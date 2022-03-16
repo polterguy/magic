@@ -93,6 +93,6 @@ import { Buffer } from "Buffer";
    * Returns true if token is expired.
    */
   get expired() {
-    return this._exp !== null && this.expires > 0;
+    return this._exp !== null && this.expires <= 0;
   }
 }

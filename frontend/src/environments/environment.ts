@@ -9,6 +9,7 @@ export const environment = {
       url: 'http://localhost:5000',
       username: 'root',
       password: 'root',
+      token_raw: null,
      },
   ],
   bazarUrl: 'https://magic-api.aista.com'

@@ -11,6 +11,7 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 import { AuthService } from '../../../../services/auth.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
+import { Backend } from 'src/app/models/backend.model';
 
 /**
  * Confirm email address component allowing the user to confirm his email address,
@@ -51,10 +52,7 @@ export class ConfirmEmailComponent implements OnInit {
       const token = params['token'];
       const url = params['url'];
       const username = params['username'];
-      this.backendService.current = {
-        url,
-        username,
-      };
+      this.backendService.current = new Backend(url, username, null, null);
 
       // Verifying email address by invoking backend.
       this.authService.verifyEmail(username, token).subscribe(() => {

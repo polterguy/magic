@@ -15,6 +15,7 @@ import { BackendService } from '../backend.service';
 import { Response } from '../../models/response.model';
 import { NameEmailModel } from '../../models/name-email.model';
 import { AuthenticateResponse } from '../../components/management/auth/models/authenticate-response.model';
+import { Backend } from 'src/app/models/backend.model';
 
 /**
  * Setup service, allows you to setup, read, and manipulate your configuration
@@ -122,12 +123,7 @@ export class ConfigService {
          * Notice, when setup is done, the backend will return a new JWT token
          * which we'll have to use for consecutive invocations towards the backend.
          */
-        this.backendService.current = {
-          url: this.backendService.current.url,
-          username: 'root',
-          password: null,
-          token: res.ticket,
-        };
+        this.backendService.current = new Backend(this.backendService.current.url, 'root', null, res.ticket);
 
         // Finishing observable.
         observer.next(res);

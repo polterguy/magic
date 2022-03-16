@@ -48,13 +48,13 @@ export class AuthInterceptor implements HttpInterceptor {
     next: HttpHandler) {
 
     // Figuring out JWT token to use for invocation, if any.
-    let backend: Backend = null
+    let backend: Backend = null;
     for (const idx of this.backendService.backends) {
       if (req.url.startsWith(idx.url)) {
         backend = idx;
       }
     }
-    if (backend && backend.token) {
+    if (backend && backend.token_raw) {
 
       /*
        * Verifying token is not expired.
@@ -62,13 +62,13 @@ export class AuthInterceptor implements HttpInterceptor {
        * if for instance the refresh JWT token timer does not fire,
        * due to a develop machine having been hibernated, etc.
        */
-      if (this.isTokenExpired(backend.token)) {
+      if (backend.token.expired) {
 
         /*
          * Token was expired, nulling it, persisting backends,
          * and publishing logout message to other parts of the system.
          */
-        backend.token = null;
+        backend.token_raw = null;
         this.backendService.persistBackends();
         this.messageService.sendMessage({
           name: Messages.USER_LOGGED_OUT,
@@ -80,7 +80,7 @@ export class AuthInterceptor implements HttpInterceptor {
 
       // Cloning HTTP request, adding Authorisation header, and invoking next in chain.
       const authReq = req.clone({
-        headers: req.headers.set('Authorization', 'Bearer ' + backend.token)
+        headers: req.headers.set('Authorization', 'Bearer ' + backend.token_raw)
       });
       return next.handle(authReq);
 
@@ -92,16 +92,5 @@ export class AuthInterceptor implements HttpInterceptor {
        */
       return next.handle(req);
     }
-  }
-
-  /*
-   * Returns true if specified JWT token is expired.
-   */
-   private isTokenExpired(token: string) {
-
-    // Parsing expiration time from JWT token.
-    const exp = (JSON.parse(atob(token.split('.')[1]))).exp;
-    const now = Math.floor(new Date().getTime() / 1000);
-    return now >= exp;
   }
 }
