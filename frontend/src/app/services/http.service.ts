@@ -39,7 +39,7 @@ export class HttpService {
   public get<Response>(url: string, requestOptions: object = null) {
 
     // Making sure we're connected to a backend, and if not, resolving observable to its error callback.
-    if (!this.backendService.connected) {
+    if (!this.backendService.current) {
 
       // Oops, not connected to any backends.
       throw throwError('Not connected to any backend, please choose a backend before trying to invoke endpoints');
@@ -64,7 +64,7 @@ export class HttpService {
   public download(url: string) {
 
     // Making sure we're connected to a backend, and if not, resolving observable to its error callback.
-    if (!this.backendService.connected) {
+    if (!this.backendService.current) {
 
       // Oops, not connected to any backends.
       throw throwError('Not connected to any backend, please choose a backend before trying to invoke endpoints');
@@ -89,7 +89,7 @@ export class HttpService {
   public downloadPost(url: string, args: any) {
 
     // Making sure we're connected to a backend, and if not, resolving observable to its error callback.
-    if (!this.backendService.connected) {
+    if (!this.backendService.current) {
 
       // Oops, not connected to any backends.
       throw throwError('Not connected to any backend, please choose a backend before trying to invoke endpoints');
@@ -117,7 +117,7 @@ export class HttpService {
   public post<Response>(url: string, req: any, requestOptions: object = null) {
 
     // Making sure we're connected to a backend, and if not, resolving observable to its error callback.
-    if (!this.backendService.connected) {
+    if (!this.backendService.current) {
 
       // Oops, not connected to any backends.
       throw throwError('Not connected to any backend, please choose a backend before trying to invoke endpoints');
@@ -145,7 +145,7 @@ export class HttpService {
   public put<Response>(url: string, req: any, requestOptions: object = null) {
 
     // Making sure we're connected to a backend, and if not, resolving observable to its error callback.
-    if (!this.backendService.connected) {
+    if (!this.backendService.current) {
 
       // Oops, not connected to any backends.
       throw throwError('Not connected to any backend, please choose a backend before trying to invoke endpoints');
@@ -173,7 +173,7 @@ export class HttpService {
   public patch<Response>(url: string, req: any, requestOptions: object = null) {
 
     // Making sure we're connected to a backend, and if not, resolving observable to its error callback.
-    if (!this.backendService.connected) {
+    if (!this.backendService.current) {
 
       // Oops, not connected to any backends.
       throw throwError('Not connected to any backend, please choose a backend before trying to invoke endpoints');
@@ -199,7 +199,7 @@ export class HttpService {
   public delete<Response>(url: string, requestOptions: object = null) {
 
     // Making sure we're connected to a backend, and if not, resolving observable to its error callback.
-    if (!this.backendService.connected) {
+    if (!this.backendService.current) {
 
       // Oops, not connected to any backends.
       throw throwError('Not connected to any backend, please choose a backend before trying to invoke endpoints');

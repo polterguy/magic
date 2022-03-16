@@ -118,7 +118,7 @@ export class ToolbarComponent implements OnInit {
   public getUserStatus() {
 
     // Verifying user is connected to a backend.
-    if (!this.backendService.connected) {
+    if (!this.backendService.current) {
       return 'not connected';
     }
 
@@ -131,7 +131,7 @@ export class ToolbarComponent implements OnInit {
     // Checking if user is authenticated.
     if (this.authService.authenticated) {
       return this.backendService.current.username + ' / ' + url;
-    } else if (this.backendService.connected) {
+    } else if (this.backendService.current) {
       return 'anonymous / ' + url;
     }
   }

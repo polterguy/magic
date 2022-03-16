@@ -50,17 +50,30 @@ export class BackendService {
   }
 
   /**
-   * Returns true if user is connected to a backend.
-   */
-  get connected() {
-    return this._backends.length > 0;
-  }
-
-  /**
    * Returns the currently used backend.
    */
   get current() {
     return this._backends.length === 0 ? null : this._backends[0];
+  }
+
+  /**
+   * Returns all backends.
+   */
+  get backends() {
+    return this._backends;
+  }
+
+  /**
+   * Sets the currently selected backend.
+   */
+  setActive(value: Backend) {
+
+    // Removing any backend with the same URL.
+    this._backends = [value].concat(this._backends.filter(x => x.url !== value.url));
+
+    // Persisting all backends to local storage object.
+    this.persistBackends();
+    this.ensureRefreshJWTTokenTimer(this.current);
   }
 
   /**
@@ -87,64 +100,6 @@ export class BackendService {
      */
     this.persistBackends();
     return cur.url === backend.url;
-  }
-
-  /**
-   * Sets the currently selected backend.
-   */
-  set current(value: Backend) {
-
-    /*
-     * Checking to see if the backend exists from before,
-     * and if it does we update its fields. If not, we append
-     * a new backend to the list of backends we handle.
-     */
-    const existing = this._backends.filter(x => x.url === value.url);
-    if (existing.length > 0) {
-
-      // Updating existing backend's fields.
-      existing[0].username = value.username;
-      existing[0].password = value.password;
-      existing[0].token = value.token;
-      value = existing[0];
-
-    } else {
-
-      // Appending backend.
-      this._backends.push(value);
-    }
-
-    /*
-     * Making sure we sort backends such that the current backend
-     * becomes the first in our list of backends, which makes sure
-     * that if the user refreshes the browser, this is the backend
-     * that will be used.
-     */
-    this._backends.sort((lhs: Backend, rhs: Backend) => {
-      if (lhs.url === value.url) {
-        return -1;
-      }
-      if (rhs.url === value.url) {
-        return 1;
-      }
-      return 0;
-    });
-
-    /*
-     * Persisting all backends to local storage object,
-     * and updating the currently selected backend.
-     */
-    this.persistBackends();
-
-    // Ensuring we create a JWT refresh timer for current backend.
-    this.ensureRefreshJWTTokenTimer(this.current);
-  }
-
-  /**
-   * Returns all backends.
-   */
-  get backends() {
-    return this._backends;
   }
 
   /*
