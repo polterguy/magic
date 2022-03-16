@@ -606,7 +606,7 @@ export class EndpointDetailsComponent implements OnInit {
         // Creating our hub connection.
         let builder = new HubConnectionBuilder();
         const hubConnection = builder.withUrl(this.backendService.current.url + '/sockets', {
-            accessTokenFactory: () => this.backendService.current.token_raw,
+            accessTokenFactory: () => this.backendService.current.token.token,
             skipNegotiation: true,
             transport: HttpTransportType.WebSockets,
           }).build();

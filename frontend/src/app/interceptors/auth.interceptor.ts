@@ -54,7 +54,7 @@ export class AuthInterceptor implements HttpInterceptor {
         backend = idx;
       }
     }
-    if (backend && backend.token_raw) {
+    if (backend && backend.token) {
 
       /*
        * Verifying token is not expired.
@@ -68,7 +68,7 @@ export class AuthInterceptor implements HttpInterceptor {
          * Token was expired, nulling it, persisting backends,
          * and publishing logout message to other parts of the system.
          */
-        backend.token_raw = null;
+        backend.token = null;
         this.backendService.persistBackends();
         this.messageService.sendMessage({
           name: Messages.USER_LOGGED_OUT,
@@ -80,7 +80,7 @@ export class AuthInterceptor implements HttpInterceptor {
 
       // Cloning HTTP request, adding Authorisation header, and invoking next in chain.
       const authReq = req.clone({
-        headers: req.headers.set('Authorization', 'Bearer ' + backend.token_raw)
+        headers: req.headers.set('Authorization', 'Bearer ' + backend.token.token)
       });
       return next.handle(authReq);
 
