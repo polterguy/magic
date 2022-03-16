@@ -19,7 +19,7 @@ import { Endpoint } from '../models/endpoint.model';
 @Injectable({
   providedIn: 'root'
 })
-export class BackendsListService {
+export class BackendsStorageService {
 
   // Backends we are currently connected to.
   private _backends: Backend[] = [];
@@ -59,13 +59,18 @@ export class BackendsListService {
     let endpoints: Endpoint[] = null;
     this._backends = [value].concat(this._backends.filter(x => {
       const isSame = x.url === value.url;
-      if (isSame) { if (x.refreshTimer) { clearTimeout(x.refreshTimer); } endpoints = x.endpoints; }
+      if (isSame) {
+        endpoints = x.endpoints; }
+        if (x.refreshTimer) {
+          clearTimeout(x.refreshTimer);
+        }
       return !isSame;
     }));
     if (endpoints) {
       value.applyEndpoints(endpoints || []);
     }
-    return endpoints === null;
+    this.persistBackends();
+    return endpoints === null && value.endpoints === null;
   }
 
   /**
@@ -73,5 +78,30 @@ export class BackendsListService {
    */
   set backends(value: Backend[]) {
     this._backends = value;
+  }
+
+  /**
+   * Persists all backends into local storage.
+   */
+  persistBackends() {
+
+    // Making sure we only persist non-null fields and that we do NOT persist "refreshTimer" field.
+    const toPersist: any[] = [];
+    for (const idx of this._backends) {
+      var idxPersist: any = {
+        url: idx.url,
+      };
+      if (idx.username) {
+        idxPersist.username = idx.username;
+      }
+      if (idx.password) {
+        idxPersist.password = idx.password;
+      }
+      if (idx.token && !idx.token.expired) {
+        idxPersist.token = idx.token.token;
+      }
+      toPersist.push(idxPersist);
+    }
+    localStorage.setItem('magic.backends', JSON.stringify(toPersist));
   }
 }

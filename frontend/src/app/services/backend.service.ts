@@ -11,7 +11,7 @@ import { HttpClient } from '@angular/common/http';
 import { Token } from '../models/token.model';
 import { Backend } from '../models/backend.model';
 import { Endpoint } from '../models/endpoint.model';
-import { BackendsListService } from './backendslist.service';
+import { BackendsStorageService } from './backendsstorage.service';
 import { AuthenticateResponse } from '../components/management/auth/models/authenticate-response.model';
 
 /**
@@ -33,7 +33,7 @@ export class BackendService {
    */
   constructor(
     private httpClient: HttpClient,
-    private backendsListService: BackendsListService) {
+    private backendsListService: BackendsStorageService) {
 
     // Checking we actually have any backends stored.
     if (this.backendsListService.backends.length > 0) {
@@ -65,7 +65,7 @@ export class BackendService {
     if (this.backendsListService.setActive(value)) {
       this.getEndpoints();
     }
-    this.persistBackends();
+    this.backendsListService.persistBackends();
     this.ensureRefreshJWTTokenTimer(this.current);
   }
 
@@ -91,7 +91,7 @@ export class BackendService {
      * Persisting all backends to local storage object,
      * and updating the currently selected backend.
      */
-    this.persistBackends();
+    this.backendsListService.persistBackends();
     return cur.url === backend.url;
   }
 
@@ -105,31 +105,6 @@ export class BackendService {
   /*
    * Private helper methods.
    */
-
-  /*
-   * Persists all backends into local storage.
-   */
-  private persistBackends() {
-
-    // Making sure we only persist non-null fields and that we do NOT persist "refreshTimer" field.
-    const toPersist: any[] = [];
-    for (const idx of this.backendsListService.backends) {
-      var idxPersist: any = {
-        url: idx.url,
-      };
-      if (idx.username) {
-        idxPersist.username = idx.username;
-      }
-      if (idx.password) {
-        idxPersist.password = idx.password;
-      }
-      if (idx.token && !idx.token.expired) {
-        idxPersist.token = idx.token.token;
-      }
-      toPersist.push(idxPersist);
-    }
-    localStorage.setItem('magic.backends', JSON.stringify(toPersist));
-  }
 
   /*
    * Creates a refresh timer for a single backend's JWT token.
@@ -154,7 +129,7 @@ export class BackendService {
 
         // Token has already expired, hence deleting token and persisting backends.
         backend.token = null;
-        this.persistBackends();
+        this.backendsListService.persistBackends();
 
       } else if (backend.token.expires_in < 60) {
 
@@ -200,7 +175,7 @@ export class BackendService {
 
         // Assigning new token to backend and persisting now with new token.
         backend.token = new Token(response.ticket);
-        this.persistBackends();
+        this.backendsListService.persistBackends();
 
         // Making sure we're able to refresh again once it's time.
         this.ensureRefreshJWTTokenTimer(backend);
