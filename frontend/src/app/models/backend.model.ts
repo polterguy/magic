@@ -13,7 +13,15 @@ export class Backend {
 
   private _token?: Token = null;
 
-  constructor(url: string, username: string, password:string, token:string) {
+  /**
+   * Creates an instance of your type.
+   * 
+   * @param url URL to backend
+   * @param username Username used to authenticate towards backend
+   * @param password Password used to authenticate towards backend
+   * @param token Existing JWT token used to access backend
+   */
+  constructor(url: string, username: string = null, password:string = null, token:string = null) {
     this.url = url;
     this.username = username;
     this.password = password;

@@ -186,7 +186,7 @@ export class NavbarComponent implements OnInit {
 
         // Check if the url exists in localstorage
         // so the availability of token can be detected
-        let cur: Backend = new Backend(backend.replace(/\s/g, '').replace(/(\/)+$/,''), null, null, null);
+        let cur: Backend = new Backend(backend.replace(/\s/g, '').replace(/(\/)+$/,''));
         if (JSON.parse(localStorage.getItem('magic.backends'))) {
           const currentBackend = JSON.parse(localStorage.getItem('magic.backends'));
           currentBackend.forEach((element: any) => {
@@ -261,7 +261,7 @@ export class NavbarComponent implements OnInit {
          *
          * Need to set the current backend first.
          */
-        this.backendService.current = new Backend(params['url'], params['username'], null, null);
+        this.backendService.current = new Backend(params['url'], params['username']);
 
         // Registration confirmation of email address.
         this.authService.verifyEmail(params['username'], token).subscribe((result: Response) => {

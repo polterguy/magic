@@ -52,7 +52,7 @@ export class ConfirmEmailComponent implements OnInit {
       const token = params['token'];
       const url = params['url'];
       const username = params['username'];
-      this.backendService.current = new Backend(url, username, null, null);
+      this.backendService.current = new Backend(url, username);
 
       // Verifying email address by invoking backend.
       this.authService.verifyEmail(username, token).subscribe(() => {
