@@ -122,9 +122,15 @@ export class AuthService {
           });
 
         }, (error: any) => {
+          console.log({
+            content: 'Could not authenticate towards backend',
+            username: username,
+            backend: url,
+            error,
+          });
           observer.error(error);
           observer.complete();
-      });
+        });
     });
   }
 
