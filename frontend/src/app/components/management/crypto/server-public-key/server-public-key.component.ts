@@ -121,7 +121,7 @@ export class ServerPublicKeyComponent implements OnInit {
   public isRoot() {
 
     // Returning true if user belongs to the root role
-    return this.backendService.current?.token?.in_role('root') || false;
+    return this.backendService.active?.token?.in_role('root') || false;
   }
 
   /**

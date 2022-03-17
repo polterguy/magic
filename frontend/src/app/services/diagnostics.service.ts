@@ -29,8 +29,6 @@ export class DiagnosticsService {
    * Returns backend version of Magic.
    */
   public version() {
-
-    // Invoking backend and returning observable to caller.
     return this.httpService.get<any>('/magic/system/version');
   }
 
@@ -39,11 +37,6 @@ export class DiagnosticsService {
    * 
    */
   public getSystemReport() {
-
-    // Dynamically building our query according to arguments specificed.
-    let url = '/magic/system/diagnostics/system-information';
-
-    // Invoking backend and returning observable to caller.
-    return this.httpService.get<SystemReport[]>(url);
+    return this.httpService.get<SystemReport[]>('/magic/system/diagnostics/system-information');
   }
 }

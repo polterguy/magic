@@ -279,7 +279,7 @@ export class EndpointDetailsComponent implements OnInit {
   public copyUrl() {
 
     // Copies the currently edited endpoint's URL prepended by backend root URL.
-    this.clipboard.copy(this.backendService.current.url + this.url);
+    this.clipboard.copy(this.backendService.active.url + this.url);
 
     // Informing user that URL can be found on clipboard.
     this.feedbackService.showInfoShort('URL was copied to your clipboard');
@@ -605,8 +605,8 @@ export class EndpointDetailsComponent implements OnInit {
 
         // Creating our hub connection.
         let builder = new HubConnectionBuilder();
-        const hubConnection = builder.withUrl(this.backendService.current.url + '/sockets', {
-            accessTokenFactory: () => this.backendService.current.token.token,
+        const hubConnection = builder.withUrl(this.backendService.active.url + '/sockets', {
+            accessTokenFactory: () => this.backendService.active.token.token,
             skipNegotiation: true,
             transport: HttpTransportType.WebSockets,
           }).build();
@@ -755,7 +755,7 @@ export class EndpointDetailsComponent implements OnInit {
   private getAssumptions() {
 
     // Verifying user has access to assumptions.
-    if (this.backendService.current.access.endpoints.assumptions) {
+    if (this.backendService.active.access.endpoints.assumptions) {
 
     // Retrieving assumptions for endpoint.
     this.assumptionService.list('/' + this.endpoint.path, this.endpoint.verb).subscribe((assumptions: any) => {

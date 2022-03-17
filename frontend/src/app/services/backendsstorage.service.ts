@@ -63,10 +63,11 @@ export class BackendsStorageService {
     this._backends = [value].concat(this._backends.filter(x => {
       const isSame = x.url === value.url;
       if (isSame) {
-        endpoints = x.endpoints; }
-        if (x.refreshTimer) {
-          clearTimeout(x.refreshTimer);
-        }
+        endpoints = x.endpoints;
+      }
+      if (x.refreshTimer) {
+        clearTimeout(x.refreshTimer);
+      }
       return !isSame;
     }));
     if (endpoints) {
@@ -87,8 +88,6 @@ export class BackendsStorageService {
    * Persists all backends into local storage.
    */
   persistBackends() {
-
-    // Making sure we only persist non-null fields and that we do NOT persist "refreshTimer" field.
     const toPersist: any[] = [];
     for (const idx of this._backends) {
       var idxPersist: any = {

@@ -9,7 +9,7 @@
               <p class="mb-0 mat-caption">Create a user account here</p>
             </div>
             <mat-icon 
-              color="warn" *ngIf="backendService.current?.url.startsWith('http://')"
+              color="warn" *ngIf="backendService.active?.url.startsWith('http://')"
               matTooltip="Clicking the submit button will transmit your password in clear text">warning
             </mat-icon>
           </div>

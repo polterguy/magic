@@ -18,7 +18,7 @@
   <button
     mat-raised-button
     *ngIf="!installed && canInstall"
-    [disabled]="!backendService.current.access.bazar.download_from_bazar"
+    [disabled]="!backendService.active.access.bazar.download_from_bazar"
     color="primary"
     matTooltip="Click here to purchase the module"
     (click)="purchase()">{{data.price === 0 ? 'Install' : 'Buy now'}}</button>

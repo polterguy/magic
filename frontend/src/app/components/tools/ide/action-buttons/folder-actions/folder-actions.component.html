@@ -11,7 +11,7 @@
 <!-- New file -->
 <button
     mat-menu-item
-    [disabled]="!backendService.current.access.files.create_file"
+    [disabled]="!backendService.active.access.files.create_file"
     color="primary"
     [matTooltip]="'Create a new file in \'' + activeFolder + '\' [ALT+A]'"
     (click)="createNewFileObject('file')">
@@ -22,7 +22,7 @@
 <!-- New folder -->
 <button
   mat-menu-item
-  [disabled]="!backendService.current.access.files.create_folder"
+  [disabled]="!backendService.active.access.files.create_folder"
   color="primary"
   [matTooltip]="'Create a new folder in \'' + activeFolder + '\' [ALT+B]'"
   (click)="createNewFileObject('folder')">
@@ -59,7 +59,7 @@
 <!-- Rename folder -->
 <button
     mat-menu-item
-    [disabled]="!backendService.current.access.files.rename || activeFolder === '/'"
+    [disabled]="!backendService.active.access.files.rename || activeFolder === '/'"
     [matTooltip]="'Rename folder \'' + activeFolder + '\' [ALT+L]'"
     (click)="renameActiveFolder()">
     <mat-icon class="material-icons-outlined"> drive_file_rename_outline </mat-icon>
@@ -68,7 +68,7 @@
 
 <!-- Delete folder -->
 <button
-    [disabled]="!backendService.current.access.files.delete_folder || activeFolder === '/'"
+    [disabled]="!backendService.active.access.files.delete_folder || activeFolder === '/'"
     mat-menu-item
     [matTooltip]="'Delete folder \'' + activeFolder + '\' [ALT+X]'"
     (click)="deleteActiveFolder()">

@@ -83,8 +83,8 @@ export class LoginDialogComponent implements OnInit {
     // Creating filter backends form control.
     this.backends = new FormControl();
 
-    if (this.data.allowAuthentication && this.backendService.current && this.backendService.current) {
-      this.backends.setValue(this.backendService.current.url);
+    if (this.data.allowAuthentication && this.backendService.active && this.backendService.active) {
+      this.backends.setValue(this.backendService.active.url);
       this.backendHasBeenSelected = true;
       this.backendSelected();
     }

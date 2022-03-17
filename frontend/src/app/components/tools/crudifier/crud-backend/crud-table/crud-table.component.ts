@@ -308,7 +308,6 @@ export class CrudifierTableComponent implements OnInit {
     // Deleting auth cache and retrieving it again.
     this.cacheService.delete('magic.auth.endpoints').subscribe(() => {
       this.backendService.refetchEndpoints();
-
     }, (error: any) => this.feedbackService.showError(error));
   }
 }

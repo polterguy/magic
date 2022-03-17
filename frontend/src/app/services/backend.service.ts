@@ -34,10 +34,8 @@ export class BackendService {
   constructor(
     private httpClient: HttpClient,
     private backendsListService: BackendsStorageService) {
-
-    // Checking we actually have any backends stored.
     if (this.backendsListService.backends.length > 0) {
-      for (const idx of this.backendsListService.backends) {
+      for (const idx of this.backendsListService.backends.filter(x => x.token)) {
         this.ensureRefreshJWTTokenTimer(idx);
       }
       this.getEndpoints();
@@ -47,7 +45,7 @@ export class BackendService {
   /**
    * Returns the currently used backend.
    */
-  get current() {
+  get active() {
     return this.backendsListService.backends.length === 0 ? null : this.backendsListService.backends[0];
   }
 
@@ -66,7 +64,7 @@ export class BackendService {
       this.getEndpoints();
     }
     this.backendsListService.persistBackends();
-    this.ensureRefreshJWTTokenTimer(this.current);
+    this.ensureRefreshJWTTokenTimer(this.active);
   }
 
   /**
@@ -84,7 +82,7 @@ export class BackendService {
     }
 
     // We need to track current backend such that we can return to caller whether or not refreshing UI is required.
-    const cur = this.current;
+    const cur = this.active;
     this.backendsListService.backends = this.backendsListService.backends.filter(x => x.url !== backend.url);
 
     /*
@@ -203,8 +201,8 @@ export class BackendService {
    * Retrieves endpoints for currently selected backend.
    */
   private getEndpoints() {
-    this.httpClient.get<Endpoint[]>(this.current.url + '/magic/system/auth/endpoints').subscribe(res => {
-      this.current.applyEndpoints(res || []);
+    this.httpClient.get<Endpoint[]>(this.active.url + '/magic/system/auth/endpoints').subscribe(res => {
+      this.active.applyEndpoints(res || []);
     }, error => console.error(error));
   }
 }

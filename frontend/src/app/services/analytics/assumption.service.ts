@@ -121,7 +121,7 @@ export class AssumptionService {
     // Invoking backend and returning observable to caller.
     return this.httpService.get<Response>(
       '/magic/system/assumptions/execute?root_url=' +
-      encodeURIComponent(this.backendService.current.url) +
+      encodeURIComponent(this.backendService.active.url) +
       '&test_file=' +
       encodeURIComponent(filename));
   }

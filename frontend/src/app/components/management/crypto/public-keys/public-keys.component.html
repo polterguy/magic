@@ -19,7 +19,7 @@
   <div>
     <button
       mat-icon-button
-      [disabled]="!backendService.current.access.crypto.import_public_key"
+      [disabled]="!backendService.active.access.crypto.import_public_key"
       matTooltip="Import public key"
       (click)="import()">
       <mat-icon>add_box</mat-icon>
@@ -51,7 +51,7 @@
         <button
           mat-icon-button
           class="float-right"
-          [disabled]="!backendService.current.access.crypto.delete_public_key"
+          [disabled]="!backendService.active.access.crypto.delete_public_key"
           (click)="delete($event, el.key)">
           <mat-icon>delete</mat-icon>
         </button>
@@ -70,7 +70,7 @@
                 <mat-label>Full name</mat-label>
                 <input
                   matInput
-                  [disabled]="!backendService.current.access.crypto.save_public_key"
+                  [disabled]="!backendService.active.access.crypto.save_public_key"
                   type="text"
                   [(ngModel)]="el.key.subject"
                   autocomplete="off">
@@ -80,7 +80,7 @@
                 <mat-label>Email</mat-label>
                 <input
                   matInput
-                  [disabled]="!backendService.current.access.crypto.save_public_key"
+                  [disabled]="!backendService.active.access.crypto.save_public_key"
                   type="text"
                   [(ngModel)]="el.key.email"
                   autocomplete="off">
@@ -91,7 +91,7 @@
                 <mat-label>Domain</mat-label>
                 <input
                   matInput
-                  [disabled]="!backendService.current.access.crypto.save_public_key"
+                  [disabled]="!backendService.active.access.crypto.save_public_key"
                   type="text"
                   [(ngModel)]="el.key.domain"
                   autocomplete="off">
@@ -101,7 +101,7 @@
                 <mat-label>Username</mat-label>
                 <input
                   matInput
-                  [disabled]="!backendService.current.access.crypto.save_public_key"
+                  [disabled]="!backendService.active.access.crypto.save_public_key"
                   type="text"
                   [(ngModel)]="el.key.username"
                   autocomplete="off">
@@ -130,7 +130,7 @@
               <mat-label>Key content</mat-label>
               <textarea
                 matInput
-                [disabled]="!backendService.current.access.crypto.save_public_key"
+                [disabled]="!backendService.active.access.crypto.save_public_key"
                 class="crypto-key"
                 [(ngModel)]="el.key.content"
                 rows="7"></textarea>
@@ -145,7 +145,7 @@
             <div class="d-flex justify-content-end align-items-center mt-3 mb-3">
               <mat-checkbox
                 class="crypto-enabled"
-                [disabled]="!backendService.current.access.crypto.save_public_key"
+                [disabled]="!backendService.active.access.crypto.save_public_key"
                 matTooltip="Enables or disables public key"
                 (change)="enabledChanged(el.key)"
                 [(ngModel)]="el.key.enabled">Enabled
@@ -153,7 +153,7 @@
               <div class="pr-2"></div>
               <button
                 mat-flat-button
-                [disabled]="!backendService.current.access.crypto.crypto_invocations"
+                [disabled]="!backendService.active.access.crypto.crypto_invocations"
                 matTooltip="Retrieve all receipts for invocations done with key"
                 (click)="showReceipts(el.key)">Receipts
               </button>
@@ -161,7 +161,7 @@
               <button
                 mat-raised-button
                 matTooltip="Saves changes to key"
-                [disabled]="!backendService.current.access.crypto.save_public_key"
+                [disabled]="!backendService.active.access.crypto.save_public_key"
                 color="primary"
                 (click)="save(el)">Save
               </button>

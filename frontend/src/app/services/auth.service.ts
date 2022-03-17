@@ -6,7 +6,7 @@
 // Angular and system imports.
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
 
 // Application specific imports.
 import { HttpService } from './http.service';
@@ -46,6 +46,9 @@ export class AuthService {
    * Verifies validity of token by invoking backend.
    */
   verifyTokenForCurrent() {
+    if (!this.backendService.active?.token) {
+      return throwError(() => new Error('No token to verify'));
+    }
     return this.httpService.get<Response>('/magic/system/auth/verify-ticket');
   }
 
@@ -83,23 +86,24 @@ export class AuthService {
           withCredentials: query === '' ? true : false,
 
         }).subscribe((auth: AuthenticateResponse) => {
-          const cur = new Backend(this.backendService.current.url, username, storePassword ? password : null, auth.ticket);
-          this.backendService.upsertAndActivate(cur);
 
-          observer.next(auth);
-          observer.complete();
+          const cur = new Backend(this.backendService.active.url, username, storePassword ? password : null, auth.ticket);
+          this.backendService.upsertAndActivate(cur);
           this._authenticated.next(true);
           console.log({
-            content: 'User successfully authenticated towards backend',
+            content: 'User successfully authenticated',
             username: username,
-            backend: this.backendService.current.url,
+            backend: this.backendService.active.url,
           });
+          observer.next(auth);
+          observer.complete();
 
         }, (error: any) => {
+
           console.log({
             content: 'Could not authenticate towards backend',
             username: username,
-            backend: this.backendService.current.url,
+            backend: this.backendService.active.url,
             error,
           });
           observer.error(error);
@@ -114,13 +118,13 @@ export class AuthService {
    * @param destroyPassword Whether or not password should be removed before persisting backend
    */
   logoutFromCurrent(destroyPassword: boolean) {
-    if (this.backendService.current?.token) {
+    if (this.backendService.active?.token) {
       const cur = new Backend(
-        this.backendService.current.url,
-        this.backendService.current.username,
-        destroyPassword ? null : this.backendService.current.password);
+        this.backendService.active.url,
+        this.backendService.active.username,
+        destroyPassword ? null : this.backendService.active.password);
       this.backendService.upsertAndActivate(cur);
-      this.backendService.current.createAccessRights();
+      this.backendService.active.createAccessRights();
       this._authenticated.next(false);
     }
   }
@@ -131,11 +135,7 @@ export class AuthService {
    * @param password New password for user
    */
   changePassword(password: string) {
-
-    // Invoking backend returning observable to caller.
-    return this.httpService.put<Response>('/magic/system/auth/change-password', {
-      password
-    });
+    return this.httpService.put<Response>('/magic/system/auth/change-password', { password });
   }
 
   /**
@@ -145,8 +145,6 @@ export class AuthService {
    * @param frontendUrl URL of frontend to use to build reset-password email from
    */
   sendResetPasswordEmail(username: string, frontendUrl: string) {
-
-    // Invoking backend returning observable to caller.
     return this.httpService.post<Response>('/magic/system/auth/send-reset-password-link', {
       username,
       frontendUrl,
