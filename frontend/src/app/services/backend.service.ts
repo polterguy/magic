@@ -162,6 +162,17 @@ export class BackendService {
       return;
     }
 
+    // Ensuring token is still valid, and if not simply destroying it and returning early.
+    if (backend.token.expired) {
+      backend.token = null;
+      this.backendsListService.persistBackends();
+      console.log({
+        content: 'Token for backend expired',
+        backend: backend.url
+      });
+      return;
+    }
+
     // Invoking the refresh token method for backend.
     this.httpClient.get<AuthenticateResponse>(
       backend.url +
@@ -180,7 +191,12 @@ export class BackendService {
         // Making sure we're able to refresh again once it's time.
         this.ensureRefreshJWTTokenTimer(backend);
         
-      }, (error: any) => console.error(error));
+      }, (error: any) => {
+
+        backend.token = null;
+        this.backendsListService.persistBackends();
+        console.error(error);
+      });
   }
 
   /*
