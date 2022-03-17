@@ -26,5 +26,5 @@ export class Table {
   /**
    * Foreign keys for table.
    */
-   foreign_keys: ForeignKey[];
+  foreign_keys: ForeignKey[];
 }
