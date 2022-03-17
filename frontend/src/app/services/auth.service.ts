@@ -119,6 +119,9 @@ export class AuthService {
    */
   logoutFromCurrent(destroyPassword: boolean) {
     if (this.backendService.active?.token) {
+      if (this.backendService.active.refreshTimer) {
+        clearTimeout(this.backendService.active.refreshTimer);
+      }
       const cur = new Backend(
         this.backendService.active.url,
         this.backendService.active.username,
