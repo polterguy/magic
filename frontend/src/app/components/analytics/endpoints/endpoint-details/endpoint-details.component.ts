@@ -15,7 +15,6 @@ import { HttpTransportType, HubConnectionBuilder } from '@aspnet/signalr';
 import { Endpoint } from '../models/endpoint.model';
 import { Argument } from '../models/argument.model';
 import { Response } from 'src/app/models/response.model';
-import { AuthService } from '../../../../services/auth.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { EndpointService } from '../../../../services/analytics/endpoint.service';
@@ -35,11 +34,7 @@ import hyperlambda_readonly from '../../../codemirror/options/hyperlambda_readon
  * Query model encapsulating a single query parameter added to the HTTP invocation.
  */
 class QueryModel {
-
-  // Name of query parameter.
   name: string;
-
-  // Value of query parameter.
   value: any;
 }
 
@@ -47,20 +42,10 @@ class QueryModel {
  * Result of invocation.
  */
 class InvocationResult {
-
-  // HTTP status code of invocation.
   status: number;
-
-  // HTTP status text of invocation.
   statusText: string;
-
-  // Actual response returned by invocation.
   response: string;
-
-  // If response returned a blob (image?), this will be its value.
   blob: any;
-
-  // Response type, can be 'hyperlambda', 'json' or 'blob'.
   responseType: string;
 }
 
@@ -68,14 +53,8 @@ class InvocationResult {
  * Assumption model for existing tests endpoint has declared.
  */
 class Assumption {
-
-  // Name of assumption (filename)
   file: string;
-
-  // Description of assumption.
   description: string
-
-  // If true, execution was a success.
   success?: boolean;
 }
 
@@ -93,74 +72,74 @@ export class EndpointDetailsComponent implements OnInit {
   /**
    * Assumptions about endpoint.
    */
-  public assumptions: Assumption[] = [];
+  assumptions: Assumption[] = [];
 
   /**
    * CodeMirror options object, taken from common settings.
    */
-  public cmOptions = {
+  cmOptions = {
     json: json,
   };
 
   /**
    * CodeMirror options object, taken from common settings.
    */
-  public cmOptionsHyperlambda = {
+  cmOptionsHyperlambda = {
     json: hyperlambda,
   };
 
   /**
    * CodeMirror options object, taken from common settings.
    */
-  public cmOptionsMarkdown = {
+  cmOptionsMarkdown = {
     json: markdown,
   };
 
   /**
    * CodeMirror options object, taken from common settings.
    */
-  public cmOptionsReadonly = {
+  cmOptionsReadonly = {
     json: json_readonly,
   };
 
   /**
    * CodeMirror options object, taken from common settings.
    */
-  public cmHlOptionsReadonly = {
+  cmHlOptionsReadonly = {
     hl: hyperlambda_readonly,
   };
 
   /**
    * CodeMirror options object, taken from common settings.
    */
-  public markdownOptionsReadonly = {
+  markdownOptionsReadonly = {
     md: markdown_readonly,
   };
 
   /**
    * Payload example for JSON type of endpoints.
    */
-  public payload: string = null;
+  payload: string = null;
 
   /**
    * Result of invocation.
    */
-  public result: InvocationResult = null;
+  result: InvocationResult = null;
 
   /**
    * URL model for invoking endpoint.
    */
-  public url: string = null;
+  url: string = null;
 
   /**
    * Query parameters added to URL.
    */
-  public query: QueryModel[] = [];
+  query: QueryModel[] = [];
 
   /**
    * Model for instance.
    */
-  @Input() public endpoint: Endpoint;
+  @Input() endpoint: Endpoint;
 
   /**
    * Creates an instance of your component.
@@ -177,7 +156,6 @@ export class EndpointDetailsComponent implements OnInit {
     private dialog: MatDialog,
     private clipboard: Clipboard,
     private sanitizer: DomSanitizer,
-    public authService: AuthService,
     public backendService: BackendService,
     private feedbackService: FeedbackService,
     private endpointService: EndpointService,
@@ -186,18 +164,10 @@ export class EndpointDetailsComponent implements OnInit {
   /**
    * Implementation of OnInit.
    */
-  public ngOnInit() {
-
-    // Model for URL that invokes endpoint.
+  ngOnInit() {
     this.url = '/' + this.endpoint.path;
-
-    // Checking if this is a JSON payload or not.
     if (this.endpoint.verb !== 'get' && this.endpoint.verb !== 'delete') {
-
-      // Checking type of payload.
       if (this.endpoint.consumes === 'application/json') {
-
-        // JSON payload type.
         let payload = {};
         for (var idx of this.endpoint.input ?? []) {
           let type: any = idx.type;
@@ -235,18 +205,11 @@ export class EndpointDetailsComponent implements OnInit {
         setTimeout(() => this.payload = JSON.stringify(payload, null, 2), 250);
 
       } else if (this.endpoint.consumes === 'application/x-hyperlambda') {
-
-        // Setting payload to empty string.
         setTimeout(() => this.payload = '', 250);
-
       } else if (this.endpoint.consumes.startsWith('text/')) {
-
-        // Setting payload to empty string.
         setTimeout(() => this.payload = '', 250);
       }
     }
-
-    // Retrieving assumptions for endpoint.
     this.getAssumptions();
   }
 
@@ -256,7 +219,7 @@ export class EndpointDetailsComponent implements OnInit {
    * Notice, we don't support invoking endpoints with for instance application/octet-stream types
    * of input, since we don't have the means to supply the required input to these endpoints.
    */
-  public canInvoke() {
+  canInvoke() {
     return this.endpoint.verb === 'get' ||
       this.endpoint.verb === 'delete' ||
       this.endpoint.consumes === 'application/json' ||
@@ -269,19 +232,15 @@ export class EndpointDetailsComponent implements OnInit {
    * 
    * @param auth List of roles
    */
-  public getAuth(auth: string[]) {
+  getAuth(auth: string[]) {
     return auth.join(', ');
   }
 
   /**
    * Invoked when user wants to copy the full URL of the endpoint.
    */
-  public copyUrl() {
-
-    // Copies the currently edited endpoint's URL prepended by backend root URL.
+  copyUrl() {
     this.clipboard.copy(this.backendService.active.url + this.url);
-
-    // Informing user that URL can be found on clipboard.
     this.feedbackService.showInfoShort('URL was copied to your clipboard');
   }
 
@@ -290,7 +249,7 @@ export class EndpointDetailsComponent implements OnInit {
    * 
    * @param path Full path of assumption
    */
-  public getAssumptionName(path: string) {
+  getAssumptionName(path: string) {
     const name = path.substring(path.lastIndexOf('/') + 1);
     return name.substring(0, name.length - 3);
   }
@@ -300,9 +259,7 @@ export class EndpointDetailsComponent implements OnInit {
    * 
    * @param assumption What assumption to run
    */
-  public runAssumption(assumption: Assumption) {
-
-    // Invoking backend and running assumption.
+  runAssumption(assumption: Assumption) {
     this.assumptionService.execute(assumption.file).subscribe((res: Response) => {
       if (res.result === 'success') {
         assumption.success = true;
@@ -322,12 +279,8 @@ export class EndpointDetailsComponent implements OnInit {
    * @param args List of all arguments for endpoint
    * @param controlArguments Whether or not to return control arguments or non-control arguments
    */
-  public getArguments(args: Argument[], controlArguments: boolean) {
-
-    // Checking if this is not a CRUD read/count type of endpoint.
+  getArguments(args: Argument[], controlArguments: boolean) {
     if (this.endpoint.type === 'crud-read' || this.endpoint.type === 'crud-count') {
-
-      // Read or count CRUD endpoint
       return args.filter(x => {
         switch (x.name) {
           case 'operator':
@@ -341,10 +294,9 @@ export class EndpointDetailsComponent implements OnInit {
         }
       });
     } else {
-
-      // Not a read or count CRUD endpoint.
-      if (controlArguments)
+      if (controlArguments) {
         return [];
+      }
       return args;
     }
   }
@@ -354,16 +306,10 @@ export class EndpointDetailsComponent implements OnInit {
    * 
    * @param arg Argument to retrieve tooltip for
    */
-  public getChipTooltip(arg: Argument) {
-
-    // Checking if this is not a CRUD read/count type of endpoint.
+  getChipTooltip(arg: Argument) {
     if (this.endpoint.type === 'crud-read' || this.endpoint.type === 'crud-count') {
-
-      // Read or count CRUD endpoint.
       const query = this.query.filter(x => x.name == arg.name);
       if (query.length === 0) {
-  
-        // Argument has not been added to query paramaters for invocation.
         switch (arg.name) {
 
           case 'operator':
@@ -383,10 +329,8 @@ export class EndpointDetailsComponent implements OnInit {
 
           default:
             if (arg.name.indexOf('.') !== -1) {
-  
-              // Highly likely a CRUD conditional argument, such as 'xxx.eq', 'xxx.mteq', etc.
-              const comparison = arg.name.substr(arg.name.lastIndexOf('.') + 1);
-              const field = arg.name.substr(0, arg.name.lastIndexOf('.'));
+              const comparison = arg.name.substring(arg.name.lastIndexOf('.') + 1);
+              const field = arg.name.substring(0, arg.name.lastIndexOf('.'));
               switch (comparison) {
   
                 case 'eq':
@@ -418,8 +362,6 @@ export class EndpointDetailsComponent implements OnInit {
             }
         }
       } else {
-  
-        // Argument has been added to query paramaters for invocation.
         switch (arg.name) {
 
           case 'operator':
@@ -439,10 +381,8 @@ export class EndpointDetailsComponent implements OnInit {
 
           default:
             if (arg.name.indexOf('.') !== -1) {
-  
-              // Highly likely a CRUD conditional argument, such as 'xxx.eq', 'xxx.mteq', etc.
-              const comparison = arg.name.substr(arg.name.lastIndexOf('.') + 1);
-              const field = arg.name.substr(0, arg.name.lastIndexOf('.'));
+              const comparison = arg.name.substring(arg.name.lastIndexOf('.') + 1);
+              const field = arg.name.substring(0, arg.name.lastIndexOf('.'));
               switch (comparison) {
   
                 case 'eq':
@@ -471,11 +411,9 @@ export class EndpointDetailsComponent implements OnInit {
               }
             }
             return query[0].value;
-          }
         }
-      } else {
-
-      // Not a read or count CRUD endpoint.
+      }
+    } else {
       const query = this.query.filter(x => x.name === arg.name);
       if (query.length > 0) {
         return `${arg.name} equals ${query[0].value}`;
@@ -489,7 +427,7 @@ export class EndpointDetailsComponent implements OnInit {
    * 
    * @param arg Argument to check for
    */
-  public hasQueryParam(arg: Argument) {
+  hasQueryParam(arg: Argument) {
     return this.query.filter(x => x.name === arg.name).length > 0;
   }
 
@@ -498,9 +436,7 @@ export class EndpointDetailsComponent implements OnInit {
    * 
    * @param arg Argument to add
    */
-  public addQueryParameter(arg: Argument) {
-
-    // Showing modal dialog allowing user to add a new query parameter to URL.
+  addQueryParameter(arg: Argument) {
     const argValue = this.query.filter(x => x.name == arg.name);
     const dialogRef = this.dialog.open(AddQueryParameterDialogComponent, {
       width: '550px',
@@ -510,23 +446,14 @@ export class EndpointDetailsComponent implements OnInit {
         old: argValue.length > 0 ? argValue[0].value : null,
       }
     });
-
     dialogRef.afterClosed().subscribe((value: any) => {
-
-      // Checking if modal dialog wants to create a query parameter.
       if (value || value === false || value === 0 || value === '' /* Avoiding explicit conversions to false */) {
-
-        // Checking if type of argument is date, and if so, converting it appropriately.
         if (arg.type === 'date') {
           value = new Date(value).toISOString();
         }
-
-        // Verifying parameter is not already added, and if it is, we remove it first.
         if (this.query.filter(x => x.name === arg.name).length > 0) {
           this.query.splice(this.query.indexOf(this.query.filter(x => x.name === arg.name)[0]), 1);
         }
-
-        // Adding query parameter to list of args, and rebuilding URL.
         this.query.push({
           name: arg.name,
           value: value,
@@ -541,9 +468,7 @@ export class EndpointDetailsComponent implements OnInit {
    * 
    * @param arg Argument to remove
    */
-  public removeQueryParameter(arg: Argument) {
-
-    // Removing query parameter from list of args, and rebuilding URL.
+  removeQueryParameter(arg: Argument) {
     this.query.splice(this.query.indexOf(this.query.filter(x => x.name === arg.name)[0]), 1);
     this.buildUrl();
   }
@@ -551,153 +476,127 @@ export class EndpointDetailsComponent implements OnInit {
   /**
    * Invoked when user wants to invoke endpoint.
    */
-  public invoke() {
+  invoke() {
+    let responseType = '';
+    if (this.endpoint.produces === 'application/json') {
+      responseType = 'json';
+    } else if (this.endpoint.produces === 'application/x-hyperlambda') {
+      responseType = 'hyperlambda';
+    } else if (this.endpoint.produces.startsWith('text')) {
+      responseType = 'text';
+    } else {
+      responseType = 'blob';
+    }
+    try {
+      let invocation: Observable<any> = null;
+      switch (this.endpoint.verb) {
 
-  // Figuring out what endpoint returns.
-  let responseType = '';
-  if (this.endpoint.produces === 'application/json') {
-    responseType = 'json';
-  } else if (this.endpoint.produces === 'application/x-hyperlambda') {
-    responseType = 'hyperlambda';
-  } else if (this.endpoint.produces.startsWith('text')) {
-    responseType = 'text';
-  } else {
-    responseType = 'blob';
-  }
+        case 'get':
+          invocation = this.endpointService.get(this.url, responseType);
+          break;
 
-  // Making sure we trap JSON conversion errors, etc.
-  try {
+        case 'delete':
+          invocation = this.endpointService.delete(this.url, responseType);
+          break;
 
-    // Creating backend invocation.
-    let invocation: Observable<any> = null;
-    switch (this.endpoint.verb) {
+        case 'post':
+          {
+            const payload = this.endpoint.consumes === 'application/json' ? JSON.parse(this.payload) : this.payload;
+            invocation = this.endpointService.post(this.url, payload, responseType);
+          }
+          break;
 
-      case 'get':
-        invocation = this.endpointService.get(this.url, responseType);
-        break;
+        case 'put':
+          {
+            const payload = this.endpoint.consumes === 'application/json' ? JSON.parse(this.payload) : this.payload;
+            invocation = this.endpointService.put(this.url, payload, responseType);
+          }
+          break;
 
-      case 'delete':
-        invocation = this.endpointService.delete(this.url, responseType);
-        break;
+        case 'patch':
+          {
+            const payload = this.endpoint.consumes === 'application/json' ? JSON.parse(this.payload) : this.payload;
+            invocation = this.endpointService.patch(this.url, payload, responseType);
+          }
+          break;
 
-      case 'post':
-        {
-          const payload = this.endpoint.consumes === 'application/json' ? JSON.parse(this.payload) : this.payload;
-          invocation = this.endpointService.post(this.url, payload, responseType);
-        }
-        break;
+        case 'socket':
+          let builder = new HubConnectionBuilder();
+          const hubConnection = builder.withUrl(this.backendService.active.url + '/sockets', {
+              accessTokenFactory: () => this.backendService.active.token.token,
+              skipNegotiation: true,
+              transport: HttpTransportType.WebSockets,
+            }).build();
 
-      case 'put':
-        {
-          const payload = this.endpoint.consumes === 'application/json' ? JSON.parse(this.payload) : this.payload;
-          invocation = this.endpointService.put(this.url, payload, responseType);
-        }
-        break;
+          hubConnection.start().then(() => {
+            let success = true;
+            const url = this.url.substring(14);
+            hubConnection
+              .invoke('execute', url, this.payload)
+              .catch(() => {
+                this.feedbackService.showError('Something went wrong as we tried to invoke socket endpoint');
+                success = false;
+              })
+              .then(() => {
+                hubConnection.stop();
+                if (success) {
+                  this.feedbackService.showInfoShort('Socket invocation was successful');
+                }
+              });
+          });
+          break;
+      }
 
-      case 'patch':
-        {
-          const payload = this.endpoint.consumes === 'application/json' ? JSON.parse(this.payload) : this.payload;
-          invocation = this.endpointService.patch(this.url, payload, responseType);
-        }
-        break;
+      if (invocation) {
+        const startTime = new Date();
+        invocation.subscribe((res: any) => {
+          const endTime = new Date();
+          const timeDiff = endTime.getTime() - startTime.getTime();
+          const response = responseType === 'json' ? JSON.stringify(res.body || '{}', null, 2) : res.body;
+          this.result = {
+            status: res.status,
+            statusText: res.statusText + ' in ' + new Intl.NumberFormat('en-us').format(timeDiff) + ' milliseconds',
+            response: response,
+            blob: null,
+            responseType,
+          };
+          if (responseType === 'blob') {
+            const objectUrl = URL.createObjectURL(response);
+            this.result.blob = this.sanitizer.bypassSecurityTrustUrl(objectUrl);
+          }
 
-      case 'socket':
-
-        // Creating our hub connection.
-        let builder = new HubConnectionBuilder();
-        const hubConnection = builder.withUrl(this.backendService.active.url + '/sockets', {
-            accessTokenFactory: () => this.backendService.active.token.token,
-            skipNegotiation: true,
-            transport: HttpTransportType.WebSockets,
-          }).build();
-
-        // Connecting to socket.
-        hubConnection.start().then(() => {
-
-          // When having connected we invoke the 'execute' method, passing in URL and arguments.
-          let success = true;
-          const url = this.url.substring(14);
-          hubConnection
-            .invoke('execute', url, this.payload)
-            .catch(() => {
-              this.feedbackService.showError('Something went wrong as we tried to invoke socket endpoint');
-              success = false;
-            })
-            .then(() => {
-              hubConnection.stop();
-              if (success) {
-                this.feedbackService.showInfoShort('Socket invocation was successful');
-              }
-            });
+        }, (error: any) => {
+          this.result = {
+            status: error.status,
+            statusText: error.statusText,
+            response: JSON.stringify(error.error || '{}', null, 2),
+            blob: null,
+            responseType,
+          };
         });
-        break;
+      }
     }
-
-    // Verifying we have an observable, which is not necessarily the case for socket invocations.
-    if (invocation) {
-
-      // Invoking backend now that we've got our observable.
-      const startTime = new Date();
-      invocation.subscribe((res: any) => {
-
-        // Binding result model to result of invocation.
-        const endTime = new Date();
-        const timeDiff = endTime.getTime() - startTime.getTime();
-        const response = responseType === 'json' ? JSON.stringify(res.body || '{}', null, 2) : res.body;
-        this.result = {
-          status: res.status,
-          statusText: res.statusText + ' in ' + new Intl.NumberFormat('en-us').format(timeDiff) + ' milliseconds',
-          response: response,
-          blob: null,
-          responseType,
-        };
-        if (responseType === 'blob') {
-          const objectUrl = URL.createObjectURL(response);
-          this.result.blob = this.sanitizer.bypassSecurityTrustUrl(objectUrl);
-        }
-
-      }, (error: any) => {
-
-        // Assigning model to result of invocation.
-        this.result = {
-          status: error.status,
-          statusText: error.statusText,
-          response: JSON.stringify(error.error || '{}', null, 2),
-          blob: null,
-          responseType,
-        };
-      });
+    catch (error) {
+      this.feedbackService.showError(error);
     }
   }
-  catch (error) {
-    this.feedbackService.showError(error);
-  }
-}
 
   /**
    * Returns whether or not the current invocation was successful or not.
    */
-  public isSuccess() {
+  isSuccess() {
     return this.result && this.result.status >= 200 && this.result.status < 400;
   }
 
   /**
    * Allows the user to create an assumption/integration test for the current request/response.
    */
-  public createTest() {
-
-    // Showing modal dialog, passing in existing filename if any, defaulting to ''.
+  createTest() {
     const dialogRef = this.dialog.open(CreateAssumptionTestDialogComponent, {
       width: '550px',
     });
-
-    // Subscribing to closed event, and if given a filename, loads it and displays it in the Hyperlambda editor.
     dialogRef.afterClosed().subscribe((res: TestModel) => {
-
-      // Checking if user selected a file, at which point filename will be non-null.
       if (res) {
-
-        // User gave us a filename, hence saving file to backend snippet collection.
         this.assumptionService.create(
           res.filename,
           this.endpoint.verb,
@@ -722,7 +621,6 @@ export class EndpointDetailsComponent implements OnInit {
           this.getAssumptions();
 
         }, (error: any) => this.feedbackService.showError(error));
-
       }
     });
   }
@@ -735,8 +633,6 @@ export class EndpointDetailsComponent implements OnInit {
    * Creates URL with root URL and query parameters.
    */
   private buildUrl() {
-
-    // Dynamically building our URL according to query parameters.
     let url = '/' + this.endpoint.path;
     if (this.query.length === 0) {
       this.url = url;
@@ -753,12 +649,8 @@ export class EndpointDetailsComponent implements OnInit {
    * Retrieves assumptions for endpoint
    */
   private getAssumptions() {
-
-    // Verifying user has access to assumptions.
     if (this.backendService.active.access.endpoints.assumptions) {
-
-    // Retrieving assumptions for endpoint.
-    this.assumptionService.list('/' + this.endpoint.path, this.endpoint.verb).subscribe((assumptions: any) => {
+      this.assumptionService.list('/' + this.endpoint.path, this.endpoint.verb).subscribe((assumptions: any) => {
         if (assumptions && assumptions.length) {
           
             const arr: Assumption[] = [];

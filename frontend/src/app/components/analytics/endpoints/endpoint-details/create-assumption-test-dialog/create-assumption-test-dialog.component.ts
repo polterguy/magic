@@ -41,17 +41,12 @@ export class TestModel {
 })
 export class CreateAssumptionTestDialogComponent implements OnInit {
 
-  /*
-   * Existing assumption/integration test files as returned from backend.
-   * 
-   * Needed to make autocompleter working allowing user to overwrite previously saved test.
-   */
   private files: string[] = [];
 
   /**
    * Test model to use when saving test.
    */
-  public data: TestModel = {
+  data: TestModel = {
     filename: '',
     description: '',
     matchResponse: false,
@@ -70,14 +65,9 @@ export class CreateAssumptionTestDialogComponent implements OnInit {
   /**
    * Implementation of OnInit.
    */
-  public ngOnInit() {
-
-    // Retrieving snippets from backend.
+  ngOnInit() {
     this.assumptionService.list().subscribe((files: string[]) => {
-
-      // Excluding all files that are not Hyperlambda files.
       this.files = files.filter(x => x.endsWith('.hl'));
-
     }, (error: any) => this.feedbackService.showError(error));
   }
 
@@ -86,19 +76,15 @@ export class CreateAssumptionTestDialogComponent implements OnInit {
    * 
    * @param path Complete path of file
    */
-  public getFilename(path: string) {
-
-    // Removing path and extension, returning only filename.
-    const result = path.substr(path.lastIndexOf('/') + 1);
-    return result.substr(0, result.lastIndexOf('.'));
+  getFilename(path: string) {
+    const result = path.substring(path.lastIndexOf('/') + 1);
+    return result.substring(0, result.lastIndexOf('.'));
   }
 
   /**
    * Returns filtered files according to what user has typed.
    */
-  public getFiltered() {
-
-    // Filtering files according such that only filtered files are returned.
+  getFiltered() {
     return this.files.filter((idx: string)  => {
       return this.getFilename(idx).indexOf(this.data.filename) !== -1;
     });
@@ -107,9 +93,7 @@ export class CreateAssumptionTestDialogComponent implements OnInit {
   /**
    * Returns true if filename is a valid filename for snippet.
    */
-  public filenameValid() {
-
-    // A valid filename only contains [a-z], [0-9], '.' and '-'.
+  filenameValid() {
     for (var idx of this.data.filename) {
       if ('abcdefghijklmnopqrstuvwxyz0123456789.-_'.indexOf(idx) === -1) {
         return false;

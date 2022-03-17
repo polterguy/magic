@@ -3,6 +3,7 @@
 
 <form (ngSubmit)="create()">
   <div mat-dialog-content>
+
     <mat-form-field *ngIf="data.argument.type === 'string' && data.argument.name === 'operator'" class="w-100" appearance="outline">
       <mat-label class="dark">Logical comparison operator</mat-label>
       <mat-select
@@ -78,6 +79,7 @@
   </div>
 
   <div mat-dialog-actions class="mat-dialog-actions">
+
     <button
       mat-raised-button
       color="primary"
@@ -86,4 +88,5 @@
       Add
     </button>
   </div>
+
 </form>

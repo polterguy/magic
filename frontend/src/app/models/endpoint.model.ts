@@ -47,5 +47,10 @@ export class Endpoint {
    * Input endpoint can legally accept.
    */
   input: any;
+
+  /**
+   * True if endpoints has been expanded.
+   */
+  expanded?: boolean;
 }
   

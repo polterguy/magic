@@ -1,6 +1,8 @@
 
 <h1 mat-dialog-title class="mat-dialog-title">New assumption</h1>
+
 <div mat-dialog-content>
+
   <mat-form-field class="w-100" appearance="outline">
     <mat-label class="dark">Name</mat-label>
     <input
@@ -16,6 +18,7 @@
       </mat-option>
     </mat-autocomplete>
   </mat-form-field>
+
   <mat-form-field class="w-100" appearance="outline">
     <mat-label class="dark">Description</mat-label>
     <textarea
@@ -23,9 +26,11 @@
       [(ngModel)]="data.description"
       rows="5"></textarea>
   </mat-form-field>
+
 </div>
 
 <div mat-dialog-actions class="d-flex">
+
   <mat-checkbox [(ngModel)]="data.matchResponse">Match response</mat-checkbox>
   <div class="p-2"></div>
   <button
@@ -33,4 +38,5 @@
     color="primary"
     [disabled]="!filenameValid()"
     [mat-dialog-close]="data">Save</button>
+
 </div>

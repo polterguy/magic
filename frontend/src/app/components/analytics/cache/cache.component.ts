@@ -154,11 +154,7 @@ export class DiagnosticsCacheComponent implements OnInit {
       'Please confirm action',
       `Are you sure you want to purge your cache? Purging your cache will delete ${this.count} items.`,
       () => {
-
-        // Invoking backend to delete all items.
         this.cacheService.clear(this.filterFormControl.value).subscribe(() => {
-
-          // Showing some information to user, and re-databinding table.
           this.feedbackService.showInfoShort('Cache successfully purged');
           this.filterFormControl.setValue('');
         });

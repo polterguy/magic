@@ -2,6 +2,7 @@
   <div class="col-12 mb-general">
     <mat-card>
       <mat-card-content>
+
         <div class="d-flex flex-sm-nowrap flex-wrap justify-content-between mb-1">
           <div class="d-flex align-items-center">
             <mat-card-title class="my-0">Endpoints</mat-card-title>
@@ -22,6 +23,7 @@
               </mat-menu>
             </div>
           </div>
+
           <div>
             <mat-slide-toggle
               [(ngModel)]="displaySystem"
@@ -29,9 +31,11 @@
               labelPosition="before">System</mat-slide-toggle>
           </div>
         </div>
+
         <mat-card-subtitle>Your server HTTP endpoints</mat-card-subtitle>
     
         <div class="d-flex align-items-center w-100">
+
           <mat-form-field class="w-100 inline-input" appearance="outline">
             <mat-label>Filter</mat-label>
             <input
@@ -46,13 +50,16 @@
               role="button"
               (click)="clearFilter()">clear</mat-icon>
           </mat-form-field>
+
           <div class="p-1"></div>
+
           <button
             mat-icon-button
             matTooltip="Refresh endpoints"
             (click)="refresh()">
             <mat-icon>refresh</mat-icon>
           </button>
+
         </div>
 
         <ng-container *ngIf="endpoints">
