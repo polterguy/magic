@@ -4,6 +4,7 @@
     <mat-card>
       <mat-card-content>
         <div class="content-wrapper">
+
           <div class="d-flex flex-sm-nowrap flex-wrap justify-content-between mb-1">
             <div class="d-flex align-items-center">
               <mat-card-title class="my-0">Sockets</mat-card-title>
@@ -25,7 +26,9 @@
               </div>
             </div>
           </div>
+
           <mat-card-subtitle>Subscribe to and publish socket messages</mat-card-subtitle>
+
           <div class="d-flex flex-sm-row flex-column align-items-sm-stretch align-items-end justify-content-center">
 
             <mat-form-field class="w-100 inline-input" appearance="outline">
@@ -42,7 +45,9 @@
                 role="button"
                 (click)="clearFilter()">clear</mat-icon>
             </mat-form-field>
+
             <div class="p-1"></div>
+
             <div class="d-flex">
               <button
                 mat-raised-button
@@ -61,7 +66,9 @@
                 Publish
               </button>
             </div>
+
           </div>
+
           <ng-container *ngIf="users && users.length > 0">
             <table
               mat-table
@@ -105,6 +112,7 @@
             </table>
 
           </ng-container>
+
           <mat-paginator
             #paginator
             [class]="count > paginator.pageSize ? '' : 'invisible'"
@@ -114,8 +122,11 @@
             (page)="paged($event)"
             [pageSizeOptions]="[5,10,25,50]">
           </mat-paginator>
+
           <hr *ngIf="users && users.length > 0" />
+
           <p class="mt-3" *ngIf="subscriptions && subscriptions.length > 0">List of subscriptions</p>
+
           <mat-chip-list class="subscriptions mt-2 mb-2 d-block">
             <mat-chip
               *ngFor="let sub of subscriptions"

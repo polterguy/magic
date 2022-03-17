@@ -21,7 +21,6 @@ import { SocketUser } from '../endpoints/models/socket-user.model';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { SubscribeComponent } from './subscribe/subscribe.component';
 import { SocketService } from 'src/app/services/analytics/socket.service';
-import { EndpointService } from '../../../services/analytics/endpoint.service';
 import { MessageWrapper, PublishComponent } from './publish/publish.component';
 
 /**
@@ -45,23 +44,27 @@ export class SocketsComponent implements OnInit, OnDestroy {
    * Users connected to a socket according to filtering condition,
    * as returned from our backend.
    */
-  public users: SocketUser[] = [];
-  public expandedElement: SocketUser | null;
+  users: SocketUser[] = [];
+
+  /**
+   * Currently expanded element.
+   */
+  expandedElement: SocketUser | null;
 
   /**
    * Number of socket connections matching specified filtering condition.
    */
-  public count: number;
+  count: number;
 
   /**
    * Filter form control for filtering connections to display according to users.
    */
-  public filterFormControl: FormControl;
+  filterFormControl: FormControl;
 
   /**
    * What users are currently being edited and viewed.
    */
-  public selectedUsers: string[] = [];
+  selectedUsers: string[] = [];
 
   /**
    * Paginator for paging table.
@@ -71,12 +74,12 @@ export class SocketsComponent implements OnInit, OnDestroy {
   /**
    * SignalR socket subscriptions (message names).
    */
-  public subscriptions: string[] = [];
+  subscriptions: string[] = [];
 
   /**
    * Messages published over socket connection.
    */
-  public messages: Message[] = [];
+  messages: Message[] = [];
 
   // SignalR hub connection
   private hubConnection: HubConnection = null;
@@ -100,35 +103,24 @@ export class SocketsComponent implements OnInit, OnDestroy {
   /**
    * Implementation of OnInit.
    */
-  public ngOnInit() {
-
-    // Creating our filtering control.
+  ngOnInit() {
     this.filterFormControl = new FormControl('');
     this.filterFormControl.setValue('');
     this.filterFormControl.valueChanges
       .pipe(debounceTime(400), distinctUntilChanged())
       .subscribe(() => {
-
-        // Resetting paginator.
         this.paginator.pageIndex = 0;
-
-        // Retrieving connections/users again since filtering condition has changed.
         this.getConnections();
     });
 
-    // Retrieving all connected users from backend.
     this.getConnections();
   }
 
   /**
    * Implementation of OnDestroy.
    */
-  public ngOnDestroy() {
-
-    // Checking if we've got subscriptions to socket messages, and if so, making sure we clean up.
+  ngOnDestroy() {
     if (this.hubConnection) {
-
-      // House cleaning.
       this.hubConnection.stop();
     }
   }
@@ -136,9 +128,7 @@ export class SocketsComponent implements OnInit, OnDestroy {
   /**
    * Invoked when user wants to clear filter condition.
    */
-  public clearFilter() {
-
-    // Just resetting the control's value will trigger the debounce method.
+  clearFilter() {
     this.filterFormControl.setValue('');
   }
 
@@ -147,18 +137,11 @@ export class SocketsComponent implements OnInit, OnDestroy {
    * 
    * @param user User to toggle details for
    */
-  public toggleDetails(user: SocketUser) {
-
-    // Checking if we're already displaying details for current item.
+  toggleDetails(user: SocketUser) {
     const idx = this.selectedUsers.indexOf(user.username);
     if (idx !== -1) {
-
-      // Hiding item.
       this.selectedUsers.splice(idx, 1);
-
     } else {
-
-      // Displaying item.
       this.selectedUsers.push(user.username);
     }
   }
@@ -168,9 +151,7 @@ export class SocketsComponent implements OnInit, OnDestroy {
    * 
    * @param user User to check if we should display details for
    */
-  public shouldDisplayDetails(user: SocketUser) {
-
-    // Returns true if we're currently displaying this particular item.
+  shouldDisplayDetails(user: SocketUser) {
     return this.selectedUsers.filter(x => x === user.username).length > 0;
   }
 
@@ -179,9 +160,7 @@ export class SocketsComponent implements OnInit, OnDestroy {
    * 
    * @param e Page event argument
    */
-  public paged(e: PageEvent) {
-
-    // Changing pager's size according to arguments, and retrieving items from backend again.
+  paged(e: PageEvent) {
     this.paginator.pageSize = e.pageSize;
     this.getConnections();
   }
@@ -189,60 +168,36 @@ export class SocketsComponent implements OnInit, OnDestroy {
   /**
    * Invoked when user wants to establish a new socket connection.
    */
-  public subscribe() {
-
-    // Creating modal dialogue that asks user what message he wants to subscribe to.
+  subscribe() {
     const dialogRef = this.dialog.open(SubscribeComponent, {
       width: '550px',
       data: ''
     });
-
-    // Subscribing to after closed to allow for current component to actually create the socket subscription.
     dialogRef.afterClosed().subscribe((message: string) => {
-
-      // Checking if modal dialog wants to create a subscription.
       if (message) {
-
-        // Verifying we're not already subscribing to this guy.
         if (this.subscriptions.filter(x => x === message).length > 0) {
-
-          // We're already subscribing to this guy.
           this.feedbackService.showInfoShort('You are already subscribing to such messages');
           return;
         }
-
-        // If this is our first socket subscription, we'll have to create our connection.
         let createdNow = false;
         if (!this.hubConnection) {
-
-          // Creating our connection.
           let builder = new HubConnectionBuilder();
           this.hubConnection = builder.withUrl(this.backendService.active.url + '/sockets', {
               accessTokenFactory: () => this.backendService.active.token.token,
               skipNegotiation: true,
               transport: HttpTransportType.WebSockets,
           }).build();
-
-          // Needed to make sure we start our socket connection further down.
           createdNow = true;
         }
-    
-        // Making sure we subscribe to messages published over socket.
         this.hubConnection.on(message, (args) => {
-
-          // Updating model.
           this.messages.push({
             name: message,
             content: JSON.parse(args),
           });
         });
-
-        // Adding subscription to model.
         this.subscriptions.push(message);
 
         if (createdNow) {
-
-          // Starting connection.
           this.hubConnection.start().then(() => {
 
             /*
@@ -265,7 +220,7 @@ export class SocketsComponent implements OnInit, OnDestroy {
    * 
    * @param connection Which connection to transmit message to
    */
-  public sendMessageToConnection(connection: string) {
+  sendMessageToConnection(connection: string) {
 
     // Creating modal dialogue that asks user what message and payload to transmit to server.
     const dialogRef = this.dialog.open(PublishComponent, {
@@ -302,9 +257,7 @@ export class SocketsComponent implements OnInit, OnDestroy {
    * Invoked when user wants to generically post a message, to for instance
    * one or more groups, or one or more roles, instead of a single connection.
    */
-  public post() {
-
-    // Creating modal dialogue that asks user what message and payload to transmit to server.
+  post() {
     const dialogRef = this.dialog.open(PublishComponent, {
       width: '550px',
       data: {
@@ -317,19 +270,10 @@ export class SocketsComponent implements OnInit, OnDestroy {
         roles: '',
       }
     });
-
-    // Subscribing to after closed to allow for current component to actually do the invocation towards backend.
     dialogRef.afterClosed().subscribe((data: MessageWrapper) => {
-
-      // Checking if modal dialog wants transmit message.
       if (data) {
-
-        // Invoking backend to transmit message to client.
         this.socketService.publishMessage(data.message, data.client, data.roles, data.groups).subscribe(() => {
-
-          // Providing feedback to user.
           this.feedbackService.showInfoShort('Message was successfully sent');
-
         }, (error: any) => this.feedbackService.showError(error));
       }
     });
@@ -340,12 +284,8 @@ export class SocketsComponent implements OnInit, OnDestroy {
    * 
    * @param msg Message to delete
    */
-  public deleteMessage(msg: Message) {
-
-    // Removing message from list of messages.
+  deleteMessage(msg: Message) {
     this.messages.splice(this.messages.indexOf(msg), 1);
-
-    // Providing feedback to user.
     this.feedbackService.showInfoShort('Message was removed');
   }
 
@@ -354,16 +294,10 @@ export class SocketsComponent implements OnInit, OnDestroy {
    * 
    * @param subscription What subscription to remove
    */
-  public removeSubscription(subscription: string) {
-
-    // Making sure we unsubscribe to messages of specified type.
+  removeSubscription(subscription: string) {
     this.hubConnection.off(subscription);
     this.subscriptions.splice(this.subscriptions.indexOf(subscription), 1);
-
-    // Checking if this is our last subscription, at which point we stop connection entirely.
     if (this.subscriptions.length === 0) {
-
-      // This is our last subscription.
       this.hubConnection.stop();
       this.hubConnection = null;
       this.getConnections();
@@ -374,9 +308,7 @@ export class SocketsComponent implements OnInit, OnDestroy {
   /**
    * Clears messages.
    */
-  public clearMessages() {
-
-    // Resettings messages to empty array.
+  clearMessages() {
     this.messages = [];
   }
 
@@ -387,28 +319,17 @@ export class SocketsComponent implements OnInit, OnDestroy {
   /*
    * Returns connections to caller by unvoking backend.
    */
-  private getConnections() {
-
-    // Invoking backend to retrieve connected users according to filtering and pagination condition(s).
+  getConnections() {
     this.socketService.socketUsers(
       this.filterFormControl.value,
       this.paginator.pageIndex * this.paginator.pageSize,
       this.paginator.pageSize).subscribe((users: SocketUser[]) => {
 
-      // Making sure we reset view details items.
       this.selectedUsers = [];
-
-      // Assigning result to model.
       this.users = users ?? [];
-
-      // Retrieving number of socket connections matching filter condition.
       this.socketService.socketUserCount(this.filterFormControl.value).subscribe((count: Count) => {
-
-        // Assigning model.
         this.count = count.count;
-
       }, (error: any) => this.feedbackService.showError(error));
-
     }, (error: any) => this.feedbackService.showError(error));
   }
 }
