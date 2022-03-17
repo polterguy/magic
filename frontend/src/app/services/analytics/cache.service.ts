@@ -34,25 +34,15 @@ export class CacheService {
    * @param filter Optional query filter deciding which items to return
    */
   public list(filter: any = null) {
-
-    // Dynamically building our query parameters.
     let query = '';
     if (filter !== null) {
-
-      // Applying limit and offset
       query += '?limit=' + filter.limit;
       query += "&offset=" + filter.offset;
-
-      // Applying filter parts, if given.
       if (filter.filter && filter.filter !== '') {
         query += '&filter=' + encodeURIComponent(filter.filter);
       }
     }
-
-    // Invoking backend and returning observable to caller.
-    return this.httpService.get<CacheItem[]>(
-      '/magic/system/cache/list' +
-      query);
+    return this.httpService.get<CacheItem[]>('/magic/system/cache/list' + query);
   }
 
   /**
@@ -61,17 +51,11 @@ export class CacheService {
    * @param filter Optional query filter deciding which items to include when counting
    */
   public count(filter: string = null) {
-
-    // Dynamically building our query parameters.
     let query = '';
     if (filter !== null && filter !== '') {
       query += '?filter=' + encodeURIComponent(filter);
     }
-
-    // Invoking backend and returning observable to caller.
-    return this.httpService.get<Count>(
-      '/magic/system/cache/count' +
-      query);
+    return this.httpService.get<Count>('/magic/system/cache/count' + query);
   }
 
   /**
@@ -80,11 +64,7 @@ export class CacheService {
    * @param id ID of item to delete
    */
   public delete(id: string) {
-
-    // Invoking backend and returning observable to caller.
-    return this.httpService.delete<Response>(
-      '/magic/system/cache/delete?id=' +
-      encodeURIComponent(id));
+    return this.httpService.delete<Response>('/magic/system/cache/delete?id=' + encodeURIComponent(id));
   }
 
   /**
@@ -93,16 +73,10 @@ export class CacheService {
    * @param filter Optional query filter deciding which items to include when deleting items
    */
   public clear(filter: string = null) {
-
-    // Dynamically building our query parameters.
     let query = '';
     if (filter !== null && filter !== '') {
       query += '?filter=' + encodeURIComponent(filter);
     }
-
-    // Invoking backend and returning observable to caller.
-    return this.httpService.delete<Response>(
-      '/magic/system/cache/empty' +
-      query);
+    return this.httpService.delete<Response>('/magic/system/cache/empty' + query);
   }
 }

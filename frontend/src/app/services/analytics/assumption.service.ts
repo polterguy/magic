@@ -37,20 +37,13 @@ export class AssumptionService {
    * @param verb If specified only returns tests for specified path
    */
   public list(endpointPath: string = null, verb: string = null) {
-
-    // Checking if we have a filter condition.
     if (endpointPath) {
-
-      // Filtering tests, to return only tests matching endpoint specified.
       return this.httpService.get<string[]>(
         '/magic/system/assumptions/query?endpoint=' +
         encodeURIComponent(endpointPath) +
         '&verb=' +
         encodeURIComponent(verb))
-
     } else {
-
-      // Filtering tests, to return only tests matching endpoint specified.
       return this.httpService.get<string[]>('/magic/system/assumptions/list');
     }
   }
@@ -65,6 +58,7 @@ export class AssumptionService {
    * @param description Descriptive text for assumption
    * @param payload Payload for HTTP invocation towards URL
    * @param response Response assumption assumes invocation towards URL will return
+   * @param produces Content-Type assumption assumes invocation towards URL will return
    */
   public create(
     filename: string,
@@ -75,27 +69,19 @@ export class AssumptionService {
     payload: string = null,
     response: string = null,
     produces: string = 'application/json') {
-
-    // Sanity checking invocation.
     if (filename.indexOf('/') !== -1) {
-      throw throwError('Please provide me with only the filename, and not the folder');
+      return throwError(() => new Error('Not a valid filename'));
     }
-
-    // Making sure we put our file into the correct folder.
     filename = '/etc/tests/' + filename;
     if (!filename.endsWith('.hl')) {
       filename += '.hl';
     }
-
-    // Returning result of invocation to file service.
     const input: any = {
       filename,
       verb,
       url,
       status,
     };
-
-    // Checking if optional arguments were supplied.
     if (description) {
       input.description = description;
     }
@@ -117,8 +103,6 @@ export class AssumptionService {
    * @param filename Full path of test to execute
    */
   public execute(filename: string) {
-
-    // Invoking backend and returning observable to caller.
     return this.httpService.get<Response>(
       '/magic/system/assumptions/execute?root_url=' +
       encodeURIComponent(this.backendService.active.url) +

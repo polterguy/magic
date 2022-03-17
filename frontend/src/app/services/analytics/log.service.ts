@@ -34,14 +34,10 @@ export class LogService {
    * @param max Maximum number of items to return
    */
   public list(from: string, max: number) {
-
-    // Dynamically building our query according to arguments specificed.
     let url = '/magic/system/log/list?max=' + max;
     if (from) {
       url += '&from=' + encodeURIComponent(from);
     }
-
-    // Invoking backend and returning observable to caller.
     return this.httpService.get<LogItem[]>(url);
   }
 
@@ -51,10 +47,7 @@ export class LogService {
    * @param id ID of item to retrieve
    */
   public get(id: number) {
-
-    // Invoking backend and returning observable to caller.
-    return this.httpService.get<LogItem>(
-      '/magic/system/log/get?id=' + id);
+    return this.httpService.get<LogItem>('/magic/system/log/get?id=' + id);
   }
 
   /**
@@ -63,17 +56,11 @@ export class LogService {
    * @param filter Query filter for items to include in count
    */
   public count(filter?: string) {
-
-    // Dynamically building our query according to arguments specificed.
     let query = '';
     if (filter) {
       query += '?query=' + encodeURIComponent(filter);
     }
-
-    // Invoking backend and returning observable to caller.
-    return this.httpService.get<Count>(
-      '/magic/system/log/count' +
-      query);
+    return this.httpService.get<Count>('/magic/system/log/count' + query);
   }
 
   /**
@@ -84,14 +71,11 @@ export class LogService {
    * @param name Name of component that was created
    */
   public createLocItem(loc: number, type: string, name: string) {
-
-    // Invoking backend and returning observable to caller.
-    return this.httpService.post<any>(
-      '/magic/system/log/log-loc', {
-        loc,
-        type,
-        name,
-      });
+    return this.httpService.post<any>('/magic/system/log/log-loc', {
+      loc,
+      type,
+      name,
+    });
   }
 
   /**
@@ -101,8 +85,6 @@ export class LogService {
    * @param content Actual content of log item
    */
   public createLogEntry(type: string, content: string) {
-
-    // Invoking backend to persist log entry, returning observable to caller.
     return this.httpService.post<Response>('/magic/system/log/log', {
       type,
       content,
