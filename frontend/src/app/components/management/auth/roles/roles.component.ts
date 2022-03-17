@@ -23,6 +23,7 @@ import { AuthFilter } from 'src/app/components/management/auth/models/auth-filte
 import { NewRoleDialogComponent } from './new-role-dialog/new-role-dialog.component';
 import { AuthService } from '../../../../services/auth.service';
 import { trigger, state, style, transition, animate } from '@angular/animations';
+import { BackendService } from 'src/app/services/backend.service';
 
 /**
  * Roles component for administrating roles in the system.
@@ -102,6 +103,7 @@ export class RolesComponent implements OnInit {
     private feedbackService: FeedbackService,
     private dialog: MatDialog,
     public authService: AuthService,
+    public backendService: BackendService,
     private roleService: RoleService,
     private userService: UserService) {
   }

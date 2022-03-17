@@ -124,7 +124,7 @@ export class LoginDialogComponent implements OnInit {
     if (this.backends.value && this.backends.value !== '') {
 
       // Invoking backend to check if it has turned on auto-auth or not.
-      this.authService.autoAuth(this.backends.value.replace(/\s/g, '').replace(/(\/)+$/, '')).subscribe((result: Response) => {
+      this.backendService.autoAuth(this.backends.value).subscribe((result: Response) => {
 
         // This will display username and password dialogs, unless backend supports automatic logins.
         this.backendHasBeenSelected = true;
@@ -167,7 +167,7 @@ export class LoginDialogComponent implements OnInit {
      * the auth service depends upon user already having selected
      * a current backend.
      */
-    this.backendService.setActive(new Backend(this.backends.value, this.autoLogin === false || this.advanced ? this.loginForm.value.username : null, this.savePassword ? this.loginForm.value.password : null));
+    this.backendService.upsertAndActivate(new Backend(this.backends.value, this.autoLogin === false || this.advanced ? this.loginForm.value.username : null, this.savePassword ? this.loginForm.value.password : null));
     this.dialogRef.close();
     const currentURL: string = window.location.protocol + '//' + window.location.host;
     const param: string = currentURL + '?backend=';
@@ -185,7 +185,7 @@ export class LoginDialogComponent implements OnInit {
     /*
      * Storing currently selected backend.
      */
-    this.backendService.setActive(new Backend(this.backends.value));
+    this.backendService.upsertAndActivate(new Backend(this.backends.value));
 
     // Invoking backend to request a reset password link to be sent as an email.
     this.authService.sendResetPasswordEmail(
@@ -218,10 +218,10 @@ export class LoginDialogComponent implements OnInit {
      * the auth service depends upon user already having selected
      * a current backend.
      */
-    this.backendService.setActive(new Backend(this.backends.value, this.autoLogin === false || this.advanced ? this.loginForm.value.username : null, this.savePassword ? this.loginForm.value.password : null));
+    this.backendService.upsertAndActivate(new Backend(this.backends.value, this.autoLogin === false || this.advanced ? this.loginForm.value.username : null, this.savePassword ? this.loginForm.value.password : null));
 
     // Authenticating user.
-    this.authService.login(
+    this.backendService.loginToCurrent(
       this.autoLogin === false || this.advanced ? this.loginForm.value.username : null,
       this.autoLogin === false || this.advanced ? this.loginForm.value.password : null,
       this.savePassword).subscribe(() => {

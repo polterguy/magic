@@ -103,7 +103,7 @@ export class UsersComponent implements OnInit {
   constructor(
     private platformLocation: PlatformLocation,
     private feedbackService: FeedbackService,
-    private backendService: BackendService,
+    public backendService: BackendService,
     private userService: UserService,
     public authService: AuthService,
     private clipboard: Clipboard,

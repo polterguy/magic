@@ -22,6 +22,7 @@ import { Model } from '../../codemirror/codemirror-hyperlambda/codemirror-hyperl
 
 // CodeMirror options.
 import hyperlambda from '../../codemirror/options/hyperlambda.json';
+import { BackendService } from 'src/app/services/backend.service';
 
 /*
  * Test model encapsulating a single test, and possibly its result.
@@ -88,6 +89,7 @@ export class DiagnosticsTestsComponent implements OnInit {
   constructor(
     public authService: AuthService,
     private fileService: FileService,
+    public backendService: BackendService,
     private messageService: MessageService,
     private feedbackService: FeedbackService,
     private loaderInterceptor: LoaderInterceptor,

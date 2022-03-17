@@ -18,6 +18,7 @@ import { Message } from 'src/app/models/message.model';
 import { Messages } from 'src/app/models/messages.model';
 import { AuthService } from '../../../services/auth.service';
 import { MessageService } from 'src/app/services/message.service';
+import { BackendService } from 'src/app/services/backend.service';
 
 /**
  * Crudifier component for creating applications.
@@ -58,6 +59,7 @@ export class CrudifierComponent implements OnInit, OnDestroy {
    */
   public constructor(
     public authService: AuthService,
+    public backendService: BackendService,
     private messageService: MessageService) { }
 
   /**
@@ -91,11 +93,11 @@ export class CrudifierComponent implements OnInit, OnDestroy {
     });
 
     // Figuring out active tab.
-    if (this.authService.access.crud.generate_crud) {
+    if (this.backendService.current.access.crud.generate_crud) {
       this.activeTab = 0;
-    } else if (this.authService.access.crud.generate_sql) {
+    } else if (this.backendService.current.access.crud.generate_sql) {
       this.activeTab = 1;
-    } else if (this.authService.access.crud.generate_frontend) {
+    } else if (this.backendService.current.access.crud.generate_frontend) {
       this.activeTab = 2;
     }
   }

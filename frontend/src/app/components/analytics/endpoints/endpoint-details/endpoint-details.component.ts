@@ -178,7 +178,7 @@ export class EndpointDetailsComponent implements OnInit {
     private clipboard: Clipboard,
     private sanitizer: DomSanitizer,
     public authService: AuthService,
-    private backendService: BackendService,
+    public backendService: BackendService,
     private feedbackService: FeedbackService,
     private endpointService: EndpointService,
     private assumptionService: AssumptionService) { }
@@ -755,7 +755,7 @@ export class EndpointDetailsComponent implements OnInit {
   private getAssumptions() {
 
     // Verifying user has access to assumptions.
-    if (this.authService.access.endpoints.assumptions) {
+    if (this.backendService.current.access.endpoints.assumptions) {
 
     // Retrieving assumptions for endpoint.
     this.assumptionService.list('/' + this.endpoint.path, this.endpoint.verb).subscribe((assumptions: any) => {

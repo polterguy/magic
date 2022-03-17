@@ -24,6 +24,7 @@ import { LoadSqlDialogComponent } from './load-sql-dialog/load-sql-dialog.compon
 
 // CodeMirror options.
 import sql from '../../codemirror/options/sql.json'
+import { BackendService } from 'src/app/services/backend.service';
 
 /**
  * SQL component allowing user to execute arbitrary SQL statements towards his database.
@@ -98,6 +99,7 @@ export class SqlComponent implements OnInit {
     private feedbackService: FeedbackService,
     private cacheService: CacheService,
     public authService: AuthService,
+    public backendService: BackendService,
     private sqlService: SqlService,
     private clipboard: Clipboard,
     private dialog: MatDialog) { }

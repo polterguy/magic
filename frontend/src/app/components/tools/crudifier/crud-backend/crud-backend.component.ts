@@ -100,7 +100,7 @@ export class CrudBackendComponent implements OnInit {
     private sqlService: SqlService,
     public authService: AuthService,
     private cacheService: CacheService,
-    private backendService: BackendService,
+    public backendService: BackendService,
     private crudifyService: CrudifyService,
     private messageService: MessageService,
     private feedbackService: FeedbackService,

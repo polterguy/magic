@@ -26,6 +26,7 @@ import { ImportPublicKeyDialogComponent } from './import-public-key-dialog/impor
 import hyperlambda from '../../../codemirror/options/hyperlambda.json';
 import { AuthService } from '../../../../services/auth.service';
 import { trigger, state, style, transition, animate } from '@angular/animations';
+import { BackendService } from 'src/app/services/backend.service';
 
 /*
  * Helper class to encapsulate all public keys and their CodeMirror vocabulary options.
@@ -120,9 +121,9 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
   constructor(
     private dialog: MatDialog,
     private clipboard: Clipboard,
-    // private logService: LogService,
     public authService: AuthService,
     private cryptoService: CryptoService,
+    public backendService: BackendService,
     private messageService: MessageService,
     private feedbackService: FeedbackService) { }
 

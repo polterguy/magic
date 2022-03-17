@@ -94,7 +94,7 @@ export class SocketsComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     public authService: AuthService,
     private socketService: SocketService,
-    private backendService: BackendService,
+    public backendService: BackendService,
     private feedbackService: FeedbackService) { }
 
   /**
