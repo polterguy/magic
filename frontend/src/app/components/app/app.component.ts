@@ -114,7 +114,7 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnInit() {
 
     // Subscribing to authentication status changed.
-    this.backendService.authenticatedChanged.subscribe((authenticated: boolean) => {
+    this.authService.authenticatedChanged.subscribe((authenticated: boolean) => {
 
       /*
        * If user was authenticated and belongs to root role, need to check configuration
@@ -312,7 +312,7 @@ export class AppComponent implements OnInit, OnDestroy {
         }, (error: any) => this.feedbackService.showError(error));
 
       }, () => {
-        this.backendService.logoutFromCurrent(false);
+        this.authService.logoutFromCurrent(false);
       });
 
     } else {

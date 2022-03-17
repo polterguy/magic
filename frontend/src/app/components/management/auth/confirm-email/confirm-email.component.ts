@@ -8,10 +8,11 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 
 // Application specific imports.
-import { AuthService } from '../../../../services/auth.service';
-import { BackendService } from 'src/app/services/backend.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
 import { Backend } from 'src/app/models/backend.model';
+import { AuthService } from '../../../../services/auth.service';
+import { FeedbackService } from 'src/app/services/feedback.service';
+import { RegisterService } from 'src/app/services/register.service';
+import { BackendService } from 'src/app/services/backend.service';
 
 /**
  * Confirm email address component allowing the user to confirm his email address,
@@ -35,6 +36,7 @@ export class ConfirmEmailComponent implements OnInit {
   constructor(
     private router: Router,
     private activated: ActivatedRoute,
+    private registerService: RegisterService,
     private authService: AuthService,
     private backendService: BackendService,
     private feedbackService: FeedbackService) { }
@@ -55,7 +57,7 @@ export class ConfirmEmailComponent implements OnInit {
       this.backendService.upsertAndActivate(new Backend(url, username));
 
       // Verifying email address by invoking backend.
-      this.authService.verifyEmail(username, token).subscribe(() => {
+      this.registerService.verifyEmail(username, token).subscribe(() => {
 
         // Signalling success to user.
         this.feedbackService.showInfo('You have successfully verified your email address');
@@ -65,7 +67,7 @@ export class ConfirmEmailComponent implements OnInit {
          * which will allow him to store his or her credentials
          * in the browser storage.
          */
-        this.backendService.logoutFromCurrent(true);
+        this.authService.logoutFromCurrent(true);
         this.feedbackService.showInfo('Your email address was successully confirmed, please login again');
         this.router.navigate(['/']);
 

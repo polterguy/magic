@@ -156,7 +156,7 @@ export class ToolbarComponent implements OnInit {
    * Logs the user out from his current backend.
    */
   public logout() {
-    this.backendService.logoutFromCurrent(false);
+    this.authService.logoutFromCurrent(false);
   }
 
   /**

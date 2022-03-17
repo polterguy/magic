@@ -5,27 +5,125 @@
 
 // Angular and system imports.
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 // Application specific imports.
 import { HttpService } from './http.service';
+import { Backend } from '../models/backend.model';
+import { BackendService } from './backend.service';
 import { Response } from 'src/app/models/response.model';
+import { AuthenticateResponse } from '../components/management/auth/models/authenticate-response.model';
 
 /**
- * Authentication and authorization HTTP service.
- * 
- * This service will allow you to authenticate towards the active backend.
+ * Authentication service allowing you to authenticate towards the active backend.
  */
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
+  private _authenticated = new BehaviorSubject<boolean>(undefined);
+
+  /**
+   * To allow consumers to subscribe to authentication status changes.
+   */
+  authenticatedChanged = this._authenticated.asObservable();
+
   /**
    * Creates an instance of your service.
    * 
-   * @param httpService Dependency injected HTTP service to handle HTTP requests
+   * @param httpClient Needed to check if specified backend supports auto-auth
+   * @param httpService Needed to create requests towards currently activated backend
+   * @param backendService Needed to retrieve currently activated backend
    */
-  constructor(private httpService: HttpService) { }
+  constructor(
+    private httpClient: HttpClient,
+    private httpService: HttpService,
+    private backendService: BackendService) { }
+
+  /**
+   * Verifies validity of token by invoking backend.
+   */
+  verifyTokenForCurrent() {
+    return this.httpService.get<Response>('/magic/system/auth/verify-ticket');
+  }
+
+  /**
+   * Invokes specified backend to check if auto-auth has been turned on.
+   * 
+   * @param url URL of backend to check
+   */
+  autoAuth(url: string) {
+    return this.httpClient.get<Response>(url.replace(/\s/g, '').replace(/(\/)+$/, '') + '/magic/system/auth/auto-auth');
+  }
+
+  /**
+   * Authenticates user towards current backend.
+   * 
+   * @param username Username
+   * @param password Password
+   * @param storePassword Whether or not passsword should be persisted into local storage
+   */
+  loginToCurrent(username: string, password: string, storePassword: boolean) {
+    return new Observable<AuthenticateResponse>(observer => {
+      let query = '';
+      if (username && username !== '') {
+        query += '?username=' + encodeURIComponent(username);
+        query += '&password=' + encodeURIComponent(password);
+      }
+
+      this.httpService.get<AuthenticateResponse>('/magic/system/auth/authenticate' + query, {
+
+          /*
+           * Notice, if we're doing Windows automatic authentication,
+           * we will not be given a username/password combination to this method, at which point
+           * we'll have to make sure Angular passes in Windows credentials to endpoint.
+           */
+          withCredentials: query === '' ? true : false,
+
+        }).subscribe((auth: AuthenticateResponse) => {
+          const cur = new Backend(this.backendService.current.url, username, storePassword ? password : null, auth.ticket);
+          this.backendService.upsertAndActivate(cur);
+
+          observer.next(auth);
+          observer.complete();
+          this._authenticated.next(true);
+          console.log({
+            content: 'User successfully authenticated towards backend',
+            username: username,
+            backend: this.backendService.current.url,
+          });
+
+        }, (error: any) => {
+          console.log({
+            content: 'Could not authenticate towards backend',
+            username: username,
+            backend: this.backendService.current.url,
+            error,
+          });
+          observer.error(error);
+          observer.complete();
+        });
+    });
+  }
+
+  /**
+   * Logs out the user from his currently active backend.
+   * 
+   * @param destroyPassword Whether or not password should be removed before persisting backend
+   */
+  logoutFromCurrent(destroyPassword: boolean) {
+    if (this.backendService.current?.token) {
+      const cur = new Backend(
+        this.backendService.current.url,
+        this.backendService.current.username,
+        destroyPassword ? null : this.backendService.current.password);
+      this.backendService.upsertAndActivate(cur);
+      this.backendService.current.createAccessRights();
+      this._authenticated.next(false);
+    }
+  }
 
   /**
    * Changes currently logged in user's password.
@@ -38,41 +136,6 @@ export class AuthService {
     return this.httpService.put<Response>('/magic/system/auth/change-password', {
       password
     });
-  }
-
-  /**
-   * Registers a new user in the backend.
-   * 
-   * @param username User's email address
-   * @param password Password user selected
-   * @param frontendUrl Frontend's URL to use as root URL for confirming email address
-   */
-  register(username: string, password: string, frontendUrl: string) {
-
-    // Invokes backend and returns observable to caller.
-    return this.httpService.post<Response>(
-      '/magic/system/auth/register', {
-        username,
-        password,
-        frontendUrl,
-      });
-  }
-
-  /**
-   * Verifies validity of email address supplied during
-   * registration by invoking backend.
-   * 
-   * @param username Username of user which is email address user supplied during registration
-   * @param token Security token system generated for user to avoid user's registering other users' email addresses
-   */
-  verifyEmail(username: string, token: string) {
-
-    // Invokes backend and returns observable to caller.
-    return this.httpService.post<Response>(
-      '/magic/system/auth/verify-email', {
-        username,
-        token,
-      });
   }
 
   /**

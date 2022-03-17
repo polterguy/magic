@@ -8,8 +8,8 @@ import { Injectable } from '@angular/core';
 
 // Application specific imports.
 import { Backend } from '../models/backend.model';
-import { environment } from 'src/environments/environment';
 import { Endpoint } from '../models/endpoint.model';
+import { environment } from 'src/environments/environment';
 
 /**
  * Service containing list of all backends in the system.
@@ -28,10 +28,13 @@ export class BackendsStorageService {
    * Creates an instance of your type.
    */
   constructor() {
-
-    // Reading persisted backends from local storage, or defaulting to whatever is in our "environment.ts" file if we're on localhost.
+    let backends: any[] = [];
     const storage = localStorage.getItem('magic.backends');
-    const backends = storage === null ? (window.location.href.indexOf('://localhost') === -1 ? [] : environment.defaultBackends) : <any[]>JSON.parse(storage);
+    if (storage) {
+      backends = <any[]>JSON.parse(storage);
+    } else if (window.location.href.indexOf('http://localhost') !== -1) {
+      backends = environment.defaultBackends;
+    }
     this._backends = backends.map(x => new Backend(x.url, x.username, x.password, x.token));
   }
 

@@ -124,7 +124,7 @@ export class LoginDialogComponent implements OnInit {
     if (this.backends.value && this.backends.value !== '') {
 
       // Invoking backend to check if it has turned on auto-auth or not.
-      this.backendService.autoAuth(this.backends.value).subscribe((result: Response) => {
+      this.authService.autoAuth(this.backends.value).subscribe((result: Response) => {
 
         // This will display username and password dialogs, unless backend supports automatic logins.
         this.backendHasBeenSelected = true;
@@ -221,7 +221,7 @@ export class LoginDialogComponent implements OnInit {
     this.backendService.upsertAndActivate(new Backend(this.backends.value, this.autoLogin === false || this.advanced ? this.loginForm.value.username : null, this.savePassword ? this.loginForm.value.password : null));
 
     // Authenticating user.
-    this.backendService.loginToCurrent(
+    this.authService.loginToCurrent(
       this.autoLogin === false || this.advanced ? this.loginForm.value.username : null,
       this.autoLogin === false || this.advanced ? this.loginForm.value.password : null,
       this.savePassword).subscribe(() => {

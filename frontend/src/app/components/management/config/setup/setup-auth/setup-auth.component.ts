@@ -9,8 +9,8 @@ import { Component, OnInit } from '@angular/core';
 // Application specific imports.
 import { Messages } from 'src/app/models/messages.model';
 import { Response } from 'src/app/models/response.model';
+import { AuthService } from 'src/app/services/auth.service';
 import { MessageService } from 'src/app/services/message.service';
-import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { ConfigService } from 'src/app/services/management/config.service';
 
@@ -73,7 +73,7 @@ export class SetupAuthComponent implements OnInit {
   constructor(
     private feedbackService: FeedbackService,
     private configService: ConfigService,
-    private backendService: BackendService,
+    private authService: AuthService,
     protected messageService: MessageService) {
   }
   
@@ -146,7 +146,7 @@ export class SetupAuthComponent implements OnInit {
     this.configService.saveConfig(JSON.parse(this.json)).subscribe((result: Response) => {
 
       // Success!
-      this.backendService.logoutFromCurrent(true);
+      this.authService.logoutFromCurrent(true);
       this.feedbackService.showInfo('You will need to login again');
     });
   }

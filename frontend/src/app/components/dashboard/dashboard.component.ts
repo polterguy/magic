@@ -109,7 +109,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ngOnInit() {
 
     // Making sure we retrieve system reports when user is authenticated.
-    this.authSubscriber = this.backendService.authenticatedChanged.subscribe((authenticated: boolean) => {
+    this.authSubscriber = this.authService.authenticatedChanged.subscribe((authenticated: boolean) => {
       if (authenticated && this.backendService.current?.token?.in_role('root') && !this.systemReport) {
         this.getSystemReport();
       }
