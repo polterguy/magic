@@ -7,22 +7,22 @@
 import { forkJoin, from } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 import { bufferCount, concatMap, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 // Application specific imports.
 import { Response } from '../../../models/response.model';
-import { FileService } from 'src/app/services/tools/file.service';
 import { AuthService } from '../../../services/auth.service';
+import { FileService } from 'src/app/services/tools/file.service';
+import { BackendService } from 'src/app/services/backend.service';
 import { MessageService } from '../../../services/message.service';
 import { FeedbackService } from '../../../services/feedback.service';
-import { AssumptionService } from 'src/app/services/analytics/assumption.service';
 import { LoaderInterceptor } from '../../../interceptors/loader.interceptor';
-import { trigger, state, style, transition, animate } from '@angular/animations';
+import { AssumptionService } from 'src/app/services/analytics/assumption.service';
 import { Model } from '../../codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 
 // CodeMirror options.
 import hyperlambda from '../../codemirror/options/hyperlambda.json';
-import { BackendService } from 'src/app/services/backend.service';
 
 /*
  * Test model encapsulating a single test, and possibly its result.
@@ -62,19 +62,17 @@ export class DiagnosticsTestsComponent implements OnInit {
   /**
    * List of all tests in system.
    */
-  public tests: TestModel[] = [];
-
-  public expandedElement: any;
+  tests: TestModel[] = [];
 
   /**
-   * What tests are currently being edited and viewed.
+   * Currently expanded assumption.
    */
-  public selectedTests: string[] = [];
+  expandedElement: TestModel;
 
   /**
    * Filter form control for filtering users to display.
    */
-  public filterFormControl: FormControl;
+  filterFormControl: FormControl;
 
   /**
    * Creates an instance of your component.
@@ -98,9 +96,8 @@ export class DiagnosticsTestsComponent implements OnInit {
   /**
    * Implementation of OnInit.
    */
-  public ngOnInit() {
+  ngOnInit() {
 
-    // Creating our filtering control.
     this.filterFormControl = new FormControl('');
     this.filterFormControl.setValue('');
     this.filterFormControl.valueChanges
@@ -109,10 +106,7 @@ export class DiagnosticsTestsComponent implements OnInit {
         this.filter = query;
     });
 
-    // Retrieving all tests form backend.
     this.assumptionService.list().subscribe((tests: string[]) => {
-
-      // Assigning result to model.
       this.tests = tests.filter(x => x.endsWith('.hl')).map(x => {
         return {
           filename: x,
@@ -120,23 +114,20 @@ export class DiagnosticsTestsComponent implements OnInit {
           content: null,
         }
       });
-
     }, (error: any) => this.feedbackService.showError(error));
   }
 
   /**
    * Invoked when user wants to clear filter.
    */
-  public clearFilter() {
+  clearFilter() {
     this.filterFormControl.setValue('');
   }
 
   /**
    * Returns tests that should be display due to matching filter condition.
    */
-  public getFilteredTests() {
-
-    // Returning tests matching currently filter condition.
+  getFilteredTests() {
     return this.tests.filter(x => x.filename.indexOf(this.filter) !== -1);
   }
 
@@ -145,11 +136,9 @@ export class DiagnosticsTestsComponent implements OnInit {
    * 
    * @param path Complete path for test
    */
-  public getName(path: string) {
-
-    // Stripping away path parts, in addition to extension.
-    const result = path.substr(path.lastIndexOf('/') + 1);
-    return result.substr(0, result.length - 3);
+  getName(path: string) {
+    const result = path.substring(path.lastIndexOf('/') + 1);
+    return result.substring(0, result.length - 3);
   }
 
   /**
@@ -157,21 +146,10 @@ export class DiagnosticsTestsComponent implements OnInit {
    * 
    * @param test Test to toggle details for
    */
-  public toggleDetails(test: TestModel) {
-
-    // Checking if we're already displaying details for current item.
-    const idx = this.selectedTests.indexOf(test.filename);
-    if (idx !== -1) {
-
-      // Hiding item.
-      // this.selectedTests.splice(idx, 1);
-
+  ensureTestContent(test: TestModel) {
+    if (test.content) {
+      return;
     } else {
-
-      // Displaying item.
-      this.selectedTests.push(test.filename);
-
-      // Retrieving test file from backend.
       this.fileService.loadFile(test.filename).subscribe((file: string) => {
         test.content = {
           hyperlambda: file,
@@ -182,39 +160,19 @@ export class DiagnosticsTestsComponent implements OnInit {
   }
 
   /**
-   * Returns true if we should display the details view for specified test.
-   * 
-   * @param test User to check if we should display details for
-   */
-  public shouldDisplayDetails(test: TestModel) {
-
-    // Returns true if we're currently displaying this particular item.
-    return this.selectedTests.filter(x => x === test.filename).length > 0;
-  }
-
-  /**
    * Runs the specified test.
    * 
-   * @param el Full path to test
+   * @param test Test we should execute
    */
-  public executeTest(test: TestModel) {
-
-    // Invoking backend to execute the test.
+  executeTest(test: TestModel) {
     this.assumptionService.execute(test.filename).subscribe((res: Response) => {
-
-      // Assigning result of test execution to model.
       test.success = res.result === 'success';
-
-      // Providing feedback to user.
       if (res.result === 'success') {
         this.feedbackService.showInfoShort('Assumption succeeded');
       } else {
         this.feedbackService.showError('Assumption failed, check your log to see why');
       }
-
     }, (error: any) => {
-
-      // Oops, test raised an exception (or something).
       test.success = false;
       this.feedbackService.showError(error);
     });
@@ -225,28 +183,15 @@ export class DiagnosticsTestsComponent implements OnInit {
    * 
    * @param test Test to delete
    */
-  public deleteTest(test: TestModel) {
-
-    // Asking user to confirm action.
+  deleteTest(test: TestModel) {
     this.feedbackService.confirm(
       'Please confirm action',
       'Are you sure you want to delete the specified assumption?',
       () => {
-
-        // Invoking backend to delete file.
         this.fileService.deleteFile(test.filename).subscribe(() => {
-
-          // Showing user some feedback.
           this.feedbackService.showInfo('Assumption successfully deleted');
-
-          // Making sure we no longer edit current test.
-          this.toggleDetails(test);
-
-          // Removing test from table's model.
           this.tests.splice(this.tests.indexOf(test), 1);
-
-          // Ensuring table is re-rendered.
-          this.tests = this.tests.filter(x => true);
+          this.tests = this.tests.filter(x => true); // TODO: Use cdRef ...?
         });
       }
     );
@@ -258,12 +203,8 @@ export class DiagnosticsTestsComponent implements OnInit {
    * @param filename Filename of test
    * @param content Content of test
    */
-  public saveTest(filename: string, content: string) {
-
-    // Invoking backend to save test.
+  saveTest(filename: string, content: string) {
     this.fileService.saveFile(filename, content).subscribe(() => {
-
-      // Providing feedback to user.
       this.feedbackService.showInfoShort('Assumption successfully saved');
     });
   }
@@ -271,19 +212,17 @@ export class DiagnosticsTestsComponent implements OnInit {
   /**
    * Invoked when user wants to execute all tests.
    */
-  public executeFiltered() {
-
+  executeFiltered() {
     const parallellNo = 2;
     let idxNo = 0;
 
-    // Used to measure how much time we need to execute currently filtered tests.
+    // Measuring time tests requires to execute
     const startTime = new Date();
     let timeDiff: number = null;
 
     // Avoid flickering in Ajax wait gif bugger.
     this.loaderInterceptor.increment();
 
-    // Invoking backend once for every test in suite.
     from(this.getFilteredTests().map(x => this.assumptionService.execute(x.filename)))
       .pipe(
         bufferCount(parallellNo),
@@ -303,7 +242,6 @@ export class DiagnosticsTestsComponent implements OnInit {
             idxNo++;
           }
         }, (error: any) => {
-
           this.feedbackService.showError(error);
 
           /*
@@ -333,8 +271,6 @@ export class DiagnosticsTestsComponent implements OnInit {
     * Filters tests according to result.
     */
    private filterTests(timeDiff: number = null) {
-
-    // Checking if all tests succeeded, and if so, avoid filtering.
     if (this.getFilteredTests().filter(x => x.success !== true).length === 0) {
 
       // Perfect health! Publishing succeeded message and showing user some feedback.

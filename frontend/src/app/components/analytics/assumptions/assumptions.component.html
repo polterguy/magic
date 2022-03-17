@@ -1,6 +1,7 @@
 <div class="row">
   <div class="col-12 mb-general" id="assumption">
     <mat-card>
+
       <div class="d-flex flex-sm-nowrap flex-wrap justify-content-between mb-1">
         <div class="d-flex align-items-center">
           <mat-card-title class="my-0">Assumptions</mat-card-title>
@@ -21,9 +22,10 @@
             </mat-menu>
           </div>
         </div>
-        
       </div>
+
       <mat-card-subtitle>Assumptions and integration tests</mat-card-subtitle>
+
       <mat-card-content>
         <div class="d-flex align-items-center mb-2">
     
@@ -86,32 +88,32 @@
                 [@detailExpand]="el == expandedElement ? 'expanded' : 'collapsed'">   
                 <div class="min-height w-100">
                   <div
-                  class="py-3 w-100"
-                  *ngIf="shouldDisplayDetails(el) && el.content">
+                    class="py-3 w-100"
+                    *ngIf="el.content">
       
-                  <app-codemirror-hyperlambda [(model)]="el.content"></app-codemirror-hyperlambda>
+                    <app-codemirror-hyperlambda [(model)]="el.content"></app-codemirror-hyperlambda>
       
-                  <div class="d-flex justify-content-end align-items-center py-2">
+                    <div class="d-flex justify-content-end align-items-center py-2">
       
-                    <button
-                      mat-raised-button
-                      (click)="saveTest(el.filename, el.content.hyperlambda)">
-                      Save
-                    </button>
-                    <div class="p-1"></div>
-                    <button
-                      mat-raised-button
-                      (click)="deleteTest(el)">
-                      Delete
-                    </button>
-                    <div class="p-1"></div>
                       <button
                         mat-raised-button
-                        color="primary"
-                        (click)="executeTest(el)">
-                        Run
+                        (click)="saveTest(el.filename, el.content.hyperlambda)">
+                        Save
                       </button>
-                    </div>
+                      <div class="p-1"></div>
+                      <button
+                        mat-raised-button
+                        (click)="deleteTest(el)">
+                        Delete
+                      </button>
+                      <div class="p-1"></div>
+                        <button
+                          mat-raised-button
+                          color="primary"
+                          (click)="executeTest(el)">
+                          Run
+                        </button>
+                      </div>
                   </div>
                 </div>
               </div>
@@ -122,14 +124,13 @@
             mat-row
             [ngClass]="(expandedElement === el ? 'selected ' : '') + 'test-row'"
             class="expandable-row"
-            (click)="toggleDetails(el);expandedElement = expandedElement === el ? null : el"
+            (click)="expandedElement = expandedElement === el ? null : el; ensureTestContent(el)"
             mat-row *matRowDef="let el; columns: ['name', 'result'];"></tr>
 
           <tr mat-row *matRowDef="let el; columns: ['showDetails']" class="expanded-row"></tr>
     
         </table>
       </mat-card-content>
-    
     </mat-card>
   </div>
 </div>
