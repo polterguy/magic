@@ -46,7 +46,7 @@
     
           <button
             *ngIf="tests.length > 0"
-            [disabled]="!backendService.current.access.diagnostics.execute_test"
+            [disabled]="!backendService.active.access.diagnostics.execute_test"
             mat-icon-button
             color="primary"
             [matTooltip]="'Run ' + getFilteredTests().length + ' health checks'"

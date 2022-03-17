@@ -92,7 +92,7 @@ export class CrudFrontendComponent implements OnInit {
     });
 
     // Defaulting API URL to current backend's URL.
-    this.apiUrl = this.backendService.current.url;
+    this.apiUrl = this.backendService.active.url;
 
     // Retrieving user's email address.
     this.configService.rootUserEmailAddress().subscribe((model: NameEmailModel) => {

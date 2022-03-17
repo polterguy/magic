@@ -2,7 +2,7 @@
 <h1 mat-dialog-title *ngIf="data.allowAuthentication">
   Login
   <mat-icon
-    *ngIf="(backendHasBeenSelected && backendService.current && backends.value.startsWith('http://') && (autoLogin !== true || advanced === true))"
+    *ngIf="(backendHasBeenSelected && backendService.active && backends.value.startsWith('http://') && (autoLogin !== true || advanced === true))"
     matTooltip="Clicking the login button will transmit your password in clear text">warning</mat-icon>
 </h1>
 

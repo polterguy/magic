@@ -93,11 +93,11 @@ export class CrudifierComponent implements OnInit, OnDestroy {
     });
 
     // Figuring out active tab.
-    if (this.backendService.current.access.crud.generate_crud) {
+    if (this.backendService.active.access.crud.generate_crud) {
       this.activeTab = 0;
-    } else if (this.backendService.current.access.crud.generate_sql) {
+    } else if (this.backendService.active.access.crud.generate_sql) {
       this.activeTab = 1;
-    } else if (this.backendService.current.access.crud.generate_frontend) {
+    } else if (this.backendService.active.access.crud.generate_frontend) {
       this.activeTab = 2;
     }
   }

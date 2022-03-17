@@ -76,7 +76,7 @@ export class CreateKeypairComponent implements OnInit {
   public ngOnInit() {
 
     // Defaulting URL parts to current backend's URL.
-    this.domain = this.backendService.current.url;
+    this.domain = this.backendService.active.url;
 
     // Getting some initial random gibberish to use as seed when generating key pair.
     this.configService.getGibberish(200, 300).subscribe((res: Response) => {

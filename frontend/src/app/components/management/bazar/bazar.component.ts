@@ -165,7 +165,7 @@ export class BazarComponent implements OnInit, OnDestroy {
       });
 
     // Sanity checking that user is root.
-    if (this.backendService.current?.token?.in_role('root')) {
+    if (this.backendService.active?.token?.in_role('root')) {
 
       // Retrieving Bazar items from main Bazar.
       this.getItems(true);

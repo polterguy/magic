@@ -118,20 +118,20 @@ export class ToolbarComponent implements OnInit {
   public getUserStatus() {
 
     // Verifying user is connected to a backend.
-    if (!this.backendService.current) {
+    if (!this.backendService.active) {
       return 'not connected';
     }
 
     // Removing schema and port from URL.
-    let url = this.backendService.current.url.replace('http://', '').replace('https://', '');
+    let url = this.backendService.active.url.replace('http://', '').replace('https://', '');
     if (url.indexOf(':') !== -1) {
       url = url.substr(0, url.indexOf(':'));
     }
 
     // Checking if user is authenticated.
-    if (this.backendService.current?.token) {
-      return this.backendService.current.username + ' / ' + url;
-    } else if (this.backendService.current) {
+    if (this.backendService.active?.token) {
+      return this.backendService.active.username + ' / ' + url;
+    } else if (this.backendService.active) {
       return 'anonymous / ' + url;
     }
   }
@@ -140,7 +140,7 @@ export class ToolbarComponent implements OnInit {
    * Returns all roles user belongs to.
    */
   public getUserRoles() {
-    return this.backendService.current?.token?.roles.join(', ') || '';
+    return this.backendService.active?.token?.roles.join(', ') || '';
   }
 
   /**

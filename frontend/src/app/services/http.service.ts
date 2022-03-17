@@ -37,20 +37,13 @@ export class HttpService {
    * @param requestOptions Request options for invocation
    */
   public get<Response>(url: string, requestOptions: object = null) {
-
-    // Making sure we're connected to a backend, and if not, resolving observable to its error callback.
-    if (!this.backendService.current) {
-
-      // Oops, not connected to any backends.
-      throw throwError('Not connected to any backend, please choose a backend before trying to invoke endpoints');
-
+    if (!this.backendService.active) {
+      return throwError(() => new Error('Not connected to a backend'));
     } else {
-
-      // Invoking backend's URL.
       if (!requestOptions) {
-        return this.httpClient.get<Response>(this.backendService.current.url + url);
+        return this.httpClient.get<Response>(this.backendService.active.url + url);
       } else {
-        return this.httpClient.get<Response>(this.backendService.current.url + url, requestOptions);
+        return this.httpClient.get<Response>(this.backendService.active.url + url, requestOptions);
       }
     }
   }
@@ -62,17 +55,10 @@ export class HttpService {
    * @param url Backend URL to endpoint
    */
   public download(url: string) {
-
-    // Making sure we're connected to a backend, and if not, resolving observable to its error callback.
-    if (!this.backendService.current) {
-
-      // Oops, not connected to any backends.
-      throw throwError('Not connected to any backend, please choose a backend before trying to invoke endpoints');
-
+    if (!this.backendService.active) {
+      return throwError(() => new Error('Not connected to a backend'));
     } else {
-
-      // Invoking backend's URL and resolving to the next subscriber.
-      return this.httpClient.get(this.backendService.current.url + url, {
+      return this.httpClient.get(this.backendService.active.url + url, {
         observe: 'response',
         responseType: 'arraybuffer',
       });
@@ -87,17 +73,10 @@ export class HttpService {
    * @param args Payload to invocation
    */
   public downloadPost(url: string, args: any) {
-
-    // Making sure we're connected to a backend, and if not, resolving observable to its error callback.
-    if (!this.backendService.current) {
-
-      // Oops, not connected to any backends.
-      throw throwError('Not connected to any backend, please choose a backend before trying to invoke endpoints');
-
+    if (!this.backendService.active) {
+      return throwError(() => new Error('Not connected to a backend'));
     } else {
-
-      // Invoking backend's URL and resolving to the next subscriber.
-      return this.httpClient.post(this.backendService.current.url + url,
+      return this.httpClient.post(this.backendService.active.url + url,
         args, {
           observe: 'response',
           responseType: 'arraybuffer',
@@ -115,20 +94,13 @@ export class HttpService {
    * @param requestOptions Request options for invocation
    */
   public post<Response>(url: string, req: any, requestOptions: object = null) {
-
-    // Making sure we're connected to a backend, and if not, resolving observable to its error callback.
-    if (!this.backendService.current) {
-
-      // Oops, not connected to any backends.
-      throw throwError('Not connected to any backend, please choose a backend before trying to invoke endpoints');
-
+    if (!this.backendService.active) {
+      return throwError(() => new Error('Not connected to a backend'));
     } else {
-
-      // Invoking backend's URL.
       if (!requestOptions) {
-        return this.httpClient.post<Response>(this.backendService.current.url + url, req);
+        return this.httpClient.post<Response>(this.backendService.active.url + url, req);
       } else {
-        return this.httpClient.post<Response>(this.backendService.current.url + url, req, requestOptions);
+        return this.httpClient.post<Response>(this.backendService.active.url + url, req, requestOptions);
       }
     }
   }
@@ -143,20 +115,13 @@ export class HttpService {
    * @param requestOptions Request options for invocation
    */
   public put<Response>(url: string, req: any, requestOptions: object = null) {
-
-    // Making sure we're connected to a backend, and if not, resolving observable to its error callback.
-    if (!this.backendService.current) {
-
-      // Oops, not connected to any backends.
-      throw throwError('Not connected to any backend, please choose a backend before trying to invoke endpoints');
-
+    if (!this.backendService.active) {
+      return throwError(() => new Error('Not connected to a backend'));
     } else {
-
-      // Invoking backend's URL.
       if (!requestOptions) {
-        return this.httpClient.put<Response>(this.backendService.current.url + url, req);
+        return this.httpClient.put<Response>(this.backendService.active.url + url, req);
       } else {
-        return this.httpClient.put<Response>(this.backendService.current.url + url, req, requestOptions);
+        return this.httpClient.put<Response>(this.backendService.active.url + url, req, requestOptions);
       }
     }
   }
@@ -171,20 +136,13 @@ export class HttpService {
    * @param requestOptions Request options for invocation
    */
   public patch<Response>(url: string, req: any, requestOptions: object = null) {
-
-    // Making sure we're connected to a backend, and if not, resolving observable to its error callback.
-    if (!this.backendService.current) {
-
-      // Oops, not connected to any backends.
-      throw throwError('Not connected to any backend, please choose a backend before trying to invoke endpoints');
-
+    if (!this.backendService.active) {
+      return throwError(() => new Error('Not connected to a backend'));
     } else {
-
-      // Invoking backend's URL.
       if (!requestOptions) {
-        return this.httpClient.patch<Response>(this.backendService.current.url + url, req);
+        return this.httpClient.patch<Response>(this.backendService.active.url + url, req);
       } else {
-        return this.httpClient.patch<Response>(this.backendService.current.url + url, req, requestOptions);
+        return this.httpClient.patch<Response>(this.backendService.active.url + url, req, requestOptions);
       }
     }
   }
@@ -197,20 +155,13 @@ export class HttpService {
    * @param requestOptions Request options for invocation
    */
   public delete<Response>(url: string, requestOptions: object = null) {
-
-    // Making sure we're connected to a backend, and if not, resolving observable to its error callback.
-    if (!this.backendService.current) {
-
-      // Oops, not connected to any backends.
-      throw throwError('Not connected to any backend, please choose a backend before trying to invoke endpoints');
-
+    if (!this.backendService.active) {
+      return throwError(() => new Error('Not connected to a backend'));
     } else {
-
-      // Invoking backend's URL.
       if (!requestOptions) {
-        return this.httpClient.delete<Response>(this.backendService.current.url + url);
+        return this.httpClient.delete<Response>(this.backendService.active.url + url);
       } else {
-        return this.httpClient.delete<Response>(this.backendService.current.url + url, requestOptions);
+        return this.httpClient.delete<Response>(this.backendService.active.url + url, requestOptions);
       }
     }
   }

@@ -26,9 +26,9 @@ export class AccessGuard implements CanActivate {
     // check the configuration of database
     // and set access accordingly
     (async () => {
-      while (!this.backendService.current?.token)
+      while (!this.backendService.active?.token)
         await new Promise(resolve => setTimeout(resolve, 100));
-      if (this.backendService.current?.token) {
+      if (this.backendService.active?.token) {
         
         this.configService.configStatus.subscribe(status => {
           if (status !== undefined) {
@@ -43,35 +43,35 @@ export class AccessGuard implements CanActivate {
      * checking access rights per route
      */
     (async () => {
-      while (Object.keys(this.backendService.current?.access.auth).length === 0)
+      while (Object.keys(this.backendService.active?.access.auth).length === 0)
         await new Promise(resolve => setTimeout(resolve, 100));
         
-      if (Object.keys(this.backendService.current?.access.auth).length !== 0) {
-        if (!(this.backendService.current?.access.crud.generate_crud || this.backendService.current?.access.crud.generate_sql || this.backendService.current?.access.crud.generate_frontend)) {
+      if (Object.keys(this.backendService.active?.access.auth).length !== 0) {
+        if (!(this.backendService.active?.access.crud.generate_crud || this.backendService.active?.access.crud.generate_sql || this.backendService.active?.access.crud.generate_frontend)) {
           route.data.page === 'crudifier' ? this.router.navigateByUrl('') : '';
-        } else if (!(this.backendService.current?.access.files.list_files && this.backendService.current?.access.files.list_folders)) {
+        } else if (!(this.backendService.active?.access.files.list_files && this.backendService.active?.access.files.list_folders)) {
           route.data.page === 'ide' ? this.router.navigateByUrl('') : '';
-        } else if (!(this.backendService.current?.access.sql.execute_access)) {
+        } else if (!(this.backendService.active?.access.sql.execute_access)) {
           route.data.page === 'sql' ? this.router.navigateByUrl('') : '';
-        } else if (!(this.backendService.current?.access.eval.execute)) {
+        } else if (!(this.backendService.active?.access.eval.execute)) {
           route.data.page === 'evaluator' ? this.router.navigateByUrl('') : '';
-        } else if (!(this.backendService.current?.access.tasks.read)) {
+        } else if (!(this.backendService.active?.access.tasks.read)) {
           route.data.page === 'tasks' ? this.router.navigateByUrl('') : '';
-        } else if (!(this.backendService.current?.access.auth.view_users && this.backendService.current?.access.auth.view_roles)) {
+        } else if (!(this.backendService.active?.access.auth.view_users && this.backendService.active?.access.auth.view_roles)) {
           route.data.page === 'auth' ? this.router.navigateByUrl('') : '';
-        } else if (!(this.backendService.current?.access.terminal.execute)) {
+        } else if (!(this.backendService.active?.access.terminal.execute)) {
           route.data.page === 'terminal' ? this.router.navigateByUrl('') : '';
-        } else if (!(this.backendService.current?.access.crypto.import_public_key)) {
+        } else if (!(this.backendService.active?.access.crypto.import_public_key)) {
           route.data.page === 'crypto' ? this.router.navigateByUrl('') : '';
-        } else if (!(this.backendService.current)) {
+        } else if (!(this.backendService.active)) {
           route.data.page === 'profile' ? this.router.navigateByUrl('') : '';
-        } else if (!(this.backendService.current?.access.bazar.get_manifests)) {
+        } else if (!(this.backendService.active?.access.bazar.get_manifests)) {
           route.data.page === 'bazar' ? this.router.navigateByUrl('') : '';
-        } else if (!(this.backendService.current?.access.log.read)) {
+        } else if (!(this.backendService.active?.access.log.read)) {
           route.data.page === 'log' || route.data.page === 'assumptions' || route.data.page === 'cache' ? this.router.navigateByUrl('') : '';
-        } else if (!(this.backendService.current?.access.endpoints.view)) {
+        } else if (!(this.backendService.active?.access.endpoints.view)) {
           route.data.page === 'endpoints' ? this.router.navigateByUrl('') : '';
-        } else if (!(this.backendService.current?.access.sockets.read)) {
+        } else if (!(this.backendService.active?.access.sockets.read)) {
           route.data.page === 'sockets' ? this.router.navigateByUrl('') : '';
         }
       }

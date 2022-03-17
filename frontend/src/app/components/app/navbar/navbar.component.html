@@ -11,7 +11,7 @@
       <div class="position-relative w-100">
         <h5 class="my-0 text-muted d-flex align-items-center justify-content-center">
           <div class="text-truncate max-width">
-            {{backendService.current?.token ? backendService.current.username : 'anonymous'}} 
+            {{backendService.active?.token ? backendService.active.username : 'anonymous'}} 
           </div>
         </h5>
         <h5
@@ -19,7 +19,7 @@
           [matMenuTriggerFor]="backends">
           <div
             class="text-truncate max-width" 
-            [class.text-warning]="backendService.current?.url.startsWith('http://')">{{getUserUrl()}} </div>
+            [class.text-warning]="backendService.active?.url.startsWith('http://')">{{getUserUrl()}} </div>
           <mat-icon class="small-icon">arrow_drop_down</mat-icon>
         </h5>
       </div>
@@ -42,9 +42,9 @@
             <mat-icon>content_copy</mat-icon>
             Copy url
           </button>
-          <button mat-menu-item [disabled]="backend?.url === backendService.current?.url" (click)="switchBackend(backend)">
+          <button mat-menu-item [disabled]="backend?.url === backendService.active?.url" (click)="switchBackend(backend)">
             <mat-icon>change_circle</mat-icon>
-            {{backend?.url === backendService.current?.url ? 'Currently in use' : 'Switch to this backend'}}
+            {{backend?.url === backendService.active?.url ? 'Currently in use' : 'Switch to this backend'}}
           </button>
           <button mat-menu-item (click)="deleteBackend(backend)">
             <mat-icon>delete</mat-icon>
@@ -71,7 +71,7 @@
       <mat-expansion-panel-header 
         #panelD (click)="panelD._toggle()" 
         [matTooltipDisabled]="sideNavStatus" 
-        [matTooltip]="backendService.current.access.files.list_files && backendService.current.access.files.list_folders ? 'Dashboard' : 'Home'" 
+        [matTooltip]="backendService.active.access.files.list_files && backendService.active.access.files.list_folders ? 'Dashboard' : 'Home'" 
         matTooltipPosition="after" 
         routerLinkActive="active-link"
         [routerLinkActiveOptions]="{exact:true}">
@@ -81,9 +81,9 @@
             [class.flex-column]="!sideNavStatus"
             [class.justify-content-center]="!sideNavStatus"
             (click)="notSmallScreen ? '' : closeNavbar()"
-            [routerLink]="!backendService.current?.token || (backendIsConfigured || !backendService.current?.token?.in_role('root')) ? '/' : null">
-            <mat-icon>{{backendService.current.access.files.list_files && backendService.current.access.files.list_folders ? 'dashboard' : 'home'}}</mat-icon>
-            <span class="title">{{backendService.current.access.files.list_files && backendService.current.access.files.list_folders ? 'Dashboard' : 'Home'}}</span>
+            [routerLink]="!backendService.active?.token || (backendIsConfigured || !backendService.active?.token?.in_role('root')) ? '/' : null">
+            <mat-icon>{{backendService.active.access.files.list_files && backendService.active.access.files.list_folders ? 'dashboard' : 'home'}}</mat-icon>
+            <span class="title">{{backendService.active.access.files.list_files && backendService.active.access.files.list_folders ? 'Dashboard' : 'Home'}}</span>
           </a>
         </mat-panel-title>
       </mat-expansion-panel-header>
@@ -93,7 +93,7 @@
     <mat-expansion-panel
       class="mat-elevation-z0"
       hideToggle
-      *ngIf="!backendService.current?.token || !backendService.current?.token?.in_role('root')">
+      *ngIf="!backendService.active?.token || !backendService.active?.token?.in_role('root')">
       <mat-expansion-panel-header 
         #panelC (click)="panelC._toggle()" 
         [matTooltipDisabled]="sideNavStatus" 
@@ -114,7 +114,7 @@
     <mat-expansion-panel class="mat-elevation-z0"
       [expanded]="hyperide?.isActive || evaluator?.isActive || sql?.isActive || crudifier?.isActive || tasks?.isActive || !sideNavStatus" 
       [hideToggle]="!sideNavStatus"
-      *ngIf="(backendService.current.access.files.list_files && backendService.current.access.files.list_folders) || backendService.current.access.eval.execute || backendService.current.access.sql.execute_access || (backendService.current.access.crud.generate_crud || backendService.current.access.crud.generate_sql || backendService.current.access.crud.generate_frontend) || backendService.current.access.tasks.read">
+      *ngIf="(backendService.active.access.files.list_files && backendService.active.access.files.list_folders) || backendService.active.access.eval.execute || backendService.active.access.sql.execute_access || (backendService.active.access.crud.generate_crud || backendService.active.access.crud.generate_sql || backendService.active.access.crud.generate_frontend) || backendService.active.access.tasks.read">
       <mat-expansion-panel-header 
         *ngIf="sideNavStatus"
         [ngClass]="{'active-link':hyperide?.isActive || evaluator?.isActive || sql?.isActive || crudifier?.isActive || tasks?.isActive}">
@@ -128,14 +128,14 @@
 
         <!-- Crudifier -->
         <mat-list-option 
-          [style.display]="backendService.current.access.crud.generate_crud || backendService.current.access.crud.generate_sql || backendService.current.access.crud.generate_frontend ? '' : 'none'"
+          [style.display]="backendService.active.access.crud.generate_crud || backendService.active.access.crud.generate_sql || backendService.active.access.crud.generate_frontend ? '' : 'none'"
           [matTooltipDisabled]="sideNavStatus" 
           matTooltip="Crudifier" 
           matTooltipPosition="after" 
           routerLinkActive="active-link"
           #crudifier="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
-          <ng-container *ngIf="backendService.current.access.crud.generate_crud || backendService.current.access.crud.generate_sql || backendService.current.access.crud.generate_frontend">
+          <ng-container *ngIf="backendService.active.access.crud.generate_crud || backendService.active.access.crud.generate_sql || backendService.active.access.crud.generate_frontend">
             <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" [routerLink]="backendIsConfigured ? '/crudifier' : null">
               <mat-icon>touch_app</mat-icon>
               <span class="title">Crudifier</span>
@@ -145,14 +145,14 @@
 
         <!-- Hyper IDE -->
         <mat-list-option 
-          [style.display]="backendService.current.access.files.list_files && backendService.current.access.files.list_folders ? '' : 'none'"
+          [style.display]="backendService.active.access.files.list_files && backendService.active.access.files.list_folders ? '' : 'none'"
           [matTooltipDisabled]="sideNavStatus" 
           matTooltip="Hyper IDE" 
           matTooltipPosition="after" 
           routerLinkActive="active-link"
           #hyperide="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
-          <ng-container *ngIf="backendService.current.access.files.list_files && backendService.current.access.files.list_folders">
+          <ng-container *ngIf="backendService.active.access.files.list_files && backendService.active.access.files.list_folders">
             <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" [routerLink]="backendIsConfigured ? '/ide' : null">
               <mat-icon>extension</mat-icon>
               <span class="title">Hyper IDE</span>
@@ -162,14 +162,14 @@
 
         <!-- SQL -->
         <mat-list-option 
-          [style.display]="backendService.current.access.sql.execute_access ? '' : 'none'"
+          [style.display]="backendService.active.access.sql.execute_access ? '' : 'none'"
           [matTooltipDisabled]="sideNavStatus" 
           matTooltip="SQL" 
           matTooltipPosition="after" 
           routerLinkActive="active-link"
           #sql="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
-          <ng-container *ngIf="backendService.current.access.sql.execute_access">
+          <ng-container *ngIf="backendService.active.access.sql.execute_access">
             <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" [routerLink]="backendIsConfigured ? '/sql' : null">
               <mat-icon>language</mat-icon>
               <span class="title">SQL</span>
@@ -179,14 +179,14 @@
 
         <!-- Evaluator -->
         <mat-list-option 
-          [style.display]="backendService.current.access.eval.execute ? '' : 'none'"
+          [style.display]="backendService.active.access.eval.execute ? '' : 'none'"
           [matTooltipDisabled]="sideNavStatus" 
           matTooltip="Evaluator" 
           matTooltipPosition="after" 
           routerLinkActive="active-link"
           #evaluator="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
-          <ng-container *ngIf="backendService.current.access.eval.execute">
+          <ng-container *ngIf="backendService.active.access.eval.execute">
             <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" [routerLink]="backendIsConfigured ? '/evaluator' : null">
               <mat-icon>offline_bolt</mat-icon>
               <span class="title">Evaluator</span>
@@ -196,14 +196,14 @@
 
         <!-- Tasks -->
         <mat-list-option 
-          [style.display]="backendService.current.access.tasks.read ? '' : 'none'"
+          [style.display]="backendService.active.access.tasks.read ? '' : 'none'"
           [matTooltipDisabled]="sideNavStatus" 
           matTooltip="Tasks" 
           matTooltipPosition="after" 
           routerLinkActive="active-link"
           #tasks="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
-          <ng-container *ngIf="backendService.current.access.tasks.read">
+          <ng-container *ngIf="backendService.active.access.tasks.read">
             <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" [routerLink]="backendIsConfigured ? '/tasks' : null">
               <mat-icon>calendar_today</mat-icon>
               <span class="title">Tasks</span>
@@ -217,7 +217,7 @@
     <mat-expansion-panel class="mat-elevation-z0"
       [expanded]="auth?.isActive || config?.isActive || crypto?.isActive || bazar?.isActive || terminal?.isActive || profile?.isActive || !sideNavStatus" 
       [hideToggle]="!sideNavStatus"
-      *ngIf="(backendService.current.access.auth.view_users && backendService.current.access.auth.view_roles) || backendService.current.access.bazar.get_manifests || backendService.current.access.config.load || backendService.current.access.terminal.execute">
+      *ngIf="(backendService.active.access.auth.view_users && backendService.active.access.auth.view_roles) || backendService.active.access.bazar.get_manifests || backendService.active.access.config.load || backendService.active.access.terminal.execute">
       <mat-expansion-panel-header 
       *ngIf="sideNavStatus"
       [ngClass]="{'active-link':auth?.isActive || config?.isActive || crypto?.isActive || bazar?.isActive || profile?.isActive || terminal?.isActive}">
@@ -230,14 +230,14 @@
 
         <!-- Users -->
         <mat-list-option 
-          [style.display]="backendService.current.access.auth.view_users && backendService.current.access.auth.view_roles ? '' : 'none'"
+          [style.display]="backendService.active.access.auth.view_users && backendService.active.access.auth.view_roles ? '' : 'none'"
           [matTooltipDisabled]="sideNavStatus" 
           matTooltip="Users & roles" 
           matTooltipPosition="after" 
           routerLinkActive="active-link"
           #auth="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
-          <ng-container *ngIf="backendService.current.access.auth.view_users && backendService.current.access.auth.view_roles">
+          <ng-container *ngIf="backendService.active.access.auth.view_users && backendService.active.access.auth.view_roles">
             <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" [routerLink]="backendIsConfigured ? '/auth' : null">
               <mat-icon>supervisor_account</mat-icon>
               <span class="title">Users &amp; roles</span>
@@ -247,14 +247,14 @@
 
         <!-- Config -->
         <mat-list-option 
-          [style.display]="backendService.current.access.config.load ? '' : 'none'"
+          [style.display]="backendService.active.access.config.load ? '' : 'none'"
           [matTooltipDisabled]="sideNavStatus" 
           matTooltip="Config" 
           matTooltipPosition="after" 
           routerLinkActive="active-link"
           #config="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
-          <ng-container *ngIf="backendService.current.access.config.load">
+          <ng-container *ngIf="backendService.active.access.config.load">
             <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" routerLink="/config">
               <mat-icon>settings</mat-icon>
               <span class="title">Config</span>
@@ -264,14 +264,14 @@
 
         <!-- Terminal -->
         <mat-list-option 
-          [style.display]="backendService.current.access.terminal.execute ? '' : 'none'"
+          [style.display]="backendService.active.access.terminal.execute ? '' : 'none'"
           [matTooltipDisabled]="sideNavStatus" 
           matTooltip="Terminal" 
           matTooltipPosition="after" 
           routerLinkActive="active-link"
           #terminal="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
-          <ng-container *ngIf="backendService.current.access.terminal.execute">
+          <ng-container *ngIf="backendService.active.access.terminal.execute">
             <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" [routerLink]="backendIsConfigured ? '/terminal' : null">
               <mat-icon>input</mat-icon>
               <span class="title">Terminal</span>
@@ -281,14 +281,14 @@
 
         <!-- Cryptography -->
         <mat-list-option 
-          [style.display]="backendService.current.access.crypto.import_public_key ? '' : 'none'"
+          [style.display]="backendService.active.access.crypto.import_public_key ? '' : 'none'"
           [matTooltipDisabled]="sideNavStatus" 
           matTooltip="Cryptography" 
           matTooltipPosition="after" 
           routerLinkActive="active-link"
           #crypto="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
-          <ng-container *ngIf="backendService.current.access.crypto.import_public_key">
+          <ng-container *ngIf="backendService.active.access.crypto.import_public_key">
             <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" [routerLink]="backendIsConfigured ? '/crypto' : null">
               <mat-icon>security</mat-icon>
               <span class="title">Cryptography</span>
@@ -315,14 +315,14 @@
 
         <!-- Bazaar -->
         <mat-list-option 
-          [style.display]="backendService.current.access.bazar.get_manifests ? '' : 'none'"
+          [style.display]="backendService.active.access.bazar.get_manifests ? '' : 'none'"
           [matTooltipDisabled]="sideNavStatus" 
           matTooltip="Bazar" 
           matTooltipPosition="after" 
           routerLinkActive="active-link"
           #bazar="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
-          <ng-container *ngIf="backendService.current.access.bazar.get_manifests">
+          <ng-container *ngIf="backendService.active.access.bazar.get_manifests">
             <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" [routerLink]="backendIsConfigured ? '/bazar' : null">
               <mat-icon>storefront</mat-icon>
               <span class="title">Bazaar</span>
@@ -336,7 +336,7 @@
     <mat-expansion-panel class="mat-elevation-z0"
       [expanded]="assumptions?.isActive || cache?.isActive || endpoints?.isActive || sockets?.isActive || log?.isActive || !sideNavStatus" 
       [hideToggle]="!sideNavStatus"
-      *ngIf="backendService.current.access.endpoints.view || backendService.current.access.sockets.read">
+      *ngIf="backendService.active.access.endpoints.view || backendService.active.access.sockets.read">
       <mat-expansion-panel-header 
       *ngIf="sideNavStatus"
       [ngClass]="{'active-link':assumptions?.isActive || cache?.isActive || log?.isActive || endpoints?.isActive || sockets?.isActive}">
@@ -349,14 +349,14 @@
 
         <!-- Log -->
         <mat-list-option 
-          [style.display]="backendService.current.access.log.read ? '' : 'none'"
+          [style.display]="backendService.active.access.log.read ? '' : 'none'"
           [matTooltipDisabled]="sideNavStatus" 
           matTooltip="Log" 
           matTooltipPosition="after" 
           routerLinkActive="active-link"
           #log="routerLinkActive"
           [routerLinkActiveOptions]="{exact:false}">
-          <ng-container *ngIf="backendService.current.access.log.read">
+          <ng-container *ngIf="backendService.active.access.log.read">
             <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" [routerLink]="backendIsConfigured ? '/log' : null">
               <mat-icon>bar_chart</mat-icon>
               <span class="title">Log</span>
@@ -366,14 +366,14 @@
 
         <!-- Assumptions //TODO -->
         <mat-list-option 
-          [style.display]="backendService.current.access.log.read ? '' : 'none'"
+          [style.display]="backendService.active.access.log.read ? '' : 'none'"
           [matTooltipDisabled]="sideNavStatus" 
           matTooltip="Assumptions" 
           matTooltipPosition="after" 
           routerLinkActive="active-link"
           #assumptions="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
-          <ng-container *ngIf="backendService.current.access.log.read">
+          <ng-container *ngIf="backendService.active.access.log.read">
             <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" [routerLink]="backendIsConfigured ? '/assumptions' : null">
               <mat-icon>fact_check</mat-icon>
               <span class="title">Assumptions</span>
@@ -383,14 +383,14 @@
 
         <!-- Cache //TODO -->
         <mat-list-option 
-          [style.display]="backendService.current.access.log.read ? '' : 'none'"
+          [style.display]="backendService.active.access.log.read ? '' : 'none'"
           [matTooltipDisabled]="sideNavStatus" 
           matTooltip="System's cache" 
           matTooltipPosition="after" 
           routerLinkActive="active-link"
           #cache="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
-          <ng-container *ngIf="backendService.current.access.log.read">
+          <ng-container *ngIf="backendService.active.access.log.read">
             <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" [routerLink]="backendIsConfigured ? '/cache' : null">
               <mat-icon>cached</mat-icon>
               <span class="title">Cache</span>
@@ -400,14 +400,14 @@
 
         <!-- Endpoints -->
         <mat-list-option 
-          [style.display]="backendService.current.access.endpoints.view ? '' : 'none'"
+          [style.display]="backendService.active.access.endpoints.view ? '' : 'none'"
           [matTooltipDisabled]="sideNavStatus" 
           matTooltip="Endpoints" 
           matTooltipPosition="after" 
           routerLinkActive="active-link"
           #endpoints="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
-          <ng-container *ngIf="backendService.current.access.endpoints.view">
+          <ng-container *ngIf="backendService.active.access.endpoints.view">
             <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" [routerLink]="backendIsConfigured ? '/endpoints' : null">
               <mat-icon>http</mat-icon>
               <span class="title">Endpoints</span>
@@ -417,14 +417,14 @@
 
         <!-- Sockets -->
         <mat-list-option 
-          [style.display]="backendService.current.access.sockets.read ? '' : 'none'"
+          [style.display]="backendService.active.access.sockets.read ? '' : 'none'"
           [matTooltipDisabled]="sideNavStatus" 
           matTooltip="Sockets" 
           matTooltipPosition="after" 
           routerLinkActive="active-link"
           #sockets="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
-          <ng-container *ngIf="backendService.current.access.sockets.read">
+          <ng-container *ngIf="backendService.active.access.sockets.read">
             <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" [routerLink]="backendIsConfigured ? '/sockets' : null">
               <mat-icon>compare_arrows</mat-icon>
               <span class="title">Sockets</span>
@@ -473,19 +473,19 @@
     <!-- Login -->
     <mat-expansion-panel class="mat-elevation-z0" hideToggle>
       <mat-expansion-panel-header
-        #panelL (click)="panelL._toggle(); backendService.current?.token ? logout() : login(true)" 
+        #panelL (click)="panelL._toggle(); backendService.active?.token ? logout() : login(true)" 
         [matTooltipDisabled]="sideNavStatus" 
-        [matTooltip]="backendService.current?.token ? 'Logout' : 'Login'">
+        [matTooltip]="backendService.active?.token ? 'Logout' : 'Login'">
         <mat-panel-title>
-            <mat-icon>{{backendService.current?.token ? 'lock' : 'lock_open'}}</mat-icon>
-            <span class="title">{{backendService.current?.token ? 'Logout' : 'Login'}}</span>
+            <mat-icon>{{backendService.active?.token ? 'lock' : 'lock_open'}}</mat-icon>
+            <span class="title">{{backendService.active?.token ? 'Logout' : 'Login'}}</span>
         </mat-panel-title>
       </mat-expansion-panel-header>
     </mat-expansion-panel>
 
     <!-- Register -->
     <mat-expansion-panel class="mat-elevation-z0" 
-      *ngIf="!backendService.current?.token && backendService.current" hideToggle>
+      *ngIf="!backendService.active?.token && backendService.active" hideToggle>
       <mat-expansion-panel-header 
         #panelH (click)="panelH._toggle()" 
         [matTooltipDisabled]="sideNavStatus" 

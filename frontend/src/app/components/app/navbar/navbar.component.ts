@@ -136,10 +136,10 @@ export class NavbarComponent implements OnInit {
     // wait for access list to be ready
     // then detect changes to update view
     (async () => {
-      while (Object.keys(this.backendService.current.access.auth).length === 0)
+      while (Object.keys(this.backendService.active.access.auth).length === 0)
         await new Promise(resolve => setTimeout(resolve, 100));
 
-      if (Object.keys(this.backendService.current.access.auth).length !== 0) {
+      if (Object.keys(this.backendService.active.access.auth).length !== 0) {
         this.cdRef.detectChanges();
       }
 
@@ -203,7 +203,7 @@ export class NavbarComponent implements OnInit {
           this.feedbackService.showInfo(`You were successfully authenticated as '${username}'`);
 
           // Checking if token is a 'reset-password' type of token.
-          if (this.backendService.current.token.in_role('reset-password')) {
+          if (this.backendService.active.token.in_role('reset-password')) {
 
             // Redirecting user to change-password route.
             this.router.navigate(['/change-password']);
@@ -214,7 +214,7 @@ export class NavbarComponent implements OnInit {
             this.router.navigate(['/']);
 
             // Making sure we refresh access rights.
-            this.backendService.current.createAccessRights();
+            this.backendService.active.createAccessRights();
           }
 
         }, (error: any) => {
@@ -264,12 +264,12 @@ export class NavbarComponent implements OnInit {
    public getUserUrl() {
 
     // Verifying user is connected to a backend.
-    if (!this.backendService.current) {
+    if (!this.backendService.active) {
       return 'not connected';
     }
     
     // Removing schema and port from URL.
-    let url = this.backendService.current.url.replace('http://', '').replace('https://', '');
+    let url = this.backendService.active.url.replace('http://', '').replace('https://', '');
     // if (url.indexOf(':') !== -1) {
     //   url = url.substring(0, url.indexOf(':'));
     // }
@@ -322,7 +322,7 @@ export class NavbarComponent implements OnInit {
   private retrieveBackendVersion() {
 
     // Retrieving backend version if we're authenticated.
-    if (this.backendService.current?.token?.in_role('root')) {
+    if (this.backendService.active?.token?.in_role('root')) {
 
       // Invoking backend to retrieve version.
       this.diagnosticsService.version().subscribe((version: any) => {

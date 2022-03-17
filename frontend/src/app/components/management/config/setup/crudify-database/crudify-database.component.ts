@@ -116,7 +116,6 @@ export class CrudifyDatabaseComponent implements OnInit {
         // Success.
         this.cacheService.delete('magic.auth.endpoints').subscribe(() => {
           this.backendService.refetchEndpoints();
-
         }, (error: any) => this.feedbackService.showError(error));
 
       }, (error: any) => this.feedbackService.showError(error));

@@ -351,7 +351,7 @@ export class UsersComponent implements OnInit {
         '&username=' +
         encodeURIComponent(user.username) +
         '&url=' +
-        encodeURIComponent(this.backendService.current.url);
+        encodeURIComponent(this.backendService.active.url);
 
       this.clipboard.copy(url);
       this.feedbackService.showInfo('The impersonation link can be found on your clipboard');
@@ -377,7 +377,7 @@ export class UsersComponent implements OnInit {
         '&username=' +
         encodeURIComponent(user.username) +
         '&url=' +
-        encodeURIComponent(this.backendService.current.url);
+        encodeURIComponent(this.backendService.active.url);
 
       this.clipboard.copy(url);
       this.feedbackService.showInfo('The reset password link can be found on your clipboard');

@@ -76,8 +76,6 @@ export abstract class FeedbackService {
    * @param confirmed Callback invoked if user confirms action
    */
   public confirm(title: string, text: string, confirmed: () => void, cancel: () => void = null) {
-
-    // Asking user to confirm deletion of file object.
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '550px',
       data: {
@@ -85,18 +83,10 @@ export abstract class FeedbackService {
         text,
       }
     });
-
-    // Subscribing to close such that we can delete schedule if it's confirmed.
     dialogRef.afterClosed().subscribe((result: ConfirmDialogData) => {
-
-      // Checking if user confirmed that he wants to delete the schedule.
       if (result && result.confirmed) {
-
-        // Invoking callback provided by caller.
         confirmed();
       } else if (cancel) {
-
-        // Use clicked no, and we've got a cancel callback.
         cancel();
       }
     });
