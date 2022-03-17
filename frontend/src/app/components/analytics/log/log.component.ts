@@ -6,12 +6,12 @@
 // Angular and system imports.
 import { Component, OnInit } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 
 // Application specific imports.
 import { LogItem } from 'src/app/models/log-item.model';
 import { LogService } from 'src/app/services/analytics/log.service';
 import { FeedbackService } from '../../../services/feedback.service';
-import { trigger, state, style, transition, animate } from '@angular/animations';
 
 /**
  * Log component for reading backend's log.
@@ -30,27 +30,23 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 })
 export class LogComponent implements OnInit {
 
-  // List of log item IDs that we're currently viewing details for.
-  private displayDetails: string[] = [];
-
-  // "Mutex" to ensure we never invoke getItems twice before last request has returned.
   private retrievingItems = false;
 
   /**
    * Columns to display in table.
    */
-  public displayedColumns: string[] = ['content', 'type', 'when'];
+  displayedColumns: string[] = ['content', 'type', 'when'];
 
   /**
    * Currently viewed log items.
    */
-  public items: LogItem[] = [];
-  public expandedElement: LogItem | null;
+  items: LogItem[] = [];
+  expandedElement: LogItem | null;
 
   /**
    * Number of log items in the backend matching the currently applied filter.
    */
-  public count: number = 0;
+  count: number = 0;
 
   /**
    * Creates an instance of your component.
@@ -67,35 +63,24 @@ export class LogComponent implements OnInit {
   /**
    * OnInit implementation.
    */
-  public ngOnInit() {
-
-    // Retrieving initial items.
+  ngOnInit() {
     this.getItems();
-
-    // Counting items.
     this.logService.count(null).subscribe(count => {
-
-      // Assigning count to value returned from server.
       this.count = count.count;
-
     }, (error: any) => this.feedbackService.showError(error));
   }
 
   /**
    * Returns log items from your backend.
    */
-  public getItems() {
-
-    // Retrieves log items from the backend.
+  getItems() {
     let from: string = null;
     if (this.items.length > 0) {
       from = this.items[this.items.length - 1].id;
     }
     this.logService.list(from, this.items.length > 0 ? 20 : 50).subscribe(logitems => {
-
       this.items = this.items.concat(logitems || []);
       this.retrievingItems = false;
-
     }, (error: any) => {
       this.retrievingItems = false;
       this.feedbackService.showError(error);
@@ -103,42 +88,11 @@ export class LogComponent implements OnInit {
   }
 
   /**
-   * Toggles details about one specific log item.
-   * 
-   * @param el Log item to toggle details for
-   */
-  public toggleDetails(el: LogItem) {
-
-    // Checking if we're already displaying details for current item.
-    const idx = this.displayDetails.indexOf(el.id);
-    if (idx !== -1) {
-
-      // Hiding item.
-      // this.displayDetails.splice(idx, 1);
-    } else {
-
-      // Displaying item.
-      this.displayDetails.push(el.id);
-    }
-  }
-
-  /**
-   * Returns true if details for specified log item should be displayed.
-   * 
-   * @param el Log item to display details for
-   */
-  public shouldDisplayDetails(el: LogItem) {
-
-    // Returns true if we're currently displaying this particular item.
-    return this.displayDetails.filter(x => x === el.id).length > 0;
-  }
-
-  /**
    * Returns specified object as an array to caller.
    * 
    * @param meta Meta object to return array for
    */
-  public toArray(meta: object) {
+  toArray(meta: object) {
     const result = [];
     var names = Object.getOwnPropertyNames(meta);
     for (const idx of names) {
@@ -155,9 +109,7 @@ export class LogComponent implements OnInit {
    * 
    * @param content Content to put on to clipboard
    */
-  public copyContent(content: string) {
-
-    // Putting content to clipboard and giving user some feedback.
+  copyContent(content: string) {
     this.clipboard.copy(content);
     this.feedbackService.showInfoShort('The specified content can be found on your clipboard');
   }
@@ -167,17 +119,13 @@ export class LogComponent implements OnInit {
    * 
    * @param e - scrolling event
    */
-  public onTableScroll(e: any) {
-
-    // Ensuring we don't invoke getItems twice before previous request has returned.
+  onTableScroll(e: any) {
     if (this.retrievingItems) {
       return;
     }
-    const clientHeight = e.target.clientHeight // viewport
-    const tableScrollHeight = e.target.scrollHeight // length of all table
-    const scrollLocation = e.target.scrollTop; // how far user scrolled
-
-    // If the user has scrolled within 50px of the bottom, add more data
+    const clientHeight = e.target.clientHeight;
+    const tableScrollHeight = e.target.scrollHeight;
+    const scrollLocation = e.target.scrollTop;
     const limit = clientHeight + scrollLocation > tableScrollHeight - 50;
     if (limit && (this.items.length < this.count)) {
       this.retrievingItems = true;

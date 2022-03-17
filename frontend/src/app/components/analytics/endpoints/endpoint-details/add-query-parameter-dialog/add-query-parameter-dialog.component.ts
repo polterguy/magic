@@ -44,12 +44,12 @@ export class AddQueryParameterDialogComponent {
   /**
    * Model for value of query parameter.
    */
-  public value: any;
+  value: any;
 
   /**
    * Data model for operator types of arguments.
    */
-  public operators: string[] = [
+  operators: string[] = [
     'or',
     'and',
   ];
@@ -57,7 +57,7 @@ export class AddQueryParameterDialogComponent {
   /**
    * Possible sort order directions for sorting result.
    */
-  public directions: string[] = [
+  directions: string[] = [
     'asc',
     'desc',
   ];
@@ -65,7 +65,7 @@ export class AddQueryParameterDialogComponent {
   /**
    * Columns user can sort endpoint by.
    */
-  public orders: string[] = [];
+  orders: string[] = [];
 
   /**
    * Creates an instance of your component.
@@ -74,32 +74,20 @@ export class AddQueryParameterDialogComponent {
    */
   constructor(
     private dialogRef: MatDialogRef<AddQueryParameterDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: ArgumentModel)
-  {
-    // Checking if argument has custom handler.
-    if (data.argument.name === 'order' && data.argument.type === 'string') {
+    @Inject(MAT_DIALOG_DATA) public data: ArgumentModel) {
 
-      // Populating orders field.
+    if (data.argument.name === 'order' && data.argument.type === 'string') {
       this.orders = this.data.all.filter(x => x.name.endsWith('.eq')).map(x => x.name.substr(0, x.name.length - 3));
       this.value = this.data.old ?? '';
-
     } else if (data.argument.name === 'direction' && data.argument.type === 'string') {
-
-      // Defaulting sort direction to 'asc' (ascending).
       this.value = this.data.old ?
         this.directions.filter(x => x === this.data.old)[0] :
         this.directions.filter(x => x === 'asc')[0];
-
     } else if (data.argument.name === 'operator' && data.argument.type === 'string') {
-
-      // Defaulting logical operator to 'or'.
       this.value = this.data.old ? 
         this.operators.filter(x => x === this.data.old)[0] :
         this.operators.filter(x => x === 'and')[0];
-
     } else {
-
-      // Making sure we create a sane default value, according to type of argument.
       switch (data.argument.type) {
 
         case 'bool':

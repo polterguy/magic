@@ -57,10 +57,14 @@
   </mat-list>
 
   <!-- Assumptions -->
-  <div class="d-flex flex-column w-100" 
+  <div
+    class="d-flex flex-column w-100" 
     *ngIf="backendService.active.access.endpoints.assumptions && assumptions.length > 0">
+
     <div class="my-3"><mat-divider></mat-divider></div>
+
     <h4 class="mb-2">Assumptions</h4>
+
     <ng-container *ngIf="backendService.active.access.diagnostics.execute_test">
       <mat-chip-list>
         <mat-chip
@@ -76,13 +80,18 @@
         </mat-chip>
       </mat-chip-list>
     </ng-container>
+
   </div>
 
   <!-- Arguments -->
-  <div class="d-flex flex-column w-100" 
+  <div
+    class="d-flex flex-column w-100" 
     *ngIf="endpoint.input && endpoint.input.length > 0 && (endpoint.verb === 'get' || endpoint.verb === 'delete')">
+
     <div class="my-3"><mat-divider></mat-divider></div>
+
     <h4 class="mb-2">Arguments</h4>
+
     <ng-container *ngIf="getArguments(endpoint.input, true).length > 0">
       <mat-chip-list class="mb-2">
         <mat-chip
@@ -97,6 +106,7 @@
         </mat-chip>
       </mat-chip-list>
     </ng-container>
+
     <mat-chip-list>
       <mat-chip
         *ngFor="let i of getArguments(endpoint.input, false)"
@@ -109,12 +119,16 @@
         <mat-icon *ngIf="hasQueryParam(i)" matChipRemove class="ml-1">cancel</mat-icon>
       </mat-chip>
     </mat-chip-list>
+
   </div>
 
   <!-- Payload -->
-  <div class="d-flex flex-column w-100" 
+  <div
+    class="d-flex flex-column w-100" 
     *ngIf="payload !== null && payload !== undefined && (endpoint.consumes === 'application/json' || endpoint.consumes === 'application/x-hyperlambda')">
+
     <div class="my-3"><mat-divider></mat-divider></div>
+
     <h4 class="mb-2">Payload</h4>
 
     <!-- Payload for application/json -->
@@ -140,6 +154,7 @@
         [options]="cmOptionsMarkdown.json">
       </ngx-codemirror>
     </ng-container>
+
   </div>
 
   <!-- Invoke button -->
@@ -200,5 +215,7 @@
         New assumption
       </button>
     </div>
+
   </div>
+
 </div>
