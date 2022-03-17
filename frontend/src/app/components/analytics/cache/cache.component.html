@@ -1,7 +1,9 @@
+
 <div class="row">
   <div class="col-12 mb-general">
     <mat-card>
       <mat-card-content>
+
         <div class="d-flex align-items-center">
           <mat-card-title class="mt-0 mb-1">Cache</mat-card-title>
           <div class="sm-icons">
@@ -20,6 +22,7 @@
             </mat-menu>
           </div>
         </div>
+
         <mat-card-subtitle>Administrate your cache</mat-card-subtitle>
 
         <div class="d-flex align-items-center">
@@ -38,7 +41,9 @@
               role="button"
               (click)="clearFilter()">clear</mat-icon>
           </mat-form-field>
+
           <div class="p-1"></div>
+
           <button
             *ngIf="cacheItems.length > 0"
             [disabled]="!backendService.active.access.diagnostics.delete_cache"
@@ -100,7 +105,7 @@
             mat-row
             [ngClass]="(expandedElement === el ? 'selected ' : '') + 'cache-item-row'"
             class="expandable-row"
-            (click)="toggleDetails(el);expandedElement = expandedElement === el ? null : el"
+            (click)="expandedElement = expandedElement === el ? null : el"
             *matRowDef="let el; columns: ['key', 'delete'];"></tr>
 
           <tr mat-row *matRowDef="let el; columns: ['showDetails']" class="expanded-row"></tr>
