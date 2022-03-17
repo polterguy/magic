@@ -19,7 +19,6 @@ import { HttpService } from '../http.service';
 })
 export class VocabularyService {
 
-  // Used to 'cache' the server's vocabulary.
   private _vocabulary: string[] = [];
 
   /**
@@ -33,16 +32,10 @@ export class VocabularyService {
    * Returns server's Hyperlambda vocabulary to caller.
    */
   public vocabulary() {
-
-    // Checking if we've already got the server's vocabulary.
     if (this._vocabulary.length > 0) {
-      of(this._vocabulary); // Returning 'cache' result.
+      of(this._vocabulary);
     }
-
-    // Creating a new observable such that we can store the vocabulary in a field.
     return new Observable<string[]>((observer) => {
-
-      // Invoking backend.
       this.httpService.get<string[]>('/magic/system/evaluator/vocabulary').subscribe((vocabulary: string[]) => {
         this._vocabulary = vocabulary;
         observer.next(vocabulary);

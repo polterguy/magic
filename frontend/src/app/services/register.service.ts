@@ -35,12 +35,11 @@ export class RegisterService {
   register(username: string, password: string, frontendUrl: string) {
 
     // Invokes backend and returns observable to caller.
-    return this.httpService.post<Response>(
-      '/magic/system/auth/register', {
-        username,
-        password,
-        frontendUrl,
-      });
+    return this.httpService.post<Response>('/magic/system/auth/register', {
+      username,
+      password,
+      frontendUrl,
+    });
   }
 
   /**
@@ -53,10 +52,9 @@ export class RegisterService {
   verifyEmail(username: string, token: string) {
 
     // Invokes backend and returns observable to caller.
-    return this.httpService.post<Response>(
-      '/magic/system/auth/verify-email', {
-        username,
-        token,
-      });
+    return this.httpService.post<Response>('/magic/system/auth/verify-email', {
+      username,
+      token,
+    });
   }
 }
