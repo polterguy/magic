@@ -82,6 +82,7 @@ export class AuthService {
   login(username: string, password: string, storePassword: boolean) {
 
     // Returning new observer, chaining authentication and retrieval of endpoints.
+    const url = this.backendService.current.url;
     return new Observable<AuthenticateResponse>(observer => {
 
       // Creating QUERY parameters.
@@ -105,7 +106,7 @@ export class AuthService {
         }).subscribe((auth: AuthenticateResponse) => {
 
           // Setting backend we just authenticated towards to the active backend.
-          const cur = new Backend(this.backendService.current.url, username, storePassword ? password : null, auth.ticket);
+          const cur = new Backend(url, username, storePassword ? password : null, auth.ticket);
           this.backendService.setActive(cur);
 
           // Invoking next link in chain of observables.
@@ -114,6 +115,11 @@ export class AuthService {
 
           // Ensuring subscribers to authentication status is notified.
           this._authenticated.next(true);
+          console.log({
+            content: 'User successfully authenticated towards backend',
+            username: username,
+            backend: url,
+          });
 
         }, (error: any) => {
           observer.error(error);
