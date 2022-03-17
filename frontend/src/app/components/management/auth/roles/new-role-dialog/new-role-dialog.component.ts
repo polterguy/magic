@@ -8,8 +8,8 @@ import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
-import { Role } from 'src/app/components/management/auth/models/role.model';
 import { FeedbackService } from 'src/app/services/feedback.service';
+import { Role } from 'src/app/components/management/auth/models/role.model';
 import { RoleService } from 'src/app/components/management/auth/services/role.service';
 
 /**
@@ -24,17 +24,18 @@ export class NewRoleDialogComponent {
   /**
    * Name of new role to create.
    */
-  public name = '';
+  name = '';
 
   /**
    * Description of new role.
    */
-  public description = '';
+  description = '';
 
   /**
    * Creates an instance of your component.
    * 
    * @param dialogRef Needed to be able to close dialog when user clicks create button
+   * @param feedbackService Needed to provide feedback to user
    * @param roleService Needed to be able to create or update a role
    * @param data If updating role, this is the role we're updating
    */
@@ -52,35 +53,25 @@ export class NewRoleDialogComponent {
   /**
    * Returns true if argument name is valid.
    */
-  public argumentValid() {
+  argumentValid() {
     return /^[a-z0-9_]+$/i.test(this.name);
   }
 
   /**
    * Invoked when user clicks the create button to create a new role.
    */
-  public create() {
-
-    // Invoking backend to create a new role.
+  create() {
     this.roleService.create(this.name, this.description).subscribe((res: any) => {
-
-      // Success! Closing dialog and informing the caller the name of the new role.
       this.dialogRef.close(this.name);
-
     }, (error: any) => this.feedbackService.showError(error));
   }
 
   /**
    * Invoked when user clicks the update button to update his role.
    */
-  public update() {
-
-    // Invoking backend to create a new role.
+  update() {
     this.roleService.update(this.name, this.description).subscribe(() => {
-
-      // Success! Closing dialog and informing the caller the name of the new role.
       this.dialogRef.close(this.name);
-
     }, (error: any) => this.feedbackService.showError(error));
   }
 
@@ -88,9 +79,7 @@ export class NewRoleDialogComponent {
    * Invoked when dialog should simply be closed without updating
    * an existing or creating a new role.
    */
-  public close() {
-
-    // Simply closing dialog without passing data to caller.
+  close() {
     this.dialogRef.close();
   }
 }

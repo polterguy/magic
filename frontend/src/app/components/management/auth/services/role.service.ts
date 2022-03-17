@@ -33,9 +33,7 @@ export class RoleService {
    * 
    * @param filter Optional query filter deciding which items to return
    */
-  public list(filter: AuthFilter = null) {
-
-    // Invoking backend and returning observable.
+  list(filter: AuthFilter = null) {
     return this.httpService.get<Role[]>('/magic/modules/magic/roles' + createAuthQuery(filter, 'name'));
   }
 
@@ -44,19 +42,13 @@ export class RoleService {
    * 
    * @param filter Optional query filter deciding which items to count
    */
-  public count(filter: AuthFilter = null) {
-
-    // Dynamically building our query parameters.
+  count(filter: AuthFilter = null) {
     let query = '';
     if (filter !== null) {
-
-      // Applying filter parts, if given.
       if (filter.filter && filter.filter !== '') {
         query += '?name.like=' + encodeURIComponent(filter.filter + '%');
       }
     }
-
-    // Invoking backend and returning observable.
     return this.httpService.get<Count>('/magic/modules/magic/roles-count' + query);
   }
 
@@ -66,9 +58,7 @@ export class RoleService {
    * @param name Name of new role to create
    * @param description Description for role
    */
-  public create(name: string, description: string) {
-
-    // Invoking backend and returning observable.
+  create(name: string, description: string) {
     return this.httpService.post<any>('/magic/modules/magic/roles', {
       name,
       description
@@ -81,9 +71,7 @@ export class RoleService {
    * @param name Name of role to update
    * @param description Description for role
    */
-  public update(name: string, description: string) {
-
-    // Invoking backend and returning observable.
+  update(name: string, description: string) {
     return this.httpService.put<any>('/magic/modules/magic/roles', {
       name,
       description
@@ -95,9 +83,8 @@ export class RoleService {
    * 
    * @param name Name of role to delete
    */
-  public delete (name: string) {
-    return this.httpService.delete<Affected>('/magic/modules/magic/roles?name=' +
-      encodeURIComponent(name));
+  delete (name: string) {
+    return this.httpService.delete<Affected>('/magic/modules/magic/roles?name=' + encodeURIComponent(name));
   }
 
   /**
@@ -105,8 +92,7 @@ export class RoleService {
    * 
    * @param role Name of role to count users belonging to
    */
-  public countUsers(role: string) {
-    return this.httpService.get<Count>('/magic/modules/magic/users_roles-count?role.eq=' +
-      encodeURIComponent(role));
+  countUsers(role: string) {
+    return this.httpService.get<Count>('/magic/modules/magic/users_roles-count?role.eq=' + encodeURIComponent(role));
   }
 }

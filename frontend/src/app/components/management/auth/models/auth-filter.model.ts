@@ -49,8 +49,6 @@ export function createAuthQuery(filter: AuthFilter, name: string) {
   if (!filter) {
     return query;
   }
-
-  // Applying limit and offset
   if (filter.limit) {
     query += '?limit=' + filter.limit;
   }
@@ -61,13 +59,9 @@ export function createAuthQuery(filter: AuthFilter, name: string) {
       query += "?offset=" + filter.offset;
     }
   }
-
-  // Applying filter parts, if given.
   if (filter.filter && filter.filter !== '') {
     query += `&${name}.like=` + encodeURIComponent(filter.filter + '%');
   }
-
-  // Applying sorting, if given.
   if (filter.order && filter.order !== '') {
     query += '&order=' + encodeURIComponent(filter.order);
   }

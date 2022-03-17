@@ -298,14 +298,14 @@
 
         <!-- Profile -->
         <mat-list-option 
-          [style.display]="authService.authenticated ? '' : 'none'"
+          [style.display]="backendService.active?.token ? '' : 'none'"
           [matTooltipDisabled]="sideNavStatus" 
           matTooltip="Edit your profile" 
           matTooltipPosition="after" 
           routerLinkActive="active-link"
           #profile="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
-          <ng-container *ngIf="authService.authenticated">
+          <ng-container *ngIf="backendService.active?.token">
             <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" [routerLink]="backendIsConfigured ? '/profile' : null">
               <mat-icon>person</mat-icon>
               <span class="title">Profile</span>

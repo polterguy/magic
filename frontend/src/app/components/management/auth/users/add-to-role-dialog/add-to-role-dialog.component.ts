@@ -10,8 +10,8 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 // Application specific imports.
 import { Role } from '../../models/role.model';
 import { RoleService } from '../../services/role.service';
-import { User } from 'src/app/components/management/auth/models/user.model';
 import { FeedbackService } from 'src/app/services/feedback.service';
+import { User } from 'src/app/components/management/auth/models/user.model';
 import { UserService } from 'src/app/components/management/auth/services/user.service';
 
 /**
@@ -27,12 +27,12 @@ export class AddToRoleDialogComponent implements OnInit {
   /**
    * What roles are available for us.
    */
-  public roles: Role[] = [];
+  roles: Role[] = [];
 
   /**
    * What role to add user to.
    */
-  public role: Role = null;
+  role: Role = null;
 
   /**
    * Creates an instance of your component.
@@ -55,18 +55,13 @@ export class AddToRoleDialogComponent implements OnInit {
    * Implementation of OnInit.
    */
   ngOnInit() {
-
-    // Fetching available roles from backend.
     this.roleService.list({
       limit: -1,
     }).subscribe((roles: Role[]) => {
-
-      // Assigning result to model, making sure we remove roles user already belongs to.
       this.roles = roles.filter(x => this.data.roles?.indexOf(x.name) === -1);
       if (this.roles.length > 0) {
         this.role = this.roles[0];
       }
-
     }, (error: any) => this.feedbackService.showError(error));
   }
 
@@ -74,16 +69,9 @@ export class AddToRoleDialogComponent implements OnInit {
    * Adds user to specified role.
    */
   public add() {
-
-    // Invoking backend to associate user with specified role.
     this.userService.addRole(this.data.username, this.role.name).subscribe(() => {
-
-      // Success! User associated with role.
       this.dialogRef.close(this.data);
-
-      // Updating user object.
       this.data.roles.push(this.role.name);
-
     }, (error: any) => this.feedbackService.showError(error));
   }
 }

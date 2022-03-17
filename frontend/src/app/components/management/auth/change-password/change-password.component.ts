@@ -8,8 +8,8 @@ import { Component } from '@angular/core';
 
 // Application specific imports.
 import { AuthService } from '../../../../services/auth.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
 import { BackendService } from 'src/app/services/backend.service';
+import { FeedbackService } from 'src/app/services/feedback.service';
 
 /**
  * Change password component allowing users to change their current password.
@@ -21,26 +21,27 @@ import { BackendService } from 'src/app/services/backend.service';
 })
 export class ChangePasswordComponent {
 
-
   /**
    * for toggling password
    */
-  public hide: boolean = true;
+  hide: boolean = true;
+
   /**
    * New password user wants to use.
    */
-  public password = '';
+  password = '';
 
   /**
    * Repeated value of new password user wants to use.
    */
-  public repeatPassword = '';
+  repeatPassword = '';
 
   /**
    * Creates an instance of your component.
    * 
    * @param authService Needed to invoke backend to actually perform the password change
    * @param feedbackService Needed to provide feedback to user
+   * @param backendService Needed to check if password will be transmitted in clear text
    */
   constructor(
     private authService: AuthService,
@@ -51,18 +52,11 @@ export class ChangePasswordComponent {
   /**
    * Invoked when user wants to save his or her password.
    */
-  public savePassword() {
-
-    // Sanity checking password.
+  savePassword() {
     if (this.password.length !== 0 || this.password === this.repeatPassword) {
-
-      // Invoking backend to perform actual password update.
       this.authService.changePassword(this.password).subscribe(() => {
-
-        // Providing user with some feedback, and forcing user to login again.
         this.feedbackService.showInfoShort('Your password was successfully updated, please login again');
         this.authService.logoutFromCurrent(true);
-
       }, (error: any) => this.feedbackService.showError(error));
     }
   }

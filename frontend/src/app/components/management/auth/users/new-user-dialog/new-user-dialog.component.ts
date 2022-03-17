@@ -8,8 +8,8 @@ import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
-import { User } from 'src/app/components/management/auth/models/user.model';
 import { FeedbackService } from 'src/app/services/feedback.service';
+import { User } from 'src/app/components/management/auth/models/user.model';
 import { UserService } from 'src/app/components/management/auth/services/user.service';
 
 /**
@@ -25,17 +25,17 @@ export class NewUserDialogComponent {
   /**
    * Username for new user.
    */
-  public username: string = '';
+  username: string = '';
 
   /**
    * Initial password for new user.
    */
-  public password: string = '';
+  password: string = '';
 
   /**
    * Whether or not password should be hidden or not.
    */
-  public hide = true;
+  hide = true;
 
   /**
    * Creates an instance of your component.
@@ -58,12 +58,8 @@ export class NewUserDialogComponent {
   /**
    * Creates a new user.
    */
-  public create() {
-
-    // Invoking backend to create the new user.
+  create() {
     this.userService.create(this.username, this.password).subscribe((res: any) => {
-
-      // Success! User created.
       this.dialogRef.close(this.username);
     }, (error: any) => this.feedbackService.showError(error));
   }
@@ -71,15 +67,11 @@ export class NewUserDialogComponent {
   /**
    * Updates an existing user.
    */
-  public update() {
-
-    // Invoking backend to create the new user.
+  update() {
     this.userService.update({
       username: this.username,
       password: this.password
-    }).subscribe((res: any) => {
-
-      // Success! User created.
+    }).subscribe(() => {
       this.dialogRef.close(this.username);
     }, (error: any) => this.feedbackService.showError(error));
   }
@@ -88,9 +80,7 @@ export class NewUserDialogComponent {
    * Invoked when dialog should simply be closed without updating
    * an existing or creating a new user.
    */
-   public close() {
-
-    // Simply closing dialog without passing data to caller.
+   close() {
     this.dialogRef.close();
   }
 }
