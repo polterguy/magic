@@ -24,18 +24,13 @@ export class EndpointService {
    * Creates an instance of your service.
    * 
    * @param httpService HTTP service to use for backend invocations
-   * @param backendService Needed to extract root URL
    */
-  constructor(
-    private httpService: HttpService,
-    private backendService: BackendService) { }
+  constructor(private httpService: HttpService) { }
 
   /**
    * Retrieves meta data about the endpoints in your installation.
    */
   public endpoints() {
-
-    // Invoking backend and returning observable to caller.
     return this.httpService.get<Endpoint[]>('/magic/system/endpoints/list');
   }
 
