@@ -33,9 +33,9 @@ export class BackendService {
    */
   constructor(
     private httpClient: HttpClient,
-    private backendsListService: BackendsStorageService) {
-    if (this.backendsListService.backends.length > 0) {
-      for (const idx of this.backendsListService.backends.filter(x => x.token)) {
+    private backendsStorageService: BackendsStorageService) {
+    if (this.backendsStorageService.backends.length > 0) {
+      for (const idx of this.backendsStorageService.backends.filter(x => x.token)) {
         this.ensureRefreshJWTTokenTimer(idx);
       }
       this.getEndpoints();
@@ -46,24 +46,24 @@ export class BackendService {
    * Returns the currently used backend.
    */
   get active() {
-    return this.backendsListService.backends.length === 0 ? null : this.backendsListService.backends[0];
+    return this.backendsStorageService.backends.length === 0 ? null : this.backendsStorageService.backends[0];
   }
 
   /**
    * Returns all backends.
    */
   get backends() {
-    return this.backendsListService.backends;
+    return this.backendsStorageService.backends;
   }
 
   /**
    * Sets the currently selected backend.
    */
   upsertAndActivate(value: Backend) {
-    if (this.backendsListService.setActive(value)) {
+    if (this.backendsStorageService.setActive(value)) {
       this.getEndpoints();
     }
-    this.backendsListService.persistBackends();
+    this.backendsStorageService.persistBackends();
     this.ensureRefreshJWTTokenTimer(this.active);
   }
 
@@ -83,13 +83,13 @@ export class BackendService {
 
     // We need to track current backend such that we can return to caller whether or not refreshing UI is required.
     const cur = this.active;
-    this.backendsListService.backends = this.backendsListService.backends.filter(x => x.url !== backend.url);
+    this.backendsStorageService.backends = this.backendsStorageService.backends.filter(x => x.url !== backend.url);
 
     /*
      * Persisting all backends to local storage object,
      * and updating the currently selected backend.
      */
-    this.backendsListService.persistBackends();
+    this.backendsStorageService.persistBackends();
     return cur.url === backend.url;
   }
 
@@ -127,7 +127,7 @@ export class BackendService {
 
         // Token has already expired, hence deleting token and persisting backends.
         backend.token = null;
-        this.backendsListService.persistBackends();
+        this.backendsStorageService.persistBackends();
 
       } else if (backend.token.expires_in < 60) {
 
@@ -163,7 +163,7 @@ export class BackendService {
     // Ensuring token is still valid, and if not simply destroying it and returning early.
     if (backend.token.expired) {
       backend.token = null;
-      this.backendsListService.persistBackends();
+      this.backendsStorageService.persistBackends();
       console.log({
         content: 'Token for backend expired',
         backend: backend.url
@@ -184,7 +184,7 @@ export class BackendService {
 
         // Assigning new token to backend and persisting now with new token.
         backend.token = new Token(response.ticket);
-        this.backendsListService.persistBackends();
+        this.backendsStorageService.persistBackends();
 
         // Making sure we're able to refresh again once it's time.
         this.ensureRefreshJWTTokenTimer(backend);
@@ -192,7 +192,7 @@ export class BackendService {
       }, (error: any) => {
 
         backend.token = null;
-        this.backendsListService.persistBackends();
+        this.backendsStorageService.persistBackends();
         console.error(error);
       });
   }

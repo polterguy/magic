@@ -102,7 +102,6 @@ import { CrudBackendComponent } from './components/tools/crudifier/crud-backend/
 import { CodemirrorSqlComponent } from './components/codemirror/codemirror-sql/codemirror-sql.component';
 import { SetupAuthComponent } from './components/management/config/setup/setup-auth/setup-auth.component';
 import { CrudFrontendComponent } from './components/tools/crudifier/crud-frontend/crud-frontend.component';
-import { ConfirmEmailComponent } from './components/management/auth/confirm-email/confirm-email.component';
 import { ConfigEditorComponent } from './components/management/config/config-editor/config-editor.component';
 import { GenerateCrudAppComponent } from './components/tools/ide/generate-crud-app/generate-crud-app.component';
 import { FileActionsComponent } from './components/tools/ide/action-buttons/file-actions/file-actions.component';
@@ -213,7 +212,6 @@ import { IncompatibleFileDialogComponent } from './components/tools/ide/incompat
     CrudSqlExtraComponent,
     CrudFrontendExtraComponent,
     ChangePasswordComponent,
-    ConfirmEmailComponent,
     JailUserDialogComponent,
     RenameFileDialogComponent,
     RenameFolderDialogComponent,
