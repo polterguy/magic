@@ -40,16 +40,16 @@ export class Messages {
   /**
    * Message will be published when a component needs to be dynamically injected somewhere.
    */
-   static readonly INJECT_COMPONENT = 'app.ui.inject-component';
+  static readonly INJECT_COMPONENT = 'app.ui.inject-component';
 
   /**
    * Message will be published when dynamically injected component wrapper needs to be cleared
    * for any dynamically injected components.
    */
-   static readonly CLEAR_COMPONENTS = 'app.ui.clear-dynamic-components';
+  static readonly CLEAR_COMPONENTS = 'app.ui.clear-dynamic-components';
 
   /**
    * Message will be published when theme changes.
    */
-   static readonly THEME_CHANGED = 'app.ui.theme-changed';
+  static readonly THEME_CHANGED = 'app.ui.theme-changed';
 }
