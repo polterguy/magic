@@ -6,13 +6,11 @@
 // Angular and system imports.
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
 
 // Application specific imports.
 import { Token } from '../models/token.model';
 import { Backend } from '../models/backend.model';
 import { Endpoint } from '../models/endpoint.model';
-import { Response } from 'src/app/models/response.model';
 import { BackendsStorageService } from './backendsstorage.service';
 import { AuthenticateResponse } from '../components/management/auth/models/authenticate-response.model';
 
@@ -26,13 +24,6 @@ import { AuthenticateResponse } from '../components/management/auth/models/authe
   providedIn: 'root'
 })
 export class BackendService {
-
-  private _authenticated = new BehaviorSubject<boolean>(undefined);
-
-  /**
-   * To allow consumers to subscribe to authentication status changes.
-   */
-  authenticatedChanged = this._authenticated.asObservable();
 
   /**
    * Creates an instance of your service.
@@ -76,99 +67,6 @@ export class BackendService {
     }
     this.backendsListService.persistBackends();
     this.ensureRefreshJWTTokenTimer(this.current);
-  }
-
-  /**
-   * Verifies validity of token by invoking backend.
-   */
-   verifyTokenForCurrent() {
-
-    // Invokes backend and returns observable to caller.
-    return this.httpClient.get<Response>(
-      this.current.url +
-      '/magic/system/auth/verify-ticket');
-  }
-
-  /**
-   * Invokes specified backend to check if auto-auth has been turned on.
-   * 
-   * @param url URL of backend to check
-   */
-  autoAuth(url: string) {
-    return this.httpClient.get<Response>(url.replace(/\s/g, '').replace(/(\/)+$/, '') + '/magic/system/auth/auto-auth');
-  }
-
-  /**
-   * Authenticates user towards current backend.
-   * 
-   * @param username Username
-   * @param password Password
-   * @param storePassword Whether or not passsword should be persisted into local storage
-   */
-  loginToCurrent(username: string, password: string, storePassword: boolean) {
-    const url = this.current.url;
-    return new Observable<AuthenticateResponse>(observer => {
-
-      let query = '';
-      if (username && username !== '') {
-        query += '?username=' + encodeURIComponent(username);
-        query += '&password=' + encodeURIComponent(password);
-      }
-
-      this.httpClient.get<AuthenticateResponse>(
-        this.current.url +
-        '/magic/system/auth/authenticate' + query, {
-
-          /*
-           * Notice, if we're doing Windows automatic authentication,
-           * we will not be given a username/password combination to this method, at which point
-           * we'll have to make sure Angular passes in Windows credentials to endpoint.
-           */
-          withCredentials: query === '' ? true : false,
-
-        }).subscribe((auth: AuthenticateResponse) => {
-
-          // Setting backend we just authenticated towards to the active backend.
-          const cur = new Backend(url, username, storePassword ? password : null, auth.ticket);
-          this.upsertAndActivate(cur);
-
-          // Invoking next link in chain of observables.
-          observer.next(auth);
-          observer.complete();
-
-          // Ensuring subscribers to authentication status is notified.
-          this._authenticated.next(true);
-          console.log({
-            content: 'User successfully authenticated towards backend',
-            username: username,
-            backend: url,
-          });
-
-        }, (error: any) => {
-          console.log({
-            content: 'Could not authenticate towards backend',
-            username: username,
-            backend: url,
-            error,
-          });
-          observer.error(error);
-          observer.complete();
-        });
-    });
-  }
-
-  /**
-   * Logs out the user from his currently active backend.
-   * 
-   * @param destroyPassword Whether or not password should be removed before persisting backend
-   */
-  logoutFromCurrent(destroyPassword: boolean) {
-    if (this.current?.token) {
-      const cur = new Backend(this.current.url, this.current.username, destroyPassword ? null : this.current.password);
-      this.upsertAndActivate(cur);
-      this.current.createAccessRights();
-      this._authenticated.next(false);
-    }
   }
 
   /**

@@ -12,6 +12,7 @@ import { Response } from 'src/app/models/response.model';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { FormBuilder, Validators } from '@angular/forms';
+import { RegisterService } from 'src/app/services/register.service';
 
 /**
  * Register component allowing users to register in the system.
@@ -47,13 +48,13 @@ export class RegisterComponent implements OnInit {
    * @param feedbackService Needed to provide feedback to user
    */
   constructor(
-    private authService: AuthService,
+    private registerService: RegisterService,
     public backendService: BackendService,
     private feedbackService: FeedbackService,
     private formBuilder: FormBuilder) { }
 
   /**
-   * reactive form declaration
+   * Reactive form declaration
    */
    registrationForm = this.formBuilder.group({
     email: ['', [Validators.required, Validators.email]],
@@ -76,7 +77,7 @@ export class RegisterComponent implements OnInit {
   /**
    * Invoked when user clicks the register button.
    */
-  public register() {
+  register() {
 
     // Verifying user correctly typed his password.
     if (this.registrationForm.value.password === '') {
@@ -93,7 +94,7 @@ export class RegisterComponent implements OnInit {
     }
 
     // Invoking backend to register user.
-    this.authService.register(
+    this.registerService.register(
       this.registrationForm.value.email,
       this.registrationForm.value.password,
       location.origin,

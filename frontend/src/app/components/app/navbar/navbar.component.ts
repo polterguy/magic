@@ -29,6 +29,7 @@ import { OverlayContainer } from '@angular/cdk/overlay';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Location } from '@angular/common'; 
 import { Backend } from 'src/app/models/backend.model';
+import { RegisterService } from 'src/app/services/register.service';
 
 /**
  * Component wrapping navbar.
@@ -105,6 +106,7 @@ export class NavbarComponent implements OnInit {
     private configService: ConfigService,
     private bazarService: BazarService,
     private overlayContainer: OverlayContainer,
+    private registerService: RegisterService,
     private clipboard: Clipboard,
     private cdRef: ChangeDetectorRef,
     private location: Location) { }
@@ -143,7 +145,7 @@ export class NavbarComponent implements OnInit {
 
     })();
 
-    this.backendService.authenticatedChanged.subscribe(() => {
+    this.authService.authenticatedChanged.subscribe(() => {
       this.cdRef.detectChanges();
     });
     
@@ -195,7 +197,7 @@ export class NavbarComponent implements OnInit {
         this.backendService.upsertAndActivate(new Backend(url, username, null, token));
 
         // Verifying token is valid by invoking backend trying to refresh token.
-        this.backendService.verifyTokenForCurrent().subscribe(() => {
+        this.authService.verifyTokenForCurrent().subscribe(() => {
 
           // Signalling success to user.
           this.feedbackService.showInfo(`You were successfully authenticated as '${username}'`);
@@ -231,7 +233,7 @@ export class NavbarComponent implements OnInit {
         this.backendService.upsertAndActivate(new Backend(params['url'], params['username']));
 
         // Registration confirmation of email address.
-        this.authService.verifyEmail(params['username'], token).subscribe((result: Response) => {
+        this.registerService.verifyEmail(params['username'], token).subscribe((result: Response) => {
 
           // Checking for success.
           if (result.result === 'success') {
@@ -308,7 +310,7 @@ export class NavbarComponent implements OnInit {
    * Logs the user out from his current backend.
    */
   public logout() {
-    this.backendService.logoutFromCurrent(false);
+    this.authService.logoutFromCurrent(false);
     if (!this.notSmallScreen) {
       this.closeNavbar();
     }
@@ -356,7 +358,7 @@ export class NavbarComponent implements OnInit {
         }, (error: any) => this.feedbackService.showError(error));
 
       }, () => {
-        this.backendService.logoutFromCurrent(false);
+        this.authService.logoutFromCurrent(false);
       });
 
     } else {
