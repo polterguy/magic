@@ -5,13 +5,12 @@
 
 // Angular and system imports.
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 
 // Application specific imports.
-import { AuthService } from '../../../../services/auth.service';
 import { Response } from 'src/app/models/response.model';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { FormBuilder, Validators } from '@angular/forms';
 import { RegisterService } from 'src/app/services/register.service';
 
 /**
@@ -28,24 +27,25 @@ export class RegisterComponent implements OnInit {
    * Status of component, allowing us to display different types of UI,
    * depending upon whether or not user is authenticated, already registered, etc.
    */
-  public status = '';
+  status = '';
 
   /**
    * Whether or not password should be displayed or hidden as the user types it.
    */
-  public hide = true;
+  hide = true;
 
   /**
    * Password of user repeated.
    */
-  public repeatPassword: string;
+  repeatPassword: string;
 
   /**
    * Creates an instance of your component.
    * 
-   * @param authService Needed to invoke backend to perform the actual registration
-   * @param authService Needed to retrieve the current backend's URL
+   * @param registerService Needed to be able to register user in backend
+   * @param backendService Needed to be able to determine if password will be sent in clear text or not
    * @param feedbackService Needed to provide feedback to user
+   * @param formBuilder Needed to build our form
    */
   constructor(
     private registerService: RegisterService,
@@ -56,7 +56,7 @@ export class RegisterComponent implements OnInit {
   /**
    * Reactive form declaration
    */
-   registrationForm = this.formBuilder.group({
+  registrationForm = this.formBuilder.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required]]
   });
@@ -65,8 +65,6 @@ export class RegisterComponent implements OnInit {
    * Implementation of OnInit.
    */
   ngOnInit() {
-
-    // Checking status of user.
     if (this.backendService.active?.token) {
       this.status = 'already-logged-in';
     } else {
@@ -78,50 +76,29 @@ export class RegisterComponent implements OnInit {
    * Invoked when user clicks the register button.
    */
   register() {
-
-    // Verifying user correctly typed his password.
     if (this.registrationForm.value.password === '') {
-
-      // Providing user with some basic feedback.
       this.feedbackService.showError('Please supply a password');
       return;
-
     } else if (this.registrationForm.value.password !== this.repeatPassword) {
-
-      // Providing user with some basic feedback.
       this.feedbackService.showError('Passwords are not matching');
       return;
     }
 
-    // Invoking backend to register user.
     this.registerService.register(
       this.registrationForm.value.email,
       this.registrationForm.value.password,
       location.origin,
     ).subscribe((result: Response) => {
-
-      // Assigning status to result of invocation.
       this.status = result.result;
-
-      // Checking result of invocation.
       if (result.result === 'already-registered') {
-
-        // Providing feedback to user.
         this.feedbackService.showError('You are already registered in backend');
       } else if (result.result === 'confirm-email-address-email-sent') {
-
-        // Providing feedback to user.
         this.feedbackService.showInfo('You have been successfully registered in the system, please verify your email address by clicking the link in the email we just sent you');
       } else if (result.result === 'email-sent-to-moderator') {
-
-        // Providing feedback to user.
         this.feedbackService.showInfo('You have been successfully registered in the system, please wait for a moderator to accept you as a user');
       } else {
-
-        // Providing feedback to user.
         this.feedbackService.showInfo('You have been successfully registered in the system');
       }
-
     }, (error: any) => this.feedbackService.showError(error));
   }
 }

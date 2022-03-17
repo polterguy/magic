@@ -22,7 +22,7 @@ export class JailUserDialogComponent {
   /**
    * Selected release date for user.
    */
-  public releaseDate = new Date();
+  releaseDate = new Date();
 
   /**
    * Creates an instance of your component.
@@ -34,7 +34,7 @@ export class JailUserDialogComponent {
   /**
    * Invoked when user has selected a release date for user.
    */
-  public imprison() {
+  imprison() {
 
     // Closing dialogue, passing in release date to caller.
     this.dialogRef.close(this.releaseDate);

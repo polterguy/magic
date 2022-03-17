@@ -50,7 +50,7 @@ export class ConfirmDialogComponent {
   /**
    * Invoked when user clicks yes to confirm the action.
    */
-  public yes() {
+  yes() {
     this.data.confirmed = true;
     this.dialogRef.close(this.data);
   }
@@ -58,7 +58,7 @@ export class ConfirmDialogComponent {
   /**
    * Invoked when user clicks no to regret the action.
    */
-  public no() {
+  no() {
     this.data.confirmed = false;
     this.dialogRef.close(this.data);
   }

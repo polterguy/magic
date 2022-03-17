@@ -36,9 +36,7 @@ export class UserService {
    * 
    * @param filter Optional query filter deciding which items to return
    */
-  public list(filter: AuthFilter = null) {
-
-    // Invoking backend and returning observable.
+  list(filter: AuthFilter = null) {
     return this.httpService.get<User[]>('/magic/modules/magic/users' + createAuthQuery(filter, 'username'));
   }
 
@@ -47,19 +45,13 @@ export class UserService {
    * 
    * @param filter Optional query filter deciding which items to count
    */
-  public count(filter: AuthFilter = null) {
-
-    // Dynamically building our query parameters.
+  count(filter: AuthFilter = null) {
     let query = '';
     if (filter !== null) {
-
-      // Applying filter parts, if given.
       if (filter.filter && filter.filter !== '') {
         query += '?username.like=' + encodeURIComponent(filter.filter + '%');
       }
     }
-
-    // Invoking backend and returning observable.
     return this.httpService.get<Count>('/magic/modules/magic/users-count' + query);
   }
 
@@ -69,9 +61,7 @@ export class UserService {
    * @param username Username for new user
    * @param password Initial password for user
    */
-  public create(username: string, password: string) {
-
-    // Invoking backend and returning observable.
+  create(username: string, password: string) {
     return this.httpService.post<any>('/magic/modules/magic/users', {
       username,
       password
@@ -83,9 +73,7 @@ export class UserService {
    * 
    * @param user User to update
    */
-  public update(user: User) {
-
-    // Invoking backend and returning observable.
+  update(user: User) {
     return this.httpService.put<any>('/magic/modules/magic/users', {
       username: user.username,
       password: user.password,
@@ -101,9 +89,7 @@ export class UserService {
    * @param username Username of user you want to imprison
    * @param releaseDate Date and time for when user can access Magic again
    */
-  public imprison(username: string, releaseDate: Date) {
-
-    // Invoking backend and returning observable.
+  imprison(username: string, releaseDate: Date) {
     return this.httpService.put<Response>('/magic/system/auth/imprison', {
       username,
       releaseDate,
@@ -115,11 +101,8 @@ export class UserService {
    * 
    * @param username Username of user you want to delete
    */
-  public delete(username: string) {
-
-    // Invoking backend and returning observable.
-    return this.httpService.delete<any>('/magic/modules/magic/users?username=' +
-      encodeURIComponent(username));
+  delete(username: string) {
+    return this.httpService.delete<any>('/magic/modules/magic/users?username=' + encodeURIComponent(username));
   }
 
   /**
@@ -127,11 +110,8 @@ export class UserService {
    * 
    * @param username Username of user to retrieve roles for
    */
-  public getRoles(username: string) {
-
-    // Invoking backend and returning observable.
-    return this.httpService.get<UserRoles[]>('/magic/modules/magic/users_roles?user.eq=' +
-      encodeURIComponent(username));
+  getRoles(username: string) {
+    return this.httpService.get<UserRoles[]>('/magic/modules/magic/users_roles?user.eq=' + encodeURIComponent(username));
   }
 
   /**
@@ -140,9 +120,7 @@ export class UserService {
    * @param user Username of user to add to role
    * @param role Name of role to add user to
    */
-  public addRole(user: string, role: string) {
-
-    // Invoking backend and returning observable.
+  addRole(user: string, role: string) {
     return this.httpService.post<Affected>('/magic/modules/magic/users_roles', {
       user,
       role,
@@ -155,9 +133,7 @@ export class UserService {
    * @param user Username of user to remove role from
    * @param role Name of role to remove user from
    */
-  public removeRole(user: string, role: string) {
-
-    // Invoking backend and returning observable.
+  removeRole(user: string, role: string) {
     return this.httpService.delete<Affected>('/magic/modules/magic/users_roles?user=' +
       encodeURIComponent(user) +
       '&role=' +
@@ -181,8 +157,6 @@ export class UserService {
    * @param username Username to generate login link on behalf of
    */
   public generateResetPasswordLink(username: string) {
-    return this.httpService.get<AuthenticateResponse>(
-      '/magic/system/auth/reset-password?username=' +
-      encodeURIComponent(username));
+    return this.httpService.get<AuthenticateResponse>('/magic/system/auth/reset-password?username=' + encodeURIComponent(username));
   }
 }
