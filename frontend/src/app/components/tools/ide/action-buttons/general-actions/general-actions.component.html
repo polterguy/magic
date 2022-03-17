@@ -2,7 +2,7 @@
 <!-- Generate CRUD -->
 <button
     mat-menu-item
-    [disabled]="!authService.access.crud.generate_crud && !authService.access.crud.generate_frontend && !authService.access.crud.generate_sql"
+    [disabled]="!backendService.current.access.crud.generate_crud && !backendService.current.access.crud.generate_frontend && !backendService.current.access.crud.generate_sql"
     matTooltip="Generate CRUD apps"
     (click)="generateCrudApp()">
     <mat-icon class="material-icons-outlined">touch_app</mat-icon>

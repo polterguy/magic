@@ -24,6 +24,7 @@ import { RenameFolderDialogComponent } from '../../rename-folder-dialog/rename-f
 import { ExecuteMacroDialogComponent } from '../../execute-macro-dialog/execute-macro-dialog.component';
 import { SelectMacroDialogComponent, Macro } from '../../select-macro-dialog/select-macro-dialog.component';
 import { NewFileFolderDialogComponent, FileObject } from '../../new-file-folder-dialog/new-file-folder-dialog.component';
+import { BackendService } from 'src/app/services/backend.service';
 
 /**
  * Folder actions component for allowing user to execute actions for selected folders in Hyper IDE.
@@ -63,6 +64,7 @@ export class FolderActionsComponent {
     private dialog: MatDialog,
     public authService: AuthService,
     private fileService: FileService,
+    public backendService: BackendService,
     private feedbackService: FeedbackService,
     readonly ngZone: NgZone
   ) { }

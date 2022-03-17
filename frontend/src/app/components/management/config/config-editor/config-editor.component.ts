@@ -13,6 +13,7 @@ import { ConfigService } from 'src/app/services/management/config.service';
 // CodeMirror options.
 import json from '../../../codemirror/options/json.json'
 import { AuthService } from '../../../../services/auth.service';
+import { BackendService } from 'src/app/services/backend.service';
 
 /**
  * Component that allows user to edit his configuration file as raw JSON.
@@ -45,6 +46,7 @@ export class ConfigEditorComponent implements OnInit {
   constructor(
     private feedbackService: FeedbackService,
     private configService: ConfigService,
+    public backendService: BackendService,
     public authService: AuthService) {
   }
 

@@ -52,7 +52,7 @@ export class ConfirmEmailComponent implements OnInit {
       const token = params['token'];
       const url = params['url'];
       const username = params['username'];
-      this.backendService.setActive(new Backend(url, username));
+      this.backendService.upsertAndActivate(new Backend(url, username));
 
       // Verifying email address by invoking backend.
       this.authService.verifyEmail(username, token).subscribe(() => {
@@ -65,7 +65,7 @@ export class ConfirmEmailComponent implements OnInit {
          * which will allow him to store his or her credentials
          * in the browser storage.
          */
-        this.authService.logout(true, false);
+        this.backendService.logoutFromCurrent(true);
         this.feedbackService.showInfo('Your email address was successully confirmed, please login again');
         this.router.navigate(['/']);
 

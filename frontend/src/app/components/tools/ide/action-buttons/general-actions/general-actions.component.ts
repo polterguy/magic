@@ -15,6 +15,7 @@ import { MessageService } from 'src/app/services/message.service';
 import { FileService } from 'src/app/services/tools/file.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { GenerateCrudAppComponent } from '../../generate-crud-app/generate-crud-app.component';
+import { BackendService } from 'src/app/services/backend.service';
 
 /**
  * General action button component for executing general actions in Hyper IDE.
@@ -57,6 +58,7 @@ export class GeneralActionsComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     public authService: AuthService,
     private fileService: FileService,
+    public backendService: BackendService,
     private messageService: MessageService,
     private feedbackService: FeedbackService,
     readonly ngZone: NgZone

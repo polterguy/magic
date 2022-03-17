@@ -2,7 +2,7 @@
 <div class="create-button">
   <button
     mat-icon-button
-    [disabled]="!authService.access.crypto.generate_server_key"
+    [disabled]="!backendService.current.access.crypto.generate_server_key"
     matTooltip="Generate server key pair"
     (click)="create()">
     <mat-icon>add_box</mat-icon>

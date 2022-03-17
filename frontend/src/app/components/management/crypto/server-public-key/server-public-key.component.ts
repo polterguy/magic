@@ -47,7 +47,7 @@ export class ServerPublicKeyComponent implements OnInit {
     public authService: AuthService,
     private cryptoService: CryptoService,
     private messageService: MessageService,
-    private backendService: BackendService,
+    public backendService: BackendService,
     private feedbackService: FeedbackService,
     private clipboard: Clipboard) { }
 

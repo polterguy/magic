@@ -61,7 +61,7 @@ export class ChangePasswordComponent {
 
         // Providing user with some feedback, and forcing user to login again.
         this.feedbackService.showInfoShort('Your password was successfully updated, please login again');
-        this.authService.logout(true, false);
+        this.backendService.logoutFromCurrent(true);
 
       }, (error: any) => this.feedbackService.showError(error));
     }

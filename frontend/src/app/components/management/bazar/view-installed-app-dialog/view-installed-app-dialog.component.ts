@@ -14,6 +14,7 @@ import { Response } from 'src/app/models/response.model';
 import { FileService } from 'src/app/services/tools/file.service';
 import { AuthService } from '../../../../services/auth.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
+import { BackendService } from 'src/app/services/backend.service';
 
 @Component({
   selector: 'app-view-installed-app-dialog',
@@ -41,6 +42,7 @@ export class ViewInstalledAppDialogComponent implements OnInit {
     private fileService: FileService,
     public authService: AuthService,
     private bazarService: BazarService,
+    public backendService: BackendService,
     private feedbackService: FeedbackService,
     @Inject(MAT_DIALOG_DATA) public data: AppManifest,
     private dialogRef: MatDialogRef<ViewInstalledAppDialogComponent>) { }

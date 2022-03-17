@@ -31,7 +31,7 @@
 
 <!-- Rename file -->
 <button mat-menu-item
-    [disabled]="!authService?.access?.files?.rename"
+    [disabled]="!backendService.current.access.files.rename"
     matTooltip="Rename file [ALT+R]"
     (click)="renameActiveFile()">
     <mat-icon class="material-icons-outlined"> drive_file_rename_outline </mat-icon>
@@ -40,7 +40,7 @@
 
 <!-- Delete file -->
 <button mat-menu-item
-    [disabled]="!authService?.access?.files?.delete_file"
+    [disabled]="!backendService.current.access.files.delete_file"
     matTooltip="Delete file [ALT+D]"
     (click)="deleteActiveFile()">
     <mat-icon>delete</mat-icon>

@@ -7,5 +7,5 @@
     <!-- <p class="mat-caption my-0">Aista Magic Cloud</p> -->
   </div>
   <div class="p-1"></div>
-  <p class="mat-caption my-0">{{getUserStatus() + ( authService.authenticated ? ' [' + getUserRoles() + ']' : '')}}</p>
+  <p class="mat-caption my-0">{{getUserStatus() + ( backendService.current?.token ? ' [' + getUserRoles() + ']' : '')}}</p>
 </mat-toolbar>

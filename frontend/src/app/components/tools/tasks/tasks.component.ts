@@ -25,6 +25,7 @@ import { ScheduleTaskDialogComponent } from './schedule-task-dialog/schedule-tas
 import hyperlambda from '../../codemirror/options/hyperlambda.json';
 import { AuthService } from '../../../services/auth.service';
 import { trigger, state, style, transition, animate } from '@angular/animations';
+import { BackendService } from 'src/app/services/backend.service';
 
 /*
  * Helper class to encapsulate a task and its details,
@@ -97,6 +98,7 @@ export class TasksComponent implements OnInit {
     private feedbackService: FeedbackService,
     private taskService: TaskService,
     public authService: AuthService,
+    public backendService: BackendService,
     private dialog: MatDialog) { }
 
   /**

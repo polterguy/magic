@@ -124,7 +124,7 @@
                   <div class="d-flex">
                     <button
                       mat-icon-button
-                      [disabled]="!authService.access.config.delete_cache_item"
+                      [disabled]="!backendService.current.access.config.delete_cache_item"
                       matTooltip="Empties your server side database declaration cache items and reloads page"
                       (click)="refresh()">
                       <mat-icon>refresh</mat-icon>
@@ -133,7 +133,7 @@
             
                     <button
                       id="loadButton"
-                      [disabled]="!authService.access.sql.list_files"
+                      [disabled]="!backendService.current.access.sql.list_files"
                       mat-raised-button
                       (click)="load()"
                       class="w-100">
@@ -143,7 +143,7 @@
           
                     <button
                       id="saveButton"
-                      [disabled]="!input.sql || !authService.access.sql.save_file"
+                      [disabled]="!input.sql || !backendService.current.access.sql.save_file"
                       mat-raised-button
                       (click)="save()"
                       class="w-100">

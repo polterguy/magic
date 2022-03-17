@@ -134,16 +134,16 @@ export class NavbarComponent implements OnInit {
     // wait for access list to be ready
     // then detect changes to update view
     (async () => {
-      while (Object.keys(this.authService.access.auth).length === 0)
+      while (Object.keys(this.backendService.current.access.auth).length === 0)
         await new Promise(resolve => setTimeout(resolve, 100));
 
-      if (Object.keys(this.authService.access.auth).length !== 0) {
+      if (Object.keys(this.backendService.current.access.auth).length !== 0) {
         this.cdRef.detectChanges();
       }
 
     })();
 
-    this.authService.authenticatedChanged.subscribe(status => {
+    this.backendService.authenticatedChanged.subscribe(() => {
       this.cdRef.detectChanges();
     });
     
@@ -162,10 +162,8 @@ export class NavbarComponent implements OnInit {
        * Checking if user accessed system with a link containing query params.
        */
       
-      const backend = params['backend'];
-      const token = params['token'];
-
       // If url has parameters, we're identifying them
+      const backend = params['backend'];
       if (backend) {
 
         // Check if the url already exists in persisted backends.
@@ -176,20 +174,12 @@ export class NavbarComponent implements OnInit {
           cur.password = old[0].password;
           cur.token = old[0].token;
         }
-        this.backendService.setActive(cur);
-
-        // Based on token availability authentication status will be set
-        if (!this.backendService.current.token) {
-          this.authService.updateAuthStatus(false);
-        } else {
-          this.authService.updateAuthStatus(true);
-        }
+        this.backendService.upsertAndActivate(cur);
         this.location.replaceState('');
       }
 
-      /*
-       * Checking if user accessed system with an authentication link.
-       */
+      // Checking if user accessed system with an authentication link.
+      const token = params['token'];
       if (token && token.includes('.')) {
 
         /*
@@ -202,10 +192,10 @@ export class NavbarComponent implements OnInit {
         const username = params['username'];
 
         // Updating current backend.
-        this.backendService.setActive(new Backend(url, username, null, token));
+        this.backendService.upsertAndActivate(new Backend(url, username, null, token));
 
         // Verifying token is valid by invoking backend trying to refresh token.
-        this.authService.verifyToken().subscribe(() => {
+        this.backendService.verifyTokenForCurrent().subscribe(() => {
 
           // Signalling success to user.
           this.feedbackService.showInfo(`You were successfully authenticated as '${username}'`);
@@ -222,7 +212,7 @@ export class NavbarComponent implements OnInit {
             this.router.navigate(['/']);
 
             // Making sure we refresh access rights.
-            this.authService.createAccessRights();
+            this.backendService.current.createAccessRights();
           }
 
         }, (error: any) => {
@@ -238,7 +228,7 @@ export class NavbarComponent implements OnInit {
          *
          * Need to set the current backend first.
          */
-        this.backendService.setActive(new Backend(params['url'], params['username']));
+        this.backendService.upsertAndActivate(new Backend(params['url'], params['username']));
 
         // Registration confirmation of email address.
         this.authService.verifyEmail(params['username'], token).subscribe((result: Response) => {
@@ -318,7 +308,7 @@ export class NavbarComponent implements OnInit {
    * Logs the user out from his current backend.
    */
   public logout() {
-    this.authService.logout(false);
+    this.backendService.logoutFromCurrent(false);
     if (!this.notSmallScreen) {
       this.closeNavbar();
     }
@@ -365,8 +355,8 @@ export class NavbarComponent implements OnInit {
 
         }, (error: any) => this.feedbackService.showError(error));
 
-      }, (error: any) => {
-        this.authService.logout(false, false);
+      }, () => {
+        this.backendService.logoutFromCurrent(false);
       });
 
     } else {
@@ -415,7 +405,7 @@ export class NavbarComponent implements OnInit {
    */
   switchBackend(backend: Backend) {
     const currentURL: string = window.location.protocol + '//' + window.location.host;
-    this.backendService.setActive(backend);
+    this.backendService.upsertAndActivate(backend);
     window.location.replace(currentURL);
   }
 

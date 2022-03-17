@@ -22,6 +22,7 @@ import { EvaluatorService } from '../../../evaluator/services/evaluator.service'
 import { PreviewFileDialogComponent } from '../../preview-file-dialog/preview-file-dialog.component';
 import { ExecuteEndpointDialogComponent } from '../../execute-endpoint-dialog/execute-endpoint-dialog.component';
 import { FileObjectName, RenameFileDialogComponent } from '../../rename-file-dialog/rename-file-dialog.component';
+import { BackendService } from 'src/app/services/backend.service';
 
 /**
  * File actions component for executing actions for selected file in Hyper IDE.
@@ -56,6 +57,7 @@ export class FileActionsComponent implements OnInit {
     private dialog: MatDialog,
     public authService: AuthService,
     private fileService: FileService,
+    public backendService: BackendService,
     private feedbackService: FeedbackService,
     private evaluatorService: EvaluatorService,
     readonly ngZone: NgZone

@@ -17,6 +17,7 @@ import { CacheItem } from '../../../models/cache-item.model';
 import { AuthService } from '../../../services/auth.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { CacheService } from 'src/app/services/analytics/cache.service';
+import { BackendService } from 'src/app/services/backend.service';
 
 /**
  * Cache component for allowing user to inspect, remove, and purge cache items.
@@ -78,6 +79,7 @@ export class DiagnosticsCacheComponent implements OnInit {
     private clipboard: Clipboard,
     public authService: AuthService,
     private cacheService: CacheService,
+    public backendService: BackendService,
     private feedbackService: FeedbackService) { }
 
   /**

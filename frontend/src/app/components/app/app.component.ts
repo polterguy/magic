@@ -111,10 +111,10 @@ export class AppComponent implements OnInit, OnDestroy {
   /**
    * OnInit implementation.
    */
-  public ngOnInit() {
+  ngOnInit() {
 
     // Subscribing to authentication status changed.
-    this.authService.authenticatedChanged.subscribe((authenticated: boolean) => {
+    this.backendService.authenticatedChanged.subscribe((authenticated: boolean) => {
 
       /*
        * If user was authenticated and belongs to root role, need to check configuration
@@ -182,7 +182,7 @@ export class AppComponent implements OnInit, OnDestroy {
           if (this.router.url !== '/') {
             this.router.navigate(['/']);
           }
-          this.authService.createAccessRights();
+          this.backendService.current.createAccessRights();
           break;
 
         // User was logged in.
@@ -311,8 +311,8 @@ export class AppComponent implements OnInit, OnDestroy {
 
         }, (error: any) => this.feedbackService.showError(error));
 
-      }, (error: any) => {
-        this.authService.logout(false, false);
+      }, () => {
+        this.backendService.logoutFromCurrent(false);
       });
 
     } else {
