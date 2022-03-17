@@ -6,6 +6,7 @@
 // Angular and system imports.
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
+import { OverlayContainer } from '@angular/cdk/overlay';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 
@@ -13,15 +14,14 @@ import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { Message } from 'src/app/models/message.model';
 import { Response } from 'src/app/models/response.model';
 import { Messages } from 'src/app/models/messages.model';
-import { BazarService } from '../../services/management/bazar.service';
-import { ConfigService } from '../../services/management/config.service';
-import { MessageService } from 'src/app/services/message.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { LoaderService } from 'src/app/services/loader.service';
-import { DiagnosticsService } from '../../services/diagnostics.service';
-import { OverlayContainer } from '@angular/cdk/overlay';
+import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
+import { FeedbackService } from 'src/app/services/feedback.service';
+import { BazarService } from '../../services/management/bazar.service';
+import { DiagnosticsService } from '../../services/diagnostics.service';
+import { ConfigService } from '../../services/management/config.service';
 
 /**
  * Main wire frame application component.
@@ -33,15 +33,17 @@ import { BackendService } from 'src/app/services/backend.service';
 })
 export class AppComponent implements OnInit, OnDestroy {
 
+  private subscriber: Subscription;
+
   /**
    * To get the width of the screen 
    * getScreenWidth {number} :: define how the sidenav and the content should behave based on the screen size
    * smallScreenSize {number} :: to set a fixed size as an agreement
    * notSmallScreen {boolean} :: to check whether the screen width is small or large
    */
-  public getScreenWidth: number;
-  public smallScreenSize: number = 768;
-  public notSmallScreen: boolean = undefined;
+  getScreenWidth: number;
+  smallScreenSize: number = 768;
+  notSmallScreen: boolean = undefined;
 
   @HostListener('window:resize', ['$event'])
   onWindowResize() {
@@ -50,36 +52,33 @@ export class AppComponent implements OnInit, OnDestroy {
     this.sidenavOpened = this.notSmallScreen;
   }
 
-  // Needed to subscribe to messages published by other componentsd.
-  private subscriber: Subscription;
-
   /**
    * True if navigation menu is expanded.
    */
-  public sidenavOpened: boolean;
+  sidenavOpened: boolean;
 
   /**
    * If there exists a newer version of Magic Core as published by the Bazar,
    * this value will be true.
    */
-  public shouldUpdateCore: boolean = false;
+  shouldUpdateCore: boolean = false;
    
   /**
    * Backend version as returned from server if authenticated.
    */
-  public version: string = null;
+  version: string = null;
 
    /**
     * Latest version of Magic as published by the Bazar.
     */
-  public bazarVersion: string = null;
+  bazarVersion: string = null;
 
   /**
    * CSS class wrapping entire application.
    * 
    * Used to change theme dynamically, and invert colors between 'light' and 'dark' themes.
    */
-  public theme: string = 'light';
+  theme: string = 'light';
 
   /**
    * Creates an instance of your component.
@@ -90,9 +89,10 @@ export class AppComponent implements OnInit, OnDestroy {
    * @param authService Authentication and authorisation service, used to authenticate user, etc
    * @param backendService Needed toverify we'reactuallyconnected to some backend before retrieving endpoints
    * @param loaderService Loader service used to display Ajax spinner during invocations to the backend
-   * @param messageService Needed to subscribe to messages informing us when user logs in and out
-   * @param diagnosticsService Needed to retrieve backend version
+   * @param bazarService Needed to see if there exists a newer version to install
+   * @param configService Needed to check if system has been initially configured
    * @param feedbackService Needed to provide feedback to user
+   * @param diagnosticsService Needed to retrieve backend version
    * @param overlayContainer Needed to add/remove theme's class name from this component.
    */
   constructor(
@@ -112,46 +112,10 @@ export class AppComponent implements OnInit, OnDestroy {
    * OnInit implementation.
    */
   ngOnInit() {
-
-    // Subscribing to authentication status changed.
-    this.authService.authenticatedChanged.subscribe((authenticated: boolean) => {
-
-      /*
-       * If user was authenticated and belongs to root role, need to check configuration
-       * status of backend, and if not configured completely, redirect to '/config' and
-       * ensure navigation items are disabled.
-       */
-      if (authenticated && this.backendService.active?.token?.in_role('root')) {
-
-        // Checking configuration status of backend.
-        this.configService.status().subscribe(config => {
-
-          // Signaling subscribers notifying them of current status.
-          this.configService.changeStatus(config.config_done && config.magic_crudified && config.server_keypair);
-
-          // If there are remaining setup steps we redirect to config component.
-          if (!config.config_done || !config.magic_crudified || !config.server_keypair) {
-            this.router.navigate(['/config']);
-          }
-        });
-      }
+    this.checkStatus();
+    this.authService.authenticatedChanged.subscribe(() => {
+      this.checkStatus();
     });
-
-    // If user is already authenticated as root we immediately check status.
-    if (this.backendService.active?.token?.in_role('root')) {
-
-      // Checking configuration status of backend.
-      this.configService.status().subscribe(config => {
-
-        // Signaling subscribers notifying them of current status.
-        this.configService.changeStatus(config.config_done && config.magic_crudified && config.server_keypair);
-
-        // If there are remaining setup steps we redirect to config component.
-        if (!config.config_done || !config.magic_crudified || !config.server_keypair) {
-          this.router.navigate(['/config']);
-        }
-      });
-    }
 
     /**
      * to check the screen width rule for initial setting
@@ -175,7 +139,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
           // Verifying caller wants to display information to user or not.
           if (msg.content !== false) {
-            this.showInfo('You were successfully logged out of your backend');
+            this.feedbackService.showInfo('You were successfully logged out of your backend');
           }
 
           // Redirecting user to landing page.
@@ -187,7 +151,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
         // User was logged in.
         case Messages.USER_LOGGED_IN:
-          this.showInfo('You were successfully authenticated towards your backend');
+          this.feedbackService.showInfo('You were successfully authenticated towards your backend');
           break;
 
         // Theme was changed.
@@ -229,7 +193,6 @@ export class AppComponent implements OnInit, OnDestroy {
         content: this.theme,
       });
     })();
-    
   }
 
   /**
@@ -237,14 +200,14 @@ export class AppComponent implements OnInit, OnDestroy {
    * 
    * Needed to unsubscribe to subscription registered in OnInit.
    */
-  public ngOnDestroy() {
+  ngOnDestroy() {
     this.subscriber.unsubscribe();
   }
 
   /**
    * Closes the navbar.
    */
-  public closeNavbar() {
+  closeNavbar() {
     this.sidenavOpened = false;
   }
 
@@ -253,56 +216,34 @@ export class AppComponent implements OnInit, OnDestroy {
    */
 
   /*
-   * Common method for displaying errors in the application.
+   * Checks setup status of system if user is authenticated and in root role,
+   * and if system is not yet configured, redirects to '/config' route.
    */
-  private showError(error: any) {
-    this.snackBar.open(error.error?.message || error, null, {
-      duration: 5000,
-    });
-  }
-
-  /*
-   * Common method for displaying information to the end user.
-   */
-  private showInfo(info: string, duration: number = 5000) {
-    this.snackBar.open(info, null, {
-      duration,
-    });
+  private checkStatus() {
+    if (this.backendService.active?.token?.in_role('root')) {
+      this.configService.status().subscribe(config => {
+        this.configService.changeStatus(config.config_done && config.magic_crudified && config.server_keypair);
+        if (!config.config_done || !config.magic_crudified || !config.server_keypair) {
+          this.router.navigate(['/config']);
+        }
+      });
+    }
   }
   
   /*
    * Retrieves backend version.
    */
   private retrieveBackendVersion() {
-
-    // Retrieving backend version if we're authenticated.
     if (this.backendService.active?.token?.in_role('root')) {
-
-      // Invoking backend to retrieve version.
       this.diagnosticsService.version().subscribe((version: any) => {
-
-        // Assigning model.
         this.version = version.version;
-
-        // Invoking Bazar to check if we have the latest current version of Magic installed.
         this.bazarService.latestVersion().subscribe((result: Response) => {
-
-          // Assigning model.
           this.bazarVersion = result.result;
-
-          // Checking if Bazar version differs from current version.
           if (this.bazarVersion !== this.version) {
 
-            // Invoking backend to check if Bazar version of Magic is higher than current version of Magic.
+            // TODO: Replace service invocation with some sort of method in service or something.
             this.configService.versionCompare(this.bazarVersion, this.version).subscribe((result: Response) => {
-
-              /*
-               * Checking return value of invocation, and if it was +1, the Bazar
-               * claims there exists a newer version of the core.
-               */
               if (+result.result === 1) {
-
-                // Newer version exists according to Bazar.
                 this.feedbackService.showInfo('There has been published an updated version of Magic. You should probably update your current version.');
                 this.shouldUpdateCore = true;
               }
@@ -310,14 +251,11 @@ export class AppComponent implements OnInit, OnDestroy {
           }
 
         }, (error: any) => this.feedbackService.showError(error));
-
-      }, () => {
-        this.authService.logoutFromCurrent(false);
+      }, (error: any) => {
+        this.feedbackService.showError(error);
       });
 
     } else {
-
-      // Unknown backend version since we're obviously not connected to any backend.
       this.version = '';
     }
   }
