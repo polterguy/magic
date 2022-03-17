@@ -47,8 +47,6 @@ export class SqlService {
     sql: string,
     safeMode: boolean,
     batch: boolean) {
-
-    // Invoking backend and returning observable to caller.
     return this.httpService.post<any[]>('/magic/system/sql/evaluate', {
       databaseType,
       database,
@@ -62,8 +60,6 @@ export class SqlService {
    * Returns the type of database that is the default database used by backend.
    */
   public defaultDatabaseType() {
-
-    // Invoking backend and returning observable to caller.
     return this.httpService.get<DefaultDatabaseType>('/magic/system/sql/default-database-type');
   }
 
@@ -73,9 +69,7 @@ export class SqlService {
    * @param databaseType Database type to retrieve connection strings for
    */
   public connectionStrings(databaseType: string) {
-    return this.httpService.get<any>(
-      '/magic/system/sql/connection-strings?databaseType=' +
-      encodeURIComponent(databaseType));
+    return this.httpService.get<any>('/magic/system/sql/connection-strings?databaseType=' + encodeURIComponent(databaseType));
   }
 
   /**
@@ -85,8 +79,6 @@ export class SqlService {
    * @param connectionString Database connection string (reference to appsettings.json)
    */
   public getDatabaseMetaInfo(databaseType: string, connectionString: string) {
-
-    // Invoking backend and returning observable to caller.
     return this.httpService.get<Databases>('/magic/system/sql/databases?databaseType=' +
       encodeURIComponent(databaseType) +
       '&connectionString=' +
@@ -109,19 +101,13 @@ export class SqlService {
    * @param filename Filename (only, no extension or folder) of snippet to load
    */
   public loadSnippet(databaseType: string, filename: string) {
-
-    // Sanity checking invocation.
     if (filename.indexOf('/') !== -1) {
-      throw throwError('Please provide me with only the filename, and not the folder');
+      return throwError(() => new Error('Not a valid filename'));
     }
-
-    // Making sure we use the correct folder.
     filename = `/etc/${databaseType}/templates/` + filename;
     if (!filename.endsWith('.sql')) {
       filename += '.sql';
     }
-
-    // Returning result of invocation to file service.
     return this.fileService.loadFile(filename);
   }
 
@@ -133,19 +119,13 @@ export class SqlService {
    * @param content Content of snippet
    */
   public saveSnippet(databaseType: string, filename: string, content: string) {
-
-    // Sanity checking invocation.
     if (filename.indexOf('/') !== -1) {
-      throw throwError('Please provide me with only the filename, and not the folder');
+      return throwError(() => new Error('Not a valid filename'));
     }
-
-    // Making sure we put our file into the correct folder.
     filename = `/etc/${databaseType}/templates/` + filename;
     if (!filename.endsWith('.sql')) {
       filename += '.sql';
     }
-
-    // Returning result of invocation to file service.
     return this.fileService.saveFile(filename, content);
   }
 }

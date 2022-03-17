@@ -36,17 +36,11 @@ export class FileService {
    * @param filter Filter for which files to return
    */
   public listFiles(folder: string, filter: string = null) {
-
-    // Dynamically building our query.
     let query = '?folder=' + encodeURIComponent(folder);
     if (filter) {
       query += '&filter=' + encodeURIComponent(filter);
     }
-
-    // Invoking backend and returning observable to caller.
-    return this.httpService.get<string[]>(
-      '/magic/system/file-system/list-files' +
-      query);
+    return this.httpService.get<string[]>('/magic/system/file-system/list-files' + query);
   }
 
   /**
@@ -56,11 +50,7 @@ export class FileService {
    * @param sysFiles If true will return system files
    */
   public listFilesRecursively(folder: string, sysFiles: boolean) {
-
-    // Dynamically building our query.
     let query = '?folder=' + encodeURIComponent(folder);
-
-    // Invoking backend and returning observable to caller.
     return this.httpService.get<string[]>(
       '/magic/system/file-system/list-files-recursively' +
       query +
@@ -73,8 +63,6 @@ export class FileService {
    * @param folder Folder from where to retrieve list of folders from
    */
   public listFolders(folder: string) {
-
-    // Invoking backend and returning observable to caller.
     return this.httpService.get<string[]>(
       '/magic/system/file-system/list-folders?folder=' +
       encodeURIComponent(folder));
@@ -87,8 +75,6 @@ export class FileService {
    * @param sysFiles If true will return system folders
    */
   public listFoldersRecursively(folder: string, sysFiles: boolean) {
-
-    // Invoking backend and returning observable to caller.
     return this.httpService.get<string[]>(
       '/magic/system/file-system/list-folders-recursively?folder=' +
       encodeURIComponent(folder) +
@@ -101,13 +87,9 @@ export class FileService {
    * @param filename Filename and full path of file to load.
    */
   public loadFile(filename: string) {
-
-    // Making sure we copmmunicate that we want to have text result.
     const requestOptions = {
       responseType: 'text'
     };
-
-    // Invoking backend and returning observable to caller.
     return this.httpService.get<string>(
       '/magic/system/file-system/file?file=' +
       encodeURIComponent(filename),
@@ -121,18 +103,11 @@ export class FileService {
    * @param content Content of file
    */
   public saveFile(filename: string, content: string) {
-
-    // Passing in file as form data.
-    const folder = filename.substr(0, filename.lastIndexOf('/') + 1);
+    const folder = filename.substring(0, filename.lastIndexOf('/') + 1);
     const formData: FormData = new FormData();
     const blob = new Blob([content], { type: 'text/plain'});
-    formData.append('file', blob, filename.substr(filename.lastIndexOf('/') + 1));
-
-    return this.httpService.put<any>(
-      '/magic/system/file-system/file?folder=' +
-      encodeURI(folder),
-      formData
-    );
+    formData.append('file', blob, filename.substring(filename.lastIndexOf('/') + 1));
+    return this.httpService.put<any>('/magic/system/file-system/file?folder=' + encodeURI(folder), formData);
   }
 
   /**
@@ -142,8 +117,6 @@ export class FileService {
    * @param newName New name for file or folder.
    */
   public rename(oldName: string, newName: string) {
-
-    // Invoking backend and returning observable to caller.
     return this.httpService.post<Response>(
       '/magic/system/file-system/rename', {
         oldName,
@@ -157,11 +130,7 @@ export class FileService {
    * @param file Path of file to delete
    */
   public deleteFile(file: string) {
-
-    // Invoking backend and returning observable to caller.
-    return this.httpService.delete<Response>(
-      '/magic/system/file-system/file?file=' +
-      encodeURIComponent(file));
+    return this.httpService.delete<Response>('/magic/system/file-system/file?file=' + encodeURIComponent(file));
   }
 
   /**
@@ -170,18 +139,12 @@ export class FileService {
    * @param path File to download
    */
   public downloadFile(path: string) {
-
-    // Invoking backend to download file and opening up save-as dialog.
-    this.httpService.download(
-      '/magic/system/file-system/file?file=' +
-      encodeURI(path)).subscribe(res => {
-
-        // Retrieving the filename, as provided by the server.
-        const disp = res.headers.get('Content-Disposition');
-        let filename = disp.split(';')[1].trim().split('=')[1].replace(/"/g, '');
-        const file = new Blob([res.body]);
-        saveAs(file, filename);
-      });
+    this.httpService.download('/magic/system/file-system/file?file=' + encodeURI(path)).subscribe(res => {
+      const disp = res.headers.get('Content-Disposition');
+      let filename = disp.split(';')[1].trim().split('=')[1].replace(/"/g, '');
+      const file = new Blob([res.body]);
+      saveAs(file, filename);
+    });
   }
 
   /**
@@ -191,15 +154,9 @@ export class FileService {
    * @param file File you want to upload
    */
   public uploadFile(path: string, file: any) {
-
-    // Invoking backend with a form data object containing file.
     const formData: FormData = new FormData();
     formData.append('file', file);
-    return this.httpService.put<any>(
-      '/magic/system/file-system/file?folder=' +
-      encodeURI(path),
-      formData
-    );
+    return this.httpService.put<any>('/magic/system/file-system/file?folder=' + encodeURI(path), formData);
   }
 
   /**
@@ -208,19 +165,13 @@ export class FileService {
    * @param path File to download
    */
   public downloadFolder(path: string) {
-
-    // Invoking backend to download file and opening up save-as dialog.
-    this.httpService.download(
-      '/magic/system/file-system/download-folder?folder=' +
-      encodeURI(path)).subscribe(res => {
-
-        // Retrieving the filename, as provided by the server.
-        const disp = res.headers.get('Content-Disposition');
-        let filename = disp.substring(disp.indexOf('=') + 1);
-        filename = filename.substring(1, filename.lastIndexOf('"'));
-        const file = new Blob([res.body], { type: 'application/zip' });
-        saveAs(file, filename);
-      });
+    this.httpService.download('/magic/system/file-system/download-folder?folder=' + encodeURI(path)).subscribe(res => {
+      const disp = res.headers.get('Content-Disposition');
+      let filename = disp.substring(disp.indexOf('=') + 1);
+      filename = filename.substring(1, filename.lastIndexOf('"'));
+      const file = new Blob([res.body], { type: 'application/zip' });
+      saveAs(file, filename);
+    });
   }
 
   /**
@@ -229,12 +180,7 @@ export class FileService {
    * @param folder Path for new folder
    */
   public createFolder(folder: string) {
-
-    // Invoking backend and returning observable to caller.
-    return this.httpService.put<Response>(
-      '/magic/system/file-system/folder', {
-        folder
-    });
+    return this.httpService.put<Response>('/magic/system/file-system/folder', { folder });
   }
 
   /**
@@ -243,11 +189,7 @@ export class FileService {
    * @param folder Path of folder to delete
    */
   public deleteFolder(folder: string) {
-
-    // Invoking backend and returning observable to caller.
-    return this.httpService.delete<Response>(
-      '/magic/system/file-system/folder?folder=' +
-      encodeURIComponent(folder));
+    return this.httpService.delete<Response>('/magic/system/file-system/folder?folder=' + encodeURIComponent(folder));
   }
 
   /**
@@ -256,10 +198,7 @@ export class FileService {
    * @param file Full path of macro to retrieve meta information about
    */
   public getMacroDefinition(file: string) {
-
-    // Invoking backend and returning observable to caller.
-    return this.httpService.get<MacroDefinition>('/magic/system/ide/macro?macro=' +
-      encodeURIComponent(file));
+    return this.httpService.get<MacroDefinition>('/magic/system/ide/macro?macro=' + encodeURIComponent(file));
   }
 
   /**
@@ -269,12 +208,7 @@ export class FileService {
    * @param args Arguments to macro execution
    */
   public executeMacro(file: string, args: any) {
-
-    // Invoking backend and returning observable to caller.
-    return this.httpService.post<Response>('/magic/system/ide/execute-macro', {
-      macro: file,
-      args
-    });
+    return this.httpService.post<Response>('/magic/system/ide/execute-macro', { macro: file, args });
   }
 
   /**
@@ -284,13 +218,8 @@ export class FileService {
    * @param file File you want to upload
    */
   public installModule(file: File) {
-
-    // Invoking backend with a form data object containing file.
     const formData: FormData = new FormData();
     formData.append('file', file);
-    return this.httpService.put<any>(
-      '/magic/system/file-system/install-module',
-      formData
-    );
+    return this.httpService.put<any>('/magic/system/file-system/install-module', formData);
   }
 }
