@@ -28,7 +28,6 @@ import { DiagnosticsCacheComponent } from './components/analytics/cache/cache.co
 import { EndpointsComponent } from './components/analytics/endpoints/endpoints.component';
 import { RegisterComponent } from './components/management/auth/register/register.component';
 import { DiagnosticsTestsComponent } from './components/analytics/assumptions/assumptions.component';
-import { ConfirmEmailComponent } from './components/management/auth/confirm-email/confirm-email.component';
 import { ChangePasswordComponent } from './components/management/auth/change-password/change-password.component';
 
 /**
@@ -148,10 +147,6 @@ const routes: Routes = [
   {
     path: 'change-password',
     component: ChangePasswordComponent
-  },
-  {
-    path: 'confirm-email',
-    component: ConfirmEmailComponent
   },
   {
     path:

@@ -25,10 +25,7 @@ import { LoaderService } from 'src/app/services/loader.service';
 })
 export class LoaderInterceptor implements HttpInterceptor {
 
-  /*
-   * Notice, to support multiple requests,
-   * we need to track how many "open" requests we currently have.
-   */
+  // We need to track how many "open" requests we currently have to support multiple requests at the same time.
   private static totalRequests = 0;
 
   /**
@@ -46,11 +43,7 @@ export class LoaderInterceptor implements HttpInterceptor {
    * @param next Next handler for HTTP request
    */
   public intercept(request: HttpRequest<any>, next: HttpHandler) {
-
-    // Incrementing total number of requests, and making sure we show loading service.
     this.increment();
-
-    // Making sure we decrease total number of requests, as the response is returned, or an error occurs.
     return next.handle(request).pipe(
       tap((res: any) => {
         if (res instanceof HttpResponse) {
@@ -79,11 +72,6 @@ export class LoaderInterceptor implements HttpInterceptor {
    * more requests we hide the loading service.
    */
   public decrement() {
-
-    /*
-     * Decrementing total number of requests, and checking if
-     * request count is zero, and if so, we hide the loader.
-     */
     LoaderInterceptor.totalRequests = Math.max(--LoaderInterceptor.totalRequests, 0);
     if (LoaderInterceptor.totalRequests === 0) {
       this.loadingService.hide();
