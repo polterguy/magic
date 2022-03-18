@@ -3,7 +3,9 @@
     <div class="row h-100">
       <div class="col-12">
         <mat-card *ngIf="input">
+
           <div class="d-flex flex-sm-nowrap flex-wrap justify-content-between">
+
             <div class="d-flex align-items-center">
               <mat-card-title class="my-0">SQL</mat-card-title>
               <div class="sm-icons">
@@ -33,39 +35,43 @@
     
               <mat-menu #list="matMenu" class="shortkeys">
                 <mat-list role="list" dense>
-    
+
                   <mat-list-item role="listitem">
                     Toggle fullscreen
                     <span class="code my-0 ml-5">Alt + M</span>
                   </mat-list-item>
-    
+
                   <mat-list-item role="listitem">
                     Load snippet
                     <span class="code my-0 ml-5">Alt + L</span>
                   </mat-list-item>
-    
+
                   <mat-list-item role="listitem">
                     Save snippet
                     <span class="code my-0 ml-5">Alt + S</span>
                   </mat-list-item>
-    
+
                   <mat-list-item role="listitem">
                     Execute
                     <span class="code my-0 ml-5">F5</span>
                   </mat-list-item>
-    
+
                 </mat-list>
               </mat-menu>
             </div>
           </div>
+
           <mat-card-subtitle>Connect to your database and execute SQL</mat-card-subtitle>
+
           <mat-card-content>
+
             <app-codemirror-sql [(model)]="input"></app-codemirror-sql>
+
             <div class="row mt-3" *ngIf="input">
               <div class="col-12">
                 <div class="d-flex flex-sm-row flex-column w-100">
+
                   <mat-form-field class="w-100" appearance="outline">
-            
                     <mat-label>Database type</mat-label>
                     <mat-select
                       [(ngModel)]="input.databaseType"
@@ -74,11 +80,11 @@
                         *ngFor="let idx of databaseTypes"
                         [value]="idx">{{idx}}</mat-option>
                     </mat-select>
-            
                   </mat-form-field>
+
                   <div class="p-sm-1"></div>
+
                   <mat-form-field class="w-100" appearance="outline">
-            
                     <mat-label>Connection</mat-label>
                     <mat-select
                       [(ngModel)]="input.connectionString"
@@ -87,11 +93,11 @@
                         *ngFor="let idx of connectionStrings"
                         [value]="idx">{{idx}}</mat-option>
                     </mat-select>
-            
                   </mat-form-field>
+
                   <div class="p-sm-1"></div>
+
                   <mat-form-field class="w-100" appearance="outline">
-            
                     <mat-label>Database</mat-label>
                     <mat-select
                       [(ngModel)]="input.database"
@@ -102,16 +108,18 @@
                         [value]="idx"
                         [class]="getDatabaseCssClass(idx)">{{idx}}</mat-option>
                     </mat-select>
-            
                   </mat-form-field>
+
                 </div>
               </div>
+
               <div class="col-12">
                 <div class="d-flex flex-wrap justify-content-end align-items-center">
                   <div class="d-flex custom-mb">
+
                     <mat-checkbox
-                    class="safe-mode"
-                    [(ngModel)]="safeMode">Safe mode</mat-checkbox>
+                      class="safe-mode"
+                      [(ngModel)]="safeMode">Safe mode</mat-checkbox>
     
                     <div class="p-1"></div>
     
@@ -119,9 +127,13 @@
                       *ngIf="input.databaseType === 'mssql'"
                       matTooltip="Executes SQL as a batch operation, respecting 'go' keywords"
                       [(ngModel)]="isBatch">Batch</mat-checkbox>
+
                   </div>
+
                   <div class="p-1"></div>
+
                   <div class="d-flex">
+
                     <button
                       mat-icon-button
                       [disabled]="!backendService.active.access.config.delete_cache_item"
@@ -129,6 +141,7 @@
                       (click)="refresh()">
                       <mat-icon>refresh</mat-icon>
                     </button>
+
                     <div class="p-1"></div>
             
                     <button
@@ -139,8 +152,9 @@
                       class="w-100">
                       Load
                     </button>
+
                     <div class="p-1"></div>
-          
+
                     <button
                       id="saveButton"
                       [disabled]="!input.sql || !backendService.active.access.sql.save_file"
@@ -149,8 +163,9 @@
                       class="w-100">
                       Save
                     </button>
+
                     <div class="p-1"></div>
-                    
+
                     <button
                       id="executeButton"
                       [disabled]="!input || input.sql === '' || !input.database"
@@ -160,6 +175,7 @@
                       class="w-100">
                       Execute
                     </button>
+
                   </div>
                 </div>
               </div>
@@ -167,8 +183,7 @@
           </mat-card-content>
         </mat-card>
       </div>
-    
-    
+
       <div
         class="col-12"
         #resultCard
@@ -180,7 +195,7 @@
             <table
               *ngIf="idxResult.rows.length > 0"
               class="w-100 clickable">
-      
+
               <thead>
                 <tr>
                   <td *ngFor="let idxColumn of idxResult.columns" class="pl-3 py-3 text-muted">
@@ -188,55 +203,44 @@
                   </td>
                 </tr>
               </thead>
-      
+
               <tbody>
                 <tr
                   *ngFor="let idxRow of idxResult.rows"
                   [class]="getRowCssClass(idxRow)"
                   (click)="toggleDetails(idxRow, idxResult)">
-      
                   <td
                     *ngFor="let idxCell of (idxRow.details === true ? [] : (idxRow.data | dynamic: 5))">
                     {{idxCell.value}}
                   </td>
-      
                   <td
                     *ngIf="idxRow.details === true && idxRow.display === true"
                     class="view-details py-3"
                     [attr.colspan]="idxResult.columns.length">
-      
                     <div class="details-sheet">
-      
                       <div
                         *ngFor="let idxDetails of idxRow.data | dynamic"
                         (click)="copyToClipBoard(idxDetails.value)"
                         class="details-item">
-      
                         <div class="d-flex py-1">
                           <span class="min-width-80">{{idxDetails.key}}</span>&nbsp;&nbsp;
                           <span class="ml-5">{{idxDetails.value === null ? '[null]' : idxDetails.value}}</span>
                         </div>
-      
                       </div>
-      
                     </div>
-      
                   </td>
-      
                 </tr>
               </tbody>
-      
+
             </table>
           </div>
-    
+
           <div class="button-strip">
-    
             <button
               mat-raised-button
               (click)="exportAsCsv(idxResult)">
               Export as CSV
             </button>
-    
           </div>
     
         </mat-card>
