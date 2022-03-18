@@ -8,17 +8,18 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
-import { BazarApp } from '../../../../models/bazar-app.model';
-import { BazarService } from '../../../../services/management/bazar.service';
-import { FileService } from 'src/app/services/tools/file.service';
 import { Response } from '../../../../models/response.model';
+import { BazarApp } from '../../../../models/bazar-app.model';
 import { AuthService } from '../../../../services/auth.service';
-import { PurchaseStatus } from '../../../../models/purchase-status.model';
-import { MessageService } from 'src/app/services/message.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
-import { ConfigService } from '../../../../services/management/config.service';
-import { NameEmailModel } from '../../../../models/name-email.model';
 import { LoaderService } from 'src/app/services/loader.service';
+import { FileService } from 'src/app/services/tools/file.service';
+import { MessageService } from 'src/app/services/message.service';
+import { BackendService } from 'src/app/services/backend.service';
+import { FeedbackService } from 'src/app/services/feedback.service';
+import { NameEmailModel } from '../../../../models/name-email.model';
+import { PurchaseStatus } from '../../../../models/purchase-status.model';
+import { BazarService } from '../../../../services/management/bazar.service';
+import { ConfigService } from '../../../../services/management/config.service';
 import { ConfirmEmailAddressDialogComponent, EmailPromoCodeModel } from './confirm-email-address-dialog/confirm-email-address-dialog.component';
 
 /**
@@ -34,7 +35,7 @@ export class ViewAppDialogComponent implements OnInit {
   /**
    * If true, this app has already been installed.
    */
-  public installed: boolean = false;
+  installed: boolean = false;
 
   /**
    * This is true if the user can install the app.
@@ -43,12 +44,12 @@ export class ViewAppDialogComponent implements OnInit {
    * implying that the user might have a Magic version that is too old for a specific
    * version to be possible to install.
    */
-  public canInstall: boolean = false;
+  canInstall: boolean = false;
 
   /**
    * If Magic installation needs to be updated, this will be true.
    */
-  public needsCoreUpdate: boolean = false;
+  needsCoreUpdate: boolean = false;
 
   /**
    * Creates an instance of your component.
@@ -59,8 +60,10 @@ export class ViewAppDialogComponent implements OnInit {
    * @param fileService Needed to check if the app can be installed, or if another app/version is already installed with the same module folder name
    * @param bazarService Needed to actually purchase apps from Bazar
    * @param configService Needed to retrieve root user's email address
+   * @param backendService Needed to verify user has access to install Bazar items
    * @param messageService Needed to publish messages for cases when app should be immediately installed.
    * @param feedbackService Needed to display errors to user
+   * @param loaderService Needed to display loader animations to user
    * @param data Bazar app user wants to view details about
    */
   constructor(
@@ -70,6 +73,7 @@ export class ViewAppDialogComponent implements OnInit {
     private fileService: FileService,
     private bazarService: BazarService,
     private configService: ConfigService,
+    public backendService: BackendService,
     private messageService: MessageService,
     private feedbackService: FeedbackService,
     private loaderService: LoaderService,
@@ -78,51 +82,28 @@ export class ViewAppDialogComponent implements OnInit {
   /**
    * Implementation of OnInit.
    */
-  public ngOnInit() {
-
-    // Checking if module is already installed.
+  ngOnInit() {
     this.fileService.listFolders('/modules/').subscribe((folders: string[]) => {
-
-      // Checking if invocation returned folder name of currently viewed app.
       if (folders.filter(x => x === '/modules/' + this.data.folder_name + '/').length > 0) {
-
-        // Module is not installed.
         this.installed = true;
       }
     }, (error: any) => this.feedbackService.showError(error));
 
-    // Verifying that the application can be installed in the current version of Magic.
     this.bazarService.canInstall(this.data.min_magic_version).subscribe((result: Response) => {
-
-      // Assigning model accordingly.
       if (result.result === 'SUCCESS') {
-
-        /*
-         * This app can be installed, since the current Magic version
-         * is equal to or higher than the minimum Magic version the app requires
-         * to function correctly.
-         */
         this.canInstall = true;
-
       } else {
-
-        // Notifying user that the application cannot be installed.
         this.feedbackService.showInfo('In order to install this app you will have to update your Magic version');
         this.needsCoreUpdate = true;
       }
-
     }, (error: any) => this.feedbackService.showError(error));
   }
 
   /**
    * Invoked when user wants to purchase the specified app.
    */
-  public purchase() {
-
-    // Retrieving user's email address, as provided when he configured Magic.
+  purchase() {
     this.configService.rootUserEmailAddress().subscribe((response: NameEmailModel) => {
-
-      // Opening up modal dialog to make sure we get root user's correct email address.
       const dialogRef = this.dialog.open(ConfirmEmailAddressDialogComponent, {
         width: '500px',
         data: {
@@ -132,16 +113,8 @@ export class ViewAppDialogComponent implements OnInit {
           code: this.data.price === 0 ? -1 : null
         }
       });
-
-      // Waiting for the user to close modal dialog.
       dialogRef.afterClosed().subscribe((model: EmailPromoCodeModel) => {
-
-        // If user clicks cancel the dialog will not pass in any data.
         if (model) {
-
-          /*
-           * Starting purchase flow.
-           */
           this.bazarService.purchaseBazarItem(
             this.data,
             model.name,
@@ -149,6 +122,7 @@ export class ViewAppDialogComponent implements OnInit {
             model.subscribe,
             model.code === -1 ? null : model.code).subscribe((status: PurchaseStatus) => {
               this.loaderService.show();
+
               /*
                * Checking if status is 'PENDING' at which point we'll have to redirect to PayPal
                * to finish transaction.
@@ -161,10 +135,7 @@ export class ViewAppDialogComponent implements OnInit {
                  * easily retrieved during callback.
                  */
                 localStorage.setItem('currently-installed-app', JSON.stringify(this.data));
-
-                // Re-directing to PayPal.
                 window.location.href = status.url;
-
               } else if (status.status === 'APPROVED') {
 
                 /*
@@ -178,16 +149,11 @@ export class ViewAppDialogComponent implements OnInit {
                     code: status.code,
                   }
                 });
-
-                // Closing modal dialog.
                 this.dialogRef.close();
 
               } else {
-
-                // Unknown status code returned from Bazar.
                 this.feedbackService.showError(`Unknown status code returned from the Bazar, code was ${status.status}`);
               }
-
           }, (error: any) => this.feedbackService.showError(error));
         }
       });

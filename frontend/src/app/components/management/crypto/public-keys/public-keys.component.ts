@@ -11,11 +11,14 @@ import { MatDialog } from '@angular/material/dialog';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 
 // Application specific imports.
 import { Message } from 'src/app/models/message.model';
 import { Response } from 'src/app/models/response.model';
+import { AuthService } from '../../../../services/auth.service';
 import { MessageService } from 'src/app/services/message.service';
+import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { PublicKey } from 'src/app/components/management/crypto/models/public-key.model';
 import { CryptoService } from 'src/app/components/management/crypto/services/crypto.service';
@@ -24,9 +27,6 @@ import { ImportPublicKeyDialogComponent } from './import-public-key-dialog/impor
 
 // CodeMirror options.
 import hyperlambda from '../../../codemirror/options/hyperlambda.json';
-import { AuthService } from '../../../../services/auth.service';
-import { trigger, state, style, transition, animate } from '@angular/animations';
-import { BackendService } from 'src/app/services/backend.service';
 
 /*
  * Helper class to encapsulate all public keys and their CodeMirror vocabulary options.
@@ -70,38 +70,38 @@ class PublicKeyEx {
 })
 export class PublicKeysComponent implements OnInit, OnDestroy {
 
-
-  // List of log item IDs that we're currently viewing details for.
-  private displayDetails: number[] = [];
-
   // Needed to subscribe to messages published by other components.
   private subscription: Subscription;
 
   /**
    * Filter form control for filtering log items to display.
    */
-  public filterFormControl: FormControl;
+  filterFormControl: FormControl;
 
   /**
    * Paginator for paging table.
    */
-  @ViewChild(MatPaginator, {static: true}) public paginator: MatPaginator;
+  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
 
   /**
    * Public keys the table is currently databound towards.
    */
-  public publicKeys: PublicKeyEx[] = [];
-  public expandedElement: PublicKeyEx | null;
+  publicKeys: PublicKeyEx[] = [];
+
+  /**
+   * Currently displayed public key.
+   */
+  expandedElement: PublicKeyEx | null;
   
   /**
    * Number of log items in the backend matching the currently applied filter.
    */
-  public count: number = 0;
+  count: number = 0;
   
   /**
    * Columns to display in table showing public keys.
    */
-  public displayedColumns: string[] = [
+  displayedColumns: string[] = [
     'identity',
     'imported',
     'delete',
@@ -112,9 +112,9 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
    * 
    * @param dialog Needed to create modal dialogs when importing public keys
    * @param clipboard Needed to be able to copy things into clipboard
-   * @param logService Needed to log changes done to key collection
    * @param authService Needed to verify access to components
    * @param cryptoService Needed to retrieve public keys from backend
+   * @param backendService Needed to determine access rights of user in backend
    * @param messageService Needed to subscribe to relevant messages, such that server key pair has been created, etc
    * @param feedbackService Needed to be able to display feedback to user
    */
@@ -130,20 +130,13 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
   /**
    * Implementation of OnInit.
    */
-  public ngOnInit() {
-
-    // Subscribing to relevant meessages.
+  ngOnInit() {
     this.subscription = this.messageService.subscriber().subscribe((msg: Message) => {
-
-      // Checking if we've got a new server key pair.
       if (msg.name === 'crypto.server.new-key-pair-generated') {
-
-        // New server key pair was created, hence we need to re-retrieve public keys.
         this.getKeys();
       }
     });
 
-    // Creating our filter form control, with debounce logic.
     this.filterFormControl = new FormControl('');
     this.filterFormControl.setValue('');
     this.filterFormControl.valueChanges
@@ -154,28 +147,14 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
         this.getKeys();
       });
 
-    // Retrieving initial keys to databind table towards.
     this.getKeys();
   }
 
   /**
    * Implementation of OnDestroy.
    */
-  public ngOnDestroy() {
-
-    // simply unsubscribing to subscription.
+  ngOnDestroy() {
     this.subscription.unsubscribe();
-  }
-
-  /**
-   * Returns true if specified key should be displayed details for.
-   * 
-   * @param key Key to check if we should display details for
-   */
-  public shouldDisplayDetails(key: PublicKey) {
-
-    // Returns true if we're currently displaying this particular item.
-    return this.displayDetails.filter(x => x === key.id).length > 0;
   }
 
   /**
@@ -183,26 +162,10 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
    * 
    * @param key Key to toggle detailed view for
    */
-  public toggleDetails(key: PublicKey) {
-    
-    // Checking if we're already displaying details for current item.
-    const idx = this.displayDetails.indexOf(key.id);
-    if (idx !== -1) {
-
-      // Hiding item.
-      this.displayDetails.splice(idx, 1);
-
-    } else {
-
-      // Displaying item.
-      this.displayDetails.push(key.id);
-
-      // Retrieving association between key and user, if existing.
+  getUserAssociation(key: PublicKey) {
+    if (!key.username) {
       this.cryptoService.getUserAssociation(key.id).subscribe((result: Response) => {
-
-        // Success!
         key.username = result.result;
-
       }, (error: any) => this.feedbackService.showError(error));
     }
   }
@@ -212,9 +175,7 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
    * 
    * @param e Page event argument
    */
-  public paged(e: PageEvent) {
-
-    // Changing pager's size according to arguments, and retrieving log items from backend.
+  paged(e: PageEvent) {
     this.paginator.pageSize = e.pageSize;
     this.getKeys();
   }
@@ -222,9 +183,7 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
   /**
    * Clears the current filter.
    */
-  public clearFilter() {
-
-    // Updating page index, and taking advantage of debounce logic on form control to retrieve items from backend.
+  clearFilter() {
     this.paginator.pageIndex = 0;
     this.filterFormControl.setValue('');
   }
@@ -235,21 +194,13 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
    * @param event Click event, needed to stop propagation
    * @param key Public key to delete
    */
-  public delete(event: any, key: PublicKey) {
-
-    // Making sure the event doesn't propagate upwards, which would trigger the row click event.
+  delete(event: any, key: PublicKey) {
     event.stopPropagation();
-
-    // Asking user to confirm deletion of public key.
     this.feedbackService.confirm(
       'Please confirm delete operation',
       `Are you sure you want to delete the public key belonging to ${key.subject} - ${key.email}`,
       () => {
-
-        // Invoking backend to delete public key.
         this.cryptoService.deletePublicKey(key.id).subscribe(() => {
-
-          // Providing feedback to caller, and reloading keys from backend.
           this.feedbackService.showInfoShort('Public key successfully deleted');
           this.getKeys();
         });
@@ -261,9 +212,7 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
    * 
    * @param content Fingerprint to put on to clipboard
    */
-  public copyContentToClipboard(content: string) {
-
-    // Putting specified fingerprint on top clipboard.
+  copyContentToClipboard(content: string) {
     this.clipboard.copy(content);
     this.feedbackService.showInfoShort('Copied to your clipboard!');
   }
@@ -273,12 +222,8 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
    * 
    * @param key What key to modify
    */
-  public enabledChanged(key: PublicKey) {
-
-    // Invoking backend to change enabled state of key.
+  enabledChanged(key: PublicKey) {
     this.cryptoService.setEnabled(key.id, key.enabled).subscribe(() => {
-
-      // Providing feedback to user.
       this.feedbackService.showInfoShort(`Key was successfully ${key.enabled ? 'enabled' : 'disabled'}`);
     });
   }
@@ -288,30 +233,16 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
    * 
    * @param key Key user wants to save
    */
-  public save(key: PublicKeyEx) {
-
-    // Updating Hyperlambda from CodeMirror options.
+  save(key: PublicKeyEx) {
     key.key.vocabulary = key.options.hyperlambda;
-
-    // Invoking backend to retrieve new fingerprint for key.
     this.cryptoService.getFingerprint(key.key.content).subscribe((response: Response) => {
-
-      // Checking if fingerprint was updated, implying the key itself was updated.
       const fingerprintUpdated = key.key.fingerprint !== response.result;
-
-      // Updating key's fingerprint, storing the old fingerprint for reference purposes such that we can log it.
       key.key.fingerprint = response.result;
-
-      // Checking if fingerprint was updated, at which point we warn user that historic invocations will be impossible to verify.
       if (fingerprintUpdated) {
-
-        // Asking user to confirm operation.
         this.feedbackService.confirm(
           'Warning!',
           'Changing the actual key content will make it impossible to easily verify historic cryptographic invocations. Are you sure you wish to proceed?',
           () => {
-
-            // Making sure we create a log item, logging the key's old content and fingerprint.
             let oldKey = '';
             for (var idx of key.original_content) {
               if (oldKey.length % 80 === 0 && oldKey.length !== 0) {
@@ -321,31 +252,20 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
             }
           });
       } else {
-
-        // Invoking method responsible for saving the key.
         this.saveKeyImplementation(key);
       }
-
     }, (error: any) => this.feedbackService.showError(error));
   }
 
   /**
    * Invoked when user wants to import a public key.
    */
-  public import() {
-
-    // Showing modal dialog.
+  import() {
     const dialogRef = this.dialog.open(ImportPublicKeyDialogComponent, {
       width: '500px',
     });
-
-    // Subscribing to closed event to provide user with some feedback, if a key is imported.
     dialogRef.afterClosed().subscribe((key: PublicKey) => {
-
-      // Checking if modal dialog imported a key.
       if (key) {
-
-        // Key was imported, displaying key for editing.
         this.filterFormControl.setValue(key.fingerprint);
         this.feedbackService.showInfo('Key successfully imported, please edit its vocabulary and enable it');
       }
@@ -357,9 +277,7 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
    * 
    * @param key Key to show receipts for
    */
-  public showReceipts(key: PublicKey) {
-
-    // Raising message needed to switch tabs.
+  showReceipts(key: PublicKey) {
     this.messageService.sendMessage({
       name: 'crypto.receipts.show',
       content: key.id
@@ -374,24 +292,14 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
    * Saves the specified key, and evicts key from server's cache.
    */
   private saveKeyImplementation(key: PublicKeyEx, extraInfo?: string) {
-
-    // Invoking backend to save key.
     this.cryptoService.updatePublicKey(key.key).subscribe(() => {
-
-      // Providing some feedback to user, and retrieving keys again to update grid.
       let info = 'Key was successfully saved';
       if (extraInfo) {
         info += '. ' + extraInfo;
       }
       key.identity = key.key.subject + '  <' + key.key.email + '>';
-
-      // Checking if we've got an association between a username and a key.
       if (key.key.username && key.key.username !== '') {
-
-        // Invoking backend to associate key with username specified.
         this.cryptoService.associateWithUser(key.key.id, key.key.username).subscribe(() => {
-
-          // Success!
           if (extraInfo) {
             this.feedbackService.showInfo(info);
           } else {
@@ -399,22 +307,15 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
           }
     
         }, (error: any) => this.feedbackService.showError(error));
-
       } else {
-
-        // Invoking backend to destroy association between user and key.
         this.cryptoService.deleteUserAssociation(key.key.id).subscribe(() => {
-
-          // Success!
           if (extraInfo) {
             this.feedbackService.showInfo(info);
           } else {
             this.feedbackService.showInfoShort(info);
           }
-    
         }, (error: any) => this.feedbackService.showError(error));
       }
-
     }, (error: any) => this.feedbackService.showError(error));
   }
 
@@ -422,18 +323,11 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
    * Returns public keys from backend.
    */
   private getKeys() {
-
-    // Retrieving public keys from backend.
     this.cryptoService.publicKeys({
       filter: this.filterFormControl.value,
       offset: this.paginator.pageIndex * this.paginator.pageSize,
       limit: this.paginator.pageSize
     }).subscribe((keys: PublicKey[]) => {
-
-      // Resetting list of items we're currently viewing details for.
-      this.displayDetails = [];
-
-      // Mapping public keys to expected model.
       this.publicKeys = (keys || []).map(x => {
         const result = {
           identity: x.subject + ' <' + x.email + '>',
@@ -448,12 +342,8 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
         return result;
       });
 
-      // Counting items with the same filter as we used to retrieve items with.
       this.cryptoService.countPublicKeys({ filter: this.filterFormControl.value }).subscribe(res => {
-
-        // Assigning count to returned value from server.
         this.count = res.count;
-
       }, (error: any) => this.feedbackService.showError(error));
     }, (error: any) => this.feedbackService.showError(error));
   }

@@ -4,7 +4,6 @@
 <div mat-dialog-content>
 
   <mat-form-field class="fill-width" appearance="outline">
-
     <mat-label class="dark">Content</mat-label>
     <textarea
       matInput
@@ -15,46 +14,38 @@
   </mat-form-field>
 
   <mat-form-field class="fill-width" appearance="outline">
-
     <mat-label class="dark">Full name</mat-label>
     <input
       matInput
       type="text"
       [(ngModel)]="key.subject"
       autocomplete="off">
-
   </mat-form-field>
 
   <mat-form-field class="fill-width" appearance="outline">
-
     <mat-label class="dark">Email</mat-label>
     <input
       matInput
       type="text"
       [(ngModel)]="key.email"
       autocomplete="off">
-
   </mat-form-field>
 
   <mat-form-field class="fill-width" appearance="outline">
-
     <mat-label class="dark">Domain</mat-label>
     <input
       matInput
       type="text"
       [(ngModel)]="key.domain"
       autocomplete="off">
-
   </mat-form-field>
 
 </div>
 
 <div mat-dialog-actions class="mat-dialog-actions">
-
   <button
     mat-raised-button
     color="primary"
     [disabled]="key.fingerprint === '' || key.email === '' || key.subject === ''"
     (click)="import()">Import</button>
-
 </div>

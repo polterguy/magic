@@ -1,6 +1,7 @@
 <div class="row">
   <div class="col-12">
     <mat-card>
+
       <div class="d-flex flex-column mb-2">
         <div class="d-flex flex-sm-nowrap flex-wrap justify-content-between mb-1">
           <div class="d-flex align-items-center">
@@ -24,48 +25,48 @@
           </div>
         </div>
         <mat-card-subtitle>Create your cryptography key pair</mat-card-subtitle>
-
       </div>
+
       <mat-card-content>
         <form>
           <div class="d-flex flex-sm-nowrap flex-wrap">
-            <mat-form-field class="w-100" appearance="outline">
 
+            <mat-form-field class="w-100" appearance="outline">
               <mat-label>Full name</mat-label>
               <input
                 matInput
                 autocomplete="off"
                 [(ngModel)]="subject"
                 name="subject">
-          
             </mat-form-field>
+
             <div class="p-1"></div>
+
             <mat-form-field class="w-100" appearance="outline">
-          
               <mat-label>Email</mat-label>
               <input
                 matInput
                 autocomplete="off"
                 [(ngModel)]="email"
                 name="email">
-          
             </mat-form-field>
+
           </div>
           
           <div class="d-flex flex-sm-nowrap flex-wrap">
-            <mat-form-field class="w-100" appearance="outline">
 
+            <mat-form-field class="w-100" appearance="outline">
               <mat-label>Domain</mat-label>
               <input
                 matInput
                 autocomplete="off"
                 [(ngModel)]="domain"
                 name="domain">
-          
             </mat-form-field>
+
             <div class="p-1"></div>
+
             <mat-form-field class="w-100" appearance="outline">
-          
               <mat-label>Key strength</mat-label>
               <mat-select [(ngModel)]="strength" name="strength">
                 <mat-option value="1024">1024</mat-option>
@@ -73,11 +74,12 @@
                 <mat-option value="4096">4096</mat-option>
                 <mat-option value="8192">8192</mat-option>
               </mat-select>
-          
             </mat-form-field>
+
           </div>
 
           <div class="row">
+
             <div class="col-xl-6 col-lg-7 col-md-8 col-sm-9 col-12 order-sm-1 order-12 pt-sm-0 pt-3">
               <mat-checkbox [(ngModel)]="doSubscribe" [ngModelOptions]="{standalone: true}" class="white-space">
                 <small>
@@ -85,6 +87,7 @@
                 </small>
               </mat-checkbox>
             </div>
+
             <div class="col-xl-6 col-lg-5 col-md-4 col-sm-3 col-12 order-sm-12 order-1 text-right">
               <button
                 mat-raised-button
@@ -96,6 +99,7 @@
                 Next
               </button>
             </div>
+
           </div>
         </form>
 

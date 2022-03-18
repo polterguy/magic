@@ -11,7 +11,7 @@ import { Status } from 'src/app/models/status.model';
 import { ConfigService } from 'src/app/services/management/config.service';
 
 /**
- * Setup component allowing you to setup and modify your system's configuration.
+ * Configuration component allowing you to edit your system's configuration.
  */
 @Component({
   selector: 'app-config',
@@ -22,12 +22,12 @@ export class ConfigComponent implements OnInit {
   /**
    * Status of setup process.
    */
-  public status: Status = null;
+  status: Status = null;
 
   /**
    * Creates an instance of your component.
    * 
-   * @param setupService Setup HTTP service to use for retrieving and saving configuration settings for your backend
+   * @param configService Configuration service used to load and save configuration settings
    */
   constructor(
     private configService: ConfigService) {
@@ -36,13 +36,10 @@ export class ConfigComponent implements OnInit {
   /**
    * OnInit implementation.
    */
-  public ngOnInit() {
-
-    // wait until configService.setupStatus is ready
+  ngOnInit() {
     (async () => {
       while (!this.configService.setupStatus)
         await new Promise(resolve => setTimeout(resolve, 100));
-      
       if (this.configService.setupStatus !== null) {
         this.status = this.configService.setupStatus;
       }

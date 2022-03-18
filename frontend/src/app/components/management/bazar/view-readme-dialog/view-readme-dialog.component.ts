@@ -29,9 +29,7 @@ export class ViewReadmeDialogComponent {
   /**
    * Invoked when user wants to close the modal dialog displaying the app's README file.
    */
-  public close() {
-
-    // Simply closing modal dialog.
+  close() {
     this.dialogRef.close();
   }
 }

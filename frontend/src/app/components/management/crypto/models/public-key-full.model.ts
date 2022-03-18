@@ -4,7 +4,7 @@
  */
 
 /**
- * Model for a cryptography key, with all fields.
+ * Model for a public cryptography key, with all fields.
  */
 export class PublicKeyFull {
 
