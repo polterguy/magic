@@ -63,15 +63,15 @@ export class SelectMacroDialogComponent implements OnInit {
    * @param macro Full path of macro
    */
   getMacroName(macro: string) {
-    let result = macro.substr(macro.lastIndexOf('/') + 1);
-    result = result.substr(0, result.lastIndexOf('.'));
+    let result = macro.substring(macro.lastIndexOf('/') + 1);
+    result = result.substring(0, result.lastIndexOf('.'));
     while (true) {
       if (result.indexOf('-') === -1) {
         break;
       }
       result = result.replace('-', ' ');
     }
-    return result.substr(0, 1).toUpperCase() + result.substr(1);
+    return result.substring(0, 1).toUpperCase() + result.substring(1);
   }
 
   /**

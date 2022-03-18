@@ -642,7 +642,7 @@ export class EndpointDetailsComponent implements OnInit {
     for (let idx of this.query) {
       url += idx.name + '=' + encodeURIComponent(idx.value) + '&';
     }
-    this.url = url.substr(0, url.length - 1);
+    this.url = url.substring(0, url.length - 1);
   }
 
   /*

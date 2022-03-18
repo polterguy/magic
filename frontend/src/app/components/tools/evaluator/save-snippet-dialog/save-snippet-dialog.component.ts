@@ -54,8 +54,8 @@ export class SaveSnippetDialogComponent implements OnInit {
    * @param path Complete path of file
    */
   getFilename(path: string) {
-    const result = path.substr(path.lastIndexOf('/') + 1);
-    return result.substr(0, result.lastIndexOf('.'));
+    const result = path.substring(path.lastIndexOf('/') + 1);
+    return result.substring(0, result.lastIndexOf('.'));
   }
 
   /**
