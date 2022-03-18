@@ -215,9 +215,9 @@ export class IdeComponent implements OnInit, OnDestroy {
    */
   ngAfterViewInit() {
     if (!window['_vocabulary']) {
-      this.vocabularyService.vocabulary().subscribe((vocabulary: string[]) => {
-        window['_vocabulary'] = vocabulary;
-      }, error => this.feedbackService.showError(error));
+      this.vocabularyService.vocabulary().subscribe({
+        next: (vocabulary: string[]) => window['_vocabulary'] = vocabulary,
+        error: error => this.feedbackService.showError(error)});
     }
   }
 
@@ -264,22 +264,24 @@ export class IdeComponent implements OnInit, OnDestroy {
         });
         return;
       }
-      this.fileService.loadFile(file.path).subscribe((content: string) => {
-        this.openFiles.push({
-          name: file.name,
-          path: file.path,
-          folder: file.path.substring(0, file.path.lastIndexOf('/') + 1),
-          content: content,
-          options: this.getCodeMirrorOptions(file.path),
-        });
-        this.currentFileData = this.openFiles.filter(x => x.path === file.path)[0];
-        setTimeout(() => {
-          var activeWrapper = document.querySelector('.active-codemirror-editor');
-          var editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
-          editor.doc.markClean();
-        }, 1);
-        this.cdRef.detectChanges();
-      }, (error: any) => this.feedbackService.showError(error));
+      this.fileService.loadFile(file.path).subscribe({
+        next: (content: string) => {
+          this.openFiles.push({
+            name: file.name,
+            path: file.path,
+            folder: file.path.substring(0, file.path.lastIndexOf('/') + 1),
+            content: content,
+            options: this.getCodeMirrorOptions(file.path),
+          });
+          this.currentFileData = this.openFiles.filter(x => x.path === file.path)[0];
+          setTimeout(() => {
+            var activeWrapper = document.querySelector('.active-codemirror-editor');
+            var editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
+            editor.doc.markClean();
+          }, 1);
+          this.cdRef.detectChanges();
+        },
+        error: (error: any) => this.feedbackService.showError(error)});
     }
     this.activeFolder = file.path.substring(0, file.path.lastIndexOf('/') + 1);
   }
@@ -553,14 +555,15 @@ export class IdeComponent implements OnInit, OnDestroy {
    * Invokes backend to retrieve meta data about endpoints.
    */
   getEndpoints(onAfter: () => void = null) {
-    this.endpointService.endpoints().subscribe((endpoints: Endpoint[]) => {
-      this.endpoints = endpoints;
-      this.cdRef.detectChanges();
-      if (onAfter) {
-        onAfter();
-      }
-
-    }, (error: any) => this.feedbackService.showError(error));
+    this.endpointService.endpoints().subscribe({
+      next: (endpoints: Endpoint[]) => {
+        this.endpoints = endpoints;
+        this.cdRef.detectChanges();
+        if (onAfter) {
+          onAfter();
+        }
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /**
@@ -583,22 +586,24 @@ export class IdeComponent implements OnInit, OnDestroy {
     }
     parent.children = [];
     this.getFilesFromServer(folder, isFile ? () => {
-      this.fileService.loadFile(fileObject).subscribe((content: string) => {
-        this.openFiles.push({
-          name: fileObject.substring(fileObject.lastIndexOf('/') + 1),
-          path: fileObject,
-          folder: fileObject.substring(0, fileObject.lastIndexOf('/') + 1),
-          content: content,
-          options: this.getCodeMirrorOptions(fileObject),
-        });
-        this.currentFileData = this.openFiles.filter(x => x.path === fileObject)[0];
-        setTimeout(() => {
-          var activeWrapper = document.querySelector('.active-codemirror-editor');
-          var editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
-          editor.doc.markClean();
-        }, 1);
-        this.cdRef.detectChanges();
-      });
+      this.fileService.loadFile(fileObject).subscribe({
+        next: (content: string) => {
+          this.openFiles.push({
+            name: fileObject.substring(fileObject.lastIndexOf('/') + 1),
+            path: fileObject,
+            folder: fileObject.substring(0, fileObject.lastIndexOf('/') + 1),
+            content: content,
+            options: this.getCodeMirrorOptions(fileObject),
+          });
+          this.currentFileData = this.openFiles.filter(x => x.path === fileObject)[0];
+          setTimeout(() => {
+            var activeWrapper = document.querySelector('.active-codemirror-editor');
+            var editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
+            editor.doc.markClean();
+          }, 1);
+          this.cdRef.detectChanges();
+        },
+        error: (error: any) => this.feedbackService.showError(error)});
     } : () => {
       this.getEndpoints();
     });
@@ -631,26 +636,30 @@ export class IdeComponent implements OnInit, OnDestroy {
       }
     };
 
-    this.fileService.listFoldersRecursively(folder, this.systemFiles).subscribe((folders: string[]) => {
-      functor(folders || [], true);
-      this.fileService.listFilesRecursively(folder, this.systemFiles).subscribe((files: string[]) => {
-        functor(files || [], false);
-        if (folder === '/') {
-          this.dataSource.data = this.root.children;
-        } else {
-          this.dataBindTree();
-        }
-        if (onAfter) {
-          onAfter();
-        }
+    this.fileService.listFoldersRecursively(folder, this.systemFiles).subscribe({
+      next: (folders: string[]) => {
+        functor(folders || [], true);
+        this.fileService.listFilesRecursively(folder, this.systemFiles).subscribe({
+          next: (files: string[]) => {
+            functor(files || [], false);
+            if (folder === '/') {
+              this.dataSource.data = this.root.children;
+            } else {
+              this.dataBindTree();
+            }
+            if (onAfter) {
+              onAfter();
+            }
 
-        // To start resizing the mat-drawer section
-        // preventing from miscalculation of the width, as mentioned inside material docs
-        // and looking for changes to update value in the html file
-        this.startResizing = true;
-        this.cdRef.detectChanges();
-      }, (error: any) => this.feedbackService.showError(error));
-    }, (error: any) => this.feedbackService.showError(error));
+            // To start resizing the mat-drawer section
+            // preventing from miscalculation of the width, as mentioned inside material docs
+            // and looking for changes to update value in the html file
+            this.startResizing = true;
+            this.cdRef.detectChanges();
+          },
+          error: (error: any) => this.feedbackService.showError(error)});
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /*

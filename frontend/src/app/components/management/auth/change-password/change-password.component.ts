@@ -54,10 +54,12 @@ export class ChangePasswordComponent {
    */
   savePassword() {
     if (this.password.length !== 0 || this.password === this.repeatPassword) {
-      this.authService.changePassword(this.password).subscribe(() => {
-        this.feedbackService.showInfoShort('Your password was successfully updated, please login again');
-        this.authService.logoutFromCurrent(true);
-      }, (error: any) => this.feedbackService.showError(error));
+      this.authService.changePassword(this.password).subscribe({
+        next: () => {
+          this.feedbackService.showInfoShort('Your password was successfully updated, please login again');
+          this.authService.logoutFromCurrent(true);
+        },
+        error: (error: any) => this.feedbackService.showError(error)});
     }
   }
 }

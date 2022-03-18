@@ -92,23 +92,27 @@ export class CreateKeypairComponent implements OnInit {
       this.seed,
       this.subject,
       this.email,
-      this.domain).subscribe(() => {
-      this.feedbackService.showInfo('Cryptography key pair successfully created');
-      this.messageService.sendMessage({
-        name: Messages.SETUP_STATE_CHANGED,
-        content: 'crypto'
-      });
-      this.doSubscribe === true ? this.subscribeToNewsletter() : '';
-    }, (error: any) => this.feedbackService.showError(error));
+      this.domain).subscribe({
+        next: () => {
+          this.feedbackService.showInfo('Cryptography key pair successfully created');
+          this.messageService.sendMessage({
+            name: Messages.SETUP_STATE_CHANGED,
+            content: 'crypto'
+          });
+          this.doSubscribe === true ? this.subscribeToNewsletter() : '';
+        },
+        error: (error: any) => this.feedbackService.showError(error)});
   }
 
   subscribeToNewsletter(){
     this.bazarService.subscribeToNewsletter(
       this.subject,
-      this.email).subscribe((result: Response) => {
-        localStorage.setItem('subscribes-to-newsletter', JSON.stringify({
-          subscribing: true,
-        }));
-      }, (error: any) => console.log('err'));
+      this.email).subscribe({
+        next: () => {
+          localStorage.setItem('subscribes-to-newsletter', JSON.stringify({
+            subscribing: true,
+          }));
+        },
+        error: (error: any) => console.log('err')});
   }
 }

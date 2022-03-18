@@ -29,9 +29,7 @@ export class ConfigComponent implements OnInit {
    * 
    * @param configService Configuration service used to load and save configuration settings
    */
-  constructor(
-    private configService: ConfigService) {
-  }
+  constructor(private configService: ConfigService) { }
 
   /**
    * OnInit implementation.

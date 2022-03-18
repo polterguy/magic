@@ -61,18 +61,18 @@ export class NewRoleDialogComponent {
    * Invoked when user clicks the create button to create a new role.
    */
   create() {
-    this.roleService.create(this.name, this.description).subscribe((res: any) => {
-      this.dialogRef.close(this.name);
-    }, (error: any) => this.feedbackService.showError(error));
+    this.roleService.create(this.name, this.description).subscribe({
+      next: () => this.dialogRef.close(this.name),
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /**
    * Invoked when user clicks the update button to update his role.
    */
   update() {
-    this.roleService.update(this.name, this.description).subscribe(() => {
-      this.dialogRef.close(this.name);
-    }, (error: any) => this.feedbackService.showError(error));
+    this.roleService.update(this.name, this.description).subscribe({
+      next: () => this.dialogRef.close(this.name),
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /**

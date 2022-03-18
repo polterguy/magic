@@ -41,6 +41,7 @@ export class ConfigEditorComponent implements OnInit {
    * 
    * @param feedbackService Needed to display feedback to user
    * @param configService Needed to load and save configuration file
+   * @param backendService Needed to retrieve user's access rights from backend
    * @param authService Needed to verify user has access to components
    */
   constructor(
@@ -53,16 +54,10 @@ export class ConfigEditorComponent implements OnInit {
   /**
    * OnInit implementation.
    */
-  public ngOnInit() {
-
-    // Fetching config from backend.
+  ngOnInit() {
     this.loadConfig();
-
-    // Associating ALT+M with fullscreen toggling of the editor instance.
     this.cmOptions.json.extraKeys['Alt-M'] = (cm: any) => {
       cm.setOption('fullScreen', !cm.getOption('fullScreen'));
-
-      // to hide/show sidenav
       let sidenav = document.querySelector('.mat-sidenav');
       sidenav.classList.contains('d-none') ? sidenav.classList.remove('d-none') :
       sidenav.classList.add('d-none');
@@ -72,35 +67,21 @@ export class ConfigEditorComponent implements OnInit {
   /**
    * Loads configuration from backend.
    */
-  public loadConfig() {
-
-    // Fetching raw config from backend.
-    this.configService.loadConfig().subscribe((res: any) => {
-
-      // Creating a JSON object out of result, that will be displayed in CodeMirror instance.
-      this.config = JSON.stringify(res, null, 2);
-
-    }, (error: any) => this.feedbackService.showError(error));
+  loadConfig() {
+    this.configService.loadConfig().subscribe({
+      next: (res: any) => this.config = JSON.stringify(res, null, 2),
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /**
    * Saves your configuration.
    */
-  public save() {
-
-    // In case conversion to JSON fails.
+  save() {
     try {
-
-      // Converting configuration to JSON.
       const config = JSON.parse(this.config);
-
-      // Saving config by invoking backend.
-      this.configService.saveConfig(config).subscribe(() => {
-
-        // Giving user feedback about operation.
-        this.feedbackService.showInfo('Configuration was successfully saved');
-
-    }, (error: any) => this.feedbackService.showError(error));
+      this.configService.saveConfig(config).subscribe({
+        next: () => this.feedbackService.showInfo('Configuration was successfully saved'),
+        error: (error: any) => this.feedbackService.showError(error)});
     }
     catch (error) {
       this.feedbackService.showError(error);

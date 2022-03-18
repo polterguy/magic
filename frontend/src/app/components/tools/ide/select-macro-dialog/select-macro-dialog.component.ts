@@ -9,6 +9,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
 import { FileService } from 'src/app/services/tools/file.service';
+import { FeedbackService } from 'src/app/services/feedback.service';
 
 /**
  * Encapsulating a single macro.
@@ -40,11 +41,13 @@ export class SelectMacroDialogComponent implements OnInit {
    * Creates an instance of your component.
    * 
    * @param fileService Needed to retrieve macro files from backend
+   * @param feedbackService Needed to provide feedback to user
    * @param dialogRef Needed to explicitly close dialog from TypeScript
    * @param data Currently selected macro
    */
   constructor(
     private fileService: FileService,
+    private feedbackService: FeedbackService,
     public dialogRef: MatDialogRef<SelectMacroDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Macro) { }
 
@@ -52,9 +55,11 @@ export class SelectMacroDialogComponent implements OnInit {
    * Implementation of OnInit.
    */
   ngOnInit() {
-    this.fileService.listFiles('/misc/ide/macros/', '.hl').subscribe((result: string[]) => {
-      this.macros = result;
-    });
+    this.fileService.listFiles('/misc/ide/macros/', '.hl').subscribe({
+      next: (result: string[]) => {
+        this.macros = result;
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /**

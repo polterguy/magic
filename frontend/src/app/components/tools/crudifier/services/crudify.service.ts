@@ -15,10 +15,9 @@ import { Crudify } from '../models/crudify.model';
 import { LocResult } from '../models/loc-result.model';
 import { CustomSql } from '../models/custom-sql.model';
 import { Response } from 'src/app/models/response.model';
-import { HttpService } from '../../../../services/http.service';
-import { formatNumber } from '@angular/common';
-import { FeedbackService } from 'src/app/services/feedback.service';
 import { Template } from 'src/app/models/template.model';
+import { HttpService } from '../../../../services/http.service';
+import { FeedbackService } from 'src/app/services/feedback.service';
 
 /**
  * Crudify service, allows you to crudify your databases.
@@ -33,6 +32,7 @@ export class CrudifyService {
    * 
    * @param httpService HTTP service to use for backend invocations
    * @param feedbackService Needed to provide feedback to user
+   * @param locale Needed to format strings according to locale
    */
   constructor(
     private httpService: HttpService,
@@ -44,9 +44,7 @@ export class CrudifyService {
    * 
    * @param data Input for process
    */
-  public crudify(data: Crudify) {
-
-    // Sanity checking invocation, returning early if we cannot generate endpoint.
+  crudify(data: Crudify) {
     let generate = true;
     if (data.verb === 'post' && data.args.columns.length === 0 && data.args.primary.length === 0) {
       generate = false;
@@ -63,8 +61,6 @@ export class CrudifyService {
         result: 'Endpoint not created'
       });
     }
-
-    // Invoking backend and returning observable to caller.
     return this.httpService.post<LocResult>('/magic/system/crudifier/crudify', data);
   }
 
@@ -73,42 +69,14 @@ export class CrudifyService {
    * 
    * @param data Input for process
    */
-  public generateSqlEndpoint(data: CustomSql) {
-
-    // Invoking backend and returning observable to caller.
+  generateSqlEndpoint(data: CustomSql) {
     return this.httpService.post<Response>('/magic/system/crudifier/custom-sql', data);
-  }
-
-  /**
-   * 
-   * 
-   * @param domain Frontend/dashboard domain
-   * @param apiDomain Backend/API domain - Typically api.xxx.domain
-   */
-  public generateDockerComposeFile(domain: string, apiDomain: string) {
-
-    // Invoking backend such that we download results of invocation to client.
-    const payload = {
-      domain,
-      apiDomain,
-    };
-    this.httpService.downloadPost(
-      '/magic/system/crudifier/generate-docker-compose', payload).subscribe(res => {
-
-        // Retrieving the filename, as provided by the server.
-        const disp = res.headers.get('Content-Disposition');
-        let filename = disp.split(';')[1].trim().split('=')[1].replace(/"/g, '');
-        const file = new Blob([res.body]);
-        saveAs(file, filename);
-      });
   }
 
   /**
    * Returns a list of all templates the backend has stored.
    */
-  public templates() {
-
-    // Filtering tests, to return only tests matching endpoint specified.
+  templates() {
     return this.httpService.get<string[]>('/magic/system/crudifier/templates');
   }
 
@@ -117,12 +85,8 @@ export class CrudifyService {
    * 
    * @param name Name of template to retrieve README file for
    */
-  public template(name: string) {
-
-    // Filtering tests, to return only tests matching endpoint specified.
-    return this.httpService.get<Template>(
-      '/magic/system/crudifier/template?name=' +
-      encodeURIComponent(name));
+  template(name: string) {
+    return this.httpService.get<Template>('/magic/system/crudifier/template?name=' + encodeURIComponent(name));
   }
 
   /**
@@ -130,12 +94,8 @@ export class CrudifyService {
    * 
    * @param name Name of template to retrieve custom arguments for
    */
-  public templateCustomArgs(name: string) {
-
-    // Filtering tests, to return only tests matching endpoint specified.
-    return this.httpService.get<any>(
-      '/magic/system/crudifier/template-args?name=' +
-      encodeURIComponent(name));
+  templateCustomArgs(name: string) {
+    return this.httpService.get<any>('/magic/system/crudifier/template-args?name=' + encodeURIComponent(name));
   }
 
   /**
@@ -148,9 +108,11 @@ export class CrudifyService {
    * @param name Name of application
    * @param copyright Copyright notice to put at top of all files
    * @param endpoints Endpoints you want to embed into your result
+   * @param deployLocally If true frontend is deployed locally on server
    * @param args Custom args endpoint requires
+   * @param onAfter Callback to be invoked once process is done
    */
-  public generate(
+  generate(
     templateName: string,
     apiUrl: string,
     frontendUrl: string,
@@ -161,44 +123,29 @@ export class CrudifyService {
     deployLocally: boolean,
     args: any,
     onAfter: () => void = null) {
-
-      // Invoking backend such that we download the result of invocation to client as a ZIP file.
-      const payload = {
-        templateName,
-        apiUrl,
-        frontendUrl,
-        email,
-        name,
-        copyright,
-        endpoints,
-        deployLocally,
-        args
-      };
-      this.httpService.downloadPost(
-        '/magic/system/crudifier/generate-frontend',
-        payload).subscribe(res => {
-  
-          // Retrieving the filename, as provided by the server.
-          const disp = res.headers.get('Content-Disposition');
-          if (disp) {
-
-            // We've got a ZIP file coming in.
-            let filename = disp.split(';')[1].trim().split('=')[1].replace(/"/g, '');
-            const file = new Blob([res.body]);
-
-            // Saving file.
-            saveAs(file, filename);
-          }
-
-          // Checking if caller provided an 'onAfter' function, and if so invoking it.
-          if (onAfter) {
-            onAfter();
-          }
-
-        }, (error: any) => this.feedbackService.showError('Something went wrong while generating your app, check your log for details'));
+    const payload = {
+      templateName,
+      apiUrl,
+      frontendUrl,
+      email,
+      name,
+      copyright,
+      endpoints,
+      deployLocally,
+      args
+    };
+    this.httpService.downloadPost('/magic/system/crudifier/generate-frontend', payload).subscribe({
+      next: (res) => {
+        const disp = res.headers.get('Content-Disposition');
+        if (disp) {
+          let filename = disp.split(';')[1].trim().split('=')[1].replace(/"/g, '');
+          const file = new Blob([res.body]);
+          saveAs(file, filename);
+        }
+        if (onAfter) {
+          onAfter();
+        }
+      },
+      error: () => this.feedbackService.showError('Something went wrong while generating your app, check your log for details')});
   }
-
-  /*
-   * Private helper methods.
-   */
 }

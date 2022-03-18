@@ -70,30 +70,32 @@ export class CrudSqlComponent implements OnInit {
    * Implementation of OnInit.
    */
   ngOnInit() {
-    this.sqlService.defaultDatabaseType().subscribe((defaultDatabaseType: DefaultDatabaseType) => {
-      this.databaseTypes = defaultDatabaseType.options;
-      this.getConnectionStrings(defaultDatabaseType.default, (connectionStrings: string[]) => {
-        this.getDatabases(defaultDatabaseType.default, 'generic', (databases: Databases) => {
-          this.databaseDeclaration = databases;
-          const tables = {};
-          for (const idxTable of databases.databases.filter((x: any) => x.name === 'magic')[0].tables) {
-            tables[idxTable.name] = idxTable.columns.map((x: any) => x.name);
-          }
-          this.connectionStrings = connectionStrings;
-          this.databases = databases.databases.map((x: any) => x.name);
-          this.input = {
-            databaseType: defaultDatabaseType.default,
-            connectionString: connectionStrings.filter(x => x === 'generic')[0],
-            database: null,
-            options: sqlOptions,
-            sql: '',
-          };
-          this.input.options.hintOptions = {
-            tables: tables,
-          };
+    this.sqlService.defaultDatabaseType().subscribe({
+      next: (defaultDatabaseType: DefaultDatabaseType) => {
+        this.databaseTypes = defaultDatabaseType.options;
+        this.getConnectionStrings(defaultDatabaseType.default, (connectionStrings: string[]) => {
+          this.getDatabases(defaultDatabaseType.default, 'generic', (databases: Databases) => {
+            this.databaseDeclaration = databases;
+            const tables = {};
+            for (const idxTable of databases.databases.filter((x: any) => x.name === 'magic')[0].tables) {
+              tables[idxTable.name] = idxTable.columns.map((x: any) => x.name);
+            }
+            this.connectionStrings = connectionStrings;
+            this.databases = databases.databases.map((x: any) => x.name);
+            this.input = {
+              databaseType: defaultDatabaseType.default,
+              connectionString: connectionStrings.filter(x => x === 'generic')[0],
+              database: null,
+              options: sqlOptions,
+              sql: '',
+            };
+            this.input.options.hintOptions = {
+              tables: tables,
+            };
+          });
         });
-      });
-    }, (error: any) => this.feedbackService.showError(error));
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /**
@@ -157,7 +159,7 @@ export class CrudSqlComponent implements OnInit {
    * 
    * @param db Database name
    */
-   getDatabaseCssClass(db: string) {
+  getDatabaseCssClass(db: string) {
     switch (this.input.databaseType) {
       case 'mysql':
         switch (db) {
@@ -201,15 +203,17 @@ export class CrudSqlComponent implements OnInit {
    * Returns all connection strings for database type from backend.
    */
   private getConnectionStrings(databaseType: string, onAfter: (connectionStrings: string[]) => void) {
-    this.sqlService.connectionStrings(databaseType).subscribe((connectionStrings: any) => {
-      if (onAfter) {
-        const tmp: string[] = [];
-        for (var idx in connectionStrings) {
-          tmp.push(idx);
+    this.sqlService.connectionStrings(databaseType).subscribe({
+      next: (connectionStrings: any) => {
+        if (onAfter) {
+          const tmp: string[] = [];
+          for (var idx in connectionStrings) {
+            tmp.push(idx);
+          }
+          onAfter(tmp);
         }
-        onAfter(tmp);
-      }
-    }, (error: any) => this.handleError(error));
+      },
+      error: (error: any) => this.handleError(error)});
   }
 
   /*
@@ -217,11 +221,13 @@ export class CrudSqlComponent implements OnInit {
    * combination from backend.
    */
   private getDatabases(databaseType: string, connectionString: string, onAfter: (databases: Databases) => void) {
-    this.sqlService.getDatabaseMetaInfo(databaseType, connectionString).subscribe((databases: Databases) => {
-      if (onAfter) {
-        onAfter(databases);
-      }
-    }, (error: any) => this.handleError(error));
+    this.sqlService.getDatabaseMetaInfo(databaseType, connectionString).subscribe({
+      next: (databases: Databases) => {
+        if (onAfter) {
+          onAfter(databases);
+        }
+      },
+      error: (error: any) => this.handleError(error)});
   }
 
   /*

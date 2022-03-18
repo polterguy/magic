@@ -123,16 +123,18 @@ export class TasksComponent implements OnInit {
     this.taskService.list(
       this.filterFormControl.value,
       this.paginator.pageIndex * this.paginator.pageSize,
-      this.paginator.pageSize).subscribe((tasks: Task[]) => {
-      this.tasks = (tasks || []).map(idx => {
-        return {
-          task: idx
-        }
-      });
-      this.taskService.count(this.filterFormControl.value).subscribe((count: Count) => {
-        this.count = count.count;
-      }, (error: any) => this.feedbackService.showError(error));
-    }, (error: any) => this.feedbackService.showError(error));
+      this.paginator.pageSize).subscribe({
+        next: (tasks: Task[]) => {
+          this.tasks = (tasks || []).map(idx => {
+            return {
+              task: idx
+            }
+          });
+          this.taskService.count(this.filterFormControl.value).subscribe({
+            next: (count: Count) => this.count = count.count,
+            error: (error: any) => this.feedbackService.showError(error)});
+        },
+        error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /**
@@ -160,24 +162,26 @@ export class TasksComponent implements OnInit {
    */
   toggleDetails(el: TaskEx) {
     if (!el.model) {
-      this.taskService.get(el.task.id).subscribe((task: Task) => {
-        el.task.hyperlambda = task.hyperlambda;
-        if (task.schedules) {
-          el.task.schedules = task.schedules.map(x => {
-            return {
-              id: x.id,
-              due: new Date(x.due),
-              repeats: x.repeats,
-            };
-          });
-        }
-        setTimeout(() => {
-          el.model = {
-            hyperlambda: task.hyperlambda,
-            options: hyperlambda
+      this.taskService.get(el.task.id).subscribe({
+        next: (task: Task) => {
+          el.task.hyperlambda = task.hyperlambda;
+          if (task.schedules) {
+            el.task.schedules = task.schedules.map(x => {
+              return {
+                id: x.id,
+                due: new Date(x.due),
+                repeats: x.repeats,
+              };
+            });
           }
-        }, 200);
-      });
+          setTimeout(() => {
+            el.model = {
+              hyperlambda: task.hyperlambda,
+              options: hyperlambda
+            }
+          }, 200);
+        },
+        error: (error: any) => this.feedbackService.showError(error)});
     }
   }
 
@@ -190,9 +194,9 @@ export class TasksComponent implements OnInit {
     this.taskService.update(
       task.task.id,
       task.model.hyperlambda,
-      task.task.description).subscribe(() => {
-      this.feedbackService.showInfoShort('Task successfully updated');
-    });
+      task.task.description).subscribe({
+        next: () => this.feedbackService.showInfoShort('Task successfully updated'),
+        error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /**
@@ -227,10 +231,12 @@ export class TasksComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe((result: ConfirmDialogData) => {
       if (result && result.confirmed) {
-        this.taskService.delete(task.task.id).subscribe(() => {
-          this.feedbackService.showInfoShort('Task successfully deleted');
-          this.getTasks();
-        }, (error: any)=> this.feedbackService.showError(error));
+        this.taskService.delete(task.task.id).subscribe({
+          next: () => {
+            this.feedbackService.showInfoShort('Task successfully deleted');
+            this.getTasks();
+          },
+          error: (error: any)=> this.feedbackService.showError(error)});
       }
     });
   }
@@ -248,9 +254,9 @@ export class TasksComponent implements OnInit {
     dialogRef.afterClosed().subscribe((result: Task) => {
       if (result) {
         this.feedbackService.showInfo('Task was successfully scheduled');
-        this.taskService.get(task.id).subscribe((nTask: Task) => {
-          task.schedules = nTask.schedules;
-        });
+        this.taskService.get(task.id).subscribe({
+          next: (nTask: Task) => task.schedules = nTask.schedules,
+          error: (error: any) =>this.feedbackService.showError(error)});
       }
     });
   }
@@ -266,10 +272,12 @@ export class TasksComponent implements OnInit {
       'Please confirm delete operation',
       'Are you sure you want to delete the schedule for the task?',
       () => {
-        this.taskService.deleteSchedule(schedule.id).subscribe(() => {
-          task.schedules.splice(task.schedules.indexOf(schedule), 1);
-          this.feedbackService.showInfoShort('Schedule deleted');
-        });
+        this.taskService.deleteSchedule(schedule.id).subscribe({
+          next: () => {
+            task.schedules.splice(task.schedules.indexOf(schedule), 1);
+            this.feedbackService.showInfoShort('Schedule deleted');
+          },
+          error: (error: any) =>this.feedbackService.showError(error)});
     });
   }
 }

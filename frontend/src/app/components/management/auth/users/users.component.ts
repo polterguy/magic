@@ -133,14 +133,16 @@ export class UsersComponent implements OnInit {
     this.filter.offset = this.paginator.pageIndex * this.paginator.pageSize;
     this.filter.limit = this.paginator.pageSize;
 
-    this.userService.list(this.filter).subscribe((users: User[]) => {
-      this.selectedUsers.splice(0, this.selectedUsers.length);
-      this.users = users || [];
-    }, (error: any) => this.feedbackService.showError(error));
+    this.userService.list(this.filter).subscribe({
+      next: (users: User[]) => {
+        this.selectedUsers.splice(0, this.selectedUsers.length);
+        this.users = users || [];
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
 
-    this.userService.count(this.filter).subscribe((res: Count) => {
-      this.count = res.count;
-    }, (error: any) => this.feedbackService.showError(error));
+    this.userService.count(this.filter).subscribe({
+      next: (res: Count) => this.count = res.count,
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /**
@@ -169,9 +171,9 @@ export class UsersComponent implements OnInit {
       this.selectedUsers.splice(idx, 1);
     } else {
       this.selectedUsers.push(user);
-      this.userService.getRoles(user.username).subscribe((roles: UserRoles[]) => {
-        user.roles = (roles || []).map(x => x.role);
-      });
+      this.userService.getRoles(user.username).subscribe({
+        next: (roles: UserRoles[]) => user.roles = (roles || []).map(x => x.role),
+        error: (error: any) =>this.feedbackService.showError(error)});
     }
   }
 
@@ -205,18 +207,14 @@ export class UsersComponent implements OnInit {
       width: '550px',
       data: user
     });
-
     dialogRef.afterClosed().subscribe((releaseDate: Date) => {
       if (releaseDate) {
-
-        /*
-         * User was jailed, invoking backend to make sure user
-         * cannot access Magic before release date.
-         */
-        this.userService.imprison(user.username, releaseDate).subscribe(() => {
-          this.feedbackService.showInfoShort('User successfully imprisoned');
-          this.getUsers();
-        }, (error: any) => this.feedbackService.showError(error));
+        this.userService.imprison(user.username, releaseDate).subscribe({
+          next: () => {
+            this.feedbackService.showInfoShort('User successfully imprisoned');
+            this.getUsers();
+          },
+          error: (error: any) => this.feedbackService.showError(error)});
       }
     });
   }
@@ -230,10 +228,12 @@ export class UsersComponent implements OnInit {
     this.userService.update({
       username: user.username,
       locked: !user.locked
-    }).subscribe(() => {
-      user.locked = !user.locked;
-      this.feedbackService.showInfo(`User was successfully ${user.locked ? 'locked out of system' : 'released to access the system'}`);
-    }, (error: any) => this.feedbackService.showError(error));
+    }).subscribe({
+      next: () => {
+        user.locked = !user.locked;
+        this.feedbackService.showInfo(`User was successfully ${user.locked ? 'locked out of system' : 'released to access the system'}`);
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /**
@@ -243,10 +243,12 @@ export class UsersComponent implements OnInit {
    * @param role Name of role to remove from user
    */
   removeRole(user: User, role: string) {
-    this.userService.removeRole(user.username, role).subscribe((affected: Affected) => {
-      this.feedbackService.showInfo(`'${role}' role was successfully removed from '${user.username}'`);
-      user.roles.splice(user.roles.indexOf(role), 1);
-    });
+    this.userService.removeRole(user.username, role).subscribe({
+      next: () => {
+        this.feedbackService.showInfo(`'${role}' role was successfully removed from '${user.username}'`);
+        user.roles.splice(user.roles.indexOf(role), 1);
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /**
@@ -283,18 +285,20 @@ export class UsersComponent implements OnInit {
    * Invoked when user wants to create a login link for user.
    */
   generateLoginLink(user: User) {
-    this.userService.generateLoginLink(user.username).subscribe((result: AuthenticateResponse) => {
-      const location: any = this.platformLocation;
-      const url = location.location.origin.toString() +
-        '/?token=' +
-        encodeURIComponent(result.ticket) +
-        '&username=' +
-        encodeURIComponent(user.username) +
-        '&url=' +
-        encodeURIComponent(this.backendService.active.url);
-      this.clipboard.copy(url);
-      this.feedbackService.showInfo('The impersonation link can be found on your clipboard');
-    }, (error: any) => this.feedbackService.showError(error));
+    this.userService.generateLoginLink(user.username).subscribe({
+      next: (result: AuthenticateResponse) => {
+        const location: any = this.platformLocation;
+        const url = location.location.origin.toString() +
+          '/?token=' +
+          encodeURIComponent(result.ticket) +
+          '&username=' +
+          encodeURIComponent(user.username) +
+          '&url=' +
+          encodeURIComponent(this.backendService.active.url);
+        this.clipboard.copy(url);
+        this.feedbackService.showInfo('The impersonation link can be found on your clipboard');
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /**
@@ -303,18 +307,20 @@ export class UsersComponent implements OnInit {
    * @param user User to create link for
    */
   generateResetPasswordLink(user: User) {
-    this.userService.generateResetPasswordLink(user.username).subscribe((result: AuthenticateResponse) => {
-      const location: any = this.platformLocation;
-      const url = location.location.origin.toString() +
-        '/?token=' +
-        encodeURIComponent(result.ticket) +
-        '&username=' +
-        encodeURIComponent(user.username) +
-        '&url=' +
-        encodeURIComponent(this.backendService.active.url);
-      this.clipboard.copy(url);
-      this.feedbackService.showInfo('The reset password link can be found on your clipboard');
-    }, (error: any) => this.feedbackService.showError(error));
+    this.userService.generateResetPasswordLink(user.username).subscribe({
+      next: (result: AuthenticateResponse) => {
+        const location: any = this.platformLocation;
+        const url = location.location.origin.toString() +
+          '/?token=' +
+          encodeURIComponent(result.ticket) +
+          '&username=' +
+          encodeURIComponent(user.username) +
+          '&url=' +
+          encodeURIComponent(this.backendService.active.url);
+        this.clipboard.copy(url);
+        this.feedbackService.showInfo('The reset password link can be found on your clipboard');
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /**
@@ -322,26 +328,27 @@ export class UsersComponent implements OnInit {
    * 
    * @param user User to delete
    */
-  public delete(user: User) {
+  delete(user: User) {
     this.feedbackService.confirm(
       'Please confirm operation',
       `Please confirm that you want to delete the '${user.username}' user`,
       () => {
-        this.userService.delete(user.username).subscribe(() => {
-          this.feedbackService.showInfo(`'${user.username}' was successfully deleted`);
-          this.getUsers();
-        }, (error: any) => this.feedbackService.showError(error));
+        this.userService.delete(user.username).subscribe({
+          next: () => {
+            this.feedbackService.showInfo(`'${user.username}' was successfully deleted`);
+            this.getUsers();
+          },
+          error: (error: any) => this.feedbackService.showError(error)});
     });
   }
 
   /**
    * Shows the create new user modal dialog.
    */
-  public createUser() {
+  createUser() {
     const dialogRef = this.dialog.open(NewUserDialogComponent, {
       width: '550px',
     });
-
     dialogRef.afterClosed().subscribe((username: string) => {
       if (username) {
         this.feedbackService.showInfo(`'${username}' successfully created`)

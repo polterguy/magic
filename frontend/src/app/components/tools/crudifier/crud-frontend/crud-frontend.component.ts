@@ -9,6 +9,7 @@ import { Messages } from 'src/app/models/messages.model';
 import { CrudifyService } from '../services/crudify.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { MessageService } from 'src/app/services/message.service';
+import { FeedbackService } from 'src/app/services/feedback.service';
 import { NameEmailModel } from '../../../../models/name-email.model';
 import { ConfigService } from '../../../../services/management/config.service';
 import { CrudFrontendExtraComponent } from './crud-frontend-extra/crud-frontend-extra.component';
@@ -69,6 +70,7 @@ export class CrudFrontendComponent implements OnInit {
    * @param resolver Needed to be able to create component factory to create dynamically inject extra information component
    * @param crudifyService Needed to retrieve templates, meta information, and actually generate frontend
    * @param messageService Needed to be able to publish messages for creating child component
+   * @param feedbackService Needed to provide feedback to user
    * @param backendService Needed to populate the default value of the API URL.
    * @param configService Needed to retrieve user's email address
    */
@@ -76,6 +78,7 @@ export class CrudFrontendComponent implements OnInit {
     private resolver: ComponentFactoryResolver,
     private crudifyService: CrudifyService,
     private messageService: MessageService,
+    private feedbackService:FeedbackService,
     private backendService: BackendService,
     private configService: ConfigService) { }
 
@@ -83,13 +86,17 @@ export class CrudFrontendComponent implements OnInit {
    * Implementation of OnInit.
    */
   ngOnInit() {
-    this.crudifyService.templates().subscribe((result: string[]) => {
-      this.templates = result || [];
-    });
+    this.crudifyService.templates().subscribe({
+      next: (result: string[]) => {
+        this.templates = result || [];
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
     this.apiUrl = this.backendService.active.url;
-    this.configService.rootUserEmailAddress().subscribe((model: NameEmailModel) => {
-      this.email = model.email;
-    });
+    this.configService.rootUserEmailAddress().subscribe({
+      next: (model: NameEmailModel) => {
+        this.email = model.email;
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /**

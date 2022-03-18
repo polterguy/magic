@@ -99,11 +99,13 @@ export class GeneralActionsComponent implements OnInit, OnDestroy {
    */
   installModule(file: FileList) {
     if (file[0].name.split('.')[1] === 'zip') {
-      this.fileService.installModule(file.item(0)).subscribe(() => {
-        this.feedbackService.showInfo('File was successfully uploaded');
-        this.zipFileInput = null;
-        this.updateFiles.emit('/modules/');
-      }, (error: any) => this.feedbackService.showError(error));
+      this.fileService.installModule(file.item(0)).subscribe({
+        next: () => {
+          this.feedbackService.showInfo('File was successfully uploaded');
+          this.zipFileInput = null;
+          this.updateFiles.emit('/modules/');
+        },
+        error: (error: any) => this.feedbackService.showError(error)});
     } else {
       this.feedbackService.showInfo('Only zip files without . are accepted');
     }

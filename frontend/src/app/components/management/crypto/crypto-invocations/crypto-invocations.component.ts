@@ -141,18 +141,20 @@ export class CryptoInvocationsComponent implements OnInit, OnDestroy {
       filter,
       offset: this.paginator.pageIndex * this.paginator.pageSize,
       limit: this.paginator.pageSize
-    }).subscribe((invocations: CryptoInvocation[]) => {
-      this.invocations = invocations || [];
-      const countFilter: any = { };
-      if (filterValue.indexOf('key:') === 0) {
-        countFilter.crypto_key = filterValue.substring(filterValue.indexOf(':') + 1);
-      } else {
-        countFilter.filter = filterValue;
-      }
-      this.cryptoService.countInvocations({ filter: countFilter }).subscribe(res => {
-        this.count = res.count;
-      }, (error: any) => this.feedbackService.showError(error));
-    }, (error: any) => this.feedbackService.showError(error));
+    }).subscribe({
+      next: (invocations: CryptoInvocation[]) => {
+        this.invocations = invocations || [];
+        const countFilter: any = { };
+        if (filterValue.indexOf('key:') === 0) {
+          countFilter.crypto_key = filterValue.substring(filterValue.indexOf(':') + 1);
+        } else {
+          countFilter.filter = filterValue;
+        }
+        this.cryptoService.countInvocations({ filter: countFilter }).subscribe({
+          next: (res) => this.count = res.count,
+          error: (error: any) => this.feedbackService.showError(error)});
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /**
@@ -164,9 +166,9 @@ export class CryptoInvocationsComponent implements OnInit, OnDestroy {
     if (this.keys.filter(x => x.id === invocation.crypto_key).length === 0) {
       this.cryptoService.publicKeys({
         key_id: invocation.crypto_key
-      }).subscribe((result: PublicKey[]) => {
-        this.keys.push(result[0])
-      }, (error: any) => this.feedbackService.showError(error));
+      }).subscribe({
+        next: (result: PublicKey[]) => this.keys.push(result[0]),
+        error: (error: any) => this.feedbackService.showError(error)});
     }
   }
 

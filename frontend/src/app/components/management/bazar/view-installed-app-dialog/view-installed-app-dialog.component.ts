@@ -55,48 +55,54 @@ export class ViewInstalledAppDialogComponent implements OnInit {
    * Implementation of OnInit.
    */
   ngOnInit() {
-    this.fileService.listFiles(
-      '/modules/' + this.data.module_name + '/',
-      'README.md').subscribe((result: string[]) => {
-      if (result && result.length > 0) {
-        this.fileService.loadFile(
-          '/modules/' + this.data.module_name +
-          '/README.md').subscribe((markdown: string) => {
-            this.markdown = markdown;
-          }, (error: any) => this.feedbackService.showError(error));
-      }
-    }, (error: any) => this.feedbackService.showError(error));
+    this.fileService.listFiles('/modules/' + this.data.module_name + '/', 'README.md').subscribe({
+      next: (result: string[]) => {
+        if (result && result.length > 0) {
+          this.fileService.loadFile('/modules/' + this.data.module_name + '/README.md').subscribe({
+            next: (markdown: string) => {
+              this.markdown = markdown;
+            },
+            error: (error: any) => this.feedbackService.showError(error)});
+        }
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /**
    * Invoked when user wants to update the app.
    */
   update() {
-    this.bazarService.updateBazarItem(this.data).subscribe((result: Response) => {
-      if (result.result === 'success') {
-        this.bazarService.installBazarItem(
-          this.data.module_name,
-          this.data.new_version,
-          this.data.name,
-          this.data.token).subscribe((install: Response) => {
-          if (install.result === 'success') {
-            this.feedbackService.showInfo('Application was successfully updated. You probably want to store the ZIP file for later in case you need to install a backup of your app.');
-            this.dialogRef.close(this.data);
-            this.bazarService.downloadBazarItemLocally(this.data.module_name);
-          }
-        }, (error: any) => this.feedbackService.showError(error));
-      }
-    }, (error: any) => this.feedbackService.showError(error));
+    this.bazarService.updateBazarItem(this.data).subscribe({
+      next: (result: Response) => {
+        if (result.result === 'success') {
+          this.bazarService.installBazarItem(
+            this.data.module_name,
+            this.data.new_version,
+            this.data.name,
+            this.data.token).subscribe({
+              next: (install: Response) => {
+                if (install.result === 'success') {
+                  this.feedbackService.showInfo('Application was successfully updated. You probably want to store the ZIP file for later in case you need to install a backup of your app.');
+                  this.dialogRef.close(this.data);
+                  this.bazarService.downloadBazarItemLocally(this.data.module_name);
+                }
+              },
+              error: (error: any) => this.feedbackService.showError(error)});
+        }
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /**
    * Invoked when user wants to uninstall app from local server.
    */
   uninstall() {
-    this.fileService.deleteFolder('/modules/' + this.data.module_name + '/').subscribe((result: Response) => {
-      this.feedbackService.showInfo('Application was successfully uninstalled from local server');
-      this.dialogRef.close(this.data);
-    }, (error: any) => this.feedbackService.showError(error));
+    this.fileService.deleteFolder('/modules/' + this.data.module_name + '/').subscribe({
+      next: () => {
+        this.feedbackService.showInfo('Application was successfully uninstalled from local server');
+        this.dialogRef.close(this.data);
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /**

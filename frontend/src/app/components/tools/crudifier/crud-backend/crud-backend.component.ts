@@ -16,7 +16,6 @@ import { Messages } from 'src/app/models/messages.model';
 import { DatabaseEx } from '../models/database-ex.model';
 import { Databases } from 'src/app/models/databases.model';
 import { CrudifyService } from '../services/crudify.service';
-import { AuthService } from '../../../../services/auth.service';
 import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { SqlService } from '../../../../services/tools/sql.service';
@@ -112,15 +111,17 @@ export class CrudBackendComponent implements OnInit {
    * Implementation of OnInit.
    */
   ngOnInit() {
-    this.sqlService.defaultDatabaseType().subscribe((defaultDatabaseType: DefaultDatabaseType) => {
-      this.databaseTypes = defaultDatabaseType.options;
-      this.databaseType = this.databaseTypes.filter(x => x === defaultDatabaseType.default)[0];
-      this.getConnectionStrings(defaultDatabaseType.default, (connectionStrings: string[]) => {
-        this.connectionStrings = connectionStrings;
-        this.connectionString = this.connectionStrings.filter(x => x === 'generic')[0];
-        this.connectionStringChanged();
-      });
-    }, (error: any) => this.feedbackService.showError(error));
+    this.sqlService.defaultDatabaseType().subscribe({
+      next: (defaultDatabaseType: DefaultDatabaseType) => {
+        this.databaseTypes = defaultDatabaseType.options;
+        this.databaseType = this.databaseTypes.filter(x => x === defaultDatabaseType.default)[0];
+        this.getConnectionStrings(defaultDatabaseType.default, (connectionStrings: string[]) => {
+          this.connectionStrings = connectionStrings;
+          this.connectionString = this.connectionStrings.filter(x => x === 'generic')[0];
+          this.connectionStringChanged();
+        });
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /**
@@ -132,14 +133,15 @@ export class CrudBackendComponent implements OnInit {
     this.database = null;
     this.table = null;
 
-    this.sqlService.connectionStrings(this.databaseType).subscribe((result: any) => {
-      const connectionStrings: string[] = [];
-      for (const idx in result) {
-        connectionStrings.push(idx);
-      }
-      this.connectionStrings = connectionStrings;
-    }, (error: any) => this.feedbackService.showError(error));
-
+    this.sqlService.connectionStrings(this.databaseType).subscribe({
+      next: (result: any) => {
+        const connectionStrings: string[] = [];
+        for (const idx in result) {
+          connectionStrings.push(idx);
+        }
+        this.connectionStrings = connectionStrings;
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
     this.messageService.sendMessage({
       name: Messages.CLEAR_COMPONENTS,
     });
@@ -153,9 +155,9 @@ export class CrudBackendComponent implements OnInit {
     this.table = null;
     this.sqlService.getDatabaseMetaInfo(
       this.databaseType,
-      this.connectionString).subscribe((databases: Databases) => {
-        this.databases = databases;
-    }, (error: any) => this.feedbackService.showError(error));
+      this.connectionString).subscribe({
+        next: (databases: Databases) => this.databases = databases,
+        error: (error: any) => this.feedbackService.showError(error)});
     this.messageService.sendMessage({
       name: Messages.CLEAR_COMPONENTS,
     });
@@ -244,9 +246,9 @@ export class CrudBackendComponent implements OnInit {
       'Confirm action',
       'This will flush your server side cache and reload your page. Are you sure you want to do this?',
       () => {
-        this.cacheService.delete('magic.sql.databases.*').subscribe(() => {
-          window.location.href = window.location.href;
-        }, (error: any) => this.feedbackService.showError(error));
+        this.cacheService.delete('magic.sql.databases.*').subscribe({
+          next: () => window.location.href = window.location.href,
+          error: (error: any) => this.feedbackService.showError(error)});
     });
   }
 
@@ -269,21 +271,25 @@ export class CrudBackendComponent implements OnInit {
       }
     }
 
-    forkJoin(subscribers).subscribe((results: LocResult[]) => {
-      const loc = results.reduce((x,y) => x + y.loc, 0);
-      this.logService.createLocItem(loc, 'backend', `${this.database.name}`).subscribe(() => {
-        this.feedbackService.showInfo(`${formatNumber(loc, this.locale, '1.0')} lines of code generated`);
-        this.flushEndpointsAuthRequirements();
-        this.messageService.sendMessage({
-          name: 'magic.folders.update',
-          content: '/modules/'
-        });
-      }, (error: any) => this.feedbackService.showError(error));
+    forkJoin(subscribers).subscribe({
+      next: (results: LocResult[]) => {
+        const loc = results.reduce((x,y) => x + y.loc, 0);
+        this.logService.createLocItem(loc, 'backend', `${this.database.name}`).subscribe({
+          next: () => {
+            this.feedbackService.showInfo(`${formatNumber(loc, this.locale, '1.0')} lines of code generated`);
+            this.flushEndpointsAuthRequirements();
+            this.messageService.sendMessage({
+              name: 'magic.folders.update',
+              content: '/modules/'
+            });
+          },
+          error: (error: any) => this.feedbackService.showError(error)});
 
-    }, (error: any) => {
-      this.loaderInterceptor.forceHide();
-      this.feedbackService.showError(error);
-    });
+      },
+      error: (error: any) => {
+        this.loaderInterceptor.forceHide();
+        this.feedbackService.showError(error);
+      }});
   }
 
   /**
@@ -436,25 +442,25 @@ export class CrudBackendComponent implements OnInit {
    * Returns all connection strings for database type from backend.
    */
   private getConnectionStrings(databaseType: string, onAfter: (connectionStrings: string[]) => void) {
-    this.sqlService.connectionStrings(databaseType).subscribe((connectionStrings: any) => {
-      if (onAfter) {
-        const tmp: string[] = [];
-        for (var idx in connectionStrings) {
-          tmp.push(idx);
+    this.sqlService.connectionStrings(databaseType).subscribe({
+      next: (connectionStrings: any) => {
+        if (onAfter) {
+          const tmp: string[] = [];
+          for (var idx in connectionStrings) {
+            tmp.push(idx);
+          }
+          onAfter(tmp);
         }
-        onAfter(tmp);
-      }
-    }, (error: any) => {
-      this.feedbackService.showError(error);}
-    );
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /*
    * Will flush server side cache of endpoints (auth invocations) and re-retrieve these again.
    */
   private flushEndpointsAuthRequirements() {
-    this.cacheService.delete('magic.auth.endpoints').subscribe(() => {
-      this.backendService.refetchEndpoints();
-    }, (error: any) => this.feedbackService.showError(error));
+    this.cacheService.delete('magic.auth.endpoints').subscribe({
+      next: () => this.backendService.refetchEndpoints(),
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 }

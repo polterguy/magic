@@ -64,8 +64,8 @@ export class ScheduleTaskDialogComponent {
   create() {
     const date = this.isRepeating ? null : this.date;
     const repeating = this.isRepeating ? this.repeats : null;
-    this.taskService.schedule(this.data.id, date, repeating).subscribe(() => {
-      this.dialogRef.close(this.data);
-    }, (error: any) => this.feedbackService.showError(error));
+    this.taskService.schedule(this.data.id, date, repeating).subscribe({
+      next: () => this.dialogRef.close(this.data),
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 }

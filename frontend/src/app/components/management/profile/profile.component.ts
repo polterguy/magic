@@ -44,8 +44,8 @@ export class ProfileComponent {
    * Invoked when user wants to change his password.
    */
   changePassword() {
-    this.authService.changePassword(this.password).subscribe((result: Response) => {
-      this.feedbackService.showInfoShort('Your password was successfully changed');
-    }, (error: any) => this.feedbackService.showError(error));
+    this.authService.changePassword(this.password).subscribe({
+      next: () => this.feedbackService.showInfoShort('Your password was successfully changed'),
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 }

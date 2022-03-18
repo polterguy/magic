@@ -269,7 +269,7 @@ export class BazarComponent implements OnInit, OnDestroy {
       data: app,
       width: '80%',
     });
-    dialogRef.afterClosed().subscribe((result: AppManifest) => {
+    dialogRef.afterClosed().subscribe(() => {
       this.loadManifests();
     });
   }
@@ -294,20 +294,19 @@ export class BazarComponent implements OnInit, OnDestroy {
     this.bazarService.listBazarItems(
       this.filterFormControl.value,
       this.paginator.pageIndex * this.paginator.pageSize,
-      this.paginator.pageSize).subscribe((apps: BazarApp[]) => {
-      this.apps = apps;
-      this.bazarService.countBazarItems(this.filterFormControl.value).subscribe((count: Count) => {
-        this.count = count.count;
-
-        /*
-         * Checking if this is our first invocation, at which point we hide filter form control
-         * if there are fewer than 6 apps.
-         */
-        if (first) {
-          this.hideFilterControl = this.count <= 5;
-        }
-      });
-    }, (error: any) => this.feedbackService.showError(error));
+      this.paginator.pageSize).subscribe({
+        next: (apps: BazarApp[]) => {
+          this.apps = apps;
+          this.bazarService.countBazarItems(this.filterFormControl.value).subscribe({
+            next: (count: Count) => {
+              this.count = count.count;
+              if (first) {
+                this.hideFilterControl = this.count <= 5;
+              }
+            },
+            error: (error: any) =>this.feedbackService.showError(error)});
+        },
+        error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /*
@@ -340,16 +339,18 @@ export class BazarComponent implements OnInit, OnDestroy {
        * we're able to connect to SignalR socket, we'll need to actualyl check if product is already ready
        * for download here.
        */
-      this.bazarService.canDownloadBazarItem(token).subscribe((response: Response) => {
-        if (response.result === 'APPROVED') {
+      this.bazarService.canDownloadBazarItem(token).subscribe({
+        next: (response: Response) => {
+          if (response.result === 'APPROVED') {
 
-          /*
-           * PayPal already invoked our callback before we were able
-           * to create our SignalR message subscriber.
-           */
-          this.install(app, token);
-        }
-      });
+            /*
+            * PayPal already invoked our callback before we were able
+            * to create our SignalR message subscriber.
+            */
+            this.install(app, token);
+          }
+        },
+        error: (error: any) =>this.feedbackService.showError(error)});
     });
   }
 
@@ -359,60 +360,60 @@ export class BazarComponent implements OnInit, OnDestroy {
    */
   private install(app: BazarApp, token: string) {
 
-    this.bazarService.downloadBazarItem(app, token).subscribe((download: Response) => {
-      if (download.result === 'success') {
-        this.bazarService.installBazarItem(
-          app.folder_name,
-          app.version,
-          app.name,
-          token).subscribe((install: Response) => {
-          if (install.result === 'success') {
-            this.feedbackService.showInfo('Module was successfully installed on your server');
-
-            /*
-             * Making sure we turn OFF socket connections if these have been created.
-             *
-             * Notice, socket connections are NOT turned on for immediate downloads (free apps).
-             */
-            if (this.hubConnection) {
-              this.hubConnection.stop();
-              this.hubConnection = null;
-              this.loaderService.hide();
-              this.dialog.closeAll();
-            }
-
-            this.router.navigate(['/bazar']);
-            this.loadManifests();
-
-            this.fileService.listFiles('/modules/' + app.folder_name + '/', 'README.md').subscribe((files: string[]) => {
-              const mainReadmeFilePath = files.filter(x => x === '/modules/' + app.folder_name + '/README.md');
-              if (mainReadmeFilePath.length > 0) {
+    this.bazarService.downloadBazarItem(app, token).subscribe({
+      next: (download: Response) => {
+        if (download.result === 'success') {
+          this.bazarService.installBazarItem(app.folder_name, app.version, app.name, token).subscribe({
+            next: (install: Response) => {
+              if (install.result === 'success') {
+                this.feedbackService.showInfo('Module was successfully installed on your server');
 
                 /*
-                 * Module has a main README file, hence displaying it to
-                 * the user in a modal window - But first we need to load the file's content.
+                 * Making sure we turn OFF socket connections if these have been created.
+                 *
+                 * Notice, socket connections are NOT turned on for immediate downloads (free apps).
                  */
-                this.fileService.loadFile(mainReadmeFilePath[0]).subscribe((readMeFileContent: string) => {
-                  this.dialog.open(ViewReadmeDialogComponent, {
-                    data: readMeFileContent,
-                  });
-                }, (error: any) => this.feedbackService.showError(error));
-              }
+                if (this.hubConnection) {
+                  this.hubConnection.stop();
+                  this.hubConnection = null;
+                  this.loaderService.hide();
+                  this.dialog.closeAll();
+                }
 
-              // Downloading module to local computer.
-              this.bazarService.downloadBazarItemLocally(app.folder_name);
+                this.router.navigate(['/bazar']);
+                this.loadManifests();
 
-            }, (error: any) => this.feedbackService.showError(error));
+                this.fileService.listFiles('/modules/' + app.folder_name + '/', 'README.md').subscribe({
+                  next: (files: string[]) => {
+                    const mainReadmeFilePath = files.filter(x => x === '/modules/' + app.folder_name + '/README.md');
+                    if (mainReadmeFilePath.length > 0) {
 
-          } else {
-            this.feedbackService.showError('Something went wrong when trying to install Bazar app. Your log might contain more information.');
-          }
-        }, (error: any) => this.feedbackService.showError(error));
-      } else {
-        this.feedbackService.showError('Something went wrong when trying to install Bazar app. Your log might contain more information.');
-      }
+                      /*
+                       * Module has a main README file, hence displaying it to
+                       * the user in a modal window - But first we need to load the file's content.
+                       */
+                      this.fileService.loadFile(mainReadmeFilePath[0]).subscribe({
+                        next: (readMeFileContent: string) => {
+                          this.dialog.open(ViewReadmeDialogComponent, {
+                            data: readMeFileContent,
+                          });
+                        },
+                        error:(error: any) => this.feedbackService.showError(error)});
+                    }
+                    this.bazarService.downloadBazarItemLocally(app.folder_name);
+                  },
+                  error: (error: any) => this.feedbackService.showError(error)});
 
-    }, (error: any) => this.feedbackService.showError(error));
+            } else {
+              this.feedbackService.showError('Something went wrong when trying to install Bazar app. Your log might contain more information.');
+            }
+          },
+          error: (error: any) => this.feedbackService.showError(error)});
+        } else {
+          this.feedbackService.showError('Something went wrong when trying to install Bazar app. Your log might contain more information.');
+        }
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /*
@@ -420,33 +421,32 @@ export class BazarComponent implements OnInit, OnDestroy {
    */
   private loadManifests() {
 
-    this.bazarService.localManifests().subscribe((manifests: AppManifest[]) => {
-      this.manifests = manifests || [];
-      let hasUpdates = false;
-      for (const idx of this.manifests) {
-        this.bazarService.getBazarItem(idx.module_name).subscribe((result: BazarApp[]) => {
-          if (result && result.length > 0) {
-            const version = result[0].version;
-            this.configService.versionCompare(idx.version, version).subscribe((versionCompare: any) => {
-
-              /*
-               * Checking if app has an update.
-               *
-               * Notice, if version comparison returned -1, this implies that the local version is
-               * less than the current Bazar version, and hence app has an update in the Bazar.
-               */
-              if (+versionCompare.result === -1) {
-                idx.has_update = true;
-                idx.new_version = version;
-                if (!hasUpdates) {
-                  hasUpdates = true;
-                  this.feedbackService.showInfo('You have apps that needs to be updated, scroll to the bottom to see the list of apps that needs updating');
-                }
+    this.bazarService.localManifests().subscribe({
+      next: (manifests: AppManifest[]) => {
+        this.manifests = manifests || [];
+        let hasUpdates = false;
+        for (const idx of this.manifests) {
+          this.bazarService.getBazarItem(idx.module_name).subscribe({
+            next: (result: BazarApp[]) => {
+              if (result && result.length > 0) {
+                const version = result[0].version;
+                this.configService.versionCompare(idx.version, version).subscribe({
+                  next: (versionCompare: any) => {
+                    if (+versionCompare.result === -1) {
+                      idx.has_update = true;
+                      idx.new_version = version;
+                      if (!hasUpdates) {
+                        hasUpdates = true;
+                        this.feedbackService.showInfo('You have apps that needs to be updated, scroll to the bottom to see the list of apps that needs updating');
+                      }
+                    }
+                  },
+                  error: (error: any) => this.feedbackService.showError(error)});
               }
-            });
-          }
-        });
-      }
-    }, (error: any) => this.feedbackService.showError(error));
+            },
+            error: (error: any) => this.feedbackService.showError(error)});
+        }
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 }

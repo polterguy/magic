@@ -65,13 +65,15 @@ export class FileActionsComponent {
     if (!this.currentFileData) {
       return;
     }
-    this.fileService.saveFile(this.currentFileData.path, this.currentFileData.content).subscribe(() => {
-      var activeWrapper = document.querySelector('.active-codemirror-editor');
-      var editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
-      editor.doc.markClean();
-      this.feedbackService.showInfoShort('File successfully saved');
-      this.getEndpoints.emit();
-    }, (error: any) => this.feedbackService.showError(error));
+    this.fileService.saveFile(this.currentFileData.path, this.currentFileData.content).subscribe({
+      next: () => {
+        var activeWrapper = document.querySelector('.active-codemirror-editor');
+        var editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
+        editor.doc.markClean();
+        this.feedbackService.showInfoShort('File successfully saved');
+        this.getEndpoints.emit();
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /**
@@ -107,9 +109,9 @@ export class FileActionsComponent {
         minWidth: '80%',
       });
     } else {
-      this.evaluatorService.execute(this.currentFileData.content).subscribe(() => {
-        this.feedbackService.showInfoShort('File successfully executed');
-      }, (error: any) => this.feedbackService.showError(error));
+      this.evaluatorService.execute(this.currentFileData.content).subscribe({
+        next: () => this.feedbackService.showInfoShort('File successfully executed'),
+        error: (error: any) => this.feedbackService.showError(error)});
     }
   }
 
@@ -155,9 +157,9 @@ export class FileActionsComponent {
     });
     dialog.afterClosed().subscribe((data: FileObjectName) => {
       if (data) {
-        this.fileService.rename(this.currentFileData.path, data.name).subscribe(() => {
-          this.renameActiveFileFromParent.emit(data.name)
-        }, (error: any) => this.feedbackService.showError(error));
+        this.fileService.rename(this.currentFileData.path, data.name).subscribe({
+          next: () => this.renameActiveFileFromParent.emit(data.name),
+          error: (error: any) => this.feedbackService.showError(error)});
       }
     });
   }
@@ -173,14 +175,14 @@ export class FileActionsComponent {
     }
     if (!path) {
       this.feedbackService.confirm('Confirm action', 'Are you sure you want to delete currently active file?', () => {
-        this.fileService.deleteFile(this.currentFileData.path).subscribe(() => {
-          this.deleteActiveFileFromParent.emit(this.currentFileData.path);
-        }, (error: any) => this.feedbackService.showError(error));
+        this.fileService.deleteFile(this.currentFileData.path).subscribe({
+          next: () => this.deleteActiveFileFromParent.emit(this.currentFileData.path),
+          error: (error: any) => this.feedbackService.showError(error)});
       });
     } else if (path) {
-      this.fileService.deleteFile(path).subscribe(() => {
-        this.deleteActiveFileFromParent.emit(path);
-      }, (error: any) => this.feedbackService.showError(error));
+      this.fileService.deleteFile(path).subscribe({
+        next: () => this.deleteActiveFileFromParent.emit(path),
+        error: (error: any) => this.feedbackService.showError(error)});
     }
   }
 

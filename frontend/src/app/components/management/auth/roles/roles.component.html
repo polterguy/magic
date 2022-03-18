@@ -23,8 +23,11 @@
         </div>
       </div>
     </div>
+
     <mat-card-subtitle>Administrate your roles</mat-card-subtitle>
+
     <div class="d-flex align-items-center">
+
       <mat-form-field class="w-100 inline-input" appearance="outline">
         <mat-label>Filter</mat-label>
         <input
@@ -46,9 +49,11 @@
         (click)="createRole()">
         <mat-icon aria-label="Creates a new role">add_box</mat-icon>
       </button>
+
     </div>
 
     <hr *ngIf="roles && roles.length > 0" class="mt-4" />
+
     <table
       mat-table
       [dataSource]="roles"
@@ -122,39 +127,6 @@
               </div>
               <span class="mt-3 text-muted d-block">Description</span>
               <span class="d-block">{{el.description}}</span>
-
-              <!-- <div class="d-flex align-items-center justify-content-end">
-
-                <button
-                  mat-icon-button
-                  [disabled]="!backendService.active.access.auth.create_user_role || el.name === 'reset-password' || getAffectedUsers(el) === 0"
-                  [matTooltip]="'Add role to ' + getAffectedUsers(el) + ' selected user(s)'"
-                  (click)="addRole(el)">
-                  <mat-icon>add_box</mat-icon>
-                </button>
-
-                <div class="p-1"></div>
-
-                <button
-                  mat-icon-button
-                  matTooltip="Edit role"
-                  [disabled]="!backendService.active.access.auth.update_role"
-                  (click)="editRole(el)">
-                  <mat-icon>edit</mat-icon>
-                </button>
-
-                <div class="p-1"></div>
-
-                <button
-                  mat-icon-button
-                  matTooltip="Delete role"
-                  [disabled]="!backendService.active.access.auth.delete_role || el.name === 'root' || el.name === 'reset-password'"
-                  (click)="deleteRole(el)">
-                  <mat-icon>delete</mat-icon>
-                </button>
-
-              </div> -->
-
             </div>
           </div>
         </td>
@@ -164,13 +136,9 @@
         mat-row
         [ngClass]="(expandedElement === el ? 'selected ' : '') + 'role-row'"
         class="expandable-row"
-        (click)="toggleDetails(el);expandedElement = expandedElement === el ? null : el"
+        (click)="expandedElement = expandedElement === el ? null : el"
         *matRowDef="let el; columns: displayedColumns;"></tr>
 
-      <!-- <tr
-        mat-row
-        [ngClass]="shouldDisplayDetails(el) ? 'details' : 'invisible'"
-        *matRowDef="let el; columns: ['show-details'];"></tr> -->
       <tr mat-row *matRowDef="let el; columns: ['showDetails']" class="expanded-row"></tr>
 
     </table>
