@@ -28,7 +28,7 @@ export class DiagnosticsService {
   /**
    * Returns backend version of Magic.
    */
-  public version() {
+  version() {
     return this.httpService.get<any>('/magic/system/version');
   }
 
@@ -36,7 +36,7 @@ export class DiagnosticsService {
    * Returns a report of the health from your backend.
    * 
    */
-  public getSystemReport() {
+  getSystemReport() {
     return this.httpService.get<SystemReport[]>('/magic/system/diagnostics/system-information');
   }
 }

@@ -36,7 +36,7 @@ export class HttpService {
    * @param url Backend URL to endpoint
    * @param requestOptions Request options for invocation
    */
-  public get<Response>(url: string, requestOptions: object = null) {
+  get<Response>(url: string, requestOptions: object = null) {
     if (!this.backendService.active) {
       return throwError(() => new Error('Not connected to a backend'));
     } else {
@@ -54,7 +54,7 @@ export class HttpService {
    * 
    * @param url Backend URL to endpoint
    */
-  public download(url: string) {
+  download(url: string) {
     if (!this.backendService.active) {
       return throwError(() => new Error('Not connected to a backend'));
     } else {
@@ -72,7 +72,7 @@ export class HttpService {
    * @param url Backend URL to endpoint
    * @param args Payload to invocation
    */
-  public downloadPost(url: string, args: any) {
+  downloadPost(url: string, args: any) {
     if (!this.backendService.active) {
       return throwError(() => new Error('Not connected to a backend'));
     } else {
@@ -93,7 +93,7 @@ export class HttpService {
    * @param req Request payload to post
    * @param requestOptions Request options for invocation
    */
-  public post<Response>(url: string, req: any, requestOptions: object = null) {
+  post<Response>(url: string, req: any, requestOptions: object = null) {
     if (!this.backendService.active) {
       return throwError(() => new Error('Not connected to a backend'));
     } else {
@@ -114,7 +114,7 @@ export class HttpService {
    * @param req Request payload to post
    * @param requestOptions Request options for invocation
    */
-  public put<Response>(url: string, req: any, requestOptions: object = null) {
+  put<Response>(url: string, req: any, requestOptions: object = null) {
     if (!this.backendService.active) {
       return throwError(() => new Error('Not connected to a backend'));
     } else {
@@ -135,7 +135,7 @@ export class HttpService {
    * @param req Request payload to post
    * @param requestOptions Request options for invocation
    */
-  public patch<Response>(url: string, req: any, requestOptions: object = null) {
+  patch<Response>(url: string, req: any, requestOptions: object = null) {
     if (!this.backendService.active) {
       return throwError(() => new Error('Not connected to a backend'));
     } else {
@@ -154,7 +154,7 @@ export class HttpService {
    * @param url Backend URL to endpoint
    * @param requestOptions Request options for invocation
    */
-  public delete<Response>(url: string, requestOptions: object = null) {
+  delete<Response>(url: string, requestOptions: object = null) {
     if (!this.backendService.active) {
       return throwError(() => new Error('Not connected to a backend'));
     } else {

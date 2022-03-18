@@ -20,12 +20,12 @@ export class LoaderService {
   /**
    * If true, one or more Ajax requests are currently going towards your backend.
    */
-  public isLoading = new BehaviorSubject<boolean>(false);
+  isLoading = new BehaviorSubject<boolean>(false);
 
   /**
    * Shows the Ajax load spinner.
    */
-  public show() {
+  show() {
     setTimeout(() => {
       this.isLoading.next(true);
     });
@@ -34,7 +34,7 @@ export class LoaderService {
   /**
    * Hides the Ajax load spinner.
    */
-  public hide() {
+  hide() {
     setTimeout(() => {
       this.isLoading.next(false);
     });

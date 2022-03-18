@@ -169,51 +169,53 @@ export class TerminalComponent implements OnInit, OnDestroy {
      * Retrieving gibberish from server which is used as unique channel name,
      * to avoid multiple users/windows interfering with each others sessions.
      */
-    this.configService.getGibberish(15, 25).subscribe((result: Response) => {
-      this.channel = result.result;
-      let builder = new HubConnectionBuilder();
-      this.hubConnection = builder.withUrl(this.backendService.active.url + '/sockets', {
-          accessTokenFactory: () => this.backendService.active.token.token,
-          skipNegotiation: true,
-          transport: HttpTransportType.WebSockets,
-        }).build();
+    this.configService.getGibberish(15, 25).subscribe({
+      next: (result: Response) => {
+        this.channel = result.result;
+        let builder = new HubConnectionBuilder();
+        this.hubConnection = builder.withUrl(this.backendService.active.url + '/sockets', {
+            accessTokenFactory: () => this.backendService.active.token.token,
+            skipNegotiation: true,
+            transport: HttpTransportType.WebSockets,
+          }).build();
 
-      /*
-       * Subscribing to [ide.terminal] messages which are transmitted by
-       * the backend once some terminal output is ready.
-       */
-      this.hubConnection.on('ide.terminal.out.' + this.channel, (args) => {
-        const json = JSON.parse(args);
-        if (!json.result) {
-          this.term.writeln('Terminal session was closed by server');
-          this.isConnected = false;
-          this.feedbackService.showInfo('Refresh browser window to reconnect to terminal process');
-          return;
-        }
-        if (json.error === true) {
-          this.term.writeln(json.result);
-        } else if (json.result.endsWith('echo --waiting-for-input--')) {
-          // Do nothing, next result will echo the command resulting in prompt being shown.
-        } else if (json.result === '--waiting-for-input--') {
-          this.term.write('$ ');
-        } else {
-          if (this.sentCommand === false) {
+        /*
+        * Subscribing to [ide.terminal] messages which are transmitted by
+        * the backend once some terminal output is ready.
+        */
+        this.hubConnection.on('ide.terminal.out.' + this.channel, (args) => {
+          const json = JSON.parse(args);
+          if (!json.result) {
+            this.term.writeln('Terminal session was closed by server');
+            this.isConnected = false;
+            this.feedbackService.showInfo('Refresh browser window to reconnect to terminal process');
             return;
           }
-          this.term.writeln(json.result);
-        }
-      });
-      this.hubConnection.start().then(() => {
-        this.hubConnection.invoke('execute', '/system/terminal/start', JSON.stringify({
-          channel: this.channel,
-          folder: '/',
-        }))
-        .then(() => {
-          this.isConnected = true;
-        })
-        .catch(() => this.feedbackService.showError('Could not start terminal on server'));
+          if (json.error === true) {
+            this.term.writeln(json.result);
+          } else if (json.result.endsWith('echo --waiting-for-input--')) {
+            // Do nothing, next result will echo the command resulting in prompt being shown.
+          } else if (json.result === '--waiting-for-input--') {
+            this.term.write('$ ');
+          } else {
+            if (this.sentCommand === false) {
+              return;
+            }
+            this.term.writeln(json.result);
+          }
+        });
+        this.hubConnection.start().then(() => {
+          this.hubConnection.invoke('execute', '/system/terminal/start', JSON.stringify({
+            channel: this.channel,
+            folder: '/',
+          }))
+          .then(() => {
+            this.isConnected = true;
+          })
+          .catch(() => this.feedbackService.showError('Could not start terminal on server'));
 
-      }, () => this.feedbackService.showError('Could not negotiate socket connection with backend'));
-    });
+        }, () => this.feedbackService.showError('Could not negotiate socket connection with backend'));
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 }
