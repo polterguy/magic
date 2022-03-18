@@ -8,8 +8,8 @@ import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
-import { TaskService } from 'src/app/components/tools/tasks/services/task.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
+import { TaskService } from 'src/app/components/tools/tasks/services/task.service';
 
 /**
  * Modal dialog used to allow user to create a new role in the system.
@@ -23,12 +23,13 @@ export class NewTaskDialogComponent {
   /**
    * Name of new task to create.
    */
-  public name = '';
+  name = '';
 
   /**
    * Creates an instance of your component.
    * 
    * @param dialogRef Needed to be able to close dialog when user clicks create button
+   * @param feedbackService Needed to be able to display feedback to user
    * @param taskService Needed to be able to create our task
    * @param data If updating role, this is the role we're updating
    */
@@ -45,16 +46,12 @@ export class NewTaskDialogComponent {
   /**
    * Invoked when user clicks the create button to create a new role.
    */
-  public create() {
+  create() {
     if (!this.argumentValid()) {
       return;
     }
-    // Invoking backend to create a new task.
     this.taskService.create(this.name, 'log.info:Task is being executed').subscribe(() => {
-
-      // Success! Closing dialog and informing the caller of the name of the new task.
       this.dialogRef.close(this.name);
-
     }, (error: any) => this.feedbackService.showError(error));
   }
 

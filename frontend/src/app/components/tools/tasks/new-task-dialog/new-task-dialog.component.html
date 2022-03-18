@@ -2,6 +2,7 @@
 <h1 mat-dialog-title>New task</h1>
 <form>
   <div mat-dialog-content>
+
     <mat-form-field class="w-100" appearance="outline">
       <mat-label class="dark">Name</mat-label>
       <input
@@ -11,8 +12,11 @@
         [disabled]="data"
         autocomplete="off"
         pattern="/^[_a-z][a-z0-9_.-]*$/">
-      <mat-hint *ngIf="!argumentValid() && name !== ''" class="warning">Name is required and cannot contain blank space, uppercase or special characters.</mat-hint>
+      <mat-hint
+        *ngIf="!argumentValid() && name !== ''"
+        class="warning">Name is required and cannot contain blank space, uppercase or special characters.</mat-hint>
     </mat-form-field>
+
   </div>
 
   <div mat-dialog-actions class="mat-dialog-actions">
