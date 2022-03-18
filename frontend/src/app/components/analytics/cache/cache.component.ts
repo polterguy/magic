@@ -101,12 +101,14 @@ export class DiagnosticsCacheComponent implements OnInit {
     this.filter.filter = this.filterFormControl.value;
     this.filter.offset = this.paginator.pageIndex * this.paginator.pageSize;
     this.filter.limit = this.paginator.pageSize;
-    this.cacheService.list(this.filter).subscribe((items: CacheItem[]) => {
+    this.cacheService.list(this.filter).subscribe({
+      next: (items: CacheItem[]) => {
       this.cacheItems = items || [];
-      this.cacheService.count(this.filter.filter).subscribe((count: Count) => {
-        this.count = count.count;
-      });
-    });
+      this.cacheService.count(this.filter.filter).subscribe({
+        next: (count: Count) => this.count = count.count,
+        error: (error: any) => this.feedbackService.showError(error)});
+    },
+    error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /**
@@ -140,10 +142,12 @@ export class DiagnosticsCacheComponent implements OnInit {
    */
   delete(event: any, id: string) {
     event.stopPropagation();
-    this.cacheService.delete(id).subscribe(() => {
-      this.feedbackService.showInfoShort('Cache item deleted');
-      this.getItems();
-    });
+    this.cacheService.delete(id).subscribe({
+      next: () => {
+        this.feedbackService.showInfoShort('Cache item deleted');
+        this.getItems();
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /**
@@ -154,10 +158,12 @@ export class DiagnosticsCacheComponent implements OnInit {
       'Please confirm action',
       `Are you sure you want to purge your cache? Purging your cache will delete ${this.count} items.`,
       () => {
-        this.cacheService.clear(this.filterFormControl.value).subscribe(() => {
-          this.feedbackService.showInfoShort('Cache successfully purged');
-          this.filterFormControl.setValue('');
-        });
+        this.cacheService.clear(this.filterFormControl.value).subscribe({
+          next: () => {
+            this.feedbackService.showInfoShort('Cache successfully purged');
+            this.filterFormControl.setValue('');
+          },
+          error: (error: any) => this.feedbackService.showError(error)});
     });
   }
 }

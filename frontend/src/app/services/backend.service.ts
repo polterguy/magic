@@ -4,6 +4,7 @@
  */
 
 // Angular and system imports.
+import { BehaviorSubject } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
@@ -24,6 +25,13 @@ import { AuthenticateResponse } from '../components/management/auth/models/authe
   providedIn: 'root'
 })
 export class BackendService {
+
+  private _authenticated = new BehaviorSubject<boolean>(undefined);
+
+  /**
+   * To allow consumers to subscribe to authentication status changes.
+   */
+  authenticatedChanged = this._authenticated.asObservable();
 
   /**
    * Creates an instance of your service.
@@ -65,6 +73,8 @@ export class BackendService {
     }
     this.backendsStorageService.persistBackends();
     this.ensureRefreshJWTTokenTimer(this.active);
+    this.active.createAccessRights();
+    this._authenticated.next(value.token ? true : false);
   }
 
   /**
@@ -174,35 +184,32 @@ export class BackendService {
     // Invoking the refresh token method for backend.
     this.httpClient.get<AuthenticateResponse>(
       backend.url +
-      '/magic/system/auth/refresh-ticket').subscribe((response: AuthenticateResponse) => {
-
-        // Doing some basic logging.
-        console.log({
-          content: 'JWT token successfully refreshed',
-          backend: backend.url,
-        });
-
-        // Assigning new token to backend and persisting now with new token.
-        backend.token = new Token(response.ticket);
-        this.backendsStorageService.persistBackends();
-
-        // Making sure we're able to refresh again once it's time.
-        this.ensureRefreshJWTTokenTimer(backend);
-        
-      }, (error: any) => {
-
-        backend.token = null;
-        this.backendsStorageService.persistBackends();
-        console.error(error);
-      });
+      '/magic/system/auth/refresh-ticket').subscribe({
+        next: (response: AuthenticateResponse) => {
+          console.log({
+            content: 'JWT token successfully refreshed',
+            backend: backend.url,
+          });
+          backend.token = new Token(response.ticket);
+          this.backendsStorageService.persistBackends();
+          this.ensureRefreshJWTTokenTimer(backend);
+        },
+        error: (error: any) => {
+          backend.token = null;
+          this.backendsStorageService.persistBackends();
+          console.error(error);
+        }});
   }
 
   /*
    * Retrieves endpoints for currently selected backend.
    */
   private getEndpoints() {
-    this.httpClient.get<Endpoint[]>(this.active.url + '/magic/system/auth/endpoints').subscribe(res => {
-      this.active.applyEndpoints(res || []);
-    }, error => console.error(error));
+    this.httpClient.get<Endpoint[]>(this.active.url + '/magic/system/auth/endpoints').subscribe({
+      next: (res) => {
+        this.active.applyEndpoints(res || []);
+      },
+      error: (error: any) => console.error(error)
+    });
   }
 }

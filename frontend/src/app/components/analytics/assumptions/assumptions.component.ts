@@ -106,15 +106,17 @@ export class DiagnosticsTestsComponent implements OnInit {
         this.filter = query;
     });
 
-    this.assumptionService.list().subscribe((tests: string[]) => {
-      this.tests = tests.filter(x => x.endsWith('.hl')).map(x => {
-        return {
-          filename: x,
-          success: null,
-          content: null,
-        }
-      });
-    }, (error: any) => this.feedbackService.showError(error));
+    this.assumptionService.list().subscribe({
+      next: (tests: string[]) => {
+        this.tests = tests.filter(x => x.endsWith('.hl')).map(x => {
+          return {
+            filename: x,
+            success: null,
+            content: null,
+          }
+        });
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /**
@@ -150,12 +152,14 @@ export class DiagnosticsTestsComponent implements OnInit {
     if (test.content) {
       return;
     } else {
-      this.fileService.loadFile(test.filename).subscribe((file: string) => {
-        test.content = {
-          hyperlambda: file,
-          options: hyperlambda,
-        };
-      });
+      this.fileService.loadFile(test.filename).subscribe({
+        next: (file: string) => {
+          test.content = {
+            hyperlambda: file,
+            options: hyperlambda,
+          };
+        },
+        error: (error: any) => this.feedbackService.showError(error)});
     }
   }
 
@@ -165,17 +169,19 @@ export class DiagnosticsTestsComponent implements OnInit {
    * @param test Test we should execute
    */
   executeTest(test: TestModel) {
-    this.assumptionService.execute(test.filename).subscribe((res: Response) => {
-      test.success = res.result === 'success';
-      if (res.result === 'success') {
-        this.feedbackService.showInfoShort('Assumption succeeded');
-      } else {
-        this.feedbackService.showError('Assumption failed, check your log to see why');
-      }
-    }, (error: any) => {
-      test.success = false;
-      this.feedbackService.showError(error);
-    });
+    this.assumptionService.execute(test.filename).subscribe({
+      next: (res: Response) => {
+        test.success = res.result === 'success';
+        if (res.result === 'success') {
+          this.feedbackService.showInfoShort('Assumption succeeded');
+        } else {
+          this.feedbackService.showError('Assumption failed, check your log to see why');
+        }
+      },
+      error: (error: any) => {
+        test.success = false;
+        this.feedbackService.showError(error);
+      }});
   }
 
   /**
@@ -188,11 +194,13 @@ export class DiagnosticsTestsComponent implements OnInit {
       'Please confirm action',
       'Are you sure you want to delete the specified assumption?',
       () => {
-        this.fileService.deleteFile(test.filename).subscribe(() => {
-          this.feedbackService.showInfo('Assumption successfully deleted');
-          this.tests.splice(this.tests.indexOf(test), 1);
-          this.tests = this.tests.filter(x => true); // TODO: Use cdRef ...?
-        });
+        this.fileService.deleteFile(test.filename).subscribe({
+          next: () => {
+            this.feedbackService.showInfo('Assumption successfully deleted');
+            this.tests.splice(this.tests.indexOf(test), 1);
+            this.tests = this.tests.filter(x => true); // TODO: Use cdRef ...?
+          },
+          error: (error: any) => this.feedbackService.showError(error)});
       }
     );
   }
@@ -204,9 +212,9 @@ export class DiagnosticsTestsComponent implements OnInit {
    * @param content Content of test
    */
   saveTest(filename: string, content: string) {
-    this.fileService.saveFile(filename, content).subscribe(() => {
-      this.feedbackService.showInfoShort('Assumption successfully saved');
-    });
+    this.fileService.saveFile(filename, content).subscribe({
+      next: () => this.feedbackService.showInfoShort('Assumption successfully saved'),
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /**
@@ -226,41 +234,40 @@ export class DiagnosticsTestsComponent implements OnInit {
     from(this.getFilteredTests().map(x => this.assumptionService.execute(x.filename)))
       .pipe(
         bufferCount(parallellNo),
-        concatMap(buffer => forkJoin(buffer))).subscribe((results: Response[]) => {
+        concatMap(buffer => forkJoin(buffer))).subscribe({
+          next: (results: Response[]) => {
+            const endTime = new Date();
+            timeDiff = endTime.getTime() - startTime.getTime();
 
-          // Figuring out how many milliseconds tests required to execute.
-          const endTime = new Date();
-          timeDiff = endTime.getTime() - startTime.getTime();
+            /*
+             * Marking test as either failure or success,
+             * depending upon return value from backend.
+             */
+            const filtered = this.getFilteredTests();
+            for (let idx of results) {
+              filtered[idxNo].success = idx.result === 'success';
+              idxNo++;
+            }
+          },
+          error: (error: any) => {
+            this.feedbackService.showError(error);
 
-          /*
-           * Marking test as either failure or success,
-           * depending upon return value from backend.
-           */
-          const filtered = this.getFilteredTests();
-          for (let idx of results) {
-            filtered[idxNo].success = idx.result === 'success';
-            idxNo++;
-          }
-        }, (error: any) => {
-          this.feedbackService.showError(error);
+            /*
+             * Filtering out tests according to result,
+             * and making sure Ajax loader is hidden again.
+             * 
+             * Notice, we can't use decrement here, because as one of our
+             * requests results in an error, all callbacks for all
+             * consecutive requests stops being invoked.
+             */
+            this.loaderInterceptor.forceHide();
+            this.filterTests();
 
-          /*
-           * Filtering out tests according to result,
-           * and making sure Ajax loader is hidden again.
-           * 
-           * Notice, we can't use decrement here, because as one of our
-           * requests results in an error, all callbacks for all
-           * consecutive requests stops being invoked.
-           */
-          this.loaderInterceptor.forceHide();
-          this.filterTests();
-
-        }, () => {
-
-          // Filtering out tests according to result, and making sure Ajax loader is hidden again.
-          this.loaderInterceptor.decrement();
-          this.filterTests(timeDiff);
-        });
+          },
+          complete: () => {
+            this.loaderInterceptor.decrement();
+            this.filterTests(timeDiff);
+          }});
   }
 
   /*

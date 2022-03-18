@@ -17,19 +17,21 @@ import { BackendService } from './services/backend.service';
   providedIn: 'root'
 })
 export class AccessGuard implements CanActivate {
+
   hasAccess: boolean = undefined;
-  constructor(private router: Router, private configService: ConfigService, private backendService: BackendService) { }
+
+  constructor(
+    private router: Router,
+    private configService: ConfigService,
+    private backendService: BackendService) { }
+
   canActivate(
     route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    // if authenticated, then
-    // check the configuration of database
-    // and set access accordingly
+    state: RouterStateSnapshot) : Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     (async () => {
       while (!this.backendService.active?.token)
         await new Promise(resolve => setTimeout(resolve, 100));
       if (this.backendService.active?.token) {
-        
         this.configService.configStatus.subscribe(status => {
           if (status !== undefined) {
             this.hasAccess = status;

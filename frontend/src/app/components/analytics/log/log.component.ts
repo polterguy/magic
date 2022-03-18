@@ -65,9 +65,9 @@ export class LogComponent implements OnInit {
    */
   ngOnInit() {
     this.getItems();
-    this.logService.count(null).subscribe(count => {
-      this.count = count.count;
-    }, (error: any) => this.feedbackService.showError(error));
+    this.logService.count(null).subscribe({
+      next: (count) => this.count = count.count,
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /**
@@ -78,13 +78,15 @@ export class LogComponent implements OnInit {
     if (this.items.length > 0) {
       from = this.items[this.items.length - 1].id;
     }
-    this.logService.list(from, this.items.length > 0 ? 20 : 50).subscribe(logitems => {
-      this.items = this.items.concat(logitems || []);
-      this.retrievingItems = false;
-    }, (error: any) => {
-      this.retrievingItems = false;
-      this.feedbackService.showError(error);
-    });
+    this.logService.list(from, this.items.length > 0 ? 20 : 50).subscribe({
+      next: (logitems) => {
+        this.items = this.items.concat(logitems || []);
+        this.retrievingItems = false;
+      },
+      error: (error: any) => {
+        this.retrievingItems = false;
+        this.feedbackService.showError(error);
+      }});
   }
 
   /**

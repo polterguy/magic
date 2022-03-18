@@ -173,14 +173,16 @@ export class EndpointsComponent implements OnInit {
    * Invokes backend to retrieve meta data about endpoints.
    */
   private getEndpoints(onAfter: () => void = null) {
-    this.endpointService.endpoints().subscribe((endpoints: Endpoint[]) => {
-      endpoints.forEach(element =>{
-        element.expanded = false;
-      });
-      this.endpoints = endpoints;
-      if (onAfter) {
-        onAfter();
-      }
-    }, (error: any) => this.feedbackService.showError(error));
+    this.endpointService.endpoints().subscribe({
+      next: (endpoints: Endpoint[]) => {
+        endpoints.forEach(element =>{
+          element.expanded = false;
+        });
+        this.endpoints = endpoints;
+        if (onAfter) {
+          onAfter();
+        }
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 }

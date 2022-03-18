@@ -243,12 +243,9 @@ export class SocketsComponent implements OnInit, OnDestroy {
       if (data) {
 
         // Invoking backend to transmit message to client.
-        this.socketService.publishMessage(data.message, data.client, data.roles, data.groups).subscribe(() => {
-
-          // Providing feedback to user.
-          this.feedbackService.showInfoShort('Message was successfully sent');
-
-        }, (error: any) => this.feedbackService.showError(error));
+        this.socketService.publishMessage(data.message, data.client, data.roles, data.groups).subscribe({
+          next: () => this.feedbackService.showInfoShort('Message was successfully sent'),
+          error: (error: any) => this.feedbackService.showError(error)});
       }
     });
   }
@@ -272,9 +269,9 @@ export class SocketsComponent implements OnInit, OnDestroy {
     });
     dialogRef.afterClosed().subscribe((data: MessageWrapper) => {
       if (data) {
-        this.socketService.publishMessage(data.message, data.client, data.roles, data.groups).subscribe(() => {
-          this.feedbackService.showInfoShort('Message was successfully sent');
-        }, (error: any) => this.feedbackService.showError(error));
+        this.socketService.publishMessage(data.message, data.client, data.roles, data.groups).subscribe({
+          next: () => this.feedbackService.showInfoShort('Message was successfully sent'),
+          error: (error: any) => this.feedbackService.showError(error)});
       }
     });
   }
@@ -323,13 +320,14 @@ export class SocketsComponent implements OnInit, OnDestroy {
     this.socketService.socketUsers(
       this.filterFormControl.value,
       this.paginator.pageIndex * this.paginator.pageSize,
-      this.paginator.pageSize).subscribe((users: SocketUser[]) => {
-
-      this.selectedUsers = [];
-      this.users = users ?? [];
-      this.socketService.socketUserCount(this.filterFormControl.value).subscribe((count: Count) => {
-        this.count = count.count;
-      }, (error: any) => this.feedbackService.showError(error));
-    }, (error: any) => this.feedbackService.showError(error));
+      this.paginator.pageSize).subscribe({
+        next: (users: SocketUser[]) => {
+          this.selectedUsers = [];
+          this.users = users ?? [];
+          this.socketService.socketUserCount(this.filterFormControl.value).subscribe({
+            next: (count: Count) => this.count = count.count,
+            error: (error: any) => this.feedbackService.showError(error)});
+        },
+        error: (error: any) => this.feedbackService.showError(error)});
   }
 }
