@@ -72,8 +72,7 @@
                   </button>
                 </div>
               </mat-tree-node>
-              
-        
+
             </mat-tree>
 
             <div class="system-files-toggle">
@@ -81,6 +80,7 @@
                 [(ngModel)]="systemFiles" color="accent"
                 (change)="toggleSystemFiles()">System files</mat-slide-toggle>
             </div>
+
           </mat-drawer>
         
           <div class="content-section d-flex flex-column w-100 h-100 p-3">
@@ -140,7 +140,7 @@
                       Active folder
                     </div>
                   </button>
-                  
+
                   <button
                     mat-menu-item
                     [matMenuTriggerFor]="submenu3"
@@ -157,33 +157,33 @@
                 <!-- General menu -->
                 <mat-menu #submenu1="matMenu" class="submenu">
                   <app-general-actions
-                  (updateFiles)="updateFileObject($event)"></app-general-actions>
+                    (updateFiles)="updateFileObject($event)"></app-general-actions>
                 </mat-menu>
 
                 <!-- Active folder menu -->
                 <mat-menu #submenu2="matMenu" class="submenu">
                   <app-folder-actions
-                  [activeFolder]="activeFolder"
-                  [getFiles]="getFiles()"
-                  [getFolders]="getFolders()"
-                  (manageAfterCreateNewFileObject)="manageAfterCreateNewFileObject($event)"
-                  (updateFiles)="updateFileObject($event)"
-                  (updateAfterDelete)="updateAfterDeleteFolder()"
-                  (updateAfterMacro)="updateAfterMacro($event)"
-                  (afterRenamingFolder)="afterRenamingFolder($event)"></app-folder-actions>
+                    [activeFolder]="activeFolder"
+                    [getFiles]="getFiles()"
+                    [getFolders]="getFolders()"
+                    (manageAfterCreateNewFileObject)="manageAfterCreateNewFileObject($event)"
+                    (updateFiles)="updateFileObject($event)"
+                    (updateAfterDelete)="updateAfterDeleteFolder()"
+                    (updateAfterMacro)="updateAfterMacro($event)"
+                    (afterRenamingFolder)="afterRenamingFolder($event)"></app-folder-actions>
                 </mat-menu>
                 
                 <!-- Active file menu -->
                 <mat-menu #submenu3="matMenu" class="submenu">
                     <app-file-actions
-                    [currentFileData]="currentFileData" 
-                    (getEndpoints)="getEndpoints()"
-                    (getEndpoint)="currentFileData ? getEndpoint($event) : ''"
-                    [endpointData]="currentFileData ? getEndpoint(currentFileData) : ''"
-                    [openFiles]="openFiles"
-                    (renameActiveFileFromParent)="renameActiveFile($event)"
-                    (deleteActiveFileFromParent)="deleteActiveFile($event)"
-                    (closeFileImplFromParent)="closeFileImpl()"></app-file-actions>
+                      [currentFileData]="currentFileData" 
+                      (getEndpoints)="getEndpoints()"
+                      (getEndpoint)="currentFileData ? getEndpoint($event) : ''"
+                      [endpointData]="currentFileData ? getEndpoint(currentFileData) : ''"
+                      [openFiles]="openFiles"
+                      (renameActiveFileFromParent)="renameActiveFile($event)"
+                      (deleteActiveFileFromParent)="deleteActiveFile($event)"
+                      (closeFileImplFromParent)="closeFileImpl()"></app-file-actions>
                 </mat-menu>
               </div>
 
@@ -309,8 +309,8 @@
               *ngIf="openFiles.length === 0"
               src="assets/light-bulb.png"
               class="light-bulb"
-              matTooltip="Hyper IDE, because your time is valuable!"
-              alt="Hyper IDE, because your time is valuable!">
+              matTooltip="Hyper IDE, where the machine creates the code"
+              alt="Hyper IDE, where the machine creates the code">
 
               <!-- CodeMirror editors wrapping currently open files -->
               <div

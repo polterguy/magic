@@ -6,6 +6,8 @@
 // Angular and system imports.
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+
+// Application specific imports.
 import { Endpoint } from '../../../analytics/endpoints/models/endpoint.model';
 
 /**

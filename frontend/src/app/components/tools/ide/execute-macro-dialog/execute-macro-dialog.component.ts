@@ -23,24 +23,20 @@ export class ExecuteMacroDialogComponent {
   /**
    * Creates an instance of your component.
    */
-  public constructor(
+  constructor(
     public dialogRef: MatDialogRef<ExecuteMacroDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: MacroDefinition) {
-
-      // Populating default values for arguments having default values.
-      for (const idx of this.data.arguments) {
-        if (!idx.value && idx.default) {
-          idx.value = idx.default;
-        }
+    for (const idx of this.data.arguments) {
+      if (!idx.value && idx.default) {
+        idx.value = idx.default;
       }
     }
+  }
 
   /**
    * Closes dialog without executing a macro, allowing user to select another macro.
    */
-  public differentMacro() {
-
-    // Simply closing dialog without a name for macro.
+  differentMacro() {
     delete this.data.name;
     this.dialogRef.close(this.data);
   }
@@ -48,27 +44,21 @@ export class ExecuteMacroDialogComponent {
   /**
    * Closes dialog completely.
    */
-   public close() {
-
-    // Simply closing dialog without a name for macro.
+  close() {
     this.dialogRef.close();
   }
 
   /**
    * Returns true if all mandatory arguments have been given values.
    */
-  public canExecute() {
-
-    // Returns true if all mandatory arguments have values.
+  canExecute() {
     return this.data.arguments.filter(x => x.mandatory && !x.value).length === 0;
   }
 
   /**
    * Invoked when user wants to execute macro after having decorated it.
    */
-  public execute() {
-
-    // Closing dialog passing in data to caller.
+  execute() {
     this.dialogRef.close(this.data);
   }
 }

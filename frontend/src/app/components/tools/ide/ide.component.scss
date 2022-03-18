@@ -1,6 +1,5 @@
 @import '../../../../assets/styles/colour.scss';
 @import '../../../../assets/styles/mixin.scss';
-// $max_height: calc(100vh - 130px);
 $max_height: calc(100vh - 155px);
 .ide{
   .tree-button{
@@ -34,7 +33,7 @@ $max_height: calc(100vh - 155px);
     border-bottom-left-radius: 5px;
     border-top-left-radius: 5px;
   }
-  // preview modal
+  // Preview modal
   .mat-dialog-content p, .mat-dialog-content pre, .mat-dialog-content code, .mat-dialog-content ul li {
     word-break: break-all;
     white-space: break-spaces;
@@ -79,9 +78,3 @@ $max_height: calc(100vh - 155px);
     height: 18px
   }
 }
-
-// .folder-button {
-//   display: block !important;
-//   width: 100%;
-//   text-align: left;
-// }
