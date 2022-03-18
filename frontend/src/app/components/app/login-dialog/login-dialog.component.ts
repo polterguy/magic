@@ -6,20 +6,20 @@
 // Angular and system imports.
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { map, startWith } from 'rxjs/operators';
 import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
+import { Backend } from 'src/app/models/backend.model';
 import { Messages } from 'src/app/models/messages.model';
 import { Response } from 'src/app/models/response.model';
+import { AuthService } from 'src/app/services/auth.service';
 import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from '../../../services/feedback.service';
-import { AuthService } from 'src/app/services/auth.service';
 import { ConfigService } from 'src/app/services/management/config.service';
-import { Backend } from 'src/app/models/backend.model';
 
 class DialogData {
   allowAuthentication?: boolean;
@@ -35,13 +35,13 @@ class DialogData {
 })
 export class LoginDialogComponent implements OnInit {
 
-  public hide = true;
-  public backends: FormControl = null;
-  public filteredBackends: Observable<string[]>;
-  public savePassword: boolean = true;
-  public backendHasBeenSelected: boolean = false;
-  public autoLogin: boolean = false;
-  public advanced: boolean = false;
+  hide = true;
+  backends: FormControl = null;
+  filteredBackends: Observable<string[]>;
+  savePassword: boolean = true;
+  backendHasBeenSelected: boolean = false;
+  autoLogin: boolean = false;
+  advanced: boolean = false;
 
   /**
    * Creates an instance of your login dialog.
@@ -53,7 +53,8 @@ export class LoginDialogComponent implements OnInit {
    * @param dialogRef Reference to self, to allow for closing dialog as user has successfully logged in
    * @param authService Dependency injected authentication and authorisation service
    * @param backendService Service to keep track of currently selected backend
-   * @param backendUrl Optional: Selected url passed when opening the dialog
+   * @param formBuilder Needed to build form
+   * @param data Input data to form declaring if user can login or not
    */
   constructor(
     private router: Router,
@@ -64,7 +65,9 @@ export class LoginDialogComponent implements OnInit {
     public authService: AuthService,
     public backendService: BackendService,
     private formBuilder: FormBuilder,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData) { this.data = this.data || { allowAuthentication: true }; }
+    @Inject(MAT_DIALOG_DATA) public data: DialogData) {
+    this.data = this.data || { allowAuthentication: true };
+  }
 
   /**
    * reactive form declaration
@@ -78,30 +81,24 @@ export class LoginDialogComponent implements OnInit {
   /**
    * OnInit implementation.
    */
-  public ngOnInit() {
-
-    // Creating filter backends form control.
+  ngOnInit() {
     this.backends = new FormControl();
-
     if (this.data.allowAuthentication && this.backendService.active && this.backendService.active) {
       this.backends.setValue(this.backendService.active.url);
       this.backendHasBeenSelected = true;
       this.backendSelected();
     }
-
-    // Making sure we subscribe to value changes on backend text box, such that we can filter the backends accordingly.
     this.filteredBackends = this.backends.valueChanges
       .pipe(
         startWith(''),
-        map(() => this.filter(this.backends.value))
-      );
+        map(() => this.filter(this.backends.value)));
   }
 
   /**
    * Invoked when a backend has been chosen from the
    * persisted backends.
    */
-  public backendSelected() {
+  backendSelected() {
     const el = this.backendService.backends.filter(x => x.url === this.backends.value);
     if (el.length > 0) {
       this.loginForm.patchValue({
@@ -110,63 +107,46 @@ export class LoginDialogComponent implements OnInit {
       });
       this.savePassword = !!el[0].password && this.loginForm.value.password !== 'root';
     }
-
-    // Making sure we invoke method responsible for checking if auto-auth is turned on for current backend or not.
     this.backendValueChanged();
   }
 
   /**
    * Invoked when the backend URL has been changed, for whatever reason.
    */
-  public backendValueChanged() {
-
-    // Verifying control actual contains any content.
+  backendValueChanged() {
     if (this.backends.value && this.backends.value !== '') {
+      this.authService.autoAuth(this.backends.value).subscribe({
+        next: (result: Response) => {
+          this.backendHasBeenSelected = true;
 
-      // Invoking backend to check if it has turned on auto-auth or not.
-      this.authService.autoAuth(this.backends.value).subscribe((result: Response) => {
-
-        // This will display username and password dialogs, unless backend supports automatic logins.
-        this.backendHasBeenSelected = true;
-
-        /*
-         * Checking if backend allows for auto-auth, and if so allowing user to click
-         * login button without providing username or password.
-         */
-        if (result.result === 'on') {
-
-          // Allowing user to logging in without username/password combination.
-          this.autoLogin = true;
+          /*
+           * Checking if backend allows for auto-auth, and if so allowing user to click
+           * login button without providing username or password.
+           */
+          if (result.result === 'on') {
+            this.autoLogin = true;
+            this.loginForm.patchValue({
+              username: ''
+            });
+          } else {
+            this.autoLogin = false;
+          }
           this.loginForm.patchValue({
-            username: ''
+            backends: this.backends.value
           });
-
-        } else {
-
-          // Preventing user from logging in without a username/password combination.
-          this.autoLogin = false;
-        }
-        this.loginForm.patchValue({
-          backends: this.backends.value
-        });
-        
-        this.data.allowAuthentication === true ? '' : this.connectToBackendWithoutLogin();
-      }, (error: any) => {
-
-        // Oops.
-        this.feedbackService.showError('Could not find that backend');
-        this.backendHasBeenSelected = false;
-      });
+          this.data.allowAuthentication === true ? '' : this.connectToBackendWithoutLogin();
+        },
+        error: () => {
+          this.feedbackService.showError('Could not find that backend');
+          this.backendHasBeenSelected = false;
+        }});
     }
   }
 
+  /**
+   * Invoked when we should connect to backend without logging in.
+   */
   connectToBackendWithoutLogin() {
-    /*
-     * Storing currently selected backend.
-     * Notice, this has to be done before we authenticate, since
-     * the auth service depends upon user already having selected
-     * a current backend.
-     */
     this.backendService.upsertAndActivate(new Backend(this.backends.value, this.autoLogin === false || this.advanced ? this.loginForm.value.username : null, this.savePassword ? this.loginForm.value.password : null));
     this.dialogRef.close();
     const currentURL: string = window.location.protocol + '//' + window.location.host;
@@ -180,37 +160,31 @@ export class LoginDialogComponent implements OnInit {
    * 
    * Notice, assumes username is a valid email address.
    */
-  public resetPassword() {
+  resetPassword() {
 
     /*
      * Storing currently selected backend.
+     * This is necessary to make sure we send reset password email to correct backend/user.
      */
     this.backendService.upsertAndActivate(new Backend(this.backends.value));
-
-    // Invoking backend to request a reset password link to be sent as an email.
     this.authService.sendResetPasswordEmail(
       this.loginForm.value.username,
-      location.origin).subscribe((res: Response) => {
+      location.origin).subscribe({
+        next: (res: Response) => {
+          if (res.result === 'success') {
+            this.feedbackService.showInfo('Pease check your email to reset your password');
+          } else {
+            this.feedbackService.showInfo(res.result);
+          }
 
-        // Verifying request was a success.
-        if (res.result === 'success') {
-
-          // Showing some information to user.
-          this.feedbackService.showInfo('Pease check your email to reset your password');
-
-        } else {
-
-          // Showing response from invocation to user.
-          this.feedbackService.showInfo(res.result);
-        }
-
-      }, (error: any) => this.feedbackService.showError(error));
+        },
+        error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /**
    * Invoked when user wants to login to currently selected backend.
    */
-  public login() {
+  login() {
 
     /*
      * Storing currently selected backend.
@@ -219,34 +193,26 @@ export class LoginDialogComponent implements OnInit {
      * a current backend.
      */
     this.backendService.upsertAndActivate(new Backend(this.backends.value, this.autoLogin === false || this.advanced ? this.loginForm.value.username : null, this.savePassword ? this.loginForm.value.password : null));
-
-    // Authenticating user.
     this.authService.loginToCurrent(
       this.autoLogin === false || this.advanced ? this.loginForm.value.username : null,
       this.autoLogin === false || this.advanced ? this.loginForm.value.password : null,
-      this.savePassword).subscribe(() => {
-
-        // Publishing user logged in message, and closing dialog.
-        this.messageService.sendMessage({
-          name: Messages.USER_LOGGED_IN,
-        });
-        this.dialogRef.close({});
-        // if server is not configured yet, redirect to config page after a successful login
-        if (this.configService.setupStatus?.config_done === false ||
-          this.configService.setupStatus?.magic_crudified === false ||
-          this.configService.setupStatus?.server_keypair === false) {
-          this.router.navigate(['/config']);
-        }
-        // if successful login while user is in register page, redirect to dashboard
-        // ** this page disappears after login
-        if (window.location.pathname === '/register') {
-          this.router.navigate(['/']);
-        }
-      }, (error: any) => {
-
-        // Oops, something went wrong.
-        this.feedbackService.showError(error);
-      });
+      this.savePassword).subscribe({
+        next: () => {
+          this.messageService.sendMessage({
+            name: Messages.USER_LOGGED_IN,
+          });
+          this.dialogRef.close({});
+          if (this.backendService.active.token.in_role('root') && 
+            (this.configService.setupStatus?.config_done === false ||
+             this.configService.setupStatus?.magic_crudified === false ||
+             this.configService.setupStatus?.server_keypair === false)) {
+            this.router.navigate(['/config']);
+          }
+          if (window.location.pathname === '/register') {
+            this.router.navigate(['/']);
+          }
+        },
+        error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /*

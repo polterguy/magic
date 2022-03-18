@@ -260,17 +260,19 @@ export class EndpointDetailsComponent implements OnInit {
    * @param assumption What assumption to run
    */
   runAssumption(assumption: Assumption) {
-    this.assumptionService.execute(assumption.file).subscribe((res: Response) => {
-      if (res.result === 'success') {
-        assumption.success = true;
-      } else {
-        this.feedbackService.showInfo('Test failed, check log for details');
+    this.assumptionService.execute(assumption.file).subscribe({
+      next: (res: Response) => {
+        if (res.result === 'success') {
+          assumption.success = true;
+        } else {
+          this.feedbackService.showInfo('Test failed, check log for details');
+          assumption.success = false;
+        }
+      },
+      error: (error: any) =>{
+        this.feedbackService.showError(error);
         assumption.success = false;
-      }
-    }, (error: any) =>{
-      this.feedbackService.showError(error);
-      assumption.success = false;
-    });
+      }});
   }
 
   /**
@@ -549,31 +551,33 @@ export class EndpointDetailsComponent implements OnInit {
 
       if (invocation) {
         const startTime = new Date();
-        invocation.subscribe((res: any) => {
-          const endTime = new Date();
-          const timeDiff = endTime.getTime() - startTime.getTime();
-          const response = responseType === 'json' ? JSON.stringify(res.body || '{}', null, 2) : res.body;
-          this.result = {
-            status: res.status,
-            statusText: res.statusText + ' in ' + new Intl.NumberFormat('en-us').format(timeDiff) + ' milliseconds',
-            response: response,
-            blob: null,
-            responseType,
-          };
-          if (responseType === 'blob') {
-            const objectUrl = URL.createObjectURL(response);
-            this.result.blob = this.sanitizer.bypassSecurityTrustUrl(objectUrl);
-          }
+        invocation.subscribe({
+          next: (res: any) => {
+            const endTime = new Date();
+            const timeDiff = endTime.getTime() - startTime.getTime();
+            const response = responseType === 'json' ? JSON.stringify(res.body || '{}', null, 2) : res.body;
+            this.result = {
+              status: res.status,
+              statusText: res.statusText + ' in ' + new Intl.NumberFormat('en-us').format(timeDiff) + ' milliseconds',
+              response: response,
+              blob: null,
+              responseType,
+            };
+            if (responseType === 'blob') {
+              const objectUrl = URL.createObjectURL(response);
+              this.result.blob = this.sanitizer.bypassSecurityTrustUrl(objectUrl);
+            }
 
-        }, (error: any) => {
-          this.result = {
-            status: error.status,
-            statusText: error.statusText,
-            response: JSON.stringify(error.error || '{}', null, 2),
-            blob: null,
-            responseType,
-          };
-        });
+          },
+          error: (error: any) => {
+            this.result = {
+              status: error.status,
+              statusText: error.statusText,
+              response: JSON.stringify(error.error || '{}', null, 2),
+              blob: null,
+              responseType,
+            };
+          }});
       }
     }
     catch (error) {
@@ -605,22 +609,23 @@ export class EndpointDetailsComponent implements OnInit {
           res.description !== '' ? res.description : null,
           this.payload !== '' ? this.payload : null,
           (res.matchResponse && !this.result.blob) ? this.result.response : null,
-          this.endpoint.produces).subscribe(() => {
+          this.endpoint.produces).subscribe({
+            next: () => {
+              /*
+               * Snippet saved, showing user some feedback, and reloading assumptions.
+               *
+               * Checking if caller wants response to match, and response is blob,
+               * at which point we inform user this is not possible.
+               */
+              if (res.matchResponse && this.result.blob) {
+                this.feedbackService.showInfo('Assumption successfully saved. Notice, blob types of invocations cannot assume response equality.');
+              } else {
+                this.feedbackService.showInfo('Assumption successfully saved');
+              }
+              this.getAssumptions();
 
-          /*
-           * Snippet saved, showing user some feedback, and reloading assumptions.
-           *
-           * Checking if caller wants response to match, and response is blob,
-           * at which point we inform user this is not possible.
-           */
-          if (res.matchResponse && this.result.blob) {
-            this.feedbackService.showInfo('Assumption successfully saved. Notice, blob types of invocations cannot assume response equality.');
-          } else {
-            this.feedbackService.showInfo('Assumption successfully saved');
-          }
-          this.getAssumptions();
-
-        }, (error: any) => this.feedbackService.showError(error));
+            },
+            error: (error: any) => this.feedbackService.showError(error)});
       }
     });
   }
@@ -650,21 +655,21 @@ export class EndpointDetailsComponent implements OnInit {
    */
   private getAssumptions() {
     if (this.backendService.active.access.endpoints.assumptions) {
-      this.assumptionService.list('/' + this.endpoint.path, this.endpoint.verb).subscribe((assumptions: any) => {
-        if (assumptions && assumptions.length) {
-          
-            const arr: Assumption[] = [];
-              assumptions.forEach((element: any) => {
-                arr.push({
-                  file: element.file,
-                  description: element.description,
-                  success: null
+      this.assumptionService.list('/' + this.endpoint.path, this.endpoint.verb).subscribe({
+        next: (assumptions: any) => {
+          if (assumptions && assumptions.length) {
+              const arr: Assumption[] = [];
+                assumptions.forEach((element: any) => {
+                  arr.push({
+                    file: element.file,
+                    description: element.description,
+                    success: null
+                  });
                 });
-              });
-            this.assumptions = arr;
-          
-        }
-      }, (error: any) => this.feedbackService.showError(error));
+              this.assumptions = arr;
+          }
+        },
+        error: (error: any) => this.feedbackService.showError(error)});
     }
   }
 }

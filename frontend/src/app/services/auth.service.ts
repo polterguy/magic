@@ -5,8 +5,8 @@
 
 // Angular and system imports.
 import { Injectable } from '@angular/core';
+import { Observable, throwError } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
 
 // Application specific imports.
 import { HttpService } from './http.service';
@@ -22,13 +22,6 @@ import { AuthenticateResponse } from '../components/management/auth/models/authe
   providedIn: 'root'
 })
 export class AuthService {
-
-  private _authenticated = new BehaviorSubject<boolean>(undefined);
-
-  /**
-   * To allow consumers to subscribe to authentication status changes.
-   */
-  authenticatedChanged = this._authenticated.asObservable();
 
   /**
    * Creates an instance of your service.
@@ -85,30 +78,28 @@ export class AuthService {
            */
           withCredentials: query === '' ? true : false,
 
-        }).subscribe((auth: AuthenticateResponse) => {
-
-          const cur = new Backend(this.backendService.active.url, username, storePassword ? password : null, auth.ticket);
-          this.backendService.upsertAndActivate(cur);
-          this._authenticated.next(true);
-          console.log({
-            content: 'User successfully authenticated',
-            username: username,
-            backend: this.backendService.active.url,
-          });
-          observer.next(auth);
-          observer.complete();
-
-        }, (error: any) => {
-
-          console.log({
-            content: 'Could not authenticate towards backend',
-            username: username,
-            backend: this.backendService.active.url,
-            error,
-          });
-          observer.error(error);
-          observer.complete();
-        });
+        }).subscribe({
+          next: (auth: AuthenticateResponse) => {
+            const cur = new Backend(this.backendService.active.url, username, storePassword ? password : null, auth.ticket);
+            this.backendService.upsertAndActivate(cur);
+            console.log({
+              content: 'User successfully authenticated',
+              username: username,
+              backend: this.backendService.active.url,
+            });
+            observer.next(auth);
+            observer.complete();
+          },
+          error: (error: any) => {
+            console.log({
+              content: 'Could not authenticate towards backend',
+              username: username,
+              backend: this.backendService.active.url,
+              error,
+            });
+            observer.error(error);
+            observer.complete();
+          }});
     });
   }
 
@@ -127,8 +118,6 @@ export class AuthService {
         this.backendService.active.username,
         destroyPassword ? null : this.backendService.active.password);
       this.backendService.upsertAndActivate(cur);
-      this.backendService.active.createAccessRights();
-      this._authenticated.next(false);
     }
   }
 

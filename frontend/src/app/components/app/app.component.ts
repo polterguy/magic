@@ -7,7 +7,6 @@
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { OverlayContainer } from '@angular/cdk/overlay';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 
 // Application specific imports.
@@ -84,7 +83,6 @@ export class AppComponent implements OnInit, OnDestroy {
    * Creates an instance of your component.
    * 
    * @param router Router service used to redirect user to main landing page if he logs out
-   * @param snackBar Snack bar used to display feedback to user, such as error or information
    * @param messageService Message service to allow for cross component communication using pub/sub pattern
    * @param authService Authentication and authorisation service, used to authenticate user, etc
    * @param backendService Needed toverify we'reactuallyconnected to some backend before retrieving endpoints
@@ -97,7 +95,6 @@ export class AppComponent implements OnInit, OnDestroy {
    */
   constructor(
     private router: Router,
-    private snackBar: MatSnackBar,
     private messageService: MessageService,
     public authService: AuthService,
     private backendService:BackendService,
@@ -113,7 +110,7 @@ export class AppComponent implements OnInit, OnDestroy {
    */
   ngOnInit() {
     this.checkStatus();
-    this.authService.authenticatedChanged.subscribe(() => {
+    this.backendService.authenticatedChanged.subscribe(() => {
       this.checkStatus();
     });
 
@@ -221,12 +218,14 @@ export class AppComponent implements OnInit, OnDestroy {
    */
   private checkStatus() {
     if (this.backendService.active?.token?.in_role('root')) {
-      this.configService.status().subscribe(config => {
-        this.configService.changeStatus(config.config_done && config.magic_crudified && config.server_keypair);
-        if (!config.config_done || !config.magic_crudified || !config.server_keypair) {
-          this.router.navigate(['/config']);
-        }
-      });
+      this.configService.status().subscribe({
+        next: (config) => {
+          this.configService.changeStatus(config.config_done && config.magic_crudified && config.server_keypair);
+          if (!config.config_done || !config.magic_crudified || !config.server_keypair) {
+            this.router.navigate(['/config']);
+          }
+        },
+        error: (error: any) => this.feedbackService.showError(error)});
     }
   }
   
@@ -235,25 +234,27 @@ export class AppComponent implements OnInit, OnDestroy {
    */
   private retrieveBackendVersion() {
     if (this.backendService.active?.token?.in_role('root')) {
-      this.diagnosticsService.version().subscribe((version: any) => {
-        this.version = version.version;
-        this.bazarService.latestVersion().subscribe((result: Response) => {
-          this.bazarVersion = result.result;
-          if (this.bazarVersion !== this.version) {
+      this.diagnosticsService.version().subscribe({
+        next: (version: any) => {
+          this.version = version.version;
+          this.bazarService.latestVersion().subscribe({
+            next: (result: Response) => {
+              this.bazarVersion = result.result;
+              if (this.bazarVersion !== this.version) {
 
-            // TODO: Replace service invocation with some sort of method in service or something.
-            this.configService.versionCompare(this.bazarVersion, this.version).subscribe((result: Response) => {
-              if (+result.result === 1) {
-                this.feedbackService.showInfo('There has been published an updated version of Magic. You should probably update your current version.');
-                this.shouldUpdateCore = true;
+                // TODO: Replace service invocation with some sort of method in service or something.
+                this.configService.versionCompare(this.bazarVersion, this.version).subscribe((result: Response) => {
+                  if (+result.result === 1) {
+                    this.feedbackService.showInfo('There has been published an updated version of Magic. You should probably update your current version.');
+                    this.shouldUpdateCore = true;
+                  }
+                });
               }
-            });
-          }
 
-        }, (error: any) => this.feedbackService.showError(error));
-      }, (error: any) => {
-        this.feedbackService.showError(error);
-      });
+            },
+            error: (error: any) => this.feedbackService.showError(error)});
+        },
+        error: (error: any) => this.feedbackService.showError(error)});
 
     } else {
       this.version = '';
