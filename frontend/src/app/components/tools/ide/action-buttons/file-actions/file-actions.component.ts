@@ -9,7 +9,6 @@ import {
   Component,
   EventEmitter,
   Input,
-  NgZone,
   Output
 } from '@angular/core';
 
@@ -50,7 +49,6 @@ export class FileActionsComponent {
    * @param backendService Needed to determine access rights of user in backend
    * @param feedbackService Needed to display feedback to user
    * @param evaluatorService Needed to retrieve vocabulary from backend, in addition to executing Hyperlambda files
-   * @param ngZone Needed to make sure dialogs popup inside the ngZone
    */
   constructor(
     private dialog: MatDialog,
@@ -58,8 +56,7 @@ export class FileActionsComponent {
     private fileService: FileService,
     public backendService: BackendService,
     private feedbackService: FeedbackService,
-    private evaluatorService: EvaluatorService,
-    readonly ngZone: NgZone) { }
+    private evaluatorService: EvaluatorService) { }
 
   /**
    * Invoked when a file should be saved.
@@ -105,12 +102,10 @@ export class FileActionsComponent {
     this.getEndpointData(this.currentFileData);
     
     if (this.endpointData) {
-      this.ngZone.run(() => {
-        this.dialog.open(ExecuteEndpointDialogComponent, {
-          data: this.endpointData,
-          minWidth: '80%',
-        });
-      })
+      this.dialog.open(ExecuteEndpointDialogComponent, {
+        data: this.endpointData,
+        minWidth: '80%',
+      });
     } else {
       this.evaluatorService.execute(this.currentFileData.content).subscribe(() => {
         this.feedbackService.showInfoShort('File successfully executed');
@@ -138,11 +133,9 @@ export class FileActionsComponent {
     if (this.openFiles.length === 0) {
       return;
     }
-    this.ngZone.run(() => {
-      this.dialog.open(PreviewFileDialogComponent, {
-        data: this.currentFileData.content,
-      });
-    })
+    this.dialog.open(PreviewFileDialogComponent, {
+      data: this.currentFileData.content,
+    });
   }
 
   /**
@@ -154,21 +147,19 @@ export class FileActionsComponent {
     if (!this.currentFileData) {
       return;
     }
-    this.ngZone.run(() => {
-      const dialog = this.dialog.open(RenameFileDialogComponent, {
-        width: '550px',
-        data: {
-          name: this.currentFileData.name,
-        },
-      });
-      dialog.afterClosed().subscribe((data: FileObjectName) => {
-        if (data) {
-          this.fileService.rename(this.currentFileData.path, data.name).subscribe(() => {
-            this.renameActiveFileFromParent.emit(data.name)
-          }, (error: any) => this.feedbackService.showError(error));
-        }
-      });
-    })
+    const dialog = this.dialog.open(RenameFileDialogComponent, {
+      width: '550px',
+      data: {
+        name: this.currentFileData.name,
+      },
+    });
+    dialog.afterClosed().subscribe((data: FileObjectName) => {
+      if (data) {
+        this.fileService.rename(this.currentFileData.path, data.name).subscribe(() => {
+          this.renameActiveFileFromParent.emit(data.name)
+        }, (error: any) => this.feedbackService.showError(error));
+      }
+    });
   }
 
   /**
@@ -181,13 +172,11 @@ export class FileActionsComponent {
       return;
     }
     if (!path) {
-      this.ngZone.run(() => {
-        this.feedbackService.confirm('Confirm action', 'Are you sure you want to delete currently active file?', () => {
-          this.fileService.deleteFile(this.currentFileData.path).subscribe(() => {
-            this.deleteActiveFileFromParent.emit(this.currentFileData.path);
-          }, (error: any) => this.feedbackService.showError(error));
-        });
-      })
+      this.feedbackService.confirm('Confirm action', 'Are you sure you want to delete currently active file?', () => {
+        this.fileService.deleteFile(this.currentFileData.path).subscribe(() => {
+          this.deleteActiveFileFromParent.emit(this.currentFileData.path);
+        }, (error: any) => this.feedbackService.showError(error));
+      });
     } else if (path) {
       this.fileService.deleteFile(path).subscribe(() => {
         this.deleteActiveFileFromParent.emit(path);
@@ -215,11 +204,9 @@ export class FileActionsComponent {
     if (!shouldWarn()) {
       this.closeFileImplFromParent.emit();
     } else {
-      this.ngZone.run(() => {
-        this.feedbackService.confirm('File not saved', 'File has unsaved changes, are you sure you want to close the file?', () => {
-          this.closeFileImplFromParent.emit();
-        });
-      })
+      this.feedbackService.confirm('File not saved', 'File has unsaved changes, are you sure you want to close the file?', () => {
+        this.closeFileImplFromParent.emit();
+      });
     }
   }
 

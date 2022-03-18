@@ -9,7 +9,6 @@ import {
   Component,
   EventEmitter,
   Input,
-  NgZone,
   Output
 } from '@angular/core';
 
@@ -58,15 +57,13 @@ export class FolderActionsComponent {
    * @param fileService Needed to load and save files.
    * @param backendService Needed to determine user's access rights in backend
    * @param feedbackService Needed to display feedback to user
-   * @param ngZone Needed to make sure dialogs popup inside the ngZone
    */
   constructor(
     private dialog: MatDialog,
     public authService: AuthService,
     private fileService: FileService,
     public backendService: BackendService,
-    private feedbackService: FeedbackService,
-    readonly ngZone: NgZone) { }
+    private feedbackService: FeedbackService) { }
 
   /**
    * Invoked when user wants to create a new file or folder.
@@ -76,33 +73,31 @@ export class FolderActionsComponent {
   createNewFileObject(type: string) {
     const folders = this.getFolders;
     const files = this.getFiles;
-    this.ngZone.run(() => {
-      const dialogRef = this.dialog.open(NewFileFolderDialogComponent, {
-        width: '550px',
-        data: {
-          isFolder: false,
-          name: '',
-          path: this.activeFolder,
-          folders: folders,
-          files: files,
-          type: type
-        },
-      });
-      dialogRef.afterClosed().subscribe((result: FileObject) => {
-        if (result) {
-          let path = result.path + result.name;
-          if (result.isFolder) {
-            path += '/';
-            this.fileService.createFolder(path).subscribe(() => {
-              this.feedbackService.showInfoShort('Folder successfully created');
-              this.manageAfterCreateNewFileObject.emit({ dialogResult: result, objectPath: path })
-            }, (error: any) => this.feedbackService.showError(error));
-          } else {
+    const dialogRef = this.dialog.open(NewFileFolderDialogComponent, {
+      width: '550px',
+      data: {
+        isFolder: false,
+        name: '',
+        path: this.activeFolder,
+        folders: folders,
+        files: files,
+        type: type
+      },
+    });
+    dialogRef.afterClosed().subscribe((result: FileObject) => {
+      if (result) {
+        let path = result.path + result.name;
+        if (result.isFolder) {
+          path += '/';
+          this.fileService.createFolder(path).subscribe(() => {
+            this.feedbackService.showInfoShort('Folder successfully created');
             this.manageAfterCreateNewFileObject.emit({ dialogResult: result, objectPath: path })
-          }
+          }, (error: any) => this.feedbackService.showError(error));
+        } else {
+          this.manageAfterCreateNewFileObject.emit({ dialogResult: result, objectPath: path })
         }
-      });
-    })
+      }
+    });
   }
 
   /**
@@ -138,13 +133,11 @@ export class FolderActionsComponent {
     if (this.activeFolder === '/') {
       return;
     }
-    this.ngZone.run(() => {
-      this.feedbackService.confirm('Confirm action', `Are you sure you want to delete the '${this.activeFolder}' folder?`, () => {
-        this.fileService.deleteFolder(this.activeFolder).subscribe(() => {
-          this.updateAfterDelete.emit();
-        }, (error: any) => this.feedbackService.showError(error));
-      });
-    })
+    this.feedbackService.confirm('Confirm action', `Are you sure you want to delete the '${this.activeFolder}' folder?`, () => {
+      this.fileService.deleteFolder(this.activeFolder).subscribe(() => {
+        this.updateAfterDelete.emit();
+      }, (error: any) => this.feedbackService.showError(error));
+    });
   }
 
   /**
@@ -154,45 +147,41 @@ export class FolderActionsComponent {
     if (this.activeFolder === '/') {
       return;
     }
-    this.ngZone.run(() => {
-      const dialog = this.dialog.open(RenameFolderDialogComponent, {
-        width: '550px',
-        data: {
-          name: this.activeFolder,
-          
-        },
-      });
-      dialog.afterClosed().subscribe((data: FileObjectName) => {
-        if (data) {
-          this.fileService.rename(this.activeFolder, data.name).subscribe(() => {
-            this.feedbackService.showInfo('Folder successfully renamed');
-            this.afterRenamingFolder.emit({
-              newName: data.name,
-              oldName: this.activeFolder
-            });
-          }, (error: any) => this.feedbackService.showError(error));
-        }
-      });
-    })
+    const dialog = this.dialog.open(RenameFolderDialogComponent, {
+      width: '550px',
+      data: {
+        name: this.activeFolder,
+        
+      },
+    });
+    dialog.afterClosed().subscribe((data: FileObjectName) => {
+      if (data) {
+        this.fileService.rename(this.activeFolder, data.name).subscribe(() => {
+          this.feedbackService.showInfo('Folder successfully renamed');
+          this.afterRenamingFolder.emit({
+            newName: data.name,
+            oldName: this.activeFolder
+          });
+        }, (error: any) => this.feedbackService.showError(error));
+      }
+    });
   }
 
   /**
    * Invoked when user wants to execute a macro.
    */
    selectMacro() {
-    this.ngZone.run(() => {
-      const dialogRef = this.dialog.open(SelectMacroDialogComponent, {
-        width: '550px',
-        data: {
-          name: '',
-        },
-      });
-      dialogRef.afterClosed().subscribe((result: Macro) => {
-        if (result) {
-          this.executeMacro(result.name);
-        }
-      });
-    })
+    const dialogRef = this.dialog.open(SelectMacroDialogComponent, {
+      width: '550px',
+      data: {
+        name: '',
+      },
+    });
+    dialogRef.afterClosed().subscribe((result: Macro) => {
+      if (result) {
+        this.executeMacro(result.name);
+      }
+    });
   }
 
   /*
@@ -220,37 +209,34 @@ export class FolderActionsComponent {
           idx.value = 'root';
         }
       }
-      this.ngZone.run(() => {
-        const dialogRef = this.dialog.open(ExecuteMacroDialogComponent, {
-          data: result,
-        });
-        dialogRef.afterClosed().subscribe((result: MacroDefinition) => {
-          if (result && result.name) {
-            const payload = {};
-            for (const idx of result.arguments.filter(x => x.value)) {
-              payload[idx.name] = idx.value;
-            }
-            this.fileService.executeMacro(file, payload).subscribe((exeResult: Response) => {
-              this.feedbackService.showInfoShort('Macro successfully executed');
-              if (exeResult.result === 'folders-changed') {
-                this.feedbackService.confirm(
-                  'Refresh folders?',
-                  'Macro execution changed your file system, do you want to refresh your files and folders?',
-                  () => {
-                    this.updateAfterMacro.emit(null);
-                  });
-                } else if (exeResult.result.startsWith('folders-changed|')) {
-                  var fileObject = exeResult.result.split('|')[1];
-                  this.updateAfterMacro.emit(fileObject);
-                
-              }
-            }, (error: any) => this.feedbackService.showError(error));
-          } else if (result) {
-            this.selectMacro();
-
+      const dialogRef = this.dialog.open(ExecuteMacroDialogComponent, {
+        data: result,
+      });
+      dialogRef.afterClosed().subscribe((result: MacroDefinition) => {
+        if (result && result.name) {
+          const payload = {};
+          for (const idx of result.arguments.filter(x => x.value)) {
+            payload[idx.name] = idx.value;
           }
-        });
-      })
+          this.fileService.executeMacro(file, payload).subscribe((exeResult: Response) => {
+            this.feedbackService.showInfoShort('Macro successfully executed');
+            if (exeResult.result === 'folders-changed') {
+              this.feedbackService.confirm(
+                'Refresh folders?',
+                'Macro execution changed your file system, do you want to refresh your files and folders?',
+                () => {
+                  this.updateAfterMacro.emit(null);
+                });
+              } else if (exeResult.result.startsWith('folders-changed|')) {
+                var fileObject = exeResult.result.split('|')[1];
+                this.updateAfterMacro.emit(fileObject);
+              
+            }
+          }, (error: any) => this.feedbackService.showError(error));
+        } else if (result) {
+          this.selectMacro();
+        }
+      });
     }, (error: any) => this.feedbackService.showError(error));
   }
 }

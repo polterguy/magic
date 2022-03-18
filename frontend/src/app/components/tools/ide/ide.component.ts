@@ -249,21 +249,19 @@ export class IdeComponent implements OnInit, OnDestroy {
       this.setFocusToActiveEditor();
     } else {
       if (this.getCodeMirrorOptions(file.path) === null){
-        this.ngZone.run(() => {
-          const dialog = this.dialog.open(IncompatibleFileDialogComponent, {
-            width: '550px',
-            data: {
-              name: file.name,
-            },
-          });
-          dialog.afterClosed().subscribe((data: { deleteFile: false, download: false }) => {
-            if (data && data.download) {
-              this.fileActionsComponent.downloadActiveFile(file.path)
-            } else if (data && data.deleteFile) {
-              this.fileActionsComponent.deleteActiveFile(file.path)
-            }
-          });
-        })
+        const dialog = this.dialog.open(IncompatibleFileDialogComponent, {
+          width: '550px',
+          data: {
+            name: file.name,
+          },
+        });
+        dialog.afterClosed().subscribe((data: { deleteFile: false, download: false }) => {
+          if (data && data.download) {
+            this.fileActionsComponent.downloadActiveFile(file.path)
+          } else if (data && data.deleteFile) {
+            this.fileActionsComponent.deleteActiveFile(file.path)
+          }
+        });
         return;
       }
       this.fileService.loadFile(file.path).subscribe((content: string) => {

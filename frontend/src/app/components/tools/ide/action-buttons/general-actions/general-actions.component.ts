@@ -6,7 +6,7 @@
 // Angular and system imports.
 import { Subscription } from 'rxjs/internal/Subscription';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Component, EventEmitter, NgZone, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 
 // Application specific imports.
 import { Message } from 'src/app/models/message.model';
@@ -48,7 +48,6 @@ export class GeneralActionsComponent implements OnInit, OnDestroy {
    * @param backendService Needed to determine user's access rights in backend
    * @param messageService Needed to subscribe to relevant messages published by other components
    * @param feedbackService Needed to display feedback to user
-   * @param ngZone Needed to make sure dialogs popup inside the ngZone
    */
   constructor(
     private dialog: MatDialog,
@@ -56,8 +55,7 @@ export class GeneralActionsComponent implements OnInit, OnDestroy {
     private fileService: FileService,
     public backendService: BackendService,
     private messageService: MessageService,
-    private feedbackService: FeedbackService,
-    readonly ngZone: NgZone) { }
+    private feedbackService: FeedbackService) { }
 
   /**
    * Implementation of OnInit
@@ -85,11 +83,9 @@ export class GeneralActionsComponent implements OnInit, OnDestroy {
    * Invoked when user wants to generate a CRUD app.
    */
   generateCrudApp() {
-    this.ngZone.run(() => {
-      this.generateCrudDialog = this.dialog.open(GenerateCrudAppComponent, {
-        width: '80%',
-        disableClose: true
-      });
+    this.generateCrudDialog = this.dialog.open(GenerateCrudAppComponent, {
+      width: '80%',
+      disableClose: true
     });
     this.generateCrudDialog.backdropClick().subscribe(() => {
       this.generateCrudDialog.close();
