@@ -63,9 +63,7 @@ slots.vocabulary
   /**
    * Invoked when user changes the value of the actual public key.
    */
-  public publicKeyChanged() {
-
-    // Retrieving fingerprint for key.
+  publicKeyChanged() {
     this.cryptoService.getFingerprint(this.key.content).subscribe((result: Response) => {
       this.key.fingerprint = result.result;
     }, (error: any) => this.feedbackService.showError(error));
@@ -74,9 +72,7 @@ slots.vocabulary
   /**
    * Invoked when user clicks the import button to actually import the public key.
    */
-  public import() {
-
-    // Importing key.
+  import() {
     this.cryptoService.createPublicKey(this.key).subscribe((res: Response) => {
       this.dialogRef.close(this.key);
     }, (error: any) => this.feedbackService.showError(error));

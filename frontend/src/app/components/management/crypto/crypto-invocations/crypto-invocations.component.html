@@ -1,6 +1,5 @@
 
 <mat-form-field class="w-100" appearance="outline">
-
   <mat-label>Filter</mat-label>
   <input
     matInput
@@ -13,7 +12,6 @@
     class="button"
     role="button"
     (click)="clearFilter()">clear</mat-icon>
-
 </mat-form-field>
 
 <div class="table-responsive">
@@ -37,36 +35,44 @@
           [@detailExpand]="el == expandedElement ? 'expanded' : 'collapsed'">
           <div class="w-100">
             <mat-list class="detail-list mb-3">
+
               <mat-list-item>
                 <div mat-line>Date</div>
                 <div mat-line class="copy-to-clipboard" (click)="copyToClipboard(el.created)">{{el.created}}</div>
               </mat-list-item>
+
               <mat-list-item>
                 <div mat-line>ID</div>
                 <div mat-line class="copy-to-clipboard" (click)="copyToClipboard(el.request_id)">{{el.request_id}} </div>
               </mat-list-item>
+
               <mat-list-item>
                 <div mat-line>Full name</div>
                 <div mat-line class="copy-to-clipboard"
                 (click)="copyToClipboard(getCryptoKeySubject(el.crypto_key))">{{getCryptoKeySubject(el.crypto_key)}} </div>
               </mat-list-item>
+
               <mat-list-item>
                 <div mat-line>Key fingerprint</div>
                 <div mat-line class="copy-to-clipboard"
                 (click)="copyToClipboard(getCryptoKeyFingerprint(el.crypto_key))">{{getCryptoKeyFingerprint(el.crypto_key)}} </div>
               </mat-list-item>
+
               <mat-list-item>
                 <div mat-line>Request</div>
                 <div mat-line class="code copy-to-clipboard" (click)="copyToClipboard(el.request)">{{el.request}}</div>
               </mat-list-item>
+
               <mat-list-item>
                 <div mat-line>Signed request</div>
                 <div mat-line class="no-overflow copy-to-clipboard" (click)="copyToClipboard(el.request_raw)">{{el.request_raw}} </div>
               </mat-list-item>
+
               <mat-list-item>
                 <div mat-line>Response</div>
                 <div mat-line class="code">{{el.response}} </div>
               </mat-list-item>
+
             </mat-list>
           </div>
         </div>
@@ -77,7 +83,7 @@
       mat-row
       [ngClass]="expandedElement === el ? 'selected ' + ' invocation-row' : ''"
       class="expandable-row"
-      (click)="toggleDetails(el);expandedElement = expandedElement === el ? null : el"
+      (click)="getDetails(el);expandedElement = expandedElement === el ? null : el"
       *matRowDef="let el; columns: displayedColumns;"></tr>
 
     <tr mat-row *matRowDef="let el; columns: ['showDetails']" class="expanded-row"></tr>

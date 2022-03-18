@@ -7,7 +7,6 @@
 import { Subscription } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { environment } from 'src/environments/environment';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
@@ -16,23 +15,24 @@ import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@aspnet/
 
 // Application specific imports.
 import { Count } from 'src/app/models/count.model';
+import { Message } from 'src/app/models/message.model';
+import { Response } from '../../../models/response.model';
 import { BazarApp } from '../../../models/bazar-app.model';
 import { AppManifest } from '../../../models/app-manifest';
-import { Message } from 'src/app/models/message.model';
-import { BazarService } from '../../../services/management/bazar.service';
-import { Response } from '../../../models/response.model';
-import { FileService } from 'src/app/services/tools/file.service';
+import { environment } from 'src/environments/environment';
 import { AuthService } from '../../../services/auth.service';
-import { ConfigService } from '../../../services/management/config.service';
-import { MessageService } from 'src/app/services/message.service';
 import { LoaderService } from '../../../services/loader.service';
+import { FileService } from 'src/app/services/tools/file.service';
+import { MessageService } from 'src/app/services/message.service';
 import { NameEmailModel } from '../../../models/name-email.model';
+import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
+import { BazarService } from '../../../services/management/bazar.service';
+import { ConfigService } from '../../../services/management/config.service';
 import { ViewAppDialogComponent } from './view-app-dialog/view-app-dialog.component';
 import { SubscribeDialogComponent } from './subscribe-dialog/subscribe-dialog.component';
 import { ViewReadmeDialogComponent } from './view-readme-dialog/view-readme-dialog.component';
 import { ViewInstalledAppDialogComponent } from './view-installed-app-dialog/view-installed-app-dialog.component';
-import { BackendService } from 'src/app/services/backend.service';
 
 /**
  * Bazar component allowing you to obtain additional Micro Service backend
@@ -49,62 +49,63 @@ export class BazarComponent implements OnInit, OnDestroy {
    * UI only
    * to filter apps based on their status
    */
-  public installed: boolean = false;
-  /*
+  installed: boolean = false;
+
+  /**
    * Timer for displaying 'get help' message.
    */
-  private timer: any = null;
+  timer: any = null;
 
-  /*
+  /**
    * Subscription for messages published by other components.
    */
-  private subscription: Subscription;
+  subscription: Subscription;
 
   /**
    * If true, then filter form control should be hidden.
    */
-  public hideFilterControl: boolean = true;
+  hideFilterControl: boolean = true;
 
   /**
    * SignalR hub connection, used to connect to Bazar server and get notifications
-   * when app ise ready to be installed.
+   * when app is ready to be installed.
    */
-  public hubConnection: HubConnection = null;
+  hubConnection: HubConnection = null;
 
   /**
    * Apps as returned from Bazar.
    */
-  public apps: BazarApp[] = [];
+  apps: BazarApp[] = [];
 
   /**
    * Number of items matching currently applied filter.
    */
-  public count: number = 0;
+  count: number = 0;
 
   /**
    * Filter form control for filtering apps to display.
    */
-  public filterFormControl: FormControl;
+  filterFormControl: FormControl;
 
   /**
    * If too much time passes, we show the 'get help' message.
    */
-  public timeout: boolean = false;
+  timeout: boolean = false;
 
   /**
    * Manifests for already installed apps.
    */
-  public manifests: AppManifest[] = null;
+  manifests: AppManifest[] = null;
 
   /**
    * If true, the user has already subscribed to our newsletter.
    */
-  public subscribing: boolean = false;
+  subscribing: boolean = false;
 
   /**
    * Paginator for paging apps.
    */
-  @ViewChild(MatPaginator, {static: true}) public paginator: MatPaginator;
+  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
 
   /**
    * Creates an instance of your component.
@@ -115,6 +116,7 @@ export class BazarComponent implements OnInit, OnDestroy {
    * @param fileService Needed to be able to display README file after app has been installed.
    * @param bazarService Needed to retrieve apps from external Bazar server
    * @param configService Needed to compare versions semantically
+   * @param backendService Needed to check if user is root
    * @param activatedRoute Needed to retrieve activated router
    * @param messageService Needed to subscribe to messages published when app should be immediately installed
    * @param feedbackService Needed to display feedback to user
@@ -131,29 +133,23 @@ export class BazarComponent implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     private messageService: MessageService,
     private feedbackService: FeedbackService,
-    private loaderService: LoaderService) { 
-      
-      // checking params inside constructor, so it would be triggered whenever user enters the page
-      // Notice onInit function would be triggered only once
-      this.activatedRoute.queryParams.subscribe((pars: Params) => {
-        // Checking if we've got "token" param.
-        const token = pars['token'];
-        if (token) {
-          // show loading
-          this.loaderService.show();
-          this.dialog.open(ViewReadmeDialogComponent, {
-            data: `<h1 class="d-flex align-items-baseline">Please wait <div class="dot-flashing ml-4"></div></h1> <p class="mb-4">Please do not leave this page until your module has been installed and downloaded.<p>`,
-          }).disableClose = true;
-        }
-      })
-    }
+    private loaderService: LoaderService) {
+
+    this.activatedRoute.queryParams.subscribe((pars: Params) => {
+      const token = pars['token'];
+      if (token) {
+        this.loaderService.show();
+        this.dialog.open(ViewReadmeDialogComponent, {
+          data: `<h1 class="d-flex align-items-baseline">Please wait <div class="dot-flashing ml-4"></div></h1> <p class="mb-4">Please do not leave this page until your module has been installed and downloaded.<p>`,
+        }).disableClose = true;
+      }
+    })
+  }
 
   /**
    * Implementation of OnInit.
    */
-  public ngOnInit() {
-    
-    // Creating our filter form control, with debounce logic.
+  ngOnInit() {
     this.filterFormControl = new FormControl('');
     this.filterFormControl.setValue('');
     this.filterFormControl.valueChanges
@@ -164,10 +160,7 @@ export class BazarComponent implements OnInit, OnDestroy {
         this.getItems();
       });
 
-    // Sanity checking that user is root.
     if (this.backendService.active?.token?.in_role('root')) {
-
-      // Retrieving Bazar items from main Bazar.
       this.getItems(true);
 
       /*
@@ -176,43 +169,28 @@ export class BazarComponent implements OnInit, OnDestroy {
        * after a successful purchase.
        */
       this.activatedRoute.queryParams.subscribe((pars: Params) => {
-
-        // Checking if we've got "token" param.
         const token = pars['token'];
         if (token) {
-          
-          // Checking if product is already ready to be downloaded, and if not, subscribing to our SignalR message.
           this.waitForCallback(token);
-
-          // Unless the process finishes in 3 minutes, we show a 'get help' message to the user.
           this.timer = setTimeout(() => {
             this.timeout = true;
           }, 180000);
         }
       });
 
-      // Loading manifests from local server.
       this.loadManifests();
     }
 
-    // Subscribing to messages from other components informing us we need to immediately install app.
     this.subscription = this.messageService.subscriber().subscribe((msg: Message) => {
-
-      // Making sure this is the correct message.
       if (msg.name === 'magic.bazar.install-immediately') {
-
-        // Yup, this is our guy - Installing app immediately.
         this.install(<BazarApp>msg.content.app, <string>msg.content.code);
       }
     });
 
-    // Checking if user has already subscribed to newsletter.
     const subscribesStr = localStorage.getItem('subscribes-to-newsletter');
     if (subscribesStr && subscribesStr !== '') {
       const subObj = JSON.parse(subscribesStr);
       if (subObj.subscribing === true) {
-
-        // User has already subscribed to newsletter.
         this.subscribing = true;
       }
     }
@@ -222,42 +200,26 @@ export class BazarComponent implements OnInit, OnDestroy {
    * Implementation of OnDestroy is necessary to make sure we
    * stop any SignalR connections once the dialog is closed.
    */
-   public ngOnDestroy() {
-
-    // Checking if we've got open SignalR connections.
+   ngOnDestroy() {
     if (this.hubConnection) {
-
-      // Stopping SignalR socket connection.
       this.hubConnection.stop();
-
-      // hiding loader
       this.loaderService.hide();
     }
-
-    // Destroying timer if it was created.
     if (this.timer) {
       clearTimeout(this.timer);
       this.timer = null;
     }
-
-    // Destroying subscription.
     this.subscription.unsubscribe();
   }
 
   /**
    * Invoked when user wants to subscribe to our newsletter.
    */
-  public subscribe() {
-
-    // Opening up modal dialog passing in reference to Bazar app.
+  subscribe() {
     let dialogRef = this.dialog.open(SubscribeDialogComponent, {
       width: '550px'
     });
-
-    // Subscribing to afterClose such that we can hide email icon in case user subscribes.
     dialogRef.afterClosed().subscribe((model: NameEmailModel) => {
-
-      // Checking if user chose to subscribe.
       if (model) {
         this.subscribing = true;
       }
@@ -267,9 +229,7 @@ export class BazarComponent implements OnInit, OnDestroy {
   /**
    * Invoked when filter should be cleared.
    */
-  public clearFilter() {
-
-    // Just resetting the form control's value which will trigger debounce after some milliseconds.
+  clearFilter() {
     this.filterFormControl.setValue('');
   }
 
@@ -278,9 +238,7 @@ export class BazarComponent implements OnInit, OnDestroy {
    * 
    * @param e Page event argument
    */
-   public paged(e: PageEvent) {
-
-    // Changing pager's size according to arguments, and retrieving log items from backend.
+   paged(e: PageEvent) {
     this.paginator.pageSize = e.pageSize;
     this.getItems();
   }
@@ -290,15 +248,11 @@ export class BazarComponent implements OnInit, OnDestroy {
    * 
    * @param app What app the user clicked
    */
-  public viewApp(app: BazarApp) {
-
-    // Checking if app is installed.
+  viewApp(app: BazarApp) {
     if (this.appIsInstalled(app)) {
       this.feedbackService.showInfoShort('App is already installed');
       return;
     }
-
-    // Opening up modal dialog passing in reference to Bazar app.
     this.dialog.open(ViewAppDialogComponent, {
       data: app,
       width: '80%'
@@ -310,18 +264,12 @@ export class BazarComponent implements OnInit, OnDestroy {
    * 
    * @param app Which app to view details about
    */
-  public viewInstalledAppDetails(app: AppManifest) {
-
-    // Opening up modal dialog passing in reference to app's manifest.
+  viewInstalledAppDetails(app: AppManifest) {
     const dialogRef = this.dialog.open(ViewInstalledAppDialogComponent, {
       data: app,
       width: '80%',
     });
-
-    // Subscribing to afterClose such that we can check if app was updated, at which point we'll need to refresh manifests.
     dialogRef.afterClosed().subscribe((result: AppManifest) => {
-
-      // app was updated, hence we need to refresh manifests.
       this.loadManifests();
     });
   }
@@ -331,9 +279,7 @@ export class BazarComponent implements OnInit, OnDestroy {
    * 
    * @param app App to check
    */
-  public appIsInstalled(app: BazarApp) {
-
-    // Checking manifest apps to see if we can find this app in our currently installed apps.
+  appIsInstalled(app: BazarApp) {
     return this.manifests.filter(x => x.module_name === app.folder_name).length > 0;
   }
 
@@ -345,20 +291,12 @@ export class BazarComponent implements OnInit, OnDestroy {
    * Lists apps from Bazar server.
    */
   private getItems(first: boolean = false) {
-
-    // Invoking service to retrieve available apps matching criteria.
     this.bazarService.listBazarItems(
       this.filterFormControl.value,
       this.paginator.pageIndex * this.paginator.pageSize,
       this.paginator.pageSize).subscribe((apps: BazarApp[]) => {
-
-      // Assigning result to model.
       this.apps = apps;
-
-      // Retrieving number of items.
       this.bazarService.countBazarItems(this.filterFormControl.value).subscribe((count: Count) => {
-
-        // Assigning model.
         this.count = count.count;
 
         /*
@@ -369,7 +307,6 @@ export class BazarComponent implements OnInit, OnDestroy {
           this.hideFilterControl = this.count <= 5;
         }
       });
-
     }, (error: any) => this.feedbackService.showError(error));
   }
 
@@ -378,13 +315,10 @@ export class BazarComponent implements OnInit, OnDestroy {
    * that the payment has been accepted.
    */
   private waitForCallback(token: string) {
-    // show loading
     this.loaderService.show();
-    // Retrieving currently installing app from local storage.
     const app = <BazarApp>JSON.parse(localStorage.getItem('currently-installed-app'));
     localStorage.removeItem('currently-installed-app');
 
-    // Creating our SignalR hub.
     let builder = new HubConnectionBuilder();
     this.hubConnection = builder.withUrl(environment.bazarUrl + '/sockets', {
       skipNegotiation: true,
@@ -396,12 +330,9 @@ export class BazarComponent implements OnInit, OnDestroy {
      * once app is ready to be downloaded.
      */
     this.hubConnection.on('bazar.package.avilable.' + token, (args: string) => {
-      
-      // Purchase accepted by PayPal, hence starting download and installation process.
       this.install(app, token);
     });
 
-    // Connecting SignalR connection.
     this.hubConnection.start().then(() => {
 
       /*
@@ -410,8 +341,6 @@ export class BazarComponent implements OnInit, OnDestroy {
        * for download here.
        */
       this.bazarService.canDownloadBazarItem(token).subscribe((response: Response) => {
-
-        // Checking result from Bazar server.
         if (response.result === 'APPROVED') {
 
           /*
@@ -430,23 +359,14 @@ export class BazarComponent implements OnInit, OnDestroy {
    */
   private install(app: BazarApp, token: string) {
 
-    // Downloading app from Bazar.
     this.bazarService.downloadBazarItem(app, token).subscribe((download: Response) => {
-
-      // Verifying process was successful.
       if (download.result === 'success') {
-
-        // Now invoking install which actually initialises the app, and executes its startup files.
         this.bazarService.installBazarItem(
           app.folder_name,
           app.version,
           app.name,
           token).subscribe((install: Response) => {
-
-          // Verifying process was successful.
           if (install.result === 'success') {
-
-            // Success!
             this.feedbackService.showInfo('Module was successfully installed on your server');
 
             /*
@@ -455,40 +375,27 @@ export class BazarComponent implements OnInit, OnDestroy {
              * Notice, socket connections are NOT turned on for immediate downloads (free apps).
              */
             if (this.hubConnection) {
-
-              // Socket connection is open, turing it off.
               this.hubConnection.stop();
               this.hubConnection = null;
-
-              // hide loading
               this.loaderService.hide();
               this.dialog.closeAll();
             }
 
-            // Redirecting to main Bazar URL now that app has been installed on the local server.
             this.router.navigate(['/bazar']);
-
-            // Reloading manifests now that we've installed an additional app.
             this.loadManifests();
 
-            // Checking if app has a README file, at which point we display the entire file to the user.
             this.fileService.listFiles('/modules/' + app.folder_name + '/', 'README.md').subscribe((files: string[]) => {
-
-              // Checking if above returned one main /modules/xxx/README.md file.
               const mainReadmeFilePath = files.filter(x => x === '/modules/' + app.folder_name + '/README.md');
               if (mainReadmeFilePath.length > 0) {
 
                 /*
-                 * Yup, module has a main README file, hence displaying it to
+                 * Module has a main README file, hence displaying it to
                  * the user in a modal window - But first we need to load the file's content.
                  */
                 this.fileService.loadFile(mainReadmeFilePath[0]).subscribe((readMeFileContent: string) => {
-
-                  // Displaying the file's content in a modal dialog.
                   this.dialog.open(ViewReadmeDialogComponent, {
                     data: readMeFileContent,
                   });
-
                 }, (error: any) => this.feedbackService.showError(error));
               }
 
@@ -498,15 +405,10 @@ export class BazarComponent implements OnInit, OnDestroy {
             }, (error: any) => this.feedbackService.showError(error));
 
           } else {
-
-            // Oops, some unspecified error occurred
             this.feedbackService.showError('Something went wrong when trying to install Bazar app. Your log might contain more information.');
           }
         }, (error: any) => this.feedbackService.showError(error));
-
       } else {
-
-        // Oops, some unspecified error occurred
         this.feedbackService.showError('Something went wrong when trying to install Bazar app. Your log might contain more information.');
       }
 
@@ -518,26 +420,13 @@ export class BazarComponent implements OnInit, OnDestroy {
    */
   private loadManifests() {
 
-    // Invoking backend to load manifests.
     this.bazarService.localManifests().subscribe((manifests: AppManifest[]) => {
-
-      // Assigning model.
       this.manifests = manifests || [];
-
-      // Checking if any of the apps have available updates.
       let hasUpdates = false;
       for (const idx of this.manifests) {
-
-        // Retrieving app from Bazar server.
         this.bazarService.getBazarItem(idx.module_name).subscribe((result: BazarApp[]) => {
-
-          // Making sure app is still available in Bazar, and if not, simply ignoring it.
           if (result && result.length > 0) {
-
-            // Checking version of app, to see if we have an available update of it.
             const version = result[0].version;
-
-            // Invoking local backend to do a comparison of currently installed app's version, and Bazar latest version.
             this.configService.versionCompare(idx.version, version).subscribe((versionCompare: any) => {
 
               /*
@@ -547,11 +436,8 @@ export class BazarComponent implements OnInit, OnDestroy {
                * less than the current Bazar version, and hence app has an update in the Bazar.
                */
               if (+versionCompare.result === -1) {
-
-                // App has an update.
                 idx.has_update = true;
                 idx.new_version = version;
-
                 if (!hasUpdates) {
                   hasUpdates = true;
                   this.feedbackService.showInfo('You have apps that needs to be updated, scroll to the bottom to see the list of apps that needs updating');

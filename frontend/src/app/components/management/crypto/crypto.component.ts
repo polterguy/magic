@@ -13,8 +13,8 @@ import { Message } from 'src/app/models/message.model';
 import { CryptoService } from './services/crypto.service';
 import { AuthService } from '../../../services/auth.service';
 import { MessageService } from 'src/app/services/message.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
 import { BackendService } from 'src/app/services/backend.service';
+import { FeedbackService } from 'src/app/services/feedback.service';
 
 /**
  * Crypto component allowing you to administrate your server's cryptography keys.
@@ -31,32 +31,32 @@ export class CryptoComponent {
   /**
    * If true, we should show the import public key part.
    */
-  public showImport = true;
+  showImport = true;
 
   /**
    * Import key model for key imported by other users.
    */
-  public importKey = '';
+  importKey = '';
 
   /**
    * Subject for import key.
    */
-  public importSubject = '';
+  importSubject = '';
 
   /**
    * Email for import key.
    */
-  public importEmail = '';
+  importEmail = '';
 
   /**
    * Domain for import key.
    */
-  public importDomain = '';
+  importDomain = '';
 
   /**
    * Paginator for paging table.
    */
-  @ViewChild(MatTabGroup, {static: false}) public tab: MatTabGroup;
+  @ViewChild(MatTabGroup, {static: false}) tab: MatTabGroup;
 
   /**
    * Creates an instance of your component.
@@ -64,6 +64,7 @@ export class CryptoComponent {
    * @param authService Needed to check role of currently authenticated user
    * @param cryptoService Needed to be able to import public keys
    * @param messageService Needed to subscribe to messages published by other components
+   * @param backendService Needed to determine access rights of user
    * @param feedbackService Needed to show user feedback
    */
   constructor(
@@ -76,13 +77,9 @@ export class CryptoComponent {
   /**
    * Implementtation of OnInit.
    */
-  public ngOnInit() {
-
-    // Making sure we subscribe to relevant messages.
+  ngOnInit() {
     this.subscription = this.messageService.subscriber().subscribe((msg: Message) => {
       if (msg.name === 'crypto.receipts.show') {
-
-        // Caller wants to change active tab to the 'View invocations' tab.
         this.tab.selectedIndex = 1;
 
         /*
@@ -102,28 +99,21 @@ export class CryptoComponent {
   /**
    * Implementation of OnDestroy.
    */
-  public ngOnDestroy() {
-
-    // House cleaning.
+  ngOnDestroy() {
     this.subscription.unsubscribe();
   }
 
   /**
    * Invoked when user tries to import a key.
    */
-  public importPublicKey() {
-
-    // Importing public key.
+  importPublicKey() {
     this.cryptoService.importPublicKey(
       this.importSubject,
       this.importEmail,
       this.importDomain,
       this.importKey).subscribe(() => {
-
-        // Showing user some feedback, and making sure we hide import card.
         this.feedbackService.showInfo('Key was sucessfully imported');
         this.showImport = false;
-
       }, (error: any) => this.feedbackService.showError(error));
   }
 }

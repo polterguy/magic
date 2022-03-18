@@ -1,10 +1,13 @@
 
 <div class="d-flex align-items-center mb-1">
+
   <mat-card-title class="my-0">Cryptography</mat-card-title>
+
   <div class="sm-icons">
     <button mat-icon-button [matMenuTriggerFor]="menu" class="mat-caption" matTooltip="Need help?" type="button">
       <mat-icon>help_outline</mat-icon>
     </button>
+
     <mat-menu #menu="matMenu">
       <div class="p-3">
         <p>
@@ -19,7 +22,9 @@
     </mat-menu>
   </div>
 </div>
+
 <mat-card-subtitle>Administrate cryptography keys and receipts</mat-card-subtitle>
+
 <div class="row mb-3">
   <div class="col-12">
     <mat-accordion class="card-replacement left-align-arrow" displayMode="flat">
@@ -41,6 +46,7 @@
     <mat-card>
       <mat-card-content>
         <mat-tab-group #tab dynamicHeight>   
+
           <mat-tab label="Keys">
             <ng-template matTabContent>
               <app-public-keys></app-public-keys>
@@ -52,6 +58,7 @@
               <app-crypto-invocations></app-crypto-invocations>
             </ng-template>
           </mat-tab>     
+
         </mat-tab-group>
       </mat-card-content>
     </mat-card>
@@ -60,6 +67,7 @@
 
 <div class="row" *ngIf="!backendService.active?.token?.in_role('root') && showImport">
   <div class="col-12 mb-general">
+
     <mat-card>
       <mat-card-content>
         <mat-form-field class="w-100" appearance="outline">
@@ -70,7 +78,8 @@
             rows="7"></textarea>     
         </mat-form-field>
       
-        <div class="d-flex flex-sm-nowrap flex-wrap">     
+        <div class="d-flex flex-sm-nowrap flex-wrap">
+
           <mat-form-field appearance="outline" class="w-100">      
             <mat-label>Full name</mat-label>
             <input
@@ -79,6 +88,7 @@
               [(ngModel)]="importSubject"
               autocomplete="off">
           </mat-form-field>
+
           <div class="p-1"></div>
 
           <mat-form-field appearance="outline" class="w-100">
@@ -89,6 +99,7 @@
               [(ngModel)]="importEmail"
               autocomplete="off">
           </mat-form-field>
+
           <div class="p-1"></div>
 
           <mat-form-field appearance="outline" class="w-100">
@@ -99,6 +110,7 @@
               [(ngModel)]="importDomain"
               autocomplete="off">
           </mat-form-field>
+
         </div>
       
         <div class="d-flex justify-content-end w-100">
@@ -111,7 +123,9 @@
             Import
           </button>
         </div>
+
       </mat-card-content>
     </mat-card>
+
   </div>
 </div>

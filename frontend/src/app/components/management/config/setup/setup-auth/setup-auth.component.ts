@@ -28,22 +28,22 @@ export class SetupAuthComponent implements OnInit {
    * If true, allows user to paste in an existing appSettings.json file
    * into a textarea editor.
    */
-  public showAdvanced: boolean = false;
+  showAdvanced: boolean = false;
 
   /**
    * Contains config file in its entirety.
    */
-  public json: string = '';
+  json: string = '';
 
   /**
    * Configuration as returned from backend.
    */
-  public config: any = null;
+  config: any = null;
 
   /**
    * Database types the user can select during configuration of system.
    */
-  public databaseTypes: string[] = [
+  databaseTypes: string[] = [
     'mysql',
     'pgsql',
     'mssql',
@@ -52,49 +52,40 @@ export class SetupAuthComponent implements OnInit {
   /**
    * Currently selected database type.
    */
-  public selectedDatabaseType: string = null;
+  selectedDatabaseType: string = null;
 
   /**
    * Root user's password.
    */
-  public password = '';
+  password = '';
 
   /**
    * Repeat value of root user's password.
    */
-  public passwordRepeat = '';
+  passwordRepeat = '';
 
   /**
    * Creates an instance of your component.
    * 
+   * @param feedbackService Needed to display feedback to user
    * @param configService Configuration service used to read and save configuration settings
+   * @param authService Needed to logout user after setup is done
    * @param messageService Used to publish event when status of setup process has changed
    */
   constructor(
     private feedbackService: FeedbackService,
     private configService: ConfigService,
     private authService: AuthService,
-    protected messageService: MessageService) {
-  }
+    protected messageService: MessageService) { }
   
   /**
    * Implementation of OnInit.
    */
-  public ngOnInit() {
-
-    // Retrieving backend's configuration.
+  ngOnInit() {
     this.configService.loadConfig().subscribe(config => {
-
-      // Assigning config field to result of invocation.
       this.config = config;
-
-      // Creating some random gibberish to use as default JWT secret.
       this.configService.getGibberish(50, 100).subscribe((gibberish: Response) => {
-
-        // Applying gibberish to relevant configuration section.
         this.config.magic.auth.secret = gibberish.result;
-
-        // Making sure we create JSON string value for advanced configuration.
         this.json = JSON.stringify(this.config, null, 2);
       });
     }, (error: any) => this.feedbackService.showError(error));
@@ -103,49 +94,31 @@ export class SetupAuthComponent implements OnInit {
   /**
    * Invoked when user clicks the next button.
    */
-  public next() {
-
-    // Sanity checking auth secret.
+  next() {
     if (this.config.magic.auth.secret.length < 50 || this.config.magic.auth.secret.length > 100) {
-
-      // No good AUTH secret.
       this.feedbackService.showError('Auth secret must be between 50 and 100 charaters in length');
       return;
     }
-
-    // Sanity checking connection string.
     if (this.config.magic.databases[this.selectedDatabaseType].generic.indexOf('{database}') === -1) {
-
-      // Not good!
       this.feedbackService.showError('Connection string is not valid, it needs the {database} section');
       return;
     }
-
-    // Invoking backend to save configuration as specified by user.
     this.config.magic.databases.default = this.selectedDatabaseType;
     this.configService.setupSystem(
       this.password,
       this.config).subscribe(() => {
-
-      // Signaling to other components we've updated setup state.
       this.messageService.sendMessage({
         name: Messages.SETUP_STATE_CHANGED
       });
-
       this.configService.changeStatus(true);
-
     }, (error: any) => this.feedbackService.showError(error));
   }
 
   /**
    * Invoked when appSettings.json file should be saved directly.
    */
-  public saveAdvanced() {
-
-    // Saving raw appSettings.json file by invoking backend.
+  saveAdvanced() {
     this.configService.saveConfig(JSON.parse(this.json)).subscribe((result: Response) => {
-
-      // Success!
       this.authService.logoutFromCurrent(true);
       this.feedbackService.showInfo('You will need to login again');
     });

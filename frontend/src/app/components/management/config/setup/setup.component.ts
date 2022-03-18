@@ -26,17 +26,16 @@ import { ConfigService } from 'src/app/services/management/config.service';
 })
 export class SetupComponent implements OnInit, OnDestroy {
 
-  // Stepper instance.
-  @ViewChild('stepper') stepper: MatStepper;
-
   // Subscription for message service.
   private subscription: Subscription;
+
+  @ViewChild('stepper') stepper: MatStepper;
 
   /**
    * Provided by parent component during creation of component.
    * Contains the status of setup process.
    */
-  @Input() public status: Status;
+  @Input() status: Status;
 
   /**
    * Creates an instance of your component.
@@ -48,41 +47,26 @@ export class SetupComponent implements OnInit, OnDestroy {
   constructor(
     private feedbackService: FeedbackService,
     private configService: ConfigService,
-    protected messageService: MessageService) {
-  }
+    protected messageService: MessageService) { }
 
   /**
    * Implementation of OnInit.
    */
-  public ngOnInit() {
-
-    // Subscribing to the setup state changed message, to make sure we change UI.
+  ngOnInit() {
     this.subscription = this.messageService.subscriber().subscribe((msg: Message) => {
-
-      // Checking if this is an interesting message.
       if (msg.name === Messages.SETUP_STATE_CHANGED) {
-
         this.configService.status().subscribe((status: Status) => {
           this.status = status;
-
-          // Retrieving next step's selected index for stepper.
           const selectedIndex = this.getStepperSelectedIndex();
           if (selectedIndex === 3) {
-
-            // We're done, giving user some feedback and encouraging him to run assumptions.
             this.feedbackService.showInfo('You have successfully setup Magic, now please verify integrity by running assumptions');
-
           } else {
-
-            // More steps to go.
             this.stepper.selectedIndex = selectedIndex;
           }
-
-          // Checking if configuration is done.
           if (status.config_done && status.magic_crudified && status.server_keypair) {
             this.configService.changeStatus(true);
           }
-      });
+        });
       }
     });
   }
@@ -90,9 +74,7 @@ export class SetupComponent implements OnInit, OnDestroy {
   /**
    * Implementation of OnDestroy.
    */
-  public ngOnDestroy() {
-
-    // Unsubscribing to message subscription.
+  ngOnDestroy() {
     this.subscription.unsubscribe();
   }
 
@@ -100,9 +82,7 @@ export class SetupComponent implements OnInit, OnDestroy {
    * Returns the selected index of the material stepper according
    * to how far into the setup process we've come.
    */
-  public getStepperSelectedIndex() {
-
-    // Changing active step of stepper according to how much of setup process we've done.
+  getStepperSelectedIndex() {
     if (!this.status.config_done) {
       return 0;
     } else if (!this.status.magic_crudified) {
