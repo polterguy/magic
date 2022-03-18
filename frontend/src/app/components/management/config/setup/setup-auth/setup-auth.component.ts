@@ -82,13 +82,17 @@ export class SetupAuthComponent implements OnInit {
    * Implementation of OnInit.
    */
   ngOnInit() {
-    this.configService.loadConfig().subscribe(config => {
-      this.config = config;
-      this.configService.getGibberish(50, 100).subscribe((gibberish: Response) => {
-        this.config.magic.auth.secret = gibberish.result;
-        this.json = JSON.stringify(this.config, null, 2);
-      });
-    }, (error: any) => this.feedbackService.showError(error));
+    this.configService.loadConfig().subscribe({
+      next: (config) => {
+        this.config = config;
+        this.configService.getGibberish(50, 100).subscribe({
+          next: (gibberish: Response) => {
+            this.config.magic.auth.secret = gibberish.result;
+            this.json = JSON.stringify(this.config, null, 2);
+          },
+          error: (error: any) => this.feedbackService.showError(error)});
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /**
@@ -106,21 +110,25 @@ export class SetupAuthComponent implements OnInit {
     this.config.magic.databases.default = this.selectedDatabaseType;
     this.configService.setupSystem(
       this.password,
-      this.config).subscribe(() => {
-      this.messageService.sendMessage({
-        name: Messages.SETUP_STATE_CHANGED
-      });
-      this.configService.changeStatus(true);
-    }, (error: any) => this.feedbackService.showError(error));
+      this.config).subscribe({
+        next: () => {
+          this.messageService.sendMessage({
+            name: Messages.SETUP_STATE_CHANGED
+          });
+          this.configService.changeStatus(true);
+        },
+        error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /**
    * Invoked when appSettings.json file should be saved directly.
    */
   saveAdvanced() {
-    this.configService.saveConfig(JSON.parse(this.json)).subscribe((result: Response) => {
-      this.authService.logoutFromCurrent(true);
-      this.feedbackService.showInfo('You will need to login again');
-    });
+    this.configService.saveConfig(JSON.parse(this.json)).subscribe({
+      next: () => {
+        this.authService.logoutFromCurrent(true);
+        this.feedbackService.showInfo('You will need to login again');
+      },
+      error: (error: any) =>this.feedbackService.showError(error)});
   }
 }

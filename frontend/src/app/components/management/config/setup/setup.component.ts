@@ -55,18 +55,20 @@ export class SetupComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.subscription = this.messageService.subscriber().subscribe((msg: Message) => {
       if (msg.name === Messages.SETUP_STATE_CHANGED) {
-        this.configService.status().subscribe((status: Status) => {
-          this.status = status;
-          const selectedIndex = this.getStepperSelectedIndex();
-          if (selectedIndex === 3) {
-            this.feedbackService.showInfo('You have successfully setup Magic, now please verify integrity by running assumptions');
-          } else {
-            this.stepper.selectedIndex = selectedIndex;
-          }
-          if (status.config_done && status.magic_crudified && status.server_keypair) {
-            this.configService.changeStatus(true);
-          }
-        });
+        this.configService.status().subscribe({
+          next: (status: Status) => {
+            this.status = status;
+            const selectedIndex = this.getStepperSelectedIndex();
+            if (selectedIndex === 3) {
+              this.feedbackService.showInfo('You have successfully setup Magic, now please verify integrity by running assumptions');
+            } else {
+              this.stepper.selectedIndex = selectedIndex;
+            }
+            if (status.config_done && status.magic_crudified && status.server_keypair) {
+              this.configService.changeStatus(true);
+            }
+          },
+          error: (error: any) =>this.feedbackService.showError(error)});
       }
     });
   }

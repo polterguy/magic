@@ -9,9 +9,10 @@ import { MatDialogRef } from '@angular/material/dialog';
 
 // Application specific imports.
 import { Response } from 'src/app/models/response.model';
-import { KeyPair } from 'src/app/components/management/crypto/models/key-pair.model';
 import { CryptoService } from '../../services/crypto.service';
+import { FeedbackService } from 'src/app/services/feedback.service';
 import { ConfigService } from 'src/app/services/management/config.service';
+import { KeyPair } from 'src/app/components/management/crypto/models/key-pair.model';
 
 /**
  * Modal dialog used to create a new keypair for server.
@@ -25,32 +26,32 @@ export class CreateKeypairDialogComponent implements OnInit {
   /**
    * Identity for the key.
    */
-  public subject: string;
+  subject: string;
 
   /**
    * Email address you want to associate with your key.
    */
-  public email: string;
+  email: string;
 
   /**
    * Base URL for your key.
    */
-  public domain = '';
+  domain = '';
 
   /**
    * Seed for CSRNG generator.
    */
-  public seed: string;
+  seed: string;
 
   /**
    * Key strength to use when generating key.
    */
-  public strength: number;
+  strength: number;
 
   /**
    * Options fo strength value when generating key.
    */
-  public strengthValues: number[] = [
+  strengthValues: number[] = [
     1024,
     2048,
     4096,
@@ -62,44 +63,42 @@ export class CreateKeypairDialogComponent implements OnInit {
    * 
    * @param configService Needed to retrieve random gibberish seeding the CSRNG as we create new key pair
    * @param cryptoService Needed to create private key pair
+   * @param feedbackService Needed to provide feedback to user
    * @param dialogRef Needed to be able to close self when key has been created
    */
   constructor(
     private configService: ConfigService,
     private cryptoService: CryptoService,
+    private feedbackService: FeedbackService,
     private dialogRef: MatDialogRef<CreateKeypairDialogComponent>) { }
 
   /**
    * Implementation of OnInit
    */
   ngOnInit() {
-
-    // Retrieving some default seed for key generating process.
-    this.configService.getGibberish(100, 200).subscribe((result: Response) => {
-
-      // Assigning model to result of backend invocation.
-      this.seed = result.result;
-      this.strength = this.strengthValues[2];
-    });
+    this.configService.getGibberish(100, 200).subscribe({
+      next: (result: Response) => {
+        this.seed = result.result;
+        this.strength = this.strengthValues[2];
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /**
    * Invoked when user wants to create the key pair, after having applied
    * strength and random gibberish.
    */
-  public create() {
-
-    // Invoking backend to generate key pair.
+  create() {
     this.cryptoService.generateKeyPair(
       +this.strength,
       this.seed,
       this.subject,
       this.email,
-      this.domain).subscribe((result: KeyPair) => {
-
-      // Success, closing dialog.
-      this.dialogRef.close(true);
-    });
+      this.domain).subscribe({
+        next: () => {
+          this.dialogRef.close(true);
+        },
+        error: (error:any) => this.feedbackService.showError(error)});
   }
 
   /**

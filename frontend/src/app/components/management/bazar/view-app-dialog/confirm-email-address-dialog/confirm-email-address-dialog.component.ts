@@ -15,22 +15,22 @@ export class EmailPromoCodeModel {
   /**
    * Whether user wants to subscribe to our newsletter or not.
    */
-  public subscribe: boolean;
+  subscribe: boolean;
 
   /**
    * Name of customer.
    */
-  public name: string;
+  name: string;
 
   /**
    * Email address we should send app's ZIP file to.
    */
-  public email: string;
+  email: string;
 
   /**
    * Optional promo code user has been given.
    */
-  public code?: any;
+  code?: any;
 }
 
 /**
@@ -47,23 +47,24 @@ export class ConfirmEmailAddressDialogComponent implements OnInit {
   /**
    * If true, the user can punch a promo code.
    */
-  public has_code: boolean = false;
+  has_code: boolean = false;
 
   /**
    * If this is true user has previously subscribed to newsletter, so we hide the
    * checkbox allowing him to sign up.
    */
-  public hideSubscribeCheckBox: boolean = false;
+  hideSubscribeCheckBox: boolean = false;
 
   /**
    * If this is true, user has previously supplied a promo code, and hence
    * we associate current purchase with the same promo code.
    */
-  public disablePromoCode: boolean = false;
+  disablePromoCode: boolean = false;
 
   /**
    * Creates an instance of your component.
    * 
+   * @param dialogRef Needed to be able to explicitly close dialog
    * @param data Root user's email address
    */
   constructor(
@@ -73,13 +74,9 @@ export class ConfirmEmailAddressDialogComponent implements OnInit {
   /**
    * Implementation of OnInit.
    */
-  public ngOnInit() {
-
-    // Checking if user has previously ordered a product, at which point we use previously submitted data.
+  ngOnInit() {
     const data = localStorage.getItem('confirm-email-data');
     if (data && data !== '') {
-
-      // Updating model.
       const dataObj = JSON.parse(data);
       this.data.code = dataObj.code && dataObj.code !== '' ? dataObj.code : null;
       this.data.email = dataObj.email;
@@ -90,8 +87,6 @@ export class ConfirmEmailAddressDialogComponent implements OnInit {
         this.disablePromoCode = true;
       }
     }
-
-    // Checking if user has previously subscribed to our newsletter, at which point we hide the checkbox for subscribing
     const subscribingStr = localStorage.getItem('subscribes-to-newsletter');
     if (subscribingStr && subscribingStr !== '') {
       this.hideSubscribeCheckBox = JSON.parse(subscribingStr).subscribing;
@@ -101,21 +96,15 @@ export class ConfirmEmailAddressDialogComponent implements OnInit {
   /**
    * Invoked when user confirms his email address.
    */
-  public ok() {
-
-    // Saving data in local storage to simplify process later.
+  ok() {
     localStorage.setItem('confirm-email-data', JSON.stringify(this.data));
-
-    // Closing dialog.
     this.dialogRef.close(this.data);
   }
 
   /**
    * Invoked when user cancels the purchasing process.
    */
-   public cancel() {
-
-    // Closing dialog.
+  cancel() {
     this.dialogRef.close();
   }
 }

@@ -19,18 +19,18 @@ export class TransformModelService {
   /**
    * Whether or not existing endpoints should be overwritten or not.
    */
-  public overwrite = false;
+  overwrite = false;
 
   /**
    * Whether or not scaffolding should create verbose endpoints, implying applying
    * as many argument options as possible, or only apply the bare minimum.
    */
-   public verbose = false;
+  verbose = false;
 
   /**
    * Whether or not scaffolding should create left joins for backend GET endpoints.
    */
-   public join = true;
+  join = true;
 
   /**
    * Transforms the specified input to a Crudify instance, required to invoke backend
@@ -40,13 +40,11 @@ export class TransformModelService {
    * @param table Name of table to crudify
    * @param verb HTTP verb, 'post', 'put', 'get' or 'delete'
    */
-  public transform(
+  transform(
     databaseType: string,
     database: string,
     table: TableEx,
     verb: string) {
-
-    // Creating arguments for crudification process.
     const result = new Crudify();
     result.databaseType = databaseType;
     result.database = database;
@@ -65,28 +63,23 @@ export class TransformModelService {
       result.cqrsAuthorisationValues = table.cqrsAuthorisationValues;
     }
 
-    // Checking if user configured endpoint to use cache or not.
     if (table.cache && table.cache > 0) {
       result.cache = table.cache;
       result.publicCache = table.publicCache;
     }
 
-    // Checking if this is delete invocation, and delete invocations should be logged.
     if (verb === 'delete' && table.logDelete) {
       result.log = `${table.moduleName}.${table.name} entry deleted`;
     }
 
-    // Checking if this is put invocation, and put invocations should be logged.
     if (verb === 'put' && table.logPut) {
       result.log = `${table.moduleName}.${table.name} entry updated`;
     }
 
-    // Checking if this is put invocation, and put invocations should be logged.
     if (verb === 'post' && table.logPost) {
       result.log = `${table.moduleName}.${table.name} entry created`;
     }
 
-    // Creating authentication requirements for endpoint(s).
     if (verb === 'post' && table.authPost) {
       result.auth = table.authPost;
     }
@@ -100,7 +93,6 @@ export class TransformModelService {
       result.auth = table.authDelete;
     }
 
-    // Figuring out template to use according to specified HTTP verb.
     switch (verb) {
 
       case 'post':
@@ -123,7 +115,6 @@ export class TransformModelService {
         throw new Error('Oops, unknown verb');
     }
 
-    // Figuring out args to use for invocation.
     result.args = {
       columns: [],
       primary: [],

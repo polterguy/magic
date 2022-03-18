@@ -83,81 +83,88 @@ export class ViewAppDialogComponent implements OnInit {
    * Implementation of OnInit.
    */
   ngOnInit() {
-    this.fileService.listFolders('/modules/').subscribe((folders: string[]) => {
-      if (folders.filter(x => x === '/modules/' + this.data.folder_name + '/').length > 0) {
-        this.installed = true;
-      }
-    }, (error: any) => this.feedbackService.showError(error));
+    this.fileService.listFolders('/modules/').subscribe({
+      next: (folders: string[]) => {
+        if (folders.filter(x => x === '/modules/' + this.data.folder_name + '/').length > 0) {
+          this.installed = true;
+        }
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
 
-    this.bazarService.canInstall(this.data.min_magic_version).subscribe((result: Response) => {
-      if (result.result === 'SUCCESS') {
-        this.canInstall = true;
-      } else {
-        this.feedbackService.showInfo('In order to install this app you will have to update your Magic version');
-        this.needsCoreUpdate = true;
-      }
-    }, (error: any) => this.feedbackService.showError(error));
+    this.bazarService.canInstall(this.data.min_magic_version).subscribe({
+      next: (result: Response) => {
+        if (result.result === 'SUCCESS') {
+          this.canInstall = true;
+        } else {
+          this.feedbackService.showInfo('In order to install this app you will have to update your Magic version');
+          this.needsCoreUpdate = true;
+        }
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /**
    * Invoked when user wants to purchase the specified app.
    */
   purchase() {
-    this.configService.rootUserEmailAddress().subscribe((response: NameEmailModel) => {
-      const dialogRef = this.dialog.open(ConfirmEmailAddressDialogComponent, {
-        width: '500px',
-        data: {
-          email: response.email,
-          name: response.name,
-          subscribe: true,
-          code: this.data.price === 0 ? -1 : null
-        }
-      });
-      dialogRef.afterClosed().subscribe((model: EmailPromoCodeModel) => {
-        if (model) {
-          this.bazarService.purchaseBazarItem(
-            this.data,
-            model.name,
-            model.email,
-            model.subscribe,
-            model.code === -1 ? null : model.code).subscribe((status: PurchaseStatus) => {
-              this.loaderService.show();
+    this.configService.rootUserEmailAddress().subscribe({
+      next: (response: NameEmailModel) => {
+        const dialogRef = this.dialog.open(ConfirmEmailAddressDialogComponent, {
+          width: '500px',
+          data: {
+            email: response.email,
+            name: response.name,
+            subscribe: true,
+            code: this.data.price === 0 ? -1 : null
+          }
+        });
+        dialogRef.afterClosed().subscribe((model: EmailPromoCodeModel) => {
+          if (model) {
+            this.bazarService.purchaseBazarItem(
+              this.data,
+              model.name,
+              model.email,
+              model.subscribe,
+              model.code === -1 ? null : model.code).subscribe({
+                next: (status: PurchaseStatus) => {
+                  this.loaderService.show();
 
-              /*
-               * Checking if status is 'PENDING' at which point we'll have to redirect to PayPal
-               * to finish transaction.
-               */
-              if (status.status === 'PENDING') {
+                  /*
+                   * Checking if status is 'PENDING' at which point we'll have to redirect to PayPal
+                   * to finish transaction.
+                   */
+                  if (status.status === 'PENDING') {
 
-                /*
-                 * We'll need to redirect user to PayPal to accept the transaction.
-                 * Hence, storing currently viewed app in local storage to make it more
-                 * easily retrieved during callback.
-                 */
-                localStorage.setItem('currently-installed-app', JSON.stringify(this.data));
-                window.location.href = status.url;
-              } else if (status.status === 'APPROVED') {
+                    /*
+                     * We'll need to redirect user to PayPal to accept the transaction.
+                     * Hence, storing currently viewed app in local storage to make it more
+                     * easily retrieved during callback.
+                     */
+                    localStorage.setItem('currently-installed-app', JSON.stringify(this.data));
+                    window.location.href = status.url;
+                  } else if (status.status === 'APPROVED') {
 
-                /*
-                 * App can immediately be installed, and status.token contains
-                 * download token.
-                 */
-                this.messageService.sendMessage({
-                  name: 'magic.bazar.install-immediately',
-                  content: {
-                    app: this.data,
-                    code: status.code,
+                    /*
+                     * App can immediately be installed, and status.token contains
+                     * download token.
+                     */
+                    this.messageService.sendMessage({
+                      name: 'magic.bazar.install-immediately',
+                      content: {
+                        app: this.data,
+                        code: status.code,
+                      }
+                    });
+                    this.dialogRef.close();
+                  } else {
+                    this.feedbackService.showError(`Unknown status code returned from the Bazar, code was ${status.status}`);
                   }
-                });
-                this.dialogRef.close();
+              },
+              error: (error: any) => this.feedbackService.showError(error)});
+          }
+        });
 
-              } else {
-                this.feedbackService.showError(`Unknown status code returned from the Bazar, code was ${status.status}`);
-              }
-          }, (error: any) => this.feedbackService.showError(error));
-        }
-      });
-
-    }, (error: any) => this.feedbackService.showError(error));
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 }

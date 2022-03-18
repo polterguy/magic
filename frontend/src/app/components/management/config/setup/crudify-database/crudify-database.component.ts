@@ -78,10 +78,12 @@ export class CrudifyDatabaseComponent implements OnInit {
    * Implementation of OnInit.
    */
   ngOnInit() {
-    this.sqlService.defaultDatabaseType().subscribe((res: DefaultDatabaseType) => {
-      this.databaseType = res.default;
-      this.crudifyContent = JSON.stringify(data, null, 2);
-    }, (error: any) => this.feedbackService.showError(error));
+    this.sqlService.defaultDatabaseType().subscribe({
+      next: (res: DefaultDatabaseType) => {
+        this.databaseType = res.default;
+        this.crudifyContent = JSON.stringify(data, null, 2);
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /**
@@ -90,18 +92,21 @@ export class CrudifyDatabaseComponent implements OnInit {
   next() {
     const endpoints = <Crudify[]>JSON.parse(this.crudifyContent);
     const forks = endpoints.map(x => this.crudifyService.crudify(x));
-    forkJoin(forks).subscribe((res: LocResult[]) => {
-      const loc = res.reduce((x,y) => x + y.loc, 0);
-      this.feedbackService.showInfo(`Your Magic database was successfully crudified. ${loc} LOC generated.`);
-      this.logService.createLocItem(loc, 'backend', 'setup').subscribe(() => {
-        this.cacheService.delete('magic.auth.endpoints').subscribe(() => {
-          this.backendService.refetchEndpoints();
-        }, (error: any) => this.feedbackService.showError(error));
-      }, (error: any) => this.feedbackService.showError(error));
-      this.messageService.sendMessage({
-        name: Messages.SETUP_STATE_CHANGED
-      });
-
-    }, (error: any) => this.feedbackService.showError(error));
+    forkJoin(forks).subscribe({
+      next: (res: LocResult[]) => {
+        const loc = res.reduce((x,y) => x + y.loc, 0);
+        this.feedbackService.showInfo(`Your Magic database was successfully crudified. ${loc} LOC generated.`);
+        this.logService.createLocItem(loc, 'backend', 'setup').subscribe({
+          next: () => {
+            this.cacheService.delete('magic.auth.endpoints').subscribe({
+              next: () => this.backendService.refetchEndpoints(),
+              error: (error: any) => this.feedbackService.showError(error)});
+          },
+          error: (error: any) => this.feedbackService.showError(error)});
+        this.messageService.sendMessage({
+          name: Messages.SETUP_STATE_CHANGED
+        });
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 }

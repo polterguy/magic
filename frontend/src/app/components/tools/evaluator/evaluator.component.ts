@@ -86,10 +86,12 @@ export class EvaluatorComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe((filename: string) => {
       if (filename) {
-        this.evaluatorService.loadSnippet(filename).subscribe((content: string) => {
-          this.input.hyperlambda = content;
-          this.filename = filename;
-        }, (error: any) => this.feedbackService.showError(error));
+        this.evaluatorService.loadSnippet(filename).subscribe({
+          next: (content: string) => {
+            this.input.hyperlambda = content;
+            this.filename = filename;
+          },
+          error: (error: any) => this.feedbackService.showError(error)});
       }
     });
   }
@@ -104,9 +106,9 @@ export class EvaluatorComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe((filename: string) => {
       if (filename) {
-        this.evaluatorService.saveSnippet(filename, this.input.hyperlambda).subscribe((res: any) => {
-          this.feedbackService.showInfo('Snippet successfully saved');
-        }, (error: any) => this.feedbackService.showError(error));
+        this.evaluatorService.saveSnippet(filename, this.input.hyperlambda).subscribe({
+          next: () => this.feedbackService.showInfo('Snippet successfully saved'),
+          error: (error: any) => this.feedbackService.showError(error)});
       }
     });
   }
@@ -116,9 +118,11 @@ export class EvaluatorComponent implements OnInit {
    */
   execute() {
     const selectedText = this.input.editor.getSelection();
-    this.evaluatorService.execute(selectedText == '' ? this.input.hyperlambda : selectedText).subscribe((res: Response) => {
-      this.output.hyperlambda = res.result;
-      this.feedbackService.showInfoShort('Hyperlambda was successfully executed');
-    }, (error: any) => this.feedbackService.showError(error));
+    this.evaluatorService.execute(selectedText == '' ? this.input.hyperlambda : selectedText).subscribe({
+      next: (res: Response) => {
+        this.output.hyperlambda = res.result;
+        this.feedbackService.showInfoShort('Hyperlambda was successfully executed');
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 }

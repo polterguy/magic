@@ -266,30 +266,34 @@ export class CrudifierTableComponent implements OnInit {
           x.name));
     });
 
-    forkJoin(subscribers).subscribe((results: LocResult[]) => {
-      const loc = results.reduce((x,y) => x + y.loc, 0);
-      this.logService.createLocItem(loc, 'backend', `${this.database + '.' + this.table.name}`).subscribe(() => {
-        this.feedbackService.showInfo(`${loc} LOC generated`);
-        this.flushEndpointsAuthRequirements();
-        this.messageService.sendMessage({
-          name: 'magic.folders.update',
-          content: '/modules/'
-        });
-      }, (error: any) => this.feedbackService.showError(error));
-    }, (error: any) => {
-      this.loaderInterceptor.forceHide();
-      this.feedbackService.showError(error);
-    });
+    forkJoin(subscribers).subscribe({
+      next: (results: LocResult[]) => {
+        const loc = results.reduce((x,y) => x + y.loc, 0);
+        this.logService.createLocItem(loc, 'backend', `${this.database + '.' + this.table.name}`).subscribe({
+          next: () => {
+            this.feedbackService.showInfo(`${loc} LOC generated`);
+            this.flushEndpointsAuthRequirements();
+            this.messageService.sendMessage({
+              name: 'magic.folders.update',
+              content: '/modules/'
+            });
+          },
+          error: (error: any) => this.feedbackService.showError(error)});
+      },
+      error: (error: any) => {
+        this.loaderInterceptor.forceHide();
+        this.feedbackService.showError(error);
+      }});
   }
 
   /*
    * Will flush server side cache of endpoints (auth invocations) and re-retrieve these again.
    */
   flushEndpointsAuthRequirements() {
-
-    // Deleting auth cache and retrieving it again.
-    this.cacheService.delete('magic.auth.endpoints').subscribe(() => {
-      this.backendService.refetchEndpoints();
-    }, (error: any) => this.feedbackService.showError(error));
+    this.cacheService.delete('magic.auth.endpoints').subscribe({
+      next: () => {
+        this.backendService.refetchEndpoints();
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 }

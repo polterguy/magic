@@ -60,19 +60,6 @@ export class ServerPublicKeyComponent implements OnInit {
   }
 
   /**
-   * Retrieves the server's public key.
-   */
-  getServerPublicKey() {
-    this.cryptoService.serverPublicKey().subscribe((key: any) => {
-      if (key.result === 'FAILURE') {
-        this.feedbackService.showInfo('No server key pair found, please create one');
-        return;
-      }
-      this.publicKeyFull = <PublicKeyFull>key;
-    });
-  }
-
-  /**
    * Invoked when user wants to create a new public key for his server.
    */
   create() {
@@ -104,5 +91,24 @@ export class ServerPublicKeyComponent implements OnInit {
    copyPublicKey() {
     this.clipboard.copy(this.publicKeyFull.publicKey);
     this.feedbackService.showInfoShort('Public key was copied to your clipboard');
+  }
+
+  /*
+   * Private helper methods.
+   */
+
+  /*
+   * Retrieves the server's public key.
+   */
+  private getServerPublicKey() {
+    this.cryptoService.serverPublicKey().subscribe({
+      next: (key: any) => {
+        if (key.result === 'FAILURE') {
+          this.feedbackService.showInfo('No server key pair found, please create one');
+          return;
+        }
+        this.publicKeyFull = <PublicKeyFull>key;
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 }

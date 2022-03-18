@@ -101,13 +101,15 @@ export class NewFileFolderDialogComponent implements OnInit {
    */
   ngOnInit() {
     this.data.isFolder = this.data.type === 'folder';
-    this.fileService.listFiles('/misc/ide/templates/').subscribe((result: string[]) => {
-      this.templates = result.map(x => {
-        return {
-          name: x,
-        }
-      });
-    });
+    this.fileService.listFiles('/misc/ide/templates/').subscribe({
+      next: (result: string[]) => {
+        this.templates = result.map(x => {
+          return {
+            name: x,
+          }
+        });
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /**
@@ -205,11 +207,13 @@ export class NewFileFolderDialogComponent implements OnInit {
    * Invoked when selected template is changed.
    */
   templateChanged() {
-    this.fileService.loadFile(this.activeTemplate.name).subscribe((result: string) => {
-      this.data.template = result;
-      this.data.name = this.activeTemplate.name.substring(this.activeTemplate.name.lastIndexOf('/') + 1);
-      this.fileName.nativeElement.focus();
-    }, (error: any) => this.feedbackService.showError(error));
+    this.fileService.loadFile(this.activeTemplate.name).subscribe({
+      next: (result: string) => {
+        this.data.template = result;
+        this.data.name = this.activeTemplate.name.substring(this.activeTemplate.name.lastIndexOf('/') + 1);
+        this.fileName.nativeElement.focus();
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /**

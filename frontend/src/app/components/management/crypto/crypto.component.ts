@@ -111,9 +111,11 @@ export class CryptoComponent {
       this.importSubject,
       this.importEmail,
       this.importDomain,
-      this.importKey).subscribe(() => {
-        this.feedbackService.showInfo('Key was sucessfully imported');
-        this.showImport = false;
-      }, (error: any) => this.feedbackService.showError(error));
+      this.importKey).subscribe({
+        next: () => {
+          this.feedbackService.showInfo('Key was sucessfully imported');
+          this.showImport = false;
+        },
+        error: (error: any) => this.feedbackService.showError(error)});
   }
 }

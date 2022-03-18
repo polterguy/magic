@@ -11,6 +11,7 @@ import { CrudifyService } from '../../services/crudify.service';
 import { MessageService } from 'src/app/services/message.service';
 import { Endpoint } from '../../../../analytics/endpoints/models/endpoint.model';
 import { EndpointService } from '../../../../../services/analytics/endpoint.service';
+import { FeedbackService } from 'src/app/services/feedback.service';
 
 /**
  * Endpoint model class, for allowing user to select which endpoints
@@ -82,25 +83,29 @@ export class CrudFrontendExtraComponent implements OnInit, OnDestroy {
    * 
    * @param messageService Needed to subscribe to messages published by other components
    * @param endpointService Needed to retrieve templates, meta information, and actually generate frontend
+   * @param feedbackService Needed to provide feedback to user
    * @param crudifyService Needed to perform tha actual creation of our frontend
    */
   constructor(
     private messageService: MessageService,
     private endpointService: EndpointService,
+    private feedbackService: FeedbackService,
     private crudifyService: CrudifyService) { }
 
   /**
    * Implementation of OnInit.
    */
   ngOnInit() {
-    this.crudifyService.templateCustomArgs(this.template).subscribe((res: any) => {
-      this.custom = res;
-      for (const idx in res) {
-        if (Array.isArray(res[idx])) {
-          this.args[idx] = res[idx][0].value;
+    this.crudifyService.templateCustomArgs(this.template).subscribe({
+      next: (res: any) => {
+        this.custom = res;
+        for (const idx in res) {
+          if (Array.isArray(res[idx])) {
+            this.args[idx] = res[idx][0].value;
+          }
         }
-      }
-    });
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
     this.subscription = this.messageService.subscriber().subscribe((msg: Message) => {
       if (msg.name === 'app.generator.generate-frontend') {
         this.generate(
@@ -114,36 +119,38 @@ export class CrudFrontendExtraComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.endpointService.endpoints().subscribe((endpoints: Endpoint[]) => {
-      this.endpoints = endpoints
-        .filter(x => !x.path.startsWith('magic/system/') && !x.path.startsWith('magic/modules/magic/'))
-        .filter(x => x.type === 'crud-count' || x.type === 'crud-delete' || x.type === 'crud-read' || x.type === 'crud-create' || x.type === 'crud-update')
-        .map(x => {
-          return {
-            path: x.path,
-            verb: x.verb,
-            consumes: x.consumes,
-            produces: x.produces,
-            input: x.input,
-            output: x.output,
-            array: x.array,
-            auth: x.auth,
-            type: x.type,
-            description: x.description,
-            selected: true,
-          };
-        });
+    this.endpointService.endpoints().subscribe({
+      next: (endpoints: Endpoint[]) => {
+        this.endpoints = endpoints
+          .filter(x => !x.path.startsWith('magic/system/') && !x.path.startsWith('magic/modules/magic/'))
+          .filter(x => x.type === 'crud-count' || x.type === 'crud-delete' || x.type === 'crud-read' || x.type === 'crud-create' || x.type === 'crud-update')
+          .map(x => {
+            return {
+              path: x.path,
+              verb: x.verb,
+              consumes: x.consumes,
+              produces: x.produces,
+              input: x.input,
+              output: x.output,
+              array: x.array,
+              auth: x.auth,
+              type: x.type,
+              description: x.description,
+              selected: true,
+            };
+          });
 
-      const modules: string[] = [];
-      for (const idx of this.endpoints) {
-        let moduleName = idx.path.substring('magic/modules/'.length);
-        moduleName = moduleName.substring(0, moduleName.indexOf('/'));
-        if (modules.indexOf(moduleName) === -1) {
-          modules.push(moduleName);
+        const modules: string[] = [];
+        for (const idx of this.endpoints) {
+          let moduleName = idx.path.substring('magic/modules/'.length);
+          moduleName = moduleName.substring(0, moduleName.indexOf('/'));
+          if (modules.indexOf(moduleName) === -1) {
+            modules.push(moduleName);
+          }
         }
-      }
-      this.modules = modules;
-    });
+        this.modules = modules;
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /**

@@ -89,10 +89,12 @@ export class FolderActionsComponent {
         let path = result.path + result.name;
         if (result.isFolder) {
           path += '/';
-          this.fileService.createFolder(path).subscribe(() => {
-            this.feedbackService.showInfoShort('Folder successfully created');
-            this.manageAfterCreateNewFileObject.emit({ dialogResult: result, objectPath: path })
-          }, (error: any) => this.feedbackService.showError(error));
+          this.fileService.createFolder(path).subscribe({
+            next: () => {
+              this.feedbackService.showInfoShort('Folder successfully created');
+              this.manageAfterCreateNewFileObject.emit({ dialogResult: result, objectPath: path })
+            },
+            error: (error: any) => this.feedbackService.showError(error)});
         } else {
           this.manageAfterCreateNewFileObject.emit({ dialogResult: result, objectPath: path })
         }
@@ -107,13 +109,15 @@ export class FolderActionsComponent {
    */
   uploadFiles(files: FileList) {
     for (let idx = 0; idx < files.length; idx++) {
-      this.fileService.uploadFile(this.activeFolder, files.item(idx)).subscribe(() => {
-        this.feedbackService.showInfo('File was successfully uploaded');
-        this.fileInput = null;
-        if (idx === (files.length - 1)){
-          this.updateFiles.emit(this.activeFolder);
-        }
-      })
+      this.fileService.uploadFile(this.activeFolder, files.item(idx)).subscribe({
+        next: () => {
+          this.feedbackService.showInfo('File was successfully uploaded');
+          this.fileInput = null;
+          if (idx === (files.length - 1)){
+            this.updateFiles.emit(this.activeFolder);
+          }
+        },
+        error: (error: any) => this.feedbackService.showError(error)});
     };
   }
 
@@ -134,9 +138,9 @@ export class FolderActionsComponent {
       return;
     }
     this.feedbackService.confirm('Confirm action', `Are you sure you want to delete the '${this.activeFolder}' folder?`, () => {
-      this.fileService.deleteFolder(this.activeFolder).subscribe(() => {
-        this.updateAfterDelete.emit();
-      }, (error: any) => this.feedbackService.showError(error));
+      this.fileService.deleteFolder(this.activeFolder).subscribe({
+        next: () => this.updateAfterDelete.emit(),
+        error: (error: any) => this.feedbackService.showError(error)});
     });
   }
 
@@ -156,13 +160,15 @@ export class FolderActionsComponent {
     });
     dialog.afterClosed().subscribe((data: FileObjectName) => {
       if (data) {
-        this.fileService.rename(this.activeFolder, data.name).subscribe(() => {
-          this.feedbackService.showInfo('Folder successfully renamed');
-          this.afterRenamingFolder.emit({
-            newName: data.name,
-            oldName: this.activeFolder
-          });
-        }, (error: any) => this.feedbackService.showError(error));
+        this.fileService.rename(this.activeFolder, data.name).subscribe({
+          next: () => {
+            this.feedbackService.showInfo('Folder successfully renamed');
+            this.afterRenamingFolder.emit({
+              newName: data.name,
+              oldName: this.activeFolder
+            });
+          },
+          error: (error: any) => this.feedbackService.showError(error)});
       }
     });
   }
@@ -188,55 +194,59 @@ export class FolderActionsComponent {
    * Executes the specified macro.
    */
   private executeMacro(file: string) {
-    this.fileService.getMacroDefinition(file).subscribe((result: MacroDefinition) => {
+    this.fileService.getMacroDefinition(file).subscribe({
+      next: (result: MacroDefinition) => {
 
-      /*
-       * Filling out default values for anything we can intelligently figure
-       * out according to selected folder.
-       */
-      const splits = this.activeFolder.split('/');
-      if (splits.length === 4 && splits[1] === 'modules') {
-        const moduleArgs = result.arguments.filter(x => x.name === 'module' || x.name === 'database');
-        if (moduleArgs.length > 0) {
-          for (const idx of moduleArgs) {
-            idx.value = splits[2];
-          }
-        }
-      }
-      const authArgs = result.arguments.filter(x => x.name === 'auth');
-      if (authArgs.length > 0) {
-        for (const idx of authArgs) {
-          idx.value = 'root';
-        }
-      }
-      const dialogRef = this.dialog.open(ExecuteMacroDialogComponent, {
-        data: result,
-      });
-      dialogRef.afterClosed().subscribe((result: MacroDefinition) => {
-        if (result && result.name) {
-          const payload = {};
-          for (const idx of result.arguments.filter(x => x.value)) {
-            payload[idx.name] = idx.value;
-          }
-          this.fileService.executeMacro(file, payload).subscribe((exeResult: Response) => {
-            this.feedbackService.showInfoShort('Macro successfully executed');
-            if (exeResult.result === 'folders-changed') {
-              this.feedbackService.confirm(
-                'Refresh folders?',
-                'Macro execution changed your file system, do you want to refresh your files and folders?',
-                () => {
-                  this.updateAfterMacro.emit(null);
-                });
-              } else if (exeResult.result.startsWith('folders-changed|')) {
-                var fileObject = exeResult.result.split('|')[1];
-                this.updateAfterMacro.emit(fileObject);
-              
+        /*
+         * Filling out default values for anything we can intelligently figure
+         * out according to selected folder.
+         */
+        const splits = this.activeFolder.split('/');
+        if (splits.length === 4 && splits[1] === 'modules') {
+          const moduleArgs = result.arguments.filter(x => x.name === 'module' || x.name === 'database');
+          if (moduleArgs.length > 0) {
+            for (const idx of moduleArgs) {
+              idx.value = splits[2];
             }
-          }, (error: any) => this.feedbackService.showError(error));
-        } else if (result) {
-          this.selectMacro();
+          }
         }
-      });
-    }, (error: any) => this.feedbackService.showError(error));
+        const authArgs = result.arguments.filter(x => x.name === 'auth');
+        if (authArgs.length > 0) {
+          for (const idx of authArgs) {
+            idx.value = 'root';
+          }
+        }
+        const dialogRef = this.dialog.open(ExecuteMacroDialogComponent, {
+          data: result,
+        });
+        dialogRef.afterClosed().subscribe((result: MacroDefinition) => {
+          if (result && result.name) {
+            const payload = {};
+            for (const idx of result.arguments.filter(x => x.value)) {
+              payload[idx.name] = idx.value;
+            }
+            this.fileService.executeMacro(file, payload).subscribe({
+              next: (exeResult: Response) => {
+                this.feedbackService.showInfoShort('Macro successfully executed');
+                if (exeResult.result === 'folders-changed') {
+                  this.feedbackService.confirm(
+                    'Refresh folders?',
+                    'Macro execution changed your file system, do you want to refresh your files and folders?',
+                    () => {
+                      this.updateAfterMacro.emit(null);
+                    });
+                  } else if (exeResult.result.startsWith('folders-changed|')) {
+                    var fileObject = exeResult.result.split('|')[1];
+                    this.updateAfterMacro.emit(fileObject);
+                  
+                }
+              },
+              error: (error: any) => this.feedbackService.showError(error)});
+          } else if (result) {
+            this.selectMacro();
+          }
+        });
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 }

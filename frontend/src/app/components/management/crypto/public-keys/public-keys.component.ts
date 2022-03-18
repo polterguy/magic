@@ -164,9 +164,9 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
    */
   getUserAssociation(key: PublicKey) {
     if (!key.username) {
-      this.cryptoService.getUserAssociation(key.id).subscribe((result: Response) => {
-        key.username = result.result;
-      }, (error: any) => this.feedbackService.showError(error));
+      this.cryptoService.getUserAssociation(key.id).subscribe({
+        next: (result: Response) => key.username = result.result,
+        error: (error: any) => this.feedbackService.showError(error)});
     }
   }
 
@@ -200,10 +200,12 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
       'Please confirm delete operation',
       `Are you sure you want to delete the public key belonging to ${key.subject} - ${key.email}`,
       () => {
-        this.cryptoService.deletePublicKey(key.id).subscribe(() => {
-          this.feedbackService.showInfoShort('Public key successfully deleted');
-          this.getKeys();
-        });
+        this.cryptoService.deletePublicKey(key.id).subscribe({
+          next: () => {
+            this.feedbackService.showInfoShort('Public key successfully deleted');
+            this.getKeys();
+          },
+          error:(error: any) => this.feedbackService.showError(error)});
     });
   }
 
@@ -223,9 +225,9 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
    * @param key What key to modify
    */
   enabledChanged(key: PublicKey) {
-    this.cryptoService.setEnabled(key.id, key.enabled).subscribe(() => {
-      this.feedbackService.showInfoShort(`Key was successfully ${key.enabled ? 'enabled' : 'disabled'}`);
-    });
+    this.cryptoService.setEnabled(key.id, key.enabled).subscribe({
+      next: () => this.feedbackService.showInfoShort(`Key was successfully ${key.enabled ? 'enabled' : 'disabled'}`),
+      error: (error: any) =>this.feedbackService.showError(error)});
   }
 
   /**
@@ -235,26 +237,28 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
    */
   save(key: PublicKeyEx) {
     key.key.vocabulary = key.options.hyperlambda;
-    this.cryptoService.getFingerprint(key.key.content).subscribe((response: Response) => {
-      const fingerprintUpdated = key.key.fingerprint !== response.result;
-      key.key.fingerprint = response.result;
-      if (fingerprintUpdated) {
-        this.feedbackService.confirm(
-          'Warning!',
-          'Changing the actual key content will make it impossible to easily verify historic cryptographic invocations. Are you sure you wish to proceed?',
-          () => {
-            let oldKey = '';
-            for (var idx of key.original_content) {
-              if (oldKey.length % 80 === 0 && oldKey.length !== 0) {
-                oldKey += '\r\n';
+    this.cryptoService.getFingerprint(key.key.content).subscribe({
+      next: (response: Response) => {
+        const fingerprintUpdated = key.key.fingerprint !== response.result;
+        key.key.fingerprint = response.result;
+        if (fingerprintUpdated) {
+          this.feedbackService.confirm(
+            'Warning!',
+            'Changing the actual key content will make it impossible to easily verify historic cryptographic invocations. Are you sure you wish to proceed?',
+            () => {
+              let oldKey = '';
+              for (var idx of key.original_content) {
+                if (oldKey.length % 80 === 0 && oldKey.length !== 0) {
+                  oldKey += '\r\n';
+                }
+                oldKey += idx;
               }
-              oldKey += idx;
-            }
-          });
-      } else {
-        this.saveKeyImplementation(key);
-      }
-    }, (error: any) => this.feedbackService.showError(error));
+            });
+        } else {
+          this.saveKeyImplementation(key);
+        }
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /**
@@ -292,31 +296,37 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
    * Saves the specified key, and evicts key from server's cache.
    */
   private saveKeyImplementation(key: PublicKeyEx, extraInfo?: string) {
-    this.cryptoService.updatePublicKey(key.key).subscribe(() => {
-      let info = 'Key was successfully saved';
-      if (extraInfo) {
-        info += '. ' + extraInfo;
-      }
-      key.identity = key.key.subject + '  <' + key.key.email + '>';
-      if (key.key.username && key.key.username !== '') {
-        this.cryptoService.associateWithUser(key.key.id, key.key.username).subscribe(() => {
-          if (extraInfo) {
-            this.feedbackService.showInfo(info);
-          } else {
-            this.feedbackService.showInfoShort(info);
-          }
-    
-        }, (error: any) => this.feedbackService.showError(error));
-      } else {
-        this.cryptoService.deleteUserAssociation(key.key.id).subscribe(() => {
-          if (extraInfo) {
-            this.feedbackService.showInfo(info);
-          } else {
-            this.feedbackService.showInfoShort(info);
-          }
-        }, (error: any) => this.feedbackService.showError(error));
-      }
-    }, (error: any) => this.feedbackService.showError(error));
+    this.cryptoService.updatePublicKey(key.key).subscribe({
+      next: () => {
+        let info = 'Key was successfully saved';
+        if (extraInfo) {
+          info += '. ' + extraInfo;
+        }
+        key.identity = key.key.subject + '  <' + key.key.email + '>';
+        if (key.key.username && key.key.username !== '') {
+          this.cryptoService.associateWithUser(key.key.id, key.key.username).subscribe({
+            next: () => {
+              if (extraInfo) {
+                this.feedbackService.showInfo(info);
+              } else {
+                this.feedbackService.showInfoShort(info);
+              }
+        
+            },
+            error: (error: any) => this.feedbackService.showError(error)});
+        } else {
+          this.cryptoService.deleteUserAssociation(key.key.id).subscribe({
+            next: () => {
+              if (extraInfo) {
+                this.feedbackService.showInfo(info);
+              } else {
+                this.feedbackService.showInfoShort(info);
+              }
+            },
+            error:(error: any) => this.feedbackService.showError(error)});
+        }
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /*
@@ -327,24 +337,26 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
       filter: this.filterFormControl.value,
       offset: this.paginator.pageIndex * this.paginator.pageSize,
       limit: this.paginator.pageSize
-    }).subscribe((keys: PublicKey[]) => {
-      this.publicKeys = (keys || []).map(x => {
-        const result = {
-          identity: x.subject + ' <' + x.email + '>',
-          key: x,
-          options: {
-            hyperlambda: x.vocabulary,
-            options: hyperlambda,
-          },
-          original_content: x.content,
-        };
-        result.options.options.autofocus = false;
-        return result;
-      });
+    }).subscribe({
+      next: (keys: PublicKey[]) => {
+        this.publicKeys = (keys || []).map(x => {
+          const result = {
+            identity: x.subject + ' <' + x.email + '>',
+            key: x,
+            options: {
+              hyperlambda: x.vocabulary,
+              options: hyperlambda,
+            },
+            original_content: x.content,
+          };
+          result.options.options.autofocus = false;
+          return result;
+        });
 
-      this.cryptoService.countPublicKeys({ filter: this.filterFormControl.value }).subscribe(res => {
-        this.count = res.count;
-      }, (error: any) => this.feedbackService.showError(error));
-    }, (error: any) => this.feedbackService.showError(error));
+        this.cryptoService.countPublicKeys({ filter: this.filterFormControl.value }).subscribe({
+          next: (res) => this.count = res.count,
+          error: (error: any) => this.feedbackService.showError(error)});
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 }
