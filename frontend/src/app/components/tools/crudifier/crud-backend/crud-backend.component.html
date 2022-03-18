@@ -1,11 +1,17 @@
 <div class="row">
   <div class="col-12">
     <mat-card>
+
       <div class="d-flex flex-sm-nowrap flex-wrap justify-content-between mb-1">
         <div class="d-flex align-items-center">
           <mat-card-title class="my-0">Crudify backend</mat-card-title>
           <div class="sm-icons">
-            <button mat-icon-button [matMenuTriggerFor]="menu" class="mat-caption" matTooltip="Need help?" type="button">
+            <button
+              mat-icon-button
+              [matMenuTriggerFor]="menu"
+              class="mat-caption"
+              matTooltip="Need help?"
+              type="button">
               <mat-icon>help_outline</mat-icon>
             </button>
             <mat-menu #menu="matMenu">
@@ -22,11 +28,13 @@
           </div>
         </div>
       </div>
+
       <mat-card-subtitle>Generate HTTP CRUD endpoints</mat-card-subtitle>
+
       <mat-card-content>
         <div class="d-flex flex-xl-nowrap flex-wrap mt-4 w-100">
+
           <mat-form-field class="w-100" appearance="outline">
-        
             <mat-label>Database</mat-label>
             <mat-select
               [(ngModel)]="databaseType"
@@ -35,12 +43,14 @@
                 *ngFor="let idx of databaseTypes"
                 [value]="idx">{{idx}}</mat-option>
             </mat-select>
-          
           </mat-form-field>
+
           <div class="p-lg-1"></div>
         
-          <mat-form-field *ngIf="databaseType && connectionStrings.length > 0" class="w-100" appearance="outline">
-          
+          <mat-form-field
+            *ngIf="databaseType && connectionStrings.length > 0"
+            class="w-100"
+            appearance="outline">
             <mat-label>Connection</mat-label>
             <mat-select
               [(ngModel)]="connectionString"
@@ -49,12 +59,14 @@
                 *ngFor="let idx of connectionStrings"
                 [value]="idx">{{idx}}</mat-option>
             </mat-select>
-          
           </mat-form-field>
+
           <div class="p-lg-1" *ngIf="connectionString && databases && databases.databases.length > 0"></div>
           
-          <mat-form-field *ngIf="connectionString && databases && databases.databases.length > 0" class="w-100" appearance="outline">
-          
+          <mat-form-field
+            *ngIf="connectionString && databases && databases.databases.length > 0"
+            class="w-100"
+            appearance="outline">
             <mat-label>Database</mat-label>
             <mat-select
               [(ngModel)]="database"
@@ -64,12 +76,14 @@
                 [value]="idx"
                 [class]="getDatabaseCssClass(idx.name)">{{idx.name}}</mat-option>
             </mat-select>
-          
           </mat-form-field>
+
           <div class="p-lg-1" *ngIf="database && database.tables && database.tables.length > 0"></div>
           
-          <mat-form-field *ngIf="database && database.tables && database.tables.length > 0" class="w-100" appearance="outline">
-          
+          <mat-form-field
+            *ngIf="database && database.tables && database.tables.length > 0"
+            class="w-100"
+            appearance="outline">
             <mat-label>Table</mat-label>
             <mat-select
               [(ngModel)]="table"
@@ -91,20 +105,24 @@
                 </div>
               </mat-option>
             </mat-select>
-          
           </mat-form-field>
+
         </div>
-        
+
         <div class="d-flex justify-content-end align-items-sm-center align-items-end flex-sm-row flex-column-reverse w-100">
-          <div class="d-flex align-items-center" *ngIf="database && database.tables && database.tables.length > 0">
+          <div
+            class="d-flex align-items-center"
+            *ngIf="database && database.tables && database.tables.length > 0">
             <mat-checkbox 
               matTooltip="If true will create left joins for all referenced tables in your backend and return foreign field as a part of the result set"
               [(ngModel)]="transformService.join">Left joins</mat-checkbox>
+
             <div class="p-1"></div>
           
             <mat-checkbox 
               matTooltip="If true will generate all possible QUERY parameters for your read endpoints"
               [(ngModel)]="transformService.verbose">Verbose</mat-checkbox>
+
             <div class="p-1"></div>
           
             <mat-checkbox 
@@ -112,14 +130,18 @@
               [(ngModel)]="transformService.overwrite">Overwrite</mat-checkbox>
             
           </div>
+
           <div class="p-1"></div>
+
           <div class="d-lg-none d-inline-block">
+
             <button
               *ngIf="database && database.tables && database.tables.length > 0"
               mat-icon-button
               [matMenuTriggerFor]="actionMenu">
               <mat-icon>more_vert</mat-icon>
             </button>
+
             <button
               *ngIf="!(database && database.tables && database.tables.length > 0)"
               mat-raised-button
@@ -127,6 +149,7 @@
               Actions 
               <mat-icon>more_vert</mat-icon>
             </button>
+
             <mat-menu #actionMenu="matMenu">
               <button
                 [disabled]="!backendService.active.access.config.delete_cache_item"
@@ -134,6 +157,7 @@
                 mat-menu-item>
                 Empty server cache
               </button>
+
               <div class="p-1"></div>
             
               <button
@@ -142,6 +166,7 @@
                 mat-menu-item>
                 Set default values
               </button>
+
               <div class="p-1"></div>
             
               <button
@@ -151,9 +176,13 @@
                 mat-menu-item>
                 Crudify all tables
               </button>
+
             </mat-menu>
+
           </div>
+
           <div class="d-lg-flex d-none align-items-center">
+
             <button
               id="loadButton"
               mat-icon-button
@@ -162,6 +191,7 @@
               (click)="refresh()">
               <mat-icon>refresh</mat-icon>
             </button>
+
             <div class="p-1"></div>
           
             <button
@@ -172,6 +202,7 @@
               class="w-100">
               Set defaults
             </button>
+
             <div class="p-1"></div>
           
             <button
@@ -182,6 +213,7 @@
               class="w-100" id="largeBtn">
               Crudify all tables
             </button>
+
           </div>
         
         </div>

@@ -19,7 +19,7 @@ export class CrudSqlAddArgumentDialogComponent {
   /**
    * Types of argument user can add.
    */
-  public types: string[] = [
+  types: string[] = [
     'string',
     'long',
     'ulong',
@@ -34,12 +34,12 @@ export class CrudSqlAddArgumentDialogComponent {
   /**
    * Name of argument.
    */
-  public name = '';
+  name = '';
 
   /**
    * Hyperlambda type of argument.
    */
-  public type = '';
+  type = '';
 
   /**
    * Creates an instance of your component.
@@ -51,7 +51,7 @@ export class CrudSqlAddArgumentDialogComponent {
   /**
    * Returns true if argument name is valid.
    */
-  public argumentValid() {
+  argumentValid() {
     return /^[a-z0-9_]+$/i.test(this.name);
   }
 
@@ -59,9 +59,7 @@ export class CrudSqlAddArgumentDialogComponent {
    * Invoked when user wants to add the argument,
    * having supplied a type and a name for it.
    */
-  public add() {
-
-    // Closing dialogue, passing in argument to caller.
+  add() {
     this.dialogRef.close({
       name: this.name,
       type: this.type,

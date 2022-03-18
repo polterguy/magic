@@ -18,6 +18,7 @@ import { Databases } from 'src/app/models/databases.model';
 import { CrudifyService } from '../services/crudify.service';
 import { AuthService } from '../../../../services/auth.service';
 import { MessageService } from 'src/app/services/message.service';
+import { BackendService } from 'src/app/services/backend.service';
 import { SqlService } from '../../../../services/tools/sql.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { LogService } from '../../../../services/analytics/log.service';
@@ -27,7 +28,6 @@ import { CrudifierTableComponent } from './crud-table/crud-table.component';
 import { LoaderInterceptor } from 'src/app/interceptors/loader.interceptor';
 import { DefaultDatabaseType } from '../../../../models/default-database-type.model';
 import { CrudifierSetDefaultsComponent } from './set-defaults/crudifier-set-defaults.component';
-import { BackendService } from 'src/app/services/backend.service';
 
 /**
  * Crudifier component for crudifying database
@@ -42,7 +42,7 @@ export class CrudBackendComponent implements OnInit {
   /**
    * Options user has for selecting database types.
    */
-  public databaseTypes: string[] = [
+  databaseTypes: string[] = [
     'mysql',
     'pgsql',
     'mssql',
@@ -51,32 +51,32 @@ export class CrudBackendComponent implements OnInit {
   /**
    * What database type user has selected.
    */
-  public databaseType: string = null;
+  databaseType: string = null;
 
   /**
    * What connection strings user has for selected database type.
    */
-  public connectionStrings: string[] = [];
+  connectionStrings: string[] = [];
 
   /**
    * What connection string user has selected.
    */
-  public connectionString: string = null;
+  connectionString: string = null;
 
   /**
    * What databases user can select.
    */
-  public databases: Databases = null;
+  databases: Databases = null;
 
   /**
    * What database user has selected.
    */
-  public database: DatabaseEx = null;
+  database: DatabaseEx = null;
 
   /**
    * What table user has selected.
    */
-  public table: TableEx = null;
+  table: TableEx = null;
 
   /**
    * Creates an instance of your component.
@@ -84,8 +84,6 @@ export class CrudBackendComponent implements OnInit {
    * @param logService Needed to be able to log LOC generated
    * @param dialog Needed to be able to open modal dialogs
    * @param sqlService Needed to retrieve meta information about databases from backend
-   * @param cacheService Needed to delete cache items from backend
-   * @param configService Needed to retrieve meta information about connection strings from backend
    * @param crudifyService Needed to actually crudify endpoints
    * @param messageService Needed to signal other components that we've create an additional info type of component that needs to be injected
    * @param feedbackService Needed to display feedback to user
@@ -93,42 +91,34 @@ export class CrudBackendComponent implements OnInit {
    * @param resolver Needed to be able to dynamically create additional components
    * @param loaderInterceptor Needed to hide Ajax loader GIF in case an error occurs
    * @param transformService Needed to transform from UI model to required backend model
+   * @param cacheService Needed to be able to purge cache
+   * @param backendService Needed to be able to determine user's access rights in backend
    */
   constructor(
     private logService: LogService,
     private dialog: MatDialog,
     private sqlService: SqlService,
-    public authService: AuthService,
-    private cacheService: CacheService,
-    public backendService: BackendService,
     private crudifyService: CrudifyService,
     private messageService: MessageService,
     private feedbackService: FeedbackService,
     @Inject(LOCALE_ID) public locale: string,
     private resolver: ComponentFactoryResolver,
     private loaderInterceptor: LoaderInterceptor,
-    protected transformService: TransformModelService) { }
+    protected transformService: TransformModelService,
+    private cacheService: CacheService,
+    public backendService: BackendService) { }
 
   /**
    * Implementation of OnInit.
    */
   ngOnInit() {
-
-    // Retrieving default database type from backend.
     this.sqlService.defaultDatabaseType().subscribe((defaultDatabaseType: DefaultDatabaseType) => {
-
-      // Assigning database types to model.
       this.databaseTypes = defaultDatabaseType.options;
       this.databaseType = this.databaseTypes.filter(x => x === defaultDatabaseType.default)[0];
-
-      // Retrieving connection strings for default database type.
       this.getConnectionStrings(defaultDatabaseType.default, (connectionStrings: string[]) => {
-
-        // Assigning default model options
         this.connectionStrings = connectionStrings;
         this.connectionString = this.connectionStrings.filter(x => x === 'generic')[0];
         this.connectionStringChanged();
-
       });
     }, (error: any) => this.feedbackService.showError(error));
   }
@@ -136,27 +126,20 @@ export class CrudBackendComponent implements OnInit {
   /**
    * Invoked when user selects a database type.
    */
-  public databaseTypeChanged() {
-
-    // Resetting currently selected models for fields.
+  databaseTypeChanged() {
     this.connectionStrings = [];
     this.connectionString = null;
     this.database = null;
     this.table = null;
 
-    // Invoking backend to retrieve candidates for connection strings.
     this.sqlService.connectionStrings(this.databaseType).subscribe((result: any) => {
-
-      // Assigning result from invocation to model.
       const connectionStrings: string[] = [];
       for (const idx in result) {
         connectionStrings.push(idx);
       }
       this.connectionStrings = connectionStrings;
-
     }, (error: any) => this.feedbackService.showError(error));
 
-    // Making sure parent clears it dynamic container.
     this.messageService.sendMessage({
       name: Messages.CLEAR_COMPONENTS,
     });
@@ -165,23 +148,14 @@ export class CrudBackendComponent implements OnInit {
   /**
    * Invoked when user selects a connection string.
    */
-  public connectionStringChanged() {
-
-    // Resetting currently selected models for fields.
+  connectionStringChanged() {
     this.database = null;
     this.table = null;
-
-    // Invoking backend to retrieve candidates for databases.
     this.sqlService.getDatabaseMetaInfo(
       this.databaseType,
       this.connectionString).subscribe((databases: Databases) => {
-
-        // Assigning result from invocation to model.
         this.databases = databases;
-
     }, (error: any) => this.feedbackService.showError(error));
-
-    // Making sure parent clears it dynamic container.
     this.messageService.sendMessage({
       name: Messages.CLEAR_COMPONENTS,
     });
@@ -190,15 +164,9 @@ export class CrudBackendComponent implements OnInit {
   /**
    * Invoked when user selects a database.
    */
-  public databaseChanged() {
-
-    // Resetting currently selected models for fields.
+  databaseChanged() {
     this.table = null;
-
-    // Creating default values for database.
     this.createDefaultOptionsForDatabase(this.database);
-
-    // Making sure parent clears it dynamic container.
     this.messageService.sendMessage({
       name: Messages.CLEAR_COMPONENTS,
     });
@@ -209,7 +177,7 @@ export class CrudBackendComponent implements OnInit {
    * 
    * @param db Database name
    */
-  public getDatabaseCssClass(db: string) {
+  getDatabaseCssClass(db: string) {
     switch (this.databaseType) {
       case 'mysql':
         switch (db) {
@@ -248,17 +216,11 @@ export class CrudBackendComponent implements OnInit {
   /**
    * Invoked when table is changed.
    */
-  public tableChanged() {
-
-    // Making sure parent clears it dynamic container in case it's already got another container.
+  tableChanged() {
     this.messageService.sendMessage({
       name: Messages.CLEAR_COMPONENTS,
     });
-
-    // Creating our component.
     const componentFactory = this.resolver.resolveComponentFactory(CrudifierTableComponent);
-
-    // Signaling listener, passing in component as data.
     this.messageService.sendMessage({
       name: Messages.INJECT_COMPONENT,
       content: {
@@ -277,22 +239,13 @@ export class CrudBackendComponent implements OnInit {
    * Empties server side cache and reloads your database declarations,
    * 'refreshing' your available databases.
    */
-  public refresh() {
-
-    // Asking user to confirm action, since it reloads page.
-    // A bit 'dirty' but simplifies code significantly.
+  refresh() {
     this.feedbackService.confirm(
       'Confirm action',
       'This will flush your server side cache and reload your page. Are you sure you want to do this?',
       () => {
-
-        // Invoking backend to empty database meta data cache entry.
         this.cacheService.delete('magic.sql.databases.*').subscribe(() => {
-
-          // Reloading database meta declarations now.
-          // A bit 'dirty' but simplifies code significantly.
           window.location.href = window.location.href;
-
         }, (error: any) => this.feedbackService.showError(error));
     });
   }
@@ -300,9 +253,7 @@ export class CrudBackendComponent implements OnInit {
   /**
    * Invoked when user wants to crudify all tables in currently selected database.
    */
-  public crudifyAll() {
-
-    // Creating an array of observables from each table/verb combination we've got.
+  crudifyAll() {
     const subscribers: Observable<LocResult>[] = [];
     for (const idxTable of this.database.tables || []) {
       const tmp = (idxTable.verbs || []).filter(x => x.generate).map(x => {
@@ -318,25 +269,15 @@ export class CrudBackendComponent implements OnInit {
       }
     }
 
-    // Invoking backend for each above created observable.
     forkJoin(subscribers).subscribe((results: LocResult[]) => {
-
-      // Providing feedback to user.
       const loc = results.reduce((x,y) => x + y.loc, 0);
       this.logService.createLocItem(loc, 'backend', `${this.database.name}`).subscribe(() => {
-
-        // Showing user some feedback information.
         this.feedbackService.showInfo(`${formatNumber(loc, this.locale, '1.0')} lines of code generated`);
-
-        // Flushing endpoints' auth requirements and re-retrieving them again.
         this.flushEndpointsAuthRequirements();
-
-        // Publishing message to subscribers that '/modules/' folder changed.
         this.messageService.sendMessage({
           name: 'magic.folders.update',
           content: '/modules/'
         });
-
       }, (error: any) => this.feedbackService.showError(error));
 
     }, (error: any) => {
@@ -345,7 +286,13 @@ export class CrudBackendComponent implements OnInit {
     });
   }
 
-  public hasWarnings(el: TableEx) {
+  /**
+   * Returns true if table has warnings.
+   * 
+   * @param el Table to check
+   * @returns True if table has warnings
+   */
+  hasWarnings(el: TableEx) {
     for (const idx of el.columns) {
       if (idx.warning) {
         return true;
@@ -358,9 +305,7 @@ export class CrudBackendComponent implements OnInit {
    * Invoked when user wants to apply default settings that are applied for all tables
    * in currently selected database.
    */
-  public setDefaults() {
-
-    // Opening up modal dialog passing in reference default values.
+  setDefaults() {
     let dialogRef = this.dialog.open(CrudifierSetDefaultsComponent, {
       width: '550px',
       data: {
@@ -374,14 +319,8 @@ export class CrudBackendComponent implements OnInit {
         logDelete: false,
       },
     });
-
-    // Subscribing to afterClose such that we can apply defaults if user clicks apply button.
     dialogRef.afterClosed().subscribe((model: any) => {
-
-      // Checking if user wants to apply default settings to all tables.
       if (model) {
-
-        // Applying default values.
         for (const idxTable of this.database.tables) {
           idxTable.moduleName = model.primaryUrl;
           idxTable.authPost = model.authCreate;
@@ -392,26 +331,20 @@ export class CrudBackendComponent implements OnInit {
           idxTable.logPut = model.logUpdate;
           idxTable.logDelete = model.logDelete;
         }
-
-        // Providing feedback to user.
         this.feedbackService.showInfoShort('Default values were applied');
       }
     });
   }
 
   /*
-   * Private methods.
+   * Private helper methods.
    */
 
   /*
    * Creates default crudify options for current database.
    */
   private createDefaultOptionsForDatabase(database: DatabaseEx) {
-
-    // Looping through each table in database.
     for (const idxTable of database.tables || []) {
-
-      // Figuring out if table has foreign keys.
       for (const idx of idxTable.columns) {
         const keys = idxTable.foreign_keys?.filter(x => x.column === idx.name) ?? [];
         if (keys.length > 0) {
@@ -435,7 +368,6 @@ export class CrudBackendComponent implements OnInit {
         }
       }
 
-      // Creating defaults for currently iterated table.
       idxTable.moduleName = database.name;
       idxTable.moduleUrl = idxTable.name.replace('.', '/').replace('dbo/', '');
       const columns = (idxTable.columns || []);
@@ -451,29 +383,23 @@ export class CrudBackendComponent implements OnInit {
         idxTable.verbs.push({ name: 'delete', generate: true });
       }
 
-      // Creating default authentication requirements to invoke endpoint(s).
       idxTable.authPost = 'root, admin';
       idxTable.authGet = 'root, admin';
       idxTable.authPut = 'root, admin';
       idxTable.authDelete = 'root, admin';
 
-      // Defaulting CQRS fields to sane values.
       idxTable.cqrsAuthorisation = 'inherited';
       idxTable.cqrsAuthorisationValues = null;
 
-      // Creating defaults for fields in table.
       for (const idxColumn of columns) {
 
-        // Defaulting expanded to false.
         idxColumn.expanded = false;
 
-        // Defaulting whether or not columns should be included to verb invocations.
         idxColumn.post = !idxColumn.automatic;
         idxColumn.get = true;
         idxColumn.put = !idxColumn.automatic || idxColumn.primary;
         idxColumn.delete = idxColumn.primary;
 
-        // Settings whether or not column can be added/removed from verb invocations.
         idxColumn.postDisabled = idxColumn.primary && !idxColumn.automatic;
         idxColumn.getDisabled = false;
         idxColumn.putDisabled = idxColumn.primary;
@@ -507,31 +433,18 @@ export class CrudBackendComponent implements OnInit {
   }
 
   /*
-   * Private helper methods.
-   */
-
-  /*
    * Returns all connection strings for database type from backend.
    */
   private getConnectionStrings(databaseType: string, onAfter: (connectionStrings: string[]) => void) {
-
-    // Retrieving connection strings for default database type from backend.
     this.sqlService.connectionStrings(databaseType).subscribe((connectionStrings: any) => {
-
-      // Checking if caller supplied a callback, and if so, invoking it.
       if (onAfter) {
-
-        // Transforming backend's result to a list of strings.
         const tmp: string[] = [];
         for (var idx in connectionStrings) {
           tmp.push(idx);
         }
         onAfter(tmp);
       }
-
     }, (error: any) => {
-
-      // Oops, showing user some feedback
       this.feedbackService.showError(error);}
     );
   }
@@ -540,8 +453,6 @@ export class CrudBackendComponent implements OnInit {
    * Will flush server side cache of endpoints (auth invocations) and re-retrieve these again.
    */
   private flushEndpointsAuthRequirements() {
-
-    // Deleting auth cache and retrieving it again.
     this.cacheService.delete('magic.auth.endpoints').subscribe(() => {
       this.backendService.refetchEndpoints();
     }, (error: any) => this.feedbackService.showError(error));

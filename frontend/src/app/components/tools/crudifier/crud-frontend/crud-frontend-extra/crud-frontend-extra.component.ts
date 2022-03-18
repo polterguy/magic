@@ -30,7 +30,8 @@ class EndpointEx extends Endpoint {
  */
 @Component({
   selector: 'app-crud-frontend-extra',
-  templateUrl: './crud-frontend-extra.component.html'
+  templateUrl: './crud-frontend-extra.component.html',
+  styleUrls: ['./crud-frontend-extra.component.scss']
 })
 export class CrudFrontendExtraComponent implements OnInit, OnDestroy {
 
@@ -40,12 +41,12 @@ export class CrudFrontendExtraComponent implements OnInit, OnDestroy {
   /**
    * Template user selected
    */
-  @Input() public template: string;
+  @Input() template: string;
 
   /**
    * Columns to display in endpoints table.
    */
-  public displayedColumns: string[] = [
+  displayedColumns: string[] = [
     'selected',
     'path',
     'verb',
@@ -54,33 +55,34 @@ export class CrudFrontendExtraComponent implements OnInit, OnDestroy {
   /**
    * Endpoints as retrieved from backend.
    */
-  public endpoints: EndpointEx[];
+  endpoints: EndpointEx[];
 
   /**
    * True if advanced settings shoulkd be shown.
    */
-  public advanced = false;
+  advanced = false;
 
   /**
    * List of modules we found in backend.
    */
-  public modules: string[] = [];
+  modules: string[] = [];
 
   /**
    * Custom args associates with template.
    */
-  public custom: any = null;
+  custom: any = null;
 
   /**
    * Additional args as passed in during crudification.
    */
-  public args: any = {};
+  args: any = {};
 
   /**
    * Creates an instance of your component.
    * 
    * @param messageService Needed to subscribe to messages published by other components
    * @param endpointService Needed to retrieve templates, meta information, and actually generate frontend
+   * @param crudifyService Needed to perform tha actual creation of our frontend
    */
   constructor(
     private messageService: MessageService,
@@ -90,12 +92,8 @@ export class CrudFrontendExtraComponent implements OnInit, OnDestroy {
   /**
    * Implementation of OnInit.
    */
-  public ngOnInit() {
-
-    // Retrieving custom template arguments.
+  ngOnInit() {
     this.crudifyService.templateCustomArgs(this.template).subscribe((res: any) => {
-
-      // Assigning model and trying to find sane default values for them.
       this.custom = res;
       for (const idx in res) {
         if (Array.isArray(res[idx])) {
@@ -103,8 +101,6 @@ export class CrudFrontendExtraComponent implements OnInit, OnDestroy {
         }
       }
     });
-
-    // Making sure we usbscribe to the 'generate' message.
     this.subscription = this.messageService.subscriber().subscribe((msg: Message) => {
       if (msg.name === 'app.generator.generate-frontend') {
         this.generate(
@@ -118,10 +114,7 @@ export class CrudFrontendExtraComponent implements OnInit, OnDestroy {
       }
     });
 
-    // Retrieving endpoints from backend.
     this.endpointService.endpoints().subscribe((endpoints: Endpoint[]) => {
-
-      // Assigning result to model.
       this.endpoints = endpoints
         .filter(x => !x.path.startsWith('magic/system/') && !x.path.startsWith('magic/modules/magic/'))
         .filter(x => x.type === 'crud-count' || x.type === 'crud-delete' || x.type === 'crud-read' || x.type === 'crud-create' || x.type === 'crud-update')
@@ -141,7 +134,6 @@ export class CrudFrontendExtraComponent implements OnInit, OnDestroy {
           };
         });
 
-      // Assigning modules to model.
       const modules: string[] = [];
       for (const idx of this.endpoints) {
         let moduleName = idx.path.substr('magic/modules/'.length);
@@ -157,16 +149,14 @@ export class CrudFrontendExtraComponent implements OnInit, OnDestroy {
   /**
    * Implementation of OnDestroy.
    */
-  public ngOnDestroy() {
-
-    // Making sure we unsubscribe to messages transmitted by other components.
+  ngOnDestroy() {
     this.subscription.unsubscribe();
   }
 
   /**
    * Returns tooltip for generate button.
    */
-  public getGenerateTooltip() {
+  getGenerateTooltip() {
     if (!this.endpoints) {
       return '';
     }
@@ -178,7 +168,7 @@ export class CrudFrontendExtraComponent implements OnInit, OnDestroy {
   /**
    * Returns the names of all component that will be generated.
    */
-  public getComponents() {
+  getComponents() {
     return this.endpoints
       .filter(x => x.type === 'crud-count')
       .map(x => {
@@ -190,7 +180,7 @@ export class CrudFrontendExtraComponent implements OnInit, OnDestroy {
   /**
    * Returns the number of selected endpoints.
    */
-  public selectedEndpoints() {
+  selectedEndpoints() {
     return this.endpoints.filter(x => x.selected).length;
   }
 
@@ -199,9 +189,7 @@ export class CrudFrontendExtraComponent implements OnInit, OnDestroy {
    * 
    * @param module Name of module
    */
-  public moduleClicked(module: string) {
-
-    // Toggling the selected value of all endpoints encapsulated by module.
+  moduleClicked(module: string) {
     const moduleEndpoints = this.endpoints.filter(x => x.path.startsWith('magic/modules/' + module + '/'));
     if (moduleEndpoints.filter(x => x.selected).length === moduleEndpoints.length) {
       for (const idx of moduleEndpoints) {
@@ -227,16 +215,10 @@ export class CrudFrontendExtraComponent implements OnInit, OnDestroy {
    * 
    * @param component Name of component that was clicked
    */
-  public componentClicked(component: string) {
-
-    // Finding all relevant components.
+  componentClicked(component: string) {
     const components = this.endpoints
       .filter(x => x.path.endsWith('/' + component) || x.path.endsWith('/' + component + '-count'));
-
-    // Figuring out if we should select or de-select component.
     const shouldSelect = components.filter(x => !x.selected).length > 0;
-
-    // Looping through all components and changing their selected state according to above logic.
     for (const idx of components) {
       idx.selected = shouldSelect;
     }
@@ -248,7 +230,7 @@ export class CrudFrontendExtraComponent implements OnInit, OnDestroy {
    * 
    * @param module What module to check for
    */
-  public moduleSelected(module: string) {
+  moduleSelected(module: string) {
     const moduleEndpoints = this.endpoints.filter(x => x.path.startsWith('magic/modules/' + module + '/'));
     if (moduleEndpoints.filter(x => x.selected).length === moduleEndpoints.length) {
       return true;
@@ -262,7 +244,7 @@ export class CrudFrontendExtraComponent implements OnInit, OnDestroy {
    * 
    * @param component Name of component to check for
    */
-  public componentSelected(component: string) {
+  componentSelected(component: string) {
     return this.endpoints
       .filter(x => x.selected)
       .filter(x => {
@@ -286,12 +268,10 @@ export class CrudFrontendExtraComponent implements OnInit, OnDestroy {
     email: string,
     deployLocally: boolean) {
 
-    // Making sure API URL ends with exactly one slash '/'.
     while (apiUrl.endsWith('/')) {
-      apiUrl = apiUrl.substr(0, apiUrl.length - 1);
+      apiUrl = apiUrl.substring(0, apiUrl.length - 1);
     }
 
-    // Invoking backend to actually generate the specified frontend.
     const svcModel = this.createServiceModel(this.endpoints.filter(x => x.selected));
     this.crudifyService.generate(
       template,
@@ -304,8 +284,6 @@ export class CrudFrontendExtraComponent implements OnInit, OnDestroy {
       deployLocally,
       this.args, 
       () => {
-
-        // Publishing message to subscribers that '/modules/' folder changed.
         this.messageService.sendMessage({
           name: deployLocally ? 'magic.crudifier.frontend-generated-locally' : 'magic.crudifier.frontend-generated'
         });
@@ -329,8 +307,6 @@ export class CrudFrontendExtraComponent implements OnInit, OnDestroy {
         output: [],
       };
       if (idx.input && idx.input.length > 0) {
-
-        // Sorting input fields in order of lookup, string, date, the rest ...
         idx.input.sort((lhs, rhs) => {
           if (lhs.name.toLowerCase() === 'name' && rhs.name.toLowerCase() !== 'name') {
             return -1;
@@ -397,8 +373,6 @@ export class CrudFrontendExtraComponent implements OnInit, OnDestroy {
         }
       }
       if (idx.output && idx.output.length > 0) {
-
-        // Sorting input fields in order of lookup, string, date, the rest ...
         idx.output.sort((lhs, rhs) => {
           if (lhs.name.toLowerCase() === 'name' && rhs.name.toLowerCase() !== 'name') {
             return -1;
@@ -427,8 +401,6 @@ export class CrudFrontendExtraComponent implements OnInit, OnDestroy {
             return 0;
           }
           if (idx.type === 'crud-read') {
-
-            // CRUD read endpoint type, making sure linked fields comes before others.
             let lhsIsLinked = false;
             if (lhs.name.indexOf('.') > 0) {
               const firstSplit = lhs.name.split('.')[0];

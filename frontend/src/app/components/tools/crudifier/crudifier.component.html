@@ -4,7 +4,11 @@
     <mat-card class="p-0">
 
       <mat-card-content>
-        <mat-tab-group mat-stretch-tabs (selectedTabChange)="selectedTabChanged()" [(selectedIndex)]="activeTab" dynamicHeight>
+        <mat-tab-group
+          mat-stretch-tabs
+          (selectedTabChange)="selectedTabChanged()"
+          [(selectedIndex)]="activeTab"
+          dynamicHeight>
     
           <mat-tab label="CRUD" [disabled]="!backendService.active.access.crud.generate_crud">
             <ng-template matTabContent>
@@ -29,6 +33,7 @@
     
     </mat-card>
   </div>
+
   <div class="col-12" [class.mb-general]="hasComponent">
     <mat-card [class]="hasComponent ? 'mt-3' : 'invisible'">
     

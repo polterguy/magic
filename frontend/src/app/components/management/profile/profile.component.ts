@@ -7,12 +7,12 @@
 import { Component } from '@angular/core';
 
 // Application specific imports.
+import { Response } from 'src/app/models/response.model';
 import { AuthService } from '../../../services/auth.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { Response } from 'src/app/models/response.model';
 
 /**
- * Profile component allowing the user to change his password and other parts of his profile.
+ * Profile component allowing the user to change his password and other parts related to his profile.
  */
 @Component({
   selector: 'app-profile',
@@ -23,12 +23,12 @@ export class ProfileComponent {
   /**
    * New password model.
    */
-  public password: string;
+  password: string;
 
   /**
    * Repeat new password.
    */
-  public repeatPassword: string;
+  repeatPassword: string;
 
   /**
    * Creates an instance of your component.
@@ -36,21 +36,16 @@ export class ProfileComponent {
    * @param authService Needed to actually change password
    * @param feedbackService NEeded to display feedback to user
    */
-  public constructor(
+  constructor(
     private authService: AuthService,
     private feedbackService: FeedbackService) { }
 
   /**
    * Invoked when user wants to change his password.
    */
-  public changePassword() {
-
-    // Changing password
+  changePassword() {
     this.authService.changePassword(this.password).subscribe((result: Response) => {
-
-      // Providing feedback to user.
       this.feedbackService.showInfoShort('Your password was successfully changed');
-
     }, (error: any) => this.feedbackService.showError(error));
   }
 }

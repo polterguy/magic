@@ -5,70 +5,56 @@
 
   <div class="splitter">
 
-    <!-- <div class="section-1"> -->
+    <h3 class="mb-1">URL</h3>
 
-      <h3 class="mb-1">URL</h3>
+    <div class="d-flex flex-sm-nowrap flex-wrap">
 
-      <div class="d-flex flex-sm-nowrap flex-wrap">
-        <mat-form-field class="w-100" appearance="outline">
+      <mat-form-field class="w-100" appearance="outline">
+        <mat-label>Verb</mat-label>
+        <mat-select
+          [(ngModel)]="verb">
+          <mat-option
+            *ngFor="let idx of verbs"
+            [value]="idx">{{idx}}</mat-option>
+        </mat-select>
+      </mat-form-field>
 
-          <mat-label>Verb</mat-label>
-          <mat-select
-            [(ngModel)]="verb">
-            <mat-option
-              *ngFor="let idx of verbs"
-              [value]="idx">{{idx}}</mat-option>
-          </mat-select>
-  
-        </mat-form-field>
+      <div class="p-1"></div>
 
-        <div class="p-1"></div>
-  
-        <mat-form-field class="w-100" appearance="outline">
-  
-          <mat-label>Primary</mat-label>
-          <input
-            matInput
-            type="text"
-            matTooltip="Only lowercase characters, numbers and - or _ please"
-            autocomplete="off"
-            [(ngModel)]="moduleName">
-  
-        </mat-form-field>
-
-        <div class="p-1"></div>
-  
-        <mat-form-field class="w-100" appearance="outline">
-  
-          <mat-label>Secondary</mat-label>
-          <input
-            matInput
-            type="text"
-            matTooltip="Only lowercase characters, numbers and - or _ please"
-            autocomplete="off"
-            [(ngModel)]="endpointName">
-  
-        </mat-form-field>
-      </div>
-
-    <!-- </div> -->
-
-    <!-- <div class="section-2"> -->
-
-      <h3 class="mb-1">Authorization</h3>
-
-      <mat-form-field appearance="outline">
-
-        <mat-label>Authorization</mat-label>
+      <mat-form-field class="w-100" appearance="outline">
+        <mat-label>Primary</mat-label>
         <input
           matInput
           type="text"
+          matTooltip="Only lowercase characters, numbers and - or _ please"
           autocomplete="off"
-          [(ngModel)]="authorization">
-
+          [(ngModel)]="moduleName">
       </mat-form-field>
 
-    <!-- </div> -->
+      <div class="p-1"></div>
+
+      <mat-form-field class="w-100" appearance="outline">
+        <mat-label>Secondary</mat-label>
+        <input
+          matInput
+          type="text"
+          matTooltip="Only lowercase characters, numbers and - or _ please"
+          autocomplete="off"
+          [(ngModel)]="endpointName">
+      </mat-form-field>
+
+    </div>
+
+    <h3 class="mb-1">Authorization</h3>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Authorization</mat-label>
+      <input
+        matInput
+        type="text"
+        autocomplete="off"
+        [(ngModel)]="authorization">
+    </mat-form-field>
 
   </div>
 
@@ -102,7 +88,7 @@
 
   <div class="d-flex align-items-center justify-content-end mt-3">
 
-    <mat-checkbox [(ngModel)]="isList">Scalar</mat-checkbox>
+    <mat-checkbox [(ngModel)]="isScalar">Scalar</mat-checkbox>
 
     <div class="p-1"></div>
 
