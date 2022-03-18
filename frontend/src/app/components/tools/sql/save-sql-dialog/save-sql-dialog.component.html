@@ -2,14 +2,12 @@
   <div mat-dialog-content>
 
     <mat-form-field class="fill-width" appearance="outline">
-  
       <mat-label class="dark">Name</mat-label>
       <input type="text"
         matInput
         [(ngModel)]="data.filename"
         name="filename"
         [matAutocomplete]="auto">
-  
       <mat-autocomplete #auto="matAutocomplete">
         <mat-option
           *ngFor="let idx of getFiltered()"
@@ -17,7 +15,6 @@
           {{getFilename(idx)}}
         </mat-option>
       </mat-autocomplete>
-  
     </mat-form-field>
   
   </div>

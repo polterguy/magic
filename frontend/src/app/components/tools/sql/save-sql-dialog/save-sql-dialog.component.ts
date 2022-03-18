@@ -41,13 +41,14 @@ export class SaveSqlDialogComponent implements OnInit {
    * 
    * Needed to make autocompleter working allowing user to overwrite previously saved snippet.
    */
-  public files: string[] = [];
+  files: string[] = [];
 
   /**
    * Creates an instance of your login dialog.
    * 
-   * @param sqlService Evaluator service needed to retrieve snippet files from backend
-   * @param data Filename to intially populate filename textbox with, and databaseType. Typically only supplied if you previously loaded a file.
+   * @param feedbackService Needed to be able to display feedback to user
+   * @param sqlService Needed to retrieve snippets from backend
+   * @param data Input data, more specifically the database type the user is currently using
    */
   constructor(
     private feedbackService: FeedbackService,
@@ -57,14 +58,9 @@ export class SaveSqlDialogComponent implements OnInit {
   /**
    * OnInit implementation.
    */
-  public ngOnInit() {
-
-    // Retrieving SQL snippets from backend.
+  ngOnInit() {
     this.sqlService.listSnippets(this.data.databaseType).subscribe((files: string[]) => {
-
-      // Excluding all files that are not SQL files.
       this.files = files.filter(x => x.endsWith('.sql'));
-
     }, (error: any) => this.feedbackService.showError(error));
   }
 
@@ -73,9 +69,7 @@ export class SaveSqlDialogComponent implements OnInit {
    * 
    * @param path Complete path of file
    */
-  public getFilename(path: string) {
-
-    // Removing path and extension, returning only filename.
+  getFilename(path: string) {
     const result = path.substr(path.lastIndexOf('/') + 1);
     return result.substr(0, result.lastIndexOf('.'));
   }
@@ -83,9 +77,7 @@ export class SaveSqlDialogComponent implements OnInit {
   /**
    * Returns filtered files according to what user has typed.
    */
-  public getFiltered() {
-
-    // Filtering files according such that only filtered files are returned.
+  getFiltered() {
     return this.files.filter((idx: string)  => {
       return this.getFilename(idx).indexOf(this.data.filename) !== -1 &&
         this.getFilename(idx) !== this.data.filename;
@@ -95,9 +87,7 @@ export class SaveSqlDialogComponent implements OnInit {
   /**
    * Returns true if filename is a valid filename for snippet.
    */
-  public filenameValid() {
-
-    // A valid filename only contains [a-z], [0-9], '.' and '-'.
+  filenameValid() {
     for (var idx of this.data.filename) {
       if ('abcdefghijklmnopqrstuvwxyz0123456789.-_'.indexOf(idx) === -1) {
         return false;

@@ -15,6 +15,7 @@ import { saveAs } from 'file-saver';
 import { Databases } from 'src/app/models/databases.model';
 import { AuthService } from '../../../services/auth.service';
 import { SqlService } from 'src/app/services/tools/sql.service';
+import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from '../../../services/feedback.service';
 import { CacheService } from '../../../services/analytics/cache.service';
 import { Model } from '../../codemirror/codemirror-sql/codemirror-sql.component';
@@ -24,10 +25,9 @@ import { LoadSqlDialogComponent } from './load-sql-dialog/load-sql-dialog.compon
 
 // CodeMirror options.
 import sql from '../../codemirror/options/sql.json'
-import { BackendService } from 'src/app/services/backend.service';
 
 /**
- * SQL component allowing user to execute arbitrary SQL statements towards his database.
+ * SQL component allowing user to execute arbitrary SQL statements towards his or her database.
  */
 @Component({
   selector: 'app-sql',
@@ -45,55 +45,50 @@ export class SqlComponent implements OnInit {
   /**
    * Database types the user can select during configuration of system.
    */
-  public databaseTypes: string[] = [];
+  databaseTypes: string[] = [];
 
   /**
    * All existing connection strings for selected database type.
    */
-  public connectionStrings: string[] = [];
+  connectionStrings: string[] = [];
 
   /**
    * Databases that exists in database type/connection string instance.
    */
-  public databases: string[] = [];
+  databases: string[] = [];
 
   /**
    * Input SQL component model and options.
    */
-  public input: Model = null;
+  input: Model = null;
 
   /**
    * Only relevant for mssql database type, and if true, executes SQL
    * as a batch execution.
    */
-  public isBatch: boolean = false;
+  isBatch: boolean = false;
 
   /**
    * If true prevents returning more than 200 records from backend to avoid
    * exhausting server.
    */
-  public safeMode: boolean = true;
+  safeMode: boolean = true;
 
   /**
    * Result of invocation towards backend.
    */
-  public result: any[] = [];
-
-  /**
-   * Model for file uploader.
-   */
-  public fileInput: string;
+  result: any[] = [];
 
   /**
    * Creates an instance of your component.
    * 
    * @param feedbackService Needed to show user feedback
-   * @param configService Needed to read configuration settings, more specifically default database config setting
    * @param cacheService Needed to be able to delete cache items in your backend
    * @param authService Needed to check if user is authorised to access features
+   * @param backendService Needed to retrieve user's access rights in backend
    * @param sqlService Needed to be able to execute SQL towards backend
+   * @param clipboard Required to allow user to copy content to clipboard
    * @param dialog Needed to be able to show Load SQL snippet dialog
-   * @param messageService Message service used to message other components
    */
   constructor(
     private feedbackService: FeedbackService,
@@ -107,33 +102,16 @@ export class SqlComponent implements OnInit {
   /**
    * Implementation of OnInit.
    */
-  public ngOnInit() {
-
-    // Retrieving default database type from backend.
+  ngOnInit() {
     this.sqlService.defaultDatabaseType().subscribe((defaultDatabaseType: DefaultDatabaseType) => {
-
-      // Assigning database types to model.
       this.databaseTypes = defaultDatabaseType.options;
-
-      // Retrieving connection strings for default database type.
       this.getConnectionStrings(defaultDatabaseType.default, (connectionStrings: string[]) => {
-
-        // Retrieving databases existing in connection string instance.
         this.getDatabases(defaultDatabaseType.default, 'generic', (databases: any) => {
-
-          // Storing database declaration such that user can change active database without having to roundtrip to server.
           this.databaseDeclaration = databases;
-
-          // Transforming from HTTP result to object(s) expected by CodeMirror.
           const tables = {};
           for (const idxTable of databases.databases.filter((x: any) => x.name === 'magic')[0].tables) {
             tables[idxTable.name] = idxTable.columns.map((x: any) => x.name);
           }
-
-          /*
-           * Initialising input now that we know the default database type, connection string,
-           * and databases that exists in connection string.
-           */
           this.connectionStrings = connectionStrings;
           this.databases = databases.databases.map((x: any) => x.name);
           this.input = {
@@ -146,30 +124,19 @@ export class SqlComponent implements OnInit {
           this.input.options.hintOptions = {
             tables: tables,
           };
-
-          // Turning on auto focus.
           this.input.options.autofocus = true;
-
-          // Associating ALT+M with fullscreen toggling of the editor instance.
           this.input.options.extraKeys['Alt-M'] = (cm: any) => {
             cm.setOption('fullScreen', !cm.getOption('fullScreen'));
-            // to hide/show sidenav
             let sidenav = document.querySelector('.mat-sidenav');
             sidenav.classList.contains('d-none') ? sidenav.classList.remove('d-none') :
             sidenav.classList.add('d-none');
           };
-
-          // Associating ALT+L with the load snippet button.
           this.input.options.extraKeys['Alt-L'] = (cm: any) => {
             document.getElementById('loadButton').click();
           };
-
-          // Associating ALT+S with the save snippet button.
           this.input.options.extraKeys['Alt-S'] = (cm: any) => {
             document.getElementById('saveButton').click();
           };
-
-          // Making sure we attach the F5 button to execute SQL.
           this.input.options.extraKeys.F5 = () => {
             document.getElementById('executeButton').click();
           };
@@ -181,19 +148,13 @@ export class SqlComponent implements OnInit {
   /**
    * Invoked when database type is changed.
    */
-  public databaseTypeChanged() {
-
-    // Retrieving all connection strings for selected database type.
+  databaseTypeChanged() {
     this.getConnectionStrings(this.input.databaseType, (connectionStrings: string[]) => {
-
-      // Resetting selected connection string and selected database.
       this.connectionStrings = connectionStrings;
       this.input.connectionString = null;
       this.input.database = null;
       this.input.options.hintOptions.tables = [];
       this.databases = [];
-
-      // Checking if this is anything but 'mssql', and if so, unchecking batch.
       if (this.input.databaseType !== 'mssql') {
         this.isBatch = false;
       }
@@ -203,29 +164,16 @@ export class SqlComponent implements OnInit {
   /**
    * Invoked when connection string is changed.
    */
-  public connectionStringChanged() {
-
-    // Retrieving all databases for selected database type and connection string.
+  connectionStringChanged() {
     this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: any) => {
-
-      // Making sure connection string has at least one database.
       if (databases.databases && databases.databases.length > 0) {
-
-        // Setting databases and hint options.
         this.databases = databases.databases.map((x: any) => x.name).sort((lhs: string, rhs: string) => {
           return lhs > rhs ? 1 : (rhs > lhs ? -1 : 0);
         });
-
-        // Storing database declaration such that user can change active database without having to roundtrip to server.
         this.databaseDeclaration = databases;
-
-        // Resetting other information, selecting first database by default.
         this.input.database = this.databases[0];
         this.databaseChanged();
-  
       } else {
-
-        // No databases in active connection string.
         this.databases = [];
         this.input.database = null;
         this.input.options.hintOptions.tables = [];
@@ -236,12 +184,9 @@ export class SqlComponent implements OnInit {
   /**
    * Invoked when active database changes.
    */
-  public databaseChanged() {
-
-    // Updating SQL hints according to selected database.
+  databaseChanged() {
     const result = {};
-    const tables = this.databaseDeclaration.databases
-      .filter((x: any) => x.name === this.input.database)[0].tables || [];
+    const tables = this.databaseDeclaration.databases.filter((x: any) => x.name === this.input.database)[0].tables || [];
     for (const idxTable of tables) {
       result[idxTable.name] = (idxTable.columns?.map((x: any) => x.name) || []);
     }
@@ -253,7 +198,7 @@ export class SqlComponent implements OnInit {
    * 
    * @param db Database name
    */
-  public getDatabaseCssClass(db: string) {
+  getDatabaseCssClass(db: string) {
     switch (this.input.databaseType) {
       case 'mysql':
         switch (db) {
@@ -293,22 +238,13 @@ export class SqlComponent implements OnInit {
    * Empties server side cache and reloads your database declarations,
    * 'refreshing' your available databases.
    */
-  public refresh() {
-
-    // Asking user to confirm action, since it reloads page.
-    // A bit 'dirty' but simplifies code significantly.
+  refresh() {
     this.feedbackService.confirm(
       'Confirm action',
       'This will flush your server side cache and reload your page. Are you sure you want to do this?',
       () => {
-
-        // Invoking backend to empty database meta data cache entry.
         this.cacheService.delete('magic.sql.databases.*').subscribe(() => {
-
-          // Reloading database meta declarations now.
-          // A bit 'dirty' but simplifies code significantly.
           window.location.href = window.location.href;
-
         }, (error: any) => this.feedbackService.showError(error));
     });
   }
@@ -316,25 +252,16 @@ export class SqlComponent implements OnInit {
   /**
    * Opens the load snippet dialog, to allow user to select a previously saved snippet.
    */
-  public load() {
-
-    // Showing modal dialog.
+  load() {
     const dialogRef = this.dialog.open(LoadSqlDialogComponent, {
       width: '550px',
       data: this.input.databaseType,
     });
-
-    // Subscribing to closed event, and if given a filename, loads it and displays it in the Hyperlambda editor.
     dialogRef.afterClosed().subscribe((filename: string) => {
       if (filename) {
-
-        // User gave us a filename, hence we load file from backend snippet collection.
         this.sqlService.loadSnippet(this.input.databaseType, filename).subscribe((content: string) => {
-
-          // Success!
           this.input.sql = content;
           this.filename = filename;
-
         }, (error: any) => this.feedbackService.showError(error));
       }
     });
@@ -343,9 +270,7 @@ export class SqlComponent implements OnInit {
   /**
    * Invoked when user wants to save an SQL snippet.
    */
-  public save() {
-
-    // Showing modal dialog, passing in existing filename if any, defaulting to ''.
+  save() {
     const dialogRef = this.dialog.open(SaveSqlDialogComponent, {
       width: '550px',
       data: {
@@ -353,25 +278,15 @@ export class SqlComponent implements OnInit {
         databaseType: this.input.databaseType,
       }
     });
-
-    // Subscribing to closed event, and if given a filename, loads it and displays it in the Hyperlambda editor.
     dialogRef.afterClosed().subscribe((filename: string) => {
-
-      // Checking if user selected a file, at which point filename will be non-null.
       if (filename) {
-
-        // User gave us a filename, hence saving file to backend snippet collection.
         this.sqlService.saveSnippet(
           this.input.databaseType,
           filename,
           this.input.sql).subscribe(() => {
-
-          // Success!
           this.feedbackService.showInfo('SQL snippet successfully saved');
           this.filename = filename;
-          
         }, (error: any) => this.feedbackService.showError(error));
-
       }
     });
   }
@@ -379,20 +294,14 @@ export class SqlComponent implements OnInit {
   /**
    * Executes the current SQL towards your backend.
    */
-  public execute() {
-
-    // Retrieving selected text from CodeMirror instance.
+  execute() {
     const selectedText = this.input.editor.getSelection();
-
-    // Invoking backend.
     this.sqlService.executeSql(
       this.input.databaseType,
       '[' + this.input.connectionString + '|' + this.input.database + ']',
       selectedText == '' ? this.input.sql : selectedText,
       this.safeMode,
       this.isBatch).subscribe((result: any[][]) => {
-
-      // Success!
       if (result) {
         let count = 0;
         for (var idx of result) {
@@ -406,13 +315,8 @@ export class SqlComponent implements OnInit {
       } else {
         this.feedbackService.showInfoShort('SQL successfully executed, but returned no result');
       }
-
-      // Making sure we remove all previously viewed detail records.
       this.result = this.buildResult(result || []);
-
     }, (error: any) => {
-
-      // Checking if user needs to turn on batch mode to execute his SQL.
       if (error.error &&
         error.error.message &&
         error.error.message &&
@@ -428,10 +332,9 @@ export class SqlComponent implements OnInit {
    * Invoked when user wants to toggle details for a row
    *
    * @param row Row to toggle details for
+   * @param result Result to toggle details for
    */
-  public toggleDetails(row: any, result: any) {
-
-    // Checking if this is not a details row, and if so toggling its display field value.
+  toggleDetails(row: any, result: any) {
     if (row.details === false) {
       const index = result.rows.indexOf(row) + 1;
       result.rows[index].display = !result.rows[index].display;
@@ -444,7 +347,7 @@ export class SqlComponent implements OnInit {
    * 
    * @param value Value to copy to clipboard
    */
-  public copyToClipBoard(value: string) {
+  copyToClipBoard(value: string) {
 
     // Using clipboard service to write specified text to clipboard.
     this.clipboard.copy(value);
@@ -456,15 +359,10 @@ export class SqlComponent implements OnInit {
    * 
    * @param result What result set to export
    */
-  public exportAsCsv(result: any) {
-
-    // Building our CSV as a string.
+  exportAsCsv(result: any) {
     let content = '';
-
-    // Iterating through each record in result set.
     let isFirst = true;
     for (let idxRow of result.rows.filter((x: any) => x.details === true)) {
-
       if (isFirst) {
         isFirst = false;
         let firstHeader = true;
@@ -478,8 +376,6 @@ export class SqlComponent implements OnInit {
         }
         content += '\r\n';
       }
-
-      // Iterating through each property in currently iterated record.
       let first = true;
       for (let idxProperty in idxRow.data) {
         if (first) {
@@ -487,12 +383,8 @@ export class SqlComponent implements OnInit {
         } else {
           content += ',';
         }
-
-        // Retrieving cell value.
         const value = idxRow.data[idxProperty];
         if (value) {
-
-          // Special handling of strings, to allow for double quotes and carriage returns.
           if (typeof value === 'string') {
             var idxContent = idxRow.data[idxProperty];
             while (idxContent.indexOf('"') !== -1) {
@@ -506,15 +398,15 @@ export class SqlComponent implements OnInit {
       }
       content += '\r\n';
     }
-
-    // Invoking saveAsFile method to allow client to download file containing CSV data.
     this.saveAsFile(content, 'sql-export.csv', 'text/csv');
   }
 
   /**
    * Returns the CSS class for a row in the data table.
+   * 
+   * @param row Row to retrieve CSS class for
    */
-  public getRowCssClass(row: any) {
+  getRowCssClass(row: any) {
     if (row.details === false) {
       if (row.display === true) {
         return 'selected';
@@ -542,24 +434,15 @@ export class SqlComponent implements OnInit {
    * Returns all connection strings for database type from backend.
    */
   private getConnectionStrings(databaseType: string, onAfter: (connectionStrings: string[]) => void) {
-
-    // Retrieving connection strings for default database type from backend.
     this.sqlService.connectionStrings(databaseType).subscribe((connectionStrings: any) => {
-
-      // Checking if caller supplied a callback, and if so, invoking it.
       if (onAfter) {
-
-        // Transforming backend's result to a list of strings.
         const tmp: string[] = [];
         for (var idx in connectionStrings) {
           tmp.push(idx);
         }
         onAfter(tmp);
       }
-
     }, (error: any) => {
-
-      // Oops, making sure we remove all selected values, and shows an error to user.
       this.nullifyAllSelectors(error);
     });
   }
@@ -568,33 +451,23 @@ export class SqlComponent implements OnInit {
    * Returns all databases for database-type/connection-string from backend.
    */
   private getDatabases(databaseType: string, connectionString: string, onAfter: (databases: any) => void) {
-
-    // Retrieving databases that exists for database-type/connection-string combination in backend.
     this.sqlService.getDatabaseMetaInfo(databaseType, connectionString).subscribe((databases: Databases) => {
-
-      // Checking if caller supplied a callback, and if so invoking it.
       if (onAfter) {
-
-        // Invoking callback.
         onAfter(databases);
       }
     }, (error: any) => {
-
-      // Resetting selected connection string and selected database.
       this.nullifyAllSelectors(error);
     });
   }
 
   /*
    * Nullifies all relevant models to ensure select dropdown
-  * lists no longer displays selected values.
+   * lists no longer displays selected values.
    */
   private nullifyAllSelectors(error: any) {
     this.input.connectionString = null;
     this.input.database = null;
     this.input.options.hintOptions.tables = [];
-
-    // Notifying user
     this.feedbackService.showError(error);
   }
 
@@ -606,26 +479,20 @@ export class SqlComponent implements OnInit {
    * a single record, in addition to viewing the details of it.
    */
   private buildResult(result: any[][]) {
-
-    // Result array returned to caller.
     const retValue: any[] = [];
     for (const idx of result) {
-
-      // Making sure current result set actually returned something.
       if (idx) {
-
-        // Duplicating rows, making twice as many rows as there actually are.
         const rows = [];
         for (const inner of idx) {
           rows.push({
             data: inner,
-            details: false, // Overview row's record
-            display: false, // False since details are by default not displayed
+            details: false,
+            display: false,
           });
           rows.push({
             data: inner,
-            details: true, // Detailed view's record
-            display: false, // False since details are by default not displayed
+            details: true,
+            display: false,
           });
         }
         retValue.push({
