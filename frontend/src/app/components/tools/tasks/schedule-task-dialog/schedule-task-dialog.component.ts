@@ -8,12 +8,12 @@ import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
+import { FeedbackService } from 'src/app/services/feedback.service';
 import { Task } from 'src/app/components/tools/tasks/models/task.model';
 import { TaskService } from 'src/app/components/tools/tasks/services/task.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
 
 /**
- * Modal dialog used to allow user to create a new role in the system.
+ * Modal dialog used to allow user to schedule a task.
  */
 @Component({
   selector: 'app-schedule-task-dialog',
@@ -23,30 +23,30 @@ import { FeedbackService } from 'src/app/services/feedback.service';
 export class ScheduleTaskDialogComponent {
 
   /**
-   * current date
-   * to be used for specifying minimum starting date
+   * Current date to use for specifying minimum starting date.
    */
-  public currentDate: Date = null;
+  currentDate: Date = null;
 
   /**
    * Date user selects, if he selects an explicit due date.
    */
-  public date: Date = null;
+  date: Date = null;
 
   /**
    * If true, user wants to provide a repeating pattern, and not an explicit due date.
    */
-  public isRepeating = false;
+  isRepeating = false;
 
   /**
    * Repetition pattern user selects.
    */
-  public repeats: string = null;
+  repeats: string = null;
 
   /**
    * Creates an instance of your component.
    * 
    * @param dialogRef Needed to be able to close dialog when user clicks create button
+   * @param feedbackService Needed to be able to display feedback to user
    * @param taskService Needed to be able to create our task
    * @param data If updating role, this is the role we're updating
    */
@@ -55,24 +55,17 @@ export class ScheduleTaskDialogComponent {
     private feedbackService: FeedbackService,
     private taskService: TaskService,
     @Inject(MAT_DIALOG_DATA) public data: Task) { 
-      this.currentDate = new Date();
-    }
+    this.currentDate = new Date();
+  }
 
   /**
    * Invoked when user clicks the create button to create a new role.
    */
-  public create() {
-
-    // Figuring out what type of task user wants to create.
+  create() {
     const date = this.isRepeating ? null : this.date;
     const repeating = this.isRepeating ? this.repeats : null;
-
-    // Invoking backend to create a new schedule for task.
     this.taskService.schedule(this.data.id, date, repeating).subscribe(() => {
-
-      // Success! Closing dialog and giving caller the new task, now with an additional schedule declared in it.
       this.dialogRef.close(this.data);
-
     }, (error: any) => this.feedbackService.showError(error));
   }
 }

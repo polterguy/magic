@@ -9,11 +9,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 
 // Application specific imports.
 import { Task } from './models/task.model';
 import { Schedule } from './models/schedule.model';
 import { Count } from 'src/app/models/count.model';
+import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from '../../../services/feedback.service';
 import { TaskService } from 'src/app/components/tools/tasks/services/task.service';
 import { NewTaskDialogComponent } from './new-task-dialog/new-task-dialog.component';
@@ -23,9 +25,6 @@ import { ScheduleTaskDialogComponent } from './schedule-task-dialog/schedule-tas
 
 // CodeMirror options.
 import hyperlambda from '../../codemirror/options/hyperlambda.json';
-import { AuthService } from '../../../services/auth.service';
-import { trigger, state, style, transition, animate } from '@angular/animations';
-import { BackendService } from 'src/app/services/backend.service';
 
 /*
  * Helper class to encapsulate a task and its details,
@@ -61,12 +60,13 @@ export class TasksComponent implements OnInit {
   /**
    * Tasks that are currently being viewed.
    */
-  public tasks: TaskEx[] = null;
-  public expandedElement: any;
+  tasks: TaskEx[] = null;
+  expandedElement: any;
+
   /**
    * Visible columns in data table.
    */
-  public displayedColumns: string[] = [
+  displayedColumns: string[] = [
     'id',
     'delete',
   ];
@@ -74,39 +74,36 @@ export class TasksComponent implements OnInit {
   /**
    * Number of tasks in backend currently matching our filter.
    */
-  public count: number = 0;
+  count: number = 0;
 
   /**
    * Paginator for paging table.
    */
-  @ViewChild(MatPaginator, {static: true}) public paginator: MatPaginator;
+  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
 
   /**
    * Filter form control for filtering tasks to display.
    */
-  public filterFormControl: FormControl;
+  filterFormControl: FormControl;
 
   /**
    * Creates an instance of your component.
    * 
    * @param feedbackService Needed to display feedback to user
    * @param taskService Needed to retrieve, update, delete and modify tasks in our backend
-   * @param authService Needed to verify user has access to components
+   * @param backendService Needed to be able to determine user's access rights in backend
    * @param dialog Needed to create modal dialogues
    */
   constructor(
     private feedbackService: FeedbackService,
     private taskService: TaskService,
-    public authService: AuthService,
     public backendService: BackendService,
     private dialog: MatDialog) { }
 
   /**
    * Implementation of OnInit.
    */
-  public ngOnInit() {
-
-    // Creating our filter form control, with debounce logic.
+  ngOnInit() {
     this.filterFormControl = new FormControl('');
     this.filterFormControl.setValue('');
     this.filterFormControl.valueChanges
@@ -116,35 +113,24 @@ export class TasksComponent implements OnInit {
         this.paginator.pageIndex = 0;
         this.getTasks();
       });
-
-    // Retrieving tasks.
     this.getTasks();
   }
 
   /**
    * Retrieves tasks from your backend and re-databinds UI.
    */
-  public getTasks() {
-
-    // Invoking backend to retrieve tasks.
+  getTasks() {
     this.taskService.list(
       this.filterFormControl.value,
       this.paginator.pageIndex * this.paginator.pageSize,
       this.paginator.pageSize).subscribe((tasks: Task[]) => {
-
-      // Assigning return values to currently viewed items by using our TaskEx class.
       this.tasks = (tasks || []).map(idx => {
         return {
           task: idx
         }
       });
-
-      // Retrieving count of items from backend.
       this.taskService.count(this.filterFormControl.value).subscribe((count: Count) => {
-
-        // Assigning count to returned value from server.
         this.count = count.count;
-
       }, (error: any) => this.feedbackService.showError(error));
     }, (error: any) => this.feedbackService.showError(error));
   }
@@ -152,9 +138,7 @@ export class TasksComponent implements OnInit {
   /**
    * Clears the current filter.
    */
-  public clearFilter() {
-
-    // Updating page index, and taking advantage of debounce logic on form control to retrieve items from backend.
+  clearFilter() {
     this.paginator.pageIndex = 0;
     this.filterFormControl.setValue('');
   }
@@ -164,9 +148,7 @@ export class TasksComponent implements OnInit {
    * 
    * @param e Page event argument
    */
-  public paged(e: PageEvent) {
-
-    // Changing pager's size according to arguments, and retrieving log items from backend.
+  paged(e: PageEvent) {
     this.paginator.pageSize = e.pageSize;
     this.getTasks();
   }
@@ -176,15 +158,9 @@ export class TasksComponent implements OnInit {
    * 
    * @param el Task to toggle details for
    */
-  public toggleDetails(el: TaskEx) {
-
-    // Checking if we're already displaying details for current item.
+  toggleDetails(el: TaskEx) {
     if (!el.model) {
-
-      // Retrieving task from backend.
       this.taskService.get(el.task.id).subscribe((task: Task) => {
-
-        // Making sure we add additional fields returned from server for completeness sake.
         el.task.hyperlambda = task.hyperlambda;
         if (task.schedules) {
           el.task.schedules = task.schedules.map(x => {
@@ -195,9 +171,6 @@ export class TasksComponent implements OnInit {
             };
           });
         }
-
-        // By adding these fields to instance, task will be edited in UI.
-        // setting timeout to prevent blinking when expanding the row
         setTimeout(() => {
           el.model = {
             hyperlambda: task.hyperlambda,
@@ -213,15 +186,11 @@ export class TasksComponent implements OnInit {
    * 
    * @param task Task caller wants to save
    */
-  public update(task: TaskEx) {
-
-    // Invoking backend to save task.
+  update(task: TaskEx) {
     this.taskService.update(
       task.task.id,
       task.model.hyperlambda,
       task.task.description).subscribe(() => {
-
-      // Success!
       this.feedbackService.showInfoShort('Task successfully updated');
     });
   }
@@ -229,19 +198,12 @@ export class TasksComponent implements OnInit {
   /**
    * Invoked when user wants to create a new task.
    */
-  public create() {
-
-    // Showing modal dialog.
+  create() {
     const dialogRef = this.dialog.open(NewTaskDialogComponent, {
       width: '550px',
     });
-
     dialogRef.afterClosed().subscribe((name: string) => {
-
-      // Checking if modal dialog wants to create a task.
       if (name) {
-
-        // Task was successfully created.
         this.feedbackService.showInfo(`'${name}' task successfully created`);
         this.filterFormControl.setValue(name);
       }
@@ -254,12 +216,8 @@ export class TasksComponent implements OnInit {
    * @param event Click event, needed to stop propagation
    * @param task Task to delete
    */
-  public delete(event: any, task: TaskEx) {
-
-    // Making sure the event doesn't propagate upwards, which would trigger the row click event.
+  delete(event: any, task: TaskEx) {
     event.stopPropagation();
-
-    // Asking user to confirm deletion of file object.
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '550px',
       data: {
@@ -267,17 +225,9 @@ export class TasksComponent implements OnInit {
         title: 'Please confirm delete operation'
       }
     });
-
-    // Subscribing to close such that we can delete user if it's confirmed.
     dialogRef.afterClosed().subscribe((result: ConfirmDialogData) => {
-
-      // Checking if user confirmed that he wants to delete the file object.
       if (result && result.confirmed) {
-
-        // Invoking backend to actually delete task.
         this.taskService.delete(task.task.id).subscribe(() => {
-
-          // Success! Showing user some feedback and re-databinding table.
           this.feedbackService.showInfoShort('Task successfully deleted');
           this.getTasks();
         }, (error: any)=> this.feedbackService.showError(error));
@@ -288,25 +238,16 @@ export class TasksComponent implements OnInit {
   /**
    * Schedules task for execution in the future.
    * 
-   * @param task Allows user to schedule task by showing a modal window allowing him to declare his schedule
+   * @param task Task user wants to schedule
    */
-  public schedule(task: Task) {
-
-    // Showing modal dialog.
+  schedule(task: Task) {
     const dialogRef = this.dialog.open(ScheduleTaskDialogComponent, {
       width: '350px',
       data: task
     });
-
     dialogRef.afterClosed().subscribe((result: Task) => {
-
-      // Checking if modal dialog wants to create a task.
       if (result) {
-
-        // Task was successfully created.
         this.feedbackService.showInfo('Task was successfully scheduled');
-
-        // Invoking backend to retrieve all schedules, now that they're changed.
         this.taskService.get(task.id).subscribe((nTask: Task) => {
           task.schedules = nTask.schedules;
         });
@@ -320,21 +261,13 @@ export class TasksComponent implements OnInit {
    * @param task Task that contains schedule
    * @param schedule Schedule to remove from task
    */
-  public deleteSchedule(task: Task, schedule: Schedule) {
-
-    // Asking user to confirm deletion of schedule.
+  deleteSchedule(task: Task, schedule: Schedule) {
     this.feedbackService.confirm(
       'Please confirm delete operation',
       'Are you sure you want to delete the schedule for the task?',
       () => {
-
-        // Invoking backend to delete schedule.
         this.taskService.deleteSchedule(schedule.id).subscribe(() => {
-
-          // No reasons to invoke backend to retrieve items again.
           task.schedules.splice(task.schedules.indexOf(schedule), 1);
-
-          // Giving user some feedback.
           this.feedbackService.showInfoShort('Schedule deleted');
         });
     });

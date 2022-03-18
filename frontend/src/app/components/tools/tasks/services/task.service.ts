@@ -8,9 +8,9 @@ import { Injectable } from '@angular/core';
 
 // Application specific imports.
 import { Task } from '../models/task.model';
-import { HttpService } from '../../../../services/http.service';
 import { Count } from '../../../../models/count.model';
 import { Response } from '../../../../models/response.model';
+import { HttpService } from '../../../../services/http.service';
 
 /**
  * Task service, allows you to Read, Create, Update and Delete tasks
@@ -35,18 +35,14 @@ export class TaskService {
    * @param offset Number of items to skip
    * @param limit Maximum number of items to return
    */
-  public list(
+  list(
     filter: string,
     offset: number,
     limit: number) {
-
-    // Dynamically building our query according to arguments specificed.
     let query = '';
     if (filter) {
       query += '&filter=' + encodeURIComponent(filter);
     }
-
-    // Invoking backend and returning observable to caller.
     return this.httpService.get<Task[]>(
       '/magic/system/tasks/list?offset=' +
       offset +
@@ -60,12 +56,8 @@ export class TaskService {
    * 
    * @param name Name of task to retrieve
    */
-  public get(name: string) {
-
-    // Invoking backend and returning observable to caller.
-    return this.httpService.get<Task>(
-      '/magic/system/tasks/get?name=' +
-      encodeURIComponent(name));
+  get(name: string) {
+    return this.httpService.get<Task>('/magic/system/tasks/get?name=' + encodeURIComponent(name));
   }
 
   /**
@@ -73,18 +65,12 @@ export class TaskService {
    * 
    * @param filter Query filter for items to include in count
    */
-  public count(filter?: string) {
-
-    // Dynamically building our query according to arguments specificed.
+  count(filter?: string) {
     let query = '';
     if (filter) {
       query += '?filter=' + encodeURIComponent(filter);
     }
-
-    // Invoking backend and returning observable to caller.
-    return this.httpService.get<Count>(
-      '/magic/system/tasks/count' +
-      query);
+    return this.httpService.get<Count>('/magic/system/tasks/count' + query);
   }
 
   /**
@@ -94,9 +80,7 @@ export class TaskService {
    * @param hyperlambda Hyperlambda for task
    * @param description Description for task as humanly readable text
    */
-  public create(id: string, hyperlambda: string, description: string = null) {
-
-    // Invoking backend and returning observable to caller.
+  create(id: string, hyperlambda: string, description: string = null) {
     return this.httpService.post<Response>(
       '/magic/system/tasks/create', {
         id,
@@ -112,9 +96,7 @@ export class TaskService {
    * @param hyperlambda Hyperlambda for task
    * @param description Description for task as humanly readable text
    */
-  public update(id: string, hyperlambda: string, description: string = null) {
-
-    // Invoking backend and returning observable to caller.
+  update(id: string, hyperlambda: string, description: string = null) {
     return this.httpService.post<Response>(
       '/magic/system/tasks/update', {
         id,
@@ -128,24 +110,18 @@ export class TaskService {
    * 
    * @param id Unique name or ID of task to delete
    */
-  public delete(id: string) {
-
-    // Invoking backend and returning observable to caller.
-    return this.httpService.delete<Response>(
-      '/magic/system/tasks/delete?id=' +
-      encodeURIComponent(id));
+  delete(id: string) {
+    return this.httpService.delete<Response>('/magic/system/tasks/delete?id=' + encodeURIComponent(id));
   }
 
   /**
    * Creates a new task according to the specified arguments.
    * 
    * @param id Unique name or ID of task to create
-   * @param hyperlambda Hyperlambda for task
-   * @param description Description for task as humanly readable text
+   * @param due Optional due date for task
+   * @param repeats Optional repetition pattern for task
    */
-  public schedule(id: string, due?: Date, repeats?: string) {
-
-    // Invoking backend and returning observable to caller.
+  schedule(id: string, due?: Date, repeats?: string) {
     const payload: any = {
       id
     };
@@ -155,8 +131,7 @@ export class TaskService {
     if (repeats) {
       payload.repeats = repeats;
     }
-    return this.httpService.post<Response>(
-      '/magic/system/tasks/due/add', payload);
+    return this.httpService.post<Response>('/magic/system/tasks/due/add', payload);
   }
 
   /**
@@ -164,10 +139,7 @@ export class TaskService {
    * 
    * @param id ID of task schedule to delete
    */
-  public deleteSchedule(id: number) {
-
-    // Invoking backend and returning observable to caller.
-    return this.httpService.delete<Response>(
-      '/magic/system/tasks/due/delete?id=' + id);
+  deleteSchedule(id: number) {
+    return this.httpService.delete<Response>('/magic/system/tasks/due/delete?id=' + id);
   }
 }
