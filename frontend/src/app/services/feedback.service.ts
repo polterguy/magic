@@ -38,7 +38,7 @@ export abstract class FeedbackService {
    * 
    * @param content Message to show
    */
-  public showInfo(content: string) {
+  showInfo(content: string) {
     this.snackBar.open(content, null, {
       duration: 5000,
     });
@@ -49,7 +49,7 @@ export abstract class FeedbackService {
    * 
    * @param content Message to show
    */
-  public showInfoShort(content: string) {
+  showInfoShort(content: string) {
     this.snackBar.open(content, null, {
       duration: 2000,
       panelClass: 'center-aligned'
@@ -61,7 +61,7 @@ export abstract class FeedbackService {
    * 
    * @param content Error message to show, or object containing error message as returned from backend
    */
-  public showError(content: any) {
+  showError(content: any) {
     this.snackBar.open(content.error?.message || content, null, {
       duration: 5000,
       panelClass: 'error-snack-bar'
@@ -75,7 +75,7 @@ export abstract class FeedbackService {
    * @param text Content of modal dialog
    * @param confirmed Callback invoked if user confirms action
    */
-  public confirm(title: string, text: string, confirmed: () => void, cancel: () => void = null) {
+  confirm(title: string, text: string, confirmed: () => void, cancel: () => void = null) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '550px',
       data: {

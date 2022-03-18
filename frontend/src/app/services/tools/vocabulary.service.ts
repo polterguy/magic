@@ -36,14 +36,16 @@ export class VocabularyService {
       of(this._vocabulary);
     }
     return new Observable<string[]>((observer) => {
-      this.httpService.get<string[]>('/magic/system/evaluator/vocabulary').subscribe((vocabulary: string[]) => {
-        this._vocabulary = vocabulary;
-        observer.next(vocabulary);
-        observer.complete();
-      }, (error: any) => {
-        observer.error(error);
-        observer.complete();
-      });
+      this.httpService.get<string[]>('/magic/system/evaluator/vocabulary').subscribe({
+        next: (vocabulary: string[]) => {
+          this._vocabulary = vocabulary;
+          observer.next(vocabulary);
+          observer.complete();
+        },
+        error: (error: any) => {
+          observer.error(error);
+          observer.complete();
+        }});
     });
   }
 }

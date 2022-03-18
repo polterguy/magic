@@ -9,7 +9,6 @@ import { BehaviorSubject, Observable } from 'rxjs';
 
 // Application specific imports.
 import { HttpService } from '../http.service';
-import { AuthService } from '../auth.service';
 import { Status } from '../../models/status.model';
 import { BackendService } from '../backend.service';
 import { Response } from '../../models/response.model';
@@ -52,15 +51,17 @@ export class ConfigService {
    */
   public status() {
     return new Observable<Status>(observer => {
-      this.httpService.get<Status>('/magic/system/config/status').subscribe((res: Status) => {
-        this._currentStatus = res;
-        observer.next(res);
-        observer.complete();
-        this.isConfigured.next(res.config_done && res.magic_crudified && res.server_keypair);
-      }, (error: any) => {
-        observer.error(error);
-        observer.complete();
-      });
+      this.httpService.get<Status>('/magic/system/config/status').subscribe({
+        next: (res: Status) => {
+          this._currentStatus = res;
+          observer.next(res);
+          observer.complete();
+          this.isConfigured.next(res.config_done && res.magic_crudified && res.server_keypair);
+        },
+        error: (error: any) => {
+          observer.error(error);
+          observer.complete();
+        }});
     });
   }
 
@@ -103,20 +104,20 @@ export class ConfigService {
       this.httpService.post<AuthenticateResponse>('/magic/system/config/setup', {
         password,
         settings,
-      }).subscribe((res: AuthenticateResponse) => {
-
-        /*
-         * Notice, when setup is done, the backend will return a new JWT token
-         * which we'll have to use for consecutive invocations towards the backend.
-         */
-        this.backendService.upsertAndActivate(new Backend(this.backendService.active.url, 'root', null, res.ticket));
-        observer.next(res);
-        observer.complete();
-
-      }, (error: any) => {
-        observer.error(error);
-        observer.complete();
-      });
+      }).subscribe({
+        next: (res: AuthenticateResponse) => {
+          /*
+           * Notice, when setup is done, the backend will return a new JWT token
+           * which we'll have to use for consecutive invocations towards the backend.
+           */
+          this.backendService.upsertAndActivate(new Backend(this.backendService.active.url, 'root', null, res.ticket));
+          observer.next(res);
+          observer.complete();
+        },
+        error: (error: any) => {
+          observer.error(error);
+          observer.complete();
+        }});
     });
   }
 

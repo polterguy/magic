@@ -11,6 +11,7 @@ import { saveAs } from "file-saver";
 
 // Application specific imports.
 import { HttpService } from '../http.service';
+import { FeedbackService } from '../feedback.service';
 import { Response } from '../../models/response.model';
 import { MacroDefinition } from '../../models/macro-definition.model';
 
@@ -26,8 +27,11 @@ export class FileService {
    * Creates an instance of your service.
    * 
    * @param httpService HTTP service to use for backend invocations
+   * @param feedbackService Needed toprovide feedback to user
    */
-  constructor(private httpService: HttpService) { }
+  constructor(
+    private httpService: HttpService,
+    private feedbackService: FeedbackService) { }
 
   /**
    * Returns a list of all files existing within the specified folder.
@@ -139,12 +143,14 @@ export class FileService {
    * @param path File to download
    */
   public downloadFile(path: string) {
-    this.httpService.download('/magic/system/file-system/file?file=' + encodeURI(path)).subscribe(res => {
-      const disp = res.headers.get('Content-Disposition');
-      let filename = disp.split(';')[1].trim().split('=')[1].replace(/"/g, '');
-      const file = new Blob([res.body]);
-      saveAs(file, filename);
-    });
+    this.httpService.download('/magic/system/file-system/file?file=' + encodeURI(path)).subscribe({
+      next: (res) => {
+        const disp = res.headers.get('Content-Disposition');
+        let filename = disp.split(';')[1].trim().split('=')[1].replace(/"/g, '');
+        const file = new Blob([res.body]);
+        saveAs(file, filename);
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /**
@@ -165,13 +171,15 @@ export class FileService {
    * @param path File to download
    */
   public downloadFolder(path: string) {
-    this.httpService.download('/magic/system/file-system/download-folder?folder=' + encodeURI(path)).subscribe(res => {
-      const disp = res.headers.get('Content-Disposition');
-      let filename = disp.substring(disp.indexOf('=') + 1);
-      filename = filename.substring(1, filename.lastIndexOf('"'));
-      const file = new Blob([res.body], { type: 'application/zip' });
-      saveAs(file, filename);
-    });
+    this.httpService.download('/magic/system/file-system/download-folder?folder=' + encodeURI(path)).subscribe({
+      next: (res) => {
+        const disp = res.headers.get('Content-Disposition');
+        let filename = disp.substring(disp.indexOf('=') + 1);
+        filename = filename.substring(1, filename.lastIndexOf('"'));
+        const file = new Blob([res.body], { type: 'application/zip' });
+        saveAs(file, filename);
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /**
