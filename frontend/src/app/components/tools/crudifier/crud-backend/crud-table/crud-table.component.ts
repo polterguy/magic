@@ -4,6 +4,7 @@
  */
 import { forkJoin } from 'rxjs';
 import { Component, Input, OnInit } from '@angular/core';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 
 // Application specific imports.
 import { TableEx } from '../../models/table-ex.model';
@@ -12,6 +13,7 @@ import { LocResult } from '../../models/loc-result.model';
 import { DatabaseEx } from '../../models/database-ex.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { CrudifyService } from '../../services/crudify.service';
+import { BackendService } from 'src/app/services/backend.service';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { CacheService } from 'src/app/services/analytics/cache.service';
@@ -22,8 +24,6 @@ import { Model } from 'src/app/components/codemirror/codemirror-hyperlambda/code
 
 // CodeMirror options.
 import hyperlambda from '../../../../codemirror/options/hyperlambda.json';
-import { trigger, state, style, transition, animate } from '@angular/animations';
-import { BackendService } from 'src/app/services/backend.service';
 
 /**
  * Crudifier component for supplying settings and configuration
@@ -46,7 +46,7 @@ export class CrudifierTableComponent implements OnInit {
   /**
    * Input Hyperlambda component model and options.
    */
-  public input: Model = {
+  input: Model = {
     hyperlambda: '',
     options: hyperlambda,
   };
@@ -54,7 +54,7 @@ export class CrudifierTableComponent implements OnInit {
   /**
    * Columns for our field/columns table.
    */
-  public displayedColumns: string[] = [
+  displayedColumns: string[] = [
     'name',
     'db',
     'nullable',
@@ -65,46 +65,46 @@ export class CrudifierTableComponent implements OnInit {
   /**
    * Whether or not advanced options should be shown or not.
    */
-  public advanced = false;
+  advanced = false;
 
-  public expandedElement: any;
+  expandedElement: any;
 
   /**
    * Authorisation requirements for SignalR messages published during invocation of endpoint.
    */
-  public cqrsAuthorisationTypes: string[] = ['none', 'inherited', 'roles', 'groups', 'users'];
+  cqrsAuthorisationTypes: string[] = ['none', 'inherited', 'roles', 'groups', 'users'];
 
   /**
    * Foreign key declarations.
    */
-  public foreignKeys: any = {};
+  foreignKeys: any = {};
 
   /**
    * Model for component wrapping table.
    */
-  @Input() public table: TableEx;
+  @Input() table: TableEx;
 
   /**
    * Model for component wrapping database name.
    */
-  @Input() public database: string;
+  @Input() database: string;
 
   /**
    * Model for component wrapping database, needed to retrieve foreign key table's columns.
    */
-  @Input() public currentDatabase: DatabaseEx;
+  @Input() currentDatabase: DatabaseEx;
 
   /**
    * Model for component wrapping database type.
    */
-  @Input() public databaseType: string;
+  @Input() databaseType: string;
 
   /**
    * Creates an instance of your component.
    * 
    * @param logService Needed to be able to log LOC generated
-   * @param authService Needed to be able to re-retrieve auth endpoints once crudification is done
    * @param cacheService Needed to be able to flush server side cache once crudification is done
+   * @param backendService Needed to able to refetch endpoints after crudification of table
    * @param crudifyService Needed to be able to actually crudify selected table
    * @param messageService Needed to publish messages to other components
    * @param feedbackService Needed to display feedback to user
@@ -113,7 +113,6 @@ export class CrudifierTableComponent implements OnInit {
    */
   constructor(
     private logService: LogService,
-    public authService: AuthService,
     private cacheService: CacheService,
     private backendService: BackendService,
     private crudifyService: CrudifyService,
@@ -127,7 +126,7 @@ export class CrudifierTableComponent implements OnInit {
   /**
    * Implementation of OnInit.
    */
-  public ngOnInit() {
+  ngOnInit() {
     for (const idx of this.table.columns) {
       if (idx.foreign_key) {
         const table = this.currentDatabase.tables.filter(x => x.name === idx.foreign_key.foreign_table)[0];
@@ -145,14 +144,14 @@ export class CrudifierTableComponent implements OnInit {
   /**
    * Returns true if this is the generic/magic database
    */
-  public isMagicDatabase() {
+  isMagicDatabase() {
     return this.database === '[generic|magic]';
   }
 
   /**
    * Returns true of HTTP verb GET is included for crudification.
    */
-  public isGetIncluded() {
+  isGetIncluded() {
     const verbs = this.table.verbs.filter(x => x.name === 'get');
     if (verbs.length === 0) {
       return false;
@@ -163,7 +162,7 @@ export class CrudifierTableComponent implements OnInit {
   /**
    * Returns true of HTTP verb DELETE is included for crudification.
    */
-  public isDeleteIncluded() {
+  isDeleteIncluded() {
     const verbs = this.table.verbs.filter(x => x.name === 'delete');
     if (verbs.length === 0) {
       return false;
@@ -174,7 +173,7 @@ export class CrudifierTableComponent implements OnInit {
   /**
    * Returns true of HTTP verb PUT is included for crudification.
    */
-  public isPutIncluded() {
+  isPutIncluded() {
     const verbs = this.table.verbs.filter(x => x.name === 'put');
     if (verbs.length === 0) {
       return false;
@@ -185,7 +184,7 @@ export class CrudifierTableComponent implements OnInit {
   /**
    * Returns true of HTTP verb POST is included for crudification.
    */
-  public isPostIncluded() {
+  isPostIncluded() {
     const verbs = this.table.verbs.filter(x => x.name === 'post');
     if (verbs.length === 0) {
       return false;
@@ -196,7 +195,7 @@ export class CrudifierTableComponent implements OnInit {
   /**
    * Returns all verbs that are enabled for table as a whole.
    */
-  public getEnabledVerbs() {
+  getEnabledVerbs() {
     return this.table.verbs.filter(x => x.generate);
   }
 
@@ -207,7 +206,7 @@ export class CrudifierTableComponent implements OnInit {
    * @param verb HTTP verb to check
    * @param column Column to check.
    */
-  public verbForColumnIsDisabled(verb: string, column: ColumnEx) {
+  verbForColumnIsDisabled(verb: string, column: ColumnEx) {
     switch (verb) {
 
       case 'post':
@@ -229,7 +228,7 @@ export class CrudifierTableComponent implements OnInit {
    * 
    * @param verb HTTP verb to return CRUD name for
    */
-  public getCrudNameForVerb(verb: string) {
+  getCrudNameForVerb(verb: string) {
     switch (verb) {
 
       case 'post':
@@ -249,16 +248,14 @@ export class CrudifierTableComponent implements OnInit {
   /**
    * Returns true if endpoint name and module name is valid.
    */
-  public validModuleComponentName() {
+  validModuleComponentName() {
     return /^[a-z0-9_-]+$/.test(this.table.moduleName) && /^[a-z0-9_-]+$/.test(this.table.moduleUrl);
   }
 
   /**
    * Invoked when user wants to crudify selected table (only).
    */
-  public crudifyTable() {
-
-    // Creating observables for each enabled HTTP verb.
+  crudifyTable() {
     this.table.validators = this.input.hyperlambda;
     const subscribers = this.table.verbs.filter(x => x.generate).map(x => {
       return this.crudifyService.crudify(
@@ -269,32 +266,17 @@ export class CrudifierTableComponent implements OnInit {
           x.name));
     });
 
-    // Invoking backend for each above created observable.
     forkJoin(subscribers).subscribe((results: LocResult[]) => {
-
-      // Providing feedback to user.
       const loc = results.reduce((x,y) => x + y.loc, 0);
-
-      // Logging items to backend, and once done, showing user some feedback information.
       this.logService.createLocItem(loc, 'backend', `${this.database + '.' + this.table.name}`).subscribe(() => {
-
-        // Providing feedback to user.
         this.feedbackService.showInfo(`${loc} LOC generated`);
-
-        // Flushing endpoints' auth requirements and re-retrieving them again.
         this.flushEndpointsAuthRequirements();
-
-        // Publishing message to subscribers that '/modules/' folder changed.
         this.messageService.sendMessage({
           name: 'magic.folders.update',
           content: '/modules/'
         });
-
       }, (error: any) => this.feedbackService.showError(error));
-
     }, (error: any) => {
-
-      // Hiding interceptor (load gif) and providing feedback to user.
       this.loaderInterceptor.forceHide();
       this.feedbackService.showError(error);
     });
@@ -303,7 +285,7 @@ export class CrudifierTableComponent implements OnInit {
   /*
    * Will flush server side cache of endpoints (auth invocations) and re-retrieve these again.
    */
-  private flushEndpointsAuthRequirements() {
+  flushEndpointsAuthRequirements() {
 
     // Deleting auth cache and retrieving it again.
     this.cacheService.delete('magic.auth.endpoints').subscribe(() => {

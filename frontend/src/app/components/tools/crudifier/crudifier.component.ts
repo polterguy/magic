@@ -21,7 +21,7 @@ import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
 
 /**
- * Crudifier component for creating applications.
+ * Crudifier component for crudifying apps.
  */
 @Component({
   selector: 'app-crudifier',
@@ -29,15 +29,13 @@ import { BackendService } from 'src/app/services/backend.service';
 })
 export class CrudifierComponent implements OnInit, OnDestroy {
 
-  /**
-   * Message subscription, required to handle messages sent by other components.
-   */
+  // Message subscription, required to handle messages sent by other components.
   private subscription: Subscription;
 
   /**
    * Active tab.
    */
-  public activeTab: number = 0;
+  activeTab: number = 0;
 
   /**
    * Needed to be able to dynamically inject components into container.
@@ -49,15 +47,16 @@ export class CrudifierComponent implements OnInit, OnDestroy {
    * which was done by children components, due to needing to show additional
    * information.
    */
-  public hasComponent = false;
+  hasComponent = false;
 
   /**
    * Creates a new instance of your component.
    * 
    * @param authService Needed to verify user has access to components
+   * @param backendService Needed to retrieve user's access rights in backend
    * @param messageService Needed to subscribe to messages sent by other components
    */
-  public constructor(
+  constructor(
     public authService: AuthService,
     public backendService: BackendService,
     private messageService: MessageService) { }
@@ -65,12 +64,8 @@ export class CrudifierComponent implements OnInit, OnDestroy {
   /**
    * Implementation of OnInit.
    */
-  public ngOnInit() {
-
-    // Making sure we subscribe to the "component created" event.
+  ngOnInit() {
     this.subscription = this.messageService.subscriber().subscribe((msg: Message) => {
-
-      // Verifying this is the correct message.
       if (msg.name === Messages.INJECT_COMPONENT) {
 
         /*
@@ -84,15 +79,12 @@ export class CrudifierComponent implements OnInit, OnDestroy {
         }
       } else if (msg.name === Messages.CLEAR_COMPONENTS) {
 
-        /*
-         * Somebody wants us to remove our dynamically injected component.
-         */
+        // Somebody wants us to remove our dynamically injected component.
         this.hasComponent = false;
         this.injectComp.viewContainerRef.clear();
       }
     });
 
-    // Figuring out active tab.
     if (this.backendService.active.access.crud.generate_crud) {
       this.activeTab = 0;
     } else if (this.backendService.active.access.crud.generate_sql) {
@@ -105,18 +97,14 @@ export class CrudifierComponent implements OnInit, OnDestroy {
   /**
    * Implementation of OnDestroy.
    */
-  public ngOnDestroy() {
-
-    // Making sure we unsubscribe to existing subscription.
+  ngOnDestroy() {
     this.subscription.unsubscribe();
   }
 
   /**
    * Invoked when active tab is changed.
    */
-  public selectedTabChanged() {
-
-    // Clearing additional components out, and making sure we no longer display card.
+  selectedTabChanged() {
     this.hasComponent = false;
     this.injectComp.viewContainerRef.clear();
   }

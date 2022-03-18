@@ -2,6 +2,7 @@
   <div class="col-12">
     <mat-card>
       <div class="d-flex flex-sm-nowrap flex-wrap justify-content-between mb-1">
+
         <div class="d-flex align-items-center">
           <mat-card-title class="my-0">Generate frontend</mat-card-title>
           <div class="sm-icons">
@@ -21,6 +22,7 @@
             </mat-menu>
           </div>
         </div>
+
         <div>
           <mat-slide-toggle
             [(ngModel)]="deployLocally"
@@ -28,29 +30,31 @@
             Deploy locally
           </mat-slide-toggle>
         </div>
+
       </div>
+
       <mat-card-subtitle>Automatically generate your frontend</mat-card-subtitle>
+
       <mat-card-content>
         <div class="d-flex flex-sm-nowrap flex-wrap mt-4 w-100">
           <mat-form-field
             class="w-100"
             matTooltip="The name of your app"
             appearance="outline">
-        
             <mat-label>Name</mat-label>
             <input
               matInput
               type="text"
               autocomplete="off"
               [(ngModel)]="name">
-        
           </mat-form-field>
+
           <div class="p-1"></div>
+
           <mat-form-field
             class="w-100"
             matTooltip="Type of template you want to use"
             appearance="outline">
-        
             <mat-label>Template</mat-label>
             <mat-select
               [(ngModel)]="template"
@@ -59,74 +63,74 @@
                 *ngFor="let idx of templates"
                 [value]="idx">{{idx}}</mat-option>
             </mat-select>
-        
           </mat-form-field>
+
           <div class="p-1"></div>
+
           <mat-form-field
             class="w-100 form-field-double"
             matTooltip="Common file comment for all files that can be commented"
             appearance="outline">
-        
             <mat-label>Copyright</mat-label>
             <input
               matInput
               type="text"
               autocomplete="off"
               [(ngModel)]="copyright">
-        
           </mat-form-field>
+
         </div>
         
         <h3 *ngIf="template" class="mt-4">Deployment settings</h3>
         
         <div class="d-flex flex-sm-nowrap flex-wrap w-100">
+
           <mat-form-field
             *ngIf="template"
             class="w-100"
             matTooltip="Root API URL of the backend you intend to use for your app"
             appearance="outline">
-        
             <mat-label>API URL</mat-label>
             <input
               matInput
               type="text"
               autocomplete="off"
               [(ngModel)]="apiUrl">
-        
           </mat-form-field>
+
           <div class="p-1"></div>
+
           <mat-form-field
             *ngIf="template"
             class="w-100"
             matTooltip="Needed to wire up docker-compose file correctly with your deployment domain/URL"
             appearance="outline">
-        
             <mat-label>Deployment domain</mat-label>
             <input
               matInput
               type="text"
               autocomplete="off"
               [(ngModel)]="frontendUrl">
-        
           </mat-form-field>
+
           <div class="p-1"></div>
+
           <mat-form-field
             *ngIf="template"
             class="w-100"
             matTooltip="Needed to wire up docker-compose file correctly for creating SSL/TLS certificate from LetsEncrypt"
             appearance="outline">
-        
             <mat-label>Email</mat-label>
             <input
               matInput
               type="text"
               autocomplete="off"
               [(ngModel)]="email">
-        
           </mat-form-field>
+
         </div>
+
         <div class="d-flex justify-content-end">
-        
           <button
             mat-raised-button
             color="primary"
@@ -134,7 +138,6 @@
             (click)="generate()">
             Generate
           </button>
-        
         </div>
         
       </mat-card-content>

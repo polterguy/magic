@@ -124,14 +124,15 @@
         *matRowDef="let el; columns: displayedColumns;"></tr>
 
       <tr mat-row *matRowDef="let el; columns: ['showDetails']" class="expanded-row"></tr>
+
     </table>
   </div>
 
   <div class="d-flex flex-column w-100 my-2">
     <h3 class="mt-3 mb-0">URL</h3>
     <div class="d-flex w-100">
-      <mat-form-field class="w-100" appearance="outline">
 
+      <mat-form-field class="w-100" appearance="outline">
         <mat-label>Primary</mat-label>
         <input
           matInput
@@ -142,9 +143,10 @@
           [(ngModel)]="table.moduleName">
         <mat-hint>Only lowercase characters, numbers and - or _ please</mat-hint>
       </mat-form-field>
-      <div class="p-1"></div>
-      <mat-form-field class="w-100" appearance="outline">
 
+      <div class="p-1"></div>
+
+      <mat-form-field class="w-100" appearance="outline">
         <mat-label>Secondary</mat-label>
         <input
           matInput
@@ -154,14 +156,14 @@
           autocomplete="off"
           [(ngModel)]="table.moduleUrl">
           <mat-hint>Only lowercase characters, numbers and - or _ please</mat-hint>
-
       </mat-form-field>
+
     </div>
 
     <h3 class="mt-sm-3 mt-5 mb-0">Authorization</h3>
     <div class="d-flex flex-lg-nowrap flex-md-wrap flex-sm-nowrap flex-wrap w-100">
-      <mat-form-field *ngIf="isPostIncluded()" class="w-100" appearance="outline">
 
+      <mat-form-field *ngIf="isPostIncluded()" class="w-100" appearance="outline">
         <mat-label>Create</mat-label>
         <input
           matInput
@@ -169,43 +171,39 @@
           type="text"
           autocomplete="off"
           [(ngModel)]="table.authPost">
-
       </mat-form-field>
 
       <div class="p-1"*ngIf="isGetIncluded()"></div>
-      <mat-form-field *ngIf="isGetIncluded()" class="w-100" appearance="outline">
 
+      <mat-form-field *ngIf="isGetIncluded()" class="w-100" appearance="outline">
         <mat-label>Read</mat-label>
         <input
           matInput
           type="text"
           autocomplete="off"
           [(ngModel)]="table.authGet">
-
       </mat-form-field>
 
       <div class="p-1" *ngIf="isPutIncluded()"></div>
-      <mat-form-field *ngIf="isPutIncluded()" class="w-100" appearance="outline">
 
+      <mat-form-field *ngIf="isPutIncluded()" class="w-100" appearance="outline">
         <mat-label>Update</mat-label>
         <input
           matInput
           type="text"
           autocomplete="off"
           [(ngModel)]="table.authPut">
-
       </mat-form-field>
 
       <div class="p-1" *ngIf="isDeleteIncluded()"></div>
-      <mat-form-field *ngIf="isDeleteIncluded()" class="w-100" appearance="outline">
 
+      <mat-form-field *ngIf="isDeleteIncluded()" class="w-100" appearance="outline">
         <mat-label>Delete</mat-label>
         <input
           matInput
           type="text"
           autocomplete="off"
           [(ngModel)]="table.authDelete">
-
       </mat-form-field>
     </div>
   </div>
@@ -213,6 +211,7 @@
   <div class="d-flex flex-column w-100 my-2">
     <h3 class="mt-3 mb-0">SignalR</h3>
     <div class="d-flex flex-column w-100">
+
       <mat-checkbox
         matTooltip="Publish SignalR messages when creating, updating, or deleting records"
         [(ngModel)]="table.cqrs">Publish</mat-checkbox>
@@ -227,7 +226,6 @@
         class="w-100"
         matTooltip="Type of authorisation for SignalR messages"
         appearance="outline">
-
         <mat-label>Message authorisation type</mat-label>
         <mat-select
           [(ngModel)]="table.cqrsAuthorisation">
@@ -235,7 +233,6 @@
             *ngFor="let idx of cqrsAuthorisationTypes"
             [value]="idx">{{idx}}</mat-option>
         </mat-select>
-
       </mat-form-field>
 
       <mat-form-field
@@ -243,15 +240,14 @@
         *ngIf="table.cqrs && (table.cqrsAuthorisation === 'roles' || table.cqrsAuthorisation === 'groups' || table.cqrsAuthorisation === 'users')"
         matTooltip="Comma separated list of authorisation values"
         appearance="outline">
-
         <mat-label>Authorisation values</mat-label>
         <input
           matInput
           type="text"
           autocomplete="off"
           [(ngModel)]="table.cqrsAuthorisationValues">
-
       </mat-form-field>    
+
     </div>
 
   </div>
@@ -273,24 +269,30 @@
     </mat-form-field>
 
     <div class="d-flex flex-sm-nowrap flex-wrap justify-content-sm-end align-items-center w-100">
+
       <mat-checkbox
         *ngIf="isGetIncluded()"
         [disabled]="!table.cache || table.cache === 0"
         [(ngModel)]="table.publicCache">Public cache</mat-checkbox>
+
       <div class="p-1" *ngIf="isPostIncluded()"></div>
+
       <mat-checkbox
         *ngIf="isPostIncluded()"
         [(ngModel)]="table.logPost">Log create</mat-checkbox>
 
       <div class="p-1" *ngIf="isPutIncluded()"></div>
+
       <mat-checkbox
         *ngIf="isPutIncluded()"
         [(ngModel)]="table.logPut">Log update</mat-checkbox>
 
       <div class="p-1" *ngIf="isDeleteIncluded()"></div>
+
       <mat-checkbox
         *ngIf="isDeleteIncluded()"
         [(ngModel)]="table.logDelete">Log delete</mat-checkbox>
+
     </div>
 
     <h3 class="mt-3">Additional POST/PUT Hyperlambda</h3>
@@ -303,7 +305,9 @@
 
     <mat-checkbox
       [(ngModel)]="advanced">Advanced</mat-checkbox>
+
     <div class="p-1"></div>
+
     <button
       [disabled]="isMagicDatabase() || (!isGetIncluded() && !isDeleteIncluded() && !isPutIncluded() && !isPostIncluded()) || !validModuleComponentName()"
       class="textwrap py-2"

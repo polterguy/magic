@@ -21,7 +21,7 @@ import { DefaultDatabaseType } from '../../../../models/default-database-type.mo
 import sqlOptions from '../../../codemirror/options/sql.json'
 
 /**
- * Component allowing user to generate an SQL based endpoint.
+ * Component allowing user to generate an HTTP endpoint based upon SQL.
  */
 @Component({
   selector: 'app-crud-sql',
@@ -35,22 +35,22 @@ export class CrudSqlComponent implements OnInit {
   /**
    * Database types the user can select during configuration of system.
    */
-  public databaseTypes: string[] = [];
+  databaseTypes: string[] = [];
 
   /**
    * All existing connection strings for selected database type.
    */
-  public connectionStrings: string[] = [];
+  connectionStrings: string[] = [];
 
   /**
    * Databases that exists in database type/connection string instance.
    */
-  public databases: string[] = [];
+  databases: string[] = [];
 
   /**
    * Input SQL component model and options.
    */
-  public input: Model = null;
+  input: Model = null;
 
   /**
    * Creates an instance of your component.
@@ -69,33 +69,16 @@ export class CrudSqlComponent implements OnInit {
   /**
    * Implementation of OnInit.
    */
-  public ngOnInit() {
-
-    // Retrieving default database type from backend.
+  ngOnInit() {
     this.sqlService.defaultDatabaseType().subscribe((defaultDatabaseType: DefaultDatabaseType) => {
-
-      // Assigning database types to model.
       this.databaseTypes = defaultDatabaseType.options;
-
-      // Retrieving connection strings for default database type.
       this.getConnectionStrings(defaultDatabaseType.default, (connectionStrings: string[]) => {
-
-        // Retrieving databases existing in connection string instance.
         this.getDatabases(defaultDatabaseType.default, 'generic', (databases: Databases) => {
-
-          // Storing database declaration such that user can change active database without having to roundtrip to server.
           this.databaseDeclaration = databases;
-
-          // Transforming from HTTP result to object(s) expected by CodeMirror.
           const tables = {};
           for (const idxTable of databases.databases.filter((x: any) => x.name === 'magic')[0].tables) {
             tables[idxTable.name] = idxTable.columns.map((x: any) => x.name);
           }
-
-          /*
-           * Initialising input now that we know the default database type, connection string,
-           * and databases that exists in connection string.
-           */
           this.connectionStrings = connectionStrings;
           this.databases = databases.databases.map((x: any) => x.name);
           this.input = {
@@ -116,12 +99,8 @@ export class CrudSqlComponent implements OnInit {
   /**
    * Invoked when database type is changed.
    */
-  public databaseTypeChanged() {
-
-    // Retrieving all connection strings for selected database type.
+  databaseTypeChanged() {
     this.getConnectionStrings(this.input.databaseType, (connectionStrings: string[]) => {
-
-      // Resetting selected connection string and selected database.
       this.connectionStrings = connectionStrings;
       this.input.connectionString = null;
       this.input.database = null;
@@ -133,27 +112,14 @@ export class CrudSqlComponent implements OnInit {
   /**
    * Invoked when connection string is changed.
    */
-  public connectionStringChanged() {
-
-    // Retrieving all databases for selected database type and connection string.
+  connectionStringChanged() {
     this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: Databases) => {
-
-      // Making sure connection string has at least one database.
       if (databases.databases && databases.databases.length > 0) {
-
-        // Setting databases and hint options.
         this.databases = databases.databases.map((x: Database) => x.name);
-
-        // Storing database declaration such that user can change active database without having to roundtrip to server.
         this.databaseDeclaration = databases;
-
-        // Resetting other information, selecting first database by default.
         this.input.database = this.databases[0];
         this.databaseChanged();
-  
       } else {
-
-        // No databases in active connection string.
         this.databases = [];
         this.input.database = null;
         this.input.options.hintOptions.tables = [];
@@ -164,28 +130,17 @@ export class CrudSqlComponent implements OnInit {
   /**
    * Invoked when active database changes.
    */
-  public databaseChanged() {
-
-    // Updating SQL hints according to selected database.
+  databaseChanged() {
     const result = {};
     const tables = this.databaseDeclaration.databases.filter((x: Database) => x.name === this.input.database)[0].tables;
     for (const idxTable of tables) {
       result[idxTable.name] = idxTable.columns?.map((x: any) => x.name) || [];
     }
     this.input.options.hintOptions.tables = result;
-
-    // Making sure parent clears it dynamic container in case it's already got another container.
     this.messageService.sendMessage({
       name: Messages.CLEAR_COMPONENTS,
     });
-
-    // Creating our component.
     const componentFactory = this.resolver.resolveComponentFactory(CrudSqlExtraComponent);
-
-    /*
-     * Signaling listener, passing in component as data, which will dynamically inject our
-     * newly created component into the "additional information werapper".
-     */
     this.messageService.sendMessage({
       name: Messages.INJECT_COMPONENT,
       content: {
@@ -202,7 +157,7 @@ export class CrudSqlComponent implements OnInit {
    * 
    * @param db Database name
    */
-   public getDatabaseCssClass(db: string) {
+   getDatabaseCssClass(db: string) {
     switch (this.input.databaseType) {
       case 'mysql':
         switch (db) {
@@ -239,24 +194,21 @@ export class CrudSqlComponent implements OnInit {
   }
 
   /*
+   * Private helpermethods.
+   */
+
+  /*
    * Returns all connection strings for database type from backend.
    */
   private getConnectionStrings(databaseType: string, onAfter: (connectionStrings: string[]) => void) {
-
-    // Retrieving connection strings for default database type from backend.
     this.sqlService.connectionStrings(databaseType).subscribe((connectionStrings: any) => {
-
-      // Checking if caller supplied a callback, and if so, invoking it.
       if (onAfter) {
-
-        // Transforming backend's result to a list of strings.
         const tmp: string[] = [];
         for (var idx in connectionStrings) {
           tmp.push(idx);
         }
         onAfter(tmp);
       }
-
     }, (error: any) => this.handleError(error));
   }
 
@@ -265,14 +217,8 @@ export class CrudSqlComponent implements OnInit {
    * combination from backend.
    */
   private getDatabases(databaseType: string, connectionString: string, onAfter: (databases: Databases) => void) {
-
-    // Retrieving databases that exists for database-type/connection-string combination in backend.
     this.sqlService.getDatabaseMetaInfo(databaseType, connectionString).subscribe((databases: Databases) => {
-
-      // Checking if caller supplied a callback, and if so invoking it.
       if (onAfter) {
-
-        // Invoking callback.
         onAfter(databases);
       }
     }, (error: any) => this.handleError(error));
@@ -282,13 +228,9 @@ export class CrudSqlComponent implements OnInit {
    * Invoked when an error occurs for some reasons.
    */
   private handleError(error: any) {
-
-    // Nullifying all relevant models.
     this.input.connectionString = null;
     this.input.database = null;
     this.input.options.hintOptions.tables = [];
-
-    // Notifying user
     this.feedbackService.showError(error);
   }
 }

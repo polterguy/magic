@@ -29,18 +29,14 @@ export class CrudifierSetDefaultsComponent {
   /**
    * Invoked when user wants to apply his settings to all tables in currently selected database.
    */
-  public apply() {
-
-    // Closing dialog signalling to caller he needs to update his defaults.
+  apply() {
     this.dialogRef.close(this.data);
   }
 
   /**
    * Invoked when user wants to close dialog WITHOUT applying default settings.
    */
-  public close() {
-
-    // Closing dialog without sending in data.
+  close() {
     this.dialogRef.close();
   }
 }

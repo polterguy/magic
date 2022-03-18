@@ -4,9 +4,7 @@
   <h3 *ngIf="custom">Arguments</h3>
 
   <div *ngIf="custom" class="custom-arguments">
-
     <div *ngFor="let idxCustom of custom | dynamic" class="custom-argument">
-
       <mat-form-field
         *ngIf="idxCustom.value.length > 0"
         appearance="outline"
@@ -18,9 +16,7 @@
             [value]="idxOption.value">{{idxOption.name}}</mat-option>
         </mat-select>
       </mat-form-field>
-
     </div>
-
   </div>
 
   <h3>Modules</h3>
@@ -35,8 +31,7 @@
         (click)="moduleClicked(idx)">
         {{idx}}
         <mat-icon
-          *ngIf="moduleSelected(idx)"
-          matChipRemove>check</mat-icon>
+          *ngIf="moduleSelected(idx)">check</mat-icon>
       </mat-chip>
     </mat-chip-list>
 
@@ -50,8 +45,7 @@
         (click)="componentClicked(idx)">
         {{idx}}
         <mat-icon
-          *ngIf="componentSelected(idx)"
-          matChipRemove>check</mat-icon>
+          *ngIf="componentSelected(idx)">check</mat-icon>
       </mat-chip>
     </mat-chip-list>
 
@@ -108,11 +102,11 @@
 
 <div *ngIf="endpoints && endpoints.length === 0">
 
-  
   <div class="d-flex justify-content-between align-items-center w-100 mt-3">
     <h3 class="my-0">No modules</h3>
     <mat-icon class="warning">report_problem</mat-icon>
   </div>
+
   <p class="mt-3">
     You don't have any modules, please generate a CRUD backend first.
   </p>

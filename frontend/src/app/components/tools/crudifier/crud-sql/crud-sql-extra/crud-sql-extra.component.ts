@@ -10,8 +10,8 @@ import { MatDialog } from '@angular/material/dialog';
 // Application specific imports.
 import { CrudifyService } from '../../services/crudify.service';
 import { MessageService } from 'src/app/services/message.service';
-import { Argument } from '../../../../analytics/endpoints/models/argument.model';
 import { FeedbackService } from 'src/app/services/feedback.service';
+import { Argument } from '../../../../analytics/endpoints/models/argument.model';
 import { Model } from '../../../../codemirror/codemirror-sql/codemirror-sql.component';
 import { CrudSqlAddArgumentDialogComponent } from './crud-sql-add-argument-dialog/crud-sql-add-argument-dialog.component';
 
@@ -27,7 +27,7 @@ export class CrudSqlExtraComponent implements OnInit {
   /**
    * Verbs user can select from.
    */
-  public verbs: string[] = [
+  verbs: string[] = [
     'post',
     'get',
     'put',
@@ -38,47 +38,42 @@ export class CrudSqlExtraComponent implements OnInit {
   /**
    * Currently selected verb.
    */
-  public verb: string;
+  verb: string;
 
   /**
    * Module name that becomes its second last relative URL.
    */
-  public moduleName: string;
+  moduleName: string;
 
   /**
    * Endpoint name that becomes its very last relative URL.
    */
-  public endpointName = '';
+  endpointName = '';
 
   /**
    * Comma separated list of roles allowed to invoke endpoint.
    */
-  public authorization = 'root, admin';
+  authorization = 'root, admin';
 
   /**
    * Whether or not endpoint returns a list of items or a single item.
    */
-  public isScalar = false;
+  isScalar = false;
 
   /**
    * Whether or not existing endpoints should be overwritten or not.
    */
-  public overwrite = false;
+  overwrite = false;
 
   /**
    * List of arguments endpoint can handle.
    */
-  public arguments: Argument[] = [];
+  arguments: Argument[] = [];
 
   /**
    * Input SQL component model and options.
    */
-  public input: Model = null;
-
-  /**
-   * Missing variable to be identified -- used in the html file
-   */
-  public isList;
+  input: Model = null;
 
   /**
    * Creates an instance of your component.
@@ -97,15 +92,9 @@ export class CrudSqlExtraComponent implements OnInit {
   /**
    * Implementation of OnInit.
    */
-  public ngOnInit() {
-
-    // Defaulting verb to GET.
+  ngOnInit() {
     this.verb = this.verbs.filter(x => x === 'get')[0];
-
-    // Turning off auto focus.
     this.input.options.autofocus = false;
-
-    // Defaulting primary URL to database name.
     this.moduleName = this.input.database;
     this.endpointName = 'custom-sql';
   }
@@ -113,16 +102,14 @@ export class CrudSqlExtraComponent implements OnInit {
   /**
    * Returns true if endpoint name and module name is valid.
    */
-  public validModuleComponentName() {
+  validModuleComponentName() {
     return /^[a-z0-9_-]+$/.test(this.endpointName) && /^[a-z0-9_-]+$/.test(this.moduleName);
   }
 
   /**
    * Generates your SQL endpoint.
    */
-  public generate() {
-
-    // Invoking backend through service instance.
+  generate() {
     this.crudifyService.generateSqlEndpoint({
       databaseType: this.input.databaseType,
       database: this.input.database,
@@ -134,43 +121,27 @@ export class CrudSqlExtraComponent implements OnInit {
       arguments: this.getArguments(),
       overwrite: this.overwrite,
       isList: !this.isScalar}).subscribe(() => {
-
-        // Providing feedback to user.
         this.feedbackService.showInfo('SQL endpoint successfully created');
-
-        // Publishing message to subscribers that '/modules/' folder changed.
         this.messageService.sendMessage({
           name: 'magic.folders.update',
           content: '/modules/'
         });
-
     }, (error: any) => this.feedbackService.showError(error));
   }
 
   /**
    * Invoked when user wants to add an argument to argument declaration of endpoint.
    */
-  public addArgument() {
-
-    // Creating modal dialogue that asks user what name and type he wants to use for his argument.
+  addArgument() {
     const dialogRef = this.dialog.open(CrudSqlAddArgumentDialogComponent, {
       width: '350px',
     });
-
     dialogRef.afterClosed().subscribe((argument: Argument) => {
-
-      // Checking if modal dialog wants to jail the user.
       if (argument) {
-
-        // Checking if argument already exists.
         if (this.arguments.filter(x => x.name === argument.name).length > 0) {
-
-          // Oops, argument already declared.
           this.feedbackService.showError('Argument already exists');
           return;
         }
-
-        // Adding argument to argument declaration.
         this.arguments.push(argument);
       }
     });
@@ -182,9 +153,7 @@ export class CrudSqlExtraComponent implements OnInit {
    * 
    * @param argument Argument to remove
    */
-  public removeArgument(argument: Argument) {
-
-    // Removing argument from collection.
+  removeArgument(argument: Argument) {
     this.arguments.splice(this.arguments.indexOf(argument), 1);
   }
 
@@ -196,8 +165,6 @@ export class CrudSqlExtraComponent implements OnInit {
    * Returns the string (Hyperlambda) representation of declared arguments.
    */
   private getArguments() {
-
-    // Transforming list of arguments to Hyperlambda declaration.
     return this.arguments.map(x => x.name + ':' + x.type).join('\r\n');
   }
 }
