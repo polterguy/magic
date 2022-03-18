@@ -8,9 +8,9 @@ import { throwError } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
-import { FileService } from 'src/app/services/tools/file.service';
 import { Response } from '../../../../models/response.model';
 import { HttpService } from '../../../../services/http.service';
+import { FileService } from 'src/app/services/tools/file.service';
 
 /**
  * Hyperlambda evaluator service allowing you to evaluate Hyperlambda in
@@ -36,9 +36,7 @@ export class EvaluatorService {
    * 
    * @param hyperlambda Hyperlambda to evaluate
    */
-  public execute(hyperlambda: string) {
-
-    // Invoking backend and returning observable to caller.
+  execute(hyperlambda: string) {
     return this.httpService.post<Response>('/magic/system/evaluator/evaluate', {
       hyperlambda
     });
@@ -47,7 +45,7 @@ export class EvaluatorService {
   /**
    * Returns a list of all Hyperlambda snippets the backend has stored.
    */
-  public snippets() {
+  snippets() {
     return this.fileService.listFiles('/etc/snippets/');
   }
 
@@ -56,20 +54,14 @@ export class EvaluatorService {
    * 
    * @param filename Filename (only, no extension or folder) of snippet to load
    */
-  public loadSnippet(filename: string) {
-
-    // Sanity checking invocation.
+  loadSnippet(filename: string) {
     if (filename.indexOf('/') !== -1) {
-      throw throwError('Please provide me with only the filename, and not the folder');
+      return throwError(() => new Error('Not a valid filename'));
     }
-
-    // Making sure we use the correct folder.
     filename = '/etc/snippets/' + filename;
     if (!filename.endsWith('.hl')) {
       filename += '.hl';
     }
-
-    // Returning result of invocation to file service.
     return this.fileService.loadFile(filename);
   }
 
@@ -79,20 +71,14 @@ export class EvaluatorService {
    * @param filename Filename to save snippet as. Notice, assumes we're only given the filename, and not the entire path. The service is responsible for prepending the folder.
    * @param content Content of snippet
    */
-  public saveSnippet(filename: string, content: string) {
-
-    // Sanity checking invocation.
+  saveSnippet(filename: string, content: string) {
     if (filename.indexOf('/') !== -1) {
-      throw throwError('Please provide me with only the filename, and not the folder');
+      return throwError(() => new Error('Not a valid filename'));
     }
-
-    // Making sure we put our file into the correct folder.
     filename = '/etc/snippets/' + filename;
     if (!filename.endsWith('.hl')) {
       filename += '.hl';
     }
-
-    // Returning result of invocation to file service.
     return this.fileService.saveFile(filename, content);
   }
 }

@@ -13,36 +13,31 @@ import { Message } from 'src/app/models/message.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { MessageService } from 'src/app/services/message.service';
 import { FileService } from 'src/app/services/tools/file.service';
+import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { GenerateCrudAppComponent } from '../../generate-crud-app/generate-crud-app.component';
-import { BackendService } from 'src/app/services/backend.service';
 
 /**
  * General action button component for executing general actions in Hyper IDE.
  */
 @Component({
   selector: 'app-general-actions',
-  templateUrl: './general-actions.component.html',
-  styleUrls: ['./general-actions.component.scss']
+  templateUrl: './general-actions.component.html'
 })
 export class GeneralActionsComponent implements OnInit, OnDestroy {
+
+  // Needed to be kept around such that we can explicitly close it after having CRUDified some database/table.
+  private generateCrudDialog: MatDialogRef<GenerateCrudAppComponent> = null;
+
+  // Subscription allowing us to subscribe to messages relevant for component.
+  private subscription: Subscription;
 
   @Output() updateFiles: EventEmitter<any> = new EventEmitter();
 
   /**
    * Model for file uploader.
    */
-  public zipFileInput: any;
-
-  /**
-   * Needed to be kept around such that we can explicitly close it after having CRUDified some database/table.
-   */
-  private generateCrudDialog: MatDialogRef<GenerateCrudAppComponent> = null;
-
-  /*
-   * Subscription allowing us to subscribe to messages relevant for component.
-   */
-  private subscription: Subscription;
+  zipFileInput: any;
 
   /**
    * Creates an instance of your component.
@@ -50,52 +45,31 @@ export class GeneralActionsComponent implements OnInit, OnDestroy {
    * @param dialog Needed to create modal dialogs
    * @param authService Needed to verify access to components
    * @param fileService Needed to load and save files.
+   * @param backendService Needed to determine user's access rights in backend
    * @param messageService Needed to subscribe to relevant messages published by other components
    * @param feedbackService Needed to display feedback to user
    * @param ngZone Needed to make sure dialogs popup inside the ngZone
    */
-   constructor(
+  constructor(
     private dialog: MatDialog,
     public authService: AuthService,
     private fileService: FileService,
     public backendService: BackendService,
     private messageService: MessageService,
     private feedbackService: FeedbackService,
-    readonly ngZone: NgZone
-  ) { }
+    readonly ngZone: NgZone) { }
 
   /**
    * Implementation of OnInit
    */
-  public ngOnInit() {
-
-    /*
-     * Subscribing to relevant messages.
-     * Notice, this is necessary to make sure we're able to close modal Crudifier dialog
-     * once the user performs some sort of "crudify action".
-     */
+  ngOnInit() {
     this.subscription = this.messageService.subscriber().subscribe((msg: Message) => {
-
-      if (msg.name === 'magic.folders.update') {
-
-        // Closing dialog if it is open.
-        if (this.generateCrudDialog) {
-          this.generateCrudDialog.close();
-        }
-
-      } else if (msg.name === 'magic.crudifier.frontend-generated-locally') {
-
-        // Closing dialog if it is open.
-        if (this.generateCrudDialog) {
-          this.generateCrudDialog.close();
-        }
-
-      } else if (msg.name === 'magic.crudifier.frontend-generated') {
-
-        // Closing dialog if it is open.
-        if (this.generateCrudDialog) {
-          this.generateCrudDialog.close();
-        }
+      switch (msg.name) {
+        case 'magic.folders.update':
+        case 'magic.crudifier.frontend-generated-locally':
+        case 'magic.crudifier.frontend-generated':
+          this.generateCrudDialog?.close();
+          break;
       }
     });
   }
@@ -103,29 +77,20 @@ export class GeneralActionsComponent implements OnInit, OnDestroy {
   /**
    * Implementation of OnDestroy.
    */
-   public ngOnDestroy() {
-
-    // Making sure we unsubscribe to our subscription.
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
+  ngOnDestroy() {
+    this.subscription?.unsubscribe();
   }
 
   /**
    * Invoked when user wants to generate a CRUD app.
    */
-   public generateCrudApp() {
-
-    // Opening modal dialog allowing user to generate a CRUD app.
-    // using ngZone to prevent the dialog from opening outside of the ngZone!
+  generateCrudApp() {
     this.ngZone.run(() => {
       this.generateCrudDialog = this.dialog.open(GenerateCrudAppComponent, {
         width: '80%',
         disableClose: true
       });
-    })
-
-    // Making sure we can still close the dialog when the obscurer is clicked.
+    });
     this.generateCrudDialog.backdropClick().subscribe(() => {
       this.generateCrudDialog.close();
     });
@@ -136,13 +101,9 @@ export class GeneralActionsComponent implements OnInit, OnDestroy {
    * 
    * @param file Zip file to upload and install
    */
-   public installModule(file: FileList) {
-
-    // Sanity checking that file is a zip file.
+  installModule(file: FileList) {
     if (file[0].name.split('.')[1] === 'zip') {
       this.fileService.installModule(file.item(0)).subscribe(() => {
-        
-        // Showing some feedback to user, and re-databinding folder's content.
         this.feedbackService.showInfo('File was successfully uploaded');
         this.zipFileInput = null;
         this.updateFiles.emit('/modules/');

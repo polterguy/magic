@@ -31,49 +31,43 @@ export class RenameFileDialogComponent {
    * Need to keep track of original filename to disable rename button
    * unless it's been changed.
    */
-  public originalName: string;
+  originalName: string;
 
   /**
    * Creates an instance of your component.
    * 
+   * @param dialogRef Needed to be able to close dialog
    * @param data Name of file you want to rename
    */
   constructor(
     public dialogRef: MatDialogRef<RenameFileDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: FileObjectName) {
-      this.originalName = data.name;
-    }
+    this.originalName = data.name;
+  }
 
   /**
    * Invoked when user wants to close dialog and rename file.
    */
-   public ok() {
-
-    // Closing dialog.
+  ok() {
     this.dialogRef.close(this.data);
   }
 
   /**
    * Invoked when user wants to close dialog without renaming file.
    */
-  public cancel() {
-
-    // Closing dialog.
+  cancel() {
     this.dialogRef.close();
   }
 
   /**
+   * Returns true if path is valid.
    * 
-   * @returns validating the inserted name
+   * @returns True if path is valid
    */
-  public pathValid(){
-
-    // Verifying user has typed a name at all.
+  pathValid() {
     if (!this.data.name || this.data.name.length === 0) {
       return false;
     }
-
-    // Verifying path doesn't contain invalid characters.
     for (const idx of this.data.name) {
       if ('abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_-.'.indexOf(idx.toLowerCase()) === -1) {
         return false;

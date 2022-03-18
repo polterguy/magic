@@ -41,17 +41,17 @@ export class FileObject {
   /**
    * All existing folders in system.
    */
-   folders: string[];
+  folders: string[];
   
   /**
    * All existing files in system.
    */
-   files: string[];
+  files: string[];
 
    /**
     * Type of the dialog
     */
-   type: string;
+  type: string;
 }
 
 /**
@@ -67,17 +67,17 @@ export class NewFileFolderDialogComponent implements OnInit {
   /**
    * Templates user can create file from.
    */
-  public templates: Template[] = [];
+  templates: Template[] = [];
 
   /**
    * Which template user has currently selected.
    */
-  public activeTemplate: Template = null;
+  activeTemplate: Template = null;
 
   /**
    * Whether or not we should attempt to intelligently filter templates or not.
    */
-  public filterTemplates: boolean = true;
+  filterTemplates: boolean = true;
 
   /**
    * Element wrapping name input.
@@ -99,12 +99,9 @@ export class NewFileFolderDialogComponent implements OnInit {
   /**
    * Implementation of OnInit.
    */
-  public ngOnInit() {
+  ngOnInit() {
     this.data.isFolder = this.data.type === 'folder';
-    // Invoking backend to retrieve templates.
     this.fileService.listFiles('/misc/ide/templates/').subscribe((result: string[]) => {
-
-      // Assigning result to model.
       this.templates = result.map(x => {
         return {
           name: x,
@@ -118,27 +115,19 @@ export class NewFileFolderDialogComponent implements OnInit {
    * 
    * @param path Full path of file we should return filename for
    */
-  public getFileName(path: string) {
-    return path.substr(path.lastIndexOf('/') + 1);
+  getFileName(path: string) {
+    return path.substring(path.lastIndexOf('/') + 1);
   }
 
   /**
    * Returns the relevant templates according to which folder is currently active.
    */
-  public getTemplates() {
-
-    // Checking if intelligent filtering is turned on.
+  getTemplates() {
     if (!this.filterTemplates) {
-
-      // No filtering of templates should be performed.
       return this.templates;
     }
-
-    // Handling special cases filtering out irrelevant templates.
     switch (this.data.path) {
-
-      // Default result.
-      default:
+      default: // TODO: Wut ...??
 
         /*
          * Figuring out which files we can legally create here.
@@ -162,8 +151,6 @@ export class NewFileFolderDialogComponent implements OnInit {
           splits[1] === 'modules' &&
           splits.filter(x => x.indexOf('.') !== -1).length === 0;
         if (canCreateHttpEndpoint) {
-
-          // Concatenating all HTTP endpoint types of Hyperlambda files.
           result = result.concat(
             this.templates.filter(x =>
               x.name.endsWith('.delete.hl') ||
@@ -217,49 +204,30 @@ export class NewFileFolderDialogComponent implements OnInit {
   /**
    * Invoked when selected template is changed.
    */
-  public templateChanged() {
-
-    // Invoking backend to retrieve file's content.
+  templateChanged() {
     this.fileService.loadFile(this.activeTemplate.name).subscribe((result: string) => {
-
-      // Assigning model.
       this.data.template = result;
       this.data.name = this.activeTemplate.name.substr(this.activeTemplate.name.lastIndexOf('/') + 1);
-
-      // For simplicity reasons we assign focus to file name input.
       this.fileName.nativeElement.focus();
-
     }, (error: any) => this.feedbackService.showError(error));
   }
 
   /**
    * Returns true if the filename is valid, otherwise false.
    */
-  public pathValid() {
-
-    // Verifying user has typed a path at all.
+  pathValid() {
     if (!this.data.name || this.data.name.length === 0) {
       return false;
     }
-
-    // Verifying path doesn't contain invalid characters.
     for (const idx of this.data.name) {
       if ('abcdefghijklmnopqrstuvwxyz0123456789_-.'.indexOf(idx.toLowerCase()) === -1) {
         return false;
       }
     }
-
-    // Making sure no other file/folder already exists with the same name.
     if (this.data.isFolder) {
-
-      // Verifying folder doesn't exist from before.
       return this.data.folders.filter(x => x.toLowerCase() === this.data.path + this.data.name.toLowerCase() + '/').length === 0;
-
     } else {
-
-      // Verifying file doesn't exist from before.
       return this.data.files.filter(x => x.toLowerCase() === this.data.path + this.data.name.toLowerCase()).length === 0;
-
     }
   }
 }

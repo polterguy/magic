@@ -2,13 +2,11 @@
 <div mat-dialog-title class="mat-dialog-title">
 
   <mat-form-field class="fill-width no-padding" appearance="outline">
-
     <mat-label class="dark">Filter</mat-label>
     <input
       matInput
       [(ngModel)]="filter"
       autocomplete="off">
-
   </mat-form-field>
 
 </div>
@@ -19,13 +17,4 @@
       {{getFilename(idx)}}
     </mat-list-option>
   </mat-selection-list>
-  <!-- <ul class="file-list">
-    <li *ngFor="let idx of getFiles()">
-      <button
-        mat-button
-        (click)="select(idx)">
-      </button>
-    </li>
-  </ul> -->
-
 </div>

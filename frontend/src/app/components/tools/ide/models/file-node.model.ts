@@ -11,25 +11,25 @@ export class FileNode {
   /**
    * Name of file.
    */
-  public name: string;
+  name: string;
 
   /**
    * Full path and name of file.
    */
-  public path: string;
+  path: string;
 
   /**
    * Folder where file exists.
    */
-  public folder: string;
+  folder: string;
 
   /**
    * Content of file.
    */
-  public content: string;
+  content: string;
 
   /**
    * CodeMirror options for file type.
    */
-  public options: any;
+  options: any;
 }

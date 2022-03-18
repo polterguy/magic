@@ -4,8 +4,8 @@
  */
 
 // Angular and system imports.
-import { MatDialogRef } from '@angular/material/dialog';
 import { Component, OnInit } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 
 // Application specific imports.
 import { FeedbackService } from '../../../../services/feedback.service';
@@ -24,18 +24,19 @@ export class LoadSnippetDialogComponent implements OnInit {
   /**
    * Snippet files as returned from backend.
    */
-  public files: string[] = [];
+  files: string[] = [];
 
   /**
    * Filter for filtering files to display.
    */
-  public filter: string = '';
+  filter: string = '';
 
   /**
    * Creates an instance of your login dialog.
    * 
    * @param dialogRef Necessary to close dialog when user selects a snippet
    * @param evaluatorService Evaluator service needed to retrieve snippet files from backend
+   * @param feedbackService Needed to display feedback to user
    */
   constructor(
     private dialogRef: MatDialogRef<LoadSnippetDialogComponent>,
@@ -45,9 +46,7 @@ export class LoadSnippetDialogComponent implements OnInit {
   /**
    * OnInit implementation.
    */
-  public ngOnInit() {
-
-    // Retrieving snippets from backend.
+  ngOnInit() {
     this.evaluatorService.snippets().subscribe((files: string[]) => {
       this.files = files.filter(x => x.endsWith('.hl'));
     }, (error: any) => this.feedbackService.showError(error));
@@ -56,7 +55,7 @@ export class LoadSnippetDialogComponent implements OnInit {
   /**
    * Returns files that matches current filter, if any.
    */
-  public getFiles() {
+  getFiles() {
     if (this.filter === '') {
       return this.files;
     } else {
@@ -69,7 +68,7 @@ export class LoadSnippetDialogComponent implements OnInit {
    * 
    * @param path Complete path of file
    */
-  public getFilename(path: string) {
+  getFilename(path: string) {
     const result = path.substr(path.lastIndexOf('/') + 1);
     return result.substr(0, result.lastIndexOf('.'));
   }
@@ -77,7 +76,7 @@ export class LoadSnippetDialogComponent implements OnInit {
   /**
    * Invoked when user selects a file.
    */
-  public select(filename: string) {
+  select(filename: string) {
     this.dialogRef.close(this.getFilename(filename));
   }
 }

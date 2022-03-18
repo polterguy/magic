@@ -34,7 +34,7 @@ export class SelectMacroDialogComponent implements OnInit {
   /**
    * All available macros from backend.
    */
-  public macros: string[] = [];
+  macros: string[] = [];
 
   /**
    * Creates an instance of your component.
@@ -51,12 +51,8 @@ export class SelectMacroDialogComponent implements OnInit {
   /**
    * Implementation of OnInit.
    */
-  public ngOnInit() {
-
-    // Retrieving all macro files from the backend.
+  ngOnInit() {
     this.fileService.listFiles('/misc/ide/macros/', '.hl').subscribe((result: string[]) => {
-
-      // Assigning result to model.
       this.macros = result;
     });
   }
@@ -66,9 +62,7 @@ export class SelectMacroDialogComponent implements OnInit {
    * 
    * @param macro Full path of macro
    */
-  public getMacroName(macro: string) {
-
-    // Trying to display something resembling a friendly name.
+  getMacroName(macro: string) {
     let result = macro.substr(macro.lastIndexOf('/') + 1);
     result = result.substr(0, result.lastIndexOf('.'));
     while (true) {
@@ -85,9 +79,7 @@ export class SelectMacroDialogComponent implements OnInit {
    * 
    * @param macro Macro that was selected
    */
-  public selectMacro(macro: string) {
-
-    // Assigning model and closing dialog.
+  selectMacro(macro: string) {
     this.data.name = macro;
     this.dialogRef.close(this.data);
   }
@@ -95,9 +87,7 @@ export class SelectMacroDialogComponent implements OnInit {
   /**
    * Invoked when user wants to close dialog without selecting a macro.
    */
-  public cancel() {
-
-    // Closing dialog without an data associated with selection operation.
+  cancel() {
     this.dialogRef.close();
   }
 }

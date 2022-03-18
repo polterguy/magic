@@ -31,10 +31,10 @@ export class MacroArgument {
   /**
    * Value of argument.
    */
-   value?: any;
+  value?: any;
   
   /**
    * Default value of argument.
    */
-   default?: any;
+  default?: any;
 }

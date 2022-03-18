@@ -1,12 +1,21 @@
-import { Component, Inject, OnInit } from '@angular/core';
+
+/*
+ * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
+ */
+
+// Angular and system imports.
+import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
+/**
+ * Modal dialog asking user what he or she wants to do with an incompatible file, that
+ * Hyper IDE does not have a registered editor for.
+ */
 @Component({
   selector: 'app-incompatible-file-dialog',
-  templateUrl: './incompatible-file-dialog.component.html',
-  styleUrls: ['./incompatible-file-dialog.component.scss']
+  templateUrl: './incompatible-file-dialog.component.html'
 })
-export class IncompatibleFileDialogComponent implements OnInit {
+export class IncompatibleFileDialogComponent {
 
    /**
    * Creates an instance of your component.
@@ -14,9 +23,4 @@ export class IncompatibleFileDialogComponent implements OnInit {
    * @param data File object type and name
    */
   constructor(@Inject(MAT_DIALOG_DATA) public data: any) { }
-
-  ngOnInit(): void {
-    
-  }
-
 }
