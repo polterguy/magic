@@ -125,7 +125,7 @@ export class ToolbarComponent implements OnInit {
     // Removing schema and port from URL.
     let url = this.backendService.active.url.replace('http://', '').replace('https://', '');
     if (url.indexOf(':') !== -1) {
-      url = url.substr(0, url.indexOf(':'));
+      url = url.substring(0, url.indexOf(':'));
     }
 
     // Checking if user is authenticated.

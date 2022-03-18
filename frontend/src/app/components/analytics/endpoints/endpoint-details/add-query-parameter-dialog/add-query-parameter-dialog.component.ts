@@ -77,7 +77,7 @@ export class AddQueryParameterDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data: ArgumentModel) {
 
     if (data.argument.name === 'order' && data.argument.type === 'string') {
-      this.orders = this.data.all.filter(x => x.name.endsWith('.eq')).map(x => x.name.substr(0, x.name.length - 3));
+      this.orders = this.data.all.filter(x => x.name.endsWith('.eq')).map(x => x.name.substring(0, x.name.length - 3));
       this.value = this.data.old ?? '';
     } else if (data.argument.name === 'direction' && data.argument.type === 'string') {
       this.value = this.data.old ?

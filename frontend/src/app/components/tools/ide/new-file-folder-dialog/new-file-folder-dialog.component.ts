@@ -207,7 +207,7 @@ export class NewFileFolderDialogComponent implements OnInit {
   templateChanged() {
     this.fileService.loadFile(this.activeTemplate.name).subscribe((result: string) => {
       this.data.template = result;
-      this.data.name = this.activeTemplate.name.substr(this.activeTemplate.name.lastIndexOf('/') + 1);
+      this.data.name = this.activeTemplate.name.substring(this.activeTemplate.name.lastIndexOf('/') + 1);
       this.fileName.nativeElement.focus();
     }, (error: any) => this.feedbackService.showError(error));
   }
