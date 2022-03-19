@@ -27,11 +27,17 @@ import { AuthenticateResponse } from '../components/management/auth/models/authe
 export class BackendService {
 
   private _authenticated = new BehaviorSubject<boolean>(undefined);
+  private _activeChanged = new BehaviorSubject<Backend>(undefined);
 
   /**
    * To allow consumers to subscribe to authentication status changes.
    */
   authenticatedChanged = this._authenticated.asObservable();
+
+  /**
+   * To allow consumers to subscribe to active backend changed events.
+   */
+  activeChanged = this._activeChanged.asObservable();
 
   /**
    * Creates an instance of your service.
@@ -42,19 +48,21 @@ export class BackendService {
   constructor(
     private httpClient: HttpClient,
     private backendsStorageService: BackendsStorageService) {
+
+    // Making sure we create refresh token timers for all backends and retrieve endpoints for active backend.
     if (this.backendsStorageService.backends.length > 0) {
       for (const idx of this.backendsStorageService.backends.filter(x => x.token)) {
         this.ensureRefreshJWTTokenTimer(idx);
       }
-      this.getEndpoints();
+      this.getEndpoints(this.active);
     }
   }
 
   /**
-   * Returns the currently used backend.
+   * Returns the currently active backend.
    */
   get active() {
-    return this.backendsStorageService.backends.length === 0 ? null : this.backendsStorageService.backends[0];
+    return this.backendsStorageService.active;
   }
 
   /**
@@ -65,49 +73,56 @@ export class BackendService {
   }
 
   /**
-   * Sets the currently selected backend.
+   * Upserts a new backend and activates it.
+   * 
+   * @param value Backend to upsert and activate
+   * @returns True if active backend was changed
    */
   upsertAndActivate(value: Backend) {
-    if (this.backendsStorageService.setActive(value)) {
-      this.getEndpoints();
+    const hasChanged = value.url !== this.active?.url;
+    const wasAuthenticated = !!this.active?.token;
+    if (this.backendsStorageService.upsertAndActivate(value)) {
+      this.getEndpoints(value);
     }
-    this.backendsStorageService.persistBackends();
-    this.ensureRefreshJWTTokenTimer(this.active);
-    this.active.createAccessRights();
-    this._authenticated.next(value.token ? true : false);
+    this.ensureRefreshJWTTokenTimer(value);
+    if (hasChanged) {
+      this._activeChanged.next(this.active);
+    }
+    const isAuthenticated = !!this.active.token;
+    if (wasAuthenticated !== isAuthenticated) {
+      this._authenticated.next(isAuthenticated);
+    }
+    return hasChanged;
   }
 
   /**
    * Removes specified backend from local storage and if it is the current 
    * backend changes the backend to the next available backend.
    * 
-   * @param backend Backend to remove
+   * @param value Backend to remove
+   * @returns True if active backend was changed
    */
-  remove(backend: Backend) {
-
-    // Ensuring we destroy refresh token timer if existing.
-    if (backend.refreshTimer) {
-      clearTimeout(backend.refreshTimer);
-      backend.refreshTimer = null;
+  remove(value: Backend) {
+    if (this.backendsStorageService.backends.filter(x => x.url === value.url).length === 0) {
+      throw 'No such backend';
     }
-
-    // We need to track current backend such that we can return to caller whether or not refreshing UI is required.
-    const cur = this.active;
-    this.backendsStorageService.backends = this.backendsStorageService.backends.filter(x => x.url !== backend.url);
-
-    /*
-     * Persisting all backends to local storage object,
-     * and updating the currently selected backend.
-     */
-    this.backendsStorageService.persistBackends();
-    return cur.url === backend.url;
+    const wasAuthenticated = !!this.active.token;
+    if (this.backendsStorageService.remove(value)) {
+      this._activeChanged.next(this.active);
+      const isAuthenticated = !!this.active?.token;
+      if (wasAuthenticated !== isAuthenticated) {
+        this._authenticated.next(isAuthenticated);
+      }
+      return true;
+    }
+    return false;
   }
 
   /**
    * Fetches endpoints for current backend again.
    */
   refetchEndpoints() {
-    this.getEndpoints();    
+    this.getEndpoints(this.active);
   }
 
   /*
@@ -119,40 +134,40 @@ export class BackendService {
    */
   private ensureRefreshJWTTokenTimer(backend: Backend) {
 
-    // Checking if we've already got a timer function, and if so deleting it.
     if (backend.refreshTimer) {
       clearTimeout(backend.refreshTimer);
       backend.refreshTimer = null;
     }
 
-    // Ensuring we've got a token, and if not we don't create the timer.
     if (!backend.token) {
       return;
     }
 
     if (backend.token.exp) {
-
-      // Token has "exp" declaration, implying it'll expire at some point.
       if (backend.token.expired) {
-
-        // Token has already expired, hence deleting token and persisting backends.
-        backend.token = null;
-        this.backendsStorageService.persistBackends();
-        backend.createAccessRights();
-        this._authenticated.next(false);
-
+        this.logoutFromBackend(backend);
       } else if (backend.token.expires_in < 60) {
-
-        // Less than 60 minutes to expiration, hence refreshing immediately.
         this.refreshJWTToken(backend);
-
       } else {
-
-        // Creating a timer that kicks in 60 seconds before token expires where we refresh JWT token.
         setTimeout(() => {
           this.refreshJWTToken(backend);
         }, (backend.token.expires_in - 60) * 1000);
       }
+    }
+  }
+
+  /*
+   * Logs out from the specified backend.
+   */
+  private logoutFromBackend(backend: Backend) {
+    if(!backend.token) {
+      return; // No change
+    }
+    backend.token = null;
+    this.backendsStorageService.persistBackends();
+    backend.createAccessRights();
+    if (this.active === backend) {
+      this._authenticated.next(false);
     }
   }
 
@@ -174,14 +189,7 @@ export class BackendService {
 
     // Ensuring token is still valid, and if not simply destroying it and returning early.
     if (backend.token.expired) {
-      backend.token = null;
-      this.backendsStorageService.persistBackends();
-      console.log({
-        content: 'Token for backend expired',
-        backend: backend.url,
-      });
-      backend.createAccessRights();
-      this._authenticated.next(false);
+      this.logoutFromBackend(backend);
       return;
     }
 
@@ -199,21 +207,18 @@ export class BackendService {
           this.ensureRefreshJWTTokenTimer(backend);
         },
         error: (error: any) => {
-          backend.token = null;
-          this.backendsStorageService.persistBackends();
           console.error(error);
-          backend.createAccessRights();
-          this._authenticated.next(false);
+          this.logoutFromBackend(backend);
         }});
   }
 
   /*
    * Retrieves endpoints for currently selected backend.
    */
-  private getEndpoints() {
-    this.httpClient.get<Endpoint[]>(this.active.url + '/magic/system/auth/endpoints').subscribe({
+  private getEndpoints(value: Backend) {
+    this.httpClient.get<Endpoint[]>(value.url + '/magic/system/auth/endpoints').subscribe({
       next: (res) => {
-        this.active.applyEndpoints(res || []);
+        value.applyEndpoints(res || []);
       },
       error: (error: any) => console.error(error)
     });

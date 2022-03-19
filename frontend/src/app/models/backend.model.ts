@@ -53,13 +53,8 @@ export class Backend {
     this._url = url.replace(/\s/g, '').replace(/(\/)+$/,'');
     this._username = username;
     this._password = password;
-
-    // Only adding token if it is not expired.
     if (token) {
-      const t = new Token(token);
-      if (!t.expired) {
-        this._token = t;
-      }
+      this.token = new Token(token);
     }
   }
 
@@ -102,14 +97,14 @@ export class Backend {
    * Returns token for backend.
    */
   get token() : Token {
-    return this._token;
+    return this._token?.expired ? null : this._token;
   }
 
   /**
    * Sets the token for the backend.
    */
   set token(value: Token) {
-    this._token = value;
+    this._token = value?.expired ? null : value;
   }
 
   /**
