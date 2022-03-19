@@ -41,7 +41,7 @@ export class BackendsStorageService {
   /**
    * Returns the currently used backend.
    */
-  get current() {
+  get active() {
     return this._backends.length === 0 ? null : this._backends[0];
   }
 
@@ -54,11 +54,11 @@ export class BackendsStorageService {
 
   /**
    * Sets the specified backend to the currently active backend, inserting backend if necessary.
-   * Returns true if endpoints needs to be fetched for specified backend.
    * 
    * @param value Backend to set as active
+   * @returns True if endpoints needs to be fetched for specified backend.
    */
-  setActive(value: Backend) {
+  upsertAndActivate(value: Backend) {
     let endpoints: Endpoint[] = null;
     this._backends = [value].concat(this._backends.filter(x => {
       const isSame = x.url === value.url;
@@ -75,6 +75,22 @@ export class BackendsStorageService {
     }
     this.persistBackends();
     return endpoints === null && value.endpoints === null;
+  }
+
+  /**
+   * Removes the specified backend.
+   * 
+   * @param value Backend to remove
+   */
+  remove(value: Backend) {
+    if (value.refreshTimer) {
+      clearTimeout(value.refreshTimer);
+      value.refreshTimer = null;
+    }
+    const oldActive = this.active;
+    this._backends = this._backends.filter(x => x.url !== value.url);
+    this.persistBackends();
+    return oldActive.url === value.url;
   }
 
   /**
