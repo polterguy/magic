@@ -138,6 +138,8 @@ export class BackendService {
         // Token has already expired, hence deleting token and persisting backends.
         backend.token = null;
         this.backendsStorageService.persistBackends();
+        backend.createAccessRights();
+        this._authenticated.next(false);
 
       } else if (backend.token.expires_in < 60) {
 
@@ -176,8 +178,10 @@ export class BackendService {
       this.backendsStorageService.persistBackends();
       console.log({
         content: 'Token for backend expired',
-        backend: backend.url
+        backend: backend.url,
       });
+      backend.createAccessRights();
+      this._authenticated.next(false);
       return;
     }
 
@@ -198,6 +202,8 @@ export class BackendService {
           backend.token = null;
           this.backendsStorageService.persistBackends();
           console.error(error);
+          backend.createAccessRights();
+          this._authenticated.next(false);
         }});
   }
 
