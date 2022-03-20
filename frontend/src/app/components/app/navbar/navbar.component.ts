@@ -19,12 +19,10 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 // Application specific imports.
 import { MatDialog } from '@angular/material/dialog';
 import { Backend } from 'src/app/models/backend.model';
-import { Messages } from 'src/app/models/messages.model';
 import { Response } from 'src/app/models/response.model';
 import { ThemeService } from 'src/app/services/theme.service';
 import { NavbarService } from 'src/app/services/navbar.service';
 import { BackendService } from 'src/app/services/backend.service';
-import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { RegisterService } from 'src/app/services/register.service';
 import { BazarService } from '../../../services/management/bazar.service';
@@ -54,11 +52,6 @@ export class NavbarComponent implements OnInit {
   currentYear: number = new Date().getFullYear();
 
   /**
-   * Get navbar state as an input from app component
-   */
-  @Input() sideNavStatus: boolean;
-
-  /**
    * Get the screen size
    */
   @Input() largeScreen: boolean;
@@ -69,9 +62,9 @@ export class NavbarComponent implements OnInit {
    */
   shouldUpdateCore: boolean = false;
 
-   /**
-    * Latest version of Magic as published by the Bazar.
-    */
+  /**
+   * Latest version of Magic as published by the Bazar.
+   */
   bazarVersion: string = null;
 
   /**
@@ -96,7 +89,6 @@ export class NavbarComponent implements OnInit {
   constructor(
     private activated: ActivatedRoute,
     private router: Router,
-    private messageService: MessageService,
     public backendService: BackendService,
     private dialog: MatDialog,
     private diagnosticsService: DiagnosticsService,
@@ -104,7 +96,7 @@ export class NavbarComponent implements OnInit {
     private configService: ConfigService,
     private bazarService: BazarService,
     public themeService: ThemeService,
-    private navbarService: NavbarService,
+    public navbarService: NavbarService,
     private overlayContainer: OverlayContainer,
     private clipboard: Clipboard,
     private registerService: RegisterService,
@@ -146,6 +138,9 @@ export class NavbarComponent implements OnInit {
       this.cdRef.detectChanges();
     });
     this.backendService.endpointsFetched.subscribe(() => {
+      this.cdRef.detectChanges();
+    });
+    this.navbarService.expandedChanged.subscribe(() => {
       this.cdRef.detectChanges();
     });
   }
