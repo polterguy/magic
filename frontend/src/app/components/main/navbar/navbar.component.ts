@@ -22,7 +22,7 @@ import { NavbarService } from 'src/app/services/navbar.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { ConfigService } from '../../../services/management/config.service';
-import { LoginDialogComponent } from '../login-dialog/login-dialog.component';
+import { LoginDialogComponent } from '../../utilities/login-dialog/login-dialog.component';
 
 /**
  * Navbar component wrapping main navigation in dashboard.
