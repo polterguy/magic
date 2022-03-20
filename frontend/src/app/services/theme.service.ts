@@ -6,6 +6,7 @@
 // Angular and system imports.
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { OverlayContainer } from '@angular/cdk/overlay';
 
 /**
  * Keeps track of what theme we're currently using
@@ -28,8 +29,9 @@ export class ThemeService {
   /**
    * Creates an instance of your type.
    */
-  constructor() {
-    this._theme = localStorage.getItem('theme');
+  constructor(private overlayContainer: OverlayContainer) {
+    this._theme = localStorage.getItem('theme') || 'light';
+    this.overlayContainer.getContainerElement().classList.add(this._theme);
     this._themeChanged = new BehaviorSubject<string>(this._theme);
   }
 
@@ -49,7 +51,9 @@ export class ThemeService {
       case 'light':
       case 'dark':
         localStorage.setItem('theme', value);
+        this.overlayContainer.getContainerElement().classList.remove(this._theme);
         this._theme = value;
+        this.overlayContainer.getContainerElement().classList.add(this._theme);
         this._themeChanged.next(value);
         break;
 

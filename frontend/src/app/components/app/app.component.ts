@@ -8,7 +8,6 @@ import { Router } from '@angular/router';
 import { 
   Component,
   HostListener,
-  OnDestroy,
   OnInit
 } from '@angular/core';
 
@@ -48,16 +47,6 @@ export class AppComponent implements OnInit {
       this.navbarService.expanded = false;
     }
   }
-
-  /**
-   * Backend version as returned from server if authenticated.
-   */
-  version: string = null;
-
-  /**
-   * Latest version of Magic as published by the Bazar.
-   */
-  bazarVersion: string = null;
 
   /**
    * Creates an instance of your component.

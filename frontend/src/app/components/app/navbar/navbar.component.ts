@@ -13,7 +13,6 @@ import {
 } from '@angular/core';
 import { Location } from '@angular/common'; 
 import { Clipboard } from '@angular/cdk/clipboard';
-import { OverlayContainer } from '@angular/cdk/overlay';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 
 // Application specific imports.
@@ -79,7 +78,6 @@ export class NavbarComponent implements OnInit {
    * @param configService Needed to check configuration status ofbackend
    * @param bazarService Needed to check if core has update
    * @param themeService Needed to determine which theme we're using and to allow user to change theme
-   * @param overlayContainer Needed to add/remove theme's class name from this component.
    * @param clipboard Needed to copy URL of endpoint
    * @param registerService Needed to allow anonymous users to register
    * @param cdRef Needed to mark component as having changes
@@ -96,7 +94,6 @@ export class NavbarComponent implements OnInit {
     private bazarService: BazarService,
     public themeService: ThemeService,
     public navbarService: NavbarService,
-    private overlayContainer: OverlayContainer,
     private clipboard: Clipboard,
     private registerService: RegisterService,
     private cdRef: ChangeDetectorRef,
@@ -129,7 +126,6 @@ export class NavbarComponent implements OnInit {
         this.shouldUpdateCore = false;
       }
     });
-    this.overlayContainer.getContainerElement().classList.add(this.themeService.theme);
     this.backendService.authenticatedChanged.subscribe(() => {
       this.cdRef.detectChanges();
     });
@@ -200,9 +196,7 @@ export class NavbarComponent implements OnInit {
    * Invoked when theme is changed.
    */
   themeChanged(value: string) {
-    this.overlayContainer.getContainerElement().classList.remove(this.themeService.theme);
     this.themeService.theme = value;
-    this.overlayContainer.getContainerElement().classList.add(value);
   }
 
   /**
