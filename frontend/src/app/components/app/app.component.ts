@@ -28,14 +28,7 @@ import { BackendService } from 'src/app/services/backend.service';
 })
 export class AppComponent implements OnInit {
 
-  /**
-   * Helper to determine how to show the navbar. If we're on a small screen, we show
-   * it as an expandable only visible as hamburger button is clicked. Otherwise we
-   * show it as a constant visible menu with the option of making it smaller bu clicking
-   * a button.
-   */
-  largeScreen: boolean = undefined;
-
+  // Needed to be able to figure out if we're on a small screen or not.
   @HostListener('window:resize', ['$event'])
   private onWindowResize() {
     const getScreenWidth = window.innerWidth;
@@ -44,6 +37,14 @@ export class AppComponent implements OnInit {
       this.navbarService.expanded = false;
     }
   }
+
+  /**
+   * Helper to determine how to show the navbar. If we're on a small screen, we show
+   * it as an expandable only visible as hamburger button is clicked. Otherwise we
+   * show it as a constant visible menu with the option of making it smaller bu clicking
+   * a button.
+   */
+  largeScreen: boolean;
 
   /**
    * Creates an instance of your component.

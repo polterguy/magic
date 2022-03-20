@@ -21,6 +21,7 @@ export class Backend {
   private _password: string;
   private _status: Status = null;
   private _version: string = null;
+  private _latestVersion: string = null;
   private _endpoints: Endpoint[] = [];
   private _access: AccessModel = {
     sql: {},
@@ -136,6 +137,40 @@ export class Backend {
    */
   set version(value: string) {
     this._version = value;
+  }
+
+  /**
+   * Returns the latest available version of Magic.
+   */
+  get latestVersion() : string {
+    return this._latestVersion;
+  }
+
+  /**
+   * Changes the latest available version of Magic.
+   */
+  set latestVersion(value: string) {
+    this._latestVersion = value;
+  }
+
+  /**
+   * Returns true if there exists a newer version of Magic.
+   */
+  get shouldUpdate() {
+    if (!this._version || !this._latestVersion) {
+      return false;
+    }
+    const lhs = this._version.substring(1).split('.');
+    const rhs = this._latestVersion.substring(1).split('.');
+    for (let idx = 0; idx < 3; ++idx) {
+      if (+lhs[idx] < +rhs[idx]) {
+        return true;
+      }
+      if (+lhs[idx] > +rhs[idx]) {
+        break;
+      }
+    }
+    return false;
   }
 
   /**

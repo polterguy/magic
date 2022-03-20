@@ -40,13 +40,6 @@ export class BazarService {
     private fileService: FileService) { }
 
   /**
-   * Retrieves the latest Magic core version as published by the Bazar.
-   */
-  public latestVersion() {
-    return this.httpClient.get<Response>(environment.bazarUrl + '/magic/modules/bazar/core-version');
-  }
-
-  /**
    * Retrieves the local manifests from your local installation.
    */
   public localManifests() {

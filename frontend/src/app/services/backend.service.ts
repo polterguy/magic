@@ -15,6 +15,7 @@ import { Backend } from '../models/backend.model';
 import { Endpoint } from '../models/endpoint.model';
 import { Response } from 'src/app/models/response.model';
 import { CoreVersion } from '../models/core-version.model';
+import { environment } from 'src/environments/environment';
 import { BackendsStorageService } from './backendsstorage.service';
 import { AuthenticateResponse } from '../components/management/auth/models/authenticate-response.model';
 
@@ -391,6 +392,11 @@ export class BackendService {
           '/magic/system/version').subscribe({
           next: (version: CoreVersion) => {
             backend.version = version.version;
+            this.httpClient.get<Response>(
+              environment.bazarUrl +
+              '/magic/modules/bazar/core-version').subscribe((latestVersion: Response) => {
+              backend.latestVersion = latestVersion.result;
+            });
           }
         });
       }});
