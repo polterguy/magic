@@ -39,15 +39,22 @@
 
       <mat-menu #selectedBackend="matMenu" xPosition="after">
         <ng-template matMenuContent let-backend="backend">
-          <button mat-menu-item (click)="copyBackendUrl(backend?.url)">
+          <button
+            mat-menu-item
+            (click)="copyBackendUrl(backend.url)">
             <mat-icon>content_copy</mat-icon>
             Copy url
           </button>
-          <button mat-menu-item [disabled]="backend?.url === backendService.active?.url" (click)="switchBackend(backend)">
+          <button
+            mat-menu-item
+            [disabled]="backend.url === backendService.active?.url"
+            (click)="switchBackend(backend)">
             <mat-icon>change_circle</mat-icon>
-            {{backend?.url === backendService.active?.url ? 'Currently in use' : 'Switch to this backend'}}
+            {{backend?.url === backendService.active.url ? 'Currently in use' : 'Switch to this backend'}}
           </button>
-          <button mat-menu-item (click)="deleteBackend(backend)">
+          <button
+            mat-menu-item
+            (click)="deleteBackend(backend)">
             <mat-icon>delete</mat-icon>
             Remove backend
           </button>

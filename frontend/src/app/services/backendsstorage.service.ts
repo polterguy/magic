@@ -93,7 +93,7 @@ export class BackendsStorageService {
    * @param value Backend to remove
    */
   remove(value: Backend) {
-    const removed = this._backends.splice(this._backends.indexOf(value));
+    const removed = this._backends.splice(this._backends.indexOf(value), 1);
     if (removed.length === 0) {
       throw 'No such backend';
     }
