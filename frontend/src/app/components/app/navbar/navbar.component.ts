@@ -72,7 +72,6 @@ export class NavbarComponent implements OnInit {
    * 
    * @param activated Needed to retrieve query parameters
    * @param router Needed to redirect user after having verified his authentication token
-   * @param messageService Message service to send messages to other components using pub/sub
    * @param backendService Service to keep track of currently selected backend
    * @param dialog Dialog reference necessary to show login dialog if user tries to login
    * @param diagnosticsService Needed to retrieve backend version
