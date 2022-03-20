@@ -20,13 +20,6 @@ import { CoreVersion } from '../models/core-version.model';
 })
 export class DiagnosticsService {
 
-  private _versionKnown = new BehaviorSubject<string>(null);
-
-  /**
-   * Invoked when we know the version of the backend.
-   */
-  backendVersionChanged = this._versionKnown.asObservable();
-
   /**
    * Creates an instance of your service.
    * 

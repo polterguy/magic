@@ -534,7 +534,7 @@
   <!-- Footer -->
   <div class="footer d-flex flex-column justify-content-center align-items-center w-100 pt-3">
     <div class="d-flex flex-column align-items-center">
-      <ng-container *ngIf="shouldUpdateCore">
+      <ng-container *ngIf="backendService.active?.shouldUpdate">
         <a
           href="https://polterguy.github.io/tutorials/getting-started/"
           mat-raised-button
@@ -543,7 +543,7 @@
           target="_blank"
           class="mb-2"
           color="warn">
-          {{navbarService.expanded ? 'Update to ' + bazarVersion : 'Update'}}
+          {{navbarService.expanded ? 'Update to ' + backendService.active.latestVersion : 'Update'}}
         </a>
       </ng-container>
     </div>

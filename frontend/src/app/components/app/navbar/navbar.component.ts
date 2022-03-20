@@ -24,8 +24,6 @@ import { NavbarService } from 'src/app/services/navbar.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { RegisterService } from 'src/app/services/register.service';
-import { BazarService } from '../../../services/management/bazar.service';
-import { DiagnosticsService } from '../../../services/diagnostics.service';
 import { ConfigService } from '../../../services/management/config.service';
 import { LoginDialogComponent } from '../login-dialog/login-dialog.component';
 
@@ -51,12 +49,6 @@ export class NavbarComponent implements OnInit {
   @Input() largeScreen: boolean;
 
   /**
-   * If there exists a newer version of Magic Core as published by the Bazar,
-   * this value will be true.
-   */
-  shouldUpdateCore: boolean = false;
-
-  /**
    * Latest version of Magic as published by the Bazar.
    */
   bazarVersion: string = null;
@@ -68,10 +60,8 @@ export class NavbarComponent implements OnInit {
    * @param router Needed to redirect user after having verified his authentication token
    * @param backendService Service to keep track of currently selected backend
    * @param dialog Dialog reference necessary to show login dialog if user tries to login
-   * @param diagnosticsService Needed to retrieve backend version
    * @param feedbackService Needed to provide feedback to user
    * @param configService Needed to check configuration status ofbackend
-   * @param bazarService Needed to check if core has update
    * @param themeService Needed to determine which theme we're using and to allow user to change theme
    * @param clipboard Needed to copy URL of endpoint
    * @param registerService Needed to allow anonymous users to register
@@ -83,10 +73,8 @@ export class NavbarComponent implements OnInit {
     private router: Router,
     public backendService: BackendService,
     private dialog: MatDialog,
-    private diagnosticsService: DiagnosticsService,
     private feedbackService: FeedbackService,
     public configService: ConfigService,
-    private bazarService: BazarService,
     public themeService: ThemeService,
     public navbarService: NavbarService,
     private clipboard: Clipboard,
@@ -99,25 +87,6 @@ export class NavbarComponent implements OnInit {
    */
   ngOnInit() {
     this.getParams();
-    this.diagnosticsService.backendVersionChanged.subscribe((version) => {
-      if (version) {
-        this.bazarService.latestVersion().subscribe({
-          next: (result: Response) => {
-            this.bazarVersion = result.result;
-            if (this.bazarVersion !== version) {
-              this.configService.versionCompare(this.bazarVersion, version).subscribe((result: Response) => {
-                if (+result.result === 1) {
-                  this.feedbackService.showInfo('There has been published an updated version of Magic. You should probably update your current version.');
-                  this.shouldUpdateCore = true;
-                }
-              });
-            }
-          },
-          error: (error: any) => this.feedbackService.showError(error)});
-      } else {
-        this.shouldUpdateCore = false;
-      }
-    });
     this.backendService.authenticatedChanged.subscribe(() => {
       this.cdRef.detectChanges();
     });
