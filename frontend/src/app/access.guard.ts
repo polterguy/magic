@@ -45,40 +45,14 @@ export class AccessGuard implements CanActivate {
      * Checking access rights per route
      */
     (async () => {
-      while (Object.keys(this.backendService.active?.access.auth).length === 0)
+      while (!this.backendService.active.access.fetched)
         await new Promise(resolve => setTimeout(resolve, 100));
-        
-      if (Object.keys(this.backendService.active?.access.auth).length !== 0) {
-        if (!(this.backendService.active?.access.crud.generate_crud || this.backendService.active?.access.crud.generate_sql || this.backendService.active?.access.crud.generate_frontend)) {
-          route.data.page === 'crudifier' ? this.router.navigateByUrl('') : '';
-        } else if (!(this.backendService.active?.access.files.list_files && this.backendService.active?.access.files.list_folders)) {
-          route.data.page === 'ide' ? this.router.navigateByUrl('') : '';
-        } else if (!(this.backendService.active?.access.sql.execute_access)) {
-          route.data.page === 'sql' ? this.router.navigateByUrl('') : '';
-        } else if (!(this.backendService.active?.access.eval.execute)) {
-          route.data.page === 'evaluator' ? this.router.navigateByUrl('') : '';
-        } else if (!(this.backendService.active?.access.tasks.read)) {
-          route.data.page === 'tasks' ? this.router.navigateByUrl('') : '';
-        } else if (!(this.backendService.active?.access.auth.view_users && this.backendService.active?.access.auth.view_roles)) {
-          route.data.page === 'auth' ? this.router.navigateByUrl('') : '';
-        } else if (!(this.backendService.active?.access.terminal.execute)) {
-          route.data.page === 'terminal' ? this.router.navigateByUrl('') : '';
-        } else if (!(this.backendService.active?.access.crypto.import_public_key)) {
-          route.data.page === 'crypto' ? this.router.navigateByUrl('') : '';
-        } else if (!(this.backendService.active)) {
-          route.data.page === 'profile' ? this.router.navigateByUrl('') : '';
-        } else if (!(this.backendService.active?.access.bazar.get_manifests)) {
-          route.data.page === 'bazar' ? this.router.navigateByUrl('') : '';
-        } else if (!(this.backendService.active?.access.log.read)) {
-          route.data.page === 'log' || route.data.page === 'assumptions' || route.data.page === 'cache' ? this.router.navigateByUrl('') : '';
-        } else if (!(this.backendService.active?.access.endpoints.view)) {
-          route.data.page === 'endpoints' ? this.router.navigateByUrl('') : '';
-        } else if (!(this.backendService.active?.access.sockets.read)) {
-          route.data.page === 'sockets' ? this.router.navigateByUrl('') : '';
-        }
+      if (!route.data.check(this.backendService.active.access)) {
+        this.router.navigate(['/']);
+        return false;
       }
+      return true;
     })();
-
     return true;
   }
 }

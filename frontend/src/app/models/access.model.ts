@@ -71,4 +71,10 @@
   crypto: any = {
     import_public_key: false,
   }
+  cache: any = {
+    read: false,
+    count: false,
+  }
+  profile: boolean = false;
+  fetched: boolean = false;
 }

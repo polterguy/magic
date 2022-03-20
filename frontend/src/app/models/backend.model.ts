@@ -38,6 +38,9 @@ export class Backend {
     sockets: {},
     config: {},
     crypto: {},
+    cache: {},
+    profile: false,
+    fetched: false,
   };
 
   /**
@@ -298,7 +301,13 @@ export class Backend {
         crypto_invocations: this.canInvoke('magic/modules/magic/crypto_invocations', 'get'),
         delete_public_key: this.canInvoke('magic/modules/magic/crypto_keys', 'delete'),
         save_public_key: this.canInvoke('magic/modules/magic/crypto_keys', 'put'),
-      }
+      },
+      cache: {
+        read: this.canInvoke('magic/system/cache/list', 'get'),
+        count: this.canInvoke('magic/system/cache/count', 'get'),
+      },
+      profile: !!this.token,
+      fetched: true,
     };
   }
 
