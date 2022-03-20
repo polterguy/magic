@@ -32,6 +32,7 @@ import { BackendService } from 'src/app/services/backend.service';
 export class DashboardComponent implements OnInit, OnDestroy {
 
   private authSubscriber: Subscription;
+  private _isRetrievingSystemReport = false;
 
   public chartType: boolean[] = [];
   public systemReport: any = null;
@@ -157,39 +158,47 @@ export class DashboardComponent implements OnInit, OnDestroy {
    */
   private getSystemReport() {
 
+    // Avoiding race conditions.
+    if (this._isRetrievingSystemReport) {
+      return;
+    }
+    this._isRetrievingSystemReport = true;
+
     // Retrieving system report from backend.
-    this.diagnosticsService.getSystemReport().subscribe((report: SystemReport[]) => {
+    this.diagnosticsService.getSystemReport().subscribe({
+      next: (report: SystemReport[]) => {
 
-      // Ensuring backend actuallyreturned something.
-      if (!report) {
-        return;
-      }
+        // Ensuring backend actually returned something.
+        if (!report) {
+          return;
+        }
 
-      // Binding model
-      this.systemReport = report;
+        // Binding model
+        this.systemReport = report;
 
-      // To display system reports in the html file.
-      this.systemReportDisplayable = this.systemReport;
-      this.logTypesChart = report['log_types'];
+        // To display system reports in the html file.
+        this.systemReportDisplayable = this.systemReport;
+        this.logTypesChart = report['log_types'];
 
-      // Preparing data with variable key
-      if (report["timeshifts"]) {
-        this.chartsList = [];
-        this.chartData = {};
-        Object.keys(report['timeshifts']).forEach((el: any) => {
+        // Preparing data with variable key
+        if (report["timeshifts"]) {
+          this.chartsList = [];
+          this.chartData = {};
+          Object.keys(report['timeshifts']).forEach((el: any) => {
 
-          // Preparing chart list for setting user preferences
-          this.chartsList.push({name: report['timeshifts'][el].name, value: el, status: true});
-          this.chartData[el] = { label: report['timeshifts'][el].items.map(x => {return moment(x.when).format("D. MMM")}), data: report['timeshifts'][el].items.map(x => {return x.count}), name: report['timeshifts'][el].name, description: report['timeshifts'][el].description};
+            // Preparing chart list for setting user preferences
+            this.chartsList.push({name: report['timeshifts'][el].name, value: el, status: true});
+            this.chartData[el] = { label: report['timeshifts'][el].items.map(x => {return moment(x.when).format("D. MMM")}), data: report['timeshifts'][el].items.map(x => {return x.count}), name: report['timeshifts'][el].name, description: report['timeshifts'][el].description};
 
-          // To prevent removing ALL charts, we keep the first index disabled... so it can't be removed
-          this.notChangableChart = this.chartsList[0].value;
-        })
-      }
-      // get the user's preferences for charts
-      this.getChartPreferences();
+            // To prevent removing ALL charts, we keep the first index disabled... so it can't be removed
+            this.notChangableChart = this.chartsList[0].value;
+          })
+        }
+        // get the user's preferences for charts
+        this.getChartPreferences();
 
-    }, (error: any) => this.feedbackService.showError(error));
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /**

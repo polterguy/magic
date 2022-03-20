@@ -4,13 +4,11 @@
  */
 
 // Angular and system imports.
-import { BehaviorSubject, Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
 import { HttpService } from './http.service';
 import { SystemReport } from '../models/dashboard.model';
-import { CoreVersion } from '../models/core-version.model';
 
 /**
  * Health service, allowing you to inspect backend for health issues, some basic statistics, etc.
