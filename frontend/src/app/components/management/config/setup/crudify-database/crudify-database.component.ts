@@ -99,13 +99,13 @@ export class CrudifyDatabaseComponent implements OnInit {
         this.logService.createLocItem(loc, 'backend', 'setup').subscribe({
           next: () => {
             this.cacheService.delete('magic.auth.endpoints').subscribe({
-              next: () => this.backendService.refetchEndpoints(),
+              next: () => {
+                this.backendService.refetchEndpoints();
+                this.backendService.active.status.magic_crudified = true;
+              },
               error: (error: any) => this.feedbackService.showError(error)});
           },
           error: (error: any) => this.feedbackService.showError(error)});
-        this.messageService.sendMessage({
-          name: Messages.SETUP_STATE_CHANGED
-        });
       },
       error: (error: any) => this.feedbackService.showError(error)});
   }

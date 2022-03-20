@@ -6,8 +6,15 @@
 // Angular and system imports.
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
-import { ConfigService } from './services/management/config.service';
-import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
+import {
+  ActivatedRouteSnapshot,
+  CanActivate,
+  Router,
+  RouterStateSnapshot,
+  UrlTree
+} from '@angular/router';
+
+// Application specific imports.
 import { BackendService } from './services/backend.service';
 
 /**
@@ -20,29 +27,22 @@ export class AccessGuard implements CanActivate {
 
   hasAccess: boolean = undefined;
 
+  /**
+   * Creates an instance of your type.
+   * 
+   * @param router Needed to be able to navigate to config if required
+   * @param backendService 
+   */
   constructor(
     private router: Router,
-    private configService: ConfigService,
     private backendService: BackendService) { }
 
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot) : Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    (async () => {
-      while (!this.backendService.active?.token)
-        await new Promise(resolve => setTimeout(resolve, 100));
-      if (this.backendService.active?.token) {
-        this.configService.configStatus.subscribe(status => {
-          if (status !== undefined) {
-            this.hasAccess = status;
-            if (!this.hasAccess) { this.router.navigateByUrl('/config'); return false; };
-          }
-        });
-      }
-    })();
 
     /**
-     * checking access rights per route
+     * Checking access rights per route
      */
     (async () => {
       while (Object.keys(this.backendService.active?.access.auth).length === 0)

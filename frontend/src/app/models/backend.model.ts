@@ -7,6 +7,7 @@
 import { Token } from "./token.model";
 import { Endpoint } from "./endpoint.model";
 import { AccessModel } from "./access.model";
+import { Status } from "./status.model";
 
 /**
  * Encapsulates a backend instance, in addition to its username, password, and if existing also
@@ -18,6 +19,8 @@ export class Backend {
   private _url: string;
   private _username: string;
   private _password: string;
+  private _status: Status = null;
+  private _version: string = null;
   private _endpoints: Endpoint[] = [];
   private _access: AccessModel = {
     sql: {},
@@ -119,6 +122,41 @@ export class Backend {
    */
   get endpoints() {
     return this._endpoints;
+  }
+
+  /**
+   * Returns the status of the backend, if known.
+   */
+  get status() : Status {
+    return this._status;
+  }
+
+  /**
+   * Changes the version of the backend.
+   */
+  set version(value: string) {
+    this._version = value;
+  }
+
+  /**
+   * Returns the version of the backend, if known.
+   */
+  get version() : string {
+    return this._version;
+  }
+
+  /**
+   * Changes the status of the backend.
+   */
+  set status(value: Status) {
+    this._status = value;
+  }
+
+  /**
+   * Returns true it setup is done.
+   */
+  get setupDone() {
+    return this._status === null || (this._status.config_done && this._status.magic_crudified && this._status.server_keypair);
   }
 
   /**

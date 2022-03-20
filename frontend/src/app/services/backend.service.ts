@@ -4,15 +4,17 @@
  */
 
 // Angular and system imports.
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
 
 // Application specific imports.
 import { Token } from '../models/token.model';
+import { Status } from '../models/status.model';
 import { Backend } from '../models/backend.model';
 import { Endpoint } from '../models/endpoint.model';
 import { Response } from 'src/app/models/response.model';
+import { CoreVersion } from '../models/core-version.model';
 import { BackendsStorageService } from './backendsstorage.service';
 import { AuthenticateResponse } from '../components/management/auth/models/authenticate-response.model';
 
@@ -30,6 +32,7 @@ export class BackendService {
   private _authenticated: BehaviorSubject<boolean>;
   private _endpointsRetrieved: BehaviorSubject<boolean>;
   private _activeChanged: BehaviorSubject<Backend>;
+  private _statusRetrieved: BehaviorSubject<Status>;
 
   /**
    * To allow consumers to subscribe to authentication status changes.
@@ -45,6 +48,11 @@ export class BackendService {
    * To allow consumers to subscribe when endpoints are retrieved.
    */
   endpointsFetched: Observable<boolean>;
+
+  /**
+   * To allow consumers to subscribe when endpoints are retrieved.
+   */
+   statusRetrieved: Observable<Status>;
 
   /**
    * Creates an instance of your service.
@@ -71,8 +79,17 @@ export class BackendService {
     this._activeChanged = new BehaviorSubject<Backend>(null);
     this.activeBackendChanged = this._activeChanged.asObservable();
 
+    this._statusRetrieved = new BehaviorSubject<Status>(null);
+    this.statusRetrieved = this._statusRetrieved.asObservable();
+
+    // If we have an active backend we need to retrieve endpoints for it.
     if (this.active) {
       this.getEndpoints(this.active);
+
+      // If user is root we'll need to retrieve status of active backend and its version.
+      if (this.active.token && !this.active.token.expired && this.active.token.in_role('root')) {
+        this.retrieveStatusAndVersion(this.active);
+      }
     }
   }
 
@@ -151,6 +168,7 @@ export class BackendService {
         query += '&password=' + encodeURIComponent(password);
       }
 
+      // Authenticating towards backend.
       this.httpClient.get<AuthenticateResponse>(
         this.active.url +
         '/magic/system/auth/authenticate' + query, {
@@ -164,6 +182,8 @@ export class BackendService {
 
         }).subscribe({
           next: (auth: AuthenticateResponse) => {
+
+            // Updating active backend.
             this.active.token = new Token(auth.ticket);
             if (storePassword) {
               this.active.password = password;
@@ -174,6 +194,9 @@ export class BackendService {
             this.ensureRefreshJWTTokenTimer(this.active);
             this.active.createAccessRights();
             this._authenticated.next(true);
+            this.retrieveStatusAndVersion(this.active);
+
+            // Done!
             observer.next(auth);
             observer.complete();
           },
@@ -340,16 +363,36 @@ export class BackendService {
   /*
    * Retrieves endpoints for currently selected backend.
    */
-  private getEndpoints(value: Backend) {
-    this.httpClient.get<Endpoint[]>(value.url + '/magic/system/auth/endpoints').subscribe({
+  private getEndpoints(backend: Backend) {
+    this.httpClient.get<Endpoint[]>(backend.url + '/magic/system/auth/endpoints').subscribe({
       next: (res) => {
-        value.applyEndpoints(res || []);
+        backend.applyEndpoints(res || []);
         this._endpointsRetrieved.next(true);
       },
       error: () => {
-        value.applyEndpoints([]);
+        backend.applyEndpoints([]);
         this._endpointsRetrieved.next(false);
       }
     });
+  }
+
+  /*
+   * Retrieves status of backend and version
+   */
+  private retrieveStatusAndVersion(backend: Backend) {
+    this.httpClient.get<Status>(
+      backend.url +
+      '/magic/system/config/status').subscribe({
+      next: (status: Status) => {
+        backend.status = status;
+        this._statusRetrieved.next(status);
+        this.httpClient.get<CoreVersion>(
+          backend.url + 
+          '/magic/system/version').subscribe({
+          next: (version: CoreVersion) => {
+            backend.version = version.version;
+          }
+        });
+      }});
   }
 }

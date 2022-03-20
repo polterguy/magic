@@ -4,10 +4,10 @@
  */
 
 // Angular and system imports.
+import { Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 
 // Application specific imports.
-import { Messages } from 'src/app/models/messages.model';
 import { Response } from 'src/app/models/response.model';
 import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
@@ -69,6 +69,7 @@ export class CreateKeypairComponent implements OnInit {
     private backendService: BackendService,
     private feedbackService: FeedbackService,
     private configService: ConfigService,
+    private router: Router,
     private cryptoService: CryptoService,
     protected messageService: MessageService,
     private bazarService: BazarService) { }
@@ -87,6 +88,17 @@ export class CreateKeypairComponent implements OnInit {
    * Invoked when user clicks the next button.
    */
   next() {
+    if (this.doSubscribe) {
+      this.bazarService.subscribeToNewsletter(
+        this.subject,
+        this.email).subscribe({
+          next: () => {
+            localStorage.setItem('subscribes-to-newsletter', JSON.stringify({
+              subscribing: true,
+            }));
+          },
+          error: (error: any) => console.log(error)});
+    }
     this.cryptoService.generateKeyPair(
       +this.strength,
       this.seed,
@@ -95,24 +107,9 @@ export class CreateKeypairComponent implements OnInit {
       this.domain).subscribe({
         next: () => {
           this.feedbackService.showInfo('Cryptography key pair successfully created');
-          this.messageService.sendMessage({
-            name: Messages.SETUP_STATE_CHANGED,
-            content: 'crypto'
-          });
-          this.doSubscribe === true ? this.subscribeToNewsletter() : '';
+          this.backendService.active.status.server_keypair = true;
+          this.router.navigate(['/']);
         },
         error: (error: any) => this.feedbackService.showError(error)});
-  }
-
-  subscribeToNewsletter(){
-    this.bazarService.subscribeToNewsletter(
-      this.subject,
-      this.email).subscribe({
-        next: () => {
-          localStorage.setItem('subscribes-to-newsletter', JSON.stringify({
-            subscribing: true,
-          }));
-        },
-        error: (error: any) => console.log('err')});
   }
 }

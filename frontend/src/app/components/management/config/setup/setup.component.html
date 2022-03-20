@@ -5,7 +5,7 @@
       <mat-card-content>
         <mat-horizontal-stepper
           #stepper
-          *ngIf="status"
+          *ngIf="backendService.active?.status"
           [selectedIndex]="getStepperSelectedIndex()">
 
           <mat-step>
@@ -26,13 +26,6 @@
             <ng-template matStepLabel>Cryptography</ng-template>
             <ng-container *ngIf="stepper.selectedIndex === 2">
               <app-create-keypair></app-create-keypair>
-            </ng-container>
-          </mat-step>
-
-          <mat-step>
-            <ng-template matStepLabel>Assumptions</ng-template>
-            <ng-container *ngIf="stepper.selectedIndex === 3">
-              <app-assumptions class="remove-margin"></app-assumptions>
             </ng-container>
           </mat-step>
 
