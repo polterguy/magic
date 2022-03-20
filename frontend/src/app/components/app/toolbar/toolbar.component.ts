@@ -4,8 +4,7 @@
  */
 
 // Angular and system imports.
-import { Component, OnInit } from '@angular/core';
-import { OverlayContainer } from '@angular/cdk/overlay';
+import { Component } from '@angular/core';
 
 // Application specific imports.
 import { ThemeService } from 'src/app/services/theme.service';
@@ -21,7 +20,7 @@ import { BackendService } from 'src/app/services/backend.service';
   templateUrl: './toolbar.component.html',
   styleUrls: ['./toolbar.component.scss']
 })
-export class ToolbarComponent implements OnInit {
+export class ToolbarComponent {
 
   /**
    * Creates an instance of your component.
@@ -29,20 +28,11 @@ export class ToolbarComponent implements OnInit {
    * @param themeService Needed to determine what theme we're currently using
    * @param navbarService Needed to allow for expanding and collapsing navbar
    * @param backendService Service to keep track of currently selected backend
-   * @param overlayContainer Needed to add/remove theme's class name from this component.
    */
   constructor(
     public themeService: ThemeService,
     private navbarService: NavbarService,
-    public backendService: BackendService,
-    private overlayContainer: OverlayContainer) { }
-
-  /**
-   * Implementation of OnInit.
-   */
-  ngOnInit() {
-    this.overlayContainer.getContainerElement().classList.add(this.themeService.theme);
-  }
+    public backendService: BackendService) { }
 
   /**
    * Toggles the navbar.
