@@ -21,6 +21,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { Backend } from 'src/app/models/backend.model';
 import { Messages } from 'src/app/models/messages.model';
 import { Response } from 'src/app/models/response.model';
+import { ThemeService } from 'src/app/services/theme.service';
+import { NavbarService } from 'src/app/services/navbar.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
@@ -29,7 +31,6 @@ import { BazarService } from '../../../services/management/bazar.service';
 import { DiagnosticsService } from '../../../services/diagnostics.service';
 import { ConfigService } from '../../../services/management/config.service';
 import { LoginDialogComponent } from '../login-dialog/login-dialog.component';
-import { ThemeService } from 'src/app/services/theme.service';
 
 /**
  * Navbar component wrapping main navigation in dashboard.
@@ -103,6 +104,7 @@ export class NavbarComponent implements OnInit {
     private configService: ConfigService,
     private bazarService: BazarService,
     public themeService: ThemeService,
+    private navbarService: NavbarService,
     private overlayContainer: OverlayContainer,
     private clipboard: Clipboard,
     private registerService: RegisterService,
@@ -152,9 +154,7 @@ export class NavbarComponent implements OnInit {
    * Toggles the navbar.
    */
   toggleNavbar() {
-    this.messageService.sendMessage({
-      name: Messages.TOGGLE_NAVBAR
-    });
+    this.navbarService.toggle();
   }
 
   /**
@@ -172,9 +172,7 @@ export class NavbarComponent implements OnInit {
    * Closes the navbar.
    */
   closeNavbar() {
-    this.messageService.sendMessage({
-      name: Messages.CLOSE_NAVBAR
-    });
+    this.navbarService.expanded = false;
   }
 
   /**
