@@ -197,16 +197,10 @@ export class LoginDialogComponent implements OnInit {
       this.autoLogin === false || this.advanced ? this.loginForm.value.password : null,
       this.savePassword).subscribe({
         next: () => {
-          this.dialogRef.close({});
-          if (this.backendService.active.token.in_role('root') && 
-            (this.configService.setupStatus?.config_done === false ||
-             this.configService.setupStatus?.magic_crudified === false ||
-             this.configService.setupStatus?.server_keypair === false)) {
-            this.router.navigate(['/config']);
-          }
           if (window.location.pathname === '/register') {
             this.router.navigate(['/']);
           }
+          this.dialogRef.close({});
         },
         error: (error: any) => this.feedbackService.showError(error)});
   }

@@ -7,7 +7,7 @@
 import { Component, OnInit } from '@angular/core';
 
 // Application specific imports.
-import { Status } from 'src/app/models/status.model';
+import { BackendService } from 'src/app/services/backend.service';
 import { ConfigService } from 'src/app/services/management/config.service';
 
 /**
@@ -17,30 +17,12 @@ import { ConfigService } from 'src/app/services/management/config.service';
   selector: 'app-config',
   templateUrl: './config.component.html'
 })
-export class ConfigComponent implements OnInit {
-
-  /**
-   * Status of setup process.
-   */
-  status: Status = null;
+export class ConfigComponent {
 
   /**
    * Creates an instance of your component.
    * 
-   * @param configService Configuration service used to load and save configuration settings
+   * @param backendService Needed to retrieve setup status of backend.
    */
-  constructor(private configService: ConfigService) { }
-
-  /**
-   * OnInit implementation.
-   */
-  ngOnInit() {
-    (async () => {
-      while (!this.configService.setupStatus)
-        await new Promise(resolve => setTimeout(resolve, 100));
-      if (this.configService.setupStatus !== null) {
-        this.status = this.configService.setupStatus;
-      }
-    })();
-  }
+  constructor(public backendService: BackendService) { }
 }

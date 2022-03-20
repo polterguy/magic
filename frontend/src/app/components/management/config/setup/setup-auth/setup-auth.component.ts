@@ -111,10 +111,8 @@ export class SetupAuthComponent implements OnInit {
       this.password,
       this.config).subscribe({
         next: () => {
-          this.messageService.sendMessage({
-            name: Messages.SETUP_STATE_CHANGED
-          });
-          this.configService.changeStatus(true);
+          this.feedbackService.showInfoShort('Database successfully configured');
+          this.backendService.active.status.config_done = true;
         },
         error: (error: any) => this.feedbackService.showError(error)});
   }

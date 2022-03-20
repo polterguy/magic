@@ -4,20 +4,19 @@
  */
 
 // Angular and system imports.
-import { Router } from '@angular/router';
 import { 
   Component,
   HostListener,
   OnInit
 } from '@angular/core';
+import { Router } from '@angular/router';
 
 // Application specific imports.
+import { Status } from 'src/app/models/status.model';
 import { ThemeService } from 'src/app/services/theme.service';
 import { LoaderService } from 'src/app/services/loader.service';
 import { NavbarService } from 'src/app/services/navbar.service';
 import { BackendService } from 'src/app/services/backend.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
-import { ConfigService } from '../../services/management/config.service';
 
 /**
  * Main wire frame application component.
@@ -49,37 +48,42 @@ export class AppComponent implements OnInit {
   /**
    * Creates an instance of your component.
    * 
-   * @param router Router service used to redirect user to main landing page if he logs out
-   * @param backendService Needed toverify we'reactuallyconnected to some backend before retrieving endpoints
    * @param loaderService Loader service used to display Ajax spinner during invocations to the backend
+   * @param router Needed to redirect user as he or she logs out
    * @param navbarService Navbar service keeping track of state of navbar
-   * @param configService Needed to check if system has been initially configured
    * @param themeService Needed to determine which theme we're using
-   * @param feedbackService Needed to provide feedback to user
+   * @param backendService Needed such that we can subscribe to authentication events
    */
   constructor(
-    private router: Router,
-    private backendService:BackendService,
     public loaderService: LoaderService,
+    private router: Router,
     public navbarService: NavbarService,
-    private configService: ConfigService,
     public themeService: ThemeService,
-    private feedbackService: FeedbackService) { }
+    private backendService: BackendService) { }
 
   /**
    * OnInit implementation.
    */
   ngOnInit() {
-    this.backendService.authenticatedChanged.subscribe(() => {
-      if (this.backendService.active?.token?.in_role('root')) {
-        this.checkStatus();
+
+    // Checking the screen width rule for initial setting
+    this.onWindowResize();
+
+    // Making sure we redirect to root URL when user logs out.
+    this.backendService.authenticatedChanged.subscribe((authenticated: boolean) => {
+      if (!authenticated) {
+        this.router.navigate(['/']);
       }
     });
 
-    /**
-     * Checking the screen width rule for initial setting
-     */
-    this.onWindowResize();
+    // Subscribing to status changes and redirect accordingly if we need user to setup system.
+    this.backendService.statusRetrieved.subscribe((status: Status) => {
+      if (status) {
+        if (!status.config_done || !status.magic_crudified || !status.server_keypair) {
+          this.router.navigate(['/config']);
+        }
+      }
+    });
   }
 
   /**
@@ -87,23 +91,5 @@ export class AppComponent implements OnInit {
    */
   closeNavbar() {
     this.navbarService.expanded = false;
-  }
-
-  /*
-   * Private helper methods.
-   */
-
-  /*
-   * Checks setup status of system if user is authenticated and in root role,
-   * and if system is not yet configured, redirects to '/config' route.
-   */
-  private checkStatus() {
-    this.configService.status().subscribe({
-      next: (config) => {
-        if (!config.config_done || !config.magic_crudified || !config.server_keypair) {
-          this.router.navigate(['/config']);
-        }
-      },
-      error: (error: any) => this.feedbackService.showError(error)});
   }
 }

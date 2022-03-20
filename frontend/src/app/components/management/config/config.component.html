@@ -1,12 +1,11 @@
 
 <app-setup
-  *ngIf="status && (!status.magic_crudified || !status.server_keypair || !status.config_done)"
-  [(status)]="status">
+  *ngIf="backendService.active?.status && (!backendService.active.status.magic_crudified || !backendService.active.status.server_keypair || !backendService.active.status.config_done)">
 </app-setup>
 
 <div class="row">
   <div
-    *ngIf="status && status.magic_crudified && status.server_keypair && status.config_done"
+    *ngIf="backendService.active?.status && backendService.active?.status.magic_crudified && backendService.active?.status.server_keypair && backendService.active?.status.config_done"
     class="col-12 mb-general">
     <mat-card>
       <mat-card-content>

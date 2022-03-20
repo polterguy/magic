@@ -4,12 +4,11 @@
  */
 
 // Angular and system imports.
+import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
 
 // Application specific imports.
 import { HttpService } from '../http.service';
-import { Status } from '../../models/status.model';
 import { BackendService } from '../backend.service';
 import { Response } from '../../models/response.model';
 import { Backend } from 'src/app/models/backend.model';
@@ -25,17 +24,6 @@ import { AuthenticateResponse } from '../../components/management/auth/models/au
 })
 export class ConfigService {
 
-  // Needed to be able to publish configuration changes to components and subscribers of such events.
-  private isConfigured = new BehaviorSubject<boolean>(undefined);
-
-  // Current configuration status of current backend.
-  private _currentStatus: Status = null;
-
-  /**
-   * To detect configuration status
-   */
-  public configStatus = this.isConfigured.asObservable();
-
   /**
    * Creates an instance of your service.
    * 
@@ -45,39 +33,6 @@ export class ConfigService {
   constructor(
     private httpService: HttpService,
     private backendService: BackendService) { }
-
-  /**
-   * Returns the status of the backend.
-   */
-  public status() {
-    return new Observable<Status>(observer => {
-      this.httpService.get<Status>('/magic/system/config/status').subscribe({
-        next: (res: Status) => {
-          this._currentStatus = res;
-          observer.next(res);
-          observer.complete();
-          this.isConfigured.next(res.config_done && res.magic_crudified && res.server_keypair);
-        },
-        error: (error: any) => {
-          observer.error(error);
-          observer.complete();
-        }});
-    });
-  }
-
-  /**
-   * Current setup status of system
-   */
-  public get setupStatus() {
-    return this._currentStatus;
-  }
-
-  /**
-   * Returns true if setup is done.
-   */
-  public get setupDone() {
-    return this._currentStatus && this._currentStatus.config_done && this._currentStatus.magic_crudified && this._currentStatus.server_keypair;
-  }
 
   /**
    * Returns the root user's email address
@@ -152,14 +107,5 @@ export class ConfigService {
       encodeURIComponent(version_1) + 
       '&version_2=' +
       encodeURIComponent(version_2));
-  }
-
-  /**
-   * Pass config status to all components and let them detect changes in config status if needed.
-   * 
-   * @param status boolean
-   */
-  public changeStatus(status: boolean){
-    this.isConfigured.next(status);
   }
 }

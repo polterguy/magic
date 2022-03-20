@@ -11,11 +11,6 @@
 export class Messages {
 
   /**
-   * Message will be published when the setup state of your system changes.
-   */
-  static readonly SETUP_STATE_CHANGED = 'app.setup.status-changed';
-
-  /**
    * Message will be published when a component needs to be dynamically injected somewhere.
    */
   static readonly INJECT_COMPONENT = 'app.ui.inject-component';

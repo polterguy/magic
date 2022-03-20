@@ -35,25 +35,6 @@ export class DiagnosticsService {
   constructor(private httpService: HttpService) { }
 
   /**
-   * Returns backend version of Magic.
-   */
-  version() {
-    return new Observable<CoreVersion>((observer) => {
-      this.httpService.get<CoreVersion>('/magic/system/version').subscribe({
-        next: (result: CoreVersion) => {
-          this._versionKnown.next(result.version);
-          observer.next(result);
-          observer.complete();
-        },
-        error: (error: any) => {
-          observer.error(error);
-          observer.complete();
-        }
-      });
-    });
-  }
-
-  /**
    * Returns a report of the health from your backend.
    * 
    */
