@@ -31,6 +31,7 @@ export class NavbarService {
   constructor() {
     this._expanded = localStorage.getItem('sidebar') !== 'close';
     this._navbarChanged = new BehaviorSubject<boolean>(this._expanded);
+    this.expandedChanged = this._navbarChanged.asObservable();
   }
 
   /**

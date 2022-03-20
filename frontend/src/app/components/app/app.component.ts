@@ -4,9 +4,13 @@
  */
 
 // Angular and system imports.
-import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
-import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { 
+  Component,
+  HostListener,
+  OnDestroy,
+  OnInit
+} from '@angular/core';
 
 // Application specific imports.
 import { ThemeService } from 'src/app/services/theme.service';
@@ -24,9 +28,7 @@ import { ConfigService } from '../../services/management/config.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit, OnDestroy {
-
-  private subscriber: Subscription;
+export class AppComponent implements OnInit {
 
   /**
    * Helpers to determine how to show the navbar. If we're on a small screen, we show
@@ -52,9 +54,9 @@ export class AppComponent implements OnInit, OnDestroy {
    */
   version: string = null;
 
-   /**
-    * Latest version of Magic as published by the Bazar.
-    */
+  /**
+   * Latest version of Magic as published by the Bazar.
+   */
   bazarVersion: string = null;
 
   /**
@@ -90,15 +92,6 @@ export class AppComponent implements OnInit, OnDestroy {
      * Checking the screen width rule for initial setting
      */
     this.onWindowResize();
-  }
-
-  /**
-   * OnDestroy implementation.
-   * 
-   * Needed to unsubscribe to subscription registered in OnInit.
-   */
-  ngOnDestroy() {
-    this.subscriber.unsubscribe();
   }
 
   /**

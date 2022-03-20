@@ -4,14 +4,12 @@
  */
 
 // Angular and system imports.
+import { Component, OnInit } from '@angular/core';
 import { OverlayContainer } from '@angular/cdk/overlay';
-import { Component, Input, OnInit } from '@angular/core';
 
 // Application specific imports.
-import { Messages } from 'src/app/models/messages.model';
 import { ThemeService } from 'src/app/services/theme.service';
 import { NavbarService } from 'src/app/services/navbar.service';
-import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
 
 /**
@@ -25,23 +23,18 @@ import { BackendService } from 'src/app/services/backend.service';
 })
 export class ToolbarComponent implements OnInit {
 
-  // checking for the sidenav status -- boolean
-  @Input() sideNavStatus: boolean;
-
   /**
    * Creates an instance of your component.
    * 
    * @param themeService Needed to determine what theme we're currently using
    * @param navbarService Needed to allow for expanding and collapsing navbar
    * @param backendService Service to keep track of currently selected backend
-   * @param messageService Message service to send messages to other components using pub/sub
    * @param overlayContainer Needed to add/remove theme's class name from this component.
    */
   constructor(
     public themeService: ThemeService,
     private navbarService: NavbarService,
     public backendService: BackendService,
-    private messageService: MessageService,
     private overlayContainer: OverlayContainer) { }
 
   /**
