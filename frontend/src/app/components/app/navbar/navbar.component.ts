@@ -41,11 +41,6 @@ import { LoginDialogComponent } from '../login-dialog/login-dialog.component';
 export class NavbarComponent implements OnInit {
 
   /**
-   * If true it implies that backend is configured and initially setup.
-   */
-  backendIsConfigured: boolean = false;
-
-  /**
    * Needed for copyright notice.
    */
   currentYear: number = new Date().getFullYear();
@@ -90,7 +85,7 @@ export class NavbarComponent implements OnInit {
     private dialog: MatDialog,
     private diagnosticsService: DiagnosticsService,
     private feedbackService: FeedbackService,
-    private configService: ConfigService,
+    public configService: ConfigService,
     private bazarService: BazarService,
     public themeService: ThemeService,
     public navbarService: NavbarService,
@@ -104,9 +99,6 @@ export class NavbarComponent implements OnInit {
    */
   ngOnInit() {
     this.getParams();
-    this.configService.configStatus.subscribe(status => {
-      this.backendIsConfigured = status;
-    });
     this.diagnosticsService.backendVersionChanged.subscribe((version) => {
       if (version) {
         this.bazarService.latestVersion().subscribe({

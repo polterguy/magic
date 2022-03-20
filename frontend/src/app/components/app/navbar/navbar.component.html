@@ -1,5 +1,5 @@
 
-<div class="d-flex flex-column w-100 h-100" id="sidebar" [class.disableLinks]="!backendIsConfigured">
+<div class="d-flex flex-column w-100 h-100" id="sidebar" [class.disableLinks]="!configService.setupDone">
   <div class="top-box-sidebar d-flex flex-column justify-content-center align-items-center text-center">
 
     <div class="d-flex flex-column w-100 justify-content-center align-items-center min-h-88">
@@ -89,7 +89,7 @@
             [class.flex-column]="!navbarService.expanded"
             [class.justify-content-center]="!navbarService.expanded"
             (click)="largeScreen ? '' : closeNavbar()"
-            [routerLink]="!backendService.active?.token || (backendIsConfigured || !backendService.active?.token?.in_role('root')) ? '/' : null">
+            [routerLink]="!backendService.active?.token || (configService.setupDone || !backendService.active?.token?.in_role('root')) ? '/' : null">
             <mat-icon>{{backendService.active.access.files.list_files && backendService.active.access.files.list_folders ? 'dashboard' : 'home'}}</mat-icon>
             <span class="title">{{backendService.active.access.files.list_files && backendService.active.access.files.list_folders ? 'Dashboard' : 'Home'}}</span>
           </a>
@@ -144,7 +144,7 @@
           #crudifier="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
           <ng-container *ngIf="backendService.active.access.crud.generate_crud || backendService.active.access.crud.generate_sql || backendService.active.access.crud.generate_frontend">
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendIsConfigured ? '/crudifier' : null">
+            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="configService.setupDone ? '/crudifier' : null">
               <mat-icon>touch_app</mat-icon>
               <span class="title">Crudifier</span>
             </a>
@@ -161,7 +161,7 @@
           #hyperide="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
           <ng-container *ngIf="backendService.active.access.files.list_files && backendService.active.access.files.list_folders">
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendIsConfigured ? '/ide' : null">
+            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="configService.setupDone ? '/ide' : null">
               <mat-icon>extension</mat-icon>
               <span class="title">Hyper IDE</span>
             </a>
@@ -178,7 +178,7 @@
           #sql="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
           <ng-container *ngIf="backendService.active.access.sql.execute_access">
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendIsConfigured ? '/sql' : null">
+            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="configService.setupDone ? '/sql' : null">
               <mat-icon>language</mat-icon>
               <span class="title">SQL</span>
             </a>
@@ -195,7 +195,7 @@
           #evaluator="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
           <ng-container *ngIf="backendService.active.access.eval.execute">
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendIsConfigured ? '/evaluator' : null">
+            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="configService.setupDone ? '/evaluator' : null">
               <mat-icon>offline_bolt</mat-icon>
               <span class="title">Evaluator</span>
             </a>
@@ -212,7 +212,7 @@
           #tasks="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
           <ng-container *ngIf="backendService.active.access.tasks.read">
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendIsConfigured ? '/tasks' : null">
+            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="configService.setupDone ? '/tasks' : null">
               <mat-icon>calendar_today</mat-icon>
               <span class="title">Tasks</span>
             </a>
@@ -246,7 +246,7 @@
           #auth="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
           <ng-container *ngIf="backendService.active.access.auth.view_users && backendService.active.access.auth.view_roles">
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendIsConfigured ? '/auth' : null">
+            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="configService.setupDone ? '/auth' : null">
               <mat-icon>supervisor_account</mat-icon>
               <span class="title">Users &amp; roles</span>
             </a>
@@ -280,7 +280,7 @@
           #terminal="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
           <ng-container *ngIf="backendService.active.access.terminal.execute">
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendIsConfigured ? '/terminal' : null">
+            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="configService.setupDone ? '/terminal' : null">
               <mat-icon>input</mat-icon>
               <span class="title">Terminal</span>
             </a>
@@ -297,7 +297,7 @@
           #crypto="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
           <ng-container *ngIf="backendService.active.access.crypto.import_public_key">
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendIsConfigured ? '/crypto' : null">
+            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="configService.setupDone ? '/crypto' : null">
               <mat-icon>security</mat-icon>
               <span class="title">Cryptography</span>
             </a>
@@ -314,7 +314,7 @@
           #profile="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
           <ng-container *ngIf="backendService.active?.token">
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendIsConfigured ? '/profile' : null">
+            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="configService.setupDone ? '/profile' : null">
               <mat-icon>person</mat-icon>
               <span class="title">Profile</span>
             </a>
@@ -331,7 +331,7 @@
           #bazar="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
           <ng-container *ngIf="backendService.active.access.bazar.get_manifests">
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendIsConfigured ? '/bazar' : null">
+            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="configService.setupDone ? '/bazar' : null">
               <mat-icon>storefront</mat-icon>
               <span class="title">Bazaar</span>
             </a>
@@ -365,7 +365,7 @@
           #log="routerLinkActive"
           [routerLinkActiveOptions]="{exact:false}">
           <ng-container *ngIf="backendService.active.access.log.read">
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendIsConfigured ? '/log' : null">
+            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="configService.setupDone ? '/log' : null">
               <mat-icon>bar_chart</mat-icon>
               <span class="title">Log</span>
             </a>
@@ -382,7 +382,7 @@
           #assumptions="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
           <ng-container *ngIf="backendService.active.access.log.read">
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendIsConfigured ? '/assumptions' : null">
+            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="configService.setupDone ? '/assumptions' : null">
               <mat-icon>fact_check</mat-icon>
               <span class="title">Assumptions</span>
             </a>
@@ -399,7 +399,7 @@
           #cache="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
           <ng-container *ngIf="backendService.active.access.log.read">
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendIsConfigured ? '/cache' : null">
+            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="configService.setupDone ? '/cache' : null">
               <mat-icon>cached</mat-icon>
               <span class="title">Cache</span>
             </a>
@@ -416,7 +416,7 @@
           #endpoints="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
           <ng-container *ngIf="backendService.active.access.endpoints.view">
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendIsConfigured ? '/endpoints' : null">
+            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="configService.setupDone ? '/endpoints' : null">
               <mat-icon>http</mat-icon>
               <span class="title">Endpoints</span>
             </a>
@@ -433,7 +433,7 @@
           #sockets="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
           <ng-container *ngIf="backendService.active.access.sockets.read">
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendIsConfigured ? '/sockets' : null">
+            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="configService.setupDone ? '/sockets' : null">
               <mat-icon>compare_arrows</mat-icon>
               <span class="title">Sockets</span>
             </a>

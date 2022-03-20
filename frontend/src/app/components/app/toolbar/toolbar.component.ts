@@ -63,7 +63,7 @@ export class ToolbarComponent {
   }
 
   /**
-   * Returns all roles user belongs to.
+   * Returns roles user belongs to.
    */
   getUserRoles() {
     return this.backendService.active?.token?.roles.join(', ') || '';

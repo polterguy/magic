@@ -73,6 +73,13 @@ export class ConfigService {
   }
 
   /**
+   * Returns true if setup is done.
+   */
+  public get setupDone() {
+    return this._currentStatus && this._currentStatus.config_done && this._currentStatus.magic_crudified && this._currentStatus.server_keypair;
+  }
+
+  /**
    * Returns the root user's email address
    */
   public rootUserEmailAddress() {
