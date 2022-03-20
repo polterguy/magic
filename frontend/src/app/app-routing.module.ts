@@ -9,6 +9,7 @@ import { Routes, RouterModule } from '@angular/router';
 
 // Application specific imports.
 import { AccessGuard } from './access.guard';
+import { AccessModel } from './models/access.model';
 import { IdeComponent } from './components/tools/ide/ide.component';
 import { AboutComponent } from './components/about/about.component';
 import { SqlComponent } from './components/tools/sql/sql.component';
@@ -42,95 +43,93 @@ const routes: Routes = [
     path: 'sql',
     component: SqlComponent,
     canActivate: [AccessGuard],
-    data: { page: "sql" }
+    data: { check: (access: AccessModel) : boolean => access.sql.execute_access }
   },
-
-  // Avoids re-initializing component as user opens and closes view details / URL link
   {
     path: 'ide',
     component: IdeComponent,
     canActivate: [AccessGuard],
-    data: { page:'ide'}
+    data: { check: (access: AccessModel) : boolean => access.files.list_files && access.files.list_folders }
   },
   {
     path: 'log',
     component: LogComponent,
     canActivate: [AccessGuard],
-    data: { page: 'log' }
+    data: { check: (access: AccessModel) : boolean => access.log.read }
   },
   {
     path: 'auth',
     component: AuthComponent,
     canActivate: [AccessGuard],
-    data: { page: 'auth' }
+    data: { check: (access: AccessModel) : boolean => access.auth.view_users && access.auth.view_roles }
   },
   {
     path: 'tasks',
     component: TasksComponent,
     canActivate: [AccessGuard],
-    data: { page: 'tasks' }
+    data: { check: (access: AccessModel) : boolean => access.auth.view_users && access.auth.view_roles }
   },
   {
     path: 'bazar',
     component: BazarComponent,
     canActivate: [AccessGuard],
-    data: { page: 'bazar' }
+    data: { check: (access: AccessModel) : boolean => access.bazar.get_manifests }
   },
   
   {
     path: 'cache',
     component: DiagnosticsCacheComponent,
     canActivate: [AccessGuard],
-    data: { page: 'cache' }
+    data: { check: (access: AccessModel) : boolean => access.cache.read && access.cache.count }
   },
   
   {
     path: 'crypto',
     component: CryptoComponent,
     canActivate: [AccessGuard],
-    data: { page: 'crypto' }
+    data: { check: (access: AccessModel) : boolean => access.crypto.import_public_key }
   },
   {
     path: 'profile',
     component: ProfileComponent,
     canActivate: [AccessGuard],
-    data: { page: 'profile' }
+    data: { check: (access: AccessModel) : boolean => access.profile }
   },
   {
     path: 'sockets',
     component: SocketsComponent,
     canActivate: [AccessGuard],
-    data: { page: 'sockets' }
+    data: { check: (access: AccessModel) : boolean => access.sockets.read }
   },
   {
     path: 'terminal',
     component: TerminalComponent,
     canActivate: [AccessGuard],
-    data: { page: 'terminal' }
+    data: { check: (access: AccessModel) : boolean => access.terminal.execute }
   },  
   {
     path: 'endpoints',
     component: EndpointsComponent,
     canActivate: [AccessGuard],
-    data: { page: 'endpoints' }
+    data: { check: (access: AccessModel) : boolean => access.endpoints.view }
   },
   {
     path: 'evaluator',
     component: EvaluatorComponent,
     canActivate: [AccessGuard],
-    data: { page: 'evaluator' }
+    data: { check: (access: AccessModel) : boolean => access.eval.execute }
   },
   {
     path: 'crudifier',
     component: CrudifierComponent,
     canActivate: [AccessGuard],
-    data: { page:'crudifier'}
+    data: { check: (access: AccessModel) : boolean => access.crud.generate_crud || access.crud.generate_sql || access.crud.generate_frontend }
   },
   {
     path: 'assumptions',
     component: DiagnosticsTestsComponent,
     canActivate: [AccessGuard],
-    data: { page: 'assumptions' }
+    data: { check: (access: AccessModel) : boolean => access.endpoints.assumptions }
   },
   {
     path: 'config',
@@ -149,13 +148,13 @@ const routes: Routes = [
     component: ChangePasswordComponent
   },
   {
-    path:
-      '**', redirectTo: ''
+    path: '**',
+    redirectTo: ''
   }
 ];
 
 /**
- * Main module for application.
+ * Routing module for application.
  */
 @NgModule({
   imports: [RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' })],

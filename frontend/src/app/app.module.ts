@@ -298,5 +298,4 @@ import { CreateAssumptionTestDialogComponent } from './components/analytics/endp
   ],
   bootstrap: [MainComponent],
 })
-export class AppModule {
-}
+export class AppModule { }
