@@ -49,11 +49,6 @@ export class NavbarComponent implements OnInit {
   @Input() largeScreen: boolean;
 
   /**
-   * Latest version of Magic as published by the Bazar.
-   */
-  bazarVersion: string = null;
-
-  /**
    * Creates an instance of your component.
    * 
    * @param activated Needed to retrieve query parameters
@@ -114,7 +109,7 @@ export class NavbarComponent implements OnInit {
   /**
    * Returns the user's status to caller.
    */
-  getUserUrl() {
+   getActiveBackendUrl() {
     if (!this.backendService.active) {
       return 'not connected';
     }
@@ -154,19 +149,20 @@ export class NavbarComponent implements OnInit {
     if (!this.largeScreen) {
       this.closeNavbar();
     }
+    this.router.navigate(['/']);
   }
 
   /**
    * Invoked when theme is changed.
    */
-  themeChanged(value: string) {
-    this.themeService.theme = value;
+   toggleTheme() {
+    this.themeService.toggle();
   }
 
   /**
    * Invoked when user wants to copy the full URL of the endpoint.
    */
-  copyBackendUrl(url: string) {
+   copyUrlWithBackend(url: string) {
     const currentURL = window.location.protocol + '//' + window.location.host;
     const param = currentURL + '?backend='
     this.clipboard.copy(param + encodeURIComponent(url));

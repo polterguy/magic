@@ -70,13 +70,6 @@ export class AppComponent implements OnInit {
     // Checking the screen width rule for initial setting
     this.onWindowResize();
 
-    // Making sure we redirect to root URL when user logs out.
-    this.backendService.authenticatedChanged.subscribe((authenticated: boolean) => {
-      if (!authenticated) {
-        this.router.navigate(['/']);
-      }
-    });
-
     // Subscribing to status changes and redirect accordingly if we need user to setup system.
     this.backendService.statusRetrieved.subscribe((status: Status) => {
       if (status) {
