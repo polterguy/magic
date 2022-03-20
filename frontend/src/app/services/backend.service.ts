@@ -34,6 +34,7 @@ export class BackendService {
   private _endpointsRetrieved: BehaviorSubject<boolean>;
   private _activeChanged: BehaviorSubject<Backend>;
   private _statusRetrieved: BehaviorSubject<Status>;
+  private _versionRetrieved: BehaviorSubject<string>;
 
   /**
    * To allow consumers to subscribe to authentication status changes.
@@ -53,7 +54,12 @@ export class BackendService {
   /**
    * To allow consumers to subscribe when endpoints are retrieved.
    */
-   statusRetrieved: Observable<Status>;
+  statusRetrieved: Observable<Status>;
+
+  /**
+   * To allow consumers to subscribe to version changes.
+   */
+  versionRetrieved: Observable<string>;
 
   /**
    * Creates an instance of your service.
@@ -82,6 +88,9 @@ export class BackendService {
 
     this._statusRetrieved = new BehaviorSubject<Status>(null);
     this.statusRetrieved = this._statusRetrieved.asObservable();
+
+    this._versionRetrieved = new BehaviorSubject<string>(null);
+    this.versionRetrieved = this._versionRetrieved.asObservable();
 
     // If we have an active backend we need to retrieve endpoints for it.
     if (this.active) {
@@ -396,6 +405,7 @@ export class BackendService {
               environment.bazarUrl +
               '/magic/modules/bazar/core-version').subscribe((latestVersion: Response) => {
               backend.latestVersion = latestVersion.result;
+              this._versionRetrieved.next(backend.version);
             });
           }
         });

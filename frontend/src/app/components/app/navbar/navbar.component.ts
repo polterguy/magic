@@ -96,6 +96,9 @@ export class NavbarComponent implements OnInit {
     this.backendService.endpointsFetched.subscribe(() => {
       this.cdRef.detectChanges();
     });
+    this.backendService.versionRetrieved.subscribe(() => {
+      this.cdRef.detectChanges();
+    });
     this.navbarService.expandedChanged.subscribe(() => {
       this.cdRef.detectChanges();
     });
