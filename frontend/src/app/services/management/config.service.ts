@@ -112,7 +112,6 @@ export class ConfigService {
            */
           const backend = new Backend(this.backendService.active.url, 'root', null, res.ticket);
           this.backendService.upsert(backend);
-          this.backendService.activate(backend);
           observer.next(res);
           observer.complete();
         },

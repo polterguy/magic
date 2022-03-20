@@ -143,6 +143,9 @@ export class NavbarComponent implements OnInit {
     this.backendService.authenticatedChanged.subscribe(() => {
       this.cdRef.detectChanges();
     });
+    this.backendService.activeChanged.subscribe(() => {
+      this.cdRef.detectChanges();
+    });
     this.backendService.endpointsFetched.subscribe(() => {
       this.cdRef.detectChanges();
     });
@@ -221,18 +224,19 @@ export class NavbarComponent implements OnInit {
   /**
    * Invoked when user wants to copy the full URL of the endpoint.
    */
-  copyBackendUrl(url?: string) {
-    const currentURL: string = window.location.protocol + '//' + window.location.host;
-    const param: string = currentURL + '?backend='
+  copyBackendUrl(url: string) {
+    const currentURL = window.location.protocol + '//' + window.location.host;
+    const param = currentURL + '?backend='
     this.clipboard.copy(param + encodeURIComponent(url));
     this.feedbackService.showInfoShort('Backend URL was copied to your clipboard');
   }
 
   /**
-   * Switching backend
+   * Switching to specified backend.
+   * 
+   * @param backend Backend to switch to
    */
   switchBackend(backend: Backend) {
-    this.backendService.upsert(backend);
     this.backendService.activate(backend);
   }
 
@@ -242,7 +246,9 @@ export class NavbarComponent implements OnInit {
    * @param backend Backend to remove
    */
   deleteBackend(backend: Backend) {
-    this.backendService.remove(backend);
+
+    // For weird reasons the menu gets "stuck" unless we do this in a timer.
+    setTimeout(() => this.backendService.remove(backend), 1);
   }
 
   /*

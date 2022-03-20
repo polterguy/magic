@@ -28,8 +28,8 @@ import { AuthenticateResponse } from '../components/management/auth/models/authe
 export class BackendService {
 
   private _authenticated: BehaviorSubject<boolean>;
-  private _activeChanged = new BehaviorSubject<Backend>(undefined);
-  private _endpointRetrieved = new BehaviorSubject<boolean>(undefined);
+  private _endpointsRetrieved: BehaviorSubject<boolean>;
+  private _activeChanged: BehaviorSubject<Backend>;
 
   /**
    * To allow consumers to subscribe to authentication status changes.
@@ -39,12 +39,12 @@ export class BackendService {
   /**
    * To allow consumers to subscribe to active backend changed events.
    */
-  activeChanged = this._activeChanged.asObservable();
+  activeChanged: Observable<Backend>;
 
   /**
    * To allow consumers to subscribe when endpoints are retrieved.
    */
-  endpointsFetched = this._endpointRetrieved.asObservable();
+  endpointsFetched: Observable<boolean>;
 
   /**
    * Creates an instance of your service.
@@ -61,10 +61,19 @@ export class BackendService {
       for (const idx of this.backendsStorageService.backends.filter(x => x.token)) {
         this.ensureRefreshJWTTokenTimer(idx);
       }
-      this.getEndpoints(this.active);
     }
     this._authenticated = new BehaviorSubject<boolean>(this.active !== null && this.active.token !== null);
     this.authenticatedChanged = this._authenticated.asObservable();
+
+    this._endpointsRetrieved = new BehaviorSubject<boolean>(false);
+    this.endpointsFetched = this._endpointsRetrieved.asObservable();
+
+    this._activeChanged = new BehaviorSubject<Backend>(null);
+    this.activeChanged = this._activeChanged.asObservable();
+
+    if (this.active) {
+      this.getEndpoints(this.active);
+    }
   }
 
   /**
@@ -335,11 +344,11 @@ export class BackendService {
     this.httpClient.get<Endpoint[]>(value.url + '/magic/system/auth/endpoints').subscribe({
       next: (res) => {
         value.applyEndpoints(res || []);
-        this._endpointRetrieved.next(true);
+        this._endpointsRetrieved.next(true);
       },
       error: () => {
         value.applyEndpoints([]);
-        this._endpointRetrieved.next(false);
+        this._endpointsRetrieved.next(false);
       }
     });
   }
