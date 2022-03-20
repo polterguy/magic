@@ -30,19 +30,17 @@ import { ConfigService } from '../../services/management/config.service';
 export class AppComponent implements OnInit {
 
   /**
-   * Helpers to determine how to show the navbar. If we're on a small screen, we show
+   * Helper to determine how to show the navbar. If we're on a small screen, we show
    * it as an expandable only visible as hamburger button is clicked. Otherwise we
    * show it as a constant visible menu with the option of making it smaller bu clicking
    * a button.
    */
-  getScreenWidth: number;
-  smallScreenSize: number = 768;
   largeScreen: boolean = undefined;
 
   @HostListener('window:resize', ['$event'])
   private onWindowResize() {
-    this.getScreenWidth = window.innerWidth;
-    this.largeScreen = this.getScreenWidth >= this.smallScreenSize ? true : false;
+    const getScreenWidth = window.innerWidth;
+    this.largeScreen = getScreenWidth >= 768 ? true : false;
     if (!this.largeScreen) {
       this.navbarService.expanded = false;
     }
@@ -72,9 +70,10 @@ export class AppComponent implements OnInit {
    * OnInit implementation.
    */
   ngOnInit() {
-    this.checkStatus();
     this.backendService.authenticatedChanged.subscribe(() => {
-      this.checkStatus();
+      if (this.backendService.active?.token?.in_role('root')) {
+        this.checkStatus();
+      }
     });
 
     /**
@@ -99,15 +98,12 @@ export class AppComponent implements OnInit {
    * and if system is not yet configured, redirects to '/config' route.
    */
   private checkStatus() {
-    if (this.backendService.active?.token?.in_role('root')) {
-      this.configService.status().subscribe({
-        next: (config) => {
-          this.configService.changeStatus(config.config_done && config.magic_crudified && config.server_keypair);
-          if (!config.config_done || !config.magic_crudified || !config.server_keypair) {
-            this.router.navigate(['/config']);
-          }
-        },
-        error: (error: any) => this.feedbackService.showError(error)});
-    }
+    this.configService.status().subscribe({
+      next: (config) => {
+        if (!config.config_done || !config.magic_crudified || !config.server_keypair) {
+          this.router.navigate(['/config']);
+        }
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 }
