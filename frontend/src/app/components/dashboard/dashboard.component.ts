@@ -50,7 +50,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   public theme = localStorage.getItem("theme");
 
-  public barChartOptions: ChartOptions = {
+  barChartOptions: ChartOptions = {
     responsive: true,
     legend: {
       display: false,
@@ -68,25 +68,25 @@ export class DashboardComponent implements OnInit, OnDestroy {
           color: 'rgba(0,0,0,0.05)',
         }
       }]
-  },
+    },
     maintainAspectRatio: false
   };
 
   // Dashboard charts
-  public chartPreference: string[] = [];
+  chartPreference: string[] = [];
 
   // default is set for all charts to be displayed
-  public chartsList: any = [];
+  chartsList: any = [];
 
   /**
    * for preparing chart data + name and description dynamically
    */
-  public chartData: any = [];
-  
+  chartData: any = [];
+
   /**
    * to keep at least one chart not removable
    */
-  public notChangableChart: string;
+  notChangableChart: string;
 
   /**
    * 
@@ -99,8 +99,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     public backendService: BackendService,
     private diagnosticsService: DiagnosticsService,
     private dialog: MatDialog,
-    private feedbackService: FeedbackService
-  ) { }
+    private feedbackService: FeedbackService) { }
 
   /**
    * Implementation of OnInit.
@@ -123,17 +122,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
   /**
    * Implementation of OnDestroy.
    */
-   ngOnDestroy() {
+  ngOnDestroy() {
 
     // Ensuring we unsubscribe from authenticated subscription.
-    this.authSubscriber?.unsubscribe();
+    this.authSubscriber.unsubscribe();
   }
 
   /**
    * getting user's preferences for the displayed charts inside dashboard
    * and storing them inside localstorage
    */
-  public getChartPreferences() {
+  getChartPreferences() {
     if (localStorage.getItem('chartPreference')) {
       this.chartPreference = JSON.parse(localStorage.getItem('chartPreference'));
     } else {
@@ -148,12 +147,25 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * set dashboard charts preferences and store in localStorage
    * show success message, so the user understands what he's done!
    */
-  public setPreference() {
+  setPreference() {
     localStorage.setItem('chartPreference', JSON.stringify(this.chartPreference));
     this.feedbackService.showInfo('Preferences updated successfuly.');
   }
 
   /**
+   * Allows user to login by showing a modal dialog.
+   */
+  login() {
+    this.dialog.open(LoginDialogComponent, {
+      width: '550px',
+    });
+  }
+
+  /*
+   * Private helper methods.
+   */
+
+  /*
    * Retrieving the system's report
    */
   private getSystemReport() {
@@ -199,14 +211,5 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
       },
       error: (error: any) => this.feedbackService.showError(error)});
-  }
-
-  /**
-   * Allows user to login by showing a modal dialog.
-   */
-   public login() {
-    this.dialog.open(LoginDialogComponent, {
-      width: '550px',
-    });
   }
 }
