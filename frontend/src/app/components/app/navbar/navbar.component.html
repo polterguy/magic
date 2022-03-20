@@ -20,7 +20,7 @@
           [matMenuTriggerFor]="backends">
           <div
             class="text-truncate max-width" 
-            [class.text-warning]="backendService.active?.url.startsWith('http://')">{{getUserUrl()}} </div>
+            [class.text-warning]="backendService.active?.url.startsWith('http://')">{{getActiveBackendUrl()}} </div>
           <mat-icon class="small-icon">arrow_drop_down</mat-icon>
         </h5>
       </div>
@@ -41,7 +41,7 @@
         <ng-template matMenuContent let-backend="backend">
           <button
             mat-menu-item
-            (click)="copyBackendUrl(backend.url)">
+            (click)="copyUrlWithBackend(backend.url)">
             <mat-icon>content_copy</mat-icon>
             Copy url
           </button>
@@ -514,7 +514,7 @@
   <!-- Theme -->
   <mat-divider class="mt-4"></mat-divider>
   <button mat-button class="ml-2 mr-1"
-    (click)="themeChanged(themeService.theme === 'light' ? 'dark' : 'light')" 
+    (click)="toggleTheme()" 
     [color]="themeService.theme === 'dark' ? 'accent' : ''"
     [class.theme-btn]="!navbarService.expanded">
     <div class="d-flex align-items-center justify-content-between" [class.flex-column]="!navbarService.expanded">

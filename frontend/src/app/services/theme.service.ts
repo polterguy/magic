@@ -61,4 +61,11 @@ export class ThemeService {
         throw `Theme '${value}' does not exist`;
       }
   }
+
+  /**
+   * Toggles current theme.
+   */
+  toggle() {
+    this.theme = this.theme === 'light' ? 'dark' : 'light';
+  }
 }
