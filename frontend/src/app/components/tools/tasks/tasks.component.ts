@@ -19,12 +19,12 @@ import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from '../../../services/feedback.service';
 import { TaskService } from 'src/app/components/tools/tasks/services/task.service';
 import { NewTaskDialogComponent } from './new-task-dialog/new-task-dialog.component';
-import { Model } from '../../codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
-import { ConfirmDialogComponent, ConfirmDialogData } from '../../confirm/confirm-dialog.component';
 import { ScheduleTaskDialogComponent } from './schedule-task-dialog/schedule-task-dialog.component';
+import { Model } from '../../utilities/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
+import { ConfirmDialogComponent, ConfirmDialogData } from '../../utilities/confirm/confirm-dialog.component';
 
 // CodeMirror options.
-import hyperlambda from '../../codemirror/options/hyperlambda.json';
+import hyperlambda from '../../utilities/codemirror/options/hyperlambda.json';
 
 /*
  * Helper class to encapsulate a task and its details,

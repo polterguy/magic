@@ -11,13 +11,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { Response } from '../../../models/response.model';
 import { FeedbackService } from '../../../services/feedback.service';
 import { EvaluatorService } from 'src/app/components/tools/evaluator/services/evaluator.service';
-import { Model } from '../../codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
+import { Model } from '../../utilities/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 import { LoadSnippetDialogComponent } from './load-snippet-dialog/load-snippet-dialog.component';
 import { SaveSnippetDialogComponent } from './save-snippet-dialog/save-snippet-dialog.component';
 
 // CodeMirror options.
-import hyperlambda from '../../codemirror/options/hyperlambda.json';
-import hyperlambda_readonly from '../../codemirror/options/hyperlambda_readonly.json';
+import hyperlambda from '../../utilities/codemirror/options/hyperlambda.json';
+import hyperlambda_readonly from '../../utilities/codemirror/options/hyperlambda_readonly.json';
 
 /**
  * Component allowing user to evaluate Hyperlambda,

@@ -18,10 +18,10 @@ import { MessageService } from '../../../services/message.service';
 import { FeedbackService } from '../../../services/feedback.service';
 import { LoaderInterceptor } from '../../../interceptors/loader.interceptor';
 import { AssumptionService } from 'src/app/services/analytics/assumption.service';
-import { Model } from '../../codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
+import { Model } from '../../utilities/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 
 // CodeMirror options.
-import hyperlambda from '../../codemirror/options/hyperlambda.json';
+import hyperlambda from '../../utilities/codemirror/options/hyperlambda.json';
 
 /*
  * Test model encapsulating a single test, and possibly its result.

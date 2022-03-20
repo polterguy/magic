@@ -23,12 +23,12 @@ import { AddQueryParameterDialogComponent } from './add-query-parameter-dialog/a
 import { CreateAssumptionTestDialogComponent, TestModel } from './create-assumption-test-dialog/create-assumption-test-dialog.component';
 
 // CodeMirror options.
-import json from '../../../codemirror/options/json.json';
-import markdown from '../../../codemirror/options/markdown.json';
-import hyperlambda from '../../../codemirror/options/hyperlambda.json';
-import json_readonly from '../../../codemirror/options/json_readonly.json';
-import markdown_readonly from '../../../codemirror/options/markdown_readonly.json';
-import hyperlambda_readonly from '../../../codemirror/options/hyperlambda_readonly.json';
+import json from '../../../utilities/codemirror/options/json.json';
+import markdown from '../../../utilities/codemirror/options/markdown.json';
+import hyperlambda from '../../../utilities/codemirror/options/hyperlambda.json';
+import json_readonly from '../../../utilities/codemirror/options/json_readonly.json';
+import markdown_readonly from '../../../utilities/codemirror/options/markdown_readonly.json';
+import hyperlambda_readonly from '../../../utilities/codemirror/options/hyperlambda_readonly.json';
 
 /*
  * Query model encapsulating a single query parameter added to the HTTP invocation.
