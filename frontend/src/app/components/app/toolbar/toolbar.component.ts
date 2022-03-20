@@ -10,6 +10,7 @@ import { Component, Input, OnInit } from '@angular/core';
 // Application specific imports.
 import { Messages } from 'src/app/models/messages.model';
 import { ThemeService } from 'src/app/services/theme.service';
+import { NavbarService } from 'src/app/services/navbar.service';
 import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
 
@@ -31,12 +32,14 @@ export class ToolbarComponent implements OnInit {
    * Creates an instance of your component.
    * 
    * @param themeService Needed to determine what theme we're currently using
+   * @param navbarService Needed to allow for expanding and collapsing navbar
    * @param backendService Service to keep track of currently selected backend
    * @param messageService Message service to send messages to other components using pub/sub
    * @param overlayContainer Needed to add/remove theme's class name from this component.
    */
   constructor(
     public themeService: ThemeService,
+    private navbarService: NavbarService,
     public backendService: BackendService,
     private messageService: MessageService,
     private overlayContainer: OverlayContainer) { }
@@ -52,9 +55,7 @@ export class ToolbarComponent implements OnInit {
    * Toggles the navbar.
    */
   toggleNavbar() {
-    this.messageService.sendMessage({
-      name: Messages.TOGGLE_NAVBAR
-    });
+    this.navbarService.toggle();
   }
 
   /**

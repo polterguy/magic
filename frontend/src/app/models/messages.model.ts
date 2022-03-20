@@ -11,18 +11,6 @@
 export class Messages {
 
   /**
-   * Message will be published by the system when the
-   * navbar should be closed.
-   */
-  static readonly CLOSE_NAVBAR = 'app.navbar.close';
-
-  /**
-   * Message will be published by the system when the
-   * navbar should be toggled.
-   */
-  static readonly TOGGLE_NAVBAR = 'app.navbar.toggle';
-
-  /**
    * Message will be published when the setup state of your system changes.
    */
   static readonly SETUP_STATE_CHANGED = 'app.setup.status-changed';

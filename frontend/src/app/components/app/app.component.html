@@ -10,20 +10,19 @@
     <mat-sidenav
       [mode]="largeScreen ? 'side' : 'over'"
       class="mat-elevation-z2"
-      [opened]="sidenavOpened || largeScreen"
-      [class.sideClosed]="!sidenavOpened && largeScreen"
-      [class.full-width-sidebar]="sidenavOpened"
-      [class.small-width-sidebar]="largeScreen && !sidenavOpened"
-      *ngIf="sidenavOpened !== undefined"
+      [opened]="navbarService.expanded || largeScreen"
+      [class.sideClosed]="!navbarService.expanded && largeScreen"
+      [class.full-width-sidebar]="navbarService.expanded"
+      [class.small-width-sidebar]="largeScreen && !navbarService.expanded"
       id="sidebar-main">
       <app-navbar
-        [sideNavStatus]="sidenavOpened || !largeScreen"
+        [sideNavStatus]="navbarService.expanded || !largeScreen"
         [largeScreen]="largeScreen"></app-navbar>
     </mat-sidenav>
 
     <mat-sidenav-content
-      [class.content-with-full-sidebar]="largeScreen && sidenavOpened"
-      [class.content-with-small-sidebar]="largeScreen && !sidenavOpened" id="main-section"
+      [class.content-with-full-sidebar]="largeScreen && navbarService.expanded"
+      [class.content-with-small-sidebar]="largeScreen && !navbarService.expanded" id="main-section"
       [class.is-small-screen]="!largeScreen">
 
       <ng-container *ngIf="!largeScreen">

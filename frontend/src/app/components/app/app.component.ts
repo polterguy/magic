@@ -9,11 +9,9 @@ import { Router } from '@angular/router';
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 
 // Application specific imports.
-import { Message } from 'src/app/models/message.model';
-import { Messages } from 'src/app/models/messages.model';
 import { ThemeService } from 'src/app/services/theme.service';
 import { LoaderService } from 'src/app/services/loader.service';
-import { MessageService } from 'src/app/services/message.service';
+import { NavbarService } from 'src/app/services/navbar.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { ConfigService } from '../../services/management/config.service';
@@ -44,14 +42,11 @@ export class AppComponent implements OnInit, OnDestroy {
   private onWindowResize() {
     this.getScreenWidth = window.innerWidth;
     this.largeScreen = this.getScreenWidth >= this.smallScreenSize ? true : false;
-    this.sidenavOpened = this.largeScreen;
+    if (!this.largeScreen) {
+      this.navbarService.expanded = false;
+    }
   }
 
-  /**
-   * True if navigation menu is expanded.
-   */
-  sidenavOpened: boolean;
-   
   /**
    * Backend version as returned from server if authenticated.
    */
@@ -66,18 +61,18 @@ export class AppComponent implements OnInit, OnDestroy {
    * Creates an instance of your component.
    * 
    * @param router Router service used to redirect user to main landing page if he logs out
-   * @param messageService Message service to allow for cross component communication using pub/sub pattern
    * @param backendService Needed toverify we'reactuallyconnected to some backend before retrieving endpoints
    * @param loaderService Loader service used to display Ajax spinner during invocations to the backend
+   * @param navbarService Navbar service keeping track of state of navbar
    * @param configService Needed to check if system has been initially configured
    * @param themeService Needed to determine which theme we're using
    * @param feedbackService Needed to provide feedback to user
    */
   constructor(
     private router: Router,
-    private messageService: MessageService,
     private backendService:BackendService,
     public loaderService: LoaderService,
+    public navbarService: NavbarService,
     private configService: ConfigService,
     public themeService: ThemeService,
     private feedbackService: FeedbackService) { }
@@ -95,35 +90,6 @@ export class AppComponent implements OnInit, OnDestroy {
      * Checking the screen width rule for initial setting
      */
     this.onWindowResize();
-
-    /*
-     * Subscribing to relevant messages published by other components
-     * when wire frame needs to react to events occurring other places in our app.
-     */
-    this.subscriber = this.messageService.subscriber().subscribe((msg: Message) => {
-      switch(msg.name) {
-
-        // Some component wants to toggle the navbar
-        case Messages.TOGGLE_NAVBAR:
-          this.sidenavOpened = !this.sidenavOpened;
-          localStorage.setItem('sidebar', this.sidenavOpened ? 'open' : 'close');
-          break;
-
-        // Some component wants to close the navbar
-        case Messages.CLOSE_NAVBAR:
-          this.sidenavOpened = false;
-          localStorage.setItem('sidebar', 'close');
-          break;
-      }
-    });
-
-    // wait until sidebar status is defined based on the value stored in localstorage 
-    (async () => {
-      while (this.sidenavOpened === undefined)
-        await new Promise(resolve => setTimeout(resolve, 100));
-
-      this.sidenavOpened = !localStorage.getItem('sidebar') && this.largeScreen ? true : (localStorage.getItem('sidebar') === 'open' && this.largeScreen ? true : false);
-    })();
   }
 
   /**
@@ -139,7 +105,7 @@ export class AppComponent implements OnInit, OnDestroy {
    * Closes the navbar.
    */
   closeNavbar() {
-    this.sidenavOpened = false;
+    this.navbarService.expanded = false;
   }
 
   /*

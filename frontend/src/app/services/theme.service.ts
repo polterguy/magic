@@ -8,10 +8,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 /**
- * Keeps track of your backends and your currently selected backend.
- * 
- * This service will store your backends in the localStorage object,
- * to allow for easily selecting a backend you have previously connected to.
+ * Keeps track of what theme we're currently using
  */
 @Injectable({
   providedIn: 'root'
