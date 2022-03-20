@@ -9,14 +9,19 @@ import {
   HostListener,
   OnInit
 } from '@angular/core';
-import { Router } from '@angular/router';
+import { Location } from '@angular/common'; 
+import { ActivatedRoute, Params, Router } from '@angular/router';
 
 // Application specific imports.
 import { Status } from 'src/app/models/status.model';
+import { Backend } from 'src/app/models/backend.model';
+import { Response } from 'src/app/models/response.model';
 import { ThemeService } from 'src/app/services/theme.service';
 import { LoaderService } from 'src/app/services/loader.service';
 import { NavbarService } from 'src/app/services/navbar.service';
 import { BackendService } from 'src/app/services/backend.service';
+import { RegisterService } from 'src/app/services/register.service';
+import { FeedbackService } from 'src/app/services/feedback.service';
 
 /**
  * Main wire frame application component.
@@ -49,23 +54,34 @@ export class AppComponent implements OnInit {
   /**
    * Creates an instance of your component.
    * 
+   * @param activated Needed to retrieve query parameters
+   * @param registerService Needed to allow anonymous users to register
+   * @param location Needed to be able to remove query parameters
    * @param loaderService Loader service used to display Ajax spinner during invocations to the backend
    * @param router Needed to redirect user as he or she logs out
    * @param navbarService Navbar service keeping track of state of navbar
    * @param themeService Needed to determine which theme we're using
    * @param backendService Needed such that we can subscribe to authentication events
+   * @param feedbackService Needed to provide feedback to user
    */
   constructor(
+    private activated: ActivatedRoute,
+    private registerService: RegisterService,
+    private location: Location,
     public loaderService: LoaderService,
     private router: Router,
     public navbarService: NavbarService,
     public themeService: ThemeService,
-    private backendService: BackendService) { }
+    private backendService: BackendService,
+    private feedbackService: FeedbackService) { }
 
   /**
    * OnInit implementation.
    */
   ngOnInit() {
+
+    // Checking for query parameters.
+    this.getParams();
 
     // Checking the screen width rule for initial setting
     this.onWindowResize();
@@ -85,5 +101,94 @@ export class AppComponent implements OnInit {
    */
   closeNavbar() {
     this.navbarService.expanded = false;
+  }
+
+  /*
+   * Private helper methods.
+   */
+
+  /*
+   * Retrieving URL parameter
+   */
+  private getParams() {
+
+    // Parsing query parameters.
+    this.activated.queryParams.subscribe((params: Params) => {
+
+      // Checking if user accessed system with a link containing query param pointing to specific backend.
+      const backend = params['backend'];
+      if (backend) {
+        const cur = new Backend(backend);
+
+        // Making sure we keep existing username, password and token, if we have these values.
+        const old = this.backendService.backends.filter(x => x.url === cur.url);
+        if (old.length > 0) {
+          cur.username = old[0].username;
+          cur.password = old[0].password;
+          cur.token = old[0].token;
+        }
+        this.backendService.upsert(cur);
+        this.backendService.activate(cur);
+        this.location.replaceState('');
+
+      } else {
+
+        // Checking if user has some sort of token, implying reset-password token or verify-email token.
+        const token = params['token'];
+        if (token && token.includes('.')) {
+
+          /*
+           * 'token' query parameter seems to be a JWT token.
+           *
+           * Authentication request, authenticating using specified link,
+           * and redirecting user to hide URL.
+           */
+          const url = params['url'];
+          const username = params['username'];
+          const backend = new Backend(url, username, null, token);
+          this.backendService.upsert(backend);
+          this.backendService.activate(backend);
+          this.backendService.verifyToken().subscribe({
+            next: () => {
+
+              this.feedbackService.showInfo(`You were successfully authenticated as '${username}'`);
+
+              // Checking if this is an impersonation request or a change-password request.
+              if (this.backendService.active.token.in_role('reset-password')) {
+
+                // Change password request.
+                this.router.navigate(['/change-password']);
+
+              } else {
+
+                // Impersonation request.
+                this.location.replaceState('');
+              }
+            },
+            error: (error: any) => this.feedbackService.showError(error)});
+
+        } else if (token) {
+
+          /*
+           * 'token' seems to be a "verify email address" type of token since it doesn't contain "." characters.
+           *
+           * Need to set the current backend first.
+           */
+          const backend = new Backend(params['url'], params['username']);
+          this.backendService.upsert(backend);
+          this.backendService.activate(backend);
+
+          // Verifying user's email address.
+          this.registerService.verifyEmail(params['username'], token).subscribe({
+            next: (result: Response) => {
+              if (result.result === 'success') {
+                this.feedbackService.showInfo('You successfully confirmed your email address');
+                this.location.replaceState('');
+              }
+            },
+            error: (error: any) => this.feedbackService.showError(error)});
+        }
+      }
+    });
   }
 }
