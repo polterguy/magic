@@ -132,7 +132,6 @@ import { NewUserDialogComponent } from './components/management/auth/users/new-u
 import { NewRoleDialogComponent } from './components/management/auth/roles/new-role-dialog/new-role-dialog.component';
 import { PreviewFileDialogComponent } from './components/tools/ide/preview-file-dialog/preview-file-dialog.component';
 import { SelectMacroDialogComponent } from './components/tools/ide/select-macro-dialog/select-macro-dialog.component';
-import { ToolbarHelpDialogComponent } from './components/app/toolbar/toolbar-help-dialog/toolbar-help-dialog.component';
 import { RenameFolderDialogComponent } from './components/tools/ide/rename-folder-dialog/rename-folder-dialog.component';
 import { ExecuteMacroDialogComponent } from './components/tools/ide/execute-macro-dialog/execute-macro-dialog.component';
 import { JailUserDialogComponent } from './components/management/auth/users/jail-user-dialog/jail-user-dialog.component';
@@ -222,7 +221,6 @@ import { IncompatibleFileDialogComponent } from './components/tools/ide/incompat
     CrudSqlComponent,
     CrudSqlAddArgumentDialogComponent,
     PublishComponent,
-    ToolbarHelpDialogComponent,
     IdeComponent,
     TerminalComponent,
     SocketsComponent,
