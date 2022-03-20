@@ -29,6 +29,7 @@ import { BazarService } from '../../../services/management/bazar.service';
 import { DiagnosticsService } from '../../../services/diagnostics.service';
 import { ConfigService } from '../../../services/management/config.service';
 import { LoginDialogComponent } from '../login-dialog/login-dialog.component';
+import { ThemeService } from 'src/app/services/theme.service';
 
 /**
  * Navbar component wrapping main navigation in dashboard.
@@ -59,12 +60,7 @@ export class NavbarComponent implements OnInit {
   /**
    * Get the screen size
    */
-  @Input() notSmallScreen: boolean;
-
-  /**
-   * Value for the theme, default is set to light
-   */
-  theme: string;
+  @Input() largeScreen: boolean;
 
   /**
    * If there exists a newer version of Magic Core as published by the Bazar,
@@ -89,6 +85,7 @@ export class NavbarComponent implements OnInit {
    * @param feedbackService Needed to provide feedback to user
    * @param configService Needed to check configuration status ofbackend
    * @param bazarService Needed to check if core has update
+   * @param themeService Needed to determine which theme we're using and to allow user to change theme
    * @param overlayContainer Needed to add/remove theme's class name from this component.
    * @param clipboard Needed to copy URL of endpoint
    * @param registerService Needed to allow anonymous users to register
@@ -105,6 +102,7 @@ export class NavbarComponent implements OnInit {
     private feedbackService: FeedbackService,
     private configService: ConfigService,
     private bazarService: BazarService,
+    public themeService: ThemeService,
     private overlayContainer: OverlayContainer,
     private clipboard: Clipboard,
     private registerService: RegisterService,
@@ -138,12 +136,11 @@ export class NavbarComponent implements OnInit {
         this.shouldUpdateCore = false;
       }
     });
-    this.theme = localStorage.getItem('theme') ? localStorage.getItem('theme') : 'light';
-    this.overlayContainer.getContainerElement().classList.add(this.theme);
+    this.overlayContainer.getContainerElement().classList.add(this.themeService.theme);
     this.backendService.authenticatedChanged.subscribe(() => {
       this.cdRef.detectChanges();
     });
-    this.backendService.activeChanged.subscribe(() => {
+    this.backendService.activeBackendChanged.subscribe(() => {
       this.cdRef.detectChanges();
     });
     this.backendService.endpointsFetched.subscribe(() => {
@@ -191,7 +188,7 @@ export class NavbarComponent implements OnInit {
       }
     });
     dialogRef.afterClosed().subscribe((res: any) => {
-      if (!this.notSmallScreen) {
+      if (!this.largeScreen) {
         this.closeNavbar();
       }
     });
@@ -202,7 +199,7 @@ export class NavbarComponent implements OnInit {
    */
   logout() {
     this.backendService.logout(false);
-    if (!this.notSmallScreen) {
+    if (!this.largeScreen) {
       this.closeNavbar();
     }
   }
@@ -211,13 +208,8 @@ export class NavbarComponent implements OnInit {
    * Invoked when theme is changed.
    */
   themeChanged(value: string) {
-    this.theme = value;
-    this.overlayContainer.getContainerElement().classList.remove(localStorage.getItem('theme'));
-    this.messageService.sendMessage({
-      name: Messages.THEME_CHANGED,
-      content: value,
-    });
-    localStorage.setItem('theme', value);
+    this.overlayContainer.getContainerElement().classList.remove(this.themeService.theme);
+    this.themeService.theme = value;
     this.overlayContainer.getContainerElement().classList.add(value);
   }
 

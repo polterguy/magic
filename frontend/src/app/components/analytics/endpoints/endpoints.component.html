@@ -89,7 +89,7 @@
                 <td
                   mat-cell
                   class="auth-col"
-                  [class.d-none]="!notSmallScreen"
+                  [class.d-none]="!largeScreen"
                   *matCellDef="let el">
                     {{getAuth(el)}}
                     <mat-icon *ngIf="el.error" [matTooltip]="el.error" class="error-icon">warning</mat-icon>

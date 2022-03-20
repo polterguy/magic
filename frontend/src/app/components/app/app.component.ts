@@ -6,18 +6,16 @@
 // Angular and system imports.
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
-import { OverlayContainer } from '@angular/cdk/overlay';
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { Message } from 'src/app/models/message.model';
 import { Messages } from 'src/app/models/messages.model';
-import { CoreVersion } from 'src/app/models/core-version.model';
+import { ThemeService } from 'src/app/services/theme.service';
 import { LoaderService } from 'src/app/services/loader.service';
 import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { DiagnosticsService } from '../../services/diagnostics.service';
 import { ConfigService } from '../../services/management/config.service';
 
 /**
@@ -33,20 +31,20 @@ export class AppComponent implements OnInit, OnDestroy {
   private subscriber: Subscription;
 
   /**
-   * To get the width of the screen 
-   * getScreenWidth {number} :: define how the sidenav and the content should behave based on the screen size
-   * smallScreenSize {number} :: to set a fixed size as an agreement
-   * notSmallScreen {boolean} :: to check whether the screen width is small or large
+   * Helpers to determine how to show the navbar. If we're on a small screen, we show
+   * it as an expandable only visible as hamburger button is clicked. Otherwise we
+   * show it as a constant visible menu with the option of making it smaller bu clicking
+   * a button.
    */
   getScreenWidth: number;
   smallScreenSize: number = 768;
-  notSmallScreen: boolean = undefined;
+  largeScreen: boolean = undefined;
 
   @HostListener('window:resize', ['$event'])
   private onWindowResize() {
     this.getScreenWidth = window.innerWidth;
-    this.notSmallScreen = (this.getScreenWidth > this.smallScreenSize || this.getScreenWidth === this.smallScreenSize) ? true : false;
-    this.sidenavOpened = this.notSmallScreen;
+    this.largeScreen = this.getScreenWidth >= this.smallScreenSize ? true : false;
+    this.sidenavOpened = this.largeScreen;
   }
 
   /**
@@ -65,13 +63,6 @@ export class AppComponent implements OnInit, OnDestroy {
   bazarVersion: string = null;
 
   /**
-   * CSS class wrapping entire application.
-   * 
-   * Used to change theme dynamically, and invert colors between 'light' and 'dark' themes.
-   */
-  theme: string = 'light';
-
-  /**
    * Creates an instance of your component.
    * 
    * @param router Router service used to redirect user to main landing page if he logs out
@@ -79,9 +70,8 @@ export class AppComponent implements OnInit, OnDestroy {
    * @param backendService Needed toverify we'reactuallyconnected to some backend before retrieving endpoints
    * @param loaderService Loader service used to display Ajax spinner during invocations to the backend
    * @param configService Needed to check if system has been initially configured
+   * @param themeService Needed to determine which theme we're using
    * @param feedbackService Needed to provide feedback to user
-   * @param diagnosticsService Needed to retrieve backend version
-   * @param overlayContainer Needed to add/remove theme's class name from this component.
    */
   constructor(
     private router: Router,
@@ -89,9 +79,8 @@ export class AppComponent implements OnInit, OnDestroy {
     private backendService:BackendService,
     public loaderService: LoaderService,
     private configService: ConfigService,
-    private feedbackService: FeedbackService,
-    private diagnosticsService: DiagnosticsService,
-    private overlayContainer: OverlayContainer) { }
+    public themeService: ThemeService,
+    private feedbackService: FeedbackService) { }
 
   /**
    * OnInit implementation.
@@ -112,35 +101,7 @@ export class AppComponent implements OnInit, OnDestroy {
      * when wire frame needs to react to events occurring other places in our app.
      */
     this.subscriber = this.messageService.subscriber().subscribe((msg: Message) => {
-      if (msg.name === Messages.USER_LOGGED_IN || msg.name === Messages.USER_LOGGED_OUT) {
-        this.retrieveBackendVersion();
-      }
       switch(msg.name) {
-
-        // User was logged out.
-        case Messages.USER_LOGGED_OUT:
-
-          // Verifying caller wants to display information to user or not.
-          if (msg.content !== false) {
-            this.feedbackService.showInfo('You were successfully logged out of your backend');
-          }
-
-          // Redirecting user to landing page.
-          if (this.router.url !== '/') {
-            this.router.navigate(['/']);
-          }
-          this.backendService.active.createAccessRights();
-          break;
-
-        // User was logged in.
-        case Messages.USER_LOGGED_IN:
-          this.feedbackService.showInfo('You were successfully authenticated towards your backend');
-          break;
-
-        // Theme was changed.
-        case Messages.THEME_CHANGED:
-          this.theme = msg.content;
-          break;
 
         // Some component wants to toggle the navbar
         case Messages.TOGGLE_NAVBAR:
@@ -161,20 +122,7 @@ export class AppComponent implements OnInit, OnDestroy {
       while (this.sidenavOpened === undefined)
         await new Promise(resolve => setTimeout(resolve, 100));
 
-      this.sidenavOpened = !localStorage.getItem('sidebar') && this.notSmallScreen ? true : (localStorage.getItem('sidebar') === 'open' && this.notSmallScreen ? true : false);
-
-      // wait until theme color is defined based on the value stored in localstorage 
-      if (!localStorage.getItem('theme')) {
-        this.theme = 'light';
-      } else {
-        this.theme = localStorage.getItem('theme');
-      }
-      this.overlayContainer.getContainerElement().classList.add(this.theme);
-
-      this.messageService.sendMessage({
-        name: Messages.THEME_CHANGED,
-        content: this.theme,
-      });
+      this.sidenavOpened = !localStorage.getItem('sidebar') && this.largeScreen ? true : (localStorage.getItem('sidebar') === 'open' && this.largeScreen ? true : false);
     })();
   }
 
@@ -212,22 +160,6 @@ export class AppComponent implements OnInit, OnDestroy {
           }
         },
         error: (error: any) => this.feedbackService.showError(error)});
-    }
-  }
-  
-  /*
-   * Retrieves backend version.
-   */
-  private retrieveBackendVersion() {
-    if (this.backendService.active?.token?.in_role('root')) {
-      this.diagnosticsService.version().subscribe({
-        next: (version: CoreVersion) => {
-          this.version = version.version;
-        },
-        error: (error: any) => this.feedbackService.showError(error)});
-
-    } else {
-      this.version = '';
     }
   }
 }
