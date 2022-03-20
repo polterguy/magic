@@ -13,7 +13,6 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
 import { Backend } from 'src/app/models/backend.model';
-import { Messages } from 'src/app/models/messages.model';
 import { Response } from 'src/app/models/response.model';
 import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
@@ -198,9 +197,6 @@ export class LoginDialogComponent implements OnInit {
       this.autoLogin === false || this.advanced ? this.loginForm.value.password : null,
       this.savePassword).subscribe({
         next: () => {
-          this.messageService.sendMessage({
-            name: Messages.USER_LOGGED_IN,
-          });
           this.dialogRef.close({});
           if (this.backendService.active.token.in_role('root') && 
             (this.configService.setupStatus?.config_done === false ||

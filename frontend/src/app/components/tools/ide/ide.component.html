@@ -9,8 +9,8 @@
           <!-- Drawer for tree view of files and folders on server -->
           <mat-drawer
             #drawer
-            [mode]="notSmallScreen ? 'side' : 'over'"
-            [opened]="startResizing && notSmallScreen ? true : false">
+            [mode]="largeScreen ? 'side' : 'over'"
+            [opened]="startResizing && largeScreen ? true : false">
 
             <!-- Close treeview drawer button, only visible on small screens -->
             <div class="d-md-none d-block mb-5">

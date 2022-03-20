@@ -39,7 +39,7 @@ export class BackendService {
   /**
    * To allow consumers to subscribe to active backend changed events.
    */
-  activeChanged: Observable<Backend>;
+  activeBackendChanged: Observable<Backend>;
 
   /**
    * To allow consumers to subscribe when endpoints are retrieved.
@@ -69,7 +69,7 @@ export class BackendService {
     this.endpointsFetched = this._endpointsRetrieved.asObservable();
 
     this._activeChanged = new BehaviorSubject<Backend>(null);
-    this.activeChanged = this._activeChanged.asObservable();
+    this.activeBackendChanged = this._activeChanged.asObservable();
 
     if (this.active) {
       this.getEndpoints(this.active);

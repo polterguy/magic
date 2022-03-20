@@ -52,7 +52,7 @@ export class IdeComponent implements OnInit, OnDestroy {
   @HostListener('window:resize', ['$event'])
   private onWindowResize() {
     this.getScreenWidth = window.innerWidth;
-    this.notSmallScreen = this.getScreenWidth >= this.smallScreenSize ? true : false;
+    this.largeScreen = this.getScreenWidth >= this.smallScreenSize ? true : false;
   }
 
   // Known file extensions we've got editors for.
@@ -85,11 +85,11 @@ export class IdeComponent implements OnInit, OnDestroy {
    * To get the width of the screen 
    * getScreenWidth {number} :: define how the sidenav and the content should behave based on the screen size
    * smallScreenSize {number} :: to set a fixed size as an agreement
-   * notSmallScreen {boolean} :: to check whether the screen width is small or large
+   * largeScreen {boolean} :: to check whether the screen width is small or large
    */
   getScreenWidth: number;
   smallScreenSize: number = 768;
-  notSmallScreen: boolean = undefined;
+  largeScreen: boolean = undefined;
 
   /**
    * Root tree node pointing to root folder.

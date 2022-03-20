@@ -3,26 +3,30 @@
   <mat-progress-bar mode="indeterminate" *ngIf="loaderService.isLoading | async"></mat-progress-bar>
 </div>
 
-<div [class]="theme" class="main-body">
+<div [class]="themeService.theme" class="main-body">
 
   <mat-sidenav-container (backdropClick)="closeNavbar()" id="main-wrapper">
 
-    <mat-sidenav [mode]="notSmallScreen ? 'side' : 'over'" class="mat-elevation-z2"
-      [opened]="sidenavOpened || notSmallScreen"
-      [class.sideClosed]="!sidenavOpened && notSmallScreen"
+    <mat-sidenav
+      [mode]="largeScreen ? 'side' : 'over'"
+      class="mat-elevation-z2"
+      [opened]="sidenavOpened || largeScreen"
+      [class.sideClosed]="!sidenavOpened && largeScreen"
       [class.full-width-sidebar]="sidenavOpened"
-      [class.small-width-sidebar]="notSmallScreen && !sidenavOpened"
+      [class.small-width-sidebar]="largeScreen && !sidenavOpened"
       *ngIf="sidenavOpened !== undefined"
       id="sidebar-main">
-      <app-navbar [sideNavStatus]="sidenavOpened || !notSmallScreen" [notSmallScreen]="notSmallScreen"></app-navbar>
+      <app-navbar
+        [sideNavStatus]="sidenavOpened || !largeScreen"
+        [largeScreen]="largeScreen"></app-navbar>
     </mat-sidenav>
 
     <mat-sidenav-content
-      [class.content-with-full-sidebar]="notSmallScreen && sidenavOpened"
-      [class.content-with-small-sidebar]="notSmallScreen && !sidenavOpened" id="main-section"
-      [class.is-small-screen]="!notSmallScreen">
+      [class.content-with-full-sidebar]="largeScreen && sidenavOpened"
+      [class.content-with-small-sidebar]="largeScreen && !sidenavOpened" id="main-section"
+      [class.is-small-screen]="!largeScreen">
 
-      <ng-container *ngIf="!notSmallScreen">
+      <ng-container *ngIf="!largeScreen">
         <app-toolbar></app-toolbar>
       </ng-container>
 

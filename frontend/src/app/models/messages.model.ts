@@ -11,16 +11,6 @@
 export class Messages {
 
   /**
-   * Message will be published by the system when the user logs in.
-   */
-  static readonly USER_LOGGED_IN = 'app.user.logged-in';
-
-  /**
-   * Message will be published by the system when the user logs out.
-   */
-  static readonly USER_LOGGED_OUT = 'app.user.logged-out';
-
-  /**
    * Message will be published by the system when the
    * navbar should be closed.
    */
@@ -47,9 +37,4 @@ export class Messages {
    * for any dynamically injected components.
    */
   static readonly CLEAR_COMPONENTS = 'app.ui.clear-dynamic-components';
-
-  /**
-   * Message will be published when theme changes.
-   */
-  static readonly THEME_CHANGED = 'app.ui.theme-changed';
 }
