@@ -14,7 +14,6 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 // Application specific imports.
 import { Count } from 'src/app/models/count.model';
 import { CacheItem } from '../../../models/cache-item.model';
-import { AuthService } from '../../../services/auth.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { CacheService } from 'src/app/services/analytics/cache.service';
@@ -66,14 +65,12 @@ export class DiagnosticsCacheComponent implements OnInit {
    * Creates an instance of your component.
    * 
    * @param clipboard Used to copy content of cache item to clipboard
-   * @param authService Needed to verify user has access to components
    * @param cacheService Needed to read, remove and clear cache
    * @param backendService Needed to figure out if user has access to specific actions related to the cache or not
    * @param feedbackService Needed to display feedback information to user
    */
   constructor(
     private clipboard: Clipboard,
-    public authService: AuthService,
     private cacheService: CacheService,
     public backendService: BackendService,
     private feedbackService: FeedbackService) { }

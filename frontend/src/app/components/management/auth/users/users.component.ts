@@ -15,8 +15,6 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 
 // Application specific imports.
 import { Count } from 'src/app/models/count.model';
-import { Affected } from 'src/app/models/affected.model';
-import { AuthService } from '../../../../services/auth.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from '../../../../services/feedback.service';
 import { User } from 'src/app/components/management/auth/models/user.model';
@@ -96,7 +94,6 @@ export class UsersComponent implements OnInit {
    * @param feedbackService Used to display feedback to user
    * @param backendService Needed to create login link
    * @param userService Used to fetch, create, and modify users in the system
-   * @param authService Needed to verify user has access to components
    * @param clipboard Needed to put login link for users into clipboard
    * @param dialog Needed to create modal dialogues
    */
@@ -105,7 +102,6 @@ export class UsersComponent implements OnInit {
     private feedbackService: FeedbackService,
     public backendService: BackendService,
     private userService: UserService,
-    public authService: AuthService,
     private clipboard: Clipboard,
     private dialog: MatDialog) { }
 

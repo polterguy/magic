@@ -16,7 +16,6 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 // Application specific imports.
 import { Message } from 'src/app/models/message.model';
 import { Response } from 'src/app/models/response.model';
-import { AuthService } from '../../../../services/auth.service';
 import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
@@ -112,7 +111,6 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
    * 
    * @param dialog Needed to create modal dialogs when importing public keys
    * @param clipboard Needed to be able to copy things into clipboard
-   * @param authService Needed to verify access to components
    * @param cryptoService Needed to retrieve public keys from backend
    * @param backendService Needed to determine access rights of user in backend
    * @param messageService Needed to subscribe to relevant messages, such that server key pair has been created, etc
@@ -121,7 +119,6 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
   constructor(
     private dialog: MatDialog,
     private clipboard: Clipboard,
-    public authService: AuthService,
     private cryptoService: CryptoService,
     public backendService: BackendService,
     private messageService: MessageService,

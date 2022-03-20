@@ -7,7 +7,6 @@
 import { Component } from '@angular/core';
 
 // Application specific imports.
-import { AuthService } from '../../../../services/auth.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 
@@ -39,12 +38,10 @@ export class ChangePasswordComponent {
   /**
    * Creates an instance of your component.
    * 
-   * @param authService Needed to invoke backend to actually perform the password change
    * @param feedbackService Needed to provide feedback to user
    * @param backendService Needed to check if password will be transmitted in clear text
    */
   constructor(
-    private authService: AuthService,
     private feedbackService: FeedbackService,
     public backendService: BackendService) { }
 
@@ -54,10 +51,10 @@ export class ChangePasswordComponent {
    */
   savePassword() {
     if (this.password.length !== 0 || this.password === this.repeatPassword) {
-      this.authService.changePassword(this.password).subscribe({
+      this.backendService.changePassword(this.password).subscribe({
         next: () => {
           this.feedbackService.showInfoShort('Your password was successfully updated, please login again');
-          this.authService.logoutFromCurrent(true);
+          this.backendService.logout(true);
         },
         error: (error: any) => this.feedbackService.showError(error)});
     }

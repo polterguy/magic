@@ -14,7 +14,6 @@ import { Messages } from 'src/app/models/messages.model';
 import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { AuthService } from 'src/app/services/auth.service';
 import { ToolbarHelpDialogComponent } from './toolbar-help-dialog/toolbar-help-dialog.component';
 import { LoginDialogComponent } from 'src/app/components/app/login-dialog/login-dialog.component';
 
@@ -64,7 +63,6 @@ export class ToolbarComponent implements OnInit {
    * 
    * @param router Needed to be able to display context sensitive help
    * @param dialog Dialog reference necessary to show login dialog if user tries to login
-   * @param authService Authentication and authorisation HTTP service
    * @param backendService Service to keep track of currently selected backend
    * @param messageService Message service to send messages to other components using pub/sub
    * @param feedbackService Needed to show confirm dialog
@@ -73,7 +71,6 @@ export class ToolbarComponent implements OnInit {
   constructor(
     private router: Router,
     private dialog: MatDialog,
-    public authService: AuthService,
     public backendService: BackendService,
     private messageService: MessageService,
     private feedbackService: FeedbackService,
@@ -156,7 +153,7 @@ export class ToolbarComponent implements OnInit {
    * Logs the user out from his current backend.
    */
   public logout() {
-    this.authService.logoutFromCurrent(false);
+    this.backendService.logout(false);
   }
 
   /**

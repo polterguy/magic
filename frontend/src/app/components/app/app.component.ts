@@ -11,14 +11,12 @@ import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { Message } from 'src/app/models/message.model';
-import { Response } from 'src/app/models/response.model';
 import { Messages } from 'src/app/models/messages.model';
-import { AuthService } from 'src/app/services/auth.service';
+import { CoreVersion } from 'src/app/models/core-version.model';
 import { LoaderService } from 'src/app/services/loader.service';
 import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { BazarService } from '../../services/management/bazar.service';
 import { DiagnosticsService } from '../../services/diagnostics.service';
 import { ConfigService } from '../../services/management/config.service';
 
@@ -45,7 +43,7 @@ export class AppComponent implements OnInit, OnDestroy {
   notSmallScreen: boolean = undefined;
 
   @HostListener('window:resize', ['$event'])
-  onWindowResize() {
+  private onWindowResize() {
     this.getScreenWidth = window.innerWidth;
     this.notSmallScreen = (this.getScreenWidth > this.smallScreenSize || this.getScreenWidth === this.smallScreenSize) ? true : false;
     this.sidenavOpened = this.notSmallScreen;
@@ -55,12 +53,6 @@ export class AppComponent implements OnInit, OnDestroy {
    * True if navigation menu is expanded.
    */
   sidenavOpened: boolean;
-
-  /**
-   * If there exists a newer version of Magic Core as published by the Bazar,
-   * this value will be true.
-   */
-  shouldUpdateCore: boolean = false;
    
   /**
    * Backend version as returned from server if authenticated.
@@ -84,10 +76,8 @@ export class AppComponent implements OnInit, OnDestroy {
    * 
    * @param router Router service used to redirect user to main landing page if he logs out
    * @param messageService Message service to allow for cross component communication using pub/sub pattern
-   * @param authService Authentication and authorisation service, used to authenticate user, etc
    * @param backendService Needed toverify we'reactuallyconnected to some backend before retrieving endpoints
    * @param loaderService Loader service used to display Ajax spinner during invocations to the backend
-   * @param bazarService Needed to see if there exists a newer version to install
    * @param configService Needed to check if system has been initially configured
    * @param feedbackService Needed to provide feedback to user
    * @param diagnosticsService Needed to retrieve backend version
@@ -96,10 +86,8 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private messageService: MessageService,
-    public authService: AuthService,
     private backendService:BackendService,
     public loaderService: LoaderService,
-    private bazarService: BazarService,
     private configService: ConfigService,
     private feedbackService: FeedbackService,
     private diagnosticsService: DiagnosticsService,
@@ -115,12 +103,10 @@ export class AppComponent implements OnInit, OnDestroy {
     });
 
     /**
-     * to check the screen width rule for initial setting
+     * Checking the screen width rule for initial setting
      */
     this.onWindowResize();
 
-    // Attempting to retrieve backend version.
-    // this.retrieveBackendVersion();
     /*
      * Subscribing to relevant messages published by other components
      * when wire frame needs to react to events occurring other places in our app.
@@ -235,24 +221,8 @@ export class AppComponent implements OnInit, OnDestroy {
   private retrieveBackendVersion() {
     if (this.backendService.active?.token?.in_role('root')) {
       this.diagnosticsService.version().subscribe({
-        next: (version: any) => {
+        next: (version: CoreVersion) => {
           this.version = version.version;
-          this.bazarService.latestVersion().subscribe({
-            next: (result: Response) => {
-              this.bazarVersion = result.result;
-              if (this.bazarVersion !== this.version) {
-
-                // TODO: Replace service invocation with some sort of method in service or something.
-                this.configService.versionCompare(this.bazarVersion, this.version).subscribe((result: Response) => {
-                  if (+result.result === 1) {
-                    this.feedbackService.showInfo('There has been published an updated version of Magic. You should probably update your current version.');
-                    this.shouldUpdateCore = true;
-                  }
-                });
-              }
-
-            },
-            error: (error: any) => this.feedbackService.showError(error)});
         },
         error: (error: any) => this.feedbackService.showError(error)});
 

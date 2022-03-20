@@ -10,7 +10,6 @@ import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/cor
 
 // Application specific imports.
 import { Message } from 'src/app/models/message.model';
-import { AuthService } from 'src/app/services/auth.service';
 import { MessageService } from 'src/app/services/message.service';
 import { FileService } from 'src/app/services/tools/file.service';
 import { BackendService } from 'src/app/services/backend.service';
@@ -43,7 +42,6 @@ export class GeneralActionsComponent implements OnInit, OnDestroy {
    * Creates an instance of your component.
    * 
    * @param dialog Needed to create modal dialogs
-   * @param authService Needed to verify access to components
    * @param fileService Needed to load and save files.
    * @param backendService Needed to determine user's access rights in backend
    * @param messageService Needed to subscribe to relevant messages published by other components
@@ -51,7 +49,6 @@ export class GeneralActionsComponent implements OnInit, OnDestroy {
    */
   constructor(
     private dialog: MatDialog,
-    public authService: AuthService,
     private fileService: FileService,
     public backendService: BackendService,
     private messageService: MessageService,

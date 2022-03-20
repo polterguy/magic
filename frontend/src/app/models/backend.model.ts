@@ -14,7 +14,7 @@ import { AccessModel } from "./access.model";
  */
 export class Backend {
 
-  private _token?: Token;
+  private _token?: Token = null;
   private _url: string;
   private _username: string;
   private _password: string;
@@ -89,7 +89,7 @@ export class Backend {
   /**
    * Changes password used to authenticate towards backend.
    */
-   set password(value: string) {
+  set password(value: string) {
     this._password = value;
   }
 
@@ -97,7 +97,7 @@ export class Backend {
    * Returns token for backend.
    */
   get token() : Token {
-    return this._token?.expired ? null : this._token;
+    return this._token;
   }
 
   /**

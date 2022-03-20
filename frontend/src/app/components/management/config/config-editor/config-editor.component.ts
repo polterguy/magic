@@ -7,13 +7,12 @@
 import { Component, OnInit } from '@angular/core';
 
 // Application specific imports.
+import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from '../../../../services/feedback.service';
 import { ConfigService } from 'src/app/services/management/config.service';
 
 // CodeMirror options.
 import json from '../../../codemirror/options/json.json'
-import { AuthService } from '../../../../services/auth.service';
-import { BackendService } from 'src/app/services/backend.service';
 
 /**
  * Component that allows user to edit his configuration file as raw JSON.
@@ -42,13 +41,11 @@ export class ConfigEditorComponent implements OnInit {
    * @param feedbackService Needed to display feedback to user
    * @param configService Needed to load and save configuration file
    * @param backendService Needed to retrieve user's access rights from backend
-   * @param authService Needed to verify user has access to components
    */
   constructor(
     private feedbackService: FeedbackService,
     private configService: ConfigService,
-    public backendService: BackendService,
-    public authService: AuthService) {
+    public backendService: BackendService) {
   }
 
   /**

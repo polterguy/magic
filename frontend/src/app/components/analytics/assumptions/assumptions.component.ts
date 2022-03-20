@@ -12,7 +12,6 @@ import { bufferCount, concatMap, debounceTime, distinctUntilChanged } from 'rxjs
 
 // Application specific imports.
 import { Response } from '../../../models/response.model';
-import { AuthService } from '../../../services/auth.service';
 import { FileService } from 'src/app/services/tools/file.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { MessageService } from '../../../services/message.service';
@@ -77,7 +76,6 @@ export class DiagnosticsTestsComponent implements OnInit {
   /**
    * Creates an instance of your component.
    * 
-   * @param authService Needed to verify user has access to component
    * @param fileService Needed to load test files from backend
    * @param messageService Needed to publish message when all assumptions succeeds
    * @param feedbackService Needed to provide feedback to user
@@ -85,7 +83,6 @@ export class DiagnosticsTestsComponent implements OnInit {
    * @param assumptionService Needed to be able to create and execute assumptions
    */
   constructor(
-    public authService: AuthService,
     private fileService: FileService,
     public backendService: BackendService,
     private messageService: MessageService,

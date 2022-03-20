@@ -20,7 +20,6 @@ import { Response } from '../../../models/response.model';
 import { BazarApp } from '../../../models/bazar-app.model';
 import { AppManifest } from '../../../models/app-manifest';
 import { environment } from 'src/environments/environment';
-import { AuthService } from '../../../services/auth.service';
 import { LoaderService } from '../../../services/loader.service';
 import { FileService } from 'src/app/services/tools/file.service';
 import { MessageService } from 'src/app/services/message.service';
@@ -112,7 +111,6 @@ export class BazarComponent implements OnInit, OnDestroy {
    * 
    * @param router Needed to redirect user after app has been installed
    * @param dialog Needed to create modal dialogs
-   * @param authService Needed to verify user is root
    * @param fileService Needed to be able to display README file after app has been installed.
    * @param bazarService Needed to retrieve apps from external Bazar server
    * @param configService Needed to compare versions semantically
@@ -125,7 +123,6 @@ export class BazarComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private dialog: MatDialog,
-    public authService: AuthService,
     private fileService: FileService,
     private bazarService: BazarService,
     private configService: ConfigService,

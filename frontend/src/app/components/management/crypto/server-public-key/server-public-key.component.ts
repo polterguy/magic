@@ -9,7 +9,6 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { MatDialog } from '@angular/material/dialog';
 
 // Application specific imports.
-import { AuthService } from '../../../../services/auth.service';
 import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
@@ -36,7 +35,6 @@ export class ServerPublicKeyComponent implements OnInit {
    * Creates an instance of your component.
    * 
    * @param dialog Needed to show modal dialogs
-   * @param authService Needed to check if user is root
    * @param cryptoService Service needed to retrieve server's public key
    * @param messageService Needed to publish message to subscribers as we create new server key pair
    * @param backendService Needed to determine access rights for user in backend
@@ -45,7 +43,6 @@ export class ServerPublicKeyComponent implements OnInit {
    */
   constructor(
     private dialog: MatDialog,
-    public authService: AuthService,
     private cryptoService: CryptoService,
     private messageService: MessageService,
     public backendService: BackendService,

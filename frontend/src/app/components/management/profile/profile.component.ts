@@ -7,9 +7,8 @@
 import { Component } from '@angular/core';
 
 // Application specific imports.
-import { Response } from 'src/app/models/response.model';
-import { AuthService } from '../../../services/auth.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
+import { BackendService } from 'src/app/services/backend.service';
 
 /**
  * Profile component allowing the user to change his password and other parts related to his profile.
@@ -37,14 +36,14 @@ export class ProfileComponent {
    * @param feedbackService NEeded to display feedback to user
    */
   constructor(
-    private authService: AuthService,
+    private backendService: BackendService,
     private feedbackService: FeedbackService) { }
 
   /**
    * Invoked when user wants to change his password.
    */
   changePassword() {
-    this.authService.changePassword(this.password).subscribe({
+    this.backendService.changePassword(this.password).subscribe({
       next: () => this.feedbackService.showInfoShort('Your password was successfully changed'),
       error: (error: any) => this.feedbackService.showError(error)});
   }

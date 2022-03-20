@@ -110,7 +110,9 @@ export class ConfigService {
            * Notice, when setup is done, the backend will return a new JWT token
            * which we'll have to use for consecutive invocations towards the backend.
            */
-          this.backendService.upsertAndActivate(new Backend(this.backendService.active.url, 'root', null, res.ticket));
+          const backend = new Backend(this.backendService.active.url, 'root', null, res.ticket);
+          this.backendService.upsert(backend);
+          this.backendService.activate(backend);
           observer.next(res);
           observer.complete();
         },
