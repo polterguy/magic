@@ -129,21 +129,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * getting user's preferences for the displayed charts inside dashboard
-   * and storing them inside localstorage
-   */
-  getChartPreferences() {
-    if (localStorage.getItem('chartPreference')) {
-      this.chartPreference = JSON.parse(localStorage.getItem('chartPreference'));
-    } else {
-      this.chartsList.forEach((element, index) => {
-        this.chartPreference.push(element.value);
-        localStorage.setItem('chartPreference', JSON.stringify(this.chartPreference))
-      });
-    }
-  }
-
-  /**
    * set dashboard charts preferences and store in localStorage
    * show success message, so the user understands what he's done!
    */
@@ -206,10 +191,26 @@ export class DashboardComponent implements OnInit, OnDestroy {
             this.notChangableChart = this.chartsList[0].value;
           })
         }
-        // get the user's preferences for charts
+
+        // Get the user's preferences for charts
         this.getChartPreferences();
 
       },
       error: (error: any) => this.feedbackService.showError(error)});
+  }
+
+  /*
+   * Getting user's preferences for the displayed charts inside dashboard
+   * and storing them inside localstorage
+   */
+  private getChartPreferences() {
+    if (localStorage.getItem('chartPreference')) {
+      this.chartPreference = JSON.parse(localStorage.getItem('chartPreference'));
+    } else {
+      this.chartsList.forEach((element, index) => {
+        this.chartPreference.push(element.value);
+        localStorage.setItem('chartPreference', JSON.stringify(this.chartPreference))
+      });
+    }
   }
 }
