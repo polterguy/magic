@@ -21,11 +21,11 @@ import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { PublicKey } from 'src/app/components/management/crypto/models/public-key.model';
 import { CryptoService } from 'src/app/components/management/crypto/services/crypto.service';
-import { Model } from '../../../codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
+import { Model } from '../../../utilities/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 import { ImportPublicKeyDialogComponent } from './import-public-key-dialog/import-public-key-dialog.component';
 
 // CodeMirror options.
-import hyperlambda from '../../../codemirror/options/hyperlambda.json';
+import hyperlambda from '../../../utilities/codemirror/options/hyperlambda.json';
 
 /*
  * Helper class to encapsulate all public keys and their CodeMirror vocabulary options.

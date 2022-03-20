@@ -12,8 +12,8 @@ import {
 } from '@angular/core';
 
 // Application specific imports.
-import { FeedbackService } from '../../../services/feedback.service';
-import { VocabularyService } from '../../../services/tools/vocabulary.service';
+import { FeedbackService } from '../../../../services/feedback.service';
+import { VocabularyService } from '../../../../services/tools/vocabulary.service';
 
 /**
  * Model class for CodeMirror instance's Hyperlambda.

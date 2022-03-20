@@ -27,11 +27,11 @@ import { FeedbackService } from 'src/app/services/feedback.service';
  * Main wire frame application component.
  */
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  selector: 'main-root',
+  templateUrl: './main.component.html',
+  styleUrls: ['./main.component.scss']
 })
-export class AppComponent implements OnInit {
+export class MainComponent implements OnInit {
 
   // Needed to be able to figure out if we're on a small screen or not.
   @HostListener('window:resize', ['$event'])

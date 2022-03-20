@@ -69,15 +69,15 @@ import { LoaderInterceptor } from './interceptors/loader.interceptor';
 import { InjectDirective } from './components/tools/crudifier/inject.directive';
 
 // Application specific normal components.
-import { AppComponent } from './components/app/app.component';
+import { MainComponent } from './components/main/main.component';
 import { IdeComponent } from './components/tools/ide/ide.component';
 import { SqlComponent } from './components/tools/sql/sql.component';
 import { AboutComponent } from './components/about/about.component';
 import { LogComponent } from './components/analytics/log/log.component';
 import { TasksComponent } from './components/tools/tasks/tasks.component';
-import { NavbarComponent } from './components/app/navbar/navbar.component';
+import { NavbarComponent } from './components/main/navbar/navbar.component';
 import { AuthComponent } from './components/management/auth/auth.component';
-import { ToolbarComponent } from './components/app/toolbar/toolbar.component';
+import { ToolbarComponent } from './components/main/toolbar/toolbar.component';
 import { BazarComponent } from './components/management/bazar/bazar.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { ConfigComponent } from './components/management/config/config.component';
@@ -99,7 +99,7 @@ import { SubscribeComponent } from './components/analytics/sockets/subscribe/sub
 import { DiagnosticsTestsComponent } from './components/analytics/assumptions/assumptions.component';
 import { PublicKeysComponent } from './components/management/crypto/public-keys/public-keys.component';
 import { CrudBackendComponent } from './components/tools/crudifier/crud-backend/crud-backend.component';
-import { CodemirrorSqlComponent } from './components/codemirror/codemirror-sql/codemirror-sql.component';
+import { CodemirrorSqlComponent } from './components/utilities/codemirror/codemirror-sql/codemirror-sql.component';
 import { SetupAuthComponent } from './components/management/config/setup/setup-auth/setup-auth.component';
 import { CrudFrontendComponent } from './components/tools/crudifier/crud-frontend/crud-frontend.component';
 import { ConfigEditorComponent } from './components/management/config/config-editor/config-editor.component';
@@ -110,7 +110,7 @@ import { CrudifierTableComponent } from './components/tools/crudifier/crud-backe
 import { CreateKeypairComponent } from './components/management/config/setup/create-keypair/create-keypair.component';
 import { CrudSqlExtraComponent } from './components/tools/crudifier/crud-sql/crud-sql-extra/crud-sql-extra.component';
 import { FolderActionsComponent } from './components/tools/ide/action-buttons/folder-actions/folder-actions.component';
-import { HyperlambdaComponent } from './components/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
+import { HyperlambdaComponent } from './components/utilities/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 import { ServerPublicKeyComponent } from './components/management/crypto/server-public-key/server-public-key.component';
 import { EndpointDetailsComponent } from './components/analytics/endpoints/endpoint-details/endpoint-details.component';
 import { GeneralActionsComponent } from './components/tools/ide/action-buttons/general-actions/general-actions.component';
@@ -120,8 +120,8 @@ import { CrudifierSetDefaultsComponent } from './components/tools/crudifier/crud
 import { CrudFrontendExtraComponent } from './components/tools/crudifier/crud-frontend/crud-frontend-extra/crud-frontend-extra.component';
 
 // Application specific modal dialog components.
-import { ConfirmDialogComponent } from './components/confirm/confirm-dialog.component';
-import { LoginDialogComponent } from './components/app/login-dialog/login-dialog.component';
+import { ConfirmDialogComponent } from './components/utilities/confirm/confirm-dialog.component';
+import { LoginDialogComponent } from './components/main/login-dialog/login-dialog.component';
 import { LoadSqlDialogComponent } from './components/tools/sql/load-sql-dialog/load-sql-dialog.component';
 import { SaveSqlDialogComponent } from './components/tools/sql/save-sql-dialog/save-sql-dialog.component';
 import { NewTaskDialogComponent } from './components/tools/tasks/new-task-dialog/new-task-dialog.component';
@@ -142,6 +142,7 @@ import { SaveSnippetDialogComponent } from './components/tools/evaluator/save-sn
 import { AddToRoleDialogComponent } from './components/management/auth/users/add-to-role-dialog/add-to-role-dialog.component';
 import { NewFileFolderDialogComponent } from './components/tools/ide/new-file-folder-dialog/new-file-folder-dialog.component';
 import { ExecuteEndpointDialogComponent } from './components/tools/ide/execute-endpoint-dialog/execute-endpoint-dialog.component';
+import { IncompatibleFileDialogComponent } from './components/tools/ide/incompatible-file-dialog/incompatible-file-dialog.component';
 import { ViewInstalledAppDialogComponent } from './components/management/bazar/view-installed-app-dialog/view-installed-app-dialog.component';
 import { CreateKeypairDialogComponent } from './components/management/crypto/server-public-key/create-keypair-dialog/create-keypair-dialog.component';
 import { ImportPublicKeyDialogComponent } from './components/management/crypto/public-keys/import-public-key-dialog/import-public-key-dialog.component';
@@ -149,14 +150,13 @@ import { AddQueryParameterDialogComponent } from './components/analytics/endpoin
 import { ConfirmEmailAddressDialogComponent } from './components/management/bazar/view-app-dialog/confirm-email-address-dialog/confirm-email-address-dialog.component';
 import { CrudSqlAddArgumentDialogComponent } from './components/tools/crudifier/crud-sql/crud-sql-extra/crud-sql-add-argument-dialog/crud-sql-add-argument-dialog.component';
 import { CreateAssumptionTestDialogComponent } from './components/analytics/endpoints/endpoint-details/create-assumption-test-dialog/create-assumption-test-dialog.component';
-import { IncompatibleFileDialogComponent } from './components/tools/ide/incompatible-file-dialog/incompatible-file-dialog.component';
 
 /**
  * The main module for your Magic Dashboard application.
  */
 @NgModule({
   declarations: [
-    AppComponent,
+    MainComponent,
     SqlComponent,
     LoginDialogComponent,
     LoadSqlDialogComponent,
@@ -296,7 +296,7 @@ import { IncompatibleFileDialogComponent } from './components/tools/ide/incompat
     },
     AccessGuard
   ],
-  bootstrap: [AppComponent],
+  bootstrap: [MainComponent],
 })
 export class AppModule {
 }

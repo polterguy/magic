@@ -21,7 +21,7 @@ import { DefaultDatabaseType } from '../../../../../models/default-database-type
 import { CrudifyService } from 'src/app/components/tools/crudifier/services/crudify.service';
 
 // CodeMirror options.
-import json from '../../../../codemirror/options/json.json'
+import json from '../../../../utilities/codemirror/options/json.json'
 
 // Default configuration for crudifying database.
 import data from './data/data.json';

@@ -14,11 +14,11 @@ import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { SqlService } from '../../../../services/tools/sql.service';
 import { CrudSqlExtraComponent } from './crud-sql-extra/crud-sql-extra.component';
-import { Model } from '../../../codemirror/codemirror-sql/codemirror-sql.component';
+import { Model } from '../../../utilities/codemirror/codemirror-sql/codemirror-sql.component';
 import { DefaultDatabaseType } from '../../../../models/default-database-type.model';
 
 // CodeMirror options.
-import sqlOptions from '../../../codemirror/options/sql.json'
+import sqlOptions from '../../../utilities/codemirror/options/sql.json'
 
 /**
  * Component allowing user to generate an HTTP endpoint based upon SQL.

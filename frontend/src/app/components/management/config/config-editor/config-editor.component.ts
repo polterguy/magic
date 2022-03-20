@@ -12,7 +12,7 @@ import { FeedbackService } from '../../../../services/feedback.service';
 import { ConfigService } from 'src/app/services/management/config.service';
 
 // CodeMirror options.
-import json from '../../../codemirror/options/json.json'
+import json from '../../../utilities/codemirror/options/json.json'
 
 /**
  * Component that allows user to edit his configuration file as raw JSON.

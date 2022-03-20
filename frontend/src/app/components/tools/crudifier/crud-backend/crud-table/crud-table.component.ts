@@ -19,10 +19,10 @@ import { CacheService } from 'src/app/services/analytics/cache.service';
 import { LogService } from '../../../../../services/analytics/log.service';
 import { LoaderInterceptor } from 'src/app/interceptors/loader.interceptor';
 import { TransformModelService } from '../../services/transform-model.service';
-import { Model } from 'src/app/components/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
+import { Model } from 'src/app/components/utilities/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 
 // CodeMirror options.
-import hyperlambda from '../../../../codemirror/options/hyperlambda.json';
+import hyperlambda from '../../../../utilities/codemirror/options/hyperlambda.json';
 
 /**
  * Crudifier component for supplying settings and configuration
