@@ -21,7 +21,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { Backend } from 'src/app/models/backend.model';
 import { Messages } from 'src/app/models/messages.model';
 import { Response } from 'src/app/models/response.model';
-import { AuthService } from 'src/app/services/auth.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
@@ -42,22 +41,28 @@ import { LoginDialogComponent } from '../login-dialog/login-dialog.component';
 })
 export class NavbarComponent implements OnInit {
 
-  backendIsConfigured: boolean = undefined;
-
-  currentYear: number;
+  /**
+   * If true it implies that backend is configured and initially setup.
+   */
+  backendIsConfigured: boolean = false;
 
   /**
-   * get navbar state as an input from app component
+   * Needed for copyright notice.
+   */
+  currentYear: number = new Date().getFullYear();
+
+  /**
+   * Get navbar state as an input from app component
    */
   @Input() sideNavStatus: boolean;
 
   /**
-   * get the screen size
+   * Get the screen size
    */
   @Input() notSmallScreen: boolean;
 
   /**
-   * value for the theme, default is set to light
+   * Value for the theme, default is set to light
    */
   theme: string;
 
@@ -66,11 +71,6 @@ export class NavbarComponent implements OnInit {
    * this value will be true.
    */
   shouldUpdateCore: boolean = false;
-   
-  /**
-   * Backend version as returned from server if authenticated.
-   */
-  version: string = null;
 
    /**
     * Latest version of Magic as published by the Bazar.
@@ -82,7 +82,6 @@ export class NavbarComponent implements OnInit {
    * 
    * @param activated Needed to retrieve query parameters
    * @param router Needed to redirect user after having verified his authentication token
-   * @param authService Authentication and authorisation HTTP service
    * @param messageService Message service to send messages to other components using pub/sub
    * @param backendService Service to keep track of currently selected backend
    * @param dialog Dialog reference necessary to show login dialog if user tries to login
@@ -99,7 +98,6 @@ export class NavbarComponent implements OnInit {
   constructor(
     private activated: ActivatedRoute,
     private router: Router,
-    public authService: AuthService,
     private messageService: MessageService,
     public backendService: BackendService,
     private dialog: MatDialog,
@@ -121,21 +119,31 @@ export class NavbarComponent implements OnInit {
     this.configService.configStatus.subscribe(status => {
       this.backendIsConfigured = status;
     });
-    this.retrieveBackendVersion();
-    this.currentYear = new Date().getFullYear();
+    this.diagnosticsService.backendVersionChanged.subscribe((version) => {
+      if (version) {
+        this.bazarService.latestVersion().subscribe({
+          next: (result: Response) => {
+            this.bazarVersion = result.result;
+            if (this.bazarVersion !== version) {
+              this.configService.versionCompare(this.bazarVersion, version).subscribe((result: Response) => {
+                if (+result.result === 1) {
+                  this.feedbackService.showInfo('There has been published an updated version of Magic. You should probably update your current version.');
+                  this.shouldUpdateCore = true;
+                }
+              });
+            }
+          },
+          error: (error: any) => this.feedbackService.showError(error)});
+      } else {
+        this.shouldUpdateCore = false;
+      }
+    });
     this.theme = localStorage.getItem('theme') ? localStorage.getItem('theme') : 'light';
     this.overlayContainer.getContainerElement().classList.add(this.theme);
-
-    // wait for access list to be ready
-    // then detect changes to update view
-    (async () => {
-      while (Object.keys(this.backendService.active.access.auth).length === 0)
-        await new Promise(resolve => setTimeout(resolve, 100));
-      if (Object.keys(this.backendService.active.access.auth).length !== 0) {
-        this.cdRef.detectChanges();
-      }
-    })();
     this.backendService.authenticatedChanged.subscribe(() => {
+      this.cdRef.detectChanges();
+    });
+    this.backendService.endpointsFetched.subscribe(() => {
       this.cdRef.detectChanges();
     });
   }
@@ -180,9 +188,6 @@ export class NavbarComponent implements OnInit {
       }
     });
     dialogRef.afterClosed().subscribe((res: any) => {
-      if (res) {
-        this.retrieveBackendVersion();
-      }
       if (!this.notSmallScreen) {
         this.closeNavbar();
       }
@@ -193,7 +198,7 @@ export class NavbarComponent implements OnInit {
    * Logs the user out from his current backend.
    */
   logout() {
-    this.authService.logoutFromCurrent(false);
+    this.backendService.logout(false);
     if (!this.notSmallScreen) {
       this.closeNavbar();
     }
@@ -227,9 +232,8 @@ export class NavbarComponent implements OnInit {
    * Switching backend
    */
   switchBackend(backend: Backend) {
-    const currentURL: string = window.location.protocol + '//' + window.location.host;
-    this.backendService.upsertAndActivate(backend);
-    window.location.replace(currentURL);
+    this.backendService.upsert(backend);
+    this.backendService.activate(backend);
   }
 
   /**
@@ -238,10 +242,7 @@ export class NavbarComponent implements OnInit {
    * @param backend Backend to remove
    */
   deleteBackend(backend: Backend) {
-    if (this.backendService.remove(backend)) {
-      const currentURL: string = window.location.protocol + '//' + window.location.host;
-      window.location.replace(currentURL);
-    }
+    this.backendService.remove(backend);
   }
 
   /*
@@ -260,14 +261,15 @@ export class NavbarComponent implements OnInit {
        */
       const backend = params['backend'];
       if (backend) {
-        const cur: Backend = new Backend(backend);
+        const cur = new Backend(backend);
         const old = this.backendService.backends.filter(x => x.url === cur.url);
         if (old.length > 0) {
           cur.username = old[0].username;
           cur.password = old[0].password;
           cur.token = old[0].token;
         }
-        this.backendService.upsertAndActivate(cur);
+        this.backendService.upsert(cur);
+        this.backendService.activate(cur);
         this.location.replaceState('');
       }
       const token = params['token'];
@@ -281,8 +283,10 @@ export class NavbarComponent implements OnInit {
          */
         const url = params['url'];
         const username = params['username'];
-        this.backendService.upsertAndActivate(new Backend(url, username, null, token));
-        this.authService.verifyTokenForCurrent().subscribe({
+        const backend = new Backend(url, username, null, token);
+        this.backendService.upsert(backend);
+        this.backendService.activate(backend);
+        this.backendService.verifyToken().subscribe({
           next: () => {
             this.feedbackService.showInfo(`You were successfully authenticated as '${username}'`);
             if (this.backendService.active.token.in_role('reset-password')) {
@@ -301,7 +305,9 @@ export class NavbarComponent implements OnInit {
          *
          * Need to set the current backend first.
          */
-        this.backendService.upsertAndActivate(new Backend(params['url'], params['username']));
+        const backend = new Backend(params['url'], params['username']);
+        this.backendService.upsert(backend);
+        this.backendService.activate(backend);
         this.registerService.verifyEmail(params['username'], token).subscribe({
           next: (result: Response) => {
             if (result.result === 'success') {
@@ -312,38 +318,5 @@ export class NavbarComponent implements OnInit {
           error: (error: any) => this.feedbackService.showError(error)});
       }
     });
-  }
-
-  /*
-   * Retrieves backend version.
-   */
-  private retrieveBackendVersion() {
-    if (this.backendService.active?.token?.in_role('root')) {
-      this.diagnosticsService.version().subscribe({
-        next: (version: any) => {
-          this.version = version.version;
-          this.bazarService.latestVersion().subscribe({
-            next: (result: Response) => {
-              this.bazarVersion = result.result;
-              if (this.bazarVersion !== this.version) {
-                this.configService.versionCompare(this.bazarVersion, this.version).subscribe((result: Response) => {
-
-                  /*
-                   * Checking return value of invocation, and if it was +1, the Bazar
-                   * claims there exists a newer version of the core.
-                   */
-                  if (+result.result === 1) {
-                    this.feedbackService.showInfo('There has been published an updated version of Magic. You should probably update your current version.');
-                    this.shouldUpdateCore = true;
-                  }
-                });
-              }
-            },
-            error: (error: any) => this.feedbackService.showError(error)});
-          },
-          error: () => this.authService.logoutFromCurrent(false)});
-    } else {
-      this.version = '';
-    }
   }
 }

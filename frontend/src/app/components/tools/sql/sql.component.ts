@@ -13,7 +13,6 @@ import { saveAs } from 'file-saver';
 
 // Application specific imports.
 import { Databases } from 'src/app/models/databases.model';
-import { AuthService } from '../../../services/auth.service';
 import { SqlService } from 'src/app/services/tools/sql.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from '../../../services/feedback.service';
@@ -84,7 +83,6 @@ export class SqlComponent implements OnInit {
    * 
    * @param feedbackService Needed to show user feedback
    * @param cacheService Needed to be able to delete cache items in your backend
-   * @param authService Needed to check if user is authorised to access features
    * @param backendService Needed to retrieve user's access rights in backend
    * @param sqlService Needed to be able to execute SQL towards backend
    * @param clipboard Required to allow user to copy content to clipboard
@@ -93,7 +91,6 @@ export class SqlComponent implements OnInit {
   constructor(
     private feedbackService: FeedbackService,
     private cacheService: CacheService,
-    public authService: AuthService,
     public backendService: BackendService,
     private sqlService: SqlService,
     private clipboard: Clipboard,

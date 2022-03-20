@@ -14,7 +14,6 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 
 // Application specific imports.
 import { Count } from 'src/app/models/count.model';
-import { AuthService } from '../../../../services/auth.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from '../../../../services/feedback.service';
 import { User } from 'src/app/components/management/auth/models/user.model';
@@ -94,7 +93,6 @@ export class RolesComponent implements OnInit {
    * 
    * @param feedbackService Used to provide feedback to user
    * @param dialog Used to open the create new role dialog
-   * @param authService Needed to verify user has access to component
    * @param backendService Needed to retrieve user's access rights in backend
    * @param roleService Used to retrieve all roles from backend
    * @param userService Used to associate a user with a role
@@ -102,7 +100,6 @@ export class RolesComponent implements OnInit {
   constructor(
     private feedbackService: FeedbackService,
     private dialog: MatDialog,
-    public authService: AuthService,
     public backendService: BackendService,
     private roleService: RoleService,
     private userService: UserService) {

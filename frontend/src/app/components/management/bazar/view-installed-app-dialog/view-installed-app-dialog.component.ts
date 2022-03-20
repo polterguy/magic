@@ -10,7 +10,6 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 // Application specific imports.
 import { Response } from 'src/app/models/response.model';
 import { AppManifest } from '../../../../models/app-manifest';
-import { AuthService } from '../../../../services/auth.service';
 import { FileService } from 'src/app/services/tools/file.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
@@ -35,7 +34,6 @@ export class ViewInstalledAppDialogComponent implements OnInit {
    * Creates an instance of your component.
    * 
    * @param fileService Needed to display module's README file
-   * @param authService Needed verify user has access to components
    * @param bazarService Needed to be able to update app, if app needs updating
    * @param backendService Needed to verify user has access to delete/uninstall Bazar item
    * @param feedbackService Needed to display feedback to user.
@@ -44,7 +42,6 @@ export class ViewInstalledAppDialogComponent implements OnInit {
    */
   constructor(
     private fileService: FileService,
-    public authService: AuthService,
     private bazarService: BazarService,
     public backendService: BackendService,
     private feedbackService: FeedbackService,

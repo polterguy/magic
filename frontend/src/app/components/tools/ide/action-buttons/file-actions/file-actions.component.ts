@@ -13,7 +13,6 @@ import {
 } from '@angular/core';
 
 // Application specific imports.
-import { AuthService } from 'src/app/services/auth.service';
 import { FileService } from 'src/app/services/tools/file.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
@@ -44,7 +43,6 @@ export class FileActionsComponent {
    * Creates an instance of your component.
    * 
    * @param dialog Needed to create modal dialogs
-   * @param authService Needed to verify access to components
    * @param fileService Needed to load and save files.
    * @param backendService Needed to determine access rights of user in backend
    * @param feedbackService Needed to display feedback to user
@@ -52,7 +50,6 @@ export class FileActionsComponent {
    */
   constructor(
     private dialog: MatDialog,
-    public authService: AuthService,
     private fileService: FileService,
     public backendService: BackendService,
     private feedbackService: FeedbackService,

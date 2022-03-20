@@ -4,11 +4,13 @@
  */
 
 // Angular and system imports.
+import { BehaviorSubject, Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
 import { HttpService } from './http.service';
 import { SystemReport } from '../models/dashboard.model';
+import { CoreVersion } from '../models/core-version.model';
 
 /**
  * Health service, allowing you to inspect backend for health issues, some basic statistics, etc.
@@ -17,6 +19,13 @@ import { SystemReport } from '../models/dashboard.model';
   providedIn: 'root'
 })
 export class DiagnosticsService {
+
+  private _versionKnown = new BehaviorSubject<string>(null);
+
+  /**
+   * Invoked when we know the version of the backend.
+   */
+  backendVersionChanged = this._versionKnown.asObservable();
 
   /**
    * Creates an instance of your service.
@@ -29,7 +38,19 @@ export class DiagnosticsService {
    * Returns backend version of Magic.
    */
   version() {
-    return this.httpService.get<any>('/magic/system/version');
+    return new Observable<CoreVersion>((observer) => {
+      this.httpService.get<CoreVersion>('/magic/system/version').subscribe({
+        next: (result: CoreVersion) => {
+          this._versionKnown.next(result.version);
+          observer.next(result);
+          observer.complete();
+        },
+        error: (error: any) => {
+          observer.error(error);
+          observer.complete();
+        }
+      });
+    });
   }
 
   /**

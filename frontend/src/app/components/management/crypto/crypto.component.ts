@@ -11,7 +11,6 @@ import { Component, ViewChild } from '@angular/core';
 // Application specific imports.
 import { Message } from 'src/app/models/message.model';
 import { CryptoService } from './services/crypto.service';
-import { AuthService } from '../../../services/auth.service';
 import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
@@ -61,14 +60,12 @@ export class CryptoComponent {
   /**
    * Creates an instance of your component.
    * 
-   * @param authService Needed to check role of currently authenticated user
    * @param cryptoService Needed to be able to import public keys
    * @param messageService Needed to subscribe to messages published by other components
    * @param backendService Needed to determine access rights of user
    * @param feedbackService Needed to show user feedback
    */
   constructor(
-    public authService: AuthService,
     private cryptoService: CryptoService,
     private messageService: MessageService,
     public backendService: BackendService,

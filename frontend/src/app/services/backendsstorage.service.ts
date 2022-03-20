@@ -8,7 +8,6 @@ import { Injectable } from '@angular/core';
 
 // Application specific imports.
 import { Backend } from '../models/backend.model';
-import { Endpoint } from '../models/endpoint.model';
 import { environment } from 'src/environments/environment';
 
 /**
@@ -53,28 +52,39 @@ export class BackendsStorageService {
   }
 
   /**
-   * Sets the specified backend to the currently active backend, inserting backend if necessary.
+   * Upserts the specified backend and returns true if backend was inserted, otherwise false.
    * 
-   * @param value Backend to set as active
-   * @returns True if endpoints needs to be fetched for specified backend.
+   * @param value Backend to upsert
+   * @returns True if backend was inserted, otherwise false.
    */
-  upsertAndActivate(value: Backend) {
-    let endpoints: Endpoint[] = null;
-    this._backends = [value].concat(this._backends.filter(x => {
-      const isSame = x.url === value.url;
-      if (isSame) {
-        endpoints = x.endpoints;
-      }
-      if (x.refreshTimer) {
-        clearTimeout(x.refreshTimer);
-      }
-      return !isSame;
-    }));
-    if (endpoints) {
-      value.applyEndpoints(endpoints || []);
+  upsert(value: Backend) {
+    const existing = this._backends.filter(x => x.url === value.url);
+    if (existing.length > 0) {
+      existing[0].username = value.username;
+      existing[0].password = value.password;
+      existing[0].token = value.token;
+    } else {
+      this._backends.push(value);
     }
     this.persistBackends();
-    return endpoints === null && value.endpoints === null;
+    return existing.length === 0;
+  }
+
+  /**
+   * Activates the specified backend.
+   * 
+   * @param value Backend to activate
+   */
+  activate(value: Backend) {
+    this._backends.sort((lhs, rhs) => {
+      if (lhs.url === value.url) {
+        return -1;
+      } else if (rhs.url === value.url) {
+        return 1;
+      }
+      return 0;
+    });
+    this.persistBackends();
   }
 
   /**
@@ -83,14 +93,11 @@ export class BackendsStorageService {
    * @param value Backend to remove
    */
   remove(value: Backend) {
-    if (value.refreshTimer) {
-      clearTimeout(value.refreshTimer);
-      value.refreshTimer = null;
+    const removed = this._backends.splice(this._backends.indexOf(value));
+    if (removed.length === 0) {
+      throw 'No such backend';
     }
-    const oldActive = this.active;
-    this._backends = this._backends.filter(x => x.url !== value.url);
     this.persistBackends();
-    return oldActive.url === value.url;
   }
 
   /**

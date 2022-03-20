@@ -11,7 +11,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
 // Application specific imports.
-import { AuthService } from '../../services/auth.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { DiagnosticsService } from 'src/app/services/diagnostics.service';
 import { LogTypes, SystemReport, Timeshifts } from '../../models/dashboard.model';
@@ -90,13 +89,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   /**
    * 
-   * @param authService defining the user's login status
+   * @param backendService Needed to retrieve user's loging status
    * @param diagnosticsService retrieving the activities on the system 
    * @param dialog Dialog reference necessary to show login dialog if user tries to login
    * @param feedbackService Needed to provide feedback to user
    */
   constructor(
-    public authService: AuthService,
     public backendService: BackendService,
     private diagnosticsService: DiagnosticsService,
     private dialog: MatDialog,

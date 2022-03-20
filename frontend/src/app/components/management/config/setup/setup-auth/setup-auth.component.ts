@@ -9,10 +9,10 @@ import { Component, OnInit } from '@angular/core';
 // Application specific imports.
 import { Messages } from 'src/app/models/messages.model';
 import { Response } from 'src/app/models/response.model';
-import { AuthService } from 'src/app/services/auth.service';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { ConfigService } from 'src/app/services/management/config.service';
+import { BackendService } from 'src/app/services/backend.service';
 
 /**
  * Setup configuration component for allowing user to configure his Magic
@@ -69,13 +69,12 @@ export class SetupAuthComponent implements OnInit {
    * 
    * @param feedbackService Needed to display feedback to user
    * @param configService Configuration service used to read and save configuration settings
-   * @param authService Needed to logout user after setup is done
    * @param messageService Used to publish event when status of setup process has changed
    */
   constructor(
     private feedbackService: FeedbackService,
     private configService: ConfigService,
-    private authService: AuthService,
+    private backendService: BackendService,
     protected messageService: MessageService) { }
   
   /**
@@ -126,7 +125,7 @@ export class SetupAuthComponent implements OnInit {
   saveAdvanced() {
     this.configService.saveConfig(JSON.parse(this.json)).subscribe({
       next: () => {
-        this.authService.logoutFromCurrent(true);
+        this.backendService.logout(true);
         this.feedbackService.showInfo('You will need to login again');
       },
       error: (error: any) =>this.feedbackService.showError(error)});

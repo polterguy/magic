@@ -25,7 +25,6 @@ import { FlatNode } from './models/flat-node.model';
 import { FileNode } from './models/file-node.model';
 import { TreeNode } from './models/tree-node.model';
 import { Message } from '../../../models/message.model';
-import { AuthService } from '../../../services/auth.service';
 import { FileService } from 'src/app/services/tools/file.service';
 import { MessageService } from '../../../services/message.service';
 import { FeedbackService } from '../../../services/feedback.service';
@@ -155,7 +154,6 @@ export class IdeComponent implements OnInit, OnDestroy {
    * Creates an instance of your component.
    * 
    * @param cdRef Needed to mark component as having changes
-   * @param authService Needed to verify access to components
    * @param fileService Needed to load and save files.
    * @param feedbackService Needed to display feedback to user
    * @param vocabularyService Needed to retrieve vocabulary from backend, in addition to executing Hyperlambda files
@@ -166,7 +164,6 @@ export class IdeComponent implements OnInit, OnDestroy {
    */
   constructor(
     private cdRef: ChangeDetectorRef,
-    public authService: AuthService,
     private fileService: FileService,
     private feedbackService: FeedbackService,
     private vocabularyService: VocabularyService,

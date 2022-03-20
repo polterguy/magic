@@ -16,7 +16,6 @@ import { Subscription } from 'rxjs';
 import { InjectDirective } from './inject.directive';
 import { Message } from 'src/app/models/message.model';
 import { Messages } from 'src/app/models/messages.model';
-import { AuthService } from '../../../services/auth.service';
 import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
 
@@ -52,12 +51,10 @@ export class CrudifierComponent implements OnInit, OnDestroy {
   /**
    * Creates a new instance of your component.
    * 
-   * @param authService Needed to verify user has access to components
    * @param backendService Needed to retrieve user's access rights in backend
    * @param messageService Needed to subscribe to messages sent by other components
    */
   constructor(
-    public authService: AuthService,
     public backendService: BackendService,
     private messageService: MessageService) { }
 

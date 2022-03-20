@@ -10,7 +10,6 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 // Application specific imports.
 import { Response } from '../../../../models/response.model';
 import { BazarApp } from '../../../../models/bazar-app.model';
-import { AuthService } from '../../../../services/auth.service';
 import { LoaderService } from 'src/app/services/loader.service';
 import { FileService } from 'src/app/services/tools/file.service';
 import { MessageService } from 'src/app/services/message.service';
@@ -56,7 +55,6 @@ export class ViewAppDialogComponent implements OnInit {
    * 
    * @param dialog Needed to be able to display modal dialog
    * @param dialogRef Needed to be able close current dialog from code
-   * @param authService Needed verify is user has access to components
    * @param fileService Needed to check if the app can be installed, or if another app/version is already installed with the same module folder name
    * @param bazarService Needed to actually purchase apps from Bazar
    * @param configService Needed to retrieve root user's email address
@@ -69,7 +67,6 @@ export class ViewAppDialogComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     private dialogRef: MatDialogRef<ViewAppDialogComponent>,
-    public authService: AuthService,
     private fileService: FileService,
     private bazarService: BazarService,
     private configService: ConfigService,

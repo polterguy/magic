@@ -4,7 +4,7 @@
  */
 
 // Angular and system imports.
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
@@ -12,6 +12,7 @@ import { HttpClient } from '@angular/common/http';
 import { Token } from '../models/token.model';
 import { Backend } from '../models/backend.model';
 import { Endpoint } from '../models/endpoint.model';
+import { Response } from 'src/app/models/response.model';
 import { BackendsStorageService } from './backendsstorage.service';
 import { AuthenticateResponse } from '../components/management/auth/models/authenticate-response.model';
 
@@ -26,13 +27,14 @@ import { AuthenticateResponse } from '../components/management/auth/models/authe
 })
 export class BackendService {
 
-  private _authenticated = new BehaviorSubject<boolean>(undefined);
+  private _authenticated: BehaviorSubject<boolean>;
   private _activeChanged = new BehaviorSubject<Backend>(undefined);
+  private _endpointRetrieved = new BehaviorSubject<boolean>(undefined);
 
   /**
    * To allow consumers to subscribe to authentication status changes.
    */
-  authenticatedChanged = this._authenticated.asObservable();
+  authenticatedChanged: Observable<boolean>;
 
   /**
    * To allow consumers to subscribe to active backend changed events.
@@ -40,9 +42,14 @@ export class BackendService {
   activeChanged = this._activeChanged.asObservable();
 
   /**
+   * To allow consumers to subscribe when endpoints are retrieved.
+   */
+  endpointsFetched = this._endpointRetrieved.asObservable();
+
+  /**
    * Creates an instance of your service.
    * 
-   * @httpClient Needed to refresh JWT token for backends
+   * @httpClient Needed to refresh JWT token for backends, logging in, and retrieving endpoints
    * @backendsListService List of all backends in system
    */
   constructor(
@@ -56,6 +63,8 @@ export class BackendService {
       }
       this.getEndpoints(this.active);
     }
+    this._authenticated = new BehaviorSubject<boolean>(this.active !== null && this.active.token !== null);
+    this.authenticatedChanged = this._authenticated.asObservable();
   }
 
   /**
@@ -73,26 +82,24 @@ export class BackendService {
   }
 
   /**
-   * Upserts a new backend and activates it.
+   * Upserts the specified backend.
    * 
-   * @param value Backend to upsert and activate
-   * @returns True if active backend was changed
+   * @param value Backend to upsert
    */
-  upsertAndActivate(value: Backend) {
-    const hasChanged = value.url !== this.active?.url;
-    const wasAuthenticated = !!this.active?.token;
-    if (this.backendsStorageService.upsertAndActivate(value)) {
+  upsert(value: Backend) {
+    if (this.backendsStorageService.upsert(value)) {
       this.getEndpoints(value);
     }
-    this.ensureRefreshJWTTokenTimer(value);
-    if (hasChanged) {
-      this._activeChanged.next(this.active);
-    }
-    const isAuthenticated = !!this.active.token;
-    if (wasAuthenticated !== isAuthenticated) {
-      this._authenticated.next(isAuthenticated);
-    }
-    return hasChanged;
+  }
+
+  /**
+   * Activates the specified backend.
+   * 
+   * @param value Backend to activate
+   */
+  activate(value: Backend) {
+    this.backendsStorageService.activate(value);
+    this._activeChanged.next(value);
   }
 
   /**
@@ -100,22 +107,17 @@ export class BackendService {
    * backend changes the backend to the next available backend.
    * 
    * @param value Backend to remove
-   * @returns True if active backend was changed
    */
   remove(value: Backend) {
-    if (this.backendsStorageService.backends.filter(x => x.url === value.url).length === 0) {
-      throw 'No such backend';
+    const activeChanged = value === this.active;
+    this.backendsStorageService.remove(value);
+    if (value.refreshTimer) {
+      clearTimeout(value.refreshTimer);
+      value.refreshTimer = null;
     }
-    const wasAuthenticated = !!this.active.token;
-    if (this.backendsStorageService.remove(value)) {
+    if (activeChanged) {
       this._activeChanged.next(this.active);
-      const isAuthenticated = !!this.active?.token;
-      if (wasAuthenticated !== isAuthenticated) {
-        this._authenticated.next(isAuthenticated);
-      }
-      return true;
     }
-    return false;
   }
 
   /**
@@ -123,6 +125,120 @@ export class BackendService {
    */
   refetchEndpoints() {
     this.getEndpoints(this.active);
+  }
+
+  /**
+   * Authenticates user towards current backend.
+   * 
+   * @param username Username
+   * @param password Password
+   * @param storePassword Whether or not passsword should be persisted into local storage
+   */
+  login(username: string, password: string, storePassword: boolean) {
+    return new Observable<AuthenticateResponse>(observer => {
+      let query = '';
+      if (username && username !== '') {
+        query += '?username=' + encodeURIComponent(username);
+        query += '&password=' + encodeURIComponent(password);
+      }
+
+      this.httpClient.get<AuthenticateResponse>(
+        this.active.url +
+        '/magic/system/auth/authenticate' + query, {
+
+          /*
+           * Notice, if we're doing Windows automatic authentication,
+           * we will not be given a username/password combination to this method, at which point
+           * we'll have to make sure Angular passes in Windows credentials to endpoint.
+           */
+          withCredentials: query === '' ? true : false,
+
+        }).subscribe({
+          next: (auth: AuthenticateResponse) => {
+            this.active.token = new Token(auth.ticket);
+            if (storePassword) {
+              this.active.password = password;
+            } else {
+              this.active.password = null;
+            }
+            this.backendsStorageService.persistBackends();
+            this.ensureRefreshJWTTokenTimer(this.active);
+            this.active.createAccessRights();
+            this._authenticated.next(true);
+            observer.next(auth);
+            observer.complete();
+          },
+          error: (error: any) => {
+            observer.error(error);
+            observer.complete();
+          }});
+    });
+  }
+
+  /**
+   * Logs out the user from his currently active backend.
+   * 
+   * @param destroyPassword Whether or not password should be removed before persisting backend
+   */
+  logout(destroyPassword: boolean) {
+    this.active.token = null;
+    if (this.active.refreshTimer) {
+      clearTimeout(this.active.refreshTimer);
+      this.active.refreshTimer = null;
+    }
+    if (destroyPassword) {
+      this.active.password = null;
+    }
+    this.backendsStorageService.persistBackends();
+    this.active.createAccessRights();
+    this._authenticated.next(false);
+  }
+
+  /**
+   * Verifies validity of token by invoking backend.
+   */
+  verifyToken() {
+    if (!this.active?.token) {
+      return throwError(() => new Error('No token to verify'));
+    }
+    return this.httpClient.get<Response>(
+      this.active.url +
+      '/magic/system/auth/verify-ticket');
+  }
+
+  /**
+   * Invokes specified backend to check if auto-auth has been turned on.
+   * 
+   * @param url URL of backend to check
+   */
+  autoAuth(url: string) {
+    return this.httpClient.get<Response>(url.replace(/\s/g, '').replace(/(\/)+$/, '') + '/magic/system/auth/auto-auth');
+  }
+
+  /**
+   * Changes currently logged in user's password.
+   * 
+   * @param password New password for user
+   */
+  changePassword(password: string) {
+    return this.httpClient.put<Response>(
+      this.active.url +
+      '/magic/system/auth/change-password', { password });
+  }
+
+  /**
+   * Invokes the backend to have a reset password email being sent to user.
+   * 
+   * @param username Username of user to generate the email for
+   * @param frontendUrl URL of frontend to use to build reset-password email from
+   */
+  resetPassword(username: string, frontendUrl: string) {
+    return this.httpClient.post<Response>(
+      this.active.url +
+      '/magic/system/auth/send-reset-password-link', {
+      username,
+      frontendUrl,
+    });
   }
 
   /*
@@ -149,7 +265,7 @@ export class BackendService {
       } else if (backend.token.expires_in < 60) {
         this.refreshJWTToken(backend);
       } else {
-        setTimeout(() => {
+        backend.refreshTimer = setTimeout(() => {
           this.refreshJWTToken(backend);
         }, (backend.token.expires_in - 60) * 1000);
       }
@@ -219,8 +335,12 @@ export class BackendService {
     this.httpClient.get<Endpoint[]>(value.url + '/magic/system/auth/endpoints').subscribe({
       next: (res) => {
         value.applyEndpoints(res || []);
+        this._endpointRetrieved.next(true);
       },
-      error: (error: any) => console.error(error)
+      error: () => {
+        value.applyEndpoints([]);
+        this._endpointRetrieved.next(false);
+      }
     });
   }
 }

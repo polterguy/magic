@@ -15,7 +15,6 @@ import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@aspnet/
 // Application specific imports.
 import { Count } from 'src/app/models/count.model';
 import { Message } from 'src/app/models/message.model';
-import { AuthService } from '../../../services/auth.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { SocketUser } from '../endpoints/models/socket-user.model';
 import { FeedbackService } from 'src/app/services/feedback.service';
@@ -88,14 +87,12 @@ export class SocketsComponent implements OnInit, OnDestroy {
    * Creates an instance of your component.
    * 
    * @param dialog Needed to create modal dialogues
-   * @param authService Needed to verify user has access to component
    * @param socketService Needed retrieve socket information and publish socket messages
    * @param backendService Needed to retrieve backend URL to connect to web sockets in backend
    * @param feedbackService Needed to provide feedback to user
    */
   constructor(
     private dialog: MatDialog,
-    public authService: AuthService,
     private socketService: SocketService,
     public backendService: BackendService,
     private feedbackService: FeedbackService) { }
