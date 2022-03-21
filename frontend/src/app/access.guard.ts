@@ -30,8 +30,8 @@ export class AccessGuard implements CanActivate {
   /**
    * Creates an instance of your type.
    * 
-   * @param router Needed to be able to navigate to config if required
-   * @param backendService 
+   * @param router Needed to redirect if user doesn't have access
+   * @param backendService Needed to determine access rights of user
    */
   constructor(
     private router: Router,
@@ -41,17 +41,13 @@ export class AccessGuard implements CanActivate {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot) : Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
 
-    /**
-     * Checking access rights per route
-     */
+    // Checking access rights per route
     (async () => {
       while (!this.backendService.active.access.fetched)
         await new Promise(resolve => setTimeout(resolve, 100));
       if (!route.data.check(this.backendService.active.access)) {
         this.router.navigate(['/']);
-        return false;
       }
-      return true;
     })();
     return true;
   }
