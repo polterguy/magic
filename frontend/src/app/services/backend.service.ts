@@ -124,9 +124,7 @@ export class BackendService {
    * @param value Backend to upsert
    */
   upsert(value: Backend) {
-    if (this.backendsStorageService.upsert(value)) {
-      this.getEndpoints(value);
-    }
+    this.backendsStorageService.upsert(value);
   }
 
   /**
@@ -136,6 +134,9 @@ export class BackendService {
    */
   activate(value: Backend) {
     this.backendsStorageService.activate(value);
+    if (!value.access.fetched) {
+      this.getEndpoints(value);
+    }
     if (value.token && value.token.in_role('root') && !value.status) {
       this.retrieveStatusAndVersion(this.active);
     }
