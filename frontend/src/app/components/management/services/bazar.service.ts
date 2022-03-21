@@ -19,8 +19,8 @@ import { FileService } from 'src/app/services/file.service';
 import { PurchaseStatus } from '../../../models/purchase-status.model';
 
 /**
- * Setup service, allows you to setup, read, and manipulate your configuration
- * settings.
+ * Bazar service allowing you to query Aista's Bazar, and/or install Bazar items locally on your
+ * own server, etc.
  */
 @Injectable({
   providedIn: 'root'
@@ -42,14 +42,14 @@ export class BazarService {
   /**
    * Retrieves the local manifests from your local installation.
    */
-  public localManifests() {
+  localManifests() {
     return this.httpService.get<AppManifest[]>('/magic/system/bazar/app-manifests');
   }
 
   /**
    * Lists all apps available in the external Bazar.
    */
-  public listBazarItems(filter: string, offset: number, limit: number) {
+  listBazarItems(filter: string, offset: number, limit: number) {
     let query = '?limit=' + limit;
     if (offset && offset !== 0) {
       query += '&offset=' + offset;
@@ -76,7 +76,7 @@ export class BazarService {
    * 
    * @param module_name Name of module
    */
-  public getBazarItem(module_name: string) {
+  getBazarItem(module_name: string) {
     const query = '?folder_name.eq=' + encodeURIComponent(module_name);
     return this.httpClient.get<BazarApp[]>(environment.bazarUrl + '/magic/modules/bazar/apps' + query);
   }
@@ -84,7 +84,7 @@ export class BazarService {
   /**
    * Lists all apps available in the external Bazar.
    */
-  public countBazarItems(filter: string) {
+  countBazarItems(filter: string) {
     let query = '';
     if (filter && filter !== '') {
       query += '?name.like=' + encodeURIComponent(filter + '%');
@@ -112,7 +112,7 @@ export class BazarService {
    * @param name Full name of user
    * @param email Email address belonging to user
    */
-  public subscribeToNewsletter(name: string, email: string) {
+  subscribeToNewsletter(name: string, email: string) {
     return this.httpClient.post<Response>(environment.bazarUrl + '/magic/modules/bazar/subscribe', {
       name,
       email
@@ -129,7 +129,7 @@ export class BazarService {
    * @param subscribe True if user wants to subscribe to our newsletter
    * @param promo_code Optional promo code user supplied before he clicked purchase
    */
-  public purchaseBazarItem(
+  purchaseBazarItem(
     app: BazarApp,
     name: string,
     email: string,
@@ -156,7 +156,7 @@ export class BazarService {
    * 
    * @param token Download token to check
    */
-  public canDownloadBazarItem(token: string) {
+  canDownloadBazarItem(token: string) {
     return this.httpClient.get<Response>(environment.bazarUrl + '/magic/modules/bazar/can-download?token=' + encodeURIComponent(token));
   }
 
@@ -166,7 +166,7 @@ export class BazarService {
    * @param app Bazar app user wants to install
    * @param token Download token needed to download ZIP file from Bazar
    */
-  public downloadBazarItem(app: BazarApp, token: string) {
+  downloadBazarItem(app: BazarApp, token: string) {
     return this.httpService.post<Response>('/magic/system/bazar/download-from-bazar', {
       url: environment.bazarUrl + '/magic/modules/bazar/download?token=' + token,
       name: app.folder_name
@@ -178,7 +178,7 @@ export class BazarService {
    * 
    * @param app App's manifest
    */
-  public updateBazarItem(app: AppManifest) {
+  updateBazarItem(app: AppManifest) {
     if (!app.token || app.token === '') {
       return throwError(() => new Error('No token found in app\'s manifest'));
     }
@@ -193,7 +193,7 @@ export class BazarService {
    * 
    * @param module_name Name of module to download
    */
-  public downloadBazarItemLocally(module_name: string) {
+  downloadBazarItemLocally(module_name: string) {
 
     /*
      * Notice, for some reasons I don't entirely understand, we'll need to wait a
@@ -208,7 +208,7 @@ export class BazarService {
    * 
    * @param required_magic_version Minimum Magic version required by app to function correctly
    */
-  public canInstall(required_magic_version: string) {
+  canInstall(required_magic_version: string) {
     return this.httpService.get<Response>('/magic/system/bazar/can-install?required_magic_version=' + encodeURIComponent(required_magic_version));
   }
 
@@ -221,7 +221,7 @@ export class BazarService {
    * @param name Friendly display name of app
    * @param token Installation token, required to be able to automatically update the app later
    */
-  public installBazarItem(folder: string, app_version: string, name: string, token: string) {
+  installBazarItem(folder: string, app_version: string, name: string, token: string) {
     return this.httpService.put<Response>('/magic/system/file-system/install', {
       folder: '/modules/' + folder + '/',
       app_version,

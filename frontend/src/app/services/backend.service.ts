@@ -22,8 +22,8 @@ import { AuthenticateResponse } from '../components/management/auth/models/authe
 /**
  * Keeps track of your backends and your currently selected backend.
  * 
- * This service will store your backends in the localStorage object,
- * to allow for easily selecting a backend you have previously connected to.
+ * This is your "goto service" when it comes to authentication, and manipulating your backends,
+ * adding a new backend, changing your currently active backend, etc.
  */
 @Injectable({
   providedIn: 'root'

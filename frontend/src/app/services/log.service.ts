@@ -7,13 +7,12 @@
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
+import { HttpService } from './http.service';
 import { Count } from '../models/count.model';
 import { LogItem } from 'src/app/models/log-item.model';
-import { HttpService } from './http.service';
 
 /**
- * Log service, allows you to Read, Create, Update and Delete log items
- * from your backend.
+ * Log service, allows you to query your backend log, in addition to some other helper methods.
  */
 @Injectable({
   providedIn: 'root'
@@ -75,19 +74,6 @@ export class LogService {
       loc,
       type,
       name,
-    });
-  }
-
-  /**
-   * Creates a server-side log entry given the specified parameters.
-   * 
-   * @param type Type of log entry, should be either 'info', 'debug', 'error' or 'fatal'.
-   * @param content Actual content of log item
-   */
-  public createLogEntry(type: string, content: string) {
-    return this.httpService.post<Response>('/magic/system/log/log', {
-      type,
-      content,
     });
   }
 }

@@ -8,15 +8,15 @@ import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
-import { Backend } from 'src/app/models/backend.model';
-import { Response } from '../models/response.model';
 import { HttpService } from './http.service';
-import { NameEmailModel } from '../models/name-email.model';
 import { BackendService } from './backend.service';
+import { Response } from '../models/response.model';
+import { Backend } from 'src/app/models/backend.model';
+import { NameEmailModel } from '../models/name-email.model';
 import { AuthenticateResponse } from '../components/management/auth/models/authenticate-response.model';
 
 /**
- * Setup service, allows you to setup, read, and manipulate your configuration
+ * Configuration service, allows you to setup system and read or manipulate your configuration
  * settings.
  */
 @Injectable({

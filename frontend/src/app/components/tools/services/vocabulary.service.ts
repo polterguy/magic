@@ -11,8 +11,7 @@ import { Injectable } from '@angular/core';
 import { HttpService } from '../../../services/http.service';
 
 /**
- * Hyperlambda vocabulary service allowiung you to apply autocomplete on Hyperlambda
- * CodeMirror instances.
+ * Hyperlambda vocabulary service allowing you to retrieve all Hyperlambda slots existing in your backend.
  */
 @Injectable({
   providedIn: 'root'
@@ -31,7 +30,7 @@ export class VocabularyService {
   /**
    * Returns server's Hyperlambda vocabulary to caller.
    */
-  public vocabulary() {
+  vocabulary() {
     if (this._vocabulary.length > 0) {
       of(this._vocabulary);
     }
