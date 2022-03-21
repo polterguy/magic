@@ -32,6 +32,7 @@ import colors from './bar_chart_colors.json';
 export class DashboardComponent implements OnInit, OnDestroy {
 
   private authSubscriber: Subscription;
+  private activeBackendSubscriber: Subscription;
   private _isRetrievingSystemReport = false;
 
   public chartType: boolean[] = [];
@@ -112,7 +113,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.getSystemReport();
       }
     });
-    this.backendService.activeBackendChanged.subscribe(() => {
+    this.activeBackendSubscriber = this.backendService.activeBackendChanged.subscribe(() => {
       if (this.backendService.active?.token?.in_role('root')) {
         this.getSystemReport();
       }
@@ -124,12 +125,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
    */
   ngOnDestroy() {
 
-    // Ensuring we unsubscribe from authenticated subscription.
+    // Ensuring we unsubscribe from authenticated subscription and active backend changed subscription.
     this.authSubscriber.unsubscribe();
+    this.activeBackendSubscriber.unsubscribe();
   }
 
   /**
-   * set dashboard charts preferences and store in localStorage
+   * Set dashboard charts preferences and store in localStorage
    * show success message, so the user understands what he's done!
    */
   setPreference() {
