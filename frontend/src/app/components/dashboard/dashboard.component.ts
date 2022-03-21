@@ -165,6 +165,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.diagnosticsService.getSystemReport().subscribe({
       next: (report: SystemReport[]) => {
 
+        // Allowing us to retrieve system report again.
+        this._isRetrievingSystemReport = false;
+
         // Ensuring backend actually returned something.
         if (!report) {
           return;
