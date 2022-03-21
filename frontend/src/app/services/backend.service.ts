@@ -136,9 +136,6 @@ export class BackendService {
    */
   activate(value: Backend) {
     this.backendsStorageService.activate(value);
-    if (!value.access.fetched) {
-      this.getEndpoints(value);
-    }
     if (value.token && value.token.in_role('root') && !value.status) {
       this.retrieveStatusAndVersion(this.active);
     }
