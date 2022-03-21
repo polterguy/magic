@@ -3,7 +3,7 @@
  * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
  */
 
-import { Buffer } from "Buffer";
+import { Buffer } from 'buffer';
 
 /**
  * Wrapper class for a JWT token with helper methods to calculate expiration, etc.
