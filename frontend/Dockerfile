@@ -3,9 +3,7 @@
 FROM node:16 as node
 WORKDIR /app
 COPY . .
-RUN npm i -g typescript@next
-RUN npm i --save @types/node
-RUN npm i
+RUN npm install
 RUN npm run build-prod
 
 # Stage 2
