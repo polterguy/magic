@@ -46,7 +46,7 @@
 
           <button
             *ngIf="cacheItems.length > 0"
-            [disabled]="!backendService.active.access.diagnostics.delete_cache"
+            [disabled]="!backendService.active?.access.diagnostics.delete_cache"
             mat-icon-button
             matTooltip="Completely empties your cache"
             (click)="deleteAll()">
@@ -72,7 +72,7 @@
             <td mat-cell class="mini-col button-col text-right" *matCellDef="let el">
               <button
                 (click)="delete($event, el.key);"
-                [disabled]="!backendService.active.access.diagnostics.delete_cache"
+                [disabled]="!backendService.active?.access.diagnostics.delete_cache"
                 matTooltip="Deletes specified cache item"
                 mat-button>
                 <mat-icon>delete</mat-icon>

@@ -19,7 +19,7 @@
 
   <button
     mat-raised-button
-    [disabled]="!backendService.active.access.files.delete_folder"
+    [disabled]="!backendService.active?.access.files.delete_folder"
     (click)="uninstall()">Uninstall</button>
 
 </div>

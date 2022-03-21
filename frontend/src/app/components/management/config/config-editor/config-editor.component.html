@@ -32,7 +32,7 @@
 
   <button
     mat-raised-button
-    [disabled]="!backendService.active.access.config.save"
+    [disabled]="!backendService.active?.access.config.save"
     color="primary"
     (click)="save()">
     Save

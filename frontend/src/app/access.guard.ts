@@ -43,9 +43,9 @@ export class AccessGuard implements CanActivate {
 
     // Checking access rights per route
     (async () => {
-      while (!this.backendService.active.access.fetched)
+      while (!this.backendService.active?.access.fetched)
         await new Promise(resolve => setTimeout(resolve, 100));
-      if (!route.data.check(this.backendService.active.access)) {
+      if (!route.data.check(this.backendService.active?.access)) {
         this.router.navigate(['/']);
       }
     })();

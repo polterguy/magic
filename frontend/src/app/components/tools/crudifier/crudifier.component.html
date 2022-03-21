@@ -10,19 +10,19 @@
           [(selectedIndex)]="activeTab"
           dynamicHeight>
     
-          <mat-tab label="CRUD" [disabled]="!backendService.active.access.crud.generate_crud">
+          <mat-tab label="CRUD" [disabled]="!backendService.active?.access.crud.generate_crud">
             <ng-template matTabContent>
               <app-crud-backend></app-crud-backend>
             </ng-template>
           </mat-tab>
       
-          <mat-tab label="SQL" [disabled]="!backendService.active.access.crud.generate_sql">
+          <mat-tab label="SQL" [disabled]="!backendService.active?.access.crud.generate_sql">
             <ng-template matTabContent>
               <app-crud-sql></app-crud-sql>
             </ng-template>
           </mat-tab>
        
-          <mat-tab label="Frontend" [disabled]="!backendService.active.access.crud.generate_frontend">
+          <mat-tab label="Frontend" [disabled]="!backendService.active?.access.crud.generate_frontend">
             <ng-template matTabContent>
               <app-crud-frontend></app-crud-frontend>
             </ng-template>

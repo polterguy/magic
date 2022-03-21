@@ -59,13 +59,13 @@
   <!-- Assumptions -->
   <div
     class="d-flex flex-column w-100" 
-    *ngIf="backendService.active.access.endpoints.assumptions && assumptions.length > 0">
+    *ngIf="backendService.active?.access.endpoints.assumptions && assumptions.length > 0">
 
     <div class="my-3"><mat-divider></mat-divider></div>
 
     <h4 class="mb-2">Assumptions</h4>
 
-    <ng-container *ngIf="backendService.active.access.diagnostics.execute_test">
+    <ng-container *ngIf="backendService.active?.access.diagnostics.execute_test">
       <mat-chip-list>
         <mat-chip
           *ngFor="let i of assumptions"
@@ -210,7 +210,7 @@
     <div class="d-flex justify-content-end w-100 my-3">
       <button
         mat-raised-button
-        [disabled]="!backendService.active.access.endpoints.create_test"
+        [disabled]="!backendService.active?.access.endpoints.create_test"
         (click)="createTest()">
         New assumption
       </button>
