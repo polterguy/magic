@@ -135,6 +135,9 @@ export class BackendService {
    */
   activate(value: Backend) {
     this.backendsStorageService.activate(value);
+    if (!value.access.fetched) {
+      this.getEndpoints(value);
+    }
     this._activeChanged.next(value);
   }
 

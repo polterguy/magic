@@ -11,6 +11,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
 // Application specific imports.
+import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { DiagnosticsService } from 'src/app/services/diagnostics.service';
 import { LogTypes, SystemReport, Timeshifts } from '../../models/dashboard.model';
@@ -18,7 +19,6 @@ import { LoginDialogComponent } from '../utilities/login-dialog/login-dialog.com
 
 // Importing global chart colors.
 import colors from './bar_chart_colors.json';
-import { BackendService } from 'src/app/services/backend.service';
 
 /**
  * Dashboard component displaying general information about Magic,
@@ -112,11 +112,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.getSystemReport();
       }
     });
-
-    // Making sure we retrieve system report if user is already authenticated.
-    if (this.backendService.active?.token?.in_role('root') && !this.systemReport) {
-      this.getSystemReport();
-    }
+    this.backendService.activeBackendChanged.subscribe(() => {
+      if (this.backendService.active?.token?.in_role('root')) {
+        this.getSystemReport();
+      }
+    });
   }
 
   /**
