@@ -248,7 +248,6 @@ import { CreateAssumptionTestDialogComponent } from './components/analytics/endp
     HttpClientModule,
     BrowserModule,
     ClipboardModule,
-    AppRoutingModule,
     BrowserAnimationsModule,
     MatSidenavModule,
     MatButtonModule,
@@ -282,6 +281,7 @@ import { CreateAssumptionTestDialogComponent } from './components/analytics/endp
     NgxMatDatetimePickerModule,
     NgxMatTimepickerModule,
     NgxMatNativeDateModule,
+    AppRoutingModule,
   ],
   providers: [
     {
