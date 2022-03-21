@@ -654,7 +654,7 @@ export class EndpointDetailsComponent implements OnInit {
    * Retrieves assumptions for endpoint
    */
   private getAssumptions() {
-    if (this.backendService.active.access.endpoints.assumptions) {
+    if (this.backendService.active?.access.endpoints.assumptions) {
       this.assumptionService.list('/' + this.endpoint.path, this.endpoint.verb).subscribe({
         next: (assumptions: any) => {
           if (assumptions && assumptions.length) {

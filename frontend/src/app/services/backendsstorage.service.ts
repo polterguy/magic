@@ -31,7 +31,7 @@ export class BackendsStorageService {
     const storage = localStorage.getItem('magic.backends');
     if (storage) {
       backends = <any[]>JSON.parse(storage);
-    } else if (window.location.href.indexOf('http://localhost') !== -1) {
+    } else if (window.location.href.indexOf('http://locaxxxlhost') !== -1) {
       backends = environment.defaultBackends;
     }
     this._backends = backends.map(x => new Backend(x.url, x.username, x.password, x.token));

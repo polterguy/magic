@@ -294,7 +294,7 @@ export class BackendService {
    * Returns true if there exists a newer version of Magic than whatever the current backend is using.
    */
   get shouldUpdate() {
-    if (!this.active.version || !this._latestBazarVersion) {
+    if (!this.active?.version || !this._latestBazarVersion) {
       return false;
     }
     const lhs = this.active.version.substring(1).split('.');

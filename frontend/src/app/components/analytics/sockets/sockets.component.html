@@ -59,7 +59,7 @@
               <div class="p-1"></div>
               <button
                 mat-raised-button
-                [disabled]="!backendService.active.access.sockets.send"
+                [disabled]="!backendService.active?.access.sockets.send"
                 color="primary"
                 class="button"
                 (click)="post()">
@@ -89,7 +89,7 @@
                     <mat-chip-list class="mt-2 mb-2">
                       <mat-chip
                         *ngFor="let con of el.connections"
-                        [disabled]="!backendService.active.access.sockets.send"
+                        [disabled]="!backendService.active?.access.sockets.send"
                         selectable="false"
                         (click)="sendMessageToConnection(con)">
                         {{con}}

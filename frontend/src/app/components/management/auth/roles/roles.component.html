@@ -45,7 +45,7 @@
 
       <button
         mat-icon-button
-        [disabled]="!backendService.active.access.auth.create_role"
+        [disabled]="!backendService.active?.access.auth.create_role"
         (click)="createRole()">
         <mat-icon aria-label="Creates a new role">add_box</mat-icon>
       </button>
@@ -94,7 +94,7 @@
                   <mat-menu #actions="matMenu">
                     <button
                       mat-menu-item
-                      [disabled]="!backendService.active.access.auth.create_user_role || el.name === 'reset-password' || getAffectedUsers(el) === 0"
+                      [disabled]="!backendService.active?.access.auth.create_user_role || el.name === 'reset-password' || getAffectedUsers(el) === 0"
                       [matTooltip]="'Add role to ' + getAffectedUsers(el) + ' selected user(s)'"
                       (click)="addRole(el)">
                       <mat-icon>add_box</mat-icon>
@@ -106,7 +106,7 @@
                     <button
                       mat-menu-item
                       matTooltip="Edit role"
-                      [disabled]="!backendService.active.access.auth.update_role"
+                      [disabled]="!backendService.active?.access.auth.update_role"
                       (click)="editRole(el)">
                       <mat-icon>edit</mat-icon>
                       Edit role
@@ -117,7 +117,7 @@
                     <button
                       mat-menu-item
                       matTooltip="Delete role"
-                      [disabled]="!backendService.active.access.auth.delete_role || el.name === 'root' || el.name === 'reset-password'"
+                      [disabled]="!backendService.active?.access.auth.delete_role || el.name === 'root' || el.name === 'reset-password'"
                       (click)="deleteRole(el)">
                       <mat-icon>delete</mat-icon>
                       Delete role

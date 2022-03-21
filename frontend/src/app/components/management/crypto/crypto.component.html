@@ -41,7 +41,7 @@
   </div>
 </div>
 
-<div class="row" *ngIf="backendService.active.access.crypto.crypto_invocations">
+<div class="row" *ngIf="backendService.active?.access.crypto.crypto_invocations">
   <div class="col-12" [class.mb-general]="!(!backendService.active.token.in_role('root') && showImport)">
     <mat-card>
       <mat-card-content>
@@ -53,7 +53,7 @@
             </ng-template>
           </mat-tab>
       
-          <mat-tab label="Receipts" [disabled]="!backendService.active.access.crypto.crypto_invocations">
+          <mat-tab label="Receipts" [disabled]="!backendService.active?.access.crypto.crypto_invocations">
             <ng-template matTabContent>
               <app-crypto-invocations></app-crypto-invocations>
             </ng-template>

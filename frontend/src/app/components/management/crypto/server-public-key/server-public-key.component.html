@@ -2,7 +2,7 @@
 <div class="create-button">
   <button
     mat-icon-button
-    *ngIf="backendService.active.access.crypto.generate_server_key"
+    *ngIf="backendService.active?.access.crypto.generate_server_key"
     matTooltip="Generate server key pair"
     (click)="create()">
     <mat-icon>add_box</mat-icon>

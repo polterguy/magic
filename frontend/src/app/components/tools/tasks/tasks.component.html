@@ -49,7 +49,7 @@
 
           <button
             mat-icon-button
-            [disabled]="!backendService.active.access.tasks.create"
+            [disabled]="!backendService.active?.access.tasks.create"
             (click)="create()">
             <mat-icon>add_box</mat-icon>
           </button>
@@ -71,7 +71,7 @@
               <button
                 mat-icon-button
                 matTooltip="Delete task"
-                [disabled]="!backendService.active.access.tasks.delete"
+                [disabled]="!backendService.active?.access.tasks.delete"
                 (click)="delete($event, el)">
                 <mat-icon>delete</mat-icon>
               </button>
@@ -93,7 +93,7 @@
                       <mat-label>Description</mat-label>
                       <input
                         matInput
-                        [disabled]="!backendService.active.access.tasks.update"
+                        [disabled]="!backendService.active?.access.tasks.update"
                         [(ngModel)]="el.task.description"
                         autocomplete="off">
                     </mat-form-field>
@@ -104,7 +104,7 @@
 
                       <button
                         mat-icon-button
-                        [disabled]="!backendService.active.access.tasks.addDue"
+                        [disabled]="!backendService.active?.access.tasks.addDue"
                         matTooltip="Schedule task"
                         (click)="schedule(el.task)">
                         <mat-icon>more_time</mat-icon>
@@ -113,7 +113,7 @@
                       <button
                         mat-icon-button
                         matTooltip="Update task"
-                        [disabled]="!backendService.active.access.tasks.update"
+                        [disabled]="!backendService.active?.access.tasks.update"
                         (click)="update(el)">
                         <mat-icon>save</mat-icon>
                       </button>
@@ -127,7 +127,7 @@
                         <mat-chip
                           *ngFor="let idxSchedule of el.task.schedules"
                           selectable="false"
-                          [disabled]="!backendService.active.access.tasks.deleteDue"
+                          [disabled]="!backendService.active?.access.tasks.deleteDue"
                           [matTooltip]="'Next due date: ' + idxSchedule.due.toLocaleString()"
                           (removed)="deleteSchedule(el.task, idxSchedule)">
                           {{idxSchedule.repeats ? idxSchedule.repeats : (idxSchedule.due | from)}}
