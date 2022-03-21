@@ -8,14 +8,14 @@ import { throwError } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
-import { Databases } from '../models/databases.model';
 import { HttpService } from './http.service';
+import { Databases } from '../models/databases.model';
 import { FileService } from 'src/app/services/file.service';
 import { DefaultDatabaseType } from '../models/default-database-type.model';
 
 /**
  * SQL service allowing you to execute SQL and retrieve meta information about
- * your database server(s).
+ * your databases.
  */
 @Injectable({
   providedIn: 'root'
@@ -41,7 +41,7 @@ export class SqlService {
    * @param safeMode If true will only return the first 1.000 records
    * @param batch If true will execute SQL as a batch operation, respecting 'go' keywords. Only relevant for MS SQL.
    */
-  public executeSql(
+  executeSql(
     databaseType: string,
     database: string,
     sql: string,
@@ -59,7 +59,7 @@ export class SqlService {
   /**
    * Returns the type of database that is the default database used by backend.
    */
-  public defaultDatabaseType() {
+  defaultDatabaseType() {
     return this.httpService.get<DefaultDatabaseType>('/magic/system/sql/default-database-type');
   }
 
@@ -68,7 +68,7 @@ export class SqlService {
    * 
    * @param databaseType Database type to retrieve connection strings for
    */
-  public connectionStrings(databaseType: string) {
+  connectionStrings(databaseType: string) {
     return this.httpService.get<any>('/magic/system/sql/connection-strings?databaseType=' + encodeURIComponent(databaseType));
   }
 
@@ -78,7 +78,7 @@ export class SqlService {
    * @param databaseType Type of database, for instance 'mssql', 'pgsql' or 'mysql'.
    * @param connectionString Database connection string (reference to appsettings.json)
    */
-  public getDatabaseMetaInfo(databaseType: string, connectionString: string) {
+  getDatabaseMetaInfo(databaseType: string, connectionString: string) {
     return this.httpService.get<Databases>('/magic/system/sql/databases?databaseType=' +
       encodeURIComponent(databaseType) +
       '&connectionString=' +
@@ -90,7 +90,7 @@ export class SqlService {
    * 
    * @param databaseType Database type to retrieve snippets for
    */
-  public listSnippets(databaseType: string) {
+  listSnippets(databaseType: string) {
     return this.fileService.listFiles(`/etc/${databaseType}/templates/`);
   }
 
@@ -100,7 +100,7 @@ export class SqlService {
    * @param databaseType Database type to load snippet for
    * @param filename Filename (only, no extension or folder) of snippet to load
    */
-  public loadSnippet(databaseType: string, filename: string) {
+  loadSnippet(databaseType: string, filename: string) {
     if (filename.indexOf('/') !== -1) {
       return throwError(() => new Error('Not a valid filename'));
     }
@@ -118,7 +118,7 @@ export class SqlService {
    * @param filename Filename to save snippet as. Notice, assumes we're only given the filename, and not the entire path. The service is responsible for prepending the folder.
    * @param content Content of snippet
    */
-  public saveSnippet(databaseType: string, filename: string, content: string) {
+  saveSnippet(databaseType: string, filename: string, content: string) {
     if (filename.indexOf('/') !== -1) {
       return throwError(() => new Error('Not a valid filename'));
     }

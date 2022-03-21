@@ -11,9 +11,9 @@ import { Backend } from '../models/backend.model';
 import { environment } from 'src/environments/environment';
 
 /**
- * Service containing list of all backends in the system.
- * 
- * Needed to avoid cyclical dependency in auth interceptor.
+ * Service containing list of all backends in the system responsible for persisting
+ * your backends and keeping track of usernames, passwords and tokens associated with
+ * each of your backends.
  */
 @Injectable({
   providedIn: 'root'

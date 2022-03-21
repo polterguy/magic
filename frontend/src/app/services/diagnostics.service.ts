@@ -11,7 +11,7 @@ import { HttpService } from './http.service';
 import { SystemReport } from '../models/dashboard.model';
 
 /**
- * Health service, allowing you to inspect backend for health issues, some basic statistics, etc.
+ * Diagnostics service providing you with diagnostics information about your system.
  */
 @Injectable({
   providedIn: 'root'

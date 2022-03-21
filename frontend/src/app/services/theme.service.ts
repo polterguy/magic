@@ -9,7 +9,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { OverlayContainer } from '@angular/cdk/overlay';
 
 /**
- * Keeps track of what theme we're currently using
+ * Service that keeps track of what theme we're currently using.
  */
 @Injectable({
   providedIn: 'root'

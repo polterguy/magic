@@ -36,7 +36,7 @@ export class AssumptionService {
    * @param endpointPath If specified only returns tests belonging to endpoint specified
    * @param verb If specified only returns tests for specified path
    */
-  public list(endpointPath: string = null, verb: string = null) {
+  list(endpointPath: string = null, verb: string = null) {
     if (endpointPath) {
       return this.httpService.get<string[]>(
         '/magic/system/assumptions/query?endpoint=' +
@@ -60,7 +60,7 @@ export class AssumptionService {
    * @param response Response assumption assumes invocation towards URL will return
    * @param produces Content-Type assumption assumes invocation towards URL will return
    */
-  public create(
+  create(
     filename: string,
     verb: string,
     url: string,
@@ -102,7 +102,7 @@ export class AssumptionService {
    * 
    * @param filename Full path of test to execute
    */
-  public execute(filename: string) {
+  execute(filename: string) {
     return this.httpService.get<Response>(
       '/magic/system/assumptions/execute?root_url=' +
       encodeURIComponent(this.backendService.active.url) +

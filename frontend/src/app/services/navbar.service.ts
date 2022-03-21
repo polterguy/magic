@@ -8,7 +8,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 /**
- * Keeps track of whether or not navbar is expanded or not.
+ * Keeps track of whether or not navbar is expanded.
  */
 @Injectable({
   providedIn: 'root'

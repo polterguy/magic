@@ -36,7 +36,7 @@ export class SocketService {
    * @param offset Offset from where to start returning connections
    * @param limit Maximum number of items to return.
    */
-  public socketUsers(filter: string, offset: number, limit: number) {
+  socketUsers(filter: string, offset: number, limit: number) {
     var query = '?offset=' + offset + '&limit=' + limit;
     if (filter) {
       query += '&filter=' + encodeURIComponent(filter);
@@ -49,7 +49,7 @@ export class SocketService {
    * 
    * @param filter Filter to apply for which connections to return to caller
    */
-  public socketUserCount(filter: string) {
+  socketUserCount(filter: string) {
     var query = '';
     if (filter) {
       query += '?filter=' + encodeURIComponent(filter);
@@ -65,7 +65,7 @@ export class SocketService {
    * @param roles What roles to publish message to
    * @param groups What groups to publish message to
    */
-  public publishMessage(msg: Message, client: string, roles: string, groups: string) {
+  publishMessage(msg: Message, client: string, roles: string, groups: string) {
     client = client === null || client === '' ? null : client;
     roles = roles === null || roles === '' ? null : roles;
     groups = groups === null || groups === '' ? null : groups;

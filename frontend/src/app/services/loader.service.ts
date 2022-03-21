@@ -6,11 +6,7 @@ import { BehaviorSubject } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 /**
- * Service that helps you determine if there is an ongoing HTTP request
- * towards your backend or not. Used to display "Ajax wait spinner".
- * 
- * Combined with the LoaderInterceptor, this is the service that makes
- * sure the user sees an animated Ajax loader during invocations towards the backend.
+ * Loader service that helps you determine if there is currently a request loading datafrom the backend.
  */
 @Injectable({
   providedIn: 'root'
@@ -20,14 +16,14 @@ export class LoaderService {
   /**
    * If true, one or more Ajax requests are currently going towards your backend.
    */
-  isLoading = new BehaviorSubject<boolean>(false);
+  private _isLoading = new BehaviorSubject<boolean>(false);
 
   /**
    * Shows the Ajax load spinner.
    */
   show() {
     setTimeout(() => {
-      this.isLoading.next(true);
+      this._isLoading.next(true);
     });
   }
 
@@ -36,7 +32,14 @@ export class LoaderService {
    */
   hide() {
     setTimeout(() => {
-      this.isLoading.next(false);
+      this._isLoading.next(false);
     });
+  }
+
+  /**
+   * Returns true if we're currently loading data from backend.
+   */
+  get isLoading() {
+    return this._isLoading;
   }
 }
