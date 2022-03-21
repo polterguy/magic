@@ -35,6 +35,7 @@ export class BackendService {
   private _activeChanged: BehaviorSubject<Backend>;
   private _statusRetrieved: BehaviorSubject<Status>;
   private _versionRetrieved: BehaviorSubject<string>;
+  private _latestBazarVersion: string = null;
 
   /**
    * To allow consumers to subscribe to authentication status changes.
@@ -137,6 +138,9 @@ export class BackendService {
     this.backendsStorageService.activate(value);
     if (!value.access.fetched) {
       this.getEndpoints(value);
+    }
+    if (value.token && value.token.in_role('root') && !value.status) {
+      this.retrieveStatusAndVersion(this.active);
     }
     this._activeChanged.next(value);
   }
@@ -286,6 +290,26 @@ export class BackendService {
     });
   }
 
+  /**
+   * Returns true if there exists a newer version of Magic than whatever the current backend is using.
+   */
+  get shouldUpdate() {
+    if (!this.active.version || !this._latestBazarVersion) {
+      return false;
+    }
+    const lhs = this.active.version.substring(1).split('.');
+    const rhs = this._latestBazarVersion.substring(1).split('.');
+    for (let idx = 0; idx < 3; ++idx) {
+      if (+lhs[idx] < +rhs[idx]) {
+        return true;
+      }
+      if (+lhs[idx] > +rhs[idx]) {
+        break;
+      }
+    }
+    return false;
+  }
+
   /*
    * Private helper methods.
    */
@@ -393,23 +417,45 @@ export class BackendService {
    * Retrieves status of backend and version
    */
   private retrieveStatusAndVersion(backend: Backend) {
+
+    // Retrieving status of specified backend.
     this.httpClient.get<Status>(
       backend.url +
       '/magic/system/config/status').subscribe({
       next: (status: Status) => {
+
+        // Assigning model.
         backend.status = status;
         this._statusRetrieved.next(status);
+
+        // Retrieving version of backend
         this.httpClient.get<CoreVersion>(
           backend.url + 
           '/magic/system/version').subscribe({
           next: (version: CoreVersion) => {
+
+            // Assigning model
             backend.version = version.version;
-            this.httpClient.get<Response>(
-              environment.bazarUrl +
-              '/magic/modules/bazar/core-version').subscribe((latestVersion: Response) => {
-              backend.latestVersion = latestVersion.result;
+
+            // Retrieving latest version as published by the Bazar unless we have already retrieved it.
+            if (this._latestBazarVersion) {
+
+              // Latest Bazar version of backend has already been retrieved.
               this._versionRetrieved.next(backend.version);
-            });
+
+            } else {
+
+              // Retrieving latest backend version as published by the Bazar.
+              this.httpClient.get<Response>(
+                environment.bazarUrl +
+                '/magic/modules/bazar/core-version').subscribe({
+                  next: (latestVersion: Response) => {
+
+                    // Assigning model
+                    this._latestBazarVersion = latestVersion.result;
+                    this._versionRetrieved.next(backend.version);
+                  }});
+            }
           }
         });
       }});
