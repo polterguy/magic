@@ -9,11 +9,11 @@ import { Component, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { Response } from 'src/app/models/response.model';
+import { ConfigService } from '../../../../../services/config.service';
 import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { BazarService } from 'src/app/services/management/bazar.service';
-import { ConfigService } from 'src/app/services/management/config.service';
+import { BazarService } from 'src/app/components/management/services/bazar.service';
 import { CryptoService } from 'src/app/components/management/crypto/services/crypto.service';
 
 /**

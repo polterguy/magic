@@ -12,12 +12,12 @@ import { bufferCount, concatMap, debounceTime, distinctUntilChanged } from 'rxjs
 
 // Application specific imports.
 import { Response } from '../../../models/response.model';
-import { FileService } from 'src/app/services/tools/file.service';
+import { FileService } from 'src/app/services/file.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { MessageService } from '../../../services/message.service';
 import { FeedbackService } from '../../../services/feedback.service';
 import { LoaderInterceptor } from '../../../interceptors/loader.interceptor';
-import { AssumptionService } from 'src/app/services/analytics/assumption.service';
+import { AssumptionService } from 'src/app/components/analytics/services/assumption.service';
 import { Model } from '../../utilities/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 
 // CodeMirror options.

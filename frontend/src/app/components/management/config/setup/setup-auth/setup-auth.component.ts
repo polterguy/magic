@@ -7,12 +7,11 @@
 import { Component, OnInit } from '@angular/core';
 
 // Application specific imports.
-import { Messages } from 'src/app/models/messages.model';
 import { Response } from 'src/app/models/response.model';
+import { ConfigService } from '../../../../../services/config.service';
 import { MessageService } from 'src/app/services/message.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
-import { ConfigService } from 'src/app/services/management/config.service';
 import { BackendService } from 'src/app/services/backend.service';
+import { FeedbackService } from 'src/app/services/feedback.service';
 
 /**
  * Setup configuration component for allowing user to configure his Magic

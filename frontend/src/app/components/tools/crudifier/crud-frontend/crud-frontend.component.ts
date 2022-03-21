@@ -11,7 +11,7 @@ import { BackendService } from 'src/app/services/backend.service';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { NameEmailModel } from '../../../../models/name-email.model';
-import { ConfigService } from '../../../../services/management/config.service';
+import { ConfigService } from 'src/app/services/config.service';
 import { CrudFrontendExtraComponent } from './crud-frontend-extra/crud-frontend-extra.component';
 
 /**

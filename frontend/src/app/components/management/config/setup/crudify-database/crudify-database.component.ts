@@ -8,13 +8,12 @@ import { forkJoin } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
 
 // Application specific imports.
-import { Messages } from 'src/app/models/messages.model';
-import { SqlService } from 'src/app/services/tools/sql.service';
+import { CacheService } from 'src/app/services/cache.service';
 import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { LogService } from 'src/app/services/analytics/log.service';
-import { CacheService } from 'src/app/services/analytics/cache.service';
+import { SqlService } from 'src/app/services/sql.service';
+import { LogService } from 'src/app/services/log.service';
 import { Crudify } from 'src/app/components/tools/crudifier/models/crudify.model';
 import { LocResult } from 'src/app/components/tools/crudifier/models/loc-result.model';
 import { DefaultDatabaseType } from '../../../../../models/default-database-type.model';

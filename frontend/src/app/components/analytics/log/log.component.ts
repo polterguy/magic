@@ -6,11 +6,17 @@
 // Angular and system imports.
 import { Component, OnInit } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
-import { trigger, state, style, transition, animate } from '@angular/animations';
+import {
+  trigger,
+  state,
+  style,
+  transition,
+  animate
+} from '@angular/animations';
 
 // Application specific imports.
+import { LogService } from '../../../services/log.service';
 import { LogItem } from 'src/app/models/log-item.model';
-import { LogService } from 'src/app/services/analytics/log.service';
 import { FeedbackService } from '../../../services/feedback.service';
 
 /**

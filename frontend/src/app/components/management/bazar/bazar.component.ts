@@ -16,18 +16,18 @@ import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@aspnet/
 // Application specific imports.
 import { Count } from 'src/app/models/count.model';
 import { Message } from 'src/app/models/message.model';
+import { BazarService } from '../services/bazar.service';
 import { Response } from '../../../models/response.model';
 import { BazarApp } from '../../../models/bazar-app.model';
 import { AppManifest } from '../../../models/app-manifest';
 import { environment } from 'src/environments/environment';
+import { ConfigService } from '../../../services/config.service';
 import { LoaderService } from '../../../services/loader.service';
-import { FileService } from 'src/app/services/tools/file.service';
 import { MessageService } from 'src/app/services/message.service';
 import { NameEmailModel } from '../../../models/name-email.model';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { BazarService } from '../../../services/management/bazar.service';
-import { ConfigService } from '../../../services/management/config.service';
+import { FileService } from 'src/app/services/file.service';
 import { ViewAppDialogComponent } from './view-app-dialog/view-app-dialog.component';
 import { SubscribeDialogComponent } from './subscribe-dialog/subscribe-dialog.component';
 import { ViewReadmeDialogComponent } from './view-readme-dialog/view-readme-dialog.component';
