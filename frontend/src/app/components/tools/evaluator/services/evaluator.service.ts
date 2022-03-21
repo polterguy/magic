@@ -10,7 +10,7 @@ import { Injectable } from '@angular/core';
 // Application specific imports.
 import { Response } from '../../../../models/response.model';
 import { HttpService } from '../../../../services/http.service';
-import { FileService } from 'src/app/services/tools/file.service';
+import { FileService } from 'src/app/services/file.service';
 
 /**
  * Hyperlambda evaluator service allowing you to evaluate Hyperlambda in

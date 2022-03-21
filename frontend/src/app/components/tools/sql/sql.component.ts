@@ -12,15 +12,15 @@ import { MatDialog } from '@angular/material/dialog';
 import { saveAs } from 'file-saver';
 
 // Application specific imports.
+import { SqlService } from '../../../services/sql.service';
 import { Databases } from 'src/app/models/databases.model';
-import { SqlService } from 'src/app/services/tools/sql.service';
+import { CacheService } from 'src/app/services/cache.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from '../../../services/feedback.service';
-import { CacheService } from '../../../services/analytics/cache.service';
-import { Model } from '../../utilities/codemirror/codemirror-sql/codemirror-sql.component';
 import { DefaultDatabaseType } from '../../../models/default-database-type.model';
 import { SaveSqlDialogComponent } from './save-sql-dialog/save-sql-dialog.component';
 import { LoadSqlDialogComponent } from './load-sql-dialog/load-sql-dialog.component';
+import { Model } from '../../utilities/codemirror/codemirror-sql/codemirror-sql.component';
 
 // CodeMirror options.
 import sql from '../../utilities/codemirror/options/sql.json'

@@ -9,10 +9,10 @@ import { MatDialogRef } from '@angular/material/dialog';
 
 // Application specific imports.
 import { Response } from 'src/app/models/response.model';
+import { BazarService } from '../../services/bazar.service';
+import { ConfigService } from '../../../../services/config.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { NameEmailModel } from '../../../../models/name-email.model';
-import { BazarService } from '../../../../services/management/bazar.service';
-import { ConfigService } from '../../../../services/management/config.service';
 
 /**
  * Component allowing user to subscribe to Aista's newsletter.

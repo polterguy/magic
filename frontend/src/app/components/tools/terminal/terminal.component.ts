@@ -25,7 +25,7 @@ import {
 import { Response } from '../../../models/response.model';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { ConfigService } from '../../../services/management/config.service';
+import { ConfigService } from '../../../services/config.service';
 
 /**
  * Terminal component for allowing user to use the terminal through a

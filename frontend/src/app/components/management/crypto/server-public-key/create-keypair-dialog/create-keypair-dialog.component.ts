@@ -10,9 +10,8 @@ import { MatDialogRef } from '@angular/material/dialog';
 // Application specific imports.
 import { Response } from 'src/app/models/response.model';
 import { CryptoService } from '../../services/crypto.service';
+import { ConfigService } from '../../../../../services/config.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { ConfigService } from 'src/app/services/management/config.service';
-import { KeyPair } from 'src/app/components/management/crypto/models/key-pair.model';
 
 /**
  * Modal dialog used to create a new keypair for server.

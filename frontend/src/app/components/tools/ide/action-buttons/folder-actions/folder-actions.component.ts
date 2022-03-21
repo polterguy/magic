@@ -14,7 +14,7 @@ import {
 
 // Application specific imports.
 import { Response } from '../../../../../models/response.model';
-import { FileService } from 'src/app/services/tools/file.service';
+import { FileService } from 'src/app/services/file.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { MacroDefinition } from 'src/app/models/macro-definition.model';

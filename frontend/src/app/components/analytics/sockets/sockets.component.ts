@@ -15,11 +15,11 @@ import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@aspnet/
 // Application specific imports.
 import { Count } from 'src/app/models/count.model';
 import { Message } from 'src/app/models/message.model';
+import { SocketService } from '../services/socket.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { SocketUser } from '../endpoints/models/socket-user.model';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { SubscribeComponent } from './subscribe/subscribe.component';
-import { SocketService } from 'src/app/services/analytics/socket.service';
 import { MessageWrapper, PublishComponent } from './publish/publish.component';
 
 /**

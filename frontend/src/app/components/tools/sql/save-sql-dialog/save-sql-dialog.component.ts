@@ -8,7 +8,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
-import { SqlService } from 'src/app/services/tools/sql.service';
+import { SqlService } from '../../../../services/sql.service';
 import { FeedbackService } from '../../../../services/feedback.service';
 
 /**

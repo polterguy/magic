@@ -10,10 +10,10 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 // Application specific imports.
 import { Response } from 'src/app/models/response.model';
 import { AppManifest } from '../../../../models/app-manifest';
-import { FileService } from 'src/app/services/tools/file.service';
+import { FileService } from 'src/app/services/file.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { BazarService } from '../../../../services/management/bazar.service';
+import { BazarService } from '../../services/bazar.service';
 
 /**
  * Displays information about a currently installed Bazar item.

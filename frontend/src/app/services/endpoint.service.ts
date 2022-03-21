@@ -7,9 +7,8 @@
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
-import { HttpService } from '../http.service';
-import { BackendService } from '../backend.service';
-import { Endpoint } from '../../components/analytics/endpoints/models/endpoint.model';
+import { HttpService } from './http.service';
+import { Endpoint } from '../components/analytics/endpoints/models/endpoint.model';
 
 /**
  * Endpoint service, allowing you to retrieve meta data about your endpoints,

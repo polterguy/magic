@@ -11,7 +11,7 @@ import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/cor
 // Application specific imports.
 import { Message } from 'src/app/models/message.model';
 import { MessageService } from 'src/app/services/message.service';
-import { FileService } from 'src/app/services/tools/file.service';
+import { FileService } from 'src/app/services/file.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { GenerateCrudAppComponent } from '../../generate-crud-app/generate-crud-app.component';

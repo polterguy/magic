@@ -17,7 +17,6 @@ import { Response } from 'src/app/models/response.model';
 import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from '../../../services/feedback.service';
-import { ConfigService } from 'src/app/services/management/config.service';
 
 class DialogData {
   allowAuthentication?: boolean;
@@ -45,7 +44,6 @@ export class LoginDialogComponent implements OnInit {
    * Creates an instance of your login dialog.
    * 
    * @param router Router service to redirect and check current route
-   * @param configService Configuration service used to determine if system has been setup if root user logs in
    * @param dialogRef Needed to be able to close dialog after having logged in
    * @param messageService Dependency injected message service to publish information from component to subscribers
    * @param dialogRef Reference to self, to allow for closing dialog as user has successfully logged in
@@ -55,7 +53,6 @@ export class LoginDialogComponent implements OnInit {
    */
   constructor(
     private router: Router,
-    private configService: ConfigService,
     private dialogRef: MatDialogRef<LoginDialogComponent>,
     private feedbackService: FeedbackService,
     protected messageService: MessageService,

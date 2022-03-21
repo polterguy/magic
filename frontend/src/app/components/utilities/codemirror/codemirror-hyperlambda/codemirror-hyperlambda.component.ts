@@ -13,7 +13,7 @@ import {
 
 // Application specific imports.
 import { FeedbackService } from '../../../../services/feedback.service';
-import { VocabularyService } from '../../../../services/tools/vocabulary.service';
+import { VocabularyService } from 'src/app/components/tools/services/vocabulary.service';
 
 /**
  * Model class for CodeMirror instance's Hyperlambda.

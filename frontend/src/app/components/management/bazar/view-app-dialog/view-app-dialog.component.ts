@@ -8,18 +8,21 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
+import { BazarService } from '../../services/bazar.service';
 import { Response } from '../../../../models/response.model';
+import { ConfigService } from '../../../../services/config.service';
 import { BazarApp } from '../../../../models/bazar-app.model';
 import { LoaderService } from 'src/app/services/loader.service';
-import { FileService } from 'src/app/services/tools/file.service';
 import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { NameEmailModel } from '../../../../models/name-email.model';
 import { PurchaseStatus } from '../../../../models/purchase-status.model';
-import { BazarService } from '../../../../services/management/bazar.service';
-import { ConfigService } from '../../../../services/management/config.service';
-import { ConfirmEmailAddressDialogComponent, EmailPromoCodeModel } from './confirm-email-address-dialog/confirm-email-address-dialog.component';
+import { FileService } from 'src/app/services/file.service';
+import {
+  ConfirmEmailAddressDialogComponent,
+  EmailPromoCodeModel
+} from './confirm-email-address-dialog/confirm-email-address-dialog.component';
 
 /**
  * View details of Bazar app modal dialog component.

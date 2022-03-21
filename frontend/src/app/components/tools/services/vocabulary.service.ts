@@ -8,7 +8,7 @@ import { Observable, of } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
-import { HttpService } from '../http.service';
+import { HttpService } from '../../../services/http.service';
 
 /**
  * Hyperlambda vocabulary service allowiung you to apply autocomplete on Hyperlambda

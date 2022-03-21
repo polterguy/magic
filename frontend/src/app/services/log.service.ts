@@ -7,9 +7,9 @@
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
-import { HttpService } from '../http.service';
-import { Count } from '../../models/count.model';
+import { Count } from '../models/count.model';
 import { LogItem } from 'src/app/models/log-item.model';
+import { HttpService } from './http.service';
 
 /**
  * Log service, allows you to Read, Create, Update and Delete log items

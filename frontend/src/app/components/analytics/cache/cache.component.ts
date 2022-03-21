@@ -14,9 +14,9 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 // Application specific imports.
 import { Count } from 'src/app/models/count.model';
 import { CacheItem } from '../../../models/cache-item.model';
+import { CacheService } from 'src/app/services/cache.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { CacheService } from 'src/app/services/analytics/cache.service';
 
 /**
  * Cache component for allowing user to inspect, remove, and purge cache items.

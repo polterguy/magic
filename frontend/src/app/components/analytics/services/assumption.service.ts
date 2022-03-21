@@ -8,9 +8,9 @@ import { throwError } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
-import { HttpService } from '../http.service';
-import { BackendService } from '../backend.service';
-import { Response } from '../../models/response.model';
+import { HttpService } from '../../../services/http.service';
+import { BackendService } from '../../../services/backend.service';
+import { Response } from '../../../models/response.model';
 
 /**
  * Assumption service, allowing you to retrieve, create and execute assumptions.
