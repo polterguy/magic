@@ -4,10 +4,10 @@
  */
 
 // Application specific imports.
-import { Token } from "./token.model";
-import { Endpoint } from "./endpoint.model";
-import { AccessModel } from "./access.model";
-import { Status } from "./status.model";
+import { Token } from './token.model';
+import { Status } from './status.model';
+import { Endpoint } from './endpoint.model';
+import { AccessModel } from './access.model';
 
 /**
  * Encapsulates a backend instance, in addition to its username, password, and if existing also
@@ -21,7 +21,6 @@ export class Backend {
   private _password: string;
   private _status: Status = null;
   private _version: string = null;
-  private _latestVersion: string = null;
   private _endpoints: Endpoint[] = [];
   private _access: AccessModel = {
     sql: {},
@@ -136,54 +135,6 @@ export class Backend {
   }
 
   /**
-   * Changes the version of the backend.
-   */
-  set version(value: string) {
-    this._version = value;
-  }
-
-  /**
-   * Returns the latest available version of Magic.
-   */
-  get latestVersion() : string {
-    return this._latestVersion;
-  }
-
-  /**
-   * Changes the latest available version of Magic.
-   */
-  set latestVersion(value: string) {
-    this._latestVersion = value;
-  }
-
-  /**
-   * Returns true if there exists a newer version of Magic.
-   */
-  get shouldUpdate() {
-    if (!this._version || !this._latestVersion) {
-      return false;
-    }
-    const lhs = this._version.substring(1).split('.');
-    const rhs = this._latestVersion.substring(1).split('.');
-    for (let idx = 0; idx < 3; ++idx) {
-      if (+lhs[idx] < +rhs[idx]) {
-        return true;
-      }
-      if (+lhs[idx] > +rhs[idx]) {
-        break;
-      }
-    }
-    return false;
-  }
-
-  /**
-   * Returns the version of the backend, if known.
-   */
-  get version() : string {
-    return this._version;
-  }
-
-  /**
    * Changes the status of the backend.
    */
   set status(value: Status) {
@@ -195,6 +146,20 @@ export class Backend {
    */
   get setupDone() {
     return this._status === null || (this._status.config_done && this._status.magic_crudified && this._status.server_keypair);
+  }
+
+  /**
+   * Returns the version of the backend, if known.
+   */
+  get version() : string {
+    return this._version;
+  }
+
+  /**
+   * Changes the version of the backend.
+   */
+  set version(value: string) {
+    this._version = value;
   }
 
   /**
@@ -311,12 +276,13 @@ export class Backend {
     };
   }
 
-  /**
+  /*
+   * Private helper methods.
+   */
+
+  /*
    * Returns true if user has general access to the specified component.
    * In order to have access to a component, user has to have access to all component URLs.
-   * 
-   * @param url URL to check
-   * @param verb HTTP verb to check
    */
   private canInvoke(url: string, verb: string) {
 
