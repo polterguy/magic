@@ -4,7 +4,8 @@
  */
 
 // Angular and system imports.
-import { Component, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 
 // Application specific imports.
@@ -21,7 +22,9 @@ import { RegisterService } from 'src/app/services/register.service';
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
 })
-export class RegisterComponent implements OnInit {
+export class RegisterComponent implements OnInit, OnDestroy {
+
+  private authSubscription: Subscription;
 
   /**
    * Status of component, allowing us to display different types of UI,
@@ -70,6 +73,22 @@ export class RegisterComponent implements OnInit {
     } else {
       this.status = 'ok-to-register';
     }
+
+    // In case user authenticates or logs out as we're on the form.
+    this.authSubscription = this.backendService.authenticatedChanged.subscribe((authenticated: boolean) => {
+      if (authenticated) {
+        this.status = 'already-logged-in';
+      } else {
+        this.status = 'ok-to-register';
+      }
+    });
+  }
+
+  /**
+   * Implementation of OnDestroy.
+   */
+  ngOnDestroy() {
+    this.authSubscription.unsubscribe();
   }
 
   /**
