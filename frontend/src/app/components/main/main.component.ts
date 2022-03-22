@@ -94,6 +94,20 @@ export class MainComponent implements OnInit {
         }
       }
     });
+
+    // Making sure we redirect to dashboard if user is no longer authenticated.
+    this.backendService.authenticatedChanged.subscribe((authenticated: boolean) => {
+      if (!authenticated) {
+        switch (window.location.pathname) {
+          case '/register':
+          case '/about':
+          case '/crypto':
+            break;
+          default:
+            this.router.navigate(['/']);
+        }
+      }
+    });
   }
 
   /**
