@@ -4,6 +4,7 @@
     mat-menu-item
     [disabled]="activeFileIsClean()"
     matTooltip="Save file [ALT+S]" 
+    matTooltipPosition="before"
     (click)="saveActiveFile()">
     <mat-icon>save</mat-icon>
     Save
@@ -14,6 +15,7 @@
     mat-menu-item
     [disabled]="!currentFileData?.path?.endsWith('.hl')"
     [matTooltip]="endpointData === null ? 'Execute Hyperlambda file immediately [F5]' : 'Invoke endpoint through a modal dialog [F5]'"
+    matTooltipPosition="before"
     (click)="executeActiveFile()">
     <mat-icon>play_arrow</mat-icon>
     {{endpointData === null ? 'Execute' : 'Invoke ...'}}
@@ -23,6 +25,7 @@
 <button mat-menu-item 
     [disabled]="!currentFileData?.path?.endsWith('.md')" 
     matTooltip="Preview file [ALT+P]" 
+    matTooltipPosition="before"
     (click)="previewActiveFile()">
     <mat-icon class="material-icons-outlined">
       preview
@@ -34,6 +37,7 @@
 <button mat-menu-item
     [disabled]="!backendService.active?.access.files.rename"
     matTooltip="Rename file [ALT+R]"
+    matTooltipPosition="before"
     (click)="renameActiveFile()">
     <mat-icon class="material-icons-outlined"> drive_file_rename_outline </mat-icon>
     Rename
@@ -43,6 +47,7 @@
 <button mat-menu-item
     [disabled]="!backendService.active?.access.files.delete_file"
     matTooltip="Delete file [ALT+D]"
+    matTooltipPosition="before"
     (click)="deleteActiveFile()">
     <mat-icon>delete</mat-icon>
     Delete
@@ -52,6 +57,7 @@
 <button
   mat-menu-item
   matTooltip="Close file [ALT+C]"
+  matTooltipPosition="before"
   (click)="closeActiveFile()">
   <mat-icon>close</mat-icon>
   Close
@@ -62,6 +68,7 @@
     mat-menu-item
     [disabled]="!currentFileData"
     matTooltip="Download the active file"
+    matTooltipPosition="before"
     (click)="downloadActiveFile()">
     <mat-icon class="material-icons-outlined">file_download</mat-icon>
     Download file

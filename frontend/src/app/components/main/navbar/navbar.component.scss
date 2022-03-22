@@ -102,6 +102,22 @@
     }
     .mat-expansion-panel{
       border-radius: 0;
+      .mat-expansion-panel-body{
+        padding: 0 0 16px;
+        .mat-list-option{
+          padding: 0;
+          .mat-list-text{
+            padding: 0 40px;
+            &::before{
+              content: ' ';
+              width: 1px;
+              height: 100%;
+              position: absolute;
+              left: 23px;
+            }
+          }
+        }
+      }
     }
 
     .mat-expansion-panel-header,
@@ -132,6 +148,7 @@
     
     .mat-list-option:not(.standalone-link){
       &::after{@include general_transition(0.5s);}
+      &::before{@include general_transition(0.5s);}
         &.active-link::after,
         &:hover::after{
             content: '.';
@@ -142,6 +159,15 @@
             font-size: 60px;
             left: 90%;
             margin-left: -10px;
+        }
+        &.active-link::before,
+        &:hover::before{
+          content: ' ';
+          width: 1px;
+          height: 100%;
+          position: absolute;
+          left: 22.5px;
+          z-index: 1;
         }
     }    
   }
@@ -177,6 +203,8 @@ colour setting -- text & background
     .top-box-sidebar,
     .top-box-sidebar p, a{color: $magic_dark_secondary;}
     
+    .mat-list-text::before{border-left: 1px dashed $magic_dark_ng_border;}
+
     .mat-expansion-panel,
     .mat-expansion-panel-header,
     .mat-list-option{background-color: transparent;}
@@ -205,6 +233,10 @@ colour setting -- text & background
         &:hover::after{
             color: $magic_dark;
         }
+      &.active-link::before,
+      &:hover::before {
+        border-left: 2px solid $magic_dark;
+      }
     }
   }
   .dark #sidebar{
@@ -214,6 +246,8 @@ colour setting -- text & background
     .mat-expansion-indicator::after,
     .top-box-sidebar,
     .top-box-sidebar p.mat-caption, a{color: $magic_default_secondary;}
+
+    .mat-list-text::before{border-left: 1px dashed $magic_default_ng_border;}
 
     .mat-expansion-panel,
     .mat-expansion-panel-header,
@@ -242,6 +276,10 @@ colour setting -- text & background
         &:hover::after{
             color: $magic_accent;
         }
+      &.active-link::before,
+      &:hover::before {
+        border-left: 2px solid $magic_accent;
+      }
     }
   }
 
@@ -261,6 +299,18 @@ colour setting -- text & background
         .mat-list-base .mat-list-item,
         a,
         .mat-expansion-indicator::after{color: $magic_accent;}
+      }
+    }
+    .mat-expansion-panel .mat-expansion-panel-body .mat-list-option .mat-list-text{padding: 0;}
+    .mat-list-text::before{content: none!important;}
+    .mat-list-option:not(.standalone-link){
+      &.active-link::before,
+      &:hover::before {
+        content: none;
+      }
+      &.active-link::after,
+      &:hover::after {
+        content: none;
       }
     }
   }
