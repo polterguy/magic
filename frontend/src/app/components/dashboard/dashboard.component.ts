@@ -35,21 +35,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private activeBackendSubscriber: Subscription;
   private _isRetrievingSystemReport = false;
 
-  public chartType: boolean[] = [];
-  public systemReport: any = null;
-  public systemReportDisplayable: any;
-  public logTypesChart: LogTypes[];
-  public timeshiftChart: Timeshifts[] = [];
-  public timeshiftChartLabel: string[] = [];
-  public timeshiftChartData: string[] = [];
+  chartType: boolean[] = [];
+  systemReport: any = null;
+  systemReportDisplayable: any;
+  logTypesChart: LogTypes[];
+  timeshiftChart: Timeshifts[] = [];
+  timeshiftChartLabel: string[] = [];
+  timeshiftChartData: string[] = [];
 
   /**
    * Common bar chart colors.
    */
-  public colors = colors;
-  public borderColor: string = "red";
-
-  public theme = localStorage.getItem("theme");
+  colors = colors;
+  borderColor: string = "red";
 
   barChartOptions: ChartOptions = {
     responsive: true,
