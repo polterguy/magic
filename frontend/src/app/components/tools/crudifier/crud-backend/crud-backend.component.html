@@ -34,14 +34,17 @@
       <mat-card-content>
         <div class="d-flex flex-xl-nowrap flex-wrap mt-4 w-100">
 
-          <mat-form-field class="w-100" appearance="outline">
-            <mat-label>Database</mat-label>
+          <mat-form-field
+            class="w-100"
+            matTooltip="Select type of database"
+            appearance="outline">
+            <mat-label>Database type</mat-label>
             <mat-select
               [(ngModel)]="databaseType"
               (selectionChange)="databaseTypeChanged()">
               <mat-option
                 *ngFor="let idx of databaseTypes"
-                [value]="idx">{{idx}}</mat-option>
+                [value]="idx">{{getDatabaseTypeName(idx)}}</mat-option>
             </mat-select>
           </mat-form-field>
 
@@ -50,8 +53,9 @@
           <mat-form-field
             *ngIf="databaseType && connectionStrings.length > 0"
             class="w-100"
+            matTooltip="Connection string to use"
             appearance="outline">
-            <mat-label>Connection</mat-label>
+            <mat-label>Connection string</mat-label>
             <mat-select
               [(ngModel)]="connectionString"
               (selectionChange)="connectionStringChanged()">
@@ -66,8 +70,9 @@
           <mat-form-field
             *ngIf="connectionString && databases && databases.databases.length > 0"
             class="w-100"
+            matTooltip="Database to crudify"
             appearance="outline">
-            <mat-label>Database</mat-label>
+            <mat-label>Database name</mat-label>
             <mat-select
               [(ngModel)]="database"
               (selectionChange)="databaseChanged()">
@@ -83,8 +88,9 @@
           <mat-form-field
             *ngIf="database && database.tables && database.tables.length > 0"
             class="w-100"
+            matTooltip="Optionally configure crudification settings for individual tables"
             appearance="outline">
-            <mat-label>Table</mat-label>
+            <mat-label>Table name</mat-label>
             <mat-select
               [(ngModel)]="table"
               (selectionChange)="tableChanged()">
@@ -211,6 +217,7 @@
               mat-raised-button
               color="primary"
               (click)="crudifyAll()"
+              matTooltip="Crudifies all tables in your currently selected database"
               class="w-100" id="largeBtn">
               Crudify all tables
             </button>

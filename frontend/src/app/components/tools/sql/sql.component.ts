@@ -143,6 +143,19 @@ export class SqlComponent implements OnInit {
   }
 
   /**
+   * Returns humanly readable type of database to caller.
+   * 
+   * @param type Type delaration
+   */
+  getDatabaseTypeName(type: string) {
+    switch (type) {
+      case 'mysql': return 'MySQL';
+      case 'pgsql': return 'PostgreSQL';
+      case 'mssql': return 'SQL Server';
+    }
+  }
+
+  /**
    * Invoked when database type is changed.
    */
   databaseTypeChanged() {
