@@ -46,6 +46,11 @@ export class NavbarComponent implements OnInit {
   @Input() largeScreen: boolean;
 
   /**
+   * get theme for logo setting 
+   */
+  public theme: string;
+
+  /**
    * Creates an instance of your component.
    * 
    * @param router Needed to redirect user after having verified his authentication token
@@ -73,6 +78,7 @@ export class NavbarComponent implements OnInit {
    * Implementation of OnInit.
    */
   ngOnInit() {
+    this.theme = this.themeService.theme;
     this.backendService.authenticatedChanged.subscribe(() => {
       this.cdRef.detectChanges();
     });
@@ -148,6 +154,7 @@ export class NavbarComponent implements OnInit {
    */
   toggleTheme() {
     this.themeService.toggle();
+    this.theme = this.themeService.theme;
   }
 
   /**
