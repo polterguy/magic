@@ -95,6 +95,7 @@
               <mat-option
                 *ngFor="let idx of database.tables"
                 [matTooltip]="hasWarnings(idx) ? 'Table has warnings, please inspect it carefully' : ''"
+                matTooltipPosition="before"
                 [value]="idx">
                 <div class="d-flex align-items-center justify-content-between w-100" 
                   [class.warning]="hasWarnings(idx)">
