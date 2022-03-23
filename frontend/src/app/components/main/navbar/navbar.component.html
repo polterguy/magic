@@ -50,7 +50,7 @@
             [disabled]="backend.url === backendService.active?.url"
             (click)="switchBackend(backend)">
             <mat-icon>change_circle</mat-icon>
-            {{backend?.url === backendService.active.url ? 'Currently in use' : 'Switch to this backend'}}
+            {{backend.url === backendService.active?.url ? 'Currently in use' : 'Switch to this backend'}}
           </button>
           <button
             mat-menu-item
@@ -101,7 +101,7 @@
     <mat-expansion-panel
       class="mat-elevation-z0"
       hideToggle
-      *ngIf="!backendService.active?.token || !backendService.active?.token?.in_role('root')">
+      *ngIf="(!backendService.active?.token || !backendService.active?.token?.in_role('root')) && backendService.active">
       <mat-expansion-panel-header 
         #panelC (click)="panelC._toggle()" 
         [matTooltipDisabled]="navbarService.expanded" 
