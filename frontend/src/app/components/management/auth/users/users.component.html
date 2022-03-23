@@ -82,6 +82,7 @@
                   <button
                     mat-menu-item
                     [disabled]="el.username === 'root' || !backendService.active?.access.auth.create_user_role"
+                    matTooltipPosition="before"
                     matTooltip="Add to role"
                     (click)="addToRole(el)">
                     <mat-icon>add_box</mat-icon>
@@ -90,6 +91,7 @@
         
                   <button
                     mat-menu-item
+                    matTooltipPosition="before"
                     matTooltip="Copy username to clipboard"
                     (click)="copyUsername(el)">
                     <mat-icon>bookmark</mat-icon>
@@ -99,6 +101,7 @@
                   <button
                     mat-menu-item
                     [disabled]="el.username === 'root' || !backendService.active?.access.auth.update_user"
+                    matTooltipPosition="before"
                     matTooltip="Change password"
                     (click)="editUser(el)">
                     <mat-icon>edit</mat-icon>
@@ -108,6 +111,7 @@
                   <button
                     mat-menu-item
                     [disabled]="el.username === 'root' || !backendService.active?.access.auth.impersonate"
+                    matTooltipPosition="before"
                     matTooltip="Impersonate user"
                     (click)="generateLoginLink(el)">
                     <mat-icon>account_circle</mat-icon>
@@ -117,6 +121,7 @@
                   <button
                     mat-menu-item
                     [disabled]="el.username === 'root' || !backendService.active?.access.auth.impersonate"
+                    matTooltipPosition="before"
                     matTooltip="Create reset password link"
                     (click)="generateResetPasswordLink(el)">
                     <mat-icon>perm_identity</mat-icon>
@@ -127,6 +132,7 @@
                     mat-menu-item
                     [disabled]="el.username === 'root' || el.locked || !backendService.active?.access.auth.jail"
                     (click)="jailUser(el)"
+                    matTooltipPosition="before"
                     matTooltip="Imprison user">
                     <mat-icon>gavel</mat-icon>
                     Imprison user
@@ -136,6 +142,7 @@
                     mat-menu-item
                     [disabled]="el.username === 'root' || !backendService.active?.access.auth.jail"
                     (click)="lockedChanged(el)"
+                    matTooltipPosition="before"
                     [matTooltip]="el.locked ? 'Release lock' : 'Lock user'">
                     <mat-icon *ngIf="el.locked">lock</mat-icon>
                     <mat-icon *ngIf="!el.locked">lock_open</mat-icon>
@@ -145,6 +152,7 @@
                   <button
                     mat-menu-item
                     [disabled]="el.username === 'root' || !backendService.active?.access.auth.delete_user"
+                    matTooltipPosition="before"
                     matTooltip="Delete user"
                     (click)="delete(el)">
                     <mat-icon>delete</mat-icon>
@@ -153,6 +161,7 @@
                 </mat-menu>
               </div>
             </div>
+
             <div class="d-flex flex-wrap pb-3">
               <mat-chip-list>
                 <mat-chip

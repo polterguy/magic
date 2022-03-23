@@ -95,6 +95,7 @@
                     <button
                       mat-menu-item
                       [disabled]="!backendService.active?.access.auth.create_user_role || el.name === 'reset-password' || getAffectedUsers(el) === 0"
+                      matTooltipPosition="before"
                       [matTooltip]="'Add role to ' + getAffectedUsers(el) + ' selected user(s)'"
                       (click)="addRole(el)">
                       <mat-icon>add_box</mat-icon>
@@ -105,6 +106,7 @@
 
                     <button
                       mat-menu-item
+                      matTooltipPosition="before"
                       matTooltip="Edit role"
                       [disabled]="!backendService.active?.access.auth.update_role"
                       (click)="editRole(el)">
@@ -116,6 +118,7 @@
 
                     <button
                       mat-menu-item
+                      matTooltipPosition="before"
                       matTooltip="Delete role"
                       [disabled]="!backendService.active?.access.auth.delete_role || el.name === 'root' || el.name === 'reset-password'"
                       (click)="deleteRole(el)">
