@@ -41,11 +41,7 @@ export class CrudBackendComponent implements OnInit {
   /**
    * Options user has for selecting database types.
    */
-  databaseTypes: string[] = [
-    'mysql',
-    'pgsql',
-    'mssql',
-  ];
+  databaseTypes: string[] = [];
 
   /**
    * What database type user has selected.
@@ -122,6 +118,19 @@ export class CrudBackendComponent implements OnInit {
         });
       },
       error: (error: any) => this.feedbackService.showError(error)});
+  }
+
+  /**
+   * Returns humanly readable type of database to caller.
+   * 
+   * @param type Type delaration
+   */
+  getDatabaseTypeName(type: string) {
+    switch (type) {
+      case 'mysql': return 'MySQL';
+      case 'pgsql': return 'PostgreSQL';
+      case 'mssql': return 'SQL Server';
+    }
   }
 
   /**

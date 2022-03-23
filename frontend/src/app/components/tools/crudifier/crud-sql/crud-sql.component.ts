@@ -7,10 +7,10 @@
 import { Component, ComponentFactoryResolver, OnInit } from '@angular/core';
 
 // Application specific imports.
-import { SqlService } from '../../../../services/sql.service';
 import { Messages } from 'src/app/models/messages.model';
 import { Database } from 'src/app/models/database.model';
 import { Databases } from 'src/app/models/databases.model';
+import { SqlService } from '../../../../services/sql.service';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { CrudSqlExtraComponent } from './crud-sql-extra/crud-sql-extra.component';
@@ -96,6 +96,19 @@ export class CrudSqlComponent implements OnInit {
         });
       },
       error: (error: any) => this.feedbackService.showError(error)});
+  }
+
+  /**
+   * Returns humanly readable type of database to caller.
+   * 
+   * @param type Type delaration
+   */
+  getDatabaseTypeName(type: string) {
+    switch (type) {
+      case 'mysql': return 'MySQL';
+      case 'pgsql': return 'PostgreSQL';
+      case 'mssql': return 'SQL Server';
+    }
   }
 
   /**

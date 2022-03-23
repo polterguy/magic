@@ -29,21 +29,27 @@
       <mat-card-content>
         <div class="d-flex flex-sm-nowrap flex-wrap mt-4 w-100" *ngIf="input">
         
-          <mat-form-field class="w-100" appearance="outline">
-            <mat-label>Database</mat-label>
+          <mat-form-field
+            class="w-100"
+            matTooltip="Select type of database"
+            appearance="outline">
+            <mat-label>Database type</mat-label>
             <mat-select
               [(ngModel)]="input.databaseType"
               (selectionChange)="databaseTypeChanged()">
               <mat-option
                 *ngFor="let idx of databaseTypes"
-                [value]="idx">{{idx}}</mat-option>
+                [value]="idx">{{getDatabaseTypeName(idx)}}</mat-option>
             </mat-select>
           </mat-form-field>
         
           <div class="p-1"></div>
         
-          <mat-form-field class="w-100" appearance="outline">
-            <mat-label>Connection</mat-label>
+          <mat-form-field
+            class="w-100"
+            matTooltip="Connection string to use"
+            appearance="outline">
+            <mat-label>Connection string</mat-label>
             <mat-select
               [(ngModel)]="input.connectionString"
               (selectionChange)="connectionStringChanged()">
@@ -55,8 +61,11 @@
         
           <div class="p-1"></div>
           
-          <mat-form-field class="w-100" appearance="outline">
-            <mat-label>Database</mat-label>
+          <mat-form-field
+            class="w-100"
+            matTooltip="Database to create SQL endpoint for"
+            appearance="outline">
+            <mat-label>Database name</mat-label>
             <mat-select
               [(ngModel)]="input.database"
               [disabled]="!databases || databases.length === 0"
