@@ -10,7 +10,7 @@
           [(selectedIndex)]="activeTab"
           dynamicHeight>
     
-          <mat-tab label="CRUD" [disabled]="!backendService.active?.access.crud.generate_crud">
+          <mat-tab label="Backend" [disabled]="!backendService.active?.access.crud.generate_crud">
             <ng-template matTabContent>
               <app-crud-backend></app-crud-backend>
             </ng-template>
