@@ -102,6 +102,7 @@ export class MainComponent implements OnInit {
           case '/register':
           case '/about':
           case '/crypto':
+          case '/':
             break;
           default:
             this.router.navigate(['/']);

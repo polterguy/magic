@@ -19,9 +19,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { Backend } from 'src/app/models/backend.model';
 import { ThemeService } from 'src/app/services/theme.service';
 import { NavbarService } from 'src/app/services/navbar.service';
+import { ConfigService } from '../../../services/config.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { ConfigService } from '../../../services/config.service';
 import { LoginDialogComponent } from '../../utilities/login-dialog/login-dialog.component';
 
 /**
@@ -106,7 +106,7 @@ export class NavbarComponent implements OnInit {
   /**
    * Returns the user's status to caller.
    */
-   getActiveBackendUrl() {
+  getActiveBackendUrl() {
     if (!this.backendService.active) {
       return 'not connected';
     }
@@ -182,7 +182,7 @@ export class NavbarComponent implements OnInit {
    * 
    * @param backend Backend to remove
    */
-   removeBackend(backend: Backend) {
+  removeBackend(backend: Backend) {
 
     // For weird reasons the menu gets "stuck" unless we do this in a timer.
     setTimeout(() => this.backendService.remove(backend), 1);
