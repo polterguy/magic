@@ -1,0 +1,49 @@
+<div class="row">
+  <div class="col-12">
+    <mat-card>
+
+      <div class="d-flex flex-sm-nowrap flex-wrap justify-content-between mb-1">
+        <div class="d-flex align-items-center">
+          <mat-card-title class="my-0">Crudify database</mat-card-title>
+          <div class="sm-icons">
+            <button mat-icon-button [matMenuTriggerFor]="menu" class="mat-caption" matTooltip="Need help?" type="button">
+              <mat-icon>help_outline</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+              <div class="p-3">
+                <p>
+                  In order to use your newly created database Magic needs to generate HTTP CRUD web API endpoints wrapping its tables.
+                </p>
+                <div class="d-flex justify-content-end">
+                  <a target="_blank" href="https://docs.aista.com/documentation/magic/components/config/crudify/" mat-stroked-button>Learn more</a>
+                </div>
+              </div>
+            </mat-menu>
+          </div>
+        </div>
+      </div>
+
+      <mat-card-subtitle>Crudify your Magic database</mat-card-subtitle>
+
+      <mat-card-content>
+
+        <ngx-codemirror
+          *ngIf="crudifyContent"
+          [(ngModel)]="crudifyContent"
+          [options]="cmOptions.json">
+        </ngx-codemirror>
+        
+        <div class="d-flex justify-content-end mt-3">
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="next()"
+            class="next">
+            Next
+          </button>
+        </div>
+        
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

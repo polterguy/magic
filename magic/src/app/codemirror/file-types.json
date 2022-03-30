@@ -1,0 +1,191 @@
+[
+  {
+    "extensions": ["sql"],
+    "options": {
+      "mode": "text/x-mysql",
+      "lineNumbers": true,
+      "readOnly": false,
+      "theme": "aista",
+      "autofocus": true,
+      "styleActiveLine": true,
+      "extraKeys": {}
+    }
+  },
+  {
+    "extensions": ["md", "txt", "log", "key"],
+    "options": {
+      "mode": "markdown",
+      "lineNumbers": true,
+      "readOnly": false,
+      "theme": "aista",
+      "autofocus": true,
+      "styleActiveLine": true,
+      "extraKeys": {}
+    }
+  },
+  {
+    "extensions": ["yml", "yaml"],
+    "options": {
+      "mode": "text/x-yaml",
+      "lineNumbers": true,
+      "readOnly": false,
+      "theme": "aista",
+      "autofocus": true,
+      "styleActiveLine": true,
+      "extraKeys": {}
+    }
+  },
+  {
+    "extensions": ["xml", "html", "htm"],
+    "options": {
+      "mode": "application/xml",
+      "lineNumbers": true,
+      "readOnly": false,
+      "theme": "aista",
+      "autofocus": true,
+      "styleActiveLine": true,
+      "extraKeys": {}
+    }
+  },
+  {
+    "extensions": ["css"],
+    "options": {
+      "mode": "text/css",
+      "lineNumbers": true,
+      "readOnly": false,
+      "theme": "aista",
+      "autofocus": true,
+      "styleActiveLine": true,
+      "extraKeys": {}
+    }
+  },
+  {
+    "extensions": ["scss"],
+    "options": {
+      "mode": "text/x-scss",
+      "lineNumbers": true,
+      "readOnly": false,
+      "theme": "aista",
+      "autofocus": true,
+      "styleActiveLine": true,
+      "extraKeys": {}
+    }
+  },
+  {
+    "extensions": ["less"],
+    "options": {
+      "mode": "text/x-less",
+      "lineNumbers": true,
+      "readOnly": false,
+      "theme": "aista",
+      "autofocus": true,
+      "styleActiveLine": true,
+      "extraKeys": {}
+    }
+  },
+  {
+    "extensions": ["sass"],
+    "options": {
+      "mode": "text/x-sass",
+      "lineNumbers": true,
+      "readOnly": false,
+      "theme": "aista",
+      "autofocus": true,
+      "styleActiveLine": true,
+      "extraKeys": {}
+    }
+  },
+  {
+    "extensions": ["js", "ts"],
+    "options": {
+      "mode": "text/javascript",
+      "lineNumbers": true,
+      "readOnly": false,
+      "theme": "aista",
+      "autofocus": true,
+      "styleActiveLine": true,
+      "extraKeys": {}
+    }
+  },
+  {
+    "extensions": ["json"],
+    "options": {
+      "mode": "application/ld+json",
+      "lineNumbers": true,
+      "readOnly": false,
+      "theme": "aista",
+      "autofocus": true,
+      "styleActiveLine": true,
+      "extraKeys": {}
+    }
+  },
+  {
+    "extensions": ["py"],
+    "options": {
+      "mode": "text/x-python",
+      "lineNumbers": true,
+      "readOnly": false,
+      "tabSize": 4,
+      "indentUnit": 4,
+      "indentAuto": true,
+      "matchBrackets": true,
+      "theme": "aista",
+      "autofocus": true,
+      "styleActiveLine": true,
+      "extraKeys": {
+        "Shift-Tab": "indentLess",
+        "Tab": "indentMore"
+      }
+    }
+  },
+  {
+    "extensions": ["rb"],
+    "options": {
+      "mode": "text/x-ruby",
+      "lineNumbers": true,
+      "readOnly": false,
+      "tabSize": 4,
+      "indentUnit": 4,
+      "indentAuto": true,
+      "matchBrackets": true,
+      "theme": "aista",
+      "autofocus": true,
+      "styleActiveLine": true,
+      "extraKeys": {
+        "Shift-Tab": "indentLess",
+        "Tab": "indentMore"
+      }
+    }
+  },
+  {
+    "extensions": ["sh"],
+    "options": {
+      "mode": "application/x-sh",
+      "lineNumbers": true,
+      "readOnly": false,
+      "theme": "aista",
+      "autofocus": true,
+      "styleActiveLine": true,
+      "extraKeys": {}
+    }
+  },
+  {
+    "extensions": ["hl"],
+    "options": {
+      "mode": "hyperlambda",
+      "lineNumbers": true,
+      "readOnly": false,
+      "theme": "aista",
+      "autofocus": true,
+      "styleActiveLine": true,
+      "tabSize": 3,
+      "indentUnit": 3,
+      "indentAuto": true,
+      "extraKeys": {
+        "Shift-Tab": "indentLess",
+        "Tab": "indentMore",
+        "Ctrl-Space": "autocomplete"
+      }
+    }
+  }
+]

@@ -1,0 +1,8 @@
+
+@import 'xterm/css/xterm.css';
+
+mat-card.terminal.closed {
+  div {
+    opacity: .75;
+  }
+}

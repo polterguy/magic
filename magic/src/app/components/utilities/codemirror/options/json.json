@@ -1,0 +1,10 @@
+{
+  "lineNumbers": true,
+  "theme": "aista",
+  "mode": "application/ld+json",
+  "styleActiveLine": true,
+  "extraKeys": {
+    "Shift-Tab": "indentLess",
+    "Tab": "indentMore"
+  }
+}

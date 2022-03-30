@@ -1,0 +1,14 @@
+{
+  "mode": "text/x-mysql",
+  "lineNumbers": true,
+  "matchBrackets": true,
+  "theme": "aista",
+  "autofocus": false,
+  "styleActiveLine": true,
+  "extraKeys": {
+    "Shift-Tab": "indentLess",
+    "Tab": "indentMore",
+    "Ctrl-Space": "autocomplete"
+  },
+  "hintOptions": {}
+}
