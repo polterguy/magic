@@ -69,6 +69,10 @@ try
             pgsql.connect:x:@strings.replace
                pgsql.select:select datname from pg_database
 
+         case:sqlite
+            // No need to verify database exists.
+            .
+
          default
             // Caught below and transformed into another exception.
             throw:Foo
