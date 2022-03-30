@@ -15,9 +15,13 @@ slots.create:magic.db.sqlite.databases
          strings.ends-with:x:@.dp/#
             .:.db
          .lambda
+            strings.split:x:@.dp/#
+               .:/
+            strings.split:x:-/0/-
+               .:.
             unwrap:x:+/*/*/*
             add:x:../*/return-nodes
                .
                   .
-                     db:x:@.dp/#
+                     db:x:@strings.split/0
    return-nodes
