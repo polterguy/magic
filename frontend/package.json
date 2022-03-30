@@ -1,5 +1,5 @@
 {
-  "name": "frontend",
+  "name": "magic",
   "version": "12.1.0",
   "scripts": {
     "ng": "ng",
@@ -22,6 +22,7 @@
     "@angular/platform-browser": "~13.2.6",
     "@angular/platform-browser-dynamic": "~13.2.6",
     "@angular/router": "~13.2.6",
+    "@angular/service-worker": "~13.2.6",
     "@aspnet/signalr": "^1.0.27",
     "@ctrl/ngx-codemirror": "^4.1.0",
     "angular-marked": "^0.0.14",
