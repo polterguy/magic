@@ -17,7 +17,7 @@ create table "users" (
   "username" text not null primary key,
   "password" text not null,
   "locked" boolean not null default false,
-  "created" timestampt not null default current_timestamp
+  "created" timestamp not null default current_timestamp
 );
 
 
@@ -66,7 +66,7 @@ create table tasks (
   id text not null primary key,
   description text null,
   hyperlambda text not null,
-  created timestampt not null default current_timestamp
+  created timestamp not null default current_timestamp
 );
 create unique index "tasks_id_idx" on "tasks" ("id");
 
@@ -77,7 +77,7 @@ create unique index "tasks_id_idx" on "tasks" ("id");
 create table task_due (
   id integer not null primary key autoincrement,
   task text not null,
-  due timestampt not null,
+  due timestamp not null,
   repeats text null,
   constraint task_due_task_fky foreign key (task) references tasks (id) on delete cascade
 );
@@ -94,7 +94,7 @@ create index "task_due_task_idx" on "task_due" ("task");
  */
 create table log_entries (
   id integer not null primary key autoincrement,
-  created timestampt not null default current_timestamp,
+  created timestamp not null default current_timestamp,
   type text not null,
   content text not null,
   meta text null,
@@ -119,7 +119,7 @@ create table crypto_keys (
   fingerprint text not null, 
   content text not null, 
   vocabulary text not null, 
-  imported timestampt not null default current_timestamp,
+  imported timestamp not null default current_timestamp,
   enabled boolean not null default false
 );
 create index "crypto_keys_subject_idx" on "crypto_keys" ("subject");
@@ -137,7 +137,7 @@ create table crypto_invocations (
   request text not null,
   request_raw text not null,
   response text not null,
-  created timestampt not null default current_timestamp,
+  created timestamp not null default current_timestamp,
   constraint "request_id_UNIQUE" unique ("request_id"),
   constraint "crypto_key_fky" foreign key ("crypto_key") references "crypto_keys" ("id") on delete cascade
 );
