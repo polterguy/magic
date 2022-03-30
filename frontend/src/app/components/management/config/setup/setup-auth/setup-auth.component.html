@@ -38,7 +38,7 @@
                   name="selectedDatabaseType">
                   <mat-option
                     *ngFor="let idx of databaseTypes"
-                    [value]="idx">{{idx}}</mat-option>
+                    [value]="idx">{{getDatabaseName(idx)}}</mat-option>
                 </mat-select>
             </mat-form-field>
 
