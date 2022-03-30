@@ -1,0 +1,18 @@
+
+/*
+ * Lists all database in your MySQL instance.
+ * 
+ * Arguments
+ * 
+ * - [connection-string] - What connection string to use
+ */
+slots.create:magic.db.sqlite.databases
+
+   // Listing files in data folder and returning to caller.
+   io.files.list:/data/
+   for-each:x:-/*
+      unwrap:x:+/*/*
+      add:x:../*/return-nodes
+         .
+            db:x:@.dp/#
+   return-nodes

@@ -76,6 +76,7 @@ try
          default
             // Caught below and transformed into another exception.
             throw:Foo
+
    .catch
       throw:Could not connect to database, please double check your connection string
          public:true
