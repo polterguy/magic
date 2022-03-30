@@ -27,6 +27,7 @@ validators.enum:x:@.arguments/*/databaseType
    .:mysql
    .:pgsql
    .:mssql
+   .:sqlite
 
 // Creating our database connection.
 data.connect:x:@.arguments/*/database
