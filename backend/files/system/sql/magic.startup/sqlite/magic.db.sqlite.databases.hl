@@ -11,8 +11,13 @@ slots.create:magic.db.sqlite.databases
    // Listing files in data folder and returning to caller.
    io.file.list:/data/
    for-each:x:-/*
-      unwrap:x:+/*/*
-      add:x:../*/return-nodes
-         .
-            db:x:@.dp/#
+      if
+         strings.ends-with:x:@.dp/#
+            .:.db
+         .lambda
+            unwrap:x:+/*/*/*
+            add:x:../*/return-nodes
+               .
+                  .
+                     db:x:@.dp/#
    return-nodes
