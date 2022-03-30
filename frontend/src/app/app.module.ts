@@ -150,6 +150,8 @@ import { AddQueryParameterDialogComponent } from './components/analytics/endpoin
 import { ConfirmEmailAddressDialogComponent } from './components/management/bazar/view-app-dialog/confirm-email-address-dialog/confirm-email-address-dialog.component';
 import { CrudSqlAddArgumentDialogComponent } from './components/tools/crudifier/crud-sql/crud-sql-extra/crud-sql-add-argument-dialog/crud-sql-add-argument-dialog.component';
 import { CreateAssumptionTestDialogComponent } from './components/analytics/endpoints/endpoint-details/create-assumption-test-dialog/create-assumption-test-dialog.component';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -282,6 +284,12 @@ import { CreateAssumptionTestDialogComponent } from './components/analytics/endp
     NgxMatTimepickerModule,
     NgxMatNativeDateModule,
     AppRoutingModule,
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: environment.production,
+      // Register the ServiceWorker as soon as the application is stable
+      // or after 30 seconds (whichever comes first).
+      registrationStrategy: 'registerWhenStable:30000'
+    }),
   ],
   providers: [
     {
