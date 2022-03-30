@@ -106,6 +106,7 @@ export class CrudSqlComponent implements OnInit {
   getDatabaseTypeName(type: string) {
     switch (type) {
       case 'mysql': return 'MySQL';
+      case 'sqlite': return 'SQLite';
       case 'pgsql': return 'PostgreSQL';
       case 'mssql': return 'SQL Server';
     }
