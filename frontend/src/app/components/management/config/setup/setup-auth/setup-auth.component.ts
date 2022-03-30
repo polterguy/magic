@@ -46,6 +46,7 @@ export class SetupAuthComponent implements OnInit {
     'mysql',
     'pgsql',
     'mssql',
+    'sqlite',
   ];
 
   /**
@@ -91,6 +92,25 @@ export class SetupAuthComponent implements OnInit {
           error: (error: any) => this.feedbackService.showError(error)});
       },
       error: (error: any) => this.feedbackService.showError(error)});
+  }
+
+  /**
+   * Returns the full name of the specified database type.
+   * 
+   * @param type Type of database
+   * @returns Name of database type according to type specified
+   */
+  getDatabaseName(type: string) {
+    switch (type) {
+      case 'mysql':
+        return 'MySQL';
+      case 'mssql':
+        return 'SQL Server';
+      case 'pgsql':
+        return 'PostgreSQL';
+      case 'sqlite':
+        return 'SQLite';
+    }
   }
 
   /**
