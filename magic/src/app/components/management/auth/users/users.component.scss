@@ -1,0 +1,30 @@
+
+table.users {
+  width: 100%;
+  .details-sheet {
+    position: relative;
+    strong {
+      display: inline-block;
+      width: 5rem;
+    }
+    mat-chip-list {
+      display: block;
+      margin-top: 1rem;
+      mat-chip {
+        padding-right: 2.5rem;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        min-height: 25px;
+        position: relative;
+        mat-icon {
+          position: absolute;
+          right: .5rem;
+        }
+      }
+    }
+    .button-strip {
+      margin-top: 2rem;
+      margin-bottom: -.5rem;
+    }
+  }
+}

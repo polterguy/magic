@@ -1,0 +1,27 @@
+
+::ng-deep {
+  img {
+    max-width: 80%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+.already-installed {
+  font-style: italic;
+  color: rgb(128, 128, 128);
+  margin-right: 1rem;
+}
+
+.purchase-info {
+  font-style: italic;
+  color: rgb(128, 128, 128);
+  margin-right: 1rem;
+}
+
+.needs-core-update {
+  font-style: italic;
+  color: rgb(128, 128, 128);
+  margin-right: 1rem;
+}

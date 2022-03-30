@@ -1,0 +1,36 @@
+
+<div class="row">
+  <div class="col-12 mb-general">
+    <mat-card class="p-0">
+      <mat-card-content>
+        <mat-horizontal-stepper
+          #stepper
+          *ngIf="backendService.active?.status"
+          [selectedIndex]="getStepperSelectedIndex()">
+
+          <mat-step>
+            <ng-template matStepLabel>Database</ng-template>
+            <ng-container *ngIf="stepper.selectedIndex === 0">
+              <app-setup-auth></app-setup-auth>
+            </ng-container>
+          </mat-step>
+
+          <mat-step>
+            <ng-template matStepLabel>Endpoints</ng-template>
+            <ng-container *ngIf="stepper.selectedIndex === 1">
+              <app-crudify-database></app-crudify-database>
+            </ng-container>
+          </mat-step>
+
+          <mat-step>
+            <ng-template matStepLabel>Cryptography</ng-template>
+            <ng-container *ngIf="stepper.selectedIndex === 2">
+              <app-create-keypair></app-create-keypair>
+            </ng-container>
+          </mat-step>
+
+        </mat-horizontal-stepper>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
