@@ -171,6 +171,13 @@ try
                mysql.connect
                   mysql.execute:x:@io.file.load
 
+            // SQLite version.
+            case:mysql
+
+               // Executing create database SQL script without any special cases.
+               sqlite.connect:[generic|magic]
+                  sqlite.execute:x:@io.file.load
+
          // Inserting root user.
          unwrap:x:+/*
          signal:magic.auth.create-user
