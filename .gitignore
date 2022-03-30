@@ -349,3 +349,6 @@ backend/files/etc/frontends/**
 backend/files/etc/tests/*.*
 !backend/files/etc/tests/README.md
 !frontend/src/app/components/analytics/sockets/publish
+
+backend/files/data/*.*
+!backend/files/data/.gitkeep
