@@ -352,3 +352,4 @@ backend/files/etc/tests/*.*
 
 backend/files/data/*.*
 !backend/files/data/.gitkeep
+!backend/files/data/sys.db

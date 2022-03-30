@@ -17,6 +17,7 @@ validators.enum:x:@.arguments/*/databaseType
    .:mysql
    .:pgsql
    .:mssql
+   .:sqlite
 
 // Retrieves all connection strings according to database type specified.
 strings.concat

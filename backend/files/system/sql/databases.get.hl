@@ -16,6 +16,7 @@ validators.enum:x:@.arguments/*/databaseType
    .:mysql
    .:pgsql
    .:mssql
+   .:sqlite
 
 /*
  * Since this endpoint is quite expensive to invoke, we cache its result
