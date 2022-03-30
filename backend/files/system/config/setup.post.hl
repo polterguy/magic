@@ -172,7 +172,7 @@ try
                   mysql.execute:x:@io.file.load
 
             // SQLite version.
-            case:mysql
+            case:sqlite
 
                // Executing create database SQL script without any special cases.
                sqlite.connect:[generic|magic]
