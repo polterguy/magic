@@ -9,7 +9,7 @@
 slots.create:magic.db.sqlite.databases
 
    // Listing files in data folder and returning to caller.
-   io.files.list:/data/
+   io.file.list:/data/
    for-each:x:-/*
       unwrap:x:+/*/*
       add:x:../*/return-nodes
