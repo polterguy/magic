@@ -8,7 +8,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "Magic": {
+    "Magic": { 
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
