@@ -1,0 +1,47 @@
+
+/*
+ * Lists all tables in your SQLite instance.
+ * 
+ * Arguments
+ * 
+ * - [connection-string] - What connection string to use
+ * - [database] - What database you want to check
+ */
+slots.create:magic.db.sqlite.tables
+
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/database
+
+   // Opens up our connection
+   .connection:[postgres]
+   if
+      and
+         not
+            eq
+               get-value:x:@.arguments/*/connection-string
+               .
+         not
+            eq
+               get-value:x:@.arguments/*/connection-string
+               .:
+      .lambda
+         set-value:x:@.connection
+            strings.concat
+               .:[
+               get-value:x:@.arguments/*/connection-string
+               .:|
+               get-value:x:@.arguments/*/database
+               .:]
+   else
+      set-value:x:@.connection
+         strings.concat
+            .:[generic|
+            get-value:x:@.arguments/*/database
+            .:]
+   sqlite.connect:x:@.connection
+
+      // Runs our query
+      sqlite.select:".tables"
+      set-name:x:@sqlite.select/*/*
+         .:table
+      return-nodes:x:@sqlite.select/*
