@@ -66,9 +66,5 @@ order by kcu.column_name"
          @table:x:@.arguments/*/table
          @database:x:@.arguments/*/database
 
-      /*
-       * Creating our return value, by projecting it into
-       * a generic form, that does not rely upon MySQL's syntactic
-       * details.
-       */
+      // Returning result to caller.
       return-nodes:x:@pgsql.select/*

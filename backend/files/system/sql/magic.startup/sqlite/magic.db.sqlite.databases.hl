@@ -1,6 +1,6 @@
 
 /*
- * Lists all database in your MySQL instance.
+ * Lists all SQLite database in your default data folder.
  * 
  * Arguments
  * 

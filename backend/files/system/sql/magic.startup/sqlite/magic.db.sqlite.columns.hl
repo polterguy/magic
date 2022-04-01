@@ -1,0 +1,171 @@
+
+/*
+ * Lists all columns in the specified SQLite table.
+ * 
+ * Arguments
+ * 
+ * - [connection-string] - What connection string to use
+ * - [database] - What database you want to check
+ * - [table] - What table you want to check
+ */
+slots.create:magic.db.sqlite.columns
+
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/database
+   validators.mandatory:x:@.arguments/*/table
+
+   // Opens up our connection
+   .connection:[postgres]
+   if
+      and
+         not
+            eq
+               get-value:x:@.arguments/*/connection-string
+               .
+         not
+            eq
+               get-value:x:@.arguments/*/connection-string
+               .:
+      .lambda
+         set-value:x:@.connection
+            strings.concat
+               .:[
+               get-value:x:@.arguments/*/connection-string
+               .:|
+               get-value:x:@.arguments/*/database
+               .:]
+   else
+      set-value:x:@.connection
+         strings.concat
+            .:[generic|
+            get-value:x:@.arguments/*/database
+            .:]
+   sqlite.connect:x:@.connection
+
+      strings.concat
+         .:"pragma table_info('"
+         get-value:x:@.arguments/*/table
+         .:"')"
+      sqlite.select:x:@strings.concat
+
+      /*
+       * Creating our return value, by projecting it into
+       * a generic form, that does not rely upon PostgreSQL's syntactic
+       * details.
+       */
+      for-each:x:@sqlite.select/*
+         unwrap:x:+/*/*
+         .tmp
+            ""
+               name:x:@.dp/#/*/name
+               db:x:@.dp/#/*/type
+
+         // Checking if column is nullable.
+         if
+            eq
+               get-value:x:@.dp/#/*/notnull
+               .:long:1
+            .lambda
+               add:x:@.tmp/*
+                  .
+                     nullable:bool:false
+         else
+            add:x:@.tmp/*
+               .
+                  nullable:bool:true
+
+         // Checking if column is a part of the primary key.
+         if
+            eq
+               get-value:x:@.dp/#/*/pk
+               .:long:1
+            .lambda
+               add:x:@.tmp/*
+                  .
+                     primary:bool:true
+         else
+            add:x:@.tmp/*
+               .
+                  primary:bool:false
+
+         // Checking if column has a default value.
+         if
+            and
+               not
+                  eq
+                     get-value:x:@.dp/#/*/dflt_value
+                     .:
+               not
+                  eq
+                     get-value:x:@.dp/#/*/dflt_value
+                     .
+            .lambda
+               add:x:@.tmp/*
+                  .
+                     automatic:bool:true
+         else
+            add:x:@.tmp/*
+               .
+                  automatic:bool:false
+
+         /*
+          * Figuring our which Hyperlambda type to project
+          * its database type to.
+          */
+         .type
+         switch:x:@.dp/#/*/type
+
+            // Everything transformed into integer values.
+            case:integer
+               set-value:x:@.type
+                  .:int
+
+            // Everything transformed into date values.
+            case:timestamp
+               set-value:x:@.type
+                  .:date
+
+            // Everything transformed into decimal values.
+            case:decimal
+               set-value:x:@.type
+                  .:decimal
+
+            // Everything transformed into double.
+            case:double precision
+               set-value:x:@.type
+                  .:double
+
+            // Everything transformed into integer long values.
+            case:bigint
+               set-value:x:@.type
+                  .:long
+
+            // Everything transformed into string values.
+            case:text
+               set-value:x:@.type
+                  .:string
+
+            // Everything transformed into boolean values.
+            case:boolean
+               set-value:x:@.type
+                  .:bool
+
+            // Default/special cases.
+            default
+
+               // Defaulting to string type.
+               set-value:x:@.type
+                  .:string
+
+         // Adding Hyperlambda type to [.tmp] above.
+         unwrap:x:+/*/*
+         add:x:@.tmp/*
+            .
+               hl:x:@.type
+
+         // Adding [.tmp] to [return-nodes] below.
+         add:x:../*/sqlite.connect/*/return-nodes
+            get-nodes:x:@.tmp/*
+
+      // Returning results to caller.
+      return-nodes
