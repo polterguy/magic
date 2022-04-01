@@ -1,16 +1,18 @@
 
 /*
- * Lists all tables in your SQLite instance.
+ * Lists all foreign keys in the specified SQLite table.
  * 
  * Arguments
  * 
  * - [connection-string] - What connection string to use
  * - [database] - What database you want to check
+ * - [table] - What table you want to check
  */
-slots.create:magic.db.sqlite.tables
+slots.create:magic.db.sqlite.foreign_keys
 
    // Sanity checking invocation.
    validators.mandatory:x:@.arguments/*/database
+   validators.mandatory:x:@.arguments/*/table
 
    // Opens up our connection
    .connection:[postgres]
@@ -40,8 +42,23 @@ slots.create:magic.db.sqlite.tables
             .:]
    sqlite.connect:x:@.connection
 
-      // Runs our query
-      sqlite.select:"select name from sqlite_master where type = 'table' and name != 'sqlite_sequence'"
-      set-name:x:@sqlite.select/*/*
-         .:table
-      return-nodes:x:@sqlite.select/*
+      strings.concat
+         .:"pragma foreign_key_list('"
+         get-value:x:@.arguments/*/table
+         .:"')"
+      sqlite.select:x:@strings.concat
+
+      /*
+       * Creating our return value, by projecting it into
+       * a generic form, that does not rely upon MySQL's syntactic
+       * details.
+       */
+      for-each:x:@sqlite.select/*
+         unwrap:x:+/*/*/*
+         add:x:../*/return-nodes
+            .
+               .
+                  column:x:@.dp/#/*/from
+                  foreign_table:x:@.dp/#/*/table
+                  foreign_column:x:@.dp/#/*/to
+   return-nodes
