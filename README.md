@@ -1,41 +1,22 @@
 
-# Aista Magic Cloud, Low-Code CRUD automation
+# A low-code CRUD generator
 
 ![Build status](https://github.com/polterguy/magic/actions/workflows/codeql-analysis.yml/badge.svg)
 
-Magic is a No-Code/Low-Code application generator that allows you to create CRUD apps 100% automatically.
-In addition it is a complete Open Source cloud system and IDE, allowing you to create your own virtualized
+Magic is a no-code/low-code CRUD generator that allows you to generate CRUD apps 100% automatically.
+In addition it is a complete open source cloud platform and IDE, allowing you to create your own virtualized
 cloud on top of your own server, and/or other cloud systems, editing your code from your phone if required.
 Below is a screenshot of Hyper IDE.
 
 ![Dashboard screenshot](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/hyper-ide-actions.jpg)
 
-The way Magic works is by reading meta data from your database, for then to automatically generate a
-complete web API for you, and then afterwards create a complete Angular frontend on top of that.
-Basically, minutes after you started, you've got thousands of lines of perfect Angular and .Net code,
-super scalable, and 100% perfectly secure.
+Magic works by reading meta data from your database, for then to automatically generate a
+complete backend web API for you. The resuling CRUD API is secured automatically, and Magic takes care
+of authentication, authorisation, user management, and everything else that's difficult.
 
-## Features
+## Website
 
-1. An SQL component allowing you to execute arbitrary SQL and select records through a browser based interface.
-2. CRUD generator creating HTTP REST CRUD endpoints automatically wrapping your database of choice.
-3. Browsing and invoking your HTTP endpoints, through a UI that is similar to Swagger/SwashBuckle.
-4. Hyper IDE being a Micro IDE for your dynamic files.
-5. Sockets administration allowing you to administrate your SignalR socket connections, subscribe to generic messages, and publish messages as you see fit.
-6. A browser based Terminal giving you direct access to your server's operating system.
-7. REPL evaluator for Hyperlambda allowing you to execute arbitrary Hyperlambda towards your server.
-8. Configuration editor, allowing you to edit your server's appsettings.json file directly from within the browser.
-9. Audit logging, with the ability to browse your log, including extracting statistics and filtering.
-10. Scheduled tasks allowing you to create tasks in Hyperlambda and schedule these as you see fit.
-11. Auth component giving you access to administrate your server's users and roles.
-12. Crypto menu to administrate cryptography keys, plus a lot of unique features, such as cryptographically signed lambda invocations, with receipts of execution, etc.
-13. Health component to see diagnostics about your systems, such as failed login attempt, other security issues, breaking down bugs and errors occurring in the system.
-14. ++++
-
-## Documentation
-
-* [Getting started](https://docs.aista.com/tutorials/getting-started/)
-* [Tutorials](https://docs.aista.com/tutorials/)
+* [Aista Magic Cloud](https://aista.com)
 
 ## License
 
