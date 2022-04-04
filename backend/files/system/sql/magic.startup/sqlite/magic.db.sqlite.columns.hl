@@ -124,37 +124,49 @@ slots.create:magic.db.sqlite.columns
          switch:x:@strings.to-lower
 
             // Everything transformed into long values.
-            case:numeric
-            case:integer
-            case:smallint
             case:int
+            case:integer
+            case:tinyint
+            case:smallint
+            case:mediumint
+            case:bigint
+            case:big int
+            case:int 2
+            case:int 8
                set-value:x:@.type
                   .:long
 
             // Everything transformed into date values.
             case:timestamp
+            case:date
+            case:datetime
                set-value:x:@.type
                   .:date
 
-            // Everything transformed into decimal values.
+            // Everything transformed into decimal.
+            case:numeric
             case:decimal
                set-value:x:@.type
                   .:decimal
 
             // Everything transformed into double.
+            case:real
+            case:double
+            case:float
             case:double precision
                set-value:x:@.type
                   .:double
 
-            // Everything transformed into integer long values.
-            case:bigint
-               set-value:x:@.type
-                  .:long
-
             // Everything transformed into string values.
-            case:text
-            case:char
+            case:character
             case:varchar
+            case:varying character
+            case:nchar
+            case:native character
+            case:nvarchar
+            case:text
+            case:clob
+            case:char
             case:blob sub_type text
                set-value:x:@.type
                   .:string
