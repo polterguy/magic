@@ -24,10 +24,17 @@
       </ng-container>
 
       <ng-container matColumnDef="db">
-        <th mat-header-cell *matHeaderCellDef >Type</th>
+        <th mat-header-cell *matHeaderCellDef>Type</th>
         <td
           mat-cell
           *matCellDef="let el">{{el.db}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="hl">
+        <th mat-header-cell *matHeaderCellDef>Hyperlambda</th>
+        <td
+          mat-cell
+          *matCellDef="let el">{{el.hl}}</td>
       </ng-container>
 
       <ng-container matColumnDef="nullable">
