@@ -56,6 +56,7 @@ export class CrudifierTableComponent implements OnInit {
   displayedColumns: string[] = [
     'name',
     'db',
+    'hl',
     'nullable',
     'primary',
     'automatic',
