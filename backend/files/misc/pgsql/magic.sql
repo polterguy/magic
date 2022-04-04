@@ -117,15 +117,15 @@ create table log_entries (
  */
 create table crypto_keys (
   id serial not null,
-  subject varchar(120) not null, /* Typically the name of the owner of the key */
-  email varchar(120) not null, /* Email address of owner */
-  domain varchar(250) null, /* The base URL of the subject */
-  type varchar(20) not null, /* Typically 'RSA' or something */
-  fingerprint varchar(120) not null, /* Public key's SHA256 value, in 'fingerprint' format */
-  content text not null, /* Actual public key */
-  vocabulary text not null, /* The vocabulary the key is allowed to evaluate */
+  subject varchar(120) not null,
+  email varchar(120) not null,
+  domain varchar(250) null,
+  type varchar(20) not null,
+  fingerprint varchar(120) not null,
+  content text not null,
+  vocabulary text not null,
   imported timestamptz not null default now(),
-  enabled boolean not null default false, /* If true, the owner is allowed to invoke cryptographically secured endpoints */
+  enabled boolean not null default false,
   primary key (id)
 );
 create index "crypto_keys_subject_idx" on "crypto_keys" ("subject");
@@ -138,11 +138,11 @@ create index "crypto_keys_email_idx" on "crypto_keys" ("email");
  */
 create table crypto_invocations (
   id serial not null,
-  crypto_key integer not null, /* A reference to the crypto key associated with the evaluation */
-  request_id varchar(250) not null, /* The ID of the request - Ensures idempotency if caller specifies an ID */
-  request text not null, /* The request payload supplied by the caller */
-  request_raw text not null, /* The request payload supplied by the caller */
-  response text not null, /* The response payload returned to the caller */
+  crypto_key integer not null,
+  request_id varchar(250) not null,
+  request text not null,
+  request_raw text not null,
+  response text not null,
   created timestamptz not null default now(),
   primary key (id),
   constraint "request_id_UNIQUE" unique ("request_id"),
