@@ -14,8 +14,8 @@
  * Creating users table.
  */
 create table "users" (
-  "username" text not null primary key,
-  "password" text not null,
+  "username" varchar(256) not null primary key,
+  "password" varchar(256) not null,
   "locked" boolean not null default false,
   "created" timestamp not null default current_timestamp
 );
@@ -25,8 +25,8 @@ create table "users" (
  * Creating roles table.
  */
 create table "roles" (
-  "name" text not null primary key,
-  "description" text null
+  "name" varchar(45) not null primary key,
+  "description" varchar(256) null
 );
 
 
@@ -34,8 +34,8 @@ create table "roles" (
  * Creating association between roles and users through users_roles table.
  */
 create table "users_roles" (
-  "role" text not null,
-  "user" text not null,
+  "role" varchar(45) not null,
+  "user" varchar(256) not null,
   constraint "roles_fky" foreign key ("role") references "roles" ("name") on delete cascade,
   constraint "users_fky" foreign key ("user") references "users" ("username") on delete cascade,
   primary key("role", "user")
@@ -63,7 +63,7 @@ insert into roles (name, description) values ('blocked', 'A user that has been b
  * Creating tasks table.
  */
 create table tasks (
-  id text not null primary key,
+  id varchar(256) not null primary key,
   description text null,
   hyperlambda text not null,
   created timestamp not null default current_timestamp
@@ -76,7 +76,7 @@ create unique index "tasks_id_idx" on "tasks" ("id");
  */
 create table task_due (
   id integer not null primary key autoincrement,
-  task text not null,
+  task varchar(256) not null,
   due timestamp not null,
   repeats text null,
   constraint task_due_task_fky foreign key (task) references tasks (id) on delete cascade
@@ -95,7 +95,7 @@ create index "task_due_task_idx" on "task_due" ("task");
 create table log_entries (
   id integer not null primary key autoincrement,
   created timestamp not null default current_timestamp,
-  type text not null,
+  type varchar(10) not null,
   content text not null,
   meta text null,
   exception text null
@@ -112,11 +112,11 @@ create table log_entries (
  */
 create table crypto_keys (
   id integer primary key autoincrement not null,
-  subject text not null, 
-  email text not null, 
-  domain text null, 
-  type text not null, 
-  fingerprint text not null, 
+  subject varchar(120) not null,
+  email varchar(120) not null,
+  domain varchar(250) null,
+  type varchar(20) not null,
+  fingerprint varchar(120) not null,
   content text not null, 
   vocabulary text not null, 
   imported timestamp not null default current_timestamp,
@@ -133,7 +133,7 @@ create index "crypto_keys_email_idx" on "crypto_keys" ("email");
 create table crypto_invocations (
   id integer primary key autoincrement not null,
   crypto_key integer not null,
-  request_id text not null,
+  request_id varchar(250) not null,
   request text not null,
   request_raw text not null,
   response text not null,
@@ -148,7 +148,7 @@ create index "crypto_invocations_crypto_key_idx" on "crypto_invocations" ("crypt
  * Creating association table between users and crypto_keys.
  */
 create table "users_crypto_keys" (
-  "username" text not null,
+  "username" varchar(256) not null,
   "key_id" integer not null,
   constraint "username_fky" foreign key ("username") references "users" ("username") on delete cascade,
   constraint "key_id_fky" foreign key ("key_id") references "crypto_keys" ("id") on delete cascade,
