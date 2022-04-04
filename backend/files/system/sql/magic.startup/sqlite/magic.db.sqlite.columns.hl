@@ -54,11 +54,12 @@ slots.create:magic.db.sqlite.columns
        * details.
        */
       for-each:x:@sqlite.select/*
+         strings.to-lower:x:@.dp/#/*/type
          unwrap:x:+/*/*
          .tmp
             ""
                name:x:@.dp/#/*/name
-               db:x:@.dp/#/*/type
+               db:x:@strings.to-lower
 
          // Checking if column is nullable.
          if
@@ -113,12 +114,22 @@ slots.create:magic.db.sqlite.columns
           * its database type to.
           */
          .type
-         switch:x:@.dp/#/*/type
+         strings.regex-replace:x:@.dp/#/*/type
+            .:"\\([0-9,]+\\)"
+            .:
+         strings.replace:x:@strings.regex-replace
+            .:" unsigned"
+            .:
+         strings.to-lower:x:@strings.replace
+         switch:x:@strings.to-lower
 
-            // Everything transformed into integer values.
+            // Everything transformed into long values.
+            case:numeric
             case:integer
+            case:smallint
+            case:int
                set-value:x:@.type
-                  .:int
+                  .:long
 
             // Everything transformed into date values.
             case:timestamp
@@ -142,6 +153,9 @@ slots.create:magic.db.sqlite.columns
 
             // Everything transformed into string values.
             case:text
+            case:char
+            case:varchar
+            case:blob sub_type text
                set-value:x:@.type
                   .:string
 
