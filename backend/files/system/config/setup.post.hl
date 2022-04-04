@@ -149,6 +149,9 @@ try
           *
           * For PG SQL we'll need to first create the database in a separate [pgsql.connect] invocation,
           * then run the execute script with the created database as our selected database.
+          *
+          * For SQLite we'll need to create an empty database file first before we execute the create
+          * database script.
           */
          switch:x:@.arguments/*/settings/*/magic/*/databases/*/default
 
@@ -175,6 +178,8 @@ try
             case:sqlite
 
                // Executing create database SQL script without any special cases.
+               io.file.save:/data/magic.db
+                  .:
                sqlite.connect:[generic|magic]
                   sqlite.execute:x:@io.file.load
 
