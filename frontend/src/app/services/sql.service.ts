@@ -35,7 +35,7 @@ export class SqlService {
   /**
    * Executes a piece of SQL and returns its result.
    * 
-   * @param databaseType Type of database, for instance 'mssql', 'pgsql' or 'mysql'.
+   * @param databaseType Type of database, for instance 'mssql', 'pgsql', 'sqlite' or 'mysql'.
    * @param database Database connection string (reference to appsettings.json)
    * @param sql SQL to evaluate
    * @param safeMode If true will only return the first 1.000 records
@@ -75,7 +75,7 @@ export class SqlService {
   /**
    * Returns SQL vocabulary auto complete object, such as table names, field names, etc.
    * 
-   * @param databaseType Type of database, for instance 'mssql', 'pgsql' or 'mysql'.
+   * @param databaseType Type of database, for instance 'mssql', 'pgsql', 'sqlite' or 'mysql'.
    * @param connectionString Database connection string (reference to appsettings.json)
    */
   getDatabaseMetaInfo(databaseType: string, connectionString: string) {

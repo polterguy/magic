@@ -102,12 +102,16 @@ export class SetupAuthComponent implements OnInit {
    */
   getDatabaseName(type: string) {
     switch (type) {
+
       case 'mysql':
         return 'MySQL';
+
       case 'mssql':
         return 'SQL Server';
+
       case 'pgsql':
         return 'PostgreSQL';
+
       case 'sqlite':
         return 'SQLite';
     }
