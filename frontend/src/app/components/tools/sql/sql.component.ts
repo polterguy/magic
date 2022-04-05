@@ -211,6 +211,7 @@ export class SqlComponent implements OnInit {
    */
   getDatabaseCssClass(db: string) {
     switch (this.input.databaseType) {
+
       case 'mysql':
         switch (db) {
           case 'information_schema':
@@ -221,6 +222,7 @@ export class SqlComponent implements OnInit {
           default:
             return '';
         }
+
       case 'mssql':
         switch (db) {
           case 'master':
@@ -232,6 +234,7 @@ export class SqlComponent implements OnInit {
           default:
             return '';
         }
+
       case 'pgsql':
         switch (db) {
           case 'postgres':
@@ -242,6 +245,9 @@ export class SqlComponent implements OnInit {
           default:
             return '';
         }
+
+      default:
+        return '';
     }
   }
 

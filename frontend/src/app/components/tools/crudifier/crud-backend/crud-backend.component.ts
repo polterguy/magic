@@ -191,6 +191,7 @@ export class CrudBackendComponent implements OnInit {
    */
   getDatabaseCssClass(db: string) {
     switch (this.databaseType) {
+
       case 'mysql':
         switch (db) {
           case 'information_schema':
@@ -201,6 +202,7 @@ export class CrudBackendComponent implements OnInit {
           default:
             return '';
         }
+
       case 'pgsql':
         switch (db) {
           case 'postgres':
@@ -211,6 +213,7 @@ export class CrudBackendComponent implements OnInit {
           default:
             return '';
         }
+
       case 'mssql':
         switch (db) {
           case 'master':
@@ -222,6 +225,9 @@ export class CrudBackendComponent implements OnInit {
           default:
             return '';
         }
+
+      default:
+        return '';
     }
   }
 

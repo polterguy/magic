@@ -25,6 +25,7 @@ validators.enum:x:@.arguments/*/databaseType
    .:mysql
    .:pgsql
    .:mssql
+   .:sqlite
 validators.enum:x:@.arguments/*/verb
    .:post
    .:get
