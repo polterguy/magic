@@ -460,13 +460,6 @@ export class IdeComponent implements OnInit, OnDestroy {
       sorter();
       this.dataBindTree();
     } else {
-      this.openFiles.push({
-        name: event.dialogResult.name,
-        path: event.objectPath,
-        folder: event.objectPath.substring(0, event.objectPath.lastIndexOf('/') + 1),
-        options: this.getCodeMirrorOptions(event.objectPath),
-        content: event.dialogResult.template || '// File content here ...'
-      });
       node.children.push({
         name: event.dialogResult.name,
         path: event.objectPath,
@@ -477,7 +470,6 @@ export class IdeComponent implements OnInit, OnDestroy {
       this.currentFileData = this.openFiles.filter(x => x.path === event.objectPath)[0];
       sorter();
       this.dataBindTree();
-      this.fileActionsComponent.saveActiveFile();
       this.cdRef.detectChanges();
       this.getEndpoints();
     }
