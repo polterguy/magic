@@ -31,9 +31,13 @@ slots.create:magic.crypto.get-public-key
       // Verifying key is enabled.
       if
          not
-            eq
-               get-value:x:@data.select/*/*/enabled
-               .:bool:true
+            or
+               eq
+                  get-value:x:@data.select/*/*/enabled
+                  .:bool:true
+               eq
+                  get-value:x:@data.select/*/*/enabled
+                  .:long:1
          .lambda
 
             // Public key is disabled.
