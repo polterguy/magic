@@ -87,19 +87,33 @@ slots.create:magic.modules.ensure-database
 
             // Opening database connection.
             switch:x:@config.get
+
                case:mysql
                   mysql.connect:sys
                      mysql.execute:x:@io.file.load
+
                case:pgsql
                   pgsql.connect
                      pgsql.execute:x:@io.file.load
+
                case:mssql
                   mssql.connect:master
                      mssql.execute-batch:x:@io.file.load
 
+               case:sqlite
+                  strings.concat
+                     .:/data/
+                     get-value:x:@.arguments/*/database
+                     .:.db
+                  io.file.save:x:-
+                     .:
+                  sqlite.connect:x:@.arguments/*/database
+                     sqlite.execute:x:@io.file.load
+
             // Doing some basic logging.
             log.info:Successfully created database
                database_name:x:@.arguments/*/database
+
          .catch
 
             // Logging exception.
