@@ -93,7 +93,12 @@ export class FolderActionsComponent {
             },
             error: (error: any) => this.feedbackService.showError(error)});
         } else {
-          this.manageAfterCreateNewFileObject.emit({ dialogResult: result, objectPath: path })
+          this.fileService.saveFile(path, '').subscribe({
+            next: () => {
+              this.feedbackService.showInfoShort('File successfully created');
+              this.manageAfterCreateNewFileObject.emit({ dialogResult: result, objectPath: path })
+            },
+            error: (error: any) => this.feedbackService.showError(error)});
         }
       }
     });
