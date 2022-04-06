@@ -33,7 +33,7 @@ namespace magic.backend.slots
         /// <param name="input">Parameters passed from signaler</param>
         public void Signal(ISignaler signaler, Node input)
         {
-            var assumeUtc = _configuration["magic:culture:date"]?.ToLowerInvariant() ?? "utc";
+            var assumeUtc = _configuration["magic:culture:defaultTimeZone"]?.ToLowerInvariant() ?? "utc";
             Converter.AssumeUtc = assumeUtc == "utc";
         }
     }
