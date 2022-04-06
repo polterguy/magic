@@ -55,6 +55,11 @@ export class SetupAuthComponent implements OnInit {
   selectedDatabaseType: string = null;
 
   /**
+   * Timezone information for system, can either be 'utc' or 'local'.
+   */
+  selectedTimeZone: string = 'utc';
+
+  /**
    * Root user's password.
    */
   password = '';
@@ -130,6 +135,7 @@ export class SetupAuthComponent implements OnInit {
       return;
     }
     this.config.magic.databases.default = this.selectedDatabaseType;
+    this.config.magic.culture.date = this.selectedTimeZone;
     this.configService.setupSystem(
       this.password,
       this.config).subscribe({
