@@ -240,6 +240,9 @@ try
       username:root
       password:x:@.arguments/*/password
 
+   // Re-initialising time zone in case it was changed from its default setting.
+   timezone.init
+
    // Returns the authentication JWT ticket created above to caller.
    return-nodes:x:@signal/*
 

@@ -31,7 +31,21 @@
               <p class="my-0 ml-1">Database</p>
             </div>
 
-            <mat-form-field appearance="outline" class="standlone-input">
+            <div class="d-flex">
+
+              <mat-form-field appearance="outline" class="standlone-input">
+                <mat-label>Time zone</mat-label>
+                <mat-select
+                  [(ngModel)]="selectedTimeZone"
+                  name="selectedTimeZone">
+                  <mat-option value="utc">UTC</mat-option>
+                  <mat-option value="none">Pass through</mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <div class="p-1"></div>
+
+              <mat-form-field appearance="outline" class="standlone-input">
                 <mat-label>Database type</mat-label>
                 <mat-select
                   [(ngModel)]="selectedDatabaseType"
@@ -40,7 +54,9 @@
                     *ngFor="let idx of databaseTypes"
                     [value]="idx">{{getDatabaseName(idx)}}</mat-option>
                 </mat-select>
-            </mat-form-field>
+              </mat-form-field>
+
+            </div>
 
             <ng-container *ngIf="selectedDatabaseType">
 
