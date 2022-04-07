@@ -105,9 +105,35 @@ slots.create:magic.db.sqlite.columns
                   .
                      automatic:bool:true
          else
+
+            // Defaulting automatic to false
             add:x:@.tmp/*
                .
                   automatic:bool:false
+
+            /*
+             * Notice, SQLite doesn't inform us that column is automatic if it's an
+             * "autoincrement" column using "pragma table_info" - Hence, we've got to
+             * do a lookup into "sqlite_master" if column is integer and primary key
+             * to determine if column is an autoincrement column.
+             */
+            strings.to-lower:x:@.dp/#/*/type
+            if
+               and
+                  eq:x:@strings.to-lower
+                     .:integer
+                  eq:x:@.dp/#/*/pk
+                     .:long:1
+               .lambda
+                  sqlite.select:"select 1 from sqlite_master where type = 'table' and name = @table and sql like '%AUTOINCREMENT%'"
+                     @table:x:@.arguments/*/table
+                  if
+                     exists:x:@sqlite.select/*/*
+                     .lambda
+
+                        // Column is autoincrement
+                        set-value:x:@.tmp/*/*/automatic
+                           .:bool:true
 
          /*
           * Figuring our which Hyperlambda type to project
