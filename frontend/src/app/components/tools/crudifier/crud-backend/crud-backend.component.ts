@@ -417,12 +417,12 @@ export class CrudBackendComponent implements OnInit {
 
         idxColumn.expanded = false;
 
-        idxColumn.post = !idxColumn.automatic;
+        idxColumn.post = !(idxColumn.automatic && idxColumn.primary);
         idxColumn.get = true;
         idxColumn.put = !idxColumn.automatic || idxColumn.primary;
         idxColumn.delete = idxColumn.primary;
 
-        idxColumn.postDisabled = idxColumn.primary && !idxColumn.automatic;
+        idxColumn.postDisabled = false; // idxColumn.primary && !idxColumn.automatic;
         idxColumn.getDisabled = false;
         idxColumn.putDisabled = idxColumn.primary;
         idxColumn.deleteDisabled = true;
