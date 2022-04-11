@@ -75,7 +75,7 @@ export abstract class FeedbackService {
    * @param text Content of modal dialog
    * @param confirmed Callback invoked if user confirms action
    */
-  confirm(title: string, text: string, confirmed: () => void, cancel: () => void = null) {
+  confirm(title: string, text: string, confirmed: (result?: any) => void, cancel: (cancel?: any) => void = null) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '550px',
       data: {
@@ -85,9 +85,9 @@ export abstract class FeedbackService {
     });
     dialogRef.afterClosed().subscribe((result: ConfirmDialogData) => {
       if (result && result.confirmed) {
-        confirmed();
+        confirmed(result?.confirmed);
       } else if (cancel) {
-        cancel();
+        cancel(result?.confirmed);
       }
     });
   }
