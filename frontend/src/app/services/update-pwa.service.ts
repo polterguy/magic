@@ -21,20 +21,29 @@ export class UpdatePwaService {
     private swUpdate: SwUpdate,
     private snackbar: MatSnackBar
   ) {
-    if (this.swUpdate.versionUpdates) {
-      this.swUpdate.versionUpdates.subscribe(() => {
-        const snack = this.snackbar.open('New version available!', 'Refresh');
-
-        snack.onAction().pipe(switchMap(() => this.swUpdate.activateUpdate())).subscribe(() => {
-          window.location.reload();
-        });
-      });
-    }
-
     if (swUpdate.isEnabled) {
       interval(6 * 60 * 60).subscribe(() => swUpdate.checkForUpdate()
         .then(() => console.log('checking for updates')));
     }
+  }
+
+  public checkForUpdates(): void {
+    if (this.swUpdate.versionUpdates) {
+      this.swUpdate.versionUpdates.subscribe(() => {
+        const snack = this.snackbar.open('New version available!', 'Refresh', {
+          verticalPosition: 'top',
+          panelClass: 'update-notification'
+        });
+
+        snack.onAction().pipe(switchMap(() => this.swUpdate.activateUpdate())).subscribe(() => {
+          this.reloadPage();
+        });
+      });
+    }
+  }
+
+  private reloadPage(): void {
+    this.swUpdate.activateUpdate().then(() => document.location.reload()); 
   }
 
 }
