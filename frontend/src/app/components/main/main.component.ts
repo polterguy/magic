@@ -79,8 +79,10 @@ export class MainComponent implements OnInit {
     private feedbackService: FeedbackService,
     private swUpdate: SwUpdate,
     private snackbar: MatSnackBar) {
+      console.log(swUpdate.isEnabled)
     if (this.swUpdate.versionUpdates) {
-      this.swUpdate.versionUpdates.subscribe(() => {
+      this.swUpdate.versionUpdates.subscribe((x: any) => {
+        console.log('first', x)
         const snack = this.snackbar.open('New version available!', 'Refresh');
 
         snack.onAction().pipe(switchMap(() => this.swUpdate.activateUpdate())).subscribe(() => {
