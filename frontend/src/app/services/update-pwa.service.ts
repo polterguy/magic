@@ -20,18 +20,16 @@ export class UpdatePwaService {
   constructor(
     private swUpdate: SwUpdate,
     private snackbar: MatSnackBar
-  ) {console.log('constructor')
+  ) {
     if (swUpdate.isEnabled) {
       interval(6 * 60 * 60).subscribe(() => swUpdate.checkForUpdate()
         .then(() => console.log('checking for updates')));
     }
   }
 
-  public checkForUpdates(): void {console.log('check line 30')
+  public checkForUpdates(): void {
     this.swUpdate.versionUpdates.subscribe(() => {
-      const snack = this.snackbar.open('New version available!', 'Refresh', {
-        verticalPosition: 'top'
-      });
+      const snack = this.snackbar.open('New version available! 🎉', 'Refresh');
 
       snack.onAction().pipe(switchMap(() => this.swUpdate.activateUpdate())).subscribe(() => {
         this.reloadPage();
