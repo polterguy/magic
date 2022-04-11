@@ -88,17 +88,50 @@ export class CreateKeypairComponent implements OnInit {
    * Invoked when user clicks the next button.
    */
   next() {
-    if (this.doSubscribe) {
-      this.bazarService.subscribeToNewsletter(
-        this.subject,
-        this.email).subscribe({
-          next: () => {
-            localStorage.setItem('subscribes-to-newsletter', JSON.stringify({
-              subscribing: true,
-            }));
-          },
-          error: (error: any) => console.log(error)});
-    }
+    this.feedbackService.confirm('Receive a promo code', 'Do you want a promo code that gives you all Bazar items for free for a limited period? Join our mailing list and stay up-to-date for promotions! If you do, then make sure you\'ll verify your email address.', 
+      () => {
+        this.bazarService.subscribeToNewsletter(
+          this.subject,
+          this.email).subscribe({
+            next: () => {
+              localStorage.setItem('subscribes-to-newsletter', JSON.stringify({
+                subscribing: true,
+              }));
+              this.generateKeypair();
+            },
+            error: (error: any) => console.log(error)});
+      }, 
+      (cancel) => {
+        if (cancel === false) {
+          this.generateKeypair();
+        }
+      })
+    // if (this.doSubscribe) {
+    //   this.bazarService.subscribeToNewsletter(
+    //     this.subject,
+    //     this.email).subscribe({
+    //       next: () => {
+    //         localStorage.setItem('subscribes-to-newsletter', JSON.stringify({
+    //           subscribing: true,
+    //         }));
+    //       },
+    //       error: (error: any) => console.log(error)});
+    // }
+    // this.cryptoService.generateKeyPair(
+    //   +this.strength,
+    //   this.seed,
+    //   this.subject,
+    //   this.email,
+    //   this.domain).subscribe({
+    //     next: () => {
+    //       this.feedbackService.showInfo('Cryptography key pair successfully created');
+    //       this.backendService.active.status.server_keypair = true;
+    //       this.router.navigate(['/']);
+    //     },
+    //     error: (error: any) => this.feedbackService.showError(error)});
+  }
+
+  private generateKeypair() {
     this.cryptoService.generateKeyPair(
       +this.strength,
       this.seed,
