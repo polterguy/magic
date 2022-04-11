@@ -4,14 +4,13 @@
  */
 
 // Angular and system imports.
-import { isPlatformBrowser } from '@angular/common';
-import { ApplicationRef, Inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SwUpdate } from '@angular/service-worker';
-import { switchMap, first, interval } from 'rxjs';
+import { switchMap, interval } from 'rxjs';
 
 /**
- * Update PWA service for letting users know about new update
+ * Update PWA service for letting users know about new update is available
  */
 @Injectable({
   providedIn: 'root'
@@ -20,8 +19,7 @@ export class UpdatePwaService {
 
   constructor(
     private swUpdate: SwUpdate,
-    private snackbar: MatSnackBar,
-    appRef: ApplicationRef
+    private snackbar: MatSnackBar
   ) {
     if (this.swUpdate.versionUpdates) {
       this.swUpdate.versionUpdates.subscribe(() => {
@@ -33,5 +31,10 @@ export class UpdatePwaService {
       });
     }
 
+    if (swUpdate.isEnabled) {
+      interval(6 * 60 * 60).subscribe(() => swUpdate.checkForUpdate()
+        .then(() => console.log('checking for updates')));
+    }
   }
+
 }
