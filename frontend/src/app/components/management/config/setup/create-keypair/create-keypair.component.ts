@@ -88,7 +88,7 @@ export class CreateKeypairComponent implements OnInit {
    * Invoked when user clicks the next button.
    */
   next() {
-    this.feedbackService.confirm('Receive a promo code', 'Do you want a promo code that gives you all Bazar items for free for a limited period? Join our mailing list and stay up-to-date for promotions! If you do, then make sure you\'ll verify your email address.', 
+    this.feedbackService.confirm('Receive a promo code', 'Do you want a promo code that gives you all Bazar items for free for a limited period? Join our mailing list and stay up-to-date for promotions! If you do, then make sure you\'ll verify your email address.',
       () => {
         this.bazarService.subscribeToNewsletter(
           this.subject,
@@ -97,10 +97,11 @@ export class CreateKeypairComponent implements OnInit {
               localStorage.setItem('subscribes-to-newsletter', JSON.stringify({
                 subscribing: true,
               }));
-              this.generateKeypair();
             },
-            error: (error: any) => console.log(error)});
-      }, 
+            error: (error: any) => console.log(error)
+          });
+        this.generateKeypair();
+      },
       (cancel) => {
         if (cancel === false) {
           this.generateKeypair();
@@ -143,6 +144,7 @@ export class CreateKeypairComponent implements OnInit {
           this.backendService.active.status.server_keypair = true;
           this.router.navigate(['/']);
         },
-        error: (error: any) => this.feedbackService.showError(error)});
+        error: (error: any) => this.feedbackService.showError(error)
+      });
   }
 }
