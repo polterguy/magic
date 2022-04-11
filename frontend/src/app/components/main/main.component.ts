@@ -4,12 +4,12 @@
  */
 
 // Angular and system imports.
-import { 
+import {
   Component,
   HostListener,
   OnInit
 } from '@angular/core';
-import { Location } from '@angular/common'; 
+import { Location } from '@angular/common';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 
 // Application specific imports.
@@ -22,6 +22,9 @@ import { NavbarService } from 'src/app/services/navbar.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { RegisterService } from 'src/app/services/register.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
+import { SwUpdate } from '@angular/service-worker';
+import { switchMap } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 /**
  * Main wire frame application component.
@@ -73,7 +76,19 @@ export class MainComponent implements OnInit {
     public navbarService: NavbarService,
     public themeService: ThemeService,
     private backendService: BackendService,
-    private feedbackService: FeedbackService) { }
+    private feedbackService: FeedbackService,
+    private swUpdate: SwUpdate,
+    private snackbar: MatSnackBar) {
+    if (this.swUpdate.versionUpdates) {
+      this.swUpdate.versionUpdates.subscribe(() => {
+        const snack = this.snackbar.open('New version available!', 'Refresh');
+
+        snack.onAction().pipe(switchMap(() => this.swUpdate.activateUpdate())).subscribe(() => {
+          window.location.reload();
+        });
+      });
+    }
+  }
 
   /**
    * OnInit implementation.
@@ -180,7 +195,8 @@ export class MainComponent implements OnInit {
                 this.location.replaceState('');
               }
             },
-            error: (error: any) => this.feedbackService.showError(error)});
+            error: (error: any) => this.feedbackService.showError(error)
+          });
 
         } else if (token) {
 
@@ -201,7 +217,8 @@ export class MainComponent implements OnInit {
                 this.location.replaceState('');
               }
             },
-            error: (error: any) => this.feedbackService.showError(error)});
+            error: (error: any) => this.feedbackService.showError(error)
+          });
         }
       }
     });
