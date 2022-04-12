@@ -106,30 +106,7 @@ export class CreateKeypairComponent implements OnInit {
         if (cancel === false) {
           this.generateKeypair();
         }
-      })
-    // if (this.doSubscribe) {
-    //   this.bazarService.subscribeToNewsletter(
-    //     this.subject,
-    //     this.email).subscribe({
-    //       next: () => {
-    //         localStorage.setItem('subscribes-to-newsletter', JSON.stringify({
-    //           subscribing: true,
-    //         }));
-    //       },
-    //       error: (error: any) => console.log(error)});
-    // }
-    // this.cryptoService.generateKeyPair(
-    //   +this.strength,
-    //   this.seed,
-    //   this.subject,
-    //   this.email,
-    //   this.domain).subscribe({
-    //     next: () => {
-    //       this.feedbackService.showInfo('Cryptography key pair successfully created');
-    //       this.backendService.active.status.server_keypair = true;
-    //       this.router.navigate(['/']);
-    //     },
-    //     error: (error: any) => this.feedbackService.showError(error)});
+      });
   }
 
   private generateKeypair() {
