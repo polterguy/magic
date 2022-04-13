@@ -172,7 +172,7 @@
         <mat-list-option 
           [style.display]="backendService.active?.access.sql.execute_access ? '' : 'none'"
           [matTooltipDisabled]="navbarService.expanded" 
-          matTooltip="SQL" 
+          matTooltip="SQL Studio" 
           matTooltipPosition="after" 
           routerLinkActive="active-link"
           #sql="routerLinkActive"
@@ -180,7 +180,7 @@
           <ng-container *ngIf="backendService.active?.access.sql.execute_access">
             <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendService.active?.setupDone ? '/sql' : null">
               <mat-icon>language</mat-icon>
-              <span class="title">SQL</span>
+              <span class="title">SQL Studio</span>
             </a>
           </ng-container>
         </mat-list-option>
