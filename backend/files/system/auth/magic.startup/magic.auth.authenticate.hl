@@ -210,7 +210,8 @@ slots.create:magic.auth.authenticate
                      type
                      value
                   where
-                     username.eq:x:@.arguments/*/username
+                     and
+                        user.eq:x:@.arguments/*/username
                for-each:x:@data.read/*
                   set-name:x:./*/add/[0,1]/*/*/name
                      get-value:x:@.dp/#/*/type
