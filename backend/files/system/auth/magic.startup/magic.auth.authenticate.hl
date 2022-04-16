@@ -203,10 +203,27 @@ slots.create:magic.auth.authenticate
                log.info:User successfully authenticated
                   username:x:@.arguments/*/username
 
+               // Selecting all extra information associated with user.
+               data.read
+                  table:users_extra
+                  columns
+                     type
+                     value
+                  where
+                     username.eq:x:@.arguments/*/username
+               for-each:x:@data.read/*
+                  set-name:x:./*/add/[0,1]/*/*/name
+                     get-value:x:@.dp/#/*/type
+                  unwrap:x:+/*/*
+                  add:x:././*/return/*/extra
+                     .
+                        name:x:@.dp/#/*/value
+
                // Returning results back to caller.
                unwrap:x:+/*
                return
                   ticket:x:@auth.ticket.create
+                  extra
       else
 
          // Hash version of password didn't match.
