@@ -6,6 +6,7 @@
    frontendUrl:string
    template:string
    subject:string
+   extra:*
 .description:Registers a new user in the system. Notice, to fully take advantage of this endpoint you would want to configure your SMTP settings.
 .type:public
 
@@ -14,6 +15,30 @@ validators.mandatory:x:@.arguments/*/username
 validators.mandatory:x:@.arguments/*/password
 validators.email:x:@.arguments/*/username
 validators.url:x:@.arguments/*/frontendUrl
+
+/*
+ * Verifying [extra] does not contain fields not allowed according to configuration.
+ * Notice, this looks a bit weird, but is necessary to ensure we're only handling
+ * [extra] information that is allowed during registrations according to configuration
+ * settings, to avoid malicious "extra information injections".
+ *
+ * Any extra information that's not declared in configuration settings will simply
+ * be ignored.
+ */
+.extra
+config.get:"magic:auth:registration:extra"
+   .:name
+strings.split:x:@config.get
+   .:,
+for-each:x:@strings.split/*
+   set-name:x:+/+/*/*
+      get-value:x:@.dp/#
+   unwrap:x:+/*/*/*
+   add:x:@.extra
+      .
+         .
+            value:x:@.arguments/*/extra/*/{@.dp/#}
+            type:x:@.dp/#
 
 // Verifying that Magic is configured to allow for users to register.
 config.get:"magic:auth:registration:allow"
@@ -63,6 +88,15 @@ data.connect:magic
       values
          user:x:@.arguments/*/username
          role:unconfirmed
+         
+   // Inserting all extra information we've got on user.
+   for-each:x:@.extra/*
+      data.create
+         table:users_extra
+         values
+            user:x:@.arguments/*/username
+            type:x:@.dp/#/*/type
+            value:x:@.dp/#/*/value
 
 /*
  * Response result to return to user, which varies according
