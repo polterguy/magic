@@ -624,5 +624,120 @@
           }
        ]
     }
-  }
+  },
+  {
+   "overwrite": true,
+   "moduleName":"magic",
+   "database":"[generic|magic]",
+   "table":"users_extra",
+   "moduleUrl":"users_extra",
+   "returnId":false,
+   "template":"/system/crudifier/templates/crud.template.post.hl",
+   "verb":"post",
+   "auth":"root",
+   "args":{
+      "columns":[
+         {
+           "name":"type",
+           "type":"string"
+         },
+         {
+           "name":"value",
+           "type":"string"
+         },
+         {
+           "name":"user",
+           "type":"string"
+         }
+      ]
+   }
+ },
+ {
+   "overwrite": true,
+   "moduleName":"magic",
+   "database":"[generic|magic]",
+   "table":"users_extra",
+   "moduleUrl":"users_extra",
+   "returnId":false,
+   "template":"/system/crudifier/templates/crud.template.get.hl",
+   "verb":"get",
+   "auth":"root",
+   "args":{
+      "columns":[
+         {
+            "name":"type",
+            "type":"string"
+         },
+         {
+            "name":"value",
+            "type":"string"
+         },
+         {
+            "name":"user",
+            "type":"string"
+         }
+      ]
+   },
+   "conditions":[
+      {
+         "type.eq": "string"
+      },
+      {
+         "value.like": "string"
+      },
+      {
+         "type.eq": "string"
+      }
+   ]
+ },
+ {
+   "overwrite": true,
+   "moduleName":"magic",
+   "database":"[generic|magic]",
+   "table":"users_extra",
+   "moduleUrl":"users_extra",
+   "returnId":false,
+   "template":"/system/crudifier/templates/crud.template.delete.hl",
+   "verb":"delete",
+   "auth":"root",
+   "args":{
+      "primary":[
+         {
+            "type":"string"
+         },
+         {
+            "user":"string"
+         }
+      ]
+   }
+ },
+ {
+   "overwrite": true,
+   "moduleName":"magic",
+   "database":"[generic|magic]",
+   "table":"users_extra",
+   "moduleUrl":"users_extra",
+   "returnId":false,
+   "template":"/system/crudifier/templates/crud.template.put.hl",
+   "verb":"put",
+   "auth":"root",
+   "args":{
+      "primary":[
+         {
+           "name":"user",
+           "type":"string"
+         },
+         {
+            "name":"type",
+            "type":"string"
+          }
+       ],
+      "columns":[
+         {
+            "name":"value",
+            "type":"string"
+         }
+      ]
+   }
+ }
 ]
