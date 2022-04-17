@@ -88,7 +88,7 @@ export class CreateKeypairComponent implements OnInit {
    * Invoked when user clicks the next button.
    */
   next() {
-    this.feedbackService.confirm('Receive a promo code', 'Do you want a promo code that gives you all Bazar items for free for a limited period? Join our mailing list and stay up-to-date for promotions! If you do, then make sure you\'ll verify your email address.',
+    this.feedbackService.confirm('Receive a promo code', 'Do you want a promo code that gives you all Bazar items for free for a limited period? Join our mailing list and stay up-to-date for promotions! If you do, then make sure you verify your email address.',
       () => {
         this.bazarService.subscribeToNewsletter(
           this.subject,
