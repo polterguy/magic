@@ -221,7 +221,12 @@ slots.create:magic.auth.authenticate
                         name:x:@.dp/#/*/value
 
                // Returning results back to caller.
-               unwrap:x:+/*
+               unwrap:x:+/+/*
+               if
+                  not
+                     exists:x:./././*/return/*/extra/0
+                  .lambda
+                     remove-nodes:x:./././*/return/*/extra
                return
                   ticket:x:@auth.ticket.create
                   extra
