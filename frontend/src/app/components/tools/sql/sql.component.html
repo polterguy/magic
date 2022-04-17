@@ -135,6 +135,7 @@
     
                     <mat-checkbox
                       *ngIf="input.databaseType === 'mssql'"
+                      (change)="batchChanged()"
                       matTooltip="Executes SQL as a batch operation, respecting 'go' keywords"
                       [(ngModel)]="isBatch">Batch</mat-checkbox>
 

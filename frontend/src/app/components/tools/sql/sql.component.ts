@@ -252,6 +252,16 @@ export class SqlComponent implements OnInit {
   }
 
   /**
+   * Invoked when the "Batch" property is changed.
+   */
+  batchChanged() {
+    if(this.isBatch && this.databases.filter(x => x === 'model').length > 0 && this.input.database !== 'model') {
+      this.input.database = 'model';
+      this.feedbackService.showInfo('Your active database was changed to \'model\'');
+    }
+  }
+
+  /**
    * Empties server side cache and reloads your database declarations,
    * 'refreshing' your available databases.
    */
