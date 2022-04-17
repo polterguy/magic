@@ -39,6 +39,19 @@ for-each:x:@strings.split/*
          .
             value:x:@.arguments/*/extra/*/{@.dp/#}
             type:x:@.dp/#
+   remove-nodes:x:@.arguments/*/extra/*/{@.dp/#}
+
+// Making sure no unsupported [extra] information was supplied.
+if
+   exists:x:@.arguments/*/extra/*
+   .lambda
+      strings.concat
+         .:"Unsupported extra field '"
+         get-name:x:@.arguments/*/extra/0
+         .:"' supplied to endpoint"
+      throw:x:-
+         public:bool:true
+         status:int:400
 
 // Verifying that Magic is configured to allow for users to register.
 config.get:"magic:auth:registration:allow"
