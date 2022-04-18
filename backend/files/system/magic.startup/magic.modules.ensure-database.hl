@@ -93,7 +93,13 @@ slots.create:magic.modules.ensure-database
                      mysql.execute:x:@io.file.load
 
                case:pgsql
-                  pgsql.connect
+                  pgsql.connect:postgres
+                     strings.concat
+                        .:"create database "
+                        get-value:x:@.arguments/*/database
+                     pgsql.execute:x:-
+                        database:x:@.arguments/*/database
+                  pgsql.connect:x:@.arguments/*/database
                      pgsql.execute:x:@io.file.load
 
                case:mssql
