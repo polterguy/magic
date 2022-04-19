@@ -162,6 +162,13 @@ export class BackendService {
   }
 
   /**
+   * Returns the latest version as published by the Bazar.
+   */
+  get latestPublishedBazarVersion() {
+    return this._latestBazarVersion;
+  }
+
+  /**
    * Fetches endpoints for current backend again.
    */
   refetchEndpoints() {
