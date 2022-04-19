@@ -24,7 +24,7 @@ export class DatePipe implements PipeTransform {
      * Some components might return date and time objects as strings, WITHOUT timezone information
      * at which point we'll have to make assumptions. The best assumption is UTC.
      */
-    if (value.indexOf && value.indexOf('+') === -1) {
+    if (value.indexOf && value.indexOf('+') === -1 && !value.endsWith('Z')) {
       value += '+00:00';
     }
     const date = new Date(value);
