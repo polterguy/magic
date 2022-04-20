@@ -81,8 +81,7 @@ else
     */
    config.get:"magic:auth:recaptcha:key"
    if
-      not
-         eq:x:@config.get
+      neq:x:@config.get
          .
       .lambda
 
