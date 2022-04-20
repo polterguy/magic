@@ -74,7 +74,7 @@ x(){console.log('first')
   /**
    * Invoked when user clicks the OK button.
    */
-  ok(event?: any) { 
+  ok(event?: any) { console.log(event)
     this.bazarService.subscribeToNewsletter(
       this.model.name,
       this.model.email).subscribe({
