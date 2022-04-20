@@ -3,9 +3,6 @@
 .description:Returns true if auto-auth is enabled. If auto-auth is turned on, clients can use LDAP authentication to authenticate, avoiding having to type their usernames or passwords. The endpoint also returns the reCAPTCHA key if quthentication requires a reCAPTCHA token, otherwise it returns null or empty string.
 .type:public
 
-// Retrieving reCAPTCHA site-key
-config.get:"magic:auth:recaptcha:key"
-
 // Retrieving auto-auth configuration setting.
 config.get:"magic:auth:auto-auth"
 
@@ -21,14 +18,10 @@ if
    .lambda
 
       // Auto-auth is turned OFF.
-      unwrap:x:+/*/captcha_key
       return-nodes
          result:off
-         captcha_key:x:@config.get/@config.get
 else
 
    // Auto-auth is turned ON.
-   unwrap:x:+/*/captcha_key
    return-nodes
       result:on
-      captcha_key:x:@config.get/@config.get
