@@ -1,6 +1,6 @@
 
 // Returns true if auto-auth is enabled.
-.description:Returns true if auto-auth is enabled. If auto-auth is turned on, clients can use LDAP authentication to authenticate, avoiding having to type their usernames or passwords. The endpoint also returns the reCAPTCHA key if quthentication requires a reCAPTCHA token, otherwise it returns null or empty string.
+.description:Returns true if auto-auth is enabled. If auto-auth is turned on, clients can use LDAP authentication to authenticate, avoiding having to type their usernames or passwords.
 .type:public
 
 // Retrieving auto-auth configuration setting.
