@@ -83,7 +83,7 @@ export class MainComponent implements OnInit {
    * OnInit implementation.
    */
   ngOnInit() {
-    this.backendService.recaptcha();
+    
     // Checking for query parameters.
     this.getParams();
 
@@ -113,6 +113,9 @@ export class MainComponent implements OnInit {
         }
       }
     });
+
+    // Retrieving recaptcha key and storing in the backend service to be accessible everywhere
+    this.backendService.recaptcha();
   }
 
   /**

@@ -39,12 +39,13 @@
       [siteKey]="recaptchaKey"
       size="invisible"
       (resolved)="$event && ok($event)"
+      *ngIf="recaptchaKey !== '' && recaptchaKey !== null"
     ></re-captcha>
     <button
       mat-raised-button
       color="primary"
       type="submit"
-      (click)="captchaRef.execute()">Subscribe</button>
+      (click)="recaptchaKey !== '' && recaptchaKey !== null ? x() : ok()">Subscribe</button>
   
     <button
       mat-raised-button
