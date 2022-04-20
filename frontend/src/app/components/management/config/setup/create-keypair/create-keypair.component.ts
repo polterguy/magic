@@ -90,17 +90,17 @@ export class CreateKeypairComponent implements OnInit {
   next() {
     this.feedbackService.confirm('Receive a promo code', 'Do you want a promo code that gives you all Bazar items for free for a limited period? Join our mailing list and stay up-to-date for promotions! If you do, then make sure you verify your email address.',
       () => {
-        this.bazarService.subscribeToNewsletter(
-          this.subject,
-          this.email).subscribe({
-            next: () => {
-              localStorage.setItem('subscribes-to-newsletter', JSON.stringify({
-                subscribing: true,
-              }));
-            },
-            error: (error: any) => console.log(error)
-          });
-        this.generateKeypair();
+        // this.bazarService.subscribeToNewsletter(
+        //   this.subject,
+        //   this.email).subscribe({
+        //     next: () => {
+        //       localStorage.setItem('subscribes-to-newsletter', JSON.stringify({
+        //         subscribing: true,
+        //       }));
+        //     },
+        //     error: (error: any) => console.log(error)
+        //   });
+        // this.generateKeypair();
       },
       (cancel) => {
         if (cancel === false) {
