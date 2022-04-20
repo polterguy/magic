@@ -6,6 +6,7 @@
    frontendUrl:string
    template:string
    subject:string
+   recaptcha_response:string
    extra:*
 .description:Registers a new user in the system. Notice, to fully take advantage of this endpoint you would want to configure your SMTP settings.
 .type:public
@@ -17,13 +18,30 @@ validators.email:x:@.arguments/*/username
 validators.url:x:@.arguments/*/frontendUrl
 
 /*
- * Verifying [extra] does not contain fields not allowed according to configuration.
- * Notice, this looks a bit weird, but is necessary to ensure we're only handling
- * [extra] information that is allowed during registrations according to configuration
- * settings, to avoid malicious "extra information injections".
- *
- * Any extra information that's not declared in configuration settings will simply
- * be ignored.
+ * Checking if backend is configured to use reCAPTCHA, and if so,
+ * making sure we ensure the frontend supplied a [recaptcha_response],
+ * and invoking slot responsible for verifying reCAPTCHA value.
+ */
+config.get:"magic:auth:recaptcha:key"
+if
+   not
+      eq:x:@config.get
+      .
+   .lambda
+   
+      // [recaptcha_response] is a mandatory field.
+      validators.mandatory:x:@.arguments/*/recaptcha_response
+      
+      // Retrieving secret and invoking slot responsible for verifying reCAPTCHA value.
+      config.get:"magic:auth:recaptcha:secret"
+      validators.recaptcha:x:@.arguments/*/recaptcha_response
+         min:0.5
+         site-key:x:@config.get/@config.get
+         secret:x:@config.get
+
+/*
+ * Retrieving extra information, making sure we only allow
+ * for extra information that's allowed according to configuration settings.
  */
 .extra
 config.get:"magic:auth:registration:extra"
