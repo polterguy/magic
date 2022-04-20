@@ -52,7 +52,7 @@ export class SubscribeDialogComponent implements OnInit {
     private backendService: BackendService) { 
       this.recaptchaKey = this.backendService._activeCaptcha;
     }
-x(){console.log('first')
+x(){
   this.captchaRef?.execute();
 }
 
@@ -74,10 +74,11 @@ x(){console.log('first')
   /**
    * Invoked when user clicks the OK button.
    */
-  ok(event?: any) { console.log(event)
+  ok(recaptcha_token?: string) { 
+    this.recaptchaKey !== null && this.recaptchaKey !== '' ? this.model['recaptcha_response'] = recaptcha_token : '';
+    console.log(this.model);
     this.bazarService.subscribeToNewsletter(
-      this.model.name,
-      this.model.email).subscribe({
+      this.model).subscribe({
         next: (result: Response) => {
           if (result.result === 'success') {
             this.feedbackService.showInfo('Please confirm your email address by clicking the link in the email we sent you');
