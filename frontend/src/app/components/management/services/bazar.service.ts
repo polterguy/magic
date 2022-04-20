@@ -112,11 +112,8 @@ export class BazarService {
    * @param name Full name of user
    * @param email Email address belonging to user
    */
-  subscribeToNewsletter(name: string, email: string) {
-    return this.httpClient.post<Response>(environment.bazarUrl + '/magic/modules/bazar/subscribe', {
-      name,
-      email
-    });
+  subscribeToNewsletter(data: any) {
+    return this.httpClient.post<Response>(environment.bazarUrl + '/magic/modules/bazar/subscribe', data);
   }
 
   /**
