@@ -13,6 +13,7 @@ import { BazarService } from '../../services/bazar.service';
 import { ConfigService } from '../../../../services/config.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { NameEmailModel } from '../../../../models/name-email.model';
+import { BackendService } from 'src/app/services/backend.service';
 
 /**
  * Component allowing user to subscribe to Aista's newsletter.
@@ -29,6 +30,11 @@ export class SubscribeDialogComponent implements OnInit {
   model: NameEmailModel;
 
   /**
+   * to set the user's site_key for recaptcha
+   */
+  recaptchaKey: string = null;
+
+  /**
    * Creates an instance of your component.
    * 
    * @param bazarService Needed to be able to subscribe user to our newsletter
@@ -40,7 +46,10 @@ export class SubscribeDialogComponent implements OnInit {
     private bazarService: BazarService,
     private configService: ConfigService,
     private feedbackService: FeedbackService,
-    private dialogRef: MatDialogRef<SubscribeDialogComponent>) { }
+    private dialogRef: MatDialogRef<SubscribeDialogComponent>,
+    private backendService: BackendService) { 
+      this.recaptchaKey = this.backendService._activeCaptcha;
+    }
 
   /**
    * Implementation of OnInit.
@@ -60,24 +69,26 @@ export class SubscribeDialogComponent implements OnInit {
   /**
    * Invoked when user clicks the OK button.
    */
-  ok() {
-    this.bazarService.subscribeToNewsletter(
-      this.model.name,
-      this.model.email).subscribe((result: Response) => {
-
-        if (result.result === 'success') {
-          this.feedbackService.showInfo('Please confirm your email address by clicking the link in the email we sent you');
-        } else if (result.result === 'no-change') {
-          this.feedbackService.showInfo('We could not add you to our newsletter, did you already subscribe previously?');
-        } else if (result.result === 'please-confirm') {
-          this.feedbackService.showInfo('We have already sent a confirm email to you. Please check your inbox for an email from ServerGardens.Com');
-        }
-
-        localStorage.setItem('subscribes-to-newsletter', JSON.stringify({
-          subscribing: true,
-        }));
-        this.dialogRef.close(this.model);
-      }, (error: any) => this.feedbackService.showError(error));
+  ok(event: any) { console.log(this.recaptchaKey,event)
+    // this.bazarService.subscribeToNewsletter(
+    //   this.model.name,
+    //   this.model.email).subscribe({
+    //     next: (result: Response) => {
+    //       if (result.result === 'success') {
+    //         this.feedbackService.showInfo('Please confirm your email address by clicking the link in the email we sent you');
+    //       } else if (result.result === 'no-change') {
+    //         this.feedbackService.showInfo('We could not add you to our newsletter, did you already subscribe previously?');
+    //       } else if (result.result === 'please-confirm') {
+    //         this.feedbackService.showInfo('We have already sent a confirm email to you. Please check your inbox for an email from ServerGardens.Com');
+    //       }
+  
+    //       localStorage.setItem('subscribes-to-newsletter', JSON.stringify({
+    //         subscribing: true,
+    //       }));
+    //       this.dialogRef.close(this.model);
+    //     },
+    //     error: (error: any) => {this.feedbackService.showError(error)}
+    //   })
   }
 
   /**

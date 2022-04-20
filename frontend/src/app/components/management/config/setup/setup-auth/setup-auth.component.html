@@ -100,6 +100,32 @@
 
               </div>
 
+
+              <div class="d-flex align-items-center mb-3">
+                <mat-icon>vpn_key</mat-icon>
+                <p class="my-0 ml-1">reCAPTCHA settings</p>
+              </div>
+
+              <div class="d-flex flex-sm-row flex-column">
+                <mat-form-field class="w-100" appearance="outline">
+                  <mat-label>reCAPTCHA site_key</mat-label>
+                  <input
+                    matInput
+                    type="text"
+                    name="site_key"
+                    [(ngModel)]="config.magic.auth.recaptcha.key">
+                </mat-form-field>
+                <div class="p-sm-1"></div>
+                <mat-form-field class="w-100" appearance="outline">
+                  <mat-label>reCAPTCHA secret_key</mat-label>
+                  <input
+                    matInput
+                    type="text"
+                    name="secret_key"
+                    [(ngModel)]="config.magic.auth.recaptcha.secret">
+                </mat-form-field>
+              </div>
+
               <mat-form-field class="w-100"  appearance="outline">
                 <mat-label>Auth secret {{config.magic.auth.secret.length}} characters</mat-label>
                 <input
