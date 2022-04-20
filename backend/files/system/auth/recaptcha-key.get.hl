@@ -1,0 +1,10 @@
+
+// Returns true if auto-auth is enabled.
+.description:This endpoint returns the reCAPTCHA key if registrations etc requires a reCAPTCHA token, otherwise it returns null or empty string.
+.type:public
+
+// Retrieving key configuration setting and returning to caller.
+config.get:"magic:auth:recaptcha:key"
+unwrap:x:+/*
+return-nodes
+   result:x:@config.get
