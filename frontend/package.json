@@ -31,6 +31,7 @@
     "file-saver": "^2.0.5",
     "marked": "^4.0.12",
     "material-icons": "^1.10.8",
+    "ng-recaptcha": "^9.0.0",
     "ng2-charts": "^2.4.2",
     "rxjs": "~7.5.5",
     "tslib": "^2.3.1",

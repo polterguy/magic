@@ -34,12 +34,17 @@
   </div>
   
   <div mat-dialog-actions class="mat-dialog-actions">
-  
+    <re-captcha
+      #captchaRef="reCaptcha"
+      [siteKey]="recaptchaKey"
+      size="invisible"
+      (resolved)="$event && ok($event)"
+    ></re-captcha>
     <button
       mat-raised-button
       color="primary"
       type="submit"
-      (click)="ok()">Subscribe</button>
+      (click)="captchaRef.execute()">Subscribe</button>
   
     <button
       mat-raised-button
