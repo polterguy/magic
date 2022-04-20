@@ -472,7 +472,7 @@ export class BackendService {
    */
   public recaptcha() {
     this.httpClient.get<Response>(
-      environment.bazarUrl +
+      this.active.url +
       '/magic/system/auth/recaptcha-key').subscribe({
         next: (recaptcha: Response) => {
 
