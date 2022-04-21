@@ -77,7 +77,12 @@ export class ConfigEditorComponent implements OnInit {
     try {
       const config = JSON.parse(this.config);
       this.configService.saveConfig(config).subscribe({
-        next: () => this.feedbackService.showInfo('Configuration was successfully saved'),
+        next: () => {
+          this.feedbackService.showInfo('Configuration was successfully saved');
+          setTimeout(() => {
+            this.backendService.getRecaptchaKey();
+          }, 1000);
+        },
         error: (error: any) => this.feedbackService.showError(error)});
     }
     catch (error) {
