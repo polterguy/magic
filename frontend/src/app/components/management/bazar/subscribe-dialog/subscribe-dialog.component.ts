@@ -33,7 +33,7 @@ export class SubscribeDialogComponent implements OnInit {
   /**
    * to set the user's site_key for recaptcha
    */
-  recaptchaKey: string = null;
+  public recaptchaKey: string = null;
   @ViewChild('captchaRef', { static: false }) captchaRef: RecaptchaComponent;
 
   /**
@@ -51,9 +51,7 @@ export class SubscribeDialogComponent implements OnInit {
     private feedbackService: FeedbackService,
     private dialogRef: MatDialogRef<SubscribeDialogComponent>,
     private backendService: BackendService) {
-    this.backendService._activeCaptchaValue.subscribe((key: string) => {
-      this.recaptchaKey = key;
-    })
+    this.recaptchaKey = this.backendService._bazaarCaptchaKey;
   }
 
   /**
