@@ -12,6 +12,7 @@
    template:string
    verb:string
    auth:string
+   captcha:decimal
    log:string
    overwrite:bool
    validators:string
@@ -202,7 +203,7 @@ semaphore:crudifier
                insert-after:x:@apply/*/.type
                   .
 
-                     // Verifying user is authorized to access endpoint.
+                     ..:Verifying user is authorized to access endpoint.
                      auth.ticket.verify
          else
 
@@ -211,8 +212,45 @@ semaphore:crudifier
             insert-after:x:@apply/*/.type
                .
 
-                  // Verifying user is authorized to access endpoint.
+                  ..:Verifying user is authorized to access endpoint.
                   auth.ticket.verify:x:@.arguments/*/auth
+
+   /*
+    * Then ensuring we turn reCAPTCHA if caller specified a [captcha] value.
+    */
+   if
+      exists:x:@.arguments/*/captcha
+      .lambda
+         add:x:@apply/*/.arguments
+            .
+               recaptcha:string
+         unwrap:x:+/**/min
+         insert-after:x:@apply/*/.type
+            .
+               ..:Checking reCAPTCHA value if backend is configured with reCAPTCHA configuration settings.
+               config.get:"magic:auth:recaptcha:key"
+               config.get:"magic:auth:recaptcha:secret"
+               if
+                  and
+                     neq:x:@config.get
+                        .
+                     neq:x:@config.get
+                        .:
+                     neq:x:@config.get/@config.get
+                        .
+                     neq:x:@config.get/@config.get
+                        .:
+                  .lambda
+
+                     ..:reCAPTCHA configuration settings found.
+                     validators.mandatory:x:@.arguments/*/recaptcha
+                     validators.recaptcha:x:@.arguments/*/recaptcha/[0,1]
+                        site-key:x:@config.get/@config.get
+                        secret:x:@config.get
+                        min:x:@.arguments/*/captcha
+
+               ..:To remove reCAPTCHA value preventing it from being used as an argument further down in file.
+               remove-nodes:x:@.arguments/*/recaptcha/[0,1]
 
    /*
     * Then making sure we do our specialized transformation,
