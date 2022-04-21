@@ -15,7 +15,7 @@
             </mat-icon>
           </div>
           
-          <form [formGroup]="registrationForm" (ngSubmit)="register()" novalidate>
+          <form [formGroup]="registrationForm" novalidate>
 
             <mat-form-field class="fill-width" appearance="outline">
               <mat-label>Email address</mat-label>
@@ -42,7 +42,15 @@
             </mat-form-field>
 
             <div class="button-strip">
-              <button mat-raised-button color="primary" type="submit">
+              <re-captcha
+                #captchaRef="reCaptcha"
+                [siteKey]="recaptchaKey"
+                size="invisible"
+                (resolved)="$event && register($event)"
+                *ngIf="recaptchaKey !== '' && recaptchaKey !== null"
+              ></re-captcha>
+              <button mat-raised-button color="primary" type="submit"
+              (click)="recaptchaKey !== '' && recaptchaKey !== null ? executeRecaptcha() : register()">
                 Submit
               </button>
             </div>

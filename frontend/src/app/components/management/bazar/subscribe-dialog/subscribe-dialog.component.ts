@@ -43,6 +43,7 @@ export class SubscribeDialogComponent implements OnInit {
    * @param configService Needed to retrieve user's name and email as specified during configuration
    * @param feedbackService Needed to display feedback to user
    * @param dialogRef Needed to be able to manually close dialog
+   * @param backendService Needed to read the dynamic reCaptcha key associated with this account
    */
   constructor(
     private bazarService: BazarService,
@@ -52,9 +53,6 @@ export class SubscribeDialogComponent implements OnInit {
     private backendService: BackendService) { 
       this.recaptchaKey = this.backendService._activeCaptcha;
     }
-x(){
-  this.captchaRef?.execute();
-}
 
   /**
    * Implementation of OnInit.
@@ -73,10 +71,12 @@ x(){
 
   /**
    * Invoked when user clicks the OK button.
+   * @param recaptcha_token received when reCaptcha component is executed,
+   * recaptcha_token is optional, exists only if recaptcha key is available
    */
   ok(recaptcha_token?: string) { 
     this.recaptchaKey !== null && this.recaptchaKey !== '' ? this.model['recaptcha_response'] = recaptcha_token : '';
-    console.log(this.model);
+    
     this.bazarService.subscribeToNewsletter(
       this.model).subscribe({
         next: (result: Response) => {
@@ -95,6 +95,14 @@ x(){
         },
         error: (error: any) => {this.feedbackService.showError(error)}
       })
+  }
+
+  /**
+   * to make a click action on the invisible reCaptcha components and receive the token,
+   * will be executed only if recaptcha key is available
+   */
+  executeRecaptcha(){
+    this.captchaRef?.execute();
   }
 
   /**

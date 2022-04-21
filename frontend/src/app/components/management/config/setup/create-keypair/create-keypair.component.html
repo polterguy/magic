@@ -80,11 +80,18 @@
 
           <div class="row">
             <div class="col-12 d-flex justify-content-end">
+              <re-captcha
+                #captchaRef="reCaptcha"
+                [siteKey]="recaptchaKey"
+                size="invisible"
+                (resolved)="$event && next($event)"
+                *ngIf="recaptchaKey !== '' && recaptchaKey !== null"
+              ></re-captcha>
               <button
                 mat-raised-button
                 color="primary"
                 [disabled]="seed === '' || subject === '' || email === ''"
-                (click)="next()"
+                (click)="recaptchaKey !== '' && recaptchaKey !== null ? executeRecaptcha() : next()"
                 type="submit"
                 class="ml-4">
                 Next

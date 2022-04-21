@@ -7,7 +7,7 @@
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { map, startWith } from 'rxjs/operators';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
@@ -17,6 +17,7 @@ import { Response } from 'src/app/models/response.model';
 import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from '../../../services/feedback.service';
+import { RecaptchaComponent } from 'ng-recaptcha';
 
 class DialogData {
   allowAuthentication?: boolean;
@@ -39,6 +40,12 @@ export class LoginDialogComponent implements OnInit {
   backendHasBeenSelected: boolean = false;
   autoLogin: boolean = false;
   advanced: boolean = false;
+  
+  /**
+   * to set the user's site_key for recaptcha
+   */
+   recaptchaKey: string = null;
+   @ViewChild('captchaRef', {static: false}) captchaRef: RecaptchaComponent;
 
   /**
    * Creates an instance of your login dialog.
@@ -60,6 +67,7 @@ export class LoginDialogComponent implements OnInit {
     private formBuilder: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public data: DialogData) {
     this.data = this.data || { allowAuthentication: true };
+    this.recaptchaKey = this.backendService._activeCaptcha;
   }
 
   /**
@@ -151,8 +159,10 @@ export class LoginDialogComponent implements OnInit {
    * and sent to him on email.
    * 
    * Notice, assumes username is a valid email address.
+   * @param recaptcha_token received when reCaptcha component is executed,
+   * recaptcha_token is optional, exists only if recaptcha key is available
    */
-  resetPassword() {
+  resetPassword(recaptcha_token?: string) {
 
     /*
      * Storing currently selected backend.
@@ -161,9 +171,16 @@ export class LoginDialogComponent implements OnInit {
     const backend = new Backend(this.backends.value)
     this.backendService.upsert(backend);
     this.backendService.activate(backend);
-    this.backendService.resetPassword(
-      this.loginForm.value.username,
-      location.origin).subscribe({
+
+    const data: any = this.recaptchaKey !== null && this.recaptchaKey !== '' ? {
+      username: this.loginForm.value.username,
+      frontendUrl: location.origin,
+      recaptcha_response: recaptcha_token,
+    } : {
+      username: this.loginForm.value.username,
+      frontendUrl: location.origin
+    };
+    this.backendService.resetPassword(data).subscribe({
         next: (res: Response) => {
           if (res.result === 'success') {
             this.feedbackService.showInfo('Pease check your email to reset your password');
@@ -173,6 +190,14 @@ export class LoginDialogComponent implements OnInit {
 
         },
         error: (error: any) => this.feedbackService.showError(error)});
+  }
+  
+  /**
+   * to make a click action on the invisible reCaptcha components and receive the token,
+   * will be executed only if recaptcha key is available
+   */
+   executeRecaptcha(){
+    this.captchaRef?.execute();
   }
 
   /**

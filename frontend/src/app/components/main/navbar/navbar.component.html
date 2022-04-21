@@ -483,6 +483,7 @@
       <mat-expansion-panel-header
         #panelL (click)="panelL._toggle(); backendService.active?.token ? logout() : login(true)" 
         [matTooltipDisabled]="navbarService.expanded" 
+        matTooltipPosition="after"
         [matTooltip]="backendService.active?.token ? 'Logout' : 'Login'">
         <mat-panel-title>
             <mat-icon>{{backendService.active?.token ? 'lock' : 'lock_open'}}</mat-icon>

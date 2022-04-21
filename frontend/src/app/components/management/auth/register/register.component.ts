@@ -5,7 +5,7 @@
 
 // Angular and system imports.
 import { Subscription } from 'rxjs';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 
 // Application specific imports.
@@ -13,6 +13,7 @@ import { Response } from 'src/app/models/response.model';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { RegisterService } from 'src/app/services/register.service';
+import { RecaptchaComponent } from 'ng-recaptcha';
 
 /**
  * Register component allowing users to register in the system.
@@ -38,6 +39,12 @@ export class RegisterComponent implements OnInit, OnDestroy {
   hide = true;
 
   /**
+   * to set the user's site_key for recaptcha
+   */
+   recaptchaKey: string = null;
+   @ViewChild('captchaRef', {static: false}) captchaRef: RecaptchaComponent;
+   
+  /**
    * Password of user repeated.
    */
   repeatPassword: string;
@@ -54,7 +61,9 @@ export class RegisterComponent implements OnInit, OnDestroy {
     private registerService: RegisterService,
     public backendService: BackendService,
     private feedbackService: FeedbackService,
-    private formBuilder: FormBuilder) { }
+    private formBuilder: FormBuilder) {
+      this.recaptchaKey = this.backendService._activeCaptcha;
+    }
 
   /**
    * Reactive form declaration
@@ -93,8 +102,10 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
   /**
    * Invoked when user clicks the register button.
+   * @param recaptcha_token received when reCaptcha component is executed,
+   * recaptcha_token is optional, exists only if recaptcha key is available
    */
-  register() {
+  register(recaptcha_token?: string) {
     if (this.registrationForm.value.password === '') {
       this.feedbackService.showError('Please supply a password');
       return;
@@ -103,11 +114,18 @@ export class RegisterComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.registerService.register(
-      this.registrationForm.value.email,
-      this.registrationForm.value.password,
-      location.origin,
-    ).subscribe({
+    const data: any = this.recaptchaKey !== null && this.recaptchaKey !== '' ? {
+      username: this.registrationForm.value.email,
+      password: this.registrationForm.value.password,
+      frontendUrl: location.origin,
+      recaptcha_response: recaptcha_token,
+    } : {
+      username: this.registrationForm.value.email,
+      password: this.registrationForm.value.password,
+      frontendUrl: location.origin
+    };
+
+    this.registerService.register(data).subscribe({
       next: (result: Response) => {
         this.status = result.result;
         if (result.result === 'already-registered') {
@@ -121,5 +139,13 @@ export class RegisterComponent implements OnInit, OnDestroy {
         }
       },
       error: (error: any) => this.feedbackService.showError(error)});
+  }
+  
+  /**
+   * to make a click action on the invisible reCaptcha components and receive the token,
+   * will be executed only if recaptcha key is available
+   */
+   executeRecaptcha(){
+    this.captchaRef?.execute();
   }
 }

@@ -50,7 +50,7 @@ import {
 } from '@angular-material-components/datetime-picker';
 
 // reCAPTCHA v3
-import { RecaptchaModule, RecaptchaFormsModule, RecaptchaV3Module, RECAPTCHA_V3_SITE_KEY } from "ng-recaptcha";
+import { RecaptchaModule, RecaptchaFormsModule, RecaptchaV3Module } from "ng-recaptcha";
 
 // Hyperlambda mode for CodeMirror import.
 import './codemirror/hyperlambda.js';
@@ -308,7 +308,6 @@ import { environment } from '../environments/environment';
       useClass: LoaderInterceptor,
       multi: true
     },
-    // { provide: RECAPTCHA_V3_SITE_KEY, useValue: "<YOUR_SITE_KEY>" },
     AccessGuard
   ],
   bootstrap: [MainComponent],
