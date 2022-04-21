@@ -6,6 +6,8 @@
    template:string
    subject:string
    recaptcha_response:string
+.description:Resends the please confirm email address email to a previously registered user in the system.
+.type:public
 
 // Used to track if an email actually was sent or not.
 .email-sent:No
