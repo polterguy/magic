@@ -87,13 +87,20 @@
       (click)="login()"
       [disabled]="!autoLogin && loginForm.invalid">Login</button>
 
+      <re-captcha
+        #captchaRef="reCaptcha"
+        [siteKey]="recaptchaKey"
+        size="invisible"
+        (resolved)="$event && resetPassword($event)"
+        *ngIf="recaptchaKey !== '' && recaptchaKey !== null"
+      ></re-captcha>
     <button
       *ngIf="autoLogin !== true"
       mat-raised-button
       [disabled]="autoLogin || loginForm.value.username === '' || loginForm.value.password !== '' || backends.value === ''"
       matTooltip="Send me a reset password link"
       type="button"
-      (click)="resetPassword()">Forgot?</button>
+      (click)="recaptchaKey !== '' && recaptchaKey !== null ? executeRecaptcha() : resetPassword()">Forgot?</button>
 
   </div>
 </form>

@@ -28,18 +28,16 @@ export class RegisterService {
   /**
    * Registers a new user in the backend.
    * 
-   * @param username User's email address
-   * @param password Password user selected
-   * @param frontendUrl Frontend's URL to use as root URL for confirming email address
+   * @param data containing the following fields:
+   * username User's email address,
+   * password Password user selected,
+   * frontendUrl Frontend's URL to use as root URL for confirming email address,
+   * recaptcha_token is optional, exists only if recaptcha key is available
    */
-  register(username: string, password: string, frontendUrl: string) {
+  register(data: any) {
 
     // Invokes backend and returns observable to caller.
-    return this.httpService.post<Response>('/magic/system/auth/register', {
-      username,
-      password,
-      frontendUrl,
-    });
+    return this.httpService.post<Response>('/magic/system/auth/register', {data});
   }
 
   /**

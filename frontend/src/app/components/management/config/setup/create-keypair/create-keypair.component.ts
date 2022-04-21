@@ -5,7 +5,7 @@
 
 // Angular and system imports.
 import { Router } from '@angular/router';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 
 // Application specific imports.
 import { Response } from 'src/app/models/response.model';
@@ -15,6 +15,7 @@ import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { BazarService } from 'src/app/components/management/services/bazar.service';
 import { CryptoService } from 'src/app/components/management/crypto/services/crypto.service';
+import { RecaptchaComponent } from 'ng-recaptcha';
 
 /**
  * Component allowing user to create a cryptography key pair.
@@ -56,6 +57,12 @@ export class CreateKeypairComponent implements OnInit {
   seed = '';
 
   /**
+   * to set the user's site_key for recaptcha
+   */
+   recaptchaKey: string = null;
+   @ViewChild('captchaRef', {static: false}) captchaRef: RecaptchaComponent;
+
+  /**
    * Creates an instance of your component.
    * 
    * @param backendService Needed to retrieve the root URL for the current backend
@@ -72,7 +79,9 @@ export class CreateKeypairComponent implements OnInit {
     private router: Router,
     private cryptoService: CryptoService,
     protected messageService: MessageService,
-    private bazarService: BazarService) { }
+    private bazarService: BazarService) { 
+      this.recaptchaKey = this.backendService._activeCaptcha;
+    }
 
   /**
    * OnInit implementation.
@@ -86,27 +95,44 @@ export class CreateKeypairComponent implements OnInit {
 
   /**
    * Invoked when user clicks the next button.
+   * @param recaptcha_token received when reCaptcha component is executed,
+   * recaptcha_token is optional, exists only if recaptcha key is available
    */
-  next() {
+  next(recaptcha_token?: string) {
+    const data: any = this.recaptchaKey !== null && this.recaptchaKey !== '' ? {
+      email: this.email,
+      name: this.subject,
+      recaptcha_response: recaptcha_token,
+    } : {
+      email: this.email,
+      name: this.subject
+    };
+    
     this.feedbackService.confirm('Receive a promo code', 'Do you want a promo code that gives you all Bazar items for free for a limited period? Join our mailing list and stay up-to-date for promotions! If you do, then make sure you verify your email address.',
       () => {
-        // this.bazarService.subscribeToNewsletter(
-        //   this.subject,
-        //   this.email).subscribe({
-        //     next: () => {
-        //       localStorage.setItem('subscribes-to-newsletter', JSON.stringify({
-        //         subscribing: true,
-        //       }));
-        //     },
-        //     error: (error: any) => console.log(error)
-        //   });
-        // this.generateKeypair();
+        this.bazarService.subscribeToNewsletter(data).subscribe({
+            next: () => {
+              localStorage.setItem('subscribes-to-newsletter', JSON.stringify({
+                subscribing: true,
+              }));
+            },
+            error: (error: any) => console.log(error)
+          });
+        this.generateKeypair();
       },
       (cancel) => {
         if (cancel === false) {
           this.generateKeypair();
         }
       });
+  }
+
+  /**
+   * to make a click action on the invisible reCaptcha components and receive the token,
+   * will be executed only if recaptcha key is available
+   */
+   executeRecaptcha(){
+    this.captchaRef?.execute();
   }
 
   private generateKeypair() {

@@ -284,16 +284,15 @@ export class BackendService {
   /**
    * Invokes the backend to have a reset password email being sent to user.
    * 
-   * @param username Username of user to generate the email for
-   * @param frontendUrl URL of frontend to use to build reset-password email from
+   * @param data containing the following fields:
+   * username Username of user to generate the email for,
+   * frontendUrl URL of frontend to use to build reset-password email from,
+   * recaptcha_response is optional, exists only if recaptcha key is available
    */
-  resetPassword(username: string, frontendUrl: string) {
+  resetPassword(data: any) {
     return this.httpClient.post<Response>(
       this.active.url +
-      '/magic/system/auth/send-reset-password-link', {
-      username,
-      frontendUrl,
-    });
+      '/magic/system/auth/send-reset-password-link', {data});
   }
 
   /**
