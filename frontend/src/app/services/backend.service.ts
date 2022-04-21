@@ -38,6 +38,7 @@ export class BackendService {
   private _latestBazarVersion: string = null;
   private _activeCaptcha = new BehaviorSubject<string>('');
   public _activeCaptchaValue = this._activeCaptcha.asObservable();
+  public _bazaarCaptchaKey: string = null;
 
   /**
    * To allow consumers to subscribe to authentication status changes.
@@ -133,8 +134,9 @@ export class BackendService {
    * Activates the specified backend.
    * 
    * @param value Backend to activate
+   * @param fetchRecaptcha ReCaptcha key to be fetched, true by default and false when invoked from forgot password
    */
-  activate(value: Backend) {
+  activate(value: Backend, fetchRecaptcha: boolean = true) {
     this.backendsStorageService.activate(value);
     if (!value.access.fetched) {
       this.getEndpoints(value);
@@ -143,6 +145,9 @@ export class BackendService {
       this.retrieveStatusAndVersion(this.active);
     }
     this._activeChanged.next(value);
+    if (fetchRecaptcha) {
+      this.getRecaptchaKey();
+    }
   }
 
   /**
@@ -462,6 +467,7 @@ export class BackendService {
                     this._versionRetrieved.next(backend.version);
                   }});
             }
+            this.getRecaptchaKey(true);
           }
         });
       }});
@@ -470,14 +476,28 @@ export class BackendService {
   /**
    * retrieving recaptcha, if existing
    */
-  public getRecaptchaKey() {
-    this.httpClient.get<Response>(
-      this.active.url +
-      '/magic/system/auth/recaptcha-key').subscribe({
-        next: (recaptcha: Response) => {
+  public getRecaptchaKey(fetchBazarKey: boolean = false) {
+    if (this._bazaarCaptchaKey === null) {
+      this.httpClient.get<Response>(
+        environment.bazarUrl +
+        '/magic/system/auth/recaptcha-key').subscribe({
+          next: (recaptcha: Response) => {
 
-          // Assigning recaptcha key
-          this._activeCaptcha.next(recaptcha.result);
-        }});
+            // Assigning bazar's recaptcha key
+            this._bazaarCaptchaKey = recaptcha.result;
+          }
+        });
+    }
+    if (!fetchBazarKey) {
+      this.httpClient.get<Response>(
+        this.active.url +
+        '/magic/system/auth/recaptcha-key').subscribe({
+          next: (recaptcha: Response) => {
+
+            // Assigning recaptcha key
+            this._activeCaptcha.next(recaptcha.result);
+          }
+        });
+    }
   }
 }
