@@ -93,6 +93,19 @@ export class TransformModelService {
       result.auth = table.authDelete;
     }
 
+    if (verb === 'post' && table.captchaPost && table.captchaPost !== 0) {
+      result.captcha = table.captchaPost;
+    }
+    if (verb === 'get' && table.captchaGet && table.captchaGet !== 0) {
+      result.captcha = table.captchaGet;
+    }
+    if (verb === 'put' && table.captchaPut && table.captchaPut !== 0) {
+      result.captcha = table.captchaPut;
+    }
+    if (verb === 'delete' && table.captchaDelete && table.captchaDelete !== 0) {
+      result.captcha = table.captchaDelete;
+    }
+
     switch (verb) {
 
       case 'post':

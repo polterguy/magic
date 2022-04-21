@@ -10,6 +10,7 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 import { TableEx } from '../../models/table-ex.model';
 import { ColumnEx } from '../../models/column-ex.model';
 import { LocResult } from '../../models/loc-result.model';
+import { LogService } from 'src/app/services/log.service';
 import { DatabaseEx } from '../../models/database-ex.model';
 import { CacheService } from 'src/app/services/cache.service';
 import { CrudifyService } from '../../services/crudify.service';
@@ -18,7 +19,6 @@ import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { LoaderInterceptor } from 'src/app/interceptors/loader.interceptor';
 import { TransformModelService } from '../../services/transform-model.service';
-import { LogService } from 'src/app/services/log.service';
 import { Model } from 'src/app/components/utilities/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 
 // CodeMirror options.
@@ -66,8 +66,6 @@ export class CrudifierTableComponent implements OnInit {
    * Whether or not advanced options should be shown or not.
    */
   advanced = false;
-
-  expandedElement: any;
 
   /**
    * Authorisation requirements for SignalR messages published during invocation of endpoint.
