@@ -62,7 +62,9 @@ export class RegisterComponent implements OnInit, OnDestroy {
     public backendService: BackendService,
     private feedbackService: FeedbackService,
     private formBuilder: FormBuilder) {
-      this.recaptchaKey = this.backendService._activeCaptcha;
+      this.backendService._activeCaptchaValue.subscribe((key: string) => {
+        this.recaptchaKey = key;
+      })
     }
 
   /**

@@ -4,7 +4,7 @@
  */
 
 // Angular and system imports.
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 
 // Application specific imports.
@@ -34,7 +34,7 @@ export class SubscribeDialogComponent implements OnInit {
    * to set the user's site_key for recaptcha
    */
   recaptchaKey: string = null;
-  @ViewChild('captchaRef', {static: false}) captchaRef: RecaptchaComponent;
+  @ViewChild('captchaRef', { static: false }) captchaRef: RecaptchaComponent;
 
   /**
    * Creates an instance of your component.
@@ -50,23 +50,28 @@ export class SubscribeDialogComponent implements OnInit {
     private configService: ConfigService,
     private feedbackService: FeedbackService,
     private dialogRef: MatDialogRef<SubscribeDialogComponent>,
-    private backendService: BackendService) { 
-      this.recaptchaKey = this.backendService._activeCaptcha;
-    }
+    private backendService: BackendService) {
+    this.backendService._activeCaptchaValue.subscribe((key: string) => {
+      this.recaptchaKey = key;
+    })
+  }
 
   /**
    * Implementation of OnInit.
    */
   ngOnInit() {
-    this.configService.rootUserEmailAddress().subscribe((result: NameEmailModel) => {
-      this.model = result;
-      const data = localStorage.getItem('confirm-email-data');
-      if (data && data !== '') {
-        const dataObj = JSON.parse(data);
-        this.model.email = dataObj.email;
-        this.model.name = dataObj.name;
-      }
-    }, (error: any) => this.feedbackService.showError(error));
+    this.configService.rootUserEmailAddress().subscribe({
+      next: (result: NameEmailModel) => {
+        this.model = result;
+        const data = localStorage.getItem('confirm-email-data');
+        if (data && data !== '') {
+          const dataObj = JSON.parse(data);
+          this.model.email = dataObj.email;
+          this.model.name = dataObj.name;
+        }
+      },
+      error: (error: any) => { this.feedbackService.showError(error) }
+    })
   }
 
   /**
@@ -74,9 +79,9 @@ export class SubscribeDialogComponent implements OnInit {
    * @param recaptcha_token received when reCaptcha component is executed,
    * recaptcha_token is optional, exists only if recaptcha key is available
    */
-  ok(recaptcha_token?: string) { 
+  ok(recaptcha_token?: string) {
     this.recaptchaKey !== null && this.recaptchaKey !== '' ? this.model['recaptcha_response'] = recaptcha_token : '';
-    
+
     this.bazarService.subscribeToNewsletter(
       this.model).subscribe({
         next: (result: Response) => {
@@ -87,13 +92,13 @@ export class SubscribeDialogComponent implements OnInit {
           } else if (result.result === 'please-confirm') {
             this.feedbackService.showInfo('We have already sent a confirm email to you. Please check your inbox for an email from ServerGardens.Com');
           }
-  
+
           localStorage.setItem('subscribes-to-newsletter', JSON.stringify({
             subscribing: true,
           }));
           this.dialogRef.close(this.model);
         },
-        error: (error: any) => {this.feedbackService.showError(error)}
+        error: (error: any) => { this.feedbackService.showError(error) }
       })
   }
 
@@ -101,7 +106,7 @@ export class SubscribeDialogComponent implements OnInit {
    * to make a click action on the invisible reCaptcha components and receive the token,
    * will be executed only if recaptcha key is available
    */
-  executeRecaptcha(){
+  executeRecaptcha() {
     this.captchaRef?.execute();
   }
 

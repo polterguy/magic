@@ -36,7 +36,8 @@ export class BackendService {
   private _statusRetrieved: BehaviorSubject<Status>;
   private _versionRetrieved: BehaviorSubject<string>;
   private _latestBazarVersion: string = null;
-  public _activeCaptcha: string = null;
+  private _activeCaptcha = new BehaviorSubject<string>('');
+  public _activeCaptchaValue = this._activeCaptcha.asObservable();
 
   /**
    * To allow consumers to subscribe to authentication status changes.
@@ -469,14 +470,14 @@ export class BackendService {
   /**
    * retrieving recaptcha, if existing
    */
-  public recaptcha() {
+  public getRecaptchaKey() {
     this.httpClient.get<Response>(
       this.active.url +
       '/magic/system/auth/recaptcha-key').subscribe({
         next: (recaptcha: Response) => {
 
           // Assigning recaptcha key
-          this._activeCaptcha = recaptcha.result;
+          this._activeCaptcha.next(recaptcha.result);
         }});
   }
 }

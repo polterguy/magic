@@ -80,7 +80,9 @@ export class CreateKeypairComponent implements OnInit {
     private cryptoService: CryptoService,
     protected messageService: MessageService,
     private bazarService: BazarService) { 
-      this.recaptchaKey = this.backendService._activeCaptcha;
+      this.backendService._activeCaptchaValue.subscribe((key: string) => {
+        this.recaptchaKey = key;
+      })
     }
 
   /**
