@@ -56,6 +56,27 @@ data.connect:magic
       .lambda
          return
             result:no-such-user
+   data.read
+      table:users_roles
+      columns
+         count(*)
+            as:count
+      where
+         and
+            user.eq:x:@.arguments/*/user
+            role.eq:unconfirmed
+      limit:1
+   if
+      or
+         eq:x:@data.read/*/*/count
+            .:long:0
+         eq:x:@data.read/*/*/count
+            .:int:0
+         eq:x:@data.read/*/*/count
+            .:ulong:0
+      .lambda
+         return
+            result:no-such-user
 
 // Verifying we've got an SMTP server to use
 config.get:"magic:smtp:host"
