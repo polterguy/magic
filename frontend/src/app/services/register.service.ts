@@ -37,7 +37,7 @@ export class RegisterService {
   register(data: any) {
 
     // Invokes backend and returns observable to caller.
-    return this.httpService.post<Response>('/magic/system/auth/register', {data});
+    return this.httpService.post<Response>('/magic/system/auth/register', data);
   }
 
   /**
