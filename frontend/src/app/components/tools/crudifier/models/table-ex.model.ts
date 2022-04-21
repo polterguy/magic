@@ -54,7 +54,7 @@ export class TableEx {
   /**
    * Whether or not post invocations should be logged.
    */
-   logPost: boolean;
+  logPost: boolean;
 
   /**
    * Whether or not delete invocations should be logged.
@@ -86,6 +86,26 @@ export class TableEx {
    */
   authDelete: string;
 
+  /**
+   * reCAPTCHA requirements for invoking POST endpoint.
+   */
+  captchaPost?: number;
+
+   /**
+    * reCAPTCHA requirements for invoking GET endpoint.
+    */
+  captchaGet?: number;
+ 
+   /**
+    * reCAPTCHA requirements for invoking PUT endpoint.
+    */
+  captchaPut?: number;
+ 
+   /**
+    * reCAPTCHA requirements for invoking DELETE endpoint.
+    */
+  captchaDelete?: number;
+ 
   /**
    * Additional validators, injectables and transformers for endpoint.
    */

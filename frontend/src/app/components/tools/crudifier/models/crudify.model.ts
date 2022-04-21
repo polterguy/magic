@@ -76,6 +76,11 @@ export class Crudify {
   auth?: string;
 
   /**
+   * Captcha value requirement to be allowed to invoke endpoint.
+   */
+  captcha?: number;
+
+  /**
    * Log entry to create when endpoint is invoked.
    */
   log?: string;
