@@ -34,6 +34,29 @@ if
          site-key:x:@config.get/@config.get
          secret:x:@config.get
 
+// Verifying user has registered.
+data.connect:magic
+   data.read
+      table:users
+      columns
+         count(*)
+            as:count
+      where
+         and
+            username.eq:x:@.arguments/*/username
+      limit:1
+   if
+      or
+         eq:x:@data.read/*/*/count
+            .:long:0
+         eq:x:@data.read/*/*/count
+            .:int:0
+         eq:x:@data.read/*/*/count
+            .:ulong:0
+      .lambda
+         return
+            result:no-such-user
+
 // Verifying we've got an SMTP server to use
 config.get:"magic:smtp:host"
 if
