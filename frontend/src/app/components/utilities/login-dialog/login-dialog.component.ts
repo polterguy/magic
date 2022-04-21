@@ -67,7 +67,9 @@ export class LoginDialogComponent implements OnInit {
     private formBuilder: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public data: DialogData) {
     this.data = this.data || { allowAuthentication: true };
-    this.recaptchaKey = this.backendService._activeCaptcha;
+    this.backendService._activeCaptchaValue.subscribe((key: string) => {
+      this.recaptchaKey = key;
+    })
   }
 
   /**

@@ -115,7 +115,8 @@ export class MainComponent implements OnInit {
     });
 
     // Retrieving recaptcha key and storing in the backend service to be accessible everywhere
-    this.backendService.recaptcha();
+    // this.backendService.recaptcha();
+    this.backendService.getRecaptchaKey();
   }
 
   /**
