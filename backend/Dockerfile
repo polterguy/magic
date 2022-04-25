@@ -24,5 +24,4 @@ ENTRYPOINT ["dotnet", "backend.dll"]
 
 RUN groupadd -r magic && useradd -g magic magic
 RUN chown -R magic:magic /magic/files
-RUN chown -R magic:magic /magic/config
 USER magic
