@@ -15,7 +15,7 @@ namespace magic.backend
             WebHost.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((ctx, config) =>
                 {
-                    config.AddJsonFile("config/appsettings.json", optional: false, reloadOnChange: true);
+                    config.AddJsonFile("files/config/appsettings.json", optional: false, reloadOnChange: true);
                 })
                 .UseStartup<Startup>()
                 .Build()

@@ -12,7 +12,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: ThisIsNotAGoodPassword
     volumes:
-      - database_my:/var/lib/mysql
+      - database_mysql:/var/lib/mysql
 
   backend:
     image: servergardens/magic-backend:latest
@@ -23,9 +23,7 @@ services:
     ports:
       - "4444:4444"
     volumes:
-      - etc_magic_folder_my:/magic/files/etc
-      - modules_magic_folder_my:/magic/files/modules
-      - config_magic_folder_my:/magic/config
+      - magic_files_mysql:/magic/files
 
   frontend:
     image: servergardens/magic-frontend:latest
@@ -37,7 +35,5 @@ services:
       - "5555:80"
 
 volumes:
-  database_my:
-  etc_magic_folder_my:
-  modules_magic_folder_my:
-  config_magic_folder_my:
+  database_mysql:
+  magic_files_mysql:
