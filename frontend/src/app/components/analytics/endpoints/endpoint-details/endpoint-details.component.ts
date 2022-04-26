@@ -290,6 +290,7 @@ export class EndpointDetailsComponent implements OnInit {
           case 'offset':
           case 'order':
           case 'direction':
+          case 'recaptcha':
             return controlArguments;
           default:
             return !controlArguments;
