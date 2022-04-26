@@ -103,7 +103,7 @@
                   colspan="3">
                   <div class="w-100 details-row"
                     [@detailExpand]="el.expanded ? 'expanded' : 'collapsed'">
-                    <div class="w-100 py-3" *ngIf="shouldDisplayDetails(el)">
+                    <div class="w-100 py-3">
                       <app-endpoint-details [endpoint]="el"></app-endpoint-details>
                     </div>
                   </div>
@@ -114,7 +114,7 @@
                 mat-row
                 [ngClass]="(el.expanded ? 'selected ' + el.type : el.type) + (el.error ? ' error' : '')"
                 class="expandable-row"
-                (click)="toggleDetails(el);el.expanded = !el.expanded"
+                (click)="el.expanded = !el.expanded"
                 *matRowDef="let el; columns: displayedColumns;"></tr>
 
               <tr
