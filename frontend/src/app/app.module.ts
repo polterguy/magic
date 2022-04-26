@@ -37,6 +37,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
@@ -155,6 +156,7 @@ import { CrudSqlAddArgumentDialogComponent } from './components/tools/crudifier/
 import { CreateAssumptionTestDialogComponent } from './components/analytics/endpoints/endpoint-details/create-assumption-test-dialog/create-assumption-test-dialog.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
+import { WarningComponent } from './components/tools/ide/warning/warning.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -245,7 +247,8 @@ import { environment } from '../environments/environment';
     FileActionsComponent,
     FolderActionsComponent,
     GeneralActionsComponent,
-    IncompatibleFileDialogComponent
+    IncompatibleFileDialogComponent,
+    WarningComponent
   ],
   imports: [
     FormsModule,
@@ -275,6 +278,7 @@ import { environment } from '../environments/environment';
     MatTableModule,
     MatAutocompleteModule,
     MatSnackBarModule,
+    MatBottomSheetModule,
     MatExpansionModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,
