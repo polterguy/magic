@@ -37,6 +37,8 @@ import { IncompatibleFileDialogComponent } from './incompatible-file-dialog/inco
 
 // File types extensions.
 import fileTypes from 'src/app/codemirror/file-types.json';
+import { WarningComponent } from './warning/warning.component';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
 
 /**
  * IDE component for editing code.
@@ -170,7 +172,8 @@ export class IdeComponent implements OnInit, OnDestroy {
     private messageService: MessageService,
     private endpointService: EndpointService,
     private ngZone: NgZone,
-    private dialog: MatDialog) { }
+    private dialog: MatDialog,
+    private bottomSheet: MatBottomSheet) { }
 
   /**
    * OnInit implementation.
@@ -359,11 +362,22 @@ export class IdeComponent implements OnInit, OnDestroy {
 
   /**
    * Invoked when user wants to toggle displaying of system files.
+   * @callback systemFiles To show warning 
    */
   toggleSystemFiles() {
     this.updateFileObject('/');
+    if (this.systemFiles) {
+      this.showWarning('system');
+    }
   }
-
+  
+  /**
+   * To show warning if system files option is enabled.
+   * @param location string, to be system or file
+   */
+  showWarning(location: string): void {
+    this.bottomSheet.open(WarningComponent, { data: { location: location } });
+  }
   /*
    * Returns all folders in system to caller.
    */
@@ -632,7 +646,24 @@ export class IdeComponent implements OnInit, OnDestroy {
           next: (files: string[]) => {
             functor(files || [], false);
             if (folder === '/') {
+
+              // Preparing a list of file systems,
+              // if file system is enabled
+              const name1: any = [];
+              if (this.systemFiles) {
+                name1.push(this.root.children.filter(newData => !this.dataSource.data.map(oldData => oldData.name).includes(newData.name)));
+              }
+
               this.dataSource.data = this.root.children;
+
+              // if file system is enabled, then set a new field as systemFile to true
+              if (this.systemFiles) {
+                this.dataSource.data.map(x => name1[0].forEach(element => {
+                  if (x.name === element.name) {
+                    x['systemFile'] = true;
+                  }
+                }))
+              }
             } else {
               this.dataBindTree();
             }
