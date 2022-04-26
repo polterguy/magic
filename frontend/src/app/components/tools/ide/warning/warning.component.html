@@ -1,7 +1,7 @@
 <h3 class="warning">Attention please!</h3>
 <ng-container *ngIf="data?.location === 'system'">
-    <p>You have enabled the "system files".</p>
-    <p>Please be aware that mis-modification can result in corruption of your entire backend.</p>
+    <p>You have enabled editing system files.</p>
+    <p>Modifying your system files can result in corruption of your system beyond what's easily recovered from.</p>
 </ng-container>
 <ng-container *ngIf="data?.location === 'file'">
     <p>You are modifying a "system file", which can result in corruption of your entire backend.</p>
