@@ -214,7 +214,7 @@
           <ng-container *ngIf="backendService.active?.access.tasks.read">
             <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendService.active?.setupDone ? '/tasks' : null">
               <mat-icon>calendar_today</mat-icon>
-              <span class="title">Tasks</span>
+              <span class="title">Task Scheduler</span>
             </a>
           </ng-container>
         </mat-list-option>
