@@ -31,9 +31,6 @@ import { FeedbackService } from 'src/app/services/feedback.service';
 })
 export class EndpointsComponent implements OnInit {
 
-  // List of log item IDs that we're currently viewing details for.
-  private displayDetails: string[] = [];
-
   // Filter for which items to display.
   private filter: string = '';
 
@@ -94,7 +91,6 @@ export class EndpointsComponent implements OnInit {
     this.filterFormControl.valueChanges
       .pipe(debounceTime(400), distinctUntilChanged())
       .subscribe((query: any) => {
-        this.displayDetails = [];
         this.filter = query;
       });
 
@@ -119,31 +115,7 @@ export class EndpointsComponent implements OnInit {
    * Clears the current filter.
    */
   clearFilter() {
-    this.displayDetails = [];
     this.filterFormControl.setValue('');
-  }
-
-  /**
-   * Toggles details about one specific endpoint item.
-   * 
-   * @param el Log item to toggle details for
-   */
-  toggleDetails(el: Endpoint) {
-    const idx = this.displayDetails.indexOf(el.verb + el.path);
-    if (idx !== -1) {
-      this.displayDetails.splice(idx, 1);
-    } else {
-      this.displayDetails.push(el.verb + el.path);
-    }
-  }
-
-  /**
-   * Returns true if details for specified endpoint item should be displayed.
-   * 
-   * @param el Endpoint item to display details for
-   */
-  shouldDisplayDetails(el: Endpoint) {
-    return this.displayDetails.filter(x => x === el.verb + el.path).length > 0;
   }
 
   /**
