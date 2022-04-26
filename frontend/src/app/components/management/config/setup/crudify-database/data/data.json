@@ -686,7 +686,7 @@
          "value.like": "string"
       },
       {
-         "type.eq": "string"
+         "user.eq": "string"
       }
    ]
  },
