@@ -6,26 +6,28 @@
 <form [formGroup]="extraInfoForm" novalidate class="user-extra-form">
     <div mat-dialog-content>
         <div *ngFor="let item of data?.extra">
-            <mat-form-field class="w-100" appearance="outline">
-                <mat-label class="dark text-capitalized">{{item.type}}</mat-label>
-                <input
-                matInput
-                [formControlName]="item.type"
-                [name]="item.type"
-                [autocomplete]="item.type">
-                <button mat-icon-button matSuffix color="warn" *ngIf="data?.action === 'delete'"
-                matTooltip="Delete this record"
-                matTooltipPosition="above"
-                (click)="deleteExtra(item.type, item.user)">
-                    <mat-icon>delete</mat-icon>
-                </button>
-                <button mat-icon-button matSuffix *ngIf="item?.new"
-                matTooltip="Remove this record"
-                matTooltipPosition="above"
-                (click)="removeNewField(item)">
-                    <mat-icon>close</mat-icon>
-                </button>
-            </mat-form-field>
+            <ng-container *ngIf="item.type !== ''">
+                <mat-form-field class="w-100" appearance="outline">
+                    <mat-label class="dark text-capitalized">{{item.type}}</mat-label>
+                    <input
+                    matInput
+                    [formControlName]="item.type"
+                    [name]="item.type"
+                    [autocomplete]="item.type">
+                    <button mat-icon-button matSuffix color="warn" *ngIf="data?.action === 'delete'"
+                    matTooltip="Delete this record"
+                    matTooltipPosition="above"
+                    (click)="deleteExtra(item.type, item.user)">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                    <button mat-icon-button matSuffix *ngIf="item?.new"
+                    matTooltip="Remove this record"
+                    matTooltipPosition="above"
+                    (click)="removeNewField(item)">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </mat-form-field>
+            </ng-container>
         </div>
 
         <ng-container *ngIf="data?.action === 'add'">
