@@ -26,6 +26,7 @@ import { JailUserDialogComponent } from './jail-user-dialog/jail-user-dialog.com
 import { AuthFilter } from 'src/app/components/management/auth/models/auth-filter.model';
 import { AddToRoleDialogComponent } from './add-to-role-dialog/add-to-role-dialog.component';
 import { ExtraInfoDialogComponent } from './extra-info-dialog/extra-info-dialog.component';
+import { element } from 'protractor';
 
 /**
  * Users component for administrating users in the system.
@@ -198,6 +199,10 @@ export class UsersComponent implements OnInit {
                 user['user_extra'] = [];
               }
             });
+          } else {
+            if (username === user.username) {
+              user['user_extra'] = [];
+            }
           }
         })
         this.cdr.detectChanges();
@@ -396,6 +401,7 @@ export class UsersComponent implements OnInit {
       if (username) {
         this.feedbackService.showInfo(`'${username}' successfully created`)
         this.getUsers();
+        this.getUserExtra(username);
       }
     });
   }
