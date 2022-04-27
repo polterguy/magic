@@ -8,6 +8,10 @@ import { MAT_BOTTOM_SHEET_DATA } from '@angular/material/bottom-sheet';
 })
 export class WarningComponent implements OnInit {
 
+  /**
+   * 
+   * @param data to contain location: file || system, currently system is in use, but can be extended to file if needed
+   */
   constructor(@Inject(MAT_BOTTOM_SHEET_DATA) public data: { location: string }) { }
 
   ngOnInit(): void {

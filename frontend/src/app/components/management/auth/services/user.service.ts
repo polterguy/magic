@@ -7,7 +7,7 @@
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
-import { User } from '../models/user.model';
+import { User, User_Extra } from '../models/user.model';
 import { Count } from '../../../../models/count.model';
 import { UserRoles } from '../models/user-roles.model';
 import { Response } from 'src/app/models/response.model';
@@ -158,5 +158,40 @@ export class UserService {
    */
   public generateResetPasswordLink(username: string) {
     return this.httpService.get<AuthenticateResponse>('/magic/system/auth/reset-password?username=' + encodeURIComponent(username));
+  }
+
+  /**
+   * Retrieving extra details of each user
+   * @param username username of the user
+   */
+  public getUserExtra(username: string) {
+    return this.httpService.get<User_Extra>('/magic/modules/magic/users_extra?user.eq=' + encodeURIComponent(username));
+  }
+
+  /**
+   * Deleting extra details of each user
+   * @param type type of the field to be deleted,
+   * @param username username of the user
+   */
+  public deleteExtra(type: string, username: string) {
+    return this.httpService.delete<User_Extra>('/magic/modules/magic/users_extra?type=' + encodeURIComponent(type) + '&user=' + encodeURIComponent(username));
+  }
+
+  /**
+   * Deleting extra details of each user
+   * @param type type of the field to be deleted,
+   * @param username username of the user
+   */
+  public editExtra(fields: User_Extra) {
+    return this.httpService.put<User_Extra>('/magic/modules/magic/users_extra', fields);
+  }
+
+  /**
+   * Deleting extra details of each user
+   * @param type type of the field to be deleted,
+   * @param username username of the user
+   */
+  public addExtra(fields: User_Extra) {
+    return this.httpService.post<User_Extra>('/magic/modules/magic/users_extra', fields);
   }
 }

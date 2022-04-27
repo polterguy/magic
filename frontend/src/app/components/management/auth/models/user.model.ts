@@ -29,3 +29,27 @@ export class User {
   roles?: string[];
 }
   
+/**
+ * User extra model for retrieving extra info from the users from your backend.
+ */
+export class User_Extra {
+  /**
+   * Type of the given field
+   */
+  type: string;
+
+  /**
+   * Email address of user, to be username
+   */
+  user: string;
+
+  /**
+   * The value of the given type
+   */
+  value: string;
+
+  /**
+   * Only for temporary use when adding new field
+   */
+  new?: boolean
+}

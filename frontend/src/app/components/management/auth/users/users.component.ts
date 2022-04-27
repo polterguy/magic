@@ -17,7 +17,7 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 import { Count } from 'src/app/models/count.model';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from '../../../../services/feedback.service';
-import { User } from 'src/app/components/management/auth/models/user.model';
+import { User, User_Extra } from 'src/app/components/management/auth/models/user.model';
 import { AuthenticateResponse } from '../models/authenticate-response.model';
 import { NewUserDialogComponent } from './new-user-dialog/new-user-dialog.component';
 import { UserService } from 'src/app/components/management/auth/services/user.service';
@@ -25,6 +25,7 @@ import { UserRoles } from 'src/app/components/management/auth/models/user-roles.
 import { JailUserDialogComponent } from './jail-user-dialog/jail-user-dialog.component';
 import { AuthFilter } from 'src/app/components/management/auth/models/auth-filter.model';
 import { AddToRoleDialogComponent } from './add-to-role-dialog/add-to-role-dialog.component';
+import { ExtraInfoDialogComponent } from './extra-info-dialog/extra-info-dialog.component';
 
 /**
  * Users component for administrating users in the system.
@@ -36,7 +37,7 @@ import { AddToRoleDialogComponent } from './add-to-role-dialog/add-to-role-dialo
   animations: [
     trigger('detailExpand', [
       state('collapsed', style({height: '0px', minHeight: '0'})),
-      state('expanded', style({height: '*'})),
+      state('expanded', style({height: '*', minHeight: '180px'})),
       transition('expanded <=> collapsed', animate('0.75s cubic-bezier(0.4, 0.0, 0.2, 1)')),
     ])
   ]
@@ -48,6 +49,8 @@ export class UsersComponent implements OnInit {
    */
   users: User[] = [];
   expandedElement: User | null;
+
+  user_extra: User_Extra[] = [];
 
   /**
    * Number of users matching filter in the backend.
@@ -160,6 +163,7 @@ export class UsersComponent implements OnInit {
    * Toggles the details view for a single user.
    * 
    * @param user User to toggle details for
+   * @callback getUserExtra To get extra details about the user
    */
   toggleDetails(user: User) {
     const idx = this.selectedUsers.indexOf(user);
@@ -168,9 +172,34 @@ export class UsersComponent implements OnInit {
     } else {
       this.selectedUsers.push(user);
       this.userService.getRoles(user.username).subscribe({
-        next: (roles: UserRoles[]) => user.roles = (roles || []).map(x => x.role),
+        next: (roles: UserRoles[]) => { 
+          user.roles = (roles || []).map(x => x.role);
+          this.getUserExtra(user.username);
+        },
         error: (error: any) =>this.feedbackService.showError(error)});
     }
+  }
+
+  /**
+   * Toggles the extra details view for a single user.
+   * 
+   * @param username User to toggle extra details for
+   */
+  getUserExtra(username: string){
+    this.userService.getUserExtra(username).subscribe({
+      next: (res: any) => { 
+        this.user_extra = res;
+      },
+      error: (error: any) =>this.feedbackService.showError(error)});
+  }
+
+  openExtraInfoDialog(user_extra: User_Extra, action: string) {
+    this.dialog.open(ExtraInfoDialogComponent, { data: { extra: user_extra, action: action }, width: '500px' })
+    .afterClosed().subscribe((result: any) => {
+      if (result === 'updated') {
+        this.getUsers();
+      }
+    })
   }
 
   /**
