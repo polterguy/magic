@@ -39,6 +39,7 @@ export class ExtraInfoDialogComponent implements OnInit {
    * @param fb Form Builder
    * @param userService User service to access the endpoints
    * @param feedbackService To show feedback after invokation
+   * @param cdr To detect changes - used only inside the createNewFields to check for changes in ngIf
    */
   constructor(
     private dialogRef: MatDialogRef<ExtraInfoDialogComponent>,
@@ -57,6 +58,10 @@ export class ExtraInfoDialogComponent implements OnInit {
     this.setFormFields();
   }
 
+  /**
+   * Sets dynamic fields based on the existing data.
+   * Sets all fields to disable, if the action is not equal to 'edit'
+   */
   setFormFields() {
     this.data.extra.forEach(element => {
       this.extraInfoForm.setControl(element.type, new FormControl(element.value));
@@ -65,7 +70,9 @@ export class ExtraInfoDialogComponent implements OnInit {
   }
 
   /**
-   * Stores the newly added fields
+   * Stores the newly added fields.
+   * Updates the original array of data.
+   * Creates a new array containing only newly added fields
    */
   saveNewFields() {
     this.extraInfoForm.setControl(this.tempType, new FormControl(this.tempValue));
@@ -86,13 +93,21 @@ export class ExtraInfoDialogComponent implements OnInit {
     this.extraInfoForm.disable();
   }
 
+  /**
+   * Removes the newly added field, if clicked.
+   * Updates both original array of data and the array containing new fields
+   */
   removeNewField(field: User_Extra) {
     this.extraInfoForm.removeControl(field.type);
     this.data.extra = this.data.extra.filter(x => x.type !== field.type);
     this.newFields = this.newFields.filter(x => x.type !== field.type);
   }
 
-  x(){
+  /**
+   * To show dynamic fields for receiving new  information.
+   * Sets focus on the field
+   */
+  createNewFields(){
     this.fieldsToBeAdded = true;
     this.cdr.detectChanges();
     this.newInput.nativeElement.focus();
