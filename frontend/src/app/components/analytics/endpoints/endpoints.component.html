@@ -103,7 +103,7 @@
                   colspan="3">
                   <div class="w-100 details-row"
                     [@detailExpand]="el.expanded ? 'expanded' : 'collapsed'">
-                    <div class="w-100 py-3">
+                    <div class="w-100 py-3" *ngIf="el.expanded">
                       <app-endpoint-details [endpoint]="el"></app-endpoint-details>
                     </div>
                   </div>
