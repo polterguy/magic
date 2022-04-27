@@ -52,7 +52,7 @@
                 </div>
                 <button mat-flat-button (click)="saveNewFields()" class="w-100" color="primary" [disabled]="temptType === '' || tempValue === ''">Save new fields</button>
             </ng-container>
-            <button mat-flat-button (click)="x()" *ngIf="!fieldsToBeAdded" class="w-100">
+            <button mat-flat-button (click)="createNewFields()" *ngIf="!fieldsToBeAdded" class="w-100">
                 <mat-icon>add</mat-icon>
                 Add extra field
             </button>
