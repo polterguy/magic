@@ -158,6 +158,47 @@
                     <mat-icon>delete</mat-icon>
                     Delete user
                   </button>
+
+                  <button
+                    mat-menu-item 
+                    [matMenuTriggerFor]="menuUserExtra"
+                    [disabled]="el.username === 'root'">
+                    <mat-icon>manage_accounts</mat-icon>
+                    Manage extra info
+                  </button>
+                </mat-menu>
+
+                <mat-menu #menuUserExtra="matMenu">
+
+                  <button
+                    mat-menu-item
+                    [disabled]="el.username === 'root' || user_extra?.length === 0"
+                    matTooltipPosition="after"
+                    matTooltip="Add extra details"
+                    (click)="openExtraInfoDialog(user_extra, 'add')">
+                    <mat-icon>person_add</mat-icon>
+                    Add extra info
+                  </button>
+
+                  <button
+                    mat-menu-item
+                    [disabled]="el.username === 'root' || user_extra?.length === 0"
+                    matTooltipPosition="after"
+                    matTooltip="Edit extra details"
+                    (click)="openExtraInfoDialog(user_extra, 'edit')">
+                    <mat-icon>drive_file_rename_outline</mat-icon>
+                    Edit extra info
+                  </button>
+
+                  <button
+                    mat-menu-item
+                    [disabled]="el.username === 'root' || !backendService.active?.access.auth.delete_user || user_extra?.length === 0"
+                    matTooltipPosition="after"
+                    matTooltip="Delete extra details"
+                    (click)="openExtraInfoDialog(user_extra, 'delete')">
+                    <mat-icon>delete</mat-icon>
+                    Delete extra info
+                  </button>
                 </mat-menu>
               </div>
             </div>
@@ -177,6 +218,14 @@
               </mat-chip-list>
             </div>
 
+            <div class="pb-3">
+              <div *ngFor="let extra of user_extra;let index = index" 
+              [class.mb-2]="index !== (user_extra.length - 1)">
+                <span class="d-block text-muted text-capitalized">{{extra?.type}}</span>
+                <span class="d-block">{{extra?.value}}</span>
+              </div>
+            </div>
+
           </div>
 
         </td>
@@ -185,7 +234,7 @@
       <tr
         mat-row
         [ngClass]="(expandedElement === el ? 'selected ' : '') + 'user-row'"
-        class="expandable-row"
+        class="expandable-row users-table-row"
         (click)="toggleDetails(el);expandedElement = expandedElement === el ? null : el"
         *matRowDef="let el; columns: displayedColumns;"></tr>
 

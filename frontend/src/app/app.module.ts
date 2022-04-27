@@ -157,6 +157,7 @@ import { CreateAssumptionTestDialogComponent } from './components/analytics/endp
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { WarningComponent } from './components/tools/ide/warning/warning.component';
+import { ExtraInfoDialogComponent } from './components/management/auth/users/extra-info-dialog/extra-info-dialog.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -248,7 +249,8 @@ import { WarningComponent } from './components/tools/ide/warning/warning.compone
     FolderActionsComponent,
     GeneralActionsComponent,
     IncompatibleFileDialogComponent,
-    WarningComponent
+    WarningComponent,
+    ExtraInfoDialogComponent
   ],
   imports: [
     FormsModule,
