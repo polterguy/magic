@@ -10,7 +10,7 @@ import { PlatformLocation } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 
 // Application specific imports.
@@ -106,7 +106,8 @@ export class UsersComponent implements OnInit {
     public backendService: BackendService,
     private userService: UserService,
     private clipboard: Clipboard,
-    private dialog: MatDialog) { }
+    private dialog: MatDialog, 
+    private cdr: ChangeDetectorRef ) { }
 
   /**
    * Implementation of OnInit.
@@ -177,29 +178,46 @@ export class UsersComponent implements OnInit {
           this.getUserExtra(user.username);
         },
         error: (error: any) =>this.feedbackService.showError(error)});
+      }
     }
-  }
 
   /**
    * Toggles the extra details view for a single user.
    * 
    * @param username User to toggle extra details for
    */
-  getUserExtra(username: string){
+  getUserExtra(username: string) {
     this.userService.getUserExtra(username).subscribe({
-      next: (res: any) => { 
-        this.user_extra = res;
+      next: (res: any) => {
+        this.users.forEach((user: any) => {
+          if (res) {
+            res.forEach((element: any) => {
+              if (user.username === element.user) {
+                user['user_extra'] = res;
+              } else if (!user.user_extra) {
+                user['user_extra'] = [];
+              }
+            });
+          }
+        })
+        this.cdr.detectChanges();
       },
-      error: (error: any) =>this.feedbackService.showError(error)});
+      error: (error: any) => this.feedbackService.showError(error)
+    });
   }
 
-  openExtraInfoDialog(user_extra: User_Extra, action: string) {
-    this.dialog.open(ExtraInfoDialogComponent, { data: { extra: user_extra, action: action }, width: '500px' })
-    .afterClosed().subscribe((result: any) => {
-      if (result === 'updated') {
-        this.getUsers();
-      }
+  openExtraInfoDialog(user_extra: User_Extra[], action: string, user?: string) {
+    this.dialog.open(ExtraInfoDialogComponent, {
+      data: {
+        extra: user_extra.length !== 0 ? user_extra : [{ user: user, type: '', value: '' }], action: action
+      },
+      width: '500px'
     })
+      .afterClosed().subscribe((result: any) => {
+        if (result === 'updated') {
+          this.getUsers();
+        }
+      })
   }
 
   /**
