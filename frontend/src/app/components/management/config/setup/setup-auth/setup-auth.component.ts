@@ -92,6 +92,7 @@ export class SetupAuthComponent implements OnInit {
         this.configService.getGibberish(50, 100).subscribe({
           next: (gibberish: Response) => {
             this.config.magic.auth.secret = gibberish.result;
+            this.config.magic.auth.recaptcha ? '' : this.config.magic.auth.recaptcha = {};
             this.json = JSON.stringify(this.config, null, 2);
           },
           error: (error: any) => this.feedbackService.showError(error)});
