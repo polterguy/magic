@@ -123,18 +123,17 @@
             <mat-label>Email</mat-label>
             <input
               matInput
-              type="text"
+              type="email"
               autocomplete="off"
-              [(ngModel)]="email">
+              [(ngModel)]="email" [email]="true">
           </mat-form-field>
 
         </div>
-
         <div class="d-flex justify-content-end">
           <button
             mat-raised-button
             color="primary"
-            [disabled]="!template || name === '' || apiUrl === '' || frontendUrl === '' || email === ''"
+            [disabled]="!template || name === '' || apiUrl === '' || frontendUrl === '' || !validateEmail()"
             (click)="generate()">
             Generate
           </button>

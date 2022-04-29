@@ -164,6 +164,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
     // Retrieving system report from backend.
     this.diagnosticsService.getSystemReport().subscribe({
       next: (report: SystemReport[]) => {
+        // emptying arrays to prevent displaying wrong information while switching between backends,
+        // if not, when system information is not available, the arrays are still filled with the previous system's information data.
+        this.chartsList = [];
+        this.chartData = {};
+        this.systemReportDisplayable = null;
 
         // Allowing us to retrieve system report again.
         this._isRetrievingSystemReport = false;
@@ -182,8 +187,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
         // Preparing data with variable key
         if (report["timeshifts"]) {
-          this.chartsList = [];
-          this.chartData = {};
           Object.keys(report['timeshifts']).forEach((el: any) => {
 
             // Preparing chart list for setting user preferences

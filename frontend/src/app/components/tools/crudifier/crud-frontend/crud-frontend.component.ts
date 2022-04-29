@@ -13,6 +13,7 @@ import { FeedbackService } from 'src/app/services/feedback.service';
 import { NameEmailModel } from '../../../../models/name-email.model';
 import { ConfigService } from 'src/app/services/config.service';
 import { CrudFrontendExtraComponent } from './crud-frontend-extra/crud-frontend-extra.component';
+import { Validators } from '@angular/forms';
 
 /**
  * Crudifier component for generating a frontend from
@@ -57,7 +58,7 @@ export class CrudFrontendComponent implements OnInit {
   /**
    * Email address of user, required to create SSL keypair during Docker deployment process.
    */
-  email: string;
+  email: string = '';
 
   /**
    * Copyright notice to use for generated files.
@@ -120,19 +121,30 @@ export class CrudFrontendComponent implements OnInit {
 
   /**
    * Invoked when user clicks the generate button.
+   * Check the email address' validity to prevent server error
    */
   generate() {
-    this.messageService.sendMessage({
-      name: 'app.generator.generate-frontend',
-      content: {
-        template: this.template,
-        name: this.name,
-        copyright: this.copyright,
-        apiUrl: this.apiUrl,
-        frontendUrl: this.frontendUrl,
-        email: this.email,
-        deployLocally: this.deployLocally,
-      }
-    });
+    if (this.validateEmail()) {
+      this.messageService.sendMessage({
+        name: 'app.generator.generate-frontend',
+        content: {
+          template: this.template,
+          name: this.name,
+          copyright: this.copyright,
+          apiUrl: this.apiUrl,
+          frontendUrl: this.frontendUrl,
+          email: this.email,
+          deployLocally: this.deployLocally,
+        }
+      });
+    }
+  }
+
+  /**
+   * Check for the basic structure of an email address.
+   * @returns boolean
+   */
+  validateEmail() {
+    return /^\S+@\S+$/.test(this.email);
   }
 }

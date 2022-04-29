@@ -50,7 +50,7 @@ export class ExtraInfoDialogComponent implements OnInit {
     private cdr: ChangeDetectorRef) { }
 
   /**
-   * initialization of the our dynamic form
+   * initialization of our dynamic form
    */
   public extraInfoForm = this.fb.group({});
 

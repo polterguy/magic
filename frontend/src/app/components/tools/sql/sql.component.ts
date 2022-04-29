@@ -429,6 +429,15 @@ export class SqlComponent implements OnInit {
   }
 
   /**
+   * Exports current result set as a SQL file, downloading it to the client.
+   * 
+   * @param result What result set to export
+   */
+   exportAsSql(result: any) {
+    
+  }
+
+  /**
    * Returns the CSS class for a row in the data table.
    * 
    * @param row Row to retrieve CSS class for

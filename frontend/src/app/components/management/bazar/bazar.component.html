@@ -102,7 +102,7 @@
       <div class="col-12" *ngIf="manifests.length === 0">
         <mat-card>
           <mat-card-content>
-            <h4 class="mb-2">You don't have any installed service yet.</h4>
+            <h4 class="mb-2">You don't have any installed services yet.</h4>
             <p class="text-muted">Browse the recommended services to find what suits your application the best.</p>
           </mat-card-content>
         </mat-card>
@@ -125,8 +125,8 @@
               <mat-list dense>
                 <div mat-subheader>Installation details:</div>
                 <mat-list-item>
-                  <div mat-line>{{idx.installed_by}}</div>
-                  <div mat-line> {{idx.installed | since}} </div>
+                  <div mat-line>{{idx?.installed_by}}</div>
+                  <div mat-line> {{idx?.installed ? (idx?.installed | since) : ''}} </div>
                 </mat-list-item>
               </mat-list>
 

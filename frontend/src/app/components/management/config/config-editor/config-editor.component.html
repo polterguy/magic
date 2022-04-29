@@ -23,12 +23,12 @@
 <mat-card-subtitle>View &amp; edit your server's configuration</mat-card-subtitle>
 
 <ngx-codemirror
-  *ngIf="config"
+  *ngIf="configExists"
   [(ngModel)]="config"
   [options]="cmOptions.json">
 </ngx-codemirror>
 
-<div *ngIf="config" class="text-right mt-3">
+<div *ngIf="configExists" class="text-right mt-3">
 
   <button
     mat-raised-button

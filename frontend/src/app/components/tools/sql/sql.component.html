@@ -248,7 +248,13 @@
             </table>
           </div>
 
-          <div class="button-strip">
+          <div class="d-flex justify-content-end">
+            <button
+              mat-raised-button
+              (click)="exportAsSql(idxResult)">
+              Export as SQL file
+            </button>
+            <div class="p-1"></div>
             <button
               mat-raised-button
               (click)="exportAsCsv(idxResult)">
