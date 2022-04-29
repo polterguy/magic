@@ -1,7 +1,7 @@
 
 <!-- If user is authenticated and has role of "root" -->
 <ng-container *ngIf="backendService.active?.token && backendService.active?.token?.in_role('root')">
-  <div class="row">
+  <div class="row" *ngIf="systemReportDisplayable !== null">
     <div class="col-12 mb-general">
 
       <!-- Title and preferences -->
@@ -171,10 +171,20 @@
       </div>
     </div>
   </div>
+  <ng-container *ngIf="systemReportDisplayable === null">
+    <div class="d-flex flex-column align-items-center justify-content-center text-center h-100 w-100 welcome-section">
+      <h1 class="mat-title">Welcome to Aista Magic Cloud</h1>
+      <p class="mat-subheading-2 mb-4">Your backend is not configured yet.</p>
+      <div class="mt-4">
+        <p class="mb-0">Configure your backend to see a full report on your system here.</p>
+        <h3>Navigate to the <a routerLink="/config">config page.</a></h3>
+      </div>
+    </div>
+  </ng-container>
 </ng-container>
 
 <!-- If user is authenticated but doesn't have "root" role -->
-<ng-container *ngIf="backendService.active?.token && !backendService.active?.token?.in_role('root')">
+<ng-container *ngIf="(backendService.active?.token && !backendService.active?.token?.in_role('root'))">
   <div class="d-flex flex-column align-items-center justify-content-center text-center h-100 w-100 welcome-section">
     <h1 class="mat-title">Welcome to Aista Magic Cloud</h1>
     <p class="mat-subheading-2 mb-4">Navigate through pages to see how you can interact with the system.</p>

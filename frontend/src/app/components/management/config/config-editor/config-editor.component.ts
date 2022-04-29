@@ -36,6 +36,15 @@ export class ConfigEditorComponent implements OnInit {
   public config: string = null;
 
   /**
+   * By default Ctrl-Z removes all the text from the editor, if there is no more changed to undo, 
+   * which results in config variable to set to an empty string,
+   * and therefore removing the editor.
+   * To prevent that from happening, we set a new variable and change the condition to match this.
+   * Will be true if loadConfig function has a value
+   */
+  public configExists: boolean = false;
+
+  /**
    * Creates an instance of your component.
    * 
    * @param feedbackService Needed to display feedback to user
@@ -66,7 +75,12 @@ export class ConfigEditorComponent implements OnInit {
    */
   loadConfig() {
     this.configService.loadConfig().subscribe({
-      next: (res: any) => this.config = JSON.stringify(res, null, 2),
+      next: (res: any) => { 
+        this.config = JSON.stringify(res, null, 2); 
+        if (res) {
+          this.configExists = true; 
+        }
+      },
       error: (error: any) => this.feedbackService.showError(error)});
   }
 

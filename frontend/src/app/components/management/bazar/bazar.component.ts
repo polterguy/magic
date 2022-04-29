@@ -434,7 +434,7 @@ export class BazarComponent implements OnInit, OnDestroy {
                       idx.new_version = version;
                       if (!hasUpdates) {
                         hasUpdates = true;
-                        this.feedbackService.showInfo('You have apps that needs to be updated, scroll to the bottom to see the list of apps that needs updating');
+                        this.feedbackService.showInfo('You have apps that needs to be updated, check your installed apps to see which one needs updating');
                       }
                     }
                   },

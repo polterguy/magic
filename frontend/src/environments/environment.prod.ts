@@ -15,5 +15,5 @@ export const environment = {
       password: 'root',
      },
   ],
-  bazarUrl: 'https://magic-api.aista.com'
+  bazarUrl: 'https://api.aista.com'
 };
