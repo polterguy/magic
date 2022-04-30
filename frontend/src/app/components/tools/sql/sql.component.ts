@@ -450,7 +450,7 @@ export class SqlComponent implements OnInit {
           const value = result.columns[key]
           headContent.push(value)
         });
-        columns = 'insert into ' + tableName + ' (' + headContent + ',createdAt)';
+        columns = 'insert into ' + tableName + ' (' + headContent + ')';
   
         result.rows.forEach((element: any) => {
           if (element.details === true) {
@@ -458,33 +458,36 @@ export class SqlComponent implements OnInit {
           }
         });
   
-        Object.keys(valueContent).forEach((key, index) => {
+        Object.keys(valueContent).forEach((key) => {
           const value = valueContent[key];
   
           for (let i = 0; i < Object.values(value).length; i++) {
-            const element = Object.values(value)[i];
+            let element = Object.values(value)[i];
   
             if (element) {
               if (i < Object.values(value).length - 1) {
                 if (typeof element === 'string') {
-                  insertValue += '"' + element + '",';
+                  insertValue += '"' + element.split('"').join('""').split('\r').join('\\r').split('\n').join('\\n') + '",';
                 } else {
                   insertValue += element + ',';
                 }
               } else {
                 if (typeof element === 'string') {
-                  insertValue += '"' + element + '"';
+                  insertValue += '"' + element.split('"').join('""').split('\r').join('\\r').split('\n').join('\\n') + '"';
                 } else {
                   insertValue += element;
                 }
               }
+            } else {
+              insertValue += 'null,';
             }
           }
   
-          rowContent.push(columns + ' values (' + insertValue + ') \r\n');
+          rowContent.push(columns + ' values (' + insertValue.substring(0, insertValue.length - 1) + ')');
+          insertValue = '';
         });
   
-        this.saveAsFile(rowContent, 'sql-export.sql', 'text/plain');
+        this.saveAsFile(rowContent.join(';\r\n') + ';\r\n', 'import-into-' + tableName +'.sql', 'text/plain');
       }
     });
   }
