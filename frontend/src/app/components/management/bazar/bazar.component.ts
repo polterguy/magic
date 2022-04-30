@@ -32,6 +32,7 @@ import { ViewAppDialogComponent } from './view-app-dialog/view-app-dialog.compon
 import { SubscribeDialogComponent } from './subscribe-dialog/subscribe-dialog.component';
 import { ViewReadmeDialogComponent } from './view-readme-dialog/view-readme-dialog.component';
 import { ViewInstalledAppDialogComponent } from './view-installed-app-dialog/view-installed-app-dialog.component';
+import { ConfirmEmailAddressDialogComponent } from './view-app-dialog/confirm-email-address-dialog/confirm-email-address-dialog.component';
 
 /**
  * Bazar component allowing you to obtain additional Micro Service backend
@@ -266,8 +267,12 @@ export class BazarComponent implements OnInit, OnDestroy {
       data: app,
       width: '80%',
     });
-    dialogRef.afterClosed().subscribe(() => {
-      this.loadManifests();
+    dialogRef.afterClosed().subscribe((result: any) => {
+
+      // Only if result is not undefined or null the user uninstalled the app, at which point we'll need to re-databind the form.
+      if(result) {
+        this.loadManifests();
+      }
     });
   }
 
@@ -278,6 +283,15 @@ export class BazarComponent implements OnInit, OnDestroy {
    */
   appIsInstalled(app: BazarApp) {
     return this.manifests.filter(x => x.module_name === app.folder_name).length > 0;
+  }
+
+  /**
+   * Returns all apps that are installed through the Bazar.
+   * 
+   * @returns All apps installed from Bazar
+   */
+  getInstalledApps() {
+    return this.manifests.filter(x => x.token);
   }
 
   /*
@@ -418,15 +432,24 @@ export class BazarComponent implements OnInit, OnDestroy {
    */
   private loadManifests() {
 
+    // Retrieving app manifests from local backend.
     this.bazarService.localManifests().subscribe({
       next: (manifests: AppManifest[]) => {
         this.manifests = manifests || [];
         let hasUpdates = false;
+
+        // Iterating through each manifest and checking if app has update in Bazar API
         for (const idx of this.manifests) {
           this.bazarService.getBazarItem(idx.module_name).subscribe({
             next: (result: BazarApp[]) => {
+
+              // Verifying app originated from Bazar API.
               if (result && result.length > 0) {
                 const version = result[0].version;
+
+                // Doing a version compare of the installed app and the latest version of app as published by Bazar API.
+                // TODO: This is kind of stupid to do over an HTTP invocation, since it's just a string comparison
+                // of two version numbers such as for instance "v5.6.7".
                 this.configService.versionCompare(idx.version, version).subscribe({
                   next: (versionCompare: any) => {
                     if (+versionCompare.result === -1) {
