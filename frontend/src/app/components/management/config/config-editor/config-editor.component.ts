@@ -76,9 +76,15 @@ export class ConfigEditorComponent implements OnInit {
   loadConfig() {
     this.configService.loadConfig().subscribe({
       next: (res: any) => { 
-        this.config = JSON.stringify(res, null, 2); 
+        this.config = JSON.stringify(res, null, 2);
         if (res) {
-          this.configExists = true; 
+          this.configExists = true;
+          setTimeout(() => {
+            var domNode = (<any>document.querySelector('.CodeMirror'));
+            var editor = domNode.CodeMirror;
+            editor.doc.markClean();
+            editor.doc.clearHistory(); // To avoid having initial loading of file becoming an "undo operation".
+          }, 1);
         }
       },
       error: (error: any) => this.feedbackService.showError(error)});

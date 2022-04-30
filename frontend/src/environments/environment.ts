@@ -12,5 +12,5 @@ export const environment = {
       token_raw: null,
      },
   ],
-  bazarUrl: 'https://dev-api.aista.com'
+  bazarUrl: 'https://api.aista.com'
 };
