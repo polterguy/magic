@@ -158,6 +158,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { WarningComponent } from './components/tools/ide/warning/warning.component';
 import { ExtraInfoDialogComponent } from './components/management/auth/users/extra-info-dialog/extra-info-dialog.component';
+import { TableNameDialogComponent } from './components/tools/sql/table-name-dialog/table-name-dialog.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -250,7 +251,8 @@ import { ExtraInfoDialogComponent } from './components/management/auth/users/ext
     GeneralActionsComponent,
     IncompatibleFileDialogComponent,
     WarningComponent,
-    ExtraInfoDialogComponent
+    ExtraInfoDialogComponent,
+    TableNameDialogComponent
   ],
   imports: [
     FormsModule,

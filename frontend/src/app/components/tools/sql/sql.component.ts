@@ -24,6 +24,7 @@ import { Model } from '../../utilities/codemirror/codemirror-sql/codemirror-sql.
 
 // CodeMirror options.
 import sql from '../../utilities/codemirror/options/sql.json'
+import { TableNameDialogComponent } from './table-name-dialog/table-name-dialog.component';
 
 /**
  * SQL component allowing user to execute arbitrary SQL statements towards his or her database.
@@ -433,8 +434,59 @@ export class SqlComponent implements OnInit {
    * 
    * @param result What result set to export
    */
-   exportAsSql(result: any) {
-    
+  exportAsSql(result: any) {
+    let headContent: string[] = [];
+    let columns: string = '';
+    let valueContent: string[] = [];
+    let rowContent: any = [];
+    let insertValue = '';
+
+    const dialogRef = this.dialog.open(TableNameDialogComponent, {
+      width: '450px',
+    });
+    dialogRef.afterClosed().subscribe(tableName => {
+      if (tableName) {
+        Object.keys(result.columns).forEach((key) => {
+          const value = result.columns[key]
+          headContent.push(value)
+        });
+        columns = 'insert into ' + tableName + ' (' + headContent + ',createdAt)';
+  
+        result.rows.forEach((element: any) => {
+          if (element.details === true) {
+            valueContent.push(element.data);
+          }
+        });
+  
+        Object.keys(valueContent).forEach((key, index) => {
+          const value = valueContent[key];
+  
+          for (let i = 0; i < Object.values(value).length; i++) {
+            const element = Object.values(value)[i];
+  
+            if (element) {
+              if (i < Object.values(value).length - 1) {
+                if (typeof element === 'string') {
+                  insertValue += '"' + element + '",';
+                } else {
+                  insertValue += element + ',';
+                }
+              } else {
+                if (typeof element === 'string') {
+                  insertValue += '"' + element + '"';
+                } else {
+                  insertValue += element;
+                }
+              }
+            }
+          }
+  
+          rowContent.push(columns + ' values (' + insertValue + ') \r\n');
+        });
+  
+        this.saveAsFile(rowContent, 'sql-export.sql', 'text/plain');
+      }
+    });
   }
 
   /**
