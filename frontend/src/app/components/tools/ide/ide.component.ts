@@ -278,6 +278,7 @@ export class IdeComponent implements OnInit, OnDestroy {
             var activeWrapper = document.querySelector('.active-codemirror-editor');
             var editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
             editor.doc.markClean();
+            editor.doc.clearHistory(); // To avoid having initial loading of file becoming an "undo operation".
           }, 1);
           this.cdRef.detectChanges();
         },
