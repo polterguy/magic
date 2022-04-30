@@ -446,9 +446,8 @@ export class SqlComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(tableName => {
       if (tableName) {
-        Object.keys(result.columns).forEach((key) => {
-          const value = result.columns[key]
-          headContent.push(value)
+        Object.keys(result.rows[0].data).forEach((key) => {
+          headContent.push(key);
         });
         columns = 'insert into ' + tableName + ' (' + headContent + ')';
   
@@ -467,23 +466,27 @@ export class SqlComponent implements OnInit {
             if (element) {
               if (i < Object.values(value).length - 1) {
                 if (typeof element === 'string') {
-                  insertValue += '"' + element.split('"').join('""').split('\r').join('\\r').split('\n').join('\\n') + '",';
+                  insertValue += '"' + element.split('\\').join('\\\\').split('"').join('""').split('\r').join('\\r').split('\n').join('\\n') + '",';
                 } else {
                   insertValue += element + ',';
                 }
               } else {
                 if (typeof element === 'string') {
-                  insertValue += '"' + element.split('"').join('""').split('\r').join('\\r').split('\n').join('\\n') + '"';
+                  insertValue += '"' + element.split('\\').join('\\\\').split('"').join('""').split('\r').join('\\r').split('\n').join('\\n') + '"';
                 } else {
                   insertValue += element;
                 }
               }
             } else {
-              insertValue += 'null,';
+              if (i < Object.values(value).length - 1) {
+                insertValue += 'null,';
+              } else {
+                insertValue += 'null';
+              }
             }
           }
   
-          rowContent.push(columns + ' values (' + insertValue.substring(0, insertValue.length - 1) + ')');
+          rowContent.push(columns + ' values (' + insertValue + ')');
           insertValue = '';
         });
   
