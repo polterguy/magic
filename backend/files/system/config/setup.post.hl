@@ -18,6 +18,11 @@
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/settings/*/magic/*/auth/*/secret
+validators.string:x:@.arguments/*/settings/*/magic/*/auth/*/secret
+   min:int:80
+
 // Making sure we're able to return exceptions to caller.
 try
 

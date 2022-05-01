@@ -89,7 +89,7 @@ export class SetupAuthComponent implements OnInit {
     this.configService.loadConfig().subscribe({
       next: (config) => {
         this.config = config;
-        this.configService.getGibberish(50, 100).subscribe({
+        this.configService.getGibberish(80, 150).subscribe({
           next: (gibberish: Response) => {
             this.config.magic.auth.secret = gibberish.result;
             this.config.magic.auth.recaptcha ? '' : this.config.magic.auth.recaptcha = {};
@@ -127,8 +127,8 @@ export class SetupAuthComponent implements OnInit {
    * Invoked when user clicks the next button.
    */
   next() {
-    if (this.config.magic.auth.secret.length < 50 || this.config.magic.auth.secret.length > 100) {
-      this.feedbackService.showError('Auth secret must be between 50 and 100 charaters in length');
+    if (this.config.magic.auth.secret.length < 50 || this.config.magic.auth.secret.length > 200) {
+      this.feedbackService.showError('Auth secret must be between 50 and 200 charaters in length');
       return;
     }
     if (this.config.magic.databases[this.selectedDatabaseType].generic.indexOf('{database}') === -1) {
