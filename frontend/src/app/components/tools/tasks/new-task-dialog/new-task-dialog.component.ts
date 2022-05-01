@@ -50,7 +50,7 @@ export class NewTaskDialogComponent {
     if (!this.argumentValid()) {
       return;
     }
-    this.taskService.create(this.name, 'log.info:Task is being executed').subscribe({
+    this.taskService.create(this.name, 'log.info:Hello world from task').subscribe({
       next: () => this.dialogRef.close(this.name),
       error:(error: any) => this.feedbackService.showError(error)});
   }
