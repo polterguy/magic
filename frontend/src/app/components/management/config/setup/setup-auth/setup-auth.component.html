@@ -38,8 +38,9 @@
                 <mat-select
                   [(ngModel)]="defaultTimeZone"
                   name="defaultTimeZone">
+                  <mat-option value="none">None</mat-option>
                   <mat-option value="utc">UTC</mat-option>
-                  <mat-option value="none">local</mat-option>
+                  <mat-option value="local">local</mat-option>
                 </mat-select>
               </mat-form-field>
 

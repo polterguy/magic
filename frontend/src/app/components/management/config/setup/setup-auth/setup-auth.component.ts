@@ -55,9 +55,9 @@ export class SetupAuthComponent implements OnInit {
   selectedDatabaseType: string = null;
 
   /**
-   * Timezone information for system, can either be 'utc' or 'local'.
+   * Timezone information for system, can either be 'none', 'utc', or 'local'.
    */
-  defaultTimeZone: string = 'utc';
+  defaultTimeZone: string = 'none';
 
   /**
    * Root user's password.
