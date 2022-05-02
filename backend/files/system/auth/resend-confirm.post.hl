@@ -52,95 +52,103 @@ data.connect:magic
          return
             result:no-such-user
 
-// Verifying we've got an SMTP server to use
-config.get:"magic:smtp:host"
-if
-   and
-      not
-         eq
-            get-value:x:@config.get
-            .
-      not
-         eq
-            get-value:x:@config.get
-            .:
-      exists:x:@.arguments/*/frontendUrl
-      or
-         eq
-            config.get:"magic:auth:registration:confirm-email"
-            .:
-         eq
-            config.get:"magic:auth:registration:confirm-email"
-            .
-   .lambda
+   // Verifying we've got an SMTP server to use
+   config.get:"magic:smtp:host"
+   if
+      and
+         not
+            eq
+               get-value:x:@config.get
+               .
+         not
+            eq
+               get-value:x:@config.get
+               .:
+         exists:x:@.arguments/*/frontendUrl
+         or
+            eq
+               config.get:"magic:auth:registration:confirm-email"
+               .:
+            eq
+               config.get:"magic:auth:registration:confirm-email"
+               .
+      .lambda
 
-      // Default template to use for sending user a "verify email address" link.
-      .template:/system/auth/email-templates/register.html
+         // Default template to use for sending user a "verify email address" link.
+         .template:/system/auth/email-templates/register.html
 
-      // Checking if caller supplied a different email template to use.
-      if
-         exists:x:@.arguments/*/template
-         .lambda
-            set-value:x:@.template
-               get-value:x:@.arguments/*/template
+         // Checking if caller supplied a different email template to use.
+         if
+            exists:x:@.arguments/*/template
+            .lambda
+               set-value:x:@.template
+                  get-value:x:@.arguments/*/template
 
-      // Default subject line for verify email address email.
-      .subject:Thank you for registering with Aista Magic Cloud
+         // Default subject line for verify email address email.
+         .subject:Thank you for registering with Aista Magic Cloud
 
-      // Checking if caller supplied a different email subject to use.
-      if
-         exists:x:@.arguments/*/subject
-         .lambda
-            set-value:x:@.subject
-               get-value:x:@.arguments/*/subject
+         // Checking if caller supplied a different email subject to use.
+         if
+            exists:x:@.arguments/*/subject
+            .lambda
+               set-value:x:@.subject
+                  get-value:x:@.arguments/*/subject
 
-      // Making sure we store the fact that a verify email address link was sent to user.
-      set-value:x:@.email-sent
-         .:new-email-sent
+         // Making sure we store the fact that a verify email address link was sent to user.
+         set-value:x:@.email-sent
+            .:new-email-sent
 
-      /*
-       * Hashing the JWT secret combined with the user's selected username,
-       * making sure we use the result as a 'secret' URL query
-       * parameter for the user's 'confirm email address' link.
-       */
-      .token
-      strings.concat
-         get-value:x:@.arguments/*/
-         config.get:"magic:auth.secret"
-      set-value:x:@.token
-         crypto.hash:x:@strings.concat
-
-      // Dynamically building our confirm email URL.
-      strings.concat
-         .:"https://"
-         request.host
-      .url
-      set-value:x:@.url
+         /*
+          * Hashing the JWT secret combined with the user's selected username,
+          * making sure we use the result as a 'secret' URL query
+          * parameter for the user's 'confirm email address' link.
+          */
+         data.read
+            table:users_extra
+            columns
+               value
+            where
+               and
+                  user.eq:x:@.arguments/*/username
+                  type.eq:email
+         .token
          strings.concat
-            get-value:x:@.arguments/*/frontendUrl
-            .:?token=
-            get-value:x:@.token
-            .:&username=
-            strings.url-encode:x:@.arguments/*/username
-            .:&url=
-            strings.url-encode:x:@strings.concat/@strings.concat
+            get-value:x:@data.read/*/*/value
+            config.get:"magic:auth.secret"
+         set-value:x:@.token
+            crypto.hash:x:@strings.concat
 
-      /*
-       * Making sure we communicate to caller that a
-       * confirm email address email was sent.
-       */
-      set-value:x:@.result
-         .:confirm-email-address-email-sent
+         // Dynamically building our confirm email URL.
+         strings.concat
+            .:"https://"
+            request.host
+         .url
+         set-value:x:@.url
+            strings.concat
+               get-value:x:@.arguments/*/frontendUrl
+               .:?token=
+               get-value:x:@.token
+               .:&username=
+               strings.url-encode:x:@.arguments/*/username
+               .:&url=
+               strings.url-encode:x:@strings.concat/@strings.concat
 
-      // Now we can send an email to user.
-      unwrap:x:+/**
-      signal:magic.emails.send
-         subject:x:@.subject
-         template-file:x:@.template
-         substitutes
-            url:x:@.url
-         mime-type:text/html
-         email:x:@.arguments/*/username
+         /*
+          * Making sure we communicate to caller that a
+          * confirm email address email was sent.
+          */
+         set-value:x:@.result
+            .:confirm-email-address-email-sent
+
+         // Now we can send an email to user.
+         unwrap:x:+/**
+         signal:magic.emails.send
+            subject:x:@.subject
+            template-file:x:@.template
+            substitutes
+               url:x:@.url
+            mime-type:text/html
+            email:x:@.arguments/*/username
 
 // Returning result to caller.
 unwrap:x:+/*

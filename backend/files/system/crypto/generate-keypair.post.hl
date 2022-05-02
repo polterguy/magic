@@ -77,7 +77,7 @@ io.file.save:/etc/system/crypto/keys/private.key
 log.info:RSA key pair generated for server
    fingerprint:x:@crypto.rsa.create-key/*/fingerprint
 
-// Importing serve key into crypto keys storage.
+// Importing server key into crypto keys storage.
 add:x:../*/signal
    get-nodes:x:@.arguments/*/subject
    get-nodes:x:@.arguments/*/email
@@ -87,6 +87,64 @@ signal:magic.crypto.import-key
    content:x:@crypto.rsa.create-key/*/public
    enabled:bool:true
    username:root
+
+/*
+ * Since user now has provided us with email address and name,
+ * we store this and associates it with root user.
+ */
+data.connect:[generic|magic]
+   data.read
+      table:users_extra
+      where
+         and
+            user.eq:root
+            or
+               type.eq:name
+               type.eq:email
+      limit:1
+   if
+      exists:x:@data.read/*/*
+      .lambda
+      
+         // Updating existing records.
+         data.update
+            table:users_extra
+            values
+               value:x:@.arguments/*/email
+               user:root
+               type:email
+            where
+               and
+                  user.eq:root
+                  type.eq:email
+         data.update
+            table:users_extra
+            values
+               value:x:@.arguments/*/subject
+               user:root
+               type:name
+            where
+               and
+                  user.eq:root
+                  type.eq:name
+   else
+      
+      // Inserting new records
+      data.create
+         table:users_extra
+         return-id:bool:false
+         values
+            value:x:@.arguments/*/email
+            user:root
+            type:email
+      data.create
+         table:users_extra
+         return-id:bool:false
+         values
+            value:x:@.arguments/*/subject
+            user:root
+            type:name
+      
 
 // Returning the public key, and its fingerprint to caller.
 unwrap:x:+/*
