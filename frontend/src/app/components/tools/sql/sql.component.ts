@@ -4,7 +4,7 @@
  */
 
 // Angular and system imports.
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -80,6 +80,11 @@ export class SqlComponent implements OnInit {
   result: any[] = [];
 
   /**
+   * Input file for importing SQL
+   */
+  sqlFile: any;
+
+  /**
    * Creates an instance of your component.
    * 
    * @param feedbackService Needed to show user feedback
@@ -95,7 +100,8 @@ export class SqlComponent implements OnInit {
     public backendService: BackendService,
     private sqlService: SqlService,
     private clipboard: Clipboard,
-    private dialog: MatDialog) { }
+    private dialog: MatDialog,
+    private cdr: ChangeDetectorRef) { }
 
   /**
    * Implementation of OnInit.
@@ -271,9 +277,13 @@ export class SqlComponent implements OnInit {
       'Confirm action',
       'This will flush your server side cache and reload your page. Are you sure you want to do this?',
       () => {
-        this.cacheService.delete('magic.sql.databases.*').subscribe(() => {
-          window.location.href = window.location.href;
-        }, (error: any) => this.feedbackService.showError(error));
+        this.cacheService.delete('magic.sql.databases.*').subscribe(
+          {
+            next: () => {
+              window.location.href = window.location.href;
+            },
+            error: (error: any) => this.feedbackService.showError(error)
+          })
     });
   }
 
@@ -287,10 +297,13 @@ export class SqlComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe((filename: string) => {
       if (filename) {
-        this.sqlService.loadSnippet(this.input.databaseType, filename).subscribe((content: string) => {
-          this.input.sql = content;
-          this.filename = filename;
-        }, (error: any) => this.feedbackService.showError(error));
+        this.sqlService.loadSnippet(this.input.databaseType, filename).subscribe({
+          next: (content: string) => {
+            this.input.sql = content;
+            this.filename = filename;
+          },
+          error: (error: any) => this.feedbackService.showError(error)
+        })
       }
     });
   }
@@ -311,10 +324,13 @@ export class SqlComponent implements OnInit {
         this.sqlService.saveSnippet(
           this.input.databaseType,
           filename,
-          this.input.sql).subscribe(() => {
-          this.feedbackService.showInfo('SQL snippet successfully saved');
-          this.filename = filename;
-        }, (error: any) => this.feedbackService.showError(error));
+          this.input.sql).subscribe(
+            {
+              next: () => {
+                this.feedbackService.showInfo('SQL snippet successfully saved');
+                this.filename = filename;
+              }, error: (error: any) => this.feedbackService.showError(error)
+            });
       }
     });
   }
@@ -597,4 +613,25 @@ export class SqlComponent implements OnInit {
     }
     return retValue;
   }
+
+  public uploadFiles(event) {
+    this.sqlFile = event.target.files[0];
+    let fileReader = new FileReader();
+
+    fileReader.onload = (e) => {
+      this.input.sql = <any>fileReader.result;
+      this.cdr.markForCheck();
+      this.cdr.detectChanges();
+
+      setTimeout(() => {
+        var domNode = (<any>document.querySelector('.CodeMirror'));
+        var editor = domNode.CodeMirror;
+        editor.doc.markClean();
+        editor.doc.clearHistory(); // To avoid having initial loading of file becoming an "undo operation".
+      }, 1);
+    }
+
+    fileReader.readAsText(this.sqlFile);
+    this.sqlFile = '';
+  } 
 }
