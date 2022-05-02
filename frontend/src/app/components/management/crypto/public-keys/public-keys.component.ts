@@ -347,6 +347,13 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
             original_content: x.content,
           };
           result.options.options.autofocus = false;
+
+          setTimeout(() => {
+            var domNode = (<any>document.querySelector('.CodeMirror'));
+            var editor = domNode.CodeMirror;
+            editor.doc.markClean();
+            editor.doc.clearHistory(); // To avoid having initial loading of file becoming an "undo operation".
+          }, 500);
           return result;
         });
 

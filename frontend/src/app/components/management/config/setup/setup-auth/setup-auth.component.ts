@@ -159,4 +159,8 @@ export class SetupAuthComponent implements OnInit {
       },
       error: (error: any) =>this.feedbackService.showError(error)});
   }
+
+  validateConnectionString() {
+    return (this.config.magic.databases[this.selectedDatabaseType].generic).includes('{database}');
+  }
 }

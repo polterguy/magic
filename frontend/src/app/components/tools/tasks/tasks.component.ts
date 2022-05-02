@@ -178,8 +178,14 @@ export class TasksComponent implements OnInit {
             el.model = {
               hyperlambda: task.hyperlambda,
               options: hyperlambda
-            }
+            };
           }, 200);
+          setTimeout(() => {
+            var domNode = (<any>document.querySelector('.CodeMirror'));
+            var editor = domNode.CodeMirror;
+            editor.doc.markClean();
+            editor.doc.clearHistory(); // To avoid having initial loading of file becoming an "undo operation".
+          }, 500);
         },
         error: (error: any) => this.feedbackService.showError(error)});
     }

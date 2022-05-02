@@ -203,6 +203,14 @@ export class EndpointDetailsComponent implements OnInit {
           payload[idx.name] = type;
         }
         setTimeout(() => this.payload = JSON.stringify(payload, null, 2), 250);
+        setTimeout(() => {
+          document.querySelectorAll('.CodeMirror').forEach(item => {
+            var domNode = (<any>item);
+            var editor = domNode.CodeMirror;
+            editor.doc.markClean();
+            editor.doc.clearHistory(); // To avoid having initial loading of file becoming an "undo operation".
+          })
+        }, 800);
 
       } else if (this.endpoint.consumes === 'application/x-hyperlambda') {
         setTimeout(() => this.payload = '', 250);

@@ -155,6 +155,15 @@ export class DiagnosticsTestsComponent implements OnInit {
             hyperlambda: file,
             options: hyperlambda,
           };
+
+          setTimeout(() => {
+            document.querySelectorAll('.CodeMirror').forEach(item => {
+              var domNode = (<any>item);
+              var editor = domNode.CodeMirror;
+              editor.doc.markClean();
+              editor.doc.clearHistory(); // To avoid having initial loading of file becoming an "undo operation".
+            })
+          }, 800);
         },
         error: (error: any) => this.feedbackService.showError(error)});
     }
