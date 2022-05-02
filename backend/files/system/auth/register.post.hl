@@ -14,7 +14,6 @@
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/username
 validators.mandatory:x:@.arguments/*/password
-validators.email:x:@.arguments/*/username
 validators.url:x:@.arguments/*/frontendUrl
 
 /*
@@ -40,6 +39,22 @@ if
          min:decimal:0.5
          site-key:x:@config.get/@config.get
          secret:x:@config.get
+
+// Verifying that Magic is configured to allow for users to register.
+config.get:"magic:auth:registration:allow"
+if
+   not
+      eq
+         get-value:x:@config.get
+         .:True
+   .lambda
+
+      // Doing some basic logging and returning failure to caller.
+      log.error:User tried to register at site, but registrations are turned OFF
+         username:x:@.arguments/*/username
+      throw:Access denied
+         public:bool:true
+         status:int:401
 
 /*
  * Retrieving extra information, making sure we only allow
@@ -83,6 +98,7 @@ if
             .
                type:email
                value:x:@.arguments/*/username
+      remove-nodes:x:@.arguments/*/extra/*/email
 
 // Making sure no unsupported [extra] information was supplied.
 if
@@ -95,22 +111,6 @@ if
       throw:x:-
          public:bool:true
          status:int:400
-
-// Verifying that Magic is configured to allow for users to register.
-config.get:"magic:auth:registration:allow"
-if
-   not
-      eq
-         get-value:x:@config.get
-         .:True
-   .lambda
-
-      // Doing some basic logging and returning failure to caller.
-      log.error:User tried to register at site, but registrations are turned OFF
-         username:x:@.arguments/*/username
-      throw:Access denied
-         public:bool:true
-         status:int:401
 
 // Hashing user's passsword.
 crypto.password.hash:x:@.arguments/*/password
@@ -169,6 +169,7 @@ data.connect:magic
 config.get:"magic:smtp:host"
 if
    and
+      exists:x:@.arguments/*/extra/*/email
       not
          eq
             get-value:x:@config.get
@@ -261,7 +262,7 @@ if
              * "confirm user email" to user himself.
              */
             set-value:x:@.recipient
-               get-value:x:@.arguments/*/username
+               get-value:x:@.arguments/*/extra/*/email
 
             /*
              * Making sure we communicate to caller that a
