@@ -90,6 +90,13 @@ export class EvaluatorComponent implements OnInit {
           next: (content: string) => {
             this.input.hyperlambda = content;
             this.filename = filename;
+
+            setTimeout(() => {
+              var domNode = (<any>document.querySelector('.CodeMirror'));
+              var editor = domNode.CodeMirror;
+              editor.doc.markClean();
+              editor.doc.clearHistory(); // To avoid having initial loading of file becoming an "undo operation".
+            }, 1);
           },
           error: (error: any) => this.feedbackService.showError(error)});
       }

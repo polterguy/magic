@@ -61,7 +61,8 @@
 
             <ng-container *ngIf="selectedDatabaseType">
 
-              <mat-form-field class="w-100" appearance="outline">
+              <mat-form-field class="w-100" appearance="outline" 
+              [class.warning]="!validateConnectionString()">
                 <mat-label>Connection string</mat-label>
                 <input
                   matInput
@@ -150,7 +151,7 @@
               mat-raised-button
               color="primary"
               type="submit"
-              [disabled]="!selectedDatabaseType || password === '' || password !== passwordRepeat"
+              [disabled]="!selectedDatabaseType || password === '' || password !== passwordRepeat || !validateConnectionString()"
               class="next"
               (click)="next()">
               Next

@@ -61,6 +61,7 @@ export class SubscribeDialogComponent implements OnInit {
     this.configService.rootUserEmailAddress().subscribe({
       next: (result: NameEmailModel) => {
         this.model = result;
+        console.log(result)
         const data = localStorage.getItem('confirm-email-data');
         if (data && data !== '') {
           const dataObj = JSON.parse(data);

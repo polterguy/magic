@@ -129,7 +129,13 @@
                     <mat-checkbox
                       class="safe-mode"
                       matTooltip="If checked will only return the first 200 records"
-                      [(ngModel)]="safeMode">Safe mode</mat-checkbox>
+                      [(ngModel)]="safeMode"
+                      [class.warning]="!safeMode">
+                      <ng-container *ngIf="!safeMode">
+                        <mat-icon class="warning warning-icon">report</mat-icon>
+                      </ng-container>
+                      Safe mode
+                    </mat-checkbox>
     
                     <div class="p-1"></div>
     
@@ -164,6 +170,19 @@
                       class="w-100">
                       Load
                     </button>
+
+                    <div class="p-1"></div>
+            
+                    <button
+                      id="loadButton"
+                      [disabled]="!backendService.active?.access.sql.list_files"
+                      mat-raised-button
+                      matTooltip="Import an SQL file"
+                      (click)="sqlFile.click()"
+                      class="w-100">
+                      Import
+                    </button>
+                    <input type="file" name="sqlFile" id="sqlFile" #sqlFile class="invisible">
 
                     <div class="p-1"></div>
 

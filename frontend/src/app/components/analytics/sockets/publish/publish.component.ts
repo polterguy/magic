@@ -87,6 +87,13 @@ export class PublishComponent implements AfterViewInit {
       this.options.autofocus = false;
 
     }, 500);
+
+    setTimeout(() => {
+      var domNode = (<any>document.querySelector('.CodeMirror'));
+      var editor = domNode.CodeMirror;
+      editor.doc.markClean();
+      editor.doc.clearHistory(); // To avoid having initial loading of file becoming an "undo operation".
+    }, 800);
   }
 
   /**
