@@ -298,7 +298,7 @@ export class BackendService {
   resetPassword(data: any) {
     return this.httpClient.post<Response>(
       this.active.url +
-      '/magic/system/auth/send-reset-password-link', {data});
+      '/magic/system/auth/send-reset-password-link', data);
   }
 
   /**
