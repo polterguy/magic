@@ -178,12 +178,14 @@
                       [disabled]="!backendService.active?.access.sql.list_files"
                       mat-raised-button
                       matTooltip="Import an SQL file"
-                      (click)="sqlFile.click()"
+                      (click)="sqlFileImport.click()"
                       class="w-100">
                       Import
                     </button>
-                    <input type="file" name="sqlFile" id="sqlFile" #sqlFile class="invisible">
-
+                    <input type="file" name="sqlFile" id="sqlFile" #sqlFileImport class="invisible" accept=".sql" 
+                    [(ngModel)]="sqlFile"
+                    (change)="uploadFiles($event)">
+ 
                     <div class="p-1"></div>
 
                     <button
