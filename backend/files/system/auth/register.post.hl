@@ -67,10 +67,7 @@ strings.split:x:@config.get
    .:,
 for-each:x:@strings.split/*
    if
-      and
-         neq:x:@.dp/#
-            .:email
-         exists:x:@.arguments/*/extra/*/{@.dp/#}
+      exists:x:@.arguments/*/extra/*/{@.dp/#}
       .lambda
          set-name:x:+/+/*/*
             get-value:x:@.dp/#
@@ -81,24 +78,6 @@ for-each:x:@strings.split/*
                   value:x:@.arguments/*/extra/*/{@.dp/#}
                   type:x:@.dp/#
    remove-nodes:x:@.arguments/*/extra/*/{@.dp/#}
-
-// Checking if email is allowed according to extra information configuration.
-if
-   or
-      strings.contains:x:@config.get
-         .:email,
-      strings.ends-with:x:@config.get
-         .:email
-   .lambda
-   
-      // Making sure we insert username which is the user's email address into users_extra.
-      unwrap:x:+/*/*/*/value
-      add:x:@.extra
-         .
-            .
-               type:email
-               value:x:@.arguments/*/extra/*/email
-      remove-nodes:x:@.arguments/*/extra/*/email
 
 // Making sure no unsupported [extra] information was supplied.
 if
@@ -169,7 +148,7 @@ data.connect:magic
 config.get:"magic:smtp:host"
 if
    and
-      exists:x:@.arguments/*/extra/*/email
+      exists:x:@.extra/*/email
       not
          eq
             get-value:x:@config.get
