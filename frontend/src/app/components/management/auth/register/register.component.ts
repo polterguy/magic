@@ -4,8 +4,8 @@
  */
 
 // Angular and system imports.
-import { Subscription } from 'rxjs';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { debounceTime, distinctUntilChanged, filter, fromEvent, map, of, pairwise, startWith, Subscription } from 'rxjs';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 
 // Application specific imports.
@@ -49,6 +49,9 @@ export class RegisterComponent implements OnInit, OnDestroy {
    */
   repeatPassword: string;
 
+  emailRes: string = ''; // waiting | email-available | email-taken
+  usernameRes: string = ''; // waiting | username-available | username-taken
+
   /**
    * Creates an instance of your component.
    * 
@@ -71,7 +74,9 @@ export class RegisterComponent implements OnInit, OnDestroy {
    * Reactive form declaration
    */
   registrationForm = this.formBuilder.group({
-    email: ['', [Validators.required, Validators.email]],
+    username: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(128)]],
+    name: [''],
+    email: ['', [Validators.email]],
     password: ['', [Validators.required]]
   });
 
@@ -93,6 +98,8 @@ export class RegisterComponent implements OnInit, OnDestroy {
         this.status = 'ok-to-register';
       }
     });
+    this.watchForUsername('username');
+    this.watchForUsername('email');
   }
 
   /**
@@ -115,32 +122,50 @@ export class RegisterComponent implements OnInit, OnDestroy {
       this.feedbackService.showError('Passwords are not matching');
       return;
     }
+    if (this.registrationForm.value.email !== '' && this.emailRes !== 'email-available') {
+      return;
+    }
+    if (this.registrationForm.value.username !== '' && this.usernameRes !== 'username-available') {
+      return;
+    }
 
-    const data: any = this.recaptchaKey !== null && this.recaptchaKey !== '' ? {
-      username: this.registrationForm.value.email,
-      password: this.registrationForm.value.password,
-      frontendUrl: location.origin,
-      recaptcha_response: recaptcha_token,
-    } : {
-      username: this.registrationForm.value.email,
-      password: this.registrationForm.value.password,
-      frontendUrl: location.origin
-    };
-
-    this.registerService.register(data).subscribe({
-      next: (result: Response) => {
-        this.status = result.result;
-        if (result.result === 'already-registered') {
-          this.feedbackService.showError('You are already registered in backend');
-        } else if (result.result === 'confirm-email-address-email-sent') {
-          this.feedbackService.showInfo('You have been successfully registered in the system, please verify your email address by clicking the link in the email we just sent you');
-        } else if (result.result === 'email-sent-to-moderator') {
-          this.feedbackService.showInfo('You have been successfully registered in the system, please wait for a moderator to accept you as a user');
-        } else {
-          this.feedbackService.showInfo('You have been successfully registered in the system');
+    if (this.registrationForm.valid) {
+      const data: any = this.recaptchaKey !== null && this.recaptchaKey !== '' ? {
+        username: this.registrationForm.value.username,
+        password: this.registrationForm.value.password,
+        frontendUrl: location.origin,
+        recaptcha_response: recaptcha_token,
+        extra: {
+          email: this.registrationForm.value.email,
+          name: this.registrationForm.value.name
         }
-      },
-      error: (error: any) => this.feedbackService.showError(error)});
+      } : {
+        username: this.registrationForm.value.username,
+        password: this.registrationForm.value.password,
+        frontendUrl: location.origin,
+        extra: {
+          email: this.registrationForm.value.email,
+          name: this.registrationForm.value.name
+        }
+      };
+  
+      this.registerService.register(data).subscribe({
+        next: (result: Response) => {
+          this.status = result.result;
+          if (result.result === 'already-registered') {
+            this.feedbackService.showError('You are already registered in backend');
+          } else if (result.result === 'confirm-email-address-email-sent') {
+            this.feedbackService.showInfo('You have been successfully registered in the system, please verify your email address by clicking the link in the email we just sent you');
+          } else if (result.result === 'email-sent-to-moderator') {
+            this.feedbackService.showInfo('You have been successfully registered in the system, please wait for a moderator to accept you as a user');
+          } else {
+            this.feedbackService.showInfo('You have been successfully registered in the system');
+          }
+        },
+        error: (error: any) => this.feedbackService.showError(error)});
+    } else {
+      this.feedbackService.showError('Please check your email and username.');
+    }
   }
   
   /**
@@ -149,5 +174,63 @@ export class RegisterComponent implements OnInit, OnDestroy {
    */
    executeRecaptcha(){
     this.captchaRef?.execute();
+  }
+
+  watchForUsername(field: string) {
+    this.registrationForm.controls[field].valueChanges
+    .pipe(
+
+      // Time in milliseconds between key events
+      debounceTime(1000),
+
+      // If previous query is diffent from current   
+      distinctUntilChanged(),
+      // get value
+      map((event: any) => {
+        if (this.registrationForm.value[field].length + 1 > 3 && this.registrationForm.controls[field].valid) {
+          field === 'username' ? this.usernameRes = 'waiting' : this.emailRes = 'waiting';
+        } else {
+          field === 'username' ? this.usernameRes = '' : this.emailRes = '';
+        }
+        return this.registrationForm.controls[field].value
+      }),
+      // if character length greater then 2
+      filter(res => this.registrationForm.value[field].length + 1 > 3)
+
+
+      // subscription for response
+    ).subscribe((text: string) => {
+      
+      if (this.registrationForm.controls[field].valid) {
+        field === 'username' ? this.checkUsername(text) : this.checkEmail(text);
+      }
+
+    });
+  }
+  
+  checkUsername(term: string) {
+
+    if (term === '') {
+      return of([]);
+    }
+    return this.registerService.usernameAvailability(encodeURIComponent(term)).subscribe({
+      next: (res) => {
+        this.usernameRes = res.result;
+      }, 
+      error: (err) => {}
+    });
+  }
+
+  checkEmail(term: string) {
+
+    if (term === '') {
+      return of([]);
+    }
+    return this.registerService.emailAvailability(encodeURIComponent(term)).subscribe({
+      next: (res) => {
+        this.emailRes = res.result;
+      }, 
+      error: (err) => {}
+    });
   }
 }

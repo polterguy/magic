@@ -17,3 +17,12 @@
     }
   }
 }
+
+::ng-deep {
+  .light {
+    .errorField {color: #ff1919;}
+  }
+  .dark {
+    .errorField {color: #f38484;}
+  }
+}

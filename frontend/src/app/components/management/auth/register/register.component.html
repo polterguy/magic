@@ -18,8 +18,34 @@
           <form [formGroup]="registrationForm" novalidate>
 
             <mat-form-field class="fill-width" appearance="outline">
+              <mat-label>Username</mat-label>
+              <input matInput type="text" name="username" autocomplete="off" formControlName="username">
+              <span matSuffix *ngIf="usernameRes !== undefined" [ngSwitch]="usernameRes">
+                <mat-spinner diameter="20" *ngSwitchCase="'waiting'"></mat-spinner>
+                <mat-icon *ngSwitchCase="'username-available'">check_circle</mat-icon>
+                <mat-icon *ngSwitchCase="'username-taken'" class="warning">error</mat-icon>
+              </span>
+              <mat-hint class="errorField" *ngIf="usernameRes === 'username-taken'">
+                Username is taken, please choose another one.
+              </mat-hint>
+            </mat-form-field>
+
+            <mat-form-field class="fill-width" appearance="outline">
+              <mat-label>Name</mat-label>
+              <input matInput type="text" name="name" autocomplete="off" formControlName="name">
+            </mat-form-field>
+
+            <mat-form-field class="fill-width" appearance="outline">
               <mat-label>Email address</mat-label>
               <input matInput type="text" name="email" autocomplete="off" formControlName="email">
+              <span matSuffix *ngIf="emailRes !== undefined" [ngSwitch]="emailRes">
+                <mat-spinner diameter="20" *ngSwitchCase="'waiting'"></mat-spinner>
+                <mat-icon *ngSwitchCase="'email-available'">check_circle</mat-icon>
+                <mat-icon *ngSwitchCase="'email-taken'" class="warning">error</mat-icon>
+              </span>
+              <mat-hint class="errorField" *ngIf="emailRes === 'email-taken'">
+                This email address is already registered.
+              </mat-hint>
             </mat-form-field>
 
             <mat-form-field class="fill-width" appearance="outline">

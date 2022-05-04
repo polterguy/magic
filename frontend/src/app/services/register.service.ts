@@ -55,4 +55,28 @@ export class RegisterService {
       token,
     });
   }
+
+  /**
+   * Verifies availability of username supplied during
+   * registration by invoking backend.
+   * 
+   * @param username Username of user which is supplied during registration
+   */
+   usernameAvailability(username: string) {
+
+    // Invokes backend and returns observable to caller.
+    return this.httpService.get<Response>('/magic/system/auth/username-taken?username=' + username);
+  }
+
+  /**
+   * Verifies availability of email supplied during
+   * registration by invoking backend.
+   * 
+   * @param email email of user which is supplied during registration
+   */
+   emailAvailability(email: string) {
+
+    // Invokes backend and returns observable to caller.
+    return this.httpService.get<Response>('/magic/system/auth/email-taken?email=' + email);
+  }
 }

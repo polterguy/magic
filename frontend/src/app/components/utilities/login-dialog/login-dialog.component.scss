@@ -7,3 +7,6 @@ h1 {
     font-size: 2rem;
   }
 }
+::ng-deep {
+  .mat-dialog-container {overflow-x: hidden;}
+}
