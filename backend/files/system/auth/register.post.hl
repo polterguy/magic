@@ -97,7 +97,7 @@ if
          .
             .
                type:email
-               value:x:@.arguments/*/email
+               value:x:@.arguments/*/extra/*/email
       remove-nodes:x:@.arguments/*/extra/*/email
 
 // Making sure no unsupported [extra] information was supplied.
