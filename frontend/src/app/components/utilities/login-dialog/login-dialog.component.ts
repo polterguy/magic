@@ -7,7 +7,7 @@
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { map, startWith } from 'rxjs/operators';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
@@ -40,12 +40,23 @@ export class LoginDialogComponent implements OnInit {
   backendHasBeenSelected: boolean = false;
   autoLogin: boolean = false;
   advanced: boolean = false;
-  
+
+  /**
+   * To store the value of input for forgot password form
+   */
+  forgotPass_username: string = '';
+
+  /**
+   * Changes to true if clicking on the forgot password button 
+   */
+  forgotPass: boolean = false;
+
   /**
    * to set the user's site_key for recaptcha
    */
    recaptchaKey: string = null;
    @ViewChild('captchaRef', {static: false}) captchaRef: RecaptchaComponent;
+   @ViewChild('forgotInput', {static: false}) forgotInput: ElementRef;
 
   /**
    * Creates an instance of your login dialog.
@@ -175,11 +186,11 @@ export class LoginDialogComponent implements OnInit {
     this.backendService.activate(backend, false);
 
     const data: any = this.recaptchaKey !== null && this.recaptchaKey !== '' ? {
-      username: this.loginForm.value.username,
+      username: this.forgotPass_username,
       frontendUrl: location.origin,
       recaptcha_response: recaptcha_token,
     } : {
-      username: this.loginForm.value.username,
+      username: this.forgotPass_username,
       frontendUrl: location.origin
     };
     this.backendService.resetPassword(data).subscribe({
@@ -241,5 +252,14 @@ export class LoginDialogComponent implements OnInit {
     return this.backendService.backends
       .filter(x => x.url.includes(value) && x.url !== value)
       .map(x => x.url);
+  }
+
+  public toggleForgotPass(status: boolean) {
+    this.forgotPass = status;
+    if (status === true) {
+      setTimeout(() => {
+        this.forgotInput.nativeElement.focus();
+      }, 200);
+    }
   }
 }
