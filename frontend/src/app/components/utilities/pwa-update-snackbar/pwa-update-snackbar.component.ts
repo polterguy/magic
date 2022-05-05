@@ -19,13 +19,11 @@ export class PwaUpdateSnackbarComponent implements OnInit {
   }
 
   reloadPage(): void {
-    
-    // this.snackbar.onAction().pipe(switchMap(() => this.swUpdate.activateUpdate())).subscribe((res) => {
-    //       console.log(res)
-    //       // this.reloadPage();
-    //     });
-    //   });
-    this.swUpdate.activateUpdate().then(() => {document.location.reload();this.dismiss()});
+    this.swUpdate.activateUpdate().then(() => {
+      caches.keys().then(cs=>cs.forEach(c=>caches.delete(c)));
+      this.dismiss();
+      document.location.reload();
+    });
   }
 
 }
