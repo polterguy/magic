@@ -31,7 +31,7 @@ export class UpdatePwaService {
   }
 
   public checkForUpdates(): void {
-    // this.swUpdate.versionUpdates.subscribe(() => {
+    this.swUpdate.versionUpdates.subscribe(() => {
       const snack = this.snackbar.openFromComponent(PwaUpdateSnackbarComponent, {
         duration: -1
       });
@@ -42,7 +42,7 @@ export class UpdatePwaService {
       //   console.log(res)
       //   // this.reloadPage();
       // });
-    // });
+    });
   }
 
   // private reloadPage(): void {
