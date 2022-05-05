@@ -76,7 +76,7 @@ export class MainComponent implements OnInit {
     private backendService: BackendService,
     private feedbackService: FeedbackService,
     private updatePwaService: UpdatePwaService) {
-      this.updatePwaService.checkForUpdates();
+      // this.updatePwaService.checkForUpdates();
   }
 
   /**
