@@ -24,7 +24,9 @@ export class UpdatePwaService {
   ) {
     if (swUpdate.isEnabled) {
       interval(6 * 60 * 60).subscribe(() => swUpdate.checkForUpdate()
-        .then(() => console.log('checking for updates')));
+        .then(() => { 
+          console.log('checking for updates'); 
+        }));
     }
   }
 
