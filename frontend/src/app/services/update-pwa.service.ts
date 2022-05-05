@@ -22,12 +22,12 @@ export class UpdatePwaService {
     private swUpdate: SwUpdate,
     private snackbar: MatSnackBar
   ) {
-    if (swUpdate.isEnabled) {
-      interval(6 * 60 * 60).subscribe(() => swUpdate.checkForUpdate()
-        .then(() => { 
-          console.log('checking for updates'); 
-        }));
-    }
+    // if (swUpdate.isEnabled) {
+    //   interval(6 * 60 * 60).subscribe(() => swUpdate.checkForUpdate()
+    //     .then(() => { 
+    //       console.log('checking for updates'); 
+    //     }));
+    // }
   }
 
   public checkForUpdates(): void {
