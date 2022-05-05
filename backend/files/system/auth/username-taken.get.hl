@@ -1,6 +1,6 @@
 
 /*
- * Checks to see if the specified username is available or not.
+ * Checks to see if the specified username is available or not
  */
 .arguments
    username:string
