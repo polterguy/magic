@@ -159,6 +159,7 @@ import { environment } from '../environments/environment';
 import { WarningComponent } from './components/tools/ide/warning/warning.component';
 import { ExtraInfoDialogComponent } from './components/management/auth/users/extra-info-dialog/extra-info-dialog.component';
 import { TableNameDialogComponent } from './components/tools/sql/table-name-dialog/table-name-dialog.component';
+import { PwaUpdateSnackbarComponent } from './components/utilities/pwa-update-snackbar/pwa-update-snackbar.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -252,7 +253,8 @@ import { TableNameDialogComponent } from './components/tools/sql/table-name-dial
     IncompatibleFileDialogComponent,
     WarningComponent,
     ExtraInfoDialogComponent,
-    TableNameDialogComponent
+    TableNameDialogComponent,
+    PwaUpdateSnackbarComponent
   ],
   imports: [
     FormsModule,

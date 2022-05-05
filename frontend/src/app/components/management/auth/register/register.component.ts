@@ -123,9 +123,11 @@ export class RegisterComponent implements OnInit, OnDestroy {
       return;
     }
     if (this.registrationForm.value.email !== '' && this.emailRes !== 'email-available') {
+      this.feedbackService.showError('Either remove the email address or type a correct one.')
       return;
     }
     if (this.registrationForm.value.username !== '' && this.usernameRes !== 'username-available') {
+      this.feedbackService.showError('Username must be unique.')
       return;
     }
 
