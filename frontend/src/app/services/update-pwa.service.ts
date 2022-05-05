@@ -22,7 +22,6 @@ export class UpdatePwaService {
     private swUpdate: SwUpdate,
     private snackbar: MatSnackBar
   ) {
-    this.checkForUpdates();
     if (swUpdate.isEnabled) {
       interval(6 * 60 * 60).subscribe(() => swUpdate.checkForUpdate()
         .then(() => console.log('checking for updates')));
