@@ -241,7 +241,7 @@ if
              * "confirm user email" to user himself.
              */
             set-value:x:@.recipient
-               get-value:x:@.arguments/*/extra/*/email
+               get-value:x:@.extra/*/email
 
             /*
              * Making sure we communicate to caller that a
