@@ -267,6 +267,7 @@ if
             url:x:@.url
          mime-type:text/html
          email:x:@.recipient
+         name:x:@.extra/*/name/*/value
 
 // Logging the fact that we registered a new user.
 log.info:Successfully registered a new user

@@ -99,7 +99,10 @@ slots.create:magic.emails.send
 
    // Checking if caller supplied a [name] argument.
    if
-      exists:x:@.arguments/*/name
+      and
+         exists:x:@.arguments/*/name
+         neq:x:@.arguments/*/name
+            .
       .lambda
 
          // Caller supplied us with a [name] argument.
