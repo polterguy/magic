@@ -148,7 +148,7 @@ data.connect:magic
 config.get:"magic:smtp:host"
 if
    and
-      exists:x:@.extra/*/email
+      exists:x:@.extra/*/email/*/value
       not
          eq
             get-value:x:@config.get
@@ -241,7 +241,7 @@ if
              * "confirm user email" to user himself.
              */
             set-value:x:@.recipient
-               get-value:x:@.extra/*/email
+               get-value:x:@.extra/*/email/*/value
 
             /*
              * Making sure we communicate to caller that a
