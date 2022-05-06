@@ -12,7 +12,6 @@
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/username
 validators.mandatory:x:@.arguments/*/token
-validators.email:x:@.arguments/*/username
 
 // Verifying user exists and has not already verified his or her email address.
 data.connect:magic
