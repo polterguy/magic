@@ -69,12 +69,12 @@
 </ng-container>
 <ng-container *ngIf="forgotPass">
   <h2 class="mb-0">Request a reset password link</h2>
-  <p class="mb-3 mat-caption">This link will be sent to the email address associated with your account.</p>
+  <p class="mb-3 mat-caption">This link will be sent to the email address associated with your username.</p>
   <form>
     <div mat-dialog-content>
       <mat-form-field class="fill-width" appearance="outline">
 
-        <mat-label class="dark">Username/Email</mat-label>
+        <mat-label class="dark">Username</mat-label>
         <input matInput type="text" name="username" [(ngModel)]="forgotPass_username" autocomplete="off" #forgotInput>
 
         <mat-hint>Please enter your registered username or password.</mat-hint>
