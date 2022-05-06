@@ -64,6 +64,22 @@ slots.create:magic.emails.send
                get-name:x:@.dp/#
                .:}}
             get-value:x:@.dp/#
+            
+   // Common substitutions.
+   if
+      and
+         exists:x:@.arguments/*/name
+         neq:x:@.arguments/*/name
+            .
+      .lambda
+         set-value:x:@.body
+            strings.replace:x:@.body
+               .:{{name}}
+               get-value:x:@.arguments/*/name
+   set-value:x:@.body
+      strings.replace:x:@.body
+         .:{{email}}
+         get-value:x:@.arguments/*/email
 
    /*
     * Making sure we log our attempt of sending the email, with all arguments supplied.
