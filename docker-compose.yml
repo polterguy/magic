@@ -6,7 +6,7 @@ version: "3.3"
 services:
 
   db:
-    image: mysql
+    image: mariadb:10.5.8
     container_name: magic_mysql
     restart: always
     environment:
@@ -15,7 +15,7 @@ services:
       - database_mysql:/var/lib/mysql
 
   backend:
-    image: servergardens/magic-backend:latest
+    image: aistamagic/magic-backend:latest
     container_name: magic_backend
     depends_on:
       - db
@@ -23,10 +23,12 @@ services:
     ports:
       - "4444:4444"
     volumes:
-      - magic_files_mysql:/magic/files
+      - magic_files_data_mysql:/magic/files/data
+      - magic_files_config_mysql:/magic/files/config
+      - magic_files_modules_mysql:/magic/files/modules
 
   frontend:
-    image: servergardens/magic-frontend:latest
+    image: aistamagic/magic-frontend:latest
     container_name: magic_frontend
     depends_on:
       - backend
@@ -36,4 +38,6 @@ services:
 
 volumes:
   database_mysql:
-  magic_files_mysql:
+  magic_files_data_mysql:
+  magic_files_config_mysql:
+  magic_files_modules_mysql:
