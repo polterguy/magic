@@ -1,13 +1,21 @@
 
-// Script counting lines of code in specified folder.
-.folder:/system/
+/*
+ * Script counting Hyperlambda nodes in the specified folder,
+ * in addition to number of Hyperlambda files
+ */
+.folder:/
+.loc:int:0
+.files:int:0
 unwrap:x:+/*
 signal:magic.io.file.load-recursively
    .:x:@.folder
-.no:int:0
 for-each:x:@signal/*
-   strings.split:x:@.dp/#/0
-      .:"\n"
-   math.increment:x:@.no
-      get-count:x:@strings.split/*
+   if
+      strings.ends-with:x:@.dp/#
+         .:.hl
+      .lambda
+         hyper2lambda:x:@.dp/#/0
+         math.increment:x:@.loc
+            get-count:x:@hyper2lambda/**
+         math.increment:x:@.files
 remove-nodes:x:@signal/*
