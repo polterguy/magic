@@ -125,6 +125,43 @@ if
                .lambda
                   set-value:x:@.has-scheduler
                      .:bool:false
+                     
+            // Iterating through each module, counting LOC, and files.
+            io.folder.list:/modules/
+            for-each:x:@io.folder.list/*
+            
+               // Finding module name.
+               strings.split:x:@.dp/#
+                  .:/
+                  
+               // Loading all files in module recursively.
+               unwrap:x:+/*
+               signal:magic.io.file.load-recursively
+                  .:x:@.dp/#
+                  
+               // Looping through each file in module folder.
+               .loc:int:0
+               .files:int:0
+               for-each:x:@signal/*
+                  if
+                     strings.ends-with:x:@.dp/#
+                        .:.hl
+                     .lambda
+                        hyper2lambda:x:@.dp/#/0
+                        math.increment:x:@.loc
+                           get-count:x:@hyper2lambda/**
+                        math.increment:x:@.files
+
+               // Adding result to return value.
+               unwrap:x:+/+/*/*/*
+               set-name:x:+/*/*
+                  get-value:x:@strings.split/0/-
+               add:x:@.lambda/*/lambda2hyper/*/modules
+                  .
+                     foo
+                        loc:x:@.loc
+                        files:x:@.files
+
 
             // Returning result to caller.
             unwrap:x:+/*
@@ -142,6 +179,7 @@ if
                default_db:x:@.default-db
                default_timezone:x:@.default-timezone
                last_log_items
+               modules
             return:x:@lambda2hyper
 
       // Returning result of cache invocation to caller.
