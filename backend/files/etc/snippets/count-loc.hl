@@ -1,7 +1,7 @@
 
 /*
- * Script counting Hyperlambda nodes in the specified folder,
- * in addition to number of Hyperlambda files
+ * This script counts the number of Hyperlambda files, in addition to the combined
+ * number of nodes, within the specified folder.
  */
 .folder:/
 .loc:int:0
