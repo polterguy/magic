@@ -95,6 +95,11 @@ if
             set-value:x:-
                config.get:"magic:databases:default"
 
+            // Retrieving default timezone.
+            .default-timezone
+            set-value:x:-
+               config.get:"magic:culture:defaultTimeZone"
+
             // Counting cache items.
             cache.count
 
@@ -135,6 +140,7 @@ if
                slots:x:@.no-slots
                dynamic_slots:x:@.no-dynamic-slots
                default_db:x:@.default-db
+               default_timezone:x:@.default-timezone
                last_log_items
             return:x:@lambda2hyper
 
