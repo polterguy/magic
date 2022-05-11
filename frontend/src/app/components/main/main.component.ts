@@ -78,7 +78,6 @@ export class MainComponent implements OnInit {
     private feedbackService: FeedbackService,
     private updatePwaService: UpdatePwaService) {
       this.updatePwaService.checkForUpdates();
-      console.log('first')
   }
 
   /**

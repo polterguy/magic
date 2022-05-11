@@ -33,15 +33,15 @@ export class UpdatePwaService {
     }
   }
 
-  public checkForUpdates(): void {console.log('firstfirst')
+  public checkForUpdates(): void {
     this.swUpdate.versionUpdates.subscribe(evt => {
       switch (evt.type) {
         case 'VERSION_DETECTED':
           console.log(`Downloading new app version`);
           break;
         case 'VERSION_READY':
-          // console.log(`Current app version: ${evt.currentVersion.hash}`);
-          // console.log(`New app version ready for use: ${evt.latestVersion.hash}`);
+          console.log(`Current app version: ${evt.currentVersion.hash}`);
+          console.log(`New app version ready for use: ${evt.latestVersion.hash}`);
 
           const snack = this.snackbar.openFromComponent(PwaUpdateSnackbarComponent, {
             duration: -1
