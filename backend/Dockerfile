@@ -21,7 +21,6 @@ ENV ASPNETCORE_URLS="http://+:4444"
 ENTRYPOINT ["dotnet", "backend.dll"]
 
 # Notice, these lines makes sure Magic cannot write to files outside of the specified folders
-
 RUN groupadd -r magic && useradd -g magic magic
 RUN chown -R magic:magic /magic/files
 USER magic
