@@ -52,6 +52,8 @@ export class UpdatePwaService {
           break;
         case 'VERSION_INSTALLATION_FAILED':
           console.log(`Failed to install app version`);
+          console.log(`Failed to install app version : ${evt.version.hash}`);
+          console.log(`Failed to install app error: ${evt.error}`);
           break;
       }
     });
