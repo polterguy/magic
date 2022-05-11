@@ -23,6 +23,7 @@ import { BackendService } from 'src/app/services/backend.service';
 import { RegisterService } from 'src/app/services/register.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { UpdatePwaService } from 'src/app/services/update-pwa.service';
+import { SwUpdate } from '@angular/service-worker';
 
 /**
  * Main wire frame application component.
@@ -76,7 +77,7 @@ export class MainComponent implements OnInit {
     private backendService: BackendService,
     private feedbackService: FeedbackService,
     private updatePwaService: UpdatePwaService) {
-      // this.updatePwaService.checkForUpdates();
+      this.updatePwaService.checkForUpdates();
   }
 
   /**
