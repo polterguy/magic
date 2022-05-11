@@ -33,7 +33,7 @@ export class UpdatePwaService {
     }
   }
 
-  public checkForUpdates(): void {
+  public checkForUpdates(): void {console.log('firstfirst')
     this.swUpdate.versionUpdates.subscribe(evt => {
       switch (evt.type) {
         case 'VERSION_DETECTED':
