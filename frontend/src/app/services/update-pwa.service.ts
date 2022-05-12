@@ -35,48 +35,24 @@ export class UpdatePwaService {
 
   public checkForUpdates(): void {
     this.swUpdate.versionUpdates.subscribe(evt => {
-      let snack;
       switch (evt.type) {
+
         case 'VERSION_DETECTED':
           console.log(`Downloading new app version`);
           break;
+
         case 'VERSION_READY':
-          snack = this.snackbar.openFromComponent(PwaUpdateSnackbarComponent, {
+          this.snackbar.openFromComponent(PwaUpdateSnackbarComponent, {
             duration: -1
           });
-          snack.afterDismissed().subscribe(res => {
-            return;
-          })
           break;
+
         case 'VERSION_INSTALLATION_FAILED':
-          snack = this.snackbar.openFromComponent(PwaUpdateSnackbarComponent, {
+          this.snackbar.openFromComponent(PwaUpdateSnackbarComponent, {
             duration: -1
           });
-          snack.afterDismissed().subscribe(res => {
-            return;
-          })
           break;
       }
     });
-
-
-
-    // this.swUpdate.versionUpdates.subscribe(() => {
-      // const snack = this.snackbar.openFromComponent(PwaUpdateSnackbarComponent, {
-      //   duration: -1
-      // });
-      // snack.afterDismissed().subscribe(res => {
-      //   return;
-      // })
-      // snack.onAction().pipe(switchMap(() => this.swUpdate.activateUpdate())).subscribe((res) => {
-      //   console.log(res)
-      //   // this.reloadPage();
-      // });
-    // });
   }
-
-  // private reloadPage(): void {
-  //   this.swUpdate.activateUpdate().then(() => document.location.reload());
-  // }
-
 }
