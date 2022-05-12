@@ -1,7 +1,7 @@
 
 # Builds and deploys Docker image to DEV server
 
-name: Docker Image CI
+name: CI and CD for development environment
 on:
   push:
     branches: [ master ]
@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Build and push backend Docker image
+    - name: Build and push Docker CI images backend/frontend
       run: |
         echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
         cd ./frontend
@@ -21,7 +21,7 @@ jobs:
         docker build -t aistamagic/magic-backend:latest-ci -f ./Dockerfile .
         docker push aistamagic/magic-backend:latest-ci
 
-    - name: Updating Docker images on DEV VPS
+    - name: Updating Docker images on DEV machine
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.HOST }}
