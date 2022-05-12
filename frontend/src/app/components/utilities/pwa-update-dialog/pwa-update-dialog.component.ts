@@ -22,12 +22,19 @@ export class PwaUpdateDialogComponent {
   public reloadPage(): void {
     this.swUpdate.activateUpdate().then(() => {
       this.dialogRef.close();
-      // caches.keys().then(cs=>cs.forEach(c=>caches.delete(c)));
       window.location.href = window.location.href;
     });
   }
 
   public remindLater() {
-    this.dialogRef.close('later');
+    this.dialogRef.close();
+    setTimeout(() => {
+      this.matDialog.open(PwaUpdateDialogComponent, {
+        position: {top: '7px'},
+        width: '500px',
+        panelClass: ['pwa-update-panel'],
+        hasBackdrop: false
+      })
+    }, 120000);
   }
 }
