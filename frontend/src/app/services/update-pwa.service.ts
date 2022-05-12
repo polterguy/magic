@@ -30,15 +30,12 @@ export class UpdatePwaService {
       const everySixHoursOnceAppIsStable$ = concat(appIsStable$, everySixHours$);
 
       everySixHoursOnceAppIsStable$.subscribe(() => swUpdate.checkForUpdate());
-        // interval(6 * 60 * 60).subscribe(() => swUpdate.checkForUpdate()
-        //   .then(() => console.log('checking for updates')));
       }
   }
 
   public checkForUpdates(): void {
     
     this.swUpdate.versionUpdates.subscribe(evt => {
-      // this.activateUpdate();
       switch (evt.type) {
 
         case 'VERSION_DETECTED':
