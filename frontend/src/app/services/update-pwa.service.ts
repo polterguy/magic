@@ -57,11 +57,15 @@ export class UpdatePwaService {
   }
 
   private activateUpdate() {
-    this.matDialog.open(PwaUpdateDialogComponent, {
-      position: {top: '7px'},
-      width: '500px',
-      panelClass: ['pwa-update-panel'],
-      hasBackdrop: false
-    })
+    const dialogExist = this.matDialog.getDialogById('message-pop-up');
+    if (!dialogExist) {
+      this.matDialog.open(PwaUpdateDialogComponent, {
+        position: {top: '7px'},
+        width: '500px',
+        panelClass: ['pwa-update-panel'],
+        hasBackdrop: false,
+        id: 'message-pop-up'
+      })
+    }
   }
 }
