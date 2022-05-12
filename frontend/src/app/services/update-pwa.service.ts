@@ -31,7 +31,6 @@ export class UpdatePwaService {
   public checkForUpdates(): void {
     
     this.swUpdate.versionUpdates.subscribe(evt => {
-      // this.activateUpdate();
       switch (evt.type) {
 
         case 'VERSION_DETECTED':
