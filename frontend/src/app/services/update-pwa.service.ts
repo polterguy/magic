@@ -54,11 +54,11 @@ export class UpdatePwaService {
           break;
 
         case 'VERSION_READY':
-          
+          console.log('ready')
           break;
 
         case 'VERSION_INSTALLATION_FAILED':
-          
+          console.log('failed')
           break;
       }
     });
