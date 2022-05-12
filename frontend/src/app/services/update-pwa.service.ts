@@ -5,10 +5,12 @@
 
 // Angular and system imports.
 import { ApplicationRef, Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SwUpdate } from '@angular/service-worker';
 import { switchMap, interval, concat, first } from 'rxjs';
 import { PwaUpdateSnackbarComponent } from '../components/utilities/pwa-update-snackbar/pwa-update-snackbar.component';
+import { PwaUpdateDialogComponent } from '../components/utilities/pwa-update-dialog/pwa-update-dialog.component';
 
 /**
  * Update PWA service for letting users know about new update is available
@@ -21,7 +23,8 @@ export class UpdatePwaService {
   constructor(
     appRef: ApplicationRef,
     private swUpdate: SwUpdate,
-    private snackbar: MatSnackBar) {
+    private snackbar: MatSnackBar,
+    private matDialog: MatDialog) {
     if (swUpdate.isEnabled) {
       // Allow the app to stabilize first, before starting
       // polling for updates with `interval()`.
@@ -34,23 +37,27 @@ export class UpdatePwaService {
   }
 
   public checkForUpdates(): void {
+    
     this.swUpdate.versionUpdates.subscribe(evt => {
       switch (evt.type) {
 
         case 'VERSION_DETECTED':
+          this.matDialog.open(PwaUpdateDialogComponent, {
+            position: {top: '7px'},
+            width: '500px',
+            panelClass: ['pwa-update-panel'],
+            hasBackdrop: false
+          })
+          
           console.log(`Downloading new app version`);
           break;
 
         case 'VERSION_READY':
-          this.snackbar.openFromComponent(PwaUpdateSnackbarComponent, {
-            duration: -1
-          });
+          
           break;
 
         case 'VERSION_INSTALLATION_FAILED':
-          this.snackbar.openFromComponent(PwaUpdateSnackbarComponent, {
-            duration: -1
-          });
+          
           break;
       }
     });
