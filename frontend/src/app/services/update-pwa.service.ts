@@ -23,7 +23,7 @@ export class UpdatePwaService {
     private swUpdate: SwUpdate,
     private matDialog: MatDialog) {
       if (swUpdate.isEnabled) {
-        interval(6 * 60 * 60).subscribe(() => swUpdate.checkForUpdate()
+        interval(5 * 60 * 1000).subscribe(() => swUpdate.checkForUpdate()
           .then(() => console.log('checking for updates')));
       }
   }
