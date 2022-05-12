@@ -38,19 +38,6 @@ platformBrowserDynamic().bootstrapModule(AppModule).then(() => {
   }
 }).catch(err => console.log(err));
 
-// function bootstrap() {
-//   platformBrowserDynamic().bootstrapModule(AppModule)
-//   .catch(err => console.error(err));
-// };
-
-
-// if (document.readyState === 'complete') {
-//   bootstrap();
-// } else {
-//   document.addEventListener('DOMContentLoaded', bootstrap);
-// }
-
-
 RecaptchaComponent.prototype.ngOnDestroy = function () {
   if (this.subscription) {
     this.subscription.unsubscribe();
