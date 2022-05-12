@@ -57,6 +57,7 @@ export class UpdatePwaService {
   }
 
   private activateUpdate() {
+    console.log('updating to new version');
     const dialogExist = this.matDialog.getDialogById('message-pop-up');
     if (!dialogExist) {
       this.matDialog.open(PwaUpdateDialogComponent, {
