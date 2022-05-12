@@ -32,27 +32,6 @@ export class UpdatePwaService {
     
     this.swUpdate.versionUpdates.subscribe(evt => {
       this.activateUpdate();
-      // switch (evt.type) {
-
-      //   case 'VERSION_DETECTED':
-      //     this.matDialog.open(PwaUpdateDialogComponent, {
-      //       position: {top: '7px'},
-      //       width: '500px',
-      //       panelClass: ['pwa-update-panel'],
-      //       hasBackdrop: false
-      //     })
-          
-      //     console.log(`Downloading new app version`);
-      //     break;
-
-      //   case 'VERSION_READY':
-      //     console.log('ready')
-      //     break;
-
-      //   case 'VERSION_INSTALLATION_FAILED':
-      //     console.log('failed')
-      //     break;
-      // }
     });
   }
 
