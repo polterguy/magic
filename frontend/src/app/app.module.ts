@@ -160,6 +160,7 @@ import { WarningComponent } from './components/tools/ide/warning/warning.compone
 import { ExtraInfoDialogComponent } from './components/management/auth/users/extra-info-dialog/extra-info-dialog.component';
 import { TableNameDialogComponent } from './components/tools/sql/table-name-dialog/table-name-dialog.component';
 import { PwaUpdateSnackbarComponent } from './components/utilities/pwa-update-snackbar/pwa-update-snackbar.component';
+import { PwaUpdateDialogComponent } from './components/utilities/pwa-update-dialog/pwa-update-dialog.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -254,7 +255,8 @@ import { PwaUpdateSnackbarComponent } from './components/utilities/pwa-update-sn
     WarningComponent,
     ExtraInfoDialogComponent,
     TableNameDialogComponent,
-    PwaUpdateSnackbarComponent
+    PwaUpdateSnackbarComponent,
+    PwaUpdateDialogComponent
   ],
   imports: [
     FormsModule,
