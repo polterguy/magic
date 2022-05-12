@@ -40,9 +40,6 @@ export class UpdatePwaService {
           console.log(`Downloading new app version`);
           break;
         case 'VERSION_READY':
-          console.log(`Current app version: ${evt.currentVersion.hash}`);
-          console.log(`New app version ready for use: ${evt.latestVersion.hash}`);
-
           const snack = this.snackbar.openFromComponent(PwaUpdateSnackbarComponent, {
             duration: -1
           });
@@ -52,8 +49,6 @@ export class UpdatePwaService {
           break;
         case 'VERSION_INSTALLATION_FAILED':
           console.log(`Failed to install app version`);
-          console.log(`Failed to install app version : ${evt.version.hash}`);
-          console.log(`Failed to install app error: ${evt.error}`);
           break;
       }
     });
