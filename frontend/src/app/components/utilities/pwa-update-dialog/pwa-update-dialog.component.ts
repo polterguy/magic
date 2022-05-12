@@ -22,7 +22,7 @@ export class PwaUpdateDialogComponent {
   public reloadPage(): void {
     this.swUpdate.activateUpdate().then(() => {
       this.dialogRef.close();
-      caches.keys().then(cs=>cs.forEach(c=>caches.delete(c)));
+      // caches.keys().then(cs=>cs.forEach(c=>caches.delete(c)));
       window.location.href = window.location.href;
     });
   }
