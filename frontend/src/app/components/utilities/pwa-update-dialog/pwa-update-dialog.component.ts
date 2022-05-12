@@ -21,8 +21,8 @@ export class PwaUpdateDialogComponent {
 
   public reloadPage(): void {
     this.swUpdate.activateUpdate().then(() => {
-      caches.keys().then(cs=>cs.forEach(c=>caches.delete(c)));
-      this.dialogRef.close('install');
+      // caches.keys().then(cs=>cs.forEach(c=>caches.delete(c)));
+      // this.dialogRef.close('install');
       document.location.reload();
     });
   }
