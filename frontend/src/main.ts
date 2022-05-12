@@ -32,23 +32,23 @@ if (environment.production) {
   enableProdMode();
 }
 
-// platformBrowserDynamic().bootstrapModule(AppModule).then(() => {
-//   if ('serviceWorker' in navigator && environment.production) {
-//     navigator.serviceWorker.register('ngsw-worker.js');
-//   }
-// }).catch(err => console.log(err));
+platformBrowserDynamic().bootstrapModule(AppModule).then(() => {
+  if ('serviceWorker' in navigator && environment.production) {
+    navigator.serviceWorker.register('ngsw-worker.js');
+  }
+}).catch(err => console.log(err));
 
-function bootstrap() {
-  platformBrowserDynamic().bootstrapModule(AppModule)
-  .catch(err => console.error(err));
-};
+// function bootstrap() {
+//   platformBrowserDynamic().bootstrapModule(AppModule)
+//   .catch(err => console.error(err));
+// };
 
 
-if (document.readyState === 'complete') {
-  bootstrap();
-} else {
-  document.addEventListener('DOMContentLoaded', bootstrap);
-}
+// if (document.readyState === 'complete') {
+//   bootstrap();
+// } else {
+//   document.addEventListener('DOMContentLoaded', bootstrap);
+// }
 
 
 RecaptchaComponent.prototype.ngOnDestroy = function () {
