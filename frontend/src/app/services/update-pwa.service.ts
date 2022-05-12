@@ -26,41 +26,42 @@ export class UpdatePwaService {
         interval(6 * 60 * 60).subscribe(() => swUpdate.checkForUpdate()
           .then(() => console.log('checking for updates')));
       }
-    // if (swUpdate.isEnabled) {
-    //   // Allow the app to stabilize first, before starting
-    //   // polling for updates with `interval()`.
-    //   const appIsStable$ = appRef.isStable.pipe(first(isStable => isStable === true));
-    //   const everySixHours$ = interval(5 * 60 * 1000);
-    //   const everySixHoursOnceAppIsStable$ = concat(appIsStable$, everySixHours$);
-
-    //   everySixHoursOnceAppIsStable$.subscribe(() => swUpdate.checkForUpdate());
-    // }
   }
 
   public checkForUpdates(): void {
     
     this.swUpdate.versionUpdates.subscribe(evt => {
-      switch (evt.type) {
+      this.activateUpdate();
+      // switch (evt.type) {
 
-        case 'VERSION_DETECTED':
-          this.matDialog.open(PwaUpdateDialogComponent, {
-            position: {top: '7px'},
-            width: '500px',
-            panelClass: ['pwa-update-panel'],
-            hasBackdrop: false
-          })
+      //   case 'VERSION_DETECTED':
+      //     this.matDialog.open(PwaUpdateDialogComponent, {
+      //       position: {top: '7px'},
+      //       width: '500px',
+      //       panelClass: ['pwa-update-panel'],
+      //       hasBackdrop: false
+      //     })
           
-          console.log(`Downloading new app version`);
-          break;
+      //     console.log(`Downloading new app version`);
+      //     break;
 
-        case 'VERSION_READY':
-          console.log('ready')
-          break;
+      //   case 'VERSION_READY':
+      //     console.log('ready')
+      //     break;
 
-        case 'VERSION_INSTALLATION_FAILED':
-          console.log('failed')
-          break;
-      }
+      //   case 'VERSION_INSTALLATION_FAILED':
+      //     console.log('failed')
+      //     break;
+      // }
     });
+  }
+
+  private activateUpdate() {
+    this.matDialog.open(PwaUpdateDialogComponent, {
+      position: {top: '7px'},
+      width: '500px',
+      panelClass: ['pwa-update-panel'],
+      hasBackdrop: false
+    })
   }
 }
