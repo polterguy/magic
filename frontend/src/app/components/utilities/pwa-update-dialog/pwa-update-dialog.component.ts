@@ -21,21 +21,13 @@ export class PwaUpdateDialogComponent {
 
   public reloadPage(): void {
     this.swUpdate.activateUpdate().then(() => {
-      // caches.keys().then(cs=>cs.forEach(c=>caches.delete(c)));
       this.dialogRef.close();
+      caches.keys().then(cs=>cs.forEach(c=>caches.delete(c)));
       window.location.href = window.location.href;
     });
   }
 
   public remindLater() {
     this.dialogRef.close('later');
-    // setTimeout(() => {
-    //   this.matDialog.open(PwaUpdateDialogComponent, {
-    //     position: {top: '7px'},
-    //     width: '500px',
-    //     panelClass: ['pwa-update-panel'],
-    //     hasBackdrop: false
-    //   })
-    // }, 120000);
   }
 }
