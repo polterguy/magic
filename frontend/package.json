@@ -1,6 +1,6 @@
 {
   "name": "magic",
-  "version": "13.3.6",
+  "version": "13.3.5",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",

@@ -31,33 +31,27 @@ export class UpdatePwaService {
   public checkForUpdates(): void {
     
     this.swUpdate.versionUpdates.subscribe(evt => {
-      this.activateUpdate();
-      // switch (evt.type) {
+      // this.activateUpdate();
+      switch (evt.type) {
 
-      //   case 'VERSION_DETECTED':
-      //     this.matDialog.open(PwaUpdateDialogComponent, {
-      //       position: {top: '7px'},
-      //       width: '500px',
-      //       panelClass: ['pwa-update-panel'],
-      //       hasBackdrop: false
-      //     })
+        case 'VERSION_DETECTED':
           
-      //     console.log(`Downloading new app version`);
-      //     break;
+          console.log(`Downloading new app version`);
+          break;
 
-      //   case 'VERSION_READY':
-      //     console.log('ready')
-      //     break;
+        case 'VERSION_READY':
+          console.log('ready')
+          this.activateUpdate();
+          break;
 
-      //   case 'VERSION_INSTALLATION_FAILED':
-      //     console.log('failed')
-      //     break;
-      // }
+        case 'VERSION_INSTALLATION_FAILED':
+          console.log('failed')
+          break;
+      }
     });
   }
 
   private activateUpdate() {
-    console.log('updating to new version');
     const dialogExist = this.matDialog.getDialogById('message-pop-up');
     if (!dialogExist) {
       this.matDialog.open(PwaUpdateDialogComponent, {
