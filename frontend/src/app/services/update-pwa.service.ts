@@ -22,24 +22,24 @@ export class UpdatePwaService {
     appRef: ApplicationRef,
     private swUpdate: SwUpdate,
     private matDialog: MatDialog) {
-      if (swUpdate.isEnabled) {
-        // Allow the app to stabilize first, before starting
+    if (swUpdate.isEnabled) {
+      // Allow the app to stabilize first, before starting
       // polling for updates with `interval()`.
       const appIsStable$ = appRef.isStable.pipe(first(isStable => isStable === true));
-      const everySixHours$ = interval(6 * 60 * 60);
+      const everySixHours$ = interval(5 * 60 * 1000);
       const everySixHoursOnceAppIsStable$ = concat(appIsStable$, everySixHours$);
 
       everySixHoursOnceAppIsStable$.subscribe(() => swUpdate.checkForUpdate());
-      }
+    }
   }
 
   public checkForUpdates(): void {
-    
+
     this.swUpdate.versionUpdates.subscribe(evt => {
       switch (evt.type) {
 
         case 'VERSION_DETECTED':
-          
+
           console.log(`Downloading new app version`);
           break;
 
@@ -59,7 +59,7 @@ export class UpdatePwaService {
     const dialogExist = this.matDialog.getDialogById('message-pop-up');
     if (!dialogExist) {
       this.matDialog.open(PwaUpdateDialogComponent, {
-        position: {top: '7px'},
+        position: { top: '7px' },
         width: '500px',
         panelClass: ['pwa-update-panel'],
         hasBackdrop: false,
