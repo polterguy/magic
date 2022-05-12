@@ -35,12 +35,13 @@ export class UpdatePwaService {
 
   public checkForUpdates(): void {
     this.swUpdate.versionUpdates.subscribe(evt => {
+      let snack;
       switch (evt.type) {
         case 'VERSION_DETECTED':
           console.log(`Downloading new app version`);
           break;
         case 'VERSION_READY':
-          const snack = this.snackbar.openFromComponent(PwaUpdateSnackbarComponent, {
+          snack = this.snackbar.openFromComponent(PwaUpdateSnackbarComponent, {
             duration: -1
           });
           snack.afterDismissed().subscribe(res => {
@@ -48,7 +49,12 @@ export class UpdatePwaService {
           })
           break;
         case 'VERSION_INSTALLATION_FAILED':
-          console.log(`Failed to install app version`);
+          snack = this.snackbar.openFromComponent(PwaUpdateSnackbarComponent, {
+            duration: -1
+          });
+          snack.afterDismissed().subscribe(res => {
+            return;
+          })
           break;
       }
     });
