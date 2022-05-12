@@ -3,24 +3,21 @@
  * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
  */
 
-import { Component, OnInit } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Component } from '@angular/core';
 import { SwUpdate } from '@angular/service-worker';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-pwa-update-dialog',
   templateUrl: './pwa-update-dialog.component.html',
   styleUrls: ['./pwa-update-dialog.component.scss']
 })
-export class PwaUpdateDialogComponent implements OnInit {
+export class PwaUpdateDialogComponent {
 
   constructor(
     private swUpdate: SwUpdate,
     private dialogRef: MatDialogRef<PwaUpdateDialogComponent>,
     private matDialog: MatDialog) { }
-
-  ngOnInit(): void {
-  }
 
   public reloadPage(): void {
     this.swUpdate.activateUpdate().then(() => {
