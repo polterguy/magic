@@ -23,8 +23,15 @@ export class UpdatePwaService {
     private swUpdate: SwUpdate,
     private matDialog: MatDialog) {
       if (swUpdate.isEnabled) {
-        interval(6 * 60 * 60).subscribe(() => swUpdate.checkForUpdate()
-          .then(() => console.log('checking for updates')));
+        // Allow the app to stabilize first, before starting
+      // polling for updates with `interval()`.
+      const appIsStable$ = appRef.isStable.pipe(first(isStable => isStable === true));
+      const everySixHours$ = interval(6 * 60 * 60);
+      const everySixHoursOnceAppIsStable$ = concat(appIsStable$, everySixHours$);
+
+      everySixHoursOnceAppIsStable$.subscribe(() => swUpdate.checkForUpdate());
+        // interval(6 * 60 * 60).subscribe(() => swUpdate.checkForUpdate()
+        //   .then(() => console.log('checking for updates')));
       }
   }
 
