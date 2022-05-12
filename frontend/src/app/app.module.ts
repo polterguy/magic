@@ -159,7 +159,6 @@ import { environment } from '../environments/environment';
 import { WarningComponent } from './components/tools/ide/warning/warning.component';
 import { ExtraInfoDialogComponent } from './components/management/auth/users/extra-info-dialog/extra-info-dialog.component';
 import { TableNameDialogComponent } from './components/tools/sql/table-name-dialog/table-name-dialog.component';
-import { PwaUpdateSnackbarComponent } from './components/utilities/pwa-update-snackbar/pwa-update-snackbar.component';
 import { PwaUpdateDialogComponent } from './components/utilities/pwa-update-dialog/pwa-update-dialog.component';
 
 /**
@@ -255,7 +254,6 @@ import { PwaUpdateDialogComponent } from './components/utilities/pwa-update-dial
     WarningComponent,
     ExtraInfoDialogComponent,
     TableNameDialogComponent,
-    PwaUpdateSnackbarComponent,
     PwaUpdateDialogComponent
   ],
   imports: [
