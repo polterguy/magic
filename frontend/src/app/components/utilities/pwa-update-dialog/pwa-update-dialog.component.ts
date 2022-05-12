@@ -29,13 +29,5 @@ export class PwaUpdateDialogComponent {
 
   public remindLater() {
     this.dialogRef.close('later');
-    // setTimeout(() => {
-    //   this.matDialog.open(PwaUpdateDialogComponent, {
-    //     position: {top: '7px'},
-    //     width: '500px',
-    //     panelClass: ['pwa-update-panel'],
-    //     hasBackdrop: false
-    //   })
-    // }, 120000);
   }
 }
