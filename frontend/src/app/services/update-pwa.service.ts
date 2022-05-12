@@ -6,10 +6,8 @@
 // Angular and system imports.
 import { ApplicationRef, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { SwUpdate } from '@angular/service-worker';
-import { switchMap, interval, concat, first } from 'rxjs';
-import { PwaUpdateSnackbarComponent } from '../components/utilities/pwa-update-snackbar/pwa-update-snackbar.component';
+import { interval, concat, first } from 'rxjs';
 import { PwaUpdateDialogComponent } from '../components/utilities/pwa-update-dialog/pwa-update-dialog.component';
 
 /**
@@ -23,7 +21,6 @@ export class UpdatePwaService {
   constructor(
     appRef: ApplicationRef,
     private swUpdate: SwUpdate,
-    private snackbar: MatSnackBar,
     private matDialog: MatDialog) {
     if (swUpdate.isEnabled) {
       // Allow the app to stabilize first, before starting
