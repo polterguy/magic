@@ -77,7 +77,7 @@ export class NavbarComponent implements OnInit {
   /**
    * Implementation of OnInit.
    */
-  ngOnInit() {
+  ngOnInit() {console.log('changes are displayed!')
     this.theme = this.themeService.theme;
     this.backendService.authenticatedChanged.subscribe(() => {
       this.cdRef.detectChanges();
