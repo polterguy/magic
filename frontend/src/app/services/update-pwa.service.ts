@@ -22,15 +22,19 @@ export class UpdatePwaService {
     appRef: ApplicationRef,
     private swUpdate: SwUpdate,
     private matDialog: MatDialog) {
-    if (swUpdate.isEnabled) {
-      // Allow the app to stabilize first, before starting
-      // polling for updates with `interval()`.
-      const appIsStable$ = appRef.isStable.pipe(first(isStable => isStable === true));
-      const everySixHours$ = interval(5 * 60 * 1000);
-      const everySixHoursOnceAppIsStable$ = concat(appIsStable$, everySixHours$);
+      if (swUpdate.isEnabled) {
+        interval(6 * 60 * 60).subscribe(() => swUpdate.checkForUpdate()
+          .then(() => console.log('checking for updates')));
+      }
+    // if (swUpdate.isEnabled) {
+    //   // Allow the app to stabilize first, before starting
+    //   // polling for updates with `interval()`.
+    //   const appIsStable$ = appRef.isStable.pipe(first(isStable => isStable === true));
+    //   const everySixHours$ = interval(5 * 60 * 1000);
+    //   const everySixHoursOnceAppIsStable$ = concat(appIsStable$, everySixHours$);
 
-      everySixHoursOnceAppIsStable$.subscribe(() => swUpdate.checkForUpdate());
-    }
+    //   everySixHoursOnceAppIsStable$.subscribe(() => swUpdate.checkForUpdate());
+    // }
   }
 
   public checkForUpdates(): void {
