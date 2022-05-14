@@ -1,0 +1,79 @@
+
+// Allows an authenticated user to update his or her extra_info fields.
+.arguments:*
+.description:Allows an authenticated user to update his or her extra fields supplied during registration
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*
+
+// Ensures user is authorized to access endpoint.
+auth.ticket.verify
+
+/*
+ * Retrieving extra information, making sure we only allow
+ * for extra information that's allowed according to configuration settings.
+ */
+.extra
+config.get:"magic:auth:registration:extra"
+   .:name
+strings.split:x:@config.get
+   .:,
+for-each:x:@strings.split/*
+   if
+      exists:x:@.arguments/*/{@.dp/#}
+      .lambda
+         set-name:x:+/+/*/*
+            get-value:x:@.dp/#
+         unwrap:x:+/*/*/*
+         add:x:@.extra
+            .
+               .
+                  value:x:@.arguments/*/{@.dp/#}
+                  type:x:@.dp/#
+   remove-nodes:x:@.arguments/*/{@.dp/#}
+
+// Making sure no unsupported [extra] information was supplied.
+if
+   exists:x:@.arguments/*
+   .lambda
+      strings.concat
+         .:"Unsupported extra field '"
+         get-name:x:@.arguments/0
+         .:"' supplied to endpoint"
+      throw:x:-
+         public:bool:true
+         status:int:400
+
+// Retrieving currently authenticated user.
+auth.ticket.get
+
+// Upserts specified extra fields.
+data.connect:magic
+
+   // Inserting all extra information we've got on user.
+   for-each:x:@.extra/*
+
+      // First trying to update existing field.
+      data.update
+         table:users_extra
+         values
+            value:x:@.dp/#/*/value
+         where
+            and
+               user.eq:x:@auth.ticket.get
+               type.eq:x:@.dp/#/*/type
+      if
+         eq:x:@data.update
+            .:int:0
+         .lambda
+
+            // Field didn't exist, inserting new field.
+            data.create
+               table:users_extra
+               values
+                  user:x:@auth.ticket.get
+                  type:x:@.dp/#/*/type
+                  value:x:@.dp/#/*/value
+
+return
+   result:success
