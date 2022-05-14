@@ -14,7 +14,7 @@ auth.ticket.verify
  * for extra information that's allowed according to configuration settings.
  */
 .extra
-config.get:"magic:auth:registration:extra"
+config.get:"magic:auth:registration:extra-mutable"
    .:name
 strings.split:x:@config.get
    .:,
