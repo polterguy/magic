@@ -13,6 +13,8 @@ auth.ticket.verify:root
 validators.mandatory:x:@.arguments/*/file
 validators.mandatory:x:@.arguments/*/file/*/name
 validators.mandatory:x:@.arguments/*/file/*/stream
+validators.regex:x:@.arguments/*/file/*/name
+   regex:[a-z0-9_-]+
 strings.split:x:@.arguments/*/file/*/name
    .:.
 if
