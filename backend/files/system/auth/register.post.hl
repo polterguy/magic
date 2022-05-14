@@ -270,9 +270,11 @@ if
          name:x:@.extra/*/name/*/value
 
 // Logging the fact that we registered a new user.
+request.ip
 log.info:Successfully registered a new user
    username:x:@.arguments/*/username
    verify-email-sent:x:@.email-sent
+   ip:x:@request.ip
 
 // Returns success to caller.
 unwrap:x:+/*
