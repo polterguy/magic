@@ -75,5 +75,6 @@ data.connect:magic
                   type:x:@.dp/#/*/type
                   value:x:@.dp/#/*/value
 
+// Returning success to caller.
 return
    result:success
