@@ -123,7 +123,7 @@ data.connect:magic
       values
          user:x:@.arguments/*/username
          role:unconfirmed
-         
+
    // Inserting all extra information we've got on user.
    for-each:x:@.extra/*
       data.create
