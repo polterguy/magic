@@ -34,5 +34,4 @@ jobs:
           docker-compose down
           docker pull aistamagic/magic-frontend:latest-ci
           docker pull aistamagic/magic-backend:latest-ci
-          docker pull aistamagic/k8s.manager:latest
           docker-compose up -d
