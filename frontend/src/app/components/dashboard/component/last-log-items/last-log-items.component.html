@@ -20,22 +20,17 @@
                 <div class="table-responsive w-100 log-table">
                     <table mat-table [dataSource]="dataSource" class="w-100">
         
-                        <!-- id Column -->
-                        <ng-container matColumnDef="id">
-                            <th mat-header-cell *matHeaderCellDef> ID </th>
-                            <td mat-cell *matCellDef="let element" class="pr-3"> {{element.id}} </td>
-                        </ng-container>
-        
                         <!-- data/time Column -->
                         <ng-container matColumnDef="created">
                             <th mat-header-cell *matHeaderCellDef> Data/time </th>
-                            <td mat-cell *matCellDef="let element" class="pr-3 text-nowrap"> {{element.created | date}} </td>
+                            <td mat-cell *matCellDef="let element" class="pr-3 text-nowrap"> {{element.created | since}} </td>
                         </ng-container>
         
                         <!-- type Column -->
                         <ng-container matColumnDef="type">
                             <th mat-header-cell *matHeaderCellDef> Type </th>
-                            <td mat-cell *matCellDef="let element" class="pr-3"> {{element.type}} </td>
+                            <td mat-cell *matCellDef="let element" class="pr-3"
+                            [class.error]="element.type === 'error' || element.type === 'fatal'"> {{element.type}} </td>
                         </ng-container>
         
                         <!-- result Column -->

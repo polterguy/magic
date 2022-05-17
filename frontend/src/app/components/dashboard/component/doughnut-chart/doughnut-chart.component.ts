@@ -34,7 +34,7 @@ export class DoughnutChartComponent implements OnInit, OnDestroy {
     responsive: true, 
     maintainAspectRatio: true,
     aspectRatio: 5 / 3.5,
-    cutoutPercentage: 90,
+    cutoutPercentage: 40,
     hover: { mode: null },
     legend: {
       display: false
@@ -120,10 +120,10 @@ export class DoughnutChartComponent implements OnInit, OnDestroy {
      * the preparation of the data for the doughnut chart
      */
   doughnutChartDataPrep(){
-    let errorLog = this.data.last_log_items.filter(n => n.type === 'error').length;
-    let successLog = this.data.last_log_items.filter(n => n.type !== 'error').length;
+    let errorLog = this.data.last_log_items.filter(n => n.type === 'error' || n.type === 'fatal').length;
+    let successLog = this.data.last_log_items.filter(n => n.type !== 'error' && n.type !== 'fatal').length;
 
-    this.doughnutChartLabels = ['Error', 'Passed'];
+    this.doughnutChartLabels = ['Unsuccess', 'Success'];
     this.doughnutChartData = [errorLog, successLog];
   }
 
