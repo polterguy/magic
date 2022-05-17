@@ -8,21 +8,20 @@ import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ThemeService } from 'src/app/services/theme.service';
 import { ChartConfiguration, ChartType } from 'chart.js';
 import { BaseChartDirective, Label, SingleDataSet } from 'ng2-charts';
-import { SystemReport } from 'src/app/models/dashboard.model';
+import { LastLogItems, SystemReport } from 'src/app/models/dashboard.model';
 import * as pluginDataLabels from 'chartjs-plugin-datalabels';
 
 // Importing global chart colors.
-import lightThemeColors from '../../_pie_chart_colors.json';
-import darkThemeColors from '../../_bar_chart_colors.json';
+import lightThemeColors from '../../_doughnut_chart_colors.json';
+import darkThemeColors from '../../_doughnut_chart_colors.json';
 import { Subscription } from 'rxjs';
 
-
 @Component({
-  selector: 'app-pie-chart',
-  templateUrl: './pie-chart.component.html',
-  styleUrls: ['./pie-chart.component.scss']
+  selector: 'app-doughnut-chart',
+  templateUrl: './doughnut-chart.component.html',
+  styleUrls: ['./doughnut-chart.component.scss']
 })
-export class PieChartComponent implements OnInit, OnDestroy {
+export class DoughnutChartComponent implements OnInit, OnDestroy {
 
   @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
 
@@ -31,10 +30,12 @@ export class PieChartComponent implements OnInit, OnDestroy {
   private theme: string = '';
 
   // chart options
-  public pieChartOptions: ChartConfiguration['options'] = {
+  public doughnutChartOptions: ChartConfiguration['options'] = {
     responsive: true, 
     maintainAspectRatio: true,
-    aspectRatio: 5 / 3.75,
+    aspectRatio: 5 / 3.5,
+    cutoutPercentage: 90,
+    hover: { mode: null },
     legend: {
       display: false
     },
@@ -55,7 +56,7 @@ export class PieChartComponent implements OnInit, OnDestroy {
           };
         },
         formatter: (value, context) => {
-          return context.chart.data.labels[context.dataIndex] + ' \n' + context.chart.data.datasets[0].data[context.dataIndex] + ' files';
+          return context.chart.data.labels[context.dataIndex] + ' \n' + (Number(context.chart.data.datasets[0].data[context.dataIndex]) * 100) / 10 + '%';
         }
       }
     },
@@ -68,24 +69,24 @@ export class PieChartComponent implements OnInit, OnDestroy {
       displayColors: false,
       callbacks: {
         label: (tooltipItem, data) => {
-          const datasetLabel = this.pieChartLabels[tooltipItem.index] || '';
+          const datasetLabel = this.doughnutChartLabels[tooltipItem.index] || '';
           return  datasetLabel + ':';
         },
         footer: (tooltipItem, data) => {
-          const datasetLabelLoc = this.pieChartLocLabel[tooltipItem[0].index] || '';
-          return [datasetLabelLoc + ' lines of code'];
+          const datasetLabelLoc = this.doughnutChartData[tooltipItem[0].index] || '';
+          return [datasetLabelLoc + ' requests'];
         }
       }
     }
   };
 
   @Input() data: SystemReport;
-  public pieChartLabels: Label[] = [];
-  public pieChartLocLabel: string[] = [];
-  public pieChartData: SingleDataSet = [];
-  public pieChartType: ChartType = 'pie';
-  public pieChartLegend = true;
-  public pieChartPlugins = [pluginDataLabels];
+  public doughnutChartLabels: Label[] = [];
+  public doughnutChartLocLabel: string[] = [];
+  public doughnutChartData: SingleDataSet = [];
+  public doughnutChartType: ChartType = 'doughnut';
+  public doughnutChartLegend = true;
+  public doughnutChartPlugins = [pluginDataLabels];
   
   constructor(private themeService: ThemeService) { }
 
@@ -97,6 +98,9 @@ export class PieChartComponent implements OnInit, OnDestroy {
     this.subscribeThemeChange = this.themeService.themeChanged.subscribe((val: any) => {
       this.colors = (val === 'light') ? lightThemeColors : darkThemeColors;
       this.theme = val;
+      if (this.chart !== undefined) {
+        this.chart.chart = this.chart.getChartBuilder(this.chart.ctx);
+      };
     });
     
     /**
@@ -107,26 +111,20 @@ export class PieChartComponent implements OnInit, OnDestroy {
       while (!this.data)
         await new Promise(resolve => setTimeout(resolve, 100));
       if (this.data) {
-        this.pieChartDataPrep();
+        this.doughnutChartDataPrep();
       }
     })();
   }
 
   /**
-     * the preparation of the data for the pie chart
+     * the preparation of the data for the doughnut chart
      */
-  pieChartDataPrep(){
-    let keys = Object.keys(this.data.modules);
-    let valuesFiles = [];
-    let valuesLoc = [];
-    keys.forEach((key)  => {
-      valuesFiles.push(this.data.modules[key].files);
-      valuesLoc.push(this.data.modules[key].loc);
-    })
+  doughnutChartDataPrep(){
+    let errorLog = this.data.last_log_items.filter(n => n.type === 'error').length;
+    let successLog = this.data.last_log_items.filter(n => n.type !== 'error').length;
 
-    this.pieChartLabels = keys;
-    this.pieChartData = valuesFiles;
-    this.pieChartLocLabel = valuesLoc;
+    this.doughnutChartLabels = ['Error', 'Passed'];
+    this.doughnutChartData = [errorLog, successLog];
   }
 
   /**

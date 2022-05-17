@@ -160,6 +160,12 @@ import { WarningComponent } from './components/tools/ide/warning/warning.compone
 import { ExtraInfoDialogComponent } from './components/management/auth/users/extra-info-dialog/extra-info-dialog.component';
 import { TableNameDialogComponent } from './components/tools/sql/table-name-dialog/table-name-dialog.component';
 import { PwaUpdateDialogComponent } from './components/utilities/pwa-update-dialog/pwa-update-dialog.component';
+import { OverviewComponent } from './components/dashboard/component/overview/overview.component';
+import { PieChartComponent } from './components/dashboard/component/pie-chart/pie-chart.component';
+import { DoughnutChartComponent } from './components/dashboard/component/doughnut-chart/doughnut-chart.component';
+import { UnsavedChangesDialogComponent } from './components/tools/ide/unsaved-changes-dialog/unsaved-changes-dialog.component';
+import { LastLogItemsComponent } from './components/dashboard/component/last-log-items/last-log-items.component';
+import { ViewLogComponent } from './components/dashboard/component/view-log/view-log.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -251,10 +257,16 @@ import { PwaUpdateDialogComponent } from './components/utilities/pwa-update-dial
     FolderActionsComponent,
     GeneralActionsComponent,
     IncompatibleFileDialogComponent,
+    UnsavedChangesDialogComponent,
     WarningComponent,
     ExtraInfoDialogComponent,
     TableNameDialogComponent,
-    PwaUpdateDialogComponent
+    PwaUpdateDialogComponent,
+    OverviewComponent,
+    PieChartComponent,
+    DoughnutChartComponent,
+    LastLogItemsComponent,
+    ViewLogComponent
   ],
   imports: [
     FormsModule,

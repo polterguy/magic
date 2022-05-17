@@ -20,6 +20,7 @@ import { EvaluatorService } from '../../../evaluator/services/evaluator.service'
 import { PreviewFileDialogComponent } from '../../preview-file-dialog/preview-file-dialog.component';
 import { ExecuteEndpointDialogComponent } from '../../execute-endpoint-dialog/execute-endpoint-dialog.component';
 import { FileObjectName, RenameFileDialogComponent } from '../../rename-file-dialog/rename-file-dialog.component';
+import { UnsavedChangesDialogComponent } from '../../unsaved-changes-dialog/unsaved-changes-dialog.component';
 
 /**
  * File actions component for executing actions for selected file in Hyper IDE.
@@ -57,8 +58,9 @@ export class FileActionsComponent {
 
   /**
    * Invoked when a file should be saved.
+   * @param thenClose Boolean, only turns to true if invoked from close function.
    */
-  saveActiveFile() {
+  saveActiveFile(thenClose: boolean = false) {
     if (!this.currentFileData) {
       return;
     }
@@ -69,6 +71,9 @@ export class FileActionsComponent {
         editor.doc.markClean();
         this.feedbackService.showInfoShort('File successfully saved');
         this.getEndpoints.emit();
+
+        // if invoked from closeActiveFile function, the recall to close after saving file.
+        thenClose === true ? this.closeActiveFile(true) : '';
       },
       error: (error: any) => this.feedbackService.showError(error)});
   }
@@ -203,9 +208,22 @@ export class FileActionsComponent {
     if (!shouldWarn()) {
       this.closeFileImplFromParent.emit();
     } else {
-      this.feedbackService.confirm('File not saved', 'File has unsaved changes, are you sure you want to close the file?', () => {
-        this.closeFileImplFromParent.emit();
+      const dialog = this.dialog.open(UnsavedChangesDialogComponent, {
+        width: '550px'
       });
+      dialog.afterClosed().subscribe((data: { save: boolean }) => {
+        if (data && data.save === true) {
+          this.saveActiveFile(true);
+          
+        } else if (data && data.save === false) {console.log(data.save)
+          this.closeFileImplFromParent.emit();
+        } else {
+          return;
+        }
+      });
+      // this.feedbackService.confirm('File not saved', 'File has unsaved changes, are you sure you want to close the file?', () => {
+      //   this.closeFileImplFromParent.emit();
+      // });
     }
   }
 

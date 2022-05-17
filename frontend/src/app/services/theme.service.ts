@@ -24,7 +24,7 @@ export class ThemeService {
   /**
    * To allow consumers to subscribe to theme change events.
    */
-   themeChanged: Observable<boolean>;
+   themeChanged: Observable<string>;
 
   /**
    * Creates an instance of your type.
@@ -33,6 +33,7 @@ export class ThemeService {
     this._theme = localStorage.getItem('theme') || 'light';
     this.overlayContainer.getContainerElement().classList.add(this._theme);
     this._themeChanged = new BehaviorSubject<string>(this._theme);
+    this.themeChanged = this._themeChanged.asObservable();
   }
 
   /**
