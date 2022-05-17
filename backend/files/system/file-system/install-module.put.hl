@@ -13,6 +13,8 @@ auth.ticket.verify:root
 validators.mandatory:x:@.arguments/*/file
 validators.mandatory:x:@.arguments/*/file/*/name
 validators.mandatory:x:@.arguments/*/file/*/stream
+validators.regex:x:@.arguments/*/file/*/name
+   regex:[a-z0-9_-]+
 strings.split:x:@.arguments/*/file/*/name
    .:.
 if
@@ -38,12 +40,22 @@ if
          public:true
          status:400
 
-// Saves the ZIP file to the modules folder.
+// Figuring out full path to use for ZIP file.
 .full-path
 set-value:x:@.full-path
    strings.concat
       .:/modules/
       get-value:x:@.arguments/*/file/*/name
+
+// Checking if ZIP file already exists, at which point we delete it.
+if
+   io.file.exists:x:@.full-path
+   .lambda
+   
+      // File with specified filename already exists.
+      io.file.delete:x:@.full-path
+
+// Saving stream to file.
 io.stream.save-file:x:@.full-path
    get-value:x:@.arguments/*/file/*/stream
 
@@ -57,9 +69,11 @@ set-value:x:@.folder
 
 // Deleting previously existing folder with same name.
 if
-   io.folder.exists:x:@.full-path
+   io.folder.exists:x:@.folder
    .lambda
-      io.folder.delete:x:@.full-path
+   
+      // Module already exists, deleting it.
+      io.folder.delete:x:@.folder
 
 // Creating folder.
 io.folder.create:x:@.folder
@@ -100,6 +114,14 @@ if
                .:/modules/
                get-value:x:@hyper2lambda/*/module_name
                .:/
+            if
+               io.folder.exists:x:@strings.concat
+               .lambda
+               
+                  // Folder already exists, deleting it.
+                  io.folder.delete:x:@strings.concat
+
+            // Renaming folder according to manifest information.
             io.folder.move:x:@.folder
                get-value:x:@strings.concat
             set-value:x:@.module-name

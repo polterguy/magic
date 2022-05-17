@@ -148,7 +148,16 @@ data.connect:magic
             substitutes
                url:x:@.url
             mime-type:text/html
-            email:x:@.arguments/*/username
+            email:x:@data.read/*/*/value
+            
+         // Logging the fact that we sent a confirmation email again.
+         request.ip
+         log.info:Confirm registration email was resent
+            subject:x:@.subject
+            template:x:@.template
+            email:x:@data.read/*/*/value
+            username:x:@.arguments/*/username
+            ip:x:@request.ip
 
 // Returning result to caller.
 unwrap:x:+/*
