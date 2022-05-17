@@ -1,3 +1,4 @@
+@import '../../../assets/styles/sizes.scss';
 
 .welcome-section {
   button { min-width: 100px; }
@@ -11,7 +12,53 @@
   }
 }
 
+.row.manipuated-layout {
+  margin-left: calc($side_space * -1.5 );  
+  margin-right: calc($side_space * -1.5 );  
+  div[class^="row"] {
+    margin-left: calc($side_space / 2 );  
+    margin-right: calc($side_space / 2 );
+  }
+  div[class^="col-"] {
+    padding-left: calc($side_space / 2 );  
+    padding-right: calc($side_space / 2 );  
+  }
+  .row.no-gutters {
+    margin-right: 0;
+    margin-left: 0;
+    div[class^="col-"]{
+      padding-right: 0;
+      padding-left: 0;
+    }
+  }
+}
+
 .min-w-30 {
   min-width: 30%;
   @media(max-width: 576px) { width: 100%; }
+}
+
+@media(min-width: 1200px) {
+  .pl-xl-reset {
+    padding-left: $side_space!important;
+  }
+  .pr-xl-reset {
+    padding-right: $side_space!important;
+  }
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+  .pl-lg-reset {
+    padding-left: $side_space!important;
+  }
+}
+@media (min-width: 768px) {
+  .pr-md-reset {
+    padding-right: $side_space!important;
+  }
+}
+@media (min-width: 576px) and (max-width: 1999px) {
+  .pl-md-reset {
+    padding-left: $side_space!important;
+  }
 }

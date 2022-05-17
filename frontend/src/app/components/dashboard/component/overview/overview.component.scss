@@ -1,0 +1,19 @@
+@import '../../../../../assets/styles/colour.scss';
+
+#add-segment-card {
+    background-color: transparentize($color: $magic_default_alternative, $amount: 0.85);
+    box-shadow: none;
+}
+.relative {
+    position: relative;
+    .change-text {
+        position: absolute;
+        right: 0;
+        top: -15px;
+        font-size: 12px;
+        font-weight: 400;
+    }
+}
+.min-h-80{
+    min-height: 80px;
+}

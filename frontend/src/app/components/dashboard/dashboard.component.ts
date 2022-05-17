@@ -18,7 +18,7 @@ import { LogTypes, SystemReport, Timeshifts } from '../../models/dashboard.model
 import { LoginDialogComponent } from '../utilities/login-dialog/login-dialog.component';
 
 // Importing global chart colors.
-import colors from './bar_chart_colors.json';
+import colors from './_bar_chart_colors.json';
 
 /**
  * Dashboard component displaying general information about Magic,
@@ -38,10 +38,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   chartType: boolean[] = [];
   systemReport: any = null;
   systemReportDisplayable: any;
-  logTypesChart: LogTypes[];
   timeshiftChart: Timeshifts[] = [];
   timeshiftChartLabel: string[] = [];
   timeshiftChartData: string[] = [];
+  logTypesChart: LogTypes[];
 
   /**
    * Common bar chart colors.

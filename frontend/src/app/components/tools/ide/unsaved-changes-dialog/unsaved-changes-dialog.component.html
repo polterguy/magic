@@ -1,0 +1,14 @@
+
+<h3 mat-dialog-title class="text-accent">File not saved</h3>
+
+<form>
+  <div mat-dialog-content>
+    <p>File has unsaved changes, are you sure you want to close the file?</p>
+  </div>
+
+  <div mat-dialog-actions>
+    <button mat-raised-button [mat-dialog-close]="{save: true}" cdkFocusInitial>Save</button>
+    <button mat-button [mat-dialog-close]="{save: false}">Don't save</button>  
+    <button mat-button mat-dialog-close>Cancel</button>
+  </div>
+</form>

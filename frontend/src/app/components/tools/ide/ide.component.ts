@@ -482,11 +482,12 @@ export class IdeComponent implements OnInit, OnDestroy {
         level: event.dialogResult.path.split('/').filter(x => x !== '').length + 1,
         children: [],
       });
-      this.currentFileData = this.openFiles.filter(x => x.path === event.objectPath)[0];
+      
       sorter();
       this.dataBindTree();
       this.cdRef.detectChanges();
       this.getEndpoints();
+      this.updateFileObject(event.objectPath);
     }
   }
 
@@ -606,6 +607,25 @@ export class IdeComponent implements OnInit, OnDestroy {
             editor.doc.markClean();
           }, 1);
           this.cdRef.detectChanges();
+
+          // If the code mirror can't open the file.
+          // Lets the user decide what to do with it.
+          if (this.getCodeMirrorOptions(fileObject) === null){
+            const dialog = this.dialog.open(IncompatibleFileDialogComponent, {
+              width: '550px',
+              data: {
+                name: fileObject.substring(fileObject.lastIndexOf('/') + 1),
+              },
+            });
+            dialog.afterClosed().subscribe((data: { deleteFile: false, download: false }) => {
+              if (data && data.download) {
+                this.fileActionsComponent.downloadActiveFile(fileObject)
+              } else if (data && data.deleteFile) {
+                this.fileActionsComponent.deleteActiveFile(fileObject)
+              }
+            });
+            return;
+          }
         },
         error: (error: any) => this.feedbackService.showError(error)});
     } : () => {
