@@ -123,7 +123,7 @@ export class DoughnutChartComponent implements OnInit, OnDestroy {
     let errorLog = this.data.last_log_items.filter(n => n.type === 'error' || n.type === 'fatal').length;
     let successLog = this.data.last_log_items.filter(n => n.type !== 'error' && n.type !== 'fatal').length;
 
-    this.doughnutChartLabels = ['Unsuccess', 'Success'];
+    this.doughnutChartLabels = ['Failure', 'Success'];
     this.doughnutChartData = [errorLog, successLog];
   }
 
