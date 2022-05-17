@@ -17,7 +17,7 @@ export class LastLogItemsComponent implements OnInit {
   @Input() data: LastLogItems[] = [];
   @Input() totalLogs: number = 0;
 
-  displayedColumns: string[] = ['id', 'created', 'type', 'content', 'more'];
+  displayedColumns: string[] = ['created', 'type', 'content', 'more'];
   dataSource;
   
   constructor(private dialog: MatDialog) { }
