@@ -3,9 +3,6 @@
 .arguments:*
 .description:Allows an authenticated user to update his or her extra fields supplied during registration
 
-// Sanity checking invocation.
-validators.mandatory:x:@.arguments/*
-
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify
 
