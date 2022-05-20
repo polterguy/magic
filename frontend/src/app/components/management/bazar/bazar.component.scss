@@ -1,5 +1,6 @@
 @import '../../../../assets/styles/colour.scss';
 @import '../../../../assets/styles/mixin.scss';
+@import '../../../../assets/styles/sizes.scss';
 
 .bazaar{
   .line-truncate{@include line_truncate(5);}
@@ -27,7 +28,26 @@
     white-space: pre-line;
   }
 }
-
+.row.manipuated-layout {
+  margin-left: calc($side_space * -1.5 );  
+  margin-right: calc($side_space * -1.5 );  
+  div[class^="row"] {
+    margin-left: calc($side_space / 2 );  
+    margin-right: calc($side_space / 2 );
+  }
+  div[class^="col-"] {
+    padding-left: calc($side_space / 2 );  
+    padding-right: calc($side_space / 2 );  
+  }
+  .row.no-gutters {
+    margin-right: 0;
+    margin-left: 0;
+    div[class^="col-"]{
+      padding-right: 0;
+      padding-left: 0;
+    }
+  }
+}
 /*=-=-=-=-=-=
  Dot Flashing
 =-=-=-=-=-=*/

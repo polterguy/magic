@@ -51,9 +51,16 @@
                     </div>
                 </button>
                 <mat-menu #menu="matMenu" yPosition="above">
-                    <button mat-menu-item *ngFor="let item of segmentOptions" (click)="setExtraSegment(item)">
-                        <mat-icon>add</mat-icon>&nbsp;
-                        {{item}}
+                    <button mat-menu-item *ngFor="let item of segmentOptions | keyvalue" (click)="setExtraSegment(item)">
+                        <!-- <mat-icon class="mr-0">add</mat-icon>&nbsp;
+                        {{item.key}}: <span class="text-accent">{{item.value}}</span> -->
+                        <div class="d-flex justify-content-between align-items-center pr-1">
+                            <div class="d-flex align-items-center mr-3">
+                                <mat-icon class="mr-0">add</mat-icon>&nbsp;
+                                {{item.key}}
+                            </div>
+                            <span class="text-accent">{{item.value}}</span>
+                        </div>
                     </button>
                 </mat-menu>
             </mat-card-content>

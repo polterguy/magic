@@ -108,7 +108,7 @@ export class HyperlambdaComponent implements AfterViewInit {
     setTimeout(() => {
       this.vocabularyLoaded = true;
       setTimeout(() => {
-        this.model.editor = this._editor.codeMirror;
+        this.model.editor = this._editor?.codeMirror;
 
         // Associating ALT+M with fullscreen toggling of the editor instance.
         if (this.model.options.extraKeys) {

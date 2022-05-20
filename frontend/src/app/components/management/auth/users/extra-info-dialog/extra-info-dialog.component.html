@@ -52,7 +52,11 @@
                         name="value">
                     </mat-form-field>
                 </div>
-                <button mat-flat-button (click)="saveNewFields()" class="w-100" color="primary" [disabled]="temptType === '' || tempValue === ''">Save new fields</button>
+                <div class="d-flex w-100 flex-sm-row flex-column-reverse">
+                    <button mat-stroked-button (click)="fieldsToBeAdded = false" class="w-100" type="button">Cancel</button>
+                    <div class="p-1"></div>
+                    <button mat-flat-button (click)="saveNewFields()" class="w-100" color="primary" [disabled]="temptType === '' || tempValue === ''">Save new fields</button>
+                </div>
             </ng-container>
             <button mat-flat-button (click)="createNewFields()" *ngIf="!fieldsToBeAdded" class="w-100">
                 <mat-icon>add</mat-icon>

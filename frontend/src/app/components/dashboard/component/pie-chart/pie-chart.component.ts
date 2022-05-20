@@ -24,10 +24,21 @@ import { Subscription } from 'rxjs';
 })
 export class PieChartComponent implements OnInit, OnDestroy {
 
-  @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
+  @ViewChild(BaseChartDirective) chartPie: BaseChartDirective | undefined;
 
+  /**
+   * To specify colors dynamically from a json file and based on the selected theme.
+   */
   public colors = [];
+  
+  /**
+   * Watches changes of the theme.
+   */
   private subscribeThemeChange: Subscription;
+  
+  /**
+   * Sets the current theme.
+   */
   private theme: string = '';
 
   // chart options
@@ -36,14 +47,18 @@ export class PieChartComponent implements OnInit, OnDestroy {
     maintainAspectRatio: true,
     aspectRatio: 5 / 3.75,
     legend: {
-      display: false
+      display: true,
+      labels: {
+        fontColor: ''
+      }
     },
     plugins: {
       datalabels: {
-        align: 'center',
-        
+        align: 'end',
+        clamp: true,
         padding: 0,
         offset: 0,
+        display: 'auto',
         color: (context) => {
           return (this.theme === 'light') ? 'black' : 'white'
         },
@@ -73,20 +88,52 @@ export class PieChartComponent implements OnInit, OnDestroy {
         },
         footer: (tooltipItem, data) => {
           const datasetLabelLoc = this.pieChartLocLabel[tooltipItem[0].index] || '';
-          return [datasetLabelLoc + ' lines of code'];
+          const filesCount = this.pieChartData[tooltipItem[0].index]
+          return [datasetLabelLoc + ' lines of code in ' + filesCount + ' files'];
         }
       }
     }
   };
 
+  /**
+   * The actual data received from the parent component, to be displayed on the chart.
+   */
   @Input() data: SystemReport;
+  
+  /**
+   * An array containing the labels of the chart
+   */
   public pieChartLabels: Label[] = [];
+  
+  /**
+   * Containing "loc" labels -> lines of code.
+   */
   public pieChartLocLabel: string[] = [];
+  
+  /**
+   * The main chart data.
+   */
   public pieChartData: SingleDataSet = [];
+  
+  /**
+   * Chart type.
+   */
   public pieChartType: ChartType = 'pie';
+  
+  /**
+   * Chart legend.
+   */
   public pieChartLegend = true;
+  
+  /**
+   * An external plugin, recommended by the Chart.js for managing labels.
+   */
   public pieChartPlugins = [pluginDataLabels];
   
+  /**
+   * 
+   * @param themeService For listening to the changes on the theme.
+   */
   constructor(private themeService: ThemeService) { }
 
   ngOnInit(): void {
@@ -97,6 +144,12 @@ export class PieChartComponent implements OnInit, OnDestroy {
     this.subscribeThemeChange = this.themeService.themeChanged.subscribe((val: any) => {
       this.colors = (val === 'light') ? lightThemeColors : darkThemeColors;
       this.theme = val;
+
+      
+      if (this.chartPie !== undefined) {
+        this.chartPie.options.legend.labels.fontColor = (val === 'light' ? 'black' : 'white');
+        this.chartPie.chart = this.chartPie.getChartBuilder(this.chartPie.ctx);
+      };
     });
     
     /**
@@ -127,6 +180,9 @@ export class PieChartComponent implements OnInit, OnDestroy {
     this.pieChartLabels = keys;
     this.pieChartData = valuesFiles;
     this.pieChartLocLabel = valuesLoc;
+
+    this.chartPie.options.legend.labels.fontColor = (this.theme === 'light' ? 'black' : 'white');
+    this.chartPie.chart = this.chartPie.getChartBuilder(this.chartPie.ctx);
   }
 
   /**

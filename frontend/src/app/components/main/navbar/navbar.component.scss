@@ -120,6 +120,8 @@
       }
     }
 
+    .mat-content { height: 100%;width: 100%; }
+
     .mat-expansion-panel-header,
     .mat-list-option{
       height: 40px;
@@ -224,6 +226,14 @@ colour setting -- text & background
         .mat-expansion-indicator::after{
           color: $magic_dark;
           font-weight: 500;
+        }
+      }
+    }
+    .mat-accordion-multi {
+      .mat-expansion-panel-header{
+        &.active-link,
+        &:hover {
+          background-color: transparent;
         }
       }
     }

@@ -13,6 +13,10 @@ import { LastLogItems } from 'src/app/models/dashboard.model';
 })
 export class ViewLogComponent implements OnInit {
 
+  /**
+   * 
+   * @param data Comes from the parent component once the dialog is being called.
+   */
   constructor(@Inject(MAT_DIALOG_DATA) public data: LastLogItems) { }
 
   ngOnInit(): void {

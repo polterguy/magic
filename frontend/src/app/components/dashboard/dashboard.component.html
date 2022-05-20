@@ -14,84 +14,89 @@
               <div class="col-xl-4 col-lg-6 col-md-4 col-sm-6 col-12">
                 <app-doughnut-chart [data]="systemReportDisplayable"></app-doughnut-chart>
               </div>
-              <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+              <div class="col-xl-4 col-lg-4 col-md-5 col-sm-6 col-12">
                 <app-pie-chart [data]="systemReportDisplayable"></app-pie-chart>
               </div>
               <div class="col-xl-7 col-lg-8 col-12 order-md-5 order-lg-4">
                 <app-last-log-items [data]="systemReportDisplayable?.last_log_items" [totalLogs]="systemReportDisplayable?.log_items"></app-last-log-items>
               </div>
-              <div class="col-xl-5 col-lg-8 col-md-8 col-12 order-md-4 order-lg-5  order-6">
-                <div class="w-100 h-100 flex-column d-{{chartItem.key === notChangableChart ? 'flex' : 'none'}}"
-                  *ngFor="let chartItem of chartData | keyvalue; let index = index; let last = last; let even = even">
-                  <ng-container *ngIf="chartItem.key === notChangableChart">
-                   <div class="row h-100 mt-4 no-gutters">
-                    <div class="col-12 mb-3">
-                      <div class="d-flex justify-content-between w-100">
-                        <div>
-                          <h2 class="mb-0">{{chartItem.value?.name}}</h2>
-                          <p class="mt-0 text-muted">{{chartItem.value?.description}}
-                            <small class="text-muted">(last 14 days)</small>
-                          </p>
-                        </div>
-                        <div>
-                          <button mat-icon-button (click)="chartType[index] = !chartType[index]">
-                            <mat-icon>{{!chartType[index] ? 'show' : 'bar'}}_chart</mat-icon>
-                          </button>
+              <div class="col-xl-5 col-lg-8 col-md-7 col-12 order-md-4 order-lg-5 order-6">
+                <ng-container *ngFor="let chartItem of chartData | keyvalue:unsorted; let index = index;">
+                  <ng-container *ngIf="index===0">
+                    <div class="w-100 h-100 d-flex flex-column">
+                     <div class="row h-100 mt-4 no-gutters">
+                      <div class="col-12 mb-3">
+                        <div class="d-flex justify-content-between w-100">
+                          <div>
+                            <h2 class="mb-0">{{chartItem.value?.name}}</h2>
+                            <p class="mt-0 text-muted">{{chartItem.value?.description}}
+                              <small class="text-muted">(last 14 days)</small>
+                            </p>
+                          </div>
+                          <div>
+                            <button mat-icon-button (click)="chartType[index] = !chartType[index]">
+                              <mat-icon>{{chartType[index] ? 'show' : 'bar'}}_chart</mat-icon>
+                            </button>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                     <div class="col-12 mb-3">
-                      <mat-card class="h-100">
-                        <mat-card-content class="min-h-300 h-100">
-                          <canvas baseChart
-                            [data]="chartItem.value?.data" 
-                            [labels]="chartItem.value?.label"
-                            [options]="barChartOptions"
-                            [chartType]="chartType[index] ? 'line' : 'bar'"
-                            [colors]="colors">
-                          </canvas>
-                        </mat-card-content>
-                      </mat-card>
+                       <div class="col-12 mb-3">
+                        <mat-card class="h-100">
+                          <mat-card-content class="min-h-300 h-100">
+                            <canvas baseChart
+                              [data]="chartItem.value?.data" 
+                              [labels]="chartItem.value?.label"
+                              [options]="barChartOptions"
+                              [chartType]="!chartType[index] ? 'line' : 'bar'"
+                              [colors]="colors">
+                            </canvas>
+                          </mat-card-content>
+                        </mat-card>
+                       </div>
                      </div>
-                   </div>
+                    </div>
                   </ng-container>
-                </div>
-              </div>
-              <div class="d-{{chartPreference.includes(chartItem.key) && chartItem.key !== notChangableChart ? 'flex' : 'none'}} flex-column col-xl-6 {{first ? 'col-lg-4' : ''}} col-sm-6 order-{{7 + index}}"
-                *ngFor="let chartItem of chartData | keyvalue; let index = index; let last = last; let even = even;let first = first">
-                <ng-container *ngIf="chartPreference.includes(chartItem.key) && chartItem.key !== notChangableChart">
-                  <div class="row h-100 mt-4 no-gutters">
-                    <div class="col-12 mb-3">
-                      <div class="d-flex justify-content-between w-100">
-                        <div>
-                          <h2 class="mb-0">{{chartItem.value?.name}}</h2>
-                          <p class="text-muted mt-0">{{chartItem.value?.description}}
-                            <small class="text-muted">(last 14 days)</small>
-                          </p>
-                        </div>
-                        <div>
-                          <button mat-icon-button (click)="chartType[index] = !chartType[index]">
-                            <mat-icon>{{chartType[index] ? 'show' : 'bar'}}_chart</mat-icon>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-12 mb-3">
-                      <mat-card class="h-100">
-                        <mat-card-content class="min-h-300">
-                          <canvas baseChart
-                            [data]="chartItem.value?.data" 
-                            [labels]="chartItem.value?.label"
-                            [options]="barChartOptions"
-                            [chartType]="!chartType[index] ? 'line' : 'bar'"
-                            [colors]="colors">
-                          </canvas>
-                        </mat-card-content>
-                      </mat-card>
-                    </div>
-                  </div>
                 </ng-container>
               </div>
+              <ng-container *ngFor="let chartItem of chartData | keyvalue:unsorted; let index = index;let first = first">
+                <ng-container *ngIf="index>0">
+                  <div class="d-flex flex-column col-xl-6 {{index===1 ? 'col-lg-4' : ''}} col-sm-6 order-{{7 + index}}"
+                    >
+                    <!-- <ng-container *ngIf="index > 0"> -->
+                      <div class="row h-100 mt-4 no-gutters">
+                        <div class="col-12 mb-3">
+                          <div class="d-flex justify-content-between w-100">
+                            <div>
+                              <h2 class="mb-0">{{chartItem.value?.name}}</h2>
+                              <p class="text-muted mt-0">{{chartItem.value?.description}}
+                                <small class="text-muted">(last 14 days)</small>
+                              </p>
+                            </div>
+                            <div>
+                              <button mat-icon-button (click)="chartType[index] = !chartType[index]">
+                                <mat-icon>{{chartType[index] ? 'show' : 'bar'}}_chart</mat-icon>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-12 mb-3">
+                          <mat-card class="h-100">
+                            <mat-card-content class="min-h-300">
+                              <canvas baseChart
+                                [data]="chartItem.value?.data" 
+                                [labels]="chartItem.value?.label"
+                                [options]="barChartOptions"
+                                [chartType]="!chartType[index] ? 'line' : 'bar'"
+                                [colors]="colors">
+                              </canvas>
+                            </mat-card-content>
+                          </mat-card>
+                        </div>
+                      </div>
+                    <!-- </ng-container> -->
+                  </div>
+                </ng-container>
+              </ng-container>
             </div>
           </div>
         </div>

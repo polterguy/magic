@@ -107,7 +107,7 @@ export class CreateKeypairComponent implements OnInit {
       email: this.email,
       name: this.subject
     };
-    
+    if (localStorage.getItem('subscribes-to-newsletter')) return this.generateKeypair();
     this.feedbackService.confirm('Receive a promo code', 'Do you want a promo code that gives you all Bazar items for free for a limited period? Join our mailing list and stay up-to-date for promotions! If you do, then make sure you verify your email address.',
       () => {
         this.bazarService.subscribeToNewsletter(data).subscribe({

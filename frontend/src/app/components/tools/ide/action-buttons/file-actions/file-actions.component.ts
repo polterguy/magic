@@ -209,21 +209,19 @@ export class FileActionsComponent {
       this.closeFileImplFromParent.emit();
     } else {
       const dialog = this.dialog.open(UnsavedChangesDialogComponent, {
-        width: '550px'
+        width: '550px',
+        data: this.currentFileData.name
       });
       dialog.afterClosed().subscribe((data: { save: boolean }) => {
         if (data && data.save === true) {
           this.saveActiveFile(true);
           
-        } else if (data && data.save === false) {console.log(data.save)
+        } else if (data && data.save === false) {
           this.closeFileImplFromParent.emit();
         } else {
           return;
         }
       });
-      // this.feedbackService.confirm('File not saved', 'File has unsaved changes, are you sure you want to close the file?', () => {
-      //   this.closeFileImplFromParent.emit();
-      // });
     }
   }
 
