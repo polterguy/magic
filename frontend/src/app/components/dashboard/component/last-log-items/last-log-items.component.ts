@@ -14,29 +14,50 @@ import { ViewLogComponent } from '../view-log/view-log.component';
 })
 export class LastLogItemsComponent implements OnInit {
 
+  /**
+   * Actual data received from the parent component.
+   */
   @Input() data: LastLogItems[] = [];
+
+  /**
+   * Number of total logs passing from the parent component.
+   */
   @Input() totalLogs: number = 0;
 
+  /**
+   * Column titles to be displayed in the table.
+   */
   displayedColumns: string[] = ['created', 'type', 'content', 'more'];
-  dataSource;
-  
+
+  /**
+   * Data to be displayed inside the table.
+   */
+  dataSource: any;
+
   constructor(private dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.watingData();
   }
 
+  /**
+   * Waiting for the data to reach from the parent component.
+   */
   watingData() {
     (async () => {
       while (this.data === null)
         await new Promise(resolve => setTimeout(resolve, 100));
-      
+
       if (this.data && this.data.length > 0) {
         this.dataSource = this.data;
       }
     })();
   }
 
+  /**
+   * To show the full details.
+   * @param log All information about the selected log.
+   */
   viewLog(log: LastLogItems) {
     this.dialog.open(ViewLogComponent, {
       width: '650px',

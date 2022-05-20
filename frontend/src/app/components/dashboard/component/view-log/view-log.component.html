@@ -10,14 +10,14 @@
         {{data.created | date}}
     </p>
   </ng-container>
-  <ng-container *ngIf="data?.meta">
-    <p *ngFor="let meta of data?.meta | keyvalue">
-        {{meta.key}}: {{meta.value}}
-    </p>
-  </ng-container>
   <ng-container *ngIf="data?.type">
     <p>
         Type: <span class="text-capitalized">{{data.type}}</span>
+    </p>
+  </ng-container>
+  <ng-container *ngIf="data?.meta">
+    <p *ngFor="let meta of data?.meta | keyvalue">
+        {{meta.key}}: {{meta.value}}
     </p>
   </ng-container>
   <ng-container *ngIf="data?.content">

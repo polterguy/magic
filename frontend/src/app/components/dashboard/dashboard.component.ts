@@ -35,7 +35,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private activeBackendSubscriber: Subscription;
   private _isRetrievingSystemReport = false;
 
+  /**
+   * Chart type.
+   */
   chartType: boolean[] = [];
+  
   systemReport: any = null;
   systemReportDisplayable: any;
   timeshiftChart: Timeshifts[] = [];
@@ -71,9 +75,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     maintainAspectRatio: false
   };
 
-  // Dashboard charts
-  chartPreference: string[] = [];
-
   // default is set for all charts to be displayed
   chartsList: any = [];
 
@@ -81,11 +82,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * for preparing chart data + name and description dynamically
    */
   chartData: any = [];
-
-  /**
-   * to keep at least one chart not removable
-   */
-  notChangableChart: string;
 
   /**
    * 
@@ -126,15 +122,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     // Ensuring we unsubscribe from authenticated subscription and active backend changed subscription.
     this.authSubscriber.unsubscribe();
     this.activeBackendSubscriber.unsubscribe();
-  }
-
-  /**
-   * Set dashboard charts preferences and store in localStorage
-   * show success message, so the user understands what he's done!
-   */
-  setPreference() {
-    localStorage.setItem('chartPreference', JSON.stringify(this.chartPreference));
-    this.feedbackService.showInfo('Preferences updated successfuly.');
   }
 
   /**
@@ -193,30 +180,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
             this.chartsList.push({name: report['timeshifts'][el].name, value: el, status: true});
             this.chartData[el] = { label: report['timeshifts'][el].items.map(x => {return moment(x.when).format("D. MMM")}), data: report['timeshifts'][el].items.map(x => {return x.count}), name: report['timeshifts'][el].name, description: report['timeshifts'][el].description};
 
-            // To prevent removing ALL charts, we keep the first index disabled... so it can't be removed
-            this.notChangableChart = this.chartsList[0].value;
           })
         }
-
-        // Get the user's preferences for charts
-        this.getChartPreferences();
 
       },
       error: (error: any) => this.feedbackService.showError(error)});
   }
 
-  /*
-   * Getting user's preferences for the displayed charts inside dashboard
-   * and storing them inside localstorage
+  /**
+   * Just an empty function, needed to keep the chartData itteration unsorted by the keyvalue pipe.
    */
-  private getChartPreferences() {
-    if (localStorage.getItem('chartPreference')) {
-      this.chartPreference = JSON.parse(localStorage.getItem('chartPreference'));
-    } else {
-      this.chartsList.forEach((element, index) => {
-        this.chartPreference.push(element.value);
-        localStorage.setItem('chartPreference', JSON.stringify(this.chartPreference))
-      });
-    }
-  }
+  unsorted() {}
 }

@@ -8,7 +8,7 @@ import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ThemeService } from 'src/app/services/theme.service';
 import { ChartConfiguration, ChartType } from 'chart.js';
 import { BaseChartDirective, Label, SingleDataSet } from 'ng2-charts';
-import { LastLogItems, SystemReport } from 'src/app/models/dashboard.model';
+import { SystemReport } from 'src/app/models/dashboard.model';
 import * as pluginDataLabels from 'chartjs-plugin-datalabels';
 
 // Importing global chart colors.
@@ -25,24 +25,38 @@ export class DoughnutChartComponent implements OnInit, OnDestroy {
 
   @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
 
+  /**
+   * To specify colors dynamically from a json file and based on the selected theme.
+   */
   public colors = [];
+
+  /**
+   * Watches changes of the theme.
+   */
   private subscribeThemeChange: Subscription;
+
+  /**
+   * Sets the current theme.
+   */
   private theme: string = '';
 
   // chart options
   public doughnutChartOptions: ChartConfiguration['options'] = {
-    responsive: true, 
+    responsive: true,
     maintainAspectRatio: true,
-    aspectRatio: 5 / 3.5,
-    cutoutPercentage: 40,
+    aspectRatio: 5 / 3.75,
+    cutoutPercentage: 50,
     hover: { mode: null },
     legend: {
-      display: false
+      display: true,
+      labels: {
+        fontColor: ''
+      }
     },
     plugins: {
       datalabels: {
         align: 'center',
-        
+
         padding: 0,
         offset: 0,
         color: (context) => {
@@ -70,7 +84,7 @@ export class DoughnutChartComponent implements OnInit, OnDestroy {
       callbacks: {
         label: (tooltipItem, data) => {
           const datasetLabel = this.doughnutChartLabels[tooltipItem.index] || '';
-          return  datasetLabel + ':';
+          return datasetLabel + ':';
         },
         footer: (tooltipItem, data) => {
           const datasetLabelLoc = this.doughnutChartData[tooltipItem[0].index] || '';
@@ -80,14 +94,40 @@ export class DoughnutChartComponent implements OnInit, OnDestroy {
     }
   };
 
+  /**
+   * The actual data received from the parent component, to be displayed on the chart.
+   */
   @Input() data: SystemReport;
+
+  /**
+   * An array containing the labels of the chart
+   */
   public doughnutChartLabels: Label[] = [];
-  public doughnutChartLocLabel: string[] = [];
+
+  /**
+   * The main chart data.
+   */
   public doughnutChartData: SingleDataSet = [];
+
+  /**
+   * Chart type.
+   */
   public doughnutChartType: ChartType = 'doughnut';
+
+  /**
+   * Chart legend.
+   */
   public doughnutChartLegend = true;
+
+  /**
+   * An external plugin, recommended by the Chart.js for managing labels.
+   */
   public doughnutChartPlugins = [pluginDataLabels];
-  
+
+  /**
+   * 
+   * @param themeService For listening to the changes on the theme.
+   */
   constructor(private themeService: ThemeService) { }
 
   ngOnInit(): void {
@@ -98,11 +138,13 @@ export class DoughnutChartComponent implements OnInit, OnDestroy {
     this.subscribeThemeChange = this.themeService.themeChanged.subscribe((val: any) => {
       this.colors = (val === 'light') ? lightThemeColors : darkThemeColors;
       this.theme = val;
+
       if (this.chart !== undefined) {
+        this.chart.options.legend.labels.fontColor = (val === 'light') ? 'black' : 'white';
         this.chart.chart = this.chart.getChartBuilder(this.chart.ctx);
       };
     });
-    
+
     /**
      * waiting for the data to be ready
      * then call the preparation function
@@ -119,12 +161,15 @@ export class DoughnutChartComponent implements OnInit, OnDestroy {
   /**
      * the preparation of the data for the doughnut chart
      */
-  doughnutChartDataPrep(){
+  doughnutChartDataPrep() {
     let errorLog = this.data.last_log_items.filter(n => n.type === 'error' || n.type === 'fatal').length;
     let successLog = this.data.last_log_items.filter(n => n.type !== 'error' && n.type !== 'fatal').length;
 
     this.doughnutChartLabels = ['Failure', 'Success'];
     this.doughnutChartData = [errorLog, successLog];
+
+    this.chart.options.legend.labels.fontColor = (this.theme === 'light' ? 'black' : 'white');
+    this.chart.chart = this.chart.getChartBuilder(this.chart.ctx);
   }
 
   /**

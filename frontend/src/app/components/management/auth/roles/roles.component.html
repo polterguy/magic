@@ -96,10 +96,10 @@
                       mat-menu-item
                       [disabled]="!backendService.active?.access.auth.create_user_role || el.name === 'reset-password' || getAffectedUsers(el) === 0"
                       matTooltipPosition="before"
-                      [matTooltip]="'Add role to ' + getAffectedUsers(el) + ' selected user(s)'"
+                      [matTooltip]="'Add role to ' + getAffectedUsers(el) + ' selected user(s) without this role.'"
                       (click)="addRole(el)">
                       <mat-icon>add_box</mat-icon>
-                      Add role 
+                      Add to selected users
                     </button>
 
                     <div class="p-1"></div>

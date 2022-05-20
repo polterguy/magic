@@ -87,7 +87,9 @@
       *matRowDef="let el; columns: displayedColumns;"></tr>
 
     <tr mat-row *matRowDef="let el; columns: ['showDetails']" class="expanded-row"></tr>
-
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell" colspan="2">No receipts found for this specific key.</td>
+    </tr>
   </table>
 </div>
 
