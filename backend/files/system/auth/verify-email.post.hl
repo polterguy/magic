@@ -105,7 +105,30 @@ data.connect:magic
       roles
          .:x:@config.get
 
-   // Returns JWT token to caller.
-   unwrap:x:+/*
-   return-nodes
+   // Selecting all extra information associated with user.
+   data.read
+      table:users_extra
+      columns
+         type
+         value
+      where
+         and
+            user.eq:x:@.arguments/*/username
+   for-each:x:@data.read/*
+      set-name:x:./*/add/[0,1]/*/*/name
+         get-value:x:@.dp/#/*/type
+      unwrap:x:+/*/*
+      add:x:././*/return/*/extra
+         .
+            name:x:@.dp/#/*/value
+
+   // Returning results back to caller.
+   unwrap:x:+/+/*
+   if
+      not
+         exists:x:./././*/return/*/extra/0
+      .lambda
+         remove-nodes:x:./././*/return/*/extra
+   return
       ticket:x:@auth.ticket.create
+      extra
