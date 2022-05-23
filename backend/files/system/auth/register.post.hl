@@ -16,7 +16,7 @@ validators.mandatory:x:@.arguments/*/username
 validators.mandatory:x:@.arguments/*/password
 validators.url:x:@.arguments/*/frontendUrl
 validators.regex:x:@.arguments/*/username
-   regex:[a-z0-9-]{5,}
+   regex:[a-z0-9-]{2,20}
 
 /*
  * Checking if backend is configured to use reCAPTCHA, and if so,
@@ -193,7 +193,7 @@ if
        */
       .token
       strings.concat
-         get-value:x:@.arguments/*/
+         get-value:x:@.arguments/*/username
          config.get:"magic:auth.secret"
       set-value:x:@.token
          crypto.hash:x:@strings.concat
