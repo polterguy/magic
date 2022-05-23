@@ -78,6 +78,7 @@ data.connect:magic
     * to the default registration role.
     */
    config.get:"magic:auth:registration:default-role"
+      .:guest
    data.delete
       table:users_roles
       where
