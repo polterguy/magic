@@ -2,18 +2,11 @@
  * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
  */
 
-import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 
 // Utility imports.
 import { ThemeService } from 'src/app/services/theme.service';
-import { ChartConfiguration, ChartType } from 'chart.js';
-import { BaseChartDirective, Label, SingleDataSet } from 'ng2-charts';
 import { SystemReport } from 'src/app/models/dashboard.model';
-import * as pluginDataLabels from 'chartjs-plugin-datalabels';
-
-// Importing global chart colors.
-import lightThemeColors from '../../_doughnut_chart_colors.json';
-import darkThemeColors from '../../_doughnut_chart_colors.json';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -22,13 +15,20 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./doughnut-chart.component.scss']
 })
 export class DoughnutChartComponent implements OnInit, OnDestroy {
+  options: any;
+  chartInstance: any;
 
-  @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
+  public colors = [];
 
   /**
-   * To specify colors dynamically from a json file and based on the selected theme.
+   * The actual data received from the parent component, to be displayed on the chart.
    */
-  public colors = [];
+  @Input() data: SystemReport;
+
+  /**
+   * The main chart data.
+   */
+  public chartData: any = [];
 
   /**
    * Watches changes of the theme.
@@ -39,90 +39,6 @@ export class DoughnutChartComponent implements OnInit, OnDestroy {
    * Sets the current theme.
    */
   private theme: string = '';
-
-  // chart options
-  public doughnutChartOptions: ChartConfiguration['options'] = {
-    responsive: true,
-    maintainAspectRatio: true,
-    aspectRatio: 5 / 3.75,
-    cutoutPercentage: 50,
-    hover: { mode: null },
-    legend: {
-      display: true,
-      labels: {
-        fontColor: ''
-      }
-    },
-    plugins: {
-      datalabels: {
-        align: 'center',
-
-        padding: 0,
-        offset: 0,
-        color: (context) => {
-          return (this.theme === 'light') ? 'black' : 'white'
-        },
-        font: (context) => {
-          var w = context.chart.width;
-          return {
-            size: w < 512 ? 12 : 14,
-            weight: 'bold'
-          };
-        },
-        formatter: (value, context) => {
-          return context.chart.data.labels[context.dataIndex] + ' \n' + (Number(context.chart.data.datasets[0].data[context.dataIndex]) * 100) / 10 + '%';
-        }
-      }
-    },
-    layout: {
-      padding: 0
-    },
-    tooltips: {
-      borderWidth: 1,
-      caretPadding: 15,
-      displayColors: false,
-      callbacks: {
-        label: (tooltipItem, data) => {
-          const datasetLabel = this.doughnutChartLabels[tooltipItem.index] || '';
-          return datasetLabel + ':';
-        },
-        footer: (tooltipItem, data) => {
-          const datasetLabelLoc = this.doughnutChartData[tooltipItem[0].index] || '';
-          return [datasetLabelLoc + ' requests'];
-        }
-      }
-    }
-  };
-
-  /**
-   * The actual data received from the parent component, to be displayed on the chart.
-   */
-  @Input() data: SystemReport;
-
-  /**
-   * An array containing the labels of the chart
-   */
-  public doughnutChartLabels: Label[] = [];
-
-  /**
-   * The main chart data.
-   */
-  public doughnutChartData: SingleDataSet = [];
-
-  /**
-   * Chart type.
-   */
-  public doughnutChartType: ChartType = 'doughnut';
-
-  /**
-   * Chart legend.
-   */
-  public doughnutChartLegend = true;
-
-  /**
-   * An external plugin, recommended by the Chart.js for managing labels.
-   */
-  public doughnutChartPlugins = [pluginDataLabels];
 
   /**
    * 
@@ -136,13 +52,8 @@ export class DoughnutChartComponent implements OnInit, OnDestroy {
      * Setting chart color based on the selected theme
      */
     this.subscribeThemeChange = this.themeService.themeChanged.subscribe((val: any) => {
-      this.colors = (val === 'light') ? lightThemeColors : darkThemeColors;
       this.theme = val;
-
-      if (this.chart !== undefined) {
-        this.chart.options.legend.labels.fontColor = (val === 'light') ? 'black' : 'white';
-        this.chart.chart = this.chart.getChartBuilder(this.chart.ctx);
-      };
+      this.getOptions();
     });
 
     /**
@@ -153,23 +64,23 @@ export class DoughnutChartComponent implements OnInit, OnDestroy {
       while (!this.data)
         await new Promise(resolve => setTimeout(resolve, 100));
       if (this.data) {
-        this.doughnutChartDataPrep();
+        this.chartDataPrep();
+        this.getOptions();
       }
     })();
   }
 
   /**
-     * the preparation of the data for the doughnut chart
+     * the preparation of the data for the pie chart
      */
-  doughnutChartDataPrep() {
+  chartDataPrep() {
     let errorLog = this.data.last_log_items.filter(n => n.type === 'error' || n.type === 'fatal').length;
     let successLog = this.data.last_log_items.filter(n => n.type !== 'error' && n.type !== 'fatal').length;
 
-    this.doughnutChartLabels = ['Failure', 'Success'];
-    this.doughnutChartData = [errorLog, successLog];
-
-    this.chart.options.legend.labels.fontColor = (this.theme === 'light' ? 'black' : 'white');
-    this.chart.chart = this.chart.getChartBuilder(this.chart.ctx);
+    this.chartData = [
+      { value: errorLog, name: 'Failure' },
+      { value: successLog, name: 'Success' }
+    ];
   }
 
   /**
@@ -179,4 +90,42 @@ export class DoughnutChartComponent implements OnInit, OnDestroy {
     this.subscribeThemeChange.unsubscribe();
   }
 
+  getOptions() {
+    this.options = {
+      tooltip: {
+        trigger: 'item',
+        appendToBody: true
+      },
+      legend: {
+        orient: 'horizontal',
+        left: 'top',
+        type: 'scroll',
+        textStyle: {
+          color: this.theme === 'light' ? 'black' : 'white'
+        },
+        pageIconColor: this.theme === 'light' ? 'black' : 'white',
+        pageTextStyle: {
+          color: this.theme === 'light' ? 'black' : 'white'
+        }
+      },
+      series: [
+        {
+          // name: 'Access From',
+          type: 'pie',
+          radius: '50%',
+          data: this.chartData,
+          label: {
+            color: this.theme === 'light' ? 'black' : 'white'
+          },
+          emphasis: {
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.5)'
+            }
+          }
+        }
+      ]
+    }
+  }
 }

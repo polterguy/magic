@@ -49,6 +49,7 @@ import {
   NgxMatNativeDateModule,
   NgxMatTimepickerModule
 } from '@angular-material-components/datetime-picker';
+import { NgxEchartsModule } from 'ngx-echarts';
 
 // reCAPTCHA v3
 import { RecaptchaModule, RecaptchaFormsModule, RecaptchaV3Module } from "ng-recaptcha";
@@ -166,6 +167,7 @@ import { DoughnutChartComponent } from './components/dashboard/component/doughnu
 import { UnsavedChangesDialogComponent } from './components/tools/ide/unsaved-changes-dialog/unsaved-changes-dialog.component';
 import { LastLogItemsComponent } from './components/dashboard/component/last-log-items/last-log-items.component';
 import { ViewLogComponent } from './components/dashboard/component/view-log/view-log.component';
+import { MainChartComponent } from './components/dashboard/component/main-chart/main-chart.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -266,7 +268,8 @@ import { ViewLogComponent } from './components/dashboard/component/view-log/view
     PieChartComponent,
     DoughnutChartComponent,
     LastLogItemsComponent,
-    ViewLogComponent
+    ViewLogComponent,
+    MainChartComponent
   ],
   imports: [
     FormsModule,
@@ -312,6 +315,9 @@ import { ViewLogComponent } from './components/dashboard/component/view-log/view
     RecaptchaModule,
     RecaptchaV3Module,
     RecaptchaFormsModule,
+    NgxEchartsModule.forRoot({
+      echarts: () => import('echarts')
+    }),
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: environment.production,
       // Register the ServiceWorker as soon as the application is stable
