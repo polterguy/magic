@@ -6,7 +6,6 @@
 // Angular specific imports.
 import moment from 'moment';
 import { Subscription } from 'rxjs';
-import { ChartOptions } from 'chart.js';
 import { MatDialog } from '@angular/material/dialog';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
@@ -16,9 +15,6 @@ import { FeedbackService } from 'src/app/services/feedback.service';
 import { DiagnosticsService } from 'src/app/services/diagnostics.service';
 import { LogTypes, SystemReport, Timeshifts } from '../../models/dashboard.model';
 import { LoginDialogComponent } from '../utilities/login-dialog/login-dialog.component';
-
-// Importing global chart colors.
-import colors from './_bar_chart_colors.json';
 
 /**
  * Dashboard component displaying general information about Magic,
@@ -43,37 +39,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   systemReport: any = null;
   systemReportDisplayable: any;
   timeshiftChart: Timeshifts[] = [];
-  timeshiftChartLabel: string[] = [];
-  timeshiftChartData: string[] = [];
   logTypesChart: LogTypes[];
-
-  /**
-   * Common bar chart colors.
-   */
-  colors = colors;
-  borderColor: string = "red";
-
-  barChartOptions: ChartOptions = {
-    responsive: true,
-    legend: {
-      display: false,
-    },
-    scales: {
-      xAxes: [{
-        gridLines: {
-          borderDash: [8, 4],
-          color: 'rgba(0,0,0,0.05)',
-        }
-      }],
-      yAxes: [{
-        gridLines: {
-          borderDash: [8, 4],
-          color: 'rgba(0,0,0,0.05)',
-        }
-      }]
-    },
-    maintainAspectRatio: false
-  };
 
   // default is set for all charts to be displayed
   chartsList: any = [];

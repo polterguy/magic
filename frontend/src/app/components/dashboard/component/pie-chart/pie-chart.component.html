@@ -6,7 +6,12 @@
         <h3 class="mb-0">Complexity of modules</h3>
         <p class="mt-0 text-muted">Based on number of files and lines of code.</p>
         <div class="d-flex h-100 align-items-center">
-          <canvas baseChart 
+
+
+          <div echarts [options]="options" class="chart-size"></div>
+
+
+          <!-- <canvas baseChart 
             [data]="pieChartData" 
             [labels]="pieChartLabels" 
             [chartType]="pieChartType"
@@ -14,7 +19,7 @@
             [legend]="pieChartLegend"
             [colors]="colors"
             [plugins]="pieChartPlugins">
-          </canvas>
+          </canvas> -->
         </div>
       </mat-card-content>
     </mat-card>

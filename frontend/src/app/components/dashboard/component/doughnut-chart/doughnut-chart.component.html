@@ -5,15 +5,7 @@
                 <h3 class="mb-0">Last actions</h3>
                 <p class="mt-0 text-muted">An overview over the last 10 log items.</p>
                 <div class="d-flex h-100 align-items-center">
-                    <canvas baseChart 
-                        [data]="doughnutChartData" 
-                        [labels]="doughnutChartLabels"
-                        [chartType]="doughnutChartType" 
-                        [options]="doughnutChartOptions" 
-                        [legend]="doughnutChartLegend"
-                        [colors]="colors" 
-                        [plugins]="doughnutChartPlugins">
-                    </canvas>
+                    <div echarts [options]="options" class="chart-size"></div>
                 </div>
             </mat-card-content>
         </mat-card>
