@@ -19,6 +19,7 @@ $max_height: calc(100vh - 155px);
     bottom: -16px;
     margin-left: -16px;
   }
+  .mat-tree-node {min-height: 40px;}
 }
 ::ng-deep .dark .ide{
   .mat-drawer{background-color: $magic_dark_ng_theme!important;}

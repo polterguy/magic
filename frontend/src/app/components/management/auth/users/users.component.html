@@ -58,11 +58,23 @@
       multiTemplateDataRows>
 
       <ng-container matColumnDef="username">
-        <td mat-cell *matCellDef="let el">{{el.username}}</td>
+        <td mat-cell *matCellDef="let el">
+          {{el.username}}
+        </td>
+      </ng-container>
+      <!-- Checkbox Column -->
+      <ng-container matColumnDef="select">
+        <td mat-cell *matCellDef="let el">
+          <div class="d-flex w-100 justify-content-end">
+            <mat-checkbox (click)="$event.stopPropagation()"
+                          (change)="$event ? toggleUserSelection(el) : null">
+            </mat-checkbox>
+          </div>
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="showDetails">
-        <td mat-cell *matCellDef="let el" colspan="1">
+        <td mat-cell *matCellDef="let el" colspan="2">
           <div class="w-100 details-row flex-column"
           [@detailExpand]="el == expandedElement ? 'expanded' : 'collapsed'">
 
@@ -234,7 +246,6 @@
         mat-row
         [ngClass]="(expandedElement === el ? 'selected ' : '') + 'user-row'"
         class="expandable-row users-table-row"
-        [class.selected-row]="selectedUsers.indexOf(el) > -1"
         (click)="toggleDetails(el);expandedElement = expandedElement === el ? null : el"
         *matRowDef="let el; columns: displayedColumns;"></tr>
 
