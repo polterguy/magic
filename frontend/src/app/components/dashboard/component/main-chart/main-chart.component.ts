@@ -49,7 +49,8 @@ export class MainChartComponent implements OnInit {
         trigger: 'axis',
         position: (pt) => {
           return [pt[0], '10%'];
-        }
+        },
+        appendToBody: true
       },
       xAxis: {
         type: 'category',

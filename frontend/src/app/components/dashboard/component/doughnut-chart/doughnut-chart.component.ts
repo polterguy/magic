@@ -114,6 +114,7 @@ export class DoughnutChartComponent implements OnInit, OnDestroy {
           type: 'pie',
           radius: '50%',
           data: this.chartData,
+          color: ['#ee6666','#91cc75'],
           label: {
             color: this.theme === 'light' ? 'black' : 'white'
           },

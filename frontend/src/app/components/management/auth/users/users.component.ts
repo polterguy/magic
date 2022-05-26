@@ -74,6 +74,7 @@ export class UsersComponent implements OnInit {
    */
   displayedColumns: string[] = [
     'username',
+    'select'
   ];
 
   /**
@@ -168,19 +169,35 @@ export class UsersComponent implements OnInit {
    * @callback getUserExtra To get extra details about the user
    */
   toggleDetails(user: User) {
-    const idx = this.selectedUsers.indexOf(user);
-    if (idx !== -1) {
-      this.selectedUsers.splice(idx, 1);
-    } else {
-      this.selectedUsers.push(user);
+    if (!user.roles) {
       this.userService.getRoles(user.username).subscribe({
-        next: (roles: UserRoles[]) => { 
+        next: (roles: UserRoles[]) => {
           user.roles = (roles || []).map(x => x.role);
           this.getUserExtra(user.username);
         },
-        error: (error: any) =>this.feedbackService.showError(error)});
-      }
+        error: (error: any) => this.feedbackService.showError(error)
+      });
     }
+  }
+
+  /**
+   * Selecting users.
+   * @param user User to select.
+   * @callback toggleDetails To get the extra details, if is not available.
+   */
+  toggleUserSelection(user: User) {
+    const idx = this.selectedUsers.indexOf(user);
+    if (idx > -1) {
+      this.selectedUsers.forEach((value: any, index: number) => {
+        if (value.username == user.username) this.selectedUsers.splice(index, 1);
+      });
+    } else {
+      this.toggleDetails(user);
+      this.selectedUsers.push(user);
+    }
+
+    console.log(this.selectedUsers)
+  }
 
   /**
    * Toggles the extra details view for a single user.
