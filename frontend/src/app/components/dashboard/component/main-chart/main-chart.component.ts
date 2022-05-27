@@ -54,7 +54,7 @@ export class MainChartComponent implements OnInit {
       },
       xAxis: {
         type: 'category',
-        boundaryGap: false,
+        boundaryGap: true,
         data: this.data.value.label
       },
       yAxis: {

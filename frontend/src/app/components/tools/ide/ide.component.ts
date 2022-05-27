@@ -39,6 +39,7 @@ import { IncompatibleFileDialogComponent } from './incompatible-file-dialog/inco
 import fileTypes from 'src/app/codemirror/file-types.json';
 import { WarningComponent } from './warning/warning.component';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
+import CodeMirror from 'codemirror';
 
 /**
  * IDE component for editing code.
@@ -846,7 +847,7 @@ export class IdeComponent implements OnInit, OnDestroy {
             this.fileActionsComponent.executeActiveFile();
           });
         };
-      }
+      } 
       return options[0].options;
     }
   }
