@@ -168,6 +168,7 @@ import { UnsavedChangesDialogComponent } from './components/tools/ide/unsaved-ch
 import { LastLogItemsComponent } from './components/dashboard/component/last-log-items/last-log-items.component';
 import { ViewLogComponent } from './components/dashboard/component/view-log/view-log.component';
 import { MainChartComponent } from './components/dashboard/component/main-chart/main-chart.component';
+import { SqlWarningComponent } from './components/tools/sql/sql-warning/sql-warning.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -269,7 +270,8 @@ import { MainChartComponent } from './components/dashboard/component/main-chart/
     DoughnutChartComponent,
     LastLogItemsComponent,
     ViewLogComponent,
-    MainChartComponent
+    MainChartComponent,
+    SqlWarningComponent
   ],
   imports: [
     FormsModule,

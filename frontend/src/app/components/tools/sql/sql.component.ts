@@ -25,6 +25,8 @@ import { Model } from '../../utilities/codemirror/codemirror-sql/codemirror-sql.
 // CodeMirror options.
 import sql from '../../utilities/codemirror/options/sql.json'
 import { TableNameDialogComponent } from './table-name-dialog/table-name-dialog.component';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
+import { SqlWarningComponent } from './sql-warning/sql-warning.component';
 
 /**
  * SQL component allowing user to execute arbitrary SQL statements towards his or her database.
@@ -101,7 +103,8 @@ export class SqlComponent implements OnInit {
     private sqlService: SqlService,
     private clipboard: Clipboard,
     private dialog: MatDialog,
-    private cdr: ChangeDetectorRef) { }
+    private cdr: ChangeDetectorRef,
+    private bottomSheet: MatBottomSheet) { }
 
   /**
    * Implementation of OnInit.
@@ -634,4 +637,8 @@ export class SqlComponent implements OnInit {
     fileReader.readAsText(this.sqlFile);
     this.sqlFile = '';
   } 
+
+  public showWarning() {
+    this.safeMode === false ? this.bottomSheet.open(SqlWarningComponent) : '';
+  }
 }

@@ -10,7 +10,7 @@
             <div>
                 <button mat-icon-button
                     (click)="chartType === 'line' ? chartType = 'bar' : chartType = 'line';prepareChart()">
-                    <mat-icon>{{chartType === 'line' ? 'show' : 'bar'}}_chart</mat-icon>
+                    <mat-icon>{{chartType !== 'line' ? 'show' : 'bar'}}_chart</mat-icon>
                 </button>
             </div>
         </div>

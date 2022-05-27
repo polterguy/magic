@@ -130,7 +130,8 @@
                       class="safe-mode"
                       matTooltip="If checked will only return the first 200 records"
                       [(ngModel)]="safeMode"
-                      [class.warning]="!safeMode">
+                      [class.warning]="!safeMode"
+                      (ngModelChange)="showWarning()">
                       <ng-container *ngIf="!safeMode">
                         <mat-icon class="warning warning-icon">report</mat-icon>
                       </ng-container>
