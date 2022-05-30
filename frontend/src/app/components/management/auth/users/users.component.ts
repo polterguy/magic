@@ -196,7 +196,6 @@ export class UsersComponent implements OnInit {
       this.selectedUsers.push(user);
     }
 
-    console.log(this.selectedUsers)
   }
 
   /**
