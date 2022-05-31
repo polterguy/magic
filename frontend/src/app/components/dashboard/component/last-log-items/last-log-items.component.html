@@ -22,7 +22,7 @@
         
                         <!-- data/time Column -->
                         <ng-container matColumnDef="created">
-                            <th mat-header-cell *matHeaderCellDef> Data/time </th>
+                            <th mat-header-cell *matHeaderCellDef> Date/time </th>
                             <td mat-cell *matCellDef="let element" class="pr-3 text-nowrap"> {{element.created | since}} </td>
                         </ng-container>
         
@@ -43,7 +43,7 @@
         
                         <!-- more Column -->
                         <ng-container matColumnDef="more">
-                            <th mat-header-cell *matHeaderCellDef> more </th>
+                            <th mat-header-cell *matHeaderCellDef> Details </th>
                             <td mat-cell *matCellDef="let element" (click)="viewLog(element)">
                                 <button mat-icon-button>
                                     <mat-icon>help</mat-icon>
