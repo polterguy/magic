@@ -119,7 +119,7 @@ export class MainComponent implements OnInit {
     this.backendService.getRecaptchaKey();
 
     this.backendService.verifyToken().subscribe((res: any) => {
-      if (res.result !== 'success') {
+      if (!res || res.result !== 'success') {
         this.backendService.logout(false);
       }
     })

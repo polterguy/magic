@@ -253,6 +253,7 @@ export class BackendService {
     this.backendsStorageService.persistBackends();
     this.active.createAccessRights();
     this._authenticated.next(false);
+    console.log('first')
   }
 
   /**
