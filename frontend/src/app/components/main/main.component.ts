@@ -117,6 +117,12 @@ export class MainComponent implements OnInit {
 
     // Retrieving recaptcha key and storing in the backend service to be accessible everywhere
     this.backendService.getRecaptchaKey();
+
+    this.backendService.verifyToken().subscribe((res: any) => {
+      if (res.result !== 'success') {
+        this.backendService.logout(false)
+      }
+    })
   }
 
   /**
