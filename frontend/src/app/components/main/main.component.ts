@@ -130,7 +130,7 @@ export class MainComponent implements OnInit {
         this.backendService.logout(false);
       }
       
-    })
+    }, (error: any) => {this.backendService.logout(false);})
   }
 
   /**
