@@ -120,7 +120,7 @@ export class MainComponent implements OnInit {
 
     this.backendService.verifyToken().subscribe((res: any) => {
       if (res.result !== 'success') {
-        this.backendService.logout(false)
+        this.backendService.logout(false);
       }
     })
   }
