@@ -120,13 +120,10 @@ export class MainComponent implements OnInit {
 
     this.backendService.verifyToken().subscribe((res: any) => {
       if (!res) {
-        console.log('!res')
         this.backendService.logout(false);
       } else if (res.result && res.result !== 'success') {
-        console.log('result')
         this.backendService.logout(false);
       } else if (res.message && res.message === 'Access denied') {
-        console.log('Access denied')
         this.backendService.logout(false);
       }
       
