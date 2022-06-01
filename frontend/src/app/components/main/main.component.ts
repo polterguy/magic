@@ -119,11 +119,17 @@ export class MainComponent implements OnInit {
     this.backendService.getRecaptchaKey();
 
     this.backendService.verifyToken().subscribe((res: any) => {
-      if (!res || res.result !== 'success' || res.message === 'Access denied') {console.log('line 122')
+      if (!res) {
+        console.log('!res')
         this.backendService.logout(false);
-      } else {
-        console.log('line 125')
+      } else if (res.result && res.result !== 'success') {
+        console.log('result')
+        this.backendService.logout(false);
+      } else if (res.message && res.message === 'Access denied') {
+        console.log('Access denied')
+        this.backendService.logout(false);
       }
+      
     })
   }
 
