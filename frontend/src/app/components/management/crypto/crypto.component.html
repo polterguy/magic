@@ -1,7 +1,7 @@
 
 <div class="d-flex align-items-center mb-1">
 
-  <mat-card-title class="my-0">Cryptography</mat-card-title>
+  <mat-card-title class="my-0">Cryptography keys</mat-card-title>
 
   <div class="sm-icons">
     <button mat-icon-button [matMenuTriggerFor]="menu" class="mat-caption" matTooltip="Need help?" type="button">
@@ -45,19 +45,19 @@
   <div class="col-12" [class.mb-general]="!(!backendService.active.token.in_role('root') && showImport)">
     <mat-card>
       <mat-card-content>
-        <mat-tab-group #tab dynamicHeight>   
+        <mat-tab-group #tab dynamicHeight>
 
           <mat-tab label="Keys">
             <ng-template matTabContent>
               <app-public-keys></app-public-keys>
             </ng-template>
           </mat-tab>
-      
+
           <mat-tab label="Receipts" [disabled]="!backendService.active?.access.crypto.crypto_invocations">
             <ng-template matTabContent>
               <app-crypto-invocations></app-crypto-invocations>
             </ng-template>
-          </mat-tab>     
+          </mat-tab>
 
         </mat-tab-group>
       </mat-card-content>
@@ -75,12 +75,12 @@
           <textarea
             matInput
             [(ngModel)]="importKey"
-            rows="7"></textarea>     
+            rows="7"></textarea>
         </mat-form-field>
-      
+
         <div class="d-flex flex-sm-nowrap flex-wrap">
 
-          <mat-form-field appearance="outline" class="w-100">      
+          <mat-form-field appearance="outline" class="w-100">
             <mat-label>Full name</mat-label>
             <input
               matInput
@@ -112,7 +112,7 @@
           </mat-form-field>
 
         </div>
-      
+
         <div class="d-flex justify-content-end w-100">
           <button
             mat-raised-button
