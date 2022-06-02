@@ -4,8 +4,11 @@
 .type:public
 
 // Ensures user is authorized to access endpoint.
-auth.ticket.verify
+try
+   auth.ticket.verify
+   return
+      result:success
 
-// Returning success.
-return
-   result:success
+.catch
+   return
+      result:failure
