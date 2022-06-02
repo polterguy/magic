@@ -16,10 +16,10 @@
           </div>
         </h5>
         <h5
-          class="my-0 text-muted d-flex align-items-center justify-content-center pointer" 
+          class="my-0 text-muted d-flex align-items-center justify-content-center pointer"
           [matMenuTriggerFor]="backends">
           <div
-            class="text-truncate max-width" 
+            class="text-truncate max-width"
             [class.text-warning]="backendService.active?.url.startsWith('http://')">{{getActiveBackendUrl()}} </div>
           <mat-icon class="small-icon">arrow_drop_down</mat-icon>
         </h5>
@@ -76,11 +76,11 @@
 
     <!-- Dashboard -->
     <mat-expansion-panel class="mat-elevation-z0" hideToggle>
-      <mat-expansion-panel-header 
-        #panelD (click)="panelD._toggle()" 
-        [matTooltipDisabled]="navbarService.expanded" 
-        [matTooltip]="backendService.active?.access.files.list_files && backendService.active?.access.files.list_folders ? 'Dashboard' : 'Home'" 
-        matTooltipPosition="after" 
+      <mat-expansion-panel-header
+        #panelD (click)="panelD._toggle()"
+        [matTooltipDisabled]="navbarService.expanded"
+        [matTooltip]="backendService.active?.access.files.list_files && backendService.active?.access.files.list_folders ? 'Dashboard' : 'Home'"
+        matTooltipPosition="after"
         routerLinkActive="active-link"
         [routerLinkActiveOptions]="{exact:true}">
         <mat-panel-title>
@@ -102,17 +102,17 @@
       class="mat-elevation-z0"
       hideToggle
       *ngIf="(!backendService.active?.token || !backendService.active?.token?.in_role('root')) && backendService.active">
-      <mat-expansion-panel-header 
-        #panelC (click)="panelC._toggle()" 
-        [matTooltipDisabled]="navbarService.expanded" 
-        matTooltip="Cryptography" 
-        matTooltipPosition="after" 
+      <mat-expansion-panel-header
+        #panelC (click)="panelC._toggle()"
+        [matTooltipDisabled]="navbarService.expanded"
+        matTooltip="Keys"
+        matTooltipPosition="after"
         routerLinkActive="active-link"
         [routerLinkActiveOptions]="{exact:true}">
         <mat-panel-title>
           <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" routerLink="/crypto">
             <mat-icon>security</mat-icon>
-            <span class="title">Cryptography</span>
+            <span class="title">Keys</span>
           </a>
         </mat-panel-title>
       </mat-expansion-panel-header>
@@ -120,12 +120,12 @@
 
     <!-- Tools -->
     <mat-expansion-panel class="mat-elevation-z0"
-      [expanded]="hyperide?.isActive || evaluator?.isActive || sql?.isActive || crudifier?.isActive || tasks?.isActive || !navbarService.expanded" 
+      [expanded]="hyperide?.isActive || evaluator?.isActive || sql?.isActive || terminal?.isActive || crudifier?.isActive || tasks?.isActive || !navbarService.expanded"
       [hideToggle]="!navbarService.expanded"
-      *ngIf="(backendService.active?.access.files.list_files && backendService.active?.access.files.list_folders) || backendService.active?.access.eval.execute || backendService.active?.access.sql.execute_access || (backendService.active?.access.crud.generate_crud || backendService.active?.access.crud.generate_sql || backendService.active?.access.crud.generate_frontend) || backendService.active?.access.tasks.read">
-      <mat-expansion-panel-header 
+      *ngIf="(backendService.active?.access.files.list_files && backendService.active?.access.files.list_folders) || backendService.active?.access.eval.execute || backendService.active?.access.sql.execute_access || (backendService.active?.access.crud.generate_crud || backendService.active?.access.crud.generate_sql || backendService.active?.access.crud.generate_frontend) || backendService.active?.access.tasks.read || backendService.active?.access.terminal.execute">
+      <mat-expansion-panel-header
         *ngIf="navbarService.expanded"
-        [ngClass]="{'active-link':hyperide?.isActive || evaluator?.isActive || sql?.isActive || crudifier?.isActive || tasks?.isActive}">
+        [ngClass]="{'active-link':hyperide?.isActive || evaluator?.isActive || sql?.isActive || crudifier?.isActive || tasks?.isActive || terminal?.isActive}">
         <mat-panel-title>
           <mat-icon>build_circle</mat-icon>
           <span class="title">Tools</span>
@@ -135,11 +135,11 @@
       <mat-selection-list [multiple]="false" [ngClass]="{'pt-0 pb-0': !navbarService.expanded}">
 
         <!-- Crudifier -->
-        <mat-list-option 
+        <mat-list-option
           [style.display]="backendService.active?.access.crud.generate_crud || backendService.active?.access.crud.generate_sql || backendService.active?.access.crud.generate_frontend ? '' : 'none'"
-          [matTooltipDisabled]="navbarService.expanded" 
-          matTooltip="Crudifier" 
-          matTooltipPosition="after" 
+          [matTooltipDisabled]="navbarService.expanded"
+          matTooltip="Crudifier"
+          matTooltipPosition="after"
           routerLinkActive="active-link"
           #crudifier="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
@@ -152,11 +152,11 @@
         </mat-list-option>
 
         <!-- Hyper IDE -->
-        <mat-list-option 
+        <mat-list-option
           [style.display]="backendService.active?.access.files.list_files && backendService.active?.access.files.list_folders ? '' : 'none'"
-          [matTooltipDisabled]="navbarService.expanded" 
-          matTooltip="Hyper IDE" 
-          matTooltipPosition="after" 
+          [matTooltipDisabled]="navbarService.expanded"
+          matTooltip="Hyper IDE"
+          matTooltipPosition="after"
           routerLinkActive="active-link"
           #hyperide="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
@@ -169,11 +169,11 @@
         </mat-list-option>
 
         <!-- SQL -->
-        <mat-list-option 
+        <mat-list-option
           [style.display]="backendService.active?.access.sql.execute_access ? '' : 'none'"
-          [matTooltipDisabled]="navbarService.expanded" 
-          matTooltip="SQL Studio" 
-          matTooltipPosition="after" 
+          [matTooltipDisabled]="navbarService.expanded"
+          matTooltip="SQL Studio"
+          matTooltipPosition="after"
           routerLinkActive="active-link"
           #sql="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
@@ -186,11 +186,11 @@
         </mat-list-option>
 
         <!-- Evaluator -->
-        <mat-list-option 
+        <mat-list-option
           [style.display]="backendService.active?.access.eval.execute ? '' : 'none'"
-          [matTooltipDisabled]="navbarService.expanded" 
-          matTooltip="Evaluator" 
-          matTooltipPosition="after" 
+          [matTooltipDisabled]="navbarService.expanded"
+          matTooltip="Evaluator"
+          matTooltipPosition="after"
           routerLinkActive="active-link"
           #evaluator="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
@@ -203,11 +203,11 @@
         </mat-list-option>
 
         <!-- Tasks -->
-        <mat-list-option 
+        <mat-list-option
           [style.display]="backendService.active?.access.tasks.read ? '' : 'none'"
-          [matTooltipDisabled]="navbarService.expanded" 
-          matTooltip="Tasks" 
-          matTooltipPosition="after" 
+          [matTooltipDisabled]="navbarService.expanded"
+          matTooltip="Tasks"
+          matTooltipPosition="after"
           routerLinkActive="active-link"
           #tasks="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
@@ -218,17 +218,34 @@
             </a>
           </ng-container>
         </mat-list-option>
+
+        <!-- Terminal -->
+        <mat-list-option
+          [style.display]="backendService.active?.access.terminal.execute ? '' : 'none'"
+          [matTooltipDisabled]="navbarService.expanded"
+          matTooltip="Terminal"
+          matTooltipPosition="after"
+          routerLinkActive="active-link"
+          #terminal="routerLinkActive"
+          [routerLinkActiveOptions]="{exact:true}">
+          <ng-container *ngIf="backendService.active?.access.terminal.execute">
+            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendService.active?.setupDone ? '/terminal' : null">
+              <mat-icon>input</mat-icon>
+              <span class="title">Terminal</span>
+            </a>
+          </ng-container>
+        </mat-list-option>
       </mat-selection-list>
     </mat-expansion-panel>
 
     <!-- Management -->
     <mat-expansion-panel class="mat-elevation-z0"
-      [expanded]="auth?.isActive || config?.isActive || crypto?.isActive || bazar?.isActive || terminal?.isActive || profile?.isActive || !navbarService.expanded" 
+      [expanded]="auth?.isActive || config?.isActive || crypto?.isActive || bazar?.isActive || profile?.isActive || !navbarService.expanded"
       [hideToggle]="!navbarService.expanded"
-      *ngIf="(backendService.active?.access.auth.view_users && backendService.active?.access.auth.view_roles) || backendService.active?.access.bazar.get_manifests || backendService.active?.access.config.load || backendService.active?.access.terminal.execute">
-      <mat-expansion-panel-header 
+      *ngIf="(backendService.active?.access.auth.view_users && backendService.active?.access.auth.view_roles) || backendService.active?.access.bazar.get_manifests || backendService.active?.access.config.load">
+      <mat-expansion-panel-header
       *ngIf="navbarService.expanded"
-      [ngClass]="{'active-link':auth?.isActive || config?.isActive || crypto?.isActive || bazar?.isActive || profile?.isActive || terminal?.isActive}">
+      [ngClass]="{'active-link':auth?.isActive || config?.isActive || crypto?.isActive || bazar?.isActive || profile?.isActive}">
         <mat-panel-title>
           <mat-icon>manage_accounts</mat-icon>
           <span class="title">Management</span>
@@ -237,11 +254,11 @@
       <mat-selection-list [multiple]="false" [ngClass]="{'pt-0 pb-0': !navbarService.expanded}">
 
         <!-- Users -->
-        <mat-list-option 
+        <mat-list-option
           [style.display]="backendService.active?.access.auth.view_users && backendService.active?.access.auth.view_roles ? '' : 'none'"
-          [matTooltipDisabled]="navbarService.expanded" 
-          matTooltip="Users & roles" 
-          matTooltipPosition="after" 
+          [matTooltipDisabled]="navbarService.expanded"
+          matTooltip="Users & roles"
+          matTooltipPosition="after"
           routerLinkActive="active-link"
           #auth="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
@@ -254,11 +271,11 @@
         </mat-list-option>
 
         <!-- Config -->
-        <mat-list-option 
+        <mat-list-option
           [style.display]="backendService.active?.access.config.load ? '' : 'none'"
-          [matTooltipDisabled]="navbarService.expanded" 
-          matTooltip="Config" 
-          matTooltipPosition="after" 
+          [matTooltipDisabled]="navbarService.expanded"
+          matTooltip="Config"
+          matTooltipPosition="after"
           routerLinkActive="active-link"
           #config="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
@@ -270,29 +287,12 @@
           </ng-container>
         </mat-list-option>
 
-        <!-- Terminal -->
-        <mat-list-option 
-          [style.display]="backendService.active?.access.terminal.execute ? '' : 'none'"
-          [matTooltipDisabled]="navbarService.expanded" 
-          matTooltip="Terminal" 
-          matTooltipPosition="after" 
-          routerLinkActive="active-link"
-          #terminal="routerLinkActive"
-          [routerLinkActiveOptions]="{exact:true}">
-          <ng-container *ngIf="backendService.active?.access.terminal.execute">
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendService.active?.setupDone ? '/terminal' : null">
-              <mat-icon>input</mat-icon>
-              <span class="title">Terminal</span>
-            </a>
-          </ng-container>
-        </mat-list-option>
-
         <!-- Cryptography -->
-        <mat-list-option 
+        <mat-list-option
           [style.display]="backendService.active?.access.crypto.import_public_key ? '' : 'none'"
-          [matTooltipDisabled]="navbarService.expanded" 
-          matTooltip="Cryptography" 
-          matTooltipPosition="after" 
+          [matTooltipDisabled]="navbarService.expanded"
+          matTooltip="Cryptography"
+          matTooltipPosition="after"
           routerLinkActive="active-link"
           #crypto="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
@@ -305,11 +305,11 @@
         </mat-list-option>
 
         <!-- Profile -->
-        <mat-list-option 
+        <mat-list-option
           [style.display]="backendService.active?.token ? '' : 'none'"
-          [matTooltipDisabled]="navbarService.expanded" 
-          matTooltip="Edit your profile" 
-          matTooltipPosition="after" 
+          [matTooltipDisabled]="navbarService.expanded"
+          matTooltip="Edit your profile"
+          matTooltipPosition="after"
           routerLinkActive="active-link"
           #profile="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
@@ -322,18 +322,18 @@
         </mat-list-option>
 
         <!-- Bazaar -->
-        <mat-list-option 
+        <mat-list-option
           [style.display]="backendService.active?.access.bazar.get_manifests ? '' : 'none'"
-          [matTooltipDisabled]="navbarService.expanded" 
-          matTooltip="Bazar" 
-          matTooltipPosition="after" 
+          [matTooltipDisabled]="navbarService.expanded"
+          matTooltip="Integrations"
+          matTooltipPosition="after"
           routerLinkActive="active-link"
           #bazar="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
           <ng-container *ngIf="backendService.active?.access.bazar.get_manifests">
             <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendService.active?.setupDone ? '/bazar' : null">
               <mat-icon>storefront</mat-icon>
-              <span class="title">Bazaar</span>
+              <span class="title">Integrations</span>
             </a>
           </ng-container>
         </mat-list-option>
@@ -342,10 +342,10 @@
 
     <!-- Analytics -->
     <mat-expansion-panel class="mat-elevation-z0"
-      [expanded]="assumptions?.isActive || cache?.isActive || endpoints?.isActive || sockets?.isActive || log?.isActive || !navbarService.expanded" 
+      [expanded]="assumptions?.isActive || cache?.isActive || endpoints?.isActive || sockets?.isActive || log?.isActive || !navbarService.expanded"
       [hideToggle]="!navbarService.expanded"
       *ngIf="backendService.active?.access.endpoints.view || backendService.active?.access.sockets.read">
-      <mat-expansion-panel-header 
+      <mat-expansion-panel-header
       *ngIf="navbarService.expanded"
       [ngClass]="{'active-link':assumptions?.isActive || cache?.isActive || log?.isActive || endpoints?.isActive || sockets?.isActive}">
         <mat-panel-title>
@@ -356,11 +356,11 @@
       <mat-selection-list [multiple]="false" [ngClass]="{'pt-0 pb-0': !navbarService.expanded}">
 
         <!-- Log -->
-        <mat-list-option 
+        <mat-list-option
           [style.display]="backendService.active?.access.log.read ? '' : 'none'"
-          [matTooltipDisabled]="navbarService.expanded" 
-          matTooltip="Log" 
-          matTooltipPosition="after" 
+          [matTooltipDisabled]="navbarService.expanded"
+          matTooltip="Log"
+          matTooltipPosition="after"
           routerLinkActive="active-link"
           #log="routerLinkActive"
           [routerLinkActiveOptions]="{exact:false}">
@@ -373,11 +373,11 @@
         </mat-list-option>
 
         <!-- Assumptions //TODO -->
-        <mat-list-option 
+        <mat-list-option
           [style.display]="backendService.active?.access.log.read ? '' : 'none'"
-          [matTooltipDisabled]="navbarService.expanded" 
-          matTooltip="Assumptions" 
-          matTooltipPosition="after" 
+          [matTooltipDisabled]="navbarService.expanded"
+          matTooltip="Assumptions"
+          matTooltipPosition="after"
           routerLinkActive="active-link"
           #assumptions="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
@@ -390,11 +390,11 @@
         </mat-list-option>
 
         <!-- Cache //TODO -->
-        <mat-list-option 
+        <mat-list-option
           [style.display]="backendService.active?.access.log.read ? '' : 'none'"
-          [matTooltipDisabled]="navbarService.expanded" 
-          matTooltip="System's cache" 
-          matTooltipPosition="after" 
+          [matTooltipDisabled]="navbarService.expanded"
+          matTooltip="System's cache"
+          matTooltipPosition="after"
           routerLinkActive="active-link"
           #cache="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
@@ -407,11 +407,11 @@
         </mat-list-option>
 
         <!-- Endpoints -->
-        <mat-list-option 
+        <mat-list-option
           [style.display]="backendService.active?.access.endpoints.view ? '' : 'none'"
-          [matTooltipDisabled]="navbarService.expanded" 
-          matTooltip="Endpoints" 
-          matTooltipPosition="after" 
+          [matTooltipDisabled]="navbarService.expanded"
+          matTooltip="Endpoints"
+          matTooltipPosition="after"
           routerLinkActive="active-link"
           #endpoints="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
@@ -424,11 +424,11 @@
         </mat-list-option>
 
         <!-- Sockets -->
-        <mat-list-option 
+        <mat-list-option
           [style.display]="backendService.active?.access.sockets.read ? '' : 'none'"
-          [matTooltipDisabled]="navbarService.expanded" 
-          matTooltip="Sockets" 
-          matTooltipPosition="after" 
+          [matTooltipDisabled]="navbarService.expanded"
+          matTooltip="Sockets"
+          matTooltipPosition="after"
           routerLinkActive="active-link"
           #sockets="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
@@ -444,11 +444,11 @@
 
     <!-- About -->
     <mat-expansion-panel class="mat-elevation-z0" hideToggle>
-      <mat-expansion-panel-header 
-      #panelH (click)="panelH._toggle()" 
-      [matTooltipDisabled]="navbarService.expanded" 
-      matTooltip="About" 
-      matTooltipPosition="after" 
+      <mat-expansion-panel-header
+      #panelH (click)="panelH._toggle()"
+      [matTooltipDisabled]="navbarService.expanded"
+      matTooltip="About"
+      matTooltipPosition="after"
       routerLinkActive="active-link"
       [routerLinkActiveOptions]="{exact:true}">
           <mat-panel-title>
@@ -462,11 +462,11 @@
 
     <!-- Documentation -->
     <mat-expansion-panel class="mat-elevation-z0" hideToggle>
-      <mat-expansion-panel-header 
-        #panelC (click)="panelC._toggle()" 
-        [matTooltipDisabled]="navbarService.expanded" 
-        matTooltip="Documentation" 
-        matTooltipPosition="after" 
+      <mat-expansion-panel-header
+        #panelC (click)="panelC._toggle()"
+        [matTooltipDisabled]="navbarService.expanded"
+        matTooltip="Documentation"
+        matTooltipPosition="after"
         routerLinkActive="active-link"
         [routerLinkActiveOptions]="{exact:true}">
         <mat-panel-title>
@@ -481,8 +481,8 @@
     <!-- Login -->
     <mat-expansion-panel class="mat-elevation-z0" hideToggle>
       <mat-expansion-panel-header
-        #panelL (click)="panelL._toggle(); backendService.active?.token ? logout() : login(true)" 
-        [matTooltipDisabled]="navbarService.expanded" 
+        #panelL (click)="panelL._toggle(); backendService.active?.token ? logout() : login(true)"
+        [matTooltipDisabled]="navbarService.expanded"
         matTooltipPosition="after"
         [matTooltip]="backendService.active?.token ? 'Logout' : 'Login'">
         <mat-panel-title>
@@ -493,13 +493,13 @@
     </mat-expansion-panel>
 
     <!-- Register -->
-    <mat-expansion-panel class="mat-elevation-z0" 
+    <mat-expansion-panel class="mat-elevation-z0"
       *ngIf="!backendService.active?.token && backendService.active" hideToggle>
-      <mat-expansion-panel-header 
-        #panelH (click)="panelH._toggle()" 
-        [matTooltipDisabled]="navbarService.expanded" 
-        matTooltip="Create an account" 
-        matTooltipPosition="after" 
+      <mat-expansion-panel-header
+        #panelH (click)="panelH._toggle()"
+        [matTooltipDisabled]="navbarService.expanded"
+        matTooltip="Create an account"
+        matTooltipPosition="after"
         routerLinkActive="active-link"
         [routerLinkActiveOptions]="{exact:true}">
         <mat-panel-title>
@@ -515,7 +515,7 @@
   <!-- Theme -->
   <mat-divider class="mt-4"></mat-divider>
   <button mat-button class="ml-2 mr-1"
-    (click)="toggleTheme()" 
+    (click)="toggleTheme()"
     [color]="themeService.theme === 'dark' ? 'accent' : ''"
     [class.theme-btn]="!navbarService.expanded">
     <div class="d-flex align-items-center justify-content-between" [class.flex-column]="!navbarService.expanded">
@@ -540,7 +540,7 @@
           href="https://polterguy.github.io/tutorials/getting-started/"
           mat-raised-button
           matTooltip="Update your Magic installation"
-          [matTooltipPosition]="navbarService.expanded ? 'above' : 'after'" 
+          [matTooltipPosition]="navbarService.expanded ? 'above' : 'after'"
           target="_blank"
           class="mb-2"
           color="warn">
