@@ -54,7 +54,7 @@ export class MainComponent implements OnInit {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param activated Needed to retrieve query parameters
    * @param registerService Needed to allow anonymous users to register
    * @param location Needed to be able to remove query parameters
@@ -77,14 +77,14 @@ export class MainComponent implements OnInit {
     private feedbackService: FeedbackService,
     private updatePwaService: UpdatePwaService) {
       this.updatePwaService.checkForUpdates();
-      
+
   }
 
   /**
    * OnInit implementation.
    */
   ngOnInit() {
-    
+
     // Checking for query parameters.
     this.getParams();
 
@@ -115,19 +115,22 @@ export class MainComponent implements OnInit {
       }
     });
 
-    // Retrieving recaptcha key and storing in the backend service to be accessible everywhere
-    this.backendService.getRecaptchaKey();
+    // Retrieving recaptcha key and storing in the backend service to be accessible everywhere.
+    // Only if active backend is available, to prevent recaptcha errors in the console.
+    if (this.backendService.active) {
+      this.backendService.getRecaptchaKey();
 
-    this.backendService.verifyToken().subscribe((res: any) => {
-      if (!res) {
-        this.backendService.logout(false);
-      } else if (res.result && res.result !== 'success') {
-        this.backendService.logout(false);
-      } else if (res.message && res.message === 'Access denied') {
-        this.backendService.logout(false);
-      }
-      
-    }, (error: any) => {this.backendService.logout(false);})
+      this.backendService.verifyToken().subscribe((res: any) => {
+        if (!res) {
+          this.backendService.logout(false);
+        } else if (res.result && res.result !== 'success') {
+          this.backendService.logout(false);
+        } else if (res.message && res.message === 'Access denied') {
+          this.backendService.logout(false);
+        }
+
+      }, (error: any) => {this.backendService.logout(false);})
+    }
   }
 
   /**

@@ -2,10 +2,10 @@
   <div class="col-12 mb-general bazaar">
     <div class="row">
       <div class="col-12">
-  
+
         <div class="d-flex flex-sm-nowrap flex-wrap justify-content-between">
           <div class="d-flex align-items-center">
-            <mat-card-title class="my-0">Bazaar</mat-card-title>
+            <mat-card-title class="my-0">Plugins</mat-card-title>
             <div class="sm-icons">
               <button mat-icon-button [matMenuTriggerFor]="menu" class="mat-caption" matTooltip="Need help?" type="button">
                 <mat-icon>help_outline</mat-icon>
@@ -13,7 +13,7 @@
               <mat-menu #menu="matMenu">
                 <div class="p-3">
                   <p>
-                    This is Magic's integrate AppStore from where you can purchase, and/or install backend modules, 
+                    This is Magic's integrate AppStore from where you can purchase, and/or install backend modules,
                     providing some micro service functionality, allowing you to extend your server's functionality without
                     any coding required.
                   </p>
@@ -33,26 +33,26 @@
             <mat-icon>email</mat-icon>
           </button>
         </div>
-    
+
         <mat-card-subtitle class="mb-4">Purchase and install micro services</mat-card-subtitle>
-    
+
         <div class="d-flex">
-          <button mat-button 
-            [class.mat-raised-button]="!installed" 
-            (click)="installed = !installed" 
+          <button mat-button
+            [class.mat-raised-button]="!installed"
+            (click)="installed = !installed"
             [disabled]="!installed">Recommended</button>
           <div class="p-1"></div>
-          <button mat-button 
-            [class.mat-raised-button]="installed" 
-            (click)="installed = !installed" 
+          <button mat-button
+            [class.mat-raised-button]="installed"
+            (click)="installed = !installed"
             [disabled]="installed">Installed</button>
         </div>
       </div>
     </div>
-  
+
     <div class="row">
       <div class="col-xl-4 col-md-6 col-12">
-  
+
         <mat-form-field [class]="hideFilterControl ? 'invisible' : 'w-100'" appearance="outline">
           <mat-label>Filter ...</mat-label>
           <input
@@ -67,14 +67,14 @@
             role="button"
             (click)="clearFilter()">clear</mat-icon>
         </mat-form-field>
-  
+
       </div>
     </div>
-  
+
     <!-- Recommended apps -->
     <div class="row mt-3" *ngIf="manifests && !installed">
-      <div class="col-xl-3 col-md-4 col-sm-6 py-1" 
-        *ngFor="let idx of apps;let i = index"
+      <div class="col-xl-3 col-md-4 col-sm-6 py-1"
+        *ngFor="let idx of apps;let i = index;let last=last"
         [class]="appIsInstalled(idx) ? 'd-none' : ''">
         <mat-card class="h-100 p-0">
           <mat-card-content class="h-100">
@@ -97,10 +97,10 @@
         </mat-card>
       </div>
     </div>
-  
+
     <!-- Installed apps -->
     <div class="row mt-3" *ngIf="manifests && installed">
-  
+
       <!-- If no installed app was found -->
       <div class="col-12" *ngIf="manifests.length === 0">
         <mat-card>
@@ -110,12 +110,12 @@
           </mat-card-content>
         </mat-card>
       </div>
-      
-      <div class="col-xl-3 col-md-4 col-sm-6 py-1" 
-        *ngFor="let idx of getInstalledApps();let i = index">
+
+      <div class="col-xl-3 col-md-4 col-sm-6 py-1"
+        *ngFor="let idx of getInstalledApps();let i = index;let last=last">
         <mat-card class="h-100 p-0">
           <mat-card-content class="h-100">
-            <a class="w-100 h-100 d-block btn p-3" 
+            <a class="w-100 h-100 d-block btn p-3"
             (click)="viewInstalledAppDetails(idx)"
             [matTooltip]="idx.has_update ? 'Update' : 'You seem to have the latest version'">
               <div class="d-flex align-items-center justify-content-between mb-2">
@@ -123,7 +123,7 @@
                 <div class="p-1"></div>
                 <p class="mb-0 text-muted">{{idx.version}}</p>
               </div>
-  
+
               <mat-list dense>
                 <div mat-subheader>Installation details</div>
                 <mat-list-item>
@@ -131,7 +131,7 @@
                   <div mat-line> {{idx?.installed ? (idx?.installed | since) : ''}} </div>
                 </mat-list-item>
               </mat-list>
-  
+
               <div class="d-flex flex-wrap justify-content-between align-items-center mt-4">
                 <div class="d-flex align-items-center" [ngClass]="{'text-accent': !idx.has_update, 'warning': idx.has_update}">
                   <p class="my-0 mr-2" *ngIf="!idx.has_update">
@@ -146,7 +146,7 @@
         </mat-card>
       </div>
     </div>
-  
+
     <div class="row">
       <div class="col-12">
         <mat-paginator
