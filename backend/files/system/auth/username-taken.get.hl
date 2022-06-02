@@ -10,6 +10,10 @@
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/username
 
+// Trimming username before proceeding.
+set-value:x:@.arguments/*/username
+   strings.trim:x:@.arguments/*/username
+
 // Verifying user exists and has not already verified his or her email address.
 data.connect:magic
 

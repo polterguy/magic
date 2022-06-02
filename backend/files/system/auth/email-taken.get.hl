@@ -11,6 +11,10 @@
 validators.mandatory:x:@.arguments/*/email
 validators.email:x:@.arguments/*/email
 
+// Trimming email before proceeding.
+set-value:x:@.arguments/*/email
+   strings.trim:x:@.arguments/*/email
+
 // Verifying user exists and has not already verified his or her email address.
 data.connect:magic
 
