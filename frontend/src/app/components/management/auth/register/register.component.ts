@@ -4,7 +4,7 @@
  */
 
 // Angular and system imports.
-import { debounceTime, distinctUntilChanged, filter, fromEvent, map, of, pairwise, startWith, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, fromEvent, map, of, pairwise, startWith, Subscription, tap } from 'rxjs';
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 
@@ -100,6 +100,10 @@ export class RegisterComponent implements OnInit, OnDestroy {
     });
     this.watchForUsername('username');
     this.watchForUsername('email');
+
+    this.registrationForm.controls.username.valueChanges.pipe(tap(value=>{
+      this.registrationForm.controls.username.setValue(value.replace(/[^a-z0-9]/ig, "").toLowerCase(), { emitEvent: false });
+    })).subscribe();
   }
 
   /**
