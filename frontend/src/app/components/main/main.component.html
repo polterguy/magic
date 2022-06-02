@@ -26,11 +26,18 @@
       <ng-container *ngIf="!largeScreen">
         <app-toolbar></app-toolbar>
       </ng-container>
-
-      <div class="container-fluid h-100">
-        <router-outlet></router-outlet>
-      </div>
-
+      <ngx-pull-to-refresh
+        spinnerColor="#03A9F4"
+        spinnerSize="40"
+        distanceForRefresh="40"
+        [isEnable]="true"
+        [targetElement]="targetElement"
+        (refresh)="refreshEvent($event, 'refresh')"
+        class="d-block h-100">
+            <div class="container-fluid h-100">
+              <router-outlet></router-outlet>
+            </div>
+      </ngx-pull-to-refresh>
     </mat-sidenav-content>
 
   </mat-sidenav-container>
