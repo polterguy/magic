@@ -106,7 +106,7 @@ export class MainComponent implements OnInit {
         switch (window.location.pathname) {
           case '/register':
           case '/about':
-          case '/crypto':
+          case '/keys':
           case '/':
             break;
           default:

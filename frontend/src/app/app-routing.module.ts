@@ -70,21 +70,21 @@ const routes: Routes = [
     data: { check: (access: AccessModel) : boolean => access.auth.view_users && access.auth.view_roles }
   },
   {
-    path: 'bazar',
+    path: 'plugins',
     component: BazarComponent,
     canActivate: [AccessGuard],
     data: { check: (access: AccessModel) : boolean => access.bazar.get_manifests }
   },
-  
+
   {
     path: 'cache',
     component: DiagnosticsCacheComponent,
     canActivate: [AccessGuard],
     data: { check: (access: AccessModel) : boolean => access.cache.read && access.cache.count }
   },
-  
+
   {
-    path: 'crypto',
+    path: 'keys',
     component: CryptoComponent,
     canActivate: [AccessGuard],
     data: { check: (access: AccessModel) : boolean => access.crypto.import_public_key }
@@ -106,7 +106,7 @@ const routes: Routes = [
     component: TerminalComponent,
     canActivate: [AccessGuard],
     data: { check: (access: AccessModel) : boolean => access.terminal.execute }
-  },  
+  },
   {
     path: 'endpoints',
     component: EndpointsComponent,

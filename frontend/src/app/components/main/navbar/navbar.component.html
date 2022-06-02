@@ -110,7 +110,7 @@
         routerLinkActive="active-link"
         [routerLinkActiveOptions]="{exact:true}">
         <mat-panel-title>
-          <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" routerLink="/crypto">
+          <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" routerLink="/keys">
             <mat-icon>security</mat-icon>
             <span class="title">Keys</span>
           </a>
@@ -297,9 +297,9 @@
           #crypto="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
           <ng-container *ngIf="backendService.active?.access.crypto.import_public_key">
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendService.active?.setupDone ? '/crypto' : null">
+            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendService.active?.setupDone ? '/keys' : null">
               <mat-icon>security</mat-icon>
-              <span class="title">Cryptography</span>
+              <span class="title">Keys</span>
             </a>
           </ng-container>
         </mat-list-option>
@@ -331,7 +331,7 @@
           #bazar="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
           <ng-container *ngIf="backendService.active?.access.bazar.get_manifests">
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendService.active?.setupDone ? '/bazar' : null">
+            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendService.active?.setupDone ? '/plugins' : null">
               <mat-icon>storefront</mat-icon>
               <span class="title">Plugins</span>
             </a>
