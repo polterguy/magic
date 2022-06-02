@@ -46,13 +46,13 @@ export class NavbarComponent implements OnInit {
   @Input() largeScreen: boolean;
 
   /**
-   * get theme for logo setting 
+   * get theme for logo setting
    */
   public theme: string;
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param router Needed to redirect user after having verified his authentication token
    * @param backendService Service to keep track of currently selected backend
    * @param dialog Dialog reference necessary to show login dialog if user tries to login
@@ -169,7 +169,7 @@ export class NavbarComponent implements OnInit {
 
   /**
    * Switching to specified backend.
-   * 
+   *
    * @param backend Backend to switch to
    */
   switchBackend(backend: Backend) {
@@ -179,7 +179,7 @@ export class NavbarComponent implements OnInit {
 
   /**
    * Removes specified backend from local storage
-   * 
+   *
    * @param backend Backend to remove
    */
   removeBackend(backend: Backend) {
