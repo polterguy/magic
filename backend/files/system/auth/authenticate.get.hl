@@ -74,6 +74,10 @@ else
    validators.mandatory:x:@.arguments/*/username
    validators.mandatory:x:@.arguments/*/password
 
+   // Trimming username before proceeding.
+   set-value:x:@.arguments/*/username
+      strings.trim:x:@.arguments/*/username
+
 /*
  * Invokes [magic.auth.authenticate] that does the heavy lifting, and creates our JWT token,
  * making sure we return that token to caller.
