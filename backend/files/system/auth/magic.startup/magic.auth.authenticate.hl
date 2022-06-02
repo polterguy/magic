@@ -57,9 +57,12 @@ slots.create:magic.auth.authenticate
    data.connect:magic
 
       // Selects the user with the given username from our table.
+      .password
+      .username
       data.read
          table:users
          columns
+            username
             password
             locked
          where
@@ -68,19 +71,79 @@ slots.create:magic.auth.authenticate
 
       // Checking if user with specified [username] exists.
       if
-         or
-            eq
-               get-count:x:@data.read/*
-               .:int:0
-            eq
-               get-value:x:@data.read/*/*/locked
-               .:bool:true
+         eq
+            get-count:x:@data.read/*
+            .:int:0
          .lambda
 
-            // No such user.
-            throw:Access denied
-               status:int:401
-               public:bool:true
+            // Checking if we can find the username through users_extra table.
+            data.read
+               table:users_extra
+               columns
+                  user
+               where
+                  and
+                     type.eq:email
+                     value.eq:x:@.arguments/*/username
+            if
+               exists:x:@data.read/*/*
+               .lambda
+
+                  // Looking up password now that we have the real username.
+                  data.read
+                     table:users
+                     columns
+                        username
+                        password
+                        locked
+                     where
+                        and
+                           username:x:@data.read/@data.read/*/*/user
+
+                  // Checking if user with specified [username] exists.
+                  if
+                     or
+                        not
+                           exists:x:@data.read/*/*
+                        get-value:x:@data.read/*/*/locked
+                     .lambda
+
+                        // No such user.
+                        throw:Access denied
+                           status:int:401
+                           public:bool:true
+
+                  else
+
+                     // Storing password and username for later.
+                     set-value:x:@.username
+                        get-value:x:@data.read/*/*/username
+                     set-value:x:@.password
+                        get-value:x:@data.read/*/*/password
+
+            else
+
+               // No such user.
+               throw:Access denied
+                  status:int:401
+                  public:bool:true
+
+      else
+
+         // Checking if user is locked.
+         if:x:@data.read/*/*/locked
+            .lambda
+
+               // User is locked out of system.
+               throw:Access denied
+                  status:int:401
+                  public:bool:true
+
+         // Storing password and username for later.
+         set-value:x:@.username
+            get-value:x:@data.read/*/*/username
+         set-value:x:@.password
+            get-value:x:@data.read/*/*/password
 
       /*
        * This part exchanges the invocation to [crypto.password.verify] below,
@@ -122,7 +185,7 @@ slots.create:magic.auth.authenticate
             insert-after:x:@if/./**/crypto.password.verify
                .
                   foo
-                     username:x:@.arguments/*/username
+                     username:x:@.username
                      password:x:@.arguments/*/password
             remove-nodes:x:@if/./**/crypto.password.verify
 
@@ -136,7 +199,7 @@ slots.create:magic.auth.authenticate
                get-value:x:@.arguments/*/check-password
                .:bool:false
             crypto.password.verify:x:@.arguments/*/password
-               hash:x:@data.read/*/*/password
+               hash:x:@.password
          .lambda
 
             /*
@@ -162,19 +225,19 @@ slots.create:magic.auth.authenticate
                    * it's already hashed in the database - However, we can't be
                    * too cautious.
                    */
-                  crypto.hash:x:@data.read/*/*/password
+                  crypto.hash:x:@.password
                   unwrap:x:+/*/*
                   add:x:+/*/roles
                      .
                         .:x:@crypto.hash
                   auth.ticket.create
-                     username:x:@.arguments/*/username
+                     username:x:@.username
                      roles
                         .:reset-password
 
                   // Logging the fact that we generated a reset-password token.
                   log.info:Reset password token successfully generated
-                     username:x:@.arguments/*/username
+                     username:x:@.username
 
                   // Returning results back to caller.
                   unwrap:x:+/*
@@ -189,19 +252,19 @@ slots.create:magic.auth.authenticate
                      role
                   where
                      and
-                        user:x:@.arguments/*/username
+                        user:x:@.username
 
                // Then we can create our JWT token/ticket.
                add:x:+/*/roles
                   get-nodes:x:@data.read/*/*
                auth.ticket.create
-                  username:x:@.arguments/*/username
+                  username:x:@.username
                   expires:x:@.arguments/*/expires
                   roles
 
                // Logging the fact that user successfully logged in.
                log.info:User successfully authenticated
-                  username:x:@.arguments/*/username
+                  username:x:@.username
 
                // Selecting all extra information associated with user.
                data.read
@@ -211,7 +274,7 @@ slots.create:magic.auth.authenticate
                      value
                   where
                      and
-                        user.eq:x:@.arguments/*/username
+                        user.eq:x:@.username
                for-each:x:@data.read/*
                   set-name:x:./*/add/[0,1]/*/*/name
                      get-value:x:@.dp/#/*/type
