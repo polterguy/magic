@@ -38,7 +38,7 @@
   /*=-=-=-=-=-=
   sidebar settings
   =-=-=-=-=-=*/
- 
+
   .dark .mat-drawer{
     background-color: $magic_dark_secondary_light!important;
   }
@@ -70,5 +70,22 @@
   // fix for codemirror only in smaller screens
   .is-small-screen table .CodeMirror:not(.CodeMirror-fullscreen){
     max-width: calc(100vw  - ((#{$side_space} * 3) + 80px));
+  }
+}
+
+
+::ng-deep {
+  .ngx-ptr-animation .ngx-ptr-path {
+    animation: ngx-ptr-dash 1.4s ease-in-out infinite,
+        ngx-ptr-colors-override 5.6s ease-in-out infinite !important;
+  }
+
+  @keyframes ngx-ptr-colors-override {
+      0% {
+          stroke: $magic_primary;
+      }
+      100% {
+          stroke: $magic_accent;
+      }
   }
 }

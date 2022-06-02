@@ -36,7 +36,6 @@
     "ng-recaptcha": "^9.0.0",
     "ng2-charts": "^2.4.2",
     "ngx-echarts": "^8.0.1",
-    "ngx-pull-to-refresh": "^13.0.0",
     "rxjs": "~7.5.5",
     "tslib": "^2.3.1",
     "xterm": "^4.12.0",

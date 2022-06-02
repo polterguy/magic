@@ -25,7 +25,7 @@ export class OverviewComponent implements OnInit {
   /**
    * To carry the selected value and set into localStorage
    */
-  public extraSegment: any = null;
+  public extraSegment: any = {};
 
   constructor() { }
 
@@ -46,14 +46,14 @@ export class OverviewComponent implements OnInit {
   }
 
   /**
-   * 
+   *
    * @param segment The selected segment from the list.
    * will be stored in the localStorage
    */
   setExtraSegment(segment: any) {
-    this.extraSegment.title = segment.key;
-    this.extraSegment.value = segment.value
-    
+    this.extraSegment['title'] = segment.key;
+    this.extraSegment['value'] = segment.value;
+
     localStorage.setItem('extra_segment', JSON.stringify(this.extraSegment));
   }
 }
