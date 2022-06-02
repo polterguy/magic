@@ -23,7 +23,6 @@ import { BackendService } from 'src/app/services/backend.service';
 import { RegisterService } from 'src/app/services/register.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { UpdatePwaService } from 'src/app/services/update-pwa.service';
-import { Subject } from 'rxjs';
 
 /**
  * Main wire frame application component.
@@ -34,8 +33,6 @@ import { Subject } from 'rxjs';
   styleUrls: ['./main.component.scss']
 })
 export class MainComponent implements OnInit {
-
-  targetElement: Element;
 
   // Needed to be able to figure out if we're on a small screen or not.
   @HostListener('window:resize', ['$event'])
@@ -87,8 +84,6 @@ export class MainComponent implements OnInit {
    * OnInit implementation.
    */
   ngOnInit() {
-    // for "pull to refresh"
-    this.targetElement = document.querySelector('html');
 
     // Checking for query parameters.
     this.getParams();
@@ -234,21 +229,5 @@ export class MainComponent implements OnInit {
         }
       }
     });
-  }
-
-  /**
-   * Reloads the page on pull to refresh action.
-   * @param event
-   * @param message 'refresh'
-   */
-  refreshEvent(event: Subject<any>, message: string) {
-    setTimeout(() => {
-        event.next(message);
-        // window.location.reload();
-        let currentUrl = this.router.url;
-      this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-      this.router.onSameUrlNavigation = 'reload';
-      this.router.navigate([currentUrl]);
-    }, 500);
   }
 }

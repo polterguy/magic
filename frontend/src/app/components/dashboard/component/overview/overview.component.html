@@ -36,15 +36,15 @@
         </mat-card>
     </div>
     <div class="col-12 mb-3">
-        <mat-card class="h-100 p-0" [id]="!extraSegment ? 'add-segment-card' : ''">
+        <mat-card class="h-100 p-0" [id]="!(extraSegment?.value) ? 'add-segment-card' : ''">
             <mat-card-content class="h-100 p-0 d-flex flex-column justify-content-center min-h-80">
                 <button mat-button class="w-100 h-100" (click)="getSegmentOptions()" [matMenuTriggerFor]="menu">
-                    <div class="text-left relative" *ngIf="extraSegment">
+                    <div class="text-left relative" *ngIf="extraSegment?.value">
                         <span class="change-text text-accent">Change</span>
                         <h3 class="mb-0 text-accent">{{extraSegment?.value}}</h3>
                         <p class="my-0 mat-caption text-capitalized">{{extraSegment?.title}}</p>
                     </div>
-                    <div class="d-flex flex-nowrap align-items-center" *ngIf="!extraSegment">
+                    <div class="d-flex flex-nowrap align-items-center" *ngIf="!(extraSegment?.value)">
                         <mat-icon>add</mat-icon>
                         &nbsp;
                         Add a segment
@@ -52,8 +52,6 @@
                 </button>
                 <mat-menu #menu="matMenu" yPosition="above">
                     <button mat-menu-item *ngFor="let item of segmentOptions | keyvalue" (click)="setExtraSegment(item)">
-                        <!-- <mat-icon class="mr-0">add</mat-icon>&nbsp;
-                        {{item.key}}: <span class="text-accent">{{item.value}}</span> -->
                         <div class="d-flex justify-content-between align-items-center pr-1">
                             <div class="d-flex align-items-center mr-3">
                                 <mat-icon class="mr-0">add</mat-icon>&nbsp;

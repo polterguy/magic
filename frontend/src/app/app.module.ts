@@ -50,7 +50,6 @@ import {
   NgxMatTimepickerModule
 } from '@angular-material-components/datetime-picker';
 import { NgxEchartsModule } from 'ngx-echarts';
-import { NgxPullToRefreshModule } from 'ngx-pull-to-refresh';
 
 // reCAPTCHA v3
 import { RecaptchaModule, RecaptchaFormsModule, RecaptchaV3Module } from "ng-recaptcha";
@@ -318,7 +317,6 @@ import { SqlWarningComponent } from './components/tools/sql/sql-warning/sql-warn
     RecaptchaModule,
     RecaptchaV3Module,
     RecaptchaFormsModule,
-    NgxPullToRefreshModule,
     NgxEchartsModule.forRoot({
       echarts: () => import('echarts')
     }),
