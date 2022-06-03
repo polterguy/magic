@@ -31,7 +31,9 @@ if
       // Oops!
       return
          result:failure
+         message:Connection string does not contain {database}
 
+// Doing the try catch thing, to return failure if connection string is invalid.
 try
    switch:x:@.arguments/*databaseType
 
@@ -61,5 +63,9 @@ try
       result:success
 
 .catch
+
+   // Oops, failure ...
+   unwrap:x:+/*
    return
       result:failure
+      message:x:@.arguments/*/message
