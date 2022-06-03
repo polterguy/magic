@@ -36,7 +36,7 @@ if
 
 // Doing the try catch thing, to return failure if connection string is invalid.
 try
-   switch:x:@.arguments/*databaseType
+   switch:x:@.arguments/*/databaseType
 
       case:mssql
          strings.replace:x:@.arguments/*/connectionString
@@ -60,6 +60,8 @@ try
             pgsql.select:select datname from pg_database
 
    // Success, connetion string is valid.
+   log.info
+      lambda2hyper:x:../*
    return
       result:success
 
