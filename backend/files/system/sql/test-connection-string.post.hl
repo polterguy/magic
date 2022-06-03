@@ -1,0 +1,72 @@
+
+/*
+ * Tests the specified connection string.
+ * 
+ * Arguments;
+ * - [databaseType] - Database type, typically 'mssql' or 'mysql'.
+ * - [connectionString] - Connection string to test.
+ */
+.arguments
+   databaseType:string
+   connectionString:string
+.description:Tests the specified connection string, making sure the backend can somehow actually connect to the database
+.type:internal
+
+// Ensures user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/databaseType
+validators.enum:x:@.arguments/*/databaseType
+   .:mysql
+   .:pgsql
+   .:mssql
+
+// Sanity checking that connection string contains {database} allowing for dynamic substitutions.
+if
+   not
+      strings.contains:x:@.arguments/*/connectionString
+         .:{database}
+   .lambda
+
+      // Oops!
+      return
+         result:failure
+         message:Connection string does not contain {database}
+
+// Doing the try catch thing, to return failure if connection string is invalid.
+try
+   switch:x:@.arguments/*databaseType
+
+      case:mssql
+         strings.replace:x:@.arguments/*/connectionString
+            .:{database}
+            .:master
+         mssql.connect:x:@strings.replace
+            mssql.select:select name from master.dbo.sysdatabases
+
+      case:mysql
+         strings.replace:x:@.arguments/*/connectionString
+            .:{database}
+            .:information_schema
+         mysql.connect:x:@strings.replace
+            mysql.select:show databases
+
+      case:pgsql
+         strings.replace:x:@.arguments/*/connectionString
+            .:{database}
+            .:postgres
+         pgsql.connect:x:@strings.replace
+            pgsql.select:select datname from pg_database
+
+   // Success, connetion string is valid.
+   return
+      result:success
+
+.catch
+
+   // Oops, failure ...
+   unwrap:x:+/*
+   return
+      result:failure
+      message:x:@.arguments/*/message
