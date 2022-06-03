@@ -1,5 +1,5 @@
 
-<div class="d-flex flex-column w-100 h-100" id="sidebar" [class.disableLinks]="!backendService.active?.setupDone">
+<div class="d-flex flex-column w-100 h-100" id="sidebar" [class.disableLinks]="!backendService.active?.setupDone" [class.side-collapsed]="!navbarService.expanded">
   <div class="top-box-sidebar d-flex flex-column justify-content-center align-items-center text-center">
 
     <div class="d-flex flex-column w-100 justify-content-center align-items-center min-h-88">
@@ -443,7 +443,8 @@
     </mat-expansion-panel>
 
     <!-- About -->
-    <mat-expansion-panel class="mat-elevation-z0" hideToggle>
+    <mat-expansion-panel class="mat-elevation-z0" hideToggle
+    *ngIf="!backendService.active?.token">
       <mat-expansion-panel-header
       #panelH (click)="panelH._toggle()"
       [matTooltipDisabled]="navbarService.expanded"
@@ -533,7 +534,7 @@
   </button>
 
   <!-- Footer -->
-  <div class="footer d-flex flex-column justify-content-center align-items-center w-100 pt-3">
+  <div class="footer d-flex flex-column justify-content-center align-items-center w-100 p-2">
     <div class="d-flex flex-column align-items-center">
       <ng-container *ngIf="backendService.shouldUpdate">
         <a
@@ -548,12 +549,14 @@
         </a>
       </ng-container>
     </div>
-    <p class="my-0 mat-caption text-center" *ngIf="navbarService.expanded">
-      &copy; Aista Ltd. 2019 - {{currentYear}}
-    </p>
-    <p class="my-0 mat-caption text-center" *ngIf="!navbarService.expanded">
-      &copy; Aista Ltd.
-    </p>
+    <a mat-button href="https://aista.com" target="_blank" class="footer-link-btn">
+      <span *ngIf="navbarService.expanded">
+        &copy; Aista Ltd. 2019 - {{currentYear}}
+      </span>
+      <span *ngIf="!navbarService.expanded">
+        &copy; Aista Ltd.
+      </span>
+    </a>
   </div>
 
 </div>
