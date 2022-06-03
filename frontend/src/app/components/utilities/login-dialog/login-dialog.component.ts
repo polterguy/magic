@@ -6,7 +6,7 @@
 // Angular and system imports.
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
-import { map, startWith } from 'rxjs/operators';
+import { map, startWith, tap } from 'rxjs/operators';
 import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -47,7 +47,7 @@ export class LoginDialogComponent implements OnInit {
   forgotPass_username: string = '';
 
   /**
-   * Changes to true if clicking on the forgot password button 
+   * Changes to true if clicking on the forgot password button
    */
   forgotPass: boolean = false;
 
@@ -60,7 +60,7 @@ export class LoginDialogComponent implements OnInit {
 
   /**
    * Creates an instance of your login dialog.
-   * 
+   *
    * @param router Router service to redirect and check current route
    * @param dialogRef Needed to be able to close dialog after having logged in
    * @param messageService Dependency injected message service to publish information from component to subscribers
@@ -106,6 +106,10 @@ export class LoginDialogComponent implements OnInit {
       .pipe(
         startWith(''),
         map(() => this.filter(this.backends.value)));
+
+    this.loginForm.controls.username.valueChanges.pipe(tap(value => {
+      this.loginForm.controls.username.setValue(value.replace(/[^a-z0-9]/ig, "").toLowerCase(), { emitEvent: false });
+    })).subscribe();
   }
 
   /**
@@ -170,7 +174,7 @@ export class LoginDialogComponent implements OnInit {
   /**
    * Invoked when user requests a reset password link to be generated
    * and sent to him on email.
-   * 
+   *
    * Notice, assumes username is a valid email address.
    * @param recaptcha_token received when reCaptcha component is executed,
    * recaptcha_token is optional, exists only if recaptcha key is available
@@ -204,7 +208,7 @@ export class LoginDialogComponent implements OnInit {
         },
         error: (error: any) => this.feedbackService.showError(error)});
   }
-  
+
   /**
    * to make a click action on the invisible reCaptcha components and receive the token,
    * will be executed only if recaptcha key is available
