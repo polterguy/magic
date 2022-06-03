@@ -68,7 +68,7 @@ export class ConnectionStringDialogComponent implements OnInit {
    */
   getDatabases() {
     this.configService.getDatabases().subscribe((res: any) => {
-      this.dbList = res.options;
+      this.dbList = res.options.filter((db: string) => {return db !== 'sqlite'});
       this.connectionStringForm.patchValue({
         selectedDb: res.default ? res.default : res.options[0],
       });
