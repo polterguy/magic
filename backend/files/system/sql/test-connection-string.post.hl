@@ -4,12 +4,23 @@
  * 
  * Arguments;
  * - [databaseType] - Database type, typically 'mssql' or 'mysql'.
+ * - [connectionString] - Connection string to test.
  */
 .arguments
    databaseType:string
    connectionString:string
-.description:Evaluates the given SQL given for your specified database, and returns the result to caller.
+.description:Tests the specified connection string, making sure the backend can somehow actually connect to the database
 .type:internal
+
+// Ensures user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/databaseType
+validators.enum:x:@.arguments/*/databaseType
+   .:mysql
+   .:pgsql
+   .:mssql
 
 if
    not
