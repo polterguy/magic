@@ -169,6 +169,7 @@ import { LastLogItemsComponent } from './components/dashboard/component/last-log
 import { ViewLogComponent } from './components/dashboard/component/view-log/view-log.component';
 import { MainChartComponent } from './components/dashboard/component/main-chart/main-chart.component';
 import { SqlWarningComponent } from './components/tools/sql/sql-warning/sql-warning.component';
+import { ConnectionStringDialogComponent } from './components/management/config/connection-string-dialog/connection-string-dialog.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -271,7 +272,8 @@ import { SqlWarningComponent } from './components/tools/sql/sql-warning/sql-warn
     LastLogItemsComponent,
     ViewLogComponent,
     MainChartComponent,
-    SqlWarningComponent
+    SqlWarningComponent,
+    ConnectionStringDialogComponent
   ],
   imports: [
     FormsModule,

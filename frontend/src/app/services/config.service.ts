@@ -26,7 +26,7 @@ export class ConfigService {
 
   /**
    * Creates an instance of your service.
-   * 
+   *
    * @param httpService HTTP service to use for backend invocations
    * @param backendService Necessary to persist JWT token for client once setup process is done
    */
@@ -57,7 +57,7 @@ export class ConfigService {
 
   /**
    * Will setup your system according to the specified arguments.
-   * 
+   *
    * @param password Root user's password to use
    * @param settings Configuration for your system
    */
@@ -87,7 +87,7 @@ export class ConfigService {
   /**
    * Generates a cryptographically secure piece of random text (gibberish)
    * by invoking backend endpoint responsible for creating it.
-   * 
+   *
    * @param min Minimum length of gibberish to return
    * @param max Maximum length of gibberish to return
    */
@@ -97,15 +97,23 @@ export class ConfigService {
 
   /**
    * Compares the two specified versions, and returns an integer declaring which comes before the other.
-   * 
+   *
    * @param version_1 First version to compare
    * @param version_2 Second version to compare
    */
   public versionCompare(version_1: string, version_2: string) {
     return this.httpService.get(
       '/magic/system/config/version-compare?version_1=' +
-      encodeURIComponent(version_1) + 
+      encodeURIComponent(version_1) +
       '&version_2=' +
       encodeURIComponent(version_2));
+  }
+
+  public getDatabases() {
+    return this.httpService.get('/magic/system/sql/default-database-type');
+  }
+
+  public connectionStringValidity(data: any) {
+    return this.httpService.post('/magic/system/sql/test-connection-string', data);
   }
 }
