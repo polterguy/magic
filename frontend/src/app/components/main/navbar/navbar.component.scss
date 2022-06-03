@@ -19,10 +19,15 @@
   }
 }
 .footer{
-  padding: 1em;
   position: absolute;
   bottom: 0;
   border-top: solid 1px $magic_dark_ng_border;
+  overflow: hidden;
+  a.footer-link-btn {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 34px;
+  }
 }
 ::ng-deep .dark .footer {
   border-top: solid 1px $magic_default_ng_border;
@@ -92,7 +97,10 @@
   =-=-=-=-=-=*/
   #sidebar {
     user-select: none;
-    padding-bottom: 50px;
+    padding-bottom: 51px;
+    &.side-collapsed{
+      padding-bottom: 67px;
+    }
     height: 100%;
     overflow-y: auto;
     overflow-x: hidden;

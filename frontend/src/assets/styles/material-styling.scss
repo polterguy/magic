@@ -3,6 +3,9 @@
 /*=-=-=-=-=-=
 Material body and general styling
 =-=-=-=-=-=*/
+[mattooltip] {
+  touch-action: auto !important;
+}
 .cdk-global-scrollblock{
   overflow-y: hidden;
 }
@@ -141,7 +144,7 @@ Material list
     }
 }
 #custom-list {
-  &.mat-list-base[dense] .mat-list-item, 
+  &.mat-list-base[dense] .mat-list-item,
   &.mat-list-base[dense] .mat-list-option { height: unset; }
   .mat-list-item-content { padding: 0; }
 }
@@ -185,7 +188,7 @@ Material icons and button
     line-height: 20px;
   }
 }
-// in SQL page 
+// in SQL page
 // ---- fix for smaller screens
 #executeButton.mat-raised-button { min-width: 80px; }
 #largeBtn.mat-raised-button { min-width: 140px; }
