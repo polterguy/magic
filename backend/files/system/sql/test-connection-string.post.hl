@@ -1,0 +1,54 @@
+
+/*
+ * Tests the specified connection string.
+ * 
+ * Arguments;
+ * - [databaseType] - Database type, typically 'mssql' or 'mysql'.
+ */
+.arguments
+   databaseType:string
+   connectionString:string
+.description:Evaluates the given SQL given for your specified database, and returns the result to caller.
+.type:internal
+
+if
+   not
+      strings.contains:x:@.arguments/*/connectionString
+         .:{database}
+   .lambda
+
+      // Oops!
+      return
+         result:failure
+
+try
+   switch:x:@.arguments/*databaseType
+
+      case:mssql
+         strings.replace:x:@.arguments/*/connectionString
+            .:{database}
+            .:master
+         mssql.connect:x:@strings.replace
+            mssql.select:select name from master.dbo.sysdatabases
+
+      case:mysql
+         strings.replace:x:@.arguments/*/connectionString
+            .:{database}
+            .:information_schema
+         mysql.connect:x:@strings.replace
+            mysql.select:show databases
+
+      case:pgsql
+         strings.replace:x:@.arguments/*/connectionString
+            .:{database}
+            .:postgres
+         pgsql.connect:x:@strings.replace
+            pgsql.select:select datname from pg_database
+
+   // Success, connetion string is valid.
+   return
+      result:success
+
+.catch
+   return
+      result:failure
