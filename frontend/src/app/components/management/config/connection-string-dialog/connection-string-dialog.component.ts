@@ -68,7 +68,7 @@ export class ConnectionStringDialogComponent implements OnInit {
    */
   getDatabases() {
     this.configService.getDatabases().subscribe((res: any) => {
-      this.dbList = res.options.filter((db: string) => {return db !== 'sqlite'});
+      this.dbList = res.options.filter((db: string) => { return db !== 'sqlite' });
       this.connectionStringForm.patchValue({
         selectedDb: res.default ? res.default : res.options[0],
       });
@@ -84,7 +84,9 @@ export class ConnectionStringDialogComponent implements OnInit {
   fillPlaceholder(dbKey: string) {
     if (dbKey) {
       for (const key in this.data.databases[dbKey]) {
-        this.placeholder = this.data.databases[dbKey][key];
+        if (key) {
+          this.placeholder = this.data.databases[dbKey][key];
+        }
       }
     }
     if (this.connectionStringForm.value.displayName !== '') {
