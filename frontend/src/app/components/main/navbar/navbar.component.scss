@@ -92,7 +92,8 @@
   =-=-=-=-=-=*/
   #sidebar {
     user-select: none;
-    padding-bottom: 155px;
+    padding-bottom: 50px;
+    height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
     @include general_transition(0.5s);
@@ -135,7 +136,7 @@
         font-size: 18px;
         margin-right: 15px;
       }
-      
+
       /*=-=-=-=-=-=
       inside mat-list-option
       =-=-=-=-=-=*/
@@ -147,7 +148,7 @@
         padding: 0;
       }
     }
-    
+
     .mat-list-option:not(.standalone-link){
       &::after{@include general_transition(0.5s);}
       &::before{@include general_transition(0.5s);}
@@ -171,9 +172,9 @@
           left: 22.5px;
           z-index: 1;
         }
-    }    
+    }
   }
-  
+
 }
 .copy-btn{
   position: absolute;
@@ -204,13 +205,13 @@ colour setting -- text & background
     .mat-expansion-indicator::after,
     .top-box-sidebar,
     .top-box-sidebar p, a{color: $magic_dark_secondary;}
-    
+
     .mat-list-text::before{border-left: 1px dashed $magic_dark_ng_border;}
 
     .mat-expansion-panel,
     .mat-expansion-panel-header,
     .mat-list-option{background-color: transparent;}
-  
+
     mat-expansion-panel.mat-expansion-panel.mat-expanded{
       box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.04);
       .mat-expansion-panel-content{
@@ -363,18 +364,18 @@ colour setting -- text & background
       height: 60px;
       display: flex;
       justify-content: center;
-      align-items: center;      
+      align-items: center;
       .mat-icon{
         margin-right: auto;
         margin-left: auto;
       }
     }
-    
-    
+
+
     /*=-=-=-=-=-=
     to fix positioning of the ripple
     =-=-=-=-=-=*/
-    .mat-expansion-panel-header .mat-list-item-content, 
+    .mat-expansion-panel-header .mat-list-item-content,
     .mat-list-option .mat-list-item-content{
       width: 100%;
     }
