@@ -13,6 +13,8 @@ import { FeedbackService } from '../../../../services/feedback.service';
 
 // CodeMirror options.
 import json from '../../../utilities/codemirror/options/json.json'
+import { MatDialog } from '@angular/material/dialog';
+import { ConnectionStringDialogComponent } from '../connection-string-dialog/connection-string-dialog.component';
 
 /**
  * Component that allows user to edit his configuration file as raw JSON.
@@ -36,7 +38,7 @@ export class ConfigEditorComponent implements OnInit {
   public config: string = null;
 
   /**
-   * By default Ctrl-Z removes all the text from the editor, if there is no more changed to undo, 
+   * By default Ctrl-Z removes all the text from the editor, if there is no more changed to undo,
    * which results in config variable to set to an empty string,
    * and therefore removing the editor.
    * To prevent that from happening, we set a new variable and change the condition to match this.
@@ -46,7 +48,7 @@ export class ConfigEditorComponent implements OnInit {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param feedbackService Needed to display feedback to user
    * @param configService Needed to load and save configuration file
    * @param backendService Needed to retrieve user's access rights from backend
@@ -54,7 +56,8 @@ export class ConfigEditorComponent implements OnInit {
   constructor(
     private feedbackService: FeedbackService,
     private configService: ConfigService,
-    public backendService: BackendService) {
+    public backendService: BackendService,
+    private dialog: MatDialog) {
   }
 
   /**
@@ -75,7 +78,7 @@ export class ConfigEditorComponent implements OnInit {
    */
   loadConfig() {
     this.configService.loadConfig().subscribe({
-      next: (res: any) => { 
+      next: (res: any) => {
         this.config = JSON.stringify(res, null, 2);
         if (res) {
           this.configExists = true;
@@ -108,5 +111,22 @@ export class ConfigEditorComponent implements OnInit {
     catch (error) {
       this.feedbackService.showError(error);
     }
+  }
+
+  addConnectionString() {
+    this.dialog
+      .open(ConnectionStringDialogComponent, {
+        width: '650px',
+        data: { databases: JSON.parse(this.config).magic.databases },
+      })
+      .afterClosed()
+      .subscribe((result: any) => {
+        if (result) {
+          let selectedDb = JSON.parse(this.config);
+          selectedDb.magic.databases[result.selectedDb][result.name] = result.connectionString;
+          this.config = JSON.stringify(selectedDb, null, 2)
+          this.save();
+        }
+      });
   }
 }
