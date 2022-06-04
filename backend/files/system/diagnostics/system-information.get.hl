@@ -28,6 +28,9 @@ if
             // Retrieving number of persisted tasks.
             tasks.count
 
+            // Getting server's IP address
+            server.ip
+
             // Counting total number of log items.
             log.count
 
@@ -178,6 +181,7 @@ if
                dynamic_slots:x:@.no-dynamic-slots
                default_db:x:@.default-db
                default_timezone:x:@.default-timezone
+               server_ip:x:@server.ip
                last_log_items
                modules
             return:x:@lambda2hyper
