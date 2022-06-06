@@ -24,6 +24,15 @@ validators.mandatory:x:@.arguments/*/settings/*/magic/*/auth/*/secret
 validators.string:x:@.arguments/*/settings/*/magic/*/auth/*/secret
    min:int:80
 
+// Defaulting to 'root' as root username unless user specified an explicit username.
+if
+   not
+      exists:x:@.arguments/*/username
+   .lambda
+      add:x:@.arguments
+         .
+            username:root
+
 // Making sure we're able to return exceptions to caller.
 try
 
@@ -190,15 +199,9 @@ try
                   sqlite.execute:x:@io.file.load
 
          // Inserting root user, defaulting username to 'root'.
-         .root:root
-         if
-            exists:x:@.arguments/*/username
-            .lambda
-               set-value:x:@.root
-                  get-value:x:@.arguments/*/username
          unwrap:x:+/*
          signal:magic.auth.create-user
-            username:x:@.root
+            username:x:@.arguments/*/username
             password:x:@.arguments/*/password
             database-type:x:@.arguments/*/settings/*/magic/*/databases/*/default
             roles
@@ -249,7 +252,7 @@ try
    // Authenticating user and returning new JWT token to client.
    unwrap:x:+/*
    signal:magic.auth.authenticate
-      username:root
+      username:x:@.arguments/*/username
       password:x:@.arguments/*/password
 
    // Re-initialising time zone in case it was changed from its default setting.
