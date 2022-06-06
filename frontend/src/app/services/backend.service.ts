@@ -140,6 +140,8 @@ export class BackendService {
     this.backendsStorageService.activate(value);
     if (!value.access.fetched) {
       this.getEndpoints(value);
+    } else {
+      value.createAccessRights(); // Updating access rights in case previous token was garbage
     }
     if (value.token && value.token.in_role('root') && !value.status) {
       this.retrieveStatusAndVersion(this.active);
