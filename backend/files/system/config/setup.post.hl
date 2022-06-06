@@ -10,6 +10,7 @@
  * is 'THIS-IS-NOT-A-GOOD-SECRET-PLEASE-CHANGE-IT'.
  */
 .arguments
+   username:string
    password:string
    settings:*
 .description:Setup authentication and other parts of the system according to the arguments provided
@@ -188,10 +189,16 @@ try
                sqlite.connect:[generic|magic]
                   sqlite.execute:x:@io.file.load
 
-         // Inserting root user.
+         // Inserting root user, defaulting username to 'root'.
+         .root:root
+         if
+            exists:x:@.arguments/*/username
+            .lambda
+               set-value:x:@.root
+                  get-value:x:@.arguments/*/username
          unwrap:x:+/*
          signal:magic.auth.create-user
-            username:root
+            username:x:@.root
             password:x:@.arguments/*/password
             database-type:x:@.arguments/*/settings/*/magic/*/databases/*/default
             roles
