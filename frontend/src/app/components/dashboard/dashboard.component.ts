@@ -150,7 +150,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }
 
       },
-      error: (error: any) => this.feedbackService.showError(error)});
+      error: (error: any) => {
+        this.feedbackService.showError(error);
+        this._isRetrievingSystemReport = false;
+      }});
   }
 
   /**
