@@ -107,6 +107,12 @@ export class CrudBackendComponent implements OnInit {
    * Implementation of OnInit.
    */
   ngOnInit() {
+
+    // Purging server side database cache in case user just recently created a new database.
+    this.cacheService.delete('magic.sql.databases.*').subscribe({
+      next: () => console.log('Your database cache was flushed server side'),
+      error: (error: any) => this.feedbackService.showError(error)});
+
     this.sqlService.defaultDatabaseType().subscribe({
       next: (defaultDatabaseType: DefaultDatabaseType) => {
         this.databaseTypes = defaultDatabaseType.options;
