@@ -9,7 +9,6 @@ Material body and general styling
 .cdk-global-scrollblock{
   overflow-y: hidden;
 }
-
 .dark .mat-primary *{
   color: $magic_default_alternative;
 }
@@ -24,10 +23,10 @@ Material body and general styling
 .mat-drawer-content{
   @include scrollbar($magic_default_secondary,transparentize($color: $magic_dark_alternative, $amount: 0.65),3px);
 }
-#main-wrapper.mat-sidenav-container{
+#main-wrapper.mat-drawer-container{
   min-height: 100vh;
 }
-#main-section.mat-sidenav-content{
+#main-section.mat-drawer-content{
   height: 100vh;
   overflow-y: auto;
   overflow-x: hidden;
