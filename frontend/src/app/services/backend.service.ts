@@ -141,7 +141,8 @@ export class BackendService {
     if (!value.access.fetched) {
       this.getEndpoints(value);
     } else {
-      value.createAccessRights(); // Updating access rights in case previous token was garbage
+      value.createAccessRights(); // Updating access rights in case previous token was garbage.
+      this._endpointsRetrieved.next(true);
     }
     if (value.token && value.token.in_role('root') && !value.status) {
       this.retrieveStatusAndVersion(this.active);
