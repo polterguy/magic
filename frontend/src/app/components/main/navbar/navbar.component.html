@@ -78,7 +78,9 @@
     <mat-expansion-panel class="mat-elevation-z0" hideToggle>
       <mat-expansion-panel-header
         #panelD (click)="panelD._toggle()"
-
+        [matTooltipDisabled]="navbarService.expanded"
+        [matTooltip]="backendService.active?.access.files.list_files && backendService.active?.access.files.list_folders ? 'Dashboard' : 'Home'"
+        matTooltipPosition="after"
         routerLinkActive="active-link"
         [routerLinkActiveOptions]="{exact:true}">
         <mat-panel-title>
@@ -102,7 +104,9 @@
       *ngIf="(!backendService.active?.token || !backendService.active?.token?.in_role('root')) && backendService.active">
       <mat-expansion-panel-header
         #panelC (click)="panelC._toggle()"
-
+        [matTooltipDisabled]="navbarService.expanded"
+        matTooltip="Keys"
+        matTooltipPosition="after"
         routerLinkActive="active-link"
         [routerLinkActiveOptions]="{exact:true}">
         <mat-panel-title>
@@ -133,7 +137,9 @@
         <!-- Crudifier -->
         <mat-list-option
           [style.display]="backendService.active?.access.crud.generate_crud || backendService.active?.access.crud.generate_sql || backendService.active?.access.crud.generate_frontend ? '' : 'none'"
-
+          [matTooltipDisabled]="navbarService.expanded"
+          matTooltip="Crudifier"
+          matTooltipPosition="after"
           routerLinkActive="active-link"
           #crudifier="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
@@ -148,7 +154,9 @@
         <!-- Hyper IDE -->
         <mat-list-option
           [style.display]="backendService.active?.access.files.list_files && backendService.active?.access.files.list_folders ? '' : 'none'"
-
+          [matTooltipDisabled]="navbarService.expanded"
+          matTooltip="Hyper IDE"
+          matTooltipPosition="after"
           routerLinkActive="active-link"
           #hyperide="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
@@ -163,6 +171,9 @@
         <!-- SQL -->
         <mat-list-option
           [style.display]="backendService.active?.access.sql.execute_access ? '' : 'none'"
+          [matTooltipDisabled]="navbarService.expanded"
+          matTooltip="SQL Studio"
+          matTooltipPosition="after"
           routerLinkActive="active-link"
           #sql="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
@@ -177,6 +188,9 @@
         <!-- Evaluator -->
         <mat-list-option
           [style.display]="backendService.active?.access.eval.execute ? '' : 'none'"
+          [matTooltipDisabled]="navbarService.expanded"
+          matTooltip="Evaluator"
+          matTooltipPosition="after"
           routerLinkActive="active-link"
           #evaluator="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
@@ -191,6 +205,9 @@
         <!-- Tasks -->
         <mat-list-option
           [style.display]="backendService.active?.access.tasks.read ? '' : 'none'"
+          [matTooltipDisabled]="navbarService.expanded"
+          matTooltip="Tasks"
+          matTooltipPosition="after"
           routerLinkActive="active-link"
           #tasks="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
@@ -205,6 +222,9 @@
         <!-- Terminal -->
         <mat-list-option
           [style.display]="backendService.active?.access.terminal.execute ? '' : 'none'"
+          [matTooltipDisabled]="navbarService.expanded"
+          matTooltip="Terminal"
+          matTooltipPosition="after"
           routerLinkActive="active-link"
           #terminal="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
@@ -236,7 +256,9 @@
         <!-- Users -->
         <mat-list-option
           [style.display]="backendService.active?.access.auth.view_users && backendService.active?.access.auth.view_roles ? '' : 'none'"
-
+          [matTooltipDisabled]="navbarService.expanded"
+          matTooltip="Users & roles"
+          matTooltipPosition="after"
           routerLinkActive="active-link"
           #auth="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
@@ -251,6 +273,9 @@
         <!-- Config -->
         <mat-list-option
           [style.display]="backendService.active?.access.config.load ? '' : 'none'"
+          [matTooltipDisabled]="navbarService.expanded"
+          matTooltip="Config"
+          matTooltipPosition="after"
           routerLinkActive="active-link"
           #config="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
@@ -265,6 +290,9 @@
         <!-- Cryptography -->
         <mat-list-option
           [style.display]="backendService.active?.access.crypto.import_public_key ? '' : 'none'"
+          [matTooltipDisabled]="navbarService.expanded"
+          matTooltip="Cryptography"
+          matTooltipPosition="after"
           routerLinkActive="active-link"
           #crypto="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
@@ -279,6 +307,9 @@
         <!-- Profile -->
         <mat-list-option
           [style.display]="backendService.active?.token ? '' : 'none'"
+          [matTooltipDisabled]="navbarService.expanded"
+          matTooltip="Edit your profile"
+          matTooltipPosition="after"
           routerLinkActive="active-link"
           #profile="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
@@ -293,6 +324,9 @@
         <!-- Bazaar -->
         <mat-list-option
           [style.display]="backendService.active?.access.bazar.get_manifests ? '' : 'none'"
+          [matTooltipDisabled]="navbarService.expanded"
+          matTooltip="Plugins"
+          matTooltipPosition="after"
           routerLinkActive="active-link"
           #bazar="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
@@ -324,6 +358,9 @@
         <!-- Log -->
         <mat-list-option
           [style.display]="backendService.active?.access.log.read ? '' : 'none'"
+          [matTooltipDisabled]="navbarService.expanded"
+          matTooltip="Log"
+          matTooltipPosition="after"
           routerLinkActive="active-link"
           #log="routerLinkActive"
           [routerLinkActiveOptions]="{exact:false}">
@@ -338,6 +375,9 @@
         <!-- Assumptions //TODO -->
         <mat-list-option
           [style.display]="backendService.active?.access.log.read ? '' : 'none'"
+          [matTooltipDisabled]="navbarService.expanded"
+          matTooltip="Assumptions"
+          matTooltipPosition="after"
           routerLinkActive="active-link"
           #assumptions="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
@@ -352,6 +392,9 @@
         <!-- Cache //TODO -->
         <mat-list-option
           [style.display]="backendService.active?.access.log.read ? '' : 'none'"
+          [matTooltipDisabled]="navbarService.expanded"
+          matTooltip="System's cache"
+          matTooltipPosition="after"
           routerLinkActive="active-link"
           #cache="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
@@ -366,6 +409,9 @@
         <!-- Endpoints -->
         <mat-list-option
           [style.display]="backendService.active?.access.endpoints.view ? '' : 'none'"
+          [matTooltipDisabled]="navbarService.expanded"
+          matTooltip="Endpoints"
+          matTooltipPosition="after"
           routerLinkActive="active-link"
           #endpoints="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
@@ -380,6 +426,9 @@
         <!-- Sockets -->
         <mat-list-option
           [style.display]="backendService.active?.access.sockets.read ? '' : 'none'"
+          [matTooltipDisabled]="navbarService.expanded"
+          matTooltip="Sockets"
+          matTooltipPosition="after"
           routerLinkActive="active-link"
           #sockets="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
@@ -398,6 +447,9 @@
     *ngIf="!backendService.active?.token">
       <mat-expansion-panel-header
       #panelH (click)="panelH._toggle()"
+      [matTooltipDisabled]="navbarService.expanded"
+      matTooltip="About"
+      matTooltipPosition="after"
       routerLinkActive="active-link"
       [routerLinkActiveOptions]="{exact:true}">
           <mat-panel-title>
@@ -413,6 +465,9 @@
     <mat-expansion-panel class="mat-elevation-z0" hideToggle>
       <mat-expansion-panel-header
         #panelC (click)="panelC._toggle()"
+        [matTooltipDisabled]="navbarService.expanded"
+        matTooltip="Documentation"
+        matTooltipPosition="after"
         routerLinkActive="active-link"
         [routerLinkActiveOptions]="{exact:true}">
         <mat-panel-title>
@@ -427,7 +482,10 @@
     <!-- Login -->
     <mat-expansion-panel class="mat-elevation-z0" hideToggle>
       <mat-expansion-panel-header
-        #panelL (click)="panelL._toggle(); backendService.active?.token ? logout() : login(true)">
+        #panelL (click)="panelL._toggle(); backendService.active?.token ? logout() : login(true)"
+        [matTooltipDisabled]="navbarService.expanded"
+        matTooltipPosition="after"
+        [matTooltip]="backendService.active?.token ? 'Logout' : 'Login'">
         <mat-panel-title>
             <mat-icon>{{backendService.active?.token ? 'lock' : 'lock_open'}}</mat-icon>
             <span class="title">{{backendService.active?.token ? 'Logout' : 'Login'}}</span>
@@ -440,6 +498,9 @@
       *ngIf="!backendService.active?.token && backendService.active" hideToggle>
       <mat-expansion-panel-header
         #panelH (click)="panelH._toggle()"
+        [matTooltipDisabled]="navbarService.expanded"
+        matTooltip="Create an account"
+        matTooltipPosition="after"
         routerLinkActive="active-link"
         [routerLinkActiveOptions]="{exact:true}">
         <mat-panel-title>
@@ -488,7 +549,6 @@
         </a>
       </ng-container>
     </div>
-
     <p class="my-0 mat-caption text-center" *ngIf="navbarService.expanded">
       &copy; Aista Ltd. 2019 - {{currentYear}}
     </p>
