@@ -3,9 +3,9 @@
 /*=-=-=-=-=-=
 Material body and general styling
 =-=-=-=-=-=*/
-[mattooltip] {
-  touch-action: auto !important;
-}
+// [mattooltip] {
+//   touch-action: auto !important;
+// }
 .cdk-global-scrollblock{
   overflow-y: hidden;
 }
@@ -45,7 +45,8 @@ Material body and general styling
     border-radius: 4px;
   }
   @media (max-width: 767px){
-    padding-bottom: 60px;
+    // padding-bottom: 60px;
+    height: 100vh;
   }
 }
 /*=-=-=-=-=-=
