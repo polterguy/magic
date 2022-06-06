@@ -121,9 +121,13 @@ if
             .has-sockets:bool:true
             .has-terminal:bool:true
             if
-               eq
-                  config.get:"magic:sockets:url"
-                  .
+               or
+                  eq
+                     config.get:"magic:terminal"
+                     .:False
+                  eq
+                     config.get:"magic:sockets:url"
+                     .
                .lambda
                   set-value:x:@.has-sockets
                      .:bool:false
