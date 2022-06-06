@@ -136,6 +136,14 @@ if
                .lambda
                   set-value:x:@.has-terminal
                      .:bool:false
+            else
+               vocabulary:system.terminal.create
+               if
+                  not
+                     exists:x:@vocabulary/*
+                  .lambda
+                     set-value:x:@.has-terminal
+                        .:bool:false
 
             // Verifying scheduler is turned on.
             .has-scheduler:bool:true
