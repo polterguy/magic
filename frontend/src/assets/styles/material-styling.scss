@@ -20,11 +20,13 @@ Material body and general styling
   background-color: $magic_site_bg!important;
   height: 100%;
 }
-
-#main-wrapper.mat-drawer-container{
+.mat-drawer-content{
+  @include scrollbar($magic_default_secondary,transparentize($color: $magic_dark_alternative, $amount: 0.65),3px);
+}
+#main-wrapper.mat-sidenav-container{
   min-height: 100vh;
 }
-#main-section{
+#main-section.mat-sidenav-content{
   height: 100vh;
   overflow-y: auto;
   overflow-x: hidden;
