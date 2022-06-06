@@ -45,22 +45,24 @@
   /*=-=-=-=-=-=
   sidebar and content width and margin relatively
   =-=-=-=-=-=*/
-  mat-sidenav.full-width-sidebar{
+  mat-drawer.full-width-sidebar{
     width: $sidebar_full_width;
     @include general_transition(0.2s);
   }
-  mat-sidenav.small-width-sidebar{
+  mat-drawer.small-width-sidebar{
     width: $sidebar_small_width;
     @include general_transition(0.2s);
   }
-  mat-sidenav-content.content-with-full-sidebar{
+  ::ng-deep .mat-drawer-content {margin: 0!important;}
+  #main-section {overflow: hidden auto; height: 100vh;}
+  #main-section.content-with-full-sidebar{
     margin-left: calc(#{$sidebar_full_width} + #{$side_space})!important;
     @include general_transition(0.2s);
     table .CodeMirror:not(.CodeMirror-fullscreen){
       max-width: calc(100vw - (#{$sidebar_full_width} + (#{$side_space} * 3) + 80px));
     }
   }
-  mat-sidenav-content.content-with-small-sidebar{
+  #main-section.content-with-small-sidebar{
     margin-left: calc(#{$sidebar_small_width} + #{$side_space})!important;
     @include general_transition(0.2s);
     table .CodeMirror:not(.CodeMirror-fullscreen){
