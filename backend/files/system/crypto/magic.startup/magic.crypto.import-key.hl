@@ -62,5 +62,5 @@ slots.vocabulary
             data.create
                table:users_crypto_keys
                values
-                  username:root
+                  username:x:@.arguments/*/username
                   key_id:x:@data.create/@data.create
