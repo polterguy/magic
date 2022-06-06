@@ -239,7 +239,7 @@ export class Backend {
         deleteDue: this.canInvoke('magic/system/tasks/due/delete', 'delete'),
       },
       terminal: {
-        execute: this.canInvoke('magic/system/terminal/command', 'socket') && this.canInvoke('magic/system/terminal/start', 'socket') && this.canInvoke('magic/system/terminal/stop', 'socket'),
+        execute: this.canInvoke('magic/system/diagnostics/has-terminal', 'get') && this.canInvoke('magic/system/terminal/command', 'socket') && this.canInvoke('magic/system/terminal/start', 'socket') && this.canInvoke('magic/system/terminal/stop', 'socket'),
       },
       eval: {
         execute: this.canInvoke('magic/system/evaluator/evaluate', 'post'),
