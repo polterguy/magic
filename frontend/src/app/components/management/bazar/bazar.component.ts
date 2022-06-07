@@ -32,7 +32,6 @@ import { ViewAppDialogComponent } from './view-app-dialog/view-app-dialog.compon
 import { SubscribeDialogComponent } from './subscribe-dialog/subscribe-dialog.component';
 import { ViewReadmeDialogComponent } from './view-readme-dialog/view-readme-dialog.component';
 import { ViewInstalledAppDialogComponent } from './view-installed-app-dialog/view-installed-app-dialog.component';
-import { ConfirmEmailAddressDialogComponent } from './view-app-dialog/confirm-email-address-dialog/confirm-email-address-dialog.component';
 
 /**
  * Bazar component allowing you to obtain additional Micro Service backend
@@ -109,7 +108,7 @@ export class BazarComponent implements OnInit, OnDestroy {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param router Needed to redirect user after app has been installed
    * @param dialog Needed to create modal dialogs
    * @param fileService Needed to be able to display README file after app has been installed.
@@ -233,7 +232,7 @@ export class BazarComponent implements OnInit, OnDestroy {
 
   /**
    * Invoked when paginator wants to page data table.
-   * 
+   *
    * @param e Page event argument
    */
    paged(e: PageEvent) {
@@ -243,7 +242,7 @@ export class BazarComponent implements OnInit, OnDestroy {
 
   /**
    * Invoked when a user clicks a specific app to view details about it.
-   * 
+   *
    * @param app What app the user clicked
    */
   viewApp(app: BazarApp) {
@@ -253,19 +252,21 @@ export class BazarComponent implements OnInit, OnDestroy {
     }
     this.dialog.open(ViewAppDialogComponent, {
       data: app,
-      width: '80%'
+      width: '90%',
+      maxWidth: '90vw'
     });
   }
 
   /**
    * Opens a modal dialog showing the user details about his already installed app.
-   * 
+   *
    * @param app Which app to view details about
    */
   viewInstalledAppDetails(app: AppManifest) {
     const dialogRef = this.dialog.open(ViewInstalledAppDialogComponent, {
       data: app,
-      width: '80%',
+      width: '90%',
+      maxWidth: '90vw'
     });
     dialogRef.afterClosed().subscribe((result: any) => {
 
@@ -278,7 +279,7 @@ export class BazarComponent implements OnInit, OnDestroy {
 
   /**
    * Returns true if specified app is already installed.
-   * 
+   *
    * @param app App to check
    */
   appIsInstalled(app: BazarApp) {
@@ -287,7 +288,7 @@ export class BazarComponent implements OnInit, OnDestroy {
 
   /**
    * Returns all apps that are installed through the Bazar.
-   * 
+   *
    * @returns All apps installed from Bazar
    */
   getInstalledApps() {

@@ -38,7 +38,7 @@ export class SubscribeDialogComponent implements OnInit {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param bazarService Needed to be able to subscribe user to our newsletter
    * @param configService Needed to retrieve user's name and email as specified during configuration
    * @param feedbackService Needed to display feedback to user

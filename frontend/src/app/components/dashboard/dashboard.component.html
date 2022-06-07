@@ -8,6 +8,30 @@
         <div class="row manipuated-layout">
           <div class="col-12 mb-general">
             <div class="row justify-content-between">
+              <div class="col-12">
+                <app-overview [data]="systemReportDisplayable"></app-overview>
+              </div>
+              <div class="col-sm-6 col-12">
+                <app-doughnut-chart [data]="systemReportDisplayable"></app-doughnut-chart>
+              </div>
+              <div class="col-sm-6 col-12">
+                <app-pie-chart [data]="systemReportDisplayable"></app-pie-chart>
+              </div>
+              <div class="col-lg-4 col-sm-6 col-12"
+               *ngFor="let chartItem of chartData | keyvalue:unsorted; let index = index;">
+                  <app-main-chart [data]="chartItem"></app-main-chart>
+              </div>
+              <div class="col-12">
+                <app-last-log-items [data]="systemReportDisplayable?.last_log_items" [totalLogs]="systemReportDisplayable?.log_items"></app-last-log-items>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+      <!-- <ng-template [ngIf]="systemReportDisplayable !== null" [ngIfElse]="noReport">
+        <div class="row manipuated-layout">
+          <div class="col-12 mb-general">
+            <div class="row justify-content-between">
               <div class="col-xl-4 col-lg-6 col-md-8 col-12">
                 <app-overview [data]="systemReportDisplayable"></app-overview>
               </div>
@@ -28,7 +52,7 @@
             </div>
           </div>
         </div>
-      </ng-template>
+      </ng-template> -->
       <ng-template #noReport>
         <div class="d-flex flex-column align-items-center justify-content-center text-center h-100 w-100 welcome-section">
           <h1 class="mat-title">Welcome to Aista Magic Cloud</h1>

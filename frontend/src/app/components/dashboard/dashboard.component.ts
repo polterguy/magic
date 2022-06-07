@@ -7,7 +7,7 @@
 import moment from 'moment';
 import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { BackendService } from 'src/app/services/backend.service';
@@ -35,7 +35,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * Chart type.
    */
   chartType: boolean[] = [];
-  
+
   systemReport: any = null;
   systemReportDisplayable: any;
   timeshiftChart: Timeshifts[] = [];
@@ -50,9 +50,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   chartData: any = [];
 
   /**
-   * 
+   *
    * @param backendService Needed to retrieve user's loging status
-   * @param diagnosticsService retrieving the activities on the system 
+   * @param diagnosticsService retrieving the activities on the system
    * @param dialog Dialog reference necessary to show login dialog if user tries to login
    * @param feedbackService Needed to provide feedback to user
    */
@@ -60,7 +60,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     public backendService: BackendService,
     private diagnosticsService: DiagnosticsService,
     private dialog: MatDialog,
-    private feedbackService: FeedbackService) { }
+    private feedbackService: FeedbackService,
+    private cdr: ChangeDetectorRef) { }
 
   /**
    * Implementation of OnInit.
@@ -107,7 +108,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * Retrieving the system's report
    */
   private getSystemReport() {
-
+    this.cdr.markForCheck();
     // Avoiding race conditions.
     if (this._isRetrievingSystemReport) {
       return;
@@ -148,7 +149,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
           })
         }
-
+        this.cdr.detectChanges();
       },
       error: (error: any) => {
         this.feedbackService.showError(error);

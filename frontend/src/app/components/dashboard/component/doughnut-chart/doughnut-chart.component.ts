@@ -2,7 +2,7 @@
  * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
  */
 
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 
 // Utility imports.
 import { ThemeService } from 'src/app/services/theme.service';
@@ -14,7 +14,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './doughnut-chart.component.html',
   styleUrls: ['./doughnut-chart.component.scss']
 })
-export class DoughnutChartComponent implements OnInit, OnDestroy {
+export class DoughnutChartComponent implements OnInit, OnDestroy, OnChanges {
   options: any;
   chartInstance: any;
 
@@ -41,7 +41,7 @@ export class DoughnutChartComponent implements OnInit, OnDestroy {
   private theme: string = '';
 
   /**
-   * 
+   *
    * @param themeService For listening to the changes on the theme.
    */
   constructor(private themeService: ThemeService) { }
@@ -56,10 +56,19 @@ export class DoughnutChartComponent implements OnInit, OnDestroy {
       this.getOptions();
     });
 
-    /**
+
+    this.waitForData();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    this.waitForData();
+  }
+
+  /**
      * waiting for the data to be ready
      * then call the preparation function
      */
+  private waitForData() {
     (async () => {
       while (!this.data)
         await new Promise(resolve => setTimeout(resolve, 100));
@@ -100,6 +109,7 @@ export class DoughnutChartComponent implements OnInit, OnDestroy {
         orient: 'horizontal',
         left: 'top',
         type: 'scroll',
+        padding: [0, 5],
         textStyle: {
           color: this.theme === 'light' ? 'black' : 'white'
         },
@@ -112,9 +122,10 @@ export class DoughnutChartComponent implements OnInit, OnDestroy {
         {
           // name: 'Access From',
           type: 'pie',
-          radius: '50%',
+          // radius: '50%',
+          radius: ['40%', '70%'],
           data: this.chartData,
-          color: ['#ee6666','#91cc75'],
+          color: ['#ee6666', '#91cc75'],
           label: {
             color: this.theme === 'light' ? 'black' : 'white'
           },

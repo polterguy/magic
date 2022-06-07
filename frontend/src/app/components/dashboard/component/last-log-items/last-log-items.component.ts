@@ -2,7 +2,7 @@
  * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
  */
 
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { LastLogItems } from 'src/app/models/dashboard.model';
 import { ViewLogComponent } from '../view-log/view-log.component';
@@ -12,7 +12,7 @@ import { ViewLogComponent } from '../view-log/view-log.component';
   templateUrl: './last-log-items.component.html',
   styleUrls: ['./last-log-items.component.scss']
 })
-export class LastLogItemsComponent implements OnInit {
+export class LastLogItemsComponent implements OnInit, OnChanges {
 
   /**
    * Actual data received from the parent component.
@@ -37,6 +37,10 @@ export class LastLogItemsComponent implements OnInit {
   constructor(private dialog: MatDialog) { }
 
   ngOnInit(): void {
+    this.watingData();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
     this.watingData();
   }
 
