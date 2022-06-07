@@ -102,6 +102,11 @@ export class BazarComponent implements OnInit, OnDestroy {
   subscribing: boolean = false;
 
   /**
+   * Number of items to be displayed in each page.
+   */
+  public pageSize: number = 8;
+
+  /**
    * Paginator for paging apps.
    */
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
@@ -152,14 +157,21 @@ export class BazarComponent implements OnInit, OnDestroy {
     this.filterFormControl.valueChanges
       .pipe(debounceTime(400), distinctUntilChanged())
       .subscribe((query: any) => {
-        this.filterFormControl.setValue(query);
-        this.paginator.pageIndex = 0;
-        this.getItems();
+        if (this.filterFormControl.value.trim().length === 0 || this.filterFormControl.value.trim().length > 2) {
+          this.filterFormControl.setValue(query);
+          this.paginator.pageIndex = 0;
+          this.getItems();
+        }
       });
 
     if (this.backendService.active?.token?.in_role('root')) {
-      this.getItems(true);
-
+      (async () => {
+        while (!this.paginator.pageSize)
+        await new Promise(resolve => setTimeout(resolve, 100));
+        if (this.paginator.pageSize) {
+          this.getItems(true);
+        }
+      })();
       /*
        * Checking if we've got a "token" query parameter,
        * at which point we've been redirected from PayPal,
@@ -304,16 +316,16 @@ export class BazarComponent implements OnInit, OnDestroy {
    */
   private getItems(first: boolean = false) {
     this.bazarService.listBazarItems(
-      this.filterFormControl.value,
+      '%' + this.filterFormControl.value + '%',
       this.paginator.pageIndex * this.paginator.pageSize,
       this.paginator.pageSize).subscribe({
         next: (apps: BazarApp[]) => {
           this.apps = apps;
-          this.bazarService.countBazarItems(this.filterFormControl.value).subscribe({
+          this.bazarService.countBazarItems('%' + this.filterFormControl.value + '%').subscribe({
             next: (count: Count) => {
               this.count = count.count;
               if (first) {
-                this.hideFilterControl = this.count <= 5;
+                this.hideFilterControl = this.count <= this.pageSize;
               }
             },
             error: (error: any) =>this.feedbackService.showError(error)});
