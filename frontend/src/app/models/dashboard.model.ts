@@ -16,6 +16,7 @@ export interface SystemReport {
   has_terminal?: boolean,
   persisted_tasks?: number,
   version?: string,
+  server_ip?: string,
   slots?: number,
   log_items?: number,
   last_log_items?: LastLogItems[],
@@ -29,7 +30,7 @@ export interface SystemReport {
   */
 export interface LogTypes {
   debug?: number,
-  error?: number, 
+  error?: number,
   fatal?: number
 }
 

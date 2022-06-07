@@ -2,7 +2,7 @@
  * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
  */
 
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 
 // Utility imports.
 import { ThemeService } from 'src/app/services/theme.service';
@@ -15,7 +15,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './pie-chart.component.html',
   styleUrls: ['./pie-chart.component.scss']
 })
-export class PieChartComponent implements OnInit, OnDestroy {
+export class PieChartComponent implements OnInit, OnDestroy, OnChanges {
 
   options: any;
   chartInstance: any;
@@ -24,25 +24,25 @@ export class PieChartComponent implements OnInit, OnDestroy {
    * The actual data received from the parent component, to be displayed on the chart.
    */
    @Input() data: SystemReport;
-   
+
    /**
     * The main chart data.
     */
    public pieChartData: any = [];
-  
+
   /**
    * Watches changes of the theme.
    */
   private subscribeThemeChange: Subscription;
-  
+
   /**
    * Sets the current theme.
    */
   private theme: string = '';
 
-  
+
   /**
-   * 
+   *
    * @param themeService For listening to the changes on the theme.
    */
    constructor(private themeService: ThemeService) { }
@@ -56,11 +56,20 @@ export class PieChartComponent implements OnInit, OnDestroy {
       this.theme = val;
       this.getOptions();
     });
-    
-    /**
+
+
+    this.waitForData();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    this.waitForData();
+  }
+
+  /**
      * waiting for the data to be ready
      * then call the preparation function
      */
+  private waitForData() {
     (async () => {
       while (!this.data)
         await new Promise(resolve => setTimeout(resolve, 100));
@@ -70,11 +79,12 @@ export class PieChartComponent implements OnInit, OnDestroy {
       }
     })();
   }
-  
+
   /**
      * the preparation of the data for the pie chart
      */
    pieChartDataPrep(){
+     this.pieChartData = [];
     let keys = Object.keys(this.data.modules);
     keys.forEach((key)  => {
       let locNumber = (this.data.modules[key].loc).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -89,9 +99,9 @@ export class PieChartComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.subscribeThemeChange.unsubscribe();
   }
-  
-  
-  
+
+
+
   getOptions() {
     this.options = {
       tooltip: {
@@ -102,6 +112,7 @@ export class PieChartComponent implements OnInit, OnDestroy {
         orient: 'horizontal',
         left: 'top',
         type: 'scroll',
+        padding: [0, 5],
         textStyle: {
           color: this.theme === 'light' ? 'black' : 'white'
         },
@@ -114,7 +125,8 @@ export class PieChartComponent implements OnInit, OnDestroy {
         {
           // name: 'Access From',
           type: 'pie',
-          radius: '50%',
+          // radius: '50%',
+          radius: ['40%', '70%'],
           data: this.pieChartData,
           label: {
             color: this.theme === 'light' ? 'black' : 'white'

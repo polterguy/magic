@@ -21,7 +21,7 @@ import { AuthenticateResponse } from '../components/management/auth/models/authe
 
 /**
  * Keeps track of your backends and your currently selected backend.
- * 
+ *
  * This is your "goto service" when it comes to authentication, and manipulating your backends,
  * adding a new backend, changing your currently active backend, etc.
  */
@@ -67,7 +67,7 @@ export class BackendService {
 
   /**
    * Creates an instance of your service.
-   * 
+   *
    * @httpClient Needed to refresh JWT token for backends, logging in, and retrieving endpoints
    * @backendsListService List of all backends in system
    */
@@ -123,7 +123,7 @@ export class BackendService {
 
   /**
    * Upserts the specified backend.
-   * 
+   *
    * @param value Backend to upsert
    */
   upsert(value: Backend) {
@@ -132,7 +132,7 @@ export class BackendService {
 
   /**
    * Activates the specified backend.
-   * 
+   *
    * @param value Backend to activate
    * @param fetchRecaptcha ReCaptcha key to be fetched, true by default and false when invoked from forgot password
    */
@@ -154,9 +154,9 @@ export class BackendService {
   }
 
   /**
-   * Removes specified backend from local storage and if it is the current 
+   * Removes specified backend from local storage and if it is the current
    * backend changes the backend to the next available backend.
-   * 
+   *
    * @param value Backend to remove
    */
   remove(value: Backend) {
@@ -187,7 +187,7 @@ export class BackendService {
 
   /**
    * Authenticates user towards current backend.
-   * 
+   *
    * @param username Username
    * @param password Password
    * @param storePassword Whether or not passsword should be persisted into local storage
@@ -241,7 +241,7 @@ export class BackendService {
 
   /**
    * Logs out the user from his currently active backend.
-   * 
+   *
    * @param destroyPassword Whether or not password should be removed before persisting backend
    */
   logout(destroyPassword: boolean) {
@@ -272,7 +272,7 @@ export class BackendService {
 
   /**
    * Invokes specified backend to check if auto-auth has been turned on.
-   * 
+   *
    * @param url URL of backend to check
    */
   autoAuth(url: string) {
@@ -281,7 +281,7 @@ export class BackendService {
 
   /**
    * Changes currently logged in user's password.
-   * 
+   *
    * @param password New password for user
    */
   changePassword(password: string) {
@@ -292,7 +292,7 @@ export class BackendService {
 
   /**
    * Invokes the backend to have a reset password email being sent to user.
-   * 
+   *
    * @param data containing the following fields:
    * username Username of user to generate the email for,
    * frontendUrl URL of frontend to use to build reset-password email from,
@@ -444,7 +444,7 @@ export class BackendService {
 
         // Retrieving version of backend
         this.httpClient.get<CoreVersion>(
-          backend.url + 
+          backend.url +
           '/magic/system/version').subscribe({
           next: (version: CoreVersion) => {
 
