@@ -36,15 +36,6 @@
 
         <mat-card-subtitle class="mb-4">Purchase and install micro services</mat-card-subtitle>
         <div class="d-flex flex-sm-nowrap flex-wrap justify-content-between mb-3">
-          <!-- <div class="d-flex">
-            <button mat-button
-              [class.text-accent]="!installed"
-              (click)="installed = false">Recommended</button>
-            <div class="p-1"></div>
-            <button mat-button
-              [class.text-accent]="installed"
-              (click)="installed = true">Installed</button>
-          </div> -->
 
           <mat-form-field [class.invisible]="hideFilterControl" appearance="outline" class="inline-input">
             <mat-label>Filter ...</mat-label>
@@ -98,19 +89,5 @@
         </mat-card>
       </div>
     </div>
-
-    <!-- <div class="row">
-      <div class="col-12">
-        <mat-paginator
-          #paginator
-          [class]="count > paginator.pageSize ? '' : 'invisible'"
-          [length]="count"
-          pageSize="5"
-          [hidePageSize]="true"
-          (page)="paged($event)"
-          [pageSizeOptions]="[5]">
-        </mat-paginator>
-      </div>
-    </div> -->
   </div>
 </div>
