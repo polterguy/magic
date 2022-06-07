@@ -12,6 +12,7 @@
 .arguments
    username:string
    password:string
+   is_hashed:bool
    settings:*
 .description:Setup authentication and other parts of the system according to the arguments provided
 .type:internal
@@ -23,6 +24,15 @@ auth.ticket.verify:root
 validators.mandatory:x:@.arguments/*/settings/*/magic/*/auth/*/secret
 validators.string:x:@.arguments/*/settings/*/magic/*/auth/*/secret
    min:int:80
+
+// Default [is_hashed] to false.
+if
+   not
+      exists:x:@.arguments/*/is_hashed
+   .lambda
+      add:x:@.arguments
+         .
+            is_hashed:bool:false
 
 // Defaulting to 'root' as root username unless user specified an explicit username.
 if
@@ -203,6 +213,7 @@ try
          signal:magic.auth.create-user
             username:x:@.arguments/*/username
             password:x:@.arguments/*/password
+            is_hashed:x:@.arguments/*/is_hashed
             database-type:x:@.arguments/*/settings/*/magic/*/databases/*/default
             roles
                .:root
@@ -216,6 +227,7 @@ try
       signal:magic.auth.change-password
          password:x:@.arguments/*/password
          database-type:x:@.arguments/*/settings/*/magic/*/databases/*/default
+         is_hashed:x:@.arguments/*/is_hashed
 
       // Then we need to make sure we run any database migration scripts.
       io.file.execute:/system/magic.startup/migrate-magic-database.hl
@@ -253,7 +265,7 @@ try
    unwrap:x:+/*
    signal:magic.auth.authenticate
       username:x:@.arguments/*/username
-      password:x:@.arguments/*/password
+      check-password:bool:false
 
    // Re-initialising time zone in case it was changed from its default setting.
    timezone.init

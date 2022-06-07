@@ -10,8 +10,16 @@
  */
 slots.create:magic.auth.create-user
 
-   // Hashing password.
-   crypto.password.hash:x:@.arguments/*/password
+   // Hashing password if we should.
+   .password
+   if
+      get-value:x:@.arguments/*/is_hashed
+      .lambda
+         set-value:x:@.password
+            get-value:x:@.arguments/*/password
+   else
+      set-value:x:@.password
+         crypto.password.hash:x:@.arguments/*/password
 
    // Opening up a database connection to magic.
    data.connect:magic
@@ -23,7 +31,7 @@ slots.create:magic.auth.create-user
          table:users
          values
             username:x:@.arguments/*/username
-            password:x:@crypto.password.hash
+            password:x:@.password
 
       // Inserting all roles.
       for-each:x:@.arguments/*/roles/*
