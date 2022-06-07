@@ -265,7 +265,7 @@ try
    unwrap:x:+/*
    signal:magic.auth.authenticate
       username:x:@.arguments/*/username
-      password:x:@.arguments/*/password
+      check-password:bool:false
 
    // Re-initialising time zone in case it was changed from its default setting.
    timezone.init
