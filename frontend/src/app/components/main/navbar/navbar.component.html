@@ -21,7 +21,7 @@
           <div
             class="text-truncate max-width"
             [class.text-warning]="backendService.active?.url.startsWith('http://')">{{getActiveBackendUrl()}} </div>
-          <mat-icon class="small-icon">arrow_drop_down</mat-icon>
+          <mat-icon class="small-icon">expand_more</mat-icon>
         </h5>
       </div>
 
@@ -67,7 +67,7 @@
       <button
         mat-icon-button
         (click)="toggleNavbar()" tabindex="-1">
-        <mat-icon>menu{{navbarService.expanded ? '_open' : ''}}</mat-icon>
+        <mat-icon>chevron{{navbarService.expanded ? '_left' : '_right'}}</mat-icon>
       </button>
     </div>
   </div>
@@ -146,7 +146,7 @@
           <ng-container *ngIf="backendService.active?.access.crud.generate_crud || backendService.active?.access.crud.generate_sql || backendService.active?.access.crud.generate_frontend">
             <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendService.active?.setupDone ? '/crudifier' : null">
               <mat-icon>touch_app</mat-icon>
-              <span class="title">Crudifier</span>
+              <span class="title">CRUD Generator</span>
             </a>
           </ng-container>
         </mat-list-option>
