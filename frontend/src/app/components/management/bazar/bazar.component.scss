@@ -3,6 +3,9 @@
 @import '../../../../assets/styles/sizes.scss';
 
 .bazaar{
+  .text-accent{
+    color: $magic_accent;
+  }
   .line-truncate{@include line_truncate(5);}
   a.btn{
     color: inherit;
@@ -11,33 +14,34 @@
     &:hover{
       box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.20);
     }
-    .text-accent{
-      color: $magic_accent;
-    }
   }
   ::ng-deep {
     .mat-raised-button.mat-button-disabled.mat-button-disabled{color: inherit;}
-    .mat-list-base[dense] .mat-list-item .mat-list-item-content{padding: 0;}
+    // .mat-list-base[dense] .mat-list-item .mat-list-item-content{padding: 0;}
     .mat-subheader{padding: 0;}
+
+    .inline-input {
+      .mat-form-field-appearance-outline .mat-form-field-wrapper {margin-bottom: 0;}
+    }
   }
 }
-::ng-deep {
-  // preview modal
-  .mat-dialog-content p, .mat-dialog-content pre, .mat-dialog-content code, .mat-dialog-content ul li {
-    word-break: break-word;
-    white-space: pre-line;
-  }
-}
+// ::ng-deep {
+//   // preview modal
+//   .mat-dialog-content p, .mat-dialog-content pre, .mat-dialog-content code, .mat-dialog-content ul li {
+//     word-break: break-word;
+//     white-space: pre-line;
+//   }
+// }
 .row.manipuated-layout {
-  margin-left: calc($side_space * -1.5 );  
-  margin-right: calc($side_space * -1.5 );  
+  margin-left: calc($side_space * -1.5 );
+  margin-right: calc($side_space * -1.5 );
   div[class^="row"] {
-    margin-left: calc($side_space / 2 );  
+    margin-left: calc($side_space / 2 );
     margin-right: calc($side_space / 2 );
   }
   div[class^="col-"] {
-    padding-left: calc($side_space / 2 );  
-    padding-right: calc($side_space / 2 );  
+    padding-left: calc($side_space / 2 );
+    padding-right: calc($side_space / 2 );
   }
   .row.no-gutters {
     margin-right: 0;
@@ -62,14 +66,14 @@
     animation: dotFlashing 1s infinite linear alternate;
     animation-delay: .5s;
   }
- 
+
  .dot-flashing::before, .dot-flashing::after {
     content: '';
     display: inline-block;
     position: absolute;
     top: 0;
   }
- 
+
  .dot-flashing::before {
     left: -10px;
     width: 5px;
@@ -80,7 +84,7 @@
     animation: dotFlashing 1s infinite alternate;
     animation-delay: 0s;
   }
- 
+
  .dot-flashing::after {
     left: 10px;
     width: 5px;
@@ -91,7 +95,7 @@
     animation: dotFlashing 1s infinite alternate;
     animation-delay: 1s;
   }
- 
+
  @keyframes dotFlashing {
    0% {
       background-color: $magic_default;
