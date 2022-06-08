@@ -5,7 +5,7 @@
 
 // Angular and system imports.
 import { Component, Inject, OnInit } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
 import { Response } from 'src/app/models/response.model';
@@ -14,6 +14,7 @@ import { FileService } from 'src/app/services/file.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { BazarService } from '../../services/bazar.service';
+import { ConfirmUninstallDialogComponent } from '../confirm-uninstall-dialog/confirm-uninstall-dialog.component';
 
 /**
  * Displays information about a currently installed Bazar item.
@@ -32,7 +33,7 @@ export class ViewInstalledAppDialogComponent implements OnInit {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param fileService Needed to display module's README file
    * @param bazarService Needed to be able to update app, if app needs updating
    * @param backendService Needed to verify user has access to delete/uninstall Bazar item
@@ -46,12 +47,13 @@ export class ViewInstalledAppDialogComponent implements OnInit {
     public backendService: BackendService,
     private feedbackService: FeedbackService,
     @Inject(MAT_DIALOG_DATA) public data: AppManifest,
-    private dialogRef: MatDialogRef<ViewInstalledAppDialogComponent>) { }
+    private dialogRef: MatDialogRef<ViewInstalledAppDialogComponent>,
+    private dialog: MatDialog) { }
 
   /**
    * Implementation of OnInit.
    */
-  ngOnInit() {
+  ngOnInit() {console.log(this.data)
     this.fileService.listFiles('/modules/' + this.data.module_name + '/', 'README.md').subscribe({
       next: (result: string[]) => {
         if (result && result.length > 0) {
@@ -94,18 +96,19 @@ export class ViewInstalledAppDialogComponent implements OnInit {
    * Invoked when user wants to uninstall app from local server.
    */
   uninstall() {
-    this.fileService.deleteFolder('/modules/' + this.data.module_name + '/').subscribe({
-      next: () => {
-        this.feedbackService.showInfo('Application was successfully uninstalled from local server');
+    this.dialog.open(ConfirmUninstallDialogComponent, {
+      data: this.data.module_name,
+      width: '500px'
+    }).afterClosed().subscribe((result: string) => {
+      if (result) {
         this.dialogRef.close(this.data);
-      },
-      error: (error: any) => this.feedbackService.showError(error)});
-  }
-
-  /**
-   * Invoked when user wants to close dialog.
-   */
-  close() {
-    this.dialogRef.close();
+      }
+    })
+    // this.fileService.deleteFolder('/modules/' + this.data.module_name + '/').subscribe({
+    //   next: () => {
+    //     this.feedbackService.showInfo('Application was successfully uninstalled from local server');
+    //     this.dialogRef.close(this.data);
+    //   },
+    //   error: (error: any) => this.feedbackService.showError(error)});
   }
 }

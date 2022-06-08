@@ -23,6 +23,7 @@ import {
   ConfirmEmailAddressDialogComponent,
   EmailPromoCodeModel
 } from './confirm-email-address-dialog/confirm-email-address-dialog.component';
+import { ConfirmUninstallDialogComponent } from '../confirm-uninstall-dialog/confirm-uninstall-dialog.component';
 
 /**
  * View details of Bazar app modal dialog component.
@@ -41,7 +42,7 @@ export class ViewAppDialogComponent implements OnInit {
 
   /**
    * This is true if the user can install the app.
-   * 
+   *
    * Notice, apps are typically built for a "minimum version" of Magic in mind,
    * implying that the user might have a Magic version that is too old for a specific
    * version to be possible to install.
@@ -55,7 +56,7 @@ export class ViewAppDialogComponent implements OnInit {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param dialog Needed to be able to display modal dialog
    * @param dialogRef Needed to be able close current dialog from code
    * @param fileService Needed to check if the app can be installed, or if another app/version is already installed with the same module folder name
@@ -96,7 +97,7 @@ export class ViewAppDialogComponent implements OnInit {
         if (result.result === 'SUCCESS') {
           this.canInstall = true;
         } else {
-          this.feedbackService.showInfo('In order to install this app you will have to update your Magic version');
+          this.feedbackService.showInfo('Incompatible with your Magic version');
           this.needsCoreUpdate = true;
         }
       },
@@ -167,4 +168,5 @@ export class ViewAppDialogComponent implements OnInit {
       },
       error: (error: any) => this.feedbackService.showError(error)});
   }
+
 }

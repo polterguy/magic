@@ -111,8 +111,9 @@ export class PieChartComponent implements OnInit, OnDestroy, OnChanges {
       legend: {
         orient: 'horizontal',
         left: 'top',
+        top: 'bottom',
         type: 'scroll',
-        padding: [0, 5],
+        padding: [15, 5, 0, 5],
         textStyle: {
           color: this.theme === 'light' ? 'black' : 'white'
         },
@@ -127,6 +128,7 @@ export class PieChartComponent implements OnInit, OnDestroy, OnChanges {
           type: 'pie',
           // radius: '50%',
           radius: ['40%', '70%'],
+          center: ['50%', '43%'],
           data: this.pieChartData,
           label: {
             color: this.theme === 'light' ? 'black' : 'white'

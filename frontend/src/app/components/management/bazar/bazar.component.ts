@@ -32,6 +32,7 @@ import { ViewAppDialogComponent } from './view-app-dialog/view-app-dialog.compon
 import { SubscribeDialogComponent } from './subscribe-dialog/subscribe-dialog.component';
 import { ViewReadmeDialogComponent } from './view-readme-dialog/view-readme-dialog.component';
 import { ViewInstalledAppDialogComponent } from './view-installed-app-dialog/view-installed-app-dialog.component';
+import { ConfirmUninstallDialogComponent } from './confirm-uninstall-dialog/confirm-uninstall-dialog.component';
 
 /**
  * Bazar component allowing you to obtain additional Micro Service backend
@@ -104,7 +105,7 @@ export class BazarComponent implements OnInit, OnDestroy {
   /**
    * Number of items to be displayed in each page.
    */
-  public pageSize: number = 8;
+  public pageSize: number = 100;
 
   /**
    * Paginator for paging apps.
@@ -135,7 +136,7 @@ export class BazarComponent implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     private messageService: MessageService,
     private feedbackService: FeedbackService,
-    private loaderService: LoaderService) {
+    private loaderService: LoaderService,) {
 
     this.activatedRoute.queryParams.subscribe((pars: Params) => {
       const token = pars['token'];
@@ -258,14 +259,16 @@ export class BazarComponent implements OnInit, OnDestroy {
    * @param app What app the user clicked
    */
   viewApp(app: BazarApp) {
-    if (this.appIsInstalled(app)) {
-      this.feedbackService.showInfoShort('App is already installed');
-      return;
-    }
+    // if (this.appIsInstalled(app)) {
+    //   this.feedbackService.showInfoShort('App is already installed');
+    //   return;
+    // }
     this.dialog.open(ViewAppDialogComponent, {
       data: app,
       width: '90%',
-      maxWidth: '90vw'
+      maxWidth: '90vw',
+      height: '90%',
+      panelClass: ['details-dialog']
     });
   }
 
@@ -275,8 +278,9 @@ export class BazarComponent implements OnInit, OnDestroy {
    * @param app Which app to view details about
    */
   viewInstalledAppDetails(app: AppManifest) {
+    let module = this.getInstalledApps().find((module: any) => app.name === module.name);
     const dialogRef = this.dialog.open(ViewInstalledAppDialogComponent, {
-      data: app,
+      data: module,
       width: '90%',
       maxWidth: '90vw'
     });
@@ -304,7 +308,26 @@ export class BazarComponent implements OnInit, OnDestroy {
    * @returns All apps installed from Bazar
    */
   getInstalledApps() {
+    this.apps.map((x: any) => this.manifests.filter((item: any) => {
+      if (item.name === x.name) {
+        item.description = x.description;
+        item.min_magic_version = x.min_magic_version;
+      }
+    }))
     return this.manifests.filter(x => x.token);
+  }
+
+  /**
+   * Returns all apps that are installed through the Bazar.
+   *
+   * @returns All apps installed from Bazar
+   */
+  getUniInstalledApps() {
+    if (this.manifests && this.manifests.length > 0) {
+      return this.apps.filter((item: any) => !this.manifests.some((element: any) => item.name === element.name));
+    } else {
+      return this.apps;
+    }
   }
 
   /*
@@ -325,7 +348,7 @@ export class BazarComponent implements OnInit, OnDestroy {
             next: (count: Count) => {
               this.count = count.count;
               if (first) {
-                this.hideFilterControl = this.count <= this.pageSize;
+                this.hideFilterControl = this.count <= 12;
               }
             },
             error: (error: any) =>this.feedbackService.showError(error)});
@@ -390,7 +413,7 @@ export class BazarComponent implements OnInit, OnDestroy {
           this.bazarService.installBazarItem(app.folder_name, app.version, app.name, token).subscribe({
             next: (install: Response) => {
               if (install.result === 'success') {
-                this.feedbackService.showInfo('Module was successfully installed on your server');
+                this.feedbackService.showInfo('Plugin was successfully installed on your server');
 
                 /*
                  * Making sure we turn OFF socket connections if these have been created.
@@ -404,7 +427,7 @@ export class BazarComponent implements OnInit, OnDestroy {
                   this.dialog.closeAll();
                 }
 
-                this.router.navigate(['/bazar']);
+                this.router.navigate(['/plugins']);
                 this.loadManifests();
 
                 this.fileService.listFiles('/modules/' + app.folder_name + '/', 'README.md').subscribe({
@@ -424,7 +447,6 @@ export class BazarComponent implements OnInit, OnDestroy {
                         },
                         error:(error: any) => this.feedbackService.showError(error)});
                     }
-                    this.bazarService.downloadBazarItemLocally(app.folder_name);
                   },
                   error: (error: any) => this.feedbackService.showError(error)});
 
@@ -459,7 +481,7 @@ export class BazarComponent implements OnInit, OnDestroy {
               // Verifying app originated from Bazar API.
               if (result && result.length > 0) {
                 const version = result[0].version;
-
+                this.getUniInstalledApps();
                 // Doing a version compare of the installed app and the latest version of app as published by Bazar API.
                 // TODO: This is kind of stupid to do over an HTTP invocation, since it's just a string comparison
                 // of two version numbers such as for instance "v5.6.7".
@@ -470,7 +492,7 @@ export class BazarComponent implements OnInit, OnDestroy {
                       idx.new_version = version;
                       if (!hasUpdates) {
                         hasUpdates = true;
-                        this.feedbackService.showInfo('You have apps that needs to be updated, check your installed apps to see which one needs updating');
+                        this.feedbackService.showInfo('You have plugin(s) that needs to be updated.');
                       }
                     }
                   },
@@ -481,5 +503,17 @@ export class BazarComponent implements OnInit, OnDestroy {
         }
       },
       error: (error: any) => this.feedbackService.showError(error)});
+  }
+
+  uninstallPlugin(item: any) {
+
+    this.dialog.open(ConfirmUninstallDialogComponent, {
+      data: item.module_name,
+      width: '500px'
+    }).afterClosed().subscribe((result: string) => {
+      if (result) {
+        this.loadManifests();
+      }
+    })
   }
 }

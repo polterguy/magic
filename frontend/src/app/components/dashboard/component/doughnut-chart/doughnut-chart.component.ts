@@ -108,6 +108,7 @@ export class DoughnutChartComponent implements OnInit, OnDestroy, OnChanges {
       legend: {
         orient: 'horizontal',
         left: 'top',
+        top: 'bottom',
         type: 'scroll',
         padding: [0, 5],
         textStyle: {

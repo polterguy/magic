@@ -5,7 +5,7 @@
 
         <div class="d-flex flex-sm-nowrap flex-wrap justify-content-between">
           <div class="d-flex align-items-center">
-            <mat-card-title class="my-0">Plugins</mat-card-title>
+            <mat-card-title class="mb-1">Plugins</mat-card-title>
             <div class="sm-icons">
               <button mat-icon-button [matMenuTriggerFor]="menu" class="mat-caption" matTooltip="Need help?" type="button">
                 <mat-icon>help_outline</mat-icon>
@@ -35,7 +35,7 @@
         </div>
 
         <mat-card-subtitle class="mb-4">Purchase and install micro services</mat-card-subtitle>
-        <div class="d-flex flex-sm-nowrap flex-wrap justify-content-between mb-3">
+        <div class="d-flex flex-sm-nowrap flex-wrap justify-content-end mb-3">
 
           <mat-form-field [class.invisible]="hideFilterControl" appearance="outline" class="inline-input">
             <mat-label>Filter ...</mat-label>
@@ -63,28 +63,74 @@
         </div>
       </div>
     </div>
-
-    <!-- Recommended apps -->
-    <div class="row mt-3">
-      <div class="col-xl-3 col-md-4 col-sm-6 pb-3"
-        *ngFor="let idx of apps;let i = index;let last=last">
-        <mat-card class="h-100 p-0">
+    <div class="row" *ngIf="manifests && manifests.length > 0">
+      <div class="col-12 mb-3">
+        <div class="d-flex align-items-center justify-content-between has-border">
+          <p class="my-0 section-title mat-body-2">Installed plugins</p>
+          <!-- <a mat-button color="primary" class="see-all-link">See all</a> -->
+          <p class="see-all-link my-0">{{manifests.length}} plugins</p>
+        </div>
+      </div>
+      <div class="col-xl-4 col-sm-6 col-12 mb-3" *ngFor="let idx of getInstalledApps();let i = index;let last=last">
+        <mat-card class="h-100">
           <mat-card-content class="h-100">
-            <a class="w-100 h-100 d-block btn p-3" (click)="viewApp(idx)">
-              <div class="d-flex align-items-center justify-content-between mb-2">
-                <h3 class="mb-0">{{idx.name}}</h3>
-                <div class="p-1"></div>
-                <p class="mb-0 text-muted">{{idx.version}}</p>
-              </div>
-              <h2 class="text-center text-accent my-3">{{idx.price === 0 ? 'Free' : (idx.price | currency:"EUR":"symbol" : '1.0-0')}}</h2>
-              <p class="line-truncate mat-caption">{{idx.description}}</p>
-              <div class="d-flex flex-wrap justify-content-between align-items-center">
-                <p class="my-0">
-                  Min. Magic: {{idx.min_magic_version}}
+            <div class="d-flex justify-content-between">
+              <div>
+                <h3 class="my-0 fw-500">{{idx.name}}</h3>
+                <p class="my-0 mat-caption text-muted">
+                  {{idx.version}}
                 </p>
-                <button mat-button>View/Get</button>
               </div>
-            </a>
+              <p class="mat-caption my-0 text-accent">
+                {{idx.price === 0 ? 'Free' : (idx.price | currency:"EUR":"symbol" : '1.0-0')}}
+              </p>
+            </div>
+            <div>
+              <p class="line-truncate mat-body-1 my-4">{{idx.description}}</p>
+            </div>
+            <div class="d-flex align-items-center justify-content-between">
+              <p class="my-0 mat-caption text-muted">
+                Min. Magic version: {{idx.min_magic_version}}
+              </p>
+              <button mat-button (click)="viewInstalledAppDetails(idx)">Details</button>
+              <button mat-button color="warn" (click)="uninstallPlugin(idx)">Uninstall</button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+    <div class="row" *ngIf="getUniInstalledApps() && getUniInstalledApps().length > 0">
+      <div class="col-12 my-3">
+        <div class="d-flex align-items-center justify-content-between has-border">
+          <p class="my-0 section-title mat-body-2">Recommended plugins</p>
+          <!-- <a mat-button color="primary" class="see-all-link">See all</a> -->
+          <p class="see-all-link my-0">{{getUniInstalledApps().length}} plugins</p>
+        </div>
+      </div>
+      <div class="col-xl-4 col-sm-6 col-12 mb-3" *ngFor="let idx of getUniInstalledApps();let i = index;let last=last">
+        <mat-card class="h-100">
+          <mat-card-content class="h-100">
+            <div class="d-flex justify-content-between">
+              <div>
+                <h3 class="my-0 fw-500">{{idx.name}}</h3>
+                <p class="my-0 mat-caption text-muted">
+                  {{idx.version}}
+                </p>
+              </div>
+              <p class="mat-caption my-0 text-accent">
+                {{idx.price === 0 ? 'Free' : (idx.price | currency:"EUR":"symbol" : '1.0-0')}}
+              </p>
+            </div>
+            <div>
+              <p class="line-truncate mat-body-1 my-4">{{idx.description}}</p>
+            </div>
+            <div class="d-flex align-items-center justify-content-between">
+              <p class="my-0 mat-caption text-muted">
+                Min. Magic version: {{idx.min_magic_version}}
+              </p>
+              <button mat-button (click)="viewApp(idx)">Details</button>
+              <button mat-flat-button color="primary" (click)="viewApp(idx)">Install</button>
+            </div>
           </mat-card-content>
         </mat-card>
       </div>
