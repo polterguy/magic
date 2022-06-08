@@ -12,7 +12,8 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
  */
 @Component({
   selector: 'app-preview-file-dialog',
-  templateUrl: './preview-file-dialog.component.html'
+  templateUrl: './preview-file-dialog.component.html',
+  styleUrls: ['./preview-file-dialog.component.scss']
 })
 export class PreviewFileDialogComponent {
 
