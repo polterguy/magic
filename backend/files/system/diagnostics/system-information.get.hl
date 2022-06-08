@@ -58,15 +58,15 @@ if
                      timeshifts
                         logins
                            name:Logins per day
-                           description:How many times users were able to successfully authenticate on a daily basis
+                           description:Successfully authenticated users
                            items
                         backend_endpoints_generated
                            name:Generated CRUD endpoints
-                           description:How many CRUD endpoints that was generated on a daily basis
+                           description:Daily generated CRUD endpoints
                            items
                         access_denied
                            name:Access denied requests
-                           description:How many times invocations have resulted in an access denied response
+                           description:Access denied response in invocations
                            items
 
                // Retrieving count of log items grouped by day for root logins.
