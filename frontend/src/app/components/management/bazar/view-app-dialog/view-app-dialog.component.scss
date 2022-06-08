@@ -25,3 +25,8 @@
   color: rgb(128, 128, 128);
   margin-right: 1rem;
 }
+
+.mat-dialog-content p {
+  word-break: unset;
+  white-space: unset;
+}
