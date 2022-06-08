@@ -68,7 +68,7 @@
         <div class="d-flex align-items-center justify-content-between has-border">
           <p class="my-0 section-title mat-body-2">Installed plugins</p>
           <!-- <a mat-button color="primary" class="see-all-link">See all</a> -->
-          <p class="see-all-link my-0">{{manifests.length}} plugins</p>
+          <p class="see-all-link my-0">{{getInstalledApps().length}} plugins</p>
         </div>
       </div>
       <div class="col-xl-4 col-sm-6 col-12 mb-3" *ngFor="let idx of getInstalledApps();let i = index;let last=last">
@@ -81,8 +81,8 @@
                   {{idx.version}}
                 </p>
               </div>
-              <p class="mat-caption my-0 text-accent">
-                {{idx.price === 0 ? 'Free' : (idx.price | currency:"EUR":"symbol" : '1.0-0')}}
+              <p class="mat-caption mb-0 mt-1 text-accent" *ngIf="idx.has_update">
+                New version available
               </p>
             </div>
             <div>
@@ -92,7 +92,7 @@
               <p class="my-0 mat-caption text-muted">
                 Min. Magic version: {{idx.min_magic_version}}
               </p>
-              <button mat-button (click)="viewInstalledAppDetails(idx)">Details</button>
+              <button mat-button (click)="viewInstalledAppDetails(idx)">{{idx.has_update ? 'Update' : 'Details'}}</button>
               <button mat-button color="warn" (click)="uninstallPlugin(idx)">Uninstall</button>
             </div>
           </mat-card-content>

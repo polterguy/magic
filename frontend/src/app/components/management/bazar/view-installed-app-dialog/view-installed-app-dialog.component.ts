@@ -53,7 +53,7 @@ export class ViewInstalledAppDialogComponent implements OnInit {
   /**
    * Implementation of OnInit.
    */
-  ngOnInit() {console.log(this.data)
+  ngOnInit() {
     this.fileService.listFiles('/modules/' + this.data.module_name + '/', 'README.md').subscribe({
       next: (result: string[]) => {
         if (result && result.length > 0) {
