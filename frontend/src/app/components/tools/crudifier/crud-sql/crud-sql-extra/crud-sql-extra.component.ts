@@ -14,6 +14,9 @@ import { FeedbackService } from 'src/app/services/feedback.service';
 import { Argument } from '../../../../analytics/endpoints/models/argument.model';
 import { Model } from '../../../../utilities/codemirror/codemirror-sql/codemirror-sql.component';
 import { CrudSqlAddArgumentDialogComponent } from './crud-sql-add-argument-dialog/crud-sql-add-argument-dialog.component';
+import { BackendService } from 'src/app/services/backend.service';
+import { LoadSqlDialogComponent } from '../../../sql/load-sql-dialog/load-sql-dialog.component';
+import { SqlService } from 'src/app/services/sql.service';
 
 /**
  * Component allowing user to generate an SQL based endpoint.
@@ -80,12 +83,16 @@ export class CrudSqlExtraComponent implements OnInit {
    * 
    * @param feedbackService Needed to show user feedback
    * @param crudifyService Needed to crudify endpoint
-   * @param messageServive Needed to publish messages to other components
+   * @param backendService Needed to figure out if user can load SQL snippets
+   * @param sqlService Needed to load SQL snippets from the backend
+   * @param messageService Needed to publish messages to other components
    * @param dialog Needed to show modal dialog to user allowing him to add a new argument to argument collection of endpoint
    */
   constructor(
     private feedbackService: FeedbackService,
     private crudifyService: CrudifyService,
+    public backendService: BackendService,
+    private sqlService: SqlService,
     private messageService: MessageService,
     private dialog: MatDialog) { }
 
@@ -104,6 +111,26 @@ export class CrudSqlExtraComponent implements OnInit {
    */
   validModuleComponentName() {
     return /^[a-z0-9_-]+$/.test(this.endpointName) && /^[a-z0-9_-]+$/.test(this.moduleName);
+  }
+
+  /**
+   * Opens the load snippet dialog, to allow user to select a previously saved snippet.
+   */
+   load() {
+    const dialogRef = this.dialog.open(LoadSqlDialogComponent, {
+      width: '550px',
+      data: this.input.databaseType,
+    });
+    dialogRef.afterClosed().subscribe((filename: string) => {
+      if (filename) {
+        this.sqlService.loadSnippet(this.input.databaseType, filename).subscribe({
+          next: (content: string) => {
+            this.input.sql = content;
+          },
+          error: (error: any) => this.feedbackService.showError(error)
+        })
+      }
+    });
   }
 
   /**

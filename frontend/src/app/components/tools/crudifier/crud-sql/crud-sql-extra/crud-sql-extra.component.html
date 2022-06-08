@@ -95,7 +95,16 @@
     <mat-checkbox [(ngModel)]="overwrite">Overwrite</mat-checkbox>
 
     <div class="p-1"></div>
-  
+
+    <button
+      mat-raised-button
+      [disabled]="!backendService.active?.access.sql.list_files"
+      matTooltip="Load a previously saved SQL snippet"
+      class="mr-2"
+      (click)="load()">
+      Load
+    </button>
+
     <button
       mat-raised-button
       color="primary"

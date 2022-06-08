@@ -145,10 +145,9 @@
           matInput
           [disabled]="!isGetIncluded() && !isDeleteIncluded() && !isPutIncluded() && !isPostIncluded()"
           type="text"
-          matTooltip="Only lowercase characters, numbers and - or _ please"
           autocomplete="off"
           [(ngModel)]="table.moduleName">
-        <mat-hint>Only lowercase characters, numbers and - or _ please</mat-hint>
+        <mat-hint>Only alphanumeric characters, and - or _ please</mat-hint>
       </mat-form-field>
 
       <div class="p-1"></div>
@@ -159,10 +158,9 @@
           matInput
           [disabled]="!isGetIncluded() && !isDeleteIncluded() && !isPutIncluded() && !isPostIncluded()"
           type="text"
-          matTooltip="Only lowercase characters, numbers and - or _ please"
           autocomplete="off"
           [(ngModel)]="table.moduleUrl">
-          <mat-hint>Only lowercase characters, numbers and - or _ please</mat-hint>
+          <mat-hint>Only alphanumeric characters, and - or _ please</mat-hint>
       </mat-form-field>
 
     </div>
@@ -177,6 +175,7 @@
           type="text"
           autocomplete="off"
           [(ngModel)]="table.authPost">
+          <mat-hint>List of roles allowed to invoke endpoint</mat-hint>
       </mat-form-field>
 
       <div class="p-1"*ngIf="isGetIncluded()"></div>
@@ -188,6 +187,7 @@
           type="text"
           autocomplete="off"
           [(ngModel)]="table.authGet">
+          <mat-hint>List of roles allowed to invoke endpoint</mat-hint>
       </mat-form-field>
 
       <div class="p-1" *ngIf="isPutIncluded()"></div>
@@ -199,6 +199,7 @@
           type="text"
           autocomplete="off"
           [(ngModel)]="table.authPut">
+          <mat-hint>List of roles allowed to invoke endpoint</mat-hint>
       </mat-form-field>
 
       <div class="p-1" *ngIf="isDeleteIncluded()"></div>
@@ -210,6 +211,7 @@
           type="text"
           autocomplete="off"
           [(ngModel)]="table.authDelete">
+          <mat-hint>List of roles allowed to invoke endpoint</mat-hint>
       </mat-form-field>
     </div>
 
@@ -226,6 +228,7 @@
           step="0.1"
           autocomplete="off"
           [(ngModel)]="table.captchaPost">
+          <mat-hint>reCAPTCHA value required to invoke endpoint</mat-hint>
       </mat-form-field>
 
       <div class="p-1"*ngIf="isGetIncluded()"></div>
@@ -240,6 +243,7 @@
           step="0.1"
           autocomplete="off"
           [(ngModel)]="table.captchaGet">
+          <mat-hint>reCAPTCHA value required to invoke endpoint</mat-hint>
       </mat-form-field>
 
       <div class="p-1" *ngIf="isPutIncluded()"></div>
@@ -254,6 +258,7 @@
           step="0.1"
           autocomplete="off"
           [(ngModel)]="table.captchaPut">
+          <mat-hint>reCAPTCHA value required to invoke endpoint</mat-hint>
       </mat-form-field>
 
       <div class="p-1" *ngIf="isDeleteIncluded()"></div>
@@ -268,6 +273,7 @@
           step="0.1"
           autocomplete="off"
           [(ngModel)]="table.captchaDelete">
+          <mat-hint>reCAPTCHA value required to invoke endpoint</mat-hint>
       </mat-form-field>
     </div>
   </div>
