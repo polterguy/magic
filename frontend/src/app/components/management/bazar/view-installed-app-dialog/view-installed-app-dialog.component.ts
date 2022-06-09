@@ -9,11 +9,11 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 
 // Application specific imports.
 import { Response } from 'src/app/models/response.model';
-import { AppManifest } from '../../../../models/app-manifest';
+import { BazarService } from '../../services/bazar.service';
 import { FileService } from 'src/app/services/file.service';
+import { AppManifest } from '../../../../models/app-manifest';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { BazarService } from '../../services/bazar.service';
 import { ConfirmUninstallDialogComponent } from '../confirm-uninstall-dialog/confirm-uninstall-dialog.component';
 
 /**
@@ -83,7 +83,6 @@ export class ViewInstalledAppDialogComponent implements OnInit {
                 if (install.result === 'success') {
                   this.feedbackService.showInfo('Application was successfully updated. You probably want to store the ZIP file for later in case you need to install a backup of your app.');
                   this.dialogRef.close(this.data);
-                  this.bazarService.downloadBazarItemLocally(this.data.module_name);
                 }
               },
               error: (error: any) => this.feedbackService.showError(error)});
