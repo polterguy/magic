@@ -10,20 +10,10 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 // Application specific imports.
 import { BazarService } from '../../services/bazar.service';
 import { Response } from '../../../../models/response.model';
-import { ConfigService } from '../../../../services/config.service';
-import { BazarApp } from '../../../../models/bazar-app.model';
-import { LoaderService } from 'src/app/services/loader.service';
-import { MessageService } from 'src/app/services/message.service';
+import { BazarAppWrapper } from '../../../../models/bazar-app.model';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { NameEmailModel } from '../../../../models/name-email.model';
-import { PurchaseStatus } from '../../../../models/purchase-status.model';
 import { FileService } from 'src/app/services/file.service';
-import {
-  ConfirmEmailAddressDialogComponent,
-  EmailPromoCodeModel
-} from './confirm-email-address-dialog/confirm-email-address-dialog.component';
-import { ConfirmUninstallDialogComponent } from '../confirm-uninstall-dialog/confirm-uninstall-dialog.component';
 
 /**
  * View details of Bazar app modal dialog component.
@@ -73,12 +63,9 @@ export class ViewAppDialogComponent implements OnInit {
     private dialogRef: MatDialogRef<ViewAppDialogComponent>,
     private fileService: FileService,
     private bazarService: BazarService,
-    private configService: ConfigService,
     public backendService: BackendService,
-    private messageService: MessageService,
     private feedbackService: FeedbackService,
-    private loaderService: LoaderService,
-    @Inject(MAT_DIALOG_DATA) public data: BazarApp) { }
+    @Inject(MAT_DIALOG_DATA) public data: BazarAppWrapper) { }
 
   /**
    * Implementation of OnInit.
@@ -86,13 +73,13 @@ export class ViewAppDialogComponent implements OnInit {
   ngOnInit() {
     this.fileService.listFolders('/modules/').subscribe({
       next: (folders: string[]) => {
-        if (folders.filter(x => x === '/modules/' + this.data.folder_name + '/').length > 0) {
+        if (folders.filter(x => x === '/modules/' + this.data.app.folder_name + '/').length > 0) {
           this.installed = true;
         }
       },
       error: (error: any) => this.feedbackService.showError(error)});
 
-    this.bazarService.canInstall(this.data.min_magic_version).subscribe({
+    this.bazarService.canInstall(this.data.app.min_magic_version).subscribe({
       next: (result: Response) => {
         if (result.result === 'SUCCESS') {
           this.canInstall = true;
@@ -108,65 +95,8 @@ export class ViewAppDialogComponent implements OnInit {
    * Invoked when user wants to purchase the specified app.
    */
   purchase() {
-    this.configService.rootUserEmailAddress().subscribe({
-      next: (response: NameEmailModel) => {
-        const dialogRef = this.dialog.open(ConfirmEmailAddressDialogComponent, {
-          width: '500px',
-          data: {
-            email: response.email,
-            name: response.name,
-            subscribe: true,
-            code: this.data.price === 0 ? -1 : null
-          }
-        });
-        dialogRef.afterClosed().subscribe((model: EmailPromoCodeModel) => {
-          if (model) {
-            this.bazarService.purchaseBazarItem(
-              this.data,
-              model.name,
-              model.email,
-              model.subscribe,
-              model.code === -1 ? null : model.code).subscribe({
-                next: (status: PurchaseStatus) => {
-                  this.loaderService.show();
-
-                  /*
-                   * Checking if status is 'PENDING' at which point we'll have to redirect to PayPal
-                   * to finish transaction.
-                   */
-                  if (status.status === 'PENDING') {
-
-                    /*
-                     * We'll need to redirect user to PayPal to accept the transaction.
-                     * Hence, storing currently viewed app in local storage to make it more
-                     * easily retrieved during callback.
-                     */
-                    localStorage.setItem('currently-installed-app', JSON.stringify(this.data));
-                    window.location.href = status.url;
-                  } else if (status.status === 'APPROVED') {
-
-                    /*
-                     * App can immediately be installed, and status.token contains
-                     * download token.
-                     */
-                    this.messageService.sendMessage({
-                      name: 'magic.bazar.install-immediately',
-                      content: {
-                        app: this.data,
-                        code: status.code,
-                      }
-                    });
-                    this.dialogRef.close();
-                  } else {
-                    this.feedbackService.showError(`Unknown status code returned from the Bazar, code was ${status.status}`);
-                  }
-              },
-              error: (error: any) => this.feedbackService.showError(error)});
-          }
-        });
-
-      },
-      error: (error: any) => this.feedbackService.showError(error)});
+    this.data.purchase(this.data.app, () => {
+      this.dialogRef.close();
+    });
   }
-
 }
