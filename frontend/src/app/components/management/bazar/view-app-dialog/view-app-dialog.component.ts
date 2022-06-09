@@ -9,11 +9,11 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 
 // Application specific imports.
 import { BazarService } from '../../services/bazar.service';
+import { FileService } from 'src/app/services/file.service';
 import { Response } from '../../../../models/response.model';
-import { BazarAppWrapper } from '../../../../models/bazar-app.model';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { FileService } from 'src/app/services/file.service';
+import { BazarAppWrapper } from '../../../../models/bazar-app.model';
 
 /**
  * View details of Bazar app modal dialog component.
@@ -47,19 +47,14 @@ export class ViewAppDialogComponent implements OnInit {
   /**
    * Creates an instance of your component.
    *
-   * @param dialog Needed to be able to display modal dialog
    * @param dialogRef Needed to be able close current dialog from code
    * @param fileService Needed to check if the app can be installed, or if another app/version is already installed with the same module folder name
    * @param bazarService Needed to actually purchase apps from Bazar
-   * @param configService Needed to retrieve root user's email address
    * @param backendService Needed to verify user has access to install Bazar items
-   * @param messageService Needed to publish messages for cases when app should be immediately installed.
    * @param feedbackService Needed to display errors to user
-   * @param loaderService Needed to display loader animations to user
    * @param data Bazar app user wants to view details about
    */
   constructor(
-    private dialog: MatDialog,
     private dialogRef: MatDialogRef<ViewAppDialogComponent>,
     private fileService: FileService,
     private bazarService: BazarService,
