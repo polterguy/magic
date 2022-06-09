@@ -41,9 +41,9 @@ import { ConfirmEmailAddressDialogComponent, EmailPromoCodeModel } from './view-
  * modules for your Magic installation.
  */
 @Component({
-  selector: 'app-bazar',
-  templateUrl: './bazar.component.html',
-  styleUrls: ['./bazar.component.scss']
+  selector: 'app-plugins',
+  templateUrl: './plugins.component.html',
+  styleUrls: ['./plugins.component.scss']
 })
 export class BazarComponent implements OnInit, OnDestroy {
 

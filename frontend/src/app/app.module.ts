@@ -83,7 +83,7 @@ import { TasksComponent } from './components/tools/tasks/tasks.component';
 import { NavbarComponent } from './components/main/navbar/navbar.component';
 import { AuthComponent } from './components/management/auth/auth.component';
 import { ToolbarComponent } from './components/main/toolbar/toolbar.component';
-import { BazarComponent } from './components/management/plugins/bazar.component';
+import { BazarComponent } from './components/management/plugins/plugins.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { ConfigComponent } from './components/management/config/config.component';
 import { CryptoComponent } from './components/management/crypto/crypto.component';
