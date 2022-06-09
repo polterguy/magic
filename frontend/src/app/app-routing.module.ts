@@ -16,7 +16,7 @@ import { SqlComponent } from './components/tools/sql/sql.component';
 import { LogComponent } from './components/analytics/log/log.component';
 import { TasksComponent } from './components/tools/tasks/tasks.component';
 import { AuthComponent } from './components/management/auth/auth.component';
-import { BazarComponent } from './components/management/plugins/bazar.component';
+import { BazarComponent } from './components/management/plugins/plugins.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { ConfigComponent } from './components/management/config/config.component';
 import { CryptoComponent } from './components/management/crypto/crypto.component';
