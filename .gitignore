@@ -353,3 +353,12 @@ backend/files/etc/tests/*.*
 backend/files/data/*.*
 !backend/files/data/.gitkeep
 !backend/files/data/sys.db
+
+backend/files/etc/sqlite/templates/*.*
+!backend/files/etc/sqlite/templates/README.md
+backend/files/etc/mysql/templates/*.*
+!backend/files/etc/mysql/templates/README.md
+backend/files/etc/pgsql/templates/*.*
+!backend/files/etc/pgsql/templates/README.md
+backend/files/etc/mssql/templates/*.*
+!backend/files/etc/mssql/templates/README.md

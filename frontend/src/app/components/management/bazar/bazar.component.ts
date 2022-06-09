@@ -277,69 +277,100 @@ export class BazarComponent implements OnInit, OnDestroy {
    * Invoked when user wants to purchase the specified app.
    */
   purchase(app: BazarApp, onAfter: () => void = null) {
-    console.log(app);
     this.configService.rootUserEmailAddress().subscribe({
       next: (response: NameEmailModel) => {
-        const dialogRef = this.dialog.open(ConfirmEmailAddressDialogComponent, {
-          width: '500px',
-          data: {
-            email: response.email,
-            name: response.name,
-            subscribe: true,
-            code: app.price === 0 ? -1 : null
-          }
-        });
-        dialogRef.afterClosed().subscribe((model: EmailPromoCodeModel) => {
-          if (model) {
-            this.bazarService.purchaseBazarItem(
-              app,
-              model.name,
-              model.email,
-              model.subscribe,
-              model.code === -1 ? null : model.code).subscribe({
-                next: (status: PurchaseStatus) => {
-                  this.loaderService.show();
-
-                  /*
-                   * Checking if status is 'PENDING' at which point we'll have to redirect to PayPal
-                   * to finish transaction.
-                   */
-                  if (status.status === 'PENDING') {
-
-                    /*
-                     * We'll need to redirect user to PayPal to accept the transaction.
-                     * Hence, storing currently viewed app in local storage to make it more
-                     * easily retrieved during callback.
-                     */
-                    localStorage.setItem('currently-installed-app', JSON.stringify(app));
-                    window.location.href = status.url;
-                  } else if (status.status === 'APPROVED') {
-
-                    /*
-                     * App can immediately be installed, and status.token contains
-                     * download token.
-                     */
-                    this.messageService.sendMessage({
-                      name: 'magic.bazar.install-immediately',
-                      content: {
-                        app: app,
-                        code: status.code,
-                      }
-                    });
-                    if (onAfter) {
-                      onAfter();
-                    }
-                  } else {
-                    this.feedbackService.showError(`Unknown status code returned from the Bazar, code was ${status.status}`);
-                  }
-              },
-              error: (error: any) => this.feedbackService.showError(error)});
-          }
-        });
+        if (app.price === 0) {
+          this.purchaseImplementation(
+            app,
+            response.name,
+            response.email,
+            null,
+            false,
+            onAfter);
+        } else {
+          const dialogRef = this.dialog.open(ConfirmEmailAddressDialogComponent, {
+            width: '500px',
+            data: {
+              email: response.email,
+              name: response.name,
+              subscribe: true,
+              code: app.price === 0 ? -1 : null
+            }
+          });
+          dialogRef.afterClosed().subscribe((model: EmailPromoCodeModel) => {
+            if (model) {
+              this.purchaseImplementation(
+                app,
+                model.name,
+                model.email,
+                model.code,
+                model.subscribe,
+                onAfter);
+            }
+          });
+        }
 
       },
       error: (error: any) => this.feedbackService.showError(error)});
   }
+
+  /*
+   * Purchase implementation method.
+   */
+  private purchaseImplementation(
+    app: BazarApp,
+    name: string,
+    email: string,
+    code: any,
+    subscribe: boolean,
+    onAfter: () => void) {
+    this.bazarService.purchaseBazarItem(
+      app,
+      name,
+      email,
+      subscribe,
+      code === -1 ? null : code).subscribe({
+        next: (status: PurchaseStatus) => {
+
+          // Making sure we show loading animation.
+          this.loaderService.show();
+
+          /*
+           * Checking if status is 'PENDING' at which point we'll have to redirect to PayPal
+           * to finish transaction.
+           */
+          if (status.status === 'PENDING') {
+
+            /*
+             * We'll need to redirect user to PayPal to accept the transaction.
+             * Hence, storing currently viewed app in local storage to make it more
+             * easily retrieved during callback.
+             */
+            localStorage.setItem('currently-installed-app', JSON.stringify(app));
+            window.location.href = status.url;
+
+          } else if (status.status === 'APPROVED') {
+
+            /*
+             * App can immediately be installed, and status.token contains
+             * download token.
+             */
+            this.messageService.sendMessage({
+              name: 'magic.bazar.install-immediately',
+              content: {
+                app: app,
+                code: status.code,
+              }
+            });
+            if (onAfter) {
+              onAfter();
+            }
+          } else {
+            this.feedbackService.showError(`Unknown status code returned from the Bazar, code was ${status.status}`);
+          }
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
+}
 
   /**
    * Opens a modal dialog showing the user details about his already installed app.
@@ -498,26 +529,6 @@ export class BazarComponent implements OnInit, OnDestroy {
 
                 this.router.navigate(['/plugins']);
                 this.loadManifests();
-
-                this.fileService.listFiles('/modules/' + app.folder_name + '/', 'README.md').subscribe({
-                  next: (files: string[]) => {
-                    const mainReadmeFilePath = files.filter(x => x === '/modules/' + app.folder_name + '/README.md');
-                    if (mainReadmeFilePath.length > 0) {
-
-                      /*
-                       * Module has a main README file, hence displaying it to
-                       * the user in a modal window - But first we need to load the file's content.
-                       */
-                      this.fileService.loadFile(mainReadmeFilePath[0]).subscribe({
-                        next: (readMeFileContent: string) => {
-                          this.dialog.open(ViewReadmeDialogComponent, {
-                            data: readMeFileContent,
-                          });
-                        },
-                        error:(error: any) => this.feedbackService.showError(error)});
-                    }
-                  },
-                  error: (error: any) => this.feedbackService.showError(error)});
 
             } else {
               this.feedbackService.showError('Something went wrong when trying to install Bazar app. Your log might contain more information.');
