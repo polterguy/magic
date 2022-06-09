@@ -81,7 +81,7 @@
                 </p>
               </div>
               <p class="mat-caption mb-0 mt-1 text-accent" *ngIf="idx.has_update">
-                New version available
+                Update available
               </p>
             </div>
             <div>
@@ -91,8 +91,8 @@
               <p class="my-0 mat-caption text-muted">
                 Min. Magic version: {{idx.min_magic_version}}
               </p>
-              <button mat-button (click)="viewInstalledAppDetails(idx)">{{idx.has_update ? 'Update' : 'Details'}}</button>
-              <button mat-button color="warn" (click)="uninstallPlugin(idx)">Uninstall</button>
+              <button mat-button (click)="viewInstalledAppDetails(idx)" [class]="idx.has_update ? 'has-update' : ''">{{idx.has_update ? 'Update' : 'Details'}}</button>
+              <button mat-button color="warn" (click)="uninstallPlugin(idx.module_name)">Uninstall</button>
             </div>
           </mat-card-content>
         </mat-card>

@@ -81,7 +81,7 @@ export class ViewInstalledAppDialogComponent implements OnInit {
             this.data.token).subscribe({
               next: (install: Response) => {
                 if (install.result === 'success') {
-                  this.feedbackService.showInfo('Application was successfully updated. You probably want to store the ZIP file for later in case you need to install a backup of your app.');
+                  this.feedbackService.showInfo('Plugin was successfully updated');
                   this.dialogRef.close(this.data);
                 }
               },
@@ -102,12 +102,6 @@ export class ViewInstalledAppDialogComponent implements OnInit {
       if (result) {
         this.dialogRef.close(this.data);
       }
-    })
-    // this.fileService.deleteFolder('/modules/' + this.data.module_name + '/').subscribe({
-    //   next: () => {
-    //     this.feedbackService.showInfo('Application was successfully uninstalled from local server');
-    //     this.dialogRef.close(this.data);
-    //   },
-    //   error: (error: any) => this.feedbackService.showError(error)});
+    });
   }
 }

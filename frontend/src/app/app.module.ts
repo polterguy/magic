@@ -83,7 +83,7 @@ import { TasksComponent } from './components/tools/tasks/tasks.component';
 import { NavbarComponent } from './components/main/navbar/navbar.component';
 import { AuthComponent } from './components/management/auth/auth.component';
 import { ToolbarComponent } from './components/main/toolbar/toolbar.component';
-import { BazarComponent } from './components/management/bazar/bazar.component';
+import { BazarComponent } from './components/management/plugins/bazar.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { ConfigComponent } from './components/management/config/config.component';
 import { CryptoComponent } from './components/management/crypto/crypto.component';
@@ -130,9 +130,9 @@ import { LoginDialogComponent } from './components/utilities/login-dialog/login-
 import { LoadSqlDialogComponent } from './components/tools/sql/load-sql-dialog/load-sql-dialog.component';
 import { SaveSqlDialogComponent } from './components/tools/sql/save-sql-dialog/save-sql-dialog.component';
 import { NewTaskDialogComponent } from './components/tools/tasks/new-task-dialog/new-task-dialog.component';
-import { ViewAppDialogComponent } from './components/management/bazar/view-app-dialog/view-app-dialog.component';
+import { ViewAppDialogComponent } from './components/management/plugins/view-app-dialog/view-app-dialog.component';
 import { RenameFileDialogComponent } from './components/tools/ide/rename-file-dialog/rename-file-dialog.component';
-import { SubscribeDialogComponent } from './components/management/bazar/subscribe-dialog/subscribe-dialog.component';
+import { SubscribeDialogComponent } from './components/management/plugins/subscribe-dialog/subscribe-dialog.component';
 import { NewUserDialogComponent } from './components/management/auth/users/new-user-dialog/new-user-dialog.component';
 import { NewRoleDialogComponent } from './components/management/auth/roles/new-role-dialog/new-role-dialog.component';
 import { PreviewFileDialogComponent } from './components/tools/ide/preview-file-dialog/preview-file-dialog.component';
@@ -140,7 +140,7 @@ import { SelectMacroDialogComponent } from './components/tools/ide/select-macro-
 import { RenameFolderDialogComponent } from './components/tools/ide/rename-folder-dialog/rename-folder-dialog.component';
 import { ExecuteMacroDialogComponent } from './components/tools/ide/execute-macro-dialog/execute-macro-dialog.component';
 import { JailUserDialogComponent } from './components/management/auth/users/jail-user-dialog/jail-user-dialog.component';
-import { ViewReadmeDialogComponent } from './components/management/bazar/view-readme-dialog/view-readme-dialog.component';
+import { ViewReadmeDialogComponent } from './components/management/plugins/view-readme-dialog/view-readme-dialog.component';
 import { ScheduleTaskDialogComponent } from './components/tools/tasks/schedule-task-dialog/schedule-task-dialog.component';
 import { LoadSnippetDialogComponent } from './components/tools/evaluator/load-snippet-dialog/load-snippet-dialog.component';
 import { SaveSnippetDialogComponent } from './components/tools/evaluator/save-snippet-dialog/save-snippet-dialog.component';
@@ -148,11 +148,11 @@ import { AddToRoleDialogComponent } from './components/management/auth/users/add
 import { NewFileFolderDialogComponent } from './components/tools/ide/new-file-folder-dialog/new-file-folder-dialog.component';
 import { ExecuteEndpointDialogComponent } from './components/tools/ide/execute-endpoint-dialog/execute-endpoint-dialog.component';
 import { IncompatibleFileDialogComponent } from './components/tools/ide/incompatible-file-dialog/incompatible-file-dialog.component';
-import { ViewInstalledAppDialogComponent } from './components/management/bazar/view-installed-app-dialog/view-installed-app-dialog.component';
+import { ViewInstalledAppDialogComponent } from './components/management/plugins/view-installed-app-dialog/view-installed-app-dialog.component';
 import { CreateKeypairDialogComponent } from './components/management/crypto/server-public-key/create-keypair-dialog/create-keypair-dialog.component';
 import { ImportPublicKeyDialogComponent } from './components/management/crypto/public-keys/import-public-key-dialog/import-public-key-dialog.component';
 import { AddQueryParameterDialogComponent } from './components/analytics/endpoints/endpoint-details/add-query-parameter-dialog/add-query-parameter-dialog.component';
-import { ConfirmEmailAddressDialogComponent } from './components/management/bazar/view-app-dialog/confirm-email-address-dialog/confirm-email-address-dialog.component';
+import { ConfirmEmailAddressDialogComponent } from './components/management/plugins/view-app-dialog/confirm-email-address-dialog/confirm-email-address-dialog.component';
 import { CrudSqlAddArgumentDialogComponent } from './components/tools/crudifier/crud-sql/crud-sql-extra/crud-sql-add-argument-dialog/crud-sql-add-argument-dialog.component';
 import { CreateAssumptionTestDialogComponent } from './components/analytics/endpoints/endpoint-details/create-assumption-test-dialog/create-assumption-test-dialog.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
@@ -170,7 +170,7 @@ import { ViewLogComponent } from './components/dashboard/component/view-log/view
 import { MainChartComponent } from './components/dashboard/component/main-chart/main-chart.component';
 import { SqlWarningComponent } from './components/tools/sql/sql-warning/sql-warning.component';
 import { ConnectionStringDialogComponent } from './components/management/config/connection-string-dialog/connection-string-dialog.component';
-import { ConfirmUninstallDialogComponent } from './components/management/bazar/confirm-uninstall-dialog/confirm-uninstall-dialog.component';
+import { ConfirmUninstallDialogComponent } from './components/management/plugins/confirm-uninstall-dialog/confirm-uninstall-dialog.component';
 
 /**
  * The main module for your Magic Dashboard application.

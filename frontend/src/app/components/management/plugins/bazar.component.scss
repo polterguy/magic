@@ -32,13 +32,11 @@
   .light {
     .section-title,
     .see-all-link {background-color: #fdfdfd;padding-left: 10px;}
-    // .mat-button.see-all-link {background-color: #fdfdfd;}
     .has-border::before {background-color: $magic_dark_ng_border;}
   }
   .dark {
     .section-title,
     .see-all-link {background-color: $magic_dark_alternative;padding-left: 10px;}
-    // .mat-button.see-all-link {background-color: $magic_dark_alternative;}
     .has-border::before {background-color: $magic_default_ng_border;}
   }
 }
@@ -61,6 +59,23 @@
       padding-left: 0;
     }
   }
+}
+@keyframes updateFlash {
+  0% {
+    color: rgb(0,0,0);
+  }
+  80% {
+    color: rgb(0,0,0);
+  }
+  100% {
+    color: rgb(200,200,0);
+  }
+}
+.has-update {
+  animation-name: updateFlash;
+  animation-duration: .75s;
+  animation-direction: alternate;
+  animation-iteration-count: infinite;
 }
 /*=-=-=-=-=-=
  Dot Flashing

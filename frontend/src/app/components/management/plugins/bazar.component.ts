@@ -21,20 +21,20 @@ import { Response } from '../../../models/response.model';
 import { BazarApp } from '../../../models/bazar-app.model';
 import { AppManifest } from '../../../models/app-manifest';
 import { environment } from 'src/environments/environment';
+import { FileService } from 'src/app/services/file.service';
 import { ConfigService } from '../../../services/config.service';
 import { LoaderService } from '../../../services/loader.service';
 import { MessageService } from 'src/app/services/message.service';
 import { NameEmailModel } from '../../../models/name-email.model';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { FileService } from 'src/app/services/file.service';
+import { PurchaseStatus } from 'src/app/models/purchase-status.model';
 import { ViewAppDialogComponent } from './view-app-dialog/view-app-dialog.component';
 import { SubscribeDialogComponent } from './subscribe-dialog/subscribe-dialog.component';
 import { ViewReadmeDialogComponent } from './view-readme-dialog/view-readme-dialog.component';
-import { ViewInstalledAppDialogComponent } from './view-installed-app-dialog/view-installed-app-dialog.component';
 import { ConfirmUninstallDialogComponent } from './confirm-uninstall-dialog/confirm-uninstall-dialog.component';
+import { ViewInstalledAppDialogComponent } from './view-installed-app-dialog/view-installed-app-dialog.component';
 import { ConfirmEmailAddressDialogComponent, EmailPromoCodeModel } from './view-app-dialog/confirm-email-address-dialog/confirm-email-address-dialog.component';
-import { PurchaseStatus } from 'src/app/models/purchase-status.model';
 
 /**
  * Bazar component allowing you to obtain additional Micro Service backend
@@ -175,6 +175,7 @@ export class BazarComponent implements OnInit, OnDestroy {
           this.getItems(true);
         }
       })();
+
       /*
        * Checking if we've got a "token" query parameter,
        * at which point we've been redirected from PayPal,
@@ -314,64 +315,6 @@ export class BazarComponent implements OnInit, OnDestroy {
       error: (error: any) => this.feedbackService.showError(error)});
   }
 
-  /*
-   * Purchase implementation method.
-   */
-  private purchaseImplementation(
-    app: BazarApp,
-    name: string,
-    email: string,
-    code: any,
-    subscribe: boolean,
-    onAfter: () => void) {
-    this.bazarService.purchaseBazarItem(
-      app,
-      name,
-      email,
-      subscribe,
-      code === -1 ? null : code).subscribe({
-        next: (status: PurchaseStatus) => {
-
-          // Making sure we show loading animation.
-          this.loaderService.show();
-
-          /*
-           * Checking if status is 'PENDING' at which point we'll have to redirect to PayPal
-           * to finish transaction.
-           */
-          if (status.status === 'PENDING') {
-
-            /*
-             * We'll need to redirect user to PayPal to accept the transaction.
-             * Hence, storing currently viewed app in local storage to make it more
-             * easily retrieved during callback.
-             */
-            localStorage.setItem('currently-installed-app', JSON.stringify(app));
-            window.location.href = status.url;
-
-          } else if (status.status === 'APPROVED') {
-
-            /*
-             * App can immediately be installed, and status.token contains
-             * download token.
-             */
-            this.messageService.sendMessage({
-              name: 'magic.bazar.install-immediately',
-              content: {
-                app: app,
-                code: status.code,
-              }
-            });
-            if (onAfter) {
-              onAfter();
-            }
-          } else {
-            this.feedbackService.showError(`Unknown status code returned from the Bazar, code was ${status.status}`);
-          }
-      },
-      error: (error: any) => this.feedbackService.showError(error)});
-}
-
   /**
    * Opens a modal dialog showing the user details about his already installed app.
    *
@@ -430,9 +373,84 @@ export class BazarComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Uninstalls the specified plugin.
+   * 
+   * @param item Item to uninstall
+   */
+  uninstallPlugin(module_name: string) {
+
+    this.dialog.open(ConfirmUninstallDialogComponent, {
+      data: module_name,
+      width: '500px'
+    }).afterClosed().subscribe((result: string) => {
+      if (result) {
+        this.loadManifests();
+      }
+    });
+  }
+
   /*
    * Private helper methods.
    */
+
+  /*
+   * Purchase implementation method.
+   */
+  private purchaseImplementation(
+    app: BazarApp,
+    name: string,
+    email: string,
+    code: any,
+    subscribe: boolean,
+    onAfter: () => void) {
+    this.bazarService.purchaseBazarItem(
+      app,
+      name,
+      email,
+      subscribe,
+      code === -1 ? null : code).subscribe({
+        next: (status: PurchaseStatus) => {
+
+          // Making sure we show loading animation.
+          this.loaderService.show();
+
+          /*
+           * Checking if status is 'PENDING' at which point we'll have to redirect to PayPal
+           * to finish transaction.
+           */
+          if (status.status === 'PENDING') {
+
+            /*
+             * We'll need to redirect user to PayPal to accept the transaction.
+             * Hence, storing currently viewed app in local storage to make it more
+             * easily retrieved during callback.
+             */
+            localStorage.setItem('currently-installed-app', JSON.stringify(app));
+            window.location.href = status.url;
+
+          } else if (status.status === 'APPROVED') {
+
+            /*
+             * App can immediately be installed, and status.token contains
+             * download token.
+             */
+            this.messageService.sendMessage({
+              name: 'magic.bazar.install-immediately',
+              content: {
+                app: app,
+                code: status.code,
+              }
+            });
+            if (onAfter) {
+              onAfter();
+            }
+          } else {
+            this.feedbackService.showError(`Unknown status code returned from the Bazar, code was ${status.status}`);
+          }
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
+  }
 
   /*
    * Lists apps from Bazar server.
@@ -562,6 +580,7 @@ export class BazarComponent implements OnInit, OnDestroy {
               if (result && result.length > 0) {
                 const version = result[0].version;
                 this.getUniInstalledApps();
+
                 // Doing a version compare of the installed app and the latest version of app as published by Bazar API.
                 // TODO: This is kind of stupid to do over an HTTP invocation, since it's just a string comparison
                 // of two version numbers such as for instance "v5.6.7".
@@ -572,7 +591,6 @@ export class BazarComponent implements OnInit, OnDestroy {
                       idx.new_version = version;
                       if (!hasUpdates) {
                         hasUpdates = true;
-                        this.feedbackService.showInfo('You have plugin(s) that needs to be updated.');
                       }
                     }
                   },
@@ -583,17 +601,5 @@ export class BazarComponent implements OnInit, OnDestroy {
         }
       },
       error: (error: any) => this.feedbackService.showError(error)});
-  }
-
-  uninstallPlugin(item: any) {
-
-    this.dialog.open(ConfirmUninstallDialogComponent, {
-      data: item.module_name,
-      width: '500px'
-    }).afterClosed().subscribe((result: string) => {
-      if (result) {
-        this.loadManifests();
-      }
-    })
   }
 }
