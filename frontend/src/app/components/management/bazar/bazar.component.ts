@@ -33,6 +33,8 @@ import { SubscribeDialogComponent } from './subscribe-dialog/subscribe-dialog.co
 import { ViewReadmeDialogComponent } from './view-readme-dialog/view-readme-dialog.component';
 import { ViewInstalledAppDialogComponent } from './view-installed-app-dialog/view-installed-app-dialog.component';
 import { ConfirmUninstallDialogComponent } from './confirm-uninstall-dialog/confirm-uninstall-dialog.component';
+import { ConfirmEmailAddressDialogComponent, EmailPromoCodeModel } from './view-app-dialog/confirm-email-address-dialog/confirm-email-address-dialog.component';
+import { PurchaseStatus } from 'src/app/models/purchase-status.model';
 
 /**
  * Bazar component allowing you to obtain additional Micro Service backend
@@ -259,17 +261,83 @@ export class BazarComponent implements OnInit, OnDestroy {
    * @param app What app the user clicked
    */
   viewApp(app: BazarApp) {
-    // if (this.appIsInstalled(app)) {
-    //   this.feedbackService.showInfoShort('App is already installed');
-    //   return;
-    // }
     this.dialog.open(ViewAppDialogComponent, {
-      data: app,
+      data: {
+        app: app,
+        purchase: (app: BazarApp, after: () => void) => this.purchase(app, after)
+      },
       width: '90%',
       maxWidth: '90vw',
       height: '90%',
       panelClass: ['details-dialog']
     });
+  }
+
+  /**
+   * Invoked when user wants to purchase the specified app.
+   */
+   purchase(app: BazarApp, onAfter: () => void = null) {
+    this.configService.rootUserEmailAddress().subscribe({
+      next: (response: NameEmailModel) => {
+        const dialogRef = this.dialog.open(ConfirmEmailAddressDialogComponent, {
+          width: '500px',
+          data: {
+            email: response.email,
+            name: response.name,
+            subscribe: true,
+            code: app.price === 0 ? -1 : null
+          }
+        });
+        dialogRef.afterClosed().subscribe((model: EmailPromoCodeModel) => {
+          if (model) {
+            this.bazarService.purchaseBazarItem(
+              app,
+              model.name,
+              model.email,
+              model.subscribe,
+              model.code === -1 ? null : model.code).subscribe({
+                next: (status: PurchaseStatus) => {
+                  this.loaderService.show();
+
+                  /*
+                   * Checking if status is 'PENDING' at which point we'll have to redirect to PayPal
+                   * to finish transaction.
+                   */
+                  if (status.status === 'PENDING') {
+
+                    /*
+                     * We'll need to redirect user to PayPal to accept the transaction.
+                     * Hence, storing currently viewed app in local storage to make it more
+                     * easily retrieved during callback.
+                     */
+                    localStorage.setItem('currently-installed-app', JSON.stringify(app));
+                    window.location.href = status.url;
+                  } else if (status.status === 'APPROVED') {
+
+                    /*
+                     * App can immediately be installed, and status.token contains
+                     * download token.
+                     */
+                    this.messageService.sendMessage({
+                      name: 'magic.bazar.install-immediately',
+                      content: {
+                        app: app,
+                        code: status.code,
+                      }
+                    });
+                    if (onAfter) {
+                      onAfter();
+                    }
+                  } else {
+                    this.feedbackService.showError(`Unknown status code returned from the Bazar, code was ${status.status}`);
+                  }
+              },
+              error: (error: any) => this.feedbackService.showError(error)});
+          }
+        });
+
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /**

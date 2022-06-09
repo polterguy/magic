@@ -4,6 +4,14 @@
  */
 
 /**
+ * Wrapper class for purchasing an app.
+ */
+export class BazarAppWrapper {
+  app: BazarApp;
+  purchase: (app: BazarApp, after: () => void) => void;
+}
+
+/**
  * Meta information for a single Bazar app.
  */
 export class BazarApp {

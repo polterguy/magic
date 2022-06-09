@@ -1,16 +1,16 @@
 
 <div mat-dialog-content class="file-content">
-  <div [innerHTML]="data.description | marked"></div>
+  <div [innerHTML]="data.app.description | marked"></div>
 </div>
 
 <div mat-dialog-actions class="mat-dialog-actions">
 
-  <div *ngIf="!installed && canInstall && data.price > 0" class="purchase-info">
+  <div *ngIf="!installed && canInstall && data.app.price > 0" class="purchase-info">
     <!-- Notice, we provide a 30 day money back guarantee -->
     30 days money back guarantee
   </div>
 
-  <div *ngIf="!installed && canInstall && data.price === 0" class="purchase-info">
+  <div *ngIf="!installed && canInstall && data.app.price === 0" class="purchase-info">
     You can install this plugin for free
   </div>
 
@@ -20,7 +20,7 @@
     [disabled]="!backendService.active?.access.bazar.download_from_bazar"
     color="primary"
     matTooltip="Click here to purchase the module"
-    (click)="purchase()">{{data.price === 0 ? 'Install' : 'Buy now'}}</button>
+    (click)="purchase()">{{data.app.price === 0 ? 'Install' : 'Buy now'}}</button>
 
   <div *ngIf="installed" class="already-installed">
     You already own this plugin
@@ -28,8 +28,6 @@
 
   <div *ngIf="needsCoreUpdate" class="needs-core-update">
     Incompatible with your current version of Magic. <a target="_blank" href="https://docs.aista.com/tutorials/getting-started/">Download the latest verion.</a>
-    <!-- You need to update your Magic installation in order to install this app or module.
-    <a target="_blank" href="https://docs.aista.com/tutorials/getting-started/">Click here to download the latest Magic version</a>. -->
   </div>
 
 </div>
