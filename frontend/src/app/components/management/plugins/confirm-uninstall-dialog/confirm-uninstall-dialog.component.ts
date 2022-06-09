@@ -5,8 +5,7 @@ import { FileService } from 'src/app/services/file.service';
 
 @Component({
   selector: 'app-confirm-uninstall-dialog',
-  templateUrl: './confirm-uninstall-dialog.component.html',
-  styleUrls: ['./confirm-uninstall-dialog.component.scss']
+  templateUrl: './confirm-uninstall-dialog.component.html'
 })
 export class ConfirmUninstallDialogComponent implements OnInit {
 

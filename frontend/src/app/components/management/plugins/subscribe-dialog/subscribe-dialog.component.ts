@@ -4,17 +4,17 @@
  */
 
 // Angular and system imports.
-import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
+import { Component, OnInit, ViewChild } from '@angular/core';
 
 // Application specific imports.
+import { RecaptchaComponent } from 'ng-recaptcha';
 import { Response } from 'src/app/models/response.model';
 import { BazarService } from '../../services/bazar.service';
+import { BackendService } from 'src/app/services/backend.service';
 import { ConfigService } from '../../../../services/config.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { NameEmailModel } from '../../../../models/name-email.model';
-import { BackendService } from 'src/app/services/backend.service';
-import { RecaptchaComponent } from 'ng-recaptcha';
 
 /**
  * Component allowing user to subscribe to Aista's newsletter.
