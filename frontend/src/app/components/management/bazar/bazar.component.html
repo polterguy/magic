@@ -63,11 +63,10 @@
         </div>
       </div>
     </div>
-    <div class="row" *ngIf="manifests && manifests.length > 0">
+    <div class="row" *ngIf="manifests && getInstalledApps().length > 0">
       <div class="col-12 mb-3">
         <div class="d-flex align-items-center justify-content-between has-border">
           <p class="my-0 section-title mat-body-2">Installed plugins</p>
-          <!-- <a mat-button color="primary" class="see-all-link">See all</a> -->
           <p class="see-all-link my-0">{{getInstalledApps().length}} plugins</p>
         </div>
       </div>
@@ -102,7 +101,7 @@
     <div class="row" *ngIf="getUniInstalledApps() && getUniInstalledApps().length > 0">
       <div class="col-12 my-3">
         <div class="d-flex align-items-center justify-content-between has-border">
-          <p class="my-0 section-title mat-body-2">Recommended plugins</p>
+          <p class="my-0 section-title mat-body-2">Available plugins</p>
           <!-- <a mat-button color="primary" class="see-all-link">See all</a> -->
           <p class="see-all-link my-0">{{getUniInstalledApps().length}} plugins</p>
         </div>

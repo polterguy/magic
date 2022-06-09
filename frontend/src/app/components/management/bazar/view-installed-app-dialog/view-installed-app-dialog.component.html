@@ -14,11 +14,12 @@
 
   <button
     *ngIf="!data.has_update"
-    mat-raised-button
+    mat-button
     mat-dialog-close>Close</button>
 
   <button
-    mat-raised-button
+    mat-button
+    color="warn"
     [disabled]="!backendService.active?.access.files.delete_folder"
     (click)="uninstall()">Uninstall</button>
 

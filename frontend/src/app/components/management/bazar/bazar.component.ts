@@ -212,7 +212,7 @@ export class BazarComponent implements OnInit, OnDestroy {
    * Implementation of OnDestroy is necessary to make sure we
    * stop any SignalR connections once the dialog is closed.
    */
-   ngOnDestroy() {
+  ngOnDestroy() {
     if (this.hubConnection) {
       this.hubConnection.stop();
       this.loaderService.hide();
@@ -250,7 +250,7 @@ export class BazarComponent implements OnInit, OnDestroy {
    *
    * @param e Page event argument
    */
-   paged(e: PageEvent) {
+  paged(e: PageEvent) {
     this.paginator.pageSize = e.pageSize;
     this.getItems();
   }
@@ -276,7 +276,8 @@ export class BazarComponent implements OnInit, OnDestroy {
   /**
    * Invoked when user wants to purchase the specified app.
    */
-   purchase(app: BazarApp, onAfter: () => void = null) {
+  purchase(app: BazarApp, onAfter: () => void = null) {
+    console.log(app);
     this.configService.rootUserEmailAddress().subscribe({
       next: (response: NameEmailModel) => {
         const dialogRef = this.dialog.open(ConfirmEmailAddressDialogComponent, {
