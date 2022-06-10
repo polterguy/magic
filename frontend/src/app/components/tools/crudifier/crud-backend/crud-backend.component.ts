@@ -75,7 +75,7 @@ export class CrudBackendComponent implements OnInit {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param logService Needed to be able to log LOC generated
    * @param dialog Needed to be able to open modal dialogs
    * @param sqlService Needed to retrieve meta information about databases from backend
@@ -128,7 +128,7 @@ export class CrudBackendComponent implements OnInit {
 
   /**
    * Returns humanly readable type of database to caller.
-   * 
+   *
    * @param type Type delaration
    */
   getDatabaseTypeName(type: string) {
@@ -192,7 +192,7 @@ export class CrudBackendComponent implements OnInit {
 
   /**
    * Invoked when CSS class for database name is to be returned.
-   * 
+   *
    * @param db Database name
    */
   getDatabaseCssClass(db: string) {
@@ -316,7 +316,7 @@ export class CrudBackendComponent implements OnInit {
 
   /**
    * Returns true if table has warnings.
-   * 
+   *
    * @param el Table to check
    * @returns True if table has warnings
    */
