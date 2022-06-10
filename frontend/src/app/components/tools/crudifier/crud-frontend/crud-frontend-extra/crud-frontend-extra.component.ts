@@ -259,6 +259,15 @@ export class CrudFrontendExtraComponent implements OnInit, OnDestroy {
       }).length === 1;
   }
 
+  /**
+   * Needed to make sure clicking checkbox actually works.
+   * 
+   * @param e Event
+   */
+  swallow(e: Event) {
+    e.stopPropagation();
+  }
+
   /*
    * Private helper methods.
    */

@@ -110,7 +110,7 @@ export class CrudBackendComponent implements OnInit {
 
     // Purging server side database cache in case user just recently created a new database.
     this.cacheService.delete('magic.sql.databases.*').subscribe({
-      next: () => console.log('Your database cache was flushed server side'),
+      next: () => console.log('Your database cache was purged server side'),
       error: (error: any) => this.feedbackService.showError(error)});
 
     this.sqlService.defaultDatabaseType().subscribe({
@@ -266,7 +266,7 @@ export class CrudBackendComponent implements OnInit {
   refresh() {
     this.feedbackService.confirm(
       'Confirm action',
-      'This will flush your server side cache and reload your page. Are you sure you want to do this?',
+      'This will purge your server side cache and reload your page. Are you sure you want to do this?',
       () => {
         this.cacheService.delete('magic.sql.databases.*').subscribe({
           next: () => window.location.href = window.location.href,

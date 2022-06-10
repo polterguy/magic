@@ -17,6 +17,7 @@
             *ngFor="let idx of verbs"
             [value]="idx">{{idx}}</mat-option>
         </mat-select>
+        <mat-hint>HTTP verb to use for endpoint</mat-hint>
       </mat-form-field>
 
       <div class="p-1"></div>
@@ -26,9 +27,9 @@
         <input
           matInput
           type="text"
-          matTooltip="Only lowercase characters, numbers and - or _ please"
           autocomplete="off"
           [(ngModel)]="moduleName">
+        <mat-hint>Only lowercase alphanumeric characters, and - or _ please</mat-hint>
       </mat-form-field>
 
       <div class="p-1"></div>
@@ -38,17 +39,17 @@
         <input
           matInput
           type="text"
-          matTooltip="Only lowercase characters, numbers and - or _ please"
           autocomplete="off"
           [(ngModel)]="endpointName">
+        <mat-hint>Only lowercase alphanumeric characters, and - or _ please</mat-hint>
       </mat-form-field>
 
     </div>
 
-    <h3 class="mb-1">Authorization</h3>
+    <h3 class="mb-1 mt-3">Authorization</h3>
 
     <mat-form-field appearance="outline">
-      <mat-label>Authorization</mat-label>
+      <mat-label>Roles</mat-label>
       <input
         matInput
         type="text"
