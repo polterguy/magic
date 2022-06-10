@@ -39,9 +39,8 @@
         <div class="d-flex flex-sm-nowrap flex-wrap mt-4 w-100">
           <mat-form-field
             class="w-100"
-            matTooltip="The name of your app"
             appearance="outline">
-            <mat-label>Name</mat-label>
+            <mat-label>App name</mat-label>
             <input
               matInput
               type="text"
@@ -53,7 +52,6 @@
 
           <mat-form-field
             class="w-100"
-            matTooltip="Type of template you want to use"
             appearance="outline">
             <mat-label>Template</mat-label>
             <mat-select
@@ -69,9 +67,8 @@
 
           <mat-form-field
             class="w-100 form-field-double"
-            matTooltip="Common file comment for all files that can be commented"
             appearance="outline">
-            <mat-label>Copyright</mat-label>
+            <mat-label>File comment</mat-label>
             <input
               matInput
               type="text"
@@ -88,7 +85,6 @@
           <mat-form-field
             *ngIf="template"
             class="w-100"
-            matTooltip="Root API URL of the backend you intend to use for your app"
             appearance="outline">
             <mat-label>API URL</mat-label>
             <input
@@ -103,7 +99,6 @@
           <mat-form-field
             *ngIf="template"
             class="w-100"
-            matTooltip="Needed to wire up docker-compose file correctly with your deployment domain/URL"
             appearance="outline">
             <mat-label>Deployment domain</mat-label>
             <input
@@ -118,7 +113,6 @@
           <mat-form-field
             *ngIf="template"
             class="w-100"
-            matTooltip="Needed to wire up docker-compose file correctly for creating SSL/TLS certificate from LetsEncrypt"
             appearance="outline">
             <mat-label>Email</mat-label>
             <input
