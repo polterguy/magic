@@ -4,7 +4,7 @@
 
       <div class="d-flex flex-sm-nowrap flex-wrap justify-content-between mb-1">
         <div class="d-flex align-items-center">
-          <mat-card-title class="my-0">Crudify backend</mat-card-title>
+          <mat-card-title class="my-0">CRUDify backend</mat-card-title>
           <div class="sm-icons">
             <button
               mat-icon-button
@@ -18,7 +18,7 @@
               <div class="p-3">
                 <p>
                   Automatically generate CRUD HTTP endpoints wrapping your existing database by
-                  choosing your database and click the crudify button.
+                  choosing your database and click the CRUDify button.
                 </p>
                 <div class="d-flex justify-content-end">
                   <a target="_blank" href="https://docs.aista.com/documentation/magic/components/crudifier/backend/" mat-stroked-button>Learn more</a>
@@ -49,7 +49,7 @@
           </mat-form-field>
 
           <div class="p-lg-1"></div>
-        
+
           <mat-form-field
             *ngIf="databaseType && connectionStrings.length > 0"
             class="w-100"
@@ -66,11 +66,11 @@
           </mat-form-field>
 
           <div class="p-lg-1" *ngIf="connectionString && databases && databases.databases.length > 0"></div>
-          
+
           <mat-form-field
             *ngIf="connectionString && databases && databases.databases.length > 0"
             class="w-100"
-            matTooltip="Database to crudify"
+            matTooltip="Database to CRUDify"
             appearance="outline">
             <mat-label>Database name</mat-label>
             <mat-select
@@ -84,11 +84,11 @@
           </mat-form-field>
 
           <div class="p-lg-1" *ngIf="database && database.tables && database.tables.length > 0"></div>
-          
+
           <mat-form-field
             *ngIf="database && database.tables && database.tables.length > 0"
             class="w-100"
-            matTooltip="Optionally configure crudification settings for individual tables"
+            matTooltip="Optionally configure CRUDification settings for individual tables"
             appearance="outline">
             <mat-label>Table name</mat-label>
             <mat-select
@@ -103,7 +103,7 @@
                 [matTooltip]="hasWarnings(idx) ? 'Table has warnings, please inspect it carefully' : ''"
                 matTooltipPosition="before"
                 [value]="idx">
-                <div class="d-flex align-items-center justify-content-between w-100" 
+                <div class="d-flex align-items-center justify-content-between w-100"
                   [class.warning]="hasWarnings(idx)">
                   {{idx.name}}
                   <div *ngIf="hasWarnings(idx)" class="sm-icons">
@@ -120,22 +120,22 @@
           <div
             class="d-flex align-items-center"
             *ngIf="database && database.tables && database.tables.length > 0">
-            <mat-checkbox 
+            <mat-checkbox
               matTooltip="If true will create left joins for all referenced tables in your backend and return foreign field as a part of the result set"
               [(ngModel)]="transformService.join">Left joins</mat-checkbox>
 
             <div class="p-1"></div>
-          
-            <mat-checkbox 
+
+            <mat-checkbox
               matTooltip="If true will generate all possible QUERY parameters for your read endpoints"
               [(ngModel)]="transformService.verbose">Verbose</mat-checkbox>
 
             <div class="p-1"></div>
-          
-            <mat-checkbox 
+
+            <mat-checkbox
               matTooltip="If true will overwrite existing modules"
               [(ngModel)]="transformService.overwrite">Overwrite</mat-checkbox>
-            
+
           </div>
 
           <div class="p-1"></div>
@@ -153,7 +153,7 @@
               *ngIf="!(database && database.tables && database.tables.length > 0)"
               mat-raised-button
               [matMenuTriggerFor]="actionMenu">
-              Actions 
+              Actions
               <mat-icon>more_vert</mat-icon>
             </button>
 
@@ -166,7 +166,7 @@
               </button>
 
               <div class="p-1"></div>
-            
+
               <button
                 [disabled]="!database || (database && database.name === 'magic' || (database.tables || []).length === 0)"
                 (click)="setDefaults()"
@@ -175,13 +175,13 @@
               </button>
 
               <div class="p-1"></div>
-            
+
               <button
                 [disabled]="!database || (database && database.name === 'magic' || (database.tables || []).length === 0)"
                 color="primary"
                 (click)="crudifyAll()"
                 mat-menu-item>
-                Crudify all tables
+                CRUDify all tables
               </button>
 
             </mat-menu>
@@ -200,7 +200,7 @@
             </button>
 
             <div class="p-1"></div>
-          
+
             <button
               [disabled]="!database || (database && database.name === 'magic' || (database.tables || []).length === 0)"
               mat-raised-button
@@ -211,21 +211,21 @@
             </button>
 
             <div class="p-1"></div>
-          
+
             <button
               [disabled]="!database || (database && database.name === 'magic' || (database.tables || []).length === 0)"
               mat-raised-button
               color="primary"
               (click)="crudifyAll()"
-              matTooltip="Crudifies all tables in your currently selected database"
+              matTooltip="CRUDifies all tables in your currently selected database"
               class="w-100" id="largeBtn">
-              Crudify all tables
+              CRUDify all tables
             </button>
 
           </div>
-        
+
         </div>
-        
+
       </mat-card-content>
     </mat-card>
   </div>
