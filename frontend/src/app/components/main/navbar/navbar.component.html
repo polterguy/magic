@@ -144,7 +144,7 @@
           #crudifier="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
           <ng-container *ngIf="backendService.active?.access.crud.generate_crud || backendService.active?.access.crud.generate_sql || backendService.active?.access.crud.generate_frontend">
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendService.active?.setupDone ? '/crudifier' : null">
+            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendService.active?.setupDone ? '/crud-generator' : null">
               <mat-icon>touch_app</mat-icon>
               <span class="title">CRUD Generator</span>
             </a>
