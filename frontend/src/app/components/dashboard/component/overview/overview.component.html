@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-12">
           <h2 class="mt-4 mb-0">Resources</h2>
-          <p class="mt-0 text-muted">An overview on your system's resources.</p>
+          <p class="mt-0 text-muted">An overview of your system's resources</p>
       </div>
 
       <div class="col-lg-2 col-sm-6 col-12 mb-3">
@@ -86,74 +86,3 @@
     </div>
   </div>
 </div>
-
-
-
-
-<!-- <div class="row h-100">
-    <div class="col-12">
-        <h2 class="mt-4 mb-0">Resources</h2>
-        <p class="mt-0 text-muted">An overview on your system's resources.</p>
-    </div>
-    <div class="col-sm-6 col-12 pr-sm-2 mb-3">
-        <mat-card class="h-100">
-            <mat-card-content class="h-100 d-flex flex-column justify-content-center">
-                <h3 class="mb-0 text-accent">{{data?.default_db}}</h3>
-                <p class="my-0 mat-caption">Database</p>
-            </mat-card-content>
-        </mat-card>
-    </div>
-    <div class="col-sm-6 col-12 pl-sm-2 mb-3">
-        <mat-card class="h-100">
-            <mat-card-content class="h-100 d-flex flex-column justify-content-center">
-                <h3 class="mb-0 text-accent">{{data?.default_timezone === 'none' ? 'Default' : data?.default_timezone }}</h3>
-                <p class="my-0 mat-caption">Timezone</p>
-            </mat-card-content>
-        </mat-card>
-    </div>
-    <div class="col-sm-6 col-12 pr-sm-2 mb-3">
-        <mat-card class="h-100">
-            <mat-card-content class="h-100 d-flex flex-column justify-content-center">
-                <h3 class="mb-0 text-accent">{{data?.version}}</h3>
-                <p class="my-0 mat-caption">Version</p>
-            </mat-card-content>
-        </mat-card>
-    </div>
-    <div class="col-sm-6 col-12 pl-sm-2 mb-3">
-        <mat-card class="h-100">
-            <mat-card-content class="h-100 d-flex flex-column justify-content-center">
-                <h3 class="mb-0 text-accent">{{data?.endpoints}}</h3>
-                <p class="my-0 mat-caption">Endpoints</p>
-            </mat-card-content>
-        </mat-card>
-    </div>
-    <div class="col-12 mb-3">
-        <mat-card class="h-100 p-0" [id]="!(extraSegment?.value) ? 'add-segment-card' : ''">
-            <mat-card-content class="h-100 p-0 d-flex flex-column justify-content-center min-h-80">
-                <button mat-button class="w-100 h-100" (click)="getSegmentOptions()" [matMenuTriggerFor]="menu">
-                    <div class="text-left relative" *ngIf="extraSegment?.value">
-                        <span class="change-text text-accent">Change</span>
-                        <h3 class="mb-0 text-accent">{{extraSegment?.value}}</h3>
-                        <p class="my-0 mat-caption text-capitalized">{{extraSegment?.title}}</p>
-                    </div>
-                    <div class="d-flex flex-nowrap align-items-center" *ngIf="!(extraSegment?.value)">
-                        <mat-icon>add</mat-icon>
-                        &nbsp;
-                        Add a segment
-                    </div>
-                </button>
-                <mat-menu #menu="matMenu" yPosition="above">
-                    <button mat-menu-item *ngFor="let item of segmentOptions | keyvalue" (click)="setExtraSegment(item)">
-                        <div class="d-flex justify-content-between align-items-center pr-1">
-                            <div class="d-flex align-items-center mr-3">
-                                <mat-icon class="mr-0">add</mat-icon>&nbsp;
-                                {{item.key}}
-                            </div>
-                            <span class="text-accent">{{item.value}}</span>
-                        </div>
-                    </button>
-                </mat-menu>
-            </mat-card-content>
-        </mat-card>
-    </div>
-</div> -->
