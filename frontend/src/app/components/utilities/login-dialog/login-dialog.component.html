@@ -70,7 +70,12 @@
       </div>
 
 
-        <button mat-raised-button color="primary" type="submit" (click)="login()" class="w-100"
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          (click)="login()"
+          class="w-100 pt-2 pb-2"
           [disabled]="!autoLogin && loginForm.invalid">Login</button>
 
 
