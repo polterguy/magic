@@ -82,7 +82,6 @@
       
           <button
             id="loadButton"
-            matTooltip="Load previously saved Hyperlambda snippet"
             mat-raised-button
             (click)="load()">Load</button>
 
@@ -90,7 +89,6 @@
 
           <button
             id="saveButton"
-            matTooltip="Save your Hyperlambda to your snippets collection"
             mat-raised-button
             [disabled]="input.hyperlambda.length === 0"
             (click)="save()">Save</button>

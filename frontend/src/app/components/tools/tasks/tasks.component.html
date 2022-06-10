@@ -70,7 +70,6 @@
             <td mat-cell class="text-right" *matCellDef="let el">
               <button
                 mat-icon-button
-                matTooltip="Delete task"
                 [disabled]="!backendService.active?.access.tasks.delete"
                 (click)="delete($event, el)">
                 <mat-icon>delete</mat-icon>
@@ -105,14 +104,12 @@
                       <button
                         mat-icon-button
                         [disabled]="!backendService.active?.access.tasks.addDue"
-                        matTooltip="Schedule task"
                         (click)="schedule(el.task)">
                         <mat-icon>more_time</mat-icon>
                       </button>
 
                       <button
                         mat-icon-button
-                        matTooltip="Update task"
                         [disabled]="!backendService.active?.access.tasks.update"
                         (click)="update(el)">
                         <mat-icon>save</mat-icon>
