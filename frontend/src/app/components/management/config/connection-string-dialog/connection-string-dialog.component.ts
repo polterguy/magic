@@ -20,9 +20,9 @@ export class ConnectionStringDialogComponent implements OnInit {
   dbList: string[] = [];
 
   /**
-   * Placeholder of the connection string field, for informational purpose.
+   * Error to display if connection string is not good.
    */
-  placeholder: string = '';
+  error = 'Connection string must contain {database} for your database';
 
   /**
    * Turns to true if the specified name for the new connection string already exists in that database.
@@ -82,13 +82,6 @@ export class ConnectionStringDialogComponent implements OnInit {
    * @callback checkName If name was already given, then check the name against recently selected database.
    */
   fillPlaceholder(dbKey: string) {
-    if (dbKey) {
-      for (const key in this.data.databases[dbKey]) {
-        if (key) {
-          this.placeholder = this.data.databases[dbKey][key];
-        }
-      }
-    }
     if (this.connectionStringForm.value.displayName !== '') {
       this.checkName();
     }

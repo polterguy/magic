@@ -16,8 +16,8 @@
     </mat-form-field>
     <mat-form-field appearance="outline" class="w-100" floatLabel="always">
       <mat-label>Connection string</mat-label>
-      <input matInput type="text" formControlName="connectionString" name="connectionString" required (keyup)="validateConnectionString()" [placeholder]="placeholder" />
-      <mat-error>Connection string is not valid.</mat-error>
+      <input matInput type="text" formControlName="connectionString" name="connectionString" required (keyup)="validateConnectionString()" placeholder="Server=yourdomain.com;Database={database};Uid=root;Pwd=your_password;SslMode=Preferred;Old Guids=true;" />
+      <mat-error>{{error}}</mat-error>
     </mat-form-field>
   </div>
   <div mat-dialog-actions [align]="'end'">
