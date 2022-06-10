@@ -201,7 +201,7 @@ export class TasksComponent implements OnInit {
       task.task.id,
       task.model.hyperlambda,
       task.task.description).subscribe({
-        next: () => this.feedbackService.showInfoShort('Task successfully updated'),
+        next: () => this.feedbackService.showInfoShort('Task successfully saved'),
         error: (error: any) => this.feedbackService.showError(error)});
   }
 
