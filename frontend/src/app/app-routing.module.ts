@@ -120,7 +120,7 @@ const routes: Routes = [
     data: { check: (access: AccessModel) : boolean => access.eval.execute }
   },
   {
-    path: 'crudifier',
+    path: 'crud-generator',
     component: CrudifierComponent,
     canActivate: [AccessGuard],
     data: { check: (access: AccessModel) : boolean => access.crud.generate_crud || access.crud.generate_sql || access.crud.generate_frontend }
