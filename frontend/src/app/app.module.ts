@@ -171,6 +171,7 @@ import { MainChartComponent } from './components/dashboard/component/main-chart/
 import { SqlWarningComponent } from './components/tools/sql/sql-warning/sql-warning.component';
 import { ConnectionStringDialogComponent } from './components/management/config/connection-string-dialog/connection-string-dialog.component';
 import { ConfirmUninstallDialogComponent } from './components/management/plugins/confirm-uninstall-dialog/confirm-uninstall-dialog.component';
+import { IntroGuideComponent } from './components/utilities/intro-guide/intro-guide.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -275,7 +276,8 @@ import { ConfirmUninstallDialogComponent } from './components/management/plugins
     MainChartComponent,
     SqlWarningComponent,
     ConnectionStringDialogComponent,
-    ConfirmUninstallDialogComponent
+    ConfirmUninstallDialogComponent,
+    IntroGuideComponent
   ],
   imports: [
     FormsModule,
