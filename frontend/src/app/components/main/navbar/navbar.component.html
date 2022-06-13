@@ -481,7 +481,7 @@
     </mat-expansion-panel>
 
     <!-- Onboarding -->
-    <mat-expansion-panel class="mat-elevation-z0" hideToggle>
+    <mat-expansion-panel class="mat-elevation-z0" hideToggle *ngIf="backendService.active?.token">
       <mat-expansion-panel-header
         #panelB (click)="panelB._toggle();showHelp()"
         [matTooltipDisabled]="navbarService.expanded"

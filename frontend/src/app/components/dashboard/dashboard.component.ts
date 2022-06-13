@@ -73,6 +73,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.authSubscriber = this.backendService.authenticatedChanged.subscribe((authenticated: boolean) => {
       if (authenticated && this.backendService.active?.token?.in_role('root')) {
         this.getSystemReport();
+        this.showIntroDialog();
       }
     });
     this.activeBackendSubscriber = this.backendService.activeBackendChanged.subscribe(() => {
@@ -81,7 +82,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.showIntroDialog();
   }
 
   /**
