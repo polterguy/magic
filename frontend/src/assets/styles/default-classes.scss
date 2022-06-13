@@ -4,7 +4,8 @@
 .h-100 {
   height: 100%;
 }
-.text-accent { color: $magic_accent; }
+.light .text-accent { color: $magic_primary; }
+.dark .text-accent { color: $magic_accent_lighter; }
 .text-warning { color: $magic_warning; }
 .text-capitalized {
   text-transform: capitalize;

@@ -63,13 +63,7 @@
 
     </ng-container>
 
-    <div class="help-btn">
-      <button
-        mat-icon-button
-        (click)="showHelp()" tabindex="-1">
-        <mat-icon>help</mat-icon>
-      </button>
-    </div>
+
     <div class="toggle-btn">
       <button
         mat-icon-button
@@ -482,6 +476,22 @@
             <mat-icon>book</mat-icon>
             <span class="title">Getting started</span>
           </a>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+    </mat-expansion-panel>
+
+    <!-- Onboarding -->
+    <mat-expansion-panel class="mat-elevation-z0" hideToggle>
+      <mat-expansion-panel-header
+        #panelB (click)="panelB._toggle();showHelp()"
+        [matTooltipDisabled]="navbarService.expanded"
+        matTooltip="Onboarding"
+        matTooltipPosition="after"
+        routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{exact:true}">
+        <mat-panel-title>
+          <mat-icon>document_scanner</mat-icon>
+          <span class="title">Onboarding</span>
         </mat-panel-title>
       </mat-expansion-panel-header>
     </mat-expansion-panel>

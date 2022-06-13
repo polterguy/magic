@@ -18,6 +18,7 @@ $magic_primary_dark: #311B92;
 $magic_site_bg: #fdfdfd;
 $magic_primary: #3F51B5;
 $magic_accent: #1A237E;
+$magic_accent_lighter: #9fa8da;
 
 $magic_warning: #cb8058;
 $magic_success: #00b31e;
@@ -49,7 +50,7 @@ defining dark theme palette
 @import '@angular/material/theming';
 
 $dark-primary: mat.define-palette(mat.$indigo-palette, 500);
-$dark-accent:  mat-palette(mat.$indigo-palette, 900);
+$dark-accent:  mat-palette(mat.$indigo-palette, 200);
 $dark-warn:    mat-palette($mat-deep-orange);
 $dark-theme:   mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
 
