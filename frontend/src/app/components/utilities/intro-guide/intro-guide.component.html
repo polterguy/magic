@@ -1,0 +1,59 @@
+<h1 mat-dialog-title>Welcome to Magic!</h1>
+<div mat-dialog-content>
+  <mat-tab-group mat-align-tabs="center">
+    <mat-tab>
+      <div class="d-flex flex-sm-row flex-column h-100 align-items-center">
+        <div class="w-100 h-100 slide-1 bg-img p-5"></div>
+        <div class="p-4"></div>
+        <div class="w-100">
+          <h2 class="mb-4 guide-title">Install a new database</h2>
+          <p class="mat-subheading-1">If you're new to Magic, you'd probably like to start with some safe moves towards
+            CRUDifying your backend!</p>
+          <p class="mat-subheading-1 mb-5">As the first step let's install a new databse as a plugin.</p>
+          <button mat-stroked-button color="accent" routerLink="/plugins">Go to Plugins</button>
+        </div>
+      </div>
+      <ng-template mat-tab-label #first>
+        <mat-icon>fiber_manual_record</mat-icon> {{first.isActive}}
+      </ng-template>
+    </mat-tab>
+
+    <mat-tab>
+      <div class="d-flex flex-sm-row flex-column h-100 align-items-center">
+        <div class="w-100 h-100 slide-2 bg-img p-5"></div>
+        <div class="p-4"></div>
+        <div class="w-100">
+          <h2 class="mb-4 guide-title">Generate CRUD HTTP endpoints</h2>
+          <p class="mat-subheading-1">To start generating CRUD endpoints, in the CRUD generator page, select the newly installed database, and then choose one of the existing tables and CRUDify the table.</p>
+          <p class="mat-subheading-1 mb-5">You'll see Magic does the magic and automatically generates CRUD HTTP endpoints wrapping the selected database.</p>
+          <button mat-stroked-button color="accent" routerLink="/crud-generator">Go to CRUD generator</button>
+        </div>
+      </div>
+
+      <ng-template mat-tab-label #second>
+        <mat-icon>fiber_manual_record</mat-icon> {{second.isActive}}
+      </ng-template>
+    </mat-tab>
+
+    <mat-tab>
+      <div class="d-flex flex-sm-row flex-column h-100 align-items-center">
+        <div class="w-100 h-100 slide-3 bg-img p-5"></div>
+        <div class="p-4"></div>
+        <div class="w-100">
+          <h2 class="mb-4 guide-title">SQL studio</h2>
+          <p class="mat-subheading-1">Now you have CRUD HTTP endpoints generated for the new database. To see all the tables and test the SQL commands in action, navigate to the SQL studio page.</p>
+          <p class="mat-subheading-1 mb-5">Start playing around with the SQL commands and see how easy is to go forward from this point. Watch for the shortkeys on top right side of the web page, to use it even more simpler!</p>
+          <button mat-stroked-button color="accent" routerLink="/sql">Go to SQL studio</button>
+        </div>
+      </div>
+      <ng-template mat-tab-label #third>
+        <mat-icon>fiber_manual_record</mat-icon> {{third.isActive}}
+      </ng-template>
+    </mat-tab>
+  </mat-tab-group>
+
+
+</div>
+<div mat-dialog-actions>
+  <button mat-raised-button mat-dialog-close>Got it!</button>
+</div>
