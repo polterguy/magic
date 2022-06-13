@@ -15,6 +15,7 @@ import { FeedbackService } from '../../../../services/feedback.service';
 import json from '../../../utilities/codemirror/options/json.json'
 import { MatDialog } from '@angular/material/dialog';
 import { ConnectionStringDialogComponent } from '../connection-string-dialog/connection-string-dialog.component';
+import { SmtpDialogComponent } from '../smtp-dialog/smtp-dialog.component';
 
 /**
  * Component that allows user to edit his configuration file as raw JSON.
@@ -126,6 +127,24 @@ export class ConfigEditorComponent implements OnInit {
           selectedDb.magic.databases[result.selectedDb][result.name] = result.connectionString;
           this.config = JSON.stringify(selectedDb, null, 2)
           this.save();
+        }
+      });
+  }
+
+  manageSMTP() {
+    this.dialog
+      .open(SmtpDialogComponent, {
+        width: '650px',
+        data: JSON.parse(this.config).magic.smtp,
+      })
+      .afterClosed()
+      .subscribe((result: any) => {
+        if (result) {
+          let config = JSON.parse(this.config);
+          config.magic.smtp = result;
+          this.config = JSON.stringify(config, null, 2)
+          this.save();
+
         }
       });
   }
