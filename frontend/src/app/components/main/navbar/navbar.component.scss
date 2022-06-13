@@ -281,8 +281,9 @@ colour setting -- text & background
       &:hover {
         background-color: $magic_dark_alternative;
         .mat-expansion-panel-header-title,
-        .mat-expansion-indicator::after{
-          color: $magic_accent;
+        .mat-expansion-indicator::after,
+        a{
+          color: $magic_accent_lighter;
         }
       }
     }
@@ -290,11 +291,24 @@ colour setting -- text & background
       &::after{@include general_transition(0.5s);}
         &.active-link::after,
         &:hover::after{
-            color: $magic_accent;
+            color: $magic_accent_lighter;
         }
       &.active-link::before,
       &:hover::before {
         border-left: 2px solid $magic_accent;
+      }
+    }
+  }
+  .dark .sideClosed #sidebar {
+    .mat-list-option,
+    .mat-expansion-panel-header{
+      &.active-link,
+      &:hover{
+        .mat-expansion-panel-header-title,
+        .mat-list-text,
+        .mat-list-base .mat-list-item,
+        a,
+        .mat-expansion-indicator::after{color: $magic_accent_lighter;}
       }
     }
   }
