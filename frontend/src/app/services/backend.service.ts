@@ -224,7 +224,11 @@ export class BackendService {
             }
             this.backendsStorageService.persistBackends();
             this.ensureRefreshJWTTokenTimer(this.active);
-            this.active.createAccessRights();
+            if (!this.active.access.fetched) {
+              this.getEndpoints(this.active);
+            } else {
+              this.active.createAccessRights();
+            }
             this._authenticated.next(true);
             this.retrieveStatusAndVersion(this.active);
 
