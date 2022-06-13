@@ -120,16 +120,16 @@ export class MainComponent implements OnInit {
     if (this.backendService.active) {
       this.backendService.getRecaptchaKey();
 
-      this.backendService.verifyToken().subscribe((res: any) => {
-        if (!res) {
-          this.backendService.logout(false);
-        } else if (res.result && res.result !== 'success') {
-          this.backendService.logout(false);
-        } else if (res.message && res.message === 'Access denied') {
-          this.backendService.logout(false);
-        }
-
-      }, (error: any) => {this.backendService.logout(false);})
+      this.backendService.verifyToken().subscribe({
+        next: (res: any) => {
+          if (!res) {
+            this.backendService.logout(false);
+          } else if (res.result && res.result !== 'success') {
+            this.backendService.logout(false);
+          }
+        }, 
+        error: () => this.backendService.logout(false)
+      });
     }
   }
 

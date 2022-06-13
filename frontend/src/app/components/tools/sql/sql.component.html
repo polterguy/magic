@@ -103,7 +103,6 @@
 
                   <mat-form-field
                     class="w-100"
-                    matTooltip="Select type of database"
                     appearance="outline">
                     <mat-label>Database type</mat-label>
                     <mat-select
@@ -119,7 +118,6 @@
 
                   <mat-form-field
                     class="w-100"
-                    matTooltip="Connection string to use"
                     appearance="outline">
                     <mat-label>Connection string</mat-label>
                     <mat-select
@@ -135,7 +133,6 @@
 
                   <mat-form-field
                     class="w-100"
-                    matTooltip="Database to execute SQL towards"
                     appearance="outline">
                     <mat-label>Database name</mat-label>
                     <mat-select
@@ -158,7 +155,6 @@
 
                     <mat-checkbox
                       class="safe-mode"
-                      matTooltip="If checked will only return the first 200 records"
                       [(ngModel)]="safeMode"
                       [class.warning]="!safeMode"
                       (ngModelChange)="showWarning()">
@@ -185,7 +181,7 @@
                     <button
                       mat-icon-button
                       [disabled]="!backendService.active?.access.config.delete_cache_item"
-                      matTooltip="Empties your server side database declaration cache items and reloads page"
+                      matTooltip="Purge your server side cache"
                       (click)="refresh()">
                       <mat-icon>refresh</mat-icon>
                     </button>
@@ -196,7 +192,6 @@
                       id="loadButton"
                       [disabled]="!backendService.active?.access.sql.list_files"
                       mat-raised-button
-                      matTooltip="Load a previously saved SQL snippet"
                       (click)="load()"
                       class="w-100">
                       Load
@@ -208,14 +203,20 @@
                       id="loadButton"
                       [disabled]="!backendService.active?.access.sql.list_files"
                       mat-raised-button
-                      matTooltip="Import an SQL file"
                       (click)="sqlFileImport.click()"
                       class="w-100">
                       Import
                     </button>
-                    <input type="file" name="sqlFile" id="sqlFile" #sqlFileImport class="invisible" accept=".sql" 
-                    [(ngModel)]="sqlFile"
-                    (change)="uploadFiles($event)">
+
+                    <input
+                      type="file"
+                      name="sqlFile"
+                      id="sqlFile"
+                      #sqlFileImport
+                      class="invisible"
+                      accept=".sql" 
+                      [(ngModel)]="sqlFile"
+                      (change)="uploadFiles($event)">
  
                     <div class="p-1"></div>
 
@@ -223,7 +224,6 @@
                       id="saveButton"
                       [disabled]="!input.sql || !backendService.active?.access.sql.save_file"
                       mat-raised-button
-                      matTooltip="Save your current SQL to your snippets collection"
                       (click)="save()"
                       class="w-100">
                       Save
