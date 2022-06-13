@@ -172,6 +172,7 @@ import { SqlWarningComponent } from './components/tools/sql/sql-warning/sql-warn
 import { ConnectionStringDialogComponent } from './components/management/config/connection-string-dialog/connection-string-dialog.component';
 import { ConfirmUninstallDialogComponent } from './components/management/plugins/confirm-uninstall-dialog/confirm-uninstall-dialog.component';
 import { IntroGuideComponent } from './components/utilities/intro-guide/intro-guide.component';
+import { SmtpDialogComponent } from './components/management/config/smtp-dialog/smtp-dialog.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -277,7 +278,8 @@ import { IntroGuideComponent } from './components/utilities/intro-guide/intro-gu
     SqlWarningComponent,
     ConnectionStringDialogComponent,
     ConfirmUninstallDialogComponent,
-    IntroGuideComponent
+    IntroGuideComponent,
+    SmtpDialogComponent
   ],
   imports: [
     FormsModule,

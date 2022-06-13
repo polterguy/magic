@@ -34,6 +34,14 @@
     [disabled]="!backendService.active?.access.config.save"
     color="primary"
     class="mr-2"
+    (click)="manageSMTP()">
+    Manage SMTP
+  </button>
+  <button
+    mat-raised-button
+    [disabled]="!backendService.active?.access.config.save"
+    color="primary"
+    class="mr-2"
     (click)="addConnectionString()">
     Add connection string
   </button>
