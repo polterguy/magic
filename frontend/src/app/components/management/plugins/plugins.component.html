@@ -63,7 +63,7 @@
         </div>
       </div>
     </div>
-    <div class="row mb-4" *ngIf="manifests && getInstalledApps().length > 0">
+    <div class="row" *ngIf="manifests && getInstalledApps().length > 0">
       <div class="col-12 mb-3">
         <div class="d-flex align-items-center justify-content-between has-border">
           <p class="my-0 section-title mat-body-2">Installed plugins</p>
@@ -98,7 +98,7 @@
         </mat-card>
       </div>
     </div>
-    <div class="row" *ngIf="getUniInstalledApps() && getUniInstalledApps().length > 0">
+    <div class="row pb-5" *ngIf="getUniInstalledApps() && getUniInstalledApps().length > 0">
       <div class="col-12 my-3">
         <div class="d-flex align-items-center justify-content-between has-border">
           <p class="my-0 section-title mat-body-2">Available plugins</p>
