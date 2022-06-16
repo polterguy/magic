@@ -20,7 +20,6 @@ jobs:
         cd ./backend
         docker build -t aistamagic/magic-backend:latest-ci -f ./Dockerfile .
         docker push aistamagic/magic-backend:latest-ci
-
     - name: Updating Docker images on DEV machine
       uses: appleboy/ssh-action@master
       with:
