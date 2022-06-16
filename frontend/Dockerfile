@@ -3,7 +3,7 @@
 FROM node:16 as node
 WORKDIR /app
 COPY . .
-RUN npm install
+RUN npm install --force
 RUN npm run build-prod
 
 # Stage 2
