@@ -14,8 +14,9 @@ Magic works by reading meta data from your database, for then to automatically g
 complete backend web API for you. The resuling CRUD API is secured automatically, and Magic takes care
 of authentication, authorisation, user management, and everything else that's difficult.
 
-## Installation
+## Getting started
 
+* [Register in our hosted solution in seconds](https://aista.com?secret=github)
 * [Download and install Magic Cloud](https://aista.com)
 
 ## License
