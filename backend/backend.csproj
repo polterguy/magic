@@ -17,8 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="magic.library" Version="13.4.25" />
-    <PackageReference Include="magic.lambda.system" Version="13.4.0" />
+    <PackageReference Include="magic.library" Version="14.0.0" />
+    <PackageReference Include="magic.lambda.system" Version="14.0.0" />
   </ItemGroup>
 
 </Project>
