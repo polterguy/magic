@@ -400,6 +400,9 @@ colour setting -- text & background
     }
   }
 }
-::ng-deep .mat-sidenav.full-width-sidebar {
+
+/* Animation fix preventing flickering on iPhone and Safari  */
+::ng-deep .mat-sidenav.full-width-sidebar,
+::ng-deep .mat-drawer.full-width-sidebar {
   transition: none;
 }
