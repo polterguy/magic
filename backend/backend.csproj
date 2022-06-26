@@ -18,7 +18,8 @@
 
   <ItemGroup>
     <PackageReference Include="magic.library" Version="14.0.0" />
-    <PackageReference Include="magic.lambda.system" Version="14.0.0" />
+    <PackageReference Include="Microsoft.Win32.SystemEvents" Version="4.5.0" />
+    <PackageReference Include="System.Drawing.Common" Version="4.5.0" />
   </ItemGroup>
 
 </Project>
