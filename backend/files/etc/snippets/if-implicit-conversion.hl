@@ -1,0 +1,8 @@
+.result
+.foo:whatever
+if:x:-
+   set-value:x:@.result
+      .:Yup!
+else
+   set-value:x:@.result
+      .:Nope!
