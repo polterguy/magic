@@ -111,6 +111,7 @@ data.connect:magic
          values
             username:x:@.arguments/*/username
             password:x:@crypto.password.hash
+
    .catch
 
       // Doing some basic logging, and returning result to caller.
@@ -260,6 +261,13 @@ if
          set-value:x:@.result
             .:email-sent-to-moderator
 
+      // Creating our 6 digit code.
+      .code
+      set-value:x:@.code
+         strings.substring:x:@.token
+            .:int:0
+            .:int:6
+
       // Now we can send an email to user.
       unwrap:x:+/**
       signal:magic.emails.send
@@ -267,6 +275,7 @@ if
          template-file:x:@.template
          substitutes
             url:x:@.url
+            code:x:@.code
          mime-type:text/html
          email:x:@.recipient
          name:x:@.extra/*/name/*/value
