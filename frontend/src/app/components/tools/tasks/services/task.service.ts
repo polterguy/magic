@@ -106,6 +106,18 @@ export class TaskService {
   }
 
   /**
+   * Updates an existing task according to the specified arguments.
+   * 
+   * @param id Unique name or ID of task to execute
+   */
+   execute(id: string) {
+    return this.httpService.post<Response>(
+      '/magic/system/tasks/execute', {
+        id
+    });
+  }
+
+  /**
    * Deletes the specified id task.
    * 
    * @param id Unique name or ID of task to delete

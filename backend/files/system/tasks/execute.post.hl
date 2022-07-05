@@ -1,0 +1,16 @@
+
+// Executes an existing task.
+.arguments
+   id:string
+.description:Executes an existing task
+.type:internal
+
+// Ensures user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Executing task.
+tasks.execute:x:@.arguments/*/id
+
+// Returning success to caller.
+return
+   result:success

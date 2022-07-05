@@ -206,6 +206,17 @@ export class TasksComponent implements OnInit {
   }
 
   /**
+   * Invoked when user wants to execute a task.
+   * 
+   * @param task Task caller wants to save
+   */
+   execute(task: TaskEx) {
+    this.taskService.execute(task.task.id).subscribe({
+      next: () => this.feedbackService.showInfoShort('Task successfully executed'),
+      error: (error: any) => this.feedbackService.showError(error)});
+  }
+
+  /**
    * Invoked when user wants to create a new task.
    */
   create() {
