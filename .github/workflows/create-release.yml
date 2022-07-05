@@ -25,8 +25,8 @@ jobs:
         cd ..
         cd ./backend
         docker build -t aistamagic/magic-backend:latest -f ./Dockerfile .
-        docker build -t aistamagic/magic-backend:${{ steps.get_version.outputs.VERSION }} -f ./Dockerfile .
         docker push aistamagic/magic-backend:latest
+        docker build -t aistamagic/magic-backend:${{ steps.get_version.outputs.VERSION }} -f ./Dockerfile .
         docker push aistamagic/magic-backend:${{ steps.get_version.outputs.VERSION }}
         dotnet remove reference magic.lambda.system
         docker build -t aistamagic/magic-backend:min-${{ steps.get_version.outputs.VERSION }} -f ./Dockerfile .
