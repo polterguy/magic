@@ -103,6 +103,7 @@
 
                       <button
                         mat-icon-button
+                        matTooltip="Schedule task"
                         [disabled]="!backendService.active?.access.tasks.addDue"
                         (click)="schedule(el.task)">
                         <mat-icon>more_time</mat-icon>
@@ -110,6 +111,15 @@
 
                       <button
                         mat-icon-button
+                        matTooltip="Execute task"
+                        [disabled]="!backendService.active?.access.tasks.update"
+                        (click)="execute(el)">
+                        <mat-icon>bolt</mat-icon>
+                      </button>
+
+                      <button
+                        mat-icon-button
+                        matTooltip="Save task"
                         [disabled]="!backendService.active?.access.tasks.update"
                         (click)="update(el)">
                         <mat-icon>save</mat-icon>
