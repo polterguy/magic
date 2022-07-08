@@ -103,6 +103,7 @@ try
             throw:Foo
 
    .catch
+
       throw:Could not connect to database, please double check your connection string
          public:true
          status:400
@@ -208,7 +209,7 @@ try
                sqlite.connect:[generic|magic]
                   sqlite.execute:x:@io.file.load
 
-         // Inserting root user, defaulting username to 'root'.
+         // Inserting root user.
          unwrap:x:+/*
          signal:magic.auth.create-user
             username:x:@.arguments/*/username
@@ -217,6 +218,9 @@ try
             database-type:x:@.arguments/*/settings/*/magic/*/databases/*/default
             roles
                .:root
+            extra
+               source:setup
+
    else
 
       /*
