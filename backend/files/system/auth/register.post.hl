@@ -115,7 +115,7 @@ data.connect:magic
    .catch
 
       // Doing some basic logging, and returning result to caller.
-      log.info:User tried to register consecutive times
+      log.error:User tried to register consecutive times
          username:x:@.arguments/*/username
       return
          result:already-registered
@@ -183,7 +183,7 @@ if
             set-value:x:@.subject
                get-value:x:@.arguments/*/subject
 
-      // Making sure we store the fact that a verify email address link was sent to user.
+      // Making sure we store the fact that a verify email address link was sent.
       set-value:x:@.email-sent
          .:Yes
 
