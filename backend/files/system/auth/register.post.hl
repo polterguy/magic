@@ -120,6 +120,151 @@ data.connect:magic
       return
          result:already-registered
 
+   /*
+    * Response result to return to user, which varies according
+    * to whether or not an email was sent, etc.
+    */
+   .result:success
+
+   /*
+    * Sends an email to user asking him or her to confirm their email address.
+    * 
+    * Notice, we only do this if we can find SMTP settings in our configuration.
+    */
+   .email-sent:No
+   config.get:"magic:smtp:host"
+   if
+      and
+         exists:x:@.extra/*/email/*/value
+         not
+            eq
+               get-value:x:@config.get
+               .
+         not
+            eq
+               get-value:x:@config.get
+               .:
+         exists:x:@.arguments/*/frontendUrl
+      .lambda
+
+         // Default template to use for sending user a "verify email address" link.
+         .template:/system/auth/email-templates/register.html
+
+         // Checking if caller supplied a different email template to use.
+         if
+            exists:x:@.arguments/*/template
+            .lambda
+               set-value:x:@.template
+                  get-value:x:@.arguments/*/template
+
+         // Default subject line for verify email address email.
+         .subject:Thank you for registering with Aista Magic Cloud
+
+         // Checking if caller supplied a different email subject to use.
+         if
+            exists:x:@.arguments/*/subject
+            .lambda
+               set-value:x:@.subject
+                  get-value:x:@.arguments/*/subject
+
+         // Making sure we store the fact that a verify email address link was sent.
+         set-value:x:@.email-sent
+            .:Yes
+
+         /*
+          * Hashing the JWT secret combined with the user's selected username,
+          * making sure we use the result as a 'secret' URL query
+          * parameter for the user's 'confirm email address' link.
+          */
+         .token
+         strings.concat
+            get-value:x:@.arguments/*/username
+            config.get:"magic:auth.secret"
+         set-value:x:@.token
+            crypto.hash:x:@strings.concat
+
+         // Dynamically building our confirm email URL.
+         strings.concat
+            .:"https://"
+            request.host
+         .url
+         set-value:x:@.url
+            strings.concat
+               get-value:x:@.arguments/*/frontendUrl
+               .:?token=
+               get-value:x:@.token
+               .:&username=
+               strings.url-encode:x:@.arguments/*/username
+               .:&url=
+               strings.url-encode:x:@strings.concat/@strings.concat
+
+         /*
+          * Checking if site is configured such that users needs to
+          * be manually enabled, at which point we send the "confirm registration email"
+          * to the "confirm-email" value from the configuration settings,
+          * instead of the user's registered email address.
+          * 
+          * Notice, by default this email is sent to registered user, but if
+          * overridden in the configuration to an explicit email, the explicit email
+          * address is used instead. Which allows for a specific user to manually
+          * having to enable users that are registering at the site for all practical
+          * concerns.
+          */
+         .recipient
+         set-value:x:@.recipient
+            config.get:"magic:auth:registration:confirm-email"
+         if
+            or
+               eq
+                  get-value:x:@.recipient
+                  .
+               eq
+                  get-value:x:@.recipient
+                  .:
+            .lambda
+
+               /*
+                * No "confirm-email" value found in configuration, hence sending
+                * "confirm user email" to user himself.
+                */
+               set-value:x:@.recipient
+                  get-value:x:@.extra/*/email/*/value
+
+               /*
+                * Making sure we communicate to caller that a
+                * confirm email address email was sent.
+                */
+               set-value:x:@.result
+                  .:confirm-email-address-email-sent
+
+         else
+
+            /*
+             * Making sure we communicate to caller that a
+             * confirm email address email was sent.
+             */
+            set-value:x:@.result
+               .:email-sent-to-moderator
+
+         // Creating our 6 digit code.
+         .code
+         set-value:x:@.code
+            strings.substring:x:@.token
+               .:int:0
+               .:int:6
+
+         // Now we can send an email to user.
+         unwrap:x:+/**
+         signal:magic.emails.send
+            subject:x:@.subject
+            template-file:x:@.template
+            substitutes
+               url:x:@.url
+               code:x:@.code
+            mime-type:text/html
+            email:x:@.recipient
+            name:x:@.extra/*/name/*/value
+
    // Associating user with correct role.
    data.create
       table:users_roles
@@ -136,158 +281,14 @@ data.connect:magic
             type:x:@.dp/#/*/type
             value:x:@.dp/#/*/value
 
-/*
- * Response result to return to user, which varies according
- * to whether or not an email was sent, etc.
- */
-.result:success
+   // Logging the fact that we registered a new user.
+   request.ip
+   log.info:Successfully registered a new user
+      username:x:@.arguments/*/username
+      verify-email-sent:x:@.email-sent
+      ip:x:@request.ip
 
-/*
- * Sends an email to user asking him or her to confirm their email address.
- * 
- * Notice, we only do this if we can find SMTP settings in our configuration.
- */
-.email-sent:No
-config.get:"magic:smtp:host"
-if
-   and
-      exists:x:@.extra/*/email/*/value
-      not
-         eq
-            get-value:x:@config.get
-            .
-      not
-         eq
-            get-value:x:@config.get
-            .:
-      exists:x:@.arguments/*/frontendUrl
-   .lambda
-
-      // Default template to use for sending user a "verify email address" link.
-      .template:/system/auth/email-templates/register.html
-
-      // Checking if caller supplied a different email template to use.
-      if
-         exists:x:@.arguments/*/template
-         .lambda
-            set-value:x:@.template
-               get-value:x:@.arguments/*/template
-
-      // Default subject line for verify email address email.
-      .subject:Thank you for registering with Aista Magic Cloud
-
-      // Checking if caller supplied a different email subject to use.
-      if
-         exists:x:@.arguments/*/subject
-         .lambda
-            set-value:x:@.subject
-               get-value:x:@.arguments/*/subject
-
-      // Making sure we store the fact that a verify email address link was sent.
-      set-value:x:@.email-sent
-         .:Yes
-
-      /*
-       * Hashing the JWT secret combined with the user's selected username,
-       * making sure we use the result as a 'secret' URL query
-       * parameter for the user's 'confirm email address' link.
-       */
-      .token
-      strings.concat
-         get-value:x:@.arguments/*/username
-         config.get:"magic:auth.secret"
-      set-value:x:@.token
-         crypto.hash:x:@strings.concat
-
-      // Dynamically building our confirm email URL.
-      strings.concat
-         .:"https://"
-         request.host
-      .url
-      set-value:x:@.url
-         strings.concat
-            get-value:x:@.arguments/*/frontendUrl
-            .:?token=
-            get-value:x:@.token
-            .:&username=
-            strings.url-encode:x:@.arguments/*/username
-            .:&url=
-            strings.url-encode:x:@strings.concat/@strings.concat
-
-      /*
-       * Checking if site is configured such that users needs to
-       * be manually enabled, at which point we send the "confirm registration email"
-       * to the "confirm-email" value from the configuration settings,
-       * instead of the user's registered email address.
-       * 
-       * Notice, by default this email is sent to registered user, but if
-       * overridden in the configuration to an explicit email, the explicit email
-       * address is used instead. Which allows for a specific user to manually
-       * having to enable users that are registering at the site for all practical
-       * concerns.
-       */
-      .recipient
-      set-value:x:@.recipient
-         config.get:"magic:auth:registration:confirm-email"
-      if
-         or
-            eq
-               get-value:x:@.recipient
-               .
-            eq
-               get-value:x:@.recipient
-               .:
-         .lambda
-
-            /*
-             * No "confirm-email" value found in configuration, hence sending
-             * "confirm user email" to user himself.
-             */
-            set-value:x:@.recipient
-               get-value:x:@.extra/*/email/*/value
-
-            /*
-             * Making sure we communicate to caller that a
-             * confirm email address email was sent.
-             */
-            set-value:x:@.result
-               .:confirm-email-address-email-sent
-      else
-
-         /*
-          * Making sure we communicate to caller that a
-          * confirm email address email was sent.
-          */
-         set-value:x:@.result
-            .:email-sent-to-moderator
-
-      // Creating our 6 digit code.
-      .code
-      set-value:x:@.code
-         strings.substring:x:@.token
-            .:int:0
-            .:int:6
-
-      // Now we can send an email to user.
-      unwrap:x:+/**
-      signal:magic.emails.send
-         subject:x:@.subject
-         template-file:x:@.template
-         substitutes
-            url:x:@.url
-            code:x:@.code
-         mime-type:text/html
-         email:x:@.recipient
-         name:x:@.extra/*/name/*/value
-
-// Logging the fact that we registered a new user.
-request.ip
-log.info:Successfully registered a new user
-   username:x:@.arguments/*/username
-   verify-email-sent:x:@.email-sent
-   ip:x:@request.ip
-
-// Returns success to caller.
-unwrap:x:+/*
-return-nodes
-   result:x:@.result
+   // Returns success to caller.
+   unwrap:x:+/*
+   return-nodes
+      result:x:@.result
