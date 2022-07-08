@@ -43,3 +43,28 @@ slots.create:magic.auth.create-user
             values
                role:x:@.dp/#
                user:x:@.arguments/*/username
+
+      // Inserting optionally supplied extra information.
+      if
+         exists:x:@.arguments/*/extra/*
+         .lambda
+
+            // Looping through each extra child specified.
+            for-each:x:@.arguments/*/extra/*
+
+               // Temporary variables.
+               .type
+               .value
+               set-value:x:@.type
+                  get-name:x:@.dp/#
+               set-value:x:@.value
+                  get-value:x:@.dp/#
+
+               // Then inserting into users_extra an association between user and extra value.
+               data.create
+                  database-type:x:@.arguments/*/database-type
+                  table:users_extra
+                  values
+                     user:x:@.arguments/*/username
+                     type:x:@.type
+                     value:x:@.value
