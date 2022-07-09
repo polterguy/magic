@@ -17,10 +17,11 @@ export class NewFieldKeyModel {
   database: any;
   type: string;
   field: string;
-  datatype: string;
+  datatype: any;
   foreignTable: string;
   foreignField: string;
   fkName: string;
+  size: number;
 }
 
 /**
@@ -32,6 +33,46 @@ export class NewFieldKeyModel {
   styleUrls: ['./new-field-key.component.scss']
 })
 export class NewFieldKeyComponent {
+
+  // Datatypes specific for MySQL.
+  private mySqlDataTypes = [
+    {name: 'char', size: true},
+    {name: 'varchar', size: true},
+    {name: 'binary', size: true},
+    {name: 'varbinary', size: true},
+    {name: 'tinyblob', size: false},
+    {name: 'tinytext', size: false},
+    {name: 'text', size: true},
+    {name: 'blob', size: true},
+    {name: 'mediumtext', size: false},
+    {name: 'mediumblob', size: false},
+    {name: 'longtext', size: false},
+    {name: 'longblob', size: false},
+    {name: 'bit', size: true},
+    {name: 'tinyint', size: true},
+    {name: 'bool', size: false},
+    {name: 'boolean', size: false},
+    {name: 'smallint', size: true},
+    {name: 'mediumint', size: true},
+    {name: 'int', size: true},
+    {name: 'integer', size: true},
+    {name: 'bigint', size: true},
+    {name: 'double', size: true},
+    {name: 'decimal', size: true},
+    {name: 'dec', size: true},
+    {name: 'date', size: false},
+    {name: 'datetime', size: false},
+    {name: 'timestamp', size: false},
+    {name: 'time', size: false},
+    {name: 'year', size: false},
+  ];
+
+  // Datatypes specific for SQLite.
+  private sqlIteDataTypes = [
+    {name: 'integer'},
+    {name: 'varchar'},
+    {name: 'text'},
+  ];
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: NewFieldKeyModel) { }
 
@@ -49,22 +90,10 @@ export class NewFieldKeyComponent {
     switch (this.data.databaseType) {
 
       case 'mysql':
-        return [
-          'varchar',
-          'boolean',
-          'smallint',
-          'int',
-          'decimal',
-          'datetime',
-          'timestamp',
-        ];
+        return this.mySqlDataTypes;
 
       case 'sqlite':
-        return [
-          'integer',
-          'varchar',
-          'text',
-        ];
+        return this.sqlIteDataTypes;
       }
   }
 
