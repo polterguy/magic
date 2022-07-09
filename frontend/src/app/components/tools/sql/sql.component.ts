@@ -6,6 +6,7 @@
 // Angular and system imports.
 import { Clipboard } from '@angular/cdk/clipboard';
 import { MatDialog } from '@angular/material/dialog';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 
 // Utility imports.
@@ -17,16 +18,16 @@ import { Databases } from 'src/app/models/databases.model';
 import { CacheService } from 'src/app/services/cache.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from '../../../services/feedback.service';
+import { SqlWarningComponent } from './sql-warning/sql-warning.component';
+import { NewFieldKeyComponent } from './new-field-key/new-field-key.component';
 import { DefaultDatabaseType } from '../../../models/default-database-type.model';
 import { SaveSqlDialogComponent } from './save-sql-dialog/save-sql-dialog.component';
 import { LoadSqlDialogComponent } from './load-sql-dialog/load-sql-dialog.component';
+import { TableNameDialogComponent } from './table-name-dialog/table-name-dialog.component';
 import { Model } from '../../utilities/codemirror/codemirror-sql/codemirror-sql.component';
 
 // CodeMirror options.
 import sql from '../../utilities/codemirror/options/sql.json'
-import { MatBottomSheet } from '@angular/material/bottom-sheet';
-import { SqlWarningComponent } from './sql-warning/sql-warning.component';
-import { TableNameDialogComponent } from './table-name-dialog/table-name-dialog.component';
 
 /**
  * SQL component allowing user to execute arbitrary SQL statements towards his or her database.
@@ -730,6 +731,58 @@ export class SqlComponent implements OnInit {
           },
           error: (error: any) => this.feedbackService.showError(error)
       });
+    });
+  }
+
+  /**
+   * Creates a new field or key for specified table.
+   * 
+   * @param table Table to create field or key for
+   */
+  public createFieldKey(table: any) {
+    const dialogRef = this.dialog.open(NewFieldKeyComponent, {
+      width: '550px',
+      data: {
+        databaseType: this.input.databaseType,
+        connectionString: this.input.connectionString,
+        table: table.name,
+        database: this.databaseDeclaration.databases.filter((x: any) => x.name === this.input.database)[0],
+        type: 'field',
+      }
+    });
+    dialogRef.afterClosed().subscribe((result: any) => {
+      switch (result.type) {
+
+        case 'field':
+          this.sqlService.addColumn(
+            result.databaseType,
+            result.connectionString,
+            result.database.name,
+            result.table,
+            result.name,
+            result.datatype).subscribe({
+            next: () => {
+              this.feedbackService.showInfo('Column was successfully added to table');
+              this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: any) => {
+                this.databaseDeclaration = databases;
+                const tables = [];
+                this.activeTables = databases.databases.filter((x: any) => x.name === this.input.database)[0].tables;
+                for (const idxTable of this.activeTables) {
+                  tables[idxTable.name] = idxTable.columns.map((x: any) => x.name);
+                }
+                this.databases = databases.databases.map((x: any) => x.name);
+                this.input.options.hintOptions = {
+                  tables: tables,
+                };
+              });
+            },
+            error: (error) => this.feedbackService.showError(error)
+          });
+          break;
+
+        case 'key':
+          break;
+      }
     });
   }
 }

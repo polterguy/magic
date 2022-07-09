@@ -1,0 +1,76 @@
+<form>
+
+  <div mat-dialog-title>
+    Add to {{this.data.table}}
+  </div>
+
+  <div mat-dialog-content>
+
+    <mat-form-field
+      class="w-100"
+      appearance="outline">
+      <mat-label>What to add</mat-label>
+      <mat-select name="type" [(ngModel)]="data.type">
+        <mat-option value="field">Field</mat-option>
+        <mat-option value="key">Foreign key</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <div *ngIf="data.type === 'field'">
+
+      <mat-form-field
+        class="w-100"
+        appearance="outline">
+        <mat-label>Name of field</mat-label>
+        <input
+          matInput
+          type="text"
+          autocomplete="off"
+          name="name"
+          [(ngModel)]="data.name">
+      </mat-form-field>
+
+      <mat-form-field
+        class="w-100"
+        appearance="outline">
+        <mat-label>Data type</mat-label>
+        <mat-select name="datatype" [(ngModel)]="data.datatype">
+          <mat-option
+            *ngFor="let idxDatatype of getDataTypes()"
+            [value]="idxDatatype">{{idxDatatype}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+    </div>
+
+    <div *ngIf="data.type === 'key'">
+
+      <mat-form-field
+        class="w-100"
+        appearance="outline">
+        <mat-label>Field</mat-label>
+        <mat-select name="fieldName" [(ngModel)]="data.field">
+          <mat-option
+            *ngFor="let idxField of getFields()"
+            [value]="idxField.name">{{idxField.name}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+    </div>
+
+  </div>
+
+  <div
+    mat-dialog-actions
+    class="mat-dialog-actions">
+
+    <button
+      mat-raised-button
+      color="primary"
+      type="submit"
+      aria-label="Saves your SQL snippet"
+      [mat-dialog-close]="data">Create</button>
+
+  </div>
+
+</form>

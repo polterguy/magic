@@ -130,6 +130,33 @@ export class SqlService {
   }
 
   /**
+   * Adds the specified column to your table.
+   * 
+   * @param databaseType Type of database
+   * @param connectionString Connection string to use
+   * @param databaseName Database name
+   * @param tableName Table name
+   * @param columnName Column name
+   * @param columnType Type of column
+   */
+   addColumn(
+    databaseType: string,
+    connectionString: string,
+    databaseName: string,
+    tableName: string,
+    columnName: string,
+    columnType: string) {
+    return this.httpService.post<any>('/magic/system/sql/add-column', {
+      databaseType,
+      connectionString,
+      databaseName,
+      tableName,
+      columnName,
+      columnType,
+    });
+  }
+
+  /**
    * Deletes the specified column from your database.
    * 
    * @param databaseType Type of database
