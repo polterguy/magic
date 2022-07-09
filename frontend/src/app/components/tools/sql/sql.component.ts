@@ -763,7 +763,7 @@ export class SqlComponent implements OnInit {
               result.database.name,
               result.table,
               result.name,
-              result.datatype).subscribe({
+              result.datatype.name + (result.size ? ('(' + result.size + ')') : '')).subscribe({
               next: () => {
                 this.feedbackService.showInfo('Column was successfully added to table');
                 this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: any) => {

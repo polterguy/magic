@@ -38,8 +38,21 @@
         <mat-select name="datatype" [(ngModel)]="data.datatype">
           <mat-option
             *ngFor="let idxDatatype of getDataTypes()"
-            [value]="idxDatatype">{{idxDatatype}}</mat-option>
+            [value]="idxDatatype">{{idxDatatype.name}}</mat-option>
         </mat-select>
+      </mat-form-field>
+
+      <mat-form-field
+        *ngIf="data.datatype?.size"
+        class="w-100"
+        appearance="outline">
+        <mat-label>Size of field</mat-label>
+        <input
+          matInput
+          type="number"
+          autocomplete="off"
+          name="size"
+          [(ngModel)]="data.size">
       </mat-form-field>
 
     </div>
