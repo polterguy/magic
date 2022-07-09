@@ -145,7 +145,8 @@ export class SqlService {
     databaseName: string,
     tableName: string,
     columnName: string,
-    columnType: string) {
+    columnType: string,
+    defaultValue: string) {
     return this.httpService.post<any>('/magic/system/sql/add-column', {
       databaseType,
       connectionString,
@@ -153,6 +154,7 @@ export class SqlService {
       tableName,
       columnName,
       columnType,
+      defaultValue,
     });
   }
 
