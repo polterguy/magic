@@ -764,7 +764,7 @@ export class SqlComponent implements OnInit {
               result.database.name,
               result.table,
               result.name,
-              result.datatype.name + (result.size ? ('(' + result.size + ')') : ''),
+              result.datatype.name + (result.size ? ('(' + result.size + ')') : '') + (result.acceptNull ? ' not null' : ''),
               result.defaultValue).subscribe({
               next: () => {
                 this.feedbackService.showInfo('Column was successfully added to table');

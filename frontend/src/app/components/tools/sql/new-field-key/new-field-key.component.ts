@@ -121,10 +121,10 @@ export class NewFieldKeyComponent {
     switch (this.data.type) {
 
       case 'field':
-        return this.data.name && this.data.datatype;
+        return this.data.name && this.data.datatype && (!this.data.datatype.size || this.data.size);
 
       case 'key':
-        return this.data.field && this.data.foreignTable && this.data.foreignField;
+        return this.data.field && this.data.foreignTable && this.data.foreignField && (!this.data.datatype.size || this.data.size);
     }
   }
 }
