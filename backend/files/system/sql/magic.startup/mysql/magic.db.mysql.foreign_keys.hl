@@ -44,7 +44,7 @@ slots.create:magic.db.mysql.foreign_keys
 
       // Dynamically creating our SQL.
       mysql.select:@"select
-   `column_name` as `column`, `referenced_table_name` as foreign_table, `referenced_column_name`  as foreign_column 
+   `column_name` as `column`, `referenced_table_name` as foreign_table, `referenced_column_name` as foreign_column, `constraint_name` as name
    from `information_schema`.`key_column_usage`
    where `constraint_schema` = schema() and
       `table_name` = @table and
