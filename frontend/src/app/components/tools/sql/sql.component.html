@@ -362,6 +362,12 @@
                 <mat-card-content class="h-100">
                   <h3 class="pl-3">{{idxTable.name}}</h3>
 
+                  <button
+                    mat-icon-button
+                    class="add">
+                    <mat-icon>add</mat-icon>
+                  </button>
+
                   <ul class="pl-3">
                     <li *ngFor="let idxColumn of idxTable.columns">
                       <mat-icon *ngIf="idxColumn.primary" class="key">vpn_key</mat-icon>
