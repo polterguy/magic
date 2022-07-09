@@ -4,7 +4,7 @@
  */
 
 // Angular and system imports.
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 /**
@@ -18,6 +18,9 @@ export class NewFieldKeyModel {
   type: string;
   field: string;
   datatype: string;
+  foreignTable: string;
+  foreignField: string;
+  fkName: string;
 }
 
 /**
@@ -28,13 +31,9 @@ export class NewFieldKeyModel {
   templateUrl: './new-field-key.component.html',
   styleUrls: ['./new-field-key.component.scss']
 })
-export class NewFieldKeyComponent implements OnInit {
+export class NewFieldKeyComponent {
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: NewFieldKeyModel) { }
-
-  ngOnInit() {
-    console.log(this.data);
-  }
 
   /**
    * Returns all fields in table to caller.
@@ -67,5 +66,19 @@ export class NewFieldKeyComponent implements OnInit {
           'text',
         ];
       }
+  }
+
+  /**
+   * Returns all tables in database to caller.
+   */
+  getTables() {
+    return this.data.database.tables.map((x: any) => x.name);
+  }
+
+  /**
+   * Returns all fields in specified table to caller.
+   */
+  getForeignField(table: string) {
+    return this.data.database.tables.filter((x: any) => x.name == table)[0].columns.map((x: any) => x.name);
   }
 }

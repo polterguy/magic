@@ -157,6 +157,36 @@ export class SqlService {
   }
 
   /**
+   * Adds the specified column to your table.
+   * 
+   * @param databaseType Type of database
+   * @param connectionString Connection string to use
+   * @param databaseName Database name
+   * @param tableName Table name
+   * @param columnName Column name
+   * @param foreignTable Foreign table
+   * @param foreignField Foreign table
+   */
+   addFk(
+    databaseType: string,
+    connectionString: string,
+    databaseName: string,
+    tableName: string,
+    columnName: string,
+    foreignTable: string,
+    foreignField: string) {
+    return this.httpService.post<any>('/magic/system/sql/add-fk', {
+      databaseType,
+      connectionString,
+      databaseName,
+      tableName,
+      columnName,
+      foreignTable,
+      foreignField,
+    });
+  }
+
+  /**
    * Deletes the specified column from your database.
    * 
    * @param databaseType Type of database

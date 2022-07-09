@@ -751,37 +751,66 @@ export class SqlComponent implements OnInit {
       }
     });
     dialogRef.afterClosed().subscribe((result: any) => {
-      switch (result.type) {
 
-        case 'field':
-          this.sqlService.addColumn(
-            result.databaseType,
-            result.connectionString,
-            result.database.name,
-            result.table,
-            result.name,
-            result.datatype).subscribe({
-            next: () => {
-              this.feedbackService.showInfo('Column was successfully added to table');
-              this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: any) => {
-                this.databaseDeclaration = databases;
-                const tables = [];
-                this.activeTables = databases.databases.filter((x: any) => x.name === this.input.database)[0].tables;
-                for (const idxTable of this.activeTables) {
-                  tables[idxTable.name] = idxTable.columns.map((x: any) => x.name);
-                }
-                this.databases = databases.databases.map((x: any) => x.name);
-                this.input.options.hintOptions = {
-                  tables: tables,
-                };
-              });
-            },
-            error: (error) => this.feedbackService.showError(error)
-          });
-          break;
+      // We should only create a new field/key if the modal dialog returns some data to us.
+      if (result) {
+        switch (result.type) {
 
-        case 'key':
-          break;
+          case 'field':
+            this.sqlService.addColumn(
+              result.databaseType,
+              result.connectionString,
+              result.database.name,
+              result.table,
+              result.name,
+              result.datatype).subscribe({
+              next: () => {
+                this.feedbackService.showInfo('Column was successfully added to table');
+                this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: any) => {
+                  this.databaseDeclaration = databases;
+                  const tables = [];
+                  this.activeTables = databases.databases.filter((x: any) => x.name === this.input.database)[0].tables;
+                  for (const idxTable of this.activeTables) {
+                    tables[idxTable.name] = idxTable.columns.map((x: any) => x.name);
+                  }
+                  this.databases = databases.databases.map((x: any) => x.name);
+                  this.input.options.hintOptions = {
+                    tables: tables,
+                  };
+                });
+              },
+              error: (error) => this.feedbackService.showError(error)
+            });
+            break;
+
+          case 'key':
+            this.sqlService.addFk(
+              result.databaseType,
+              result.connectionString,
+              result.database.name,
+              result.table,
+              result.field,
+              result.foreignTable,
+              result.foreignField).subscribe({
+              next: () => {
+                this.feedbackService.showInfo('Foreign key was successfully added to table');
+                this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: any) => {
+                  this.databaseDeclaration = databases;
+                  const tables = [];
+                  this.activeTables = databases.databases.filter((x: any) => x.name === this.input.database)[0].tables;
+                  for (const idxTable of this.activeTables) {
+                    tables[idxTable.name] = idxTable.columns.map((x: any) => x.name);
+                  }
+                  this.databases = databases.databases.map((x: any) => x.name);
+                  this.input.options.hintOptions = {
+                    tables: tables,
+                  };
+                });
+              },
+              error: (error) => this.feedbackService.showError(error)
+            });
+            break;
+        }
       }
     });
   }
