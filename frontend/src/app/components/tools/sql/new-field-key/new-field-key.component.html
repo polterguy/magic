@@ -50,6 +50,8 @@
         <input
           matInput
           type="number"
+          [min]="data.datatype.size.min"
+          [max]="data.datatype.size.max"
           autocomplete="off"
           name="size"
           [(ngModel)]="data.size">
