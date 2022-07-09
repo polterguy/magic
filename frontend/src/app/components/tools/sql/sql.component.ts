@@ -816,4 +816,37 @@ export class SqlComponent implements OnInit {
       }
     });
   }
+
+  /**
+   * Deletes the specified table.
+   * 
+   * @param table Table declaration
+   */
+  deleteTable(table: any) {
+    this.feedbackService.confirm('Warning!', 'Are you sure you want to drop table <strong>' + table.name + 
+    '</strong>? This action is permanent and you will lose all data in your table.', () => {
+      this.sqlService.dropTable(
+        this.input.databaseType,
+        this.input.connectionString,
+        this.input.database,
+        table.name).subscribe({
+          next: () => {
+            this.feedbackService.showInfo('Table was successfully dropped');
+            this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: any) => {
+              this.databaseDeclaration = databases;
+              const tables = [];
+              this.activeTables = databases.databases.filter((x: any) => x.name === this.input.database)[0].tables;
+              for (const idxTable of this.activeTables) {
+                tables[idxTable.name] = idxTable.columns.map((x: any) => x.name);
+              }
+              this.databases = databases.databases.map((x: any) => x.name);
+              this.input.options.hintOptions = {
+                tables: tables,
+              };
+            });
+          },
+          error: (error: any) => this.feedbackService.showError(error)
+        });
+    });
+  }
 }

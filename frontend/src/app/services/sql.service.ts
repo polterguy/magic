@@ -139,7 +139,33 @@ export class SqlService {
    * @param columnName Column name
    * @param columnType Type of column
    */
-   addColumn(
+  dropTable(
+    databaseType: string,
+    connectionString: string,
+    databaseName: string,
+    tableName: string) {
+    return this.httpService.delete<any>(
+      '/magic/system/sql/drop-table?databaseType=' +
+      encodeURIComponent(databaseType) +
+      '&connectionString=' +
+      encodeURIComponent(connectionString) +
+      '&databaseName=' + 
+      encodeURIComponent(databaseName) +
+      '&tableName=' +
+      encodeURIComponent(tableName));
+  }
+
+  /**
+   * Adds the specified column to your table.
+   * 
+   * @param databaseType Type of database
+   * @param connectionString Connection string to use
+   * @param databaseName Database name
+   * @param tableName Table name
+   * @param columnName Column name
+   * @param columnType Type of column
+   */
+  addColumn(
     databaseType: string,
     connectionString: string,
     databaseName: string,
@@ -169,7 +195,7 @@ export class SqlService {
    * @param foreignTable Foreign table
    * @param foreignField Foreign table
    */
-   addFk(
+  addFk(
     databaseType: string,
     connectionString: string,
     databaseName: string,
