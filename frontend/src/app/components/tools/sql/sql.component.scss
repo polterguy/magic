@@ -26,3 +26,34 @@ button {
     line-height: 24px;
   }
 }
+.db-table-design {
+  h3 {
+    font-weight: bold;
+  }
+  ul {
+    li {
+      list-style-type: none;
+    }
+  }
+  .aligned-with-icon{
+    position: relative;
+    top: -7px;
+  }
+  mat-icon.arrow {
+    margin-left: 5px;
+    margin-right: 5px;
+  }
+  mat-icon.key {
+    position: absolute;
+    left: 12px;
+    margin-top: 2px;
+    font-size: 14px;
+    color: #b0b0b0;
+  }
+  ul.foreign-keys {
+    margin-top: 0;
+    li {
+      height: 20px;
+    }
+  }
+}
