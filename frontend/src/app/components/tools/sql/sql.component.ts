@@ -71,6 +71,16 @@ export class SqlComponent implements OnInit {
   isBatch: boolean = false;
 
   /**
+   * If true, user wants to see DDL for currently selected database.
+   */
+  designer: boolean = false;
+
+  /**
+   * Tables in currently active database.
+   */
+  activeTables: any[];
+
+  /**
    * If true prevents returning more than 200 records from backend to avoid
    * exhausting server.
    */
@@ -115,8 +125,9 @@ export class SqlComponent implements OnInit {
       this.getConnectionStrings(defaultDatabaseType.default, (connectionStrings: string[]) => {
         this.getDatabases(defaultDatabaseType.default, 'generic', (databases: any) => {
           this.databaseDeclaration = databases;
-          const tables = {};
-          for (const idxTable of databases.databases.filter((x: any) => x.name === 'magic')[0].tables) {
+          const tables = [];
+          this.activeTables = databases.databases.filter((x: any) => x.name === 'magic')[0].tables;
+          for (const idxTable of this.activeTables) {
             tables[idxTable.name] = idxTable.columns.map((x: any) => x.name);
           }
           this.connectionStrings = connectionStrings;
@@ -207,10 +218,11 @@ export class SqlComponent implements OnInit {
    */
   databaseChanged() {
     const result = {};
-    const tables = this.databaseDeclaration.databases.filter((x: any) => x.name === this.input.database)[0].tables || [];
-    for (const idxTable of tables) {
+    this.activeTables = this.databaseDeclaration.databases.filter((x: any) => x.name === this.input.database)[0].tables || [];
+    for (const idxTable of this.activeTables) {
       result[idxTable.name] = (idxTable.columns?.map((x: any) => x.name) || []);
     }
+    console.log(this.activeTables);
     this.input.options.hintOptions.tables = result;
   }
 
