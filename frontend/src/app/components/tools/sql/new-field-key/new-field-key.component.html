@@ -57,6 +57,18 @@
           [(ngModel)]="data.size">
       </mat-form-field>
 
+      <mat-form-field
+        *ngIf="data.name"
+        class="w-100"
+        appearance="outline">
+        <mat-label>Default value</mat-label>
+        <input
+          matInput
+          autocomplete="off"
+          name="defaultValue"
+          [(ngModel)]="data.defaultValue">
+      </mat-form-field>
+
     </div>
 
     <div *ngIf="data.type === 'key'">
@@ -104,8 +116,14 @@
     mat-dialog-actions
     class="mat-dialog-actions">
 
+    <mat-slide-toggle
+      *ngIf="data.type === 'field'"
+      [(ngModel)]="data.acceptNull"
+      labelPosition="before">Nullable</mat-slide-toggle>
+
     <button
       mat-raised-button
+      [disabled]="!verifyInput()"
       color="primary"
       type="submit"
       aria-label="Saves your SQL snippet"

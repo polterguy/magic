@@ -748,6 +748,7 @@ export class SqlComponent implements OnInit {
         table: table.name,
         database: this.databaseDeclaration.databases.filter((x: any) => x.name === this.input.database)[0],
         type: 'field',
+        acceptNull: true,
       }
     });
     dialogRef.afterClosed().subscribe((result: any) => {
@@ -763,7 +764,8 @@ export class SqlComponent implements OnInit {
               result.database.name,
               result.table,
               result.name,
-              result.datatype.name + (result.size ? ('(' + result.size + ')') : '')).subscribe({
+              result.datatype.name + (result.size ? ('(' + result.size + ')') : ''),
+              result.defaultValue).subscribe({
               next: () => {
                 this.feedbackService.showInfo('Column was successfully added to table');
                 this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: any) => {

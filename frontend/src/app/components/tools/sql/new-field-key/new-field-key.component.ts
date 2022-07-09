@@ -16,12 +16,15 @@ export class NewFieldKeyModel {
   table: string;
   database: any;
   type: string;
+  name: string;
   field: string;
   datatype: any;
   foreignTable: string;
   foreignField: string;
   fkName: string;
   size: number;
+  defaultValue: string;
+  acceptNull: boolean;
 }
 
 /**
@@ -109,5 +112,19 @@ export class NewFieldKeyComponent {
    */
   getForeignField(table: string) {
     return this.data.database.tables.filter((x: any) => x.name == table)[0].columns.map((x: any) => x.name);
+  }
+
+  /**
+   * Returns true if input is valid.
+   */
+  verifyInput() {
+    switch (this.data.type) {
+
+      case 'field':
+        return this.data.name && this.data.datatype;
+
+      case 'key':
+        return this.data.field && this.data.foreignTable && this.data.foreignField;
+    }
   }
 }
