@@ -33,11 +33,23 @@ button {
   ul {
     li {
       list-style-type: none;
+      height: auto !important;
+      clear:both;
+      padding: 5px;
+      .delete {
+        position: relative !important;
+        float: right;
+        font-size: 20px;
+        color: #b0b0b0;
+        cursor: pointer;
+      }
+    }
+    li:hover {
+      background-color: rgba(0,0,0,.1);
     }
   }
-  .aligned-with-icon{
-    position: relative;
-    top: -7px;
+  .after {
+    padding-left: 34px;
   }
   mat-icon.arrow {
     margin-left: 5px;
@@ -51,9 +63,11 @@ button {
     color: #b0b0b0;
   }
   ul.foreign-keys {
-    margin-top: 0;
     li {
-      height: 20px;
+      mat-icon {
+        position: absolute;
+        margin-top: -2px;
+      }
     }
   }
 }

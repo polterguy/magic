@@ -366,15 +366,17 @@
                     <li *ngFor="let idxColumn of idxTable.columns">
                       <mat-icon *ngIf="idxColumn.primary" class="key">vpn_key</mat-icon>
                       <strong>{{idxColumn.name}}</strong> {{idxColumn.db}}
+                      <mat-icon role="button" class="delete" (click)="deleteColumn(idxTable, idxColumn)">delete</mat-icon>
                     </li>
                   </ul>
                   <hr *ngIf="idxTable.foreign_keys">
 
                   <ul class="pl-3 foreign-keys">
                     <li *ngFor="let idxFk of idxTable.foreign_keys">
-                      <span class="aligned-with-icon">{{idxFk.column}}</span>
+                      <span>{{idxFk.column}}</span>
                       <mat-icon class="arrow">arrow_right_alt</mat-icon>
-                      <span class="aligned-with-icon">{{idxFk.foreign_table}}.{{idxFk.foreign_column}}</span>
+                      <span class="after">{{idxFk.foreign_table}}.{{idxFk.foreign_column}}</span>
+                      <mat-icon *ngIf="idxFk.name" role="button" class="delete" (click)="deleteFk(idxTable, idxFk)">delete</mat-icon>
                     </li>
                   </ul>
 

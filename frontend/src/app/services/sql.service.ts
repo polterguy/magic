@@ -128,4 +128,58 @@ export class SqlService {
     }
     return this.fileService.saveFile(filename, content);
   }
+
+  /**
+   * Deletes the specified column from your database.
+   * 
+   * @param databaseType Type of database
+   * @param connectionString Connection string to use
+   * @param databaseName Database name
+   * @param tableName Table name
+   * @param columnName Column name
+   */
+  deleteColumn(
+    databaseType: string,
+    connectionString: string,
+    databaseName: string,
+    tableName: string,
+    columnName: string) {
+    return this.httpService.delete<any>('/magic/system/sql/delete-column?databaseType=' +
+      encodeURIComponent(databaseType) + 
+      '&connectionString=' +
+      encodeURIComponent(connectionString) +
+      '&databaseName=' +
+      encodeURIComponent(databaseName) +
+      '&tableName=' +
+      encodeURIComponent(tableName) +
+      '&columnName=' +
+      encodeURIComponent(columnName));
+  }
+
+  /**
+   * Deletes the specified foreign key from your database.
+   * 
+   * @param databaseType Type of database
+   * @param connectionString Connection string to use
+   * @param databaseName Database name
+   * @param tableName Table name
+   * @param fkName Column name
+   */
+   deleteFk(
+    databaseType: string,
+    connectionString: string,
+    databaseName: string,
+    tableName: string,
+    fkName: string) {
+    return this.httpService.delete<any>('/magic/system/sql/delete-fk?databaseType=' +
+      encodeURIComponent(databaseType) + 
+      '&connectionString=' +
+      encodeURIComponent(connectionString) +
+      '&databaseName=' +
+      encodeURIComponent(databaseName) +
+      '&tableName=' +
+      encodeURIComponent(tableName) +
+      '&fkName=' +
+      encodeURIComponent(fkName));
+  }
 }
