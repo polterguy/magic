@@ -31,6 +31,7 @@
       </mat-form-field>
 
       <mat-form-field
+        *ngIf="data.name"
         class="w-100"
         appearance="outline">
         <mat-label>Data type</mat-label>
@@ -53,6 +54,30 @@
           <mat-option
             *ngFor="let idxField of getFields()"
             [value]="idxField.name">{{idxField.name}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field
+        *ngIf="data.field"
+        class="w-100"
+        appearance="outline">
+        <mat-label>Points to table</mat-label>
+        <mat-select name="tableName" [(ngModel)]="data.foreignTable">
+          <mat-option
+            *ngFor="let idxTable of getTables()"
+            [value]="idxTable">{{idxTable}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field
+        *ngIf="data.foreignTable"
+        class="w-100"
+        appearance="outline">
+        <mat-label>Points to field</mat-label>
+        <mat-select name="foreignFieldName" [(ngModel)]="data.foreignField">
+          <mat-option
+            *ngFor="let idxForeignField of getForeignField(data.foreignTable)"
+            [value]="idxForeignField">{{idxForeignField}}</mat-option>
         </mat-select>
       </mat-form-field>
 
