@@ -1,7 +1,7 @@
 <form>
 
   <div mat-dialog-title>
-    Add to {{this.data.table}}
+    Add {{data.type}} to {{this.data.table}}
   </div>
 
   <div mat-dialog-content>
@@ -46,7 +46,7 @@
         *ngIf="data.datatype?.size"
         class="w-100"
         appearance="outline">
-        <mat-label>Size of field</mat-label>
+        <mat-label>Size of field ({{data.datatype.size.min + ' - ' + data.datatype.size.max}})</mat-label>
         <input
           matInput
           type="number"
