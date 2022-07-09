@@ -4,9 +4,9 @@
  */
 
 // Angular and system imports.
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { MatDialog } from '@angular/material/dialog';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 
 // Utility imports.
 import { saveAs } from 'file-saver';
@@ -24,9 +24,9 @@ import { Model } from '../../utilities/codemirror/codemirror-sql/codemirror-sql.
 
 // CodeMirror options.
 import sql from '../../utilities/codemirror/options/sql.json'
-import { TableNameDialogComponent } from './table-name-dialog/table-name-dialog.component';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { SqlWarningComponent } from './sql-warning/sql-warning.component';
+import { TableNameDialogComponent } from './table-name-dialog/table-name-dialog.component';
 
 /**
  * SQL component allowing user to execute arbitrary SQL statements towards his or her database.
@@ -120,47 +120,50 @@ export class SqlComponent implements OnInit {
    * Implementation of OnInit.
    */
   ngOnInit() {
-    this.sqlService.defaultDatabaseType().subscribe((defaultDatabaseType: DefaultDatabaseType) => {
-      this.databaseTypes = defaultDatabaseType.options;
-      this.getConnectionStrings(defaultDatabaseType.default, (connectionStrings: string[]) => {
-        this.getDatabases(defaultDatabaseType.default, 'generic', (databases: any) => {
-          this.databaseDeclaration = databases;
-          const tables = [];
-          this.activeTables = databases.databases.filter((x: any) => x.name === 'magic')[0].tables;
-          for (const idxTable of this.activeTables) {
-            tables[idxTable.name] = idxTable.columns.map((x: any) => x.name);
-          }
-          this.connectionStrings = connectionStrings;
-          this.databases = databases.databases.map((x: any) => x.name);
-          this.input = {
-            databaseType: defaultDatabaseType.default,
-            connectionString: connectionStrings.filter(x => x === 'generic')[0],
-            database: this.databases.filter(x => x === 'magic')[0],
-            options: sql,
-            sql: '',
-          };
-          this.input.options.hintOptions = {
-            tables: tables,
-          };
-          this.input.options.autofocus = true;
-          this.input.options.extraKeys['Alt-M'] = (cm: any) => {
-            cm.setOption('fullScreen', !cm.getOption('fullScreen'));
-            let sidenav = document.querySelector('.mat-sidenav');
-            sidenav.classList.contains('d-none') ? sidenav.classList.remove('d-none') :
-            sidenav.classList.add('d-none');
-          };
-          this.input.options.extraKeys['Alt-L'] = (cm: any) => {
-            document.getElementById('loadButton').click();
-          };
-          this.input.options.extraKeys['Alt-S'] = (cm: any) => {
-            document.getElementById('saveButton').click();
-          };
-          this.input.options.extraKeys.F5 = () => {
-            document.getElementById('executeButton').click();
-          };
+    this.sqlService.defaultDatabaseType().subscribe({
+      next: (defaultDatabaseType: DefaultDatabaseType) => {
+        this.databaseTypes = defaultDatabaseType.options;
+        this.getConnectionStrings(defaultDatabaseType.default, (connectionStrings: string[]) => {
+          this.getDatabases(defaultDatabaseType.default, 'generic', (databases: any) => {
+            this.databaseDeclaration = databases;
+            const tables = [];
+            this.activeTables = databases.databases.filter((x: any) => x.name === 'magic')[0].tables;
+            for (const idxTable of this.activeTables) {
+              tables[idxTable.name] = idxTable.columns.map((x: any) => x.name);
+            }
+            this.connectionStrings = connectionStrings;
+            this.databases = databases.databases.map((x: any) => x.name);
+            this.input = {
+              databaseType: defaultDatabaseType.default,
+              connectionString: connectionStrings.filter(x => x === 'generic')[0],
+              database: this.databases.filter(x => x === 'magic')[0],
+              options: sql,
+              sql: '',
+            };
+            this.input.options.hintOptions = {
+              tables: tables,
+            };
+            this.input.options.autofocus = true;
+            this.input.options.extraKeys['Alt-M'] = (cm: any) => {
+              cm.setOption('fullScreen', !cm.getOption('fullScreen'));
+              let sidenav = document.querySelector('.mat-sidenav');
+              sidenav.classList.contains('d-none') ? sidenav.classList.remove('d-none') :
+              sidenav.classList.add('d-none');
+            };
+            this.input.options.extraKeys['Alt-L'] = (cm: any) => {
+              document.getElementById('loadButton').click();
+            };
+            this.input.options.extraKeys['Alt-S'] = (cm: any) => {
+              document.getElementById('saveButton').click();
+            };
+            this.input.options.extraKeys.F5 = () => {
+              document.getElementById('executeButton').click();
+            };
+          });
         });
-      });
-    }, (error: any) => this.feedbackService.showError(error));
+      },
+      error: (error) => this.feedbackService.showError(error)
+    });
   }
 
   /**
@@ -222,7 +225,6 @@ export class SqlComponent implements OnInit {
     for (const idxTable of this.activeTables) {
       result[idxTable.name] = (idxTable.columns?.map((x: any) => x.name) || []);
     }
-    console.log(this.activeTables);
     this.input.options.hintOptions.tables = result;
   }
 
@@ -576,12 +578,15 @@ export class SqlComponent implements OnInit {
    * Returns all databases for database-type/connection-string from backend.
    */
   private getDatabases(databaseType: string, connectionString: string, onAfter: (databases: any) => void) {
-    this.sqlService.getDatabaseMetaInfo(databaseType, connectionString).subscribe((databases: Databases) => {
-      if (onAfter) {
-        onAfter(databases);
+    this.sqlService.getDatabaseMetaInfo(databaseType, connectionString).subscribe({
+      next: (databases: Databases) => {
+        if (onAfter) {
+          onAfter(databases);
+        }
+      }, 
+      error: (error: any) => {
+        this.nullifyAllSelectors(error);
       }
-    }, (error: any) => {
-      this.nullifyAllSelectors(error);
     });
   }
 
@@ -652,5 +657,79 @@ export class SqlComponent implements OnInit {
 
   public showWarning() {
     this.safeMode === false ? this.bottomSheet.open(SqlWarningComponent) : '';
+  }
+
+  /**
+   * Deletes the specified column in the specified table
+   * 
+   * @param table Table columns belongs to
+   * @param column Column to delete
+   */
+  public deleteColumn(table: any, column: any) {
+    this.feedbackService.confirm('Warning!', 'Are you sure you want to delete the column called <strong>' + column.name + 
+    '</strong>? This action is permanent and will delete all data existing in the column.', () => {
+      const tableName = table.name;
+      const columnName = column.name;
+      this.sqlService.deleteColumn(
+        this.input.databaseType,
+        this.input.connectionString,
+        this.input.database,
+        tableName,
+        columnName).subscribe({
+          next: () => {
+            this.feedbackService.showInfo('Column successfully deleted');
+            this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: any) => {
+              this.databaseDeclaration = databases;
+              const tables = [];
+              this.activeTables = databases.databases.filter((x: any) => x.name === this.input.database)[0].tables;
+              for (const idxTable of this.activeTables) {
+                tables[idxTable.name] = idxTable.columns.map((x: any) => x.name);
+              }
+              this.databases = databases.databases.map((x: any) => x.name);
+              this.input.options.hintOptions = {
+                tables: tables,
+              };
+            });
+          },
+          error: (error: any) => this.feedbackService.showError(error)
+      });
+    });
+  }
+
+  /**
+   * Deletes the specified foreign key in the specified table
+   * 
+   * @param table Table columns belongs to
+   * @param fk Foreign key to delete
+   */
+   public deleteFk(table: any, fk: any) {
+    this.feedbackService.confirm('Warning!', 'Are you sure you want to delete the foreign key called <strong>' + fk.name + 
+    '</strong>? This action is permanent.', () => {
+      const tableName = table.name;
+      const columnName = fk.name;
+      this.sqlService.deleteFk(
+        this.input.databaseType,
+        this.input.connectionString,
+        this.input.database,
+        tableName,
+        columnName).subscribe({
+          next: () => {
+            this.feedbackService.showInfo('Foreign key successfully deleted');
+            this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: any) => {
+              this.databaseDeclaration = databases;
+              const tables = [];
+              this.activeTables = databases.databases.filter((x: any) => x.name === this.input.database)[0].tables;
+              for (const idxTable of this.activeTables) {
+                tables[idxTable.name] = idxTable.columns.map((x: any) => x.name);
+              }
+              this.databases = databases.databases.map((x: any) => x.name);
+              this.input.options.hintOptions = {
+                tables: tables,
+              };
+            });
+          },
+          error: (error: any) => this.feedbackService.showError(error)
+      });
+    });
   }
 }
