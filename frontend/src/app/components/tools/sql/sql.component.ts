@@ -670,6 +670,7 @@ export class SqlComponent implements OnInit {
         switch (result.type) {
 
           case 'field':
+            console.log(result);
             this.sqlService.addColumn(
               result.databaseType,
               result.connectionString,
@@ -677,7 +678,7 @@ export class SqlComponent implements OnInit {
               result.table,
               result.name,
               result.datatype.name + (result.size ? ('(' + result.size + ')') : '') + (result.acceptNull ? '' : ' not null'),
-              result.datatype.defaultValue ? (result.datatype.defaultValue === 'string' ? ('\'' + result.defaultValue + '\'') : result.defaultValue) : null).subscribe({
+              !result.defaultValue || result.defaultValue === '' ? null : (result.datatype.defaultValue ? (result.datatype.defaultValue === 'string' ? ('\'' + result.defaultValue + '\'') : result.defaultValue) : null)).subscribe({
               next: () => {
                 this.feedbackService.showInfo('Column was successfully added to table');
                 this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: any) => {
