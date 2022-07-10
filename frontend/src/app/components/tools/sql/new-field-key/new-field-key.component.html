@@ -58,7 +58,7 @@
       </mat-form-field>
 
       <mat-form-field
-        *ngIf="data.name"
+        *ngIf="data.name && data.datatype?.defaultValue"
         class="w-100"
         appearance="outline">
         <mat-label>Default value</mat-label>
@@ -119,6 +119,7 @@
     <mat-slide-toggle
       *ngIf="data.type === 'field'"
       [(ngModel)]="data.acceptNull"
+      name="nullable"
       labelPosition="before">Nullable</mat-slide-toggle>
 
     <button
