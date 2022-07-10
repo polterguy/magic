@@ -130,6 +130,26 @@ export class SqlService {
   }
 
   /**
+   * Drops the specified database entirely.
+   * 
+   * @param databaseType Type of database
+   * @param connectionString Connection string to use
+   * @param databaseName Database name
+   */
+  dropDatabase(
+    databaseType: string,
+    connectionString: string,
+    databaseName: string) {
+    return this.httpService.delete<any>(
+      '/magic/system/sql/drop-database?databaseType=' +
+      encodeURIComponent(databaseType) +
+      '&connectionString=' +
+      encodeURIComponent(connectionString) +
+      '&databaseName=' +
+      encodeURIComponent(databaseName));
+  }
+
+  /**
    * Adds the specified column to your table.
    * 
    * @param databaseType Type of database

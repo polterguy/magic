@@ -399,6 +399,7 @@
                   <div class="delete-table">
                     <button
                       (click)="deleteTable(idxTable)"
+                      matTooltip="Drop table"
                       mat-icon-button>
                       <mat-icon>delete</mat-icon>
                     </button>
@@ -406,6 +407,15 @@
 
                 </mat-card-content>
               </mat-card>
+            </div>
+
+            <div class="delete-database">
+              <button
+                (click)="deleteDatabase()"
+                matTooltip="Drop database"
+                mat-icon-button>
+                <mat-icon>delete</mat-icon>
+              </button>
             </div>
 
           </mat-card-content>
