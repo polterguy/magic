@@ -203,3 +203,11 @@ Material form
 .main-body .mat-form-field:not(.standlone-input):not(.mat-paginator-page-size-select) .mat-form-field-infix { width: unset!important;min-width: 100px!important; }
 .warning .mat-option-text { color: inherit; }
 .dark .mat-form-field.mat-focused.mat-primary .mat-select-arrow{ color: inherit; }
+
+.error-snack-bar {
+  background: rgb(128,0,0) !important;
+}
+
+.dark .error-snack-bar {
+  background: rgb(255,128,128) !important;
+}

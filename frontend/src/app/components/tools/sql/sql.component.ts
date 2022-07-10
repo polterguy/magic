@@ -579,6 +579,10 @@ export class SqlComponent implements OnInit {
    * @param column Column to delete
    */
   deleteColumn(table: any, column: any) {
+    if ((table.foreign_keys?.filter((x: any) => x.column === column.name) || []).length > 0) {
+      this.feedbackService.showError('You have to delete foreign keys for column before you can delete column');
+      return;
+    }
     this.feedbackService.confirm('Warning!', 'Are you sure you want to delete the column called <strong>' + column.name + 
     '</strong>? This action is permanent and will delete all data existing in the column.', () => {
       const tableName = table.name;
