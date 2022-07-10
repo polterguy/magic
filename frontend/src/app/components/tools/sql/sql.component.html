@@ -357,26 +357,69 @@
 
           <mat-card-content class="row d-flex">
 
+            <!-- Trigger action menu button -->
             <button
               mat-icon-button
-              matTooltip="Add new table to database"
-              (click)="createNewTable()"
-              class="add-table">
-              <mat-icon>add</mat-icon>
+              class="database-actions"
+              [matMenuTriggerFor]="database">
+              <mat-icon>more_vert</mat-icon>
             </button>
+
+            <!-- Menu action items -->
+            <mat-menu #database="matMenu">
+
+              <button
+                mat-menu-item
+                (click)="createNewTable()"
+                class="action-button">
+                <mat-icon class="material-icons-outlined">add</mat-icon>
+                Add table
+              </button>
+
+              <button
+                mat-menu-item
+                (click)="deleteDatabase()"
+                class="action-button">
+                <mat-icon class="material-icons-outlined">delete</mat-icon>
+                Drop database
+              </button>
+
+            </mat-menu>
 
             <div class="col-xl-4 col-sm-6 col-12 mb-3 db-table-design" *ngFor="let idxTable of activeTables">
               <mat-card class="h-100">
                 <mat-card-content class="h-100 pb-4">
                   <h3 class="pl-3">{{idxTable.name}}</h3>
 
+                  <!-- Trigger action menu button -->
                   <button
                     mat-icon-button
-                    matTooltip="Add new field or key to table"
-                    (click)="createFieldKey(idxTable)"
-                    class="add">
-                    <mat-icon>add</mat-icon>
+                    class="table-actions"
+                    [matMenuTriggerFor]="table"
+                    matTooltip="Actions">
+                    <mat-icon>more_vert</mat-icon>
                   </button>
+
+                  <!-- Menu action items -->
+                  <mat-menu #table="matMenu">
+
+                    <button
+                      mat-menu-item
+                      (click)="createFieldKey(idxTable)"
+                      class="action-button">
+                      <mat-icon>add</mat-icon>
+                      Add
+                    </button>
+
+                    <button
+                      (click)="deleteTable(idxTable)"
+                      mat-menu-item
+                      class="action-button">
+                      <mat-icon>delete</mat-icon>
+                      Drop table
+                    </button>
+
+                  </mat-menu>
 
                   <ul class="pl-3">
                     <li *ngFor="let idxColumn of idxTable.columns" [class]="idxColumn.nullable ? 'nullable' : 'not-null'">
@@ -396,26 +439,8 @@
                     </li>
                   </ul>
 
-                  <div class="delete-table">
-                    <button
-                      (click)="deleteTable(idxTable)"
-                      matTooltip="Drop table"
-                      mat-icon-button>
-                      <mat-icon>delete</mat-icon>
-                    </button>
-                  </div>
-
                 </mat-card-content>
               </mat-card>
-            </div>
-
-            <div class="delete-database">
-              <button
-                (click)="deleteDatabase()"
-                matTooltip="Drop database"
-                mat-icon-button>
-                <mat-icon>delete</mat-icon>
-              </button>
             </div>
 
           </mat-card-content>

@@ -1,56 +1,56 @@
 
 <!-- Save file -->
 <button
-    mat-menu-item
-    [disabled]="activeFileIsClean()"
-    matTooltip="Save file [ALT+S]" 
-    matTooltipPosition="before"
-    (click)="saveActiveFile()">
-    <mat-icon>save</mat-icon>
-    Save
+  mat-menu-item
+  [disabled]="activeFileIsClean()"
+  matTooltip="Save file [ALT+S]" 
+  matTooltipPosition="before"
+  (click)="saveActiveFile()">
+  <mat-icon>save</mat-icon>
+  Save
 </button>
 
 <!-- Invoke/execute file -->
 <button
-    mat-menu-item
-    [disabled]="!currentFileData?.path?.endsWith('.hl')"
-    [matTooltip]="endpointData === null ? 'Execute Hyperlambda file immediately [F5]' : 'Invoke endpoint through a modal dialog [F5]'"
-    matTooltipPosition="before"
-    (click)="executeActiveFile()">
-    <mat-icon>play_arrow</mat-icon>
-    {{endpointData === null ? 'Execute' : 'Invoke ...'}}
+  mat-menu-item
+  [disabled]="!currentFileData?.path?.endsWith('.hl')"
+  [matTooltip]="endpointData === null ? 'Execute Hyperlambda file immediately [F5]' : 'Invoke endpoint through a modal dialog [F5]'"
+  matTooltipPosition="before"
+  (click)="executeActiveFile()">
+  <mat-icon>play_arrow</mat-icon>
+  {{endpointData === null ? 'Execute' : 'Invoke ...'}}
 </button>
 
 <!-- Preview file -->
 <button mat-menu-item 
-    [disabled]="!currentFileData?.path?.endsWith('.md')" 
-    matTooltip="Preview file [ALT+P]" 
-    matTooltipPosition="before"
-    (click)="previewActiveFile()">
-    <mat-icon class="material-icons-outlined">
-      preview
-    </mat-icon>
-    Preview
+  [disabled]="!currentFileData?.path?.endsWith('.md')" 
+  matTooltip="Preview file [ALT+P]" 
+  matTooltipPosition="before"
+  (click)="previewActiveFile()">
+  <mat-icon class="material-icons-outlined">
+    preview
+  </mat-icon>
+  Preview
 </button>
 
 <!-- Rename file -->
 <button mat-menu-item
-    [disabled]="!backendService.active?.access.files.rename"
-    matTooltip="Rename file [ALT+R]"
-    matTooltipPosition="before"
-    (click)="renameActiveFile()">
-    <mat-icon class="material-icons-outlined"> drive_file_rename_outline </mat-icon>
-    Rename
+  [disabled]="!backendService.active?.access.files.rename"
+  matTooltip="Rename file [ALT+R]"
+  matTooltipPosition="before"
+  (click)="renameActiveFile()">
+  <mat-icon class="material-icons-outlined"> drive_file_rename_outline </mat-icon>
+  Rename
 </button>
 
 <!-- Delete file -->
 <button mat-menu-item
-    [disabled]="!backendService.active?.access.files.delete_file"
-    matTooltip="Delete file [ALT+D]"
-    matTooltipPosition="before"
-    (click)="deleteActiveFile()">
-    <mat-icon>delete</mat-icon>
-    Delete
+  [disabled]="!backendService.active?.access.files.delete_file"
+  matTooltip="Delete file [ALT+D]"
+  matTooltipPosition="before"
+  (click)="deleteActiveFile()">
+  <mat-icon>delete</mat-icon>
+  Delete
 </button>
 
 <!-- Close file -->
@@ -65,11 +65,11 @@
 
 <!-- Download file -->
 <button
-    mat-menu-item
-    [disabled]="!currentFileData"
-    matTooltip="Download the active file"
-    matTooltipPosition="before"
-    (click)="downloadActiveFile()">
-    <mat-icon class="material-icons-outlined">file_download</mat-icon>
-    Download file
+  mat-menu-item
+  [disabled]="!currentFileData"
+  matTooltip="Download the active file"
+  matTooltipPosition="before"
+  (click)="downloadActiveFile()">
+  <mat-icon class="material-icons-outlined">file_download</mat-icon>
+  Download file
 </button>

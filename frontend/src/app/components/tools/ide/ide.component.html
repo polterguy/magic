@@ -178,15 +178,15 @@
                 
                 <!-- Active file menu -->
                 <mat-menu #submenu3="matMenu" class="submenu">
-                    <app-file-actions
-                      [currentFileData]="currentFileData" 
-                      (getEndpoints)="getEndpoints()"
-                      (getEndpoint)="currentFileData ? getEndpoint($event) : ''"
-                      [endpointData]="currentFileData ? getEndpoint(currentFileData) : ''"
-                      [openFiles]="openFiles"
-                      (renameActiveFileFromParent)="renameActiveFile($event)"
-                      (deleteActiveFileFromParent)="deleteActiveFile($event)"
-                      (closeFileImplFromParent)="closeFileImpl()"></app-file-actions>
+                  <app-file-actions
+                    [currentFileData]="currentFileData" 
+                    (getEndpoints)="getEndpoints()"
+                    (getEndpoint)="currentFileData ? getEndpoint($event) : ''"
+                    [endpointData]="currentFileData ? getEndpoint(currentFileData) : ''"
+                    [openFiles]="openFiles"
+                    (renameActiveFileFromParent)="renameActiveFile($event)"
+                    (deleteActiveFileFromParent)="deleteActiveFile($event)"
+                    (closeFileImplFromParent)="closeFileImpl()"></app-file-actions>
                 </mat-menu>
               </div>
 
