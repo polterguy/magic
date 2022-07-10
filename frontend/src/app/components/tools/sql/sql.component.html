@@ -395,8 +395,7 @@
                   <button
                     mat-icon-button
                     class="table-actions"
-                    [matMenuTriggerFor]="table"
-                    matTooltip="Actions">
+                    [matMenuTriggerFor]="table">
                     <mat-icon>more_vert</mat-icon>
                   </button>
 
@@ -415,17 +414,25 @@
                       (click)="deleteTable(idxTable)"
                       mat-menu-item
                       class="action-button">
-                      <mat-icon>delete</mat-icon>
+                      <mat-icon>remove</mat-icon>
                       Drop table
                     </button>
 
                   </mat-menu>
 
                   <ul class="pl-3">
-                    <li *ngFor="let idxColumn of idxTable.columns" [class]="idxColumn.nullable ? 'nullable' : 'not-null'">
-                      <mat-icon *ngIf="idxColumn.primary" class="key">vpn_key</mat-icon>
+                    <li
+                      *ngFor="let idxColumn of idxTable.columns"
+                      [class]="idxColumn.nullable ? 'nullable' : 'not-null'">
+                      <mat-icon
+                        *ngIf="idxColumn.primary"
+                        class="key">vpn_key</mat-icon>
                       <span>{{idxColumn.name}}</span> {{idxColumn.db}}
-                      <mat-icon role="button" class="delete" (click)="deleteColumn(idxTable, idxColumn)">delete</mat-icon>
+                      <mat-icon
+                        role="button"
+                        *ngIf="!idxColumn.primary"
+                        class="delete"
+                        (click)="deleteColumn(idxTable, idxColumn)">remove</mat-icon>
                     </li>
                   </ul>
                   <hr *ngIf="idxTable.foreign_keys">
@@ -435,7 +442,11 @@
                       <span>{{idxFk.column}}</span>
                       <mat-icon class="arrow">arrow_right_alt</mat-icon>
                       <span class="after">{{idxFk.foreign_table}}.{{idxFk.foreign_column}}</span>
-                      <mat-icon *ngIf="idxFk.name" role="button" class="delete" (click)="deleteFk(idxTable, idxFk)">delete</mat-icon>
+                      <mat-icon
+                        *ngIf="idxFk.name"
+                        role="button"
+                        class="delete"
+                        (click)="deleteFk(idxTable, idxFk)">remove</mat-icon>
                     </li>
                   </ul>
 
