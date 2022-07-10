@@ -124,7 +124,7 @@ export class NewFieldKeyComponent {
         return this.data.name && this.data.datatype && (!this.data.datatype.size || this.data.size);
 
       case 'key':
-        return this.data.field && this.data.foreignTable && this.data.foreignField && (!this.data.datatype.size || this.data.size);
+        return this.data.field && this.data.foreignTable && this.data.foreignField;
     }
   }
 
@@ -141,6 +141,8 @@ export class NewFieldKeyComponent {
           this.data.defaultValue = 'current_timestamp';
           break;
       }
+    } else {
+      delete this.data.defaultValue;
     }
   }
 }

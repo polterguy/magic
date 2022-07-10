@@ -136,6 +136,39 @@ export class SqlService {
    * @param connectionString Connection string to use
    * @param databaseName Database name
    * @param tableName Table name
+   * @param pkName Name of primary key
+   * @param pkType Type of primary key
+   * @param pkLength Length of primary key
+   * @param pkDefault Default value for primary key
+   */
+  addTable(
+    databaseType: string,
+    connectionString: string,
+    databaseName: string,
+    tableName: string,
+    pkName: string,
+    pkType: string,
+    pkLength: string,
+    pkDefault: string) {
+    return this.httpService.post<any>('/magic/system/sql/add-table', {
+      databaseType,
+      connectionString,
+      databaseName,
+      tableName,
+      pkName,
+      pkType,
+      pkLength,
+      pkDefault,
+    });
+  }
+
+  /**
+   * Adds the specified column to your table.
+   * 
+   * @param databaseType Type of database
+   * @param connectionString Connection string to use
+   * @param databaseName Database name
+   * @param tableName Table name
    * @param columnName Column name
    * @param columnType Type of column
    */

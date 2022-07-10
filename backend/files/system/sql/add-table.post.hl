@@ -1,0 +1,137 @@
+
+/*
+ * Adds the specified table to the specified database.
+ * 
+ * Arguments;
+ * - [databaseType] - Database type, typically 'mssql' or 'mysql'.
+ * - [connectionString] - Connection string to use
+ * - [databaseName] - Name of database
+ * - [tableName] - Name of table
+ * - [pkName] - Name of primary key
+ * - [pkType] - Type of primary key
+ * - [pkLength] - Length of primary key
+ * - [pkDefault] - Default value for primary key
+ */
+.arguments
+   databaseType:string
+   connectionString:string
+   databaseName:string
+   tableName:string
+   pkName:string
+   pkType:string
+   pkLength:string
+   pkDefault:string
+.description:Adds the specified table to the specified database
+.type:internal
+
+// Ensures user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/connectionString
+validators.mandatory:x:@.arguments/*/databaseName
+validators.mandatory:x:@.arguments/*/tableName
+validators.mandatory:x:@.arguments/*/pkName
+validators.mandatory:x:@.arguments/*/pkType
+validators.mandatory:x:@.arguments/*/pkLength
+validators.mandatory:x:@.arguments/*/databaseType
+validators.enum:x:@.arguments/*/databaseType
+   .:mysql
+   .:sqlite
+
+// Creating our database connection.
+strings.concat
+   .:[
+   get-value:x:@.arguments/*/connectionString
+   .:|
+   get-value:x:@.arguments/*/databaseName
+   .:]
+data.connect:x:-
+   database-type:x:@.arguments/*/databaseType
+
+   // Creating our correct SQL according to [databaseType].
+   switch:x:@.arguments/*/databaseType
+
+      case:mysql
+         .sql
+         .type
+         if
+            eq:x:@.arguments/*/pkType
+               .:auto_increment
+            .lambda
+               set-value:x:@.type
+                  strings.concat
+                     .:int(
+                     get-value:x:@.arguments/*/pkLength
+                     .:)
+                     .:" not null auto_increment primary key"
+         else
+            set-value:x:@.type
+               strings.concat
+                  get-value:x:@.arguments/*/pkType
+                     .:(
+                     get-value:x:@.arguments/*/pkLength
+                     .:") not null primary key"
+         set-value:x:@.sql
+            strings.concat
+               .:"create table "
+               get-value:x:@.arguments/*/tableName
+               .:"("
+               get-value:x:@.arguments/*/pkName
+               .:" "
+               get-value:x:@.type
+         if
+            exists:x:@.arguments/*/pkDefault
+            .lambda
+               set-value:x:@.sql
+                  strings.concat
+                     get-value:x:@.sql
+                     .:" default "
+                     get-value:x:@.arguments/*/pkDefault
+         set-value:x:@.sql
+            strings.concat
+               get-value:x:@.sql
+               .:")"
+         log.info:x:@.sql
+         data.execute:x:@.sql
+            database-type:x:@.arguments/*/databaseType
+
+      case:sqlite
+         .sql
+         set-value:x:@.sql
+            strings.concat
+               .:"create table "
+               get-value:x:@.arguments/*/tableName
+               .:"("
+               get-value:x:@.arguments/*/pkName
+               .:" "
+               get-value:x:@.arguments/*/pkType
+               .:"("
+               get-value:x:@.arguments/*/pkLength
+               .:")"
+         if
+            exists:x:@.arguments/*/pkDefault
+            .lambda
+               set-value:x:@.sql
+                  strings.concat
+                     get-value:x:@.sql
+                     .:" "
+                     get-value:x:@.arguments/*/pkDefault
+         set-value:x:@.sql
+            strings.concat
+               get-value:x:@.sql
+               .:")"
+         data.execute:x:@.sql
+            database-type:x:@.arguments/*/databaseType
+
+// Flushing database cache.
+strings.concat
+   .:magic.sql.databases.
+   get-value:x:@.arguments/*/databaseType
+   :.
+   get-value:x:@.arguments/*/connectionString
+cache.set:x:-
+
+// Returning result to caller.
+return
+   result:success
