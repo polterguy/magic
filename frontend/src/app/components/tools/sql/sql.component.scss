@@ -26,11 +26,6 @@ button {
     line-height: 24px;
   }
 }
-.add-table {
-  position: absolute;
-  top: 5px;
-  right: 10px;
-}
 .db-table-design {
   h3 {
     font-weight: bold;
@@ -60,7 +55,7 @@ button {
         font-weight: bold;
       }
     }
-}
+  }
   .after {
     padding-left: 34px;
   }
@@ -83,21 +78,12 @@ button {
       }
     }
   }
-  .add {
-    position: absolute;
-    top: 5px;
-    right: 10px;
-  }
-  .delete-table {
-    position: absolute;
-    bottom: 5px;
-    right: 10px;
-    color: #b0b0b0;
-  }
 }
-.delete-database {
+.database-actions, .table-actions {
   position: absolute;
-  bottom: 5px;
-  right: 10px;
-  color: #b0b0b0;
+  top: 5px;
+  right: 15px;
+}
+.action-button {
+  max-width: 100%;
 }
