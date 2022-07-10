@@ -72,9 +72,10 @@ export class NewFieldKeyComponent {
 
   // Datatypes specific for SQLite.
   private sqlIteDataTypes = [
-    {name: 'integer'},
-    {name: 'varchar'},
-    {name: 'text'},
+    {name: 'integer', defaultValue: 'int'},
+    {name: 'real', defaultValue: 'decimal'},
+    {name: 'text', defaultValue: 'string'},
+    {name: 'blob', defaultValue: false},
   ];
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: NewFieldKeyModel) { }
@@ -141,6 +142,17 @@ export class NewFieldKeyComponent {
           this.data.defaultValue = 'current_timestamp';
           break;
       }
+
+    } else if (this.data.datatype.defaultValue === 'int') {
+
+      switch (this.data.databaseType) {
+
+        case 'mysql':
+        case 'sqlite':
+          this.data.defaultValue = 'auto_increment';
+          break;
+      }
+
     } else {
       delete this.data.defaultValue;
     }
