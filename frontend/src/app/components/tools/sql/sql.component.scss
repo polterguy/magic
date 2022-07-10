@@ -52,7 +52,15 @@ button {
     li:hover {
       background-color: rgba(0,0,0,.1);
     }
-  }
+    li.nullable {
+      font-style: italic;
+    }
+    li.not-null {
+      span {
+        font-weight: bold;
+      }
+    }
+}
   .after {
     padding-left: 34px;
   }

@@ -379,9 +379,9 @@
                   </button>
 
                   <ul class="pl-3">
-                    <li *ngFor="let idxColumn of idxTable.columns">
+                    <li *ngFor="let idxColumn of idxTable.columns" [class]="idxColumn.nullable ? 'nullable' : 'not-null'">
                       <mat-icon *ngIf="idxColumn.primary" class="key">vpn_key</mat-icon>
-                      <strong>{{idxColumn.name}}</strong> {{idxColumn.db}}
+                      <span>{{idxColumn.name}}</span> {{idxColumn.db}}
                       <mat-icon role="button" class="delete" (click)="deleteColumn(idxTable, idxColumn)">delete</mat-icon>
                     </li>
                   </ul>
