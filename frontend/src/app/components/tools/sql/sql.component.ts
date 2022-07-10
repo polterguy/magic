@@ -670,7 +670,6 @@ export class SqlComponent implements OnInit {
         switch (result.type) {
 
           case 'field':
-            console.log(result);
             this.sqlService.addColumn(
               result.databaseType,
               result.connectionString,

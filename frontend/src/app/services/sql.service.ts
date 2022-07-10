@@ -141,7 +141,7 @@ export class SqlService {
     connectionString: string,
     databaseName: string) {
     return this.httpService.delete<any>(
-      '/magic/system/sql/drop-database?databaseType=' +
+      '/magic/system/sql/ddl/database?databaseType=' +
       encodeURIComponent(databaseType) +
       '&connectionString=' +
       encodeURIComponent(connectionString) +
@@ -170,7 +170,7 @@ export class SqlService {
     pkType: string,
     pkLength: string,
     pkDefault: string) {
-    return this.httpService.post<any>('/magic/system/sql/add-table', {
+    return this.httpService.post<any>('/magic/system/sql/ddl/table', {
       databaseType,
       connectionString,
       databaseName,
@@ -198,7 +198,7 @@ export class SqlService {
     databaseName: string,
     tableName: string) {
     return this.httpService.delete<any>(
-      '/magic/system/sql/drop-table?databaseType=' +
+      '/magic/system/sql/ddl/table?databaseType=' +
       encodeURIComponent(databaseType) +
       '&connectionString=' +
       encodeURIComponent(connectionString) +
@@ -226,7 +226,7 @@ export class SqlService {
     columnName: string,
     columnType: string,
     defaultValue: string) {
-    return this.httpService.post<any>('/magic/system/sql/add-column', {
+    return this.httpService.post<any>('/magic/system/sql/ddl/column', {
       databaseType,
       connectionString,
       databaseName,
@@ -256,7 +256,7 @@ export class SqlService {
     columnName: string,
     foreignTable: string,
     foreignField: string) {
-    return this.httpService.post<any>('/magic/system/sql/add-fk', {
+    return this.httpService.post<any>('/magic/system/sql/ddl/foreign-key', {
       databaseType,
       connectionString,
       databaseName,
@@ -282,7 +282,7 @@ export class SqlService {
     databaseName: string,
     tableName: string,
     columnName: string) {
-    return this.httpService.delete<any>('/magic/system/sql/delete-column?databaseType=' +
+    return this.httpService.delete<any>('/magic/system/sql/ddl/column?databaseType=' +
       encodeURIComponent(databaseType) + 
       '&connectionString=' +
       encodeURIComponent(connectionString) +
@@ -309,7 +309,7 @@ export class SqlService {
     databaseName: string,
     tableName: string,
     fkName: string) {
-    return this.httpService.delete<any>('/magic/system/sql/delete-fk?databaseType=' +
+    return this.httpService.delete<any>('/magic/system/sql/ddl/foreign-key?databaseType=' +
       encodeURIComponent(databaseType) + 
       '&connectionString=' +
       encodeURIComponent(connectionString) +
