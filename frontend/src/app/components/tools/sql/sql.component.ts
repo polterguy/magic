@@ -547,96 +547,7 @@ export class SqlComponent implements OnInit {
     }
   }
 
-  /*
-   * Private helper methods.
-   */
-
-  /*
-   * Saves the file using 'saveAs'.
-   */
-  private saveAsFile(buffer: any, fileName: string, fileType: string) {
-    const data: Blob = new Blob([buffer], { type: fileType });
-    saveAs(data, fileName);
-  }
-
-  /*
-   * Returns all connection strings for database type from backend.
-   */
-  private getConnectionStrings(databaseType: string, onAfter: (connectionStrings: string[]) => void) {
-    this.sqlService.connectionStrings(databaseType).subscribe((connectionStrings: any) => {
-      if (onAfter) {
-        const tmp: string[] = [];
-        for (var idx in connectionStrings) {
-          tmp.push(idx);
-        }
-        onAfter(tmp);
-      }
-    }, (error: any) => {
-      this.nullifyAllSelectors(error);
-    });
-  }
-
-  /*
-   * Returns all databases for database-type/connection-string from backend.
-   */
-  private getDatabases(databaseType: string, connectionString: string, onAfter: (databases: any) => void) {
-    this.sqlService.getDatabaseMetaInfo(databaseType, connectionString).subscribe({
-      next: (databases: Databases) => {
-        if (onAfter) {
-          onAfter(databases);
-        }
-      }, 
-      error: (error: any) => {
-        this.nullifyAllSelectors(error);
-      }
-    });
-  }
-
-  /*
-   * Nullifies all relevant models to ensure select dropdown
-   * lists no longer displays selected values.
-   */
-  private nullifyAllSelectors(error: any) {
-    this.input.connectionString = null;
-    this.input.database = null;
-    this.input.options.hintOptions.tables = [];
-    this.feedbackService.showError(error);
-  }
-
-  /*
-   * Creates our view model from the result of invoking backend.
-   *
-   * The reason we need this, is to allow for tracking which records are currently
-   * being viewed, in addition that we need to duplicate rows, to allow for viewing
-   * a single record, in addition to viewing the details of it.
-   */
-  private buildResult(result: any[][]) {
-    const retValue: any[] = [];
-    for (const idx of result) {
-      if (idx) {
-        const rows = [];
-        for (const inner of idx) {
-          rows.push({
-            data: inner,
-            details: false,
-            display: false,
-          });
-          rows.push({
-            data: inner,
-            details: true,
-            display: false,
-          });
-        }
-        retValue.push({
-          columns: Object.keys(idx[0]).slice(0, 5), // Making sure we never display more than 5 columns in main table
-          rows,
-        });
-      }
-    }
-    return retValue;
-  }
-
-  public uploadFiles(event) {
+  uploadFiles(event) {
     this.sqlFile = event.target.files[0];
     let fileReader = new FileReader();
 
@@ -657,7 +568,7 @@ export class SqlComponent implements OnInit {
     this.sqlFile = '';
   } 
 
-  public showWarning() {
+  showWarning() {
     this.safeMode === false ? this.bottomSheet.open(SqlWarningComponent) : '';
   }
 
@@ -667,7 +578,7 @@ export class SqlComponent implements OnInit {
    * @param table Table columns belongs to
    * @param column Column to delete
    */
-  public deleteColumn(table: any, column: any) {
+  deleteColumn(table: any, column: any) {
     this.feedbackService.confirm('Warning!', 'Are you sure you want to delete the column called <strong>' + column.name + 
     '</strong>? This action is permanent and will delete all data existing in the column.', () => {
       const tableName = table.name;
@@ -704,7 +615,7 @@ export class SqlComponent implements OnInit {
    * @param table Table columns belongs to
    * @param fk Foreign key to delete
    */
-   public deleteFk(table: any, fk: any) {
+  deleteFk(table: any, fk: any) {
     this.feedbackService.confirm('Warning!', 'Are you sure you want to delete the foreign key called <strong>' + fk.name + 
     '</strong>? This action is permanent.', () => {
       const tableName = table.name;
@@ -740,7 +651,7 @@ export class SqlComponent implements OnInit {
    * 
    * @param table Table to create field or key for
    */
-  public createFieldKey(table: any) {
+  createFieldKey(table: any) {
     const dialogRef = this.dialog.open(NewFieldKeyComponent, {
       width: '550px',
       data: {
@@ -892,5 +803,125 @@ export class SqlComponent implements OnInit {
           });
       }
     });
+  }
+
+  /**
+   * Drops the currently active database.
+   */
+  deleteDatabase() {
+    this.feedbackService.confirm('Warning!', 'Are you sure you want to drop the database <strong>' + this.input.database + 
+    '</strong>? This action is permanent and you will lose all data in your database.', () => {
+      this.sqlService.dropDatabase(
+        this.input.databaseType,
+        this.input.connectionString,
+        this.input.database).subscribe({
+          next: () => {
+            this.feedbackService.showInfo('Database successfully dropped');
+            this.input.database = 'magic';
+            this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: any) => {
+              this.databaseDeclaration = databases;
+              const tables = [];
+              this.activeTables = databases.databases.filter((x: any) => x.name === this.input.database)[0].tables;
+              for (const idxTable of this.activeTables) {
+                tables[idxTable.name] = idxTable.columns.map((x: any) => x.name);
+              }
+              this.databases = databases.databases.map((x: any) => x.name);
+              this.input.options.hintOptions = {
+                tables: tables,
+              };
+            });
+          },
+          error: (error: any) => this.feedbackService.showError(error)
+        });
+    });
+  }
+
+  /*
+   * Private helper methods.
+   */
+
+  /*
+   * Saves the file using 'saveAs'.
+   */
+  private saveAsFile(buffer: any, fileName: string, fileType: string) {
+    const data: Blob = new Blob([buffer], { type: fileType });
+    saveAs(data, fileName);
+  }
+
+  /*
+   * Returns all connection strings for database type from backend.
+   */
+  private getConnectionStrings(databaseType: string, onAfter: (connectionStrings: string[]) => void) {
+    this.sqlService.connectionStrings(databaseType).subscribe((connectionStrings: any) => {
+      if (onAfter) {
+        const tmp: string[] = [];
+        for (var idx in connectionStrings) {
+          tmp.push(idx);
+        }
+        onAfter(tmp);
+      }
+    }, (error: any) => {
+      this.nullifyAllSelectors(error);
+    });
+  }
+
+  /*
+   * Returns all databases for database-type/connection-string from backend.
+   */
+  private getDatabases(databaseType: string, connectionString: string, onAfter: (databases: any) => void) {
+    this.sqlService.getDatabaseMetaInfo(databaseType, connectionString).subscribe({
+      next: (databases: Databases) => {
+        if (onAfter) {
+          onAfter(databases);
+        }
+      }, 
+      error: (error: any) => {
+        this.nullifyAllSelectors(error);
+      }
+    });
+  }
+
+  /*
+   * Nullifies all relevant models to ensure select dropdown
+   * lists no longer displays selected values.
+   */
+  private nullifyAllSelectors(error: any) {
+    this.input.connectionString = null;
+    this.input.database = null;
+    this.input.options.hintOptions.tables = [];
+    this.feedbackService.showError(error);
+  }
+
+  /*
+   * Creates our view model from the result of invoking backend.
+   *
+   * The reason we need this, is to allow for tracking which records are currently
+   * being viewed, in addition that we need to duplicate rows, to allow for viewing
+   * a single record, in addition to viewing the details of it.
+   */
+  private buildResult(result: any[][]) {
+    const retValue: any[] = [];
+    for (const idx of result) {
+      if (idx) {
+        const rows = [];
+        for (const inner of idx) {
+          rows.push({
+            data: inner,
+            details: false,
+            display: false,
+          });
+          rows.push({
+            data: inner,
+            details: true,
+            display: false,
+          });
+        }
+        retValue.push({
+          columns: Object.keys(idx[0]).slice(0, 5), // Making sure we never display more than 5 columns in main table
+          rows,
+        });
+      }
+    }
+    return retValue;
   }
 }
