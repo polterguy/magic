@@ -53,7 +53,6 @@ data.connect:x:-
    switch:x:@.arguments/*/databaseType
 
       case:mysql
-      case:sqlite
          .sql
          .type
          if
@@ -70,9 +69,50 @@ data.connect:x:-
             set-value:x:@.type
                strings.concat
                   get-value:x:@.arguments/*/pkType
-                     .:(
-                     get-value:x:@.arguments/*/pkLength
-                     .:") not null primary key"
+                  .:(
+                  get-value:x:@.arguments/*/pkLength
+                  .:") not null primary key"
+         set-value:x:@.sql
+            strings.concat
+               .:"create table "
+               get-value:x:@.arguments/*/tableName
+               .:"("
+               get-value:x:@.arguments/*/pkName
+               .:" "
+               get-value:x:@.type
+         if
+            exists:x:@.arguments/*/pkDefault
+            .lambda
+               set-value:x:@.sql
+                  strings.concat
+                     get-value:x:@.sql
+                     .:" default "
+                     get-value:x:@.arguments/*/pkDefault
+         set-value:x:@.sql
+            strings.concat
+               get-value:x:@.sql
+               .:")"
+         data.execute:x:@.sql
+            database-type:x:@.arguments/*/databaseType
+
+      case:sqlite
+         .sql
+         .type
+         if
+            eq:x:@.arguments/*/pkType
+               .:auto_increment
+            .lambda
+               set-value:x:@.type
+                  strings.concat
+                     .:integer
+                     .:" not null primary key autoincrement"
+         else
+            set-value:x:@.type
+               strings.concat
+                  get-value:x:@.arguments/*/pkType
+                  .:(
+                  get-value:x:@.arguments/*/pkLength
+                  .:") not null primary key"
          set-value:x:@.sql
             strings.concat
                .:"create table "
