@@ -357,7 +357,7 @@
 
           <mat-card-content class="row d-flex">
 
-            <!-- Trigger action menu button -->
+            <!-- Trigger action menu button for database -->
             <button
               mat-icon-button
               class="database-actions"
@@ -365,7 +365,7 @@
               <mat-icon>more_vert</mat-icon>
             </button>
 
-            <!-- Menu action items -->
+            <!-- Menu action items for database -->
             <mat-menu #database="matMenu">
 
               <button
@@ -391,7 +391,7 @@
                 <mat-card-content class="h-100 pb-4">
                   <h3 class="pl-3">{{idxTable.name}}</h3>
 
-                  <!-- Trigger action menu button -->
+                  <!-- Trigger action menu button for table menu -->
                   <button
                     mat-icon-button
                     class="table-actions"
@@ -400,7 +400,7 @@
                     <mat-icon>more_vert</mat-icon>
                   </button>
 
-                  <!-- Menu action items -->
+                  <!-- Menu action items for table -->
                   <mat-menu #table="matMenu">
 
                     <button
@@ -408,7 +408,7 @@
                       (click)="createFieldKey(idxTable)"
                       class="action-button">
                       <mat-icon>add</mat-icon>
-                      Add
+                      Add field/key
                     </button>
 
                     <button
