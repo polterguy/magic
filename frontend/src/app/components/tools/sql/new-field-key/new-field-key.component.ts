@@ -127,4 +127,20 @@ export class NewFieldKeyComponent {
         return this.data.field && this.data.foreignTable && this.data.foreignField && (!this.data.datatype.size || this.data.size);
     }
   }
+
+  /**
+   * Invoked when datatype changes.
+   */
+  datatypeChanged() {
+    if (this.data.datatype.defaultValue === 'date') {
+
+      switch (this.data.databaseType) {
+
+        case 'mysql':
+        case 'sqlite':
+          this.data.defaultValue = 'current_timestamp';
+          break;
+      }
+    }
+  }
 }

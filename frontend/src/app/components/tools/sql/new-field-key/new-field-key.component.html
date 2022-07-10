@@ -35,7 +35,9 @@
         class="w-100"
         appearance="outline">
         <mat-label>Data type</mat-label>
-        <mat-select name="datatype" [(ngModel)]="data.datatype">
+        <mat-select name="datatype"
+            [(ngModel)]="data.datatype"
+            (selectionChange)="datatypeChanged()">
           <mat-option
             *ngFor="let idxDatatype of getDataTypes()"
             [value]="idxDatatype">{{idxDatatype.name}}</mat-option>
