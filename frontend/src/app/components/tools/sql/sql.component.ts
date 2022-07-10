@@ -17,6 +17,7 @@ import { SqlService } from '../../../services/sql.service';
 import { Databases } from 'src/app/models/databases.model';
 import { CacheService } from 'src/app/services/cache.service';
 import { BackendService } from 'src/app/services/backend.service';
+import { NewTableComponent } from './new-table/new-table.component';
 import { FeedbackService } from '../../../services/feedback.service';
 import { SqlWarningComponent } from './sql-warning/sql-warning.component';
 import { NewFieldKeyComponent } from './new-field-key/new-field-key.component';
@@ -847,6 +848,49 @@ export class SqlComponent implements OnInit {
           },
           error: (error: any) => this.feedbackService.showError(error)
         });
+    });
+  }
+
+  /**
+   * Invoked when user wants to create a new table.
+   */
+  createNewTable() {
+    const dialogRef = this.dialog.open(NewTableComponent, {
+      width: '550px',
+      data: {
+      }
+    });
+    dialogRef.afterClosed().subscribe((result: any) => {
+
+      // We should only create a new field/key if the modal dialog returns some data to us.
+      if (result) {
+        this.sqlService.addTable(
+          this.input.databaseType,
+          this.input.connectionString,
+          this.input.database,
+          result.name,
+          result.pkName,
+          result.pkType,
+          result.pkLength,
+          result.pkDefault).subscribe({
+            next: () => {
+              this.feedbackService.showInfo('Table successfully added');
+              this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: any) => {
+                this.databaseDeclaration = databases;
+                const tables = [];
+                this.activeTables = databases.databases.filter((x: any) => x.name === this.input.database)[0].tables;
+                for (const idxTable of this.activeTables) {
+                  tables[idxTable.name] = idxTable.columns.map((x: any) => x.name);
+                }
+                this.databases = databases.databases.map((x: any) => x.name);
+                this.input.options.hintOptions = {
+                  tables: tables,
+                };
+              });
+            },
+            error: (error: any) => this.feedbackService.showError(error)
+          });
+      }
     });
   }
 }

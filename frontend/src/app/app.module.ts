@@ -174,6 +174,7 @@ import { ConfirmUninstallDialogComponent } from './components/management/plugins
 import { IntroGuideComponent } from './components/utilities/intro-guide/intro-guide.component';
 import { SmtpDialogComponent } from './components/management/config/smtp-dialog/smtp-dialog.component';
 import { NewFieldKeyComponent } from './components/tools/sql/new-field-key/new-field-key.component';
+import { NewTableComponent } from './components/tools/sql/new-table/new-table.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -282,6 +283,7 @@ import { NewFieldKeyComponent } from './components/tools/sql/new-field-key/new-f
     IntroGuideComponent,
     SmtpDialogComponent,
     NewFieldKeyComponent,
+    NewTableComponent,
   ],
   imports: [
     FormsModule,

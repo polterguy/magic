@@ -357,6 +357,14 @@
 
           <mat-card-content class="row d-flex">
 
+            <button
+              mat-icon-button
+              matTooltip="Add new table to database"
+              (click)="createNewTable()"
+              class="add-table">
+              <mat-icon>add</mat-icon>
+            </button>
+
             <div class="col-xl-4 col-sm-6 col-12 mb-3 db-table-design" *ngFor="let idxTable of activeTables">
               <mat-card class="h-100">
                 <mat-card-content class="h-100 pb-4">
@@ -364,6 +372,7 @@
 
                   <button
                     mat-icon-button
+                    matTooltip="Add new field or key to table"
                     (click)="createFieldKey(idxTable)"
                     class="add">
                     <mat-icon>add</mat-icon>
