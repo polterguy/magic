@@ -7,6 +7,7 @@
   <div mat-dialog-content>
 
     <mat-form-field
+      *ngIf="data.databaseType !== 'sqlite'"
       class="w-100"
       appearance="outline">
       <mat-label>What to add</mat-label>

@@ -76,7 +76,7 @@ export class NewFieldKeyComponent {
     {name: 'real', defaultValue: 'decimal'},
     {name: 'text', defaultValue: 'string'},
     {name: 'blob', defaultValue: false},
-    {name: 'nvarchar', size: {min: 0, max: 65535}, defaultValue: 'string'},
+    {name: 'nvarchar', size: {min: 0, max: 65535}, defaultValue: false},
     {name: 'varchar', size: {min: 0, max: 65535}, defaultValue: 'string'},
   ];
 
