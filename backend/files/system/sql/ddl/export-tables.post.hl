@@ -54,7 +54,7 @@ data.connect:x:-
                get-value:x:@.arguments/*/databaseName
                .:";\r\nUSE "
                get-value:x:@.arguments/*/databaseName
-               .:"\r\n\r\n"
+               .:";\r\n\r\n"
          for-each:x:@.arguments/*/tables/*
             .sql
             set-value:x:@.sql
