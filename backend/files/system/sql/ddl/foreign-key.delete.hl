@@ -52,6 +52,11 @@ data.connect:x:-
          data.execute:x:@strings.concat
             database-type:x:@.arguments/*/databaseType
 
+      case:sqlite
+         throw:"SQLite doesn't support dropping foreign keys"
+            public:true
+            status:400
+
 // Flushing database cache.
 strings.concat
    .:magic.sql.databases.
