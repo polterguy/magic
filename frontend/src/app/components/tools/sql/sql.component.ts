@@ -603,7 +603,7 @@ export class SqlComponent implements OnInit {
             this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: any) => {
               this.databaseDeclaration = databases;
               const tables = [];
-              this.activeTables = databases.databases.filter((x: any) => x.name === this.input.database)[0].tables;
+              this.activeTables = databases.databases.filter((x: any) => x.name === this.input.database)[0].tables || [];
               for (const idxTable of this.activeTables) {
                 tables[idxTable.name] = idxTable.columns.map((x: any) => x.name);
               }
@@ -640,7 +640,7 @@ export class SqlComponent implements OnInit {
             this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: any) => {
               this.databaseDeclaration = databases;
               const tables = [];
-              this.activeTables = databases.databases.filter((x: any) => x.name === this.input.database)[0].tables;
+              this.activeTables = databases.databases.filter((x: any) => x.name === this.input.database)[0].tables || [];
               for (const idxTable of this.activeTables) {
                 tables[idxTable.name] = idxTable.columns.map((x: any) => x.name);
               }
@@ -692,7 +692,7 @@ export class SqlComponent implements OnInit {
                 this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: any) => {
                   this.databaseDeclaration = databases;
                   const tables = [];
-                  this.activeTables = databases.databases.filter((x: any) => x.name === this.input.database)[0].tables;
+                  this.activeTables = databases.databases.filter((x: any) => x.name === this.input.database)[0].tables || [];
                   for (const idxTable of this.activeTables) {
                     tables[idxTable.name] = idxTable.columns.map((x: any) => x.name);
                   }
@@ -720,7 +720,7 @@ export class SqlComponent implements OnInit {
                 this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: any) => {
                   this.databaseDeclaration = databases;
                   const tables = [];
-                  this.activeTables = databases.databases.filter((x: any) => x.name === this.input.database)[0].tables;
+                  this.activeTables = databases.databases.filter((x: any) => x.name === this.input.database)[0].tables || [];
                   for (const idxTable of this.activeTables) {
                     tables[idxTable.name] = idxTable.columns.map((x: any) => x.name);
                   }
@@ -756,7 +756,7 @@ export class SqlComponent implements OnInit {
             this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: any) => {
               this.databaseDeclaration = databases;
               const tables = [];
-              this.activeTables = databases.databases.filter((x: any) => x.name === this.input.database)[0].tables;
+              this.activeTables = databases.databases.filter((x: any) => x.name === this.input.database)[0].tables || [];
               for (const idxTable of this.activeTables) {
                 tables[idxTable.name] = idxTable.columns.map((x: any) => x.name);
               }
@@ -837,7 +837,7 @@ export class SqlComponent implements OnInit {
               this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: any) => {
                 this.databaseDeclaration = databases;
                 const tables = [];
-                this.activeTables = databases.databases.filter((x: any) => x.name === this.input.database)[0].tables;
+                this.activeTables = databases.databases.filter((x: any) => x.name === this.input.database)[0].tables || [];
                 for (const idxTable of this.activeTables) {
                   tables[idxTable.name] = idxTable.columns.map((x: any) => x.name);
                 }
@@ -869,7 +869,7 @@ export class SqlComponent implements OnInit {
             this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: any) => {
               this.databaseDeclaration = databases;
               const tables = [];
-              this.activeTables = databases.databases.filter((x: any) => x.name === this.input.database)[0].tables;
+              this.activeTables = databases.databases.filter((x: any) => x.name === this.input.database)[0].tables || [];
               for (const idxTable of this.activeTables) {
                 tables[idxTable.name] = idxTable.columns.map((x: any) => x.name);
               }
