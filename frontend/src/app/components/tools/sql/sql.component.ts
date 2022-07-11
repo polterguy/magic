@@ -76,7 +76,7 @@ export class SqlComponent implements OnInit {
   /**
    * If true, user wants to see DDL for currently selected database.
    */
-  designer: boolean = false;
+  designer: boolean = true;
 
   /**
    * Tables in currently active database.
