@@ -797,7 +797,8 @@ export class SqlComponent implements OnInit {
       this.input.databaseType,
       this.input.connectionString,
       this.input.database,
-      tables.map(x => x.name)).subscribe({
+      tables.map(x => x.name),
+      true).subscribe({
         next: (result: any) => {
           this.dialog.open(ExportTablesComponent, {
             width: '80%',
@@ -808,7 +809,31 @@ export class SqlComponent implements OnInit {
         },
         error: (error: any) => this.feedbackService.showError(error)
     });
-}
+  }
+
+  /**
+   * Exports the specified table's DDL.
+   * 
+   * @param table Table to export DDL for
+   */
+  exportTable(table: any) {
+    this.sqlService.exportDdl(
+      this.input.databaseType,
+      this.input.connectionString,
+      this.input.database,
+      [table.name],
+      false).subscribe({
+        next: (result: any) => {
+          this.dialog.open(ExportTablesComponent, {
+            width: '80%',
+            data: {
+              result: result.result,
+            }
+          });
+        },
+        error: (error: any) => this.feedbackService.showError(error)
+    });
+  }
 
   /**
    * Drops the currently active database.

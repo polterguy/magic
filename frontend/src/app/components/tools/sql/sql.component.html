@@ -427,6 +427,14 @@
                     </button>
 
                     <button
+                      mat-menu-item
+                      (click)="exportTable(idxTable)"
+                      class="action-button">
+                      <mat-icon class="material-icons-outlined">cloud_download</mat-icon>
+                      Export table DDL
+                    </button>
+    
+                    <button
                       (click)="deleteTable(idxTable)"
                       mat-menu-item
                       class="action-button">

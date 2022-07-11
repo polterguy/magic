@@ -160,12 +160,14 @@ export class SqlService {
     databaseType: string,
     connectionString: string,
     databaseName: string,
-    tables: string[]) {
+    tables: string[],
+    full: boolean) {
       return this.httpService.post<any>('/magic/system/sql/ddl/export-tables', {
         databaseType,
         connectionString,
         databaseName,
         tables,
+        full,
       });
     }
 
