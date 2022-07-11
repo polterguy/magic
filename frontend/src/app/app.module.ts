@@ -175,6 +175,7 @@ import { IntroGuideComponent } from './components/utilities/intro-guide/intro-gu
 import { SmtpDialogComponent } from './components/management/config/smtp-dialog/smtp-dialog.component';
 import { NewFieldKeyComponent } from './components/tools/sql/new-field-key/new-field-key.component';
 import { NewTableComponent } from './components/tools/sql/new-table/new-table.component';
+import { NewDatabaseComponent } from './components/tools/sql/new-database/new-database.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -284,6 +285,7 @@ import { NewTableComponent } from './components/tools/sql/new-table/new-table.co
     SmtpDialogComponent,
     NewFieldKeyComponent,
     NewTableComponent,
+    NewDatabaseComponent,
   ],
   imports: [
     FormsModule,

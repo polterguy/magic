@@ -130,6 +130,24 @@ export class SqlService {
   }
 
   /**
+   * Adds the specified column to your table.
+   * 
+   * @param databaseType Type of database
+   * @param connectionString Connection string to use
+   * @param databaseName Database name
+   */
+   createDatabase(
+    databaseType: string,
+    connectionString: string,
+    databaseName: string) {
+    return this.httpService.post<any>('/magic/system/sql/ddl/database', {
+      databaseType,
+      connectionString,
+      databaseName,
+    });
+  }
+
+  /**
    * Drops the specified database entirely.
    * 
    * @param databaseType Type of database
