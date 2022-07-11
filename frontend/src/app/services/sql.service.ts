@@ -148,6 +148,28 @@ export class SqlService {
   }
 
   /**
+   * Exports DDL for the specified tables in the specified database.
+   * 
+   * @param databaseType Type of database
+   * @param connectionString Connection string to use
+   * @param databaseName Database name
+   * @param tables List of tables to export
+   * @returns 
+   */
+  exportDdl(
+    databaseType: string,
+    connectionString: string,
+    databaseName: string,
+    tables: string[]) {
+      return this.httpService.post<any>('/magic/system/sql/ddl/export-tables', {
+        databaseType,
+        connectionString,
+        databaseName,
+        tables,
+      });
+    }
+
+  /**
    * Drops the specified database entirely.
    * 
    * @param databaseType Type of database

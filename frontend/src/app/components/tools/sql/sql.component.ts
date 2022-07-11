@@ -20,7 +20,9 @@ import { BackendService } from 'src/app/services/backend.service';
 import { NewTableComponent } from './new-table/new-table.component';
 import { FeedbackService } from '../../../services/feedback.service';
 import { SqlWarningComponent } from './sql-warning/sql-warning.component';
+import { NewDatabaseComponent } from './new-database/new-database.component';
 import { NewFieldKeyComponent } from './new-field-key/new-field-key.component';
+import { ExportTablesComponent } from './export-tables/export-tables.component';
 import { DefaultDatabaseType } from '../../../models/default-database-type.model';
 import { SaveSqlDialogComponent } from './save-sql-dialog/save-sql-dialog.component';
 import { LoadSqlDialogComponent } from './load-sql-dialog/load-sql-dialog.component';
@@ -29,7 +31,6 @@ import { Model } from '../../utilities/codemirror/codemirror-sql/codemirror-sql.
 
 // CodeMirror options.
 import sql from '../../utilities/codemirror/options/sql.json'
-import { NewDatabaseComponent } from './new-database/new-database.component';
 
 /**
  * SQL component allowing user to execute arbitrary SQL statements towards his or her database.
@@ -776,6 +777,27 @@ export class SqlComponent implements OnInit {
       }
     });
   }
+
+  /**
+   * Exports the entire database as DDL and shows in a modal window.
+   */
+  exportDatabase() {
+    this.sqlService.exportDdl(
+      this.input.databaseType,
+      this.input.connectionString,
+      this.input.database,
+      this.activeTables.map(x => x.name)).subscribe({
+        next: (result: any) => {
+          this.dialog.open(ExportTablesComponent, {
+            width: '80%',
+            data: {
+              result: result.result,
+            }
+          });
+        },
+        error: (error: any) => this.feedbackService.showError(error)
+      });
+}
 
   /**
    * Drops the currently active database.

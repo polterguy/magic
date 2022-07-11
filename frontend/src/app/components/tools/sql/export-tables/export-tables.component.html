@@ -1,0 +1,25 @@
+
+<div mat-dialog-title>
+  Export DDL result
+</div>
+
+<div mat-dialog-content>
+  <ngx-codemirror
+    *ngIf="options"
+    [(ngModel)]="data.result"
+    [options]="options"
+    name="content">
+  </ngx-codemirror>
+</div>
+
+<div
+  mat-dialog-actions
+  class="mat-dialog-actions">
+
+  <button
+    mat-raised-button
+    color="primary"
+    type="submit"
+    [mat-dialog-close]="data">Close</button>
+
+</div>
