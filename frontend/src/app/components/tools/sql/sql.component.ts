@@ -782,11 +782,22 @@ export class SqlComponent implements OnInit {
    * Exports the entire database as DDL and shows in a modal window.
    */
   exportDatabase() {
+
+    // Retrieving tables and sorting such that tables with foreign keys to other tables ends up after the table they're pointing to.
+    let tables = this.activeTables;
+    tables = tables.sort((lhs: any, rhs: any) => {
+      if (lhs.foreign_keys?.filter((x: any) => x.foreign_table === rhs.name)) {
+        return 1;
+      } else if (rhs.foreign_keys?.filter((x: any) => x.foreign_table === lhs.name)) {
+        return -1;
+      }
+      return 0;
+    });
     this.sqlService.exportDdl(
       this.input.databaseType,
       this.input.connectionString,
       this.input.database,
-      this.activeTables.map(x => x.name)).subscribe({
+      tables.map(x => x.name)).subscribe({
         next: (result: any) => {
           this.dialog.open(ExportTablesComponent, {
             width: '80%',
@@ -796,7 +807,7 @@ export class SqlComponent implements OnInit {
           });
         },
         error: (error: any) => this.feedbackService.showError(error)
-      });
+    });
 }
 
   /**
