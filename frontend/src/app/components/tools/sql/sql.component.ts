@@ -580,7 +580,11 @@ export class SqlComponent implements OnInit {
    */
   deleteColumn(table: any, column: any) {
     if ((table.foreign_keys?.filter((x: any) => x.column === column.name) || []).length > 0) {
-      this.feedbackService.showError('Delete foreign keys before you delete the column');
+      if (this.input.databaseType === 'sqlite') {
+        this.feedbackService.showError('SQLite doesn\'t allow for deleting columns with foreign keys');
+      } else {
+        this.feedbackService.showError('Delete foreign keys before you delete the column');
+      }
       return;
     }
     this.feedbackService.confirm('Warning!', 'Are you sure you want to delete the column called <strong>' + column.name + 
