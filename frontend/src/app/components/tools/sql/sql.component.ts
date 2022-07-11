@@ -29,6 +29,7 @@ import { Model } from '../../utilities/codemirror/codemirror-sql/codemirror-sql.
 
 // CodeMirror options.
 import sql from '../../utilities/codemirror/options/sql.json'
+import { NewDatabaseComponent } from './new-database/new-database.component';
 
 /**
  * SQL component allowing user to execute arbitrary SQL statements towards his or her database.
@@ -767,6 +768,45 @@ export class SqlComponent implements OnInit {
           },
           error: (error: any) => this.feedbackService.showError(error)
         });
+    });
+  }
+
+  /**
+   * Invoken when user wants to create a new database.
+   */
+  createNewDatabase() {
+    const dialogRef = this.dialog.open(NewDatabaseComponent, {
+      width: '550px',
+      data: {
+      }
+    });
+    dialogRef.afterClosed().subscribe((result: any) => {
+
+      // We should only create a new database if the modal dialog returns some data to us.
+      if (result) {
+        this.sqlService.createDatabase(
+          this.input.databaseType,
+          this.input.connectionString,
+          result.name).subscribe({
+            next: () => {
+              this.feedbackService.showInfo('Database successfully create');
+              this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: any) => {
+                this.databaseDeclaration = databases;
+                this.input.database = result.name;
+                const tables = [];
+                this.activeTables = databases.databases.filter((x: any) => x.name === this.input.database)[0].tables || [];
+                for (const idxTable of this.activeTables) {
+                  tables[idxTable.name] = idxTable.columns.map((x: any) => x.name);
+                }
+                this.databases = databases.databases.map((x: any) => x.name);
+                this.input.options.hintOptions = {
+                  tables: tables,
+                };
+              });
+            },
+            error: (error: any) => this.feedbackService.showError(error)
+          });
+      }
     });
   }
 

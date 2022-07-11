@@ -370,6 +370,14 @@
 
               <button
                 mat-menu-item
+                (click)="createNewDatabase()"
+                class="action-button">
+                <mat-icon class="material-icons-outlined">add</mat-icon>
+                Create database
+              </button>
+
+              <button
+                mat-menu-item
                 (click)="createNewTable()"
                 class="action-button">
                 <mat-icon class="material-icons-outlined">add</mat-icon>

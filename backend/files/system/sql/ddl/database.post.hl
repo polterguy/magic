@@ -1,6 +1,6 @@
 
 /*
- * Adds the specified table to the specified database.
+ * Creates a new database with the specified name.
  * 
  * Arguments;
  * - [databaseType] - Database type, typically 'mssql' or 'mysql'.
@@ -11,7 +11,7 @@
    databaseType:string
    connectionString:string
    databaseName:string
-.description:Adds the specified table to the specified database
+.description:Creates a new database with the specified name
 .type:internal
 
 // Ensures user is authorized to access endpoint.
@@ -33,7 +33,8 @@ if
          .:/data/
          get-value:x:@.arguments/*/databaseName
          .:.db
-      io.file.delete:x:-
+      io.file.save:x:-
+         .:
 
 else
 
@@ -52,7 +53,7 @@ else
             .sql
             set-value:x:@.sql
                strings.concat
-                  .:"drop database "
+                  .:"create database "
                   get-value:x:@.arguments/*/databaseName
             data.execute:x:@.sql
                database-type:x:@.arguments/*/databaseType

@@ -1,0 +1,37 @@
+<form>
+
+    <div mat-dialog-title>
+      Create new database
+    </div>
+  
+    <div mat-dialog-content>
+  
+      <mat-form-field
+        class="w-100"
+        appearance="outline">
+        <mat-label>Name</mat-label>
+        <input
+          matInput
+          type="text"
+          autocomplete="off"
+          name="name"
+          [(ngModel)]="data.name">
+      </mat-form-field>
+  
+  </div>
+  
+    <div
+      mat-dialog-actions
+      class="mat-dialog-actions">
+  
+      <button
+        mat-raised-button
+        [disabled]="!data.name"
+        color="primary"
+        type="submit"
+        [mat-dialog-close]="data">Create</button>
+  
+    </div>
+  
+  </form>
+  
