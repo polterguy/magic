@@ -386,6 +386,14 @@
 
               <button
                 mat-menu-item
+                (click)="exportDatabase()"
+                class="action-button">
+                <mat-icon class="material-icons-outlined">cloud_download</mat-icon>
+                Export database DDL
+              </button>
+
+              <button
+                mat-menu-item
                 (click)="deleteDatabase()"
                 class="action-button">
                 <mat-icon class="material-icons-outlined">delete</mat-icon>
