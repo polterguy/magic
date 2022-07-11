@@ -600,18 +600,7 @@ export class SqlComponent implements OnInit {
         columnName).subscribe({
           next: () => {
             this.feedbackService.showInfo('Column successfully deleted');
-            this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: any) => {
-              this.databaseDeclaration = databases;
-              const tables = [];
-              this.activeTables = databases.databases.filter((x: any) => x.name === this.input.database)[0].tables || [];
-              for (const idxTable of this.activeTables) {
-                tables[idxTable.name] = idxTable.columns.map((x: any) => x.name);
-              }
-              this.databases = databases.databases.map((x: any) => x.name);
-              this.input.options.hintOptions = {
-                tables: tables,
-              };
-            });
+            this.reloadDatabases();
           },
           error: (error: any) => this.feedbackService.showError(error)
       });
@@ -637,18 +626,7 @@ export class SqlComponent implements OnInit {
         columnName).subscribe({
           next: () => {
             this.feedbackService.showInfo('Foreign key successfully deleted');
-            this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: any) => {
-              this.databaseDeclaration = databases;
-              const tables = [];
-              this.activeTables = databases.databases.filter((x: any) => x.name === this.input.database)[0].tables || [];
-              for (const idxTable of this.activeTables) {
-                tables[idxTable.name] = idxTable.columns.map((x: any) => x.name);
-              }
-              this.databases = databases.databases.map((x: any) => x.name);
-              this.input.options.hintOptions = {
-                tables: tables,
-              };
-            });
+            this.reloadDatabases();
           },
           error: (error: any) => this.feedbackService.showError(error)
       });
@@ -690,16 +668,7 @@ export class SqlComponent implements OnInit {
               next: () => {
                 this.feedbackService.showInfo('Column was successfully added to table');
                 this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: any) => {
-                  this.databaseDeclaration = databases;
-                  const tables = [];
-                  this.activeTables = databases.databases.filter((x: any) => x.name === this.input.database)[0].tables || [];
-                  for (const idxTable of this.activeTables) {
-                    tables[idxTable.name] = idxTable.columns.map((x: any) => x.name);
-                  }
-                  this.databases = databases.databases.map((x: any) => x.name);
-                  this.input.options.hintOptions = {
-                    tables: tables,
-                  };
+                  this.reloadDatabases();
                 });
               },
               error: (error) => this.feedbackService.showError(error)
@@ -717,18 +686,7 @@ export class SqlComponent implements OnInit {
               result.foreignField).subscribe({
               next: () => {
                 this.feedbackService.showInfo('Foreign key was successfully added to table');
-                this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: any) => {
-                  this.databaseDeclaration = databases;
-                  const tables = [];
-                  this.activeTables = databases.databases.filter((x: any) => x.name === this.input.database)[0].tables || [];
-                  for (const idxTable of this.activeTables) {
-                    tables[idxTable.name] = idxTable.columns.map((x: any) => x.name);
-                  }
-                  this.databases = databases.databases.map((x: any) => x.name);
-                  this.input.options.hintOptions = {
-                    tables: tables,
-                  };
-                });
+                this.reloadDatabases();
               },
               error: (error) => this.feedbackService.showError(error)
             });
@@ -753,18 +711,7 @@ export class SqlComponent implements OnInit {
         table.name).subscribe({
           next: () => {
             this.feedbackService.showInfo('Table was successfully dropped');
-            this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: any) => {
-              this.databaseDeclaration = databases;
-              const tables = [];
-              this.activeTables = databases.databases.filter((x: any) => x.name === this.input.database)[0].tables || [];
-              for (const idxTable of this.activeTables) {
-                tables[idxTable.name] = idxTable.columns.map((x: any) => x.name);
-              }
-              this.databases = databases.databases.map((x: any) => x.name);
-              this.input.options.hintOptions = {
-                tables: tables,
-              };
-            });
+            this.reloadDatabases();
           },
           error: (error: any) => this.feedbackService.showError(error)
         });
@@ -790,19 +737,7 @@ export class SqlComponent implements OnInit {
           result.name).subscribe({
             next: () => {
               this.feedbackService.showInfo('Database successfully create');
-              this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: any) => {
-                this.databaseDeclaration = databases;
-                this.input.database = result.name;
-                const tables = [];
-                this.activeTables = databases.databases.filter((x: any) => x.name === this.input.database)[0].tables || [];
-                for (const idxTable of this.activeTables) {
-                  tables[idxTable.name] = idxTable.columns.map((x: any) => x.name);
-                }
-                this.databases = databases.databases.map((x: any) => x.name);
-                this.input.options.hintOptions = {
-                  tables: tables,
-                };
-              });
+              this.reloadDatabases(() => this.input.database = result.name);
             },
             error: (error: any) => this.feedbackService.showError(error)
           });
@@ -834,18 +769,7 @@ export class SqlComponent implements OnInit {
           result.pkDefault).subscribe({
             next: () => {
               this.feedbackService.showInfo('Table successfully added');
-              this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: any) => {
-                this.databaseDeclaration = databases;
-                const tables = [];
-                this.activeTables = databases.databases.filter((x: any) => x.name === this.input.database)[0].tables || [];
-                for (const idxTable of this.activeTables) {
-                  tables[idxTable.name] = idxTable.columns.map((x: any) => x.name);
-                }
-                this.databases = databases.databases.map((x: any) => x.name);
-                this.input.options.hintOptions = {
-                  tables: tables,
-                };
-              });
+              this.reloadDatabases();
             },
             error: (error: any) => this.feedbackService.showError(error)
           });
@@ -866,18 +790,7 @@ export class SqlComponent implements OnInit {
           next: () => {
             this.feedbackService.showInfo('Database successfully dropped');
             this.input.database = 'magic';
-            this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: any) => {
-              this.databaseDeclaration = databases;
-              const tables = [];
-              this.activeTables = databases.databases.filter((x: any) => x.name === this.input.database)[0].tables || [];
-              for (const idxTable of this.activeTables) {
-                tables[idxTable.name] = idxTable.columns.map((x: any) => x.name);
-              }
-              this.databases = databases.databases.map((x: any) => x.name);
-              this.input.options.hintOptions = {
-                tables: tables,
-              };
-            });
+            this.reloadDatabases();
           },
           error: (error: any) => this.feedbackService.showError(error)
         });
@@ -971,5 +884,26 @@ export class SqlComponent implements OnInit {
       }
     }
     return retValue;
+  }
+
+  /*
+   * Reloads all databases from backend.
+   */
+  private reloadDatabases(inject: () => void = null) {
+    this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: any) => {
+      this.databaseDeclaration = databases;
+      if (inject) {
+        inject();
+      }
+      const tables = [];
+      this.activeTables = databases.databases.filter((x: any) => x.name === this.input.database)[0].tables || [];
+      for (const idxTable of this.activeTables) {
+        tables[idxTable.name] = idxTable.columns.map((x: any) => x.name);
+      }
+      this.databases = databases.databases.map((x: any) => x.name);
+      this.input.options.hintOptions = {
+        tables: tables,
+      };
+    });
   }
 }
