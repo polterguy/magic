@@ -810,6 +810,7 @@ export class SqlComponent implements OnInit {
           });
           dialogRef.afterClosed().subscribe((result: any) => {
             if (result) {
+
               // User wants to save content to a module folder.
               this.sqlService.exportToModule(
                 this.input.databaseType,
