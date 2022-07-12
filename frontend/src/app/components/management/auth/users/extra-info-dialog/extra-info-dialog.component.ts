@@ -140,7 +140,7 @@ export class ExtraInfoDialogComponent implements OnInit {
         this.userService.editExtra(element).subscribe({
           next: (res: any) => {
             if (index === changedFields.length - 1) {
-              this.feedbackService.showInfo('Field/s successfully updated');
+              this.feedbackService.showInfo('Fields successfully updated');
               this.close();
             }
           },
