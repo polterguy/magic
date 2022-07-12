@@ -228,6 +228,7 @@
                   *ngFor="let extra of el.user_extra;let index = index"
                   (click)="editExtra(extra)"
                   (removed)="removeExtra(extra)"
+                  class="pointer-chip"
                   selectable="false">
                   {{extra.type}} - {{extra.value}}
                   <mat-icon matChipRemove>cancel</mat-icon>
