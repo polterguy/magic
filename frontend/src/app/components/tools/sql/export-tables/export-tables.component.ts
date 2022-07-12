@@ -7,9 +7,6 @@
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AfterViewInit, Component, Inject } from '@angular/core';
 
-// Application specific imports.
-import { Model } from 'src/app/components/utilities/codemirror/codemirror-sql/codemirror-sql.component';
-
 // CodeMirror options according to file extensions needed to show JSON CodeMirror editor.
 import fileTypes from 'src/app/codemirror/file-types.json';
 
@@ -44,7 +41,6 @@ export class ExportTablesComponent implements AfterViewInit {
   constructor(@Inject(MAT_DIALOG_DATA) public data: ExportTablesModel) { }
 
   ngAfterViewInit() {
-    console.log(this.data);
     setTimeout(() => {
       this.options = this.extensions.filter(x => x.extensions.indexOf('sql') !== -1)[0].options;
     }, 500);
