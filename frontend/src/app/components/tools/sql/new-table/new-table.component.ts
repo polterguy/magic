@@ -36,4 +36,13 @@ export class NewTableComponent {
   getValidInput() {
     return this.data.name && this.data.pkName && this.data.pkType && this.data.pkLength;
   }
+
+  /**
+   * Invoked when name changes.
+   */
+  nameChanged() {
+    this.data.pkName = this.data.name + '_id';
+    this.data.pkType = 'auto_increment';
+    this.data.pkLength = 10;
+  }
 }
