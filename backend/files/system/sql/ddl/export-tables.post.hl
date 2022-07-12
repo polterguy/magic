@@ -78,7 +78,7 @@ data.connect:x:-
          set-value:x:@.result
             strings.concat
                get-value:x:@.result
-               .:"SET foreign_key_checks = 0;\r\n"
+               .:"SET foreign_key_checks = 1;\r\n"
          unwrap:x:+/*
          return
             result:x:@.result
