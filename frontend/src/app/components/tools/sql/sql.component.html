@@ -402,6 +402,12 @@
 
             </mat-menu>
 
+            <div
+              *ngIf="!activeTables || activeTables.length === 0"
+              class="col-12">
+              Please add tables to your database
+            </div>
+
             <div class="col-xl-4 col-sm-6 col-12 mb-5 db-table-design" *ngFor="let idxTable of activeTables">
               <mat-card class="h-100" [id]="idxTable.name">
                 <mat-card-content class="h-100 pb-4">
