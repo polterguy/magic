@@ -10,23 +10,23 @@ import { PlatformLocation } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { ChangeDetectorRef, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { trigger, state, style, transition, animate } from '@angular/animations';
+import { ChangeDetectorRef, Component, Input, OnInit, ViewChild } from '@angular/core';
 
 // Application specific imports.
 import { Count } from 'src/app/models/count.model';
 import { BackendService } from 'src/app/services/backend.service';
+import { EditExtraComponent } from './edit-extra/edit-extra.component';
 import { FeedbackService } from '../../../../services/feedback.service';
-import { User, User_Extra } from 'src/app/components/management/auth/models/user.model';
 import { AuthenticateResponse } from '../models/authenticate-response.model';
 import { NewUserDialogComponent } from './new-user-dialog/new-user-dialog.component';
 import { UserService } from 'src/app/components/management/auth/services/user.service';
 import { UserRoles } from 'src/app/components/management/auth/models/user-roles.model';
+import { User, User_Extra } from 'src/app/components/management/auth/models/user.model';
 import { JailUserDialogComponent } from './jail-user-dialog/jail-user-dialog.component';
 import { AuthFilter } from 'src/app/components/management/auth/models/auth-filter.model';
-import { AddToRoleDialogComponent } from './add-to-role-dialog/add-to-role-dialog.component';
 import { ExtraInfoDialogComponent } from './extra-info-dialog/extra-info-dialog.component';
-import { element } from 'protractor';
+import { AddToRoleDialogComponent } from './add-to-role-dialog/add-to-role-dialog.component';
 
 /**
  * Users component for administrating users in the system.
@@ -418,6 +418,43 @@ export class UsersComponent implements OnInit {
         this.feedbackService.showInfo(`'${username}' successfully created`)
         this.getUsers();
         this.getUserExtra(username);
+      }
+    });
+  }
+
+  /**
+   * Removes the specified extra field from the specified user.
+   * 
+   * @param extra Extra field to remove
+   */
+  removeExtra(extra: User_Extra) {
+    this.userService.deleteExtra(extra.type, extra.user).subscribe({
+      next: () => {
+        this.feedbackService.showInfo('Extra information removed from user');
+        this.getUserExtra(extra.user);
+      },
+      error: (error: any) => this.feedbackService.showError(error)
+    });
+  }
+
+  /**
+   * Edits a single extra field.
+   * 
+   * @param extra Extra field to edit
+   */
+  editExtra(extra: User_Extra) {
+    const dialogRef = this.dialog.open(EditExtraComponent, {
+      width: '550px',
+      data: extra,
+    });
+    dialogRef.afterClosed().subscribe((username: string) => {
+      if (username) {
+        this.userService.editExtra(extra).subscribe({
+          next: () => {
+            this.feedbackService.showInfo('Extra field successfully updated');
+          },
+          error: (error: any) => this.feedbackService.showError(error)
+        });
       }
     });
   }

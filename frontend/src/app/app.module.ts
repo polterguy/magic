@@ -177,6 +177,7 @@ import { NewFieldKeyComponent } from './components/tools/sql/new-field-key/new-f
 import { NewTableComponent } from './components/tools/sql/new-table/new-table.component';
 import { NewDatabaseComponent } from './components/tools/sql/new-database/new-database.component';
 import { ExportTablesComponent } from './components/tools/sql/export-tables/export-tables.component';
+import { EditExtraComponent } from './components/management/auth/users/edit-extra/edit-extra.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -288,6 +289,7 @@ import { ExportTablesComponent } from './components/tools/sql/export-tables/expo
     NewTableComponent,
     NewDatabaseComponent,
     ExportTablesComponent,
+    EditExtraComponent,
   ],
   imports: [
     FormsModule,

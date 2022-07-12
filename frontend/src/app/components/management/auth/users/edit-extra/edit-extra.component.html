@@ -1,0 +1,27 @@
+
+<h1 mat-dialog-title>Edit extra field value</h1>
+
+<form>
+  <div mat-dialog-content>
+
+    <mat-form-field class="w-100" appearance="outline">
+      <mat-label class="dark">{{data.type}}</mat-label>
+      <input
+        matInput
+        [(ngModel)]="data.value"
+        name="value"
+        autocomplete="off">
+    </mat-form-field>
+
+  </div>
+
+  <div mat-dialog-actions>
+    <button
+      mat-raised-button
+      type="submit"
+      [mat-dialog-close]="data">
+      Save & close
+    </button>
+  </div>
+
+</form>

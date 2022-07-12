@@ -161,37 +161,39 @@ export class UserService {
   }
 
   /**
-   * Retrieving extra details of each user
-   * @param username username of the user
+   * Retrieving extra details of each user.
+   * 
+   * @param username Username of the user
    */
   public getUserExtra(username: string) {
     return this.httpService.get<User_Extra>('/magic/modules/magic/users_extra?user.eq=' + encodeURIComponent(username));
   }
 
   /**
-   * Deleting extra details of each user
-   * @param type type of the field to be deleted,
-   * @param username username of the user
+   * Deleting extra details of each user.
+   * 
+   * @param type Type of the field to be deleted,
+   * @param username Username of the user
    */
   public deleteExtra(type: string, username: string) {
-    return this.httpService.delete<User_Extra>('/magic/modules/magic/users_extra?type=' + encodeURIComponent(type) + '&user=' + encodeURIComponent(username));
+    return this.httpService.delete<any>('/magic/modules/magic/users_extra?type=' + encodeURIComponent(type) + '&user=' + encodeURIComponent(username));
   }
 
   /**
-   * Deleting extra details of each user
-   * @param type type of the field to be deleted,
-   * @param username username of the user
+   * Deleting extra details of each user.
+   * 
+   * @param extra Extra information
    */
-  public editExtra(fields: User_Extra) {
-    return this.httpService.put<User_Extra>('/magic/modules/magic/users_extra', fields);
+  public editExtra(extra: User_Extra) {
+    return this.httpService.put<any>('/magic/modules/magic/users_extra', extra);
   }
 
   /**
-   * Deleting extra details of each user
-   * @param type type of the field to be deleted,
-   * @param username username of the user
+   * Deleting extra details of each user.
+   * 
+   * @param extra Extra information
    */
-  public addExtra(fields: User_Extra) {
-    return this.httpService.post<User_Extra>('/magic/modules/magic/users_extra', fields);
+  public addExtra(extra: User_Extra) {
+    return this.httpService.post<any>('/magic/modules/magic/users_extra', extra);
   }
 }

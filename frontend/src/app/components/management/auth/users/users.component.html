@@ -201,15 +201,6 @@
                     Edit extra info
                   </button>
 
-                  <button
-                    mat-menu-item
-                    [disabled]="el.username === 'root' || !backendService.active?.access.auth.delete_user || el?.user_extra?.length === 0"
-                    matTooltipPosition="after"
-                    matTooltip="Delete extra details"
-                    (click)="openExtraInfoDialog(el?.user_extra, 'delete')">
-                    <mat-icon>delete</mat-icon>
-                    Delete extra info
-                  </button>
                 </mat-menu>
               </div>
             </div>
@@ -229,12 +220,19 @@
               </mat-chip-list>
             </div>
 
-            <div class="pb-3">
-              <div *ngFor="let extra of el?.user_extra;let index = index" 
-              [class.mb-2]="index !== (el?.user_extra.length - 1)">
-                <span class="d-block text-muted text-capitalized">{{extra?.type}}</span>
-                <span class="d-block">{{extra?.value}}</span>
-              </div>
+            <div
+              class="d-flex flex-wrap pb-3"
+              *ngIf="el?.user_extra && el.user_extra.length > 0">
+              <mat-chip-list>
+                <mat-chip
+                  *ngFor="let extra of el.user_extra;let index = index"
+                  (click)="editExtra(extra)"
+                  (removed)="removeExtra(extra)"
+                  selectable="false">
+                  {{extra.type}} - {{extra.value}}
+                  <mat-icon matChipRemove>cancel</mat-icon>
+                </mat-chip>
+              </mat-chip-list>
             </div>
 
           </div>
