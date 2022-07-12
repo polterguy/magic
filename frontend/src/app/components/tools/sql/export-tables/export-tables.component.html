@@ -18,6 +18,7 @@
 
   <button
     mat-raised-button
+    [disabled]="data.module === 'magic'"
     color="primary"
     type="submit"
     [mat-dialog-close]="data">Export to module</button>
@@ -25,7 +26,6 @@
     <button
     mat-raised-button
     color="primary"
-    type="submit"
     [mat-dialog-close]="">Close</button>
 
 </div>
