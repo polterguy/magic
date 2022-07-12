@@ -403,7 +403,7 @@
             </mat-menu>
 
             <div class="col-xl-4 col-sm-6 col-12 mb-5 db-table-design" *ngFor="let idxTable of activeTables">
-              <mat-card class="h-100">
+              <mat-card class="h-100" [id]="idxTable.name">
                 <mat-card-content class="h-100 pb-4">
                   <h3 class="pl-3">{{idxTable.name}}</h3>
 
@@ -465,7 +465,10 @@
                     <li *ngFor="let idxFk of idxTable.foreign_keys">
                       <span>{{idxFk.column}}</span>
                       <mat-icon class="arrow">arrow_right_alt</mat-icon>
-                      <span class="after">{{idxFk.foreign_table}}.{{idxFk.foreign_column}}</span>
+                      <span
+                        class="after"
+                        role="button"
+                        (click)="scrollIntoView(idxFk.foreign_table)">{{idxFk.foreign_table}}.{{idxFk.foreign_column}}</span>
                       <mat-icon
                         *ngIf="idxFk.name"
                         role="button"
