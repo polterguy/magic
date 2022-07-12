@@ -61,7 +61,7 @@ data.connect:x:-
                   get-value:x:@.arguments/*/databaseName
                   .:";\r\nUSE "
                   get-value:x:@.arguments/*/databaseName
-                  .:";\r\n\r\n"
+                  .:";\r\nSET foreign_key_checks = 0;\r\n\r\n"
          for-each:x:@.arguments/*/tables/*
             .sql
             set-value:x:@.sql
@@ -75,6 +75,10 @@ data.connect:x:-
                   get-value:x:@.result
                   get-value:x:@data.select/*/1
                   .:";\r\n\r\n"
+         set-value:x:@.result
+            strings.concat
+               get-value:x:@.result
+               .:"SET foreign_key_checks = 0;\r\n"
          unwrap:x:+/*
          return
             result:x:@.result
