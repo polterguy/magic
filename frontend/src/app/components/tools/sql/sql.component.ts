@@ -130,7 +130,7 @@ export class SqlComponent implements OnInit {
         this.getConnectionStrings(defaultDatabaseType.default, (connectionStrings: string[]) => {
           this.getDatabases(defaultDatabaseType.default, 'generic', (databases: any) => {
             this.databaseDeclaration = databases;
-            const tables = [];
+            const tables = {};
             this.activeTables = databases.databases.filter((x: any) => x.name === 'magic')[0].tables;
             for (const idxTable of this.activeTables) {
               tables[idxTable.name] = idxTable.columns.map((x: any) => x.name);
