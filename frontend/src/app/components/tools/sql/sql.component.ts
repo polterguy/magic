@@ -800,10 +800,26 @@ export class SqlComponent implements OnInit {
       tables.map(x => x.name),
       true).subscribe({
         next: (result: any) => {
-          this.dialog.open(ExportTablesComponent, {
+          const dialogRef = this.dialog.open(ExportTablesComponent, {
             width: '80%',
             data: {
               result: result.result,
+              full: true,
+            }
+          });
+          dialogRef.afterClosed().subscribe((result: any) => {
+            if (result) {
+              // User wants to save content to a module folder.
+              this.sqlService.exportToModule(
+                this.input.databaseType,
+                this.input.database,
+                result.result,
+              ).subscribe({
+                next: () => {
+                  this.feedbackService.showInfo('SQL successfully exported');
+                },
+                error: (error: any) => this.feedbackService.showError(error)
+              });
             }
           });
         },
@@ -828,6 +844,7 @@ export class SqlComponent implements OnInit {
             width: '80%',
             data: {
               result: result.result,
+              full: false,
             }
           });
         },

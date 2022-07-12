@@ -17,7 +17,8 @@ import fileTypes from 'src/app/codemirror/file-types.json';
  * Model for seeing DDL of tables.
  */
 export class ExportTablesModel {
-  result: Model;
+  result: string;
+  full: boolean;
 }
 
 /**

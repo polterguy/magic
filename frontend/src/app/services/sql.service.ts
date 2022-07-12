@@ -362,4 +362,22 @@ export class SqlService {
       '&fkName=' +
       encodeURIComponent(fkName));
   }
+
+  /**
+   * Adds the specified column to your table.
+   * 
+   * @param databaseType Type of database
+   * @param module Database name
+   * @param sql Table name
+   */
+   exportToModule(
+    databaseType: string,
+    module: string,
+    sql: string) {
+    return this.httpService.post<any>('/magic/system/sql/ddl/export-to-module', {
+      databaseType,
+      module,
+      sql,
+    });
+  }
 }

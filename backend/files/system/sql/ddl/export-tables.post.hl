@@ -75,10 +75,11 @@ data.connect:x:-
                   get-value:x:@.result
                   get-value:x:@data.select/*/1
                   .:";\r\n\r\n"
-         set-value:x:@.result
-            strings.concat
-               get-value:x:@.result
-               .:"SET foreign_key_checks = 1;\r\n"
+         if:x:@.arguments/*/full
+            set-value:x:@.result
+               strings.concat
+                  get-value:x:@.result
+                  .:"SET foreign_key_checks = 1;\r\n"
          unwrap:x:+/*
          return
             result:x:@.result

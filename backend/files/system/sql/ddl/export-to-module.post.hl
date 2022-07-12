@@ -1,0 +1,65 @@
+
+/*
+ * Exports the specified SQL to a module folder.
+ * 
+ * Arguments;
+ * - [databaseType] - Type of database
+ * - [module] - Name of module
+ * - [sql] - SQL script to export
+ */
+.arguments
+   databaseType:string
+   module:string
+   sql:string
+.description:Exports the specified SQL to a module folder
+.type:internal
+
+// Ensures user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/sql
+validators.mandatory:x:@.arguments/*/module
+validators.mandatory:x:@.arguments/*/databaseType
+validators.enum:x:@.arguments/*/databaseType
+   .:mysql
+   .:sqlite
+   .:mssql
+   .:pgsql
+
+// Ensuring folders exists.
+strings.concat
+   .:/modules/
+   get-value:x:@.arguments/*/module
+   .:/
+if
+   not
+      io.folder.exists:x:@strings.concat
+   .lambda
+      io.folder.create:x:@strings.concat
+strings.concat
+   .:/modules/
+   get-value:x:@.arguments/*/module
+   .:/magic.startup/
+if
+   not
+      io.folder.exists:x:@strings.concat
+   .lambda
+      io.folder.create:x:@strings.concat
+
+// Saving file.
+strings.concat
+   .:/modules/
+   get-value:x:@.arguments/*/module
+   .:/magic.startup/
+   get-value:x:@.arguments/*/module
+   .:.
+   get-value:x:@.arguments/*/databaseType
+   .:.sql
+io.file.save:x:@strings.concat
+   get-value:x:@.arguments/*/sql
+
+
+// Returning result to caller.
+return
+   result:success
