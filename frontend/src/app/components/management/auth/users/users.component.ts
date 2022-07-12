@@ -445,13 +445,18 @@ export class UsersComponent implements OnInit {
   editExtra(extra: User_Extra) {
     const dialogRef = this.dialog.open(EditExtraComponent, {
       width: '550px',
-      data: extra,
+      data: {
+        type: extra.type,
+        user: extra.user,
+        value: extra.value,
+      },
     });
-    dialogRef.afterClosed().subscribe((username: string) => {
-      if (username) {
-        this.userService.editExtra(extra).subscribe({
+    dialogRef.afterClosed().subscribe((result: User_Extra) => {
+      if (result) {
+        this.userService.editExtra(result).subscribe({
           next: () => {
             this.feedbackService.showInfo('Extra field successfully updated');
+            extra.value = result.value;
           },
           error: (error: any) => this.feedbackService.showError(error)
         });
