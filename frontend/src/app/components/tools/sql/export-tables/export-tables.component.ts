@@ -19,6 +19,7 @@ import fileTypes from 'src/app/codemirror/file-types.json';
 export class ExportTablesModel {
   result: string;
   full: boolean;
+  module: string;
 }
 
 /**
@@ -43,6 +44,7 @@ export class ExportTablesComponent implements AfterViewInit {
   constructor(@Inject(MAT_DIALOG_DATA) public data: ExportTablesModel) { }
 
   ngAfterViewInit() {
+    console.log(this.data);
     setTimeout(() => {
       this.options = this.extensions.filter(x => x.extensions.indexOf('sql') !== -1)[0].options;
     }, 500);

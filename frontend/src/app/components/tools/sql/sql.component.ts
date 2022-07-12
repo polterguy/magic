@@ -805,6 +805,7 @@ export class SqlComponent implements OnInit {
             data: {
               result: result.result,
               full: true,
+              module: this.input.database,
             }
           });
           dialogRef.afterClosed().subscribe((result: any) => {
@@ -845,6 +846,7 @@ export class SqlComponent implements OnInit {
             data: {
               result: result.result,
               full: false,
+              module: this.input.database,
             }
           });
         },

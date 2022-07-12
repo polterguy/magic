@@ -59,6 +59,25 @@ strings.concat
 io.file.save:x:@strings.concat
    get-value:x:@.arguments/*/sql
 
+// Creating ensure database Hyperlambda file.
+.lambda
+   ..:@"Runs during startup of Magic, and basically just ensures the module's database exists,
+and is updated by running migration scripts after attempting to create the database.
+ 
+If the database doesn't exist, this script will create it by executing the SQL in the file"
+   signal:magic.modules.ensure-database
+      module:module
+      database:module
+set-value:x:@.lambda/**/=module
+   get-value:x:@.arguments/*/module
+lambda2hyper:x:@.lambda/*
+   comments:true
+strings.concat
+   .:/modules/
+   get-value:x:@.arguments/*/module
+   .:/magic.startup/ensure-database.hl
+io.file.save:x:@strings.concat
+   get-value:x:@lambda2hyper
 
 // Returning result to caller.
 return
