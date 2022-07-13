@@ -39,28 +39,28 @@
   sidebar settings
   =-=-=-=-=-=*/
 
-  .dark .mat-drawer{
+  .dark .mat-sidenav{
     background-color: $magic_dark_secondary_light!important;
   }
   /*=-=-=-=-=-=
   sidebar and content width and margin relatively
   =-=-=-=-=-=*/
-  mat-drawer.full-width-sidebar{
+  mat-sidenav.full-width-sidebar{
     width: $sidebar_full_width;
     @include general_transition(0.2s);
   }
-  mat-drawer.small-width-sidebar{
+  mat-sidenav.small-width-sidebar{
     width: $sidebar_small_width;
     @include general_transition(0.2s);
   }
-  mat-drawer-content.content-with-full-sidebar{
+  mat-sidenav-content.content-with-full-sidebar{
     margin-left: calc(#{$sidebar_full_width} + #{$side_space})!important;
     @include general_transition(0.2s);
     table .CodeMirror:not(.CodeMirror-fullscreen){
       max-width: calc(100vw - (#{$sidebar_full_width} + (#{$side_space} * 3) + 80px));
     }
   }
-  mat-drawer-content.content-with-small-sidebar{
+  mat-sidenav-content.content-with-small-sidebar{
     margin-left: calc(#{$sidebar_small_width} + #{$side_space})!important;
     @include general_transition(0.2s);
     table .CodeMirror:not(.CodeMirror-fullscreen){

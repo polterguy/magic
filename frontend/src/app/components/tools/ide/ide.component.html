@@ -4,27 +4,13 @@
   <div class="col-12 mb-general">
     <mat-card class="h-100 p-0">
       <mat-card-content class="h-100">
-        <mat-drawer-container autosize="true">
+        <mat-sidenav-container autosize="true">
 
           <!-- Drawer for tree view of files and folders on server -->
-          <mat-drawer
+          <mat-sidenav
             #drawer
             [mode]="largeScreen ? 'side' : 'over'"
             [opened]="startResizing && largeScreen ? true : false">
-
-            <!-- Close treeview drawer button, only visible on small screens -->
-            <div class="d-md-none d-block mb-5">
-              <div class="mobile-close-drawer">
-                <button
-                  type="button"
-                  mat-flat-button
-                  (click)="drawer.toggle()"
-                  class="d-flex justify-content-start w-100">
-                  <mat-icon>close</mat-icon>
-                  Close
-                </button>
-              </div>
-            </div>
 
             <!-- Treeview for files and folders on server -->
             <mat-tree
@@ -84,7 +70,7 @@
                 (change)="toggleSystemFiles()">System files</mat-slide-toggle>
             </div>
 
-          </mat-drawer>
+          </mat-sidenav>
         
           <div class="content-section d-flex flex-column w-100 h-100 p-3">
 
@@ -362,7 +348,7 @@
               </div>
 
           </div>
-        </mat-drawer-container>
+        </mat-sidenav-container>
         
       </mat-card-content>
     </mat-card>
