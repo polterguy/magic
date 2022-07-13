@@ -878,10 +878,14 @@ export class SqlComponent implements OnInit {
   /**
    * Scrolls the specified element into view.
    * 
-   * @param el ID of element to scroll into view
+   * @param id ID of element to scroll into view
    */
-  scrollIntoView(el: string) {
-    document.getElementById(el).scrollIntoView({behavior: 'smooth'});
+  public animating = '';
+  scrollIntoView(id: string) {
+    const el = document.getElementById(id);
+    el.scrollIntoView({behavior: 'smooth'});
+    this.animating = id;
+    setTimeout(() => this.animating = '', 2000);
   }
 
   /*
