@@ -56,7 +56,6 @@ $max_height: calc(100vh - 155px);
     .mat-menu-content{min-width: 200px;}
   }
 }
-.mobile-close-drawer { position: absolute;left: 5px;top: 5px;z-index: 1;right: 10px; }
 .system-files-toggle {
   position: absolute;
   left: 0;
@@ -77,5 +76,10 @@ $max_height: calc(100vh - 155px);
     font-size: 18px;
     width: 18px;
     height: 18px
+  }
+}
+@media(max-width:992px) {
+  .mat-drawer-opened {
+    border-radius: 0;
   }
 }
