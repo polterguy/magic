@@ -5,9 +5,9 @@
 
 <div [class]="themeService.theme" class="main-body">
 
-  <mat-drawer-container (backdropClick)="closeNavbar()" id="main-wrapper">
+  <mat-sidenav-container (backdropClick)="closeNavbar()" id="main-wrapper">
 
-    <mat-drawer
+    <mat-sidenav
       [mode]="largeScreen ? 'side' : 'over'"
       class="mat-elevation-z2"
       [opened]="navbarService.expanded || largeScreen"
@@ -16,9 +16,9 @@
       [class.small-width-sidebar]="largeScreen && !navbarService.expanded"
       id="sidebar-main">
       <app-navbar [largeScreen]="largeScreen"></app-navbar>
-    </mat-drawer>
+    </mat-sidenav>
 
-    <mat-drawer-content
+    <mat-sidenav-content
       [class.content-with-full-sidebar]="largeScreen && navbarService.expanded"
       [class.content-with-small-sidebar]="largeScreen && !navbarService.expanded" id="main-section"
       [class.is-small-screen]="!largeScreen">
@@ -30,8 +30,8 @@
       <div class="container-fluid h-100">
         <router-outlet></router-outlet>
       </div>
-    </mat-drawer-content>
+    </mat-sidenav-content>
 
-  </mat-drawer-container>
+  </mat-sidenav-container>
 
 </div>

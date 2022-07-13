@@ -12,21 +12,25 @@ Material body and general styling
 .dark .mat-primary *{
   color: $magic_default_alternative;
 }
-.mat-drawer-container{
+.mat-sidenav-container{
   height: 100%;
   overflow-x: hidden;
 }
-.light .mat-drawer-container{
+.light .mat-sidenav-container{
   background-color: $magic_site_bg!important;
   height: 100%;
 }
-.mat-drawer-content{
+.mat-sidenav-content{
   @include scrollbar($magic_default_secondary,transparentize($color: $magic_dark_alternative, $amount: 0.65),3px);
 }
-#main-wrapper.mat-drawer-container{
+#main-wrapper.mat-sidenav-container{
   min-height: 100vh;
 }
-#main-section.mat-drawer-content{
+#main-section.mat-sidenav-content{
+  position: fixed;
+  top:0;
+  left:0;
+  width: -webkit-fill-available;
   height: 100vh;
   overflow-y: auto;
   overflow-x: hidden;
@@ -36,7 +40,7 @@ Material body and general styling
   margin-bottom: $side_space;
   @include scrollbar($magic_default_secondary,transparentize($color: $magic_dark_alternative, $amount: 0.65),3px);
 }
-#sidebar-main.mat-drawer{
+#sidebar-main.mat-sidenav{
   @media (min-width: 768px){
     position: fixed;
     top: $side_space;

@@ -10,9 +10,9 @@ $max_height: calc(100vh - 155px);
   .light-bulb{max-height: 50vh;display: block;margin: auto;max-width: 100%;}
 }
 ::ng-deep .ide{
-  .mat-drawer-inner-container{@include scrollbar($magic_default_secondary,transparentize($color: $magic_dark_alternative, $amount: 0.65),5px);}
-  .mat-drawer-container,.mat-drawer{background-color: inherit!important;}
-  .mat-drawer{
+  .mat-sidenav-inner-container{@include scrollbar($magic_default_secondary,transparentize($color: $magic_dark_alternative, $amount: 0.65),5px);}
+  .mat-sidenav-container,.mat-sidenav{background-color: inherit!important;}
+  .mat-sidenav{
     overflow: hidden;
   }
   .custom-margin{
@@ -22,15 +22,15 @@ $max_height: calc(100vh - 155px);
   .mat-tree-node {min-height: 40px;}
 }
 ::ng-deep .dark .ide{
-  .mat-drawer{background-color: $magic_dark_ng_theme!important;}
+  .mat-sidenav{background-color: $magic_dark_ng_theme!important;}
   .system-files-toggle{background-color: $magic_dark_ng_theme;box-shadow: inset 0 0 50px rgb(0 0 0 / 20%);}
 }
 ::ng-deep .light .ide{
-  .mat-drawer{background-color: $magic_default!important;}
+  .mat-sidenav{background-color: $magic_default!important;}
   .system-files-toggle{background-color: $magic_default;box-shadow: inset 0 0 50px rgb(0 0 0 / 5%);}
 }
 ::ng-deep{
-  .mat-drawer{
+  .mat-sidenav{
     border-bottom-left-radius: 5px;
     border-top-left-radius: 5px;
   }
@@ -56,7 +56,7 @@ $max_height: calc(100vh - 155px);
     .mat-menu-content{min-width: 200px;}
   }
 }
-.mobile-close-drawer { position: absolute;left: 0;top: 0;z-index: 1;right: 10px; }
+.mobile-close-drawer { position: absolute;left: 5px;top: 5px;z-index: 1;right: 10px; }
 .system-files-toggle {
   position: absolute;
   left: 0;
