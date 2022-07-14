@@ -27,6 +27,8 @@ validators.mandatory:x:@.arguments/*/databaseType
 validators.enum:x:@.arguments/*/databaseType
    .:mysql
    .:sqlite
+   .:pgsql
+   
 
 // Creating our database connection.
 strings.concat
@@ -43,6 +45,7 @@ data.connect:x:-
 
       case:sqlite
       case:mysql
+      case:pgsql
          .sql
          set-value:x:@.sql
             strings.concat

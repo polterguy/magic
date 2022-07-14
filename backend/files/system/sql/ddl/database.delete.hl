@@ -24,6 +24,7 @@ validators.mandatory:x:@.arguments/*/databaseType
 validators.enum:x:@.arguments/*/databaseType
    .:mysql
    .:sqlite
+   .:pgsql
 
 if
    eq:x:@.arguments/*/databaseType
@@ -33,7 +34,7 @@ if
          .:/data/
          get-value:x:@.arguments/*/databaseName
          .:.db
-      io.file.delete:x:-
+      io.file.delete
 
 else
 
@@ -41,7 +42,6 @@ else
    switch:x:@.arguments/*/databaseType
 
       case:mysql
-
          // Creating our database connection.
          strings.concat
             .:[
@@ -54,6 +54,23 @@ else
                strings.concat
                   .:"drop database "
                   get-value:x:@.arguments/*/databaseName
+            log.info:x:@.sql
+            data.execute:x:@.sql
+               database-type:x:@.arguments/*/databaseType
+      case:pgsql
+         // Creating our database connection.
+         strings.concat
+            .:[
+            get-value:x:@.arguments/*/connectionString
+            .:|postgres]
+         data.connect:x:-
+            database-type:x:@.arguments/*/databaseType
+            .sql
+            set-value:x:@.sql
+               strings.concat
+                  .:"drop database IF EXISTS "
+                  get-value:x:@.arguments/*/databaseName
+//            log.info:x:@.sql
             data.execute:x:@.sql
                database-type:x:@.arguments/*/databaseType
 

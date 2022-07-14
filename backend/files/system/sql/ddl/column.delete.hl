@@ -30,6 +30,8 @@ validators.mandatory:x:@.arguments/*/databaseType
 validators.enum:x:@.arguments/*/databaseType
    .:mysql
    .:sqlite
+   .:pgsql
+   
 
 // Creating our database connection.
 strings.concat
@@ -46,6 +48,7 @@ data.connect:x:-
 
       case:sqlite
       case:mysql
+      case:pgsql
          strings.concat
             .:"alter table "
             get-value:x:@.arguments/*/tableName

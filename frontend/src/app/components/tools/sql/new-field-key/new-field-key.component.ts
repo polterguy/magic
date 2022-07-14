@@ -79,6 +79,13 @@ export class NewFieldKeyComponent {
     {name: 'nvarchar', size: {min: 0, max: 65535}, defaultValue: false},
     {name: 'varchar', size: {min: 0, max: 65535}, defaultValue: 'string'},
   ];
+  private pgsqlDataTypes = [
+    {name: 'Numeric', defaultValue: 'Numeric'},
+    {name: 'text', defaultValue: 'string'},
+    {name: 'blob', defaultValue: false},
+    {name: 'nvarchar', size: {min: 0, max: 65535}, defaultValue: false},
+    {name: 'varchar', size: {min: 0, max: 65535}, defaultValue: 'string'},
+  ];
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: NewFieldKeyModel) { }
 
@@ -100,6 +107,9 @@ export class NewFieldKeyComponent {
 
       case 'sqlite':
         return this.sqlIteDataTypes;
+
+      case 'pgsql':
+        return this.pgsqlDataTypes;
       }
   }
 
