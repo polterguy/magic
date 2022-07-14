@@ -39,30 +39,30 @@ export class NewFieldKeyComponent {
 
   // Datatypes specific for MySQL.
   private mySqlDataTypes = [
-    {name: 'char', size: {min: 0, max: 255}, defaultValue: 'string'},
-    {name: 'varchar', size: {min: 0, max: 16383}, defaultValue: 'string'},
-    {name: 'binary', size: {min: 0, max: 255}, defaultValue: false},
-    {name: 'varbinary', size: {min: 0, max: 16383}, defaultValue: false},
+    {name: 'char', size: {min: 0, max: 255, defaultSize: 20}, defaultValue: 'string'},
+    {name: 'varchar', size: {min: 0, max: 16383, defaultSize: 100}, defaultValue: 'string'},
+    {name: 'binary', size: {min: 0, max: 255, defaultSize: 100}, defaultValue: false},
+    {name: 'varbinary', size: {min: 0, max: 16383, defaultSize: 5000}, defaultValue: false},
     {name: 'tinyblob', defaultValue: false},
     {name: 'tinytext', defaultValue: 'string'},
-    {name: 'text', size: {min: 0, max: 65535}, defaultValue: 'string'},
-    {name: 'blob', size: {min: 0, max: 65535}, defaultValue: false},
+    {name: 'text', size: {min: 0, max: 65535, defaultSize: 65535}, defaultValue: 'string'},
+    {name: 'blob', size: {min: 0, max: 65535, defaultSize: 65535}, defaultValue: false},
     {name: 'mediumtext', defaultValue: 'string'},
     {name: 'mediumblob', defaultValue: false},
     {name: 'longtext', defaultValue: 'string'},
     {name: 'longblob', defaultValue: false},
-    {name: 'bit', size: {min: 1, max: 64}, defaultValue: 'bool'},
-    {name: 'tinyint', size: {min: 0, max: 255}, defaultValue: 'int'},
+    {name: 'bit', size: {min: 1, max: 64, defaultSize: 1}, defaultValue: 'bool'},
+    {name: 'tinyint', size: {min: 0, max: 255, defaultSize: 1}, defaultValue: 'int'},
     {name: 'bool', defaultValue: 'bool'},
     {name: 'boolean', defaultValue: 'bool'},
-    {name: 'smallint', size: {min: 0, max: 65535}, defaultValue: 'int'},
-    {name: 'mediumint', size: {min: 0, max: 255}, defaultValue: 'int'},
-    {name: 'int', size: {min: 0, max: 255}, defaultValue: 'int'},
-    {name: 'integer', size: {min: 0, max: 255}, defaultValue: 'int'},
-    {name: 'bigint', size: {min: 0, max: 255}, defaultValue: 'int'},
-    {name: 'double', size: {min: 0, max: 65535}, defaultValue: 'decimal'},
-    {name: 'decimal', size: {min: 0, max: 65}, defaultValue: 'decimal'},
-    {name: 'dec', size: {min: 0, max: 65}, defaultValue: 'decimal'},
+    {name: 'smallint', size: {min: 0, max: 65535, defaultSize: 10}, defaultValue: 'int'},
+    {name: 'mediumint', size: {min: 0, max: 255, defaultSize: 10}, defaultValue: 'int'},
+    {name: 'int', size: {min: 0, max: 255, defaultSize: 10}, defaultValue: 'int'},
+    {name: 'integer', size: {min: 0, max: 255, defaultSize: 10}, defaultValue: 'int'},
+    {name: 'bigint', size: {min: 0, max: 255, defaultSize: 10}, defaultValue: 'int'},
+    {name: 'double', size: {min: 0, max: 65535, defaultSize: 10}, defaultValue: 'decimal'},
+    {name: 'decimal', size: {min: 0, max: 65, defaultSize: 10}, defaultValue: 'decimal'},
+    {name: 'dec', size: {min: 0, max: 65, defaultSize: 10}, defaultValue: 'decimal'},
     {name: 'date', defaultValue: 'date'},
     {name: 'datetime', defaultValue: 'date'},
     {name: 'timestamp', defaultValue: 'date'},
@@ -76,8 +76,8 @@ export class NewFieldKeyComponent {
     {name: 'real', defaultValue: 'decimal'},
     {name: 'text', defaultValue: 'string'},
     {name: 'blob', defaultValue: false},
-    {name: 'nvarchar', size: {min: 0, max: 65535}, defaultValue: false},
-    {name: 'varchar', size: {min: 0, max: 65535}, defaultValue: 'string'},
+    {name: 'nvarchar', size: {min: 0, max: 65535, defaultSize: 65535}, defaultValue: false},
+    {name: 'varchar', size: {min: 0, max: 65535, defaultSize: 65535}, defaultValue: 'string'},
   ];
   private pgsqlDataTypes = [
     {name: 'Numeric', defaultValue: 'Numeric'},
@@ -166,6 +166,7 @@ export class NewFieldKeyComponent {
       }
 
     } else {
+      this.data.size = this.data.datatype.size?.defaultSize;
       delete this.data.defaultValue;
     }
   }

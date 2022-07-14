@@ -58,6 +58,7 @@ button {
   }
   .after {
     padding-left: 34px;
+    cursor: pointer;
   }
   mat-icon.arrow {
     margin-left: 5px;
@@ -86,4 +87,17 @@ button {
 }
 .action-button {
   max-width: 100%;
+}
+@keyframes card-animation {
+  0% {
+    background: rgb(255,255,0);
+  }
+  100% {
+    background: transparent;
+  }
+  
+}
+mat-card.animating {
+  animation-name: card-animation;
+  animation-duration: 2s;
 }

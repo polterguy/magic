@@ -30,6 +30,8 @@ if
    eq:x:@.arguments/*/databaseType
       .:sqlite
    .lambda
+
+      // Deleting the file for our database.
       strings.concat
          .:/data/
          get-value:x:@.arguments/*/databaseName
