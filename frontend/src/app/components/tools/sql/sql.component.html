@@ -386,6 +386,14 @@
 
               <button
                 mat-menu-item
+                (click)="exportDatabase()"
+                class="action-button">
+                <mat-icon class="material-icons-outlined">cloud_download</mat-icon>
+                Export database DDL
+              </button>
+
+              <button
+                mat-menu-item
                 (click)="deleteDatabase()"
                 class="action-button">
                 <mat-icon class="material-icons-outlined">delete</mat-icon>
@@ -394,8 +402,14 @@
 
             </mat-menu>
 
-            <div class="col-xl-4 col-sm-6 col-12 mb-3 db-table-design" *ngFor="let idxTable of activeTables">
-              <mat-card class="h-100">
+            <div
+              *ngIf="!activeTables || activeTables.length === 0"
+              class="col-12">
+              Please add tables to your database
+            </div>
+
+            <div class="col-xl-4 col-sm-6 col-12 mb-5 db-table-design" *ngFor="let idxTable of activeTables">
+              <mat-card class="h-100" [id]="idxTable.name" [class.animating]="animating == idxTable.name">
                 <mat-card-content class="h-100 pb-4">
                   <h3 class="pl-3">{{idxTable.name}}</h3>
 
@@ -418,6 +432,14 @@
                       Add field/key
                     </button>
 
+                    <button
+                      mat-menu-item
+                      (click)="exportTable(idxTable)"
+                      class="action-button">
+                      <mat-icon class="material-icons-outlined">cloud_download</mat-icon>
+                      Export table DDL
+                    </button>
+    
                     <button
                       (click)="deleteTable(idxTable)"
                       mat-menu-item
@@ -449,7 +471,10 @@
                     <li *ngFor="let idxFk of idxTable.foreign_keys">
                       <span>{{idxFk.column}}</span>
                       <mat-icon class="arrow">arrow_right_alt</mat-icon>
-                      <span class="after">{{idxFk.foreign_table}}.{{idxFk.foreign_column}}</span>
+                      <span
+                        class="after"
+                        role="button"
+                        (click)="scrollIntoView(idxFk.foreign_table)">{{idxFk.foreign_table}}.{{idxFk.foreign_column}}</span>
                       <mat-icon
                         *ngIf="idxFk.name"
                         role="button"

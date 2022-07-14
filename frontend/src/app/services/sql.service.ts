@@ -148,6 +148,30 @@ export class SqlService {
   }
 
   /**
+   * Exports DDL for the specified tables in the specified database.
+   * 
+   * @param databaseType Type of database
+   * @param connectionString Connection string to use
+   * @param databaseName Database name
+   * @param tables List of tables to export
+   * @returns 
+   */
+  exportDdl(
+    databaseType: string,
+    connectionString: string,
+    databaseName: string,
+    tables: string[],
+    full: boolean) {
+      return this.httpService.post<any>('/magic/system/sql/ddl/export-tables', {
+        databaseType,
+        connectionString,
+        databaseName,
+        tables,
+        full,
+      });
+    }
+
+  /**
    * Drops the specified database entirely.
    * 
    * @param databaseType Type of database
@@ -337,5 +361,23 @@ export class SqlService {
       encodeURIComponent(tableName) +
       '&fkName=' +
       encodeURIComponent(fkName));
+  }
+
+  /**
+   * Adds the specified column to your table.
+   * 
+   * @param databaseType Type of database
+   * @param module Database name
+   * @param sql Table name
+   */
+   exportToModule(
+    databaseType: string,
+    module: string,
+    sql: string) {
+    return this.httpService.post<any>('/magic/system/sql/ddl/export-to-module', {
+      databaseType,
+      module,
+      sql,
+    });
   }
 }
