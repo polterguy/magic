@@ -39,6 +39,8 @@ validators.enum:x:@.arguments/*/databaseType
    .:mysql
    .:sqlite
    .:pgsql
+   .:mssql
+   
    
 
 // Creating our database connection.
@@ -178,6 +180,47 @@ data.connect:x:-
                get-value:x:@.sql
                .:")"
 //         log.info:x:@.sql
+         data.execute:x:@.sql
+            database-type:x:@.arguments/*/databaseType
+      case:mssql
+         .sql
+         .type
+         if
+            eq:x:@.arguments/*/pkType
+               .:auto_increment
+            .lambda
+               set-value:x:@.type
+                  strings.concat
+                     .:integer
+                     .:" not null IDENTITY(1,1) primary key"
+         else
+            set-value:x:@.type
+               strings.concat
+                  get-value:x:@.arguments/*/pkType
+                  .:(
+                  get-value:x:@.arguments/*/pkLength
+                  .:") not null primary key"
+         set-value:x:@.sql
+            strings.concat
+               .:"create table "
+               get-value:x:@.arguments/*/tableName
+               .:"("
+               get-value:x:@.arguments/*/pkName
+               .:" "
+               get-value:x:@.type
+         if
+            exists:x:@.arguments/*/pkDefault
+            .lambda
+               set-value:x:@.sql
+                  strings.concat
+                     get-value:x:@.sql
+                     .:" default "
+                     get-value:x:@.arguments/*/pkDefault
+         set-value:x:@.sql
+            strings.concat
+               get-value:x:@.sql
+               .:")"
+         log.info:x:@.sql
          data.execute:x:@.sql
             database-type:x:@.arguments/*/databaseType
             

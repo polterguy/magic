@@ -37,6 +37,8 @@ validators.enum:x:@.arguments/*/databaseType
    .:mysql
    .:sqlite
    .:pgsql
+   .:mssql
+   
 
 // Creating our database connection.
 strings.concat
@@ -77,8 +79,25 @@ data.connect:x:-
                .:" ("
                get-value:x:@.arguments/*/foreignField
                .:")"
-//         data.execute:x:@.sql
-//            database-type:x:@.arguments/*/databaseType
+         data.execute:x:@.sql
+            database-type:x:@.arguments/*/databaseType
+//         log.info:x:@.sql
+
+      case:mssql
+         .sql
+         set-value:x:-
+            strings.concat
+               .:"alter table "
+               get-value:x:@.arguments/*/tableName
+               .:" ADD FOREIGN KEY  ("
+               get-value:x:@.arguments/*/columnName
+               .:") references "
+               get-value:x:@.arguments/*/foreignTable
+               .:" ("
+               get-value:x:@.arguments/*/foreignField
+               .:")"
+         data.execute:x:@.sql
+            database-type:x:@.arguments/*/databaseType
          log.info:x:@.sql
 
       case:sqlite
