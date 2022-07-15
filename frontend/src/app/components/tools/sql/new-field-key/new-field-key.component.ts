@@ -82,13 +82,22 @@ export class NewFieldKeyComponent {
   private pgsqlDataTypes = [
     {name: 'Numeric', defaultValue: 'Numeric'},
     {name: 'text', defaultValue: 'string'},
-    {name: 'blob', defaultValue: false},
+    {name: 'date', defaultValue: 'date'},
+    {name: 'datetime', defaultValue: 'datetime'},
+    {name: 'time', defaultValue: 'time'},
+    { name: 'blob', defaultValue: false },
     {name: 'nvarchar', size: {min: 0, max: 65535}, defaultValue: false},
     {name: 'varchar', size: {min: 0, max: 65535}, defaultValue: 'string'},
   ];
   private mssqlDataTypes = [
     {name: 'integer', defaultValue: 'integer'},
+    {name: 'float', defaultValue: 'float'},
+    {name: 'real', defaultValue: 'real'},
+    {name: 'date', defaultValue: 'date'},
+    {name: 'datetime', defaultValue: 'datetime'},
+    {name: 'time', defaultValue: 'time'},
     {name: 'text', defaultValue: 'string'},
+    {name: 'ntext', defaultValue: 'string'},
     {name: 'blob', defaultValue: false},
     {name: 'nvarchar', size: {min: 0, max: 65535}, defaultValue: false},
     {name: 'varchar', size: {min: 0, max: 65535}, defaultValue: 'string'},
