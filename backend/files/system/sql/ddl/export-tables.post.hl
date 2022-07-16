@@ -28,7 +28,6 @@ validators.mandatory:x:@.arguments/*/tables
 validators.mandatory:x:@.arguments/*/databaseType
 validators.enum:x:@.arguments/*/databaseType
    .:mysql
-   .:sqlite
 
 // Creating our database connection.
 strings.concat
@@ -43,12 +42,8 @@ data.connect:x:-
    // Creating our correct SQL according to [databaseType].
    switch:x:@.arguments/*/databaseType
 
-      case:sqlite
-         throw:SQLite is currently not supported
-            public:true
-            status:400
-
       case:mysql
+
          .result
          set-value:x:@.result
             strings.concat

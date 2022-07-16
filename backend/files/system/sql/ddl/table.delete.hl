@@ -29,7 +29,9 @@ validators.enum:x:@.arguments/*/databaseType
    .:sqlite
    .:pgsql
    .:mssql
-   
+
+// SQL that executes to modify DDL.
+.sql
 
 // Creating our database connection.
 strings.concat
@@ -48,7 +50,6 @@ data.connect:x:-
       case:mysql
       case:pgsql
       case:mssql
-         .sql
          set-value:x:@.sql
             strings.concat
                .:"drop table "
@@ -65,5 +66,7 @@ strings.concat
 cache.set:x:-
 
 // Returning result to caller.
+unwrap:x:+/*
 return
    result:success
+   sql:x:@.sql
