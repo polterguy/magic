@@ -380,4 +380,22 @@ export class SqlService {
       sql,
     });
   }
+
+  /**
+   * Creates a migrations script for module.
+   * 
+   * @param databaseType Type of database
+   * @param module Database name
+   * @param sql Table name
+   */
+  createMigrationScript(
+    databaseType: string,
+    module: string,
+    sql: string) {
+      return this.httpService.post<any>('/magic/system/sql/ddl/create-migration-script', {
+        databaseType,
+        module,
+        sql,
+    });
+  }
 }

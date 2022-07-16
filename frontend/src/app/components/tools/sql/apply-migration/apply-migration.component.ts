@@ -4,30 +4,29 @@
  */
 
 // Angular and system imports.
+import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { AfterViewInit, Component, Inject } from '@angular/core';
 
 // CodeMirror options according to file extensions needed to show JSON CodeMirror editor.
 import fileTypes from 'src/app/codemirror/file-types.json';
 
 /**
- * Model for seeing DDL of tables.
+ * Model for migration script.
  */
-export class ExportTablesModel {
-  result: string;
-  full: boolean;
-  module: string;
+ export class MigrationScriptModel {
+  sql: string;
 }
 
 /**
- * Modal window to show result of export tables DDL.
+ * Modal dialog for showing user SQL resulting from DDL execution, allowing him to automatically create
+ * a migration script for the currently selected database.
  */
 @Component({
-  selector: 'app-export-tables',
-  templateUrl: './export-tables.component.html',
-  styleUrls: ['./export-tables.component.scss']
+  selector: 'app-apply-migration',
+  templateUrl: './apply-migration.component.html',
+  styleUrls: ['./apply-migration.component.scss']
 })
-export class ExportTablesComponent implements AfterViewInit {
+export class ApplyMigrationComponent {
 
   // Known file extensions we've got editors for.
   // Used to make sure we reuse default JSON settings for CodeMirror editor.
@@ -36,9 +35,9 @@ export class ExportTablesComponent implements AfterViewInit {
   /**
    * CodeMirror options for SQL.
    */
-  options: any = null;
+   options: any = null;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: ExportTablesModel) { }
+  constructor(@Inject(MAT_DIALOG_DATA) public data: MigrationScriptModel) { }
 
   ngAfterViewInit() {
     setTimeout(() => {

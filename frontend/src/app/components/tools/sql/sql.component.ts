@@ -26,6 +26,7 @@ import { ExportTablesComponent } from './export-tables/export-tables.component';
 import { DefaultDatabaseType } from '../../../models/default-database-type.model';
 import { SaveSqlDialogComponent } from './save-sql-dialog/save-sql-dialog.component';
 import { LoadSqlDialogComponent } from './load-sql-dialog/load-sql-dialog.component';
+import { ApplyMigrationComponent } from './apply-migration/apply-migration.component';
 import { TableNameDialogComponent } from './table-name-dialog/table-name-dialog.component';
 import { Model } from '../../utilities/codemirror/codemirror-sql/codemirror-sql.component';
 
@@ -47,6 +48,11 @@ export class SqlComponent implements OnInit {
 
   // Database declaration as returned from server
   private databaseDeclaration: any = null;
+
+  /**
+   * Card that's currently animated due to being selected.
+   */
+  animating = '';
 
   /**
    * Database types the user can select during configuration of system.
@@ -599,9 +605,10 @@ export class SqlComponent implements OnInit {
         this.input.database,
         tableName,
         columnName).subscribe({
-          next: () => {
+          next: (result: any) => {
             this.feedbackService.showInfo('Column successfully deleted');
             this.reloadDatabases();
+            this.applyMigration(result.sql);
           },
           error: (error: any) => this.feedbackService.showError(error)
       });
@@ -625,9 +632,10 @@ export class SqlComponent implements OnInit {
         this.input.database,
         tableName,
         columnName).subscribe({
-          next: () => {
+          next: (result: any) => {
             this.feedbackService.showInfo('Foreign key successfully deleted');
             this.reloadDatabases();
+            this.applyMigration(result.sql);
           },
           error: (error: any) => this.feedbackService.showError(error)
       });
@@ -666,11 +674,12 @@ export class SqlComponent implements OnInit {
               result.name,
               result.datatype.name + (result.size ? ('(' + result.size + ')') : '') + (result.acceptNull ? '' : ' not null'),
               !result.defaultValue || result.defaultValue === '' ? null : (result.datatype.defaultValue ? (result.datatype.defaultValue === 'string' ? ('\'' + result.defaultValue + '\'') : result.defaultValue) : null)).subscribe({
-              next: () => {
+              next: (result: any) => {
                 this.feedbackService.showInfo('Column was successfully added to table');
                 this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: any) => {
                   this.reloadDatabases();
                 });
+                this.applyMigration(result.sql);
               },
               error: (error) => this.feedbackService.showError(error)
             });
@@ -685,9 +694,10 @@ export class SqlComponent implements OnInit {
               result.field,
               result.foreignTable,
               result.foreignField).subscribe({
-              next: () => {
+              next: (result: any) => {
                 this.feedbackService.showInfo('Foreign key was successfully added to table');
                 this.reloadDatabases();
+                this.applyMigration(result.sql);
               },
               error: (error) => this.feedbackService.showError(error)
             });
@@ -710,9 +720,10 @@ export class SqlComponent implements OnInit {
         this.input.connectionString,
         this.input.database,
         table.name).subscribe({
-          next: () => {
+          next: (result: any) => {
             this.feedbackService.showInfo('Table was successfully dropped');
             this.reloadDatabases();
+            this.applyMigration(result.sql);
           },
           error: (error: any) => this.feedbackService.showError(error)
         });
@@ -752,8 +763,7 @@ export class SqlComponent implements OnInit {
   createNewTable() {
     const dialogRef = this.dialog.open(NewTableComponent, {
       width: '550px',
-      data: {
-      }
+      data: { }
     });
     dialogRef.afterClosed().subscribe((result: any) => {
 
@@ -768,9 +778,10 @@ export class SqlComponent implements OnInit {
           result.pkType,
           result.pkLength,
           result.pkDefault).subscribe({
-            next: () => {
+            next: (result: any) => {
               this.feedbackService.showInfo('Table successfully added');
               this.reloadDatabases();
+              this.applyMigration(result.sql);
             },
             error: (error: any) => this.feedbackService.showError(error)
           });
@@ -880,7 +891,6 @@ export class SqlComponent implements OnInit {
    * 
    * @param id ID of element to scroll into view
    */
-  public animating = '';
   scrollIntoView(id: string) {
     const el = document.getElementById(id);
     el.scrollIntoView({behavior: 'smooth'});
@@ -996,5 +1006,32 @@ export class SqlComponent implements OnInit {
         tables: tables,
       };
     });
+  }
+
+  /*
+   * Applies migration scripts, if any migration scripts are returned from the server.
+   */
+  private applyMigration(sql: string) {
+    if (sql) {
+      const dialogRef = this.dialog.open(ApplyMigrationComponent, {
+        width: '80%',
+        data: {
+          sql,
+        },
+      });
+      dialogRef.afterClosed().subscribe((result: any) => {
+        if (result) {
+          this.sqlService.createMigrationScript(
+            this.input.databaseType,
+            this.input.database,
+            result.sql).subscribe({
+            next: () => {
+              this.feedbackService.showInfo('Migration script successfully added to module');
+            },
+            error: (error: any) => this.feedbackService.showError(error)
+          });
+        }
+      });
+    }
   }
 }
