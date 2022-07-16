@@ -37,7 +37,7 @@ if
          .:/data/
          get-value:x:@.arguments/*/databaseName
          .:.db
-      io.file.delete
+      io.file.delete:x:-
 
 else
 
