@@ -349,6 +349,7 @@
                 </mat-menu>
               </div>
             </div>
+
             <!-- Trigger action menu button for database -->
             <button mat-icon-button class="action-button-more" [matMenuTriggerFor]="database">
               <mat-icon>more_vert</mat-icon>
@@ -400,8 +401,6 @@
           </div>
 
           <p class="mat-card-subtitle">Design and modify your database</p>
-
-
 
           <div *ngIf="!activeTables || activeTables.length === 0" class="col-12">
             Please add tables to your database
