@@ -888,7 +888,6 @@ export class SqlComponent implements OnInit {
           next: () => {
             this.feedbackService.showInfo('Database successfully dropped');
             this.input.database = null;
-            this.input.options.hintOptions.tables = [];
             this.reloadDatabases();
           },
           error: (error: any) => this.feedbackService.showError(error)
@@ -1009,13 +1008,13 @@ export class SqlComponent implements OnInit {
       if (inject) {
         inject();
       }
+      this.databases = databases.databases.map((x: any) => x.name);
       if (this.input.database) {
         const tables = [];
         this.activeTables = databases.databases.filter((x: any) => x.name === this.input.database)[0].tables || [];
         for (const idxTable of this.activeTables) {
           tables[idxTable.name] = idxTable.columns.map((x: any) => x.name);
         }
-        this.databases = databases.databases.map((x: any) => x.name);
         this.input.options.hintOptions = {
           tables: tables,
         };
