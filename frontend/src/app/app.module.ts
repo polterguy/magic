@@ -178,7 +178,6 @@ import { NewTableComponent } from './components/tools/sql/new-table/new-table.co
 import { NewDatabaseComponent } from './components/tools/sql/new-database/new-database.component';
 import { ExportTablesComponent } from './components/tools/sql/export-tables/export-tables.component';
 import { EditExtraComponent } from './components/management/auth/users/edit-extra/edit-extra.component';
-import { ApplyMigrationComponent } from './components/tools/sql/apply-migration/apply-migration.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -291,7 +290,6 @@ import { ApplyMigrationComponent } from './components/tools/sql/apply-migration/
     NewDatabaseComponent,
     ExportTablesComponent,
     EditExtraComponent,
-    ApplyMigrationComponent,
   ],
   imports: [
     FormsModule,
