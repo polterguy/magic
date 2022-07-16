@@ -448,25 +448,43 @@
     </mat-expansion-panel>
 
     <!-- About -->
-    <mat-expansion-panel class="mat-elevation-z0" hideToggle
-    *ngIf="!backendService.active?.token">
+    <mat-expansion-panel
+      class="mat-elevation-z0"
+      hideToggle
+      *ngIf="!backendService.active?.token">
       <mat-expansion-panel-header
-      #panelH (click)="panelH._toggle()"
-      [matTooltipDisabled]="navbarService.expanded"
-      matTooltip="About"
-      matTooltipPosition="after"
-      routerLinkActive="active-link"
-      [routerLinkActiveOptions]="{exact:true}">
-          <mat-panel-title>
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" routerLink="/about">
-              <mat-icon>copyright</mat-icon>
-              <span class="title">About Magic</span>
-            </a>
-          </mat-panel-title>
+        #panelH (click)="panelH._toggle()"
+        [matTooltipDisabled]="navbarService.expanded"
+        matTooltip="About"
+        matTooltipPosition="after"
+        routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{exact:true}">
+        <mat-panel-title>
+          <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" routerLink="/about">
+            <mat-icon>copyright</mat-icon>
+            <span class="title">About Magic</span>
+          </a>
+        </mat-panel-title>
       </mat-expansion-panel-header>
     </mat-expansion-panel>
 
     <!-- Getting started -->
+    <mat-expansion-panel class="mat-elevation-z0" hideToggle *ngIf="backendService.active?.token">
+      <mat-expansion-panel-header
+        #panelB (click)="panelB._toggle();showHelp()"
+        [matTooltipDisabled]="navbarService.expanded"
+        matTooltip="Getting started"
+        matTooltipPosition="after"
+        routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{exact:true}">
+        <mat-panel-title>
+          <mat-icon>help</mat-icon>
+          <span class="title">Getting started</span>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+    </mat-expansion-panel>
+
+    <!-- Documentation -->
     <mat-expansion-panel class="mat-elevation-z0" hideToggle>
       <mat-expansion-panel-header
         #panelC (click)="panelC._toggle()"
@@ -478,24 +496,8 @@
         <mat-panel-title>
           <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" href="https://docs.aista.com/" target="_blank">
             <mat-icon>book</mat-icon>
-            <span class="title">Getting started</span>
+            <span class="title">Documentation</span>
           </a>
-        </mat-panel-title>
-      </mat-expansion-panel-header>
-    </mat-expansion-panel>
-
-    <!-- Onboarding -->
-    <mat-expansion-panel class="mat-elevation-z0" hideToggle *ngIf="backendService.active?.token">
-      <mat-expansion-panel-header
-        #panelB (click)="panelB._toggle();showHelp()"
-        [matTooltipDisabled]="navbarService.expanded"
-        matTooltip="Onboarding"
-        matTooltipPosition="after"
-        routerLinkActive="active-link"
-        [routerLinkActiveOptions]="{exact:true}">
-        <mat-panel-title>
-          <mat-icon>document_scanner</mat-icon>
-          <span class="title">Onboarding</span>
         </mat-panel-title>
       </mat-expansion-panel-header>
     </mat-expansion-panel>
