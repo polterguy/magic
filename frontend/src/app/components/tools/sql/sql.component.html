@@ -396,7 +396,8 @@
           <mat-card
             class="h-100"
             [id]="idxTable.name"
-            [class.animating]="animating == idxTable.name">
+            [class.animating]="animating === idxTable.name"
+            [class.mat-elevation-z3]="highlighted === idxTable.name">
 
             <mat-card-content class="h-100">
               <div class="d-flex align-items-center justify-content-between mb-3">
