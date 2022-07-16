@@ -135,6 +135,23 @@
 
       <mat-selection-list [multiple]="false" [ngClass]="{'pt-0 pb-0': !navbarService.expanded}">
 
+        <!-- SQL Studio -->
+        <mat-list-option
+          [style.display]="backendService.active?.access.sql.execute_access ? '' : 'none'"
+          [matTooltipDisabled]="navbarService.expanded"
+          matTooltip="SQL Studio"
+          matTooltipPosition="after"
+          routerLinkActive="active-link"
+          #sql="routerLinkActive"
+          [routerLinkActiveOptions]="{exact:true}">
+          <ng-container *ngIf="backendService.active?.access.sql.execute_access">
+            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendService.active?.setupDone ? '/sql' : null">
+              <mat-icon>language</mat-icon>
+              <span class="title">SQL Studio</span>
+            </a>
+          </ng-container>
+        </mat-list-option>
+
         <!-- Crudifier -->
         <mat-list-option
           [style.display]="backendService.active?.access.crud.generate_crud || backendService.active?.access.crud.generate_sql || backendService.active?.access.crud.generate_frontend ? '' : 'none'"
@@ -165,23 +182,6 @@
             <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendService.active?.setupDone ? '/ide' : null">
               <mat-icon>extension</mat-icon>
               <span class="title">Hyper IDE</span>
-            </a>
-          </ng-container>
-        </mat-list-option>
-
-        <!-- SQL -->
-        <mat-list-option
-          [style.display]="backendService.active?.access.sql.execute_access ? '' : 'none'"
-          [matTooltipDisabled]="navbarService.expanded"
-          matTooltip="SQL Studio"
-          matTooltipPosition="after"
-          routerLinkActive="active-link"
-          #sql="routerLinkActive"
-          [routerLinkActiveOptions]="{exact:true}">
-          <ng-container *ngIf="backendService.active?.access.sql.execute_access">
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendService.active?.setupDone ? '/sql' : null">
-              <mat-icon>language</mat-icon>
-              <span class="title">SQL Studio</span>
             </a>
           </ng-container>
         </mat-list-option>
