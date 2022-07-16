@@ -55,6 +55,11 @@ export class SqlComponent implements OnInit {
   animating = '';
 
   /**
+   * Table card that is currently highlighted.
+   */
+  highlighted = '';
+
+  /**
    * Database types the user can select during configuration of system.
    */
   databaseTypes: string[] = [];
@@ -895,6 +900,7 @@ export class SqlComponent implements OnInit {
     const el = document.getElementById(id);
     el.scrollIntoView({behavior: 'smooth'});
     this.animating = id;
+    this.highlighted = id;
     setTimeout(() => this.animating = '', 2000);
   }
 
