@@ -1,5 +1,6 @@
 @import '../../../../assets/styles/colour.scss';
 @import '../../../../assets/styles/mixin.scss';
+@import '../../../../assets/styles/sizes.scss';
 .min-h-400 { min-height: 400px; }
 .min-width-80 { min-width: 80px; }
 ::ng-deep .data-row {
@@ -26,60 +27,7 @@ button {
     line-height: 24px;
   }
 }
-.db-table-design {
-  h3 {
-    font-weight: bold;
-  }
-  ul {
-    li {
-      list-style-type: none;
-      height: auto !important;
-      clear:both;
-      padding: 5px;
-      .delete {
-        position: relative !important;
-        float: right;
-        font-size: 20px;
-        color: #b0b0b0;
-        cursor: pointer;
-      }
-    }
-    li:hover {
-      background-color: rgba(0,0,0,.1);
-    }
-    li.nullable {
-      font-style: italic;
-    }
-    li.not-null {
-      span {
-        font-weight: bold;
-      }
-    }
-  }
-  .after {
-    padding-left: 34px;
-    cursor: pointer;
-  }
-  mat-icon.arrow {
-    margin-left: 5px;
-    margin-right: 5px;
-  }
-  mat-icon.key {
-    position: absolute;
-    left: 12px;
-    margin-top: 2px;
-    font-size: 14px;
-    color: #b0b0b0;
-  }
-  ul.foreign-keys {
-    li {
-      mat-icon {
-        position: absolute;
-        margin-top: -2px;
-      }
-    }
-  }
-}
+
 .database-actions, .table-actions {
   position: absolute;
   top: 5px;
@@ -90,14 +38,84 @@ button {
 }
 @keyframes card-animation {
   0% {
-    background: rgb(255,255,0);
+    background: transparentize($color: $magic_accent_lighter, $amount: 0.5);
   }
   100% {
     background: transparent;
   }
-  
+
 }
 mat-card.animating {
   animation-name: card-animation;
   animation-duration: 2s;
+}
+
+.row.manipuated-layout {
+  margin-left: calc($side_space * -1.5 );
+  margin-right: calc($side_space * -1.5 );
+  div[class^="row"] {
+    margin-left: calc($side_space / 2 );
+    margin-right: calc($side_space / 2 );
+  }
+  div[class^="col-"] {
+    padding-left: calc($side_space / 2 );
+    padding-right: calc($side_space / 2 );
+  }
+  .row.no-gutters {
+    margin-right: 0;
+    margin-left: 0;
+    div[class^="col-"]{
+      padding-right: 0;
+      padding-left: 0;
+    }
+  }
+}
+.db-table-design {
+  h3 {font-weight: 500;}
+}
+.action-button-more {
+  min-width: 40px;
+  margin-right: -7px;
+}
+::ng-deep .light {
+  .table-element {
+    &:hover {
+      background-color: transparentize($color: $magic_dark_ng_border, $amount: 0.09);
+    }
+    mat-icon {color: transparentize($color: $magic_dark_ng_theme, $amount: 0.6);}
+  }
+}
+::ng-deep .dark {
+  .table-element {
+    &:hover {
+      background-color: transparentize($color: $magic_default_ng_border, $amount: 0.07);
+    }
+    mat-icon {color: transparentize($color: $magic_default_alternative, $amount: 0.6);}
+  }
+}
+.table-element {
+  border-radius: 4px;
+  @include general_transition(0.3s);
+  strong {
+    font-weight: 500;
+  }
+  button {height: 24px;width: 24px;line-height: 24px;}
+}
+::ng-deep {
+  #custom-divider.mat-divider {left: 1.2em;right: 1.2em;width: unset;}
+}
+mat-icon {
+  &.key-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    line-height: 14px;
+    margin-left: -1.1em;
+  }
+  &.general-icon {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+  }
 }
