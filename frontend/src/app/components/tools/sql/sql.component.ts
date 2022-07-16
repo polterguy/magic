@@ -887,7 +887,8 @@ export class SqlComponent implements OnInit {
         this.input.database).subscribe({
           next: () => {
             this.feedbackService.showInfo('Database successfully dropped');
-            this.input.database = 'magic';
+            this.input.database = null;
+            this.input.options.hintOptions.tables = [];
             this.reloadDatabases();
           },
           error: (error: any) => this.feedbackService.showError(error)
@@ -961,7 +962,9 @@ export class SqlComponent implements OnInit {
     this.input.connectionString = null;
     this.input.database = null;
     this.input.options.hintOptions.tables = [];
-    this.feedbackService.showError(error);
+    if (error) {
+      this.feedbackService.showError(error);
+    }
   }
 
   /*
@@ -1006,15 +1009,17 @@ export class SqlComponent implements OnInit {
       if (inject) {
         inject();
       }
-      const tables = [];
-      this.activeTables = databases.databases.filter((x: any) => x.name === this.input.database)[0].tables || [];
-      for (const idxTable of this.activeTables) {
-        tables[idxTable.name] = idxTable.columns.map((x: any) => x.name);
+      if (this.input.database) {
+        const tables = [];
+        this.activeTables = databases.databases.filter((x: any) => x.name === this.input.database)[0].tables || [];
+        for (const idxTable of this.activeTables) {
+          tables[idxTable.name] = idxTable.columns.map((x: any) => x.name);
+        }
+        this.databases = databases.databases.map((x: any) => x.name);
+        this.input.options.hintOptions = {
+          tables: tables,
+        };
       }
-      this.databases = databases.databases.map((x: any) => x.name);
-      this.input.options.hintOptions = {
-        tables: tables,
-      };
     });
   }
 
