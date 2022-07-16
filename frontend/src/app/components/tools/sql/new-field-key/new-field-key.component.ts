@@ -109,7 +109,7 @@ export class NewFieldKeyComponent {
    * Returns all fields in table to caller.
    */
   getFields() {
-    return this.data.database.tables.filter(x => x.name === this.data.table)[0].columns;
+    return this.data.database.tables.filter((x: any) => x.name === this.data.table)[0].columns;
   }
 
   /**
