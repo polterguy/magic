@@ -146,7 +146,7 @@
           [routerLinkActiveOptions]="{exact:true}">
           <ng-container *ngIf="backendService.active?.access.sql.execute_access">
             <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendService.active?.setupDone ? '/sql' : null">
-              <mat-icon>language</mat-icon>
+              <mat-icon>cloud_queue</mat-icon>
               <span class="title">SQL Studio</span>
             </a>
           </ng-container>

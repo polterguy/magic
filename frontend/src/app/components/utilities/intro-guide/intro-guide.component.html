@@ -6,11 +6,16 @@
         <div class="w-100 h-100 slide-1 bg-img p-5"></div>
         <div class="p-4"></div>
         <div class="w-100">
-          <h2 class="mb-4 guide-title">Install a new database</h2>
-          <p class="mat-subheading-1">If you're new to Magic, you'd probably like to start with some safe moves towards
-            CRUDifying your backend!</p>
-          <p class="mat-subheading-1 mb-5">As the first step let's install a new database as a plugin.</p>
-          <button mat-stroked-button color="accent" routerLink="/plugins">Go to Plugins</button>
+          <h2 class="mb-4 guide-title">Install a plugin database</h2>
+          <p class="mat-subheading-1">
+            If you're new to Magic, you'd probably like to start with some safe moves towards
+            generating your CRUD backend. As the first step let's install a new database as a plugin. Go to plugins and install
+            the SQLite Chinook DB plugin.
+          </p>
+          <button
+            mat-stroked-button
+            color="accent"
+            routerLink="/plugins">Go to Plugins</button>
         </div>
       </div>
       <ng-template mat-tab-label #first>
@@ -24,9 +29,15 @@
         <div class="p-4"></div>
         <div class="w-100">
           <h2 class="mb-4 guide-title">Generate CRUD HTTP endpoints</h2>
-          <p class="mat-subheading-1">To generate a CRUD backend, select the newly installed database in the CRUD Generator, then click <em>"CRUDify all tables"</em>.</p>
-          <p class="mat-subheading-1 mb-5">When you are done creating your backend API you can go to <em>"Management"/"Endpoints"</em> to immediately play with your API.</p>
-          <button mat-stroked-button color="accent" routerLink="/crud-generator">Go to CRUD generator</button>
+          <p class="mat-subheading-1">
+            To generate a CRUD backend, select the newly installed database in the CRUD Generator,
+            then click <em>"CRUDify all tables"</em>. When you are done creating your backend API you can go to
+            <em>"Management"/"Endpoints"</em> to immediately play with your API.
+          </p>
+          <button
+            mat-stroked-button
+            color="accent"
+            routerLink="/crud-generator">Go to CRUD generator</button>
         </div>
       </div>
 
@@ -41,10 +52,18 @@
         <div class="p-4"></div>
         <div class="w-100">
           <h2 class="mb-4 guide-title">SQL Studio</h2>
-          <p class="mat-subheading-1">You can also use Magic to manage your database in <em>"SQL Studio"</em> allowing you to immediately execute any SQL towards your database.
-          Most database plugins contains a list of example SQL scripts that you can load using the <em>"Load"</em> button.</p>
-          <p class="mat-subheading-1 mb-5">Start playing around with the SQL commands and see how easy it is to move onwards on your own. Look at the shortkeys in the top right corner of the page for keyboard shortcuts!</p>
-          <button mat-stroked-button color="accent" routerLink="/sql">Go to SQL studio</button>
+          <p class="mat-subheading-1">
+            You can also use Magic to manage your database in <em>"SQL Studio"</em>
+            allowing you to immediately execute any SQL towards your database, and also design your database
+            graphically without even knowing much SQL at all.</p>
+          <p class="mat-subheading-1 mb-5">
+            Start playing around with the SQL commands and see how easy it is to move onwards on your own. Look
+            at the shortkeys in the top right corner of the page for keyboard shortcuts.
+          </p>
+          <button
+            mat-stroked-button
+            color="accent"
+            routerLink="/sql">Go to SQL studio</button>
         </div>
       </div>
       <ng-template mat-tab-label #third>
