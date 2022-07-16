@@ -389,31 +389,50 @@
           </div>
 
         </div>
-        <div class="col-xl-4 col-lg-6 col-md-12 col-sm-6 col-12 mb-3 db-table-design" *ngFor="let idxTable of activeTables">
-          <mat-card class="h-100" [id]="idxTable.name" [class.animating]="animating == idxTable.name">
+        <div
+          class="col-xl-4 col-lg-6 col-md-12 col-sm-6 col-12 mb-3 db-table-design"
+          *ngFor="let idxTable of activeTables">
+
+          <mat-card
+            class="h-100"
+            [id]="idxTable.name"
+            [class.animating]="animating == idxTable.name">
+
             <mat-card-content class="h-100">
               <div class="d-flex align-items-center justify-content-between mb-3">
                 <h3 class="my-0">{{idxTable.name}}</h3>
 
                 <!-- Trigger action menu button for table menu -->
-                <button mat-icon-button [matMenuTriggerFor]="table" class="action-button-more">
+                <button
+                  mat-icon-button
+                  [matMenuTriggerFor]="table"
+                  class="action-button-more">
                   <mat-icon>more_vert</mat-icon>
                 </button>
 
                 <!-- Menu action items for table -->
                 <mat-menu #table="matMenu">
 
-                  <button mat-menu-item (click)="createFieldKey(idxTable)" class="action-button">
+                  <button
+                    mat-menu-item
+                    (click)="createFieldKey(idxTable)"
+                    class="action-button">
                     <mat-icon>add</mat-icon>
                     Add field/key
                   </button>
 
-                  <button mat-menu-item (click)="exportTable(idxTable)" class="action-button">
+                  <button
+                    mat-menu-item
+                    (click)="exportTable(idxTable)"
+                    class="action-button">
                     <mat-icon class="material-icons-outlined">cloud_download</mat-icon>
                     Export table DDL
                   </button>
 
-                  <button (click)="deleteTable(idxTable)" mat-menu-item class="action-button">
+                  <button
+                    (click)="deleteTable(idxTable)"
+                    mat-menu-item
+                    class="action-button">
                     <mat-icon>remove</mat-icon>
                     Drop table
                   </button>
@@ -421,44 +440,61 @@
                 </mat-menu>
               </div>
               <div class="pl-3 mb-2">
-                <div class="d-flex align-items-center justify-content-between py-1 table-element"
-                  *ngFor="let idxColumn of idxTable.columns" [class]="idxColumn.nullable ? 'nullable' : 'not-null'">
+                <div
+                  class="d-flex align-items-center justify-content-between py-1 table-element"
+                  *ngFor="let idxColumn of idxTable.columns"
+                  [class]="idxColumn.nullable ? 'nullable' : 'not-null'">
+
                   <div class="d-flex align-items-center">
-                    <mat-icon *ngIf="idxColumn.primary" class="key-icon">vpn_key</mat-icon>
+                    <mat-icon
+                      *ngIf="idxColumn.primary"
+                      class="key-icon">vpn_key</mat-icon>
                     &nbsp;
-                    <strong class="ml-1 mr-2">{{idxColumn.name}}</strong> <span class="text-muted">{{idxColumn.db}}</span>
+                    <strong class="ml-1 mr-2">{{idxColumn.name}}</strong>
+                    <span class="text-muted">{{idxColumn.db}}</span>
                   </div>
-                  <button mat-icon-button *ngIf="!idxColumn.primary" type="button" (click)="deleteColumn(idxTable, idxColumn)">
+
+                  <button
+                    mat-icon-button
+                    *ngIf="!idxColumn.primary"
+                    type="button"
+                    (click)="deleteColumn(idxTable, idxColumn)">
                     <mat-icon class="general-icon">remove</mat-icon>
                   </button>
+
                 </div>
               </div>
-              <mat-divider *ngIf="idxTable.foreign_keys" id="custom-divider"></mat-divider>
+
+              <mat-divider
+                *ngIf="idxTable.foreign_keys"
+                id="custom-divider"></mat-divider>
+
               <div class="pl-3 pt-2">
-                <div class="d-flex align-items-center justify-content-between py-1 table-element"
-                  *ngFor="let idxFk of idxTable.foreign_keys;let last = last" [class.mb-2]="!last">
-                  <div class="d-flex align-items-center">
+                <div
+                  class="d-flex align-items-center justify-content-between py-1 table-element"
+                  *ngFor="let idxFk of idxTable.foreign_keys;let last = last"
+                  [class.mb-2]="!last">
+
+                  <div class="d-flex align-items-center text-truncate">
                     &nbsp;&nbsp;
                     <span>{{idxFk.column}}</span>
                     <mat-icon class="general-icon mx-1">arrow_right_alt</mat-icon>
-                    <span class="pointer" role="button"
+                    <span
+                      class="pointer"
+                      role="button"
                       (click)="scrollIntoView(idxFk.foreign_table)">{{idxFk.foreign_table}}.{{idxFk.foreign_column}}</span>
                   </div>
-                  <button mat-icon-button *ngIf="idxFk.name" type="button" (click)="deleteFk(idxTable, idxFk)">
+
+                  <button
+                    mat-icon-button
+                    *ngIf="idxFk.name"
+                    type="button"
+                    (click)="deleteFk(idxTable, idxFk)">
                     <mat-icon class="general-icon">remove</mat-icon>
                   </button>
+
                 </div>
               </div>
-              <!-- <ul class="pl-3 foreign-keys">
-                <li *ngFor="let idxFk of idxTable.foreign_keys">
-                  <span>{{idxFk.column}}</span>
-                  <mat-icon class="arrow">arrow_right_alt</mat-icon>
-                  <span class="after" role="button"
-                    (click)="scrollIntoView(idxFk.foreign_table)">{{idxFk.foreign_table}}.{{idxFk.foreign_column}}</span>
-                  <mat-icon *ngIf="idxFk.name" role="button" class="delete" (click)="deleteFk(idxTable, idxFk)">remove
-                  </mat-icon>
-                </li>
-              </ul> -->
 
             </mat-card-content>
           </mat-card>

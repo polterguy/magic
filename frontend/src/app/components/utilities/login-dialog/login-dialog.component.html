@@ -52,28 +52,46 @@
 
       <div class="d-flex justify-content-between w-100 align-items-center mb-2 custom-mt">
         <div>
-          <mat-checkbox *ngIf="autoLogin === true"
+
+          <mat-checkbox
+            *ngIf="autoLogin === true"
             [(ngModel)]="advanced"
             [ngModelOptions]="{standalone: true}"
             class="mr-2">
             Advanced
           </mat-checkbox>
 
-          <mat-checkbox *ngIf="autoLogin !== true && loginForm.value.password !== 'root'"
+          <mat-checkbox
+            *ngIf="autoLogin !== true && loginForm.value.password !== 'root'"
             [disabled]="loginForm.value.username === '' || loginForm.value.password === '' || backends.value === ''"
-            [(ngModel)]="savePassword" [ngModelOptions]="{standalone: true}">Save</mat-checkbox>
+            [(ngModel)]="savePassword"
+            [ngModelOptions]="{standalone: true}">Save</mat-checkbox>
+
         </div>
-        <re-captcha #captchaRef="reCaptcha" [siteKey]="recaptchaKey" size="invisible"
-        (resolved)="$event && resetPassword($event)" *ngIf="recaptchaKey !== '' && recaptchaKey !== null"></re-captcha>
-        <button *ngIf="autoLogin !== true" mat-button type="button" class="mr-0 forgot-pass"
+
+        <re-captcha
+          #captchaRef="reCaptcha"
+          [siteKey]="recaptchaKey"
+          size="invisible"
+          (resolved)="$event && resetPassword($event)"
+          *ngIf="recaptchaKey !== '' && recaptchaKey !== null"></re-captcha>
+
+        <button
+          *ngIf="autoLogin !== true"
+          mat-button
+          type="button"
+          class="mr-0 forgot-pass"
           (click)="toggleForgotPass(true)">Forgot password?</button>
+
       </div>
 
-
-        <button mat-raised-button color="primary" type="submit" (click)="login()" class="w-100 custom-height"
-          [disabled]="!autoLogin && loginForm.invalid">Login</button>
-
-
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit"
+        (click)="login()"
+        class="w-100 custom-height"
+        [disabled]="!autoLogin && loginForm.invalid">Login</button>
 
     </div>
   </form>
