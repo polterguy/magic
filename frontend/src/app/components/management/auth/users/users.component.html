@@ -99,7 +99,7 @@
                     <mat-icon>add_box</mat-icon>
                     Add to role
                   </button>
-        
+
                   <button
                     mat-menu-item
                     matTooltipPosition="before"
@@ -108,7 +108,7 @@
                     <mat-icon>bookmark</mat-icon>
                     Copy username
                   </button>
-        
+
                   <button
                     mat-menu-item
                     [disabled]="el.username === 'root' || !backendService.active?.access.auth.update_user"
@@ -118,7 +118,7 @@
                     <mat-icon>edit</mat-icon>
                     Change password
                   </button>
-        
+
                   <button
                     mat-menu-item
                     [disabled]="el.username === 'root' || !backendService.active?.access.auth.impersonate"
@@ -128,7 +128,7 @@
                     <mat-icon>account_circle</mat-icon>
                     Impersonate user
                   </button>
-        
+
                   <button
                     mat-menu-item
                     [disabled]="el.username === 'root' || !backendService.active?.access.auth.impersonate"
@@ -138,7 +138,7 @@
                     <mat-icon>perm_identity</mat-icon>
                     Create reset password link
                   </button>
-        
+
                   <button
                     mat-menu-item
                     [disabled]="el.username === 'root' || el.locked || !backendService.active?.access.auth.jail"
@@ -148,7 +148,7 @@
                     <mat-icon>gavel</mat-icon>
                     Imprison user
                   </button>
-        
+
                   <button
                     mat-menu-item
                     [disabled]="el.username === 'root' || !backendService.active?.access.auth.jail"
@@ -159,7 +159,14 @@
                     <mat-icon *ngIf="!el.locked">lock_open</mat-icon>
                     {{el.locked ? 'Release lock' : 'Lock user'}}
                   </button>
-        
+
+                  <button
+                    mat-menu-item 
+                    [matMenuTriggerFor]="menuUserExtra">
+                    <mat-icon>manage_accounts</mat-icon>
+                    Manage extra info
+                  </button>
+
                   <button
                     mat-menu-item
                     [disabled]="el.username === 'root' || !backendService.active?.access.auth.delete_user"
@@ -170,20 +177,12 @@
                     Delete user
                   </button>
 
-                  <button
-                    mat-menu-item 
-                    [matMenuTriggerFor]="menuUserExtra"
-                    [disabled]="el.username === 'root'">
-                    <mat-icon>manage_accounts</mat-icon>
-                    Manage extra info
-                  </button>
                 </mat-menu>
 
                 <mat-menu #menuUserExtra="matMenu">
 
                   <button
                     mat-menu-item
-                    [disabled]="el.username === 'root'"
                     matTooltipPosition="after"
                     matTooltip="Add extra details"
                     (click)="openExtraInfoDialog(el?.user_extra, 'add', el.username)">
@@ -193,7 +192,7 @@
 
                   <button
                     mat-menu-item
-                    [disabled]="el.username === 'root' || el?.user_extra?.length === 0"
+                    [disabled]="el?.user_extra?.length === 0"
                     matTooltipPosition="after"
                     matTooltip="Edit extra details"
                     (click)="openExtraInfoDialog(el?.user_extra, 'edit')">
