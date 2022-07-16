@@ -91,7 +91,7 @@
             [class.justify-content-center]="!navbarService.expanded"
             (click)="largeScreen ? '' : closeNavbar()"
             [routerLink]="!backendService.active?.token || (backendService.active?.setupDone || !backendService.active?.token?.in_role('root')) ? '/' : null">
-            <mat-icon>{{backendService.active?.access.files.list_files && backendService.active?.access.files.list_folders ? 'dashboard' : 'home'}}</mat-icon>
+            <mat-icon>home</mat-icon>
             <span class="title">{{backendService.active?.access.files.list_files && backendService.active?.access.files.list_folders ? 'Dashboard' : 'Home'}}</span>
           </a>
         </mat-panel-title>
@@ -121,14 +121,14 @@
 
     <!-- Tools -->
     <mat-expansion-panel class="mat-elevation-z0"
-      [expanded]="hyperide?.isActive || evaluator?.isActive || sql?.isActive || terminal?.isActive || crudifier?.isActive || tasks?.isActive || !navbarService.expanded"
+      [expanded]="hyperide?.isActive || endpoints?.isActive || bazar?.isActive || sql?.isActive || crudifier?.isActive || !navbarService.expanded"
       [hideToggle]="!navbarService.expanded"
       *ngIf="(backendService.active?.access.files.list_files && backendService.active?.access.files.list_folders) || backendService.active?.access.eval.execute || backendService.active?.access.sql.execute_access || (backendService.active?.access.crud.generate_crud || backendService.active?.access.crud.generate_sql || backendService.active?.access.crud.generate_frontend) || backendService.active?.access.tasks.read || backendService.active?.access.terminal.execute">
       <mat-expansion-panel-header
         *ngIf="navbarService.expanded"
-        [ngClass]="{'active-link':hyperide?.isActive || evaluator?.isActive || sql?.isActive || crudifier?.isActive || tasks?.isActive || terminal?.isActive}">
+        [ngClass]="{'active-link':hyperide?.isActive || endpoints?.isActive || bazar?.isActive || sql?.isActive || crudifier?.isActive}">
         <mat-panel-title>
-          <mat-icon>build_circle</mat-icon>
+          <mat-icon>build</mat-icon>
           <span class="title">Tools</span>
         </mat-panel-title>
       </mat-expansion-panel-header>
@@ -186,69 +186,53 @@
           </ng-container>
         </mat-list-option>
 
-        <!-- Evaluator -->
+        <!-- Endpoints -->
         <mat-list-option
-          [style.display]="backendService.active?.access.eval.execute ? '' : 'none'"
+          [style.display]="backendService.active?.access.endpoints.view ? '' : 'none'"
           [matTooltipDisabled]="navbarService.expanded"
-          matTooltip="Evaluator"
+          matTooltip="Endpoints"
           matTooltipPosition="after"
           routerLinkActive="active-link"
-          #evaluator="routerLinkActive"
+          #endpoints="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
-          <ng-container *ngIf="backendService.active?.access.eval.execute">
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendService.active?.setupDone ? '/evaluator' : null">
-              <mat-icon>offline_bolt</mat-icon>
-              <span class="title">Evaluator</span>
+          <ng-container *ngIf="backendService.active?.access.endpoints.view">
+            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendService.active?.setupDone ? '/endpoints' : null">
+              <mat-icon>http</mat-icon>
+              <span class="title">Endpoints</span>
             </a>
           </ng-container>
         </mat-list-option>
 
-        <!-- Tasks -->
+        <!-- Plugins -->
         <mat-list-option
-          [style.display]="backendService.active?.access.tasks.read ? '' : 'none'"
+          [style.display]="backendService.active?.access.bazar.get_manifests ? '' : 'none'"
           [matTooltipDisabled]="navbarService.expanded"
-          matTooltip="Tasks"
+          matTooltip="Plugins"
           matTooltipPosition="after"
           routerLinkActive="active-link"
-          #tasks="routerLinkActive"
+          #bazar="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
-          <ng-container *ngIf="backendService.active?.access.tasks.read">
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendService.active?.setupDone ? '/tasks' : null">
-              <mat-icon>calendar_today</mat-icon>
-              <span class="title">Task Scheduler</span>
+          <ng-container *ngIf="backendService.active?.access.bazar.get_manifests">
+            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendService.active?.setupDone ? '/plugins' : null">
+              <mat-icon>shop</mat-icon>
+              <span class="title">Plugins</span>
             </a>
           </ng-container>
         </mat-list-option>
 
-        <!-- Terminal -->
-        <mat-list-option
-          [style.display]="backendService.active?.access.terminal.execute ? '' : 'none'"
-          [matTooltipDisabled]="navbarService.expanded"
-          matTooltip="Terminal"
-          matTooltipPosition="after"
-          routerLinkActive="active-link"
-          #terminal="routerLinkActive"
-          [routerLinkActiveOptions]="{exact:true}">
-          <ng-container *ngIf="backendService.active?.access.terminal.execute">
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendService.active?.setupDone ? '/terminal' : null">
-              <mat-icon>input</mat-icon>
-              <span class="title">Terminal</span>
-            </a>
-          </ng-container>
-        </mat-list-option>
       </mat-selection-list>
     </mat-expansion-panel>
 
     <!-- Management -->
     <mat-expansion-panel class="mat-elevation-z0"
-      [expanded]="auth?.isActive || config?.isActive || crypto?.isActive || bazar?.isActive || profile?.isActive || !navbarService.expanded"
+      [expanded]="auth?.isActive || cache?.isActive || tasks?.isActive || config?.isActive || crypto?.isActive || !navbarService.expanded"
       [hideToggle]="!navbarService.expanded"
       *ngIf="(backendService.active?.access.auth.view_users && backendService.active?.access.auth.view_roles) || backendService.active?.access.bazar.get_manifests || backendService.active?.access.config.load">
       <mat-expansion-panel-header
       *ngIf="navbarService.expanded"
-      [ngClass]="{'active-link':auth?.isActive || config?.isActive || crypto?.isActive || bazar?.isActive || profile?.isActive}">
+      [ngClass]="{'active-link':auth?.isActive || cache?.isActive || tasks?.isActive || config?.isActive || crypto?.isActive}">
         <mat-panel-title>
-          <mat-icon>manage_accounts</mat-icon>
+          <mat-icon>settings</mat-icon>
           <span class="title">Management</span>
         </mat-panel-title>
       </mat-expansion-panel-header>
@@ -271,19 +255,36 @@
           </ng-container>
         </mat-list-option>
 
-        <!-- Config -->
+        <!-- Tasks -->
         <mat-list-option
-          [style.display]="backendService.active?.access.config.load ? '' : 'none'"
+          [style.display]="backendService.active?.access.tasks.read ? '' : 'none'"
           [matTooltipDisabled]="navbarService.expanded"
-          matTooltip="Config"
+          matTooltip="Tasks"
           matTooltipPosition="after"
           routerLinkActive="active-link"
-          #config="routerLinkActive"
+          #tasks="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
-          <ng-container *ngIf="backendService.active?.access.config.load">
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" routerLink="/config">
-              <mat-icon>settings</mat-icon>
-              <span class="title">Config</span>
+          <ng-container *ngIf="backendService.active?.access.tasks.read">
+            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendService.active?.setupDone ? '/tasks' : null">
+              <mat-icon>schedule</mat-icon>
+              <span class="title">Task Scheduler</span>
+            </a>
+          </ng-container>
+        </mat-list-option>
+
+        <!-- Cache -->
+        <mat-list-option
+          [style.display]="backendService.active?.access.log.read ? '' : 'none'"
+          [matTooltipDisabled]="navbarService.expanded"
+          matTooltip="System's cache"
+          matTooltipPosition="after"
+          routerLinkActive="active-link"
+          #cache="routerLinkActive"
+          [routerLinkActiveOptions]="{exact:true}">
+          <ng-container *ngIf="backendService.active?.access.log.read">
+            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendService.active?.setupDone ? '/cache' : null">
+              <mat-icon>cached</mat-icon>
+              <span class="title">Cache</span>
             </a>
           </ng-container>
         </mat-list-option>
@@ -305,53 +306,38 @@
           </ng-container>
         </mat-list-option>
 
-        <!-- Profile -->
+        <!-- Config -->
         <mat-list-option
-          [style.display]="backendService.active?.token ? '' : 'none'"
+          [style.display]="backendService.active?.access.config.load ? '' : 'none'"
           [matTooltipDisabled]="navbarService.expanded"
-          matTooltip="Edit your profile"
+          matTooltip="Config"
           matTooltipPosition="after"
           routerLinkActive="active-link"
-          #profile="routerLinkActive"
+          #config="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
-          <ng-container *ngIf="backendService.active?.token">
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendService.active?.setupDone ? '/profile' : null">
-              <mat-icon>person</mat-icon>
-              <span class="title">Profile</span>
+          <ng-container *ngIf="backendService.active?.access.config.load">
+            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" routerLink="/config">
+              <mat-icon>settings</mat-icon>
+              <span class="title">Config</span>
             </a>
           </ng-container>
         </mat-list-option>
 
-        <!-- Bazaar -->
-        <mat-list-option
-          [style.display]="backendService.active?.access.bazar.get_manifests ? '' : 'none'"
-          [matTooltipDisabled]="navbarService.expanded"
-          matTooltip="Plugins"
-          matTooltipPosition="after"
-          routerLinkActive="active-link"
-          #bazar="routerLinkActive"
-          [routerLinkActiveOptions]="{exact:true}">
-          <ng-container *ngIf="backendService.active?.access.bazar.get_manifests">
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendService.active?.setupDone ? '/plugins' : null">
-              <mat-icon>storefront</mat-icon>
-              <span class="title">Plugins</span>
-            </a>
-          </ng-container>
-        </mat-list-option>
       </mat-selection-list>
     </mat-expansion-panel>
 
-    <!-- Analytics -->
-    <mat-expansion-panel class="mat-elevation-z0"
-      [expanded]="assumptions?.isActive || cache?.isActive || endpoints?.isActive || sockets?.isActive || log?.isActive || !navbarService.expanded"
+    <!-- Misc -->
+    <mat-expansion-panel
+      class="mat-elevation-z0"
+      [expanded]="assumptions?.isActive || profile?.isActive || terminal?.isActive || evaluator?.isActive || sockets?.isActive || log?.isActive || !navbarService.expanded"
       [hideToggle]="!navbarService.expanded"
       *ngIf="backendService.active?.access.endpoints.view || backendService.active?.access.sockets.read">
       <mat-expansion-panel-header
-      *ngIf="navbarService.expanded"
-      [ngClass]="{'active-link':assumptions?.isActive || cache?.isActive || log?.isActive || endpoints?.isActive || sockets?.isActive}">
+        *ngIf="navbarService.expanded"
+        [ngClass]="{'active-link':assumptions?.isActive || profile?.isActive || terminal?.isActive || evaluator?.isActive || log?.isActive || sockets?.isActive}">
         <mat-panel-title>
-          <mat-icon>equalizer</mat-icon>
-          <span class="title">Analytics</span>
+          <mat-icon>reorder</mat-icon>
+          <span class="title">Misc</span>
         </mat-panel-title>
       </mat-expansion-panel-header>
       <mat-selection-list [multiple]="false" [ngClass]="{'pt-0 pb-0': !navbarService.expanded}">
@@ -373,7 +359,24 @@
           </ng-container>
         </mat-list-option>
 
-        <!-- Assumptions //TODO -->
+        <!-- Evaluator -->
+        <mat-list-option
+          [style.display]="backendService.active?.access.eval.execute ? '' : 'none'"
+          [matTooltipDisabled]="navbarService.expanded"
+          matTooltip="Evaluator"
+          matTooltipPosition="after"
+          routerLinkActive="active-link"
+          #evaluator="routerLinkActive"
+          [routerLinkActiveOptions]="{exact:true}">
+          <ng-container *ngIf="backendService.active?.access.eval.execute">
+            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendService.active?.setupDone ? '/evaluator' : null">
+              <mat-icon>offline_bolt</mat-icon>
+              <span class="title">Evaluator</span>
+            </a>
+          </ng-container>
+        </mat-list-option>
+
+        <!-- Assumptions -->
         <mat-list-option
           [style.display]="backendService.active?.access.log.read ? '' : 'none'"
           [matTooltipDisabled]="navbarService.expanded"
@@ -386,40 +389,6 @@
             <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendService.active?.setupDone ? '/assumptions' : null">
               <mat-icon>fact_check</mat-icon>
               <span class="title">Assumptions</span>
-            </a>
-          </ng-container>
-        </mat-list-option>
-
-        <!-- Cache //TODO -->
-        <mat-list-option
-          [style.display]="backendService.active?.access.log.read ? '' : 'none'"
-          [matTooltipDisabled]="navbarService.expanded"
-          matTooltip="System's cache"
-          matTooltipPosition="after"
-          routerLinkActive="active-link"
-          #cache="routerLinkActive"
-          [routerLinkActiveOptions]="{exact:true}">
-          <ng-container *ngIf="backendService.active?.access.log.read">
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendService.active?.setupDone ? '/cache' : null">
-              <mat-icon>cached</mat-icon>
-              <span class="title">Cache</span>
-            </a>
-          </ng-container>
-        </mat-list-option>
-
-        <!-- Endpoints -->
-        <mat-list-option
-          [style.display]="backendService.active?.access.endpoints.view ? '' : 'none'"
-          [matTooltipDisabled]="navbarService.expanded"
-          matTooltip="Endpoints"
-          matTooltipPosition="after"
-          routerLinkActive="active-link"
-          #endpoints="routerLinkActive"
-          [routerLinkActiveOptions]="{exact:true}">
-          <ng-container *ngIf="backendService.active?.access.endpoints.view">
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendService.active?.setupDone ? '/endpoints' : null">
-              <mat-icon>http</mat-icon>
-              <span class="title">Endpoints</span>
             </a>
           </ng-container>
         </mat-list-option>
@@ -440,6 +409,41 @@
             </a>
           </ng-container>
         </mat-list-option>
+
+        <!-- Terminal -->
+        <mat-list-option
+          [style.display]="backendService.active?.access.terminal.execute ? '' : 'none'"
+          [matTooltipDisabled]="navbarService.expanded"
+          matTooltip="Terminal"
+          matTooltipPosition="after"
+          routerLinkActive="active-link"
+          #terminal="routerLinkActive"
+          [routerLinkActiveOptions]="{exact:true}">
+          <ng-container *ngIf="backendService.active?.access.terminal.execute">
+            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendService.active?.setupDone ? '/terminal' : null">
+              <mat-icon>input</mat-icon>
+              <span class="title">Terminal</span>
+            </a>
+          </ng-container>
+        </mat-list-option>
+
+        <!-- Profile -->
+        <mat-list-option
+          [style.display]="backendService.active?.token ? '' : 'none'"
+          [matTooltipDisabled]="navbarService.expanded"
+          matTooltip="Edit your profile"
+          matTooltipPosition="after"
+          routerLinkActive="active-link"
+          #profile="routerLinkActive"
+          [routerLinkActiveOptions]="{exact:true}">
+          <ng-container *ngIf="backendService.active?.token">
+            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendService.active?.setupDone ? '/profile' : null">
+              <mat-icon>person</mat-icon>
+              <span class="title">Profile</span>
+            </a>
+          </ng-container>
+        </mat-list-option>
+
       </mat-selection-list>
     </mat-expansion-panel>
 
