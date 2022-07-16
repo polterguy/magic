@@ -6,10 +6,11 @@
 // Angular and system imports.
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
+import { RecaptchaComponent } from 'ng-recaptcha';
 import { map, startWith, tap } from 'rxjs/operators';
-import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 
 // Application specific imports.
 import { Backend } from 'src/app/models/backend.model';
@@ -17,7 +18,6 @@ import { Response } from 'src/app/models/response.model';
 import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from '../../../services/feedback.service';
-import { RecaptchaComponent } from 'ng-recaptcha';
 
 class DialogData {
   allowAuthentication?: boolean;
@@ -123,7 +123,6 @@ export class LoginDialogComponent implements OnInit {
         username: el[0].username || '',
         password: el[0].password || ''
       });
-      this.savePassword = !!el[0].password && this.loginForm.value.password !== 'root';
     }
     this.backendValueChanged();
   }

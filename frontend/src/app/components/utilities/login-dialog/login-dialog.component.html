@@ -65,7 +65,7 @@
         </div>
         <re-captcha #captchaRef="reCaptcha" [siteKey]="recaptchaKey" size="invisible"
         (resolved)="$event && resetPassword($event)" *ngIf="recaptchaKey !== '' && recaptchaKey !== null"></re-captcha>
-        <button *ngIf="autoLogin !== true" mat-button type="button" class="pr-0 forgot-pass"
+        <button *ngIf="autoLogin !== true" mat-button type="button" class="mr-0 forgot-pass"
           (click)="toggleForgotPass(true)">Forgot password?</button>
       </div>
 
