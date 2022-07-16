@@ -26,7 +26,6 @@ import { ExportTablesComponent } from './export-tables/export-tables.component';
 import { DefaultDatabaseType } from '../../../models/default-database-type.model';
 import { SaveSqlDialogComponent } from './save-sql-dialog/save-sql-dialog.component';
 import { LoadSqlDialogComponent } from './load-sql-dialog/load-sql-dialog.component';
-import { ApplyMigrationComponent } from './apply-migration/apply-migration.component';
 import { TableNameDialogComponent } from './table-name-dialog/table-name-dialog.component';
 import { Model } from '../../utilities/codemirror/codemirror-sql/codemirror-sql.component';
 
@@ -48,6 +47,11 @@ export class SqlComponent implements OnInit {
 
   // Database declaration as returned from server
   private databaseDeclaration: any = null;
+
+  /**
+   * If true, migration scripts will be automatically created.
+   */
+  autoMigrate = false;
 
   /**
    * Card that's currently animated due to being selected.
@@ -1018,25 +1022,15 @@ export class SqlComponent implements OnInit {
    * Applies migration scripts, if any migration scripts are returned from the server.
    */
   private applyMigration(sql: string) {
-    if (sql) {
-      const dialogRef = this.dialog.open(ApplyMigrationComponent, {
-        width: '80%',
-        data: {
-          sql,
+    if (this.autoMigrate) {
+      this.sqlService.createMigrationScript(
+        this.input.databaseType,
+        this.input.database,
+        sql).subscribe({
+        next: () => {
+          this.feedbackService.showInfo('Migration script successfully added to module');
         },
-      });
-      dialogRef.afterClosed().subscribe((result: any) => {
-        if (result) {
-          this.sqlService.createMigrationScript(
-            this.input.databaseType,
-            this.input.database,
-            result.sql).subscribe({
-            next: () => {
-              this.feedbackService.showInfo('Migration script successfully added to module');
-            },
-            error: (error: any) => this.feedbackService.showError(error)
-          });
-        }
+        error: (error: any) => this.feedbackService.showError(error)
       });
     }
   }

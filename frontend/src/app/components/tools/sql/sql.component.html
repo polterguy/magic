@@ -357,26 +357,45 @@
             <!-- Menu action items for database -->
             <mat-menu #database="matMenu">
 
-              <button mat-menu-item (click)="createNewDatabase()" class="action-button">
+              <button
+                mat-menu-item
+                (click)="createNewDatabase()"
+                class="action-button">
                 <mat-icon class="material-icons-outlined">language</mat-icon>
                 New database
               </button>
 
-              <button mat-menu-item (click)="createNewTable()" class="action-button">
+              <button
+                mat-menu-item
+                (click)="createNewTable()"
+                class="action-button">
                 <mat-icon class="material-icons-outlined">add</mat-icon>
                 Add table
               </button>
 
-              <button mat-menu-item (click)="exportDatabase()" class="action-button">
+              <button
+                mat-menu-item
+                (click)="exportDatabase()"
+                class="action-button">
                 <mat-icon class="material-icons-outlined">cloud_download</mat-icon>
                 Export database DDL
               </button>
 
-              <button mat-menu-item (click)="deleteDatabase()" class="action-button">
+              <button
+                mat-menu-item
+                (click)="deleteDatabase()"
+                class="action-button">
                 <mat-icon class="material-icons-outlined">delete</mat-icon>
                 Drop database
               </button>
 
+              <button mat-menu-item>
+                <mat-slide-toggle
+                  [(ngModel)]="autoMigrate"
+                  (click)="$event.stopPropagation();"
+                  labelPosition="after">Auto migrate</mat-slide-toggle>
+              </button>
+        
             </mat-menu>
           </div>
 

@@ -43,16 +43,6 @@
   Rename
 </button>
 
-<!-- Delete file -->
-<button mat-menu-item
-  [disabled]="!backendService.active?.access.files.delete_file"
-  matTooltip="Delete file [ALT+D]"
-  matTooltipPosition="before"
-  (click)="deleteActiveFile()">
-  <mat-icon>delete</mat-icon>
-  Delete
-</button>
-
 <!-- Close file -->
 <button
   mat-menu-item
@@ -72,4 +62,14 @@
   (click)="downloadActiveFile()">
   <mat-icon class="material-icons-outlined">file_download</mat-icon>
   Download file
+</button>
+
+<!-- Delete file -->
+<button mat-menu-item
+  [disabled]="!backendService.active?.access.files.delete_file"
+  matTooltip="Delete file [ALT+D]"
+  matTooltipPosition="before"
+  (click)="deleteActiveFile()">
+  <mat-icon class="material-icons-outlined">delete</mat-icon>
+  Delete
 </button>
