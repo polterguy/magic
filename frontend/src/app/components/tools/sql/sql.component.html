@@ -25,17 +25,17 @@
                 </mat-menu>
               </div>
             </div>
-    
+
             <!-- Shortkeys information button and menu -->
             <div class="d-md-block d-none">
-    
+
               <button mat-stroked-button [matMenuTriggerFor]="list" matTooltip="List of shortkeys">
                 Shortkeys
               </button>
-    
+
               <mat-menu #list="matMenu" class="shortkeys">
                 <mat-list role="list" dense>
-              
+
                   <mat-list-item role="listitem">
                     Toggle fullscreen
                     <span class="code my-0 ml-5">Alt + M</span>
@@ -45,47 +45,47 @@
                     Load snippet
                     <span class="code my-0 ml-5">Alt + L</span>
                   </mat-list-item>
-              
+
                   <mat-list-item role="listitem">
                     Save snippet
                     <span class="code my-0 ml-5">Alt + S</span>
                   </mat-list-item>
-              
+
                   <mat-list-item role="listitem">
                     Execute
                     <span class="code my-0 ml-5">F5</span>
                   </mat-list-item>
-              
+
                   <mat-list-item role="listitem">
                     Search
                     <span class="code my-0 ml-5">Ctrl+F/Cmd+F</span>
                   </mat-list-item>
-              
+
                   <mat-list-item role="listitem">
                     Find next
                     <span class="code my-0 ml-5">Ctrl+G/Cmd+G</span>
                   </mat-list-item>
-              
+
                   <mat-list-item role="listitem">
                     Find previous
                     <span class="code my-0 ml-5">Shift+Ctrl+G/<br>Shift+Cmd+G</span>
                   </mat-list-item>
-              
+
                   <mat-list-item role="listitem">
                     Replace
                     <span class="code my-0 ml-5">Shift+Ctrl+F/<br>Cmd+Option+F</span>
                   </mat-list-item>
-              
+
                   <mat-list-item role="listitem">
                     Replace all
                     <span class="code my-0 ml-5">Shift+Ctrl+R/<br>Shift+Cmd+Option+F</span>
                   </mat-list-item>
-              
+
                   <mat-list-item role="listitem">
                     Jump to line
                     <span class="code my-0 ml-5">Alt + G</span>
                   </mat-list-item>
-              
+
                 </mat-list>
               </mat-menu>
             </div>
@@ -167,9 +167,9 @@
                       </ng-container>
                       Safe mode
                     </mat-checkbox>
-    
+
                     <div class="p-1"></div>
-    
+
                     <mat-checkbox
                       *ngIf="input.databaseType === 'mssql'"
                       (change)="batchChanged()"
@@ -202,7 +202,7 @@
                     </button>
 
                     <div class="p-1"></div>
-            
+
                     <button
                       id="loadButton"
                       [disabled]="!backendService.active?.access.sql.list_files"
@@ -218,10 +218,10 @@
                       id="sqlFile"
                       #sqlFileImport
                       class="invisible"
-                      accept=".sql" 
+                      accept=".sql"
                       [(ngModel)]="sqlFile"
                       (change)="uploadFiles($event)">
- 
+
                     <div class="p-1"></div>
 
                     <button
@@ -317,24 +317,21 @@
               Export as CSV
             </button>
           </div>
-    
+
         </mat-card>
       </div>
     </div>
   </div>
 </div>
 
-<div class="row" *ngIf="designer">
+<div class="row manipuated-layout" *ngIf="designer">
   <div class="col-12 mb-general">
-    <div class="row h-100">
-      <div class="col-12">
-
-        <mat-card *ngIf="input">
-
+    <div class="row h-100" *ngIf="input">
+        <div class="col-12">
           <div class="d-flex flex-sm-nowrap flex-wrap justify-content-between">
 
             <div class="d-flex align-items-center">
-              <mat-card-title class="my-0">Designer</mat-card-title>
+              <h3 class="mat-card-title my-0">Designer</h3>
               <div class="sm-icons">
                 <button mat-icon-button [matMenuTriggerFor]="menu" class="mat-caption" matTooltip="Need help?" type="button">
                   <mat-icon>help_outline</mat-icon>
@@ -345,153 +342,135 @@
                       Design your database and add columns, delete columns, create tables, etc.
                     </p>
                     <div class="d-flex justify-content-end">
-                      <a target="_blank" href="https://docs.aista.com/documentation/magic/components/sql/" mat-stroked-button>Learn more</a>
+                      <a target="_blank" href="https://docs.aista.com/documentation/magic/components/sql/"
+                        mat-stroked-button>Learn more</a>
                     </div>
                   </div>
                 </mat-menu>
               </div>
             </div>
-          </div>
-
-          <mat-card-subtitle>Design and modify your database</mat-card-subtitle>
-
-          <mat-card-content class="row d-flex">
-
             <!-- Trigger action menu button for database -->
-            <button
-              mat-icon-button
-              class="database-actions"
-              [matMenuTriggerFor]="database">
+            <button mat-icon-button class="action-button-more" [matMenuTriggerFor]="database">
               <mat-icon>more_vert</mat-icon>
             </button>
 
             <!-- Menu action items for database -->
             <mat-menu #database="matMenu">
 
-              <button
-                mat-menu-item
-                (click)="createNewDatabase()"
-                class="action-button">
+              <button mat-menu-item (click)="createNewDatabase()" class="action-button">
                 <mat-icon class="material-icons-outlined">add</mat-icon>
                 Create database
               </button>
 
-              <button
-                mat-menu-item
-                (click)="createNewTable()"
-                class="action-button">
+              <button mat-menu-item (click)="createNewTable()" class="action-button">
                 <mat-icon class="material-icons-outlined">add</mat-icon>
                 Add table
               </button>
 
-              <button
-                mat-menu-item
-                (click)="exportDatabase()"
-                class="action-button">
+              <button mat-menu-item (click)="exportDatabase()" class="action-button">
                 <mat-icon class="material-icons-outlined">cloud_download</mat-icon>
                 Export database DDL
               </button>
 
-              <button
-                mat-menu-item
-                (click)="deleteDatabase()"
-                class="action-button">
+              <button mat-menu-item (click)="deleteDatabase()" class="action-button">
                 <mat-icon class="material-icons-outlined">delete</mat-icon>
                 Drop database
               </button>
 
             </mat-menu>
+          </div>
 
-            <div
-              *ngIf="!activeTables || activeTables.length === 0"
-              class="col-12">
-              Please add tables to your database
-            </div>
+          <p class="mat-card-subtitle">Design and modify your database</p>
 
-            <div class="col-xl-4 col-sm-6 col-12 mb-5 db-table-design" *ngFor="let idxTable of activeTables">
-              <mat-card class="h-100" [id]="idxTable.name" [class.animating]="animating == idxTable.name">
-                <mat-card-content class="h-100 pb-4">
-                  <h3 class="pl-3">{{idxTable.name}}</h3>
 
-                  <!-- Trigger action menu button for table menu -->
-                  <button
-                    mat-icon-button
-                    class="table-actions"
-                    [matMenuTriggerFor]="table">
-                    <mat-icon>more_vert</mat-icon>
+
+          <div *ngIf="!activeTables || activeTables.length === 0" class="col-12">
+            Please add tables to your database
+          </div>
+
+        </div>
+        <div class="col-xl-4 col-lg-6 col-md-12 col-sm-6 col-12 mb-3 db-table-design" *ngFor="let idxTable of activeTables">
+          <mat-card class="h-100" [id]="idxTable.name" [class.animating]="animating == idxTable.name">
+            <mat-card-content class="h-100">
+              <div class="d-flex align-items-center justify-content-between mb-3">
+                <h3 class="my-0">{{idxTable.name}}</h3>
+
+                <!-- Trigger action menu button for table menu -->
+                <button mat-icon-button [matMenuTriggerFor]="table" class="action-button-more">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+
+                <!-- Menu action items for table -->
+                <mat-menu #table="matMenu">
+
+                  <button mat-menu-item (click)="createFieldKey(idxTable)" class="action-button">
+                    <mat-icon>add</mat-icon>
+                    Add field/key
                   </button>
 
-                  <!-- Menu action items for table -->
-                  <mat-menu #table="matMenu">
+                  <button mat-menu-item (click)="exportTable(idxTable)" class="action-button">
+                    <mat-icon class="material-icons-outlined">cloud_download</mat-icon>
+                    Export table DDL
+                  </button>
 
-                    <button
-                      mat-menu-item
-                      (click)="createFieldKey(idxTable)"
-                      class="action-button">
-                      <mat-icon>add</mat-icon>
-                      Add field/key
-                    </button>
+                  <button (click)="deleteTable(idxTable)" mat-menu-item class="action-button">
+                    <mat-icon>remove</mat-icon>
+                    Drop table
+                  </button>
 
-                    <button
-                      mat-menu-item
-                      (click)="exportTable(idxTable)"
-                      class="action-button">
-                      <mat-icon class="material-icons-outlined">cloud_download</mat-icon>
-                      Export table DDL
-                    </button>
-    
-                    <button
-                      (click)="deleteTable(idxTable)"
-                      mat-menu-item
-                      class="action-button">
-                      <mat-icon>remove</mat-icon>
-                      Drop table
-                    </button>
+                </mat-menu>
+              </div>
+              <div class="pl-3 mb-2">
+                <div class="d-flex align-items-center justify-content-between py-1 table-element"
+                  *ngFor="let idxColumn of idxTable.columns" [class]="idxColumn.nullable ? 'nullable' : 'not-null'">
+                  <div class="d-flex align-items-center">
+                    <mat-icon *ngIf="idxColumn.primary" class="key-icon">vpn_key</mat-icon>
+                    &nbsp;
+                    <strong class="ml-1 mr-2">{{idxColumn.name}}</strong> <span class="text-muted">{{idxColumn.db}}</span>
+                  </div>
+                  <button mat-icon-button *ngIf="!idxColumn.primary" type="button" (click)="deleteColumn(idxTable, idxColumn)">
+                    <mat-icon class="general-icon">remove</mat-icon>
+                  </button>
+                </div>
+              </div>
+              <!-- <ul class="pl-3">
+                <li *ngFor="let idxColumn of idxTable.columns" [class]="idxColumn.nullable ? 'nullable' : 'not-null'">
+                  <mat-icon *ngIf="idxColumn.primary" class="key">vpn_key</mat-icon>
+                  <span>{{idxColumn.name}}</span> {{idxColumn.db}}
+                  <mat-icon role="button" *ngIf="!idxColumn.primary" class="delete" (click)="deleteColumn(idxTable, idxColumn)">
+                    remove</mat-icon>
+                </li>
+              </ul> -->
+              <mat-divider *ngIf="idxTable.foreign_keys" id="custom-divider"></mat-divider>
+              <div class="pl-3 pt-2">
+                <div class="d-flex align-items-center justify-content-between py-1 table-element"
+                  *ngFor="let idxFk of idxTable.foreign_keys;let last = last" [class.mb-2]="!last">
+                  <div class="d-flex align-items-center">
+                    &nbsp;&nbsp;
+                    <span>{{idxFk.column}}</span>
+                    <mat-icon class="general-icon mx-1">arrow_right_alt</mat-icon>
+                    <span class="pointer" role="button"
+                      (click)="scrollIntoView(idxFk.foreign_table)">{{idxFk.foreign_table}}.{{idxFk.foreign_column}}</span>
+                  </div>
+                  <button mat-icon-button *ngIf="idxFk.name" type="button" (click)="deleteFk(idxTable, idxFk)">
+                    <mat-icon class="general-icon">remove</mat-icon>
+                  </button>
+                </div>
+              </div>
+              <!-- <ul class="pl-3 foreign-keys">
+                <li *ngFor="let idxFk of idxTable.foreign_keys">
+                  <span>{{idxFk.column}}</span>
+                  <mat-icon class="arrow">arrow_right_alt</mat-icon>
+                  <span class="after" role="button"
+                    (click)="scrollIntoView(idxFk.foreign_table)">{{idxFk.foreign_table}}.{{idxFk.foreign_column}}</span>
+                  <mat-icon *ngIf="idxFk.name" role="button" class="delete" (click)="deleteFk(idxTable, idxFk)">remove
+                  </mat-icon>
+                </li>
+              </ul> -->
 
-                  </mat-menu>
-
-                  <ul class="pl-3">
-                    <li
-                      *ngFor="let idxColumn of idxTable.columns"
-                      [class]="idxColumn.nullable ? 'nullable' : 'not-null'">
-                      <mat-icon
-                        *ngIf="idxColumn.primary"
-                        class="key">vpn_key</mat-icon>
-                      <span>{{idxColumn.name}}</span> {{idxColumn.db}}
-                      <mat-icon
-                        role="button"
-                        *ngIf="!idxColumn.primary"
-                        class="delete"
-                        (click)="deleteColumn(idxTable, idxColumn)">remove</mat-icon>
-                    </li>
-                  </ul>
-                  <hr *ngIf="idxTable.foreign_keys">
-
-                  <ul class="pl-3 foreign-keys">
-                    <li *ngFor="let idxFk of idxTable.foreign_keys">
-                      <span>{{idxFk.column}}</span>
-                      <mat-icon class="arrow">arrow_right_alt</mat-icon>
-                      <span
-                        class="after"
-                        role="button"
-                        (click)="scrollIntoView(idxFk.foreign_table)">{{idxFk.foreign_table}}.{{idxFk.foreign_column}}</span>
-                      <mat-icon
-                        *ngIf="idxFk.name"
-                        role="button"
-                        class="delete"
-                        (click)="deleteFk(idxTable, idxFk)">remove</mat-icon>
-                    </li>
-                  </ul>
-
-                </mat-card-content>
-              </mat-card>
-            </div>
-
-          </mat-card-content>
-
-        </mat-card>
-
-      </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
     </div>
   </div>
 </div>
