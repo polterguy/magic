@@ -433,14 +433,6 @@
                   </button>
                 </div>
               </div>
-              <!-- <ul class="pl-3">
-                <li *ngFor="let idxColumn of idxTable.columns" [class]="idxColumn.nullable ? 'nullable' : 'not-null'">
-                  <mat-icon *ngIf="idxColumn.primary" class="key">vpn_key</mat-icon>
-                  <span>{{idxColumn.name}}</span> {{idxColumn.db}}
-                  <mat-icon role="button" *ngIf="!idxColumn.primary" class="delete" (click)="deleteColumn(idxTable, idxColumn)">
-                    remove</mat-icon>
-                </li>
-              </ul> -->
               <mat-divider *ngIf="idxTable.foreign_keys" id="custom-divider"></mat-divider>
               <div class="pl-3 pt-2">
                 <div class="d-flex align-items-center justify-content-between py-1 table-element"
