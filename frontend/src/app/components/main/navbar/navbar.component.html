@@ -232,7 +232,7 @@
       *ngIf="navbarService.expanded"
       [ngClass]="{'active-link':auth?.isActive || cache?.isActive || tasks?.isActive || config?.isActive || crypto?.isActive}">
         <mat-panel-title>
-          <mat-icon>settings</mat-icon>
+          <mat-icon>local_hospital</mat-icon>
           <span class="title">Management</span>
         </mat-panel-title>
       </mat-expansion-panel-header>
@@ -301,12 +301,12 @@
           <ng-container *ngIf="backendService.active?.access.crypto.import_public_key">
             <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendService.active?.setupDone ? '/keys' : null">
               <mat-icon>security</mat-icon>
-              <span class="title">Keys</span>
+              <span class="title">Cryptography Keys</span>
             </a>
           </ng-container>
         </mat-list-option>
 
-        <!-- Config -->
+        <!-- Configuration -->
         <mat-list-option
           [style.display]="backendService.active?.access.config.load ? '' : 'none'"
           [matTooltipDisabled]="navbarService.expanded"
@@ -318,7 +318,7 @@
           <ng-container *ngIf="backendService.active?.access.config.load">
             <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" routerLink="/config">
               <mat-icon>settings</mat-icon>
-              <span class="title">Config</span>
+              <span class="title">Configuration</span>
             </a>
           </ng-container>
         </mat-list-option>
@@ -336,7 +336,7 @@
         *ngIf="navbarService.expanded"
         [ngClass]="{'active-link':assumptions?.isActive || profile?.isActive || terminal?.isActive || evaluator?.isActive || log?.isActive || sockets?.isActive}">
         <mat-panel-title>
-          <mat-icon>reorder</mat-icon>
+          <mat-icon>playlist_add</mat-icon>
           <span class="title">Misc</span>
         </mat-panel-title>
       </mat-expansion-panel-header>
@@ -370,7 +370,7 @@
           [routerLinkActiveOptions]="{exact:true}">
           <ng-container *ngIf="backendService.active?.access.eval.execute">
             <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendService.active?.setupDone ? '/evaluator' : null">
-              <mat-icon>offline_bolt</mat-icon>
+              <mat-icon>flash_on</mat-icon>
               <span class="title">Evaluator</span>
             </a>
           </ng-container>
