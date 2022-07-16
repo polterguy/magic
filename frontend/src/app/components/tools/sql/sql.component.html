@@ -418,7 +418,7 @@
                     mat-menu-item
                     (click)="createFieldKey(idxTable)"
                     class="action-button">
-                    <mat-icon>add</mat-icon>
+                    <mat-icon class="material-icons-outlined">add</mat-icon>
                     Add field/key
                   </button>
 
@@ -434,7 +434,7 @@
                     (click)="deleteTable(idxTable)"
                     mat-menu-item
                     class="action-button">
-                    <mat-icon>remove</mat-icon>
+                    <mat-icon class="material-icons-outlined">delete</mat-icon>
                     Drop table
                   </button>
 
@@ -460,7 +460,7 @@
                     *ngIf="!idxColumn.primary"
                     type="button"
                     (click)="deleteColumn(idxTable, idxColumn)">
-                    <mat-icon class="general-icon">remove</mat-icon>
+                    <mat-icon class="material-icons-outlined">delete</mat-icon>
                   </button>
 
                 </div>
