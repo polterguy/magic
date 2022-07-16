@@ -79,6 +79,29 @@ export class NewFieldKeyComponent {
     {name: 'nvarchar', size: {min: 0, max: 65535, defaultSize: 65535}, defaultValue: false},
     {name: 'varchar', size: {min: 0, max: 65535, defaultSize: 65535}, defaultValue: 'string'},
   ];
+  private pgsqlDataTypes = [
+    {name: 'Numeric', defaultValue: 'Numeric'},
+    {name: 'text', defaultValue: 'string'},
+    {name: 'date', defaultValue: 'date'},
+    {name: 'datetime', defaultValue: 'datetime'},
+    {name: 'time', defaultValue: 'time'},
+    { name: 'blob', defaultValue: false },
+    {name: 'nvarchar', size: {min: 0, max: 65535}, defaultValue: false},
+    {name: 'varchar', size: {min: 0, max: 65535}, defaultValue: 'string'},
+  ];
+  private mssqlDataTypes = [
+    {name: 'integer', defaultValue: 'integer'},
+    {name: 'float', defaultValue: 'float'},
+    {name: 'real', defaultValue: 'real'},
+    {name: 'date', defaultValue: 'date'},
+    {name: 'datetime', defaultValue: 'datetime'},
+    {name: 'time', defaultValue: 'time'},
+    {name: 'text', defaultValue: 'string'},
+    {name: 'ntext', defaultValue: 'string'},
+    {name: 'blob', defaultValue: false},
+    {name: 'nvarchar', size: {min: 0, max: 65535}, defaultValue: false},
+    {name: 'varchar', size: {min: 0, max: 65535}, defaultValue: 'string'},
+  ];
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: NewFieldKeyModel) { }
 
@@ -100,6 +123,11 @@ export class NewFieldKeyComponent {
 
       case 'sqlite':
         return this.sqlIteDataTypes;
+
+      case 'pgsql':
+        return this.pgsqlDataTypes;
+      case 'mssql':
+        return this.mssqlDataTypes;
       }
   }
 

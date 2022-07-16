@@ -29,6 +29,7 @@ validators.mandatory:x:@.arguments/*/fkName
 validators.mandatory:x:@.arguments/*/databaseType
 validators.enum:x:@.arguments/*/databaseType
    .:mysql
+   .:pgsql
 
 // Creating our database connection.
 strings.concat
@@ -51,6 +52,17 @@ data.connect:x:-
             get-value:x:@.arguments/*/fkName
          data.execute:x:@strings.concat
             database-type:x:@.arguments/*/databaseType
+      case:pgsql
+         strings.concat
+            .:"alter table "
+            get-value:x:@.arguments/*/tableName
+            .:" drop constraint "
+            get-value:x:@.arguments/*/fkName
+         log.info:x:@strings.concat
+            database-type:x:@.arguments/*/databaseType
+   
+//         data.execute:x:@strings.concat
+//            database-type:x:@.arguments/*/databaseType
 
       case:sqlite
          throw:"SQLite doesn't support dropping foreign keys"
