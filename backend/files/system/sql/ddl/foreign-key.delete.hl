@@ -31,6 +31,9 @@ validators.enum:x:@.arguments/*/databaseType
    .:mysql
    .:pgsql
 
+// SQL that executes to modify DDL.
+.sql
+
 // Creating our database connection.
 strings.concat
    .:[
@@ -45,29 +48,17 @@ data.connect:x:-
    switch:x:@.arguments/*/databaseType
 
       case:mysql
-         strings.concat
-            .:"alter table "
-            get-value:x:@.arguments/*/tableName
-            .:" drop constraint "
-            get-value:x:@.arguments/*/fkName
-         data.execute:x:@strings.concat
-            database-type:x:@.arguments/*/databaseType
       case:pgsql
-         strings.concat
-            .:"alter table "
-            get-value:x:@.arguments/*/tableName
-            .:" drop constraint "
-            get-value:x:@.arguments/*/fkName
-         log.info:x:@strings.concat
-            database-type:x:@.arguments/*/databaseType
-   
-//         data.execute:x:@strings.concat
-//            database-type:x:@.arguments/*/databaseType
 
-      case:sqlite
-         throw:"SQLite doesn't support dropping foreign keys"
-            public:true
-            status:400
+         set-value:x:@.sql
+            strings.concat
+               .:"alter table "
+               get-value:x:@.arguments/*/tableName
+               .:" drop constraint "
+               get-value:x:@.arguments/*/fkName
+
+   data.execute:x:@.sql
+      database-type:x:@.arguments/*/databaseType
 
 // Flushing database cache.
 strings.concat
@@ -78,5 +69,7 @@ strings.concat
 cache.set:x:-
 
 // Returning result to caller.
+unwrap:x:+/*
 return
    result:success
+   sql:x:@.sql

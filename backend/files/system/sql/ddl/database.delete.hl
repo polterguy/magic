@@ -26,7 +26,6 @@ validators.enum:x:@.arguments/*/databaseType
    .:sqlite
    .:pgsql
    .:mssql
-   
 
 if
    eq:x:@.arguments/*/databaseType
@@ -46,6 +45,7 @@ else
    switch:x:@.arguments/*/databaseType
 
       case:mysql
+
          // Creating our database connection.
          strings.concat
             .:[
@@ -58,10 +58,11 @@ else
                strings.concat
                   .:"drop database "
                   get-value:x:@.arguments/*/databaseName
-            log.info:x:@.sql
             data.execute:x:@.sql
                database-type:x:@.arguments/*/databaseType
+
       case:pgsql
+
          // Creating our database connection.
          strings.concat
             .:[
@@ -72,12 +73,13 @@ else
             .sql
             set-value:x:@.sql
                strings.concat
-                  .:"drop database IF EXISTS "
+                  .:"drop database "
                   get-value:x:@.arguments/*/databaseName
-//            log.info:x:@.sql
             data.execute:x:@.sql
                database-type:x:@.arguments/*/databaseType
+
       case:mssql
+
          // Creating our database connection.
          strings.concat
             .:[
@@ -90,7 +92,6 @@ else
                strings.concat
                   .:"drop database "
                   get-value:x:@.arguments/*/databaseName
-//            log.info:x:@.sql
             data.execute:x:@.sql
                database-type:x:@.arguments/*/databaseType
 

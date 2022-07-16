@@ -40,8 +40,9 @@ validators.enum:x:@.arguments/*/databaseType
    .:sqlite
    .:pgsql
    .:mssql
-   
-   
+
+// SQL that executes to modify DDL.
+.sql
 
 // Creating our database connection.
 strings.concat
@@ -57,7 +58,7 @@ data.connect:x:-
    switch:x:@.arguments/*/databaseType
 
       case:mysql
-         .sql
+
          .type
          if
             eq:x:@.arguments/*/pkType
@@ -96,11 +97,9 @@ data.connect:x:-
             strings.concat
                get-value:x:@.sql
                .:")"
-         data.execute:x:@.sql
-            database-type:x:@.arguments/*/databaseType
 
       case:sqlite
-         .sql
+
          .type
          if
             eq:x:@.arguments/*/pkType
@@ -137,11 +136,9 @@ data.connect:x:-
             strings.concat
                get-value:x:@.sql
                .:")"
-         data.execute:x:@.sql
-            database-type:x:@.arguments/*/databaseType
 
       case:pgsql
-         .sql
+
          .type
          if
             eq:x:@.arguments/*/pkType
@@ -179,11 +176,9 @@ data.connect:x:-
             strings.concat
                get-value:x:@.sql
                .:")"
-//         log.info:x:@.sql
-         data.execute:x:@.sql
-            database-type:x:@.arguments/*/databaseType
+
       case:mssql
-         .sql
+
          .type
          if
             eq:x:@.arguments/*/pkType
@@ -220,12 +215,10 @@ data.connect:x:-
             strings.concat
                get-value:x:@.sql
                .:")"
-         log.info:x:@.sql
-         data.execute:x:@.sql
-            database-type:x:@.arguments/*/databaseType
-            
-            
-            
+
+   data.execute:x:@.sql
+      database-type:x:@.arguments/*/databaseType
+
 // Flushing database cache.
 strings.concat
    .:magic.sql.databases.
@@ -235,5 +228,8 @@ strings.concat
 cache.set:x:-
 
 // Returning result to caller.
+unwrap:x:+/*
 return
    result:success
+   sql:x:@.sql
+
