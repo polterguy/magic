@@ -38,6 +38,9 @@ if
       io.file.save:x:-
          .:
 
+      // Flushing connections cache.
+      sqlite.connections.flush
+
 else
 
    // Creating our correct SQL according to [databaseType].
