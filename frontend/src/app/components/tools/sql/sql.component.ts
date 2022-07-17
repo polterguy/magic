@@ -908,6 +908,13 @@ export class SqlComponent implements OnInit {
     setTimeout(() => this.animating = '', 2000);
   }
 
+  /**
+   * Closes result card.
+   */
+  closeResult() {
+    this.result = null;
+  }
+
   /*
    * Private helper methods.
    */

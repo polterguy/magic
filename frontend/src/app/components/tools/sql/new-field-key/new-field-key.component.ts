@@ -76,14 +76,14 @@ export class NewFieldKeyComponent {
     {name: 'real', defaultValue: 'decimal'},
     {name: 'text', defaultValue: 'string'},
     {name: 'blob', defaultValue: false},
-    {name: 'nvarchar', size: {min: 0, max: 65535, defaultSize: 65535}, defaultValue: false},
-    {name: 'varchar', size: {min: 0, max: 65535, defaultSize: 65535}, defaultValue: 'string'},
+    {name: 'varchar', defaultValue: 'string'},
+    {name: 'timestamp', defaultValue: 'date'},
   ];
   private pgsqlDataTypes = [
     {name: 'Numeric', defaultValue: 'Numeric'},
     {name: 'text', defaultValue: 'string'},
     {name: 'date', defaultValue: 'date'},
-    {name: 'datetime', defaultValue: 'datetime'},
+    {name: 'datetime', defaultValue: 'date'},
     {name: 'time', defaultValue: 'time'},
     { name: 'blob', defaultValue: false },
     {name: 'nvarchar', size: {min: 0, max: 65535}, defaultValue: false},

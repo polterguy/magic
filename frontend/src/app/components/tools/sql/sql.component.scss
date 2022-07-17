@@ -122,4 +122,10 @@ mat-icon {
 .not-null strong {
   text-decoration: underline;
 }
+.close-button {
+  position: absolute;
+  top: 5px;
+  right: 15px;
+  z-index: 100;
+}
 
