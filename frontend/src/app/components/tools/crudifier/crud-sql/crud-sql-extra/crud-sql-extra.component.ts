@@ -11,7 +11,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { CrudifyService } from '../../services/crudify.service';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { Argument } from '../../../../analytics/endpoints/models/argument.model';
+import { Argument } from '../../../endpoints/models/argument.model';
 import { Model } from '../../../../utilities/codemirror/codemirror-sql/codemirror-sql.component';
 import { CrudSqlAddArgumentDialogComponent } from './crud-sql-add-argument-dialog/crud-sql-add-argument-dialog.component';
 import { BackendService } from 'src/app/services/backend.service';

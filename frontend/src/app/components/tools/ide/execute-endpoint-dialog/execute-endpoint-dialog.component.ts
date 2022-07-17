@@ -8,7 +8,7 @@ import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
-import { Endpoint } from '../../../analytics/endpoints/models/endpoint.model';
+import { Endpoint } from '../../endpoints/models/endpoint.model';
 
 /**
  * Component for executing an endpoint file through a modal window.
