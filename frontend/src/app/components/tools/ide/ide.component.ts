@@ -28,7 +28,7 @@ import { Message } from '../../../models/message.model';
 import { VocabularyService } from '../services/vocabulary.service';
 import { MessageService } from '../../../services/message.service';
 import { FeedbackService } from '../../../services/feedback.service';
-import { Endpoint } from '../../analytics/endpoints/models/endpoint.model';
+import { Endpoint } from '../endpoints/models/endpoint.model';
 import { EndpointService } from '../../../services/endpoint.service';
 import { FileService } from 'src/app/services/file.service';
 import { FileActionsComponent } from './action-buttons/file-actions/file-actions.component';

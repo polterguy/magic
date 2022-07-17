@@ -10,7 +10,7 @@ import { Message } from 'src/app/models/message.model';
 import { CrudifyService } from '../../services/crudify.service';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { Endpoint } from '../../../../analytics/endpoints/models/endpoint.model';
+import { Endpoint } from '../../../endpoints/models/endpoint.model';
 import { EndpointService } from 'src/app/services/endpoint.service';
 
 /**
