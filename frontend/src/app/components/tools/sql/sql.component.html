@@ -392,6 +392,7 @@
 
               <button
                 mat-menu-item
+                [disabled]="input.database === 'magic'"
                 (click)="createNewTable()"
                 class="action-button">
                 <mat-icon class="material-icons-outlined">add</mat-icon>
@@ -408,6 +409,7 @@
 
               <button
                 mat-menu-item
+                [disabled]="input.database === 'magic'"
                 (click)="deleteDatabase()"
                 class="action-button">
                 <mat-icon class="material-icons-outlined">delete</mat-icon>
@@ -417,6 +419,7 @@
               <button mat-menu-item>
                 <mat-slide-toggle
                   [(ngModel)]="autoMigrate"
+                  [disabled]="input.database === 'magic'"
                   (click)="$event.stopPropagation();"
                   matTooltip="Automatically create migration scripts"
                   labelPosition="after">Auto migrate</mat-slide-toggle>
@@ -459,6 +462,7 @@
 
                   <button
                     mat-menu-item
+                    [disabled]="input.database === 'magic'"
                     (click)="createFieldKey(idxTable)"
                     class="action-button">
                     <mat-icon class="material-icons-outlined">add</mat-icon>
@@ -475,6 +479,7 @@
 
                   <button
                     (click)="deleteTable(idxTable)"
+                    [disabled]="input.database === 'magic'"
                     mat-menu-item
                     class="action-button">
                     <mat-icon class="material-icons-outlined">delete</mat-icon>
@@ -500,6 +505,7 @@
 
                   <button
                     mat-icon-button
+                    [disabled]="input.database === 'magic'"
                     *ngIf="!idxColumn.primary"
                     type="button"
                     (click)="deleteColumn(idxTable, idxColumn)">
