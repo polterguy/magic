@@ -77,6 +77,12 @@ mat-card.animating {
   min-width: 40px;
   margin-right: -7px;
 }
+.absolutize {
+  position: absolute;
+  top: 5px;
+  right: 15px;
+  z-index: 100;
+}
 ::ng-deep .light {
   .table-element {
     &:hover {
@@ -122,10 +128,3 @@ mat-icon {
 .not-null strong {
   text-decoration: underline;
 }
-.close-button {
-  position: absolute;
-  top: 5px;
-  right: 15px;
-  z-index: 100;
-}
-
