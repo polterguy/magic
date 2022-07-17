@@ -63,11 +63,6 @@ export class CrudifierTableComponent implements OnInit {
   ];
 
   /**
-   * Whether or not advanced options should be shown or not.
-   */
-  advanced = false;
-
-  /**
    * Authorisation requirements for SignalR messages published during invocation of endpoint.
    */
   cqrsAuthorisationTypes: string[] = ['none', 'inherited', 'roles', 'groups', 'users'];
