@@ -2,16 +2,15 @@
 /*
  * Upload file endpoint template file.
  * 
- * This file creates an HTTP PUT endpoint that allows you to upload a single file file as multipart/form-data
- * and stores it in a specified folder on the server.
+ * This file creates an HTTP PUT endpoint that allows you to upload a single
+ * file as multipart/form-data and stores it in a specified folder on the server.
  * 
  * NOTICE! This file should probably be consumed as a Macro, and not as a template, since this
  * will correctly decorate your file with the correct properties.
  */
-.description:Upload file endpoint, allowing you to upload a file to the backend, Notice, [old_file] if declared and existing will be deleted.
+.description:Upload file endpoint, allowing you to upload a file to the backend.
 .arguments
    file:*
-   old_file:string
 .type:file-upload
 .accept:multipart/form-data
 
@@ -39,46 +38,13 @@ if
 
       // Need to create folder.
       io.folder.create:x:@.folder
-else
-
-   // Checking if [old_file] is specified, and existing.
-   .old-file-full-path
-   set-value:x:@.old-file-full-path
-      strings.concat
-         get-value:x:@.folder
-         get-value:x:@.arguments/*/old_file
-   if
-      and
-         not
-            eq
-               get-value:x:@.arguments/*/old_file
-               .
-         not
-            eq
-               get-value:x:@.arguments/*/old_file
-               .:
-         io.file.exists:x:@.old-file-full-path
-      .lambda
-
-         // Old file exists, deleting it.
-         io.file.delete:x:@.old-file-full-path
-
-// Creating a unique filename for file.
-.filename
-strings.split:x:@.arguments/*/file/*/name
-   .:.
-set-value:x:@.filename
-   strings.concat
-      guid.new
-      .:.
-      get-value:x:@strings.split/0/-
 
 // Saving file with the specified filename to our folder.
 .full-path
 set-value:x:@.full-path
    strings.concat
       get-value:x:@.folder
-      get-value:x:@.filename
+      get-value:x:@.arguments/*/file/*/name
 io.stream.save-file:x:@.full-path
    get-value:x:@.arguments/*/file/*/stream
 
@@ -86,4 +52,4 @@ io.stream.save-file:x:@.full-path
 unwrap:x:+/*/filename
 return
    result:success
-   filename:x:@.filename
+   filename:x:@.full-path
