@@ -193,6 +193,15 @@
                     <div class="p-1"></div>
 
                     <button
+                      mat-raised-button
+                      (click)="createNewDatabase()"
+                      class="w-100">
+                      New database
+                    </button>
+
+                    <div class="p-1"></div>
+
+                    <button
                       id="loadButton"
                       [disabled]="!backendService.active?.access.sql.list_files"
                       mat-raised-button
@@ -204,7 +213,7 @@
                     <div class="p-1"></div>
 
                     <button
-                      id="loadButton"
+                      id="importButton"
                       [disabled]="!backendService.active?.access.sql.list_files"
                       mat-raised-button
                       (click)="sqlFileImport.click()"
@@ -384,14 +393,6 @@
 
               <button
                 mat-menu-item
-                (click)="createNewDatabase()"
-                class="action-button">
-                <mat-icon class="material-icons-outlined">cloud_queue</mat-icon>
-                New database
-              </button>
-
-              <button
-                mat-menu-item
                 [disabled]="input.database === 'magic'"
                 (click)="createNewTable()"
                 class="action-button">
@@ -428,7 +429,7 @@
             </mat-menu>
           </div>
 
-          <p class="mat-card-subtitle">Design and modify your database</p>
+          <p class="mat-card-subtitle">Design and modify your {{input.database}} database</p>
 
           <div *ngIf="!activeTables || activeTables.length === 0" class="col-12">
             Please add tables to your database
