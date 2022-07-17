@@ -23,6 +23,15 @@ strings.concat
    .:/
    get-value:x:@.arguments/*/file
 
+// Verifying that file exists.
+if
+   not
+      io.file.exists:x:@strings.concat
+   .lambda
+      throw:Not found
+         public:true
+         status:404
+
 // Opening up a read stream for file.
 io.stream.open-file:x:@strings.concat
 
