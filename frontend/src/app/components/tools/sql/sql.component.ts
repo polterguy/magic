@@ -245,6 +245,9 @@ export class SqlComponent implements OnInit {
       result[idxTable.name] = (idxTable.columns?.map((x: any) => x.name) || []);
     }
     this.input.options.hintOptions.tables = result;
+    if (this.input.database === 'magic') {
+      this.autoMigrate = false;
+    }
   }
 
   /**
