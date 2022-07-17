@@ -420,7 +420,6 @@
               <button mat-menu-item>
                 <mat-slide-toggle
                   [(ngModel)]="autoMigrate"
-                  [disabled]="input.database === 'magic'"
                   (click)="$event.stopPropagation();"
                   matTooltip="Automatically create migration scripts"
                   labelPosition="after">Auto migrate</mat-slide-toggle>
