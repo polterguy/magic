@@ -99,10 +99,10 @@
 
             <div class="row mt-3" *ngIf="input">
               <div class="col-12">
-                <div class="d-flex flex-sm-row flex-column w-100">
+                <div class="d-flex flex-sm-row flex-column w-100 align-items-center">
 
                   <mat-form-field
-                    class="w-100"
+                    class="w-100 inline-input"
                     appearance="outline">
                     <mat-label>Database type</mat-label>
                     <mat-select
@@ -114,10 +114,10 @@
                     </mat-select>
                   </mat-form-field>
 
-                  <div class="p-sm-1"></div>
+                  <div class="p-1"></div>
 
                   <mat-form-field
-                    class="w-100"
+                    class="w-100 inline-input"
                     appearance="outline">
                     <mat-label>Connection string</mat-label>
                     <mat-select
@@ -129,10 +129,10 @@
                     </mat-select>
                   </mat-form-field>
 
-                  <div class="p-sm-1"></div>
+                  <div class="p-1"></div>
 
                   <mat-form-field
-                    class="w-100"
+                    class="w-100 inline-input"
                     appearance="outline">
                     <mat-label>Database name</mat-label>
                     <mat-select
@@ -146,88 +146,104 @@
                     </mat-select>
                   </mat-form-field>
 
+                  <button mat-icon-button [matMenuTriggerFor]="actionMenu" aria-label="Action Menu" class="d-sm-block d-none">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <button mat-flat-button [matMenuTriggerFor]="actionMenu" aria-label="Action Menu" class="d-sm-none d-block w-100 mt-2" color="primary">
+                    <div class="d-flex align-items-center justify-content-center">
+                      <mat-icon>more_vert</mat-icon> &nbsp;Actions
+                    </div>
+                  </button>
                 </div>
               </div>
 
               <div class="col-12">
                 <div class="d-flex flex-wrap justify-content-end align-items-center">
-
-                    <mat-checkbox [(ngModel)]="designer" class="mr-3">
-                      Designer
-                    </mat-checkbox>
-
-                    <mat-checkbox
-                      class="safe-mode mr-3"
-                      [(ngModel)]="safeMode"
-                      [class.warning]="!safeMode"
-                      (ngModelChange)="showWarning()">
-                      <ng-container *ngIf="!safeMode">
-                        <mat-icon class="warning warning-icon">report</mat-icon>
-                      </ng-container>
-                      Safe mode
-                    </mat-checkbox>
-
-                    <mat-checkbox
-                      class="mr-3"
-                      *ngIf="input.databaseType === 'mssql'"
-                      (change)="batchChanged()"
-                      matTooltip="Executes SQL as a batch operation, respecting 'go' keywords"
-                      [(ngModel)]="isBatch">Batch</mat-checkbox>
-
-                    <button
-                      mat-icon-button
-                      [disabled]="!backendService.active?.access.config.delete_cache_item"
-                      matTooltip="Purge your server side cache"
-                      (click)="refresh()">
-                      <mat-icon>refresh</mat-icon>
-                    </button>
-
-                    <button mat-icon-button [matMenuTriggerFor]="actionMenu" aria-label="Action Menu">
-                      <mat-icon>more_vert</mat-icon>
-                    </button>
-
                     <mat-menu #actionMenu="matMenu">
-                    <button
-                      mat-menu-item
-                      (click)="createNewDatabase()">
-                      Create a new database
-                    </button>
-                    <button
-                      [disabled]="!backendService.active?.access.sql.list_files"
-                      mat-menu-item
-                      (click)="load()">
-                      Load database
-                    </button>
+                      <button class="pr-5"
+                        mat-menu-item
+                        (click)="createNewDatabase()">
+                        <mat-icon>post_add</mat-icon>
+                        New database
+                      </button>
+                      <button class="pr-5"
+                        id="loadButton"
+                        [disabled]="!backendService.active?.access.sql.list_files"
+                        mat-menu-item
+                        (click)="load()">
+                        <mat-icon>note_add</mat-icon>
+                        Load database
+                      </button>
 
-                    <button
-                      [disabled]="!backendService.active?.access.sql.list_files"
-                      mat-menu-item
-                      (click)="sqlFileImport.click()">
-                      Import .sql file
-                    </button>
-                    <input
-                      type="file"
-                      name="sqlFile"
-                      id="sqlFile"
-                      #sqlFileImport
-                      class="invisible"
-                      accept=".sql"
-                      [(ngModel)]="sqlFile"
-                      (change)="uploadFiles($event)">
+                      <button class="pr-5"
+                        id="importButton"
+                        [disabled]="!backendService.active?.access.sql.list_files"
+                        mat-menu-item
+                        (click)="sqlFileImport.click()">
+                        <mat-icon>upload_file</mat-icon>
+                        Import .sql file
+                      </button>
+                      <input
+                        type="file"
+                        name="sqlFile"
+                        id="sqlFile"
+                        #sqlFileImport
+                        class="invisible"
+                        accept=".sql"
+                        [(ngModel)]="sqlFile"
+                        (change)="uploadFiles($event)">
 
-                    <button
-                      [disabled]="!input.sql || !backendService.active?.access.sql.save_file"
-                      mat-menu-item
-                      (click)="save()">
-                      Save file
-                    </button>
-                    <button
-                      [disabled]="!input || input.sql === '' || !input.database"
-                      mat-menu-item
-                      color="primary"
-                      (click)="execute()">
-                      Execute file
-                    </button>
+                      <button class="pr-5"
+                        id="saveButton"
+                        [disabled]="!input.sql || !backendService.active?.access.sql.save_file"
+                        mat-menu-item
+                        (click)="save()">
+                        <mat-icon>save</mat-icon>
+                        Save file
+                      </button>
+                      <button class="pr-5"
+                        id="executeButton"
+                        [disabled]="!input || input.sql === '' || !input.database"
+                        mat-menu-item
+                        (click)="execute()">
+                        <mat-icon>play_arrow</mat-icon>
+                        Execute file
+                      </button>
+                      <button class="pr-5"
+                        mat-menu-item
+                        [disabled]="!backendService.active?.access.config.delete_cache_item"
+                        matTooltip="Purge your server side cache"
+                        matTooltipPosition="before"
+                        (click)="refresh()">
+                        <mat-icon>refresh</mat-icon>
+                        Refresh
+                      </button>
+
+                      <div mat-menu-item>
+                        <mat-slide-toggle
+                          color="primary"
+                          [(ngModel)]="designer"
+                          (click)="$event.stopPropagation();">Designer</mat-slide-toggle>
+                      </div>
+                      <div mat-menu-item [class.warning]="!safeMode" class="d-flex align-items-center justify-content-between">
+                        <mat-slide-toggle
+                          color="primary"
+                          [(ngModel)]="safeMode"
+                          (ngModelChange)="showWarning()"
+                          (click)="$event.stopPropagation();">Safe mode</mat-slide-toggle>
+                        <ng-container *ngIf="!safeMode">
+                          <mat-icon class="warning">report</mat-icon>
+                        </ng-container>
+                      </div>
+
+                      <div mat-menu-item *ngIf="input.databaseType === 'mssql'">
+                        <mat-slide-toggle
+                          [(ngModel)]="isBatch"
+                          (change)="batchChanged()"
+                          matTooltip="Executes SQL as a batch operation, respecting 'go' keywords"
+                          matTooltipPosition="before"
+                          (click)="$event.stopPropagation();">Batch</mat-slide-toggle>
+                      </div>
 
                     </mat-menu>
                 </div>

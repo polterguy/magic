@@ -9,22 +9,6 @@
     background-color: transparentize($color: $magic_default_alternative, $amount: 0.7);
   }
 }
-@media (max-width: 496px) {
-  .custom-mb { margin-bottom: 1rem; }
-}
-
-.safe-mode {
-  position: relative;
-  .warning-icon {
-    position: absolute;
-    left: -6px;
-    z-index: 1;
-    font-size: 28px;
-    height: 28px;
-    width: 28px;
-    line-height: 24px;
-  }
-}
 
 .database-actions, .table-actions {
   position: absolute;
