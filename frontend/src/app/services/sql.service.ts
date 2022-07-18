@@ -259,6 +259,8 @@ export class SqlService {
    * @param tableName Table name
    * @param columnName Column name
    * @param columnType Type of column
+   * @param foreignTable Table column links to
+   * @param foreignField Field column links to
    */
   addColumn(
     databaseType: string,
@@ -267,7 +269,9 @@ export class SqlService {
     tableName: string,
     columnName: string,
     columnType: string,
-    defaultValue: string) {
+    defaultValue: string,
+    foreignTable: string,
+    foreignField: string) {
     return this.httpService.post<any>('/magic/system/sql/ddl/column', {
       databaseType,
       connectionString,
@@ -276,6 +280,8 @@ export class SqlService {
       columnName,
       columnType,
       defaultValue,
+      foreignTable,
+      foreignField,
     });
   }
 
