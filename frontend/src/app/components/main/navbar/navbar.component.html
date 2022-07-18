@@ -301,7 +301,7 @@
           <ng-container *ngIf="backendService.active?.access.crypto.import_public_key">
             <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!navbarService.expanded" [class.justify-content-center]="!navbarService.expanded" (click)="largeScreen ? '' : closeNavbar()" [routerLink]="backendService.active?.setupDone ? '/keys' : null">
               <mat-icon>security</mat-icon>
-              <span class="title">Cryptography Keys</span>
+              <span class="title text-center">Cryptography Keys</span>
             </a>
           </ng-container>
         </mat-list-option>
