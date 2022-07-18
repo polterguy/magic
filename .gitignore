@@ -348,7 +348,7 @@ backend/files/misc/bazar/published.hl
 backend/files/etc/frontends/**
 backend/files/etc/tests/*.*
 !backend/files/etc/tests/README.md
-!frontend/src/app/components/analytics/sockets/publish
+!frontend/src/app/components/misc/sockets/publish
 
 backend/files/data/*.*
 !backend/files/data/.gitkeep
