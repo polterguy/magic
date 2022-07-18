@@ -25,6 +25,7 @@ export class NewFieldKeyModel {
   size: number;
   defaultValue: string;
   acceptNull: boolean;
+  hasKey: boolean;
 }
 
 /**

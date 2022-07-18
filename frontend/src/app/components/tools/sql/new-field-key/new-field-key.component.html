@@ -74,9 +74,10 @@
 
     </div>
 
-    <div *ngIf="data.type === 'key'">
+    <div *ngIf="data.type === 'key' || data.hasKey">
 
       <mat-form-field
+        *ngIf="data.type !== 'field'"
         class="w-100"
         appearance="outline">
         <mat-label>Field</mat-label>
@@ -88,7 +89,7 @@
       </mat-form-field>
 
       <mat-form-field
-        *ngIf="data.field"
+        *ngIf="data.field || data.type === 'field'"
         class="w-100"
         appearance="outline">
         <mat-label>Points to table</mat-label>
@@ -118,6 +119,12 @@
   <div
     mat-dialog-actions
     class="mat-dialog-actions">
+
+    <mat-slide-toggle
+      *ngIf="data.type === 'field' && data.databaseType === 'sqlite'"
+      [(ngModel)]="data.hasKey"
+      name="hasKey"
+      labelPosition="before">Foreign key</mat-slide-toggle>
 
     <mat-slide-toggle
       *ngIf="data.type === 'field'"

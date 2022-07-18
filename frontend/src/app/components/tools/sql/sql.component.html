@@ -357,7 +357,7 @@
           <div class="d-flex flex-sm-nowrap flex-wrap justify-content-between">
 
             <div class="d-flex align-items-center">
-              <h3 class="mat-card-title my-0">Designer</h3>
+              <h3 class="mat-card-title my-0">{{input?.database}}</h3>
               <div class="sm-icons">
                 <button mat-icon-button [matMenuTriggerFor]="menu" class="mat-caption" matTooltip="Need help?" type="button">
                   <mat-icon>help_outline</mat-icon>
@@ -416,6 +416,7 @@
                   [(ngModel)]="autoMigrate"
                   (click)="$event.stopPropagation();"
                   matTooltip="Automatically create migration scripts"
+                  matTooltipPosition="after"
                   labelPosition="after">Auto migrate</mat-slide-toggle>
               </button>
 
