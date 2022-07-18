@@ -151,14 +151,13 @@
 
               <div class="col-12">
                 <div class="d-flex flex-wrap justify-content-end align-items-center">
-                  <div class="d-flex custom-mb">
 
                     <mat-checkbox [(ngModel)]="designer" class="mr-3">
                       Designer
                     </mat-checkbox>
 
                     <mat-checkbox
-                      class="safe-mode"
+                      class="safe-mode mr-3"
                       [(ngModel)]="safeMode"
                       [class.warning]="!safeMode"
                       (ngModelChange)="showWarning()">
@@ -168,19 +167,12 @@
                       Safe mode
                     </mat-checkbox>
 
-                    <div class="p-1"></div>
-
                     <mat-checkbox
+                      class="mr-3"
                       *ngIf="input.databaseType === 'mssql'"
                       (change)="batchChanged()"
                       matTooltip="Executes SQL as a batch operation, respecting 'go' keywords"
                       [(ngModel)]="isBatch">Batch</mat-checkbox>
-
-                  </div>
-
-                  <div class="p-1"></div>
-
-                  <div class="d-flex">
 
                     <button
                       mat-icon-button
@@ -190,37 +182,29 @@
                       <mat-icon>refresh</mat-icon>
                     </button>
 
-                    <div class="p-1"></div>
-
-                    <button
-                      mat-raised-button
-                      (click)="createNewDatabase()"
-                      class="w-100">
-                      New database
+                    <button mat-icon-button [matMenuTriggerFor]="actionMenu" aria-label="Action Menu">
+                      <mat-icon>more_vert</mat-icon>
                     </button>
 
-                    <div class="p-1"></div>
-
+                    <mat-menu #actionMenu="matMenu">
                     <button
-                      id="loadButton"
+                      mat-menu-item
+                      (click)="createNewDatabase()">
+                      Create a new database
+                    </button>
+                    <button
                       [disabled]="!backendService.active?.access.sql.list_files"
-                      mat-raised-button
-                      (click)="load()"
-                      class="w-100">
-                      Load
+                      mat-menu-item
+                      (click)="load()">
+                      Load database
                     </button>
-
-                    <div class="p-1"></div>
 
                     <button
-                      id="importButton"
                       [disabled]="!backendService.active?.access.sql.list_files"
-                      mat-raised-button
-                      (click)="sqlFileImport.click()"
-                      class="w-100">
-                      Import
+                      mat-menu-item
+                      (click)="sqlFileImport.click()">
+                      Import .sql file
                     </button>
-
                     <input
                       type="file"
                       name="sqlFile"
@@ -231,30 +215,21 @@
                       [(ngModel)]="sqlFile"
                       (change)="uploadFiles($event)">
 
-                    <div class="p-1"></div>
-
                     <button
-                      id="saveButton"
                       [disabled]="!input.sql || !backendService.active?.access.sql.save_file"
-                      mat-raised-button
-                      (click)="save()"
-                      class="w-100">
-                      Save
+                      mat-menu-item
+                      (click)="save()">
+                      Save file
                     </button>
-
-                    <div class="p-1"></div>
-
                     <button
-                      id="executeButton"
                       [disabled]="!input || input.sql === '' || !input.database"
-                      mat-raised-button
+                      mat-menu-item
                       color="primary"
-                      (click)="execute()"
-                      class="w-100">
-                      Execute
+                      (click)="execute()">
+                      Execute file
                     </button>
 
-                  </div>
+                    </mat-menu>
                 </div>
               </div>
             </div>
@@ -425,7 +400,7 @@
                   matTooltip="Automatically create migration scripts"
                   labelPosition="after">Auto migrate</mat-slide-toggle>
               </button>
-        
+
             </mat-menu>
           </div>
 
