@@ -57,18 +57,17 @@ export class NewFieldKeyComponent {
     {name: 'boolean', defaultValue: 'bool'},
     {name: 'smallint', size: {min: 0, max: 65535, defaultSize: 10}, defaultValue: 'int'},
     {name: 'mediumint', size: {min: 0, max: 255, defaultSize: 10}, defaultValue: 'int'},
-    {name: 'int', size: {min: 0, max: 255, defaultSize: 10}, defaultValue: 'int'},
-    {name: 'integer', size: {min: 0, max: 255, defaultSize: 10}, defaultValue: 'int'},
-    {name: 'bigint', size: {min: 0, max: 255, defaultSize: 10}, defaultValue: 'int'},
-    {name: 'double', size: {min: 0, max: 65535, defaultSize: 10}, defaultValue: 'decimal'},
-    {name: 'decimal', size: {min: 0, max: 65, defaultSize: 10}, defaultValue: 'decimal'},
-    {name: 'dec', size: {min: 0, max: 65, defaultSize: 10}, defaultValue: 'decimal'},
+    {name: 'int'},
+    {name: 'integer'},
+    {name: 'bigint'},
+    {name: 'double'},
+    {name: 'decimal', size: {min: 0, max: 65, defaultSize: 10}},
+    {name: 'dec', size: {min: 0, max: 65, defaultSize: 10}},
     {name: 'date', defaultValue: 'date'},
     {name: 'datetime', defaultValue: 'date'},
     {name: 'timestamp', defaultValue: 'date'},
-    {name: 'time', defaultValue: 'int'},
-    {name: 'year', defaultValue: 'int'},
-  ];
+    {name: 'time' },
+   ];
 
   // Datatypes specific for SQLite.
   private sqlIteDataTypes = [
@@ -98,7 +97,7 @@ export class NewFieldKeyComponent {
     {name: 'time', defaultValue: 'time'},
     {name: 'text', defaultValue: 'string'},
     {name: 'ntext', defaultValue: 'string'},
-    {name: 'blob', defaultValue: false},
+    {name: 'blob' },
     {name: 'nvarchar', size: {min: 0, max: 65535}, defaultValue: false},
     {name: 'varchar', size: {min: 0, max: 65535}, defaultValue: 'string'},
   ];
