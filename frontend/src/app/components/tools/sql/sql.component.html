@@ -1,5 +1,5 @@
 <div class="row">
-  <div class="col-12 mb-general">
+  <div class="col-12 mb-3">
     <div class="row h-100">
       <div class="col-12">
         <mat-card *ngIf="input">
@@ -160,29 +160,38 @@
               <div class="col-12">
                 <div class="d-flex flex-wrap justify-content-end align-items-center">
                     <mat-menu #actionMenu="matMenu">
+
                       <button class="pr-5"
                         mat-menu-item
                         (click)="createNewDatabase()">
                         <mat-icon>post_add</mat-icon>
                         New database
                       </button>
+
                       <button class="pr-5"
-                        id="loadButton"
                         [disabled]="!backendService.active?.access.sql.list_files"
                         mat-menu-item
                         (click)="load()">
                         <mat-icon>note_add</mat-icon>
-                        Load database
+                        Load snippet
                       </button>
 
                       <button class="pr-5"
-                        id="importButton"
+                        [disabled]="!input.sql || !backendService.active?.access.sql.save_file"
+                        mat-menu-item
+                        (click)="save()">
+                        <mat-icon>save</mat-icon>
+                        Save snippet
+                      </button>
+
+                      <button class="pr-5"
                         [disabled]="!backendService.active?.access.sql.list_files"
                         mat-menu-item
                         (click)="sqlFileImport.click()">
                         <mat-icon>upload_file</mat-icon>
-                        Import .sql file
+                        Import SQL file
                       </button>
+
                       <input
                         type="file"
                         name="sqlFile"
@@ -194,21 +203,13 @@
                         (change)="uploadFiles($event)">
 
                       <button class="pr-5"
-                        id="saveButton"
-                        [disabled]="!input.sql || !backendService.active?.access.sql.save_file"
-                        mat-menu-item
-                        (click)="save()">
-                        <mat-icon>save</mat-icon>
-                        Save file
-                      </button>
-                      <button class="pr-5"
-                        id="executeButton"
                         [disabled]="!input || input.sql === '' || !input.database"
                         mat-menu-item
                         (click)="execute()">
                         <mat-icon>play_arrow</mat-icon>
-                        Execute file
+                        Execute
                       </button>
+
                       <button class="pr-5"
                         mat-menu-item
                         [disabled]="!backendService.active?.access.config.delete_cache_item"
@@ -225,6 +226,7 @@
                           [(ngModel)]="designer"
                           (click)="$event.stopPropagation();">Designer</mat-slide-toggle>
                       </div>
+
                       <div mat-menu-item [class.warning]="!safeMode" class="d-flex align-items-center justify-content-between">
                         <mat-slide-toggle
                           color="primary"
