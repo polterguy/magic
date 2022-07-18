@@ -7,7 +7,7 @@
 import { Clipboard } from '@angular/cdk/clipboard';
 import { MatDialog } from '@angular/material/dialog';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, NgZone, OnInit } from '@angular/core';
 
 // Utility imports.
 import { saveAs } from 'file-saver';
@@ -132,6 +132,7 @@ export class SqlComponent implements OnInit {
     private sqlService: SqlService,
     private clipboard: Clipboard,
     private dialog: MatDialog,
+    private ngZone: NgZone,
     private cdr: ChangeDetectorRef,
     private bottomSheet: MatBottomSheet) { }
 
@@ -170,13 +171,19 @@ export class SqlComponent implements OnInit {
               sidenav.classList.add('d-none');
             };
             this.input.options.extraKeys['Alt-L'] = (cm: any) => {
-              document.getElementById('loadButton').click();
+              this.ngZone.run(() => {
+                this.load();
+              });
             };
             this.input.options.extraKeys['Alt-S'] = (cm: any) => {
-              document.getElementById('saveButton').click();
+              this.ngZone.run(() => {
+                this.save();
+              });
             };
             this.input.options.extraKeys.F5 = () => {
-              document.getElementById('executeButton').click();
+              this.ngZone.run(() => {
+                this.execute();
+              });
             };
           });
         });
