@@ -178,6 +178,7 @@ import { NewTableComponent } from './components/tools/sql/new-table/new-table.co
 import { NewDatabaseComponent } from './components/tools/sql/new-database/new-database.component';
 import { ExportTablesComponent } from './components/tools/sql/export-tables/export-tables.component';
 import { EditExtraComponent } from './components/management/auth/users/edit-extra/edit-extra.component';
+import { NewLinkTableComponent } from './components/tools/sql/new-link-table/new-link-table.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -290,6 +291,7 @@ import { EditExtraComponent } from './components/management/auth/users/edit-extr
     NewDatabaseComponent,
     ExportTablesComponent,
     EditExtraComponent,
+    NewLinkTableComponent,
   ],
   imports: [
     FormsModule,

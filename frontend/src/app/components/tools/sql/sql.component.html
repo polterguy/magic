@@ -395,6 +395,15 @@
 
               <button
                 mat-menu-item
+                [disabled]="input.database === 'magic'"
+                (click)="createNewLinkTable()"
+                class="action-button">
+                <mat-icon class="material-icons-outlined">compare_arrows</mat-icon>
+                Add link table
+              </button>
+
+              <button
+                mat-menu-item
                 (click)="exportDatabase()"
                 [disabled]="input?.databaseType !== 'sqlite' && input?.databaseType !== 'mysql'"
                 class="action-button">
