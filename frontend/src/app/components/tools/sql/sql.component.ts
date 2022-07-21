@@ -852,7 +852,7 @@ export class SqlComponent implements OnInit {
           this.input.connectionString,
           this.input.database,
           payload).subscribe({
-            next: () => {
+            next: (result: any) => {
               this.feedbackService.showInfo('Link table successfully created');
               this.reloadDatabases();
               this.applyMigration(result.sql);
