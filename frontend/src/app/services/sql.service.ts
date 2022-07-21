@@ -225,6 +225,27 @@ export class SqlService {
   }
 
   /**
+   * Creates a new link table with a many2many relationship between two different tables.
+   * 
+   * @param databaseType Type of database
+   * @param connectionString Connection string to use
+   * @param databaseName Database name
+   * @param args Link table declaration
+   */
+  addLinkTable(
+    databaseType: string,
+    connectionString: string,
+    databaseName: string,
+    args: any) {
+    return this.httpService.post<any>('/magic/system/sql/ddl/link-table', {
+      databaseType,
+      connectionString,
+      databaseName,
+      args,
+    });
+  }
+
+  /**
    * Adds the specified column to your table.
    * 
    * @param databaseType Type of database

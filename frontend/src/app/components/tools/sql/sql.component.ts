@@ -24,6 +24,7 @@ import { NewDatabaseComponent } from './new-database/new-database.component';
 import { NewFieldKeyComponent } from './new-field-key/new-field-key.component';
 import { ExportTablesComponent } from './export-tables/export-tables.component';
 import { DefaultDatabaseType } from '../../../models/default-database-type.model';
+import { NewLinkTableComponent } from './new-link-table/new-link-table.component';
 import { SaveSqlDialogComponent } from './save-sql-dialog/save-sql-dialog.component';
 import { LoadSqlDialogComponent } from './load-sql-dialog/load-sql-dialog.component';
 import { TableNameDialogComponent } from './table-name-dialog/table-name-dialog.component';
@@ -802,6 +803,57 @@ export class SqlComponent implements OnInit {
           result.pkDefault).subscribe({
             next: (result: any) => {
               this.feedbackService.showInfo('Table successfully added');
+              this.reloadDatabases();
+              this.applyMigration(result.sql);
+            },
+            error: (error: any) => this.feedbackService.showError(error)
+          });
+      }
+    });
+  }
+
+  /**
+   * Invoked when user wants to create a new link table.
+   */
+  createNewLinkTable() {
+    const dialogRef = this.dialog.open(NewLinkTableComponent, {
+      width: '550px',
+      data: {
+        tables: this.databaseDeclaration.databases.filter((x: any) => x.name === this.input.database)[0].tables,
+      },
+    });
+    dialogRef.afterClosed().subscribe((result: any) => {
+
+      // We should only create a new field/key if the modal dialog returns some data to us.
+      if (result) {
+        const table1 = result.tables.filter((x: any) => x.name === result.table1)[0];
+        const table2 = result.tables.filter((x: any) => x.name === result.table2)[0];
+        const table1pk: any[] = table1.columns.filter((x: any) => x.primary);
+        const table2pk: any[] = table2.columns.filter((x: any) => x.primary);
+        const payload = {
+          name: table1.name + '_' + table2.name,
+          table1: table1.name,
+          table2: table2.name,
+          table1pk: table1pk.map((x: any) => {
+            return {
+              type: x.db,
+              name: x.name,
+            }
+          }),
+          table2pk: table2pk.map((x: any) => {
+            return {
+              type: x.db,
+              name: x.name,
+            }
+          }),
+        };
+        this.sqlService.addLinkTable(
+          this.input.databaseType,
+          this.input.connectionString,
+          this.input.database,
+          payload).subscribe({
+            next: () => {
+              this.feedbackService.showInfo('Link table successfully created');
               this.reloadDatabases();
               this.applyMigration(result.sql);
             },
