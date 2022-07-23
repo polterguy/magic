@@ -7,13 +7,12 @@ import { Component, ComponentFactoryResolver, OnInit } from '@angular/core';
 // Application specific imports.
 import { Messages } from 'src/app/models/messages.model';
 import { CrudifyService } from '../services/crudify.service';
+import { ConfigService } from 'src/app/services/config.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { NameEmailModel } from '../../../../models/name-email.model';
-import { ConfigService } from 'src/app/services/config.service';
 import { CrudFrontendExtraComponent } from './crud-frontend-extra/crud-frontend-extra.component';
-import { Validators } from '@angular/forms';
 
 /**
  * Crudifier component for generating a frontend from
@@ -28,7 +27,7 @@ export class CrudFrontendComponent implements OnInit {
   /**
    * If true, will deploy app locally in "/etc/" folder instead of downloading as a ZIP file.
    */
-  deployLocally: boolean = false;
+  deployLocally: boolean = true;
 
   /**
    * Available templates user can select.
