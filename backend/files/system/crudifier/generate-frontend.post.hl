@@ -85,51 +85,39 @@ if
          Access-Control-Expose-Headers:Content-Disposition
       return-value:x:@io.content.zip-stream
 
-
 /*
  * Caller wants to deploy frontend locally on server.
- *
- * First we'll need to verify that "frontends" folder exists within "/etc/".
+ * First deleting folder entirely and re-creating it for simplicity, to
+ * make sure folder is empty.
  */
 if
-   not
-      io.file.exists:/etc/frontends/
+   io.folder.exists:/etc/frontend/
    .lambda
 
-      // Creating "frontend" folder.
-      io.folder.create:/etc/frontends/
-else
+      // Deleteing "frontend" folder.
+      io.folder.delete:/etc/frontend/
 
-   // Checking if folder for app already exists, and if so, making sure we delete it.
-   strings.concat
-      .:/etc/frontends/
-      get-value:x:@.arguments/*/name
-   if
-      io.folder.exists:x:@strings.concat
-      .lambda
-         io.folder.delete:x:@strings.concat
+io.folder.create:/etc/frontend/
 
-// Then we need to construct a complete path for ZIP file.
+// Then figuring out full path for file.
 strings.concat
-   .:/etc/frontends/
+   .:/etc/frontend/
    get-value:x:@.arguments/*/name
    .:.zip
-
-// Checking if ZIP file already exists, and if so, deleting it.
-if
-   io.file.exists:x:@strings.concat
-   .lambda
-      io.file.delete:x:@strings.concat
 
 // Saving ZIP stream.
 io.stream.save-file:x:@strings.concat
    get-value:x:@io.content.zip-stream
 
-/*
- * Unzipping file in its current folder and returning success to caller,
- * making sure we delete file in the process.
- */
+// Unzipping file in its current folder and deleting it afterwards.
 io.file.unzip:x:@strings.concat
 io.file.delete:x:@strings.concat
+
+// Renaming folder to "src" to have a predictive path.
+io.folder.list:/etc/frontend/
+io.folder.move:x:-/0
+   .:/etc/frontend/src
+
+// Returning success to caller.
 return
    result:success
