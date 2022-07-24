@@ -8,7 +8,7 @@ import { Buffer } from 'buffer';
 /**
  * Wrapper class for a JWT token with helper methods to calculate expiration, etc.
  */
- export class Token {
+export class Token {
 
   private _token: string = null;
   private _username: string = null;

@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 export interface Credentials {
   // Customize received credentials here
@@ -18,9 +19,9 @@ const credentialsKey = 'credentials';
 export class CredentialsService {
   private _credentials: Credentials | null = null;
 
-  constructor() {
+  constructor(private jwtHelper: JwtHelperService) {
     const savedCredentials = sessionStorage.getItem(credentialsKey) || localStorage.getItem(credentialsKey);
-    if (savedCredentials) {
+    if (savedCredentials && !jwtHelper.isTokenExpired(savedCredentials)) {
       this._credentials = JSON.parse(savedCredentials);
     }
   }
