@@ -43,7 +43,7 @@
           colspan="[[colspan]]">
           <div
             class="details-sheet"
-            *ngIf="shouldDisplayDetails(el)">
+            [@detailExpand]="el == expandedElement ? 'expanded' : 'collapsed'">
             <button
               *ngIf="authService.me.canInvoke(url(), 'put') && httpService['[[crud-entity]]']['update']"
               mat-button
@@ -63,15 +63,18 @@
 
       <tr
         mat-row
-        [ngClass]="getClassForRecord(row)"
+        [ngClass]="expandedElement === row ? 'selected' : 'row'"
+        class="expandable-row"
+        (click)="expandedElement = expandedElement === row ? null : row"
         *matRowDef="let row; columns: displayedColumns;"></tr>
 
       <tr
         mat-row
-        [ngClass]="getClassForDetails(row)"
+        class="expanded-row"
         *matRowDef="let row; columns: ['details']; "></tr>
 
     </table>
+
     <mat-paginator
       #paginator
       [(length)]="itemsCount"

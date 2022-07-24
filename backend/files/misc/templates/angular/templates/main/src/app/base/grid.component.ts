@@ -336,32 +336,6 @@ export abstract class GridComponent {
   }
 
   /**
-   * Toggles displaying of details for a specific entity in the data-grid.
-   * 
-   * @param entity Entity to toggle details view for
-   */
-  public toggleDetails(entity: any) {
-    const indexOf = this.viewDetails.indexOf(entity);
-    if (indexOf === -1) {
-      this.viewDetails.push(entity);
-    } else {
-      this.viewDetails.splice(indexOf, 1);
-    }
-  }
-
-  /**
-   * Returns true if we should display the details view for a specific entity or not.
-   * 
-   * @param entity Entity to check if we should display details view for
-   */
-  public shouldDisplayDetails(entity: any) {
-    if (this.viewDetails.indexOf(entity) !== -1) {
-      return true;
-    }
-    return false;
-  }
-
-  /**
    * Invoked when a referenced item needs to be fetched to display
    * some foreign key lookup value.
    * 
