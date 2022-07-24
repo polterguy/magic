@@ -47,7 +47,6 @@ data.connect:x:-
    switch:x:@.arguments/*/databaseType
 
       case:sqlite
-
          // Creating our SQL.
          set-value:x:@.sql
             strings.concat
@@ -95,6 +94,146 @@ data.connect:x:-
                   .:" ("
                   get-value:x:@.dp/#/*/name
                   .:")"
+         set-value:x:@.sql
+            strings.concat
+               get-value:x:@.sql
+               .:")"
+      case:mysql
+         // Creating our SQL.
+         set-value:x:@.sql
+            strings.concat
+               .:"create table "
+               get-value:x:@.arguments/*/args/*/name
+               .:"("
+         .first:bool:true
+         for-each:x:@.arguments/*/args/*/table1pk/*
+            if:x:@.first
+               set-value:x:@.first
+                  .:bool:false
+            else
+               set-value:x:@.sql
+                  strings.concat
+                     get-value:x:@.sql
+                     .:", "
+            set-value:x:@.sql
+               strings.concat
+                  get-value:x:@.sql
+                  get-value:x:@.dp/#/*/name
+                  .:" "
+                  get-value:x:@.dp/#/*/type
+                  .:" not null references "
+                  get-value:x:@.arguments/*/args/*/table1
+                  .:" ("
+                  get-value:x:@.dp/#/*/name
+                  .:")"
+         for-each:x:@.arguments/*/args/*/table2pk/*
+            if:x:@.first
+               set-value:x:@.first
+                  .:bool:false
+            else
+               set-value:x:@.sql
+                  strings.concat
+                     get-value:x:@.sql
+                     .:", "
+            set-value:x:@.sql
+               strings.concat
+                  get-value:x:@.sql
+                  get-value:x:@.dp/#/*/name
+                  .:" "
+                  get-value:x:@.dp/#/*/type
+                  .:" not null references "
+                  get-value:x:@.arguments/*/args/*/table2
+                  .:" ("
+                  get-value:x:@.dp/#/*/name
+                  .:")"
+         set-value:x:@.sql
+            strings.concat
+               get-value:x:@.sql
+               .:")"
+               
+      case:mssql
+      case:pgsql
+         // Creating our SQL.
+         set-value:x:@.sql
+            strings.concat
+               .:"create table "
+//               .:"link_table "
+               get-value:x:@.arguments/*/args/*/name
+               .:"("
+         .first:bool:true
+         for-each:x:@.arguments/*/args/*/table1pk/*
+            if:x:@.first
+               set-value:x:@.first
+                  .:bool:false
+            else
+               set-value:x:@.sql
+                  strings.concat
+                     get-value:x:@.sql
+                     .:", "
+            set-value:x:@.sql
+               strings.concat
+                  get-value:x:@.sql
+                  get-value:x:@.dp/#/*/name
+                  .:" "
+                  get-value:x:@.dp/#/*/type 
+                  .:" not null "
+         for-each:x:@.arguments/*/args/*/table2pk/*
+            if:x:@.first
+               set-value:x:@.first
+                  .:bool:false
+            else
+               set-value:x:@.sql
+                  strings.concat
+                     get-value:x:@.sql
+                     .:", "
+            set-value:x:@.sql
+               strings.concat
+                  get-value:x:@.sql
+                  get-value:x:@.dp/#/*/name
+                  .:" "
+                  get-value:x:@.dp/#/*/type
+                  .:" not null"
+         .first:bool:true
+         for-each:x:@.arguments/*/args/*/table1pk/*
+            if:x:@.first
+               set-value:x:@.first
+                  .:bool:false
+            else
+               set-value:x:@.sql
+                  strings.concat
+                     get-value:x:@.sql
+                     .:", "
+            set-value:x:@.sql
+               strings.concat
+                  get-value:x:@.sql
+                  .:", FOREIGN KEY ("
+                  get-value:x:@.dp/#/*/name
+                  .:") "
+                  .:"  REFERENCES "
+                  get-value:x:@.arguments/*/args/*/table1
+                  .:"( "
+                  get-value:x:@.dp/#/*/name
+                  .:")"
+         for-each:x:@.arguments/*/args/*/table2pk/*
+            if:x:@.first
+               set-value:x:@.first
+                  .:bool:false
+            else
+               set-value:x:@.sql
+                  strings.concat
+                     get-value:x:@.sql
+            set-value:x:@.sql
+               strings.concat
+                  get-value:x:@.sql
+                  .:", FOREIGN KEY ("
+                  get-value:x:@.dp/#/*/name
+                  .:") "
+                  .:"  REFERENCES "
+                  get-value:x:@.arguments/*/args/*/table2
+                  .:"( "
+                  get-value:x:@.dp/#/*/name
+                  .:")"
+
          set-value:x:@.sql
             strings.concat
                get-value:x:@.sql
