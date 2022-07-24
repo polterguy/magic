@@ -1,3 +1,5 @@
+
+// Angular specific components
 import { throwError } from 'rxjs';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -5,7 +7,15 @@ import { GridComponent } from '@app/base/grid.component';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
 import { FormControl } from '@angular/forms';
+import {
+  trigger,
+  state,
+  style,
+  transition,
+  animate
+} from '@angular/animations';
 
+// Application specific components
 import { Edit[[component-name]] } from './modals/edit.[[component-filename]]';
 import { HttpService } from 'src/app/services/http-service';
 import { AuthService } from 'src/app/services/auth-service';
@@ -17,7 +27,14 @@ import { AuthService } from 'src/app/services/auth-service';
 @Component({
   selector: '[[component-selector]]',
   templateUrl: './[[component-filename]].html',
-  styleUrls: ['./[[component-filename]].scss']
+  styleUrls: ['./[[component-filename]].scss'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({height: '0px', minHeight: '0', padding: '0'})),
+      state('expanded', style({height: '*', padding: '0 2rem 0 2rem'})),
+      transition('expanded <=> collapsed', animate('0.75s cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ])
+  ]
 })
 export class [[component-name]] extends GridComponent implements OnInit {
 
@@ -28,6 +45,12 @@ export class [[component-name]] extends GridComponent implements OnInit {
   public displayedColumns: string[] = [
     [[displayed-columns]]
   ];
+
+  /**
+   * What element is currently expanded.
+   */
+  public expandedElement: any | null;
+
 
   // Need to view paginator as a child to update page index of it.
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;

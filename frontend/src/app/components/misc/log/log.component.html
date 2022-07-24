@@ -69,7 +69,7 @@
                 *matCellDef="let el"
                 colspan="3">
                 <div class="w-100 details-row"
-                  [@detailExpand]="el == expandedElement ? 'expanded' : 'collapsed'">   
+                  [@detailExpand]="el == expandedElement ? 'expanded' : 'collapsed'">
                   <div
                     class="details-sheet">
                     <div class="d-flex flex-column w-100 py-3">
@@ -122,11 +122,15 @@
             <tr
               mat-row
               [ngClass]="(expandedElement === el ? 'selected ' + el.type : el.type) + ' log-row'"
-              class="expandable-row" [class.error-bg]="el.type === 'error'"
+              class="expandable-row"
+              [class.error-bg]="el.type === 'error'"
               (click)="expandedElement = expandedElement === el ? null : el"
               *matRowDef="let el; columns: displayedColumns;"></tr>
 
-            <tr mat-row *matRowDef="let el; columns: ['showDetails']" class="expanded-row"></tr>
+            <tr
+              mat-row
+              *matRowDef="let el; columns: ['showDetails']"
+              class="expanded-row"></tr>
 
           </table>
         </div>
