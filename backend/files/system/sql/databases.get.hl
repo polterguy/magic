@@ -47,8 +47,6 @@ cache.try-get:x:@strings.concat
       // Creating our return value, one for each database.
       .result
       for-each:x:@signal/*/*
-         set-value:x:@.dp/#
-            strings.to-lower:x:@.dp/#
          set-name:x:@.dp/#
             .:database
          unwrap:x:+/*/*/*

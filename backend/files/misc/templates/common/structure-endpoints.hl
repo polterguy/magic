@@ -59,9 +59,6 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
       get-value:x:@strings.replace-not-of
       .:.component
 
-   // The component's routing URL.
-   strings.to-lower:x:@strings.replace-not-of/@strings.replace-not-of
-
    // The component's header
    strings.capitalize:x:@strings.split/0/-
 
@@ -84,13 +81,13 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
          component-selector:x:@strings.concat/@strings.concat/@strings.concat/@strings.concat/@strings.concat
          component-name:x:@strings.concat/@strings.concat/@strings.concat/@strings.concat
          component-filename:x:@strings.concat/@strings.concat/@strings.concat
-         component-folder:x:@strings.to-lower
+         component-folder:x:@strings.replace-not-of/@strings.replace-not-of
          table-name:x:@strings.replace/@strings.replace
          database-name:x:@strings.replace
          component-header:x:@strings.capitalize
          component-edit-name:x:@strings.concat/@strings.concat
          component-edit-filename:x:@strings.concat
-         component-routing-url:x:@strings.to-lower
+         component-routing-url:x:@strings.replace-not-of/@strings.replace-not-of
          verbs
 
    // Finding all related endpoints.

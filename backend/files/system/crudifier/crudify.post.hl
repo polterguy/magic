@@ -92,10 +92,10 @@ semaphore:crudifier
    if
       or
          eq
-            get-value:x:@strings.to-lower
+            get-value:x:@.arguments/*/moduleName
             .:
          eq
-            get-value:x:@strings.to-lower
+            get-value:x:@.arguments/*/moduleName
             .
       .lambda
          throw:"You can't use an empty string as your module's name. Your module must have a name."
@@ -104,7 +104,7 @@ semaphore:crudifier
 
    // Creating a log entry explaining roughly what we're about to do.
    log.info:Generating CRUD backend
-      module:x:@strings.to-lower
+      module:x:@.arguments/*/moduleName
       databaseType:x:@.arguments/*/databaseType
       database:x:@.arguments/*/database
       table:x:@.arguments/*/table
@@ -116,8 +116,6 @@ semaphore:crudifier
       strings.replace:x:@.arguments/*/moduleUrl
          .:.
          .:/
-   set-value:x:@.filename
-      strings.to-lower:x:@.filename
 
    /*
     * Creating our endpoint according to arguments given, by using [apply]

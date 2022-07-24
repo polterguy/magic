@@ -378,7 +378,7 @@ export class CrudFrontendExtraComponent implements OnInit, OnDestroy {
           };
           if (idxInput.lookup) {
             cur.lookup = idxInput.lookup;
-            cur.lookup.table = cur.lookup.table.replace('dbo.', '').toLowerCase();
+            cur.lookup.table = cur.lookup.table.replace('dbo.', '');
             cur.lookup.service = idx.path.substring(14);
             cur.lookup.service = cur.lookup.service.substring(0, cur.lookup.service.indexOf('/')) + '.' + cur.lookup.table;
             while (cur.lookup.service.indexOf('.') > 0) {
@@ -470,7 +470,7 @@ export class CrudFrontendExtraComponent implements OnInit, OnDestroy {
           };
           if (idxOutput.lookup) {
             cur.lookup = idxOutput.lookup;
-            cur.lookup.table = cur.lookup.table.replace('dbo.', '').toLowerCase();
+            cur.lookup.table = cur.lookup.table.replace('dbo.', '');
             cur.lookup.service = idx.path.substring(14);
             cur.lookup.service = cur.lookup.service.substring(0, cur.lookup.service.indexOf('/')) + '.' + cur.lookup.table;
             while (cur.lookup.service.indexOf('.') > 0) {
