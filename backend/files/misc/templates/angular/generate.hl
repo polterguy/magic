@@ -591,6 +591,22 @@ add:x:../*/return-nodes
    .
       .:x:@strings.concat/@strings.concat
          .:x:@io.stream.read
+strings.concat
+   .:/
+   get-value:x:@.arguments/*/name
+   .:/src/assets/logo-official.png
+io.path.get-folder:x:@.filename
+strings.concat
+   get-value:x:@io.path.get-folder
+   .:templates/main/src/assets/logo-official.png
+io.stream.open-file:x:@strings.concat
+io.stream.read:x:@io.stream.open-file
+io.stream.close:x:@io.stream.open-file
+unwrap:x:+/*/**
+add:x:../*/return-nodes
+   .
+      .:x:@strings.concat/@strings.concat
+         .:x:@io.stream.read
 
 // Returning all generated files to caller.
 .return-nodes
