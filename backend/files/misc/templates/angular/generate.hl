@@ -401,9 +401,7 @@ for-each:x:@.components/*
 // Some template fields needs the name in to-lower form, without spaces.
 .name-lowers
 set-value:x:@.name-lowers
-   strings.to-lower:x:@.arguments/*/name
-set-value:x:@.name-lowers
-   strings.replace-not-of:x:@.name-lowers
+   strings.replace-not-of:x:@.arguments/*/name
       .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0987654321
       .:_
 

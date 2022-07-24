@@ -50,16 +50,15 @@ slots.create:magic.db.sqlite.columns
 
       /*
        * Creating our return value, by projecting it into
-       * a generic form, that does not rely upon PostgreSQL's syntactic
+       * a generic form, that does not rely upon SQLite's syntactic
        * details.
        */
       for-each:x:@sqlite.select/*
-         strings.to-lower:x:@.dp/#/*/type
          unwrap:x:+/*/*
          .tmp
             ""
                name:x:@.dp/#/*/name
-               db:x:@strings.to-lower
+               db:x:@.dp/#/*/type
 
          // Checking if column is nullable.
          if

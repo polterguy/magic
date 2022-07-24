@@ -12,6 +12,8 @@
    args:*
 .description:Generates a frontend for you according to the given arguments
 .type:internal
+lambda2hyper:x:@.arguments/*
+log.info:x:-
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
