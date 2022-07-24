@@ -20,6 +20,9 @@ import { IREntity } from '@app/services/interfaces/crud-interfaces';
  */
 export abstract class GridComponent {
 
+  // Private cache for foreign key items.
+  private cache: any = {};
+
   /**
    * Number of milliseconds after a keystroke before
    * filtering should be re-applied.
@@ -306,20 +309,6 @@ export abstract class GridComponent {
   }
 
   /**
-   * Returns the CSS class for the "view details" parts.
-   * Notice, this basically ensures that the "view details" is invisible, unless
-   * explicitly shown by the user choosing to view the details for a record.
-   * 
-   * @param entity Entity to retrieve CSS class for showing details for
-   */
-  public getClassForDetails(entity: any) {
-    if (this.viewDetails.indexOf(entity) !== -1) {
-      return 'details-row visible';
-    }
-    return 'details-row hidden';
-  }
-
-  /**
    * Returns the sorting icon for the specified column.
    * 
    * @param column Column to retrieve icons for
@@ -345,7 +334,6 @@ export abstract class GridComponent {
    * @param functor Cache item read function to invoke if we have a cache miss
    * @param property Property to return to caller from objact
    */
-  private cache: any = {};
   public getCachedItem(
     cacheStorageName: string,
     id: any,
