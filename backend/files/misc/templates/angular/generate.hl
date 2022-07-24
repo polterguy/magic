@@ -530,11 +530,11 @@ for-each:x:../*/.return-nodes/*
 strings.concat
    .:/
    get-value:x:@.arguments/*/name
-   .:/src/assets/apple-touch-icon-iphone-60x60.png
+   .:/src/assets/apple-icon-57x57.png
 io.path.get-folder:x:@.filename
 strings.concat
    get-value:x:@io.path.get-folder
-   .:templates/main/src/assets/apple-touch-icon-iphone-60x60.png
+   .:templates/main/src/assets/apple-icon-57x57.png
 io.stream.open-file:x:@strings.concat
 io.stream.read:x:@io.stream.open-file
 io.stream.close:x:@io.stream.open-file
@@ -546,11 +546,11 @@ add:x:../*/return-nodes
 strings.concat
    .:/
    get-value:x:@.arguments/*/name
-   .:/src/assets/apple-touch-icon-ipad-76x76.png
+   .:/src/assets/apple-icon-72x72.png
 io.path.get-folder:x:@.filename
 strings.concat
    get-value:x:@io.path.get-folder
-   .:templates/main/src/assets/apple-touch-icon-ipad-76x76.png
+   .:templates/main/src/assets/apple-icon-72x72.png
 io.stream.open-file:x:@strings.concat
 io.stream.read:x:@io.stream.open-file
 io.stream.close:x:@io.stream.open-file
@@ -562,11 +562,11 @@ add:x:../*/return-nodes
 strings.concat
    .:/
    get-value:x:@.arguments/*/name
-   .:/src/assets/apple-touch-icon-iphone-retina-120x120.png
+   .:/src/assets/apple-icon-128x128.png
 io.path.get-folder:x:@.filename
 strings.concat
    get-value:x:@io.path.get-folder
-   .:templates/main/src/assets/apple-touch-icon-iphone-retina-120x120.png
+   .:templates/main/src/assets/apple-icon-128x128.png
 io.stream.open-file:x:@strings.concat
 io.stream.read:x:@io.stream.open-file
 io.stream.close:x:@io.stream.open-file
@@ -578,11 +578,11 @@ add:x:../*/return-nodes
 strings.concat
    .:/
    get-value:x:@.arguments/*/name
-   .:/src/assets/apple-touch-icon-ipad-retina-152x152.png
+   .:/src/assets/apple-icon-144x144.png
 io.path.get-folder:x:@.filename
 strings.concat
    get-value:x:@io.path.get-folder
-   .:templates/main/src/assets/apple-touch-icon-ipad-retina-152x152.png
+   .:templates/main/src/assets/apple-icon-144x144.png
 io.stream.open-file:x:@strings.concat
 io.stream.read:x:@io.stream.open-file
 io.stream.close:x:@io.stream.open-file
