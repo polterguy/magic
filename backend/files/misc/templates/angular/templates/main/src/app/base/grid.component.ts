@@ -63,7 +63,12 @@ export abstract class GridComponent {
   constructor(
     protected authService: AuthService,
     protected snackBar: MatSnackBar,
-    protected dialog: MatDialog) { }
+    protected dialog: MatDialog) {
+      const size = localStorage.getItem('page-size');
+      if (size) {
+        this.filter.limit = +size;
+      }
+    }
 
   /**
    * Abstract method you'll need to override to actually return URL of
@@ -162,7 +167,7 @@ export abstract class GridComponent {
    * @param entity Entity to delete
    * @param ids Primary keys for entity
    */
-  public deleteEntity(entity: any, ids: any) {
+  public deleteEntity(ev: Event, entity: any, ids: any) {
 
     let hasKeys = false;
     for (const idx in ids) {
@@ -201,6 +206,7 @@ export abstract class GridComponent {
     
       }
     });
+    ev.stopPropagation();
   }
 
   /**
@@ -287,7 +293,8 @@ export abstract class GridComponent {
     this.viewDetails = [];
     if (this.filter.limit !== e.pageSize) {
       this.filter.limit = e.pageSize;
-      this.resetPaginator()
+      this.resetPaginator();
+      localStorage.setItem('page-size', e.pageSize.toString());
     } else {
       this.filter.offset = e.pageIndex * e.pageSize;
     }

@@ -1,12 +1,12 @@
-  <app-magic-selector
-    *ngIf="canEditColumn('[[column-name]]')"
-    [model]="data.entity"
-    field="[[column-name]]"
-    key="[[lookup_key]]"
-    value="[[lookup_name]]"
-    [placeholder]="('Choose a ' | translate) + ('[[column-name]]' | translate)"
-    class="entity-edit-field"
-    (change)="changed('[[column-name]]')"
-    [getItems]="service.[[lookup_table]].read({limit:-1})">
-  </app-magic-selector>
+    <app-magic-selector
+      *ngIf="canEditColumn('[[column-name]]')"
+      [model]="data.entity"
+      field="[[column-name]]"
+      key="[[lookup_key]]"
+      value="[[lookup_name]]"
+      [placeholder]="('Choose a ' | translate) + ('[[column-name]]' | translate)"
+      class="entity-edit-field"
+      (change)="changed('[[column-name]]')"
+      [getItems]="service.[[lookup_table]].read({limit:-1})">
+    </app-magic-selector>
 

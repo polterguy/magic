@@ -1,22 +1,24 @@
+<form>
+  <h1 mat-dialog-title>{{(data.isEdit ? 'Edit' : 'Create') | translate}} {{'[[component-header]]' | translate}}</h1>
+  <div mat-dialog-content>
 
-<h1 mat-dialog-title>{{(data.isEdit ? 'Edit' : 'Create') | translate}} {{'[[component-header]]' | translate}}</h1>
-<div mat-dialog-content>
+  [[form-fields]]</div>
 
-[[form-fields]]</div>
+  <div mat-dialog-actions>
 
-<div mat-dialog-actions>
+    <div class="right-aligned">
 
-  <div class="right-aligned">
+      <button 
+        mat-raised-button
+        color="primary"
+        type="submit"
+        (click)="upsert()">{{'Save' | translate}}</button>
 
-    <button 
-      mat-raised-button
-      color="primary"
-      (click)="upsert()">{{'Save' | translate}}</button>
+      <button
+        mat-button
+        (click)="close(null)">{{'Cancel' | translate}}</button>
 
-    <button
-      mat-button
-      (click)="close(null)">{{'Cancel' | translate}}</button>
+    </div>
 
   </div>
-
-</div>
+</form>
