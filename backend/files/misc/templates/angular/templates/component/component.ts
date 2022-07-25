@@ -30,8 +30,8 @@ import { AuthService } from 'src/app/services/auth-service';
   styleUrls: ['./[[component-filename]].scss'],
   animations: [
     trigger('detailExpand', [
-      state('collapsed', style({height: '0px', minHeight: '0', padding: '0'})),
-      state('expanded', style({height: '*', padding: '0 2rem 0 2rem'})),
+      state('collapsed', style({height: '0px', opacity: '0'})),
+      state('expanded', style({height: '*', opacity: '1'})),
       transition('expanded <=> collapsed', animate('0.75s cubic-bezier(0.4, 0.0, 0.2, 1)')),
     ])
   ]
