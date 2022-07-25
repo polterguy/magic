@@ -407,6 +407,7 @@ export class SqlComponent implements OnInit {
         this.feedbackService.showInfoShort('SQL successfully executed, but returned no result');
       }
       this.result = this.buildResult(result || []);
+      this.applyMigration(selectedText == '' ? this.input.sql : selectedText, true);
     }, (error: any) => {
       if (error.error &&
         error.error.message &&
@@ -1097,17 +1098,34 @@ export class SqlComponent implements OnInit {
   /*
    * Applies migration scripts, if any migration scripts are returned from the server.
    */
-  private applyMigration(sql: string) {
+  private applyMigration(sql: string, ask: boolean = false) {
     if (this.autoMigrate) {
-      this.sqlService.createMigrationScript(
-        this.input.databaseType,
-        this.input.database,
-        sql).subscribe({
-        next: () => {
-          this.feedbackService.showInfo('Migration script successfully added to module');
-        },
-        error: (error: any) => this.feedbackService.showError(error)
-      });
+      if (ask) {
+        this.feedbackService.confirm(
+          'Apply migration script?',
+          'Do you want to create a migration script for your current SQL statement(s)?',
+          () => {
+            this.sqlService.createMigrationScript(
+              this.input.databaseType,
+              this.input.database,
+              sql).subscribe({
+              next: () => {
+                this.feedbackService.showInfo('Migration script successfully added to module');
+              },
+              error: (error: any) => this.feedbackService.showError(error)
+            });
+          });
+      } else {
+        this.sqlService.createMigrationScript(
+          this.input.databaseType,
+          this.input.database,
+          sql).subscribe({
+          next: () => {
+            this.feedbackService.showInfo('Migration script successfully added to module');
+          },
+          error: (error: any) => this.feedbackService.showError(error)
+        });
+      }
     }
   }
 }
