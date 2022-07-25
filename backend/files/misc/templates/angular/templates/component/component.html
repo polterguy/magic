@@ -29,7 +29,7 @@
           [ngClass]="authService.me.canInvoke(url(), 'delete') && httpService['[[crud-entity]]']['delete'] ? 'delete-column' : 'hidden'">
           <button
             mat-button
-            (click)="deleteEntity(el, {[[delete-input]]})"
+            (click)="deleteEntity($event, el, {[[delete-input]]})"
             [matTooltip]="'Delete this record' | translate">
             <mat-icon matSuffix>delete</mat-icon>
           </button>
