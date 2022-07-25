@@ -23,12 +23,21 @@
   width: 100%;
 }
 
+.mat-list-item {
+  transition-property: background-color;
+  transition-duration: .3s;
+}
+
 .mat-list-item:hover {
   background-color: mat-color($app-primary, 100);
+  transition-property: background-color;
+  transition-duration: .3s;
 }
 
 .mat-list-item.active {
   background-color: mat-color($app-primary, 300);
+  transition-property: background-color;
+  transition-duration: .3s;
 }
 
 /*
@@ -178,6 +187,8 @@
       }
 
       tr.row, tr.selected {
+        transition-property: background-color;
+        transition-duration: .3s;
         td {
           border-top: solid 1px rgba(0,0,0,.2);
         }
@@ -192,7 +203,7 @@
         cursor: pointer;
         background-color: mat-color($app-primary, 100); 
         transition-property: background-color;
-        transition-duration: 0.1s;
+        transition-duration: .3s;
       }
 
       // Row that displays details.
