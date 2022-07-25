@@ -12,9 +12,9 @@
           </mat-form-field>
           <button
             class="sort-button"
-            (click)="sort('[[column-name]]')"
+            (click)="sort('[[column-full-name]]')"
             mat-button>
-            <mat-icon matSuffix>{{getSortIcon('[[column-name]]')}}</mat-icon>
+            <mat-icon matSuffix>{{getSortIcon('[[column-full-name]]')}}</mat-icon>
           </button>
         </th>
         <td mat-cell *matCellDef="let el">{{el['[[column-name]]'] | formatDate}}</td>

@@ -182,12 +182,15 @@
           border-top: solid 1px rgba(0,0,0,.2);
         }
       }
+      tr.selected {
+        background-color: mat-color($app-primary, 300);
+      }
 
       // Making sure we communicate that column is clickable and give some visual clues.
       tr.selected:hover,
       tr.row:hover {
         cursor: pointer;
-        background-color: mat-color($app-primary, 100);
+        background-color: mat-color($app-primary, 100); 
         transition-property: background-color;
         transition-duration: 0.1s;
       }

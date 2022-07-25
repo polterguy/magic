@@ -377,6 +377,21 @@ for-each:x:@.arguments/*/.crud-methods/*
                               get-value:x:@.dp/#/*/name
                               .:"'"
 
+            // Figuring out entire column name.
+            .col-name-tmp
+            if
+               strings.contains:x:@.dp/#/*/name
+                  .:.
+               .lambda
+                  set-value:x:@.col-name-tmp
+                     get-value:x:@.dp/#/*/name
+            else
+               set-value:x:@.col-name-tmp
+                  strings.concat
+                     get-value:x:@for-each/@.dp/#/*/database-name
+                     .:.
+                     get-value:x:@.dp/#/*/name
+
             /*
              * Checking if this is a lookup type of field, implying a foreign key into
              * another table.
@@ -489,19 +504,6 @@ for-each:x:@.arguments/*/.crud-methods/*
                 * 
                 * Notice, some types have specialized implementations here.
                 */
-               .col-name-tmp
-               if
-                  strings.contains:x:@.dp/#/*/name
-                     .:.
-                  .lambda
-                     set-value:x:@.col-name-tmp
-                        get-value:x:@.dp/#/*/name
-               else
-                  set-value:x:@.col-name-tmp
-                     strings.concat
-                        get-value:x:@for-each/@.dp/#/*/database-name
-                        .:.
-                        get-value:x:@.dp/#/*/name
                switch:x:@.dp/#/*/type
 
                   // String type.
@@ -595,6 +597,12 @@ for-each:x:@.arguments/*/.crud-methods/*
                            strings.replace:x:@strings.replace
                               .:[[column-name]]
                               get-value:x:@.dp/#/*/name
+
+               // Replacing full name.
+               set-value:x:@.substitutions/*/ng-containers
+                  strings.replace:x:@.substitutions/*/ng-containers
+                     .:[[column-full-name]]
+                     get-value:x:@.col-name-tmp
 
          /*
           * Dynamically creating our editor component.
