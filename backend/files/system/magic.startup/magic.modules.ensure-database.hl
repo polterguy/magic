@@ -9,6 +9,7 @@
  * 
  * - [module] - Module's name and root folder.
  * - [database] - Module's database, and connection string reference.
+ * - [database-type] - Optional type of database. If not specified defaults to the default database.
  * 
  * The slot assumes the module is created according to the same structure, having
  * a 'db-migrations' folder inside of its 'magic.startup' folder, containing SQL
@@ -42,9 +43,15 @@ slots.create:magic.modules.ensure-database
     * Figuring out folder from where to read migration scripts and
     * main 'create-database.sql' script.
     */
+   .database-type:x:@.arguments/*/database-type
+   unwrap:x:-
+   if
+      null:x:@.database-type
+      .lambda
+         set-value:x:@.database-type
+            config.get:"magic:databases:default"
    .create-database-script
    .migration-script-folder
-   config.get:"magic:databases:default"
    set-value:x:@.create-database-script
       strings.concat
          .:/modules/
@@ -52,20 +59,20 @@ slots.create:magic.modules.ensure-database
          .:/magic.startup/
          get-value:x:@.arguments/*/module
          .:.
-         get-value:x:@config.get
+         get-value:x:@.database-type
          .:.sql
    set-value:x:@.migration-script-folder
       strings.concat
          .:/modules/
          get-value:x:@.arguments/*/module
          .:/magic.startup/db-migrations/
-         get-value:x:@config.get
+         get-value:x:@.database-type
          .:/
 
    // Checking if database already exists.
    strings.concat
       .:magic.db.
-      get-value:x:@config.get
+      get-value:x:@.database-type
       .:.databases
    signal:x:-
    strings.concat
@@ -86,7 +93,7 @@ slots.create:magic.modules.ensure-database
             io.file.load:x:@.create-database-script
 
             // Opening database connection.
-            switch:x:@config.get
+            switch:x:@.database-type
 
                case:mysql
                   mysql.connect:sys
@@ -162,7 +169,7 @@ slots.create:magic.modules.ensure-database
                   // Special case for MS SQL to make sure we use batch execute.
                   if
                      eq
-                        get-value:x:@config.get
+                        get-value:x:@.database-type
                         .:mssql
                      .lambda
 
