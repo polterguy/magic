@@ -95,6 +95,7 @@ export class CreateKeypairComponent implements OnInit {
 
   /**
    * Invoked when user clicks the next button.
+   * 
    * @param recaptcha_token received when reCaptcha component is executed,
    * recaptcha_token is optional, exists only if recaptcha key is available
    */
@@ -108,7 +109,9 @@ export class CreateKeypairComponent implements OnInit {
       name: this.subject
     };
     if (localStorage.getItem('subscribes-to-newsletter')) return this.generateKeypair();
-    this.feedbackService.confirm('Receive a promo code', 'Do you want a promo code that gives you all Bazar items for free for a limited period? Join our mailing list and stay up-to-date for promotions! If you do, then make sure you verify your email address.',
+    this.feedbackService.confirm(
+      'Receive a promo code',
+      'Do you want a promo code that gives you all Bazar items for free for a limited period? Join our mailing list and stay up-to-date for promotions! If you do, then make sure you verify your email address.',
       () => {
         this.bazarService.subscribeToNewsletter(data).subscribe({
             next: () => {

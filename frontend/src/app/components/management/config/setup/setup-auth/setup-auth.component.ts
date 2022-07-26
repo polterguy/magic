@@ -144,6 +144,10 @@ export class SetupAuthComponent implements OnInit {
           this.feedbackService.showInfoShort('Database successfully configured');
           this.backendService.active.status.config_done = true;
           this.backendService.getRecaptchaKey();
+          this.configService.installModules().subscribe({
+            next: () => console.log('All modules were successfully installed'),
+            error: (error: any) => this.feedbackService.showError(error)
+          });
         },
         error: (error: any) => this.feedbackService.showError(error)});
   }
