@@ -61,7 +61,6 @@ slots.create:magic.modules.install-module
                       * Sub folder "magic.startup" folder of module, making sure we execute
                       * all files within it recursively.
                       */
-                     unwrap:x:+/*
                      io.file.list-recursively:x:@.dp/#
                      for-each:x:@io.file.list-recursively/*
                         if

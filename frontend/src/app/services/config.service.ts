@@ -37,21 +37,21 @@ export class ConfigService {
   /**
    * Returns the root user's email address
    */
-  public rootUserEmailAddress() {
+  rootUserEmailAddress() {
     return this.httpService.get<NameEmailModel>('/magic/system/emails/email');
   }
 
   /**
    * Loads your configuration.
    */
-  public loadConfig() {
+  loadConfig() {
     return this.httpService.get<any>('/magic/system/config/load');
   }
 
   /**
    * Saves your configuration.
    */
-  public saveConfig(config: any) {
+  saveConfig(config: any) {
     return this.httpService.post<Response>('/magic/system/config/save', config);
   }
 
@@ -61,7 +61,7 @@ export class ConfigService {
    * @param password Root user's password to use
    * @param settings Configuration for your system
    */
-  public setupSystem(password: string, settings: any) {
+  setupSystem(password: string, settings: any) {
     return new Observable<AuthenticateResponse>((observer) => {
       this.httpService.post<AuthenticateResponse>('/magic/system/config/setup', {
         password,
@@ -85,13 +85,21 @@ export class ConfigService {
   }
 
   /**
+   * Invoked when modules needs to be installed for some reasons, which
+   * might be a requirement after the system has been setup.
+   */
+  installModules() {
+    return this.httpService.post<any>('/magic/system/config/install-modules', {});
+  }
+
+  /**
    * Generates a cryptographically secure piece of random text (gibberish)
    * by invoking backend endpoint responsible for creating it.
    *
    * @param min Minimum length of gibberish to return
    * @param max Maximum length of gibberish to return
    */
-  public getGibberish(min: number, max: number) {
+  getGibberish(min: number, max: number) {
     return this.httpService.get<Response>('/magic/system/misc/gibberish?min=' + min + '&max=' + max);
   }
 
@@ -101,7 +109,7 @@ export class ConfigService {
    * @param version_1 First version to compare
    * @param version_2 Second version to compare
    */
-  public versionCompare(version_1: string, version_2: string) {
+  versionCompare(version_1: string, version_2: string) {
     return this.httpService.get(
       '/magic/system/config/version-compare?version_1=' +
       encodeURIComponent(version_1) +
@@ -109,11 +117,11 @@ export class ConfigService {
       encodeURIComponent(version_2));
   }
 
-  public getDatabases() {
+  getDatabases() {
     return this.httpService.get('/magic/system/sql/default-database-type');
   }
 
-  public connectionStringValidity(data: any) {
+  connectionStringValidity(data: any) {
     return this.httpService.post('/magic/system/sql/test-connection-string', data);
   }
 }
