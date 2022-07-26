@@ -78,15 +78,15 @@ slots.create:magic.db.sqlite.columns
          if
             eq
                get-value:x:@.dp/#/*/pk
-               .:long:1
+               .:long:0
             .lambda
                add:x:@.tmp/*
                   .
-                     primary:bool:true
+                     primary:bool:false
          else
             add:x:@.tmp/*
                .
-                  primary:bool:false
+                  primary:bool:true
 
          // Checking if column has a default value.
          if
