@@ -89,6 +89,11 @@ export class CrudFrontendComponent implements OnInit {
     this.crudifyService.templates().subscribe({
       next: (result: string[]) => {
         this.templates = result || [];
+        const angular = this.templates.filter(x => x === 'angular');
+        if (angular && angular.length > 0) {
+          this.template = angular[0];
+          this.templateChanged();
+        }
       },
       error: (error: any) => this.feedbackService.showError(error)});
     this.apiUrl = this.backendService.active.url;
