@@ -88,9 +88,9 @@ export class AuthService {
           this.httpClient.get<AuthenticateToken>(
             environment.apiUrl +
             'magic/system/auth/authenticate?username=' +
-            encodeURI(username) +
+            encodeURIComponent(username) +
             '&password=' +
-            encodeURI(password)).subscribe((res: any) => {
+            encodeURIComponent(password)).subscribe((res: any) => {
     
               // Success.
               localStorage.setItem('jwt_token', res.ticket);

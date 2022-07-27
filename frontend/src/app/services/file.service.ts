@@ -111,7 +111,7 @@ export class FileService {
     const formData: FormData = new FormData();
     const blob = new Blob([content], { type: 'text/plain'});
     formData.append('file', blob, filename.substring(filename.lastIndexOf('/') + 1));
-    return this.httpService.put<any>('/magic/system/file-system/file?folder=' + encodeURI(folder), formData);
+    return this.httpService.put<any>('/magic/system/file-system/file?folder=' + encodeURIComponent(folder), formData);
   }
 
   /**
@@ -143,7 +143,7 @@ export class FileService {
    * @param path File to download
    */
   public downloadFile(path: string) {
-    this.httpService.download('/magic/system/file-system/file?file=' + encodeURI(path)).subscribe({
+    this.httpService.download('/magic/system/file-system/file?file=' + encodeURIComponent(path)).subscribe({
       next: (res) => {
         const disp = res.headers.get('Content-Disposition');
         let filename = disp.split(';')[1].trim().split('=')[1].replace(/"/g, '');
@@ -162,7 +162,7 @@ export class FileService {
   public uploadFile(path: string, file: any) {
     const formData: FormData = new FormData();
     formData.append('file', file);
-    return this.httpService.put<any>('/magic/system/file-system/file?folder=' + encodeURI(path), formData);
+    return this.httpService.put<any>('/magic/system/file-system/file?folder=' + encodeURIComponent(path), formData);
   }
 
   /**
@@ -171,7 +171,7 @@ export class FileService {
    * @param path File to download
    */
   public downloadFolder(path: string) {
-    this.httpService.download('/magic/system/file-system/download-folder?folder=' + encodeURI(path)).subscribe({
+    this.httpService.download('/magic/system/file-system/download-folder?folder=' + encodeURIComponent(path)).subscribe({
       next: (res) => {
         const disp = res.headers.get('Content-Disposition');
         let filename = disp.substring(disp.indexOf('=') + 1);
