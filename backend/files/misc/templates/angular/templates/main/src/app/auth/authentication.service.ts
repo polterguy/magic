@@ -34,9 +34,9 @@ export class AuthenticationService {
       this.httpClient.get<AuthenticateToken>(
         environment.apiUrl +
         'magic/system/auth/authenticate?username=' +
-        encodeURI(context.username) +
+        encodeURIComponent(context.username) +
         '&password=' +
-        encodeURI(context.password)).subscribe((res: AuthenticateToken) => {
+        encodeURIComponent(context.password)).subscribe((res: AuthenticateToken) => {
 
           // Success.
           const data = {
