@@ -18,7 +18,7 @@ validators.url:x:@.arguments/*/frontendUrl
 validators.regex:x:@.arguments/*/username
    regex:[a-z0-9-]{2,20}
 validators.string:x:@.arguments/*/password
-   min:12
+   min:8
 
 /*
  * Checking if backend is configured to use reCAPTCHA, and if so,
