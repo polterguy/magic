@@ -341,18 +341,6 @@ for-each:x:@.main-files/*
          .:[[theme]]
          get-value:x:@.arguments/*/args/*/theme
 
-   // Replacing [[frontendUrl]]
-   set-value:x:@.dp/#/*
-      strings.replace:x:@.dp/#/*
-         .:[[frontendUrl]]
-         get-value:x:@.arguments/*/frontendUrl
-
-   // Replacing [[email]]
-   set-value:x:@.dp/#/*
-      strings.replace:x:@.dp/#/*
-         .:[[email]]
-         get-value:x:@.arguments/*/email
-
    // Replacing [[router-links]]
    set-value:x:@.dp/#/*
       strings.replace:x:@.dp/#/*

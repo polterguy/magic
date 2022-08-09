@@ -3,8 +3,6 @@
 .arguments
    templateName:string
    apiUrl:string
-   frontendUrl:string
-   email:string
    name:string
    copyright:string
    endpoints:*
@@ -17,8 +15,6 @@
 auth.ticket.verify:root
 
 // Sanity checking invocation.
-validators.mandatory:x:@.arguments/*/email
-validators.email:x:@.arguments/*/email
 validators.mandatory:x:@.arguments/*/apiUrl
 validators.url:x:@.arguments/*/apiUrl
 
@@ -26,8 +22,6 @@ validators.url:x:@.arguments/*/apiUrl
 log.info:Generating CRUD frontend
    template:x:@.arguments/*/templateName
    apiUrl:x:@.arguments/*/apiUrl
-   frontendUrl:x:@.arguments/*/frontendUrl
-   email:x:@.arguments/*/email
    name:x:@.arguments/*/name
    copyright:x:@.arguments/*/copyright
    deployLocally:x:@.arguments/*/deployLocally
@@ -44,8 +38,6 @@ add:x:+/+
 unwrap:x:+/*
 io.file.execute:x:@strings.concat
    apiUrl:x:@.arguments/*/apiUrl
-   frontendUrl:x:@.arguments/*/frontendUrl
-   email:x:@.arguments/*/email
    name:x:@.arguments/*/name
    copyright:x:@.arguments/*/copyright
 
