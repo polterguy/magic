@@ -366,7 +366,9 @@ export class IdeComponent implements OnInit, OnDestroy {
       }
     }
     this.dataBindTree();
-    this.activeFolder = '/';
+    let newFolder = this.activeFolder.substring(0, this.activeFolder.length - 1);
+    newFolder = newFolder.substring(0, newFolder.lastIndexOf('/') + 1);
+    this.activeFolder = newFolder;
     this.cdRef.detectChanges();
   }
 
