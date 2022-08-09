@@ -230,4 +230,17 @@ export class FileService {
     formData.append('file', file);
     return this.httpService.put<any>('/magic/system/file-system/install-module', formData);
   }
+
+  /**
+   * Unzips file in place.
+   * 
+   * @param file Path of file to unzip
+   * @returns 
+   */
+  public unzip(file: string) {
+    return this.httpService.put<Response>('/magic/system/file-system/unzip', {
+      file,
+      create_folder: true,
+    });
+  }
 }

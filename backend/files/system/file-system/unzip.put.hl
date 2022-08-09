@@ -2,11 +2,39 @@
 // Unzips the specified file in its current folder.
 .arguments
    file:string
+   create_folder:bool
 .description:Unzips the specified file in its current folder
 .type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
+
+// Checking if we need to create folder with name and path of zip file.
+if:x:@.arguments/*/create_folder
+   strings.length:x:@.arguments/*/file
+   strings.substring:x:@.arguments/*/file
+      .:int:0
+      math.subtract:x:@strings.length
+         .:int:4
+   strings.concat
+      get-value:x:@strings.substring
+      .:/
+   unwrap:x:+/*/*
+   add:x:../*/io.file.unzip
+      .
+         folder:x:@strings.concat
+   if
+      not
+         io.folder.exists:x:@strings.concat
+      .lambda
+
+         // Creating folder we're unzipping into.
+         io.folder.create:x:@strings.concat
+   else
+
+      // Deleting folder and re-creating it to ensure it's empty.
+      io.folder.delete:x:@strings.concat
+      io.folder.create:x:@strings.concat
 
 // Unzipping file.
 io.file.unzip:x:@.arguments/*/file
