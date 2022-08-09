@@ -21,6 +21,7 @@ import {
 } from '@angular/core';
 
 // Application specific imports.
+import { Response } from '../../../models/response.model';
 import { FlatNode } from './models/flat-node.model';
 import { FileNode } from './models/file-node.model';
 import { TreeNode } from './models/tree-node.model';
@@ -39,7 +40,6 @@ import { IncompatibleFileDialogComponent } from './incompatible-file-dialog/inco
 import fileTypes from 'src/app/codemirror/file-types.json';
 import { WarningComponent } from './warning/warning.component';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
-import CodeMirror from 'codemirror';
 
 /**
  * IDE component for editing code.
@@ -256,11 +256,19 @@ export class IdeComponent implements OnInit, OnDestroy {
             name: file.name,
           },
         });
-        dialog.afterClosed().subscribe((data: { deleteFile: false, download: false }) => {
+        dialog.afterClosed().subscribe((data: { deleteFile: false, download: false, unzip: false }) => {
           if (data && data.download) {
             this.fileActionsComponent.downloadActiveFile(file.path)
           } else if (data && data.deleteFile) {
             this.fileActionsComponent.deleteActiveFile(file.path)
+          } else if (data && data.unzip) {
+            this.fileService.unzip(file.path).subscribe({
+              next: () => {
+                const update = file.path.substring(0, file.path.lastIndexOf('/') + 1);
+                this.updateFileObject(update);
+              },
+              error: (error: any) => this.feedbackService.showError(error)
+            });
           }
         });
         return;
