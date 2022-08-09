@@ -294,7 +294,7 @@ export class CrudFrontendExtraComponent implements OnInit, OnDestroy {
       deployLocally,
       this.args, 
       () => {
-        this.feedbackService.showInfo('Frontend successfully generated');
+        this.feedbackService.showInfo('Frontend successfully generated and stored in /etc/frontend/');
         this.messageService.sendMessage({
           name: deployLocally ? 'magic.crudifier.frontend-generated-locally' : 'magic.crudifier.frontend-generated'
         });
