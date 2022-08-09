@@ -11,7 +11,6 @@ import { ConfigService } from 'src/app/services/config.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { NameEmailModel } from '../../../../models/name-email.model';
 import { CrudFrontendExtraComponent } from './crud-frontend-extra/crud-frontend-extra.component';
 
 /**
@@ -23,11 +22,6 @@ import { CrudFrontendExtraComponent } from './crud-frontend-extra/crud-frontend-
   templateUrl: './crud-frontend.component.html'
 })
 export class CrudFrontendComponent implements OnInit {
-
-  /**
-   * If true, will deploy app locally in "/etc/" folder instead of downloading as a ZIP file.
-   */
-  deployLocally: boolean = true;
 
   /**
    * Available templates user can select.
@@ -43,21 +37,6 @@ export class CrudFrontendComponent implements OnInit {
    * Name user wants to use for his app.
    */
   name = '';
-
-  /**
-   * The API URL to bind the frontend towards.
-   */
-  apiUrl = '';
-
-  /**
-   * URL where the user intends to deploy the frontend.
-   */
-  frontendUrl = 'frontend.yourdomain.com';
-
-  /**
-   * Email address of user, required to create SSL keypair during Docker deployment process.
-   */
-  email: string = '';
 
   /**
    * Copyright notice to use for generated files.
@@ -91,12 +70,6 @@ export class CrudFrontendComponent implements OnInit {
         this.templates = result || [];
       },
       error: (error: any) => this.feedbackService.showError(error)});
-    this.apiUrl = this.backendService.active.url;
-    this.configService.rootUserEmailAddress().subscribe({
-      next: (model: NameEmailModel) => {
-        this.email = model.email;
-      },
-      error: (error: any) => this.feedbackService.showError(error)});
   }
 
   /**
@@ -123,27 +96,15 @@ export class CrudFrontendComponent implements OnInit {
    * Check the email address' validity to prevent server error
    */
   generate() {
-    if (this.validateEmail()) {
-      this.messageService.sendMessage({
-        name: 'app.generator.generate-frontend',
-        content: {
-          template: this.template,
-          name: this.name,
-          copyright: this.copyright,
-          apiUrl: this.apiUrl,
-          frontendUrl: this.frontendUrl,
-          email: this.email,
-          deployLocally: this.deployLocally,
-        }
-      });
-    }
-  }
-
-  /**
-   * Check for the basic structure of an email address.
-   * @returns boolean
-   */
-  validateEmail() {
-    return /^\S+@\S+$/.test(this.email);
+    this.messageService.sendMessage({
+      name: 'app.generator.generate-frontend',
+      content: {
+        template: this.template,
+        name: this.name,
+        copyright: this.copyright,
+        apiUrl: this.backendService.active.url,
+        deployLocally: true,
+      }
+    });
   }
 }

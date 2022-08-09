@@ -23,14 +23,6 @@
           </div>
         </div>
 
-        <div>
-          <mat-slide-toggle
-            [(ngModel)]="deployLocally"
-            labelPosition="before">
-            Deploy locally
-          </mat-slide-toggle>
-        </div>
-
       </div>
 
       <mat-card-subtitle>Generate an Angular frontend</mat-card-subtitle>
@@ -77,57 +69,11 @@
           </mat-form-field>
 
         </div>
-        
-        <h3 *ngIf="template" class="mt-4">Deployment settings</h3>
-        
-        <div class="d-flex flex-sm-nowrap flex-wrap w-100">
-
-          <mat-form-field
-            *ngIf="template"
-            class="w-100"
-            appearance="outline">
-            <mat-label>API URL</mat-label>
-            <input
-              matInput
-              type="text"
-              autocomplete="off"
-              [(ngModel)]="apiUrl">
-          </mat-form-field>
-
-          <div class="p-1"></div>
-
-          <mat-form-field
-            *ngIf="template"
-            class="w-100"
-            appearance="outline">
-            <mat-label>Deployment domain</mat-label>
-            <input
-              matInput
-              type="text"
-              autocomplete="off"
-              [(ngModel)]="frontendUrl">
-          </mat-form-field>
-
-          <div class="p-1"></div>
-
-          <mat-form-field
-            *ngIf="template"
-            class="w-100"
-            appearance="outline">
-            <mat-label>Email</mat-label>
-            <input
-              matInput
-              type="email"
-              autocomplete="off"
-              [(ngModel)]="email" [email]="true">
-          </mat-form-field>
-
-        </div>
         <div class="d-flex justify-content-end">
           <button
             mat-raised-button
             color="primary"
-            [disabled]="!template || name === '' || apiUrl === '' || frontendUrl === '' || !validateEmail()"
+            [disabled]="!template || name === ''"
             (click)="generate()">
             Generate
           </button>

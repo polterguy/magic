@@ -115,8 +115,6 @@ export class CrudifyService {
   generate(
     templateName: string,
     apiUrl: string,
-    frontendUrl: string,
-    email: string,
     name: string,
     copyright: string,
     endpoints: any[],
@@ -126,8 +124,6 @@ export class CrudifyService {
     const payload = {
       templateName,
       apiUrl,
-      frontendUrl,
-      email,
       name,
       copyright,
       endpoints,
