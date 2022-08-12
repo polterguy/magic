@@ -73,7 +73,7 @@ export class MainComponent implements OnInit {
     private router: Router,
     public navbarService: NavbarService,
     public themeService: ThemeService,
-    private backendService: BackendService,
+    public backendService: BackendService,
     private feedbackService: FeedbackService,
     private updatePwaService: UpdatePwaService) {
       this.updatePwaService.checkForUpdates();

@@ -12,6 +12,28 @@
   }
 }
 
+@keyframes fade-in {
+  0% {
+    background-color: rgba(0,0,0,0);
+  }
+  100% {
+    background-color: rgba(0,0,0,.7);
+  }
+}
+
+.global-obscurer {
+  z-index: 5000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  animation-name: fade-in;
+  animation-duration: .2s;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-in;
+}
+
 .obscurer {
   position: fixed;
   top: .5rem;
