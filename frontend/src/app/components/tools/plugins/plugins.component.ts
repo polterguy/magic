@@ -21,7 +21,6 @@ import { Response } from '../../../models/response.model';
 import { BazarApp } from '../../../models/bazar-app.model';
 import { AppManifest } from '../../../models/app-manifest';
 import { environment } from 'src/environments/environment';
-import { FileService } from 'src/app/services/file.service';
 import { ConfigService } from '../../../services/config.service';
 import { LoaderService } from '../../../services/loader.service';
 import { MessageService } from 'src/app/services/message.service';
@@ -119,7 +118,6 @@ export class BazarComponent implements OnInit, OnDestroy {
    *
    * @param router Needed to redirect user after app has been installed
    * @param dialog Needed to create modal dialogs
-   * @param fileService Needed to be able to display README file after app has been installed.
    * @param bazarService Needed to retrieve apps from external Bazar server
    * @param configService Needed to compare versions semantically
    * @param backendService Needed to check if user is root
@@ -131,7 +129,6 @@ export class BazarComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private dialog: MatDialog,
-    private fileService: FileService,
     private bazarService: BazarService,
     private configService: ConfigService,
     private backendService: BackendService,
@@ -278,6 +275,7 @@ export class BazarComponent implements OnInit, OnDestroy {
    * Invoked when user wants to purchase the specified app.
    */
   purchase(app: BazarApp, onAfter: () => void = null) {
+    this.backendService.showObscurer(true);
     this.configService.rootUserEmailAddress().subscribe({
       next: (response: NameEmailModel) => {
         if (app.price === 0) {
@@ -447,9 +445,13 @@ export class BazarComponent implements OnInit, OnDestroy {
             }
           } else {
             this.feedbackService.showError(`Unknown status code returned from the Bazar, code was ${status.status}`);
+            this.backendService.showObscurer(false);
           }
       },
-      error: (error: any) => this.feedbackService.showError(error)});
+      error: (error: any) => {
+        this.feedbackService.showError(error);
+        this.backendService.showObscurer(false);
+      }});
   }
 
   /*
@@ -580,6 +582,7 @@ export class BazarComponent implements OnInit, OnDestroy {
               if (result && result.length > 0) {
                 const version = result[0].version;
                 this.getUniInstalledApps();
+                this.backendService.showObscurer(false);
 
                 // Doing a version compare of the installed app and the latest version of app as published by Bazar API.
                 // TODO: This is kind of stupid to do over an HTTP invocation, since it's just a string comparison

@@ -35,6 +35,7 @@ export class BackendService {
   private _activeChanged: BehaviorSubject<Backend>;
   private _statusRetrieved: BehaviorSubject<Status>;
   private _versionRetrieved: BehaviorSubject<string>;
+  private _obscure: BehaviorSubject<boolean>;
   private _latestBazarVersion: string = null;
   private _activeCaptcha = new BehaviorSubject<string>('');
   public _activeCaptchaValue = this._activeCaptcha.asObservable();
@@ -66,6 +67,11 @@ export class BackendService {
   versionRetrieved: Observable<string>;
 
   /**
+   * To allow consumers to subscribe to version changes.
+   */
+   obscure: Observable<boolean>;
+
+  /**
    * Creates an instance of your service.
    *
    * @httpClient Needed to refresh JWT token for backends, logging in, and retrieving endpoints
@@ -95,6 +101,9 @@ export class BackendService {
 
     this._versionRetrieved = new BehaviorSubject<string>(null);
     this.versionRetrieved = this._versionRetrieved.asObservable();
+
+    this._obscure = new BehaviorSubject<boolean>(false);
+    this.obscure = this._obscure.asObservable();
 
     // If we have an active backend we need to retrieve endpoints for it.
     if (this.active) {
@@ -326,6 +335,24 @@ export class BackendService {
       }
     }
     return false;
+  }
+
+  /**
+   * Shows or hides the global obscurer
+   * 
+   * @param value Whether or not obscurer should be shown or not
+   */
+  showObscurer(value: boolean) {
+    this._obscure.next(value);
+  }
+
+  /**
+   * Returns true if global obscurer should be visible.
+   * 
+   * @returns Whether or not obscurer is visible or not
+   */
+  getObscurer() {
+    return this._obscure.value;
   }
 
   /*

@@ -3,6 +3,8 @@
   <mat-progress-bar mode="indeterminate" *ngIf="loaderService.isLoading | async"></mat-progress-bar>
 </div>
 
+<div *ngIf="backendService.getObscurer()" class="global-obscurer"></div>
+
 <div [class]="themeService.theme" class="main-body">
 
   <mat-sidenav-container (backdropClick)="closeNavbar()" id="main-wrapper">
