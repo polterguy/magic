@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "ng": "ng",
-    "build": "npm run write:env -s && ng build --prod",
+    "build": "npm run write:env -s && ng build --configuration production",
     "start": "npm run write:env -s && ng serve --proxy-config proxy.conf.js",
     "lint": "ng lint && stylelint \"src/**/*.scss\" --syntax scss && htmlhint \"src\" --config .htmlhintrc",
     "test": "npm run write:env -s && ng test",
