@@ -63,7 +63,7 @@
 
     // Actual material data table for CRUD components.
     table {
-      padding-top: 1.5rem;
+      padding-top: 2.5rem;
       padding-left: 1rem;
       padding-right: 1rem;
       width: 100%;
@@ -190,6 +190,7 @@
       tr.row, tr.selected {
         transition-property: background-color;
         transition-duration: .3s;
+        height: 37px;
         td {
           border-top: solid 1px rgba(0,0,0,.2);
         }
