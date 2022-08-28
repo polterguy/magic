@@ -5,7 +5,9 @@
 
   <div class="d-flex justify-content-sm-end align-items-center mb-2 flex-sm-nowrap flex-wrap">
     <div *ngFor="let idx of table.verbs;let i = index">
-      <mat-checkbox [(ngModel)]="idx.generate" [class.mr-3]="i !== table.verbs.length - 1">{{getCrudNameForVerb(idx.name)}}</mat-checkbox>
+      <mat-checkbox
+        [(ngModel)]="idx.generate"
+        [class.mr-3]="i !== table.verbs.length - 1">{{getCrudNameForVerb(idx.name)}}</mat-checkbox>
     </div>
   </div>
 
@@ -73,16 +75,38 @@
           *matCellDef="let el" class="'{{el.expanded}}'"
           colspan="6">
           <div class="w-100 details-row"
-          [@detailExpand]="el.expanded ? 'expanded' : 'collapsed'">
+            [@detailExpand]="el.expanded ? 'expanded' : 'collapsed'">
             <div
               [class]="el.warning ? 'details-sheet crud-warning' : 'details-sheet'"
               *ngIf="el.expanded" class="w-100 py-3">
+
               <div class="d-flex justify-content-end align-items-center mb-2">
                 <mat-icon
                   class="warning"
                   *ngIf="el.warning"
                   [matTooltip]="el.warning">warning</mat-icon>
               </div>
+
+              <div
+                *ngIf="!el.primary"
+                class="mb-4 d-flex justify-content-sm-end">
+
+                <mat-form-field
+                  class="inline-input"
+                  appearance="outline"
+                  matTooltip="Lock this field">
+
+                  <mat-label>Lock to</mat-label>
+                  <mat-select
+                    [(ngModel)]="el.locked">
+                    <mat-option
+                      value="auth.ticket.get">Username</mat-option>
+                  </mat-select>
+
+                </mat-form-field>
+
+              </div>
+
               <div class="d-flex justify-content-sm-end align-items-center flex-sm-nowrap flex-wrap">
                 <div *ngFor="let idx of getEnabledVerbs();let i = index">
                   <mat-checkbox [class.mr-3]="i !== getEnabledVerbs().length - 1"
@@ -91,7 +115,10 @@
                 </div>
               </div>
 
-              <div *ngIf="foreignKeys[el.name] && foreignKeys[el.name].length > 0" class="foreign-key d-flex w-100 mt-3 align-items-center">
+              <div
+                *ngIf="foreignKeys[el.name] && foreignKeys[el.name].length > 0"
+                class="foreign-key d-flex w-100 mt-3 align-items-center">
+
                 <mat-form-field
                   class="w-100 inline-input"
                   appearance="outline"
@@ -108,6 +135,7 @@
                   </mat-select>
 
                 </mat-form-field>
+
                 <mat-checkbox
                   [(ngModel)]="el.foreign_key.long_data"
                   class="long-data ml-3"
