@@ -91,9 +91,9 @@ export class TableEx {
    */
   captchaPost?: number;
 
-   /**
-    * reCAPTCHA requirements for invoking GET endpoint.
-    */
+  /**
+   * reCAPTCHA requirements for invoking GET endpoint.
+   */
   captchaGet?: number;
  
    /**
@@ -129,14 +129,14 @@ export class TableEx {
    */
   cqrsAuthorisation?: string;
 
-   /**
-    * Only relevant if above field is 'roles', at which point this should be
-    * the comma separated list of which roles messages are published to.
-    */
+  /**
+   * Only relevant if above field is 'roles', at which point this should be
+   * the comma separated list of which roles messages are published to.
+   */
   cqrsAuthorisationValues?: string;
 
-   /**
-    * Foreign keys in table.
-    */
+  /**
+   * Foreign keys in table.
+   */
   foreign_keys: ForeignKey[];
- }
+}

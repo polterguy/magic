@@ -185,8 +185,7 @@ semaphore:crudifier
       .lambda
 
          /*
-          * Checking if '
-          * ' was provided as the value for authentication,
+          * Checking if '' was provided as the value for authentication,
           * at which point we simply add authentication, without any
           * roles - Ensuring only authenticated users can access endpoint,
           * but no requirements in regards to roles are specified.
@@ -301,6 +300,31 @@ semaphore:crudifier
                .
                   validators.mandatory
 
+         // Making sure we apply "locked" columns.
+         for-each:x:@.arguments/*/args/*/columns/*/*/locked/.
+            set-name:x:+/*/1
+               get-value:x:@.dp/#/*/locked
+            insert-before:x:@apply/*/data.connect/-
+               .
+                  ..:Making sure we retrieve lock value for column
+                  .
+            .x
+            set-value:x:@.x
+               strings.concat
+                  .:@
+                  get-value:x:@.dp/#/*/locked
+            convert:x:@.x
+               type:x
+            set-x:x:+/+/*/*
+               get-value:x:@convert
+            set-name:x:+/*/*
+               strings.concat
+                  get-value:x:@.dp/#/*/name
+                  .:.eq
+            add:x:@apply/*/data.connect/*/data.delete/*/where/*/and
+               .
+                  .
+
       // HTTP GET special case
       case:get
 
@@ -400,71 +424,74 @@ semaphore:crudifier
 
             // Applying arguments to endpoint.
             for-each:x:@.arguments/*/args/*/columns/*
-
-               /*
-                * Checking if argument needs a ".like" comparison type,
-                * which is true only for "string" type of arguments.
-                */
                if
-                  eq
-                     get-value:x:@.dp/#/*/type
-                     .:string
+                  not-exists:x:@.dp/#/*/locked
                   .lambda
 
-                     // String type of argument, appending ".like" to legal arguments.
-                     .buffer
-                        .name:x:@.dp/#/*/type
-                     unwrap:x:@.buffer/*
-                     set-name:x:@.buffer/*
-                        strings.concat
-                           get-value:x:@.arguments/*/table
-                           .:.
-                           get-value:x:@.dp/#/*/name
-                           .:.like
-                     add:x:@apply/*/.arguments
-                        get-nodes:x:@.buffer/*
+                     /*
+                      * Checking if argument needs a ".like" comparison type,
+                      * which is true only for "string" type of arguments.
+                      */
+                     if
+                        eq
+                           get-value:x:@.dp/#/*/type
+                           .:string
+                        .lambda
 
-               /*
-                * Checking if argument is boolean type of argument, at which
-                * point we ONLY add ".eq" type of argument to it.
-                */
-               if
-                  eq
-                     get-value:x:@.dp/#/*/type
-                     .:bool
-                  .lambda
+                           // String type of argument, appending ".like" to legal arguments.
+                           .buffer
+                              .name:x:@.dp/#/*/type
+                           unwrap:x:@.buffer/*
+                           set-name:x:@.buffer/*
+                              strings.concat
+                                 get-value:x:@.arguments/*/table
+                                 .:.
+                                 get-value:x:@.dp/#/*/name
+                                 .:.like
+                           add:x:@apply/*/.arguments
+                              get-nodes:x:@.buffer/*
 
-                     // Boolean type of argument, removing everything but ".eq" type of arguments.
-                     .buffer
-                        .name:x:@.dp/#/*/type
-                     unwrap:x:@.buffer/*
-                     set-name:x:@.buffer/*
-                        strings.concat
-                           get-value:x:@.arguments/*/table
-                           .:.
-                           get-value:x:@.dp/#/*/name
-                           .:.eq
-                     add:x:@apply/*/.arguments
-                        get-nodes:x:@.buffer/*
-               else
+                     /*
+                      * Checking if argument is boolean type of argument, at which
+                      * point we ONLY add ".eq" type of argument to it.
+                      */
+                     if
+                        eq
+                           get-value:x:@.dp/#/*/type
+                           .:bool
+                        .lambda
 
-                  /*
-                   * Not a boolean type of argument, hence looping through all of
-                   * our default comparison operators.
-                   */
-                  for-each:x:@.operators/*
-                     .buffer
-                        .name:x:@.dp/@.dp/#/*/type
-                     unwrap:x:@.buffer/*
-                     set-name:x:@.buffer/*
-                        strings.concat
-                           get-value:x:@.arguments/*/table
-                           .:.
-                           get-value:x:@.dp/@.dp/#/*/name
-                           .:.
-                           get-name:x:@.dp/#
-                     add:x:@apply/*/.arguments
-                        get-nodes:x:@.buffer/*
+                           // Boolean type of argument, removing everything but ".eq" type of arguments.
+                           .buffer
+                              .name:x:@.dp/#/*/type
+                           unwrap:x:@.buffer/*
+                           set-name:x:@.buffer/*
+                              strings.concat
+                                 get-value:x:@.arguments/*/table
+                                 .:.
+                                 get-value:x:@.dp/#/*/name
+                                 .:.eq
+                           add:x:@apply/*/.arguments
+                              get-nodes:x:@.buffer/*
+                     else
+
+                        /*
+                         * Not a boolean type of argument, hence looping through all of
+                         * our default comparison operators.
+                         */
+                        for-each:x:@.operators/*
+                           .buffer
+                              .name:x:@.dp/@.dp/#/*/type
+                           unwrap:x:@.buffer/*
+                           set-name:x:@.buffer/*
+                              strings.concat
+                                 get-value:x:@.arguments/*/table
+                                 .:.
+                                 get-value:x:@.dp/@.dp/#/*/name
+                                 .:.
+                                 get-name:x:@.dp/#
+                           add:x:@apply/*/.arguments
+                              get-nodes:x:@.buffer/*
 
          /*
           * Making sure we explicitly declare which [columns] that our
@@ -573,6 +600,33 @@ semaphore:crudifier
                               eq:string
                               like:string
 
+         // Making sure we apply "locked" columns.
+         if:x:@.arguments/*/args/*/columns/*/*/locked
+            remove-nodes:x:@apply/*/.arguments/*/operator
+         for-each:x:@.arguments/*/args/*/columns/*/*/locked/.
+            set-name:x:+/*/1
+               get-value:x:@.dp/#/*/locked
+            insert-before:x:@apply/*/data.connect/-
+               .
+                  ..:Making sure we retrieve lock value for column
+                  .
+            .x
+            set-value:x:@.x
+               strings.concat
+                  .:@
+                  get-value:x:@.dp/#/*/locked
+            convert:x:@.x
+               type:x
+            set-x:x:+/+/*/*
+               get-value:x:@convert
+            set-name:x:+/*/*
+               strings.concat
+                  get-value:x:@.dp/#/*/name
+                  .:.eq
+            add:x:@apply/*/data.connect/*/data.read/*/where/*/and
+               .
+                  .
+
       // HTTP POST special cases
       case:post
 
@@ -594,13 +648,16 @@ semaphore:crudifier
           * record.
           */
          for-each:x:@.arguments/*/args/*/columns/*
-            set-name:x:+/+/*/*
-               get-value:x:@.dp/#/*/name
-            set-value:x:+/*/*
-               get-value:x:@.dp/#/*/type
-            add:x:@apply/*/.arguments
-               .
-                  .
+            if
+               not-exists:x:@.dp/#/*/locked
+               .lambda
+                  set-name:x:+/+/*/*
+                     get-value:x:@.dp/#/*/name
+                  set-value:x:+/*/*
+                     get-value:x:@.dp/#/*/type
+                  add:x:@apply/*/.arguments
+                     .
+                        .
 
          /*
           * Checking if caller specified he wanted to have ID of item returned,
@@ -614,6 +671,29 @@ semaphore:crudifier
                add:x:@apply/**/return
                   .
                      result:success
+
+         // Making sure we apply "locked" columns.
+         for-each:x:@.arguments/*/args/*/columns/*/*/locked/.
+            set-name:x:+/*/1
+               get-value:x:@.dp/#/*/locked
+            insert-before:x:@apply/*/data.connect/-
+               .
+                  ..:Making sure we retrieve lock value for column
+                  .
+            .x
+            set-value:x:@.x
+               strings.concat
+                  .:@
+                  get-value:x:@.dp/#/*/locked
+            convert:x:@.x
+               type:x
+            set-x:x:+/+/*/*
+               get-value:x:@convert
+            set-name:x:+/*/*
+               get-value:x:@.dp/#/*/name
+            add:x:@apply/*/data.connect/*/data.create/*/values
+               .
+                  .
 
       // HTTP PUT special cases
       case:put
@@ -683,13 +763,16 @@ semaphore:crudifier
           * and declared first in our [.arguments] node in our endpoint.
           */
          for-each:x:@.arguments/*/args/*/columns/*
-            set-name:x:+/+/*/*
-               get-value:x:@.dp/#/*/name
-            set-value:x:+/*/*
-               get-value:x:@.dp/#/*/type
-            add:x:@apply/*/.arguments
-               .
-                  .
+            if
+               not-exists:x:@.dp/#/*/locked
+               .lambda
+                  set-name:x:+/+/*/*
+                     get-value:x:@.dp/#/*/name
+                  set-value:x:+/*/*
+                     get-value:x:@.dp/#/*/type
+                  add:x:@apply/*/.arguments
+                     .
+                        .
 
          // First adding the [add] into [where] parts, which are the primary keys.
          .x:@.arguments/*/[0,
@@ -727,6 +810,31 @@ semaphore:crudifier
             .
                add:x:./*/data.update/*/values
                   get-nodes
+
+         // Making sure we apply "locked" columns.
+         for-each:x:@.arguments/*/args/*/columns/*/*/locked/.
+            set-name:x:+/*/1
+               get-value:x:@.dp/#/*/locked
+            insert-before:x:@apply/*/data.connect/-
+               .
+                  ..:Making sure we retrieve lock value for column
+                  .
+            .x
+            set-value:x:@.x
+               strings.concat
+                  .:@
+                  get-value:x:@.dp/#/*/locked
+            convert:x:@.x
+               type:x
+            set-x:x:+/+/*/*
+               get-value:x:@convert
+            set-name:x:+/*/*
+               strings.concat
+                  get-value:x:@.dp/#/*/name
+                  .:.eq
+            add:x:@apply/*/data.connect/*/data.update/*/where/*/and
+               .
+                  .
 
    // HTTP PUT, POST and GET commonalities
    switch:x:@.arguments/*/verb

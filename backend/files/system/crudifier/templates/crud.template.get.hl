@@ -27,7 +27,7 @@ if
    .lambda
 
       // User provided a boolean comparison [operator] argument.
-      set-name:x:../*/data.connect/*/data.read/*/where/*
+      set-name:x:../*/data.connect/*/data.read/*/where/0
          get-value:x:@.arguments/*/operator
 
 // Opening up our database connection.

@@ -141,6 +141,9 @@ export class TransformModelService {
               name: idxColumn.name,
               type: idxColumn.hl,
             };
+            if (idxColumn.locked) {
+              cur['locked'] = idxColumn.locked;
+            }
             if (idxColumn.foreign_key && idxColumn.foreign_key.foreign_name !== null) {
               cur['foreign_key'] = {
                 table: idxColumn.foreign_key.foreign_table,
@@ -149,7 +152,7 @@ export class TransformModelService {
                 long: idxColumn.foreign_key.long_data,
               };
             }
-          result.args.columns.push(cur);
+            result.args.columns.push(cur);
           }
           break;
 
@@ -159,6 +162,9 @@ export class TransformModelService {
               name: idxColumn.name,
               type: idxColumn.hl,
             };
+            if (idxColumn.locked) {
+              cur['locked'] = idxColumn.locked;
+            }
             if (idxColumn.foreign_key && idxColumn.foreign_key.foreign_name !== null) {
               cur['foreign_key'] = {
                 table: idxColumn.foreign_key.foreign_table,
@@ -177,6 +183,9 @@ export class TransformModelService {
               name: idxColumn.name,
               type: idxColumn.hl,
             };
+            if (idxColumn.locked) {
+              cur['locked'] = idxColumn.locked;
+            }
             if (idxColumn.foreign_key && idxColumn.foreign_key.foreign_name !== null) {
               cur['foreign_key'] = {
                 table: idxColumn.foreign_key.foreign_table,
@@ -198,6 +207,13 @@ export class TransformModelService {
             if (idxColumn.primary) {
               result.args.primary.push({
                 [idxColumn.name]: idxColumn.hl
+              });
+            }
+          } else {
+            if (idxColumn.locked) {
+              result.args.columns.push({
+                name: idxColumn.name,
+                locked: idxColumn.locked,
               });
             }
           }

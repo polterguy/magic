@@ -95,4 +95,9 @@ export class ColumnEx {
    * Foreign key reference to use when crudifying table.
    */
    foreign_key?: ForeignKey;
+
+  /**
+   * Name of lock type for field.
+   */
+  locked?: string;
 }
