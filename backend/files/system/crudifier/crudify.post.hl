@@ -306,7 +306,7 @@ semaphore:crudifier
                get-value:x:@.dp/#/*/locked
             insert-before:x:@apply/*/data.connect/-
                .
-                  ..:Making sure we retrieve lock value for column
+                  ..:Making sure we retrieve lock value for column.
                   .
             .x
             set-value:x:@.x
@@ -315,14 +315,15 @@ semaphore:crudifier
                   get-value:x:@.dp/#/*/locked
             convert:x:@.x
                type:x
-            set-x:x:+/+/*/*
+            set-x:x:+/+/*/1
                get-value:x:@convert
-            set-name:x:+/*/*
+            set-name:x:+/*/1
                strings.concat
                   get-value:x:@.dp/#/*/name
                   .:.eq
             add:x:@apply/*/data.connect/*/data.delete/*/where/*/and
                .
+                  ..:Table is locked on the following field.
                   .
 
       // HTTP GET special case
@@ -618,7 +619,7 @@ semaphore:crudifier
                get-value:x:@.dp/#/*/locked
             insert-before:x:@apply/*/data.connect/-
                .
-                  ..:Making sure we retrieve lock value for column
+                  ..:Making sure we retrieve lock value for column.
                   .
             .x
             set-value:x:@.x
@@ -627,14 +628,15 @@ semaphore:crudifier
                   get-value:x:@.dp/#/*/locked
             convert:x:@.x
                type:x
-            set-x:x:+/+/*/*
+            set-x:x:+/+/*/1
                get-value:x:@convert
-            set-name:x:+/*/*
+            set-name:x:+/*/1
                strings.concat
                   get-value:x:@.dp/#/*/name
                   .:.eq
             add:x:@apply/*/data.connect/*/data.read/*/where/*/and
                .
+                  ..:Table is locked on the following field.
                   .
 
       // HTTP POST special cases
@@ -688,7 +690,7 @@ semaphore:crudifier
                get-value:x:@.dp/#/*/locked
             insert-before:x:@apply/*/data.connect/-
                .
-                  ..:Making sure we retrieve lock value for column
+                  ..:Making sure we retrieve lock value for column.
                   .
             .x
             set-value:x:@.x
@@ -697,12 +699,13 @@ semaphore:crudifier
                   get-value:x:@.dp/#/*/locked
             convert:x:@.x
                type:x
-            set-x:x:+/+/*/*
+            set-x:x:+/+/*/1
                get-value:x:@convert
-            set-name:x:+/*/*
+            set-name:x:+/*/1
                get-value:x:@.dp/#/*/name
             add:x:@apply/*/data.connect/*/data.create/*/values
                .
+                  ..:Table is locked on the following field.
                   .
 
       // HTTP PUT special cases
@@ -791,13 +794,14 @@ semaphore:crudifier
                get-value:x:@.x
                get-count:x:@.arguments/*/args/*/primary/*
                .:]
-         set-x:x:+/*/*/*
+         set-x:x:+/*/*/1
             convert:x:@.x
                type:x
          insert-before:x:@apply/**/table/././1
             .
 
                // Parametrising our update invocation.
+               ..:Parametrising our invocation.
                add:x:./*/data.update/*/where/*/and
                   get-nodes
 
@@ -827,7 +831,7 @@ semaphore:crudifier
                get-value:x:@.dp/#/*/locked
             insert-before:x:@apply/*/data.connect/-
                .
-                  ..:Making sure we retrieve lock value for column
+                  ..:Making sure we retrieve lock value for column.
                   .
             .x
             set-value:x:@.x
@@ -836,14 +840,15 @@ semaphore:crudifier
                   get-value:x:@.dp/#/*/locked
             convert:x:@.x
                type:x
-            set-x:x:+/+/*/*
+            set-x:x:+/+/*/1
                get-value:x:@convert
-            set-name:x:+/*/*
+            set-name:x:+/*/1
                strings.concat
                   get-value:x:@.dp/#/*/name
                   .:.eq
             add:x:@apply/*/data.connect/*/data.update/*/where/*/and
                .
+                  ..:Table is locked on the following field.
                   .
 
    // HTTP PUT, POST and GET commonalities
