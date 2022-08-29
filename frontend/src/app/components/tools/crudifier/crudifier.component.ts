@@ -74,11 +74,17 @@ export class CrudifierComponent implements OnInit, OnDestroy {
         for (const idx in msg.content.data) {
           componentRef.instance[idx] = msg.content.data[idx];
         }
+
       } else if (msg.name === Messages.CLEAR_COMPONENTS) {
 
         // Somebody wants us to remove our dynamically injected component.
         this.hasComponent = false;
         this.injectComp.viewContainerRef.clear();
+
+      } else if (msg.name === 'magic.crud-generator.activate-frontend') {
+        if (this.backendService.active?.access.crud.generate_frontend) {
+          this.activeTab = 2;
+        }
       }
     });
 

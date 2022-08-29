@@ -468,18 +468,18 @@
       </mat-expansion-panel-header>
     </mat-expansion-panel>
 
-    <!-- Getting started -->
+    <!-- Quick start -->
     <mat-expansion-panel class="mat-elevation-z0" hideToggle *ngIf="backendService.active?.token">
       <mat-expansion-panel-header
         #panelB (click)="panelB._toggle();showHelp()"
         [matTooltipDisabled]="navbarService.expanded"
-        matTooltip="Getting started"
+        matTooltip="Quick start"
         matTooltipPosition="after"
         routerLinkActive="active-link"
         [routerLinkActiveOptions]="{exact:true}">
         <mat-panel-title>
           <mat-icon>help</mat-icon>
-          <span class="title">Getting started</span>
+          <span class="title">Quick start</span>
         </mat-panel-title>
       </mat-expansion-panel-header>
     </mat-expansion-panel>
