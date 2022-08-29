@@ -27,6 +27,7 @@ import { CrudifierTableComponent } from './crud-table/crud-table.component';
 import { LoaderInterceptor } from 'src/app/interceptors/loader.interceptor';
 import { DefaultDatabaseType } from '../../../../models/default-database-type.model';
 import { CrudifierSetDefaultsComponent } from './set-defaults/crudifier-set-defaults.component';
+import { Router } from '@angular/router';
 
 /**
  * Crudifier component for crudifying database
@@ -87,6 +88,7 @@ export class CrudBackendComponent implements OnInit {
    * @param loaderInterceptor Needed to hide Ajax loader GIF in case an error occurs
    * @param transformService Needed to transform from UI model to required backend model
    * @param cacheService Needed to be able to purge cache
+   * @param router Needed to figure out activated route
    * @param backendService Needed to be able to determine user's access rights in backend
    */
   constructor(
@@ -101,6 +103,7 @@ export class CrudBackendComponent implements OnInit {
     private loaderInterceptor: LoaderInterceptor,
     protected transformService: TransformModelService,
     private cacheService: CacheService,
+    private router: Router,
     public backendService: BackendService) { }
 
   /**
@@ -304,6 +307,11 @@ export class CrudBackendComponent implements OnInit {
               name: 'magic.folders.update',
               content: '/modules/'
             });
+            if (this.router.url === '/crud-generator') {
+              this.messageService.sendMessage({
+                name: 'magic.crud-generator.activate-frontend'
+              });
+            }
           },
           error: (error: any) => this.feedbackService.showError(error)});
 
