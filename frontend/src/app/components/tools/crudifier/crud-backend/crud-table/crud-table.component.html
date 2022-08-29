@@ -94,15 +94,15 @@
                 <mat-form-field
                   class="inline-input"
                   appearance="outline"
-                  matTooltip="Lock this field">
+                  matTooltip="Lock this field with row level security">
 
-                  <mat-label>Lock to</mat-label>
+                  <mat-label>Lock field</mat-label>
                   <mat-select
                     [(ngModel)]="el.locked">
                     <mat-option
                       [value]="null">No lock</mat-option>
                     <mat-option
-                      value="auth.ticket.get">Username</mat-option>
+                      value="auth.ticket.get">Lock to username</mat-option>
                   </mat-select>
 
                 </mat-form-field>
