@@ -498,14 +498,17 @@ semaphore:crudifier
           * endpoint should return, according to caller's specifications.
           */
          for-each:x:@.arguments/*/args/*/columns/*/*/name
-            set-name:x:+/*/*
-               strings.concat
-                  get-value:x:@.arguments/*/table
-                  .:.
-                  get-value:x:@.dp/#
-            add:x:@apply/**/columns
-               .
-                  .
+            if
+               not-exists:x:@.dp/#/./*/locked
+               .lambda
+                  set-name:x:+/*/*
+                     strings.concat
+                        get-value:x:@.arguments/*/table
+                        .:.
+                        get-value:x:@.dp/#
+                  add:x:@apply/**/columns
+                     .
+                        .
 
          /*
           * Checking if caller wants to apply server side joins, at which point we left join
@@ -600,9 +603,16 @@ semaphore:crudifier
                               eq:string
                               like:string
 
-         // Making sure we apply "locked" columns.
+         // Removing [operator] argument if there are "locked" columns.
          if:x:@.arguments/*/args/*/columns/*/*/locked
             remove-nodes:x:@apply/*/.arguments/*/operator
+            remove-nodes:x:@apply/*/validators.enum/-
+            remove-nodes:x:@apply/*/validators.enum
+            remove-nodes:x:@apply/*/if/-
+            remove-nodes:x:@apply/*/if
+            remove-nodes:x:@apply/*/data.connect/*/remove-nodes/[0,1]
+
+         // Making sure we apply "locked" columns.
          for-each:x:@.arguments/*/args/*/columns/*/*/locked/.
             set-name:x:+/*/1
                get-value:x:@.dp/#/*/locked

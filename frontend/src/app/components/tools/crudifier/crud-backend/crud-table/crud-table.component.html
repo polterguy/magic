@@ -100,6 +100,8 @@
                   <mat-select
                     [(ngModel)]="el.locked">
                     <mat-option
+                      [value]="null">No lock</mat-option>
+                    <mat-option
                       value="auth.ticket.get">Username</mat-option>
                   </mat-select>
 
