@@ -420,6 +420,15 @@
                 Drop database
               </button>
 
+              <button
+                *ngIf="input.databaseType === 'sqlite'"
+                mat-menu-item
+                (click)="downloadBackup()"
+                class="action-button">
+                <mat-icon class="material-icons-outlined">cloud_download</mat-icon>
+                Download backup
+              </button>
+
               <button mat-menu-item>
                 <mat-slide-toggle
                   [(ngModel)]="autoMigrate"
