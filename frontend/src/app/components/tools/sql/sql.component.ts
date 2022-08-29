@@ -15,6 +15,7 @@ import { saveAs } from 'file-saver';
 // Application specific imports.
 import { SqlService } from '../../../services/sql.service';
 import { Databases } from 'src/app/models/databases.model';
+import { FileService } from 'src/app/services/file.service';
 import { CacheService } from 'src/app/services/cache.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { NewTableComponent } from './new-table/new-table.component';
@@ -134,6 +135,7 @@ export class SqlComponent implements OnInit {
     private clipboard: Clipboard,
     private dialog: MatDialog,
     private ngZone: NgZone,
+    private fileService: FileService,
     private cdr: ChangeDetectorRef,
     private bottomSheet: MatBottomSheet) { }
 
@@ -979,6 +981,13 @@ export class SqlComponent implements OnInit {
    */
   closeResult() {
     this.result = null;
+  }
+
+  /**
+   * Downloads a backup of the currently selected SQLite database
+   */
+  downloadBackup() {
+    this.fileService.downloadFile('/data/' + this.input.database + '.db');
   }
 
   /*
