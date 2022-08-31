@@ -27,7 +27,7 @@ import { CrudifierTableComponent } from './crud-table/crud-table.component';
 import { LoaderInterceptor } from 'src/app/interceptors/loader.interceptor';
 import { DefaultDatabaseType } from '../../../../models/default-database-type.model';
 import { CrudifierSetDefaultsComponent } from './set-defaults/crudifier-set-defaults.component';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 /**
  * Crudifier component for crudifying database
@@ -74,6 +74,8 @@ export class CrudBackendComponent implements OnInit {
    */
   table: TableEx = null;
 
+  public preDefinedDbName: string = '';
+
   /**
    * Creates an instance of your component.
    *
@@ -104,7 +106,12 @@ export class CrudBackendComponent implements OnInit {
     protected transformService: TransformModelService,
     private cacheService: CacheService,
     private router: Router,
-    public backendService: BackendService) { }
+    public backendService: BackendService,
+    private activatedRoute: ActivatedRoute) {
+      this.activatedRoute.queryParams.subscribe((params: any) => {
+        this.preDefinedDbName = params['db'];
+      })
+    }
 
   /**
    * Implementation of OnInit.
@@ -175,7 +182,12 @@ export class CrudBackendComponent implements OnInit {
     this.sqlService.getDatabaseMetaInfo(
       this.databaseType,
       this.connectionString).subscribe({
-        next: (databases: Databases) => this.databases = databases,
+        next: (databases: Databases) => {
+          if (this.preDefinedDbName !== '') {
+            this.database = <any>databases.databases.find((item: any) => item.name === this.preDefinedDbName)
+          }
+          this.databases = databases;
+        },
         error: (error: any) => this.feedbackService.showError(error)});
     this.messageService.sendMessage({
       name: Messages.CLEAR_COMPONENTS,

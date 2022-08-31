@@ -18,6 +18,7 @@ import { Message } from 'src/app/models/message.model';
 import { Messages } from 'src/app/models/messages.model';
 import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
+import { ActivatedRoute } from '@angular/router';
 
 /**
  * Crudifier component for crudifying apps.
@@ -50,13 +51,22 @@ export class CrudifierComponent implements OnInit, OnDestroy {
 
   /**
    * Creates a new instance of your component.
-   * 
+   *
    * @param backendService Needed to retrieve user's access rights in backend
    * @param messageService Needed to subscribe to messages sent by other components
    */
   constructor(
     public backendService: BackendService,
-    private messageService: MessageService) { }
+    private messageService: MessageService,
+    private activatedRouter: ActivatedRoute) {
+      this.activatedRouter.queryParams.subscribe((param: any) => {
+        if (param.type && param.type === 'frontend') {
+          setTimeout(() => {
+            this.activeTab = 2;
+          }, 300);
+        }
+      })
+     }
 
   /**
    * Implementation of OnInit.
