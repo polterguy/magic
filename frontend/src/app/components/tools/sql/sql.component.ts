@@ -136,6 +136,8 @@ export class SqlComponent implements OnInit {
    */
   hubConnection: HubConnection = null;
 
+  public hiddenPanel: boolean = false;
+
   /**
    * Creates an instance of your component.
    *
@@ -163,7 +165,9 @@ export class SqlComponent implements OnInit {
     private bazarService: BazarService,
     private messageService: MessageService,
     private loaderService: LoaderService,
-    private configService: ConfigService) { }
+    private configService: ConfigService) {
+      sessionStorage.getItem('dbPanel') === 'show' || !sessionStorage.getItem('dbPanel') ? this.hiddenPanel = false : this.hiddenPanel = true;
+    }
 
   /**
    * Implementation of OnInit.
@@ -214,13 +218,16 @@ export class SqlComponent implements OnInit {
                 this.execute();
               });
             };
+
           });
         });
       },
       error: (error) => this.feedbackService.showError(error)
     });
 
-    this.getItems();
+    if (this.hiddenPanel === false) {
+      this.getItems();
+    }
   }
 
   /**
@@ -278,7 +285,7 @@ export class SqlComponent implements OnInit {
    */
   databaseChanged() {
     const result = {};
-    this.activeTables = this.databaseDeclaration.databases.filter((x: any) => x.name === this.input.database)[0].tables || [];
+    this.activeTables = this.databaseDeclaration.databases?.filter((x: any) => x.name === this.input.database)[0].tables || [];
     for (const idxTable of this.activeTables) {
       result[idxTable.name] = (idxTable.columns?.map((x: any) => x.name) || []);
     }
@@ -1179,6 +1186,7 @@ export class SqlComponent implements OnInit {
         next: (apps: any[]) => {
           this.dbPluginList = apps.filter((item: any) => item.name.includes('SQLite'));
           this.dbPluginList.map((item: any) => item.dbName = (item.name.substring(7, item.name.length - 3)).toLowerCase());
+          this.dbPluginList.unshift(this.dbPluginList.splice(this.dbPluginList.findIndex((item: any) => item.folder_name === 'sqlite-chinook'), 1)[0])
           this.loadManifests();
         },
         error: (error: any) => this.feedbackService.showError(error)
@@ -1297,7 +1305,6 @@ export class SqlComponent implements OnInit {
                 this.loaderService.hide();
                 this.dialog.closeAll();
               }
-
               setTimeout(() => {
                 this.getDatabases('sqlite', this.input.connectionString, (databases: any) => {
                   this.databaseDeclaration = this.databases
@@ -1309,6 +1316,10 @@ export class SqlComponent implements OnInit {
               setTimeout(() => {
                 this.loadManifests();
                 this.input.database = app.dbName;
+                this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: any) => {
+                  this.databases = databases.databases.map((x: any) => x.name);
+                  this.reloadDatabases(() => this.input.database = app.dbName);
+                });
               }, 100);
 
             } else {
@@ -1332,7 +1343,7 @@ export class SqlComponent implements OnInit {
     this.bazarService.localManifests().subscribe({
       next: (manifests: any[]) => {
         this.dbPluginList.map((el: any) => {
-          el.isInstalled = (manifests.findIndex((item: any) => el.name === item.name) > -1);
+          el.isInstalled = (manifests?.findIndex((item: any) => el.name === item.name) > -1);
         })
       },
       error: (error: any) => this.feedbackService.showError(error)});
@@ -1350,8 +1361,14 @@ export class SqlComponent implements OnInit {
       width: '500px'
     }).afterClosed().subscribe((result: string) => {
       if (result) {
+        this.refresh();
         this.loadManifests();
       }
     });
+  }
+
+  public togglePanel() {
+    this.hiddenPanel = !this.hiddenPanel;
+    this.hiddenPanel ? sessionStorage.setItem('dbPanel', 'hide') : sessionStorage.setItem('dbPanel', 'show');
   }
 }

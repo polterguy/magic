@@ -28,9 +28,6 @@
     z-index: 1;
   }
 }
-::ng-deep {
-  mat-checkbox.mat-caption .mat-checkbox-inner-container {height: 13px;width: 13px;}
-}
 
 .row.manipuated-layout {
   margin-left: calc($side_space * -1.5 );
