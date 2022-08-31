@@ -12,7 +12,22 @@
   }
 }
 
-iframe {border-radius: 5px;}
+// iframe {border-radius: 5px;min-height: 300px;}
+.video-wrapper {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 */
+  height: 0;
+  min-height: 100%;
+  iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
+    z-index: 1;
+  }
+}
 ::ng-deep {
   mat-checkbox.mat-caption .mat-checkbox-inner-container {height: 13px;width: 13px;}
 }
