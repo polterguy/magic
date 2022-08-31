@@ -5,25 +5,30 @@
         <div class="row manipuated-layout">
           <div class="col-12">
             <div class="row">
-              <div class="col-lg-4 col-sm-12 col-12 pr-lg-1 mb-sm-0 mb-3">
-                <div class="d-flex align-items-center">
-                <mat-card-title class="my-0">Install a database</mat-card-title>
-                <div class="sm-icons">
-                  <button mat-icon-button [matMenuTriggerFor]="menu" class="mat-caption" matTooltip="Need help?" type="button">
-                    <mat-icon>help_outline</mat-icon>
-                  </button>
-                  <mat-menu #menu="matMenu">
-                    <div class="p-3">
-                      <p>
-                        The first step towards having a proper backend plus a ready to use frontend, is to have a database on your server. Select and install any of the following databases to see how easy is the whole process.
-                      </p>
-                      <div class="d-flex justify-content-end">
-                        <a target="_blank" href="https://docs.aista.com/documentation/magic/components/sql/" mat-stroked-button>Learn more</a>
-                      </div>
+              <div class="col-lg-4 col-sm-12 col-12 pr-lg-1 mb-sm-0 mb-3" *ngIf="!hiddenPanel">
+                <div class="d-flex align-items-center justify-content-between">
+                  <div class="d-flex align-items-center">
+                    <mat-card-title class="my-0">Install a database</mat-card-title>
+                    <div class="sm-icons">
+                      <button mat-icon-button [matMenuTriggerFor]="menu" class="mat-caption" matTooltip="Need help?" type="button">
+                        <mat-icon>help_outline</mat-icon>
+                      </button>
+                      <mat-menu #menu="matMenu">
+                        <div class="p-3">
+                          <p>
+                            The first step towards having a proper backend plus a ready to use frontend, is to have a database on your server. Select and install any of the following databases to see how easy is the whole process.
+                          </p>
+                          <div class="d-flex justify-content-end">
+                            <a target="_blank" href="https://docs.aista.com/documentation/magic/components/sql/" mat-stroked-button>Learn more</a>
+                          </div>
+                        </div>
+                      </mat-menu>
                     </div>
-                  </mat-menu>
+                  </div>
+                  <button mat-icon-button (click)="togglePanel()">
+                    <mat-icon>close</mat-icon>
+                  </button>
                 </div>
-              </div>
                 <mat-card-subtitle>Install a database and start generating endpoints.</mat-card-subtitle>
                 <mat-card [class.mb-3]="!last" *ngFor="let item of dbPluginList | slice:0:3;let last=last" class="col-lg-12 col-sm-4 col-12 d-lg-block d-sm-inline-block d-block">
                   <mat-card-content>
@@ -57,7 +62,7 @@
                   </mat-card-content>
                 </mat-card>
               </div>
-              <div class="col-lg-8 col-sm-12 col-12 pl-lg-1">
+              <div class="{{hiddenPanel ? 'col-12' : 'col-lg-8 col-sm-12 col-12 pl-lg-1'}}">
                 <!-- <div class="row h-100 manipuated-layout">
                   <div class="col-12"> -->
                     <mat-card *ngIf="input" class="h-100">
@@ -407,7 +412,6 @@
                 <!-- </div> -->
               </div>
             </div>
-
           </div>
         </div>
       </div>

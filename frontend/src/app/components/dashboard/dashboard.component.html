@@ -13,7 +13,8 @@
                 <div class="col-lg-7 col-md-8 col-sm-6 col-12">
                   <div class="d-flex justify-content-between">
                     <h2 class="mb-0">See Magic in 5 steps!</h2>
-                    <mat-checkbox color="primary" class="text-muted mat-caption" (change)="hidePanel()">Hide this panel</mat-checkbox>
+
+                    <button mat-button class="mat-caption text-muted" (change)="hidePanel()">Hide this panel</button>
                   </div>
                   <ol class="pl-3">
                     <li class="pt-3">Connect your databse from <a class="text-primary btn-link pointer" routerLink="/config">here</a> or install a new database from <a class="text-primary btn-link pointer" routerLink="/sql">here</a></li>
