@@ -12,7 +12,9 @@
   }
 }
 
-// iframe {border-radius: 5px;min-height: 300px;}
+.info-panel {
+  .text-primary {color: #0080ff;}
+}
 .video-wrapper {
   position: relative;
   padding-bottom: 56.25%; /* 16:9 */
