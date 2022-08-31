@@ -50,6 +50,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
    */
   chartData: any = [];
 
+  public showInfoPanel: string = sessionStorage.getItem('infoPanel') || 'show';
+
   /**
    *
    * @param backendService Needed to retrieve user's loging status
@@ -171,6 +173,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }).afterClosed().subscribe(() => {
       localStorage.setItem('intro','passes')
     })
+  }
+
+  hidePanel() {
+    this.showInfoPanel === 'show' ? this.showInfoPanel = 'hide' : this.showInfoPanel = 'show';
+    this.cdr.detectChanges();
+
+    sessionStorage.setItem('infoPanel', this.showInfoPanel);
   }
 
   /**

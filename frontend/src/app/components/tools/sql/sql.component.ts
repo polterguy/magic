@@ -8,6 +8,7 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { MatDialog } from '@angular/material/dialog';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { ChangeDetectorRef, Component, NgZone, OnInit } from '@angular/core';
+import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
 
 // Utility imports.
 import { saveAs } from 'file-saver';
@@ -33,6 +34,13 @@ import { Model } from '../../utilities/codemirror/codemirror-sql/codemirror-sql.
 
 // CodeMirror options.
 import sql from '../../utilities/codemirror/options/sql.json'
+import { ViewAppDialogComponent } from '../plugins/view-app-dialog/view-app-dialog.component';
+import { ConfigService } from 'src/app/services/config.service';
+import { BazarService } from '../../management/services/bazar.service';
+import { MessageService } from 'src/app/services/message.service';
+import { LoaderService } from 'src/app/services/loader.service';
+import { environment } from 'src/environments/environment';
+import { ConfirmUninstallDialogComponent } from '../plugins/confirm-uninstall-dialog/confirm-uninstall-dialog.component';
 
 /**
  * SQL component allowing user to execute arbitrary SQL statements towards his or her database.
@@ -118,14 +126,28 @@ export class SqlComponent implements OnInit {
   sqlFile: any;
 
   /**
+   * List of databases as plugins to show Temporarily.
+   */
+  public dbPluginList: any = [];
+
+  /**
+   * SignalR hub connection, used to connect to Bazar server and get notifications
+   * when app is ready to be installed.
+   */
+  hubConnection: HubConnection = null;
+
+  /**
    * Creates an instance of your component.
-   * 
+   *
    * @param feedbackService Needed to show user feedback
    * @param cacheService Needed to be able to delete cache items in your backend
    * @param backendService Needed to retrieve user's access rights in backend
    * @param sqlService Needed to be able to execute SQL towards backend
    * @param clipboard Required to allow user to copy content to clipboard
    * @param dialog Needed to be able to show Load SQL snippet dialog
+   * @param bazarService Needed to retrieve apps from external Bazar server
+   * @param messageService Needed to subscribe to messages published when app should be immediately installed
+   * @param loaderService Needed to show loading when socket is connected
    */
   constructor(
     private feedbackService: FeedbackService,
@@ -137,7 +159,11 @@ export class SqlComponent implements OnInit {
     private ngZone: NgZone,
     private fileService: FileService,
     private cdr: ChangeDetectorRef,
-    private bottomSheet: MatBottomSheet) { }
+    private bottomSheet: MatBottomSheet,
+    private bazarService: BazarService,
+    private messageService: MessageService,
+    private loaderService: LoaderService,
+    private configService: ConfigService) { }
 
   /**
    * Implementation of OnInit.
@@ -171,7 +197,7 @@ export class SqlComponent implements OnInit {
               cm.setOption('fullScreen', !cm.getOption('fullScreen'));
               let sidenav = document.querySelector('.mat-sidenav');
               sidenav.classList.contains('d-none') ? sidenav.classList.remove('d-none') :
-              sidenav.classList.add('d-none');
+                sidenav.classList.add('d-none');
             };
             this.input.options.extraKeys['Alt-L'] = (cm: any) => {
               this.ngZone.run(() => {
@@ -193,11 +219,13 @@ export class SqlComponent implements OnInit {
       },
       error: (error) => this.feedbackService.showError(error)
     });
+
+    this.getItems();
   }
 
   /**
    * Returns humanly readable type of database to caller.
-   * 
+   *
    * @param type Type delaration
    */
   getDatabaseTypeName(type: string) {
@@ -262,7 +290,7 @@ export class SqlComponent implements OnInit {
 
   /**
    * Invoked when CSS class for database name is to be returned.
-   * 
+   *
    * @param db Database name
    */
   getDatabaseCssClass(db: string) {
@@ -311,7 +339,7 @@ export class SqlComponent implements OnInit {
    * Invoked when the "Batch" property is changed.
    */
   batchChanged() {
-    if(this.isBatch && this.databases.filter(x => x === 'model').length > 0 && this.input.database !== 'model') {
+    if (this.isBatch && this.databases.filter(x => x === 'model').length > 0 && this.input.database !== 'model') {
       this.input.database = 'model';
       this.feedbackService.showInfo('Your active database was changed to \'model\'');
     }
@@ -333,7 +361,7 @@ export class SqlComponent implements OnInit {
             },
             error: (error: any) => this.feedbackService.showError(error)
           })
-    });
+      });
   }
 
   /**
@@ -395,31 +423,31 @@ export class SqlComponent implements OnInit {
       selectedText == '' ? this.input.sql : selectedText,
       this.safeMode,
       this.isBatch).subscribe((result: any[][]) => {
-      if (result) {
-        let count = 0;
-        for (var idx of result) {
-          count += (idx || []).length;
-        }
-        if (this.safeMode && count === 200) {
-          this.feedbackService.showInfo('First 200 records returned. Turn off safe mode to return all records.');
+        if (result) {
+          let count = 0;
+          for (var idx of result) {
+            count += (idx || []).length;
+          }
+          if (this.safeMode && count === 200) {
+            this.feedbackService.showInfo('First 200 records returned. Turn off safe mode to return all records.');
+          } else {
+            this.feedbackService.showInfoShort(`${count} records returned`);
+          }
         } else {
-          this.feedbackService.showInfoShort(`${count} records returned`);
+          this.feedbackService.showInfoShort('SQL successfully executed, but returned no result');
         }
-      } else {
-        this.feedbackService.showInfoShort('SQL successfully executed, but returned no result');
-      }
-      this.result = this.buildResult(result || []);
-      this.applyMigration(selectedText == '' ? this.input.sql : selectedText, true);
-    }, (error: any) => {
-      if (error.error &&
-        error.error.message &&
-        error.error.message &&
-        (<string>error.error.message).toLowerCase().indexOf('incorrect syntax near \'go\'') !== -1) {
+        this.result = this.buildResult(result || []);
+        this.applyMigration(selectedText == '' ? this.input.sql : selectedText, true);
+      }, (error: any) => {
+        if (error.error &&
+          error.error.message &&
+          error.error.message &&
+          (<string>error.error.message).toLowerCase().indexOf('incorrect syntax near \'go\'') !== -1) {
           this.feedbackService.showError('Turn ON batch mode to execute this SQL');
           return;
         }
-      this.feedbackService.showError(error);
-    });
+        this.feedbackService.showError(error);
+      });
   }
 
   /**
@@ -438,7 +466,7 @@ export class SqlComponent implements OnInit {
 
   /**
    * Copies the specified text to clipboard.
-   * 
+   *
    * @param value Value to copy to clipboard
    */
   copyToClipBoard(value: string) {
@@ -450,7 +478,7 @@ export class SqlComponent implements OnInit {
 
   /**
    * Exports current result set as a CSV file, downloading it to the client.
-   * 
+   *
    * @param result What result set to export
    */
   exportAsCsv(result: any) {
@@ -466,7 +494,7 @@ export class SqlComponent implements OnInit {
           } else {
             content += ',';
           }
-            content += idxHeader;
+          content += idxHeader;
         }
         content += '\r\n';
       }
@@ -497,7 +525,7 @@ export class SqlComponent implements OnInit {
 
   /**
    * Exports current result set as a SQL file, downloading it to the client.
-   * 
+   *
    * @param result What result set to export
    */
   exportAsSql(result: any) {
@@ -516,19 +544,19 @@ export class SqlComponent implements OnInit {
           headContent.push(key);
         });
         columns = 'insert into ' + tableName + ' (' + headContent + ')';
-  
+
         result.rows.forEach((element: any) => {
           if (element.details === true) {
             valueContent.push(element.data);
           }
         });
-  
+
         Object.keys(valueContent).forEach((key) => {
           const value = valueContent[key];
-  
+
           for (let i = 0; i < Object.values(value).length; i++) {
             let element = Object.values(value)[i];
-  
+
             if (element) {
               if (i < Object.values(value).length - 1) {
                 if (typeof element === 'string') {
@@ -551,19 +579,19 @@ export class SqlComponent implements OnInit {
               }
             }
           }
-  
+
           rowContent.push(columns + ' values (' + insertValue + ')');
           insertValue = '';
         });
-  
-        this.saveAsFile(rowContent.join(';\r\n') + ';\r\n', 'import-into-' + tableName +'.sql', 'text/plain');
+
+        this.saveAsFile(rowContent.join(';\r\n') + ';\r\n', 'import-into-' + tableName + '.sql', 'text/plain');
       }
     });
   }
 
   /**
    * Returns the CSS class for a row in the data table.
-   * 
+   *
    * @param row Row to retrieve CSS class for
    */
   getRowCssClass(row: any) {
@@ -597,7 +625,7 @@ export class SqlComponent implements OnInit {
 
     fileReader.readAsText(this.sqlFile);
     this.sqlFile = '';
-  } 
+  }
 
   showWarning() {
     this.safeMode === false ? this.bottomSheet.open(SqlWarningComponent) : '';
@@ -605,7 +633,7 @@ export class SqlComponent implements OnInit {
 
   /**
    * Deletes the specified column in the specified table
-   * 
+   *
    * @param table Table columns belongs to
    * @param column Column to delete
    */
@@ -618,56 +646,56 @@ export class SqlComponent implements OnInit {
       }
       return;
     }
-    this.feedbackService.confirm('Warning!', 'Are you sure you want to delete the column called <strong>' + column.name + 
-    '</strong>? This action is permanent and will delete all data existing in the column.', () => {
-      const tableName = table.name;
-      const columnName = column.name;
-      this.sqlService.deleteColumn(
-        this.input.databaseType,
-        this.input.connectionString,
-        this.input.database,
-        tableName,
-        columnName).subscribe({
-          next: (result: any) => {
-            this.feedbackService.showInfo('Column successfully deleted');
-            this.reloadDatabases();
-            this.applyMigration(result.sql);
-          },
-          error: (error: any) => this.feedbackService.showError(error)
+    this.feedbackService.confirm('Warning!', 'Are you sure you want to delete the column called <strong>' + column.name +
+      '</strong>? This action is permanent and will delete all data existing in the column.', () => {
+        const tableName = table.name;
+        const columnName = column.name;
+        this.sqlService.deleteColumn(
+          this.input.databaseType,
+          this.input.connectionString,
+          this.input.database,
+          tableName,
+          columnName).subscribe({
+            next: (result: any) => {
+              this.feedbackService.showInfo('Column successfully deleted');
+              this.reloadDatabases();
+              this.applyMigration(result.sql);
+            },
+            error: (error: any) => this.feedbackService.showError(error)
+          });
       });
-    });
   }
 
   /**
    * Deletes the specified foreign key in the specified table
-   * 
+   *
    * @param table Table columns belongs to
    * @param fk Foreign key to delete
    */
   deleteFk(table: any, fk: any) {
-    this.feedbackService.confirm('Warning!', 'Are you sure you want to delete the foreign key called <strong>' + fk.name + 
-    '</strong>? This action is permanent.', () => {
-      const tableName = table.name;
-      const columnName = fk.name;
-      this.sqlService.deleteFk(
-        this.input.databaseType,
-        this.input.connectionString,
-        this.input.database,
-        tableName,
-        columnName).subscribe({
-          next: (result: any) => {
-            this.feedbackService.showInfo('Foreign key successfully deleted');
-            this.reloadDatabases();
-            this.applyMigration(result.sql);
-          },
-          error: (error: any) => this.feedbackService.showError(error)
+    this.feedbackService.confirm('Warning!', 'Are you sure you want to delete the foreign key called <strong>' + fk.name +
+      '</strong>? This action is permanent.', () => {
+        const tableName = table.name;
+        const columnName = fk.name;
+        this.sqlService.deleteFk(
+          this.input.databaseType,
+          this.input.connectionString,
+          this.input.database,
+          tableName,
+          columnName).subscribe({
+            next: (result: any) => {
+              this.feedbackService.showInfo('Foreign key successfully deleted');
+              this.reloadDatabases();
+              this.applyMigration(result.sql);
+            },
+            error: (error: any) => this.feedbackService.showError(error)
+          });
       });
-    });
   }
 
   /**
    * Creates a new field or key for specified table.
-   * 
+   *
    * @param table Table to create field or key for
    */
   createFieldKey(table: any) {
@@ -700,15 +728,15 @@ export class SqlComponent implements OnInit {
               !result.defaultValue || result.defaultValue === '' ? null : (result.datatype.defaultValue ? (result.datatype.defaultValue === 'string' ? ('\'' + result.defaultValue + '\'') : result.defaultValue) : null),
               result.foreignTable,
               result.foreignField).subscribe({
-              next: (result: any) => {
-                this.feedbackService.showInfo('Column was successfully added to table');
-                this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: any) => {
-                  this.reloadDatabases();
-                });
-                this.applyMigration(result.sql);
-              },
-              error: (error) => this.feedbackService.showError(error)
-            });
+                next: (result: any) => {
+                  this.feedbackService.showInfo('Column was successfully added to table');
+                  this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: any) => {
+                    this.reloadDatabases();
+                  });
+                  this.applyMigration(result.sql);
+                },
+                error: (error) => this.feedbackService.showError(error)
+              });
             break;
 
           case 'key':
@@ -720,13 +748,13 @@ export class SqlComponent implements OnInit {
               result.field,
               result.foreignTable,
               result.foreignField).subscribe({
-              next: (result: any) => {
-                this.feedbackService.showInfo('Foreign key was successfully added to table');
-                this.reloadDatabases();
-                this.applyMigration(result.sql);
-              },
-              error: (error) => this.feedbackService.showError(error)
-            });
+                next: (result: any) => {
+                  this.feedbackService.showInfo('Foreign key was successfully added to table');
+                  this.reloadDatabases();
+                  this.applyMigration(result.sql);
+                },
+                error: (error) => this.feedbackService.showError(error)
+              });
             break;
         }
       }
@@ -735,25 +763,25 @@ export class SqlComponent implements OnInit {
 
   /**
    * Deletes the specified table.
-   * 
+   *
    * @param table Table declaration
    */
   deleteTable(table: any) {
-    this.feedbackService.confirm('Warning!', 'Are you sure you want to drop table <strong>' + table.name + 
-    '</strong>? This action is permanent and you will lose all data in your table.', () => {
-      this.sqlService.dropTable(
-        this.input.databaseType,
-        this.input.connectionString,
-        this.input.database,
-        table.name).subscribe({
-          next: (result: any) => {
-            this.feedbackService.showInfo('Table was successfully dropped');
-            this.reloadDatabases();
-            this.applyMigration(result.sql);
-          },
-          error: (error: any) => this.feedbackService.showError(error)
-        });
-    });
+    this.feedbackService.confirm('Warning!', 'Are you sure you want to drop table <strong>' + table.name +
+      '</strong>? This action is permanent and you will lose all data in your table.', () => {
+        this.sqlService.dropTable(
+          this.input.databaseType,
+          this.input.connectionString,
+          this.input.database,
+          table.name).subscribe({
+            next: (result: any) => {
+              this.feedbackService.showInfo('Table was successfully dropped');
+              this.reloadDatabases();
+              this.applyMigration(result.sql);
+            },
+            error: (error: any) => this.feedbackService.showError(error)
+          });
+      });
   }
 
   /**
@@ -789,7 +817,7 @@ export class SqlComponent implements OnInit {
   createNewTable() {
     const dialogRef = this.dialog.open(NewTableComponent, {
       width: '550px',
-      data: { }
+      data: {}
     });
     dialogRef.afterClosed().subscribe((result: any) => {
 
@@ -914,12 +942,12 @@ export class SqlComponent implements OnInit {
           });
         },
         error: (error: any) => this.feedbackService.showError(error)
-    });
+      });
   }
 
   /**
    * Exports the specified table's DDL.
-   * 
+   *
    * @param table Table to export DDL for
    */
   exportTable(table: any) {
@@ -940,37 +968,37 @@ export class SqlComponent implements OnInit {
           });
         },
         error: (error: any) => this.feedbackService.showError(error)
-    });
+      });
   }
 
   /**
    * Drops the currently active database.
    */
   deleteDatabase() {
-    this.feedbackService.confirm('Warning!', 'Are you sure you want to drop the database <strong>' + this.input.database + 
-    '</strong>? This action is permanent and you will lose all data in your database.', () => {
-      this.sqlService.dropDatabase(
-        this.input.databaseType,
-        this.input.connectionString,
-        this.input.database).subscribe({
-          next: () => {
-            this.feedbackService.showInfo('Database successfully dropped');
-            this.input.database = null;
-            this.reloadDatabases();
-          },
-          error: (error: any) => this.feedbackService.showError(error)
-        });
-    });
+    this.feedbackService.confirm('Warning!', 'Are you sure you want to drop the database <strong>' + this.input.database +
+      '</strong>? This action is permanent and you will lose all data in your database.', () => {
+        this.sqlService.dropDatabase(
+          this.input.databaseType,
+          this.input.connectionString,
+          this.input.database).subscribe({
+            next: () => {
+              this.feedbackService.showInfo('Database successfully dropped');
+              this.input.database = null;
+              this.reloadDatabases();
+            },
+            error: (error: any) => this.feedbackService.showError(error)
+          });
+      });
   }
 
   /**
    * Scrolls the specified element into view.
-   * 
+   *
    * @param id ID of element to scroll into view
    */
   scrollIntoView(id: string) {
     const el = document.getElementById(id);
-    el.scrollIntoView({behavior: 'smooth'});
+    el.scrollIntoView({ behavior: 'smooth' });
     this.animating = id;
     this.highlighted = id;
     setTimeout(() => this.animating = '', 2000);
@@ -1028,7 +1056,7 @@ export class SqlComponent implements OnInit {
         if (onAfter) {
           onAfter(databases);
         }
-      }, 
+      },
       error: (error: any) => {
         this.nullifyAllSelectors(error);
       }
@@ -1118,23 +1146,212 @@ export class SqlComponent implements OnInit {
               this.input.databaseType,
               this.input.database,
               sql).subscribe({
-              next: () => {
-                this.feedbackService.showInfo('Migration script successfully added to module');
-              },
-              error: (error: any) => this.feedbackService.showError(error)
-            });
+                next: () => {
+                  this.feedbackService.showInfo('Migration script successfully added to module');
+                },
+                error: (error: any) => this.feedbackService.showError(error)
+              });
           });
       } else {
         this.sqlService.createMigrationScript(
           this.input.databaseType,
           this.input.database,
           sql).subscribe({
-          next: () => {
-            this.feedbackService.showInfo('Migration script successfully added to module');
-          },
-          error: (error: any) => this.feedbackService.showError(error)
-        });
+            next: () => {
+              this.feedbackService.showInfo('Migration script successfully added to module');
+            },
+            error: (error: any) => this.feedbackService.showError(error)
+          });
       }
     }
+  }
+
+
+
+  /*
+   * Lists apps from Bazar server.
+   */
+  private getItems(first: boolean = false) {
+    this.bazarService.listBazarItems(
+      '%' + '' + '%',
+      0,
+      100).subscribe({
+        next: (apps: any[]) => {
+          this.dbPluginList = apps.filter((item: any) => item.name.includes('SQLite'));
+          this.dbPluginList.map((item: any) => item.dbName = (item.name.substring(7, item.name.length - 3)).toLowerCase());
+          this.loadManifests();
+        },
+        error: (error: any) => this.feedbackService.showError(error)
+      });
+  }
+
+  /**
+   * Invoked when a user clicks a specific app to view details about it.
+   * Temporary, to be removed later.
+   * @param app What app the user clicked
+   */
+  viewApp(app: any) {
+    this.dialog.open(ViewAppDialogComponent, {
+      data: {
+        app: app,
+        purchase: (app: any, after: () => void) => this.purchaseImplementation(app, after)
+      },
+      width: '90%',
+      maxWidth: '90vw',
+      height: '90%',
+      panelClass: ['details-dialog']
+    });
+  }
+
+  /*
+   * Purchase implementation method.
+   */
+  public purchaseImplementation(app: any, onAfter: () => void = null) {
+    this.backendService.showObscurer(true);
+    this.configService.rootUserEmailAddress().subscribe({
+      next: (response: any) => {
+        this.bazarService.purchaseBazarItem(
+          app,
+          response.name,
+          response.email,
+          false,
+          null).subscribe({
+            next: (status: any) => {
+
+              // Making sure we show loading animation.
+              this.loaderService.show();
+              /*
+               * App can immediately be installed, and status.token contains
+               * download token.
+               */
+              this.messageService.sendMessage({
+                name: 'magic.bazar.install-immediately',
+                content: {
+                  app: app,
+                  code: status.code,
+                }
+              });
+              this.waitForCallback(status.code, app);
+              if (onAfter) {
+                onAfter();
+              }
+            },
+            error: (error: any) => {
+              this.feedbackService.showError(error);
+              this.backendService.showObscurer(false);
+            }
+          });
+      },
+      error: (error: any) => { this.backendService.showObscurer(false); }
+    })
+  }
+
+  /*
+   * Creates a SignalR subscriber that waits for the Bazar to publish a message verifying
+   * that the payment has been accepted.
+   */
+  private waitForCallback(token: string, app: any) {
+    this.loaderService.show();
+
+    let builder = new HubConnectionBuilder();
+    this.hubConnection = builder.withUrl(environment.bazarUrl + '/sockets', {
+      skipNegotiation: true,
+      transport: HttpTransportType.WebSockets,
+    }).build();
+
+    /*
+     * Subscribing to SignalR message from Bazar that is published
+     * once app is ready to be downloaded.
+     */
+    this.hubConnection.on('bazar.package.avilable.' + token, (args: string) => {
+      this.install(app, token);
+    });
+
+    this.hubConnection.start().then(() => {
+
+      this.install(app, token);
+
+    });
+  }
+
+  /*
+   * Invoked when app should be installed, which is only possible after
+   * PayPal has accepted the payment from the user.
+   */
+  private install(app: any, token: string) {
+
+    this.bazarService.downloadBazarItem(app, token).subscribe({
+      next: (download: any) => {
+        this.bazarService.installBazarItem(app.folder_name, app.version, app.name, token).subscribe({
+          next: (install: any) => {
+            if (install.result === 'success') {
+
+              /*
+               * Making sure we turn OFF socket connections if these have been created.
+               *
+               * Notice, socket connections are NOT turned on for immediate downloads (free apps).
+               */
+              if (this.hubConnection) {
+                this.hubConnection.stop();
+                this.hubConnection = null;
+                this.loaderService.hide();
+                this.dialog.closeAll();
+              }
+
+              setTimeout(() => {
+                this.getDatabases('sqlite', this.input.connectionString, (databases: any) => {
+                  this.databaseDeclaration = this.databases
+                })
+
+                this.backendService.showObscurer(false);
+                this.feedbackService.showInfo('Plugin was successfully installed on your server');
+              }, 1000);
+              setTimeout(() => {
+                this.loadManifests();
+                this.input.database = app.dbName;
+              }, 100);
+
+            } else {
+              this.feedbackService.showError('Something went wrong when trying to install Bazar app. Your log might contain more information.');
+            }
+          },
+          error: (error: any) => { this.backendService.showObscurer(false); this.feedbackService.showError(error) }
+        });
+
+      },
+      error: (error: any) => { this.backendService.showObscurer(false); this.feedbackService.showError(error) }
+    });
+  }
+
+  /*
+   * Loads manifests of installed apps from current installation.
+   */
+  private loadManifests() {
+
+    // Retrieving app manifests from local backend.
+    this.bazarService.localManifests().subscribe({
+      next: (manifests: any[]) => {
+        this.dbPluginList.map((el: any) => {
+          el.isInstalled = (manifests.findIndex((item: any) => el.name === item.name) > -1);
+        })
+      },
+      error: (error: any) => this.feedbackService.showError(error)});
+  }
+
+  /**
+   * Uninstalls the specified plugin.
+   *
+   * @param item Item to uninstall
+   */
+   uninstallPlugin(module_name: string) {
+
+    this.dialog.open(ConfirmUninstallDialogComponent, {
+      data: module_name,
+      width: '500px'
+    }).afterClosed().subscribe((result: string) => {
+      if (result) {
+        this.loadManifests();
+      }
+    });
   }
 }
