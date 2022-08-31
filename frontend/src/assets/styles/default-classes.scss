@@ -90,7 +90,12 @@
   line-height: .9rem;
 }
 .word-break { word-break: break-all; }
-.mb-general { margin-bottom: calc(#{$side_space} * 2); }
+.mb-general {
+  margin-bottom: calc(#{$side_space} * 2);
+  @media (max-width: 576px) {
+    margin-bottom: calc(#{$side_space} * 3);
+  }
+}
 .table-responsive{
   max-width: 100%;
   width: 100%;
