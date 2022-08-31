@@ -1,628 +1,633 @@
 <div class="row">
-  <div class="col-12 mb-3">
-    <div class="row manipuated-layout">
-      <div class="col-12">
-        <div class="row">
-          <div class="col-lg-4 col-sm-12 col-12 pr-lg-1 mb-sm-0 mb-3">
-            <div class="d-flex align-items-center">
-            <mat-card-title class="my-0">Install a database</mat-card-title>
-            <div class="sm-icons">
-              <button mat-icon-button [matMenuTriggerFor]="menu" class="mat-caption" matTooltip="Need help?" type="button">
-                <mat-icon>help_outline</mat-icon>
-              </button>
-              <mat-menu #menu="matMenu">
-                <div class="p-3">
-                  <p>
-                    The first step towards having a proper backend plus a ready to use frontend, is to have a database on your server. Select and install any of the following databases to see how easy is the whole process.
-                  </p>
-                  <div class="d-flex justify-content-end">
-                    <a target="_blank" href="https://docs.aista.com/documentation/magic/components/sql/" mat-stroked-button>Learn more</a>
-                  </div>
+  <div class="col-12 mb-general">
+    <div class="row">
+      <div class="col-12 mb-3">
+        <div class="row manipuated-layout">
+          <div class="col-12">
+            <div class="row">
+              <div class="col-lg-4 col-sm-12 col-12 pr-lg-1 mb-sm-0 mb-3">
+                <div class="d-flex align-items-center">
+                <mat-card-title class="my-0">Install a database</mat-card-title>
+                <div class="sm-icons">
+                  <button mat-icon-button [matMenuTriggerFor]="menu" class="mat-caption" matTooltip="Need help?" type="button">
+                    <mat-icon>help_outline</mat-icon>
+                  </button>
+                  <mat-menu #menu="matMenu">
+                    <div class="p-3">
+                      <p>
+                        The first step towards having a proper backend plus a ready to use frontend, is to have a database on your server. Select and install any of the following databases to see how easy is the whole process.
+                      </p>
+                      <div class="d-flex justify-content-end">
+                        <a target="_blank" href="https://docs.aista.com/documentation/magic/components/sql/" mat-stroked-button>Learn more</a>
+                      </div>
+                    </div>
+                  </mat-menu>
                 </div>
-              </mat-menu>
-            </div>
-          </div>
-            <mat-card-subtitle>Install a database and start generating endpoints.</mat-card-subtitle>
-            <mat-card [class.mb-3]="!last" *ngFor="let item of dbPluginList | slice:0:3;let last=last" class="col-lg-12 col-sm-4 col-12 d-lg-block d-sm-inline-block d-block">
-              <mat-card-content>
-                <h4 class="my-0 fw-500">{{item.name}}</h4>
+              </div>
+                <mat-card-subtitle>Install a database and start generating endpoints.</mat-card-subtitle>
+                <mat-card [class.mb-3]="!last" *ngFor="let item of dbPluginList | slice:0:3;let last=last" class="col-lg-12 col-sm-4 col-12 d-lg-block d-sm-inline-block d-block">
+                  <mat-card-content>
+                    <h4 class="my-0 fw-500">{{item.name}}</h4>
 
-                <div>
-                  <p class="line-truncate mat-body-1 mt-2 mb-4">{{item.description}}</p>
-                </div>
-                <div class="d-flex align-items-center justify-content-end flex-wrap flex-md-row flex-sm-column flex-row sm-icons">
+                    <div>
+                      <p class="line-truncate mat-body-1 mt-2 mb-4">{{item.description}}</p>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-end flex-wrap flex-md-row flex-sm-column flex-row sm-icons">
 
-                  <ng-template [ngIf]="item?.isInstalled" [ngIfElse]="notInstalled">
-                    <button mat-icon-button
-                      (click)="uninstallPlugin(item.folder_name)" color="warn" class="d-lg-none d-block">
-                      <mat-icon>delete</mat-icon>
-                    </button>
-                    <button mat-button
-                      (click)="uninstallPlugin(item.folder_name)" color="warn" class="d-lg-block d-none">
-                      Uninstall
-                    </button>
-                    <div class="p-1 d-lg-none d-block"></div>
-                    <button mat-flat-button color="primary"
-                      routerLink="/crud-generator"
-                      [queryParams]="{db: item.dbName}">Create endpoints</button>
-                  </ng-template>
-                  <ng-template #notInstalled>
-                    <button mat-button (click)="viewApp(item)">Details</button>
-                    <button mat-flat-button color="primary" (click)="purchaseImplementation(item, '','','',false,'after')">Install</button>
-                  </ng-template>
-
-                </div>
-              </mat-card-content>
-            </mat-card>
-          </div>
-          <div class="col-lg-8 col-sm-12 col-12 pl-lg-1">
-            <!-- <div class="row h-100 manipuated-layout">
-              <div class="col-12"> -->
-                <mat-card *ngIf="input" class="h-100">
-
-                  <div class="d-flex flex-sm-nowrap flex-wrap justify-content-between">
-
-                    <div class="d-flex align-items-center">
-                      <mat-card-title class="my-0">SQL</mat-card-title>
-                      <div class="sm-icons">
-                        <button mat-icon-button [matMenuTriggerFor]="menu" class="mat-caption" matTooltip="Need help?" type="button">
-                          <mat-icon>help_outline</mat-icon>
+                      <ng-template [ngIf]="item?.isInstalled" [ngIfElse]="notInstalled">
+                        <button mat-icon-button
+                          (click)="uninstallPlugin(item.folder_name)" color="warn" class="d-lg-none d-block">
+                          <mat-icon>delete</mat-icon>
                         </button>
-                        <mat-menu #menu="matMenu">
-                          <div class="p-3">
-                            <p>
-                              Write any SQL into the below code editor and execute it towards your database of choice. If you
-                              have frequently used SQL snippets, you can also save these into your SQL snippets collection.
-                            </p>
-                            <div class="d-flex justify-content-end">
-                              <a target="_blank" href="https://docs.aista.com/documentation/magic/components/sql/" mat-stroked-button>Learn more</a>
-                            </div>
-                          </div>
-                        </mat-menu>
-                      </div>
-                    </div>
+                        <button mat-button
+                          (click)="uninstallPlugin(item.folder_name)" color="warn" class="d-lg-block d-none">
+                          Uninstall
+                        </button>
+                        <div class="p-1 d-lg-none d-block"></div>
+                        <button mat-flat-button color="primary"
+                          routerLink="/crud-generator"
+                          [queryParams]="{db: item.dbName}">Create endpoints</button>
+                      </ng-template>
+                      <ng-template #notInstalled>
+                        <button mat-button (click)="viewApp(item)">Details</button>
+                        <button mat-flat-button color="primary" (click)="purchaseImplementation(item, '','','',false,'after')">Install</button>
+                      </ng-template>
 
-                    <!-- Shortkeys information button and menu -->
-                    <div class="d-md-block d-none">
-
-                      <button mat-stroked-button [matMenuTriggerFor]="list" matTooltip="List of shortkeys">
-                        Shortkeys
-                      </button>
-
-                      <mat-menu #list="matMenu" class="shortkeys">
-                        <mat-list role="list" dense>
-
-                          <mat-list-item role="listitem">
-                            Toggle fullscreen
-                            <span class="code my-0 ml-5">Alt + M</span>
-                          </mat-list-item>
-
-                          <mat-list-item role="listitem">
-                            Load snippet
-                            <span class="code my-0 ml-5">Alt + L</span>
-                          </mat-list-item>
-
-                          <mat-list-item role="listitem">
-                            Save snippet
-                            <span class="code my-0 ml-5">Alt + S</span>
-                          </mat-list-item>
-
-                          <mat-list-item role="listitem">
-                            Execute
-                            <span class="code my-0 ml-5">F5</span>
-                          </mat-list-item>
-
-                          <mat-list-item role="listitem">
-                            Search
-                            <span class="code my-0 ml-5">Ctrl+F/Cmd+F</span>
-                          </mat-list-item>
-
-                          <mat-list-item role="listitem">
-                            Find next
-                            <span class="code my-0 ml-5">Ctrl+G/Cmd+G</span>
-                          </mat-list-item>
-
-                          <mat-list-item role="listitem">
-                            Find previous
-                            <span class="code my-0 ml-5">Shift+Ctrl+G/<br>Shift+Cmd+G</span>
-                          </mat-list-item>
-
-                          <mat-list-item role="listitem">
-                            Replace
-                            <span class="code my-0 ml-5">Shift+Ctrl+F/<br>Cmd+Option+F</span>
-                          </mat-list-item>
-
-                          <mat-list-item role="listitem">
-                            Replace all
-                            <span class="code my-0 ml-5">Shift+Ctrl+R/<br>Shift+Cmd+Option+F</span>
-                          </mat-list-item>
-
-                          <mat-list-item role="listitem">
-                            Jump to line
-                            <span class="code my-0 ml-5">Alt + G</span>
-                          </mat-list-item>
-
-                        </mat-list>
-                      </mat-menu>
-                    </div>
-                  </div>
-
-                  <mat-card-subtitle>Connect to your database and execute SQL</mat-card-subtitle>
-
-                  <mat-card-content class="h-100">
-
-                    <app-codemirror-sql [(model)]="input"></app-codemirror-sql>
-
-                    <div class="row mt-3" *ngIf="input">
-                      <div class="col-12">
-                        <div class="d-flex flex-sm-row flex-column w-100 align-items-center">
-
-                          <mat-form-field
-                            class="w-100 inline-input"
-                            appearance="outline">
-                            <mat-label>Database type</mat-label>
-                            <mat-select
-                              [(ngModel)]="input.databaseType"
-                              (selectionChange)="databaseTypeChanged()">
-                              <mat-option
-                                *ngFor="let idx of databaseTypes"
-                                [value]="idx">{{getDatabaseTypeName(idx)}}</mat-option>
-                            </mat-select>
-                          </mat-form-field>
-
-                          <div class="p-1"></div>
-
-                          <mat-form-field
-                            class="w-100 inline-input"
-                            appearance="outline">
-                            <mat-label>Connection string</mat-label>
-                            <mat-select
-                              [(ngModel)]="input.connectionString"
-                              (selectionChange)="connectionStringChanged()">
-                              <mat-option
-                                *ngFor="let idx of connectionStrings"
-                                [value]="idx">{{idx}}</mat-option>
-                            </mat-select>
-                          </mat-form-field>
-
-                          <div class="p-1"></div>
-
-                          <mat-form-field
-                            class="w-100 inline-input"
-                            appearance="outline">
-                            <mat-label>Database name</mat-label>
-                            <mat-select
-                              [(ngModel)]="input.database"
-                              [disabled]="!databases || databases.length === 0"
-                              (selectionChange)="databaseChanged()">
-                              <mat-option
-                                *ngFor="let idx of databases"
-                                [value]="idx"
-                                [class]="getDatabaseCssClass(idx)">{{idx}}</mat-option>
-                            </mat-select>
-                          </mat-form-field>
-
-                          <button mat-icon-button [matMenuTriggerFor]="actionMenu" aria-label="Action Menu" class="d-sm-block d-none">
-                            <mat-icon>more_vert</mat-icon>
-                          </button>
-                          <button mat-flat-button [matMenuTriggerFor]="actionMenu" aria-label="Action Menu" class="d-sm-none d-block w-100 mt-2" color="primary">
-                            <div class="d-flex align-items-center justify-content-center">
-                              <mat-icon>more_vert</mat-icon> &nbsp;Actions
-                            </div>
-                          </button>
-                        </div>
-                      </div>
-
-                      <div class="col-12">
-                        <div class="d-flex flex-wrap justify-content-end align-items-center">
-                            <mat-menu #actionMenu="matMenu">
-
-                              <button class="pr-5"
-                                mat-menu-item
-                                (click)="createNewDatabase()">
-                                <mat-icon>post_add</mat-icon>
-                                New database
-                              </button>
-
-                              <button class="pr-5"
-                                [disabled]="!backendService.active?.access.sql.list_files"
-                                mat-menu-item
-                                (click)="load()">
-                                <mat-icon>note_add</mat-icon>
-                                Load snippet
-                              </button>
-
-                              <button class="pr-5"
-                                [disabled]="!input.sql || !backendService.active?.access.sql.save_file"
-                                mat-menu-item
-                                (click)="save()">
-                                <mat-icon>save</mat-icon>
-                                Save snippet
-                              </button>
-
-                              <button class="pr-5"
-                                [disabled]="!backendService.active?.access.sql.list_files"
-                                mat-menu-item
-                                (click)="sqlFileImport.click()">
-                                <mat-icon>upload_file</mat-icon>
-                                Import SQL file
-                              </button>
-
-                              <input
-                                type="file"
-                                name="sqlFile"
-                                id="sqlFile"
-                                #sqlFileImport
-                                class="invisible"
-                                accept=".sql"
-                                [(ngModel)]="sqlFile"
-                                (change)="uploadFiles($event)">
-
-                              <button class="pr-5"
-                                [disabled]="!input || input.sql === '' || !input.database"
-                                mat-menu-item
-                                (click)="execute()">
-                                <mat-icon>play_arrow</mat-icon>
-                                Execute
-                              </button>
-
-                              <button class="pr-5"
-                                mat-menu-item
-                                [disabled]="!backendService.active?.access.config.delete_cache_item"
-                                matTooltip="Purge your server side cache"
-                                matTooltipPosition="before"
-                                (click)="refresh()">
-                                <mat-icon>refresh</mat-icon>
-                                Refresh
-                              </button>
-
-                              <div mat-menu-item>
-                                <mat-slide-toggle
-                                  color="primary"
-                                  [(ngModel)]="designer"
-                                  (click)="$event.stopPropagation();">Designer</mat-slide-toggle>
-                              </div>
-
-                              <div mat-menu-item [class.warning]="!safeMode" class="d-flex align-items-center justify-content-between">
-                                <mat-slide-toggle
-                                  color="primary"
-                                  [(ngModel)]="safeMode"
-                                  (ngModelChange)="showWarning()"
-                                  (click)="$event.stopPropagation();">Safe mode</mat-slide-toggle>
-                                <ng-container *ngIf="!safeMode">
-                                  <mat-icon class="warning">report</mat-icon>
-                                </ng-container>
-                              </div>
-
-                              <div mat-menu-item *ngIf="input.databaseType === 'mssql'">
-                                <mat-slide-toggle
-                                  [(ngModel)]="isBatch"
-                                  (change)="batchChanged()"
-                                  matTooltip="Executes SQL as a batch operation, respecting 'go' keywords"
-                                  matTooltipPosition="before"
-                                  (click)="$event.stopPropagation();">Batch</mat-slide-toggle>
-                              </div>
-
-                            </mat-menu>
-                        </div>
-                      </div>
                     </div>
                   </mat-card-content>
                 </mat-card>
-              <!-- </div> -->
+              </div>
+              <div class="col-lg-8 col-sm-12 col-12 pl-lg-1">
+                <!-- <div class="row h-100 manipuated-layout">
+                  <div class="col-12"> -->
+                    <mat-card *ngIf="input" class="h-100">
 
-              <div
-                 [class.d-none]="!(result && result.length > 0)"
-                #resultCard
-                [class.mt-3]="result && result.length > 0">
-                <mat-card
-                  class="result-card"
-                  [class.mb-3]="!last"
-                  *ngFor="let idxResult of result; let last = last">
-                  <div class="table-responsive">
+                      <div class="d-flex flex-sm-nowrap flex-wrap justify-content-between">
 
-                    <!-- Trigger action menu button for results -->
-                    <button mat-icon-button class="action-button-more absolutize" [matMenuTriggerFor]="results">
-                      <mat-icon>more_vert</mat-icon>
-                    </button>
-
-                    <!-- Menu action items for results -->
-                    <mat-menu #results="matMenu">
-
-                      <button
-                        mat-menu-item
-                        (click)="closeResult()"
-                        class="action-button">
-                        <mat-icon>close</mat-icon>
-                        Close results
-                      </button>
-
-                      <button
-                        mat-menu-item
-                        (click)="exportAsSql(idxResult)"
-                        class="action-button">
-                        <mat-icon>cloud</mat-icon>
-                        Export as SQL file
-                      </button>
-
-                      <button
-                        mat-menu-item
-                        (click)="exportAsCsv(idxResult)"
-                        class="action-button">
-                        <mat-icon>home</mat-icon>
-                        Export as CSV
-                      </button>
-
-                    </mat-menu>
-
-                    <table
-                      *ngIf="idxResult.rows.length > 0"
-                      class="w-100 clickable">
-
-                      <thead>
-                        <tr>
-                          <td
-                            *ngFor="let idxColumn of idxResult.columns"
-                            class="pl-3 py-3 text-muted">
-                            {{idxColumn}}
-                          </td>
-                        </tr>
-                      </thead>
-
-                      <tbody>
-                        <tr
-                          *ngFor="let idxRow of idxResult.rows"
-                          [class]="getRowCssClass(idxRow)"
-                          (click)="toggleDetails(idxRow, idxResult)">
-                          <td
-                            *ngFor="let idxCell of (idxRow.details === true ? [] : (idxRow.data | dynamic: 5))">
-                            {{idxCell.value}}
-                          </td>
-                          <td
-                            *ngIf="idxRow.details === true && idxRow.display === true"
-                            class="view-details py-3"
-                            [attr.colspan]="idxResult.columns.length">
-                            <div class="details-sheet">
-                              <div
-                                *ngFor="let idxDetails of idxRow.data | dynamic"
-                                (click)="copyToClipBoard(idxDetails.value)"
-                                class="details-item">
-                                <div class="d-flex py-1">
-                                  <span class="min-width-80">{{idxDetails.key}}</span>&nbsp;&nbsp;
-                                  <span class="ml-5">{{idxDetails.value === null ? '[null]' : idxDetails.value}}</span>
+                        <div class="d-flex align-items-center">
+                          <mat-card-title class="my-0">SQL</mat-card-title>
+                          <div class="sm-icons">
+                            <button mat-icon-button [matMenuTriggerFor]="menu" class="mat-caption" matTooltip="Need help?" type="button">
+                              <mat-icon>help_outline</mat-icon>
+                            </button>
+                            <mat-menu #menu="matMenu">
+                              <div class="p-3">
+                                <p>
+                                  Write any SQL into the below code editor and execute it towards your database of choice. If you
+                                  have frequently used SQL snippets, you can also save these into your SQL snippets collection.
+                                </p>
+                                <div class="d-flex justify-content-end">
+                                  <a target="_blank" href="https://docs.aista.com/documentation/magic/components/sql/" mat-stroked-button>Learn more</a>
                                 </div>
                               </div>
+                            </mat-menu>
+                          </div>
+                        </div>
+
+                        <!-- Shortkeys information button and menu -->
+                        <div class="d-md-block d-none">
+
+                          <button mat-stroked-button [matMenuTriggerFor]="list" matTooltip="List of shortkeys">
+                            Shortkeys
+                          </button>
+
+                          <mat-menu #list="matMenu" class="shortkeys">
+                            <mat-list role="list" dense>
+
+                              <mat-list-item role="listitem">
+                                Toggle fullscreen
+                                <span class="code my-0 ml-5">Alt + M</span>
+                              </mat-list-item>
+
+                              <mat-list-item role="listitem">
+                                Load snippet
+                                <span class="code my-0 ml-5">Alt + L</span>
+                              </mat-list-item>
+
+                              <mat-list-item role="listitem">
+                                Save snippet
+                                <span class="code my-0 ml-5">Alt + S</span>
+                              </mat-list-item>
+
+                              <mat-list-item role="listitem">
+                                Execute
+                                <span class="code my-0 ml-5">F5</span>
+                              </mat-list-item>
+
+                              <mat-list-item role="listitem">
+                                Search
+                                <span class="code my-0 ml-5">Ctrl+F/Cmd+F</span>
+                              </mat-list-item>
+
+                              <mat-list-item role="listitem">
+                                Find next
+                                <span class="code my-0 ml-5">Ctrl+G/Cmd+G</span>
+                              </mat-list-item>
+
+                              <mat-list-item role="listitem">
+                                Find previous
+                                <span class="code my-0 ml-5">Shift+Ctrl+G/<br>Shift+Cmd+G</span>
+                              </mat-list-item>
+
+                              <mat-list-item role="listitem">
+                                Replace
+                                <span class="code my-0 ml-5">Shift+Ctrl+F/<br>Cmd+Option+F</span>
+                              </mat-list-item>
+
+                              <mat-list-item role="listitem">
+                                Replace all
+                                <span class="code my-0 ml-5">Shift+Ctrl+R/<br>Shift+Cmd+Option+F</span>
+                              </mat-list-item>
+
+                              <mat-list-item role="listitem">
+                                Jump to line
+                                <span class="code my-0 ml-5">Alt + G</span>
+                              </mat-list-item>
+
+                            </mat-list>
+                          </mat-menu>
+                        </div>
+                      </div>
+
+                      <mat-card-subtitle>Connect to your database and execute SQL</mat-card-subtitle>
+
+                      <mat-card-content class="h-100">
+
+                        <app-codemirror-sql [(model)]="input"></app-codemirror-sql>
+
+                        <div class="row mt-3" *ngIf="input">
+                          <div class="col-12">
+                            <div class="d-flex flex-sm-row flex-column w-100 align-items-center">
+
+                              <mat-form-field
+                                class="w-100 inline-input"
+                                appearance="outline">
+                                <mat-label>Database type</mat-label>
+                                <mat-select
+                                  [(ngModel)]="input.databaseType"
+                                  (selectionChange)="databaseTypeChanged()">
+                                  <mat-option
+                                    *ngFor="let idx of databaseTypes"
+                                    [value]="idx">{{getDatabaseTypeName(idx)}}</mat-option>
+                                </mat-select>
+                              </mat-form-field>
+
+                              <div class="p-1"></div>
+
+                              <mat-form-field
+                                class="w-100 inline-input"
+                                appearance="outline">
+                                <mat-label>Connection string</mat-label>
+                                <mat-select
+                                  [(ngModel)]="input.connectionString"
+                                  (selectionChange)="connectionStringChanged()">
+                                  <mat-option
+                                    *ngFor="let idx of connectionStrings"
+                                    [value]="idx">{{idx}}</mat-option>
+                                </mat-select>
+                              </mat-form-field>
+
+                              <div class="p-1"></div>
+
+                              <mat-form-field
+                                class="w-100 inline-input"
+                                appearance="outline">
+                                <mat-label>Database name</mat-label>
+                                <mat-select
+                                  [(ngModel)]="input.database"
+                                  [disabled]="!databases || databases.length === 0"
+                                  (selectionChange)="databaseChanged()">
+                                  <mat-option
+                                    *ngFor="let idx of databases"
+                                    [value]="idx"
+                                    [class]="getDatabaseCssClass(idx)">{{idx}}</mat-option>
+                                </mat-select>
+                              </mat-form-field>
+
+                              <button mat-icon-button [matMenuTriggerFor]="actionMenu" aria-label="Action Menu" class="d-sm-block d-none">
+                                <mat-icon>more_vert</mat-icon>
+                              </button>
+                              <button mat-flat-button [matMenuTriggerFor]="actionMenu" aria-label="Action Menu" class="d-sm-none d-block w-100 mt-2" color="primary">
+                                <div class="d-flex align-items-center justify-content-center">
+                                  <mat-icon>more_vert</mat-icon> &nbsp;Actions
+                                </div>
+                              </button>
                             </div>
-                          </td>
-                        </tr>
-                      </tbody>
+                          </div>
 
-                    </table>
+                          <div class="col-12">
+                            <div class="d-flex flex-wrap justify-content-end align-items-center">
+                                <mat-menu #actionMenu="matMenu">
+
+                                  <button class="pr-5"
+                                    mat-menu-item
+                                    (click)="createNewDatabase()">
+                                    <mat-icon>post_add</mat-icon>
+                                    New database
+                                  </button>
+
+                                  <button class="pr-5"
+                                    [disabled]="!backendService.active?.access.sql.list_files"
+                                    mat-menu-item
+                                    (click)="load()">
+                                    <mat-icon>note_add</mat-icon>
+                                    Load snippet
+                                  </button>
+
+                                  <button class="pr-5"
+                                    [disabled]="!input.sql || !backendService.active?.access.sql.save_file"
+                                    mat-menu-item
+                                    (click)="save()">
+                                    <mat-icon>save</mat-icon>
+                                    Save snippet
+                                  </button>
+
+                                  <button class="pr-5"
+                                    [disabled]="!backendService.active?.access.sql.list_files"
+                                    mat-menu-item
+                                    (click)="sqlFileImport.click()">
+                                    <mat-icon>upload_file</mat-icon>
+                                    Import SQL file
+                                  </button>
+
+                                  <input
+                                    type="file"
+                                    name="sqlFile"
+                                    id="sqlFile"
+                                    #sqlFileImport
+                                    class="invisible"
+                                    accept=".sql"
+                                    [(ngModel)]="sqlFile"
+                                    (change)="uploadFiles($event)">
+
+                                  <button class="pr-5"
+                                    [disabled]="!input || input.sql === '' || !input.database"
+                                    mat-menu-item
+                                    (click)="execute()">
+                                    <mat-icon>play_arrow</mat-icon>
+                                    Execute
+                                  </button>
+
+                                  <button class="pr-5"
+                                    mat-menu-item
+                                    [disabled]="!backendService.active?.access.config.delete_cache_item"
+                                    matTooltip="Purge your server side cache"
+                                    matTooltipPosition="before"
+                                    (click)="refresh()">
+                                    <mat-icon>refresh</mat-icon>
+                                    Refresh
+                                  </button>
+
+                                  <div mat-menu-item>
+                                    <mat-slide-toggle
+                                      color="primary"
+                                      [(ngModel)]="designer"
+                                      (click)="$event.stopPropagation();">Designer</mat-slide-toggle>
+                                  </div>
+
+                                  <div mat-menu-item [class.warning]="!safeMode" class="d-flex align-items-center justify-content-between">
+                                    <mat-slide-toggle
+                                      color="primary"
+                                      [(ngModel)]="safeMode"
+                                      (ngModelChange)="showWarning()"
+                                      (click)="$event.stopPropagation();">Safe mode</mat-slide-toggle>
+                                    <ng-container *ngIf="!safeMode">
+                                      <mat-icon class="warning">report</mat-icon>
+                                    </ng-container>
+                                  </div>
+
+                                  <div mat-menu-item *ngIf="input.databaseType === 'mssql'">
+                                    <mat-slide-toggle
+                                      [(ngModel)]="isBatch"
+                                      (change)="batchChanged()"
+                                      matTooltip="Executes SQL as a batch operation, respecting 'go' keywords"
+                                      matTooltipPosition="before"
+                                      (click)="$event.stopPropagation();">Batch</mat-slide-toggle>
+                                  </div>
+
+                                </mat-menu>
+                            </div>
+                          </div>
+                        </div>
+                      </mat-card-content>
+                    </mat-card>
+                  <!-- </div> -->
+
+                  <div
+                     [class.d-none]="!(result && result.length > 0)"
+                    #resultCard
+                    [class.mt-3]="result && result.length > 0">
+                    <mat-card
+                      class="result-card"
+                      [class.mb-3]="!last"
+                      *ngFor="let idxResult of result; let last = last">
+                      <div class="table-responsive">
+
+                        <!-- Trigger action menu button for results -->
+                        <button mat-icon-button class="action-button-more absolutize" [matMenuTriggerFor]="results">
+                          <mat-icon>more_vert</mat-icon>
+                        </button>
+
+                        <!-- Menu action items for results -->
+                        <mat-menu #results="matMenu">
+
+                          <button
+                            mat-menu-item
+                            (click)="closeResult()"
+                            class="action-button">
+                            <mat-icon>close</mat-icon>
+                            Close results
+                          </button>
+
+                          <button
+                            mat-menu-item
+                            (click)="exportAsSql(idxResult)"
+                            class="action-button">
+                            <mat-icon>cloud</mat-icon>
+                            Export as SQL file
+                          </button>
+
+                          <button
+                            mat-menu-item
+                            (click)="exportAsCsv(idxResult)"
+                            class="action-button">
+                            <mat-icon>home</mat-icon>
+                            Export as CSV
+                          </button>
+
+                        </mat-menu>
+
+                        <table
+                          *ngIf="idxResult.rows.length > 0"
+                          class="w-100 clickable">
+
+                          <thead>
+                            <tr>
+                              <td
+                                *ngFor="let idxColumn of idxResult.columns"
+                                class="pl-3 py-3 text-muted">
+                                {{idxColumn}}
+                              </td>
+                            </tr>
+                          </thead>
+
+                          <tbody>
+                            <tr
+                              *ngFor="let idxRow of idxResult.rows"
+                              [class]="getRowCssClass(idxRow)"
+                              (click)="toggleDetails(idxRow, idxResult)">
+                              <td
+                                *ngFor="let idxCell of (idxRow.details === true ? [] : (idxRow.data | dynamic: 5))">
+                                {{idxCell.value}}
+                              </td>
+                              <td
+                                *ngIf="idxRow.details === true && idxRow.display === true"
+                                class="view-details py-3"
+                                [attr.colspan]="idxResult.columns.length">
+                                <div class="details-sheet">
+                                  <div
+                                    *ngFor="let idxDetails of idxRow.data | dynamic"
+                                    (click)="copyToClipBoard(idxDetails.value)"
+                                    class="details-item">
+                                    <div class="d-flex py-1">
+                                      <span class="min-width-80">{{idxDetails.key}}</span>&nbsp;&nbsp;
+                                      <span class="ml-5">{{idxDetails.value === null ? '[null]' : idxDetails.value}}</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+
+                        </table>
+                      </div>
+
+                    </mat-card>
                   </div>
-
-                </mat-card>
-              </div>
-            <!-- </div> -->
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="row manipuated-layout" *ngIf="designer && input?.database">
-  <div class="col-12 mb-general">
-    <div class="row" *ngIf="input">
-        <div class="col-12">
-          <div class="d-flex flex-sm-nowrap flex-wrap justify-content-between">
-
-            <div class="d-flex align-items-center">
-              <h3 class="mat-card-title my-0">{{input?.database}}</h3>
-              <div class="sm-icons">
-                <button mat-icon-button [matMenuTriggerFor]="menu" class="mat-caption" matTooltip="Need help?" type="button">
-                  <mat-icon>help_outline</mat-icon>
-                </button>
-                <mat-menu #menu="matMenu">
-                  <div class="p-3">
-                    <p>
-                      Design your database and add columns, delete columns, create tables, etc.
-                    </p>
-                    <div class="d-flex justify-content-end">
-                      <a target="_blank" href="https://docs.aista.com/documentation/magic/components/sql/"
-                        mat-stroked-button>Learn more</a>
-                    </div>
-                  </div>
-                </mat-menu>
+                <!-- </div> -->
               </div>
             </div>
 
-            <!-- Trigger action menu button for database -->
-            <button mat-icon-button class="action-button-more" [matMenuTriggerFor]="database">
-              <mat-icon>more_vert</mat-icon>
-            </button>
-
-            <!-- Menu action items for database -->
-            <mat-menu #database="matMenu">
-
-              <button
-                mat-menu-item
-                [disabled]="input.database === 'magic'"
-                (click)="createNewTable()"
-                class="action-button">
-                <mat-icon class="material-icons-outlined">add</mat-icon>
-                Add table
-              </button>
-
-              <button
-                mat-menu-item
-                [disabled]="input.database === 'magic'"
-                (click)="createNewLinkTable()"
-                class="action-button">
-                <mat-icon class="material-icons-outlined">compare_arrows</mat-icon>
-                Add link table
-              </button>
-
-              <button
-                mat-menu-item
-                (click)="exportDatabase()"
-                [disabled]="input?.databaseType !== 'sqlite' && input?.databaseType !== 'mysql'"
-                class="action-button">
-                <mat-icon class="material-icons-outlined">cloud_download</mat-icon>
-                Export database DDL
-              </button>
-
-              <button
-                mat-menu-item
-                [disabled]="input.database === 'magic'"
-                (click)="deleteDatabase()"
-                class="action-button">
-                <mat-icon class="material-icons-outlined">delete</mat-icon>
-                Drop database
-              </button>
-
-              <button
-                *ngIf="input.databaseType === 'sqlite'"
-                mat-menu-item
-                (click)="downloadBackup()"
-                class="action-button">
-                <mat-icon class="material-icons-outlined">cloud_download</mat-icon>
-                Download backup
-              </button>
-
-              <button mat-menu-item>
-                <mat-slide-toggle
-                  [(ngModel)]="autoMigrate"
-                  (click)="$event.stopPropagation();"
-                  matTooltip="Automatically create migration scripts"
-                  matTooltipPosition="after"
-                  labelPosition="after">Auto migrate</mat-slide-toggle>
-              </button>
-
-            </mat-menu>
           </div>
-
-          <p class="mat-card-subtitle">Design and modify your {{input.database}} database</p>
-
-          <div *ngIf="!activeTables || activeTables.length === 0" class="col-12">
-            Please add tables to your database
-          </div>
-
         </div>
-        <div
-          class="col-xl-4 col-lg-6 col-md-12 col-sm-6 col-12 mb-3 db-table-design"
-          *ngFor="let idxTable of activeTables">
+      </div>
+    </div>
 
-          <mat-card
-            class="h-100"
-            [id]="idxTable.name"
-            [class.animating]="animating === idxTable.name"
-            [class.mat-elevation-z5]="highlighted === idxTable.name">
+    <div class="row manipuated-layout" *ngIf="designer && input?.database">
+      <div class="col-12">
+        <div class="row" *ngIf="input">
+            <div class="col-12">
+              <div class="d-flex flex-sm-nowrap flex-wrap justify-content-between">
 
-            <mat-card-content class="h-100">
-              <div class="d-flex align-items-center justify-content-between mb-3">
-                <h3 class="my-0">{{idxTable.name}}</h3>
+                <div class="d-flex align-items-center">
+                  <h3 class="mat-card-title my-0">{{input?.database}}</h3>
+                  <div class="sm-icons">
+                    <button mat-icon-button [matMenuTriggerFor]="menu" class="mat-caption" matTooltip="Need help?" type="button">
+                      <mat-icon>help_outline</mat-icon>
+                    </button>
+                    <mat-menu #menu="matMenu">
+                      <div class="p-3">
+                        <p>
+                          Design your database and add columns, delete columns, create tables, etc.
+                        </p>
+                        <div class="d-flex justify-content-end">
+                          <a target="_blank" href="https://docs.aista.com/documentation/magic/components/sql/"
+                            mat-stroked-button>Learn more</a>
+                        </div>
+                      </div>
+                    </mat-menu>
+                  </div>
+                </div>
 
-                <!-- Trigger action menu button for table menu -->
-                <button
-                  mat-icon-button
-                  [matMenuTriggerFor]="table"
-                  class="action-button-more">
+                <!-- Trigger action menu button for database -->
+                <button mat-icon-button class="action-button-more" [matMenuTriggerFor]="database">
                   <mat-icon>more_vert</mat-icon>
                 </button>
 
-                <!-- Menu action items for table -->
-                <mat-menu #table="matMenu">
+                <!-- Menu action items for database -->
+                <mat-menu #database="matMenu">
 
                   <button
                     mat-menu-item
                     [disabled]="input.database === 'magic'"
-                    (click)="createFieldKey(idxTable)"
+                    (click)="createNewTable()"
                     class="action-button">
                     <mat-icon class="material-icons-outlined">add</mat-icon>
-                    Add field/key
+                    Add table
                   </button>
 
                   <button
                     mat-menu-item
-                    (click)="exportTable(idxTable)"
+                    [disabled]="input.database === 'magic'"
+                    (click)="createNewLinkTable()"
+                    class="action-button">
+                    <mat-icon class="material-icons-outlined">compare_arrows</mat-icon>
+                    Add link table
+                  </button>
+
+                  <button
+                    mat-menu-item
+                    (click)="exportDatabase()"
+                    [disabled]="input?.databaseType !== 'sqlite' && input?.databaseType !== 'mysql'"
                     class="action-button">
                     <mat-icon class="material-icons-outlined">cloud_download</mat-icon>
-                    Export table DDL
+                    Export database DDL
                   </button>
 
                   <button
-                    (click)="deleteTable(idxTable)"
-                    [disabled]="input.database === 'magic'"
                     mat-menu-item
+                    [disabled]="input.database === 'magic'"
+                    (click)="deleteDatabase()"
                     class="action-button">
                     <mat-icon class="material-icons-outlined">delete</mat-icon>
-                    Drop table
+                    Drop database
+                  </button>
+
+                  <button
+                    *ngIf="input.databaseType === 'sqlite'"
+                    mat-menu-item
+                    (click)="downloadBackup()"
+                    class="action-button">
+                    <mat-icon class="material-icons-outlined">cloud_download</mat-icon>
+                    Download backup
+                  </button>
+
+                  <button mat-menu-item>
+                    <mat-slide-toggle
+                      [(ngModel)]="autoMigrate"
+                      (click)="$event.stopPropagation();"
+                      matTooltip="Automatically create migration scripts"
+                      matTooltipPosition="after"
+                      labelPosition="after">Auto migrate</mat-slide-toggle>
                   </button>
 
                 </mat-menu>
               </div>
-              <div class="pl-3 mb-2">
-                <div
-                  class="d-flex align-items-center justify-content-between py-1 table-element"
-                  *ngFor="let idxColumn of idxTable.columns"
-                  [class]="idxColumn.nullable ? 'nullable' : 'not-null'">
 
-                  <div class="d-flex align-items-center">
-                    <mat-icon
-                      *ngIf="idxColumn.primary"
-                      class="key-icon">vpn_key</mat-icon>
-                    &nbsp;
-                    <strong class="ml-1 mr-2">{{idxColumn.name}}</strong>
-                    <span class="text-muted">{{idxColumn.db}}</span>
-                  </div>
+              <p class="mat-card-subtitle">Design and modify your {{input.database}} database</p>
 
-                  <button
-                    mat-icon-button
-                    [disabled]="input.database === 'magic'"
-                    *ngIf="!idxColumn.primary"
-                    type="button"
-                    (click)="deleteColumn(idxTable, idxColumn)">
-                    <mat-icon class="material-icons-outlined">delete</mat-icon>
-                  </button>
-
-                </div>
+              <div *ngIf="!activeTables || activeTables.length === 0" class="col-12">
+                Please add tables to your database
               </div>
 
-              <mat-divider
-                *ngIf="idxTable.foreign_keys"
-                id="custom-divider"></mat-divider>
+            </div>
+            <div
+              class="col-xl-4 col-lg-6 col-md-12 col-sm-6 col-12 mb-3 db-table-design"
+              *ngFor="let idxTable of activeTables">
 
-              <div class="pl-3 pt-2">
-                <div
-                  class="d-flex align-items-center justify-content-between py-1 table-element"
-                  *ngFor="let idxFk of idxTable.foreign_keys;let last = last"
-                  [class.mb-2]="!last">
+              <mat-card
+                class="h-100"
+                [id]="idxTable.name"
+                [class.animating]="animating === idxTable.name"
+                [class.mat-elevation-z5]="highlighted === idxTable.name">
 
-                  <div class="d-flex align-items-center text-truncate">
-                    &nbsp;&nbsp;
-                    <span>{{idxFk.column}}</span>
-                    <mat-icon class="general-icon mx-1">arrow_right_alt</mat-icon>
-                    <span
-                      class="pointer"
-                      role="button"
-                      (click)="scrollIntoView(idxFk.foreign_table)">{{idxFk.foreign_table}}.{{idxFk.foreign_column}}</span>
+                <mat-card-content class="h-100">
+                  <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h3 class="my-0">{{idxTable.name}}</h3>
+
+                    <!-- Trigger action menu button for table menu -->
+                    <button
+                      mat-icon-button
+                      [matMenuTriggerFor]="table"
+                      class="action-button-more">
+                      <mat-icon>more_vert</mat-icon>
+                    </button>
+
+                    <!-- Menu action items for table -->
+                    <mat-menu #table="matMenu">
+
+                      <button
+                        mat-menu-item
+                        [disabled]="input.database === 'magic'"
+                        (click)="createFieldKey(idxTable)"
+                        class="action-button">
+                        <mat-icon class="material-icons-outlined">add</mat-icon>
+                        Add field/key
+                      </button>
+
+                      <button
+                        mat-menu-item
+                        (click)="exportTable(idxTable)"
+                        class="action-button">
+                        <mat-icon class="material-icons-outlined">cloud_download</mat-icon>
+                        Export table DDL
+                      </button>
+
+                      <button
+                        (click)="deleteTable(idxTable)"
+                        [disabled]="input.database === 'magic'"
+                        mat-menu-item
+                        class="action-button">
+                        <mat-icon class="material-icons-outlined">delete</mat-icon>
+                        Drop table
+                      </button>
+
+                    </mat-menu>
+                  </div>
+                  <div class="pl-3 mb-2">
+                    <div
+                      class="d-flex align-items-center justify-content-between py-1 table-element"
+                      *ngFor="let idxColumn of idxTable.columns"
+                      [class]="idxColumn.nullable ? 'nullable' : 'not-null'">
+
+                      <div class="d-flex align-items-center">
+                        <mat-icon
+                          *ngIf="idxColumn.primary"
+                          class="key-icon">vpn_key</mat-icon>
+                        &nbsp;
+                        <strong class="ml-1 mr-2">{{idxColumn.name}}</strong>
+                        <span class="text-muted">{{idxColumn.db}}</span>
+                      </div>
+
+                      <button
+                        mat-icon-button
+                        [disabled]="input.database === 'magic'"
+                        *ngIf="!idxColumn.primary"
+                        type="button"
+                        (click)="deleteColumn(idxTable, idxColumn)">
+                        <mat-icon class="material-icons-outlined">delete</mat-icon>
+                      </button>
+
+                    </div>
                   </div>
 
-                  <button
-                    mat-icon-button
-                    *ngIf="idxFk.name"
-                    type="button"
-                    (click)="deleteFk(idxTable, idxFk)">
-                    <mat-icon class="general-icon">remove</mat-icon>
-                  </button>
+                  <mat-divider
+                    *ngIf="idxTable.foreign_keys"
+                    id="custom-divider"></mat-divider>
 
-                </div>
-              </div>
+                  <div class="pl-3 pt-2">
+                    <div
+                      class="d-flex align-items-center justify-content-between py-1 table-element"
+                      *ngFor="let idxFk of idxTable.foreign_keys;let last = last"
+                      [class.mb-2]="!last">
 
-            </mat-card-content>
-          </mat-card>
+                      <div class="d-flex align-items-center text-truncate">
+                        &nbsp;&nbsp;
+                        <span>{{idxFk.column}}</span>
+                        <mat-icon class="general-icon mx-1">arrow_right_alt</mat-icon>
+                        <span
+                          class="pointer"
+                          role="button"
+                          (click)="scrollIntoView(idxFk.foreign_table)">{{idxFk.foreign_table}}.{{idxFk.foreign_column}}</span>
+                      </div>
+
+                      <button
+                        mat-icon-button
+                        *ngIf="idxFk.name"
+                        type="button"
+                        (click)="deleteFk(idxTable, idxFk)">
+                        <mat-icon class="general-icon">remove</mat-icon>
+                      </button>
+
+                    </div>
+                  </div>
+
+                </mat-card-content>
+              </mat-card>
+            </div>
         </div>
+      </div>
     </div>
+
   </div>
 </div>
