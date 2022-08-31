@@ -135,7 +135,7 @@ export class BazarComponent implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     private messageService: MessageService,
     private feedbackService: FeedbackService,
-    private loaderService: LoaderService,) {
+    private loaderService: LoaderService) {
 
     this.activatedRoute.queryParams.subscribe((pars: Params) => {
       const token = pars['token'];
@@ -373,7 +373,7 @@ export class BazarComponent implements OnInit, OnDestroy {
 
   /**
    * Uninstalls the specified plugin.
-   * 
+   *
    * @param item Item to uninstall
    */
   uninstallPlugin(module_name: string) {

@@ -12,16 +12,21 @@
   }
 }
 
+iframe {border-radius: 5px;}
+::ng-deep {
+  mat-checkbox.mat-caption .mat-checkbox-inner-container {height: 13px;width: 13px;}
+}
+
 .row.manipuated-layout {
-  margin-left: calc($side_space * -1.5 );  
-  margin-right: calc($side_space * -1.5 );  
+  margin-left: calc($side_space * -1.5 );
+  margin-right: calc($side_space * -1.5 );
   div[class^="row"] {
-    margin-left: calc($side_space / 2 );  
+    margin-left: calc($side_space / 2 );
     margin-right: calc($side_space / 2 );
   }
   div[class^="col-"] {
-    padding-left: calc($side_space / 2 );  
-    padding-right: calc($side_space / 2 );  
+    padding-left: calc($side_space / 2 );
+    padding-right: calc($side_space / 2 );
   }
   .row.no-gutters {
     margin-right: 0;

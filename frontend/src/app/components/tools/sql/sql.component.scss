@@ -1,6 +1,9 @@
 @import '../../../../assets/styles/colour.scss';
 @import '../../../../assets/styles/mixin.scss';
 @import '../../../../assets/styles/sizes.scss';
+
+.line-truncate{@include line_truncate(2);line-height: 1.6;font-size: 13px;}
+
 .min-h-400 { min-height: 400px; }
 .min-width-80 { min-width: 80px; }
 ::ng-deep .data-row {

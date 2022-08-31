@@ -4,6 +4,34 @@
   <!-- if authenticated -->
   <ng-container *ngSwitchCase="backendService.active?.token !== null">
     <ng-template [ngIf]="backendService.active?.token?.in_role('root')" [ngIfElse]="isNotRoot">
+
+      <div class="row no-gutters" *ngIf="showInfoPanel === 'show'">
+        <div class="col-12 mb-3 mt-4">
+          <mat-card class="h-100">
+            <mat-card-content class="h-100 p-0 d-flex flex-column">
+              <div class="row">
+                <div class="col-lg-7 col-md-8 col-sm-6 col-12">
+                  <div class="d-flex justify-content-between">
+                    <h2 class="mb-0">See Magic in 5 steps!</h2>
+                    <mat-checkbox color="primary" class="text-muted mat-caption" (change)="hidePanel()">Hide this panel</mat-checkbox>
+                  </div>
+                  <ol class="pl-3">
+                    <li class="pt-3">Connect your databse from <a class="text-primary btn-link pointer" routerLink="/config">here</a> or install a new database from <a class="text-primary btn-link pointer" routerLink="/sql">here</a></li>
+                    <li class="pt-3">Load, add, update or delete your database tables from  <a class="text-primary btn-link pointer" routerLink="/sql">here</a></li>
+                    <li class="pt-3">Create your database endpoints from  <a class="text-primary btn-link pointer" routerLink="/crud-generator">here</a></li>
+                    <li class="pt-3" routerLink="/crud-generator" [queryParams]="{type: 'frontend'}"> Create your frontend from  <a class="text-primary btn-link pointer">here</a></li>
+                    <li class="pt-3"> Test and debug your created endpoints from  <a class="text-primary btn-link pointer" routerLink="/endpoints">here</a></li>
+                  </ol>
+                </div>
+                <div class="col-lg-5 col-md-4 col-sm-6 col-12">
+                  <iframe width="560" height="315" class="w-100 h-100" src="https://www.youtube.com/embed/FaQuLOHl3s4" title="Creating a full stack CRM in 5 minutes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+
       <ng-template [ngIf]="systemReportDisplayable !== null" [ngIfElse]="noReport">
         <div class="row manipuated-layout">
           <div class="col-12 mb-general">
@@ -28,31 +56,6 @@
           </div>
         </div>
       </ng-template>
-      <!-- <ng-template [ngIf]="systemReportDisplayable !== null" [ngIfElse]="noReport">
-        <div class="row manipuated-layout">
-          <div class="col-12 mb-general">
-            <div class="row justify-content-between">
-              <div class="col-xl-4 col-lg-6 col-md-8 col-12">
-                <app-overview [data]="systemReportDisplayable"></app-overview>
-              </div>
-              <div class="col-xl-4 col-lg-6 col-md-4 col-sm-6 col-12">
-                <app-doughnut-chart [data]="systemReportDisplayable"></app-doughnut-chart>
-              </div>
-              <div class="col-xl-4 col-lg-4 col-md-5 col-sm-6 col-12">
-                <app-pie-chart [data]="systemReportDisplayable"></app-pie-chart>
-              </div>
-              <div class="col-xl-7 col-lg-8 col-12 order-md-5 order-lg-4">
-                <app-last-log-items [data]="systemReportDisplayable?.last_log_items" [totalLogs]="systemReportDisplayable?.log_items"></app-last-log-items>
-              </div>
-              <div class="col-12 order-{{6+index}}"
-              [ngClass]="{'col-xl-5 col-lg-8 col-md-7 order-md-4 order-lg-5': index===0, 'col-xl-6 col-sm-6': index!==0, 'col-lg-4': index===1}"
-               *ngFor="let chartItem of chartData | keyvalue:unsorted; let index = index;">
-                  <app-main-chart [data]="chartItem"></app-main-chart>
-              </div>
-            </div>
-          </div>
-        </div>
-      </ng-template> -->
       <ng-template #noReport>
         <div class="d-flex flex-column align-items-center justify-content-center text-center h-100 w-100 welcome-section">
           <h1 class="mat-title">Welcome to Aista Magic Cloud</h1>
