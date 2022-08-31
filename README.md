@@ -20,7 +20,7 @@ of authentication, authorisation, user management, and everything else that's di
 * [What is Hyperlambda](https://aista.com/hyperlambda/)
 * [How magic creates CRUD full stack apps](https://aista.com/crud-datagrid/)
 * [SQL Studio to visuall design your database](https://aista.com/sql-studio/)
-* [SQL API generator](aista.com/sql-api-generator/)
+* [SQL API generator](https://aista.com/sql-api-generator/)
 
 ## License
 
