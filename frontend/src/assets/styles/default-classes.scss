@@ -93,7 +93,7 @@
 .mb-general {
   margin-bottom: calc(#{$side_space} * 2);
   @media (max-width: 576px) {
-    margin-bottom: calc(#{$side_space} * 3);
+    margin-bottom: calc(#{$side_space} * 5);
   }
 }
 .table-responsive{
