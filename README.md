@@ -14,10 +14,13 @@ Magic works by reading meta data from your database, for then to automatically g
 complete backend web API for you. The resuling CRUD API is secured automatically, and Magic takes care
 of authentication, authorisation, user management, and everything else that's difficult.
 
-## Getting started
+## Useful links
 
-* [Register in our hosted solution in seconds](https://aista.com?secret=github)
-* [Download and install Magic Cloud](https://aista.com)
+* [Create a Low Code CRUD app in seconds](https://aista.com)
+* [What is Hyperlambda](https://aista.com/hyperlambda/)
+* [How magic creates CRUD full stack apps](https://aista.com/crud-datagrid/)
+* [SQL Studio to visuall design your database](https://aista.com/sql-studio/)
+* [SQL API generator](aista.com/sql-api-generator/)
 
 ## License
 
