@@ -176,7 +176,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   hidePanel() {
-    this.showInfoPanel === 'show' ? this.showInfoPanel = 'hide' : this.showInfoPanel = 'show';
+    this.showInfoPanel = 'hide';
     this.cdr.detectChanges();
 
     sessionStorage.setItem('infoPanel', this.showInfoPanel);
