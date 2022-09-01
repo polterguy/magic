@@ -7,7 +7,7 @@
 
   <button
     mat-raised-button
-    color="primary"
+    [color]="data.title === 'Warning!' ? 'warn' : 'primary'"
     (click)="yes()">Yes</button>
 
   <button
