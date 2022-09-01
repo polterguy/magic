@@ -110,7 +110,7 @@ export class CrudBackendComponent implements OnInit {
     private activatedRoute: ActivatedRoute) {
       this.activatedRoute.queryParams.subscribe((params: any) => {
         this.preDefinedDbName = params['db'];
-      })
+      });
     }
 
   /**
@@ -320,7 +320,7 @@ export class CrudBackendComponent implements OnInit {
               name: 'magic.folders.update',
               content: '/modules/'
             });
-            if (this.router.url === '/crud-generator') {
+            if (this.router.url?.startsWith('/crud-generator')) {
               this.messageService.sendMessage({
                 name: 'magic.crud-generator.activate-frontend'
               });
