@@ -12,6 +12,7 @@ import { BackendService } from 'src/app/services/backend.service';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { CrudFrontendExtraComponent } from './crud-frontend-extra/crud-frontend-extra.component';
+import { ActivatedRoute } from '@angular/router';
 
 /**
  * Crudifier component for generating a frontend from
@@ -59,7 +60,7 @@ export class CrudFrontendComponent implements OnInit {
     private messageService: MessageService,
     private feedbackService:FeedbackService,
     private backendService: BackendService,
-    private configService: ConfigService) { }
+    private activatedRoute: ActivatedRoute) { }
 
   /**
    * Implementation of OnInit.
@@ -70,6 +71,9 @@ export class CrudFrontendComponent implements OnInit {
         this.templates = result || [];
       },
       error: (error: any) => this.feedbackService.showError(error)});
+      this.activatedRoute.queryParams.subscribe((params: any) => {
+        this.name = params['db'];
+      });
   }
 
   /**
