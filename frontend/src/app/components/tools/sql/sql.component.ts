@@ -1361,7 +1361,6 @@ export class SqlComponent implements OnInit {
       width: '500px'
     }).afterClosed().subscribe((result: string) => {
       if (result) {
-        this.refresh();
         this.loadManifests();
       }
     });

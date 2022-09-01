@@ -23,7 +23,6 @@ import { ConfigService } from '../../../services/config.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { LoginDialogComponent } from '../../utilities/login-dialog/login-dialog.component';
-import { IntroGuideComponent } from '../../utilities/intro-guide/intro-guide.component';
 
 /**
  * Navbar component wrapping main navigation in dashboard.
@@ -187,13 +186,5 @@ export class NavbarComponent implements OnInit {
 
     // For weird reasons the menu gets "stuck" unless we do this in a timer.
     setTimeout(() => this.backendService.remove(backend), 1);
-  }
-
-  public showHelp() {
-    this.dialog.open(IntroGuideComponent, {
-      width: '80%',
-      height: '80%',
-      panelClass: ['intro-panel']
-    })
   }
 }
