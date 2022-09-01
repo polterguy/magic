@@ -15,7 +15,6 @@ import { FeedbackService } from 'src/app/services/feedback.service';
 import { DiagnosticsService } from 'src/app/services/diagnostics.service';
 import { LogTypes, SystemReport, Timeshifts } from '../../models/dashboard.model';
 import { LoginDialogComponent } from '../utilities/login-dialog/login-dialog.component';
-import { IntroGuideComponent } from '../utilities/intro-guide/intro-guide.component';
 
 /**
  * Dashboard component displaying general information about Magic,
@@ -75,7 +74,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.authSubscriber = this.backendService.authenticatedChanged.subscribe((authenticated: boolean) => {
       if (authenticated && this.backendService.active?.token?.in_role('root')) {
         this.getSystemReport();
-        this.showIntroDialog();
       }
     });
     this.activeBackendSubscriber = this.backendService.activeBackendChanged.subscribe(() => {
@@ -160,19 +158,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.feedbackService.showError(error);
         this._isRetrievingSystemReport = false;
       }});
-  }
-
-  private showIntroDialog() {
-    if (localStorage.getItem('intro')) {
-      return;
-    }
-    this.dialog.open(IntroGuideComponent, {
-      width: '80%',
-      height: '80%',
-      panelClass: ['intro-panel']
-    }).afterClosed().subscribe(() => {
-      localStorage.setItem('intro','passes')
-    })
   }
 
   hidePanel() {
