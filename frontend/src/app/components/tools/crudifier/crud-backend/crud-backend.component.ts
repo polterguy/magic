@@ -183,10 +183,11 @@ export class CrudBackendComponent implements OnInit {
       this.databaseType,
       this.connectionString).subscribe({
         next: (databases: Databases) => {
-          if (this.preDefinedDbName !== '') {
-            this.database = <any>databases.databases.find((item: any) => item.name === this.preDefinedDbName)
-          }
           this.databases = databases;
+          if (this.preDefinedDbName !== '') {
+            this.database = <any>this.databases.databases.find((item: any) => item.name === this.preDefinedDbName)
+            this.createDefaultOptionsForDatabase(this.database);
+          }
         },
         error: (error: any) => this.feedbackService.showError(error)});
     this.messageService.sendMessage({
