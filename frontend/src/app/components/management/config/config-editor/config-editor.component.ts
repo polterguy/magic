@@ -4,18 +4,19 @@
  */
 
 // Angular and system imports.
+import { ActivatedRoute } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 
 // Application specific imports.
-import { ConfigService } from '../../../../services/config.service';
 import { BackendService } from 'src/app/services/backend.service';
+import { ConfigService } from '../../../../services/config.service';
 import { FeedbackService } from '../../../../services/feedback.service';
+import { SmtpDialogComponent } from '../smtp-dialog/smtp-dialog.component';
+import { ConnectionStringDialogComponent } from '../connection-string-dialog/connection-string-dialog.component';
 
 // CodeMirror options.
 import json from '../../../utilities/codemirror/options/json.json'
-import { MatDialog } from '@angular/material/dialog';
-import { ConnectionStringDialogComponent } from '../connection-string-dialog/connection-string-dialog.component';
-import { SmtpDialogComponent } from '../smtp-dialog/smtp-dialog.component';
 
 /**
  * Component that allows user to edit his configuration file as raw JSON.
@@ -58,6 +59,7 @@ export class ConfigEditorComponent implements OnInit {
     private feedbackService: FeedbackService,
     private configService: ConfigService,
     public backendService: BackendService,
+    private activatedRoute: ActivatedRoute,
     private dialog: MatDialog) {
   }
 
@@ -89,6 +91,12 @@ export class ConfigEditorComponent implements OnInit {
             editor.doc.markClean();
             editor.doc.clearHistory(); // To avoid having initial loading of file becoming an "undo operation".
           }, 1);
+          this.activatedRoute.queryParams.subscribe((params: any) => {
+            const connect = params['connect'];
+            if (connect) {
+              this.addConnectionString()
+            }
+          });
         }
       },
       error: (error: any) => this.feedbackService.showError(error)});

@@ -3,7 +3,9 @@
   <mat-progress-bar mode="indeterminate" *ngIf="loaderService.isLoading | async"></mat-progress-bar>
 </div>
 
-<div *ngIf="backendService.getObscurer()" class="global-obscurer"></div>
+<div *ngIf="backendService.getObscurer()" class="global-obscurer">
+  <h1>Please wait ...</h1>
+</div>
 
 <div [class]="themeService.theme" class="main-body">
 
