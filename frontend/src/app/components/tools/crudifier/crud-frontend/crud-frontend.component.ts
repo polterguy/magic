@@ -2,17 +2,16 @@
 /*
  * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
  */
+import { ActivatedRoute } from '@angular/router';
 import { Component, ComponentFactoryResolver, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { Messages } from 'src/app/models/messages.model';
 import { CrudifyService } from '../services/crudify.service';
-import { ConfigService } from 'src/app/services/config.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { CrudFrontendExtraComponent } from './crud-frontend-extra/crud-frontend-extra.component';
-import { ActivatedRoute } from '@angular/router';
 
 /**
  * Crudifier component for generating a frontend from
@@ -58,7 +57,7 @@ export class CrudFrontendComponent implements OnInit {
     private resolver: ComponentFactoryResolver,
     private crudifyService: CrudifyService,
     private messageService: MessageService,
-    private feedbackService:FeedbackService,
+    private feedbackService: FeedbackService,
     private backendService: BackendService,
     private activatedRoute: ActivatedRoute) { }
 
@@ -69,11 +68,16 @@ export class CrudFrontendComponent implements OnInit {
     this.crudifyService.templates().subscribe({
       next: (result: string[]) => {
         this.templates = result || [];
+        this.activatedRoute.queryParams.subscribe((params: any) => {
+          const db = params['db'];
+          if (db) {
+            this.name = params['db'];
+            this.template = this.templates.find((idx: string) => idx === 'angular');
+            this.templateChanged();
+          }
+        });
       },
       error: (error: any) => this.feedbackService.showError(error)});
-      this.activatedRoute.queryParams.subscribe((params: any) => {
-        this.name = params['db'];
-      });
   }
 
   /**
