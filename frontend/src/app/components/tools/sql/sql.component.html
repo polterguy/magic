@@ -318,6 +318,10 @@
                     </mat-card>
                   <!-- </div> -->
 
+                  <!-- </div> -->
+                </div>
+                <div class="col-12">
+
                   <div
                      [class.d-none]="!(result && result.length > 0)"
                     #resultCard
@@ -389,7 +393,7 @@
                                 *ngIf="idxRow.details === true && idxRow.display === true"
                                 class="view-details py-3"
                                 [attr.colspan]="idxResult.columns.length">
-                                <div class="details-sheet">
+                                <div class="details-sheet pl-3">
                                   <div
                                     *ngFor="let idxDetails of idxRow.data | dynamic"
                                     (click)="copyToClipBoard(idxDetails.value)"
@@ -409,7 +413,6 @@
 
                     </mat-card>
                   </div>
-                <!-- </div> -->
               </div>
             </div>
           </div>
