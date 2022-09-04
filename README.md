@@ -17,7 +17,7 @@ of authentication, authorisation, user management, and everything else that's di
 
 ## Useful links
 
-* [Create a Low Code CRUD app in seconds](https://aista.com)
+* [Create a Low Code / No Code CRUD app in seconds](https://aista.com)
 * [What is Hyperlambda](https://aista.com/hyperlambda/)
 * [How magic creates CRUD full stack apps](https://aista.com/crud-datagrid/)
 * [SQL Studio to visuall design your database](https://aista.com/sql-studio/)
