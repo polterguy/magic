@@ -7,7 +7,7 @@ Magic is a no-code/low-code CRUD app generator that allows you to generate CRUD 
 In addition it is a complete open source cloud platform and IDE, allowing you to create your own virtualized
 cloud on top of your own server, and/or other cloud systems, editing your code from your phone if required.
 Magic is professionally maintained by [Aista, your low code and no code cloud service provider](https://aista.com).
-Below is a screenshot of an app built in 5 minutes using our [no code CRUD datagrid generator](https://aista.com/crud-datagrid/).
+Below is a screenshot of an app built in 5 minutes using our [no code CRUD datagrid generator](https://aista.com/crud-datagrid/). Try the app [here](https://sakila.aista.com).
 
 ![Low code and no code CRUD datagrid](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/sakila.jpg)
 
