@@ -1,5 +1,5 @@
 
-# A low-code CRUD generator
+# A low-code CRUD app generator - No code required
 
 ![Build status](https://github.com/polterguy/magic/actions/workflows/codeql-analysis.yml/badge.svg)
 
