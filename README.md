@@ -3,7 +3,7 @@
 
 ![Build status](https://github.com/polterguy/magic/actions/workflows/codeql-analysis.yml/badge.svg)
 
-Magic is a no-code/low-code CRUD generator that allows you to generate CRUD apps 100% automatically.
+Magic is a no-code/low-code CRUD app generator that allows you to generate CRUD apps 100% automatically.
 In addition it is a complete open source cloud platform and IDE, allowing you to create your own virtualized
 cloud on top of your own server, and/or other cloud systems, editing your code from your phone if required.
 Magic is professionally maintained by [Aista, your low code and no code cloud service provider](https://aista.com).
