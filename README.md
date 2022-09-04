@@ -12,7 +12,7 @@ Below is a screenshot of an app built in 5 minutes using our [no code CRUD datag
 ![Low code and no code CRUD datagrid](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/sakila.jpg)
 
 Magic works by reading meta data from your database, for then to automatically generate a
-complete backend web API for you. The resuling CRUD API is secured automatically, and Magic takes care
+complete backend no-code CRUD API for you. The resuling CRUD API is secured automatically, and Magic takes care
 of authentication, authorisation, user management, and everything else that's difficult.
 
 ## Useful links
