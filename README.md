@@ -6,6 +6,7 @@
 Magic is a no-code/low-code CRUD generator that allows you to generate CRUD apps 100% automatically.
 In addition it is a complete open source cloud platform and IDE, allowing you to create your own virtualized
 cloud on top of your own server, and/or other cloud systems, editing your code from your phone if required.
+Magic is professionally maintained by [Aista, your low code and no code cloud service provider](https://aista.com).
 Below is a screenshot of Hyper IDE.
 
 ![Dashboard screenshot](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/hyper-ide-actions.jpg)
