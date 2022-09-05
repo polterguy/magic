@@ -199,8 +199,8 @@ export class MainComponent implements OnInit {
               } else {
 
                 // Impersonation request.
-                this.backendService.active.createAccessRights();
                 this.location.replaceState('');
+                window.location.href = window.location.href; // Refreshing page ...
               }
             },
             error: (error: any) => this.feedbackService.showError(error)
