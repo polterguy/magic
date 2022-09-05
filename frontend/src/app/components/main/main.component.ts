@@ -199,6 +199,7 @@ export class MainComponent implements OnInit {
               } else {
 
                 // Impersonation request.
+                this.backendService.active.createAccessRights();
                 this.location.replaceState('');
               }
             },
