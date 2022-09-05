@@ -450,6 +450,7 @@ export class BackendService {
       next: (res) => {
         backend.applyEndpoints(res || []);
         this._endpointsRetrieved.next(true);
+        backend.createAccessRights();
       },
       error: () => {
         backend.applyEndpoints([]);
