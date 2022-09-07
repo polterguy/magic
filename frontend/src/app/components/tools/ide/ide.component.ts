@@ -594,9 +594,19 @@ export class IdeComponent implements OnInit, OnDestroy {
       if (editor) {
         let result = '';
         const indentation = editor.doc.sel.ranges[0].anchor.ch;
+        if (indentation % 3 !== 0) {
+          this.feedbackService.showError('Indentation must be modulo of 3');
+          return;
+        }
         const lines = content.trimEnd().split('\n');
+        let first = true;
         for (let idx of lines) {
-          result += ' '.repeat(indentation) + idx.trimEnd() + '\r\n';
+          if (first) {
+            result += idx.trimEnd() + '\r\n';
+            first = false;
+          } else {
+            result += ' '.repeat(indentation) + idx.trimEnd() + '\r\n';
+          }
         }
         const doc = editor.getDoc();
         const cursor = doc.getCursor();

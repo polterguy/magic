@@ -1,4 +1,3 @@
-
 // Inserts a bunch of nodes before the specified destination expression's node.
 .destination
    foo1

@@ -1,4 +1,3 @@
-
 /*
  * Opens a database connection and executes some arbitrary SQL,
  * returning results as a record set.

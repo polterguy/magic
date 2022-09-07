@@ -1,4 +1,3 @@
-
 /*
  * Illustrates how to create a complex read invocation,
  * that joins two different tables together, using lambda

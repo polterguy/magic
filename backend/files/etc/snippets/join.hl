@@ -1,4 +1,3 @@
-
 /*
  * And example of waiting for multiple threads to
  * finish parallel execution.

@@ -1,11 +1,7 @@
-
 // Illustrates how to use a [for-each] loop to iterate some node-set.
-
 .data
    item1:Hello from Item1
    item2:Hello from Item2
    item3:Hello from Item3
-   
 for-each:x:@.data/*
-
    log.info:x:@.dp/#

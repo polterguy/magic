@@ -1,3 +1,4 @@
+// Example of creating a MIME HTTP POST request.
 http.post:"http://localhost:5000/magic/modules/foo/foo"
    headers
       Content-Type:multipart/form-data
