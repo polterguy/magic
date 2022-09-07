@@ -1,8 +1,7 @@
 // Evaluates specified [.lambda] if condition evaluates to true.
 if:x:@SOME_EXPRESSION
-   .lambda
 
-      // Lambda evaluates if condition is true.
+   // Lambda evaluates if condition is true.
 
 else
 
