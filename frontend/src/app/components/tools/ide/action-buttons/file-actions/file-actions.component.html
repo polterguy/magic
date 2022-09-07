@@ -33,6 +33,18 @@
   Preview
 </button>
 
+<!-- Insert snippet -->
+<button mat-menu-item 
+  [disabled]="!currentFileData?.path?.endsWith('.hl')" 
+  matTooltip="Insert snippet [ALT+V]" 
+  matTooltipPosition="before"
+  (click)="insertSnippet()">
+  <mat-icon class="material-icons-outlined">
+    get_app
+  </mat-icon>
+  Insert snippet
+</button>
+
 <!-- Rename file -->
 <button mat-menu-item
   [disabled]="!backendService.active?.access.files.rename"

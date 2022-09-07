@@ -21,6 +21,7 @@ import { PreviewFileDialogComponent } from '../../preview-file-dialog/preview-fi
 import { ExecuteEndpointDialogComponent } from '../../execute-endpoint-dialog/execute-endpoint-dialog.component';
 import { FileObjectName, RenameFileDialogComponent } from '../../rename-file-dialog/rename-file-dialog.component';
 import { UnsavedChangesDialogComponent } from '../../unsaved-changes-dialog/unsaved-changes-dialog.component';
+import { LoadSnippetDialogComponent } from 'src/app/components/misc/evaluator/load-snippet-dialog/load-snippet-dialog.component';
 
 /**
  * File actions component for executing actions for selected file in Hyper IDE.
@@ -36,6 +37,7 @@ export class FileActionsComponent {
   @Input() endpointData: any;
   @Output() getEndpoints: EventEmitter<any> = new EventEmitter();
   @Output() getEndpoint: EventEmitter<any> = new EventEmitter();
+  @Output() insertHyperlambda: EventEmitter<string> = new EventEmitter();
   @Output() renameActiveFileFromParent: EventEmitter<any> = new EventEmitter();
   @Output() deleteActiveFileFromParent: EventEmitter<any> = new EventEmitter();
   @Output() closeFileImplFromParent: EventEmitter<any> = new EventEmitter();
@@ -139,6 +141,30 @@ export class FileActionsComponent {
     }
     this.dialog.open(PreviewFileDialogComponent, {
       data: this.currentFileData.content,
+    });
+  }
+
+  /**
+   * Invoked when a file should be previewed.
+   */
+  insertSnippet() {
+    if (!this.currentFileData.path.endsWith('.hl')) {
+      return;
+    }
+    if (this.openFiles.length === 0) {
+      return;
+    }
+    const dialogRef = this.dialog.open(LoadSnippetDialogComponent, {
+      width: '550px',
+    });
+    dialogRef.afterClosed().subscribe((filename: string) => {
+      if (filename) {
+        this.evaluatorService.loadSnippet(filename).subscribe({
+          next: (content: string) => {
+            return this.insertHyperlambda.emit(content);
+          },
+          error: (error: any) => this.feedbackService.showError(error)});
+      }
     });
   }
 

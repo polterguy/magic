@@ -583,6 +583,34 @@ export class IdeComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Inserts specified Hyperlambda at caret's position.
+   * 
+   * @param content Hyperlambda to insert
+   */
+  insertHyperlambda(content: string) {
+    var activeWrapper = document.querySelector('.active-codemirror-editor');
+    if (activeWrapper) {
+      var editor = (<any>activeWrapper.querySelector('.CodeMirror'))?.CodeMirror;
+      if (editor) {
+        let result = '';
+        const indentation = editor.doc.sel.ranges[0].anchor.ch;
+        const lines = content.trimEnd().split('\n');
+        for (let idx of lines) {
+          result += ' '.repeat(indentation) + idx.trimEnd() + '\r\n';
+        }
+        const doc = editor.getDoc();
+        const cursor = doc.getCursor();
+        const line = doc.getLine(cursor.line);
+        const pos = {
+            line: cursor.line,
+            ch: line.length,
+        };
+        doc.replaceRange(result, pos);
+      }
+    }
+}
+
+  /**
    * Updates the specified folder or file object only and re-renders TreeView.
    * 
    * @param fileObject File object to update
@@ -825,6 +853,11 @@ export class IdeComponent implements OnInit, OnDestroy {
         options[0].options.extraKeys['Alt-L'] = (cm: any) => {
           this.ngZone.run(() => {
             this.folderActionsComponent.renameActiveFolder();
+          });
+        };
+        options[0].options.extraKeys['Alt-V'] = (cm: any) => {
+          this.ngZone.run(() => {
+            this.fileActionsComponent.insertSnippet();
           });
         };
         options[0].options.extraKeys['Alt-O'] = (cm: any) => {
