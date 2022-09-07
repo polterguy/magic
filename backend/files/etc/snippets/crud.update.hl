@@ -1,0 +1,14 @@
+// Updates an item in your DATABASE_NAME database in TABLE_NAME table with id of WHATEVER_ID_HERE.
+data.connect:DATABASE_NAME
+   database-type:sqlite
+
+   // Invoking our update slot.
+   data.update
+      database-type:sqlite
+      table:TABLE_NAME
+      values
+         column1:NEW_VALUE_HERE
+         column2:ANOTHER NEW_VALUE_HERE
+      where
+         and
+            id.eq:x:@WHATEVER_ID_HERE
