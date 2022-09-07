@@ -1,4 +1,3 @@
-
 // Example of how to use [strings.concat] to concatenate two or more strings together.
 strings.concat
    .:foo

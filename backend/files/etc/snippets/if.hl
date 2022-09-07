@@ -1,22 +1,9 @@
-
-/*
- * Evaluates specified [.lambda] if condition evaluates to true.
- * 
- * Try changing the below true value to false.
- */
-.source:bool:true
-.result
-if
-   eq
-      get-value:x:@.source
-      .:bool:true
+// Evaluates specified [.lambda] if condition evaluates to true.
+if:x:@SOME_EXPRESSION
    .lambda
 
       // Lambda evaluates if condition is true.
-      set-value:x:@.result
-         .:yup!
+
 else
 
    // Lambda evaluated if condition is NOT true.
-   set-value:x:@.result
-      .:nope!

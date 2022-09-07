@@ -1,4 +1,3 @@
-
 // Invoking server to retrieve a cryptography challenge.
 http.get:"http://localhost:5000/magic/system/crypto/challenge"
 
