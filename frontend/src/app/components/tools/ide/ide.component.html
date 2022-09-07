@@ -167,6 +167,7 @@
                   <app-file-actions
                     [currentFileData]="currentFileData" 
                     (getEndpoints)="getEndpoints()"
+                    (insertHyperlambda)="insertHyperlambda($event)"
                     (getEndpoint)="currentFileData ? getEndpoint($event) : ''"
                     [endpointData]="currentFileData ? getEndpoint(currentFileData) : ''"
                     [openFiles]="openFiles"
@@ -262,6 +263,11 @@
                   <mat-list-item role="listitem">
                     Preview active file
                     <span class="code my-0 ml-5">ALT + P</span>
+                  </mat-list-item>
+
+                  <mat-list-item role="listitem">
+                    Insert snippet
+                    <span class="code my-0 ml-5">ALT + V</span>
                   </mat-list-item>
 
                   <mat-list-item role="listitem">
