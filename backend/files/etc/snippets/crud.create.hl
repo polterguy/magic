@@ -1,0 +1,9 @@
+// Creates a new item in DATABASE_NAME database and its TABLE_NAME table.
+data.connect:DATABASE_NAME
+   database-type:sqlite
+
+   // Creating our record.
+   data.create
+      database-type:sqlite
+      table:TABLE_NAME
+      values
