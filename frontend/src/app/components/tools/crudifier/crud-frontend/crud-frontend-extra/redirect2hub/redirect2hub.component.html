@@ -1,0 +1,20 @@
+<h3 mat-dialog-title>Redirect to hub?</h3>
+<div mat-dialog-content>
+  <p>
+    Do you want to deploy your newly created frontend? If you say yes, you will be redirected to
+    hub and you'll have to login and create a new cloudlet of type Angular cloudlet wrapping
+    your existing backend cloudlets as its 'source cloudlet'.
+  </p>
+</div>
+<div mat-dialog-actions [align]="'end'">
+  <a
+    mat-flat-button
+    color="primary"
+    href="https://{{getRootUrl()}}.aista.com/cloudlets"
+    target="_blank"
+    (click)="deploy()">Yes</a>
+  <button
+    mat-button
+    mat-dialog-close=""
+    type="button">No</button>
+</div>

@@ -12,6 +12,8 @@ import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { Endpoint } from '../../../endpoints/models/endpoint.model';
 import { EndpointService } from 'src/app/services/endpoint.service';
+import { MatDialog } from '@angular/material/dialog';
+import { Redirect2hubComponent } from './redirect2hub/redirect2hub.component';
 
 /**
  * Endpoint model class, for allowing user to select which endpoints
@@ -85,12 +87,14 @@ export class CrudFrontendExtraComponent implements OnInit, OnDestroy {
    * @param endpointService Needed to retrieve templates, meta information, and actually generate frontend
    * @param feedbackService Needed to provide feedback to user
    * @param crudifyService Needed to perform tha actual creation of our frontend
+   * @param dialog Needed to open up modal dialogues
    */
   constructor(
     private messageService: MessageService,
     private endpointService: EndpointService,
     private feedbackService: FeedbackService,
-    private crudifyService: CrudifyService) { }
+    private crudifyService: CrudifyService,
+    private dialog: MatDialog) { }
 
   /**
    * Implementation of OnInit.
@@ -298,7 +302,13 @@ export class CrudFrontendExtraComponent implements OnInit, OnDestroy {
         this.messageService.sendMessage({
           name: deployLocally ? 'magic.crudifier.frontend-generated-locally' : 'magic.crudifier.frontend-generated'
         });
-      });
+
+        // Asking user if he or she wants to redirect to hub.
+        this.dialog
+          .open(Redirect2hubComponent, {
+            width: '650px',
+          });
+        });
   }
 
   /*
