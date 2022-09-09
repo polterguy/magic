@@ -393,7 +393,7 @@ export class CrudBackendComponent implements OnInit {
    * Creates default crudify options for current database.
    */
   private createDefaultOptionsForDatabase(database: DatabaseEx) {
-    for (const idxTable of database.tables || []) {
+    for (const idxTable of database?.tables || []) {
       for (const idx of idxTable.columns) {
         const keys = idxTable.foreign_keys?.filter(x => x.column === idx.name) ?? [];
         if (keys.length > 0) {

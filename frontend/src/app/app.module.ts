@@ -178,6 +178,7 @@ import { NewDatabaseComponent } from './components/tools/sql/new-database/new-da
 import { ExportTablesComponent } from './components/tools/sql/export-tables/export-tables.component';
 import { EditExtraComponent } from './components/management/auth/users/edit-extra/edit-extra.component';
 import { NewLinkTableComponent } from './components/tools/sql/new-link-table/new-link-table.component';
+import { Redirect2hubComponent } from './components/tools/crudifier/crud-frontend/crud-frontend-extra/redirect2hub/redirect2hub.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -290,6 +291,7 @@ import { NewLinkTableComponent } from './components/tools/sql/new-link-table/new
     ExportTablesComponent,
     EditExtraComponent,
     NewLinkTableComponent,
+    Redirect2hubComponent,
   ],
   imports: [
     FormsModule,
