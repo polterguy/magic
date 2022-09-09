@@ -314,7 +314,7 @@ export class CrudBackendComponent implements OnInit {
         const loc = results.reduce((x,y) => x + y.loc, 0);
         this.logService.createLocItem(loc, 'backend', `${this.database.name}`).subscribe({
           next: () => {
-            this.feedbackService.showInfo(`${formatNumber(loc, this.locale, '1.0')} lines of code generated`);
+            this.feedbackService.showInfo(`${formatNumber(loc, this.locale, '1.0')} lines of code generated. Now generate your frontend!`);
             this.flushEndpointsAuthRequirements();
             this.messageService.sendMessage({
               name: 'magic.folders.update',
