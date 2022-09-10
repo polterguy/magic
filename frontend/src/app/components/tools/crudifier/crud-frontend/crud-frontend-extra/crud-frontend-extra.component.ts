@@ -476,6 +476,9 @@ export class CrudFrontendExtraComponent implements OnInit, OnDestroy {
             name: idxOutput.name,
             type: idxOutput.type || tmp.input[idxOutput.name + '.eq'],
           };
+          if (idxOutput.handling) {
+            cur.handling = idxOutput.handling;
+          }
           if (idxOutput.lookup) {
             cur.lookup = idxOutput.lookup;
             cur.lookup.table = cur.lookup.table.replace('dbo.', '');

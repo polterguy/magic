@@ -463,6 +463,10 @@ export class CrudBackendComponent implements OnInit {
           idxColumn.warning = 'Warning, I automatically associated this column with the currently authenticated user due to its name. You might want to sanity check my decision.';
         }
 
+        if (idxColumn.name?.toLowerCase() === 'picture' || idxColumn.name?.toLowerCase() === 'image' || idxColumn.name?.toLowerCase() === 'photo') {
+          idxColumn.handling = 'image';
+        }
+
         /*
          * Notice, if we're not sure whether or not column should be a part of POST and PUT
          * we expand the column by default, to give visual clues to the user that he needs to

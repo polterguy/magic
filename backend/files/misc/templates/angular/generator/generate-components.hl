@@ -74,6 +74,7 @@ set-value:x:@.column-file/*/lookup
    date
    bool
    lookup
+   image
 strings.concat
    get-value:x:@.arguments/*/root-folder
    .:templates/view-details/view-details.html
@@ -93,6 +94,11 @@ strings.concat
    get-value:x:@.arguments/*/root-folder
    .:templates/view-details/view-details.lookup.html
 set-value:x:@.view-details-file/*/lookup
+   io.file.load:x:@strings.concat
+strings.concat
+   get-value:x:@.arguments/*/root-folder
+   .:templates/view-details/view-details.image.html
+set-value:x:@.view-details-file/*/image
    io.file.load:x:@strings.concat
 
 /*
@@ -479,12 +485,23 @@ for-each:x:@.arguments/*/.crud-methods/*
 
                         // Default (anything not having a specialized implementation).
                         default
-                           set-value:x:@.substitutions/*/view-details
-                              strings.concat
-                                 get-value:x:@.substitutions/*/view-details
-                                 strings.replace:x:@.view-details-file
-                                    .:[[column-name]]
-                                    get-value:x:@.dp/#/*/name
+                           if
+                              eq:x:@.dp/#/*/handling
+                                 .:image
+                              .lambda
+                                 set-value:x:@.substitutions/*/view-details
+                                    strings.concat
+                                       get-value:x:@.substitutions/*/view-details
+                                       strings.replace:x:@.view-details-file/*/image
+                                          .:[[column-name]]
+                                          get-value:x:@.dp/#/*/name
+                           else
+                              set-value:x:@.substitutions/*/view-details
+                                 strings.concat
+                                    get-value:x:@.substitutions/*/view-details
+                                    strings.replace:x:@.view-details-file
+                                       .:[[column-name]]
+                                       get-value:x:@.dp/#/*/name
 
                /*
                 * Making sure we create a TypeScript instance of correct type to
