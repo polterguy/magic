@@ -445,6 +445,9 @@ export class CrudBackendComponent implements OnInit {
         idxColumn.expanded = false;
 
         idxColumn.post = !(idxColumn.automatic && idxColumn.primary);
+        if (idxColumn.automatic && idxColumn.name?.toLowerCase() === 'created') {
+          idxColumn.post = false;
+        }
         idxColumn.get = true;
         idxColumn.put = !idxColumn.automatic || idxColumn.primary;
         idxColumn.delete = idxColumn.primary;
@@ -453,6 +456,12 @@ export class CrudBackendComponent implements OnInit {
         idxColumn.getDisabled = false;
         idxColumn.putDisabled = idxColumn.primary;
         idxColumn.deleteDisabled = true;
+
+        if ((idxColumn.name === 'user' || idxColumn.name === 'username') && idxColumn.hl === 'string') {
+          idxColumn.locked = 'auth.ticket.get';
+          idxColumn.expanded = true;
+          idxColumn.warning = 'Warning, I automatically associated this column with the currently authenticated user due to its name. You might want to sanity check my decision.';
+        }
 
         /*
          * Notice, if we're not sure whether or not column should be a part of POST and PUT
