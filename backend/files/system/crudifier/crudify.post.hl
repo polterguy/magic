@@ -494,6 +494,25 @@ semaphore:crudifier
                            add:x:@apply/*/.arguments
                               get-nodes:x:@.buffer/*
 
+         // Making sure we add [.handling] section if needed.
+         if
+            exists:x:@.arguments/*/args/*/columns/*/*/handling
+            .lambda
+               insert-after:x:@apply/*/.type
+                  .
+                     .handling
+         for-each:x:@.arguments/*/args/*/columns/*/*/handling
+            set-value:x:+/+/*/*
+               get-value:x:@.dp/#/./*/handling
+            set-name:x:+/*/*
+               strings.concat
+                  get-value:x:@.arguments/*/table
+                  .:.
+                  get-value:x:@.dp/#/./*/name
+            add:x:@apply/*/.handling
+               .
+                  .
+
          /*
           * Making sure we explicitly declare which [columns] that our
           * endpoint should return, according to caller's specifications.
@@ -1113,6 +1132,7 @@ semaphore:crudifier
           * plain get, except appending "-count" to it.
           */
          remove-nodes:x:@apply/*/.foreign-keys
+         remove-nodes:x:@apply/*/.handling
          remove-nodes:x:@apply/**/columns/*
          remove-nodes:x:@apply/**/table/././*/remove-nodes
          remove-nodes:x:@apply/**/return-nodes

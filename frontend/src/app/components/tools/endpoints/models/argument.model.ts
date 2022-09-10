@@ -24,4 +24,9 @@ export class Argument {
    * If table is a foreign key into another table, this will contain that data.
    */
   lookup: Lookup;
+
+  /**
+   * Special handling of fiel.
+   */
+  handling?: string;
 }

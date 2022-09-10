@@ -94,6 +94,7 @@
                 <mat-form-field
                   class="inline-input"
                   appearance="outline"
+                  class="mr-4"
                   matTooltip="Lock this field with row level security">
 
                   <mat-label>Lock field</mat-label>
@@ -103,6 +104,22 @@
                       [value]="null">No lock</mat-option>
                     <mat-option
                       value="auth.ticket.get">Lock to username</mat-option>
+                  </mat-select>
+
+                </mat-form-field>
+
+                <mat-form-field
+                  class="inline-input"
+                  appearance="outline"
+                  matTooltip="How to handle this field">
+
+                  <mat-label>Handling</mat-label>
+                  <mat-select
+                    [(ngModel)]="el.handling">
+                    <mat-option
+                      [value]="null">No special handling</mat-option>
+                    <mat-option
+                      value="image">Handle as image</mat-option>
                   </mat-select>
 
                 </mat-form-field>
