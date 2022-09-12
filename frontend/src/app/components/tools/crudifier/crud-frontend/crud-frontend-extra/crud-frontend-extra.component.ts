@@ -393,6 +393,9 @@ export class CrudFrontendExtraComponent implements OnInit, OnDestroy {
               cur.lookup.service = cur.lookup.service.replace('.', '_');
             }
           }
+          if (idxInput.handling) {
+            cur.handling = idxInput.handling;
+          }
           tmp.input.push(cur);
         }
       }

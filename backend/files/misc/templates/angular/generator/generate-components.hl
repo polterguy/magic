@@ -39,6 +39,7 @@ set-value:x:@.form-control-file
    date
    bool
    lookup
+   image
 strings.concat
    get-value:x:@.arguments/*/root-folder
    .:templates/column/column.html
@@ -63,6 +64,11 @@ strings.concat
    get-value:x:@.arguments/*/root-folder
    .:templates/column/column.lookup.html
 set-value:x:@.column-file/*/lookup
+   io.file.load:x:@strings.concat
+strings.concat
+   get-value:x:@.arguments/*/root-folder
+   .:templates/column/column.image.html
+set-value:x:@.column-file/*/image
    io.file.load:x:@strings.concat
 
 /*
@@ -112,6 +118,7 @@ set-value:x:@.view-details-file/*/image
    decimal
    selector
    autocomplete
+   image
 strings.concat
    get-value:x:@.arguments/*/root-folder
    .:templates/form-field/form-field.html
@@ -146,6 +153,11 @@ strings.concat
    get-value:x:@.arguments/*/root-folder
    .:templates/form-field/form-field.autocomplete.html
 set-value:x:@.form-field-file/*/autocomplete
+   io.file.load:x:@strings.concat
+strings.concat
+   get-value:x:@.arguments/*/root-folder
+   .:templates/form-field/form-field.image.html
+set-value:x:@.form-field-file/*/image
    io.file.load:x:@strings.concat
 
 /*
@@ -603,17 +615,33 @@ for-each:x:@.arguments/*/.crud-methods/*
 
                   // Default (anything not having a specialized implementation).
                   default
-                     strings.replace:x:@.column-file
-                        .:[[form-control-name]]
-                        strings.replace:x:@.dp/#/*/name
-                           .:.
-                           .:_
-                     set-value:x:@.substitutions/*/ng-containers
-                        strings.concat
-                           get-value:x:@.substitutions/*/ng-containers
-                           strings.replace:x:@strings.replace
-                              .:[[column-name]]
-                              get-value:x:@.dp/#/*/name
+                     if
+                        eq:x:@.dp/#/*/handling
+                           .:image
+                        .lambda
+                           strings.replace:x:@.column-file/*/image
+                              .:[[form-control-name]]
+                              strings.replace:x:@.dp/#/*/name
+                                 .:.
+                                 .:_
+                           set-value:x:@.substitutions/*/ng-containers
+                              strings.concat
+                                 get-value:x:@.substitutions/*/ng-containers
+                                 strings.replace:x:@strings.replace
+                                    .:[[column-name]]
+                                    get-value:x:@.dp/#/*/name
+                     else
+                        strings.replace:x:@.column-file
+                           .:[[form-control-name]]
+                           strings.replace:x:@.dp/#/*/name
+                              .:.
+                              .:_
+                        set-value:x:@.substitutions/*/ng-containers
+                           strings.concat
+                              get-value:x:@.substitutions/*/ng-containers
+                              strings.replace:x:@strings.replace
+                                 .:[[column-name]]
+                                 get-value:x:@.dp/#/*/name
 
                // Replacing full name.
                set-value:x:@.substitutions/*/ng-containers
@@ -783,12 +811,23 @@ for-each:x:@.arguments/*/.crud-methods/*
 
                   // Default (anything not having a specialized implementation).
                   default
-                     set-value:x:@.substitutions/*/form-fields
-                        strings.concat
-                           get-value:x:@.substitutions/*/form-fields
-                           strings.replace:x:@.form-field-file
-                              .:[[column-name]]
-                              get-value:x:@.dp/#/*/name
+                     if
+                        eq:x:@.dp/#/*/handling
+                           .:image
+                        .lambda
+                           set-value:x:@.substitutions/*/form-fields
+                              strings.concat
+                                 get-value:x:@.substitutions/*/form-fields
+                                 strings.replace:x:@.form-field-file/*/image
+                                    .:[[column-name]]
+                                    get-value:x:@.dp/#/*/name
+                     else
+                        set-value:x:@.substitutions/*/form-fields
+                           strings.concat
+                              get-value:x:@.substitutions/*/form-fields
+                              strings.replace:x:@.form-field-file
+                                 .:[[column-name]]
+                                 get-value:x:@.dp/#/*/name
 
          // Adding "delete-instance" to [displayed-columns]
          set-value:x:@.substitutions/*/displayed-columns

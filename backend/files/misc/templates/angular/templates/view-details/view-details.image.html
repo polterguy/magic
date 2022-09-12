@@ -1,4 +1,8 @@
             <p class="details">
               <label>{{'[[column-name]]' | translate}}</label>
-              <img class="database-image" [src]="'data:image/png;base64,' + el['[[column-name]]']" alt="Image from database">
+              <img
+                *ngIf="el['[[column-name]]']"
+                class="database-image"
+                [src]="'data:image/png;base64,' + el['[[column-name]]']"
+                alt="Image from database">
             </p>

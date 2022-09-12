@@ -1,0 +1,22 @@
+<div class="top">
+  <strong>{{label}}</strong>
+  <div>
+    <button
+      mat-icon-button
+      (click)="selectImage()">
+      <mat-icon>camera_enhance</mat-icon>
+    </button>
+  </div>
+</div>
+<div class="bottom">
+  <button
+    *ngIf="model[field]"
+    mat-icon-button
+    (click)="remove()">
+    <mat-icon>remove</mat-icon>
+  </button>
+  <img
+    *ngIf="model[field]"
+    [src]="'data:image/png;base64,' + model[field]"
+    alt="Image to use for entity">
+</div>

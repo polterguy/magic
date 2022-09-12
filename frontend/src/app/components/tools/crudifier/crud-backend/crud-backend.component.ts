@@ -465,6 +465,8 @@ export class CrudBackendComponent implements OnInit {
 
         if (idxColumn.name?.toLowerCase() === 'picture' || idxColumn.name?.toLowerCase() === 'image' || idxColumn.name?.toLowerCase() === 'photo') {
           idxColumn.handling = 'image';
+          idxColumn.expanded = true;
+          idxColumn.warning = 'Notice, by default this field will be handled as an image field. You mght want to double check my decision.';
         }
 
         /*

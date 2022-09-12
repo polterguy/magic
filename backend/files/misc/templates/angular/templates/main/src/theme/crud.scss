@@ -77,6 +77,11 @@
           max-width: 80px;
         }
 
+        th.text-header mat-label {
+          display: block;
+          margin-top: -1rem;
+        }
+
         td {
           text-overflow: ellipsis;
           overflow: hidden;

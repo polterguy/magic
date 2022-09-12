@@ -144,6 +144,9 @@ export class TransformModelService {
             if (idxColumn.locked) {
               cur['locked'] = idxColumn.locked;
             }
+            if (idxColumn.handling) {
+              cur['handling'] = idxColumn.handling;
+            }
             if (idxColumn.foreign_key && idxColumn.foreign_key.foreign_name !== null) {
               cur['foreign_key'] = {
                 table: idxColumn.foreign_key.foreign_table,
@@ -188,6 +191,9 @@ export class TransformModelService {
             };
             if (idxColumn.locked) {
               cur['locked'] = idxColumn.locked;
+            }
+            if (idxColumn.handling) {
+              cur['handling'] = idxColumn.handling;
             }
             if (idxColumn.foreign_key && idxColumn.foreign_key.foreign_name !== null) {
               cur['foreign_key'] = {
