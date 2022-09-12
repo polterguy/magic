@@ -17,6 +17,7 @@ import { MagicSelectorComponent } from './helpers/magic-selector/magic-selector.
 import { MagicAutocompleteComponent } from './helpers/magic-autocomplete/magic-autocomplete.component';
 import { MagicFilterComponent } from './helpers/magic-filter/magic-filter.component';
 import { MagicImageComponent } from './helpers/magic-image/magic-image.component';
+import { MagicImageFieldComponent } from './helpers/magic-image-field/magic-image-field.component';
 import { MagicImageViewComponent } from './helpers/magic-image-view/magic-image-view.component';
 import { MagicFileViewComponent } from './helpers/magic-file-view/magic-file-view.component';
 import { MagicFileComponent } from './helpers/magic-file/magic-file.component';
@@ -67,6 +68,7 @@ import { ConfirmDialogComponent } from './confirm-deletion-dialog/confirm-dialog
     MagicAutocompleteComponent,
     MagicFilterComponent,
     MagicImageComponent,
+    MagicImageFieldComponent,
     MagicImageViewComponent,
     MagicFileViewComponent,
     MagicFileComponent,

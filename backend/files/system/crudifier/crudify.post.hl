@@ -727,6 +727,22 @@ semaphore:crudifier
                   ..:Table is locked on the following field.
                   .
 
+         // Making sure we add [.handling] section if needed.
+         if
+            exists:x:@.arguments/*/args/*/columns/*/*/handling
+            .lambda
+               insert-after:x:@apply/*/.type
+                  .
+                     .handling
+         for-each:x:@.arguments/*/args/*/columns/*/*/handling
+            set-value:x:+/+/*/*
+               get-value:x:@.dp/#/./*/handling
+            set-name:x:+/*/*
+               get-value:x:@.dp/#/./*/name
+            add:x:@apply/*/.handling
+               .
+                  .
+
       // HTTP PUT special cases
       case:put
 
@@ -813,7 +829,7 @@ semaphore:crudifier
                get-value:x:@.x
                get-count:x:@.arguments/*/args/*/primary/*
                .:]
-         set-x:x:+/*/*/1
+         set-x:x:+/*/*/0
             convert:x:@.x
                type:x
          insert-before:x:@apply/**/table/././1
@@ -868,6 +884,22 @@ semaphore:crudifier
             add:x:@apply/*/data.connect/*/data.update/*/where/*/and
                .
                   ..:Table is locked on the following field.
+                  .
+
+         // Making sure we add [.handling] section if needed.
+         if
+            exists:x:@.arguments/*/args/*/columns/*/*/handling
+            .lambda
+               insert-after:x:@apply/*/.type
+                  .
+                     .handling
+         for-each:x:@.arguments/*/args/*/columns/*/*/handling
+            set-value:x:+/+/*/*
+               get-value:x:@.dp/#/./*/handling
+            set-name:x:+/*/*
+               get-value:x:@.dp/#/./*/name
+            add:x:@apply/*/.handling
+               .
                   .
 
    // HTTP PUT, POST and GET commonalities
