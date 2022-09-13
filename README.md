@@ -1,27 +1,30 @@
 
-# A low-code CRUD app generator - No code required
+# A lowcode CRUD generator - No code required
 
 ![Build status](https://github.com/polterguy/magic/actions/workflows/codeql-analysis.yml/badge.svg)
 
-Magic is a no-code/low-code CRUD app generator that allows you to generate CRUD apps 100% automatically.
+Magic is a nocode/lowcode CRUD generator that allows you to generate CRUD apps 100% automatically.
 In addition it is a complete open source cloud platform and IDE, allowing you to create your own virtualized
 cloud on top of your own server, and/or other cloud systems, editing your code from your phone if required.
-Magic is professionally maintained by [Aista, your low code and no code cloud service provider](https://aista.com).
-Below is a screenshot of an app built in 5 minutes using our [no code CRUD datagrid generator](https://aista.com/crud-datagrid/). Try the app [here](https://sakila.aista.com).
+Magic is professionally maintained by [Aista](https://aista.com).
+Below is a screenshot of an app built in 5 minutes using our [nocode CRUD generator](https://aista.com/crud-datagrid/).
+Try the app [here](https://sakila.aista.com).
 
-![Low code and no code CRUD datagrid](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/sakila.jpg)
+![Lowcode and nocode CRUD generator](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/sakila.jpg)
 
 Magic works by reading meta data from your database, for then to automatically generate a
-complete backend no-code CRUD API for you. The resuling CRUD API is secured automatically, and Magic takes care
-of authentication, authorisation, user management, and everything else that's difficult.
+complete backend nocode CRUD API for you. The resuling CRUD API is secured automatically, and Magic takes care
+of authentication, authorisation, user management, and everything else that's difficult. Afterwards you can
+optionally generate a CRUD datagrid giving you a full stack web app as the screenshot above illustrates.
 
 ## Useful links
 
-* [Create a Low Code / No Code CRUD app in seconds](https://aista.com)
-* [What is Hyperlambda](https://aista.com/hyperlambda/)
+* [Create a lowcode/nocode CRUD app in seconds](https://aista.com)
+* [CRUD API generator](https://aista.com/crud-api-generator/)
 * [How magic creates CRUD full stack apps](https://aista.com/crud-datagrid/)
 * [SQL Studio to visuall design your database](https://aista.com/sql-studio/)
 * [SQL API generator](https://aista.com/sql-api-generator/)
+* [What is Hyperlambda](https://aista.com/hyperlambda/)
 
 ## License
 
