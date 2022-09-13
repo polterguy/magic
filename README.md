@@ -21,7 +21,7 @@ optionally generate a CRUD datagrid giving you a full stack web app as the scree
 
 * [Create a lowcode/nocode CRUD app in seconds](https://aista.com)
 * [CRUD API generator](https://aista.com/crud-api-generator/)
-* [How magic creates CRUD full stack apps](https://aista.com/crud-datagrid/)
+* [How magic creates full stack CRUD apps](https://aista.com/crud-datagrid/)
 * [SQL Studio to visuall design your database](https://aista.com/sql-studio/)
 * [SQL API generator](https://aista.com/sql-api-generator/)
 * [What is Hyperlambda](https://aista.com/hyperlambda/)
