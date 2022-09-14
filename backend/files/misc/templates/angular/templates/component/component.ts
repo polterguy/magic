@@ -78,7 +78,7 @@ export class [[component-name]] extends GridComponent implements OnInit {
    * Overridde abstract method necessary to return the URL endpoint
    * for CRUD methods to base class.
    */
-  public url() {
+  public entityBaseUrl() {
     return '[[endpoint-url]]';
   }
 

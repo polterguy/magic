@@ -74,7 +74,7 @@ export abstract class GridComponent {
    * Abstract method you'll need to override to actually return URL of
    * CRUD methods.
    */
-  protected abstract url() : string;
+  protected abstract entityBaseUrl() : string;
 
   /**
    * Abstract method you'll need to override to actually return method that
@@ -127,7 +127,7 @@ export abstract class GridComponent {
     this.viewDetails = [];
 
     // Checking that we actually can retrieve data at all.
-    if (!this.authService.me.canInvoke(this.url(), 'get')) {
+    if (!this.authService.me.canInvoke(this.entityBaseUrl(), 'get')) {
       this.data = [];
       this.itemsCount = 0;
       return;
@@ -159,6 +159,21 @@ export abstract class GridComponent {
         }, (error: any) => this.showError(error));
       }
     }, (error: any) => this.showError(error));
+  }
+
+  /**
+   * Ensures URL is returned with https:// prefix
+   * 
+   * @param value URL to normalise
+   */
+  public ensureUrl(value: string) {
+    if (!value) {
+      return null;
+    }
+    if (!value.startsWith('http://') && !value.startsWith('https://')) {
+      return 'https://' + value;
+    }
+    return value;
   }
 
   /**
