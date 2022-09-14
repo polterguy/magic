@@ -108,7 +108,8 @@
             // 'Card' that shows details of entities.
             .details {
               flex-grow: 1;
-              width: 100%;
+              width: calc(100% - 1rem);
+              margin-right: 1rem;
 
               // Descriptive label for entity field.
               label {
@@ -263,7 +264,8 @@
         td {
           .details-sheet {
             .details {
-              width: 50% !important;
+              width: calc(50% - 1rem) !important;
+              margin-right: 1rem;
             }
           }
         }
