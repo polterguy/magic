@@ -8,10 +8,16 @@
         name="[[column-name]]"
         (change)="changed('[[column-name]]')"
         [owlDateTime]="picker[[column-name]]"
-        [owlDateTimeTrigger]="picker[[column-name]]"
         [(ngModel)]="data.entity.[[column-name]]"
         autocomplete="off">
-      <owl-date-time #picker[[column-name]] (afterPickerClosed)="changed('[[column-name]]')"></owl-date-time>
-      <mat-icon matSuffix matDatepickerToggleIcon>calendar_today</mat-icon>
+      <owl-date-time
+        #picker[[column-name]]
+        (afterPickerClosed)="changed('[[column-name]]')"></owl-date-time>
+      <mat-icon
+        [owlDateTimeTrigger]="picker[[column-name]]"
+        matSuffix
+        role="button"
+        class="button-icon"
+        matDatepickerToggleIcon>calendar_today</mat-icon>
     </mat-form-field>
 
