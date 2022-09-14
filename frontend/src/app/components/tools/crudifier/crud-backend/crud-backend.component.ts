@@ -469,6 +469,12 @@ export class CrudBackendComponent implements OnInit {
           idxColumn.warning = 'Notice, by default this field will be handled as an image field. You mght want to double check my decision.';
         }
 
+        if (idxColumn.name?.toLowerCase() === 'email' || idxColumn.name?.toLowerCase() === 'mail') {
+          idxColumn.handling = 'email';
+          idxColumn.expanded = true;
+          idxColumn.warning = 'Notice, by default this field will be handled as an email field. You mght want to double check my decision.';
+        }
+
         /*
          * Notice, if we're not sure whether or not column should be a part of POST and PUT
          * we expand the column by default, to give visual clues to the user that he needs to
