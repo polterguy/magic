@@ -28,6 +28,7 @@ import { OwlDateTimeModule, OwlNativeDateTimeModule } from '@danielmoncada/angul
 import { FormatDatePipe } from './pipes/format-date-pipe';
 import { DateSincePipe } from './pipes/date-since.pipe';
 import { ConfirmDialogComponent } from './confirm-deletion-dialog/confirm-dialog.component';
+import { UserManagementComponent } from './common/user-management/user-management.component';
 
 // Generated CRUD components here.
 [[imports]]
@@ -75,6 +76,7 @@ import { ConfirmDialogComponent } from './confirm-deletion-dialog/confirm-dialog
     FormatDatePipe,
     DateSincePipe,
     ConfirmDialogComponent,
+    UserManagementComponent,
 
     // Generated CRUD components here.
 [[module-declarations]]  ],

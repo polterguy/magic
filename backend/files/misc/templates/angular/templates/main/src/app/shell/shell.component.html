@@ -10,8 +10,7 @@
       [mode]="isMobile ? 'over' : 'side'"
       [opened]="!isMobile"
       [disableClose]="!isMobile"
-      ngClass.gt-sm="has-border"
-    >
+      ngClass.gt-sm="has-border">
       <mat-toolbar color="primary">
         <span translate>APP_NAME</span>
         <div fxFlex></div>
@@ -41,6 +40,16 @@
             routerLinkActive="active"
             (click)="isMobile && sidenav.close()">
             <span translate>Home</span>
+          </a>
+          <mat-divider></mat-divider>
+          <a
+            *ngIf="authService.me.canInvoke('magic/modules/magic/users', 'get')"
+            mat-list-item
+            routerLink="/users"
+            [routerLinkActiveOptions]="{exact: true}"
+            routerLinkActive="active"
+            (click)="isMobile && sidenav.close()">
+            <span translate>Users</span>
           </a>
 [[router-links]]
           <mat-divider></mat-divider>
