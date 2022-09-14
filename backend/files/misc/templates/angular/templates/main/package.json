@@ -1,5 +1,5 @@
 {
-  "name": "pagila",
+  "name": "[[name]]",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -12,8 +12,6 @@
     "e2e": "npm run write:env -s && ng e2e",
     "translations:extract": "ngx-translate-extract --input ./src --output ./src/translations/template.json --format=json --clean --sort",
     "write:env": "ngx-scripts env npm_package_version",
-    "prettier": "prettier --write \"./{src,e2e}/**/*.{ts,js,html,scss}\"",
-    "prettier:check": "prettier --list-different \"./{src,e2e}/**/*.{ts,js,html,scss}\"",
     "generate": "ng generate"
   },
   "dependencies": {
@@ -51,10 +49,8 @@
     "@types/jasmine": "^3.6.2",
     "@types/jasminewd2": "^2.0.8",
     "@types/node": "^18.7.9",
-    "codelyzer": "^0.0.28",
     "htmlhint": "^1.1.4",
     "https-proxy-agent": "^5.0.0",
-    "husky": "^8.0.1",
     "jasmine-core": "~4.3.0",
     "jasmine-spec-reporter": "~7.0.0",
     "karma": "^6.4.0",
@@ -63,33 +59,9 @@
     "karma-jasmine": "~4.0.1",
     "karma-jasmine-html-reporter": "^1.7.0",
     "karma-junit-reporter": "^2.0.1",
-    "prettier": "^2.2.1",
-    "pretty-quick": "^3.1.0",
     "protractor": "~7.0.0",
-    "stylelint": "~13.8.0",
-    "stylelint-config-prettier": "^8.0.2",
-    "stylelint-config-recommended-scss": "~4.2.0",
-    "stylelint-config-standard": "~20.0.0",
-    "stylelint-scss": "~3.18.0",
     "ts-node": "^9.1.1",
-    "tslint": "~6.1.0",
-    "tslint-config-prettier": "^1.18.0",
+    "tslint": "^6.1.3",
     "typescript": "~4.7.4"
-  },
-  "prettier": {
-    "singleQuote": true,
-    "overrides": [
-      {
-        "files": "*.scss",
-        "options": {
-          "singleQuote": false
-        }
-      }
-    ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "pretty-quick --staged"
-    }
   }
 }
