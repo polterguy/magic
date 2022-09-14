@@ -20,6 +20,11 @@ export class DateSincePipe implements PipeTransform {
     if (!value) {
       return '';
     }
+    if (typeof value === 'string') {
+      if ((<string>value).indexOf('+') === -1 && (<string>value).indexOf('Z') === -1) {
+        value += 'Z';
+      }
+    }
     const due = new Date(value).getTime();
     const now = new Date().getTime();
     const deltaSeconds = Math.round((now - due) / 1000);

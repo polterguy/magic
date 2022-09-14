@@ -232,6 +232,8 @@ for-each:x:@.arguments/*/.crud-methods/*
             // Instantiations for each above form field.
             form-controls-instantiations
 
+            dates-to-format:
+
          // Setting the URL for our endpoint.
          set-value:x:@.substitutions/*/endpoint-url
             get-value:x:@.dp/#/*/url
@@ -808,6 +810,12 @@ for-each:x:@.arguments/*/.crud-methods/*
                            strings.replace:x:@.form-field-file/*/date
                               .:[[column-name]]
                               get-value:x:@.dp/#/*/name
+                     set-value:x:@.substitutions/*/dates-to-format
+                        strings.concat
+                           get-value:x:@.substitutions/*/dates-to-format
+                           .:"'"
+                           get-value:x:@.dp/#/*/name
+                           .:"', "
 
                   // Default (anything not having a specialized implementation).
                   default
@@ -884,6 +892,12 @@ for-each:x:@.arguments/*/.crud-methods/*
             strings.replace:x:@strings.replace
                .:[[primary-keys]]
                get-value:x:@.substitutions/*/primary-keys
+
+            // Replacing [[dates-to-format]].
+            strings.replace:x:@strings.replace
+               .:[[dates-to-format]]
+               strings.trim:x:@.substitutions/*/dates-to-format
+                  .:", "
 
             // Replacing [[create-input]].
             strings.replace:x:@strings.replace

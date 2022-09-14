@@ -28,6 +28,17 @@ export class Edit[[component-name]] extends DialogComponent {
     ];
     this.updateColumns = [[[update-input]]
     ];
+    const datesToFormat: string[] = [[[dates-to-format]]];
+    for (let idx of datesToFormat) {
+      if (this.data.entity[idx]) {
+        if (typeof this.data.entity[idx] === 'string') {
+          if ((<string>this.data.entity[idx]).indexOf('+') === -1 && (<string>this.data.entity[idx]).indexOf('Z') === -1) {
+            this.data.entity[idx] += 'Z';
+          }
+        }
+        this.data.entity[idx] = new Date(this.data.entity[idx]);
+      }
+    }
   }
 
   /**
