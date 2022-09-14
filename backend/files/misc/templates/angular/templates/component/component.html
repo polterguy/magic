@@ -5,7 +5,7 @@
 
     <button
       mat-raised-button
-      *ngIf="authService.me.canInvoke(url(), 'post') && httpService['[[crud-entity]]']['create']"
+      *ngIf="authService.me.canInvoke(entityBaseUrl(), 'post') && httpService['[[crud-entity]]']['create']"
       class="create-button"
       [matTooltip]="('Create' | translate) + (' [[component-header]]' | translate)"
       (click)="createEntity()">
@@ -21,12 +21,12 @@
         <th
           mat-header-cell
           *matHeaderCellDef
-          [ngClass]="authService.me.canInvoke(url(), 'delete') && httpService['[[crud-entity]]']['delete'] ? 'delete-column' : 'hidden'"></th>
+          [ngClass]="authService.me.canInvoke(entityBaseUrl(), 'delete') && httpService['[[crud-entity]]']['delete'] ? 'delete-column' : 'hidden'"></th>
 
         <td
           mat-cell
           *matCellDef="let el"
-          [ngClass]="authService.me.canInvoke(url(), 'delete') && httpService['[[crud-entity]]']['delete'] ? 'delete-column' : 'hidden'">
+          [ngClass]="authService.me.canInvoke(entityBaseUrl(), 'delete') && httpService['[[crud-entity]]']['delete'] ? 'delete-column' : 'hidden'">
           <button
             mat-button
             (click)="deleteEntity($event, el, {[[delete-input]]})"
@@ -45,7 +45,7 @@
             class="details-sheet"
             [@detailExpand]="el == expandedElement ? 'expanded' : 'collapsed'">
             <button
-              *ngIf="authService.me.canInvoke(url(), 'put') && httpService['[[crud-entity]]']['update']"
+              *ngIf="authService.me.canInvoke(entityBaseUrl(), 'put') && httpService['[[crud-entity]]']['update']"
               mat-button
               color="primary"
               class="edit-button"
