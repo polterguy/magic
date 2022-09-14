@@ -81,6 +81,7 @@ set-value:x:@.column-file/*/image
    bool
    lookup
    image
+   email
 strings.concat
    get-value:x:@.arguments/*/root-folder
    .:templates/view-details/view-details.html
@@ -105,6 +106,11 @@ strings.concat
    get-value:x:@.arguments/*/root-folder
    .:templates/view-details/view-details.image.html
 set-value:x:@.view-details-file/*/image
+   io.file.load:x:@strings.concat
+strings.concat
+   get-value:x:@.arguments/*/root-folder
+   .:templates/view-details/view-details.email.html
+set-value:x:@.view-details-file/*/email
    io.file.load:x:@strings.concat
 
 /*
@@ -507,6 +513,16 @@ for-each:x:@.arguments/*/.crud-methods/*
                                     strings.concat
                                        get-value:x:@.substitutions/*/view-details
                                        strings.replace:x:@.view-details-file/*/image
+                                          .:[[column-name]]
+                                          get-value:x:@.dp/#/*/name
+                           else-if
+                              eq:x:@.dp/#/*/handling
+                                 .:email
+                              .lambda
+                                 set-value:x:@.substitutions/*/view-details
+                                    strings.concat
+                                       get-value:x:@.substitutions/*/view-details
+                                       strings.replace:x:@.view-details-file/*/email
                                           .:[[column-name]]
                                           get-value:x:@.dp/#/*/name
                            else
