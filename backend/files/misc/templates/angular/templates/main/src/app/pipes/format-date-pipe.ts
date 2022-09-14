@@ -13,6 +13,11 @@ export class FormatDatePipe implements PipeTransform {
     if (!value) {
       return '';
     }
+    if (typeof value === 'string') {
+      if ((<string>value).indexOf('+') === -1 && (<string>value).indexOf('Z') === -1) {
+        value += 'Z';
+      }
+    }
     const date = new Date(value);
     return date.toLocaleString();
   }
