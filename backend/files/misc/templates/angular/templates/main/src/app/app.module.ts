@@ -76,7 +76,7 @@ import { ConfirmDialogComponent } from './confirm-deletion-dialog/confirm-dialog
     DateSincePipe,
     ConfirmDialogComponent,
 
-// Generated CRUD components here.
+    // Generated CRUD components here.
 [[module-declarations]]  ],
 
   providers: [NgxImageCompressService],
