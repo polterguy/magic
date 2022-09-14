@@ -96,6 +96,10 @@
             padding-left: 2rem;
             padding-right: 2rem;
 
+            a {
+              text-decoration: none;
+            }
+
             // Edit details button.
             .edit-button {
               position: absolute;
