@@ -80,12 +80,10 @@ export class NewFieldKeyComponent {
     {name: 'timestamp', defaultValue: 'date'},
   ];
   private pgsqlDataTypes = [
-    {name: 'Numeric', defaultValue: 'Numeric'},
+    {name: 'numeric', defaultValue: 'numeric'},
     {name: 'text', defaultValue: 'string'},
-    {name: 'date', defaultValue: 'date'},
-    {name: 'datetime', defaultValue: 'date'},
-    {name: 'time', defaultValue: 'time'},
-    { name: 'blob', defaultValue: false },
+    {name: 'timestamp', defaultValue: 'date'},
+    {name: 'blob', defaultValue: false},
     {name: 'nvarchar', size: {min: 0, max: 65535}, defaultValue: false},
     {name: 'varchar', size: {min: 0, max: 65535}, defaultValue: 'string'},
   ];
@@ -93,9 +91,7 @@ export class NewFieldKeyComponent {
     {name: 'integer', defaultValue: 'integer'},
     {name: 'float', defaultValue: 'float'},
     {name: 'real', defaultValue: 'real'},
-    {name: 'date', defaultValue: 'date'},
-    {name: 'datetime', defaultValue: 'datetime'},
-    {name: 'time', defaultValue: 'time'},
+    {name: 'datetime', defaultValue: 'date'},
     {name: 'text', defaultValue: 'string'},
     {name: 'ntext', defaultValue: 'string'},
     {name: 'blob' },
@@ -126,6 +122,7 @@ export class NewFieldKeyComponent {
 
       case 'pgsql':
         return this.pgsqlDataTypes;
+
       case 'mssql':
         return this.mssqlDataTypes;
       }
@@ -169,6 +166,7 @@ export class NewFieldKeyComponent {
 
         case 'mysql':
         case 'sqlite':
+        case 'pgsql':
           this.data.defaultValue = 'current_timestamp';
           break;
       }
