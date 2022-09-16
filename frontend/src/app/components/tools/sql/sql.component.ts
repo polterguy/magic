@@ -1204,7 +1204,7 @@ export class SqlComponent implements OnInit {
       },
       width: '90%',
       maxWidth: '90vw',
-      height: '90%',
+      maxHeight: '90%',
       panelClass: ['details-dialog']
     });
   }
