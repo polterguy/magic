@@ -29,6 +29,8 @@ import { FormatDatePipe } from './pipes/format-date-pipe';
 import { DateSincePipe } from './pipes/date-since.pipe';
 import { ConfirmDialogComponent } from './confirm-deletion-dialog/confirm-dialog.component';
 import { UserManagementComponent } from './common/user-management/user-management.component';
+import { EditUserDialogComponent } from './common/user-management/edit-user-dialog/edit-user-dialog.component';
+import { CreateUserDialogComponent } from './common/user-management/create-user-dialog/create-user-dialog.component';
 
 // Generated CRUD components here.
 [[imports]]
@@ -77,6 +79,8 @@ import { UserManagementComponent } from './common/user-management/user-managemen
     DateSincePipe,
     ConfirmDialogComponent,
     UserManagementComponent,
+    EditUserDialogComponent,
+    CreateUserDialogComponent,
 
     // Generated CRUD components here.
 [[module-declarations]]  ],

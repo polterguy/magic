@@ -2,6 +2,15 @@
 <div class="component-wrapper">
   <div class="mat-elevation-z4 relativized grid-wrapper">
 
+    <button mat-flat-button 
+      color="primary"
+      class="create-btn" 
+      role="button"
+      (click)="createUser()" 
+      [ngClass]="authService.me.canInvoke('magic/modules/magic/users', 'create') ? '' : 'hidden'">
+        Create a new user
+    </button>
+
     <table
       mat-table
       multiTemplateDataRows
@@ -16,7 +25,14 @@
               type="text"
               autocomplete="off"
               [formControl]="username">
-            <mat-icon matSuffix>search</mat-icon>
+            <div *ngIf="username?.value?.length<3;else showClear" matSuffix>
+              <mat-icon >search</mat-icon>
+            </div>
+            <ng-template #showClear>
+              <button mat-icon-button (click)="clearSearch()" matSuffix>
+                <mat-icon>close</mat-icon>
+              </button>
+            </ng-template>
           </mat-form-field>
         </th>
         <td mat-cell *matCellDef="let el">{{el.username}}</td>
@@ -26,7 +42,7 @@
         <th mat-header-cell *matHeaderCellDef>
           Created
         </th>
-        <td mat-cell *matCellDef="let el">{{el.created}}</td>
+        <td mat-cell *matCellDef="let el">{{el.created | date: 'dd MMM, YYYY - HH:mm'}}</td>
       </ng-container>
 
       <ng-container matColumnDef="delete-instance">
@@ -41,7 +57,8 @@
           [ngClass]="authService.me.canInvoke('magic/modules/magic/users', 'delete') ? 'delete-column' : 'hidden'">
           <button
             mat-button
-            [matTooltip]="'Delete this record' | translate">
+            [matTooltip]="'Delete this record' | translate"
+            (click)="deleteUser(el.username);$event.stopPropagation()">
             <mat-icon matSuffix>delete</mat-icon>
           </button>
         </td>
@@ -51,7 +68,7 @@
         <td
           mat-cell
           *matCellDef="let el"
-          colspan="3">
+          colspan="4">
           <div
             class="details-sheet"
             [@detailExpand]="el == expandedElement ? 'expanded' : 'collapsed'">
@@ -60,16 +77,35 @@
               mat-button
               color="primary"
               class="edit-button"
+              (click)="edit(el)"
               [matTooltip]="'Edit' | translate">
               <mat-icon matSuffix>edit</mat-icon>
             </button>
             <p class="details">
-              <label>{{'Username' | translate}}</label>
+              <label [class.locked]="el.locked === 1">{{'Username' | translate}}</label>
               <span>{{el.username}}</span>
             </p>
             <p class="details">
               <label>{{'Created' | translate}}</label>
-              <span>{{el.created}}</span>
+              <span>{{el.created | date: 'dd MMM, YYYY - HH:mm'}}</span>
+            </p>
+            <p class="details">
+              <label>{{'Role' | translate}}</label>
+              <ng-container *ngIf="el.role.length > 0; else noRoles">
+                <span *ngFor="let role of el.role">
+                  {{role}}
+                </span>
+              </ng-container>
+              <ng-template #noRoles>-</ng-template>
+            </p>
+            <p class="details">
+              <label>{{'Extra details' | translate}}</label>
+              <ng-container *ngIf="el.extra.length > 0; else noExtra">
+                <span *ngFor="let extra of el.extra">
+                  {{extra.type}}: {{extra.value}}
+                </span>
+              </ng-container>
+              <ng-template #noExtra>-</ng-template>
             </p>
           </div>
         </td>
@@ -83,20 +119,20 @@
         mat-row
         [ngClass]="expandedElement === row ? 'selected' : 'row'"
         class="expandable-row"
-        (click)="expandedElement = expandedElement === row ? null : row"
+        (click)="expandedElement = expandedElement === row ? null : row;getUserRoles(row.username, row.role)"
         *matRowDef="let row; columns: displayedColumns;"></tr>
 
       <tr
         mat-row
         class="expanded-row"
-        *matRowDef="let row; columns: ['details']; "></tr>
+        *matRowDef="let row; columns: ['details'];"></tr>
 
     </table>
 
     <mat-paginator
       #paginator
-      [(length)]="itemsCount"
-      [(pageSize)]="limit"
+      [(length)]="total"
+      [(pageSize)]="pageSize"
       (page)="paged($event)"
       [pageSizeOptions]="[5,10,25,50]">
     </mat-paginator>
