@@ -69,7 +69,7 @@ else
          strings.concat
             .:[
             get-value:x:@.arguments/*/connectionString
-            .:|postgres]
+            .:|template1]
          data.connect:x:-
             database-type:x:@.arguments/*/databaseType
             .sql

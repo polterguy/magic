@@ -725,6 +725,9 @@ export class SqlComponent implements OnInit {
         switch (result.type) {
 
           case 'field':
+            if (result.databaseType === 'pgsql' && result.datatype.name === 'timestamp') {
+              result.datatype.name += ' with time zone';
+            }
             this.sqlService.addColumn(
               result.databaseType,
               result.connectionString,
@@ -1132,9 +1135,7 @@ export class SqlComponent implements OnInit {
         for (const idxTable of this.activeTables) {
           tables[idxTable.name] = idxTable.columns.map((x: any) => x.name);
         }
-        this.input.options.hintOptions = {
-          tables: tables,
-        };
+        this.input.options.hintOptions.tables = tables;
       }
     });
   }
@@ -1206,7 +1207,7 @@ export class SqlComponent implements OnInit {
       },
       width: '90%',
       maxWidth: '90vw',
-      height: '90%',
+      maxHeight: '90%',
       panelClass: ['details-dialog']
     });
   }
@@ -1276,9 +1277,7 @@ export class SqlComponent implements OnInit {
     });
 
     this.hubConnection.start().then(() => {
-
       this.install(app, token);
-
     });
   }
 
@@ -1306,19 +1305,17 @@ export class SqlComponent implements OnInit {
                 this.dialog.closeAll();
               }
               setTimeout(() => {
-                this.getDatabases('sqlite', this.input.connectionString, (databases: any) => {
-                  this.databaseDeclaration = this.databases
-                })
-
-                this.backendService.showObscurer(false);
-                this.feedbackService.showInfo('Plugin was successfully installed on your server');
-              }, 1000);
-              setTimeout(() => {
                 this.loadManifests();
                 this.input.database = app.dbName;
-                this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: any) => {
-                  this.databases = databases.databases.map((x: any) => x.name);
-                  this.reloadDatabases(() => this.input.database = app.dbName);
+                this.getDatabases('sqlite', this.input.connectionString, (databases: any) => {
+                  this.input.database = app.dbName;
+                  this.reloadDatabases(() => {
+                    setTimeout(() => {
+                      this.backendService.showObscurer(false);
+                      this.feedbackService.showInfo('Plugin was successfully installed on your server');
+                      this.databaseChanged();
+                    }, 100);
+                  });
                 });
               }, 100);
 
@@ -1328,7 +1325,6 @@ export class SqlComponent implements OnInit {
           },
           error: (error: any) => { this.backendService.showObscurer(false); this.feedbackService.showError(error) }
         });
-
       },
       error: (error: any) => { this.backendService.showObscurer(false); this.feedbackService.showError(error) }
     });
