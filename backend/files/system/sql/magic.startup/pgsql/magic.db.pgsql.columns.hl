@@ -133,10 +133,10 @@ select c.column_name, c.is_nullable, c.data_type, c.column_default, exists(
          strings.replace:x:@strings.regex-replace
             .:" unsigned"
             .:
-         strings.replace:x:@strings.regex-replace
+         strings.replace:x:@strings.replace
             .:" without time zone"
             .:
-         strings.replace:x:@strings.regex-replace
+         strings.replace:x:@strings.replace
             .:" with time zone"
             .:
          switch:x:@strings.replace
@@ -149,8 +149,6 @@ select c.column_name, c.is_nullable, c.data_type, c.column_default, exists(
                   .:int
 
             // Everything transformed into date values.
-            case:date
-            case:time
             case:timestamp
                set-value:x:@.type
                   .:date

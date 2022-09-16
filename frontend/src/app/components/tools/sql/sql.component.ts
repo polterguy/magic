@@ -725,6 +725,9 @@ export class SqlComponent implements OnInit {
         switch (result.type) {
 
           case 'field':
+            if (result.databaseType === 'pgsql' && result.datatype.name === 'timestamp') {
+              result.datatype.name += ' with time zone';
+            }
             this.sqlService.addColumn(
               result.databaseType,
               result.connectionString,
