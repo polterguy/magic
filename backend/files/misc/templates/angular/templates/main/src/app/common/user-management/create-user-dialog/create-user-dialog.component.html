@@ -1,0 +1,23 @@
+
+<h1 mat-dialog-title>Create a new user</h1>
+<form>
+    <div mat-dialog-content>
+        <mat-form-field appearance="outline" class="fill-width">
+            <mat-label>Username</mat-label>
+            <input matInput type="text" name="-" [(ngModel)]="username" [ngModelOptions]="{standalone: true}" autocomplete="off">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="fill-width">
+            <mat-label>Password</mat-label>
+            <input matInput [type]="showPassword ? 'text' : 'password'" name="-" [(ngModel)]="password" [ngModelOptions]="{standalone: true}" autocomplete="new-password">
+            <button mat-icon-button matSuffix (click)="showPassword = !showPassword" type="button">
+                <mat-icon>{{showPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+            </button>
+        </mat-form-field>
+    </div>
+    
+    <div mat-dialog-actions class="right-aligned">
+        <button mat-button mat-dialog-close type="button">Close</button>
+        <button mat-flat-button color="primary" type="submit" (click)="createUser()" [disabled]="isLoading">Create</button>
+    </div>
+</form>
