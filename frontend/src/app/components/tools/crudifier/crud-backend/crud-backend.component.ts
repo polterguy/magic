@@ -7,6 +7,7 @@
 import { forkJoin, Observable } from 'rxjs';
 import { formatNumber } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Component, ComponentFactoryResolver, Inject, LOCALE_ID, OnInit } from '@angular/core';
 
 // Application specific imports.
@@ -27,7 +28,6 @@ import { CrudifierTableComponent } from './crud-table/crud-table.component';
 import { LoaderInterceptor } from 'src/app/interceptors/loader.interceptor';
 import { DefaultDatabaseType } from '../../../../models/default-database-type.model';
 import { CrudifierSetDefaultsComponent } from './set-defaults/crudifier-set-defaults.component';
-import { ActivatedRoute, Router } from '@angular/router';
 
 /**
  * Crudifier component for crudifying database
@@ -35,7 +35,8 @@ import { ActivatedRoute, Router } from '@angular/router';
  */
 @Component({
   selector: 'app-crud-backend',
-  templateUrl: './crud-backend.component.html'
+  templateUrl: './crud-backend.component.html',
+  styleUrls: ['./crud-backend.component.scss']
 })
 export class CrudBackendComponent implements OnInit {
 
