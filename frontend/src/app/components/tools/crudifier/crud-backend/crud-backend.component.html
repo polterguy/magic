@@ -97,7 +97,7 @@
               [(ngModel)]="table"
               (selectionChange)="tableChanged()">
               <mat-select-trigger
-                [class.warning]="table ? hasWarnings(table) : false">
+                [class.warning-yellow]="table ? hasWarnings(table) : false">
                 {{table?.name}}
               </mat-select-trigger>
               <mat-option
@@ -105,10 +105,13 @@
                 matTooltipPosition="before"
                 [value]="idx">
                 <div class="d-flex align-items-center justify-content-between w-100"
-                  [class.warning]="hasWarnings(idx)">
+                  [class.warning-yellow]="hasWarnings(idx)">
                   {{idx.name}}
                   <div *ngIf="hasWarnings(idx)" class="sm-icons">
-                    <mat-icon fontSet="material-icons-outlined" class="m-0 text-muted warning">report_problem</mat-icon>
+                    <mat-icon
+                      fontSet="material-icons-outlined"
+                      matTooltip="I tried my best to guess how to treat this table, but I might be wrong, and you might want to double check my guesstimates"
+                      class="m-0 text-muted warning-yellow">report_problem</mat-icon>
                   </div>
                 </div>
               </mat-option>
