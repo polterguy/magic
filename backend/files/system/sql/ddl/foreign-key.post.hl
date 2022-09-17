@@ -60,7 +60,16 @@ data.connect:x:-
             strings.concat
                .:"alter table "
                get-value:x:@.arguments/*/tableName
-               .:" add foreign key ("
+               .:" add constraint "
+               get-value:x:@.arguments/*/tableName
+               .:_
+               get-value:x:@.arguments/*/columnName
+               .:_
+               get-value:x:@.arguments/*/foreignTable
+               .:_
+               get-value:x:@.arguments/*/foreignField
+               .:_fky
+               .:" foreign key ("
                get-value:x:@.arguments/*/columnName
                .:") references "
                get-value:x:@.arguments/*/foreignTable
