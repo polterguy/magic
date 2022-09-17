@@ -80,6 +80,7 @@ export class NewFieldKeyComponent {
     {name: 'timestamp', defaultValue: 'date'},
   ];
   private pgsqlDataTypes = [
+    {name: 'integer', defaultValue: 'numeric'},
     {name: 'numeric', defaultValue: 'numeric'},
     {name: 'text', defaultValue: 'string'},
     {name: 'timestamp', defaultValue: 'date'},
