@@ -45,7 +45,6 @@ export class NewFieldKeyComponent {
     {name: 'text', size: {min: 0, max: 65535, defaultSize: 65535}, defaultValue: 'string'},
     {name: 'blob', size: {min: 0, max: 65535, defaultSize: 65535}, defaultValue: false},
     {name: 'bool', defaultValue: 'bool'},
-    {name: 'boolean', defaultValue: 'bool'},
     {name: 'double'},
     {name: 'decimal', size: {min: 0, max: 65, defaultSize: 10}},
     {name: 'datetime', defaultValue: 'date'},
