@@ -40,34 +40,16 @@ export class NewFieldKeyComponent {
 
   // Datatypes specific for MySQL.
   private mySqlDataTypes = [
-    {name: 'char', size: {min: 0, max: 255, defaultSize: 20}, defaultValue: 'string'},
+    {name: 'int', defaultValue: 'number'},
     {name: 'varchar', size: {min: 0, max: 16383, defaultSize: 100}, defaultValue: 'string'},
-    {name: 'binary', size: {min: 0, max: 255, defaultSize: 100}, defaultValue: false},
-    {name: 'varbinary', size: {min: 0, max: 16383, defaultSize: 5000}, defaultValue: false},
-    {name: 'tinyblob', defaultValue: false},
-    {name: 'tinytext', defaultValue: 'string'},
     {name: 'text', size: {min: 0, max: 65535, defaultSize: 65535}, defaultValue: 'string'},
     {name: 'blob', size: {min: 0, max: 65535, defaultSize: 65535}, defaultValue: false},
-    {name: 'mediumtext', defaultValue: 'string'},
-    {name: 'mediumblob', defaultValue: false},
-    {name: 'longtext', defaultValue: 'string'},
-    {name: 'longblob', defaultValue: false},
-    {name: 'bit', size: {min: 1, max: 64, defaultSize: 1}, defaultValue: 'bool'},
-    {name: 'tinyint', size: {min: 0, max: 255, defaultSize: 1}, defaultValue: 'int'},
     {name: 'bool', defaultValue: 'bool'},
     {name: 'boolean', defaultValue: 'bool'},
-    {name: 'smallint', size: {min: 0, max: 65535, defaultSize: 10}, defaultValue: 'int'},
-    {name: 'mediumint', size: {min: 0, max: 255, defaultSize: 10}, defaultValue: 'int'},
-    {name: 'int'},
-    {name: 'integer'},
-    {name: 'bigint'},
     {name: 'double'},
     {name: 'decimal', size: {min: 0, max: 65, defaultSize: 10}},
-    {name: 'dec', size: {min: 0, max: 65, defaultSize: 10}},
-    {name: 'date', defaultValue: 'date'},
     {name: 'datetime', defaultValue: 'date'},
     {name: 'timestamp', defaultValue: 'date'},
-    {name: 'time' },
    ];
 
   // Datatypes specific for SQLite.
