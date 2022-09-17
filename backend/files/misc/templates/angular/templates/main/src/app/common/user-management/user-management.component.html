@@ -2,12 +2,13 @@
 <div class="component-wrapper">
   <div class="mat-elevation-z4 relativized grid-wrapper">
 
-    <button mat-flat-button 
+    <button
+      mat-flat-button
+      *ngIf="authService.me.canInvoke('magic/modules/magic/users', 'post')"
       color="primary"
       class="create-btn" 
       role="button"
-      (click)="createUser()" 
-      [ngClass]="authService.me.canInvoke('magic/modules/magic/users', 'create') ? '' : 'hidden'">
+      (click)="createUser()" >
         Create a new user
     </button>
 
@@ -25,7 +26,7 @@
               type="text"
               autocomplete="off"
               [formControl]="username">
-            <div *ngIf="username?.value?.length<3;else showClear" matSuffix>
+            <div *ngIf="username?.value?.length < 3;else showClear" matSuffix>
               <mat-icon >search</mat-icon>
             </div>
             <ng-template #showClear>
