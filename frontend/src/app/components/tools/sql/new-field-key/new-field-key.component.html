@@ -39,9 +39,20 @@
         <mat-select name="datatype"
             [(ngModel)]="data.datatype"
             (selectionChange)="datatypeChanged()">
+            <mat-select-trigger>
+              {{data.datatype?.name}}
+            </mat-select-trigger>
           <mat-option
             *ngFor="let idxDatatype of getDataTypes()"
-            [value]="idxDatatype">{{idxDatatype.name}}</mat-option>
+            class="multiline-mat-option"
+            [value]="idxDatatype">
+            <span class="d-block name-line">
+              {{idxDatatype.name}}
+            </span>
+            <span class="d-block desc-line">
+              {{idxDatatype.description}}
+            </span>
+          </mat-option>
         </mat-select>
       </mat-form-field>
 
