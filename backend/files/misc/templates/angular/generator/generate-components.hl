@@ -40,6 +40,7 @@ set-value:x:@.form-control-file
    bool
    lookup
    image
+   file
 strings.concat
    get-value:x:@.arguments/*/root-folder
    .:templates/column/column.html
@@ -70,6 +71,11 @@ strings.concat
    .:templates/column/column.image.html
 set-value:x:@.column-file/*/image
    io.file.load:x:@strings.concat
+strings.concat
+   get-value:x:@.arguments/*/root-folder
+   .:templates/column/column.file.html
+set-value:x:@.column-file/*/file
+   io.file.load:x:@strings.concat
 
 /*
  * Loading view details file, that contains the declaration
@@ -81,6 +87,7 @@ set-value:x:@.column-file/*/image
    bool
    lookup
    image
+   file
    email
    url
    phone
@@ -111,6 +118,11 @@ set-value:x:@.view-details-file/*/image
    io.file.load:x:@strings.concat
 strings.concat
    get-value:x:@.arguments/*/root-folder
+   .:templates/view-details/view-details.file.html
+set-value:x:@.view-details-file/*/file
+   io.file.load:x:@strings.concat
+strings.concat
+   get-value:x:@.arguments/*/root-folder
    .:templates/view-details/view-details.email.html
 set-value:x:@.view-details-file/*/email
    io.file.load:x:@strings.concat
@@ -137,6 +149,7 @@ set-value:x:@.view-details-file/*/phone
    selector
    autocomplete
    image
+   file
 strings.concat
    get-value:x:@.arguments/*/root-folder
    .:templates/form-field/form-field.html
@@ -176,6 +189,11 @@ strings.concat
    get-value:x:@.arguments/*/root-folder
    .:templates/form-field/form-field.image.html
 set-value:x:@.form-field-file/*/image
+   io.file.load:x:@strings.concat
+strings.concat
+   get-value:x:@.arguments/*/root-folder
+   .:templates/form-field/form-field.file.html
+set-value:x:@.form-field-file/*/file
    io.file.load:x:@strings.concat
 
 /*
@@ -529,6 +547,16 @@ for-each:x:@.arguments/*/.crud-methods/*
                                           get-value:x:@.dp/#/*/name
                            else-if
                               eq:x:@.dp/#/*/handling
+                                 .:file
+                              .lambda
+                                 set-value:x:@.substitutions/*/view-details
+                                    strings.concat
+                                       get-value:x:@.substitutions/*/view-details
+                                       strings.replace:x:@.view-details-file/*/file
+                                          .:[[column-name]]
+                                          get-value:x:@.dp/#/*/name
+                           else-if
+                              eq:x:@.dp/#/*/handling
                                  .:email
                               .lambda
                                  set-value:x:@.substitutions/*/view-details
@@ -670,6 +698,21 @@ for-each:x:@.arguments/*/.crud-methods/*
                            .:image
                         .lambda
                            strings.replace:x:@.column-file/*/image
+                              .:[[form-control-name]]
+                              strings.replace:x:@.dp/#/*/name
+                                 .:.
+                                 .:_
+                           set-value:x:@.substitutions/*/ng-containers
+                              strings.concat
+                                 get-value:x:@.substitutions/*/ng-containers
+                                 strings.replace:x:@strings.replace
+                                    .:[[column-name]]
+                                    get-value:x:@.dp/#/*/name
+                     else-if
+                        eq:x:@.dp/#/*/handling
+                           .:file
+                        .lambda
+                           strings.replace:x:@.column-file/*/file
                               .:[[form-control-name]]
                               strings.replace:x:@.dp/#/*/name
                                  .:.
@@ -875,6 +918,16 @@ for-each:x:@.arguments/*/.crud-methods/*
                               strings.concat
                                  get-value:x:@.substitutions/*/form-fields
                                  strings.replace:x:@.form-field-file/*/image
+                                    .:[[column-name]]
+                                    get-value:x:@.dp/#/*/name
+                     else-if
+                        eq:x:@.dp/#/*/handling
+                           .:file
+                        .lambda
+                           set-value:x:@.substitutions/*/form-fields
+                              strings.concat
+                                 get-value:x:@.substitutions/*/form-fields
+                                 strings.replace:x:@.form-field-file/*/file
                                     .:[[column-name]]
                                     get-value:x:@.dp/#/*/name
                      else

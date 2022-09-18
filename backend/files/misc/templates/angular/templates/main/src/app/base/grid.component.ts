@@ -6,6 +6,10 @@ import { Observable } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 
+// Utility component imports.
+import { saveAs } from "file-saver";
+import { Buffer } from 'buffer';
+
 // Custom services and models your app depends upon.
 import { DeleteResponse } from '../services/models/delete-response';
 import { CountResponse } from '../services/models/count-response';
@@ -243,6 +247,23 @@ export abstract class GridComponent {
     }
     this.resetPaginator();
     this.getData(false);
+  }
+
+  /**
+   * Downloads the specified content to client by base64 de-encoding it
+   * and triggering a download.
+   * 
+   * @param content Content to base64 de-encode and download to client
+   */
+  public downloadAsFile(content: string) {
+    const filename = content.substring(0, content.indexOf(';'));
+    const bytes = content.substring(content.indexOf(',') + 1);
+    let type = content.substring(content.indexOf(':') + 1, content.indexOf(','));
+    type = type.substring(0, type.indexOf(';'));
+    const rawBytes = Buffer.from(bytes, 'base64');
+    const file = new Blob([rawBytes], { type: type });
+    saveAs(file, filename, false);
+    return false;
   }
 
   /**

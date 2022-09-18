@@ -54,7 +54,7 @@ select c.column_name, c.is_nullable, c.data_type, c.column_default, exists(
          c.column_name = kcu.column_name and c.table_name = kcu.table_name
    ) as is_pk
    from information_schema.columns c
-   where c.table_name = @table and c.table_catalog = @database"
+   where c.table_name = @table and c.table_catalog = @database order by is_pk desc, c.column_name asc"
       pgsql.select:x:@strings.concat
          @table:x:@.arguments/*/table
          @database:x:@.arguments/*/database
