@@ -51,8 +51,8 @@ export class NewFieldKeyComponent {
       defaultValue: 'string'
     },
     {
-      name: 'longtext',
-      description: 'Text type for strings up to 4GB. This type cannot be indexed and is for longer text fields and can also be used to store images and files.',
+      name: 'mediumtext',
+      description: 'Text type for strings up to 16MB. This type cannot be indexed and is for longer text fields and can also be used to store images and files.',
       defaultValue: 'string'
     },
     {
