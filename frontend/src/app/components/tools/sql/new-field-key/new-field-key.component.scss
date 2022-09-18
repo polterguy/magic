@@ -6,3 +6,21 @@
 mat-slide-toggle {
   margin-right: 15px;
 }
+.d-block { display: block; }
+.multiline-mat-option.mat-option {
+  white-space: normal;
+  line-height: normal;
+  height: unset;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.name-line {
+  font-weight: bold;
+  font-size: 15px;
+  margin-top: 5px;
+}
+.desc-line {
+  color: #777;
+  font-size: 13px;
+  margin-top: 7px;
+}

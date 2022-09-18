@@ -40,45 +40,166 @@ export class NewFieldKeyComponent {
 
   // Datatypes specific for MySQL.
   private mySqlDataTypes = [
-    {name: 'int', defaultValue: 'number'},
-    {name: 'varchar', size: {min: 0, max: 16383, defaultSize: 100}, defaultValue: 'string'},
-    {name: 'text', size: {min: 0, max: 65535, defaultSize: 65535}, defaultValue: 'string'},
-    {name: 'blob', size: {min: 0, max: 65535, defaultSize: 65535}, defaultValue: false},
-    {name: 'bool', defaultValue: 'bool'},
-    {name: 'double'},
-    {name: 'decimal', size: {min: 0, max: 65, defaultSize: 10}},
-    {name: 'datetime', defaultValue: 'date'},
-    {name: 'timestamp', defaultValue: 'date'},
+    {
+      name: 'int',
+      description: 'Integer number without support for decimals. Typically used as primary keys or foreign keys pointing to other tables.',
+      defaultValue: 'number'
+    },
+    {
+      name: 'varchar',
+      description: 'Text type for strings of varying size. This type can be indexed implying faster filtering.',
+      size: {
+        min: 0,
+        max: 16383,
+        defaultSize: 100
+      },
+      defaultValue: 'string'
+    },
+    {
+      name: 'text',
+      description: 'Text type for longer strings. This type cannot be indexed and is for longer text fields not intended to be filtered upon.',
+      defaultValue: 'string'
+    },
+    {
+      name: 'blob',
+      description: 'Raw byte type for files and similar objects. This type cannot be indexed or used as a part of filtering.',
+      size: {
+        min: 0,
+        max: 65535,
+        defaultSize: 65535
+      },
+      defaultValue: false
+    },
+    {
+      name: 'bool',
+      description: 'Yes/no type used for checkboxes and similar constructs. Can only hold two values; true or false.',
+      defaultValue: 'bool'
+    },
+    {
+      name: 'double',
+      description: 'Real number with any number of decimals. Suffers from floating point rounding errors. Typically used when exact calculations are not crucial.'
+    },
+    {
+      name: 'decimal',
+      description: 'Real number with fixed amount of decimals. Typically used when exact calculations are crucial, such as for money and similar constructs.',
+      size: {
+        min: 0,
+        max: 65,
+        defaultSize: 10
+      }
+    },
+    {
+      name: 'datetime',
+      description: 'Date and time type with a range between 1000-01-01 00:00:00 and 9999-12-31 23:59:59. No automatic conversion but preserves the time zone information.',
+      defaultValue: 'date'
+    },
+    {
+      name: 'timestamp',
+      description: 'Date and time type with a range between 1970-01-01 00:00:01 and 2038-01-19 08:44:07. Converts automatically to UTC.',
+      defaultValue: 'date'
+    },
    ];
 
   // Datatypes specific for SQLite.
   private sqlIteDataTypes = [
-    {name: 'integer', defaultValue: 'int'},
-    {name: 'real', defaultValue: 'decimal'},
-    {name: 'text', defaultValue: 'string'},
-    {name: 'blob', defaultValue: false},
-    {name: 'varchar', defaultValue: 'string'},
-    {name: 'timestamp', defaultValue: 'date'},
+    {
+      name: 'integer',
+      description: 'Integer number without support for decimals. Typically used as primary keys or foreign keys pointing to other tables.',
+      defaultValue: 'int'
+    },
+    {
+      name: 'real',
+      description: 'Real number with any number of decimals. Suffers from floating point rounding errors. Typically used when exact calculations are not crucial.',
+      defaultValue: 'decimal'
+    },
+    {
+      name: 'numeric',
+      description: 'Real number with fixed amount of decimals. Typically used when exact calculations are crucial, such as for money and similar constructs.',
+      defaultValue: 'decimal'
+    },
+    {
+      name: 'text',
+      description: 'Text type for any type of text. Notice, SQLite does not provide two separate types for short strings and longer strings, so this type is used for both.',
+      defaultValue: 'string'
+    },
+    {
+      name: 'blob',
+      description: 'Binary type allowing you to store raw bytes, such as files and other binary type of objects.',
+      defaultValue: false
+    },
+    {
+      name: 'timestamp',
+      description: 'Date and time type of field. Notice, this type automatically converts to UTC when stored, and is returned as a UTC string to the client once retrieved.',
+      defaultValue: 'date'
+    },
   ];
   private pgsqlDataTypes = [
-    {name: 'integer', defaultValue: 'numeric'},
-    {name: 'numeric', defaultValue: 'numeric'},
-    {name: 'text', defaultValue: 'string'},
-    {name: 'timestamp', defaultValue: 'date'},
-    {name: 'blob', defaultValue: false},
-    {name: 'nvarchar', size: {min: 0, max: 65535}, defaultValue: false},
-    {name: 'varchar', size: {min: 0, max: 65535}, defaultValue: 'string'},
+    {
+      name: 'integer',
+      description: 'Integer data type allowing you to store numbers from -2,147,483,648 to 2,147,483,647 and is usually used for primary keys and foreign keys.',
+      defaultValue: 'numeric'
+    },
+    {
+      name: 'numeric',
+      description: 'Real number type with fixed point precision making it useful for storing data such as for instance money.',
+      defaultValue: 'numeric'
+    },
+    {
+      name: 'text',
+      description: 'Allows you to store strings of unlimited length and is useful for pieces of text where you do not know the maximum length. Text fields can be indexed.',
+      defaultValue: 'string'
+    },
+    {
+      name: 'timestampz',
+      description: 'Date and time type with time zone information. Notice, internally PostgreSQL stores the date as UTC and converts back to local time zone when retrieved.',
+      defaultValue: 'date'
+    },
+    {
+      name: 'blob',
+      description: 'Binary type used to store raw bytes. Useful for storing files for instance and other types of binary objects.',
+      defaultValue: false
+    },
   ];
   private mssqlDataTypes = [
-    {name: 'integer', defaultValue: 'integer'},
-    {name: 'float', defaultValue: 'float'},
-    {name: 'real', defaultValue: 'real'},
-    {name: 'datetime', defaultValue: 'date'},
-    {name: 'text', defaultValue: 'string'},
-    {name: 'ntext', defaultValue: 'string'},
-    {name: 'blob' },
-    {name: 'nvarchar', size: {min: 0, max: 65535}, defaultValue: false},
-    {name: 'varchar', size: {min: 0, max: 65535}, defaultValue: 'string'},
+    {
+      name: 'int',
+      description: 'Integer data type allowing you to store numbers from -2,147,483,648 to 2,147,483,647 and is usually used for primary keys and foreign keys.',
+      defaultValue: 'integer'
+    },
+    {
+      name: 'float',
+      description: 'Real number with any number of decimals. Suffers from floating point rounding errors. Typically used when exact calculations are not crucial.',
+      defaultValue: 'float'
+    },
+    {
+      name: 'decimal',
+      description: 'Real number with fixed amount of decimals. Typically used when exact calculations are crucial, such as for money and similar constructs.',
+      defaultValue: 'decimal'
+    },
+    {
+      name: 'datetime2',
+      description: 'Date and time type with a range between 0001-01-01 00:00:00 and 9999-12-31 23:59:59. Does not preserve time zone information.',
+      defaultValue: 'date'
+    },
+    {
+      name: 'blob',
+      description: 'Binary type used to store raw bytes. Useful for storing files for instance and other types of binary objects.',
+      defaultValue: false
+    },
+    {
+      name: 'nvarchar',
+      description: 'Variable length UNICODE string that can hold lengths up to 2GB in size if you set it to its maxim length value being 4,000.',
+      size: {
+        min: 0,
+        max: 4000
+      },
+      defaultValue: false
+    },
+    {
+      name: 'ntext',
+      description: 'Variable length UNICODE string that can hold strings up to 1,073,741,823 bytes in length.',
+      defaultValue: 'string'
+    },
   ];
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: NewFieldKeyModel) { }
