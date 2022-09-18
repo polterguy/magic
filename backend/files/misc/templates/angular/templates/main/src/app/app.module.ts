@@ -21,6 +21,7 @@ import { MagicImageFieldComponent } from './helpers/magic-image-field/magic-imag
 import { MagicImageViewComponent } from './helpers/magic-image-view/magic-image-view.component';
 import { MagicFileViewComponent } from './helpers/magic-file-view/magic-file-view.component';
 import { MagicFileComponent } from './helpers/magic-file/magic-file.component';
+import { MagicFileFieldComponent } from './helpers/magic-file-field/magic-file-field.component';
 import { AppRoutingModule } from './app-routing.module';
 import { environment } from '@env/environment';
 import { JwtModule } from '@auth0/angular-jwt';
@@ -75,6 +76,7 @@ import { CreateUserDialogComponent } from './common/user-management/create-user-
     MagicImageViewComponent,
     MagicFileViewComponent,
     MagicFileComponent,
+    MagicFileFieldComponent,
     FormatDatePipe,
     DateSincePipe,
     ConfirmDialogComponent,

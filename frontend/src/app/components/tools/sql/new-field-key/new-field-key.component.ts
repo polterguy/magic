@@ -1,8 +1,3 @@
-
-/*
- * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
- */
-
 // Angular and system imports.
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -42,12 +37,12 @@ export class NewFieldKeyComponent {
   private mySqlDataTypes = [
     {
       name: 'int',
-      description: 'Integer number without support for decimals. Typically used as primary keys or foreign keys pointing to other tables.',
+      description: 'Whole number without support for decimals. Often used as primary keys or foreign keys pointing to other tables.',
       defaultValue: 'number'
     },
     {
       name: 'varchar',
-      description: 'Text type for strings of varying size. This type can be indexed implying faster filtering.',
+      description: 'Text type for strings of varying size. This type can be indexed implying faster filtering, sorting and searching.',
       size: {
         min: 0,
         max: 16383,
@@ -56,41 +51,26 @@ export class NewFieldKeyComponent {
       defaultValue: 'string'
     },
     {
-      name: 'text',
-      description: 'Text type for longer strings. This type cannot be indexed and is for longer text fields not intended to be filtered upon.',
+      name: 'longtext',
+      description: 'Text type for strings up to 4GB. This type cannot be indexed and is for longer text fields and can also be used to store images and files.',
       defaultValue: 'string'
     },
     {
-      name: 'blob',
-      description: 'Raw byte type for files and similar objects. This type cannot be indexed or used as a part of filtering.',
-      size: {
-        min: 0,
-        max: 65535,
-        defaultSize: 65535
-      },
-      defaultValue: false
-    },
-    {
       name: 'bool',
-      description: 'Yes/no type used for checkboxes and similar constructs. Can only hold two values; true or false.',
+      description: 'Yes/no type used for checkboxes and similar constructs. Can only hold two values; true or false which are the equivalent of yes and no.',
       defaultValue: 'bool'
-    },
-    {
-      name: 'double',
-      description: 'Real number with any number of decimals. Suffers from floating point rounding errors. Typically used when exact calculations are not crucial.'
     },
     {
       name: 'decimal',
       description: 'Real number with fixed amount of decimals. Typically used when exact calculations are crucial, such as for money and similar constructs.',
     },
     {
-      name: 'datetime',
-      description: 'Date and time type with a range between 1000-01-01 00:00:00 and 9999-12-31 23:59:59. No automatic conversion but preserves the time zone information.',
-      defaultValue: 'date'
+      name: 'double',
+      description: 'Real number with any number of decimals. Suffers from floating point rounding errors. Do not use as money or other exact values.'
     },
     {
-      name: 'timestamp',
-      description: 'Date and time type with a range between 1970-01-01 00:00:01 and 2038-01-19 08:44:07. Converts automatically to UTC.',
+      name: 'datetime',
+      description: 'Date and time type with a range between 1000-01-01 00:00:00 and 9999-12-31 23:59:59. Stored internally as local time zone.',
       defaultValue: 'date'
     },
    ];
@@ -114,13 +94,8 @@ export class NewFieldKeyComponent {
     },
     {
       name: 'text',
-      description: 'Text type for any type of text. Notice, SQLite does not provide two separate types for short strings and longer strings, so this type is used for both.',
+      description: 'Text type for any type of text, images or files. Notice, SQLite does not provide two separate types for short strings and longer strings, so this type is used for both.',
       defaultValue: 'string'
-    },
-    {
-      name: 'blob',
-      description: 'Binary type allowing you to store raw bytes, such as files and other binary type of objects.',
-      defaultValue: false
     },
     {
       name: 'timestamp',
@@ -131,7 +106,7 @@ export class NewFieldKeyComponent {
   private pgsqlDataTypes = [
     {
       name: 'integer',
-      description: 'Integer data type allowing you to store numbers from -2,147,483,648 to 2,147,483,647 and is usually used for primary keys and foreign keys.',
+      description: 'Integer data type allowing you to store numbers from -2,147,483,648 to 2,147,483,647 and is often used for primary keys and foreign keys.',
       defaultValue: 'numeric'
     },
     {
@@ -141,18 +116,18 @@ export class NewFieldKeyComponent {
     },
     {
       name: 'text',
-      description: 'Allows you to store strings of unlimited length and is useful for pieces of text where you do not know the maximum length. Text fields can be indexed.',
+      description: 'Allows you to store strings of unlimited length and is useful for pieces of text where you do not know the maximum length. Also useful for images and files.',
       defaultValue: 'string'
     },
     {
-      name: 'timestamp',
-      description: 'Date and time type without time zone information. Notice, internally PostgreSQL does not handle time zone infoamtion associated with this type.',
-      defaultValue: 'date'
+      name: 'boolean',
+      description: 'Yes/no type used for checkboxes and similar constructs. Can only hold two values; true or false which are the equivalent of yes and no.',
+      defaultValue: 'bool'
     },
     {
-      name: 'bytea',
-      description: 'Binary type used to store raw bytes of maximum 1GB. Useful for storing files for instance and other types of binary objects.',
-      defaultValue: false
+      name: 'timestamptz',
+      description: 'Date and time type with time zone information. Notice, internally PostgreSQL will store the field as UTC.',
+      defaultValue: 'date'
     },
   ];
   private mssqlDataTypes = [
@@ -177,11 +152,6 @@ export class NewFieldKeyComponent {
       defaultValue: 'date'
     },
     {
-      name: 'blob',
-      description: 'Binary type used to store raw bytes. Useful for storing files for instance and other types of binary objects.',
-      defaultValue: false
-    },
-    {
       name: 'nvarchar',
       description: 'Variable length UNICODE string that can hold lengths up to 2GB in size if you set it to its maxim length value being 4,000.',
       size: {
@@ -192,7 +162,7 @@ export class NewFieldKeyComponent {
     },
     {
       name: 'ntext',
-      description: 'Variable length UNICODE string that can hold strings up to 1,073,741,823 bytes in length.',
+      description: 'Variable length UNICODE string that can hold strings up to 1,073,741,823 bytes in length. Also usefule for images and files.',
       defaultValue: 'string'
     },
   ];

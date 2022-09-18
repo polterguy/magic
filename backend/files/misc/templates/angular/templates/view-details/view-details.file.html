@@ -1,0 +1,8 @@
+            <p class="details">
+              <label>{{'[[column-name]]' | translate}}</label>
+              <a
+                *ngIf="el['[[column-name]]']"
+                class="database-file"
+                href="#"
+                (click)="downloadAsFile(el['[[column-name]]'])">{{el['[[column-name]]'] ? el['[[column-name]]'].substring(0, el['[[column-name]]'].indexOf(';')) : ''}}</a>
+            </p>

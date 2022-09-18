@@ -1,0 +1,19 @@
+<div>
+  <mat-form-field appearance="outline">
+    <mat-label>{{label}}</mat-label>
+    <input
+      matInput
+      [value]="getFileName(model[field])"
+      disabled />
+  </mat-form-field>
+  <input
+    hidden
+    type="file"
+    id="{{ 'file_' + field }}"
+    (change)="uploadFile($event)">
+  <button
+    mat-icon-button
+    (click)="clickFileUploader()">
+    <mat-icon>cloud_upload</mat-icon>
+  </button>
+</div>

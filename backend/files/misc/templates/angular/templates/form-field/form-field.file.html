@@ -1,0 +1,10 @@
+    <app-magic-file-field
+      *ngIf="canEditColumn('[[column-name]]')"
+      [model]="data.entity"
+      field="[[column-name]]"
+      [label]="'[[column-name]]' | translate"
+      class="entity-edit-field"
+      maxWidth="1024"
+      maxHeight="800"
+      (change)="changed('[[column-name]]')">
+    </app-magic-file-field>

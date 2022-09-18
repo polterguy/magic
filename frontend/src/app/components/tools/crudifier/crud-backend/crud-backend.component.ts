@@ -467,7 +467,13 @@ export class CrudBackendComponent implements OnInit {
         if (idxColumn.name?.toLowerCase() === 'picture' || idxColumn.name?.toLowerCase() === 'image' || idxColumn.name?.toLowerCase() === 'photo') {
           idxColumn.handling = 'image';
           idxColumn.expanded = true;
-          idxColumn.warning = 'Notice, by default this field will be handled as an image field. You mght want to double check my decision.';
+          idxColumn.warning = 'Notice, by default this field will be handled as an image field. You might want to double check my decision.';
+        }
+
+        if (idxColumn.name?.toLowerCase() === 'file' || idxColumn.name?.toLowerCase() === 'upload') {
+          idxColumn.handling = 'file';
+          idxColumn.expanded = true;
+          idxColumn.warning = 'Notice, by default this field will be handled as a file upload field. You might want to double check my decision.';
         }
 
         if (idxColumn.name?.toLowerCase() === 'email' || idxColumn.name?.toLowerCase() === 'mail') {
