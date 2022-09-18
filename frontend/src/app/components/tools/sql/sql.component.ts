@@ -728,6 +728,9 @@ export class SqlComponent implements OnInit {
             if (result.databaseType === 'pgsql' && result.datatype.name === 'timestamp') {
               result.datatype.name += ' with time zone';
             }
+            if (result.databaseType === 'mysql' && result.datatype.name === 'decimal') {
+              result.datatype.name += '(30, 5)';
+            }
             this.sqlService.addColumn(
               result.databaseType,
               result.connectionString,
