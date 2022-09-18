@@ -8,6 +8,6 @@ log.error:x:@.arguments/*/message
    exception:x:@.arguments/*/stack
 add:x:+
    get-nodes:x:@.arguments/*/status
-   get-nodes:x:@.arguments/*/field
    get-nodes:x:@.arguments/*/message
+   get-nodes:x:@.arguments/*/field
 return
