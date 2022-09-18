@@ -82,11 +82,6 @@ export class NewFieldKeyComponent {
     {
       name: 'decimal',
       description: 'Real number with fixed amount of decimals. Typically used when exact calculations are crucial, such as for money and similar constructs.',
-      size: {
-        min: 0,
-        max: 65,
-        defaultSize: 10
-      }
     },
     {
       name: 'datetime',
@@ -150,13 +145,13 @@ export class NewFieldKeyComponent {
       defaultValue: 'string'
     },
     {
-      name: 'timestampz',
-      description: 'Date and time type with time zone information. Notice, internally PostgreSQL stores the date as UTC and converts back to local time zone when retrieved.',
+      name: 'timestamp',
+      description: 'Date and time type without time zone information. Notice, internally PostgreSQL does not handle time zone infoamtion associated with this type.',
       defaultValue: 'date'
     },
     {
-      name: 'blob',
-      description: 'Binary type used to store raw bytes. Useful for storing files for instance and other types of binary objects.',
+      name: 'bytea',
+      description: 'Binary type used to store raw bytes of maximum 1GB. Useful for storing files for instance and other types of binary objects.',
       defaultValue: false
     },
   ];
