@@ -1,7 +1,7 @@
-    <mat-checkbox
+    <mat-slide-toggle
       *ngIf="canEditColumn('[[column-name]]')"
       class="entity-edit-field"
       name="[[column-name]]"
       (change)="changed('[[column-name]]')"
-      [(ngModel)]="data.entity.[[column-name]]">[[column-name]]</mat-checkbox>
+      [(ngModel)]="data.entity.[[column-name]]">[[column-name]]</mat-slide-toggle>
 

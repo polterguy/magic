@@ -1,6 +1,6 @@
             <div class="details">
               <label>{{'[[column-name]]' | translate}}</label>
-              <div class="youtube-container">
-                <iframe *ngIf="el['[[column-name]]']" [src]="getUnsafeUrl('https://www.youtube.com/embed/' + el['[[column-name]]'].substring(el['[[column-name]]'].lastIndexOf('=') + 1))" frameborder="0" allowfullscreen loading="lazy"></iframe>
+              <div *ngIf="el['[[column-name]]']" class="youtube-container">
+                <iframe [src]="getUnsafeUrl('https://www.youtube.com/embed/' + el['[[column-name]]'].substring(el['[[column-name]]'].lastIndexOf('=') + 1))" frameborder="0" allowfullscreen loading="lazy"></iframe>
               </div>
             </div>

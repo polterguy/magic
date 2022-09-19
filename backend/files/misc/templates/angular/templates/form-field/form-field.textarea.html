@@ -1,0 +1,14 @@
+    <mat-form-field
+      *ngIf="canEditColumn('[[column-name]]')"
+      class="entity-edit-field"
+      appearance="outline">
+      <mat-label>{{'[[column-name]]' | translate}}</mat-label>
+      <textarea
+        matInput
+        name="[[column-name]]"
+        (change)="changed('[[column-name]]')"
+        [(ngModel)]="data.entity.[[column-name]]"
+        rows="5">
+      </textarea>
+    </mat-form-field>
+
