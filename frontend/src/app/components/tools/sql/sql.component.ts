@@ -734,9 +734,6 @@ export class SqlComponent implements OnInit {
             if (result.databaseType === 'mssql' && (result.datatype.name === 'decimal')) {
               result.datatype.name += '(30, 5)';
             }
-            if (result.databaseType === 'mssql' && ( result.datatype.name === 'float')) {
-              result.datatype.name = 'decimal(30, 5)';
-            }
             this.sqlService.addColumn(
               result.databaseType,
               result.connectionString,
