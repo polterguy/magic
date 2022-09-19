@@ -65,10 +65,6 @@ export class NewFieldKeyComponent {
       description: 'Real number with fixed amount of decimals. Typically used when exact calculations are crucial, such as for money and similar constructs.',
     },
     {
-      name: 'double',
-      description: 'Real number with any number of decimals. Suffers from floating point rounding errors. Do not use as money or other exact values.'
-    },
-    {
       name: 'datetime',
       description: 'Date and time type with a range between 1000-01-01 00:00:00 and 9999-12-31 23:59:59. Stored internally as local time zone.',
       defaultValue: 'date'
@@ -81,11 +77,6 @@ export class NewFieldKeyComponent {
       name: 'integer',
       description: 'Integer number without support for decimals. Typically used as primary keys or foreign keys pointing to other tables.',
       defaultValue: 'int'
-    },
-    {
-      name: 'real',
-      description: 'Real number with any number of decimals. Suffers from floating point rounding errors. Typically used when exact calculations are not crucial.',
-      defaultValue: 'decimal'
     },
     {
       name: 'numeric',
@@ -139,11 +130,6 @@ export class NewFieldKeyComponent {
       name: 'int',
       description: 'Integer data type allowing you to store numbers from -2,147,483,648 to 2,147,483,647 and is usually used for primary keys and foreign keys.',
       defaultValue: 'integer'
-    },
-    {
-      name: 'float',
-      description: 'Real number with any number of decimals. Suffers from floating point rounding errors. Typically used when exact calculations are not crucial.',
-      defaultValue: 'float'
     },
     {
       name: 'decimal',
