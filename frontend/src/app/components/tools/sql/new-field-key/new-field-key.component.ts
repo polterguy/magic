@@ -103,6 +103,8 @@ export class NewFieldKeyComponent {
       defaultValue: 'date'
     },
   ];
+
+  // PostgreSQL data types.
   private pgsqlDataTypes = [
     {
       name: 'integer',
@@ -130,6 +132,8 @@ export class NewFieldKeyComponent {
       defaultValue: 'date'
     },
   ];
+
+  // SQL Server data types.
   private mssqlDataTypes = [
     {
       name: 'int',
