@@ -1,12 +1,16 @@
- div {
+div {
   width: 100%;
   position: relative;
   mat-form-field {
     width: 100%;
   }
-  button {
+  div {
     position: absolute;
-    right: 0;
-    top: 8px;
+    right: 8px;
+    top: 9px;
+    text-align: right;
+    button {
+      margin-right: -5px;
+    }
   }
 }
