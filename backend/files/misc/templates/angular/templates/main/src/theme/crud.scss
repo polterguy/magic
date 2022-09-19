@@ -334,7 +334,12 @@
   display: none;
 }
 
+mat-slide-toggle.entity-edit-field {
+  margin-top: 19px;
+}
+
 .entity-edit-field {
+  vertical-align: top;
   width: calc(100% - 1.2rem);
   margin-right: 1rem;
   display: inline-block;

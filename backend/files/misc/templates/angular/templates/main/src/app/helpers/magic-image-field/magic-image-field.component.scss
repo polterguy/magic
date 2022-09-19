@@ -1,6 +1,8 @@
 div.top {
   width: 100%;
   position: relative;
+  height: 57px;
+  padding-top: 10px;
   strong {
     display: block;
     height: 2.5rem;
@@ -9,7 +11,7 @@ div.top {
   div {
     position: absolute;
     right: 8px;
-    top: 0;
+    top: 15px;
     text-align: right;
     button {
       margin-top: -5px;
