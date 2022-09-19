@@ -1,10 +1,5 @@
 // Angular and system imports.
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-
-// Application specific imports.
-import { HttpService } from '@app/services/http-service';
-import { MessageService } from '@app/services/message.service';
 
 /**
  * File uploader component, allowing you to browse for and upload a file.
@@ -86,5 +81,17 @@ export class MagicFileFieldComponent {
     reader.onerror = (error) => {
       console.error(error);
     };
+  }
+
+  /**
+   * Removes the currently selected file.
+   */
+  remove() {
+
+    // Removing image from entity.
+    this.model[this.field] = null;
+
+    // Signaling image has changed.
+    this.change?.emit();
   }
 }

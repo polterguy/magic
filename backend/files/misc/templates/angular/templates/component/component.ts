@@ -7,6 +7,7 @@ import { GridComponent } from '@app/base/grid.component';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
 import { FormControl } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import {
   trigger,
   state,
@@ -65,13 +66,15 @@ export class [[component-name]] extends GridComponent implements OnInit {
    * @param authService Needed to check if user has access to invoking CRUD operation
    * @param snackBar Needed to display errror and feedback
    * @param dialog Needed to show modal dialog as user edits or creates new entities
+   * @param sanitizer Needed to be able to dynamically display iframes
    */
    constructor(
     public httpService: HttpService,
     public authService: AuthService,
     protected snackBar: MatSnackBar,
-    protected dialog: MatDialog) {
-      super(authService, snackBar, dialog);
+    protected dialog: MatDialog,
+    protected sanitizer: DomSanitizer) {
+      super(authService, snackBar, dialog, sanitizer);
   }
 
   /**

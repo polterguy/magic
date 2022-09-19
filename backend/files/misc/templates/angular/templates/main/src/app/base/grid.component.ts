@@ -5,6 +5,7 @@ import { PageEvent } from '@angular/material/paginator';
 import { Observable } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { DomSanitizer } from '@angular/platform-browser';
 
 // Utility component imports.
 import { saveAs } from "file-saver";
@@ -63,11 +64,13 @@ export abstract class GridComponent {
    * @param authService Authentication and authorization service
    * @param snackBar Snack bar to use to display errors, and also general information
    * @param dialog Needed to ask for user's confirmtion during deletion of entities
+   * @param sanitizer Needed to be able to dynamically display iframes
    */
   constructor(
     protected authService: AuthService,
     protected snackBar: MatSnackBar,
-    protected dialog: MatDialog) {
+    protected dialog: MatDialog,
+    protected sanitizer: DomSanitizer) {
       const size = localStorage.getItem('page-size');
       if (size) {
         this.filter.limit = +size;
@@ -374,7 +377,7 @@ export abstract class GridComponent {
    * @param cacheStorageName Name of cache storage
    * @param id ID to lookup into cache
    * @param param Parameter to add when doing lookup towards server
-   * @param functor Cache item read function to invoke if we have a cache miss
+   * @param entityStorage Storage where to retrieve item from
    * @param property Property to return to caller from objact
    */
   public getCachedItem(
@@ -425,6 +428,10 @@ export abstract class GridComponent {
 
     // Waiting for server method to return - Hence, while we wait, we simply return the ID of the element.
     return id;
+  }
+
+  public getUnsafeUrl(url: string) {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
  
   /**

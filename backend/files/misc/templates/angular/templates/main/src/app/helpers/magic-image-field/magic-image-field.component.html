@@ -2,19 +2,19 @@
   <strong>{{label}}</strong>
   <div>
     <button
+      *ngIf="model[field]"
+      mat-icon-button
+      (click)="remove()">
+      <mat-icon>not_interested</mat-icon>
+    </button>
+    <button
       mat-icon-button
       (click)="selectImage()">
-      <mat-icon>camera_enhance</mat-icon>
+      <mat-icon>cloud_upload</mat-icon>
     </button>
   </div>
 </div>
-<div class="bottom">
-  <button
-    *ngIf="model[field]"
-    mat-icon-button
-    (click)="remove()">
-    <mat-icon>remove</mat-icon>
-  </button>
+<div class="bottom" *ngIf="model[field]">
   <img
     *ngIf="model[field]"
     [src]="'data:image/png;base64,' + model[field]"
