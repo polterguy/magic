@@ -6,6 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material.module';
 import { NgxImageCompressService } from 'ngx-image-compress';
+import { A11yModule } from '@angular/cdk/a11y';
 
 import { CoreModule } from '@core';
 import { SharedModule } from '@shared';
@@ -32,6 +33,7 @@ import { ConfirmDialogComponent } from './confirm-deletion-dialog/confirm-dialog
 import { UserManagementComponent } from './common/user-management/user-management.component';
 import { EditUserDialogComponent } from './common/user-management/edit-user-dialog/edit-user-dialog.component';
 import { CreateUserDialogComponent } from './common/user-management/create-user-dialog/create-user-dialog.component';
+import { EditExtraFieldsComponent } from './common/user-management/edit-extra-fields/edit-extra-fields.component';
 
 // Generated CRUD components here.
 [[imports]]
@@ -65,6 +67,7 @@ import { CreateUserDialogComponent } from './common/user-management/create-user-
       },
     }),
     AppRoutingModule, // must be imported as the last module as it contains the fallback route
+    A11yModule
   ],
   declarations: [
     AppComponent,
@@ -83,6 +86,7 @@ import { CreateUserDialogComponent } from './common/user-management/create-user-
     UserManagementComponent,
     EditUserDialogComponent,
     CreateUserDialogComponent,
+    EditExtraFieldsComponent,
 
     // Generated CRUD components here.
 [[module-declarations]]  ],

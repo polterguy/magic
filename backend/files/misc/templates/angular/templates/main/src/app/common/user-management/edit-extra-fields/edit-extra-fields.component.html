@@ -1,0 +1,41 @@
+<form [formGroup]="extraForm" novalidate>
+    <div class="row">
+        <div class="col" *ngFor="let item of data">
+            <mat-form-field appearance="standard" class="fill-width">
+                <mat-label>{{item.type}}</mat-label>
+                <input matInput type="text" [formControlName]="item.type" (ngModelChange)="watchInputChanges(item.type)">
+                <button mat-icon-button matSuffix color="warn" 
+                    (click)="deleteUser(item.type)"
+                    *ngIf="!extraForm.controls[item.type].disabled">
+                    <mat-icon class="custom-icon">delete</mat-icon>
+                </button>
+            </mat-form-field>
+        </div>
+    </div>
+</form>
+
+<div class="row">
+    <div class="col-lg section-title"><b>Add new fields</b></div>
+</div>
+<form>
+    <div class="row">
+        <div class="col-lg">
+            <mat-form-field appearance="standard" class="fill-width">
+                <mat-label>Field's title</mat-label>
+                <input matInput type="text" [(ngModel)]="newType" [ngModelOptions]="{standalone: true}" #type
+                [cdkTrapFocusAutoCapture]="focusOnType" [cdkTrapFocus]="focusOnType">
+            </mat-form-field>
+        </div>
+        <div class="col-lg">
+            <mat-form-field appearance="standard" class="fill-width">
+                <mat-label>Field's value</mat-label>
+                <input matInput type="text" [(ngModel)]="newValue" [ngModelOptions]="{standalone: true}" #value>
+                <button mat-flat-button color="primary" class="custom-save-btn"
+                type="submit"
+                matSuffix
+                (click)="addExtra()"
+                [disabled]="value.value==='' || type.value===''">Save</button>
+            </mat-form-field>
+        </div>
+    </div>
+</form>
