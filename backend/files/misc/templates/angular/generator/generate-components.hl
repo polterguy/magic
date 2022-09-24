@@ -461,6 +461,30 @@ for-each:x:@.arguments/*/.crud-methods/*
                      get-value:x:@.dp/#/*/name
 
             /*
+             * Finding filtering column in [input] for currently iterated [output] column.
+             */
+            .col-filter
+            for-each:x:@.dp/@.dp/#/*/verbs/*/get/*/input/*
+               if
+                  strings.ends-with:x:@.dp/#/*/name
+                     strings.concat
+                        get-value:x:@.dp/@.dp/#/*/name
+                        .:.like
+                  .lambda
+                     set-value:x:@.col-filter
+                        get-value:x:@.dp/#/*/name
+               else-if
+                  and
+                     null:x:@.col-filter
+                     strings.ends-with:x:@.dp/#/*/name
+                        strings.concat
+                           get-value:x:@.dp/@.dp/#/*/name
+                           .:.eq
+                  .lambda
+                     set-value:x:@.col-filter
+                        get-value:x:@.dp/#/*/name
+
+            /*
              * Checking if this is a lookup type of field, implying a foreign key into
              * another table.
              */
@@ -646,8 +670,8 @@ for-each:x:@.arguments/*/.crud-methods/*
                         strings.concat
                            get-value:x:@.substitutions/*/form-controls-instantiations
                            strings.replace:x:@strings.replace
-                              .:[[column-name]]
-                              get-value:x:@.col-name-tmp
+                              .:[[column-filter]]
+                              get-value:x:@.col-filter
 
                   // Default (anything not having a specialized implementation).
                   default
@@ -660,8 +684,8 @@ for-each:x:@.arguments/*/.crud-methods/*
                         strings.concat
                            get-value:x:@.substitutions/*/form-controls-instantiations
                            strings.replace:x:@strings.replace
-                              .:[[column-name]]
-                              get-value:x:@.col-name-tmp
+                              .:[[column-filter]]
+                              get-value:x:@.col-filter
 
                /*
                 * Appending currently iterated column to [.ng-containers].
