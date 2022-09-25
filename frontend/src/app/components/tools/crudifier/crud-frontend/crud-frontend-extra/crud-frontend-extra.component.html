@@ -3,8 +3,8 @@
 
   <h3 *ngIf="custom">Arguments</h3>
 
-  <div *ngIf="custom" class="custom-arguments">
-    <div *ngFor="let idxCustom of custom | dynamic" class="custom-argument">
+  <div *ngIf="customSelect" class="custom-arguments">
+    <div *ngFor="let idxCustom of customSelect | dynamic" class="custom-argument">
       <mat-form-field
         *ngIf="idxCustom.value.length > 0"
         appearance="outline"
@@ -15,6 +15,20 @@
             *ngFor="let idxOption of idxCustom.value"
             [value]="idxOption.value">{{idxOption.name}}</mat-option>
         </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div *ngIf="customValue" class="custom-arguments">
+    <div *ngFor="let idxCustom of customValue | dynamic" class="custom-argument">
+      <mat-form-field
+        appearance="outline"
+        class="w-100">
+        <mat-label class="capsify">{{idxCustom.key}}</mat-label>
+        <textarea
+          matInput
+          rows="5"
+          [(ngModel)]="args[idxCustom.key]"></textarea>
       </mat-form-field>
     </div>
   </div>

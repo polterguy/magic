@@ -3,6 +3,7 @@
  * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
  */
 import { Subscription } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 
 // Application specific imports.
@@ -12,7 +13,6 @@ import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { Endpoint } from '../../../endpoints/models/endpoint.model';
 import { EndpointService } from 'src/app/services/endpoint.service';
-import { MatDialog } from '@angular/material/dialog';
 import { Redirect2hubComponent } from './redirect2hub/redirect2hub.component';
 
 /**
@@ -71,9 +71,14 @@ export class CrudFrontendExtraComponent implements OnInit, OnDestroy {
   modules: string[] = [];
 
   /**
-   * Custom args associates with template.
+   * Custom select arguments associates with template.
    */
-  custom: any = null;
+  customSelect: any = null;
+
+  /**
+   * Custom value arguments asssociated with template.
+   */
+  customValue: any = null;
 
   /**
    * Additional args as passed in during crudification.
@@ -101,15 +106,29 @@ export class CrudFrontendExtraComponent implements OnInit, OnDestroy {
    */
   ngOnInit() {
     this.crudifyService.templateCustomArgs(this.template).subscribe({
-      next: (res: any) => {
-        this.custom = res;
+      next: (res: any[]) => {
+        const objSelect = {};
+        const objValue = {};
         for (const idx in res) {
-          if (Array.isArray(res[idx])) {
-            this.args[idx] = res[idx][0].value;
+          if (res[idx]?.length && typeof res[idx] !== 'string') {
+            objSelect[idx] = res[idx];
+          } else {
+            objValue[idx] = res[idx];
           }
+        }
+        this.customValue = objValue;
+        this.customSelect = objSelect;
+        for (const idx in this.customSelect) {
+          if (Array.isArray(this.customSelect[idx])) {
+            this.args[idx] = this.customSelect[idx][0].value;
+          }
+        }
+        for (const idx in this.customValue) {
+          this.args[idx] = this.customValue[idx];
         }
       },
       error: (error: any) => this.feedbackService.showError(error)});
+
     this.subscription = this.messageService.subscriber().subscribe((msg: Message) => {
       if (msg.name === 'app.generator.generate-frontend') {
         this.generate(
