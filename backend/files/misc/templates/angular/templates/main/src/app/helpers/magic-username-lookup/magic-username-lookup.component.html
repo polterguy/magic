@@ -1,0 +1,9 @@
+<mat-form-field appearance="outline">
+  <mat-label>Username</mat-label>
+  <mat-select
+    [(ngModel)]="model[field]"
+    [name]="field"
+    (selectionChange)="valueChanged()">
+    <mat-option *ngFor="let idx of items" [value]="idx.username">{{idx.username}}</mat-option>
+  </mat-select>
+</mat-form-field>

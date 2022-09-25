@@ -15,6 +15,7 @@ import { HomeModule } from './home/home.module';
 import { ShellModule } from './shell/shell.module';
 import { AppComponent } from './app.component';
 import { MagicSelectorComponent } from './helpers/magic-selector/magic-selector.component';
+import { MagicUsernameLookupComponent } from './helpers/magic-username-lookup/magic-username-lookup.component';
 import { MagicAutocompleteComponent } from './helpers/magic-autocomplete/magic-autocomplete.component';
 import { MagicFilterComponent } from './helpers/magic-filter/magic-filter.component';
 import { MagicImageComponent } from './helpers/magic-image/magic-image.component';
@@ -72,6 +73,7 @@ import { EditExtraFieldsComponent } from './common/user-management/edit-extra-fi
   declarations: [
     AppComponent,
     MagicSelectorComponent,
+    MagicUsernameLookupComponent,
     MagicAutocompleteComponent,
     MagicFilterComponent,
     MagicImageComponent,
