@@ -57,6 +57,9 @@ mat-card.animating {
 }
 .db-table-design {
   h3 {font-weight: 500;}
+  .is_automatic {
+    font-style: italic;
+  }
 }
 .action-button-more {
   min-width: 40px;

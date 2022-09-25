@@ -578,7 +578,7 @@
                           class="key-icon">vpn_key</mat-icon>
                         &nbsp;
                         <strong class="ml-1 mr-2">{{idxColumn.name}}</strong>
-                        <span class="text-muted">{{idxColumn.db}}</span>
+                        <span class="text-muted" [class.is_automatic]="idxColumn.automatic">{{idxColumn.db}}</span>
                       </div>
 
                       <button
