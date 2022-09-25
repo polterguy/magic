@@ -157,6 +157,7 @@ set-value:x:@.view-details-file/*/youtube
    autocomplete
    image
    file
+   username_lookup
 strings.concat
    get-value:x:@.arguments/*/root-folder
    .:templates/form-field/form-field.html
@@ -206,6 +207,11 @@ strings.concat
    get-value:x:@.arguments/*/root-folder
    .:templates/form-field/form-field.textarea.html
 set-value:x:@.form-field-file/*/textarea
+   io.file.load:x:@strings.concat
+strings.concat
+   get-value:x:@.arguments/*/root-folder
+   .:templates/form-field/form-field.username_lookup.html
+set-value:x:@.form-field-file/*/username_lookup
    io.file.load:x:@strings.concat
 
 /*
@@ -984,6 +990,16 @@ for-each:x:@.arguments/*/.crud-methods/*
                               strings.concat
                                  get-value:x:@.substitutions/*/form-fields
                                  strings.replace:x:@.form-field-file/*/file
+                                    .:[[column-name]]
+                                    get-value:x:@.dp/#/*/name
+                     else-if
+                        eq:x:@.dp/#/*/handling
+                           .:username_lookup
+                        .lambda
+                           set-value:x:@.substitutions/*/form-fields
+                              strings.concat
+                                 get-value:x:@.substitutions/*/form-fields
+                                 strings.replace:x:@.form-field-file/*/username_lookup
                                     .:[[column-name]]
                                     get-value:x:@.dp/#/*/name
                      else
