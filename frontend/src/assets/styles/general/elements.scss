@@ -1,0 +1,52 @@
+/*=-=-=-=-=-=
+card
+=-=-=-=-=-=*/
+:root .mat-card {border-radius: $aista_radius;padding: 25px;}
+:root .mat-dialog-container {padding: 25px;}
+/*=-=-=-=-=-=
+table
+=-=-=-=-=-=*/
+.borderless {
+  th.mat-header-cell, td.mat-cell {padding-right: 8px;}
+  th.mat-header-cell, td.mat-cell, td.mat-footer-cell {border: none;}
+  tr.mat-header-row {height: 35px;}
+}
+/*=-=-=-=-=-=
+accordion
+=-=-=-=-=-=*/
+.custom-height-header {
+  .mat-expansion-indicator {margin-right: 5px;}
+  .mat-expanded .mat-expansion-indicator {
+    margin-top: 10px;
+  }
+  .mat-expansion-panel-body {padding: 0;}
+}
+/*=-=-=-=-=-=
+dialog
+=-=-=-=-=-=*/
+.mat-dialog-content {
+  @include scrollbar($aista_default_alt,$aista_default_grey4,3px);
+}
+@media(max-width: 576px) {
+  .cdk-overlay-pane {max-height: 78vh;margin-bottom: 12vh;}
+  .mat-dialog-content {max-height: unset!important;overflow: unset!important;}
+}
+/*=-=-=-=-=-=
+radio button
+=-=-=-=-=-=*/
+.card-radio {
+  .mat-radio-label-content {
+    width: 100%;
+    @media (max-width: 576px) {
+      img {max-width: 32px;}
+    }
+    @media (max-width: 335px) {
+      font-size: 11px;
+      padding-left: 0;
+      img {margin-right: -0.5rem}
+    }
+  }
+}
+.plan-box {
+  .mat-radio-label {white-space: unset;}
+}

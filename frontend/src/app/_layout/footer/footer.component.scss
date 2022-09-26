@@ -1,0 +1,32 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
+@import '../../../../assets/styles/_variables/colors.scss';
+@import '../../../../assets/styles/_variables/sizing.scss';
+@import '../../../../assets/styles/_variables/mixin.scss';
+
+#footer {
+  margin: $aista_spacing;
+  background-color: $aista_default;
+  border-radius: $aista_radius;
+  min-height: 70px;
+  padding: 20px;
+  font-size: 12px;
+  @media (max-width: 575px) {
+    border-radius: 0;
+    margin: $aista_spacing 0 0 0;
+  }
+
+  a.link {
+    cursor: pointer;
+    text-decoration: none;
+    color: $aista_primary;
+    @include general_transition(0.3s);
+
+    &:hover {
+      color: $aista_accent;
+    }
+  }
+}
