@@ -1,0 +1,237 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
+@import '../../../../assets/styles/_variables/colors.scss';
+@import '../../../../assets/styles/_variables/sizing.scss';
+@import '../../../../assets/styles/_variables/mixin.scss';
+
+#navbar {
+  margin: $aista_spacing;
+  background-color: $aista_default;
+  border-radius: $aista_radius;
+  height: 70px;
+  padding: 20px;
+  @media (max-width: 575px) {
+    border-radius: 0;
+    margin: 0 0 $aista_spacing 0;
+  }
+
+  .email-text {
+    max-width: 12vw;
+  }
+
+  .nav-link {
+    font-weight: 500;
+    font-family: 'inter-medium';
+    @include general_transition(0.3s);
+
+    &.active-link,
+    &:hover {
+      color: $aista_primary;
+    }
+  }
+
+  .nav-button {
+    line-height: 35px;
+    min-width: unset;
+    min-height: 35px;
+
+    @media (min-width: 576px) {
+      padding: 0 15px 0 10px;
+    }
+  }
+
+}
+.bell-button {
+  position: relative;
+  &.isOpen::before {
+    content: " ";
+    display: block;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid #FFFFFF;
+    position: absolute;
+    top: 100%;
+    left: 10px;
+    z-index: 9999999;
+  }
+  &.hasUnread mat-icon {
+    position: relative;
+
+    &::after {
+      position: absolute;
+      z-index: 2;
+      content: ' ';
+      width: 5px;
+      height: 5px;
+      right: 5px;
+      top: 6px;
+      border-radius: 50%;
+      background-color: $aista_error;
+    }
+
+    &::before {
+      position: absolute;
+      z-index: 1;
+      content: ' ';
+      width: 10px;
+      height: 10px;
+      right: 2.5px;
+      top: 3.5px;
+      border-radius: 50%;
+      background-color: $aista_default;
+    }
+  }
+
+}
+
+@media (max-width: 1199px) {
+  #navbar {
+    .nav-links {
+      position: fixed;
+      height: 100%;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 250px;
+      z-index: 999;
+      padding: 40px 20px;
+      background-color: $aista_default;
+      box-shadow: 0 18px 7px 4px rgba(0, 0, 0, 0.15);
+      transform: translateX(-270px);
+      @include general_transition(0.3s);
+
+      &.open {
+        transform: translateX(0px);
+      }
+
+      .nav-link {
+        height: 50px;
+        display: flex;
+        align-items: center;
+        @include general_transition(0.3s);
+
+        &.active-link,
+        &:hover {
+          color: $aista_primary;
+
+          &::before {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background-color: $aista_primary;
+            content: ' ';
+          }
+        }
+      }
+    }
+  }
+
+  .overlay {
+    background-color: rgba(0, 0, 0, 0.2);
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 998;
+  }
+}
+.logout-btn {background-color: transparentize($color: $aista_error, $amount: 0.8);border-radius: $aista_radius_sm;}
+button.dropdown-link {
+  background-color: transparent !important;
+  @include general_transition(0.3s);
+
+  &.active-link,
+  &:hover {
+    color: $aista_primary;
+
+    &::before {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background-color: $aista_primary;
+      border-radius: $aista_radius;
+      content: ' ';
+    }
+  }
+}
+
+::ng-deep .mat-menu-panel.account-menu {
+  margin-top: 10px;
+  border-radius: $aista_radius;
+}
+
+::ng-deep .mat-menu-panel.account-menu button {
+  padding-right: 50px;
+}
+
+
+::ng-deep .mat-menu-panel.notifications-menu {
+  margin-top: 10px;
+  margin-right: -10px;
+  border-radius: $aista_radius;
+  width: 485px;
+  max-width: 90vw;
+  padding: 20px;
+  @media (max-width: 319px) {
+    max-width: 80vw;
+  }
+
+  .mat-menu-content {
+    overflow: auto;
+    padding-right: 20px;
+    margin-right: -13px;
+    max-height: 400px;
+    @include scrollbar($aista_default_alt, $aista_default_grey4, 3px);
+  }
+
+  // &::before {
+  //   width: 0;
+  //   height: 0;
+  //   border-left: 10px solid transparent;
+  //   border-right: 10px solid transparent;
+  //   border-bottom: 10px solid $aista_default;
+  //   content: ' ';
+  //   position: absolute;
+  //   top: 0px;
+  //   right: 15px;
+  // }
+}
+
+::ng-deep .cdk-overlay-backdrop.notifications-backdrop {
+  background-color: transparentize($color: $aista_dark, $amount: 0.5);
+}
+
+.coloured-box {
+  background-color: $aista_default_alt;
+  border-radius: $aista_radius;
+  cursor: pointer;
+
+  p {
+    line-height: 1.5;
+
+    &.truncatable {
+      @include line_truncate(2);
+    }
+  }
+}
+
+::ng-deep.nav-link {
+  @include general_transition(0.3s);
+
+  &.bg-light {
+    color: $aista_primary;
+    border-radius: 0;
+  }
+}

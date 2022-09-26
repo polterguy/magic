@@ -1,0 +1,67 @@
+/*=-=-=-=-=-=
+buttons
+=-=-=-=-=-=*/
+:root .mat-flat-button,
+:root .mat-stroked-button {border-radius: $aista_radius_sm;}
+
+.btn-link{
+  background-color: transparent;
+  display: inline-flex;
+  align-items: center;
+  border: none;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  @include general_transition(0.3s);
+  &:hover{
+      filter: invert(30%);
+      -webkit-filter: invert(30%);
+  }
+}
+/*=-=-=-=-=-=
+icons
+=-=-=-=-=-=*/
+:root .mat-form-field-appearance-outline {
+  .mat-select-arrow {
+    width: 8px;
+    height: 8px;
+    border-top: 1px solid $aista_default_grey2;
+    border-left: 1px solid $aista_default_grey2;
+    border-right: unset;
+    transform: rotate(-135deg)!important;
+  }
+  .mat-form-field-prefix {top: 0.35em;color: $aista_default_grey3;}
+  &.inline-form-field {
+    .mat-form-field-wrapper {padding: 0;margin: 0;}
+  }
+  .mat-form-field-outline-start {border-radius: $aista_radius_sm 0 0 $aista_radius_sm;}
+  .mat-form-field-outline-end {border-radius: 0 $aista_radius_sm $aista_radius_sm 0;}
+}
+/*=-=-=-=-=-=
+form fields
+=-=-=-=-=-=*/
+:root {
+  .mat-form-field-appearance-outline {
+    .mat-form-field-outline-start,
+    .mat-form-field-outline-gap,
+    .mat-form-field-outline-end {
+      background-color: $aista_default_grey5;
+      border: none;
+      color: $aista_default_grey3;
+    }
+    .mat-form-field-infix {padding-top: 0.5em;}
+
+    &.custom-alignment {
+      .mat-form-field-flex {align-items: flex-start;}
+      .mat-form-field-prefix {margin-top: 8px;}
+      .mat-form-field-suffix {top: 0.6rem;}
+    }
+  }
+}
+
+
+@media screen and (max-width: 767px) {
+  input, select, textarea {
+    font-size: 16px!important;
+  }
+}
