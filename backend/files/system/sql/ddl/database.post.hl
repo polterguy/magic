@@ -26,6 +26,11 @@ validators.enum:x:@.arguments/*/databaseType
    .:sqlite
    .:pgsql
    .:mssql
+if
+   eq:x:@.arguments/*/databaseName
+      .:magic
+   .lambda
+      throw:You cannot create a database with the name of magic since it is a restriced name
 
 if
    eq:x:@.arguments/*/databaseType
