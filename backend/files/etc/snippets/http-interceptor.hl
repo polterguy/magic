@@ -18,7 +18,8 @@ request.headers.get:Authorization
 
 /*
  * This is where you would parametrise your above [.before] object
- * with for instance arguments given by the client.
+ * with for instance arguments given by the client, before the
+ * invocation to [eval] below.
  */
 
 // Evaluating [.before] lambda object.
@@ -72,7 +73,8 @@ if
 
 /*
  * This is where you would parametrise your above [.after] object
- * with for instance arguments given by the client.
+ * with for instance arguments given by the client, before the
+ * invocation to [eval] below.
  */
 
 // Evaluating [.before] lambda object.
