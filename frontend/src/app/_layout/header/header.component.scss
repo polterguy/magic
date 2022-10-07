@@ -3,9 +3,9 @@
  * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
-@import '../../../../assets/styles/_variables/colors.scss';
-@import '../../../../assets/styles/_variables/sizing.scss';
-@import '../../../../assets/styles/_variables/mixin.scss';
+@import '../../../assets/styles/_variables/colors.scss';
+@import '../../../assets/styles/_variables/sizing.scss';
+@import '../../../assets/styles/_variables/mixin.scss';
 
 #navbar {
   margin: $aista_spacing;
@@ -17,9 +17,9 @@
     border-radius: 0;
     margin: 0 0 $aista_spacing 0;
   }
-
-  .email-text {
-    max-width: 12vw;
+  .url-btn {min-height: 36px;}
+  .url-text {
+    max-width: clamp(21vw, 1vw, 40vw);
   }
 
   .nav-link {
@@ -88,8 +88,13 @@
   }
 
 }
-
-@media (max-width: 1199px) {
+@media (min-width: 992px) and (max-width: 1199px) {
+  .nav-link {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}
+@media (max-width: 991px) {
   #navbar {
     .nav-links {
       position: fixed;
@@ -146,12 +151,12 @@
   }
 }
 .logout-btn {background-color: transparentize($color: $aista_error, $amount: 0.8);border-radius: $aista_radius_sm;}
-button.dropdown-link {
+a {
   background-color: transparent !important;
   @include general_transition(0.3s);
 
   &.active-link,
-  &:hover {
+  &:not([disabled]):not(.warn):hover {
     color: $aista_primary;
 
     &::before {
@@ -165,6 +170,9 @@ button.dropdown-link {
       content: ' ';
     }
   }
+  &.warn {
+    color: $aista_error;
+  }
 }
 
 ::ng-deep .mat-menu-panel.account-menu {
@@ -174,43 +182,6 @@ button.dropdown-link {
 
 ::ng-deep .mat-menu-panel.account-menu button {
   padding-right: 50px;
-}
-
-
-::ng-deep .mat-menu-panel.notifications-menu {
-  margin-top: 10px;
-  margin-right: -10px;
-  border-radius: $aista_radius;
-  width: 485px;
-  max-width: 90vw;
-  padding: 20px;
-  @media (max-width: 319px) {
-    max-width: 80vw;
-  }
-
-  .mat-menu-content {
-    overflow: auto;
-    padding-right: 20px;
-    margin-right: -13px;
-    max-height: 400px;
-    @include scrollbar($aista_default_alt, $aista_default_grey4, 3px);
-  }
-
-  // &::before {
-  //   width: 0;
-  //   height: 0;
-  //   border-left: 10px solid transparent;
-  //   border-right: 10px solid transparent;
-  //   border-bottom: 10px solid $aista_default;
-  //   content: ' ';
-  //   position: absolute;
-  //   top: 0px;
-  //   right: 15px;
-  // }
-}
-
-::ng-deep .cdk-overlay-backdrop.notifications-backdrop {
-  background-color: transparentize($color: $aista_dark, $amount: 0.5);
 }
 
 .coloured-box {

@@ -1,0 +1,23 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
+.not-found {
+  height: 100vh;
+
+  .watermark {
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    p {
+      font-size: clamp(10rem, 54vw, 35rem);
+      opacity: 0.1;
+      font-weight: 900;
+    }
+  }
+}

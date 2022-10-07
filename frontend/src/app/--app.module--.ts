@@ -62,11 +62,11 @@ import 'codemirror/addon/hint/sql-hint.js';
 
 // Application specific imports.
 import { AccessGuard } from './access.guard';
-import { DatePipe } from './pipes/date.pipe';
-import { MarkedPipe } from './pipes/marked.pipe';
-import { DynamicPipe } from './pipes/dynamic.pipe';
-import { DateFromPipe } from './pipes/date-from.pipe';
-import { DateSincePipe } from './pipes/date-since.pipe';
+import { DatePipe } from './_general/pipes/date.pipe';
+import { MarkedPipe } from './_general/pipes/marked.pipe';
+import { DynamicPipe } from './_general/pipes/dynamic.pipe';
+import { DateFromPipe } from './_general/pipes/date-from.pipe';
+import { DateSincePipe } from './_general/pipes/date-since.pipe';
 import { AppRoutingModule } from './app-routing.module';
 import { LoaderService } from './services/loader.service';
 import { AuthInterceptor } from './interceptors/auth.interceptor';

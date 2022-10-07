@@ -9,8 +9,8 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { Role } from 'src/app/components/management/auth/models/role.model';
-import { RoleService } from 'src/app/components/management/auth/services/role.service';
+import { Role } from 'src/app/_protected/pages/user-roles/_models/role.model';
+import { RoleService } from 'src/app/_protected/pages/user-roles/_services/role.service';
 
 /**
  * Modal dialog used to allow user to create a new role in the system.
@@ -33,7 +33,7 @@ export class NewRoleDialogComponent {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param dialogRef Needed to be able to close dialog when user clicks create button
    * @param feedbackService Needed to provide feedback to user
    * @param roleService Needed to be able to create or update a role

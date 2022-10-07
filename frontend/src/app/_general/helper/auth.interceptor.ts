@@ -26,7 +26,7 @@ export class AuthInterceptor implements HttpInterceptor {
   handleError(error: HttpErrorResponse) {
     if (window.location.pathname !== '/authentication') {
       if (error.status === 401) {
-        this.authService.setJwtToken();
+        // this.authService.setJwtToken();
         this.router.navigateByUrl('/authentication');
       }
     }

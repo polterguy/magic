@@ -1,0 +1,45 @@
+<mat-card class="h-100">
+  <mat-card-content class="h-100">
+    <div class="row h-100">
+      <div class="col-12 d-flex flex-column h-100">
+        <div class="row">
+          <div class="col-12">
+              <p class="mt-0 mb-4 mat-body-2 fw-bold">Information</p>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-6 text-muted">
+            Database type:
+          </div>
+          <div class="col-6 text-uppercase">{{data?.default_db}}</div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-6 text-muted">
+            Timezone:
+          </div>
+          <div class="col">{{data?.default_timezone === 'none' ? 'Default' : data?.default_timezone }}</div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-6 text-muted">
+            Version:
+          </div>
+          <div class="col-6">{{data?.version}}</div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-6 text-muted">
+            No. endpoints:
+          </div>
+          <div class="col-6">{{data?.endpoints}}</div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-6 text-muted">
+            Server IP:
+          </div>
+          <div class="col-6">{{data?.server_ip ? data?.server_ip : '-'}}</div>
+        </div>
+        <button mat-button color="primary" class="w-100 mt-auto">More information</button>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

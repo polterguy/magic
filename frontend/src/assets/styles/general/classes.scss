@@ -25,6 +25,7 @@ text
 .text-primary {color: $aista_primary;}
 .text-muted {color: $aista_default_grey3;}
 .text-danger {color: $aista_error;}
+.error {color: $aista_error;}
 /*=-=-=-=-=-=
 snackbar classes
 =-=-=-=-=-=*/
@@ -49,8 +50,8 @@ table
   td.mat-cell:not(:last-child) {padding-right: 5px;}
 }
 @media(max-width: 576px) {
-  .fullPage:not(.dashboard):not(.affiliate) {
-    .table-responsive {
+  // :root .fullPage {
+    .table-responsive:not(.leave-as-normal) {
       overflow: unset;
       table { table-layout: fixed; }
       thead tr { display: none; }
@@ -83,5 +84,5 @@ table
         }
       }
     }
-  }
+  // }
 }

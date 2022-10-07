@@ -9,11 +9,11 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 // Application specific imports.
 import { TableEx } from '../../models/table-ex.model';
 import { ColumnEx } from '../../models/column-ex.model';
-import { LocResult } from '../../models/loc-result.model';
-import { LogService } from 'src/app/services/log.service';
+import { LocResult } from '../../../../../_protected/pages/crud-generator/_models/loc-result.model';
+import { LogService } from 'src/app/_protected/pages/log/_services/log.service';
 import { DatabaseEx } from '../../models/database-ex.model';
 import { CacheService } from 'src/app/services/cache.service';
-import { CrudifyService } from '../../services/crudify.service';
+import { CrudifyService } from '../../../../../_protected/pages/crud-generator/_services/crudify.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
@@ -94,7 +94,7 @@ export class CrudifierTableComponent implements OnInit {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param logService Needed to be able to log LOC generated
    * @param cacheService Needed to be able to flush server side cache once crudification is done
    * @param backendService Needed to able to refetch endpoints after crudification of table
@@ -195,7 +195,7 @@ export class CrudifierTableComponent implements OnInit {
   /**
    * Returns whether or not the specified HTTP verb is disabled
    * for the specified column.
-   * 
+   *
    * @param verb HTTP verb to check
    * @param column Column to check.
    */
@@ -218,7 +218,7 @@ export class CrudifierTableComponent implements OnInit {
 
   /**
    * Returns CRUD name for specified verb.
-   * 
+   *
    * @param verb HTTP verb to return CRUD name for
    */
   getCrudNameForVerb(verb: string) {

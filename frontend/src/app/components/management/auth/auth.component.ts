@@ -7,7 +7,7 @@
 import { Component } from '@angular/core';
 
 // Application specific imports.
-import { User } from 'src/app/components/management/auth/models/user.model';
+import { User } from 'src/app/_protected/pages/user-roles/_models/user.model';
 
 /**
  * Authentication and authorization component, allowing you to administrate and manage

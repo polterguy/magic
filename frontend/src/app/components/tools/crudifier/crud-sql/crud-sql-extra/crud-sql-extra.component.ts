@@ -8,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 // Application specific imports.
-import { CrudifyService } from '../../services/crudify.service';
+import { CrudifyService } from '../../../../../_protected/pages/crud-generator/_services/crudify.service';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { Argument } from '../../../endpoints/models/argument.model';
@@ -80,7 +80,7 @@ export class CrudSqlExtraComponent implements OnInit {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param feedbackService Needed to show user feedback
    * @param crudifyService Needed to crudify endpoint
    * @param backendService Needed to figure out if user can load SQL snippets
@@ -177,7 +177,7 @@ export class CrudSqlExtraComponent implements OnInit {
   /**
    * Invoked when user wants to remove an argument from collection of arguments
    * endpoint can handle.
-   * 
+   *
    * @param argument Argument to remove
    */
   removeArgument(argument: Argument) {

@@ -1,3 +1,10 @@
+@import 'node_modules/codemirror/lib/codemirror';
+@import 'node_modules/codemirror/theme/material';
+@import "node_modules/codemirror/addon/display/fullscreen";
+@import "~codemirror/addon/dialog/dialog.css";
+
+@import 'material-symbols/outlined.css';
+@import './codemirror.scss';
 @import './_variables/fonts.scss';
 @import './_variables/sizing.scss';
 @import './_variables/colors.scss';

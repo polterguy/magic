@@ -12,12 +12,12 @@ import { Component, ComponentFactoryResolver, Inject, LOCALE_ID, OnInit } from '
 
 // Application specific imports.
 import { TableEx } from '../models/table-ex.model';
-import { LocResult } from '../models/loc-result.model';
+import { LocResult } from '../../../../_protected/pages/crud-generator/_models/loc-result.model';
 import { Messages } from 'src/app/models/messages.model';
 import { DatabaseEx } from '../models/database-ex.model';
-import { LogService } from 'src/app/services/log.service';
+import { LogService } from 'src/app/_protected/pages/log/_services/log.service';
 import { Databases } from 'src/app/models/databases.model';
-import { CrudifyService } from '../services/crudify.service';
+import { CrudifyService } from '../../../../_protected/pages/crud-generator/_services/crudify.service';
 import { CacheService } from 'src/app/services/cache.service';
 import { SqlService } from '../../../../services/sql.service';
 import { MessageService } from 'src/app/services/message.service';

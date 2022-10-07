@@ -1,214 +1,42 @@
 
 /*
- * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
-@import '~codemirror/lib/codemirror';
-@import "~codemirror/addon/display/fullscreen";
-@import "~codemirror/addon/dialog/dialog.css";
-@import 'material-icons/iconfont/material-icons.css';
-@import './assets/styles/sizes.scss';
-@import './assets/styles/grid.scss';
-@import './assets/styles/colour.scss';
-@import './assets/styles/mixin.scss';
-@import './assets/styles/material-styling.scss';
-@import './assets/styles/default-classes.scss';
-@import './assets/styles/codemirror.scss';
+/* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-body { margin: 0;min-height: 100vh;overflow: hidden;}
-.grecaptcha-badge { visibility: hidden; }
-/*=-=-=-=-=-=
-General settings 
-=-=-=-=-=-=*/
-hr {
-  border-style: solid;
-  border-width: 0.5px;
-  border-color: transparentize($color: $magic_default_alternative, $amount: 0.7);
-}
-/*
- * Misc classes.
- */
-.warning {
-  color: $magic_warning!important;
-}
-.error-bg { background-color: $magic_error!important; }
-.error-text { color: $magic_error!important; }
-.fill-width {
-  width: 100%;
-}
-.button-strip {
-  text-align: right;
-  margin-top: .5rem;
-  margin-bottom: .5rem;
-  mat-checkbox, button {
-    margin-left: 1rem;
-  }
-}
-.sys-database {
-  color: rgb(198, 198, 198);
-  font-style: italic;
-}
-.CodeMirror-vscrollbar {
-  @include scrollbar($magic_default_secondary,transparentize($color: $magic_dark_alternative, $amount: 0.65),6px);
-}
-.CodeMirror-hscrollbar {
-  @include scrollbar_horizontal($magic_default_secondary,transparentize($color: $magic_dark_alternative, $amount: 0.65),6px);
-}
-.invisible {
-  display: none !important;
-}
-.word-break {
-  word-break: break-word;
-}
-.button {
-  cursor: pointer;
-}
-button.wider-button {
-  width: 150px;
-}
-.mat-dialog-actions {
-  float: right;
-}
-a {
-  color: $magic_accent;
-  text-decoration: none;
+@import './assets/styles/_imports';
+
+html,
+body {
+  background-color: $aista_default_alt;
 }
 
-/*
- * Material table styles.
- */
-table.clickable {
-  width: 100%;
-  border-collapse: collapse;
-  thead {
-    tr {
-      th {
-        white-space: nowrap;
-      }
-    }
-  }
-  tbody {
-    tr {
-      td {
-        vertical-align: middle;
-        padding: 0.5rem 1rem 0.5rem;
-        cursor: pointer;
-        user-select: none;
-      }
-    }
-    td.mini-col {
-      width: 5px;
-      white-space: nowrap;
-    }
-    td.icon-col {
-      width: 20px;
-      height: 20px;
-      padding-top: 3px;
-      padding-bottom: 0;
-      vertical-align: middle;
-    }
-    td.button-col {
-      width: 30px;
-      padding-top: 3px;
-      padding-bottom: 0;
-    }
-    tr.selected {
-      background-color: transparentize($color: $magic_default, $amount: 0.9);
-    }
-    tr.details {
-      background-color: transparentize($color: $magic_default, $amount: 0.95);
-      td {
-        cursor: default;
-        user-select: unset;
-      }
-      @keyframes fadeIn {
-        0% {
-          opacity: 0;
-          margin-top: -50px;
-        }
-        100% {
-          opacity: 1;
-          margin-top: inherit;
-        }
-      }
-      td>div {
-        animation-name: fadeIn;
-        animation-duration: .2s;
-        animation-timing-function: ease-in;
-        animation-fill-mode: forwards;
-      }
-    }
-  }
-}
-td:last-child.icon-col {
-  text-align: right;
-}
-
-/*
- * Generic mat-dialog overrides.
- */
-.mat-dialog-title, .mat-dialog-content {
-  input {
-    color: $magic_dark;
-  }
-}
-
-/*
- * CodeMirror overrides.
- */
-.CodeMirror {
-  height: 400px;
-  resize: vertical;
-}
-.CodeMirror-hints {
-  position: absolute;
-  z-index: 10000;
-  overflow: hidden;
-  list-style: none;
+body {
   margin: 0;
-  padding: 2px;
-  -webkit-box-shadow: 2px 3px 5px transparentize($color: $magic_dark, $amount: 0.8);
-  -moz-box-shadow: 2px 3px 5px transparentize($color: $magic_dark, $amount: 0.8);
-  box-shadow: 2px 3px 5px transparentize($color: $magic_dark, $amount: 0.8);
-  border-radius: 3px;
-  color: $magic_default;
-  border: 1px solid $magic_dark;
-  background-color: $magic_dark_alternative;
-  font-size: 90%;
-  font-family: monospace;
-  max-height: 20em;
-  overflow-y: auto;
-}
-.CodeMirror-hint {
-  margin: 0;
-  padding: 0 4px;
-  border-radius: 2px;
-  white-space: pre;
-  cursor: pointer;
-}
-li.CodeMirror-hint-active {
-  background: $magic_primary;
-  color: white;
-}
-.cm-error {
-  background-color: $magic_error;
+  @include scrollbar($aista_default_alt, $aista_default_grey4, 5px);
 }
 
-@media screen and (-webkit-min-device-pixel-ratio:0) { 
-  select:focus,
-  textarea:focus,
-  input:focus {
-    font-size: 16px;
-    background: #eee;
+.grecaptcha-badge {
+  visibility: hidden;
+}
+@media (max-width: 576px) {
+
+  @media screen and (-webkit-min-device-pixel-ratio:0) {
+    select:focus,
+    textarea:focus,
+    input:focus {
+      font-size: 16px;
+      background: #eee;
+    }
   }
-}
 
-@media screen and (-webkit-min-device-pixel-ratio:0) { 
-  select,
-  textarea,
-  input {
-    font-size: 16px;
+  @media screen and (-webkit-min-device-pixel-ratio:0) {
+    select,
+    textarea,
+    input {
+      font-size: 16px;
+    }
   }
 }
 

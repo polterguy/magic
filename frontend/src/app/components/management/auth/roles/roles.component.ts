@@ -16,12 +16,12 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 import { Count } from 'src/app/models/count.model';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from '../../../../services/feedback.service';
-import { User } from 'src/app/components/management/auth/models/user.model';
-import { Role } from 'src/app/components/management/auth/models/role.model';
+import { User } from 'src/app/_protected/pages/user-roles/_models/user.model';
+import { Role } from 'src/app/_protected/pages/user-roles/_models/role.model';
 import { NewRoleDialogComponent } from './new-role-dialog/new-role-dialog.component';
-import { RoleService } from 'src/app/components/management/auth/services/role.service';
-import { UserService } from 'src/app/components/management/auth/services/user.service';
-import { AuthFilter } from 'src/app/components/management/auth/models/auth-filter.model';
+import { RoleService } from 'src/app/_protected/pages/user-roles/_services/role.service';
+import { UserService } from 'src/app/_protected/pages/user-roles/_services/user.service';
+import { AuthFilter } from 'src/app/_protected/pages/user-roles/_models/auth-filter.model';
 
 /**
  * Roles component for administrating roles in the system.
@@ -90,7 +90,7 @@ export class RolesComponent implements OnInit {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param feedbackService Used to provide feedback to user
    * @param dialog Used to open the create new role dialog
    * @param backendService Needed to retrieve user's access rights in backend
@@ -167,7 +167,7 @@ export class RolesComponent implements OnInit {
 
   /**
    * Deletes the specified role.
-   * 
+   *
    * @param role Role to delete
    */
   deleteRole(role: Role) {
@@ -205,7 +205,7 @@ export class RolesComponent implements OnInit {
 
   /**
    * Returns the number of users that are selected but does not belong to specified role.
-   * 
+   *
    * @param role Role to check for
    */
   getAffectedUsers(role: Role) {
@@ -215,7 +215,7 @@ export class RolesComponent implements OnInit {
   /**
    * Adds the specified role to all currently selected users,
    * unless user already belongs to the specified role.
-   * 
+   *
    * @param role Role to add to selected users
    */
   addRole(role: Role) {
@@ -233,7 +233,7 @@ export class RolesComponent implements OnInit {
 
   /**
    * Invoked when user wants to edit a specific role.
-   * 
+   *
    * @param role Role to edit
    */
   editRole(role: Role) {

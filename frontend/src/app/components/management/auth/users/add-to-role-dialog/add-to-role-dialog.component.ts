@@ -8,11 +8,11 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
-import { Role } from '../../models/role.model';
-import { RoleService } from '../../services/role.service';
+import { Role } from '../../../../../_protected/pages/user-roles/_models/role.model';
+import { RoleService } from '../../../../../_protected/pages/user-roles/_services/role.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { User } from 'src/app/components/management/auth/models/user.model';
-import { UserService } from 'src/app/components/management/auth/services/user.service';
+import { User } from 'src/app/_protected/pages/user-roles/_models/user.model';
+import { UserService } from 'src/app/_protected/pages/user-roles/_services/user.service';
 
 /**
  * Modal dialog component allowing you to add a specific user
@@ -36,7 +36,7 @@ export class AddToRoleDialogComponent implements OnInit {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param userService Used to associate user with new role
    * @param roleService Needed to retrieve roles from backend
    * @param feedbackService Used to display feedback to user

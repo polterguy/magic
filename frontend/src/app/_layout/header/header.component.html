@@ -1,30 +1,45 @@
 <div id="navbar" class="d-flex align-items-center justify-content-lg-between mat-elevation-z2">
 
-  <button mat-icon-button color="primary" class="d-xl-none d-block me-2" (click)="toggleSidebar()">
+  <button mat-icon-button color="primary" class="d-lg-none d-block me-2" (click)="toggleSidebar()">
     <mat-icon>menu</mat-icon>
   </button>
-  <a class="me-xl-0 me-auto pointer" routerLink="/">
+  <a class="me-lg-0 me-auto pointer" routerLink="/">
     <img src="../../../../assets/images/aista-logo.svg" alt="Aista Ltd." height="20" class="my-auto d-sm-block d-none">
     <img src="../../../../assets/images/icons/apple-icon-180x180.png" alt="Aista Ltd." height="50" class="my-auto d-sm-none d-block">
   </a>
 
 
-  <div class="nav-links mx-auto  d-flex flex-xl-row flex-column" [class.open]="sideExpanded">
+  <div class="nav-links mx-auto  d-flex flex-lg-row flex-column" [class.open]="sideExpanded">
     <img src="../../../../assets/images/aista-logo.svg" alt="Aista Ltd." height="20"
-    class="mx-auto d-block d-xl-none mb-4">
+    class="mx-auto d-block d-lg-none mb-4">
 
-    <!-- ONLY to be displayed on medium size screens and smaller -->
-    <div class="d-md-none d-block mb-4">
-      <button mat-button [matMenuTriggerFor]="account" class="mx-auto d-block">
-        <div class="d-flex flex-nowrap align-items-center ps-1">
-          <mat-icon>account_circle</mat-icon>
-          <p class="my-0 mx-2 text-truncate email-text">{{username}}</p>
-          <mat-icon>expand_more</mat-icon>
-        </div>
-      </button>
-    </div>
+    <a mat-button class="nav-link" *ngFor="let item of navLinks"
+      [routerLink]="item.url"
+      (click)="item.expandable ? null : closeSidebarInSidePanel()"
+      [matMenuTriggerFor]="item.expandable ? subMenu : null" [matMenuTriggerData]="item">
 
-    <a mat-button class="nav-link" routerLink="/" [routerLinkActiveOptions]="{exact: true}"
+      {{item.name}} <mat-icon *ngIf="item.expandable">expand_more</mat-icon>
+
+    </a>
+
+    <mat-menu #subMenu="matMenu">
+      <ng-template matMenuContent let-submenuItems="submenu">
+        <a mat-menu-item [class.warn]="item.color"
+          *ngFor="let item of submenuItems"
+          [disabled]="item.disabled"
+          [routerLink]="item.disabled ? null : item.url"
+          [routerLinkActiveOptions]="{exact: true}"
+          routerLinkActive="active-link"
+          #isActiveLink="routerLinkActive"
+          (click)="logout(item.name);closeSidebarInSidePanel()">
+          {{item.name}}
+        </a>
+      </ng-template>
+    </mat-menu>
+
+
+
+    <!-- <a mat-button class="nav-link" routerLink="/" [routerLinkActiveOptions]="{exact: true}"
       routerLinkActive="active-link" #isActiveLink="routerLinkActive" (click)="closeSidebarInSidePanel()">Dashboard</a>
 
     <a mat-button class="nav-link" routerLink="/cloudlets" [routerLinkActiveOptions]="{exact: false}"
@@ -37,72 +52,62 @@
       routerLinkActive="active-link" #isActiveLink="routerLinkActive" (click)="closeSidebarInSidePanel()">Invoices</a>
 
     <a mat-button class="nav-link" *ngIf="isAffiliate" routerLink="affiliate" [routerLinkActiveOptions]="{exact: true}"
-      routerLinkActive="active-link" #isActiveLink="routerLinkActive" (click)="closeSidebarInSidePanel()">Affiliates</a>
+      routerLinkActive="active-link" #isActiveLink="routerLinkActive" (click)="closeSidebarInSidePanel()">Affiliates</a> -->
 
     <!-- ONLY to be displayed on medium size screens and smaller -->
-    <div class="d-md-none d-block mt-auto">
+    <!-- <div class="d-md-none d-block mt-auto">
       <a mat-button class="justify-content-center w-100 logout-btn" color="warn" (click)="logout()">Logout</a>
-    </div>
+    </div> -->
   </div>
 
   <div class="d-flex align-items-center">
-    <button mat-icon-button color="primary" [matMenuTriggerFor]="notifications" class="me-xl-4 bell-button"
-      (click)="getNotifications()" [class.hasUnread]="notificationList?.length > 0"
-      #notificationHeaderMenu="matMenuTrigger"
-      [class.isOpen]="notificationHeaderMenu.menuOpen">
-      <mat-icon>notifications</mat-icon>
-    </button>
 
-
-    <button mat-button [matMenuTriggerFor]="account" color="primary" class="d-md-block d-none me-1">
+    <button mat-flat-button color="primary" class="url-btn" (click)="viewBackends()">
       <div class="d-flex flex-nowrap align-items-center ps-1">
-        <mat-icon>account_circle</mat-icon>
-        <p class="my-0 mx-2 text-truncate email-text">{{username}}</p>
+        <mat-icon>database</mat-icon>
+        <p class="my-0 mx-2 text-truncate url-text">{{activeUrl}}</p>
         <mat-icon>expand_more</mat-icon>
-      </div>
-    </button>
-    <button mat-flat-button color="primary" class="nav-button ps-2" routerLink="/cloudlets/create">
-      <div class="d-flex flex-nowrap align-items-center ps-sm-0">
-        <mat-icon class="me-0">add</mat-icon>
-        <span class="d-sm-block d-none">Create cloudlet</span>
-        <span class="d-sm-none d-block">Cloudlet</span>
       </div>
     </button>
 
   </div>
 </div>
 <!-- Account dowpdown menu -->
-<mat-menu #account="matMenu" class="account-menu">
-  <button mat-menu-item class="dropdown-link" routerLink="/my-profile" [routerLinkActiveOptions]="{exact: true}"
-    routerLinkActive="active-link" #isActiveLink="routerLinkActive" (click)="closeSidebarInSidePanel()">My profile</button>
-  <button mat-menu-item class="dropdown-link" routerLink="/account-security"
-    [routerLinkActiveOptions]="{exact: true}" routerLinkActive="active-link"
-    #isActiveLink="routerLinkActive" (click)="closeSidebarInSidePanel()">Security</button>
-  <button mat-menu-item class="dropdown-link" routerLink="/payment-methods"
-    [routerLinkActiveOptions]="{exact: true}" routerLinkActive="active-link"
-    #isActiveLink="routerLinkActive" (click)="closeSidebarInSidePanel()">Payment methods</button>
-  <button mat-menu-item class="dropdown-link" routerLink="/setting" [routerLinkActiveOptions]="{exact: true}"
-    routerLinkActive="active-link" #isActiveLink="routerLinkActive" (click)="closeSidebarInSidePanel()">Settings</button>
-
-
-  <button mat-menu-item class="dropdown-link d-md-block d-none" (click)="logout()" (click)="closeSidebarInSidePanel()">Logout</button>
+<mat-menu #backendsMenu="matMenu">
+  <button mat-menu-item *ngFor="let item of backendList"
+  [matMenuTriggerFor]="selectedBackend"
+  [matMenuTriggerData]="{backend: item}">
+    <mat-icon>{{item.token ? 'lock' : 'lock_open'}}</mat-icon>
+    <span [class.warn]="item.url.startsWith('http://')">
+      {{item.url.substring(item.url.indexOf('://') + 3)}}
+    </span>
+  </button>
+  <button mat-menu-item>
+    <mat-icon>add</mat-icon> Add new backend
+  </button>
 </mat-menu>
-
-<!-- Notification panel -->
-<mat-menu #notifications="matMenu" class="notifications-menu" backdropClass="notifications-backdrop" xPosition="before">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h3 class="my-0 fw-bold">Notifications</h3>
-    <a mat-button color="primary" routerLink="/notifications">See all</a>
-  </div>
-  <a class="d-flex flex-column coloured-box p-3" *ngFor="let item of notificationList; let last = last"
-    [class.mb-3]="!last">
-    <p class="mt-0 truncatable">{{item.content}}</p>
-    <em class="mb-0 text-muted ms-auto">{{item.created | friendlyDate}}</em>
-  </a>
-  <ng-container *ngIf="!notificationList || notificationList.length === 0">
-    <p class="mt-0 truncatable">All is good!</p>
-  </ng-container>
-
+<mat-menu #selectedBackend="matMenu" xPosition="after">
+  <ng-template matMenuContent let-backend="backend">
+    <button
+      mat-menu-item
+      (click)="copyUrlWithBackend(backend.url)">
+      <mat-icon>content_copy</mat-icon>
+      Copy url
+    </button>
+    <button
+      mat-menu-item
+      [disabled]="backend.url === backendService.active?.url"
+      (click)="switchBackend(backend)">
+      <mat-icon>change_circle</mat-icon>
+      {{backend.url === backendService.active?.url ? 'Currently in use' : 'Switch to this backend'}}
+    </button>
+    <button
+      mat-menu-item
+      (click)="removeBackend(backend)">
+      <mat-icon>delete</mat-icon>
+      Remove backend
+    </button>
+  </ng-template>
 </mat-menu>
 
 <div class="overlay" *ngIf="sideExpanded" (click)="toggleSidebar()"></div>
