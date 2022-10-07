@@ -46,9 +46,9 @@ export class GeneralService {
    * @param duration optional; if available, the default value of 2000 ms will be overwritten
    */
   showFeedback(message: string, panelClass?: string, actionButton?: string, duration?: number) {
-    if (message?.startsWith('Guru meditation')) {
-      return;
-    }
+    // if (message && message?.startsWith('Guru meditation')) {
+    //   return;
+    // }
     this._snackBar.open(message, actionButton, {
       duration: duration || 2000, // if exists use it, otherwise use default
       panelClass: [panelClass!] // if available
@@ -56,14 +56,14 @@ export class GeneralService {
   }
 
   /**
-   * 
+   *
    * @returns boolean value indicating the site is rendered on a small or large screen size device
    */
   getScreenSize(): Observable<boolean> {
     return this.largeScreen.asObservable();
   }
   /**
-   * 
+   *
    * @param status boolean
    * set to true if the device in use is a large screen device
    */

@@ -17,7 +17,7 @@ import { Response } from 'src/app/models/response.model';
 import { CoreVersion } from '../models/core-version.model';
 import { environment } from 'src/environments/environment';
 import { BackendsStorageService } from './backendsstorage.service';
-import { AuthenticateResponse } from '../components/management/auth/models/authenticate-response.model';
+import { AuthenticateResponse } from '../_protected/pages/user-roles/_models/authenticate-response.model';
 
 /**
  * Keeps track of your backends and your currently selected backend.
@@ -339,7 +339,7 @@ export class BackendService {
 
   /**
    * Shows or hides the global obscurer
-   * 
+   *
    * @param value Whether or not obscurer should be shown or not
    */
   showObscurer(value: boolean) {
@@ -348,7 +348,7 @@ export class BackendService {
 
   /**
    * Returns true if global obscurer should be visible.
-   * 
+   *
    * @returns Whether or not obscurer is visible or not
    */
   getObscurer() {

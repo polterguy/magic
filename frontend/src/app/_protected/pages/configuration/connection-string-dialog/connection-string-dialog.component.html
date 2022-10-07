@@ -1,0 +1,28 @@
+<form [formGroup]="connectionStringForm">
+  <h3 mat-dialog-title>Connect to database</h3>
+  <div mat-dialog-content>
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Database type</mat-label>
+      <mat-select formControlName="selectedDb" name="selectedDb" required (ngModelChange)="fillPlaceholder(connectionStringForm.value.selectedDb)">
+        <mat-option *ngFor="let db of dbList" [value]="db">{{db}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Name</mat-label>
+      <input matInput type="text" formControlName="displayName" name="displayName" (ngModelChange)="checkName()" required>
+      <mat-error>
+        {{nameExisting ? 'This name already exists in your database.' : 'Alphanumeric lowercase characters between 2 to 20 (no space).'}}
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="w-100" floatLabel="always">
+      <mat-label>Connection string</mat-label>
+      <input matInput type="text" formControlName="connectionString" name="connectionString" required (keyup)="validateConnectionString()" placeholder="Server=yourdomain.com;Database={database};Uid=root;Pwd=your_password;SslMode=Preferred;Old Guids=true;" />
+      <mat-error>{{error}}</mat-error>
+    </mat-form-field>
+  </div>
+  <div mat-dialog-actions [align]="'end'">
+    <button mat-button mat-dialog-close="" type="button">Cancel</button>
+    <button mat-flat-button type="submit" color="primary" (click)="testConnectionString()" [disabled]="connectionStringForm.value.connectionString === ''">Test</button>
+    <button mat-flat-button type="button" color="primary" (click)="testConnectionString(true)" [disabled]="connectionStringForm.invalid">Submit</button>
+  </div>
+</form>

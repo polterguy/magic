@@ -13,11 +13,11 @@ import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { SqlService } from 'src/app/services/sql.service';
-import { LogService } from 'src/app/services/log.service';
-import { Crudify } from 'src/app/components/tools/crudifier/models/crudify.model';
-import { LocResult } from 'src/app/components/tools/crudifier/models/loc-result.model';
+import { LogService } from 'src/app/_protected/pages/log/_services/log.service';
+import { Crudify } from 'src/app/_protected/pages/crud-generator/_models/crudify.model';
+import { LocResult } from 'src/app/_protected/pages/crud-generator/_models/loc-result.model';
 import { DefaultDatabaseType } from '../../../../../models/default-database-type.model';
-import { CrudifyService } from 'src/app/components/tools/crudifier/services/crudify.service';
+import { CrudifyService } from 'src/app/_protected/pages/crud-generator/_services/crudify.service';
 
 // CodeMirror options.
 import json from '../../../../utilities/codemirror/options/json.json'
@@ -55,7 +55,7 @@ export class CrudifyDatabaseComponent implements OnInit {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param logService Needed to log LOC to backend
    * @param sqlService Needed to retrieve default database type
    * @param backendService Needed to re-retrieve endpoints after crudification is done

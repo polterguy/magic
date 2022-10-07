@@ -15,7 +15,7 @@ import {
 } from '@angular/animations';
 
 // Application specific imports.
-import { LogService } from '../../../services/log.service';
+import { LogService } from '../../../_protected/pages/log/_services/log.service';
 import { LogItem } from 'src/app/models/log-item.model';
 import { FeedbackService } from '../../../services/feedback.service';
 
@@ -56,7 +56,7 @@ export class LogComponent implements OnInit {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param feedbackService Needed to display feedback to user
    * @param logService Log HTTP service to use for retrieving log items
    * @param clipboard Needed to be able to access the clipboard
@@ -97,7 +97,7 @@ export class LogComponent implements OnInit {
 
   /**
    * Returns specified object as an array to caller.
-   * 
+   *
    * @param meta Meta object to return array for
    */
   toArray(meta: object) {
@@ -114,7 +114,7 @@ export class LogComponent implements OnInit {
 
   /**
    * Puts the specified content into the user's clipboard
-   * 
+   *
    * @param content Content to put on to clipboard
    */
   copyContent(content: string) {
@@ -124,7 +124,7 @@ export class LogComponent implements OnInit {
 
   /**
    * Invoked when element wrapping table is scrolled.
-   * 
+   *
    * @param e - scrolling event
    */
   onTableScroll(e: any) {

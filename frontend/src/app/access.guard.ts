@@ -29,7 +29,7 @@ export class AccessGuard implements CanActivate {
 
   /**
    * Creates an instance of your type.
-   * 
+   *
    * @param router Needed to redirect if user doesn't have access
    * @param backendService Needed to determine access rights of user
    */
@@ -39,16 +39,18 @@ export class AccessGuard implements CanActivate {
 
   canActivate(
     route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot) : Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+    state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+      (async () => {
+        while (this.backendService.active.access && !Object.keys(this.backendService.active.access.auth).length)
+          await new Promise(resolve => setTimeout(resolve, 100));
+          if (this.backendService.active.access) {
+            const notAuthorized: boolean = Object.values(this.backendService.active.access.auth).every((item: any) => {return item === false})
 
-    // Checking access rights per route
-    (async () => {
-      while (!this.backendService.active?.access.fetched)
-        await new Promise(resolve => setTimeout(resolve, 100));
-      if (!route.data.check(this.backendService.active?.access)) {
-        this.router.navigate(['/']);
-      }
-    })();
-    return true;
+          notAuthorized && !this.backendService.active.token?
+          this.router.navigate(['/authentication']) : '';
+        }
+      })();
+      return true;
   }
+
 }

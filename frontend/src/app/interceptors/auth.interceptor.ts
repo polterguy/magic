@@ -24,7 +24,7 @@ export class AuthInterceptor implements HttpInterceptor {
 
   /**
    * Creates an instance of your service.
-   * 
+   *
    * @param backendsStorageService Needed to figure out which JWT token to associate with request, if any
    */
   constructor(private backendsStorageService: BackendsStorageService) { }
@@ -32,7 +32,7 @@ export class AuthInterceptor implements HttpInterceptor {
   /**
    * Intercepts all HTTP requests to associate an Authorization
    * HTTP header with the request, if possible.
-   * 
+   *
    * @param req HTTP request
    * @param next Next handler
    */

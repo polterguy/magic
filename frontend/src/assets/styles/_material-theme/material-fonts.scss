@@ -1,9 +1,9 @@
-@import '~@angular/material/theming';
+@import 'node_modules/@angular/material/theming';
 
 $custom-typography: mat-typography-config(
   $font-family: 'inter-regular',
   $headline: mat-typography-level(32px, 48px, 400, 'inter-medium'),
-  $body-1: mat-typography-level(13px, 16px, 400)
+  $body-1: mat-typography-level(13px, 14px, 400)
 );
 
 @include angular-material-typography($custom-typography);

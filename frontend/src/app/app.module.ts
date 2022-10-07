@@ -15,11 +15,10 @@ import { MaterialModule } from './material.module';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 // Extra packages
-import { NgxEchartsModule } from 'ngx-echarts';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import { MatNativeDateModule } from '@angular/material/core';
-import { RECAPTCHA_V3_SITE_KEY, RecaptchaV3Module, RecaptchaFormsModule, RecaptchaModule } from "ng-recaptcha";
-import { NgxMatDatetimePickerModule, NgxMatTimepickerModule, NgxMatNativeDateModule } from '@angular-material-components/datetime-picker';
+import { RecaptchaV3Module, RecaptchaFormsModule, RecaptchaModule } from "ng-recaptcha";
+import { NgxMatDatetimePickerModule, NgxMatTimepickerModule } from '@angular-material-components/datetime-picker';
 
 // PWA
 import { environment } from 'src/environments/environment';
@@ -35,13 +34,19 @@ import { AppComponent } from './app.component';
 import { CoreComponent } from './_layout/core/core.component';
 import { HeaderComponent } from './_layout/header/header.component';
 import { FooterComponent } from './_layout/footer/footer.component';
+import { LoaderService } from './services/loader.service';
+import { LoaderInterceptor } from './interceptors/loader.interceptor';
+import { CodemirrorSqlComponent } from './codemirror/codemirror-sql/codemirror-sql.component';
+import { HyperlambdaComponent } from './codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     CoreComponent,
     HeaderComponent,
-    FooterComponent
+    FooterComponent,
+    CodemirrorSqlComponent,
+    HyperlambdaComponent
   ],
   imports: [
     BrowserModule,
@@ -55,13 +60,9 @@ import { FooterComponent } from './_layout/footer/footer.component';
     MatNativeDateModule,
     NgxMatDatetimePickerModule,
     NgxMatTimepickerModule,
-    NgxMatNativeDateModule,
     RecaptchaModule,
     RecaptchaV3Module,
     RecaptchaFormsModule,
-    NgxEchartsModule.forRoot({
-      echarts: () => import('echarts')
-    }),
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: environment.production,
       // Register the ServiceWorker as soon as the application is stable
@@ -72,11 +73,14 @@ import { FooterComponent } from './_layout/footer/footer.component';
   providers: [
     {
       provide: HTTP_INTERCEPTORS,
-      useClass: NetworkInterceptor,
+      useClass: AuthInterceptor,
       multi: true,
     },
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true }
+    LoaderService, {
+      provide: HTTP_INTERCEPTORS,
+      useClass: LoaderInterceptor,
+      multi: true
+    }
   ],
   bootstrap: [AppComponent]
 })

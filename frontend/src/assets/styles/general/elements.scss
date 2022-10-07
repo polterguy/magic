@@ -1,8 +1,8 @@
 /*=-=-=-=-=-=
 card
 =-=-=-=-=-=*/
-:root .mat-card {border-radius: $aista_radius;padding: 25px;}
-:root .mat-dialog-container {padding: 25px;}
+:root .mat-card {border-radius: $aista_radius;padding: 30px;}
+:root .mat-dialog-container {padding: 30px;}
 /*=-=-=-=-=-=
 table
 =-=-=-=-=-=*/
@@ -10,6 +10,14 @@ table
   th.mat-header-cell, td.mat-cell {padding-right: 8px;}
   th.mat-header-cell, td.mat-cell, td.mat-footer-cell {border: none;}
   tr.mat-header-row {height: 35px;}
+  tr.mat-row, tr.mat-footer-row { height: 40px; }
+  button {font-size: 13px;}
+}
+.hoverable {
+  tr.mat-row {
+    @include general_transition(0.3s);
+    &:hover {background-color: transparentize($color: $aista_default_alt, $amount: 0.5);}
+  }
 }
 /*=-=-=-=-=-=
 accordion
@@ -49,4 +57,17 @@ radio button
 }
 .plan-box {
   .mat-radio-label {white-space: unset;}
+}
+/*=-=-=-=-=-=
+tab
+=-=-=-=-=-=*/
+.mat-tab-label-active {
+  color: $aista_primary;
+}
+.mat-tab-label {
+  font-weight: 600;
+  font-size: clamp(13px,2vw,14px);
+  &:not(.mat-tab-disabled) {
+    opacity: 1;
+  }
 }

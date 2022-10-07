@@ -2,7 +2,7 @@
 * customizing colors defined in angular material theme
 */
 
-@import '~@angular/material/theming';
+@import 'node_modules/@angular/material/theming';
 
 
 // Foreground Elements
@@ -100,15 +100,7 @@ $theme: mat-light-theme($theme-primary, $theme-accent);
 // Theme Init
 @include angular-material-theme($theme);
 
-// material icons
-
-@font-face {
-  font-family: 'Material Symbols Outlined';
-  font-style: normal;
-  font-weight: 100 700;
-  font-display: block;
-  src: url('../../fonts/icon-fonts/materialicons-outline.woff2') format('woff2');
-}
+// material symbols
 
 .material-icons {
   font-family: 'Material Symbols Outlined';

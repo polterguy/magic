@@ -13,7 +13,7 @@ import { BackendService } from './backend.service';
 import { Response } from '../models/response.model';
 import { Backend } from 'src/app/models/backend.model';
 import { NameEmailModel } from '../models/name-email.model';
-import { AuthenticateResponse } from '../components/management/auth/models/authenticate-response.model';
+import { AuthenticateResponse } from '../_protected/pages/user-roles/_models/authenticate-response.model';
 
 /**
  * Configuration service, allows you to setup system and read or manipulate your configuration

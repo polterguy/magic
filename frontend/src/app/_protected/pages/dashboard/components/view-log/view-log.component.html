@@ -1,0 +1,36 @@
+<!-- <h3 mat-dialog-title>{{data?.content}}</h3> -->
+<div mat-dialog-content>
+  <ng-container *ngIf="data?.id">
+    <p class="mb-0">
+        {{data.id}}
+    </p>
+  </ng-container>
+  <ng-container *ngIf="data?.created">
+    <p class="mat-caption text-muted mb-3 mt-0">
+        {{data.created | date}}
+    </p>
+  </ng-container>
+  <ng-container *ngIf="data?.type">
+    <p>
+        Type: <span class="text-capitalized">{{data.type}}</span>
+    </p>
+  </ng-container>
+  <ng-container *ngIf="data?.meta">
+    <p *ngFor="let meta of data?.meta | keyvalue">
+        {{meta.key}}: {{meta.value}}
+    </p>
+  </ng-container>
+  <ng-container *ngIf="data?.content">
+    <p>
+        Content: <span class="word-break">{{data.content}}</span> 
+    </p>
+  </ng-container>
+  <ng-container *ngIf="data?.exception">
+    <p>
+        Exception: <span class="word-break">{{data.exception}}</span> 
+    </p>
+  </ng-container>
+</div>
+<div mat-dialog-actions [align]="'end'">
+  <button mat-button mat-dialog-close>Close</button>
+</div>

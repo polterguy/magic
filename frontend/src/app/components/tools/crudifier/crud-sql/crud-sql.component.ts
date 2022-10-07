@@ -8,7 +8,7 @@ import { Component, ComponentFactoryResolver, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { Messages } from 'src/app/models/messages.model';
-import { Database } from 'src/app/models/database.model';
+import { Database } from 'src/app/_protected/pages/sql-studio/_models/database.model';
 import { Databases } from 'src/app/models/databases.model';
 import { SqlService } from '../../../../services/sql.service';
 import { MessageService } from 'src/app/services/message.service';
@@ -54,7 +54,7 @@ export class CrudSqlComponent implements OnInit {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param resolver Needed to be able to dynamically create the additional information component
    * @param feedbackService Needed to show user feedback
    * @param messageService Needed to publish message as we want to create additional information component
@@ -100,7 +100,7 @@ export class CrudSqlComponent implements OnInit {
 
   /**
    * Returns humanly readable type of database to caller.
-   * 
+   *
    * @param type Type delaration
    */
   getDatabaseTypeName(type: string) {
@@ -170,7 +170,7 @@ export class CrudSqlComponent implements OnInit {
 
   /**
    * Invoked when CSS class for database name is to be returned.
-   * 
+   *
    * @param db Database name
    */
   getDatabaseCssClass(db: string) {

@@ -1,0 +1,36 @@
+<div class="container-fluid core px-0">
+  <div class="row flex-column w-100 no-gutters">
+    <div class="col-12 my-auto">
+      <div class="row h-100">
+        <div class="col-lg-4 col-md-4 col-12">
+          <div class="text-center">
+            <a href="https://aista.com">
+              <img src="../../../assets/images/aista-blue-white-logo.svg" alt="Aista Magic Cloud - Official brand"
+                width="200">
+            </a>
+            <p class="mat-subheading-2 mt-4 title-text">Where the Machine Creates the Code</p>
+          </div>
+        </div>
+        <div class="col-lg-8 col-md-8 col-12 my-auto">
+          <div class="row justify-content-center h-100 align-items-md-center">
+            <div class="col-xl-8 col-sm-10 col-11 pb-md-0 pb-4">
+              <router-outlet></router-outlet>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 footer">
+      <div
+        class="d-flex justify-content-md-between justify-content-center align-items-md-end align-items-center flex-md-row flex-column">
+        <div
+          class="d-flex flex-nowrap flex-lg-row flex-md-column justify-content-md-start justify-content-center mat-caption">
+          <a class="btn-link-accent mb-lg-0 mb-0" (click)="privacyModal()">Privacy policy</a>
+          <div class="px-2 d-lg-block d-md-none link-divider">|</div>
+          <a class="btn-link-accent mb-lg-0 mb-0" (click)="termsModal()">Terms &amp; conditions</a>
+        </div>
+        <p class="text-muted mat-caption my-0">&copy; Aista Ltd 2021 - {{currentYear}}, all rights reserved</p>
+      </div>
+    </div>
+  </div>
+</div>

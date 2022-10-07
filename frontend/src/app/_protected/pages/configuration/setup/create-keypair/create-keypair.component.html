@@ -1,0 +1,107 @@
+<div class="row">
+  <div class="col-12">
+    <mat-card>
+
+      <div class="d-flex flex-column mb-2">
+        <div class="d-flex flex-sm-nowrap flex-wrap justify-content-between mb-1">
+          <div class="d-flex align-items-center">
+            <mat-card-title class="my-0">Cryptography key</mat-card-title>
+            <div class="sm-icons">
+              <button mat-icon-button [matMenuTriggerFor]="menu" class="mat-caption" matTooltip="Need help?" type="button">
+                <mat-icon>help_outline</mat-icon>
+              </button>
+              <mat-menu #menu="matMenu">
+                <div class="p-3">
+                  <p>
+                    Supply your name and email address such that Magic can create a cryptography key pair for you. This allows
+                    Magic to securely communicate with other Magic servers, and/or clients.
+                  </p>
+                  <div class="d-flex justify-content-end">
+                    <a target="_blank" href="https://docs.aista.com/documentation/magic/components/config/crypto/" mat-stroked-button>Learn more</a>
+                  </div>
+                </div>
+              </mat-menu>
+            </div>
+          </div>
+        </div>
+        <mat-card-subtitle>Create your cryptography key pair</mat-card-subtitle>
+      </div>
+
+      <mat-card-content>
+        <form>
+          <div class="d-flex flex-sm-nowrap flex-wrap">
+
+            <mat-form-field class="w-100" appearance="outline">
+              <mat-label>Full name</mat-label>
+              <input
+                matInput
+                autocomplete="off"
+                [(ngModel)]="subject"
+                name="subject">
+            </mat-form-field>
+
+            <div class="p-1"></div>
+
+            <mat-form-field class="w-100" appearance="outline">
+              <mat-label>Email</mat-label>
+              <input
+                matInput
+                autocomplete="off"
+                [(ngModel)]="email"
+                name="email">
+            </mat-form-field>
+
+          </div>
+          
+          <div class="d-flex flex-sm-nowrap flex-wrap">
+
+            <mat-form-field class="w-100" appearance="outline">
+              <mat-label>Domain</mat-label>
+              <input
+                matInput
+                autocomplete="off"
+                [(ngModel)]="domain"
+                name="domain">
+            </mat-form-field>
+
+            <div class="p-1"></div>
+
+            <mat-form-field class="w-100" appearance="outline">
+              <mat-label>Key strength</mat-label>
+              <mat-select [(ngModel)]="strength" name="strength">
+                <mat-option value="1024">1024</mat-option>
+                <mat-option value="2048">2048</mat-option>
+                <mat-option value="4096">4096</mat-option>
+                <mat-option value="8192">8192</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+          </div>
+
+          <div class="row">
+            <div class="col-12 d-flex justify-content-end">
+              <re-captcha
+                #captchaRef="reCaptcha"
+                [siteKey]="recaptchaKey"
+                size="invisible"
+                (resolved)="$event && next($event)"
+                *ngIf="recaptchaKey !== '' && recaptchaKey !== null"
+              ></re-captcha>
+              <button
+                mat-raised-button
+                color="primary"
+                [disabled]="seed === '' || subject === '' || email === ''"
+                (click)="recaptchaKey !== '' && recaptchaKey !== null ? executeRecaptcha() : next()"
+                type="submit"
+                class="ml-4">
+                Next
+              </button>
+            </div>
+
+          </div>
+        </form>
+
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
