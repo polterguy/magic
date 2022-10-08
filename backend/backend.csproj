@@ -20,7 +20,7 @@
     <PackageReference Include="magic.data.cql" Version="14.3.1" />
     <PackageReference Include="magic.lambda.cql" Version="14.3.1" />
     <PackageReference Include="magic.lambda.system" Version="14.3.1" />
-    <PackageReference Include="magic.library" Version="14.3.1" />
+    <PackageReference Include="magic.library" Version="14.3.6" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.0" />
   </ItemGroup>
 
