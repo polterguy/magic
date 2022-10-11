@@ -30,7 +30,7 @@ if
    eq:x:@.arguments/*/databaseName
       .:magic
    .lambda
-      throw:You cannot create a database with the name of magic since it is a restriced name
+      throw:You cannot create a database with the name of magic since it is a restricted name
 
 if
    eq:x:@.arguments/*/databaseType
