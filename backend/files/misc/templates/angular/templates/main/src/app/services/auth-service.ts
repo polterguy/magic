@@ -59,7 +59,7 @@ export class AuthService {
           return false; // No such endpoint
         }
         return (
-          endpoints[0].auth === null ||
+          !endpoints[0].auth ||
           endpoints[0].auth.filter((x) => this.userRoles.includes(x)).length > 0
         );
       },
