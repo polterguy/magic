@@ -1,4 +1,4 @@
-          <mat-divider></mat-divider>
+          <mat-divider *ngIf="authService.me.canInvoke('[[endpoint-url]]', 'get')"></mat-divider>
           <a
             *ngIf="authService.me.canInvoke('[[endpoint-url]]', 'get')"
             mat-list-item
