@@ -12,7 +12,7 @@ import { Count } from '../../../models/count.model';
 import { Message } from '../../../models/message.model';
 import { Response } from '../../../models/response.model';
 import { HttpService } from '../../../services/http.service';
-import { SocketUser } from '../../tools/endpoints/models/socket-user.model';
+import { SocketUser } from '../../../_protected/pages/generated-endpoints/_models/socket-user.model';
 
 /**
  * Socket service, allowing you to retrieve data about sockets and publish socket messages.
@@ -24,14 +24,14 @@ export class SocketService {
 
   /**
    * Creates an instance of your service.
-   * 
+   *
    * @param httpService HTTP service to use for backend invocations
    */
   constructor(private httpService: HttpService) { }
 
   /**
    * Returns a list of all users currently connected to a socket.
-   * 
+   *
    * @param filter Filter to apply for which connections to return to caller
    * @param offset Offset from where to start returning connections
    * @param limit Maximum number of items to return.
@@ -46,7 +46,7 @@ export class SocketService {
 
   /**
    * Returns the count of all users currently connected to a socket.
-   * 
+   *
    * @param filter Filter to apply for which connections to return to caller
    */
   socketUserCount(filter: string) {
@@ -59,7 +59,7 @@ export class SocketService {
 
   /**
    * Transmits the specified message to the specified client.
-   * 
+   *
    * @param msg What message to send
    * @param client What client (connection) to transmit the message to
    * @param roles What roles to publish message to

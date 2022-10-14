@@ -2,11 +2,11 @@
  * Aista CodeMirror theme.
  */
  .light {
-  .cm-s-aista.CodeMirror { background: #fafaf5; color: #41323f; }
-  .cm-s-aista div.CodeMirror-selected { background: #e0e0d5; }
-  .cm-s-aista .CodeMirror-line::selection, .cm-s-aista .CodeMirror-line > span::selection, .cm-s-aista .CodeMirror-line > span > span::selection { background: #e0e0d5; }
-  .cm-s-aista .CodeMirror-line::-moz-selection, .cm-s-aista .CodeMirror-line > span::-moz-selection, .cm-s-aista .CodeMirror-line > span > span::-moz-selection { background: #e0e0d5; }
-  .cm-s-aista .CodeMirror-gutters { background: #ffffff; border-right: 0px; }
+  .cm-s-aista.CodeMirror { background: $aista_default_grey5; color: #41323f; }
+  .cm-s-aista div.CodeMirror-selected { background: transparentize($color: $aista_info, $amount: 0.85); }
+  .cm-s-aista .CodeMirror-line::selection, .cm-s-aista .CodeMirror-line > span::selection, .cm-s-aista .CodeMirror-line > span > span::selection { background: transparentize($color: $aista_info, $amount: 0.85); }
+  .cm-s-aista .CodeMirror-line::-moz-selection, .cm-s-aista .CodeMirror-line > span::-moz-selection, .cm-s-aista .CodeMirror-line > span > span::-moz-selection { background: transparentize($color: $aista_info, $amount: 0.85); }
+  .cm-s-aista .CodeMirror-gutters { background: $aista_default_grey5; border-right: 0px; border-top-left-radius: $aista_radius; border-bottom-left-radius: $aista_radius; }
   .cm-s-aista .CodeMirror-guttermarker { color: white; }
   .cm-s-aista .CodeMirror-guttermarker-subtle { color: grey; }
   .cm-s-aista .CodeMirror-linenumber { color: #91828f; }
@@ -30,7 +30,7 @@
   .cm-s-aista span.cm-error { border-bottom: #636363; color: #d64f10; }
   .cm-s-aista span.cm-qualifier { color: #ffffec; }
 
-  .cm-s-aista .CodeMirror-activeline-background { background: #f0f0e5; }
+  .cm-s-aista .CodeMirror-activeline-background { border-top: 1px solid transparentize($color: $aista_default_grey4, $amount: 0.75); border-bottom: 1px solid transparentize($color: $aista_default_grey4, $amount: 0.75); background: transparentize($color: $aista_default_grey4, $amount: 0.95); }
   .cm-s-aista .CodeMirror-matchingbracket { color: #ffb928 !important; }
   .cm-s-aista .CodeMirror-matchingtag { background: rgba(255, 255, 255, .37); }
 }

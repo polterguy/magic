@@ -26,6 +26,10 @@ const routes: Routes = [
         path: 'user-roles-management',
         loadChildren: () => import('./_protected/pages/user-roles/_module/users-roles.module').then(m => m.UsersRolesModule)
       },
+      {
+        path: 'generated-endpoints',
+        loadChildren: () => import('./_protected/pages/generated-endpoints/_module/generated-endpoints.module').then(m => m.GeneratedEndpointsModule)
+      },
     ]
   },
   {

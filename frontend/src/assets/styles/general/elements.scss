@@ -20,6 +20,16 @@ table
   }
 }
 /*=-=-=-=-=-=
+codemirror
+=-=-=-=-=-=*/
+.CodeMirror {border-radius: 5px;}
+.CodeMirror-scroll {
+  overflow: auto!important;
+  padding-bottom: 30px;
+  margin-bottom: 0;
+  max-height: 100%;
+}
+/*=-=-=-=-=-=
 accordion
 =-=-=-=-=-=*/
 .custom-height-header {

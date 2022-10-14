@@ -17,7 +17,7 @@ import { Count } from 'src/app/models/count.model';
 import { Message } from 'src/app/models/message.model';
 import { SocketService } from '../services/socket.service';
 import { BackendService } from 'src/app/services/backend.service';
-import { SocketUser } from '../../tools/endpoints/models/socket-user.model';
+import { SocketUser } from '../../../_protected/pages/generated-endpoints/_models/socket-user.model';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { SubscribeComponent } from './subscribe/subscribe.component';
 import { MessageWrapper, PublishComponent } from './publish/publish.component';
@@ -85,7 +85,7 @@ export class SocketsComponent implements OnInit, OnDestroy {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param dialog Needed to create modal dialogues
    * @param socketService Needed retrieve socket information and publish socket messages
    * @param backendService Needed to retrieve backend URL to connect to web sockets in backend
@@ -131,7 +131,7 @@ export class SocketsComponent implements OnInit, OnDestroy {
 
   /**
    * Toggles the details view for a single user.
-   * 
+   *
    * @param user User to toggle details for
    */
   toggleDetails(user: SocketUser) {
@@ -145,7 +145,7 @@ export class SocketsComponent implements OnInit, OnDestroy {
 
   /**
    * Returns true if we should display the details view for specified user.
-   * 
+   *
    * @param user User to check if we should display details for
    */
   shouldDisplayDetails(user: SocketUser) {
@@ -154,7 +154,7 @@ export class SocketsComponent implements OnInit, OnDestroy {
 
   /**
    * Invoked when paginator wants to page data table.
-   * 
+   *
    * @param e Page event argument
    */
   paged(e: PageEvent) {
@@ -200,7 +200,7 @@ export class SocketsComponent implements OnInit, OnDestroy {
             /*
              * Since we now have one additional connection (obviously),
              * we need to re-retrieve connections.
-             * 
+             *
              * However, due to that SignalR doesn't immediately create the connection
              * for unknown reasons, we have to apply a "wait 500 milliseconds" type of
              * trickery here.
@@ -214,7 +214,7 @@ export class SocketsComponent implements OnInit, OnDestroy {
 
   /**
    * Shows a modal dialog allowing you to send a message to one single connection.
-   * 
+   *
    * @param connection Which connection to transmit message to
    */
   sendMessageToConnection(connection: string) {
@@ -275,7 +275,7 @@ export class SocketsComponent implements OnInit, OnDestroy {
 
   /**
    * Deletes a single message from list of messages.
-   * 
+   *
    * @param msg Message to delete
    */
   deleteMessage(msg: Message) {
@@ -285,7 +285,7 @@ export class SocketsComponent implements OnInit, OnDestroy {
 
   /**
    * Invoked when a socket subscription should be removed.
-   * 
+   *
    * @param subscription What subscription to remove
    */
   removeSubscription(subscription: string) {

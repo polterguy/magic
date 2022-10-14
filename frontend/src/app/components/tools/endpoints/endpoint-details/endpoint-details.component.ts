@@ -12,10 +12,10 @@ import { Component, Input, OnInit } from '@angular/core';
 import { HttpTransportType, HubConnectionBuilder } from '@aspnet/signalr';
 
 // Application specific imports.
-import { Endpoint } from '../models/endpoint.model';
-import { Argument } from '../models/argument.model';
+import { Endpoint } from '../../../../_protected/pages/generated-endpoints/_models/endpoint.model';
+import { Argument } from '../../../../_protected/pages/generated-endpoints/_models/argument.model';
 import { Response } from 'src/app/models/response.model';
-import { EndpointService } from '../../../../services/endpoint.service';
+import { EndpointService } from '../../../../_protected/pages/generated-endpoints/_services/endpoint.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { AssumptionService } from 'src/app/components/misc/services/assumption.service';
@@ -143,7 +143,7 @@ export class EndpointDetailsComponent implements OnInit {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param dialog Needed to be able to create add query value dialog
    * @param clipboard Needed to copy URL of endpoint
    * @param sanitizer Needed to display image results originating from invocations
@@ -223,7 +223,7 @@ export class EndpointDetailsComponent implements OnInit {
 
   /**
    * Returns true if endpoint can be invoked.
-   * 
+   *
    * Notice, we don't support invoking endpoints with for instance application/octet-stream types
    * of input, since we don't have the means to supply the required input to these endpoints.
    */
@@ -237,7 +237,7 @@ export class EndpointDetailsComponent implements OnInit {
 
   /**
    * Returns string representation of authorization requirements for endpoint.
-   * 
+   *
    * @param auth List of roles
    */
   getAuth(auth: string[]) {
@@ -254,7 +254,7 @@ export class EndpointDetailsComponent implements OnInit {
 
   /**
    * Returns assumption name to caller.
-   * 
+   *
    * @param path Full path of assumption
    */
   getAssumptionName(path: string) {
@@ -264,7 +264,7 @@ export class EndpointDetailsComponent implements OnInit {
 
   /**
    * Runs the specified assumption, and giving feedback to user if it was successfully assumed or not.
-   * 
+   *
    * @param assumption What assumption to run
    */
   runAssumption(assumption: Assumption) {
@@ -285,7 +285,7 @@ export class EndpointDetailsComponent implements OnInit {
 
   /**
    * Returns arguments for endpoint.
-   * 
+   *
    * @param args List of all arguments for endpoint
    * @param controlArguments Whether or not to return control arguments or non-control arguments
    */
@@ -314,7 +314,7 @@ export class EndpointDetailsComponent implements OnInit {
 
   /**
    * Returns tooltip information for specified argument.
-   * 
+   *
    * @param arg Argument to retrieve tooltip for
    */
   getChipTooltip(arg: Argument) {
@@ -343,28 +343,28 @@ export class EndpointDetailsComponent implements OnInit {
               const comparison = arg.name.substring(arg.name.lastIndexOf('.') + 1);
               const field = arg.name.substring(0, arg.name.lastIndexOf('.'));
               switch (comparison) {
-  
+
                 case 'eq':
                   return `'${field}' equal to ${arg.type}`;
-  
+
                 case 'neq':
                   return `'${field}' not equal to ${arg.type}`;
-  
+
                 case 'mteq':
                   return `'${field}' more than or equal to ${arg.type}`;
-  
+
                 case 'lteq':
                   return `'${field}' less than or equal to ${arg.type}`;
-  
+
                 case 'lt':
                   return `'${field}' less than ${arg.type}`;
-  
+
                 case 'mt':
                   return `'${field}' more than ${arg.type}`;
-  
+
                 case 'like':
                   return `'${field}' contains ${arg.type}`;
-  
+
                 default:
                   return query[0].value;
               }
@@ -395,28 +395,28 @@ export class EndpointDetailsComponent implements OnInit {
               const comparison = arg.name.substring(arg.name.lastIndexOf('.') + 1);
               const field = arg.name.substring(0, arg.name.lastIndexOf('.'));
               switch (comparison) {
-  
+
                 case 'eq':
                   return `'${field}' equal to ${query[0].value}`;
-  
+
                 case 'neq':
                   return `'${field}' not equal to ${query[0].value}`;
-  
+
                 case 'mteq':
                   return `'${field}' more than or equal to ${query[0].value}`;
-  
+
                 case 'lteq':
                   return `'${field}' less than or equal to ${query[0].value}`;
-  
+
                 case 'lt':
                   return `'${field}' less than ${query[0].value}`;
-  
+
                 case 'mt':
                   return `'${field}' more than ${query[0].value}`;
-  
+
                 case 'like':
                   return `'${field}' contains ${query[0].value}`;
-  
+
                 default:
                   return query[0].value;
               }
@@ -435,7 +435,7 @@ export class EndpointDetailsComponent implements OnInit {
 
   /**
    * Returns true if specified query parameter is already in invocation list.
-   * 
+   *
    * @param arg Argument to check for
    */
   hasQueryParam(arg: Argument) {
@@ -444,7 +444,7 @@ export class EndpointDetailsComponent implements OnInit {
 
   /**
    * Invoked when user wants to add a query parameter to URL.
-   * 
+   *
    * @param arg Argument to add
    */
   addQueryParameter(arg: Argument) {
@@ -476,7 +476,7 @@ export class EndpointDetailsComponent implements OnInit {
 
   /**
    * Invoked when user wants to remove a query parameter from URL.
-   * 
+   *
    * @param arg Argument to remove
    */
   removeQueryParameter(arg: Argument) {

@@ -7,8 +7,8 @@
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
-import { HttpService } from './http.service';
-import { Endpoint } from '../components/tools/endpoints/models/endpoint.model';
+import { HttpService } from '../../../../services/http.service';
+import { Endpoint } from '../_models/endpoint.model';
 
 /**
  * Endpoint service, allowing you to retrieve meta data about your endpoints,
@@ -21,7 +21,7 @@ export class EndpointService {
 
   /**
    * Creates an instance of your service.
-   * 
+   *
    * @param httpService HTTP service to use for backend invocations
    */
   constructor(private httpService: HttpService) { }
@@ -35,7 +35,7 @@ export class EndpointService {
 
   /**
    * Invokes the HTTP GET verb towards the specified URL.
-   * 
+   *
    * @param url URL to invoke
    * @param responseType What response endpoint is assumed to return
    */
@@ -48,7 +48,7 @@ export class EndpointService {
 
   /**
    * Invokes the HTTP DELETE verb towards the specified URL.
-   * 
+   *
    * @param url URL to invoke
    * @param responseType What response endpoint is assumed to return
    */
@@ -62,7 +62,7 @@ export class EndpointService {
   /**
    * Invokes the HTTP POST verb towards the specified URL, passing
    * in the specified payload.
-   * 
+   *
    * @param url URL to invoke
    * @param args Payload to transmit to backend
    * @param responseType What response endpoint is assumed to return
@@ -77,7 +77,7 @@ export class EndpointService {
   /**
    * Invokes the HTTP PUT verb towards the specified URL, passing
    * in the specified payload.
-   * 
+   *
    * @param url URL to invoke
    * @param args Payload to transmit to backend
    * @param responseType What response endpoint is assumed to return
@@ -92,7 +92,7 @@ export class EndpointService {
   /**
    * Invokes the HTTP PATCH verb towards the specified URL, passing
    * in the specified payload.
-   * 
+   *
    * @param url URL to invoke
    * @param args Payload to transmit to backend
    * @param responseType What response endpoint is assumed to return
