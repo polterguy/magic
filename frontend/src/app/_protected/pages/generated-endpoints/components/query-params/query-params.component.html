@@ -1,0 +1,91 @@
+<mat-form-field *ngIf="item.type === 'string' && item.name === 'operator'" class="w-100 standalone-field">
+  <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2 pe-2 min-width">
+                {{item.name}}
+                <span class="text-muted ms-1">|</span>
+              </span>
+  <mat-select
+    [formControlName]="item.name"
+    class="dark"
+    name="value">
+    <mat-option *ngFor="let cur of operators" [value]="cur">{{cur}}</mat-option>
+  </mat-select>
+</mat-form-field>
+
+<mat-form-field *ngIf="item.type === 'string' && item.name === 'order'" class="w-100 standalone-field">
+  <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2 pe-2 min-width">
+                {{item.name}}
+                <span class="text-muted ms-1">|</span>
+              </span>
+  <input type="text"
+    matInput
+    [formControlName]="item.name"
+    [matAutocomplete]="auto"
+    name="value">
+  <mat-autocomplete
+    #auto="matAutocomplete">
+    <mat-option
+      *ngFor="let el of orders"
+      [value]="el">
+      {{el}}
+    </mat-option>
+  </mat-autocomplete>
+</mat-form-field>
+
+<mat-form-field *ngIf="item.type === 'string' && item.name === 'direction'" class="w-100 standalone-field">
+  <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2 pe-2 min-width">
+                {{item.name}}
+                <span class="text-muted ms-1">|</span>
+              </span>
+  <mat-select
+    [formControlName]="item.name"
+    name="value"
+    class="dark">
+    <mat-option *ngFor="let cur of directions" [value]="cur">{{cur}}</mat-option>
+  </mat-select>
+</mat-form-field>
+
+<mat-form-field *ngIf="item.type === 'string' && item.name !== 'operator' && item.name !== 'direction' && item.name !== 'order'" class="w-100 standalone-field">
+  <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2 pe-2 min-width">
+                {{item.name}}
+                <span class="text-muted ms-1">|</span>
+              </span>
+  <input
+    matInput
+    [formControlName]="item.name"
+    name="-"
+    autocomplete="off">
+</mat-form-field>
+
+<mat-form-field class="w-100 standalone-field" *ngIf="item.type === 'date'">
+  <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2 pe-2 min-width">
+                {{item.name}}
+                <span class="text-muted ms-1">|</span>
+              </span>
+  <input
+    matInput
+    [ngxMatDatetimePicker]="picker"
+    autocomplete="off"
+    [formControlName]="item.name"
+    name="value">
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <ngx-mat-datetime-picker #picker></ngx-mat-datetime-picker>
+</mat-form-field>
+
+<mat-form-field *ngIf="item.type === 'long' || item.type === 'int' || item.type === 'uint' || item.type === 'ulong' || item.type === 'shor' || item.type === 'ushort'" class="w-100 standalone-field">
+  <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2 pe-2 min-width">
+                {{item.name}}
+                <span class="text-muted ms-1">|</span>
+              </span>
+  <input
+    matInput
+    [formControlName]="item.name"
+    name="-"
+    type="number"
+    autocomplete="off"/>
+
+</mat-form-field>
+
+<mat-checkbox
+  *ngIf="item.type === 'bool'"
+  [formControlName]="item.name"
+  name="value">Value</mat-checkbox>

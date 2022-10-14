@@ -119,7 +119,7 @@ export class HeaderComponent implements OnInit {
           },
           {
             name: 'Generated endpoints',
-            url: '/generate-endpoints',
+            url: '/generated-endpoints',
             disabled: !(this.permissions.access.endpoints.view && this.permissions.setupDone)
           },
           {

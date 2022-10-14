@@ -11,7 +11,7 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 
 // Application specific imports.
 import { Endpoint } from 'src/app/models/endpoint.model';
-import { EndpointService } from '../../../services/endpoint.service';
+import { EndpointService } from '../../../_protected/pages/generated-endpoints/_services/endpoint.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 
 /**
@@ -35,7 +35,7 @@ export class EndpointsComponent implements OnInit {
   private filter: string = '';
 
   /**
-   * To get the width of the screen 
+   * To get the width of the screen
    * getScreenWidth {number} :: define how the sidenav and the content should behave based on the screen size
    * smallScreenSize {number} :: to set a fixed size as an agreement
    * largeScreen {boolean} :: to check whether the screen width is small or large
@@ -43,7 +43,7 @@ export class EndpointsComponent implements OnInit {
   getScreenWidth: number;
   smallScreenSize: number = 768;
   largeScreen: boolean = undefined;
- 
+
   @HostListener('window:resize', ['$event'])
   onWindowResize() {
     this.getScreenWidth = window.innerWidth;
@@ -72,7 +72,7 @@ export class EndpointsComponent implements OnInit {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param feedbackService Needed to display feedback to user
    * @param endpointService Endpoint service required to retrieve meta information about endpoints, and invoke them generically
    */
@@ -120,7 +120,7 @@ export class EndpointsComponent implements OnInit {
 
   /**
    * Returns a string containing all roles allowed to invoke endpoint.
-   * 
+   *
    * @param item Endpoint to return auth for
    */
   public getAuth(item: Endpoint) {

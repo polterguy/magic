@@ -5,6 +5,8 @@
 
 import { NgModule } from '@angular/core';
 
+import { ScrollingModule } from '@angular/cdk/scrolling';
+
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
@@ -76,7 +78,8 @@ import { MatSliderModule } from '@angular/material/slider';
     MatRadioModule,
     MatPaginatorModule,
     A11yModule,
-    MatSliderModule
+    MatSliderModule,
+    ScrollingModule
   ],
   imports: [
     MatIconModule,
@@ -113,7 +116,8 @@ import { MatSliderModule } from '@angular/material/slider';
     MatRadioModule,
     MatPaginatorModule,
     A11yModule,
-    MatSliderModule
+    MatSliderModule,
+    ScrollingModule
   ],
   providers: [
     { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'outline' } }

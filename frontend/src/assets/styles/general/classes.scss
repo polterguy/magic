@@ -25,7 +25,12 @@ text
 .text-primary {color: $aista_primary;}
 .text-muted {color: $aista_default_grey3;}
 .text-danger {color: $aista_error;}
+.text-success {color: $aista_success;}
 .error {color: $aista_error;}
+
+.word-break {
+  word-break: break-word;
+}
 /*=-=-=-=-=-=
 snackbar classes
 =-=-=-=-=-=*/

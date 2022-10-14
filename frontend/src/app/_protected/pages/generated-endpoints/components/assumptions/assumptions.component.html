@@ -1,0 +1,32 @@
+<ng-container *ngIf="assumptions && assumptions.length > 0">
+  <div class="my-1">
+    <mat-divider></mat-divider>
+  </div>
+  <p class="mt-4 mb-2 fw-bold">Test cases</p>
+
+  <mat-chip-list>
+    <mat-chip
+      *ngFor="let item of assumptions"
+      [matTooltip]="item.description"
+      (click)="runAssumption(item)"
+      class="assumption mat-caption"
+      selectable="false">
+      {{getAssumptionName(item.file)}}
+      <mat-icon class="ms-1"
+      [ngClass]="{'text-success': item?.success === true, 'text-danger': item?.success === false}">
+        {{item?.success === false ? 'error' : (item?.success === true ? 'done' : 'help_outline')}}
+      </mat-icon>
+    </mat-chip>
+  </mat-chip-list>
+
+  <!-- <button mat-button class="mat-caption px-0 py-1 d-block"
+  [ngClass]="{'text-success': item?.success === true, 'text-danger': item?.success === false}"
+  *ngFor="let item of assumptions"
+  [matTooltip]="item?.description"
+  (click)="runAssumption(item)">
+  {{item?.name}}
+  <mat-icon>
+    {{item?.success === false ? 'error' : (item?.success === true ? 'done' : 'help_outline')}}
+  </mat-icon> -->
+<!-- </button> -->
+</ng-container>
