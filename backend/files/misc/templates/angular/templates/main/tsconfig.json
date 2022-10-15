@@ -33,7 +33,6 @@
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,
     "strictInjectionParameters": true,
-    "preserveWhitespaces": true,
-    "skipLibCheck": true
+    "preserveWhitespaces": true
   }
 }
