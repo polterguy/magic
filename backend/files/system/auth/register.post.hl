@@ -64,9 +64,12 @@ if
  * Retrieving extra information, making sure we only allow
  * for extra information that's allowed according to configuration settings.
  */
+.arguments_copy
+add:x:@.arguments_copy
+   get-nodes:x:@.arguments/*
 .extra
 config.get:"magic:auth:registration:extra"
-   .:name
+   .:name,email
 strings.split:x:@config.get
    .:,
 for-each:x:@strings.split/*
@@ -294,10 +297,11 @@ data.connect:magic
    slots.vocabulary:magic.users.registered.
    for-each:x:@slots.vocabulary/*
       .lambda
+         unwrap:x:+/*
          signal:x:@.dp/#
             username:x:@.arguments/*/username
       add:x:@.lambda/*/signal
-         get-nodes:x:@.arguments/*/extra/*
+         get-nodes:x:@.arguments_copy/*/extra/*
       eval:x:@.lambda
 
    // Returns success to caller.
