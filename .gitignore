@@ -363,3 +363,5 @@ backend/files/etc/pgsql/templates/*.*
 backend/files/etc/mssql/templates/*.*
 !backend/files/etc/mssql/templates/README.md
 backend/files/etc/frontend
+
+backend/files/etc/robo-crm/kpi/*.*
