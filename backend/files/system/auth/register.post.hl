@@ -290,6 +290,16 @@ data.connect:magic
       verify-email-sent:x:@.email-sent
       ip:x:@request.ip
 
+   // Invoking plugins interested in event.
+   slots.vocabulary:magic.users.registered.
+   for-each:x:@slots.vocabulary/*
+      .lambda
+         signal:x:@.dp/#
+            username:x:@.arguments/*/username
+      add:x:@.lambda/*/signal
+         get-nodes:x:@.arguments/*/extra/*
+      eval:x:@.lambda
+
    // Returns success to caller.
    unwrap:x:+/*
    return-nodes
