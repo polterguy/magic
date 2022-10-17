@@ -17,10 +17,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="magic.data.cql" Version="14.3.1" />
-    <PackageReference Include="magic.lambda.cql" Version="14.3.1" />
-    <PackageReference Include="magic.lambda.system" Version="14.3.1" />
-    <PackageReference Include="magic.library" Version="14.3.9" />
+    <PackageReference Include="magic.data.cql" Version="14.4.0" />
+    <PackageReference Include="magic.lambda.cql" Version="14.4.0" />
+    <PackageReference Include="magic.lambda.system" Version="14.4.0" />
+    <PackageReference Include="magic.library" Version="14.4.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.0" />
   </ItemGroup>
 
