@@ -94,7 +94,12 @@ export class AuthService {
     if (this.jwtHelper.isTokenExpired(ticket.token)) {
       localStorage.removeItem('jwt_token');
     } else {
-      this.userRoles = this.jwtHelper.decodeToken(ticket.token).role;
+      const roles = this.jwtHelper.decodeToken(ticket.token).role;
+      if (roles.filter) {
+        this.userRoles = roles;
+      } else {
+        this.userRoles = [roles];
+      }
     }
 
     /*
