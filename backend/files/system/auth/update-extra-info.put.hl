@@ -72,6 +72,17 @@ data.connect:magic
                   type:x:@.dp/#/*/type
                   value:x:@.dp/#/*/value
 
+   // Invoking plugins interested in event.
+   slots.vocabulary:magic.users.update-extra.
+   for-each:x:@slots.vocabulary/*
+      .lambda
+         unwrap:x:+/*
+         signal:x:@.dp/#
+            username:x:@auth.ticket.get
+      add:x:@.lambda/*/signal
+         get-nodes:x:@.arguments/*
+      eval:x:@.lambda
+
 // Returning success to caller.
 return
    result:success
