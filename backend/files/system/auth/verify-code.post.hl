@@ -124,6 +124,15 @@ data.connect:magic
          .
             name:x:@.dp/#/*/value
 
+   // Invoking plugins interested in event.
+   slots.vocabulary:magic.users.confirmed.
+   for-each:x:@slots.vocabulary/*
+      .lambda
+         unwrap:x:+/*
+         signal:x:@.dp/#
+            username:x:@.arguments/*/username
+      eval:x:@.lambda
+
    // Returning results back to caller.
    unwrap:x:+/+/*
    if
