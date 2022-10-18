@@ -219,12 +219,13 @@ export abstract class GridComponent {
       if (result && result.confirmed) {
 
         // Deleting entity
-        this.delete(ids).subscribe((res: DeleteResponse) => {
+        this.delete(ids).subscribe({
+          next: (res: DeleteResponse) => {
             this.getData();
-        }, (error: any) => {
-          this.showError('I could not delete your entity, maybe other entities are referencing it?');
-          console.error(error);
-        });
+          }, error: (error: any) => {
+            this.showError('I could not delete your entity, maybe other entities are referencing it?');
+            console.error(error);
+          }});
     
       }
     });
