@@ -1,0 +1,12 @@
+<h3 mat-dialog-title>Shortkeys</h3>
+<div mat-dialog-content>
+  <div class="row">
+    <div class="col-xl-4 col-md-6 col-12 my-2" *ngFor="let item of shortkeys">
+      <p class="mb-2 text-nowrap text-muted">{{item.name}}</p>
+      <span class="my-0 fw-bold">{{item.key}}</span>
+    </div>
+  </div>
+</div>
+<div mat-dialog-actions [align]="'end'">
+  <button mat-button mat-dialog-close>Close</button>
+</div>

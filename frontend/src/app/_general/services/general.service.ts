@@ -51,7 +51,9 @@ export class GeneralService {
     // }
     this._snackBar.open(message, actionButton, {
       duration: duration || 2000, // if exists use it, otherwise use default
-      panelClass: [panelClass!] // if available
+      horizontalPosition: 'right',
+      verticalPosition: 'top',
+      panelClass: ['top-aligned-snackbar', panelClass]
     });
   }
 

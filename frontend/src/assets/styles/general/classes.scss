@@ -31,6 +31,11 @@ text
 .word-break {
   word-break: break-word;
 }
+.code {
+  font-family: 'Courier New','Courier','monospace';
+  font-size: .8rem;
+  line-height: .9rem;
+}
 /*=-=-=-=-=-=
 snackbar classes
 =-=-=-=-=-=*/
@@ -41,6 +46,10 @@ snackbar classes
 .errorMessage {
   color: $aista_error;
   button {color: $aista_error;}
+}
+.mat-snack-bar-container.top-aligned-snackbar {
+  margin-top: 90px;
+  max-width: 40vw;
 }
 /*=-=-=-=-=-=
 table

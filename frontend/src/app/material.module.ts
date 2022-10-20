@@ -41,6 +41,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { A11yModule } from '@angular/cdk/a11y';
 import { MatSliderModule } from '@angular/material/slider';
+import { MatTreeModule } from '@angular/material/tree';
 
 @NgModule({
   exports: [
@@ -79,7 +80,8 @@ import { MatSliderModule } from '@angular/material/slider';
     MatPaginatorModule,
     A11yModule,
     MatSliderModule,
-    ScrollingModule
+    ScrollingModule,
+    MatTreeModule
   ],
   imports: [
     MatIconModule,
@@ -117,7 +119,8 @@ import { MatSliderModule } from '@angular/material/slider';
     MatPaginatorModule,
     A11yModule,
     MatSliderModule,
-    ScrollingModule
+    ScrollingModule,
+    MatTreeModule
   ],
   providers: [
     { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'outline' } }

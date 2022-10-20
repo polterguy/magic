@@ -4,6 +4,7 @@
  */
 
 import { ChangeDetectorRef, Component, HostListener, OnInit } from '@angular/core';
+import { EndpointsGeneralService } from 'src/app/_general/services/endpoints-general.service';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { BackendService } from 'src/app/_protected/services/common/backend.service';
 
@@ -33,10 +34,12 @@ export class CoreComponent implements OnInit {
   constructor(
     private cdr: ChangeDetectorRef,
     private generalService: GeneralService,
-    private backendService: BackendService) {}
+    private backendService: BackendService,
+    private endpointsGeneralService: EndpointsGeneralService) {}
 
   ngOnInit(): void {
     this.onWindowResize();
+    this.getEndpoints();
     this.backendService.authenticatedChanged.subscribe(() => {
       this.cdr.detectChanges();
     });
@@ -49,5 +52,12 @@ export class CoreComponent implements OnInit {
     this.backendService.versionRetrieved.subscribe(() => {
       this.cdr.detectChanges();
     });
+  }
+
+  /**
+   * Fetching list of endpoints to be used throughout the app.
+   */
+   private getEndpoints() {
+    this.endpointsGeneralService.getEndpoints();
   }
 }

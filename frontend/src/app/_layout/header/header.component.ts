@@ -124,12 +124,12 @@ export class HeaderComponent implements OnInit {
           },
           {
             name: 'Generated sockets',
-            url: '/generate-sockets',
+            url: '/generated-sockets',
             disabled: !(this.permissions.access.sockets.read && this.permissions.setupDone)
           },
           {
             name: 'Generated frontend',
-            url: '/generate-frontend',
+            url: '/generated-frontend',
             disabled: !(this.permissions.access.crud.generate_crud && this.permissions.access.crud.generate_sql && this.permissions.access.crud.generate_frontend && this.permissions.setupDone)
           },
         ],

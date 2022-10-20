@@ -12,6 +12,8 @@ import { AssumptionsComponent } from '../components/assumptions/assumptions.comp
 import { CreateAssumptionTestDialogComponent } from '../components/create-assumption-test-dialog/create-assumption-test-dialog.component';
 import { ComponentsModule } from 'src/app/_general/components/components.module';
 import { QueryParamsComponent } from '../components/query-params/query-params.component';
+import { PreviewFileDialogComponent } from '../../generated-frontend/components/preview-file-dialog/preview-file-dialog.component';
+import { SharedModule } from 'src/app/shared.module';
 
 
 
@@ -23,7 +25,8 @@ import { QueryParamsComponent } from '../components/query-params/query-params.co
     EndpointsResultComponent,
     AssumptionsComponent,
     CreateAssumptionTestDialogComponent,
-    QueryParamsComponent
+    QueryParamsComponent,
+    PreviewFileDialogComponent
   ],
   imports: [
     CommonModule,
@@ -32,7 +35,8 @@ import { QueryParamsComponent } from '../components/query-params/query-params.co
     MaterialModule,
     CodemirrorModule,
     ComponentsModule,
-    GeneratedEndpointsRoutingModule
+    GeneratedEndpointsRoutingModule,
+    SharedModule
   ]
 })
 export class GeneratedEndpointsModule { }
