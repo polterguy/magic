@@ -5,6 +5,7 @@ import { GeneralService } from '../../services/general.service';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DialogRef } from '@angular/cdk/dialog';
+import { EndpointsGeneralService } from '../../services/endpoints-general.service';
 
 @Component({
   selector: 'app-backends-list',
@@ -40,7 +41,8 @@ export class BackendsListComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private activatedRoute: ActivatedRoute,
     private generalService: GeneralService,
-    private backendService: BackendService) {
+    private backendService: BackendService,
+    private endpointsGeneralService: EndpointsGeneralService) {
       this.router.routeReuseStrategy.shouldReuseRoute = () => false;
     }
 
@@ -79,16 +81,24 @@ export class BackendsListComponent implements OnInit {
    * @param backend Backend to switch to
    */
   switchBackend(backend: Backend) {
+    this.isLoading = true;
     if (backend.token) {
       this.backendService.activate(backend);
       this.backendService.upsert(backend);
-      this.getBackends();
-      this.router.navigate(['.'], { relativeTo: this.activatedRoute});
-      if (this.dialogRef) {
-        this.dialogRef.close();
-      }
+
+      window.location.reload();
+      // TODO::: reload must be changed to below actions, so a reliable solution needs to update the active url.
+
+      // this.refetchEndpointsList();
+      // this.reloadCurrentRoute();
+      // if (this.dialogRef) {
+      //   this.dialogRef.close();
+      //   this.isLoading = false;
+      // }
+
       return;
     } else {
+      this.isLoading = false;
       this.router.navigate(['/authentication/login'], {
         queryParams: { switchTo: backend.url }
       });
@@ -96,6 +106,21 @@ export class BackendsListComponent implements OnInit {
         this.dialogRef.close();
       }
     }
+  }
+
+  private reloadCurrentRoute() {
+    const currentUrl = this.router.url;
+    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+        this.router.navigate([currentUrl]);
+    });
+  }
+
+  /**
+   * Fetching list of endpoints to be used throughout the app.
+   * Only invokes when requesting a refrech of the list.
+   */
+  private refetchEndpointsList() {
+    this.endpointsGeneralService.getEndpoints();
   }
 
   /**

@@ -1,15 +1,15 @@
-import { Component, OnInit } from '@angular/core';
-import { EndpointService } from 'src/app/_protected/pages/generated-endpoints/_services/endpoint.service';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { Endpoint } from './_models/endpoint.model';
-import { BehaviorSubject, debounceTime, Observable } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
+import { EndpointsGeneralService } from 'src/app/_general/services/endpoints-general.service';
 
 @Component({
   selector: 'app-generated-endpoints',
   templateUrl: './generated-endpoints.component.html',
   styleUrls: ['./generated-endpoints.component.scss']
 })
-export class GeneratedEndpointsComponent implements OnInit {
+export class GeneratedEndpointsComponent implements OnInit, OnDestroy {
 
   public selectedDb: string = 'Magic';
 
@@ -32,11 +32,13 @@ export class GeneratedEndpointsComponent implements OnInit {
 
    public itemToBeTried = new BehaviorSubject<any>({});
 
+   private endpointSubscription!: Subscription;
+
    public isLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
 
   constructor(
     private generalService: GeneralService,
-    private endpointService: EndpointService) { }
+    private endpointsGeneralService: EndpointsGeneralService) { }
 
   ngOnInit(): void {
     this.getEndpoints();
@@ -46,39 +48,37 @@ export class GeneratedEndpointsComponent implements OnInit {
    * Invokes backend to retrieve meta data about endpoints.
    */
   private getEndpoints() {
-    this.endpointService.endpoints().subscribe({
+    this.endpointSubscription = this.endpointsGeneralService.endpoints.subscribe({
       next: (endpoints: Endpoint[]) => {
-        let groups: any = [];
-        groups['other'] = endpoints.reduce((item: any, x: any) => {
-          if (x.type !== 'internal' && !x.path.startsWith('magic/modules/magic/')) {
-            item[x.path.split('/')[2]] = item[x.path.split('/')[2]] || [];
-            item[x.path.split('/')[2]].push(x);
+        if (endpoints) {
+          let groups: any = [];
+          groups['other'] = endpoints.reduce((item: any, x: any) => {
+            if (x.type !== 'internal' && !x.path.startsWith('magic/modules/magic/')) {
+              item[x.path.split('/')[2]] = item[x.path.split('/')[2]] || [];
+              item[x.path.split('/')[2]].push(x);
+            }
+            return item;
+          }, Object.create(null));
+          groups['system'] = endpoints.reduce((item: any, x: any) => {
+            if (x.type === 'internal' || x.path.startsWith('magic/modules/magic/')) {
+              item[x.path.split('/')[2]] = item[x.path.split('/')[2]] || [];
+              item[x.path.split('/')[2]].push(x);
+            }
+            return item;
+          }, Object.create(null));
+
+          if (groups['other'] && Object.keys(groups['other']).length) {
+            this.defaultListToShow = 'other';
+
+          } else {
+            this.defaultListToShow = 'system';
           }
-          return item;
-        }, Object.create(null));
-        groups['system'] = endpoints.reduce((item: any, x: any) => {
-          if (x.type === 'internal' || x.path.startsWith('magic/modules/magic/')) {
-            item[x.path.split('/')[2]] = item[x.path.split('/')[2]] || [];
-            item[x.path.split('/')[2]].push(x);
-          }
-          return item;
-        }, Object.create(null));
 
-        if (groups['other'] && Object.keys(groups['other']).length) {
-          this.defaultListToShow = 'other';
+          this.originalEndpoints = groups;
+          this.endpoints = {...this.originalEndpoints};
 
-        } else {
-          this.defaultListToShow = 'system';
-        }
-
-        this.originalEndpoints = groups;
-        this.endpoints = {...this.originalEndpoints};
-
-        // setting a short delay for elements to appear.
-        setTimeout(() => {
           this.isLoading.next(false);
-        }, 700);
-
+        }
       },
       error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')});
   }
@@ -104,5 +104,9 @@ export class GeneratedEndpointsComponent implements OnInit {
 
   public changeEditor(event: any) {
     this.itemToBeTried.next(event);
+  }
+
+  ngOnDestroy(): void {
+    this.endpointSubscription.unsubscribe();
   }
 }

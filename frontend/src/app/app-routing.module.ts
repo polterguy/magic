@@ -30,6 +30,10 @@ const routes: Routes = [
         path: 'generated-endpoints',
         loadChildren: () => import('./_protected/pages/generated-endpoints/_module/generated-endpoints.module').then(m => m.GeneratedEndpointsModule)
       },
+      {
+        path: 'generated-frontend',
+        loadChildren: () => import('./_protected/pages/generated-frontend/_module/frontend.module').then(m => m.FrontendModule)
+      },
     ]
   },
   {

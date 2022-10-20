@@ -13,6 +13,7 @@ import { BackendsListComponent } from './backends-list/backends-list.component';
 import { LoadingSkeletonComponent } from './loading-skeleton/loading-skeleton.component';
 import { DialogComponent } from './dialog/dialog.component';
 import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
+import { ShortkeysComponent } from './shortkeys/shortkeys.component';
 
 
 
@@ -23,7 +24,8 @@ import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-
       BackendsListComponent,
       LoadingSkeletonComponent,
       DialogComponent,
-      ConfirmationDialogComponent
+      ConfirmationDialogComponent,
+      ShortkeysComponent
   ],
   imports: [
     CommonModule,
@@ -37,7 +39,8 @@ import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-
     BackendsListComponent,
     LoadingSkeletonComponent,
     DialogComponent,
-    ConfirmationDialogComponent
+    ConfirmationDialogComponent,
+    ShortkeysComponent
   ]
 })
 export class ComponentsModule { }

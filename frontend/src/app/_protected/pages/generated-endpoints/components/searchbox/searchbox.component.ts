@@ -13,19 +13,13 @@ export class SearchboxComponent implements OnInit {
 
   @Output() filterList = new EventEmitter<any>();
 
-  /**
-   * Stores the search input value.
-   */
-   searchTerm: string = '';
-
   private _inputValue: ReplaySubject<string>= new ReplaySubject();
   public inputValue = this._inputValue.asObservable();
 
-  constructor(
-    private cdr: ChangeDetectorRef) { }
+  constructor() { }
 
   ngOnInit(): void {
-    // this.watchSearchInputChanges();
+
   }
 
   /**

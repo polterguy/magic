@@ -57,6 +57,13 @@ form fields
       .mat-form-field-suffix {top: 0.6rem;}
     }
 
+    &.prefix-alignment {
+      .mat-form-field-prefix {
+        top: 0.05rem;
+        min-width: 100px;
+      }
+    }
+
     &.standalone-field {
       .mat-form-field-wrapper {padding-bottom: 0;}
     }
