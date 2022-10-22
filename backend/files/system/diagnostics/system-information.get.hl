@@ -9,8 +9,9 @@ auth.ticket.verify:root
 // Verifying system has been setup.
 config.get:"magic:auth:secret"
 if
-   neq:x:@config.get
-      .:THIS-IS-NOT-A-GOOD-SECRET-PLEASE-CHANGE-IT
+   mt
+      strings.length:x:@config.get
+      .:int:50
    .lambda
 
       // Making sure we aggressively cache the HTTP response object on the client side.
