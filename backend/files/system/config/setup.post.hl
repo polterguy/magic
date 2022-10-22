@@ -6,8 +6,8 @@
  * 
  * Notice, if the root user exists from before, this file will change
  * its password - However, you cannot setup the system twice, unless you
- * manually change the JWT secret to its default value, which
- * is 'THIS-IS-NOT-A-GOOD-SECRET-PLEASE-CHANGE-IT'.
+ * manually change the JWT secret to a value that's less than 50 characters
+ * in length.
  */
 .arguments
    username:string
@@ -54,10 +54,9 @@ try
     */
    config.get:"magic:auth:secret"
    if
-      not
-         eq
-            get-value:x:@config.get
-            .:THIS-IS-NOT-A-GOOD-SECRET-PLEASE-CHANGE-IT
+      mt
+         strings.length:x:@config.get
+         .:int:50
       .lambda
 
          // System has been setup before

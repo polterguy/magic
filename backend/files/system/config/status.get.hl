@@ -20,9 +20,9 @@ io.file.exists:/etc/system/crypto/keys/public.key
 .jwt-secret-changed:bool:true
 config.get:"magic:auth:secret"
 if
-   eq
-      get-value:x:@config.get
-      .:THIS-IS-NOT-A-GOOD-SECRET-PLEASE-CHANGE-IT
+   lt
+      strings.length:x:@config.get
+      .:int:50
    .lambda
 
       // System has not been setup.
