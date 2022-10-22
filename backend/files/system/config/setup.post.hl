@@ -237,26 +237,9 @@ try
       io.file.execute:/system/magic.startup/migrate-magic-database.hl
 
    /*
-    * Starting task scheduler, making sure we apply maximum number of concurrent threads from config,
-    * and also that we catch exceptions for cases when the scheduler has already been started.
+    * Starting task scheduler.
     */
-   try
-      .max:int:8
-      config.get:"magic:scheduler:max-threads"
-      if
-         not
-            eq
-               get-value:x:@config.get
-               .
-         .lambda
-            set-value:x:@.max
-               convert:x:@config.get
-                  type:int
-      tasks.scheduler.start:x:@.max
-   .catch
-
-      // Scheduler has probably already been started.
-      .do-nothing
+   tasks.scheduler.start
 
    /*
     * Explicitly seeding CSRNG with auth secret, which might have been manually applied
