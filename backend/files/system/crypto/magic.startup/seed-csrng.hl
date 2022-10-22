@@ -7,9 +7,11 @@
  */
 config.get:"magic:auth:secret"
 if
-   mt
-      strings.length:x:@config.get
-      .:int:50
+   and
+      not-null:x:@config.get
+      mte
+         strings.length:x:@config.get
+         .:int:50
    .lambda
 
       // System has already been setup, making sure we seed CSRNG.

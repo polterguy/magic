@@ -54,9 +54,11 @@ try
     */
    config.get:"magic:auth:secret"
    if
-      mt
-         strings.length:x:@config.get
-         .:int:50
+      and
+         not-null:x:@config.get
+         mte
+            strings.length:x:@config.get
+            .:int:50
       .lambda
 
          // System has been setup before
@@ -245,6 +247,7 @@ try
     * by user during setup process.
     */
    config.get:"magic:auth:secret"
+      .:abcdefghijklmnopqrstuvwxyz1234567890
    crypto.seed:x:-
 
    // Authenticating user and returning new JWT token to client.
