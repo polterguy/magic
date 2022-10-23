@@ -1,0 +1,6 @@
+verb:delete
+url:/magic/system/sql/ddl2/foreign-key?databaseType=mysql&connectionString=generic&databaseName=foo&tableName=bar&fkName=xyz&generate=true
+status:int:200
+description:Verifies that dropping a foreign key works with MySQL
+response:"{\n  \"sql\": \"alter table bar drop constraint xyz\"\n}"
+produces:application/json
