@@ -57,6 +57,7 @@ set-value:x:@.sql
 
 // Looping through primary keys in table1.
 .first:bool:true
+.pk:
 for-each:x:@.arguments/*/args/*/table1pk/*
 
    // Checking if this is our first column or not.
@@ -103,6 +104,13 @@ for-each:x:@.arguments/*/args/*/table1pk/*
          .:" ("
          get-value:x:@.dp/#/*/name
          .:")"
+
+   // Storing primary key's name.
+   set-value:x:@.pk
+      strings.concat
+         get-value:x:@.pk
+         get-value:x:@.dp/#/*/name
+         .:,
 
 // Looping through primary keys in table2.
 for-each:x:@.arguments/*/args/*/table2pk/*
@@ -151,6 +159,24 @@ for-each:x:@.arguments/*/args/*/table2pk/*
          .:" ("
          get-value:x:@.dp/#/*/name
          .:")"
+
+   // Storing primary key's name.
+   set-value:x:@.pk
+      strings.concat
+         get-value:x:@.pk
+         get-value:x:@.dp/#/*/name
+         .:,
+
+// Adding primary key to table.
+strings.trim:x:@.pk
+   .:,
+
+set-value:x:@.sql
+   strings.concat
+      get-value:x:@.sql
+      .:",\r\n  primary key("
+      get-value:x:@strings.trim
+      .:)
 
 // Adding closing paranthesis and semi colon.
 set-value:x:@.sql
