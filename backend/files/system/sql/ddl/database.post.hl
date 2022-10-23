@@ -6,11 +6,13 @@
  * - [databaseType] - Database type, typically 'mssql' or 'mysql'.
  * - [connectionString] - Connection string to use
  * - [databaseName] - Name of database
+ * - [generate] - If true will not execute SQL but only return DDL to caller
  */
 .arguments
    databaseType:string
    connectionString:string
    databaseName:string
+   generate:bool
 .description:Creates a new database with the specified name
 .type:internal
 
@@ -26,16 +28,24 @@ validators.enum:x:@.arguments/*/databaseType
    .:sqlite
    .:pgsql
    .:mssql
+
+// Sanity checking invocation.
 if
    eq:x:@.arguments/*/databaseName
       .:magic
    .lambda
       throw:You cannot create a database with the name of magic since it is a restricted name
 
+// Checking if database is SQLite, at which point we simply create a new empty file.
 if
    eq:x:@.arguments/*/databaseType
       .:sqlite
    .lambda
+
+      // Checking if caller only wants to generate SQL.
+      if:x:@.arguments/*/generate
+         return
+            result:/* SQLite does not support create database syntax */
       strings.concat
          .:/data/
          get-value:x:@.arguments/*/databaseName
@@ -43,64 +53,55 @@ if
       io.file.save:x:-
          .:
 
-      // Flushing connections cache.
+      // Flushing SQLite connections cache.
       sqlite.connections.flush
 
 else
+
+   // Buffer to hold SQL and 'master' database.
+   .sql
+   .master
 
    // Creating our correct SQL according to [databaseType].
    switch:x:@.arguments/*/databaseType
 
       case:mysql
-
-         // Creating our database connection.
-         strings.concat
-            .:[
-            get-value:x:@.arguments/*/connectionString
-            .:|information_schema]
-         data.connect:x:-
-            database-type:x:@.arguments/*/databaseType
-            .sql
-            set-value:x:@.sql
-               strings.concat
-                  .:"create database "
-                  get-value:x:@.arguments/*/databaseName
-            data.execute:x:@.sql
-               database-type:x:@.arguments/*/databaseType
+         set-value:x:@.master
+            .:information_schema
 
       case:pgsql
-
-         // Creating our database connection.
-         strings.concat
-            .:[
-            get-value:x:@.arguments/*/connectionString
-            .:|template1]
-         data.connect:x:-
-            database-type:x:@.arguments/*/databaseType
-            .sql
-            set-value:x:@.sql
-               strings.concat
-                  .:"create database "
-                  get-value:x:@.arguments/*/databaseName
-            data.execute:x:@.sql
-               database-type:x:@.arguments/*/databaseType
+         set-value:x:@.master
+            .:template1
 
       case:mssql
+         set-value:x:@.master
+            .:master
 
-         // Creating our database connection.
-         strings.concat
-            .:[
-            get-value:x:@.arguments/*/connectionString
-            .:|master]
-         data.connect:x:-
-            database-type:x:@.arguments/*/databaseType
-            .sql
-            set-value:x:@.sql
-               strings.concat
-                  .:"create database "
-                  get-value:x:@.arguments/*/databaseName
-            data.execute:x:@.sql
-               database-type:x:@.arguments/*/databaseType
+   // Same SQL for all types.
+   set-value:x:@.sql
+      strings.concat
+         .:"create database "
+         get-value:x:@.arguments/*/databaseName
+         .:";"
+
+   // Checking if caller only wants to generate SQL statement.
+   if:x:@.arguments/*/generate
+      unwrap:x:+/*
+      return
+         sql:x:@.sql
+
+
+   // Opening our database connection and executing SQL.
+   strings.concat
+      .:[
+      get-value:x:@.arguments/*/connectionString
+      .:|
+      get-value:x:@.master
+      .:]
+   data.connect:x:@strings.concat
+      database-type:x:@.arguments/*/databaseType
+      data.execute:x:@.sql
+         database-type:x:@.arguments/*/databaseType
 
 
 // Flushing database cache.

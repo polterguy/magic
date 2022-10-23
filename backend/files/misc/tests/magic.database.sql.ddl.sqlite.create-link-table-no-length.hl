@@ -1,0 +1,7 @@
+verb:post
+url:/magic/system/sql/ddl2/link-table
+status:int:200
+description:Verifies that creating a link table with no length on one of the foreign keys produces the correct SQL DDL
+payload:"{\n  \"databaseType\": \"sqlite\",\n  \"connectionString\": \"generic\",\n  \"databaseName\": \"my_db\",\n  \"args\": {\n    \"name\": \"users_roles\",\n    \"table1\": \"users\",\n    \"table2\": \"roles\",\n    \"table1pk\": [\n      {\n        \"name\": \"username1\",\n        \"type\": \"varchar\",\n        \"length\": 20\n      },\n      {\n        \"name\": \"username2\",\n        \"type\": \"varchar\",\n        \"length\": 25\n      }\n    ],\n    \"table2pk\": [\n      {\n        \"name\": \"role_id\",\n        \"type\": \"int\"\n      }\n    ]\n  },\n  \"generate\": true\n}"
+response:"{\n  \"sql\": \"create table users_roles(\\r\\n  username1 varchar(20) references users (username1),\\r\\n  username2 varchar(25) references users (username2),\\r\\n  role_id int references roles (role_id));\"\n}"
+produces:application/json
