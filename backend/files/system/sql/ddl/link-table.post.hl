@@ -58,6 +58,7 @@ set-value:x:@.sql
 // Looping through primary keys in table1.
 .first:bool:true
 .pk:
+.fk:
 for-each:x:@.arguments/*/args/*/table1pk/*
 
    // Checking if this is our first column or not.
@@ -95,15 +96,30 @@ for-each:x:@.arguments/*/args/*/table1pk/*
                get-value:x:@.dp/#/*/length
                .:)
 
-   // Adding references constraint for column.
-   set-value:x:@.sql
-      strings.concat
-         get-value:x:@.sql
-         .:" references "
-         get-value:x:@.arguments/*/args/*/table1
-         .:" ("
-         get-value:x:@.dp/#/*/name
-         .:")"
+   // Adding references constraint for column if not MySQL.
+   if
+      neq:x:@.arguments/*/databaseType
+         .:mysql
+      .lambda
+         set-value:x:@.sql
+            strings.concat
+               get-value:x:@.sql
+               .:" references "
+               get-value:x:@.arguments/*/args/*/table1
+               .:" ("
+               get-value:x:@.dp/#/*/name
+               .:")"
+   else
+      set-value:x:@.fk
+         strings.concat
+            get-value:x:@.fk
+            .:",\r\n foreign key ("
+            get-value:x:@.dp/#/*/name
+            .:") references "
+            get-value:x:@.arguments/*/args/*/table1
+            .:" ("
+            get-value:x:@.dp/#/*/name
+            .:)
 
    // Storing primary key's name.
    set-value:x:@.pk
@@ -150,15 +166,30 @@ for-each:x:@.arguments/*/args/*/table2pk/*
                get-value:x:@.dp/#/*/length
                .:)
 
-   // Adding references constraint for column.
-   set-value:x:@.sql
-      strings.concat
-         get-value:x:@.sql
-         .:" references "
-         get-value:x:@.arguments/*/args/*/table2
-         .:" ("
-         get-value:x:@.dp/#/*/name
-         .:")"
+   // Adding references constraint for column if not MySQL.
+   if
+      neq:x:@.arguments/*/databaseType
+         .:mysql
+      .lambda
+         set-value:x:@.sql
+            strings.concat
+               get-value:x:@.sql
+               .:" references "
+               get-value:x:@.arguments/*/args/*/table2
+               .:" ("
+               get-value:x:@.dp/#/*/name
+               .:")"
+   else
+      set-value:x:@.fk
+         strings.concat
+            get-value:x:@.fk
+            .:",\r\n foreign key ("
+            get-value:x:@.dp/#/*/name
+            .:") references "
+            get-value:x:@.arguments/*/args/*/table2
+            .:" ("
+            get-value:x:@.dp/#/*/name
+            .:)
 
    // Storing primary key's name.
    set-value:x:@.pk
@@ -182,6 +213,7 @@ set-value:x:@.sql
 set-value:x:@.sql
    strings.concat
       get-value:x:@.sql
+      get-value:x:@.fk
       .:");"
 
 // Checking if caller only wants to generate SQL statement.
