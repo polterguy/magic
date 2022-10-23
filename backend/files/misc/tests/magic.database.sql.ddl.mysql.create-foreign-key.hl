@@ -1,5 +1,5 @@
 verb:post
-url:/magic/system/sql/ddl2/foreign-key
+url:/magic/system/sql/ddl/foreign-key
 status:int:200
 description:Verifies creating a foreign key in MySQL creates the correct SQL DDL
 payload:"{\n  \"databaseType\": \"mysql\",\n  \"connectionString\": \"generic\",\n  \"databaseName\": \"test\",\n  \"tableName\": \"foo\",\n  \"columnName\": \"bar\",\n  \"foreignTable\": \"blah\",\n  \"foreignField\": \"blah_id\",\n  \"generate\": true\n}"

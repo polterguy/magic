@@ -1,5 +1,5 @@
 verb:post
-url:/magic/system/sql/ddl2/table
+url:/magic/system/sql/ddl/table
 status:int:200
 description:Verifies that PostgreSQL correctly creates create table SQL DDL
 payload:"{\n  \"databaseType\": \"pgsql\",\n  \"connectionString\": \"generic\",\n  \"databaseName\": \"test\",\n  \"tableName\": \"foo\",\n  \"pkName\": \"foo_id\",\n  \"pkType\": \"auto_increment\",\n  \"generate\": true\n}"
