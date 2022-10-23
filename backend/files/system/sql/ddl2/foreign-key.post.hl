@@ -1,12 +1,15 @@
 
 /*
- * Drops the specified table.
+ * Add the specified foreign key to the specified table.
  * 
  * Arguments;
  * - [databaseType] - Database type, typically 'mssql' or 'mysql'.
  * - [connectionString] - Connection string to use
  * - [databaseName] - Name of database
  * - [tableName] - Name of table
+ * - [columnName] - Name of column
+ * - [foreignTable] - Type declaration of column
+ * - [foreignField] - Type declaration of column
  * - [generate] - If true will not execute SQL but only return DDL to caller
  */
 .arguments
@@ -14,8 +17,11 @@
    connectionString:string
    databaseName:string
    tableName:string
+   columnName:string
+   foreignTable:string
+   foreignField:string
    generate:bool
-.description:Drops the specified table
+.description:Adds the specified foreign key to your specified table
 .type:internal
 
 // Ensures user is authorized to access endpoint.
@@ -25,20 +31,37 @@ auth.ticket.verify:root
 validators.mandatory:x:@.arguments/*/connectionString
 validators.mandatory:x:@.arguments/*/databaseName
 validators.mandatory:x:@.arguments/*/tableName
+validators.mandatory:x:@.arguments/*/columnName
+validators.mandatory:x:@.arguments/*/foreignTable
+validators.mandatory:x:@.arguments/*/foreignField
 validators.mandatory:x:@.arguments/*/databaseType
 validators.enum:x:@.arguments/*/databaseType
    .:mysql
-   .:sqlite
    .:pgsql
    .:mssql
 
-// SQL that executes to modify DDL.
+// SQL that executes to modify table.
 .sql
 set-value:x:@.sql
    strings.concat
-      .:"drop table "
+      .:"alter table "
       get-value:x:@.arguments/*/tableName
-      .:";"
+      .:" add constraint "
+      get-value:x:@.arguments/*/tableName
+      .:_
+      get-value:x:@.arguments/*/columnName
+      .:_
+      get-value:x:@.arguments/*/foreignTable
+      .:_
+      get-value:x:@.arguments/*/foreignField
+      .:_fky
+      .:" foreign key ("
+      get-value:x:@.arguments/*/columnName
+      .:") references "
+      get-value:x:@.arguments/*/foreignTable
+      .:" ("
+      get-value:x:@.arguments/*/foreignField
+      .:");"
 
 // Checking if caller only wants to generate SQL statement.
 if:x:@.arguments/*/generate
@@ -46,7 +69,7 @@ if:x:@.arguments/*/generate
    return
       sql:x:@.sql
 
-// Creating our database connection.
+// Creating our database connection and executing SQL.
 strings.concat
    .:[
    get-value:x:@.arguments/*/connectionString
