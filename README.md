@@ -25,6 +25,7 @@ optionally generate a CRUD datagrid giving you a full stack web app as the scree
 * [SQL Studio to visually design your database](https://aista.com/sql-studio/)
 * [SQL API generator](https://aista.com/sql-api-generator/)
 * [What is Hyperlambda](https://aista.com/hyperlambda/)
+* [Hyperlambda 101](https://aista.com/hyperlambda-101/)
 
 ## License
 

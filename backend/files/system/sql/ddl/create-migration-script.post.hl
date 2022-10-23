@@ -88,6 +88,8 @@ for-each:x:-/*
                set-value:x:@.no
                   math.add:x:@convert
                      .:int:1
+
+// Figuring out complete filename for migration script file.
 strings.concat
    .:/modules/
    get-value:x:@.arguments/*/module

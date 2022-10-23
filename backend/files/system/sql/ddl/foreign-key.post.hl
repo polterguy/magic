@@ -10,6 +10,7 @@
  * - [columnName] - Name of column
  * - [foreignTable] - Type declaration of column
  * - [foreignField] - Type declaration of column
+ * - [generate] - If true will not execute SQL but only return DDL to caller
  */
 .arguments
    databaseType:string
@@ -19,6 +20,7 @@
    columnName:string
    foreignTable:string
    foreignField:string
+   generate:bool
 .description:Adds the specified foreign key to your specified table
 .type:internal
 
@@ -38,10 +40,36 @@ validators.enum:x:@.arguments/*/databaseType
    .:pgsql
    .:mssql
 
-// SQL that executes to modify DDL.
+// SQL that executes to modify table.
 .sql
+set-value:x:@.sql
+   strings.concat
+      .:"alter table "
+      get-value:x:@.arguments/*/tableName
+      .:" add constraint "
+      get-value:x:@.arguments/*/tableName
+      .:_
+      get-value:x:@.arguments/*/columnName
+      .:_
+      get-value:x:@.arguments/*/foreignTable
+      .:_
+      get-value:x:@.arguments/*/foreignField
+      .:_fky
+      .:" foreign key ("
+      get-value:x:@.arguments/*/columnName
+      .:") references "
+      get-value:x:@.arguments/*/foreignTable
+      .:" ("
+      get-value:x:@.arguments/*/foreignField
+      .:");"
 
-// Creating our database connection.
+// Checking if caller only wants to generate SQL statement.
+if:x:@.arguments/*/generate
+   unwrap:x:+/*
+   return
+      sql:x:@.sql
+
+// Creating our database connection and executing SQL.
 strings.concat
    .:[
    get-value:x:@.arguments/*/connectionString
@@ -50,71 +78,6 @@ strings.concat
    .:]
 data.connect:x:-
    database-type:x:@.arguments/*/databaseType
-
-   // Creating our correct SQL according to [databaseType].
-   switch:x:@.arguments/*/databaseType
-
-      case:mysql
-
-         set-value:x:@.sql
-            strings.concat
-               .:"alter table "
-               get-value:x:@.arguments/*/tableName
-               .:" add constraint "
-               get-value:x:@.arguments/*/tableName
-               .:_
-               get-value:x:@.arguments/*/columnName
-               .:_
-               get-value:x:@.arguments/*/foreignTable
-               .:_
-               get-value:x:@.arguments/*/foreignField
-               .:_fky
-               .:" foreign key ("
-               get-value:x:@.arguments/*/columnName
-               .:") references "
-               get-value:x:@.arguments/*/foreignTable
-               .:" ("
-               get-value:x:@.arguments/*/foreignField
-               .:")"
-
-      case:pgsql
-
-         set-value:x:@.sql
-            strings.concat
-               .:"alter table "
-               get-value:x:@.arguments/*/tableName
-               .:" add constraint "
-               get-value:x:@.arguments/*/tableName
-               .:_
-               get-value:x:@.arguments/*/columnName
-               .:_
-               get-value:x:@.arguments/*/foreignTable
-               .:_
-               get-value:x:@.arguments/*/foreignField
-               .:_fky
-               .:" foreign key ("
-               get-value:x:@.arguments/*/columnName
-               .:") references "
-               get-value:x:@.arguments/*/foreignTable
-               .:" ("
-               get-value:x:@.arguments/*/foreignField
-               .:")"
-
-      case:mssql
-
-         set-value:x:@.sql
-            strings.concat
-               .:"alter table "
-               get-value:x:@.arguments/*/tableName
-               .:" add foreign key  ("
-               get-value:x:@.arguments/*/columnName
-               .:") references "
-               get-value:x:@.arguments/*/foreignTable
-               .:" ("
-               get-value:x:@.arguments/*/foreignField
-               .:")"
-
-   log.info:x:@.sql
    data.execute:x:@.sql
       database-type:x:@.arguments/*/databaseType
 

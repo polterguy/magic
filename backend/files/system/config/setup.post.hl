@@ -6,8 +6,8 @@
  * 
  * Notice, if the root user exists from before, this file will change
  * its password - However, you cannot setup the system twice, unless you
- * manually change the JWT secret to its default value, which
- * is 'THIS-IS-NOT-A-GOOD-SECRET-PLEASE-CHANGE-IT'.
+ * manually change the JWT secret to a value that's less than 50 characters
+ * in length.
  */
 .arguments
    username:string
@@ -54,10 +54,11 @@ try
     */
    config.get:"magic:auth:secret"
    if
-      not
-         eq
-            get-value:x:@config.get
-            .:THIS-IS-NOT-A-GOOD-SECRET-PLEASE-CHANGE-IT
+      and
+         not-null:x:@config.get
+         mte
+            strings.length:x:@config.get
+            .:int:50
       .lambda
 
          // System has been setup before
@@ -237,32 +238,16 @@ try
       io.file.execute:/system/magic.startup/migrate-magic-database.hl
 
    /*
-    * Starting task scheduler, making sure we apply maximum number of concurrent threads from config,
-    * and also that we catch exceptions for cases when the scheduler has already been started.
+    * Starting task scheduler.
     */
-   try
-      .max:int:8
-      config.get:"magic:scheduler:max-threads"
-      if
-         not
-            eq
-               get-value:x:@config.get
-               .
-         .lambda
-            set-value:x:@.max
-               convert:x:@config.get
-                  type:int
-      tasks.scheduler.start:x:@.max
-   .catch
-
-      // Scheduler has probably already been started.
-      .do-nothing
+   tasks.scheduler.start
 
    /*
     * Explicitly seeding CSRNG with auth secret, which might have been manually applied
     * by user during setup process.
     */
    config.get:"magic:auth:secret"
+      .:abcdefghijklmnopqrstuvwxyz1234567890
    crypto.seed:x:-
 
    // Authenticating user and returning new JWT token to client.

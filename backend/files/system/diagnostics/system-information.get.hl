@@ -9,8 +9,11 @@ auth.ticket.verify:root
 // Verifying system has been setup.
 config.get:"magic:auth:secret"
 if
-   neq:x:@config.get
-      .:THIS-IS-NOT-A-GOOD-SECRET-PLEASE-CHANGE-IT
+   and
+      not-null:x:@config.get
+      mte
+         strings.length:x:@config.get
+         .:int:50
    .lambda
 
       // Making sure we aggressively cache the HTTP response object on the client side.
@@ -144,16 +147,6 @@ if
                   .lambda
                      set-value:x:@.has-terminal
                         .:bool:false
-
-            // Verifying scheduler is turned on.
-            .has-scheduler:bool:true
-            if
-               eq
-                  config.get:"magic:tasks:scheduler"
-                  .
-               .lambda
-                  set-value:x:@.has-scheduler
-                     .:bool:false
                      
             // Iterating through each module, counting LOC, and files.
             io.folder.list:/modules/
@@ -199,7 +192,6 @@ if
                persisted_tasks:x:@tasks.count
                has_sockets:x:@.has-sockets
                has_terminal:x:@.has-terminal
-               has_scheduler:x:@.has-scheduler
                log_items:x:@log.count
                cache_items:x:@cache.count
                endpoints:x:@.no-endpoints

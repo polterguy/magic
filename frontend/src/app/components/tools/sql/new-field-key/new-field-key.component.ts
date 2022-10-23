@@ -89,6 +89,16 @@ export class NewFieldKeyComponent {
       defaultValue: 'string'
     },
     {
+      name: 'varchar',
+      description: 'Text type for strings of varying size.',
+      size: {
+        min: 0,
+        max: 16383,
+        defaultSize: 100
+      },
+      defaultValue: 'string'
+    },
+    {
       name: 'timestamp',
       description: 'Date and time type of field. Notice, this type automatically converts to UTC when stored, and is returned as a UTC string to the client once retrieved.',
       defaultValue: 'date'

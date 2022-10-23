@@ -470,7 +470,7 @@
                   <button
                     mat-menu-item
                     (click)="exportDatabase()"
-                    [disabled]="input?.databaseType !== 'sqlite' && input?.databaseType !== 'mysql'"
+                    [disabled]="input?.databaseType !== 'sqlite' && input?.databaseType !== 'mysql' && input?.databaseType !== 'pgsql'"
                     class="action-button">
                     <mat-icon class="material-icons-outlined">cloud_download</mat-icon>
                     Export database DDL
