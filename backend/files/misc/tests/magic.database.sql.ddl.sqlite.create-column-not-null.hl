@@ -2,6 +2,6 @@ verb:post
 url:/magic/system/sql/ddl2/column
 status:int:200
 description:Verifies that creating a non-nullable column in SQLite works correctly
-payload:"{\n  \"databaseType\": \"sqlite\",\n  \"connectionString\": \"generic\",\n  \"databaseName\": \"test\",\n  \"tableName\": \"customers\",\n  \"columnName\": \"name\",\n  \"columnType\": \"int\",\n  \"nullable\": true,\n  \"generate\": true\n}"
-response:"{\n  \"sql\": \"alter table customers add column name int;\"\n}"
+payload:"{\n  \"databaseType\": \"sqlite\",\n  \"connectionString\": \"generic\",\n  \"databaseName\": \"test\",\n  \"tableName\": \"customers\",\n  \"columnName\": \"name\",\n  \"columnType\": \"int\",\n  \"nullable\": false,\n  \"generate\": true\n}"
+response:"{\n  \"sql\": \"alter table customers add column name int not null;\"\n}"
 produces:application/json
