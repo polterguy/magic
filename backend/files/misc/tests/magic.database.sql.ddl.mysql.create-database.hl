@@ -1,5 +1,5 @@
 verb:post
-url:/magic/system/sql/ddl2/database
+url:/magic/system/sql/ddl/database
 status:int:200
 description:Verifies that MySQL correctly creates create database SQL DDL
 payload:"{\n  \"databaseType\": \"mysql\",\n  \"connectionString\": \"generic\",\n  \"databaseName\": \"test\",\n  \"generate\": true\n}"

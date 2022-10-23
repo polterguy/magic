@@ -1,5 +1,5 @@
 verb:post
-url:/magic/system/sql/ddl2/column
+url:/magic/system/sql/ddl/column
 status:int:200
 description:Verifies that adding a column to SQLite having turned off cascading deletes works correctly
 payload:"{\n  \"databaseType\": \"sqlite\",\n  \"connectionString\": \"generic\",\n  \"databaseName\": \"test\",\n  \"tableName\": \"contacts\",\n  \"columnName\": \"customer_id\",\n  \"columnType\": \"int\",\n  \"foreignTable\": \"customers\",\n  \"foreignField\": \"customer_id\",\n  \"cascading\": false,\n  \"generate\": true\n}"

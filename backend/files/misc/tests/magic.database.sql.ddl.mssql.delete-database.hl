@@ -1,5 +1,5 @@
 verb:delete
-url:/magic/system/sql/ddl2/database?connectionString=generic&databaseName=test&generate=true&databaseType=mssql
+url:/magic/system/sql/ddl/database?connectionString=generic&databaseName=test&generate=true&databaseType=mssql
 status:int:200
 description:Verifies that Microsoft SQL Server correctly creates drop database SQL DDL
 response:"{\n  \"sql\": \"alter database test set single_user with rollback immediate; drop database test;\"\n}"

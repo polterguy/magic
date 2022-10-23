@@ -1,5 +1,5 @@
 verb:post
-url:/magic/system/sql/ddl2/database
+url:/magic/system/sql/ddl/database
 status:int:200
 description:Verifies that SQLite correctly creates create database SQL DDL
 payload:"{\n  \"databaseType\": \"sqlite\",\n  \"connectionString\": \"generic\",\n  \"databaseName\": \"test\",\n  \"generate\": true\n}"
