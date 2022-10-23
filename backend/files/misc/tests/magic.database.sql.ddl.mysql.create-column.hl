@@ -1,0 +1,7 @@
+verb:post
+url:/magic/system/sql/ddl2/column
+status:int:200
+description:Verifies that MySQL creates the correct create column SQL DDL
+payload:"{\n  \"databaseType\": \"mysql\",\n  \"connectionString\": \"generic\",\n  \"databaseName\": \"test\",\n  \"tableName\": \"foo\",\n  \"columnName\": \"bar\",\n  \"columnType\": \"varchar\",\n  \"columnLength\": 42,\n  \"generate\": true\n}"
+response:"{\n  \"sql\": \"alter table foo add column bar varchar(42);\"\n}"
+produces:application/json

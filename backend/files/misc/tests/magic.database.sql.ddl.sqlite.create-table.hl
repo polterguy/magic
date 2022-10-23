@@ -1,0 +1,7 @@
+verb:post
+url:/magic/system/sql/ddl2/table
+status:int:200
+description:Verifies that MySQL correctly creates create table SQL DDL
+payload:"{\n  \"databaseType\": \"sqlite\",\n  \"connectionString\": \"generic\",\n  \"databaseName\": \"test\",\n  \"tableName\": \"foo\",\n  \"pkName\": \"foo_id\",\n  \"pkType\": \"auto_increment\",\n  \"generate\": true\n}"
+response:"{\n  \"sql\": \"create table foo(foo_id integer not null primary key autoincrement);\"\n}"
+produces:application/json

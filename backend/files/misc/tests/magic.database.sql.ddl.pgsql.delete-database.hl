@@ -1,0 +1,6 @@
+verb:delete
+url:/magic/system/sql/ddl2/database?connectionString=generic&databaseName=test&generate=true&databaseType=pgsql
+status:int:200
+description:Verifies that PostgreSQL correctly creates drop database SQL DDL
+response:"{\n  \"sql\": \"revoke connect on database test from public; select pid, pg_terminate_backend(pid) from pg_stat_activity where datname = 'test'; drop database test;\"\n}"
+produces:application/json
