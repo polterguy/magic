@@ -48,6 +48,170 @@ validators.enum:x:@.arguments/*/pkType
 // SQL that executes to modify DDL.
 .sql
 
+// Creating our correct SQL according to [databaseType].
+switch:x:@.arguments/*/databaseType
+
+   case:sqlite
+
+      .type
+      if
+         eq:x:@.arguments/*/pkType
+            .:auto_increment
+         .lambda
+            set-value:x:@.type
+               strings.concat
+                  .:integer not null primary key autoincrement
+      else
+         set-value:x:@.type
+            strings.concat
+               get-value:x:@.arguments/*/pkType
+               .:(
+               get-value:x:@.arguments/*/pkLength
+               .:") not null primary key"
+      set-value:x:@.sql
+         strings.concat
+            .:"create table "
+            get-value:x:@.arguments/*/tableName
+            .:"("
+            get-value:x:@.arguments/*/pkName
+            .:" "
+            get-value:x:@.type
+      if
+         exists:x:@.arguments/*/pkDefault
+         .lambda
+            set-value:x:@.sql
+               strings.concat
+                  get-value:x:@.sql
+                  .:" default "
+                  get-value:x:@.arguments/*/pkDefault
+      set-value:x:@.sql
+         strings.concat
+            get-value:x:@.sql
+            .:");"
+
+   case:mysql
+
+      .type
+      if
+         eq:x:@.arguments/*/pkType
+            .:auto_increment
+         .lambda
+            set-value:x:@.type
+               strings.concat
+                  .:int not null auto_increment primary key
+      else
+         set-value:x:@.type
+            strings.concat
+               get-value:x:@.arguments/*/pkType
+               .:(
+               get-value:x:@.arguments/*/pkLength
+               .:") not null primary key"
+      set-value:x:@.sql
+         strings.concat
+            .:"create table "
+            get-value:x:@.arguments/*/tableName
+            .:"("
+            get-value:x:@.arguments/*/pkName
+            .:" "
+            get-value:x:@.type
+      if
+         exists:x:@.arguments/*/pkDefault
+         .lambda
+            set-value:x:@.sql
+               strings.concat
+                  get-value:x:@.sql
+                  .:" default "
+                  get-value:x:@.arguments/*/pkDefault
+      set-value:x:@.sql
+         strings.concat
+            get-value:x:@.sql
+            .:");"
+
+   case:pgsql
+
+      .type
+      if
+         eq:x:@.arguments/*/pkType
+            .:auto_increment
+         .lambda
+            set-value:x:@.type
+               strings.concat
+                  get-value:x:@.arguments/*/pkName
+                  .:" serial primary key"
+      else
+         set-value:x:@.type
+            strings.concat
+               get-value:x:@.arguments/*/pkName
+               .:" "
+               get-value:x:@.arguments/*/pkType
+               .:(
+               get-value:x:@.arguments/*/pkLength
+               .:") primary key"
+      set-value:x:@.sql
+         strings.concat
+            .:"create table "
+            get-value:x:@.arguments/*/tableName
+            .:"("
+            get-value:x:@.type
+      if
+         exists:x:@.arguments/*/pkDefault
+         .lambda
+            set-value:x:@.sql
+               strings.concat
+                  get-value:x:@.sql
+                  .:" default "
+                  get-value:x:@.arguments/*/pkDefault
+      set-value:x:@.sql
+         strings.concat
+            get-value:x:@.sql
+            .:");"
+
+   case:mssql
+
+      .type
+      if
+         eq:x:@.arguments/*/pkType
+            .:auto_increment
+         .lambda
+            set-value:x:@.type
+               strings.concat
+                  get-value:x:@.arguments/*/pkName
+                  .:" integer"
+                  .:" not null identity(1,1) primary key"
+      else
+         set-value:x:@.type
+            strings.concat
+               get-value:x:@.arguments/*/pkName
+               .:" "
+               get-value:x:@.arguments/*/pkType
+               .:(
+               get-value:x:@.arguments/*/pkLength
+               .:") not null primary key"
+      set-value:x:@.sql
+         strings.concat
+            .:"create table "
+            get-value:x:@.arguments/*/tableName
+            .:"("
+            get-value:x:@.type
+      if
+         exists:x:@.arguments/*/pkDefault
+         .lambda
+            set-value:x:@.sql
+               strings.concat
+                  get-value:x:@.sql
+                  .:" default "
+                  get-value:x:@.arguments/*/pkDefault
+      set-value:x:@.sql
+         strings.concat
+            get-value:x:@.sql
+            .:");"
+
+// Checking if caller only wants to generate SQL statement.
+if:x:@.arguments/*/generate
+   unwrap:x:+/*
+   return
+      sql:x:@.sql
+
 // Creating our database connection.
 strings.concat
    .:[
@@ -57,171 +221,6 @@ strings.concat
    .:]
 data.connect:x:-
    database-type:x:@.arguments/*/databaseType
-
-   // Creating our correct SQL according to [databaseType].
-   switch:x:@.arguments/*/databaseType
-
-      case:sqlite
-
-         .type
-         if
-            eq:x:@.arguments/*/pkType
-               .:auto_increment
-            .lambda
-               set-value:x:@.type
-                  strings.concat
-                     .:integer not null primary key autoincrement
-         else
-            set-value:x:@.type
-               strings.concat
-                  get-value:x:@.arguments/*/pkType
-                  .:(
-                  get-value:x:@.arguments/*/pkLength
-                  .:") not null primary key"
-         set-value:x:@.sql
-            strings.concat
-               .:"create table "
-               get-value:x:@.arguments/*/tableName
-               .:"("
-               get-value:x:@.arguments/*/pkName
-               .:" "
-               get-value:x:@.type
-         if
-            exists:x:@.arguments/*/pkDefault
-            .lambda
-               set-value:x:@.sql
-                  strings.concat
-                     get-value:x:@.sql
-                     .:" default "
-                     get-value:x:@.arguments/*/pkDefault
-         set-value:x:@.sql
-            strings.concat
-               get-value:x:@.sql
-               .:");"
-
-      case:mysql
-
-         .type
-         if
-            eq:x:@.arguments/*/pkType
-               .:auto_increment
-            .lambda
-               set-value:x:@.type
-                  strings.concat
-                     .:int not null auto_increment primary key
-         else
-            set-value:x:@.type
-               strings.concat
-                  get-value:x:@.arguments/*/pkType
-                  .:(
-                  get-value:x:@.arguments/*/pkLength
-                  .:") not null primary key"
-         set-value:x:@.sql
-            strings.concat
-               .:"create table "
-               get-value:x:@.arguments/*/tableName
-               .:"("
-               get-value:x:@.arguments/*/pkName
-               .:" "
-               get-value:x:@.type
-         if
-            exists:x:@.arguments/*/pkDefault
-            .lambda
-               set-value:x:@.sql
-                  strings.concat
-                     get-value:x:@.sql
-                     .:" default "
-                     get-value:x:@.arguments/*/pkDefault
-         set-value:x:@.sql
-            strings.concat
-               get-value:x:@.sql
-               .:");"
-
-      case:pgsql
-
-         .type
-         if
-            eq:x:@.arguments/*/pkType
-               .:auto_increment
-            .lambda
-               set-value:x:@.type
-                  strings.concat
-                     get-value:x:@.arguments/*/pkName
-                     .:" serial primary key"
-         else
-            set-value:x:@.type
-               strings.concat
-                  get-value:x:@.arguments/*/pkName
-                  .:" "
-                  get-value:x:@.arguments/*/pkType
-                  .:(
-                  get-value:x:@.arguments/*/pkLength
-                  .:") primary key"
-         set-value:x:@.sql
-            strings.concat
-               .:"create table "
-               get-value:x:@.arguments/*/tableName
-               .:"("
-               get-value:x:@.type
-         if
-            exists:x:@.arguments/*/pkDefault
-            .lambda
-               set-value:x:@.sql
-                  strings.concat
-                     get-value:x:@.sql
-                     .:" default "
-                     get-value:x:@.arguments/*/pkDefault
-         set-value:x:@.sql
-            strings.concat
-               get-value:x:@.sql
-               .:");"
-
-      case:mssql
-
-         .type
-         if
-            eq:x:@.arguments/*/pkType
-               .:auto_increment
-            .lambda
-               set-value:x:@.type
-                  strings.concat
-                     get-value:x:@.arguments/*/pkName
-                     .:" integer"
-                     .:" not null identity(1,1) primary key"
-         else
-            set-value:x:@.type
-               strings.concat
-                  get-value:x:@.arguments/*/pkName
-                  .:" "
-                  get-value:x:@.arguments/*/pkType
-                  .:(
-                  get-value:x:@.arguments/*/pkLength
-                  .:") not null primary key"
-         set-value:x:@.sql
-            strings.concat
-               .:"create table "
-               get-value:x:@.arguments/*/tableName
-               .:"("
-               get-value:x:@.type
-         if
-            exists:x:@.arguments/*/pkDefault
-            .lambda
-               set-value:x:@.sql
-                  strings.concat
-                     get-value:x:@.sql
-                     .:" default "
-                     get-value:x:@.arguments/*/pkDefault
-         set-value:x:@.sql
-            strings.concat
-               get-value:x:@.sql
-               .:");"
-
-   // Checking if caller only wants to generate SQL statement.
-   if:x:@.arguments/*/generate
-      unwrap:x:+/*
-      return
-         sql:x:@.sql
-
    data.execute:x:@.sql
       database-type:x:@.arguments/*/databaseType
 
