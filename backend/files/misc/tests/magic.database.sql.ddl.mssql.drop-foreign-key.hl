@@ -1,0 +1,6 @@
+verb:delete
+url:/magic/system/sql/ddl2/foreign-key?databaseType=mssql&connectionString=generic&databaseName=foo&tableName=bar&fkName=xyz&generate=true
+status:int:200
+description:Verifies that dropping a foreign key works with SQL Server
+response:"{\n  \"sql\": \"alter table bar drop constraint xyz\"\n}"
+produces:application/json
