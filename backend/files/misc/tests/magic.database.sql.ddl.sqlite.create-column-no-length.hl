@@ -1,0 +1,7 @@
+verb:post
+url:/magic/system/sql/ddl2/column
+status:int:200
+description:Verifies that creating an SQLite column without providing length creates correct SQL DDL
+payload:"{\n  \"databaseType\": \"sqlite\",\n  \"connectionString\": \"generic\",\n  \"databaseName\": \"test\",\n  \"tableName\": \"customers\",\n  \"columnName\": \"name\",\n  \"columnType\": \"integer\",\n  \"generate\": true\n}"
+response:"{\n  \"sql\": \"alter table customers add column name integer;\"\n}"
+produces:application/json

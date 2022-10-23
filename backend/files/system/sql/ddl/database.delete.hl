@@ -6,12 +6,14 @@
  * - [databaseType] - Database type, typically 'mssql' or 'mysql'.
  * - [connectionString] - Connection string to use
  * - [databaseName] - Name of database
+ * - [generate] - If true will not execute SQL but only return DDL to caller
  */
 .arguments
    databaseType:string
    connectionString:string
    databaseName:string
-.description:Adds the specified table to the specified database
+   generate:bool
+.description:Deletes the specified database
 .type:internal
 
 // Ensures user is authorized to access endpoint.
@@ -27,10 +29,16 @@ validators.enum:x:@.arguments/*/databaseType
    .:pgsql
    .:mssql
 
+// SQLite special case, simply implying deleting file on disc.
 if
    eq:x:@.arguments/*/databaseType
       .:sqlite
    .lambda
+
+      // Checking if caller only wants to generate SQL.
+      if:x:@.arguments/*/generate
+         return
+            result:/* SQLite does not support drop database syntax */
 
       // Deleting the file for our database.
       strings.concat
@@ -44,62 +52,67 @@ if
 
 else
 
+   // Buffer to hold SQL and 'master' database.
+   .sql
+   .master
+
    // Creating our correct SQL according to [databaseType].
    switch:x:@.arguments/*/databaseType
 
       case:mysql
-
-         // Creating our database connection.
-         strings.concat
-            .:[
-            get-value:x:@.arguments/*/connectionString
-            .:|information_schema]
-         data.connect:x:-
-            database-type:x:@.arguments/*/databaseType
-            .sql
-            set-value:x:@.sql
-               strings.concat
-                  .:"drop database "
-                  get-value:x:@.arguments/*/databaseName
-            data.execute:x:@.sql
-               database-type:x:@.arguments/*/databaseType
+         set-value:x:@.master
+            .:information_schema
+         set-value:x:@.sql
+            strings.concat
+               .:"drop database "
+               get-value:x:@.arguments/*/databaseName
+               .:;
 
       case:pgsql
-
-         // Creating our database connection.
-         strings.concat
-            .:[
-            get-value:x:@.arguments/*/connectionString
-            .:|postgres]
-         data.connect:x:-
-            database-type:x:@.arguments/*/databaseType
-            .sql
-            set-value:x:@.sql
-               strings.concat
-                  .:"drop database "
-                  get-value:x:@.arguments/*/databaseName
-            data.execute:x:@.sql
-               database-type:x:@.arguments/*/databaseType
+         set-value:x:@.master
+            .:template1
+         set-value:x:@.sql
+            strings.concat
+               .:"revoke connect on database "
+               get-value:x:@.arguments/*/databaseName
+               .:" from public; "
+               .:"select pid, pg_terminate_backend(pid) from pg_stat_activity "
+               .:"where datname = '"
+               get-value:x:@.arguments/*/databaseName
+               .:"'; "
+               .:"drop database "
+               get-value:x:@.arguments/*/databaseName
+               .:;
 
       case:mssql
+         set-value:x:@.master
+            .:master
+         set-value:x:@.sql
+            strings.concat
+               .:"alter database "
+               .:x:@.arguments/*/databaseName
+               .:" set single_user with rollback immediate; "
+               .:"drop database "
+               get-value:x:@.arguments/*/databaseName
+               .:;
 
-         // Creating our database connection.
-         strings.concat
-            .:[
-            get-value:x:@.arguments/*/connectionString
-            .:|master]
-         data.connect:x:-
-            database-type:x:@.arguments/*/databaseType
-            .sql
-            set-value:x:@.sql
-               strings.concat
-                  .:"ALTER DATABASE "
-                  .:x:@.arguments/*/databaseName
-                  .:" SET  SINGLE_USER WITH ROLLBACK IMMEDIATE; "
-                  .:" drop database "
-                  get-value:x:@.arguments/*/databaseName
-            data.execute:x:@.sql
-               database-type:x:@.arguments/*/databaseType
+   // Checking if caller only wants to generate SQL statement.
+   if:x:@.arguments/*/generate
+      unwrap:x:+/*
+      return
+         sql:x:@.sql
+
+   // Opening up database connection and executing SQL.
+   strings.concat
+      .:[
+      get-value:x:@.arguments/*/connectionString
+      .:|
+      get-value:x:@.master
+      .:]
+   data.connect:x:@strings.concat
+      database-type:x:@.arguments/*/databaseType
+      data.execute:x:@.sql
+         database-type:x:@.arguments/*/databaseType
 
 // Flushing database cache.
 strings.concat
