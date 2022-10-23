@@ -10,6 +10,9 @@ auth.ticket.verify
  * Retrieving extra information, making sure we only allow
  * for extra information that's allowed according to configuration settings.
  */
+.arguments_copy
+add:x:@.arguments_copy
+   get-nodes:x:@.arguments/*
 .extra
 config.get:"magic:auth:registration:extra-mutable"
    .:name
@@ -71,6 +74,17 @@ data.connect:magic
                   user:x:@auth.ticket.get
                   type:x:@.dp/#/*/type
                   value:x:@.dp/#/*/value
+
+   // Invoking plugins interested in event.
+   slots.vocabulary:magic.users.update-extra.
+   for-each:x:@slots.vocabulary/*
+      .lambda
+         unwrap:x:+/*
+         signal:x:@.dp/#
+            username:x:@auth.ticket.get
+      add:x:@.lambda/*/signal
+         get-nodes:x:@.arguments_copy/*
+      eval:x:@.lambda
 
 // Returning success to caller.
 return

@@ -1,0 +1,6 @@
+verb:delete
+url:/magic/system/sql/ddl/column?connectionString=generic&databaseName=test&tableName=foo&columnName=bar&generate=true&databaseType=xyz
+status:int:400
+description:Verifies that endpoint throws if given a bogus database type
+response:"{\n  \"field\": \"databaseType\",\n  \"message\": \"'xyz' is not a valid enum of ['mysql', 'sqlite', 'pgsql', 'mssql'] for [databaseType]\"\n}"
+produces:application/json

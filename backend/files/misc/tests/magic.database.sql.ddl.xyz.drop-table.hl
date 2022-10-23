@@ -1,0 +1,6 @@
+verb:delete
+url:/magic/system/sql/ddl/table?databaseType=xyz&connectionString=generic&databaseName=test&tableName=foo&generate=true
+status:int:400
+description:Verifies that trying to drop non-existent database type throws
+response:"{\n  \"field\": \"databaseType\",\n  \"message\": \"'xyz' is not a valid enum of ['mysql', 'sqlite', 'pgsql', 'mssql'] for [databaseType]\"\n}"
+produces:application/json

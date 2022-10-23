@@ -64,13 +64,12 @@ export class MagicUsernameLookupComponent implements OnInit {
   public ngOnInit() {
 
     // Retrieving users from backend.
-    this.usersService.users('').subscribe(
-      (res: User[]) => {
-        // Assigning model.
-        this.items = res;
+    this.usersService.users('').subscribe({
+      next: (res: User[]) => {
+        this.items = res || [];
       },
-      (error: any) => console.error('Could not get items in MagicSelector')
-    );
+      error: (error) => console.error('Could not get items in MagicSelector')
+    });
   }
 
   /**

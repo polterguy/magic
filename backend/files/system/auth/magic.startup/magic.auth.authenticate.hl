@@ -16,9 +16,11 @@ slots.create:magic.auth.authenticate
     */
    config.get:"magic:auth:secret"
    if
-      eq
-         get-value:x:@config.get
-         .:THIS-IS-NOT-A-GOOD-SECRET-PLEASE-CHANGE-IT
+      or
+         null:x:@config.get
+         lt
+            strings.length:x:@config.get
+            .:int:50
       .lambda
 
          // System has not yet been setup.
@@ -40,6 +42,7 @@ slots.create:magic.auth.authenticate
                unwrap:x:+/*
                return
                   ticket:x:@auth.ticket.create
+
          else
 
             // Failure!

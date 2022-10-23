@@ -31,9 +31,11 @@ slots.create:magic.modules.ensure-database
    // Ensuring system has been setup.
    config.get:"magic:auth:secret"
    if
-      eq
-         get-value:x:@config.get
-         .:THIS-IS-NOT-A-GOOD-SECRET-PLEASE-CHANGE-IT
+      or
+         null:x:@config.get
+         lt
+            strings.length:x:@config.get
+            .:int:50
       .lambda
 
          // We cannot create any databases before system has been setup.

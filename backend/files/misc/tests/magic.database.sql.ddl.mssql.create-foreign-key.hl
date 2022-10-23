@@ -1,0 +1,7 @@
+verb:post
+url:/magic/system/sql/ddl/foreign-key
+status:int:200
+description:Verifies creating a foreign key in MySQL creates the correct SQL DDL
+payload:"{\n  \"databaseType\": \"mssql\",\n  \"connectionString\": \"generic\",\n  \"databaseName\": \"test\",\n  \"tableName\": \"foo\",\n  \"columnName\": \"bar\",\n  \"foreignTable\": \"blah\",\n  \"foreignField\": \"blah_id\",\n  \"generate\": true\n}"
+response:"{\n  \"sql\": \"alter table foo add constraint foo_bar_blah_blah_id_fky foreign key (bar) references blah (blah_id);\"\n}"
+produces:application/json
