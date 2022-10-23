@@ -6,11 +6,13 @@
  * - [databaseType] - Database type, typically 'mssql' or 'mysql'.
  * - [connectionString] - Connection string to use
  * - [databaseName] - Name of database
+ * - [generate] - If true will not execute SQL but only return DDL to caller
  */
 .arguments
    databaseType:string
    connectionString:string
    databaseName:string
+   generate:bool
 .description:Creates a new database with the specified name
 .type:internal
 
@@ -39,6 +41,11 @@ if
    eq:x:@.arguments/*/databaseType
       .:sqlite
    .lambda
+
+      // Checking if caller only wants to generate SQL.
+      if:x:@.arguments/*/generate
+         return
+            result:/* SQLite does not support create database syntax */
       strings.concat
          .:/data/
          get-value:x:@.arguments/*/databaseName
@@ -75,6 +82,13 @@ else
       strings.concat
          .:"create database "
          get-value:x:@.arguments/*/databaseName
+         .:";"
+
+   // Checking if caller only wants to generate SQL statement.
+   if:x:@.arguments/*/generate
+      unwrap:x:+/*
+      return
+         sql:x:@.sql
 
 
    // Opening our database connection and executing SQL.

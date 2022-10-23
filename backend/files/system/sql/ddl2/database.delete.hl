@@ -6,11 +6,13 @@
  * - [databaseType] - Database type, typically 'mssql' or 'mysql'.
  * - [connectionString] - Connection string to use
  * - [databaseName] - Name of database
+ * - [generate] - If true will not execute SQL but only return DDL to caller
  */
 .arguments
    databaseType:string
    connectionString:string
    databaseName:string
+   generate:bool
 .description:Deletes the specified database
 .type:internal
 
@@ -32,6 +34,11 @@ if
    eq:x:@.arguments/*/databaseType
       .:sqlite
    .lambda
+
+      // Checking if caller only wants to generate SQL.
+      if:x:@.arguments/*/generate
+         return
+            result:/* SQLite does not support drop database syntax */
 
       // Deleting the file for our database.
       strings.concat
@@ -59,6 +66,7 @@ else
             strings.concat
                .:"drop database "
                get-value:x:@.arguments/*/databaseName
+               .:;
 
       case:pgsql
          set-value:x:@.master
@@ -74,6 +82,7 @@ else
                .:"'; "
                .:"drop database "
                get-value:x:@.arguments/*/databaseName
+               .:;
 
       case:mssql
          set-value:x:@.master
@@ -82,9 +91,16 @@ else
             strings.concat
                .:"alter database "
                .:x:@.arguments/*/databaseName
-               .:" set  single_user with rollback immediate; "
+               .:" set single_user with rollback immediate; "
                .:"drop database "
                get-value:x:@.arguments/*/databaseName
+               .:;
+
+   // Checking if caller only wants to generate SQL statement.
+   if:x:@.arguments/*/generate
+      unwrap:x:+/*
+      return
+         sql:x:@.sql
 
    // Opening up database connection and executing SQL.
    strings.concat
