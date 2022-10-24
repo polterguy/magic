@@ -21,6 +21,7 @@ export class NewFieldKeyModel {
   defaultValue: string;
   acceptNull: boolean;
   hasKey: boolean;
+  cascade: boolean;
 }
 
 /**

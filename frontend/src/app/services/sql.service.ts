@@ -285,6 +285,7 @@ export class SqlService {
    * @param nullable If false then column will not accept null values
    * @param columnLength Length of column
    * @param precision If decimal or other real numbers, declares the precision of the column
+   * @param cascading If true then foreign key deletions will cascade
    */
   addColumn(
     databaseType: string,
@@ -298,7 +299,8 @@ export class SqlService {
     foreignField: string,
     nullable: boolean,
     columnLength: number,
-    precision: string) {
+    precision: string,
+    cascading: boolean) {
     return this.httpService.post<any>('/magic/system/sql/ddl/column', {
       databaseType,
       connectionString,
@@ -312,6 +314,7 @@ export class SqlService {
       nullable,
       columnLength,
       precision,
+      cascading,
     });
   }
 

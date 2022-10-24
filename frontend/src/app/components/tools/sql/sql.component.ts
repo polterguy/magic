@@ -746,7 +746,8 @@ export class SqlComponent implements OnInit {
               result.foreignField,
               result.acceptNull,
               result.size,
-              precision).subscribe({
+              precision,
+              result.cascade).subscribe({
                 next: (result: any) => {
                   this.feedbackService.showInfo('Column was successfully added to table');
                   this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: any) => {
