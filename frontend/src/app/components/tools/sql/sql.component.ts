@@ -725,14 +725,14 @@ export class SqlComponent implements OnInit {
         switch (result.type) {
 
           case 'field':
-            if (result.databaseType === 'pgsql' && result.datatype.name === 'timestamp') {
-              result.datatype.name += ' with time zone';
-            }
-            if (result.databaseType === 'mysql' && result.datatype.name === 'decimal') {
-              result.datatype.name += '(30, 5)';
-            }
-            if (result.databaseType === 'mssql' && (result.datatype.name === 'decimal')) {
-              result.datatype.name += '(30, 5)';
+            let precision = null;
+            let defaultValue = null;
+            if (result.defaultValue && result.defaultValue !== '') {
+              if (result.datatype.defaultValue === 'string') {
+                defaultValue = '\'' + result.defaultValue + '\'';
+              } else {
+                defaultValue = result.defaultValue;
+              }
             }
             this.sqlService.addColumn(
               result.databaseType,
@@ -740,10 +740,13 @@ export class SqlComponent implements OnInit {
               result.database.name,
               result.table,
               result.name,
-              result.datatype.name + (result.size ? ('(' + result.size + ')') : '') + (result.acceptNull ? '' : ' not null'),
-              !result.defaultValue || result.defaultValue === '' ? null : (result.datatype.defaultValue ? (result.datatype.defaultValue === 'string' ? ('\'' + result.defaultValue + '\'') : result.defaultValue) : null),
+              result.datatype.name,
+              defaultValue,
               result.foreignTable,
-              result.foreignField).subscribe({
+              result.foreignField,
+              result.acceptNull,
+              result.size,
+              precision).subscribe({
                 next: (result: any) => {
                   this.feedbackService.showInfo('Column was successfully added to table');
                   this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: any) => {

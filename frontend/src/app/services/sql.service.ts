@@ -282,6 +282,9 @@ export class SqlService {
    * @param columnType Type of column
    * @param foreignTable Table column links to
    * @param foreignField Field column links to
+   * @param nullable If false then column will not accept null values
+   * @param columnLength Length of column
+   * @param precision If decimal or other real numbers, declares the precision of the column
    */
   addColumn(
     databaseType: string,
@@ -292,7 +295,10 @@ export class SqlService {
     columnType: string,
     defaultValue: string,
     foreignTable: string,
-    foreignField: string) {
+    foreignField: string,
+    nullable: boolean,
+    columnLength: number,
+    precision: string) {
     return this.httpService.post<any>('/magic/system/sql/ddl/column', {
       databaseType,
       connectionString,
@@ -303,6 +309,9 @@ export class SqlService {
       defaultValue,
       foreignTable,
       foreignField,
+      nullable,
+      columnLength,
+      precision,
     });
   }
 

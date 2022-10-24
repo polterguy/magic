@@ -9,6 +9,8 @@
  * - [tableName] - Name of table
  * - [columnName] - Name of column
  * - [columnType] - Type declaration of column
+ * - [precision] - If relevant declares the precision of column
+ * - [columnLength] - Length of column if applicable
  * - [foreignTable] - Table column links to
  * - [foreignField] - Field column links to
  * - [nullable] - If false will create a column that does NOT accept null values
@@ -21,6 +23,7 @@
    tableName:string
    columnName:string
    columnType:string
+   precision:string
    columnLength:int
    defaultValue:string
    foreignTable:string
@@ -60,18 +63,51 @@ set-value:x:@.sql
       .:" "
       get-value:x:@.arguments/*/columnType
 
-// Column length part, if specified.
+// Column length part, if specified - Otherwise possibly precision.
 if
    and
       exists:x:@.arguments/*/columnLength
       not-null:x:@.arguments/*/columnLength
    .lambda
+
+      // Adding column length
       set-value:x:@.sql
          strings.concat
             get-value:x:@.sql
             .:(
             get-value:x:@.arguments/*/columnLength
             .:)
+else-if
+   and
+      exists:x:@.arguments/*/precision
+      not-null:x:@.arguments/*/precision
+   .lambda
+
+      // Sanity checking precision value.
+      validators.regex:x:@.arguments/*/precision
+         regex:[0-9]+,[0-9]
+      set-value:x:@.sql
+         strings.concat
+            get-value:x:@.sql
+            .:(
+            get-value:x:@.arguments/*/precision
+            .:)
+else-if
+   and
+      neq:x:@.arguments/*/databaseType
+         .:sqlite
+      or
+         eq:x:@.arguments/*/columnType
+            .:decimal
+         eq:x:@.arguments/*/columnType
+            .:numeric
+   .lambda
+
+      // Defaulting precision to (30,5) unless explicitly specified.
+      set-value:x:@.sql
+         strings.concat
+            get-value:x:@.sql
+            .:(30,5)
 
 // Not null parts if specified
 if
