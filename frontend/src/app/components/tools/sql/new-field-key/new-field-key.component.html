@@ -132,7 +132,7 @@
     class="mat-dialog-actions">
 
     <mat-slide-toggle
-      *ngIf="data.type === 'field' && data.databaseType === 'sqlite'"
+      *ngIf="data.type === 'field'"
       [(ngModel)]="data.hasKey"
       name="hasKey"
       labelPosition="before">Foreign key</mat-slide-toggle>
