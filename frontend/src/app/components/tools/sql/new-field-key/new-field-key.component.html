@@ -132,6 +132,12 @@
     class="mat-dialog-actions">
 
     <mat-slide-toggle
+      [disabled]="!data.hasKey"
+      [(ngModel)]="data.cascade"
+      name="cascade"
+      labelPosition="before">Cascade</mat-slide-toggle>
+
+    <mat-slide-toggle
       *ngIf="data.type === 'field'"
       [(ngModel)]="data.hasKey"
       name="hasKey"

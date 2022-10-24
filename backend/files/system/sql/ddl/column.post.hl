@@ -13,6 +13,7 @@
  * - [columnLength] - Length of column if applicable
  * - [foreignTable] - Table column links to
  * - [foreignField] - Field column links to
+ * - [cascading] - If true the foreign key will cascade on delete
  * - [nullable] - If false will create a column that does NOT accept null values
  * - [generate] - If true will not execute SQL but only return DDL to caller
  */
@@ -164,7 +165,25 @@ if
                   get-value:x:@.arguments/*/foreignTable
                   .:(
                   get-value:x:@.arguments/*/foreignField
-                  .:");"
+                  .:")"
+
+            // Checking if cascading deletes are turned on.
+            if
+               and
+                  exists:x:@.arguments/*/cascading
+                  not-null:x:@.arguments/*/cascading
+                  eq
+                     get-value:x:@.arguments/*/cascading
+                     .:bool:true
+               .lambda
+                  set-value:x:@.additional
+                     strings.concat
+                        get-value:x:@.additional
+                        .:" on delete cascade"
+            set-value:x:@.additional
+               strings.concat
+                  get-value:x:@.additional
+                  .:";"
                   
 
       else
