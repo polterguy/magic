@@ -767,7 +767,8 @@ export class SqlComponent implements OnInit {
         connectionString: this.input.connectionString,
         table: table.name,
         database: this.databaseDeclaration.databases.filter((x: any) => x.name === this.input.database)[0],
-        acceptNull: true,
+        acceptNull: false,
+        cascade: false,
       }
     });
     dialogRef.afterClosed().subscribe((result: any) => {
