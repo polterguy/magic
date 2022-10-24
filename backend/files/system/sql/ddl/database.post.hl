@@ -75,7 +75,7 @@ else
 
       case:mssql
          set-value:x:@.master
-            .:master
+            .:model
 
    // Same SQL for all types.
    set-value:x:@.sql
