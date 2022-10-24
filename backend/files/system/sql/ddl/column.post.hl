@@ -135,39 +135,70 @@ if
             get-value:x:@.arguments/*/defaultValue
 
 // References (foreign key) parts if specified.
+.additional:
 if
    and
       not-null:x:@.arguments/*/foreignTable
       not-null:x:@.arguments/*/foreignField
    .lambda
-      set-value:x:@.sql
-         strings.concat
-            get-value:x:@.sql
-            .:" references "
-            get-value:x:@.arguments/*/foreignTable
-            .:"("
-            get-value:x:@.arguments/*/foreignField
-            .:")"
-
-      // Checking if cascading deletes are turned on.
       if
-         and
-            exists:x:@.arguments/*/cascading
-            not-null:x:@.arguments/*/cascading
-            eq
-               get-value:x:@.arguments/*/cascading
-               .:bool:true
+         eq:x:@.arguments/*/databaseType
+            .:mysql
          .lambda
-            set-value:x:@.sql
+
+            // MySQL doesn't support normal foreign key constraints.
+            set-value:x:@.additional
                strings.concat
-                  get-value:x:@.sql
-                  .:" on delete cascade"
+                  .:"\r\nalter table "
+                  get-value:x:@.arguments/*/tableName
+                  .:" add constraint "
+                  get-value:x:@.arguments/*/tableName
+                  .:_
+                  get-value:x:@.arguments/*/foreignTable
+                  .:_
+                  get-value:x:@.arguments/*/foreignField
+                  .:"_fky "
+                  .:foreign key(
+                  get-value:x:@.arguments/*/columnName
+                  .:") references "
+                  get-value:x:@.arguments/*/foreignTable
+                  .:(
+                  get-value:x:@.arguments/*/foreignField
+                  .:");"
+                  
+
+      else
+
+         // Adding normal foreign key constraint.
+         set-value:x:@.sql
+            strings.concat
+               get-value:x:@.sql
+               .:" references "
+               get-value:x:@.arguments/*/foreignTable
+               .:"("
+               get-value:x:@.arguments/*/foreignField
+               .:")"
+
+         // Checking if cascading deletes are turned on.
+         if
+            and
+               exists:x:@.arguments/*/cascading
+               not-null:x:@.arguments/*/cascading
+               eq
+                  get-value:x:@.arguments/*/cascading
+                  .:bool:true
+            .lambda
+               set-value:x:@.sql
+                  strings.concat
+                     get-value:x:@.sql
+                     .:" on delete cascade"
 
 // Appending semi colon at end.
 set-value:x:@.sql
    strings.concat
       get-value:x:@.sql
       .:;
+      get-value:x:@.additional
 
 // Checking if caller only wants to generate SQL statement.
 if:x:@.arguments/*/generate
