@@ -55,14 +55,27 @@ validators.enum:x:@.arguments/*/databaseType
 .sql
 
 // Alter table part.
-set-value:x:@.sql
-   strings.concat
-      .:"alter table "
-      get-value:x:@.arguments/*/tableName
-      .:" add column "
-      get-value:x:@.arguments/*/columnName
-      .:" "
-      get-value:x:@.arguments/*/columnType
+if
+   eq:x:@.arguments/*/databaseType
+      .:mssql
+   .lambda
+      set-value:x:@.sql
+         strings.concat
+            .:"alter table "
+            get-value:x:@.arguments/*/tableName
+            .:" add "
+            get-value:x:@.arguments/*/columnName
+            .:" "
+            get-value:x:@.arguments/*/columnType
+else
+   set-value:x:@.sql
+      strings.concat
+         .:"alter table "
+         get-value:x:@.arguments/*/tableName
+         .:" add column "
+         get-value:x:@.arguments/*/columnName
+         .:" "
+         get-value:x:@.arguments/*/columnType
 
 // Column length part, if specified - Otherwise possibly precision.
 if

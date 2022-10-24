@@ -1,0 +1,71 @@
+<form>
+
+  <div mat-dialog-title>
+    Add referenced field to {{this.data.table}}
+  </div>
+
+  <div mat-dialog-content>
+
+    <mat-form-field
+      class="w-100"
+      appearance="outline">
+      <mat-label>Points to table</mat-label>
+      <mat-select name="tableName" [(ngModel)]="data.foreignTable" (selectionChange)="tableChanged()">
+        <mat-option
+          *ngFor="let idxTable of getTables()"
+          [value]="idxTable">{{idxTable}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field
+      *ngIf="data.foreignTable"
+      class="w-100"
+      appearance="outline">
+      <mat-label>Points to field</mat-label>
+      <mat-select name="foreignFieldName" [(ngModel)]="data.foreignField" (selectionChange)="fieldChanged()">
+        <mat-option
+          *ngFor="let idxForeignField of getForeignField(data.foreignTable)"
+          [value]="idxForeignField">{{idxForeignField}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field
+      *ngIf="data.foreignTable && data.foreignField"
+      class="w-100"
+      appearance="outline">
+      <mat-label>Name of field</mat-label>
+      <input
+        matInput
+        type="text"
+        autocomplete="off"
+        name="name"
+        [(ngModel)]="data.name">
+    </mat-form-field>
+
+  </div>
+
+  <div
+    mat-dialog-actions
+    class="mat-dialog-actions">
+
+    <mat-slide-toggle
+      [(ngModel)]="data.cascade"
+      name="cascade"
+      labelPosition="before">Cascade</mat-slide-toggle>
+
+    <mat-slide-toggle
+      [(ngModel)]="data.acceptNull"
+      name="nullable"
+      labelPosition="before">Nullable</mat-slide-toggle>
+
+    <button
+      mat-raised-button
+      [disabled]="!verifyInput()"
+      color="primary"
+      type="submit"
+      aria-label="Creates your field or key"
+      [mat-dialog-close]="data">Create</button>
+
+  </div>
+
+</form>

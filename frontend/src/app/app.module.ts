@@ -172,7 +172,8 @@ import { SqlWarningComponent } from './components/tools/sql/sql-warning/sql-warn
 import { ConnectionStringDialogComponent } from './components/management/config/connection-string-dialog/connection-string-dialog.component';
 import { ConfirmUninstallDialogComponent } from './components/tools/plugins/confirm-uninstall-dialog/confirm-uninstall-dialog.component';
 import { SmtpDialogComponent } from './components/management/config/smtp-dialog/smtp-dialog.component';
-import { NewFieldKeyComponent } from './components/tools/sql/new-field-key/new-field-key.component';
+import { NewFieldComponent } from './components/tools/sql/new-field/new-field.component';
+import { NewReferencedFieldComponent } from './components/tools/sql/new-referenced-field/new-referenced-field.component';
 import { NewTableComponent } from './components/tools/sql/new-table/new-table.component';
 import { NewDatabaseComponent } from './components/tools/sql/new-database/new-database.component';
 import { ExportTablesComponent } from './components/tools/sql/export-tables/export-tables.component';
@@ -285,7 +286,8 @@ import { Redirect2hubComponent } from './components/tools/crudifier/crud-fronten
     ConnectionStringDialogComponent,
     ConfirmUninstallDialogComponent,
     SmtpDialogComponent,
-    NewFieldKeyComponent,
+    NewFieldComponent,
+    NewReferencedFieldComponent,
     NewTableComponent,
     NewDatabaseComponent,
     ExportTablesComponent,

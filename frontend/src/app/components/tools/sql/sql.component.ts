@@ -23,7 +23,7 @@ import { NewTableComponent } from './new-table/new-table.component';
 import { FeedbackService } from '../../../services/feedback.service';
 import { SqlWarningComponent } from './sql-warning/sql-warning.component';
 import { NewDatabaseComponent } from './new-database/new-database.component';
-import { NewFieldKeyComponent } from './new-field-key/new-field-key.component';
+import { NewFieldComponent } from './new-field/new-field.component';
 import { ExportTablesComponent } from './export-tables/export-tables.component';
 import { DefaultDatabaseType } from '../../../models/default-database-type.model';
 import { NewLinkTableComponent } from './new-link-table/new-link-table.component';
@@ -41,6 +41,7 @@ import { MessageService } from 'src/app/services/message.service';
 import { LoaderService } from 'src/app/services/loader.service';
 import { environment } from 'src/environments/environment';
 import { ConfirmUninstallDialogComponent } from '../plugins/confirm-uninstall-dialog/confirm-uninstall-dialog.component';
+import { NewReferencedFieldComponent } from './new-referenced-field/new-referenced-field.component';
 
 /**
  * SQL component allowing user to execute arbitrary SQL statements towards his or her database.
@@ -705,78 +706,98 @@ export class SqlComponent implements OnInit {
    *
    * @param table Table to create field or key for
    */
-  createFieldKey(table: any) {
-    const dialogRef = this.dialog.open(NewFieldKeyComponent, {
+  createField(table: any) {
+    const dialogRef = this.dialog.open(NewFieldComponent, {
       width: '550px',
       data: {
         databaseType: this.input.databaseType,
         connectionString: this.input.connectionString,
         table: table.name,
         database: this.databaseDeclaration.databases.filter((x: any) => x.name === this.input.database)[0],
-        type: 'field',
         acceptNull: true,
-        hasKey: false,
       }
     });
     dialogRef.afterClosed().subscribe((result: any) => {
 
       // We should only create a new field/key if the modal dialog returns some data to us.
       if (result) {
-        switch (result.type) {
-
-          case 'field':
-            let precision = null;
-            let defaultValue = null;
-            if (result.defaultValue && result.defaultValue !== '') {
-              if (result.datatype.defaultValue === 'string') {
-                defaultValue = '\'' + result.defaultValue + '\'';
-              } else {
-                defaultValue = result.defaultValue;
-              }
-            }
-            this.sqlService.addColumn(
-              result.databaseType,
-              result.connectionString,
-              result.database.name,
-              result.table,
-              result.name,
-              result.datatype.name,
-              defaultValue,
-              result.foreignTable,
-              result.foreignField,
-              result.acceptNull,
-              result.size,
-              precision,
-              result.cascade).subscribe({
-                next: (result: any) => {
-                  this.feedbackService.showInfo('Column was successfully added to table');
-                  this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: any) => {
-                    this.reloadDatabases();
-                  });
-                  this.applyMigration(result.sql);
-                },
-                error: (error) => this.feedbackService.showError(error)
-              });
-            break;
-
-          case 'key':
-            this.sqlService.addFk(
-              result.databaseType,
-              result.connectionString,
-              result.database.name,
-              result.table,
-              result.field,
-              result.foreignTable,
-              result.foreignField).subscribe({
-                next: (result: any) => {
-                  this.feedbackService.showInfo('Foreign key was successfully added to table');
-                  this.reloadDatabases();
-                  this.applyMigration(result.sql);
-                },
-                error: (error) => this.feedbackService.showError(error)
-              });
-            break;
+        let precision = null;
+        let defaultValue = null;
+        if (result.defaultValue && result.defaultValue !== '') {
+          if (result.datatype.defaultValue === 'string') {
+            defaultValue = '\'' + result.defaultValue + '\'';
+          } else {
+            defaultValue = result.defaultValue;
+          }
         }
+        this.sqlService.addColumn(
+          result.databaseType,
+          result.connectionString,
+          result.database.name,
+          result.table,
+          result.name,
+          result.datatype.name,
+          defaultValue,
+          result.acceptNull,
+          result.size,
+          precision).subscribe({
+            next: (result: any) => {
+              this.feedbackService.showInfo('Column was successfully added to table');
+              this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: any) => {
+                this.reloadDatabases();
+              });
+              this.applyMigration(result.sql);
+            },
+            error: (error) => this.feedbackService.showError(error)
+          });
+      }
+    });
+  }
+
+  /**
+   * Creates a new field or key for specified table.
+   *
+   * @param table Table to create field or key for
+   */
+   createReferencedField(table: any) {
+    const dialogRef = this.dialog.open(NewReferencedFieldComponent, {
+      width: '550px',
+      data: {
+        databaseType: this.input.databaseType,
+        connectionString: this.input.connectionString,
+        table: table.name,
+        database: this.databaseDeclaration.databases.filter((x: any) => x.name === this.input.database)[0],
+        acceptNull: true,
+      }
+    });
+    dialogRef.afterClosed().subscribe((result: any) => {
+
+      // We should only create a new field/key if the modal dialog returns some data to us.
+      if (result) {
+        const dbType = result.database.tables
+          .filter((x: any) => x.name === result.foreignTable)[0].columns
+          .filter((x: any) => x.name === result.foreignField)[0].db;
+        this.sqlService.addReferencedColumn(
+          result.databaseType,
+          result.connectionString,
+          result.database.name,
+          result.table,
+          result.name,
+          dbType,
+          result.foreignTable,
+          result.foreignField,
+          result.acceptNull,
+          result.size,
+          result.cascade).subscribe({
+            next: (result: any) => {
+              this.feedbackService.showInfo('Column was successfully added to table');
+              this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: any) => {
+                this.reloadDatabases();
+              });
+              this.applyMigration(result.sql);
+            },
+            error: (error) => this.feedbackService.showError(error)
+          });
       }
     });
   }
@@ -822,7 +843,7 @@ export class SqlComponent implements OnInit {
           this.input.connectionString,
           result.name).subscribe({
             next: () => {
-              this.feedbackService.showInfo('Database successfully create');
+              this.feedbackService.showInfo('Database successfully created');
               this.reloadDatabases(() => this.input.database = result.name);
             },
             error: (error: any) => this.feedbackService.showError(error)
@@ -882,7 +903,7 @@ export class SqlComponent implements OnInit {
         const table1pk: any[] = table1.columns.filter((x: any) => x.primary);
         const table2pk: any[] = table2.columns.filter((x: any) => x.primary);
         const payload = {
-          name: table1.name + '_' + table2.name,
+          name: table1.name.replace('dbo.', '').replace('.', '_') + '_' + table2.name.replace('dbo.', '').replace('.', '_'),
           table1: table1.name,
           table2: table2.name,
           table1pk: table1pk.map((x: any) => {

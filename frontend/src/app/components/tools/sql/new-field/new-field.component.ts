@@ -5,34 +5,27 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 /**
  * Model for creating a new field or key in the specified table.
  */
-export class NewFieldKeyModel {
+export class NewFieldModel {
   databaseType: string;
   connectionString: string;
-  table: string;
   database: any;
-  type: string;
+  table: string;
   name: string;
-  field: string;
   datatype: any;
-  foreignTable: string;
-  foreignField: string;
-  fkName: string;
   size: number;
   defaultValue: string;
   acceptNull: boolean;
-  hasKey: boolean;
-  cascade: boolean;
 }
 
 /**
  * Component allowing user to create a new field or foreign key.
  */
 @Component({
-  selector: 'app-new-field-key',
-  templateUrl: './new-field-key.component.html',
-  styleUrls: ['./new-field-key.component.scss']
+  selector: 'app-new-field',
+  templateUrl: './new-field.component.html',
+  styleUrls: ['./new-field.component.scss']
 })
-export class NewFieldKeyComponent {
+export class NewFieldComponent {
 
   // Datatypes specific for MySQL.
   private mySqlDataTypes = [
@@ -168,14 +161,7 @@ export class NewFieldKeyComponent {
     },
   ];
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: NewFieldKeyModel) { }
-
-  /**
-   * Returns all fields in table to caller.
-   */
-  getFields() {
-    return this.data.database.tables.filter((x: any) => x.name === this.data.table)[0].columns;
-  }
+  constructor(@Inject(MAT_DIALOG_DATA) public data: NewFieldModel) { }
 
   /**
    * Returns the supported datatypes for the specified database type to caller.
@@ -198,31 +184,10 @@ export class NewFieldKeyComponent {
   }
 
   /**
-   * Returns all tables in database to caller.
-   */
-  getTables() {
-    return this.data.database.tables.map((x: any) => x.name);
-  }
-
-  /**
-   * Returns all fields in specified table to caller.
-   */
-  getForeignField(table: string) {
-    return this.data.database.tables.filter((x: any) => x.name == table)[0].columns.map((x: any) => x.name);
-  }
-
-  /**
    * Returns true if input is valid.
    */
   verifyInput() {
-    switch (this.data.type) {
-
-      case 'field':
-        return this.data.name && this.data.datatype && (!this.data.datatype.size || this.data.size);
-
-      case 'key':
-        return this.data.field && this.data.foreignTable && this.data.foreignField;
-    }
+    return this.data.name && this.data.datatype && (!this.data.datatype.size || this.data.size);
   }
 
   /**
