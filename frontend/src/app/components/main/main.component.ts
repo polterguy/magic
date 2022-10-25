@@ -85,9 +85,6 @@ export class MainComponent implements OnInit {
    */
   ngOnInit() {
 
-    // Checking for query parameters.
-    this.getParams();
-
     // Checking the screen width rule for initial setting
     this.onWindowResize();
 
@@ -115,20 +112,8 @@ export class MainComponent implements OnInit {
       }
     });
 
-    // Retrieving recaptcha key and storing in the backend service to be accessible everywhere.
-    // Only if active backend is available, to prevent recaptcha errors in the console.
-    if (this.backendService.active) {
-      this.backendService.verifyToken().subscribe({
-        next: (res: any) => {
-          if (!res) {
-            this.backendService.logout(false);
-          } else if (res.result && res.result !== 'success') {
-            this.backendService.logout(false);
-          }
-        }, 
-        error: () => this.backendService.logout(false)
-      });
-    }
+    // Checking for query parameters.
+    this.getParams();
   }
 
   /**
@@ -232,22 +217,34 @@ export class MainComponent implements OnInit {
           });
 
         } else {
-          this.getStatus();
+
+          if (this.backendService.active) {
+            this.getStatus();
+            this.backendService.verifyToken().subscribe({
+              next: (res: any) => {
+                if (!res) {
+                  this.backendService.logout(false);
+                } else if (res.result && res.result !== 'success') {
+                  this.backendService.logout(false);
+                }
+              }, 
+              error: () => this.backendService.logout(false)
+            });
+          }
         }
       }
     });
   }
 
+  /*
+   * Retrieves endpoints and status of backend.
+   */
   private getStatus() {
+    this.backendService.getEndpoints(this.backendService.active);
 
-    // If we have an active backend we need to retrieve endpoints for it.
-    if (this.backendService.active) {
-      this.backendService.getEndpoints(this.backendService.active);
-
-      // If user is root we'll need to retrieve status of active backend and its version.
-      if (this.backendService.active.token && !this.backendService.active.token.expired && this.backendService.active.token.in_role('root')) {
-        this.backendService.retrieveStatusAndVersion(this.backendService.active);
-      }
+    // If user is root we'll need to retrieve status of active backend and its version.
+    if (this.backendService.active.token && !this.backendService.active.token.expired && this.backendService.active.token.in_role('root')) {
+      this.backendService.retrieveStatusAndVersion(this.backendService.active);
     }
   }
 }
