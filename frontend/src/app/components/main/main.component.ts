@@ -191,7 +191,7 @@ export class MainComponent implements OnInit {
               this.feedbackService.showInfo(`You were successfully authenticated as '${username}'`);
 
               // Checking if this is an impersonation request or a change-password request.
-              if (this.backendService.active.token.in_role('reset-password')) {
+              if (this.backendService.active.token?.in_role('reset-password')) {
 
                 // Change password request.
                 this.router.navigate(['/change-password']);
