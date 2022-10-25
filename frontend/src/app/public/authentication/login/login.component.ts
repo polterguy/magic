@@ -206,7 +206,8 @@ export class LoginComponent implements OnInit {
         this.loginForm.value.password,
         this.savePassword).subscribe({
           next: () => {
-            this.router.navigate(['/']);
+            window.location.href = '/';
+            // this.router.navigate(['/']);
             this.waiting = false;
           },
           error: (error: any) => {

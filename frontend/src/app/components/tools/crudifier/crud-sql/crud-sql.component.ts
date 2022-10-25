@@ -8,7 +8,7 @@ import { Component, ComponentFactoryResolver, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { Messages } from 'src/app/models/messages.model';
-import { Database } from 'src/app/_protected/pages/sql-studio/_models/database.model';
+import { Database } from 'src/app/_protected/pages/database/_models/database.model';
 import { Databases } from 'src/app/models/databases.model';
 import { SqlService } from '../../../../services/sql.service';
 import { MessageService } from 'src/app/services/message.service';

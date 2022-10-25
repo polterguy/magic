@@ -1,9 +1,9 @@
 <div class="d-flex justify-content-between align-items-center w-100 mb-4">
   <h3 class="my-0">List of backends</h3>
-  <button mat-flat-button color="primary">
+  <a mat-flat-button color="primary" [href]="'/authentication/login'">
     <span class="d-sm-block d-none">Add new backend</span>
     <span class="d-sm-none d-block">New backend</span>
-  </button>
+  </a>
 </div>
 
 <ng-container *ngIf="isLoading">
