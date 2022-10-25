@@ -118,8 +118,6 @@ export class MainComponent implements OnInit {
     // Retrieving recaptcha key and storing in the backend service to be accessible everywhere.
     // Only if active backend is available, to prevent recaptcha errors in the console.
     if (this.backendService.active) {
-      this.backendService.getRecaptchaKey();
-
       this.backendService.verifyToken().subscribe({
         next: (res: any) => {
           if (!res) {
@@ -232,6 +230,7 @@ export class MainComponent implements OnInit {
             },
             error: (error: any) => this.feedbackService.showError(error)
           });
+
         } else {
           this.getStatus();
         }
