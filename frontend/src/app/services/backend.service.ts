@@ -137,19 +137,6 @@ export class BackendService {
    */
   activate(value: Backend, fetchRecaptcha: boolean = true) {
     this.backendsStorageService.activate(value);
-    if (!value.access.fetched) {
-      this.getEndpoints(value);
-    } else {
-      value.createAccessRights(); // Updating access rights in case previous token was garbage.
-      this._endpointsRetrieved.next(true);
-    }
-    if (value.token && value.token.in_role('root') && !value.status) {
-      this.retrieveStatusAndVersion(this.active);
-    }
-    this._activeChanged.next(value);
-    if (fetchRecaptcha) {
-      this.getRecaptchaKey();
-    }
   }
 
   /**
@@ -440,6 +427,10 @@ export class BackendService {
       next: (res) => {
         backend.applyEndpoints(res || []);
         this._endpointsRetrieved.next(true);
+        if (backend.token && backend.token.in_role('root') && !backend.status) {
+          this.retrieveStatusAndVersion(this.active);
+        }
+        this.getRecaptchaKey();
       },
       error: () => {
         backend.applyEndpoints([]);
@@ -491,7 +482,6 @@ export class BackendService {
                     this._versionRetrieved.next(backend.version);
                   }});
             }
-            this.getRecaptchaKey(true);
           }
         });
       }});
