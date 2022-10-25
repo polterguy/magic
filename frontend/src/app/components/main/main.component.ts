@@ -190,6 +190,7 @@ export class MainComponent implements OnInit {
 
               if (result.result !== 'success') {
                 this.backendService.logout(false);
+                this.feedbackService.showError('Bogus token');
                 return;
               }
 
@@ -231,8 +232,23 @@ export class MainComponent implements OnInit {
             },
             error: (error: any) => this.feedbackService.showError(error)
           });
+        } else {
+          this.getStatus();
         }
       }
     });
+  }
+
+  private getStatus() {
+
+    // If we have an active backend we need to retrieve endpoints for it.
+    if (this.backendService.active) {
+      this.backendService.getEndpoints(this.backendService.active);
+
+      // If user is root we'll need to retrieve status of active backend and its version.
+      if (this.backendService.active.token && !this.backendService.active.token.expired && this.backendService.active.token.in_role('root')) {
+        this.backendService.retrieveStatusAndVersion(this.backendService.active);
+      }
+    }
   }
 }

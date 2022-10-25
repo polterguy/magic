@@ -104,16 +104,6 @@ export class BackendService {
 
     this._obscure = new BehaviorSubject<boolean>(false);
     this.obscure = this._obscure.asObservable();
-
-    // If we have an active backend we need to retrieve endpoints for it.
-    if (this.active) {
-      this.getEndpoints(this.active);
-
-      // If user is root we'll need to retrieve status of active backend and its version.
-      if (this.active.token && !this.active.token.expired && this.active.token.in_role('root')) {
-        this.retrieveStatusAndVersion(this.active);
-      }
-    }
   }
 
   /**
@@ -445,7 +435,7 @@ export class BackendService {
   /*
    * Retrieves endpoints for currently selected backend.
    */
-  private getEndpoints(backend: Backend) {
+  public getEndpoints(backend: Backend) {
     this.httpClient.get<Endpoint[]>(backend.url + '/magic/system/auth/endpoints').subscribe({
       next: (res) => {
         backend.applyEndpoints(res || []);
@@ -461,7 +451,7 @@ export class BackendService {
   /*
    * Retrieves status of backend and version
    */
-  private retrieveStatusAndVersion(backend: Backend) {
+  public retrieveStatusAndVersion(backend: Backend) {
 
     // Retrieving status of specified backend.
     this.httpClient.get<Status>(
