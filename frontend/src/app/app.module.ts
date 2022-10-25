@@ -61,7 +61,6 @@ import './codemirror/hyperlambda.js';
 import 'codemirror/addon/hint/sql-hint.js';
 
 // Application specific imports.
-import { AccessGuard } from './access.guard';
 import { DatePipe } from './pipes/date.pipe';
 import { MarkedPipe } from './pipes/marked.pipe';
 import { DynamicPipe } from './pipes/dynamic.pipe';
@@ -360,7 +359,6 @@ import { Redirect2hubComponent } from './components/tools/crudifier/crud-fronten
       useClass: LoaderInterceptor,
       multi: true
     },
-    AccessGuard
   ],
   bootstrap: [MainComponent],
 })
