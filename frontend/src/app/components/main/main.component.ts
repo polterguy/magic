@@ -186,7 +186,12 @@ export class MainComponent implements OnInit {
           this.backendService.upsert(backend);
           this.backendService.activate(backend);
           this.backendService.verifyToken().subscribe({
-            next: () => {
+            next: (result: any) => {
+
+              if (result.result !== 'success') {
+                this.backendService.logout(false);
+                return;
+              }
 
               this.feedbackService.showInfo(`You were successfully authenticated as '${username}'`);
 
