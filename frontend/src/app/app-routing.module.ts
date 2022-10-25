@@ -34,6 +34,10 @@ const routes: Routes = [
         path: 'generated-frontend',
         loadChildren: () => import('./_protected/pages/generated-frontend/_module/frontend.module').then(m => m.FrontendModule)
       },
+      {
+        path: 'database-management',
+        loadChildren: () => import('./_protected/pages/database/_module/database.module').then(m => m.DatabaseModule)
+      },
     ]
   },
   {

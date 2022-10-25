@@ -140,18 +140,18 @@ export class HeaderComponent implements OnInit {
         expandable: true,
         submenu: [
           {
-            name: 'SQL studio',
-            url: '/sql-studio',
+            name: 'Database',
+            url: '/database-management',
             disabled: !(this.permissions.access.sql.execute_access && this.permissions.setupDone)
           },
           {
-            name: 'CRUD generator',
-            url: '/sql-studio',
+            name: 'Endpoint generator',
+            url: '/endpoint-generator',
             disabled: !(this.permissions.access.crud.generate_crud && this.permissions.access.crud.generate_sql && this.permissions.access.crud.generate_frontend && this.permissions.setupDone)
           },
           {
-            name: 'Extra Modules',
-            url: '/extra-modules',
+            name: 'Plugins',
+            url: '/plugins',
             disabled: !(this.permissions.access.bazar.get_manifests && this.permissions.setupDone)
           },
           {

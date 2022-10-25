@@ -4,7 +4,7 @@
  */
 
 // Application specific imports.
-import { Database } from "../_protected/pages/sql-studio/_models/database.model";
+import { Database } from "../_protected/pages/database/_models/database.model";
 
 /**
  * Database meta information type, describing all databases in

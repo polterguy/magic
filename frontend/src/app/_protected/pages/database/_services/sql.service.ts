@@ -9,9 +9,9 @@ import { Injectable } from '@angular/core';
 
 // Application specific imports.
 import { HttpService } from '../../../services/common/http.service';
-import { Databases } from '../../sql-studio/_models/databases.model';
 import { FileService } from '../../hyper-ide/_services/file.service';
-import { DefaultDatabaseType } from '../../sql-studio/_models/default-database-type.model';
+import { DefaultDatabaseType } from '../_models/default-database-type.model';
+import { Databases } from '../_models/databases.model';
 
 /**
  * SQL service allowing you to execute SQL and retrieve meta information about

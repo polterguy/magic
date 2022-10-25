@@ -11,11 +11,10 @@ import { Component, OnInit } from '@angular/core';
 import { CacheService } from 'src/app/services/cache.service';
 import { MessageService } from '../../../../services/common/message.service';
 import { BackendService } from '../../../../services/common/backend.service';
-import { SqlService } from '../../../sql-studio/_services/sql.service';
+import { SqlService } from '../../../database/_services/sql.service';
 import { LogService } from 'src/app/_protected/pages/log/_services/log.service';
 import { Crudify } from 'src/app/_protected/pages/crud-generator/_models/crudify.model';
 import { LocResult } from 'src/app/_protected/pages/crud-generator/_models/loc-result.model';
-import { DefaultDatabaseType } from '../../../sql-studio/_models/default-database-type.model';
 import { CrudifyService } from 'src/app/_protected/pages/crud-generator/_services/crudify.service';
 
 // CodeMirror options.
@@ -24,6 +23,7 @@ import json from '../../../../../codemirror/options/json.json'
 // Default configuration for crudifying database.
 import data from './data/data.json';
 import { GeneralService } from 'src/app/_general/services/general.service';
+import { DefaultDatabaseType } from '../../../database/_models/default-database-type.model';
 
 /**
  * Component that helps you crudify your magic database
