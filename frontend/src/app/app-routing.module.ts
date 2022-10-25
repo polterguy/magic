@@ -8,7 +8,6 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 // Application specific imports.
-import { AccessGuard } from './access.guard';
 import { AccessModel } from './models/access.model';
 import { IdeComponent } from './components/tools/ide/ide.component';
 import { AboutComponent } from './components/about/about.component';
@@ -42,98 +41,68 @@ const routes: Routes = [
   {
     path: 'sql',
     component: SqlComponent,
-    canActivate: [AccessGuard],
-    data: { check: (access: AccessModel) : boolean => access.sql.execute_access }
   },
   {
     path: 'ide',
     component: IdeComponent,
-    canActivate: [AccessGuard],
-    data: { check: (access: AccessModel) : boolean => access.files.list_files && access.files.list_folders }
   },
   {
     path: 'log',
     component: LogComponent,
-    canActivate: [AccessGuard],
-    data: { check: (access: AccessModel) : boolean => access.log.read }
   },
   {
     path: 'auth',
     component: AuthComponent,
-    canActivate: [AccessGuard],
-    data: { check: (access: AccessModel) : boolean => access.auth.view_users && access.auth.view_roles }
   },
   {
     path: 'tasks',
     component: TasksComponent,
-    canActivate: [AccessGuard],
-    data: { check: (access: AccessModel) : boolean => access.auth.view_users && access.auth.view_roles }
   },
   {
     path: 'plugins',
     component: BazarComponent,
-    canActivate: [AccessGuard],
-    data: { check: (access: AccessModel) : boolean => access.bazar.get_manifests }
   },
 
   {
     path: 'cache',
     component: DiagnosticsCacheComponent,
-    canActivate: [AccessGuard],
-    data: { check: (access: AccessModel) : boolean => access.cache.read && access.cache.count }
   },
 
   {
     path: 'keys',
     component: CryptoComponent,
-    canActivate: [AccessGuard],
-    data: { check: (access: AccessModel) : boolean => access.crypto.import_public_key }
   },
   {
     path: 'profile',
     component: ProfileComponent,
-    canActivate: [AccessGuard],
-    data: { check: (access: AccessModel) : boolean => access.profile }
   },
   {
     path: 'sockets',
     component: SocketsComponent,
-    canActivate: [AccessGuard],
-    data: { check: (access: AccessModel) : boolean => access.sockets.read }
   },
   {
     path: 'terminal',
     component: TerminalComponent,
-    canActivate: [AccessGuard],
-    data: { check: (access: AccessModel) : boolean => access.terminal.execute }
   },
   {
     path: 'endpoints',
     component: EndpointsComponent,
-    canActivate: [AccessGuard],
-    data: { check: (access: AccessModel) : boolean => access.endpoints.view }
   },
   {
     path: 'evaluator',
     component: EvaluatorComponent,
-    canActivate: [AccessGuard],
-    data: { check: (access: AccessModel) : boolean => access.eval.execute }
   },
   {
     path: 'crud-generator',
     component: CrudifierComponent,
-    canActivate: [AccessGuard],
-    data: { check: (access: AccessModel) : boolean => access.crud.generate_crud || access.crud.generate_sql || access.crud.generate_frontend }
   },
   {
     path: 'assumptions',
     component: DiagnosticsTestsComponent,
-    canActivate: [AccessGuard],
-    data: { check: (access: AccessModel) : boolean => access.endpoints.assumptions }
   },
   {
     path: 'config',
-    component: ConfigComponent
+    component: ConfigComponent,
   },
   {
     path: 'about',
@@ -145,7 +114,7 @@ const routes: Routes = [
   },
   {
     path: 'change-password',
-    component: ChangePasswordComponent
+    component: ChangePasswordComponent,
   },
   {
     path: '**',
