@@ -168,31 +168,18 @@ export class MainComponent implements OnInit {
           const backend = new Backend(url, username, null, token);
           this.backendService.upsert(backend);
           this.backendService.activate(backend);
-          this.backendService.verifyToken().subscribe({
-            next: (result: any) => {
 
-              if (result.result !== 'success') {
-                this.backendService.logout(false);
-                this.feedbackService.showError('Bogus token');
-                return;
-              }
+          // Checking if this is an impersonation request or a change-password request.
+          if (this.backendService.active.token?.in_role('reset-password')) {
 
-              this.feedbackService.showInfo(`You were successfully authenticated as '${username}'`);
+            // Change password request.
+            this.router.navigate(['/change-password']);
 
-              // Checking if this is an impersonation request or a change-password request.
-              if (this.backendService.active.token?.in_role('reset-password')) {
+          } else {
 
-                // Change password request.
-                this.router.navigate(['/change-password']);
-
-              } else {
-
-                // Impersonation request.
-                this.location.replaceState('');
-              }
-            },
-            error: (error: any) => this.feedbackService.showError(error)
-          });
+            // Impersonation request.
+            this.location.replaceState('');
+          }
 
         } else if (token) {
 
