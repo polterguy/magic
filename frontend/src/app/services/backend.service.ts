@@ -133,9 +133,8 @@ export class BackendService {
    * Activates the specified backend.
    *
    * @param value Backend to activate
-   * @param fetchRecaptcha ReCaptcha key to be fetched, true by default and false when invoked from forgot password
    */
-  activate(value: Backend, fetchRecaptcha: boolean = true) {
+  activate(value: Backend) {
     this.backendsStorageService.activate(value);
   }
 
