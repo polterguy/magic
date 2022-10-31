@@ -8,8 +8,8 @@ import { throwError } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
-import { HttpService } from '../../../services/common/http.service';
-import { FileService } from '../../hyper-ide/_services/file.service';
+import { HttpService } from '../../../../services/common/http.service';
+import { FileService } from '../../../hyper-ide/_services/file.service';
 import { DefaultDatabaseType } from '../_models/default-database-type.model';
 import { Databases } from '../_models/databases.model';
 

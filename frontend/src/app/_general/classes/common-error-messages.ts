@@ -18,4 +18,5 @@ export const CommonErrorMessages: { [key: string]: string } = {
   phone: 'e.g. 1111111111',
   subject: '2 to 30 letters, without special characters',
   message: 'Message cannot be less than 3 characters',
+  appNames: 'Only lowercase alphanumeric characters, and - or _ please'
 };
