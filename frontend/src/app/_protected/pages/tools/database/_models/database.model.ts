@@ -4,7 +4,7 @@
  */
 
 // Application specific imports.
-import { Table } from "../../../../models/table.model";
+import { Table } from "../../../../../models/table.model";
 
 /**
  * Database class containing meta information about

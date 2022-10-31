@@ -36,7 +36,11 @@ const routes: Routes = [
       },
       {
         path: 'database-management',
-        loadChildren: () => import('./_protected/pages/database/_module/database.module').then(m => m.DatabaseModule)
+        loadChildren: () => import('./_protected/pages/tools/database/_module/database.module').then(m => m.DatabaseModule)
+      },
+      {
+        path: 'endpoint-generator',
+        loadChildren: () => import('./_protected/pages/tools/endpoints/_module/endpoint.module').then(m => m.EndpointModule)
       },
     ]
   },

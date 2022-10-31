@@ -6,7 +6,7 @@
 // Angular and system imports.
 import { Injectable } from '@angular/core';
 import { Crudify } from '../../../../_protected/pages/crud-generator/_models/crudify.model';
-import { TableEx } from '../models/table-ex.model';
+import { TableEx } from '../_models/table-ex.model';
 
 /**
  * Transformation service building a Crudify object given the specific arguments.

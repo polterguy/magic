@@ -5,6 +5,7 @@ import { DateSincePipe } from "./_general/pipes/date-since.pipe";
 import { DynamicPipe } from "./_general/pipes/dynamic.pipe";
 import { MarkedPipe } from "./_general/pipes/marked.pipe";
 import { DatePipe } from "./_general/pipes/date.pipe";
+import { SortByPipe } from "./_general/pipes/sort-by.pipe";
 
 @NgModule({
   declarations: [
@@ -12,7 +13,8 @@ import { DatePipe } from "./_general/pipes/date.pipe";
     DateSincePipe,
     DatePipe,
     DynamicPipe,
-    MarkedPipe
+    MarkedPipe,
+    SortByPipe
   ],
   imports: [
     CommonModule
@@ -22,7 +24,8 @@ import { DatePipe } from "./_general/pipes/date.pipe";
     DateSincePipe,
     DatePipe,
     DynamicPipe,
-    MarkedPipe
+    MarkedPipe,
+    SortByPipe
   ]
 })
 export class SharedModule { }

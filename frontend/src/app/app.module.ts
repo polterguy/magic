@@ -20,6 +20,12 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { RecaptchaV3Module, RecaptchaFormsModule, RecaptchaModule } from "ng-recaptcha";
 import { NgxMatDatetimePickerModule, NgxMatTimepickerModule } from '@angular-material-components/datetime-picker';
 
+// Hyperlambda mode for CodeMirror import.
+import './codemirror/hyperlambda.js';
+
+// SQL hints plugin for CodeMirror.
+import 'codemirror/addon/hint/sql-hint.js';
+
 // PWA
 import { environment } from 'src/environments/environment';
 import { ServiceWorkerModule } from '@angular/service-worker';
@@ -36,7 +42,6 @@ import { HeaderComponent } from './_layout/header/header.component';
 import { FooterComponent } from './_layout/footer/footer.component';
 import { LoaderService } from './services/loader.service';
 import { LoaderInterceptor } from './interceptors/loader.interceptor';
-import { CodemirrorSqlComponent } from './codemirror/codemirror-sql/codemirror-sql.component';
 import { HyperlambdaComponent } from './codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 
 @NgModule({
@@ -45,7 +50,6 @@ import { HyperlambdaComponent } from './codemirror/codemirror-hyperlambda/codemi
     CoreComponent,
     HeaderComponent,
     FooterComponent,
-    CodemirrorSqlComponent,
     HyperlambdaComponent
   ],
   imports: [
