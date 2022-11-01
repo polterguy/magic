@@ -1,0 +1,31 @@
+
+/*
+ * Template for HTTP DELETE CRUD requests.
+ * This file was automatically generated using Magic's CRUDifier.
+ */
+.arguments
+   id:long
+.description:Deletes one item from your crypto_keys table in your [generic|magic] database matching the specified argument(s)
+.type:crud-delete
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root
+validators.mandatory:x:@.arguments/*/id
+
+// Opening up our database connection.
+data.connect:[generic|magic]
+
+   // Parametrising our delete invocation.
+   add:x:./*/data.delete/*/where/*/and
+      get-nodes:x:@.arguments/*
+
+   // Deleting item from database.
+   data.delete
+      table:crypto_keys
+      where
+         and
+
+   // Returning result of above invocation to caller.
+   unwrap:x:+/*
+   return
+      affected:x:@data.delete
