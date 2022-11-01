@@ -1,0 +1,33 @@
+/*
+ * Returns a list of all socket messages the backend can publish.
+ */
+.arguments
+.description:Returns a list of all socket messages the backend can publish
+
+// Making sure user is allowed to access endpoint
+auth.ticket.verify:root
+
+// Buffer for return values
+.signals
+
+// Looping through all files recursively inside of modules folder.
+io.file.list-recursively:/modules/
+for-each:x:-/*
+   if
+      strings.ends-with:x:@.dp/#
+         .:.hl
+      .lambda
+         io.file.load:x:@.dp/#
+         hyper2lambda:x:-
+         if
+            exists:x:@hyper2lambda/**/sockets.signal
+            .lambda
+
+               // Returning socket message invocation to caller.
+               unwrap:x:+/*/*/*
+               add:x:@.signals
+                  .
+                     .
+                        name:x:@hyper2lambda/**/sockets.signal/[0,1]
+                        path:x:@.dp/#
+return-nodes:x:@.signals/*
