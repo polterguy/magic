@@ -6,24 +6,29 @@
  * 
  * Notice, if the root user exists from before, this file will change
  * its password - However, you cannot setup the system twice, unless you
- * manually change the JWT secret to its default value, which
- * is 'THIS-IS-NOT-A-GOOD-SECRET-PLEASE-CHANGE-IT'.
+ * manually change the JWT secret to a value that's less than 50 characters
+ * in length.
  */
 .arguments
    username:string
    password:string
    is_hashed:bool
-   settings:*
+   connectionString:string
+   defaultTimeZone:string
+   databaseType:string
+   name:string
+   email:string
 .description:Setup authentication and other parts of the system according to the arguments provided
 .type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
-// Sanity checking invocation.
-validators.mandatory:x:@.arguments/*/settings/*/magic/*/auth/*/secret
-validators.string:x:@.arguments/*/settings/*/magic/*/auth/*/secret
-   min:int:80
+validators.enum:x:@.arguments/*/databaseType
+   .:mssql
+   .:mysql
+   .:pgsql
+   .:sqlite
 
 // Default [is_hashed] to false.
 if
@@ -54,10 +59,11 @@ try
     */
    config.get:"magic:auth:secret"
    if
-      not
-         eq
-            get-value:x:@config.get
-            .:THIS-IS-NOT-A-GOOD-SECRET-PLEASE-CHANGE-IT
+      and
+         not-null:x:@config.get
+         mte
+            strings.length:x:@config.get
+            .:int:50
       .lambda
 
          // System has been setup before
@@ -71,24 +77,24 @@ try
     * not valid.
     */
    try
-      switch:x:@.arguments/*/settings/*/magic/*/databases/*/default
+      switch:x:@.arguments/*/databaseType
 
          case:mssql
-            strings.replace:x:@.arguments/*/settings/*/magic/*/databases/*/mssql/*/generic
+            strings.replace:x:@.arguments/*/connectionString
                .:{database}
                .:master
             mssql.connect:x:@strings.replace
                mssql.select:select name from master.dbo.sysdatabases
 
          case:mysql
-            strings.replace:x:@.arguments/*/settings/*/magic/*/databases/*/mysql/*/generic
+            strings.replace:x:@.arguments/*/connectionString
                .:{database}
                .:information_schema
             mysql.connect:x:@strings.replace
                mysql.select:show databases
 
          case:pgsql
-            strings.replace:x:@.arguments/*/settings/*/magic/*/databases/*/pgsql/*/generic
+            strings.replace:x:@.arguments/*/connectionString
                .:{database}
                .:postgres
             pgsql.connect:x:@strings.replace
@@ -98,10 +104,6 @@ try
             // No need to verify database exists.
             .
 
-         default
-            // Caught below and transformed into another exception.
-            throw:Foo
-
    .catch
 
       throw:Could not connect to database, please double check your connection string
@@ -110,10 +112,23 @@ try
 
    /*
     * Connection string is valid and we are able to connect to a database,
-    * hence we can safely save the appsettings.json file now.
+    * hence we can safely change our appsettings.json file now.
     */
-   lambda2json:x:@.arguments/*/settings/*
-      format:true
+   config.load
+   json2lambda:x:@config.load
+
+   set-value:x:@json2lambda/*/magic/*/databases/*/default
+      get-value:x:@.arguments/*/databaseType
+   set-value:x:@json2lambda/*/magic/*/databases/*/{@.arguments/*/databaseType}/*/generic
+      get-value:x:@.arguments/*/connectionString
+   set-value:x:@json2lambda/*/magic/*/auth/*/secret
+      crypto.random
+         min:100
+         max:200
+   set-value:x:@json2lambda/*/magic/*/culture/*/defaultTimeZone
+      get-value:x:@.arguments/*/defaultTimeZone
+
+   lambda2json:x:@json2lambda/*
    config.save:x:-
 
    /*
@@ -142,7 +157,7 @@ try
     */
    strings.concat
       .:magic.db.
-      get-value:x:@.arguments/*/settings/*/magic/*/databases/*/default
+      get-value:x:@.arguments/*/databaseType
       .:.databases
    signal:x:-
 
@@ -160,7 +175,7 @@ try
           */
          strings.concat
             .:/misc/
-            get-value:x:@.arguments/*/settings/*/magic/*/databases/*/default
+            get-value:x:@.arguments/*/databaseType
             .:/magic.sql
 
          /*
@@ -179,7 +194,7 @@ try
           * For SQLite we'll need to create an empty database file first before we execute the create
           * database script.
           */
-         switch:x:@.arguments/*/settings/*/magic/*/databases/*/default
+         switch:x:@.arguments/*/databaseType
 
             // Special case for MS SQL to use [mssql.execute-batch].
             case:mssql
@@ -215,7 +230,7 @@ try
             username:x:@.arguments/*/username
             password:x:@.arguments/*/password
             is_hashed:x:@.arguments/*/is_hashed
-            database-type:x:@.arguments/*/settings/*/magic/*/databases/*/default
+            database-type:x:@.arguments/*/databaseType
             roles
                .:root
             extra
@@ -230,40 +245,38 @@ try
       unwrap:x:+/*
       signal:magic.auth.change-password
          password:x:@.arguments/*/password
-         database-type:x:@.arguments/*/settings/*/magic/*/databases/*/default
+         database-type:x:@.arguments/*/databaseType
          is_hashed:x:@.arguments/*/is_hashed
 
       // Then we need to make sure we run any database migration scripts.
       io.file.execute:/system/magic.startup/migrate-magic-database.hl
 
    /*
-    * Starting task scheduler, making sure we apply maximum number of concurrent threads from config,
-    * and also that we catch exceptions for cases when the scheduler has already been started.
+    * Starting task scheduler now that we have created our database.
     */
-   try
-      .max:int:8
-      config.get:"magic:scheduler:max-threads"
-      if
-         not
-            eq
-               get-value:x:@config.get
-               .
-         .lambda
-            set-value:x:@.max
-               convert:x:@config.get
-                  type:int
-      tasks.scheduler.start:x:@.max
-   .catch
-
-      // Scheduler has probably already been started.
-      .do-nothing
+   tasks.scheduler.start
 
    /*
-    * Explicitly seeding CSRNG with auth secret, which might have been manually applied
-    * by user during setup process.
+    * Explicitly seeding CSRNG with password to create more entropy.
     */
-   config.get:"magic:auth:secret"
-   crypto.seed:x:-
+   crypto.seed:x:@.arguments/*/password
+
+   // Creating cryptography key pair.
+   crypto.random
+      min:100
+      max:200
+   strings.concat
+      request.scheme
+      .:"://"
+      request.host
+   unwrap:x:+/*
+   io.file.execute:/system/crypto/generate-keypair.post.hl
+      strength:int:4096
+      seed:x:@crypto.random
+      subject:x:@.arguments/*/name
+      email:x:@.arguments/*/email
+      username:x:@.arguments/*/username
+      domain:x:@strings.concat
 
    // Authenticating user and returning new JWT token to client.
    unwrap:x:+/*
