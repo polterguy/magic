@@ -7,13 +7,15 @@
  * - [connectionString] - Connection string to use
  * - [databaseName] - Name of database
  * - [tableName] - Name of table
+ * - [generate] - If true will not execute SQL but only return DDL to caller
  */
 .arguments
    databaseType:string
    connectionString:string
    databaseName:string
    tableName:string
-.description:Drops the specified table
+   generate:bool
+.description:Drops the specified table from the specified database
 .type:internal
 
 // Ensures user is authorized to access endpoint.
@@ -32,6 +34,17 @@ validators.enum:x:@.arguments/*/databaseType
 
 // SQL that executes to modify DDL.
 .sql
+set-value:x:@.sql
+   strings.concat
+      .:"drop table "
+      get-value:x:@.arguments/*/tableName
+      .:";"
+
+// Checking if caller only wants to generate SQL statement.
+if:x:@.arguments/*/generate
+   unwrap:x:+/*
+   return
+      sql:x:@.sql
 
 // Creating our database connection.
 strings.concat
@@ -42,20 +55,8 @@ strings.concat
    .:]
 data.connect:x:-
    database-type:x:@.arguments/*/databaseType
-
-   // Creating our correct SQL according to [databaseType].
-   switch:x:@.arguments/*/databaseType
-
-      case:sqlite
-      case:mysql
-      case:pgsql
-      case:mssql
-         set-value:x:@.sql
-            strings.concat
-               .:"drop table "
-               get-value:x:@.arguments/*/tableName
-         data.execute:x:@.sql
-            database-type:x:@.arguments/*/databaseType
+   data.execute:x:@.sql
+      database-type:x:@.arguments/*/databaseType
 
 // Flushing database cache.
 strings.concat
