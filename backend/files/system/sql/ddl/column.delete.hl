@@ -8,6 +8,7 @@
  * - [databaseName] - Name of database
  * - [tableName] - Name of table
  * - [columnName] - Name of column
+ * - [generate] - If true will not execute SQL but only return DDL to caller
  */
 .arguments
    databaseType:string
@@ -15,6 +16,7 @@
    databaseName:string
    tableName:string
    columnName:string
+   generate:bool
 .description:Deletes the specified column from your database
 .type:internal
 
@@ -35,8 +37,21 @@ validators.enum:x:@.arguments/*/databaseType
 
 // SQL that executes to modify DDL.
 .sql
+set-value:x:@.sql
+   strings.concat
+      .:"alter table "
+      get-value:x:@.arguments/*/tableName
+      .:" drop column "
+      get-value:x:@.arguments/*/columnName
+      .:;
 
-// Creating our database connection.
+// Checking if caller only wants to generate SQL statement.
+if:x:@.arguments/*/generate
+   unwrap:x:+/*
+   return
+      sql:x:@.sql
+
+// Creating our database connection and executing SQL.
 strings.concat
    .:[
    get-value:x:@.arguments/*/connectionString
@@ -45,14 +60,6 @@ strings.concat
    .:]
 data.connect:x:-
    database-type:x:@.arguments/*/databaseType
-
-   set-value:x:@.sql
-      strings.concat
-         .:"alter table "
-         get-value:x:@.arguments/*/tableName
-         .:" drop column "
-         get-value:x:@.arguments/*/columnName
-
    data.execute:x:@.sql
       database-type:x:@.arguments/*/databaseType
 
