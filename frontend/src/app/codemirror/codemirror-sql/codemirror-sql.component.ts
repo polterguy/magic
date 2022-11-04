@@ -64,6 +64,16 @@ export class CodemirrorSqlComponent implements AfterViewInit {
    * Implementation of AfterViewInit
    */
   public ngAfterViewInit() {
-    this.model.editor = this._editor.codeMirror;
+    (async () => {
+      while (!(this._editor && this._editor.codeMirror))
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+      if (this._editor && this._editor.codeMirror) {
+        this.model.editor = this._editor.codeMirror;
+
+        this.model.editor.doc.markClean();
+        this.model.editor.doc.clearHistory(); // To avoid having initial loading of file becoming an "undo operation".
+      }
+    })();
   }
 }

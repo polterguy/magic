@@ -54,6 +54,13 @@ snackbar classes
   max-width: 40vw;
 }
 /*=-=-=-=-=-=
+hover
+=-=-=-=-=-=*/
+.hoverable-row {
+  @include general_transition(0.3s);
+  &:hover {background-color: transparentize($color: $aista_default_alt, $amount: 0.5);}
+}
+/*=-=-=-=-=-=
 table
 =-=-=-=-=-=*/
 .table-responsive{

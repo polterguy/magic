@@ -42,15 +42,13 @@ import { HeaderComponent } from './_layout/header/header.component';
 import { FooterComponent } from './_layout/footer/footer.component';
 import { LoaderService } from './services/loader.service';
 import { LoaderInterceptor } from './interceptors/loader.interceptor';
-import { HyperlambdaComponent } from './codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     CoreComponent,
     HeaderComponent,
-    FooterComponent,
-    HyperlambdaComponent
+    FooterComponent
   ],
   imports: [
     BrowserModule,

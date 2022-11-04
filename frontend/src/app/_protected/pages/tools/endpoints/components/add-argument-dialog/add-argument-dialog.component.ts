@@ -3,7 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
 import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { Argument } from 'src/app/_protected/pages/generated-endpoints/_models/argument.model';
+import { Argument } from 'src/app/_protected/pages/administration/generated-endpoints/_models/argument.model';
 
 @Component({
   selector: 'app-add-argument-dialog',

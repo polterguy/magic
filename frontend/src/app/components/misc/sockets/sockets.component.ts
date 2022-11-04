@@ -17,7 +17,7 @@ import { Count } from 'src/app/models/count.model';
 import { Message } from 'src/app/models/message.model';
 import { SocketService } from '../services/socket.service';
 import { BackendService } from 'src/app/services/backend.service';
-import { SocketUser } from '../../../_protected/pages/generated-endpoints/_models/socket-user.model';
+import { SocketUser } from '../../../_protected/pages/administration/generated-endpoints/_models/socket-user.model';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { SubscribeComponent } from './subscribe/subscribe.component';
 import { MessageWrapper, PublishComponent } from './publish/publish.component';

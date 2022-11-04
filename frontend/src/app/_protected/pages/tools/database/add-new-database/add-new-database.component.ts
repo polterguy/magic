@@ -31,7 +31,7 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
 
   public plugins: any = [];
 
-  public existingDatabases: any = undefined;
+  public existingDatabases: any = [];
 
   private appDetails: any = [];
 
@@ -52,7 +52,7 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
    * SignalR hub connection, used to connect to Bazar server and get notifications
    * when app is ready to be installed.
    */
-  hubConnection: HubConnection = null;
+  private hubConnection: HubConnection = null;
 
   constructor(
     private dialog: MatDialog,
@@ -350,20 +350,27 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
    */
   private getDatabases() {
     this.isLoadingDbs = true;
-    this.sqlService.getDatabaseMetaInfo(
-      this.databaseType,
-      this.connectionString).subscribe({
-        next: (res: Databases) => {
-          this.existingDatabases = res.databases || [];
-          // this.existingDatabases = res.databases.filter((item: any) => item.tables && item.tables.length > 0) || [];
+    for (const type of this.databaseTypes) {
+      this.sqlService.getDatabaseMetaInfo(
+        type,
+        this.connectionString).subscribe({
+          next: (res: Databases) => {
+            res.databases.map((item: any) => {
+              item.type = type;
+              item.connectionString = this.connectionString;
+            });
+            this.existingDatabases = [...this.existingDatabases, ...res.databases];
 
-          // Makes difference only after a successful installation.
-          this.waitingInstallation = false;
-          this.isLoadingDbs = false;
-          this.generalService.hideLoading();
-        },
-        error: (error: any) => { }
-      })
+            // Makes difference only after a successful installation.
+            if (type === this.databaseTypes[this.databaseTypes.length - 1]) {
+              this.waitingInstallation = false;
+              this.isLoadingDbs = false;
+              this.generalService.hideLoading();
+            }
+          },
+          error: (error: any) => { }
+        })
+    }
   }
 
   private clearServersideCache() {

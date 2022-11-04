@@ -1,0 +1,47 @@
+@import '../../../../../../../assets/styles/_variables/sizing.scss';
+
+.action-btn {
+  button {
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+  }
+  mat-icon {
+    width: 15px;
+    height: 15px;
+    line-height: 15px;
+    font-size: 15px;
+  }
+}
+
+.masonry {
+  width: 100%;
+  -webkit-column-gap: $aista_gutter_x;
+  -webkit-column-fill: auto;
+  -moz-column-count: 3;
+  -moz-column-gap: $aista_gutter_x;
+  -moz-column-fill: auto;
+  column-count: 3;
+  column-gap: $aista_gutter_x;
+  column-fill: auto;
+
+  .grid {
+    -webkit-column-break-inside:avoid-column;
+    -moz-column-break-inside: avoid-column;
+    break-inside: avoid;
+
+    .small {font-size: 11px;}
+  }
+
+  @media (min-width: 680px) and (max-width: 1100px) {
+    -webkit-column-count: 2;
+    -moz-column-count:2;
+    column-count: 2;
+
+  }
+  @media (max-width: 679px) {
+    -webkit-column-count: 1;
+    -moz-column-count:1;
+    column-count: 1;
+  }
+}

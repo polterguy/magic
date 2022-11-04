@@ -8,7 +8,7 @@ import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
-import { Argument } from '../../../../../_protected/pages/generated-endpoints/_models/argument.model';
+import { Argument } from '../../../../../_protected/pages/administration/generated-endpoints/_models/argument.model';
 
 /**
  * Model class for dialog.

@@ -2,6 +2,7 @@ import { formatNumber } from '@angular/common';
 import { ChangeDetectorRef, Component, EventEmitter, Inject, Input, LOCALE_ID, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { forkJoin, Observable, Subscription } from 'rxjs';
+import { Model } from 'src/app/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
 import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 import { GeneralService } from 'src/app/_general/services/general.service';
@@ -14,6 +15,10 @@ import { CrudifyService } from '../../../crud-generator/_services/crudify.servic
 import { TransformModelService } from '../../../crud-generator/_services/transform-model.service';
 import { LogService } from '../../../log/_services/log.service';
 import { Role } from '../../../user-roles/_models/role.model';
+import { SingleTableConfigComponent } from '../components/single-table-config/single-table-config.component';
+
+// CodeMirror options.
+import hyperlambda from '../../../../../codemirror/options/hyperlambda.json';
 
 @Component({
   selector: 'app-auto-generator',
@@ -30,6 +35,7 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
 
   @Input() defaultDbType: string = '';
   @Input() defaultConnectionString: string = '';
+  @Input() defaultDbName: string = '';
 
   public allDatabasesList: any = [];
   public selectedDatabase: string = '';
@@ -45,6 +51,24 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
   public logUpdate: boolean = false;
   public logDelete: boolean = false;
 
+  public captchaCreate: boolean = false;
+  public captchaRead: boolean = false;
+  public captchaUpdate: boolean = false;
+  public captchaDelete: boolean = false;
+  public captchaValue: number;
+
+  public cachePublic: boolean = false;
+  public cacheDuration: boolean = false;
+
+  public generateSocket: boolean = false;
+  public generateSocketMessage: string;
+  public authRoles: FormControl = new FormControl<any>('');
+
+  /**
+   * Authorisation requirements for SignalR messages published during invocation of endpoint.
+   */
+   cqrsAuthorisationTypes: string[] = ['none', 'inherited', 'roles', 'groups', 'users'];
+
   public tables: any = [];
 
   @Output() getConnectionString: EventEmitter<any> = new EventEmitter<any>();
@@ -53,6 +77,14 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
 
   public CommonRegEx = CommonRegEx;
   public CommonErrorMessages = CommonErrorMessages;
+
+  /**
+   * Input Hyperlambda component model and options.
+   */
+   hlInput: Model = {
+    hyperlambda: '',
+    options: hyperlambda,
+  };
 
   constructor(
     private logService: LogService,
@@ -92,7 +124,7 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
 
         this.selectedDbType = this.defaultDbType;
         this.selectedConnectionString = this.defaultConnectionString;
-        this.selectedDatabase = this.databases[0].name;
+        this.selectedDatabase = this.defaultDbName !== '' ? this.defaultDbName : this.databases[0].name;
         this.primaryURL = this.selectedDatabase.toLowerCase();
 
         this.readRoles.setValue(['root', 'guest']);
@@ -134,16 +166,22 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
   }
 
   public generateEndpoints() {
+    // this.createDefaultOptionsForDatabase().then((resolve: boolean) =>{console.log(this.databases)})
     if (this.validateUrlName()) {
       if (this.selectedDatabase !== 'magic') {
-        if (this.databases.find((item: any) => item.name === this.selectedDatabase).tables) {
+        if (this.databases.find((db: any) => db.name === this.selectedDatabase).tables) {
           const subscribers: Observable<LocResult>[] = [];
           this.generalService.showLoading();
           this.createDefaultOptionsForDatabase().then((resolve: boolean) => {
             if (resolve) {
-              const tables = this.databases.find((item: any) => item.name === this.selectedDatabase).tables.filter((el: any) => el.verbs)
+              const tables = this.databases.find((item: any) => item.name === this.selectedDatabase).tables.filter((el: any) => el.verbs);
 
               for (const table of tables) {
+                table.captchaPost = this.captchaCreate ? this.captchaValue : null;
+                table.captchaGet = this.captchaRead ? this.captchaValue : null;
+                table.captchaPut = this.captchaUpdate ? this.captchaValue : null;
+                table.captchaDelete = this.captchaDelete ? this.captchaValue : null;
+                table.cqrs = this.generateSocket;
                 const verbs = (table.verbs || []).filter((method: any) => method.generate).map((method: any) => {
                   return this.crudifyService.crudify(
                     this.transformService.transform(
@@ -172,14 +210,14 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
                     },
                     error: (error: any) => {
                       this.generalService.hideLoading();
-                      this.generalService.showFeedback(error.error.message ?? error, 'errorMessage')
+                      this.generalService.showFeedback(error.error.message ?? error, 'errorMessage', 'Ok', 4000)
                     }
                   });
 
                 },
                 error: (error: any) => {
                   this.generalService.hideLoading();
-                  this.generalService.showFeedback(error.error.message ?? error, 'errorMessage');
+                  this.generalService.showFeedback(error.error.message ?? error, 'errorMessage', 'Ok', 4000);
                 }
               });
             } else {
@@ -209,26 +247,8 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
         const selectedTables: any = this.tables.filter((item: any) => item.name === element);
         for (const idxTable of selectedTables) {
           for (const col of idxTable.columns || []) {
-            const keys = idxTable.foreign_keys?.filter((foreign_key: any) => foreign_key.column === col.name) ?? [];
-            if (keys.length > 0) {
-              let shouldCreateForeignKey = false;
-              const foreignTable = db.tables.filter((table: any) => table.name === keys[0].foreign_table)[0];
-              for (const idxCol of foreignTable.columns) {
-                if (idxCol.hl === 'string') {
-                  shouldCreateForeignKey = true;
-                  break;
-                }
-              }
-              if (shouldCreateForeignKey) {
-                col.foreign_key = {
-                  foreign_table: keys[0].foreign_table,
-                  foreign_column: keys[0].foreign_column,
-                  long_data: true,
-                  foreign_name: db.tables
-                    .filter(x => x.name === keys[0].foreign_table)[0].columns.filter(x => x.hl === 'string')[0].name,
-                };
-              }
-              // console.log(keys, foreignTable)
+            if (col.locked === true) {
+              col.locked = 'auth.ticket.get';
             }
           }
           idxTable.moduleName = this.selectedDatabase;
@@ -239,102 +259,132 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
             { name: 'get', generate: columns.length > 0 },
           ];
           if (columns.filter(x => !x.primary).length > 0 &&
-            columns.filter(x => x.primary).length > 0) {
+          columns.filter(x => x.primary).length > 0) {
             idxTable.verbs.push({ name: 'put', generate: columns.filter(x => !x.primary && !x.automatic).length > 0 });
           }
           if (columns.filter(x => x.primary).length > 0) {
             idxTable.verbs.push({ name: 'delete', generate: true });
           }
+          idxTable.authPost = this.createRoles.value.toString() ?? 'root, admin';
+          idxTable.authGet = this.readRoles.value.toString() ?? 'root, admin';
+          idxTable.authPut = this.updateRoles.value.toString() ?? 'root, admin';
+          idxTable.authDelete = this.deleteRoles.value.toString() ?? 'root, admin';
 
-          idxTable.authPost = 'root, admin';
-          idxTable.authGet = 'root, admin';
-          idxTable.authPut = 'root, admin';
-          idxTable.authDelete = 'root, admin';
+          idxTable.cqrsAuthorisation = this.generateSocket === true && this.generateSocketMessage!== '' ? this.generateSocketMessage : 'inherited';
+          idxTable.cqrsAuthorisationValues =
+          this.generateSocket === true && this.generateSocketMessage!== '' && this.authRoles.value.length > 0 ? this.authRoles.value.toString() : null;
 
-          idxTable.cqrsAuthorisation = 'inherited';
-          idxTable.cqrsAuthorisationValues = null;
+          idxTable.cache = this.cacheDuration;
+          idxTable.publicCache = this.cachePublic;
 
-          for (const idxColumn of columns) {
+          idxTable.validators = this.hlInput.hyperlambda;
 
-            idxColumn.expanded = false;
 
-            idxColumn.post = !(idxColumn.automatic && idxColumn.primary);
-            if (idxColumn.automatic && idxColumn.name?.toLowerCase() === 'created') {
-              idxColumn.post = false;
-            }
-            idxColumn.get = true;
-            idxColumn.put = !idxColumn.automatic || idxColumn.primary;
-            idxColumn.delete = idxColumn.primary;
 
-            idxColumn.postDisabled = false; // idxColumn.primary && !idxColumn.automatic;
-            idxColumn.getDisabled = false;
-            idxColumn.putDisabled = idxColumn.primary;
-            idxColumn.deleteDisabled = true;
-
-            if ((idxColumn.name === 'user' || idxColumn.name === 'username') && idxColumn.hl === 'string') {
-              idxColumn.locked = 'auth.ticket.get';
-              idxColumn.expanded = true;
-              idxColumn.warning = 'Warning, I automatically associated this column with the currently authenticated user due to its name. You might want to sanity check my decision.';
-            }
-
-            if (idxColumn.name?.toLowerCase() === 'picture' || idxColumn.name?.toLowerCase() === 'image' || idxColumn.name?.toLowerCase() === 'photo') {
-              idxColumn.handling = 'image';
-              idxColumn.expanded = true;
-              idxColumn.warning = 'Notice, by default this field will be handled as an image field. You might want to double check my decision.';
-            }
-
-            if (idxColumn.name?.toLowerCase() === 'file') {
-              idxColumn.handling = 'file';
-              idxColumn.expanded = true;
-              idxColumn.warning = 'Notice, by default this field will be handled as a file upload field. You might want to double check my decision.';
-            }
-
-            if (idxColumn.name?.toLowerCase() === 'youtube' || idxColumn.name?.toLowerCase() === 'video') {
-              idxColumn.handling = 'youtube';
-              idxColumn.expanded = true;
-              idxColumn.warning = 'Notice, by default this field will be handled as a YouTube field. You might want to double check my decision.';
-            }
-
-            if (idxColumn.name?.toLowerCase() === 'email' || idxColumn.name?.toLowerCase() === 'mail') {
-              idxColumn.handling = 'email';
-              idxColumn.expanded = true;
-              idxColumn.warning = 'Notice, by default this field will be handled as an email field. You mght want to double check my decision.';
-            }
-
-            if (idxColumn.name?.toLowerCase() === 'url' || idxColumn.name?.toLowerCase() === 'link') {
-              idxColumn.handling = 'url';
-              idxColumn.expanded = true;
-              idxColumn.warning = 'Notice, by default this field will be handled as an url field. You mght want to double check my decision.';
-            }
-
-            if (idxColumn.name?.toLowerCase() === 'phone' || idxColumn.name?.toLowerCase() === 'tel') {
-              idxColumn.handling = 'phone';
-              idxColumn.expanded = true;
-              idxColumn.warning = 'Notice, by default this field will be handled as a phone field. You mght want to double check my decision.';
-            }
-
-            /*
-             * Notice, if we're not sure whether or not column should be a part of POST and PUT
-             * we expand the column by default, to give visual clues to the user that he needs to
-             * pay particular attention to this column, and attach a warning with the column.
-             */
-            if (idxColumn.automatic && !idxColumn.primary) {
-              idxColumn.expanded = true;
-              idxColumn.warning = 'Warning, I could not determine with certainty if this column should be included in your create and update endpoints. Please carefully look at it and decide for yourself.';
-            }
-
-            /*
-             * If column is a foreign key, we also warn the user such that he can associate it with the
-             * correct field in the foreign table.
-             */
-            if (idxColumn.foreign_key) {
-              idxColumn.expanded = true;
-              if (idxColumn.warning) {
-                idxColumn.warning += ' ';
-              } else {
-                idxColumn.warning = '';
+          if (this.selectedTables.value.length > 1) {
+            for (const idxColumn of columns) {
+              const keys = idxTable.foreign_keys?.filter((foreign_key: any) => foreign_key.column === idxColumn.name) ?? [];
+              if (keys.length > 0) {
+                let shouldCreateForeignKey = false;
+                const foreignTable = db.tables.filter((table: any) => table.name === keys[0].foreign_table)[0];
+                for (const idxCol of foreignTable.columns) {
+                  if (idxCol.hl === 'string') {
+                    shouldCreateForeignKey = true;
+                    break;
+                  }
+                }
+                if (shouldCreateForeignKey) {
+                  idxColumn.foreign_key = {
+                    foreign_table: keys[0].foreign_table,
+                    foreign_column: keys[0].foreign_column,
+                    long_data: true,
+                    foreign_name: db.tables
+                      .filter(x => x.name === keys[0].foreign_table)[0].columns.filter(x => x.hl === 'string')[0].name,
+                  };
+                }
+                // console.log(keys, foreignTable)
               }
-              idxColumn.warning += 'You need to make sure this column is associated with the correct value field in the referenced table.';
+
+              idxColumn.expanded = false;
+
+              idxColumn.post = !(idxColumn.automatic && idxColumn.primary);
+              if (idxColumn.automatic && idxColumn.name?.toLowerCase() === 'created') {
+                idxColumn.post = false;
+              }
+              idxColumn.get = true;
+              idxColumn.put = !idxColumn.automatic || idxColumn.primary;
+              idxColumn.delete = idxColumn.primary;
+
+              idxColumn.postDisabled = false; // idxColumn.primary && !idxColumn.automatic;
+              idxColumn.getDisabled = false;
+              idxColumn.putDisabled = idxColumn.primary;
+              idxColumn.deleteDisabled = true;
+
+              if ((idxColumn.name === 'user' || idxColumn.name === 'username') && idxColumn.hl === 'string') {
+                idxColumn.locked = 'auth.ticket.get';
+                idxColumn.expanded = true;
+                idxColumn.warning = 'Warning, I automatically associated this column with the currently authenticated user due to its name. You might want to sanity check my decision.';
+              }
+
+              if (idxColumn.name?.toLowerCase() === 'picture' || idxColumn.name?.toLowerCase() === 'image' || idxColumn.name?.toLowerCase() === 'photo') {
+                idxColumn.handling = 'image';
+                idxColumn.expanded = true;
+                idxColumn.warning = 'Notice, by default this field will be handled as an image field. You might want to double check my decision.';
+              }
+
+              if (idxColumn.name?.toLowerCase() === 'file') {
+                idxColumn.handling = 'file';
+                idxColumn.expanded = true;
+                idxColumn.warning = 'Notice, by default this field will be handled as a file upload field. You might want to double check my decision.';
+              }
+
+              if (idxColumn.name?.toLowerCase() === 'youtube' || idxColumn.name?.toLowerCase() === 'video') {
+                idxColumn.handling = 'youtube';
+                idxColumn.expanded = true;
+                idxColumn.warning = 'Notice, by default this field will be handled as a YouTube field. You might want to double check my decision.';
+              }
+
+              if (idxColumn.name?.toLowerCase() === 'email' || idxColumn.name?.toLowerCase() === 'mail') {
+                idxColumn.handling = 'email';
+                idxColumn.expanded = true;
+                idxColumn.warning = 'Notice, by default this field will be handled as an email field. You mght want to double check my decision.';
+              }
+
+              if (idxColumn.name?.toLowerCase() === 'url' || idxColumn.name?.toLowerCase() === 'link') {
+                idxColumn.handling = 'url';
+                idxColumn.expanded = true;
+                idxColumn.warning = 'Notice, by default this field will be handled as an url field. You mght want to double check my decision.';
+              }
+
+              if (idxColumn.name?.toLowerCase() === 'phone' || idxColumn.name?.toLowerCase() === 'tel') {
+                idxColumn.handling = 'phone';
+                idxColumn.expanded = true;
+                idxColumn.warning = 'Notice, by default this field will be handled as a phone field. You mght want to double check my decision.';
+              }
+
+              /*
+               * Notice, if we're not sure whether or not column should be a part of POST and PUT
+               * we expand the column by default, to give visual clues to the user that he needs to
+               * pay particular attention to this column, and attach a warning with the column.
+               */
+              if (idxColumn.automatic && !idxColumn.primary) {
+                idxColumn.expanded = true;
+                idxColumn.warning = 'Warning, I could not determine with certainty if this column should be included in your create and update endpoints. Please carefully look at it and decide for yourself.';
+              }
+
+              /*
+               * If column is a foreign key, we also warn the user such that he can associate it with the
+               * correct field in the foreign table.
+               */
+              if (idxColumn.foreign_key) {
+                idxColumn.expanded = true;
+                if (idxColumn.warning) {
+                  idxColumn.warning += ' ';
+                } else {
+                  idxColumn.warning = '';
+                }
+                idxColumn.warning += 'You need to make sure this column is associated with the correct value field in the referenced table.';
+              }
             }
           }
         }

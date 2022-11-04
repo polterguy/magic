@@ -106,16 +106,20 @@
   </div>
 
   <ng-container *ngIf="selectedTables.value.length === 1">
-    <app-single-table-config
-    [selectedTable]="selectedTables.value"
-    [selectedDatabase]="selectedDatabase"
-    [databases]="databases"
-    [dbLoading]="dbLoading"></app-single-table-config>
+    <!-- 2 - config table -->
+    <div class="col-12 mt-4">
+      <p class="fw-bold">Step 2 - Configure fields</p>
+      <app-single-table-config
+      [selectedTable]="selectedTables.value"
+      [selectedDatabase]="selectedDatabase"
+      [databases]="databases"
+      [dbLoading]="dbLoading"></app-single-table-config>
+    </div>
   </ng-container>
 
-  <!-- 2 - configuration -->
+  <!-- ? - configuration -->
   <div class="col-12 mt-4">
-    <p class="fw-bold mb-0">Step 2 - Default endpoint configuration</p>
+    <p class="fw-bold mb-0">Step {{selectedTables.value.length === 1 ? '3' : '2'}} - Default endpoint configuration</p>
   </div>
   <div class="col-xxl-9 col-xl-10 col-lg-11 col-12">
     <div class="row align-items-stretch mt-4">
@@ -248,12 +252,92 @@
     </div>
   </div>
 
-  <!-- 3 - Settings -->
-  <div class="col-12 mt-4">
-    <p class="fw-bold">Step 3 - Settings</p>
-  </div>
-  <div class="col-12 mt-1">
-    <div class="d-flex align-items-center flex-wrap">
+  <ng-container *ngIf="selectedTables.value.length === 1">
+
+    <!-- ? - reCaptcha -->
+    <div class="col-md-6 col-12 mt-4">
+      <p class="fw-bold">Step 4 - reCAPTCHA</p>
+      <mat-form-field class="w-100 text-prefix" *ngIf="!(dbLoading | async)">
+        <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
+          reCaptcha
+        </span>
+
+        <input matInput type="number" placeholder="Value" [(ngModel)]="captchaValue" min="0.0" max="1.0" step="0.1">
+      </mat-form-field>
+      <div class="d-flex align-items-center flex-wrap mt-1">
+        <span class="me-2">Apply for: </span>
+        <mat-checkbox color="primary"
+         [(ngModel)]="captchaCreate">Create</mat-checkbox>
+        <div class="px-xl-4 px-lg-3 px-sm-2 px-1"></div>
+        <mat-checkbox color="primary"
+         [(ngModel)]="captchaRead">Read</mat-checkbox>
+        <div class="px-xl-4 px-lg-3 px-sm-2 px-1"></div>
+        <mat-checkbox color="primary"
+        [(ngModel)]="captchaUpdate">Update</mat-checkbox>
+        <div class="px-xl-4 px-lg-3 px-sm-2 px-1"></div>
+        <mat-checkbox color="primary"
+         [(ngModel)]="captchaDelete">Delete</mat-checkbox>
+      </div>
+    </div>
+
+    <!-- ? - Cache -->
+    <div class="col-md-6 col-12 mt-4">
+      <p class="fw-bold">Step 5 - Caching</p>
+      <mat-form-field class="w-100 text-prefix" *ngIf="!(dbLoading | async)">
+        <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
+          Duration
+        </span>
+
+        <input matInput type="number" placeholder="Value" min="0" max="300" [(ngModel)]="cacheDuration">
+      </mat-form-field>
+      <div class="d-flex align-items-center flex-wrap mt-1">
+        <span class="me-2">Caching type: </span>
+        <mat-checkbox color="primary"
+         [(ngModel)]="cachePublic">Public</mat-checkbox>
+      </div>
+    </div>
+
+    <!-- ? - Socket -->
+    <div class="col-md-6 col-12 mt-md-5 mt-4">
+      <p class="fw-bold">Step 6 - Socket (SignalR)</p>
+      <div class="d-flex align-items-center flex-wrap mt-1">
+        <mat-checkbox color="primary"
+         [(ngModel)]="generateSocket">Generate socket</mat-checkbox>
+      </div>
+      <!-- auth type: select message type if generate socket is checked -->
+      <mat-form-field class="w-100 mt-2" *ngIf="generateSocket">
+        <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+          <mat-icon>Message auth type</mat-icon>
+          <span class="text-muted">|</span>
+        </span>
+
+        <mat-select placeholder="Databases" [(ngModel)]="generateSocketMessage">
+          <mat-option *ngFor="let item of cqrsAuthorisationTypes" [value]="item">{{item}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <!-- roles: select roles if generate socket is checked & auth type is either roles, users or groups -->
+      <mat-form-field class="w-100"
+      *ngIf="generateSocket && (generateSocketMessage === 'roles' || generateSocketMessage === 'groups' || generateSocketMessage === 'users')">
+        <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+          <mat-icon>Message auth type</mat-icon>
+          <span class="text-muted">|</span>
+        </span>
+
+        <mat-select placeholder="Add roles" multiple [formControl]="authRoles" disableOptionCentering panelClass="custom-select-option">
+          <mat-option
+            *ngFor="let item of roles | sortBy: 'name'"
+            [value]="item.name">
+            {{item.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </ng-container>
+
+  <!-- ? - Settings -->
+  <div class="col-md-6 col-12 mt-md-{{selectedTables.value.length === 1 ? '5' : '4'}} mt-4">
+    <p class="fw-bold">Step {{selectedTables.value.length === 1 ? '7' : '3'}} - Settings</p>
+    <div class="d-flex align-items-center flex-wrap mt-1">
       <mat-checkbox color="primary"
        [(ngModel)]="transformService.join"
       [disabled]="!(tables && tables.length > 0 && selectedTables.value.length > 0)">Left join</mat-checkbox>
@@ -267,6 +351,17 @@
       [disabled]="!(tables && tables.length > 0 && selectedTables.value.length > 0)">Overwrite</mat-checkbox>
     </div>
   </div>
+
+  <ng-container *ngIf="selectedTables.value.length === 1">
+    <!-- 8 - Additional -->
+    <div class="col-12 mt-5">
+      <p class="fw-bold">Step 8 - Additional POST/PUT</p>
+    </div>
+    <div class="col-12">
+      <app-codemirror-hyperlambda [(model)]="hlInput" class="codemirror-container"></app-codemirror-hyperlambda>
+    </div>
+
+  </ng-container>
 
   <div class="col-12 d-flex justify-content-end mt-5">
     <button mat-flat-button color="primary" class="px-5" (click)="generateEndpoints()">Generate endpoints</button>

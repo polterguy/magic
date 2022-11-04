@@ -10,9 +10,10 @@ import { AutoGeneratorComponent } from '../auto-generator/auto-generator.compone
 import { ManualGeneratorComponent } from '../manual-generator/manual-generator.component';
 import { AddArgumentDialogComponent } from '../components/add-argument-dialog/add-argument-dialog.component';
 import { SqlSnippetDialogComponent } from '../components/sql-snippet-dialog/sql-snippet-dialog.component';
-import { CodemirrorSqlComponent } from 'src/app/codemirror/codemirror-sql/codemirror-sql.component';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import { SingleTableConfigComponent } from '../components/single-table-config/single-table-config.component';
+import { ForeignKeyDialogComponent } from '../components/foreign-key-dialog/foreign-key-dialog.component';
+import { CmModule } from 'src/app/codemirror/_module/cm.module';
 
 
 
@@ -23,8 +24,8 @@ import { SingleTableConfigComponent } from '../components/single-table-config/si
     ManualGeneratorComponent,
     AddArgumentDialogComponent,
     SqlSnippetDialogComponent,
-    CodemirrorSqlComponent,
-    SingleTableConfigComponent
+    SingleTableConfigComponent,
+    ForeignKeyDialogComponent
   ],
   imports: [
     CommonModule,
@@ -34,7 +35,8 @@ import { SingleTableConfigComponent } from '../components/single-table-config/si
     MaterialModule,
     FormsModule,
     ReactiveFormsModule,
-    SharedModule
+    SharedModule,
+    CmModule
   ]
 })
 export class EndpointModule { }
