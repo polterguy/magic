@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { ReplaySubject } from 'rxjs';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { Role } from '../../user-roles/_models/role.model';
@@ -47,10 +48,23 @@ export class EndpointsComponent implements OnInit {
   private _dbLoading: ReplaySubject<boolean> = new ReplaySubject();
   public dbLoading = this._dbLoading.asObservable();
 
+  private paramDbType: string = '';
+  public paramDbName: string = '';
+  private paramDbConnectionString: string = '';
+
   constructor(
     private sqlService: SqlService,
     private roleService: RoleService,
-    private generalService: GeneralService) { }
+    private activatedRoute: ActivatedRoute,
+    private generalService: GeneralService) {
+      this.activatedRoute.queryParams.subscribe((param: any) => {
+        if (param && param.dbName && param.dbType && param.dbCString) {
+          this.paramDbName = param.dbName;
+          this.paramDbType = param.dbType;
+          this.paramDbConnectionString = param.dbCString;
+        }
+      })
+    }
 
   ngOnInit(): void {
     this.getDefaultDbType();
@@ -65,11 +79,17 @@ export class EndpointsComponent implements OnInit {
     this._dbLoading.next(true);
     this.sqlService.defaultDatabaseType().subscribe({
       next: (dbTypes: DefaultDatabaseType) => {
-        this.defaultDbType = dbTypes.default;
+        this.defaultDbType = this.paramDbType !== '' ? this.paramDbType : dbTypes.default;
         dbTypes.options.map((item: string) => {
           this.databaseTypes.push({ name: this.getDatabaseTypeName(item), type: item });
         });
-        this.getConnectionString({selectedDbType: this.defaultDbType});
+        let dataToPass: any = {
+          selectedDbType: this.defaultDbType
+        };
+        if (this.paramDbConnectionString !== '') {
+          dataToPass.selectedConnectionString = this.paramDbConnectionString;
+        }
+        this.getConnectionString(dataToPass);
       },
       error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
     });

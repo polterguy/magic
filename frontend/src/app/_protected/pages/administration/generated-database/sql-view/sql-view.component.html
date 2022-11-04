@@ -1,0 +1,59 @@
+<div class="row fullPage sql-editor">
+  <div class="col-xl-4 col-lg-6 col-md-5 col-12">
+    <mat-card class="h-100">
+      <mat-card-content class="h-100 d-flex flex-column w-100">
+        <div class="d-flex justify-content-between align-items-center">
+          <h3 class="my-0 fw-bold">SQL</h3>
+          <div>
+            <button mat-button color="primary" (click)="viewShortkeys()">Shortkeys</button>
+            <button mat-button color="primary" (click)="loadSnippet()" [disabled]="!canLoadSnippet">Snippets</button>
+          </div>
+        </div>
+
+        <div class="row mt-3 mb-4 h-100">
+          <div class="col-12">
+            <ng-container *ngIf="input?.options">
+              <app-codemirror-sql [(model)]="input"></app-codemirror-sql>
+            </ng-container>
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-end align-items-center">
+          <button mat-button color="primary">Clear</button>
+          <button mat-flat-button color="primary" class="px-4">Execute</button>
+        </div>
+
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div class="col-xl-8 col-lg-6 col-md-7 col-12">
+    <mat-card class="h-100 pt-3">
+      <mat-card-content class="h-100 max-height-full">
+
+        <div class="table-responsive w-100" *ngIf="dataSource && dataSource.length > 0">
+          <table mat-table class="w-100 borderless hoverable" [dataSource]="dataSource">
+
+            <ng-container *ngFor="let column of columns" [matColumnDef]="column.columnDef">
+              <th mat-header-cell *matHeaderCellDef class="ps-3 text-nowrap">
+                {{column.header}}
+              </th>
+              <td mat-cell *matCellDef="let row" class="ps-3">
+                <ng-container *ngIf="column.header !== 'created';else dateColumn">
+                  {{row[column.header]}}
+                </ng-container>
+                <ng-template #dateColumn>
+                  {{row[column.header] | date}}
+                </ng-template>
+
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns;sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

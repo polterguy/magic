@@ -1,0 +1,11 @@
+
+@import '../../../../../../assets/styles/_variables/colors.scss';
+@import '../../../../../../assets/styles/_variables/mixin.scss';
+
+::ng-deep .sql-editor {
+  .CodeMirror { height: 100%;max-height: 60vh; }
+}
+.table-responsive {
+  max-height: 70vh;
+  @include scrollbar  ($aista_default_alt,$aista_default_grey4,5px);
+}

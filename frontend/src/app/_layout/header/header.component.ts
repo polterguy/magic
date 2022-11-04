@@ -118,6 +118,11 @@ export class HeaderComponent implements OnInit {
             disabled: !(this.permissions.access.auth.view_users && this.permissions.access.auth.view_roles && this.permissions.setupDone)
           },
           {
+            name: 'Generated databases',
+            url: '/generated-database',
+            disabled: !(this.permissions.access.endpoints.view && this.permissions.setupDone)
+          },
+          {
             name: 'Generated endpoints',
             url: '/generated-endpoints',
             disabled: !(this.permissions.access.endpoints.view && this.permissions.setupDone)

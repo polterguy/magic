@@ -12,12 +12,15 @@ import { ShortkeysComponent } from 'src/app/_general/components/shortkeys/shortk
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { CrudifyService } from '../../../crud-generator/_services/crudify.service';
 import { TransformModelService } from '../../../crud-generator/_services/transform-model.service';
-import { Argument } from '../../../generated-endpoints/_models/argument.model';
+import { Argument } from '../../../administration/generated-endpoints/_models/argument.model';
 import { LogService } from '../../../log/_services/log.service';
 import { Role } from '../../../user-roles/_models/role.model';
 import { SqlService } from '../../database/_services/sql.service';
 import { AddArgumentDialogComponent } from '../components/add-argument-dialog/add-argument-dialog.component';
 import { SqlSnippetDialogComponent } from '../components/sql-snippet-dialog/sql-snippet-dialog.component';
+
+// CodeMirror options.
+import sql from '../../../../../codemirror/options/sql.json';
 
 @Component({
   selector: 'app-manual-generator',
@@ -34,6 +37,7 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
 
   @Input() defaultDbType: string = '';
   @Input() defaultConnectionString: string = '';
+  @Input() defaultDbName: string = '';
 
   public allDatabasesList: any = [];
   public selectedDatabase: string = '';
@@ -94,11 +98,7 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
     connectionString: this.selectedConnectionString,
     database: '[' + this.selectedConnectionString + '|' + this.selectedDatabase + ']',
     sql: '',
-    options: {
-      theme: 'aista',
-      lineNumbers: true,
-      mode: "text/x-mysql"
-    },
+    options: sql,
     editor: ''
   };
 
@@ -141,7 +141,7 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
 
         this.selectedDbType = this.defaultDbType;
         this.selectedConnectionString = this.defaultConnectionString;
-        this.selectedDatabase = this.databases[0].name;
+        this.selectedDatabase = this.defaultDbName !== '' ? this.defaultDbName : this.databases[0].name;
         this.primaryURL = this.selectedDatabase.toLowerCase();
 
         this.selectedRoles.setValue(['root', 'guest']);

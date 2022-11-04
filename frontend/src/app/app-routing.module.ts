@@ -27,12 +27,16 @@ const routes: Routes = [
         loadChildren: () => import('./_protected/pages/user-roles/_module/users-roles.module').then(m => m.UsersRolesModule)
       },
       {
+        path: 'generated-database',
+        loadChildren: () => import('./_protected/pages/administration/generated-database/_module/g-database.module').then(m => m.GDatabaseModule)
+      },
+      {
         path: 'generated-endpoints',
-        loadChildren: () => import('./_protected/pages/generated-endpoints/_module/generated-endpoints.module').then(m => m.GeneratedEndpointsModule)
+        loadChildren: () => import('./_protected/pages/administration/generated-endpoints/_module/generated-endpoints.module').then(m => m.GeneratedEndpointsModule)
       },
       {
         path: 'generated-frontend',
-        loadChildren: () => import('./_protected/pages/generated-frontend/_module/frontend.module').then(m => m.FrontendModule)
+        loadChildren: () => import('./_protected/pages/administration/generated-frontend/_module/frontend.module').then(m => m.FrontendModule)
       },
       {
         path: 'database-management',

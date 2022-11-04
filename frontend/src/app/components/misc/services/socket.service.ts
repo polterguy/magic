@@ -12,7 +12,7 @@ import { Count } from '../../../models/count.model';
 import { Message } from '../../../models/message.model';
 import { Response } from '../../../models/response.model';
 import { HttpService } from '../../../services/http.service';
-import { SocketUser } from '../../../_protected/pages/generated-endpoints/_models/socket-user.model';
+import { SocketUser } from '../../../_protected/pages/administration/generated-endpoints/_models/socket-user.model';
 
 /**
  * Socket service, allowing you to retrieve data about sockets and publish socket messages.

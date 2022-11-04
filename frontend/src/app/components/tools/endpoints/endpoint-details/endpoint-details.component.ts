@@ -12,8 +12,8 @@ import { Component, Input, OnInit } from '@angular/core';
 import { HttpTransportType, HubConnectionBuilder } from '@aspnet/signalr';
 
 // Application specific imports.
-import { Endpoint } from '../../../../_protected/pages/generated-endpoints/_models/endpoint.model';
-import { Argument } from '../../../../_protected/pages/generated-endpoints/_models/argument.model';
+import { Endpoint } from '../../../../_protected/pages/administration/generated-endpoints/_models/endpoint.model';
+import { Argument } from '../../../../_protected/pages/administration/generated-endpoints/_models/argument.model';
 import { Response } from 'src/app/models/response.model';
 import { EndpointService } from '../../../../_protected/pages/generated-endpoints/_services/endpoint.service';
 import { BackendService } from 'src/app/services/backend.service';

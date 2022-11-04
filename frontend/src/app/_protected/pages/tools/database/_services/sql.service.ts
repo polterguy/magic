@@ -8,8 +8,8 @@ import { throwError } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
-import { HttpService } from '../../../../services/common/http.service';
-import { FileService } from '../../../hyper-ide/_services/file.service';
+import { FileService } from 'src/app/services/file.service';
+import { HttpService } from 'src/app/_protected/services/common/http.service';
 import { DefaultDatabaseType } from '../_models/default-database-type.model';
 import { Databases } from '../_models/databases.model';
 
@@ -280,8 +280,9 @@ export class SqlService {
    * @param tableName Table name
    * @param columnName Column name
    * @param columnType Type of column
-   * @param foreignTable Table column links to
-   * @param foreignField Field column links to
+   * @param nullable If false then column will not accept null values
+   * @param columnLength Length of column
+   * @param precision If decimal or other real numbers, declares the precision of the column
    */
   addColumn(
     databaseType: string,
@@ -291,8 +292,9 @@ export class SqlService {
     columnName: string,
     columnType: string,
     defaultValue: string,
-    foreignTable: string,
-    foreignField: string) {
+    nullable: boolean,
+    columnLength: number,
+    precision: string) {
     return this.httpService.post<any>('/magic/system/sql/ddl/column', {
       databaseType,
       connectionString,
@@ -301,8 +303,51 @@ export class SqlService {
       columnName,
       columnType,
       defaultValue,
+      nullable,
+      columnLength,
+      precision,
+    });
+  }
+
+  /**
+   * Adds the specified column to your table.
+   *
+   * @param databaseType Type of database
+   * @param connectionString Connection string to use
+   * @param databaseName Database name
+   * @param tableName Table name
+   * @param columnName Column name
+   * @param columnType Type of column
+   * @param foreignTable Table column links to
+   * @param foreignField Field column links to
+   * @param nullable If false then column will not accept null values
+   * @param columnLength Length of column
+   * @param cascading If true then foreign key deletions will cascade
+   */
+   addReferencedColumn(
+    databaseType: string,
+    connectionString: string,
+    databaseName: string,
+    tableName: string,
+    columnName: string,
+    columnType: string,
+    foreignTable: string,
+    foreignField: string,
+    nullable: boolean,
+    columnLength: number,
+    cascading: boolean) {
+    return this.httpService.post<any>('/magic/system/sql/ddl/column', {
+      databaseType,
+      connectionString,
+      databaseName,
+      tableName,
+      columnName,
+      columnType,
       foreignTable,
       foreignField,
+      nullable,
+      columnLength,
+      cascading,
     });
   }
 

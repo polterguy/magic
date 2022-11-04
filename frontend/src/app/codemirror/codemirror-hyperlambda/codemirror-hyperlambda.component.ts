@@ -114,10 +114,6 @@ export class HyperlambdaComponent implements AfterViewInit {
         if (this.model.options.extraKeys) {
           this.model.options.extraKeys['Alt-M'] = (cm: any) => {
             cm.setOption('fullScreen', !cm.getOption('fullScreen'));
-            // to hide/show sidenav
-            let sidenav = document.querySelector('.mat-sidenav');
-            sidenav.classList.contains('d-none') ? sidenav.classList.remove('d-none') :
-            sidenav.classList.add('d-none');
           };
         }
       }, 100);
