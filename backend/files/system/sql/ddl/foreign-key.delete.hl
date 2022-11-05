@@ -8,6 +8,7 @@
  * - [databaseName] - Name of database
  * - [tableName] - Name of table
  * - [fkName] - Name of column
+ * - [generate] - If true will not execute SQL but only return DDL to caller
  */
 .arguments
    databaseType:string
@@ -15,7 +16,8 @@
    databaseName:string
    tableName:string
    fkName:string
-.description:Deletes the specified column from your database
+   generate:bool
+.description:Deletes the specified foreign key from your database
 .type:internal
 
 // Ensures user is authorized to access endpoint.
@@ -30,9 +32,22 @@ validators.mandatory:x:@.arguments/*/databaseType
 validators.enum:x:@.arguments/*/databaseType
    .:mysql
    .:pgsql
+   .:mssql
 
 // SQL that executes to modify DDL.
 .sql
+set-value:x:@.sql
+   strings.concat
+      .:"alter table "
+      get-value:x:@.arguments/*/tableName
+      .:" drop constraint "
+      get-value:x:@.arguments/*/fkName
+
+// Checking if caller only wants to generate SQL statement.
+if:x:@.arguments/*/generate
+   unwrap:x:+/*
+   return
+      sql:x:@.sql
 
 // Creating our database connection.
 strings.concat
@@ -43,20 +58,6 @@ strings.concat
    .:]
 data.connect:x:-
    database-type:x:@.arguments/*/databaseType
-
-   // Creating our correct SQL according to [databaseType].
-   switch:x:@.arguments/*/databaseType
-
-      case:mysql
-      case:pgsql
-
-         set-value:x:@.sql
-            strings.concat
-               .:"alter table "
-               get-value:x:@.arguments/*/tableName
-               .:" drop constraint "
-               get-value:x:@.arguments/*/fkName
-
    data.execute:x:@.sql
       database-type:x:@.arguments/*/databaseType
 

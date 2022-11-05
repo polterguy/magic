@@ -1,0 +1,36 @@
+
+/*
+ * Template for HTTP POST CRUD requests.
+ * This file was automatically generated using Magic's CRUDifier.
+ */
+.arguments
+   name:string
+   description:string
+.description:Creates an item in your roles table in your [generic|magic] database according to the specified arguments
+.type:crud-create
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Sanity checking invocation
+validators.regex:x:@.arguments/*/name
+   regex:"^[A-Za-z0-9\\-_]*$"
+
+// Opening up database connection.
+data.connect:[generic|magic]
+
+   // Parametrising our create invocation.
+   add:x:./*/data.create/*/values
+      get-nodes:x:@.arguments/*
+
+   // Creating our record.
+   data.create
+      table:roles
+      return-id:bool:false
+      values
+
+   // Returning result of above invoction to caller.
+   response.status.set:201
+   unwrap:x:+/*
+   return
+      result:success
