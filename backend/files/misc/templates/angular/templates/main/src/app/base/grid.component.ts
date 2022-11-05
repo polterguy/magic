@@ -54,11 +54,6 @@ export abstract class GridComponent {
   };
 
   /**
-   * List of items we're currently viewing details for.
-   */
-  public viewDetails: any[] = [];
-
-  /**
    * Constructor for grid component, taking a couple of services using dependency injection.
    * 
    * @param authService Authentication and authorization service
@@ -128,10 +123,9 @@ export abstract class GridComponent {
    * Returns data items from backend.
    * 
    * @param countRecords Whether or not we should also retrieve and update count of records
+   * @param collapseViewDetails If true will close view data fields
    */
   public getData(countRecords: boolean = true) {
-
-    this.viewDetails = [];
 
     // Checking that we actually can retrieve data at all.
     if (!this.authService.me.canInvoke(this.entityBaseUrl(), 'get')) {
@@ -140,32 +134,38 @@ export abstract class GridComponent {
       return;
     }
 
-    this.read(this.filter).subscribe((items: any[]) => {
-      this.data = items || [];
-
-      if (countRecords) {
-
-        const filterCount = {};
-        for (const idx in this.filter) {
-          if (Object.prototype.hasOwnProperty.call(this.filter, idx)) {
-            switch (idx) {
-              case 'limit':
-              case 'offset':
-              case 'order':
-              case 'direction':
-                break; // Ignoring
-              default:
-                filterCount[idx] = this.filter[idx];
-                break;
+    this.read(this.filter).subscribe({
+      next: (items: any[]) => {
+        this.data = items || [];
+  
+        if (countRecords) {
+  
+          const filterCount = {};
+          for (const idx in this.filter) {
+            if (Object.prototype.hasOwnProperty.call(this.filter, idx)) {
+              switch (idx) {
+                case 'limit':
+                case 'offset':
+                case 'order':
+                case 'direction':
+                  break; // Ignoring
+                default:
+                  filterCount[idx] = this.filter[idx];
+                  break;
+              }
             }
           }
+  
+          this.count(filterCount).subscribe({
+            next: (count: CountResponse) => {
+              this.itemsCount = count.count;
+            },
+            error: (error: any) => this.showError(error)
+          });
         }
-
-        this.count(filterCount).subscribe((count: CountResponse) => {
-          this.itemsCount = count.count;
-        }, (error: any) => this.showError(error));
-      }
-    }, (error: any) => this.showError(error));
+      },
+      error: (error: any) => this.showError(error)
+    });
   }
 
   /**
@@ -219,12 +219,13 @@ export abstract class GridComponent {
       if (result && result.confirmed) {
 
         // Deleting entity
-        this.delete(ids).subscribe((res: DeleteResponse) => {
+        this.delete(ids).subscribe({
+          next: (res: DeleteResponse) => {
             this.getData();
-        }, (error: any) => {
-          this.showError('I could not delete your entity, maybe other entities are referencing it?');
-          console.error(error);
-        });
+          }, error: (error: any) => {
+            this.showError('I could not delete your entity, maybe other entities are referencing it?');
+            console.error(error);
+          }});
     
       }
     });
@@ -299,6 +300,7 @@ export abstract class GridComponent {
 
     if (srcEntity) {
       for (const idx in srcEntity) {
+        console.log(idx);
         if (Object.prototype.hasOwnProperty.call(srcEntity, idx)) {
           destEntity[idx] = srcEntity[idx];
         }
@@ -329,7 +331,6 @@ export abstract class GridComponent {
    * @param e Paging event
    */
   public paged(e: PageEvent) {
-    this.viewDetails = [];
     if (this.filter.limit !== e.pageSize) {
       this.filter.limit = e.pageSize;
       this.resetPaginator();
@@ -338,20 +339,6 @@ export abstract class GridComponent {
       this.filter.offset = e.pageIndex * e.pageSize;
     }
     this.getData(false);
-  }
-
-  /**
-   * Returns CSS class name for a specific table row (tr element).
-   * Notice, the CSS class is changed according to whether or not the details
-   * window is visible or not.
-   * 
-   * @param entity Entity to retrieve view-details CSS class for
-   */
-  public getClassForRecord(entity: any) {
-    if (this.viewDetails.indexOf(entity) !== -1) {
-      return 'grid-row visible-details';
-    }
-    return 'grid-row';
   }
 
   /**

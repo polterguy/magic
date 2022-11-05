@@ -25,8 +25,7 @@ export class LoginComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private formBuilder: FormBuilder,
-    private authenticationService: AuthenticationService
-  ) {
+    private authenticationService: AuthenticationService) {
     this.createForm();
   }
 
@@ -46,7 +45,7 @@ export class LoginComponent implements OnInit {
       .subscribe(
         (credentials) => {
           log.debug(`${credentials.username} successfully logged in`);
-          this.router.navigate([this.route.snapshot.queryParams.redirect || '/'], { replaceUrl: true });
+          this.router.navigate([this.route.snapshot.queryParams.redirect || '/'], { replaceUrl: true }).then(() => window.location.href = window.location.href);
         },
         (error) => {
           log.debug(`Login error: ${error}`);

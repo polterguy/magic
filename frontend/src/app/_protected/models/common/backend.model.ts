@@ -145,7 +145,7 @@ export class Backend {
    * Returns true it setup is done.
    */
   get setupDone() {
-    return this._status === null || (this._status.config_done && this._status.magic_crudified && this._status.server_keypair);
+    return this._status === null || this._status.result;
   }
 
   /**

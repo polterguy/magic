@@ -14,6 +14,7 @@ import { AuthenticateResponse } from 'src/app/_protected/models/auth/authenticat
 import { NameEmailModel } from 'src/app/_protected/models/auth/name-email.model';
 import { HttpService } from 'src/app/_protected/services/common/http.service';
 import { Backend } from 'src/app/_protected/models/common/backend.model';
+import { SetupModel } from '../../../models/common/status.model';
 
 /**
  * Configuration service, allows you to setup system and read or manipulate your configuration
@@ -55,32 +56,23 @@ export class ConfigService {
     return this.httpService.post<Response>('/magic/system/config/save', config);
   }
 
-  /**
-   * Will setup your system according to the specified arguments.
-   *
-   * @param password Root user's password to use
-   * @param settings Configuration for your system
-   */
-  setupSystem(password: string, settings: any) {
-    return new Observable<AuthenticateResponse>((observer) => {
-      this.httpService.post<AuthenticateResponse>('/magic/system/config/setup', {
-        password,
-        settings,
-      }).subscribe({
-        next: (res: AuthenticateResponse) => {
-          /*
-           * Notice, when setup is done, the backend will return a new JWT token
-           * which we'll have to use for consecutive invocations towards the backend.
-           */
-          const backend = new Backend(this.backendService.active.url, 'root', null, res.ticket);
-          this.backendService.upsert(backend);
-          observer.next(res);
-          observer.complete();
-        },
-        error: (error: any) => {
-          observer.error(error);
-          observer.complete();
-        }});
+  setup(payload: SetupModel) {
+    return new Observable<AuthenticateResponse>(observer => {
+      return this.httpService.post<AuthenticateResponse>(
+        '/magic/system/config/setup',
+        payload).subscribe({
+          next: (auth: AuthenticateResponse) => {
+            const backend = new Backend(this.backendService.active.url, 'root', null, auth.ticket);
+            this.backendService.upsert(backend);
+            this.backendService.activate(backend);
+            observer.next(auth);
+            observer.complete();
+          },
+          error: (error: any) => {
+            observer.error(error);
+            observer.complete();
+          }
+        });
     });
   }
 

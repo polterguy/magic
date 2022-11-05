@@ -4,6 +4,8 @@
  */
 
 import { ChangeDetectorRef, Component, HostListener, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { Status } from 'src/app/models/status.model';
 import { EndpointsGeneralService } from 'src/app/_general/services/endpoints-general.service';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { BackendService } from 'src/app/_protected/services/common/backend.service';
@@ -34,6 +36,7 @@ export class CoreComponent implements OnInit {
   constructor(
     private cdr: ChangeDetectorRef,
     private generalService: GeneralService,
+    private router: Router,
     private backendService: BackendService,
     private endpointsGeneralService: EndpointsGeneralService) {}
 
@@ -51,6 +54,15 @@ export class CoreComponent implements OnInit {
     });
     this.backendService.versionRetrieved.subscribe(() => {
       this.cdr.detectChanges();
+    });
+
+    // Subscribing to status changes and redirect accordingly if we need user to setup system.
+    this.backendService.statusRetrieved.subscribe((status: Status) => {
+      if (status) {
+        if (!status.result) {
+          this.router.navigate(['/configurations/setup']);
+        }
+      }
     });
   }
 

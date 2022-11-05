@@ -86,14 +86,12 @@ export class MagicSelectorComponent implements OnInit {
    * OnInit implementation.
    */
   public ngOnInit() {
-    // Retrieving items from callback provided by consumer.
-    this.getItems.subscribe(
-      (res) => {
-        // Assigning model.
-        this.items = res;
+    this.getItems.subscribe({
+      next: (res: any[]) => {
+        this.items = res || [];
       },
-      (error: any) => console.error('Could not get items in MagicSelector')
-    );
+      error: (error) => console.error('Could not get items in MagicSelector')
+    });
   }
 
   /**
