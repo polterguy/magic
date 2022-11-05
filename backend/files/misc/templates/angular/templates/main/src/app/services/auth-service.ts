@@ -59,7 +59,7 @@ export class AuthService {
           return false; // No such endpoint
         }
         return (
-          endpoints[0].auth === null ||
+          !endpoints[0].auth ||
           endpoints[0].auth.filter((x) => this.userRoles.includes(x)).length > 0
         );
       },
@@ -94,7 +94,12 @@ export class AuthService {
     if (this.jwtHelper.isTokenExpired(ticket.token)) {
       localStorage.removeItem('jwt_token');
     } else {
-      this.userRoles = this.jwtHelper.decodeToken(ticket.token).role.split(',');
+      const roles = this.jwtHelper.decodeToken(ticket.token).role;
+      if (roles.filter) {
+        this.userRoles = roles;
+      } else {
+        this.userRoles = [roles];
+      }
     }
 
     /*

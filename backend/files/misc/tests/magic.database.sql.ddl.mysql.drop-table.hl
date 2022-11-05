@@ -1,0 +1,6 @@
+verb:delete
+url:/magic/system/sql/ddl/table?connectionString=generic&databaseName=test&tableName=foo&generate=true&databaseType=mysql
+status:int:200
+description:Verifies that MySQL correctly creates drop table SQL DDL
+response:"{\n  \"sql\": \"drop table foo;\"\n}"
+produces:application/json

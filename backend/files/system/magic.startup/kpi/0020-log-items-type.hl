@@ -1,0 +1,18 @@
+
+// KPI file for displaying employee productivity.
+.name:Log items type
+.description:Type of log items the current month
+.enabled:bool:true
+.type:pie
+.lambda
+   data.connect:[generic|magic]
+      date.now
+      date.format:x:-
+         format:yyyy-MM-00
+      data.select:@"
+select type as name, count(*) as value
+   from log_entries
+      where created > @date
+   group by type"
+         @date:x:@date.format
+      return-nodes:x:-/*

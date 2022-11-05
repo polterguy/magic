@@ -1,0 +1,38 @@
+
+// Executes all KPI Hyperlambda snippets and returns to caller.
+.description:Executes all KPI Hyperlambda snippets and returns to caller
+auth.ticket.verify:root
+
+// Iterating through all files in KPI folder and executing these sequentially
+io.file.list:/etc/system/kpi/
+for-each:x:-/*
+   if
+      strings.ends-with:x:@.dp/#
+         .:.hl
+      .lambda
+         .return
+         io.file.load:x:@.dp/#
+         hyper2lambda:x:-
+
+         // Checking if KPI chart is enabled.
+         if
+            eq
+               get-value:x:@hyper2lambda/*/.enabled
+               .:bool:true
+            .lambda
+               invoke:x:@hyper2lambda/*/.lambda
+               unwrap:x:+/*/*/*
+               add:x:@.return
+                  .
+                     .
+                        name:x:@hyper2lambda/*/.name
+                        type:x:@hyper2lambda/*/.type
+                        description:x:@hyper2lambda/*/.description
+                        values
+               add:x:@.return/*/*/values
+                  get-nodes:x:@invoke/*
+               add:x:../*/return
+                  get-nodes:x:@.return/*
+
+// Returning result of above invocation to caller.
+return

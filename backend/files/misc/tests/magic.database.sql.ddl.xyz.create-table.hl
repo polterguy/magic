@@ -1,0 +1,7 @@
+verb:post
+url:/magic/system/sql/ddl/table
+status:int:400
+description:Verifies that non-existent database type throws exception
+payload:"{\n  \"databaseType\": \"xyz\",\n  \"connectionString\": \"generic\",\n  \"databaseName\": \"test\",\n  \"tableName\": \"foo\",\n  \"pkName\": \"foo_id\",\n  \"pkType\": \"auto_increment\",\n  \"generate\": true\n}"
+response:"{\n  \"field\": \"databaseType\",\n  \"message\": \"'xyz' is not a valid enum of ['mysql', 'sqlite', 'pgsql', 'mssql'] for [databaseType]\"\n}"
+produces:application/json

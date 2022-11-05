@@ -1,0 +1,15 @@
+
+// [include] example illustrating basic usage.
+.static:JO
+.data
+   foo1:bar1
+   foo2:bar2
+   foo3:bar3
+include:x:@.data/*
+   strings.concat
+      get-value:x:@.dp/#
+      .:" howdy "
+      get-value:x:@.static
+   unwrap:x:+/*
+   return
+      howdy:x:@strings.concat

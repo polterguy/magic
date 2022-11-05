@@ -1,0 +1,38 @@
+
+// KPI file for displaying employee productivity.
+.name:Complexity
+.description:Complexity of individual modules
+.enabled:bool:true
+.type:pie
+.lambda
+   io.folder.list:/modules/
+   for-each:x:@io.folder.list/*
+    
+      // Finding module name.
+      strings.split:x:@.dp/#
+         .:/
+          
+      // Loading all files in module recursively.
+      unwrap:x:+/*
+      signal:magic.io.file.load-recursively
+         .:x:@.dp/#
+          
+      // Looping through each file in module folder.
+      .loc:int:0
+      for-each:x:@signal/*
+         if
+            strings.ends-with:x:@.dp/#
+               .:.hl
+            .lambda
+               hyper2lambda:x:@.dp/#/0
+               math.increment:x:@.loc
+                  get-count:x:@hyper2lambda/**
+
+      // Adding result to return value.
+      unwrap:x:+/*/*/*
+      add:x:../*/return
+         .
+            .
+               name:x:@strings.split/0/-
+               value:x:@.loc
+   return
