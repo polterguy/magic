@@ -76,7 +76,7 @@ export class RolesListComponent implements OnInit {
         this.roleService.delete(role.name).subscribe({
           next: () => {
             this.generalService.showFeedback(`${role.name} was successfully deleted`, 'successMessage', 'Ok', 4000);
-            this.updateList();
+            this.updateList({});
           },
           error: (error: any) => this.generalService.showFeedback(error, 'errorMessage', 'Ok', 4000)});
       }
@@ -97,7 +97,7 @@ export class RolesListComponent implements OnInit {
     })
   }
 
-  private updateList() {
-    this.getRolesList.emit();
+  private updateList(obj: any = undefined) {
+    this.getRolesList.emit(obj);
   }
 }

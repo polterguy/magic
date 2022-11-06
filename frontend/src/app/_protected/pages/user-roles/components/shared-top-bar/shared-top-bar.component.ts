@@ -118,7 +118,7 @@ export class SharedTopBarComponent implements OnInit {
       }
     }).afterClosed().subscribe((result: string) => {
       if (result === 'saved') {
-        this.getRolesList.emit();
+        this.getRolesList.emit({});
       }
     })
   }
