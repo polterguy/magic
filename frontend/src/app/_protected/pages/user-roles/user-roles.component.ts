@@ -45,7 +45,7 @@ export class UserRolesComponent implements OnInit {
    /**
     * Current page number.
     */
-   currentPage: number = 1;
+   currentPage: number = 0;
 
    // MatPaginator Output
    pageEvent!: PageEvent;
