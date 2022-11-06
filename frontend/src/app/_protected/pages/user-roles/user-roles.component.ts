@@ -196,6 +196,7 @@ export class UserRolesComponent implements OnInit {
     // this.currentPage = event.pageIndex + 1;
     // this.pageSize = this.pageEvent.pageSize;
     this.currentPage = event.pageIndex * this.pageSize;
+    this.pageSize = event.pageSize;
     activeTabIndex === 0 ? this.getUsersList() : this.getRolesList();
   }
 }
