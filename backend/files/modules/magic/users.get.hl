@@ -8,7 +8,6 @@
    offset:long
    order:string
    direction:string
-   operator:string
    username.eq:string
    username.like:string
    locked.eq:bool
@@ -22,23 +21,6 @@
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:root
 
-// Sanity checking invocation.
-validators.enum:x:@.arguments/*/operator
-   .:or
-   .:and
-
-/*
- * Checking if user supplied an [operator] argument, and if so
- * changing the boolean operator for comparison operations.
- */
-if
-   exists:x:@.arguments/*/operator
-   .lambda
-
-      // User provided a boolean comparison [operator] argument.
-      set-name:x:../*/data.connect/*/data.read/*/where/0
-         get-value:x:@.arguments/*/operator
-
 // Opening up our database connection.
 data.connect:[generic|magic]
 
@@ -48,7 +30,6 @@ data.connect:[generic|magic]
       get-nodes:x:@.arguments/*/offset
       get-nodes:x:@.arguments/*/order
       get-nodes:x:@.arguments/*/direction
-   remove-nodes:x:@.arguments/*/operator
    remove-nodes:x:@.arguments/*/limit
    remove-nodes:x:@.arguments/*/offset
    remove-nodes:x:@.arguments/*/order
@@ -65,6 +46,43 @@ data.connect:[generic|magic]
          users.created
       where
          and
+
+   // Mixing in roles.
+   include:x:@data.read/*
+      data.read
+         table:users_roles
+         columns
+            role
+         where
+            and
+               user.eq:x:@.dp/#/*/username
+      for-each:x:@data.read/*
+         unwrap:x:+/*/*
+         add:x:././*/return/*/roles
+            .
+               .:x:@.dp/#/*/role
+      return
+         roles
+
+   // Mixing in users extra fields.
+   include:x:@data.read/*
+      data.read
+         table:users_extra
+         columns
+            type
+            value
+         where
+            and
+               user.eq:x:@.dp/#/*/username
+      for-each:x:@data.read/*
+         unwrap:x:+/*/*/*
+         add:x:././*/return/*/extra
+            .
+               .
+                  type:x:@.dp/#/*/type
+                  value:x:@.dp/#/*/value
+      return
+         extra
 
    // Returning result of above read invocation to caller.
    return-nodes:x:@data.read/*
