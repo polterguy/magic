@@ -5,7 +5,7 @@
     <mat-expansion-panel [expanded]="index===0" class="mat-elevation-z0" [class.d-none]="item.value.length === 0"
       *cdkVirtualFor="let item of endpoints[defaultListToShow] | keyvalue; let index = index;trackBy:trackFilterList">
       <mat-expansion-panel-header class="ps-0 pe-3">
-        <mat-panel-title class="text-capitalized text-muted">
+        <mat-panel-title class="text-muted">
           {{item.key}}
         </mat-panel-title>
 

@@ -54,16 +54,25 @@ export class GeneratedEndpointsComponent implements OnInit, OnDestroy {
           let groups: any = [];
           groups['other'] = endpoints.reduce((item: any, x: any) => {
             if (x.type !== 'internal' && !x.path.startsWith('magic/modules/magic/')) {
-              item[x.path.split('/')[2]] = item[x.path.split('/')[2]] || [];
-              item[x.path.split('/')[2]].push(x);
+              let paths: any[] = x.path.split('/');
+              paths.splice(0, 1);
+              paths.splice(2);
+              const path = paths.join('/');
+              item[path] = item[path] || [];
+              item[path].push(x);
             }
             return item;
           }, Object.create(null));
           groups['system'] = endpoints.reduce((item: any, x: any) => {
-            item[x.path.split('/')[2]] = item[x.path.split('/')[2]] || [];
-            item[x.path.split('/')[2]].push(x);
+            let paths: any[] = x.path.split('/');
+            paths.splice(0, 1);
+            paths.splice(2);
+            const path = paths.join('/');
+            item[path] = item[path] || [];
+            item[path].push(x);
             return item;
           }, Object.create(null));
+          console.log(groups);
 
           if (groups['other'] && Object.keys(groups['other']).length) {
             this.defaultListToShow = 'other';
