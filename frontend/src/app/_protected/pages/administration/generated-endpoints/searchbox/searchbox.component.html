@@ -7,8 +7,9 @@
 
     <input matInput
       placeholder="Search through endpoints"
-      (input)="applyFilter(input.value)" #input>
-      <button mat-icon-button matSuffix (click)="removeSearchTerm();input.value = ''" *ngIf="input.value!==''">
+      [formControl]="filterControl"
+      #input>
+      <button mat-icon-button matSuffix (click)="removeSearchTerm();" *ngIf="input.value !== ''">
         <mat-icon>close</mat-icon>
       </button>
   </mat-form-field>
@@ -17,8 +18,7 @@
     color="primary"
     class="mt-lg-0 mt-3"
     [(ngModel)]="systemEndpointChecked"
-    (change)="toggleSystemEndpoints();input.value = ''"
-    [disabled]="!hasSystemEndpoints">
-    Only system endpoints
+    (change)="toggleSystemEndpoints();">
+    Internal endpoints
   </mat-checkbox>
 </div>

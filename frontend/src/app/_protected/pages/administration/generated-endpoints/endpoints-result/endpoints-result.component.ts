@@ -93,9 +93,9 @@ export class EndpointsResultComponent implements OnInit {
   /**
    * Result of invocation.
    */
-   result: InvocationResult = null;
+  result: InvocationResult = null;
 
-   public isExecuting: boolean = false;
+  public isExecuting: boolean = false;
 
   public paramsForm = this.formBuilder.group({});
 
@@ -121,7 +121,7 @@ export class EndpointsResultComponent implements OnInit {
         this.paramsForm = this.formBuilder.group({});
         this.prepareData(value);
       }
-    })
+    });
   }
 
   private prepareData(item: any) {
@@ -295,7 +295,7 @@ export class EndpointsResultComponent implements OnInit {
    * Notice, we don't support invoking endpoints with for instance application/octet-stream types
    * of input, since we don't have the means to supply the required input to these endpoints.
    */
-   canInvoke() {
+  canInvoke() {
     return this.itemDetails?.verb === 'get' ||
       this.itemDetails?.verb === 'delete' ||
       this.itemDetails?.consumes === 'application/json' ||

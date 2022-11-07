@@ -5,7 +5,7 @@ import { Argument } from '../../_models/argument.model';
 /**
  * Model class for dialog.
  */
- export class ArgumentModel {
+export class ArgumentModel {
 
   /**
    * Argument we're currently creating a value for.
@@ -37,28 +37,28 @@ export class QueryParamsComponent implements OnInit {
   /**
    * Model for value of query parameter.
    */
-   value: any;
+  value: any;
 
-   /**
-    * Data model for operator types of arguments.
-    */
-   operators: string[] = [
-     'or',
-     'and',
-   ];
+  /**
+   * Data model for operator types of arguments.
+   */
+  operators: string[] = [
+    'or',
+    'and',
+  ];
 
-   /**
-    * Possible sort order directions for sorting result.
-    */
-   directions: string[] = [
-     'asc',
-     'desc',
-   ];
+  /**
+   * Possible sort order directions for sorting result.
+   */
+  directions: string[] = [
+    'asc',
+    'desc',
+  ];
 
-   /**
-    * Columns user can sort endpoint by.
-    */
-   orders: string[] = [];
+  /**
+   * Columns user can sort endpoint by.
+   */
+  orders: string[] = [];
 
   constructor() { }
 
@@ -67,7 +67,6 @@ export class QueryParamsComponent implements OnInit {
   }
 
   setParams() {
-    console.log(this.item)
     if (this.item) {
       if (this.item.name === 'order' && this.item.type === 'string') {
         this.orders = this.allItems.filter(x => x.name.endsWith('.eq')).map(x => x.name.substring(0, x.name.length - 3));
@@ -102,5 +101,4 @@ export class QueryParamsComponent implements OnInit {
       }
     }
   }
-
 }

@@ -28,9 +28,7 @@ export class EndpointsListComponent implements OnInit {
     private clipboard: Clipboard,
     private cdr: ChangeDetectorRef,
     private generalService: GeneralService,
-    private backendService: BackendService) {
-
-    }
+    private backendService: BackendService) { }
 
   ngOnInit(): void {
     (async () => {
@@ -46,12 +44,6 @@ export class EndpointsListComponent implements OnInit {
       }
     })();
   }
-
-  // private checkLoading() {
-  //   this.isLoading.subscribe((isLoading: boolean) => {
-
-  //   })
-  // }
 
   public requestEditor(item: any) {
     this.selectedItem = item;

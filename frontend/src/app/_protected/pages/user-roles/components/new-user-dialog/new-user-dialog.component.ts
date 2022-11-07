@@ -5,6 +5,7 @@ import { forkJoin } from 'rxjs';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { Role } from '../../_models/role.model';
 import { User_Extra } from '../../_models/user.model';
+import { RoleService } from '../../_services/role.service';
 import { UserService } from '../../_services/user.service';
 
 @Component({
@@ -24,15 +25,17 @@ export class NewUserDialogComponent implements OnInit {
    */
   public isLoading: boolean = false;
 
+  public data: Role[] = [];
+
   roleControl = new FormControl();
 
   constructor(
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
     private userService: UserService,
+    private roleService: RoleService,
     private dialogRef: MatDialogRef<NewUserDialogComponent>,
-    private generalService: GeneralService,
-    @Inject(MAT_DIALOG_DATA) public data: Role[]) { }
+    private generalService: GeneralService) { }
 
   userForm = this.fb.group({
     username: ['', [Validators.required]],
@@ -42,18 +45,14 @@ export class NewUserDialogComponent implements OnInit {
   })
 
   ngOnInit(): void {
-    (async () => {
-      while (!this.data && !this.data.length)
-      await new Promise(resolve => setTimeout(resolve, 100));
-
-      if (this.data) {
-        // setting pre-selected value for roles.
+    this.roleService.list('?limit=-1').subscribe({
+      next: (roles: Role[]) => {
+        this.data = roles;
         const guestExisting: any = this.data.find((item: Role) => item.name === 'guest');
         guestExisting ? this.userForm.patchValue({role:['guest']}) : this.userForm.patchValue({role:[this.data[0].name]})
-
         this.cdr.detectChanges();
       }
-    })();
+    });
   }
 
   public createUser() {
