@@ -31,7 +31,7 @@
   &.get {
     background-color: $aista_info;
   }
-  &.post {
+  &.post, &.socket {
     background-color: $aista_success;
   }
   &.put, &.patch {

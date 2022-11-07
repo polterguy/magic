@@ -15,23 +15,19 @@
 
         <div class="row mt-3">
           <div class="col-12">
-            <app-searchbox
-            (filterList)="filterList($event)"
-            [hasSystemEndpoints]="endpoints['system'] && (endpoints['system'] | keyvalue).length ? true : false"
-            [systemEndpointChecked]="endpoints['other'] && (endpoints['other'] | keyvalue).length ? false : true"></app-searchbox>
+            <app-searchbox (filterList)="filterList($event)"
+              [hasSystemEndpoints]="endpoints['system'] && (endpoints['system'] | keyvalue).length ? true : false"
+              [systemEndpointChecked]="endpoints['other'] && (endpoints['other'] | keyvalue).length ? false : true">
+            </app-searchbox>
           </div>
         </div>
 
         <div class="row mt-3 scrollable-row">
           <div class="col-12">
 
-            <app-endpoints-list
-            [defaultListToShow]="defaultListToShow"
-            [endpoints]="endpoints"
-            [result]="resultPanel.result"
-            [payload]="resultPanel.payload"
-            [isLoading]="isLoading"
-            (changeEditor)="changeEditor($event)"></app-endpoints-list>
+            <app-endpoints-list [defaultListToShow]="defaultListToShow" [endpoints]="endpoints"
+              [result]="resultPanel.result" [payload]="resultPanel.payload" [isLoading]="isLoading"
+              (changeEditor)="changeEditor($event)"></app-endpoints-list>
 
           </div>
         </div>
@@ -39,12 +35,15 @@
       </mat-card-content>
     </mat-card>
   </div>
+
   <div class="col-lg-6 col-md-7 col-12">
     <mat-card class="h-100">
       <mat-card-content class="h-100 max-height-full">
 
-        <app-endpoints-result class="h-100 d-block"
-        [itemToBeTried]="itemToBeTried" #resultPanel></app-endpoints-result>
+        <app-endpoints-result
+          class="h-100 d-block"
+          [itemToBeTried]="itemToBeTried"
+          #resultPanel></app-endpoints-result>
 
       </mat-card-content>
     </mat-card>
