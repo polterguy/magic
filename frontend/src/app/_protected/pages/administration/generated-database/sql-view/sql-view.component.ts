@@ -1,6 +1,6 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Observable } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
 import { Model } from 'src/app/codemirror/codemirror-sql/codemirror-sql.component';
 import { ShortkeysComponent } from 'src/app/_general/components/shortkeys/shortkeys.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
@@ -12,13 +12,14 @@ import { CodemirrorActionsService } from '../../../hyper-ide/_services/codemirro
 import { DefaultDatabaseType } from '../../../tools/database/_models/default-database-type.model';
 import { SqlService } from '../../../tools/database/_services/sql.service';
 import { SqlSnippetDialogComponent } from '../../../tools/endpoints/components/sql-snippet-dialog/sql-snippet-dialog.component';
+import { SnippetNameDialogComponent } from '../components/snippet-name-dialog/snippet-name-dialog.component';
 
 @Component({
   selector: 'app-sql-view',
   templateUrl: './sql-view.component.html',
   styleUrls: ['./sql-view.component.scss']
 })
-export class SqlViewComponent implements OnInit {
+export class SqlViewComponent implements OnInit, OnDestroy {
 
   @Input() dbLoading: boolean;
   @Input() tables: any;
@@ -26,6 +27,7 @@ export class SqlViewComponent implements OnInit {
   @Input() selectedDatabase: string = '';
   @Input() selectedDbType: string = '';
   @Input() selectedConnectionString: string = '';
+  @Input() saveSnippet: Subject<any>;
 
   @Output() getDatabases: EventEmitter<any> = new EventEmitter<any>();
 
@@ -50,6 +52,17 @@ export class SqlViewComponent implements OnInit {
 
    columns: any = [];
 
+   public selectedSnippet: string = '';
+
+   public waitingRun: boolean = false;
+
+   /**
+   * Input file for importing SQL
+   */
+  sqlFile: any;
+
+   private saveSnippetSubscription!: Subscription;
+
   constructor(
     private dialog: MatDialog,
     private sqlService: SqlService,
@@ -66,10 +79,10 @@ export class SqlViewComponent implements OnInit {
         this.canLoadSnippet = this.backendService.active?.access.sql.list_files;
         this.codemirrorInit();
         this.watchForActions();
+        this.waitForSavingSnippet();
       }
     })();
   }
-
 
   /*
    * Returns options for CodeMirror editor.
@@ -101,6 +114,7 @@ export class SqlViewComponent implements OnInit {
       data: this.selectedDbType,
     }).afterClosed().subscribe((filename: string) => {
       if (filename) {
+        this.selectedSnippet = filename;
         this.sqlService.loadSnippet(this.selectedDbType, filename).subscribe({
           next: (content: string) => {
             this.input.sql = content;
@@ -111,14 +125,64 @@ export class SqlViewComponent implements OnInit {
     });
   }
 
-  public save() {console.log('save')}
+  public save() {
+    if (!this.input.sql && this.input.sql === '') {
+      this.generalService.showFeedback('Write an SQL command and then save it.', 'errorMessage', 'Ok', 5000)
+      return;
+    }
+
+    if (!this.backendService.active?.access.sql.save_file) {
+      this.generalService.showFeedback('You need a proper permission.', 'errorMessage', 'Ok', 5000)
+      return;
+    }
+
+    this.dialog.open(SnippetNameDialogComponent, {
+      width: '550px',
+      data: this.selectedSnippet
+    }).afterClosed().subscribe((filename: string) => {
+      if (filename) {
+        this.generalService.showLoading();
+        this.sqlService.saveSnippet(
+          this.selectedDbType,
+          filename,
+          this.input.sql).subscribe(
+            {
+              next: () => {
+                this.generalService.showFeedback('SQL snippet successfully saved.', 'successMessage');
+                this.selectedSnippet = filename;
+                this.generalService.hideLoading();
+              }, error: (error: any) => {
+                this.generalService.showFeedback(error.error.message ?? error, 'errorMessage', 'Ok', 5000)
+                this.generalService.hideLoading();
+              }
+            });
+      }
+    });
+  }
+
+  private waitForSavingSnippet() {
+    this.saveSnippetSubscription = this.saveSnippet.subscribe((res: any) => {
+      if (res === 'save') {
+        this.save();
+      }
+      if (res && res.action === 'importFile') {
+        this.importSqlFile(res.event)
+      }
+    })
+  }
 
   /**
    * Executes the current SQL towards your backend.
    */
   public execute() {
+    if (!this.input.sql && this.input.sql === '') {
+      this.generalService.showFeedback('Write an SQL command and then save it.', 'errorMessage', 'Ok', 5000)
+      return;
+    }
     if (this.input && this.input.editor) {
+      this.waitingRun = true;
       const selectedText = this.input.editor.getSelection();
+      this.generalService.showLoading();
       this.sqlService.executeSql(
         this.selectedDbType,
         '[' + this.input.connectionString + '|' + this.selectedDatabase + ']',
@@ -141,10 +205,16 @@ export class SqlViewComponent implements OnInit {
             }
             this.queryResult = result || [];
             this.buildTable();
-
+            if (this.input.sql.indexOf('CREATE TABLE') > -1) {
+              this.refetchDatabases();
+            } else {
+              this.generalService.hideLoading();
+            }
+            this.waitingRun = false;
             // this.applyMigration(selectedText == '' ? this.input.sql : selectedText, true);
           },
           error: (error: any) => {
+            this.waitingRun = false;
             if (error.error &&
               error.error.message &&
               error.error.message &&
@@ -153,6 +223,7 @@ export class SqlViewComponent implements OnInit {
               return;
             }
             this.generalService.showFeedback(error.error.message ?? error, 'errorMessage', 'Ok', 5000);
+            this.generalService.hideLoading();
           }
         });
     }
@@ -160,6 +231,9 @@ export class SqlViewComponent implements OnInit {
 
   private buildTable() {
     if (this.queryResult && this.queryResult.length > 0) {
+      this.columns = [];
+      this.displayedColumns = [];
+      this.dataSource = [];
 
       const titles = Object.keys(this.queryResult[0][0]);
       if (titles.indexOf('password') > -1) {
@@ -178,10 +252,31 @@ export class SqlViewComponent implements OnInit {
     }
   }
 
+  public clearSQLEditor() {
+    this.input.sql = '';
+    this.selectedSnippet = '';
+  }
+
+  public importSqlFile(event: any) {
+    this.sqlFile = event.target.files[0];
+    let fileReader = new FileReader();
+
+    fileReader.onload = (e) => {
+      this.input.sql = <any>fileReader.result;
+    }
+
+    fileReader.readAsText(this.sqlFile);
+    this.sqlFile = '';
+  }
+
   public viewShortkeys() {
     this.dialog.open(ShortkeysComponent, {
-      width: '500pc'
+      width: '900px'
     })
+  }
+
+  private refetchDatabases() {
+    this.getDatabases.emit(true);
   }
 
   private watchForActions() {
@@ -203,5 +298,11 @@ export class SqlViewComponent implements OnInit {
           break;
       }
     })
+  }
+
+  ngOnDestroy(): void {
+    if (this.saveSnippetSubscription) {
+      this.saveSnippetSubscription.unsubscribe();
+    }
   }
 }
