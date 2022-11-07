@@ -54,8 +54,8 @@ export class NewTableComponent implements OnInit {
       this.generalService.showFeedback('Invalid input.', 'errorMessage');
       return;
     }
-console.log(this.data)
-    // this.dialogRef.close(this.data);
+
+    this.dialogRef.close(this.data);
   }
 
   private validateUrlName() {
