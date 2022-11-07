@@ -95,6 +95,10 @@ export class UsersListComponent implements OnInit {
     });
   }
 
+  getRoles(el: User) {
+    return (el.roles || []).join(',');
+  }
+
   /**
    * Invoked when user wants to create a login link for user.
    * @param user Selected user.
