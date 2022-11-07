@@ -67,7 +67,6 @@ export class QueryParamsComponent implements OnInit {
   }
 
   setParams() {
-    console.log(this.item)
     if (this.item) {
       if (this.item.name === 'order' && this.item.type === 'string') {
         this.orders = this.allItems.filter(x => x.name.endsWith('.eq')).map(x => x.name.substring(0, x.name.length - 3));
