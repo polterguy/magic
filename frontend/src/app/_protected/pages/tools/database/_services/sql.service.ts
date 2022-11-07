@@ -293,8 +293,7 @@ export class SqlService {
     columnType: string,
     defaultValue: string,
     nullable: boolean,
-    columnLength: number,
-    precision: string) {
+    columnLength: number) {
     return this.httpService.post<any>('/magic/system/sql/ddl/column', {
       databaseType,
       connectionString,
@@ -305,7 +304,6 @@ export class SqlService {
       defaultValue,
       nullable,
       columnLength,
-      precision,
     });
   }
 

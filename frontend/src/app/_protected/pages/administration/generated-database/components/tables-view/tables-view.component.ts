@@ -66,7 +66,6 @@ export class TablesViewComponent implements OnInit, OnDestroy {
   }
 
   private addColumn(res: any, table: any) {
-    let precision = null;
     let defaultValue = null;
     if (res.defaultValue && res.defaultValue !== '') {
       if (res.fieldType.defaultValue === 'string') {
@@ -84,8 +83,7 @@ export class TablesViewComponent implements OnInit, OnDestroy {
       res.columnType,
       defaultValue,
       res.nullable,
-      res.columnLength,
-      precision).subscribe({
+      res.columnLength).subscribe({
         next: (result: any) => {
           this.generalService.showFeedback('Column successfully added to table', 'successMessage');
           this.refetchDatabases();
