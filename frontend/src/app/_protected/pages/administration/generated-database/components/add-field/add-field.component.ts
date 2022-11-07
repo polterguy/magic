@@ -42,8 +42,6 @@ export class AddFieldComponent implements OnInit {
 
   fieldTypeList: any = fieldTypes;
 
-  private activeTabIndex: number;
-
   public CommonRegEx = CommonRegEx;
   public CommonErrorMessages = CommonErrorMessages;
 

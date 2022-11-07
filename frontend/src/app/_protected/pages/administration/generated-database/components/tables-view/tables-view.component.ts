@@ -56,7 +56,7 @@ export class TablesViewComponent implements OnInit, OnDestroy {
       }
     }).afterClosed().subscribe((res: any) => {
       if (res) {
-        if (!res.foreignTable || res.foreignTable === '') {
+        if (!res.selectedTable) {
           this.addColumn(res, item);
         } else {
           this.addForeignKey(res, item);
