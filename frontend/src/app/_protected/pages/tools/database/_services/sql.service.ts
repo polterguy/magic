@@ -136,7 +136,7 @@ export class SqlService {
    * @param connectionString Connection string to use
    * @param databaseName Database name
    */
-   createDatabase(
+  createDatabase(
     databaseType: string,
     connectionString: string,
     databaseName: string) {
@@ -162,14 +162,14 @@ export class SqlService {
     databaseName: string,
     tables: string[],
     full: boolean) {
-      return this.httpService.post<any>('/magic/system/sql/ddl/export-tables', {
-        databaseType,
-        connectionString,
-        databaseName,
-        tables,
-        full,
-      });
-    }
+    return this.httpService.post<any>('/magic/system/sql/ddl/export-tables', {
+      databaseType,
+      connectionString,
+      databaseName,
+      tables,
+      full,
+    });
+  }
 
   /**
    * Drops the specified database entirely.
@@ -322,7 +322,7 @@ export class SqlService {
    * @param columnLength Length of column
    * @param cascading If true then foreign key deletions will cascade
    */
-   addReferencedColumn(
+  addReferencedColumn(
     databaseType: string,
     connectionString: string,
     databaseName: string,
@@ -415,7 +415,7 @@ export class SqlService {
    * @param tableName Table name
    * @param fkName Column name
    */
-   deleteFk(
+  deleteFk(
     databaseType: string,
     connectionString: string,
     databaseName: string,
@@ -440,7 +440,7 @@ export class SqlService {
    * @param module Database name
    * @param sql Table name
    */
-   exportToModule(
+  exportToModule(
     databaseType: string,
     module: string,
     sql: string) {
@@ -462,10 +462,10 @@ export class SqlService {
     databaseType: string,
     module: string,
     sql: string) {
-      return this.httpService.post<any>('/magic/system/sql/ddl/create-migration-script', {
-        databaseType,
-        module,
-        sql,
+    return this.httpService.post<any>('/magic/system/sql/ddl/create-migration-script', {
+      databaseType,
+      module,
+      sql,
     });
   }
 }
