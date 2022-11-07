@@ -102,7 +102,7 @@ export class TablesViewComponent implements OnInit, OnDestroy {
       table.name,
       res.columnName,
       selectedTable.db,
-      selectedTable.name,
+      res.selectedTable.name,
       res.foreignField,
       res.nullable,
       res.columnLength,

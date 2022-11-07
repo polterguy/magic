@@ -8,13 +8,6 @@
             <button mat-icon-button color="primary" (click)="addField(item)">
               <mat-icon>add</mat-icon>
             </button>
-            <!--
-              TODO: To add edit functionality
-            -->
-            <!-- <div class="me-1"></div>
-            <button mat-icon-button color="primary">
-              <mat-icon>edit</mat-icon>
-            </button> -->
             <div class="me-1"></div>
             <button mat-icon-button color="primary"
               (click)="exportTable(item.name)">
@@ -51,7 +44,7 @@
             <div class="d-flex justify-content-between align-items-center">
               <p class="my-0">Linked table <i>(Foreign Key)</i></p>
               <p class="my-0 d-flex justify-content-between align-items-center">
-                {{fk?.foreign_column}} <mat-icon class="mx-2">trending_flat</mat-icon> {{fk?.foreign_table}}
+                {{fk?.column}} <mat-icon class="mx-2">trending_flat</mat-icon> {{fk?.foreign_table}}.{{fk.foreign_column}}
               </p>
             </div>
           </div>
