@@ -88,6 +88,14 @@
               {{selectedDatabase === 'magic' || selectedDbType === 'sqlite' || selectedDbType === 'mysql' || selectedDbType === 'pgsql' ? 'View database as DDL' : 'Export database'}}
             </button>
             <button mat-menu-item
+              (click)="callParentAction('save')">
+              Save SQL snippet
+            </button>
+            <button mat-menu-item
+              (click)="sqlView ? sqlFileImport.click() : callParentAction('')">
+              Import SQL file
+            </button>
+            <button mat-menu-item
               [disabled]="selectedDatabase === 'magic'"
               (click)="deleteDatabase()">
               Delete database
@@ -97,10 +105,24 @@
               (click)="downloadBackup()">
               Download backup
             </button>
+            <button mat-menu-item
+              [disabled]="selectedDbType !== 'sqlite'"
+              (click)="clearServerCache()">
+              Clear server side cache
+            </button>
           </mat-menu>
         </div>
       </div>
     </div>
+    <input
+      type="file"
+      name="sqlFile"
+      id="sqlFile"
+      #sqlFileImport
+      class="d-none"
+      accept=".sql"
+      [(ngModel)]="sqlFile"
+      (change)="callParentAction($event)">
   </mat-card-content>
 </mat-card>
 <div class="row mt-4">
@@ -125,6 +147,7 @@
           [selectedDatabase]="selectedDatabase"
           [selectedDbType]="selectedDbType"
           [selectedConnectionString]="selectedConnectionString"
+          [saveSnippet]="saveSnippet"
           (getDatabases)="getDatabases($event)"></app-sql-view>
       </ng-container>
     </container-element>
