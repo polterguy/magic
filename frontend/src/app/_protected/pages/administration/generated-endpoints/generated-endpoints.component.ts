@@ -81,6 +81,8 @@ export class GeneratedEndpointsComponent implements OnInit, OnDestroy {
         }
       },
       error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')});
+
+      this.endpointsGeneralService.getEndpoints();
   }
 
   public filterList(event: any) {
