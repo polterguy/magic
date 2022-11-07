@@ -23,50 +23,50 @@ export class GeneratedDatabaseComponent implements OnInit {
   /**
    * List of all database types, including type and the human readable name of each.
    */
-   public databaseTypes: any = [];
+  public databaseTypes: any = [];
 
-   /**
-    * The user's default database type.
-    */
-   public selectedDbType: string = '';
+  /**
+   * The user's default database type.
+   */
+  public selectedDbType: string = '';
 
-   /**
-    * List of connection strings available for the selected database type.
-    */
-   public connectionStrings: string[] = [];
+  /**
+   * List of connection strings available for the selected database type.
+   */
+  public connectionStrings: string[] = [];
 
-   /**
-    * The connection string of the user's default database type.
-    */
-   public selectedConnectionString: string = '';
+  /**
+   * The connection string of the user's default database type.
+   */
+  public selectedConnectionString: string = '';
 
-   /**
-    * Available databases based on the user's selected database type and the connection string.
-    */
-   public databases: any = [];
+  /**
+   * Available databases based on the user's selected database type and the connection string.
+   */
+  public databases: any = [];
 
-   /**
-    * The user's selected database name.
-    */
-   public selectedDatabase: string = '';
+  /**
+   * The user's selected database name.
+   */
+  public selectedDatabase: string = '';
 
-   /**
-    * Specifies the view.
-    * will be used to switch between table and SQLview.
-    */
-   public sqlView: boolean = false;
+  /**
+   * Specifies the view.
+   * will be used to switch between table and SQLview.
+   */
+  public sqlView: boolean = false;
 
-   /**
-    * Tables in the user's selected database.
-    */
-   private _tables: ReplaySubject<boolean> = new ReplaySubject();
-   public tables = this._tables.asObservable();
+  /**
+   * Tables in the user's selected database.
+   */
+  private _tables: ReplaySubject<boolean> = new ReplaySubject();
+  public tables = this._tables.asObservable();
 
-   /**
-    * To watch for the changes in database changes.
-    */
-   private _dbLoading: ReplaySubject<boolean> = new ReplaySubject();
-   public dbLoading = this._dbLoading.asObservable();
+  /**
+   * To watch for the changes in database changes.
+   */
+  private _dbLoading: ReplaySubject<boolean> = new ReplaySubject();
+  public dbLoading = this._dbLoading.asObservable();
 
   private paramDbType: string = '';
   private paramDbName: string = '';
@@ -285,7 +285,7 @@ export class GeneratedDatabaseComponent implements OnInit {
           this.getDatabases(true);
           // this.applyMigration(result.sql);
         },
-        error: (error: any) => this.generalService.showFeedback(error.error.message??error, 'errorMessage', 'Ok', 5000)
+        error: (error: any) => this.generalService.showFeedback(error.error.message ?? error, 'errorMessage', 'Ok', 5000)
       });
   }
 
@@ -340,12 +340,12 @@ export class GeneratedDatabaseComponent implements OnInit {
                 next: () => {
                   this.generalService.showFeedback('Database successfully exported', 'successMessage');
                 },
-                error: (error: any) => this.generalService.showFeedback(error.error.message??error, 'errorMessage', 'Ok', 5000)
+                error: (error: any) => this.generalService.showFeedback(error.error.message ?? error, 'errorMessage', 'Ok', 5000)
               });
             }
           });
         },
-        error: (error: any) => this.generalService.showFeedback(error.error.message??error, 'errorMessage', 'Ok', 5000)
+        error: (error: any) => this.generalService.showFeedback(error.error.message ?? error, 'errorMessage', 'Ok', 5000)
       });
   }
 
@@ -378,7 +378,7 @@ export class GeneratedDatabaseComponent implements OnInit {
                 this.selectedDatabase = null;
                 this.getDatabases();
               },
-              error: (error: any) => this.generalService.showFeedback(error.error.message??error, 'errorMessage', 'Ok', 5000)
+              error: (error: any) => this.generalService.showFeedback(error.error.message ?? error, 'errorMessage', 'Ok', 5000)
             });
         }
       })
@@ -390,7 +390,7 @@ export class GeneratedDatabaseComponent implements OnInit {
   /**
    * Downloads a backup of the currently selected SQLite database
    */
-   downloadBackup() {
+  downloadBackup() {
     this.fileService.downloadFile('/data/' + this.selectedDatabase + '.db');
   }
 
@@ -409,7 +409,7 @@ export class GeneratedDatabaseComponent implements OnInit {
         },
         error: (error: any) => {
           this.generalService.hideLoading();
-          this.generalService.showFeedback(error.error.message??error, 'errorMessage', 'Ok', 5000)
+          this.generalService.showFeedback(error.error.message ?? error, 'errorMessage', 'Ok', 5000)
         }
       })
   }
@@ -422,7 +422,7 @@ export class GeneratedDatabaseComponent implements OnInit {
     if (!event) {
       this.saveSnippet.next(action);
     } else if (event) {
-      this.saveSnippet.next({action: action, event: event, slqFile: this.sqlFile});
+      this.saveSnippet.next({ action: action, event: event, slqFile: this.sqlFile });
     }
   }
 }
