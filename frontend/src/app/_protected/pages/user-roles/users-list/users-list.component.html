@@ -1,7 +1,7 @@
 <div class="table-responsive">
   <table mat-table [dataSource]="usersList" class="w-100 borderless hoverable">
 
-    <!-- Position Column -->
+    <!-- Username Column -->
     <ng-container matColumnDef="username">
       <th mat-header-cell *matHeaderCellDef> Username </th>
       <td mat-cell *matCellDef="let element"> {{element.username}} </td>
@@ -10,19 +10,19 @@
     <!-- Name Column -->
     <ng-container matColumnDef="name">
       <th mat-header-cell *matHeaderCellDef> Name </th>
-      <td mat-cell *matCellDef="let element"> {{element.name ?? 'N/A'}} </td>
+      <td mat-cell *matCellDef="let element"> {{getExtra('name', element) ?? 'N/A'}} </td>
     </ng-container>
 
-    <!-- Weight Column -->
+    <!-- Email Column -->
     <ng-container matColumnDef="email">
       <th mat-header-cell *matHeaderCellDef> Email </th>
-      <td mat-cell *matCellDef="let element"> {{element?.email ?? 'N/A'}} </td>
+      <td mat-cell *matCellDef="let element"> {{getExtra('email', element) ?? 'N/A'}} </td>
     </ng-container>
 
-    <!-- Symbol Column -->
+    <!-- Role Column -->
     <ng-container matColumnDef="role">
       <th mat-header-cell *matHeaderCellDef> Role </th>
-      <td mat-cell *matCellDef="let element"> {{element?.role ?? 'N/A'}} </td>
+      <td mat-cell *matCellDef="let element"> {{getRoles(element) ?? 'N/A'}} </td>
     </ng-container>
 
     <!-- creationDate Column -->

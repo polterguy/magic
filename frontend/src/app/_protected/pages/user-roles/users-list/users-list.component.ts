@@ -77,7 +77,7 @@ export class UsersListComponent implements OnInit {
    *
    * @param user User to create link for
    */
-   generateResetPasswordLink(user: User) {
+  generateResetPasswordLink(user: User) {
     this.userService.generateResetPasswordLink(user.username).subscribe({
       next: (result: AuthenticateResponse) => {
         const location: any = this.platformLocation;
@@ -91,14 +91,15 @@ export class UsersListComponent implements OnInit {
         this.clipboard.copy(url);
         this.generalService.showFeedback('Reset password link is copied to your clipboard', 'successMessage', 'Ok', 4000);
       },
-      error: (error: any) => this.generalService.showFeedback(error, 'errorMessage', 'Ok', 4000)});
+      error: (error: any) => this.generalService.showFeedback(error, 'errorMessage', 'Ok', 4000)
+    });
   }
 
   /**
    * Invoked when user wants to create a login link for user.
    * @param user Selected user.
    */
-   generateLoginLink(user: User) {
+  generateLoginLink(user: User) {
     this.userService.generateLoginLink(user.username).subscribe({
       next: (result: AuthenticateResponse) => {
         const location: any = this.platformLocation;
@@ -125,7 +126,7 @@ export class UsersListComponent implements OnInit {
    *
    * @param user User to change lock status of
    */
-   lockedChanged(user: User) {
+  lockedChanged(user: User) {
     this.dialog.open(ConfirmationDialogComponent, {
       width: '500px',
       data: {
@@ -186,9 +187,18 @@ export class UsersListComponent implements OnInit {
             this.generalService.showFeedback(`${user.username} was successfully deleted`, 'successMessage', 'Ok', 4000);
             this.updateList();
           },
-          error: (error: any) => this.generalService.showFeedback(error, 'errorMessage', 'Ok', 4000)});
+          error: (error: any) => this.generalService.showFeedback(error, 'errorMessage', 'Ok', 4000)
+        });
       }
     })
+  }
+
+  getExtra (name: string, el: User) {
+    const result = el.extra.filter(x => x.type === name);
+    if (result.length > 0) {
+      return result[0].value;
+    }
+    return '';
   }
 
   /**
@@ -223,6 +233,6 @@ export class UsersListComponent implements OnInit {
   }
 
   private updateList() {
-    this.getUsersList.emit();
+    this.getUsersList.emit({});
   }
 }
