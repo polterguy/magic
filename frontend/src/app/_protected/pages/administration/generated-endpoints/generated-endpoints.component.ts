@@ -60,10 +60,8 @@ export class GeneratedEndpointsComponent implements OnInit, OnDestroy {
             return item;
           }, Object.create(null));
           groups['system'] = endpoints.reduce((item: any, x: any) => {
-            if (x.type === 'internal' || x.path.startsWith('magic/modules/magic/')) {
-              item[x.path.split('/')[2]] = item[x.path.split('/')[2]] || [];
-              item[x.path.split('/')[2]].push(x);
-            }
+            item[x.path.split('/')[2]] = item[x.path.split('/')[2]] || [];
+            item[x.path.split('/')[2]].push(x);
             return item;
           }, Object.create(null));
 
