@@ -72,7 +72,6 @@ export class GeneratedEndpointsComponent implements OnInit, OnDestroy {
             item[path].push(x);
             return item;
           }, Object.create(null));
-          console.log(groups);
 
           if (groups['other'] && Object.keys(groups['other']).length) {
             this.defaultListToShow = 'other';
@@ -93,22 +92,14 @@ export class GeneratedEndpointsComponent implements OnInit, OnDestroy {
   }
 
   public filterList(event: any) {
-    event.defaultListToShow ? this.defaultListToShow = event.defaultListToShow : '';
-    let instance: any = {...this.endpoints[this.defaultListToShow]};
+    this.defaultListToShow = event.defaultListToShow ?? 'other';
+    let instance: any = {...this.originalEndpoints[this.defaultListToShow]};
     if (event.searchKey) {
-      this.searchKey = event.searchKey;
-      event.searchKey.subscribe((event: string)=>{
-        if (event.length > 0) {
-          Object.keys(instance).map((element: any) => {
-            instance[element] = instance[element].filter((el: any) => el.path.indexOf(event) > -1)
-          })
-          this.endpoints[this.defaultListToShow] = instance;
-        }
-        if (event.length === 0) {
-          this.endpoints[this.defaultListToShow] = this.originalEndpoints[this.defaultListToShow];
-        }
-      })
+      Object.keys(instance).map((element: any) => {
+        instance[element] = instance[element].filter((el: any) => el.path.indexOf(event.searchKey) > -1)
+      });
     }
+    this.endpoints[this.defaultListToShow] = instance;
   }
 
   public changeEditor(event: any) {
