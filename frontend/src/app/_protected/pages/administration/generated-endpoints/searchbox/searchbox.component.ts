@@ -38,10 +38,10 @@ export class SearchboxComponent implements OnInit {
    * @callback getExportList To refetch the unfiltered list.
    */
   public removeSearchTerm() {
-    this.filterList.emit({searchKey: ''});
+    this.filterControl.setValue('');
   }
 
   public toggleSystemEndpoints() {
-    this.filterList.emit({ defaultListToShow: this.systemEndpointChecked ? 'system' : 'other', searchKey: '' });
+    this.filterList.emit({ defaultListToShow: this.systemEndpointChecked ? 'system' : 'other', searchKey: this.filterControl.value });
   }
 }

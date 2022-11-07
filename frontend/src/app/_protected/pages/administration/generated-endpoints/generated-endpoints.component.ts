@@ -92,7 +92,7 @@ export class GeneratedEndpointsComponent implements OnInit, OnDestroy {
   }
 
   public filterList(event: any) {
-    this.defaultListToShow = event.defaultListToShow ?? 'other';
+    this.defaultListToShow = event.defaultListToShow ?? this.defaultListToShow;
     let instance: any = {...this.originalEndpoints[this.defaultListToShow]};
     if (event.searchKey) {
       Object.keys(instance).map((element: any) => {
