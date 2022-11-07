@@ -1,8 +1,10 @@
 <mat-accordion displayMode="flat" multi class="endpoints-list" [class.d-none]="isLoading | async">
   <cdk-virtual-scroll-viewport class="virtual-viewport" appendOnly itemSize="5"
-    [maxBufferPx]="(endpoints[defaultListToShow] | keyvalue)?.length *1000 || 200">
+    [maxBufferPx]="(endpoints[defaultListToShow] | keyvalue)?.length * 1000 || 200">
 
-    <mat-expansion-panel [expanded]="index===0" class="mat-elevation-z0" [class.d-none]="item.value.length === 0"
+    <mat-expansion-panel
+      class="mat-elevation-z0"
+      [class.d-none]="item.value.length === 0"
       *cdkVirtualFor="let item of endpoints[defaultListToShow] | keyvalue; let index = index;trackBy:trackFilterList">
       <mat-expansion-panel-header class="ps-0 pe-3">
         <mat-panel-title class="text-muted px-2">
@@ -18,7 +20,7 @@
               <div class="d-flex justify-content-between align-items-center w-100">
                 <div class="d-flex justify-content-between align-items-center word-break">
                   <span class="span me-3 methods {{el?.verb}}">{{el?.verb === 'delete' ? 'del' : el.verb}}</span>
-                  /{{el?.path}}
+                  /{{getPath(el?.path)}}
                 </div>
                 <div>
                   <button mat-icon-button color="primary" class="copy-btn"

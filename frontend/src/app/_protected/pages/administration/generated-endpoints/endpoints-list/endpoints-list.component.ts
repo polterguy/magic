@@ -45,13 +45,18 @@ export class EndpointsListComponent implements OnInit {
     })();
   }
 
+  getPath(path: string) {
+    return path.split('?')[0];
+  }
+
   public requestEditor(item: any) {
+    item.path = item.path.split('?')[0];
     this.selectedItem = item;
     this.changeEditor.emit(item);
   }
 
   public copyUrl(url: string) {
-    this.clipboard.copy(url);
+    this.clipboard.copy(this.backendService.active.url + '/' + url);
     this.generalService.showFeedback('URL is copied to your clipboard');
   }
 
@@ -60,7 +65,7 @@ export class EndpointsListComponent implements OnInit {
    * @param item
    * @returns item
    */
-   public trackFilterList(item: any) {
+  public trackFilterList(item: any) {
     return item;
   }
 }

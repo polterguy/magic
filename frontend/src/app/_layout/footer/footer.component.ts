@@ -5,6 +5,8 @@
 
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { PrivacyModalComponent } from 'src/app/_general/components/privacy-modal/privacy-modal.component';
+import { TermsModalComponent } from 'src/app/_general/components/terms-modal/terms-modal.component';
 // import { PrivacyModalComponent } from 'src/app/_general/components/privacy-modal/privacy-modal.component';
 // import { TermsModalComponent } from 'src/app/_general/components/terms-modal/terms-modal.component';
 
@@ -26,10 +28,10 @@ export class FooterComponent implements OnInit {
   }
 
   public termsModal(){
-    // this.dialog.open(TermsModalComponent);
+    this.dialog.open(TermsModalComponent);
   }
 
   public privacyModal(){
-    // this.dialog.open(PrivacyModalComponent);
+    this.dialog.open(PrivacyModalComponent);
   }
 }
