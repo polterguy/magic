@@ -16,25 +16,25 @@ export class GeneratedEndpointsComponent implements OnInit, OnDestroy {
   /**
    * Model describing endpoints in your installation.
    */
-   endpoints: any = [];
+  endpoints: any = [];
 
-   originalEndpoints: any = [];
+  originalEndpoints: any = [];
 
-   /**
-    * Specifies what list to be displayed by default.
-    */
-   public defaultListToShow: string = '';
+  /**
+   * Specifies what list to be displayed by default.
+   */
+  public defaultListToShow: string = '';
 
-   /**
-    * Stores the search key to be passed to the list.
-    */
-   public searchKey: string = '';
+  /**
+   * Stores the search key to be passed to the list.
+   */
+  public searchKey: string = '';
 
-   public itemToBeTried = new BehaviorSubject<any>({});
+  public itemToBeTried = new BehaviorSubject<any>({});
 
-   private endpointSubscription!: Subscription;
+  private endpointSubscription!: Subscription;
 
-   public isLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+  public isLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
 
   constructor(
     private generalService: GeneralService,
@@ -52,6 +52,7 @@ export class GeneratedEndpointsComponent implements OnInit, OnDestroy {
       next: (endpoints: Endpoint[]) => {
         if (endpoints) {
           let groups: any = [];
+
           groups['other'] = endpoints.reduce((item: any, x: any) => {
             if (x.type !== 'internal' && !x.path.startsWith('magic/modules/magic/')) {
               let paths: any[] = x.path.split('/');
@@ -63,6 +64,7 @@ export class GeneratedEndpointsComponent implements OnInit, OnDestroy {
             }
             return item;
           }, Object.create(null));
+
           groups['system'] = endpoints.reduce((item: any, x: any) => {
             let paths: any[] = x.path.split('/');
             paths.splice(0, 1);
@@ -81,19 +83,20 @@ export class GeneratedEndpointsComponent implements OnInit, OnDestroy {
           }
 
           this.originalEndpoints = groups;
-          this.endpoints = {...this.originalEndpoints};
+          this.endpoints = { ...this.originalEndpoints };
 
           this.isLoading.next(false);
         }
       },
-      error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')});
+      error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
+    });
 
-      this.endpointsGeneralService.getEndpoints();
+    this.endpointsGeneralService.getEndpoints();
   }
 
   public filterList(event: any) {
     this.defaultListToShow = event.defaultListToShow ?? this.defaultListToShow;
-    let instance: any = {...this.originalEndpoints[this.defaultListToShow]};
+    let instance: any = { ...this.originalEndpoints[this.defaultListToShow] };
     if (event.searchKey) {
       Object.keys(instance).map((element: any) => {
         instance[element] = instance[element].filter((el: any) => el.path.indexOf(event.searchKey) > -1)
