@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ReplaySubject } from 'rxjs';
+import { ReplaySubject, Subject } from 'rxjs';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
+import { CacheService } from 'src/app/_protected/services/common/cache.service';
 import { FileService } from '../../hyper-ide/_services/file.service';
 import { Databases } from '../../tools/database/_models/databases.model';
 import { DefaultDatabaseType } from '../../tools/database/_models/default-database-type.model';
@@ -71,11 +72,15 @@ export class GeneratedDatabaseComponent implements OnInit {
   private paramDbName: string = '';
   private paramDbConnectionString: string = '';
 
+  public saveSnippet: Subject<any> = new Subject();
+  public sqlFile: any;
+
   constructor(
     private router: Router,
     private dialog: MatDialog,
     private sqlService: SqlService,
     private fileService: FileService,
+    private cacheService: CacheService,
     private activatedRoute: ActivatedRoute,
     private generalService: GeneralService) {
     this.activatedRoute.queryParams.subscribe((param: any) => {
@@ -392,5 +397,32 @@ export class GeneratedDatabaseComponent implements OnInit {
   public changeTable() {
     const tables = this.databases.find((db: any) => db.name === this.selectedDatabase)?.tables || [];
     this._tables.next(tables);
+  }
+
+  public clearServerCache() {
+    this.generalService.showLoading();
+    this.cacheService.delete('magic.sql.databases.*').subscribe(
+      {
+        next: () => {
+          window.location.href = window.location.href;
+          this.generalService.hideLoading();
+        },
+        error: (error: any) => {
+          this.generalService.hideLoading();
+          this.generalService.showFeedback(error.error.message??error, 'errorMessage', 'Ok', 5000)
+        }
+      })
+  }
+
+  public callParentAction(action: string, event?: any) {
+    if (!this.sqlView) {
+      this.generalService.showFeedback('Switch to SQL view first.', 'errorMessage');
+      return;
+    }
+    if (!event) {
+      this.saveSnippet.next(action);
+    } else if (event) {
+      this.saveSnippet.next({action: action, event: event, slqFile: this.sqlFile});
+    }
   }
 }
