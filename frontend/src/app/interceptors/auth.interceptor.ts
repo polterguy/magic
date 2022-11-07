@@ -12,7 +12,7 @@ import {
 } from '@angular/common/http';
 
 // Application specific imports.
-import { BackendsStorageService } from '../services/backendsstorage.service';
+import { BackendsStorageService } from '../_protected/services/common/backendsstorage.service';
 
 /**
  * HTTP client Authorization interceptor, to attach JWT token to all HTTP requests.

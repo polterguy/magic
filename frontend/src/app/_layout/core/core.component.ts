@@ -37,12 +37,10 @@ export class CoreComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private generalService: GeneralService,
     private router: Router,
-    private backendService: BackendService,
-    private endpointsGeneralService: EndpointsGeneralService) {}
+    private backendService: BackendService) {}
 
   ngOnInit(): void {
     this.onWindowResize();
-    this.getEndpoints();
     this.backendService.authenticatedChanged.subscribe(() => {
       this.cdr.detectChanges();
     });
@@ -64,12 +62,5 @@ export class CoreComponent implements OnInit {
         }
       }
     });
-  }
-
-  /**
-   * Fetching list of endpoints to be used throughout the app.
-   */
-   private getEndpoints() {
-    this.endpointsGeneralService.getEndpoints();
   }
 }

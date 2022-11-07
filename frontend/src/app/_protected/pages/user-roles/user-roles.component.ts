@@ -15,45 +15,19 @@ import { UserService } from './_services/user.service';
 })
 export class UserRolesComponent implements OnInit {
 
-  public isLoading: boolean = true;
+  private usersCount: number = 0;
+  private rolesCount: number = 0;
+  isLoading: boolean = true;
+  users = new BehaviorSubject<User[] | null>([]);
+  roles = new BehaviorSubject<Role[]>([]);
+  accessPermissions: any = [];
+  resultsLength: number = 0;
+  pageSize: number = 10;
+  pageSizeOptions: number[] = [5, 10, 25, 100];
+  currentPage: number = 0;
+  pageEvent!: PageEvent;
 
-  public users = new BehaviorSubject<User[] | null>([]);
-
-  public roles = new BehaviorSubject<Role[]>([]);
-
-  public accessPermissions: any = [];
-
-  /**
-    * Total records.
-    */
-   resultsLength: number = 0;
-
-   private usersCount: number = 0;
-
-   private rolesCount: number = 0;
-
-   /**
-    * Number of records per page.
-    */
-   pageSize: number = 10;
-
-   /**
-    * Optoins for changing the number of records per page.
-    */
-   pageSizeOptions: number[] = [5, 10, 25, 100];
-
-   /**
-    * Current page number.
-    */
-   currentPage: number = 0;
-
-   // MatPaginator Output
-   pageEvent!: PageEvent;
-
-   /**
-   * Accessing the paginator element in the template.
-   */
-    @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
+  @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -61,16 +35,13 @@ export class UserRolesComponent implements OnInit {
     private roleService: RoleService,
     private backendService: BackendService) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.getUsersList();
-    this.getRolesList();
     (async () => {
       while (this.backendService.active.access && !Object.keys(this.backendService.active.access.auth).length)
         await new Promise(resolve => setTimeout(resolve, 100));
-
       if (this.backendService.active.access && Object.keys(this.backendService.active.access.auth).length > 0) {
         this.accessPermissions = this.backendService.active?.access;
-
         this.cdr.detectChanges();
       }
     })();
@@ -78,26 +49,12 @@ export class UserRolesComponent implements OnInit {
 
   public tabChange(event: MatTabChangeEvent) {
     if (event.index === 0) {
-      if (this.users.getValue().length > 0) {
-        this.resultsLength = this.usersCount;
-        return;
-      } else {
-        this.getUsersList();
-      }
+      this.getUsersList();
     } else {
-      if (this.roles.getValue().length > 0) {
-        this.resultsLength = this.rolesCount;
-        return;
-      } else {
-        this.getRolesList();
-      }
+      this.getRolesList();
     }
   }
 
-  /**
-   * Invokes backend to fetch the list of users.
-   * @param event search keyword received from child element.
-   */
   public getUsersList(event?: { search: string }) {
     // Resets pagination while sorting the table.
     if (event && event.search) {
@@ -120,10 +77,6 @@ export class UserRolesComponent implements OnInit {
     })
   }
 
-  /**
-   * Invokes backend to fetch the count of the list of users.
-   * @param event search keyword received from child element and passed through the previous step.
-   */
   private countUser(event?: any) {
     if (event || this.usersCount === 0) {
       const param: string = `${event?.search ? `?username.like=${encodeURIComponent(event.search)}%` : ''}`;
@@ -141,10 +94,6 @@ export class UserRolesComponent implements OnInit {
     } else { this.isLoading = false; return }
   }
 
-  /**
-   * Invokes backend to fetch the list of roles.
-   * @param event search keyword received from child element.
-   */
   public getRolesList(event?: { search: string }) {
     let param: string = '';
     if (event?.search) {
@@ -162,10 +111,6 @@ export class UserRolesComponent implements OnInit {
     })
   }
 
-  /**
-   * Invokes backend to fetch the count of the list of roles.
-   * @param event search keyword received from child element and passed through the previous step.
-   */
   private countRole(event: any) {
     if (event || this.rolesCount === 0) {
       const param: string = `${event?.search ? `?name.like=${encodeURIComponent(event.search)}%` : ''}`;
@@ -183,18 +128,9 @@ export class UserRolesComponent implements OnInit {
     } else { this.isLoading = false; return }
   }
 
-  /**
-   *
-   * @param event Event of the page change.
-   * @param activeTabIndex Index of the active tab.
-   * @callback getUsersList retrieves the list of users if activeTabIndex is 0.
-   * @callback getRolesList retrieves the list of roles if activeTabIndex is 1.
-   */
-   public pageChange(event: PageEvent, activeTabIndex?: number) {
+  public pageChange(event: PageEvent, activeTabIndex?: number) {
     this.isLoading = true;
     this.pageEvent = event;
-    // this.currentPage = event.pageIndex + 1;
-    // this.pageSize = this.pageEvent.pageSize;
     this.currentPage = event.pageIndex * this.pageSize;
     this.pageSize = event.pageSize;
     activeTabIndex === 0 ? this.getUsersList() : this.getRolesList();

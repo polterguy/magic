@@ -46,10 +46,10 @@ export class DashboardComponent implements OnInit {
 
   private waitForData() {
     (async () => {
-      while (this.backendService.active.access && !Object.keys(this.backendService.active.access.auth).length)
+      while (!Object.keys(this.backendService.active.access.auth).length)
         await new Promise(resolve => setTimeout(resolve, 100));
 
-      if (this.backendService.active.access && Object.keys(this.backendService.active.access.auth).length > 0) {
+      if (Object.keys(this.backendService.active.access.auth).length > 0) {
         if (this.backendService.active?.token?.in_role('root')) {
           this.getSystemReport();
           this.userIsRoot = (this.backendService.active?.token?.in_role('root'));
