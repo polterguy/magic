@@ -27,6 +27,11 @@ export class User {
    * Roles user belongs to.
    */
   roles?: string[];
+
+  /**
+   * Extra information associated with user.
+   */
+  extra?: User_Extra[] = [];
 }
   
 /**

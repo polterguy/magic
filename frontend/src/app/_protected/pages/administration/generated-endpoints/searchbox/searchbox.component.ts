@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { ReplaySubject } from 'rxjs';
+import { FormControl } from '@angular/forms';
+import { debounceTime, distinctUntilChanged, ReplaySubject } from 'rxjs';
 
 @Component({
   selector: 'app-searchbox',
@@ -10,16 +11,18 @@ export class SearchboxComponent implements OnInit {
 
   @Input() hasSystemEndpoints: boolean = false;
   @Input() systemEndpointChecked: boolean = false;
-
   @Output() filterList = new EventEmitter<any>();
-
-  private _inputValue: ReplaySubject<string>= new ReplaySubject();
-  public inputValue = this._inputValue.asObservable();
+  filterControl: FormControl;
 
   constructor() { }
 
   ngOnInit(): void {
-
+    this.filterControl = new FormControl('');
+    this.filterControl.valueChanges
+      .pipe(debounceTime(400), distinctUntilChanged())
+      .subscribe((query: string) => {
+        this.applyFilter(query);
+      });
   }
 
   /**
@@ -27,8 +30,7 @@ export class SearchboxComponent implements OnInit {
    * @params event
    */
    public applyFilter(keyword: string) {
-    this._inputValue.next(keyword);
-    this.filterList.emit({searchKey: this._inputValue});
+    this.filterList.emit({searchKey: keyword});
   }
 
   /**
@@ -36,12 +38,10 @@ export class SearchboxComponent implements OnInit {
    * @callback getExportList To refetch the unfiltered list.
    */
   public removeSearchTerm() {
-    this._inputValue.next('');
-    this.filterList.emit({searchKey: this._inputValue});
+    this.filterControl.setValue('');
   }
 
   public toggleSystemEndpoints() {
-    this._inputValue.next('');
-    this.filterList.emit({ defaultListToShow: this.systemEndpointChecked ? 'system' : 'other', searchKey: this._inputValue });
+    this.filterList.emit({ defaultListToShow: this.systemEndpointChecked ? 'system' : 'other', searchKey: this.filterControl.value });
   }
 }
