@@ -1,18 +1,18 @@
 <mat-accordion displayMode="flat" multi class="endpoints-list" [class.d-none]="isLoading | async">
-  <cdk-virtual-scroll-viewport class="virtual-viewport" appendOnly itemSize="5" [maxBufferPx]="(endpoints[defaultListToShow] | keyvalue)?.length *1000 || 200">
+  <cdk-virtual-scroll-viewport class="virtual-viewport" appendOnly itemSize="5"
+    [maxBufferPx]="(endpoints[defaultListToShow] | keyvalue)?.length *1000 || 200">
 
     <mat-expansion-panel [expanded]="index===0" class="mat-elevation-z0" [class.d-none]="item.value.length === 0"
-    *cdkVirtualFor="let item of endpoints[defaultListToShow] | keyvalue; let index = index;trackBy:trackFilterList">
-      <mat-expansion-panel-header class="ps-0 pe-3" >
+      *cdkVirtualFor="let item of endpoints[defaultListToShow] | keyvalue; let index = index;trackBy:trackFilterList">
+      <mat-expansion-panel-header class="ps-0 pe-3">
         <mat-panel-title class="text-capitalized text-muted">
           {{item.key}}
         </mat-panel-title>
 
       </mat-expansion-panel-header>
 
-      <mat-accordion multi >
-        <mat-expansion-panel class="mat-elevation-z1 mb-3" id="inner-panel"
-        *ngFor="let el of item.value">
+      <mat-accordion multi>
+        <mat-expansion-panel class="mat-elevation-z1 mb-3" id="inner-panel" *ngFor="let el of item.value">
           <mat-expansion-panel-header class="px-3 py-2" #header (click)="requestEditor(el)">
             <mat-panel-title>
               <div class="d-flex justify-content-between align-items-center w-100">
@@ -86,10 +86,7 @@
             <ng-container *ngIf="assumptionsPermission && testPermission && (selectedItem === el)">
               <div class="row mt-4">
                 <div class="col-12">
-                  <app-assumptions
-                  [itemDetails]="selectedItem"
-                  [result]="result"
-                  [payload]="payload"></app-assumptions>
+                  <app-assumptions [itemDetails]="selectedItem" [result]="result" [payload]="payload"></app-assumptions>
                 </div>
               </div>
             </ng-container>
@@ -105,12 +102,6 @@
 </mat-accordion>
 
 <ng-container *ngIf="isLoading | async">
-  <app-loading-skeleton
-  [amount]="1"
-  [colClass]="'col-12'"
-  [blockHeight]="'64px'"></app-loading-skeleton>
-  <app-loading-skeleton
-  [amount]="5"
-  [colClass]="'col-12'"
-  [blockHeight]="'56px'"></app-loading-skeleton>
+  <app-loading-skeleton [amount]="1" [colClass]="'col-12'" [blockHeight]="'64px'"></app-loading-skeleton>
+  <app-loading-skeleton [amount]="5" [colClass]="'col-12'" [blockHeight]="'56px'"></app-loading-skeleton>
 </ng-container>
