@@ -108,7 +108,7 @@ export class BackendService {
     if (this.active) {
       this.getEndpoints().subscribe({
         next: () => {
-          if (!this.active.token.expired && this.active.token.in_role('root')) {
+          if (!this.active.token?.expired && this.active.token?.in_role('root')) {
             this.retrieveStatusAndVersion().subscribe({
               next: () => {}
             });
