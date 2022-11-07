@@ -27,9 +27,6 @@ export class AssumptionsComponent implements OnInit {
   @Input() itemDetails!: any;
   @Input() result: InvocationResult = null;
   @Input() payload: any;
-
-  // public itemDetails: any = {};
-
   @Output() getAssumptionsist: EventEmitter<any> = new EventEmitter<any>();
 
   /**
