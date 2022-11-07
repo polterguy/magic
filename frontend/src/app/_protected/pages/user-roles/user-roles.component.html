@@ -1,9 +1,16 @@
 <mat-card>
   <mat-card-content>
-    <mat-tab-group mat-stretch-tabs dynamicHeight animationDuration="0ms"
-    (selectedTabChange)="tabChange($event)" #tabs>
+
+    <mat-tab-group
+      mat-stretch-tabs
+      dynamicHeight
+      animationDuration="0ms"
+      (selectedTabChange)="tabChange($event)"
+      #tabs>
+
       <mat-tab>
-        <ng-template mat-tab-label>User <span class="d-sm-inline d-none ps-1">Management</span></ng-template>
+        <ng-template
+          mat-tab-label>User <span class="d-sm-inline d-none ps-1">Management</span></ng-template>
         <ng-template matTabContent>
           <ng-container *ngIf="isLoading;else dataLoadedUsers">
 
@@ -33,16 +40,18 @@
           </ng-template>
         </ng-template>
       </mat-tab>
+
       <mat-tab>
-        <ng-template mat-tab-label>Role <span class="d-sm-inline d-none ps-1">Management</span></ng-template>
+        <ng-template
+          mat-tab-label>Role <span class="d-sm-inline d-none ps-1">Management</span></ng-template>
         <ng-template matTabContent>
           <ng-container *ngIf="isLoading;else dataLoadedRoles">
 
             <app-loading-skeleton
-            [amount]="5"
-            [colClass]="'col-12'"
-            [blockHeight]="'40px'"
-            [hasShadow]="false"></app-loading-skeleton>
+              [amount]="5"
+              [colClass]="'col-12'"
+              [blockHeight]="'40px'"
+              [hasShadow]="false"></app-loading-skeleton>
 
           </ng-container>
           <ng-template #dataLoadedRoles>
@@ -61,15 +70,17 @@
       </mat-tab>
     </mat-tab-group>
 
-    <mat-paginator #paginator
+    <mat-paginator
+      #paginator
       [length]="resultsLength"
       (page)="pageChange($event, tabs.selectedIndex)"
       [pageSize]="pageSize"
       [pageSizeOptions]="pageSizeOptions"
       [showFirstLastButtons]="true"
       class="mt-4"
-      aria-label="Select page of products"
+      aria-label="Select page"
       [class.d-none]="resultsLength < 5">
     </mat-paginator>
+
   </mat-card-content>
 </mat-card>

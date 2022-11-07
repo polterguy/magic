@@ -105,14 +105,16 @@ export class BackendService {
     this._obscure = new BehaviorSubject<boolean>(false);
     this.obscure = this._obscure.asObservable();
 
-    // If we have an active backend we need to retrieve endpoints for it.
     if (this.active) {
-      this.getEndpoints(this.active);
-
-      // If user is root we'll need to retrieve status of active backend and its version.
-      if (this.active.token && !this.active.token.expired && this.active.token.in_role('root')) {
-        this.retrieveStatusAndVersion(this.active);
-      }
+      this.getEndpoints().subscribe({
+        next: () => {
+          if (!this.active.token.expired && this.active.token.in_role('root')) {
+            this.retrieveStatusAndVersion().subscribe({
+              next: () => {}
+            });
+          }
+        }
+      });
     }
   }
 
@@ -146,20 +148,8 @@ export class BackendService {
    * @param fetchRecaptcha ReCaptcha key to be fetched, true by default and false when invoked from forgot password
    */
   activate(value: Backend, fetchRecaptcha: boolean = true) {
-    this.backendsStorageService.activate(value);
-    if (!value.access.fetched) {
-      this.getEndpoints(value);
-    } else {
-      value.createAccessRights(); // Updating access rights in case previous token was garbage.
-      this._endpointsRetrieved.next(true);
-    }
-    if (value.token && value.token.in_role('root') && !value.status) {
-      this.retrieveStatusAndVersion(this.active);
-    }
+    value = this.backendsStorageService.activate(value);
     this._activeChanged.next(value);
-    if (fetchRecaptcha) {
-      this.getRecaptchaKey();
-    }
   }
 
   /**
@@ -188,13 +178,6 @@ export class BackendService {
   }
 
   /**
-   * Fetches endpoints for current backend again.
-   */
-  refetchEndpoints() {
-    this.getEndpoints(this.active);
-  }
-
-  /**
    * Authenticates user towards current backend.
    *
    * @param username Username
@@ -213,18 +196,9 @@ export class BackendService {
       this.httpClient.get<AuthenticateResponse>(
         this.active.url +
         '/magic/system/auth/authenticate' + query, {
-
-          /*
-           * Notice, if we're doing Windows automatic authentication,
-           * we will not be given a username/password combination to this method, at which point
-           * we'll have to make sure Angular passes in Windows credentials to endpoint.
-           */
           withCredentials: query === '' ? true : false,
-
         }).subscribe({
           next: (auth: AuthenticateResponse) => {
-
-            // Updating active backend.
             this.active.token = new Token(auth.ticket);
             if (storePassword) {
               this.active.password = password;
@@ -233,17 +207,25 @@ export class BackendService {
             }
             this.backendsStorageService.persistBackends();
             this.ensureRefreshJWTTokenTimer(this.active);
-            if (!this.active.access.fetched) {
-              this.getEndpoints(this.active);
-            } else {
-              this.active.createAccessRights();
-            }
             this._authenticated.next(true);
-            this.retrieveStatusAndVersion(this.active);
-
-            // Done!
-            observer.next(auth);
-            observer.complete();
+            this.getEndpoints().subscribe({
+              next: () => {
+                this.retrieveStatusAndVersion().subscribe({
+                  next: () => {
+                    observer.next(auth);
+                    observer.complete();
+                  },
+                  error: (error: any) => {
+                    observer.error(error);
+                    observer.complete();
+                  }
+                });
+              },
+              error: (error: any) => {
+                observer.error(error);
+                observer.complete();
+              }
+            });
           },
           error: (error: any) => {
             observer.error(error);
@@ -355,6 +337,10 @@ export class BackendService {
     return this._obscure.value;
   }
 
+  refetchEndpoints() {
+    this.getEndpoints();
+  }
+
   /*
    * Private helper methods.
    */
@@ -438,22 +424,35 @@ export class BackendService {
         },
         error: (error: any) => {
           console.error(error);
-          this.logoutFromBackend(backend);
         }});
   }
 
   /*
    * Retrieves endpoints for currently selected backend.
    */
-  private getEndpoints(backend: Backend) {
-    this.httpClient.get<Endpoint[]>(backend.url + '/magic/system/auth/endpoints').subscribe({
-      next: (res) => {
-        backend.applyEndpoints(res || []);
-        this._endpointsRetrieved.next(true);
-      },
-      error: () => {
-        backend.applyEndpoints([]);
-        this._endpointsRetrieved.next(false);
+  private getEndpoints() {
+    return new Observable<Endpoint[]>(observer => {
+      if (this.active.endpoints?.length > 0) {
+        this.active.createAccessRights();
+        observer.next(this.active.endpoints);
+        observer.complete()
+      } else {
+        this.httpClient.get<Endpoint[]>(this.active.url + '/magic/system/auth/endpoints').subscribe({
+          next: (res) => {
+            this.active.applyEndpoints(res || []);
+            this.active.createAccessRights();
+            this._endpointsRetrieved.next(true);
+            observer.next(res);
+            observer.complete()
+          },
+          error: (error: any) => {
+            this.active.applyEndpoints([]);
+            this.active.createAccessRights();
+            this._endpointsRetrieved.next(false);
+            observer.error(error);
+            observer.complete();
+          }
+        });
       }
     });
   }
@@ -461,77 +460,69 @@ export class BackendService {
   /*
    * Retrieves status of backend and version
    */
-  private retrieveStatusAndVersion(backend: Backend) {
+  private retrieveStatusAndVersion() {
 
     // Retrieving status of specified backend.
-    this.httpClient.get<Status>(
-      backend.url +
-      '/magic/system/config/status').subscribe({
-      next: (status: Status) => {
+    return new Observable<Status>(observer => {
+      this.httpClient.get<Status>(
+        this.active.url +
+        '/magic/system/config/status').subscribe({
+        next: (status: Status) => {
 
-        // Assigning model.
-        backend.status = status;
-        this._statusRetrieved.next(status);
+          // Assigning model.
+          this.active.status = status;
+          this._statusRetrieved.next(status);
 
-        // Retrieving version of backend
-        this.httpClient.get<CoreVersion>(
-          backend.url +
-          '/magic/system/version').subscribe({
-          next: (version: CoreVersion) => {
+          // Retrieving version of backend
+          this.httpClient.get<CoreVersion>(
+            this.active.url +
+            '/magic/system/version').subscribe({
+            next: (version: CoreVersion) => {
+              this.active.version = version.version;
+              if (this._latestBazarVersion) {
+                this._versionRetrieved.next(this.active.version);
+                observer.next(status);
+                observer.complete();
 
-            // Assigning model
-            backend.version = version.version;
-
-            // Retrieving latest version as published by the Bazar unless we have already retrieved it.
-            if (this._latestBazarVersion) {
-
-              // Latest Bazar version of backend has already been retrieved.
-              this._versionRetrieved.next(backend.version);
-
-            } else {
-
-              // Retrieving latest backend version as published by the Bazar.
-              this.httpClient.get<Response>(
-                environment.bazarUrl +
-                '/magic/modules/bazar/core-version').subscribe({
-                  next: (latestVersion: Response) => {
-
-                    // Assigning model
-                    this._latestBazarVersion = latestVersion.result;
-                    this._versionRetrieved.next(backend.version);
-                  }});
+              } else {
+                this.httpClient.get<Response>(
+                  environment.bazarUrl +
+                  '/magic/modules/bazar/core-version').subscribe({
+                    next: (latestVersion: Response) => {
+                      this._latestBazarVersion = latestVersion.result;
+                      this._versionRetrieved.next(this.active.version);
+                      observer.next(status);
+                      observer.complete();
+                    },
+                    error: (error: any) => {
+                      observer.error(error);
+                      observer.complete();
+                    }});
+              }
+              this.getRecaptchaKey(); 
             }
-            this.getRecaptchaKey(true);
-          }
-        });
+          });
       }});
+    });
   }
 
   /**
    * retrieving recaptcha, if existing
    */
-  public getRecaptchaKey(fetchBazarKey: boolean = false) {
-    if (this._bazaarCaptchaKey === null) {
-      this.httpClient.get<Response>(
-        environment.bazarUrl +
-        '/magic/system/auth/recaptcha-key').subscribe({
-          next: (recaptcha: Response) => {
-
-            // Assigning bazar's recaptcha key
-            this._bazaarCaptchaKey = recaptcha.result;
-          }
-        });
-    }
-    if (!fetchBazarKey) {
-      this.httpClient.get<Response>(
-        this.active.url +
-        '/magic/system/auth/recaptcha-key').subscribe({
-          next: (recaptcha: Response) => {
-
-            // Assigning recaptcha key
-            this._activeCaptcha.next(recaptcha.result);
-          }
-        });
-    }
+  public getRecaptchaKey() {
+    this.httpClient.get<Response>(
+      environment.bazarUrl +
+      '/magic/system/auth/recaptcha-key').subscribe({
+        next: (recaptcha: Response) => {
+          this._bazaarCaptchaKey = recaptcha.result;
+        }
+      });
+    this.httpClient.get<Response>(
+      this.active.url +
+      '/magic/system/auth/recaptcha-key').subscribe({
+        next: (recaptcha: Response) => {
+          this._activeCaptcha.next(recaptcha.result);
+        }
+      });
   }
 }
