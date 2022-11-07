@@ -102,7 +102,7 @@ export class SharedTopBarComponent implements OnInit {
       data: this.rolesList
     }).afterClosed().subscribe((result: string) => {
       if (result) {
-        this.getUsersList.emit();
+        this.getUsersList.emit({});
       }
     })
   }
