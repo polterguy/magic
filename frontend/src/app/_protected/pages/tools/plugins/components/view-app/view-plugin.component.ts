@@ -8,11 +8,11 @@ import { BackendService } from 'src/app/_protected/services/common/backend.servi
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
-  selector: 'app-view-db',
-  templateUrl: './view-db.component.html',
-  styleUrls: ['./view-db.component.scss']
+  selector: 'app-view-plugin',
+  templateUrl: './view-plugin.component.html',
+  styleUrls: ['./view-plugin.component.scss']
 })
-export class ViewDbComponent implements OnInit {
+export class ViewPluginComponent implements OnInit {
 
   public installed: boolean = false;
   public canInstall: boolean = false;
@@ -21,7 +21,7 @@ export class ViewDbComponent implements OnInit {
 
   constructor(
     private dialog: MatDialog,
-    private dialogRef: MatDialogRef<ViewDbComponent>,
+    private dialogRef: MatDialogRef<ViewPluginComponent>,
     private fileService: FileService,
     private bazarService: BazarService,
     private generalService: GeneralService,

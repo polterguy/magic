@@ -46,7 +46,7 @@
               <button mat-button color="primary" (click)="viewAppDetails(item)">Detail</button>
               <button mat-flat-button color="primary" class="w-100 px-4 ms-2"
                 *ngIf="!item?.details"
-                (click)="item.name">Install</button>
+                (click)="installDb(item)">Install</button>
               <button mat-flat-button color="warn" class="w-100 px-4 ms-2"
                 *ngIf="item?.details"
                 (click)="uninstallDb(item.details)">Uninstall</button>

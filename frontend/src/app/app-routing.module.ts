@@ -46,6 +46,10 @@ const routes: Routes = [
         path: 'endpoint-generator',
         loadChildren: () => import('./_protected/pages/tools/endpoints/_module/endpoint.module').then(m => m.EndpointModule)
       },
+      {
+        path: 'plugins',
+        loadChildren: () => import('./_protected/pages/tools/plugins/_module/plugins.module').then(m => m.PluginsModule)
+      },
     ]
   },
   {
