@@ -142,7 +142,7 @@
       <ng-container *ngSwitchCase="true">
         <app-sql-view
           [dbLoading]="dbLoading|async"
-          [tables]="hintTables | async"
+          [tables]="hintTables"
           [databases]="databases"
           [selectedDatabase]="selectedDatabase"
           [selectedDbType]="selectedDbType"
