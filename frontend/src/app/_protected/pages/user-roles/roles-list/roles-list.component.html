@@ -13,18 +13,6 @@
       <td mat-cell *matCellDef="let element"> {{element?.description ?? 'N/A'}} </td>
     </ng-container>
 
-    <!-- createdBy Column -->
-    <ng-container matColumnDef="createdBy">
-      <th mat-header-cell *matHeaderCellDef class="text-nowrap"> Created by </th>
-      <td mat-cell *matCellDef="let element"> {{element?.createdBy ?? 'N/A'}} </td>
-    </ng-container>
-
-    <!-- createdAt Column -->
-    <ng-container matColumnDef="createdAt">
-      <th mat-header-cell *matHeaderCellDef class="text-nowrap"> Creation date </th>
-      <td mat-cell *matCellDef="let element"> {{element?.createdAt ?? 'N/A'}} </td>
-    </ng-container>
-
     <!-- action Column -->
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef> Actions </th>

@@ -18,7 +18,7 @@ export class RolesListComponent implements OnInit {
 
   @Output() getRolesList = new EventEmitter<any>();
 
-  displayedColumns: string[] = ['name', 'description', 'createdBy', 'createdAt', 'actions'];
+  displayedColumns: string[] = ['name', 'description', 'actions'];
 
   /**
    * Specify if the user can update roles
