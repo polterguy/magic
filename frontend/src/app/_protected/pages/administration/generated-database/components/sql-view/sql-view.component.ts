@@ -71,10 +71,10 @@ export class SqlViewComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     (async () => {
-      while (!(this.tables && this.tables.length))
+      while (!(this.tables))
         await new Promise(resolve => setTimeout(resolve, 100));
 
-      if (this.tables && this.tables.length > 0) {
+      if (this.tables) {
         this.canLoadSnippet = this.backendService.active?.access.sql.list_files;
         this.codemirrorInit();
         this.watchForActions();
@@ -86,7 +86,7 @@ export class SqlViewComponent implements OnInit, OnDestroy {
   /*
    * Returns options for CodeMirror editor.
   */
-  private getCodeMirrorOptions(): Promise<any> {
+  private async getCodeMirrorOptions(): Promise<any> {
     return this.codemirrorActionsService.getActions(null, 'sql').then((res: any) => { return res });
   }
 
