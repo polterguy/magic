@@ -3,76 +3,106 @@
 
   <div mat-dialog-content>
     <div class="row">
+
       <div class="col-md-6 col-12">
         <mat-form-field class="w-100">
           <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>person</mat-icon>
             <span class="text-muted">|</span>
           </span>
-
-          <input matInput type="text" name="-" autocomplete="off" placeholder="Username"
-          formControlName="username" required />
-
+          <input
+            matInput
+            type="text"
+            name="-"
+            autocomplete="off"
+            placeholder="Username"
+            formControlName="username"
+            required />
         </mat-form-field>
       </div>
+
       <div class="col-md-6 col-12">
         <mat-form-field class="w-100">
           <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>key</mat-icon>
             <span class="text-muted">|</span>
           </span>
-
-          <input matInput [type]="showPassword ? 'text' : 'password'" autocomplete="new-password"
-          formControlName="password" placeholder="Password" required />
-
-          <button mat-icon-button matSuffix type="button" (click)="showPassword = !showPassword">
+          <input
+            matInput
+            [type]="showPassword ? 'text' : 'password'"
+            autocomplete="new-password"
+            formControlName="password"
+            placeholder="Password"
+            required />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="showPassword = !showPassword">
             <mat-icon>{{showPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
           </button>
-
         </mat-form-field>
       </div>
+
       <div class="col-md-6 col-12">
         <mat-form-field class="w-100">
           <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>mail</mat-icon>
             <span class="text-muted">|</span>
           </span>
-
-          <input matInput type="text" name="-" autocomplete="off"
-          formControlName="email" placeholder="Email address (optional)" />
-
+          <input
+            matInput
+            type="text"
+            name="-"
+            autocomplete="email"
+            formControlName="email"
+            placeholder="Email address (optional)" />
         </mat-form-field>
       </div>
+
       <div class="col-md-6 col-12">
+        <mat-form-field class="w-100">
+          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>person</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            type="text"
+            name="-"
+            autocomplete="name"
+            formControlName="name"
+            placeholder="Full name (optional)" />
+        </mat-form-field>
+      </div>
+
+      <div class="col-12">
         <mat-form-field class="w-100">
           <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>shield</mat-icon>
             <span class="text-muted">|</span>
           </span>
-
           <mat-select formControlName="role" multiple placeholder="Role (optional)">
             <mat-select-trigger>
-                {{userForm.value.role ? userForm.value.role[0] : ''}}
-                <span *ngIf="userForm.value.role?.length > 1">
-                  + {{userForm.value.role.length - 1}} more
-                </span>
+              {{userForm.value.role ? userForm.value.role[0] : ''}}
+              <span *ngIf="userForm.value.role?.length > 1">
+                + {{userForm.value.role.length - 1}} more
+              </span>
             </mat-select-trigger>
-          <mat-option
-            class="multiline-mat-option"
-            *ngFor="let role of data"
-            [value]="role.name">
-            <span class="d-block name-line">{{role.name}}</span>
-            <span class="d-block description-line">{{role.description}}</span>
-          </mat-option>
-        </mat-select>
-
+            <mat-option class="multiline-mat-option" *ngFor="let role of data" [value]="role.name">
+              <span class="d-block name-line">{{role.name}}</span>
+              <span class="d-block description-line">{{role.description}}</span>
+            </mat-option>
+          </mat-select>
         </mat-form-field>
       </div>
+
     </div>
 
   </div>
   <div mat-dialog-actions [align]="'end'">
     <button mat-button mat-dialog-close>Cancel</button>
-    <button mat-flat-button color="primary" (click)="createUser()" [disabled]="isLoading" type="submit">Save password</button>
+    <button mat-flat-button color="primary" (click)="createUser()" [disabled]="isLoading" type="submit">Save
+      password</button>
   </div>
 </form>

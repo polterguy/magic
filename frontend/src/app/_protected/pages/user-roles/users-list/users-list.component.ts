@@ -225,7 +225,6 @@ export class UsersListComponent implements OnInit {
       width: '700px',
       data: {
         user: user,
-        roles: this.rolesList
       },
       autoFocus: false
     }).afterClosed().subscribe((result: string) => {

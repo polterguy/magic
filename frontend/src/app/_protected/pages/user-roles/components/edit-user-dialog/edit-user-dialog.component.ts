@@ -4,6 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { Role } from '../../_models/role.model';
 import { User } from '../../_models/user.model';
+import { RoleService } from '../../_services/role.service';
 import { UserService } from '../../_services/user.service';
 
 @Component({
@@ -29,21 +30,31 @@ export class EditUserDialogComponent implements OnInit {
   public userIsLocked: boolean = undefined;
 
   public formData: any = [];
+  roles: Role[] = [];
 
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
-    private dialogRef: MatDialogRef<EditUserDialogComponent>,
+    private roleService: RoleService,
     private generalService: GeneralService,
     private cdr: ChangeDetectorRef,
-    @Inject(MAT_DIALOG_DATA) public data: { user: User, roles: Role[] }) { }
+    @Inject(MAT_DIALOG_DATA) public data: { user: User }) { }
 
   /**
- * initialization of our dynamic form
- */
+   * initialization of our dynamic form
+   */
   public userForm = this.fb.group({});
 
   ngOnInit(): void {
+
+    this.roleService.list('?limit=-1').subscribe({
+      next: (roles: Role[]) => {
+        this.roles = roles || [];
+        for (const idx of (this.data.user.roles || [])) {
+          this.rolesCtrl.value.push(idx);
+        }
+      },
+    });
 
     (async () => {
       while (this.data && !Object.keys(this.data).length)
@@ -54,25 +65,15 @@ export class EditUserDialogComponent implements OnInit {
         this.setFormFields();
 
         this.sortRolesBySelected();
-        // this.rolesCtrl.setValue(this.data.user.role);
         this.userIsLocked = (this.data.user.locked === true);
       }
     })();
   }
 
-  /**
-   * Sorts roles' list in a way to have all selected roles listed on top of the list.
-   * @param item Role set in the previous step.
-   */
-   public sortRolesBySelected() {
-    // this.data.roles = this.data.roles.sort((a: any, b: any) => this.data.user.role.indexOf(b.name) - this.data.user.role.indexOf(a.name));
+  public sortRolesBySelected() {
     this.cdr.detectChanges();
   }
 
-  /**
-   * Sets dynamic fields based on the existing data.
-   * Sets all fields to disable, if the action is not equal to 'edit'
-   */
   setFormFields() {
     delete this.formData?.created;
     delete this.formData?.locked;
@@ -81,12 +82,7 @@ export class EditUserDialogComponent implements OnInit {
     }
   }
 
-
-  /**
-   * Setting the Role object and deciding what action needs to be made.
-   * @param name user's username.
-   */
-   manageRole(name: string) {
+  manageRole(name: string) {
     this.rolesCtrl.disable();
     const value: boolean = (this.rolesCtrl.value.indexOf(name) > -1);
     const item: any = {
@@ -94,18 +90,14 @@ export class EditUserDialogComponent implements OnInit {
       role: name
     }
     if (value === true) {
-      this.addRole(item);
+      this.addRole(name);
     } else {
       this.removeRole(item);
     }
   }
 
-  /**
-   * Invokes the endpoint to add a role to the user's roles.
-   * @param item Role set in the previous step.
-   */
-  public addRole(item: any) {
-    this.userService.addRole(item.user, item.name).subscribe({
+  public addRole(role: string) {
+    this.userService.addRole(this.data.user.username, role).subscribe({
       next: (res: any) => {
         if (res && res.result === 'success') {
           this.generalService.showFeedback('Roles successfully updated.', 'successMessage');
@@ -117,12 +109,8 @@ export class EditUserDialogComponent implements OnInit {
     });
   }
 
-  /**
-   * Invokes the endpoint to remove a role from the user's roles.
-   * @param item Role set in the previous step.
-   */
   public removeRole(item: any) {
-    this.userService.removeRole(item.role, item.user).subscribe({
+    this.userService.removeRole(item.user, item.role).subscribe({
       next: (res: any) => {
         if (res && res.affected > 0) {
           this.generalService.showFeedback('Roles successfully updated.', 'successMessage');
@@ -134,9 +122,6 @@ export class EditUserDialogComponent implements OnInit {
     });
   }
 
-  /**
-   * Invokes the endpoint to lock/unlock user.
-   */
   public toggleLockUser() {
     this.userIsLocked = !this.userIsLocked;
     const data: any = {
