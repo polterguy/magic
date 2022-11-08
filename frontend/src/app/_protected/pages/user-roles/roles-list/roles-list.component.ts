@@ -18,7 +18,7 @@ export class RolesListComponent implements OnInit {
 
   @Output() getRolesList = new EventEmitter<any>();
 
-  displayedColumns: string[] = ['name', 'description', 'createdBy', 'createdAt', 'actions'];
+  displayedColumns: string[] = ['name', 'description', 'actions'];
 
   /**
    * Specify if the user can update roles
@@ -48,6 +48,19 @@ export class RolesListComponent implements OnInit {
         this.cdr.detectChanges();
       }
     })();
+  }
+
+  systemRole(role: string) {
+    switch (role) {
+      case 'root':
+      case 'guest':
+      case 'reset-password':
+      case 'unconfirmed':
+      case 'blocked':
+        return true;
+      default:
+        return false;
+    }
   }
 
   /**

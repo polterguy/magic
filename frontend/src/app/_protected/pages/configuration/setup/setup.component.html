@@ -45,6 +45,7 @@
           <input
             matInput
             autocomplete="connectionString"
+            placeholder="Connection string"
             formControlName="connectionString"
             name="connectionString">
           <mat-error *ngIf="configForm.controls.connectionString.errors?.['pattern']">You must provide a {{'{'}}database{{'}'}} part</mat-error>
@@ -62,6 +63,7 @@
           <input
             matInput
             autocomplete="new-password"
+            placeholder="Password"
             formControlName="password"
             [type]="showPassword ? 'text' : 'password'"
             name="password">
@@ -85,6 +87,7 @@
             matInput
             autocomplete="new-password"
             formControlName="passwordRepeat"
+            placeholder="Repeat password"
             [type]="showPassword ? 'text' : 'password'"
             [errorStateMatcher]="matcher"
             name="password">
@@ -100,6 +103,7 @@
               matInput
               autocomplete="name"
               formControlName="name"
+              placeholder="Name"
               name="name">
             <mat-error *ngIf="configForm.controls.name.errors?.['required']">You must provide your name</mat-error>
           </mat-form-field>
@@ -112,6 +116,7 @@
             <input
               matInput
               autocomplete="email"
+              placeholder="Email"
               formControlName="email"
               name="email">
             <mat-error *ngIf="configForm.controls.email.errors?.['required']">You must provide your email</mat-error>
