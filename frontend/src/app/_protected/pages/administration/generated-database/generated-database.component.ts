@@ -402,6 +402,9 @@ export class GeneratedDatabaseComponent implements OnInit {
   public changeTable() {
     const tables = this.databases.find((db: any) => db.name === this.selectedDatabase)?.tables || [];
     this._tables.next(tables);
+    let hintTables = this.databases.find((db: any) => db.name === this.selectedDatabase)?.tables || [];
+    hintTables = hintTables.map((x: any) => [x.name, x.columns.map((y: any) => y.name)]);
+    this._hintTables.next(Object.fromEntries(hintTables));
   }
 
   public clearServerCache() {

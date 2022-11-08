@@ -41,7 +41,7 @@ export class TablesViewComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.tableSubscription = this.tables.subscribe((res: any) => {
       this.tablesList = res;
-    })
+    });
   }
 
   public addField(item: any) {

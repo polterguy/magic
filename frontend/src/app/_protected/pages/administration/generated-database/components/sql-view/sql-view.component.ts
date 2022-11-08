@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Subject, Subscription } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
 import { Model } from 'src/app/codemirror/codemirror-sql/codemirror-sql.component';
 import { ShortkeysComponent } from 'src/app/_general/components/shortkeys/shortkeys.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
@@ -21,46 +21,33 @@ import { SnippetNameDialogComponent } from '../snippet-name-dialog/snippet-name-
 export class SqlViewComponent implements OnInit, OnDestroy {
 
   @Input() dbLoading: boolean;
-  @Input() tables: any;
+  @Input() tables: Observable<any>;
   @Input() databases: any;
   @Input() selectedDatabase: string = '';
   @Input() selectedDbType: string = '';
   @Input() selectedConnectionString: string = '';
   @Input() saveSnippet: Subject<any>;
-
   @Output() getDatabases: EventEmitter<any> = new EventEmitter<any>();
 
-  /**
-   * Input SQL component model and options.
-   */
   input: Model = null;
+  canLoadSnippet: boolean = undefined;
+  queryResult: any = [];
 
-  public canLoadSnippet: boolean = undefined;
+  public dataSource: any = [];
 
-  public queryResult: any = [];
+  displayedColumns: any = [];
 
-  /**
-   * Stores the query's data.
-   */
-   public dataSource: any = [];
+  columns: any = [];
 
-   /**
-    * Table columns to be displayed.
-    */
-   displayedColumns: any = [];
+  public selectedSnippet: string = '';
 
-   columns: any = [];
+  public waitingRun: boolean = false;
 
-   public selectedSnippet: string = '';
-
-   public waitingRun: boolean = false;
-
-   /**
-   * Input file for importing SQL
-   */
   sqlFile: any;
 
-   private saveSnippetSubscription!: Subscription;
+  private saveSnippetSubscription!: Subscription;
+  private tablesList: any = null;
+  private tableSubscription!: Subscription;
 
   constructor(
     private dialog: MatDialog,
@@ -79,13 +66,18 @@ export class SqlViewComponent implements OnInit, OnDestroy {
         this.codemirrorInit();
         this.watchForActions();
         this.waitForSavingSnippet();
+        this.tableSubscription = this.tables.subscribe((res: any) => {
+          this.tablesList = res;
+          if (this.input) {
+            this.input.options.hintOptions = {
+              tables: this.tablesList,
+            };
+          }
+        });
       }
     })();
   }
 
-  /*
-   * Returns options for CodeMirror editor.
-  */
   private async getCodeMirrorOptions(): Promise<any> {
     return this.codemirrorActionsService.getActions(null, 'sql').then((res: any) => { return res });
   }
@@ -99,7 +91,7 @@ export class SqlViewComponent implements OnInit, OnDestroy {
       sql: '',
     };
     this.input.options.hintOptions = {
-      tables: this.tables,
+      tables: this.tablesList,
     };
     this.input.options.autofocus = true;
   };
@@ -237,7 +229,7 @@ export class SqlViewComponent implements OnInit, OnDestroy {
       const titles = Object.keys(this.queryResult[0][0]);
       if (titles.indexOf('password') > -1) {
         const index: number = titles.findIndex((value: string) => value === 'password');
-        titles.splice(index,1)
+        titles.splice(index, 1)
       }
 
       for (const title of titles) {
@@ -300,6 +292,9 @@ export class SqlViewComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    if(this.tableSubscription) {
+      this.tableSubscription.unsubscribe();
+    }
     if (this.saveSnippetSubscription) {
       this.saveSnippetSubscription.unsubscribe();
     }
