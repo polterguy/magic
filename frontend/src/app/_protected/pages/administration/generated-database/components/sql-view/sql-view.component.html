@@ -1,5 +1,6 @@
 <div class="row sql-editor">
-  <div class="col-xl-4 col-lg-6 col-md-5 col-12">
+
+  <div class="col-12 sql-input">
     <mat-card class="h-100">
       <mat-card-content class="h-100 d-flex flex-column w-100">
         <div class="d-flex justify-content-between align-items-center">
@@ -20,15 +21,15 @@
 
         <div class="d-flex justify-content-end align-items-center">
           <button mat-button color="primary" (click)="clearSQLEditor()">Clear</button>
-          <button mat-flat-button color="primary" class="px-4"
-            [disabled]="waitingRun"
+          <button mat-flat-button color="primary" class="px-4" [disabled]="waitingRun"
             (click)="execute()">Execute</button>
         </div>
 
       </mat-card-content>
     </mat-card>
   </div>
-  <div class="col-xl-8 col-lg-6 col-md-7 col-12">
+
+  <div class="col-12 mt-3" *ngIf="dataSource && dataSource.length > 0">
     <mat-card class="h-100 pt-3">
       <mat-card-content class="h-100 max-height-full">
 

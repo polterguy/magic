@@ -32,7 +32,6 @@ export class LinkTableComponent implements OnInit {
 
   public create() {
     if (this.formData.table1 !== '' && this.formData.table2 !== '') {
-      console.log(this.formData)
       this.dialogRef.close(this.formData);
     } else {
       this.generalService.showFeedback('Please select both tables.', 'errorMessage');
