@@ -50,6 +50,19 @@ export class RolesListComponent implements OnInit {
     })();
   }
 
+  systemRole(role: string) {
+    switch (role) {
+      case 'root':
+      case 'guest':
+      case 'reset-password':
+      case 'unconfirmed':
+      case 'blocked':
+        return true;
+      default:
+        return false;
+    }
+  }
+
   /**
    * Deleting the selected role upon confirmation.
    * @param role Selected role.

@@ -24,7 +24,7 @@
               [disabled]="!userCanUpdate">Edit</button>
             <button mat-button color="primary" class="p-0"
               (click)="deleteRole(element)"
-              [disabled]="!userCanDelete || (element?.name === 'root' || element?.name === 'reset-password')">Delete</button>
+              [disabled]="!userCanDelete || systemRole(element?.name)">Delete</button>
           </div>
         </div>
       </td>
