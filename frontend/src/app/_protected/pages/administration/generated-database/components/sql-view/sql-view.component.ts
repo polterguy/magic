@@ -1,18 +1,17 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Observable, Subject, Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { Model } from 'src/app/codemirror/codemirror-sql/codemirror-sql.component';
 import { ShortkeysComponent } from 'src/app/_general/components/shortkeys/shortkeys.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { BackendService } from 'src/app/_protected/services/common/backend.service';
 
 // CodeMirror options.
-import sql from '../../../../../codemirror/options/sql.json';
-import { CodemirrorActionsService } from '../../../hyper-ide/_services/codemirror-actions.service';
-import { DefaultDatabaseType } from '../../../tools/database/_models/default-database-type.model';
-import { SqlService } from '../../../tools/database/_services/sql.service';
-import { SqlSnippetDialogComponent } from '../../../tools/endpoints/components/sql-snippet-dialog/sql-snippet-dialog.component';
-import { SnippetNameDialogComponent } from '../components/snippet-name-dialog/snippet-name-dialog.component';
+import sql from '../../../../../../codemirror/options/sql.json';
+import { CodemirrorActionsService } from '../../../../hyper-ide/_services/codemirror-actions.service';
+import { SqlService } from '../../../../tools/database/_services/sql.service';
+import { SqlSnippetDialogComponent } from '../../../../tools/endpoints/components/sql-snippet-dialog/sql-snippet-dialog.component';
+import { SnippetNameDialogComponent } from '../snippet-name-dialog/snippet-name-dialog.component';
 
 @Component({
   selector: 'app-sql-view',

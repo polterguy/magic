@@ -1,0 +1,16 @@
+
+@import '../../../../../../../assets/styles/_variables/colors.scss';
+@import '../../../../../../../assets/styles/_variables/mixin.scss';
+
+::ng-deep .sql-editor {
+  .sql-input {
+    min-height: 500px;
+    .CodeMirror:not(.CodeMirror-fullscreen) { height: 100%; }
+  }
+}
+.table-responsive {
+  @include scrollbar  ($aista_default_alt,$aista_default_grey4,5px);
+  .text-truncate {
+    max-width: 50vw;
+  }
+}

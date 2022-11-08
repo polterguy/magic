@@ -7,7 +7,7 @@ import fileTypes from 'src/app/codemirror/file-types.json';
 /**
  * Model for seeing DDL of tables.
  */
- export class ExportTablesModel {
+export class ExportTablesModel {
   result: string;
   full: boolean;
   module: string;
@@ -63,5 +63,4 @@ export class ExportDdlComponent implements OnInit {
       }
     })();
   }
-
 }
