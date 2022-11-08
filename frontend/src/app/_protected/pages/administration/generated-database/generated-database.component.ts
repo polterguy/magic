@@ -59,8 +59,10 @@ export class GeneratedDatabaseComponent implements OnInit {
   /**
    * Tables in the user's selected database.
    */
-  private _tables: ReplaySubject<boolean> = new ReplaySubject();
+  private _tables: ReplaySubject<any[]> = new ReplaySubject();
   public tables = this._tables.asObservable();
+  private _hintTables: ReplaySubject<any> = new ReplaySubject();
+  public hintTables = this._hintTables.asObservable();
 
   /**
    * To watch for the changes in database changes.
@@ -195,6 +197,9 @@ export class GeneratedDatabaseComponent implements OnInit {
 
           const tables = this.databases.find((db: any) => db.name === this.selectedDatabase)?.tables || [];
           this._tables.next(tables);
+          let hintTables = this.databases.find((db: any) => db.name === this.selectedDatabase)?.tables || [];
+          hintTables = hintTables.map((x: any) => [x.name, x.columns.map((y: any) => y.name)]);
+          this._hintTables.next(Object.fromEntries(hintTables));
           this._dbLoading.next(false);
           this.generalService.hideLoading();
         },

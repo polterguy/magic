@@ -68,3 +68,33 @@
   .cm-s-aista .CodeMirror-matchingbracket { color: #ffb928 !important; }
   .cm-s-aista .CodeMirror-matchingtag { background: rgba(255, 255, 255, .37); }
 }
+
+.CodeMirror-hints {
+  position: absolute;
+  z-index: 10000;
+  overflow: hidden;
+  list-style: none;
+  margin: 0;
+  padding: 2px;
+  -webkit-box-shadow: 2px 3px 5px transparentize($color: $aista_dark, $amount: 0.8);
+  -moz-box-shadow: 2px 3px 5px transparentize($color: $aista_dark, $amount: 0.8);
+  box-shadow: 2px 3px 5px transparentize($color: $aista_dark, $amount: 0.8);
+  border-radius: 3px;
+  color: $aista_dark;
+  background-color: $aista_default_grey4;
+  font-size: 90%;
+  font-family: monospace;
+  max-height: 20em;
+  overflow-y: auto;
+}
+.CodeMirror-hint {
+  margin: 0;
+  padding: 0 4px;
+  border-radius: 2px;
+  white-space: pre;
+  cursor: pointer;
+}
+li.CodeMirror-hint-active {
+  background: $aista_primary;
+  color: white;
+}

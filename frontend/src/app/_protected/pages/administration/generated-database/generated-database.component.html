@@ -130,19 +130,19 @@
     <container-element [ngSwitch]="sqlView">
       <ng-container *ngSwitchCase="false">
         <app-tables-view
-        [dbLoading]="dbLoading|async"
-        [tables]="tables"
-        [databases]="databases"
-        [selectedDatabase]="selectedDatabase"
-        [selectedDbType]="selectedDbType"
-        [selectedConnectionString]="selectedConnectionString"
-        (getDatabases)="getDatabases($event)"></app-tables-view>
+          [dbLoading]="dbLoading|async"
+          [tables]="tables"
+          [databases]="databases"
+          [selectedDatabase]="selectedDatabase"
+          [selectedDbType]="selectedDbType"
+          [selectedConnectionString]="selectedConnectionString"
+          (getDatabases)="getDatabases($event)"></app-tables-view>
       </ng-container>
 
       <ng-container *ngSwitchCase="true">
         <app-sql-view
           [dbLoading]="dbLoading|async"
-          [tables]="tables | async"
+          [tables]="hintTables | async"
           [databases]="databases"
           [selectedDatabase]="selectedDatabase"
           [selectedDbType]="selectedDbType"
