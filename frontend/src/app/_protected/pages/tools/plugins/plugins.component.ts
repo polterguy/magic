@@ -1,58 +1,45 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
+import { Observable } from 'rxjs';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { BackendService } from 'src/app/_protected/services/common/backend.service';
 import { BazarService } from 'src/app/_protected/services/common/bazar.service';
 import { CacheService } from 'src/app/_protected/services/common/cache.service';
-import { ConfigService } from 'src/app/_protected/services/common/config.service';
 import { environment } from 'src/environments/environment';
-import { FileService } from '../../../hyper-ide/_services/file.service';
-import { AppManifest } from '../../plugins/_models/app-manifest';
-import { BazarApp } from '../../plugins/_models/bazar-app.model';
-import { ViewDbComponent } from '../components/view-db/view-db.component';
-import { Databases } from '../_models/databases.model';
-import { DefaultDatabaseType } from '../_models/default-database-type.model';
-import { SqlService } from '../_services/sql.service';
+import { ConfigService } from '../../configuration/_services/config.service';
+import { FileService } from '../../hyper-ide/_services/file.service';
+import { SqlService } from '../database/_services/sql.service';
+import { ViewPluginComponent } from './components/view-app/view-plugin.component';
+import { AppManifest } from './_models/app-manifest';
+import { BazarApp } from './_models/bazar-app.model';
 
 @Component({
-  selector: 'app-add-new-database',
-  templateUrl: './add-new-database.component.html',
-  styleUrls: ['./add-new-database.component.scss']
+  selector: 'app-plugins',
+  templateUrl: './plugins.component.html',
+  styleUrls: ['./plugins.component.scss']
 })
-export class AddNewDatabaseComponent implements OnInit, OnDestroy {
+export class PluginsComponent implements OnInit {
 
-  public databaseName: string = '';
+  public isLoading: boolean = true;
 
-  displayedColumns: string[] = ['dbName', 'tables', 'actions'];
-
-  public databases: any = [];
-
+  private originalPlugins: any = [];
   public plugins: any = [];
 
-  public existingDatabases: any = [];
-
   private appDetails: any = [];
-
-  private databaseType: string = '';
-
-  public databaseTypes: string[] = [];
-
-  private connectionString: string = '';
 
   public waitingInstallation: boolean = false;
 
   public currentStage: string = 'Prepering database to be downloaded.';
 
-  public isLoadingDbs: boolean = true;
-  public isLoadingPlugins: boolean = true;
-
   /**
    * SignalR hub connection, used to connect to Bazar server and get notifications
    * when app is ready to be installed.
    */
-  private hubConnection: HubConnection = null;
+   private hubConnection: HubConnection = null;
+
+  public searchKey: Observable<string>;
 
   constructor(
     private dialog: MatDialog,
@@ -66,7 +53,6 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getItems();
-    this.getDefaultDbType();
   }
 
   /*
@@ -75,11 +61,7 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
   private getItems() {
     this.bazarService.listBazarItems('%%', 0, 1000).subscribe({
       next: (apps: BazarApp[]) => {
-        this.databases = apps.filter((item: any) => { return item.name.indexOf('DB') > -1 }) || [];
-        this.databases.map((item: any) => {
-          this.plugins[item.name] = item;
-          item.hasUpdate = false;
-        });
+        this.plugins = apps;
         this.loadDetails();
       },
       error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
@@ -94,7 +76,7 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
       next: (manifests: AppManifest[]) => {
         this.appDetails = manifests || [];
         if (manifests) {
-          this.databases.map((item: any) => this.appDetails.map((el: any) => {
+          this.plugins.map((item: any) => this.appDetails.map((el: any) => {
             if (item.name === el.name) {
               item.details = el;
             }
@@ -102,6 +84,7 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
           manifests.forEach((item: any) => {
             this.getVersion(item.module_name, item.version);
           })
+          this.waitingInstallation = false;
         }
       },
       error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
@@ -118,7 +101,7 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
       next: (res: any) => {
         if (res) {
           this.versionComparision(module_name, appVersion, res[0].version);
-          this.backendService.showObscurer(false);
+          // this.backendService.showObscurer(false);
         }
       },
       error: (error: any) => { }
@@ -134,8 +117,8 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
    * @param lastestVersion Retrieved from getVersion function.
    */
   private versionComparision(module_name: string, appVersion: string, lastestVersion: string) {
-    if (this.databases) {
-      const item = this.databases.find((item: any) => item?.details?.module_name === module_name);
+    if (this.plugins) {
+      const item = this.plugins.find((item: any) => item?.details?.module_name === module_name);
       this.configService.versionCompare(appVersion, lastestVersion).subscribe({
         next: (versionCompare: any) => {
           if (+versionCompare.result === -1) {
@@ -144,8 +127,8 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
               item.newVersion = lastestVersion;
             }
           }
-
-          this.isLoadingPlugins = false;
+          this.originalPlugins = [...this.plugins];
+          this.isLoading = false;
         },
         error: (error: any) => { }
       });
@@ -154,7 +137,6 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
   }
 
   public installDb(database: any) {
-    this.generalService.showLoading();
     this.waitingInstallation = true;
     this.configService.rootUserEmailAddress().subscribe({
       next: (userDerails: any) => {
@@ -168,8 +150,7 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
               this.connectSocket(status.code, database);
             },
             error: (error: any) => {
-              this.generalService.showFeedback(error, 'errorMessage');
-              this.generalService.hideLoading();
+              this.generalService.showFeedback(error.error.message??error, 'errorMessage');
               this.waitingInstallation = false;
             }
           });
@@ -219,7 +200,6 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
               if (install.result === 'success') {
                 this.generalService.showFeedback('Plugin was successfully installed on your server', 'successMessage');
 
-                this.getDatabases();
                 this.loadDetails();
 
                 /*
@@ -278,7 +258,6 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
             this.generalService.showFeedback(database.name + ' uninstalled successfully.', 'successMessage');
             this.clearServersideCache();
             this.getItems();
-            this.getDatabases();
           },
           error: (error: any) => { this.generalService.showFeedback(error, 'errorMessage') }
         });
@@ -286,103 +265,8 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
     })
   }
 
-  public deleteDb(dbName: string) {
-    this.dialog.open(ConfirmationDialogComponent, {
-      width: '500px',
-      data: {
-        title: `Delete database`,
-        description_extra: `You are deleting the following database: <br/> <span class="fw-bold">${dbName}</span> <br/><br/> Do you want to continue?`,
-        action_btn: 'Delete',
-        action_btn_color: 'warn',
-        bold_description: true
-      }
-    }).afterClosed().subscribe((result: string) => {
-      if (result === 'confirm') {
-        this.sqlService.dropDatabase(
-          this.databaseType,
-          this.connectionString,
-          dbName).subscribe({
-            next: () => {
-              this.generalService.showFeedback('Database successfully deleted.', 'successMessage');
-              this.clearServersideCache();
-              this.getDatabases();
-              this.getItems();
-            },
-            error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
-          });
-      }
-    })
-  }
-
-  /**
-   * Invokes endpoint to get the default database type.
-   * Retrieves all available database types and specifies the default one.
-   */
-  private getDefaultDbType() {
-    this.sqlService.defaultDatabaseType().subscribe({
-      next: (dbTypes: DefaultDatabaseType) => {
-        this.databaseTypes = dbTypes.options;
-        this.getConnectionString(dbTypes.default);
-      },
-      error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
-    });
-  }
-
-  /**
-   * Retrieves the connection string of the default database.
-   * @param dbType Default type of the databases, sets during the initial configuration.
-   */
-  private getConnectionString(dbType: string) {
-    this.sqlService.connectionStrings(dbType).subscribe({
-      next: (connectionStrings: any) => {
-        if (connectionStrings) {
-          this.databaseType = dbType,
-          this.connectionString = Object.keys(connectionStrings)[0];
-          this.getDatabases();
-        }
-      },
-      error: (error: any) => { }
-    });
-  }
-
-  /**
-   * Retrieves a list of databases already available on the user's backend.
-   */
-  private getDatabases() {
-    this.isLoadingDbs = true;
-    for (const type of this.databaseTypes) {
-      this.sqlService.getDatabaseMetaInfo(
-        type,
-        this.connectionString).subscribe({
-          next: (res: Databases) => {
-            res.databases.map((item: any) => {
-              item.type = type;
-              item.connectionString = this.connectionString;
-            });
-            this.existingDatabases = [...this.existingDatabases, ...res.databases];
-
-            // Makes difference only after a successful installation.
-            if (type === this.databaseTypes[this.databaseTypes.length - 1]) {
-              this.waitingInstallation = false;
-              this.isLoadingDbs = false;
-              this.generalService.hideLoading();
-            }
-          },
-          error: (error: any) => { }
-        })
-    }
-  }
-
-  private clearServersideCache() {
-    // Purging server side database cache in case user just recently created a new database.
-    this.cacheService.delete('magic.sql.databases.*').subscribe({
-      next: () => {},
-      error: (error: any) => {}
-    });
-  }
-
   public viewAppDetails(item: any) {
-    this.dialog.open(ViewDbComponent, {
+    this.dialog.open(ViewPluginComponent, {
       minWidth: '500px',
       data: item
     }).afterClosed().subscribe((res: string) => {
@@ -395,35 +279,27 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
     })
   }
 
-  public createNewDatabase() {
-    this.sqlService.createDatabase(
-      this.databaseType,
-      this.connectionString,
-      this.databaseName).subscribe({
-        next: () => {
-          this.generalService.showFeedback('Database successfully create', 'successMessage');
-          this.getDatabases();
-          this.databaseName = '';
-        },
-        error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
-      });
+  private clearServersideCache() {
+    // Purging server side database cache in case user just recently created a new database.
+    this.cacheService.delete('magic.sql.databases.*').subscribe({
+      next: () => {},
+      error: (error: any) => {}
+    });
   }
 
-  public viewItem(item: any) {
-    // TODO: navigate to generated databases
-    // to see all the tables.
-  }
-
-  ngOnDestroy(): void {
-    /*
-      * Making sure we turn OFF socket connections if these have been created.
-      *
-      * Notice, socket connections are NOT turned on for immediate downloads (free apps).
-      */
-    if (this.hubConnection) {
-      this.hubConnection.stop();
-      this.hubConnection = null;
-      this.generalService.hideLoading();
+  public filterList(event: { installedOnly: boolean, searchKey: string }) {
+    if (event?.searchKey !== '' || event.installedOnly === true) {
+      if (event.installedOnly) {
+        this.plugins = this.originalPlugins.filter((item: any) => item.name.toLowerCase().indexOf(event?.searchKey.toLowerCase()) > -1 && item.details);
+      } else {
+        this.plugins = this.originalPlugins.filter((item: any) => item.name.toLowerCase().indexOf(event?.searchKey.toLowerCase()) > -1)
+      }
+    } else {
+      if (event.installedOnly) {
+        this.plugins = this.originalPlugins.filter((item: any) => item.details);
+      } else {
+        this.plugins = this.originalPlugins;
+      }
     }
   }
 }
