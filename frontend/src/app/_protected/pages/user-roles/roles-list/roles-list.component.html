@@ -13,18 +13,6 @@
       <td mat-cell *matCellDef="let element"> {{element?.description ?? 'N/A'}} </td>
     </ng-container>
 
-    <!-- createdBy Column -->
-    <ng-container matColumnDef="createdBy">
-      <th mat-header-cell *matHeaderCellDef class="text-nowrap"> Created by </th>
-      <td mat-cell *matCellDef="let element"> {{element?.createdBy ?? 'N/A'}} </td>
-    </ng-container>
-
-    <!-- createdAt Column -->
-    <ng-container matColumnDef="createdAt">
-      <th mat-header-cell *matHeaderCellDef class="text-nowrap"> Creation date </th>
-      <td mat-cell *matCellDef="let element"> {{element?.createdAt ?? 'N/A'}} </td>
-    </ng-container>
-
     <!-- action Column -->
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef> Actions </th>
@@ -36,7 +24,7 @@
               [disabled]="!userCanUpdate">Edit</button>
             <button mat-button color="primary" class="p-0"
               (click)="deleteRole(element)"
-              [disabled]="!userCanDelete || (element?.name === 'root' || element?.name === 'reset-password')">Delete</button>
+              [disabled]="!userCanDelete || systemRole(element?.name)">Delete</button>
           </div>
         </div>
       </td>

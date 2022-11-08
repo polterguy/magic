@@ -13,8 +13,14 @@
         <span class="text-muted">|</span>
       </span>
 
-      <input matInput type="text" name="-" autocomplete="off" placeholder="Name"
-      formControlName="name" required />
+      <input
+        matInput
+        type="text"
+        name="-"
+        autocomplete="off"
+        placeholder="Name"
+        formControlName="name" 
+        [readonly]="data.action === 'edit'" />
     </mat-form-field>
 
     <mat-form-field class="w-100 custom-alignment">
@@ -23,12 +29,23 @@
         <span class="text-muted">|</span>
       </span>
 
-      <textarea matInput type="text" name="-" autocomplete="off" placeholder="Description"
-      formControlName="description" required rows="5"></textarea>
+      <textarea
+        matInput
+        type="text"
+        name="-"
+        autocomplete="off"
+        placeholder="Description"
+        formControlName="description"
+        required rows="5"></textarea>
     </mat-form-field>
   </div>
   <div mat-dialog-actions [align]="'end'">
     <button mat-button mat-dialog-close>Cancel</button>
-    <button mat-flat-button color="primary" (click)="save()" [disabled]="isLoading" type="submit">Save role</button>
+    <button
+      mat-flat-button
+      color="primary"
+      (click)="save()"
+      [disabled]="isLoading"
+      type="submit">Save role</button>
   </div>
 </form>

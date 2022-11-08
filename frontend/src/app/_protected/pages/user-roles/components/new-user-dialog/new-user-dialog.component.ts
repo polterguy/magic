@@ -41,6 +41,7 @@ export class NewUserDialogComponent implements OnInit {
     username: ['', [Validators.required]],
     password: ['', [Validators.required]],
     email: [''],
+    name: [''],
     role: []
   })
 
@@ -62,37 +63,37 @@ export class NewUserDialogComponent implements OnInit {
         next: (res: any) => {
           if (res) {
 
-            if (this.userForm.value.role.length && this.userForm.value.email) {
-              forkJoin([
-                this.addRole(),
-                this.addEmail()
-              ]).subscribe((res: any) => {
-                this.generalService.showFeedback('User is created successfully', 'successMessage');
-                this.dialogRef.close('done');
-                this.isLoading = false;
-              })
-            } else if (this.userForm.value.role.length && !this.userForm.value.email) {
-              this.addRole().then((roleRes: string) => {
-                this.generalService.showFeedback('User is created successfully', 'successMessage');
-                this.dialogRef.close('done');
-                this.isLoading = false;
-              })
-            } else if (this.userForm.value.email && !this.userForm.value.role.length) {
-              this.addEmail().then((emailRes: string) => {
-                this.generalService.showFeedback('User is created successfully', 'successMessage');
-                this.dialogRef.close('done');
-                this.isLoading = false;
-              })
+            const promises: Promise<any>[] = [];
+            if (this.userForm.value.role.length) {
+              for (const role of this.userForm.value.role) {
+                promises.push(this.addRole(role));
+              }
             }
-
-            if (!this.userForm.value.role.length && !this.userForm.value.email) {
+            if (this.userForm.value.email) {
+              promises.push(this.addEmail());
+            }
+            if (this.userForm.value.name) {
+              promises.push(this.addName());
+            }
+            if (promises.length === 0) {
               this.generalService.showFeedback('User is created successfully', 'successMessage');
               this.dialogRef.close('done');
               this.isLoading = false;
+              return;
             }
+            forkJoin(promises).subscribe({
+              next: () => {
+                this.generalService.showFeedback('User is created successfully', 'successMessage');
+                this.dialogRef.close('done');
+                this.isLoading = false;
+              },
+              error: () => {
+                this.generalService.showFeedback('Something went wrong', 'errorMessage', 'Ok');
+              }
+            });
           }
         },
-        error: (error: any) => {
+        error: () => {
           this.isLoading = false;
           this.generalService.showFeedback('Username is already existing.', 'errorMessage', 'Ok', 4000);
         }
@@ -102,17 +103,15 @@ export class NewUserDialogComponent implements OnInit {
     }
   }
 
-  private addRole() {
-    return new Promise((resolve) => {
-      this.userForm.value.role.forEach((element: any, index: number) => {
-        this.userService.addRole(this.userForm.value.username, element).subscribe({
-          next: (res: any) => {
-            if (res.result === 'success') {
-              resolve('ok')
-            }
-          },
-          error: (error: any) => { resolve('error') }
-        })
+  private addRole(role: string) {
+    return new Promise<string>((resolve) => {
+      this.userService.addRole(this.userForm.value.username, role).subscribe({
+        next: (res: any) => {
+          if (res.result === 'success') {
+            resolve('ok')
+          }
+        },
+        error: () => { resolve('error') }
       });
     })
   }
@@ -123,18 +122,35 @@ export class NewUserDialogComponent implements OnInit {
       value: this.userForm.value.email,
       user: this.userForm.value.username
     };
-    return new Promise((resolve) => {
+    return new Promise<string>((resolve) => {
       this.userService.addExtra(data).subscribe({
         next: (res: any) => {
           if (res.result === 'success') {
             resolve('ok')
           }
         },
-        error: (error: any) => { resolve('error') }
+        error: () => { resolve('error') }
       })
       resolve('ok')
     })
   }
 
-
+  private addName() {
+    const data: User_Extra = {
+      type: 'name',
+      value: this.userForm.value.name,
+      user: this.userForm.value.username
+    };
+    return new Promise<string>((resolve) => {
+      this.userService.addExtra(data).subscribe({
+        next: (res: any) => {
+          if (res.result === 'success') {
+            resolve('ok')
+          }
+        },
+        error: () => { resolve('error') }
+      })
+      resolve('ok')
+    })
+  }
 }

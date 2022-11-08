@@ -225,14 +225,10 @@ export class UsersListComponent implements OnInit {
       width: '700px',
       data: {
         user: user,
-        roles: this.rolesList
       },
       autoFocus: false
     }).afterClosed().subscribe((result: string) => {
-      if (result === 'confirm') {
-        this.generalService.showFeedback(`${user.username} was successfully updated`, 'successMessage', 'Ok', 4000);
-        this.updateList();
-      }
+      this.updateList();
     })
   }
 
