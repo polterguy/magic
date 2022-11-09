@@ -19,6 +19,7 @@ import { RenameFileDialogComponent, FileObjectName } from '../../generated-front
 import { RenameFolderDialogComponent } from '../../generated-frontend/components/rename-folder-dialog/rename-folder-dialog.component';
 import { SelectMacroDialogComponent, Macro } from '../../generated-frontend/components/select-macro-dialog/select-macro-dialog.component';
 import { UnsavedChangesDialogComponent } from '../../generated-frontend/components/unsaved-changes-dialog/unsaved-changes-dialog.component';
+import { EndpointDialogComponent } from '../components/endpoint-dialog/endpoint-dialog.component';
 
 @Component({
   selector: 'app-backend-editor',
@@ -56,10 +57,11 @@ export class BackendEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   ngOnInit(): void {
     (async () => {
-      while (!(this.currentFileData))
+      while (!(this.currentFileData && !this.endpoints.length))
         await new Promise(resolve => setTimeout(resolve, 100));
 
-      if (this.currentFileData) {
+      if (this.currentFileData && this.endpoints.length > 0) {
+
         setTimeout(() => {
           const activeWrapper = document.querySelector('.active-codemirror-editor');
           const editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
@@ -174,17 +176,20 @@ export class BackendEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     if (this.openFiles.length === 0 || !this.currentFileData.path.endsWith('.hl')) {
       return;
     }
-    this.getEndpointToExecute();
-    let endpoints = await this.getEndpointToExecute();
-    if (endpoints) {
-      this.dialog.open(ExecuteEndpointDialogComponent, {
-        data: endpoints,
-        minWidth: '80%',
+
+    // let endpoints = await this.getEndpointToExecute();
+    console.log(this.currentFileData, await this.getEndpointToExecute())
+    if (await this.getEndpointToExecute() !== null) {
+      this.dialog.open(EndpointDialogComponent, {
+        data: {itemToBeTried: await this.getEndpointToExecute()},
+        minWidth: '80vw',
+        minHeight: '50vh',
+        panelClass: ['light']
       });
     } else {
       this.evaluatorService.execute(this.currentFileData.content).subscribe({
         next: () => this.generalService.showFeedback('File successfully executed', 'successMessage'),
-        error: (error: any) => this.generalService.showFeedback(error, )});
+        error: (error: any) => this.generalService.showFeedback(error.error.message??error, 'erroorMessage', 'Ok', 5000)});
     }
   }
 
@@ -208,15 +213,22 @@ export class BackendEditorComponent implements OnInit, AfterViewInit, OnDestroy 
              * verify we can find file in our list of endpoints.
              */
             const url = 'magic' + this.currentFileData.folder + lastSplits[0];
-            let endpoints = this.endpoints.filter(x => x.path === url && x.verb === lastSplits[lastSplits.length - 2]);
+            // deep copying the original endpoints array to prevent manipulations.
+            const copyEndpoints = JSON.parse(JSON.stringify(this.endpoints));
+            let endpoints = copyEndpoints.filter(x => x.path === url && x.verb === lastSplits[lastSplits.length - 2]);
+
             if (endpoints.length > 0) {
               return endpoints[0];
               // resolve (endpoints[0])
             }
         }
+      } else {
+        return null;
       }
+    } else {
+      return null;
     }
-    return null;
+    // return null;
   }
 
   /**
