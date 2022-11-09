@@ -5,7 +5,6 @@ import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import { MaterialModule } from 'src/app/material.module';
 import { SharedModule } from 'src/app/shared.module';
 import { ComponentsModule } from 'src/app/_general/components/components.module';
-import { LoadSnippetDialogComponent } from '../../../evaluator/load-snippet-dialog/load-snippet-dialog.component';
 import { ExecuteEndpointDialogComponent } from '../components/execute-endpoint-dialog/execute-endpoint-dialog.component';
 import { ExecuteMacroDialogComponent } from '../components/execute-macro-dialog/execute-macro-dialog.component';
 import { FrontendEditorComponent } from '../frontend-editor/frontend-editor.component';
@@ -36,7 +35,6 @@ import { FrontendRoutingModule } from './frontend.routing.module';
     RenameFolderDialogComponent,
     SelectMacroDialogComponent,
     ExecuteMacroDialogComponent,
-    LoadSnippetDialogComponent,
     ExecuteEndpointDialogComponent
   ],
   imports: [

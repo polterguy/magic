@@ -14,6 +14,7 @@ import { LoadingSkeletonComponent } from './loading-skeleton/loading-skeleton.co
 import { DialogComponent } from './dialog/dialog.component';
 import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
 import { ShortkeysComponent } from './shortkeys/shortkeys.component';
+import { LoadSnippetDialogComponent } from './load-snippet-dialog/load-snippet-dialog.component';
 
 
 
@@ -25,7 +26,8 @@ import { ShortkeysComponent } from './shortkeys/shortkeys.component';
       LoadingSkeletonComponent,
       DialogComponent,
       ConfirmationDialogComponent,
-      ShortkeysComponent
+      ShortkeysComponent,
+      LoadSnippetDialogComponent
   ],
   imports: [
     CommonModule,
@@ -40,7 +42,8 @@ import { ShortkeysComponent } from './shortkeys/shortkeys.component';
     LoadingSkeletonComponent,
     DialogComponent,
     ConfirmationDialogComponent,
-    ShortkeysComponent
+    ShortkeysComponent,
+    LoadSnippetDialogComponent
   ]
 })
 export class ComponentsModule { }

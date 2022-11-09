@@ -2,9 +2,9 @@ import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, OnDes
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
+import { LoadSnippetDialogComponent } from 'src/app/_general/components/load-snippet-dialog/load-snippet-dialog.component';
 import { ShortkeysComponent } from 'src/app/_general/components/shortkeys/shortkeys.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { LoadSnippetDialogComponent } from '../../../../../_general/components/load-snippet-dialog/load-snippet-dialog.component';
 import { EvaluatorService } from '../../../evaluator/_services/evaluator.service';
 import { FileNode } from '../../../hyper-ide/_models/file-node.model';
 import { MacroDefinition } from '../../../hyper-ide/_models/macro-definition.model';
@@ -12,20 +12,20 @@ import { TreeNode } from '../../../hyper-ide/_models/tree-node.model';
 import { CodemirrorActionsService } from '../../../hyper-ide/_services/codemirror-actions.service';
 import { FileService } from '../../../hyper-ide/_services/file.service';
 import { VocabularyService } from '../../../hyper-ide/_services/vocabulary.service';
-import { ExecuteEndpointDialogComponent } from '../components/execute-endpoint-dialog/execute-endpoint-dialog.component';
-import { ExecuteMacroDialogComponent } from '../components/execute-macro-dialog/execute-macro-dialog.component';
-import { PreviewFileDialogComponent } from '../components/preview-file-dialog/preview-file-dialog.component';
-import { FileObjectName, RenameFileDialogComponent } from '../components/rename-file-dialog/rename-file-dialog.component';
-import { RenameFolderDialogComponent } from '../components/rename-folder-dialog/rename-folder-dialog.component';
-import { Macro, SelectMacroDialogComponent } from '../components/select-macro-dialog/select-macro-dialog.component';
-import { UnsavedChangesDialogComponent } from '../components/unsaved-changes-dialog/unsaved-changes-dialog.component';
+import { ExecuteEndpointDialogComponent } from '../../generated-frontend/components/execute-endpoint-dialog/execute-endpoint-dialog.component';
+import { ExecuteMacroDialogComponent } from '../../generated-frontend/components/execute-macro-dialog/execute-macro-dialog.component';
+import { PreviewFileDialogComponent } from '../../generated-frontend/components/preview-file-dialog/preview-file-dialog.component';
+import { RenameFileDialogComponent, FileObjectName } from '../../generated-frontend/components/rename-file-dialog/rename-file-dialog.component';
+import { RenameFolderDialogComponent } from '../../generated-frontend/components/rename-folder-dialog/rename-folder-dialog.component';
+import { SelectMacroDialogComponent, Macro } from '../../generated-frontend/components/select-macro-dialog/select-macro-dialog.component';
+import { UnsavedChangesDialogComponent } from '../../generated-frontend/components/unsaved-changes-dialog/unsaved-changes-dialog.component';
 
 @Component({
-  selector: 'app-frontend-editor',
-  templateUrl: './frontend-editor.component.html',
-  styleUrls: ['./frontend-editor.component.scss']
+  selector: 'app-backend-editor',
+  templateUrl: './backend-editor.component.html',
+  styleUrls: ['./backend-editor.component.scss']
 })
-export class FrontendEditorComponent implements OnInit, AfterViewInit, OnDestroy {
+export class BackendEditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @Input() currentFileData: FileNode;
   @Input() activeFolder: string = '';
