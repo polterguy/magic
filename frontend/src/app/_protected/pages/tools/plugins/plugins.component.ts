@@ -85,6 +85,8 @@ export class PluginsComponent implements OnInit {
             this.getVersion(item.module_name, item.version);
           })
           this.waitingInstallation = false;
+        } else {
+          this.isLoading = false;
         }
       },
       error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
