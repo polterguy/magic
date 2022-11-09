@@ -53,28 +53,34 @@ export class LoginComponent implements OnInit {
   }
 
   private readBackendService() {
-    if (this.backendService.active) {
-      this.backendHasBeenSelected = true;
-      this.backendList = this.backendService.backends;
+    (async () => {
+      while (this.backendService.active.access && !Object.keys(this.backendService.active.access.auth).length)
+        await new Promise(resolve => setTimeout(resolve, 100));
 
-      this.activatedRoute.queryParams.subscribe((params: any) => {
-        if (params.switchTo) {
-          const defaultBackend: any = this.backendList.find((item: any) => item.url === params.switchTo)
+      if (this.backendService.active) {
+        this.backendHasBeenSelected = true;
+        this.backendList = this.backendService.backends;
+
+        this.activatedRoute.queryParams.subscribe((params: any) => {
+          if (params.switchTo) {
+            const defaultBackend: any = this.backendList.find((item: any) => item.url === params.switchTo)
+            this.backends.setValue(defaultBackend);
+          }
+        })
+
+        if (this.backendList && this.backendList.length && !this.backends.value) {
+          const defaultBackend: any = this.backendList.find((item: any) => item.url === this.backendService.active.url)
           this.backends.setValue(defaultBackend);
+
         }
-      })
-
-      if (this.backendList && this.backendList.length && !this.backends.value) {
-        const defaultBackend: any = this.backendList.find((item: any) => item.url === this.backendService.active.url)
-        this.backends.setValue(defaultBackend);
-
+        this.backendService._activeCaptchaValue.subscribe((key: string) => {
+          this.recaptchaKey = key;
+        })
+        this.watchAutocomplteChanges();
+        this.cdr.detectChanges();
       }
-      this.backendService._activeCaptchaValue.subscribe((key: string) => {
-        this.recaptchaKey = key;
-      })
-      this.watchAutocomplteChanges();
       this.cdr.detectChanges();
-    }
+    })();
   }
 
   /**
