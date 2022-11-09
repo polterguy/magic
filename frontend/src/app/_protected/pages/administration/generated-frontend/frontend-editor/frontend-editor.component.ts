@@ -208,7 +208,10 @@ export class FrontendEditorComponent implements OnInit, AfterViewInit, OnDestroy
              * verify we can find file in our list of endpoints.
              */
             const url = 'magic' + this.currentFileData.folder + lastSplits[0];
-            let endpoints = this.endpoints.filter(x => x.path === url && x.verb === lastSplits[lastSplits.length - 2]);
+            // deep copying the original endpoints array to prevent manipulations.
+            const copyEndpoints = JSON.parse(JSON.stringify(this.endpoints));
+            let endpoints = copyEndpoints.filter(x => x.path === url && x.verb === lastSplits[lastSplits.length - 2]);
+
             if (endpoints.length > 0) {
               return endpoints[0];
               // resolve (endpoints[0])

@@ -52,7 +52,7 @@
               (keyup.enter)="renameActiveFile({file: file, name: fileInput?.value})">
             </span>
             <div class="show-on-hover" *ngIf="showRenameBox===null"
-            [style.margin-right.px]="10 * file?.level">
+            [style.margin-right.px]="30 * file?.level">
               <button mat-icon-button color="primary" (click)="showRenameInput(file)">
                 <mat-icon>edit</mat-icon>
               </button>
@@ -100,7 +100,7 @@
               (keyup.enter)="renameActiveFolder(folder, folderInput?.value)">
             </span>
             <div class="show-on-hover" *ngIf="showRenameBox===null"
-            [style.margin-right.px]="10 * folder?.level">
+            [style.margin-right.px]="30 * folder?.level">
               <button mat-icon-button color="primary" (click)="showRenameInput(folder)">
                 <mat-icon>edit</mat-icon>
               </button>

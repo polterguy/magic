@@ -15,6 +15,9 @@ import { DialogComponent } from './dialog/dialog.component';
 import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
 import { ShortkeysComponent } from './shortkeys/shortkeys.component';
 import { LoadSnippetDialogComponent } from './load-snippet-dialog/load-snippet-dialog.component';
+import { QueryParamsComponent } from './query-params/query-params.component';
+import { AssumptionsComponent } from './assumptions/assumptions.component';
+import { CreateAssumptionTestDialogComponent } from './create-assumption-test-dialog/create-assumption-test-dialog.component';
 
 
 
@@ -27,7 +30,10 @@ import { LoadSnippetDialogComponent } from './load-snippet-dialog/load-snippet-d
       DialogComponent,
       ConfirmationDialogComponent,
       ShortkeysComponent,
-      LoadSnippetDialogComponent
+      LoadSnippetDialogComponent,
+      QueryParamsComponent,
+      AssumptionsComponent,
+      CreateAssumptionTestDialogComponent
   ],
   imports: [
     CommonModule,
@@ -43,7 +49,10 @@ import { LoadSnippetDialogComponent } from './load-snippet-dialog/load-snippet-d
     DialogComponent,
     ConfirmationDialogComponent,
     ShortkeysComponent,
-    LoadSnippetDialogComponent
+    LoadSnippetDialogComponent,
+    QueryParamsComponent,
+    AssumptionsComponent,
+    CreateAssumptionTestDialogComponent
   ]
 })
 export class ComponentsModule { }

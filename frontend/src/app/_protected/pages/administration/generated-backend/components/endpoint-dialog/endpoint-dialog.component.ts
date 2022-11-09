@@ -1,42 +1,31 @@
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, Input, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpTransportType, HubConnectionBuilder } from '@aspnet/signalr';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Clipboard } from '@angular/cdk/clipboard';
+import { FormBuilder, FormControl } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
-import { Argument } from '../../../administration/generated-endpoints/_models/argument.model';
-import { EndpointService } from '../_services/endpoint.service';
+import { Argument } from '../../../../administration/generated-endpoints/_models/argument.model';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { BackendService } from 'src/app/_protected/services/common/backend.service';
+import { EndpointService } from '../../../generated-endpoints/_services/endpoint.service';
+import { InvocationResult } from '../../../generated-endpoints/endpoints-result/endpoints-result.component';
 
 // CodeMirror options.
-import json from '../../../../../codemirror/options/json.json';
-import markdown from '../../../../../codemirror/options/markdown.json';
-import hyperlambda from '../../../../../codemirror/options/hyperlambda.json';
-import json_readonly from '../../../../../codemirror/options/json_readonly.json';
-import markdown_readonly from '../../../../../codemirror/options/markdown_readonly.json';
-import hyperlambda_readonly from '../../../../../codemirror/options/hyperlambda_readonly.json';
-import { FormBuilder, FormControl } from '@angular/forms';
-
-/*
- * Result of invocation.
- */
-export class InvocationResult {
-  status: number;
-  statusText: string;
-  response: string;
-  blob: any;
-  responseType: string;
-}
+import json from '../../../../../../codemirror/options/json.json';
+import markdown from '../../../../../../codemirror/options/markdown.json';
+import hyperlambda from '../../../../../../codemirror/options/hyperlambda.json';
+import json_readonly from '../../../../../../codemirror/options/json_readonly.json';
+import markdown_readonly from '../../../../../../codemirror/options/markdown_readonly.json';
+import hyperlambda_readonly from '../../../../../../codemirror/options/hyperlambda_readonly.json';
 
 @Component({
-  selector: 'app-endpoints-result',
-  templateUrl: './endpoints-result.component.html',
-  styleUrls: ['./endpoints-result.component.scss']
+  selector: 'app-endpoint-dialog',
+  templateUrl: './endpoint-dialog.component.html',
+  styleUrls: ['./endpoint-dialog.component.scss']
 })
-export class EndpointsResultComponent implements OnInit {
-
-  @Input() itemToBeTried!: Observable<any>;
+export class EndpointDialogComponent implements OnInit {
 
   private originalPath: string = '';
   public itemDetails: any = {};
@@ -99,6 +88,9 @@ export class EndpointsResultComponent implements OnInit {
 
   public paramsForm = this.formBuilder.group({});
 
+  public assumptionsPermission: boolean = false;
+  public testPermission: boolean = false;
+
   constructor(
     private clipboard: Clipboard,
     private cdr: ChangeDetectorRef,
@@ -106,22 +98,44 @@ export class EndpointsResultComponent implements OnInit {
     private formBuilder: FormBuilder,
     public backendService: BackendService,
     private generalService: GeneralService,
-    private endpointService: EndpointService) { }
+    private endpointService: EndpointService,
+    private dialogRef: MatDialogRef<EndpointDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: {itemToBeTried: any}) { }
 
   ngOnInit(): void {
     this.getItemDetails();
+    this.getPermissions();
   }
 
   private getItemDetails() {
-    this.itemToBeTried.subscribe((value: any) => {
-      if (value && Object.keys(value).length) {
+    (async () => {
+      while (!(this.data.itemToBeTried && Object.keys(this.data.itemToBeTried).length))
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      if (Object.keys(this.data.itemToBeTried).length > 0) {
+
         this.itemDetails = [];
         this.parameters = [];
         this.result = null;
         this.paramsForm = this.formBuilder.group({});
-        this.prepareData(value);
+        this.prepareData(this.data.itemToBeTried);
       }
-    });
+    })();
+  }
+
+  private getPermissions() {
+    (async () => {
+      while (this.backendService.active.access && !Object.keys(this.backendService.active.access.endpoints).length)
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+      if (this.backendService.active.access && Object.keys(this.backendService.active.access.endpoints).length > 0) {
+
+        this.assumptionsPermission = this.backendService.active.access.endpoints.assumptions;
+        this.testPermission = this.backendService.active.access.diagnostics.execute_test
+
+        this.cdr.detectChanges();
+      }
+    })();
   }
 
   private prepareData(item: any) {
@@ -191,7 +205,7 @@ export class EndpointsResultComponent implements OnInit {
 
   private setForm() {
     this.itemDetails.input.forEach((element: any) => {
-      this.paramsForm.setControl(element.name, new FormControl<any>(''));
+      this.paramsForm.setControl(element.name, new FormControl<any>(null));
     });
 
     this.cdr.detectChanges();
@@ -311,6 +325,7 @@ export class EndpointsResultComponent implements OnInit {
     if (Object.values(this.paramsForm.value).length) {
       let url: string = `${this.itemDetails.path}`;
       url += '?';
+
       for (const key in this.paramsForm.value) {
         if (this.paramsForm.value[key]) {
           const type: string = this.itemDetails.input.find((element: any) => element.name === key).type;
@@ -472,4 +487,5 @@ export class EndpointsResultComponent implements OnInit {
     this.clipboard.copy(response);
     this.generalService.showFeedback('Result is copied to your clipboard');
   }
+
 }

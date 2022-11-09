@@ -99,6 +99,7 @@ export class BackendTreeComponent implements OnInit, OnDestroy {
     this.getFilesFromServer().then((res: boolean) => {
       if (res === true) {
         this.getEndpoints();
+        this.refetchEndpointsList()
       }
     })
   }

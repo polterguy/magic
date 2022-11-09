@@ -5,7 +5,7 @@ import { AssumptionService } from 'src/app/components/misc/services/assumption.s
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { BackendService } from 'src/app/_protected/services/common/backend.service';
 import { CreateAssumptionTestDialogComponent, TestModel } from '../create-assumption-test-dialog/create-assumption-test-dialog.component';
-import { InvocationResult } from '../../endpoints-result/endpoints-result.component';
+import { InvocationResult } from '../../../_protected/pages/administration/generated-endpoints/endpoints-result/endpoints-result.component';
 
 /*
  * Assumption model for existing tests endpoint has declared.
