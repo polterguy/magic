@@ -54,6 +54,14 @@ const routes: Routes = [
         path: 'plugins',
         loadChildren: () => import('./_protected/pages/tools/plugins/_module/plugins.module').then(m => m.PluginsModule)
       },
+      {
+        path: 'hyperlambda-playground',
+        loadChildren: () => import('./_protected/pages/tools/hl-playground/_module/hl-playground.module').then(m => m.HlPlaygroundModule)
+      },
+      {
+        path: 'endpoints-health-check',
+        loadChildren: () => import('./_protected/pages/tools/health-check/_module/health-check.module').then(m => m.HealthCheckModule)
+      },
     ]
   },
   {

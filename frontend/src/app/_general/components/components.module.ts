@@ -18,6 +18,7 @@ import { LoadSnippetDialogComponent } from './load-snippet-dialog/load-snippet-d
 import { QueryParamsComponent } from './query-params/query-params.component';
 import { AssumptionsComponent } from './assumptions/assumptions.component';
 import { CreateAssumptionTestDialogComponent } from './create-assumption-test-dialog/create-assumption-test-dialog.component';
+import { SnippetNameDialogComponent } from './snippet-name-dialog/snippet-name-dialog.component';
 
 
 
@@ -33,7 +34,8 @@ import { CreateAssumptionTestDialogComponent } from './create-assumption-test-di
       LoadSnippetDialogComponent,
       QueryParamsComponent,
       AssumptionsComponent,
-      CreateAssumptionTestDialogComponent
+      CreateAssumptionTestDialogComponent,
+      SnippetNameDialogComponent
   ],
   imports: [
     CommonModule,
@@ -52,7 +54,8 @@ import { CreateAssumptionTestDialogComponent } from './create-assumption-test-di
     LoadSnippetDialogComponent,
     QueryParamsComponent,
     AssumptionsComponent,
-    CreateAssumptionTestDialogComponent
+    CreateAssumptionTestDialogComponent,
+    SnippetNameDialogComponent
   ]
 })
 export class ComponentsModule { }

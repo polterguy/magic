@@ -1,20 +1,26 @@
+<h3 mat-dialog-title>Add a predefiend snippet</h3>
 
-<div mat-dialog-title class="mat-dialog-title">
+<div mat-dialog-content>
+  <mat-form-field class="w-100 standalone-field mt-3">
+    <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+      <mat-icon>search</mat-icon>
+      <span class="text-muted">|</span>
+    </span>
 
-  <mat-form-field class="fill-width no-padding" appearance="outline">
-    <mat-label class="dark">Filter</mat-label>
-    <input
-      matInput
-      [(ngModel)]="filter"
-      autocomplete="off">
+    <input matInput
+      placeholder="Search through endpoints" #input>
+      <button mat-icon-button matSuffix (click)="input.value = ''" *ngIf="input.value!==''">
+        <mat-icon>close</mat-icon>
+      </button>
   </mat-form-field>
 
-</div>
-
-<div mat-dialog-content class="file-content">
-  <mat-selection-list [multiple]="false">
-    <mat-list-option *ngFor="let idx of getFiles()" [value]="idx" (click)="select(idx)">
-      {{getFilename(idx)}}
+  <mat-selection-list [multiple]="false" dense>
+    <mat-list-option
+      *ngFor="let item of files"
+      [class.d-none]="input.value !== '' && item.toLowerCase().indexOf(input.value.toLowerCase()) === -1"
+      (click)="select(item)">
+      {{getFilename(item)}}
     </mat-list-option>
   </mat-selection-list>
+
 </div>

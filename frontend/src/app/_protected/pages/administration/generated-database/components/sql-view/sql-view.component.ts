@@ -11,7 +11,7 @@ import sql from '../../../../../../codemirror/options/sql.json';
 import { CodemirrorActionsService } from '../../../../hyper-ide/_services/codemirror-actions.service';
 import { SqlService } from '../../../../tools/database/_services/sql.service';
 import { SqlSnippetDialogComponent } from '../../../../tools/endpoints/components/sql-snippet-dialog/sql-snippet-dialog.component';
-import { SnippetNameDialogComponent } from '../snippet-name-dialog/snippet-name-dialog.component';
+import { SnippetNameDialogComponent } from '../../../../../../_general/components/snippet-name-dialog/snippet-name-dialog.component';
 
 @Component({
   selector: 'app-sql-view',

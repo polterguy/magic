@@ -5,7 +5,7 @@ import { ConfirmationDialogComponent } from 'src/app/_general/components/confirm
 import { ShortkeysComponent } from 'src/app/_general/components/shortkeys/shortkeys.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { LoadSnippetDialogComponent } from '../../../../../_general/components/load-snippet-dialog/load-snippet-dialog.component';
-import { EvaluatorService } from '../../../evaluator/_services/evaluator.service';
+import { EvaluatorService } from '../../../tools/hl-playground/_services/evaluator.service';
 import { FileNode } from '../../../hyper-ide/_models/file-node.model';
 import { MacroDefinition } from '../../../hyper-ide/_models/macro-definition.model';
 import { TreeNode } from '../../../hyper-ide/_models/tree-node.model';

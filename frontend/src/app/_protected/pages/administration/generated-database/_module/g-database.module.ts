@@ -10,7 +10,6 @@ import { AddFieldComponent } from '../components/add-field/add-field.component';
 import { ExportDdlComponent } from '../components/export-ddl/export-ddl.component';
 import { LinkTableComponent } from '../components/link-table/link-table.component';
 import { NewTableComponent } from '../components/new-table/new-table.component';
-import { SnippetNameDialogComponent } from '../components/snippet-name-dialog/snippet-name-dialog.component';
 import { TablesViewComponent } from '../components/tables-view/tables-view.component';
 import { GeneratedDatabaseComponent } from '../generated-database.component';
 import { SqlViewComponent } from '../components/sql-view/sql-view.component';
@@ -24,8 +23,7 @@ import { GDatabaseRoutingModule } from './g-database.routing.module';
     AddFieldComponent,
     LinkTableComponent,
     ExportDdlComponent,
-    SqlViewComponent,
-    SnippetNameDialogComponent
+    SqlViewComponent
   ],
   imports: [
     CommonModule,

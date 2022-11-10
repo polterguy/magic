@@ -8,9 +8,9 @@ import { throwError } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
-import { HttpService } from '../../../services/http.service';
-import { BackendService } from '../../../services/backend.service';
-import { Response } from '../../../models/response.model';
+import { HttpService } from '../../../../../services/http.service';
+import { BackendService } from '../../../../../services/backend.service';
+import { Response } from '../../../../../models/response.model';
 
 /**
  * Assumption service, allowing you to retrieve, create and execute assumptions.
@@ -22,7 +22,7 @@ export class AssumptionService {
 
   /**
    * Creates an instance of your service.
-   * 
+   *
    * @param httpService HTTP service to use for backend invocations
    * @param backendService Needed to extract root URL
    */
@@ -32,7 +32,7 @@ export class AssumptionService {
 
   /**
    * Returns a list of all assumption/integration tests the backend has stored.
-   * 
+   *
    * @param endpointPath If specified only returns tests belonging to endpoint specified
    * @param verb If specified only returns tests for specified path
    */
@@ -50,7 +50,7 @@ export class AssumptionService {
 
   /**
    * Saves the specified assumption/integration test according to the specified argument.
-   * 
+   *
    * @param filename Filename to save snippet as. Notice, assumes we're only given the filename, and not the entire path. The service is responsible for prepending the folder.
    * @param verb HTTP verb assumption is using during invocation towards URL
    * @param url HTTP URL assumption invokes
@@ -99,7 +99,7 @@ export class AssumptionService {
 
   /**
    * Executes the specified tests.
-   * 
+   *
    * @param filename Full path of test to execute
    */
   execute(filename: string) {
