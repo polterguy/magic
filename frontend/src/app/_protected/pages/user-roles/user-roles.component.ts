@@ -49,9 +49,9 @@ export class UserRolesComponent implements OnInit {
 
   public tabChange(event: MatTabChangeEvent) {
     if (event.index === 0) {
-      this.getUsersList();
+      this.getUsersList({search: ''});
     } else {
-      this.getRolesList();
+      this.getRolesList({search: ''});
     }
   }
 
