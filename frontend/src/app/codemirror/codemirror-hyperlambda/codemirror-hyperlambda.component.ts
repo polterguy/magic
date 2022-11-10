@@ -12,8 +12,9 @@ import {
 } from '@angular/core';
 
 // Application specific imports.
-import { FeedbackService } from '../../services/feedback.service';
 import { VocabularyService } from 'src/app/components/tools/services/vocabulary.service';
+import { GeneralService } from 'src/app/_general/services/general.service';
+import { Subscription } from 'rxjs';
 
 /**
  * Model class for CodeMirror instance's Hyperlambda.
@@ -57,6 +58,7 @@ export class HyperlambdaComponent implements AfterViewInit {
    * If true, vocabulary has been loaded from server.
    */
   public vocabularyLoaded = false;
+  private codemirrorActionSubscription!: Subscription;
 
   /**
    * Creates an instance of your component.
@@ -65,7 +67,7 @@ export class HyperlambdaComponent implements AfterViewInit {
    */
   constructor(
     private vocabularyService: VocabularyService,
-    private feedbackService: FeedbackService) {
+    private generalService: GeneralService) {
   }
 
   /**
@@ -75,20 +77,23 @@ export class HyperlambdaComponent implements AfterViewInit {
 
     // Retrieving server's vocabulary.
     if (window['_vocabulary']) {
-
+      this.vocabularyLoaded = true;
       // Vocabulary already loaded, initializing editor immediately.
       this.init();
 
     } else {
 
       // Loading vocabulary from server before initializing editor.
-      this.vocabularyService.vocabulary().subscribe((vocabulary: string[]) => {
+      this.vocabularyService.vocabulary().subscribe({
+        next: (vocabulary: string[]) => {
+          this.vocabularyLoaded = true;
+          // Publishing vocabulary such that autocomplete component can reach it.
+          window['_vocabulary'] = vocabulary;
+          this.init();
 
-        // Publishing vocabulary such that autocomplete component can reach it.
-        window['_vocabulary'] = vocabulary;
-        this.init();
-
-      }, error => this.feedbackService.showError(error));
+        },
+        error: (error: any) => this.generalService.showFeedback(error.error.message??error, 'errorMessage')
+      })
     }
   }
 
@@ -100,23 +105,19 @@ export class HyperlambdaComponent implements AfterViewInit {
    * Initializes editor.
    */
   private init() {
+    (async () => {
+      while (!(this._editor && this._editor.codeMirror && this.vocabularyLoaded && this.model.options))
+        await new Promise(resolve => setTimeout(resolve, 100));
 
-    /*
-     * This looks a bit stupid, but is necessary to allow for editor to be rendered
-     * before we assign the editor instance to its field.
-     */
-    setTimeout(() => {
-      this.vocabularyLoaded = true;
-      setTimeout(() => {
-        this.model.editor = this._editor?.codeMirror;
+      if (this._editor && this._editor.codeMirror && this.vocabularyLoaded === true && this.model.options) {
 
-        // Associating ALT+M with fullscreen toggling of the editor instance.
-        if (this.model.options.extraKeys) {
-          this.model.options.extraKeys['Alt-M'] = (cm: any) => {
-            cm.setOption('fullScreen', !cm.getOption('fullScreen'));
-          };
-        }
-      }, 100);
-    }, 1);
+        this.model.editor = this._editor.codeMirror;
+
+        this.model.editor.doc.markClean();
+        this.model.editor.doc.clearHistory(); // To avoid having initial loading of file becoming an "undo operation".
+      }
+    })();
+
   }
+
 }

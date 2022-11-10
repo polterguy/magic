@@ -165,8 +165,8 @@ export class HeaderComponent implements OnInit {
             disabled: !(this.permissions.access.bazar.get_manifests && this.permissions.setupDone)
           },
           {
-            name: 'Evaluator',
-            url: '/evaluator',
+            name: 'Hyperlambda playground',
+            url: '/hyperlambda-playground',
             disabled: !(this.permissions.access.eval.execute && this.permissions.setupDone)
           },
           {
@@ -202,8 +202,8 @@ export class HeaderComponent implements OnInit {
             disabled: !(this.permissions.access.log.read && this.permissions.setupDone)
           },
           {
-            name: 'Health check',
-            url: '/health-check',
+            name: 'Endpoints health check',
+            url: '/endpoints-health-check',
             disabled: !(this.permissions.access.log.read && this.permissions.setupDone)
           },
           {

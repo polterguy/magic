@@ -8,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { AssumptionService } from 'src/app/components/misc/services/assumption.service';
+import { AssumptionService } from 'src/app/_protected/pages/tools/health-check/_services/assumption.service';
 
 /**
  * Result of dialog if user chooses to create a test.
@@ -54,7 +54,7 @@ export class CreateAssumptionTestDialogComponent implements OnInit {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param feedbackService Needed to show user feedback
    * @param assumptionService Needed to be able tolist and execute assumptions
    */
@@ -73,7 +73,7 @@ export class CreateAssumptionTestDialogComponent implements OnInit {
 
   /**
    * Returns only the filename parts from the given full path and filename.
-   * 
+   *
    * @param path Complete path of file
    */
   getFilename(path: string) {
