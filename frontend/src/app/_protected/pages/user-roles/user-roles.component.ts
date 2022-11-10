@@ -59,7 +59,7 @@ export class UserRolesComponent implements OnInit {
     // Resets pagination while sorting the table.
     if (event && event.search) {
       this.paginator.pageIndex = 0;
-      this.currentPage = 1;
+      this.currentPage = 0;
     }
     let param: string = '';
     if (event?.search) {
