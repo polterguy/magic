@@ -37,7 +37,8 @@ _"/blog/default.html"_ file above assuming you have the above folder hierarchy.
 The resolver will only resolve mixin files without a period (.) in the URL. If you add a period to the filename,
 the resolver will return the file as a staically served file, matching it's MIME type according to its extension.
 However, even statically served files will _not_ be served if they exists inside a folder with a period (.) in
-its name.
+its name. You can _only_ have periods in the filenames of files, and not in the folder from where they are resolved.
+This allows you to create _"private"_ folders where you store _"reusable component"_ types of files.
 
 Internally the resolver simply uses the **[mixin]** slot to combine HTML files with Hyperlambda codebehind
 files. Implying you can inject component files from your Hyperlambda codebehind, to recursively build your
