@@ -11,7 +11,12 @@ title
       .:/
    return:x:-/0/-
 
+/*
+ * Returns the content for this particular blog item.
+ */
 content
+
+   // Finding Markdown file the current request URL is mapping to.
    request.url
    strings.split:x:-
       .:/
@@ -19,6 +24,17 @@ content
       .:/etc/www/blog/.blogs/
       get-value:x:@strings.split/0/-
       .:.md
-   io.file.load:x:-
+
+   // Making sure the file actually exists.
+   if
+      not
+         io.file.exists:x:@strings.concat
+      .lambda
+         throw:Not found
+            public:bool:true
+            status:404
+
+   // Loading the file, transforming it into HTML, and returning it to caller as HTML.
+   io.file.load:x:@strings.concat
    markdown2html:x:-
    return:x:-

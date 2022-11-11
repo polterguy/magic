@@ -5,8 +5,6 @@
  * a "component" rather, and consumed by other mixin files, as an HTML snippet
  * rendered using [mixin] from the codebehind of another Hyperlambda file.
  */
-
-
 url
    request.url
    return:x:-
