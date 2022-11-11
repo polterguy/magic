@@ -1,0 +1,8 @@
+
+/*
+ * Example of explicitly resolved mixin file that resolves only given
+ * its exact URL.
+ */
+
+hello
+   return:Hello from the server

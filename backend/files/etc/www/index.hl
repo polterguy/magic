@@ -1,0 +1,28 @@
+
+/*
+ * Example of mixin file that combines Hyperlambda lambda objects with HTML
+ * to render back to caller as a combined result.
+ */
+
+// Returns the URL of the current request to caller.
+url
+   request.url
+   return:x:-
+
+// Returns the HTTP verb of the current request to caller.
+verb
+   request.verb
+   return:x:-
+
+args
+   .result:
+   for-each:x:@.arguments/*
+      set-value:x:@.result
+         strings.concat
+            get-value:x:@.result
+            .:<li>
+            get-name:x:@.dp/#
+            .:" ==> "
+            get-value:x:@.dp/#
+            .:</li>
+   return:x:@.result
