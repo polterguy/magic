@@ -1,5 +1,6 @@
 
-This is an example Markdown blog file
+This is an example Markdown blog file and this content is stored as a Markdown file, dynamically
+injected by transforming from Markdown to HTML.
 
 * Foo
 * Bar

@@ -16,6 +16,7 @@ verb
    request.verb
    return:x:-
 
+// Returns all HTTP QUERY parameters to caller.
 args
    .result:
    for-each:x:@.arguments/*
