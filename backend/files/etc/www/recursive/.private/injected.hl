@@ -1,0 +1,13 @@
+
+/*
+ * Example of mixin file that combines Hyperlambda lambda objects with HTML
+ * to render back to caller as a combined result.
+ */
+
+
+url
+   request.url
+   return:x:-
+
+arg1
+   return:x:@.arguments/*/arg1
