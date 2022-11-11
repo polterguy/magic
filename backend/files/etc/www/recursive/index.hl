@@ -1,7 +1,7 @@
 
 /*
- * Example of mixin file that combines Hyperlambda lambda objects with HTML
- * to render back to caller as a combined result.
+ * Example of mixin file that injected another mixin file in its codebehind
+ * Hyperlambda file, passing in arguments to the included mixin file.
  */
 
 

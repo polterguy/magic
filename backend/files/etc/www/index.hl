@@ -1,7 +1,9 @@
 
 /*
  * Example of mixin file that combines Hyperlambda lambda objects with HTML
- * to render back to caller as a combined result.
+ * to render back to caller as a combined result. This is the root index file,
+ * resolved at the root of your server's path, because it's at root, and its
+ * name is "index.html".
  */
 
 // Returns the URL of the current request to caller.
