@@ -11,7 +11,9 @@ title
       .:/
    return:x:-/0/-
 
-// Returns the content for this particular blog item.
+/*
+ * Returns the content for this particular blog item.
+ */
 content
 
    // Finding Markdown file the current request URL is mapping to.
