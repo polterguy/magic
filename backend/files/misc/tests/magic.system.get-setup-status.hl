@@ -3,5 +3,5 @@
 verb:get
 url:/magic/system/config/status
 status:int:200
-response:"{\"magic_crudified\":true,\"server_keypair\":true,\"config_done\":true}"
+response:"{\"result\":true}"
 description:"Assumes retrieving system's setup status succeeds, and returns the correct result (that system has been setup)"
