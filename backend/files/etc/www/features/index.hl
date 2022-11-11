@@ -1,7 +1,6 @@
 
 /*
- * Example of default mixin file that resolves all URLs inside specified folder,
- * unless an explicitly resolved file exists overriding this file.
+ * Example of index mixin file inside a folder, resolved as "/features".
  */
 
 // Returns the URL of the current request to caller.
