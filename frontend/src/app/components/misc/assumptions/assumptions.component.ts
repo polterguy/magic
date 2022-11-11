@@ -17,7 +17,7 @@ import { BackendService } from 'src/app/services/backend.service';
 import { MessageService } from '../../../services/message.service';
 import { FeedbackService } from '../../../services/feedback.service';
 import { LoaderInterceptor } from '../../../interceptors/loader.interceptor';
-import { AssumptionService } from 'src/app/_protected/pages/tools/health-check/_services/assumption.service';
+import { AssumptionService } from 'src/app/_protected/pages/setting-security/health-check/_services/assumption.service';
 import { Model } from '../../utilities/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 
 // CodeMirror options.

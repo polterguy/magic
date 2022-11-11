@@ -19,8 +19,8 @@ const routes: Routes = [
         loadChildren: () => import('./_protected/pages/dashboard/_module/dashboard.module').then(m => m.DashboardModule)
       },
       {
-        path: 'configurations',
-        loadChildren: () => import('./_protected/pages/configuration/_module/config.module').then(m => m.ConfigModule)
+        path: 'setup',
+        loadChildren: () => import('./_protected/pages/setup/_module/setup.module').then(m => m.SetupModule)
       },
       {
         path: 'user-roles-management',
@@ -60,7 +60,15 @@ const routes: Routes = [
       },
       {
         path: 'endpoints-health-check',
-        loadChildren: () => import('./_protected/pages/tools/health-check/_module/health-check.module').then(m => m.HealthCheckModule)
+        loadChildren: () => import('./_protected/pages/setting-security/health-check/_module/health-check.module').then(m => m.HealthCheckModule)
+      },
+      {
+        path: 'configuration',
+        loadChildren: () => import('./_protected/pages/setting-security/configuration/_module/config.module').then(m => m.ConfigModule)
+      },
+      {
+        path: 'log',
+        loadChildren: () => import('./_protected/pages/setting-security/log/_module/log.module').then(m => m.LogModule)
       },
     ]
   },

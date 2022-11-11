@@ -13,7 +13,7 @@ import { DatabaseEx } from '../../../crud-generator/_models/database-ex.model';
 import { LocResult } from '../../../crud-generator/_models/loc-result.model';
 import { CrudifyService } from '../../../crud-generator/_services/crudify.service';
 import { TransformModelService } from '../../../crud-generator/_services/transform-model.service';
-import { LogService } from '../../../log/_services/log.service';
+import { LogService } from '../../../setting-security/log/_services/log.service';
 import { Role } from '../../../user-roles/_models/role.model';
 import { SingleTableConfigComponent } from '../components/single-table-config/single-table-config.component';
 

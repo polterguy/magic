@@ -187,8 +187,8 @@ export class HeaderComponent implements OnInit {
         expandable: true,
         submenu: [
           {
-            name: 'Config',
-            url: '/configurations',
+            name: 'Configuration',
+            url: '/configuration',
             disabled: !(this.permissions.access.config.load)
           },
           {

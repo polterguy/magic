@@ -8,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { AssumptionService } from 'src/app/_protected/pages/tools/health-check/_services/assumption.service';
+import { AssumptionService } from 'src/app/_protected/pages/setting-security/health-check/_services/assumption.service';
 
 /**
  * Result of dialog if user chooses to create a test.
