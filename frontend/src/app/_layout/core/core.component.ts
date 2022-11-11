@@ -58,7 +58,7 @@ export class CoreComponent implements OnInit {
     this.backendService.statusRetrieved.subscribe((status: Status) => {
       if (status) {
         if (!status.result) {
-          this.router.navigate(['/configurations/setup']);
+          this.router.navigate(['/setup']);
         }
       }
     });

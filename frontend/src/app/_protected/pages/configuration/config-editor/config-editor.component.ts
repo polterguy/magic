@@ -10,9 +10,9 @@ import { MatDialog } from '@angular/material/dialog';
 
 // Application specific imports.
 import { BackendService } from '../../../services/common/backend.service';
-import { ConfigService } from '../_services/config.service';
+import { ConfigService } from '../../setting-security/configuration/_services/config.service';
 
-import { SmtpDialogComponent } from '../smtp-dialog/smtp-dialog.component';
+import { SmtpDialogComponent } from '../../setting-security/configuration/components/smtp-dialog/smtp-dialog.component';
 import { ConnectionStringDialogComponent } from '../connection-string-dialog/connection-string-dialog.component';
 
 // CodeMirror options.

@@ -10,7 +10,7 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 import { TableEx } from '../../models/table-ex.model';
 import { ColumnEx } from '../../models/column-ex.model';
 import { LocResult } from '../../../../../_protected/pages/crud-generator/_models/loc-result.model';
-import { LogService } from 'src/app/_protected/pages/log/_services/log.service';
+import { LogService } from 'src/app/_protected/pages/setting-security/log/_services/log.service';
 import { DatabaseEx } from '../../models/database-ex.model';
 import { CacheService } from 'src/app/services/cache.service';
 import { CrudifyService } from '../../../../../_protected/pages/crud-generator/_services/crudify.service';

@@ -1,0 +1,22 @@
+
+<h3 mat-dialog-title>Log ID {{data.id}}</h3>
+
+<div mat-dialog-content>
+  <p class="fw-bold mt-2">Date &amp; time</p>
+  <p>{{data.created | date: 'dd-MM-YYYY HH:mm'}}</p>
+
+  <p class="fw-bold mt-4">Content</p>
+  <p>{{data.content}}</p>
+
+  <p class="fw-bold mt-4">Meta</p>
+  <div *ngFor="let item of data.meta | keyvalue">
+    {{item.key}}: {{item.value}}
+  </div>
+
+  <p class="fw-bold mt-4">Exception</p>
+  <p [innerHTML]="data.exception" class="pre-formatted"></p>
+</div>
+
+<div mat-dialog-actions [align]="'end'">
+  <button mat-button color="primary" mat-dialog-close>Close</button>
+</div>

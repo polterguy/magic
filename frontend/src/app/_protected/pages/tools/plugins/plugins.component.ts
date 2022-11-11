@@ -8,7 +8,7 @@ import { BackendService } from 'src/app/_protected/services/common/backend.servi
 import { BazarService } from 'src/app/_protected/services/common/bazar.service';
 import { CacheService } from 'src/app/_protected/services/common/cache.service';
 import { environment } from 'src/environments/environment';
-import { ConfigService } from '../../configuration/_services/config.service';
+import { ConfigService } from '../../setting-security/configuration/_services/config.service';
 import { FileService } from '../../hyper-ide/_services/file.service';
 import { SqlService } from '../database/_services/sql.service';
 import { ViewPluginComponent } from './components/view-app/view-plugin.component';

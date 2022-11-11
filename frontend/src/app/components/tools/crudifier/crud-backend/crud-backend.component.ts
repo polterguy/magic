@@ -15,7 +15,7 @@ import { TableEx } from '../models/table-ex.model';
 import { LocResult } from '../../../../_protected/pages/crud-generator/_models/loc-result.model';
 import { Messages } from 'src/app/models/messages.model';
 import { DatabaseEx } from '../models/database-ex.model';
-import { LogService } from 'src/app/_protected/pages/log/_services/log.service';
+import { LogService } from 'src/app/_protected/pages/setting-security/log/_services/log.service';
 import { Databases } from 'src/app/models/databases.model';
 import { CrudifyService } from '../../../../_protected/pages/crud-generator/_services/crudify.service';
 import { CacheService } from 'src/app/services/cache.service';

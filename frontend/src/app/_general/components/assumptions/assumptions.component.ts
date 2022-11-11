@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
-import { AssumptionService } from 'src/app/_protected/pages/tools/health-check/_services/assumption.service';
+import { AssumptionService } from 'src/app/_protected/pages/setting-security/health-check/_services/assumption.service';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { BackendService } from 'src/app/_protected/services/common/backend.service';
 import { CreateAssumptionTestDialogComponent, TestModel } from '../create-assumption-test-dialog/create-assumption-test-dialog.component';
