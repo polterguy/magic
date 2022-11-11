@@ -1,0 +1,11 @@
+
+/*
+ * Example of mixin file that combines Hyperlambda lambda objects with HTML
+ * to render back to caller as a combined result.
+ */
+
+
+inject
+   mixin:/etc/www/recursive/.private/injected.html
+      arg1:Argument 1
+   return:x:-
