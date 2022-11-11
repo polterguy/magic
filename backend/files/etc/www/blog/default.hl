@@ -5,6 +5,20 @@
  */
 
 // Returns the URL of the current request to caller.
-url
+title
    request.url
+   strings.split:x:-
+      .:/
+   return:x:-/0/-
+
+content
+   request.url
+   strings.split:x:-
+      .:/
+   strings.concat
+      .:/etc/www/blog/.blogs/
+      get-value:x:@strings.split/0/-
+      .:.md
+   io.file.load:x:-
+   markdown2html:x:-
    return:x:-
