@@ -1,9 +1,0 @@
-
-/*
- * Example of index mixin file inside a folder, resolved as "/features".
- */
-
-// Returns the URL of the current request to caller.
-url
-   request.url
-   return:x:-
