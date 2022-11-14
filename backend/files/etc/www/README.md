@@ -124,14 +124,14 @@ And an _"/index.html"_ HTML file resembling the following.
 ```
 
 Then the above invocation to `{{*/.count}}` will return count from your _"log-entries"_ database table
-and substitute the `{{*/.count}}` parts, and your combined Hyperlambda file that's used to resolve
-the URL of _"/"_ or _"/index.html"_ will become as follows.
+and substitute the `{{*/.count}}` parts with whatever executing your **[.count]** node returns, and your
+combined Hyperlambda file that's used to resolve the URL of _"/"_ or _"/index.html"_ will become as follows.
 
 ```
 data.connect:magic
    io.file.mixin:/etc/www/index.html
-   .count
-      data.select:select count(*) from log_entries
-      return:x:-
+      .count
+         data.select:select count(*) from log_entries
+         return:x:-
    return:x:-
 ```
