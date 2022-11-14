@@ -43,7 +43,28 @@ using **[mime.list]**. By not serving hidden files in folders starting with a _"
 where you store _"reusable component"_ types of files.
 
 Internally the resolver simply uses the **[io.file.mixin]** slot to combine HTML files with Hyperlambda codebehind
-files. You can also inject component files from your Hyperlambda codebehind, to recursively build your HTML.
+files. You can also inject component files from your Hyperlambda codebehind using your own **[io.file.mixin]** invocations,
+to recursively build your HTML. Below is an example of an HTML file that dynamically substitutes parts of its HTML
+by invoking Hyperlambda lambda objects from its codebehind file.
+
+**/index.html**
+
+```
+<html>
+  <head>
+    <title>Foo</title>
+  </head>
+  <body>
+    Hello from {{*/.hello}}
+  </body>
+</html>
+```
+
+**/index.hl**
+
+```
+.hello:The server
+```
 
 The library also supports interceptors similarly to how the default API rendering logic allows for using interceptors.
 If you have an interveptor resembling the following.

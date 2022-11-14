@@ -1,0 +1,3 @@
+data.connect:magic
+   .interceptor
+   return:x:-

@@ -1,0 +1,3 @@
+.count
+   data.scalar:select count(*) from log_entries
+   return:x:-
