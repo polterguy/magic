@@ -5,9 +5,9 @@ This folder is for statically and dynamically served content files. A dynamicall
 an HTML file with a Hyperlambda codebehind file, using the **[io.file.mixin]** slot. See the _"magic.lambda.io"_ project's
 documentation to understand how such mixin invocations works. The rules for resolving files are applied in the following order.
 
-1. If the URL directly maps to an HTML file, this file is resolved
+1. If the URL directly maps to an HTML file, this file is resolved.
 2. If a file exists with the specified URL + _".html"_ this file is resolved. For instance, _"/about"_ is resolved to _"/about.html"_.
-3. If a folder exists with the specified URL and the URL ends with _"/"_, and an _"index.html"_ file can be found within the folder, this file is resolved. For instance _"/features/"_ is resolved to _"/features/index.html"_
+3. If a folder exists with the specified URL and the URL ends with _"/"_, and an _"index.html"_ file can be found within the folder, this file is resolved. For instance _"/features/"_ is resolved to _"/features/index.html"_.
 4. If a _"default.html"_ file exists either directly within the folder the request is requesting files from, or upwards in the folder hierarchy, this file is resolved. For instance, _"/blog/xyz"_ resolves to _"/blog/default.html"_ allowing you to render dynamic content with dynamic URLs, becoming _"wildcard"_ handlers. If you don't have a _"/blog/default.html"_ file, but you do have a _"/default.html"_ file, this file will be resolved. This allows you to apply wildcard handlers for entire folder hierarchies.
 
 If none of the above rules resolves to an actual file, the resolver returns a 404 Not Found response.
@@ -36,11 +36,11 @@ will be handled by the first of the following files the resolver can find.
 3. _"/x/default.html"_
 4. _"/default.html"_
 
-The resolver will only resolve files that does not have a URL where either a folder or the filename starts with a ".".
-If you add a period to the filename, the resolver will return the file as a statically served file unless the extention
-is _".html"_. The MIME type a statically rendered file is served with depends upon its file extention, and can be seen
-using **[mime.list]**. By not serving hidden files in folders starting with a _"."_, you can create _"private"_ folders
-where you store _"reusable component"_ types of files.
+The resolver will not resolve to hidden files or folders, implying files and folders starting with a _"."_.
+If you add a file extention to your request, and your extention is not _".html"_, the resolver will try to resolve your
+request as a static file request, and returning the file as a static resource. The MIME type a statically rendered file
+is served with depends upon its file extention, and can be seen using **[mime.list]**. By not serving hidden files in
+folders starting with a _"."_, you can create _"private"_ folders where you store _"reusable component"_ types of files.
 
 Internally the resolver simply uses the **[io.file.mixin]** slot to combine HTML files with Hyperlambda codebehind
 files. You can also inject component files from your Hyperlambda codebehind using your own **[io.file.mixin]** invocations,
