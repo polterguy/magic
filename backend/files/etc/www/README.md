@@ -123,7 +123,7 @@ And an _"/index.html"_ HTML file resembling the following.
 </html>
 ```
 
-The the above invocation to `{{*/.count}}` will return count from your _"log-entries"_ database table
+Then the above invocation to `{{*/.count}}` will return count from your _"log-entries"_ database table
 and substitute the `{{*/.count}}` parts, and your combined Hyperlambda file that's used to resolve
 the URL of _"/"_ or _"/index.html"_ will become as follows.
 
