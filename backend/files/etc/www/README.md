@@ -36,11 +36,11 @@ will be handled by the first of the following files the resolver can find.
 3. _"/x/default.html"_
 4. _"/default.html"_
 
-The resolver will not resolve to hidden files or folders, implying files and folders starting with a _"."_.
-If you add a file extention to your request, and your extention is not _".html"_, the resolver will try to resolve your
-request as a static file request, and returning the file as a static resource. The MIME type a statically rendered file
-is served with depends upon its file extention, and can be seen using **[mime.list]**. By not serving hidden files in
-folders starting with a _"."_, you can create _"private"_ folders where you store _"reusable component"_ types of files.
+The resolver will not resolve hidden files or folders, implying files and folders starting with a _"."_. This allows
+you to create _"private"_ folders where you store _"reusable component"_ types of files. If you add a file extention
+to your request, and your extention is not _".html"_, the resolver will try to resolve your request as a static file
+request, and returning the file as a static resource. The MIME type a statically rendered file is served with depends
+upon its file extention, and can be seen using **[mime.list]**.
 
 Internally the resolver simply uses the **[io.file.mixin]** slot to combine HTML files with Hyperlambda codebehind
 files. You can also inject component files from your Hyperlambda codebehind using your own **[io.file.mixin]** invocations,
