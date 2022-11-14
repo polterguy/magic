@@ -8,7 +8,7 @@ documentation to understand how such mixin invocations works. The rules for reso
 1. If the URL directly maps to an HTML file, this file is resolved
 2. If a file exists with the specified URL + _".html"_ this file is resolved. For instance, _"/about"_ is resolved to _"/about.html"_.
 3. If a folder exists with the specified URL and the URL ends with _"/"_, and an _"index.html"_ file can be found within the folder, this file is resolved. For instance _"/features/"_ is resolved to _"/features/index.html"_
-4. If a _"default.html"_ file exists either directly within the folder the request is requesting files from, or upwards in the folder hierarechy, this file is resolved. For instance, _"/blog/xyz"_ resolves to _"/blog/default.html"_ allowing you to render dynamic content with dynamic URLs, becoming _"wildcard"_ handlers within one folder. If you don't have a _"/blog/default.html"_ file, but you do have a _"/default.html"_ file, this file will be resolved.
+4. If a _"default.html"_ file exists either directly within the folder the request is requesting files from, or upwards in the folder hierarchy, this file is resolved. For instance, _"/blog/xyz"_ resolves to _"/blog/default.html"_ allowing you to render dynamic content with dynamic URLs, becoming _"wildcard"_ handlers within one folder. If you don't have a _"/blog/default.html"_ file, but you do have a _"/default.html"_ file, this file will be resolved.
 
 If none of the above rules resolves to an actual file, the resolver returns a 404 Not Found response.
 Imagine you have the following file hierarchy;
