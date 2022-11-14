@@ -6,9 +6,9 @@ an HTML file with a Hyperlambda codebehind file, using the **[io.file.mixin]** s
 documentation to understand how such mixin invocations works. The rules for resolving files are applied in the following order.
 
 1. If the URL directly maps to an HTML file, this file is resolved
-2. If a file exists with the specified URL + ".html" this file is resolved. For instance, "/about" is resolved to "/about.html".
-3. If a folder exists with the specified URL and the URL ends with "/", and an "index.html" file can be found within the folder, this file is resolved. For instance "/features/" is resolved to "/features/index.html"
-4. If a folder exists matching the URL minus the last part, and the folder contains a "default.html" file, this file is resolved. For instance, "/blog/xyz" resolves to "/blog/default.html" allowing you to render dynamic content with dynamic URLs, becoming _"wildcard"_ handlers within one folder.
+2. If a file exists with the specified URL + _".html"_ this file is resolved. For instance, _"/about"_ is resolved to _"/about.html"_.
+3. If a folder exists with the specified URL and the URL ends with _"/"_, and an _"index.html"_ file can be found within the folder, this file is resolved. For instance _"/features/"_ is resolved to _"/features/index.html"_
+4. If a folder exists matching the URL minus the last part, and the folder contains a _"default.html"_ file, this file is resolved. For instance, _"/blog/xyz"_ resolves to _"/blog/default.html"_ allowing you to render dynamic content with dynamic URLs, becoming _"wildcard"_ handlers within one folder. This logic recursively traverses upwards in the folder hierarchy looking for _"default.html"_ pages.
 
 If none of the above rules resolves to an actual file, the resolver returns a 404 Not Found response.
 Imagine you have the following file hierarchy;
