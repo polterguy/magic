@@ -58,7 +58,7 @@ And a _"/index.hl"_ file resembling the following.
 
 ```
 .count
-   data.select:select count(*) from log_entries
+   data.scalar:select count(*) from log_entries
    return:x:-
 ```
 
