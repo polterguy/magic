@@ -42,7 +42,9 @@ mixin components from your Hyperlambda code using the **[io.file.mixin]** slot.
 
 If you add a file extention to your request, and your extention is not _".html"_, the resolver will try to resolve
 your request as a static file request, and returning the file as a static resource. The MIME type a statically rendered
-file is served with depends upon its file extention, and can be seen using **[mime.list]**.
+file is served with depends upon its file extention, and can be seen using **[mime.list]**. Notice, if you have
+an HTML file that does _not_ have an associated Hyperlambda codebehind file, the file will be served as a static
+resource, and not dynamically rendered.
 
 Internally the resolver simply uses the **[io.file.mixin]** slot to combine HTML files with Hyperlambda codebehind
 files. You can also inject component files from your Hyperlambda codebehind using your own **[io.file.mixin]** invocations,
