@@ -51,6 +51,8 @@ files. You can also inject component files from your Hyperlambda codebehind usin
 to recursively build your HTML. Below is an example of an HTML file that dynamically substitutes parts of its HTML
 by invoking Hyperlambda lambda objects from its codebehind file.
 
+## Example usage of Hyperlambda codebehind file
+
 **/index.html**
 
 ```
@@ -70,8 +72,10 @@ by invoking Hyperlambda lambda objects from its codebehind file.
 .hello:The Machine
 ```
 
+## Interceptors
+
 The library also supports interceptors similarly to how the default API rendering logic allows for using interceptors.
-If you have an interveptor resembling the following.
+If you have an interceptor resembling the following.
 
 ```
 data.connect:magic
