@@ -80,6 +80,17 @@ objects from its codebehind file.
 .hello:The Machine
 ```
 
+The reason why this works, is because the Hyperlambda file that is executed during your request becomes as follows.
+
+```
+io.file.mixin:/index.html
+   .hello:The Machine
+return:x:-
+```
+
+Then whatever your Hyperlambda file returns is what is rendered back to the client as the HTTP response from your
+Magic server.
+
 ## Interceptors
 
 The library also supports interceptors similarly to how the default API rendering logic allows for using interceptors.
