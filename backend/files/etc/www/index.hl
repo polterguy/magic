@@ -1,3 +1,7 @@
+.hello:The Machine
+.debug
+   lambda2hyper:x:../*
+   return:x:-
 .count
    data.scalar:select count(*) from log_entries
    return:x:-

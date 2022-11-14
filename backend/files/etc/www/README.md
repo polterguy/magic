@@ -63,7 +63,7 @@ by invoking Hyperlambda lambda objects from its codebehind file.
 **/index.hl**
 
 ```
-.hello:The server
+.hello:The Machine
 ```
 
 The library also supports interceptors similarly to how the default API rendering logic allows for using interceptors.
