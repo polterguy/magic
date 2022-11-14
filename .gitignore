@@ -365,5 +365,5 @@ backend/files/etc/mssql/templates/*.*
 !backend/files/etc/mssql/templates/README.md
 backend/files/etc/frontend
 
-backend/files/etc/www/*.*
+backend/files/etc/www/*
 !backend/files/etc/www/README.md
