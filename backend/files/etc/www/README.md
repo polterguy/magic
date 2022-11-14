@@ -48,10 +48,15 @@ resource, and not dynamically rendered.
 
 Internally the resolver simply uses the **[io.file.mixin]** slot to combine HTML files with Hyperlambda codebehind
 files. You can also inject component files from your Hyperlambda codebehind using your own **[io.file.mixin]** invocations,
-to recursively build your HTML. Below is an example of an HTML file that dynamically substitutes parts of its HTML
-by invoking Hyperlambda lambda objects from its codebehind file.
+to recursively build your HTML. The HTML substitution process from lambda objects is as follows.
+
+1. If your lambda node has a value, this value is returned and this value becomes the substitution value in your HTML.
+2. If your lambda node does not have a value, the node is executed assumed to be a lambda object, and whatever the execution of your lambda node returns becomes your substitution value.
 
 ## Example usage of Hyperlambda codebehind file
+
+Below is an example of an HTML file that dynamically substitutes parts of its HTML by invoking Hyperlambda lambda
+objects from its codebehind file.
 
 **/index.html**
 
