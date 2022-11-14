@@ -1,0 +1,89 @@
+
+# Content files
+
+This folder is for statically and dynamically served content files. A dynamically rendered file is created by combining
+an HTML file with a Hyperlambda codebehind file, using the **[io.file.mixin]** slot. See the _"magic.lambda.io"_ project's
+documentation to understand how such mixin invocations works. The rules for resolving files are applied in the following order.
+
+1. If the URL directly maps to an HTML file, this file is resolved
+2. If a file exists with the specified URL + ".html" this file is resolved. For instance, "/about" is resolved to "/about.html".
+3. If a folder exists with the specified URL and the URL ends with "/", and an "index.html" file can be found within the folder, this file is resolved. For instance "/features/" is resolved to "/features/index.html"
+4. If a folder exists matching the URL minus the last part, and the folder contains a "default.html" file, this file is resolved. For instance, "/blog/xyz" resolves to "/blog/default.html" allowing you to render dynamic content with dynamic URLs, becoming _"wildcard"_ handlers within one folder.
+
+If none of the above rules resolves to an actual file, the resolver returns a 404 Not Found response.
+Imagine you have the following file hierarchy;
+
+1. _"/index.html"_
+2. _"/about.html"_
+3. _"/blog/default.html"_
+4. _"/features/index.html"_
+
+The following URLs will resolve to the specified files.
+
+* _"/"_ - Resolves to _"/index.html"_
+* _"/about"_ - Resolves to _"/about.html"_
+* _"/blog/xyz"_ - Resolves to _"/blog/default.html"_ (wildcard resolver)
+* _"/features/"_ - Resolves to _"/features/index.html"_
+
+Rules are applied in the order specified above, and if one rule is a match for a file, that file
+is returned without trying the rest of the rules.
+
+Notice that _"default.html"_ files propagates upwards in the hierarchy, implying a request trowards _"/x/y/z/q"_
+will be handled by the first of the following files the resolver can find.
+
+1. _"/x/y/z/default.html"_
+2. _"/x/y/default.html"_
+3. _"/x/default.html"_
+4. _"/default.html"_
+
+The resolver will only resolve files that does not have a URL where either a folder or the filename starts with a ".".
+If you add a period to the filename, the resolver will return the file as a statically served file unless the extention
+is _".html"_. The MIME type a statically rendered file is served with depends upon its file extention, and can be seen
+using **[mime.list]**. By not serving hidden files in folders starting with a _"."_, you can create _"private"_ folders
+where you store _"reusable component"_ types of files.
+
+Internally the resolver simply uses the **[io.file.mixin]** slot to combine HTML files with Hyperlambda codebehind
+files. You can also inject component files from your Hyperlambda codebehind, to recursively build your HTML.
+
+The library also supports interceptors similarly to how the default API rendering logic allows for using interceptors.
+If you have an interveptor resembling the following.
+
+```
+data.connect:magic
+   .interceptor
+   return:x:-
+```
+
+And a _"/index.hl"_ file resembling the following.
+
+```
+.count
+   data.select:select count(*) from log_entries
+   return:x:-
+```
+
+And an _"/index.html"_ HTML file resembling the following.
+
+```html
+<html>
+  <head>
+    <title>Foo</title>
+  </head>
+  <body>
+    Count of log items {{*/.count}}
+  </body>
+</html>
+```
+
+The the above invocation to `{{*/.count}}` will return count from your _"log-entries"_ database table
+and substitute the `{{*/.count}}` parts, and your combined Hyperlambda file that's used to resolve
+the URL of _"/"_ or _"/index.html"_ will become as follows.
+
+```
+data.connect:magic
+   io.file.mixin:/etc/www/index.html
+   .count
+      data.select:select count(*) from log_entries
+      return:x:-
+   return:x:-
+```
