@@ -9,13 +9,13 @@ import { Response } from 'src/app/_protected/models/common/response.model';
 
 import { Subscription } from 'rxjs';
 import { ShortkeysComponent } from 'src/app/_general/components/shortkeys/shortkeys.component';
-import { CodemirrorActionsService } from '../../hyper-ide/_services/codemirror-actions.service';
+import { CodemirrorActionsService } from '../../tools/hyper-ide/_services/codemirror-actions.service';
 import { Model } from 'src/app/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 
 // CodeMirror options.
 import hyperlambda from 'src/app/codemirror/options/hyperlambda.json';
 import hyperlambda_readonly from 'src/app/codemirror/options/hyperlambda_readonly.json';
-import { FileService } from '../../hyper-ide/_services/file.service';
+import { FileService } from '../../tools/hyper-ide/_services/file.service';
 
 @Component({
   selector: 'app-hl-playground',

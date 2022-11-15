@@ -39,10 +39,6 @@ const routes: Routes = [
         loadChildren: () => import('./_protected/pages/administration/generated-frontend/_module/frontend.module').then(m => m.FrontendModule)
       },
       {
-        path: 'generated-backend',
-        loadChildren: () => import('./_protected/pages/administration/generated-backend/_module/backend.module').then(m => m.BackendModule)
-      },
-      {
         path: 'database-management',
         loadChildren: () => import('./_protected/pages/tools/database/_module/database.module').then(m => m.DatabaseModule)
       },
@@ -59,6 +55,10 @@ const routes: Routes = [
         loadChildren: () => import('./_protected/pages/tools/hl-playground/_module/hl-playground.module').then(m => m.HlPlaygroundModule)
       },
       {
+        path: 'hyper-ide',
+        loadChildren: () => import('./_protected/pages/tools/hyper-ide/_module/ide.module').then(m => m.IdeModule)
+      },
+      {
         path: 'endpoints-health-check',
         loadChildren: () => import('./_protected/pages/setting-security/health-check/_module/health-check.module').then(m => m.HealthCheckModule)
       },
@@ -69,6 +69,10 @@ const routes: Routes = [
       {
         path: 'log',
         loadChildren: () => import('./_protected/pages/setting-security/log/_module/log.module').then(m => m.LogModule)
+      },
+      {
+        path: 'server-key-setting',
+        loadChildren: () => import('./_protected/pages/setting-security/server-key-setting/_module/server-key.module').then(m => m.ServerKeyModule)
       },
     ]
   },

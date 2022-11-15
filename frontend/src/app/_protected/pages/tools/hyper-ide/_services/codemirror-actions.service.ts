@@ -31,7 +31,7 @@ export class CodemirrorActionsService {
       } else if (type) {
         options = this.extensions.filter(x => x.extensions.indexOf(type) !== -1);
       }
-console.log(options)
+
       if (options.length === 0) {
         resolve(null);
         return null;

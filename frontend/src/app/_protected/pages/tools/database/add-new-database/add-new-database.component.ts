@@ -8,7 +8,7 @@ import { BazarService } from 'src/app/_protected/services/common/bazar.service';
 import { CacheService } from 'src/app/_protected/services/common/cache.service';
 import { ConfigService } from 'src/app/_protected/services/common/config.service';
 import { environment } from 'src/environments/environment';
-import { FileService } from '../../../hyper-ide/_services/file.service';
+import { FileService } from '../../../tools/hyper-ide/_services/file.service';
 import { AppManifest } from '../../plugins/_models/app-manifest';
 import { BazarApp } from '../../plugins/_models/bazar-app.model';
 import { ViewDbComponent } from '../components/view-db/view-db.component';
