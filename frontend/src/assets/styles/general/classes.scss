@@ -71,6 +71,13 @@ table
   td.mat-cell:not(:first-child) {padding-left: 5px;}
   th.mat-header-cell:not(:last-child),
   td.mat-cell:not(:last-child) {padding-right: 5px;}
+
+  @media(min-width: 577px) {
+    th.mat-header-cell {
+      border-bottom: 1px solid $aista_default_grey5;
+      padding: 15px 0;
+    }
+  }
 }
 @media(max-width: 576px) {
   // :root .fullPage {

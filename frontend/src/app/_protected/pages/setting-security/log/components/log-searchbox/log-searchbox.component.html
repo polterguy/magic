@@ -1,7 +1,8 @@
 
 
 <div class="d-flex align-items-center flex-sm-row flex-column-reverse w-100">
-  <mat-checkbox color="primary">Show error only</mat-checkbox>
+  <mat-checkbox color="primary" (change)="toggleShowError($event)">Show error only</mat-checkbox>
+
   <div class="px-2"></div>
   <mat-form-field class="w-100 standalone-field">
     <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">

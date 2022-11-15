@@ -16,7 +16,7 @@
             </ng-container>
             <ng-template #loaded>
               <app-log-searchbox
-                (testAll)="testAll()"
+                (errorOnly)="errorOnly($event)"
                 (filterList)="filterList($event)"></app-log-searchbox>
             </ng-template>
           </div>

@@ -3,8 +3,8 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { Subscription } from 'rxjs';
 import { LoadSnippetDialogComponent } from 'src/app/_general/components/load-snippet-dialog/load-snippet-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { CodemirrorActionsService } from 'src/app/_protected/pages/hyper-ide/_services/codemirror-actions.service';
-import { FileService } from 'src/app/_protected/pages/hyper-ide/_services/file.service';
+import { CodemirrorActionsService } from 'src/app/_protected/pages/tools/hyper-ide/_services/codemirror-actions.service';
+import { FileService } from 'src/app/_protected/pages/tools/hyper-ide/_services/file.service';
 import { EvaluatorService } from '../../../../tools/hl-playground/_services/evaluator.service';
 import { AssumptionService } from '../../_services/assumption.service';
 

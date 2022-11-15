@@ -8,7 +8,7 @@ import { ComponentsModule } from 'src/app/_general/components/components.module'
 import { BackendEditorComponent } from '../backend-editor/backend-editor.component';
 import { BackendSearchboxComponent } from '../backend-searchbox/backend-searchbox.component';
 import { BackendTreeComponent } from '../backend-tree/backend-tree.component';
-import { EndpointDialogComponent } from '../components/endpoint-dialog/endpoint-dialog.component';
+import { EndpointDialogComponent } from '../../../tools/hyper-ide/components/endpoint-dialog/endpoint-dialog.component';
 import { GeneratedBackendComponent } from '../generated-backend.component';
 import { BackendRoutingModule } from './backend.routing.module';
 
