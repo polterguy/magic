@@ -2,7 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { BazarService } from 'src/app/_protected/services/common/bazar.service';
-import { FileService } from '../../../../hyper-ide/_services/file.service';
+import { FileService } from '../../../../tools/hyper-ide/_services/file.service';
 import { Response } from '../../../../../models/common/response.model';
 import { BackendService } from 'src/app/_protected/services/common/backend.service';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';

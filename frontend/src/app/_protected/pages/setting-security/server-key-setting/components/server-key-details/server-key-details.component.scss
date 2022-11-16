@@ -1,0 +1,8 @@
+@import '../../../../../../../assets/styles/_variables/colors.scss';
+
+#custom-input ::ng-deep {
+  .mat-input-element:disabled {
+    color: $aista_dark;
+    font-size: 11px;
+  }
+}

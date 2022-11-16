@@ -6,7 +6,7 @@ import { BackendService } from 'src/app/_protected/services/common/backend.servi
 import { ConfigService } from './_services/config.service';
 
 import json from '../../../../codemirror/options/json.json'
-import { CodemirrorActionsService } from '../../hyper-ide/_services/codemirror-actions.service';
+import { CodemirrorActionsService } from '../../tools/hyper-ide/_services/codemirror-actions.service';
 import { Subscription } from 'rxjs';
 import { ConnectionStringDialogComponent } from './components/connection-string-dialog/connection-string-dialog.component';
 import { SmtpDialogComponent } from './components/smtp-dialog/smtp-dialog.component';

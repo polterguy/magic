@@ -8,11 +8,11 @@ import { Injectable } from '@angular/core';
 
 // Application specific imports.
 import { KeyPair } from '../_models/key-pair.model';
-import { Count } from '../../../../models/count.model';
+import { Count } from '../../../../../models/count.model';
 import { PublicKey } from '../_models/public-key.model';
-import { Affected } from '../../../../models/affected.model';
-import { Response } from '../../../../models/response.model';
-import { HttpService } from '../../../../services/http.service';
+import { Affected } from '../../../../../models/affected.model';
+import { Response } from '../../../../../models/response.model';
+import { HttpService } from '../../../../../services/http.service';
 import { PublicKeyFull } from '../_models/public-key-full.model';
 import { CryptoInvocation } from '../_models/crypto-invocations.model';
 

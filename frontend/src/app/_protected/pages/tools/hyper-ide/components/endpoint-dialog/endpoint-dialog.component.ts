@@ -9,8 +9,8 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Argument } from '../../../../administration/generated-endpoints/_models/argument.model';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { BackendService } from 'src/app/_protected/services/common/backend.service';
-import { EndpointService } from '../../../generated-endpoints/_services/endpoint.service';
-import { InvocationResult } from '../../../generated-endpoints/endpoints-result/endpoints-result.component';
+import { EndpointService } from '../../../../administration/generated-endpoints/_services/endpoint.service';
+import { InvocationResult } from '../../../../administration/generated-endpoints/endpoints-result/endpoints-result.component';
 
 // CodeMirror options.
 import json from '../../../../../../codemirror/options/json.json';

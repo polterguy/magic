@@ -6,12 +6,12 @@ import { LoadSnippetDialogComponent } from 'src/app/_general/components/load-sni
 import { ShortkeysComponent } from 'src/app/_general/components/shortkeys/shortkeys.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { EvaluatorService } from '../../../tools/hl-playground/_services/evaluator.service';
-import { FileNode } from '../../../hyper-ide/_models/file-node.model';
-import { MacroDefinition } from '../../../hyper-ide/_models/macro-definition.model';
-import { TreeNode } from '../../../hyper-ide/_models/tree-node.model';
-import { CodemirrorActionsService } from '../../../hyper-ide/_services/codemirror-actions.service';
-import { FileService } from '../../../hyper-ide/_services/file.service';
-import { VocabularyService } from '../../../hyper-ide/_services/vocabulary.service';
+import { FileNode } from '../../../tools/hyper-ide/_models/file-node.model';
+import { MacroDefinition } from '../../../tools/hyper-ide/_models/macro-definition.model';
+import { TreeNode } from '../../../tools/hyper-ide/_models/tree-node.model';
+import { CodemirrorActionsService } from '../../../tools/hyper-ide/_services/codemirror-actions.service';
+import { FileService } from '../../../tools/hyper-ide/_services/file.service';
+import { VocabularyService } from '../../../tools/hyper-ide/_services/vocabulary.service';
 import { ExecuteEndpointDialogComponent } from '../../generated-frontend/components/execute-endpoint-dialog/execute-endpoint-dialog.component';
 import { ExecuteMacroDialogComponent } from '../../generated-frontend/components/execute-macro-dialog/execute-macro-dialog.component';
 import { PreviewFileDialogComponent } from '../../generated-frontend/components/preview-file-dialog/preview-file-dialog.component';
@@ -19,7 +19,7 @@ import { RenameFileDialogComponent, FileObjectName } from '../../generated-front
 import { RenameFolderDialogComponent } from '../../generated-frontend/components/rename-folder-dialog/rename-folder-dialog.component';
 import { SelectMacroDialogComponent, Macro } from '../../generated-frontend/components/select-macro-dialog/select-macro-dialog.component';
 import { UnsavedChangesDialogComponent } from '../../generated-frontend/components/unsaved-changes-dialog/unsaved-changes-dialog.component';
-import { EndpointDialogComponent } from '../components/endpoint-dialog/endpoint-dialog.component';
+import { EndpointDialogComponent } from '../../../tools/hyper-ide/components/endpoint-dialog/endpoint-dialog.component';
 
 @Component({
   selector: 'app-backend-editor',

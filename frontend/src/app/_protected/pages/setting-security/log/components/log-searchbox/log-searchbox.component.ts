@@ -8,7 +8,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 export class LogSearchboxComponent implements OnInit {
 
   @Output() filterList = new EventEmitter<any>();
-  @Output() testAll = new EventEmitter<any>();
+  @Output() errorOnly = new EventEmitter<any>();
 
   constructor() { }
 
@@ -32,8 +32,8 @@ export class LogSearchboxComponent implements OnInit {
     this.filterList.emit('');
   }
 
-  public invokeTestAll() {
-    this.testAll.emit();
+  public toggleShowError(event: any) {
+    this.errorOnly.emit(event.checked);
   }
 
 }

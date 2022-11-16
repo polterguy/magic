@@ -4,7 +4,7 @@ import { Model } from 'src/app/codemirror/codemirror-hyperlambda/codemirror-hype
 import { Response } from 'src/app/_protected/models/common/response.model';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { BackendService } from 'src/app/_protected/services/common/backend.service';
-import { FileService } from '../../hyper-ide/_services/file.service';
+import { FileService } from '../../tools/hyper-ide/_services/file.service';
 import { AssumptionService } from '../../setting-security/health-check/_services/assumption.service';
 
 // CodeMirror options.

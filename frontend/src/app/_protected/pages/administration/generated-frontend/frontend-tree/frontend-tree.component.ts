@@ -9,9 +9,9 @@ import { ConfirmationDialogComponent } from 'src/app/_general/components/confirm
 import { EndpointsGeneralService } from 'src/app/_general/services/endpoints-general.service';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { Endpoint } from '../../generated-endpoints/_models/endpoint.model';
-import { FileNode } from '../../../hyper-ide/_models/file-node.model';
-import { CodemirrorActionsService } from '../../../hyper-ide/_services/codemirror-actions.service';
-import { FileService } from '../../../hyper-ide/_services/file.service';
+import { FileNode } from '../../../tools/hyper-ide/_models/file-node.model';
+import { CodemirrorActionsService } from '../../../tools/hyper-ide/_services/codemirror-actions.service';
+import { FileService } from '../../../tools/hyper-ide/_services/file.service';
 import { IncompatibleFileDialogComponent } from '../components/incompatible-file-dialog/incompatible-file-dialog.component';
 import { NewFileFolderDialogComponent } from '../components/new-file-folder-dialog/new-file-folder-dialog.component';
 
@@ -800,6 +800,51 @@ export class FrontendTreeComponent implements OnInit, OnDestroy {
    */
   public isExpandable(_: number, node: FlatNode) {
     return node.expandable;
+  }
+
+  /**
+   * Searches in the files' name to apply filtering in the view.
+   * @param node
+   * @param searchKeyword coming from the searchbox.
+   * @returns true if search keyword exists inside the node item's name
+   */
+   filterLeafNode(node: FlatNode, searchKeyword: string): boolean {
+    if (!searchKeyword) {
+      return false
+    }
+    return node.name.toLowerCase()
+      .indexOf(searchKeyword?.toLowerCase()) === -1
+  }
+
+  /**
+   * Searches in the folders' name to apply filtering in the view.
+   * @param node
+   * @param searchKeyword coming from the searchbox.
+   * @returns true if search keyword exists inside the node item's name
+   */
+   filterParentNode(node: FlatNode, searchKeyword: string): boolean {
+    if (
+      !searchKeyword ||
+      node.name.toLowerCase()
+        .indexOf(
+          searchKeyword?.toLowerCase()
+        ) !== -1
+    ) {
+      return false
+    }
+    const descendants = this.treeControl.getDescendants(node)
+
+    if (
+      descendants.some(
+        (descendantNode) =>
+          descendantNode.name
+            .toLowerCase()
+            .indexOf(searchKeyword?.toLowerCase()) !== -1
+      )
+    ) {
+      return false
+    }
+    return true
   }
 
   ngOnDestroy(): void {

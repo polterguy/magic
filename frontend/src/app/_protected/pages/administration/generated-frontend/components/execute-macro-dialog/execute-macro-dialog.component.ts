@@ -6,7 +6,7 @@
 // Angular and system imports.
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MacroDefinition } from '../../../../hyper-ide/_models/macro-definition.model';
+import { MacroDefinition } from '../../../../tools/hyper-ide/_models/macro-definition.model';
 
 // Application specific imports.
 
