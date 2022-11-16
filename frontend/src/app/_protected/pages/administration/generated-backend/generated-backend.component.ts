@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { FileNode } from '../../hyper-ide/_models/file-node.model';
+import { FileNode } from '../../tools/hyper-ide/_models/file-node.model';
 
 @Component({
   selector: 'app-generated-backend',

@@ -5,7 +5,7 @@ import { ReplaySubject, Subject } from 'rxjs';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { CacheService } from 'src/app/_protected/services/common/cache.service';
-import { FileService } from '../../hyper-ide/_services/file.service';
+import { FileService } from '../../tools/hyper-ide/_services/file.service';
 import { Databases } from '../../tools/database/_models/databases.model';
 import { DefaultDatabaseType } from '../../tools/database/_models/default-database-type.model';
 import { SqlService } from '../../tools/database/_services/sql.service';

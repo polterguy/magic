@@ -91,7 +91,7 @@ export class LogComponent implements OnInit {
   }
 
   page(event: PageEvent) {
-    console.log(event)
+
     this.currentPage = event.pageIndex;
     if (!this.items[this.currentPage]) {
       this.getItems();
@@ -112,23 +112,6 @@ export class LogComponent implements OnInit {
   }
 
   /**
-   * Returns specified object as an array to caller.
-   *
-   * @param meta Meta object to return array for
-   */
-  // toArray(meta: object) {
-  //   const result = [];
-  //   var names = Object.getOwnPropertyNames(meta);
-  //   for (const idx of names) {
-  //     result.push({
-  //       key: idx,
-  //       value: meta[idx],
-  //     });
-  //   }
-  //   return result;
-  // }
-
-  /**
    * Puts the specified content into the user's clipboard
    *
    * @param content Content to put on to clipboard
@@ -138,31 +121,25 @@ export class LogComponent implements OnInit {
     this.generalService.showFeedback('Contentis copied on your clipboard');
   }
 
-  /**
-   * Invoked when element wrapping table is scrolled.
-   *
-   * @param e - scrolling event
-   */
-  // onTableScroll(e: any) {
-  //   if (this.retrievingItems) {
-  //     return;
-  //   }
-  //   const clientHeight = e.target.clientHeight;
-  //   const tableScrollHeight = e.target.scrollHeight;
-  //   const scrollLocation = e.target.scrollTop;
-  //   const limit = clientHeight + scrollLocation > tableScrollHeight - 50;
-  //   if (limit && (this.items.length < this.count)) {
-  //     this.retrievingItems = true;
-  //     this.getItems();
-  //   }
-  // }
-
-
+  // TODO:
+  //    Invoking endpoint to search through all data and return data.
+  //    It is only temporary solution for now.
   public filterList(event: string) {
     if (event !== '') {
-      // this.dataSource = this.originalDataSource.filter((item: any) => item.name.indexOf(event) > -1);
+      this.dataSource = this.dataSource.filter((item: any) => item.content.toLowerCase().indexOf(event.toLowerCase()) > -1);
     } else {
-      // this.dataSource = this.originalDataSource;
+      this.getDataSource();
+    }
+  }
+
+  // TODO:
+  //    Invoking endpoint to search through all data and return data.
+  //    It is only temporary solution for now.
+  public errorOnly(event: boolean) {
+    if (event) {
+      this.dataSource = this.dataSource.filter((item: any) => item.type === 'error');
+    } else {
+      this.getDataSource();
     }
   }
 }

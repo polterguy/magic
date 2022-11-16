@@ -10,9 +10,9 @@ import { Injectable } from '@angular/core';
 import { saveAs } from "file-saver";
 
 // Application specific imports.
-import { HttpService } from '../../../services/common/http.service';
-import { Response } from '../../../models/common/response.model';
-import { MacroDefinition } from '../../../models/common/macro-definition.model';
+import { HttpService } from '../../../../services/common/http.service';
+import { Response } from '../../../../models/common/response.model';
+import { MacroDefinition } from '../../../../models/common/macro-definition.model';
 import { GeneralService } from 'src/app/_general/services/general.service';
 
 /**
