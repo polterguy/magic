@@ -20,7 +20,7 @@ export class ServerKeyReceiptsComponent implements OnInit {
   public dataSource: any = [];
 
   pageIndex: number = 0;
-  pageSize: number = 8;
+  pageSize: number = 5;
   totalItems: number = 0;
 
   public isLoading: boolean = true;
@@ -30,7 +30,7 @@ export class ServerKeyReceiptsComponent implements OnInit {
     private generalService: GeneralService) { }
 
   ngOnInit(): void {
-    console.log(this.isNewKey, this.selectedServerKey)
+
     if (this.isNewKey) {
       this.getInvocations();
       this.getCount();

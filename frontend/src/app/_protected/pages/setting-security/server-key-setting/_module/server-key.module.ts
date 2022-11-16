@@ -11,6 +11,7 @@ import { ServerKeyDetailsComponent } from '../components/server-key-details/serv
 import { FormsModule } from '@angular/forms';
 import { CmModule } from 'src/app/codemirror/_module/cm.module';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
+import { NewServerKeyComponent } from '../components/new-server-key/new-server-key.component';
 
 
 
@@ -19,7 +20,8 @@ import { CodemirrorModule } from '@ctrl/ngx-codemirror';
     ServerKeyComponent,
     ServerKeyTableComponent,
     ServerKeyReceiptsComponent,
-    ServerKeyDetailsComponent
+    ServerKeyDetailsComponent,
+    NewServerKeyComponent
   ],
   imports: [
     CommonModule,

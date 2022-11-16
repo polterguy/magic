@@ -74,6 +74,10 @@ const routes: Routes = [
         path: 'server-key-setting',
         loadChildren: () => import('./_protected/pages/setting-security/server-key-setting/_module/server-key.module').then(m => m.ServerKeyModule)
       },
+      {
+        path: 'user-profile',
+        loadChildren: () => import('./_protected/pages/user/profile/_module/profile.module').then(m => m.ProfileModule)
+      },
     ]
   },
   {

@@ -22,7 +22,7 @@ export class ServerKeyTableComponent implements OnInit {
   public dataSource: any = [];
 
   pageIndex: number = 0;
-  pageSize: number = 8;
+  pageSize: number = 5;
   totalItems: number = 0;
 
   public isLoading: boolean = true;
@@ -55,7 +55,7 @@ export class ServerKeyTableComponent implements OnInit {
   /*
    * Returns public keys from backend.
    */
-  private getKeys() {
+  public getKeys() {
     this.isLoading = true;
     this.cryptoService.publicKeys({
       filter: '',
@@ -69,7 +69,7 @@ export class ServerKeyTableComponent implements OnInit {
       error: (error: any) => this.generalService.showFeedback(error.error.message??error, 'errorMessage')});
   }
 
-  private getCount() {
+  public getCount() {
     const filter: string = '';
     this.cryptoService.countPublicKeys({ filter: filter }).subscribe({
       next: (res) => {
@@ -100,6 +100,7 @@ export class ServerKeyTableComponent implements OnInit {
           next: () => {
             this.generalService.showFeedback('Public key successfully deleted', 'successMessage');
             this.getKeys();
+            this.getCount();
           },
           error:(error: any) => this.generalService.showFeedback(error.error.message??error, 'errorMessage')});
       }
@@ -113,19 +114,27 @@ export class ServerKeyTableComponent implements OnInit {
    */
   public enabledChanged(event: any, key: PublicKey) {
     this.cryptoService.setEnabled(key.id, event.checked).subscribe({
-      next: () => this.generalService.showFeedback(`Key was successfully ${event.checked ? 'enabled' : 'disabled'}`, 'successMessage'),
+      next: () => {
+        this.generalService.showFeedback(`Key was successfully ${event.checked ? 'enabled' : 'disabled'}`, 'successMessage')
+        this.getKeys();
+      },
       error: (error: any) => this.generalService.showFeedback(error.error.message??error, 'errorMessage')});
   }
 
   public viewDetails(key: PublicKey) {
+    const keyData: any = {...key};
+    keyData.original_content = key.content;
     this.dialog.open(ServerKeyDetailsComponent, {
       width: '80vw',
+      panelClass: ['light'],
       data: {
-        key: key,
+        key: keyData,
         savePermission: this.savePermission
       }
     }).afterClosed().subscribe((res: any) => {
-      console.log(res)
+      if (res === true) {
+        this.getKeys();
+      }
     })
   }
 
