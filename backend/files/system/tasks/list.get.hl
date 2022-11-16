@@ -16,5 +16,16 @@ add:x:../*/tasks.list
    get-nodes:x:@.arguments/*/limit
 tasks.list:x:@.arguments/*/filter
 
+// Retrieving schedules for tasks, if any.
+include:x:@tasks.list/*
+   tasks.get:x:@.dp/#/*/id
+      schedules:true
+   add:x:+/*
+      get-nodes:x:@tasks.get/*/schedules/*
+   add:x:./*/return/*/schedules
+      .
+   return
+      schedules
+
 // Returning the results of the evaluation to caller.
 return-nodes:x:@tasks.list/*
