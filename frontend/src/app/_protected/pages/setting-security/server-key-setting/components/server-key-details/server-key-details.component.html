@@ -50,7 +50,7 @@
             <span class="text-muted">|</span>
           </span>
 
-          <input matInput placeholder="Domain"
+          <input matInput placeholder="Associated user"
             [disabled]="!data.savePermission"
             [(ngModel)]="data.key.username"
             [ngModelOptions]="{standalone: true}">
@@ -63,7 +63,11 @@
           <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
               <p class="mb-0">Fingerprint</p>
-              <button mat-button color="primary" (click)="copy(data.key.fingerprint)">Copy</button>
+              <button mat-button color="primary"
+                class="custom-copy-btn"
+                (click)="copy(data.key.fingerprint)">
+                Copy
+              </button>
             </div>
             <mat-form-field class="w-100" id="custom-input">
               <input matInput
@@ -76,7 +80,11 @@
           <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
               <p class="mb-0">Key content</p>
-              <button mat-button color="primary" (click)="copy(data.key.content)">Copy</button>
+              <button mat-button color="primary"
+                class="custom-copy-btn"
+                (click)="copy(data.key.content)">
+                Copy
+              </button>
             </div>
             <mat-form-field class="w-100">
               <textarea matInput rows="12"
@@ -87,8 +95,8 @@
           </div>
         </div>
       </div>
-      <div class="col-lg-6 col-12">
-        <!-- <app-codemirror-hyperlambda [(model)]="data.key.options"></app-codemirror-hyperlambda> -->
+      <div class="col-lg-6 col-12 modal-custom-codemirror" *ngIf="data.key.options">
+        <app-codemirror-hyperlambda [(model)]="data.key.options"></app-codemirror-hyperlambda>
       </div>
     </div>
   </form>
@@ -96,5 +104,5 @@
 
 <div mat-dialog-actions [align]="'end'">
   <button mat-button color="primary" mat-dialog-close class="me-2">Cancel</button>
-  <button mat-flat-button color="primary" class="px-5">Save</button>
+  <button mat-flat-button color="primary" class="px-5" (click)="save()">Save</button>
 </div>

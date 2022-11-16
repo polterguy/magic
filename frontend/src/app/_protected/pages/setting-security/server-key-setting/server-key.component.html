@@ -7,8 +7,8 @@
             <div class="d-flex justify-content-between flex-sm-row flex-column align-items-sm-center mb-4">
               <h3 class="my-0 fw-bold">Server key</h3>
               <div class="ms-auto">
-                <button mat-button color="primary">Import key</button>
-                <button mat-flat-button color="primary">Create a new key</button>
+                <button mat-button color="primary" (click)="newKey('import')">Import key</button>
+                <button mat-flat-button color="primary" (click)="newKey('create')">Create a new key</button>
               </div>
             </div>
           </div>
@@ -46,14 +46,14 @@
 </div>
 <div class="row mt-4">
   <div class="col-12">
-    <mat-card>
+    <mat-card class="pb-2">
       <mat-card-content>
         <mat-tab-group mat-stretch-tabs dynamicHeight
           animationDuration="0ms"
           [selectedIndex]="selectedTabIndex"
           (selectedIndexChange)="tabChanged($event)">
           <mat-tab label="Keys">
-            <app-server-key-table (invokeViewReceipts)="invokeViewReceipts($event)"></app-server-key-table>
+            <app-server-key-table (invokeViewReceipts)="invokeViewReceipts($event)" #tableComponent></app-server-key-table>
           </mat-tab>
           <mat-tab label="Receipts" [disabled]="!selectedServerKey">
             <ng-template matTabContent>
