@@ -9,7 +9,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { TaskService } from 'src/app/components/management/tasks/services/task.service';
+import { TaskService } from 'src/app/_protected/pages/tools/task-scheduler/_services/task.service';
 
 /**
  * Modal dialog used to allow user to create a new role in the system.
@@ -27,7 +27,7 @@ export class NewTaskDialogComponent {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param dialogRef Needed to be able to close dialog when user clicks create button
    * @param feedbackService Needed to be able to display feedback to user
    * @param taskService Needed to be able to create our task

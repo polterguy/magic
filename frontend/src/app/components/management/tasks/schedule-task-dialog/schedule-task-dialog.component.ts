@@ -10,7 +10,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 // Application specific imports.
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { Task } from 'src/app/components/management/tasks/models/task.model';
-import { TaskService } from 'src/app/components/management/tasks/services/task.service';
+import { TaskService } from 'src/app/_protected/pages/tools/task-scheduler/_services/task.service';
 
 /**
  * Modal dialog used to allow user to schedule a task.
@@ -44,7 +44,7 @@ export class ScheduleTaskDialogComponent {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param dialogRef Needed to be able to close dialog when user clicks create button
    * @param feedbackService Needed to be able to display feedback to user
    * @param taskService Needed to be able to create our task
@@ -54,7 +54,7 @@ export class ScheduleTaskDialogComponent {
     private dialogRef: MatDialogRef<ScheduleTaskDialogComponent>,
     private feedbackService: FeedbackService,
     private taskService: TaskService,
-    @Inject(MAT_DIALOG_DATA) public data: Task) { 
+    @Inject(MAT_DIALOG_DATA) public data: Task) {
     this.currentDate = new Date();
   }
 

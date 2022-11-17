@@ -165,8 +165,8 @@ export class HeaderComponent implements OnInit {
             disabled: !(this.permissions.access.eval.execute && this.permissions.setupDone)
           },
           {
-            name: 'Task scheduler',
-            url: '/task-scheduler',
+            name: 'Tasks',
+            url: '/tasks',
             disabled: !(this.permissions.access.tasks.read && this.permissions.setupDone)
           },
           {
