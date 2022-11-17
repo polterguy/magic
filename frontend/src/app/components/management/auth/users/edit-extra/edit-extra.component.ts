@@ -8,7 +8,7 @@ import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specifif imports.
-import { User_Extra } from '../../models/user.model';
+import { User_Extra } from '../../../../../_protected/pages/user-roles/_models/user.model';
 
 @Component({
   selector: 'app-edit-extra',

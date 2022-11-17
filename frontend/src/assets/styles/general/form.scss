@@ -1,0 +1,125 @@
+/*=-=-=-=-=-=
+buttons
+=-=-=-=-=-=*/
+:root .mat-flat-button,
+:root .mat-stroked-button {border-radius: $aista_radius_sm;}
+
+.btn-link{
+  background-color: transparent;
+  display: inline-flex;
+  align-items: center;
+  border: none;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  @include general_transition(0.3s);
+  &:hover{
+      filter: invert(30%);
+      -webkit-filter: invert(30%);
+  }
+}
+/*=-=-=-=-=-=
+icons
+=-=-=-=-=-=*/
+:root .mat-form-field-appearance-outline {
+  .mat-select-arrow {
+    width: 8px;
+    height: 8px;
+    border-top: 1px solid $aista_default_grey2;
+    border-left: 1px solid $aista_default_grey2;
+    border-right: unset;
+    transform: rotate(-135deg)!important;
+  }
+  .mat-form-field-prefix {
+    top: 0.35em;
+    color: $aista_default_grey3;
+  }
+  &.text-prefix .mat-form-field-prefix {
+    top: 0;
+  }
+  &.inline-form-field {
+    .mat-form-field-wrapper {padding: 0;margin: 0;}
+  }
+  .mat-form-field-outline-start {border-radius: $aista_radius_sm 0 0 $aista_radius_sm;}
+  .mat-form-field-outline-end {border-radius: 0 $aista_radius_sm $aista_radius_sm 0;}
+}
+/*=-=-=-=-=-=
+form fields
+=-=-=-=-=-=*/
+:root {
+  .mat-form-field-appearance-outline {
+    .mat-form-field-outline-start,
+    .mat-form-field-outline-gap,
+    .mat-form-field-outline-end {
+      background-color: $aista_default_grey5;
+      border: none;
+      color: $aista_default_grey3;
+    }
+    .mat-form-field-infix {padding-top: 0.5em;}
+
+    &.custom-alignment {
+      .mat-form-field-flex {align-items: flex-start;}
+      .mat-form-field-prefix {margin-top: 8px;}
+      .mat-form-field-suffix {top: 0.6rem;}
+    }
+
+    &.prefix-alignment {
+      .mat-form-field-prefix {
+        top: 0.05rem;
+        min-width: 100px;
+      }
+    }
+
+    &.standalone-field {
+      .mat-form-field-wrapper {padding-bottom: 0;}
+    }
+  }
+
+  .form-with-label {
+    .mat-form-field-appearance-outline .mat-form-field-prefix {
+      top: 0px;
+      min-width: 95px;
+    }
+  }
+
+  .search-list-input {
+    height: 3em;
+    line-height: 3em;
+    padding: 0 13px;
+    position: sticky;
+    top: 0;
+    background-color: $aista_default;
+    z-index: 1;
+    border-bottom: 1px solid transparentize($color: $aista_default_grey4, $amount: 0.8);
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+      line-height: 20px;
+    }
+  }
+}
+/*=-=-=-=-=-=
+multi select form fields
+=-=-=-=-=-=*/
+:root {
+  .multiline-mat-option.mat-option {
+    white-space: normal;
+    line-height: normal;
+    height: unset;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    .name-line {color: $aista_dark;}
+    .description-line {
+      color: $aista_default_grey3;
+      font-size: 12px;
+      margin-top: 5px;
+    }
+  }
+}
+
+@media screen and (max-width: 767px) {
+  input, select, textarea {
+    font-size: 16px!important;
+  }
+}

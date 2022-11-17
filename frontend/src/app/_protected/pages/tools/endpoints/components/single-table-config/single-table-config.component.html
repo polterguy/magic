@@ -1,0 +1,151 @@
+<div class="table-responsive">
+  <table mat-table [dataSource]="dataSource" class="w-100 borderless hoverable">
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef class="ps-0"> Name </th>
+      <td mat-cell *matCellDef="let element" class="ps-0"> {{element?.name ?? '-'}} </td>
+    </ng-container>
+
+    <!-- type Column -->
+    <ng-container matColumnDef="type">
+      <th mat-header-cell *matHeaderCellDef class="ps-0"> Type </th>
+      <td mat-cell *matCellDef="let element" class="ps-0"> {{element?.db ?? '-'}} </td>
+    </ng-container>
+
+    <!-- hyperlambda Column -->
+    <ng-container matColumnDef="hyperlambda">
+      <th mat-header-cell *matHeaderCellDef class="ps-0"> Hyperlambda </th>
+      <td mat-cell *matCellDef="let element" class="ps-0"> {{element?.hl ?? '-'}} </td>
+    </ng-container>
+
+    <!-- nullable Column -->
+    <ng-container matColumnDef="nullable">
+      <th mat-header-cell *matHeaderCellDef class="text-nowrap ps-0"> Nullable? </th>
+      <td mat-cell *matCellDef="let element" class="ps-0"> {{element?.nullable}} </td>
+    </ng-container>
+
+    <!-- key Column -->
+    <ng-container matColumnDef="key">
+      <th mat-header-cell *matHeaderCellDef class="text-nowrap"> Key </th>
+      <td mat-cell *matCellDef="let element">
+        {{element?.primary === true ? 'Primary' : (foreign_keys?.column === element?.name ? 'Foreign' : '-')}}
+        <button mat-icon-button color="primary" class="table-btn"
+          (click)="editForeignKey(element.name)"
+          *ngIf="foreign_keys?.column === element?.name && !element?.primary">
+          <mat-icon>edit</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <!-- default Column -->
+    <ng-container matColumnDef="default">
+      <th mat-header-cell *matHeaderCellDef class="text-nowrap"> Default? </th>
+      <td mat-cell *matCellDef="let element"> {{element?.automatic === true ? 'Yes' : 'No'}} </td>
+    </ng-container>
+
+    <!-- locked Column -->
+    <ng-container matColumnDef="locked">
+      <th mat-header-cell *matHeaderCellDef class="text-nowrap"> Locked to username? </th>
+      <td mat-cell *matCellDef="let element">
+        <button mat-button class="table-btn w-100"
+          [matMenuTriggerFor]="lockedToUsernameMenu"
+          [matMenuTriggerData]="{element: element}"
+          aria-label="Select locked status"
+          [disabled]="element?.primary">
+          <div class="d-flex w-100 justify-content-between align-items-center">
+            {{element?.locked === true ? 'True' : 'False'}}
+            <mat-icon class="me-4" *ngIf="!element?.primary">keyboard_arrow_down</mat-icon>
+          </div>
+        </button>
+        <mat-menu #lockedToUsernameMenu="matMenu">
+          <ng-template matMenuContent let-element="element">
+            <button mat-menu-item (click)="element.locked = true">
+              True
+            </button>
+            <button mat-menu-item (click)="element.locked = ''">
+              False
+            </button>
+          </ng-template>
+        </mat-menu>
+      </td>
+    </ng-container>
+
+    <!-- template Column -->
+    <ng-container matColumnDef="template">
+      <th mat-header-cell *matHeaderCellDef class="text-nowrap"> Template </th>
+      <td mat-cell *matCellDef="let element">
+        <button mat-button class="table-btn w-100"
+          [matMenuTriggerFor]="templateMenu"
+          [matMenuTriggerData]="{element: element}"
+          aria-label="Select template handling"
+          [disabled]="element?.primary">
+          <div class="d-flex w-100 justify-content-between align-items-center">
+            {{element?.handling ? templateList[element.handling] : '-'}}
+            <mat-icon *ngIf="!element?.primary">keyboard_arrow_down</mat-icon>
+          </div>
+        </button>
+        <mat-menu #templateMenu="matMenu">
+          <ng-template matMenuContent let-element="element">
+            <button mat-menu-item (click)="element.handling = ''">None</button>
+            <button mat-menu-item
+              *ngFor="let item of templateList | keyvalue"
+              (click)="element.handling = item.key">{{item.value}}</button>
+          </ng-template>
+        </mat-menu>
+      </td>
+    </ng-container>
+
+    <!-- create Column -->
+    <ng-container matColumnDef="create">
+      <th mat-header-cell *matHeaderCellDef class="text-nowrap">
+        Create
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <mat-checkbox color="primary"
+        [disabled]="verbForColumnIsDisabled('post', element)"
+        [(ngModel)]="element.post">Create</mat-checkbox>
+      </td>
+    </ng-container>
+
+    <!-- read Column -->
+    <ng-container matColumnDef="read">
+      <th mat-header-cell *matHeaderCellDef class="text-nowrap">
+        Read
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <mat-checkbox color="primary"
+        [disabled]="verbForColumnIsDisabled('get', element)"
+        [(ngModel)]="element.get">Read</mat-checkbox>
+      </td>
+    </ng-container>
+
+    <!-- update Column -->
+    <ng-container matColumnDef="update">
+      <th mat-header-cell *matHeaderCellDef class="text-nowrap">
+        Update
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <mat-checkbox color="primary"
+        [disabled]="verbForColumnIsDisabled('put', element)"
+        [(ngModel)]="element.put">Update</mat-checkbox>
+      </td>
+    </ng-container>
+
+    <!-- delete Column -->
+    <ng-container matColumnDef="delete">
+      <th mat-header-cell *matHeaderCellDef class="text-nowrap">
+        Delete
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <mat-checkbox color="primary"
+        [disabled]="verbForColumnIsDisabled('delete', element)"
+        [(ngModel)]="element.delete">Delete</mat-checkbox>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</div>
+

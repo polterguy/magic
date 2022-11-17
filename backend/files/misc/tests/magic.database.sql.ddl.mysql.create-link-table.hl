@@ -3,5 +3,5 @@ url:/magic/system/sql/ddl/link-table
 status:int:200
 description:Verifies creating a link table in MySQL works correctly
 payload:"{\n  \"databaseType\": \"mysql\",\n  \"connectionString\": \"generic\",\n  \"databaseName\": \"crm\",\n  \"args\": {\n    \"name\": \"customers_contacts\",\n    \"table1\": \"customers\",\n    \"table2\": \"contacts\",\n    \"table1pk\": [\n      {\n        \"name\": \"customers_id\",\n        \"type\": \"integer\"\n      }\n    ],\n    \"table2pk\": [\n      {\n        \"name\": \"contacts_id\",\n        \"type\": \"integer\"\n      }\n    ]\n  },\n  \"generate\": true\n}"
-response:"{\n  \"sql\": \"create table customers_contacts(\\r\\n  customers_id integer,\\r\\n  contacts_id integer,\\r\\n  primary key(customers_id,contacts_id),\\r\\n foreign key (customers_id) references customers (customers_id),\\r\\n foreign key (contacts_id) references contacts (contacts_id)\r\n);\"\n}"
+response:"{\n  \"sql\": \"create table customers_contacts(\\r\\n  customers_id integer,\\r\\n  contacts_id integer,\\r\\n  primary key(customers_id,contacts_id),\\r\\n foreign key (customers_id) references customers (customers_id),\\r\\n foreign key (contacts_id) references contacts (contacts_id));\"\n}"
 produces:application/json

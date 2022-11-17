@@ -1,0 +1,63 @@
+<div class="masonry" *ngIf="!dbLoading">
+  <div class="grid mb-4" *ngFor="let item of (tables | async)">
+    <mat-card>
+      <mat-card-content>
+        <div class="d-flex align-items-center justify-content-between mb-4">
+          <p class="fw-bold mb-0">{{item.name}}</p>
+          <div class="d-flex align-items-center justify-content-between action-btn">
+            <button mat-icon-button color="primary" (click)="addField(item)">
+              <mat-icon>add</mat-icon>
+            </button>
+            <div class="me-1"></div>
+            <button mat-icon-button color="primary"
+              (click)="exportTable(item.name)">
+              <mat-icon>file_download</mat-icon>
+            </button>
+            <div class="me-1"></div>
+            <button mat-icon-button color="warn"
+              [disabled]="selectedDatabase === 'magic'"
+              (click)="dropTable(item, 'table')">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+        <div class="row hoverable-row py-2 align-items-center" *ngFor="let column of item.columns">
+          <div class="col-lg-6 col-5">
+            <p class="text-truncate my-0">{{column.name}} <i *ngIf="column.primary" class="small">(Primary key)</i></p>
+          </div>
+          <div class="col-5">
+            <p class="small text-muted my-0">{{column.db}}</p>
+          </div>
+          <div class="col-lg-1 col-2 action-btn d-flex justify-content-end">
+            <button mat-icon-button color="warn"
+              [disabled]="selectedDatabase === 'magic'"
+              (click)="dropTable(column, 'column', item.foreign_keys, item.name)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+        <div class="row"
+        [class.mt-5]="item.foreign_keys && item.foreign_keys.length > 0">
+          <div class="col-12 bg-light action-btn py-2 small"
+            *ngFor="let fk of item.foreign_keys;let last = last"
+            [class.mb-2]="!last">
+            <div class="d-flex justify-content-between align-items-center">
+              <p class="my-0">Linked table <i>(Foreign Key)</i></p>
+              <p class="my-0 d-flex justify-content-between align-items-center">
+                {{fk?.column}} <mat-icon class="mx-2">trending_flat</mat-icon> {{fk?.foreign_table}}.{{fk.foreign_column}}
+              </p>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+
+<ng-container *ngIf="dbLoading">
+  <app-loading-skeleton
+  [amount]="3"
+  [colClass]="'col-4'"
+  [blockHeight]="'250px'"
+  [hasShadow]="true"></app-loading-skeleton>
+</ng-container>

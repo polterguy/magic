@@ -1,0 +1,56 @@
+
+<div class="d-flex flex-sm-nowrap flex-wrap justify-content-between mb-1">
+  <div class="d-flex align-items-center">
+    <mat-card-title class="my-0">Configuration</mat-card-title>
+    <div class="sm-icons">
+      <button mat-icon-button [matMenuTriggerFor]="menu" class="mat-caption" matTooltip="Need help?" type="button">
+        <mat-icon>help_outline</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <div class="p-3">
+          <p>
+            View and edit your server's configuration. Configuration settings are stored in your
+            appsettings.json file, and typically change some part of your Magic installation's behaviour.
+          </p>
+          <div class="d-flex justify-content-end">
+            <a target="_blank" href="https://docs.aista.com/documentation/magic/components/config/" mat-stroked-button>Learn more</a>
+          </div>
+        </div>
+      </mat-menu>
+    </div>
+  </div>
+</div>
+<mat-card-subtitle>View &amp; edit your server's configuration</mat-card-subtitle>
+
+<ngx-codemirror
+  *ngIf="configExists"
+  [(ngModel)]="config"
+  [options]="cmOptions.json">
+</ngx-codemirror>
+
+<div *ngIf="configExists" class="text-right mt-3">
+  <button
+    mat-raised-button
+    [disabled]="!backendService.active?.access.config.save"
+    color="primary"
+    class="mr-2"
+    (click)="manageSMTP()">
+    Manage SMTP
+  </button>
+  <button
+    mat-raised-button
+    [disabled]="!backendService.active?.access.config.save"
+    color="primary"
+    class="mr-2"
+    (click)="addConnectionString()">
+    Add connection string
+  </button>
+  <button
+    mat-raised-button
+    [disabled]="!backendService.active?.access.config.save"
+    color="primary"
+    (click)="save()">
+    Save
+  </button>
+
+</div>

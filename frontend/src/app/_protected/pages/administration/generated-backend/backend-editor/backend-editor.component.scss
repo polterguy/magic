@@ -1,0 +1,6 @@
+
+.full-height {height: calc(100% - (52px + 36px));}
+::ng-deep .frontend-editor {
+  overflow-y: hidden;
+  .CodeMirror { height: 100%; }
+}

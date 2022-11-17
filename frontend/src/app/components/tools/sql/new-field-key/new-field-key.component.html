@@ -1,0 +1,156 @@
+<form>
+
+  <div mat-dialog-title>
+    Add {{data.type}} to {{this.data.table}}
+  </div>
+
+  <div mat-dialog-content>
+
+    <mat-form-field
+      *ngIf="data.databaseType !== 'sqlite'"
+      class="w-100"
+      appearance="outline">
+      <mat-label>What to add</mat-label>
+      <mat-select name="type" [(ngModel)]="data.type">
+        <mat-option value="field">Field</mat-option>
+        <mat-option value="key">Foreign key</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <div *ngIf="data.type === 'field'">
+
+      <mat-form-field
+        class="w-100"
+        appearance="outline">
+        <mat-label>Name of field</mat-label>
+        <input
+          matInput
+          type="text"
+          autocomplete="off"
+          name="name"
+          [(ngModel)]="data.name">
+      </mat-form-field>
+
+      <mat-form-field
+        *ngIf="data.name"
+        class="w-100"
+        appearance="outline">
+        <mat-label>Data type</mat-label>
+        <mat-select name="datatype"
+            [(ngModel)]="data.datatype"
+            (selectionChange)="datatypeChanged()">
+            <mat-select-trigger>
+              {{data.datatype?.name}}
+            </mat-select-trigger>
+          <mat-option
+            *ngFor="let idxDatatype of getDataTypes()"
+            class="multiline-mat-option"
+            [value]="idxDatatype">
+            <span class="d-block name-line">
+              {{idxDatatype.name}}
+            </span>
+            <span class="d-block desc-line">
+              {{idxDatatype.description}}
+            </span>
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field
+        *ngIf="data.datatype?.size"
+        class="w-100"
+        appearance="outline">
+        <mat-label>Size of field ({{data.datatype.size.min + ' - ' + data.datatype.size.max}})</mat-label>
+        <input
+          matInput
+          type="number"
+          [min]="data.datatype.size.min"
+          [max]="data.datatype.size.max"
+          autocomplete="off"
+          name="size"
+          [(ngModel)]="data.size">
+      </mat-form-field>
+
+      <mat-form-field
+        *ngIf="data.name && data.datatype?.defaultValue"
+        class="w-100"
+        appearance="outline">
+        <mat-label>Default value</mat-label>
+        <input
+          matInput
+          autocomplete="off"
+          name="defaultValue"
+          [(ngModel)]="data.defaultValue">
+      </mat-form-field>
+
+    </div>
+
+    <div *ngIf="data.type === 'key' || data.hasKey">
+
+      <mat-form-field
+        *ngIf="data.type !== 'field'"
+        class="w-100"
+        appearance="outline">
+        <mat-label>Field</mat-label>
+        <mat-select name="fieldName" [(ngModel)]="data.field">
+          <mat-option
+            *ngFor="let idxField of getFields()"
+            [value]="idxField.name">{{idxField.name}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field
+        *ngIf="data.field || data.type === 'field'"
+        class="w-100"
+        appearance="outline">
+        <mat-label>Points to table</mat-label>
+        <mat-select name="tableName" [(ngModel)]="data.foreignTable">
+          <mat-option
+            *ngFor="let idxTable of getTables()"
+            [value]="idxTable">{{idxTable}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field
+        *ngIf="data.foreignTable"
+        class="w-100"
+        appearance="outline">
+        <mat-label>Points to field</mat-label>
+        <mat-select name="foreignFieldName" [(ngModel)]="data.foreignField">
+          <mat-option
+            *ngFor="let idxForeignField of getForeignField(data.foreignTable)"
+            [value]="idxForeignField">{{idxForeignField}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+    </div>
+
+  </div>
+
+  <div
+    mat-dialog-actions
+    class="mat-dialog-actions">
+
+    <mat-slide-toggle
+      *ngIf="data.type === 'field' && data.databaseType === 'sqlite'"
+      [(ngModel)]="data.hasKey"
+      name="hasKey"
+      labelPosition="before">Foreign key</mat-slide-toggle>
+
+    <mat-slide-toggle
+      *ngIf="data.type === 'field'"
+      [(ngModel)]="data.acceptNull"
+      name="nullable"
+      labelPosition="before">Nullable</mat-slide-toggle>
+
+    <button
+      mat-raised-button
+      [disabled]="!verifyInput()"
+      color="primary"
+      type="submit"
+      aria-label="Creates your field or key"
+      [mat-dialog-close]="data">Create</button>
+
+  </div>
+
+</form>

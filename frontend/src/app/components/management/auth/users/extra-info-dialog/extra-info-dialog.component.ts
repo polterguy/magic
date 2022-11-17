@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { User_Extra } from '../../models/user.model';
+import { User_Extra } from '../../../../../_protected/pages/user-roles/_models/user.model';
 
 import {
   FormControl,
@@ -9,7 +9,7 @@ import {
   FormArray,
   Validators
 } from '@angular/forms';
-import { UserService } from '../../services/user.service';
+import { UserService } from '../../../../../_protected/pages/user-roles/_services/user.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 
 @Component({
@@ -33,7 +33,7 @@ export class ExtraInfoDialogComponent implements OnInit {
   private newFields: User_Extra[] = [];
 
   /**
-   * 
+   *
    * @param dialogRef To access the referece of the dialog
    * @param data The data passed to this component from the parent
    * @param fb Form Builder
@@ -183,7 +183,7 @@ export class ExtraInfoDialogComponent implements OnInit {
 
   /**
    * Deletes the selected field in extra details of the user.
-   * 
+   *
    * @param username User to delete extra details for
    * @param type Type of the field to be deleted
    */

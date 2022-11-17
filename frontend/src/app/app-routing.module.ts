@@ -1,132 +1,98 @@
 
 /*
- * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
-// Angular and system imports.
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
+import { AccessGuard } from './access.guard';
+import { CoreComponent } from './_layout/core/core.component';
 
-// Application specific imports.
-import { AccessModel } from './models/access.model';
-import { IdeComponent } from './components/tools/ide/ide.component';
-import { AboutComponent } from './components/about/about.component';
-import { SqlComponent } from './components/tools/sql/sql.component';
-import { LogComponent } from './components/misc/log/log.component';
-import { TasksComponent } from './components/management/tasks/tasks.component';
-import { AuthComponent } from './components/management/auth/auth.component';
-import { BazarComponent } from './components/tools/plugins/plugins.component';
-import { DashboardComponent } from './components/dashboard/dashboard.component';
-import { ConfigComponent } from './components/management/config/config.component';
-import { CryptoComponent } from './components/management/crypto/crypto.component';
-import { TerminalComponent } from './components/misc/terminal/terminal.component';
-import { SocketsComponent } from './components/misc/sockets/sockets.component';
-import { ProfileComponent } from './components/misc/profile/profile.component';
-import { CrudifierComponent } from './components/tools/crudifier/crudifier.component';
-import { EvaluatorComponent } from './components/misc/evaluator/evaluator.component';
-import { DiagnosticsCacheComponent } from './components/management/cache/cache.component';
-import { EndpointsComponent } from './components/tools/endpoints/endpoints.component';
-import { RegisterComponent } from './components/management/auth/register/register.component';
-import { DiagnosticsTestsComponent } from './components/misc/assumptions/assumptions.component';
-import { ChangePasswordComponent } from './components/management/auth/change-password/change-password.component';
-
-/**
- * Routes for application.
- */
 const routes: Routes = [
   {
     path: '',
-    component: DashboardComponent
+    component: CoreComponent,
+    canActivate: [AccessGuard],
+    children: [
+      {
+        path: '',
+        loadChildren: () => import('./_protected/pages/dashboard/_module/dashboard.module').then(m => m.DashboardModule)
+      },
+      {
+        path: 'setup',
+        loadChildren: () => import('./_protected/pages/setup/_module/setup.module').then(m => m.SetupModule)
+      },
+      {
+        path: 'user-roles-management',
+        loadChildren: () => import('./_protected/pages/user-roles/_module/users-roles.module').then(m => m.UsersRolesModule)
+      },
+      {
+        path: 'generated-database',
+        loadChildren: () => import('./_protected/pages/administration/generated-database/_module/g-database.module').then(m => m.GDatabaseModule)
+      },
+      {
+        path: 'generated-endpoints',
+        loadChildren: () => import('./_protected/pages/administration/generated-endpoints/_module/generated-endpoints.module').then(m => m.GeneratedEndpointsModule)
+      },
+      {
+        path: 'generated-frontend',
+        loadChildren: () => import('./_protected/pages/administration/generated-frontend/_module/frontend.module').then(m => m.FrontendModule)
+      },
+      {
+        path: 'database-management',
+        loadChildren: () => import('./_protected/pages/tools/database/_module/database.module').then(m => m.DatabaseModule)
+      },
+      {
+        path: 'endpoint-generator',
+        loadChildren: () => import('./_protected/pages/tools/endpoints/_module/endpoint.module').then(m => m.EndpointModule)
+      },
+      {
+        path: 'plugins',
+        loadChildren: () => import('./_protected/pages/tools/plugins/_module/plugins.module').then(m => m.PluginsModule)
+      },
+      {
+        path: 'hyperlambda-playground',
+        loadChildren: () => import('./_protected/pages/tools/hl-playground/_module/hl-playground.module').then(m => m.HlPlaygroundModule)
+      },
+      {
+        path: 'hyper-ide',
+        loadChildren: () => import('./_protected/pages/tools/hyper-ide/_module/ide.module').then(m => m.IdeModule)
+      },
+      {
+        path: 'endpoints-health-check',
+        loadChildren: () => import('./_protected/pages/setting-security/health-check/_module/health-check.module').then(m => m.HealthCheckModule)
+      },
+      {
+        path: 'configuration',
+        loadChildren: () => import('./_protected/pages/setting-security/configuration/_module/config.module').then(m => m.ConfigModule)
+      },
+      {
+        path: 'log',
+        loadChildren: () => import('./_protected/pages/setting-security/log/_module/log.module').then(m => m.LogModule)
+      },
+      {
+        path: 'server-key-setting',
+        loadChildren: () => import('./_protected/pages/setting-security/server-key-setting/_module/server-key.module').then(m => m.ServerKeyModule)
+      },
+      {
+        path: 'user-profile',
+        loadChildren: () => import('./_protected/pages/user/profile/_module/profile.module').then(m => m.ProfileModule)
+      },
+    ]
   },
   {
-    path: 'sql',
-    component: SqlComponent,
+    path: 'authentication',
+    loadChildren: () => import('./public/authentication/_module/auth.module').then(m => m.AuthModule),
   },
   {
-    path: 'ide',
-    component: IdeComponent,
+    path: 'not-found',
+    loadChildren: () => import('./public/not-found/lazy-loading/notfound.module').then(m => m.NotfoundModule),
   },
-  {
-    path: 'log',
-    component: LogComponent,
-  },
-  {
-    path: 'auth',
-    component: AuthComponent,
-  },
-  {
-    path: 'tasks',
-    component: TasksComponent,
-  },
-  {
-    path: 'plugins',
-    component: BazarComponent,
-  },
-
-  {
-    path: 'cache',
-    component: DiagnosticsCacheComponent,
-  },
-
-  {
-    path: 'keys',
-    component: CryptoComponent,
-  },
-  {
-    path: 'profile',
-    component: ProfileComponent,
-  },
-  {
-    path: 'sockets',
-    component: SocketsComponent,
-  },
-  {
-    path: 'terminal',
-    component: TerminalComponent,
-  },
-  {
-    path: 'endpoints',
-    component: EndpointsComponent,
-  },
-  {
-    path: 'evaluator',
-    component: EvaluatorComponent,
-  },
-  {
-    path: 'crud-generator',
-    component: CrudifierComponent,
-  },
-  {
-    path: 'assumptions',
-    component: DiagnosticsTestsComponent,
-  },
-  {
-    path: 'config',
-    component: ConfigComponent,
-  },
-  {
-    path: 'about',
-    component: AboutComponent
-  },
-  {
-    path: 'register',
-    component: RegisterComponent
-  },
-  {
-    path: 'change-password',
-    component: ChangePasswordComponent,
-  },
-  {
-    path: '**',
-    redirectTo: '',
-  }
+  { path: '**', redirectTo: 'not-found' }
 ];
 
-/**
- * Routing module for application.
- */
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, {onSameUrlNavigation: 'reload'})],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

@@ -186,7 +186,7 @@ export class LoginDialogComponent implements OnInit {
      */
     const backend = new Backend(this.backends.value)
     this.backendService.upsert(backend);
-    this.backendService.activate(backend);
+    this.backendService.activate(backend, false);
 
     const data: any = this.recaptchaKey !== null && this.recaptchaKey !== '' ? {
       username: this.forgotPass_username,

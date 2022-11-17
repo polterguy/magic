@@ -1,0 +1,7 @@
+
+.mw-set {min-width: 182px;}
+
+.align-items-stretch ::ng-deep {
+  .mat-form-field-appearance-outline .mat-form-field-wrapper {margin: 0;}
+  .mat-form-field-infix {width: unset;}
+}

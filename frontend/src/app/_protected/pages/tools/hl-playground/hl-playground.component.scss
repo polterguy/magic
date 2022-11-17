@@ -1,0 +1,9 @@
+
+
+.playground ::ng-deep {
+  .cm-s-aista.CodeMirror {height: 100%;}
+}
+.full-height {
+  height: calc(100% - (52px * 2));
+}
+.dummy-element {visibility: hidden;}

@@ -1,0 +1,70 @@
+
+<h3 mat-dialog-title>New {{data?.type}}</h3>
+<form>
+  <div mat-dialog-content>
+
+    <mat-form-field class="w-100 prefix-alignment">
+      <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        Folder
+        <span class="text-muted">|</span>
+      </span>
+      <mat-select [(ngModel)]="data.path" class="dark" name="path">
+        <mat-option
+          *ngFor="let idx of data.folders"
+          [value]="idx">{{idx}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="w-100 prefix-alignment" *ngIf="templates.length > 0 && data.type ==='file'">
+      <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        Templates
+        <span class="text-muted">|</span>
+      </span>
+      <mat-select
+        [(ngModel)]="activeTemplate"
+        name="activeTemplate"
+        (selectionChange)="templateChanged()"
+        class="dark">
+        <mat-option
+          *ngFor="let idx of getTemplates()"
+          [value]="idx">{{getFileName(idx.name)}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="w-100 prefix-alignment">
+      <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        Name
+        <span class="text-muted">|</span>
+      </span>
+      <input
+        #fileName
+        type="text"
+        matInput
+        autocomplete="off"
+        [(ngModel)]="data.name"
+        name="name"
+        cdkFocusInitial>
+      <mat-hint *ngIf="!pathValid()" class="warning">Name is required and cannot contain blank space or special characters.</mat-hint>
+    </mat-form-field>
+
+  </div>
+
+  <div mat-dialog-actions [align]="'end'">
+
+    <mat-checkbox
+      *ngIf="data?.type === 'file'"
+      [(ngModel)]="filterTemplates"
+      color="primary"
+      name="filterTemplates"
+      matTooltip="Apply 'intelligent' filtering of templates"
+      class="margin-right">Filter</mat-checkbox>
+
+    <button
+      mat-flat-button
+      color="primary"
+      type="submit"
+      [disabled]="!pathValid()"
+      [mat-dialog-close]="data">Create</button>
+
+  </div>
+</form>

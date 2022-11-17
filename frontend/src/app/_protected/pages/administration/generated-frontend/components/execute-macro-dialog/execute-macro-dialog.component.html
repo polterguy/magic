@@ -1,0 +1,59 @@
+
+<h3 mat-dialog-title>{{data.name}}</h3>
+
+<div mat-dialog-content>
+
+  <p class="description">{{data.description}}</p>
+
+  <div class="arguments" *ngFor="let idx of data.arguments">
+
+    <mat-form-field
+      *ngIf="idx.type === 'string'"
+      class="w-100 prefix-alignment">
+      <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        {{idx.name}}
+        <span class="text-muted">|</span>
+      </span>
+      <input
+        type="text"
+        [matTooltip]="idx.description"
+        matInput
+        autocomplete="off"
+        [(ngModel)]="idx.value">
+    </mat-form-field>
+
+    <mat-form-field
+      *ngIf="idx.type === 'multi_string'"
+      class="w-100 custom-alignment">
+      <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        {{idx.name}}
+        <span class="text-muted">|</span>
+      </span>
+      <textarea
+        [matTooltip]="idx.description"
+        matInput
+        rows="4"
+        autocomplete="off"
+        [(ngModel)]="idx.value"></textarea>
+    </mat-form-field>
+
+  </div>
+
+</div>
+
+<div mat-dialog-actions [align]="'end'">
+
+  <button mat-button mat-dialog-close>Close</button>
+
+  <button
+    mat-flat-button
+    matTooltip="Select a different macro"
+    (click)="differentMacro()">Select</button>
+
+  <button
+      mat-flat-button
+      color="primary"
+      [disabled]="!canExecute()"
+      (click)="execute()">Execute</button>
+
+</div>

@@ -8,7 +8,7 @@ import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
-import { Argument } from '../../models/argument.model';
+import { Argument } from '../../../../../_protected/pages/administration/generated-endpoints/_models/argument.model';
 
 /**
  * Model class for dialog.
@@ -69,7 +69,7 @@ export class AddQueryParameterDialogComponent {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param dialogRef Needed to be able to close dialog
    */
   constructor(
@@ -84,7 +84,7 @@ export class AddQueryParameterDialogComponent {
         this.directions.filter(x => x === this.data.old)[0] :
         this.directions.filter(x => x === 'asc')[0];
     } else if (data.argument.name === 'operator' && data.argument.type === 'string') {
-      this.value = this.data.old ? 
+      this.value = this.data.old ?
         this.operators.filter(x => x === this.data.old)[0] :
         this.operators.filter(x => x === 'and')[0];
     } else {

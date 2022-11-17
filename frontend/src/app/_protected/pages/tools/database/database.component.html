@@ -1,0 +1,16 @@
+<mat-card>
+  <mat-card-content>
+    <mat-tab-group mat-stretch-tabs dynamicHeight animationDuration="0ms" #tabs>
+      <mat-tab>
+        <ng-template mat-tab-label>Add <span class="d-sm-inline d-none px-1">new</span> database</ng-template>
+        <app-add-new-database #dbComponent></app-add-new-database>
+      </mat-tab>
+      <mat-tab>
+        <ng-template mat-tab-label>Connect <span class="d-sm-inline d-none ps-1">to database</span></ng-template>
+        <app-connect
+          [databaseTypes]="dbComponent.databaseTypes"></app-connect>
+      </mat-tab>
+    </mat-tab-group>
+
+  </mat-card-content>
+</mat-card>

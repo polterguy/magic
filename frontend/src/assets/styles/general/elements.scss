@@ -1,0 +1,84 @@
+/*=-=-=-=-=-=
+card
+=-=-=-=-=-=*/
+:root .mat-card {border-radius: $aista_radius;padding: 30px;}
+:root .mat-dialog-container {padding: 30px;}
+/*=-=-=-=-=-=
+table
+=-=-=-=-=-=*/
+.borderless {
+  th.mat-header-cell, td.mat-cell {padding-right: 8px;}
+  th.mat-header-cell, td.mat-cell, td.mat-footer-cell {border: none;}
+  tr.mat-header-row {height: 35px;}
+  tr.mat-row, tr.mat-footer-row { height: 40px; }
+  button {font-size: 13px;}
+}
+.hoverable {
+  tr.mat-row {
+    @include general_transition(0.3s);
+    &:hover {background-color: transparentize($color: $aista_default_alt, $amount: 0.5);}
+  }
+}
+/*=-=-=-=-=-=
+codemirror
+=-=-=-=-=-=*/
+.CodeMirror {border-radius: 5px;}
+.CodeMirror-scroll {
+  overflow: auto!important;
+  padding-bottom: 30px;
+  margin-bottom: 0;
+  max-height: 100%;
+}
+.CodeMirror pre.CodeMirror-line, .CodeMirror pre.CodeMirror-line-lik {padding-left: 15px;}
+/*=-=-=-=-=-=
+accordion
+=-=-=-=-=-=*/
+.custom-height-header {
+  .mat-expansion-indicator {margin-right: 5px;}
+  .mat-expanded .mat-expansion-indicator {
+    margin-top: 10px;
+  }
+  .mat-expansion-panel-body {padding: 0;}
+}
+/*=-=-=-=-=-=
+dialog
+=-=-=-=-=-=*/
+.mat-dialog-content {
+  @include scrollbar($aista_default_alt,$aista_default_grey4,3px);
+}
+@media(max-width: 576px) {
+  .cdk-overlay-pane {max-height: 78vh;margin-bottom: 12vh;}
+  .mat-dialog-content {max-height: unset!important;overflow: unset!important;}
+}
+/*=-=-=-=-=-=
+radio button
+=-=-=-=-=-=*/
+.card-radio {
+  .mat-radio-label-content {
+    width: 100%;
+    @media (max-width: 576px) {
+      img {max-width: 32px;}
+    }
+    @media (max-width: 335px) {
+      font-size: 11px;
+      padding-left: 0;
+      img {margin-right: -0.5rem}
+    }
+  }
+}
+.plan-box {
+  .mat-radio-label {white-space: unset;}
+}
+/*=-=-=-=-=-=
+tab
+=-=-=-=-=-=*/
+.mat-tab-label-active {
+  color: $aista_primary;
+}
+.mat-tab-label {
+  font-weight: 600;
+  font-size: clamp(13px,2vw,14px);
+  &:not(.mat-tab-disabled) {
+    opacity: 1;
+  }
+}

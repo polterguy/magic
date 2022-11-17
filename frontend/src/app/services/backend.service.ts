@@ -17,7 +17,7 @@ import { Response } from 'src/app/models/response.model';
 import { CoreVersion } from '../models/core-version.model';
 import { environment } from 'src/environments/environment';
 import { BackendsStorageService } from './backendsstorage.service';
-import { AuthenticateResponse } from '../components/management/auth/models/authenticate-response.model';
+import { AuthenticateResponse } from '../_protected/pages/user-roles/_models/authenticate-response.model';
 
 /**
  * Keeps track of your backends and your currently selected backend.
@@ -104,6 +104,16 @@ export class BackendService {
 
     this._obscure = new BehaviorSubject<boolean>(false);
     this.obscure = this._obscure.asObservable();
+
+    // If we have an active backend we need to retrieve endpoints for it.
+    if (this.active) {
+      this.getEndpoints(this.active);
+
+      // If user is root we'll need to retrieve status of active backend and its version.
+      if (this.active.token && !this.active.token.expired && this.active.token.in_role('root')) {
+        this.retrieveStatusAndVersion(this.active);
+      }
+    }
   }
 
   /**
@@ -133,9 +143,23 @@ export class BackendService {
    * Activates the specified backend.
    *
    * @param value Backend to activate
+   * @param fetchRecaptcha ReCaptcha key to be fetched, true by default and false when invoked from forgot password
    */
-  activate(value: Backend) {
+  activate(value: Backend, fetchRecaptcha: boolean = true) {
     this.backendsStorageService.activate(value);
+    if (!value.access.fetched) {
+      this.getEndpoints(value);
+    } else {
+      value.createAccessRights(); // Updating access rights in case previous token was garbage.
+      this._endpointsRetrieved.next(true);
+    }
+    if (value.token && value.token.in_role('root') && !value.status) {
+      this.retrieveStatusAndVersion(this.active);
+    }
+    this._activeChanged.next(value);
+    if (fetchRecaptcha) {
+      this.getRecaptchaKey();
+    }
   }
 
   /**
@@ -315,7 +339,7 @@ export class BackendService {
 
   /**
    * Shows or hides the global obscurer
-   * 
+   *
    * @param value Whether or not obscurer should be shown or not
    */
   showObscurer(value: boolean) {
@@ -324,7 +348,7 @@ export class BackendService {
 
   /**
    * Returns true if global obscurer should be visible.
-   * 
+   *
    * @returns Whether or not obscurer is visible or not
    */
   getObscurer() {
@@ -421,15 +445,11 @@ export class BackendService {
   /*
    * Retrieves endpoints for currently selected backend.
    */
-  public getEndpoints(backend: Backend) {
+  private getEndpoints(backend: Backend) {
     this.httpClient.get<Endpoint[]>(backend.url + '/magic/system/auth/endpoints').subscribe({
       next: (res) => {
         backend.applyEndpoints(res || []);
         this._endpointsRetrieved.next(true);
-        if (backend.token && backend.token.in_role('root') && !backend.status) {
-          this.retrieveStatusAndVersion(this.active);
-        }
-        this.getRecaptchaKey();
       },
       error: () => {
         backend.applyEndpoints([]);
@@ -441,7 +461,7 @@ export class BackendService {
   /*
    * Retrieves status of backend and version
    */
-  public retrieveStatusAndVersion(backend: Backend) {
+  private retrieveStatusAndVersion(backend: Backend) {
 
     // Retrieving status of specified backend.
     this.httpClient.get<Status>(
@@ -481,6 +501,7 @@ export class BackendService {
                     this._versionRetrieved.next(backend.version);
                   }});
             }
+            this.getRecaptchaKey(true);
           }
         });
       }});
