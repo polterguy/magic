@@ -102,6 +102,10 @@ $theme: mat-light-theme($theme-primary, $theme-accent);
 
 // material symbols
 
+@font-face {
+  font-family: "Material Symbols Outlined";
+  src: url("~node_modules/material-symbols/material-symbols-outlined.woff2");
+}
 .material-icons {
   font-family: 'Material Symbols Outlined';
   font-weight: normal;

@@ -139,7 +139,7 @@ export class ServerKeyDetailsComponent implements OnInit {
             }
           })
         } else {
-          console.log(key)
+
           this.saveKeyImplementation(key);
         }
       },

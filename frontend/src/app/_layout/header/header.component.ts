@@ -200,12 +200,7 @@ export class HeaderComponent implements OnInit {
             name: 'Endpoints health check',
             url: '/endpoints-health-check',
             disabled: !(this.permissions.access.log.read && this.permissions.setupDone)
-          },
-          {
-            name: 'Cache',
-            url: '/cache',
-            disabled: !(this.permissions.access.log.read && this.permissions.setupDone)
-          },
+          }
         ],
       },
       {

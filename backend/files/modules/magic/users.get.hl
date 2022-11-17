@@ -1,0 +1,88 @@
+
+/*
+ * Template for HTTP GET CRUD requests.
+ * This file was automatically generated using Magic's CRUDifier.
+ */
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   username.eq:string
+   username.like:string
+   locked.eq:bool
+   created.mt:date
+   created.lt:date
+   created.mteq:date
+   created.lteq:date
+.description:Returns items from your users table in your [generic|magic] database according to the specified arguments
+.type:crud-read
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Opening up our database connection.
+data.connect:[generic|magic]
+
+   // Parametrising our read invocation.
+   add:x:./*/data.read
+      get-nodes:x:@.arguments/*/limit
+      get-nodes:x:@.arguments/*/offset
+      get-nodes:x:@.arguments/*/order
+      get-nodes:x:@.arguments/*/direction
+   remove-nodes:x:@.arguments/*/limit
+   remove-nodes:x:@.arguments/*/offset
+   remove-nodes:x:@.arguments/*/order
+   remove-nodes:x:@.arguments/*/direction
+   add:x:./*/data.read/*/where/*
+      get-nodes:x:@.arguments/*
+
+   // Reading data from database.
+   data.read
+      table:users
+      columns
+         users.username
+         users.locked
+         users.created
+      where
+         and
+
+   // Mixing in roles.
+   include:x:@data.read/*
+      data.read
+         table:users_roles
+         columns
+            role
+         where
+            and
+               user.eq:x:@.dp/#/*/username
+      for-each:x:@data.read/*
+         unwrap:x:+/*/*
+         add:x:././*/return/*/roles
+            .
+               .:x:@.dp/#/*/role
+      return
+         roles
+
+   // Mixing in users extra fields.
+   include:x:@data.read/*
+      data.read
+         table:users_extra
+         columns
+            type
+            value
+         where
+            and
+               user.eq:x:@.dp/#/*/username
+      for-each:x:@data.read/*
+         unwrap:x:+/*/*/*
+         add:x:././*/return/*/extra
+            .
+               .
+                  type:x:@.dp/#/*/type
+                  value:x:@.dp/#/*/value
+      return
+         extra
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@data.read/*

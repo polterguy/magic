@@ -59,6 +59,10 @@ const routes: Routes = [
         loadChildren: () => import('./_protected/pages/tools/hyper-ide/_module/ide.module').then(m => m.IdeModule)
       },
       {
+        path: 'task-scheduler',
+        loadChildren: () => import('./_protected/pages/tools/task-scheduler/_module/task.module').then(m => m.TaskModule)
+      },
+      {
         path: 'endpoints-health-check',
         loadChildren: () => import('./_protected/pages/setting-security/health-check/_module/health-check.module').then(m => m.HealthCheckModule)
       },

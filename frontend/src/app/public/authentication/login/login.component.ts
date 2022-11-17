@@ -157,7 +157,7 @@ export class LoginComponent implements OnInit {
           this.waiting = false;
         },
         error: (error: any) => {
-          this.generalService.showFeedback(error, 'errorMessage', 'Ok');
+          this.generalService.showFeedback(error.error.message??error, 'errorMessage', 'Ok');
           this.waiting = false;
         }
       });
