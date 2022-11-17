@@ -13,11 +13,11 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 
 // Application specific imports.
 import { Task } from './models/task.model';
-import { Schedule } from './models/schedule.model';
+import { Schedule } from '../../../_protected/pages/tools/task-scheduler/_models/schedule.model';
 import { Count } from 'src/app/models/count.model';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from '../../../services/feedback.service';
-import { TaskService } from 'src/app/components/management/tasks/services/task.service';
+import { TaskService } from 'src/app/_protected/pages/tools/task-scheduler/_services/task.service';
 import { NewTaskDialogComponent } from './new-task-dialog/new-task-dialog.component';
 import { ScheduleTaskDialogComponent } from './schedule-task-dialog/schedule-task-dialog.component';
 import { Model } from '../../utilities/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
@@ -88,7 +88,7 @@ export class TasksComponent implements OnInit {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param feedbackService Needed to display feedback to user
    * @param taskService Needed to retrieve, update, delete and modify tasks in our backend
    * @param backendService Needed to be able to determine user's access rights in backend
@@ -147,7 +147,7 @@ export class TasksComponent implements OnInit {
 
   /**
    * Invoked when paginator wants to page data table.
-   * 
+   *
    * @param e Page event argument
    */
   paged(e: PageEvent) {
@@ -157,7 +157,7 @@ export class TasksComponent implements OnInit {
 
   /**
    * Toggles details about one specific task.
-   * 
+   *
    * @param el Task to toggle details for
    */
   toggleDetails(el: TaskEx) {
@@ -193,7 +193,7 @@ export class TasksComponent implements OnInit {
 
   /**
    * Invoked when user wants to save a task.
-   * 
+   *
    * @param task Task caller wants to save
    */
   update(task: TaskEx) {
@@ -207,7 +207,7 @@ export class TasksComponent implements OnInit {
 
   /**
    * Invoked when user wants to execute a task.
-   * 
+   *
    * @param task Task caller wants to save
    */
    execute(task: TaskEx) {
@@ -233,7 +233,7 @@ export class TasksComponent implements OnInit {
 
   /**
    * Deletes a task in your backend.
-   * 
+   *
    * @param event Click event, needed to stop propagation
    * @param task Task to delete
    */
@@ -260,7 +260,7 @@ export class TasksComponent implements OnInit {
 
   /**
    * Schedules task for execution in the future.
-   * 
+   *
    * @param task Task user wants to schedule
    */
   schedule(task: Task) {
@@ -280,7 +280,7 @@ export class TasksComponent implements OnInit {
 
   /**
    * Invoked when user wants to delete a schedule for a task.
-   * 
+   *
    * @param task Task that contains schedule
    * @param schedule Schedule to remove from task
    */

@@ -59,7 +59,7 @@ const routes: Routes = [
         loadChildren: () => import('./_protected/pages/tools/hyper-ide/_module/ide.module').then(m => m.IdeModule)
       },
       {
-        path: 'task-scheduler',
+        path: 'tasks',
         loadChildren: () => import('./_protected/pages/tools/task-scheduler/_module/task.module').then(m => m.TaskModule)
       },
       {

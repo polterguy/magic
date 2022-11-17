@@ -1,0 +1,25 @@
+
+<div class="row mb-4 align-items-center">
+  <div class="col-md-6 col-sm-8 col-12">
+    <mat-form-field class="w-100 standalone-field">
+      <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        <mat-icon>search</mat-icon>
+        <span class="text-muted">|</span>
+      </span>
+
+      <input matInput
+        placeholder="Search through tasks"
+        (input)="applyFilter(input.value)" #input>
+        <button mat-icon-button matSuffix (click)="removeSearchTerm();input.value = ''" *ngIf="input.value!==''">
+          <mat-icon>close</mat-icon>
+        </button>
+    </mat-form-field>
+  </div>
+  <div class="col-md-6 col-sm-4 col-12 d-flex justify-content-end">
+    <button mat-flat-button color="primary"
+      class="mt-sm-0 mt-2"
+      (click)="invokeAddTask()">
+      Add new task
+    </button>
+  </div>
+</div>
