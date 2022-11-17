@@ -1,0 +1,62 @@
+
+/*
+ * Template for HTTP PUT CRUD requests.
+ * This file was automatically generated using Magic's CRUDifier.
+ */
+.arguments
+   id:long
+   subject:string
+   email:string
+   domain:string
+   type:string
+   fingerprint:string
+   content:string
+   vocabulary:string
+   enabled:bool
+.description:Updates an existing item in your crypto_keys table in your [generic|magic] database according to the specified arguments
+.type:crud-update
+
+// Verifying user is authorized to access endpoint.
+validators.mandatory:x:@.arguments/*/id
+auth.ticket.verify:root
+
+// Sanity checking invocation
+validators.email:x:@.arguments/*/email
+validators.url:x:@.arguments/*/domain
+validators.enum:x:@.arguments/*/type
+   .:RSA
+validators.string:x:@.arguments/*/fingerprint
+   min:int:79
+   max:int:79
+
+// Opening up our database connection.
+data.connect:[generic|magic]
+
+   // Parametrising our invocation.
+   add:x:./*/data.update/*/values
+      get-nodes:x:@.arguments/*/[1,1000]
+   add:x:./*/data.update/*/where/*/and
+      get-nodes:x:@.arguments/*/[0,1]
+
+   // Invoking our update slot.
+   data.update
+      table:crypto_keys
+      values
+      where
+         and
+
+   // Verifying record exists.
+   if
+      eq
+         get-value:x:@data.update
+         .:int:0
+      .lambda
+         response.status.set:404
+         return
+            result:Record not found
+
+   // Returning success to caller.
+   response.status.set:202
+   unwrap:x:+/*
+   return
+      affected:x:@data.update

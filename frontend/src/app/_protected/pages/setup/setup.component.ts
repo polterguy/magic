@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroupDirective, NgForm, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { Router } from '@angular/router';
+import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
+import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { SetupModel } from '../../models/common/status.model';
@@ -48,6 +50,11 @@ export class SetupComponent implements OnInit {
   });
 
   showPassword: boolean = false;
+
+  public waiting: boolean = false;
+
+  public CommonRegEx = CommonRegEx;
+  public CommonErrorMessages = CommonErrorMessages;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -101,6 +108,7 @@ export class SetupComponent implements OnInit {
       this.generalService.showFeedback('Please fill all the fields.', 'errorMessage');
       return;
     }
+    this.waiting = true;
     const payload: SetupModel = {
       password: this.configForm.controls.password.value,
       connectionString: this.configForm.controls.connectionString.value,
@@ -111,9 +119,13 @@ export class SetupComponent implements OnInit {
     };
     this.configService.setup(payload).subscribe({
       next: (auth: any) => {
+        this.waiting = false;
         this.router.navigateByUrl('/');
       },
-      error: (error: any) => console.log(error)
+      error: (error: any) => {
+        this.generalService.showFeedback(error.error.message??error, 'errorMessage');
+        this.waiting = false;
+      }
     });
   }
 }

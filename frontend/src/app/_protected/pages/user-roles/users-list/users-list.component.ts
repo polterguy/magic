@@ -198,7 +198,7 @@ export class UsersListComponent implements OnInit {
   }
 
   getExtra (name: string, el: User) {
-    const result = el.extra.filter(x => x.type === name);
+    const result = el?.extra?.filter(x => x.type === name) || [];
     if (result.length > 0) {
       return result[0].value;
     }

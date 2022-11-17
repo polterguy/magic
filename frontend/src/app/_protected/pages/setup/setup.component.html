@@ -89,8 +89,9 @@
                   matInput
                   autocomplete="email"
                   formControlName="email"
-                  name="email">
-                <mat-error>Email address is required.</mat-error>
+                  name="email"
+                  [pattern]="CommonRegEx.email">
+                <mat-error>{{CommonErrorMessages.email}}</mat-error>
               </mat-form-field>
             </div>
             <div class="col-xl-3 col-md-6 col-12">
@@ -104,7 +105,8 @@
                   autocomplete="new-password"
                   formControlName="password"
                   [type]="showPassword ? 'text' : 'password'"
-                  name="password">
+                  name="password"
+                  [pattern]="CommonRegEx.password">
                 <button
                   mat-icon-button
                   (click)="toggleShowPassword()"
@@ -113,10 +115,8 @@
                   tabindex="-1">
                   <mat-icon>visibility{{showPassword ? '_off' : ''}}</mat-icon>
                 </button>
-                <mat-error>
-                  <ng-container *ngIf="configForm.controls.password.hasError('pattern')">Minimum 12 characters</ng-container>
-                  <ng-container *ngIf="configForm.controls.password.hasError('required')">This field is required</ng-container>
-                </mat-error>
+
+                <mat-error>{{CommonErrorMessages.password}}</mat-error>
               </mat-form-field>
             </div>
             <div class="col-xl-3 col-md-6 col-12">
@@ -143,7 +143,8 @@
             mat-flat-button
             type="submit"
             class="px-5"
-            color="primary">
+            color="primary"
+            [disabled]="waiting">
             Save
           </button>
         </div>
