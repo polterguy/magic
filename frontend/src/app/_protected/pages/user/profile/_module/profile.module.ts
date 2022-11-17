@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ProfileComponent } from '../profile.component';
 import { ProfileRoutingModule } from './profile.routing.module';
 import { MaterialModule } from 'src/app/material.module';
+import { FormsModule } from '@angular/forms';
 
 
 
@@ -13,7 +14,8 @@ import { MaterialModule } from 'src/app/material.module';
   imports: [
     CommonModule,
     ProfileRoutingModule,
-    MaterialModule
+    MaterialModule,
+    FormsModule
   ]
 })
 export class ProfileModule { }

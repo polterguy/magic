@@ -13,5 +13,6 @@ export const CommonRegEx: { [key: string]: RegExp } = {
   appNames: /^[a-z0-9_-]+$/,
   appNameWithUppercase: /^[a-zA-Z0-9_]+$/,
   domain: /(^https?:\/\/)([\w\-])+\.{1}([a-zA-Z]{2,63})([\/\w-]*)*\/?\??([^#\n\r]*)?#?([^\n\r]*)/,
-  email: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
+  email: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
+  password: /^.{12,}$/
 };
