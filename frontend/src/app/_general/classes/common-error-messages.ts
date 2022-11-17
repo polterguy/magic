@@ -20,5 +20,6 @@ export const CommonErrorMessages: { [key: string]: string } = {
   message: 'Message cannot be less than 3 characters',
   appNames: 'Only lowercase alphanumeric characters, and - or _ please',
   appNameWithUppercase: 'Accepts alphanumeric characters and _',
-  domain: 'Domain is not valid'
+  domain: 'Domain is not valid',
+  password: 'Minimum 12 characters'
 };
