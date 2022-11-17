@@ -86,5 +86,20 @@ data.connect:[generic|magic]
       where
          and
 
+   // Notice, SQLite doesn't quite support boolean types, so we need to apply some "trickery" here.
+   for-each:x:@data.read/*
+      if
+         eq:x:@.dp/#/*/enabled
+            .:int:1
+         .lambda
+            set-value:x:@.dp/#/*/enabled
+               .:bool:true
+      else-if
+         eq:x:@.dp/#/*/enabled
+            .:int:0
+         .lambda
+            set-value:x:@.dp/#/*/enabled
+               .:bool:false
+
    // Returning result of above read invocation to caller.
    return-nodes:x:@data.read/*
