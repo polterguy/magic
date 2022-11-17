@@ -3,7 +3,7 @@
  * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
  */
 
-import { MacroArgument } from "./macro-argument.model";
+import { MacroArgument } from "../_protected/models/common/macro-argument.model";
 
 /**
  * Model describing a single macro.
@@ -25,4 +25,3 @@ export class MacroDefinition {
    */
   arguments: MacroArgument[];
 }
-  

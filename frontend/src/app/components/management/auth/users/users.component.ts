@@ -18,13 +18,13 @@ import { Count } from 'src/app/models/count.model';
 import { BackendService } from 'src/app/services/backend.service';
 import { EditExtraComponent } from './edit-extra/edit-extra.component';
 import { FeedbackService } from '../../../../services/feedback.service';
-import { AuthenticateResponse } from '../models/authenticate-response.model';
+import { AuthenticateResponse } from '../../../../_protected/pages/user-roles/_models/authenticate-response.model';
 import { NewUserDialogComponent } from './new-user-dialog/new-user-dialog.component';
-import { UserService } from 'src/app/components/management/auth/services/user.service';
-import { UserRoles } from 'src/app/components/management/auth/models/user-roles.model';
-import { User, User_Extra } from 'src/app/components/management/auth/models/user.model';
+import { UserService } from 'src/app/_protected/pages/user-roles/_services/user.service';
+import { UserRoles } from 'src/app/_protected/pages/user-roles/_models/user-roles.model';
+import { User, User_Extra } from 'src/app/_protected/pages/user-roles/_models/user.model';
 import { JailUserDialogComponent } from './jail-user-dialog/jail-user-dialog.component';
-import { AuthFilter } from 'src/app/components/management/auth/models/auth-filter.model';
+import { AuthFilter } from 'src/app/_protected/pages/user-roles/_models/auth-filter.model';
 import { ExtraInfoDialogComponent } from './extra-info-dialog/extra-info-dialog.component';
 import { AddToRoleDialogComponent } from './add-to-role-dialog/add-to-role-dialog.component';
 
@@ -94,7 +94,7 @@ export class UsersComponent implements OnInit {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param platformLocation Needed to create login link
    * @param feedbackService Used to display feedback to user
    * @param backendService Needed to create login link
@@ -108,7 +108,7 @@ export class UsersComponent implements OnInit {
     public backendService: BackendService,
     private userService: UserService,
     private clipboard: Clipboard,
-    private dialog: MatDialog, 
+    private dialog: MatDialog,
     private cdr: ChangeDetectorRef ) { }
 
   /**
@@ -164,7 +164,7 @@ export class UsersComponent implements OnInit {
 
   /**
    * Toggles the details view for a single user.
-   * 
+   *
    * @param user User to toggle details for
    * @callback getUserExtra To get extra details about the user
    */
@@ -200,7 +200,7 @@ export class UsersComponent implements OnInit {
 
   /**
    * Toggles the extra details view for a single user.
-   * 
+   *
    * @param username User to toggle extra details for
    */
   getUserExtra(username: string) {
@@ -243,7 +243,7 @@ export class UsersComponent implements OnInit {
 
   /**
    * Returns true if we should display the details view for specified user.
-   * 
+   *
    * @param user User to check if we should display details for
    */
   shouldDisplayDetails(user: User) {
@@ -252,7 +252,7 @@ export class UsersComponent implements OnInit {
 
   /**
    * Put user's username into clipboard
-   * 
+   *
    * @param user User to copy
    */
   copyUsername(user: User) {
@@ -263,7 +263,7 @@ export class UsersComponent implements OnInit {
   /**
    * Put user in jail for some time, preventing him or her to access Magic
    * for some specified amount of time.
-   * 
+   *
    * @param user What user to put in jail
    */
   jailUser(user: User) {
@@ -285,7 +285,7 @@ export class UsersComponent implements OnInit {
 
   /**
    * Invoked when user's locked status has changed.
-   * 
+   *
    * @param user User to change lock status of
    */
   lockedChanged(user: User) {
@@ -302,7 +302,7 @@ export class UsersComponent implements OnInit {
 
   /**
    * Removes a role from a user.
-   * 
+   *
    * @param username Username of user to remove specified role from
    * @param role Name of role to remove from user
    */
@@ -317,7 +317,7 @@ export class UsersComponent implements OnInit {
 
   /**
    * Edits the specified user
-   * 
+   *
    * @param user User to edit
    */
   editUser(user: User) {
@@ -335,7 +335,7 @@ export class UsersComponent implements OnInit {
 
   /**
    * Allows user to add a specific user to a role.
-   * 
+   *
    * @param user User to edit
    */
   addToRole(user: User) {
@@ -367,7 +367,7 @@ export class UsersComponent implements OnInit {
 
   /**
    * Invoked when user wants to create a reset password link for a specific user.
-   * 
+   *
    * @param user User to create link for
    */
   generateResetPasswordLink(user: User) {
@@ -389,7 +389,7 @@ export class UsersComponent implements OnInit {
 
   /**
    * Deletes the specified user from backend.
-   * 
+   *
    * @param user User to delete
    */
   delete(user: User) {
@@ -424,7 +424,7 @@ export class UsersComponent implements OnInit {
 
   /**
    * Removes the specified extra field from the specified user.
-   * 
+   *
    * @param extra Extra field to remove
    */
   removeExtra(extra: User_Extra) {
@@ -439,7 +439,7 @@ export class UsersComponent implements OnInit {
 
   /**
    * Edits a single extra field.
-   * 
+   *
    * @param extra Extra field to edit
    */
   editExtra(extra: User_Extra) {

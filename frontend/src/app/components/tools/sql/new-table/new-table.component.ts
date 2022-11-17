@@ -41,15 +41,7 @@ export class NewTableComponent {
    * Invoked when name changes.
    */
   nameChanged() {
-    if (!this.data.name || this.data.name.length === 0) {
-      return;
-    }
-    if (this.data.name.endsWith('s')) {
-      this.data.pkName = this.data.name.substring(0, this.data.name.length - 1);
-    } else {
-      this.data.pkName = this.data.name;
-    }
-    this.data.pkName += '_id';
+    this.data.pkName = this.data.name + '_id';
     this.data.pkType = 'auto_increment';
     this.data.pkLength = 10;
   }

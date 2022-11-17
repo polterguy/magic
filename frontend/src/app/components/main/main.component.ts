@@ -85,13 +85,16 @@ export class MainComponent implements OnInit {
    */
   ngOnInit() {
 
+    // Checking for query parameters.
+    this.getParams();
+
     // Checking the screen width rule for initial setting
     this.onWindowResize();
 
     // Subscribing to status changes and redirect accordingly if we need user to setup system.
     this.backendService.statusRetrieved.subscribe((status: Status) => {
       if (status) {
-        if (!status.config_done || !status.magic_crudified || !status.server_keypair) {
+        if (!status.result) {
           this.router.navigate(['/config']);
         }
       }
@@ -112,8 +115,22 @@ export class MainComponent implements OnInit {
       }
     });
 
-    // Checking for query parameters.
-    this.getParams();
+    // Retrieving recaptcha key and storing in the backend service to be accessible everywhere.
+    // Only if active backend is available, to prevent recaptcha errors in the console.
+    if (this.backendService.active) {
+      this.backendService.getRecaptchaKey();
+
+      this.backendService.verifyToken().subscribe({
+        next: (res: any) => {
+          if (!res) {
+            this.backendService.logout(false);
+          } else if (res.result && res.result !== 'success') {
+            this.backendService.logout(false);
+          }
+        }, 
+        error: () => this.backendService.logout(false)
+      });
+    }
   }
 
   /**
@@ -168,18 +185,25 @@ export class MainComponent implements OnInit {
           const backend = new Backend(url, username, null, token);
           this.backendService.upsert(backend);
           this.backendService.activate(backend);
+          this.backendService.verifyToken().subscribe({
+            next: () => {
 
-          // Checking if this is an impersonation request or a change-password request.
-          if (this.backendService.active.token?.in_role('reset-password')) {
+              this.feedbackService.showInfo(`You were successfully authenticated as '${username}'`);
 
-            // Change password request.
-            this.router.navigate(['/change-password']);
+              // Checking if this is an impersonation request or a change-password request.
+              if (this.backendService.active.token.in_role('reset-password')) {
 
-          } else {
+                // Change password request.
+                this.router.navigate(['/change-password']);
 
-            // Impersonation request.
-            this.location.replaceState('');
-          }
+              } else {
+
+                // Impersonation request.
+                this.location.replaceState('');
+              }
+            },
+            error: (error: any) => this.feedbackService.showError(error)
+          });
 
         } else if (token) {
 
@@ -202,36 +226,8 @@ export class MainComponent implements OnInit {
             },
             error: (error: any) => this.feedbackService.showError(error)
           });
-
-        } else {
-
-          if (this.backendService.active) {
-            this.getStatus();
-            this.backendService.verifyToken().subscribe({
-              next: (res: any) => {
-                if (!res) {
-                  this.backendService.logout(false);
-                } else if (res.result && res.result !== 'success') {
-                  this.backendService.logout(false);
-                }
-              }, 
-              error: () => this.backendService.logout(false)
-            });
-          }
         }
       }
     });
-  }
-
-  /*
-   * Retrieves endpoints and status of backend.
-   */
-  private getStatus() {
-    this.backendService.getEndpoints(this.backendService.active);
-
-    // If user is root we'll need to retrieve status of active backend and its version.
-    if (this.backendService.active.token && !this.backendService.active.token.expired && this.backendService.active.token.in_role('root')) {
-      this.backendService.retrieveStatusAndVersion(this.backendService.active);
-    }
   }
 }

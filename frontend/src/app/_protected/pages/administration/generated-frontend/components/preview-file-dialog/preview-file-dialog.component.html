@@ -1,0 +1,10 @@
+
+<div mat-dialog-content>
+  <div [innerHTML]="data | marked" class="markdown-preview"></div>
+</div>
+
+<div mat-dialog-actions [align]="'end'">
+
+  <button mat-button [mat-dialog-close]="data" tabindex="-1">Close</button>
+
+</div>

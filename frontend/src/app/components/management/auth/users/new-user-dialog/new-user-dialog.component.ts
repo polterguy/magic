@@ -9,8 +9,8 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { User } from 'src/app/components/management/auth/models/user.model';
-import { UserService } from 'src/app/components/management/auth/services/user.service';
+import { User } from 'src/app/_protected/pages/user-roles/_models/user.model';
+import { UserService } from 'src/app/_protected/pages/user-roles/_services/user.service';
 
 /**
  * Modal dialog component for creating a new user and
@@ -39,7 +39,7 @@ export class NewUserDialogComponent {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param userService Used to create a new user
    * @param feedbackService Used to display feedback to user
    * @param dialogRef Dialog reference used to close dialog

@@ -9,11 +9,8 @@
  * - [tableName] - Name of table
  * - [columnName] - Name of column
  * - [columnType] - Type declaration of column
- * - [precision] - If relevant declares the precision of column
- * - [columnLength] - Length of column if applicable
  * - [foreignTable] - Table column links to
  * - [foreignField] - Field column links to
- * - [cascading] - If true the foreign key will cascade on delete
  * - [nullable] - If false will create a column that does NOT accept null values
  * - [generate] - If true will not execute SQL but only return DDL to caller
  */
@@ -24,7 +21,6 @@
    tableName:string
    columnName:string
    columnType:string
-   precision:string
    columnLength:int
    defaultValue:string
    foreignTable:string
@@ -55,73 +51,27 @@ validators.enum:x:@.arguments/*/databaseType
 .sql
 
 // Alter table part.
-if
-   eq:x:@.arguments/*/databaseType
-      .:mssql
-   .lambda
-      set-value:x:@.sql
-         strings.concat
-            .:"alter table "
-            get-value:x:@.arguments/*/tableName
-            .:" add "
-            get-value:x:@.arguments/*/columnName
-            .:" "
-            get-value:x:@.arguments/*/columnType
-else
-   set-value:x:@.sql
-      strings.concat
-         .:"alter table "
-         get-value:x:@.arguments/*/tableName
-         .:" add column "
-         get-value:x:@.arguments/*/columnName
-         .:" "
-         get-value:x:@.arguments/*/columnType
+set-value:x:@.sql
+   strings.concat
+      .:"alter table "
+      get-value:x:@.arguments/*/tableName
+      .:" add column "
+      get-value:x:@.arguments/*/columnName
+      .:" "
+      get-value:x:@.arguments/*/columnType
 
-// Column length part, if specified - Otherwise possibly precision.
+// Column length part, if specified.
 if
    and
       exists:x:@.arguments/*/columnLength
       not-null:x:@.arguments/*/columnLength
    .lambda
-
-      // Adding column length
       set-value:x:@.sql
          strings.concat
             get-value:x:@.sql
             .:(
             get-value:x:@.arguments/*/columnLength
             .:)
-else-if
-   and
-      exists:x:@.arguments/*/precision
-      not-null:x:@.arguments/*/precision
-   .lambda
-
-      // Sanity checking precision value.
-      validators.regex:x:@.arguments/*/precision
-         regex:[0-9]+,[0-9]
-      set-value:x:@.sql
-         strings.concat
-            get-value:x:@.sql
-            .:(
-            get-value:x:@.arguments/*/precision
-            .:)
-else-if
-   and
-      neq:x:@.arguments/*/databaseType
-         .:sqlite
-      or
-         eq:x:@.arguments/*/columnType
-            .:decimal
-         eq:x:@.arguments/*/columnType
-            .:numeric
-   .lambda
-
-      // Defaulting precision to (30,5) unless explicitly specified.
-      set-value:x:@.sql
-         strings.concat
-            get-value:x:@.sql
-            .:(30,5)
 
 // Not null parts if specified
 if
@@ -149,88 +99,39 @@ if
             get-value:x:@.arguments/*/defaultValue
 
 // References (foreign key) parts if specified.
-.additional:
 if
    and
       not-null:x:@.arguments/*/foreignTable
       not-null:x:@.arguments/*/foreignField
    .lambda
+      set-value:x:@.sql
+         strings.concat
+            get-value:x:@.sql
+            .:" references "
+            get-value:x:@.arguments/*/foreignTable
+            .:"("
+            get-value:x:@.arguments/*/foreignField
+            .:")"
+
+      // Checking if cascading deletes are turned on.
       if
-         eq:x:@.arguments/*/databaseType
-            .:mysql
+         and
+            exists:x:@.arguments/*/cascading
+            not-null:x:@.arguments/*/cascading
+            eq
+               get-value:x:@.arguments/*/cascading
+               .:bool:true
          .lambda
-
-            // MySQL doesn't support normal foreign key constraints.
-            set-value:x:@.additional
+            set-value:x:@.sql
                strings.concat
-                  .:"\r\nalter table "
-                  get-value:x:@.arguments/*/tableName
-                  .:" add constraint "
-                  get-value:x:@.arguments/*/tableName
-                  .:_
-                  get-value:x:@.arguments/*/foreignTable
-                  .:_
-                  get-value:x:@.arguments/*/foreignField
-                  .:"_fky "
-                  .:foreign key(
-                  get-value:x:@.arguments/*/columnName
-                  .:") references "
-                  get-value:x:@.arguments/*/foreignTable
-                  .:(
-                  get-value:x:@.arguments/*/foreignField
-                  .:")"
-
-            // Checking if cascading deletes are turned on.
-            if
-               and
-                  exists:x:@.arguments/*/cascading
-                  not-null:x:@.arguments/*/cascading
-                  eq
-                     get-value:x:@.arguments/*/cascading
-                     .:bool:true
-               .lambda
-                  set-value:x:@.additional
-                     strings.concat
-                        get-value:x:@.additional
-                        .:" on delete cascade"
-            set-value:x:@.additional
-               strings.concat
-                  get-value:x:@.additional
-                  .:";"
-                  
-
-      else
-
-         // Adding normal foreign key constraint.
-         set-value:x:@.sql
-            strings.concat
-               get-value:x:@.sql
-               .:" references "
-               get-value:x:@.arguments/*/foreignTable
-               .:"("
-               get-value:x:@.arguments/*/foreignField
-               .:")"
-
-         // Checking if cascading deletes are turned on.
-         if
-            and
-               exists:x:@.arguments/*/cascading
-               not-null:x:@.arguments/*/cascading
-               eq
-                  get-value:x:@.arguments/*/cascading
-                  .:bool:true
-            .lambda
-               set-value:x:@.sql
-                  strings.concat
-                     get-value:x:@.sql
-                     .:" on delete cascade"
+                  get-value:x:@.sql
+                  .:" on delete cascade"
 
 // Appending semi colon at end.
 set-value:x:@.sql
    strings.concat
       get-value:x:@.sql
       .:;
-      get-value:x:@.additional
 
 // Checking if caller only wants to generate SQL statement.
 if:x:@.arguments/*/generate

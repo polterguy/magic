@@ -17,7 +17,7 @@ import { BackendService } from 'src/app/services/backend.service';
 import { MessageService } from '../../../services/message.service';
 import { FeedbackService } from '../../../services/feedback.service';
 import { LoaderInterceptor } from '../../../interceptors/loader.interceptor';
-import { AssumptionService } from 'src/app/components/misc/services/assumption.service';
+import { AssumptionService } from 'src/app/_protected/pages/setting-security/health-check/_services/assumption.service';
 import { Model } from '../../utilities/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 
 // CodeMirror options.
@@ -75,7 +75,7 @@ export class DiagnosticsTestsComponent implements OnInit {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param fileService Needed to load test files from backend
    * @param messageService Needed to publish message when all assumptions succeeds
    * @param feedbackService Needed to provide feedback to user
@@ -132,7 +132,7 @@ export class DiagnosticsTestsComponent implements OnInit {
 
   /**
    * Returns test name, without its path parts.
-   * 
+   *
    * @param path Complete path for test
    */
   getName(path: string) {
@@ -142,7 +142,7 @@ export class DiagnosticsTestsComponent implements OnInit {
 
   /**
    * Toggles the details view for a single test.
-   * 
+   *
    * @param test Test to toggle details for
    */
   ensureTestContent(test: TestModel) {
@@ -171,7 +171,7 @@ export class DiagnosticsTestsComponent implements OnInit {
 
   /**
    * Runs the specified test.
-   * 
+   *
    * @param test Test we should execute
    */
   executeTest(test: TestModel) {
@@ -192,7 +192,7 @@ export class DiagnosticsTestsComponent implements OnInit {
 
   /**
    * Deletes the specified assumption test.
-   * 
+   *
    * @param test Test to delete
    */
   deleteTest(test: TestModel) {
@@ -213,7 +213,7 @@ export class DiagnosticsTestsComponent implements OnInit {
 
   /**
    * Saves an assumption test.
-   * 
+   *
    * @param filename Filename of test
    * @param content Content of test
    */
@@ -261,7 +261,7 @@ export class DiagnosticsTestsComponent implements OnInit {
             /*
              * Filtering out tests according to result,
              * and making sure Ajax loader is hidden again.
-             * 
+             *
              * Notice, we can't use decrement here, because as one of our
              * requests results in an error, all callbacks for all
              * consecutive requests stops being invoked.

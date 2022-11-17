@@ -15,6 +15,7 @@ import {
 
 // Application specific imports.
 import { LoaderService } from 'src/app/services/loader.service';
+import { GeneralService } from "../_general/services/general.service";
 
 /**
  * Our HTTP interceptor that changes the LoaderService's state according to whether or not
@@ -31,14 +32,14 @@ export class LoaderInterceptor implements HttpInterceptor {
   /**
    * HTTP interceptor used to create Ajax loading animation during HTTP invocations
    * towards your backend.
-   * 
+   *
    * @param loadingService What loader service to use
    */
-  constructor(public loadingService: LoaderService) { }
+  constructor(public generalService: GeneralService) { }
 
   /**
    * Override from base class, actual implementation parts.
-   * 
+   *
    * @param request HTTP request for current instance
    * @param next Next handler for HTTP request
    */
@@ -63,7 +64,7 @@ export class LoaderInterceptor implements HttpInterceptor {
    */
   public increment() {
     if (++LoaderInterceptor.totalRequests === 1) {
-      this.loadingService.show();
+      this.generalService.showLoading();
     }
   }
 
@@ -74,7 +75,7 @@ export class LoaderInterceptor implements HttpInterceptor {
   public decrement() {
     LoaderInterceptor.totalRequests = Math.max(--LoaderInterceptor.totalRequests, 0);
     if (LoaderInterceptor.totalRequests === 0) {
-      this.loadingService.hide();
+      this.generalService.hideLoading();
     }
   }
 
@@ -83,6 +84,6 @@ export class LoaderInterceptor implements HttpInterceptor {
    */
   public forceHide() {
     LoaderInterceptor.totalRequests = 0;
-    this.loadingService.hide();
+    this.generalService.hideLoading();
   }
 }

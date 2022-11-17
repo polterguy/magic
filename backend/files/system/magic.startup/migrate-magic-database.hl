@@ -5,6 +5,15 @@
  * Notice, to avoid this from taking too much time during startup before server
  * becomes responsive, we execute these on a background thread.
  */
+
+// Verifying system has been configrued before we try to run migration scripts.
+config.get:"magic:auth:secret"
+if
+   lt
+      strings.length:x:@config.get
+      .:int:50
+   .lambda
+      return:bool:true
 fork
 
    /*

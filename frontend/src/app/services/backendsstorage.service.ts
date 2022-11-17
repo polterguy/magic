@@ -85,6 +85,7 @@ export class BackendsStorageService {
       return 0;
     });
     this.persistBackends();
+    return this._backends[0];
   }
 
   /**

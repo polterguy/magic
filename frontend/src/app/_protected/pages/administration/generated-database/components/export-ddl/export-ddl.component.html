@@ -1,0 +1,25 @@
+<h3 mat-dialog-title class="mb-0">Export DDL</h3>
+<p class="text-muted mb-4">Export {{data.type === 'table' ? 'table' : 'database'}} to a module as DDL (Data Definition Language)</p>
+
+<div mat-dialog-content class="codemirror-dialog">
+  <ngx-codemirror
+    *ngIf="options"
+    [(ngModel)]="data.result"
+    [options]="options"
+    name="content">
+  </ngx-codemirror>
+</div>
+
+<div mat-dialog-actions [align]="'end'">
+
+  <p class="text-danger mat-caption d-inline-block mb-0 mt-1" *ngIf="data.type === 'table' && data.module === 'magic'">Tables in Magic database can't be exported.</p>
+
+  <button mat-button mat-dialog-close>Cancel</button>
+
+  <button mat-flat-button color="primary" class="px-4"
+    *ngIf="data.canExport"
+    [mat-dialog-close]="data">
+    Export to module
+  </button>
+
+</div>

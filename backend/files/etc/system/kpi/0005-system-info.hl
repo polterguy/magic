@@ -1,0 +1,44 @@
+
+// KPI file for displaying employee productivity.
+.name:System information
+.description:Information about your installation
+.enabled:bool:true
+.type:table
+.lambda
+   version
+   config.get:"magic:culture:defaultTimeZone"
+   config.get:"magic:databases:default"
+   tasks.count
+   io.folder.list:/modules/
+   get-count:x:-/*
+   slots.vocabulary
+   get-count:x:-/*
+   endpoints.list
+   get-count:x:-/*
+   cache.count
+   unwrap:x:+/*/*
+   return-nodes
+      .
+         name:Backend version
+         value:x:@version
+      .
+         name:Default database
+         value:x:@config.get
+      .
+         name:Default timezone
+         value:x:@config.get/@config.get
+      .
+         name:Persisted tasks
+         value:x:@tasks.count
+      .
+         name:Total no of endpoints
+         value:x:@get-count
+      .
+         name:Dynamic slots
+         value:x:@get-count/@get-count
+      .
+         name:Number of modules
+         value:x:@get-count/@get-count/@get-count
+      .
+         name:Cache items
+         value:x:@cache.count

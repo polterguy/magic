@@ -1,0 +1,58 @@
+@mixin general_transition($speed){
+    -webkit-transition: all $speed;
+    -moz-transition: all $speed;
+    -ms-transition: all $speed;
+    -o-transition: all $speed;
+    transition: all $speed;
+    &:hover{
+        -webkit-transition: all $speed;
+        -moz-transition: all $speed;
+        -ms-transition: all $speed;
+        -o-transition: all $speed;
+        transition: all $speed;
+    }
+}
+
+@mixin scrollbar($color_base,$color_top,$width) {
+    &::-webkit-scrollbar-track {
+        box-shadow: inset 0 0 6px $color_base;
+        -webkit-box-shadow: inset 0 0 6px $color_base;
+        background-color: $color_base;
+    }
+
+    &::-webkit-scrollbar {
+        width: $width;
+        background-color: $color_base;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: $color_top;
+        border-radius: 10px;
+    }
+}
+@mixin scrollbar_horizontal($color_base,$color_top,$height) {
+    &::-webkit-scrollbar-track {
+        box-shadow: inset 0 0 6px $color_base;
+        -webkit-box-shadow: inset 0 0 6px $color_base;
+        background-color: $color_base;
+    }
+
+    &::-webkit-scrollbar {
+        height: $height;
+        background-color: $color_base;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: $color_top;
+    }
+}
+
+@mixin line_truncate($lines) {
+    display: block;
+    display: -webkit-box;
+    max-width: 500px;
+    -webkit-line-clamp: $lines;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

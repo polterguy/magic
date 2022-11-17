@@ -29,8 +29,8 @@ import { Message } from '../../../models/message.model';
 import { VocabularyService } from '../services/vocabulary.service';
 import { MessageService } from '../../../services/message.service';
 import { FeedbackService } from '../../../services/feedback.service';
-import { Endpoint } from '../endpoints/models/endpoint.model';
-import { EndpointService } from '../../../services/endpoint.service';
+import { Endpoint } from '../../../_protected/pages/administration/generated-endpoints/_models/endpoint.model';
+import { EndpointService } from '../../../_protected/pages/generated-endpoints/_services/endpoint.service';
 import { FileService } from 'src/app/services/file.service';
 import { FileActionsComponent } from './action-buttons/file-actions/file-actions.component';
 import { FolderActionsComponent } from './action-buttons/folder-actions/folder-actions.component';
@@ -85,7 +85,7 @@ export class IdeComponent implements OnInit, OnDestroy {
   @ViewChild('drawer') drawer: MatSidenav;
 
   /**
-   * To get the width of the screen 
+   * To get the width of the screen
    * getScreenWidth {number} :: define how the sidenav and the content should behave based on the screen size
    * smallScreenSize {number} :: to set a fixed size as an agreement
    * largeScreen {boolean} :: to check whether the screen width is small or large
@@ -155,7 +155,7 @@ export class IdeComponent implements OnInit, OnDestroy {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param cdRef Needed to mark component as having changes
    * @param fileService Needed to load and save files.
    * @param feedbackService Needed to display feedback to user
@@ -210,7 +210,7 @@ export class IdeComponent implements OnInit, OnDestroy {
 
   /**
    * Implementation of AfterViewInit.
-   * 
+   *
    * This is needed to ensure we retrieve Hyperlambda vocabulary from backend to
    * have autocomplete data for Hyperlambda language.
    */
@@ -241,7 +241,7 @@ export class IdeComponent implements OnInit, OnDestroy {
 
   /**
    * Invoked when user wants to open a file.
-   * 
+   *
    * @param file Tree node wrapping file to open
    */
   openFile(file: TreeNode) {
@@ -298,14 +298,14 @@ export class IdeComponent implements OnInit, OnDestroy {
 
   /**
    * Invoked when user wants to open a folder.
-   * 
+   *
    * @param folder Tree node wrapping folder to open
    */
   selectFolder(folder: any, keepOpen?: boolean) {
     this.activeFolder = folder.node.path;
     this.openFolder = folder;
   }
- 
+
   /**
    * Invoked when the currently selected file is changed.
    */
@@ -317,7 +317,7 @@ export class IdeComponent implements OnInit, OnDestroy {
   /**
    * to be called from a child component
    * Invoked when a file should be renamed.
-   * 
+   *
    * @param name - the given name to be string
    */
   renameActiveFile(name: string) {
@@ -337,7 +337,7 @@ export class IdeComponent implements OnInit, OnDestroy {
 
   /**
    * Invoked from a child component when a file should be deleted.
-   * 
+   *
    * @param path path of the current file to be string
    */
   deleteActiveFile(path: string) {
@@ -374,7 +374,7 @@ export class IdeComponent implements OnInit, OnDestroy {
 
   /**
    * Invoked when user wants to toggle displaying of system files.
-   * @callback systemFiles To show warning 
+   * @callback systemFiles To show warning
    */
   toggleSystemFiles() {
     this.updateFileObject('/');
@@ -382,7 +382,7 @@ export class IdeComponent implements OnInit, OnDestroy {
       this.showWarning('system');
     }
   }
-  
+
   /**
    * To show warning if system files option is enabled.
    * @param location string, to be system or file
@@ -436,7 +436,7 @@ export class IdeComponent implements OnInit, OnDestroy {
           case 'patch':
           case 'delete':
 
-            /* 
+            /*
              * File is probably a Hyperlambda endpoint, however to be sure we
              * verify we can find file in our list of endpoints.
              */
@@ -453,7 +453,7 @@ export class IdeComponent implements OnInit, OnDestroy {
 
   /**
    * Callback function from child component invoked after creating a new file or folder object
-   * 
+   *
    * @param event an array coming from the child component when new file/folder is created
    */
   manageAfterCreateNewFileObject(event: any) {
@@ -493,7 +493,7 @@ export class IdeComponent implements OnInit, OnDestroy {
         level: event.dialogResult.path.split('/').filter(x => x !== '').length + 1,
         children: [],
       });
-      
+
       sorter();
       this.dataBindTree();
       this.cdRef.detectChanges();
@@ -504,7 +504,7 @@ export class IdeComponent implements OnInit, OnDestroy {
 
   /**
    * A callback function from child component after macro executed.
-   * 
+   *
    * @param fileObject string to be defined by child component if execution result startsWith 'folders-changed|'
    */
   updateAfterMacro(fileObject: string) {
@@ -520,7 +520,7 @@ export class IdeComponent implements OnInit, OnDestroy {
 
   /**
    * A callback function from child component to rename active folder.
-   * 
+   *
    * @param fileObject Folder to rename
    */
   afterRenamingFolder(fileObject: any) {
@@ -538,7 +538,7 @@ export class IdeComponent implements OnInit, OnDestroy {
     const entities = fileObject.newName.split('/').filter(x => x !== '');
     this.openFolder.node.name = entities[entities.length - 1];
     this.openFolder.name = entities[entities.length - 1];
-    this.selectFolder(this.openFolder, true)    
+    this.selectFolder(this.openFolder, true)
   }
 
   /**
@@ -584,7 +584,7 @@ export class IdeComponent implements OnInit, OnDestroy {
 
   /**
    * Inserts specified Hyperlambda at caret's position.
-   * 
+   *
    * @param content Hyperlambda to insert
    */
   insertHyperlambda(content: string) {
@@ -622,7 +622,7 @@ export class IdeComponent implements OnInit, OnDestroy {
 
   /**
    * Updates the specified folder or file object only and re-renders TreeView.
-   * 
+   *
    * @param fileObject File object to update
    */
   updateFileObject(fileObject: string) {
@@ -900,7 +900,7 @@ export class IdeComponent implements OnInit, OnDestroy {
             this.fileActionsComponent.executeActiveFile();
           });
         };
-      } 
+      }
       return options[0].options;
     }
   }

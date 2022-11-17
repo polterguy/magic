@@ -1,0 +1,35 @@
+
+<h3 mat-dialog-title>Rename folder</h3>
+<form>
+  <div mat-dialog-content>
+
+    <mat-form-field class="w-100">
+      <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        <mat-icon class="mat-icon-rtl-mirror">folder</mat-icon>
+        <span class="text-muted">|</span>
+      </span>
+      <input
+        type="text"
+        matInput
+        autocomplete="off"
+        [(ngModel)]="newName"
+        name="name">
+        <mat-hint *ngIf="!pathValid()" class="warning">Name is required and cannot contain blank space or special characters.</mat-hint>
+        <mat-hint *ngIf="newName === originalName" class="warning">New name cannot be the same as the current name.</mat-hint>
+    </mat-form-field>
+
+  </div>
+
+  <div mat-dialog-actions [align]="'end'">
+
+    <button mat-button mat-dialog-close>Close</button>
+
+    <button
+      mat-flat-button
+      [disabled]="newName === originalName || !pathValid()"
+      color="primary"
+      type="submit"
+      (click)="ok()">Rename</button>
+
+  </div>
+</form>

@@ -1,0 +1,27 @@
+<h3 mat-dialog-title>Add new argument</h3>
+
+<div mat-dialog-content>
+  <mat-form-field class="w-100 text-prefix">
+    <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
+      Argument's name
+    </span>
+
+    <input matInput type="text" placeholder="Argument's name" [(ngModel)]="name" [pattern]="CommonRegEx.appNames" #argName>
+    <mat-error>{{CommonErrorMessages.appNames}}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field class="w-100 text-prefix">
+    <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
+      Argument's type
+    </span>
+
+    <mat-select placeholder="Type" [(ngModel)]="selectedType">
+      <mat-option *ngFor="let item of types | sortBy: 'item'" [value]="item">{{item}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+
+<div mat-dialog-actions [align]="'end'">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-flat-button color="primary" class="px-4" (click)="add()">Save</button>
+</div>

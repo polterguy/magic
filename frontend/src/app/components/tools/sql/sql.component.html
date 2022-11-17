@@ -470,7 +470,7 @@
                   <button
                     mat-menu-item
                     (click)="exportDatabase()"
-                    [disabled]="input?.databaseType !== 'sqlite' && input?.databaseType !== 'mysql' && input?.databaseType !== 'pgsql'"
+                    [disabled]="input?.databaseType !== 'sqlite' && input?.databaseType !== 'mysql'"
                     class="action-button">
                     <mat-icon class="material-icons-outlined">cloud_download</mat-icon>
                     Export database DDL
@@ -541,19 +541,10 @@
                       <button
                         mat-menu-item
                         [disabled]="input.database === 'magic'"
-                        (click)="createField(idxTable)"
+                        (click)="createFieldKey(idxTable)"
                         class="action-button">
                         <mat-icon class="material-icons-outlined">add</mat-icon>
-                        Add field
-                      </button>
-
-                      <button
-                        mat-menu-item
-                        [disabled]="input.database === 'magic'"
-                        (click)="createReferencedField(idxTable)"
-                        class="action-button">
-                        <mat-icon class="material-icons-outlined">add</mat-icon>
-                        Add referenced field
+                        Add field/key
                       </button>
 
                       <button

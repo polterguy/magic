@@ -1,0 +1,208 @@
+<div class="row mt-4">
+  <!-- 1 - database -->
+  <div class="col-12">
+    <p class="fw-bold mb-0">Step 1 - Choose a database</p>
+  </div>
+  <div class="col-xxl-9 col-xl-10 col-lg-11 col-12">
+    <div class="row align-items-stretch mt-4">
+      <!-- database types -->
+      <div class="col-md-4 col-sm-6 col-12">
+        <mat-form-field class="w-100">
+          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>database</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+
+          <mat-select placeholder="Database type" [(ngModel)]="selectedDbType" (selectionChange)="changeConnectionStrings()">
+            <mat-option *ngFor="let item of databaseTypes" [value]="item.type">{{item.name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <!-- connection string -->
+      <div class="col-md-4 col-sm-6 col-12">
+        <ng-container *ngIf="dbLoading | async">
+          <app-loading-skeleton
+          [amount]="1"
+          [colClass]="'col-12'"
+          [blockHeight]="'45px'"
+          [hasShadow]="false"></app-loading-skeleton>
+        </ng-container>
+        <mat-form-field class="w-100" *ngIf="!(dbLoading | async)">
+          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>conversion_path</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+
+          <mat-select placeholder="Connection string" [(ngModel)]="selectedConnectionString" (selectionChange)="changeConnectionStrings()">
+            <mat-option *ngFor="let item of connectionStrings | keyvalue" [value]="item.key">{{item.key}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <!-- databases list -->
+      <div class="col-md-4 col-sm-6 col-12">
+        <ng-container *ngIf="dbLoading | async">
+          <app-loading-skeleton
+          [amount]="1"
+          [colClass]="'col-12'"
+          [blockHeight]="'45px'"
+          [hasShadow]="false"></app-loading-skeleton>
+        </ng-container>
+        <mat-form-field class="w-100" *ngIf="!(dbLoading | async)">
+          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>database</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+
+          <mat-select placeholder="Databases" [(ngModel)]="selectedDatabase" (selectionChange)="changeDatabase()">
+            <mat-option *ngFor="let item of databases | sortBy: 'name'" [value]="item.name">{{item.name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2 - configuration -->
+  <div class="col-12 mt-5">
+    <p class="fw-bold mb-0">Step 2 - Method, URL & Authorization</p>
+  </div>
+  <div class="col-xxl-9 col-xl-10 col-lg-11 col-12">
+    <div class="row align-items-stretch mt-4">
+      <!-- Methods -->
+      <div class="col-md-3 col-sm-6 col-12">
+        <mat-form-field class="w-100">
+          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>database</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+
+          <mat-select placeholder="Choose method" [(ngModel)]="selectedMethod">
+            <mat-option *ngFor="let item of methods" [value]="item">{{item}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <!-- primary route -->
+      <div class="col-md-3 col-sm-6 col-12">
+        <mat-form-field class="w-100">
+          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>link</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+
+          <input matInput type="text"
+            placeholder="Primary route"
+            [(ngModel)]="primaryURL"
+            [pattern]="CommonRegEx.appNames">
+          <mat-error>{{CommonErrorMessages.appNames}}</mat-error>
+        </mat-form-field>
+      </div>
+      <!-- secondary route -->
+      <div class="col-md-3 col-sm-6 col-12">
+        <mat-form-field class="w-100">
+          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>link</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+
+          <input matInput type="text"
+            placeholder="Secondary route"
+            [(ngModel)]="secondaryURL"
+            [pattern]="CommonRegEx.appNames">
+          <mat-error>{{CommonErrorMessages.appNames}}</mat-error>
+        </mat-form-field>
+      </div>
+      <!-- tables list -->
+      <div class="col-md-3 col-sm-6 col-12">
+        <ng-container *ngIf="!roles">
+          <app-loading-skeleton
+          [amount]="1"
+          [colClass]="'col-12'"
+          [blockHeight]="'45px'"
+          [hasShadow]="false"></app-loading-skeleton>
+        </ng-container>
+        <mat-form-field class="w-100" *ngIf="roles">
+          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>table</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+
+          <mat-select placeholder="Add roles" multiple [formControl]="selectedRoles" disableOptionCentering panelClass="custom-select-option">
+            <mat-option
+              *ngFor="let item of roles | sortBy: 'name'"
+              [value]="item.name">
+              {{item.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="col-12 mt-4">
+    <div class="row">
+      <!-- 3 - Settings -->
+      <div class="col-md-6 col-12">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <p class="fw-bold text-nowrap my-0">Step 3 - Settings</p>
+          <div class="py-2">&nbsp;</div>
+        </div>
+        <div class="col-12">
+          <div class="d-flex align-items-center flex-wrap mt-1">
+            <mat-checkbox color="primary"
+            [(ngModel)]="isScalar"
+            [disabled]="selectedDatabase === ''">Scalar</mat-checkbox>
+            <div class="px-xl-5 px-lg-4 px-sm-3 px-1"></div>
+            <mat-checkbox color="primary"
+            [(ngModel)]="overwrite"
+            [disabled]="selectedDatabase === ''">Overwrite</mat-checkbox>
+          </div>
+        </div>
+      </div>
+      <!-- 4 - Arguments -->
+      <div class="col-md-6 col-12">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <p class="fw-bold text-nowrap my-0">Step 4 - Arguments</p>
+          <button mat-button color="primary" (click)="addArgument()">Add new argument</button>
+        </div>
+        <ng-container *ngIf="arguments && arguments.length === 0;else hasArguments">
+          Add arguments
+        </ng-container>
+        <ng-template #hasArguments>
+          <mat-chip-list aria-label="Fish selection">
+            <mat-chip
+              *ngFor="let item of arguments"
+              (removed)="removeArgument(item)">
+              {{item.name}}
+              <button matChipRemove>
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </mat-chip>
+          </mat-chip-list>
+        </ng-template>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- SQL -->
+  <div class="col-12 mt-5">
+    <div class="d-flex justify-content-between align-items-center">
+      <p class="fw-bold mb-0">Step 5 - SQL</p>
+      <div>
+        <button mat-button color="primary" (click)="viewShortkeys()">Shortkeys</button>
+        <button mat-button color="primary"
+          (click)="loadSnippet()"
+          [disabled]="!canLoadSnippet">Snippets</button>
+      </div>
+    </div>
+  </div>
+  <div class="col-12 mt-3">
+    <app-codemirror-sql [(model)]="sql" class="codemirror-container"></app-codemirror-sql>
+  </div>
+
+  <div class="col-12 d-flex justify-content-end mt-5">
+    <button mat-flat-button color="primary" class="px-5"
+      (click)="generate()"
+      [disabled]="waiting">Generate endpoints</button>
+  </div>
+</div>

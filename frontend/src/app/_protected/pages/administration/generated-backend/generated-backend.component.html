@@ -1,0 +1,54 @@
+<div class="row fullPage">
+  <div class="col-xl-4 col-lg-6 col-md-5 col-12">
+    <mat-card class="h-100">
+      <mat-card-content class="h-100 max-height-full">
+        <h3 class="my-0 fw-bold">
+          Backend
+        </h3>
+
+        <div class="row mt-3">
+          <div class="col-12">
+            <app-backend-searchbox (filterList)="filterList($event)"></app-backend-searchbox>
+          </div>
+        </div>
+
+        <div class="row mt-3 scrollable-row">
+          <div class="col-12 max-height">
+
+            <app-backend-tree
+              #tree
+              [searchKey]="searchKey"
+              (showEditor)="showEditor($event)"
+              (setFocusToActiveEditor)="editor.setFocusToActiveEditor()"></app-backend-tree>
+
+          </div>
+        </div>
+
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div class="col-xl-8 col-lg-6 col-md-7 col-12">
+    <mat-card class="h-100 pt-3">
+      <mat-card-content class="h-100 max-height-full">
+
+        <app-backend-editor class="h-100 d-block"
+          #editor
+          [currentFileData]="currentFileData"
+          [activeFolder]="tree.activeFolder"
+          [openFiles]="tree.openFiles"
+          (updateFileObject)="tree.updateFileObject($event)"
+          (getFilesFromServer)="tree.getFilesFromServer()"
+          (getEndpoints)="tree.refetchEndpointsList()"
+          [endpoints]="tree.endpoints"
+          (dataBindTree)="tree.dataBindTree()"
+          (deleteActiveFolderFromParent)="tree.deleteActiveFolder($event)"
+          (deleteActiveFileFromParent)="tree.deleteActiveFile($event)"
+          (renameActiveFileFromParent)="tree.renameActiveFile($event)"
+          (renameActiveFolderFromParent)="tree.renameActiveFolder($event)"
+          (createNewFileObjectFromParent)="tree.createNewFileObject($event)"
+          (closeFileImpl)="tree.closeFileImpl()"></app-backend-editor>
+
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

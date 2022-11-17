@@ -1,0 +1,118 @@
+/*=-=-=-=-=-=
+general classes
+=-=-=-=-=-=*/
+.pointer {cursor: pointer;}
+/*=-=-=-=-=-=
+spaces - sizes
+=-=-=-=-=-=*/
+.fullPage {
+  min-height: calc(100vh - 240px);
+  // height: calc(100vh - 240px);
+  // max-height: unset;
+  @media (max-width: 576px) {
+    min-height: calc(100vh - 190px);
+  }
+}
+.mt-spacing {margin-top: $aista_spacing;}
+/*=-=-=-=-=-=
+background
+=-=-=-=-=-=*/
+.bg-light {
+  background-color: $aista_default_grey5;
+  border-radius: $aista_radius_sm;
+}
+/*=-=-=-=-=-=
+text
+=-=-=-=-=-=*/
+.text-primary {color: $aista_primary;}
+.text-muted {color: $aista_default_grey3;}
+.text-danger {color: $aista_error;}
+.text-success {color: $aista_success;}
+.error {color: $aista_error;}
+
+.word-break {
+  word-break: break-word;
+}
+.code {
+  font-family: 'Courier New','Courier','monospace';
+  font-size: .8rem;
+  line-height: .9rem;
+}
+/*=-=-=-=-=-=
+snackbar classes
+=-=-=-=-=-=*/
+.successMessage {
+  color: $aista_success;
+  button {color: $aista_success;}
+}
+.errorMessage {
+  color: $aista_error;
+  button {color: $aista_error;}
+}
+.mat-snack-bar-container.top-aligned-snackbar {
+  margin-top: 90px;
+  max-width: 40vw;
+}
+/*=-=-=-=-=-=
+hover
+=-=-=-=-=-=*/
+.hoverable-row {
+  @include general_transition(0.3s);
+  &:hover {background-color: transparentize($color: $aista_default_alt, $amount: 0.5);}
+}
+/*=-=-=-=-=-=
+table
+=-=-=-=-=-=*/
+.table-responsive{
+  width: 100%;
+  overflow-x: auto;
+  @include scrollbar_horizontal($aista_default_alt,$aista_default_grey4,5px);
+  th.mat-header-cell:not(:first-child),
+  td.mat-cell:not(:first-child) {padding-left: 5px;}
+  th.mat-header-cell:not(:last-child),
+  td.mat-cell:not(:last-child) {padding-right: 5px;}
+
+  @media(min-width: 577px) {
+    th.mat-header-cell {
+      border-bottom: 1px solid $aista_default_grey5;
+      padding: 15px 0;
+    }
+  }
+}
+@media(max-width: 576px) {
+  // :root .fullPage {
+    .table-responsive:not(.leave-as-normal) {
+      overflow: unset;
+      table { table-layout: fixed; }
+      thead tr { display: none; }
+      tbody { display: block; }
+      tr.mat-row {
+        display: flex;
+        flex-direction: column;
+        height: auto;
+        padding: 25px;
+        background-color: whitesmoke;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        td.mat-cell {
+          .py-0 {padding: 0!important;}
+          padding: 5px 0!important;
+          font-size: 12px;
+          overflow: hidden !important;
+          text-overflow: ellipsis !important;
+          white-space: nowrap !important;
+          &:first-child {
+            display: flex;
+            align-items: center;
+            .mt-2 {margin-top: 0!important;}
+          }
+          &:last-child {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 10px;
+          }
+        }
+      }
+    }
+  // }
+}

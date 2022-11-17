@@ -1,0 +1,32 @@
+
+@media (max-width: 576px) {
+  .backend-list {
+    ::ng-deep .mat-row td.mat-cell {
+      &::before {
+        margin-right: 10px;
+        opacity: 0.7;
+      }
+      &:nth-child(1) {
+        &::before {
+          content: 'Username: ';
+          min-width: 60px;
+          display: inline-block;
+        }
+      }
+      &:nth-child(2) {
+        &::before {
+          content: 'URL: ';
+          min-width: 60px;
+          display: inline-block;
+        }
+      }
+      &:nth-child(3) {
+        &::before {
+          content: 'Status: ';
+          min-width: 60px;
+          display: inline-block;
+        }
+      }
+    }
+  }
+}

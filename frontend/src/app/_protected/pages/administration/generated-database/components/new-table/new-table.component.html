@@ -1,0 +1,53 @@
+<h3 mat-dialog-title>Add new table</h3>
+
+<form (ngSubmit)="create()">
+  <div mat-dialog-content>
+    <mat-form-field class="w-100 text-prefix">
+      <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
+        Name
+      </span>
+
+      <input matInput type="text" placeholder="Table's name" [(ngModel)]="data.name"
+        name="table_name"
+        [pattern]="CommonRegEx.appNameWithUppercase" (ngModelChange)="nameChanged()">
+      <mat-error>{{CommonErrorMessages.appNameWithUppercase}}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="w-100 text-prefix">
+      <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
+        Primary key's name
+      </span>
+
+      <input matInput type="text" placeholder="Primary key's name" [(ngModel)]="data.pkName"
+        name="pk_name"
+        [pattern]="CommonRegEx.appNameWithUppercase">
+      <mat-error>{{CommonErrorMessages.appNameWithUppercase}}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="w-100 text-prefix">
+      <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
+        Primary key's type
+      </span>
+
+      <mat-select placeholder="Type" [(ngModel)]="data.pkType" name="pk_type">
+        <mat-option *ngFor="let item of primaryKeyTypeList" [value]="item.value">{{item.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="w-100 text-prefix">
+      <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
+        Primary key's length
+      </span>
+
+      <input matInput type="number" placeholder="Primary key's length" [(ngModel)]="data.pkLength" min="10"
+        name="pk_length"
+        pattern="^\d{1,5}$">
+      <mat-error>Invalid number</mat-error>
+    </mat-form-field>
+  </div>
+
+  <div mat-dialog-actions [align]="'end'">
+    <button mat-button mat-dialog-close>Cancel</button>
+    <button mat-flat-button color="primary" class="px-4" type="submit">Create</button>
+  </div>
+</form>

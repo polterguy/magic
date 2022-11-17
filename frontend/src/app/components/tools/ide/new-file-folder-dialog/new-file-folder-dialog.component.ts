@@ -42,7 +42,7 @@ export class FileObject {
    * All existing folders in system.
    */
   folders: string[];
-  
+
   /**
    * All existing files in system.
    */
@@ -86,7 +86,7 @@ export class NewFileFolderDialogComponent implements OnInit {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param fileService Needed to retrieve templates from backend
    * @param feedbackService Needed to display errors and such to the user
    * @param data File object type and name
@@ -114,7 +114,7 @@ export class NewFileFolderDialogComponent implements OnInit {
 
   /**
    * Returns only filename for specified path.
-   * 
+   *
    * @param path Full path of file we should return filename for
    */
   getFileName(path: string) {

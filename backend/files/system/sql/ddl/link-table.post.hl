@@ -214,7 +214,7 @@ set-value:x:@.sql
    strings.concat
       get-value:x:@.sql
       get-value:x:@.fk
-      .:"\r\n);"
+      .:");"
 
 // Checking if caller only wants to generate SQL statement.
 if:x:@.arguments/*/generate
@@ -223,7 +223,6 @@ if:x:@.arguments/*/generate
       sql:x:@.sql
 
 // Creating our database connection and executing our SQL.
-log.info:x:@.sql
 strings.concat
    .:[
    get-value:x:@.arguments/*/connectionString

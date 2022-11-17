@@ -46,7 +46,7 @@ slots.create:magic.db.mssql.foreign_keys
       strings.split:x:@.arguments/*/table
          .:.
       mssql.select:@"select
-   col1.name as [column], sch2.name + '.' + tab2.name as [foreign_table], col2.name as [foreign_column], fk.name as name
+   col1.name as [column], sch2.name + '.' + tab2.name as [foreign_table], col2.name as [foreign_column]
    from sys.foreign_key_columns fkc
       inner join sys.objects obj on obj.object_id = fkc.constraint_object_id
       inner join sys.tables tab1 on tab1.object_id = fkc.parent_object_id
@@ -59,8 +59,7 @@ slots.create:magic.db.mssql.foreign_keys
          col1.[system_type_id] = TY.[system_type_id] and
          col1.[user_type_id] = TY.[user_type_id] and
          tab1.name = @table and
-         sch.name = @schema
-      inner join sys.foreign_keys fk on fk.object_id = obj.object_id"
+         sch.name = @schema"
          @table:x:@strings.split/0/-
          schema:x:@strings.split/0
 

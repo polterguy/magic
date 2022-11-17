@@ -1,0 +1,10 @@
+
+@import '../../../../../assets/styles/_variables/colors.scss';
+@import '../../../../../assets/styles/_variables/mixin.scss';
+@import '../../../../../assets/styles/_variables/sizing.scss';
+
+.max-height-full {
+  max-height: 53vh;
+  min-height: 100%;
+  overflow: hidden;
+}
