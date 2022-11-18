@@ -331,7 +331,6 @@ backend/dev_backend.csproj
 backend/files/tasks.hl
 backend/tasks/**
 backend/files/modules/*
-!backend/files/modules/magic
 !backend/files/modules/README.md
 backend/files/etc/system/crypto/keys/*
 !backend/files/etc/system/crypto/keys/README.md
