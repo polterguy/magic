@@ -60,7 +60,7 @@ export class IdeEditorComponent implements OnInit {
         await new Promise(resolve => setTimeout(resolve, 100));
 
       if (this.currentFileData && this.endpoints.length > 0) {
-
+console.log(this.currentFileData)
         setTimeout(() => {
           const activeWrapper = document.querySelector('.active-codemirror-editor');
           const editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
