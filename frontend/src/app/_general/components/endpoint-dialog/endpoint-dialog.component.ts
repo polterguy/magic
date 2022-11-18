@@ -6,19 +6,19 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { FormBuilder, FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
-import { Argument } from '../../../../administration/generated-endpoints/_models/argument.model';
+import { Argument } from '../../../_protected/pages/administration/generated-endpoints/_models/argument.model';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { BackendService } from 'src/app/_protected/services/common/backend.service';
-import { EndpointService } from '../../../../administration/generated-endpoints/_services/endpoint.service';
-import { InvocationResult } from '../../../../administration/generated-endpoints/endpoints-result/endpoints-result.component';
+import { EndpointService } from '../../../_protected/pages/administration/generated-endpoints/_services/endpoint.service';
+import { InvocationResult } from '../../../_protected/pages/administration/generated-endpoints/endpoints-result/endpoints-result.component';
 
 // CodeMirror options.
-import json from '../../../../../../codemirror/options/json.json';
-import markdown from '../../../../../../codemirror/options/markdown.json';
-import hyperlambda from '../../../../../../codemirror/options/hyperlambda.json';
-import json_readonly from '../../../../../../codemirror/options/json_readonly.json';
-import markdown_readonly from '../../../../../../codemirror/options/markdown_readonly.json';
-import hyperlambda_readonly from '../../../../../../codemirror/options/hyperlambda_readonly.json';
+import json from '../../../codemirror/options/json.json';
+import markdown from '../../../codemirror/options/markdown.json';
+import hyperlambda from '../../../codemirror/options/hyperlambda.json';
+import json_readonly from '../../../codemirror/options/json_readonly.json';
+import markdown_readonly from '../../../codemirror/options/markdown_readonly.json';
+import hyperlambda_readonly from '../../../codemirror/options/hyperlambda_readonly.json';
 
 @Component({
   selector: 'app-endpoint-dialog',
@@ -447,7 +447,7 @@ export class EndpointDialogComponent implements OnInit {
     }
     catch (error) {
       this.isExecuting = false;
-      this.generalService.showFeedback(error);
+      this.generalService.showFeedback(error?.error?.message??error,'errorMessage');
     }
   }
 

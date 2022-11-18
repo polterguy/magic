@@ -432,7 +432,7 @@ export class EndpointsResultComponent implements OnInit {
     }
     catch (error) {
       this.isExecuting = false;
-      this.generalService.showFeedback(error);
+      this.generalService.showFeedback(error?.error?.message??error,'errorMessage');
     }
   }
 

@@ -12,7 +12,7 @@ import { RenameFolderDialogComponent } from '../../../administration/generated-f
 import { SelectMacroDialogComponent, Macro } from '../../../administration/generated-frontend/components/select-macro-dialog/select-macro-dialog.component';
 import { UnsavedChangesDialogComponent } from '../../../administration/generated-frontend/components/unsaved-changes-dialog/unsaved-changes-dialog.component';
 import { EvaluatorService } from '../../hl-playground/_services/evaluator.service';
-import { EndpointDialogComponent } from '../components/endpoint-dialog/endpoint-dialog.component';
+import { EndpointDialogComponent } from '../../../../../_general/components/endpoint-dialog/endpoint-dialog.component';
 import { FileNode } from '../_models/file-node.model';
 import { MacroDefinition } from '../_models/macro-definition.model';
 import { TreeNode } from '../_models/tree-node.model';

@@ -16,7 +16,9 @@
     <a mat-button class="nav-link" *ngFor="let item of navLinks"
       [routerLink]="item.url"
       (click)="item.expandable ? null : closeSidebarInSidePanel()"
-      [matMenuTriggerFor]="item.expandable ? subMenu : null" [matMenuTriggerData]="item">
+      [matMenuTriggerFor]="item.expandable ? subMenu : null" [matMenuTriggerData]="item"
+      routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"
+      [class.xxxxxx]="">
 
       {{item.name}} <mat-icon *ngIf="item.expandable">expand_more</mat-icon>
 
@@ -57,7 +59,7 @@
   </div>
 </div>
 <!-- Account dowpdown menu -->
-<mat-menu #backendsMenu="matMenu">
+<!-- <mat-menu #backendsMenu="matMenu">
   <button mat-menu-item *ngFor="let item of backendList"
   [matMenuTriggerFor]="selectedBackend"
   [matMenuTriggerData]="{backend: item}">
@@ -92,6 +94,6 @@
       Remove backend
     </button>
   </ng-template>
-</mat-menu>
+</mat-menu> -->
 
 <div class="overlay" *ngIf="sideExpanded" (click)="toggleSidebar()"></div>
