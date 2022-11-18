@@ -19,7 +19,7 @@ import { RenameFileDialogComponent, FileObjectName } from '../../generated-front
 import { RenameFolderDialogComponent } from '../../generated-frontend/components/rename-folder-dialog/rename-folder-dialog.component';
 import { SelectMacroDialogComponent, Macro } from '../../generated-frontend/components/select-macro-dialog/select-macro-dialog.component';
 import { UnsavedChangesDialogComponent } from '../../generated-frontend/components/unsaved-changes-dialog/unsaved-changes-dialog.component';
-import { EndpointDialogComponent } from '../../../tools/hyper-ide/components/endpoint-dialog/endpoint-dialog.component';
+import { EndpointDialogComponent } from '../../../../../_general/components/endpoint-dialog/endpoint-dialog.component';
 
 @Component({
   selector: 'app-backend-editor',

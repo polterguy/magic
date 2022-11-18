@@ -111,7 +111,7 @@ export class DashboardComponent implements OnInit {
         this.isLoading = false;
       },
       error: (error: any) => {
-        this.generalService.showFeedback(error);
+        this.generalService.showFeedback(error?.error?.message??error,'errorMessage');
         this._isRetrievingSystemReport = false;
       }});
   }

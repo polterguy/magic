@@ -3,7 +3,8 @@ export interface NavLinks {
   url: string,
   expandable: boolean,
   color?: string,
-  submenu?: Submenu[]
+  submenu?: Submenu[],
+  isActive?: boolean
 }
 
 export interface Submenu {

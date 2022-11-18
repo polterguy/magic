@@ -19,6 +19,7 @@ import { QueryParamsComponent } from './query-params/query-params.component';
 import { AssumptionsComponent } from './assumptions/assumptions.component';
 import { CreateAssumptionTestDialogComponent } from './create-assumption-test-dialog/create-assumption-test-dialog.component';
 import { SnippetNameDialogComponent } from './snippet-name-dialog/snippet-name-dialog.component';
+import { EndpointDialogComponent } from './endpoint-dialog/endpoint-dialog.component';
 
 
 
@@ -35,7 +36,8 @@ import { SnippetNameDialogComponent } from './snippet-name-dialog/snippet-name-d
       QueryParamsComponent,
       AssumptionsComponent,
       CreateAssumptionTestDialogComponent,
-      SnippetNameDialogComponent
+      SnippetNameDialogComponent,
+      EndpointDialogComponent
   ],
   imports: [
     CommonModule,
@@ -55,7 +57,8 @@ import { SnippetNameDialogComponent } from './snippet-name-dialog/snippet-name-d
     QueryParamsComponent,
     AssumptionsComponent,
     CreateAssumptionTestDialogComponent,
-    SnippetNameDialogComponent
+    SnippetNameDialogComponent,
+    EndpointDialogComponent
   ]
 })
 export class ComponentsModule { }

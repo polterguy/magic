@@ -4,7 +4,7 @@
  */
 
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { UserService } from 'src/app/_general/services/user.service';
 import { BackendService } from 'src/app/_protected/services/common/backend.service';
@@ -14,6 +14,7 @@ import { Backend } from 'src/app/_protected/models/common/backend.model';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogComponent } from 'src/app/_general/components/dialog/dialog.component';
 import { BackendsListComponent } from 'src/app/_general/components/backends-list/backends-list.component';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-header',
@@ -76,11 +77,18 @@ export class HeaderComponent implements OnInit {
     private clipboard: Clipboard,
     private generalService: GeneralService,
     private userService: UserService,
+    private location: Location,
     private router: Router,
+    private activatedRoute: ActivatedRoute,
     private cdr: ChangeDetectorRef,
     private backendService: BackendService) {
     // this.username = this.userService.getUserData().username;
     // this.userService.getUserData()?.extra?.affiliate_percent ? this.isAffiliate = true : this.isAffiliate = false;
+      this.activatedRoute.queryParamMap.subscribe((params: any) => {
+        if (params) {
+          this.getParams(params)
+        }
+      })
   }
 
   ngOnInit() {
@@ -96,8 +104,96 @@ export class HeaderComponent implements OnInit {
 
         this.createMenu();
         this.cdr.detectChanges();
+        // console.log(this.router.url,(this.navLinks.find((item: any) => item.name === 'Tools')?.submenu.findIndex((el: any) => el.url === this.router.url) > -1))
       }
     })();
+  }
+
+  /*
+   * Retrieving URL parameter
+   */
+  private getParams(params: any) {
+
+    // Parsing query parameters.
+    // this.activated.queryParams.subscribe((params: Params) => {
+
+      // Checking if user accessed system with a link containing query param pointing to specific backend.
+      const backend = params['backend'];
+      if (backend) {
+        const cur = new Backend(backend);
+
+        // Making sure we keep existing username, password and token, if we have these values.
+        const old = this.backendService.backends.filter(x => x.url === cur.url);
+        if (old.length > 0) {
+          cur.username = old[0].username;
+          cur.password = old[0].password;
+          cur.token = old[0].token;
+        }
+        this.backendService.upsert(cur);
+        this.backendService.activate(cur);
+        this.location.replaceState('');
+
+      } else {
+
+        // Checking if user has some sort of token, implying reset-password token or verify-email token.
+        const token = params['token'];
+        if (token && token.includes('.')) {
+
+          /*
+           * 'token' query parameter seems to be a JWT token.
+           *
+           * Authentication request, authenticating using specified link,
+           * and redirecting user to hide URL.
+           */
+          const url = params['url'];
+          const username = params['username'];
+          const backend = new Backend(url, username, null, token);
+          this.backendService.upsert(backend);
+          this.backendService.activate(backend);
+          this.backendService.verifyToken().subscribe({
+            next: () => {
+
+              // this.feedbackService.showInfo(`You were successfully authenticated as '${username}'`);
+
+              // Checking if this is an impersonation request or a change-password request.
+              if (this.backendService.active.token.in_role('reset-password')) {
+
+                // Change password request.
+                this.router.navigate(['/change-password']);
+
+              } else {
+
+                // Impersonation request.
+                this.location.replaceState('');
+              }
+            },
+            error: (error: any) => {}
+          });
+
+        } else if (token) {
+
+          /*
+           * 'token' seems to be a "verify email address" type of token since it doesn't contain "." characters.
+           *
+           * Need to set the current backend first.
+           */
+          const backend = new Backend(params['url'], params['username']);
+          this.backendService.upsert(backend);
+          this.backendService.activate(backend);
+
+          // Verifying user's email address.
+          // this.registerService.verifyEmail(params['username'], token).subscribe({
+          //   next: (result: Response) => {
+          //     if (result.result === 'success') {
+          //       this.feedbackService.showInfo('You successfully confirmed your email address');
+          //       this.location.replaceState('');
+          //     }
+          //   },
+          //   error: (error: any) => this.feedbackService.showError(error)
+          // });
+        }
+      }
+    // });
   }
 
   private createMenu() {
@@ -111,6 +207,7 @@ export class HeaderComponent implements OnInit {
         name: 'Administration',
         url: null,
         expandable: true,
+        isActive: (this.navLinks.find((item: any) => item.name === 'Administration')?.submenu.findIndex((el: any) => el.url === this.router.url) > -1),
         submenu: [
           {
             name: 'Users and roles',
@@ -143,6 +240,7 @@ export class HeaderComponent implements OnInit {
         name: 'Tools',
         url: null,
         expandable: true,
+        isActive: (this.navLinks.find((item: any) => item.name === 'Tools')?.submenu.findIndex((el: any) => el.url === this.router.url) > -1),
         submenu: [
           {
             name: 'Database',
@@ -180,6 +278,7 @@ export class HeaderComponent implements OnInit {
         name: 'Settings & security',
         url: null,
         expandable: true,
+        isActive: (this.navLinks.find((item: any) => item.name === 'Settings & security')?.submenu.findIndex((el: any) => el.url === this.router.url) > -1),
         submenu: [
           {
             name: 'Configuration',
@@ -207,6 +306,7 @@ export class HeaderComponent implements OnInit {
         name: this.username,
         url: null,
         expandable: true,
+        isActive: (this.navLinks.find((item: any) => item.name === this.username)?.submenu.findIndex((el: any) => el.url === this.router.url) > -1),
         submenu: [
           {
             name: 'Profile',
