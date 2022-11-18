@@ -41,6 +41,7 @@ data.connect:[generic|magic]
          exists:x:@.dp/#/*/roles
          .lambda
             strings.split:x:@.dp/#/*/roles
+               .:" "
             for-each:x:@strings.split/*
                data.create
                   table:users_roles
