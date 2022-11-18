@@ -21,26 +21,34 @@ io.stream.read:x:@.arguments/*/file/*/stream
 // Transforming content to lambda.
 csv2lambda:x:@io.stream.read
 
-// Iterating through each record in above CSV file and creating a user belonging to the guest role.
+// Opening up our database connection.
 data.connect:[generic|magic]
 
+   // Iterating through each record in above CSV file and creating a user belonging to the guest role.
    for-each:x:@csv2lambda/*
       signal:transformers.hash-password
          reference:x:@.dp/#/*/password
 
-      // Creating our record.
+      // Creating our user record.
       data.create
          table:users
          return-id:bool:false
          values
             username:x:@.dp/#/*/username
             password:x:@.dp/#/*/password
+
+      // Iterating through all fields, excluding username and passwords, and using as extra fields.
       for-each:x:@.dp/#/*
+
+         // Making sure we exclude username and password
          switch:x:@.dp/#
+
             case:username
             case:password
+
                // Do nothing
                .foo
+
             default
                get-name:x:@.dp/#
                data.create
@@ -50,7 +58,6 @@ data.connect:[generic|magic]
                      user:x:@for-each/@.dp/#/*/username
                      type:x:@get-name
                      value:x:@.dp/#
-
 
 // Returning success to caller.
 return
