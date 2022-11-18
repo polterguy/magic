@@ -20,6 +20,11 @@ jobs:
         cd ./backend
         docker build -t aistamagic/magic-backend:latest-ci -f ./Dockerfile .
         docker push aistamagic/magic-backend:latest-ci
+        dotnet remove reference magic.lambda.system
+        dotnet remove reference magic.data.cql
+        dotnet remove reference magic.lambda.cql
+        docker build -t aistamagic/magic-backend:min-latest-ci -f ./Dockerfile .
+        docker push aistamagic/magic-backend:min-latest-ci
 
     - name: Updating Docker images on DEV machine
       uses: appleboy/ssh-action@master
