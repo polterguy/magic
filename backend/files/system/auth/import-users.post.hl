@@ -1,0 +1,42 @@
+
+/*
+ * Endpoint for uploading CSV file with multiple users in.
+ */
+.description:Endpoint for uploading CSV file with multiple users in
+.arguments
+   file:*
+.type:file-upload
+.accept:multipart/form-data
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/file/*/name
+validators.mandatory:x:@.arguments/*/file/*/stream
+
+// Verifying user has access to invoke endpoint.
+auth.ticket.verify:root
+
+// Loading CSV content from specified stream.
+io.stream.read:x:@.arguments/*/file/*/stream
+
+// Transforming content to lambda.
+csv2lambda:x:@io.stream.read
+
+// Iterating through each record in above CSV file and creating a user belonging to the guest role.
+data.connect:[generic|magic]
+
+   for-each:x:@csv2lambda/*
+      signal:transformers.hash-password
+         reference:x:@.dp/#/*/password
+
+      // Creating our record.
+      data.create
+         table:users
+         return-id:bool:false
+         values
+            username:x:@.dp/#/*/username
+            password:x:@.dp/#/*/password
+
+
+// Returning success to caller.
+return
+   result:success
