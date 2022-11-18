@@ -35,6 +35,21 @@ data.connect:[generic|magic]
          values
             username:x:@.dp/#/*/username
             password:x:@.dp/#/*/password
+      for-each:x:@.dp/#/*
+         switch:x:@.dp/#
+            case:username
+            case:password
+               // Do nothing
+               .foo
+            default
+               get-name:x:@.dp/#
+               data.create
+                  table:users_extra
+                  return-id:bool:false
+                  values
+                     user:x:@for-each/@.dp/#/*/username
+                     type:x:@get-name
+                     value:x:@.dp/#
 
 
 // Returning success to caller.
