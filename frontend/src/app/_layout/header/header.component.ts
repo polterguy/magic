@@ -87,11 +87,16 @@ export class HeaderComponent implements OnInit {
       this.activatedRoute.queryParamMap.subscribe((params: any) => {
         if (params) {
           this.getParams(params)
+        } else {
+          this.getPermissions();
         }
       })
   }
 
   ngOnInit() {
+  }
+
+  public getPermissions() {
     (async () => {
       while (this.backendService.active.access && !Object.keys(this.backendService.active.access.auth).length)
         await new Promise(resolve => setTimeout(resolve, 100));
@@ -193,6 +198,7 @@ export class HeaderComponent implements OnInit {
           // });
         }
       }
+      this.getPermissions();
     // });
   }
 
