@@ -7,11 +7,11 @@ import { CodemirrorActionsService } from '../../../hyper-ide/_services/codemirro
 import { TaskService } from '../../_services/task.service';
 
 @Component({
-  selector: 'app-new-task',
-  templateUrl: './new-task.component.html',
-  styleUrls: ['./new-task.component.scss']
+  selector: 'app-manage-task',
+  templateUrl: './manage-task.component.html',
+  styleUrls: ['./manage-task.component.scss']
 })
-export class NewTaskComponent implements OnInit {
+export class ManageTaskComponent implements OnInit {
 
   public task: Task = {
     id: '',
@@ -29,7 +29,7 @@ export class NewTaskComponent implements OnInit {
   constructor(
     private taskService: TaskService,
     private generalService: GeneralService,
-    private dialogRef: MatDialogRef<NewTaskComponent>,
+    private dialogRef: MatDialogRef<ManageTaskComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Task,
     private codemirrorActionsService: CodemirrorActionsService) { }
 
