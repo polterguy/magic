@@ -186,7 +186,7 @@ export class IdeEditorComponent implements OnInit {
     } else {
       this.evaluatorService.execute(this.currentFileData.content).subscribe({
         next: () => this.generalService.showFeedback('File successfully executed', 'successMessage'),
-        error: (error: any) => this.generalService.showFeedback(error.error.message??error, 'erroorMessage', 'Ok', 5000)});
+        error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'erroorMessage', 'Ok', 5000)});
     }
   }
 

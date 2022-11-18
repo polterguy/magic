@@ -126,7 +126,7 @@ export class ConnectComponent implements OnInit {
             },
             error: (error: any) => {
               this.waitingTest = false;
-              this.generalService.showFeedback(error, 'errorMessage');
+              this.generalService.showFeedback(error?.error?.message??error, 'errorMessage');
             },
           });
         } else {

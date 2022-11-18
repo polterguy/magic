@@ -123,7 +123,7 @@ export class SetupComponent implements OnInit {
         this.router.navigateByUrl('/');
       },
       error: (error: any) => {
-        this.generalService.showFeedback(error.error.message??error, 'errorMessage');
+        this.generalService.showFeedback(error?.error?.message??error, 'errorMessage');
         this.waiting = false;
       }
     });

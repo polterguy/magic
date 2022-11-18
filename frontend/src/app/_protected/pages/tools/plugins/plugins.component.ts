@@ -152,7 +152,7 @@ export class PluginsComponent implements OnInit {
               this.connectSocket(status.code, database);
             },
             error: (error: any) => {
-              this.generalService.showFeedback(error.error.message??error, 'errorMessage');
+              this.generalService.showFeedback(error?.error?.message??error, 'errorMessage');
               this.waitingInstallation = false;
             }
           });

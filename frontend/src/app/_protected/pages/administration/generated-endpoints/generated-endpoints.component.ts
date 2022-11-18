@@ -54,7 +54,7 @@ export class GeneratedEndpointsComponent implements OnInit, OnDestroy {
           let groups: any = [];
 
           groups['other'] = endpoints.reduce((item: any, x: any) => {
-            if (x.type !== 'internal' && !x.path.startsWith('magic/modules/magic/')) {
+            if (x.type !== 'internal' && !x.path.startsWith('magic/system/magic/')) {
               let paths: any[] = x.path.split('/');
               paths.splice(0, 1);
               paths.splice(2);

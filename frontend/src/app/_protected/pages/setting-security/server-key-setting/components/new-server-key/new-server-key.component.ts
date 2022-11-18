@@ -75,7 +75,7 @@ export class NewServerKeyComponent implements OnInit {
       next: (result: Response) => {
         this.newKey.content = result.result;
       },
-      error: (error: any) => this.generalService.showFeedback(error.error.message??error, 'errorMessage')
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')
     });
   }
 
@@ -128,7 +128,7 @@ export class NewServerKeyComponent implements OnInit {
       next: (result: Response) => {
         this.newKey.fingerprint = result.result;
       },
-      error: (error: any) => this.generalService.showFeedback(error.error.message??error, 'errorMessage')
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')
     });
   }
 
@@ -143,7 +143,7 @@ export class NewServerKeyComponent implements OnInit {
         this.isWaiting = false;
         this.dialogRef.close(true);
       },
-      error: (error: any) => this.generalService.showFeedback(error.error.message??error, 'errorMessage')
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')
     });
   }
 
@@ -164,7 +164,7 @@ export class NewServerKeyComponent implements OnInit {
           this.generalService.showFeedback('New key pair created successfully and the old key is backed up.', 'successMessage', 'Ok', 4000);
           this.dialogRef.close(true);
         },
-        error: (error:any) => this.generalService.showFeedback(error.error.message??error, 'errorMessage')
+        error: (error:any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')
       });
   }
 }

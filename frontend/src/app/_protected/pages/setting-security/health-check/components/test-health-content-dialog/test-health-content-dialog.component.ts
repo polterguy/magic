@@ -72,7 +72,7 @@ export class TestHealthContentDialogComponent implements OnInit, OnDestroy {
           next: (content: string) => {
             this.data.content.hyperlambda = content;
           },
-          error: (error: any) => this.generalService.showFeedback(error.error.message??error, 'errorMessage')});
+          error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
       }
     });
   }
@@ -89,7 +89,7 @@ export class TestHealthContentDialogComponent implements OnInit, OnDestroy {
         this.generalService.showFeedback('Assumption successfully saved', 'successMessage', 'Ok', 3000);
         this.dialogRef.close();
       },
-      error: (error: any) => this.generalService.showFeedback(error.error.message??error, 'errorMessage')});
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
   }
 
   public executeTest() {
@@ -106,7 +106,7 @@ export class TestHealthContentDialogComponent implements OnInit, OnDestroy {
       error: (error: any) => {
         this.data.success = false;
         this.data.status = 'Failed';
-        this.generalService.showFeedback(error.error.message??error, 'errorMessage');
+        this.generalService.showFeedback(error?.error?.message??error, 'errorMessage');
       }});
   }
 

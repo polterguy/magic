@@ -61,7 +61,7 @@ export class CryptoService {
         }
       }
     }
-    return this.httpService.get<PublicKey[]>('/magic/modules/magic/crypto_keys' + query);
+    return this.httpService.get<PublicKey[]>('/magic/system/magic/crypto_keys' + query);
   }
 
   /**
@@ -77,7 +77,7 @@ export class CryptoService {
       query += '&subject.like=' + encodeURIComponent('%' + filter.filter + '%');
       query += '&fingerprint.eq=' + encodeURIComponent(filter.filter);
     }
-    return this.httpService.get<Count>('/magic/modules/magic/crypto_keys-count' + query);
+    return this.httpService.get<Count>('/magic/system/magic/crypto_keys-count' + query);
   }
 
   /**
@@ -86,7 +86,7 @@ export class CryptoService {
    * @param id Unique ID of public key to delete
    */
   deletePublicKey(id: number) {
-    return this.httpService.delete<Affected>('/magic/modules/magic/crypto_keys?id=' + id);
+    return this.httpService.delete<Affected>('/magic/system/magic/crypto_keys?id=' + id);
   }
 
   /**
@@ -96,7 +96,7 @@ export class CryptoService {
    * @param enabled Whether or not caller wants to enable or disable key
    */
   setEnabled(id: number, enabled: boolean) {
-    return this.httpService.put<Affected>('/magic/modules/magic/crypto_keys', {
+    return this.httpService.put<Affected>('/magic/system/magic/crypto_keys', {
       id,
       enabled
     });
@@ -122,7 +122,7 @@ export class CryptoService {
     } else {
       payload.domain = null;
     }
-    return this.httpService.put<Affected>('/magic/modules/magic/crypto_keys', payload);
+    return this.httpService.put<Affected>('/magic/system/magic/crypto_keys', payload);
   }
 
   /**
@@ -188,7 +188,7 @@ export class CryptoService {
    * @param key Key caller wants to import
    */
   createPublicKey(key: PublicKey) {
-    return this.httpService.post<Response>('/magic/modules/magic/crypto_keys', {
+    return this.httpService.post<Response>('/magic/system/magic/crypto_keys', {
       type: key.type,
       subject: key.subject,
       email: key.email,
@@ -251,7 +251,7 @@ export class CryptoService {
         }
       }
     }
-    return this.httpService.get<CryptoInvocation[]>('/magic/modules/magic/crypto_invocations' + query);
+    return this.httpService.get<CryptoInvocation[]>('/magic/system/magic/crypto_invocations' + query);
   }
 
   /**
@@ -269,6 +269,6 @@ export class CryptoService {
         query += '?crypto_key.eq=' + encodeURIComponent(filter.filter.crypto_key);
       }
     }
-    return this.httpService.get<Count>('/magic/modules/magic/crypto_invocations-count' + query);
+    return this.httpService.get<Count>('/magic/system/magic/crypto_invocations-count' + query);
   }
 }

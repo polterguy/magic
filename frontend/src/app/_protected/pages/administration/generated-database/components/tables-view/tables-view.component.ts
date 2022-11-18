@@ -89,7 +89,7 @@ export class TablesViewComponent implements OnInit, OnDestroy {
           this.refetchDatabases();
           // this.applyMigration(result.sql);
         },
-        error: (error) => this.generalService.showFeedback(error.error.message??error, 'errorMessage', 'Ok', 5000)
+        error: (error) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage', 'Ok', 5000)
       });
   }
 
@@ -112,7 +112,7 @@ export class TablesViewComponent implements OnInit, OnDestroy {
           this.refetchDatabases();
           // this.applyMigration(result.sql);
         },
-        error: (error) => this.generalService.showFeedback(error.error.message??error, 'errorMessage', 'Ok', 5000)
+        error: (error) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage', 'Ok', 5000)
       });
   }
 
@@ -167,7 +167,7 @@ export class TablesViewComponent implements OnInit, OnDestroy {
           this.refetchDatabases();
           // this.applyMigration(result.sql);
         },
-        error: (error: any) => this.generalService.showFeedback(error.error.message??error, 'errorMessage', 'Ok', 5000)
+        error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage', 'Ok', 5000)
       });
   }
 
@@ -183,7 +183,7 @@ export class TablesViewComponent implements OnInit, OnDestroy {
           this.refetchDatabases();
           // this.applyMigration(result.sql);
         },
-        error: (error: any) => this.generalService.showFeedback(error.error.message??error, 'errorMessage', 'Ok', 5000)
+        error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage', 'Ok', 5000)
       });
   }
 
@@ -279,7 +279,7 @@ export class TablesViewComponent implements OnInit, OnDestroy {
                 },
                 error: (error: any) => {
                   this.generalService.hideLoading();
-                  this.generalService.showFeedback(error.error.message??error, 'errorMessage', 'Ok', 5000)
+                  this.generalService.showFeedback(error?.error?.message??error, 'errorMessage', 'Ok', 5000)
                 }
               });
             }
@@ -287,7 +287,7 @@ export class TablesViewComponent implements OnInit, OnDestroy {
         },
         error: (error: any) => {
           this.generalService.hideLoading();
-          this.generalService.showFeedback(error.error.message??error, 'errorMessage', 'Ok', 5000)
+          this.generalService.showFeedback(error?.error?.message??error, 'errorMessage', 'Ok', 5000)
         }
       });
   }

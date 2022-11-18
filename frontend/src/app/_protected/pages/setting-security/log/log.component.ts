@@ -78,7 +78,7 @@ export class LogComponent implements OnInit {
       },
       error: (error: any) => {
         this.retrievingItems = false;
-        this.generalService.showFeedback(error.error.message??error, 'errorMessage');
+        this.generalService.showFeedback(error?.error?.message??error, 'errorMessage');
       }});
   }
 
@@ -87,7 +87,7 @@ export class LogComponent implements OnInit {
       next: (count) => {
         this.count = count.count;
       },
-      error: (error: any) => this.generalService.showFeedback(error.error.message??error, 'errorMessage')});
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
   }
 
   page(event: PageEvent) {

@@ -83,7 +83,7 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
           });
         }
       },
-      error: (error: any) => this.generalService.showFeedback(error.error.message??error, 'errorMessage')});
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
   }
 
   /**

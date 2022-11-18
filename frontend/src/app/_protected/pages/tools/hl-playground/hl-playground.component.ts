@@ -88,7 +88,7 @@ export class HlPlaygroundComponent implements OnInit, OnDestroy {
             this.input.hyperlambda = content;
             this.filename = filename;
           },
-          error: (error: any) => this.generalService.showFeedback(error.error.message??error, 'errorMessage')});
+          error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
       }
     });
   }
@@ -105,7 +105,7 @@ export class HlPlaygroundComponent implements OnInit, OnDestroy {
       if (filename) {
         this.evaluatorService.saveSnippet(filename, this.input.hyperlambda).subscribe({
           next: () => this.generalService.showFeedback('Snippet successfully saved'),
-          error: (error: any) => this.generalService.showFeedback(error.error.message??error, 'errorMessage')});
+          error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
       }
     });
   }
@@ -125,7 +125,7 @@ export class HlPlaygroundComponent implements OnInit, OnDestroy {
         this.output.hyperlambda = res.result;
         this.generalService.showFeedback('Hyperlambda was successfully executed', 'successMessage');
       },
-      error: (error: any) =>  this.generalService.showFeedback(error.error.message??error, 'errorMessage', 'Ok', 5000)});
+      error: (error: any) =>  this.generalService.showFeedback(error?.error?.message??error, 'errorMessage', 'Ok', 5000)});
   }
 
   public clear() {

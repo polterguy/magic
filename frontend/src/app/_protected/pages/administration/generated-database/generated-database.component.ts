@@ -114,7 +114,7 @@ export class GeneratedDatabaseComponent implements OnInit {
 
         this.getConnectionString(this.selectedDbType, this.paramDbConnectionString, preserveQueryParam);
       },
-      error: (error: any) => this.generalService.showFeedback(error.error.message ?? error, 'errorMessage', 'Ok', 5000)
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
     });
   }
 
@@ -150,7 +150,7 @@ export class GeneratedDatabaseComponent implements OnInit {
         }
       },
       error: (error: any) => {
-        this.generalService.showFeedback(error.error.message ?? error, 'errorMessage', 'Ok', 5000);
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000);
       }
     });
   }
@@ -206,7 +206,7 @@ export class GeneratedDatabaseComponent implements OnInit {
         error: (error: any) => {
           this._dbLoading.next(false);
           this.generalService.hideLoading();
-          this.generalService.showFeedback(error.error.message, 'errorMessage', 'Ok', 5000);
+          this.generalService.showFeedback(error?.error?.message, 'errorMessage', 'Ok', 5000);
         }
       })
   }
@@ -235,7 +235,7 @@ export class GeneratedDatabaseComponent implements OnInit {
               this.getDatabases();
               // this.applyMigration(result.sql);
             },
-            error: (error: any) => this.generalService.showFeedback(error.error.message ?? error, 'errorMessage', 'Ok', 4000)
+            error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)
           });
       }
     });
@@ -290,7 +290,7 @@ export class GeneratedDatabaseComponent implements OnInit {
           this.getDatabases(true);
           // this.applyMigration(result.sql);
         },
-        error: (error: any) => this.generalService.showFeedback(error.error.message ?? error, 'errorMessage', 'Ok', 5000)
+        error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
       });
   }
 
@@ -345,12 +345,12 @@ export class GeneratedDatabaseComponent implements OnInit {
                 next: () => {
                   this.generalService.showFeedback('Database successfully exported', 'successMessage');
                 },
-                error: (error: any) => this.generalService.showFeedback(error.error.message ?? error, 'errorMessage', 'Ok', 5000)
+                error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
               });
             }
           });
         },
-        error: (error: any) => this.generalService.showFeedback(error.error.message ?? error, 'errorMessage', 'Ok', 5000)
+        error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
       });
   }
 
@@ -383,7 +383,7 @@ export class GeneratedDatabaseComponent implements OnInit {
                 this.selectedDatabase = null;
                 this.getDatabases();
               },
-              error: (error: any) => this.generalService.showFeedback(error.error.message ?? error, 'errorMessage', 'Ok', 5000)
+              error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
             });
         }
       })
@@ -417,7 +417,7 @@ export class GeneratedDatabaseComponent implements OnInit {
         },
         error: (error: any) => {
           this.generalService.hideLoading();
-          this.generalService.showFeedback(error.error.message ?? error, 'errorMessage', 'Ok', 5000)
+          this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
         }
       })
   }
