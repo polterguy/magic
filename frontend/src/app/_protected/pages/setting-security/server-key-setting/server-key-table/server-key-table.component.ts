@@ -66,7 +66,7 @@ export class ServerKeyTableComponent implements OnInit {
         this.dataSource = keys || [];
         this.isLoading = false;
       },
-      error: (error: any) => this.generalService.showFeedback(error.error.message??error, 'errorMessage')});
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
   }
 
   public getCount() {
@@ -76,7 +76,7 @@ export class ServerKeyTableComponent implements OnInit {
         this.totalItems = res.count;
       },
 
-      error: (error: any) => this.generalService.showFeedback(error.error.message??error, 'errorMessage')});
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
   }
 
   /**
@@ -102,7 +102,7 @@ export class ServerKeyTableComponent implements OnInit {
             this.getKeys();
             this.getCount();
           },
-          error:(error: any) => this.generalService.showFeedback(error.error.message??error, 'errorMessage')});
+          error:(error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
       }
     })
   }
@@ -118,7 +118,7 @@ export class ServerKeyTableComponent implements OnInit {
         this.generalService.showFeedback(`Key was successfully ${event.checked ? 'enabled' : 'disabled'}`, 'successMessage')
         this.getKeys();
       },
-      error: (error: any) => this.generalService.showFeedback(error.error.message??error, 'errorMessage')});
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
   }
 
   public viewDetails(key: PublicKey) {

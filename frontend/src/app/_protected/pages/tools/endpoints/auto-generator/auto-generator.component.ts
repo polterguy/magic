@@ -210,14 +210,14 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
                     },
                     error: (error: any) => {
                       this.generalService.hideLoading();
-                      this.generalService.showFeedback(error.error.message ?? error, 'errorMessage', 'Ok', 4000)
+                      this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)
                     }
                   });
 
                 },
                 error: (error: any) => {
                   this.generalService.hideLoading();
-                  this.generalService.showFeedback(error.error.message ?? error, 'errorMessage', 'Ok', 4000);
+                  this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000);
                 }
               });
             } else {

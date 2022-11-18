@@ -56,7 +56,7 @@ export class ServerKeyReceiptsComponent implements OnInit {
         this.dataSource = invocations || [];
         this.isLoading = false;
       },
-      error: (error: any) => this.generalService.showFeedback(error.error.message??error, 'errorMessage')});
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
   }
 
   private getCount() {
@@ -67,7 +67,7 @@ export class ServerKeyReceiptsComponent implements OnInit {
       next: (res) => {
         this.totalItems = res.count
       },
-      error: (error: any) => this.generalService.showFeedback(error.error.message??error, 'errorMessage')});
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
   }
 
   /**

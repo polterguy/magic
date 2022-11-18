@@ -66,7 +66,7 @@ export class ServerKeyDetailsComponent implements OnInit {
     if (!this.data.key.username) {
       this.cryptoService.getUserAssociation(this.data.key.id).subscribe({
         next: (result: any) => this.data.key.username = result.result,
-        error: (error: any) => this.generalService.showFeedback(error.error.message??error, 'errorMessage')});
+        error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
     }
   }
 
@@ -167,7 +167,7 @@ export class ServerKeyDetailsComponent implements OnInit {
               }
               this.dialogRef.close(true);
             },
-            error: (error: any) => this.generalService.showFeedback(error.error.message??error, 'errorMessage')});
+            error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
         } else {
           this.cryptoService.deleteUserAssociation(key.key.id).subscribe({
             next: () => {
@@ -178,9 +178,9 @@ export class ServerKeyDetailsComponent implements OnInit {
               }
               this.dialogRef.close(true);
             },
-            error:(error: any) => this.generalService.showFeedback(error.error.message??error, 'errorMessage')});
+            error:(error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
         }
       },
-      error: (error: any) => this.generalService.showFeedback(error.error.message??error, 'errorMessage')});
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
   }
 }

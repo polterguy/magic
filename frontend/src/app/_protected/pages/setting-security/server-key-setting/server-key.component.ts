@@ -49,7 +49,7 @@ export class ServerKeyComponent implements OnInit {
         }
         this.publicKeyFull = <PublicKeyFull>key;
       },
-      error: (error: any) => this.generalService.showFeedback(error.error.message??error, 'errorMessage')});
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
   }
 
   public copy(text: string) {

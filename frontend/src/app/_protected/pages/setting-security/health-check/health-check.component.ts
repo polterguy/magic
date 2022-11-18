@@ -104,7 +104,7 @@ export class HealthCheckComponent implements OnInit {
 
         this.isLoading = false;
       },
-      error: (error: any) => this.generalService.showFeedback(error.error.message??error, 'errorMessage')});
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
   }
 
   /**
@@ -126,7 +126,7 @@ export class HealthCheckComponent implements OnInit {
 
           this.openContent(item);
         },
-        error: (error: any) => this.generalService.showFeedback(error.error.message??error, 'errorMessage')});
+        error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
     }
   }
 
@@ -157,7 +157,7 @@ export class HealthCheckComponent implements OnInit {
       error: (error: any) => {
         item.success = false;
         item.status = 'Failed';
-        this.generalService.showFeedback(error.error.message??error, 'errorMessage');
+        this.generalService.showFeedback(error?.error?.message??error, 'errorMessage');
       }});
   }
 
@@ -185,7 +185,7 @@ export class HealthCheckComponent implements OnInit {
             this.originalDataSource = this.originalDataSource.filter((el: any) => el.filename !== item.filename);
             this.cdr.detectChanges();
           },
-          error: (error: any) => this.generalService.showFeedback(error.error.message??error, 'errorMessage')});
+          error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
       }
     });
   }
@@ -223,7 +223,7 @@ export class HealthCheckComponent implements OnInit {
             }
           },
           error: (error: any) => {
-            this.generalService.showFeedback(error.error.message??error, 'errorMessage');
+            this.generalService.showFeedback(error?.error?.message??error, 'errorMessage');
 
             /*
              * Filtering out tests according to result,

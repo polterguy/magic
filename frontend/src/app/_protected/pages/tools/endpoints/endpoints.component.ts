@@ -126,7 +126,7 @@ export class EndpointsComponent implements OnInit {
         }
       },
       error: (error: any) => {
-        this.generalService.showFeedback(error.error.message ?? error, 'errorMessage', 'Ok', 5000);
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000);
       }
     });
   }
@@ -144,7 +144,7 @@ export class EndpointsComponent implements OnInit {
           this._dbLoading.next(false);
         },
         error: (error: any) => {
-          this.generalService.showFeedback(error.error.message, 'errorMessage', 'Ok', 5000);
+          this.generalService.showFeedback(error?.error?.message, 'errorMessage', 'Ok', 5000);
         }
       })
   }

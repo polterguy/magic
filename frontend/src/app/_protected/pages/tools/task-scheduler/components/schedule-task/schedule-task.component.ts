@@ -65,6 +65,6 @@ export class ScheduleTaskComponent implements OnInit {
         this.generalService.showFeedback('Task was successfully scheduled', 'successMessage');
         this.dialogRef.close(true);
       },
-      error: (error: any) => this.generalService.showFeedback(error.error.message??error, 'errorMessage', 'Ok', 4000)});
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage', 'Ok', 4000)});
   }
 }

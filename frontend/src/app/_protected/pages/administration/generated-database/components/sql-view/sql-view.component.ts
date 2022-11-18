@@ -143,7 +143,7 @@ export class SqlViewComponent implements OnInit, OnDestroy {
                 this.selectedSnippet = filename;
                 this.generalService.hideLoading();
               }, error: (error: any) => {
-                this.generalService.showFeedback(error.error.message ?? error, 'errorMessage', 'Ok', 5000)
+                this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
                 this.generalService.hideLoading();
               }
             });
@@ -207,13 +207,13 @@ export class SqlViewComponent implements OnInit, OnDestroy {
           error: (error: any) => {
             this.waitingRun = false;
             if (error.error &&
-              error.error.message &&
-              error.error.message &&
-              (<string>error.error.message).toLowerCase().indexOf('incorrect syntax near \'go\'') !== -1) {
+              error?.error?.message &&
+              error?.error?.message &&
+              (<string>error?.error?.message).toLowerCase().indexOf('incorrect syntax near \'go\'') !== -1) {
               this.generalService.showFeedback('Turn ON batch mode to execute this SQL', 'errorMessage', 'Ok', 5000);
               return;
             }
-            this.generalService.showFeedback(error.error.message ?? error, 'errorMessage', 'Ok', 5000);
+            this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000);
             this.generalService.hideLoading();
           }
         });

@@ -79,7 +79,7 @@ export class ProfileComponent implements OnInit {
         this.generalService.showFeedback('Details saved successfully', 'successMessage');
       },
       error: (error: any) => {
-        this.generalService.showFeedback(error.error.message??error, 'errorMessage');
+        this.generalService.showFeedback(error?.error?.message??error, 'errorMessage');
       }
     })
   }
@@ -111,6 +111,6 @@ export class ProfileComponent implements OnInit {
         this.backendService.logout(false);
         this.router.navigate(['/authentication']);
       },
-      error: (error: any) => this.generalService.showFeedback(error.error.message??error, 'errorMessage')});
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
   }
 }

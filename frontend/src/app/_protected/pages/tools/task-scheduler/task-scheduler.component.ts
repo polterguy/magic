@@ -73,14 +73,14 @@ export class TaskSchedulerComponent implements OnInit {
           this.dataSource = tasks || [];
           this.isLoading = false;
         },
-        error: (error: any) => this.generalService.showFeedback(error.error.message ?? error, 'errorMessage')
+        error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
       });
   }
 
   private getCount() {
     this.taskService.count(this.searchText).subscribe({
       next: (count: Count) => this.totalItems = count.count,
-      error: (error: any) => this.generalService.showFeedback(error.error.message ?? error, 'errorMessage')
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
     });
   }
 
@@ -98,7 +98,7 @@ export class TaskSchedulerComponent implements OnInit {
           });
         }
       },
-      error: (error: any) => this.generalService.showFeedback(error.error.message ?? error, 'errorMessage')
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
     });
   }
 
@@ -135,7 +135,7 @@ export class TaskSchedulerComponent implements OnInit {
   public execute(task: any) {
     this.taskService.execute(task.id).subscribe({
       next: () => this.generalService.showFeedback('Task successfully executed', 'successMessage'),
-      error: (error: any) => this.generalService.showFeedback(error.error.message ?? error, 'errorMessage', 'Ok', 4000)
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)
     });
   }
 
