@@ -57,7 +57,7 @@ data.connect:[generic|magic]
 
             case:username
             case:password
-            case:role
+            case:roles
 
                // Do nothing
                .foo
