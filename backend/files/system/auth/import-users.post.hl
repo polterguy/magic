@@ -37,6 +37,17 @@ data.connect:[generic|magic]
             username:x:@.dp/#/*/username
             password:x:@.dp/#/*/password
 
+      if
+         exists:x:@.dp/#/*/roles
+         .lambda
+            strings.split:x:@.dp/#/*/roles
+            for-each:x:@strings.split/*
+               data.create
+                  table:users_roles
+                  values
+                     user:x:@for-each/@.dp/#/*/username
+                     role:x:@.dp/#
+
       // Iterating through all fields, excluding username and passwords, and using as extra fields.
       for-each:x:@.dp/#/*
 
@@ -45,6 +56,7 @@ data.connect:[generic|magic]
 
             case:username
             case:password
+            case:role
 
                // Do nothing
                .foo
