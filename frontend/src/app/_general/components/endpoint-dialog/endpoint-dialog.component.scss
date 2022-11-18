@@ -1,6 +1,6 @@
 
 ::ng-deep .endpoint-result {
-  .CodeMirror { height: 100%;min-height: 360px; }
+  .CodeMirror { height: 100%;min-height: 360px;max-height: 44vh; }
 }
 .params-inputs ::ng-deep {
   .mat-form-field-appearance-outline .mat-form-field-infix { padding-top: 3px; padding-bottom: 8px; }

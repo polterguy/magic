@@ -140,6 +140,7 @@ export class EndpointDialogComponent implements OnInit {
 
   private prepareData(item: any) {
     this.itemDetails = item;
+console.log(item)
     this.originalPath = item.path;
 
     item.input ? this.setForm() : '';
@@ -180,7 +181,9 @@ export class EndpointDialogComponent implements OnInit {
         }
         payload[idx.name] = type;
       }
-      setTimeout(() => this.payload = JSON.stringify(payload, null, 2), 250);
+      this.payload = JSON.stringify(payload, null, 2)
+      // setTimeout(() => this.payload = JSON.stringify(payload, null, 2), 250);
+      console.log(this.payload, this.cmOptions.json)
       setTimeout(() => {
         document.querySelectorAll('.CodeMirror').forEach(item => {
           var domNode = (<any>item);
@@ -205,7 +208,7 @@ export class EndpointDialogComponent implements OnInit {
 
   private setForm() {
     this.itemDetails.input.forEach((element: any) => {
-      this.paramsForm.setControl(element.name, new FormControl<any>(null));
+      this.paramsForm.setControl(element.name, new FormControl<any>(''));
     });
 
     this.cdr.detectChanges();
