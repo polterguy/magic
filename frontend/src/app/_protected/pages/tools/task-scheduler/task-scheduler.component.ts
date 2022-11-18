@@ -5,9 +5,11 @@ import { Model } from 'src/app/codemirror/codemirror-hyperlambda/codemirror-hype
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { Count } from 'src/app/_protected/models/common/count.model';
 import { MatDialog } from '@angular/material/dialog';
-import { NewTaskComponent } from './components/new-task/new-task.component';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { ScheduleTaskComponent } from './components/schedule-task/schedule-task.component';
+import { ManageTaskComponent } from './components/manage-task/manage-task.component';
+import { Schedule } from './_models/schedule.model';
+import { PageEvent } from '@angular/material/paginator';
 
 /*
  * Helper class to encapsulate a task and its details,
@@ -39,10 +41,12 @@ export class TaskSchedulerComponent implements OnInit {
   public dataSource: any = [];
 
   pageIndex: number = 0;
-  pageSize: number = 5;
+  pageSize: number = 13;
   totalItems: number = 0;
 
   public isLoading: boolean = true;
+
+  public searchText: string = '';
 
   constructor(
     private dialog: MatDialog,
@@ -59,7 +63,7 @@ export class TaskSchedulerComponent implements OnInit {
    */
   private getTasks() {
     this.taskService.list(
-      '',
+      this.searchText,
       this.pageIndex * this.pageSize,
       this.pageSize).subscribe({
         next: (tasks: Task[]) => {
@@ -69,13 +73,15 @@ export class TaskSchedulerComponent implements OnInit {
           this.dataSource = tasks || [];
           this.isLoading = false;
         },
-        error: (error: any) => this.generalService.showFeedback(error.error.message??error, 'errorMessage')});
+        error: (error: any) => this.generalService.showFeedback(error.error.message ?? error, 'errorMessage')
+      });
   }
 
   private getCount() {
-    this.taskService.count('').subscribe({
+    this.taskService.count(this.searchText).subscribe({
       next: (count: Count) => this.totalItems = count.count,
-      error: (error: any) => this.generalService.showFeedback(error.error.message??error, 'errorMessage')});
+      error: (error: any) => this.generalService.showFeedback(error.error.message ?? error, 'errorMessage')
+    });
   }
 
   private getDetails(item: any) {
@@ -92,11 +98,12 @@ export class TaskSchedulerComponent implements OnInit {
           });
         }
       },
-      error: (error: any) => this.generalService.showFeedback(error.error.message??error, 'errorMessage')});
+      error: (error: any) => this.generalService.showFeedback(error.error.message ?? error, 'errorMessage')
+    });
   }
 
   public addTask() {
-    this.dialog.open(NewTaskComponent, {
+    this.dialog.open(ManageTaskComponent, {
       width: '800px',
       panelClass: ['light']
     }).afterClosed().subscribe((res: boolean) => {
@@ -108,7 +115,7 @@ export class TaskSchedulerComponent implements OnInit {
   }
 
   public editTask(task: any) {
-    this.dialog.open(NewTaskComponent, {
+    this.dialog.open(ManageTaskComponent, {
       width: '800px',
       panelClass: ['light'],
       data: task
@@ -128,7 +135,8 @@ export class TaskSchedulerComponent implements OnInit {
   public execute(task: any) {
     this.taskService.execute(task.id).subscribe({
       next: () => this.generalService.showFeedback('Task successfully executed', 'successMessage'),
-      error: (error: any) => this.generalService.showFeedback(error.error.message??error, 'errorMessage', 'Ok', 4000)});
+      error: (error: any) => this.generalService.showFeedback(error.error.message ?? error, 'errorMessage', 'Ok', 4000)
+    });
   }
 
   /**
@@ -154,7 +162,8 @@ export class TaskSchedulerComponent implements OnInit {
             this.getTasks();
             this.getCount();
           },
-          error: (error: any)=> this.generalService.showFeedback(error.error.message??error, 'errorMessage', 'Ok', 4000)});
+          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)
+        });
       }
     });
   }
@@ -176,11 +185,49 @@ export class TaskSchedulerComponent implements OnInit {
     });
   }
 
+  /**
+   * Invoked when user wants to delete a schedule for a task.
+   *
+   * @param task Task that contains schedule
+   * @param schedule Schedule to remove from task
+   */
+  deleteSchedule(schedule: Schedule, task: any) {
+    this.dialog.open(ConfirmationDialogComponent, {
+      width: '500px',
+      data: {
+        title: `Delete schedule for ${task.id} task`,
+        description_extra: `You are deleting the selected schedule for this task. Do you want to continue?`,
+        action_btn: 'Delete',
+        action_btn_color: 'warn',
+        bold_description: true
+      }
+    }).afterClosed().subscribe((result: string) => {
+      if (result === 'confirm') {
+        this.taskService.deleteSchedule(schedule.id).subscribe({
+          next: () => {
+            task.schedules.splice(task.schedules.indexOf(schedule), 1);
+            this.generalService.showFeedback('Schedule deleted successfully', 'successMessage');
+          },
+          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)
+        });
+      }
+    })
+  }
+
+  /**
+   * Invoked when paginator wants to page data table.
+   *
+   * @param e Page event argument
+   */
+  public changePage(e: PageEvent) {
+    this.pageSize = e.pageSize;
+    this.pageIndex = e.pageIndex;
+    this.getTasks();
+  }
+
   public filterList(event: string) {
-    if (event !== '') {
-      // this.dataSource = this.originalDataSource.filter((item: any) => item.name.indexOf(event) > -1);
-    } else {
-      // this.dataSource = this.originalDataSource;
-    }
+    this.searchText = event;
+    this.getTasks();
+    this.getCount();
   }
 }

@@ -1,4 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
   selector: 'app-task-searchbox',
@@ -10,17 +12,29 @@ export class TaskSearchboxComponent implements OnInit {
   @Output() filterList = new EventEmitter<any>();
   @Output() addTask = new EventEmitter<any>();
 
+  filterControl: FormControl;
+
   constructor() { }
 
   ngOnInit(): void {
-
+    this.filterControl = new FormControl('');
+    this.filterControl.valueChanges
+      .pipe(debounceTime(600), distinctUntilChanged())
+      .subscribe((query: string) => {
+        if (query.length > 2) {
+          this.applyFilter(query);
+        }
+        if (query.length === 0) {
+          this.applyFilter('');
+        }
+      });
   }
 
   /**
    * Invoking endpoint to search in unique fields.
    * @params event
    */
-   public applyFilter(keyword: string) {
+   private applyFilter(keyword: string) {
     this.filterList.emit(keyword);
   }
 
@@ -29,7 +43,7 @@ export class TaskSearchboxComponent implements OnInit {
    * @callback filterList To refetch the unfiltered list.
    */
   public removeSearchTerm() {
-    this.filterList.emit('');
+    this.filterControl.setValue('');
   }
 
   public invokeAddTask() {

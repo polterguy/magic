@@ -21,7 +21,8 @@
               [(ngModel)]="fixedDateTime"
               [ngModelOptions]="{standalone: true}"
               [min]="minDate"
-              (focus)="picker.open()"
+              (click)="picker.open()"
+              readonly
               [disabled]="scheduleOption==='repeat'">
             <mat-datepicker-toggle matPrefix [for]="picker"></mat-datepicker-toggle>
             <ngx-mat-datetime-picker #picker [showSeconds]="false">
