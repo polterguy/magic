@@ -1,0 +1,31 @@
+
+// Generates a long lasting JWT token with the specified username and the specified role, expiring on the specified date.
+.arguments
+   username:string
+   role:string
+   expires:date
+.description:Generates a long lasting JWT token with the specified username and the specified role, expiring on the specified date
+.type:internal
+
+// Ensures user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/username
+validators.mandatory:x:@.arguments/*/role
+validators.mandatory:x:@.arguments/*/expires
+
+/*
+ * Invokes [auth.ticket.create] to create our JWT token,
+ * making sure we return the token to the caller.
+ */
+auth.ticket.create
+   username:x:@.arguments/*/username
+   expires:x:@.arguments/*/expires
+   roles
+      .:x:@.arguments/*/role
+
+// Returns the authentication JWT ticket created above to caller.
+unwrap:x:+/*
+return
+   ticket:x:@auth.ticket.create
