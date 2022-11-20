@@ -366,5 +366,7 @@ backend/files/etc/frontend
 backend/files/etc/www/*
 !backend/files/etc/www/README.md
 
-
 backend/files/etc/robo-crm/kpi/*.*
+
+backend/files/etc/plugins/*
+backend/files/etc/blogs/*
