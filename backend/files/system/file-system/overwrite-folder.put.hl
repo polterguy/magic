@@ -15,6 +15,8 @@ validators.mandatory:x:@.arguments/*/file
 validators.mandatory:x:@.arguments/*/file/*/name
 validators.mandatory:x:@.arguments/*/file/*/stream
 validators.mandatory:x:@.arguments/*/folder
+
+// Making sure specified file is a ZIP file.
 strings.split:x:@.arguments/*/file/*/name
    .:.
 if
@@ -29,6 +31,14 @@ if
          public:true
          status:415
 
+// Emptying folder.
+io.folder.list:x:@.arguments/*/folder
+for-each:x:-/*
+   io.folder.delete:x:@.dp/#
+io.file.list:x:@.arguments/*/folder
+for-each:x:-/*
+   io.file.delete:x:@.dp/#
+
 // Figuring out full path of ZIP file as it should be saved.
 .filename
 set-value:x:@.filename
@@ -39,27 +49,6 @@ set-value:x:@.filename
 // Saving stream to file.
 io.stream.save-file:x:@.filename
    get-value:x:@.arguments/*/file/*/stream
-
-// Figuring out complete folder name of file after being unzipped.
-remove-nodes:x:@strings.split/0/-
-strings.join:x:@strings.split/*
-   .:.
-
-// Checking if folder already exists, at which point we delete it.
-.folder
-set-value:x:@.folder
-   strings.concat
-      get-value:x:@.arguments/*/folder
-      get-value:x:@strings.join
-      .:/
-
-// Deleting previously existing folder with same name.
-if
-   io.folder.exists:x:@.folder
-   .lambda
-   
-      // Folder already exists, deleting it.
-      io.folder.delete:x:@.folder
 
 // Unzipping file.
 io.file.unzip:x:@.filename
