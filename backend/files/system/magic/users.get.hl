@@ -47,6 +47,21 @@ data.connect:[generic|magic]
       where
          and
 
+   // Making sure we return locked as boolean in case we're on SQLite.
+   for-each:x:@data.read/*
+      if
+         eq:x:@.dp/#/*/locked
+            .:long:1
+         .lambda
+            set-value:x:@.dp/#/*/locked
+               .:bool:true
+      else-if
+         eq:x:@.dp/#/*/locked
+            .:long:0
+         .lambda
+            set-value:x:@.dp/#/*/locked
+               .:bool:false
+
    // Mixing in roles.
    include:x:@data.read/*
       data.read

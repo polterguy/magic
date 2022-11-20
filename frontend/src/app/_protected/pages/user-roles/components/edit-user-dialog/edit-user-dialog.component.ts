@@ -65,7 +65,7 @@ export class EditUserDialogComponent implements OnInit {
         this.setFormFields();
 
         this.sortRolesBySelected();
-        this.userIsLocked = (this.data.user.locked === true);
+        this.userIsLocked = this.data.user.locked;
       }
     })();
   }
@@ -76,7 +76,6 @@ export class EditUserDialogComponent implements OnInit {
 
   setFormFields() {
     delete this.formData?.created;
-    delete this.formData?.locked;
     for (const key in this.formData) {
       this.userForm.setControl(key, new FormControl(this.formData[key]));
     }
