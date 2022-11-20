@@ -1,0 +1,72 @@
+
+// Uploads, unzips, and overwrites the specified folder.
+.arguments
+   file:*
+   folder:string
+.description:Uploads, unzips, and overwrites the specified folder
+.type:internal
+.accept:multipart/form-data
+
+// Ensures user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/file
+validators.mandatory:x:@.arguments/*/file/*/name
+validators.mandatory:x:@.arguments/*/file/*/stream
+validators.mandatory:x:@.arguments/*/folder
+strings.split:x:@.arguments/*/file/*/name
+   .:.
+if
+   not
+      eq
+         get-value:x:@strings.split/0/-
+         .:zip
+   .lambda
+
+      // Oops, not a ZIP file ...
+      throw:You can only upload ZIP files
+         public:true
+         status:415
+
+// Figuring out full path of ZIP file as it should be saved.
+.filename
+set-value:x:@.filename
+   strings.concat
+      get-value:x:@.arguments/*/folder
+      get-value:x:@.arguments/*/file/*/name
+
+// Saving stream to file.
+io.stream.save-file:x:@.filename
+   get-value:x:@.arguments/*/file/*/stream
+
+// Figuring out complete folder name of file after being unzipped.
+remove-nodes:x:@strings.split/0/-
+strings.join:x:@strings.split/*
+   .:.
+
+// Checking if folder already exists, at which point we delete it.
+.folder
+set-value:x:@.folder
+   strings.concat
+      get-value:x:@.arguments/*/folder
+      get-value:x:@strings.join
+      .:/
+
+// Deleting previously existing folder with same name.
+if
+   io.folder.exists:x:@.folder
+   .lambda
+   
+      // Folder already exists, deleting it.
+      io.folder.delete:x:@.folder
+
+// Unzipping file.
+io.file.unzip:x:@.filename
+
+// Deleting ZIP file.
+io.file.delete:x:@.filename
+
+// Returning success to caller.
+return-nodes
+   result:Success
