@@ -11,7 +11,7 @@ import { environment } from 'src/environments/environment';
  */
 export class User {
   username: string;
-  locked?: number; 
+  locked?: boolean;
   created?: Date;
   role?: any; // In-app use only
   extra?: any; // In-app use only

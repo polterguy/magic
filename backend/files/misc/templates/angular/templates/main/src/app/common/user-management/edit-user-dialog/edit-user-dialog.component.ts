@@ -46,7 +46,7 @@ export class EditUserDialogComponent implements OnInit {
   ngOnInit(): void {
     this.sortRolesBySelected();
     this.rolesCtrl.setValue(this.data.user.role);
-    this.userIsLocked = (this.data.user.locked === 1);
+    this.userIsLocked = this.data.user.locked;
   }
 
   /**
