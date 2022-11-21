@@ -14,9 +14,9 @@ import {
 
 // Application specific imports.
 import { Response } from '../../../../../models/response.model';
-import { FileService } from 'src/app/services/file.service';
-import { BackendService } from 'src/app/services/backend.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
+import { FileService } from 'src/app/services--/file.service';
+import { BackendService } from 'src/app/services--/backend.service--';
+import { FeedbackService } from 'src/app/services--/feedback.service';
 import { MacroDefinition } from 'src/app/models/macro-definition.model';
 import { FileObjectName } from '../../rename-file-dialog/rename-file-dialog.component';
 import { RenameFolderDialogComponent } from '../../rename-folder-dialog/rename-folder-dialog.component';
@@ -50,7 +50,7 @@ export class FolderActionsComponent {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param dialog Needed to create modal dialogs
    * @param fileService Needed to load and save files.
    * @param backendService Needed to determine user's access rights in backend
@@ -64,7 +64,7 @@ export class FolderActionsComponent {
 
   /**
    * Invoked when user wants to create a new file or folder.
-   * 
+   *
    * @param type to specify the type of new object: file | folder
    */
   createNewFileObject(type: string) {
@@ -106,7 +106,7 @@ export class FolderActionsComponent {
 
   /**
    * Uploads one or more files to the currently active folder.
-   * 
+   *
    * @param files List of files to upload
    */
   uploadFiles(files: FileList) {
@@ -157,7 +157,7 @@ export class FolderActionsComponent {
       width: '550px',
       data: {
         name: this.activeFolder,
-        
+
       },
     });
     dialog.afterClosed().subscribe((data: FileObjectName) => {
@@ -240,7 +240,7 @@ export class FolderActionsComponent {
                   } else if (exeResult.result.startsWith('folders-changed|')) {
                     var fileObject = exeResult.result.split('|')[1];
                     this.updateAfterMacro.emit(fileObject);
-                  
+
                 }
               },
               error: (error: any) => this.feedbackService.showError(error)});

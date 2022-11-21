@@ -13,9 +13,9 @@ import {
 } from '@angular/core';
 
 // Application specific imports.
-import { FileService } from 'src/app/services/file.service';
-import { BackendService } from 'src/app/services/backend.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
+import { FileService } from 'src/app/services--/file.service';
+import { BackendService } from 'src/app/services--/backend.service--';
+import { FeedbackService } from 'src/app/services--/feedback.service';
 import { EvaluatorService } from '../../../../misc/evaluator/services/evaluator.service';
 import { PreviewFileDialogComponent } from '../../preview-file-dialog/preview-file-dialog.component';
 import { ExecuteEndpointDialogComponent } from '../../execute-endpoint-dialog/execute-endpoint-dialog.component';
@@ -44,7 +44,7 @@ export class FileActionsComponent {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param dialog Needed to create modal dialogs
    * @param fileService Needed to load and save files.
    * @param backendService Needed to determine access rights of user in backend
@@ -96,7 +96,7 @@ export class FileActionsComponent {
 
   /**
    * Invoked when a Hyperlambda file should be executed.
-   * 
+   *
    * How the file is executed depends upon if the file is an endpoint file or not.
    * If the file is an endpoint file, a modal dialog will be displayed, allowing
    * the user to parametrise invocation as an HTTP request first.
@@ -106,7 +106,7 @@ export class FileActionsComponent {
       return;
     }
     this.getEndpointData(this.currentFileData);
-    
+
     if (this.endpointData) {
       this.dialog.open(ExecuteEndpointDialogComponent, {
         data: this.endpointData,
@@ -121,7 +121,7 @@ export class FileActionsComponent {
 
   /**
    * Returns data for endpoint by invoking parent component
-   * 
+   *
    * @param data current file's data
    * @returns value from the parent component based idicating if file is endpoint or not
    */
@@ -170,7 +170,7 @@ export class FileActionsComponent {
 
   /**
    * Invoked when a file should be renamed.
-   * 
+   *
    * @callback renameActiveFileFromParent to update the file inside the tree with the given name
    */
   renameActiveFile() {
@@ -194,7 +194,7 @@ export class FileActionsComponent {
 
   /**
    * Invoked when a file should be deleted.
-   * 
+   *
    * @callback deleteActiveFileFromParent calling a function in the parent component for managing the tree
    */
   deleteActiveFile(path?: string) {
@@ -216,7 +216,7 @@ export class FileActionsComponent {
 
   /**
    * Invoked when a file should be closed.
-   * 
+   *
    * @param noDirtyWarnings If true user will be warned about unsaved changes
    */
   closeActiveFile(noDirtyWarnings: boolean = false) {
@@ -241,7 +241,7 @@ export class FileActionsComponent {
       dialog.afterClosed().subscribe((data: { save: boolean }) => {
         if (data && data.save === true) {
           this.saveActiveFile(true);
-          
+
         } else if (data && data.save === false) {
           this.closeFileImplFromParent.emit();
         } else {
@@ -253,13 +253,13 @@ export class FileActionsComponent {
 
   /**
    * Downloads the active file or optionally the given file to the client
-   * 
+   *
    * @param path Optional override of which file to actually download
    */
    public downloadActiveFile(path?: string) {
     if (this.currentFileData) {
       this.fileService.downloadFile(this.currentFileData.path);
-    } 
+    }
     if (path) {
       this.fileService.downloadFile(path);
     }

@@ -5,9 +5,9 @@
 
 // Angular and system imports.
 import { Injectable } from '@angular/core';
+import { HttpService } from 'src/app/_protected/services/common/http.service';
 
 // Application specific imports.
-import { HttpService } from '../../../../../services/http.service';
 import { Endpoint } from '../_models/endpoint.model';
 
 /**

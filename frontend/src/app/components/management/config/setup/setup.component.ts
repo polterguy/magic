@@ -8,7 +8,7 @@ import { Component, ViewChild } from '@angular/core';
 import { MatStepper } from '@angular/material/stepper';
 
 // Application specific imports.
-import { BackendService } from 'src/app/services/backend.service';
+import { BackendService } from 'src/app/services--/backend.service--';
 
 /**
  * Component responsible for allowing user to setup system.
@@ -24,7 +24,7 @@ export class SetupComponent {
 
   /**
    * Creates an instance of your type.
-   * 
+   *
    * @param backendService Needed to retrieve backend setup status
    */
   constructor(public backendService: BackendService) { }

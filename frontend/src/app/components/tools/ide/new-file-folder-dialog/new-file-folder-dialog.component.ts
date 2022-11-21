@@ -9,9 +9,9 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 
 // Application specific imports.
-import { FileService } from 'src/app/services/file.service';
+import { FileService } from 'src/app/services--/file.service';
 import { Template } from '../../../../models/template.model';
-import { FeedbackService } from 'src/app/services/feedback.service';
+import { FeedbackService } from 'src/app/services--/feedback.service';
 
 /**
  * Helper class for passing parameters in and out of modal dialog.

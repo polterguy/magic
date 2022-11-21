@@ -17,7 +17,7 @@ import {
 // Application specific imports.
 import { LogService } from '../../../_protected/pages/setting-security/log/_services/log.service';
 import { LogItem } from 'src/app/_protected/pages/setting-security/log/_models/log-item.model';
-import { FeedbackService } from '../../../services/feedback.service';
+import { FeedbackService } from '../../../services--/feedback.service';
 
 /**
  * Log component for reading backend's log.

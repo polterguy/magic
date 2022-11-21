@@ -12,9 +12,9 @@ import { Count } from '../../../../../models/count.model';
 import { PublicKey } from '../_models/public-key.model';
 import { Affected } from '../../../../../models/affected.model';
 import { Response } from '../../../../../models/response.model';
-import { HttpService } from '../../../../../services/http.service';
 import { PublicKeyFull } from '../_models/public-key-full.model';
 import { CryptoInvocation } from '../_models/crypto-invocations.model';
+import { HttpService } from 'src/app/_protected/services/common/http.service';
 
 /**
  * Crypto service, allowing you to administrate your cryptography keys.

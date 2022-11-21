@@ -15,8 +15,8 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 import { Task } from './models/task.model';
 import { Schedule } from '../../../_protected/pages/tools/task-scheduler/_models/schedule.model';
 import { Count } from 'src/app/models/count.model';
-import { BackendService } from 'src/app/services/backend.service';
-import { FeedbackService } from '../../../services/feedback.service';
+import { BackendService } from 'src/app/services--/backend.service--';
+import { FeedbackService } from '../../../services--/feedback.service';
 import { TaskService } from 'src/app/_protected/pages/tools/task-scheduler/_services/task.service';
 import { NewTaskDialogComponent } from './new-task-dialog/new-task-dialog.component';
 import { ScheduleTaskDialogComponent } from './schedule-task-dialog/schedule-task-dialog.component';

@@ -24,7 +24,7 @@ const routes: Routes = [
       },
       {
         path: 'user-roles-management',
-        loadChildren: () => import('./_protected/pages/user-roles/_module/users-roles.module').then(m => m.UsersRolesModule)
+        loadChildren: () => import('./_protected/pages/administration/user-roles/_module/users-roles.module').then(m => m.UsersRolesModule)
       },
       {
         path: 'generated-database',
@@ -45,6 +45,10 @@ const routes: Routes = [
       {
         path: 'endpoint-generator',
         loadChildren: () => import('./_protected/pages/tools/endpoints/_module/endpoint.module').then(m => m.EndpointModule)
+      },
+      {
+        path: 'frontend-generator',
+        loadChildren: () => import('./_protected/pages/tools/frontend-generator/_module/frontend-generator.module').then(m => m.FrontendGeneratorModule)
       },
       {
         path: 'plugins',

@@ -13,10 +13,10 @@ import { Count } from 'src/app/models/count.model';
 import { BazarApp } from '../../../models/bazar-app.model';
 import { AppManifest } from '../../../models/app-manifest';
 import { Response } from 'src/app/models/response.model';
-import { HttpService } from 'src/app/services/http.service';
 import { environment } from '../../../../environments/environment';
-import { FileService } from 'src/app/services/file.service';
 import { PurchaseStatus } from '../../../models/purchase-status.model';
+import { HttpService } from './http.service';
+import { FileService } from '../../pages/tools/hyper-ide/_services/file.service';
 
 /**
  * Bazar service allowing you to query Aista's Bazar, and/or install Bazar items locally on your
@@ -29,7 +29,7 @@ export class BazarService {
 
   /**
    * Creates an instance of your service.
-   * 
+   *
    * @param httpClient HTTP client needed to retrieve Bazar manifest from Server Gardens
    * @param httpService Needed to retrieve data from backend
    * @param fileService Needed to be able to download bazar items
@@ -73,7 +73,7 @@ export class BazarService {
 
   /**
    * Returns specified app from Bazar.
-   * 
+   *
    * @param module_name Name of module
    */
   getBazarItem(module_name: string) {
@@ -108,7 +108,7 @@ export class BazarService {
 
   /**
    * Subscribes the specified user to our newsletter.
-   * 
+   *
    * @param name Full name of user
    * @param email Email address belonging to user
    */
@@ -119,7 +119,7 @@ export class BazarService {
   /**
    * Starts the purchasing workflow to allow user to purchase and
    * install application in his own Magic installation.
-   * 
+   *
    * @param app Application user wants to purchase
    * @param name Customer's name
    * @param email Customer's email address
@@ -147,10 +147,10 @@ export class BazarService {
 
   /**
    * Checks to see if the payment for the specified download token has been accepted.
-   * 
+   *
    * Notice, the token will only become accepted as the payment has been accepted by PayPal,
    * and PayPal has invoked our callback webhook.
-   * 
+   *
    * @param token Download token to check
    */
   canDownloadBazarItem(token: string) {
@@ -159,7 +159,7 @@ export class BazarService {
 
   /**
    * Download the specified Bazar item from the Bazar and directly into the current backend.
-   * 
+   *
    * @param app Bazar app user wants to install
    * @param token Download token needed to download ZIP file from Bazar
    */
@@ -172,7 +172,7 @@ export class BazarService {
 
   /**
    * Updates the specified app by invoking Bazar.
-   * 
+   *
    * @param app App's manifest
    */
   updateBazarItem(app: AppManifest) {
@@ -187,7 +187,7 @@ export class BazarService {
 
   /**
    * Downloads module to the local computer.
-   * 
+   *
    * @param module_name Name of module to download
    */
   downloadBazarItemLocally(module_name: string) {
@@ -202,7 +202,7 @@ export class BazarService {
 
   /**
    * Returns whether or not the application can be successfully installed or not.
-   * 
+   *
    * @param required_magic_version Minimum Magic version required by app to function correctly
    */
   canInstall(required_magic_version: string) {
@@ -212,7 +212,7 @@ export class BazarService {
   /**
    * Installs an app on your current backend by running initialisation process,
    * executing startup files, etc.
-   * 
+   *
    * @param folder Module to install
    * @param app_version Version of app we're currently installing
    * @param name Friendly display name of app

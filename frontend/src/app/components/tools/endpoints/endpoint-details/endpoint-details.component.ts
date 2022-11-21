@@ -16,8 +16,8 @@ import { Endpoint } from '../../../../_protected/pages/administration/generated-
 import { Argument } from '../../../../_protected/pages/administration/generated-endpoints/_models/argument.model';
 import { Response } from 'src/app/models/response.model';
 import { EndpointService } from '../../../../_protected/pages/generated-endpoints/_services/endpoint.service';
-import { BackendService } from 'src/app/services/backend.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
+import { BackendService } from 'src/app/services--/backend.service--';
+import { FeedbackService } from 'src/app/services--/feedback.service';
 import { AssumptionService } from 'src/app/_protected/pages/setting-security/health-check/_services/assumption.service';
 import { AddQueryParameterDialogComponent } from './add-query-parameter-dialog/add-query-parameter-dialog.component';
 import { CreateAssumptionTestDialogComponent, TestModel } from './create-assumption-test-dialog/create-assumption-test-dialog.component';

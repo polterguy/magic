@@ -8,7 +8,7 @@ import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
-import { FeedbackService } from 'src/app/services/feedback.service';
+import { FeedbackService } from 'src/app/services--/feedback.service';
 import { Role } from 'src/app/_protected/pages/user-roles/_models/role.model';
 import { RoleService } from 'src/app/_protected/pages/user-roles/_services/role.service';
 

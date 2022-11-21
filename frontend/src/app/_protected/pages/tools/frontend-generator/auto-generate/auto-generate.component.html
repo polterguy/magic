@@ -1,0 +1,143 @@
+<div class="row mt-4 frontend-generator">
+  <div class="col-md-6 col-12 pe-lg-4 mb-3">
+    <p class="fw-bold pb-3">Step 1 - App type &amp; name</p>
+    <div class="row">
+      <div class="col-sm-6 col-12">
+        <mat-form-field class="w-100">
+          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>apps</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+
+          <mat-select placeholder="Frontend type" [(ngModel)]="frontendType" (selectionChange)="changeFrontendType()">
+            <mat-option *ngFor="let item of frontendTypes" [value]="item.value">{{item.name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col-sm-6 col-12">
+        <mat-form-field class="w-100">
+          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>app_registration</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+
+          <input matInput
+            [placeholder]="frontendType === frontendTypes[1].value ? 'App name' : 'Service name'"
+            [(ngModel)]="frontendName">
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 col-12 ps-lg-4 mb-3">
+    <p class="fw-bold pb-3">Step 2 - App appearance</p>
+    <div class="row">
+      <div class="col-sm-6 col-12">
+        <mat-form-field class="w-100">
+          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>palette</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+
+          <mat-select placeholder="Colour palette"
+            [(ngModel)]="colorPalette"
+            [disabled]="!isApp">
+            <mat-option *ngFor="let item of colorPalettes" [value]="item.value">{{item.name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col-sm-6 col-12">
+        <mat-form-field class="w-100">
+          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>invert_colors</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+
+          <mat-select placeholder="Theme"
+            [(ngModel)]="theme"
+            [disabled]="!isApp">
+            <mat-option *ngFor="let item of themes" [value]="item.value">{{item.name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-6 col-12 pe-lg-4 mb-3">
+    <div class="d-flex justify-content-between align-items-center pb-3">
+      <p class="fw-bold my-0">Step 3 - App database</p>
+      <button mat-button color="primary" routerLink="/database-management">Create new database</button>
+    </div>
+
+    <mat-chip-list aria-label="table selection" multiple>
+      <mat-chip color="primary" *ngFor="let item of databases" [selected]="moduleSelected(item.name)" (click)="moduleClicked(item.name)">{{item.name}}</mat-chip>
+    </mat-chip-list>
+    <app-loading-skeleton *ngIf="!databases || databases.length === 0"
+      [amount]="1"
+      [colClass]="'col-12'"
+      [blockHeight]="'45px'"
+      [hasShadow]="false"></app-loading-skeleton>
+  </div>
+  <div class="col-lg-6 col-12 ps-lg-4 mb-3">
+    <div class="d-flex justify-content-between align-items-center pb-3">
+      <p class="fw-bold my-0">Step 4 - App tables</p>
+      <button mat-button color="primary" routerLink="/generated-database">Create new table</button>
+    </div>
+
+    <mat-chip-list aria-label="table selection" multiple>
+      <mat-chip color="primary" *ngFor="let item of tables" [selected]="componentSelected(item.name)" (click)="componentClicked(item.name)">{{item.name}}</mat-chip>
+    </mat-chip-list>
+    <app-loading-skeleton *ngIf="!tables || tables.length === 0"
+      [amount]="1"
+      [colClass]="'col-12'"
+      [blockHeight]="'45px'"
+      [hasShadow]="false"></app-loading-skeleton>
+
+  </div>
+
+  <div class="col-lg-6 col-12 pe-lg-4 mb-lg-0 mb-3">
+    <div class="d-flex justify-content-between align-items-center pb-3">
+      <p class="fw-bold my-0">Step 5 - App endpoints</p>
+      <button mat-button color="primary" routerLink="/endpoint-generator">Create new endpoints</button>
+    </div>
+
+    <div class="endpoints-list w-100 pe-2">
+      <app-loading-skeleton *ngIf="!endpoints || endpoints.length === 0"
+      [amount]="5"
+      [colClass]="'col-12'"
+      [blockHeight]="'40px'"
+      [hasShadow]="false"></app-loading-skeleton>
+      <div class="d-flex mb-2 bg-light px-3 py-2"
+        *ngFor="let item of endpoints">
+        <mat-checkbox [(ngModel)]="item.selected"
+          color="primary" class="">
+          <span class="span me-3 methods {{item?.verb}}">{{item?.verb}}</span> {{item.path}}
+        </mat-checkbox>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-6 col-12 ps-lg-4">
+    <p class="fw-bold pb-3 mt-2">Step 6 - Homepage</p>
+    <ngx-codemirror *ngIf="isApp"
+      class="h-100 large"
+      [(ngModel)]="template"
+      [options]="codemirrorOptions">
+    </ngx-codemirror>
+
+    <p class="fw-bold pb-3 mt-4" *ngIf="!isApp">Step 7 - Copy right</p>
+    <mat-form-field class="w-100" *ngIf="isApp">
+      <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        <mat-icon>copyright</mat-icon>
+        <span class="text-muted">|</span>
+      </span>
+
+      <input matInput
+        [(ngModel)]="copyRight">
+    </mat-form-field>
+
+    <div class="fake-container bg-light" *ngIf="!isApp"></div>
+  </div>
+  <div class="col-12 d-flex justify-content-end">
+    <button mat-button color="primary" class="px-5" (click)="generate(false)">Download</button>
+    <button mat-flat-button color="primary" class="px-5" (click)="generate(true)">Generate</button>
+  </div>
+</div>

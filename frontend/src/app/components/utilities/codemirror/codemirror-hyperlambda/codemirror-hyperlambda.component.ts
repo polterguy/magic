@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 
 // Application specific imports.
-import { FeedbackService } from '../../../../services/feedback.service';
+import { FeedbackService } from '../../../../services--/feedback.service';
 import { VocabularyService } from 'src/app/components/tools/services/vocabulary.service';
 
 /**
@@ -60,7 +60,7 @@ export class HyperlambdaComponent implements AfterViewInit {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param vocabularyService Evaluator service used to retrieve auto complete keywords (vocabulary)
    */
   constructor(

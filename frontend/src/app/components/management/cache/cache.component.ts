@@ -14,9 +14,9 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 // Application specific imports.
 import { Count } from 'src/app/models/count.model';
 import { CacheItem } from '../../../models/cache-item.model';
-import { CacheService } from 'src/app/services/cache.service';
-import { BackendService } from 'src/app/services/backend.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
+import { CacheService } from 'src/app/services--/cache.service';
+import { BackendService } from 'src/app/services--/backend.service--';
+import { FeedbackService } from 'src/app/services--/feedback.service';
 
 /**
  * Cache component for allowing user to inspect, remove, and purge cache items.
@@ -63,7 +63,7 @@ export class DiagnosticsCacheComponent implements OnInit {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param clipboard Used to copy content of cache item to clipboard
    * @param cacheService Needed to read, remove and clear cache
    * @param backendService Needed to figure out if user has access to specific actions related to the cache or not
@@ -124,7 +124,7 @@ export class DiagnosticsCacheComponent implements OnInit {
 
   /**
    * Invoked when user wants to copy value of cache entry.
-   * 
+   *
    * @param value Value to copy
    */
   copyContent(value: string) {
@@ -134,7 +134,7 @@ export class DiagnosticsCacheComponent implements OnInit {
 
   /**
    * Deletes the specified cache item.
-   * 
+   *
    * @param id ID or key of item to delete
    */
   delete(event: any, id: string) {

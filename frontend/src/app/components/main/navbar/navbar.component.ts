@@ -17,11 +17,11 @@ import { Clipboard } from '@angular/cdk/clipboard';
 // Application specific imports.
 import { MatDialog } from '@angular/material/dialog';
 import { Backend } from 'src/app/models/backend.model';
-import { ThemeService } from 'src/app/services/theme.service';
-import { NavbarService } from 'src/app/services/navbar.service';
-import { ConfigService } from '../../../services/config.service';
-import { BackendService } from 'src/app/services/backend.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
+import { ThemeService } from 'src/app/services--/theme.service';
+import { NavbarService } from 'src/app/services--/navbar.service';
+import { ConfigService } from '../../../services--/config.service';
+import { BackendService } from 'src/app/services--/backend.service--';
+import { FeedbackService } from 'src/app/services--/feedback.service';
 import { LoginDialogComponent } from '../../utilities/login-dialog/login-dialog.component';
 
 /**

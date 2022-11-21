@@ -68,7 +68,7 @@ import { DynamicPipe } from './_general/pipes/dynamic.pipe';
 import { DateFromPipe } from './_general/pipes/date-from.pipe';
 import { DateSincePipe } from './_general/pipes/date-since.pipe';
 import { AppRoutingModule } from './app-routing.module';
-import { LoaderService } from './services/loader.service';
+import { LoaderService } from './services--/loader.service';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { LoaderInterceptor } from './interceptors/loader.interceptor';
 import { InjectDirective } from './components/tools/crudifier/inject.directive';
