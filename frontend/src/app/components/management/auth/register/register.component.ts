@@ -10,9 +10,9 @@ import { FormBuilder, Validators } from '@angular/forms';
 
 // Application specific imports.
 import { Response } from 'src/app/models/response.model';
-import { BackendService } from 'src/app/services/backend.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
-import { RegisterService } from 'src/app/services/register.service';
+import { BackendService } from 'src/app/services--/backend.service--';
+import { FeedbackService } from 'src/app/services--/feedback.service';
+import { RegisterService } from 'src/app/services--/register.service';
 import { RecaptchaComponent } from 'ng-recaptcha';
 
 /**
@@ -43,7 +43,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
    */
    recaptchaKey: string = null;
    @ViewChild('captchaRef', {static: false}) captchaRef: RecaptchaComponent;
-   
+
   /**
    * Password of user repeated.
    */
@@ -54,7 +54,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param registerService Needed to be able to register user in backend
    * @param backendService Needed to be able to determine if password will be sent in clear text or not
    * @param feedbackService Needed to provide feedback to user
@@ -154,7 +154,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
           name: this.registrationForm.value.name
         }
       };
-  
+
       this.registerService.register(data).subscribe({
         next: (result: Response) => {
           this.status = result.result;
@@ -173,7 +173,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
       this.feedbackService.showError('Please check your email and username.');
     }
   }
-  
+
   /**
    * to make a click action on the invisible reCaptcha components and receive the token,
    * will be executed only if recaptcha key is available
@@ -189,7 +189,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
       // Time in milliseconds between key events
       debounceTime(1000),
 
-      // If previous query is diffent from current   
+      // If previous query is diffent from current
       distinctUntilChanged(),
       // get value
       map((event: any) => {
@@ -206,14 +206,14 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
       // subscription for response
     ).subscribe((text: string) => {
-      
+
       if (this.registrationForm.controls[field].valid) {
         field === 'username' ? this.checkUsername(text) : this.checkEmail(text);
       }
 
     });
   }
-  
+
   checkUsername(term: string) {
 
     if (term === '') {
@@ -222,7 +222,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
     return this.registerService.usernameAvailability(encodeURIComponent(term)).subscribe({
       next: (res) => {
         this.usernameRes = res.result;
-      }, 
+      },
       error: (err) => {}
     });
   }
@@ -235,7 +235,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
     return this.registerService.emailAvailability(encodeURIComponent(term)).subscribe({
       next: (res) => {
         this.emailRes = res.result;
-      }, 
+      },
       error: (err) => {}
     });
   }

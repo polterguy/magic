@@ -9,9 +9,9 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 
 // Application specific imports.
-import { FileService } from 'src/app/services/file.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
 import { Template } from 'src/app/models/template.model';
+import { FileService } from 'src/app/_protected/pages/tools/hyper-ide/_services/file.service';
+import { GeneralService } from 'src/app/_general/services/general.service';
 
 /**
  * Helper class for passing parameters in and out of modal dialog.
@@ -93,7 +93,7 @@ export class NewFileFolderDialogComponent implements OnInit {
    */
   constructor(
     private fileService: FileService,
-    private feedbackService: FeedbackService,
+    private generalService: GeneralService,
     @Inject(MAT_DIALOG_DATA) public data: FileObject) { }
 
   /**
@@ -109,7 +109,7 @@ export class NewFileFolderDialogComponent implements OnInit {
             }
           });
         },
-        error: (error: any) => this.feedbackService.showError(error)});
+        error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
       }
   }
 
@@ -214,7 +214,7 @@ export class NewFileFolderDialogComponent implements OnInit {
         this.data.name = this.activeTemplate.name.substring(this.activeTemplate.name.lastIndexOf('/') + 1);
         this.fileName.nativeElement.focus();
       },
-      error: (error: any) => this.feedbackService.showError(error)});
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
   }
 
   /**

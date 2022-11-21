@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { FeedbackService } from 'src/app/services/feedback.service';
-import { FileService } from 'src/app/services/file.service';
+import { FeedbackService } from 'src/app/services--/feedback.service';
+import { FileService } from 'src/app/services--/file.service';
 
 @Component({
   selector: 'app-confirm-uninstall-dialog',

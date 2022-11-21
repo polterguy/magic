@@ -16,9 +16,9 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 // Application specific imports.
 import { Message } from 'src/app/models/message.model';
 import { Response } from 'src/app/models/response.model';
-import { MessageService } from 'src/app/services/message.service';
-import { BackendService } from 'src/app/services/backend.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
+import { MessageService } from 'src/app/services--/message.service';
+import { BackendService } from 'src/app/services--/backend.service--';
+import { FeedbackService } from 'src/app/services--/feedback.service';
 import { PublicKey } from 'src/app/components/management/crypto/models/public-key.model';
 import { CryptoService } from 'src/app/components/management/crypto/services/crypto.service';
 import { Model } from '../../../utilities/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
@@ -91,12 +91,12 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
    * Currently displayed public key.
    */
   expandedElement: PublicKeyEx | null;
-  
+
   /**
    * Number of log items in the backend matching the currently applied filter.
    */
   count: number = 0;
-  
+
   /**
    * Columns to display in table showing public keys.
    */
@@ -108,7 +108,7 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
 
   /**
    * Creates and instance of your component.
-   * 
+   *
    * @param dialog Needed to create modal dialogs when importing public keys
    * @param clipboard Needed to be able to copy things into clipboard
    * @param cryptoService Needed to retrieve public keys from backend
@@ -156,7 +156,7 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
 
   /**
    * Invoked when detailed view is toggled for specified key.
-   * 
+   *
    * @param key Key to toggle detailed view for
    */
   getUserAssociation(key: PublicKey) {
@@ -169,7 +169,7 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
 
   /**
    * Invoked when paginator wants to page data table.
-   * 
+   *
    * @param e Page event argument
    */
   paged(e: PageEvent) {
@@ -187,7 +187,7 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
 
   /**
    * Deletes a public cryptography key from your backend.
-   * 
+   *
    * @param event Click event, needed to stop propagation
    * @param key Public key to delete
    */
@@ -208,7 +208,7 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
 
   /**
    * Invoked when user wants to copy a key's fingerprint
-   * 
+   *
    * @param content Fingerprint to put on to clipboard
    */
   copyContentToClipboard(content: string) {
@@ -218,7 +218,7 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
 
   /**
    * Changes the enabled state of the specified key.
-   * 
+   *
    * @param key What key to modify
    */
   enabledChanged(key: PublicKey) {
@@ -229,7 +229,7 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
 
   /**
    * Invoked when user wants to save a public key.
-   * 
+   *
    * @param key Key user wants to save
    */
   save(key: PublicKeyEx) {
@@ -275,7 +275,7 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
 
   /**
    * Invoked when user wants to see all receipts belonging to one specific key.
-   * 
+   *
    * @param key Key to show receipts for
    */
   showReceipts(key: PublicKey) {
@@ -308,7 +308,7 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
               } else {
                 this.feedbackService.showInfoShort(info);
               }
-        
+
             },
             error: (error: any) => this.feedbackService.showError(error)});
         } else {

@@ -259,6 +259,11 @@ export class HeaderComponent implements OnInit {
             disabled: !(this.permissions.access.crud.generate_crud && this.permissions.access.crud.generate_sql && this.permissions.access.crud.generate_frontend && this.permissions.setupDone)
           },
           {
+            name: 'Frontend generator',
+            url: '/frontend-generator',
+            disabled: !(this.permissions.access.crud.generate_crud && this.permissions.access.crud.generate_sql && this.permissions.access.crud.generate_frontend && this.permissions.setupDone)
+          },
+          {
             name: 'Plugins',
             url: '/plugins',
             disabled: !(this.permissions.access.bazar.get_manifests && this.permissions.setupDone)

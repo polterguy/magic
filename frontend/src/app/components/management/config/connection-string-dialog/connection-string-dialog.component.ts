@@ -5,8 +5,8 @@
 import { Component, Inject, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ConfigService } from 'src/app/services/config.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
+import { ConfigService } from 'src/app/services--/config.service';
+import { FeedbackService } from 'src/app/services--/feedback.service';
 
 @Component({
   selector: 'app-connection-string-dialog',

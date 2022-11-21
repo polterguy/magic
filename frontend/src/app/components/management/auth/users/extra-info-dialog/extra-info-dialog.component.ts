@@ -10,7 +10,7 @@ import {
   Validators
 } from '@angular/forms';
 import { UserService } from '../../../../../_protected/pages/user-roles/_services/user.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
+import { FeedbackService } from 'src/app/services--/feedback.service';
 
 @Component({
   selector: 'app-extra-info-dialog',

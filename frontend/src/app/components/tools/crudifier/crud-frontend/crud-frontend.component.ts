@@ -8,9 +8,9 @@ import { Component, ComponentFactoryResolver, OnInit } from '@angular/core';
 // Application specific imports.
 import { Messages } from 'src/app/models/messages.model';
 import { CrudifyService } from '../../../../_protected/pages/crud-generator/_services/crudify.service';
-import { BackendService } from 'src/app/services/backend.service';
-import { MessageService } from 'src/app/services/message.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
+import { BackendService } from 'src/app/services--/backend.service--';
+import { MessageService } from 'src/app/services--/message.service';
+import { FeedbackService } from 'src/app/services--/feedback.service';
 import { CrudFrontendExtraComponent } from './crud-frontend-extra/crud-frontend-extra.component';
 
 /**

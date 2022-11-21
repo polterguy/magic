@@ -9,9 +9,9 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 // Application specific imports.
-import { BackendService } from 'src/app/services/backend.service';
-import { ConfigService } from '../../../../services/config.service';
-import { FeedbackService } from '../../../../services/feedback.service';
+import { BackendService } from 'src/app/services--/backend.service--';
+import { ConfigService } from '../../../../services--/config.service';
+import { FeedbackService } from '../../../../services--/feedback.service';
 import { SmtpDialogComponent } from '../smtp-dialog/smtp-dialog.component';
 import { ConnectionStringDialogComponent } from '../connection-string-dialog/connection-string-dialog.component';
 

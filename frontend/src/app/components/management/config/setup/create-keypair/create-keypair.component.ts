@@ -9,10 +9,10 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 
 // Application specific imports.
 import { Response } from 'src/app/models/response.model';
-import { ConfigService } from '../../../../../services/config.service';
-import { MessageService } from 'src/app/services/message.service';
-import { BackendService } from 'src/app/services/backend.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
+import { ConfigService } from '../../../../../services--/config.service';
+import { MessageService } from 'src/app/services--/message.service';
+import { BackendService } from 'src/app/services--/backend.service--';
+import { FeedbackService } from 'src/app/services--/feedback.service';
 import { BazarService } from 'src/app/components/management/services/bazar.service';
 import { CryptoService } from 'src/app/components/management/crypto/services/crypto.service';
 import { RecaptchaComponent } from 'ng-recaptcha';
@@ -64,7 +64,7 @@ export class CreateKeypairComponent implements OnInit {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param backendService Needed to retrieve the root URL for the current backend
    * @param feedbackService Needed to provide feedback to user
    * @param configService Configuration service used to generate server key pair
@@ -79,7 +79,7 @@ export class CreateKeypairComponent implements OnInit {
     private router: Router,
     private cryptoService: CryptoService,
     protected messageService: MessageService,
-    private bazarService: BazarService) { 
+    private bazarService: BazarService) {
       this.recaptchaKey = this.backendService._bazaarCaptchaKey;
     }
 
@@ -95,7 +95,7 @@ export class CreateKeypairComponent implements OnInit {
 
   /**
    * Invoked when user clicks the next button.
-   * 
+   *
    * @param recaptcha_token received when reCaptcha component is executed,
    * recaptcha_token is optional, exists only if recaptcha key is available
    */

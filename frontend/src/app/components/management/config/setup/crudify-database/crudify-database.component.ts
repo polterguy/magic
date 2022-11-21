@@ -8,11 +8,11 @@ import { forkJoin } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
 
 // Application specific imports.
-import { CacheService } from 'src/app/services/cache.service';
-import { MessageService } from 'src/app/services/message.service';
-import { BackendService } from 'src/app/services/backend.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
-import { SqlService } from 'src/app/services/sql.service';
+import { CacheService } from 'src/app/services--/cache.service';
+import { MessageService } from 'src/app/services--/message.service';
+import { BackendService } from 'src/app/services--/backend.service--';
+import { FeedbackService } from 'src/app/services--/feedback.service';
+import { SqlService } from 'src/app/services--/sql.service';
 import { LogService } from 'src/app/_protected/pages/setting-security/log/_services/log.service';
 import { Crudify } from 'src/app/_protected/pages/crud-generator/_models/crudify.model';
 import { LocResult } from 'src/app/_protected/pages/crud-generator/_models/loc-result.model';

@@ -8,7 +8,6 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
-import { FeedbackService } from 'src/app/services/feedback.service';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { FileService } from '../../../../tools/hyper-ide/_services/file.service';
 

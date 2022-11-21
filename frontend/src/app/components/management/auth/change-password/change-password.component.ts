@@ -7,8 +7,8 @@
 import { Component } from '@angular/core';
 
 // Application specific imports.
-import { BackendService } from 'src/app/services/backend.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
+import { BackendService } from 'src/app/services--/backend.service--';
+import { FeedbackService } from 'src/app/services--/feedback.service';
 
 /**
  * Change password component allowing users to change their current password.
@@ -37,7 +37,7 @@ export class ChangePasswordComponent {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param feedbackService Needed to provide feedback to user
    * @param backendService Needed to check if password will be transmitted in clear text
    */
@@ -45,7 +45,7 @@ export class ChangePasswordComponent {
     private feedbackService: FeedbackService,
     public backendService: BackendService) { }
 
-  
+
   /**
    * Invoked when user wants to save his or her password.
    */

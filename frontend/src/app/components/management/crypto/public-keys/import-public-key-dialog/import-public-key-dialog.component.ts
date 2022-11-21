@@ -9,7 +9,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 
 // Application specific imports.
 import { Response } from 'src/app/models/response.model';
-import { FeedbackService } from 'src/app/services/feedback.service';
+import { FeedbackService } from 'src/app/services--/feedback.service';
 import { PublicKey } from 'src/app/components/management/crypto/models/public-key.model';
 import { CryptoService } from 'src/app/components/management/crypto/services/crypto.service';
 
@@ -50,7 +50,7 @@ slots.vocabulary
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param dialogRef Needed to be able to close dialog
    * @param cryptoService Needed to be able to retrieve fingerprint for key as user changes key content
    * @param feedbackService Needed to be able to display information to user

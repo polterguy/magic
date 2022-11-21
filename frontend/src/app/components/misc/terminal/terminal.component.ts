@@ -23,9 +23,9 @@ import {
 
 // Application specific imports.
 import { Response } from '../../../models/response.model';
-import { BackendService } from 'src/app/services/backend.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
-import { ConfigService } from '../../../services/config.service';
+import { BackendService } from 'src/app/services--/backend.service--';
+import { FeedbackService } from 'src/app/services--/feedback.service';
+import { ConfigService } from '../../../services--/config.service';
 
 /**
  * Terminal component for allowing user to use the terminal through a
@@ -69,7 +69,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param configService Needed to retrieve 'gibberish' creating a unique channel for the user on SignalR
    * @param backendService Needed to retrieve the root URL for backend used by SignalR.
    * @param feedbackService Needed to display feedback to caller.

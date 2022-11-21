@@ -10,9 +10,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 
 // Application specific imports.
-import { BackendService } from 'src/app/services/backend.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
-import { DiagnosticsService } from 'src/app/services/diagnostics.service';
+import { BackendService } from 'src/app/services--/backend.service--';
+import { FeedbackService } from 'src/app/services--/feedback.service';
+import { DiagnosticsService } from 'src/app/services--/diagnostics.service';
 import { LogTypes, SystemReport, Timeshifts } from '../../models/dashboard.model';
 import { LoginDialogComponent } from '../utilities/login-dialog/login-dialog.component';
 

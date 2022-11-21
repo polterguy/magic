@@ -1,5 +1,5 @@
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTreeFlattener, MatTreeFlatDataSource } from '@angular/material/tree';
 import { Observable, Subscription } from 'rxjs';
@@ -20,7 +20,7 @@ import { FileService } from '../_services/file.service';
   templateUrl: './ide-tree.component.html',
   styleUrls: ['./ide-tree.component.scss']
 })
-export class IdeTreeComponent implements OnInit {
+export class IdeTreeComponent implements OnInit, OnDestroy {
 
   @Input() searchKey!: Observable<string>;
 
@@ -853,6 +853,7 @@ export class IdeTreeComponent implements OnInit {
   ngOnDestroy(): void {
     if (this.endpointSubscription) {
       this.endpointSubscription.unsubscribe();
+      root.children = [];
     }
   }
 }
