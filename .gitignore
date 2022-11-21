@@ -369,4 +369,4 @@ backend/files/etc/www/*
 backend/files/etc/robo-crm/kpi/*.*
 
 backend/files/etc/plugins/*
-backend/files/etc/blogs/*
+backend/files/etc/articles/*
