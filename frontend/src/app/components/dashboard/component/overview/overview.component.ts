@@ -4,7 +4,7 @@
 
 import { Component, Input, OnInit } from '@angular/core';
 import { SystemReport } from 'src/app/models/dashboard.model';
-import { BackendService } from 'src/app/services/backend.service';
+import { BackendService } from 'src/app/services--/backend.service--';
 import { Clipboard } from '@angular/cdk/clipboard';
 
 @Component({

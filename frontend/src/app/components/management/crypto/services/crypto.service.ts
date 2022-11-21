@@ -12,7 +12,7 @@ import { Count } from '../../../../models/count.model';
 import { PublicKey } from '../models/public-key.model';
 import { Affected } from '../../../../models/affected.model';
 import { Response } from '../../../../models/response.model';
-import { HttpService } from '../../../../services/http.service';
+import { HttpService } from '../../../../services--/http.service';
 import { PublicKeyFull } from '../models/public-key-full.model';
 import { CryptoInvocation } from '../models/crypto-invocations.model';
 
@@ -26,7 +26,7 @@ export class CryptoService {
 
   /**
    * Creates an instance of your service.
-   * 
+   *
    * @param httpService HTTP service to use for backend invocations
    */
   constructor(private httpService: HttpService) { }
@@ -40,7 +40,7 @@ export class CryptoService {
 
   /**
    * Returns public keys from your backend.
-   * 
+   *
    * @param filter Filter for which keys to return
    */
   publicKeys(filter: any) {
@@ -66,7 +66,7 @@ export class CryptoService {
 
   /**
    * Returns public keys from your backend.
-   * 
+   *
    * @param filter Filter for which keys to return
    */
   countPublicKeys(filter: any) {
@@ -82,7 +82,7 @@ export class CryptoService {
 
   /**
    * Deletes a public key from your backend.
-   * 
+   *
    * @param id Unique ID of public key to delete
    */
   deletePublicKey(id: number) {
@@ -91,7 +91,7 @@ export class CryptoService {
 
   /**
    * Changes the enabled state of the specified key.
-   * 
+   *
    * @param id Key caller wants to change enabled state of
    * @param enabled Whether or not caller wants to enable or disable key
    */
@@ -104,7 +104,7 @@ export class CryptoService {
 
   /**
    * Saves the public key declaration by invoking backend.
-   * 
+   *
    * @param key Key caller wants to save
    */
   updatePublicKey(key: PublicKey) {
@@ -127,7 +127,7 @@ export class CryptoService {
 
   /**
    * Associates the specified public key with a user.
-   * 
+   *
    * @param keyId Key caller wants to associate with user.
    * @param username Username caller wants to associate with key.
    */
@@ -140,7 +140,7 @@ export class CryptoService {
 
   /**
    * Returns the username of the user key is associated with, if any.
-   * 
+   *
    * @param keyId Key caller wants to retrieve association for.
    */
   getUserAssociation(keyId: number) {
@@ -149,7 +149,7 @@ export class CryptoService {
 
   /**
    * Deletes any existing associations between a user and a public key.
-   * 
+   *
    * @param keyId Key caller wants to associate with user.
    */
   deleteUserAssociation(keyId: number) {
@@ -160,7 +160,7 @@ export class CryptoService {
 
   /**
    * Generates a cryptography key pair for your server.
-   * 
+   *
    * @param strength Strength of key pair to generate, typically 2048, 4096, or some other exponent of 2
    * @param seed Used to seed the CSRNG object
    * @param subject Identity to use for key, typically owner's full name
@@ -184,7 +184,7 @@ export class CryptoService {
 
   /**
    * Imports a public key.
-   * 
+   *
    * @param key Key caller wants to import
    */
   createPublicKey(key: PublicKey) {
@@ -202,7 +202,7 @@ export class CryptoService {
 
   /**
    * Imports a public key into the system.
-   * 
+   *
    * @param subject Name of key owner
    * @param email Email of owner
    * @param domain Root domain of key's owner
@@ -223,7 +223,7 @@ export class CryptoService {
 
   /**
    * Invokes server to find the fingerprint of a public key.
-   * 
+   *
    * @param key Key to retrieve fingerprint for
    */
   getFingerprint(key: string) {
@@ -232,7 +232,7 @@ export class CryptoService {
 
   /**
    * Returns cryptographically signed invocations from backend to caller.
-   * 
+   *
    * @param filter Filter for filtering which invocations to return
    */
   invocations(filter: any = null) {
@@ -256,7 +256,7 @@ export class CryptoService {
 
   /**
    * Returns public keys from your backend.
-   * 
+   *
    * @param filter Filter for which keys to return
    */
   countInvocations(filter: any) {

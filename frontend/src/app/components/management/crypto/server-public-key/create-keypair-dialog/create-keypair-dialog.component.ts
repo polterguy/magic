@@ -10,8 +10,8 @@ import { MatDialogRef } from '@angular/material/dialog';
 // Application specific imports.
 import { Response } from 'src/app/models/response.model';
 import { CryptoService } from '../../services/crypto.service';
-import { ConfigService } from '../../../../../services/config.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
+import { ConfigService } from '../../../../../services--/config.service';
+import { FeedbackService } from 'src/app/services--/feedback.service';
 
 /**
  * Modal dialog used to create a new keypair for server.
@@ -59,7 +59,7 @@ export class CreateKeypairDialogComponent implements OnInit {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param configService Needed to retrieve random gibberish seeding the CSRNG as we create new key pair
    * @param cryptoService Needed to create private key pair
    * @param feedbackService Needed to provide feedback to user

@@ -8,8 +8,8 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
-import { SqlService } from '../../../../services/sql.service';
-import { FeedbackService } from '../../../../services/feedback.service';
+import { SqlService } from '../../../../services--/sql.service';
+import { FeedbackService } from '../../../../services--/feedback.service';
 
 /**
  * Modal dialog data.
@@ -38,14 +38,14 @@ export class SaveSqlDialogComponent implements OnInit {
 
   /**
    * Existing snippet files as returned from backend.
-   * 
+   *
    * Needed to make autocompleter working allowing user to overwrite previously saved snippet.
    */
   files: string[] = [];
 
   /**
    * Creates an instance of your login dialog.
-   * 
+   *
    * @param feedbackService Needed to be able to display feedback to user
    * @param sqlService Needed to retrieve snippets from backend
    * @param data Input data, more specifically the database type the user is currently using
@@ -66,7 +66,7 @@ export class SaveSqlDialogComponent implements OnInit {
 
   /**
    * Returns only the filename parts from the given full path and filename.
-   * 
+   *
    * @param path Complete path of file
    */
   getFilename(path: string) {

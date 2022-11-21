@@ -40,7 +40,7 @@ import { AppComponent } from './app.component';
 import { CoreComponent } from './_layout/core/core.component';
 import { HeaderComponent } from './_layout/header/header.component';
 import { FooterComponent } from './_layout/footer/footer.component';
-import { LoaderService } from './services/loader.service';
+import { LoaderService } from './services--/loader.service';
 import { LoaderInterceptor } from './interceptors/loader.interceptor';
 
 @NgModule({

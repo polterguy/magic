@@ -9,8 +9,8 @@ import { Injectable } from '@angular/core';
 
 // Application specific imports.
 import { Response } from '../../../../models/response.model';
-import { HttpService } from '../../../../services/http.service';
-import { FileService } from 'src/app/services/file.service';
+import { HttpService } from '../../../../services--/http.service';
+import { FileService } from 'src/app/services--/file.service';
 
 /**
  * Hyperlambda evaluator service allowing you to evaluate Hyperlambda in
@@ -23,7 +23,7 @@ export class EvaluatorService {
 
   /**
    * Creates an instance of your service.
-   * 
+   *
    * @param httpService HTTP service to use for backend invocations
    * @param fileService Used to retrieve and update snippets from your backend
    */
@@ -33,7 +33,7 @@ export class EvaluatorService {
 
   /**
    * Evaluates a piece of Hyperlambda and returns its result.
-   * 
+   *
    * @param hyperlambda Hyperlambda to evaluate
    */
   execute(hyperlambda: string) {
@@ -51,7 +51,7 @@ export class EvaluatorService {
 
   /**
    * Loads a snippet from the backend.
-   * 
+   *
    * @param filename Filename (only, no extension or folder) of snippet to load
    */
   loadSnippet(filename: string) {
@@ -67,7 +67,7 @@ export class EvaluatorService {
 
   /**
    * Saves the specified snippet according to the specified argument.
-   * 
+   *
    * @param filename Filename to save snippet as. Notice, assumes we're only given the filename, and not the entire path. The service is responsible for prepending the folder.
    * @param content Content of snippet
    */

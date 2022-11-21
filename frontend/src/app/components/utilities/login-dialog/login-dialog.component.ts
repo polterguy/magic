@@ -15,9 +15,9 @@ import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core'
 // Application specific imports.
 import { Backend } from 'src/app/models/backend.model';
 import { Response } from 'src/app/models/response.model';
-import { MessageService } from 'src/app/services/message.service';
-import { BackendService } from 'src/app/services/backend.service';
-import { FeedbackService } from '../../../services/feedback.service';
+import { MessageService } from 'src/app/services--/message.service';
+import { BackendService } from 'src/app/services--/backend.service--';
+import { FeedbackService } from '../../../services--/feedback.service';
 
 class DialogData {
   allowAuthentication?: boolean;

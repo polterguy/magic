@@ -14,8 +14,8 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 
 // Application specific imports.
 import { Count } from 'src/app/models/count.model';
-import { BackendService } from 'src/app/services/backend.service';
-import { FeedbackService } from '../../../../services/feedback.service';
+import { BackendService } from 'src/app/services--/backend.service--';
+import { FeedbackService } from '../../../../services--/feedback.service';
 import { User } from 'src/app/_protected/pages/user-roles/_models/user.model';
 import { Role } from 'src/app/_protected/pages/user-roles/_models/role.model';
 import { NewRoleDialogComponent } from './new-role-dialog/new-role-dialog.component';

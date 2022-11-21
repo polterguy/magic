@@ -11,7 +11,7 @@ import { Injectable } from '@angular/core';
 import { Count } from '../../../models/count.model';
 import { Message } from '../../../models/message.model';
 import { Response } from '../../../models/response.model';
-import { HttpService } from '../../../services/http.service';
+import { HttpService } from '../../../services--/http.service';
 import { SocketUser } from '../../../_protected/pages/administration/generated-endpoints/_models/socket-user.model';
 
 /**

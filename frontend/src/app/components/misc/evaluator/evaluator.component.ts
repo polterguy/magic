@@ -9,7 +9,7 @@ import { MatDialog } from '@angular/material/dialog';
 
 // Application specific imports.
 import { Response } from '../../../models/response.model';
-import { FeedbackService } from '../../../services/feedback.service';
+import { FeedbackService } from '../../../services--/feedback.service';
 import { EvaluatorService } from 'src/app/components/misc/evaluator/services/evaluator.service';
 import { Model } from '../../utilities/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 import { LoadSnippetDialogComponent } from './load-snippet-dialog/load-snippet-dialog.component';
@@ -52,7 +52,7 @@ export class EvaluatorComponent implements OnInit {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param evaluatorService Used to execute Hyperlambda specified by user
    * @param feedbackService Needed to display feedback to user
    * @param dialog Needed to be able to create model dialogs

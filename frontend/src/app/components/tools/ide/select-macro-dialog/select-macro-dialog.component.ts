@@ -8,8 +8,8 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
-import { FileService } from 'src/app/services/file.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
+import { FileService } from 'src/app/services--/file.service';
+import { FeedbackService } from 'src/app/services--/feedback.service';
 
 /**
  * Encapsulating a single macro.
@@ -39,7 +39,7 @@ export class SelectMacroDialogComponent implements OnInit {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param fileService Needed to retrieve macro files from backend
    * @param feedbackService Needed to provide feedback to user
    * @param dialogRef Needed to explicitly close dialog from TypeScript
@@ -64,7 +64,7 @@ export class SelectMacroDialogComponent implements OnInit {
 
   /**
    * Returns only the name of the macro to caller.
-   * 
+   *
    * @param macro Full path of macro
    */
   getMacroName(macro: string) {
@@ -81,7 +81,7 @@ export class SelectMacroDialogComponent implements OnInit {
 
   /**
    * Invoked when user selects a macro.
-   * 
+   *
    * @param macro Macro that was selected
    */
   selectMacro(macro: string) {

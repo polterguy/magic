@@ -3,9 +3,6 @@ import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, Subscription } from 'rxjs';
 import { Model } from 'src/app/codemirror/codemirror-sql/codemirror-sql.component';
-import { BackendService } from 'src/app/services/backend.service';
-import { CacheService } from 'src/app/services/cache.service';
-import { MessageService } from 'src/app/services/message.service';
 import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
 import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 import { ShortkeysComponent } from 'src/app/_general/components/shortkeys/shortkeys.component';
@@ -14,13 +11,15 @@ import { CrudifyService } from '../../../crud-generator/_services/crudify.servic
 import { TransformModelService } from '../../../crud-generator/_services/transform-model.service';
 import { Argument } from '../../../administration/generated-endpoints/_models/argument.model';
 import { LogService } from '../../../setting-security/log/_services/log.service';
-import { Role } from '../../../user-roles/_models/role.model';
+import { Role } from '../../../administration/user-roles/_models/role.model';
 import { SqlService } from '../../database/_services/sql.service';
 import { AddArgumentDialogComponent } from '../components/add-argument-dialog/add-argument-dialog.component';
 import { SqlSnippetDialogComponent } from '../components/sql-snippet-dialog/sql-snippet-dialog.component';
 
 // CodeMirror options.
 import sql from '../../../../../codemirror/options/sql.json';
+import { BackendService } from 'src/app/_protected/services/common/backend.service';
+import { MessageService } from 'src/app/_protected/services/common/message.service';
 
 @Component({
   selector: 'app-manual-generator',

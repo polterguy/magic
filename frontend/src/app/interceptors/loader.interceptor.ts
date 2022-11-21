@@ -14,7 +14,6 @@ import {
 } from '@angular/common/http';
 
 // Application specific imports.
-import { LoaderService } from 'src/app/services/loader.service';
 import { GeneralService } from "../_general/services/general.service";
 
 /**

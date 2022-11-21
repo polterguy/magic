@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { ThemeService } from 'src/app/services/theme.service';
 import { GeneralService } from 'src/app/_general/services/general.service';
+import { ThemeService } from 'src/app/_general/services/theme.service';
 import { SystemReport } from '../../_models/dashboard.model';
 
 @Component({

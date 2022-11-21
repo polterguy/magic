@@ -850,6 +850,7 @@ export class FrontendTreeComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.endpointSubscription) {
       this.endpointSubscription.unsubscribe();
+      root.children = [];
     }
   }
 }

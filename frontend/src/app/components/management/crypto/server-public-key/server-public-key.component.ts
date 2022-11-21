@@ -9,9 +9,9 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { MatDialog } from '@angular/material/dialog';
 
 // Application specific imports.
-import { MessageService } from 'src/app/services/message.service';
-import { BackendService } from 'src/app/services/backend.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
+import { MessageService } from 'src/app/services--/message.service';
+import { BackendService } from 'src/app/services--/backend.service--';
+import { FeedbackService } from 'src/app/services--/feedback.service';
 import { CryptoService } from 'src/app/components/management/crypto/services/crypto.service';
 import { PublicKeyFull } from 'src/app/components/management/crypto/models/public-key-full.model';
 import { CreateKeypairDialogComponent } from './create-keypair-dialog/create-keypair-dialog.component';
@@ -33,7 +33,7 @@ export class ServerPublicKeyComponent implements OnInit {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param dialog Needed to show modal dialogs
    * @param cryptoService Service needed to retrieve server's public key
    * @param messageService Needed to publish message to subscribers as we create new server key pair
@@ -71,7 +71,7 @@ export class ServerPublicKeyComponent implements OnInit {
         /*
          * Publishing message to have other components understand they need to
          * re-retrieve publick keys.
-         * 
+         *
          * This needs to be done since as we create a new server key pair, the public parts
          * of the key is also imported into the trusted public keys' database.
          */

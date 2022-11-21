@@ -9,10 +9,10 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 
 // Application specific imports.
 import { BazarService } from '../../../management/services/bazar.service';
-import { FileService } from 'src/app/services/file.service';
+import { FileService } from 'src/app/services--/file.service';
 import { Response } from '../../../../models/response.model';
-import { BackendService } from 'src/app/services/backend.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
+import { BackendService } from 'src/app/services--/backend.service--';
+import { FeedbackService } from 'src/app/services--/feedback.service';
 import { BazarAppWrapper } from '../../../../models/bazar-app.model';
 
 /**

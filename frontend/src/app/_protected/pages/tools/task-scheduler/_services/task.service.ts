@@ -10,7 +10,7 @@ import { Injectable } from '@angular/core';
 import { Task } from '../_models/task.model';
 import { Count } from '../../../../../models/count.model';
 import { Response } from '../../../../../models/response.model';
-import { HttpService } from '../../../../../services/http.service';
+import { HttpService } from 'src/app/_protected/services/common/http.service';
 
 /**
  * Task service, allows you to Read, Create, Update and Delete tasks

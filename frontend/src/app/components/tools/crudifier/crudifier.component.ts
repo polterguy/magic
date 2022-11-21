@@ -16,8 +16,8 @@ import { Subscription } from 'rxjs';
 import { InjectDirective } from './inject.directive';
 import { Message } from 'src/app/models/message.model';
 import { Messages } from 'src/app/models/messages.model';
-import { MessageService } from 'src/app/services/message.service';
-import { BackendService } from 'src/app/services/backend.service';
+import { MessageService } from 'src/app/services--/message.service';
+import { BackendService } from 'src/app/services--/backend.service--';
 import { ActivatedRoute } from '@angular/router';
 
 /**

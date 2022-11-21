@@ -7,9 +7,9 @@
 import { Component } from '@angular/core';
 
 // Application specific imports.
-import { ThemeService } from 'src/app/services/theme.service';
-import { NavbarService } from 'src/app/services/navbar.service';
-import { BackendService } from 'src/app/services/backend.service';
+import { ThemeService } from 'src/app/services--/theme.service';
+import { NavbarService } from 'src/app/services--/navbar.service';
+import { BackendService } from 'src/app/services--/backend.service--';
 
 /**
  * Toolbar component for displaying toolbar that allows the
@@ -24,7 +24,7 @@ export class ToolbarComponent {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param themeService Needed to determine what theme we're currently using
    * @param navbarService Needed to allow for expanding and collapsing navbar
    * @param backendService Service to keep track of currently selected backend

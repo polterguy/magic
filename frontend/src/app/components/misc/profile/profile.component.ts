@@ -7,8 +7,8 @@
 import { Component } from '@angular/core';
 
 // Application specific imports.
-import { FeedbackService } from 'src/app/services/feedback.service';
-import { BackendService } from 'src/app/services/backend.service';
+import { FeedbackService } from 'src/app/services--/feedback.service';
+import { BackendService } from 'src/app/services--/backend.service--';
 
 /**
  * Profile component allowing the user to change his password and other parts related to his profile.
@@ -31,7 +31,7 @@ export class ProfileComponent {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param authService Needed to actually change password
    * @param feedbackService NEeded to display feedback to user
    */

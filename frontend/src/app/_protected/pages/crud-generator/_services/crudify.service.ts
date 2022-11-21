@@ -16,8 +16,8 @@ import { LocResult } from '../_models/loc-result.model';
 import { CustomSql } from '../../../../components/tools/crudifier/models/custom-sql.model';
 import { Response } from 'src/app/models/response.model';
 import { Template } from 'src/app/models/template.model';
-import { HttpService } from '../../../../services/http.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
+import { HttpService } from 'src/app/_protected/services/common/http.service';
+import { GeneralService } from 'src/app/_general/services/general.service';
 
 /**
  * Crudify service, allows you to crudify your databases.
@@ -36,7 +36,7 @@ export class CrudifyService {
    */
   constructor(
     private httpService: HttpService,
-    private feedbackService: FeedbackService,
+    private generalService: GeneralService,
     @Inject(LOCALE_ID) public locale: string) { }
 
   /**
@@ -142,6 +142,6 @@ export class CrudifyService {
           onAfter();
         }
       },
-      error: () => this.feedbackService.showError('Something went wrong while generating your app, check your log for details')});
+      error: () => this.generalService.showFeedback('Something went wrong while generating your app, check your log for details', 'errorMessage', 'Ok', 4000)});
   }
 }

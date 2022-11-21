@@ -8,7 +8,7 @@ import { Observable, of } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
-import { HttpService } from '../../../services/http.service';
+import { HttpService } from '../../../services--/http.service';
 
 /**
  * Hyperlambda vocabulary service allowing you to retrieve all Hyperlambda slots existing in your backend.
@@ -22,7 +22,7 @@ export class VocabularyService {
 
   /**
    * Creates an instance of your service.
-   * 
+   *
    * @param httpService HTTP service to use for backend invocations
    */
   constructor(private httpService: HttpService) { }
