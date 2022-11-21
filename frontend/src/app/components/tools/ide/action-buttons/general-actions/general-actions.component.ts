@@ -10,10 +10,10 @@ import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/cor
 
 // Application specific imports.
 import { Message } from 'src/app/models/message.model';
-import { MessageService } from 'src/app/services/message.service';
-import { FileService } from 'src/app/services/file.service';
-import { BackendService } from 'src/app/services/backend.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
+import { MessageService } from 'src/app/services--/message.service';
+import { FileService } from 'src/app/services--/file.service';
+import { BackendService } from 'src/app/services--/backend.service--';
+import { FeedbackService } from 'src/app/services--/feedback.service';
 import { GenerateCrudAppComponent } from '../../generate-crud-app/generate-crud-app.component';
 
 /**
@@ -40,7 +40,7 @@ export class GeneralActionsComponent implements OnInit, OnDestroy {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param dialog Needed to create modal dialogs
    * @param fileService Needed to load and save files.
    * @param backendService Needed to determine user's access rights in backend
@@ -91,7 +91,7 @@ export class GeneralActionsComponent implements OnInit, OnDestroy {
 
   /**
    * Uploads and installs a zip file on the server.
-   * 
+   *
    * @param file Zip file to upload and install
    */
   installModule(file: FileList) {

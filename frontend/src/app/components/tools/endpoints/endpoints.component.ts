@@ -12,7 +12,7 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 // Application specific imports.
 import { Endpoint } from 'src/app/models/endpoint.model';
 import { EndpointService } from '../../../_protected/pages/generated-endpoints/_services/endpoint.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
+import { FeedbackService } from 'src/app/services--/feedback.service';
 
 /**
  * Endpoints component allowing user to see and invoke his endpoints.

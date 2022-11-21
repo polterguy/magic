@@ -8,7 +8,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
-import { FeedbackService } from '../../../../services/feedback.service';
+import { FeedbackService } from '../../../../services--/feedback.service';
 import { EvaluatorService } from 'src/app/components/misc/evaluator/services/evaluator.service';
 
 /**
@@ -22,14 +22,14 @@ export class SaveSnippetDialogComponent implements OnInit {
 
   /*
    * Existing snippet files as returned from backend.
-   * 
+   *
    * Needed to make autocompleter working allowing user to overwrite previously saved snippet.
    */
   private files: string[] = [];
 
   /**
    * Creates an instance of your login dialog.
-   * 
+   *
    * @param evaluatorService Evaluator service needed to retrieve snippet files from backend
    * @param feedbackService Needed to be able to display feedback to user
    * @param data Filename to intially populate filename textbox with. Typically only supplied if you previously loaded a file.
@@ -50,7 +50,7 @@ export class SaveSnippetDialogComponent implements OnInit {
 
   /**
    * Returns only the filename parts from the given full path and filename.
-   * 
+   *
    * @param path Complete path of file
    */
   getFilename(path: string) {

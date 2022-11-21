@@ -8,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 
 // Application specific imports.
-import { FeedbackService } from '../../../services/feedback.service';
+import { FeedbackService } from '../../../services--/feedback.service';
 import { EvaluatorService } from 'src/app/components/misc/evaluator/services/evaluator.service';
 
 /**

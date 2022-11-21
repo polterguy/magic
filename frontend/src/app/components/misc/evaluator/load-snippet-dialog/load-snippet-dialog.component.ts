@@ -8,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 
 // Application specific imports.
-import { FeedbackService } from '../../../../services/feedback.service';
+import { FeedbackService } from '../../../../services--/feedback.service';
 import { EvaluatorService } from 'src/app/components/misc/evaluator/services/evaluator.service';
 
 /**
@@ -33,7 +33,7 @@ export class LoadSnippetDialogComponent implements OnInit {
 
   /**
    * Creates an instance of your login dialog.
-   * 
+   *
    * @param dialogRef Necessary to close dialog when user selects a snippet
    * @param evaluatorService Evaluator service needed to retrieve snippet files from backend
    * @param feedbackService Needed to display feedback to user
@@ -65,7 +65,7 @@ export class LoadSnippetDialogComponent implements OnInit {
 
   /**
    * Returns only the filename parts from the given full path and filename.
-   * 
+   *
    * @param path Complete path of file
    */
   getFilename(path: string) {

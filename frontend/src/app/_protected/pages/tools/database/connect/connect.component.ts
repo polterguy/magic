@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { BackendService } from 'src/app/services/backend.service';
 import { GeneralService } from 'src/app/_general/services/general.service';
+import { BackendService } from 'src/app/_protected/services/common/backend.service';
 import { ConfigService } from 'src/app/_protected/services/common/config.service';
 import { SqlService } from '../_services/sql.service';
 

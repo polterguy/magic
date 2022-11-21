@@ -8,10 +8,10 @@ import { Component, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { Response } from 'src/app/models/response.model';
-import { ConfigService } from '../../../../../services/config.service';
-import { MessageService } from 'src/app/services/message.service';
-import { BackendService } from 'src/app/services/backend.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
+import { ConfigService } from '../../../../../services--/config.service';
+import { MessageService } from 'src/app/services--/message.service';
+import { BackendService } from 'src/app/services--/backend.service--';
+import { FeedbackService } from 'src/app/services--/feedback.service';
 
 /**
  * Setup configuration component for allowing user to configure his Magic
@@ -71,7 +71,7 @@ export class SetupAuthComponent implements OnInit {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param feedbackService Needed to display feedback to user
    * @param configService Configuration service used to read and save configuration settings
    * @param messageService Used to publish event when status of setup process has changed
@@ -81,7 +81,7 @@ export class SetupAuthComponent implements OnInit {
     private configService: ConfigService,
     private backendService: BackendService,
     protected messageService: MessageService) { }
-  
+
   /**
    * Implementation of OnInit.
    */
@@ -102,7 +102,7 @@ export class SetupAuthComponent implements OnInit {
 
   /**
    * Returns the full name of the specified database type.
-   * 
+   *
    * @param type Type of database
    * @returns Name of database type according to type specified
    */

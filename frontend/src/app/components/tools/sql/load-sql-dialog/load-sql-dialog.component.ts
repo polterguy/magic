@@ -8,8 +8,8 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
-import { SqlService } from '../../../../services/sql.service';
-import { FeedbackService } from '../../../../services/feedback.service';
+import { SqlService } from '../../../../services--/sql.service';
+import { FeedbackService } from '../../../../services--/feedback.service';
 
 /**
  * Load snippet dialog for loading saved snippets from the backend.
@@ -33,7 +33,7 @@ export class LoadSqlDialogComponent implements OnInit {
 
   /**
    * Creates an instance of your login dialog.
-   * 
+   *
    * @param dialogRef Needed to be able to close dialog as user selects a snippet
    * @param feedbackService Needed to be able to display feedback to user
    * @param sqlService Needed to retrieve snippets from backend
@@ -67,7 +67,7 @@ export class LoadSqlDialogComponent implements OnInit {
 
   /**
    * Returns only the filename parts from the given full path and filename.
-   * 
+   *
    * @param path Complete path of file
    */
   getFilename(path: string) {

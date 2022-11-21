@@ -14,13 +14,13 @@ import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@aspnet/
 import { saveAs } from 'file-saver';
 
 // Application specific imports.
-import { SqlService } from '../../../services/sql.service';
+import { SqlService } from '../../../services--/sql.service';
 import { Databases } from 'src/app/models/databases.model';
-import { FileService } from 'src/app/services/file.service';
-import { CacheService } from 'src/app/services/cache.service';
-import { BackendService } from 'src/app/services/backend.service';
+import { FileService } from 'src/app/services--/file.service';
+import { CacheService } from 'src/app/services--/cache.service';
+import { BackendService } from 'src/app/services--/backend.service--';
 import { NewTableComponent } from './new-table/new-table.component';
-import { FeedbackService } from '../../../services/feedback.service';
+import { FeedbackService } from '../../../services--/feedback.service';
 import { SqlWarningComponent } from './sql-warning/sql-warning.component';
 import { NewDatabaseComponent } from './new-database/new-database.component';
 import { NewFieldKeyComponent } from './new-field-key/new-field-key.component';
@@ -35,10 +35,10 @@ import { Model } from '../../utilities/codemirror/codemirror-sql/codemirror-sql.
 // CodeMirror options.
 import sql from '../../utilities/codemirror/options/sql.json'
 import { ViewAppDialogComponent } from '../plugins/view-app-dialog/view-app-dialog.component';
-import { ConfigService } from 'src/app/services/config.service';
+import { ConfigService } from 'src/app/services--/config.service';
 import { BazarService } from '../../management/services/bazar.service';
-import { MessageService } from 'src/app/services/message.service';
-import { LoaderService } from 'src/app/services/loader.service';
+import { MessageService } from 'src/app/services--/message.service';
+import { LoaderService } from 'src/app/services--/loader.service';
 import { environment } from 'src/environments/environment';
 import { ConfirmUninstallDialogComponent } from '../plugins/confirm-uninstall-dialog/confirm-uninstall-dialog.component';
 

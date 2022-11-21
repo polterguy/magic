@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { ThemeService } from 'src/app/services/theme.service';
 import { GeneralService } from 'src/app/_general/services/general.service';
+import { ThemeService } from 'src/app/_general/services/theme.service';
 
 @Component({
   selector: 'app-main-chart',

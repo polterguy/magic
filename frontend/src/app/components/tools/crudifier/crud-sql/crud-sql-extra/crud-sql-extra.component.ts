@@ -9,14 +9,14 @@ import { MatDialog } from '@angular/material/dialog';
 
 // Application specific imports.
 import { CrudifyService } from '../../../../../_protected/pages/crud-generator/_services/crudify.service';
-import { MessageService } from 'src/app/services/message.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
+import { MessageService } from 'src/app/services--/message.service';
+import { FeedbackService } from 'src/app/services--/feedback.service';
 import { Argument } from '../../../../../_protected/pages/administration/generated-endpoints/_models/argument.model';
 import { Model } from '../../../../utilities/codemirror/codemirror-sql/codemirror-sql.component';
 import { CrudSqlAddArgumentDialogComponent } from './crud-sql-add-argument-dialog/crud-sql-add-argument-dialog.component';
-import { BackendService } from 'src/app/services/backend.service';
+import { BackendService } from 'src/app/services--/backend.service--';
 import { LoadSqlDialogComponent } from '../../../sql/load-sql-dialog/load-sql-dialog.component';
-import { SqlService } from 'src/app/services/sql.service';
+import { SqlService } from 'src/app/services--/sql.service';
 
 /**
  * Component allowing user to generate an SQL based endpoint.

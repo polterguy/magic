@@ -1,0 +1,53 @@
+@import '../../../../../../assets/styles/_variables/colors.scss';
+@import '../../../../../../assets/styles/_variables/mixin.scss';
+
+.frontend-generator ::ng-deep {
+  .mat-chip {
+    font-size: 12px;
+    min-height: 25px;
+  }
+  .mat-checkbox-label {
+    margin-left: 12px;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .CodeMirror {
+    height: 100%;
+    max-height: 300px;
+  }
+}
+
+.fake-container {
+  height: 400px;
+}
+
+.endpoints-list {
+  max-height: 408px;
+  overflow: hidden auto;
+  @include scrollbar($aista_default_alt, $aista_default_grey4, 5px);
+}
+.methods {
+  min-width: 50px;
+  min-height: 20px;
+  width: 50px;
+  height: 20px;
+  font-size: 10px;
+  border-radius: 45px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+  color: $aista_default;
+  &.get {
+    background-color: $aista_info;
+  }
+  &.post {
+    background-color: $aista_success;
+  }
+  &.put, &.patch {
+    background-color: $aista_warning;
+  }
+  &.delete {
+    background-color: $aista_error;
+  }
+}

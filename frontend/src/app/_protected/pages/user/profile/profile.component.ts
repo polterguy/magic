@@ -4,7 +4,7 @@ import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messa
 import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { BackendService } from 'src/app/_protected/services/common/backend.service';
-import { UserService } from '../../user-roles/_services/user.service';
+import { UserService } from '../../administration/user-roles/_services/user.service';
 
 @Component({
   selector: 'app-profile',

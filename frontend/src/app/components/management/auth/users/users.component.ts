@@ -15,9 +15,9 @@ import { ChangeDetectorRef, Component, Input, OnInit, ViewChild } from '@angular
 
 // Application specific imports.
 import { Count } from 'src/app/models/count.model';
-import { BackendService } from 'src/app/services/backend.service';
+import { BackendService } from 'src/app/services--/backend.service--';
 import { EditExtraComponent } from './edit-extra/edit-extra.component';
-import { FeedbackService } from '../../../../services/feedback.service';
+import { FeedbackService } from '../../../../services--/feedback.service';
 import { AuthenticateResponse } from '../../../../_protected/pages/user-roles/_models/authenticate-response.model';
 import { NewUserDialogComponent } from './new-user-dialog/new-user-dialog.component';
 import { UserService } from 'src/app/_protected/pages/user-roles/_services/user.service';

@@ -15,8 +15,8 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 // Application specific imports.
 import { Message } from 'src/app/models/message.model';
 import { PublicKey } from '../models/public-key.model';
-import { MessageService } from 'src/app/services/message.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
+import { MessageService } from 'src/app/services--/message.service';
+import { FeedbackService } from 'src/app/services--/feedback.service';
 import { CryptoService } from 'src/app/components/management/crypto/services/crypto.service';
 import { CryptoInvocation } from 'src/app/components/management/crypto/models/crypto-invocations.model';
 
@@ -80,7 +80,7 @@ export class CryptoInvocationsComponent implements OnInit, OnDestroy {
 
   /**
    * Creates an instance of your component.
-   * 
+   *
    * @param clipboard Needed to be able to copy information to the clipboard
    * @param cryptoService Needed to retrieve cryptographically signed invocations from backend
    * @param messageService Needed to be able to subscribe to messages of relevance transmitted by other components
@@ -159,7 +159,7 @@ export class CryptoInvocationsComponent implements OnInit, OnDestroy {
 
   /**
    * Invoked when detailed view is toggled for specified invocation.
-   * 
+   *
    * @param invocation Inovcation to toggle detailed view for
    */
   getDetails(invocation: CryptoInvocation) {
@@ -174,7 +174,7 @@ export class CryptoInvocationsComponent implements OnInit, OnDestroy {
 
   /**
    * Copies the specified content into the clipboard.
-   * 
+   *
    * @param content Content to copy to clipboard
    */
   copyToClipboard(content: string) {
@@ -184,7 +184,7 @@ export class CryptoInvocationsComponent implements OnInit, OnDestroy {
 
   /**
    * Invoked when paginator wants to page data table.
-   * 
+   *
    * @param e Page event argument
    */
   paged(e: PageEvent) {
@@ -202,7 +202,7 @@ export class CryptoInvocationsComponent implements OnInit, OnDestroy {
 
   /**
    * Invoked when information about a specific key is needed.
-   * 
+   *
    * @param id ID of key to retrieve
    */
   getCryptoKeySubject(id: number) {
@@ -215,7 +215,7 @@ export class CryptoInvocationsComponent implements OnInit, OnDestroy {
 
   /**
    * Invoked when information about a specific key is needed.
-   * 
+   *
    * @param id ID of key to retrieve
    */
    getCryptoKeyFingerprint(id: number) {

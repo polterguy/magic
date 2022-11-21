@@ -5,7 +5,7 @@
 import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 
 // Utility imports.
-import { ThemeService } from 'src/app/services/theme.service';
+import { ThemeService } from 'src/app/services--/theme.service';
 import { SystemReport } from 'src/app/models/dashboard.model';
 import { Subscription } from 'rxjs';
 
