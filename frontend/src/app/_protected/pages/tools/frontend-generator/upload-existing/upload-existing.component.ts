@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { GeneralService } from 'src/app/_general/services/general.service';
+import { FileService } from '../../hyper-ide/_services/file.service';
 
 @Component({
   selector: 'app-upload-existing',
@@ -7,10 +9,46 @@ import { Component, OnInit } from '@angular/core';
 })
 export class UploadExistingComponent implements OnInit {
 
-  constructor() { }
+   /**
+   * selected file
+   */
+    public file: any;
+
+    /**
+   * specifies if the file is being uploaded.
+   */
+  public uploading: boolean = false;
+
+  constructor(
+    private generalService: GeneralService,
+    private fileService: FileService) { }
 
   ngOnInit(): void {
 
+  }
+
+  /**
+   * getting the selected file to upload
+   * @param event
+   */
+   public getFile(event: any) {
+    this.uploading = true;
+    this.file = event.target.files[0];
+
+    const formData = new FormData();
+    formData.append("file", this.file, this.file.name);
+    formData.append("folder", '/etc/www/');
+
+    this.fileService.uploadStaticWebsite(formData).subscribe({
+      next: (res: any) => {
+        this.uploading = false;
+        this.generalService.showFeedback('Uploaded successfully in /www.', 'successMessage', 'Ok', 4000);
+      },
+      error: (error: any) => {
+        this.uploading = false;
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000);
+      }
+    })
   }
 }
 

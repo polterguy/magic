@@ -120,7 +120,8 @@ export class SetupComponent implements OnInit {
     this.configService.setup(payload).subscribe({
       next: (auth: any) => {
         this.waiting = false;
-        this.router.navigateByUrl('/');
+        // this.router.navigateByUrl('/');
+        window.location.href = '/';
       },
       error: (error: any) => {
         this.generalService.showFeedback(error?.error?.message??error, 'errorMessage');

@@ -21,6 +21,7 @@ import { CreateAssumptionTestDialogComponent } from './create-assumption-test-di
 import { SnippetNameDialogComponent } from './snippet-name-dialog/snippet-name-dialog.component';
 import { EndpointDialogComponent } from './endpoint-dialog/endpoint-dialog.component';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
+import { GithubTokenDialogComponent } from './github-token-dialog/github-token-dialog.component';
 
 
 
@@ -38,7 +39,8 @@ import { CodemirrorModule } from '@ctrl/ngx-codemirror';
       AssumptionsComponent,
       CreateAssumptionTestDialogComponent,
       SnippetNameDialogComponent,
-      EndpointDialogComponent
+      EndpointDialogComponent,
+      GithubTokenDialogComponent
   ],
   imports: [
     CommonModule,
@@ -60,7 +62,8 @@ import { CodemirrorModule } from '@ctrl/ngx-codemirror';
     AssumptionsComponent,
     CreateAssumptionTestDialogComponent,
     SnippetNameDialogComponent,
-    EndpointDialogComponent
+    EndpointDialogComponent,
+    GithubTokenDialogComponent
   ]
 })
 export class ComponentsModule { }

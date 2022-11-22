@@ -16,7 +16,7 @@ export class ScheduleTaskComponent implements OnInit {
 
   public fixedDateTime: string;
 
-  public scheduleOption: string; // fixed || repeat
+  public scheduleOption: string; // fixed || repeat || custom
 
   public period: string[] = [
     'seconds', 'minutes', 'hours', 'days', 'weeks', 'months'
@@ -27,6 +27,7 @@ export class ScheduleTaskComponent implements OnInit {
 
   public selectedPeriod: string;
   public selectedNumber: number;
+  public customRepetition: string;
 
   constructor(
     private taskService: TaskService,
@@ -51,12 +52,19 @@ export class ScheduleTaskComponent implements OnInit {
       }
       date = new Date(this.fixedDateTime);
       repeating = null;
-    } else {
+    } else if (this.scheduleOption === 'repeat') {
       if (!this.selectedNumber || !this.selectedPeriod) {
         this.generalService.showFeedback('Please complete the setting', 'errorMessage');
         return;
       }
       repeating = `${this.selectedNumber}.${this.selectedPeriod}`;
+      date = null;
+    } else {
+      if (!this.customRepetition || this.customRepetition === '') {
+        this.generalService.showFeedback('Please complete the setting', 'errorMessage');
+        return;
+      }
+      repeating = this.customRepetition;
       date = null;
     }
 

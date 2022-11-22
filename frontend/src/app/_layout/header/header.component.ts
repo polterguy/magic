@@ -15,6 +15,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { DialogComponent } from 'src/app/_general/components/dialog/dialog.component';
 import { BackendsListComponent } from 'src/app/_general/components/backends-list/backends-list.component';
 import { Location } from '@angular/common';
+import { CryptoService } from 'src/app/_protected/pages/setting-security/server-key-setting/_services/crypto.service';
+import { GithubTokenDialogComponent } from 'src/app/_general/components/github-token-dialog/github-token-dialog.component';
 
 @Component({
   selector: 'app-header',
@@ -74,16 +76,14 @@ export class HeaderComponent implements OnInit {
     */
   constructor(
     private dialog: MatDialog,
+    private location: Location,
     private clipboard: Clipboard,
     private generalService: GeneralService,
     private userService: UserService,
-    private location: Location,
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private cdr: ChangeDetectorRef,
     private backendService: BackendService) {
-    // this.username = this.userService.getUserData().username;
-    // this.userService.getUserData()?.extra?.affiliate_percent ? this.isAffiliate = true : this.isAffiliate = false;
       this.activatedRoute.queryParamMap.subscribe((params: any) => {
         if (params) {
           this.getParams(params)
@@ -91,23 +91,23 @@ export class HeaderComponent implements OnInit {
           this.getPermissions();
         }
       })
-  }
+    }
 
-  ngOnInit() {
-  }
+    ngOnInit() {
+    }
 
-  public getPermissions() {
-    (async () => {
-      while (this.backendService.active.access && !Object.keys(this.backendService.active.access.auth).length)
+    public getPermissions() {
+      (async () => {
+        while (this.backendService.active.access && !Object.keys(this.backendService.active.access.auth).length)
         await new Promise(resolve => setTimeout(resolve, 100));
 
-      if (this.backendService.active.access && Object.keys(this.backendService.active.access.auth).length > 0) {
-        this.permissions = this.backendService.active;
-        this.username = this.permissions.token ? this.permissions.token['_username'] : 'anonymous';
-        this.backendService.active ? this.activeUrl = this.backendService.active.url.replace('http://', '').replace('https://', '') : this.activeUrl = 'not connected';
-        this.backendList = this.backendService.backends;
+        if (this.backendService.active.access && Object.keys(this.backendService.active.access.auth).length > 0) {
+          this.permissions = this.backendService.active;
+          this.username = this.permissions.token ? this.permissions.token['_username'] : 'anonymous';
+          this.backendService.active ? this.activeUrl = this.backendService.active.url.replace('http://', '').replace('https://', '') : this.activeUrl = 'not connected';
+          this.backendList = this.backendService.backends;
 
-        this.createMenu();
+          this.createMenu();
         this.cdr.detectChanges();
         // console.log(this.router.url,(this.navLinks.find((item: any) => item.name === 'Tools')?.submenu.findIndex((el: any) => el.url === this.router.url) > -1))
       }
@@ -213,7 +213,6 @@ export class HeaderComponent implements OnInit {
         name: 'Administration',
         url: null,
         expandable: true,
-        isActive: (this.navLinks.find((item: any) => item.name === 'Administration')?.submenu.findIndex((el: any) => el.url === this.router.url) > -1),
         submenu: [
           {
             name: 'Users and roles',
@@ -246,7 +245,6 @@ export class HeaderComponent implements OnInit {
         name: 'Tools',
         url: null,
         expandable: true,
-        isActive: (this.navLinks.find((item: any) => item.name === 'Tools')?.submenu.findIndex((el: any) => el.url === this.router.url) > -1),
         submenu: [
           {
             name: 'Database',
@@ -289,7 +287,6 @@ export class HeaderComponent implements OnInit {
         name: 'Settings & security',
         url: null,
         expandable: true,
-        isActive: (this.navLinks.find((item: any) => item.name === 'Settings & security')?.submenu.findIndex((el: any) => el.url === this.router.url) > -1),
         submenu: [
           {
             name: 'Configuration',
@@ -317,7 +314,6 @@ export class HeaderComponent implements OnInit {
         name: this.username,
         url: null,
         expandable: true,
-        isActive: (this.navLinks.find((item: any) => item.name === this.username)?.submenu.findIndex((el: any) => el.url === this.router.url) > -1),
         submenu: [
           {
             name: 'Profile',
@@ -327,6 +323,9 @@ export class HeaderComponent implements OnInit {
           {
             name: 'Help center',
             url: '/help-center'
+          },
+          {
+            name: 'GitHub token',
           },
           {
             name: 'Logout',
@@ -349,6 +348,25 @@ export class HeaderComponent implements OnInit {
       return;
     }
     this.toggleSidebar();
+  }
+
+  /**
+   * Logs the user out of his current backend.
+   */
+  public getGithubToken(clickType: string) {
+    if (clickType !== 'GitHub token') {
+      return;
+    }
+
+    this.dialog.open(GithubTokenDialogComponent, {
+      width: '500px',
+      autoFocus: false,
+      data: {
+        username: this.username,
+        role: this.permissions.token['_roles'].toString(),
+        expires: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString()
+      }
+    })
   }
 
   /**

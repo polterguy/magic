@@ -1,0 +1,16 @@
+<h3 mat-dialog-title>Token is Ready!</h3>
+<div mat-dialog-content>
+  <div class="d-flex bg-light p-3">
+    <div class="text-muted">
+      <mat-icon>sticky_note_2</mat-icon>
+    </div>
+    <div class="px-2"></div>
+    <div class="word-break">
+      {{token}}
+    </div>
+  </div>
+</div>
+<div mat-dialog-actions [align]="'end'">
+  <button mat-button color="primary" mat-dialog-close>Close</button>
+  <button mat-flat-button color="primary" (click)="copy()">Copy to clipboard</button>
+</div>

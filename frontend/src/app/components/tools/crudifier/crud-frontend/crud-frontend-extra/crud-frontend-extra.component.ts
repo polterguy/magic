@@ -9,8 +9,8 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 // Application specific imports.
 import { Message } from 'src/app/models/message.model';
 import { CrudifyService } from '../../../../../_protected/pages/crud-generator/_services/crudify.service';
-import { MessageService } from 'src/app/services--/message.service';
-import { FeedbackService } from 'src/app/services--/feedback.service';
+import { MessageService } from 'src/app/services/message.service';
+import { FeedbackService } from 'src/app/services/feedback.service';
 import { Endpoint } from '../../../../../_protected/pages/administration/generated-endpoints/_models/endpoint.model';
 import { EndpointService } from 'src/app/_protected/pages/generated-endpoints/_services/endpoint.service';
 import { Redirect2hubComponent } from './redirect2hub/redirect2hub.component';

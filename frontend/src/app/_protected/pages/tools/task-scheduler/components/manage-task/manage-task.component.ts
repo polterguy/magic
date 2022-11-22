@@ -61,7 +61,7 @@ export class ManageTaskComponent implements OnInit {
 
     if (this.data) {
       this.taskService.update(
-        this.task.id,
+        this.data.id,
         this.hlModel.hyperlambda,
         this.task.description).subscribe({
           next: () => {

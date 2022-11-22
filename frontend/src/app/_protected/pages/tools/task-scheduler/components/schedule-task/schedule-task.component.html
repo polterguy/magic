@@ -23,7 +23,7 @@
               [min]="minDate"
               (click)="picker.open()"
               readonly
-              [disabled]="scheduleOption==='repeat'">
+              [disabled]="scheduleOption !== 'fixed'">
             <mat-datepicker-toggle matPrefix [for]="picker"></mat-datepicker-toggle>
             <ngx-mat-datetime-picker #picker [showSeconds]="false">
             </ngx-mat-datetime-picker>
@@ -47,7 +47,7 @@
                 <mat-select placeholder="Strength"
                   [(ngModel)]="selectedNumber"
                   [ngModelOptions]="{standalone: true}"
-                  [disabled]="scheduleOption==='fixed'">
+                  [disabled]="scheduleOption !== 'repeat'">
                   <mat-option *ngFor="let item of numbers" [value]="item">
                     {{item}}
                   </mat-option>
@@ -64,7 +64,7 @@
                 <mat-select placeholder="Strength"
                   [(ngModel)]="selectedPeriod"
                   [ngModelOptions]="{standalone: true}"
-                  [disabled]="scheduleOption==='fixed'">
+                  [disabled]="scheduleOption !== 'repeat'">
                   <mat-option *ngFor="let item of period" [value]="item">
                     {{item}}
                   </mat-option>
@@ -72,6 +72,39 @@
               </mat-form-field>
             </div>
           </div>
+        </div>
+
+        <div class="col-md-4 col-12 mt-3 align-self-start">
+          <p class="mt-3 mb-0">
+            <mat-radio-button value="custom" color="primary">Custom repetition</mat-radio-button>
+          </p>
+        </div>
+        <div class="col-md-8 col-12 mt-3">
+          <mat-form-field class="w-100 standalone-field">
+            <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+              <mat-icon>unfold_more</mat-icon>
+              <span class="text-muted">|</span>
+            </span>
+
+            <input matInput type="text" placeholder="Custom value"
+              [(ngModel)]="customRepetition"
+              [ngModelOptions]="{standalone: true}"
+              [disabled]="scheduleOption !== 'custom'">
+          </mat-form-field>
+          <ng-container *ngIf="scheduleOption === 'custom'">
+            <mat-hint class="d-block mat-caption mt-2">
+              <span class="fw-bold">e.g. 5.days</span> ->
+              <span class="d-block text-muted">x.units: Units can be one of "seconds", "minutes", "hours", "days", "weeks" or "months"</span>
+            </mat-hint>
+            <mat-hint class="d-block mat-caption">
+              <span class="fw-bold">e.g. 10.20.15.22.22</span> ->
+              <span class="d-block text-muted">MM.dd.HH.mm.ss: Months.days in months.hours.minutes.seconds</span>
+            </mat-hint>
+            <mat-hint class="d-block mat-caption">
+              <span class="fw-bold">e.g. 10.15.22.22</span> ->
+              <span class="d-block text-muted">ww.HH.mm.ss: Weekdays.hour.minute.second</span>
+            </mat-hint>
+          </ng-container>
         </div>
       </div>
 

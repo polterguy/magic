@@ -60,6 +60,7 @@
 
     .mat-expansion-panel-content {
       max-height: calc(100% - 25px);
+      height: 100%;
       overflow: auto;
       @include scrollbar($aista_default_alt, $aista_default_grey4, 8px);
       @include scrollbar_horizontal($aista_default_alt, $aista_default_grey4, 7px);

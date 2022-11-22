@@ -15,6 +15,7 @@
             name="-"
             autocomplete="off"
             [(ngModel)]="task.id"
+            [disabled]="data"
             [ngModelOptions]="{standalone: true}"
             [pattern]="CommonRegEx.appNames">
           <mat-error>{{CommonErrorMessages.appNames}}</mat-error>

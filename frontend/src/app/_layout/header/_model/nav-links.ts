@@ -4,7 +4,7 @@ export interface NavLinks {
   expandable: boolean,
   color?: string,
   submenu?: Submenu[],
-  isActive?: boolean
+  isActive?: any
 }
 
 export interface Submenu {

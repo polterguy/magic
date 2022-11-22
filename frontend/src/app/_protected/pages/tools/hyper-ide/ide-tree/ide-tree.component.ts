@@ -174,6 +174,8 @@ export class IdeTreeComponent implements OnInit, OnDestroy {
                     }
                   }))
                 }
+
+                console.log(this.dataSource.data)
               } else {
                 // this.dataBindTree();
               }

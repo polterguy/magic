@@ -134,7 +134,7 @@ export class UsersListComponent implements OnInit {
     this.dialog.open(ConfirmationDialogComponent, {
       width: '500px',
       data: {
-        title: `Lock user ${user?.username}`,
+        title: `${user?.locked ? 'Unlock' : 'Lock'} user ${user?.username}`,
         description_extra: 'To proceed please type in the <span class="fw-bold">user\'s username</span> below.',
         action_btn: 'Lock user',
         action_btn_color: 'warn',
