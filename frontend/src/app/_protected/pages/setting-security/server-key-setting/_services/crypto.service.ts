@@ -271,4 +271,12 @@ export class CryptoService {
     }
     return this.httpService.get<Count>('/magic/system/magic/crypto_invocations-count' + query);
   }
+
+  /**
+   * Retrieves the long lasting JWT token and returns to caller.
+   */
+   getGithubKey(username: string, role: string, expires: string) {
+    const param: string = `?username=${encodeURIComponent(username)}&role=${encodeURIComponent(role)}&expires=${encodeURIComponent(expires)}`
+    return this.httpService.get<any>('/magic/system/auth/generate-key' + param);
+  }
 }

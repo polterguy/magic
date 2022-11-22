@@ -9,9 +9,12 @@ import { BehaviorSubject, ReplaySubject } from 'rxjs';
 export class IdeSearchboxComponent implements OnInit {
 
   @Output() filterList = new EventEmitter<any>();
+  @Output() toggleFileSystems = new EventEmitter<any>();
 
   private _inputValue: BehaviorSubject<string> = new BehaviorSubject<string>('');
   public inputValue = this._inputValue.asObservable();
+
+  public fileSystem: boolean = false;
 
   constructor() { }
 
@@ -37,9 +40,8 @@ export class IdeSearchboxComponent implements OnInit {
     this.filterList.emit(this._inputValue);
   }
 
-  public toggleSystemEndpoints() {
-    this._inputValue.next('');
-    this.filterList.emit(this._inputValue);
+  public toggleFileSystem() {
+    this.toggleFileSystems.emit(this.fileSystem);
   }
 
 }

@@ -1,13 +1,24 @@
-<mat-form-field class="w-100 standalone-field">
-  <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-    <mat-icon>search</mat-icon>
-    <span class="text-muted">|</span>
-  </span>
 
-  <input matInput
-    placeholder="Search through files"
-    (input)="applyFilter(input.value)" #input>
+<div class="d-flex justify-content-lg-between align-items-lg-center align-items-end flex-lg-row flex-column w-100">
+  <mat-form-field class="w-100 standalone-field custom-size">
+    <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+      <mat-icon>search</mat-icon>
+      <span class="text-muted">|</span>
+    </span>
+
+    <input matInput
+      placeholder="Search through files"
+      (input)="applyFilter(input.value)" #input>
     <button mat-icon-button matSuffix (click)="removeSearchTerm();input.value = ''" *ngIf="input.value!==''">
       <mat-icon>close</mat-icon>
     </button>
-</mat-form-field>
+  </mat-form-field>
+  <div class="p-lg-2"></div>
+  <mat-checkbox
+    color="primary"
+    class="mt-lg-0 mt-3"
+    [(ngModel)]="fileSystem"
+    (change)="toggleFileSystem();">
+    System files
+  </mat-checkbox>
+</div>

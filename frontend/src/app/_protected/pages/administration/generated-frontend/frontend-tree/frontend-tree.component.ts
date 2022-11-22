@@ -163,9 +163,12 @@ export class FrontendTreeComponent implements OnInit, OnDestroy {
                   name1.push(root.children.filter(newData => !this.dataSource.data.map(oldData => oldData.name).includes(newData.name)));
                 }
                 const etcPath: any = root.children.find((item: any) => item.name === 'etc')
-                const frontendPath = etcPath.children.find((item: any) => item.path === '/etc/frontend/');
-                const srcFolder = frontendPath.children.find((item: any) => item.name === 'src');
-                this.dataSource.data = srcFolder.children;
+                // const frontendPath = etcPath.children.find((item: any) => item.path === '/etc/frontend/');
+                // const srcFolder = frontendPath.children.find((item: any) => item.name === 'src');
+                // this.dataSource.data = srcFolder.children;
+
+                const frontendFolders = etcPath.children.filter((item: any) => item.path === '/etc/frontend/' || item.path === '/etc/www/')
+                this.dataSource.data = frontendFolders;
 
                 // if file system is enabled, then set a new field as systemFile to true
                 if (this.systemFiles) {
@@ -397,10 +400,12 @@ export class FrontendTreeComponent implements OnInit, OnDestroy {
         expanded.push(this.openFolder);
       }
     }
-    const frontendPath: any = root.children.find((item: any) => item.name === 'etc')
-    const frontendFolder = frontendPath.children.find((item: any) => item.path === '/etc/frontend/');
-    const srcFolder = frontendFolder.children.find((item: any) => item.name === 'src');
-    this.dataSource.data = srcFolder.children;
+    const etcPath: any = root.children.find((item: any) => item.name === 'etc')
+    // const frontendFolder = frontendPath.children.find((item: any) => item.path === '/etc/frontend/');
+    // const srcFolder = frontendFolder.children.find((item: any) => item.name === 'src');
+    // this.dataSource.data = srcFolder.children;
+    const frontendFolders = etcPath.children.filter((item: any) => item.path === '/etc/frontend/' || item.path === '/etc/www/')
+    this.dataSource.data = frontendFolders;
 
     for (const idx of this.treeControl.dataNodes) {
       if (expanded.filter(x => (<any>x)?.node?.path === (<any>idx).node.path).length > 0) {
@@ -632,8 +637,10 @@ export class FrontendTreeComponent implements OnInit, OnDestroy {
   private getFolders(current?: any) {
     if (!current) {
       const etcPath: any = root.children.find((item: any) => item.name === 'etc')
-      const frontendPath = etcPath.children.find((item: any) => item.path === '/etc/frontend/');
-      current = frontendPath.children.find((item: any) => item.name === 'src');
+      // const frontendPath = etcPath.children.find((item: any) => item.path === '/etc/frontend/');
+      // current = frontendPath.children.find((item: any) => item.name === 'src');
+      const frontendFolders = etcPath.children.filter((item: any) => item.path === '/etc/frontend/' || item.path === '/etc/www/')
+      this.dataSource.data = frontendFolders;
     }
     const result: string[] = [];
     if (current.isFolder) {
@@ -655,14 +662,18 @@ export class FrontendTreeComponent implements OnInit, OnDestroy {
   private getFiles(current?:any) {
     let result: string[] = [];
     const etcPath: any = root.children.find((item: any) => item.name === 'etc')
-    const frontendPath = etcPath.children.find((item: any) => item.path === '/etc/frontend/');
-    const srcFolder = current ?? frontendPath.children.find((item: any) => item.name === 'src');
-    for (const idx of srcFolder.children.filter(x => !x.isFolder)) {
-      result.push(idx.path);
-    }
-    for (const idx of srcFolder.children.filter(x => x.isFolder)) {
-      result = result.concat(this.getFiles(idx));
-    }
+    // const frontendPath = etcPath.children.find((item: any) => item.path === '/etc/frontend/');
+    // const srcFolder = current ?? frontendPath.children.find((item: any) => item.name === 'src');
+    const frontendFolders = etcPath.children.filter((item: any) => item.path === '/etc/frontend/' || item.path === '/etc/www/')
+    frontendFolders.map((item: any) => {
+
+      for (const idx of item.children.filter(x => !x.isFolder)) {
+        result.push(idx.path);
+      }
+      for (const idx of item.children.filter(x => x.isFolder)) {
+        result = result.concat(this.getFiles(idx));
+      }
+    })
 
     return result;
   }

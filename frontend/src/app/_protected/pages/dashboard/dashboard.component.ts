@@ -91,11 +91,11 @@ export class DashboardComponent implements OnInit {
         }
 
         // Binding model
-        this.systemReport = report;
+        this.systemReport = report || [];
 
         // To display system reports in the html file.
         this.systemReportDisplayable = this.systemReport;
-        this.logTypesChart = report['log_types'];
+        this.logTypesChart = report['log_types'] || [];
 
         // Preparing data with variable key
         if (report["timeshifts"]) {

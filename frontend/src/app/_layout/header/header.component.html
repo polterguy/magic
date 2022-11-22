@@ -17,8 +17,7 @@
       [routerLink]="item.url"
       (click)="item.expandable ? null : closeSidebarInSidePanel()"
       [matMenuTriggerFor]="item.expandable ? subMenu : null" [matMenuTriggerData]="item"
-      routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"
-      [class.xxxxxx]="">
+      routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
 
       {{item.name}} <mat-icon *ngIf="item.expandable">expand_more</mat-icon>
 
@@ -33,7 +32,7 @@
           [routerLinkActiveOptions]="{exact: true}"
           routerLinkActive="active-link"
           #isActiveLink="routerLinkActive"
-          (click)="logout(item.name);closeSidebarInSidePanel()">
+          (click)="getGithubToken(item.name);logout(item.name);closeSidebarInSidePanel()">
           {{item.name}}
         </a>
       </ng-template>

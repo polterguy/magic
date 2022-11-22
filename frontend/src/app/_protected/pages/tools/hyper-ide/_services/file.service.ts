@@ -166,6 +166,18 @@ export class FileService {
   }
 
   /**
+   * Uploads a file to your backend.
+   *
+   * @param path Folder to upload file to
+   * @param file File you want to upload
+   */
+   public uploadStaticWebsite(data: FormData) {
+    // const formData: FormData = new FormData();
+    // formData.append('file', file);
+    return this.httpService.put<any>('/magic/system/file-system/overwrite-folder', data);
+  }
+
+  /**
    * Downloads a file from backend.
    *
    * @param path File to download
