@@ -4,6 +4,7 @@ import { BackendService } from '../../services/common/backend.service';
 import { DiagnosticsService } from './_services/diagnostics.service';
 import moment from 'moment';
 import { LogTypes, SystemReport, Timeshifts } from './_models/dashboard.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
@@ -35,6 +36,7 @@ export class DashboardComponent implements OnInit {
    public userAsUsername: string = '';
 
   constructor(
+    private router: Router,
     private cdr: ChangeDetectorRef,
     private generalService: GeneralService,
     private backendService: BackendService,
@@ -50,6 +52,11 @@ export class DashboardComponent implements OnInit {
         await new Promise(resolve => setTimeout(resolve, 100));
 
       if (this.backendService?.active?.access && Object.keys(this.backendService?.active?.access?.auth).length) {
+        const notAuthorized: boolean = Object.values(this.backendService.active.access.auth).every((item: any) => {return item === false})
+
+          if (notAuthorized || !this.backendService.active.token) {
+            this.router.navigateByUrl('/authentication');
+          }
         if (this.backendService.active?.token?.in_role('root')) {
           this.getSystemReport();
           this.userIsRoot = (this.backendService.active?.token?.in_role('root'));
