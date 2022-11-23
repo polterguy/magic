@@ -51,7 +51,7 @@ export class LoginComponent implements OnInit {
     @Inject(Injector) private readonly injector: Injector) { }
 
   ngOnInit(): void {
-    this.readBackendService();
+    // this.readBackendService();
   }
 
   private readBackendService() {
