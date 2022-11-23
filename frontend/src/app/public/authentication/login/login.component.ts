@@ -56,7 +56,7 @@ export class LoginComponent implements OnInit {
 
   private readBackendService() {
     (async () => {
-      while (!this.backendService?.active['_access'] || !Object.keys(this.backendService?.active['_access']?.auth).length)
+      while (!this.backendService?.active?.access && !Object.keys(this.backendService?.active?.access?.auth ?? {}).length)
         await new Promise(resolve => setTimeout(resolve, 100));
 
       if (this.backendService?.active) {

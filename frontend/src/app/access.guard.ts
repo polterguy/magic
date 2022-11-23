@@ -42,10 +42,10 @@ export class AccessGuard implements CanActivate {
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
 
       (async () => {
-        while ((!this.backendService?.active?.access || !Object.keys(this.backendService?.active?.access?.auth ?? {})?.length))
+        while ((this.backendService?.active?.access && Object.keys(this.backendService?.active?.access?.auth ?? {}).length===0))
           await new Promise(resolve => setTimeout(resolve, 100));
-          if (this.backendService?.active?.access) {
-            const notAuthorized: boolean = Object.values(this.backendService.active['_access'].auth).every((item: any) => {return item === false})
+          if (this.backendService?.active?.access && Object.keys(this.backendService?.active?.access?.auth).length) {
+            const notAuthorized: boolean = Object.values(this.backendService.active.access.auth).every((item: any) => {return item === false})
 console.log('first')
           if (notAuthorized || !this.backendService.active.token) {
             this.router.navigateByUrl('/authentication');
