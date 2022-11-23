@@ -56,10 +56,10 @@ export class LoginComponent implements OnInit {
 
   private readBackendService() {
     (async () => {
-      while (!this.backendService.active['_access'] || !Object.keys(this.backendService.active['_access'].auth).length)
+      while (!this.backendService?.active['_access'] || !Object.keys(this.backendService?.active['_access']?.auth).length)
         await new Promise(resolve => setTimeout(resolve, 100));
 
-      if (this.backendService.active) {
+      if (this.backendService?.active) {
         this.backendHasBeenSelected = true;
         this.backendList = this.backendService.backends;
 
