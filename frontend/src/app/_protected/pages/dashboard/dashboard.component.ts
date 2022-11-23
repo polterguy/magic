@@ -52,11 +52,6 @@ export class DashboardComponent implements OnInit {
         await new Promise(resolve => setTimeout(resolve, 100));
 
       if (this.backendService?.active?.access && Object.keys(this.backendService?.active?.access?.auth).length) {
-        const notAuthorized: boolean = Object.values(this.backendService.active.access.auth).every((item: any) => {return item === false})
-
-          if (notAuthorized || !this.backendService.active.token) {
-            this.router.navigateByUrl('/authentication');
-          }
         if (this.backendService.active?.token?.in_role('root')) {
           this.getSystemReport();
           this.userIsRoot = (this.backendService.active?.token?.in_role('root'));
@@ -67,6 +62,15 @@ export class DashboardComponent implements OnInit {
         this.cdr.detectChanges();
       }
     })();
+
+    setTimeout(() => {
+      const notAuthorized: boolean = Object.values(this.backendService.active.access.auth).every((item: any) => {return item === false})
+
+        if (notAuthorized || !this.backendService.active.token) {
+          this.router.navigateByUrl('/authentication');
+        }
+
+    }, 5000);
   }
 
   /*
