@@ -64,6 +64,7 @@ export class DashboardComponent implements OnInit {
     })();
 
     setTimeout(() => {
+      console.log(this.backendService)
       const notAuthorized: boolean = Object.values(this.backendService.active.access.auth).every((item: any) => {return item === false})
 
         if (notAuthorized || !this.backendService.active.token) {
