@@ -41,16 +41,16 @@ export class CoreComponent implements OnInit {
 
   ngOnInit(): void {
     this.onWindowResize();
-    this.backendService.authenticatedChanged.subscribe(() => {
+    this.backendService.authenticatedChanged.subscribe((res:any) => {
       this.cdr.detectChanges();
     });
-    this.backendService.activeBackendChanged.subscribe(() => {
+    this.backendService.activeBackendChanged.subscribe((res:any) => {
       this.cdr.detectChanges();
     });
-    this.backendService.endpointsFetched.subscribe(() => {
+    this.backendService.endpointsFetched.subscribe((res:any) => {
       this.cdr.detectChanges();
     });
-    this.backendService.versionRetrieved.subscribe(() => {
+    this.backendService.versionRetrieved.subscribe((res:any) => {
       this.cdr.detectChanges();
     });
 

@@ -1,7 +1,10 @@
 
 
 .playground ::ng-deep {
-  .cm-s-aista.CodeMirror {height: 100%;}
+  .cm-s-aista.CodeMirror {height: 100%;max-height: calc(100vh - (368px + 36px));}
+  @media (max-width: 991px) {
+    .cm-s-aista.CodeMirror {max-height: calc(100vh - (368px + 50px));}
+  }
 }
 .full-height {
   height: calc(100% - (52px * 2));

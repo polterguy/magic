@@ -21,5 +21,6 @@ export const CommonErrorMessages: { [key: string]: string } = {
   appNames: 'Only lowercase alphanumeric characters, and - or _ please',
   appNameWithUppercase: 'Accepts alphanumeric characters and _',
   domain: 'Domain is not valid',
+  backend: 'Backend URL must contain http://',
   password: 'Minimum 12 characters'
 };

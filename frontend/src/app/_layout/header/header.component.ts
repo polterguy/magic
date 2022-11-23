@@ -98,7 +98,7 @@ export class HeaderComponent implements OnInit {
 
     public getPermissions() {
       (async () => {
-        while (this.backendService.active.access && !Object.keys(this.backendService.active.access.auth).length)
+        while (!this.backendService.active.access || !Object.keys(this.backendService.active.access.auth).length)
         await new Promise(resolve => setTimeout(resolve, 100));
 
         if (this.backendService.active.access && Object.keys(this.backendService.active.access.auth).length > 0) {
@@ -108,7 +108,6 @@ export class HeaderComponent implements OnInit {
           this.backendList = this.backendService.backends;
 
           this.createMenu();
-        this.cdr.detectChanges();
         // console.log(this.router.url,(this.navLinks.find((item: any) => item.name === 'Tools')?.submenu.findIndex((el: any) => el.url === this.router.url) > -1))
       }
     })();
@@ -333,7 +332,20 @@ export class HeaderComponent implements OnInit {
           }
         ],
       }
-    ]
+    ];
+    this.checkActiveLink(this.router.url);
+  }
+
+  /**
+   * To set the active link visually.
+   * @param currentUrl active nav item's url.
+   */
+  public checkActiveLink(currentUrl: string) {
+    this.navLinks.forEach((item: any) => {
+      if (item.submenu) {
+        item.isActive = item.submenu.findIndex((el: any) => el.url === currentUrl) > -1;
+      }
+    })
   }
 
   /**
@@ -343,7 +355,8 @@ export class HeaderComponent implements OnInit {
     this.sideExpanded = !this.sideExpanded;
   }
 
-  public closeSidebarInSidePanel() {
+  public closeSidebarInSidePanel(currentUrl: string) {
+    this.checkActiveLink(currentUrl)
     if (!this.sideExpanded) {
       return;
     }

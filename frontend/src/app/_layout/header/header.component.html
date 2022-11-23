@@ -15,9 +15,10 @@
 
     <a mat-button class="nav-link" *ngFor="let item of navLinks"
       [routerLink]="item.url"
-      (click)="item.expandable ? null : closeSidebarInSidePanel()"
+      (click)="item.expandable ? null : closeSidebarInSidePanel(item.url)"
       [matMenuTriggerFor]="item.expandable ? subMenu : null" [matMenuTriggerData]="item"
-      routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+      routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}"
+      [class.active-link]="item?.isActive">
 
       {{item.name}} <mat-icon *ngIf="item.expandable">expand_more</mat-icon>
 
@@ -32,7 +33,7 @@
           [routerLinkActiveOptions]="{exact: true}"
           routerLinkActive="active-link"
           #isActiveLink="routerLinkActive"
-          (click)="getGithubToken(item.name);logout(item.name);closeSidebarInSidePanel()">
+          (click)="getGithubToken(item.name);logout(item.name);closeSidebarInSidePanel(item.url)">
           {{item.name}}
         </a>
       </ng-template>

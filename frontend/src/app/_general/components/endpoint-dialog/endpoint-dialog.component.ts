@@ -183,7 +183,6 @@ console.log(item)
       }
       this.payload = JSON.stringify(payload, null, 2)
       // setTimeout(() => this.payload = JSON.stringify(payload, null, 2), 250);
-      console.log(this.payload, this.cmOptions.json)
       setTimeout(() => {
         document.querySelectorAll('.CodeMirror').forEach(item => {
           var domNode = (<any>item);
