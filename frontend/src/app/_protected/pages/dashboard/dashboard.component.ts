@@ -65,7 +65,7 @@ export class DashboardComponent implements OnInit {
 
     setTimeout(() => {
       console.log(this.backendService)
-      const notAuthorized: boolean = Object.values(this.backendService.active.access.auth).every((item: any) => {return item === false})
+      const notAuthorized: boolean = (Object.values(this.backendService.active.access.auth).every((item: any) => {return item === false}) || !this.backendService.active)
 
         if (notAuthorized || !this.backendService.active.token) {
           this.router.navigateByUrl('/authentication');
