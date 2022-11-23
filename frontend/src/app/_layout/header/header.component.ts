@@ -98,7 +98,7 @@ export class HeaderComponent implements OnInit {
 
     public getPermissions() {
       (async () => {
-        while (!this.backendService?.active?.access || !Object.keys(this.backendService?.active?.access?.auth).length)
+        while (!this.backendService?.active?.access || !Object.keys(this.backendService?.active?.access?.auth ?? {}).length)
         await new Promise(resolve => setTimeout(resolve, 100));
 
         if (this.backendService?.active?.access && Object.keys(this.backendService?.active?.access?.auth)?.length > 0) {

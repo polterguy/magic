@@ -46,7 +46,7 @@ export class DashboardComponent implements OnInit {
 
   private waitForData() {
     (async () => {
-      while (!Object.keys(this.backendService?.active?.access?.auth)?.length)
+      while (!Object.keys(this.backendService?.active?.access?.auth ?? {})?.length)
         await new Promise(resolve => setTimeout(resolve, 100));
 
       if (Object.keys(this.backendService?.active?.access?.auth)?.length > 0) {
