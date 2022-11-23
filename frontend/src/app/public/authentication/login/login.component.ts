@@ -10,6 +10,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { RecaptchaComponent } from 'ng-recaptcha';
 import { map, Observable, startWith } from 'rxjs';
 import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
+import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { Backend } from 'src/app/_protected/models/common/backend.model';
 import { BackendService } from 'src/app/_protected/services/common/backend.service';
@@ -28,11 +29,12 @@ export class LoginComponent implements OnInit {
 
   recaptchaKey: string = '';
   backendHasBeenSelected: boolean = false;
-  backends = new FormControl<any>('');
+  backends = new FormControl<any>('', Validators.pattern(CommonRegEx.backend));
   backendList: any = [];
   filteredBackends: Observable<any[]>;
   savePassword: boolean = false;
-  errors = CommonErrorMessages;
+  public CommonRegEx = CommonRegEx;
+  public CommonErrorMessages = CommonErrorMessages;
   viewPassword: boolean = false;
   rememberPassword: boolean = false;
   waiting: boolean = false;
@@ -133,6 +135,11 @@ export class LoginComponent implements OnInit {
    * login form
    */
   login(inputValue?: string) {
+
+    if (!CommonRegEx.backend.test(inputValue)) {
+      this.generalService.showFeedback('Backend URL is not valid.', 'errorMessage', 'Ok');
+      return;
+    }
     if (inputValue && inputValue !== '' && this.loginForm.value.backends === undefined) {
       this.loginForm.controls.backends.setValue(inputValue)
     }

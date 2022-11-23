@@ -1,4 +1,4 @@
-<div class="row h-100">
+<div class="row h-100 max-height">
   <div class="col-lg-5 col-12">
     <div class="row mb-2" *ngIf="itemDetails?.produces">
       <div class="col-xxl-4 col-sm-5 col-12">
@@ -100,7 +100,7 @@
 
         <!-- If has body -->
         <ng-container *ngIf="itemDetails?.consumes">
-          <div class="d-flex flex-column w-100 h-100 endpoint-result mb-3">
+          <div class="w-100 h-100 endpoint-result mb-3">
             <div class="d-flex justify-content-between align-items-center w-100 mb-3">
               <h3 class="my-0 fw-bold">Body</h3>
             </div>
@@ -134,7 +134,7 @@
           </div>
         </ng-container>
 
-        <div class="d-flex flex-column w-100 h-100 endpoint-result" *ngIf="result">
+        <div class="w-100 h-100 endpoint-result" *ngIf="result">
           <div class="d-flex justify-content-between align-items-center w-100 mb-3">
             <h3 class="my-0 fw-bold">Results</h3>
             <button mat-button color="primary" class="pe-0 copy-btn" (click)="copyResult(result.response)">

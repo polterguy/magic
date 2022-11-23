@@ -14,12 +14,13 @@
           <span class="text-muted mx-2">|</span>
         </span>
 
-        <input type="text" matInput [formControl]="backends" [matAutocomplete]="auto" #inputValue>
+        <input type="text" matInput [formControl]="backends" [matAutocomplete]="auto" #inputValue placeholder="http://yourdomain.com">
         <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
           <mat-option *ngFor="let option of filteredBackends | async" [value]="option">
             {{option.url}}
           </mat-option>
         </mat-autocomplete>
+        <mat-hint>{{CommonErrorMessages.backend}}</mat-hint>
       </mat-form-field>
     </div>
     <div class="col-12 mb-2">
