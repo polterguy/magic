@@ -42,6 +42,7 @@ import { HeaderComponent } from './_layout/header/header.component';
 import { FooterComponent } from './_layout/footer/footer.component';
 import { LoaderService } from './services--/loader.service';
 import { LoaderInterceptor } from './interceptors/loader.interceptor';
+import { AccessGuard } from './access.guard';
 
 @NgModule({
   declarations: [
@@ -73,6 +74,7 @@ import { LoaderInterceptor } from './interceptors/loader.interceptor';
     })
   ],
   providers: [
+    AccessGuard,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
