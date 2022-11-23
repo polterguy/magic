@@ -51,12 +51,12 @@ export class LoginComponent implements OnInit {
     @Inject(Injector) private readonly injector: Injector) { }
 
   ngOnInit(): void {
-    // this.readBackendService();
+    this.readBackendService();
   }
 
   private readBackendService() {
     (async () => {
-      while (this.backendService.active.access && !Object.keys(this.backendService.active.access.auth).length)
+      while (!this.backendService.active['_access'] || !Object.keys(this.backendService.active['_access'].auth).length)
         await new Promise(resolve => setTimeout(resolve, 100));
 
       if (this.backendService.active) {
