@@ -50,8 +50,14 @@ export class AccessGuard implements CanActivate {
           if (this.backendService.active['_access']) {
             const notAuthorized: boolean = Object.values(this.backendService.active['_access'].auth).every((item: any) => {return item === false})
 console.log('first')
-          notAuthorized && !this.backendService.active.token?
-          this.router.navigate(['/authentication']) : '';
+          if (notAuthorized || !this.backendService.active.token) {
+            this.router.navigateByUrl('/authentication');
+            return false;
+          }
+
+          return true
+          // notAuthorized && !this.backendService.active.token?
+          // this.router.navigate(['/authentication']) : '';
         }
       })();
       return true;
