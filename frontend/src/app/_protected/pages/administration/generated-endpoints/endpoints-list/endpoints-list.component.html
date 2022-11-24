@@ -95,7 +95,10 @@
             <ng-container *ngIf="assumptionsPermission && testPermission && (selectedItem === el)">
               <div class="row mt-4">
                 <div class="col-12">
-                  <app-assumptions [itemDetails]="selectedItem" [result]="result" [payload]="payload"></app-assumptions>
+                  <app-assumptions #assumptions
+                    [itemDetails]="selectedItem"
+                    [result]="result"
+                    [payload]="payload"></app-assumptions>
                 </div>
               </div>
             </ng-container>

@@ -23,6 +23,10 @@
                 (click)="file.click()">
                   <mat-icon>file_upload</mat-icon>
                 </button>
+                <button mat-icon-button color="primary" class="tree-action-btn" title="Import module ..."
+                (click)="zipfile.click()">
+                  <mat-icon>drive_folder_upload</mat-icon>
+                </button>
               </div>
             </div>
           </mat-panel-title>
@@ -157,6 +161,15 @@
   multiple
   class="d-none"
   (change)="uploadFiles($event.target.files)">
+
+<input
+  type="file"
+  [(ngModel)]="zipFileInput"
+  #zipfile
+  class="d-none"
+  accept="zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed"
+  (change)="installModule($event.target.files)">
+
 
 
 <div class="overlay" *ngIf="showRenameBox!==null" (click)="showRenameBox=null"></div>

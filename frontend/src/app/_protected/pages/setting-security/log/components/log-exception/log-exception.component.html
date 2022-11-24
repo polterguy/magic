@@ -1,5 +1,8 @@
 
-<h3 mat-dialog-title>Log ID {{data.id}}</h3>
+<div class="d-flex justify-content-between align-items-center">
+  <h3 mat-dialog-title class="my-0">Log ID {{data.id}}</h3>
+  <p class="mat-h3" [class.text-danger]="data?.type === 'error'"> {{data?.type}} </p>
+</div>
 
 <div mat-dialog-content>
   <p class="fw-bold mt-2">Date &amp; time</p>
@@ -8,12 +11,12 @@
   <p class="fw-bold mt-4">Content</p>
   <p>{{data.content}}</p>
 
-  <p class="fw-bold mt-4">Meta</p>
-  <div *ngFor="let item of data.meta | keyvalue">
+  <p class="fw-bold mt-4" *ngIf="data.meta">Meta</p>
+  <p *ngFor="let item of data.meta | keyvalue">
     {{item.key}}: {{item.value}}
-  </div>
+  </p>
 
-  <p class="fw-bold mt-4">Exception</p>
+  <p class="fw-bold mt-4" *ngIf="data.exception">Exception</p>
   <p [innerHTML]="data.exception" class="pre-formatted"></p>
 </div>
 

@@ -46,8 +46,8 @@
             name="url"
             [(ngModel)]="newKey.domain"
             [ngModelOptions]="{standalone: true}"
-            [pattern]="CommonRegEx.domain">
-          <mat-error>{{CommonErrorMessages.domain}}</mat-error>
+            [pattern]="CommonRegEx.backend">
+          <mat-error>{{CommonErrorMessages.backend}}</mat-error>
         </mat-form-field>
       </div>
       <div class="col-sm-6 col-12" *ngIf="data.type === 'create'">

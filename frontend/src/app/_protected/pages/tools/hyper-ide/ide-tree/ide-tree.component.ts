@@ -854,6 +854,25 @@ export class IdeTreeComponent implements OnInit, OnDestroy {
     return true
   }
 
+  /**
+   * Uploads and installs a zip file on the server.
+   *
+   * @param file Zip file to upload and install
+   */
+  public installModule(file: FileList) {
+    if (file[0].name.split('.')[1] === 'zip') {
+      this.fileService.installModule(file.item(0)).subscribe({
+        next: () => {
+          this.generalService.showFeedback('File was successfully uploaded', 'successMessage');
+          this.zipFileInput = null;
+          this.updateFileObject('/modules/');
+        },
+        error: (error: any) => this.generalService.showFeedback(error)});
+    } else {
+      this.generalService.showFeedback('Only zip files without . are accepted', 'errorMessage', 'Ok', 5000);
+    }
+  }
+
   ngOnDestroy(): void {
     if (this.endpointSubscription) {
       this.endpointSubscription.unsubscribe();

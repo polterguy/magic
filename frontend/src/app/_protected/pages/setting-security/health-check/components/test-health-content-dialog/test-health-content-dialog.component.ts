@@ -16,6 +16,7 @@ import { AssumptionService } from '../../_services/assumption.service';
 export class TestHealthContentDialogComponent implements OnInit, OnDestroy {
 
   private codemirrorActionSubscription!: Subscription;
+  public codemirrorOptionsReady: boolean = false;
 
   constructor(
     private dialog: MatDialog,
@@ -28,13 +29,17 @@ export class TestHealthContentDialogComponent implements OnInit, OnDestroy {
     private codemirrorActionsService: CodemirrorActionsService) { }
 
   ngOnInit(): void {
-
     this.getCodeMirrorOptions();
     this.watchForActions();
   }
   private async getCodeMirrorOptions() {
     this.codemirrorActionsService.getActions(null, 'hl').then((res: any) => {
-      this.data.content.options = res;
+      if (res) {
+        this.data.content.options = res;
+        setTimeout(() => {
+          this.codemirrorOptionsReady = true;
+        }, 100);
+      }
      });
   }
 
