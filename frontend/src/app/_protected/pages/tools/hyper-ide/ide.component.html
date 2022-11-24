@@ -21,6 +21,7 @@
               #tree
               [searchKey]="searchKey"
               (showEditor)="showEditor($event)"
+              (clearEditorHistory)="editor.clearEditorHistory($event)"
               (setFocusToActiveEditor)="editor.setFocusToActiveEditor()"></app-ide-tree>
 
           </div>
