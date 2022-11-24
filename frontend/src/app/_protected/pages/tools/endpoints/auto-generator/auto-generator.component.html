@@ -216,7 +216,7 @@
         </mat-form-field>
       </div>
       <!-- Primary URL -->
-      <div class="col-lg-3 col-md-5 col-sm-6 col-12">
+      <div class="col-xl-3 col-lg-4 col-md-5 col-sm-6 col-12">
         <ng-container *ngIf="dbLoading | async">
           <app-loading-skeleton
           [amount]="1"
@@ -229,7 +229,25 @@
             Primary URL
           </span>
 
-          <input matInput type="text" placeholder="Add URL" [name]="selectedDatabase" [(ngModel)]="primaryURL" [pattern]="CommonRegEx.appNames" #urlName>
+          <input matInput type="text" placeholder="Add URL" [name]="selectedDatabase" [(ngModel)]="primaryURL" [pattern]="CommonRegEx.appNames">
+          <mat-error>{{CommonErrorMessages.appNames}}</mat-error>
+        </mat-form-field>
+      </div>
+      <!-- Secondary URL -->
+      <div class="col-xl-3 col-lg-4 col-md-5 col-sm-6 col-12">
+        <ng-container *ngIf="dbLoading | async">
+          <app-loading-skeleton
+          [amount]="1"
+          [colClass]="'col-12'"
+          [blockHeight]="'45px'"
+          [hasShadow]="false"></app-loading-skeleton>
+        </ng-container>
+        <mat-form-field class="w-100 text-prefix" *ngIf="!(dbLoading | async)">
+          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
+            Secondary URL
+          </span>
+
+          <input matInput type="text" placeholder="Add URL" [(ngModel)]="secondaryURL" [pattern]="CommonRegEx.appNames">
           <mat-error>{{CommonErrorMessages.appNames}}</mat-error>
         </mat-form-field>
       </div>

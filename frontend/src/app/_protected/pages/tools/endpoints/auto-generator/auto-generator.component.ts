@@ -47,6 +47,7 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
   public deleteRoles: FormControl = new FormControl<any>('');
   public createRoles: FormControl = new FormControl<any>('');
   public primaryURL: string = '';
+  public secondaryURL: string = 'custom-sql';
   public logCreate: boolean = false;
   public logUpdate: boolean = false;
   public logDelete: boolean = false;
@@ -252,7 +253,7 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
             }
           }
           idxTable.moduleName = this.selectedDatabase;
-          idxTable.moduleUrl = idxTable.name.replace('.', '/').replace('dbo/', '');
+          idxTable.moduleUrl = this.secondaryURL;
           const columns = (idxTable.columns || []);
           idxTable.verbs = [
             { name: 'post', generate: columns.length > 0 },
@@ -403,7 +404,7 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
   }
 
   private validateUrlName() {
-    return this.CommonRegEx.appNames.test(this.primaryURL);
+    return this.CommonRegEx.appNames.test(this.primaryURL) && this.CommonRegEx.appNames.test(this.secondaryURL);
   }
 
   ngOnDestroy(): void {

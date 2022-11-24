@@ -19,7 +19,7 @@ export class LogComponent implements OnInit {
   /**
    * Columns to display in table.
    */
-  displayedColumns: string[] = ['id', 'date','content', 'type', 'meta', 'description'];
+  displayedColumns: string[] = ['id', 'date','content', 'type', 'action'];
 
   /**
    * Currently viewed log items.

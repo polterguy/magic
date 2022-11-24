@@ -32,7 +32,7 @@ export class AppComponent implements AfterContentChecked {
     this.loader.loading$.subscribe((res: any) => {
       this.cdr.markForCheck();
       this.loading$.next(res)
-      // this.cdr.detectChanges();
+      this.cdr.detectChanges();
     })
   }
 }

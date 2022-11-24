@@ -27,7 +27,6 @@ export class AssumptionsComponent implements OnInit {
   @Input() itemDetails!: any;
   @Input() result: InvocationResult = null;
   @Input() payload: any;
-  @Output() getAssumptionsist: EventEmitter<any> = new EventEmitter<any>();
 
   /**
    * Assumptions about endpoint.
@@ -77,49 +76,12 @@ export class AssumptionsComponent implements OnInit {
     });
   }
 
-  /**
-   * Allows the user to create an assumption/integration test for the current request/response.
-   */
-  createTest() {
-    const dialogRef = this.dialog.open(CreateAssumptionTestDialogComponent, {
-      width: '550px',
-    });
-    dialogRef.afterClosed().subscribe((res: TestModel) => {
-      if (res) {
-        this.assumptionService.create(
-          res.filename,
-          this.itemDetails.verb,
-          `/${this.itemDetails.path}`,
-          this.result.status,
-          res.description !== '' ? res.description : null,
-          this.payload !== '' ? this.payload : null,
-          (res.matchResponse && !this.result.blob) ? this.result.response : null,
-          this.itemDetails.produces).subscribe({
-            next: () => {
-              /*
-               * Snippet saved, showing user some feedback, and reloading assumptions.
-               *
-               * Checking if caller wants response to match, and response is blob,
-               * at which point we inform user this is not possible.
-               */
-              if (res.matchResponse && this.result.blob) {
-                this.generalService.showFeedback('Assumption successfully saved. Notice, blob types of invocations cannot assume response equality.', 'successMessage', 'Ok', 5000);
-              } else {
-                this.generalService.showFeedback('Assumption successfully saved', 'successMessage');
-              }
-              this.getAssumptions();
 
-            },
-            error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
-          });
-      }
-    });
-  }
 
   /*
    * Retrieves assumptions for endpoint
    */
-  private getAssumptions() {
+  public getAssumptions() {
     if (this.backendService.active?.access.endpoints.assumptions) {
       this.assumptionService.list('/' + this.itemDetails.path, this.itemDetails.verb).subscribe({
         next: (assumptions: any) => {

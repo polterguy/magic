@@ -5,10 +5,15 @@
 
 // Angular and system imports.
 import { Component, OnInit } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
+import { error } from 'protractor';
 
 // Application specific imports.
 import { FeedbackService } from 'src/app/services--/feedback.service';
 import { AssumptionService } from 'src/app/_protected/pages/setting-security/health-check/_services/assumption.service';
+import { CommonErrorMessages } from '../../classes/common-error-messages';
+import { CommonRegEx } from '../../classes/common-regex';
+import { GeneralService } from '../../services/general.service';
 
 /**
  * Result of dialog if user chooses to create a test.
@@ -37,7 +42,8 @@ export class TestModel {
  */
 @Component({
   selector: 'app-create-assumption-test-dialog',
-  templateUrl: './create-assumption-test-dialog.component.html'
+  templateUrl: './create-assumption-test-dialog.component.html',
+  styleUrls: ['./create-assumption-test-dialog.component.scss']
 })
 export class CreateAssumptionTestDialogComponent implements OnInit {
 
@@ -52,23 +58,30 @@ export class CreateAssumptionTestDialogComponent implements OnInit {
     matchResponse: false,
   };
 
+  public CommonRegEx = CommonRegEx;
+  public CommonErrorMessages = CommonErrorMessages;
+
   /**
    * Creates an instance of your component.
    *
-   * @param feedbackService Needed to show user feedback
+   * @param generalService Needed to show user feedback
    * @param assumptionService Needed to be able tolist and execute assumptions
    */
   constructor(
-    private feedbackService: FeedbackService,
+    private dialogRef: MatDialogRef<CreateAssumptionTestDialogComponent>,
+    private generalService: GeneralService,
     private assumptionService: AssumptionService) { }
 
   /**
    * Implementation of OnInit.
    */
   ngOnInit() {
-    this.assumptionService.list().subscribe((files: string[]) => {
-      this.files = files.filter(x => x.endsWith('.hl'));
-    }, (error: any) => this.feedbackService.showError(error));
+    this.assumptionService.list().subscribe({
+      next: (files: string[]) => {
+        this.files = files.filter(x => x.endsWith('.hl'));
+      },
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+    });
   }
 
   /**
@@ -94,11 +107,14 @@ export class CreateAssumptionTestDialogComponent implements OnInit {
    * Returns true if filename is a valid filename for snippet.
    */
   filenameValid() {
-    for (var idx of this.data.filename) {
-      if ('abcdefghijklmnopqrstuvwxyz0123456789.-_'.indexOf(idx) === -1) {
-        return false;
-      }
+    return this.CommonRegEx.appNamesWithDot.test(this.data.filename);
+  }
+
+  public create() {
+    if (!this.filenameValid()) {
+      this.generalService.showFeedback('Test name is not valid.', 'errorMessage');
+      return;
     }
-    return this.data.filename.length > 0;
+    this.dialogRef.close(this.data)
   }
 }

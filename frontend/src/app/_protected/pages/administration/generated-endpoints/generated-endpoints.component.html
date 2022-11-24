@@ -27,7 +27,7 @@
 
             <app-endpoints-list [defaultListToShow]="defaultListToShow" [endpoints]="endpoints"
               [result]="resultPanel.result" [payload]="resultPanel.payload" [isLoading]="isLoading"
-              (changeEditor)="changeEditor($event)"></app-endpoints-list>
+              (changeEditor)="changeEditor($event)" #listPanel></app-endpoints-list>
 
           </div>
         </div>
@@ -36,13 +36,14 @@
     </mat-card>
   </div>
 
-  <div class="col-lg-6 col-md-7 col-12">
+  <div class="col-lg-6 col-md-7 col-12 mt-md-0 mt-4">
     <mat-card class="h-100">
       <mat-card-content class="h-100 max-height-full">
 
         <app-endpoints-result
           class="h-100 d-block"
           [itemToBeTried]="itemToBeTried"
+          (refetchAssumptions)="listPanel.refetchAssumptions()"
           #resultPanel></app-endpoints-result>
 
       </mat-card-content>

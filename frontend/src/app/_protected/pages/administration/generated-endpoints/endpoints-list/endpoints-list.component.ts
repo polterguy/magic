@@ -1,8 +1,9 @@
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { BackendService } from 'src/app/_protected/services/common/backend.service';
 import { Observable } from 'rxjs';
+import { AssumptionsComponent } from 'src/app/_general/components/assumptions/assumptions.component';
 
 @Component({
   selector: 'app-endpoints-list',
@@ -59,7 +60,7 @@ export class EndpointsListComponent implements OnInit {
     this.clipboard.copy(this.backendService.active.url + '/' + url);
     this.generalService.showFeedback('URL is copied to your clipboard');
   }
-
+  @ViewChild('assumptions', {static: false}) assumptions: AssumptionsComponent;
   /**
    * For tracking the virtual scrolling on filterList
    * @param item
@@ -67,5 +68,9 @@ export class EndpointsListComponent implements OnInit {
    */
   public trackFilterList(item: any) {
     return item;
+  }
+
+  public refetchAssumptions() {
+    this.assumptions.getAssumptions()
   }
 }

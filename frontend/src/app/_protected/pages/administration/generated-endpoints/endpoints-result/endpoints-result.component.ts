@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpTransportType, HubConnectionBuilder } from '@aspnet/signalr';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -17,6 +17,9 @@ import json_readonly from '../../../../../codemirror/options/json_readonly.json'
 import markdown_readonly from '../../../../../codemirror/options/markdown_readonly.json';
 import hyperlambda_readonly from '../../../../../codemirror/options/hyperlambda_readonly.json';
 import { FormBuilder, FormControl } from '@angular/forms';
+import { AssumptionService } from '../../../setting-security/health-check/_services/assumption.service';
+import { MatDialog } from '@angular/material/dialog';
+import { CreateAssumptionTestDialogComponent, TestModel } from 'src/app/_general/components/create-assumption-test-dialog/create-assumption-test-dialog.component';
 
 /*
  * Result of invocation.
@@ -37,6 +40,9 @@ export class InvocationResult {
 export class EndpointsResultComponent implements OnInit {
 
   @Input() itemToBeTried!: Observable<any>;
+
+  @Output() refetchAssumptions: EventEmitter<any> = new EventEmitter<any>();
+
 
   private originalPath: string = '';
   public itemDetails: any = {};
@@ -99,14 +105,18 @@ export class EndpointsResultComponent implements OnInit {
 
   public paramsForm = this.formBuilder.group({});
 
+  public canCreateAssumption: boolean = false;
+
   constructor(
+    private dialog: MatDialog,
     private clipboard: Clipboard,
     private cdr: ChangeDetectorRef,
     private sanitizer: DomSanitizer,
     private formBuilder: FormBuilder,
     public backendService: BackendService,
     private generalService: GeneralService,
-    private endpointService: EndpointService) { }
+    private endpointService: EndpointService,
+    private assumptionService: AssumptionService) { }
 
   ngOnInit(): void {
     this.getItemDetails();
@@ -114,6 +124,7 @@ export class EndpointsResultComponent implements OnInit {
 
   private getItemDetails() {
     this.itemToBeTried.subscribe((value: any) => {
+      this.canCreateAssumption = false;
       if (value && Object.keys(value).length) {
         this.itemDetails = [];
         this.parameters = [];
@@ -416,6 +427,7 @@ export class EndpointsResultComponent implements OnInit {
               this.result.blob = this.sanitizer.bypassSecurityTrustUrl(objectUrl);
             }
             this.isExecuting = false;
+            this.canCreateAssumption = true;
           },
           error: (error: any) => {
             this.isExecuting = false;
@@ -471,5 +483,46 @@ export class EndpointsResultComponent implements OnInit {
   public copyResult(response: any) {
     this.clipboard.copy(response);
     this.generalService.showFeedback('Result is copied to your clipboard');
+  }
+
+  /**
+   * Allows the user to create an assumption/integration test for the current request/response.
+   */
+   createTest() {
+    const dialogRef = this.dialog.open(CreateAssumptionTestDialogComponent, {
+      width: '550px',
+    });
+    dialogRef.afterClosed().subscribe((res: TestModel) => {
+      if (res) {
+        console.log(res, this.result)
+        this.assumptionService.create(
+          res.filename,
+          this.itemDetails.verb,
+          `/${this.itemDetails.path}`,
+          this.result?.status,
+          res.description !== '' ? res.description : null,
+          this.payload !== '' ? this.payload : null,
+          (res.matchResponse && !this.result?.blob) ? this.result?.response : null,
+          this.itemDetails.produces).subscribe({
+            next: () => {
+              /*
+               * Snippet saved, showing user some feedback, and reloading assumptions.
+               *
+               * Checking if caller wants response to match, and response is blob,
+               * at which point we inform user this is not possible.
+               */
+              if (res.matchResponse && this.result.blob) {
+                this.generalService.showFeedback('Assumption successfully saved. Notice, blob types of invocations cannot assume response equality.', 'successMessage', 'Ok', 5000);
+              } else {
+                this.generalService.showFeedback('Assumption successfully saved', 'successMessage');
+              }
+
+              this.refetchAssumptions.emit();
+
+            },
+            error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
+          });
+      }
+    });
   }
 }
