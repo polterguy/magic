@@ -60,17 +60,20 @@ export class IdeEditorComponent implements OnInit {
         await new Promise(resolve => setTimeout(resolve, 100));
 
       if (this.currentFileData && this.endpoints.length > 0) {
-console.log(this.currentFileData)
         setTimeout(() => {
-          const activeWrapper = document.querySelector('.active-codemirror-editor');
-          const editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
-          editor.doc.markClean();
-          editor.doc.clearHistory(); // To avoid having initial loading of file becoming an "undo operation".
+            this.clearEditorHistory(true);
         }, 100);
       }
     })();
     this.watchForActions();
     this.cdr.detectChanges();
+  }
+
+  clearEditorHistory(clear: boolean) {
+    const activeWrapper = document.querySelector('.active-codemirror-editor');
+    const editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
+    editor.doc.markClean();
+    editor.doc.clearHistory(); // To avoid having initial loading of file becoming an "undo operation".
   }
 
   /**

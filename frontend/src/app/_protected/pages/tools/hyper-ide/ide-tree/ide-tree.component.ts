@@ -25,6 +25,7 @@ export class IdeTreeComponent implements OnInit, OnDestroy {
   @Input() searchKey!: Observable<string>;
 
   @Output() showEditor: EventEmitter<any> = new EventEmitter<any>();
+  @Output() clearEditorHistory: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output() setFocusToActiveEditor: EventEmitter<any> = new EventEmitter<any>();
 
   // Flattens tree structure.
@@ -244,6 +245,7 @@ export class IdeTreeComponent implements OnInit, OnDestroy {
           this.cdr.detectChanges();
           setTimeout(() => {
             this.scrollToLastOpenFile();
+            this.clearEditorHistory.emit(true);
           }, 1);
         },
         error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
