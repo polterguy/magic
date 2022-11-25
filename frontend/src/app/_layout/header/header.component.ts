@@ -91,7 +91,6 @@ export class HeaderComponent implements OnInit {
           this.getPermissions();
         }
 
-        console.log(params, 'dsjkdskj')
       })
     }
 
@@ -129,7 +128,7 @@ export class HeaderComponent implements OnInit {
    * Retrieving URL parameter
    */
   private getParams(params: any) {
-console.log(params.params)
+
     // Parsing query parameters.
     // this.activated.queryParams.subscribe((params: Params) => {
 
@@ -148,6 +147,7 @@ console.log(params.params)
         this.backendService.upsert(cur);
         this.backendService.activate(cur);
         this.location.replaceState('');
+        this.getPermissions();
 
       } else {
 
@@ -181,6 +181,7 @@ console.log(params.params)
 
                 // Impersonation request.
                 this.location.replaceState('');
+                this.getPermissions();
               }
             },
             error: (error: any) => {}
@@ -196,7 +197,7 @@ console.log(params.params)
           const backend = new Backend(params.params['url'], params.params['username']);
           this.backendService.upsert(backend);
           this.backendService.activate(backend);
-
+          this.getPermissions();
           // Verifying user's email address.
           // this.registerService.verifyEmail(params['username'], token).subscribe({
           //   next: (result: Response) => {
@@ -207,9 +208,11 @@ console.log(params.params)
           //   },
           //   error: (error: any) => this.feedbackService.showError(error)
           // });
+        } else {
+          this.getPermissions();
         }
       }
-      this.getPermissions();
+
     // });
   }
 

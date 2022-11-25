@@ -35,6 +35,10 @@ const routes: Routes = [
         loadChildren: () => import('./_protected/pages/administration/generated-endpoints/_module/generated-endpoints.module').then(m => m.GeneratedEndpointsModule)
       },
       {
+        path: 'generated-sockets',
+        loadChildren: () => import('./_protected/pages/administration/generated-sockets/_module/socket.module').then(m => m.SocketModule)
+      },
+      {
         path: 'generated-frontend',
         loadChildren: () => import('./_protected/pages/administration/generated-frontend/_module/frontend.module').then(m => m.FrontendModule)
       },
