@@ -8,6 +8,7 @@ import { SocketListComponent } from '../socket-list/socket-list.component';
 import { SocketResultComponent } from '../socket-result/socket-result.component';
 import { SubscribeDialogComponent } from '../components/subscribe-dialog/subscribe-dialog.component';
 import { FormsModule } from '@angular/forms';
+import { PublishDialogComponent } from '../components/publish-dialog/publish-dialog.component';
 
 
 
@@ -17,7 +18,8 @@ import { FormsModule } from '@angular/forms';
     SocketSearchboxComponent,
     SocketListComponent,
     SocketResultComponent,
-    SubscribeDialogComponent
+    SubscribeDialogComponent,
+    PublishDialogComponent
   ],
   imports: [
     CommonModule,

@@ -58,6 +58,13 @@ export class SocketService {
   }
 
   /**
+   * Returns a list of published messages.
+   */
+   socketMessages() {
+    return this.httpService.get<any>('/magic/system/sockets/published-messages');
+  }
+
+  /**
    * Transmits the specified message to the specified client.
    *
    * @param msg What message to send
