@@ -113,18 +113,28 @@ export class HeaderComponent implements OnInit {
         // console.log(this.router.url,(this.navLinks.find((item: any) => item.name === 'Tools')?.submenu.findIndex((el: any) => el.url === this.router.url) > -1))
       }
     })();
+
+    setTimeout(() => {
+      console.log(this.backendService)
+      const notAuthorized: boolean = (!this.backendService.active || Object.values(this.backendService.active.access.auth ?? {}).every((item: any) => {return item === false}))
+
+        if (notAuthorized || !this.backendService.active.token) {
+          this.router.navigateByUrl('/authentication');
+        }
+
+    }, 3000);
   }
 
   /*
    * Retrieving URL parameter
    */
   private getParams(params: any) {
-console.log(params)
+console.log(params.params)
     // Parsing query parameters.
     // this.activated.queryParams.subscribe((params: Params) => {
 
       // Checking if user accessed system with a link containing query param pointing to specific backend.
-      const backend = params['backend'];
+      const backend = params.params['backend'];
       if (backend) {
         const cur = new Backend(backend);
 
@@ -142,7 +152,7 @@ console.log(params)
       } else {
 
         // Checking if user has some sort of token, implying reset-password token or verify-email token.
-        const token = params['token'];
+        const token = params.params['token'];
         if (token && token.includes('.')) {
 
           /*
@@ -151,8 +161,8 @@ console.log(params)
            * Authentication request, authenticating using specified link,
            * and redirecting user to hide URL.
            */
-          const url = params['url'];
-          const username = params['username'];
+          const url = params.params['url'];
+          const username = params.params['username'];
           const backend = new Backend(url, username, null, token);
           this.backendService.upsert(backend);
           this.backendService.activate(backend);
@@ -183,7 +193,7 @@ console.log(params)
            *
            * Need to set the current backend first.
            */
-          const backend = new Backend(params['url'], params['username']);
+          const backend = new Backend(params.params['url'], params.params['username']);
           this.backendService.upsert(backend);
           this.backendService.activate(backend);
 
