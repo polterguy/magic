@@ -90,6 +90,8 @@ export class HeaderComponent implements OnInit {
         } else {
           this.getPermissions();
         }
+
+        console.log(params, 'dsjkdskj')
       })
     }
 
@@ -98,7 +100,7 @@ export class HeaderComponent implements OnInit {
 
     public getPermissions() {
       (async () => {
-        while ((this.backendService?.active?.access && Object.keys(this.backendService?.active?.access?.auth ?? {}).length===0))
+        while ((!this.backendService?.active && !this.backendService?.active?.access && Object.keys(this.backendService?.active?.access?.auth ?? {}).length===0))
         await new Promise(resolve => setTimeout(resolve, 100));
 
         if (this.backendService?.active?.access && Object.keys(this.backendService?.active?.access?.auth).length) {
@@ -117,7 +119,7 @@ export class HeaderComponent implements OnInit {
    * Retrieving URL parameter
    */
   private getParams(params: any) {
-
+console.log(params)
     // Parsing query parameters.
     // this.activated.queryParams.subscribe((params: Params) => {
 
