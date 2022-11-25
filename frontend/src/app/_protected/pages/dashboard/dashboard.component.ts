@@ -71,7 +71,7 @@ export class DashboardComponent implements OnInit {
           this.router.navigateByUrl('/authentication');
         }
 
-    }, 5000);
+    }, 3000);
   }
 
   /*
