@@ -1,0 +1,42 @@
+<div class="row fullPage">
+  <div class="col-md-6 col-12 mb-md-0 mb-4">
+    <mat-card class="h-100">
+      <mat-card-content class="h-100 max-height-full">
+        <h3 class="my-0 fw-bold">
+          List of sockets
+        </h3>
+
+        <div class="row mt-3">
+          <div class="col-12">
+            <app-socket-searchbox (filterList)="filterList($event)"></app-socket-searchbox>
+          </div>
+        </div>
+
+        <div class="row mt-3 scrollable-row">
+          <div class="col-12 max-height">
+
+            <app-socket-list (getConnections)="getConnections($event)"></app-socket-list>
+
+          </div>
+        </div>
+        <mat-paginator
+          *ngIf="totalItems > pageSize"
+          [length]="totalItems"
+          [pageSize]="pageSize"
+          [pageIndex]="pageIndex"
+          (page)="changePage($event)"
+          aria-label="Change page">
+        </mat-paginator>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div class="col-md-6 col-12">
+    <mat-card class="h-100 pt-3">
+      <mat-card-content class="h-100 max-height-full">
+
+        <app-socket-result></app-socket-result>
+
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
