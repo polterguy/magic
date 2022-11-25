@@ -109,9 +109,8 @@ export class HeaderComponent implements OnInit {
           this.backendList = this.backendService.backends;
 
           this.createMenu();
-        // console.log(this.router.url,(this.navLinks.find((item: any) => item.name === 'Tools')?.submenu.findIndex((el: any) => el.url === this.router.url) > -1))
-      }
-    })();
+        }
+      })();
 
     setTimeout(() => {
       console.log(this.backendService)

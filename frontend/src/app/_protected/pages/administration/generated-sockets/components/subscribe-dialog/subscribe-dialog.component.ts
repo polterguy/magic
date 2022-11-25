@@ -20,17 +20,19 @@ export class SubscribeDialogComponent implements OnInit {
   constructor(
     private generalService: GeneralService,
     private dialogRef: MatDialogRef<SubscribeDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any) { }
+    @Inject(MAT_DIALOG_DATA) public data: {subscriptionName?: string, subscriptionList?: any}) { }
 
   ngOnInit(): void {
-    console.log(this.data)
+    if (this.data.subscriptionName && this.data.subscriptionName !== '') {
+      this.name = this.data.subscriptionName;
+    }
   }
 
   /**
    * Invoked when user wants to subscribe to the specified message.
    */
   public connect() {
-    if (this.data && this.data.length > 0 && this.data.filter((item: any) => item === this.name).length > 0) {
+    if (this.data.subscriptionList && this.data.subscriptionList.length > 0 && this.data.subscriptionList.filter((item: any) => item === this.name).length > 0) {
       this.generalService.showFeedback('You are already subscribing to this messages', 'errorMessage');
       return;
     }
