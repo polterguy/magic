@@ -50,7 +50,13 @@ if
          .:/data/
          get-value:x:@.arguments/*/databaseName
          .:.db
-      io.file.save:x:-
+      if
+         io.file.exists:x:@strings.concat
+         .lambda
+            throw:Database already exists
+               public:bool:true
+               status:400
+      io.file.save:x:@strings.concat
          .:
 
       // Flushing SQLite connections cache.
