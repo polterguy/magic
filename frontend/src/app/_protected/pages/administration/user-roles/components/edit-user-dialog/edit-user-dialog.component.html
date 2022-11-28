@@ -2,58 +2,50 @@
   <h3 mat-dialog-title>Edit user {{data?.user?.username}}</h3>
 
   <div mat-dialog-content>
-    <mat-tab-group mat-stretch-tabs dynamicHeight animationDuration="0ms" color="primary">
-      <mat-tab label="Access">
-        <div class="row mt-4">
-          <div class="col-12">
-            <mat-form-field class="w-100">
-              <span matPrefix
-                class="d-flex flex-nowrap align-items-center justify-content-between me-2 text-capitalized">
-                Roles
-                <span class="text-muted">|</span>
+    <div class="row">
+      <div class="col-md-6 col-12">
+        <mat-form-field class="w-100">
+          <span matPrefix
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2 text-capitalized">
+            Roles
+            <span class="text-muted">|</span>
+          </span>
+          <mat-select [formControl]="rolesCtrl" multiple>
+            <mat-select-trigger>
+              {{rolesCtrl.value ? rolesCtrl.value[0] : ''}}
+              <span *ngIf="rolesCtrl.value?.length > 1">
+                + {{rolesCtrl.value.length - 1}} more
               </span>
-              <mat-select [formControl]="rolesCtrl" multiple>
-                <mat-select-trigger>
-                  {{rolesCtrl.value ? rolesCtrl.value[0] : ''}}
-                  <span *ngIf="rolesCtrl.value?.length > 1">
-                    + {{rolesCtrl.value.length - 1}} more
-                  </span>
-                </mat-select-trigger>
-                <mat-option
-                  class="multiline-mat-option"
-                  *ngFor="let role of roles"
-                  [value]="role.name"
-                  (click)="manageRole(role.name)">
-                  <span class="d-block name-line">{{role.name}}</span>
-                  <span class="d-block description-line">{{role.description}}</span>
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-
-            <p>
-              <mat-slide-toggle [checked]="userIsLocked" (toggleChange)="toggleLockUser()">
-                {{userIsLocked ? 'Unlock user' : 'Lock user'}}
-              </mat-slide-toggle>
-            </p>
-          </div>
-        </div>
-      </mat-tab>
-
-      <mat-tab label="Details">
-        <div class="row mt-4">
-          <div class="col-md-6 col-12" *ngFor="let item of formData | keyvalue">
-            <mat-form-field class="w-100">
-              <span matPrefix
-                class="d-flex flex-nowrap align-items-center justify-content-between me-2 text-capitalized">
-                {{item.key}}
-                <span class="text-muted">|</span>
-              </span>
-              <input matInput [formControlName]="item.key">
-            </mat-form-field>
-          </div>
-        </div>
-      </mat-tab>
-    </mat-tab-group>
+            </mat-select-trigger>
+            <mat-option
+              class="multiline-mat-option"
+              *ngFor="let role of rolesList"
+              [value]="role.name"
+              (click)="manageRole(role.name)">
+              <span class="d-block name-line">{{role.name}}</span>
+              <span class="d-block description-line">{{role.description}}</span>
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col-md-6 col-12" *ngFor="let item of formData">
+        <mat-form-field class="w-100">
+          <span matPrefix
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2 text-capitalized">
+            {{item.type}}
+            <span class="text-muted ms-1">|</span>
+          </span>
+          <input matInput [formControlName]="item.type">
+        </mat-form-field>
+      </div>
+      <div class="col-12">
+        <p>
+          <mat-slide-toggle [checked]="userIsLocked" (toggleChange)="toggleLockUser()">
+            {{userIsLocked ? 'Unlock user' : 'Lock user'}}
+          </mat-slide-toggle>
+        </p>
+      </div>
+    </div>
   </div>
 
 

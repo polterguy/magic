@@ -95,10 +95,6 @@ export class UsersListComponent implements OnInit {
     });
   }
 
-  getRoles(el: User) {
-    return (el.roles || []).join(',');
-  }
-
   /**
    * Invoked when user wants to create a login link for user.
    * @param user Selected user.
@@ -222,7 +218,7 @@ export class UsersListComponent implements OnInit {
    */
   public editUser(user: User) {
     this.dialog.open(EditUserDialogComponent, {
-      width: '700px',
+      width: '800px',
       data: {
         user: user,
       },
