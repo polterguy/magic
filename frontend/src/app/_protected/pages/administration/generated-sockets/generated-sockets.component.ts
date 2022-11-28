@@ -42,6 +42,7 @@ export class GeneratedSocketsComponent implements OnInit, OnDestroy {
   selectedUsers: string[] = [];
 
   public publishedMessages: PublishedMessages[] = [];
+  public CopyPublishedMessages: PublishedMessages[] = [];
 
   public searchKey: string = '';
 
@@ -84,6 +85,11 @@ export class GeneratedSocketsComponent implements OnInit, OnDestroy {
 
   public filterList(event: any) {
     this.searchKey = event;
+    if (event && event !== '') {
+      this.publishedMessages = this.CopyPublishedMessages.filter((item: any) => item.name.indexOf(event) > -1);
+    } else {
+      this.publishedMessages = this.CopyPublishedMessages;
+    }
   }
 
   /*
@@ -118,6 +124,7 @@ export class GeneratedSocketsComponent implements OnInit, OnDestroy {
     this.socketService.socketMessages().subscribe({
       next: (res: PublishedMessages[]) => {
         this.publishedMessages = res || [];
+        this.CopyPublishedMessages = res || [];
       },
       error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
     });
@@ -171,6 +178,29 @@ export class GeneratedSocketsComponent implements OnInit, OnDestroy {
         }
       }
     });
+  }
+
+  /**
+   * Invoked when a socket subscription should be removed.
+   *
+   * @param subscription What subscription to remove
+   */
+  public removeSubscription(subscription: string) {
+    this.hubConnection.off(subscription);
+    this.subscriptions.splice(this.subscriptions.indexOf(subscription), 1);
+    if (this.subscriptions.length === 0) {
+      this.hubConnection.stop();
+      this.hubConnection = null;
+      this.getConnections();
+      this.messages = [];
+    }
+  }
+
+  /**
+   * Clears messages.
+   */
+  public clearMessages() {
+    this.messages = [];
   }
 
   /**

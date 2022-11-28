@@ -26,22 +26,30 @@
 
           </div>
         </div>
-        <mat-paginator
-          *ngIf="totalItems > pageSize"
-          [length]="totalItems"
-          [pageSize]="pageSize"
-          [pageIndex]="pageIndex"
-          (page)="changePage($event)"
-          aria-label="Change page">
-        </mat-paginator>
+
       </mat-card-content>
     </mat-card>
   </div>
   <div class="col-md-6 col-12">
-    <mat-card class="h-100 pt-3">
+    <mat-card class="h-100">
       <mat-card-content class="h-100 max-height-full">
+        <div class="d-flex justify-content-between align-items-center">
+          <h3 class="my-0 fw-bold">
+            List of subscriptions
+          </h3>
+          <button mat-button color="primary" class="px-4" (click)="clearMessages()">Clear all messages</button>
+        </div>
 
-        <app-socket-result></app-socket-result>
+        <div class="row mt-3 scrollable-row">
+          <div class="col-12 max-height">
+
+        <app-socket-result
+          [users]="users"
+          [messages]="messages"
+          [subscriptions]="subscriptions"
+          (removeSubscription)="removeSubscription($event)"></app-socket-result>
+          </div>
+        </div>
 
       </mat-card-content>
     </mat-card>

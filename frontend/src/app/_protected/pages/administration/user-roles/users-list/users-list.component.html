@@ -10,13 +10,13 @@
     <!-- Name Column -->
     <ng-container matColumnDef="name">
       <th mat-header-cell *matHeaderCellDef> Name </th>
-      <td mat-cell *matCellDef="let element"> {{getExtra('name', element) ?? 'N/A'}} </td>
+      <td mat-cell *matCellDef="let element"> {{getExtra('name', element)}} </td>
     </ng-container>
 
     <!-- Email Column -->
     <ng-container matColumnDef="email">
       <th mat-header-cell *matHeaderCellDef> Email </th>
-      <td mat-cell *matCellDef="let element"> {{getExtra('email', element) ?? 'N/A'}} </td>
+      <td mat-cell *matCellDef="let element"> {{getExtra('email', element)}} </td>
     </ng-container>
 
     <!-- Role Column -->

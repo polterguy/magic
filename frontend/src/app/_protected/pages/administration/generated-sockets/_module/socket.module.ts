@@ -9,6 +9,8 @@ import { SocketResultComponent } from '../socket-result/socket-result.component'
 import { SubscribeDialogComponent } from '../components/subscribe-dialog/subscribe-dialog.component';
 import { FormsModule } from '@angular/forms';
 import { PublishDialogComponent } from '../components/publish-dialog/publish-dialog.component';
+import { CmModule } from 'src/app/codemirror/_module/cm.module';
+import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 
 
 
@@ -25,7 +27,9 @@ import { PublishDialogComponent } from '../components/publish-dialog/publish-dia
     CommonModule,
     SocketRoutingModule,
     MaterialModule,
-    FormsModule
+    FormsModule,
+    CmModule,
+    CodemirrorModule
   ]
 })
 export class SocketModule { }

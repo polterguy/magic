@@ -41,6 +41,7 @@ export class SocketListComponent implements OnInit {
   public publish(item: any) {
     this.dialog.open(PublishDialogComponent, {
       width: '550px',
+      panelClass: 'light',
       data: {
         message: {
           name: item.name,

@@ -12,6 +12,7 @@ import { ChangePasswordDialogComponent } from '../components/change-password-dia
 import { NewUserDialogComponent } from '../components/new-user-dialog/new-user-dialog.component';
 import { EditUserDialogComponent } from '../components/edit-user-dialog/edit-user-dialog.component';
 import { ManageRoleDialogComponent } from '../components/manage-role-dialog/manage-role-dialog.component';
+import { AddExtraFieldsComponent } from '../components/add-extra-fields/add-extra-fields.component';
 
 
 
@@ -24,7 +25,8 @@ import { ManageRoleDialogComponent } from '../components/manage-role-dialog/mana
     NewUserDialogComponent,
     EditUserDialogComponent,
     ManageRoleDialogComponent,
-    ChangePasswordDialogComponent
+    ChangePasswordDialogComponent,
+    AddExtraFieldsComponent
   ],
   imports: [
     CommonModule,

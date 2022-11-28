@@ -99,7 +99,7 @@
         </ng-container>
 
         <!-- If has body -->
-        <ng-container *ngIf="itemDetails?.consumes">
+        <ng-container *ngIf="itemDetails?.consumes && codemirrorIsReady">
           <div class="w-100 h-100 endpoint-result mb-3">
             <div class="d-flex justify-content-between align-items-center w-100 mb-3">
               <h3 class="my-0 fw-bold">Body</h3>

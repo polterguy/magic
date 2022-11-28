@@ -5,11 +5,12 @@ import { Message } from 'src/app/models/message.model';
 // CodeMirror options according to file extensions needed to show JSON CodeMirror editor.
 import fileTypes from 'src/app/codemirror/file-types.json';
 import { GeneralService } from 'src/app/_general/services/general.service';
+import { CodemirrorActionsService } from 'src/app/_protected/pages/tools/hyper-ide/_services/codemirror-actions.service';
 
 /**
  * Message wrapper for what message to publish.
  */
- export class MessageWrapper {
+export class MessageWrapper {
 
   /**
    * the actual message to publish.
@@ -48,7 +49,9 @@ export class PublishDialogComponent implements OnInit {
   /**
    * CodeMirror options for JSON file types.
    */
-   public options: any = null;
+  public options: any = null;
+
+  public codemirrorIsReady: boolean = false;
 
   /**
    * Creates an instance of your component.
@@ -59,38 +62,20 @@ export class PublishDialogComponent implements OnInit {
   constructor(
     private generalService: GeneralService,
     private dialogRef: MatDialogRef<PublishDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: MessageWrapper) { }
+    @Inject(MAT_DIALOG_DATA) public data: MessageWrapper,
+    private codemirrorActionsService: CodemirrorActionsService) { }
 
-    ngOnInit(): void {
+  ngOnInit(): void {
+    this.getCodeMirrorOptions();
+  }
 
-    }
-
-  /**
-   * Implementation of AfterViewInit.
-   *
-   * Needed to be able to correctly initialise CodeMirror editor, to avoid 'race conditions',
-   * since it cannot be initialised until after all CSS animations and initialisation code
-   * has executed.
-   */
-  ngAfterViewInit() {
-
-    // This looks a bit funny, but due to the way CodeMirror is wired together it's unfortunately necessary ...
-    setTimeout(() => {
-
-      // Making sure we find the correct options for our CodeMirror editor.
-      this.options = this.extensions.filter(x => x.extensions.indexOf('json') !== -1)[0].options;
-
-      // Turning OFF autofocus such that user starts filling out form at 'the top'.
-      this.options.autofocus = false;
-
-    }, 1000);
-
-    setTimeout(() => {
-      var domNode = (<any>document.querySelector('.CodeMirror'));
-      var editor = domNode.CodeMirror;
-      editor.doc.markClean();
-      editor.doc.clearHistory(); // To avoid having initial loading of file becoming an "undo operation".
-    }, 800);
+  private getCodeMirrorOptions() {
+    this.codemirrorActionsService.getActions(null, 'json').then((res: any) => {
+      this.options = res;
+      setTimeout(() => {
+        this.codemirrorIsReady = true;
+      }, 500);
+    });
   }
 
   /**

@@ -91,6 +91,8 @@ export class EndpointDialogComponent implements OnInit {
   public assumptionsPermission: boolean = false;
   public testPermission: boolean = false;
 
+  public codemirrorIsReady: boolean = false;
+
   constructor(
     private clipboard: Clipboard,
     private cdr: ChangeDetectorRef,
@@ -140,7 +142,7 @@ export class EndpointDialogComponent implements OnInit {
 
   private prepareData(item: any) {
     this.itemDetails = item;
-console.log(item)
+
     this.originalPath = item.path;
 
     item.input ? this.setForm() : '';
@@ -197,7 +199,9 @@ console.log(item)
     } else if (this.itemDetails?.consumes?.startsWith('text/')) {
       setTimeout(() => this.payload = '', 250);
     }
-
+    setTimeout(() => {
+      this.codemirrorIsReady = true;
+    }, 500);
     this.cdr.detectChanges();
   }
 

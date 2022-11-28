@@ -494,7 +494,7 @@ export class EndpointsResultComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe((res: TestModel) => {
       if (res) {
-        console.log(res, this.result)
+
         this.assumptionService.create(
           res.filename,
           this.itemDetails.verb,

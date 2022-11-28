@@ -13,6 +13,8 @@ export class GithubTokenDialogComponent implements OnInit {
 
   public token: string = '';
 
+  public today: Date;
+
   constructor(
     private clipboard: Clipboard,
     private cryptoService: CryptoService,
@@ -20,11 +22,11 @@ export class GithubTokenDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: { username: string, role: string, expires: string }) { }
 
   ngOnInit(): void {
-    this.getKey();
+    this.today = new Date();
   }
 
   public getKey() {
-    this.cryptoService.getGithubKey(this.data.username,this.data.role, this.data.expires).subscribe({
+    this.cryptoService.getGithubKey(this.data.username,this.data.role, new Date(this.data.expires).toISOString()).subscribe({
       next: (res: any) => {
         this.token = res.ticket;
       },

@@ -10,9 +10,6 @@ export class SocketSearchboxComponent implements OnInit {
 
   @Output() filterList = new EventEmitter<any>();
 
-  private _inputValue: ReplaySubject<string>= new ReplaySubject();
-  public inputValue = this._inputValue.asObservable();
-
   constructor() { }
 
   ngOnInit(): void {
@@ -24,8 +21,7 @@ export class SocketSearchboxComponent implements OnInit {
    * @params event
    */
    public applyFilter(keyword: string) {
-    this._inputValue.next(keyword);
-    this.filterList.emit(this._inputValue);
+    this.filterList.emit(keyword);
   }
 
   /**
@@ -33,13 +29,7 @@ export class SocketSearchboxComponent implements OnInit {
    * @callback getExportList To refetch the unfiltered list.
    */
   public removeSearchTerm() {
-    this._inputValue.next('');
-    this.filterList.emit(this._inputValue);
-  }
-
-  public toggleSystemEndpoints() {
-    this._inputValue.next('');
-    this.filterList.emit(this._inputValue);
+    this.filterList.emit('');
   }
 
 }
