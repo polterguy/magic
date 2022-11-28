@@ -80,9 +80,9 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
           this.plugins[item.name] = item;
           item.hasUpdate = false;
         });
-        this.loadDetails();
       },
-      error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
+      error: (error: any) => this.generalService.showFeedback(error, 'errorMessage'),
+      complete: () => this.loadDetails()
     });
   }
 
@@ -104,7 +104,12 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
           })
         }
       },
-      error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
+      error: (error: any) => this.generalService.showFeedback(error, 'errorMessage'),
+      complete: () => {
+        if (this.appDetails.length === 0) {
+          this.isLoadingPlugins = false;
+        }
+      }
     });
   }
 

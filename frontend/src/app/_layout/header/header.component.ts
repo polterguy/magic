@@ -260,17 +260,17 @@ export class HeaderComponent implements OnInit {
         expandable: true,
         submenu: [
           {
-            name: 'Database',
+            name: 'Create database',
             url: '/database-management',
             disabled: !(this.permissions.access.sql.execute_access && this.permissions.setupDone)
           },
           {
-            name: 'Endpoint generator',
+            name: 'Generate endpoint',
             url: '/endpoint-generator',
             disabled: !(this.permissions.access.crud.generate_crud && this.permissions.access.crud.generate_sql && this.permissions.access.crud.generate_frontend && this.permissions.setupDone)
           },
           {
-            name: 'Frontend generator',
+            name: 'Generate frontend',
             url: '/frontend-generator',
             disabled: !(this.permissions.access.crud.generate_crud && this.permissions.access.crud.generate_sql && this.permissions.access.crud.generate_frontend && this.permissions.setupDone)
           },

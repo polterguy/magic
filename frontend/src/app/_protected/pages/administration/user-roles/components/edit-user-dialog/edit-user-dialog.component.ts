@@ -22,7 +22,7 @@ export class EditUserDialogComponent implements OnInit {
   /**
    * Stores all the roles in a list.
    */
-  public rolesList: any = [];
+  public rolesList: Role[] = [];
 
   /**
    * Setting a variable for the current state of the selected user.
@@ -30,7 +30,6 @@ export class EditUserDialogComponent implements OnInit {
   public userIsLocked: boolean = undefined;
 
   public formData: any = [];
-  roles: Role[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -46,28 +45,29 @@ export class EditUserDialogComponent implements OnInit {
   public userForm = this.fb.group({});
 
   ngOnInit(): void {
-
-    this.roleService.list('?limit=-1').subscribe({
-      next: (roles: Role[]) => {
-        this.roles = roles || [];
-        for (const idx of (this.data.user.roles || [])) {
-          this.rolesCtrl.value.push(idx);
-        }
-      },
-    });
-
     (async () => {
       while (this.data && !Object.keys(this.data).length)
         await new Promise(resolve => setTimeout(resolve, 100));
 
       if (this.data && Object.keys(this.data).length > 0) {
-        this.formData = this.data.user;
+        this.formData = this.data.user?.extra || [];
         this.setFormFields();
 
         this.sortRolesBySelected();
         this.userIsLocked = this.data.user.locked;
+
+        this.getRolesList();
       }
     })();
+  }
+
+  private getRolesList() {
+    this.roleService.list('?limit=-1').subscribe({
+      next: (roles: Role[]) => {
+        this.rolesList = roles || [];
+        this.rolesCtrl = new FormControl<string[] | null>(this.data.user.roles || []);
+      }
+    });
   }
 
   public sortRolesBySelected() {
@@ -75,10 +75,10 @@ export class EditUserDialogComponent implements OnInit {
   }
 
   setFormFields() {
-    delete this.formData?.created;
-    for (const key in this.formData) {
-      this.userForm.setControl(key, new FormControl(this.formData[key]));
-    }
+    this.formData.forEach((element: any) => {
+      this.userForm.setControl(element.type, new FormControl(element.value));
+
+    });
   }
 
   manageRole(name: string) {
@@ -100,10 +100,12 @@ export class EditUserDialogComponent implements OnInit {
       next: (res: any) => {
         if (res && res.result === 'success') {
           this.generalService.showFeedback('Roles successfully updated.', 'successMessage');
+          this.rolesCtrl.enable();
         }
       },
       error: (error: any) => {
-        this.generalService.showFeedback(error, 'errorMessage', 'ok', 4000);
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'ok', 4000);
+        this.rolesCtrl.enable();
       }
     });
   }
@@ -113,10 +115,12 @@ export class EditUserDialogComponent implements OnInit {
       next: (res: any) => {
         if (res && res.affected > 0) {
           this.generalService.showFeedback('Roles successfully updated.', 'successMessage');
+          this.rolesCtrl.enable();
         }
       },
       error: (error: any) => {
-        this.generalService.showFeedback(error, 'errorMessage', 'ok', 4000);
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'ok', 4000);
+        this.rolesCtrl.enable();
       }
     });
   }
@@ -134,7 +138,7 @@ export class EditUserDialogComponent implements OnInit {
         }
       },
       error: (error: any) => {
-        this.generalService.showFeedback(error, 'errorMessage', 'ok', 4000);
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'ok', 4000);
       }
     });
   }
