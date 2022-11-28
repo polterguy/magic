@@ -338,7 +338,7 @@ export class HeaderComponent implements OnInit {
             url: '/help-center'
           },
           {
-            name: 'GitHub token',
+            name: 'Generate token',
           },
           {
             name: 'Logout',

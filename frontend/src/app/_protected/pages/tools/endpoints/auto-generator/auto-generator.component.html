@@ -234,7 +234,7 @@
         </mat-form-field>
       </div>
       <!-- Secondary URL -->
-      <div class="col-xl-3 col-lg-4 col-md-5 col-sm-6 col-12">
+      <div class="col-xl-3 col-lg-4 col-md-5 col-sm-6 col-12" *ngIf="selectedTables.value.length === 1">
         <ng-container *ngIf="dbLoading | async">
           <app-loading-skeleton
           [amount]="1"

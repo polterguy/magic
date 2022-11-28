@@ -63,7 +63,7 @@ export class UserRolesComponent implements OnInit {
     }
     let param: string = '';
     if (event?.search) {
-      param = `?username.like=${encodeURIComponent(event.search)}%`;
+      param = `?username.like=%${encodeURIComponent(event.search)}%`;
     } else {
       param = `?limit=${this.pageSize}&offset=${this.currentPage}`;
     }
@@ -79,7 +79,7 @@ export class UserRolesComponent implements OnInit {
 
   private countUser(event?: any) {
     if (event || this.usersCount === 0) {
-      const param: string = `${event?.search ? `?username.like=${encodeURIComponent(event.search)}%` : ''}`;
+      const param: string = `${event?.search ? `?username.like=%${encodeURIComponent(event.search)}%` : ''}`;
       this.userService.count(param).subscribe({
         next: (res: any) => {
           if (res) {

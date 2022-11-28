@@ -5,7 +5,7 @@
 
 .scrollable-row {
   height: calc(100% - 100px);
-  overflow: hidden;
+  overflow: auto;
 }
 .max-height-full {
   max-height: 53vh;

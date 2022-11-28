@@ -1,5 +1,8 @@
 <form [formGroup]="userForm" class="form-with-label">
-  <h3 mat-dialog-title>Edit user {{data?.user?.username}}</h3>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 mat-dialog-title class="my-0">Edit user {{data?.user?.username}}</h3>
+    <button mat-button color="primary" (click)="addField()" type="button">Add fields</button>
+  </div>
 
   <div mat-dialog-content>
     <div class="row">
@@ -35,12 +38,17 @@
             {{item.type}}
             <span class="text-muted ms-1">|</span>
           </span>
-          <input matInput [formControlName]="item.type">
+          <input matInput [formControlName]="item.type" [name]="item.type">
+          <button matSuffix mat-icon-button color="warn" type="button"
+            *ngIf="item.type !== 'email'"
+            (click)="deleteField(item.type)">
+            <mat-icon>delete</mat-icon>
+          </button>
         </mat-form-field>
       </div>
       <div class="col-12">
         <p>
-          <mat-slide-toggle [checked]="userIsLocked" (toggleChange)="toggleLockUser()">
+          <mat-slide-toggle [checked]="userIsLocked" (toggleChange)="toggleLockUser()" color="primary">
             {{userIsLocked ? 'Unlock user' : 'Lock user'}}
           </mat-slide-toggle>
         </p>
@@ -52,8 +60,15 @@
   <div mat-dialog-actions [align]="'end'">
     <button
       mat-dialog-close
+      mat-button
+      color="primary"
+      class="px-sm-5 px-4"
+      type="button">Close</button>
+    <button
       mat-flat-button
       color="primary"
-      type="submit">Close</button>
+      class="px-sm-5 px-4"
+      (click)="saveFields()"
+      type="submit">Save</button>
   </div>
 </form>

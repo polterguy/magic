@@ -46,7 +46,9 @@ export class ManageTaskComponent implements OnInit {
         hyperlambda: this.task.hyperlambda,
         options: res
       }
-      this.hlReady = true;
+      setTimeout(() => {
+        this.hlReady = true;
+      }, 500);
      });
   }
 

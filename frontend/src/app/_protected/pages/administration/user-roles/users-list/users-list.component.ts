@@ -198,7 +198,7 @@ export class UsersListComponent implements OnInit {
     if (result.length > 0) {
       return result[0].value;
     }
-    return '';
+    return 'N/A';
   }
 
   /**
