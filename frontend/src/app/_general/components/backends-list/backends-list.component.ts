@@ -85,8 +85,11 @@ export class BackendsListComponent implements OnInit {
     if (backend.token) {
       this.backendService.activate(backend);
       this.backendService.upsert(backend);
-
-      window.location.reload();
+      if (this.router.url !== '/setup') {
+        window.location.reload();
+      } else {
+        window.location.href = '/'
+      }
       // TODO::: reload must be changed to below actions, so a reliable solution needs to update the active url.
 
       // this.refetchEndpointsList();
@@ -129,9 +132,14 @@ export class BackendsListComponent implements OnInit {
    * @param backend Backend to remove
    */
   removeBackend(backend: Backend) {
-
+    if (this.backendsList.length > 1) {
+      const anotherWithToken: any = this.backendsList.find((item: any) => item !== backend && item.token !== null);
+      if (anotherWithToken) {
+        this.switchBackend(anotherWithToken)
+      }
+    }
     // For weird reasons the menu gets "stuck" unless we do this in a timer.
-    setTimeout(() => this.backendService.remove(backend), 1);
+    setTimeout(() => this.backendService.remove(backend), 100);
   }
 
 }

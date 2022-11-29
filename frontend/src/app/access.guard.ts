@@ -46,7 +46,7 @@ export class AccessGuard implements CanActivate {
           await new Promise(resolve => setTimeout(resolve, 100));
           if (this.backendService?.active?.access && Object.keys(this.backendService?.active?.access?.auth).length) {
             const notAuthorized: boolean = Object.values(this.backendService.active.access.auth).every((item: any) => {return item === false})
-console.log('first')
+
           if (notAuthorized || !this.backendService.active.token) {
             this.router.navigateByUrl('/authentication');
             return false;
@@ -58,7 +58,7 @@ console.log('first')
           // this.router.navigate(['/authentication']) : '';
         }
       })();
-      // return true;
+      return true;
   }
 
 }

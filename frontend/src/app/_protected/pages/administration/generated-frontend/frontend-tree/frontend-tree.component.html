@@ -68,7 +68,7 @@
             [class]="activeFolder === folder.node.path ? 'active-folder' : 'node'"
             [class.warning]="folder.node.systemFile"
             level="level"
-            matTreeNodePadding
+            matTreeNodePadding #foldersss
             matTreeNodePaddingIndent="30" [isExpanded]="activeFolder === folder.node.path"
             class="justify-content-betwee"
             [class.d-none]="filterParentNode(folder, (searchKey|async))">
@@ -88,7 +88,7 @@
                 mat-button
                 (click)="selectFolder(folder);treeControl.expand(folder);currentSelection = 'folder'"
                 class="px-1 d-flex justify-content-start w-100">
-                {{folder.name}}
+                {{folder.name}} {{foldersss?.node?.level}}
               </button>
             </div>
             <span class="d-{{showRenameBox === folder ? 'flex' : 'none'}} rename-box">
