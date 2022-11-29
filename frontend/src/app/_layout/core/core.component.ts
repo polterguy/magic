@@ -54,13 +54,6 @@ export class CoreComponent implements OnInit {
       this.cdr.detectChanges();
     });
 
-    // Subscribing to status changes and redirect accordingly if we need user to setup system.
-    this.backendService.statusRetrieved.subscribe((status: Status) => {
-      if (status) {
-        if (!status.result) {
-          this.router.navigate(['/setup']);
-        }
-      }
-    });
+
   }
 }

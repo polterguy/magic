@@ -18,7 +18,7 @@
       (click)="item.expandable ? null : closeSidebarInSidePanel(item.url)"
       [matMenuTriggerFor]="item.expandable ? subMenu : null" [matMenuTriggerData]="item"
       routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}"
-      [class.active-link]="item?.isActive">
+      [class.active-link]="item?.isActive" [disabled]="waitingSetupStatus">
 
       {{item.name}} <mat-icon *ngIf="item.expandable">expand_more</mat-icon>
 
@@ -48,7 +48,7 @@
 
   <div class="d-flex align-items-center">
 
-    <button mat-flat-button color="primary" class="url-btn" (click)="viewBackends()">
+    <button mat-flat-button color="primary" class="url-btn" (click)="viewBackends()" [disabled]="waitingSetupStatus">
       <div class="d-flex flex-nowrap align-items-center ps-1">
         <mat-icon>database</mat-icon>
         <p class="my-0 mx-2 text-truncate url-text">{{activeUrl}}</p>

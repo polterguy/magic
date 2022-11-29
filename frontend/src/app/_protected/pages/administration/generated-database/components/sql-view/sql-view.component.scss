@@ -9,8 +9,9 @@
   }
 }
 .table-responsive {
-  @include scrollbar  ($aista_default_alt,$aista_default_grey4,5px);
+  max-height: 50vh;
+  @include scrollbar ($aista_default_alt,$aista_default_grey4,5px);
   .text-truncate {
-    max-width: 50vw;
+    max-width: 25vw;
   }
 }

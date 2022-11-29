@@ -33,11 +33,7 @@ export class SqlViewComponent implements OnInit, OnDestroy {
   canLoadSnippet: boolean = undefined;
   queryResult: any = [];
 
-  public dataSource: any = [];
-
   displayedColumns: any = [];
-
-  columns: any = [];
 
   public selectedSnippet: string = '';
 
@@ -176,7 +172,7 @@ export class SqlViewComponent implements OnInit, OnDestroy {
       this.generalService.showLoading();
       this.sqlService.executeSql(
         this.selectedDbType,
-        '[' + this.input.connectionString + '|' + this.selectedDatabase + ']',
+        '[' + this.selectedConnectionString + '|' + this.selectedDatabase + ']',
         selectedText == '' ? this.input.sql : selectedText,
         true,
         false).subscribe({
@@ -195,6 +191,7 @@ export class SqlViewComponent implements OnInit, OnDestroy {
               this.generalService.showFeedback('SQL successfully executed, but returned no result');
             }
             this.queryResult = result || [];
+
             this.buildTable();
             if (this.input.sql.indexOf('CREATE TABLE') > -1) {
               this.refetchDatabases();
@@ -222,24 +219,17 @@ export class SqlViewComponent implements OnInit, OnDestroy {
 
   private buildTable() {
     if (this.queryResult && this.queryResult.length > 0) {
-      this.columns = [];
       this.displayedColumns = [];
-      this.dataSource = [];
 
-      const titles = Object.keys(this.queryResult[0][0]);
-      if (titles.indexOf('password') > -1) {
-        const index: number = titles.findIndex((value: string) => value === 'password');
-        titles.splice(index, 1)
-      }
+      this.queryResult.forEach((element: any, index: number) => {
+        const titles = Object.keys(element[index]);
+        if (titles.indexOf('password') > -1) {
+          const index: number = titles.findIndex((value: string) => value === 'password');
+          titles.splice(index, 1)
+        }
 
-      for (const title of titles) {
-        this.columns.push({
-          columnDef: title,
-          header: title
-        });
-      }
-      this.displayedColumns = this.columns.map((c: any) => c.columnDef);
-      this.dataSource = this.queryResult[0];
+        this.displayedColumns[index] = Object.keys(element[index]);
+      });
     }
   }
 

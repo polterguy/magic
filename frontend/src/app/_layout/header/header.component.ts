@@ -17,6 +17,7 @@ import { BackendsListComponent } from 'src/app/_general/components/backends-list
 import { Location } from '@angular/common';
 import { CryptoService } from 'src/app/_protected/pages/setting-security/server-key-setting/_services/crypto.service';
 import { GithubTokenDialogComponent } from 'src/app/_general/components/github-token-dialog/github-token-dialog.component';
+import { Status } from 'src/app/_protected/models/common/status.model';
 
 @Component({
   selector: 'app-header',
@@ -64,6 +65,8 @@ export class HeaderComponent implements OnInit {
 
   public isAffiliate: boolean = false;
 
+  public waitingSetupStatus: boolean = true;
+
    /**
     *
     * @param clipboard To copy URL of endpoint
@@ -85,7 +88,7 @@ export class HeaderComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private backendService: BackendService) {
       this.activatedRoute.queryParamMap.subscribe((params: any) => {
-        if (params) {
+        if (params && params.keys && params.keys.length > 0) {
           this.getParams(params)
         } else {
           this.getPermissions();
@@ -109,6 +112,7 @@ export class HeaderComponent implements OnInit {
           this.backendList = this.backendService.backends;
 
           this.createMenu();
+          this.getSetupStatus();
         }
       })();
 
@@ -116,7 +120,7 @@ export class HeaderComponent implements OnInit {
       console.log(this.backendService)
       const notAuthorized: boolean = (!this.backendService.active || Object.values(this.backendService.active.access.auth ?? {}).every((item: any) => {return item === false}))
 
-        if (notAuthorized || !this.backendService.active.token) {
+        if (notAuthorized || this.backendService.active.token === null) {
           this.router.navigateByUrl('/authentication');
         }
 
@@ -127,7 +131,6 @@ export class HeaderComponent implements OnInit {
    * Retrieving URL parameter
    */
   private getParams(params: any) {
-
     // Parsing query parameters.
     // this.activated.queryParams.subscribe((params: Params) => {
 
@@ -143,10 +146,9 @@ export class HeaderComponent implements OnInit {
           cur.password = old[0].password;
           cur.token = old[0].token;
         }
-        this.backendService.upsert(cur);
         this.backendService.activate(cur);
-        this.location.replaceState('');
-        this.getPermissions();
+        this.backendService.upsert(cur);
+        window.location.href = '/';
 
       } else {
 
@@ -418,6 +420,18 @@ export class HeaderComponent implements OnInit {
         component: BackendsListComponent
       }
     })
+  }
+
+  private getSetupStatus() {
+    // Subscribing to status changes and redirect accordingly if we need user to setup system.
+    this.backendService.statusRetrieved.subscribe((status: Status) => {
+      if (status) {
+        this.waitingSetupStatus = false;
+        if (!status.result) {
+          this.router.navigate(['/setup']);
+        }
+      }
+    });
   }
   // /**
   //  * Invoked when user wants to copy the full URL of the endpoint.
