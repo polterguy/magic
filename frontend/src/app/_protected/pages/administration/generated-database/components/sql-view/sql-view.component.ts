@@ -12,6 +12,7 @@ import { CodemirrorActionsService } from '../../../../tools/hyper-ide/_services/
 import { SqlService } from '../../../../tools/database/_services/sql.service';
 import { SqlSnippetDialogComponent } from '../../../../tools/endpoints/components/sql-snippet-dialog/sql-snippet-dialog.component';
 import { SnippetNameDialogComponent } from '../../../../../../_general/components/snippet-name-dialog/snippet-name-dialog.component';
+import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-sql-view',
@@ -44,6 +45,12 @@ export class SqlViewComponent implements OnInit, OnDestroy {
   private saveSnippetSubscription!: Subscription;
   private tablesList: any = null;
   private tableSubscription!: Subscription;
+
+  /**
+   * If true prevents returning more than 200 records from backend to avoid
+   * exhausting server.
+   */
+  public safeMode: boolean = true;
 
   constructor(
     private dialog: MatDialog,
@@ -106,7 +113,7 @@ export class SqlViewComponent implements OnInit, OnDestroy {
           next: (content: string) => {
             this.input.sql = content;
           },
-          error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
+          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
         })
       }
     });
@@ -161,7 +168,7 @@ export class SqlViewComponent implements OnInit, OnDestroy {
   /**
    * Executes the current SQL towards your backend.
    */
-  public execute() {
+  public execute() {console.log(this.safeMode)
     if (!this.input.sql && this.input.sql === '') {
       this.generalService.showFeedback('Write an SQL command and then save it.', 'errorMessage', 'Ok', 5000)
       return;
@@ -174,7 +181,7 @@ export class SqlViewComponent implements OnInit, OnDestroy {
         this.selectedDbType,
         '[' + this.selectedConnectionString + '|' + this.selectedDatabase + ']',
         selectedText == '' ? this.input.sql : selectedText,
-        true,
+        this.safeMode,
         false).subscribe({
           next: (result: any[][]) => {
             if (result) {
@@ -231,6 +238,27 @@ export class SqlViewComponent implements OnInit, OnDestroy {
         this.displayedColumns[index] = Object.keys(element[index]);
       });
     }
+  }
+
+  public toggleSafeMode() {
+    this.safeMode === true ? this.showWarning() : this.safeMode = true;
+  }
+
+  private showWarning() {
+    this.dialog.open(ConfirmationDialogComponent, {
+      width: '500px',
+        data: {
+          title: 'Attention please!',
+          description: 'Disabling safe mode might result in you exhausting your server or client if you select thousands of records.',
+          description_extra: '<span class="fw-bold">Are you sure you want to continue?</span>',
+          action_btn: 'Yes, enable',
+          action_btn_color: 'warn'
+        }
+    }).afterClosed().subscribe((result: string) => {
+      if (result === 'confirm') {
+        this.safeMode = false;
+      }
+    })
   }
 
   public clearSQLEditor() {

@@ -217,7 +217,7 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
           next: (content: string) => {
             this.sql.sql = content;
           },
-          error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
+          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
         })
       }
     });
@@ -276,7 +276,7 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
       error: (error: any) => {
         this.generalService.hideLoading();
         this.waiting = false;
-        this.generalService.showFeedback(error, 'errorMessage', 'Ok', 3000)
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 3000)
       }
     })
   }

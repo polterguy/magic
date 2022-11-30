@@ -154,7 +154,7 @@ export class ConnectionStringDialogComponent implements OnInit {
         }
       },
       error: (error: any) => {
-        this.generalService.showFeedback(error, 'errorMessage', 'ok', 4000);
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'ok', 4000);
       },
     });
   }

@@ -59,7 +59,7 @@ export class SelectMacroDialogComponent implements OnInit {
       next: (result: string[]) => {
         this.macros = result;
       },
-      error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')});
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')});
   }
 
   /**

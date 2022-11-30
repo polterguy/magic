@@ -91,7 +91,7 @@ export class EndpointsComponent implements OnInit {
         }
         this.getConnectionString(dataToPass);
       },
-      error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
     });
   }
 

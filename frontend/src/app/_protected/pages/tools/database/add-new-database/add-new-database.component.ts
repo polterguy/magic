@@ -81,7 +81,7 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
           item.hasUpdate = false;
         });
       },
-      error: (error: any) => this.generalService.showFeedback(error, 'errorMessage'),
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage'),
       complete: () => this.loadDetails()
     });
   }
@@ -104,7 +104,7 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
           })
         }
       },
-      error: (error: any) => this.generalService.showFeedback(error, 'errorMessage'),
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage'),
       complete: () => {
         if (this.appDetails.length === 0) {
           this.isLoadingPlugins = false;
@@ -173,7 +173,7 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
               this.connectSocket(status.code, database);
             },
             error: (error: any) => {
-              this.generalService.showFeedback(error, 'errorMessage');
+              this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
               this.generalService.hideLoading();
               this.waitingInstallation = false;
             }
@@ -240,7 +240,7 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
               this.generalService.showFeedback('Oops! Please check the system log.', 'errorMessage', 'Ok', 5000);
             }
           },
-          error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
+          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
         });
         } else {
           this.generalService.showFeedback('Oops! Please check the system log.', 'errorMessage', 'Ok', 5000);
@@ -285,7 +285,7 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
             this.getItems();
             this.getDatabases();
           },
-          error: (error: any) => { this.generalService.showFeedback(error, 'errorMessage') }
+          error: (error: any) => { this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage') }
         });
       }
     })
@@ -313,7 +313,7 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
               this.getDatabases();
               this.getItems();
             },
-            error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
+            error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
           });
       }
     })
@@ -329,7 +329,7 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
         this.databaseTypes = dbTypes.options;
         this.getConnectionString(dbTypes.default);
       },
-      error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
     });
   }
 
@@ -410,7 +410,7 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
           this.getDatabases();
           this.databaseName = '';
         },
-        error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
+        error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
       });
   }
 

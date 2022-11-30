@@ -47,7 +47,7 @@ export class ChangePasswordDialogComponent {
           this.isLoading = false;
           this.dialogRef.close();
         },
-        error: (error: any) => this.generalService.showFeedback(error, 'errorMessage', 'Ok', 4000)});
+        error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)});
     } else {
       this.generalService.showFeedback('Please give a password to save.')
     }

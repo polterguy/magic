@@ -179,7 +179,7 @@ export class EditUserDialogComponent implements OnInit {
             this.setFormFields();
             this.generalService.showFeedback('The selected field is deleted successfully.', 'successMessage');
           },
-          error: (error: any) => this.generalService.showFeedback(error, 'errorMessage', 'Ok', 4000)
+          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)
         });
       }
     })

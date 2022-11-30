@@ -8,6 +8,13 @@
           <div>
             <button mat-button color="primary" (click)="viewShortkeys()">Shortkeys</button>
             <button mat-button color="primary" (click)="loadSnippet()" [disabled]="!canLoadSnippet">Snippets</button>
+
+            <button mat-button color="primary" (click)="toggleSafeMode()" *ngIf="safeMode">
+              Disable safe mode
+            </button>
+            <button mat-button color="warn" (click)="toggleSafeMode()" *ngIf="!safeMode">
+              Enable safe mode
+            </button>
           </div>
         </div>
 

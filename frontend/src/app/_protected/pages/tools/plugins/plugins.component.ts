@@ -64,7 +64,7 @@ export class PluginsComponent implements OnInit {
         this.plugins = apps;
         this.loadDetails();
       },
-      error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
     });
   }
 
@@ -89,7 +89,7 @@ export class PluginsComponent implements OnInit {
           this.isLoading = false;
         }
       },
-      error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
     });
   }
 
@@ -217,7 +217,7 @@ export class PluginsComponent implements OnInit {
               this.generalService.showFeedback('Oops! Please check the system log.', 'errorMessage', 'Ok', 5000);
             }
           },
-          error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
+          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
         });
         } else {
           this.generalService.showFeedback('Oops! Please check the system log.', 'errorMessage', 'Ok', 5000);
@@ -261,7 +261,7 @@ export class PluginsComponent implements OnInit {
             this.clearServersideCache();
             this.getItems();
           },
-          error: (error: any) => { this.generalService.showFeedback(error, 'errorMessage') }
+          error: (error: any) => { this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage') }
         });
       }
     })

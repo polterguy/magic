@@ -30,7 +30,23 @@
     -moz-column-break-inside: avoid-column;
     break-inside: avoid;
 
-    .small {font-size: 11px;}
+    .small {font-size: 11px;word-break: break-all;}
+
+    .table-title {max-width: 80%; word-break: break-all;}
+
+    .table-icons {
+      mat-icon {
+        font-size: 14px;
+        width: 14px;
+        height: 14px;
+        line-height: 14px;
+        margin-right: 2px;
+        vertical-align: bottom;
+        &.flipped {
+          transform: rotate(90deg);
+        }
+      }
+    }
   }
 
   @media (min-width: 680px) and (max-width: 1100px) {

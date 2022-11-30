@@ -45,6 +45,8 @@ export class FrontendEditorComponent implements OnInit, AfterViewInit, OnDestroy
 
   private codemirrorActionSubscription!: Subscription;
 
+  private codemirrorOptions: any = {};
+
   constructor(
     private dialog: MatDialog,
     private cdr: ChangeDetectorRef,
@@ -73,10 +75,10 @@ export class FrontendEditorComponent implements OnInit, AfterViewInit, OnDestroy
     this.watchForActions();
     this.cdr.detectChanges();
   }
-  codemirrorOptions: any = {};
+
   ngOnChanges(changes: SimpleChanges): void {
     const fileExisting: number = this.openFiles.findIndex((item: any) => item.path === this.currentFileData.path);
-    // console.log(fileExisting,changes)
+
     if (changes['currentFileData'] && !changes['currentFileData'].firstChange) {
       if (this.currentFileData) {
         if (this.currentFileData.options !== this.codemirrorOptions[this.currentFileData.path]) {
@@ -97,7 +99,7 @@ export class FrontendEditorComponent implements OnInit, AfterViewInit, OnDestroy
     }
   }
 
-  private async getCodeMirrorOptions() {
+  private getCodeMirrorOptions() {
     this.codemirrorActionsService.getActions(null, this.currentFileData?.path.split('.').pop()).then((options: any) => {
       this.codemirrorOptions[this.currentFileData.path] = options;
       this.currentFileData.options = options;
@@ -114,7 +116,7 @@ export class FrontendEditorComponent implements OnInit, AfterViewInit, OnDestroy
     if (!window['_vocabulary']) {
       this.vocabularyService.vocabulary().subscribe({
         next: (vocabulary: string[]) => window['_vocabulary'] = vocabulary,
-        error: error => this.generalService.showFeedback(error, 'errorMessage')
+        error: error => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
       });
     }
   }
@@ -135,7 +137,7 @@ export class FrontendEditorComponent implements OnInit, AfterViewInit, OnDestroy
         // if invoked from closeActiveFile function, the recall to close after saving file.
         thenClose === true ? this.closeActiveFile(true) : '';
       },
-      error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
     });
   }
 
@@ -216,7 +218,7 @@ export class FrontendEditorComponent implements OnInit, AfterViewInit, OnDestroy
     } else {
       this.evaluatorService.execute(this.currentFileData.content).subscribe({
         next: () => this.generalService.showFeedback('File successfully executed', 'successMessage'),
-        error: (error: any) => this.generalService.showFeedback(error,)
+        error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
       });
     }
   }
@@ -369,7 +371,7 @@ export class FrontendEditorComponent implements OnInit, AfterViewInit, OnDestroy
           next: (content: string) => {
             return this.insertHyperlambda(content);
           },
-          error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
+          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
         });
       }
     });
@@ -486,14 +488,14 @@ export class FrontendEditorComponent implements OnInit, AfterViewInit, OnDestroy
 
                 }
               },
-              error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
+              error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
             });
           } else if (result) {
             this.selectMacro();
           }
         });
       },
-      error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
     });
   }
 

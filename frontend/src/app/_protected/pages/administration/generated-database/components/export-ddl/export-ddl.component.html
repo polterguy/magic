@@ -3,7 +3,7 @@
 
 <div mat-dialog-content class="codemirror-dialog">
   <ngx-codemirror
-    *ngIf="options"
+    *ngIf="codemirrorReady"
     [(ngModel)]="data.result"
     [options]="options"
     name="content">
