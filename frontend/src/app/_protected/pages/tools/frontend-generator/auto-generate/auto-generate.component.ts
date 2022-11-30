@@ -172,7 +172,7 @@ export class AutoGenerateComponent implements OnInit, OnDestroy {
           this.refetchEndpointsList();
         }
       },
-      error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
     });
   }
 

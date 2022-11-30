@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
@@ -25,7 +25,7 @@ import { VocabularyService } from '../_services/vocabulary.service';
   templateUrl: './ide-editor.component.html',
   styleUrls: ['./ide-editor.component.scss']
 })
-export class IdeEditorComponent implements OnInit {
+export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
 
   @Input() currentFileData: FileNode;
   @Input() activeFolder: string = '';
@@ -45,6 +45,8 @@ export class IdeEditorComponent implements OnInit {
 
   private codemirrorActionSubscription!: Subscription;
 
+  private codemirrorOptions: any = {};
+
   constructor(
     private dialog: MatDialog,
     private cdr: ChangeDetectorRef,
@@ -55,22 +57,53 @@ export class IdeEditorComponent implements OnInit {
     private codemirrorActionsService: CodemirrorActionsService) { }
 
   ngOnInit(): void {
-    (async () => {
-      while (!(this.currentFileData && !this.endpoints.length))
-        await new Promise(resolve => setTimeout(resolve, 100));
+    // (async () => {
+    //   while (!(this.currentFileData && !this.endpoints.length))
+    //     await new Promise(resolve => setTimeout(resolve, 100));
 
-      if (this.currentFileData && this.endpoints.length > 0) {
-        setTimeout(() => {
-            this.clearEditorHistory(true);
-        }, 100);
-      }
-    })();
+    //   if (this.currentFileData && this.endpoints.length > 0) {
+    //     setTimeout(() => {
+    //         this.clearEditorHistory(true);
+    //     }, 100);
+    //   }
+    // })();
     this.watchForActions();
     this.cdr.detectChanges();
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    const fileExisting: number = this.openFiles.findIndex((item: any) => item.path === this.currentFileData.path);
+
+    if (changes['currentFileData'] && !changes['currentFileData'].firstChange) {
+      if (this.currentFileData) {
+        if (this.currentFileData.options !== this.codemirrorOptions[this.currentFileData.path]) {
+          this.getCodeMirrorOptions();
+          // if ()
+          setTimeout(() => {
+            const activeWrapper = document.querySelector('.active-codemirror-editor-' + fileExisting);
+            const editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
+            editor.doc.isClean()
+            editor.doc.markClean();
+            editor.doc.clearHistory(); // To avoid having initial loading of file becoming an "undo operation".
+          }, 100);
+
+        }
+
+      }
+
+    }
+  }
+
+  private async getCodeMirrorOptions() {
+    this.codemirrorActionsService.getActions(null, this.currentFileData?.path.split('.').pop()).then((options: any) => {
+      this.codemirrorOptions[this.currentFileData.path] = options;
+      this.currentFileData.options = options;
+    });
+  }
+
   clearEditorHistory(clear: boolean) {
-    const activeWrapper = document.querySelector('.active-codemirror-editor');
+    const fileExisting: number = this.openFiles.findIndex((item: any) => item.path === this.currentFileData.path);
+    const activeWrapper = document.querySelector('.active-codemirror-editor-' + fileExisting);
     const editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
     editor.doc.markClean();
     editor.doc.clearHistory(); // To avoid having initial loading of file becoming an "undo operation".
@@ -86,7 +119,7 @@ export class IdeEditorComponent implements OnInit {
     if (!window['_vocabulary']) {
       this.vocabularyService.vocabulary().subscribe({
         next: (vocabulary: string[]) => window['_vocabulary'] = vocabulary,
-        error: error => this.generalService.showFeedback(error, 'errorMessage')
+        error: error => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
       });
     }
   }
@@ -107,7 +140,7 @@ export class IdeEditorComponent implements OnInit {
         // if invoked from closeActiveFile function, the recall to close after saving file.
         thenClose === true ? this.closeActiveFile(true) : '';
       },
-      error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
     });
   }
 
@@ -181,7 +214,7 @@ export class IdeEditorComponent implements OnInit {
 
     if (await this.getEndpointToExecute() !== null) {
       this.dialog.open(EndpointDialogComponent, {
-        data: {itemToBeTried: await this.getEndpointToExecute()},
+        data: { itemToBeTried: await this.getEndpointToExecute() },
         minWidth: '80vw',
         minHeight: '50vh',
         panelClass: ['light']
@@ -189,7 +222,8 @@ export class IdeEditorComponent implements OnInit {
     } else {
       this.evaluatorService.execute(this.currentFileData.content).subscribe({
         next: () => this.generalService.showFeedback('File successfully executed', 'successMessage'),
-        error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'erroorMessage', 'Ok', 5000)});
+        error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'erroorMessage', 'Ok', 5000)
+      });
     }
   }
 
@@ -236,7 +270,8 @@ export class IdeEditorComponent implements OnInit {
    */
   private activeFileIsClean() {
     return new Promise((resolve) => {
-      const activeWrapper = document.querySelector('.active-codemirror-editor');
+      const fileExisting: number = this.openFiles.findIndex((item: any) => item.path === this.currentFileData.path);
+      const activeWrapper = document.querySelector('.active-codemirror-editor-' + fileExisting);
       if (activeWrapper) {
         const editor = (<any>activeWrapper.querySelector('.CodeMirror'))?.CodeMirror;
         if (editor) {
@@ -248,7 +283,8 @@ export class IdeEditorComponent implements OnInit {
   }
 
   private markEditorClean() {
-    const activeWrapper = document.querySelector('.active-codemirror-editor');
+    const fileExisting: number = this.openFiles.findIndex((item: any) => item.path === this.currentFileData.path);
+    const activeWrapper = document.querySelector('.active-codemirror-editor-' + fileExisting);
     const editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
     editor.doc.markClean();
     editor.doc.clearHistory(); // To avoid having initial loading of file becoming an "undo operation".
@@ -343,14 +379,15 @@ export class IdeEditorComponent implements OnInit {
           next: (content: string) => {
             return this.insertHyperlambda(content);
           },
-          error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
+          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
         });
       }
     });
   }
 
   private insertHyperlambda(content: string) {
-    var activeWrapper = document.querySelector('.active-codemirror-editor');
+    const fileExisting: number = this.openFiles.findIndex((item: any) => item.path === this.currentFileData.path);
+    const activeWrapper = document.querySelector('.active-codemirror-editor-' + fileExisting);
     if (activeWrapper) {
       var editor = (<any>activeWrapper.querySelector('.CodeMirror'))?.CodeMirror;
       if (editor) {
@@ -459,14 +496,14 @@ export class IdeEditorComponent implements OnInit {
 
                 }
               },
-              error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
+              error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
             });
           } else if (result) {
             this.selectMacro();
           }
         });
       },
-      error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
     });
   }
 
@@ -475,7 +512,8 @@ export class IdeEditorComponent implements OnInit {
    */
   public setFocusToActiveEditor() {
     setTimeout(() => {
-      var activeWrapper = document.querySelector('.active-codemirror-editor');
+      const fileExisting: number = this.openFiles.findIndex((item: any) => item.path === this.currentFileData.path);
+      const activeWrapper = document.querySelector('.active-codemirror-editor-' + fileExisting);
       if (activeWrapper) {
         var editor = (<any>activeWrapper.querySelector('.CodeMirror'))?.CodeMirror;
         if (editor) {

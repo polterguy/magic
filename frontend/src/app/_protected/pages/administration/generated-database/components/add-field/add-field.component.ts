@@ -76,6 +76,10 @@ export class AddFieldComponent implements OnInit {
     this.formData.columnType = this.formData.fieldType.name;
   }
 
+  public changeTable() {
+    this.formData.foreignField = this.data.tables.find((item: any) => item.name === this.formData.selectedTable.name).columns[0].name;
+  }
+
   public changeColumnName() {
     this.formData.columnName = this.formData.foreignField;
   }

@@ -91,7 +91,7 @@ export class RolesListComponent implements OnInit {
             this.generalService.showFeedback(`${role.name} was successfully deleted`, 'successMessage', 'Ok', 4000);
             this.updateList({});
           },
-          error: (error: any) => this.generalService.showFeedback(error, 'errorMessage', 'Ok', 4000)});
+          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)});
       }
     })
   }

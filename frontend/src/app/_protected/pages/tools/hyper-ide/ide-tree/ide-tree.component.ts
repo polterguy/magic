@@ -122,7 +122,7 @@ export class IdeTreeComponent implements OnInit, OnDestroy {
         this.endpoints = endpoints;
         this.cdr.detectChanges();
       },
-      error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
     });
   }
 
@@ -175,8 +175,6 @@ export class IdeTreeComponent implements OnInit, OnDestroy {
                     }
                   }))
                 }
-
-                console.log(this.dataSource.data)
               } else {
                 // this.dataBindTree();
               }
@@ -184,12 +182,12 @@ export class IdeTreeComponent implements OnInit, OnDestroy {
               resolve(true);
               this.cdr.detectChanges();
             },
-            error: (error: any) => this.generalService.showFeedback(error, 'errorMessage', 'Ok', 4000)
+            error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)
           });
         },
         error: (error: any) => {
           resolve(false)
-          this.generalService.showFeedback(error, 'errorMessage')
+          this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
         }
       });
     })
@@ -224,7 +222,7 @@ export class IdeTreeComponent implements OnInit, OnDestroy {
                 const update = file.path.substring(0, file.path.lastIndexOf('/') + 1);
                 this.updateFileObject(update);
               },
-              error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
+              error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
             });
           }
         });
@@ -248,7 +246,7 @@ export class IdeTreeComponent implements OnInit, OnDestroy {
             this.clearEditorHistory.emit(true);
           }, 1);
         },
-        error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
+        error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
       });
     }
     this.activeFolder = file.path.substring(0, file.path.lastIndexOf('/') + 1);
@@ -272,7 +270,7 @@ export class IdeTreeComponent implements OnInit, OnDestroy {
             this.generalService.showFeedback('Something went wrong, please try again.', 'errorMessage')
           }
         },
-        error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
+        error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
       });
     } else {
       this.dialog.open(ConfirmationDialogComponent, {
@@ -297,7 +295,7 @@ export class IdeTreeComponent implements OnInit, OnDestroy {
                 this.generalService.showFeedback('Something went wrong, please try again.', 'errorMessage')
               }
             },
-            error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
+            error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
           });
         }
       })
@@ -351,7 +349,7 @@ export class IdeTreeComponent implements OnInit, OnDestroy {
                this.generalService.showFeedback('Something went wrong, please try again.', 'errorMessage')
              }
            },
-           error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
+           error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
          });
        }
      })
@@ -482,7 +480,7 @@ export class IdeTreeComponent implements OnInit, OnDestroy {
           this.showRenameBox = null;
 
         },
-        error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
+        error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
       })
     } else if (!this.nameValidation(event.name)) {
       this.generalService.showFeedback('Invalid characters', 'errorMessage');
@@ -520,7 +518,7 @@ export class IdeTreeComponent implements OnInit, OnDestroy {
           this.generalService.showFeedback('Folder successfully renamed', 'successMessage');
           this.showRenameBox = null;
         },
-        error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
+        error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
       })
 
     } else if (!this.nameValidation(givenName)) {
@@ -556,14 +554,14 @@ export class IdeTreeComponent implements OnInit, OnDestroy {
               this.generalService.showFeedback('Folder successfully created', 'successMessage');
               this.sort({ dialogResult: result, objectPath: path })
             },
-            error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')});
+            error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')});
         } else {
           this.fileService.saveFile(path, '').subscribe({
             next: () => {
               this.generalService.showFeedback('File successfully created', 'successMessage');
               this.sort({ dialogResult: result, objectPath: path })
             },
-            error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')});
+            error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')});
         }
       }
     });
@@ -631,7 +629,7 @@ export class IdeTreeComponent implements OnInit, OnDestroy {
             this.updateFileObject(this.activeFolder);
           }
         },
-        error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')});
+        error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')});
     };
   }
 
@@ -730,7 +728,7 @@ export class IdeTreeComponent implements OnInit, OnDestroy {
               return;
             }
           },
-          error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
+          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
         })
       } else {
         this.dataBindTree();

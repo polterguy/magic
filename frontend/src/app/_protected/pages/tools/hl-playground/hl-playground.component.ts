@@ -147,7 +147,7 @@ export class HlPlaygroundComponent implements OnInit, OnDestroy {
       next: () => {
         this.generalService.showFeedback('File successfully saved', 'successMessage');
       },
-      error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
     });
   }
 

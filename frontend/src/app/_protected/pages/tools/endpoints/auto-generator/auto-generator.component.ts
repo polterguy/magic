@@ -400,7 +400,7 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
   private flushEndpointsAuthRequirements() {
     this.cacheService.delete('magic.auth.endpoints').subscribe({
       next: () => this.backendService.refetchEndpoints(),
-      error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')});
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')});
   }
 
   private validateUrlName() {

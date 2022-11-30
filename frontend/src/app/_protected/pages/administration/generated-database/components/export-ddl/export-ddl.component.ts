@@ -3,6 +3,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // CodeMirror options according to file extensions needed to show JSON CodeMirror editor.
 import fileTypes from 'src/app/codemirror/file-types.json';
+import { CodemirrorActionsService } from 'src/app/_protected/pages/tools/hyper-ide/_services/codemirror-actions.service';
 
 /**
  * Model for seeing DDL of tables.
@@ -31,11 +32,14 @@ export class ExportDdlComponent implements OnInit {
    */
   options: any = null;
 
+  public codemirrorReady: boolean = false;
+
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: ExportTablesModel) { }
+    @Inject(MAT_DIALOG_DATA) public data: ExportTablesModel,
+    private codemirrorActionsService: CodemirrorActionsService) { }
 
   ngOnInit(): void {
-    this.getOptions();
+    this.getCodeMirrorOptions();
   }
 
   private getOptions() {
@@ -50,17 +54,24 @@ export class ExportDdlComponent implements OnInit {
     })();
   }
 
-  private codemirrorInit() {
-    (async () => {
-      while (!(document.querySelector('.CodeMirror')))
-        await new Promise(resolve => setTimeout(resolve, 100));
-
-      if (document.querySelector('.CodeMirror')) {
-        const domNode = (<any>document.querySelector('.CodeMirror'));
-        const editor = domNode.CodeMirror;
-        editor.doc.markClean();
-        editor.doc.clearHistory(); // To avoid having initial loading of file becoming an "undo operation".
+  private getCodeMirrorOptions() {
+    this.codemirrorActionsService.getActions(null, 'sql').then((options: any) => {
+      this.options = options;
+      if (options) {
+        setTimeout(() => {
+          this.codemirrorInit();
+        }, 100);
       }
-    })();
+    });
+  }
+
+  private codemirrorInit() {
+    this.codemirrorReady = true;
+    setTimeout(() => {
+      const domNode = (<any>document.querySelector('.CodeMirror'));
+      const editor = domNode.CodeMirror;
+      editor.doc.markClean();
+      editor.doc.clearHistory(); // To avoid having initial loading of file becoming an "undo operation".
+    }, 100);
   }
 }

@@ -40,7 +40,7 @@ export class SqlSnippetDialogComponent implements OnInit {
    ngOnInit() {
      this.sqlService.listSnippets(this.data).subscribe((files: string[]) => {
        this.files = files.filter(x => x.endsWith('.sql'));
-     }, (error: any) => this.generalService.showFeedback(error, 'errorMessage'));
+     }, (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage'));
    }
 
    /**

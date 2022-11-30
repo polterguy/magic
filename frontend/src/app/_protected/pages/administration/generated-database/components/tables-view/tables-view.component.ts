@@ -47,7 +47,7 @@ export class TablesViewComponent implements OnInit, OnDestroy {
   public addField(item: any) {
     this.dialog.open(AddFieldComponent, {
       width: '500px',
-      autoFocus: false,
+      // autoFocus: 'name',
       data: {
         table: item,
         tables: this.tablesList,

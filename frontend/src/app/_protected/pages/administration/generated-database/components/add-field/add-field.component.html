@@ -10,7 +10,7 @@
           </span>
 
           <input matInput type="text" placeholder="Column's name" [(ngModel)]="formData.columnName"
-            name="column_name"
+            name="column_name" #name cdkFocusInitial
             [pattern]="CommonRegEx.appNameWithUppercase">
           <mat-error>{{CommonErrorMessages.appNameWithUppercase}}</mat-error>
         </mat-form-field>
@@ -71,7 +71,7 @@
             Foreign table
           </span>
 
-          <mat-select placeholder="Foreign table" [(ngModel)]="formData.selectedTable" name="selected_table">
+          <mat-select placeholder="Foreign table" [(ngModel)]="formData.selectedTable" name="selected_table" (selectionChange)="changeTable()">
             <mat-select-trigger>
               {{formData?.selectedTable?.name}}
             </mat-select-trigger>

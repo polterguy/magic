@@ -11,9 +11,9 @@
       <button mat-button color="primary" (click)="openShortkeys()">Shortkeys</button>
     </div>
   </div>
-  <ng-container *ngFor="let file of openFiles">
-    <div class="active-codemirror-editor h-100 frontend-editor"
-    *ngIf="currentFileData.path === file.path">
+  <ng-container *ngFor="let file of openFiles;let index = index">
+    <div class="active-codemirror-editor-{{index}} h-100 frontend-editor"
+    [class.d-none]="currentFileData.path !== file.path">
       <ngx-codemirror
         class="codemirror-container h-100"
         [(ngModel)]="file.content"

@@ -91,7 +91,7 @@ export class UsersListComponent implements OnInit {
         this.clipboard.copy(url);
         this.generalService.showFeedback('Reset password link is copied to your clipboard', 'successMessage', 'Ok', 4000);
       },
-      error: (error: any) => this.generalService.showFeedback(error, 'errorMessage', 'Ok', 4000)
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)
     });
   }
 
@@ -115,7 +115,7 @@ export class UsersListComponent implements OnInit {
         this.generalService.showFeedback('Login link is copied to your clipboard', 'successMessage', 'Ok', 4000);
       },
       error: (error: any) => {
-        this.generalService.showFeedback(error, 'errorMessage', 'Ok', 4000);
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000);
         return;
       }
     });
@@ -153,7 +153,7 @@ export class UsersListComponent implements OnInit {
             user.locked = !user.locked;
             this.generalService.showFeedback(`User is successfully ${user.locked ? 'locked out of system' : 'released to access the system'}`, 'successMessage', 'Ok', 4000);
           },
-          error: (error: any) => this.generalService.showFeedback(error, 'errorMessage', 'Ok', 4000)
+          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)
         })
       }
     })
@@ -187,7 +187,7 @@ export class UsersListComponent implements OnInit {
             this.generalService.showFeedback(`${user.username} was successfully deleted`, 'successMessage', 'Ok', 4000);
             this.updateList();
           },
-          error: (error: any) => this.generalService.showFeedback(error, 'errorMessage', 'Ok', 4000)
+          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)
         });
       }
     })

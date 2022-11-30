@@ -88,7 +88,7 @@ export class GeneratedEndpointsComponent implements OnInit, OnDestroy {
           this.isLoading.next(false);
         }
       },
-      error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
     });
 
     this.endpointsGeneralService.getEndpoints();

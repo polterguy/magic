@@ -43,7 +43,7 @@ export class ViewPluginComponent implements OnInit {
           this.needsCoreUpdate = true;
         }
       },
-      error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
     });
   }
 
@@ -65,11 +65,11 @@ export class ViewPluginComponent implements OnInit {
                   this.dialogRef.close();
                 }
               },
-              error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
+              error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
             });
         }
       },
-      error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
     });
   }
 

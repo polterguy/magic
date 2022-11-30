@@ -116,10 +116,10 @@ export class ConfigEditorComponent implements OnInit {
             this.backendService.getRecaptchaKey();
           }, 1000);
         },
-        error: (error: any) => this.generalService.showFeedback(error, 'errorMessage', 'ok', 4000)});
+        error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'ok', 4000)});
     }
     catch (error) {
-      this.generalService.showFeedback(error, 'errorMessage', 'ok', 4000);
+      this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'ok', 4000);
     }
   }
 

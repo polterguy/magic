@@ -3,19 +3,20 @@
     <mat-card>
       <mat-card-content>
         <div class="d-flex align-items-center justify-content-between mb-4">
-          <p class="fw-bold mb-0">{{item.name}}</p>
+          <p class="fw-bold mb-0 table-title">{{item.name}}</p>
           <div class="d-flex align-items-center justify-content-between action-btn">
-            <button mat-icon-button color="primary" (click)="addField(item)">
+            <button mat-icon-button color="primary" (click)="addField(item)" title="Add field ...">
               <mat-icon>add</mat-icon>
             </button>
             <div class="me-1"></div>
-            <button mat-icon-button color="primary"
+            <button mat-icon-button color="primary" title="Export table ..."
               (click)="exportTable(item.name)">
               <mat-icon>file_download</mat-icon>
             </button>
             <div class="me-1"></div>
             <button mat-icon-button color="warn"
               [disabled]="selectedDatabase === 'magic'"
+              title="Delete table ..."
               (click)="dropTable(item, 'table')">
               <mat-icon>delete</mat-icon>
             </button>
@@ -23,13 +24,19 @@
         </div>
         <div class="row hoverable-row py-2 align-items-center" *ngFor="let column of item.columns">
           <div class="col-lg-6 col-5">
-            <p class="text-truncate my-0">{{column.name}} <i *ngIf="column.primary" class="small">(Primary key)</i></p>
+            <p class="text-truncate my-0 table-icons">
+              <mat-icon *ngIf="column.primary" title="Primary key">key</mat-icon>
+              <mat-icon *ngIf="column?.nullable === true" class="flipped text-muted" title="Nullable">motion_photos_off</mat-icon>
+              {{column.name}}
+            </p>
           </div>
           <div class="col-5">
-            <p class="small text-muted my-0">{{column.db}}</p>
+            <p class="small text-muted my-0">
+              {{column.db}}
+            </p>
           </div>
           <div class="col-lg-1 col-2 action-btn d-flex justify-content-end">
-            <button mat-icon-button color="warn"
+            <button mat-icon-button color="warn" title="Delete column ..."
               [disabled]="selectedDatabase === 'magic'"
               (click)="dropTable(column, 'column', item.foreign_keys, item.name)">
               <mat-icon>delete</mat-icon>
