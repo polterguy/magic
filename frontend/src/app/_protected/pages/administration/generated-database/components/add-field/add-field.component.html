@@ -100,7 +100,7 @@
           </span>
 
           <input matInput type="text" placeholder="Column's name"
-            [value]="formData.foreignField ? formData.foreignField : ''" [(ngModel)]="formData.columnName"
+            [value]="formData.foreignField ? formData.foreignField + '_column' : ''" [(ngModel)]="formData.columnName"
             name="column_name"
             [pattern]="CommonRegEx.appNameWithUppercase">
           <mat-error>{{CommonErrorMessages.appNameWithUppercase}}</mat-error>

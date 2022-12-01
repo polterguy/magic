@@ -27,7 +27,6 @@ export class LoginComponent implements OnInit {
     backends: ['', [Validators.required]]
   });
 
-  recaptchaKey: string = '';
   backendHasBeenSelected: boolean = false;
   backends = new FormControl<any>('', Validators.pattern(CommonRegEx.backend));
   backendList: any = [];
@@ -39,7 +38,10 @@ export class LoginComponent implements OnInit {
   rememberPassword: boolean = false;
   waiting: boolean = false;
 
-  @ViewChild('captchaRef', { static: false }) captchaRef: RecaptchaComponent;
+  /**
+   * to set the user's site_key for recaptcha
+   */
+   recaptchaKey: string = null;
 
   constructor(
     private formBuilder: UntypedFormBuilder,
@@ -67,6 +69,9 @@ export class LoginComponent implements OnInit {
           if (params.switchTo) {
             const defaultBackend: any = this.backendList.find((item: any) => item.url === params.switchTo)
             this.backends.setValue(defaultBackend);
+          }
+          if (params.backend) {
+            this.backends.setValue(new Backend(params.backend))
           }
         })
 
@@ -136,12 +141,12 @@ export class LoginComponent implements OnInit {
    */
   login(inputValue?: string) {
 
-    if (!CommonRegEx.backend.test(inputValue)) {
+    if (!CommonRegEx.backend.test(inputValue.replace(/\/$/, ''))) {
       this.generalService.showFeedback('Backend URL is not valid.', 'errorMessage', 'Ok');
       return;
     }
     if (inputValue && inputValue !== '' && this.loginForm.value.backends === undefined) {
-      this.loginForm.controls.backends.setValue(inputValue)
+      this.loginForm.controls.backends.setValue(inputValue.replace(/\/$/, ''))
     }
 
     this.waiting = true;
@@ -152,7 +157,7 @@ export class LoginComponent implements OnInit {
      * the auth service depends upon user already having selected
      * a current backend.
      */
-    const backend = new Backend(this.loginForm.value.backends, this.loginForm.value.username, this.loginForm.value.password)
+    const backend = new Backend(this.loginForm.value.backends.replace(/\/$/, ''), this.loginForm.value.username, this.loginForm.value.password)
     this.backendService.upsert(backend);
     this.backendService.activate(backend);
     this.backendService.login(
@@ -168,9 +173,5 @@ export class LoginComponent implements OnInit {
           this.waiting = false;
         }
       });
-  }
-
-  executeRecaptcha() {
-    this.captchaRef?.execute();
   }
 }

@@ -97,6 +97,7 @@ export class AssumptionsComponent implements OnInit {
               });
             });
             this.assumptions = arr;
+            this.cdr.detectChanges();
           }
         },
         error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')

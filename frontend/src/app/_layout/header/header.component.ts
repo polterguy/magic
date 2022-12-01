@@ -88,6 +88,9 @@ export class HeaderComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private backendService: BackendService) {
       this.activatedRoute.queryParamMap.subscribe((params: any) => {
+        // console.log(params.params.backend);
+        // console.log(params);
+        // if (params && params.)
         if (params && params.keys && params.keys.length > 0) {
           this.getParams(params)
         } else {
@@ -100,31 +103,47 @@ export class HeaderComponent implements OnInit {
     ngOnInit() {
     }
 
-    public getPermissions() {
-      (async () => {
-        while ((!this.backendService?.active && !this.backendService?.active?.access && Object.keys(this.backendService?.active?.access?.auth ?? {}).length===0))
+  public getPermissions() {
+
+    (async () => {
+      while (!(this.backendService?.active && this.backendService?.active?.access && Object.keys(this.backendService?.active?.access?.auth ?? {}).length > 0))
         await new Promise(resolve => setTimeout(resolve, 100));
 
-        if (this.backendService?.active?.access && Object.keys(this.backendService?.active?.access?.auth).length) {
-          this.permissions = this.backendService.active;
-          this.username = this.permissions.token ? this.permissions.token['_username'] : 'anonymous';
-          this.backendService.active ? this.activeUrl = this.backendService.active.url.replace('http://', '').replace('https://', '') : this.activeUrl = 'not connected';
-          this.backendList = this.backendService.backends;
+      if ((this.backendService?.active?.access && Object.keys(this.backendService?.active?.access?.auth).length > 0)) {
+        this.permissions = this.backendService.active;
+        this.username = this.permissions.token ? this.permissions.token['_username'] : 'anonymous';
+        this.backendService.active ? this.activeUrl = this.backendService.active.url.replace('http://', '').replace('https://', '') : this.activeUrl = 'not connected';
+        this.backendList = this.backendService.backends;
 
-          this.createMenu();
-          this.getSetupStatus();
-        }
-      })();
+        // console.log(this.backendService)
 
-    setTimeout(() => {
-      console.log(this.backendService)
-      const notAuthorized: boolean = (!this.backendService.active || Object.values(this.backendService.active.access.auth ?? {}).every((item: any) => {return item === false}))
+        const notAuthorized: boolean = (!this.backendService.active || Object.values(this.backendService.active.access.auth ?? {}).every((item: any) => { return item === false }))
 
         if (notAuthorized || this.backendService.active.token === null) {
-          this.router.navigateByUrl('/authentication');
+          this.router.navigate(['/authentication/login']);
         }
 
-    }, 3000);
+        this.createMenu();
+        this.getSetupStatus();
+      } else {
+        console.log(this.backendService)
+        const notAuthorized: boolean = (!this.backendService.active || Object.values(this.backendService.active.access.auth ?? {}).every((item: any) => { return item === false }))
+
+        if (notAuthorized || this.backendService.active.token === null) {
+          this.router.navigate(['/authentication/login']);
+        }
+      }
+    })();
+
+    // setTimeout(() => {
+    //   console.log(this.backendService)
+    //   const notAuthorized: boolean = (!this.backendService.active || Object.values(this.backendService.active.access.auth ?? {}).every((item: any) => { return item === false }))
+
+    //   if (notAuthorized || this.backendService.active.token === null) {
+    //     this.router.navigate(['/authentication/login']);
+    //   }
+
+    // }, 3000);
   }
 
   /*
@@ -148,7 +167,14 @@ export class HeaderComponent implements OnInit {
         }
         this.backendService.activate(cur);
         this.backendService.upsert(cur);
-        window.location.href = '/';
+
+        if (cur.token === null) {
+          this.router.navigate(['/authentication/login/'], {
+            queryParamsHandling: 'preserve'
+          });
+        } else {
+          window.location.href = '/';
+        }
 
       } else {
 
@@ -383,7 +409,7 @@ export class HeaderComponent implements OnInit {
    * Logs the user out of his current backend.
    */
   public getGithubToken(clickType: string) {
-    if (clickType !== 'GitHub token') {
+    if (clickType !== 'Generate token') {
       return;
     }
 

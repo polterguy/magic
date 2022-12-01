@@ -112,8 +112,8 @@ export class NewServerKeyComponent implements OnInit {
     return this.CommonRegEx.email.test(this.newKey.email);
   }
 
-  private validateDomain() {
-    return this.CommonRegEx.domain.test(this.newKey.domain);
+  public validateDomain() {
+    return this.CommonRegEx.backend.test(this.newKey.domain.replace(/\/$/, ''));
   }
 
   /**
@@ -137,13 +137,26 @@ export class NewServerKeyComponent implements OnInit {
    */
   private import() {
     this.isWaiting = true;
-    this.cryptoService.createPublicKey(this.newKey).subscribe({
+    const data: NewKey = {
+      subject: this.newKey.subject,
+      email: this.newKey.email,
+      domain: this.newKey.domain.replace(/\/$/, ''),
+      content: this.newKey.content,
+      enabled: this.newKey.enabled,
+      fingerprint: this.newKey.fingerprint,
+      type: this.newKey.type,
+      vocabulary: this.newKey.vocabulary,
+    }
+    this.cryptoService.createPublicKey(data).subscribe({
       next: (res: Response) => {
         this.generalService.showFeedback('Key successfully imported, please edit its vocabulary and enable it.', 'successMessage', 'Ok', 5000);
         this.isWaiting = false;
         this.dialogRef.close(true);
       },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')
+      error: (error: any) => {
+        this.isWaiting = false;
+        this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')
+      }
     });
   }
 
@@ -158,13 +171,16 @@ export class NewServerKeyComponent implements OnInit {
       this.newKey.content,
       this.newKey.subject,
       this.newKey.email,
-      this.newKey.domain).subscribe({
+      this.newKey.domain.replace(/\/$/, '')).subscribe({
         next: () => {
           this.isWaiting = false;
           this.generalService.showFeedback('New key pair created successfully and the old key is backed up.', 'successMessage', 'Ok', 4000);
           this.dialogRef.close(true);
         },
-        error: (error:any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')
+        error: (error:any) => {
+          this.isWaiting = false;
+          this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')
+        }
       });
   }
 }
