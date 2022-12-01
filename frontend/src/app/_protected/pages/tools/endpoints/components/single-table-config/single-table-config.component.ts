@@ -88,9 +88,6 @@ export class SingleTableConfigComponent implements OnInit, OnDestroy {
             idxColumn.handling = 'phone';
           }
         }
-
-
-        console.log(table, this.dataSource)
       }
     })
   }

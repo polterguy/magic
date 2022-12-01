@@ -6,6 +6,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AccessGuard } from './access.guard';
+import { AuthBaseComponent } from './public/authentication/auth-base/auth-base.component';
 import { CoreComponent } from './_layout/core/core.component';
 
 const routes: Routes = [
@@ -94,6 +95,7 @@ const routes: Routes = [
   },
   {
     path: 'authentication',
+    component: AuthBaseComponent,
     loadChildren: () => import('./public/authentication/_module/auth.module').then(m => m.AuthModule),
   },
   {

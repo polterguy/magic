@@ -3,13 +3,14 @@
  * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { Validators, UntypedFormBuilder } from '@angular/forms';
 import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { AuthApiService } from '../services/auth-api.service';
-import { ReCaptchaV3Service } from 'ng-recaptcha';
+import { RecaptchaComponent, ReCaptchaV3Service } from 'ng-recaptcha';
 import { Router } from '@angular/router';
+import { BackendService } from 'src/app/_protected/services/common/backend.service';
 
 @Component({
   selector: 'app-forgot-password',
@@ -41,48 +42,77 @@ export class ForgotPasswordComponent {
 
   waiting: boolean = false;
 
+  /**
+   * to set the user's site_key for recaptcha
+   */
+   recaptchaKey: string = null;
+   @ViewChild('captchaRef', {static: false}) captchaRef: RecaptchaComponent;
+
   constructor(
     private formBuilder: UntypedFormBuilder,
     private authApiService: AuthApiService,
     private generalService: GeneralService,
-    private recaptchaV3Service: ReCaptchaV3Service,
-    private router: Router) { }
+    private backendService: BackendService,
+    private router: Router) {
+      this.backendService._activeCaptchaValue.subscribe((key: string) => {
+        this.recaptchaKey = key;
+      })
+    }
 
   /**
-   * forgot password form
+   * Invoked when user requests a reset password link to be generated
+   * and sent to him on email.
+   *
+   * Notice, assumes username is a valid email address.
+   * @param recaptcha_token received when reCaptcha component is executed,
+   * recaptcha_token is optional, exists only if recaptcha key is available
    */
-   forgotPass() {
+   forgotPass(recaptcha_token?: string) {
 
      if (this.forgotPassForm.valid) {
        this.waiting = true;
-       this.recaptchaV3Service.execute('forgotPassFormSubmission').subscribe({
-         next: (token) => {
-          const data: any = {
+      //  this.recaptchaV3Service.execute('forgotPassFormSubmission').subscribe({
+      //    next: (token) => {
+          const data: any = this.recaptchaKey !== null && this.recaptchaKey !== '' ? {
             username: this.forgotPassForm.value.username,
             frontendUrl: window.location.origin + '/authentication/reset-password',
-            recaptcha_response: token,
-          }
+            recaptcha_response: recaptcha_token,
+          } : {
+            username: this.forgotPassForm.value.username,
+            frontendUrl: window.location.origin + '/authentication/reset-password',
+          };
 
-          // this.authApiService.forgotPass(data).subscribe((res: any) => {
-          //   this.waiting = false;
+          this.backendService.resetPassword(data).subscribe({
+            next: (res: any) => {
+              this.waiting = false;
 
-          //   if (res && res?.Error) {
+              if (res && res?.Error) {
 
-          //   } else {
-          //     this.generalService.showFeedback('A reset password link is sent to your email', 'successMessage', 'Ok', 5000);
-          //     this.router.navigateByUrl('/authentication/login')
-          //   }
-          // })
-        },
-        error: (e) => {
-          this.waiting = false;
-          this.generalService.showFeedback('Oops... please try again.');
-        },
-        complete: () => {}
-      })
+              } else {
+                this.generalService.showFeedback('A reset password link is sent to your email', 'successMessage', 'Ok', 5000);
+                this.router.navigateByUrl('/authentication/login')
+              }
+            },
+            error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+          })
+      //   },
+      //   error: (e) => {
+      //     this.waiting = false;
+      //     this.generalService.showFeedback('Oops... please try again.');
+      //   },
+      //   complete: () => {}
+      // })
 
     } else {
       this.generalService.showFeedback('All fields are required', 'errorMessage', 'Ok');;
     }
+  }
+
+  /**
+   * to make a click action on the invisible reCaptcha components and receive the token,
+   * will be executed only if recaptcha key is available
+   */
+   executeRecaptcha(){
+    this.captchaRef?.execute();
   }
 }

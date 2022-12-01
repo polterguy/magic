@@ -156,6 +156,12 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
     this.cdr.detectChanges();
   }
 
+  public selectedTableChanged() {
+    this.selectedTables.value.length === 1 ?
+      this.secondaryURL = this.selectedTables.value.toString().toLowerCase() :
+      '';
+  }
+
   public toggleAllTables(checked: boolean) {
     if (!checked) {
       this.selectedTables.setValue('');

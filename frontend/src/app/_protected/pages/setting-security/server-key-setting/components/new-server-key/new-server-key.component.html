@@ -47,7 +47,7 @@
             [(ngModel)]="newKey.domain"
             [ngModelOptions]="{standalone: true}"
             [pattern]="CommonRegEx.backend">
-          <mat-error>{{CommonErrorMessages.backend}}</mat-error>
+          <mat-error *ngIf="!validateDomain()">{{CommonErrorMessages.backend}}</mat-error>
         </mat-form-field>
       </div>
       <div class="col-sm-6 col-12" *ngIf="data.type === 'create'">

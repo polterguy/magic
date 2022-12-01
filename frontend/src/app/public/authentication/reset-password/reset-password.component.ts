@@ -11,6 +11,7 @@ import { GeneralService } from 'src/app/_general/services/general.service';
 import { AuthApiService } from '../services/auth-api.service';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { BackendService } from 'src/app/_protected/services/common/backend.service';
 
 @Component({
   selector: 'app-reset-password',
@@ -50,6 +51,7 @@ export class ResetPasswordComponent {
   constructor(
     private formBuilder: UntypedFormBuilder,
     private authApiService: AuthApiService,
+    private backendService: BackendService,
     private generalService: GeneralService,
     private location: Location,
     private activatedRouer: ActivatedRoute,
@@ -77,6 +79,21 @@ export class ResetPasswordComponent {
 
     if (this.resetPassForm.valid) {
       this.waiting = true;
+      this.backendService.changePassword(data).subscribe({
+        next: (res: any) => {
+          this.waiting = false;
+          if (res && res?.Error) {
+
+          } else {
+            this.generalService.showFeedback('Password successfully changed', 'successMessage', 'Ok', 10000);
+            this.router.navigateByUrl('/');
+          }
+        },
+        error: (error: any) => {
+          this.waiting = false;
+          this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+        }
+      })
       // this.authApiService.changePass(data, this.passwordToken).subscribe((res: any) => {
       //   this.waiting = false;
       //   if (res && res?.Error) {

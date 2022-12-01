@@ -73,7 +73,11 @@
             <span class="text-muted">|</span>
           </span>
 
-          <mat-select placeholder="Tables" multiple [formControl]="selectedTables" disableOptionCentering panelClass="custom-select-option">
+          <mat-select placeholder="Tables" multiple
+            [formControl]="selectedTables"
+            disableOptionCentering
+            panelClass="custom-select-option"
+            (selectionChange)="selectedTableChanged()">
             <mat-select-trigger>
               {{selectedTables.value?.length ? selectedTables.value?.length + ' tables' : 'Nothing is selected'}}
             </mat-select-trigger>

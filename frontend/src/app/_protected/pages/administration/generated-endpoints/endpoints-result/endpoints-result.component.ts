@@ -431,6 +431,7 @@ export class EndpointsResultComponent implements OnInit {
           },
           error: (error: any) => {
             this.isExecuting = false;
+            this.canCreateAssumption = true;
             this.result = {
               status: error.status,
               statusText: error.statusText,
@@ -444,6 +445,7 @@ export class EndpointsResultComponent implements OnInit {
     }
     catch (error) {
       this.isExecuting = false;
+      this.canCreateAssumption = true;
       this.generalService.showFeedback(error?.error?.message??error,'errorMessage');
     }
   }
