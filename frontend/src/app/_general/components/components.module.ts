@@ -22,6 +22,7 @@ import { SnippetNameDialogComponent } from './snippet-name-dialog/snippet-name-d
 import { EndpointDialogComponent } from './endpoint-dialog/endpoint-dialog.component';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import { GithubTokenDialogComponent } from './github-token-dialog/github-token-dialog.component';
+import { PwaUpdateDialogComponent } from './pwa-update-dialog/pwa-update-dialog.component';
 
 
 
@@ -40,7 +41,8 @@ import { GithubTokenDialogComponent } from './github-token-dialog/github-token-d
       CreateAssumptionTestDialogComponent,
       SnippetNameDialogComponent,
       EndpointDialogComponent,
-      GithubTokenDialogComponent
+      GithubTokenDialogComponent,
+      PwaUpdateDialogComponent
   ],
   imports: [
     CommonModule,

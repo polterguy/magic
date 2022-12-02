@@ -160,7 +160,7 @@ import { environment } from '../environments/environment';
 import { WarningComponent } from './components/tools/ide/warning/warning.component';
 import { ExtraInfoDialogComponent } from './components/management/auth/users/extra-info-dialog/extra-info-dialog.component';
 import { TableNameDialogComponent } from './components/tools/sql/table-name-dialog/table-name-dialog.component';
-import { PwaUpdateDialogComponent } from './components/utilities/pwa-update-dialog/pwa-update-dialog.component';
+import { PwaUpdateDialogComponent } from './_general/components/pwa-update-dialog/pwa-update-dialog.component';
 import { OverviewComponent } from './components/dashboard/component/overview/overview.component';
 import { PieChartComponent } from './components/dashboard/component/pie-chart/pie-chart.component';
 import { DoughnutChartComponent } from './components/dashboard/component/doughnut-chart/doughnut-chart.component';

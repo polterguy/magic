@@ -8,7 +8,7 @@ import { ApplicationRef, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { SwUpdate } from '@angular/service-worker';
 import { interval, concat, first } from 'rxjs';
-import { PwaUpdateDialogComponent } from '../components/utilities/pwa-update-dialog/pwa-update-dialog.component';
+import { PwaUpdateDialogComponent } from '../components/pwa-update-dialog/pwa-update-dialog.component';
 
 /**
  * Update PWA service for letting users know about new update is available
@@ -59,10 +59,11 @@ export class UpdatePwaService {
     const dialogExist = this.matDialog.getDialogById('message-pop-up');
     if (!dialogExist) {
       this.matDialog.open(PwaUpdateDialogComponent, {
-        position: { top: '7px' },
-        width: '500px',
+        // position: { top: '7px' },
+        // width: '500px',
+        // height: '400px',
         panelClass: ['pwa-update-panel'],
-        hasBackdrop: false,
+        disableClose: true,
         id: 'message-pop-up'
       })
     }

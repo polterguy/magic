@@ -190,12 +190,12 @@ export class SqlViewComponent implements OnInit, OnDestroy {
                 count += (idx || []).length;
               }
               if (count === 200) {
-                this.generalService.showFeedback('First 200 records returned. Turn off safe mode to return all records.');
+                this.generalService.showFeedback('First 200 records returned. Turn off safe mode to return all records.', 'successMessage');
               } else {
                 this.generalService.showFeedback(`${count} records returned`);
               }
             } else {
-              this.generalService.showFeedback('SQL successfully executed, but returned no result');
+              this.generalService.showFeedback('SQL successfully executed, but returned no result', 'successMessage', 'Ok', 5000);
             }
             this.queryResult = result || [];
 

@@ -22,7 +22,7 @@ import { NavbarService } from 'src/app/services--/navbar.service';
 import { BackendService } from 'src/app/services--/backend.service--';
 import { RegisterService } from 'src/app/services--/register.service';
 import { FeedbackService } from 'src/app/services--/feedback.service';
-import { UpdatePwaService } from 'src/app/services--/update-pwa.service';
+import { UpdatePwaService } from 'src/app/_general/services/update-pwa.service';
 
 /**
  * Main wire frame application component.
