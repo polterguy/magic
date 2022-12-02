@@ -90,9 +90,7 @@
 
           <input matInput type="text"
             placeholder="Primary route"
-            [(ngModel)]="primaryURL"
-            [pattern]="CommonRegEx.appNames">
-          <mat-error>{{CommonErrorMessages.appNames}}</mat-error>
+            [(ngModel)]="primaryURL">
         </mat-form-field>
       </div>
       <!-- secondary route -->
@@ -105,9 +103,7 @@
 
           <input matInput type="text"
             placeholder="Secondary route"
-            [(ngModel)]="secondaryURL"
-            [pattern]="CommonRegEx.appNames">
-          <mat-error>{{CommonErrorMessages.appNames}}</mat-error>
+            [(ngModel)]="secondaryURL">
         </mat-form-field>
       </div>
       <!-- tables list -->
@@ -197,7 +193,7 @@
     </div>
   </div>
   <div class="col-12 mt-3">
-    <app-codemirror-sql [(model)]="sql" class="codemirror-container"></app-codemirror-sql>
+    <app-codemirror-sql [(model)]="sql" class="codemirror-container" *ngIf="codeMirrorReady"></app-codemirror-sql>
   </div>
 
   <div class="col-12 d-flex justify-content-end mt-5">

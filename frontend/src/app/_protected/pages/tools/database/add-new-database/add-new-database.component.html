@@ -1,26 +1,90 @@
 <div class="row mt-4">
-  <div class="col-md-6 col-12 pe-lg-5">
-    <div class="row">
-      <div class="col-12">
-        <h3 class="fw-bold">Create a new database</h3>
-        <p class="text-muted">Give your new database a name in the textbox below.</p>
-      </div>
-      <div class="col-12 my-5">
-        <form class="d-flex flex-nowrap align-items-stretch">
-          <mat-form-field class="w-65 standalone-field">
+  <div class="col-12 mb-5 pb-3 pe-lg-5">
+    <form>
+      <div class="row align-items-stretch">
+        <div class="col-12">
+          <h3 class="fw-bold">Create a new database</h3>
+          <p class="text-muted">Give your new database a name in the textbox below.</p>
+        </div>
+
+        <!-- database types -->
+        <div class="col-md-3 col-sm-6 col-12">
+          <mat-form-field class="w-100 standalone-field mb-md-0 mb-3">
             <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
               <mat-icon>database</mat-icon>
               <span class="text-muted">|</span>
             </span>
 
-            <input matInput type="text" name="-" autocomplete="off" placeholder="Insert the name of the database"
-            [(ngModel)]="databaseName" required />
-
+            <mat-select placeholder="Database type" [(ngModel)]="selectedType" name="dbType" (selectionChange)="getAvailableConnectionStrings()">
+              <mat-option *ngFor="let item of dbTypeList" [value]="item.type">{{item.name}}</mat-option>
+            </mat-select>
           </mat-form-field>
-          <div class="p-2"></div>
-          <button mat-flat-button class="w-35" color="primary" type="submit" (click)="createNewDatabase()">Create now</button>
-        </form>
+        </div>
+        <!-- connection string -->
+        <div class="col-md-3 col-sm-6 col-12">
+          <ng-container *ngIf="isLoadingDbs">
+            <app-loading-skeleton
+            [amount]="1"
+            [colClass]="'col-12'"
+            [blockHeight]="'43px'"
+            [hasShadow]="false"></app-loading-skeleton>
+          </ng-container>
+          <mat-form-field class="w-100 standalone-field mb-md-0 mb-3" *ngIf="!isLoadingDbs">
+            <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+              <mat-icon>conversion_path</mat-icon>
+              <span class="text-muted">|</span>
+            </span>
+
+            <mat-select placeholder="Connection string" [(ngModel)]="selectedCString" name="cString">
+              <mat-option *ngFor="let item of cStringList | keyvalue" [value]="item.key">{{item.key}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <!-- databases list -->
+        <div class="col-md-3 col-sm-6 col-12">
+          <ng-container *ngIf="isLoadingDbs">
+            <app-loading-skeleton
+            [amount]="1"
+            [colClass]="'col-12'"
+            [blockHeight]="'43px'"
+            [hasShadow]="false"></app-loading-skeleton>
+          </ng-container>
+          <mat-form-field class="w-100 standalone-field mb-md-0 mb-3" *ngIf="!isLoadingDbs">
+            <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+              <mat-icon>database</mat-icon>
+              <span class="text-muted">|</span>
+            </span>
+
+            <input matInput
+              type="text"
+              name="-"
+              autocomplete="off"
+              placeholder="Insert the name of the database"
+              [(ngModel)]="databaseName"
+              required />
+          </mat-form-field>
+        </div>
+
+        <div class="col-md-3 col-sm-6 col-12">
+          <ng-container *ngIf="isLoadingDbs">
+            <app-loading-skeleton
+            [amount]="1"
+            [colClass]="'col-12'"
+            [blockHeight]="'43px'"
+            [hasShadow]="false"></app-loading-skeleton>
+          </ng-container>
+          <button mat-flat-button *ngIf="!isLoadingDbs"
+            class="px-lg-5 px-md-4 create-btn"
+            color="primary"
+            type="submit"
+            [disabled]="waitingCreation"
+            (click)="createNewDatabase()">Create now</button>
+        </div>
       </div>
+    </form>
+  </div>
+  <div class="col-md-6 col-12 pe-lg-5">
+    <div class="row">
 
       <div class="col-12">
         <h3 class="fw-bold">Install ready databases</h3>

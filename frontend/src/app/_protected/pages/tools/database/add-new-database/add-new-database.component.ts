@@ -23,7 +23,6 @@ import { SqlService } from '../_services/sql.service';
 })
 export class AddNewDatabaseComponent implements OnInit, OnDestroy {
 
-  public databaseName: string = '';
 
   displayedColumns: string[] = ['dbName', 'tables', 'actions'];
 
@@ -47,6 +46,16 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
 
   public isLoadingDbs: boolean = true;
   public isLoadingPlugins: boolean = true;
+
+  /**
+   * The following variables are for creating a new db.
+   */
+  public dbTypeList: any = [];
+  public selectedType: string = '';
+  public cStringList: any = '';
+  public selectedCString: string = '';
+  public databaseName: string = '';
+  public waitingCreation: boolean = false;
 
   /**
    * SignalR hub connection, used to connect to Bazar server and get notifications
@@ -328,9 +337,26 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
       next: (dbTypes: DefaultDatabaseType) => {
         this.databaseTypes = dbTypes.options;
         this.getConnectionString(dbTypes.default);
+        dbTypes.options.map((item: string) => {
+          this.dbTypeList.push({ name: this.getDatabaseTypeName(item), type: item });
+        });
+        this.selectedType = dbTypes.default;
       },
       error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
     });
+  }
+
+  /**
+   * Returns humanly readable type of database to caller.
+   * @param type Type delaration
+   */
+   private getDatabaseTypeName(type: string) {
+    switch (type) {
+      case 'mysql': return 'MySQL';
+      case 'sqlite': return 'SQLite';
+      case 'pgsql': return 'PostgreSQL';
+      case 'mssql': return 'SQL Server';
+    }
   }
 
   /**
@@ -341,9 +367,24 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
     this.sqlService.connectionStrings(dbType).subscribe({
       next: (connectionStrings: any) => {
         if (connectionStrings) {
-          this.databaseType = dbType,
+          this.databaseType = dbType;
+          this.cStringList = connectionStrings;
+          this.selectedCString = Object.keys(connectionStrings)[0];
           this.connectionString = Object.keys(connectionStrings)[0];
           this.getDatabases();
+        }
+      },
+      error: (error: any) => { }
+    });
+  }
+
+  public getAvailableConnectionStrings() {
+    this.cStringList = [];
+    this.sqlService.connectionStrings(this.selectedType).subscribe({
+      next: (connectionStrings: any) => {
+        if (connectionStrings) {
+          this.cStringList = connectionStrings || [];
+          this.selectedCString = Object.keys(connectionStrings || {})[0];
         }
       },
       error: (error: any) => { }
@@ -354,6 +395,7 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
    * Retrieves a list of databases already available on the user's backend.
    */
   private getDatabases() {
+    this.existingDatabases = [];
     this.isLoadingDbs = true;
     for (const type of this.databaseTypes) {
       this.sqlService.getDatabaseMetaInfo(
@@ -401,16 +443,21 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
   }
 
   public createNewDatabase() {
+    this.waitingCreation = true;
     this.sqlService.createDatabase(
-      this.databaseType,
-      this.connectionString,
+      this.selectedType,
+      this.selectedCString,
       this.databaseName).subscribe({
         next: () => {
           this.generalService.showFeedback('Database successfully create', 'successMessage');
           this.getDatabases();
           this.databaseName = '';
+          this.waitingCreation = false;
         },
-        error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+        error: (error: any) => {
+          this.waitingCreation = false;
+          this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', -1)
+        }
       });
   }
 
