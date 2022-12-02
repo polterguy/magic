@@ -142,4 +142,8 @@ export class BackendsListComponent implements OnInit {
     setTimeout(() => this.backendService.remove(backend), 100);
   }
 
+  public addNew() {
+    window.location.href = '/authentication/login';
+  }
+
 }
