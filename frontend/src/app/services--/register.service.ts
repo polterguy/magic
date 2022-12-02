@@ -7,7 +7,7 @@
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
-import { HttpService } from './http.service';
+import { HttpService } from '../_general/services/http.service';
 import { Response } from 'src/app/models/response.model';
 
 /**
@@ -20,14 +20,14 @@ export class RegisterService {
 
   /**
    * Creates an instance of your service.
-   * 
+   *
    * @param httpService Dependency injected HTTP service to handle HTTP requests
    */
   constructor(private httpService: HttpService) { }
 
   /**
    * Registers a new user in the backend.
-   * 
+   *
    * @param data containing the following fields:
    * username User's email address,
    * password Password user selected,
@@ -43,7 +43,7 @@ export class RegisterService {
   /**
    * Verifies validity of email address supplied during
    * registration by invoking backend.
-   * 
+   *
    * @param username Username of user which is email address user supplied during registration
    * @param token Security token system generated for user to avoid user's registering other users' email addresses
    */
@@ -59,7 +59,7 @@ export class RegisterService {
   /**
    * Verifies availability of username supplied during
    * registration by invoking backend.
-   * 
+   *
    * @param username Username of user which is supplied during registration
    */
    usernameAvailability(username: string) {
@@ -71,7 +71,7 @@ export class RegisterService {
   /**
    * Verifies availability of email supplied during
    * registration by invoking backend.
-   * 
+   *
    * @param email email of user which is supplied during registration
    */
    emailAvailability(email: string) {

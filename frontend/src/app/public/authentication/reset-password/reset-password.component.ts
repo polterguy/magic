@@ -8,7 +8,6 @@ import { Validators, UntypedFormBuilder } from '@angular/forms';
 import { PasswordsMatchingValidator } from 'src/app/_general/classes/passwords-matching-validator';
 import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { AuthApiService } from '../services/auth-api.service';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BackendService } from 'src/app/_protected/services/common/backend.service';
@@ -50,7 +49,6 @@ export class ResetPasswordComponent {
 
   constructor(
     private formBuilder: UntypedFormBuilder,
-    private authApiService: AuthApiService,
     private backendService: BackendService,
     private generalService: GeneralService,
     private location: Location,

@@ -38,7 +38,7 @@ import { ViewAppDialogComponent } from '../plugins/view-app-dialog/view-app-dial
 import { ConfigService } from 'src/app/services--/config.service';
 import { BazarService } from '../../management/services/bazar.service';
 import { MessageService } from 'src/app/services--/message.service';
-import { LoaderService } from 'src/app/services--/loader.service';
+import { LoaderService } from 'src/app/_general/services/loader.service';
 import { environment } from 'src/environments/environment';
 import { ConfirmUninstallDialogComponent } from '../plugins/confirm-uninstall-dialog/confirm-uninstall-dialog.component';
 

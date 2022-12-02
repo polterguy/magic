@@ -17,7 +17,7 @@ import { Status } from 'src/app/models/status.model';
 import { Backend } from 'src/app/models/backend.model';
 import { Response } from 'src/app/models/response.model';
 import { ThemeService } from 'src/app/services--/theme.service';
-import { LoaderService } from 'src/app/services--/loader.service';
+import { LoaderService } from 'src/app/_general/services/loader.service';
 import { NavbarService } from 'src/app/services--/navbar.service';
 import { BackendService } from 'src/app/services--/backend.service--';
 import { RegisterService } from 'src/app/services--/register.service';

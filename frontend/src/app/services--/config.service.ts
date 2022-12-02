@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
-import { HttpService } from './http.service';
+import { HttpService } from '../_general/services/http.service';
 import { BackendService } from './backend.service--';
 import { Response } from '../models/response.model';
 import { Backend } from 'src/app/models/backend.model';

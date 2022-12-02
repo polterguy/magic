@@ -12,9 +12,8 @@ import { Count } from '../../../../../models/count.model';
 import { UserRoles } from '../_models/user-roles.model';
 import { Response } from 'src/app/models/response.model';
 import { Affected } from '../../../../../models/affected.model';
-import { AuthFilter, createAuthQuery } from '../_models/auth-filter.model';
 import { AuthenticateResponse } from '../_models/authenticate-response.model';
-import { HttpService } from 'src/app/_protected/services/common/http.service';
+import { HttpService } from 'src/app/_general/services/http.service';
 
 /**
  * User service, allowing you to administrate the users in your backend.

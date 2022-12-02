@@ -10,7 +10,7 @@ import { Injectable } from '@angular/core';
 import { saveAs } from "file-saver";
 
 // Application specific imports.
-import { HttpService } from './http.service';
+import { HttpService } from '../_general/services/http.service';
 import { Response } from '../models/response.model';
 import { FeedbackService } from './feedback.service';
 import { MacroDefinition } from '../models/macro-definition.model';
@@ -25,7 +25,7 @@ export class FileService {
 
   /**
    * Creates an instance of your service.
-   * 
+   *
    * @param httpService HTTP service to use for backend invocations
    * @param feedbackService Needed toprovide feedback to user
    */
@@ -35,7 +35,7 @@ export class FileService {
 
   /**
    * Returns a list of all files existing within the specified folder.
-   * 
+   *
    * @param folder Folder from where to retrieve list of files from
    * @param filter Filter for which files to return
    */
@@ -49,7 +49,7 @@ export class FileService {
 
   /**
    * Returns a list of all files existing within the specified folder recursively.
-   * 
+   *
    * @param folder Folder from where to retrieve list of files from
    * @param sysFiles If true will return system files
    */
@@ -63,7 +63,7 @@ export class FileService {
 
   /**
    * Returns a list of all folders existing within the specified folder.
-   * 
+   *
    * @param folder Folder from where to retrieve list of folders from
    */
   public listFolders(folder: string) {
@@ -74,7 +74,7 @@ export class FileService {
 
   /**
    * Returns a list of all folders existing within the specified folder recursively.
-   * 
+   *
    * @param folder Folder from where to retrieve list of folders from
    * @param sysFiles If true will return system folders
    */
@@ -87,7 +87,7 @@ export class FileService {
 
   /**
    * Loads the specified file from backend.
-   * 
+   *
    * @param filename Filename and full path of file to load.
    */
   public loadFile(filename: string) {
@@ -102,7 +102,7 @@ export class FileService {
 
   /**
    * Saves the specified file with the given filename.
-   * 
+   *
    * @param filename Filename to save file as
    * @param content Content of file
    */
@@ -116,7 +116,7 @@ export class FileService {
 
   /**
    * Renames the specified file or folder in the backend.
-   * 
+   *
    * @param oldName File or folder to rename.
    * @param newName New name for file or folder.
    */
@@ -130,7 +130,7 @@ export class FileService {
 
   /**
    * Deletes an existing file on the server.
-   * 
+   *
    * @param file Path of file to delete
    */
   public deleteFile(file: string) {
@@ -139,7 +139,7 @@ export class FileService {
 
   /**
    * Downloads a file from backend.
-   * 
+   *
    * @param path File to download
    */
   public downloadFile(path: string) {
@@ -155,7 +155,7 @@ export class FileService {
 
   /**
    * Uploads a file to your backend.
-   * 
+   *
    * @param path Folder to upload file to
    * @param file File you want to upload
    */
@@ -167,7 +167,7 @@ export class FileService {
 
   /**
    * Downloads a file from backend.
-   * 
+   *
    * @param path File to download
    */
   public downloadFolder(path: string) {
@@ -184,7 +184,7 @@ export class FileService {
 
   /**
    * Creates a new folder on the server.
-   * 
+   *
    * @param folder Path for new folder
    */
   public createFolder(folder: string) {
@@ -193,7 +193,7 @@ export class FileService {
 
   /**
    * Deletes an existing folder on the server.
-   * 
+   *
    * @param folder Path of folder to delete
    */
   public deleteFolder(folder: string) {
@@ -202,7 +202,7 @@ export class FileService {
 
   /**
    * Returns macro definition to caller for specified macro.
-   * 
+   *
    * @param file Full path of macro to retrieve meta information about
    */
   public getMacroDefinition(file: string) {
@@ -211,7 +211,7 @@ export class FileService {
 
   /**
    * Returns macro definition to caller for specified macro.
-   * 
+   *
    * @param file Full path of macro to retrieve meta information about
    * @param args Arguments to macro execution
    */
@@ -221,7 +221,7 @@ export class FileService {
 
   /**
    * Uploads a zip file to your backend.
-   * 
+   *
    * @param path Folder to upload file to
    * @param file File you want to upload
    */
@@ -233,9 +233,9 @@ export class FileService {
 
   /**
    * Unzips file in place.
-   * 
+   *
    * @param file Path of file to unzip
-   * @returns 
+   * @returns
    */
   public unzip(file: string) {
     return this.httpService.put<Response>('/magic/system/file-system/unzip', {

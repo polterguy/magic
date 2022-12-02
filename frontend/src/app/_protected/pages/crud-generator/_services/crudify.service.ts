@@ -16,8 +16,8 @@ import { LocResult } from '../_models/loc-result.model';
 import { CustomSql } from '../../../../components/tools/crudifier/models/custom-sql.model';
 import { Response } from 'src/app/models/response.model';
 import { Template } from 'src/app/models/template.model';
-import { HttpService } from 'src/app/_protected/services/common/http.service';
 import { GeneralService } from 'src/app/_general/services/general.service';
+import { HttpService } from 'src/app/_general/services/http.service';
 
 /**
  * Crudify service, allows you to crudify your databases.

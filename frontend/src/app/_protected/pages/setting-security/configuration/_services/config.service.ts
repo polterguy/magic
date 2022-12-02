@@ -12,9 +12,9 @@ import { Response } from 'src/app/_protected/models/common/response.model';
 import { BackendService } from 'src/app/_protected/services/common/backend.service';
 import { AuthenticateResponse } from 'src/app/_protected/models/auth/authenticate-response.model';
 import { NameEmailModel } from 'src/app/_protected/models/auth/name-email.model';
-import { HttpService } from 'src/app/_protected/services/common/http.service';
 import { Backend } from 'src/app/_protected/models/common/backend.model';
 import { SetupModel } from '../../../../models/common/status.model';
+import { HttpService } from 'src/app/_general/services/http.service';
 
 /**
  * Configuration service, allows you to setup system and read or manipulate your configuration

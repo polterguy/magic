@@ -4,8 +4,7 @@
  */
 
 import { AfterContentChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { Event, RouterEvent, Router, NavigationStart } from '@angular/router';
-import { Subject, BehaviorSubject, filter } from 'rxjs';
+import { Subject, BehaviorSubject } from 'rxjs';
 import { GeneralService } from './_general/services/general.service';
 
 @Component({

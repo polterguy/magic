@@ -40,7 +40,7 @@ export class AccessGuard implements CanActivate {
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-
+      console.log('CanActivate called');
       return (async () => {
         while ((this.backendService?.active?.access && Object.keys(this.backendService?.active?.access?.auth ?? {}).length===0))
           await new Promise(resolve => setTimeout(resolve, 100));

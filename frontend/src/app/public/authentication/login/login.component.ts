@@ -3,11 +3,9 @@
  * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
-import { Location } from '@angular/common';
-import { ChangeDetectorRef, Component, Inject, Injector, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Validators, UntypedFormBuilder, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { RecaptchaComponent } from 'ng-recaptcha';
 import { map, Observable, startWith } from 'rxjs';
 import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
 import { CommonRegEx } from 'src/app/_general/classes/common-regex';
@@ -28,15 +26,17 @@ export class LoginComponent implements OnInit {
   });
 
   backendHasBeenSelected: boolean = false;
-  backends = new FormControl<any>('', Validators.pattern(CommonRegEx.backend));
   backendList: any = [];
   filteredBackends: Observable<any[]>;
   savePassword: boolean = false;
-  public CommonRegEx = CommonRegEx;
-  public CommonErrorMessages = CommonErrorMessages;
   viewPassword: boolean = false;
   rememberPassword: boolean = false;
   waiting: boolean = false;
+
+  public CommonRegEx = CommonRegEx;
+  public CommonErrorMessages = CommonErrorMessages;
+
+  backends = new FormControl<any>('', Validators.pattern(CommonRegEx.backend));
 
   /**
    * to set the user's site_key for recaptcha
@@ -49,8 +49,7 @@ export class LoginComponent implements OnInit {
     private backendService: BackendService,
     private router: Router,
     private cdr: ChangeDetectorRef,
-    private activatedRoute: ActivatedRoute,
-    @Inject(Injector) private readonly injector: Injector) { }
+    private activatedRoute: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.readBackendService();
@@ -58,10 +57,10 @@ export class LoginComponent implements OnInit {
 
   private readBackendService() {
     (async () => {
-      while (!this.backendService?.active?.access && !Object.keys(this.backendService?.active?.access?.auth ?? {}).length)
+      while (!(this.backendService?.active && this.backendService?.active?.access && Object.keys(this.backendService?.active?.access?.auth ?? {}).length > 0))
         await new Promise(resolve => setTimeout(resolve, 100));
 
-      if (this.backendService?.active) {
+      if ((this.backendService?.active?.access && Object.keys(this.backendService?.active?.access?.auth).length > 0)) {
         this.backendHasBeenSelected = true;
         this.backendList = this.backendService.backends;
 

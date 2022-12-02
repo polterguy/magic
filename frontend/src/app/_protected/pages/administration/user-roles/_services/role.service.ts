@@ -10,8 +10,7 @@ import { Injectable } from '@angular/core';
 import { Role } from '../_models/role.model';
 import { Count } from '../../../../../models/count.model';
 import { Affected } from '../../../../../models/affected.model';
-import { AuthFilter, createAuthQuery } from '../_models/auth-filter.model';
-import { HttpService } from 'src/app/_protected/services/common/http.service';
+import { HttpService } from 'src/app/_general/services/http.service';
 
 /**
  * User service, allowing you to administrate the users in your backend.

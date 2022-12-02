@@ -22,7 +22,7 @@ import { BazarApp } from '../../../models/bazar-app.model';
 import { AppManifest } from '../../../models/app-manifest';
 import { environment } from 'src/environments/environment';
 import { ConfigService } from '../../../services--/config.service';
-import { LoaderService } from '../../../services--/loader.service';
+import { LoaderService } from '../../../_general/services/loader.service';
 import { MessageService } from 'src/app/services--/message.service';
 import { NameEmailModel } from '../../../models/name-email.model';
 import { BackendService } from 'src/app/services--/backend.service--';

@@ -10,10 +10,10 @@ import { Injectable } from '@angular/core';
 import { saveAs } from "file-saver";
 
 // Application specific imports.
-import { HttpService } from '../../../../services/common/http.service';
 import { Response } from '../../../../models/common/response.model';
 import { MacroDefinition } from '../../../../models/common/macro-definition.model';
 import { GeneralService } from 'src/app/_general/services/general.service';
+import { HttpService } from 'src/app/_general/services/http.service';
 
 /**
  * File service allowing you to read, download, upload, and delete files.
