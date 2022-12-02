@@ -86,9 +86,6 @@ export class HeaderComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private backendService: BackendService) {
       this.activatedRoute.queryParamMap.subscribe((params: any) => {
-        // console.log(params.params.backend);
-        // console.log(params);
-        // if (params && params.)
         if (params && params.keys && params.keys.length > 0) {
           this.getParams(params)
         } else {
@@ -113,7 +110,7 @@ export class HeaderComponent implements OnInit {
         this.backendService.active ? this.activeUrl = this.backendService.active.url.replace('http://', '').replace('https://', '') : this.activeUrl = 'not connected';
         this.backendList = this.backendService.backends;
 
-        // console.log(this.backendService)
+        console.log(this.backendService)
 
         const notAuthorized: boolean = (!this.backendService.active || Object.values(this.backendService.active.access.auth ?? {}).every((item: any) => { return item === false }))
 
@@ -133,15 +130,15 @@ export class HeaderComponent implements OnInit {
       }
     })();
 
-    // setTimeout(() => {
-    //   console.log(this.backendService)
-    //   const notAuthorized: boolean = (!this.backendService.active || Object.values(this.backendService.active.access.auth ?? {}).every((item: any) => { return item === false }))
+    setTimeout(() => {
+      console.log(this.backendService)
+      // const notAuthorized: boolean = (!this.backendService.active || Object.values(this.backendService.active.access.auth ?? {}).every((item: any) => { return item === false }))
 
-    //   if (notAuthorized || this.backendService.active.token === null) {
-    //     this.router.navigate(['/authentication/login']);
-    //   }
+      // if (notAuthorized || this.backendService.active.token === null) {
+      //   this.router.navigate(['/authentication/login']);
+      // }
 
-    // }, 3000);
+    }, 3000);
   }
 
   /*
@@ -205,7 +202,8 @@ export class HeaderComponent implements OnInit {
               } else {
 
                 // Impersonation request.
-                this.location.replaceState('');
+                // this.location.replaceState('');
+                window.location.href = '/';
                 this.getPermissions();
               }
             },
