@@ -137,7 +137,6 @@ export class HeaderComponent implements OnInit {
       // if (notAuthorized || this.backendService.active.token === null) {
       //   this.router.navigate(['/authentication/login']);
       // }
-
     }, 3000);
   }
 

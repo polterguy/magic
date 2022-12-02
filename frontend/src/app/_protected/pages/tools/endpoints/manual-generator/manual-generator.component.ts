@@ -20,6 +20,7 @@ import { SqlSnippetDialogComponent } from '../components/sql-snippet-dialog/sql-
 import sql from '../../../../../codemirror/options/sql.json';
 import { BackendService } from 'src/app/_protected/services/common/backend.service';
 import { MessageService } from 'src/app/_protected/services/common/message.service';
+import { CodemirrorActionsService } from '../../hyper-ide/_services/codemirror-actions.service';
 
 @Component({
   selector: 'app-manual-generator',
@@ -89,6 +90,8 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
 
   public waiting: boolean = false;
 
+  public codeMirrorReady: boolean = false;
+
   /**
    * Input SQL component model and options.
    */
@@ -97,7 +100,7 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
     connectionString: this.selectedConnectionString,
     database: '[' + this.selectedConnectionString + '|' + this.selectedDatabase + ']',
     sql: '',
-    options: sql,
+    options: [],
     editor: ''
   };
 
@@ -111,6 +114,7 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
     private sqlService: SqlService,
     private backendService: BackendService,
     protected transformService: TransformModelService,
+    private codemirrorActionsService: CodemirrorActionsService,
     @Inject(LOCALE_ID) public locale: string) { }
 
   ngOnInit(): void {
@@ -125,7 +129,16 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
       if (isLoading === false) {
 
         this.waitingData();
+        this.getOptions();
       }
+    })
+  }
+
+  private getOptions() {
+    this.codemirrorActionsService.getActions('','sql').then((options: any) => {
+      options.autofocus = false;
+      this.sql.options = options;
+      this.codeMirrorReady = true;
     })
   }
 
@@ -199,10 +212,6 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
     this.arguments.splice(this.arguments.indexOf(argument), 1);
   }
 
-  private validateUrlName() {
-    return this.CommonRegEx.appNames.test(this.primaryURL) && this.CommonRegEx.appNames.test(this.secondaryURL);
-  }
-
   /**
    * Opens the load snippet dialog, to allow user to select a previously saved snippet.
    */
@@ -232,7 +241,7 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
       this.generalService.showFeedback('Please create tables in the selected database.', 'errorMessage', 'Ok', 5000);
       return;
     }
-    if (!this.validateUrlName() || this.primaryURL === '' && this.secondaryURL === '') {
+    if (this.primaryURL === '' && this.secondaryURL === '') {
       this.generalService.showFeedback('Please check the route(s).', 'errorMessage');
       return;
     }

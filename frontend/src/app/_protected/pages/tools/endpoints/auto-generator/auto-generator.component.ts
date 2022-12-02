@@ -19,6 +19,7 @@ import { SingleTableConfigComponent } from '../components/single-table-config/si
 
 // CodeMirror options.
 import hyperlambda from '../../../../../codemirror/options/hyperlambda.json';
+import { CodemirrorActionsService } from '../../hyper-ide/_services/codemirror-actions.service';
 
 @Component({
   selector: 'app-auto-generator',
@@ -47,7 +48,7 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
   public deleteRoles: FormControl = new FormControl<any>('');
   public createRoles: FormControl = new FormControl<any>('');
   public primaryURL: string = '';
-  public secondaryURL: string = 'custom-sql';
+  public secondaryURL: string = '';
   public logCreate: boolean = false;
   public logUpdate: boolean = false;
   public logDelete: boolean = false;
@@ -87,6 +88,8 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
     options: hyperlambda,
   };
 
+  public codeMirrorReady: boolean = false;
+
   constructor(
     private logService: LogService,
     private cdr: ChangeDetectorRef,
@@ -96,6 +99,7 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
     private crudifyService: CrudifyService,
     private backendService: BackendService,
     protected transformService: TransformModelService,
+    private codemirrorActionsService: CodemirrorActionsService,
     @Inject(LOCALE_ID) public locale: string) { }
 
   ngOnInit(): void {
@@ -110,7 +114,16 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
       if (isLoading === false) {
 
         this.waitingData();
+        this.getOptions();
       }
+    })
+  }
+
+  private getOptions() {
+    this.codemirrorActionsService.getActions('','hl').then((options: any) => {
+      options.autofocus = false;
+      this.hlInput.options = options;
+      this.codeMirrorReady = true;
     })
   }
 
@@ -153,6 +166,9 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
       this.selectedTables = new FormControl({value: '', disabled: true});
     }
     this.primaryURL = this.selectedDatabase.toLowerCase();
+    if (this.tables.length === 1) {
+      this.secondaryURL = this.tables[0].name
+    }
     this.cdr.detectChanges();
   }
 
@@ -173,72 +189,67 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
   }
 
   public generateEndpoints() {
-    // this.createDefaultOptionsForDatabase().then((resolve: boolean) =>{console.log(this.databases)})
-    if (this.validateUrlName()) {
-      if (this.selectedDatabase !== 'magic') {
-        if (this.databases.find((db: any) => db.name === this.selectedDatabase).tables) {
-          const subscribers: Observable<LocResult>[] = [];
-          this.generalService.showLoading();
-          this.createDefaultOptionsForDatabase().then((resolve: boolean) => {
-            if (resolve) {
-              const tables = this.databases.find((item: any) => item.name === this.selectedDatabase).tables.filter((el: any) => el.verbs);
+    if (this.selectedDatabase !== 'magic') {
+      if (this.databases.find((db: any) => db.name === this.selectedDatabase).tables) {
+        const subscribers: Observable<LocResult>[] = [];
+        this.generalService.showLoading();
+        this.createDefaultOptionsForDatabase().then((resolve: boolean) => {
+          if (resolve) {
+            const tables = this.databases.find((item: any) => item.name === this.selectedDatabase).tables.filter((el: any) => el.verbs);
 
-              for (const table of tables) {
-                table.captchaPost = this.captchaCreate ? this.captchaValue : null;
-                table.captchaGet = this.captchaRead ? this.captchaValue : null;
-                table.captchaPut = this.captchaUpdate ? this.captchaValue : null;
-                table.captchaDelete = this.captchaDelete ? this.captchaValue : null;
-                table.cqrs = this.generateSocket;
-                const verbs = (table.verbs || []).filter((method: any) => method.generate).map((method: any) => {
-                  return this.crudifyService.crudify(
-                    this.transformService.transform(
-                      this.selectedDbType,
-                      '[' + this.selectedConnectionString + '|' + this.selectedDatabase + ']',
-                      table,
-                      method.name));
-                });
-                for (const tmpIdx of verbs) {
-                  subscribers.push(tmpIdx);
-                }
-              }
-
-              forkJoin(subscribers).subscribe({
-                next: (results: LocResult[]) => {
-                  const loc = results.reduce((x, y) => x + y.loc, 0);
-                  this.logService.createLocItem(loc, 'backend', `${this.selectedDatabase}`).subscribe({
-                    next: () => {
-                      this.generalService.showFeedback(`${formatNumber(loc, this.locale, '1.0')} lines of code generated.`, 'successMessage');
-                      this.flushEndpointsAuthRequirements();
-                      this.messageService.sendMessage({
-                        name: 'magic.folders.update',
-                        content: '/modules/'
-                      });
-                      this.generalService.hideLoading();
-                    },
-                    error: (error: any) => {
-                      this.generalService.hideLoading();
-                      this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)
-                    }
-                  });
-
-                },
-                error: (error: any) => {
-                  this.generalService.hideLoading();
-                  this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000);
-                }
+            for (const table of tables) {
+              table.captchaPost = this.captchaCreate ? this.captchaValue : null;
+              table.captchaGet = this.captchaRead ? this.captchaValue : null;
+              table.captchaPut = this.captchaUpdate ? this.captchaValue : null;
+              table.captchaDelete = this.captchaDelete ? this.captchaValue : null;
+              table.cqrs = this.generateSocket;
+              const verbs = (table.verbs || []).filter((method: any) => method.generate).map((method: any) => {
+                return this.crudifyService.crudify(
+                  this.transformService.transform(
+                    this.selectedDbType,
+                    '[' + this.selectedConnectionString + '|' + this.selectedDatabase + ']',
+                    table,
+                    method.name));
               });
-            } else {
-              this.generalService.hideLoading();
+              for (const tmpIdx of verbs) {
+                subscribers.push(tmpIdx);
+              }
             }
-          })
-        } else {
-          this.generalService.showFeedback('This database doesn\'t have tables', 'errorMessage', 'Ok', 5000);
-        }
+
+            forkJoin(subscribers).subscribe({
+              next: (results: LocResult[]) => {
+                const loc = results.reduce((x, y) => x + y.loc, 0);
+                this.logService.createLocItem(loc, 'backend', `${this.selectedDatabase}`).subscribe({
+                  next: () => {
+                    this.generalService.showFeedback(`${formatNumber(loc, this.locale, '1.0')} lines of code generated.`, 'successMessage');
+                    this.flushEndpointsAuthRequirements();
+                    this.messageService.sendMessage({
+                      name: 'magic.folders.update',
+                      content: '/modules/'
+                    });
+                    this.generalService.hideLoading();
+                  },
+                  error: (error: any) => {
+                    this.generalService.hideLoading();
+                    this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)
+                  }
+                });
+
+              },
+              error: (error: any) => {
+                this.generalService.hideLoading();
+                this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000);
+              }
+            });
+          } else {
+            this.generalService.hideLoading();
+          }
+        })
       } else {
-        this.generalService.showFeedback('You cannot generate endpoints for this table.', 'errorMessage', 'Ok', 5000);
+        this.generalService.showFeedback('This database doesn\'t have tables', 'errorMessage', 'Ok', 5000);
       }
     } else {
-      this.generalService.showFeedback(this.CommonErrorMessages.appNames, 'errorMessage');
+      this.generalService.showFeedback('You cannot generate endpoints for this table.', 'errorMessage', 'Ok', 5000);
     }
   }
 
@@ -289,6 +300,7 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
 
 
           if (this.selectedTables.value.length > 1) {
+            idxTable.moduleUrl = idxTable.name;
             for (const idxColumn of columns) {
               const keys = idxTable.foreign_keys?.filter((foreign_key: any) => foreign_key.column === idxColumn.name) ?? [];
               if (keys.length > 0) {
@@ -407,10 +419,6 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
     this.cacheService.delete('magic.auth.endpoints').subscribe({
       next: () => this.backendService.refetchEndpoints(),
       error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')});
-  }
-
-  private validateUrlName() {
-    return this.CommonRegEx.appNames.test(this.primaryURL) && this.CommonRegEx.appNames.test(this.secondaryURL);
   }
 
   ngOnDestroy(): void {

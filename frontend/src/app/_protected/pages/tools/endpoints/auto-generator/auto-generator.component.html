@@ -233,8 +233,7 @@
             Primary URL
           </span>
 
-          <input matInput type="text" placeholder="Add URL" [name]="selectedDatabase" [(ngModel)]="primaryURL" [pattern]="CommonRegEx.appNames">
-          <mat-error>{{CommonErrorMessages.appNames}}</mat-error>
+          <input matInput type="text" placeholder="Add URL" [name]="selectedDatabase" [(ngModel)]="primaryURL">
         </mat-form-field>
       </div>
       <!-- Secondary URL -->
@@ -251,8 +250,8 @@
             Secondary URL
           </span>
 
-          <input matInput type="text" placeholder="Add URL" [(ngModel)]="secondaryURL" [pattern]="CommonRegEx.appNames">
-          <mat-error>{{CommonErrorMessages.appNames}}</mat-error>
+          <input matInput type="text" placeholder="Add URL" [(ngModel)]="secondaryURL">
+          <mat-error></mat-error>
         </mat-form-field>
       </div>
 
@@ -380,7 +379,7 @@
       <p class="fw-bold">Step 8 - Additional POST/PUT</p>
     </div>
     <div class="col-12">
-      <app-codemirror-hyperlambda [(model)]="hlInput" class="codemirror-container"></app-codemirror-hyperlambda>
+      <app-codemirror-hyperlambda [(model)]="hlInput" class="codemirror-container" *ngIf="codeMirrorReady"></app-codemirror-hyperlambda>
     </div>
 
   </ng-container>
