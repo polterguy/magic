@@ -44,6 +44,10 @@ export class ServerKeyDetailsComponent implements OnInit {
 
   public username: string = '';
 
+  public codemirrorReady: boolean = false;
+
+  public waiting: boolean = false;
+
   constructor(
     private dialog: MatDialog,
     private clipboard: Clipboard,
@@ -83,6 +87,10 @@ export class ServerKeyDetailsComponent implements OnInit {
       }
       hlOptions.options.autofocus = false;
       this.data.key.options = hlOptions;
+
+      setTimeout(() => {
+        this.codemirrorReady = true;
+      }, 300);
      });
   }
 
@@ -92,6 +100,7 @@ export class ServerKeyDetailsComponent implements OnInit {
    * @param key Key user wants to save
    */
    save() {
+    this.waiting = true;
     const key: PublicKeyEx = {
       identity: '',
       original_content: this.data.key.original_content,
@@ -136,14 +145,19 @@ export class ServerKeyDetailsComponent implements OnInit {
                 }
                 oldKey += idx;
               }
+
+              this.saveKeyImplementation(key);
             }
           })
         } else {
-
           this.saveKeyImplementation(key);
         }
       },
-      error: (error: any) => this.generalService.showFeedback('Key content is not valid.', 'errorMessage')});
+      error: (error: any) => {
+        this.waiting = false;
+        this.generalService.showFeedback('Key content is not valid.', 'errorMessage')
+      }
+    });
   }
 
   /*
@@ -165,9 +179,14 @@ export class ServerKeyDetailsComponent implements OnInit {
               } else {
                 this.generalService.showFeedback(info, 'successMessage');
               }
+              this.waiting = false;
               this.dialogRef.close(true);
             },
-            error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
+            error: (error: any) => {
+              this.waiting = false;
+              this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')
+            }
+          });
         } else {
           this.cryptoService.deleteUserAssociation(key.key.id).subscribe({
             next: () => {
@@ -176,11 +195,20 @@ export class ServerKeyDetailsComponent implements OnInit {
               } else {
                 this.generalService.showFeedback(info, 'successMessage');
               }
+              this.waiting = false;
               this.dialogRef.close(true);
             },
-            error:(error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
+            error:(error: any) => {
+              this.waiting = false;
+              this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')
+            }
+          });
         }
       },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
+      error: (error: any) => {
+        this.waiting = false;
+        this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')
+      }
+    });
   }
 }

@@ -1,0 +1,19 @@
+<!-- <div class="d-flex justify-content-sm-between align-items-sm-end align-items-center flex-sm-row flex-column">
+    <div>
+        <p class="my-0 dialog-title">New version available! 🎉</p>
+        <p class="my-0 mat-caption d-sm-block d-none">If you have unsaved works, try saving them, then refresh the page.</p>
+    </div>
+    <div class="mx-md-5 mx-sm-3 my-sm-0 my-2"></div>
+    <div class="d-flex flex-sm-column flex-row-reverse">
+        <button mat-flat-button color="primary" (click)="reloadPage()">Refresh now</button>
+        <button mat-button (click)="remindLater()">Remind me later</button>
+    </div>
+</div> -->
+<h3 mat-dialog-title>New version available! 🎉</h3>
+<div mat-dialog-content>
+  <p class="mat-body-2">If you have unsaved works, try saving them and then <span class="fw-bold">refresh the page</span>.</p>
+</div>
+<div mat-dialog-actions [align]="'end'">
+  <button mat-button (click)="remindLater()" tabIndex="-1">Remind me later</button>
+  <button mat-flat-button color="primary" (click)="reloadPage()">Refresh now</button>
+</div>

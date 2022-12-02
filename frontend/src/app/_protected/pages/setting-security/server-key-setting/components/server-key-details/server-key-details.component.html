@@ -97,7 +97,7 @@
           </div>
         </div>
       </div>
-      <div class="col-lg-6 col-12 modal-custom-codemirror" *ngIf="data.key.options">
+      <div class="col-lg-6 col-12 modal-custom-codemirror" *ngIf="codemirrorReady">
         <app-codemirror-hyperlambda [(model)]="data.key.options"></app-codemirror-hyperlambda>
       </div>
     </div>
@@ -106,5 +106,7 @@
 
 <div mat-dialog-actions [align]="'end'">
   <button mat-button color="primary" mat-dialog-close class="me-2">Cancel</button>
-  <button mat-flat-button color="primary" class="px-5" (click)="save()">Save</button>
+  <button mat-flat-button color="primary" class="px-5"
+    [disabled]="waiting"
+    (click)="save()">Save</button>
 </div>

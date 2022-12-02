@@ -9,7 +9,7 @@
   <p>{{data.created | date: 'dd-MM-YYYY HH:mm'}}</p>
 
   <p class="fw-bold mt-4">Content</p>
-  <p>{{data.content}}</p>
+  <p class="pre-formatted">{{data.content}}</p>
 
   <p class="fw-bold mt-4" *ngIf="data.meta">Meta</p>
   <p *ngFor="let item of data.meta | keyvalue">

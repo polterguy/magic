@@ -50,7 +50,7 @@
                 </th>
                 <td mat-cell *matCellDef="let row" class="ps-3 text-truncate">
                   <ng-container *ngIf="column !== 'created';else dateColumn">
-                    {{row[column]}}
+                    {{row[column] ?? '[null]'}}
                   </ng-container>
                   <ng-template #dateColumn>
                     {{row[column] | date}}
