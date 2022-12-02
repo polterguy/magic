@@ -8,12 +8,12 @@ import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
-import { HttpService } from './http.service';
 import { BackendService } from './backend.service';
 import { Response } from '../../models/common/response.model';
 import { Backend } from '../../models/common/backend.model';
 import { NameEmailModel } from '../../models/common/name-email.model';
 import { AuthenticateResponse } from '../../models/auth/authenticate-response.model';
+import { HttpService } from 'src/app/_general/services/http.service';
 
 /**
  * Configuration service, allows you to setup system and read or manipulate your configuration

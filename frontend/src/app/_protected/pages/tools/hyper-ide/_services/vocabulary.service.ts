@@ -6,7 +6,7 @@
 // Angular and system imports.
 import { Observable, of } from 'rxjs';
 import { Injectable } from '@angular/core';
-import { HttpService } from 'src/app/_protected/services/common/http.service';
+import { HttpService } from 'src/app/_general/services/http.service';
 
 // Application specific imports.
 

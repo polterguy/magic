@@ -7,7 +7,6 @@ import { Component, ViewChild } from '@angular/core';
 import { Validators, UntypedFormBuilder } from '@angular/forms';
 import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { AuthApiService } from '../services/auth-api.service';
 import { RecaptchaComponent, ReCaptchaV3Service } from 'ng-recaptcha';
 import { Router } from '@angular/router';
 import { BackendService } from 'src/app/_protected/services/common/backend.service';
@@ -50,7 +49,6 @@ export class ForgotPasswordComponent {
 
   constructor(
     private formBuilder: UntypedFormBuilder,
-    private authApiService: AuthApiService,
     private generalService: GeneralService,
     private backendService: BackendService,
     private router: Router) {

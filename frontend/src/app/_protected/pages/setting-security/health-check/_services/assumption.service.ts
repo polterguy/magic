@@ -10,7 +10,7 @@ import { Injectable } from '@angular/core';
 // Application specific imports.
 import { Response } from '../../../../../models/response.model';
 import { BackendService } from 'src/app/_protected/services/common/backend.service';
-import { HttpService } from 'src/app/_protected/services/common/http.service';
+import { HttpService } from 'src/app/_general/services/http.service';
 
 /**
  * Assumption service, allowing you to retrieve, create and execute assumptions.

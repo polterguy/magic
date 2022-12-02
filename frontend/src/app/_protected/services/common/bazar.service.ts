@@ -15,8 +15,8 @@ import { AppManifest } from '../../../models/app-manifest';
 import { Response } from 'src/app/models/response.model';
 import { environment } from '../../../../environments/environment';
 import { PurchaseStatus } from '../../../models/purchase-status.model';
-import { HttpService } from './http.service';
 import { FileService } from '../../pages/tools/hyper-ide/_services/file.service';
+import { HttpService } from 'src/app/_general/services/http.service';
 
 /**
  * Bazar service allowing you to query Aista's Bazar, and/or install Bazar items locally on your

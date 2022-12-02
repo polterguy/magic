@@ -499,7 +499,7 @@ export class BackendService {
                       observer.complete();
                     }});
               }
-              this.getRecaptchaKey(); 
+              this.getRecaptchaKey();
             }
           });
       }});

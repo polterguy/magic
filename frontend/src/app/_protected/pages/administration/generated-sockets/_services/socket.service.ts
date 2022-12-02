@@ -11,8 +11,8 @@ import { Injectable } from '@angular/core';
 import { Count } from '../../../../../models/count.model';
 import { Message } from '../../../../../models/message.model';
 import { Response } from '../../../../../models/response.model';
-import { HttpService } from '../../../../../services--/http.service';
 import { SocketUser } from '../../generated-endpoints/_models/socket-user.model';
+import { HttpService } from 'src/app/_general/services/http.service';
 
 /**
  * Socket service, allowing you to retrieve data about sockets and publish socket messages.

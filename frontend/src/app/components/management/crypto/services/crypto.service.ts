@@ -12,7 +12,7 @@ import { Count } from '../../../../models/count.model';
 import { PublicKey } from '../models/public-key.model';
 import { Affected } from '../../../../models/affected.model';
 import { Response } from '../../../../models/response.model';
-import { HttpService } from '../../../../services--/http.service';
+import { HttpService } from '../../../../_general/services/http.service';
 import { PublicKeyFull } from '../models/public-key-full.model';
 import { CryptoInvocation } from '../models/crypto-invocations.model';
 

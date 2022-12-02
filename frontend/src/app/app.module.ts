@@ -40,9 +40,10 @@ import { AppComponent } from './app.component';
 import { CoreComponent } from './_layout/core/core.component';
 import { HeaderComponent } from './_layout/header/header.component';
 import { FooterComponent } from './_layout/footer/footer.component';
-import { LoaderService } from './services--/loader.service';
+
 import { LoaderInterceptor } from './interceptors/loader.interceptor';
 import { AccessGuard } from './access.guard';
+import { LoaderService } from './_general/services/loader.service';
 
 @NgModule({
   declarations: [
@@ -79,11 +80,6 @@ import { AccessGuard } from './access.guard';
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
       multi: true,
-    },
-    LoaderService, {
-      provide: HTTP_INTERCEPTORS,
-      useClass: LoaderInterceptor,
-      multi: true
     }
   ],
   bootstrap: [AppComponent]

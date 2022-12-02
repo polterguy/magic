@@ -8,8 +8,8 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 
 // Application specific imports.
-import { FeedbackService } from '../../../services--/feedback.service';
 import { EvaluatorService } from 'src/app/components/misc/evaluator/services/evaluator.service';
+import { GeneralService } from '../../services/general.service';
 
 /**
  * Load snippet dialog for loading saved snippets from the backend.
@@ -36,20 +36,23 @@ export class LoadSnippetDialogComponent implements OnInit {
    *
    * @param dialogRef Necessary to close dialog when user selects a snippet
    * @param evaluatorService Evaluator service needed to retrieve snippet files from backend
-   * @param feedbackService Needed to display feedback to user
+   * @param generalService Needed to display feedback to user
    */
   constructor(
     private dialogRef: MatDialogRef<LoadSnippetDialogComponent>,
     private evaluatorService: EvaluatorService,
-    private feedbackService: FeedbackService) { }
+    private generalService: GeneralService) { }
 
   /**
    * OnInit implementation.
    */
   ngOnInit() {
-    this.evaluatorService.snippets().subscribe((files: string[]) => {
-      this.files = files.filter(x => x.endsWith('.hl'));
-    }, (error: any) => this.feedbackService.showError(error));
+    this.evaluatorService.snippets().subscribe({
+      next: (files: string[]) => {
+        this.files = files.filter(x => x.endsWith('.hl'));
+      },
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')
+    });
   }
 
   /**

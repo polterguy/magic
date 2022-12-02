@@ -8,7 +8,7 @@ import { ForgotPasswordComponent } from '../forgot-password/forgot-password.comp
 import { MaterialModule } from 'src/app/material.module';
 import { ComponentsModule } from 'src/app/_general/components/components.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { RecaptchaV3Module, RecaptchaModule, ReCaptchaV3Service, RecaptchaFormsModule } from "ng-recaptcha";
+import { RecaptchaV3Module, RecaptchaModule, RecaptchaFormsModule } from "ng-recaptcha";
 import { HttpClientModule } from '@angular/common/http';
 
 

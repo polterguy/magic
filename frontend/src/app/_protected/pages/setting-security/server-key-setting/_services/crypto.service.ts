@@ -14,7 +14,7 @@ import { Affected } from '../../../../../models/affected.model';
 import { Response } from '../../../../../models/response.model';
 import { PublicKeyFull } from '../_models/public-key-full.model';
 import { CryptoInvocation } from '../_models/crypto-invocations.model';
-import { HttpService } from 'src/app/_protected/services/common/http.service';
+import { HttpService } from 'src/app/_general/services/http.service';
 
 /**
  * Crypto service, allowing you to administrate your cryptography keys.

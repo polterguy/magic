@@ -8,7 +8,7 @@ import { throwError } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
-import { HttpService } from './http.service';
+import { HttpService } from '../_general/services/http.service';
 import { Databases } from '../models/databases.model';
 import { FileService } from 'src/app/services--/file.service';
 import { DefaultDatabaseType } from '../models/default-database-type.model';

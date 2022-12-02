@@ -7,7 +7,7 @@
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
-import { HttpService } from './http.service';
+import { HttpService } from '../_general/services/http.service';
 import { Count } from '../models/count.model';
 import { Response } from '../models/response.model';
 import { CacheItem } from '../models/cache-item.model';
@@ -23,14 +23,14 @@ export class CacheService {
 
   /**
    * Creates an instance of your service.
-   * 
+   *
    * @param httpService HTTP service to use for backend invocations
    */
   constructor(private httpService: HttpService) { }
 
   /**
    * Returns all cache items from backend matching optional filter.
-   * 
+   *
    * @param filter Optional query filter deciding which items to return
    */
   public list(filter: any = null) {
@@ -47,7 +47,7 @@ export class CacheService {
 
   /**
    * Returns count of all cache items from backend matching optional filter.
-   * 
+   *
    * @param filter Optional query filter deciding which items to include when counting
    */
   public count(filter: string = null) {
@@ -60,7 +60,7 @@ export class CacheService {
 
   /**
    * Deletes a single cache item.
-   * 
+   *
    * @param id ID of item to delete
    */
   public delete(id: string) {
@@ -69,7 +69,7 @@ export class CacheService {
 
   /**
    * Deletes all cache items matching the optional filter condition.
-   * 
+   *
    * @param filter Optional query filter deciding which items to include when deleting items
    */
   public clear(filter: string = null) {

@@ -6,7 +6,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { UserService } from 'src/app/_general/services/user.service';
 import { BackendService } from 'src/app/_protected/services/common/backend.service';
 import { NavLinks } from './_model/nav-links';
 import { Clipboard } from '@angular/cdk/clipboard';
@@ -82,7 +81,6 @@ export class HeaderComponent implements OnInit {
     private location: Location,
     private clipboard: Clipboard,
     private generalService: GeneralService,
-    private userService: UserService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private cdr: ChangeDetectorRef,

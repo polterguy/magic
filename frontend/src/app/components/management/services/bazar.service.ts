@@ -13,7 +13,7 @@ import { Count } from 'src/app/models/count.model';
 import { BazarApp } from '../../../models/bazar-app.model';
 import { AppManifest } from '../../../models/app-manifest';
 import { Response } from 'src/app/models/response.model';
-import { HttpService } from 'src/app/services--/http.service';
+import { HttpService } from 'src/app/_general/services/http.service';
 import { environment } from '../../../../environments/environment';
 import { FileService } from 'src/app/services--/file.service';
 import { PurchaseStatus } from '../../../models/purchase-status.model';
