@@ -13,7 +13,7 @@ const routes: Routes = [
   {
     path: '',
     component: CoreComponent,
-    canActivate: [AccessGuard],
+
     children: [
       {
         path: '',
