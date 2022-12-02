@@ -41,16 +41,18 @@ import { CoreComponent } from './_layout/core/core.component';
 import { HeaderComponent } from './_layout/header/header.component';
 import { FooterComponent } from './_layout/footer/footer.component';
 
-import { LoaderInterceptor } from './interceptors/loader.interceptor';
 import { AccessGuard } from './access.guard';
-import { LoaderService } from './_general/services/loader.service';
+import { BaseComponent } from './_layout/public/base/base.component';
+import { AuthBaseComponent } from './public/authentication/auth-base/auth-base.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     CoreComponent,
     HeaderComponent,
-    FooterComponent
+    FooterComponent,
+    BaseComponent,
+    AuthBaseComponent
   ],
   imports: [
     BrowserModule,
