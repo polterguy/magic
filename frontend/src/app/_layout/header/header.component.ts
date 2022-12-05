@@ -246,6 +246,43 @@ export class HeaderComponent implements OnInit {
         expandable: false
       },
       {
+        name: 'Create',
+        url: null,
+        expandable: true,
+        submenu: [
+          {
+            name: 'Manage databases',
+            url: '/database-management',
+            disabled: !(this.permissions.access.sql.execute_access && this.permissions.setupDone)
+          },
+          {
+            name: 'SQL Studio',
+            url: '/sql-studio',
+            disabled: !(this.permissions.access.endpoints.view && this.permissions.setupDone)
+          },
+          {
+            name: 'Endpoint Generator',
+            url: '/endpoint-generator',
+            disabled: !(this.permissions.access.crud.generate_crud && this.permissions.access.crud.generate_sql && this.permissions.access.crud.generate_frontend && this.permissions.setupDone)
+          },
+          {
+            name: 'Frontend Generator',
+            url: '/frontend-generator',
+            disabled: !(this.permissions.access.crud.generate_crud && this.permissions.access.crud.generate_sql && this.permissions.access.crud.generate_frontend && this.permissions.setupDone)
+          },
+          {
+            name: 'Hyper IDE',
+            url: '/hyper-ide',
+            disabled: !(this.permissions.access.files.list_files && this.permissions.access.files.list_folders && this.permissions.setupDone)
+          },
+          {
+            name: 'Frontend IDE',
+            url: '/generated-frontend',
+            disabled: !(this.permissions.access.crud.generate_crud && this.permissions.access.crud.generate_sql && this.permissions.access.crud.generate_frontend && this.permissions.setupDone)
+          },
+        ],
+      },
+      {
         name: 'Administration',
         url: null,
         expandable: true,
@@ -256,46 +293,14 @@ export class HeaderComponent implements OnInit {
             disabled: !(this.permissions.access.auth.view_users && this.permissions.access.auth.view_roles && this.permissions.setupDone)
           },
           {
-            name: 'Generated databases',
-            url: '/generated-database',
+            name: 'Endpoints',
+            url: '/endpoints',
             disabled: !(this.permissions.access.endpoints.view && this.permissions.setupDone)
           },
           {
-            name: 'Generated endpoints',
-            url: '/generated-endpoints',
-            disabled: !(this.permissions.access.endpoints.view && this.permissions.setupDone)
-          },
-          {
-            name: 'Generated sockets',
-            url: '/generated-sockets',
+            name: 'Sockets',
+            url: '/sockets',
             disabled: !(this.permissions.access.sockets.read && this.permissions.setupDone)
-          },
-          {
-            name: 'Generated frontend',
-            url: '/generated-frontend',
-            disabled: !(this.permissions.access.crud.generate_crud && this.permissions.access.crud.generate_sql && this.permissions.access.crud.generate_frontend && this.permissions.setupDone)
-          },
-        ],
-      },
-      {
-        name: 'Tools',
-        url: null,
-        expandable: true,
-        submenu: [
-          {
-            name: 'Create database',
-            url: '/database-management',
-            disabled: !(this.permissions.access.sql.execute_access && this.permissions.setupDone)
-          },
-          {
-            name: 'Generate endpoint',
-            url: '/endpoint-generator',
-            disabled: !(this.permissions.access.crud.generate_crud && this.permissions.access.crud.generate_sql && this.permissions.access.crud.generate_frontend && this.permissions.setupDone)
-          },
-          {
-            name: 'Generate frontend',
-            url: '/frontend-generator',
-            disabled: !(this.permissions.access.crud.generate_crud && this.permissions.access.crud.generate_sql && this.permissions.access.crud.generate_frontend && this.permissions.setupDone)
           },
           {
             name: 'Plugins',
@@ -303,7 +308,7 @@ export class HeaderComponent implements OnInit {
             disabled: !(this.permissions.access.bazar.get_manifests && this.permissions.setupDone)
           },
           {
-            name: 'Hyperlambda playground',
+            name: 'Hyperlambda Playground',
             url: '/hyperlambda-playground',
             disabled: !(this.permissions.access.eval.execute && this.permissions.setupDone)
           },
@@ -312,15 +317,10 @@ export class HeaderComponent implements OnInit {
             url: '/tasks',
             disabled: !(this.permissions.access.tasks.read && this.permissions.setupDone)
           },
-          {
-            name: 'Hyper IDE',
-            url: '/hyper-ide',
-            disabled: !(this.permissions.access.files.list_files && this.permissions.access.files.list_folders && this.permissions.setupDone)
-          }
         ],
       },
       {
-        name: 'Settings & security',
+        name: 'Settings',
         url: null,
         expandable: true,
         submenu: [
@@ -330,7 +330,7 @@ export class HeaderComponent implements OnInit {
             disabled: !(this.permissions.access.config.load)
           },
           {
-            name: 'Server keys setting',
+            name: 'Cryptography',
             url: '/server-key-setting',
             disabled: !(this.permissions.access.crypto.import_public_key)
           },
