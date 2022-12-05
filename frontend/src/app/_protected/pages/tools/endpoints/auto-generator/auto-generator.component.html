@@ -251,7 +251,6 @@
           </span>
 
           <input matInput type="text" placeholder="Add URL" [(ngModel)]="secondaryURL">
-          <mat-error></mat-error>
         </mat-form-field>
       </div>
 
@@ -386,7 +385,6 @@
 
   <div class="col-12 d-flex justify-content-end mt-5">
     <button
-      [disabled]="!(tables && tables.length > 0 && selectedTables.value.length > 0)"
       mat-flat-button
       color="primary"
       class="px-5"

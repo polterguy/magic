@@ -189,6 +189,10 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
   }
 
   public generateEndpoints() {
+    if (!(this.tables && this.tables.length > 0 && this.selectedTables.value.length > 0)) {
+      this.generalService.showFeedback('Please select table(s) and try generating endpoints.', 'errorMessage');
+      return;
+    }
     if (this.selectedDatabase !== 'magic') {
       if (this.databases.find((db: any) => db.name === this.selectedDatabase).tables) {
         const subscribers: Observable<LocResult>[] = [];
