@@ -251,7 +251,7 @@ export class HeaderComponent implements OnInit {
         expandable: true,
         submenu: [
           {
-            name: 'Manage databases',
+            name: 'Databases',
             url: '/database-management',
             disabled: !(this.permissions.access.sql.execute_access && this.permissions.setupDone)
           },
@@ -283,7 +283,7 @@ export class HeaderComponent implements OnInit {
         ],
       },
       {
-        name: 'Administration',
+        name: 'Manage',
         url: null,
         expandable: true,
         submenu: [
@@ -298,6 +298,16 @@ export class HeaderComponent implements OnInit {
             disabled: !(this.permissions.access.endpoints.view && this.permissions.setupDone)
           },
           {
+            name: 'Tasks',
+            url: '/tasks',
+            disabled: !(this.permissions.access.tasks.read && this.permissions.setupDone)
+          },
+          {
+            name: 'Hyperlambda Playground',
+            url: '/hyperlambda-playground',
+            disabled: !(this.permissions.access.eval.execute && this.permissions.setupDone)
+          },
+          {
             name: 'Sockets',
             url: '/sockets',
             disabled: !(this.permissions.access.sockets.read && this.permissions.setupDone)
@@ -306,16 +316,6 @@ export class HeaderComponent implements OnInit {
             name: 'Plugins',
             url: '/plugins',
             disabled: !(this.permissions.access.bazar.get_manifests && this.permissions.setupDone)
-          },
-          {
-            name: 'Hyperlambda Playground',
-            url: '/hyperlambda-playground',
-            disabled: !(this.permissions.access.eval.execute && this.permissions.setupDone)
-          },
-          {
-            name: 'Tasks',
-            url: '/tasks',
-            disabled: !(this.permissions.access.tasks.read && this.permissions.setupDone)
           },
         ],
       },
@@ -340,7 +340,7 @@ export class HeaderComponent implements OnInit {
             disabled: !(this.permissions.access.log.read && this.permissions.setupDone)
           },
           {
-            name: 'Endpoints health check',
+            name: 'Health check',
             url: '/endpoints-health-check',
             disabled: !(this.permissions.access.log.read && this.permissions.setupDone)
           }
