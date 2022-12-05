@@ -28,15 +28,15 @@ const routes: Routes = [
         loadChildren: () => import('./_protected/pages/administration/user-roles/_module/users-roles.module').then(m => m.UsersRolesModule)
       },
       {
-        path: 'generated-database',
+        path: 'sql-studio',
         loadChildren: () => import('./_protected/pages/administration/generated-database/_module/g-database.module').then(m => m.GDatabaseModule)
       },
       {
-        path: 'generated-endpoints',
+        path: 'endpoints',
         loadChildren: () => import('./_protected/pages/administration/generated-endpoints/_module/generated-endpoints.module').then(m => m.GeneratedEndpointsModule)
       },
       {
-        path: 'generated-sockets',
+        path: 'sockets',
         loadChildren: () => import('./_protected/pages/administration/generated-sockets/_module/socket.module').then(m => m.SocketModule)
       },
       {
