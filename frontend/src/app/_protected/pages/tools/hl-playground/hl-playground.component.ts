@@ -125,13 +125,18 @@ export class HlPlaygroundComponent implements OnInit, OnDestroy {
     if (editor.getDoc().getValue() === '') {
       return;
     }
+    this.generalService.showLoading();
     const selectedText = this.input.editor.getSelection();
     this.evaluatorService.execute(selectedText == '' ? this.input.hyperlambda : selectedText).subscribe({
       next: (res: Response) => {
         this.output.hyperlambda = res.result;
         this.generalService.showFeedback('Hyperlambda was successfully executed', 'successMessage');
+        this.generalService.hideLoading();
       },
-      error: (error: any) =>  this.generalService.showFeedback(error?.error?.message??error, 'errorMessage', 'Ok', 5000)});
+      error: (error: any) =>  {
+        this.generalService.hideLoading();
+        this.generalService.showFeedback(error?.error?.message??error, 'errorMessage', 'Ok', 5000)}
+      });
   }
 
   public clear() {

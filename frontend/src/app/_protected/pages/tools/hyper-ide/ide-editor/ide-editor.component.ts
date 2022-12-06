@@ -134,7 +134,6 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     }
     this.fileService.saveFile(this.currentFileData.path, this.currentFileData.content).subscribe({
       next: () => {
-        this.markEditorClean();
         this.generalService.showFeedback('File successfully saved', 'successMessage');
         this.getEndpoints.emit();
         // if invoked from closeActiveFile function, the recall to close after saving file.
