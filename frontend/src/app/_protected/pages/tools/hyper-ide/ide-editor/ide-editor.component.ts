@@ -463,6 +463,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
           }
         }
         const dialogRef = this.dialog.open(ExecuteMacroDialogComponent, {
+          width: '500px',
           data: result,
         });
         dialogRef.afterClosed().subscribe((result: MacroDefinition) => {
@@ -525,7 +526,10 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
 
   public openShortkeys() {
     this.dialog.open(ShortkeysComponent, {
-      width: '900px'
+      width: '900px',
+      data: {
+        type: ['full']
+      }
     })
   }
 

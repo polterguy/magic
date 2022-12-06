@@ -1,6 +1,6 @@
 import { Injectable, NgZone } from '@angular/core';
 import CodeMirror from 'codemirror';
-import { ReplaySubject } from 'rxjs';
+import { ReplaySubject, Subject } from 'rxjs';
 import fileTypes from 'src/app/codemirror/file-types.json';
 
 @Injectable({
@@ -13,7 +13,7 @@ export class CodemirrorActionsService {
   // Known file extensions we've got editors for.
   private extensions = fileTypes;
 
-  public action: ReplaySubject<string> = new ReplaySubject();
+  public action: Subject<string> = new Subject();
 
   /**
    *

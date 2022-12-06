@@ -78,10 +78,9 @@ export class HlPlaygroundComponent implements OnInit, OnDestroy {
    * Shows load snippet dialog.
    */
   load() {
-    const dialogRef = this.dialog.open(LoadSnippetDialogComponent, {
+    this.dialog.open(LoadSnippetDialogComponent, {
       width: '550px',
-    });
-    dialogRef.afterClosed().subscribe((filename: string) => {
+    }).afterClosed().subscribe((filename: string) => {
       if (filename) {
         this.evaluatorService.loadSnippet(filename).subscribe({
           next: (content: string) => {
@@ -97,11 +96,14 @@ export class HlPlaygroundComponent implements OnInit, OnDestroy {
    * Shows the save snippet dialog.
    */
   save() {
-    const dialogRef = this.dialog.open(SnippetNameDialogComponent, {
+    if (!this.input?.hyperlambda || this.input?.hyperlambda === '') {
+      this.generalService.showFeedback('Code editor is empty.', 'errorMessage')
+      return;
+    }
+    this.dialog.open(SnippetNameDialogComponent, {
       width: '550px',
       data: this.filename || '',
-    });
-    dialogRef.afterClosed().subscribe((filename: string) => {
+    }).afterClosed().subscribe((filename: string) => {
       if (filename) {
         this.evaluatorService.saveSnippet(filename, this.input.hyperlambda).subscribe({
           next: () => this.generalService.showFeedback('Snippet successfully saved'),
@@ -113,7 +115,11 @@ export class HlPlaygroundComponent implements OnInit, OnDestroy {
   /**
    * Executes the Hyperlambda from the input CodeMirror component.
    */
-  execute() {
+  public execute() {
+    if (!this.input.hyperlambda || this.input.hyperlambda === '') {
+      this.generalService.showFeedback('Insert some code and try executing.', 'errorMessage');
+      return;
+    }
     const domNode = (<any>document.querySelector('.CodeMirror'));
     const editor = domNode.CodeMirror;
     if (editor.getDoc().getValue() === '') {
@@ -138,22 +144,25 @@ export class HlPlaygroundComponent implements OnInit, OnDestroy {
     editor.getDoc().setValue('');
   }
 
-  public saveAsFile() {
-    if (this.output.editor.getValue() === '') {
-      return;
-    }
+  // public saveAsFile() {
+  //   if (this.output.editor.getValue() === '') {
+  //     return;
+  //   }
 
-    this.fileService.saveFile(`/hyperlambda-test--${Date.now()}.hl`, this.output.editor.getValue()).subscribe({
-      next: () => {
-        this.generalService.showFeedback('File successfully saved', 'successMessage');
-      },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
-    });
-  }
+  //   this.fileService.saveFile(`/hyperlambda-test--${Date.now()}.hl`, this.output.editor.getValue()).subscribe({
+  //     next: () => {
+  //       this.generalService.showFeedback('File successfully saved', 'successMessage');
+  //     },
+  //     error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+  //   });
+  // }
 
   public viewShortkeys() {
     this.dialog.open(ShortkeysComponent, {
-      width: '500pc'
+      width: '900px',
+      data: {
+        type: ['save', 'execute']
+      }
     })
   }
 

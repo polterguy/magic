@@ -20,6 +20,10 @@ import { SingleTableConfigComponent } from '../components/single-table-config/si
 // CodeMirror options.
 import hyperlambda from '../../../../../codemirror/options/hyperlambda.json';
 import { CodemirrorActionsService } from '../../hyper-ide/_services/codemirror-actions.service';
+import { MatDialog } from '@angular/material/dialog';
+import { EvaluatorService } from '../../hl-playground/_services/evaluator.service';
+import { LoadSnippetDialogComponent } from 'src/app/_general/components/load-snippet-dialog/load-snippet-dialog.component';
+import { SnippetNameDialogComponent } from 'src/app/_general/components/snippet-name-dialog/snippet-name-dialog.component';
 
 @Component({
   selector: 'app-auto-generator',
@@ -90,7 +94,12 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
 
   public codeMirrorReady: boolean = false;
 
+  private snippetName: string = '';
+  public canLoadSnippet: boolean = undefined;
+  private codemirrorActionsSubscription: Subscription;
+
   constructor(
+    private dialog: MatDialog,
     private logService: LogService,
     private cdr: ChangeDetectorRef,
     private cacheService: CacheService,
@@ -98,6 +107,7 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
     private generalService: GeneralService,
     private crudifyService: CrudifyService,
     private backendService: BackendService,
+    private evaluatorService: EvaluatorService,
     protected transformService: TransformModelService,
     private codemirrorActionsService: CodemirrorActionsService,
     @Inject(LOCALE_ID) public locale: string) { }
@@ -115,6 +125,7 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
 
         this.waitingData();
         this.getOptions();
+        this.watchForActions();
       }
     })
   }
@@ -145,6 +156,8 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
         this.updateRoles.setValue(['root', 'guest']);
         this.deleteRoles.setValue(['root', 'guest']);
         this.createRoles.setValue(['root', 'guest']);
+
+        this.canLoadSnippet = this.backendService.active?.access.sql.list_files;
 
         this.changeDatabase();
         this.cdr.detectChanges();
@@ -416,6 +429,53 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
     })
   }
 
+  /**
+   * Shows load snippet dialog.
+   */
+  public loadSnippet() {
+    if (!this.canLoadSnippet) {
+      this.generalService.showFeedback('You need a proper permission.', 'errorMessage', 'Ok', 5000)
+      return;
+    }
+    this.dialog.open(LoadSnippetDialogComponent, {
+      width: '550px',
+    }).afterClosed().subscribe((filename: string) => {
+      if (filename) {
+        this.evaluatorService.loadSnippet(filename).subscribe({
+          next: (content: string) => {
+            this.hlInput.hyperlambda = content;
+            this.snippetName = filename;
+          },
+          error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
+      }
+    });
+  }
+
+  /**
+   * Shows the save snippet dialog.
+   */
+  private saveSnippet() {
+    if (!this.hlInput?.hyperlambda || this.hlInput?.hyperlambda === '') {
+      this.generalService.showFeedback('Code editor is empty.', 'errorMessage')
+      return;
+    }
+
+    if (!this.backendService.active?.access.sql.save_file) {
+      this.generalService.showFeedback('You need a proper permission.', 'errorMessage', 'Ok', 5000)
+      return;
+    }
+    this.dialog.open(SnippetNameDialogComponent, {
+      width: '550px',
+      data: this.snippetName || '',
+    }).afterClosed().subscribe((filename: string) => {
+      if (filename) {
+        this.evaluatorService.saveSnippet(filename, this.hlInput.hyperlambda).subscribe({
+          next: () => this.generalService.showFeedback('Snippet successfully saved', 'successMessage'),
+          error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
+      }
+    });
+  }
+
   /*
    * Will flush server side cache of endpoints (auth invocations) and re-retrieve these again.
    */
@@ -425,9 +485,29 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
       error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')});
   }
 
+  private watchForActions() {
+    this.codemirrorActionsSubscription = this.codemirrorActionsService.action.subscribe((action: string) => {
+      switch (action) {
+        case 'save':
+          this.saveSnippet();
+          break;
+
+        case 'insertSnippet':
+          this.loadSnippet();
+          break;
+
+        default:
+          break;
+      }
+    })
+  }
+
   ngOnDestroy(): void {
     if (this.dbLoadingSubscription) {
       this.dbLoadingSubscription.unsubscribe();
+    }
+    if (this.codemirrorActionsSubscription) {
+      this.codemirrorActionsSubscription.unsubscribe();
     }
   }
 }

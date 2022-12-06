@@ -8,9 +8,9 @@
               <h3 class="my-0 fw-bold">System configuration</h3>
 
               <div class="d-flex">
-                <button mat-button color="primary" class="reset-mw" (click)="addConnectionString()">Add SMTP</button>
+                <button mat-button color="primary" class="reset-mw" (click)="manageSMTP()">Add SMTP</button>
                 <div class="px-1"></div>
-                <button mat-button color="primary" class="reset-mw" (click)="manageSMTP()">Add connection string</button>
+                <button mat-button color="primary" class="reset-mw" (click)="addConnectionString()">Add connection string</button>
               </div>
             </div>
 
@@ -25,7 +25,7 @@
           </div>
 
           <div class="col-12 d-flex justify-content-end mt-4">
-            <button mat-button color="primary">Reset</button>
+            <button mat-button color="primary" (click)="reset()">Reset</button>
             <div class="px-1"></div>
             <button mat-flat-button color="primary" class="px-5" (click)="save()">Save</button>
           </div>

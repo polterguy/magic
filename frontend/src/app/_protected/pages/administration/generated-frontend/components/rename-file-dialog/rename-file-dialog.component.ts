@@ -6,6 +6,7 @@
 // Angular and system imports.
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { GeneralService } from 'src/app/_general/services/general.service';
 
 /**
  * Model encapsulating name of file you want to rename.
@@ -40,6 +41,7 @@ export class RenameFileDialogComponent {
    * @param data Name of file you want to rename
    */
   constructor(
+    private generalService: GeneralService,
     public dialogRef: MatDialogRef<RenameFileDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: FileObjectName) {
     this.originalName = data.name;
@@ -49,6 +51,14 @@ export class RenameFileDialogComponent {
    * Invoked when user wants to close dialog and rename file.
    */
   ok() {
+    if (!this.pathValid()) {
+      this.generalService.showFeedback('Name is required and cannot contain blank space or special characters.', 'errorMessage', 'Ok', 5000);
+      return;
+    }
+    if (this.data.name === this.originalName) {
+      this.generalService.showFeedback('New name cannot be the same as the current name.', 'errorMessage', 'Ok', 5000);
+      return;
+    }
     this.dialogRef.close(this.data);
   }
 

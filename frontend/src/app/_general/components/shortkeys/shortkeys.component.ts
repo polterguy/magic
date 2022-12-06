@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 interface Keys {
@@ -13,16 +13,45 @@ interface Keys {
 })
 export class ShortkeysComponent implements OnInit {
 
-  public shortkeys: Keys[] = shortkeys;
+  public shortkeys: Keys[] = fixKeys;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data) { }
+  constructor(@Inject(MAT_DIALOG_DATA) public data: { type: string[] }) { }
 
   ngOnInit(): void {
+    this.prepareData();
   }
 
+  private prepareData() {
+    if (this.data.type.indexOf('save') > -1) {
+      this.shortkeys = [
+        ...this.shortkeys,
+        {
+          name: 'Save',
+          key: 'Alt + S'
+        }
+
+      ];
+    }
+    if (this.data.type.indexOf('execute') > -1) {
+      this.shortkeys = [
+        ...this.shortkeys,
+        {
+          name: 'Execute',
+          key: 'F5'
+        }
+      ];
+    }
+    if (this.data.type.indexOf('full') > -1) {
+      this.shortkeys = [
+        ...this.shortkeys,
+        ...fullkeys
+      ]
+console.log(this.shortkeys)
+    }
+  }
 }
 
-const shortkeys: Keys[] = [
+const fixKeys: Keys[] = [
   {
     name: 'Toggle fullscreen',
     key: 'Alt + M'
@@ -50,7 +79,11 @@ const shortkeys: Keys[] = [
   {
     name: 'Jump to line',
     key: 'Alt + G'
-  },
+  }
+]
+
+const fullkeys: Keys[] = [
+
   {
     name: 'Save File',
     key: 'Alt + S'
@@ -59,10 +92,10 @@ const shortkeys: Keys[] = [
     name: 'Execute File',
     key: 'F5'
   },
-  // {
-  //   name: 'Preview File',
-  //   key: 'ALT + P'
-  // },
+  {
+    name: 'Preview File',
+    key: 'ALT + P'
+  },
   {
     name: 'Insert snippet',
     key: 'ALT + V'

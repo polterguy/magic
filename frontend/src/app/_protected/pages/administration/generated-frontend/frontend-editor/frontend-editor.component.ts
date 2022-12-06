@@ -517,7 +517,10 @@ export class FrontendEditorComponent implements OnInit, AfterViewInit, OnDestroy
 
   public openShortkeys() {
     this.dialog.open(ShortkeysComponent, {
-      width: '900px'
+      width: '900px',
+      data: {
+        type: ['full']
+      }
     })
   }
 

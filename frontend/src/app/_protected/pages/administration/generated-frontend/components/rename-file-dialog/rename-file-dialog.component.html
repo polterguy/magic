@@ -15,8 +15,10 @@
         [(ngModel)]="data.name"
         name="-">
       </mat-form-field>
-      <mat-hint *ngIf="!pathValid()" class="warning">Name is required and cannot contain blank space or special characters.</mat-hint>
-      <mat-hint *ngIf="data.name === originalName" class="warning">New name cannot be the same as the current name.</mat-hint>
+      <mat-hint *ngIf="(data.name && !pathValid()) || data.name === originalName">
+        <span *ngIf="!pathValid()">Name is required and cannot contain blank space or special characters.</span>
+        <span *ngIf="data.name === originalName">New name cannot be the same as the current name.</span>
+      </mat-hint>
 
   </div>
 
@@ -25,7 +27,6 @@
 
     <button
       mat-flat-button
-      [disabled]="data.name === originalName || !pathValid()"
       color="primary"
       type="submit"
       (click)="ok()">Rename</button>
