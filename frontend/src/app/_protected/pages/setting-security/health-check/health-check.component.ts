@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { bufferCount, concatMap, forkJoin, from, Observable } from 'rxjs';
+import { bufferCount, catchError, concatMap, forkJoin, from, Observable } from 'rxjs';
 import { Model } from 'src/app/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 import { Response } from 'src/app/_protected/models/common/response.model';
 import { GeneralService } from 'src/app/_general/services/general.service';
@@ -12,6 +12,7 @@ import hyperlambda from 'src/app/codemirror/options/hyperlambda.json';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { TestHealthContentDialogComponent } from '../../setting-security/health-check/components/test-health-content-dialog/test-health-content-dialog.component';
+import { Sort } from '@angular/material/sort';
 
 /*
  * Test model encapsulating a single test, and possibly its result.
@@ -202,11 +203,11 @@ export class HealthCheckComponent implements OnInit {
     // Measuring time tests requires to execute
     const startTime = new Date();
     let timeDiff: number = null;
-
+    this.generalService.showLoading();
     from(this.dataSource.map(x => this.assumptionService.execute(x.filename)))
       .pipe(
         bufferCount(parallellNo),
-        concatMap(buffer => forkJoin(buffer))).subscribe({
+        concatMap((buffer: any) => forkJoin(buffer))).subscribe({
           next: (results: any) => {
             const endTime = new Date();
             timeDiff = endTime.getTime() - startTime.getTime();
@@ -237,10 +238,12 @@ export class HealthCheckComponent implements OnInit {
 
           },
           complete: () => {
-
+            this.generalService.hideLoading();
             this.filterTests(timeDiff);
           }
         });
+
+
   }
 
   /*
@@ -257,10 +260,9 @@ export class HealthCheckComponent implements OnInit {
       this.generalService.showFeedback('All tests succeeded' + (timeDiff !== null ? ' in ' + new Intl.NumberFormat('en-us').format(timeDiff) + ' milliseconds' : ''), 'successMessage', 'Ok', 5000);
 
     } else {
-
+      this.generalService.hideLoading();
       // One or more tests failed, removing all successful tests.
-      this.generalService.showFeedback('One or more assumptions failed!', 'errorMessage', 'Ok', 5000);
-      this.dataSource = this.dataSource.filter(x => x.success !== true);
+      this.generalService.showFeedback('One or more tests failed!', 'errorMessage', 'Ok', 5000);
     }
   }
 
@@ -272,4 +274,28 @@ export class HealthCheckComponent implements OnInit {
     }
   }
 
+  sortData(sort: Sort) {
+    const data = this.originalDataSource.slice();
+    if (!sort.active || sort.direction === '') {
+      this.dataSource = data;
+      return;
+    }
+
+    this.dataSource = data.sort((a: any, b: any) => {
+      const isAsc = sort.direction === 'asc';
+      switch (sort.active) {
+        case 'name':
+          return compare(a.name, b.name, isAsc);
+        case 'status':
+          return compare(a.status, b.status, isAsc);
+
+        default:
+          return 0;
+      }
+    });
+  }
+}
+
+function compare(a: number | string, b: number | string, isAsc: boolean) {
+  return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
 }

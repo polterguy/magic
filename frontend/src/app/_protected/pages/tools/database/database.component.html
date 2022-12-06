@@ -3,12 +3,16 @@
     <mat-tab-group mat-stretch-tabs dynamicHeight animationDuration="0ms" #tabs>
       <mat-tab>
         <ng-template mat-tab-label>Add <span class="d-sm-inline d-none px-1">new</span> database</ng-template>
-        <app-add-new-database #dbComponent></app-add-new-database>
+        <ng-template matTabContent>
+          <app-add-new-database (dbTypes)="passDbTypesToParent($event)"></app-add-new-database>
+        </ng-template>
       </mat-tab>
       <mat-tab>
         <ng-template mat-tab-label>Connect <span class="d-sm-inline d-none ps-1">to database</span></ng-template>
-        <app-connect
-          [databaseTypes]="dbComponent.databaseTypes"></app-connect>
+        <ng-template matTabContent>
+          <app-connect
+            [databaseTypes]="databaseTypes"></app-connect>
+        </ng-template>
       </mat-tab>
     </mat-tab-group>
 

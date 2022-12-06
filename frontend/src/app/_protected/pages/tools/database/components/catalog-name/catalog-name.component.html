@@ -1,0 +1,23 @@
+<h3 mat-dialog-title>Give your catalog a name</h3>
+
+<form>
+  <div mat-dialog-content>
+    <mat-form-field class="w-100">
+      <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        <mat-icon>database</mat-icon>
+        <span class="text-muted">|</span>
+      </span>
+
+      <input matInput type="text" [(ngModel)]="name" name="-" placeholder="Catalog name">
+    </mat-form-field>
+  </div>
+
+  <div mat-dialog-actions [align]="'end'">
+    <button mat-button mat-dialog-close color="primary" type="button">Cancel</button>
+    <button mat-flat-button color="primary" class="px-5" type="submit"
+      (click)="save()"
+      [disabled]="waitingCreation">
+      Save
+    </button>
+  </div>
+</form>

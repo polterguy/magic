@@ -1,8 +1,11 @@
 import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject } from 'rxjs';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { BackendService } from 'src/app/_protected/services/common/backend.service';
 import { ConfigService } from 'src/app/_protected/services/common/config.service';
+import { CatalogNameComponent } from '../components/catalog-name/catalog-name.component';
+import { ViewDbListComponent } from '../components/view-db-list/view-db-list.component';
 import { SqlService } from '../_services/sql.service';
 
 @Component({
@@ -42,18 +45,20 @@ export class ConnectComponent implements OnInit {
    /**
     * List of connected databases.
     */
-  private _databases: BehaviorSubject<any> = new BehaviorSubject<any>([]);
-  public databases = this._databases.asObservable();
+  public databases: any = [];
+
+  private loopIndex: number = 1;
 
   private configFile: any = {};
 
   public waitingTest: boolean = false;
 
-  displayedColumns: string[] = ['dbName', 'dbType', 'cString', 'actions'];
+  displayedColumns: string[] = ['dbType', 'cString', 'status', 'actions'];
 
   public isLoading: boolean = true;
 
   constructor(
+    private dialog: MatDialog,
     private cdr: ChangeDetectorRef,
     private sqlService: SqlService,
     private configService: ConfigService,
@@ -191,38 +196,84 @@ export class ConnectComponent implements OnInit {
     this.configService.loadConfig().subscribe({
       next: (res: any) => {
         this.configFile = res.magic;
-        this.getDatabasesDetails();
-      },
-      error: (error: any) => this.generalService.showFeedback('Something went wrong, please refresh the page.', 'errorMessage')});
-  }
 
-  private getDatabasesDetails() {
-    let databases: any = [];
-    this.databaseTypes.forEach((type: string) => {
-      for (const key in this.configFile.databases[type]) {
-        this.sqlService.getDatabaseMetaInfo(type, key).subscribe({
-          next: (res: any) => {
-            for (const el of res.databases) {
+        let databases: any = [];
+        this.dbTypes.forEach((type: any) => {
+          for (const key in this.configFile.databases[type.type]) {
+            this.getStatus(type.type, this.configFile.databases[type.type][key]).then((res: string) => {
               databases.push({
-                dbName: el.name,
-                dbType: type,
-                cString: this.configFile.databases[type][key],
-                status: '',
-                cStringKey: key
+                dbType: type.name,
+                dbTypeValue: type.type,
+                cString: this.configFile.databases[type.type][key],
+                status: res,
+                cStringKey: key,
+                isClicked: false
               });
-              this._databases.next(databases.sort((a: any ,b: any) => a.dbName.localeCompare(b.dbName)));
-            }
-            this.isLoading = false;
-          },
-          error: (error: any) => {this._databases.next(databases); }
-        })
-      }
+              this.databases = [...databases];
+            })
+          }
+        });
+
+      },
+      error: (error: any) => this.generalService.showFeedback('Something went wrong, please refresh the page.', 'errorMessage')
     });
-    this.cdr.detectChanges();
   }
 
-  public viewItem(item: any) {
-    // TODO: navigate to generated databases
-    // to see all the tables.
+  private getStatus(databaseType: string, connectionString: string) {
+    return new Promise(resolve => {
+      const data: any = {
+        databaseType: databaseType,
+        connectionString: connectionString,
+      };
+      this.configService.connectionStringValidity(data).subscribe({
+        next: (res: any) => {
+          resolve('Live')
+        },
+        error: (res: any) => {
+          resolve('Down')
+        },
+        complete:()=>{
+          let count = this.loopIndex++;
+          if(count === this.dbTypes.length) {
+            this.isLoading = false;
+          }
+        }
+      })
+    })
+  }
+
+  public getDatabasesList(item: any) {
+    item.isClicked = true;
+    this.generalService.showLoading();
+    this.sqlService.getDatabaseMetaInfo(item.dbTypeValue, item.cStringKey).subscribe({
+      next: (res: any) => {
+        if (res) {
+          this.dialog.open(ViewDbListComponent, {
+            width: '800px',
+            autoFocus: false,
+            data: {
+              list: res.databases,
+              item: item
+            }
+          })
+        } else {
+          this.generalService.showFeedback('No database was found.', null, 'Ok', 4000);
+        }
+        item.isClicked = false;
+        this.generalService.hideLoading();
+      },
+      error: (error: any) => {
+        this.generalService.showFeedback('Something went wrong, please try again later.', 'errorMessage');
+        item.isClicked = false;
+        this.generalService.hideLoading();
+      }
+    })
+  }
+
+  public createCatalog(item: any) {
+    this.dialog.open(CatalogNameComponent, {
+      width: '500px',
+      data: item
+    });
   }
 }

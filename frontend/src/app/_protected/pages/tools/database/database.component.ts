@@ -7,9 +7,15 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DatabaseComponent implements OnInit {
 
+  public databaseTypes: any;
+
   constructor() { }
 
   ngOnInit(): void {
+
   }
 
+  public passDbTypesToParent(event: string[]) {
+    this.databaseTypes = event;
+  }
 }

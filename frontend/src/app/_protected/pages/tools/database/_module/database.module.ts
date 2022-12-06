@@ -9,6 +9,8 @@ import { SharedModule } from 'src/app/shared.module';
 import { ViewDbComponent } from '../components/view-db/view-db.component';
 import { ConnectComponent } from '../connect/connect.component';
 import { AddNewDatabaseComponent } from '../add-new-database/add-new-database.component';
+import { ViewDbListComponent } from '../components/view-db-list/view-db-list.component';
+import { CatalogNameComponent } from '../components/catalog-name/catalog-name.component';
 
 
 
@@ -17,7 +19,9 @@ import { AddNewDatabaseComponent } from '../add-new-database/add-new-database.co
     DatabaseComponent,
     AddNewDatabaseComponent,
     ConnectComponent,
-    ViewDbComponent
+    ViewDbComponent,
+    ViewDbListComponent,
+    CatalogNameComponent
   ],
   imports: [
     CommonModule,
