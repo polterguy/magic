@@ -21,6 +21,7 @@ import sql from '../../../../../codemirror/options/sql.json';
 import { BackendService } from 'src/app/_protected/services/common/backend.service';
 import { MessageService } from 'src/app/_protected/services/common/message.service';
 import { CodemirrorActionsService } from '../../hyper-ide/_services/codemirror-actions.service';
+import { SnippetNameDialogComponent } from 'src/app/_general/components/snippet-name-dialog/snippet-name-dialog.component';
 
 @Component({
   selector: 'app-manual-generator',
@@ -91,6 +92,7 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
   public waiting: boolean = false;
 
   public codeMirrorReady: boolean = false;
+  private codemirrorActionsSubscription: Subscription;
 
   /**
    * Input SQL component model and options.
@@ -130,6 +132,7 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
 
         this.waitingData();
         this.getOptions();
+        this.watchForActions();
       }
     })
   }
@@ -215,12 +218,15 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
   /**
    * Opens the load snippet dialog, to allow user to select a previously saved snippet.
    */
-   loadSnippet() {
-    const dialogRef = this.dialog.open(SqlSnippetDialogComponent, {
+  public loadSnippet() {
+    if (!this.canLoadSnippet) {
+      this.generalService.showFeedback('You need a proper permission.', 'errorMessage', 'Ok', 5000)
+      return;
+    }
+    this.dialog.open(SqlSnippetDialogComponent, {
       width: '550px',
       data: this.selectedDbType,
-    });
-    dialogRef.afterClosed().subscribe((filename: string) => {
+    }).afterClosed().subscribe((filename: string) => {
       if (filename) {
         this.sqlService.loadSnippet(this.selectedDbType, filename).subscribe({
           next: (content: string) => {
@@ -232,10 +238,44 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
     });
   }
 
+  private saveSnippet() {
+    if (!this.sql?.sql || this.sql?.sql === '') {
+      this.generalService.showFeedback('Write an SQL command and then save it.', 'errorMessage')
+      return;
+    }
+
+    if (!this.backendService.active?.access.sql.save_file) {
+      this.generalService.showFeedback('You need a proper permission.', 'errorMessage', 'Ok', 5000)
+      return;
+    }
+
+    this.dialog.open(SnippetNameDialogComponent, {
+      width: '550px',
+      data: ''
+    }).afterClosed().subscribe((filename: string) => {
+      if (filename) {
+        this.generalService.showLoading();
+        this.sqlService.saveSnippet(
+          this.selectedDbType,
+          filename,
+          this.sql.sql).subscribe(
+            {
+              next: () => {
+                this.generalService.showFeedback('SQL snippet successfully saved.', 'successMessage');
+                this.generalService.hideLoading();
+              }, error: (error: any) => {
+                this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
+                this.generalService.hideLoading();
+              }
+            });
+      }
+    });
+  }
+
   /**
    * Generates your SQL endpoint.
    */
-   generate() {
+  public generate() {
     const hasTables = this.databases.find((item: any) => item.name === this.selectedDatabase).tables !== null;
     if (!hasTables) {
       this.generalService.showFeedback('Please create tables in the selected database.', 'errorMessage', 'Ok', 5000);
@@ -292,13 +332,36 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
 
   public viewShortkeys() {
     this.dialog.open(ShortkeysComponent, {
-      width: '500pc'
+      width: '900px',
+      data: {
+        type: ['save']
+      }
+    })
+  }
+
+  private watchForActions() {
+    this.codemirrorActionsSubscription = this.codemirrorActionsService.action.subscribe((action: string) => {
+      switch (action) {
+        case 'save':
+          this.saveSnippet();
+          break;
+
+        case 'insertSnippet':
+          this.loadSnippet();
+          break;
+
+        default:
+          break;
+      }
     })
   }
 
   ngOnDestroy(): void {
     if (this.dbLoadingSubscription) {
       this.dbLoadingSubscription.unsubscribe();
+    }
+    if (this.codemirrorActionsSubscription) {
+      this.codemirrorActionsSubscription.unsubscribe();
     }
   }
 }

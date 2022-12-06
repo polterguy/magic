@@ -16,3 +16,9 @@
 .fill-width {
   width: calc(100% - 1rem);
 }
+
+::ng-deep .custom-fields {
+  .mat-form-field-flex {
+    align-items: flex-start;
+  }
+}

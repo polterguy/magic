@@ -3,20 +3,20 @@
 
 <div mat-dialog-content>
 
-  <p class="description">{{data.description}}</p>
+  <p class="text-muted">{{data.description}}</p>
 
-  <div class="arguments" *ngFor="let idx of data.arguments">
+  <div *ngFor="let idx of data.arguments">
 
     <mat-form-field
       *ngIf="idx.type === 'string'"
       class="w-100 prefix-alignment">
-      <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+      <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2"
+      [matTooltip]="idx.description">
         {{idx.name}}
-        <span class="text-muted">|</span>
+        <span class="text-muted ms-1">|</span>
       </span>
       <input
         type="text"
-        [matTooltip]="idx.description"
         matInput
         autocomplete="off"
         [(ngModel)]="idx.value">
@@ -24,13 +24,13 @@
 
     <mat-form-field
       *ngIf="idx.type === 'multi_string'"
-      class="w-100 custom-alignment">
-      <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+      class="w-100 prefix-alignment custom-fields">
+      <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2 mt-2"
+      [matTooltip]="idx.description">
         {{idx.name}}
-        <span class="text-muted">|</span>
+        <span class="text-muted ms-1">|</span>
       </span>
       <textarea
-        [matTooltip]="idx.description"
         matInput
         rows="4"
         autocomplete="off"
@@ -46,14 +46,12 @@
   <button mat-button mat-dialog-close>Close</button>
 
   <button
-    mat-flat-button
-    matTooltip="Select a different macro"
-    (click)="differentMacro()">Select</button>
+    mat-button
+    (click)="differentMacro()">Change macro</button>
 
   <button
       mat-flat-button
       color="primary"
-      [disabled]="!canExecute()"
       (click)="execute()">Execute</button>
 
 </div>

@@ -6,6 +6,7 @@
 // Angular and system imports.
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { GeneralService } from 'src/app/_general/services/general.service';
 
 /**
  * Model encapsulating name of folder you want to rename.
@@ -45,6 +46,7 @@ export class RenameFolderDialogComponent {
    * @param data Name of folder you want to rename
    */
   constructor(
+    private generalService: GeneralService,
     public dialogRef: MatDialogRef<RenameFolderDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: FolderObjectName) {
     let name = data.name.substring(0, data.name.length - 1);
@@ -59,6 +61,14 @@ export class RenameFolderDialogComponent {
   ok() {
     // let newName = this.data.name.substring(0, this.data.name.length - 1);
     // newName = newName.substring(0, newName.lastIndexOf('/')) + '/' + this.newName + '/';
+    if (!this.pathValid()) {
+      this.generalService.showFeedback('Name is required and cannot contain blank space or special characters.', 'errorMessage', 'Ok', 5000);
+      return;
+    }
+    if (this.data.name === this.originalName) {
+      this.generalService.showFeedback('New name cannot be the same as the current name.', 'errorMessage', 'Ok', 5000);
+      return;
+    }
     this.data.name = this.newName;
     this.dialogRef.close(this.newName);
   }

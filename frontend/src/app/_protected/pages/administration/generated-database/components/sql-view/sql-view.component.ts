@@ -120,7 +120,7 @@ export class SqlViewComponent implements OnInit, OnDestroy {
   }
 
   public save() {
-    if (!this.input.sql && this.input.sql === '') {
+    if (!this.input?.sql && this.input.sql === '') {
       this.generalService.showFeedback('Write an SQL command and then save it.', 'errorMessage', 'Ok', 5000)
       return;
     }
@@ -168,7 +168,7 @@ export class SqlViewComponent implements OnInit, OnDestroy {
   /**
    * Executes the current SQL towards your backend.
    */
-  public execute() {console.log(this.safeMode)
+  public execute() {
     if (!this.input.sql && this.input.sql === '') {
       this.generalService.showFeedback('Write an SQL command and then save it.', 'errorMessage', 'Ok', 5000)
       return;
@@ -280,7 +280,10 @@ export class SqlViewComponent implements OnInit, OnDestroy {
 
   public viewShortkeys() {
     this.dialog.open(ShortkeysComponent, {
-      width: '900px'
+      width: '900px',
+      data: {
+        type: ['save', 'execute']
+      }
     })
   }
 

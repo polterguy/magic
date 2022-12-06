@@ -375,7 +375,15 @@
   <ng-container *ngIf="selectedTables.value.length === 1">
     <!-- 8 - Additional -->
     <div class="col-12 mt-5">
-      <p class="fw-bold">Step 8 - Additional POST/PUT Hyperlambda</p>
+      <div class="d-flex justify-content-between align-items-center">
+        <p class="fw-bold mb-0">Step 8 - Additional POST/PUT Hyperlambda</p>
+        <div>
+          <button mat-button color="primary" (click)="viewShortkeys()">Shortkeys</button>
+          <button mat-button color="primary"
+            (click)="loadSnippet()"
+            [disabled]="!canLoadSnippet">Snippets</button>
+        </div>
+      </div>
     </div>
     <div class="col-12">
       <app-codemirror-hyperlambda [(model)]="hlInput" class="codemirror-container" *ngIf="codeMirrorReady"></app-codemirror-hyperlambda>

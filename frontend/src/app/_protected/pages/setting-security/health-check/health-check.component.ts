@@ -207,7 +207,7 @@ export class HealthCheckComponent implements OnInit {
       .pipe(
         bufferCount(parallellNo),
         concatMap(buffer => forkJoin(buffer))).subscribe({
-          next: (results:any) => {
+          next: (results: any) => {
             const endTime = new Date();
             timeDiff = endTime.getTime() - startTime.getTime();
 
@@ -223,7 +223,7 @@ export class HealthCheckComponent implements OnInit {
             }
           },
           error: (error: any) => {
-            this.generalService.showFeedback(error?.error?.message??error, 'errorMessage');
+            this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
 
             /*
              * Filtering out tests according to result,
@@ -239,7 +239,8 @@ export class HealthCheckComponent implements OnInit {
           complete: () => {
 
             this.filterTests(timeDiff);
-          }});
+          }
+        });
   }
 
   /*

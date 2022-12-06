@@ -29,6 +29,7 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
    * Raw configuration settings as returned from backend.
    */
   public config: string = '';
+  public originalConfig: string = '';
 
   /**
    * By default Ctrl-Z removes all the text from the editor, if there is no more changed to undo,
@@ -73,6 +74,7 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     this.configService.loadConfig().subscribe({
       next: (res: any) => {
         this.config = JSON.stringify(res, null, 2);
+        this.originalConfig = JSON.stringify(res, null, 2);
         if (res) {
           this.configExists = true;
           this.activatedRoute.queryParams.subscribe((params: any) => {
@@ -84,6 +86,10 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
         }
       },
       error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
+  }
+
+  public reset() {
+    this.config = this.originalConfig;
   }
 
   /**
