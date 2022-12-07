@@ -33,6 +33,6 @@ remove-nodes:x:@json2lambda/*/magic/*/databases/*/{@.arguments/*/databaseType}/*
 lambda2json:x:@json2lambda/*
 config.save:x:-
 
-// Success, connetion string is valid.
+// Success, connetion string deleted.
 return
    result:success
