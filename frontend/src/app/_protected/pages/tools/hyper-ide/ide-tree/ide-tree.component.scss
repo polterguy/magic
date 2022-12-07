@@ -67,6 +67,11 @@
     }
   }
 
+  .file-node {
+    button:first-child {
+      padding-left: 30px !important;
+    }
+  }
   .mat-tree-node {
     min-height: 38px;
     width: 100%;
