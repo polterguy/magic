@@ -46,6 +46,10 @@ export class EndpointsListComponent implements OnInit {
     })();
   }
 
+  public panelExpanded(el: any) {
+    el.expanded = true;
+  }
+
   getPath(path: string) {
     return path.split('?')[0];
   }
