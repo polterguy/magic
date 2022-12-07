@@ -37,9 +37,9 @@
           <!-- Tree nodes for files -->
           <mat-tree-node
             *matTreeNodeDef="let file"
-            [class]="currentFileData?.path === file.node.path ? 'active-file' : 'node'"
+            [class]="currentFileData?.path === file.node.path ? 'active-file file-node' : 'node file-node'"
             matTreeNodePadding
-            [matTreeNodePaddingIndent]="30"
+            [matTreeNodePaddingIndent]="10"
             level="level"
             class="justify-content-between"
             [class.d-none]="filterLeafNode(file, (searchKey|async))">
@@ -75,7 +75,7 @@
             [class.text-danger]="folder.node.systemFile"
             level="level"
             matTreeNodePadding
-            matTreeNodePaddingIndent="30" [isExpanded]="activeFolder === folder.node.path"
+            matTreeNodePaddingIndent="10" [isExpanded]="activeFolder === folder.node.path"
             class="justify-content-betwee"
             [class.d-none]="filterParentNode(folder, (searchKey|async))">
             <div class="w-100 h-100 flex-nowrap align-items-center d-{{showRenameBox !== folder ? 'flex' : 'none'}}">
