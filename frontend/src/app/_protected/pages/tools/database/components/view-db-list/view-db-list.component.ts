@@ -29,7 +29,14 @@ export class ViewDbListComponent implements OnInit {
         description_extra: `You are deleting the following database: <br/> <span class="fw-bold">${item.name}</span> <br/><br/> Do you want to continue?`,
         action_btn: 'Delete',
         action_btn_color: 'warn',
-        bold_description: true
+        bold_description: true,
+        extra: {
+          details: item,
+          action: 'confirmInput',
+          fieldToBeTypedTitle: `Database's name`,
+          fieldToBeTypedValue: item.name,
+          icon: 'database',
+        }
       }
     }).afterClosed().subscribe((result: string) => {
       if (result === 'confirm') {

@@ -82,7 +82,7 @@ export class AddFieldComponent implements OnInit {
   }
 
   public changeColumnName() {
-    this.formData.columnName = this.formData.foreignField + '_column';
+    this.formData.columnName = this.formData.foreignField;
   }
 
   public tabsCahnged(event: any) {
