@@ -1,6 +1,6 @@
 
 /*
- * Tests the specified connection string.
+ * Adds the specified connection string.
  * 
  * Arguments;
  * - [databaseType] - Database type, typically 'mssql' or 'mysql'.
@@ -8,16 +8,18 @@
  */
 .arguments
    databaseType:string
+   name:string
    connectionString:string
-.description:Tests the specified connection string, making sure the backend can somehow actually connect to the database
+.description:Adds the specified connection string, making sure the backend can somehow actually connect to the database
 .type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
 // Sanity checking invocation.
-validators.mandatory:x:@.arguments/*/connectionString
 validators.mandatory:x:@.arguments/*/databaseType
+validators.mandatory:x:@.arguments/*/name
+validators.mandatory:x:@.arguments/*/connectionString
 validators.enum:x:@.arguments/*/databaseType
    .:mysql
    .:pgsql
@@ -59,6 +61,30 @@ try
             .:postgres
          pgsql.connect:x:@strings.replace
             pgsql.select:select datname from pg_database
+
+   // Loading config file such that we can add connection string to current configuration.
+   config.load
+   json2lambda:x:-
+
+   // Verifying that section exists.
+   if
+      not-exists:x:@json2lambda/*/magic/*/databases/*/{@.arguments/*/databaseType}
+      .lambda
+         set-name:x:+/*/*
+            get-value:x:@.arguments/*/databaseType
+         add:x:@json2lambda/*/magic/*/databases
+            .
+               foo
+
+   // Adding actual connection string to section.
+   set-name:x:+/+/*/*
+      get-value:x:@.arguments/*/name
+   unwrap:x:+/*/*
+   add:x:@json2lambda/*/magic/*/databases/*/{@.arguments/*/databaseType}
+      .
+         foo:x:@.arguments/*/connectionString
+   lambda2json:x:@json2lambda/*
+   config.save:x:-
 
    // Success, connetion string is valid.
    return
