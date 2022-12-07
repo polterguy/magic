@@ -4,7 +4,8 @@
  * 
  * Arguments;
  * - [databaseType] - Database type, typically 'mssql' or 'mysql'.
- * - [connectionString] - Connection string to test.
+ * - [name] - Name of connection string.
+ * - [connectionString] - Connection string to add.
  */
 .arguments
    databaseType:string
