@@ -99,11 +99,40 @@ export class HeaderComponent implements OnInit {
     }
 
   public getPermissions() {
+    // TODO:
 
-    (async () => {
-      while (!(this.backendService?.active && this.backendService?.active?.access && Object.keys(this.backendService?.active?.access?.auth ?? {}).length > 0))
-        await new Promise(resolve => setTimeout(resolve, 100));
+    // (async () => {
+    //   while (!(this.backendService?.active && this.backendService?.active?.access && Object.keys(this.backendService?.active?.access?.auth ?? {}).length > 0))
+    //     await new Promise(resolve => setTimeout(resolve, 100));
 
+    //   if ((this.backendService?.active?.access && Object.keys(this.backendService?.active?.access?.auth).length > 0)) {
+    //     this.permissions = this.backendService.active;
+    //     this.username = this.permissions.token ? this.permissions.token['_username'] : 'anonymous';
+    //     this.backendService.active ? this.activeUrl = this.backendService.active.url.replace('http://', '').replace('https://', '') : this.activeUrl = 'not connected';
+    //     this.backendList = this.backendService.backends;
+
+    //     console.log(this.backendService)
+
+    //     const notAuthorized: boolean = (!this.backendService.active || Object.values(this.backendService.active.access.auth ?? {}).every((item: any) => { return item === false }))
+
+    //     if (notAuthorized || this.backendService.active.token === null) {
+    //       this.router.navigate(['/authentication/login']);
+    //     }
+
+    //     this.createMenu();
+    //     this.getSetupStatus();
+    //   } else {
+    //     console.log(this.backendService)
+    //     const notAuthorized: boolean = (!this.backendService.active || Object.values(this.backendService.active.access.auth ?? {}).every((item: any) => { return item === false }))
+
+    //     if (notAuthorized || this.backendService.active.token === null) {
+    //       this.router.navigate(['/authentication/login']);
+    //     }
+    //   }
+    // })();
+
+    setTimeout(() => {
+      console.log(this.backendService)
       if ((this.backendService?.active?.access && Object.keys(this.backendService?.active?.access?.auth).length > 0)) {
         this.permissions = this.backendService.active;
         this.username = this.permissions.token ? this.permissions.token['_username'] : 'anonymous';
@@ -127,15 +156,6 @@ export class HeaderComponent implements OnInit {
         if (notAuthorized || this.backendService.active.token === null) {
           this.router.navigate(['/authentication/login']);
         }
-      }
-    })();
-
-    setTimeout(() => {
-      console.log(this.backendService)
-      const notAuthorized: boolean = (!this.backendService.active || Object.values(this.backendService.active.access.auth ?? {}).every((item: any) => { return item === false }))
-
-      if (notAuthorized || this.backendService.active.token === null) {
-        this.router.navigate(['/authentication/login']);
       }
     }, 3000);
   }

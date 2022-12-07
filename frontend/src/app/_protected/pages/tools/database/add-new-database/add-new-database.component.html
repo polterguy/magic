@@ -93,7 +93,7 @@
               routerLink="/sql-studio"
               [queryParams]="{dbType: element.type, dbName: element.name, dbCString: element.connectionString}">View</button>
             <button mat-button color="warn" class="ps-0"
-              (click)="deleteDb(element.name)"
+              (click)="deleteDb(element)"
               [disabled]="element.name === 'magic'">Delete</button>
             <button mat-button color="primary" class="px-0"
               routerLink="/endpoint-generator"

@@ -189,19 +189,30 @@ export class ConnectComponent implements OnInit {
         description_extra: `You are deleting the following connection string: <br/> <span class="fw-bold">${item.cStringKey}</span> from ${item.dbType}.<br/><br/> Do you want to continue?`,
         action_btn: 'Delete',
         action_btn_color: 'warn',
-        bold_description: true
+        bold_description: true,
+        extra: {
+          details: item,
+          action: 'confirmInput',
+          fieldToBeTypedTitle: `Connection string's name`,
+          fieldToBeTypedValue: item.cStringKey,
+          icon: 'conversion_path',
+        }
       }
     }).afterClosed().subscribe((result: string) => {
       if (result === 'confirm') {
-        for (const key in this.configFile.databases) {
-          if (key === item.dbTypeValue) {
-            delete this.configFile.databases[key][item.cStringKey]
+        item.isClicked = true;
+        this.sqlService.deleteConnectionString(item.dbTypeValue, item.cStringKey).subscribe({
+          next: () => {
+            item.isClicked = false;
+            this.generalService.showFeedback('Successfully deleted.', 'successMessage');
+            this.databases = this.databases.filter((el: any) => item !== el);
+            this.cdr.detectChanges();
+          },
+          error: (error: any) => {
+            item.isClicked = false;
+            this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
           }
-        }
-        console.log(this.configFile)
-        // this.configFile = JSON.stringify(selectedDb, null, 2);
-
-
+        });
       }
     })
   }

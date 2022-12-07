@@ -302,22 +302,29 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
     })
   }
 
-  public deleteDb(dbName: string) {
+  public deleteDb(item: any) {
     this.dialog.open(ConfirmationDialogComponent, {
       width: '500px',
       data: {
         title: `Delete database`,
-        description_extra: `You are deleting the following database: <br/> <span class="fw-bold">${dbName}</span> <br/><br/> Do you want to continue?`,
+        description_extra: `You are deleting the following database: <br/> <span class="fw-bold">${item.name}</span> <br/><br/> Do you want to continue?`,
         action_btn: 'Delete',
         action_btn_color: 'warn',
-        bold_description: true
+        bold_description: true,
+        extra: {
+          details: item,
+          action: 'confirmInput',
+          fieldToBeTypedTitle: `Database's name`,
+          fieldToBeTypedValue: item.name,
+          icon: 'database',
+        }
       }
     }).afterClosed().subscribe((result: string) => {
       if (result === 'confirm') {
         this.sqlService.dropDatabase(
           this.databaseType,
           this.connectionString,
-          dbName).subscribe({
+          item.name).subscribe({
             next: () => {
               this.generalService.showFeedback('Database successfully deleted.', 'successMessage');
               this.clearServersideCache();
