@@ -1,7 +1,7 @@
 
 // Automatically generated assumption test.
 verb:get
-url:/magic/modules/magic/roles-count?name.eq=root
+url:/magic/system/magic/roles-count?name.eq=root
 status:int:200
 response:"{\"count\":1}"
 description:"Assumes counting roles with name being 'root' returns 1 result"

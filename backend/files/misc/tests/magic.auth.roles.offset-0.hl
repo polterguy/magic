@@ -1,5 +1,5 @@
 verb:get
-url:/magic/modules/magic/roles?offset=0
+url:/magic/system/magic/roles?offset=0
 status:int:200
 description:Verifies you can pass in only offset = 0 when retrieving roles
 produces:application/json

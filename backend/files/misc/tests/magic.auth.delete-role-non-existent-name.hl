@@ -1,7 +1,7 @@
 
 // Automatically generated assumption test.
 verb:delete
-url:/magic/modules/magic/roles?name=non-existent-role
+url:/magic/system/magic/roles?name=non-existent-role
 status:int:200
 description:Assumes that deleting a role that does not exist results in the correct status code and response value from server
 response:@"{

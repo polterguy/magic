@@ -1,5 +1,5 @@
 verb:post
-url:/magic/modules/magic/users_extra
+url:/magic/system/magic/users_extra
 status:int:500
 description:Verifies that associating an extra field with a non-existent user fails
 payload:"{\n  \"type\": \"name\",\n  \"value\": \"John Doe\",\n  \"user\": \"non-existent-user\"\n}"

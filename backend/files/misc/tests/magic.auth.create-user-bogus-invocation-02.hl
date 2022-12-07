@@ -1,7 +1,7 @@
 
 // Automatically generated assumption test.
 verb:post
-url:/magic/modules/magic/users
+url:/magic/system/magic/users
 status:int:400
 description:Assumes that trying to create a user without providing a username argument fails with the correct status code and response from server
 payload:@"{

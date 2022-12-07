@@ -1,7 +1,7 @@
 
 // Automatically generated assumption test.
 verb:get
-url:/magic/modules/magic/crypto_invocations-count
+url:/magic/system/magic/crypto_invocations-count
 status:int:200
 description:"Assumes it's possible to count cryptographic invocations executed towards backend"
 produces:application/json

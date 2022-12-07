@@ -1,7 +1,7 @@
 
 // Automatically generated assumption test.
 verb:get
-url:/magic/modules/magic/users?locked.eq=false&username.eq=root
+url:/magic/system/magic/users?locked.eq=false&username.eq=root
 status:int:200
 description:Assumes that we can retrieve root user, and that user is not locked
 produces:application/json

@@ -1,7 +1,7 @@
 
 // Automatically generated assumption test.
 verb:get
-url:/magic/modules/magic/crypto_invocations-count?created.mt=2020-12-01T09%3A01%3A18.000Z&created.lt=2021-01-11T09%3A01%3A56.000Z
+url:/magic/system/magic/crypto_invocations-count?created.mt=2020-12-01T09%3A01%3A18.000Z&created.lt=2021-01-11T09%3A01%3A56.000Z
 status:int:200
 description:Assumes counting invocations passing in date arguments (slicing between lt and mt for create field) works as expected
 produces:application/json

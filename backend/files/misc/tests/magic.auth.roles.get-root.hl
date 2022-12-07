@@ -1,7 +1,7 @@
 
 // Automatically generated assumption test.
 verb:get
-url:/magic/modules/magic/roles?name.eq=root
+url:/magic/system/magic/roles?name.eq=root
 status:int:200
 response:"[{\"name\":\"root\",\"description\":\"A user that has complete access to everything in the system\"}]"
 description:"Assumes retrieving roles with name equal to 'root' returns the root role with the correct description"

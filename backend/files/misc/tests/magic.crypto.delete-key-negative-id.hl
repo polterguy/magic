@@ -1,7 +1,7 @@
 
 // Automatically generated assumption test.
 verb:delete
-url:/magic/modules/magic/crypto_keys?id=-1
+url:/magic/system/magic/crypto_keys?id=-1
 status:int:200
 description:Assumes trying to delete cryptography key with negative ID results in 0 records affected
 response:@"{
