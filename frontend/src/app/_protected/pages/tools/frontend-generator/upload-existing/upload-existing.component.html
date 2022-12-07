@@ -7,7 +7,7 @@
     <form>
 
       <div class="drop-container pointer border-color">
-          <input type="file" class="w-100 h-100 hide pointer" #upload (change)="getFile($event)" accept=".xlsx,.csv">
+          <input type="file" class="w-100 h-100 hide pointer" #upload (change)="getFile($event)" accept=".zip">
           <button mat-button class="w-100" (click)="upload.click()" *ngIf="!file" [disabled]="uploading">
               <i>Drag & drop or click to upload your static website here</i> <br/>
               <span class="text-primary">Choose a file</span>
