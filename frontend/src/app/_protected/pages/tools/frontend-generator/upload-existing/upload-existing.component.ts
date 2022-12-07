@@ -42,7 +42,7 @@ export class UploadExistingComponent implements OnInit {
     this.fileService.uploadStaticWebsite(formData).subscribe({
       next: (res: any) => {
         this.uploading = false;
-        this.generalService.showFeedback('Uploaded successfully in /www.', 'successMessage', 'Ok', 4000);
+        this.generalService.showFeedback('Website successfully uploaded to /etc/www/', 'successMessage', 'Ok', 4000);
       },
       error: (error: any) => {
         this.uploading = false;
