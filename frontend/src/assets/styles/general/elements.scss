@@ -32,6 +32,9 @@ codemirror
 /*=-=-=-=-=-=
 accordion
 =-=-=-=-=-=*/
+.mat-expansion-panel-header.mat-expanded {
+    height: 48px;
+  }
 .custom-height-header {
   .mat-expansion-indicator {margin-right: 5px;}
   .mat-expanded .mat-expansion-indicator {
