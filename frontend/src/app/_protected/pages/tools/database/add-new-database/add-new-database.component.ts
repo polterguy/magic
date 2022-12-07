@@ -414,6 +414,10 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
   }
 
   public createNewDatabase() {
+    if (this.databaseName === '') {
+      this.generalService.showFeedback('Please provide a name.', 'errorMessage');
+      return;
+    }
     this.waitingCreation = true;
     this.sqlService.createDatabase(
       this.defaultDbType,

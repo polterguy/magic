@@ -132,11 +132,11 @@ export class HeaderComponent implements OnInit {
 
     setTimeout(() => {
       console.log(this.backendService)
-      // const notAuthorized: boolean = (!this.backendService.active || Object.values(this.backendService.active.access.auth ?? {}).every((item: any) => { return item === false }))
+      const notAuthorized: boolean = (!this.backendService.active || Object.values(this.backendService.active.access.auth ?? {}).every((item: any) => { return item === false }))
 
-      // if (notAuthorized || this.backendService.active.token === null) {
-      //   this.router.navigate(['/authentication/login']);
-      // }
+      if (notAuthorized || this.backendService.active.token === null) {
+        this.router.navigate(['/authentication/login']);
+      }
     }, 3000);
   }
 

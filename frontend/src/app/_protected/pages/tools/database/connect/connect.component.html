@@ -64,6 +64,12 @@
           <td mat-cell *matCellDef="let element" class="ps-0"> {{element?.dbType}} </td>
         </ng-container>
 
+        <!-- cStringName Column -->
+        <ng-container matColumnDef="cStringName">
+          <th mat-header-cell *matHeaderCellDef class="text-nowrap ps-0"> Connection name </th>
+          <td mat-cell *matCellDef="let element" class="ps-0 text-truncate"> {{element?.cStringKey}} </td>
+        </ng-container>
+
         <!-- cString Column -->
         <ng-container matColumnDef="cString">
           <th mat-header-cell *matHeaderCellDef class="text-nowrap ps-0"> Connection string </th>
@@ -73,21 +79,29 @@
         <!-- status Column -->
         <ng-container matColumnDef="status">
           <th mat-header-cell *matHeaderCellDef class="text-nowrap ps-0"> Status </th>
-          <td mat-cell *matCellDef="let element" class="ps-0 text-truncate"> {{element?.status}} </td>
+          <td mat-cell *matCellDef="let element" class="ps-0">
+            <div class="d-flex align-items-center text-truncate"
+            [class.text-muted]="element?.status !== 'Live' && element?.status !== 'Down'">
+              <span class="status {{element?.status}} me-1"></span>
+              {{element?.status}}
+            </div>
+          </td>
         </ng-container>
 
         <!-- actions Column -->
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef class="ps-0"> Actions </th>
           <td mat-cell *matCellDef="let element" class="px-0">
-            <button mat-button color="primary" class="ps-0"
-              (click)="getDatabasesList(element)"
-              [disabled]="element.isClicked === true">View</button>
-            <button mat-button color="warn" class="ps-0"
-              (click)="deleteDb(element.name)"
-              [disabled]="element.name === 'magic'">Delete</button>
-            <button mat-button color="primary" class="px-0"
-            (click)="createCatalog(element)">Create new catalog</button>
+            <div class="d-flex">
+              <button mat-button color="primary" class="ps-0"
+                (click)="getDatabasesList(element)"
+                [disabled]="element.isClicked === true">View</button>
+              <button mat-button color="warn" class="ps-0"
+                (click)="deleteDb(element)"
+                [disabled]="element.name === 'magic'">Delete</button>
+              <button mat-button color="primary" class="ps-0"
+              (click)="createCatalog(element)">Create new catalog</button>
+            </div>
           </td>
         </ng-container>
 
