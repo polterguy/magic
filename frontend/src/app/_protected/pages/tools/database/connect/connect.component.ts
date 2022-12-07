@@ -228,7 +228,7 @@ export class ConnectComponent implements OnInit {
    * Making sure the given name doesn't already exist in the selected database.
    */
   private checkName() {
-    return !this.configFile.databases[this.databaseType][this.cStringName];
+    return !this.configFile.databases[this.databaseType]?.[this.cStringName] ?? false;
   }
 
   /**
