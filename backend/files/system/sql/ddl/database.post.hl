@@ -22,6 +22,8 @@ auth.ticket.verify:root
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/connectionString
 validators.mandatory:x:@.arguments/*/databaseName
+validators.string:x:@.arguments/*/databaseName
+   min:2
 validators.mandatory:x:@.arguments/*/databaseType
 validators.enum:x:@.arguments/*/databaseType
    .:mysql
