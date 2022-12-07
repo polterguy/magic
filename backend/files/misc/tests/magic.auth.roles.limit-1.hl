@@ -1,5 +1,5 @@
 verb:get
-url:/magic/modules/magic/roles?limit=-1
+url:/magic/system/magic/roles?limit=-1
 status:int:200
 description:Verifies you can pass in only limit = -1 when retrieving roles, and use that as your only query parameter
 produces:application/json

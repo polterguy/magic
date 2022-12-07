@@ -1,7 +1,7 @@
 
 // Automatically generated assumption test.
 verb:delete
-url:/magic/modules/magic/users_roles?user=non-existent-user
+url:/magic/system/magic/users_roles?user=non-existent-user
 status:int:400
 description:Assumes that trying to delete an entry from users_roles without providing a role argument fails with the correct status code and response returned from server
 response:@"{

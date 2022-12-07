@@ -1,5 +1,5 @@
 verb:delete
-url:/magic/modules/magic/users_extra?type=name&user=non-existent
+url:/magic/system/magic/users_extra?type=name&user=non-existent
 status:int:200
 description:"Verifies that deleting extra information associated with a user that doesn't exist returns 0 affected records"
 response:"{\n  \"affected\": 0\n}"

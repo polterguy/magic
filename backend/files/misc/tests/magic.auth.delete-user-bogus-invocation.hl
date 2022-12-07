@@ -1,7 +1,7 @@
 
 // Automatically generated assumption test.
 verb:delete
-url:/magic/modules/magic/users
+url:/magic/system/magic/users
 status:int:400
 description:Assumes that trying to delete a user without providing a username argument fails with the correct response and status code
 response:@"{

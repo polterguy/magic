@@ -1,5 +1,5 @@
 verb:delete
-url:/magic/modules/magic/crypto_keys
+url:/magic/system/magic/crypto_keys
 status:int:400
 description:Assumes that invoking endpoint without an id results in the correct error response and status code from the backend
 response:@"{

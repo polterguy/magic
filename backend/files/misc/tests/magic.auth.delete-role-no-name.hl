@@ -1,7 +1,7 @@
 
 // Automatically generated assumption test.
 verb:delete
-url:/magic/modules/magic/roles
+url:/magic/system/magic/roles
 status:int:400
 description:Assumes that trying to delete a role without providing a name results in the correct error response and status code returned from server
 response:@"{

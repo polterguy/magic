@@ -1,5 +1,5 @@
 verb:post
-url:/magic/modules/magic/roles
+url:/magic/system/magic/roles
 status:int:400
 description:"Verifies that creating a role that doesn't match the regex validator for role name does not work"
 payload:@"{

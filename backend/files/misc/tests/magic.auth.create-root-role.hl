@@ -1,7 +1,7 @@
 
 // Automatically generated assumption test.
 verb:post
-url:/magic/modules/magic/roles
+url:/magic/system/magic/roles
 status:int:500
 description:Assumes that trying to create root role fails, with the correct status code and response from server
 payload:@"{

@@ -26,6 +26,6 @@ response.headers.set
    Cache-Control:public, max-age=600
 
 // Creating QR code, and return stream directly to caller.
-qr.generate:x:@.arguments/*/content
+image.generate-qr:x:@.arguments/*/content
    size:x:@.arguments/*/size
 return:x:-

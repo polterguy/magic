@@ -1,5 +1,5 @@
 verb:delete
-url:/magic/modules/magic/users_extra
+url:/magic/system/magic/users_extra
 status:int:400
 description:Verifies that deleting an extra field without parameters fails
 response:"{\n  \"message\": \"Mandatory argument 'type' not given\",\n  \"field\": \"type\"\n}"
