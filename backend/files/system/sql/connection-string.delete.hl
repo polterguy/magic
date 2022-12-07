@@ -1,0 +1,38 @@
+
+/*
+ * Deletes the specified connection string.
+ * 
+ * Arguments;
+ * - [databaseType] - Database type, typically 'mssql' or 'mysql'.
+ * - [name] - Name of connection string.
+ */
+.arguments
+   databaseType:string
+   name:string
+.description:Deletes the specified connection string
+.type:internal
+
+// Ensures user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/databaseType
+validators.mandatory:x:@.arguments/*/name
+validators.enum:x:@.arguments/*/databaseType
+   .:mysql
+   .:pgsql
+   .:mssql
+
+
+// Loading config file such that we can delete connection string from current configuration.
+config.load
+json2lambda:x:-
+
+// Deleting actual connection string from section.
+remove-nodes:x:@json2lambda/*/magic/*/databases/*/{@.arguments/*/databaseType}/*/{@.arguments/*/name}
+lambda2json:x:@json2lambda/*
+config.save:x:-
+
+// Success, connetion string deleted.
+return
+   result:success
