@@ -31,6 +31,8 @@ export class TablesViewComponent implements OnInit, OnDestroy {
 
   private tableSubscription!: Subscription;
 
+  public activeTable: string = null;
+
   constructor(
     private dialog: MatDialog,
     private sqlService: SqlService,
@@ -114,6 +116,15 @@ export class TablesViewComponent implements OnInit, OnDestroy {
         },
         error: (error) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage', 'Ok', 5000)
       });
+  }
+
+  public scrollTableIntoView(el: any) {
+    const domEl = document.getElementById(el.foreign_table);
+    domEl.scrollIntoView();
+    this.activeTable = el.foreign_table;
+    setTimeout(() => {
+        this.activeTable = null;
+    }, 2000);
   }
 
   public dropTable(item: any, field: string, foreign_keys?: any, tableName?: string) {
