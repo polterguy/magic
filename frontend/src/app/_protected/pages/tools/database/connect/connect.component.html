@@ -83,7 +83,6 @@
             <div class="d-flex align-items-center text-truncate"
             [class.text-muted]="element?.status !== 'Live' && element?.status !== 'Down'">
               <span class="status {{element?.status}} me-1"></span>
-              {{element?.status}}
             </div>
           </td>
         </ng-container>
@@ -95,7 +94,7 @@
             <div class="d-flex">
               <button mat-button color="primary" class="ps-0"
                 (click)="getDatabasesList(element)"
-                [disabled]="element.isClicked === true">View</button>
+                [disabled]="element.isClicked === true">Manage</button>
               <button mat-button color="warn" class="ps-0"
                 (click)="deleteDb(element)"
                 [disabled]="element.name === 'magic'">Delete</button>
