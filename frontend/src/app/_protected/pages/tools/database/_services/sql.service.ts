@@ -78,11 +78,12 @@ export class SqlService {
    * @param databaseType Type of database, for instance 'mssql', 'pgsql', 'sqlite' or 'mysql'.
    * @param connectionString Database connection string (reference to appsettings.json)
    */
-  getDatabaseMetaInfo(databaseType: string, connectionString: string) {
+  getDatabaseMetaInfo(databaseType: string, connectionString: string, protectedDb: boolean = false) {
     return this.httpService.get<Databases>('/magic/system/sql/databases?databaseType=' +
       encodeURIComponent(databaseType) +
       '&connectionString=' +
-      connectionString);
+      connectionString +
+      '&protected=' + protectedDb);
   }
 
   addConnectionString(data: any) {

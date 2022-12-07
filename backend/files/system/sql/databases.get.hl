@@ -3,6 +3,7 @@
 .arguments
    databaseType:string
    connectionString:string
+   protected:bool
 .description:Returns all databases in your installation, according to the arguments specified
 .type:internal
 
@@ -29,6 +30,7 @@ strings.concat
    get-value:x:@.arguments/*/connectionString
 unwrap:x:../*/cache.try-get/**/.databaseType
 unwrap:x:../*/cache.try-get/**/.connection-string
+unwrap:x:../*/cache.try-get/**/.protected
 cache.try-get:x:@strings.concat
    expiration:36000
    .lambda
@@ -36,6 +38,7 @@ cache.try-get:x:@strings.concat
       // Retrieving databases.
       .databaseType:x:@.arguments/*/databaseType
       .connection-string:x:@.arguments/*/connectionString
+      .protected:x:@.arguments/*/protected
       strings.concat
          .:magic.db.
          get-value:x:@.databaseType
@@ -43,6 +46,30 @@ cache.try-get:x:@strings.concat
       unwrap:x:+/*
       signal:x:@strings.concat
          connection-string:x:@.connection-string
+      if:x:@.protected
+         if
+            eq:x:@.databaseType
+               .:mssql
+            .lambda
+               remove-nodes:x:@signal/*/*/db/=master
+               remove-nodes:x:@signal/*/*/db/=tempdb
+               remove-nodes:x:@signal/*/*/db/=model
+               remove-nodes:x:@signal/*/*/db/=msdb
+         else-if
+            eq:x:@.databaseType
+               .:mysql
+            .lambda
+               remove-nodes:x:@signal/*/*/db/=information_schema
+               remove-nodes:x:@signal/*/*/db/=mysql
+               remove-nodes:x:@signal/*/*/db/=performance_schema
+               remove-nodes:x:@signal/*/*/db/=sys
+         else-if
+            eq:x:@.databaseType
+               .:pgsql
+            .lambda
+               remove-nodes:x:@signal/*/*/db/=postgres
+               remove-nodes:x:@signal/*/*/db/=template1
+               remove-nodes:x:@signal/*/*/db/=template0
 
       // Creating our return value, one for each database.
       .result
