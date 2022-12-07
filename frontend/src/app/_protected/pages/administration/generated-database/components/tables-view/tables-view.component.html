@@ -49,7 +49,6 @@
             *ngFor="let fk of item.foreign_keys;let last = last"
             [class.mb-2]="!last">
             <div class="d-flex justify-content-between align-items-center">
-              <p class="my-0">Linked table <i>(Foreign Key)</i></p>
               <p class="my-0 d-flex justify-content-between align-items-center">
                 {{fk?.column}} <mat-icon class="mx-2">trending_flat</mat-icon> {{fk?.foreign_table}}.{{fk.foreign_column}}
               </p>
