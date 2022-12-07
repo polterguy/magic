@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject } from 'rxjs';
+import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { BackendService } from 'src/app/_protected/services/common/backend.service';
 import { ConfigService } from 'src/app/_protected/services/common/config.service';
@@ -53,7 +54,7 @@ export class ConnectComponent implements OnInit {
 
   public waitingTest: boolean = false;
 
-  displayedColumns: string[] = ['dbType', 'cString', 'status', 'actions'];
+  displayedColumns: string[] = ['dbType', 'cStringName', 'cString', 'status', 'actions'];
 
   public isLoading: boolean = true;
 
@@ -149,30 +150,60 @@ export class ConnectComponent implements OnInit {
    * Saves the new connection string.
    */
   private connect() {
-    let selectedDb = JSON.parse(this.configFile);
-    selectedDb.magic.databases[this.databaseType][this.cStringName] = this.connectionString;
-    this.configFile = JSON.stringify(selectedDb, null, 2);
+    const data: any = {
+      databaseType: this.databaseType,
+      name: this.cStringName,
+      connectionString: this.connectionString
+    }
+    this.sqlService.addConnectionString(data).subscribe({
+      next: () => {
+        this.generalService.showFeedback('Successfully connected.', 'successMessage');
+        this.waitingTest = false;
+        this.databases = [...this.databases, {
+          dbType: this.dbTypes.find((db: any) => db.type === this.databaseType).name,
+          dbTypeValue: this.databaseType,
+          cString: this.connectionString,
+          status: 'Live',
+          cStringKey: this.cStringName,
+          isClicked: false
+        }]
+        this.cdr.detectChanges();
+        this.cStringName = '';
+        this.connectionString = '';
+        setTimeout(() => {
+          this.backendService.getRecaptchaKey();
+        }, 1000);
+      },
+      error: (error: any) => {
+        this.waitingTest = false;
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+      }
+    });
+  }
 
-    try {
-      const config = JSON.parse(this.configFile);
-      this.configService.saveConfig(config).subscribe({
-        next: () => {
-          this.generalService.showFeedback('Successfully connected.', 'successMessage');
-          this.waitingTest = false;
-          setTimeout(() => {
-            this.backendService.getRecaptchaKey();
-          }, 1000);
-        },
-        error: (error: any) => {
-          this.waitingTest = false;
-          this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+  public deleteDb(item: any) {
+    this.dialog.open(ConfirmationDialogComponent, {
+      width: '500px',
+      data: {
+        title: 'Delete connection string',
+        description_extra: `You are deleting the following connection string: <br/> <span class="fw-bold">${item.cStringKey}</span> from ${item.dbType}.<br/><br/> Do you want to continue?`,
+        action_btn: 'Delete',
+        action_btn_color: 'warn',
+        bold_description: true
+      }
+    }).afterClosed().subscribe((result: string) => {
+      if (result === 'confirm') {
+        for (const key in this.configFile.databases) {
+          if (key === item.dbTypeValue) {
+            delete this.configFile.databases[key][item.cStringKey]
+          }
         }
-      });
-    }
-    catch (error) {
-      this.waitingTest = false;
-      this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
-    }
+        console.log(this.configFile)
+        // this.configFile = JSON.stringify(selectedDb, null, 2);
+
+
+      }
+    })
   }
 
   /**
@@ -200,46 +231,43 @@ export class ConnectComponent implements OnInit {
         let databases: any = [];
         this.dbTypes.forEach((type: any) => {
           for (const key in this.configFile.databases[type.type]) {
-            this.getStatus(type.type, this.configFile.databases[type.type][key]).then((res: string) => {
-              databases.push({
-                dbType: type.name,
-                dbTypeValue: type.type,
-                cString: this.configFile.databases[type.type][key],
-                status: res,
-                cStringKey: key,
-                isClicked: false
-              });
-              this.databases = [...databases];
-            })
+            databases.push({
+              dbType: type.name,
+              dbTypeValue: type.type,
+              cString: this.configFile.databases[type.type][key],
+              status: 'testing ...',
+              cStringKey: key,
+              isClicked: false
+            });
+            this.databases = [...databases];
           }
         });
-
+        this.isLoading = false;
+        this.getStatus();
       },
       error: (error: any) => this.generalService.showFeedback('Something went wrong, please refresh the page.', 'errorMessage')
     });
   }
 
-  private getStatus(databaseType: string, connectionString: string) {
-    return new Promise(resolve => {
+  private getStatus() {
+    this.databases.forEach((element: any) => {
       const data: any = {
-        databaseType: databaseType,
-        connectionString: connectionString,
+        databaseType: element.dbTypeValue,
+        connectionString: element.cString,
       };
       this.configService.connectionStringValidity(data).subscribe({
         next: (res: any) => {
-          resolve('Live')
+          if (res?.result === 'failure') {
+            element.status = 'Down';
+          } else {
+            element.status = 'Live';
+          }
         },
         error: (res: any) => {
-          resolve('Down')
-        },
-        complete:()=>{
-          let count = this.loopIndex++;
-          if(count === this.dbTypes.length) {
-            this.isLoading = false;
-          }
+          element.status = 'Down';
         }
       })
-    })
+    });
   }
 
   public getDatabasesList(item: any) {
@@ -250,6 +278,7 @@ export class ConnectComponent implements OnInit {
         if (res) {
           this.dialog.open(ViewDbListComponent, {
             width: '800px',
+            height: '85vh',
             autoFocus: false,
             data: {
               list: res.databases,

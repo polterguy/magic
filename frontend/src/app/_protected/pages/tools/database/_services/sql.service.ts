@@ -85,6 +85,10 @@ export class SqlService {
       connectionString);
   }
 
+  addConnectionString(data: any) {
+    return this.httpService.post('/magic/system/sql/add-connection-string', data);
+  }
+
   /**
    * Returns a list of all SQL snippets the backend has stored.
    *

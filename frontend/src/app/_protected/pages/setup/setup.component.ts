@@ -108,6 +108,7 @@ export class SetupComponent implements OnInit {
       this.generalService.showFeedback('Please fill all the fields.', 'errorMessage');
       return;
     }
+    this.generalService.showLoading();
     this.waiting = true;
     const payload: SetupModel = {
       password: this.configForm.controls.password.value,
@@ -122,9 +123,11 @@ export class SetupComponent implements OnInit {
         this.waiting = false;
         // this.router.navigateByUrl('/');
         window.location.href = '/';
+        this.generalService.hideLoading();
       },
       error: (error: any) => {
         this.generalService.showFeedback(error?.error?.message??error, 'errorMessage');
+        this.generalService.hideLoading();
         this.waiting = false;
       }
     });

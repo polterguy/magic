@@ -1,6 +1,16 @@
-<h3 mat-dialog-title>List of databases</h3>
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3 mat-dialog-title class="mb-0">List of databases</h3>
+  <mat-form-field class="standalone">
+    <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+      <mat-icon>search</mat-icon>
+      <span class="text-muted">|</span>
+    </span>
 
-<div mat-dialog-content>
+    <input matInput type="text" #search placeholder="Search database name">
+  </mat-form-field>
+</div>
+
+<div mat-dialog-content class="h-100">
   <div class="table-responsive" *ngIf="data.list">
     <table mat-table [dataSource]="data.list" class="w-100 borderless hoverable">
 
@@ -29,6 +39,9 @@
             mat-dialog-close>
             Manage tables
           </button>
+          <button mat-button color="warn" class="px-0 ms-3" (click)="deleteDb(element)">
+            Delete
+          </button>
           <button mat-button color="primary" class="px-0 ms-3"
             routerLink="/endpoint-generator"
             [queryParams]="{dbType: data.item.dbTypeValue, dbName: element.name, dbCString: data.item.cStringKey}"
@@ -45,7 +58,7 @@
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns;sticky: true"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.d-none]="row.name.indexOf(search.value) === -1"></tr>
     </table>
 
 
