@@ -5,7 +5,7 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { LogItem } from './_models/log-item.model';
 import { PageEvent } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
-import { LogExceptionComponent } from './components/log-exception/log-exception.component';
+import { LogExceptionComponent } from '../../../../_general/components/log-exception/log-exception.component';
 
 @Component({
   selector: 'app-log',

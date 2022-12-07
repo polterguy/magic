@@ -23,6 +23,7 @@ import { EndpointDialogComponent } from './endpoint-dialog/endpoint-dialog.compo
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import { GithubTokenDialogComponent } from './github-token-dialog/github-token-dialog.component';
 import { PwaUpdateDialogComponent } from './pwa-update-dialog/pwa-update-dialog.component';
+import { LogExceptionComponent } from './log-exception/log-exception.component';
 
 
 
@@ -42,7 +43,8 @@ import { PwaUpdateDialogComponent } from './pwa-update-dialog/pwa-update-dialog.
       SnippetNameDialogComponent,
       EndpointDialogComponent,
       GithubTokenDialogComponent,
-      PwaUpdateDialogComponent
+      PwaUpdateDialogComponent,
+      LogExceptionComponent
   ],
   imports: [
     CommonModule,
@@ -65,7 +67,8 @@ import { PwaUpdateDialogComponent } from './pwa-update-dialog/pwa-update-dialog.
     CreateAssumptionTestDialogComponent,
     SnippetNameDialogComponent,
     EndpointDialogComponent,
-    GithubTokenDialogComponent
+    GithubTokenDialogComponent,
+    LogExceptionComponent
   ]
 })
 export class ComponentsModule { }

@@ -5,6 +5,7 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { LastLogItems } from 'src/app/models/dashboard.model';
+import { LogExceptionComponent } from 'src/app/_general/components/log-exception/log-exception.component';
 import { ViewLogComponent } from '../view-log/view-log.component';
 
 @Component({
@@ -60,12 +61,12 @@ export class LastLogItemsComponent implements OnInit, OnChanges {
 
   /**
    * To show the full details.
-   * @param log All information about the selected log.
+   * @param item All information about the selected log.
    */
-  viewLog(log: LastLogItems) {
-    this.dialog.open(ViewLogComponent, {
-      width: '650px',
-      data: log
+  viewLog(item: any) {
+    this.dialog.open(LogExceptionComponent, {
+      width: '700px',
+      data: item
     })
   }
 }
