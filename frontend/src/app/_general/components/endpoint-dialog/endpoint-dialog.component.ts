@@ -544,7 +544,7 @@ export class EndpointDialogComponent implements OnInit {
 
   public copyResult(response: any) {
     this.clipboard.copy(response);
-    this.generalService.showFeedback('Result is copied to your clipboard');
+    this.generalService.showFeedback('Result can be found on your clipboard');
   }
 
 }
