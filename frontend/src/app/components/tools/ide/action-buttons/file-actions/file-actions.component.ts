@@ -16,7 +16,7 @@ import {
 import { FileService } from 'src/app/services--/file.service';
 import { BackendService } from 'src/app/services--/backend.service--';
 import { FeedbackService } from 'src/app/services--/feedback.service';
-import { EvaluatorService } from '../../../../misc/evaluator/services/evaluator.service';
+import { EvaluatorService } from '../../../../../_protected/services/common/evaluator.service';
 import { PreviewFileDialogComponent } from '../../preview-file-dialog/preview-file-dialog.component';
 import { ExecuteEndpointDialogComponent } from '../../execute-endpoint-dialog/execute-endpoint-dialog.component';
 import { FileObjectName, RenameFileDialogComponent } from '../../rename-file-dialog/rename-file-dialog.component';

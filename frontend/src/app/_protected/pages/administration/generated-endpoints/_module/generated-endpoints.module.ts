@@ -19,7 +19,7 @@ import { GeneratedEndpointsRoutingModule } from './generated-endpoints.routing.m
     GeneratedEndpointsComponent,
     EndpointsListComponent,
     EndpointsResultComponent,
-    PreviewFileDialogComponent
+    PreviewFileDialogComponent,
   ],
   imports: [
     CommonModule,

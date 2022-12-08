@@ -15,9 +15,7 @@
 
         <div class="row mt-3">
           <div class="col-12">
-            <app-searchbox (filterList)="filterList($event)"
-              [hasSystemEndpoints]="endpoints['system'] && (endpoints['system'] | keyvalue).length ? true : false"
-              [systemEndpointChecked]="endpoints['other'] && (endpoints['other'] | keyvalue).length ? false : true">
+            <app-searchbox (filterList)="filterList($event)">
             </app-searchbox>
           </div>
         </div>
