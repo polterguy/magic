@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-xl-7 col-lg-6 col-md-5 col-sm-6 col-12">
         <h3 class="fw-bold">Plugins</h3>
-        <p class="text-muted">Purchase and install micro services.</p>
+        <p class="text-muted">Purchase and install micro services</p>
       </div>
       <div class="col-xl-5 col-lg-6 col-md-7 col-sm-6 col-12">
         <app-searchbox (filterList)="filterList($event)"></app-searchbox>
@@ -11,10 +11,10 @@
       <div class="col-12 mt-md-0 mt-4">
         <ng-container *ngIf="isLoading">
           <app-loading-skeleton
-          [amount]="3"
-          [colClass]="'col-12'"
-          [blockHeight]="'48px'"
-          [hasShadow]="false"></app-loading-skeleton>
+            [amount]="9"
+            [colClass]="'col-4'"
+            [blockHeight]="'180px'"
+            [hasShadow]="false"></app-loading-skeleton>
         </ng-container>
 
         <div class="row" *ngIf="!isLoading">
@@ -26,11 +26,9 @@
               </p>
               <div class="d-flex justify-content-end">
                 <button mat-button color="primary" (click)="viewAppDetails(item)">Detail</button>
-                <button mat-flat-button color="warn" class="px-5"
-                  *ngIf="item?.details"
+                <button mat-flat-button color="warn" class="px-5" *ngIf="item?.details"
                   (click)="uninstallDb(item.details)">Uninstall</button>
-                <button mat-flat-button color="primary" class="px-5"
-                  *ngIf="!item?.details"
+                <button mat-flat-button color="primary" class="px-5" *ngIf="!item?.details"
                   (click)="installDb(item)">Install</button>
               </div>
             </div>
