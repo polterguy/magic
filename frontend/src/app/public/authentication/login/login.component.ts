@@ -4,9 +4,9 @@
  */
 
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { Validators, UntypedFormBuilder, FormControl } from '@angular/forms';
+import { Validators, UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { map, Observable, startWith } from 'rxjs';
+import { Observable } from 'rxjs';
 import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
 import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 import { GeneralService } from 'src/app/_general/services/general.service';
@@ -27,7 +27,7 @@ export class LoginComponent implements OnInit {
   });
 
   backendHasBeenSelected: boolean = false;
-  backendList: any = [];
+  backendList: Backend[] = [];
   filteredBackends: Observable<any[]>;
   savePassword: boolean = false;
   viewPassword: boolean = false;
@@ -70,9 +70,13 @@ export class LoginComponent implements OnInit {
             this.loginForm.controls.backend.setValue(defaultBackend.url);
             this.loginForm.controls.username.setValue(defaultBackend.username);
             this.loginForm.controls.password.setValue(defaultBackend.password);
-          }
-          if (params.backend) {
+          } else if (params.backend) {
             const defaultBackend: Backend = this.backendList.find((item: any) => item.url === params.backend.url);
+            this.loginForm.controls.backend.setValue(defaultBackend.url);
+            this.loginForm.controls.username.setValue(defaultBackend.username);
+            this.loginForm.controls.password.setValue(defaultBackend.password);
+          } else if (this.backendList.length > 0) {
+            const defaultBackend: Backend = this.backendList[0];
             this.loginForm.controls.backend.setValue(defaultBackend.url);
             this.loginForm.controls.username.setValue(defaultBackend.username);
             this.loginForm.controls.password.setValue(defaultBackend.password);
@@ -116,7 +120,7 @@ export class LoginComponent implements OnInit {
           this.waiting = false;
         },
         error: (error: any) => {
-          this.generalService.showFeedback(error.error.message ?? error, 'errorMessage', 'Ok');
+          this.generalService.showFeedback(error?.error?.message ?? error ?? 'Something went wrong while trying to login', 'errorMessage', 'Ok');
           this.waiting = false;
         }
       });
