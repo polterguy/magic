@@ -7,8 +7,7 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-frontend-generator',
-  templateUrl: './frontend-generator.component.html',
-  styleUrls: ['./frontend-generator.component.scss']
+  templateUrl: './frontend-generator.component.html'
 })
 export class FrontendGeneratorComponent {
 }

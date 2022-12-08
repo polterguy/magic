@@ -17,8 +17,7 @@ import { AddExtraFieldsComponent } from '../add-extra-fields/add-extra-fields.co
 
 @Component({
   selector: 'app-edit-user-dialog',
-  templateUrl: './edit-user-dialog.component.html',
-  styleUrls: ['./edit-user-dialog.component.scss']
+  templateUrl: './edit-user-dialog.component.html'
 })
 export class EditUserDialogComponent implements OnInit {
 
