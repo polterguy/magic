@@ -1,9 +1,8 @@
-
 /*
  * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
- .table-btn {
+.table-btn {
   width: 20px;
   height: 20px;
   line-height: 20px;
@@ -13,5 +12,20 @@
     height: 14px;
     line-height: 14px;
     font-size: 14px;
+  }
+}
+.mat-table {
+  td {
+    .name {
+      margin-left: 20px;
+    }
+    mat-icon {
+      width: 14px;
+      height: 14px;
+      line-height: 14px;
+      font-size: 14px;
+      position: absolute;
+      left: 0;
+    }
   }
 }

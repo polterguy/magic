@@ -21,7 +21,7 @@ export class SingleTableConfigComponent implements OnInit, OnDestroy {
   @Input() databases: any = [];
   @Input() dbLoading: Observable<boolean>;
 
-  displayedColumns: string[] = ['name', 'type', 'hyperlambda', 'nullable', 'key', 'default', 'locked', 'template', 'create', 'read', 'update', 'delete'];
+  displayedColumns: string[] = ['name', 'type', 'default', 'locked', 'template', 'create', 'read', 'update', 'delete'];
   dataSource: any = [];
 
   public foreign_keys: any = {};
