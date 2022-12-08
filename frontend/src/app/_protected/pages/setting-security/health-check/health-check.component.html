@@ -9,10 +9,10 @@
           <div class="col-xxl-4 col-xl-5 col-lg-6 col-12">
             <ng-container *ngIf="isLoading;else loaded">
               <app-loading-skeleton
-              [amount]="1"
-              [colClass]="'col-12'"
-              [blockHeight]="'41px'"
-              [hasShadow]="false"></app-loading-skeleton>
+                [amount]="1"
+                [colClass]="'col-12'"
+                [blockHeight]="'41px'"
+                [hasShadow]="false"></app-loading-skeleton>
             </ng-container>
             <ng-template #loaded>
               <app-health-searchbox
