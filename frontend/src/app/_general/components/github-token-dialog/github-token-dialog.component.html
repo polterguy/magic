@@ -10,15 +10,8 @@
     <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
       <mat-icon>calendar_month</mat-icon>
     </span>
-    <input matInput
-      [matDatepicker]="picker"
-      [(ngModel)]="data.expires"
-      autocomplete="off"
-      [name]="data.expires"
-      [min]="today"
-      (click)="picker.open()"
-      readonly>
-    <!-- <mat-datepicker-toggle matPrefix [for]="picker"></mat-datepicker-toggle> -->
+    <input matInput [matDatepicker]="picker" [(ngModel)]="data.expires" autocomplete="off" [name]="data.expires"
+      [min]="today" (click)="picker.open()" readonly>
     <mat-datepicker #picker></mat-datepicker>
   </mat-form-field>
   <mat-form-field class="w-100">
@@ -47,5 +40,5 @@
 </div>
 <div mat-dialog-actions [align]="'end'">
   <button mat-button color="primary" mat-dialog-close>Close</button>
-  <button mat-flat-button color="primary" (click)="getKey()">Generate token</button>
+  <button mat-flat-button color="primary" (click)="generateToken()">Generate token</button>
 </div>
