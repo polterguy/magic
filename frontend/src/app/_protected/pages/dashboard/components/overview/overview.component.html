@@ -8,37 +8,15 @@
           </div>
         </div>
 
-        <div class="row mb-3">
-          <div class="col-6 text-muted">
-            Database type:
+        <div class="scrollable-row">
+          <div class="row mb-3" *ngFor="let item of displayableList">
+            <div class="col-6 text-muted">
+              {{item.name}}
+            </div>
+            <div class="col-6 text-uppercase">{{data[item.key] ?? '-'}}</div>
           </div>
-          <div class="col-6 text-uppercase">{{data?.default_db}}</div>
         </div>
-        <div class="row mb-3">
-          <div class="col-6 text-muted">
-            Timezone:
-          </div>
-          <div class="col">{{data?.default_timezone === 'none' ? 'Default' : data?.default_timezone }}</div>
-        </div>
-        <div class="row mb-3">
-          <div class="col-6 text-muted">
-            Version:
-          </div>
-          <div class="col-6">{{data?.version}}</div>
-        </div>
-        <div class="row mb-3">
-          <div class="col-6 text-muted">
-            No. endpoints:
-          </div>
-          <div class="col-6">{{data?.endpoints}}</div>
-        </div>
-        <div class="row mb-3">
-          <div class="col-6 text-muted">
-            Server IP:
-          </div>
-          <div class="col-6">{{data?.server_ip ? data?.server_ip : '-'}}</div>
-        </div>
-        <button mat-button color="primary" class="w-100 mt-auto">More information</button>
+        <button mat-button color="primary" class="w-100 mt-auto" (click)="more()">More information</button>
       </div>
     </div>
   </mat-card-content>
