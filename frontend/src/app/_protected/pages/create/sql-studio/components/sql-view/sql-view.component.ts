@@ -14,7 +14,7 @@ import { BackendService } from 'src/app/_protected/services/common/backend.servi
 // CodeMirror options.
 import { CodemirrorActionsService } from '../../../hyper-ide/_services/codemirror-actions.service';
 import { SqlService } from '../../../database/_services/sql.service';
-import { SqlSnippetDialogComponent } from '../../../../tools/endpoints/components/sql-snippet-dialog/sql-snippet-dialog.component';
+import { SqlSnippetDialogComponent } from '../sql-snippet-dialog/sql-snippet-dialog.component';
 import { SnippetNameDialogComponent } from '../../../../../../_general/components/snippet-name-dialog/snippet-name-dialog.component';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 
