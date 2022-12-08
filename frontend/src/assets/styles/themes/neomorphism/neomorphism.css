@@ -172,4 +172,9 @@ html, body {
   background: linear-gradient(90deg, rgb(230,231,238) 8%, rgb(220,221,228) 18%, rgb(230,231,238) 33%);
   background-size: 200% 100%;
   box-shadow: 3px 3px 6px #b8b9be, -3px -3px 6px #fff;
+  border: .0625rem solid #d1d9e6;
+}
+
+.mat-paginator {
+  background-color: rgb(230,231,238);
 }
