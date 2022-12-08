@@ -5,7 +5,7 @@
   </div>
 </div>
 
-<form [formGroup]="loginForm" (ngSubmit)="login(inputValue.value)" class="w-100">
+<form [formGroup]="loginForm" (ngSubmit)="login()" class="w-100">
   <div class="row">
     <div class="col-12 mb-2">
       <mat-form-field class="w-100">
@@ -14,10 +14,10 @@
           <span class="text-muted mx-2">|</span>
         </span>
 
-        <input type="text" matInput [formControl]="backends" [matAutocomplete]="auto" #inputValue
-          placeholder="http://yourdomain.com">
-        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-          <mat-option *ngFor="let option of filteredBackends | async" [value]="option">
+        <input type="text" matInput [formControl]="backends" name="backends" [matAutocomplete]="auto" 
+          placeholder="https://yourdomain.com">
+        <mat-autocomplete #auto="matAutocomplete">
+          <mat-option *ngFor="let option of filteredBackends | async" [value]="option.url">
             {{option.url}}
           </mat-option>
         </mat-autocomplete>

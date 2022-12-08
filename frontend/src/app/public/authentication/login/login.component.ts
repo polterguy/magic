@@ -6,7 +6,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Validators, UntypedFormBuilder, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { map, Observable, startWith } from 'rxjs';
+import { filter, map, Observable, startWith } from 'rxjs';
 import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
 import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 import { GeneralService } from 'src/app/_general/services/general.service';
@@ -22,7 +22,6 @@ export class LoginComponent implements OnInit {
   loginForm = this.formBuilder.group({
     username: ['', [Validators.required]],
     password: ['', [Validators.required]],
-    backends: ['', [Validators.required]]
   });
 
   backendHasBeenSelected: boolean = false;
@@ -67,16 +66,16 @@ export class LoginComponent implements OnInit {
         this.activatedRoute.queryParams.subscribe((params: any) => {
           if (params.switchTo) {
             const defaultBackend: any = this.backendList.find((item: any) => item.url === params.switchTo)
-            this.backends.setValue(defaultBackend);
+            this.backends.setValue(defaultBackend.url);
           }
           if (params.backend) {
-            this.backends.setValue(new Backend(params.backend))
+            this.backends.setValue(params.backend.url);
           }
         })
 
         if (this.backendList && this.backendList.length && !this.backends.value) {
           const defaultBackend: any = this.backendList.find((item: any) => item.url === this.backendService.active.url)
-          this.backends.setValue(defaultBackend);
+          this.backends.setValue(defaultBackend.url);
 
         }
         this.backendService._activeCaptchaValue.subscribe((key: string) => {
@@ -104,22 +103,13 @@ export class LoginComponent implements OnInit {
   }
 
   /**
-   * Manages the parameter to display in the textbox.
-   * @param backend Selected backend from the list as an object
-   * @returns URL of the selected backend to display in the input box.
-   */
-  displayFn(backend: any): string {
-    return backend && backend.url ? backend.url : '';
-  }
-
-  /**
    * Filters the list of backends in the autocomplete element.
    * @param keyword Typed value in the input.
    * @returns Filtered list based on the given keyword.
    */
   private _filter(keyword: string) {
     const filterValue = keyword.toLowerCase();
-    return this.backendList.filter((option: any) => option.url.toLowerCase().includes(filterValue));
+    return this.backendList.filter((option: any) => option.url.toLowerCase().includes(filterValue) && option.url.toLowerCase() !== filterValue);
   }
 
   /**
@@ -138,14 +128,11 @@ export class LoginComponent implements OnInit {
   /**
    * login form
    */
-  login(inputValue?: string) {
-
-    if (!CommonRegEx.backend.test(inputValue.replace(/\/$/, ''))) {
+  login() {
+    console.log(this.backends.value);
+    if (!CommonRegEx.backend.test(this.backends.value.replace(/\/$/, ''))) {
       this.generalService.showFeedback('Backend URL is not valid.', 'errorMessage', 'Ok');
       return;
-    }
-    if (inputValue && inputValue !== '' && this.loginForm.value.backends === undefined) {
-      this.loginForm.controls.backends.setValue(inputValue.replace(/\/$/, ''))
     }
 
     this.waiting = true;
@@ -156,7 +143,7 @@ export class LoginComponent implements OnInit {
      * the auth service depends upon user already having selected
      * a current backend.
      */
-    const backend = new Backend(this.loginForm.value.backends.replace(/\/$/, ''), this.loginForm.value.username, this.loginForm.value.password)
+    const backend = new Backend(this.backends.value.replace(/\/$/, ''), this.loginForm.value.username, this.loginForm.value.password)
     this.backendService.upsert(backend);
     this.backendService.activate(backend);
     this.backendService.login(

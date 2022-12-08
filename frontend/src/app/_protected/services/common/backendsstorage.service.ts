@@ -76,7 +76,7 @@ export class BackendsStorageService {
    * @param value Backend to activate
    */
   activate(value: Backend) {
-    this._backends.sort((lhs, rhs) => {
+    this._backends = this._backends.sort((lhs, rhs) => {
       if (lhs.url === value.url) {
         return -1;
       } else if (rhs.url === value.url) {

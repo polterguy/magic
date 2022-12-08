@@ -45,8 +45,7 @@ export class BackendsListComponent implements OnInit {
     private clipboard: Clipboard,
     private cdr: ChangeDetectorRef,
     private generalService: GeneralService,
-    private backendService: BackendService,
-    private endpointsGeneralService: EndpointsGeneralService) {
+    private backendService: BackendService) {
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
   }
 
@@ -87,14 +86,11 @@ export class BackendsListComponent implements OnInit {
   switchBackend(backend: Backend) {
     this.isLoading = true;
     if (backend.token) {
-      this.backendService.activate(backend);
-      this.backendService.upsert(backend);
       if (this.router.url !== '/setup') {
+        this.backendService.activate(backend);
+        this.backendService.upsert(backend);
         window.location.reload();
-      } else {
-        window.location.href = '/'
       }
-      return;
     } else {
       this.isLoading = false;
       this.router.navigate(['/authentication/login'], {
@@ -112,14 +108,20 @@ export class BackendsListComponent implements OnInit {
    * @param backend Backend to remove
    */
   removeBackend(backend: Backend) {
-    if (this.backendsList.length > 1) {
+    if (this.backendsList.length === 1) {
       const anotherWithToken: any = this.backendsList.find((item: any) => item !== backend && item.token !== null);
       if (anotherWithToken) {
-        this.switchBackend(anotherWithToken)
+        this.switchBackend(anotherWithToken);
+        return;
       }
     }
-    // For weird reasons the menu gets "stuck" unless we do this in a timer.
-    setTimeout(() => this.backendService.remove(backend), 100);
+    this.backendService.remove(backend);
+    if (this.backendService.backends.length === 0) {
+      this.addNew();
+      return;
+    } else {
+      this.backendsList = this.backendService.backends;
+    }
   }
 
   public addNew() {
