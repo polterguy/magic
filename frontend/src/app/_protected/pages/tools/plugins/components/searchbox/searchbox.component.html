@@ -14,7 +14,7 @@
     </span>
 
     <input matInput
-      placeholder="Search through plugins"
+      placeholder="Search for plugin"
       [formControl]="filterControl"
       #input>
       <button mat-icon-button matSuffix (click)="removeSearchTerm();" *ngIf="input.value !== ''">
