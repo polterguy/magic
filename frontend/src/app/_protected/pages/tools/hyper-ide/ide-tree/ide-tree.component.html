@@ -54,7 +54,8 @@
               <mat-icon>insert_drive_file</mat-icon>
               <input type="text" [value]="file.name" class="w-100 ms-2"
               [id]="showRenameBox === file ? 'renameFile':''" #fileInput
-              (keyup.enter)="renameActiveFile({file: file, name: fileInput?.value})">
+              (keyup.enter)="renameActiveFile({file: file, name: fileInput?.value})"
+              (keyup.esc)="showRenameBox = null">
             </span>
             <!-- action buttons -->
             <div class="show-on-hover" *ngIf="showRenameBox===null"
