@@ -221,9 +221,6 @@ html, body {
   border-radius: 5px !important;
 }
 
-:root app-socket-list {
-}
-
 :root app-socket-list mat-card {
   margin: 15px;
 }
