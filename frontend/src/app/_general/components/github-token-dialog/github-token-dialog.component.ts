@@ -17,15 +17,16 @@ export class GithubTokenDialogComponent implements OnInit {
 
   constructor(
     private clipboard: Clipboard,
-    private cryptoService: CryptoService,
     private generalService: GeneralService,
+    private cryptoService: CryptoService,
     @Inject(MAT_DIALOG_DATA) public data: { username: string, role: string, expires: string }) { }
 
   ngOnInit(): void {
     this.today = new Date();
+    this.generateToken();
   }
 
-  public getKey() {
+  public generateToken() {
     this.cryptoService.getGithubKey(this.data.username,this.data.role, new Date(this.data.expires).toISOString()).subscribe({
       next: (res: any) => {
         this.token = res.ticket;
@@ -36,5 +37,6 @@ export class GithubTokenDialogComponent implements OnInit {
 
   public copy() {
     this.clipboard.copy(this.token);
+    this.generalService.showFeedback('Token can be found on your clipboard');
   }
 }
