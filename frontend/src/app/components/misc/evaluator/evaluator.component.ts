@@ -10,7 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 // Application specific imports.
 import { Response } from '../../../models/response.model';
 import { FeedbackService } from '../../../services--/feedback.service';
-import { EvaluatorService } from 'src/app/components/misc/evaluator/services/evaluator.service';
+import { EvaluatorService } from 'src/app/_protected/services/common/evaluator.service';
 import { Model } from '../../utilities/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 import { LoadSnippetDialogComponent } from './load-snippet-dialog/load-snippet-dialog.component';
 import { SaveSnippetDialogComponent } from './save-snippet-dialog/save-snippet-dialog.component';

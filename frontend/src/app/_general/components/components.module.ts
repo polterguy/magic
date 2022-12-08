@@ -24,6 +24,7 @@ import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import { GithubTokenDialogComponent } from './github-token-dialog/github-token-dialog.component';
 import { PwaUpdateDialogComponent } from './pwa-update-dialog/pwa-update-dialog.component';
 import { LogExceptionComponent } from './log-exception/log-exception.component';
+import { SearchboxComponent } from 'src/app/_protected/pages/tools/plugins/components/searchbox/searchbox.component';
 
 
 
@@ -44,14 +45,15 @@ import { LogExceptionComponent } from './log-exception/log-exception.component';
       EndpointDialogComponent,
       GithubTokenDialogComponent,
       PwaUpdateDialogComponent,
-      LogExceptionComponent
-  ],
+      LogExceptionComponent,
+      SearchboxComponent,
+    ],
   imports: [
     CommonModule,
     MaterialModule,
     FormsModule,
     ReactiveFormsModule,
-    CodemirrorModule
+    CodemirrorModule,
   ],
   exports: [
     TermsModalComponent,

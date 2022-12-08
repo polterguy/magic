@@ -9,7 +9,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 
 // Application specific imports.
 import { FeedbackService } from '../../../../services--/feedback.service';
-import { EvaluatorService } from 'src/app/components/misc/evaluator/services/evaluator.service';
+import { EvaluatorService } from 'src/app/_protected/services/common/evaluator.service';
 
 /**
  * Load snippet dialog for loading saved snippets from the backend.

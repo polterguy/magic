@@ -8,8 +8,8 @@ import { throwError } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
-import { Response } from '../../../../models/response.model';
-import { HttpService } from '../../../../_general/services/http.service';
+import { Response } from '../../../models/response.model';
+import { HttpService } from '../../../_general/services/http.service';
 import { FileService } from 'src/app/services--/file.service';
 
 /**
