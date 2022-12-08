@@ -14,7 +14,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DialogComponent } from 'src/app/_general/components/dialog/dialog.component';
 import { BackendsListComponent } from 'src/app/_general/components/backends-list/backends-list.component';
 import { Location } from '@angular/common';
-import { GithubTokenDialogComponent } from 'src/app/_general/components/github-token-dialog/github-token-dialog.component';
+import { GithubTokenDialogComponent } from 'src/app/_protected/pages/user/github-token-dialog/github-token-dialog.component';
 import { Status } from 'src/app/_protected/models/common/status.model';
 
 @Component({
@@ -195,7 +195,7 @@ export class HeaderComponent {
         submenu: [
           {
             name: 'Databases',
-            url: '/database-management',
+            url: '/databases',
             disabled: !(this.permissions.access.sql.execute_access && this.permissions.setupDone)
           },
           {
@@ -220,7 +220,7 @@ export class HeaderComponent {
           },
           {
             name: 'Frontend IDE',
-            url: '/generated-frontend',
+            url: '/frontend-ide',
             disabled: !(this.permissions.access.crud.generate_crud && this.permissions.access.crud.generate_sql && this.permissions.access.crud.generate_frontend && this.permissions.setupDone)
           },
         ],
@@ -231,7 +231,7 @@ export class HeaderComponent {
         expandable: true,
         submenu: [
           {
-            name: 'Users and roles',
+            name: 'Users & roles',
             url: '/user-roles-management',
             disabled: !(this.permissions.access.auth.view_users && this.permissions.access.auth.view_roles && this.permissions.setupDone)
           },
@@ -278,15 +278,15 @@ export class HeaderComponent {
             disabled: !(this.permissions.access.crypto.import_public_key)
           },
           {
+            name: 'Health check',
+            url: '/endpoints-health-check',
+            disabled: !(this.permissions.access.log.read && this.permissions.setupDone)
+          },
+          {
             name: 'Log',
             url: '/log',
             disabled: !(this.permissions.access.log.read && this.permissions.setupDone)
           },
-          {
-            name: 'Health check',
-            url: '/endpoints-health-check',
-            disabled: !(this.permissions.access.log.read && this.permissions.setupDone)
-          }
         ],
       },
       {

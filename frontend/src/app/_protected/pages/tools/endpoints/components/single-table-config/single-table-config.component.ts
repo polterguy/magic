@@ -1,7 +1,7 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, Subscription } from 'rxjs';
-import { ColumnEx } from 'src/app/_protected/pages/crud-generator/_models/column-ex.model';
+import { ColumnEx } from 'src/app/_protected/pages/create/endpoint-generator/_models/column-ex.model';
 import { FKModel, ForeignKeyDialogComponent } from '../foreign-key-dialog/foreign-key-dialog.component';
 
 @Component({

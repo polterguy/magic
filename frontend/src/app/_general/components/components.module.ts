@@ -21,10 +21,10 @@ import { CreateAssumptionTestDialogComponent } from './create-assumption-test-di
 import { SnippetNameDialogComponent } from './snippet-name-dialog/snippet-name-dialog.component';
 import { EndpointDialogComponent } from './endpoint-dialog/endpoint-dialog.component';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
-import { GithubTokenDialogComponent } from './github-token-dialog/github-token-dialog.component';
+import { GithubTokenDialogComponent } from '../../_protected/pages/user/github-token-dialog/github-token-dialog.component';
 import { PwaUpdateDialogComponent } from './pwa-update-dialog/pwa-update-dialog.component';
 import { LogExceptionComponent } from './log-exception/log-exception.component';
-import { SearchboxComponent } from 'src/app/_protected/pages/tools/plugins/components/searchbox/searchbox.component';
+import { SearchboxComponent } from 'src/app/_protected/pages/manage/plugins/components/searchbox/searchbox.component';
 
 
 
