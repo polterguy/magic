@@ -143,8 +143,9 @@
           (click)="openFile(item)"
           [class.active-file]="currentFileData.name === item.name">
           <button mat-button class="justify-content-start d-flex w-100">{{item.name}}</button>
-          <button mat-icon-button color="warn" *ngIf="currentFileData.name === item.name"
-            (click)="closeFileImpl()">
+          <button
+            mat-icon-button
+            (click)="closeFileImpl(item)">
             <mat-icon>close</mat-icon>
           </button>
         </div>
