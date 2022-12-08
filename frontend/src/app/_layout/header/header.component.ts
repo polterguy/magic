@@ -303,7 +303,6 @@ export class HeaderComponent {
           },
           {
             name: 'Logout',
-            color: 'warn'
           }
         ],
       }
