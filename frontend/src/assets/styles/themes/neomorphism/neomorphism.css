@@ -215,7 +215,8 @@ html, body {
   animation-name: flash2 !important;
 }
 
-:root mat-calendar {
+:root mat-calendar,
+:root ngx-mat-datetime-content {
   background-color: rgb(230,231,238);
   border: .0625rem solid #d1d9e6;
   border-radius: 5px !important;
@@ -223,4 +224,12 @@ html, body {
 
 :root app-socket-list mat-card {
   margin: 15px;
+}
+
+:root .mat-radio-button.mat-primary.mat-radio-checked .mat-radio-outer-circle {
+  border-color: rgb(150,150,161);
+}
+
+:root .mat-radio-button.mat-primary .mat-radio-inner-circle {
+  background-color: rgb(150,150,161);
 }
