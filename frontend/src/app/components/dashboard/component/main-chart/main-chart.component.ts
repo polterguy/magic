@@ -63,7 +63,7 @@ export class MainChartComponent implements OnInit {
           lineStyle: {
             type: 'dotted',
             width: 1,
-            color: this.theme === 'light' ? 'rgba(0, 0, 0, 0.12)' : 'rgba(255, 255, 255, 0.12)'
+            color: 'rgba(0, 0, 0, 0.12)'
           }
         }
       },

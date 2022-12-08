@@ -112,11 +112,11 @@ export class DoughnutChartComponent implements OnInit, OnDestroy, OnChanges {
         type: 'scroll',
         padding: [0, 5],
         textStyle: {
-          color: this.theme === 'light' ? 'black' : 'white'
+          color: 'black'
         },
-        pageIconColor: this.theme === 'light' ? 'black' : 'white',
+        pageIconColor: 'black',
         pageTextStyle: {
-          color: this.theme === 'light' ? 'black' : 'white'
+          color: 'black'
         }
       },
       series: [
@@ -128,7 +128,7 @@ export class DoughnutChartComponent implements OnInit, OnDestroy, OnChanges {
           data: this.chartData,
           color: ['#ee6666', '#91cc75'],
           label: {
-            color: this.theme === 'light' ? 'black' : 'white'
+            color: 'black'
           },
           emphasis: {
             itemStyle: {

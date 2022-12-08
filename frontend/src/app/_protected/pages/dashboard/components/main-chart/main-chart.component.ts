@@ -96,9 +96,9 @@ export class MainChartComponent implements OnInit {
         orient: this.isLargeScreen ? 'vertical' : 'horizontal',
         top: this.isLargeScreen ? 'middle' : '10',
         left: this.isLargeScreen ? '0' : 'center',
-        backgroundColor: 'white',
+        backgroundColor: 'transparent',
         textStyle: {
-          color: this.theme === 'light' ? 'black' : 'white',
+          color: 'black',
           fontSize: 10
         },
       },

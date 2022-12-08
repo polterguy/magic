@@ -524,7 +524,7 @@
   <mat-divider class="mt-4"></mat-divider>
   <button mat-button class="ml-2 mr-1"
     (click)="toggleTheme()"
-    [color]="themeService.theme === 'dark' ? 'accent' : ''"
+    color=""
     [class.theme-btn]="!navbarService.expanded">
     <div class="d-flex align-items-center justify-content-between" [class.flex-column]="!navbarService.expanded">
       <div class="theme-title" [class.d-none]="!navbarService.expanded">{{'Switch to ' + (themeService.theme === 'light' ? 'dark' : 'light') + ' theme'}}</div>

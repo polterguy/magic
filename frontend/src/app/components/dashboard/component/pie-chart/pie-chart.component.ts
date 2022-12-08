@@ -115,11 +115,11 @@ export class PieChartComponent implements OnInit, OnDestroy, OnChanges {
         type: 'scroll',
         padding: [15, 5, 0, 5],
         textStyle: {
-          color: this.theme === 'light' ? 'black' : 'white'
+          color: 'black'
         },
-        pageIconColor: this.theme === 'light' ? 'black' : 'white',
+        pageIconColor: 'black',
         pageTextStyle: {
-          color: this.theme === 'light' ? 'black' : 'white'
+          color: 'black'
         }
       },
       series: [
@@ -131,7 +131,7 @@ export class PieChartComponent implements OnInit, OnDestroy, OnChanges {
           center: ['50%', '43%'],
           data: this.pieChartData,
           label: {
-            color: this.theme === 'light' ? 'black' : 'white'
+            color: 'black'
           },
           emphasis: {
             itemStyle: {
