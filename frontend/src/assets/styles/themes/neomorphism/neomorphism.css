@@ -243,3 +243,7 @@ body {
   border-radius: 5px !important;
   box-shadow: 3px 3px 6px #b8b9be, -3px -3px 6px #fff;
 }
+
+:root .mat-autocomplete-panel .mat-option.mat-selected:not(.mat-active):not(:hover):not(.mat-option-disabled) {
+  background-color: rgb(230, 231, 238) !important;
+}

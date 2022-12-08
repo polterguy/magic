@@ -5,6 +5,7 @@
 
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Validators, UntypedFormBuilder } from '@angular/forms';
+import { MatAutocompleteActivatedEvent } from '@angular/material/autocomplete';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
@@ -89,6 +90,13 @@ export class LoginComponent implements OnInit {
       }
       this.cdr.detectChanges();
     })();
+  }
+
+  backendActivated(e: MatAutocompleteActivatedEvent) {
+    debugger;
+    const defaultBackend: Backend = this.backendList.find((item: any) => item.url === e.option.value);
+    this.loginForm.controls.username.setValue(defaultBackend.username);
+    this.loginForm.controls.password.setValue(defaultBackend.password);
   }
 
   /**
