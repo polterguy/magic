@@ -6,7 +6,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { SqlService } from '../../../../create/database/_services/sql.service';
+import { SqlService } from '../../../database/_services/sql.service';
 
 @Component({
   selector: 'app-sql-snippet-dialog',
