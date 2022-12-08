@@ -70,7 +70,8 @@ import { SearchboxComponent } from 'src/app/_protected/pages/tools/plugins/compo
     SnippetNameDialogComponent,
     EndpointDialogComponent,
     GithubTokenDialogComponent,
-    LogExceptionComponent
+    LogExceptionComponent,
+    SearchboxComponent,
   ]
 })
 export class ComponentsModule { }
