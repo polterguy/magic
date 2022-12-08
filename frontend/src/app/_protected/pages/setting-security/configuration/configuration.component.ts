@@ -8,7 +8,6 @@ import { ConfigService } from './_services/config.service';
 import json from '../../../../codemirror/options/json.json'
 import { CodemirrorActionsService } from '../../tools/hyper-ide/_services/codemirror-actions.service';
 import { Subscription } from 'rxjs';
-import { ConnectionStringDialogComponent } from './components/connection-string-dialog/connection-string-dialog.component';
 import { SmtpDialogComponent } from './components/smtp-dialog/smtp-dialog.component';
 
 @Component({
@@ -75,15 +74,6 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
       next: (res: any) => {
         this.config = JSON.stringify(res, null, 2);
         this.originalConfig = JSON.stringify(res, null, 2);
-        if (res) {
-          this.configExists = true;
-          this.activatedRoute.queryParams.subscribe((params: any) => {
-            const connect = params['connect'];
-            if (connect) {
-              this.addConnectionString()
-            }
-          });
-        }
       },
       error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
   }
@@ -110,23 +100,6 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     catch (error) {
       this.generalService.showFeedback(error?.error?.message??error, 'errorMessage', 'ok', 4000);
     }
-  }
-
-  addConnectionString() {
-    this.dialog
-      .open(ConnectionStringDialogComponent, {
-        width: '700px',
-        data: { databases: JSON.parse(this.config).magic.databases },
-      })
-      .afterClosed()
-      .subscribe((result: any) => {
-        if (result) {
-          let selectedDb = JSON.parse(this.config);
-          selectedDb.magic.databases[result.selectedDb][result.name] = result.connectionString;
-          this.config = JSON.stringify(selectedDb, null, 2)
-          this.save();
-        }
-      });
   }
 
   manageSMTP() {

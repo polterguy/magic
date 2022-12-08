@@ -8,7 +8,6 @@ import { MaterialModule } from 'src/app/material.module';
 import { ComponentsModule } from 'src/app/_general/components/components.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SmtpDialogComponent } from '../components/smtp-dialog/smtp-dialog.component';
-import { ConnectionStringDialogComponent } from '../components/connection-string-dialog/connection-string-dialog.component';
 
 
 
@@ -16,7 +15,6 @@ import { ConnectionStringDialogComponent } from '../components/connection-string
   declarations: [
     ConfigurationComponent,
     SmtpDialogComponent,
-    ConnectionStringDialogComponent
   ],
   imports: [
     CommonModule,
