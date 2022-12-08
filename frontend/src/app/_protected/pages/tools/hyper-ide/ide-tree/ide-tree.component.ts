@@ -418,11 +418,12 @@ export class IdeTreeComponent implements OnInit, OnDestroy {
   /**
      * Actual method responsible for closing file.
      */
-  public closeFileImpl() {
+  public closeFileImpl(file: any = null) {
     this.cdr.markForCheck();
     let idx: number;
+    file = file || this.currentFileData;
     this.openFiles.forEach(element => {
-      if (element.path === this.currentFileData.path) {
+      if (element.path === file.path) {
         idx = this.openFiles.indexOf(element);
       }
     });
