@@ -1,0 +1,31 @@
+   
+// Uploads the specified backup.
+.arguments
+   file:*
+.description:Uploads the specified backup
+.type:internal
+.accept:multipart/form-data
+
+// Ensures user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/file
+validators.mandatory:x:@.arguments/*/file/*/name
+validators.mandatory:x:@.arguments/*/file/*/stream
+validators.regex:x:@.arguments/*/file/*/name
+   regex:"\\.db$"
+
+// Saves the file to the specified folder.
+.full-path
+set-value:x:@.full-path
+   strings.concat
+      get-value:/data/
+      get-value:x:@.arguments/*/file/*/name
+io.stream.save-file:x:@.full-path
+   get-value:x:@.arguments/*/file/*/stream
+
+// Flushing SQLite, and returning success to caller.
+sqlite.connections.flush
+return
+   result:success

@@ -60,10 +60,6 @@ if
                            name:Logins per day
                            description:Successfully authenticated users
                            items
-                        backend_endpoints_generated
-                           name:Generated CRUD endpoints
-                           description:Daily generated CRUD endpoints
-                           items
                         access_denied
                            name:Access denied requests
                            description:Access denied requests
@@ -72,10 +68,6 @@ if
                // Retrieving count of log items grouped by day for root logins.
                add:x:@.lambda/*/lambda2hyper/*/timeshifts/*/logins/*/items
                   log.timeshift:User successfully authenticated
-
-               // Retrieving count of log items grouped by day for backend endpoints generated.
-               add:x:@.lambda/*/lambda2hyper/*/timeshifts/*/backend_endpoints_generated/*/items
-                  log.timeshift:Generating CRUD backend
 
                // Retrieving access denied invocations.
                add:x:@.lambda/*/lambda2hyper/*/timeshifts/*/access_denied/*/items
