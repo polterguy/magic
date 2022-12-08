@@ -7,8 +7,8 @@ import { ConfirmationDialogComponent } from 'src/app/_general/components/confirm
 import { EndpointsGeneralService } from 'src/app/_general/services/endpoints-general.service';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { Endpoint } from '../../../administration/generated-endpoints/_models/endpoint.model';
-import { IncompatibleFileDialogComponent } from '../../../administration/generated-frontend/components/incompatible-file-dialog/incompatible-file-dialog.component';
-import { NewFileFolderDialogComponent } from '../../../administration/generated-frontend/components/new-file-folder-dialog/new-file-folder-dialog.component';
+import { IncompatibleFileDialogComponent } from '../components/incompatible-file-dialog/incompatible-file-dialog.component';
+import { NewFileFolderDialogComponent } from '../components/new-file-folder-dialog/new-file-folder-dialog.component';
 import { FileNode } from '../_models/file-node.model';
 import { FlatNode } from '../_models/flat-node.model';
 import { TreeNode } from '../_models/tree-node.model';
@@ -23,6 +23,7 @@ import { FileService } from '../_services/file.service';
 export class IdeTreeComponent implements OnInit, OnDestroy {
 
   @Input() searchKey!: Observable<string>;
+  @Input() type: string;
 
   @Output() showEditor: EventEmitter<any> = new EventEmitter<any>();
   @Output() clearEditorHistory: EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -97,6 +98,10 @@ export class IdeTreeComponent implements OnInit, OnDestroy {
     private codemirrorActionsService: CodemirrorActionsService) { }
 
   ngOnInit(): void {
+    if (this.type === 'frontend') {
+      this.activeFolder = '/etc/www/';
+      this.currentFolder = '/etc/www/';
+    }
     this.getFilesFromServer().then((res: boolean) => {
       if (res === true) {
         this.getEndpoints();
@@ -165,7 +170,13 @@ export class IdeTreeComponent implements OnInit, OnDestroy {
                   name1.push(root.children.filter(newData => !this.dataSource.data.map(oldData => oldData.name).includes(newData.name)));
                 }
 
-                this.dataSource.data = root.children;
+                if (this.type === 'frontend') {
+                  const etcPath: any = root.children.find((item: any) => item.name === 'etc');
+                  const frontendFolders = etcPath.children.filter((item: any) => item.path === '/etc/frontend/' || item.path === '/etc/www/');
+                  this.dataSource.data = frontendFolders;
+                } else {
+                  this.dataSource.data = root.children;
+                }
 
                 // if file system is enabled, then set a new field as systemFile to true
                 if (this.systemFiles) {

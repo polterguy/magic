@@ -1,5 +1,5 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { BehaviorSubject, ReplaySubject } from 'rxjs';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-ide-searchbox',
@@ -10,16 +10,16 @@ export class IdeSearchboxComponent implements OnInit {
 
   @Output() filterList = new EventEmitter<any>();
   @Output() toggleFileSystems = new EventEmitter<any>();
+  @Input() type: string;
 
   private _inputValue: BehaviorSubject<string> = new BehaviorSubject<string>('');
   public inputValue = this._inputValue.asObservable();
 
-  public fileSystem: boolean = false;
+  public fileSystem: boolean;
 
   constructor() { }
 
   ngOnInit(): void {
-
   }
 
   /**
@@ -43,5 +43,4 @@ export class IdeSearchboxComponent implements OnInit {
   public toggleFileSystem() {
     this.toggleFileSystems.emit(this.fileSystem);
   }
-
 }

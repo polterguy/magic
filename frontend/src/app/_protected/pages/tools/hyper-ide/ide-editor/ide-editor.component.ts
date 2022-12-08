@@ -5,12 +5,12 @@ import { ConfirmationDialogComponent } from 'src/app/_general/components/confirm
 import { LoadSnippetDialogComponent } from 'src/app/_general/components/load-snippet-dialog/load-snippet-dialog.component';
 import { ShortkeysComponent } from 'src/app/_general/components/shortkeys/shortkeys.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { ExecuteMacroDialogComponent } from '../../../administration/generated-frontend/components/execute-macro-dialog/execute-macro-dialog.component';
-import { PreviewFileDialogComponent } from '../../../administration/generated-frontend/components/preview-file-dialog/preview-file-dialog.component';
-import { RenameFileDialogComponent, FileObjectName } from '../../../administration/generated-frontend/components/rename-file-dialog/rename-file-dialog.component';
-import { RenameFolderDialogComponent } from '../../../administration/generated-frontend/components/rename-folder-dialog/rename-folder-dialog.component';
-import { SelectMacroDialogComponent, Macro } from '../../../administration/generated-frontend/components/select-macro-dialog/select-macro-dialog.component';
-import { UnsavedChangesDialogComponent } from '../../../administration/generated-frontend/components/unsaved-changes-dialog/unsaved-changes-dialog.component';
+import { ExecuteMacroDialogComponent } from '../components/execute-macro-dialog/execute-macro-dialog.component';
+import { PreviewFileDialogComponent } from '../components/preview-file-dialog/preview-file-dialog.component';
+import { RenameFileDialogComponent, FileObjectName } from '../components/rename-file-dialog/rename-file-dialog.component';
+import { RenameFolderDialogComponent } from '../components/rename-folder-dialog/rename-folder-dialog.component';
+import { SelectMacroDialogComponent, Macro } from '../components/select-macro-dialog/select-macro-dialog.component';
+import { UnsavedChangesDialogComponent } from '../components/unsaved-changes-dialog/unsaved-changes-dialog.component';
 import { EvaluatorService } from '../../hl-playground/_services/evaluator.service';
 import { EndpointDialogComponent } from '../../../../../_general/components/endpoint-dialog/endpoint-dialog.component';
 import { FileNode } from '../_models/file-node.model';
