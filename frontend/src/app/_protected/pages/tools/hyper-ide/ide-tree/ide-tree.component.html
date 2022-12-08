@@ -59,7 +59,7 @@
             </span>
             <!-- action buttons -->
             <div class="show-on-hover" *ngIf="showRenameBox===null"
-            [style.margin-right.px]="30 * file?.level">
+            [style.margin-right.px]="10 * file?.level">
               <button mat-icon-button color="primary" (click)="showRenameInput(file)">
                 <mat-icon>edit</mat-icon>
               </button>
@@ -110,7 +110,7 @@
             </span>
             <!-- action buttons -->
             <div class="show-on-hover" *ngIf="showRenameBox===null"
-            [style.margin-right.px]="30 * folder?.level">
+            [style.margin-right.px]="10 * folder?.level">
               <button mat-icon-button color="primary" (click)="showRenameInput(folder)">
                 <mat-icon>edit</mat-icon>
               </button>
