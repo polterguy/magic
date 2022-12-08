@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ControlContainer, FormGroupDirective } from '@angular/forms';
-import { Argument } from '../../../_protected/pages/administration/generated-endpoints/_models/argument.model';
+import { Argument } from '../../../_protected/pages/manage/endpoints/_models/argument.model';
 
 /**
  * Model class for dialog.

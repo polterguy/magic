@@ -15,7 +15,7 @@ import { AppManifest } from '../../../models/app-manifest';
 import { Response } from 'src/app/models/response.model';
 import { environment } from '../../../../environments/environment';
 import { PurchaseStatus } from '../../../models/purchase-status.model';
-import { FileService } from '../../pages/tools/hyper-ide/_services/file.service';
+import { FileService } from '../../pages/create/hyper-ide/_services/file.service';
 import { HttpService } from 'src/app/_general/services/http.service';
 
 /**

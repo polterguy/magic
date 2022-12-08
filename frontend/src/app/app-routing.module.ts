@@ -25,23 +25,23 @@ const routes: Routes = [
       },
       {
         path: 'user-roles-management',
-        loadChildren: () => import('./_protected/pages/administration/user-roles/_module/users-roles.module').then(m => m.UsersRolesModule)
+        loadChildren: () => import('./_protected/pages/manage/user-and-roles/_module/users-roles.module').then(m => m.UsersRolesModule)
       },
       {
         path: 'sql-studio',
-        loadChildren: () => import('./_protected/pages/administration/generated-database/_module/g-database.module').then(m => m.GDatabaseModule)
+        loadChildren: () => import('./_protected/pages/create/sql-studio/_module/g-database.module').then(m => m.GDatabaseModule)
       },
       {
         path: 'endpoints',
-        loadChildren: () => import('./_protected/pages/administration/generated-endpoints/_module/generated-endpoints.module').then(m => m.GeneratedEndpointsModule)
+        loadChildren: () => import('./_protected/pages/manage/endpoints/_module/generated-endpoints.module').then(m => m.GeneratedEndpointsModule)
       },
       {
         path: 'sockets',
-        loadChildren: () => import('./_protected/pages/administration/generated-sockets/_module/socket.module').then(m => m.SocketModule)
+        loadChildren: () => import('./_protected/pages/manage/sockets/_module/socket.module').then(m => m.SocketModule)
       },
       {
-        path: 'database-management',
-        loadChildren: () => import('./_protected/pages/tools/database/_module/database.module').then(m => m.DatabaseModule)
+        path: 'databases',
+        loadChildren: () => import('./_protected/pages/create/database/_module/database.module').then(m => m.DatabaseModule)
       },
       {
         path: 'endpoint-generator',
@@ -49,49 +49,49 @@ const routes: Routes = [
       },
       {
         path: 'frontend-generator',
-        loadChildren: () => import('./_protected/pages/tools/frontend-generator/_module/frontend-generator.module').then(m => m.FrontendGeneratorModule)
+        loadChildren: () => import('./_protected/pages/create/frontend-generator/_module/frontend-generator.module').then(m => m.FrontendGeneratorModule)
       },
       {
         path: 'plugins',
-        loadChildren: () => import('./_protected/pages/tools/plugins/_module/plugins.module').then(m => m.PluginsModule)
+        loadChildren: () => import('./_protected/pages/manage/plugins/_module/plugins.module').then(m => m.PluginsModule)
       },
       {
         path: 'hyperlambda-playground',
-        loadChildren: () => import('./_protected/pages/tools/hl-playground/_module/hl-playground.module').then(m => m.HlPlaygroundModule)
+        loadChildren: () => import('./_protected/pages/manage/hyperlambda-playground/_module/hl-playground.module').then(m => m.HlPlaygroundModule)
       },
       {
         path: 'hyper-ide',
         data: {
           type: 'backend'
         },
-        loadChildren: () => import('./_protected/pages/tools/hyper-ide/_module/ide.module').then(m => m.IdeModule)
+        loadChildren: () => import('./_protected/pages/create/hyper-ide/_module/ide.module').then(m => m.IdeModule)
       },
       {
-        path: 'generated-frontend',
+        path: 'frontend-ide',
         data: {
           type: 'frontend',
         },
-        loadChildren: () => import('./_protected/pages/tools/hyper-ide/_module/ide.module').then(m => m.IdeModule)
+        loadChildren: () => import('./_protected/pages/create/hyper-ide/_module/ide.module').then(m => m.IdeModule)
       },
       {
         path: 'tasks',
-        loadChildren: () => import('./_protected/pages/tools/task-scheduler/_module/task.module').then(m => m.TaskModule)
+        loadChildren: () => import('./_protected/pages/manage/tasks/_module/task.module').then(m => m.TaskModule)
       },
       {
         path: 'endpoints-health-check',
-        loadChildren: () => import('./_protected/pages/setting-security/health-check/_module/health-check.module').then(m => m.HealthCheckModule)
+        loadChildren: () => import('./_protected/pages/settings/health-check/_module/health-check.module').then(m => m.HealthCheckModule)
       },
       {
         path: 'configuration',
-        loadChildren: () => import('./_protected/pages/setting-security/configuration/_module/config.module').then(m => m.ConfigModule)
+        loadChildren: () => import('./_protected/pages/settings/configuration/_module/config.module').then(m => m.ConfigModule)
       },
       {
         path: 'log',
-        loadChildren: () => import('./_protected/pages/setting-security/log/_module/log.module').then(m => m.LogModule)
+        loadChildren: () => import('./_protected/pages/settings/log/_module/log.module').then(m => m.LogModule)
       },
       {
         path: 'server-key-setting',
-        loadChildren: () => import('./_protected/pages/setting-security/server-key-setting/_module/server-key.module').then(m => m.ServerKeyModule)
+        loadChildren: () => import('./_protected/pages/settings/cryptography/_module/server-key.module').then(m => m.ServerKeyModule)
       },
       {
         path: 'user-profile',

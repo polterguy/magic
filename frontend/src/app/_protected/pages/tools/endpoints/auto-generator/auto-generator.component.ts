@@ -9,19 +9,19 @@ import { GeneralService } from 'src/app/_general/services/general.service';
 import { BackendService } from 'src/app/_protected/services/common/backend.service';
 import { CacheService } from 'src/app/_protected/services/common/cache.service';
 import { MessageService } from 'src/app/_protected/services/common/message.service';
-import { DatabaseEx } from '../../../crud-generator/_models/database-ex.model';
-import { LocResult } from '../../../crud-generator/_models/loc-result.model';
-import { CrudifyService } from '../../../crud-generator/_services/crudify.service';
-import { TransformModelService } from '../../../crud-generator/_services/transform-model.service';
-import { LogService } from '../../../setting-security/log/_services/log.service';
-import { Role } from '../../../administration/user-roles/_models/role.model';
+import { DatabaseEx } from '../../../create/endpoint-generator/_models/database-ex.model';
+import { LocResult } from '../../../create/endpoint-generator/_models/loc-result.model';
+import { CrudifyService } from '../../../create/endpoint-generator/_services/crudify.service';
+import { TransformModelService } from '../../../create/endpoint-generator/_services/transform-model.service';
+import { LogService } from '../../../settings/log/_services/log.service';
+import { Role } from '../../../manage/user-and-roles/_models/role.model';
 import { SingleTableConfigComponent } from '../components/single-table-config/single-table-config.component';
 
 // CodeMirror options.
 import hyperlambda from '../../../../../codemirror/options/hyperlambda.json';
-import { CodemirrorActionsService } from '../../hyper-ide/_services/codemirror-actions.service';
+import { CodemirrorActionsService } from '../../../create/hyper-ide/_services/codemirror-actions.service';
 import { MatDialog } from '@angular/material/dialog';
-import { EvaluatorService } from '../../hl-playground/_services/evaluator.service';
+import { EvaluatorService } from '../../../manage/hyperlambda-playground/_services/evaluator.service';
 import { LoadSnippetDialogComponent } from 'src/app/_general/components/load-snippet-dialog/load-snippet-dialog.component';
 import { SnippetNameDialogComponent } from 'src/app/_general/components/snippet-name-dialog/snippet-name-dialog.component';
 

@@ -2,11 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ReplaySubject } from 'rxjs';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { Role } from '../../administration/user-roles/_models/role.model';
-import { RoleService } from '../../administration/user-roles/_services/role.service';
-import { Databases } from '../database/_models/databases.model';
-import { DefaultDatabaseType } from '../database/_models/default-database-type.model';
-import { SqlService } from '../database/_services/sql.service';
+import { Role } from '../../manage/user-and-roles/_models/role.model';
+import { RoleService } from '../../manage/user-and-roles/_services/role.service';
+import { Databases } from '../../create/database/_models/databases.model';
+import { DefaultDatabaseType } from '../../create/database/_models/default-database-type.model';
+import { SqlService } from '../../create/database/_services/sql.service';
 
 @Component({
   selector: 'app-endpoints',
