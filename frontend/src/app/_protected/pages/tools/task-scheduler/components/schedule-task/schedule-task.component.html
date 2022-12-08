@@ -92,16 +92,12 @@
               [disabled]="scheduleOption !== 'custom'">
           </mat-form-field>
           <ng-container *ngIf="scheduleOption === 'custom'">
-            <mat-hint class="d-block mat-caption mt-2">
-              <span class="fw-bold">e.g. 5.days</span> ->
-              <span class="d-block text-muted">x.units: Units can be one of "seconds", "minutes", "hours", "days", "weeks" or "months"</span>
-            </mat-hint>
             <mat-hint class="d-block mat-caption">
               <span class="fw-bold">e.g. 10.20.15.22.22</span> ->
               <span class="d-block text-muted">MM.dd.HH.mm.ss: Months.days in months.hours.minutes.seconds</span>
             </mat-hint>
             <mat-hint class="d-block mat-caption">
-              <span class="fw-bold">e.g. 10.15.22.22</span> ->
+              <span class="fw-bold">e.g. Sunday.15.22.22</span> ->
               <span class="d-block text-muted">ww.HH.mm.ss: Weekdays.hour.minute.second</span>
             </mat-hint>
           </ng-container>
