@@ -19,6 +19,7 @@ html, body {
   box-shadow: 3px 3px 6px #b8b9be, -3px -3px 6px #fff;
   border: .0625rem solid #d1d9e6;
   border-radius: 5px;
+  padding: 10px 20px;
 }
 
 :root .mat-raised-button,
@@ -58,7 +59,7 @@ html, body {
 }
 
 :root .bg-light {
-    background-color: rgb(230,231,238);
+    background-color: transparent;
 }
 
 :root .mat-menu-panel {
@@ -84,6 +85,9 @@ html, body {
 
 :root .mat-select-panel {
   background-color: rgb(230,231,238);
+  box-shadow: 3px 3px 6px #b8b9be, -3px -3px 6px #fff;
+  border: .0625rem solid #d1d9e6;
+  border-radius: 5px !important;
 }
 
 :root .search-list-input {
@@ -178,3 +182,36 @@ html, body {
 .mat-paginator {
   background-color: rgb(230,231,238);
 }
+
+:root .mat-accordion .mat-expansion-panel {
+  box-shadow: 3px 3px 6px #b8b9be, -3px -3px 6px #fff;
+  border: .0625rem solid #d1d9e6;
+}
+
+:root .mat-elevation-z0 {
+  box-shadow: none !important;
+  border: 0 !important;
+}
+
+:root .button-row {
+  padding: 0 25px 15px 0;
+}
+
+:root app-tables-view .masonry mat-card.mat-card .hoverable-row p {
+  margin-left: 15px;
+}
+
+
+@keyframes flash2 {
+  0% {
+    background-color: rgba(255,255,128);
+  }
+  100% {
+    background-color: rgb(230,231,238);
+  }
+}
+
+:root .active {
+  animation-name: flash2 !important;
+}
+
