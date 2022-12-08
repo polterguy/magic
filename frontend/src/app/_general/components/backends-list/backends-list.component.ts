@@ -10,7 +10,6 @@ import { GeneralService } from '../../services/general.service';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { Router } from '@angular/router';
 import { DialogRef } from '@angular/cdk/dialog';
-import { EndpointsGeneralService } from '../../services/endpoints-general.service';
 
 @Component({
   selector: 'app-backends-list',
@@ -122,6 +121,7 @@ export class BackendsListComponent implements OnInit {
     } else {
       this.backendsList = this.backendService.backends;
     }
+    this.dialogRef.close();
   }
 
   public addNew() {
