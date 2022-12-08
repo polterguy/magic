@@ -84,20 +84,12 @@ export class BackendsListComponent implements OnInit {
    */
   switchBackend(backend: Backend) {
     this.isLoading = true;
-    if (backend.token) {
-      if (this.router.url !== '/setup') {
-        this.backendService.activate(backend);
-        this.backendService.upsert(backend);
-        window.location.reload();
-      }
-    } else {
-      this.isLoading = false;
-      this.router.navigate(['/authentication/login'], {
-        queryParams: { switchTo: backend.url }
-      });
-      if (this.dialogRef) {
-        this.dialogRef.close();
-      }
+    this.isLoading = false;
+    this.router.navigate(['/authentication/login'], {
+      queryParams: { switchTo: backend.url }
+    });
+    if (this.dialogRef) {
+      this.dialogRef.close();
     }
   }
 
