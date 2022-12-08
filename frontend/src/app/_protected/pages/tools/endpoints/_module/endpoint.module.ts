@@ -14,6 +14,7 @@ import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import { SingleTableConfigComponent } from '../components/single-table-config/single-table-config.component';
 import { ForeignKeyDialogComponent } from '../components/foreign-key-dialog/foreign-key-dialog.component';
 import { CmModule } from 'src/app/codemirror/_module/cm.module';
+import { ForeignKeyListComponent } from '../components/foreign-key-list/foreign-key-list.component';
 
 
 
@@ -25,7 +26,8 @@ import { CmModule } from 'src/app/codemirror/_module/cm.module';
     AddArgumentDialogComponent,
     SqlSnippetDialogComponent,
     SingleTableConfigComponent,
-    ForeignKeyDialogComponent
+    ForeignKeyDialogComponent,
+    ForeignKeyListComponent
   ],
   imports: [
     CommonModule,

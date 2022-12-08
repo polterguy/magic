@@ -29,12 +29,36 @@
     <ng-container matColumnDef="key">
       <th mat-header-cell *matHeaderCellDef class="text-nowrap"> Key </th>
       <td mat-cell *matCellDef="let element">
-        {{element?.primary === true ? 'Primary' : (foreign_keys?.column === element?.name ? 'Foreign' : '-')}}
+        <!-- {{element?.primary === true ? 'Primary' : (foreign_keys?.column === element?.name ? 'Foreign' : '-')}}
         <button mat-icon-button color="primary" class="table-btn"
           (click)="editForeignKey(element.name)"
           *ngIf="foreign_keys?.column === element?.name && !element?.primary">
           <mat-icon>edit</mat-icon>
-        </button>
+        </button> -->
+        <ng-container *ngIf="foreign_keys[element?.name] && !element?.primary;else notEditable">
+          <button mat-button class="table-btn w-100 ps-0" [disableRipple]="true"
+            [matMenuTriggerFor]="editForeignKeyMenu"
+            [matMenuTriggerData]="{data: {databases: databases, selectedDatabase: selectedDatabase, selectedTable: selectedTable, columnName: element?.name, foreign_keys: foreign_keys, long_data: fkLong[element?.name]??true}}"
+            aria-label="Edit foreign key">
+            <div class="d-flex w-100 justify-content-between align-items-center">
+              Foreign
+              <mat-icon class="me-4">keyboard_arrow_down</mat-icon>
+            </div>
+          </button>
+          <mat-menu #editForeignKeyMenu="matMenu">
+            <ng-template matMenuContent let-data="data">
+              <div class="inner-menu w-100">
+                <app-foreign-key-list
+                [data]="data"
+                (changeForeignKey)="changeForeignKey($event)"></app-foreign-key-list>
+              </div>
+            </ng-template>
+          </mat-menu>
+        </ng-container>
+
+        <ng-template #notEditable>
+          {{element?.primary === true ? 'Primary' : '-'}}
+        </ng-template>
       </td>
     </ng-container>
 

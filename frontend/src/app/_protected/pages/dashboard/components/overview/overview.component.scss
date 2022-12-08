@@ -1,0 +1,12 @@
+@import '../../../../../../assets/styles/_variables/colors.scss';
+@import '../../../../../../assets/styles/_variables/mixin.scss';
+
+.scrollable-row {
+  max-height: 216px;
+  overflow: hidden auto;
+  @include scrollbar($aista_default_alt, $aista_default_grey4, 5px);
+
+  @media(max-width: 1199px) {
+    max-height: 345px;
+  }
+}

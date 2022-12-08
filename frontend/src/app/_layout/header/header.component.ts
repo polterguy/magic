@@ -132,18 +132,16 @@ export class HeaderComponent implements OnInit {
     // })();
 
     setTimeout(() => {
-      console.log(this.backendService)
       if ((this.backendService?.active?.access && Object.keys(this.backendService?.active?.access?.auth).length > 0)) {
         this.permissions = this.backendService.active;
         this.username = this.permissions.token ? this.permissions.token['_username'] : 'anonymous';
         this.backendService.active ? this.activeUrl = this.backendService.active.url.replace('http://', '').replace('https://', '') : this.activeUrl = 'not connected';
         this.backendList = this.backendService.backends;
 
-        console.log(this.backendService)
-
         const notAuthorized: boolean = (!this.backendService.active || Object.values(this.backendService.active.access.auth ?? {}).every((item: any) => { return item === false }))
 
         if (notAuthorized || this.backendService.active.token === null) {
+          console.log('backendService responded.')
           this.router.navigate(['/authentication/login']);
         }
 
@@ -151,6 +149,7 @@ export class HeaderComponent implements OnInit {
         this.getSetupStatus();
       } else {
         console.log(this.backendService)
+        console.log('backendService didn\'t respond.')
         const notAuthorized: boolean = (!this.backendService.active || Object.values(this.backendService.active.access.auth ?? {}).every((item: any) => { return item === false }))
 
         if (notAuthorized || this.backendService.active.token === null) {

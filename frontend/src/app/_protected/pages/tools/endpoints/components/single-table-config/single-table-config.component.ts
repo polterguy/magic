@@ -2,7 +2,6 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, Subscription } from 'rxjs';
 import { ColumnEx } from 'src/app/_protected/pages/crud-generator/_models/column-ex.model';
-import { FKModel, ForeignKeyDialogComponent } from '../foreign-key-dialog/foreign-key-dialog.component';
 
 @Component({
   selector: 'app-single-table-config',
@@ -25,6 +24,8 @@ export class SingleTableConfigComponent implements OnInit, OnDestroy {
 
   private dbLoadingSubscription!: Subscription;
 
+  fkLong: any = {}
+
   constructor(
     private dialog: MatDialog) { }
 
@@ -39,7 +40,20 @@ export class SingleTableConfigComponent implements OnInit, OnDestroy {
         const db: any = this.databases.find((db: any) => db.name === this.selectedDatabase);
         const table: any = db.tables.find((table: any) => table.name === this.selectedTable.toString());
 
-        this.foreign_keys = table?.foreign_keys!==null ? table.foreign_keys[0] : [] ;
+        // this.foreign_keys = table?.foreign_keys!==null ? table.foreign_keys[0] : [] ;
+
+        if (table?.foreign_keys && table?.foreign_keys !== null) {
+          for (const idx of table?.foreign_keys) {
+            const t = db.tables.filter(x => x.name === idx.foreign_table)[0];
+            this.foreign_keys[idx.column] = t.columns.map(x => {
+              return {
+                name: t.name.replace('dbo.', '') + '.' + x.name,
+                value: x.name,
+                type: x.hl,
+              };
+            });
+          }
+        }
 
         const columns = (table.columns || []);
 
@@ -90,24 +104,35 @@ export class SingleTableConfigComponent implements OnInit, OnDestroy {
         }
       }
     })
+
   }
 
-  public editForeignKey(columnName: string) {
+  // public editForeignKey({ columnName }: { columnName: string; }) {
+  //   const db: any = this.databases.find((db: any) => db.name === this.selectedDatabase);
+  //   const table: any = db.tables.find((table: any) => table.name === this.selectedTable.toString());
+  //   this.dialog.open(ForeignKeyDialogComponent, {
+  //     width: '500px',
+  //     data: {
+  //       database: db,
+  //       foreign_keys: this.foreign_keys,
+  //       currentForeignKey: table.foreign_keys.find((fk: any) => fk.column === columnName)
+  //     }
+  //   }).afterClosed().subscribe((res: { selectedForeignKey: FKModel }) => {
+  //     if (res && res.selectedForeignKey) {
+  //       const column: any = table.columns.find((column: any) => column.name === columnName);
+  //       column.foreign_key = res.selectedForeignKey;
+  //     }
+  //   })
+  // }
+
+  public changeForeignKey(event: any) {
+
     const db: any = this.databases.find((db: any) => db.name === this.selectedDatabase);
     const table: any = db.tables.find((table: any) => table.name === this.selectedTable.toString());
-    this.dialog.open(ForeignKeyDialogComponent, {
-      width: '500px',
-      data: {
-        database: db,
-        foreign_keys: this.foreign_keys,
-        currentForeignKey: table.foreign_keys.find((fk: any) => fk.column === columnName)
-      }
-    }).afterClosed().subscribe((res: { selectedForeignKey: FKModel }) => {
-      if (res && res.selectedForeignKey) {
-        const column: any = table.columns.find((column: any) => column.name === columnName);
-        column.foreign_key = res.selectedForeignKey;
-      }
-    })
+    const column: any = table.columns.find((column: any) => column.name === event.columnName);
+    column.foreign_key = event.selectedForeignKey;
+    this.fkLong[event.columnName] = column.foreign_key.long_data;
+
   }
 
   /**

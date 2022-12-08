@@ -21,6 +21,7 @@
                 <div class="d-flex justify-content-between align-items-center word-break">
                   <span class="span me-3 methods {{el?.verb}}">{{el?.verb === 'delete' ? 'del' : el.verb}}</span>
                   /{{getPath(el?.path)}}
+                  <span *ngIf="el?.error" class="text-danger mat-caption"> &nbsp;-Syntax error</span>
                 </div>
                 <div>
                   <button mat-icon-button color="primary" class="copy-btn"
