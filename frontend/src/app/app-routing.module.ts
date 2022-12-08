@@ -40,10 +40,6 @@ const routes: Routes = [
         loadChildren: () => import('./_protected/pages/administration/generated-sockets/_module/socket.module').then(m => m.SocketModule)
       },
       {
-        path: 'generated-frontend',
-        loadChildren: () => import('./_protected/pages/administration/generated-frontend/_module/frontend.module').then(m => m.FrontendModule)
-      },
-      {
         path: 'database-management',
         loadChildren: () => import('./_protected/pages/tools/database/_module/database.module').then(m => m.DatabaseModule)
       },
@@ -65,6 +61,16 @@ const routes: Routes = [
       },
       {
         path: 'hyper-ide',
+        data: {
+          type: 'backend'
+        },
+        loadChildren: () => import('./_protected/pages/tools/hyper-ide/_module/ide.module').then(m => m.IdeModule)
+      },
+      {
+        path: 'generated-frontend',
+        data: {
+          type: 'frontend',
+        },
         loadChildren: () => import('./_protected/pages/tools/hyper-ide/_module/ide.module').then(m => m.IdeModule)
       },
       {

@@ -23,7 +23,7 @@
                 (click)="file.click()">
                   <mat-icon>file_upload</mat-icon>
                 </button>
-                <button mat-icon-button color="primary" class="tree-action-btn" title="Install module ..."
+                <button *ngIf="type === 'backend'" mat-icon-button color="primary" class="tree-action-btn" title="Install module ..."
                 (click)="zipfile.click()">
                   <mat-icon>drive_folder_upload</mat-icon>
                 </button>

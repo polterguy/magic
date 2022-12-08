@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { FileNode } from './_models/file-node.model';
 
@@ -16,9 +17,14 @@ export class IdeComponent implements OnInit {
 
    public searchKey: Observable<string>;
 
-   constructor() { }
+   public type: Observable<string>;
+
+   constructor(private route: ActivatedRoute) { }
 
    ngOnInit(): void {
+    this.route.data.subscribe(data => {
+      this.type = data.type;
+    });
    }
 
    public showEditor(event: { currentFileData: any }) {

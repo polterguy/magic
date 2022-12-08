@@ -9,6 +9,7 @@
         <div class="row mt-3">
           <div class="col-12">
             <app-ide-searchbox
+              [type]="type"
               (toggleFileSystems)="tree.systemFiles = $event;tree.updateFileObject('/')"
               (filterList)="filterList($event)" #search></app-ide-searchbox>
           </div>
@@ -20,6 +21,7 @@
             <app-ide-tree
               #tree
               [searchKey]="searchKey"
+              [type]="type"
               (showEditor)="showEditor($event)"
               (clearEditorHistory)="editor.clearEditorHistory($event)"
               (setFocusToActiveEditor)="editor.setFocusToActiveEditor()"></app-ide-tree>

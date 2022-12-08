@@ -15,6 +15,7 @@
   </mat-form-field>
   <div class="p-lg-2"></div>
   <mat-checkbox
+    *ngIf="type === 'backend'"
     color="primary"
     class="mt-lg-0 mt-3"
     [(ngModel)]="fileSystem"
