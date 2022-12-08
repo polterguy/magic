@@ -215,3 +215,15 @@ html, body {
   animation-name: flash2 !important;
 }
 
+:root mat-calendar {
+  background-color: rgb(230,231,238);
+  border: .0625rem solid #d1d9e6;
+  border-radius: 5px !important;
+}
+
+:root app-socket-list {
+}
+
+:root app-socket-list mat-card {
+  margin: 15px;
+}
