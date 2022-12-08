@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { GeneralService } from 'src/app/_general/services/general.service';

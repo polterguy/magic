@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { Endpoint } from './_models/endpoint.model';

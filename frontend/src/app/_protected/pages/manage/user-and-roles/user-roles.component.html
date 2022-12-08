@@ -1,85 +1,54 @@
 <mat-card>
   <mat-card-content>
 
-    <mat-tab-group
-      mat-stretch-tabs
-      dynamicHeight
-      animationDuration="0ms"
-      (selectedTabChange)="tabChange($event)"
-      #tabs>
+    <mat-tab-group mat-stretch-tabs dynamicHeight animationDuration="0ms" (selectedTabChange)="tabChange($event)" #tabs>
 
       <mat-tab>
-        <ng-template
-          mat-tab-label>User <span class="d-sm-inline d-none ps-1">Management</span></ng-template>
+        <ng-template mat-tab-label>User <span class="d-sm-inline d-none ps-1">Management</span></ng-template>
         <ng-template matTabContent>
           <ng-container *ngIf="isLoading;else dataLoadedUsers">
 
             <div class="row mt-3">
               <div class="col-12">
-                <app-loading-skeleton
-                [amount]="5"
-                [colClass]="'col-12'"
-                [blockHeight]="'40px'"
-                [hasShadow]="false"></app-loading-skeleton>
+                <app-loading-skeleton [amount]="5" [colClass]="'col-12'" [blockHeight]="'40px'"
+                  [hasShadow]="false"></app-loading-skeleton>
               </div>
             </div>
 
           </ng-container>
           <ng-template #dataLoadedUsers>
-              <app-shared-top-bar
-                [tab]="'user'"
-                [rolesList]="roles | async"
-                [accessPermissions]="accessPermissions"
-                (getUsersList)="getUsersList($event)"></app-shared-top-bar>
+            <app-shared-top-bar [tab]="'user'" [rolesList]="roles | async" [accessPermissions]="accessPermissions"
+              (getUsersList)="getUsersList($event)"></app-shared-top-bar>
 
-              <app-users-list
-                [usersList]="users | async"
-                [rolesList]="roles | async"
-                [accessPermissions]="accessPermissions"
-                (getUsersList)="getUsersList($event)"></app-users-list>
+            <app-users-list [usersList]="users | async" [rolesList]="roles | async"
+              [accessPermissions]="accessPermissions" (getUsersList)="getUsersList($event)"></app-users-list>
           </ng-template>
         </ng-template>
       </mat-tab>
 
       <mat-tab>
-        <ng-template
-          mat-tab-label>Role <span class="d-sm-inline d-none ps-1">Management</span></ng-template>
+        <ng-template mat-tab-label>Role <span class="d-sm-inline d-none ps-1">Management</span></ng-template>
         <ng-template matTabContent>
           <ng-container *ngIf="isLoading;else dataLoadedRoles">
 
-            <app-loading-skeleton
-              [amount]="5"
-              [colClass]="'col-12'"
-              [blockHeight]="'40px'"
+            <app-loading-skeleton [amount]="5" [colClass]="'col-12'" [blockHeight]="'40px'"
               [hasShadow]="false"></app-loading-skeleton>
 
           </ng-container>
           <ng-template #dataLoadedRoles>
-            <app-shared-top-bar
-              [tab]="'role'"
-              [rolesList]="roles | async"
-              [accessPermissions]="accessPermissions"
+            <app-shared-top-bar [tab]="'role'" [rolesList]="roles | async" [accessPermissions]="accessPermissions"
               (getRolesList)="getRolesList($event)"></app-shared-top-bar>
 
-            <app-roles-list
-              [rolesList]="roles | async"
-              [accessPermissions]="accessPermissions"
+            <app-roles-list [rolesList]="roles | async" [accessPermissions]="accessPermissions"
               (getRolesList)="getRolesList($event)"></app-roles-list>
           </ng-template>
         </ng-template>
       </mat-tab>
     </mat-tab-group>
 
-    <mat-paginator
-      #paginator
-      [length]="resultsLength"
-      (page)="pageChange($event, tabs.selectedIndex)"
-      [pageSize]="pageSize"
-      [pageSizeOptions]="pageSizeOptions"
-      [showFirstLastButtons]="true"
-      class="mt-4"
-      aria-label="Select page"
-      [class.d-none]="resultsLength < 5">
+    <mat-paginator #paginator [length]="resultsLength" (page)="pageChange($event, tabs.selectedIndex)"
+      [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" [showFirstLastButtons]="true" class="mt-4"
+      aria-label="Select page" [class.d-none]="resultsLength < 5">
     </mat-paginator>
 
   </mat-card-content>

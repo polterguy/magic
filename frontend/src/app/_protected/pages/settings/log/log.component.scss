@@ -1,12 +1,20 @@
 
-@import '../../../../../assets/styles/_variables/colors.scss';
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
+ @import '../../../../../assets/styles/_variables/colors.scss';
 @import '../../../../../assets/styles/_variables/mixin.scss';
 
 .table-responsive {
   max-height: 55vh;
-  @include scrollbar($aista_default_alt,$aista_default_grey4,8px);
+  @include scrollbar($aista_default_alt, $aista_default_grey4, 8px);
+
   @media (max-width: 576px) {
     max-height: unset;
   }
-  .text-truncate { max-width: 30vw; }
+
+  .text-truncate {
+    max-width: 30vw;
+  }
 }

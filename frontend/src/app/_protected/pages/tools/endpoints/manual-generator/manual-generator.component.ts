@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { ChangeDetectorRef, Component, EventEmitter, Inject, Input, LOCALE_ID, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -25,8 +30,7 @@ import { SnippetNameDialogComponent } from 'src/app/_general/components/snippet-
 
 @Component({
   selector: 'app-manual-generator',
-  templateUrl: './manual-generator.component.html',
-  styleUrls: ['./manual-generator.component.scss']
+  templateUrl: './manual-generator.component.html'
 })
 export class ManualGeneratorComponent implements OnInit, OnDestroy {
 
@@ -75,9 +79,9 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
    */
   public isScalar = false;
 
-   /**
-    * Whether or not existing endpoints should be overwritten or not.
-    */
+  /**
+   * Whether or not existing endpoints should be overwritten or not.
+   */
   public overwrite = false;
 
   /**
@@ -108,7 +112,6 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
 
   constructor(
     private dialog: MatDialog,
-    private logService: LogService,
     private cdr: ChangeDetectorRef,
     private crudifyService: CrudifyService,
     private messageService: MessageService,
@@ -138,7 +141,7 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
   }
 
   private getOptions() {
-    this.codemirrorActionsService.getActions('','sql').then((options: any) => {
+    this.codemirrorActionsService.getActions('', 'sql').then((options: any) => {
       options.autofocus = false;
       this.sql.options = options;
       this.codeMirrorReady = true;
@@ -178,15 +181,15 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
     if (this.selectedDatabase && db && db.tables?.length) {
       this.tables = this.databases.find((item: any) => item.name === this.selectedDatabase).tables;
       let names: any = this.tables.map((item: any) => { return item.name });
-      this.selectedTables = new FormControl({value: names, disabled: false});
+      this.selectedTables = new FormControl({ value: names, disabled: false });
     } else {
-      this.selectedTables = new FormControl({value: '', disabled: true});
+      this.selectedTables = new FormControl({ value: '', disabled: true });
     }
     this.primaryURL = this.selectedDatabase.toLowerCase();
     this.cdr.detectChanges();
   }
 
-  public generateEndpoints() {}
+  public generateEndpoints() { }
   public addArgument() {
     this.dialog.open(AddArgumentDialogComponent, {
       width: '500px',

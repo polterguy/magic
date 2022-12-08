@@ -1,21 +1,22 @@
-
-html, body {
-  background-color: rgb(230,231,238);
+html,
+body {
+  background-color: rgb(230, 231, 238);
 }
 
 :root .core {
-  background: linear-gradient(to right, rgb(50,50,50) 0%, rgb(50,50,50) 33.33333%, rgb(230,231,238) 33.33333%, rgb(230,231,238) 100%) !important;
+  background: linear-gradient(to right, rgb(50, 50, 50) 0%, rgb(50, 50, 50) 33.33333%, rgb(230, 231, 238) 33.33333%, rgb(230, 231, 238) 100%) !important;
 }
 
-#navbar, #footer {
-  background-color: rgb(230,231,238) !important;
+#navbar,
+#footer {
+  background-color: rgb(230, 231, 238) !important;
   box-shadow: 3px 3px 6px #b8b9be, -3px -3px 6px #fff;
   border: .0625rem solid #d1d9e6;
   border-radius: 5px !important;
 }
 
 :root mat-card.mat-card {
-  background-color: rgb(230,231,238);
+  background-color: rgb(230, 231, 238);
   box-shadow: 3px 3px 6px #b8b9be, -3px -3px 6px #fff;
   border: .0625rem solid #d1d9e6;
   border-radius: 5px;
@@ -24,9 +25,9 @@ html, body {
 
 :root .mat-raised-button,
 :root .mat-flat-button {
-  background-color: rgb(230,231,238);
+  background-color: rgb(230, 231, 238);
   box-shadow: 3px 3px 6px #b8b9be, -3px -3px 6px #fff;
-  color: rgba(0,0,0,.87);
+  color: rgba(0, 0, 0, .87);
   transition-property: box-shadow;
   transition-duration: .2s;
   transition-timing-function: ease-in-out;
@@ -37,7 +38,7 @@ html, body {
 :root .mat-raised-button:hover:not([disabled]),
 :root .mat-flat-button:hover:not([disabled]) {
   box-shadow: 2px 2px 4px #b8b9be, -2px -2px 4px #fff;
-  color: rgba(0,0,0,.87);
+  color: rgba(0, 0, 0, .87);
   transition-property: box-shadow;
   transition-duration: .2s;
   transition-timing-function: ease-in-out;
@@ -48,22 +49,22 @@ html, body {
 :root button.mat-raised-button:focus,
 :root button.mat-flat-button:focus {
   box-shadow: 1px 1px 2px #b8b9be, -1px -1px 2px #fff;
-  color: rgba(0,0,0,.87);
+  color: rgba(0, 0, 0, .87);
   transition-property: box-shadow;
   transition-duration: .2s;
   transition-timing-function: ease-in-out;
 }
 
 :root table.mat-table {
-  background-color: rgb(230,231,238);
+  background-color: rgb(230, 231, 238);
 }
 
 :root .bg-light {
-    background-color: transparent;
+  background-color: transparent;
 }
 
 :root .mat-menu-panel {
-  background-color: rgb(230,231,238);
+  background-color: rgb(230, 231, 238);
 }
 
 :root mat-form-field.mat-form-field {
@@ -73,7 +74,7 @@ html, body {
 
 :root mat-form-field.mat-form-field .mat-form-field-wrapper .mat-form-field-outline {
   box-shadow: inset 2px 2px 5px #b8b9be, inset -3px -3px 7px #fff;
-  background-color: rgb(230,231,238);
+  background-color: rgb(230, 231, 238);
   border-radius: 5px;
 }
 
@@ -84,33 +85,34 @@ html, body {
 }
 
 :root .mat-select-panel {
-  background-color: rgb(230,231,238);
+  background-color: rgb(230, 231, 238);
   box-shadow: 3px 3px 6px #b8b9be, -3px -3px 6px #fff;
   border: .0625rem solid #d1d9e6;
   border-radius: 5px !important;
 }
 
 :root .search-list-input {
-  background-color: rgba(230,231,238);
+  background-color: rgba(230, 231, 238);
 }
 
 :root .mat-select-panel .mat-option.mat-selected {
-  color:black;
+  color: black;
 }
 
-:root .mat-tab-group.mat-primary .mat-ink-bar, .mat-tab-nav-bar.mat-primary .mat-ink-bar {
-  background-color: rgb(200,200,200);
+:root .mat-tab-group.mat-primary .mat-ink-bar,
+.mat-tab-nav-bar.mat-primary .mat-ink-bar {
+  background-color: rgb(200, 200, 200);
 }
 
 :root .mat-tab-label .mat-tab-label-content {
-  color: rgba(0,0,0,.87)
+  color: rgba(0, 0, 0, .87)
 }
 
 :root mat-checkbox-indeterminate.mat-primary .mat-checkbox-background,
 :root .mat-checkbox-indeterminate.mat-primary .mat-checkbox-background,
 :root .mat-checkbox-checked.mat-primary .mat-checkbox-background,
 :root .mat-checkbox-checked.mat-primary .mat-checkbox-background {
-  background-color: rgb(230,231,238);
+  background-color: rgb(230, 231, 238);
 }
 
 :root mat-pseudo-checkbox.mat-pseudo-checkbox-checked {
@@ -118,22 +120,22 @@ html, body {
 }
 
 :root .mat-checkbox-checkmark-path {
-  stroke: rgba(0,0,0,.87) !important;
+  stroke: rgba(0, 0, 0, .87) !important;
 }
 
 :root .mat-pseudo-checkbox-checked::after {
-  color: rgb(0,0,0,.87);
+  color: rgb(0, 0, 0, .87);
 }
 
 :root mat-chip.mat-standard-chip {
-  background-color: rgb(230,231,238);
-  color: rgba(0,0,0,.87);
+  background-color: rgb(230, 231, 238);
+  color: rgba(0, 0, 0, .87);
   box-shadow: 3px 3px 6px #b8b9be, -3px -3px 6px #fff;
 }
 
 :root mat-chip.mat-standard-chip.mat-chip-selected.mat-primary {
-  background-color: rgb(230,231,238);
-  color: rgba(0,0,0,.87);
+  background-color: rgb(230, 231, 238);
+  color: rgba(0, 0, 0, .87);
   box-shadow: inset 2px 2px 5px #b8b9be, inset -3px -3px 7px #fff;
 }
 
@@ -143,44 +145,44 @@ html, body {
 }
 
 :root .mat-dialog-container {
-  background-color: rgb(230,231,238);
+  background-color: rgb(230, 231, 238);
 }
 
 :root .table-responsive th.mat-header-cell {
-  border-bottom: 1px solid rgba(0,0,0,.05);
+  border-bottom: 1px solid rgba(0, 0, 0, .05);
 }
 
 .cm-s-aista.CodeMirror {
-  background-color: rgb(230,231,238) !important;
+  background-color: rgb(230, 231, 238) !important;
 }
 
 .cm-s-aista .CodeMirror-gutters {
-  background: rgb(230,231,238) !important;
+  background: rgb(230, 231, 238) !important;
   border-radius: 0 !important;
 }
 
 .mat-accordion .mat-expansion-panel {
-  background-color: rgb(230,231,238);
+  background-color: rgb(230, 231, 238);
 }
 
 .mat-tree,
 .mat-tree-node .show-on-hover .mat-icon-button {
-  background-color: rgb(230,231,238) !important;
+  background-color: rgb(230, 231, 238) !important;
 }
 
 .open-files.active-file {
-  background-color: rgb(230,231,238) !important;
+  background-color: rgb(230, 231, 238) !important;
 }
 
 :root app-loading-skeleton .block {
-  background: linear-gradient(90deg, rgb(230,231,238) 8%, rgb(220,221,228) 18%, rgb(230,231,238) 33%);
+  background: linear-gradient(90deg, rgb(230, 231, 238) 8%, rgb(220, 221, 228) 18%, rgb(230, 231, 238) 33%);
   background-size: 200% 100%;
   box-shadow: 3px 3px 6px #b8b9be, -3px -3px 6px #fff;
   border: .0625rem solid #d1d9e6;
 }
 
 .mat-paginator {
-  background-color: rgb(230,231,238);
+  background-color: rgb(230, 231, 238);
 }
 
 :root .mat-accordion .mat-expansion-panel {
@@ -204,10 +206,11 @@ html, body {
 
 @keyframes flash2 {
   0% {
-    background-color: rgba(255,255,128);
+    background-color: rgba(255, 255, 128);
   }
+
   100% {
-    background-color: rgb(230,231,238);
+    background-color: rgb(230, 231, 238);
   }
 }
 
@@ -217,7 +220,7 @@ html, body {
 
 :root mat-calendar,
 :root ngx-mat-datetime-content {
-  background-color: rgb(230,231,238);
+  background-color: rgb(230, 231, 238);
   border: .0625rem solid #d1d9e6;
   border-radius: 5px !important;
 }
@@ -227,9 +230,9 @@ html, body {
 }
 
 :root .mat-radio-button.mat-primary.mat-radio-checked .mat-radio-outer-circle {
-  border-color: rgb(150,150,161);
+  border-color: rgb(150, 150, 161);
 }
 
 :root .mat-radio-button.mat-primary .mat-radio-inner-circle {
-  background-color: rgb(150,150,161);
+  background-color: rgb(150, 150, 161);
 }

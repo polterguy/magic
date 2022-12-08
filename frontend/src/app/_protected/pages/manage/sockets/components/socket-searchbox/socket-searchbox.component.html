@@ -4,10 +4,8 @@
     <span class="text-muted">|</span>
   </span>
 
-  <input matInput
-    placeholder="Search through endpoints"
-    (input)="applyFilter(input.value)" #input>
-    <button mat-icon-button matSuffix (click)="removeSearchTerm();input.value = ''" *ngIf="input.value!==''">
-      <mat-icon>close</mat-icon>
-    </button>
+  <input matInput placeholder="Search through endpoints" (input)="applyFilter(input.value)" #input>
+  <button mat-icon-button matSuffix (click)="removeSearchTerm();input.value = ''" *ngIf="input.value!==''">
+    <mat-icon>close</mat-icon>
+  </button>
 </mat-form-field>

@@ -1,4 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
+import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
 import { CommonRegEx } from 'src/app/_general/classes/common-regex';
@@ -14,10 +19,9 @@ export interface NewTableModel {
 
 @Component({
   selector: 'app-new-table',
-  templateUrl: './new-table.component.html',
-  styleUrls: ['./new-table.component.scss']
+  templateUrl: './new-table.component.html'
 })
-export class NewTableComponent implements OnInit {
+export class NewTableComponent {
 
   /**
    * Name of table.
@@ -38,9 +42,6 @@ export class NewTableComponent implements OnInit {
   constructor(
     private generalService: GeneralService,
     private dialogRef: MatDialogRef<NewTableComponent>) { }
-
-  ngOnInit(): void {
-  }
 
   /**
    * Invoked when name changes.

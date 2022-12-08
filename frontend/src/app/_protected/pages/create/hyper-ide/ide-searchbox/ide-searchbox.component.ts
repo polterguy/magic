@@ -1,12 +1,17 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-ide-searchbox',
   templateUrl: './ide-searchbox.component.html',
   styleUrls: ['./ide-searchbox.component.scss']
 })
-export class IdeSearchboxComponent implements OnInit {
+export class IdeSearchboxComponent {
 
   @Output() filterList = new EventEmitter<any>();
   @Output() toggleFileSystems = new EventEmitter<any>();
@@ -17,16 +22,11 @@ export class IdeSearchboxComponent implements OnInit {
 
   public fileSystem: boolean;
 
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
   /**
    * Invoking endpoint to search in unique fields.
    * @params event
    */
-   public applyFilter(keyword: string) {
+  public applyFilter(keyword: string) {
     this._inputValue.next(keyword);
     this.filterList.emit(this._inputValue);
   }

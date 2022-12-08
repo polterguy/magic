@@ -26,28 +26,26 @@ import { PwaUpdateDialogComponent } from './pwa-update-dialog/pwa-update-dialog.
 import { LogExceptionComponent } from './log-exception/log-exception.component';
 import { SearchboxComponent } from 'src/app/_protected/pages/manage/plugins/components/searchbox/searchbox.component';
 
-
-
 @NgModule({
   declarations: [
-      TermsModalComponent,
-      PrivacyModalComponent,
-      BackendsListComponent,
-      LoadingSkeletonComponent,
-      DialogComponent,
-      ConfirmationDialogComponent,
-      ShortkeysComponent,
-      LoadSnippetDialogComponent,
-      QueryParamsComponent,
-      AssumptionsComponent,
-      CreateAssumptionTestDialogComponent,
-      SnippetNameDialogComponent,
-      EndpointDialogComponent,
-      GithubTokenDialogComponent,
-      PwaUpdateDialogComponent,
-      LogExceptionComponent,
-      SearchboxComponent,
-    ],
+    TermsModalComponent,
+    PrivacyModalComponent,
+    BackendsListComponent,
+    LoadingSkeletonComponent,
+    DialogComponent,
+    ConfirmationDialogComponent,
+    ShortkeysComponent,
+    LoadSnippetDialogComponent,
+    QueryParamsComponent,
+    AssumptionsComponent,
+    CreateAssumptionTestDialogComponent,
+    SnippetNameDialogComponent,
+    EndpointDialogComponent,
+    GithubTokenDialogComponent,
+    PwaUpdateDialogComponent,
+    LogExceptionComponent,
+    SearchboxComponent,
+  ],
   imports: [
     CommonModule,
     MaterialModule,

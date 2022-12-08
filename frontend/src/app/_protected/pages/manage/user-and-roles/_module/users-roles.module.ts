@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UsersRolesRoutingModule } from './users-roles.routing.module';
@@ -13,8 +18,6 @@ import { NewUserDialogComponent } from '../components/new-user-dialog/new-user-d
 import { EditUserDialogComponent } from '../components/edit-user-dialog/edit-user-dialog.component';
 import { ManageRoleDialogComponent } from '../components/manage-role-dialog/manage-role-dialog.component';
 import { AddExtraFieldsComponent } from '../components/add-extra-fields/add-extra-fields.component';
-
-
 
 @NgModule({
   declarations: [

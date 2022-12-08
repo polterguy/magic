@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HealthCheckRoutingModule } from './health-check.routing.module';
@@ -8,8 +13,6 @@ import { ComponentsModule } from 'src/app/_general/components/components.module'
 import { HealthSearchboxComponent } from '../components/health-searchbox/health-searchbox.component';
 import { TestHealthContentDialogComponent } from '../components/test-health-content-dialog/test-health-content-dialog.component';
 import { HealthCheckComponent } from '../health-check.component';
-
-
 
 @NgModule({
   declarations: [

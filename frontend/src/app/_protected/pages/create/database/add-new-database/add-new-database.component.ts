@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
@@ -247,12 +252,12 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
                   this.hubConnection = null;
                 }
 
-            } else {
-              this.generalService.showFeedback('Oops! Please check the system log.', 'errorMessage', 'Ok', 5000);
-            }
-          },
-          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
-        });
+              } else {
+                this.generalService.showFeedback('Oops! Please check the system log.', 'errorMessage', 'Ok', 5000);
+              }
+            },
+            error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+          });
         } else {
           this.generalService.showFeedback('Oops! Please check the system log.', 'errorMessage', 'Ok', 5000);
         }
@@ -401,8 +406,8 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
   private clearServersideCache() {
     // Purging server side database cache in case user just recently created a new database.
     this.cacheService.delete('magic.sql.databases.*').subscribe({
-      next: () => {},
-      error: (error: any) => {}
+      next: () => { },
+      error: (error: any) => { }
     });
   }
 
@@ -441,11 +446,6 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
           this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', -1)
         }
       });
-  }
-
-  public viewItem(item: any) {
-    // TODO: navigate to generated databases
-    // to see all the tables.
   }
 
   ngOnDestroy(): void {

@@ -1,5 +1,3 @@
-
-
 <mat-card>
   <mat-card-content>
     <form [formGroup]="configForm" (ngSubmit)="submit()">
@@ -18,12 +16,8 @@
                   Database type
                 </span>
 
-                <mat-select
-                  formControlName="selectedDatabaseType"
-                  (selectionChange)="selectedDatabaseTypeChanged()">
-                  <mat-option
-                    *ngFor="let idx of databaseTypes"
-                    [value]="idx.value">
+                <mat-select formControlName="selectedDatabaseType" (selectionChange)="selectedDatabaseTypeChanged()">
+                  <mat-option *ngFor="let idx of databaseTypes" [value]="idx.value">
                     {{idx.name}}
                   </mat-option>
                 </mat-select>
@@ -48,12 +42,8 @@
                   Connection
                 </span>
 
-                <input
-                  matInput
-                  autocomplete="connectionString"
-                  placeholder="Connection string"
-                  formControlName="connectionString"
-                  name="connectionString">
+                <input matInput autocomplete="connectionString" placeholder="Connection string"
+                  formControlName="connectionString" name="connectionString">
                 <mat-error>
                   Connection string in not valid.
                 </mat-error>
@@ -71,11 +61,7 @@
                   Name
                 </span>
 
-                <input
-                  matInput
-                  autocomplete="name"
-                  formControlName="name"
-                  name="name">
+                <input matInput autocomplete="name" formControlName="name" name="name">
                 <mat-error>Name is required.</mat-error>
               </mat-form-field>
             </div>
@@ -85,12 +71,7 @@
                   Email
                 </span>
 
-                <input
-                  matInput
-                  autocomplete="email"
-                  formControlName="email"
-                  name="email"
-                  [pattern]="CommonRegEx.email">
+                <input matInput autocomplete="email" formControlName="email" name="email" [pattern]="CommonRegEx.email">
                 <mat-error>{{CommonErrorMessages.email}}</mat-error>
               </mat-form-field>
             </div>
@@ -100,19 +81,9 @@
                   Password
                 </span>
 
-                <input
-                  matInput
-                  autocomplete="new-password"
-                  formControlName="password"
-                  [type]="showPassword ? 'text' : 'password'"
-                  name="password"
-                  [pattern]="CommonRegEx.password">
-                <button
-                  mat-icon-button
-                  (click)="toggleShowPassword()"
-                  type="button"
-                  matSuffix
-                  tabindex="-1">
+                <input matInput autocomplete="new-password" formControlName="password"
+                  [type]="showPassword ? 'text' : 'password'" name="password" [pattern]="CommonRegEx.password">
+                <button mat-icon-button (click)="toggleShowPassword()" type="button" matSuffix tabindex="-1">
                   <mat-icon>visibility{{showPassword ? '_off' : ''}}</mat-icon>
                 </button>
 
@@ -125,13 +96,8 @@
                   Repeat password
                 </span>
 
-                <input
-                  matInput
-                  autocomplete="new-password"
-                  formControlName="passwordRepeat"
-                  [type]="showPassword ? 'text' : 'password'"
-                  [errorStateMatcher]="matcher"
-                  name="password">
+                <input matInput autocomplete="new-password" formControlName="passwordRepeat"
+                  [type]="showPassword ? 'text' : 'password'" [errorStateMatcher]="matcher" name="password">
                 <mat-error *ngIf="configForm.hasError('notSame')">Passwords must match</mat-error>
               </mat-form-field>
             </div>
@@ -139,12 +105,7 @@
         </div>
 
         <div class="col-12 d-flex justify-content-end mt-3">
-          <button
-            mat-flat-button
-            type="submit"
-            class="px-5"
-            color="primary"
-            [disabled]="waiting">
+          <button mat-flat-button type="submit" class="px-5" color="primary" [disabled]="waiting">
             Save
           </button>
         </div>

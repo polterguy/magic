@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject, ReplaySubject, debounceTime } from 'rxjs';
@@ -7,8 +12,7 @@ import { NewUserDialogComponent } from '../new-user-dialog/new-user-dialog.compo
 
 @Component({
   selector: 'app-shared-top-bar',
-  templateUrl: './shared-top-bar.component.html',
-  styleUrls: ['./shared-top-bar.component.scss']
+  templateUrl: './shared-top-bar.component.html'
 })
 export class SharedTopBarComponent implements OnInit {
 
@@ -22,20 +26,20 @@ export class SharedTopBarComponent implements OnInit {
   /**
    * Stores the search input value.
    */
-   searchTerm: string = '';
+  searchTerm: string = '';
 
-   /**
-   * Specify if the user can create roles
-   */
-    public userCanCreateRole: boolean = undefined;
+  /**
+  * Specify if the user can create roles
+  */
+  public userCanCreateRole: boolean = undefined;
 
-   /**
+  /**
    * Specify if the user can create user
    */
-    public userCanCreateUser: boolean = undefined;
+  public userCanCreateUser: boolean = undefined;
 
   searchKeySubject: Subject<string> = new Subject<string>();
-  private inputValue: ReplaySubject<string>= new ReplaySubject();
+  private inputValue: ReplaySubject<string> = new ReplaySubject();
 
   constructor(
     private dialog: MatDialog,
@@ -57,7 +61,7 @@ export class SharedTopBarComponent implements OnInit {
   }
 
   private watchSearchInputChanges() {
-    this.inputValue.pipe(debounceTime(500)).subscribe((event: string)=>{
+    this.inputValue.pipe(debounceTime(500)).subscribe((event: string) => {
       if (event.length > 2) {
         this.searchTerm = event;
         this.tab === 'user' ? this.getUsers() : this.getRoles();
@@ -72,7 +76,7 @@ export class SharedTopBarComponent implements OnInit {
    * Invoking endpoint to search in unique fields.
    * @params event
    */
-   public applyFilter(keyword: string) {
+  public applyFilter(keyword: string) {
     this.inputValue.next(keyword);
   }
 
@@ -86,11 +90,11 @@ export class SharedTopBarComponent implements OnInit {
   }
 
   private getUsers() {
-    this.getUsersList.emit({search: this.searchTerm});
+    this.getUsersList.emit({ search: this.searchTerm });
   }
 
   private getRoles() {
-    this.getRolesList.emit({search: this.searchTerm});
+    this.getRolesList.emit({ search: this.searchTerm });
   }
 
   /**

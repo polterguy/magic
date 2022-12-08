@@ -1,20 +1,17 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { ReplaySubject } from 'rxjs';
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
+import { Component, EventEmitter, Output } from '@angular/core';
 
 @Component({
   selector: 'app-socket-searchbox',
-  templateUrl: './socket-searchbox.component.html',
-  styleUrls: ['./socket-searchbox.component.scss']
+  templateUrl: './socket-searchbox.component.html'
 })
-export class SocketSearchboxComponent implements OnInit {
+export class SocketSearchboxComponent {
 
   @Output() filterList = new EventEmitter<any>();
-
-  constructor() { }
-
-  ngOnInit(): void {
-
-  }
 
   /**
    * Invoking endpoint to search in unique fields.

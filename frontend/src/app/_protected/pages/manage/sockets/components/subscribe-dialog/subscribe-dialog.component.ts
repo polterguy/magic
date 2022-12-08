@@ -1,11 +1,15 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { GeneralService } from 'src/app/_general/services/general.service';
 
 @Component({
   selector: 'app-subscribe-dialog',
-  templateUrl: './subscribe-dialog.component.html',
-  styleUrls: ['./subscribe-dialog.component.scss']
+  templateUrl: './subscribe-dialog.component.html'
 })
 export class SubscribeDialogComponent implements OnInit {
 
@@ -20,7 +24,7 @@ export class SubscribeDialogComponent implements OnInit {
   constructor(
     private generalService: GeneralService,
     private dialogRef: MatDialogRef<SubscribeDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: {subscriptionName?: string, subscriptionList?: any}) { }
+    @Inject(MAT_DIALOG_DATA) public data: { subscriptionName?: string, subscriptionList?: any }) { }
 
   ngOnInit(): void {
     if (this.data.subscriptionName && this.data.subscriptionName !== '') {
@@ -43,5 +47,4 @@ export class SubscribeDialogComponent implements OnInit {
     // Closing dialog making sure we provide message name to caller.
     this.dialogRef.close(this.name);
   }
-
 }

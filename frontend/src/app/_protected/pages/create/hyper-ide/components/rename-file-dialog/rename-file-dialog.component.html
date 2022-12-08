@@ -1,4 +1,3 @@
-
 <h3 mat-dialog-title>Rename file</h3>
 <form>
   <div mat-dialog-content>
@@ -8,28 +7,17 @@
         <mat-icon class="mat-icon-rtl-mirror">insert_drive_file</mat-icon>
         <span class="text-muted">|</span>
       </span>
-      <input
-        type="text"
-        matInput
-        autocomplete="off"
-        [(ngModel)]="data.name"
-        name="-">
-      </mat-form-field>
-      <mat-hint *ngIf="(data.name && !pathValid()) || data.name === originalName">
-        <span *ngIf="!pathValid()">Name is required and cannot contain blank space or special characters.</span>
-        <span *ngIf="data.name === originalName">New name cannot be the same as the current name.</span>
-      </mat-hint>
+      <input type="text" matInput autocomplete="off" [(ngModel)]="data.name" name="-">
+    </mat-form-field>
+    <mat-hint *ngIf="(data.name && !pathValid()) || data.name === originalName">
+      <span *ngIf="!pathValid()">Name is required and cannot contain blank space or special characters.</span>
+      <span *ngIf="data.name === originalName">New name cannot be the same as the current name.</span>
+    </mat-hint>
 
   </div>
 
   <div mat-dialog-actions [align]="'end'">
     <button mat-button mat-dialog-close>Close</button>
-
-    <button
-      mat-flat-button
-      color="primary"
-      type="submit"
-      (click)="ok()">Rename</button>
-
+    <button mat-flat-button color="primary" type="submit" (click)="ok()">Rename</button>
   </div>
 </form>

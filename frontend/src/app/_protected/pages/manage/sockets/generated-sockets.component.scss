@@ -1,5 +1,9 @@
 
-@import '../../../../../assets/styles/_variables/colors.scss';
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
+ @import '../../../../../assets/styles/_variables/colors.scss';
 @import '../../../../../assets/styles/_variables/mixin.scss';
 @import '../../../../../assets/styles/_variables/sizing.scss';
 
@@ -7,9 +11,13 @@
   height: calc(100% - 100px);
   overflow: auto;
 }
+
 .max-height-full {
   max-height: 53vh;
   min-height: 100%;
   overflow: hidden;
 }
-.max-height {max-height: 100%;}
+
+.max-height {
+  max-height: 100%;
+}

@@ -1,6 +1,8 @@
 [
   {
-    "extensions": ["sql"],
+    "extensions": [
+      "sql"
+    ],
     "options": {
       "mode": "text/x-mysql",
       "lineNumbers": true,
@@ -12,7 +14,12 @@
     }
   },
   {
-    "extensions": ["md", "txt", "log", "key"],
+    "extensions": [
+      "md",
+      "txt",
+      "log",
+      "key"
+    ],
     "options": {
       "mode": "markdown",
       "lineNumbers": true,
@@ -24,7 +31,10 @@
     }
   },
   {
-    "extensions": ["yml", "yaml"],
+    "extensions": [
+      "yml",
+      "yaml"
+    ],
     "options": {
       "mode": "text/x-yaml",
       "lineNumbers": true,
@@ -36,7 +46,11 @@
     }
   },
   {
-    "extensions": ["xml", "html", "htm"],
+    "extensions": [
+      "xml",
+      "html",
+      "htm"
+    ],
     "options": {
       "mode": "application/xml",
       "lineNumbers": true,
@@ -48,7 +62,9 @@
     }
   },
   {
-    "extensions": ["css"],
+    "extensions": [
+      "css"
+    ],
     "options": {
       "mode": "text/css",
       "lineNumbers": true,
@@ -60,7 +76,9 @@
     }
   },
   {
-    "extensions": ["scss"],
+    "extensions": [
+      "scss"
+    ],
     "options": {
       "mode": "text/x-scss",
       "lineNumbers": true,
@@ -72,7 +90,9 @@
     }
   },
   {
-    "extensions": ["less"],
+    "extensions": [
+      "less"
+    ],
     "options": {
       "mode": "text/x-less",
       "lineNumbers": true,
@@ -84,7 +104,9 @@
     }
   },
   {
-    "extensions": ["sass"],
+    "extensions": [
+      "sass"
+    ],
     "options": {
       "mode": "text/x-sass",
       "lineNumbers": true,
@@ -96,7 +118,10 @@
     }
   },
   {
-    "extensions": ["js", "ts"],
+    "extensions": [
+      "js",
+      "ts"
+    ],
     "options": {
       "mode": "text/javascript",
       "lineNumbers": true,
@@ -108,7 +133,9 @@
     }
   },
   {
-    "extensions": ["json"],
+    "extensions": [
+      "json"
+    ],
     "options": {
       "mode": "application/ld+json",
       "lineNumbers": true,
@@ -120,7 +147,9 @@
     }
   },
   {
-    "extensions": ["py"],
+    "extensions": [
+      "py"
+    ],
     "options": {
       "mode": "text/x-python",
       "lineNumbers": true,
@@ -139,7 +168,9 @@
     }
   },
   {
-    "extensions": ["rb"],
+    "extensions": [
+      "rb"
+    ],
     "options": {
       "mode": "text/x-ruby",
       "lineNumbers": true,
@@ -158,7 +189,9 @@
     }
   },
   {
-    "extensions": ["sh"],
+    "extensions": [
+      "sh"
+    ],
     "options": {
       "mode": "application/x-sh",
       "lineNumbers": true,
@@ -170,7 +203,9 @@
     }
   },
   {
-    "extensions": ["hl"],
+    "extensions": [
+      "hl"
+    ],
     "options": {
       "mode": "hyperlambda",
       "lineNumbers": true,

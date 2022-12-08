@@ -1,6 +1,10 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { BehaviorSubject } from 'rxjs';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { BackendService } from 'src/app/_protected/services/common/backend.service';
@@ -28,27 +32,25 @@ export class ConnectComponent implements OnInit {
    */
   public dbTypes: any = [];
 
-   /**
-    * What database type user has selected.
-    */
+  /**
+   * What database type user has selected.
+   */
   public databaseType: string = '';
 
-   /**
-    * What connection string user has selected.
-    */
+  /**
+   * What connection string user has selected.
+   */
   public connectionString: string = '';
 
-   /**
-    * Stores the given name for a new database to be connected.
-    */
+  /**
+   * Stores the given name for a new database to be connected.
+   */
   public cStringName: string = '';
 
-   /**
-    * List of connected databases.
-    */
+  /**
+   * List of connected databases.
+   */
   public databases: any = [];
-
-  private loopIndex: number = 1;
 
   private configFile: any = {};
 
@@ -74,7 +76,7 @@ export class ConnectComponent implements OnInit {
   private getDatabaseTypes() {
     (async () => {
       while (!(this.databaseTypes && this.databaseTypes.length))
-      await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise(resolve => setTimeout(resolve, 100));
 
       if (this.databaseTypes && this.databaseTypes.length > 0) {
         this.databaseTypes.map((item: string) => {
@@ -132,7 +134,7 @@ export class ConnectComponent implements OnInit {
             },
             error: (error: any) => {
               this.waitingTest = false;
-              this.generalService.showFeedback(error?.error?.message??error, 'errorMessage');
+              this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
             },
           });
         } else {

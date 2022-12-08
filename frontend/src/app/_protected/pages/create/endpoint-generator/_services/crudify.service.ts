@@ -1,6 +1,6 @@
 
 /*
- * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
 // Angular and system imports.
@@ -142,6 +142,7 @@ export class CrudifyService {
           onAfter();
         }
       },
-      error: () => this.generalService.showFeedback('Something went wrong while generating your app, check your log for details', 'errorMessage', 'Ok', 4000)});
+      error: () => this.generalService.showFeedback('Something went wrong while generating your app, check your log for details', 'errorMessage', 'Ok', 4000)
+    });
   }
 }

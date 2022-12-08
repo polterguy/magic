@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, Subject, Subscription } from 'rxjs';
@@ -7,7 +12,6 @@ import { GeneralService } from 'src/app/_general/services/general.service';
 import { BackendService } from 'src/app/_protected/services/common/backend.service';
 
 // CodeMirror options.
-import sql from '../../../../../../codemirror/options/sql.json';
 import { CodemirrorActionsService } from '../../../hyper-ide/_services/codemirror-actions.service';
 import { SqlService } from '../../../database/_services/sql.service';
 import { SqlSnippetDialogComponent } from '../../../../tools/endpoints/components/sql-snippet-dialog/sql-snippet-dialog.component';
@@ -247,13 +251,13 @@ export class SqlViewComponent implements OnInit, OnDestroy {
   private showWarning() {
     this.dialog.open(ConfirmationDialogComponent, {
       width: '500px',
-        data: {
-          title: 'Attention please!',
-          description: 'Disabling safe mode might result in you exhausting your server or client if you select thousands of records.',
-          description_extra: '<span class="fw-bold">Are you sure you want to continue?</span>',
-          action_btn: 'Yes, enable',
-          action_btn_color: 'warn'
-        }
+      data: {
+        title: 'Attention please!',
+        description: 'Disabling safe mode might result in you exhausting your server or client if you select thousands of records.',
+        description_extra: '<span class="fw-bold">Are you sure you want to continue?</span>',
+        action_btn: 'Yes, enable',
+        action_btn_color: 'warn'
+      }
     }).afterClosed().subscribe((result: string) => {
       if (result === 'confirm') {
         this.safeMode = false;
@@ -313,7 +317,7 @@ export class SqlViewComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if(this.tableSubscription) {
+    if (this.tableSubscription) {
       this.tableSubscription.unsubscribe();
     }
     if (this.saveSnippetSubscription) {

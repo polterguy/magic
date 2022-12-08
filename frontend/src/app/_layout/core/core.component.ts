@@ -5,9 +5,7 @@
 
 import { ChangeDetectorRef, Component, HostListener, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Status } from 'src/app/models/status.model';
 import { UpdatePwaService } from 'src/app/_general/services/update-pwa.service';
-import { EndpointsGeneralService } from 'src/app/_general/services/endpoints-general.service';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { BackendService } from 'src/app/_protected/services/common/backend.service';
 
@@ -40,21 +38,21 @@ export class CoreComponent implements OnInit {
     private router: Router,
     private backendService: BackendService,
     private updatePwaService: UpdatePwaService) {
-      this.updatePwaService.checkForUpdates();
-    }
+    this.updatePwaService.checkForUpdates();
+  }
 
   ngOnInit(): void {
     this.onWindowResize();
-    this.backendService.authenticatedChanged.subscribe((res:any) => {
+    this.backendService.authenticatedChanged.subscribe((res: any) => {
       this.cdr.detectChanges();
     });
-    this.backendService.activeBackendChanged.subscribe((res:any) => {
+    this.backendService.activeBackendChanged.subscribe((res: any) => {
       this.cdr.detectChanges();
     });
-    this.backendService.endpointsFetched.subscribe((res:any) => {
+    this.backendService.endpointsFetched.subscribe((res: any) => {
       this.cdr.detectChanges();
     });
-    this.backendService.versionRetrieved.subscribe((res:any) => {
+    this.backendService.versionRetrieved.subscribe((res: any) => {
       this.cdr.detectChanges();
     });
 

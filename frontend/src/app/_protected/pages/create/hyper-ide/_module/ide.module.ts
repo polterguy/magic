@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IdeComponent } from '../ide.component';
@@ -18,8 +23,6 @@ import { RenameFileDialogComponent } from '../components/rename-file-dialog/rena
 import { RenameFolderDialogComponent } from '../components/rename-folder-dialog/rename-folder-dialog.component';
 import { SelectMacroDialogComponent } from '../components/select-macro-dialog/select-macro-dialog.component';
 import { UnsavedChangesDialogComponent } from '../components/unsaved-changes-dialog/unsaved-changes-dialog.component';
-
-
 
 @NgModule({
   declarations: [

@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, Input, OnInit, OnDestroy, EventEmitter, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, Subscription } from 'rxjs';
@@ -91,7 +96,7 @@ export class TablesViewComponent implements OnInit, OnDestroy {
           this.refetchDatabases();
           // this.applyMigration(result.sql);
         },
-        error: (error) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage', 'Ok', 5000)
+        error: (error) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
       });
   }
 
@@ -114,7 +119,7 @@ export class TablesViewComponent implements OnInit, OnDestroy {
           this.refetchDatabases();
           // this.applyMigration(result.sql);
         },
-        error: (error) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage', 'Ok', 5000)
+        error: (error) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
       });
   }
 
@@ -123,7 +128,7 @@ export class TablesViewComponent implements OnInit, OnDestroy {
     domEl.scrollIntoView();
     this.activeTable = el.foreign_table;
     setTimeout(() => {
-        this.activeTable = null;
+      this.activeTable = null;
     }, 2000);
   }
 
@@ -178,7 +183,7 @@ export class TablesViewComponent implements OnInit, OnDestroy {
           this.refetchDatabases();
           // this.applyMigration(result.sql);
         },
-        error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage', 'Ok', 5000)
+        error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
       });
   }
 
@@ -194,64 +199,22 @@ export class TablesViewComponent implements OnInit, OnDestroy {
           this.refetchDatabases();
           // this.applyMigration(result.sql);
         },
-        error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage', 'Ok', 5000)
+        error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
       });
   }
 
-  /*
-   * Applies migration scripts, if any migration scripts are returned from the server.
-   */
-  // private applyMigration(sql: string, ask: boolean = false) {
-  //   if (this.autoMigrate) {
-  //     if (ask) {
-  //       this.dialog.open(ConfirmationDialogComponent, {
-  //         width: '500px',
-  //         data: {
-  //           title: `Delete ${field} ${item?.name}`,
-  //           description_extra: `This action is permanent and you will lose all data in your ${field}.<br/><br/>Please type in the <span class="fw-bold">${field} name</span> below.`,
-  //           action_btn: `Delete ${field}`,
-  //           action_btn_color: 'warn',
-  //           bold_description: true
-  //         }
-  //       })
-  //       this.feedbackService.confirm(
-  //         'Apply migration script?',
-  //         'Do you want to create a migration script for your current SQL statement(s)?',
-  //         () => {
-  //           this.sqlService.createMigrationScript(
-  //             this.input.databaseType,
-  //             this.input.database,
-  //             sql).subscribe({
-  //               next: () => {
-  //                 this.feedbackService.showInfo('Migration script successfully added to module');
-  //               },
-  //               error: (error: any) => this.feedbackService.showError(error)
-  //             });
-  //         });
-  //     } else {
-  //       this.sqlService.createMigrationScript(
-  //         this.input.databaseType,
-  //         this.input.database,
-  //         sql).subscribe({
-  //           next: () => {
-  //             this.feedbackService.showInfo('Migration script successfully added to module');
-  //           },
-  //           error: (error: any) => this.feedbackService.showError(error)
-  //         });
-  //     }
-  //   }
-  // }
   private refetchDatabases() {
     this.flushEndpointsAuthRequirements();
     this.getDatabases.emit(true);
   }
+
   /*
    * Will flush server side cache of endpoints (auth invocations) and re-retrieve these again.
    */
   private flushEndpointsAuthRequirements() {
     this.cacheService.delete('magic.auth.endpoints').subscribe({
       next: () => this.backendService.refetchEndpoints(),
-      error: (error: any) => {}
+      error: (error: any) => { }
     });
   }
 
@@ -290,7 +253,7 @@ export class TablesViewComponent implements OnInit, OnDestroy {
                 },
                 error: (error: any) => {
                   this.generalService.hideLoading();
-                  this.generalService.showFeedback(error?.error?.message??error, 'errorMessage', 'Ok', 5000)
+                  this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
                 }
               });
             }
@@ -298,13 +261,13 @@ export class TablesViewComponent implements OnInit, OnDestroy {
         },
         error: (error: any) => {
           this.generalService.hideLoading();
-          this.generalService.showFeedback(error?.error?.message??error, 'errorMessage', 'Ok', 5000)
+          this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
         }
       });
   }
 
   ngOnDestroy(): void {
-    if(this.tableSubscription) {
+    if (this.tableSubscription) {
       this.tableSubscription.unsubscribe();
     }
   }

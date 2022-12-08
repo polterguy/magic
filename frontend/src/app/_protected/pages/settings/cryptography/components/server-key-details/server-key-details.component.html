@@ -1,4 +1,3 @@
-
 <h3 mat-dialog-title>Details of {{data.key?.subject}} key</h3>
 
 <div mat-dialog-content>
@@ -11,9 +10,7 @@
             <span class="text-muted">|</span>
           </span>
 
-          <input matInput placeholder="Full name"
-            [disabled]="!data.savePermission"
-            [(ngModel)]="data.key.subject"
+          <input matInput placeholder="Full name" [disabled]="!data.savePermission" [(ngModel)]="data.key.subject"
             [ngModelOptions]="{standalone: true}">
         </mat-form-field>
       </div>
@@ -24,9 +21,7 @@
             <span class="text-muted">|</span>
           </span>
 
-          <input matInput placeholder="Email address"
-            [disabled]="!data.savePermission"
-            [(ngModel)]="data.key.email"
+          <input matInput placeholder="Email address" [disabled]="!data.savePermission" [(ngModel)]="data.key.email"
             [ngModelOptions]="{standalone: true}">
         </mat-form-field>
       </div>
@@ -37,9 +32,7 @@
             <span class="text-muted">|</span>
           </span>
 
-          <input matInput placeholder="Domain"
-            [disabled]="!data.savePermission"
-            [(ngModel)]="data.key.domain"
+          <input matInput placeholder="Domain" [disabled]="!data.savePermission" [(ngModel)]="data.key.domain"
             [ngModelOptions]="{standalone: true}">
         </mat-form-field>
       </div>
@@ -50,10 +43,8 @@
             <span class="text-muted">|</span>
           </span>
 
-          <input matInput placeholder="Associated user"
-            [disabled]="!data.savePermission"
-            [(ngModel)]="data.key.username"
-            [ngModelOptions]="{standalone: true}">
+          <input matInput placeholder="Associated user" [disabled]="!data.savePermission"
+            [(ngModel)]="data.key.username" [ngModelOptions]="{standalone: true}">
         </mat-form-field>
       </div>
     </div>
@@ -63,35 +54,25 @@
           <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
               <p class="mb-0">Fingerprint</p>
-              <button mat-button color="primary"
-                class="custom-copy-btn"
-                type="button"
+              <button mat-button color="primary" class="custom-copy-btn" type="button"
                 (click)="copy(data.key.fingerprint)">
                 Copy
               </button>
             </div>
             <mat-form-field class="w-100" id="custom-input">
-              <input matInput
-                [disabled]="true"
-                [(ngModel)]="data.key.fingerprint"
-                [ngModelOptions]="{standalone: true}"
+              <input matInput [disabled]="true" [(ngModel)]="data.key.fingerprint" [ngModelOptions]="{standalone: true}"
                 readonly>
             </mat-form-field>
           </div>
           <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
               <p class="mb-0">Key content</p>
-              <button mat-button color="primary"
-                class="custom-copy-btn"
-                type="button"
-                (click)="copy(data.key.content)">
+              <button mat-button color="primary" class="custom-copy-btn" type="button" (click)="copy(data.key.content)">
                 Copy
               </button>
             </div>
             <mat-form-field class="w-100">
-              <textarea matInput rows="12"
-                [disabled]="!data.savePermission"
-                [(ngModel)]="data.key.content"
+              <textarea matInput rows="12" [disabled]="!data.savePermission" [(ngModel)]="data.key.content"
                 [ngModelOptions]="{standalone: true}"></textarea>
             </mat-form-field>
           </div>
@@ -106,7 +87,5 @@
 
 <div mat-dialog-actions [align]="'end'">
   <button mat-button color="primary" mat-dialog-close class="me-2">Cancel</button>
-  <button mat-flat-button color="primary" class="px-5"
-    [disabled]="waiting"
-    (click)="save()">Save</button>
+  <button mat-flat-button color="primary" class="px-5" [disabled]="waiting" (click)="save()">Save</button>
 </div>

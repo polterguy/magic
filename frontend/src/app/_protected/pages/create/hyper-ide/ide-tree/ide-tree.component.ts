@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -6,7 +11,6 @@ import { Observable, Subscription } from 'rxjs';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { EndpointsGeneralService } from 'src/app/_general/services/endpoints-general.service';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { Endpoint } from '../../../manage/endpoints/_models/endpoint.model';
 import { IncompatibleFileDialogComponent } from '../components/incompatible-file-dialog/incompatible-file-dialog.component';
 import { NewFileFolderDialogComponent } from '../components/new-file-folder-dialog/new-file-folder-dialog.component';
 import { FileNode } from '../_models/file-node.model';
@@ -44,9 +48,6 @@ export class IdeTreeComponent implements OnInit, OnDestroy {
 
   private endpointSubscription!: Subscription;
 
-  // Model describing endpoints in your installation.
-  private endpoints: Endpoint[];
-
   /**
    * Currently edited files.
    */
@@ -82,8 +83,8 @@ export class IdeTreeComponent implements OnInit, OnDestroy {
   /**
    * Model for file uploader.
    */
-   fileInput: string[];
-   zipFileInput: any;
+  fileInput: string[];
+  zipFileInput: any;
 
   public showRenameBox: any = null;
 
@@ -123,8 +124,7 @@ export class IdeTreeComponent implements OnInit, OnDestroy {
    */
   private getEndpoints() {
     this.endpointSubscription = this.endpointsGeneralService.endpoints.subscribe({
-      next: (endpoints: Endpoint[]) => {
-        this.endpoints = endpoints;
+      next: () => {
         this.cdr.detectChanges();
       },
       error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
@@ -320,50 +320,50 @@ export class IdeTreeComponent implements OnInit, OnDestroy {
    * @callback removeNode To remove the node after successful deletion.
    * @callback dataBindTree To rebind the tree after changes.
    */
-   public deleteActiveFolder(folder: any) {
+  public deleteActiveFolder(folder: any) {
     let path: string = '';
     folder.node ? path = folder.node.path : path = folder;
-     this.dialog.open(ConfirmationDialogComponent, {
-       width: '500px',
-       data: {
-         title: `Delete entire folder`,
-         description_extra: `You are deleting the following folder: <br/> <span class="fw-bold">${path}</span> <br/><br/> Do you want to continue?`,
-         action_btn: 'Delete',
-         action_btn_color: 'warn',
-         bold_description: true
-       }
-     }).afterClosed().subscribe((result: string) => {
-       if (result === 'confirm') {
+    this.dialog.open(ConfirmationDialogComponent, {
+      width: '500px',
+      data: {
+        title: `Delete entire folder`,
+        description_extra: `You are deleting the following folder: <br/> <span class="fw-bold">${path}</span> <br/><br/> Do you want to continue?`,
+        action_btn: 'Delete',
+        action_btn_color: 'warn',
+        bold_description: true
+      }
+    }).afterClosed().subscribe((result: string) => {
+      if (result === 'confirm') {
         if (this.currentFileData?.folder.indexOf(path) > -1) {
           this.closeFileImpl();
         }
-         this.fileService.deleteFolder(path).subscribe({
-           next: (res: { result: string }) => {
-             if (res.result === 'success') {
+        this.fileService.deleteFolder(path).subscribe({
+          next: (res: { result: string }) => {
+            if (res.result === 'success') {
               this.removeNode(path);
-               this.generalService.showFeedback('Folder is deleted successfully.', 'successMessage');
+              this.generalService.showFeedback('Folder is deleted successfully.', 'successMessage');
 
-               this.openFiles = this.openFiles.filter(x => !x.path.startsWith(this.activeFolder));
-                if (this.openFiles.filter(x => x.path === this.currentFileData.path).length === 0) {
-                  if (this.openFiles.length > 0) {
-                    this.currentFileData = this.openFiles.filter(x => x.path === this.openFiles[0].path)[0];
-                  } else {
-                    this.currentFileData = null;
-                  }
+              this.openFiles = this.openFiles.filter(x => !x.path.startsWith(this.activeFolder));
+              if (this.openFiles.filter(x => x.path === this.currentFileData.path).length === 0) {
+                if (this.openFiles.length > 0) {
+                  this.currentFileData = this.openFiles.filter(x => x.path === this.openFiles[0].path)[0];
+                } else {
+                  this.currentFileData = null;
                 }
-                this.dataBindTree();
-                let newFolder = this.activeFolder.substring(0, this.activeFolder.length - 1);
-                newFolder = newFolder.substring(0, newFolder.lastIndexOf('/') + 1);
-                this.activeFolder = newFolder;
-                this.cdr.detectChanges();
-             } else {
-               this.generalService.showFeedback('Something went wrong, please try again.', 'errorMessage')
-             }
-           },
-           error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
-         });
-       }
-     })
+              }
+              this.dataBindTree();
+              let newFolder = this.activeFolder.substring(0, this.activeFolder.length - 1);
+              newFolder = newFolder.substring(0, newFolder.lastIndexOf('/') + 1);
+              this.activeFolder = newFolder;
+              this.cdr.detectChanges();
+            } else {
+              this.generalService.showFeedback('Something went wrong, please try again.', 'errorMessage')
+            }
+          },
+          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+        });
+      }
+    })
   }
 
   /*
@@ -520,7 +520,7 @@ export class IdeTreeComponent implements OnInit, OnDestroy {
         next: () => {
           var toUpdate = folder.node.path.substring(0, folder.node.path.length - 1);
           toUpdate = toUpdate.substring(0, toUpdate.lastIndexOf('/') + 1);
-          if(this.currentFileData) {
+          if (this.currentFileData) {
             this.currentFileData.path = this.currentFileData.path.toString().replace(folder.name, givenName);
             this.currentFileData.folder = this.currentFileData.path.toString().replace(folder.name, givenName);
           }
@@ -566,14 +566,16 @@ export class IdeTreeComponent implements OnInit, OnDestroy {
               this.generalService.showFeedback('Folder successfully created', 'successMessage');
               this.sort({ dialogResult: result, objectPath: path })
             },
-            error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')});
+            error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+          });
         } else {
           this.fileService.saveFile(path, '').subscribe({
             next: () => {
               this.generalService.showFeedback('File successfully created', 'successMessage');
               this.sort({ dialogResult: result, objectPath: path })
             },
-            error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')});
+            error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+          });
         }
       }
     });
@@ -631,17 +633,18 @@ export class IdeTreeComponent implements OnInit, OnDestroy {
    *
    * @param files List of files to upload
    */
-   uploadFiles(files: FileList) {
+  uploadFiles(files: FileList) {
     for (let idx = 0; idx < files.length; idx++) {
       this.fileService.uploadFile(this.activeFolder, files.item(idx)).subscribe({
         next: () => {
           this.generalService.showFeedback('File was successfully uploaded', 'successMessage');
           this.fileInput = null;
-          if (idx === (files.length - 1)){
+          if (idx === (files.length - 1)) {
             this.updateFileObject(this.activeFolder);
           }
         },
-        error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')});
+        error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+      });
     };
   }
 
@@ -877,7 +880,8 @@ export class IdeTreeComponent implements OnInit, OnDestroy {
           this.zipFileInput = null;
           this.updateFileObject('/modules/');
         },
-        error: (error: any) => this.generalService.showFeedback(error)});
+        error: (error: any) => this.generalService.showFeedback(error)
+      });
     } else {
       this.generalService.showFeedback('Only zip files without . are accepted', 'errorMessage', 'Ok', 5000);
     }

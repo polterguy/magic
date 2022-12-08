@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { GeneralService } from 'src/app/_general/services/general.service';
@@ -5,8 +10,7 @@ import { SqlService } from '../../_services/sql.service';
 
 @Component({
   selector: 'app-catalog-name',
-  templateUrl: './catalog-name.component.html',
-  styleUrls: ['./catalog-name.component.scss']
+  templateUrl: './catalog-name.component.html'
 })
 export class CatalogNameComponent implements OnInit {
 

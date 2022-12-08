@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
@@ -22,7 +27,7 @@ export class SortByPipe implements PipeTransform {
       });
     } else {
       array.sort((a: any, b: any) => {
-        if (typeof a[field] === 'string' && typeof b[field] === 'string' ) {
+        if (typeof a[field] === 'string' && typeof b[field] === 'string') {
           if (((<string>a[field] || '').toLowerCase()) < ((<string>b[field] || '').toLowerCase())) {
             return -1;
           } else if (((<string>a[field] || '').toLowerCase()) > ((<string>b[field] || '').toLowerCase())) {

@@ -11,8 +11,10 @@
           <span class="text-muted">|</span>
         </span>
 
-        <input cdkFocusInitial matInput placeholder="Type in the {{data.extra.fieldToBeTypedTitle}}" [formControl]="inputValue">
-        <mat-hint *ngIf="inputValue.value !== '' && data.extra.fieldToBeTypedValue !== inputValue.value" class="text-danger">
+        <input cdkFocusInitial matInput placeholder="Type in the {{data.extra.fieldToBeTypedTitle}}"
+          [formControl]="inputValue">
+        <mat-hint *ngIf="inputValue.value !== '' && data.extra.fieldToBeTypedValue !== inputValue.value"
+          class="text-danger">
           Inserted {{data.extra.fieldToBeTypedTitle}} doesn't match.
         </mat-hint>
       </mat-form-field>

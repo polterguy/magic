@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, OnInit } from '@angular/core';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { FileService } from '../../hyper-ide/_services/file.service';
@@ -9,14 +14,14 @@ import { FileService } from '../../hyper-ide/_services/file.service';
 })
 export class UploadExistingComponent implements OnInit {
 
-   /**
-   * selected file
-   */
-    public file: any;
+  /**
+  * selected file
+  */
+  public file: any;
 
-    /**
-   * specifies if the file is being uploaded.
-   */
+  /**
+ * specifies if the file is being uploaded.
+ */
   public uploading: boolean = false;
 
   constructor(
@@ -31,7 +36,7 @@ export class UploadExistingComponent implements OnInit {
    * getting the selected file to upload
    * @param event
    */
-   public getFile(event: any) {
+  public getFile(event: any) {
     this.uploading = true;
     this.file = event.target.files[0];
 
@@ -51,4 +56,3 @@ export class UploadExistingComponent implements OnInit {
     })
   }
 }
-

@@ -41,7 +41,7 @@ export class LoginComponent implements OnInit {
   /**
    * to set the user's site_key for recaptcha
    */
-   recaptchaKey: string = null;
+  recaptchaKey: string = null;
 
   constructor(
     private formBuilder: UntypedFormBuilder,
@@ -168,7 +168,7 @@ export class LoginComponent implements OnInit {
           this.waiting = false;
         },
         error: (error: any) => {
-          this.generalService.showFeedback(error.error.message??error, 'errorMessage', 'Ok');
+          this.generalService.showFeedback(error.error.message ?? error, 'errorMessage', 'Ok');
           this.waiting = false;
         }
       });

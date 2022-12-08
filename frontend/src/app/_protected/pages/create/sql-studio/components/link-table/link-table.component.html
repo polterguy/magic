@@ -13,9 +13,7 @@
         {{formData?.table1?.name}}
       </mat-select-trigger>
 
-      <mat-option
-        *ngFor="let item of data"
-        [value]="item">
+      <mat-option *ngFor="let item of data" [value]="item">
         {{item.name}}
       </mat-option>
     </mat-select>
@@ -31,9 +29,7 @@
         {{formData?.table2?.name}}
       </mat-select-trigger>
 
-      <mat-option
-        *ngFor="let item of secondTableList()"
-        [value]="item">
+      <mat-option *ngFor="let item of secondTableList()" [value]="item">
         {{item.name}}
       </mat-option>
     </mat-select>

@@ -1,6 +1,6 @@
 
 /*
- * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
 // Angular and system imports.
@@ -213,12 +213,12 @@ export class CryptoService {
     email: string,
     domain: string,
     content: string) {
-      return this.httpService.post<Response>('/magic/system/crypto/import', {
-        subject,
-        email,
-        domain,
-        content
-      });
+    return this.httpService.post<Response>('/magic/system/crypto/import', {
+      subject,
+      email,
+      domain,
+      content
+    });
   }
 
   /**
@@ -275,7 +275,7 @@ export class CryptoService {
   /**
    * Retrieves the long lasting JWT token and returns to caller.
    */
-   getGithubKey(username: string, role: string, expires: string) {
+  getGithubKey(username: string, role: string, expires: string) {
     const param: string = `?username=${encodeURIComponent(username)}&role=${encodeURIComponent(role)}&expires=${encodeURIComponent(expires)}`
     return this.httpService.get<any>('/magic/system/auth/generate-key' + param);
   }

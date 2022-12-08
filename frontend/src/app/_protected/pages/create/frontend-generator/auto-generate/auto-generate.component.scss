@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 @import '../../../../../../assets/styles/_variables/colors.scss';
 @import '../../../../../../assets/styles/_variables/mixin.scss';
 
@@ -6,11 +11,13 @@
     font-size: 12px;
     min-height: 25px;
   }
+
   .mat-checkbox-label {
     margin-left: 12px;
     white-space: pre-wrap;
     word-break: break-word;
   }
+
   .CodeMirror {
     height: 100%;
     max-height: 300px;
@@ -26,6 +33,7 @@
   overflow: hidden auto;
   @include scrollbar($aista_default_alt, $aista_default_grey4, 5px);
 }
+
 .methods {
   min-width: 50px;
   min-height: 20px;
@@ -38,15 +46,20 @@
   justify-content: center;
   text-transform: uppercase;
   color: $aista_default;
+
   &.get {
     background-color: $aista_info;
   }
+
   &.post {
     background-color: $aista_success;
   }
-  &.put, &.patch {
+
+  &.put,
+  &.patch {
     background-color: $aista_warning;
   }
+
   &.delete {
     background-color: $aista_error;
   }

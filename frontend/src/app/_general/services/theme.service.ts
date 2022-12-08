@@ -1,6 +1,6 @@
 
 /*
- * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
 // Angular and system imports.
@@ -69,11 +69,11 @@ export class ThemeService {
    * Injects a CSS file dynamically into the HTML head section
    */
   private injectTheme(theme: string) {
-    if (!document.getElementById(theme)){
-      var head  = document.getElementsByTagName('head')[0];
-      var link  = document.createElement('link');
-      link.id   = theme;
-      link.rel  = 'stylesheet';
+    if (!document.getElementById(theme)) {
+      var head = document.getElementsByTagName('head')[0];
+      var link = document.createElement('link');
+      link.id = theme;
+      link.rel = 'stylesheet';
       link.type = 'text/css';
       link.href = '/assets/styles/themes/' + theme + '/' + theme + '.css'
       link.media = 'all';

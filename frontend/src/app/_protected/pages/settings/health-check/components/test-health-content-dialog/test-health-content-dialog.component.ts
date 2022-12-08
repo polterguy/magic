@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
@@ -10,8 +15,7 @@ import { AssumptionService } from '../../_services/assumption.service';
 
 @Component({
   selector: 'app-test-health-content-dialog',
-  templateUrl: './test-health-content-dialog.component.html',
-  styleUrls: ['./test-health-content-dialog.component.scss']
+  templateUrl: './test-health-content-dialog.component.html'
 })
 export class TestHealthContentDialogComponent implements OnInit, OnDestroy {
 
@@ -40,7 +44,7 @@ export class TestHealthContentDialogComponent implements OnInit, OnDestroy {
           this.codemirrorOptionsReady = true;
         }, 100);
       }
-     });
+    });
   }
 
   private watchForActions() {
@@ -67,7 +71,7 @@ export class TestHealthContentDialogComponent implements OnInit, OnDestroy {
   /**
    * Shows load snippet dialog.
    */
-   load() {
+  load() {
     const dialogRef = this.dialog.open(LoadSnippetDialogComponent, {
       width: '550px',
     });
@@ -77,7 +81,8 @@ export class TestHealthContentDialogComponent implements OnInit, OnDestroy {
           next: (content: string) => {
             this.data.content.hyperlambda = content;
           },
-          error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
+          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+        });
       }
     });
   }
@@ -94,7 +99,8 @@ export class TestHealthContentDialogComponent implements OnInit, OnDestroy {
         this.generalService.showFeedback('Assumption successfully saved', 'successMessage', 'Ok', 3000);
         this.dialogRef.close();
       },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+    });
   }
 
   public executeTest() {
@@ -111,8 +117,9 @@ export class TestHealthContentDialogComponent implements OnInit, OnDestroy {
       error: (error: any) => {
         this.data.success = false;
         this.data.status = 'Failed';
-        this.generalService.showFeedback(error?.error?.message??error, 'errorMessage');
-      }});
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+      }
+    });
   }
 
   ngOnDestroy(): void {

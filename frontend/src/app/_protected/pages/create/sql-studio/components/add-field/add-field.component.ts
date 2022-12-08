@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
@@ -112,10 +117,10 @@ export class AddFieldComponent implements OnInit {
     } else {
       if (this.formData.fieldType.size) {
         condition = (this.formData.columnName !== '' &&
-        this.formData.fieldType &&
-        this.formData.columnLength &&
-        this.formData.columnLength >= this.formData.fieldType.size.min &&
-        this.formData.columnLength <= this.formData.fieldType.size.max);
+          this.formData.fieldType &&
+          this.formData.columnLength &&
+          this.formData.columnLength >= this.formData.fieldType.size.min &&
+          this.formData.columnLength <= this.formData.fieldType.size.max);
       } else {
         condition = (this.formData.columnName !== '' && this.formData.fieldType.name);
       }

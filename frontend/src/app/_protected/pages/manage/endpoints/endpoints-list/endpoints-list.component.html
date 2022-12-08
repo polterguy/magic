@@ -2,9 +2,7 @@
   <cdk-virtual-scroll-viewport class="virtual-viewport" appendOnly itemSize="5"
     [maxBufferPx]="(endpoints[defaultListToShow] | keyvalue)?.length * 1000 || 200">
 
-    <mat-expansion-panel
-      class="mat-elevation-z0"
-      [class.d-none]="item.value.length === 0"
+    <mat-expansion-panel class="mat-elevation-z0" [class.d-none]="item.value.length === 0"
       *cdkVirtualFor="let item of endpoints[defaultListToShow] | keyvalue; let index = index;trackBy:trackFilterList">
       <mat-expansion-panel-header class="ps-0 pe-3">
         <mat-panel-title class="text-muted px-2">
@@ -14,7 +12,8 @@
       </mat-expansion-panel-header>
 
       <mat-accordion multi>
-        <mat-expansion-panel (opened)="panelExpanded(el)" class="mat-elevation-z1 mb-3" id="inner-panel" *ngFor="let el of item.value">
+        <mat-expansion-panel (opened)="panelExpanded(el)" class="mat-elevation-z1 mb-3" id="inner-panel"
+          *ngFor="let el of item.value">
           <mat-expansion-panel-header class="px-3 py-2" #header>
             <mat-panel-title>
               <div class="d-flex justify-content-between align-items-center w-100">
@@ -95,9 +94,7 @@
             <ng-container *ngIf="assumptionsPermission && testPermission && el.expanded === true">
               <div class="row mt-4">
                 <div class="col-12">
-                  <app-assumptions #assumptions
-                    [itemDetails]="el"
-                    [result]="result"
+                  <app-assumptions #assumptions [itemDetails]="el" [result]="result"
                     [payload]="payload"></app-assumptions>
                 </div>
               </div>

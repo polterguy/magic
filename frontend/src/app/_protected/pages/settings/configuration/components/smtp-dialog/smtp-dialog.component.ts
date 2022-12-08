@@ -1,5 +1,5 @@
 /*
- * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
 import { Component, Inject, OnInit } from '@angular/core';
@@ -8,15 +8,14 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-smtp-dialog',
-  templateUrl: './smtp-dialog.component.html',
-  styleUrls: ['./smtp-dialog.component.scss']
+  templateUrl: './smtp-dialog.component.html'
 })
 export class SmtpDialogComponent implements OnInit {
 
   /**
    * Form builder
    */
-   smtpForm = this.formBuilder.group({
+  smtpForm = this.formBuilder.group({
     host: [''],
     port: [''],
     secure: [true],
@@ -55,8 +54,8 @@ export class SmtpDialogComponent implements OnInit {
   /**
    * Closes the dialog for the data to be saved in the parent component.
    */
-   submit() {
-     const data = {
+  submit() {
+    const data = {
       host: this.smtpForm.value.host,
       port: this.smtpForm.value.port,
       secure: this.smtpForm.value.secure,
@@ -66,7 +65,7 @@ export class SmtpDialogComponent implements OnInit {
         name: this.smtpForm.value.name,
         address: this.smtpForm.value.address
       }
-     }
+    }
     this.dialogRef.close(data);
   }
 

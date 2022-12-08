@@ -1,20 +1,18 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
+import { Component, EventEmitter, Output } from '@angular/core';
 
 @Component({
   selector: 'app-log-searchbox',
-  templateUrl: './log-searchbox.component.html',
-  styleUrls: ['./log-searchbox.component.scss']
+  templateUrl: './log-searchbox.component.html'
 })
-export class LogSearchboxComponent implements OnInit {
+export class LogSearchboxComponent {
 
   @Output() filterList = new EventEmitter<any>();
   @Output() errorOnly = new EventEmitter<any>();
-
-  constructor() { }
-
-  ngOnInit(): void {
-
-  }
 
   /**
    * Invoking endpoint to search in unique fields.
@@ -35,5 +33,4 @@ export class LogSearchboxComponent implements OnInit {
   public toggleShowError(event: any) {
     this.errorOnly.emit(event.checked);
   }
-
 }

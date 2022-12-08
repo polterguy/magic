@@ -1,14 +1,16 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import * as moment from 'moment';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { TaskService } from '../../_services/task.service';
 
 @Component({
   selector: 'app-schedule-task',
-  templateUrl: './schedule-task.component.html',
-  styleUrls: ['./schedule-task.component.scss']
+  templateUrl: './schedule-task.component.html'
 })
 export class ScheduleTaskComponent implements OnInit {
 
@@ -73,6 +75,7 @@ export class ScheduleTaskComponent implements OnInit {
         this.generalService.showFeedback('Task was successfully scheduled', 'successMessage');
         this.dialogRef.close(true);
       },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage', 'Ok', 4000)});
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)
+    });
   }
 }

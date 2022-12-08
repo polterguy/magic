@@ -1,10 +1,16 @@
-@import '../../../../../../assets/styles/_variables/colors.scss';
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
+ @import '../../../../../../assets/styles/_variables/colors.scss';
 @import '../../../../../../assets/styles/_variables/mixin.scss';
 
 .panel-1 {
   flex: 1 1 auto;
   overflow: hidden;
 }
+
 .panel-2 {
   flex: 0 0 auto;
 }
@@ -15,6 +21,7 @@
   width: 94%;
   z-index: 2;
 }
+
 .overlay {
   position: fixed;
   top: 0;
@@ -23,12 +30,14 @@
   left: 0;
   z-index: 1;
 }
+
 ::ng-deep #hyper-ide {
   .action-menu-general {
     .mat-icon-button {
       height: 25px;
       width: 25px;
       line-height: 25px;
+
       mat-icon {
         width: 18px;
         height: 18px;
@@ -37,8 +46,14 @@
       }
     }
   }
-  .panel-1 .mat-expansion-panel {max-height: 100%;}
-  .panel-2 .mat-expansion-panel {max-height: 15vh;}
+
+  .panel-1 .mat-expansion-panel {
+    max-height: 100%;
+  }
+
+  .panel-2 .mat-expansion-panel {
+    max-height: 15vh;
+  }
 
   .mat-accordion {
     padding: 0 0 16px;
@@ -46,11 +61,16 @@
     overflow: hidden;
     display: flex;
 
-    .mat-expansion-panel-body {padding: 0;}
+    .mat-expansion-panel-body {
+      padding: 0;
+    }
 
     .mat-expansion-panel-header {
       height: 25px;
-      &.mat-expanded {height: 25px;}
+
+      &.mat-expanded {
+        height: 25px;
+      }
     }
 
     .mat-expansion-panel {
@@ -72,14 +92,17 @@
       margin-left: 28px !important;
     }
   }
+
   .mat-tree-node {
     min-height: 28px;
     width: 100%;
     position: relative;
     overflow: visible;
     @include general_transition(0.3s);
+
     button {
       font-size: 12px;
+
       mat-icon {
         font-size: 22px;
         width: 22px;
@@ -88,16 +111,19 @@
         margin-right: 5px;
       }
     }
+
     .show-on-hover {
       visibility: hidden;
       display: flex;
       align-items: center;
+
       .mat-icon-button {
         height: 25px;
         width: 25px;
         line-height: 25px;
         background-color: transparentize($color: $aista_default, $amount: 0.05);
       }
+
       mat-icon {
         font-size: 18px;
         line-height: 18px;
@@ -106,14 +132,20 @@
         margin-right: 0;
       }
     }
+
     &.active-folder {
-      button {font-weight: 900;}
+      button {
+        font-weight: 900;
+      }
     }
+
     &.active-file {
       background-color: transparentize($color: $aista_default_grey5, $amount: 0.5);
     }
+
     &:hover {
       background-color: transparentize($color: $aista_default_grey5, $amount: 0.75);
+
       .show-on-hover {
         visibility: visible;
       }
@@ -126,13 +158,17 @@
       padding-left: 5px;
       min-height: 40px;
     }
+
     @include general_transition(0.3s);
+
     &.active-file {
       background-color: transparentize($color: $aista_default_grey5, $amount: 0.5);
     }
+
     &:hover {
       background-color: transparentize($color: $aista_default_grey5, $amount: 0.75);
     }
+
     mat-icon {
       font-size: 20px;
       width: 20px;
@@ -140,5 +176,4 @@
       line-height: 20px;
     }
   }
-
 }

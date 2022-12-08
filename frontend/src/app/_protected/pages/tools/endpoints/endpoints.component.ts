@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ReplaySubject } from 'rxjs';
@@ -57,14 +62,14 @@ export class EndpointsComponent implements OnInit {
     private roleService: RoleService,
     private activatedRoute: ActivatedRoute,
     private generalService: GeneralService) {
-      this.activatedRoute.queryParams.subscribe((param: any) => {
-        if (param && param.dbName && param.dbType && param.dbCString) {
-          this.paramDbName = param.dbName;
-          this.paramDbType = param.dbType;
-          this.paramDbConnectionString = param.dbCString;
-        }
-      })
-    }
+    this.activatedRoute.queryParams.subscribe((param: any) => {
+      if (param && param.dbName && param.dbType && param.dbCString) {
+        this.paramDbName = param.dbName;
+        this.paramDbType = param.dbType;
+        this.paramDbConnectionString = param.dbCString;
+      }
+    })
+  }
 
   ngOnInit(): void {
     this.getDefaultDbType();
@@ -154,7 +159,7 @@ export class EndpointsComponent implements OnInit {
       next: (res: Role[]) => {
         this.roles = res || [];
       },
-      error: (error: any) => {}
+      error: (error: any) => { }
     })
   }
 

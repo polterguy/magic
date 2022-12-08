@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -15,8 +20,7 @@ import { NewTableComponent } from './components/new-table/new-table.component';
 
 @Component({
   selector: 'app-generated-database',
-  templateUrl: './generated-database.component.html',
-  styleUrls: ['./generated-database.component.scss']
+  templateUrl: './generated-database.component.html'
 })
 export class GeneratedDatabaseComponent implements OnInit {
 

@@ -16,52 +16,52 @@ $dark-dividers: rgba($dark-primary-text, 0.12);
 $dark-focused: rgba($dark-primary-text, 0.12);
 
 $mat-light-theme-foreground: (
-  base:              black,
-  divider:           $dark-dividers,
-  dividers:          $dark-dividers,
-  disabled:          $dark-disabled-text,
-  disabled-button:   rgba($dark-text, 0.26),
-  disabled-text:     $dark-disabled-text,
-  elevation:         black,
-  secondary-text:    $dark-accent-text,
-  hint-text:         $dark-disabled-text,
-  accent-text:       $dark-accent-text,
-  icon:              $dark-accent-text,
-  icons:             $dark-accent-text,
-  text:              $dark-primary-text,
-  slider-min:        $dark-primary-text,
-  slider-off:        rgba($dark-text, 0.26),
+  base: black,
+  divider: $dark-dividers,
+  dividers: $dark-dividers,
+  disabled: $dark-disabled-text,
+  disabled-button: rgba($dark-text, 0.26),
+  disabled-text: $dark-disabled-text,
+  elevation: black,
+  secondary-text: $dark-accent-text,
+  hint-text: $dark-disabled-text,
+  accent-text: $dark-accent-text,
+  icon: $dark-accent-text,
+  icons: $dark-accent-text,
+  text: $dark-primary-text,
+  slider-min: $dark-primary-text,
+  slider-off: rgba($dark-text, 0.26),
   slider-off-active: $dark-disabled-text,
 );
 
 // Background config
 // Light bg
-$light-background:    $aista_default_alt;
-$light-bg-darker-5:   darken($light-background, 5%);
-$light-bg-darker-10:  darken($light-background, 10%);
-$light-bg-darker-20:  darken($light-background, 20%);
-$light-bg-darker-30:  darken($light-background, 30%);
-$light-bg-lighter-5:  lighten($light-background, 5%);
-$dark-bg-tooltip:     lighten($aista_dark, 20%);
-$dark-bg-alpha-4:     rgba($aista_dark, 0.04);
-$dark-bg-alpha-12:    rgba($aista_dark, 0.12);
+$light-background: $aista_default_alt;
+$light-bg-darker-5: darken($light-background, 5%);
+$light-bg-darker-10: darken($light-background, 10%);
+$light-bg-darker-20: darken($light-background, 20%);
+$light-bg-darker-30: darken($light-background, 30%);
+$light-bg-lighter-5: lighten($light-background, 5%);
+$dark-bg-tooltip: lighten($aista_dark, 20%);
+$dark-bg-alpha-4: rgba($aista_dark, 0.04);
+$dark-bg-alpha-12: rgba($aista_dark, 0.12);
 
 $mat-light-theme-background: (
-  background:               $light-background,
-  status-bar:               $light-bg-darker-20,
-  app-bar:                  $light-bg-darker-5,
-  hover:                    $dark-bg-alpha-4,
-  card:                     $light-bg-lighter-5,
-  dialog:                   $aista_default,
-  tooltip:                  $dark-bg-tooltip,
-  disabled-button:          $dark-bg-alpha-12,
-  raised-button:            $light-bg-lighter-5,
-  focused-button:           $dark-focused,
-  selected-button:          $light-bg-darker-20,
+  background: $light-background,
+  status-bar: $light-bg-darker-20,
+  app-bar: $light-bg-darker-5,
+  hover: $dark-bg-alpha-4,
+  card: $light-bg-lighter-5,
+  dialog: $aista_default,
+  tooltip: $dark-bg-tooltip,
+  disabled-button: $dark-bg-alpha-12,
+  raised-button: $light-bg-lighter-5,
+  focused-button: $dark-focused,
+  selected-button: $light-bg-darker-20,
   selected-disabled-button: $light-bg-darker-30,
-  disabled-button-toggle:   $light-bg-darker-10,
-  unselected-chip:          $light-bg-darker-10,
-  disabled-list-option:     $light-bg-darker-10,
+  disabled-button-toggle: $light-bg-darker-10,
+  unselected-chip: $light-bg-darker-10,
+  disabled-list-option: $light-bg-darker-10,
 );
 
 // primary
@@ -70,9 +70,9 @@ $mat-primary: (
   main: $aista_primary,
   lighter: $aista_primary,
   darker: $aista_primary,
-  200: $aista_primary, // For slide toggle,
-  contrast : (
-    main: $aista_default,
+  200: $aista_primary,
+  // For slide toggle,
+  contrast : (main: $aista_default,
     lighter: $aista_primary,
     darker: $aista_default,
   )
@@ -85,9 +85,9 @@ $mat-accent: (
   main: $aista_accent,
   lighter: $aista_accent,
   darker: $aista_accent,
-  200: $aista_accent, // For slide toggle,
-  contrast : (
-    main: $aista_default,
+  200: $aista_accent,
+  // For slide toggle,
+  contrast : (main: $aista_default,
     lighter: $aista_accent,
     darker: $aista_default,
   )
@@ -106,6 +106,7 @@ $theme: mat-light-theme($theme-primary, $theme-accent);
   font-family: "Material Symbols Outlined";
   src: url("~node_modules/material-symbols/material-symbols-outlined.woff2");
 }
+
 .material-icons {
   font-family: 'Material Symbols Outlined';
   font-weight: normal;

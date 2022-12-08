@@ -1,10 +1,14 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-searchbox',
-  templateUrl: './searchbox.component.html',
-  styleUrls: ['./searchbox.component.scss']
+  templateUrl: './searchbox.component.html'
 })
 export class SearchboxComponent implements OnInit {
 

@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { PlatformLocation } from '@angular/common';
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { User } from 'src/app/_protected/pages/manage/user-and-roles/_models/user.model';
@@ -193,7 +198,7 @@ export class UsersListComponent implements OnInit {
     })
   }
 
-  getExtra (name: string, el: User) {
+  getExtra(name: string, el: User) {
     const result = el?.extra?.filter(x => x.type === name) || [];
     if (result.length > 0) {
       return result[0].value;

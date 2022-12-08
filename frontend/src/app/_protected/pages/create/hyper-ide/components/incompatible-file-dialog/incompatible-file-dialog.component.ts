@@ -1,6 +1,6 @@
 
 /*
- * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
 // Angular and system imports.
@@ -17,10 +17,10 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 })
 export class IncompatibleFileDialogComponent {
 
-   /**
-   * Creates an instance of your component.
-   * 
-   * @param data File object type and name
-   */
+  /**
+  * Creates an instance of your component.
+  * 
+  * @param data File object type and name
+  */
   constructor(@Inject(MAT_DIALOG_DATA) public data: any) { }
 }

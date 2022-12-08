@@ -1,5 +1,14 @@
 
-::ng-deep .codemirror-dialog {
-  .CodeMirror {height: 64vh;}
-  .CodeMirror-hscrollbar {left: 0!important;}
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
+ ::ng-deep .codemirror-dialog {
+  .CodeMirror {
+    height: 64vh;
+  }
+
+  .CodeMirror-hscrollbar {
+    left: 0 !important;
+  }
 }

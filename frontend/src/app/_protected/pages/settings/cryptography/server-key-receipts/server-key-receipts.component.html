@@ -1,9 +1,5 @@
-
 <ng-container *ngIf="isLoading;else loaded">
-  <app-loading-skeleton
-  [amount]="5"
-  [blockHeight]="'40px'"
-  [hasShadow]="false"></app-loading-skeleton>
+  <app-loading-skeleton [amount]="5" [blockHeight]="'40px'" [hasShadow]="false"></app-loading-skeleton>
 </ng-container>
 
 <ng-template #loaded>
@@ -59,16 +55,13 @@
 
       <!-- Row shown when there is no matching data. -->
       <tr class="mat-row" *matNoDataRow>
-        <td class="mat-cell" colspan="4">The select key <span class="fw-bold">{{selectedServerKey?.subject}}</span> has no receipt.</td>
+        <td class="mat-cell" colspan="4">The select key <span class="fw-bold">{{selectedServerKey?.subject}}</span> has
+          no receipt.</td>
       </tr>
     </table>
   </div>
 
-  <mat-paginator
-    *ngIf="totalItems > pageSize"
-    [length]="totalItems"
-    [pageSize]="pageSize"
-    (page)="changePage($event)"
+  <mat-paginator *ngIf="totalItems > pageSize" [length]="totalItems" [pageSize]="pageSize" (page)="changePage($event)"
     aria-label="Change page">
   </mat-paginator>
 </ng-template>

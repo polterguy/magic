@@ -1,6 +1,11 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Injectable, NgZone } from '@angular/core';
 import CodeMirror from 'codemirror';
-import { ReplaySubject, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import fileTypes from 'src/app/codemirror/file-types.json';
 
 @Injectable({

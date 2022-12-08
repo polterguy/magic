@@ -7,8 +7,6 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PrivacyModalComponent } from 'src/app/_general/components/privacy-modal/privacy-modal.component';
 import { TermsModalComponent } from 'src/app/_general/components/terms-modal/terms-modal.component';
-// import { PrivacyModalComponent } from 'src/app/_general/components/privacy-modal/privacy-modal.component';
-// import { TermsModalComponent } from 'src/app/_general/components/terms-modal/terms-modal.component';
 
 @Component({
   selector: 'app-footer',
@@ -17,7 +15,7 @@ import { TermsModalComponent } from 'src/app/_general/components/terms-modal/ter
 })
 export class FooterComponent implements OnInit {
 
-  constructor(private dialog:MatDialog){}
+  constructor(private dialog: MatDialog) { }
   /**
    * copyright year
    */
@@ -27,11 +25,11 @@ export class FooterComponent implements OnInit {
     this.currentYear = new Date().getFullYear();
   }
 
-  public termsModal(){
+  public termsModal() {
     this.dialog.open(TermsModalComponent);
   }
 
-  public privacyModal(){
+  public privacyModal() {
     this.dialog.open(PrivacyModalComponent);
   }
 }

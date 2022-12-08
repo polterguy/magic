@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { GeneralService } from 'src/app/_general/services/general.service';
@@ -6,8 +11,7 @@ import { UserService } from '../../_services/user.service';
 
 @Component({
   selector: 'app-add-extra-fields',
-  templateUrl: './add-extra-fields.component.html',
-  styleUrls: ['./add-extra-fields.component.scss']
+  templateUrl: './add-extra-fields.component.html'
 })
 export class AddExtraFieldsComponent implements OnInit {
 
@@ -34,7 +38,7 @@ export class AddExtraFieldsComponent implements OnInit {
       next: (res: any) => {
         if (res.result === 'success') {
           this.generalService.showFeedback('New field is saved successfully.', 'successMessage');
-          this.dialogRef.close({type: type, value: value})
+          this.dialogRef.close({ type: type, value: value })
         } else {
           this.generalService.showFeedback('Something went wrong, please try again.', 'errorMessage', 'ok', 4000)
         }

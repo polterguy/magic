@@ -1,11 +1,15 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { GeneralService } from 'src/app/_general/services/general.service';
 
 @Component({
   selector: 'app-link-table',
-  templateUrl: './link-table.component.html',
-  styleUrls: ['./link-table.component.scss']
+  templateUrl: './link-table.component.html'
 })
 export class LinkTableComponent implements OnInit {
 

@@ -6,7 +6,8 @@
       Argument's name
     </span>
 
-    <input matInput type="text" placeholder="Argument's name" [(ngModel)]="name" [pattern]="CommonRegEx.appNames" #argName>
+    <input matInput type="text" placeholder="Argument's name" [(ngModel)]="name" [pattern]="CommonRegEx.appNames"
+      #argName>
     <mat-error>{{CommonErrorMessages.appNames}}</mat-error>
   </mat-form-field>
 

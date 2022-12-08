@@ -9,9 +9,8 @@
             Column's name
           </span>
 
-          <input matInput type="text" placeholder="Column's name" [(ngModel)]="formData.columnName"
-            name="column_name" #name cdkFocusInitial
-            [pattern]="CommonRegEx.appNameWithUppercase">
+          <input matInput type="text" placeholder="Column's name" [(ngModel)]="formData.columnName" name="column_name"
+            #name cdkFocusInitial [pattern]="CommonRegEx.appNameWithUppercase">
           <mat-error>{{CommonErrorMessages.appNameWithUppercase}}</mat-error>
         </mat-form-field>
 
@@ -40,8 +39,7 @@
 
           <input matInput type="number"
             [placeholder]="'Size between ' + formData.fieldType.size.min + ' and ' + formData.fieldType.size.max"
-            [(ngModel)]="formData.columnLength" [pattern]="CommonRegEx.appNameWithUppercase"
-            name="column_length"
+            [(ngModel)]="formData.columnLength" [pattern]="CommonRegEx.appNameWithUppercase" name="column_length"
             [min]="formData.fieldType.size.min" [max]="formData.fieldType.size.max" autocomplete="off" name="-">
           <mat-hint class="text-danger"
             *ngIf="formData.columnLength < formData.fieldType.size.min || formData.columnLength > formData.fieldType.size.max">
@@ -55,8 +53,7 @@
           </span>
 
           <input matInput type="text" placeholder="Column's default value" [(ngModel)]="formData.defaultValue"
-            name="default_value"
-            [pattern]="CommonRegEx.appNameWithUppercase">
+            name="default_value" [pattern]="CommonRegEx.appNameWithUppercase">
           <mat-error>{{CommonErrorMessages.appNameWithUppercase}}</mat-error>
         </mat-form-field>
 
@@ -71,7 +68,8 @@
             Foreign table
           </span>
 
-          <mat-select placeholder="Foreign table" [(ngModel)]="formData.selectedTable" name="selected_table" (selectionChange)="changeTable()">
+          <mat-select placeholder="Foreign table" [(ngModel)]="formData.selectedTable" name="selected_table"
+            (selectionChange)="changeTable()">
             <mat-select-trigger>
               {{formData?.selectedTable?.name}}
             </mat-select-trigger>
@@ -85,8 +83,7 @@
             Foreign table's column
           </span>
 
-          <mat-select placeholder="Foreign table's column" [(ngModel)]="formData.foreignField"
-            name="foreign_field"
+          <mat-select placeholder="Foreign table's column" [(ngModel)]="formData.foreignField" name="foreign_field"
             (selectionChange)="changeColumnName()">
             <mat-option class="multiline-mat-option" *ngFor="let item of formData.selectedTable?.columns"
               [value]="item?.name">{{item?.name}}
@@ -101,13 +98,13 @@
 
           <input matInput type="text" placeholder="Column's name"
             [value]="formData.foreignField ? formData.foreignField + '_column' : ''" [(ngModel)]="formData.columnName"
-            name="column_name"
-            [pattern]="CommonRegEx.appNameWithUppercase">
+            name="column_name" [pattern]="CommonRegEx.appNameWithUppercase">
           <mat-error>{{CommonErrorMessages.appNameWithUppercase}}</mat-error>
         </mat-form-field>
 
         <p class="d-flex justify-content-end">
-          <mat-checkbox [(ngModel)]="formData.nullable" color="primary" class="me-2" name="nullable">Nullable</mat-checkbox>
+          <mat-checkbox [(ngModel)]="formData.nullable" color="primary" class="me-2"
+            name="nullable">Nullable</mat-checkbox>
           <mat-checkbox [(ngModel)]="formData.cascading" color="primary" name="cascade">Cascade</mat-checkbox>
         </p>
       </mat-tab>

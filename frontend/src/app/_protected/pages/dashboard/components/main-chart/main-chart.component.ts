@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, Input, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { GeneralService } from 'src/app/_general/services/general.service';
@@ -29,9 +34,9 @@ export class MainChartComponent implements OnInit {
   /**
    * Watches changes of the theme.
    */
-   private subscribeScreenSizeChange: Subscription;
+  private subscribeScreenSizeChange: Subscription;
 
-   private isLargeScreen: boolean = undefined;
+  private isLargeScreen: boolean = undefined;
 
   /**
    * Sets the current theme.
@@ -58,14 +63,13 @@ export class MainChartComponent implements OnInit {
       }
     })
     this.waitForData();
-    // this.prepareChart();
 
   }
 
   /**
-     * waiting for the data to be ready
-     * then call the preparation function
-     */
+   * waiting for the data to be ready
+   * then call the preparation function
+   */
   private waitForData() {
     (async () => {
       while (!this.data || !Object.keys(this.data).length)
@@ -81,7 +85,7 @@ export class MainChartComponent implements OnInit {
     let xAxis: any = {};
     let series: any = {};
 
-    const colors = ['rgba(91, 83, 247, 0.4)', 'rgba(68, 184, 198, 0.6)','rgba(91, 83, 247, 0.8)'];
+    const colors = ['rgba(91, 83, 247, 0.4)', 'rgba(68, 184, 198, 0.6)', 'rgba(91, 83, 247, 0.8)'];
 
     this.options = {
       color: colors,

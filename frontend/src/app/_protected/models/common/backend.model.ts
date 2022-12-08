@@ -1,6 +1,6 @@
 
 /*
- * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
 // Application specific imports.
@@ -55,8 +55,8 @@ export class Backend {
    * @param password Password used to authenticate towards backend
    * @param token Existing JWT token used to access backend
    */
-  constructor(url: string, username: string = null, password:string = null, token:string = null) {
-    this._url = url.replace(/\s/g, '').replace(/(\/)+$/,'');
+  constructor(url: string, username: string = null, password: string = null, token: string = null) {
+    this._url = url.replace(/\s/g, '').replace(/(\/)+$/, '');
     this._username = username;
     this._password = password;
     if (token) {
@@ -67,14 +67,14 @@ export class Backend {
   /**
    * Returns root URL for backend.
    */
-  get url() : string {
+  get url(): string {
     return this._url;
   }
 
   /**
    * Returns username used to authenticate towards backend.
    */
-  get username() : string {
+  get username(): string {
     return this._username;
   }
 
@@ -88,7 +88,7 @@ export class Backend {
   /**
    * Returns password used to authenticate towards backend.
    */
-  get password() : string {
+  get password(): string {
     return this._password;
   }
 
@@ -102,7 +102,7 @@ export class Backend {
   /**
    * Returns token for backend.
    */
-  get token() : Token {
+  get token(): Token {
     return this._token;
   }
 
@@ -130,7 +130,7 @@ export class Backend {
   /**
    * Returns the status of the backend, if known.
    */
-  get status() : Status {
+  get status(): Status {
     return this._status;
   }
 
@@ -151,7 +151,7 @@ export class Backend {
   /**
    * Returns the version of the backend, if known.
    */
-  get version() : string {
+  get version(): string {
     return this._version;
   }
 

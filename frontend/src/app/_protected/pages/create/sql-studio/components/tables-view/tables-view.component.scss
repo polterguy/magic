@@ -1,4 +1,9 @@
-@import '../../../../../../../assets/styles/_variables/sizing.scss';
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
+ @import '../../../../../../../assets/styles/_variables/sizing.scss';
 
 .action-btn {
   button {
@@ -6,6 +11,7 @@
     height: 18px;
     line-height: 18px;
   }
+
   mat-icon {
     width: 15px;
     height: 15px;
@@ -16,8 +22,9 @@
 
 @keyframes flash {
   0% {
-    background-color: rgba(255,255,128);
+    background-color: rgba(255, 255, 128);
   }
+
   100% {
     background-color: white;
   }
@@ -40,13 +47,19 @@
   column-fill: auto;
 
   .grid {
-    -webkit-column-break-inside:avoid-column;
+    -webkit-column-break-inside: avoid-column;
     -moz-column-break-inside: avoid-column;
     break-inside: avoid;
 
-    .small {font-size: 11px;word-break: break-all;}
+    .small {
+      font-size: 11px;
+      word-break: break-all;
+    }
 
-    .table-title {max-width: 80%; word-break: break-all;}
+    .table-title {
+      max-width: 80%;
+      word-break: break-all;
+    }
 
     .table-icons {
       mat-icon {
@@ -58,6 +71,7 @@
         vertical-align: bottom;
         position: absolute;
         left: 10px;
+
         &.flipped {
           transform: rotate(90deg);
         }
@@ -67,13 +81,14 @@
 
   @media (min-width: 680px) and (max-width: 1100px) {
     -webkit-column-count: 2;
-    -moz-column-count:2;
+    -moz-column-count: 2;
     column-count: 2;
 
   }
+
   @media (max-width: 679px) {
     -webkit-column-count: 1;
-    -moz-column-count:1;
+    -moz-column-count: 1;
     column-count: 1;
   }
 }

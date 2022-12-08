@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
@@ -33,8 +38,7 @@ class NewKey {
 
 @Component({
   selector: 'app-new-server-key',
-  templateUrl: './new-server-key.component.html',
-  styleUrls: ['./new-server-key.component.scss']
+  templateUrl: './new-server-key.component.html'
 })
 export class NewServerKeyComponent implements OnInit {
 

@@ -1,4 +1,3 @@
-
 <h3 mat-dialog-title>Subscribe to message</h3>
 <form>
   <div mat-dialog-content>
@@ -8,21 +7,12 @@
         <span class="text-muted">|</span>
       </span>
 
-      <input
-        matInput placeholder="Message's name"
-        [(ngModel)]="name"
-        name="-"
-        autocomplete="off">
+      <input matInput placeholder="Message's name" [(ngModel)]="name" name="-" autocomplete="off">
     </mat-form-field>
   </div>
 
   <div mat-dialog-actions [align]="'end'">
     <button mat-button color="primary" class="me-2" type="button">Cancel</button>
-    <button
-      mat-flat-button
-      color="primary"
-      type="submit"
-      class="px-5"
-      (click)="connect()">Subscribe</button>
+    <button mat-flat-button color="primary" type="submit" class="px-5" (click)="connect()">Subscribe</button>
   </div>
 </form>

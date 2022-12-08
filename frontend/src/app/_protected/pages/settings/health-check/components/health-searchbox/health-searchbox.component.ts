@@ -1,27 +1,25 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { ReplaySubject } from 'rxjs';
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
+import { Component, EventEmitter, Output } from '@angular/core';
 
 @Component({
   selector: 'app-health-searchbox',
   templateUrl: './health-searchbox.component.html',
   styleUrls: ['./health-searchbox.component.scss']
 })
-export class HealthSearchboxComponent implements OnInit {
+export class HealthSearchboxComponent {
 
   @Output() filterList = new EventEmitter<any>();
   @Output() testAll = new EventEmitter<any>();
-
-  constructor() { }
-
-  ngOnInit(): void {
-
-  }
 
   /**
    * Invoking endpoint to search in unique fields.
    * @params event
    */
-   public applyFilter(keyword: string) {
+  public applyFilter(keyword: string) {
     this.filterList.emit(keyword);
   }
 
@@ -36,5 +34,4 @@ export class HealthSearchboxComponent implements OnInit {
   public invokeTestAll() {
     this.testAll.emit();
   }
-
 }

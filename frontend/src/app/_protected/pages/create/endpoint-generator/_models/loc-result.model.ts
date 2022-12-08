@@ -1,6 +1,6 @@
 
 /*
- * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
 // Application specific imports
@@ -16,4 +16,3 @@ export class LocResult extends Response {
    */
   loc: number;
 }
-  

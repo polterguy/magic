@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -13,26 +18,26 @@ export class IdeComponent implements OnInit {
   /**
    * Currently selected file.
    */
-   public currentFileData: FileNode;
+  public currentFileData: FileNode;
 
-   public searchKey: Observable<string>;
+  public searchKey: Observable<string>;
 
-   public type: Observable<string>;
+  public type: Observable<string>;
 
-   constructor(private route: ActivatedRoute) { }
+  constructor(private route: ActivatedRoute) { }
 
-   ngOnInit(): void {
+  ngOnInit(): void {
     this.route.data.subscribe(data => {
       this.type = data.type;
     });
-   }
+  }
 
-   public showEditor(event: { currentFileData: any }) {
-     this.currentFileData = event.currentFileData;
-   }
+  public showEditor(event: { currentFileData: any }) {
+    this.currentFileData = event.currentFileData;
+  }
 
-   public filterList(event: any) {
-     this.searchKey = event;
-   }
+  public filterList(event: any) {
+    this.searchKey = event;
+  }
 
 }

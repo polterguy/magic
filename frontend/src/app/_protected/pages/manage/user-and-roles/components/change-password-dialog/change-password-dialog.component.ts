@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { GeneralService } from 'src/app/_general/services/general.service';
@@ -6,8 +11,7 @@ import { UserService } from '../../_services/user.service';
 
 @Component({
   selector: 'app-change-password-dialog',
-  templateUrl: './change-password-dialog.component.html',
-  styleUrls: ['./change-password-dialog.component.scss']
+  templateUrl: './change-password-dialog.component.html'
 })
 export class ChangePasswordDialogComponent {
 
@@ -47,10 +51,10 @@ export class ChangePasswordDialogComponent {
           this.isLoading = false;
           this.dialogRef.close();
         },
-        error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)});
+        error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)
+      });
     } else {
       this.generalService.showFeedback('Please give a password to save.')
     }
   }
-
 }

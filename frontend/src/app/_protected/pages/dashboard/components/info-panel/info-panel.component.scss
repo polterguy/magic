@@ -1,9 +1,14 @@
 
-.video-wrapper {
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
+ .video-wrapper {
   position: relative;
-  padding-bottom: 56.25%; /* 16:9 */
+  padding-bottom: 56.25%;
   height: 0;
   min-height: 100%;
+
   iframe {
     position: absolute;
     top: 0;

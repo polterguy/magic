@@ -1,5 +1,10 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { bufferCount, catchError, concatMap, forkJoin, from, Observable } from 'rxjs';
+import { bufferCount, concatMap, forkJoin, from } from 'rxjs';
 import { Model } from 'src/app/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 import { Response } from 'src/app/_protected/models/common/response.model';
 import { GeneralService } from 'src/app/_general/services/general.service';
@@ -38,11 +43,6 @@ export class HealthCheckComponent implements OnInit {
 
   // Filter for which items to display.
   private filter: string = '';
-
-  /**
-   * List of all tests in system.
-   */
-  private list: TestModel[] = [];
 
   /**
    * Currently expanded assumption.
@@ -98,7 +98,8 @@ export class HealthCheckComponent implements OnInit {
 
         this.isLoading = false;
       },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+    });
   }
 
   /**
@@ -120,7 +121,8 @@ export class HealthCheckComponent implements OnInit {
 
           this.openContent(item);
         },
-        error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
+        error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+      });
     }
   }
 
@@ -151,8 +153,9 @@ export class HealthCheckComponent implements OnInit {
       error: (error: any) => {
         item.success = false;
         item.status = 'Failed';
-        this.generalService.showFeedback(error?.error?.message??error, 'errorMessage');
-      }});
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+      }
+    });
   }
 
   /**
@@ -179,12 +182,11 @@ export class HealthCheckComponent implements OnInit {
             this.originalDataSource = this.originalDataSource.filter((el: any) => el.filename !== item.filename);
             this.cdr.detectChanges();
           },
-          error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
+          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+        });
       }
     });
   }
-
-
 
   /**
    * Invoked when user wants to execute all tests.
@@ -235,18 +237,16 @@ export class HealthCheckComponent implements OnInit {
             this.filterTests(timeDiff);
           }
         });
-
-
   }
 
   /*
    * Private helper methods
    */
 
-   /*
-    * Filters tests according to result.
-    */
-   private filterTests(timeDiff: number = null) {
+  /*
+   * Filters tests according to result.
+   */
+  private filterTests(timeDiff: number = null) {
     if (this.dataSource.filter(x => x.success !== true).length === 0) {
 
       // Perfect health! Publishing succeeded message and showing user some feedback.

@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -10,9 +15,6 @@ import { EndpointsListComponent } from '../endpoints-list/endpoints-list.compone
 import { EndpointsResultComponent } from '../endpoints-result/endpoints-result.component';
 import { GeneratedEndpointsComponent } from '../generated-endpoints.component';
 import { GeneratedEndpointsRoutingModule } from './generated-endpoints.routing.module';
-
-
-
 
 @NgModule({
   declarations: [

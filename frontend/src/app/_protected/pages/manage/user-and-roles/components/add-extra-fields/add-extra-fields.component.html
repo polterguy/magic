@@ -12,17 +12,8 @@
 
 
   <div mat-dialog-actions [align]="'end'">
-    <button
-      mat-dialog-close
-      mat-button
-      color="primary"
-      class="px-sm-5 px-4"
-      type="button">Close</button>
-    <button
-      mat-flat-button
-      color="primary"
-      class="px-sm-5 px-4"
-      (click)="save(type.value, value.value)"
+    <button mat-dialog-close mat-button color="primary" class="px-sm-5 px-4" type="button">Close</button>
+    <button mat-flat-button color="primary" class="px-sm-5 px-4" (click)="save(type.value, value.value)"
       type="submit">Save</button>
   </div>
 </form>

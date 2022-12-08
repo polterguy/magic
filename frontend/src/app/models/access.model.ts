@@ -1,12 +1,12 @@
 
 /*
- * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
 /**
  * Wrapper class declaring user's access to different modules.
  */
- export class AccessModel {
+export class AccessModel {
   sql: any = {
     execute_access: false,
     list_files: false,

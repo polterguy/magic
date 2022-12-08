@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, Input, OnInit } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { GeneralService } from 'src/app/_general/services/general.service';
@@ -7,8 +12,7 @@ import { CryptoService } from '../_services/crypto.service';
 
 @Component({
   selector: 'app-server-key-receipts',
-  templateUrl: './server-key-receipts.component.html',
-  styleUrls: ['./server-key-receipts.component.scss']
+  templateUrl: './server-key-receipts.component.html'
 })
 export class ServerKeyReceiptsComponent implements OnInit {
 
@@ -56,7 +60,8 @@ export class ServerKeyReceiptsComponent implements OnInit {
         this.dataSource = invocations || [];
         this.isLoading = false;
       },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+    });
   }
 
   private getCount() {
@@ -67,7 +72,8 @@ export class ServerKeyReceiptsComponent implements OnInit {
       next: (res) => {
         this.totalItems = res.count
       },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+    });
   }
 
   /**
@@ -75,11 +81,10 @@ export class ServerKeyReceiptsComponent implements OnInit {
    *
    * @param e Page event argument
    */
-   public changePage(e: PageEvent) {
+  public changePage(e: PageEvent) {
     this.pageSize = e.pageSize;
     this.pageIndex = e.pageIndex;
     this.getInvocations();
     this.getCount();
   }
-
 }

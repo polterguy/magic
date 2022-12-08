@@ -3,7 +3,7 @@
  * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
-import { AfterContentChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { AfterContentChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { GeneralService } from './_general/services/general.service';
 import { ThemeService } from './_general/services/theme.service';

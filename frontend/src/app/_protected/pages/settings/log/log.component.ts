@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, OnInit } from '@angular/core';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { LogService } from './_services/log.service';
@@ -19,7 +24,7 @@ export class LogComponent implements OnInit {
   /**
    * Columns to display in table.
    */
-  displayedColumns: string[] = ['id', 'date','content', 'type', 'action'];
+  displayedColumns: string[] = ['id', 'date', 'content', 'type', 'action'];
 
   /**
    * Currently viewed log items.
@@ -66,7 +71,7 @@ export class LogComponent implements OnInit {
   getItems() {
     let from: string = null;
     if (this.currentPage > 0) {
-      from = this.items[this.currentPage-1][this.pageSize - 1].id;
+      from = this.items[this.currentPage - 1][this.pageSize - 1].id;
     }
     this.logService.list(from, this.pageSize).subscribe({
       next: (logitems) => {
@@ -78,8 +83,9 @@ export class LogComponent implements OnInit {
       },
       error: (error: any) => {
         this.retrievingItems = false;
-        this.generalService.showFeedback(error?.error?.message??error, 'errorMessage');
-      }});
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+      }
+    });
   }
 
   getCount() {
@@ -87,7 +93,8 @@ export class LogComponent implements OnInit {
       next: (count) => {
         this.count = count.count;
       },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+    });
   }
 
   page(event: PageEvent) {

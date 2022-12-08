@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
@@ -37,7 +42,7 @@ export class PluginsComponent implements OnInit {
    * SignalR hub connection, used to connect to Bazar server and get notifications
    * when app is ready to be installed.
    */
-   private hubConnection: HubConnection = null;
+  private hubConnection: HubConnection = null;
 
   public searchKey: Observable<string>;
 
@@ -152,7 +157,7 @@ export class PluginsComponent implements OnInit {
               this.connectSocket(status.code, database);
             },
             error: (error: any) => {
-              this.generalService.showFeedback(error?.error?.message??error, 'errorMessage');
+              this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
               this.waitingInstallation = false;
             }
           });
@@ -213,12 +218,12 @@ export class PluginsComponent implements OnInit {
                   this.hubConnection = null;
                 }
 
-            } else {
-              this.generalService.showFeedback('Oops! Please check the system log.', 'errorMessage', 'Ok', 5000);
-            }
-          },
-          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
-        });
+              } else {
+                this.generalService.showFeedback('Oops! Please check the system log.', 'errorMessage', 'Ok', 5000);
+              }
+            },
+            error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+          });
         } else {
           this.generalService.showFeedback('Oops! Please check the system log.', 'errorMessage', 'Ok', 5000);
         }
@@ -284,8 +289,8 @@ export class PluginsComponent implements OnInit {
   private clearServersideCache() {
     // Purging server side database cache in case user just recently created a new database.
     this.cacheService.delete('magic.sql.databases.*').subscribe({
-      next: () => {},
-      error: (error: any) => {}
+      next: () => { },
+      error: (error: any) => { }
     });
   }
 

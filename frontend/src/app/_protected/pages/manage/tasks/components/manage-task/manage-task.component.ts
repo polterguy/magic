@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
@@ -8,8 +13,7 @@ import { TaskService } from '../../_services/task.service';
 
 @Component({
   selector: 'app-manage-task',
-  templateUrl: './manage-task.component.html',
-  styleUrls: ['./manage-task.component.scss']
+  templateUrl: './manage-task.component.html'
 })
 export class ManageTaskComponent implements OnInit {
 
@@ -49,7 +53,7 @@ export class ManageTaskComponent implements OnInit {
       setTimeout(() => {
         this.hlReady = true;
       }, 500);
-     });
+    });
   }
 
   /**
@@ -70,14 +74,16 @@ export class ManageTaskComponent implements OnInit {
             this.generalService.showFeedback('Task successfully edited', 'successMessage')
             this.dialogRef.close(true);
           },
-          error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage', 'Ok', 4000)});
+          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)
+        });
     } else {
       this.taskService.create(this.task.id, this.hlModel.hyperlambda, this.task.description).subscribe({
         next: () => {
           this.generalService.showFeedback('New task is created successfully', 'successMessage')
           this.dialogRef.close(true);
         },
-        error:(error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage', 'Ok', 4000)});
+        error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)
+      });
     }
 
   }
