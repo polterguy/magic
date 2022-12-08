@@ -82,13 +82,6 @@ export class HealthCheckComponent implements OnInit {
   private getList() {
     this.assumptionService.list().subscribe({
       next: (tests: string[]) => {
-        // this.list = tests.filter(x => x.endsWith('.hl')).map(x => {
-        //   return {
-        //     filename: x,
-        //     success: null,
-        //     content: null,
-        //   }
-        // });
         let tableData: any;
         tableData = tests.filter(x => x.endsWith('.hl')).map((item: any) => {
           const name = item.substring(item.lastIndexOf('/') + 1);
