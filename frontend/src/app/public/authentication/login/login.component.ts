@@ -30,7 +30,7 @@ export class LoginComponent implements OnInit {
   backendHasBeenSelected: boolean = false;
   backendList: Backend[] = [];
   filteredBackends: Observable<any[]>;
-  savePassword: boolean = false;
+  savePassword: boolean = true;
   viewPassword: boolean = false;
   rememberPassword: boolean = false;
   waiting: boolean = false;
@@ -93,10 +93,11 @@ export class LoginComponent implements OnInit {
   }
 
   backendActivated(e: MatAutocompleteActivatedEvent) {
-    debugger;
     const defaultBackend: Backend = this.backendList.find((item: any) => item.url === e.option.value);
     this.loginForm.controls.username.setValue(defaultBackend.username);
-    this.loginForm.controls.password.setValue(defaultBackend.password);
+    if (defaultBackend.password) {
+      this.loginForm.controls.password.setValue(defaultBackend.password);
+    }
   }
 
   /**
