@@ -6,7 +6,6 @@
 // Angular and system imports.
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { OverlayContainer } from '@angular/cdk/overlay';
 
 /**
  * Service that keeps track of what theme we're currently using.
@@ -18,55 +17,79 @@ export class ThemeService {
 
   private _themeChanged: BehaviorSubject<string>;
 
-  // Name of theme currently used, either 'light' or 'dark'.
-  private _theme: string;
-
   /**
    * To allow consumers to subscribe to theme change events.
    */
-   themeChanged: Observable<string>;
+  themeChanged: Observable<string>;
 
   /**
    * Creates an instance of your type.
    */
-  constructor(private overlayContainer: OverlayContainer) {
-    this._theme = localStorage.getItem('theme') || 'light';
-    this.overlayContainer.getContainerElement().classList.add(this._theme);
-    this._themeChanged = new BehaviorSubject<string>(this._theme);
+  constructor() {
+    const theme = localStorage.getItem('theme') || 'default';
+    this._themeChanged = new BehaviorSubject<string>(theme);
     this.themeChanged = this._themeChanged.asObservable();
+    if (theme && theme !== 'default') {
+      this.injectTheme(theme);
+    }
   }
 
   /**
    * Returns theme to caller.
    */
   get theme() {
-    return this._theme;
+    return localStorage.getItem('theme') || 'default';
   }
 
   /**
    * Sets theme to specified value and persists into localStorage.
    */
   set theme(value: string) {
-    switch (value) {
 
-      case 'light':
-      case 'dark':
-        localStorage.setItem('theme', value);
-        this.overlayContainer.getContainerElement().classList.remove(this._theme);
-        this._theme = value;
-        this.overlayContainer.getContainerElement().classList.add(this._theme);
-        this._themeChanged.next(value);
-        break;
+    // Disabling old theme, if existing.
+    const curTheme = localStorage.getItem('theme');
+    if (curTheme) {
+      this.disableTheme(curTheme);
+      localStorage.removeItem('theme');
+    }
 
-      default:
-        throw `Theme '${value}' does not exist`;
-      }
+    // Applying new theme.
+    localStorage.setItem('theme', value);
+    if (value && value !== 'default') {
+      this.injectTheme(value);
+    }
+    this._themeChanged.next(value);
   }
 
-  /**
-   * Toggles current theme.
+  /*
+   * Private helper methods
    */
-  toggle() {
-    this.theme = this.theme === 'light' ? 'dark' : 'light';
+
+  /*
+   * Injects a CSS file dynamically into the HTML head section
+   */
+  private injectTheme(theme: string) {
+    if (!document.getElementById(theme)){
+      var head  = document.getElementsByTagName('head')[0];
+      var link  = document.createElement('link');
+      link.id   = theme;
+      link.rel  = 'stylesheet';
+      link.type = 'text/css';
+      link.href = '/assets/styles/themes/' + theme + '/' + theme + '.css'
+      link.media = 'all';
+      head.appendChild(link);
+    } else {
+      (<any>document.getElementById(theme)).disabled = false; // Simply enabling the element
+    }
+  }
+
+  /*
+   * Disables the specified CSS element
+   */
+  private disableTheme(theme: string) {
+    const el = <any>document.getElementById(theme);
+    if (el) {
+      el.disabled = true;
+    }
   }
 }
