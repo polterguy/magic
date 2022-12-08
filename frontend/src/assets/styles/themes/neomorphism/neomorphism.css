@@ -236,3 +236,10 @@ body {
 :root .mat-radio-button.mat-primary .mat-radio-inner-circle {
   background-color: rgb(150, 150, 161);
 }
+
+:root .mat-autocomplete-panel {
+  background-color: rgb(230, 231, 238) !important;
+  border: .0625rem solid #d1d9e6;
+  border-radius: 5px !important;
+  box-shadow: 3px 3px 6px #b8b9be, -3px -3px 6px #fff;
+}
