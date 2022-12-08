@@ -13,7 +13,7 @@ import { saveAs } from "file-saver";
 // Application specific imports.
 import { Crudify } from '../_models/crudify.model';
 import { LocResult } from '../_models/loc-result.model';
-import { CustomSql } from '../../../../components/tools/crudifier/models/custom-sql.model';
+import { CustomSql } from '../_models/custom-sql.model';
 import { Response } from 'src/app/models/response.model';
 import { Template } from 'src/app/models/template.model';
 import { GeneralService } from 'src/app/_general/services/general.service';
