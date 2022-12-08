@@ -4,7 +4,6 @@
  */
 
 import { ChangeDetectorRef, Component, HostListener, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { UpdatePwaService } from 'src/app/_general/services/update-pwa.service';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { BackendService } from 'src/app/_protected/services/common/backend.service';
@@ -35,7 +34,6 @@ export class CoreComponent implements OnInit {
   constructor(
     private cdr: ChangeDetectorRef,
     private generalService: GeneralService,
-    private router: Router,
     private backendService: BackendService,
     private updatePwaService: UpdatePwaService) {
     this.updatePwaService.checkForUpdates();
@@ -55,7 +53,5 @@ export class CoreComponent implements OnInit {
     this.backendService.versionRetrieved.subscribe((res: any) => {
       this.cdr.detectChanges();
     });
-
-
   }
 }
