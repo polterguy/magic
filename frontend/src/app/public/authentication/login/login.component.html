@@ -16,12 +16,10 @@
 
         <input
           type="text"
-          autofocus
           matInput
           autocomplete="off"
           formControlName="backend"
-          [matAutocomplete]="auto"
-          #inputValue>
+          [matAutocomplete]="auto">
           <mat-error *ngIf="loginForm.controls.backend.errors?.['required']">Backend is required</mat-error>
           <mat-error *ngIf="loginForm.controls.backend.errors?.['pattern']">Backend must be a valid URL</mat-error>
           <mat-autocomplete #auto="matAutocomplete">
@@ -41,6 +39,7 @@
 
         <input
           matInput="text"
+          autofocus
           placeholder="Username"
           formControlName="username"
           name="username"
