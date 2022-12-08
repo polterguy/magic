@@ -12,7 +12,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import {
   ConfirmDialogComponent,
   ConfirmDialogData
-} from '../components/utilities/confirm/confirm-dialog.component';
+} from '../_general/components/confirm/confirm-dialog.component';
 
  /**
   * Feedback service allowing you to show feedback to users, such as
