@@ -3,9 +3,10 @@
  * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
-import { AfterContentChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { AfterContentChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { GeneralService } from './_general/services/general.service';
+import { ThemeService } from './_general/services/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -17,18 +18,20 @@ export class AppComponent implements AfterContentChecked {
   title = 'Aista Magic Cloud';
 
   loading$: Subject<any> = new BehaviorSubject(true);
+
   /**
    *
    * @param loader To handle the loader generally.
    * @param cdr To detect changes for handling the loader.
    */
   constructor(
-    public loader: GeneralService,
+    private generalService: GeneralService,
+    private themeService: ThemeService,
     private cdr: ChangeDetectorRef) {
   }
 
   ngAfterContentChecked(): void {
-    this.loader.loading$.subscribe((res: any) => {
+    this.generalService.loading$.subscribe((res: any) => {
       this.cdr.markForCheck();
       this.loading$.next(res)
       this.cdr.detectChanges();
