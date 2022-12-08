@@ -12,6 +12,7 @@ import { OverviewComponent } from '../components/overview/overview.component';
 import { ViewLogComponent } from '../components/view-log/view-log.component';
 import { DashboardComponent } from '../dashboard.component';
 import { DashboardRoutingModule } from './dashboard-routing.module';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import { DashboardRoutingModule } from './dashboard-routing.module';
     MaterialModule,
     SharedModule,
     ComponentsModule,
+    FormsModule,
     NgxEchartsModule.forRoot({
       echarts: () => import('echarts')
     }),
