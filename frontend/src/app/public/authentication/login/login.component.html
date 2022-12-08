@@ -22,7 +22,7 @@
           [matAutocomplete]="auto">
           <mat-error *ngIf="loginForm.controls.backend.errors?.['required']">Backend is required</mat-error>
           <mat-error *ngIf="loginForm.controls.backend.errors?.['pattern']">Backend must be a valid URL</mat-error>
-          <mat-autocomplete #auto="matAutocomplete">
+          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="backendActivated($event)">
             <mat-option *ngFor="let option of backendStorageService.backends" [value]="option.url">
               {{option.url}}
             </mat-option>
