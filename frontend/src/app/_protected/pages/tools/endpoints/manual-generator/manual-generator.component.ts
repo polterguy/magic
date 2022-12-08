@@ -19,7 +19,7 @@ import { LogService } from '../../../settings/log/_services/log.service';
 import { Role } from '../../../manage/user-and-roles/_models/role.model';
 import { SqlService } from '../../../create/database/_services/sql.service';
 import { AddArgumentDialogComponent } from '../components/add-argument-dialog/add-argument-dialog.component';
-import { SqlSnippetDialogComponent } from '../components/sql-snippet-dialog/sql-snippet-dialog.component';
+import { SqlSnippetDialogComponent } from '../../../create/sql-studio/components/sql-snippet-dialog/sql-snippet-dialog.component';
 
 // CodeMirror options.
 import sql from '../../../../../codemirror/options/sql.json';
