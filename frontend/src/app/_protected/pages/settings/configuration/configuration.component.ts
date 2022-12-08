@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
@@ -20,7 +25,7 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
   /**
    * CodeMirror options object, taken from common settings.
    */
-   public cmOptions = {
+  public cmOptions = {
     json: json,
   };
 
@@ -75,7 +80,8 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
         this.config = JSON.stringify(res, null, 2);
         this.originalConfig = JSON.stringify(res, null, 2);
       },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+    });
   }
 
   public reset() {
@@ -95,10 +101,11 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
             this.backendService.getRecaptchaKey();
           }, 1000);
         },
-        error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage', 'ok', 4000)});
+        error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'ok', 4000)
+      });
     }
     catch (error) {
-      this.generalService.showFeedback(error?.error?.message??error, 'errorMessage', 'ok', 4000);
+      this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'ok', 4000);
     }
   }
 
@@ -123,7 +130,7 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
   private async getCodeMirrorOptions() {
     this.codemirrorActionsService.getActions(null, 'json').then((options: any) => {
       this.cmOptions.json = options;
-     });
+    });
   }
 
   private watchForActions() {

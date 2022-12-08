@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -9,8 +14,7 @@ import { RoleService } from '../../_services/role.service';
 
 @Component({
   selector: 'app-manage-role-dialog',
-  templateUrl: './manage-role-dialog.component.html',
-  styleUrls: ['./manage-role-dialog.component.scss']
+  templateUrl: './manage-role-dialog.component.html'
 })
 export class ManageRoleDialogComponent implements OnInit {
 

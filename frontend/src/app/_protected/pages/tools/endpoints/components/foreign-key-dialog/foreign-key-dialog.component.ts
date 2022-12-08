@@ -1,7 +1,12 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
- interface FKData {
+interface FKData {
   database: any,
   foreign_keys: any,
   currentForeignKey: any
@@ -13,7 +18,6 @@ export interface FKModel {
   foreign_name: string,
   long_data: boolean
 }
-
 
 @Component({
   selector: 'app-foreign-key-dialog',
@@ -54,5 +58,4 @@ export class ForeignKeyDialogComponent implements OnInit {
     };
     this.dialogRef.close({ selectedForeignKey: this.selectedForeignKey });
   }
-
 }

@@ -1,4 +1,3 @@
-
 <div class="d-flex flex-column w-100 h-100">
 
   <div class="d-flex flex-wrap justify-content-between align-items-center w-100 mb-3" *ngIf="currentFileData">
@@ -7,17 +6,15 @@
       {{currentFileData?.path}}
     </div>
     <div>
-      <a mat-button color="primary" href="https://docs.aista.com/documentation/magic/components/hyper-ide/" target="_blank">Help</a>
+      <a mat-button color="primary" href="https://docs.aista.com/documentation/magic/components/hyper-ide/"
+        target="_blank">Help</a>
       <button mat-button color="primary" (click)="openShortkeys()">Shortkeys</button>
     </div>
   </div>
   <ng-container *ngFor="let file of openFiles;let index = index">
     <div class="active-codemirror-editor-{{index}} h-100 frontend-editor"
-    [class.d-none]="currentFileData.path !== file.path">
-      <ngx-codemirror
-        class="codemirror-container h-100"
-        [(ngModel)]="file.content"
-        [options]="file.options">
+      [class.d-none]="currentFileData.path !== file.path">
+      <ngx-codemirror class="codemirror-container h-100" [(ngModel)]="file.content" [options]="file.options">
       </ngx-codemirror>
     </div>
   </ng-container>

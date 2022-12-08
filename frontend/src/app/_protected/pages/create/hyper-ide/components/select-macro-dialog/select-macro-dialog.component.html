@@ -1,9 +1,9 @@
-
 <h3 mat-dialog-title>Select macro</h3>
 
 <div mat-dialog-content>
 
-  <mat-selection-list #macro [multiple]="false" dense (selectionChange)="selectMacro(macro.selectedOptions.selected[0]?.value)">
+  <mat-selection-list #macro [multiple]="false" dense
+    (selectionChange)="selectMacro(macro.selectedOptions.selected[0]?.value)">
     <mat-list-option *ngFor="let idx of macros" [value]="idx">
       {{getMacroName(idx)}}
     </mat-list-option>

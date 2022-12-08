@@ -1,11 +1,14 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, Inject, OnInit } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { BazarService } from 'src/app/_protected/services/common/bazar.service';
-import { FileService } from '../../../../create/hyper-ide/_services/file.service';
 import { Response } from '../../../../../models/common/response.model';
 import { BackendService } from 'src/app/_protected/services/common/backend.service';
-import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-view-plugin',
@@ -20,9 +23,7 @@ export class ViewPluginComponent implements OnInit {
   public deletePermission: boolean = false;
 
   constructor(
-    private dialog: MatDialog,
     private dialogRef: MatDialogRef<ViewPluginComponent>,
-    private fileService: FileService,
     private bazarService: BazarService,
     private generalService: GeneralService,
     private backendService: BackendService,

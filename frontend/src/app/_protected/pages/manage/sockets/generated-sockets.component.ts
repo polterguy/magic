@@ -1,9 +1,12 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
-import { Observable } from 'rxjs';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { Count } from 'src/app/_protected/models/common/count.model';
 import { Message } from 'src/app/_protected/models/common/message.model';
@@ -53,15 +56,15 @@ export class GeneratedSocketsComponent implements OnInit, OnDestroy {
   /**
    * SignalR socket subscriptions (message names).
    */
-   subscriptions: string[] = [];
+  subscriptions: string[] = [];
 
-   /**
-    * Messages published over socket connection.
-    */
-   messages: Message[] = [];
+  /**
+   * Messages published over socket connection.
+   */
+  messages: Message[] = [];
 
-   // SignalR hub connection
-   private hubConnection: HubConnection = null;
+  // SignalR hub connection
+  private hubConnection: HubConnection = null;
 
   /**
   * Creates an instance of your component.
@@ -133,7 +136,7 @@ export class GeneratedSocketsComponent implements OnInit, OnDestroy {
   /**
    * Invoked when user wants to establish a new socket connection.
    */
-   public subscribe(itemName?: string) {
+  public subscribe(itemName?: string) {
     const dialogRef = this.dialog.open(SubscribeDialogComponent, {
       width: '550px',
       data: {
@@ -148,9 +151,9 @@ export class GeneratedSocketsComponent implements OnInit, OnDestroy {
         if (!this.hubConnection) {
           let builder = new HubConnectionBuilder();
           this.hubConnection = builder.withUrl(this.backendService.active.url + '/sockets', {
-              accessTokenFactory: () => this.backendService.active.token.token,
-              skipNegotiation: true,
-              transport: HttpTransportType.WebSockets,
+            accessTokenFactory: () => this.backendService.active.token.token,
+            skipNegotiation: true,
+            transport: HttpTransportType.WebSockets,
           }).build();
           createdNow = true;
         }
@@ -208,7 +211,7 @@ export class GeneratedSocketsComponent implements OnInit, OnDestroy {
    *
    * @param e Page event argument
    */
-   public changePage(e: PageEvent) {
+  public changePage(e: PageEvent) {
     this.pageSize = e.pageSize;
     this.pageIndex = e.pageIndex;
     this.getConnections();
@@ -217,10 +220,9 @@ export class GeneratedSocketsComponent implements OnInit, OnDestroy {
   /**
    * Implementation of OnDestroy.
    */
-   ngOnDestroy() {
+  ngOnDestroy() {
     if (this.hubConnection) {
       this.hubConnection.stop();
     }
   }
-
 }

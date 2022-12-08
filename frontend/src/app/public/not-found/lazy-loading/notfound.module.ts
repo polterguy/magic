@@ -9,8 +9,6 @@ import { NotfoundRoutingModule } from './notfound.routing.module';
 import { MatButtonModule } from '@angular/material/button';
 import { NotFoundComponent } from '../not-found.component';
 
-
-
 @NgModule({
   declarations: [NotFoundComponent],
   imports: [

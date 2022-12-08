@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DatabaseRoutingModule } from './database.routing.module';
@@ -11,8 +16,6 @@ import { ConnectComponent } from '../connect/connect.component';
 import { AddNewDatabaseComponent } from '../add-new-database/add-new-database.component';
 import { ViewDbListComponent } from '../components/view-db-list/view-db-list.component';
 import { CatalogNameComponent } from '../components/catalog-name/catalog-name.component';
-
-
 
 @NgModule({
   declarations: [

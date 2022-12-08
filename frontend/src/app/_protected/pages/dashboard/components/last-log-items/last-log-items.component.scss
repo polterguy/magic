@@ -1,32 +1,50 @@
-@import '../../../../../../assets/styles/_variables/colors.scss';
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
+ @import '../../../../../../assets/styles/_variables/colors.scss';
 @import '../../../../../../assets/styles/_variables/mixin.scss';
-.log-table{
-  // max-height: 50vh;
-  // overflow-y: auto;
-  // @include scrollbar($aista_default_grey3,transparentize($color: $aista_default_grey5, $amount: 0.65),3px);
+
+.log-table {
+
   ::ng-deep {
+
     th.mat-header-cell,
     td.mat-cell {
       &:nth-child(1) {
         width: 90px;
       }
+
       &:nth-child(2) {
         width: 50px;
       }
+
       &:nth-child(4) {
         width: 65px;
       }
     }
-    th.mat-header-cell:first-of-type, td.mat-cell:first-of-type, td.mat-footer-cell:first-of-type {
+
+    th.mat-header-cell:first-of-type,
+    td.mat-cell:first-of-type,
+    td.mat-footer-cell:first-of-type {
       padding-left: 0;
     }
-    th.mat-header-cell:last-of-type, td.mat-cell:last-of-type, td.mat-footer-cell:last-of-type {
+
+    th.mat-header-cell:last-of-type,
+    td.mat-cell:last-of-type,
+    td.mat-footer-cell:last-of-type {
       padding-right: 0;
     }
-    th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
+
+    th.mat-header-cell,
+    td.mat-cell,
+    td.mat-footer-cell {
       border: none;
     }
-    tr.mat-row, tr.mat-footer-row {
+
+    tr.mat-row,
+    tr.mat-footer-row {
       height: 33px;
     }
 
@@ -35,9 +53,10 @@
       table-layout: fixed;
     }
 
-    th, td {
+    th,
+    td {
       overflow: hidden;
-      width:auto;
+      width: auto;
       text-overflow: ellipsis;
       white-space: nowrap;
     }

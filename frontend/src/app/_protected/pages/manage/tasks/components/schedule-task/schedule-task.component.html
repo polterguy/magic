@@ -2,9 +2,7 @@
 
 <form>
   <div mat-dialog-content>
-    <mat-radio-group aria-label="Select an option"
-      [(ngModel)]="scheduleOption"
-      [ngModelOptions]="{standalone: true}">
+    <mat-radio-group aria-label="Select an option" [(ngModel)]="scheduleOption" [ngModelOptions]="{standalone: true}">
       <div class="row align-items-center">
         <div class="col-md-4 col-12">
           <p class="my-0">
@@ -13,17 +11,9 @@
         </div>
         <div class="col-md-8 col-12 mt-md-0 mt-3">
           <mat-form-field class="w-100 standalone-field">
-            <input matInput
-              name="-"
-              autocomplete="off"
-              placeholder="Pick date & time"
-              [ngxMatDatetimePicker]="picker"
-              [(ngModel)]="fixedDateTime"
-              [ngModelOptions]="{standalone: true}"
-              [min]="minDate"
-              (click)="picker.open()"
-              readonly
-              [disabled]="scheduleOption !== 'fixed'">
+            <input matInput name="-" autocomplete="off" placeholder="Pick date & time" [ngxMatDatetimePicker]="picker"
+              [(ngModel)]="fixedDateTime" [ngModelOptions]="{standalone: true}" [min]="minDate" (click)="picker.open()"
+              readonly [disabled]="scheduleOption !== 'fixed'">
             <mat-datepicker-toggle matPrefix [for]="picker"></mat-datepicker-toggle>
             <ngx-mat-datetime-picker #picker [showSeconds]="false">
             </ngx-mat-datetime-picker>
@@ -44,9 +34,7 @@
                   <span class="text-muted">|</span>
                 </span>
 
-                <mat-select placeholder="Strength"
-                  [(ngModel)]="selectedNumber"
-                  [ngModelOptions]="{standalone: true}"
+                <mat-select placeholder="Strength" [(ngModel)]="selectedNumber" [ngModelOptions]="{standalone: true}"
                   [disabled]="scheduleOption !== 'repeat'">
                   <mat-option *ngFor="let item of numbers" [value]="item">
                     {{item}}
@@ -61,9 +49,7 @@
                   <span class="text-muted">|</span>
                 </span>
 
-                <mat-select placeholder="Strength"
-                  [(ngModel)]="selectedPeriod"
-                  [ngModelOptions]="{standalone: true}"
+                <mat-select placeholder="Strength" [(ngModel)]="selectedPeriod" [ngModelOptions]="{standalone: true}"
                   [disabled]="scheduleOption !== 'repeat'">
                   <mat-option *ngFor="let item of period" [value]="item">
                     {{item}}
@@ -86,10 +72,8 @@
               <span class="text-muted">|</span>
             </span>
 
-            <input matInput type="text" placeholder="Custom value"
-              [(ngModel)]="customRepetition"
-              [ngModelOptions]="{standalone: true}"
-              [disabled]="scheduleOption !== 'custom'">
+            <input matInput type="text" placeholder="Custom value" [(ngModel)]="customRepetition"
+              [ngModelOptions]="{standalone: true}" [disabled]="scheduleOption !== 'custom'">
           </mat-form-field>
           <ng-container *ngIf="scheduleOption === 'custom'">
             <mat-hint class="d-block mat-caption">

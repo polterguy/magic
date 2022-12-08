@@ -1,6 +1,6 @@
 
 /*
- * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
 import { Pipe, PipeTransform } from '@angular/core';
@@ -30,7 +30,7 @@ export class FriendlyDatePipe implements PipeTransform {
     }
     const date = new Date(value);
     let result = date.getDate().toString() + ' ';
-    switch(date.getMonth()) {
+    switch (date.getMonth()) {
       case 0:
         result += 'Jan';
         break;

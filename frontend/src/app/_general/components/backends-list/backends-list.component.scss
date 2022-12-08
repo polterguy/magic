@@ -1,4 +1,9 @@
-@media (max-width: 576px) {
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
+ @media (max-width: 576px) {
   .backend-list {
     ::ng-deep .mat-row td.mat-cell {
       &::before {

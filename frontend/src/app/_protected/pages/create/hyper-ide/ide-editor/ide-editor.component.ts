@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
@@ -57,16 +62,6 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     private codemirrorActionsService: CodemirrorActionsService) { }
 
   ngOnInit(): void {
-    // (async () => {
-    //   while (!(this.currentFileData && !this.endpoints.length))
-    //     await new Promise(resolve => setTimeout(resolve, 100));
-
-    //   if (this.currentFileData && this.endpoints.length > 0) {
-    //     setTimeout(() => {
-    //         this.clearEditorHistory(true);
-    //     }, 100);
-    //   }
-    // })();
     this.watchForActions();
     this.cdr.detectChanges();
   }
@@ -78,7 +73,6 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
       if (this.currentFileData) {
         if (this.currentFileData.options !== this.codemirrorOptions[this.currentFileData.path]) {
           this.getCodeMirrorOptions();
-          // if ()
           setTimeout(() => {
             const activeWrapper = document.querySelector('.active-codemirror-editor-' + fileExisting);
             const editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
@@ -252,7 +246,6 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
 
             if (endpoints.length > 0) {
               return endpoints[0];
-              // resolve (endpoints[0])
             }
         }
       } else {
@@ -261,7 +254,6 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     } else {
       return null;
     }
-    // return null;
   }
 
   /**
@@ -419,8 +411,8 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   /**
-     * Invoked when user wants to execute a macro.
-     */
+   * Invoked when user wants to execute a macro.
+   */
   private selectMacro() {
     const dialogRef = this.dialog.open(SelectMacroDialogComponent, {
       width: '550px',

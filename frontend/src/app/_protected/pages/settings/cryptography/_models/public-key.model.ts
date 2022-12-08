@@ -1,6 +1,6 @@
 
 /*
- * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
 /**
@@ -36,7 +36,7 @@ export class PublicKey {
   /**
    * Optional username to associate key with.
    */
-   username?: string;
+  username?: string;
 
   /**
    * Whether or not key is enabled for cryptography operations or not.
@@ -65,4 +65,3 @@ export class PublicKey {
    */
   vocabulary: string;
 }
-  

@@ -1,11 +1,15 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
   selector: 'app-task-searchbox',
-  templateUrl: './task-searchbox.component.html',
-  styleUrls: ['./task-searchbox.component.scss']
+  templateUrl: './task-searchbox.component.html'
 })
 export class TaskSearchboxComponent implements OnInit {
 
@@ -13,8 +17,6 @@ export class TaskSearchboxComponent implements OnInit {
   @Output() addTask = new EventEmitter<any>();
 
   filterControl: FormControl;
-
-  constructor() { }
 
   ngOnInit(): void {
     this.filterControl = new FormControl('');
@@ -34,7 +36,7 @@ export class TaskSearchboxComponent implements OnInit {
    * Invoking endpoint to search in unique fields.
    * @params event
    */
-   private applyFilter(keyword: string) {
+  private applyFilter(keyword: string) {
     this.filterList.emit(keyword);
   }
 
@@ -49,5 +51,4 @@ export class TaskSearchboxComponent implements OnInit {
   public invokeAddTask() {
     this.addTask.emit();
   }
-
 }

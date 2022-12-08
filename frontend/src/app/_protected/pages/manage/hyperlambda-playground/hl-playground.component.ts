@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -27,7 +32,7 @@ export class HlPlaygroundComponent implements OnInit, OnDestroy {
   /**
    * Input Hyperlambda component model and options.
    */
-   input: Model = {
+  input: Model = {
     hyperlambda: '',
     options: hyperlambda,
   };
@@ -71,7 +76,7 @@ export class HlPlaygroundComponent implements OnInit, OnDestroy {
   private async getCodeMirrorOptions() {
     this.codemirrorActionsService.getActions(null, 'hl').then((res: any) => {
       this.input.options = res;
-     });
+    });
   }
 
   /**
@@ -87,7 +92,8 @@ export class HlPlaygroundComponent implements OnInit, OnDestroy {
             this.input.hyperlambda = content;
             this.filename = filename;
           },
-          error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
+          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+        });
       }
     });
   }
@@ -107,7 +113,8 @@ export class HlPlaygroundComponent implements OnInit, OnDestroy {
       if (filename) {
         this.evaluatorService.saveSnippet(filename, this.input.hyperlambda).subscribe({
           next: () => this.generalService.showFeedback('Snippet successfully saved'),
-          error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
+          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+        });
       }
     });
   }
@@ -133,10 +140,11 @@ export class HlPlaygroundComponent implements OnInit, OnDestroy {
         this.generalService.showFeedback('Hyperlambda was successfully executed', 'successMessage');
         this.generalService.hideLoading();
       },
-      error: (error: any) =>  {
+      error: (error: any) => {
         this.generalService.hideLoading();
-        this.generalService.showFeedback(error?.error?.message??error, 'errorMessage', 'Ok', 5000)}
-      });
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
+      }
+    });
   }
 
   public clear() {

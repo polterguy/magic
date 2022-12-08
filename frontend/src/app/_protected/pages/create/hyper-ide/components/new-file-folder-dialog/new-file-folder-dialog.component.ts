@@ -1,6 +1,6 @@
 
 /*
- * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
 // Angular and system imports.
@@ -48,9 +48,9 @@ export class FileObject {
    */
   files: string[];
 
-   /**
-    * Type of the dialog
-    */
+  /**
+   * Type of the dialog
+   */
   type: string;
 }
 
@@ -109,8 +109,9 @@ export class NewFileFolderDialogComponent implements OnInit {
             }
           });
         },
-        error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
-      }
+        error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+      });
+    }
   }
 
   /**
@@ -214,7 +215,8 @@ export class NewFileFolderDialogComponent implements OnInit {
         this.data.name = this.activeTemplate.name.substring(this.activeTemplate.name.lastIndexOf('/') + 1);
         this.fileName.nativeElement.focus();
       },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+    });
   }
 
   /**

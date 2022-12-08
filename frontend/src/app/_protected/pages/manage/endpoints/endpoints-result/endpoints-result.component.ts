@@ -1,4 +1,9 @@
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpTransportType, HubConnectionBuilder } from '@aspnet/signalr';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -446,7 +451,7 @@ export class EndpointsResultComponent implements OnInit {
     catch (error) {
       this.isExecuting = false;
       this.canCreateAssumption = true;
-      this.generalService.showFeedback(error?.error?.message??error,'errorMessage');
+      this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
     }
   }
 
@@ -490,7 +495,7 @@ export class EndpointsResultComponent implements OnInit {
   /**
    * Allows the user to create an assumption/integration test for the current request/response.
    */
-   createTest() {
+  createTest() {
     const dialogRef = this.dialog.open(CreateAssumptionTestDialogComponent, {
       width: '550px',
     });

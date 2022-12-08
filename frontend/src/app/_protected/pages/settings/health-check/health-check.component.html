@@ -8,30 +8,23 @@
           </div>
           <div class="col-xxl-4 col-xl-5 col-lg-6 col-12">
             <ng-container *ngIf="isLoading;else loaded">
-              <app-loading-skeleton
-                [amount]="1"
-                [colClass]="'col-12'"
-                [blockHeight]="'41px'"
+              <app-loading-skeleton [amount]="1" [colClass]="'col-12'" [blockHeight]="'41px'"
                 [hasShadow]="false"></app-loading-skeleton>
             </ng-container>
             <ng-template #loaded>
-              <app-health-searchbox
-                (testAll)="testAll()"
-                (filterList)="filterList($event)"></app-health-searchbox>
+              <app-health-searchbox (testAll)="testAll()" (filterList)="filterList($event)"></app-health-searchbox>
             </ng-template>
           </div>
         </div>
 
         <ng-container *ngIf="isLoading;else dataReady">
-          <app-loading-skeleton
-            [amount]="6"
-            [colClass]="'col-12'"
-            [blockHeight]="'40px'"
+          <app-loading-skeleton [amount]="6" [colClass]="'col-12'" [blockHeight]="'40px'"
             [hasShadow]="false"></app-loading-skeleton>
         </ng-container>
         <ng-template #dataReady>
           <div class="table-responsive mt-4">
-            <table mat-table [dataSource]="dataSource" class="w-100 borderless hoverable" matSort (matSortChange)="sortData($event)">
+            <table mat-table [dataSource]="dataSource" class="w-100 borderless hoverable" matSort
+              (matSortChange)="sortData($event)">
 
               <!-- Name Column -->
               <ng-container matColumnDef="name">
@@ -42,8 +35,7 @@
               <!-- status Column -->
               <ng-container matColumnDef="status">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
-                <td mat-cell *matCellDef="let element"
-                  [class.text-muted]="element?.status === 'Untested'"
+                <td mat-cell *matCellDef="let element" [class.text-muted]="element?.status === 'Untested'"
                   [class.text-danger]="element?.status === 'Failed'"
                   [class.text-success]="element?.status === 'Passed'"> {{element?.status}} </td>
               </ng-container>
@@ -53,7 +45,8 @@
                 <th mat-header-cell *matHeaderCellDef> Actions </th>
                 <td mat-cell *matCellDef="let element">
                   <div class="d-flex">
-                    <button mat-button color="primary" class="ps-0" (click)="ensureTestContent(element)">View details</button>
+                    <button mat-button color="primary" class="ps-0" (click)="ensureTestContent(element)">View
+                      details</button>
                     <div class="pe-1"></div>
                     <button mat-button color="warn" class="ps-0" (click)="deleteTest(element)">Delete</button>
                     <div class="pe-1"></div>

@@ -1,5 +1,10 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { formatNumber } from '@angular/common';
-import { ChangeDetectorRef, Component, EventEmitter, Inject, Input, LOCALE_ID, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Inject, Input, LOCALE_ID, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { forkJoin, Observable, Subscription } from 'rxjs';
 import { Model } from 'src/app/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
@@ -9,13 +14,11 @@ import { GeneralService } from 'src/app/_general/services/general.service';
 import { BackendService } from 'src/app/_protected/services/common/backend.service';
 import { CacheService } from 'src/app/_protected/services/common/cache.service';
 import { MessageService } from 'src/app/_protected/services/common/message.service';
-import { DatabaseEx } from '../../../create/endpoint-generator/_models/database-ex.model';
 import { LocResult } from '../../../create/endpoint-generator/_models/loc-result.model';
 import { CrudifyService } from '../../../create/endpoint-generator/_services/crudify.service';
 import { TransformModelService } from '../../../create/endpoint-generator/_services/transform-model.service';
 import { LogService } from '../../../settings/log/_services/log.service';
 import { Role } from '../../../manage/user-and-roles/_models/role.model';
-import { SingleTableConfigComponent } from '../components/single-table-config/single-table-config.component';
 
 // CodeMirror options.
 import hyperlambda from '../../../../../codemirror/options/hyperlambda.json';
@@ -27,8 +30,7 @@ import { SnippetNameDialogComponent } from 'src/app/_general/components/snippet-
 
 @Component({
   selector: 'app-auto-generator',
-  templateUrl: './auto-generator.component.html',
-  styleUrls: ['./auto-generator.component.scss']
+  templateUrl: './auto-generator.component.html'
 })
 export class AutoGeneratorComponent implements OnInit, OnDestroy {
 
@@ -73,7 +75,7 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
   /**
    * Authorisation requirements for SignalR messages published during invocation of endpoint.
    */
-   cqrsAuthorisationTypes: string[] = ['none', 'inherited', 'roles', 'groups', 'users'];
+  cqrsAuthorisationTypes: string[] = ['none', 'inherited', 'roles', 'groups', 'users'];
 
   public tables: any = [];
 
@@ -87,7 +89,7 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
   /**
    * Input Hyperlambda component model and options.
    */
-   hlInput: Model = {
+  hlInput: Model = {
     hyperlambda: '',
     options: hyperlambda,
   };
@@ -131,7 +133,7 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
   }
 
   private getOptions() {
-    this.codemirrorActionsService.getActions('','hl').then((options: any) => {
+    this.codemirrorActionsService.getActions('', 'hl').then((options: any) => {
       options.autofocus = false;
       this.hlInput.options = options;
       this.codeMirrorReady = true;
@@ -174,9 +176,9 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
     if (this.selectedDatabase && db && db.tables?.length) {
       this.tables = this.databases.find((item: any) => item.name === this.selectedDatabase).tables;
       let names: any = this.tables.map((item: any) => { return item.name });
-      this.selectedTables = new FormControl({value: names, disabled: false});
+      this.selectedTables = new FormControl({ value: names, disabled: false });
     } else {
-      this.selectedTables = new FormControl({value: '', disabled: true});
+      this.selectedTables = new FormControl({ value: '', disabled: true });
     }
     this.primaryURL = this.selectedDatabase.toLowerCase();
     if (this.tables.length === 1) {
@@ -294,7 +296,7 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
             { name: 'get', generate: columns.length > 0 },
           ];
           if (columns.filter(x => !x.primary).length > 0 &&
-          columns.filter(x => x.primary).length > 0) {
+            columns.filter(x => x.primary).length > 0) {
             idxTable.verbs.push({ name: 'put', generate: columns.filter(x => !x.primary && !x.automatic).length > 0 });
           }
           if (columns.filter(x => x.primary).length > 0) {
@@ -305,9 +307,9 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
           idxTable.authPut = this.updateRoles.value.toString() ?? 'root, admin';
           idxTable.authDelete = this.deleteRoles.value.toString() ?? 'root, admin';
 
-          idxTable.cqrsAuthorisation = this.generateSocket === true && this.generateSocketMessage!== '' ? this.generateSocketMessage : 'inherited';
+          idxTable.cqrsAuthorisation = this.generateSocket === true && this.generateSocketMessage !== '' ? this.generateSocketMessage : 'inherited';
           idxTable.cqrsAuthorisationValues =
-          this.generateSocket === true && this.generateSocketMessage!== '' && this.authRoles.value.length > 0 ? this.authRoles.value.toString() : null;
+            this.generateSocket === true && this.generateSocketMessage !== '' && this.authRoles.value.length > 0 ? this.authRoles.value.toString() : null;
 
           idxTable.cache = this.cacheDuration;
           idxTable.publicCache = this.cachePublic;
@@ -425,7 +427,7 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
           }
         }
       }
-      resolve (true)
+      resolve(true)
     })
   }
 
@@ -446,7 +448,8 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
             this.hlInput.hyperlambda = content;
             this.snippetName = filename;
           },
-          error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
+          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+        });
       }
     });
   }
@@ -471,7 +474,8 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
       if (filename) {
         this.evaluatorService.saveSnippet(filename, this.hlInput.hyperlambda).subscribe({
           next: () => this.generalService.showFeedback('Snippet successfully saved', 'successMessage'),
-          error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
+          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+        });
       }
     });
   }
@@ -482,7 +486,8 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
   private flushEndpointsAuthRequirements() {
     this.cacheService.delete('magic.auth.endpoints').subscribe({
       next: () => this.backendService.refetchEndpoints(),
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')});
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+    });
   }
 
   private watchForActions() {

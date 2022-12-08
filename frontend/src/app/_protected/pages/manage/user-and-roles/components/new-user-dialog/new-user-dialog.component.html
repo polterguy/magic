@@ -10,13 +10,7 @@
             <mat-icon>person</mat-icon>
             <span class="text-muted">|</span>
           </span>
-          <input
-            matInput
-            type="text"
-            name="-"
-            autocomplete="off"
-            placeholder="Username"
-            formControlName="username"
+          <input matInput type="text" name="-" autocomplete="off" placeholder="Username" formControlName="username"
             required />
         </mat-form-field>
       </div>
@@ -27,18 +21,9 @@
             <mat-icon>key</mat-icon>
             <span class="text-muted">|</span>
           </span>
-          <input
-            matInput
-            [type]="showPassword ? 'text' : 'password'"
-            autocomplete="new-password"
-            formControlName="password"
-            placeholder="Password"
-            required />
-          <button
-            mat-icon-button
-            matSuffix
-            type="button"
-            (click)="showPassword = !showPassword">
+          <input matInput [type]="showPassword ? 'text' : 'password'" autocomplete="new-password"
+            formControlName="password" placeholder="Password" required />
+          <button mat-icon-button matSuffix type="button" (click)="showPassword = !showPassword">
             <mat-icon>{{showPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
           </button>
         </mat-form-field>
@@ -50,12 +35,7 @@
             <mat-icon>mail</mat-icon>
             <span class="text-muted">|</span>
           </span>
-          <input
-            matInput
-            type="text"
-            name="-"
-            autocomplete="email"
-            formControlName="email"
+          <input matInput type="text" name="-" autocomplete="email" formControlName="email"
             placeholder="Email address (optional)" />
         </mat-form-field>
       </div>
@@ -66,12 +46,7 @@
             <mat-icon>person</mat-icon>
             <span class="text-muted">|</span>
           </span>
-          <input
-            matInput
-            type="text"
-            name="-"
-            autocomplete="name"
-            formControlName="name"
+          <input matInput type="text" name="-" autocomplete="name" formControlName="name"
             placeholder="Full name (optional)" />
         </mat-form-field>
       </div>

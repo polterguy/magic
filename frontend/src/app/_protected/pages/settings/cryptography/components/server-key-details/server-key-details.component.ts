@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, Inject, OnInit } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -60,7 +65,6 @@ export class ServerKeyDetailsComponent implements OnInit {
   ngOnInit(): void {
     this.getUserAssociation();
     this.getCodeMirrorOptions();
-    // this.original_content = this.data.key.content;
   }
 
   /**
@@ -70,7 +74,8 @@ export class ServerKeyDetailsComponent implements OnInit {
     if (!this.data.key.username) {
       this.cryptoService.getUserAssociation(this.data.key.id).subscribe({
         next: (result: any) => this.data.key.username = result.result,
-        error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
+        error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+      });
     }
   }
 
@@ -91,7 +96,7 @@ export class ServerKeyDetailsComponent implements OnInit {
       setTimeout(() => {
         this.codemirrorReady = true;
       }, 300);
-     });
+    });
   }
 
   /**
@@ -99,7 +104,7 @@ export class ServerKeyDetailsComponent implements OnInit {
    *
    * @param key Key user wants to save
    */
-   save() {
+  save() {
     this.waiting = true;
     const key: PublicKeyEx = {
       identity: '',
@@ -184,7 +189,7 @@ export class ServerKeyDetailsComponent implements OnInit {
             },
             error: (error: any) => {
               this.waiting = false;
-              this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')
+              this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
             }
           });
         } else {
@@ -198,16 +203,16 @@ export class ServerKeyDetailsComponent implements OnInit {
               this.waiting = false;
               this.dialogRef.close(true);
             },
-            error:(error: any) => {
+            error: (error: any) => {
               this.waiting = false;
-              this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')
+              this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
             }
           });
         }
       },
       error: (error: any) => {
         this.waiting = false;
-        this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
       }
     });
   }

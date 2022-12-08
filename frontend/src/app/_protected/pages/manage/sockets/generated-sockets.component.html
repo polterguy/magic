@@ -18,11 +18,8 @@
         <div class="row mt-3 scrollable-row">
           <div class="col-12 max-height">
 
-            <app-socket-list
-            [publishedMessages]="publishedMessages"
-            [users]="users"
-            (getConnections)="getConnections($event)"
-            (subscribe)="subscribe($event)"></app-socket-list>
+            <app-socket-list [publishedMessages]="publishedMessages" [users]="users"
+              (getConnections)="getConnections($event)" (subscribe)="subscribe($event)"></app-socket-list>
 
           </div>
         </div>
@@ -43,11 +40,8 @@
         <div class="row mt-3 scrollable-row">
           <div class="col-12 max-height">
 
-        <app-socket-result
-          [users]="users"
-          [messages]="messages"
-          [subscriptions]="subscriptions"
-          (removeSubscription)="removeSubscription($event)"></app-socket-result>
+            <app-socket-result [users]="users" [messages]="messages" [subscriptions]="subscriptions"
+              (removeSubscription)="removeSubscription($event)"></app-socket-result>
           </div>
         </div>
 

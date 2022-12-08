@@ -10,10 +10,7 @@
       </div>
       <div class="col-12 mt-md-0 mt-4">
         <ng-container *ngIf="isLoading">
-          <app-loading-skeleton
-            [amount]="9"
-            [colClass]="'col-4'"
-            [blockHeight]="'180px'"
+          <app-loading-skeleton [amount]="9" [colClass]="'col-4'" [blockHeight]="'180px'"
             [hasShadow]="false"></app-loading-skeleton>
         </ng-container>
 

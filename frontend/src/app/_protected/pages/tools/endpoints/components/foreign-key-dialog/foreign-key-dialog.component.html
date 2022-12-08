@@ -2,12 +2,8 @@
 <p class="text-muted">Link this field to a value field in its referenced table.</p>
 
 <div mat-dialog-content class="fk">
-  <mat-selection-list [multiple]="false" dense
-  [(ngModel)]="foreignKey">
-    <mat-list-option
-      *ngFor="let item of fkList"
-      [disabled]="item.hl !== 'string'"
-      [value]="item.name">
+  <mat-selection-list [multiple]="false" dense [(ngModel)]="foreignKey">
+    <mat-list-option *ngFor="let item of fkList" [disabled]="item.hl !== 'string'" [value]="item.name">
       {{data.foreign_keys.foreign_table}}.{{item.name}}[{{item.hl}}]
     </mat-list-option>
   </mat-selection-list>
@@ -18,8 +14,5 @@
 
 <div mat-dialog-actions [align]="'end'">
   <button mat-button mat-dialog-close>Close</button>
-  <button mat-flat-button
-    color="primary"
-    class="px-4"
-    (click)="save()">Save</button>
+  <button mat-flat-button color="primary" class="px-4" (click)="save()">Save</button>
 </div>

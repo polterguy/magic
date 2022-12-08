@@ -1,6 +1,6 @@
 
 /*
- * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
 // Angular and system imports.
@@ -109,7 +109,7 @@ export class FileService {
   public saveFile(filename: string, content: string) {
     const folder = filename.substring(0, filename.lastIndexOf('/') + 1);
     const formData: FormData = new FormData();
-    const blob = new Blob([content], { type: 'text/plain'});
+    const blob = new Blob([content], { type: 'text/plain' });
     formData.append('file', blob, filename.substring(filename.lastIndexOf('/') + 1));
     return this.httpService.put<any>('/magic/system/file-system/file?folder=' + encodeURIComponent(folder), formData);
   }
@@ -123,9 +123,9 @@ export class FileService {
   public rename(oldName: string, newName: string) {
     return this.httpService.post<Response>(
       '/magic/system/file-system/rename', {
-        oldName,
-        newName,
-      });
+      oldName,
+      newName,
+    });
   }
 
   /**
@@ -150,7 +150,8 @@ export class FileService {
         const file = new Blob([res.body]);
         saveAs(file, filename);
       },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)});
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)
+    });
   }
 
   /**
@@ -171,7 +172,7 @@ export class FileService {
    * @param path Folder to upload file to
    * @param file File you want to upload
    */
-   public uploadStaticWebsite(data: FormData) {
+  public uploadStaticWebsite(data: FormData) {
     // const formData: FormData = new FormData();
     // formData.append('file', file);
     return this.httpService.put<any>('/magic/system/file-system/overwrite-folder', data);
@@ -191,7 +192,8 @@ export class FileService {
         const file = new Blob([res.body], { type: 'application/zip' });
         saveAs(file, filename);
       },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)});
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)
+    });
   }
 
   /**

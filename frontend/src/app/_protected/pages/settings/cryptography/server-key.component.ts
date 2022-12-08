@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { PublicKeyFull } from './_models/public-key-full.model';
@@ -49,7 +54,8 @@ export class ServerKeyComponent implements OnInit {
         }
         this.publicKeyFull = <PublicKeyFull>key;
       },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+    });
   }
 
   public copy(text: string) {
@@ -84,16 +90,6 @@ export class ServerKeyComponent implements OnInit {
         if (type === 'create') {
           this.getServerPublicKey();
         }
-        /*
-         * Publishing message to have other components understand they need to
-         * re-retrieve publick keys.
-         *
-         * This needs to be done since as we create a new server key pair, the public parts
-         * of the key is also imported into the trusted public keys' database.
-         */
-        // this.messageService.sendMessage({
-        //   name: 'crypto.server.new-key-pair-generated'
-        // });
       }
     })
   }

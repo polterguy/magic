@@ -1,4 +1,9 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { Message } from 'src/app/_protected/models/common/message.model';
@@ -9,10 +14,9 @@ import { SocketService } from '../_services/socket.service';
 
 @Component({
   selector: 'app-socket-result',
-  templateUrl: './socket-result.component.html',
-  styleUrls: ['./socket-result.component.scss']
+  templateUrl: './socket-result.component.html'
 })
-export class SocketResultComponent implements OnInit {
+export class SocketResultComponent {
 
   @Input() users: SocketUser[] = [];
   @Input() messages: any = [];
@@ -25,9 +29,6 @@ export class SocketResultComponent implements OnInit {
     private socketService: SocketService,
     public backendService: BackendService,
     private generalService: GeneralService) { }
-
-  ngOnInit(): void {
-  }
 
   /**
    * Shows a modal dialog allowing you to send a message to one single connection.

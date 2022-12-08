@@ -1,6 +1,12 @@
 
-.profile {
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
+ .profile {
   .equal-height ::ng-deep {
-    .mat-form-field-wrapper {margin: 0;}
+    .mat-form-field-wrapper {
+      margin: 0;
+    }
   }
 }

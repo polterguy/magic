@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ServerKeyComponent } from '../server-key.component';
@@ -12,8 +17,6 @@ import { FormsModule } from '@angular/forms';
 import { CmModule } from 'src/app/codemirror/_module/cm.module';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import { NewServerKeyComponent } from '../components/new-server-key/new-server-key.component';
-
-
 
 @NgModule({
   declarations: [

@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -14,8 +19,6 @@ import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import { SingleTableConfigComponent } from '../components/single-table-config/single-table-config.component';
 import { ForeignKeyDialogComponent } from '../components/foreign-key-dialog/foreign-key-dialog.component';
 import { CmModule } from 'src/app/codemirror/_module/cm.module';
-
-
 
 @NgModule({
   declarations: [

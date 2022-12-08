@@ -46,24 +46,11 @@
     {{item.name}}
     <span class="text-muted ms-1">|</span>
   </span>
-  <!-- <input
-    matInput
-    [ngxMatDatetimePicker]="picker"
-    autocomplete="off"
-    [formControlName]="item.name"
-    [name]="item.name">
-    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-    <ngx-mat-datetime-picker #picker></ngx-mat-datetime-picker> -->
 
-    <input matInput
-      [matDatepicker]="picker"
-      [formControlName]="item.name"
-      autocomplete="off"
-      [name]="item.name"
-      (click)="picker.open()"
-      readonly>
-    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-    <mat-datepicker #picker></mat-datepicker>
+  <input matInput [matDatepicker]="picker" [formControlName]="item.name" autocomplete="off" [name]="item.name"
+    (click)="picker.open()" readonly>
+  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+  <mat-datepicker #picker></mat-datepicker>
 </mat-form-field>
 
 <mat-form-field

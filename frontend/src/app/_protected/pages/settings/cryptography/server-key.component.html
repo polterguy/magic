@@ -48,16 +48,16 @@
   <div class="col-12">
     <mat-card class="pb-2">
       <mat-card-content>
-        <mat-tab-group mat-stretch-tabs dynamicHeight
-          animationDuration="0ms"
-          [selectedIndex]="selectedTabIndex"
+        <mat-tab-group mat-stretch-tabs dynamicHeight animationDuration="0ms" [selectedIndex]="selectedTabIndex"
           (selectedIndexChange)="tabChanged($event)">
           <mat-tab label="Keys">
-            <app-server-key-table (invokeViewReceipts)="invokeViewReceipts($event)" #tableComponent></app-server-key-table>
+            <app-server-key-table (invokeViewReceipts)="invokeViewReceipts($event)"
+              #tableComponent></app-server-key-table>
           </mat-tab>
           <mat-tab label="Receipts" [disabled]="!selectedServerKey">
             <ng-template matTabContent>
-              <app-server-key-receipts [selectedServerKey]="selectedServerKey" [isNewKey]="isNewKey"></app-server-key-receipts>
+              <app-server-key-receipts [selectedServerKey]="selectedServerKey"
+                [isNewKey]="isNewKey"></app-server-key-receipts>
             </ng-template>
           </mat-tab>
         </mat-tab-group>

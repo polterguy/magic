@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
@@ -66,7 +71,8 @@ export class ServerKeyTableComponent implements OnInit {
         this.dataSource = keys || [];
         this.isLoading = false;
       },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+    });
   }
 
   public getCount() {
@@ -76,7 +82,8 @@ export class ServerKeyTableComponent implements OnInit {
         this.totalItems = res.count;
       },
 
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+    });
   }
 
   /**
@@ -102,7 +109,8 @@ export class ServerKeyTableComponent implements OnInit {
             this.getKeys();
             this.getCount();
           },
-          error:(error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
+          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+        });
       }
     })
   }
@@ -118,11 +126,12 @@ export class ServerKeyTableComponent implements OnInit {
         this.generalService.showFeedback(`Key was successfully ${event.checked ? 'enabled' : 'disabled'}`, 'successMessage')
         this.getKeys();
       },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+    });
   }
 
   public viewDetails(key: PublicKey) {
-    const keyData: any = {...key};
+    const keyData: any = { ...key };
     keyData.original_content = key.content;
     this.dialog.open(ServerKeyDetailsComponent, {
       width: '80vw',

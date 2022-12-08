@@ -1,6 +1,6 @@
 
 /*
- * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
 // Application specific imports.
@@ -95,17 +95,17 @@ export class TableEx {
    * reCAPTCHA requirements for invoking GET endpoint.
    */
   captchaGet?: number;
- 
-   /**
-    * reCAPTCHA requirements for invoking PUT endpoint.
-    */
+
+  /**
+   * reCAPTCHA requirements for invoking PUT endpoint.
+   */
   captchaPut?: number;
- 
-   /**
-    * reCAPTCHA requirements for invoking DELETE endpoint.
-    */
+
+  /**
+   * reCAPTCHA requirements for invoking DELETE endpoint.
+   */
   captchaDelete?: number;
- 
+
   /**
    * Additional validators, injectables and transformers for endpoint.
    */

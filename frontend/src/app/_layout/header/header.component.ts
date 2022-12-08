@@ -3,17 +3,14 @@
  * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { GeneralService } from 'src/app/_general/services/general.service';
 import { BackendService } from 'src/app/_protected/services/common/backend.service';
 import { NavLinks } from './_model/nav-links';
-import { Clipboard } from '@angular/cdk/clipboard';
 import { Backend } from 'src/app/_protected/models/common/backend.model';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogComponent } from 'src/app/_general/components/dialog/dialog.component';
 import { BackendsListComponent } from 'src/app/_general/components/backends-list/backends-list.component';
-import { Location } from '@angular/common';
 import { GithubTokenDialogComponent } from 'src/app/_protected/pages/user/github-token-dialog/github-token-dialog.component';
 import { Status } from 'src/app/_protected/models/common/status.model';
 
@@ -177,8 +174,6 @@ export class HeaderComponent {
         this.getPermissions();
       }
     }
-
-    // });
   }
 
   private createMenu() {
@@ -397,34 +392,4 @@ export class HeaderComponent {
       }
     });
   }
-  // /**
-  //  * Invoked when user wants to copy the full URL of the endpoint.
-  //  */
-  //  copyUrlWithBackend(url: string) {
-  //   const currentURL = window.location.protocol + '//' + window.location.host;
-  //   const param = currentURL + '?backend='
-  //   this.clipboard.copy(param + encodeURIComponent(url));
-  //   this.generalService.showFeedback('Backend URL was copied to your clipboard');
-  // }
-
-  // /**
-  //  * Switching to specified backend.
-  //  *
-  //  * @param backend Backend to switch to
-  //  */
-  // switchBackend(backend: Backend) {
-  //   this.backendService.activate(backend);
-  //   this.router.navigate(['/']);
-  // }
-
-  // /**
-  //  * Removes specified backend from local storage
-  //  *
-  //  * @param backend Backend to remove
-  //  */
-  // removeBackend(backend: Backend) {
-
-  //   // For weird reasons the menu gets "stuck" unless we do this in a timer.
-  //   setTimeout(() => this.backendService.remove(backend), 1);
-  // }
 }

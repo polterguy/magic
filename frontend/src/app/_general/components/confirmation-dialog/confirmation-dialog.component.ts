@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -27,14 +32,14 @@ export class ConfirmationDialogComponent implements OnInit {
     private generalService: GeneralService,
     private dialogRef: MatDialogRef<ConfirmationDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: {
-    title?: string, // default is "please confirm"
-    description?: string, // default is "Are you sure?"
-    description_extra: string,
-    action_btn: string,
-    action_btn_color?: string, // default is "primary"
-    bold_description?: boolean,
-    extra?: Extra // Optional extra field
-  }) { }
+      title?: string, // default is "please confirm"
+      description?: string, // default is "Are you sure?"
+      description_extra: string,
+      action_btn: string,
+      action_btn_color?: string, // default is "primary"
+      bold_description?: boolean,
+      extra?: Extra // Optional extra field
+    }) { }
 
   ngOnInit(): void {
     this.data['title'] ? this.data['title'] = this.data['title'] : this.data['title'] = 'Please confirm';

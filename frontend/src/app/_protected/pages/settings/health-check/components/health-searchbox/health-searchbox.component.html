@@ -1,9 +1,5 @@
-
-
 <div class="d-flex align-items-stretch flex-sm-row flex-column-reverse w-100">
-  <button mat-flat-button color="primary"
-    class="mw-set mt-sm-0 mt-2"
-    (click)="invokeTestAll();">
+  <button mat-flat-button color="primary" class="mw-set mt-sm-0 mt-2" (click)="invokeTestAll();">
     Test {{input.value === '' ? 'all' : 'filtered'}} endpoints
   </button>
   <div class="px-2"></div>
@@ -13,11 +9,9 @@
       <span class="text-muted">|</span>
     </span>
 
-    <input matInput
-      placeholder="Search through tests"
-      (input)="applyFilter(input.value)" #input>
-      <button mat-icon-button matSuffix (click)="removeSearchTerm();input.value = ''" *ngIf="input.value!==''">
-        <mat-icon>close</mat-icon>
-      </button>
+    <input matInput placeholder="Search through tests" (input)="applyFilter(input.value)" #input>
+    <button mat-icon-button matSuffix (click)="removeSearchTerm();input.value = ''" *ngIf="input.value!==''">
+      <mat-icon>close</mat-icon>
+    </button>
   </mat-form-field>
 </div>

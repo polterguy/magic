@@ -8,25 +8,17 @@
           </div>
           <div class="col-xxl-4 col-xl-5 col-lg-6 col-12">
             <ng-container *ngIf="isLoading;else loaded">
-              <app-loading-skeleton
-              [amount]="1"
-              [colClass]="'col-12'"
-              [blockHeight]="'41px'"
-              [hasShadow]="false"></app-loading-skeleton>
+              <app-loading-skeleton [amount]="1" [colClass]="'col-12'" [blockHeight]="'41px'"
+                [hasShadow]="false"></app-loading-skeleton>
             </ng-container>
             <ng-template #loaded>
-              <app-log-searchbox
-                (errorOnly)="errorOnly($event)"
-                (filterList)="filterList($event)"></app-log-searchbox>
+              <app-log-searchbox (errorOnly)="errorOnly($event)" (filterList)="filterList($event)"></app-log-searchbox>
             </ng-template>
           </div>
         </div>
 
         <ng-container *ngIf="isLoading;else dataReady">
-          <app-loading-skeleton
-            [amount]="6"
-            [colClass]="'col-12'"
-            [blockHeight]="'40px'"
+          <app-loading-skeleton [amount]="6" [colClass]="'col-12'" [blockHeight]="'40px'"
             [hasShadow]="false"></app-loading-skeleton>
         </ng-container>
         <ng-template #dataReady>
@@ -54,8 +46,8 @@
               <!-- type Column -->
               <ng-container matColumnDef="type">
                 <th mat-header-cell *matHeaderCellDef class="px-sm-3"> Type </th>
-                <td mat-cell *matCellDef="let element" class="px-sm-3"
-                [class.text-danger]="element?.type === 'error'"> {{element?.type}} </td>
+                <td mat-cell *matCellDef="let element" class="px-sm-3" [class.text-danger]="element?.type === 'error'">
+                  {{element?.type}} </td>
               </ng-container>
 
               <!-- meta Column -->
@@ -72,11 +64,11 @@
               <ng-container matColumnDef="action">
                 <th mat-header-cell *matHeaderCellDef class="ps-sm-3"> Action </th>
                 <td mat-cell *matCellDef="let element" class="ps-sm-3 text-nowrap"
-                [class.text-danger]="element?.type === 'error'">
-                <button mat-button color="primary" (click)="viewException(element)">
-                  Show details
-                </button>
-              </td>
+                  [class.text-danger]="element?.type === 'error'">
+                  <button mat-button color="primary" (click)="viewException(element)">
+                    Show details
+                  </button>
+                </td>
               </ng-container>
 
               <tr mat-header-row *matHeaderRowDef="displayedColumns;sticky: true"></tr>
@@ -86,10 +78,7 @@
 
           </div>
 
-          <mat-paginator [length]="count"
-              [pageSize]="pageSize"
-              (page)="page($event)"
-              aria-label="Select page">
+          <mat-paginator [length]="count" [pageSize]="pageSize" (page)="page($event)" aria-label="Select page">
           </mat-paginator>
 
         </ng-template>

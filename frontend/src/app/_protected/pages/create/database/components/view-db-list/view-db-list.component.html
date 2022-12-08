@@ -14,9 +14,6 @@
   <div class="table-responsive" *ngIf="data.list">
     <table mat-table [dataSource]="data.list" class="w-100 borderless hoverable">
 
-      <!--- Note that these columns can be defined in any order.
-            The actual rendered columns are set as a property on the row definition" -->
-
       <!-- name Column -->
       <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef> Database name </th>
@@ -33,8 +30,7 @@
       <ng-container matColumnDef="action">
         <th mat-header-cell *matHeaderCellDef> Action </th>
         <td mat-cell *matCellDef="let element">
-          <button mat-button color="primary" class="px-0"
-            routerLink="/sql-studio"
+          <button mat-button color="primary" class="px-0" routerLink="/sql-studio"
             [queryParams]="{dbType: data.item.dbTypeValue, dbName: element.name, dbCString: data.item.cStringKey}"
             mat-dialog-close>
             Manage tables
@@ -42,8 +38,7 @@
           <button mat-button color="warn" class="px-0 ms-3" (click)="deleteDb(element)">
             Delete
           </button>
-          <button mat-button color="primary" class="px-0 ms-3"
-            routerLink="/endpoint-generator"
+          <button mat-button color="primary" class="px-0 ms-3" routerLink="/endpoint-generator"
             [queryParams]="{dbType: data.item.dbTypeValue, dbName: element.name, dbCString: data.item.cStringKey}"
             mat-dialog-close>
             Generate endpoint
@@ -58,9 +53,9 @@
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns;sticky: true"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.d-none]="row.name.indexOf(search.value) === -1"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+        [class.d-none]="row.name.indexOf(search.value) === -1"></tr>
     </table>
-
 
   </div>
 </div>

@@ -1,4 +1,9 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
+import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 interface Keys {
@@ -8,8 +13,7 @@ interface Keys {
 
 @Component({
   selector: 'app-shortkeys',
-  templateUrl: './shortkeys.component.html',
-  styleUrls: ['./shortkeys.component.scss']
+  templateUrl: './shortkeys.component.html'
 })
 export class ShortkeysComponent implements OnInit {
 
@@ -46,7 +50,7 @@ export class ShortkeysComponent implements OnInit {
         ...this.shortkeys,
         ...fullkeys
       ]
-console.log(this.shortkeys)
+      console.log(this.shortkeys)
     }
   }
 }

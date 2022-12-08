@@ -1,6 +1,6 @@
 
 /*
- * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
 // Angular and system imports.
@@ -45,12 +45,6 @@ export class UserService {
    * @param filter Optional query filter deciding which items to count
    */
   count(params: string) {
-    let query = '';
-    // if (filter !== null) {
-    //   if (filter.filter && filter.filter !== '') {
-    //     query += '?username.like=' + encodeURIComponent(filter.filter + '%');
-    //   }
-    // }
     return this.httpService.get<Count>('/magic/system/magic/users-count' + params);
   }
 

@@ -1,4 +1,9 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { Message } from 'src/app/_protected/models/common/message.model';
@@ -10,10 +15,9 @@ import { SocketService } from '../_services/socket.service';
 
 @Component({
   selector: 'app-socket-list',
-  templateUrl: './socket-list.component.html',
-  styleUrls: ['./socket-list.component.scss']
+  templateUrl: './socket-list.component.html'
 })
-export class SocketListComponent implements OnInit {
+export class SocketListComponent {
 
   @Input() publishedMessages: PublishedMessages[] = [];
   @Input() users: SocketUser[] = [];
@@ -26,9 +30,6 @@ export class SocketListComponent implements OnInit {
     private socketService: SocketService,
     public backendService: BackendService,
     private generalService: GeneralService) { }
-
-  ngOnInit(): void {
-  }
 
   public subscribeToPublishedMessage(itemName: string) {
     this.subscribe.emit(itemName);
@@ -55,7 +56,8 @@ export class SocketListComponent implements OnInit {
       if (data) {
         this.socketService.publishMessage(data.message, data.client, data.roles, data.groups).subscribe({
           next: () => this.generalService.showFeedback('Message was successfully published', 'successMessage'),
-          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')});
+          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+        });
       }
     });
   }
@@ -65,7 +67,7 @@ export class SocketListComponent implements OnInit {
    *
    * @param msg Message to delete
    */
-   deleteMessage(msg: Message) {
+  deleteMessage(msg: Message) {
     // this.messages.splice(this.messages.indexOf(msg), 1);
     // this.feedbackService.showInfoShort('Message was removed');
   }

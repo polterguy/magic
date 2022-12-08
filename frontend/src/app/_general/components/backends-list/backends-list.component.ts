@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Backend } from 'src/app/_protected/models/common/backend.model';
 import { BackendService } from 'src/app/_protected/services/common/backend.service';

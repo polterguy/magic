@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PluginsComponent } from '../plugins.component';
@@ -7,8 +12,6 @@ import { PluginsRoutingModule } from './plugins.routing.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ViewPluginComponent } from '../components/view-app/view-plugin.component';
 import { SharedModule } from 'src/app/shared.module';
-
-
 
 @NgModule({
   declarations: [

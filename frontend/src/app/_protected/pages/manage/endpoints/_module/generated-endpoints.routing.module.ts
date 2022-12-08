@@ -2,8 +2,6 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { GeneratedEndpointsComponent } from '../generated-endpoints.component';
 
-
-
 const routes: Routes = [
   {
     path: '',

@@ -8,9 +8,7 @@
 
         <div class="row mt-3">
           <div class="col-12">
-            <app-ide-searchbox
-              [type]="type"
-              (toggleFileSystems)="tree.systemFiles = $event;tree.updateFileObject('/')"
+            <app-ide-searchbox [type]="type" (toggleFileSystems)="tree.systemFiles = $event;tree.updateFileObject('/')"
               (filterList)="filterList($event)" #search></app-ide-searchbox>
           </div>
         </div>
@@ -18,11 +16,7 @@
         <div class="row mt-3 scrollable-row">
           <div class="col-12 max-height">
 
-            <app-ide-tree
-              #tree
-              [searchKey]="searchKey"
-              [type]="type"
-              (showEditor)="showEditor($event)"
+            <app-ide-tree #tree [searchKey]="searchKey" [type]="type" (showEditor)="showEditor($event)"
               (clearEditorHistory)="editor.clearEditorHistory($event)"
               (setFocusToActiveEditor)="editor.setFocusToActiveEditor()"></app-ide-tree>
 
@@ -36,16 +30,10 @@
     <mat-card class="h-100 pt-3">
       <mat-card-content class="h-100 max-height-full">
 
-        <app-ide-editor class="h-100 d-block"
-          #editor
-          [currentFileData]="currentFileData"
-          [activeFolder]="tree.activeFolder"
-          [openFiles]="tree.openFiles"
-          (updateFileObject)="tree.updateFileObject($event)"
-          (getFilesFromServer)="tree.getFilesFromServer()"
-          (getEndpoints)="tree.refetchEndpointsList()"
-          [endpoints]="tree.endpoints"
-          (dataBindTree)="tree.dataBindTree()"
+        <app-ide-editor class="h-100 d-block" #editor [currentFileData]="currentFileData"
+          [activeFolder]="tree.activeFolder" [openFiles]="tree.openFiles"
+          (updateFileObject)="tree.updateFileObject($event)" (getFilesFromServer)="tree.getFilesFromServer()"
+          (getEndpoints)="tree.refetchEndpointsList()" [endpoints]="tree.endpoints" (dataBindTree)="tree.dataBindTree()"
           (deleteActiveFolderFromParent)="tree.deleteActiveFolder($event)"
           (deleteActiveFileFromParent)="tree.deleteActiveFile($event)"
           (renameActiveFileFromParent)="tree.renameActiveFile($event)"

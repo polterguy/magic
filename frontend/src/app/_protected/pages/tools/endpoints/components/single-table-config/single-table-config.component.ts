@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, Subscription } from 'rxjs';
@@ -39,7 +44,7 @@ export class SingleTableConfigComponent implements OnInit, OnDestroy {
         const db: any = this.databases.find((db: any) => db.name === this.selectedDatabase);
         const table: any = db.tables.find((table: any) => table.name === this.selectedTable.toString());
 
-        this.foreign_keys = table?.foreign_keys!==null ? table.foreign_keys[0] : [] ;
+        this.foreign_keys = table?.foreign_keys !== null ? table.foreign_keys[0] : [];
 
         const columns = (table.columns || []);
 

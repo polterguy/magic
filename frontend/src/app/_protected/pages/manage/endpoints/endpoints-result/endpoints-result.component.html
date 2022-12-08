@@ -1,14 +1,16 @@
 <div class="d-flex flex-column h-100 w-100">
   <ng-container *ngIf="(itemDetails && (itemDetails | keyvalue).length) && canInvoke();else noInvocation">
     <!-- Query parameters -->
-    <ng-container *ngIf="(parameters && parameters.length) && (itemDetails.verb === 'get' || itemDetails.verb === 'delete')">
+    <ng-container
+      *ngIf="(parameters && parameters.length) && (itemDetails.verb === 'get' || itemDetails.verb === 'delete')">
       <div class="row mb-3">
         <div class="col-12 mb-3">
           <h3 class="my-0 fw-bold">Query parameters</h3>
         </div>
         <div class="col-12 params-wrapper">
           <form [formGroup]="paramsForm" novalidate>
-            <div class="row align-items-center params-inputs" *ngFor="let item of getArguments(itemDetails.input, true)">
+            <div class="row align-items-center params-inputs"
+              *ngFor="let item of getArguments(itemDetails.input, true)">
               <div class="col-sm-6 col-12">
                 <app-query-params [item]="item" [allItems]="itemDetails.input"></app-query-params>
               </div>
@@ -18,7 +20,8 @@
                 </p>
               </div>
             </div>
-            <div class="row align-items-center params-inputs" *ngFor="let item of getArguments(itemDetails.input, false)">
+            <div class="row align-items-center params-inputs"
+              *ngFor="let item of getArguments(itemDetails.input, false)">
               <div class="col-sm-6 col-12">
                 <app-query-params [item]="item" [allItems]="itemDetails.input"></app-query-params>
               </div>
@@ -42,28 +45,19 @@
 
         <!-- Payload for application/json -->
         <ng-container *ngIf="itemDetails?.consumes === 'application/json'">
-          <ngx-codemirror
-            class="h-100"
-            [(ngModel)]="payload"
-            [options]="cmOptions.json">
+          <ngx-codemirror class="h-100" [(ngModel)]="payload" [options]="cmOptions.json">
           </ngx-codemirror>
         </ng-container>
 
         <!-- Payload for application/x-hyperlambda -->
         <ng-container *ngIf="itemDetails?.consumes === 'application/x-hyperlambda'">
-          <ngx-codemirror
-            class="h-100"
-            [(ngModel)]="payload"
-            [options]="cmOptionsHyperlambda.json">
+          <ngx-codemirror class="h-100" [(ngModel)]="payload" [options]="cmOptionsHyperlambda.json">
           </ngx-codemirror>
         </ng-container>
 
         <!-- Payload for text -->
         <ng-container *ngIf="itemDetails?.consumes?.startsWith('text/')">
-          <ngx-codemirror
-            class="h-100"
-            [(ngModel)]="payload"
-            [options]="cmOptionsMarkdown.json">
+          <ngx-codemirror class="h-100" [(ngModel)]="payload" [options]="cmOptionsMarkdown.json">
           </ngx-codemirror>
         </ng-container>
       </div>
@@ -83,26 +77,17 @@
       </p>
 
       <ng-container *ngIf="result.responseType === 'json'">
-        <ngx-codemirror
-          class="h-100"
-          [(ngModel)]="result.response"
-          [options]="cmOptionsReadonly.json">
+        <ngx-codemirror class="h-100" [(ngModel)]="result.response" [options]="cmOptionsReadonly.json">
         </ngx-codemirror>
       </ng-container>
 
       <ng-container *ngIf="result.responseType === 'hyperlambda'">
-        <ngx-codemirror
-          class="h-100"
-          [(ngModel)]="result.response"
-          [options]="cmHlOptionsReadonly.hl">
+        <ngx-codemirror class="h-100" [(ngModel)]="result.response" [options]="cmHlOptionsReadonly.hl">
         </ngx-codemirror>
       </ng-container>
 
       <ng-container *ngIf="result.responseType === 'text'">
-        <ngx-codemirror
-          class="h-100"
-          [(ngModel)]="result.response"
-          [options]="markdownOptionsReadonly.md">
+        <ngx-codemirror class="h-100" [(ngModel)]="result.response" [options]="markdownOptionsReadonly.md">
         </ngx-codemirror>
       </ng-container>
 
@@ -118,18 +103,10 @@
     </ng-container>
 
     <div class="d-flex justify-content-end button-row mt-3">
-      <button mat-button color="primary"
-        class="px-sm-4"
-        (click)="createTest()"
-        [disabled]="!canCreateAssumption">
+      <button mat-button color="primary" class="px-sm-4" (click)="createTest()" [disabled]="!canCreateAssumption">
         Save as test case
       </button>
-      <button
-        mat-flat-button
-        color="primary"
-        class="px-sm-4"
-        [disabled]="isExecuting"
-        (click)="invoke()">
+      <button mat-flat-button color="primary" class="px-sm-4" [disabled]="isExecuting" (click)="invoke()">
         Try it out!
       </button>
     </div>

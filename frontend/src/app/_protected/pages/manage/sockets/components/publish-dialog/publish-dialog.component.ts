@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Message } from 'src/app/models/message.model';
@@ -35,16 +40,9 @@ export class MessageWrapper {
 
 @Component({
   selector: 'app-publish-dialog',
-  templateUrl: './publish-dialog.component.html',
-  styleUrls: ['./publish-dialog.component.scss']
+  templateUrl: './publish-dialog.component.html'
 })
 export class PublishDialogComponent implements OnInit {
-
-
-
-  // Known file extensions we've got editors for.
-  // Used to make sure we reuse default JSON settings for CodeMirror editor.
-  private extensions = fileTypes;
 
   /**
    * CodeMirror options for JSON file types.

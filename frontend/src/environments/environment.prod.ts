@@ -1,6 +1,6 @@
 
 /*
- * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
 // This little trick makes pipeline transformations slightly simpler in Azure at least.
@@ -13,7 +13,7 @@ export const environment = {
       url: prod_environment.url,
       username: 'root',
       password: 'root',
-     },
+    },
   ],
   bazarUrl: 'https://api.aista.com'
 };

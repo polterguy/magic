@@ -1,6 +1,6 @@
 
 /*
- * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
 // Angular and system imports.
@@ -85,7 +85,7 @@ export class RenameFolderDialogComponent {
    *
    * @returns True if path is valid
    */
-  pathValid(){
+  pathValid() {
     if (!this.newName || this.newName.length === 0) {
       return false;
     }

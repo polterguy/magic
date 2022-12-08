@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
@@ -23,11 +28,11 @@ export class RolesListComponent implements OnInit {
   /**
    * Specify if the user can update roles
    */
-   public userCanUpdate: boolean = undefined;
+  public userCanUpdate: boolean = undefined;
 
-   /**
-   * Specify if the user can delete roles
-   */
+  /**
+  * Specify if the user can delete roles
+  */
   public userCanDelete: boolean = undefined;
 
   constructor(
@@ -67,7 +72,7 @@ export class RolesListComponent implements OnInit {
    * Deleting the selected role upon confirmation.
    * @param role Selected role.
    */
-   public deleteRole(role: Role) {
+  public deleteRole(role: Role) {
     this.dialog.open(ConfirmationDialogComponent, {
       width: '500px',
       data: {
@@ -91,7 +96,8 @@ export class RolesListComponent implements OnInit {
             this.generalService.showFeedback(`${role.name} was successfully deleted`, 'successMessage', 'Ok', 4000);
             this.updateList({});
           },
-          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)});
+          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)
+        });
       }
     })
   }

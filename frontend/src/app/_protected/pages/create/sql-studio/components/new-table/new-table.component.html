@@ -7,8 +7,7 @@
         Name
       </span>
 
-      <input matInput type="text" placeholder="Table's name" [(ngModel)]="data.name"
-        name="table_name"
+      <input matInput type="text" placeholder="Table's name" [(ngModel)]="data.name" name="table_name"
         [pattern]="CommonRegEx.appNameWithUppercase" (ngModelChange)="nameChanged()">
       <mat-error>{{CommonErrorMessages.appNameWithUppercase}}</mat-error>
     </mat-form-field>
@@ -18,8 +17,7 @@
         Primary key's name
       </span>
 
-      <input matInput type="text" placeholder="Primary key's name" [(ngModel)]="data.pkName"
-        name="pk_name"
+      <input matInput type="text" placeholder="Primary key's name" [(ngModel)]="data.pkName" name="pk_name"
         [pattern]="CommonRegEx.appNameWithUppercase">
       <mat-error>{{CommonErrorMessages.appNameWithUppercase}}</mat-error>
     </mat-form-field>
@@ -40,8 +38,7 @@
       </span>
 
       <input matInput type="number" placeholder="Primary key's length" [(ngModel)]="data.pkLength" min="10"
-        name="pk_length"
-        pattern="^\d{1,5}$">
+        name="pk_length" pattern="^\d{1,5}$">
       <mat-error>Invalid number</mat-error>
     </mat-form-field>
   </div>

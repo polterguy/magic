@@ -1,6 +1,6 @@
 
 /*
- * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
 // Angular and system imports.
@@ -82,7 +82,7 @@ export class RoleService {
    *
    * @param name Name of role to delete
    */
-  delete (name: string) {
+  delete(name: string) {
     return this.httpService.delete<Affected>('/magic/system/magic/roles?name=' + encodeURIComponent(name));
   }
 

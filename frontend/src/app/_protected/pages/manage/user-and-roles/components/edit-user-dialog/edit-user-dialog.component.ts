@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormControl } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -5,7 +10,7 @@ import { forkJoin } from 'rxjs';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { Role } from '../../_models/role.model';
-import { User, User_Extra } from '../../_models/user.model';
+import { User } from '../../_models/user.model';
 import { RoleService } from '../../_services/role.service';
 import { UserService } from '../../_services/user.service';
 import { AddExtraFieldsComponent } from '../add-extra-fields/add-extra-fields.component';
@@ -154,7 +159,7 @@ export class EditUserDialogComponent implements OnInit {
       data: this.data.user.username
     }).afterClosed().subscribe((result: any) => {
       if (result) {
-        this.formData.push({type: result.type, value: result.value});
+        this.formData.push({ type: result.type, value: result.value });
         this.setFormFields();
       }
     })

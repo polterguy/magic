@@ -1,8 +1,8 @@
 /*
- * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { SystemReport } from 'src/app/models/dashboard.model';
 import { ThemeService } from 'src/app/_general/services/theme.service';
 

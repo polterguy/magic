@@ -1,6 +1,11 @@
-import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { forkJoin } from 'rxjs';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { Role } from '../../_models/role.model';
@@ -50,7 +55,7 @@ export class NewUserDialogComponent implements OnInit {
       next: (roles: Role[]) => {
         this.data = roles;
         const guestExisting: any = this.data.find((item: Role) => item.name === 'guest');
-        guestExisting ? this.userForm.patchValue({role:['guest']}) : this.userForm.patchValue({role:[this.data[0].name]})
+        guestExisting ? this.userForm.patchValue({ role: ['guest'] }) : this.userForm.patchValue({ role: [this.data[0].name] })
         this.cdr.detectChanges();
       }
     });

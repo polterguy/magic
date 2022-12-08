@@ -1,10 +1,14 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { CodemirrorModule } from "@ctrl/ngx-codemirror";
 import { HyperlambdaComponent } from "../codemirror-hyperlambda/codemirror-hyperlambda.component";
 import { CodemirrorSqlComponent } from "../codemirror-sql/codemirror-sql.component";
-
 
 @NgModule({
   declarations: [

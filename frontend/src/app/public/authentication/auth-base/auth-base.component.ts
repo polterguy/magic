@@ -16,7 +16,7 @@ import { TermsModalComponent } from 'src/app/_general/components/terms-modal/ter
 export class AuthBaseComponent implements OnInit {
 
   constructor(
-    private dialog: MatDialog) {}
+    private dialog: MatDialog) { }
   /**
    * copyright year
    */
@@ -28,11 +28,11 @@ export class AuthBaseComponent implements OnInit {
     this.currentYear = new Date().getFullYear();
   }
 
-  public termsModal(){
+  public termsModal() {
     this.dialog.open(TermsModalComponent);
   }
 
-  public privacyModal(){
+  public privacyModal() {
     this.dialog.open(PrivacyModalComponent);
   }
 }

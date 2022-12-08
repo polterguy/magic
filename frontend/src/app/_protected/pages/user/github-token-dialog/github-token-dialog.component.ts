@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, Inject, OnInit } from '@angular/core';
 import { CryptoService } from 'src/app/_protected/pages/settings/cryptography/_services/crypto.service';
 import { Clipboard } from '@angular/cdk/clipboard';
@@ -27,11 +32,11 @@ export class GithubTokenDialogComponent implements OnInit {
   }
 
   public generateToken() {
-    this.cryptoService.getGithubKey(this.data.username,this.data.role, new Date(this.data.expires).toISOString()).subscribe({
+    this.cryptoService.getGithubKey(this.data.username, this.data.role, new Date(this.data.expires).toISOString()).subscribe({
       next: (res: any) => {
         this.token = res.ticket;
       },
-      error: (error: any) => {}
+      error: (error: any) => { }
     })
   }
 

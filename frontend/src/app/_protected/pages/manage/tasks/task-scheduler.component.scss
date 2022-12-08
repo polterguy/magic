@@ -1,8 +1,13 @@
 
-.table-chips ::ng-deep {
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
+ .table-chips ::ng-deep {
   .mat-chip-list-wrapper {
     display: inline-flex;
     flex-wrap: nowrap;
+
     .mat-standard-chip {
       font-size: 12px;
       padding-top: 3px;
@@ -12,4 +17,7 @@
     }
   }
 }
-.text-truncate {max-width: 20vw;}
+
+.text-truncate {
+  max-width: 20vw;
+}

@@ -1,4 +1,9 @@
-@import '../../../../../../../assets/styles/_variables/colors.scss';
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
+ @import '../../../../../../../assets/styles/_variables/colors.scss';
 
 .multiline-mat-option.mat-option {
   white-space: normal;
@@ -7,7 +12,11 @@
   padding-top: 10px;
   padding-bottom: 10px;
 }
-.name-line {color: $aista_dark;}
+
+.name-line {
+  color: $aista_dark;
+}
+
 .description-line {
   color: $aista_default_grey3;
   font-size: 13px;

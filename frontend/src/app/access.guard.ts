@@ -1,6 +1,6 @@
 
 /*
- * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
 // Angular and system imports.
@@ -40,27 +40,22 @@ export class AccessGuard implements CanActivate {
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-      console.log('CanActivate called');
-      return (async () => {
-        while ((this.backendService?.active?.access && Object.keys(this.backendService?.active?.access?.auth ?? {}).length===0))
-          await new Promise(resolve => setTimeout(resolve, 100));
-          if (this.backendService?.active?.access && Object.keys(this.backendService?.active?.access?.auth).length) {
-            const notAuthorized: boolean = Object.values(this.backendService.active.access.auth).every((item: any) => {return item === false})
+    console.log('CanActivate called');
+    return (async () => {
+      while ((this.backendService?.active?.access && Object.keys(this.backendService?.active?.access?.auth ?? {}).length === 0))
+        await new Promise(resolve => setTimeout(resolve, 100));
+      if (this.backendService?.active?.access && Object.keys(this.backendService?.active?.access?.auth).length) {
+        const notAuthorized: boolean = Object.values(this.backendService.active.access.auth).every((item: any) => { return item === false })
 
-          if (notAuthorized || !this.backendService.active.token) {
-            this.router.navigate(['/authentication/login/'], {
-              queryParams: route.queryParams
-            });
-            return false;
-          } else {
-            return true
-          }
-
-          // notAuthorized && !this.backendService.active.token?
-          // this.router.navigate(['/authentication']) : '';
+        if (notAuthorized || !this.backendService.active.token) {
+          this.router.navigate(['/authentication/login/'], {
+            queryParams: route.queryParams
+          });
+          return false;
+        } else {
+          return true
         }
-      })();
-      return true;
+      }
+    })();
   }
-
 }

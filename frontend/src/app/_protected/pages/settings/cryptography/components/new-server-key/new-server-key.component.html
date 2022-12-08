@@ -13,10 +13,7 @@
             <span class="text-muted">|</span>
           </span>
 
-          <input matInput placeholder="Full name"
-            type="text"
-            name="name"
-            [(ngModel)]="newKey.subject"
+          <input matInput placeholder="Full name" type="text" name="name" [(ngModel)]="newKey.subject"
             [ngModelOptions]="{standalone: true}">
         </mat-form-field>
       </div>
@@ -27,9 +24,7 @@
             <span class="text-muted">|</span>
           </span>
 
-          <input matInput placeholder="Email address"
-            [(ngModel)]="newKey.email"
-            [ngModelOptions]="{standalone: true}"
+          <input matInput placeholder="Email address" [(ngModel)]="newKey.email" [ngModelOptions]="{standalone: true}"
             [pattern]="CommonRegEx.email">
           <mat-error>{{CommonErrorMessages.email}}</mat-error>
         </mat-form-field>
@@ -41,12 +36,8 @@
             <span class="text-muted">|</span>
           </span>
 
-          <input matInput placeholder="http://domain.com"
-            type="url"
-            name="url"
-            [(ngModel)]="newKey.domain"
-            [ngModelOptions]="{standalone: true}"
-            [pattern]="CommonRegEx.backend">
+          <input matInput placeholder="http://domain.com" type="url" name="url" [(ngModel)]="newKey.domain"
+            [ngModelOptions]="{standalone: true}" [pattern]="CommonRegEx.backend">
           <mat-error *ngIf="!validateDomain()">{{CommonErrorMessages.backend}}</mat-error>
         </mat-form-field>
       </div>
@@ -57,9 +48,7 @@
             <span class="text-muted">|</span>
           </span>
 
-          <mat-select placeholder="Strength"
-            [(ngModel)]="newKey.strength"
-            [ngModelOptions]="{standalone: true}">
+          <mat-select placeholder="Strength" [(ngModel)]="newKey.strength" [ngModelOptions]="{standalone: true}">
             <mat-option *ngFor="let item of strengthArray" [value]="item">
               {{item}}
             </mat-option>
@@ -69,9 +58,7 @@
       <div class="col-12">
         <p>{{data?.type === 'create' ? 'Seed' : 'Public key'}}</p>
         <mat-form-field class="w-100">
-          <textarea matInput rows="7"
-            [(ngModel)]="newKey.content"
-            [ngModelOptions]="{standalone: true}"
+          <textarea matInput rows="7" [(ngModel)]="newKey.content" [ngModelOptions]="{standalone: true}"
             (ngModelChange)="publicKeyChanged()"></textarea>
         </mat-form-field>
       </div>
@@ -80,9 +67,7 @@
 
   <div mat-dialog-actions [align]="'end'">
     <button mat-button color="primary" mat-dialog-close class="me-2">Cancel</button>
-    <button mat-flat-button type="submit" color="primary" class="px-5"
-      (click)="save()"
-      [disabled]="isWaiting">
+    <button mat-flat-button type="submit" color="primary" class="px-5" (click)="save()" [disabled]="isWaiting">
       {{data?.type === 'create' ? 'Save' : 'Import'}}
     </button>
   </div>

@@ -1,4 +1,3 @@
-
 <div class="d-flex justify-content-between align-items-center w-100 my-3">
   <mat-form-field class="w-100 standalone-field">
     <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
@@ -6,12 +5,10 @@
       <span class="text-muted">|</span>
     </span>
 
-    <input matInput
-      [placeholder]="'Search for a ' + tab"
-      (input)="applyFilter(input.value)" #input>
-      <button mat-icon-button matSuffix (click)="removeSearchTerm();input.value = ''" *ngIf="input.value!==''">
-        <mat-icon>close</mat-icon>
-      </button>
+    <input matInput [placeholder]="'Search for a ' + tab" (input)="applyFilter(input.value)" #input>
+    <button mat-icon-button matSuffix (click)="removeSearchTerm();input.value = ''" *ngIf="input.value!==''">
+      <mat-icon>close</mat-icon>
+    </button>
   </mat-form-field>
 
   <div class="d-flex justify-content-end align-items-center w-100">
@@ -19,7 +16,7 @@
     <button mat-flat-button color="primary" class="py-1"
       [disabled]="(tab !== 'user' && userCanCreateRole === false) || (tab === 'user' && userCanCreateUser === false)"
       (click)="tab === 'user' ? createNewUser() : createNewRole()">
-        Add {{tab === 'user' ? 'single user' : 'new role'}}
+      Add {{tab === 'user' ? 'single user' : 'new role'}}
     </button>
   </div>
 </div>

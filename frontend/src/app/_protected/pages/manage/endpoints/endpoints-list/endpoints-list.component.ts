@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { GeneralService } from 'src/app/_general/services/general.service';
@@ -64,7 +69,7 @@ export class EndpointsListComponent implements OnInit {
     this.clipboard.copy(this.backendService.active.url + '/' + url);
     this.generalService.showFeedback('URL is copied to your clipboard');
   }
-  @ViewChild('assumptions', {static: false}) assumptions: AssumptionsComponent;
+  @ViewChild('assumptions', { static: false }) assumptions: AssumptionsComponent;
   /**
    * For tracking the virtual scrolling on filterList
    * @param item
