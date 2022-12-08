@@ -1,4 +1,4 @@
-<h3 mat-dialog-title>Add a new task</h3>
+<h3 mat-dialog-title>{{data ? 'Edit task' : 'Create task'}}</h3>
 
 <form>
   <div mat-dialog-content>
@@ -44,6 +44,6 @@
 
   <div mat-dialog-actions [align]="'end'" class="mt-3">
     <button mat-button color="primary" type="button" class="me-2" mat-dialog-close>Cancel</button>
-    <button mat-flat-button color="primary" class="px-5" type="submit" (click)="create()">Create task</button>
+    <button mat-flat-button color="primary" class="px-5" type="submit" (click)="create()">Save</button>
   </div>
 </form>
