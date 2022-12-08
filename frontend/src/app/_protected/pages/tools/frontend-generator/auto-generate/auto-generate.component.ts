@@ -307,7 +307,7 @@ export class AutoGenerateComponent implements OnInit, OnDestroy {
       deployLocally,
       args,
       () => {
-        this.generalService.showFeedback(deployLocally ? 'Successfully generated in /frontend/' : 'Successfully generated', 'successMessage', 'Ok', 5000);
+        this.generalService.showFeedback(deployLocally ? 'Successfully generated in /etc/frontend/' : 'Successfully generated', 'successMessage', 'Ok', 5000);
       })
   }
 
