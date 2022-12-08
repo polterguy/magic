@@ -23,7 +23,7 @@ export class LoginComponent implements OnInit {
   loginForm = this.formBuilder.group({
     username: ['', [Validators.required]],
     password: ['', [Validators.required]],
-    backend: ['', [Validators.required, Validators.pattern('(https://|http://){1}([a-z.-]+)(\\.([a-z.]{2,6})|\\:([0-9]{2,5}))')]],
+    backend: ['', [Validators.required, Validators.pattern(/^(http|https):\/\/[^ "]+$/)]],
   });
 
   backendHasBeenSelected: boolean = false;
@@ -66,11 +66,16 @@ export class LoginComponent implements OnInit {
 
         this.activatedRoute.queryParams.subscribe((params: any) => {
           if (params.switchTo) {
-            const defaultBackend: any = this.backendList.find((item: any) => item.url === params.switchTo)
+            const defaultBackend: Backend = this.backendList.find((item: any) => item.url === params.switchTo);
             this.loginForm.controls.backend.setValue(defaultBackend.url);
+            this.loginForm.controls.username.setValue(defaultBackend.username);
+            this.loginForm.controls.password.setValue(defaultBackend.password);
           }
           if (params.backend) {
-            this.loginForm.controls.backend.setValue(params.backend.url);
+            const defaultBackend: Backend = this.backendList.find((item: any) => item.url === params.backend.url);
+            this.loginForm.controls.backend.setValue(defaultBackend.url);
+            this.loginForm.controls.username.setValue(defaultBackend.username);
+            this.loginForm.controls.password.setValue(defaultBackend.password);
           }
         })
         this.backendService._activeCaptchaValue.subscribe((key: string) => {

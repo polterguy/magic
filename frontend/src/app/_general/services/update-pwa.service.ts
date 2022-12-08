@@ -23,12 +23,9 @@ export class UpdatePwaService {
     private swUpdate: SwUpdate,
     private matDialog: MatDialog) {
     if (swUpdate.isEnabled) {
-      // Allow the app to stabilize first, before starting
-      // polling for updates with `interval()`.
       const appIsStable$ = appRef.isStable.pipe(first(isStable => isStable === true));
       const everySixHours$ = interval(5 * 60 * 1000);
       const everySixHoursOnceAppIsStable$ = concat(appIsStable$, everySixHours$);
-
       everySixHoursOnceAppIsStable$.subscribe(() => swUpdate.checkForUpdate());
     }
   }
@@ -59,9 +56,6 @@ export class UpdatePwaService {
     const dialogExist = this.matDialog.getDialogById('message-pop-up');
     if (!dialogExist) {
       this.matDialog.open(PwaUpdateDialogComponent, {
-        // position: { top: '7px' },
-        // width: '500px',
-        // height: '400px',
         panelClass: ['pwa-update-panel'],
         disableClose: true,
         id: 'message-pop-up'
