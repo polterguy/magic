@@ -38,7 +38,7 @@ export class ViewDbListComponent implements OnInit {
         extra: {
           details: item,
           action: 'confirmInput',
-          fieldToBeTypedTitle: `Database's name`,
+          fieldToBeTypedTitle: `Database name`,
           fieldToBeTypedValue: item.name,
           icon: 'database',
         }
