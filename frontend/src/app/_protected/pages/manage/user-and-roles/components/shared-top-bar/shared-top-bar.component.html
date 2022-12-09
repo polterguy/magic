@@ -11,7 +11,7 @@
     </button>
   </mat-form-field>
 
-  <div class="d-flex justify-content-end align-items-center w-100">
+  <div class="d-flex justify-content-end button-row align-items-center w-100">
     <button mat-button color="primary" *ngIf="tab === 'user'">Import users in bulk</button>
     <button mat-flat-button color="primary" class="py-1"
       [disabled]="(tab !== 'user' && userCanCreateRole === false) || (tab === 'user' && userCanCreateUser === false)"

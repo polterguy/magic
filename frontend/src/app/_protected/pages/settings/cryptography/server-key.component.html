@@ -54,7 +54,7 @@
             <app-server-key-table (invokeViewReceipts)="invokeViewReceipts($event)"
               #tableComponent></app-server-key-table>
           </mat-tab>
-          <mat-tab label="Receipts" [disabled]="!selectedServerKey">
+          <mat-tab label="Receipts">
             <ng-template matTabContent>
               <app-server-key-receipts [selectedServerKey]="selectedServerKey"
                 [isNewKey]="isNewKey"></app-server-key-receipts>

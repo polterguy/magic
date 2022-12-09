@@ -79,9 +79,14 @@ export class ServerKeyDetailsComponent implements OnInit {
     }
   }
 
-  public copy(text: string) {
+  public copyFingerprint(text: string) {
     this.clipboard.copy(text);
-    this.generalService.showFeedback('Copied to your clipboard');
+    this.generalService.showFeedback('Fingerprint can be found on your clipboard');
+  }
+
+  public copyContent(text: string) {
+    this.clipboard.copy(text);
+    this.generalService.showFeedback('Public key can be found on your clipboard');
   }
 
   private async getCodeMirrorOptions() {
