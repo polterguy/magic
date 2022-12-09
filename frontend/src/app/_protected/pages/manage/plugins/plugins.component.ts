@@ -36,7 +36,7 @@ export class PluginsComponent implements OnInit {
 
   public waitingInstallation: boolean = false;
 
-  public currentStage: string = 'Prepering database to be downloaded.';
+  public currentStage: string = 'Preparing plugin to be downloaded.';
 
   /**
    * SignalR hub connection, used to connect to Bazar server and get notifications
@@ -162,7 +162,7 @@ export class PluginsComponent implements OnInit {
             }
           });
       },
-      error: (error: any) => {
+      error: () => {
         this.generalService.hideLoading();
         this.waitingInstallation = false;
       }
@@ -197,11 +197,11 @@ export class PluginsComponent implements OnInit {
    * Invoked when app should be installed.
    */
   private getDb(app: BazarApp, token: string) {
-    this.currentStage = 'Downloading database';
+    this.currentStage = 'Downloading plugin';
     this.bazarService.downloadBazarItem(app, token).subscribe({
       next: (download: any) => {
         if (download.result === 'success') {
-          this.currentStage = 'Installing database';
+          this.currentStage = 'Installing plugin';
           this.bazarService.installBazarItem(app.folder_name, app.version, app.name, token).subscribe({
             next: (install: any) => {
               if (install.result === 'success') {
