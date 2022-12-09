@@ -53,28 +53,10 @@ export class BackendsListComponent implements OnInit {
   }
 
   private getBackends() {
-    if (((this.backendService?.active?.access && Object.keys(this.backendService?.active?.access?.auth ?? {}).length === 0))) return Promise.resolve();
-    try {
-      this.backendsList = this.backendService.backends;
-        this.activeBackend = this.backendService.active.url;
-        this.isLoading = false;
-
-        this.cdr.detectChanges();
-    } catch (err) {
-      console.log(err)
-    }
-    // (async () => {
-    //   while (this.backendService.active.access && !Object.keys(this.backendService.active.access.auth).length)
-    //     await new Promise(resolve => setTimeout(resolve, 100));
-
-    //   if (this.backendService.active.access && Object.keys(this.backendService.active.access.auth).length > 0) {
-    //     this.backendsList = this.backendService.backends;
-    //     this.activeBackend = this.backendService.active.url;
-    //     this.isLoading = false;
-
-    //     this.cdr.detectChanges();
-    //   }
-    // })();
+    this.backendsList = this.backendService.backends;
+    this.activeBackend = this.backendService.active.url;
+    this.isLoading = false;
+    this.cdr.detectChanges();
   }
 
   /**
