@@ -286,9 +286,9 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
     this.dialog.open(ConfirmationDialogComponent, {
       width: '500px',
       data: {
-        title: `Delete database`,
-        description_extra: `You are deleting the following database: <br/> <span class="fw-bold">${database?.name}</span> <br/><br/> Do you want to continue?`,
-        action_btn: 'Delete',
+        title: `Uninstall module`,
+        description_extra: `You are uninstalling the following database module: <br/> <span class="fw-bold">${database?.name}</span> <br/><br/> Do you want to continue?`,
+        action_btn: 'Uninstall',
         action_btn_color: 'warn',
         bold_description: true
       }
@@ -299,7 +299,6 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
             this.generalService.showFeedback(database.name + ' uninstalled successfully.', 'successMessage');
             this.clearServersideCache();
             this.getItems();
-            this.getDatabases();
           },
           error: (error: any) => { this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage') }
         });
@@ -319,7 +318,7 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
         extra: {
           details: item,
           action: 'confirmInput',
-          fieldToBeTypedTitle: `Database's name`,
+          fieldToBeTypedTitle: `Database name`,
           fieldToBeTypedValue: item.name,
           icon: 'database',
         }

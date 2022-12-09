@@ -12,6 +12,15 @@
   @include line_truncate(3);
 }
 
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
 .waiting-overlay {
   position: fixed;
   top: 0;
@@ -21,6 +30,9 @@
   z-index: 1080;
   color: $aista_default;
   background-color: transparentize($color: $aista_dark, $amount: 0.1);
+  animation-name: fadeIn;
+  animation-duration: 1s;
+  animation-fill-mode: forwards;
 }
 
 .wating-dot-animation {
