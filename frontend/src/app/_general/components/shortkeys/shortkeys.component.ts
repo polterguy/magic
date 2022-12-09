@@ -93,7 +93,7 @@ const fullkeys: Keys[] = [
     key: 'Alt + S'
   },
   {
-    name: 'Execute File',
+    name: 'Execute File or Endpoint',
     key: 'F5'
   },
   {
