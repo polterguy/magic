@@ -20,7 +20,6 @@ body {
   box-shadow: 3px 3px 6px #b8b9be, -3px -3px 6px #fff;
   border: .0625rem solid #d1d9e6;
   border-radius: 5px;
-  padding: 10px 20px;
 }
 
 :root .mat-raised-button,
@@ -196,7 +195,7 @@ body {
 }
 
 :root .button-row {
-  padding: 0 25px 15px 0;
+  padding: 0 10px 15px 0;
 }
 
 :root app-tables-view .masonry mat-card.mat-card .hoverable-row p {
