@@ -21,7 +21,7 @@ export class OverviewComponent {
 
   public displayableList: any = [];
   private fullList: any = titles;
-  private titles: string[];
+  private titles: string[] = [];
 
   constructor(private dialog: MatDialog) { }
 
@@ -32,6 +32,11 @@ export class OverviewComponent {
       this.displayableList = this.fullList.filter((item: any) => this.titles.find((el: any) => {return el === item.name}));
     } else {
       this.displayableList = this.fullList.filter((el: any) => { return el.isDefault === true });
+      this.fullList.map((el: any) => {
+        if (el.isDefault === true) {
+          this.titles.push(el.name)
+        }
+      });
     }
   }
 
