@@ -30,6 +30,8 @@ export class SingleTableConfigComponent implements OnInit, OnDestroy {
 
   private dbLoadingSubscription!: Subscription;
 
+  fkLong: any = {}
+
   constructor(
     private dialog: MatDialog) { }
 
@@ -95,24 +97,35 @@ export class SingleTableConfigComponent implements OnInit, OnDestroy {
         }
       }
     })
+
   }
 
-  public editForeignKey(columnName: string) {
+  // public editForeignKey({ columnName }: { columnName: string; }) {
+  //   const db: any = this.databases.find((db: any) => db.name === this.selectedDatabase);
+  //   const table: any = db.tables.find((table: any) => table.name === this.selectedTable.toString());
+  //   this.dialog.open(ForeignKeyDialogComponent, {
+  //     width: '500px',
+  //     data: {
+  //       database: db,
+  //       foreign_keys: this.foreign_keys,
+  //       currentForeignKey: table.foreign_keys.find((fk: any) => fk.column === columnName)
+  //     }
+  //   }).afterClosed().subscribe((res: { selectedForeignKey: FKModel }) => {
+  //     if (res && res.selectedForeignKey) {
+  //       const column: any = table.columns.find((column: any) => column.name === columnName);
+  //       column.foreign_key = res.selectedForeignKey;
+  //     }
+  //   })
+  // }
+
+  public changeForeignKey(event: any) {
+
     const db: any = this.databases.find((db: any) => db.name === this.selectedDatabase);
     const table: any = db.tables.find((table: any) => table.name === this.selectedTable.toString());
-    this.dialog.open(ForeignKeyDialogComponent, {
-      width: '500px',
-      data: {
-        database: db,
-        foreign_keys: this.foreign_keys,
-        currentForeignKey: table.foreign_keys.find((fk: any) => fk.column === columnName)
-      }
-    }).afterClosed().subscribe((res: { selectedForeignKey: FKModel }) => {
-      if (res && res.selectedForeignKey) {
-        const column: any = table.columns.find((column: any) => column.name === columnName);
-        column.foreign_key = res.selectedForeignKey;
-      }
-    })
+    const column: any = table.columns.find((column: any) => column.name === event.columnName);
+    column.foreign_key = event.selectedForeignKey;
+    this.fkLong[event.columnName] = column.foreign_key.long_data;
+
   }
 
   /**

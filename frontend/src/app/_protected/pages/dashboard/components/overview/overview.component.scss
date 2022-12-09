@@ -1,3 +1,17 @@
+<<<<<<< HEAD
+@import '../../../../../../assets/styles/_variables/colors.scss';
+@import '../../../../../../assets/styles/_variables/mixin.scss';
+
+.scrollable-row {
+  max-height: 216px;
+  overflow: hidden auto;
+  @include scrollbar($aista_default_alt, $aista_default_grey4, 5px);
+
+  @media(max-width: 1199px) {
+    max-height: 345px;
+  }
+}
+=======
 
 /*
  * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
@@ -9,3 +23,4 @@
   left: 1.2rem;
   width: calc(100% - 2.4rem) !important;
 }
+>>>>>>> fbc52a8e786f5b5f20cdb06766554fbd38e13122

@@ -8,12 +8,15 @@
           </div>
         </div>
 
-        <div class="row mb-3">
-          <div class="col-6 text-muted">
-            Database type:
+        <div class="scrollable-row">
+          <div class="row mb-3" *ngFor="let item of displayableList">
+            <div class="col-6 text-muted">
+              {{item.name}}
+            </div>
+            <div class="col-6 text-uppercase">{{data[item.key] ?? '-'}}</div>
           </div>
-          <div class="col-6 text-uppercase">{{data?.default_db}}</div>
         </div>
+        <button mat-button color="primary" class="w-100 mt-auto" (click)="more()">More information</button>
         <div class="row mb-3">
           <div class="col-6 text-muted">
             Timezone:
