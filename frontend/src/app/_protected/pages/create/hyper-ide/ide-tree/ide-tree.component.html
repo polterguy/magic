@@ -89,7 +89,7 @@
               <mat-icon class="me-2">
                 {{treeControl.isExpanded(folder) ? 'expand_more' : 'chevron_right'}}
               </mat-icon>
-              <mat-icon class="me-2">{{treeControl.isExpanded(folder) ? 'folder_open' : 'folder'}}</mat-icon>
+              <mat-icon class="me-2 fixed-width">{{treeControl.isExpanded(folder) ? 'folder_open' : 'folder'}}</mat-icon>
               <input type="text" [value]="folder.name" class="w-100 ms-2"
                 [id]="showRenameBox === folder ? 'renameFile':''" #folderInput
                 (keyup.enter)="renameActiveFolder(folder, folderInput?.value)"
