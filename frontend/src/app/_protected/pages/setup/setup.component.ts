@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroupDirective, NgForm, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
@@ -7,33 +12,32 @@ import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { SetupModel } from '../../models/common/status.model';
-import { ConfigService } from '../setting-security/configuration/_services/config.service';
+import { ConfigService } from '../settings/configuration/_services/config.service';
 
 class MyErrorStateMatcher implements ErrorStateMatcher {
   isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
     const invalidCtrl = !!(control?.invalid && control?.parent?.dirty);
     const invalidParent = !!(control?.parent?.invalid && control?.parent?.dirty);
-   return invalidCtrl || invalidParent;
+    return invalidCtrl || invalidParent;
   }
 }
 
 @Component({
   selector: 'app-setup',
-  templateUrl: './setup.component.html',
-  styleUrls: ['./setup.component.scss']
+  templateUrl: './setup.component.html'
 })
 export class SetupComponent implements OnInit {
 
   matcher = new MyErrorStateMatcher();
 
   databaseTypes: any[] = [
-    {name: 'SQLite', value: 'sqlite'},
-    {name: 'MySQL', value: 'mysql'},
-    {name: 'PostgreSQL', value: 'pgsql'},
-    {name: 'SQL Server', value: 'mssql'},
+    { name: 'SQLite', value: 'sqlite' },
+    { name: 'MySQL', value: 'mysql' },
+    { name: 'PostgreSQL', value: 'pgsql' },
+    { name: 'SQL Server', value: 'mssql' },
   ];
 
-  checkPasswords: ValidatorFn = (g: AbstractControl):  ValidationErrors | null => {
+  checkPasswords: ValidatorFn = (g: AbstractControl): ValidationErrors | null => {
     const pass = g.get('password')?.value;
     const confirmPass = g.get('passwordRepeat')?.value;
     return pass === confirmPass ? null : { notSame: true }
@@ -64,7 +68,7 @@ export class SetupComponent implements OnInit {
     this.configForm.addValidators(this.checkPasswords);
   }
 
-  ngOnInit() : void {
+  ngOnInit(): void {
     this.configForm.controls.password.valueChanges.subscribe(() => {
       if (this.showPassword) {
         this.configForm.controls.passwordRepeat.setValue(this.configForm.controls.password.value);
@@ -126,7 +130,7 @@ export class SetupComponent implements OnInit {
         this.generalService.hideLoading();
       },
       error: (error: any) => {
-        this.generalService.showFeedback(error?.error?.message??error, 'errorMessage');
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
         this.generalService.hideLoading();
         this.waiting = false;
       }

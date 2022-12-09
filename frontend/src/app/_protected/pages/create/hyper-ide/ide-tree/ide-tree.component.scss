@@ -1,0 +1,179 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
+ @import '../../../../../../assets/styles/_variables/colors.scss';
+@import '../../../../../../assets/styles/_variables/mixin.scss';
+
+.panel-1 {
+  flex: 1 1 auto;
+  overflow: hidden;
+}
+
+.panel-2 {
+  flex: 0 0 auto;
+}
+
+.rename-box {
+  position: absolute;
+  left: 4px;
+  width: 94%;
+  z-index: 2;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  z-index: 1;
+}
+
+::ng-deep #hyper-ide {
+  .action-menu-general {
+    .mat-icon-button {
+      height: 25px;
+      width: 25px;
+      line-height: 25px;
+
+      mat-icon {
+        width: 18px;
+        height: 18px;
+        font-size: 18px;
+        line-height: 18px;
+      }
+    }
+  }
+
+  .panel-1 .mat-expansion-panel {
+    max-height: 100%;
+  }
+
+  .panel-2 .mat-expansion-panel {
+    max-height: 15vh;
+  }
+
+  .mat-accordion {
+    padding: 0 0 16px;
+    max-height: 100%;
+    overflow: hidden;
+    display: flex;
+
+    .mat-expansion-panel-body {
+      padding: 0;
+    }
+
+    .mat-expansion-panel-header {
+      height: 25px;
+
+      &.mat-expanded {
+        height: 25px;
+      }
+    }
+
+    .mat-expansion-panel {
+      overflow: hidden;
+      width: 100%;
+    }
+
+    .mat-expansion-panel-content {
+      max-height: calc(100% - 25px);
+      height: 100%;
+      overflow: auto;
+      @include scrollbar($aista_default_alt, $aista_default_grey4, 8px);
+      @include scrollbar_horizontal($aista_default_alt, $aista_default_grey4, 7px);
+    }
+  }
+
+  .mat-tree-node.file-node {
+    button:first-child {
+      margin-left: 28px !important;
+    }
+  }
+
+  .mat-tree-node {
+    min-height: 28px;
+    width: 100%;
+    position: relative;
+    overflow: visible;
+    @include general_transition(0.3s);
+
+    button {
+      font-size: 12px;
+
+      mat-icon {
+        font-size: 22px;
+        width: 22px;
+        height: 22px;
+        line-height: 22px;
+        margin-right: 5px;
+      }
+    }
+
+    .show-on-hover {
+      visibility: hidden;
+      display: flex;
+      align-items: center;
+
+      .mat-icon-button {
+        height: 25px;
+        width: 25px;
+        line-height: 25px;
+        background-color: transparentize($color: $aista_default, $amount: 0.05);
+      }
+
+      mat-icon {
+        font-size: 18px;
+        line-height: 18px;
+        width: 18px;
+        height: 18px;
+        margin-right: 0;
+      }
+    }
+
+    &.active-folder {
+      button {
+        font-weight: 900;
+      }
+    }
+
+    &.active-file {
+      background-color: transparentize($color: $aista_default_grey5, $amount: 0.5);
+    }
+
+    &:hover {
+      background-color: transparentize($color: $aista_default_grey5, $amount: 0.75);
+
+      .show-on-hover {
+        visibility: visible;
+      }
+    }
+  }
+
+  .open-files {
+    button {
+      font-size: 12px;
+      padding-left: 5px;
+      min-height: 40px;
+    }
+
+    @include general_transition(0.3s);
+
+    &.active-file {
+      background-color: transparentize($color: $aista_default_grey5, $amount: 0.5);
+    }
+
+    &:hover {
+      background-color: transparentize($color: $aista_default_grey5, $amount: 0.75);
+    }
+
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+      line-height: 20px;
+    }
+  }
+}

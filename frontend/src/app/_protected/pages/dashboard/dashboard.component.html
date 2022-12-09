@@ -1,25 +1,16 @@
 <ng-container *ngIf="isLoading;else dataLoaded">
   <div class="row">
     <div class="col-12">
-      <app-loading-skeleton
-      [amount]="1"
-      [colClass]="'col-12'"
-      [blockHeight]="'268px'"></app-loading-skeleton>
+      <app-loading-skeleton [amount]="1" [colClass]="'col-12'" [blockHeight]="'268px'"></app-loading-skeleton>
     </div>
   </div>
   <div class="row">
     <div class="col-12">
-      <app-loading-skeleton
-      [amount]="3"
-      [colClass]="'col-md-4 col-12'"
-      [blockHeight]="'360px'"></app-loading-skeleton>
+      <app-loading-skeleton [amount]="3" [colClass]="'col-md-4 col-12'" [blockHeight]="'360px'"></app-loading-skeleton>
     </div>
 
     <div class="col-12">
-      <app-loading-skeleton
-      [amount]="2"
-      [colClass]="'col-md-6 col-12'"
-      [blockHeight]="'500px'"></app-loading-skeleton>
+      <app-loading-skeleton [amount]="2" [colClass]="'col-md-6 col-12'" [blockHeight]="'500px'"></app-loading-skeleton>
     </div>
   </div>
 </ng-container>
@@ -41,14 +32,10 @@
         <div class="col-xl-9 col-12 order-xl-2 order-first">
           <div class="row">
             <div class="col-sm-6 col-12 mb-4">
-              <app-chart
-                [data]="systemReportDisplayable"
-                [log]="true"></app-chart>
+              <app-chart [data]="systemReportDisplayable" [log]="true"></app-chart>
             </div>
             <div class="col-sm-6 col-12 mb-4">
-              <app-chart
-                [data]="systemReportDisplayable"
-                [complexity]="true"></app-chart>
+              <app-chart [data]="systemReportDisplayable" [complexity]="true"></app-chart>
             </div>
           </div>
         </div>
@@ -56,7 +43,8 @@
           <app-main-chart [data]="chartData"></app-main-chart>
         </div>
         <div class="col-xl-4 col-12 mb-4 order-last">
-          <app-last-log-items [data]="systemReportDisplayable?.last_log_items" [totalLogs]="systemReportDisplayable?.log_items"></app-last-log-items>
+          <app-last-log-items [data]="systemReportDisplayable?.last_log_items"
+            [totalLogs]="systemReportDisplayable?.log_items"></app-last-log-items>
         </div>
       </div>
     </ng-container>
@@ -75,7 +63,8 @@
           <mat-card-content class="p-md-5">
             <h3 class="fw-bold text-center">You are signed in as {{userAsUsername}}</h3>
             <p class="mat-body-2 text-center">
-              You can now check the user's server key settings by navigating to this page, found under <span class="fw-bold">"Settings & security"</span> link.
+              You can now check the user's server key settings by navigating to this page, found under <span
+                class="fw-bold">"Settings & security"</span> link.
             </p>
           </mat-card-content>
         </mat-card>
@@ -84,4 +73,3 @@
   </ng-template>
 
 </ng-template>
-

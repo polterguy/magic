@@ -13,11 +13,16 @@
   border-radius: $aista_radius;
   height: 70px;
   padding: 20px;
+
   @media (max-width: 575px) {
     border-radius: 0;
     margin: 0 0 $aista_spacing 0;
   }
-  .url-btn {min-height: 36px;}
+
+  .url-btn {
+    min-height: 36px;
+  }
+
   .url-text {
     max-width: clamp(21vw, 1vw, 40vw);
   }
@@ -44,8 +49,10 @@
   }
 
 }
+
 .bell-button {
   position: relative;
+
   &.isOpen::before {
     content: " ";
     display: block;
@@ -59,6 +66,7 @@
     left: 10px;
     z-index: 9999999;
   }
+
   &.hasUnread mat-icon {
     position: relative;
 
@@ -88,12 +96,14 @@
   }
 
 }
+
 @media (min-width: 992px) and (max-width: 1199px) {
   .nav-link {
     padding-left: 10px;
     padding-right: 10px;
   }
 }
+
 @media (max-width: 991px) {
   #navbar {
     .nav-links {
@@ -150,7 +160,12 @@
     z-index: 998;
   }
 }
-.logout-btn {background-color: transparentize($color: $aista_error, $amount: 0.8);border-radius: $aista_radius_sm;}
+
+.logout-btn {
+  background-color: transparentize($color: $aista_error, $amount: 0.8);
+  border-radius: $aista_radius_sm;
+}
+
 a {
   background-color: transparent !important;
   @include general_transition(0.3s);
@@ -170,6 +185,7 @@ a {
       content: ' ';
     }
   }
+
   &.warn {
     color: $aista_error;
   }

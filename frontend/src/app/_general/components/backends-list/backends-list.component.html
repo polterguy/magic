@@ -7,10 +7,7 @@
 </div>
 
 <ng-container *ngIf="isLoading">
-  <app-loading-skeleton
-  [amount]="3"
-  [blockHeight]="'40px'"
-  [hasShadow]="false"></app-loading-skeleton>
+  <app-loading-skeleton [amount]="3" [blockHeight]="'40px'" [hasShadow]="false"></app-loading-skeleton>
 </ng-container>
 
 <div class="table-responsive backend-list" *ngIf="!isLoading">
@@ -31,23 +28,20 @@
     <!-- status Column -->
     <ng-container matColumnDef="status">
       <th mat-header-cell *matHeaderCellDef> Status </th>
-      <td mat-cell *matCellDef="let element" class="text-nowrap"> {{element?.url === activeBackend ? 'In use' : 'Not in use'}} </td>
+      <td mat-cell *matCellDef="let element" class="text-nowrap"> {{element?.url === activeBackend ? 'In use' : 'Not in
+        use'}} </td>
     </ng-container>
 
     <!-- actions Column -->
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef class="text-nowrap"> Actions </th>
       <td mat-cell *matCellDef="let element;let index=index;let last=last;let first=first" class="text-nowrap">
-        <button mat-button class="ps-0 mat-caption"
-          color="primary"
-          [disabled]="element?.url === activeBackend"
+        <button mat-button class="ps-0 mat-caption" color="primary" [disabled]="element?.url === activeBackend"
           (click)="switchBackend(element)">Switch</button>
-        <button mat-button class="ps-0 mat-caption"
-          color="primary"
-          (click)="copyUrlWithBackend(element.url)">Copy URL</button>
-        <button mat-button class="ps-0 mat-caption"
-        color="warn"
-        (click)="removeBackend(element,index,last,first)">Remove</button>
+        <button mat-button class="ps-0 mat-caption" color="primary" (click)="copyUrlWithBackend(element.url)">Copy
+          URL</button>
+        <button mat-button class="ps-0 mat-caption" color="warn"
+          (click)="removeBackend(element)">Remove</button>
       </td>
     </ng-container>
 

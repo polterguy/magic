@@ -1,0 +1,113 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
+ @import '../../../../../assets/styles/_variables/colors.scss';
+@import '../../../../../assets/styles/_variables/mixin.scss';
+
+.line-truncate {
+  line-height: 1.5;
+  font-size: 12px;
+  @include line_truncate(3);
+}
+
+.waiting-overlay {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1080;
+  color: $aista_default;
+  background-color: transparentize($color: $aista_dark, $amount: 0.1);
+}
+
+.wating-dot-animation {
+  position: relative;
+  left: -9999px;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: $aista_primary;
+  color: $aista_primary;
+  box-shadow: 9999px 0 0 0 $aista_primary;
+  animation: waitingDot 1s infinite linear;
+  animation-delay: .1s;
+
+  &::before,
+  &::after {
+    content: '';
+    display: inline-block;
+    position: absolute;
+    top: 0;
+  }
+
+  &::before {
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    background-color: $aista_primary;
+    color: $aista_primary;
+    animation: waitingDotBefore 1s infinite linear;
+    animation-delay: 0s;
+  }
+
+  &::after {
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    background-color: $aista_primary;
+    color: $aista_primary;
+    animation: waitingDotAfter 1s infinite linear;
+    animation-delay: .2s;
+  }
+}
+
+@keyframes waitingDot {
+  0% {
+    box-shadow: 9999px -15px 0 0 rgba(152, 128, 255, 0);
+  }
+
+  25%,
+  50%,
+  75% {
+    box-shadow: 9999px 0 0 0 $aista_primary;
+  }
+
+  100% {
+    box-shadow: 9999px 15px 0 0 rgba(152, 128, 255, 0);
+  }
+}
+
+@keyframes waitingDotBefore {
+  0% {
+    box-shadow: 9984px -15px 0 0 rgba(152, 128, 255, 0);
+  }
+
+  25%,
+  50%,
+  75% {
+    box-shadow: 9984px 0 0 0 $aista_primary;
+  }
+
+  100% {
+    box-shadow: 9984px 15px 0 0 rgba(152, 128, 255, 0);
+  }
+}
+
+@keyframes waitingDotAfter {
+  0% {
+    box-shadow: 10014px -15px 0 0 rgba(152, 128, 255, 0);
+  }
+
+  25%,
+  50%,
+  75% {
+    box-shadow: 10014px 0 0 0 $aista_primary;
+  }
+
+  100% {
+    box-shadow: 10014px 15px 0 0 rgba(152, 128, 255, 0);
+  }
+}

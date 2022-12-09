@@ -1,0 +1,19 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
+ .reset-mw {
+  min-width: unset;
+}
+
+.full-height {
+  height: calc(100% - 112px);
+}
+
+.config ::ng-deep {
+  .cm-s-aista.CodeMirror:not(.CodeMirror-fullscreen) {
+    height: 100%;
+    max-height: 57vh;
+  }
+}

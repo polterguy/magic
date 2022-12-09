@@ -1,6 +1,6 @@
 
 /*
- * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
 // Angular and system imports.
@@ -78,8 +78,8 @@ export class HttpService {
     } else {
       return this.httpClient.post(this.backendService.active.url + url,
         args, {
-          observe: 'response',
-          responseType: 'arraybuffer',
+        observe: 'response',
+        responseType: 'arraybuffer',
       });
     }
   }

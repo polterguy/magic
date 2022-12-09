@@ -1,0 +1,25 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
+ @import '../../../../../../../assets/styles/_variables/colors.scss';
+
+#custom-input ::ng-deep {
+  .mat-input-element:disabled {
+    color: $aista_dark;
+    font-size: 11px;
+  }
+}
+
+.modal-custom-codemirror ::ng-deep {
+  .cm-s-aista.CodeMirror {
+    padding-top: 10px;
+    min-height: 94%;
+  }
+}
+
+.custom-copy-btn {
+  font-size: 13px;
+  line-height: 1.4;
+}

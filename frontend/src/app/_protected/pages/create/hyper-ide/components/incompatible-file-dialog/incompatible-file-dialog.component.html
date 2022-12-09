@@ -1,0 +1,11 @@
+<h3 mat-dialog-title>{{data?.name}}</h3>
+<div mat-dialog-content>
+  <p class="fw-bold mb-4">This file cannot be opened. Please choose what to do with this file.</p>
+</div>
+
+<div mat-dialog-actions [align]="'end'">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-button [mat-dialog-close]="{deleteFile: true}">Delete</button>
+  <button *ngIf="data?.name?.endsWith('.zip')" mat-button [mat-dialog-close]="{unzip: true}">Unzip</button>
+  <button mat-flat-button [mat-dialog-close]="{download: true}" color="primary">Download</button>
+</div>

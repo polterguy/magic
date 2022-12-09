@@ -4,7 +4,7 @@
       <div class="col-12 d-flex flex-column h-100">
         <div class="row">
           <div class="col-12">
-              <p class="mt-0 mb-4 mat-body-2 fw-bold">Information</p>
+            <p class="mt-0 mb-4 mat-body-2 fw-bold">Information</p>
           </div>
         </div>
 
@@ -17,6 +17,42 @@
           </div>
         </div>
         <button mat-button color="primary" class="w-100 mt-auto" (click)="more()">More information</button>
+        <div class="row mb-3">
+          <div class="col-6 text-muted">
+            Timezone:
+          </div>
+          <div class="col">{{data?.default_timezone === 'none' ? 'Default' : data?.default_timezone }}</div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-6 text-muted">
+            Version:
+          </div>
+          <div class="col-6">{{data?.version}}</div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-6 text-muted">
+            No. endpoints:
+          </div>
+          <div class="col-6">{{data?.endpoints}}</div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-6 text-muted">
+            Server IP:
+          </div>
+          <div class="col-6">{{data?.server_ip ? data?.server_ip : '-'}}</div>
+        </div>
+
+        <mat-form-field class="theme-selector">
+          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>remove_red_eye</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+
+          <mat-select placeholder="Theme" [(ngModel)]="themeService.theme">
+            <mat-option *ngFor="let item of themes" [value]="item">{{item}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
       </div>
     </div>
   </mat-card-content>

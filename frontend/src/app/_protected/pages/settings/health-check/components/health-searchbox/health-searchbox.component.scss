@@ -1,0 +1,18 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
+ .mw-set {
+  min-width: 182px;
+}
+
+.align-items-stretch ::ng-deep {
+  .mat-form-field-appearance-outline .mat-form-field-wrapper {
+    margin: 0;
+  }
+
+  .mat-form-field-infix {
+    width: unset;
+  }
+}

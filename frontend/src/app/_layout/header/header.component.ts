@@ -3,19 +3,15 @@
  * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { GeneralService } from 'src/app/_general/services/general.service';
 import { BackendService } from 'src/app/_protected/services/common/backend.service';
 import { NavLinks } from './_model/nav-links';
-import { Clipboard } from '@angular/cdk/clipboard';
 import { Backend } from 'src/app/_protected/models/common/backend.model';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogComponent } from 'src/app/_general/components/dialog/dialog.component';
 import { BackendsListComponent } from 'src/app/_general/components/backends-list/backends-list.component';
-import { Location } from '@angular/common';
-import { CryptoService } from 'src/app/_protected/pages/setting-security/server-key-setting/_services/crypto.service';
-import { GithubTokenDialogComponent } from 'src/app/_general/components/github-token-dialog/github-token-dialog.component';
+import { GithubTokenDialogComponent } from 'src/app/_protected/pages/user/github-token-dialog/github-token-dialog.component';
 import { Status } from 'src/app/_protected/models/common/status.model';
 
 @Component({
@@ -23,7 +19,7 @@ import { Status } from 'src/app/_protected/models/common/status.model';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent {
 
   /**
    * Header's links.
@@ -34,16 +30,6 @@ export class HeaderComponent implements OnInit {
    * An instance for the list of permissions specified in the backendService.
    */
   private permissions: any = [];
-
-  /**
-   * Specifies if the user is authenticated towards the selected backend or now.
-   */
-  private hasToken: boolean = undefined;
-
-  /**
-   * Specifies if the user has a root role.
-   */
-  private isRoot: boolean = undefined;
 
   /**
    * Specifies the active backend's url.
@@ -66,195 +52,126 @@ export class HeaderComponent implements OnInit {
 
   public waitingSetupStatus: boolean = true;
 
-   /**
-    *
-    * @param clipboard To copy URL of endpoint
-    * @param generalService To provide feedback to user
-    * @param userService
-    * @param router To redirect user after having verified his authentication token
-    * @param cdr To mark component as having changes
-    * @param themeService To determine which theme we're using and to allow user to change theme
-    * @param backendService To keep track of currently selected backend
-    */
   constructor(
     private dialog: MatDialog,
-    private location: Location,
-    private clipboard: Clipboard,
-    private generalService: GeneralService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private cdr: ChangeDetectorRef,
     private backendService: BackendService) {
-      this.activatedRoute.queryParamMap.subscribe((params: any) => {
-        if (params && params.keys && params.keys.length > 0) {
-          this.getParams(params)
-        } else {
-          this.getPermissions();
-        }
+    this.activatedRoute.queryParamMap.subscribe((params: any) => {
+      if (params && params.keys && params.keys.length > 0) {
+        this.getParams(params)
+      } else {
+        this.getPermissions();
+      }
 
-      })
-    }
-
-    ngOnInit() {
-    }
+    })
+  }
 
   public getPermissions() {
-    // TODO:
+    if ((this.backendService?.active?.access && Object.keys(this.backendService?.active?.access?.auth).length > 0)) {
+      this.permissions = this.backendService.active;
+      this.username = this.permissions.token ? this.permissions.token['_username'] : 'anonymous';
+      this.backendService.active ? this.activeUrl = this.backendService.active.url.replace('http://', '').replace('https://', '') : this.activeUrl = 'not connected';
+      this.backendList = this.backendService.backends;
 
-    // (async () => {
-    //   while (!(this.backendService?.active && this.backendService?.active?.access && Object.keys(this.backendService?.active?.access?.auth ?? {}).length > 0))
-    //     await new Promise(resolve => setTimeout(resolve, 100));
+      const notAuthorized: boolean = (!this.backendService.active || Object.values(this.backendService.active.access.auth ?? {}).every((item: any) => { return item === false }))
 
-    //   if ((this.backendService?.active?.access && Object.keys(this.backendService?.active?.access?.auth).length > 0)) {
-    //     this.permissions = this.backendService.active;
-    //     this.username = this.permissions.token ? this.permissions.token['_username'] : 'anonymous';
-    //     this.backendService.active ? this.activeUrl = this.backendService.active.url.replace('http://', '').replace('https://', '') : this.activeUrl = 'not connected';
-    //     this.backendList = this.backendService.backends;
-
-    //     console.log(this.backendService)
-
-    //     const notAuthorized: boolean = (!this.backendService.active || Object.values(this.backendService.active.access.auth ?? {}).every((item: any) => { return item === false }))
-
-    //     if (notAuthorized || this.backendService.active.token === null) {
-    //       this.router.navigate(['/authentication/login']);
-    //     }
-
-    //     this.createMenu();
-    //     this.getSetupStatus();
-    //   } else {
-    //     console.log(this.backendService)
-    //     const notAuthorized: boolean = (!this.backendService.active || Object.values(this.backendService.active.access.auth ?? {}).every((item: any) => { return item === false }))
-
-    //     if (notAuthorized || this.backendService.active.token === null) {
-    //       this.router.navigate(['/authentication/login']);
-    //     }
-    //   }
-    // })();
-
-    setTimeout(() => {
-      if ((this.backendService?.active?.access && Object.keys(this.backendService?.active?.access?.auth).length > 0)) {
-        this.permissions = this.backendService.active;
-        this.username = this.permissions.token ? this.permissions.token['_username'] : 'anonymous';
-        this.backendService.active ? this.activeUrl = this.backendService.active.url.replace('http://', '').replace('https://', '') : this.activeUrl = 'not connected';
-        this.backendList = this.backendService.backends;
-
-        const notAuthorized: boolean = (!this.backendService.active || Object.values(this.backendService.active.access.auth ?? {}).every((item: any) => { return item === false }))
-
-        if (notAuthorized || this.backendService.active.token === null) {
-          console.log('backendService responded.')
-          this.router.navigate(['/authentication/login']);
-        }
-
-        this.createMenu();
-        this.getSetupStatus();
-      } else {
-        console.log(this.backendService)
-        console.log('backendService didn\'t respond.')
-        const notAuthorized: boolean = (!this.backendService.active || Object.values(this.backendService.active.access.auth ?? {}).every((item: any) => { return item === false }))
-
-        if (notAuthorized || this.backendService.active.token === null) {
-          this.router.navigate(['/authentication/login']);
-        }
+      if (notAuthorized || this.backendService.active.token === null) {
+        this.router.navigate(['/authentication/login']);
       }
-    }, 3000);
+
+      this.createMenu();
+      this.getSetupStatus();
+    } else {
+      const notAuthorized: boolean = (!this.backendService.active || Object.values(this.backendService.active.access.auth ?? {}).every((item: any) => { return item === false }))
+      if (notAuthorized || this.backendService.active.token === null) {
+        this.router.navigate(['/authentication/login']);
+      }
+    }
   }
 
   /*
    * Retrieving URL parameter
    */
   private getParams(params: any) {
-    // Parsing query parameters.
-    // this.activated.queryParams.subscribe((params: Params) => {
 
-      // Checking if user accessed system with a link containing query param pointing to specific backend.
-      const backend = params.params['backend'];
-      if (backend) {
-        const cur = new Backend(backend);
+    // Checking if user accessed system with a link containing query param pointing to specific backend.
+    const backend = params.params['backend'];
+    if (backend) {
+      const cur = new Backend(backend);
 
-        // Making sure we keep existing username, password and token, if we have these values.
-        const old = this.backendService.backends.filter(x => x.url === cur.url);
-        if (old.length > 0) {
-          cur.username = old[0].username;
-          cur.password = old[0].password;
-          cur.token = old[0].token;
-        }
-        this.backendService.activate(cur);
-        this.backendService.upsert(cur);
+      // Making sure we keep existing username, password and token, if we have these values.
+      const old = this.backendService.backends.filter(x => x.url === cur.url);
+      if (old.length > 0) {
+        cur.username = old[0].username;
+        cur.password = old[0].password;
+        cur.token = old[0].token;
+      }
+      this.backendService.activate(cur);
+      this.backendService.upsert(cur);
 
-        if (cur.token === null) {
-          this.router.navigate(['/authentication/login/'], {
-            queryParamsHandling: 'preserve'
-          });
-        } else {
-          window.location.href = '/';
-        }
-
+      if (cur.token === null) {
+        this.router.navigate(['/authentication/login/'], {
+          queryParamsHandling: 'preserve'
+        });
       } else {
-
-        // Checking if user has some sort of token, implying reset-password token or verify-email token.
-        const token = params.params['token'];
-        if (token && token.includes('.')) {
-
-          /*
-           * 'token' query parameter seems to be a JWT token.
-           *
-           * Authentication request, authenticating using specified link,
-           * and redirecting user to hide URL.
-           */
-          const url = params.params['url'];
-          const username = params.params['username'];
-          const backend = new Backend(url, username, null, token);
-          this.backendService.upsert(backend);
-          this.backendService.activate(backend);
-          this.backendService.verifyToken().subscribe({
-            next: () => {
-
-              // this.feedbackService.showInfo(`You were successfully authenticated as '${username}'`);
-
-              // Checking if this is an impersonation request or a change-password request.
-              if (this.backendService.active.token.in_role('reset-password')) {
-
-                // Change password request.
-                this.router.navigate(['/change-password']);
-
-              } else {
-
-                // Impersonation request.
-                // this.location.replaceState('');
-                window.location.href = '/';
-                this.getPermissions();
-              }
-            },
-            error: (error: any) => {}
-          });
-
-        } else if (token) {
-
-          /*
-           * 'token' seems to be a "verify email address" type of token since it doesn't contain "." characters.
-           *
-           * Need to set the current backend first.
-           */
-          const backend = new Backend(params.params['url'], params.params['username']);
-          this.backendService.upsert(backend);
-          this.backendService.activate(backend);
-          this.getPermissions();
-          // Verifying user's email address.
-          // this.registerService.verifyEmail(params['username'], token).subscribe({
-          //   next: (result: Response) => {
-          //     if (result.result === 'success') {
-          //       this.feedbackService.showInfo('You successfully confirmed your email address');
-          //       this.location.replaceState('');
-          //     }
-          //   },
-          //   error: (error: any) => this.feedbackService.showError(error)
-          // });
-        } else {
-          this.getPermissions();
-        }
+        window.location.href = '/';
       }
 
-    // });
+    } else {
+
+      // Checking if user has some sort of token, implying reset-password token or verify-email token.
+      const token = params.params['token'];
+      if (token && token.includes('.')) {
+
+        /*
+         * 'token' query parameter seems to be a JWT token.
+         *
+         * Authentication request, authenticating using specified link,
+         * and redirecting user to hide URL.
+         */
+        const url = params.params['url'];
+        const username = params.params['username'];
+        const backend = new Backend(url, username, null, token);
+        this.backendService.upsert(backend);
+        this.backendService.activate(backend);
+        this.backendService.verifyToken().subscribe({
+          next: () => {
+
+            // this.feedbackService.showInfo(`You were successfully authenticated as '${username}'`);
+
+            // Checking if this is an impersonation request or a change-password request.
+            if (this.backendService.active.token.in_role('reset-password')) {
+
+              // Change password request.
+              this.router.navigate(['/change-password']);
+
+            } else {
+
+              // Impersonation request.
+              // this.location.replaceState('');
+              window.location.href = '/';
+              this.getPermissions();
+            }
+          },
+          error: (error: any) => { }
+        });
+
+      } else if (token) {
+
+        /*
+         * 'token' seems to be a "verify email address" type of token since it doesn't contain "." characters.
+         *
+         * Need to set the current backend first.
+         */
+        const backend = new Backend(params.params['url'], params.params['username']);
+        this.backendService.upsert(backend);
+        this.backendService.activate(backend);
+        this.getPermissions();
+      } else {
+        this.getPermissions();
+      }
+    }
   }
 
   private createMenu() {
@@ -271,7 +188,7 @@ export class HeaderComponent implements OnInit {
         submenu: [
           {
             name: 'Databases',
-            url: '/database-management',
+            url: '/databases',
             disabled: !(this.permissions.access.sql.execute_access && this.permissions.setupDone)
           },
           {
@@ -296,7 +213,7 @@ export class HeaderComponent implements OnInit {
           },
           {
             name: 'Frontend IDE',
-            url: '/generated-frontend',
+            url: '/frontend-ide',
             disabled: !(this.permissions.access.crud.generate_crud && this.permissions.access.crud.generate_sql && this.permissions.access.crud.generate_frontend && this.permissions.setupDone)
           },
         ],
@@ -307,7 +224,7 @@ export class HeaderComponent implements OnInit {
         expandable: true,
         submenu: [
           {
-            name: 'Users and roles',
+            name: 'Users & roles',
             url: '/user-roles-management',
             disabled: !(this.permissions.access.auth.view_users && this.permissions.access.auth.view_roles && this.permissions.setupDone)
           },
@@ -354,15 +271,15 @@ export class HeaderComponent implements OnInit {
             disabled: !(this.permissions.access.crypto.import_public_key)
           },
           {
+            name: 'Health check',
+            url: '/endpoints-health-check',
+            disabled: !(this.permissions.access.log.read && this.permissions.setupDone)
+          },
+          {
             name: 'Log',
             url: '/log',
             disabled: !(this.permissions.access.log.read && this.permissions.setupDone)
           },
-          {
-            name: 'Health check',
-            url: '/endpoints-health-check',
-            disabled: !(this.permissions.access.log.read && this.permissions.setupDone)
-          }
         ],
       },
       {
@@ -384,7 +301,6 @@ export class HeaderComponent implements OnInit {
           },
           {
             name: 'Logout',
-            color: 'warn'
           }
         ],
       }
@@ -473,34 +389,4 @@ export class HeaderComponent implements OnInit {
       }
     });
   }
-  // /**
-  //  * Invoked when user wants to copy the full URL of the endpoint.
-  //  */
-  //  copyUrlWithBackend(url: string) {
-  //   const currentURL = window.location.protocol + '//' + window.location.host;
-  //   const param = currentURL + '?backend='
-  //   this.clipboard.copy(param + encodeURIComponent(url));
-  //   this.generalService.showFeedback('Backend URL was copied to your clipboard');
-  // }
-
-  // /**
-  //  * Switching to specified backend.
-  //  *
-  //  * @param backend Backend to switch to
-  //  */
-  // switchBackend(backend: Backend) {
-  //   this.backendService.activate(backend);
-  //   this.router.navigate(['/']);
-  // }
-
-  // /**
-  //  * Removes specified backend from local storage
-  //  *
-  //  * @param backend Backend to remove
-  //  */
-  // removeBackend(backend: Backend) {
-
-  //   // For weird reasons the menu gets "stuck" unless we do this in a timer.
-  //   setTimeout(() => this.backendService.remove(backend), 1);
-  // }
 }

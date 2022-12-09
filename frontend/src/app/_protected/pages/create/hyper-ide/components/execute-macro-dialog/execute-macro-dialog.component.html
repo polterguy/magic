@@ -1,0 +1,35 @@
+<h3 mat-dialog-title>{{data.name}}</h3>
+
+<div mat-dialog-content>
+
+  <p class="text-muted">{{data.description}}</p>
+
+  <div *ngFor="let idx of data.arguments">
+
+    <mat-form-field *ngIf="idx.type === 'string'" class="w-100 prefix-alignment">
+      <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2"
+        [matTooltip]="idx.description">
+        {{idx.name}}
+        <span class="text-muted ms-1">|</span>
+      </span>
+      <input type="text" matInput autocomplete="off" [(ngModel)]="idx.value">
+    </mat-form-field>
+
+    <mat-form-field *ngIf="idx.type === 'multi_string'" class="w-100 prefix-alignment custom-fields">
+      <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2 mt-2"
+        [matTooltip]="idx.description">
+        {{idx.name}}
+        <span class="text-muted ms-1">|</span>
+      </span>
+      <textarea matInput rows="4" autocomplete="off" [(ngModel)]="idx.value"></textarea>
+    </mat-form-field>
+
+  </div>
+
+</div>
+
+<div mat-dialog-actions [align]="'end'">
+  <button mat-button mat-dialog-close>Close</button>
+  <button mat-button (click)="differentMacro()">Change macro</button>
+  <button mat-flat-button color="primary" (click)="execute()">Execute</button>
+</div>

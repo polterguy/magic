@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { GeneralService } from 'src/app/_general/services/general.service';
@@ -53,6 +58,7 @@ export class ChartComponent implements OnInit, OnDestroy {
     private themeService: ThemeService) { }
 
   ngOnInit(): void {
+
     /**
      * Setting chart color based on the selected theme
      */
@@ -130,12 +136,12 @@ export class ChartComponent implements OnInit, OnDestroy {
         type: 'scroll',
         padding: [0, 5],
         textStyle: {
-          color: this.theme === 'light' ? 'black' : 'white',
+          color: 'black',
           fontSize: 10
         },
-        pageIconColor: this.theme === 'light' ? 'black' : 'white',
+        pageIconColor: 'black',
         pageTextStyle: {
-          color: this.theme === 'light' ? 'black' : 'white'
+          color: 'black'
         }
       },
       series: [

@@ -1,0 +1,114 @@
+<div class="row mt-4">
+
+  <div class="col-md-6 col-12 pe-lg-5">
+    <div class="row">
+
+      <div class="col-12">
+        <h3 class="fw-bold">Create a new database</h3>
+        <p class="text-muted">Give your new database a name in the textbox below.</p>
+      </div>
+      <div class="col-12 my-5">
+        <form class="d-flex flex-nowrap align-items-stretch w-100">
+          <mat-form-field class="w-65 standalone-field">
+            <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+              <mat-icon>database</mat-icon>
+              <span class="text-muted">|</span>
+            </span>
+            <input matInput type="text" name="-" autocomplete="off" placeholder="Insert the name of the database"
+              [(ngModel)]="databaseName" required />
+          </mat-form-field>
+          <div class="p-2"></div>
+          <button mat-flat-button class="w-35" color="primary" type="submit" (click)="createNewDatabase()">Create
+            now</button>
+        </form>
+      </div>
+
+
+      <div class="col-12">
+        <h3 class="fw-bold">Install ready databases</h3>
+        <p class="text-muted">Select a database, install, and start using it right away!</p>
+      </div>
+
+      <ng-container *ngIf="isLoadingPlugins">
+        <app-loading-skeleton [amount]="3" [colClass]="'col-12'" [blockHeight]="'80px'"
+          [hasShadow]="false"></app-loading-skeleton>
+      </ng-container>
+      <ng-container *ngIf="!isLoadingPlugins">
+        <div class="col-12 bg-light mt-4 py-3 mb-2" *ngFor="let item of databases">
+          <div class="row">
+            <div class="col-xl-7 col-lg-6 col-12 ps-4">
+              <p class="mat-body-2 mb-1">{{item?.name}}</p>
+              <p class="text-muted text-truncate my-0">{{item?.description}}</p>
+            </div>
+            <div
+              class="col-xl-5 col-lg-6 col-12 d-flex flex-nowrap align-self-center justifycontent-between mt-lg-0 mt-3">
+              <button mat-button color="primary" (click)="viewAppDetails(item)">Detail</button>
+              <button mat-flat-button color="primary" class="w-100 px-4 ms-2" *ngIf="!item?.details"
+                (click)="installDb(item)">Install</button>
+              <button mat-flat-button color="warn" class="w-100 px-4 ms-2" *ngIf="item?.details"
+                (click)="uninstallDb(item.details)">Uninstall</button>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+
+  <!-- Databases table -->
+  <div class="col-md-6 col-12 position-relative ps-lg-5">
+    <div class="v-line"></div>
+    <h3 class="fw-bold">List of created or installed databases</h3>
+
+    <ng-container *ngIf="isLoadingDbs">
+      <app-loading-skeleton [amount]="8" [colClass]="'col-12'" [blockHeight]="'48px'"
+        [hasShadow]="false"></app-loading-skeleton>
+    </ng-container>
+    <div class="table-responsive" *ngIf="!isLoadingDbs">
+      <table mat-table [dataSource]="existingDatabases" class="w-100 borderless hoverable">
+
+        <!-- name Column -->
+        <ng-container matColumnDef="dbName">
+          <th mat-header-cell *matHeaderCellDef class="text-nowrap ps-0"> Database name </th>
+          <td mat-cell *matCellDef="let element" class="ps-0 text-truncate"> {{element?.name}} </td>
+        </ng-container>
+
+        <!-- tables Column -->
+        <ng-container matColumnDef="tables">
+          <th mat-header-cell *matHeaderCellDef class="text-nowrap ps-0"> No. of tables </th>
+          <td mat-cell *matCellDef="let element" class="ps-0"> {{element?.tables?.length ?? '-'}} </td>
+        </ng-container>
+
+        <!-- actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef class="ps-0"> Actions </th>
+          <td mat-cell *matCellDef="let element" class="px-0">
+            <button mat-button color="primary" class="ps-0" routerLink="/sql-studio"
+              [queryParams]="{dbType: element.type, dbName: element.name, dbCString: element.connectionString}">Manage</button>
+            <button mat-button color="warn" class="ps-0" (click)="deleteDb(element)"
+              [disabled]="element.name === 'magic'">Delete</button>
+            <button mat-button color="primary" class="px-0" routerLink="/endpoint-generator"
+              [queryParams]="{dbType: element.type, dbName: element.name, dbCString: element.connectionString}">Generate
+              endpoint</button>
+          </td>
+        </ng-container>
+
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<div class="waiting-overlay" *ngIf="waitingInstallation">
+  <div class="row h-100 align-items-center justify-content-center">
+    <div class="col-xxl-2 col-xl-3 col-md-4 col-sm-5 col-6">
+      <div class="d-flex w-100 justify-content-center">
+        <div class="wating-dot-animation"></div>
+      </div>
+      <h3 class="text-center mt-5">{{currentStage}}</h3>
+      <p class="mat-h3 text-center mt-4">Please do NOT leave this page until the installation is completed.</p>
+    </div>
+  </div>
+</div>

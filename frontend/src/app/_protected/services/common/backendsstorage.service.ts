@@ -1,6 +1,6 @@
 
 /*
- * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
 // Angular and system imports.
@@ -76,7 +76,7 @@ export class BackendsStorageService {
    * @param value Backend to activate
    */
   activate(value: Backend) {
-    this._backends.sort((lhs, rhs) => {
+    this._backends = this._backends.sort((lhs, rhs) => {
       if (lhs.url === value.url) {
         return -1;
       } else if (rhs.url === value.url) {

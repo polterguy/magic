@@ -1,6 +1,6 @@
 
 /*
- * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
 import { Pipe, PipeTransform } from '@angular/core';
@@ -19,13 +19,13 @@ export class DynamicPipe implements PipeTransform {
    * @param value Value to transform
    * @param max Optional maximum number of items to return
    */
-  transform(value: any, max: number = -1) : any {
+  transform(value: any, max: number = -1): any {
     const keys = [];
     for (const key in value) {
       if (keys.length === max) {
         break;
       }
-      keys.push({key: key, value: value[key]});
+      keys.push({ key: key, value: value[key] });
     }
     return keys;
   }

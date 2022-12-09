@@ -31,9 +31,7 @@ import { environment } from 'src/environments/environment';
 import { ServiceWorkerModule } from '@angular/service-worker';
 
 // Interceptors
-import { NetworkInterceptor } from './_general/helper/network.interceptor';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
-import { TokenInterceptor } from './_general/helper/token.interceptor';
 
 // Components
 import { AppComponent } from './app.component';
@@ -42,7 +40,6 @@ import { HeaderComponent } from './_layout/header/header.component';
 import { FooterComponent } from './_layout/footer/footer.component';
 
 import { AccessGuard } from './access.guard';
-import { BaseComponent } from './_layout/public/base/base.component';
 import { AuthBaseComponent } from './public/authentication/auth-base/auth-base.component';
 
 @NgModule({
@@ -51,7 +48,6 @@ import { AuthBaseComponent } from './public/authentication/auth-base/auth-base.c
     CoreComponent,
     HeaderComponent,
     FooterComponent,
-    BaseComponent,
     AuthBaseComponent
   ],
   imports: [

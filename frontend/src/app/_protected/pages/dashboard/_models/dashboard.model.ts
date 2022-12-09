@@ -1,5 +1,5 @@
 /*
- * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
 /**
@@ -25,9 +25,9 @@ export interface SystemReport {
   timeshifts?: Timeshifts[]
 }
 
- /**
-  * type of logs created on the backend
-  */
+/**
+ * type of logs created on the backend
+ */
 export interface LogTypes {
   debug?: number,
   error?: number,
@@ -41,7 +41,7 @@ export interface Timeshifts {
   variable?: {
     description?: string,
     name?: string,
-    items?: [ {
+    items?: [{
       when?: Date,
       count?: number
     }]
@@ -52,7 +52,7 @@ export interface Timeshifts {
  * Displaying the complexity of modules
  */
 export interface Modules {
-  variable?: [ {
+  variable?: [{
     files?: number,
     loc?: number
   }]

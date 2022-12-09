@@ -1,0 +1,11 @@
+<h3 mat-dialog-title>Do you want to save the changes you made to {{data}}?</h3>
+
+<div mat-dialog-content>
+  <p class="fw-bold">Your changes will be lost if you don't save them.</p>
+</div>
+
+<div mat-dialog-actions [align]="'end'">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-button [mat-dialog-close]="{save: false}">Don't save</button>
+  <button mat-flat-button color="primary" [mat-dialog-close]="{save: true}" cdkFocusInitial>Save</button>
+</div>

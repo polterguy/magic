@@ -1,6 +1,6 @@
 
 /*
- * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
 // Angular and system imports.
@@ -15,7 +15,7 @@ import { AppManifest } from '../../../models/app-manifest';
 import { Response } from 'src/app/models/response.model';
 import { environment } from '../../../../environments/environment';
 import { PurchaseStatus } from '../../../models/purchase-status.model';
-import { FileService } from '../../pages/tools/hyper-ide/_services/file.service';
+import { FileService } from '../../pages/create/hyper-ide/_services/file.service';
 import { HttpService } from 'src/app/_general/services/http.service';
 
 /**

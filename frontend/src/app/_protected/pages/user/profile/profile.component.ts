@@ -1,10 +1,15 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
 import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { BackendService } from 'src/app/_protected/services/common/backend.service';
-import { UserService } from '../../administration/user-roles/_services/user.service';
+import { UserService } from '../../manage/user-and-roles/_services/user.service';
 
 @Component({
   selector: 'app-profile',
@@ -60,7 +65,7 @@ export class ProfileComponent implements OnInit {
           this.user = user;
         }
       },
-      error: (error: any) => {}
+      error: (error: any) => { }
     })
   }
 
@@ -79,7 +84,7 @@ export class ProfileComponent implements OnInit {
         this.generalService.showFeedback('Details saved successfully', 'successMessage');
       },
       error: (error: any) => {
-        this.generalService.showFeedback(error?.error?.message??error, 'errorMessage');
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
       }
     })
   }
@@ -111,6 +116,7 @@ export class ProfileComponent implements OnInit {
         this.backendService.logout(false);
         this.router.navigate(['/authentication']);
       },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')});
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+    });
   }
 }

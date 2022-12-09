@@ -1,7 +1,12 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { Endpoint } from 'src/app/_protected/pages/administration/generated-endpoints/_models/endpoint.model';
-import { EndpointService } from 'src/app/_protected/pages/administration/generated-endpoints/_services/endpoint.service';
+import { Endpoint } from 'src/app/_protected/pages/manage/endpoints/_models/endpoint.model';
+import { EndpointService } from 'src/app/_protected/pages/manage/endpoints/_services/endpoint.service';
 
 @Injectable({
   providedIn: 'root'

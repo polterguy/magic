@@ -1,8 +1,0 @@
-@import '../../../../../../../assets/styles/_variables/colors.scss';
-@import '../../../../../../../assets/styles/_variables/mixin.scss';
-
-.table-responsive {
-  max-height: 65vh;
-  @include scrollbar($aista_default_alt,$aista_default_grey4,8px);
-  .text-truncate {max-width: 10vw;}
-}

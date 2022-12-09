@@ -1,15 +1,7 @@
 
 /*
- * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
-
-/**
- * Wrapper class for purchasing an app.
- */
-export class BazarAppWrapper {
-  app: BazarApp;
-  purchase: (app: BazarApp, after: () => void) => void;
-}
 
 /**
  * Meta information for a single Bazar app.

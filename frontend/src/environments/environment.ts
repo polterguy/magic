@@ -1,6 +1,6 @@
 
 /*
- * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 export const environment = {
   production: false,
@@ -10,7 +10,7 @@ export const environment = {
       username: 'root',
       password: 'root',
       token_raw: null,
-     },
+    },
   ],
   bazarUrl: 'https://api.aista.com'
 };

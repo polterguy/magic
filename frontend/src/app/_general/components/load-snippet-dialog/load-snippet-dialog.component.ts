@@ -1,6 +1,6 @@
 
 /*
- * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
 // Angular and system imports.
@@ -8,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 
 // Application specific imports.
-import { EvaluatorService } from 'src/app/components/misc/evaluator/services/evaluator.service';
+import { EvaluatorService } from 'src/app/_protected/services/common/evaluator.service';
 import { GeneralService } from '../../services/general.service';
 
 /**
@@ -51,7 +51,7 @@ export class LoadSnippetDialogComponent implements OnInit {
       next: (files: string[]) => {
         this.files = files.filter(x => x.endsWith('.hl'));
       },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
     });
   }
 

@@ -1,11 +1,14 @@
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
+import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Observable } from 'rxjs';
-import { AssumptionService } from 'src/app/_protected/pages/setting-security/health-check/_services/assumption.service';
+import { AssumptionService } from 'src/app/_protected/pages/settings/health-check/_services/assumption.service';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { BackendService } from 'src/app/_protected/services/common/backend.service';
-import { CreateAssumptionTestDialogComponent, TestModel } from '../create-assumption-test-dialog/create-assumption-test-dialog.component';
-import { InvocationResult } from '../../../_protected/pages/administration/generated-endpoints/endpoints-result/endpoints-result.component';
+import { InvocationResult } from '../../../_protected/pages/manage/endpoints/endpoints-result/endpoints-result.component';
 
 /*
  * Assumption model for existing tests endpoint has declared.
