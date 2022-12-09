@@ -92,7 +92,8 @@
               <mat-icon class="me-2">{{treeControl.isExpanded(folder) ? 'folder_open' : 'folder'}}</mat-icon>
               <input type="text" [value]="folder.name" class="w-100 ms-2"
                 [id]="showRenameBox === folder ? 'renameFile':''" #folderInput
-                (keyup.enter)="renameActiveFolder(folder, folderInput?.value)">
+                (keyup.enter)="renameActiveFolder(folder, folderInput?.value)"
+                (keyup.esc)="showRenameBox = null">
             </span>
             <!-- action buttons -->
             <div class="show-on-hover" *ngIf="showRenameBox===null" [style.margin-right.px]="10 * folder?.level">
