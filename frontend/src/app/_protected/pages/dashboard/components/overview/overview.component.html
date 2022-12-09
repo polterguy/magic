@@ -17,31 +17,6 @@
           </div>
         </div>
         <button mat-button color="primary" class="w-100 mt-auto" (click)="more()">More information</button>
-        <div class="row mb-3">
-          <div class="col-6 text-muted">
-            Timezone:
-          </div>
-          <div class="col">{{data?.default_timezone === 'none' ? 'Default' : data?.default_timezone }}</div>
-        </div>
-        <div class="row mb-3">
-          <div class="col-6 text-muted">
-            Version:
-          </div>
-          <div class="col-6">{{data?.version}}</div>
-        </div>
-        <div class="row mb-3">
-          <div class="col-6 text-muted">
-            No. endpoints:
-          </div>
-          <div class="col-6">{{data?.endpoints}}</div>
-        </div>
-        <div class="row mb-3">
-          <div class="col-6 text-muted">
-            Server IP:
-          </div>
-          <div class="col-6">{{data?.server_ip ? data?.server_ip : '-'}}</div>
-        </div>
-
       </div>
     </div>
   </mat-card-content>
