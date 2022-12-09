@@ -249,12 +249,9 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
               return endpoints[0];
             }
         }
-      } else {
-        return null;
       }
-    } else {
-      return null;
     }
+    return null;
   }
 
   /**
