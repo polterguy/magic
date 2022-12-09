@@ -3,7 +3,7 @@
  * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BackendService } from 'src/app/_protected/services/common/backend.service';
 import { NavLinks } from './_model/nav-links';
@@ -19,7 +19,7 @@ import { Status } from 'src/app/_protected/models/common/status.model';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit {
 
   /**
    * Header's links.
@@ -57,13 +57,16 @@ export class HeaderComponent {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private backendService: BackendService) {
+
+  }
+
+  ngOnInit(): void {
     this.activatedRoute.queryParamMap.subscribe((params: any) => {
       if (params && params.keys && params.keys.length > 0) {
         this.getParams(params)
       } else {
         this.getPermissions();
       }
-
     })
   }
 

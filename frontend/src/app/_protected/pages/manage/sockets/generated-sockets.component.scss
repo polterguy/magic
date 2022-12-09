@@ -9,7 +9,7 @@
 
 .scrollable-row {
   height: calc(100% - 100px);
-  overflow: auto;
+
 }
 
 .max-height-full {
@@ -20,4 +20,5 @@
 
 .max-height {
   max-height: 100%;
+  overflow: auto;
 }
