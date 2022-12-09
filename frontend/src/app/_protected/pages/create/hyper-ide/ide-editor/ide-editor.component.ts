@@ -326,7 +326,9 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
             path: this.activeFolder
           }
         }
-        this.renameActiveFolderFromParent.emit(folder)
+        this.renameActiveFolderFromParent.emit(folder);
+        this.updateFileObject.emit(folder);
+        this.activeFolder = this.activeFolder.substring(0, this.activeFolder.substring(0, this.activeFolder.length - 1).lastIndexOf('/') + 1) + data + '/';
       }
     });
   }
