@@ -53,17 +53,14 @@ export class LoginComponent implements OnInit {
     private activatedRoute: ActivatedRoute) { }
 
   ngOnInit(): void {
-    this.readBackendService();
+    this.waitForBackend();
   }
 
-  private readBackendService() {
-    (async () => {
-      while (!(this.backendService?.active && this.backendService?.active?.access && Object.keys(this.backendService?.active?.access?.auth ?? {}).length > 0))
-        await new Promise(resolve => setTimeout(resolve, 100));
-
-      if ((this.backendService?.active?.access && Object.keys(this.backendService?.active?.access?.auth).length > 0)) {
+  private waitForBackend() {
+    this.readBackendService().then((res: any) => {
+      if (res && res.active && res.active.access && res.active.access.auth) {
+        this.backendList = res.backends;
         this.backendHasBeenSelected = true;
-        this.backendList = this.backendService.backends;
 
         this.activatedRoute.queryParams.subscribe((params: any) => {
           if (params.switchTo) {
@@ -88,11 +85,16 @@ export class LoginComponent implements OnInit {
         })
         this.cdr.detectChanges();
       }
-      this.cdr.detectChanges();
-    })();
+    })
   }
 
-  backendActivated(e: MatAutocompleteActivatedEvent) {
+  private readBackendService(): Promise<any> {
+    return new Promise((resolve) => {
+      resolve(this.backendService)
+    });
+  }
+
+  backendActivated(e: MatAutocompleteActivatedEvent) {console.log(this.backendList)
     const defaultBackend: Backend = this.backendList.find((item: any) => item.url === e.option.value);
     this.loginForm.controls.username.setValue(defaultBackend.username);
     if (defaultBackend.password) {
@@ -126,7 +128,9 @@ export class LoginComponent implements OnInit {
       this.savePassword).subscribe({
         next: () => {
           this.router.navigate(['/']);
-          this.waiting = false;
+          setTimeout(() => {
+            this.waiting = false;
+          }, 1000);
         },
         error: (error: any) => {
           this.generalService.showFeedback(error?.error?.message ?? error ?? 'Something went wrong while trying to login', 'errorMessage', 'Ok');

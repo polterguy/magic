@@ -46,23 +46,35 @@ export class DashboardComponent implements OnInit {
   }
 
   private waitForData() {
-    (async () => {
-      while ((this.backendService?.active?.access && Object.keys(this.backendService?.active?.access?.auth ?? {}).length === 0))
-        await new Promise(resolve => setTimeout(resolve, 100));
+    // (async () => {
+    //   while ((this.backendService?.active?.access && Object.keys(this.backendService?.active?.access?.auth ?? {}).length === 0))
+    //     await new Promise(resolve => setTimeout(resolve, 100));
 
-      if (this.backendService?.active?.access && Object.keys(this.backendService?.active?.access?.auth).length) {
-        if (this.backendService.active?.token?.in_role('root')) {
-          this.getSystemReport();
-          this.userIsRoot = (this.backendService.active?.token?.in_role('root'));
-        } else {
-          this.userAsUsername = this.backendService.active.username;
-          this.isLoading = false;
-        }
-        this.cdr.detectChanges();
+    //   if (this.backendService?.active?.access && Object.keys(this.backendService?.active?.access?.auth).length) {
+    //     if (this.backendService.active?.token?.in_role('root')) {
+    //       this.getSystemReport();
+    //       this.userIsRoot = (this.backendService.active?.token?.in_role('root'));
+    //     } else {
+    //       this.userAsUsername = this.backendService.active.username;
+    //       this.isLoading = false;
+    //     }
+    //     this.cdr.detectChanges();
+    //   }
+    // })();
+
+    if (((this.backendService?.active?.access && Object.keys(this.backendService?.active?.access?.auth ?? {}).length === 0))) return Promise.resolve();
+    try {
+      if (this.backendService.active?.token?.in_role('root')) {
+        this.getSystemReport();
+        this.userIsRoot = (this.backendService.active?.token?.in_role('root'));
+      } else {
+        this.userAsUsername = this.backendService.active.username;
+        this.isLoading = false;
       }
-    })();
-
-
+      this.cdr.detectChanges();
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   /*

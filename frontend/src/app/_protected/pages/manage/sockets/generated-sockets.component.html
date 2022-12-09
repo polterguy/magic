@@ -15,7 +15,7 @@
           </div>
         </div>
 
-        <div class="row mt-3 scrollable-row">
+        <div class="row mt-3 scrollable-row pb-3">
           <div class="col-12 max-height">
 
             <app-socket-list [publishedMessages]="publishedMessages" [users]="users"
@@ -38,7 +38,7 @@
         </div>
 
         <div class="row mt-3 scrollable-row">
-          <div class="col-12 max-height">
+          <div class="col-12 max-height pb-3">
 
             <app-socket-result [users]="users" [messages]="messages" [subscriptions]="subscriptions"
               (removeSubscription)="removeSubscription($event)"></app-socket-result>
