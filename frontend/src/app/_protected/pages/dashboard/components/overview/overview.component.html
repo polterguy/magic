@@ -42,17 +42,6 @@
           <div class="col-6">{{data?.server_ip ? data?.server_ip : '-'}}</div>
         </div>
 
-        <mat-form-field class="theme-selector">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-            <mat-icon>remove_red_eye</mat-icon>
-            <span class="text-muted">|</span>
-          </span>
-
-          <mat-select placeholder="Theme" [(ngModel)]="themeService.theme">
-            <mat-option *ngFor="let item of themes" [value]="item">{{item}}</mat-option>
-          </mat-select>
-        </mat-form-field>
-
       </div>
     </div>
   </mat-card-content>

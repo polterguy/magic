@@ -6,7 +6,6 @@ import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { SystemReport } from 'src/app/models/dashboard.model';
 import { OverviewDialogComponent } from '../overview-dialog/overview-dialog.component';
-import { ThemeService } from 'src/app/_general/services/theme.service';
 
 @Component({
   selector: 'app-overview',
@@ -14,15 +13,6 @@ import { ThemeService } from 'src/app/_general/services/theme.service';
   styleUrls: ['./overview.component.scss']
 })
 export class OverviewComponent {
-
-  // Available themes.
-  themes: string[] = [
-    'default',
-    'neomorphism'
-  ];
-
-  // Selected theme.
-  public selectedTheme: string = null;
 
   /**
    * Data coming from the parent component.
@@ -33,9 +23,7 @@ export class OverviewComponent {
   private fullList: any = titles;
   private titles: string[];
 
-  constructor(
-    private dialog: MatDialog,
-    public themeService: ThemeService) { }
+  constructor(private dialog: MatDialog) { }
 
   ngOnInit(): void {
     const storedSelections: string = localStorage.getItem('overviewItems') || '';
