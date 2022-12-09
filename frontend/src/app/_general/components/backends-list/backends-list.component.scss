@@ -3,7 +3,10 @@
  * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
- @media (max-width: 576px) {
+@import '../../../../assets/styles/_variables/colors.scss';
+@import '../../../../assets/styles/_variables/mixin.scss';
+
+@media (max-width: 576px) {
   .backend-list {
     ::ng-deep .mat-row td.mat-cell {
       &::before {
@@ -35,5 +38,23 @@
         }
       }
     }
+  }
+}
+
+.status {
+  min-width: 7px;
+  min-height: 7px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: $aista_default_grey3;
+  display: inline-block;
+
+  &.disconnected {
+    background-color: $aista_default_grey3;
+  }
+
+  &.connected {
+    background-color: $aista_success;
   }
 }
