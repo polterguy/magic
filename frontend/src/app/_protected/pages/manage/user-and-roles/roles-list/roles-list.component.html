@@ -1,0 +1,34 @@
+<div class="table-responsive">
+  <table mat-table [dataSource]="rolesList" class="w-100 borderless hoverable">
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef> Name </th>
+      <td mat-cell *matCellDef="let element" class="text-nowrap"> {{element?.name}} </td>
+    </ng-container>
+
+    <!-- Description Column -->
+    <ng-container matColumnDef="description">
+      <th mat-header-cell *matHeaderCellDef> Description </th>
+      <td mat-cell *matCellDef="let element"> {{element?.description ?? 'N/A'}} </td>
+    </ng-container>
+
+    <!-- action Column -->
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef> Actions </th>
+      <td mat-cell *matCellDef="let element">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <button mat-button color="primary" class="p-0 me-4" (click)="editRole(element)"
+              [disabled]="!userCanUpdate">Edit</button>
+            <button mat-button color="primary" class="p-0" (click)="deleteRole(element)"
+              [disabled]="!userCanDelete || systemRole(element?.name)">Delete</button>
+          </div>
+        </div>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</div>

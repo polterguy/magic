@@ -51,21 +51,20 @@ export class ResetPasswordComponent {
     private formBuilder: UntypedFormBuilder,
     private backendService: BackendService,
     private generalService: GeneralService,
-    private location: Location,
     private activatedRouer: ActivatedRoute,
     private router: Router) {
-      this.activatedRouer.queryParams.subscribe(params => {
-        if (params) {
-          if (params.token) {
-            if (params.token.indexOf('.') > -1) {
-              this.passwordToken = params.token;
-            } else {
-              this.router.navigateByUrl('/authentication')
-            }
+    this.activatedRouer.queryParams.subscribe(params => {
+      if (params) {
+        if (params.token) {
+          if (params.token.indexOf('.') > -1) {
+            this.passwordToken = params.token;
+          } else {
+            this.router.navigateByUrl('/authentication')
           }
         }
-      });
-    }
+      }
+    });
+  }
 
   /**
    * forgot password form
@@ -91,17 +90,7 @@ export class ResetPasswordComponent {
           this.waiting = false;
           this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
         }
-      })
-      // this.authApiService.changePass(data, this.passwordToken).subscribe((res: any) => {
-      //   this.waiting = false;
-      //   if (res && res?.Error) {
-
-      //   } else {
-      //     this.generalService.showFeedback('Password successfully changed', 'successMessage', 'Ok', 10000);
-      //     this.router.navigateByUrl('/');
-      //   }
-      // }, (error: any) => { this.waiting = false; })
-
+      });
     } else {
       this.generalService.showFeedback('All fields are required', 'errorMessage', 'Ok');;
     }

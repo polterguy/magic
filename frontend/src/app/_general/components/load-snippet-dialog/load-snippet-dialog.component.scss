@@ -1,15 +1,21 @@
 
-.mat-list-option {
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
+ .mat-list-option {
   height: 40px;
 }
 
 .mat-dialog-title {
-  font:inherit;
+  font: inherit;
   margin-bottom: 0;
 }
 
 .file-content {
-  ::ng-deep .mat-list-base .mat-list-item .mat-list-item-content-reverse, .mat-list-base .mat-list-option .mat-list-item-content-reverse{
+
+  ::ng-deep .mat-list-base .mat-list-item .mat-list-item-content-reverse,
+  .mat-list-base .mat-list-option .mat-list-item-content-reverse {
     word-break: break-all;
     height: unset;
     min-height: 40px;

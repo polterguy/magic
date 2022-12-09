@@ -1,0 +1,21 @@
+<div class="row">
+  <div class="col-12">
+    <mat-card class="h-100">
+      <mat-card-content class="endpoint-generator h-100">
+        <mat-tab-group mat-stretch-tabs dynamicHeight animationDuration="0ms" #tabs>
+          <mat-tab>
+            <ng-template mat-tab-label>Auto <span class="d-sm-inline d-none px-1">frontend</span>
+              generator</ng-template>
+            <app-auto-generate></app-auto-generate>
+          </mat-tab>
+          <mat-tab>
+            <ng-template mat-tab-label>Upload <span class="d-sm-inline d-none px-1">existing</span>
+              frontend</ng-template>
+            <app-upload-existing></app-upload-existing>
+          </mat-tab>
+        </mat-tab-group>
+
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

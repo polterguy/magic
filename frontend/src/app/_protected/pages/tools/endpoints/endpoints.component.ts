@@ -1,12 +1,17 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ReplaySubject } from 'rxjs';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { Role } from '../../administration/user-roles/_models/role.model';
-import { RoleService } from '../../administration/user-roles/_services/role.service';
-import { Databases } from '../database/_models/databases.model';
-import { DefaultDatabaseType } from '../database/_models/default-database-type.model';
-import { SqlService } from '../database/_services/sql.service';
+import { Role } from '../../manage/user-and-roles/_models/role.model';
+import { RoleService } from '../../manage/user-and-roles/_services/role.service';
+import { Databases } from '../../create/database/_models/databases.model';
+import { DefaultDatabaseType } from '../../create/database/_models/default-database-type.model';
+import { SqlService } from '../../create/database/_services/sql.service';
 
 @Component({
   selector: 'app-endpoints',
@@ -57,14 +62,14 @@ export class EndpointsComponent implements OnInit {
     private roleService: RoleService,
     private activatedRoute: ActivatedRoute,
     private generalService: GeneralService) {
-      this.activatedRoute.queryParams.subscribe((param: any) => {
-        if (param && param.dbName && param.dbType && param.dbCString) {
-          this.paramDbName = param.dbName;
-          this.paramDbType = param.dbType;
-          this.paramDbConnectionString = param.dbCString;
-        }
-      })
-    }
+    this.activatedRoute.queryParams.subscribe((param: any) => {
+      if (param && param.dbName && param.dbType && param.dbCString) {
+        this.paramDbName = param.dbName;
+        this.paramDbType = param.dbType;
+        this.paramDbConnectionString = param.dbCString;
+      }
+    })
+  }
 
   ngOnInit(): void {
     this.getDefaultDbType();
@@ -154,7 +159,7 @@ export class EndpointsComponent implements OnInit {
       next: (res: Role[]) => {
         this.roles = res || [];
       },
-      error: (error: any) => {}
+      error: (error: any) => { }
     })
   }
 

@@ -1,0 +1,67 @@
+<div class="row fullPage">
+  <div class="col-12">
+    <mat-card class="h-100">
+      <mat-card-content class="h-100">
+        <div class="row align-items-center">
+          <div class="col-xxl-8 col-xl-7 col-lg-6 col-12 mb-lg-0 mb-2">
+            <h3 class="my-0 fw-bold">Endpoints health check</h3>
+          </div>
+          <div class="col-xxl-4 col-xl-5 col-lg-6 col-12">
+            <ng-container *ngIf="isLoading;else loaded">
+              <app-loading-skeleton [amount]="1" [colClass]="'col-12'" [blockHeight]="'41px'"
+                [hasShadow]="false"></app-loading-skeleton>
+            </ng-container>
+            <ng-template #loaded>
+              <app-health-searchbox (testAll)="testAll()" (filterList)="filterList($event)"></app-health-searchbox>
+            </ng-template>
+          </div>
+        </div>
+
+        <ng-container *ngIf="isLoading;else dataReady">
+          <app-loading-skeleton [amount]="6" [colClass]="'col-12'" [blockHeight]="'40px'"
+            [hasShadow]="false"></app-loading-skeleton>
+        </ng-container>
+        <ng-template #dataReady>
+          <div class="table-responsive mt-4">
+            <table mat-table [dataSource]="dataSource" class="w-100 borderless hoverable" matSort
+              (matSortChange)="sortData($event)">
+
+              <!-- Name Column -->
+              <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
+                <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+              </ng-container>
+
+              <!-- status Column -->
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
+                <td mat-cell *matCellDef="let element" [class.text-muted]="element?.status === 'Untested'"
+                  [class.text-danger]="element?.status === 'Failed'"
+                  [class.text-success]="element?.status === 'Passed'"> {{element?.status}} </td>
+              </ng-container>
+
+              <!-- action Column -->
+              <ng-container matColumnDef="action">
+                <th mat-header-cell *matHeaderCellDef> Actions </th>
+                <td mat-cell *matCellDef="let element">
+                  <div class="d-flex">
+                    <button mat-button color="primary" class="ps-0" (click)="ensureTestContent(element)">View
+                      details</button>
+                    <div class="pe-1"></div>
+                    <button mat-button color="warn" class="ps-0" (click)="deleteTest(element)">Delete</button>
+                    <div class="pe-1"></div>
+                    <button mat-button color="primary" class="ps-0" (click)="executeTest(element)">Run test</button>
+                  </div>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns;sticky: true"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+
+          </div>
+        </ng-template>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

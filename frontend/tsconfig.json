@@ -13,8 +13,12 @@
     "importHelpers": true,
     "target": "es2020",
     "module": "es2020",
-    "types": ["node"],
-    "typeRoots": ["node_modules/@types"],
+    "types": [
+      "node"
+    ],
+    "typeRoots": [
+      "node_modules/@types"
+    ],
     "lib": [
       "es2018",
       "dom"

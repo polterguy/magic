@@ -21,37 +21,37 @@ import { CreateAssumptionTestDialogComponent } from './create-assumption-test-di
 import { SnippetNameDialogComponent } from './snippet-name-dialog/snippet-name-dialog.component';
 import { EndpointDialogComponent } from './endpoint-dialog/endpoint-dialog.component';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
-import { GithubTokenDialogComponent } from './github-token-dialog/github-token-dialog.component';
+import { GithubTokenDialogComponent } from '../../_protected/pages/user/github-token-dialog/github-token-dialog.component';
 import { PwaUpdateDialogComponent } from './pwa-update-dialog/pwa-update-dialog.component';
 import { LogExceptionComponent } from './log-exception/log-exception.component';
-
-
+import { SearchboxComponent } from 'src/app/_protected/pages/manage/plugins/components/searchbox/searchbox.component';
 
 @NgModule({
   declarations: [
-      TermsModalComponent,
-      PrivacyModalComponent,
-      BackendsListComponent,
-      LoadingSkeletonComponent,
-      DialogComponent,
-      ConfirmationDialogComponent,
-      ShortkeysComponent,
-      LoadSnippetDialogComponent,
-      QueryParamsComponent,
-      AssumptionsComponent,
-      CreateAssumptionTestDialogComponent,
-      SnippetNameDialogComponent,
-      EndpointDialogComponent,
-      GithubTokenDialogComponent,
-      PwaUpdateDialogComponent,
-      LogExceptionComponent
+    TermsModalComponent,
+    PrivacyModalComponent,
+    BackendsListComponent,
+    LoadingSkeletonComponent,
+    DialogComponent,
+    ConfirmationDialogComponent,
+    ShortkeysComponent,
+    LoadSnippetDialogComponent,
+    QueryParamsComponent,
+    AssumptionsComponent,
+    CreateAssumptionTestDialogComponent,
+    SnippetNameDialogComponent,
+    EndpointDialogComponent,
+    GithubTokenDialogComponent,
+    PwaUpdateDialogComponent,
+    LogExceptionComponent,
+    SearchboxComponent,
   ],
   imports: [
     CommonModule,
     MaterialModule,
     FormsModule,
     ReactiveFormsModule,
-    CodemirrorModule
+    CodemirrorModule,
   ],
   exports: [
     TermsModalComponent,
@@ -68,7 +68,8 @@ import { LogExceptionComponent } from './log-exception/log-exception.component';
     SnippetNameDialogComponent,
     EndpointDialogComponent,
     GithubTokenDialogComponent,
-    LogExceptionComponent
+    LogExceptionComponent,
+    SearchboxComponent,
   ]
 })
 export class ComponentsModule { }

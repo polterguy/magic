@@ -1,14 +1,18 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
 import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { Argument } from 'src/app/_protected/pages/administration/generated-endpoints/_models/argument.model';
+import { Argument } from 'src/app/_protected/pages/manage/endpoints/_models/argument.model';
 
 @Component({
   selector: 'app-add-argument-dialog',
-  templateUrl: './add-argument-dialog.component.html',
-  styleUrls: ['./add-argument-dialog.component.scss']
+  templateUrl: './add-argument-dialog.component.html'
 })
 export class AddArgumentDialogComponent implements OnInit {
 

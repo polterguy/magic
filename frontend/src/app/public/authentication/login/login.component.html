@@ -5,7 +5,7 @@
   </div>
 </div>
 
-<form [formGroup]="loginForm" (ngSubmit)="login(inputValue.value)" class="w-100">
+<form [formGroup]="loginForm" (ngSubmit)="login()" class="w-100">
   <div class="row">
     <div class="col-12 mb-2">
       <mat-form-field class="w-100">
@@ -14,13 +14,20 @@
           <span class="text-muted mx-2">|</span>
         </span>
 
-        <input type="text" matInput [formControl]="backends" [matAutocomplete]="auto" #inputValue placeholder="http://yourdomain.com">
-        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-          <mat-option *ngFor="let option of filteredBackends | async" [value]="option">
-            {{option.url}}
-          </mat-option>
-        </mat-autocomplete>
-        <mat-hint>{{CommonErrorMessages.backend}}</mat-hint>
+        <input
+          type="text"
+          matInput
+          autocomplete="off"
+          formControlName="backend"
+          [matAutocomplete]="auto">
+          <mat-error *ngIf="loginForm.controls.backend.errors?.['required']">Backend is required</mat-error>
+          <mat-error *ngIf="loginForm.controls.backend.errors?.['pattern']">Backend must be a valid URL</mat-error>
+          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="backendActivated($event)">
+            <mat-option *ngFor="let option of backendStorageService.backends" [value]="option.url">
+              {{option.url}}
+            </mat-option>
+          </mat-autocomplete>
+          <mat-hint>{{CommonErrorMessages.backend}}</mat-hint>
       </mat-form-field>
     </div>
     <div class="col-12 mb-2">
@@ -32,12 +39,13 @@
 
         <input
           matInput="text"
+          autofocus
           placeholder="Username"
           formControlName="username"
           name="username"
           type="username"
-          required
           autocomplete="username">
+          <mat-error *ngIf="loginForm.controls.username.errors?.['required']">Username is required</mat-error>
       </mat-form-field>
     </div>
     <div class="col-12 mb-lg-0 mb-2">
@@ -47,11 +55,22 @@
           <span class="text-muted mx-2">|</span>
         </span>
 
-        <input matInput="password" placeholder="Password" formControlName="password" name="password"
-          [type]="viewPassword ? 'text' : 'password'" autocomplete="password" required>
-        <button mat-icon-button (click)="viewPassword = !viewPassword" type="button" matSuffix tabindex="-1">
+        <input
+          matInput="password"
+          placeholder="Password"
+          formControlName="password"
+          name="password"
+          [type]="viewPassword ? 'text' : 'password'"
+          autocomplete="password">
+        <button
+          mat-icon-button
+          (click)="viewPassword = !viewPassword"
+          type="button"
+          matSuffix
+          tabindex="-1">
           <mat-icon>visibility{{viewPassword ? '_off' : ''}}</mat-icon>
         </button>
+        <mat-error *ngIf="loginForm.controls.password.errors?.['required']">Password is required</mat-error>
       </mat-form-field>
     </div>
     <div class="col-12 mb-4">

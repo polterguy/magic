@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
@@ -6,8 +11,7 @@ import { GeneralService } from 'src/app/_general/services/general.service';
 
 @Component({
   selector: 'app-snippet-name-dialog',
-  templateUrl: './snippet-name-dialog.component.html',
-  styleUrls: ['./snippet-name-dialog.component.scss']
+  templateUrl: './snippet-name-dialog.component.html'
 })
 export class SnippetNameDialogComponent implements OnInit {
 
@@ -34,5 +38,4 @@ export class SnippetNameDialogComponent implements OnInit {
   private validateName() {
     return this.CommonRegEx.appNames.test(this.data);
   }
-
 }

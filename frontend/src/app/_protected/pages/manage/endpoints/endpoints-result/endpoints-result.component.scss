@@ -1,0 +1,45 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
+ ::ng-deep .endpoint-result {
+  .CodeMirror {
+    height: 100%;
+  }
+}
+
+.params-inputs ::ng-deep {
+  .mat-form-field-appearance-outline .mat-form-field-infix {
+    padding-top: 3px;
+    padding-bottom: 8px;
+  }
+
+  .mat-form-field-prefix {
+    font-size: 11px;
+    top: -1px;
+  }
+
+  .min-width {
+    min-width: 100px;
+  }
+}
+
+.params-wrapper {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.copy-btn {
+  .mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+  }
+}
+
+.h-100 {
+  max-height: 100%;
+  overflow: hidden;
+}

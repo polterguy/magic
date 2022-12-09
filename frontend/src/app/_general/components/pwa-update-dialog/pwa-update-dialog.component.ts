@@ -1,6 +1,6 @@
 
 /*
- * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
 import { Component } from '@angular/core';
@@ -9,8 +9,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-pwa-update-dialog',
-  templateUrl: './pwa-update-dialog.component.html',
-  styleUrls: ['./pwa-update-dialog.component.scss']
+  templateUrl: './pwa-update-dialog.component.html'
 })
 export class PwaUpdateDialogComponent {
 

@@ -1,6 +1,6 @@
 
 /*
- * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
 // Angular and system imports.
@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 
 // Application specific imports.
-import { VocabularyService } from 'src/app/components/tools/services/vocabulary.service';
+import { VocabularyService } from 'src/app/_protected/services/common/vocabulary.service';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { Subscription } from 'rxjs';
 

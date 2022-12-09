@@ -1,0 +1,149 @@
+<div class="w-100 d-flex flex-column h-100" id="hyper-ide">
+  <div class="max-height panel-1">
+    <mat-accordion displayMode="flat" multi #container class="h-100">
+      <mat-expansion-panel expanded class="mat-elevation-z0">
+        <mat-expansion-panel-header class="ps-0 pe-1">
+          <mat-panel-title>
+            <div class="d-flex justify-content-between align-items-center w-100">
+              <p class="my-0 fw-bold text-nowrap w-100">Files & folders </p>
+              <div class="ps-3 d-flex justify-content-end align-items-center action-menu-general"
+                (click)="$event.stopPropagation()">
+                <button mat-icon-button color="primary" class="tree-action-btn" title="New file..."
+                  (click)="createNewFileObject('file')">
+                  <mat-icon>post_add</mat-icon>
+                </button>
+                <button mat-icon-button color="primary" class="tree-action-btn" title="New folder..."
+                  (click)="createNewFileObject('folder')">
+                  <mat-icon>create_new_folder</mat-icon>
+                </button>
+                <button mat-icon-button color="primary" class="tree-action-btn"
+                  [title]="currentFileData && currentSelection === 'file' ? 'Download file...' : 'Download folder...'"
+                  (click)="currentFileData && currentSelection === 'file' ? downloadActiveFile(currentFileData.path) : downloadFolder()">
+                  <mat-icon>file_download</mat-icon>
+                </button>
+                <button mat-icon-button color="primary" class="tree-action-btn" title="Upload ..."
+                  (click)="file.click()">
+                  <mat-icon>file_upload</mat-icon>
+                </button>
+                <button *ngIf="type === 'backend'" mat-icon-button color="primary" class="tree-action-btn"
+                  title="Install module ..." (click)="zipfile.click()">
+                  <mat-icon>drive_folder_upload</mat-icon>
+                </button>
+              </div>
+            </div>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
+
+          <!-- Tree nodes for files -->
+          <mat-tree-node *matTreeNodeDef="let file"
+            [class]="currentFileData?.path === file.node.path ? 'active-file file-node' : 'node file-node'"
+            matTreeNodePadding [matTreeNodePaddingIndent]="10" level="level" class="justify-content-between"
+            [class.d-none]="filterLeafNode(file, (searchKey|async))">
+            <button class="w-100 px-1 justify-content-start d-{{showRenameBox !== file ? 'flex' : 'none'}}" mat-button
+              (click)="openFile(file.node);currentSelection = 'file'">
+              <mat-icon>insert_drive_file</mat-icon>{{file.name}} {{file.node.systemFile}}
+            </button>
+            <!-- name textbox -->
+            <span class="d-{{showRenameBox === file ? 'flex' : 'none'}} rename-box">
+              <mat-icon>insert_drive_file</mat-icon>
+              <input type="text" [value]="file.name" class="w-100 ms-2" [id]="showRenameBox === file ? 'renameFile':''"
+                #fileInput (keyup.enter)="renameActiveFile({file: file, name: fileInput?.value})"
+                (keyup.esc)="showRenameBox = null">
+            </span>
+            <!-- action buttons -->
+            <div class="show-on-hover" *ngIf="showRenameBox===null" [style.margin-right.px]="10 * file?.level">
+              <button mat-icon-button color="primary" (click)="showRenameInput(file)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="deleteActiveFile(file)">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+          </mat-tree-node>
+
+          <!-- Tree nodes for folders -->
+          <mat-tree-node *matTreeNodeDef="let folder; when: isExpandable"
+            [class]="activeFolder === folder.node.path ? 'active-folder' : 'node'"
+            [class.text-danger]="folder.node.systemFile" level="level" matTreeNodePadding matTreeNodePaddingIndent="10"
+            [isExpanded]="activeFolder === folder.node.path" class="justify-content-betwee"
+            [class.d-none]="filterParentNode(folder, (searchKey|async))">
+            <div class="w-100 h-100 flex-nowrap align-items-center d-{{showRenameBox !== folder ? 'flex' : 'none'}}">
+              <button mat-button class="px-1" matTreeNodeToggle
+                [matTooltip]="folder.node.systemFile ? 'Do not modify unless you know what you\'re doing' : ''"
+                matTooltipPosition="after">
+                <mat-icon class="mat-icon-rtl-mirror">
+                  {{treeControl.isExpanded(folder) ? 'expand_more' : 'chevron_right'}}
+                </mat-icon>
+                <mat-icon class="mat-icon-rtl-mirror">{{treeControl.isExpanded(folder) ? 'folder_open' :
+                  'folder'}}</mat-icon>
+              </button>
+              <button mat-button (click)="selectFolder(folder);treeControl.expand(folder);currentSelection = 'folder'"
+                class="px-1 d-flex justify-content-start w-100">
+                {{folder.name}}
+              </button>
+            </div>
+            <!-- name textbox -->
+            <span class="d-{{showRenameBox === folder ? 'flex' : 'none'}} rename-box">
+              <mat-icon class="me-2">
+                {{treeControl.isExpanded(folder) ? 'expand_more' : 'chevron_right'}}
+              </mat-icon>
+              <mat-icon class="me-2">{{treeControl.isExpanded(folder) ? 'folder_open' : 'folder'}}</mat-icon>
+              <input type="text" [value]="folder.name" class="w-100 ms-2"
+                [id]="showRenameBox === folder ? 'renameFile':''" #folderInput
+                (keyup.enter)="renameActiveFolder(folder, folderInput?.value)">
+            </span>
+            <!-- action buttons -->
+            <div class="show-on-hover" *ngIf="showRenameBox===null" [style.margin-right.px]="10 * folder?.level">
+              <button mat-icon-button color="primary" (click)="showRenameInput(folder)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="deleteActiveFolder(folder)">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+          </mat-tree-node>
+
+        </mat-tree>
+
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
+
+
+  <div class="max-height panel-2">
+    <mat-accordion displayMode="flat" multi>
+      <mat-expansion-panel [expanded]="openFiles && openFiles.length > 0" class="mat-elevation-z0">
+        <mat-expansion-panel-header class="ps-0 pe-1">
+          <mat-panel-title>
+            <div class="d-flex w-100">
+              <p class="my-0 fw-bold text-nowrap">Open files</p>
+            </div>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <div class="justify-content-between d-flex w-100 open-files" *ngFor="let item of openFiles;let index=index"
+          [id]="currentFileData.name === item.name ? 'active' : ''" (click)="openFile(item)"
+          [class.active-file]="currentFileData.name === item.name">
+          <button mat-button class="justify-content-start d-flex w-100">{{item.name}}</button>
+          <button mat-icon-button (click)="closeFileImpl(item)">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+
+      </mat-expansion-panel>
+    </mat-accordion>
+
+  </div>
+</div>
+
+<input type="file" [(ngModel)]="fileInput" #file multiple class="d-none" (change)="uploadFiles($event.target.files)">
+
+<input type="file" [(ngModel)]="zipFileInput" #zipfile class="d-none"
+  accept="zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed"
+  (change)="installModule($event.target.files)">
+
+
+
+<div class="overlay" *ngIf="showRenameBox!==null" (click)="showRenameBox=null"></div>

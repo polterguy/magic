@@ -1,6 +1,11 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, Input, OnInit } from '@angular/core';
 import { ControlContainer, FormGroupDirective } from '@angular/forms';
-import { Argument } from '../../../_protected/pages/administration/generated-endpoints/_models/argument.model';
+import { Argument } from '../../../_protected/pages/manage/endpoints/_models/argument.model';
 
 /**
  * Model class for dialog.
@@ -26,7 +31,6 @@ export class ArgumentModel {
 @Component({
   selector: 'app-query-params',
   templateUrl: './query-params.component.html',
-  styleUrls: ['./query-params.component.scss'],
   viewProviders: [{ provide: ControlContainer, useExisting: FormGroupDirective }]
 })
 export class QueryParamsComponent implements OnInit {
@@ -60,9 +64,7 @@ export class QueryParamsComponent implements OnInit {
    */
   orders: string[] = [];
 
-  constructor() { }
-
-  ngOnInit(): void {
+  ngOnInit() {
     this.setParams();
   }
 

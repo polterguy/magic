@@ -1,7 +1,13 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, Subscription } from 'rxjs';
-import { ColumnEx } from 'src/app/_protected/pages/crud-generator/_models/column-ex.model';
+import { ColumnEx } from 'src/app/_protected/pages/create/endpoint-generator/_models/column-ex.model';
+import { FKModel, ForeignKeyDialogComponent } from '../foreign-key-dialog/foreign-key-dialog.component';
 
 @Component({
   selector: 'app-single-table-config',
@@ -15,7 +21,7 @@ export class SingleTableConfigComponent implements OnInit, OnDestroy {
   @Input() databases: any = [];
   @Input() dbLoading: Observable<boolean>;
 
-  displayedColumns: string[] = ['name', 'type', 'hyperlambda', 'nullable', 'key', 'default', 'locked', 'template', 'create', 'read', 'update', 'delete'];
+  displayedColumns: string[] = ['name', 'type', 'default', 'locked', 'template', 'create', 'read', 'update', 'delete'];
   dataSource: any = [];
 
   public foreign_keys: any = {};
@@ -40,20 +46,7 @@ export class SingleTableConfigComponent implements OnInit, OnDestroy {
         const db: any = this.databases.find((db: any) => db.name === this.selectedDatabase);
         const table: any = db.tables.find((table: any) => table.name === this.selectedTable.toString());
 
-        // this.foreign_keys = table?.foreign_keys!==null ? table.foreign_keys[0] : [] ;
-
-        if (table?.foreign_keys && table?.foreign_keys !== null) {
-          for (const idx of table?.foreign_keys) {
-            const t = db.tables.filter(x => x.name === idx.foreign_table)[0];
-            this.foreign_keys[idx.column] = t.columns.map(x => {
-              return {
-                name: t.name.replace('dbo.', '') + '.' + x.name,
-                value: x.name,
-                type: x.hl,
-              };
-            });
-          }
-        }
+        this.foreign_keys = table?.foreign_keys !== null ? table.foreign_keys[0] : [];
 
         const columns = (table.columns || []);
 

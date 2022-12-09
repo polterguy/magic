@@ -1,32 +1,21 @@
-
 <h3 mat-dialog-title>New assumption</h3>
 
 <div mat-dialog-content class="tests">
 
   <mat-form-field class="w-100">
 
-    <input
-      type="text"
-      placeholder="Test name"
-      matInput
-      [(ngModel)]="data.filename"
-      [matAutocomplete]="auto"
+    <input type="text" placeholder="Test name" matInput [(ngModel)]="data.filename" [matAutocomplete]="auto"
       [pattern]="CommonRegEx.appNamesWithDot">
-      <mat-error>{{CommonErrorMessages.appNamesWithDot}}</mat-error>
+    <mat-error>{{CommonErrorMessages.appNamesWithDot}}</mat-error>
     <mat-autocomplete #auto="matAutocomplete">
-      <mat-option id="custom-option"
-        *ngFor="let idx of getFiltered()"
-        [value]="getFilename(idx)">
+      <mat-option id="custom-option" *ngFor="let idx of getFiltered()" [value]="getFilename(idx)">
         {{getFilename(idx)}}
       </mat-option>
     </mat-autocomplete>
   </mat-form-field>
 
   <mat-form-field class="w-100">
-    <textarea
-      matInput placeholder="Description"
-      [(ngModel)]="data.description"
-      rows="5"></textarea>
+    <textarea matInput placeholder="Description" [(ngModel)]="data.description" rows="5"></textarea>
   </mat-form-field>
 
 </div>
@@ -35,9 +24,6 @@
 
   <mat-checkbox [(ngModel)]="data.matchResponse" color="primary">Match response</mat-checkbox>
   <div class="p-2"></div>
-  <button
-    mat-flat-button
-    color="primary"
-    class="px-5" (click)="create()">Create</button>
+  <button mat-flat-button color="primary" class="px-5" (click)="create()">Create</button>
 
 </div>

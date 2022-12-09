@@ -1,15 +1,14 @@
 
 /*
- * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
 // Angular and system imports.
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { error } from 'protractor';
 
 // Application specific imports.
-import { AssumptionService } from 'src/app/_protected/pages/setting-security/health-check/_services/assumption.service';
+import { AssumptionService } from 'src/app/_protected/pages/settings/health-check/_services/assumption.service';
 import { CommonErrorMessages } from '../../classes/common-error-messages';
 import { CommonRegEx } from '../../classes/common-regex';
 import { GeneralService } from '../../services/general.service';
@@ -97,7 +96,7 @@ export class CreateAssumptionTestDialogComponent implements OnInit {
    * Returns filtered files according to what user has typed.
    */
   getFiltered() {
-    return this.files.filter((idx: string)  => {
+    return this.files.filter((idx: string) => {
       return this.getFilename(idx).indexOf(this.data.filename) !== -1;
     });
   }

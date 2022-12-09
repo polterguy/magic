@@ -1,12 +1,11 @@
 /*
- * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { LastLogItems } from 'src/app/models/dashboard.model';
 import { LogExceptionComponent } from 'src/app/_general/components/log-exception/log-exception.component';
-import { ViewLogComponent } from '../view-log/view-log.component';
 
 @Component({
   selector: 'app-last-log-items',
@@ -70,3 +69,4 @@ export class LastLogItemsComponent implements OnInit, OnChanges {
     })
   }
 }
+

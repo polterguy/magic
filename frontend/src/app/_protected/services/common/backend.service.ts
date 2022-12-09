@@ -1,6 +1,6 @@
 
 /*
- * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
 // Angular and system imports.
@@ -69,7 +69,7 @@ export class BackendService {
   /**
    * To allow consumers to subscribe to version changes.
    */
-   obscure: Observable<boolean>;
+  obscure: Observable<boolean>;
 
   /**
    * Creates an instance of your service.
@@ -110,7 +110,7 @@ export class BackendService {
         next: () => {
           if (!this.active.token?.expired && this.active.token?.in_role('root')) {
             this.retrieveStatusAndVersion().subscribe({
-              next: () => {}
+              next: () => { }
             });
           }
         }
@@ -145,9 +145,8 @@ export class BackendService {
    * Activates the specified backend.
    *
    * @param value Backend to activate
-   * @param fetchRecaptcha ReCaptcha key to be fetched, true by default and false when invoked from forgot password
    */
-  activate(value: Backend, fetchRecaptcha: boolean = true) {
+  activate(value: Backend) {
     value = this.backendsStorageService.activate(value);
     this._activeChanged.next(value);
   }
@@ -196,41 +195,42 @@ export class BackendService {
       this.httpClient.get<AuthenticateResponse>(
         this.active.url +
         '/magic/system/auth/authenticate' + query, {
-          withCredentials: query === '' ? true : false,
-        }).subscribe({
-          next: (auth: AuthenticateResponse) => {
-            this.active.token = new Token(auth.ticket);
-            if (storePassword) {
-              this.active.password = password;
-            } else {
-              this.active.password = null;
+        withCredentials: query === '' ? true : false,
+      }).subscribe({
+        next: (auth: AuthenticateResponse) => {
+          this.active.token = new Token(auth.ticket);
+          if (storePassword) {
+            this.active.password = password;
+          } else {
+            this.active.password = null;
+          }
+          this.backendsStorageService.persistBackends();
+          this.ensureRefreshJWTTokenTimer(this.active);
+          this._authenticated.next(true);
+          this.getEndpoints().subscribe({
+            next: () => {
+              this.retrieveStatusAndVersion().subscribe({
+                next: () => {
+                  observer.next(auth);
+                  observer.complete();
+                },
+                error: (error: any) => {
+                  observer.error(error);
+                  observer.complete();
+                }
+              });
+            },
+            error: (error: any) => {
+              observer.error(error);
+              observer.complete();
             }
-            this.backendsStorageService.persistBackends();
-            this.ensureRefreshJWTTokenTimer(this.active);
-            this._authenticated.next(true);
-            this.getEndpoints().subscribe({
-              next: () => {
-                this.retrieveStatusAndVersion().subscribe({
-                  next: () => {
-                    observer.next(auth);
-                    observer.complete();
-                  },
-                  error: (error: any) => {
-                    observer.error(error);
-                    observer.complete();
-                  }
-                });
-              },
-              error: (error: any) => {
-                observer.error(error);
-                observer.complete();
-              }
-            });
-          },
-          error: (error: any) => {
-            observer.error(error);
-            observer.complete();
-          }});
+          });
+        },
+        error: (error: any) => {
+          observer.error(error);
+          observer.complete();
+        }
+      });
     });
   }
 
@@ -376,7 +376,7 @@ export class BackendService {
    * Logs out from the specified backend.
    */
   private logoutFromBackend(backend: Backend) {
-    if(!backend.token) {
+    if (!backend.token) {
       return; // No change
     }
     backend.token = null;
@@ -424,7 +424,8 @@ export class BackendService {
         },
         error: (error: any) => {
           console.error(error);
-        }});
+        }
+      });
   }
 
   /*
@@ -467,42 +468,44 @@ export class BackendService {
       this.httpClient.get<Status>(
         this.active.url +
         '/magic/system/config/status').subscribe({
-        next: (status: Status) => {
+          next: (status: Status) => {
 
-          // Assigning model.
-          this.active.status = status;
-          this._statusRetrieved.next(status);
+            // Assigning model.
+            this.active.status = status;
+            this._statusRetrieved.next(status);
 
-          // Retrieving version of backend
-          this.httpClient.get<CoreVersion>(
-            this.active.url +
-            '/magic/system/version').subscribe({
-            next: (version: CoreVersion) => {
-              this.active.version = version.version;
-              if (this._latestBazarVersion) {
-                this._versionRetrieved.next(this.active.version);
-                observer.next(status);
-                observer.complete();
+            // Retrieving version of backend
+            this.httpClient.get<CoreVersion>(
+              this.active.url +
+              '/magic/system/version').subscribe({
+                next: (version: CoreVersion) => {
+                  this.active.version = version.version;
+                  if (this._latestBazarVersion) {
+                    this._versionRetrieved.next(this.active.version);
+                    observer.next(status);
+                    observer.complete();
 
-              } else {
-                this.httpClient.get<Response>(
-                  environment.bazarUrl +
-                  '/magic/modules/bazar/core-version').subscribe({
-                    next: (latestVersion: Response) => {
-                      this._latestBazarVersion = latestVersion.result;
-                      this._versionRetrieved.next(this.active.version);
-                      observer.next(status);
-                      observer.complete();
-                    },
-                    error: (error: any) => {
-                      observer.error(error);
-                      observer.complete();
-                    }});
-              }
-              this.getRecaptchaKey();
-            }
-          });
-      }});
+                  } else {
+                    this.httpClient.get<Response>(
+                      environment.bazarUrl +
+                      '/magic/modules/bazar/core-version').subscribe({
+                        next: (latestVersion: Response) => {
+                          this._latestBazarVersion = latestVersion.result;
+                          this._versionRetrieved.next(this.active.version);
+                          observer.next(status);
+                          observer.complete();
+                        },
+                        error: (error: any) => {
+                          observer.error(error);
+                          observer.complete();
+                        }
+                      });
+                  }
+                  this.getRecaptchaKey();
+                }
+              });
+          }
+        });
     });
   }
 

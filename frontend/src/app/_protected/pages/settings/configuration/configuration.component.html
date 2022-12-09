@@ -1,0 +1,31 @@
+<div class="row fullPage config">
+  <div class="col-12">
+    <mat-card class="h-100">
+      <mat-card-content class="h-100">
+        <div class="row h-100">
+          <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h3 class="my-0 fw-bold">Configuration</h3>
+
+              <div class="d-flex">
+                <button mat-button color="primary" class="reset-mw" (click)="manageSMTP()">Add SMTP</button>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="col-12 full-height">
+            <ngx-codemirror class="h-100" [(ngModel)]="config" [options]="cmOptions.json">
+            </ngx-codemirror>
+          </div>
+
+          <div class="col-12 d-flex justify-content-end mt-4">
+            <button mat-button color="primary" (click)="reset()">Reset</button>
+            <div class="px-1"></div>
+            <button mat-flat-button color="primary" class="px-5" (click)="save()">Save</button>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
