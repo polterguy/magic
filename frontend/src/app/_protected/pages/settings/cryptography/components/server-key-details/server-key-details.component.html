@@ -39,7 +39,7 @@
       <div class="col-lg-3 col-sm-6 col-12">
         <mat-form-field class="w-100">
           <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-            <mat-icon>badge</mat-icon>
+            <mat-icon>supervisor_account</mat-icon>
             <span class="text-muted">|</span>
           </span>
 
@@ -55,7 +55,7 @@
             <div class="d-flex justify-content-between align-items-center">
               <p class="mb-0">Fingerprint</p>
               <button mat-button color="primary" class="custom-copy-btn" type="button"
-                (click)="copy(data.key.fingerprint)">
+                (click)="copyFingerprint(data.key.fingerprint)">
                 Copy
               </button>
             </div>
@@ -66,13 +66,15 @@
           </div>
           <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
-              <p class="mb-0">Key content</p>
-              <button mat-button color="primary" class="custom-copy-btn" type="button" (click)="copy(data.key.content)">
+              <p class="mb-0">Public key</p>
+              <button mat-button color="primary" class="custom-copy-btn" type="button" (click)="copyContent(data.key.content)">
                 Copy
               </button>
             </div>
             <mat-form-field class="w-100">
-              <textarea matInput rows="12" [disabled]="!data.savePermission" [(ngModel)]="data.key.content"
+              <textarea
+                spellcheck="false"
+                matInput rows="12" [disabled]="!data.savePermission" [(ngModel)]="data.key.content"
                 [ngModelOptions]="{standalone: true}"></textarea>
             </mat-form-field>
           </div>
