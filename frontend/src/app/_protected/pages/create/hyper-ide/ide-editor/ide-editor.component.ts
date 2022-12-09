@@ -24,6 +24,7 @@ import { TreeNode } from '../_models/tree-node.model';
 import { CodemirrorActionsService } from '../_services/codemirror-actions.service';
 import { FileService } from '../_services/file.service';
 import { VocabularyService } from '../_services/vocabulary.service';
+import { Endpoint } from 'src/app/_protected/models/common/endpoint.model';
 
 @Component({
   selector: 'app-ide-editor',
@@ -35,7 +36,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   @Input() currentFileData: FileNode;
   @Input() activeFolder: string = '';
   @Input() openFiles: FileNode[];
-  @Input() endpoints: any;
+  @Input() endpoints: Endpoint[];
 
   @Output() updateFileObject: EventEmitter<any> = new EventEmitter<any>();
   @Output() getFilesFromServer: EventEmitter<any> = new EventEmitter<any>();
@@ -242,7 +243,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
             const url = 'magic' + this.currentFileData.folder + lastSplits[0];
             // deep copying the original endpoints array to prevent manipulations.
             const copyEndpoints = JSON.parse(JSON.stringify(this.endpoints));
-            let endpoints = copyEndpoints.filter(x => x.path === url && x.verb === lastSplits[lastSplits.length - 2]);
+            let endpoints = copyEndpoints.filter((x: any) => x.path === url && x.verb === lastSplits[lastSplits.length - 2]);
 
             if (endpoints.length > 0) {
               return endpoints[0];

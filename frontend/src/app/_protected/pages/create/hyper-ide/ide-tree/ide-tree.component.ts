@@ -11,6 +11,7 @@ import { Observable, Subscription } from 'rxjs';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { EndpointsGeneralService } from 'src/app/_general/services/endpoints-general.service';
 import { GeneralService } from 'src/app/_general/services/general.service';
+import { Endpoint } from 'src/app/_protected/models/common/endpoint.model';
 import { IncompatibleFileDialogComponent } from '../components/incompatible-file-dialog/incompatible-file-dialog.component';
 import { NewFileFolderDialogComponent } from '../components/new-file-folder-dialog/new-file-folder-dialog.component';
 import { FileNode } from '../_models/file-node.model';
@@ -28,6 +29,7 @@ export class IdeTreeComponent implements OnInit, OnDestroy {
 
   @Input() searchKey!: Observable<string>;
   @Input() type: string;
+  endpoints: Endpoint[];
 
   @Output() showEditor: EventEmitter<any> = new EventEmitter<any>();
   @Output() clearEditorHistory: EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -124,7 +126,8 @@ export class IdeTreeComponent implements OnInit, OnDestroy {
    */
   private getEndpoints() {
     this.endpointSubscription = this.endpointsGeneralService.endpoints.subscribe({
-      next: () => {
+      next: (result: Endpoint[]) => {
+        this.endpoints = result;
         this.cdr.detectChanges();
       },
       error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
