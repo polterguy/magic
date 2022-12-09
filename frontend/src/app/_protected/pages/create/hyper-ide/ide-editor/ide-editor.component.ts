@@ -294,7 +294,10 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     });
     dialog.afterClosed().subscribe((data: FileObjectName) => {
       if (data) {
-        this.renameActiveFileFromParent.emit({ file: this.currentFileData, name: data.name })
+        this.renameActiveFileFromParent.emit({ file: this.currentFileData, name: data.name });
+        this.currentFileData.name = data.name;
+        this.currentFileData.path = this.currentFileData.path.substring(0, this.currentFileData.path.lastIndexOf('/') + 1) +
+          data.name;
       }
     });
   }
