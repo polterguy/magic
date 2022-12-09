@@ -74,8 +74,6 @@ export class HeaderComponent {
       this.backendService.active ? this.activeUrl = this.backendService.active.url.replace('http://', '').replace('https://', '') : this.activeUrl = 'not connected';
       this.backendList = this.backendService.backends;
 
-      console.log(this.backendService)
-
       const notAuthorized: boolean = (!this.backendService.active || Object.values(this.backendService.active.access.auth ?? {}).every((item: any) => { return item === false }))
 
       if (notAuthorized || this.backendService.active.token === null) {
