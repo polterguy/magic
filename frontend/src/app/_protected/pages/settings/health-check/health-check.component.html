@@ -37,7 +37,10 @@
                 <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
                 <td mat-cell *matCellDef="let element" [class.text-muted]="element?.status === 'Untested'"
                   [class.text-danger]="element?.status === 'Failed'"
-                  [class.text-success]="element?.status === 'Passed'"> {{element?.status}} </td>
+                  [class.text-success]="element?.status === 'Passed'"
+                  class="ps-3">
+                  <span class="status {{element?.status}} me-1"></span>
+                </td>
               </ng-container>
 
               <!-- action Column -->
