@@ -64,15 +64,19 @@ export class LoginComponent implements OnInit {
 
         this.activatedRoute.queryParams.subscribe((params: any) => {
           if (params.switchTo) {
+            this.loginForm.controls.backend.setValue(params.switchTo);
             const defaultBackend: Backend = this.backendList.find((item: any) => item.url === params.switchTo);
-            this.loginForm.controls.backend.setValue(defaultBackend.url);
-            this.loginForm.controls.username.setValue(defaultBackend.username);
-            this.loginForm.controls.password.setValue(defaultBackend.password);
+            if (defaultBackend) {
+              this.loginForm.controls.username.setValue(defaultBackend.username);
+              this.loginForm.controls.password.setValue(defaultBackend.password);
+            }
           } else if (params.backend) {
+            this.loginForm.controls.backend.setValue(params.backend);
             const defaultBackend: Backend = this.backendList.find((item: any) => item.url === params.backend.url);
-            this.loginForm.controls.backend.setValue(defaultBackend.url);
-            this.loginForm.controls.username.setValue(defaultBackend.username);
-            this.loginForm.controls.password.setValue(defaultBackend.password);
+            if (defaultBackend) {
+              this.loginForm.controls.username.setValue(defaultBackend.username);
+              this.loginForm.controls.password.setValue(defaultBackend.password);
+            }
           } else if (this.backendList.length > 0) {
             const defaultBackend: Backend = this.backendList[0];
             this.loginForm.controls.backend.setValue(defaultBackend.url);

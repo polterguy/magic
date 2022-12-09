@@ -3,7 +3,7 @@
  * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
 @Component({
@@ -13,11 +13,11 @@ import { FormControl } from '@angular/forms';
 export class SearchboxComponent implements OnInit {
 
   @Output() filterList = new EventEmitter<any>();
+  @Input() type: string;
+
   filterControl: FormControl;
 
   public installedOnly: boolean = false;
-
-  constructor() { }
 
   ngOnInit(): void {
     this.filterControl = new FormControl('');

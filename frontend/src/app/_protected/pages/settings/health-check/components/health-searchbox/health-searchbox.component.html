@@ -1,8 +1,4 @@
 <div class="d-flex align-items-stretch flex-sm-row flex-column-reverse w-100">
-  <button mat-flat-button color="primary" class="mw-set mt-sm-0 mt-2" (click)="invokeTestAll();">
-    Test {{input.value === '' ? 'all' : 'filtered'}} endpoints
-  </button>
-  <div class="px-2"></div>
   <mat-form-field class="w-100 standalone-field">
     <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
       <mat-icon>search</mat-icon>
@@ -14,4 +10,8 @@
       <mat-icon>close</mat-icon>
     </button>
   </mat-form-field>
+  <div class="px-2"></div>
+  <button mat-flat-button color="primary" class="mw-set mt-sm-0 mt-2" (click)="invokeTestAll();">
+    Test {{input.value === '' ? 'all' : 'filtered'}} endpoints
+  </button>
 </div>

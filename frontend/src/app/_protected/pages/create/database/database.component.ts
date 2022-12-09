@@ -13,8 +13,6 @@ export class DatabaseComponent {
 
   public databaseTypes: any;
 
-  constructor() { }
-
   public passDbTypesToParent(event: string[]) {
     this.databaseTypes = event;
   }

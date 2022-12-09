@@ -1,5 +1,5 @@
 <div class="d-flex align-items-center flex-sm-row flex-column-reverse w-100">
-  <mat-checkbox color="primary" (change)="toggleShowError($event)">Show error only</mat-checkbox>
+  <mat-checkbox color="primary" (change)="toggleShowError($event)">Show errors only</mat-checkbox>
 
   <div class="px-2"></div>
   <mat-form-field class="w-100 standalone-field">
@@ -8,7 +8,7 @@
       <span class="text-muted">|</span>
     </span>
 
-    <input matInput placeholder="Search through endpoints" (input)="applyFilter(input.value)" #input>
+    <input matInput placeholder="Search through log items" (input)="applyFilter(input.value)" #input>
     <button mat-icon-button matSuffix (click)="removeSearchTerm();input.value = ''" *ngIf="input.value!==''">
       <mat-icon>close</mat-icon>
     </button>
