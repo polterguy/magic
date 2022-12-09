@@ -124,11 +124,9 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
    * @param thenClose Boolean, only turns to true if invoked from close function.
    */
   private saveActiveFile(thenClose: boolean = false) {
-    if (!this.currentFileData) {
-      return;
-    }
     this.fileService.saveFile(this.currentFileData.path, this.currentFileData.content).subscribe({
       next: () => {
+        this.markEditorClean();
         this.generalService.showFeedback('File successfully saved', 'successMessage');
         this.getEndpoints.emit();
         // if invoked from closeActiveFile function, the recall to close after saving file.
