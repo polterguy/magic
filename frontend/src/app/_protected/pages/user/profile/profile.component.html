@@ -1,4 +1,5 @@
 <div class="row profile">
+
   <div class="col-12">
     <mat-card>
       <mat-card-content>
@@ -48,6 +49,7 @@
       </mat-card-content>
     </mat-card>
   </div>
+
   <div class="col-12 mt-4">
     <mat-card>
       <mat-card-content>
@@ -96,6 +98,29 @@
             </div>
           </div>
         </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="col-12 mt-4">
+    <mat-card>
+      <mat-card-content>
+        <div class="row equal-height">
+          <div class="col-12">
+            <h3 class="fw-bold">Theme</h3>
+          </div>
+          <div class="col-lg-4 col-sm-6 col-12 mb-sm-0 mb-3">
+            <mat-form-field class="w-100 standalone-field">
+              <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+                <mat-icon>remove_red_eye</mat-icon>
+                <span class="text-muted">|</span>
+              </span>
+              <mat-select placeholder="Theme" [(ngModel)]="themeService.theme">
+                <mat-option *ngFor="let item of themes" [value]="item">{{item}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
       </mat-card-content>
     </mat-card>
   </div>

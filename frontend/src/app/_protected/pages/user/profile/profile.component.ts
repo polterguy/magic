@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
 import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 import { GeneralService } from 'src/app/_general/services/general.service';
+import { ThemeService } from 'src/app/_general/services/theme.service';
 import { BackendService } from 'src/app/_protected/services/common/backend.service';
 import { UserService } from '../../manage/user-and-roles/_services/user.service';
 
@@ -17,6 +18,15 @@ import { UserService } from '../../manage/user-and-roles/_services/user.service'
   styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent implements OnInit {
+
+  // Available themes.
+  themes: string[] = [
+    'default',
+    'neomorphism'
+  ];
+
+  // Selected theme.
+  public selectedTheme: string = null;
 
   public user: any = {};
 
@@ -29,6 +39,7 @@ export class ProfileComponent implements OnInit {
 
   constructor(
     private router: Router,
+    public themeService: ThemeService,
     private userService: UserService,
     private backendService: BackendService,
     private generalService: GeneralService) { }

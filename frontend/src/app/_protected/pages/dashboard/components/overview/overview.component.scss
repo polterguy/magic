@@ -1,4 +1,7 @@
-<<<<<<< HEAD
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 @import '../../../../../../assets/styles/_variables/colors.scss';
 @import '../../../../../../assets/styles/_variables/mixin.scss';
 
@@ -11,16 +14,3 @@
     max-height: 345px;
   }
 }
-=======
-
-/*
- * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
- */
-
- .theme-selector {
-  position: absolute;
-  bottom: 0;
-  left: 1.2rem;
-  width: calc(100% - 2.4rem) !important;
-}
->>>>>>> fbc52a8e786f5b5f20cdb06766554fbd38e13122
