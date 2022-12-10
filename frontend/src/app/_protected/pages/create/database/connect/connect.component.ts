@@ -144,10 +144,10 @@ export class ConnectComponent implements OnInit {
             },
           });
         } else {
-          this.generalService.showFeedback('This name already exists in your database.', 'errorMessage', 'Ok', 3000);
+          this.generalService.showFeedback('Connection already exists', 'errorMessage', 'Ok', 3000);
         }
       } else {
-        this.generalService.showFeedback('Connection string is not valid.', 'errorMessage', 'Ok', 3000);
+        this.generalService.showFeedback('Connection string is not valid', 'errorMessage', 'Ok', 3000);
       }
     } else {
       this.generalService.showFeedback('Please provide all fields', 'errorMessage');
