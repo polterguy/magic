@@ -246,3 +246,10 @@ body {
 :root .mat-autocomplete-panel .mat-option.mat-selected:not(.mat-active):not(:hover):not(.mat-option-disabled) {
   background-color: rgb(230, 231, 238) !important;
 }
+
+:root .mat-button.mat-primary,
+.mat-icon-button.mat-primary,
+.mat-stroked-button.mat-primary,
+a {
+  color: #7788ee !important;
+}
