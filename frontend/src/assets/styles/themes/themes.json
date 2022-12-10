@@ -1,0 +1,18 @@
+{
+  "nuomorphism": {
+    "css_file": "/assets/styles/themes/nuomorphism/nuomorphism.css",
+    "charts": {
+      "pie": {
+        "colors": ["#777777", "#888888", "#999999", "#aaaaaa", "#bbbbbb", "#cccccc", "#dddddd"]
+      }
+    }
+  },
+  "default": {
+    "css_file": null,
+    "charts": {
+      "pie": {
+        "colors": ["#ee7777", "#77ee77", "#7777ee", "#77eeee", "#eeee77", "#ee77ee", "#eecc99"]
+      }
+    }
+  }
+}

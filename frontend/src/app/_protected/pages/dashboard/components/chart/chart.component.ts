@@ -34,19 +34,9 @@ export class ChartComponent implements OnInit, OnDestroy {
   /**
    * Watches changes of the theme.
    */
-  private subscribeThemeChange: Subscription;
-
-  /**
-   * Watches changes of the theme.
-   */
   private subscribeScreenSizeChange: Subscription;
 
   private isLargeScreen: boolean = undefined;
-
-  /**
-   * Sets the current theme.
-   */
-  private theme: string = '';
 
   /**
    *
@@ -57,15 +47,7 @@ export class ChartComponent implements OnInit, OnDestroy {
     private generalService: GeneralService,
     private themeService: ThemeService) { }
 
-  ngOnInit(): void {
-
-    /**
-     * Setting chart color based on the selected theme
-     */
-    this.subscribeThemeChange = this.themeService.themeChanged.subscribe((val: any) => {
-      this.theme = val;
-      // this.getOptions();
-    });
+  ngOnInit() {
 
     this.subscribeScreenSizeChange = this.generalService.getScreenSize().subscribe((isLarge: boolean) => {
       this.isLargeScreen = isLarge;
@@ -108,7 +90,6 @@ export class ChartComponent implements OnInit, OnDestroy {
       ];
       resolve('done')
     })
-    // this.getOptions();
   }
 
   private complexityDataPrep() {
@@ -150,7 +131,7 @@ export class ChartComponent implements OnInit, OnDestroy {
           radius: ['64%', '70%'],
           right: this.isLargeScreen ? '-40%' : '',
           data: this.log === true ? this.logData : this.complexityData,
-          color: ['#FF3B2F', '#2FFF37', '#0080FF'],
+          color: this.themeService.theme_options.charts.pie.colors,
           label: {
             show: false
           },
@@ -172,7 +153,6 @@ export class ChartComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subscribeThemeChange.unsubscribe();
     this.subscribeScreenSizeChange.unsubscribe();
   }
 }

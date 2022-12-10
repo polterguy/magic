@@ -22,7 +22,7 @@ export class ProfileComponent implements OnInit {
   // Available themes.
   themes: string[] = [
     'default',
-    'neomorphism'
+    'nuomorphism'
   ];
 
   // Selected theme.
