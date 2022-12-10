@@ -74,7 +74,6 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private sqlService: SqlService,
     private fileService: FileService,
-    private cacheService: CacheService,
     private bazarService: BazarService,
     private configService: ConfigService,
     private generalService: GeneralService,
@@ -297,7 +296,6 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
         this.fileService.deleteFolder('/modules/' + database.module_name + '/').subscribe({
           next: (res: any) => {
             this.generalService.showFeedback(database.name + ' uninstalled successfully.', 'successMessage');
-            this.clearServersideCache();
             this.getItems();
           },
           error: (error: any) => { this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage') }
@@ -331,7 +329,6 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
           item.name).subscribe({
             next: () => {
               this.generalService.showFeedback('Database successfully deleted.', 'successMessage');
-              this.clearServersideCache();
               this.getDatabases();
               this.getItems();
             },
@@ -400,14 +397,6 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
         },
         error: (error: any) => { }
       })
-  }
-
-  private clearServersideCache() {
-    // Purging server side database cache in case user just recently created a new database.
-    this.cacheService.delete('magic.sql.databases.*').subscribe({
-      next: () => { },
-      error: (error: any) => { }
-    });
   }
 
   public viewAppDetails(item: any) {
