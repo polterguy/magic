@@ -83,10 +83,15 @@ export class ConnectComponent implements OnInit {
   getIPAddress() {
     this.diagnosticService.getSystemReport().subscribe({
       next: (result: any) => {
-        this.ip_address = result.server_ip;
+        this.ip_address = result.server_ip || 'unknown';
         this.cdr.detectChanges();
       },
     });
+  }
+
+  copyIpAddress() {
+    this.clipboard.copy(this.ip_address);
+    this.generalService.showFeedback('Cloudlet\'s IP address can be found on your clipboard');
   }
 
   /**

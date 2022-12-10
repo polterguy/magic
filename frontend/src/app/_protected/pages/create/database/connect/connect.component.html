@@ -3,7 +3,8 @@
     <h3 class="fw-bold">Connect to existing database</h3>
     <p class="text-muted">
       Connect to an existing database by providing a connection name and connection string. You cloudlet's
-      IP address is {{ip_address}}
+      IP address is {{ip_address}}.
+      <button mat-button color="primary" (click)="copyIpAddress()" class="ps-0 ip-address-btn">Copy IP address</button>.
     </p>
   </div>
   <div class="col-12">
