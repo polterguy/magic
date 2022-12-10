@@ -29,33 +29,15 @@ export class MainChartComponent implements OnInit {
   /**
    * Watches changes of the theme.
    */
-  private subscribeThemeChange: Subscription;
-
-  /**
-   * Watches changes of the theme.
-   */
   private subscribeScreenSizeChange: Subscription;
 
   private isLargeScreen: boolean = undefined;
-
-  /**
-   * Sets the current theme.
-   */
-  private theme: string = '';
 
   constructor(
     private generalService: GeneralService,
     private themeService: ThemeService) { }
 
-  ngOnInit(): void {
-    /**
-     * Setting chart color based on the selected theme
-     */
-    this.subscribeThemeChange = this.themeService.themeChanged.subscribe((val: any) => {
-      this.theme = val;
-      // this.prepareChart();
-    });
-
+  ngOnInit() {
     this.subscribeScreenSizeChange = this.generalService.getScreenSize().subscribe((isLarge: boolean) => {
       this.isLargeScreen = isLarge;
       if (this.data && Object.keys(this.data).length) {
@@ -85,10 +67,8 @@ export class MainChartComponent implements OnInit {
     let xAxis: any = {};
     let series: any = {};
 
-    const colors = ['rgba(91, 83, 247, 0.4)', 'rgba(68, 184, 198, 0.6)', 'rgba(91, 83, 247, 0.8)'];
-
     this.options = {
-      color: colors,
+      color: this.themeService.theme_options.charts.category.colors,
 
       tooltip: {
         trigger: 'none',
@@ -132,7 +112,7 @@ export class MainChartComponent implements OnInit {
         axisLine: {
           onZero: false,
           lineStyle: {
-            color: colors[index]
+            color: this.themeService.theme_options.charts.category.colors[index]
           }
         },
         axisPointer: {
@@ -155,7 +135,7 @@ export class MainChartComponent implements OnInit {
         showSymbol: false,
         areaStyle: {
           opacity: 0.8,
-          color: colors[index]
+          color: this.themeService.theme_options.charts.category.colors[index]
         },
         emphasis: {
           focus: 'series'
@@ -171,7 +151,6 @@ export class MainChartComponent implements OnInit {
    * Unsubscribes from the themeChange observable on page leave, for performance protection
    */
   ngOnDestroy(): void {
-    this.subscribeThemeChange.unsubscribe();
     this.subscribeScreenSizeChange.unsubscribe();
   }
 }
