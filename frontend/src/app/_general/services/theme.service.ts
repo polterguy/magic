@@ -6,6 +6,7 @@
 // Angular and system imports.
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import themes from '../../../assets/styles/themes/themes.json';
 
 /**
  * Service that keeps track of what theme we're currently using.
@@ -29,7 +30,7 @@ export class ThemeService {
     const theme = localStorage.getItem('theme') || 'default';
     this._themeChanged = new BehaviorSubject<string>(theme);
     this.themeChanged = this._themeChanged.asObservable();
-    if (theme && theme !== 'default') {
+    if (theme && themes[theme].css_file) {
       this.injectTheme(theme);
     }
   }
@@ -55,10 +56,17 @@ export class ThemeService {
 
     // Applying new theme.
     localStorage.setItem('theme', value);
-    if (value && value !== 'default') {
+    if (value && themes[value].css_file) {
       this.injectTheme(value);
     }
     this._themeChanged.next(value);
+  }
+
+  /**
+   * Returns options for currently selected theme.
+   */
+  get theme_options() {
+    return themes[this.theme];
   }
 
   /*
@@ -75,7 +83,7 @@ export class ThemeService {
       link.id = theme;
       link.rel = 'stylesheet';
       link.type = 'text/css';
-      link.href = '/assets/styles/themes/' + theme + '/' + theme + '.css'
+      link.href = themes[theme].css_file;
       link.media = 'all';
       head.appendChild(link);
     } else {
