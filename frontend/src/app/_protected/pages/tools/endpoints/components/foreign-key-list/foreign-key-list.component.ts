@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/core';
 
 interface FKData {
   databases: any,
@@ -22,7 +22,7 @@ export interface FKModel {
   templateUrl: './foreign-key-list.component.html',
   styleUrls: ['./foreign-key-list.component.scss']
 })
-export class ForeignKeyListComponent implements OnInit, AfterViewInit {
+export class ForeignKeyListComponent implements AfterViewInit {
 
   @Input() data: FKData;
   @Output() changeForeignKey = new EventEmitter<any>();
@@ -30,12 +30,6 @@ export class ForeignKeyListComponent implements OnInit, AfterViewInit {
   public fkList: any = [];
 
   public foreignKey: string[] = [];
-
-  constructor() { }
-
-  ngOnInit(): void {
-
-  }
 
   ngAfterViewInit(): void {
     const currentDb = this.data.databases.find((db: any) => db.name === this.data.selectedDatabase);
