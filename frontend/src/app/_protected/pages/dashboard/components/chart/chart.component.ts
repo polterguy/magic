@@ -95,7 +95,7 @@ export class ChartComponent implements OnInit, OnDestroy {
   private complexityDataPrep() {
     return new Promise(resolve => {
       this.complexityData = [];
-      let keys = Object.keys(this.data.modules);
+      let keys = Object.keys(this.data.modules || []);
       keys.forEach((key) => {
         let locNumber = (this.data.modules[key].loc).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         this.complexityData.push({ value: this.data.modules[key].files, name: key + ': ' + locNumber + ' lines of code' });
