@@ -93,10 +93,11 @@
           <td mat-cell *matCellDef="let element" class="px-0">
             <div class="d-flex">
               <button mat-button color="primary" class="ps-0" (click)="getDatabasesList(element)"
-                [disabled]="element.isClicked === true">Manage</button>
+                [disabled]="element.isClicked === true || element.status !== 'Live'">Manage</button>
               <button mat-button color="warn" class="ps-0" (click)="deleteDb(element)"
                 [disabled]="element.name === 'magic'">Delete</button>
-              <button mat-button color="primary" class="ps-0" (click)="createCatalog(element)">Create new
+              <button mat-button color="primary" class="ps-0" (click)="copyConnectionString(element)">Copy</button>
+              <button mat-button [disabled]="element.status !== 'Live'" color="primary" class="ps-0" (click)="createCatalog(element)">Create new
                 catalog</button>
             </div>
           </td>
