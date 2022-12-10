@@ -26,7 +26,7 @@ export class AddExtraFieldsComponent implements OnInit {
 
   public save(type: string, value: string) {
     if (type === '' || value === '') {
-      this.generalService.showFeedback('Please fill all the fields.', 'errorMessage');
+      this.generalService.showFeedback('Please provide all fields', 'errorMessage');
       return;
     }
     let data: User_Extra = {

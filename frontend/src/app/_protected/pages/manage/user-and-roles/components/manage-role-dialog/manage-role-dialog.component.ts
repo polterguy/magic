@@ -81,7 +81,7 @@ export class ManageRoleDialogComponent implements OnInit {
         }});
       }
     } else {
-      this.generalService.showFeedback('Please fill all the fields.', 'errorMessage', 'Ok')
+      this.generalService.showFeedback('Please provide all fields', 'errorMessage', 'Ok')
     }
   }
 

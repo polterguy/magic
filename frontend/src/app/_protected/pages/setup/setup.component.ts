@@ -109,7 +109,7 @@ export class SetupComponent implements OnInit {
 
   submit() {
     if (this.configForm.invalid) {
-      this.generalService.showFeedback('Please fill all the fields.', 'errorMessage');
+      this.generalService.showFeedback('Please provide all fields', 'errorMessage');
       return;
     }
     this.generalService.showLoading();
