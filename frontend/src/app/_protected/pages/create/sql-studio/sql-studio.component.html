@@ -87,12 +87,6 @@
             <button mat-menu-item (click)="sqlView ? sqlFileImport.click() : callParentAction('')">
               Import SQL file
             </button>
-            <button mat-menu-item [disabled]="selectedDatabase === 'magic'" (click)="deleteDatabase()">
-              Delete database
-            </button>
-            <button mat-menu-item [disabled]="selectedDbType !== 'sqlite'" (click)="downloadBackup()">
-              Download backup
-            </button>
             <button mat-menu-item [disabled]="selectedDbType !== 'sqlite'" (click)="clearServerCache()">
               Clear server side cache
             </button>

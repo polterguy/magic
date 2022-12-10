@@ -224,6 +224,13 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Downloads a backup of the currently selected SQLite database
+   */
+  downloadBackup(database: any) {
+    this.fileService.downloadFile('/data/' + database.name + '.db');
+  }
+
   /*
    * Invoked when app should be installed.
    */
@@ -327,7 +334,7 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
           this.connectionString,
           item.name).subscribe({
             next: () => {
-              this.generalService.showFeedback('Database successfully deleted.', 'successMessage');
+              this.generalService.showFeedback('Database successfully deleted', 'successMessage');
               this.getDatabases();
               this.getItems();
             },

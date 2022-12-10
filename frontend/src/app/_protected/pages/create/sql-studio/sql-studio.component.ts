@@ -10,7 +10,6 @@ import { ReplaySubject, Subject } from 'rxjs';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { CacheService } from 'src/app/_protected/services/common/cache.service';
-import { FileService } from '../hyper-ide/_services/file.service';
 import { Databases } from '../database/_models/databases.model';
 import { SqlService } from '../database/_services/sql.service';
 import { ExportDdlComponent } from './components/export-ddl/export-ddl.component';
@@ -85,7 +84,6 @@ export class SQLStudioComponent implements OnInit {
     private router: Router,
     private dialog: MatDialog,
     private sqlService: SqlService,
-    private fileService: FileService,
     private cacheService: CacheService,
     private activatedRoute: ActivatedRoute,
     private generalService: GeneralService) { }
@@ -329,51 +327,6 @@ export class SQLStudioComponent implements OnInit {
         },
         error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
       });
-  }
-
-  public deleteDatabase() {
-    if (this.selectedDatabase !== 'magic') {
-      this.dialog.open(ConfirmationDialogComponent, {
-        width: '500px',
-        data: {
-          title: `Delete database ${this.selectedDatabase}`,
-          description_extra: `This action is permanent and you will lose all data in this database.<br/><br/>Please type in the <span class="fw-bold">database name</span> below.`,
-          action_btn: `Delete database`,
-          action_btn_color: 'warn',
-          bold_description: true,
-          extra: {
-            details: this.databases.find((db: any) => db.name === this.selectedDatabase),
-            action: 'confirmInput',
-            fieldToBeTypedTitle: `database name`,
-            fieldToBeTypedValue: this.selectedDatabase,
-            icon: 'table',
-          }
-        }
-      }).afterClosed().subscribe((result: string) => {
-        if (result === 'confirm') {
-          this.sqlService.dropDatabase(
-            this.selectedDbType,
-            this.selectedConnectionString,
-            this.selectedDatabase).subscribe({
-              next: () => {
-                this.generalService.showFeedback('Database successfully deleted.', 'successMessage');
-                this.selectedDatabase = null;
-                this.getDatabases();
-              },
-              error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
-            });
-        }
-      })
-    } else {
-      this.generalService.showFeedback('This database cannot be deleted.', 'errorMessage');
-    }
-  }
-
-  /**
-   * Downloads a backup of the currently selected SQLite database
-   */
-  downloadBackup() {
-    this.fileService.downloadFile('/data/' + this.selectedDatabase + '.db');
   }
 
   public changeTable() {

@@ -49,7 +49,7 @@ export class ViewDbListComponent {
           item.name).subscribe({
             next: () => {
               this.data.list = this.data.list.filter((el: any) => el.name !== item.name);
-              this.generalService.showFeedback('Database successfully deleted.', 'successMessage');
+              this.generalService.showFeedback('Database successfully deleted', 'successMessage');
             },
             error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
           });

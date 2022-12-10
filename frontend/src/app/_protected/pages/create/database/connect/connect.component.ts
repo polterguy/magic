@@ -144,7 +144,7 @@ export class ConnectComponent implements OnInit {
         this.generalService.showFeedback('Connection string is not valid.', 'errorMessage', 'Ok', 3000);
       }
     } else {
-      this.generalService.showFeedback('Please fill all the fields.', 'errorMessage');
+      this.generalService.showFeedback('Please provide all fields', 'errorMessage');
     }
   }
 
