@@ -21,22 +21,19 @@ import { SqlService } from '../_services/sql.service';
 })
 export class ConnectComponent implements OnInit {
 
-  @Input() databaseTypes: string[] = [];
-
   /**
    * Options user has for selecting database types.
    */
-  // public databaseTypes: any = [];
-
-  /**
-   * Options user has for selecting database types.
-   */
-  public dbTypes: any = [];
+  public dbTypes: any = [
+    {name: 'MySQL', type: 'mysql'},
+    {name: 'PostgreSQL', type: 'pgsql'},
+    {name: 'SQL Server', type: 'mssql'},
+  ];
 
   /**
    * What database type user has selected.
    */
-  public databaseType: string = '';
+  public databaseType: string = 'mysql';
 
   /**
    * What connection string user has selected.
@@ -71,43 +68,12 @@ export class ConnectComponent implements OnInit {
     private generalService: GeneralService) { }
 
   ngOnInit() {
-    this.getDatabaseTypes();
+    this.loadConfig();
   }
 
   copyConnectionString(element: any) {
     this.clipboard.copy(element.cString);
     this.generalService.showFeedback('Connection string can be found on your clipboard');
-  }
-
-  private getDatabaseTypes() {
-    (async () => {
-      while (!(this.databaseTypes && this.databaseTypes.length))
-        await new Promise(resolve => setTimeout(resolve, 100));
-
-      if (this.databaseTypes && this.databaseTypes.length > 0) {
-        this.databaseTypes.map((item: string) => {
-          if (item !== 'sqlite') {
-            this.dbTypes.push({ name: this.getDatabaseTypeName(item), type: item })
-          }
-        })
-        this.databaseType = this.dbTypes[0].type;
-        this.loadConfig();
-      }
-    })();
-  }
-
-  /**
-   * Returns humanly readable type of database to caller.
-   *
-   * @param type Type delaration
-   */
-  private getDatabaseTypeName(type: string) {
-    switch (type) {
-      case 'mysql': return 'MySQL';
-      case 'sqlite': return 'SQLite';
-      case 'pgsql': return 'PostgreSQL';
-      case 'mssql': return 'SQL Server';
-    }
   }
 
   /**
@@ -147,7 +113,7 @@ export class ConnectComponent implements OnInit {
           this.generalService.showFeedback('Connection already exists', 'errorMessage', 'Ok', 3000);
         }
       } else {
-        this.generalService.showFeedback('Connection string is not valid', 'errorMessage', 'Ok', 3000);
+        this.generalService.showFeedback('Connection string needs a {database} declaration', 'errorMessage', 'Ok', 3000);
       }
     } else {
       this.generalService.showFeedback('Please provide all fields', 'errorMessage');
