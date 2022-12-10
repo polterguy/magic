@@ -41,19 +41,22 @@
             [class]="currentFileData?.path === file.node.path ? 'active-file file-node' : 'node file-node'"
             matTreeNodePadding [matTreeNodePaddingIndent]="10" level="level" class="justify-content-between"
             [class.d-none]="filterLeafNode(file, (searchKey|async))">
-            <button class="w-100 px-1 justify-content-start d-{{showRenameBox !== file ? 'flex' : 'none'}}" mat-button
-              (click)="openFile(file.node);currentSelection = 'file'">
-              <mat-icon>insert_drive_file</mat-icon>{{file.name}} {{file.node.systemFile}}
-            </button>
+            <div class="w-100 h-100 flex-nowrap align-items-center d-{{showRenameBox !== folder ? 'flex' : 'none'}}">
+              <button class="w-100 file-button px-1 justify-content-start d-{{showRenameBox !== file ? 'flex' : 'none'}}" mat-button
+                (click)="openFile(file.node);currentSelection = 'file'">
+                <mat-icon>insert_drive_file</mat-icon>{{file.name}} {{file.node.systemFile}}
+              </button>
+            </div>
+
             <!-- name textbox -->
             <span class="d-{{showRenameBox === file ? 'flex' : 'none'}} rename-box">
-              <mat-icon>insert_drive_file</mat-icon>
               <input type="text" [value]="file.name" class="w-100 ms-2" [id]="showRenameBox === file ? 'renameFile':''"
                 #fileInput (keyup.enter)="renameActiveFile({file: file, name: fileInput?.value})"
                 (keyup.esc)="showRenameBox = null">
             </span>
+
             <!-- action buttons -->
-            <div class="show-on-hover" *ngIf="showRenameBox===null" [style.margin-right.px]="10 * file?.level">
+            <div class="show-on-hover" *ngIf="showRenameBox===null">
               <button mat-icon-button color="primary" (click)="showRenameInput(file)">
                 <mat-icon>edit</mat-icon>
               </button>
@@ -84,19 +87,17 @@
                 {{folder.name}}
               </button>
             </div>
+
             <!-- name textbox -->
             <span class="d-{{showRenameBox === folder ? 'flex' : 'none'}} rename-box">
-              <mat-icon class="me-2">
-                {{treeControl.isExpanded(folder) ? 'expand_more' : 'chevron_right'}}
-              </mat-icon>
-              <mat-icon class="me-2 fixed-width">{{treeControl.isExpanded(folder) ? 'folder_open' : 'folder'}}</mat-icon>
               <input type="text" [value]="folder.name" class="w-100 ms-2"
                 [id]="showRenameBox === folder ? 'renameFile':''" #folderInput
                 (keyup.enter)="renameActiveFolder(folder, folderInput?.value)"
                 (keyup.esc)="showRenameBox = null">
             </span>
+
             <!-- action buttons -->
-            <div class="show-on-hover" *ngIf="showRenameBox===null" [style.margin-right.px]="10 * folder?.level">
+            <div class="show-on-hover" *ngIf="showRenameBox===null">
               <button mat-icon-button color="primary" (click)="showRenameInput(folder)">
                 <mat-icon>edit</mat-icon>
               </button>

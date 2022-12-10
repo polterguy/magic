@@ -87,15 +87,12 @@
     }
   }
 
-  .mat-tree-node.file-node {
-    button:first-child {
-      margin-left: 28px !important;
-    }
+  .mat-tree-node.file-node .file-button {
+    margin-left: 28px !important;
   }
 
   .mat-tree-node {
     min-height: 30px;
-    width: 100%;
     position: relative;
     overflow: visible;
     @include general_transition(0.3s);
