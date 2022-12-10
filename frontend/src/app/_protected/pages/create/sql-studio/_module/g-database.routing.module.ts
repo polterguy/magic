@@ -5,12 +5,12 @@
 
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { GeneratedDatabaseComponent } from '../generated-database.component';
+import { SQLStudioComponent } from '../sql-studio.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: GeneratedDatabaseComponent
+    component: SQLStudioComponent
   }
 ];
 
