@@ -4,6 +4,7 @@
  */
 
 import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { Clipboard } from '@angular/cdk/clipboard';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
@@ -64,13 +65,18 @@ export class ConnectComponent implements OnInit {
     private dialog: MatDialog,
     private cdr: ChangeDetectorRef,
     private sqlService: SqlService,
+    private clipboard: Clipboard,
     private configService: ConfigService,
     private backendService: BackendService,
     private generalService: GeneralService) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.getDatabaseTypes();
+  }
 
+  copyConnectionString(element: any) {
+    this.clipboard.copy(element.cString);
+    this.generalService.showFeedback('Connection string can be found on your clipboard');
   }
 
   private getDatabaseTypes() {
@@ -122,7 +128,7 @@ export class ConnectComponent implements OnInit {
               if (res.result === 'success') {
                 if (toTestBeforeSubmit !== true) {
                   this.waitingTest = false;
-                  this.generalService.showFeedback('Connection successful.', 'successMessage');
+                  this.generalService.showFeedback('Connection successful', 'successMessage');
                   return;
                 } else {
                   this.connect();
