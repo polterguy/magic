@@ -10,7 +10,6 @@ import { ConfirmationDialogComponent } from 'src/app/_general/components/confirm
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { BackendService } from 'src/app/_protected/services/common/backend.service';
 import { BazarService } from 'src/app/_protected/services/common/bazar.service';
-import { CacheService } from 'src/app/_protected/services/common/cache.service';
 import { ConfigService } from 'src/app/_protected/services/common/config.service';
 import { environment } from 'src/environments/environment';
 import { FileService } from '../../hyper-ide/_services/file.service';
