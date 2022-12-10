@@ -7,7 +7,6 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ReplaySubject, Subject } from 'rxjs';
-import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { CacheService } from 'src/app/_protected/services/common/cache.service';
 import { Databases } from '../database/_models/databases.model';
@@ -135,6 +134,12 @@ export class SQLStudioComponent implements OnInit {
             selectedConnectionString :
             (Object.keys(connectionStrings).indexOf('generic') > -1 ? 'generic' : Object.keys(connectionStrings)[0]);
           this.getDatabases();
+        } else {
+          this._dbLoading.next(false);
+          this.generalService.hideLoading();
+          this.databases = [];
+          this._tables.next([]);
+          this._hintTables.next({});
         }
       },
       error: (error: any) => {
@@ -168,7 +173,7 @@ export class SQLStudioComponent implements OnInit {
                   dbCString: null,
                 },
                 queryParamsHandling: 'merge'
-              })
+              });
             }
           }
 
