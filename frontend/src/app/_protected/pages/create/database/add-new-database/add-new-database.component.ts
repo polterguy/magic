@@ -19,6 +19,7 @@ import { ViewDbComponent } from '../components/view-db/view-db.component';
 import { Databases } from '../_models/databases.model';
 import { DefaultDatabaseType } from '../_models/default-database-type.model';
 import { SqlService } from '../_services/sql.service';
+import { CacheService } from 'src/app/_protected/services/common/cache.service';
 
 @Component({
   selector: 'app-add-new-database',
@@ -74,6 +75,7 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
     private sqlService: SqlService,
     private fileService: FileService,
     private bazarService: BazarService,
+    private cacheService: CacheService,
     private configService: ConfigService,
     private generalService: GeneralService,
     private backendService: BackendService) { }
@@ -193,7 +195,7 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
             }
           });
       },
-      error: (error: any) => {
+      error: () => {
         this.generalService.hideLoading();
         this.waitingInstallation = false;
       }
@@ -245,8 +247,12 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
               if (install.result === 'success') {
                 this.generalService.showFeedback('Plugin was successfully installed on your server', 'successMessage');
 
-                this.getDatabases();
-                this.loadDetails();
+                this.cacheService.delete('magic.sql.databases.sqlite.*').subscribe({
+                  next: () => {
+                    this.getDatabases();
+                    this.loadDetails();
+                  }
+                })
 
                 /*
                   * Making sure we turn OFF socket connections if these have been created.
@@ -300,7 +306,7 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
     }).afterClosed().subscribe((result: string) => {
       if (result === 'confirm') {
         this.fileService.deleteFolder('/modules/' + database.module_name + '/').subscribe({
-          next: (res: any) => {
+          next: () => {
             this.generalService.showFeedback(database.name + ' uninstalled successfully.', 'successMessage');
             this.getItems();
           },
