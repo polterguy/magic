@@ -3,7 +3,7 @@
  * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
@@ -13,6 +13,7 @@ import { ConfigService } from 'src/app/_protected/services/common/config.service
 import { CatalogNameComponent } from '../components/catalog-name/catalog-name.component';
 import { ViewDbListComponent } from '../components/view-db-list/view-db-list.component';
 import { SqlService } from '../_services/sql.service';
+import { DiagnosticsService } from '../../../dashboard/_services/diagnostics.service';
 
 @Component({
   selector: 'app-connect',
@@ -57,23 +58,35 @@ export class ConnectComponent implements OnInit {
   displayedColumns: string[] = ['dbType', 'cStringName', 'cString', 'status', 'actions'];
 
   public isLoading: boolean = true;
+  public ip_address: string = 'unknown';
 
   constructor(
     private dialog: MatDialog,
     private cdr: ChangeDetectorRef,
     private sqlService: SqlService,
     private clipboard: Clipboard,
+    private diagnosticService: DiagnosticsService,
     private configService: ConfigService,
     private backendService: BackendService,
     private generalService: GeneralService) { }
 
   ngOnInit() {
     this.loadConfig();
+    this.getIPAddress();
   }
 
   copyConnectionString(element: any) {
     this.clipboard.copy(element.cString);
     this.generalService.showFeedback('Connection string can be found on your clipboard');
+  }
+
+  getIPAddress() {
+    this.diagnosticService.getSystemReport().subscribe({
+      next: (result: any) => {
+        this.ip_address = result.server_ip;
+        this.cdr.detectChanges();
+      },
+    });
   }
 
   /**
