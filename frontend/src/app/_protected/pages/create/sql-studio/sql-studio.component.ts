@@ -18,10 +18,10 @@ import { LinkTableComponent } from './components/link-table/link-table.component
 import { NewTableComponent } from './components/new-table/new-table.component';
 
 @Component({
-  selector: 'app-generated-database',
-  templateUrl: './generated-database.component.html'
+  selector: 'app-sql-studio',
+  templateUrl: './sql-studio.component.html'
 })
-export class GeneratedDatabaseComponent implements OnInit {
+export class SQLStudioComponent implements OnInit {
 
   /**
    * List of all database types, including type and the human readable name of each.
