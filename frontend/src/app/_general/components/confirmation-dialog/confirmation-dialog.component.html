@@ -12,6 +12,7 @@
         </span>
 
         <input cdkFocusInitial matInput placeholder="Type in the {{data.extra.fieldToBeTypedTitle}}"
+          autocomplete="off"
           [formControl]="inputValue">
         <mat-hint *ngIf="inputValue.value !== '' && data.extra.fieldToBeTypedValue !== inputValue.value"
           class="text-danger">
