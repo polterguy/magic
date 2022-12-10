@@ -247,9 +247,13 @@ body {
   background-color: rgb(230, 231, 238) !important;
 }
 
-:root .mat-button.mat-primary,
-.mat-icon-button.mat-primary,
-.mat-stroked-button.mat-primary,
+:root .mat-button.mat-primary:not([disabled]),
+.mat-icon-button.mat-primary:not([disabled]),
+.mat-stroked-button.mat-primary:not([disabled]),
 a {
   color: #7788ee !important;
+}
+
+a.active-link:not([disabled]) {
+  color: rgb(50,50,50) !important;
 }
