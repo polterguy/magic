@@ -291,8 +291,6 @@ export class ConnectComponent implements OnInit {
         if (res) {
           this.dialog.open(ViewDbListComponent, {
             width: '800px',
-            height: '85vh',
-            autoFocus: false,
             data: {
               list: res.databases,
               item: item
