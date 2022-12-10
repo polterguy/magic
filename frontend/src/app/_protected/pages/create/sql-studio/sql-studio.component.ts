@@ -91,7 +91,6 @@ export class SQLStudioComponent implements OnInit {
     private generalService: GeneralService) { }
 
   ngOnInit() {
-    console.log('foo');
     this.activatedRoute.queryParams.subscribe((param: any) => {
       if (param && param.dbName && param.dbType && param.dbCString) {
         this.selectedDatabase = param.dbName;
@@ -155,7 +154,8 @@ export class SQLStudioComponent implements OnInit {
     this.databases = [];
     this.sqlService.getDatabaseMetaInfo(
       this.selectedDbType,
-      this.selectedConnectionString).subscribe({
+      this.selectedConnectionString,
+      true).subscribe({
         next: (res: Databases) => {
           this.databases = res.databases || [];
           if (this.selectedDatabase === '') {
