@@ -6,7 +6,7 @@
 // Angular and system imports.
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import themes from '../../../assets/styles/themes/themes.json';
+import themes from './themes.json';
 
 /**
  * Service that keeps track of what theme we're currently using.

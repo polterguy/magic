@@ -8,7 +8,6 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Message } from 'src/app/models/message.model';
 
 // CodeMirror options according to file extensions needed to show JSON CodeMirror editor.
-import fileTypes from 'src/app/codemirror/file-types.json';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { CodemirrorActionsService } from 'src/app/_protected/pages/create/hyper-ide/_services/codemirror-actions.service';
 

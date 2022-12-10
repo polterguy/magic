@@ -2,7 +2,7 @@
  * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { SystemReport } from 'src/app/models/dashboard.model';
 import { OverviewDialogComponent } from '../overview-dialog/overview-dialog.component';
@@ -25,7 +25,7 @@ export class OverviewComponent {
 
   constructor(private dialog: MatDialog) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     const storedSelections: string = localStorage.getItem('overviewItems') || '';
     if (storedSelections && storedSelections !== '') {
       this.titles = JSON.parse(storedSelections);
