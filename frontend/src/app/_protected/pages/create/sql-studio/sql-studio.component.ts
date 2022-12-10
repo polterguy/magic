@@ -93,9 +93,9 @@ export class SQLStudioComponent implements OnInit {
   ngOnInit() {
     this.activatedRoute.queryParams.subscribe((param: any) => {
       if (param && param.dbName && param.dbType && param.dbCString) {
-        this.selectedDatabase = param.dbName;
         this.selectedDbType = param.dbType;
         this.selectedConnectionString = param.dbCString;
+        this.selectedDatabase = param.dbName;
       } else {
         this.selectedDbType = 'sqlite';
       }
@@ -160,17 +160,9 @@ export class SQLStudioComponent implements OnInit {
           this.databases = res.databases || [];
           if (this.selectedDatabase === '') {
             this.selectedDatabase = this.databases[0].name;
-            this.router.navigate([], {
-              queryParams: {
-                dbName: null,
-                dbType: null,
-                dbCString: null,
-              },
-              queryParamsHandling: 'merge'
-            });
           } else {
             const existingDb: any = this.databases.find((db: any) => db.name === this.selectedDatabase) || [];
-            if (!existingDb || !existingDb.length) {
+            if (!existingDb || existingDb.length === 0) {
               this.router.navigate([], {
                 queryParams: {
                   dbName: null,
