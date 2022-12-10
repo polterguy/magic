@@ -44,11 +44,9 @@ export class BackendsListComponent implements OnInit {
     private clipboard: Clipboard,
     private cdr: ChangeDetectorRef,
     private generalService: GeneralService,
-    private backendService: BackendService) {
-    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-  }
+    private backendService: BackendService) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.getBackends();
   }
 
