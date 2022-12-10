@@ -28,6 +28,8 @@ strings.concat
    get-value:x:@.arguments/*/databaseType
    :.
    get-value:x:@.arguments/*/connectionString
+   :.
+   get-value:x:@.arguments/*/protected
 unwrap:x:../*/cache.try-get/**/.databaseType
 unwrap:x:../*/cache.try-get/**/.connection-string
 unwrap:x:../*/cache.try-get/**/.protected
@@ -47,26 +49,18 @@ cache.try-get:x:@strings.concat
       signal:x:@strings.concat
          connection-string:x:@.connection-string
       if:x:@.protected
-         if
-            eq:x:@.databaseType
-               .:mssql
-            .lambda
+         switch:x:@.databaseType
+            case:mssql
                remove-nodes:x:@signal/*/*/db/=master
                remove-nodes:x:@signal/*/*/db/=tempdb
                remove-nodes:x:@signal/*/*/db/=model
                remove-nodes:x:@signal/*/*/db/=msdb
-         else-if
-            eq:x:@.databaseType
-               .:mysql
-            .lambda
+            case:mysql
                remove-nodes:x:@signal/*/*/db/=information_schema
                remove-nodes:x:@signal/*/*/db/=mysql
                remove-nodes:x:@signal/*/*/db/=performance_schema
                remove-nodes:x:@signal/*/*/db/=sys
-         else-if
-            eq:x:@.databaseType
-               .:pgsql
-            .lambda
+            case:pgsql
                remove-nodes:x:@signal/*/*/db/=postgres
                remove-nodes:x:@signal/*/*/db/=template1
                remove-nodes:x:@signal/*/*/db/=template0
