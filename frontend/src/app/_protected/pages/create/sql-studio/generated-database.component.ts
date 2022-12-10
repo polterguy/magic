@@ -12,7 +12,6 @@ import { GeneralService } from 'src/app/_general/services/general.service';
 import { CacheService } from 'src/app/_protected/services/common/cache.service';
 import { FileService } from '../hyper-ide/_services/file.service';
 import { Databases } from '../database/_models/databases.model';
-import { DefaultDatabaseType } from '../database/_models/default-database-type.model';
 import { SqlService } from '../database/_services/sql.service';
 import { ExportDdlComponent } from './components/export-ddl/export-ddl.component';
 import { LinkTableComponent } from './components/link-table/link-table.component';
@@ -27,7 +26,12 @@ export class GeneratedDatabaseComponent implements OnInit {
   /**
    * List of all database types, including type and the human readable name of each.
    */
-  public databaseTypes: any = [];
+  public databaseTypes: any = [] = [
+    {type: 'sqlite', name: 'SQLite'},
+    {type: 'mysql', name: 'MySQL'},
+    {type: 'mssql', name: 'SQL Server'},
+    {type: 'pgsql', name: 'PostgreSQL'},
+  ];
 
   /**
    * The user's default database type.
@@ -74,10 +78,6 @@ export class GeneratedDatabaseComponent implements OnInit {
   private _dbLoading: ReplaySubject<boolean> = new ReplaySubject();
   public dbLoading = this._dbLoading.asObservable();
 
-  private paramDbType: string = '';
-  private paramDbName: string = '';
-  private paramDbConnectionString: string = '';
-
   public saveSnippet: Subject<any> = new Subject();
   public sqlFile: any;
 
@@ -88,58 +88,43 @@ export class GeneratedDatabaseComponent implements OnInit {
     private fileService: FileService,
     private cacheService: CacheService,
     private activatedRoute: ActivatedRoute,
-    private generalService: GeneralService) {
+    private generalService: GeneralService) { }
+
+  ngOnInit() {
+    console.log('foo');
     this.activatedRoute.queryParams.subscribe((param: any) => {
       if (param && param.dbName && param.dbType && param.dbCString) {
-        this.paramDbName = param.dbName;
-        this.paramDbType = param.dbType;
-        this.paramDbConnectionString = param.dbCString;
+        this.selectedDatabase = param.dbName;
+        this.selectedDbType = param.dbType;
+        this.selectedConnectionString = param.dbCString;
+      } else {
+        this.selectedDbType = 'sqlite';
       }
-    })
-  }
-
-  ngOnInit(): void {
-    this.getDefaultDbType(true);
+      this.getDefaultDbType();
+    });
   }
 
   /**
    * Invokes endpoint to get the default database type.
    * Retrieves all available database types and specifies the default one.
    */
-  private getDefaultDbType(preserveQueryParam?: boolean) {
+  private getDefaultDbType() {
     this._dbLoading.next(true);
     this.generalService.showLoading();
     this.sqlService.defaultDatabaseType().subscribe({
-      next: (dbTypes: DefaultDatabaseType) => {
-        this.selectedDbType = this.paramDbType !== '' ? this.paramDbType : dbTypes.default;
-        dbTypes.options.map((item: string) => {
-          this.databaseTypes.push({ name: this.getDatabaseTypeName(item), type: item });
-        });
+      next: () => {
 
-        this.getConnectionString(this.selectedDbType, this.paramDbConnectionString, preserveQueryParam);
+        this.getConnectionString(this.selectedDbType, this.selectedConnectionString);
       },
       error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
     });
   }
 
   /**
-   * Returns humanly readable type of database to caller.
-   * @param type Type delaration
-   */
-  private getDatabaseTypeName(type: string) {
-    switch (type) {
-      case 'mysql': return 'MySQL';
-      case 'sqlite': return 'SQLite';
-      case 'pgsql': return 'PostgreSQL';
-      case 'mssql': return 'SQL Server';
-    }
-  }
-
-  /**
    * Retrieves the connection string of the default database.
    * @param selectedDbType Default type of the databases, sets during the initial configuration.
    */
-  public getConnectionString(selectedDbType: string, selectedConnectionString?: string, preserveQueryParam?: boolean) {
+  public getConnectionString(selectedDbType: string, selectedConnectionString?: string) {
     this._dbLoading.next(true);
     this.selectedConnectionString = '';
     this.connectionStrings = [];
@@ -149,8 +134,10 @@ export class GeneratedDatabaseComponent implements OnInit {
       next: (connectionStrings: any) => {
         this.connectionStrings = connectionStrings;
         if (connectionStrings) {
-          this.selectedConnectionString = selectedConnectionString ? selectedConnectionString : (Object.keys(connectionStrings).indexOf('generic') > -1 ? 'generic' : Object.keys(connectionStrings)[0]);
-          this.getDatabases(preserveQueryParam);
+          this.selectedConnectionString = selectedConnectionString ?
+            selectedConnectionString :
+            (Object.keys(connectionStrings).indexOf('generic') > -1 ? 'generic' : Object.keys(connectionStrings)[0]);
+          this.getDatabases();
         }
       },
       error: (error: any) => {
@@ -162,7 +149,7 @@ export class GeneratedDatabaseComponent implements OnInit {
   /**
    * Retrieves a list of databases already available on the user's backend.
    */
-  public getDatabases(preserveQueryParam?: boolean) {
+  public getDatabases() {
     this._dbLoading.next(true);
     this.generalService.showLoading();
     this.databases = [];
@@ -172,19 +159,15 @@ export class GeneratedDatabaseComponent implements OnInit {
         next: (res: Databases) => {
           this.databases = res.databases || [];
           if (this.selectedDatabase === '') {
-            if (preserveQueryParam && this.paramDbName !== '') {
-              this.selectedDatabase = this.paramDbName;
-            } else {
-              this.selectedDatabase = this.databases[0].name;
-              this.router.navigate([], {
-                queryParams: {
-                  dbName: null,
-                  dbType: null,
-                  dbCString: null,
-                },
-                queryParamsHandling: 'merge'
-              })
-            }
+            this.selectedDatabase = this.databases[0].name;
+            this.router.navigate([], {
+              queryParams: {
+                dbName: null,
+                dbType: null,
+                dbCString: null,
+              },
+              queryParamsHandling: 'merge'
+            });
           } else {
             const existingDb: any = this.databases.find((db: any) => db.name === this.selectedDatabase) || [];
             if (!existingDb || !existingDb.length) {
@@ -234,10 +217,9 @@ export class GeneratedDatabaseComponent implements OnInit {
           result.pkType,
           result.pkLength,
           result.pkDefault).subscribe({
-            next: (result: any) => {
+            next: () => {
               this.generalService.showFeedback('Table successfully added.', 'successMessage');
               this.getDatabases();
-              // this.applyMigration(result.sql);
             },
             error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)
           });
@@ -291,8 +273,7 @@ export class GeneratedDatabaseComponent implements OnInit {
       payload).subscribe({
         next: (result: any) => {
           this.generalService.showFeedback('Link table successfully created', 'successMessage');
-          this.getDatabases(true);
-          // this.applyMigration(result.sql);
+          this.getDatabases();
         },
         error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
       });
