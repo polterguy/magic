@@ -30,7 +30,7 @@ export class ThemeService {
     const theme = localStorage.getItem('theme') || 'default';
     this._themeChanged = new BehaviorSubject<string>(theme);
     this.themeChanged = this._themeChanged.asObservable();
-    if (theme && themes[theme].css_file) {
+    if (theme && themes[theme]?.css_file) {
       this.injectTheme(theme);
     }
   }
@@ -56,7 +56,7 @@ export class ThemeService {
 
     // Applying new theme.
     localStorage.setItem('theme', value);
-    if (value && themes[value].css_file) {
+    if (value && themes[value]?.css_file) {
       this.injectTheme(value);
     }
     this._themeChanged.next(value);
