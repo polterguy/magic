@@ -28,17 +28,17 @@
 
       <!-- action Column -->
       <ng-container matColumnDef="action">
-        <th mat-header-cell *matHeaderCellDef> Action </th>
+        <th mat-header-cell *matHeaderCellDef> Actions </th>
         <td mat-cell *matCellDef="let element">
-          <button mat-button color="primary" class="px-0" routerLink="/sql-studio"
+          <button mat-button color="primary" routerLink="/sql-studio"
             [queryParams]="{dbType: data.item.dbTypeValue, dbName: element.name, dbCString: data.item.cStringKey}"
             mat-dialog-close>
-            Manage tables
+            Edit
           </button>
-          <button mat-button color="warn" class="px-0 ms-3" (click)="deleteDb(element)">
+          <button mat-button color="warn" class="ms-3" (click)="deleteDb(element)">
             Delete
           </button>
-          <button mat-button color="primary" class="px-0 ms-3" routerLink="/endpoint-generator"
+          <button mat-button color="primary" class="ms-3" routerLink="/endpoint-generator"
             [queryParams]="{dbType: data.item.dbTypeValue, dbName: element.name, dbCString: data.item.cStringKey}"
             mat-dialog-close>
             Generate endpoints

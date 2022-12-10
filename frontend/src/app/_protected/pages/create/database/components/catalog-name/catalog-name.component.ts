@@ -37,7 +37,7 @@ export class CatalogNameComponent implements OnInit {
       this.data.cStringKey,
       this.name).subscribe({
         next: () => {
-          this.generalService.showFeedback('Catalog successfully created.', 'successMessage');
+          this.generalService.showFeedback('Catalog successfully created', 'successMessage');
           this.dialogRef.close();
         },
         error: (error: any) => {
