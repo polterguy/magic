@@ -9,13 +9,11 @@ import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@aspnet/
 import { Observable } from 'rxjs';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { BackendService } from 'src/app/_protected/services/common/backend.service';
 import { BazarService } from 'src/app/_protected/services/common/bazar.service';
 import { CacheService } from 'src/app/_protected/services/common/cache.service';
 import { environment } from 'src/environments/environment';
 import { ConfigService } from '../../settings/configuration/_services/config.service';
 import { FileService } from '../../create/hyper-ide/_services/file.service';
-import { SqlService } from '../../create/database/_services/sql.service';
 import { ViewPluginComponent } from './components/view-app/view-plugin.component';
 import { AppManifest } from './_models/app-manifest';
 import { BazarApp } from './_models/bazar-app.model';
@@ -48,13 +46,11 @@ export class PluginsComponent implements OnInit {
 
   constructor(
     private dialog: MatDialog,
-    private sqlService: SqlService,
     private fileService: FileService,
     private cacheService: CacheService,
     private bazarService: BazarService,
     private configService: ConfigService,
-    private generalService: GeneralService,
-    private backendService: BackendService) { }
+    private generalService: GeneralService) { }
 
   ngOnInit(): void {
     this.getItems();
