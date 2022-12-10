@@ -62,30 +62,6 @@
       <td mat-cell *matCellDef="let element"> {{element?.automatic === true ? 'Yes' : 'No'}} </td>
     </ng-container>
 
-    <!-- locked Column -->
-    <ng-container matColumnDef="locked">
-      <th mat-header-cell *matHeaderCellDef class="text-nowrap"> Locked to username? </th>
-      <td mat-cell *matCellDef="let element">
-        <button mat-button class="table-btn w-100" [matMenuTriggerFor]="lockedToUsernameMenu"
-          [matMenuTriggerData]="{element: element}" aria-label="Select locked status" [disabled]="element?.primary">
-          <div class="d-flex w-100 justify-content-between align-items-center">
-            {{element?.locked === true ? 'True' : 'False'}}
-            <mat-icon class="me-4" *ngIf="!element?.primary">keyboard_arrow_down</mat-icon>
-          </div>
-        </button>
-        <mat-menu #lockedToUsernameMenu="matMenu">
-          <ng-template matMenuContent let-element="element">
-            <button mat-menu-item (click)="element.locked = true">
-              True
-            </button>
-            <button mat-menu-item (click)="element.locked = ''">
-              False
-            </button>
-          </ng-template>
-        </mat-menu>
-      </td>
-    </ng-container>
-
     <!-- template Column -->
     <ng-container matColumnDef="template">
       <th mat-header-cell *matHeaderCellDef class="text-nowrap"> Template </th>
@@ -93,15 +69,15 @@
         <button mat-button class="table-btn w-100" [matMenuTriggerFor]="templateMenu"
           [matMenuTriggerData]="{element: element}" aria-label="Select template handling" [disabled]="element?.primary">
           <div class="d-flex w-100 justify-content-between align-items-center">
-            {{element?.handling ? templateList[element.handling] : '-'}}
+            {{element.locked ? 'Locked' : templateList[element.handling]}}
             <mat-icon *ngIf="!element?.primary">keyboard_arrow_down</mat-icon>
           </div>
         </button>
         <mat-menu #templateMenu="matMenu">
           <ng-template matMenuContent let-element="element">
-            <button mat-menu-item (click)="element.handling = ''">None</button>
+            <button mat-menu-item (click)="element.handling = ''; element.locked = false;">None</button>
             <button mat-menu-item *ngFor="let item of templateList | keyvalue"
-              (click)="element.handling = item.key">{{item.value}}</button>
+              (click)="changeTemplate(element, item);">{{item.value}}</button>
           </ng-template>
         </mat-menu>
       </td>

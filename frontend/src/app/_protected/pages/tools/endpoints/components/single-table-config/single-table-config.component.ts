@@ -24,7 +24,6 @@ export class SingleTableConfigComponent implements OnInit, OnDestroy {
     'type',
     'key',
     'default',
-    'locked',
     'template',
     'create',
     'read',
@@ -152,6 +151,16 @@ export class SingleTableConfigComponent implements OnInit, OnDestroy {
     }
   }
 
+  changeTemplate(el: any, item: any) {
+    if (item.key === 'locked') {
+      el.locked = true;
+      delete el.handling;
+    } else {
+      delete el.locked;
+      el.handling = item.key
+    }
+  }
+
   ngOnDestroy(): void {
     if (this.dbLoadingSubscription) {
       this.dbLoadingSubscription.unsubscribe();
@@ -167,5 +176,6 @@ const TemplateList: any = {
   'url': 'URL',
   'youtube': 'YouTube',
   'phone': 'Phone',
-  'username_lookup': 'Username lookup'
+  'username_lookup': 'Username lookup',
+  'locked': 'Locked'
 }
