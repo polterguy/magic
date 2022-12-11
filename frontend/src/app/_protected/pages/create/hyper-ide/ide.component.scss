@@ -3,13 +3,21 @@
  * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
- @import '../../../../../assets/styles/_variables/colors.scss';
+@import '../../../../../assets/styles/_variables/colors.scss';
 @import '../../../../../assets/styles/_variables/mixin.scss';
 @import '../../../../../assets/styles/_variables/sizing.scss';
 
 .scrollable-row {
-  height: calc(100% - 100px);
+  height: calc(100% - 65px);
   overflow: hidden;
+}
+
+mat-card.editor-card {
+  padding: 5px 15px 0 15px;
+}
+
+mat-card.tree-card {
+  padding: 15px;
 }
 
 .max-height-full {
