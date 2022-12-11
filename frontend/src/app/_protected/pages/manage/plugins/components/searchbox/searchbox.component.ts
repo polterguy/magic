@@ -18,6 +18,7 @@ export class SearchboxComponent implements OnInit {
   filterControl: FormControl;
 
   public installedOnly: boolean = false;
+  public showSystem: boolean = false;
 
   ngOnInit(): void {
     this.filterControl = new FormControl('');
@@ -44,6 +45,6 @@ export class SearchboxComponent implements OnInit {
   }
 
   public filter() {
-    this.filterList.emit({ installedOnly: this.installedOnly, searchKey: this.filterControl.value });
+    this.filterList.emit({ installedOnly: this.installedOnly, showSystem: this.showSystem, searchKey: this.filterControl.value });
   }
 }
