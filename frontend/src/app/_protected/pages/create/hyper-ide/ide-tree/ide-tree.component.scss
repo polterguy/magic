@@ -110,6 +110,10 @@
       }
     }
 
+    .folder-btn {
+      margin-left: -9px;
+    }
+
     .show-on-hover {
       visibility: hidden;
       display: flex;
@@ -153,8 +157,11 @@
   .open-files {
     button {
       font-size: 12px;
+      line-height: 21px;
       padding-left: 5px;
-      min-height: 40px;
+    }
+    button.mat-icon-button {
+      height: unset;
     }
 
     @include general_transition(0.3s);
