@@ -20,7 +20,7 @@
    tableName:string
    pkName:string
    pkType:string
-   pkLength:string
+   pkLength:int
    pkDefault:string
    generate:bool
 .description:Adds the specified table to the specified database
@@ -120,7 +120,12 @@ switch:x:@.arguments/*/databaseType
             .:" "
             get-value:x:@.type
       if
-         exists:x:@.arguments/*/pkDefault
+         and
+            exists:x:@.arguments/*/pkDefault
+            neq:x:@.arguments/*/pkDefault
+               .
+            neq:x:@.arguments/*/pkDefault
+               .:
          .lambda
             set-value:x:@.sql
                strings.concat
@@ -159,7 +164,12 @@ switch:x:@.arguments/*/databaseType
             .:"("
             get-value:x:@.type
       if
-         exists:x:@.arguments/*/pkDefault
+         and
+            exists:x:@.arguments/*/pkDefault
+            neq:x:@.arguments/*/pkDefault
+               .
+            neq:x:@.arguments/*/pkDefault
+               .:
          .lambda
             set-value:x:@.sql
                strings.concat
@@ -199,7 +209,12 @@ switch:x:@.arguments/*/databaseType
             .:"("
             get-value:x:@.type
       if
-         exists:x:@.arguments/*/pkDefault
+         and
+            exists:x:@.arguments/*/pkDefault
+            neq:x:@.arguments/*/pkDefault
+               .
+            neq:x:@.arguments/*/pkDefault
+               .:
          .lambda
             set-value:x:@.sql
                strings.concat
