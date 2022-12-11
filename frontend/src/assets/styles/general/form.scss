@@ -5,6 +5,9 @@ buttons
 :root .mat-stroked-button {
   border-radius: $aista_radius_sm;
 }
+:root .mat-button {
+  min-width: unset;
+}
 
 .btn-link {
   background-color: transparent;

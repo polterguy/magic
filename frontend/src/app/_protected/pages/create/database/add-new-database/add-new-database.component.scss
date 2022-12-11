@@ -1,9 +1,8 @@
-
 /*
  * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
- @import '../../../../../../assets/styles/_variables/colors.scss';
+@import '../../../../../../assets/styles/_variables/colors.scss';
 @import '../../../../../../assets/styles/_variables/mixin.scss';
 @import '../../../../../../assets/styles/_variables/sizing.scss';
 
@@ -43,6 +42,7 @@
   0% {
     opacity: 0;
   }
+
   100% {
     opacity: 1;
   }
@@ -172,4 +172,10 @@
     width: 100%;
     height: 44px;
   }
+}
+
+.upload-backup-row {
+  position: absolute;
+  bottom: 0;
+  right: 0;
 }

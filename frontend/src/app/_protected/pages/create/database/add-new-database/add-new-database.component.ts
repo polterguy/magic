@@ -52,6 +52,7 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
 
   public isLoadingDbs: boolean = true;
   public isLoadingPlugins: boolean = true;
+  public zipFileInput: any;
 
   /**
    * The following variables are for creating a new db.
@@ -231,6 +232,17 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
    */
   downloadBackup(database: any) {
     this.fileService.downloadFile('/data/' + database.name + '.db');
+  }
+
+  uploadBackup(file: any) {
+    this.fileService.uploadDatabaseBackup(file.item(0)).subscribe({
+      next: () => {
+        this.generalService.showFeedback('Backup was successfully uploaded', 'successMessage');
+        this.zipFileInput = null;
+        this.getDatabases();
+      },
+      error: (error: any) => this.generalService.showFeedback(error)
+    });
   }
 
   /*
