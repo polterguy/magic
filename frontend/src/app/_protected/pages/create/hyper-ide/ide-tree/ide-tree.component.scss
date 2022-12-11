@@ -167,7 +167,7 @@
     @include general_transition(0.3s);
 
     &.active-file {
-      background-color: transparentize($color: $aista_default_grey5, $amount: 0.5);
+      background-color: transparentize($color: $aista_default_grey4, $amount: 0.9);
     }
 
     &:hover {
