@@ -9,9 +9,12 @@
       <span class="text-muted">|</span>
     </span>
 
-    <input matInput [placeholder]="'Search for ' + type" [formControl]="filterControl" #input>
+    <input matInput [placeholder]="'Search for ' + type" [formControl]="filterControl" #input autocomplete="off">
     <button mat-icon-button matSuffix (click)="removeSearchTerm();" *ngIf="input.value !== ''">
       <mat-icon>close</mat-icon>
     </button>
   </mat-form-field>
+  <mat-checkbox *ngIf="type === 'endpoint'" color="primary" class="mt-md-0 mt-1 ms-3" [(ngModel)]="showSystem" (change)="filter();">
+    System endpoints
+  </mat-checkbox>
 </div>
