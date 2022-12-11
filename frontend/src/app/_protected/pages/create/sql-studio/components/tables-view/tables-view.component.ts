@@ -134,13 +134,14 @@ export class TablesViewComponent implements OnInit, OnDestroy {
 
   public dropTable(item: any, field: string, foreign_keys?: any, tableName?: string) {
     if (this.selectedDatabase !== 'magic') {
+      let fkName = null;
       if (field === 'column' && foreign_keys && (foreign_keys?.filter((x: any) => x.column === item.name) || []).length > 0) {
         if (this.selectedDbType === 'sqlite') {
           this.generalService.showFeedback('SQLite doesn\'t allow for deleting columns with foreign keys', 'errorMessage', 'Ok', 5000);
+          return;
         } else {
-          this.generalService.showFeedback('Delete foreign keys before you delete the column', 'errorMessage', 'Ok', 5000);
+          fkName = foreign_keys?.filter((x: any) => x.column === item.name)[0].name;
         }
-        return;
       }
       this.dialog.open(ConfirmationDialogComponent, {
         width: '500px',
@@ -163,7 +164,7 @@ export class TablesViewComponent implements OnInit, OnDestroy {
           if (field === 'table') {
             this.deleteTable(item);
           } else if (field === 'column') {
-            this.deleteColumn(item, tableName);
+            this.deleteColumn(item, tableName, fkName);
           }
         }
       })
@@ -187,35 +188,38 @@ export class TablesViewComponent implements OnInit, OnDestroy {
       });
   }
 
-  private deleteColumn(item: any, tableName: string) {
-    this.sqlService.deleteColumn(
-      this.selectedDbType,
-      this.selectedConnectionString,
-      this.selectedDatabase,
-      tableName,
-      item.name).subscribe({
-        next: (result: any) => {
-          this.generalService.showFeedback('Column successfully deleted', 'successMessage');
-          this.refetchDatabases();
-          // this.applyMigration(result.sql);
-        },
-        error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
-      });
+  private deleteColumn(item: any, tableName: string, fkName: string) {
+    if (fkName) {
+      this.sqlService.deleteFk(
+        this.selectedDbType,
+        this.selectedConnectionString,
+        this.selectedDatabase,
+        tableName,
+        fkName,
+        false).subscribe({
+          next: () => {
+            this.deleteColumn(item, tableName, null);
+          },
+          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
+        });
+    } else {
+      this.sqlService.deleteColumn(
+        this.selectedDbType,
+        this.selectedConnectionString,
+        this.selectedDatabase,
+        tableName,
+        item.name).subscribe({
+          next: () => {
+            this.generalService.showFeedback('Column successfully deleted', 'successMessage');
+            this.refetchDatabases();
+          },
+          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
+        });
+    }
   }
 
   private refetchDatabases() {
-    this.flushEndpointsAuthRequirements();
     this.getDatabases.emit(true);
-  }
-
-  /*
-   * Will flush server side cache of endpoints (auth invocations) and re-retrieve these again.
-   */
-  private flushEndpointsAuthRequirements() {
-    this.cacheService.delete('magic.auth.endpoints').subscribe({
-      next: () => this.backendService.refetchEndpoints(),
-      error: (error: any) => { }
-    });
   }
 
   public exportTable(tableName: string) {

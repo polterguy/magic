@@ -604,8 +604,21 @@ export class SqlService {
     connectionString: string,
     databaseName: string,
     tableName: string,
-    fkName: string) {
-    new Observable<any>(subscriber => {
+    fkName: string,
+    flushCache: boolean = true) {
+    if (flushCache === false) {
+      return this.httpService.delete<any>('/magic/system/sql/ddl/foreign-key?databaseType=' +
+      encodeURIComponent(databaseType) +
+      '&connectionString=' +
+      encodeURIComponent(connectionString) +
+      '&databaseName=' +
+      encodeURIComponent(databaseName) +
+      '&tableName=' +
+      encodeURIComponent(tableName) +
+      '&fkName=' +
+      encodeURIComponent(fkName));
+    }
+    return new Observable<any>(subscriber => {
       this.httpService.delete<any>('/magic/system/sql/ddl/foreign-key?databaseType=' +
         encodeURIComponent(databaseType) +
         '&connectionString=' +
