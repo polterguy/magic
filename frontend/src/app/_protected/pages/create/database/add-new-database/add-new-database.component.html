@@ -14,8 +14,8 @@
               <mat-icon>database</mat-icon>
               <span class="text-muted">|</span>
             </span>
-            <input matInput type="text" name="-" autocomplete="off" placeholder="Name"
-              [(ngModel)]="databaseName" required />
+            <input matInput type="text" name="-" autocomplete="off" placeholder="Name" [(ngModel)]="databaseName"
+              required />
           </mat-form-field>
           <div class="p-2"></div>
           <button mat-flat-button class="w-35" color="primary" type="submit" (click)="createNewDatabase()">Create
@@ -89,7 +89,8 @@
             <button mat-button color="warn" class="ps-0" (click)="deleteDb(element)"
               [disabled]="element.name === 'magic'">Delete</button>
             <button mat-button color="primary" class="px-0" routerLink="/endpoint-generator"
-              [queryParams]="{dbType: element.type, dbName: element.name, dbCString: element.connectionString}">Generate endpoints</button>
+              [queryParams]="{dbType: element.type, dbName: element.name, dbCString: element.connectionString}">Generate
+              endpoints</button>
           </td>
         </ng-container>
 
@@ -98,6 +99,14 @@
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
       </table>
     </div>
+
+    <div class="text-end button-row mt-3 w-100 upload-backup-row">
+      <button mat-flat-button color="primary" (click)="zipfile.click()">Upload
+        backup</button>
+    </div>
+
+    <input type="file" [(ngModel)]="zipFileInput" #zipfile class="d-none" accept="db"
+      (change)="uploadBackup($event.target.files)">
 
   </div>
 </div>

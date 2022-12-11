@@ -20,7 +20,7 @@ validators.regex:x:@.arguments/*/file/*/name
 .full-path
 set-value:x:@.full-path
    strings.concat
-      get-value:/data/
+      .:/data/
       get-value:x:@.arguments/*/file/*/name
 io.stream.save-file:x:@.full-path
    get-value:x:@.arguments/*/file/*/stream

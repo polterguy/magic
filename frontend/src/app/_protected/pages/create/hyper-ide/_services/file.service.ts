@@ -14,6 +14,8 @@ import { Response } from '../../../../models/common/response.model';
 import { MacroDefinition } from '../../../../models/common/macro-definition.model';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { HttpService } from 'src/app/_general/services/http.service';
+import { Observable } from 'rxjs';
+import { CacheService } from 'src/app/_protected/services/common/cache.service';
 
 /**
  * File service allowing you to read, download, upload, and delete files.
@@ -31,7 +33,8 @@ export class FileService {
    */
   constructor(
     private httpService: HttpService,
-    private generalService: GeneralService) { }
+    private generalService: GeneralService,
+    private cacheService: CacheService) { }
 
   /**
    * Returns a list of all files existing within the specified folder.
@@ -164,6 +167,36 @@ export class FileService {
     const formData: FormData = new FormData();
     formData.append('file', file);
     return this.httpService.put<any>('/magic/system/file-system/file?folder=' + encodeURIComponent(path), formData);
+  }
+
+  /**
+   * Uploads a database backup file.
+   * 
+   * @param file Database backup file to upload
+   */
+  public uploadDatabaseBackup(file: any) {
+    return new Observable<any>(subscriber => {
+      const formData: FormData = new FormData();
+      formData.append('file', file);
+      this.httpService.put<any>('/magic/system/sql/backup', formData).subscribe({
+        next: (result: any) => {
+          this.cacheService.delete('magic.sql.databases.sqlite.*').subscribe({
+            next: () => {
+              subscriber.next(result);
+              subscriber.complete();
+            },
+            error: (error: any) => {
+              subscriber.error(error);
+              subscriber.error(error);
+            }
+          });
+        },
+        error: (error: any) => {
+          subscriber.error(error);
+          subscriber.error(error);
+        }
+      })
+    });
   }
 
   /**

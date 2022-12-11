@@ -182,7 +182,6 @@ export class TablesViewComponent implements OnInit, OnDestroy {
         next: (result: any) => {
           this.generalService.showFeedback('Table was successfully deleted', 'successMessage');
           this.refetchDatabases();
-          // this.applyMigration(result.sql);
         },
         error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
       });
