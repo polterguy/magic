@@ -8,16 +8,15 @@
 @import '../../../../../assets/styles/_variables/sizing.scss';
 
 .scrollable-row {
-  height: calc(100% - 65px);
+  height: calc(100% - 42px);
   overflow: hidden;
-}
-
-mat-card.editor-card {
-  padding: 5px 15px 0 15px;
 }
 
 mat-card.tree-card {
   padding: 15px;
+  app-ide-searchbox {
+    font-size: 11px;
+  }
 }
 
 .max-height-full {
