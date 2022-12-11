@@ -5,7 +5,7 @@
       <span class="text-muted">|</span>
     </span>
 
-    <input matInput placeholder="Search through files" (input)="applyFilter(input.value)" #input>
+    <input matInput placeholder="Search through files" (input)="applyFilter(input.value)" #input autocomplete="off">
     <button mat-icon-button matSuffix (click)="removeSearchTerm();input.value = ''" *ngIf="input.value!==''">
       <mat-icon>close</mat-icon>
     </button>
