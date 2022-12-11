@@ -143,7 +143,6 @@ export class AutoGenerateComponent implements OnInit, OnDestroy {
             }
           }
           this.databases = modules;
-          console.log(this.databases)
           this.getComponents();
         } else {
           this.refetchEndpointsList();
@@ -258,6 +257,10 @@ export class AutoGenerateComponent implements OnInit, OnDestroy {
     deployLocally: boolean = true) {
     if (this.frontendName === '') {
       this.generalService.showFeedback('Please give your fontend a name', 'errorMessage');
+      return;
+    }
+    if (this.endpoints.length === 0) {
+      this.generalService.showFeedback('No endpoints selected', 'errorMessage');
       return;
     }
     let apiUrl = this.backendService.active.url;
