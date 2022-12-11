@@ -171,7 +171,7 @@ body {
 }
 
 .open-files.active-file {
-  background-color: rgb(230, 231, 238) !important;
+  background-color: rgb(210, 211, 218) !important;
 }
 
 :root app-loading-skeleton .block {
