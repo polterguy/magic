@@ -344,7 +344,7 @@ export class IdeTreeComponent implements OnInit, OnDestroy {
           next: (res: { result: string }) => {
             if (res.result === 'success') {
               this.removeNode(path);
-              this.generalService.showFeedback('Folder is deleted successfully.', 'successMessage');
+              this.generalService.showFeedback('Folder successfully deleted', 'successMessage');
 
               this.openFiles = this.openFiles.filter(x => !x.path.startsWith(this.activeFolder));
               if (this.openFiles.filter(x => x.path === this.currentFileData.path).length === 0) {
