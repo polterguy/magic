@@ -22,7 +22,7 @@
           </span>
 
           <input matInput [placeholder]="frontendType === frontendTypes[1].value ? 'App name' : 'Service name'"
-            [(ngModel)]="frontendName">
+            [(ngModel)]="frontendName" autocomplete="off">
         </mat-form-field>
       </div>
     </div>
@@ -66,7 +66,7 @@
       <mat-chip color="primary" *ngFor="let item of databases" [selected]="moduleSelected(item.name)"
         (click)="moduleClicked(item.name)">{{item.name}}</mat-chip>
     </mat-chip-list>
-    <app-loading-skeleton *ngIf="!databases || databases.length === 0" [amount]="1" [colClass]="'col-12'"
+    <app-loading-skeleton *ngIf="!databases" [amount]="1" [colClass]="'col-12'"
       [blockHeight]="'45px'" [hasShadow]="false"></app-loading-skeleton>
   </div>
   <div class="col-lg-6 col-12 ps-lg-4 mb-3">
@@ -78,7 +78,7 @@
       <mat-chip color="primary" *ngFor="let item of tables" [selected]="componentSelected(item.name)"
         (click)="componentClicked(item.name)">{{item.name}}</mat-chip>
     </mat-chip-list>
-    <app-loading-skeleton *ngIf="!tables || tables.length === 0" [amount]="1" [colClass]="'col-12'"
+    <app-loading-skeleton *ngIf="!tables" [amount]="1" [colClass]="'col-12'"
       [blockHeight]="'45px'" [hasShadow]="false"></app-loading-skeleton>
 
   </div>
@@ -90,7 +90,7 @@
     </div>
 
     <div class="endpoints-list w-100 pe-2">
-      <app-loading-skeleton *ngIf="!endpoints || endpoints.length === 0" [amount]="5" [colClass]="'col-12'"
+      <app-loading-skeleton *ngIf="!endpoints" [amount]="5" [colClass]="'col-12'"
         [blockHeight]="'40px'" [hasShadow]="false"></app-loading-skeleton>
       <div class="d-flex mb-2 bg-light px-3 py-2" *ngFor="let item of endpoints">
         <mat-checkbox [(ngModel)]="item.selected" color="primary" class="">
@@ -111,7 +111,7 @@
         <span class="text-muted">|</span>
       </span>
 
-      <input matInput [(ngModel)]="copyRight">
+      <input matInput [(ngModel)]="copyRight" autocomplete="off">
     </mat-form-field>
 
     <div class="fake-container bg-light" *ngIf="!isApp"></div>
