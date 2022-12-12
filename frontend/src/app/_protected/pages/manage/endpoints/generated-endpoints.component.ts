@@ -99,6 +99,10 @@ export class GeneratedEndpointsComponent implements OnInit, OnDestroy {
     this.endpointsGeneralService.getEndpoints();
   }
 
+  reloadEndpoints(e: any) {
+    this.getEndpoints();
+  }
+
   public filterList(event: any) {
     this.defaultListToShow = event.showSystem ? 'system' : 'other';
     let instance: any = { ...this.originalEndpoints[this.defaultListToShow] };
