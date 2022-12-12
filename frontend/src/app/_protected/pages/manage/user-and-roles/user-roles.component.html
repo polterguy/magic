@@ -48,7 +48,7 @@
 
     <mat-paginator #paginator [length]="resultsLength" (page)="pageChange($event, tabs.selectedIndex)"
       [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" [showFirstLastButtons]="true" class="mt-4"
-      aria-label="Select page" [class.d-none]="resultsLength < 5">
+      aria-label="Select page" [class.d-none]="resultsLength <= 10">
     </mat-paginator>
 
   </mat-card-content>

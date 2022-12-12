@@ -6,6 +6,7 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject, ReplaySubject, debounceTime } from 'rxjs';
+import { GeneralService } from 'src/app/_general/services/general.service';
 import { FileService } from 'src/app/_protected/pages/create/hyper-ide/_services/file.service';
 import { Role } from '../../_models/role.model';
 import { ManageRoleDialogComponent } from '../manage-role-dialog/manage-role-dialog.component';
@@ -47,6 +48,7 @@ export class SharedTopBarComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     private fileService: FileService,
+    private generalService: GeneralService,
     private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
@@ -66,10 +68,11 @@ export class SharedTopBarComponent implements OnInit {
 
   uploadUsers(files: any) {
     this.fileService.importUsers(files.item(0)).subscribe({
-      next: () => {
+      next: (res: any) => {
         this.csvFileInput = null;
         this.getUsersList.emit({ search: this.searchTerm });
-      }
+        this.generalService.showFeedback(`${res.count} users were successfully imported`);
+      }, error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
     });
   }
 

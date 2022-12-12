@@ -73,5 +73,7 @@ data.connect:[generic|magic]
                      value:x:@.dp/#
 
 // Returning success to caller.
+get-count:x:@csv2lambda/*
+unwrap:x:+/*
 return
-   result:success
+   count:x:@get-count
