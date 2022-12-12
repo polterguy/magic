@@ -34,7 +34,7 @@
             <span class="text-muted ms-1">|</span>
           </span>
           <input matInput [formControlName]="item.type" [name]="item.type">
-          <button matSuffix mat-icon-button color="warn" type="button" *ngIf="item.type !== 'email'"
+          <button matSuffix mat-icon-button color="warn" type="button"
             (click)="deleteField(item.type)">
             <mat-icon>delete</mat-icon>
           </button>
