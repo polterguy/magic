@@ -12,7 +12,7 @@
                 [hasShadow]="false"></app-loading-skeleton>
             </ng-container>
             <ng-template #loaded>
-              <app-log-searchbox (errorOnly)="errorOnly($event)" (filterList)="filterList($event)"></app-log-searchbox>
+              <app-log-searchbox (filterList)="filterList($event)"></app-log-searchbox>
             </ng-template>
           </div>
         </div>

@@ -32,10 +32,16 @@ export class LogService {
    * @param from What item to use as offset for retrieving items
    * @param max Maximum number of items to return
    */
-  public list(from: string, max: number) {
+  public list(from: string, max: number, query: string = null) {
     let url = '/magic/system/log/list?max=' + max;
     if (from) {
       url += '&from=' + encodeURIComponent(from);
+    }
+    if (query && query.length > 0) {
+      if (!query.includes('%')) {
+        query += '%';
+      }
+      url += '&query=' + encodeURIComponent(query);
     }
     return this.httpService.get<LogItem[]>(url);
   }
@@ -57,6 +63,9 @@ export class LogService {
   public count(filter?: string) {
     let query = '';
     if (filter) {
+      if (!query.includes('%')) {
+        filter += '%';
+      }
       query += '?query=' + encodeURIComponent(filter);
     }
     return this.httpService.get<Count>('/magic/system/log/count' + query);

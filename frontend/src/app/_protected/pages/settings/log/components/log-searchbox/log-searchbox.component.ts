@@ -3,23 +3,27 @@
  * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
   selector: 'app-log-searchbox',
   templateUrl: './log-searchbox.component.html'
 })
-export class LogSearchboxComponent {
+export class LogSearchboxComponent implements OnInit {
 
-  @Output() filterList = new EventEmitter<any>();
-  @Output() errorOnly = new EventEmitter<any>();
+  @Output() filterList = new EventEmitter<string>();
 
-  /**
-   * Invoking endpoint to search in unique fields.
-   * @params event
-   */
-   public applyFilter(keyword: string) {
-    this.filterList.emit(keyword);
+  filter: FormControl;
+
+  ngOnInit() {
+    this.filter = new FormControl('');
+    this.filter.valueChanges
+      .pipe(debounceTime(400), distinctUntilChanged())
+      .subscribe((query: string) => {
+        this.filterList.emit(query);
+      });
   }
 
   /**
@@ -27,10 +31,6 @@ export class LogSearchboxComponent {
    * @callback filterList To refetch the unfiltered list.
    */
   public removeSearchTerm() {
-    this.filterList.emit('');
-  }
-
-  public toggleShowError(event: any) {
-    this.errorOnly.emit(event.checked);
+    this.filter.setValue('');
   }
 }
