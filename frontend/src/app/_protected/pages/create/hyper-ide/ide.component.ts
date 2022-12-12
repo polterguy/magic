@@ -26,7 +26,7 @@ export class IdeComponent implements OnInit {
 
   constructor(private route: ActivatedRoute) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.route.data.subscribe(data => {
       this.type = data.type;
     });
