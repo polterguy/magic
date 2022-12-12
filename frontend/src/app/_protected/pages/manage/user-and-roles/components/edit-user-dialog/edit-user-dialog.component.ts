@@ -143,7 +143,7 @@ export class EditUserDialogComponent implements OnInit {
     this.userService.update(data).subscribe({
       next: (res: any) => {
         if (res && res.affected > 0) {
-          this.generalService.showFeedback(`User is ${this.userIsLocked ? 'LOCKED' : 'UNLOCKED'} successfully.`, 'successMessage');
+          this.generalService.showFeedback(`User was successfully ${this.userIsLocked ? 'locked' : 'unlocked'}`, 'successMessage');
         }
       },
       error: (error: any) => {
@@ -180,7 +180,7 @@ export class EditUserDialogComponent implements OnInit {
         this.userService.deleteExtra(type, this.data.user.username).subscribe({
           next: () => {
             this.formData.splice(index, 1);
-            this.setFormFields();
+            this.userForm.removeControl(type);
             this.generalService.showFeedback('The selected field is deleted successfully.', 'successMessage');
           },
           error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)
@@ -198,8 +198,12 @@ export class EditUserDialogComponent implements OnInit {
         value: this.userForm.value[key]
       }))
     }
+    if (data.length === 0) {
+      this.dialogRef.close();
+      return;
+    }
     forkJoin(data).subscribe({
-      next: (res: any) => {
+      next: () => {
         this.generalService.showFeedback('Changes are saved successfully.', 'successMessage');
         this.dialogRef.close();
       },
