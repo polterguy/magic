@@ -100,7 +100,7 @@ export class IdeTreeComponent implements OnInit, OnDestroy {
     private endpointsGeneralService: EndpointsGeneralService,
     private codemirrorActionsService: CodemirrorActionsService) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     if (this.type === 'frontend') {
       this.activeFolder = '/etc/www/';
       this.currentFolder = '/etc/www/';
@@ -189,8 +189,6 @@ export class IdeTreeComponent implements OnInit, OnDestroy {
                     }
                   }))
                 }
-              } else {
-                // this.dataBindTree();
               }
 
               resolve(true);
@@ -413,14 +411,14 @@ export class IdeTreeComponent implements OnInit, OnDestroy {
         expanded.push(this.openFolder);
       }
     }
-    // root.children.map((root_folder: any) => {
 
-    //   if (root_folder.name === 'etc') {
-
-    //     root_folder.children = root_folder.children.filter((item: any) => item.path !== '/etc/frontend/');
-    //   }
-    // })
-    this.dataSource.data = root.children;
+    if (this.type === 'frontend') {
+      const etcPath: any = root.children.find((item: any) => item.name === 'etc');
+      const frontendFolders = etcPath.children.filter((item: any) => item.path === '/etc/frontend/' || item.path === '/etc/www/');
+      this.dataSource.data = frontendFolders;
+    } else {
+      this.dataSource.data = root.children;
+    }
 
     for (const idx of this.treeControl.dataNodes) {
       if (expanded.filter(x => (<any>x)?.node?.path === (<any>idx).node.path).length > 0) {
