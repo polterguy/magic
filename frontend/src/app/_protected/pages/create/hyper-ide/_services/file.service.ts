@@ -200,6 +200,17 @@ export class FileService {
   }
 
   /**
+   * Imports users
+   * 
+   * @param file CSV file to import
+   */
+  public importUsers(file: any) {
+    const formData: FormData = new FormData();
+    formData.append('file', file);
+    return this.httpService.put<any>('/magic/system/auth/import-users', formData);
+  }
+
+  /**
    * Uploads a file to your backend.
    *
    * @param path Folder to upload file to

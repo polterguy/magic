@@ -53,7 +53,8 @@ data.connect:[generic|magic]
       for-each:x:@.dp/#/*
 
          // Making sure we exclude username and password
-         switch:x:@.dp/#
+         get-name:x:@.dp/#
+         switch:x:-
 
             case:username
             case:password
@@ -63,7 +64,6 @@ data.connect:[generic|magic]
                .foo
 
             default
-               get-name:x:@.dp/#
                data.create
                   table:users_extra
                   return-id:bool:false
