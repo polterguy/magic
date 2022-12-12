@@ -18,7 +18,7 @@
 
   <ng-container *ngIf="userIsRoot;else notRoot">
 
-    <div class="row" *ngIf="showInfoPanel === 'show'">
+    <div class="row mb-1" *ngIf="showInfoPanel === 'show'">
       <div class="col-12 mb-4">
         <app-info-panel (hideInfoPanel)="hidePanel()"></app-info-panel>
       </div>
