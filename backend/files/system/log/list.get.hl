@@ -3,6 +3,7 @@
 .arguments
    from:string
    max:long
+   query:string
 .description:Returns log items according to the optional arguments
 .type:internal
 
@@ -13,7 +14,7 @@ auth.ticket.verify:root
 add:x:../*/log.query
    get-nodes:x:@.arguments/*/max
    get-nodes:x:@.arguments/*/from
-log.query
+log.query:x:@.arguments/*/query
 
 // Returning result of above invocation to caller.
 return-nodes:x:-/*

@@ -19,8 +19,6 @@ import { LogExceptionComponent } from '../../../../_general/components/log-excep
 })
 export class LogComponent implements OnInit {
 
-  private retrievingItems = false;
-
   /**
    * Columns to display in table.
    */
@@ -29,7 +27,6 @@ export class LogComponent implements OnInit {
   /**
    * Currently viewed log items.
    */
-  items: any = [];
   expandedElement: LogItem | null;
 
   /**
@@ -43,6 +40,7 @@ export class LogComponent implements OnInit {
   public currentPage: number = 0;
 
   public dataSource: any = [];
+  private filter: string = '';
 
   /**
    * Creates an instance of your component.
@@ -71,25 +69,21 @@ export class LogComponent implements OnInit {
   getItems() {
     let from: string = null;
     if (this.currentPage > 0) {
-      from = this.items[this.currentPage - 1][this.pageSize - 1].id;
+      from = this.dataSource[this.dataSource.length - 1].id;
     }
-    this.logService.list(from, this.pageSize).subscribe({
+    this.logService.list(from, this.pageSize, this.filter).subscribe({
       next: (logitems) => {
-        // this.items = this.items.concat(logitems || []);
-        this.items.push(logitems || []);
-        this.retrievingItems = false;
-        this.getDataSource();
+        this.dataSource = logitems || [];
         this.isLoading = false;
       },
       error: (error: any) => {
-        this.retrievingItems = false;
         this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
       }
     });
   }
 
   getCount() {
-    this.logService.count(null).subscribe({
+    this.logService.count(this.filter).subscribe({
       next: (count) => {
         this.count = count.count;
       },
@@ -100,15 +94,7 @@ export class LogComponent implements OnInit {
   page(event: PageEvent) {
 
     this.currentPage = event.pageIndex;
-    if (!this.items[this.currentPage]) {
-      this.getItems();
-    } else {
-      this.getDataSource();
-    }
-  }
-
-  getDataSource() {
-    this.dataSource = this.items[this.currentPage];
+    this.getItems();
   }
 
   viewException(item: any) {
@@ -128,25 +114,9 @@ export class LogComponent implements OnInit {
     this.generalService.showFeedback('Contentis copied on your clipboard');
   }
 
-  // TODO:
-  //    Invoking endpoint to search through all data and return data.
-  //    It is only temporary solution for now.
-  public filterList(event: string) {
-    if (event !== '') {
-      this.dataSource = this.dataSource.filter((item: any) => item.content.toLowerCase().indexOf(event.toLowerCase()) > -1);
-    } else {
-      this.getDataSource();
-    }
-  }
-
-  // TODO:
-  //    Invoking endpoint to search through all data and return data.
-  //    It is only temporary solution for now.
-  public errorOnly(event: boolean) {
-    if (event) {
-      this.dataSource = this.dataSource.filter((item: any) => item.type === 'error');
-    } else {
-      this.getDataSource();
-    }
+  public filterList(filter: any) {    
+    this.filter = filter;
+    this.getItems();
+    this.getCount();
   }
 }
