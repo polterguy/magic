@@ -4,7 +4,8 @@ import { BackendService } from '../../services/common/backend.service';
 import { DiagnosticsService } from './_services/diagnostics.service';
 import moment from 'moment';
 import { LogTypes, SystemReport } from './_models/dashboard.model';
-import { Router } from '@angular/router';
+import { SplashDialogComponent } from 'src/app/_protected/pages/dashboard/components/splash-dialog/splash-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-dashboard',
@@ -35,14 +36,15 @@ export class DashboardComponent implements OnInit {
   public userAsUsername: string = '';
 
   constructor(
-    private router: Router,
     private cdr: ChangeDetectorRef,
     private generalService: GeneralService,
+    private dialog: MatDialog,
     private backendService: BackendService,
     private diagnosticsService: DiagnosticsService) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.waitForData();
+    this.showInitDialog();
   }
 
   private waitForData() {
@@ -110,6 +112,17 @@ export class DashboardComponent implements OnInit {
         this._isRetrievingSystemReport = false;
       }
     });
+  }
+
+  private showInitDialog() {
+    const configured = localStorage.getItem('configured');
+    if (configured) {
+      return;
+    }
+    this.dialog.open(SplashDialogComponent, {
+      width: '550px',
+    });
+    localStorage.setItem('configured', 'true');
   }
 
   hidePanel() {

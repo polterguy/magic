@@ -19,12 +19,6 @@ import { UserService } from '../../manage/user-and-roles/_services/user.service'
 })
 export class ProfileComponent implements OnInit {
 
-  // Available themes.
-  themes: string[] = [
-    'default',
-    'nuomorphism'
-  ];
-
   // Selected theme.
   public selectedTheme: string = null;
 
@@ -44,7 +38,7 @@ export class ProfileComponent implements OnInit {
     private backendService: BackendService,
     private generalService: GeneralService) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.getUsername();
   }
 
