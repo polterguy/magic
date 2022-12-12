@@ -436,12 +436,20 @@ export class IdeTreeComponent implements OnInit, OnDestroy {
     this.cdr.markForCheck();
     let idx: number;
     file = file || this.currentFileData;
+    let isActiveFile = false;
     this.openFiles.forEach(element => {
       if (element.path === file.path) {
         idx = this.openFiles.indexOf(element);
+        if (this.currentFileData.path === file.path) {
+          isActiveFile = true;
+        }
       }
     });
     this.openFiles.splice(idx, 1);
+
+    if (!isActiveFile) {
+      return;
+    }
 
     if (this.openFiles.length === 0) {
       this.currentFileData = null;
