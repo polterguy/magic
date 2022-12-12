@@ -147,29 +147,6 @@ export class HlPlaygroundComponent implements OnInit, OnDestroy {
     });
   }
 
-  public clear() {
-    const domNode = (<any>document.querySelector('.CodeMirror'));
-    const editor = domNode.CodeMirror;
-
-    if (editor.getDoc().getValue() === '') {
-      return;
-    }
-    editor.getDoc().setValue('');
-  }
-
-  // public saveAsFile() {
-  //   if (this.output.editor.getValue() === '') {
-  //     return;
-  //   }
-
-  //   this.fileService.saveFile(`/hyperlambda-test--${Date.now()}.hl`, this.output.editor.getValue()).subscribe({
-  //     next: () => {
-  //       this.generalService.showFeedback('File successfully saved', 'successMessage');
-  //     },
-  //     error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
-  //   });
-  // }
-
   public viewShortkeys() {
     this.dialog.open(ShortkeysComponent, {
       width: '900px',
