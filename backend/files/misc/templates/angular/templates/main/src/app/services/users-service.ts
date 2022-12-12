@@ -79,7 +79,7 @@ export class UsersService {
   users(params: string) {
     return this.httpClient.get<User[]>(
       environment.apiUrl +
-      'magic/modules/magic/users' + params);
+      'magic/system/magic/users' + params);
   }
 
   /**
@@ -90,7 +90,7 @@ export class UsersService {
   updateUser(data: UpdateUser) {
     return this.httpClient.put<UpdateUser>(
       environment.apiUrl +
-      'magic/modules/magic/users', data);
+      'magic/system/magic/users', data);
   }
 
   /**
@@ -101,7 +101,7 @@ export class UsersService {
   createUser(data: NewUser) {
     return this.httpClient.post<NewUser>(
       environment.apiUrl +
-      'magic/modules/magic/users', data);
+      'magic/system/magic/users', data);
   }
 
   /**
@@ -112,7 +112,7 @@ export class UsersService {
   usersCount(params: string) {
     return this.httpClient.get<any>(
       environment.apiUrl +
-      'magic/modules/magic/users-count' + params);
+      'magic/system/magic/users-count' + params);
   }
 
   /**
@@ -123,7 +123,7 @@ export class UsersService {
   deleteUser(params: string) {
     return this.httpClient.delete<User>(
       environment.apiUrl +
-      'magic/modules/magic/users' + params);
+      'magic/system/magic/users' + params);
   }
 
   /**
@@ -134,7 +134,7 @@ export class UsersService {
   getUserRole(params: string) {
     return this.httpClient.get<Role[]>(
       environment.apiUrl +
-      'magic/modules/magic/users_roles' + params);
+      'magic/system/magic/users_roles' + params);
   }
 
   /**
@@ -145,7 +145,7 @@ export class UsersService {
   addUserRole(data: Role) {
     return this.httpClient.post<any>(
       environment.apiUrl +
-      'magic/modules/magic/users_roles', data);
+      'magic/system/magic/users_roles', data);
   }
 
   /**
@@ -156,7 +156,7 @@ export class UsersService {
   removeUserRole(params: string) {
     return this.httpClient.delete<any>(
       environment.apiUrl +
-      'magic/modules/magic/users_roles' + params);
+      'magic/system/magic/users_roles' + params);
   }
 
   /**
@@ -167,7 +167,7 @@ export class UsersService {
   getUserExtras(params: string) {
     return this.httpClient.get<Extra[]>(
       environment.apiUrl +
-      'magic/modules/magic/users_extra' + params);
+      'magic/system/magic/users_extra' + params);
   }
 
   /**
@@ -178,7 +178,7 @@ export class UsersService {
   addUserExtras(data: Extra) {
     return this.httpClient.post<Extra>(
       environment.apiUrl +
-      'magic/modules/magic/users_extra', data);
+      'magic/system/magic/users_extra', data);
   }
 
   /**
@@ -189,7 +189,7 @@ export class UsersService {
   updateUserExtras(data: Extra) {
     return this.httpClient.put<Extra>(
       environment.apiUrl +
-      'magic/modules/magic/users_extra', data);
+      'magic/system/magic/users_extra', data);
   }
 
   /**
@@ -200,7 +200,7 @@ export class UsersService {
   deleteUserExtras(params: string) {
     return this.httpClient.delete<any>(
       environment.apiUrl +
-      'magic/modules/magic/users_extra' + params);
+      'magic/system/magic/users_extra' + params);
   }
 
   /**
@@ -210,7 +210,7 @@ export class UsersService {
   getRoles() {
     return this.httpClient.get<Roles[]>(
       environment.apiUrl +
-      'magic/modules/magic/roles');
+      'magic/system/magic/roles');
   }
 
 }

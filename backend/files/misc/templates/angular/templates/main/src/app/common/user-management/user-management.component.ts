@@ -323,12 +323,8 @@ export class UserManagementComponent implements OnInit {
       }
     }).afterClosed().subscribe((res: {role: any, locked: boolean, extra: Extra[]}) => {
       
-      // updating the selected user's detail without refetching data.
       this.users.find((item: User) => item.username === user.username).role = res.role;
-      let lockState: number = undefined;
-      res.locked ? lockState = 1 : lockState = 0;
-      this.users.find((item: User) => item.username === user.username).locked = lockState;
-      // updating the selected user's detail without refetching data.
+      this.users.find((item: User) => item.username === user.username).locked = res.locked;
       this.users.find((item: User) => item.username === user.username).extra = res.extra;
     })
   }

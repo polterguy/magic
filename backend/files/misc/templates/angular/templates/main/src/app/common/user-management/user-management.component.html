@@ -4,7 +4,7 @@
 
     <button
       mat-flat-button
-      *ngIf="authService.me.canInvoke('magic/modules/magic/users', 'post')"
+      *ngIf="authService.me.canInvoke('magic/system/magic/users', 'post')"
       color="primary"
       class="create-btn" 
       role="button"
@@ -50,12 +50,12 @@
         <th
           mat-header-cell
           *matHeaderCellDef
-          [ngClass]="authService.me.canInvoke('magic/modules/magic/users', 'delete') ? 'delete-column' : 'hidden'"></th>
+          [ngClass]="authService.me.canInvoke('magic/system/magic/users', 'delete') ? 'delete-column' : 'hidden'"></th>
 
         <td
           mat-cell
           *matCellDef="let el"
-          [ngClass]="authService.me.canInvoke('magic/modules/magic/users', 'delete') ? 'delete-column' : 'hidden'">
+          [ngClass]="authService.me.canInvoke('magic/system/magic/users', 'delete') ? 'delete-column' : 'hidden'">
           <button
             mat-button
             [matTooltip]="'Delete this record' | translate"
@@ -74,7 +74,7 @@
             class="details-sheet"
             [@detailExpand]="el == expandedElement ? 'expanded' : 'collapsed'">
             <button
-              *ngIf="authService.me.canInvoke('magic/modules/magic/users', 'put')"
+              *ngIf="authService.me.canInvoke('magic/system/magic/users', 'put')"
               mat-button
               color="primary"
               class="edit-button"
