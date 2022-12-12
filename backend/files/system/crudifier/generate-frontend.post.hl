@@ -82,14 +82,18 @@ if
  * First deleting folder entirely and re-creating it for simplicity, to
  * make sure folder is empty.
  */
+strings.concat
+   .:/etc/frontend/
+   get-value:x:@.arguments/*/name
+   .:/
 if
-   io.folder.exists:/etc/frontend/
+   io.folder.exists:x:@strings.concat
    .lambda
 
-      // Deleteing "frontend" folder.
-      io.folder.delete:/etc/frontend/
+      // Deleting "frontend" folder.
+      io.folder.delete:x:@strings.concat
 
-io.folder.create:/etc/frontend/
+io.folder.create:x:@strings.concat
 
 // Then figuring out full path for file.
 strings.concat
@@ -104,11 +108,6 @@ io.stream.save-file:x:@strings.concat
 // Unzipping file in its current folder and deleting it afterwards.
 io.file.unzip:x:@strings.concat
 io.file.delete:x:@strings.concat
-
-// Renaming folder to "src" to have a predictive path.
-io.folder.list:/etc/frontend/
-io.folder.move:x:-/0
-   .:/etc/frontend/src
 
 // Returning success to caller.
 return
