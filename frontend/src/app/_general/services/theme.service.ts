@@ -35,6 +35,13 @@ export class ThemeService {
     }
   }
 
+  get themes() {
+    return [
+      'default',
+      'nuomorphism',
+    ];
+  }
+
   /**
    * Returns theme to caller.
    */

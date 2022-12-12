@@ -116,7 +116,7 @@
                 <span class="text-muted">|</span>
               </span>
               <mat-select placeholder="Theme" [(ngModel)]="themeService.theme">
-                <mat-option *ngFor="let item of themes" [value]="item">{{item}}</mat-option>
+                <mat-option *ngFor="let item of themeService.themes" [value]="item">{{item}}</mat-option>
               </mat-select>
             </mat-form-field>
           </div>
