@@ -112,7 +112,10 @@ export class HlPlaygroundComponent implements OnInit, OnDestroy {
     }).afterClosed().subscribe((filename: string) => {
       if (filename) {
         this.evaluatorService.saveSnippet(filename, this.input.hyperlambda).subscribe({
-          next: () => this.generalService.showFeedback('Snippet successfully saved'),
+          next: () => {
+            this.generalService.showFeedback('Snippet successfully saved');
+            this.filename = filename
+          },
           error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
         });
       }
