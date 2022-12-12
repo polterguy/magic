@@ -17,7 +17,6 @@ import { CryptoService } from '../_services/crypto.service';
 export class ServerKeyReceiptsComponent implements OnInit {
 
   @Input() selectedServerKey: PublicKey;
-  @Input() isNewKey: boolean = undefined;
 
   displayedColumns: string[] = ['created', 'request', 'response'];
 
@@ -34,13 +33,8 @@ export class ServerKeyReceiptsComponent implements OnInit {
     private generalService: GeneralService) { }
 
   ngOnInit(): void {
-
-    if (this.isNewKey) {
-      this.getInvocations();
-      this.getCount();
-    } else {
-      this.isLoading = false;
-    }
+    this.getInvocations();
+    this.getCount();
   }
 
   /**
@@ -48,9 +42,10 @@ export class ServerKeyReceiptsComponent implements OnInit {
    */
   private getInvocations() {
     this.isLoading = true;
-    const filter: any = {
-      crypto_key: this.selectedServerKey.id
-    };
+    const filter: any = {};
+    if (this.selectedServerKey) {
+      filter.crypto_key = this.selectedServerKey.id;
+    }
     this.cryptoService.invocations({
       filter,
       offset: this.pageIndex * this.pageSize,
@@ -65,9 +60,10 @@ export class ServerKeyReceiptsComponent implements OnInit {
   }
 
   private getCount() {
-    const filter: any = {
-      crypto_key: this.selectedServerKey.id
-    };
+    const filter: any = {};
+    if (this.selectedServerKey) {
+      filter.crypto_key = this.selectedServerKey.id;
+    }
     this.cryptoService.countInvocations({ filter: filter }).subscribe({
       next: (res) => {
         this.totalItems = res.count
