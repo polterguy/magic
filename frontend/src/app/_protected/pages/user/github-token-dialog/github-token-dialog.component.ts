@@ -26,7 +26,7 @@ export class GithubTokenDialogComponent implements OnInit {
     private cryptoService: CryptoService,
     @Inject(MAT_DIALOG_DATA) public data: { username: string, role: string, expires: string }) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.today = new Date();
     this.generateToken();
   }

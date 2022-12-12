@@ -157,8 +157,7 @@ export class SQLStudioComponent implements OnInit {
     this.databases = [];
     this.sqlService.getDatabaseMetaInfo(
       this.selectedDbType,
-      this.selectedConnectionString,
-      true).subscribe({
+      this.selectedConnectionString).subscribe({
         next: (res: Databases) => {
           this.databases = res.databases || [];
           if (this.selectedDatabase === '') {

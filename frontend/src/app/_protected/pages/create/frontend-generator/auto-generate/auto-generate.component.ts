@@ -3,14 +3,12 @@
  * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { EndpointsGeneralService } from 'src/app/_general/services/endpoints-general.service';
+import { Component, OnInit } from '@angular/core';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { Endpoint } from 'src/app/_protected/models/common/endpoint.model';
 import { BackendService } from 'src/app/_protected/services/common/backend.service';
+import { EndpointService } from '../../../manage/endpoints/_services/endpoint.service';
 import { CrudifyService } from '../../endpoint-generator/_services/crudify.service';
-import { SqlService } from '../../database/_services/sql.service';
 import { CodemirrorActionsService } from '../../hyper-ide/_services/codemirror-actions.service';
 
 /**
@@ -30,7 +28,7 @@ class EndpointEx extends Endpoint {
   templateUrl: './auto-generate.component.html',
   styleUrls: ['./auto-generate.component.scss']
 })
-export class AutoGenerateComponent implements OnInit, OnDestroy {
+export class AutoGenerateComponent implements OnInit {
 
   public frontendTypes: any = FrontendTypes;
   public frontendType: string = '';
@@ -46,8 +44,6 @@ export class AutoGenerateComponent implements OnInit, OnDestroy {
 
   public themes: any = [];
   public theme: string = '';
-
-  private endpointSubscription!: Subscription;
 
   /**
    * Endpoints as retrieved from backend.
@@ -69,10 +65,10 @@ export class AutoGenerateComponent implements OnInit, OnDestroy {
     private crudifyService: CrudifyService,
     private generalService: GeneralService,
     private backendService: BackendService,
-    private endpointsGeneralService: EndpointsGeneralService,
+    private endpointsService: EndpointService,
     private codemirrorActionsService: CodemirrorActionsService) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.frontendType = this.frontendTypes[1].value;
     this.getPalette();
     this.getEndpoints();
@@ -112,7 +108,7 @@ export class AutoGenerateComponent implements OnInit, OnDestroy {
    * Reading endpoints' list from the already fetched instance.
    */
   private getEndpoints() {
-    this.endpointSubscription = this.endpointsGeneralService.endpoints.subscribe({
+    this.endpointsService.endpoints().subscribe({
       next: (endpoints: Endpoint[]) => {
         if (endpoints) {
           this.endpoints = endpoints
@@ -144,20 +140,10 @@ export class AutoGenerateComponent implements OnInit, OnDestroy {
           }
           this.databases = modules;
           this.getComponents();
-        } else {
-          this.refetchEndpointsList();
         }
       },
       error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
     });
-  }
-
-  /**
-   * Fetching list of endpoints to be used throughout the app.
-   * Only invokes if the list doesn't exist.
-   */
-  private refetchEndpointsList() {
-    this.endpointsGeneralService.getEndpoints();
   }
 
   /**
@@ -477,12 +463,6 @@ export class AutoGenerateComponent implements OnInit, OnDestroy {
       result.push(tmp);
     }
     return result;
-  }
-
-  ngOnDestroy(): void {
-    if (this.endpointSubscription) {
-      this.endpointSubscription.unsubscribe();
-    }
   }
 }
 

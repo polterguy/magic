@@ -276,7 +276,7 @@ export class ConnectComponent implements OnInit {
   public getDatabasesList(item: any) {
     item.isClicked = true;
     this.generalService.showLoading();
-    this.sqlService.getDatabaseMetaInfo(item.dbTypeValue, item.cStringKey, true).subscribe({
+    this.sqlService.getDatabaseMetaInfo(item.dbTypeValue, item.cStringKey).subscribe({
       next: (res: any) => {
         if (res) {
           this.dialog.open(ViewDbListComponent, {
