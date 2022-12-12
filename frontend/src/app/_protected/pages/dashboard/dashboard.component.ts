@@ -6,6 +6,7 @@ import moment from 'moment';
 import { LogTypes, SystemReport } from './_models/dashboard.model';
 import { SplashDialogComponent } from 'src/app/_protected/pages/dashboard/components/splash-dialog/splash-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
@@ -39,10 +40,15 @@ export class DashboardComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private generalService: GeneralService,
     private dialog: MatDialog,
+    private router: Router,
     private backendService: BackendService,
     private diagnosticsService: DiagnosticsService) { }
 
   ngOnInit() {
+    if (!this.backendService.active.setupDone) {
+      this.router.navigate(['/setup']);
+      return;
+    }
     this.waitForData();
     this.showInitDialog();
   }
