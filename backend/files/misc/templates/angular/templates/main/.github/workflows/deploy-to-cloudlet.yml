@@ -3,7 +3,7 @@ on:
   push:
     branches: [ master, main ]
 jobs:
-  archive-deploy:
+  deploy:
     runs-on: ubuntu-latest
     container: node:16
     steps:
@@ -25,7 +25,7 @@ jobs:
         if: success()
         uses: fjogeleit/http-request-action@v1
         with:
-          url: '[[apiUrl]]/magic/system/file-system/overwrite-folder'
+          url: '[[apiUrl]]magic/system/file-system/overwrite-folder'
           method: 'PUT'
           customHeaders: '{
             "Content-Type": "multipart/form-data",
