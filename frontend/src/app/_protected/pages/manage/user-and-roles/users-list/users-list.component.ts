@@ -195,7 +195,7 @@ export class UsersListComponent implements OnInit {
           error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)
         });
       }
-    })
+    });
   }
 
   getExtra(name: string, el: User) {

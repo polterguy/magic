@@ -21,6 +21,7 @@
           <div class="col-12">
 
             <app-endpoints-list [defaultListToShow]="defaultListToShow" [endpoints]="endpoints"
+              (reload)="reloadEndpoints($event)"
               [result]="resultPanel.result" [payload]="resultPanel.payload" [isLoading]="isLoading"
               (changeEditor)="changeEditor($event)" #listPanel></app-endpoints-list>
 
