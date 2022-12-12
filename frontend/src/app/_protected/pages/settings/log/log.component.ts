@@ -36,7 +36,7 @@ export class LogComponent implements OnInit {
 
   public isLoading: boolean = true;
 
-  public pageSize: number = 15;
+  public pageSize: number = 10;
   public currentPage: number = 0;
 
   public dataSource: any = [];
@@ -116,6 +116,7 @@ export class LogComponent implements OnInit {
 
   public filterList(filter: any) {    
     this.filter = filter;
+    this.currentPage = 0;
     this.getItems();
     this.getCount();
   }
