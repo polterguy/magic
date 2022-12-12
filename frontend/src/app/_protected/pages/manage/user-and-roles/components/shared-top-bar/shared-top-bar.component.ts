@@ -6,6 +6,7 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject, ReplaySubject, debounceTime } from 'rxjs';
+import { FileService } from 'src/app/_protected/pages/create/hyper-ide/_services/file.service';
 import { Role } from '../../_models/role.model';
 import { ManageRoleDialogComponent } from '../manage-role-dialog/manage-role-dialog.component';
 import { NewUserDialogComponent } from '../new-user-dialog/new-user-dialog.component';
@@ -22,6 +23,8 @@ export class SharedTopBarComponent implements OnInit {
 
   @Output() getUsersList = new EventEmitter<any>();
   @Output() getRolesList = new EventEmitter<any>();
+
+  csvFileInput: any = null;
 
   /**
    * Stores the search input value.
@@ -43,6 +46,7 @@ export class SharedTopBarComponent implements OnInit {
 
   constructor(
     private dialog: MatDialog,
+    private fileService: FileService,
     private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
@@ -58,6 +62,15 @@ export class SharedTopBarComponent implements OnInit {
         this.cdr.detectChanges();
       }
     })();
+  }
+
+  uploadUsers(files: any) {
+    this.fileService.importUsers(files.item(0)).subscribe({
+      next: () => {
+        this.csvFileInput = null;
+        this.getUsersList.emit({ search: this.searchTerm });
+      }
+    });
   }
 
   private watchSearchInputChanges() {
