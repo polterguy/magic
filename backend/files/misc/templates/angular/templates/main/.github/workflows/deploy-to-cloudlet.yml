@@ -1,0 +1,35 @@
+name: CI and CD pipeline deploying app to your cloudlet
+on:
+  push:
+    branches: [ master, main ]
+jobs:
+  archive-deploy:
+    runs-on: ubuntu-latest
+    container: node:16
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Set permissions
+        run: chmod -R 777 ./
+      - name: Build
+        run: npm i && npm run build
+      - name: Archive
+        if: success()
+        uses: vimtor/action-zip@v1
+        with:
+          files: ./dist/
+          dest: archive.zip
+      - name: Check Files
+        run: ls -a && pwd 
+      - name: Deploy
+        if: success()
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: '[[apiUrl]]/magic/system/file-system/overwrite-folder'
+          method: 'PUT'
+          customHeaders: '{
+            "Content-Type": "multipart/form-data",
+            "Authorization": "Bearer ${{ secrets.TOKEN }}"
+            }'
+          data: '{"folder": "/etc/www/"}'
+          files: '{"file": "/__w/[[name]]/[[name]]/archive.zip"}'

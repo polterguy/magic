@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "angular-light": {
+    "[[name]]": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
