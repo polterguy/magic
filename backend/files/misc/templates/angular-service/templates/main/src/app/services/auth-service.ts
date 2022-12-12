@@ -140,7 +140,7 @@ export class AuthService {
       create: (username: string, password: string) => {
         return this.httpClient.post<CreateResponse>(
           environment.apiUrl +
-          'magic/modules/magic/users', {
+          'magic/system/magic/users', {
             username,
             password,
         });
@@ -159,7 +159,7 @@ export class AuthService {
         }
         return this.httpClient.get<any[]>(
           environment.apiUrl +
-          'magic/modules/magic/users' + query);
+          'magic/system/magic/users' + query);
       },
 
       count: (filter: string) => {
@@ -170,28 +170,28 @@ export class AuthService {
         }
         return this.httpClient.get<CountResponse>(
           environment.apiUrl +
-          'magic/modules/magic/users-count' +
+          'magic/system/magic/users-count' +
           query);
       },
 
       delete: (username: string) => {
         return this.httpClient.delete<DeleteResponse>(
           environment.apiUrl + 
-          'magic/modules/magic/users?username=' +
+          'magic/system/magic/users?username=' +
           encodeURIComponent(username));
       },
 
       roles: (username: string) => {
         return this.httpClient.get<any[]>(
           environment.apiUrl +
-          'magic/modules/magic/users_roles?user.eq=' +
+          'magic/system/magic/users_roles?user.eq=' +
           encodeURIComponent(username));
       },
 
       addRole: (user: string, role: string) => {
         return this.httpClient.post<CreateResponse>(
           environment.apiUrl +
-          'magic/modules/magic/users_roles', {
+          'magic/system/magic/users_roles', {
             user,
             role,
         });
@@ -200,7 +200,7 @@ export class AuthService {
       deleteRole: (user: string, role: string) => {
         return this.httpClient.delete<DeleteResponse>(
           environment.apiUrl + 
-          'magic/modules/magic/users_roles?role=' +
+          'magic/system/magic/users_roles?role=' +
           encodeURIComponent(role) +
           '&user=' +
           encodeURIComponent(user));
@@ -219,7 +219,7 @@ export class AuthService {
       create: (name: string, description: string) => {
         return this.httpClient.post<CreateResponse>(
           environment.apiUrl +
-          'magic/modules/magic/roles', {
+          'magic/system/magic/roles', {
             name,
             description,
         });
@@ -239,7 +239,7 @@ export class AuthService {
         }
         return this.httpClient.get<any[]>(
           environment.apiUrl +
-          'magic/modules/magic/roles' + query);
+          'magic/system/magic/roles' + query);
       },
 
       count: (filter: string) => {
@@ -250,13 +250,13 @@ export class AuthService {
         }
         return this.httpClient.get<CountResponse>(
           environment.apiUrl +
-          'magic/modules/magic/roles-count' + query);
+          'magic/system/magic/roles-count' + query);
       },
 
       delete: (name: string) => {
         return this.httpClient.delete<DeleteResponse>(
           environment.apiUrl + 
-          'magic/modules/magic/roles?name=' +
+          'magic/system/magic/roles?name=' +
           encodeURIComponent(name));
       }
     }

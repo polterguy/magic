@@ -43,7 +43,7 @@
           </a>
           <mat-divider></mat-divider>
           <a
-            *ngIf="authService.me.canInvoke('magic/modules/magic/users', 'get')"
+            *ngIf="authService.me.canInvoke('magic/system/magic/users', 'get')"
             mat-list-item
             routerLink="/users"
             [routerLinkActiveOptions]="{exact: true}"
