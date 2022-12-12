@@ -19,7 +19,7 @@ export class ServerKeyReceiptsComponent implements OnInit {
   @Input() selectedServerKey: PublicKey;
   @Input() isNewKey: boolean = undefined;
 
-  displayedColumns: string[] = ['name', 'domain', 'email', 'created', 'fingerprint', 'actions'];
+  displayedColumns: string[] = ['created', 'request', 'response'];
 
   public dataSource: any = [];
 
