@@ -204,6 +204,7 @@ export class PluginsComponent implements OnInit {
                 this.generalService.showFeedback('Plugin was successfully installed on your server', 'successMessage');
 
                 this.loadDetails();
+                this.cacheService.delete('magic.sql.databases.sqlite.*').subscribe();
 
                 /*
                   * Making sure we turn OFF socket connections if these have been created.
