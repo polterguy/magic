@@ -29,7 +29,7 @@ export class UsersListComponent implements OnInit {
 
   @Output() getUsersList = new EventEmitter<any>();
 
-  displayedColumns: string[] = ['username', 'name', 'email', 'role', 'creationDate', 'actions'];
+  displayedColumns: string[] = ['username', 'name', 'email', 'role', 'creationDate', 'status', 'actions'];
 
   /**
    * Specify if the user can change password for the selected user

@@ -1,8 +1,26 @@
-
 /*
  * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
- button.p-0 {
+@import '../../../../../../assets/styles/_variables/colors.scss';
+
+button.p-0 {
   min-width: 0;
+}
+
+.status {
+  min-width: 7px;
+  min-height: 7px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+
+  &.locked {
+    background-color: $aista_error;
+  }
+
+  &.unlocked {
+    background-color: $aista_success;
+  }
 }
