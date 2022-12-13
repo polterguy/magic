@@ -83,7 +83,7 @@ if
  * make sure folder is empty.
  */
 strings.concat
-   .:/etc/frontend/
+   .:/etc/frontends/
    get-value:x:@.arguments/*/name
    .:/
 if
@@ -97,7 +97,7 @@ io.folder.create:x:@strings.concat
 
 // Then figuring out full path for file.
 strings.concat
-   .:/etc/frontend/
+   .:/etc/frontends/
    get-value:x:@.arguments/*/name
    .:.zip
 
