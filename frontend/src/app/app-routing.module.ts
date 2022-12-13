@@ -91,7 +91,7 @@ const routes: Routes = [
       },
       {
         path: 'server-key-setting',
-        loadChildren: () => import('./_protected/pages/misc/cryptography/_module/server-key.module').then(m => m.ServerKeyModule)
+        loadChildren: () => import('./_protected/pages/user/cryptography/_module/server-key.module').then(m => m.ServerKeyModule)
       },
       {
         path: 'user-profile',
@@ -99,7 +99,7 @@ const routes: Routes = [
       },
       {
         path: 'help-center',
-        loadChildren: () => import('./_protected/pages/user/help-center/_module/help-center.module').then(m => m.HelpCenterModule)
+        loadChildren: () => import('./_protected/pages/misc/help-center/_module/help-center.module').then(m => m.HelpCenterModule)
       },
     ]
   },
