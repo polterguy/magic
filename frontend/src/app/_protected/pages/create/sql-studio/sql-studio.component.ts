@@ -354,11 +354,4 @@ export class SQLStudioComponent implements OnInit {
         }
       })
   }
-
-  public callParentAction(action: string, event?: any) {
-    if (!this.sqlView) {
-      this.generalService.showFeedback('Switch to SQL view first.', 'errorMessage');
-      return;
-    }
-  }
 }

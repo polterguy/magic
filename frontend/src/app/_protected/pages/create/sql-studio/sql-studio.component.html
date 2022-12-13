@@ -60,11 +60,11 @@
       <div class="col align-self-center">
         <div class="d-flex justify-content-end flex-sm-nowrap flex-wrap mt-xl-0 mt-3">
           <button mat-button color="primary" class="mat-caption px-1"
-            [disabled]="selectedDatabase === 'magic' || (dbLoading | async)" (click)="addNewTable()">
-            Add new table
+            [disabled]="(dbLoading | async) || sqlView" (click)="addNewTable()">
+            New table
           </button>
-          <button mat-button color="primary" class="mat-caption ps-3 pe-1"
-            [disabled]="selectedDatabase === 'magic' || (dbLoading | async)" (click)="createNewLinkTable()">
+          <button mat-button color="primary" class="mat-caption px-1"
+            [disabled]="(dbLoading | async) || sqlView" (click)="createNewLinkTable()">
             Link table
           </button>
           <button mat-button color="primary" class="mat-caption px-1" [disabled]="(dbLoading | async)"
@@ -81,10 +81,7 @@
               {{selectedDatabase === 'magic' || selectedDbType === 'sqlite' || selectedDbType === 'mysql' ||
               selectedDbType === 'pgsql' ? 'View database as DDL' : 'Export database'}}
             </button>
-            <button mat-menu-item (click)="sqlView ? sqlFileImport.click() : callParentAction('')">
-              Import SQL file
-            </button>
-            <button mat-menu-item [disabled]="selectedDbType !== 'sqlite'" (click)="clearServerCache()">
+            <button mat-menu-item (click)="clearServerCache()">
               Clear server side cache
             </button>
           </mat-menu>
@@ -92,8 +89,6 @@
         </div>
       </div>
     </div>
-    <input type="file" name="sqlFile" id="sqlFile" #sqlFileImport class="d-none" accept=".sql" [(ngModel)]="sqlFile"
-      (change)="callParentAction($event)">
   </mat-card-content>
 </mat-card>
 

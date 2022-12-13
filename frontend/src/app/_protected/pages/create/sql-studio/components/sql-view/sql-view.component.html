@@ -27,9 +27,12 @@
         </div>
 
         <div class="d-flex justify-content-end align-items-center">
+          <button mat-button color="primary" (click)="sqlFileImport.click()">Import</button>
           <button mat-button color="primary" (click)="save()">Save</button>
           <button mat-flat-button color="primary" class="px-4" [disabled]="waitingRun"
             (click)="execute()">Execute</button>
+          <input type="file" name="sqlFile" id="sqlFile" #sqlFileImport class="d-none" accept=".sql" [(ngModel)]="sqlFile"
+            (change)="importSqlFile($event)">
         </div>
 
       </mat-card-content>
