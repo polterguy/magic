@@ -259,7 +259,7 @@ export class HeaderComponent implements OnInit {
         ],
       },
       {
-        name: 'Settings',
+        name: 'Misc',
         url: null,
         expandable: true,
         submenu: [
@@ -267,11 +267,6 @@ export class HeaderComponent implements OnInit {
             name: 'Configuration',
             url: '/configuration',
             disabled: !(this.permissions.access.config.load)
-          },
-          {
-            name: 'Cryptography',
-            url: '/server-key-setting',
-            disabled: !(this.permissions.access.crypto.import_public_key)
           },
           {
             name: 'Health Check',
@@ -282,6 +277,10 @@ export class HeaderComponent implements OnInit {
             name: 'Log',
             url: '/log',
             disabled: !(this.permissions.access.log.read && this.permissions.setupDone)
+          },
+          {
+            name: 'Help Center',
+            url: '/help-center'
           },
         ],
       },
@@ -296,8 +295,9 @@ export class HeaderComponent implements OnInit {
             disabled: !(this.permissions.token)
           },
           {
-            name: 'Help Center',
-            url: '/help-center'
+            name: 'Cryptography',
+            url: '/server-key-setting',
+            disabled: !(this.permissions.access.crypto.import_public_key)
           },
           {
             name: 'Generate Token',
@@ -342,7 +342,7 @@ export class HeaderComponent implements OnInit {
    * Logs the user out of his current backend.
    */
   public getGithubToken(clickType: string) {
-    if (clickType !== 'Generate token') {
+    if (clickType !== 'Generate Token') {
       return;
     }
 
