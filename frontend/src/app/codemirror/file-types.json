@@ -204,7 +204,8 @@
   },
   {
     "extensions": [
-      "hl"
+      "hl",
+      "config"
     ],
     "options": {
       "mode": "hyperlambda",
