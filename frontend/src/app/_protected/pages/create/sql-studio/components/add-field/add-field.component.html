@@ -10,7 +10,7 @@
             <span class="text-muted">|</span>
           </span>
 
-          <input matInput type="text" placeholder="Name" [(ngModel)]="formData.columnName" name="column_name"
+          <input matInput type="text" placeholder="Column name" [(ngModel)]="formData.columnName" name="column_name"
             autocomplete="off"
             #name cdkFocusInitial [pattern]="CommonRegEx.appNameWithUppercase">
           <mat-error>{{CommonErrorMessages.appNameWithUppercase}}</mat-error>
@@ -22,7 +22,7 @@
             <span class="text-muted">|</span>
           </span>
 
-          <mat-select placeholder="Type" [(ngModel)]="formData.fieldType" (ngModelChange)="changeDefaultValue()"
+          <mat-select placeholder="Column type" [(ngModel)]="formData.fieldType" (ngModelChange)="changeDefaultValue()"
             name="field_type">
             <mat-select-trigger>
               {{formData?.fieldType?.name}}
@@ -73,7 +73,7 @@
             <span class="text-muted">|</span>
           </span>
 
-          <mat-select placeholder="Table" [(ngModel)]="formData.selectedTable" name="selected_table"
+          <mat-select placeholder="Foreign table" [(ngModel)]="formData.selectedTable" name="selected_table"
             (selectionChange)="changeTable()">
             <mat-select-trigger>
               {{formData?.selectedTable?.name}}
@@ -89,7 +89,7 @@
             <span class="text-muted">|</span>
           </span>
 
-          <mat-select placeholder="Column" [(ngModel)]="formData.foreignField" name="foreign_field"
+          <mat-select placeholder="Foreign column" [(ngModel)]="formData.foreignField" name="foreign_field"
             (selectionChange)="changeColumnName()">
             <mat-option class="multiline-mat-option" *ngFor="let item of formData.selectedTable?.columns"
               [value]="item?.name">{{item?.name}}
@@ -103,7 +103,7 @@
             <span class="text-muted">|</span>
           </span>
 
-          <input matInput type="text" placeholder="Name"
+          <input matInput type="text" placeholder="Key name"
             autocomplete="off"
             [value]="formData.foreignField ? formData.foreignField + '_column' : ''" [(ngModel)]="formData.columnName"
             name="column_name" [pattern]="CommonRegEx.appNameWithUppercase">

@@ -1,14 +1,15 @@
-<h3 mat-dialog-title class="mb-0">Link tables</h3>
-<p class="text-muted mb-4">Select two tables and merge them into a new table.</p>
+<h3 mat-dialog-title class="mb-0">Add new link table</h3>
+<p class="text-muted mb-4">Create a link table connecting two tables together</p>
 
 <div mat-dialog-content class="new-field-dialog">
 
-  <mat-form-field class="w-100 text-prefix">
-    <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
-      First table
+  <mat-form-field class="w-100 standalone-field mt-2">
+    <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+      <mat-icon>conversion_path</mat-icon>
+      <span class="text-muted">|</span>
     </span>
 
-    <mat-select placeholder="Type" [(ngModel)]="formData.table1">
+    <mat-select placeholder="Table 1" [(ngModel)]="formData.table1">
       <mat-select-trigger>
         {{formData?.table1?.name}}
       </mat-select-trigger>
@@ -19,12 +20,13 @@
     </mat-select>
   </mat-form-field>
 
-  <mat-form-field class="w-100 text-prefix">
-    <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
-      Second table
+  <mat-form-field class="w-100 standalone-field">
+    <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+      <mat-icon>conversion_path</mat-icon>
+      <span class="text-muted">|</span>
     </span>
 
-    <mat-select placeholder="Type" [(ngModel)]="formData.table2">
+    <mat-select placeholder="Table 2" [(ngModel)]="formData.table2">
       <mat-select-trigger>
         {{formData?.table2?.name}}
       </mat-select-trigger>

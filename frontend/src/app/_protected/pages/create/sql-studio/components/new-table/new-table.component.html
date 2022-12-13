@@ -1,45 +1,39 @@
 <h3 mat-dialog-title>Add new table</h3>
+<p class="text-muted mb-4">Create a new table and its primary key</p>
 
 <form (ngSubmit)="create()">
   <div mat-dialog-content>
-    <mat-form-field class="w-100 text-prefix">
-      <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
-        Name
+    <mat-form-field class="w-100 standalone-field mt-2">
+      <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        <mat-icon>edit</mat-icon>
+        <span class="text-muted">|</span>
       </span>
 
-      <input matInput type="text" placeholder="Table's name" [(ngModel)]="data.name" name="table_name"
+      <input matInput type="text" placeholder="Table name" [(ngModel)]="data.name" name="table_name"
         [pattern]="CommonRegEx.appNameWithUppercase" (ngModelChange)="nameChanged()">
       <mat-error>{{CommonErrorMessages.appNameWithUppercase}}</mat-error>
     </mat-form-field>
 
-    <mat-form-field class="w-100 text-prefix">
-      <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
-        Primary key's name
+    <mat-form-field class="w-100 standalone-field">
+      <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        <mat-icon>key</mat-icon>
+        <span class="text-muted">|</span>
       </span>
 
-      <input matInput type="text" placeholder="Primary key's name" [(ngModel)]="data.pkName" name="pk_name"
+      <input matInput type="text" placeholder="Primary key name" [(ngModel)]="data.pkName" name="pk_name"
         [pattern]="CommonRegEx.appNameWithUppercase">
       <mat-error>{{CommonErrorMessages.appNameWithUppercase}}</mat-error>
     </mat-form-field>
 
-    <mat-form-field class="w-100 text-prefix">
-      <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
-        Primary key's type
+    <mat-form-field class="w-100 standalone-field">
+      <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        <mat-icon>dehaze</mat-icon>
+        <span class="text-muted">|</span>
       </span>
 
-      <mat-select placeholder="Type" [(ngModel)]="data.pkType" name="pk_type">
+      <mat-select placeholder="Primary key type" [(ngModel)]="data.pkType" name="pk_type">
         <mat-option *ngFor="let item of primaryKeyTypeList" [value]="item.value">{{item.name}}</mat-option>
       </mat-select>
-    </mat-form-field>
-
-    <mat-form-field class="w-100 text-prefix">
-      <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
-        Primary key's length
-      </span>
-
-      <input matInput type="number" placeholder="Primary key's length" [(ngModel)]="data.pkLength" min="10"
-        name="pk_length" pattern="^\d{1,5}$">
-      <mat-error>Invalid number</mat-error>
     </mat-form-field>
   </div>
 
