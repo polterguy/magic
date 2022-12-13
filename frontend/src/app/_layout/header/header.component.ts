@@ -60,7 +60,7 @@ export class HeaderComponent implements OnInit {
 
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.activatedRoute.queryParamMap.subscribe((params: any) => {
       if (params && params.keys && params.keys.length > 0) {
         this.getParams(params)
@@ -141,7 +141,7 @@ export class HeaderComponent implements OnInit {
         this.backendService.verifyToken().subscribe({
           next: () => {
 
-            // this.feedbackService.showInfo(`You were successfully authenticated as '${username}'`);
+            console.log(`You were successfully authenticated as '${username}'`);
 
             // Checking if this is an impersonation request or a change-password request.
             if (this.backendService.active.token.in_role('reset-password')) {
@@ -152,12 +152,10 @@ export class HeaderComponent implements OnInit {
             } else {
 
               // Impersonation request.
-              // this.location.replaceState('');
               window.location.href = '/';
-              this.getPermissions();
+              //this.getPermissions();
             }
           },
-          error: (error: any) => { }
         });
 
       } else if (token) {
@@ -391,7 +389,6 @@ export class HeaderComponent implements OnInit {
     this.router.navigate(['/authentication']);
   }
 
-
   public viewBackends() {
     this.dialog.open(DialogComponent, {
       width: '80vw',
@@ -405,6 +402,7 @@ export class HeaderComponent implements OnInit {
   }
 
   private getSetupStatus() {
+
     // Subscribing to status changes and redirect accordingly if we need user to setup system.
     this.backendService.statusRetrieved.subscribe((status: Status) => {
       if (status) {
