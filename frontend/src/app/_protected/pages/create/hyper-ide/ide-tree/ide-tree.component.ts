@@ -175,7 +175,7 @@ export class IdeTreeComponent implements OnInit, OnDestroy {
 
                 if (this.type === 'frontend') {
                   const etcPath: any = root.children.find((item: any) => item.name === 'etc');
-                  const frontendFolders = etcPath.children.filter((item: any) => item.path === '/etc/frontend/' || item.path === '/etc/www/');
+                  const frontendFolders = etcPath.children.filter((item: any) => item.path === '/etc/frontends/' || item.path === '/etc/www/');
                   this.dataSource.data = frontendFolders;
                 } else {
                   this.dataSource.data = root.children;
@@ -414,7 +414,7 @@ export class IdeTreeComponent implements OnInit, OnDestroy {
 
     if (this.type === 'frontend') {
       const etcPath: any = root.children.find((item: any) => item.name === 'etc');
-      const frontendFolders = etcPath.children.filter((item: any) => item.path === '/etc/frontend/' || item.path === '/etc/www/');
+      const frontendFolders = etcPath.children.filter((item: any) => item.path === '/etc/frontends/' || item.path === '/etc/www/');
       this.dataSource.data = frontendFolders;
     } else {
       this.dataSource.data = root.children;
