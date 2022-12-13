@@ -16,7 +16,7 @@ import { RenameFileDialogComponent, FileObjectName } from '../components/rename-
 import { RenameFolderDialogComponent } from '../components/rename-folder-dialog/rename-folder-dialog.component';
 import { SelectMacroDialogComponent, Macro } from '../components/select-macro-dialog/select-macro-dialog.component';
 import { UnsavedChangesDialogComponent } from '../components/unsaved-changes-dialog/unsaved-changes-dialog.component';
-import { EvaluatorService } from '../../../manage/hyperlambda-playground/_services/evaluator.service';
+import { EvaluatorService } from '../../../../../_general/services/evaluator.service';
 import { EndpointDialogComponent } from '../../../../../_general/components/endpoint-dialog/endpoint-dialog.component';
 import { FileNode } from '../_models/file-node.model';
 import { MacroDefinition } from '../_models/macro-definition.model';

@@ -8,7 +8,7 @@ import { Injectable } from '@angular/core';
 import { HttpService } from 'src/app/_general/services/http.service';
 
 // Application specific imports.
-import { Endpoint } from '../_models/endpoint.model';
+import { Endpoint } from '../models/endpoint.model';
 
 /**
  * Endpoint service, allowing you to retrieve meta data about your endpoints,

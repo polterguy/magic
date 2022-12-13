@@ -11,15 +11,15 @@ import { GeneralService } from 'src/app/_general/services/general.service';
 import { BackendService } from 'src/app/_general/services/backend.service';
 import { environment } from 'src/environments/environment';
 import { FileService } from '../../hyper-ide/_services/file.service';
-import { AppManifest } from '../../../manage/plugins/_models/app-manifest';
-import { BazarApp } from '../../../manage/plugins/_models/bazar-app.model';
+import { AppManifest } from '../../../../../_general/models/app-manifest';
 import { ViewDbComponent } from '../components/view-db/view-db.component';
-import { Databases } from '../_models/databases.model';
-import { DefaultDatabaseType } from '../_models/default-database-type.model';
-import { SqlService } from '../_services/sql.service';
+import { SqlService } from '../../../../../_general/services/sql.service';
 import { BazarService } from 'src/app/_general/services/bazar.service';
 import { CacheService } from 'src/app/_general/services/cache.service';
 import { ConfigService } from 'src/app/_general/services/config.service';
+import { DefaultDatabaseType } from 'src/app/_general/models/default-database-type.model';
+import { Databases } from 'src/app/_general/models/databases.model';
+import { BazarApp } from 'src/app/models/bazar-app.model';
 
 @Component({
   selector: 'app-add-new-database',

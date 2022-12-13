@@ -10,8 +10,8 @@ import { LoadSnippetDialogComponent } from 'src/app/_general/components/load-sni
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { CodemirrorActionsService } from 'src/app/_protected/pages/create/hyper-ide/_services/codemirror-actions.service';
 import { FileService } from 'src/app/_protected/pages/create/hyper-ide/_services/file.service';
-import { EvaluatorService } from '../../../../manage/hyperlambda-playground/_services/evaluator.service';
-import { AssumptionService } from '../../_services/assumption.service';
+import { EvaluatorService } from '../../../../../../_general/services/evaluator.service';
+import { AssumptionService } from '../../../../../../_general/services/assumption.service';
 
 @Component({
   selector: 'app-test-health-content-dialog',

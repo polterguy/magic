@@ -7,7 +7,7 @@ import { Component, Inject } from '@angular/core';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { SqlService } from '../../_services/sql.service';
+import { SqlService } from '../../../../../../_general/services/sql.service';
 
 @Component({
   selector: 'app-view-db-list',

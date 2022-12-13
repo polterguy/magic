@@ -10,13 +10,13 @@ import { Observable } from 'rxjs';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { environment } from 'src/environments/environment';
-import { ConfigService } from '../../misc/configuration/_services/config.service';
+import { ConfigService } from '../../../../_general/services/config.service';
 import { FileService } from '../../create/hyper-ide/_services/file.service';
 import { ViewPluginComponent } from './components/view-app/view-plugin.component';
-import { AppManifest } from './_models/app-manifest';
-import { BazarApp } from './_models/bazar-app.model';
+import { AppManifest } from '../../../../_general/models/app-manifest';
 import { CacheService } from 'src/app/_general/services/cache.service';
 import { BazarService } from 'src/app/_general/services/bazar.service';
+import { BazarApp } from 'src/app/models/bazar-app.model';
 
 @Component({
   selector: 'app-plugins',

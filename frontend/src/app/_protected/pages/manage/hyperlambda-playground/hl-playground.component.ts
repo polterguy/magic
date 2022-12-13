@@ -9,7 +9,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { LoadSnippetDialogComponent } from 'src/app/_general/components/load-snippet-dialog/load-snippet-dialog.component';
 import { SnippetNameDialogComponent } from 'src/app/_general/components/snippet-name-dialog/snippet-name-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { EvaluatorService } from './_services/evaluator.service';
+import { EvaluatorService } from '../../../../_general/services/evaluator.service';
 import { Response } from 'src/app/_protected/models/common/response.model';
 
 import { Subscription } from 'rxjs';
