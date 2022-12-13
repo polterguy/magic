@@ -10,6 +10,7 @@ import { ConfirmationDialogComponent } from 'src/app/_general/components/confirm
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { SqlService } from 'src/app/_general/services/sql.service';
 import { AddFieldComponent } from '../add-field/add-field.component';
+import { AddMigrateScriptComponent } from '../add-migrate-script/add-migrate-script.component';
 import { ExportDdlComponent } from '../export-ddl/export-ddl.component';
 
 @Component({
@@ -27,8 +28,6 @@ export class TablesViewComponent implements OnInit, OnDestroy {
   @Input() selectedConnectionString: string = '';
 
   @Output() getDatabases: EventEmitter<any> = new EventEmitter<any>();
-
-  private autoMigrate: boolean = false;
 
   private tablesList: any = [];
 
@@ -50,7 +49,6 @@ export class TablesViewComponent implements OnInit, OnDestroy {
   public addField(item: any) {
     this.dialog.open(AddFieldComponent, {
       width: '500px',
-      // autoFocus: 'name',
       data: {
         table: item,
         tables: this.tablesList,
@@ -65,7 +63,7 @@ export class TablesViewComponent implements OnInit, OnDestroy {
           this.addForeignKey(res, item);
         }
       }
-    })
+    });
   }
 
   private addColumn(res: any, table: any) {
@@ -90,7 +88,7 @@ export class TablesViewComponent implements OnInit, OnDestroy {
         next: (result: any) => {
           this.generalService.showFeedback('Column successfully added to table', 'successMessage');
           this.refetchDatabases();
-          // this.applyMigration(result.sql);
+          this.applyMigration(result.sql);
         },
         error: (error) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
       });
@@ -113,7 +111,7 @@ export class TablesViewComponent implements OnInit, OnDestroy {
         next: (result: any) => {
           this.generalService.showFeedback('Foreign key successfully added to table.', 'successMessage');
           this.refetchDatabases();
-          // this.applyMigration(result.sql);
+          this.applyMigration(result.sql);
         },
         error: (error) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
       });
@@ -178,6 +176,7 @@ export class TablesViewComponent implements OnInit, OnDestroy {
         next: (result: any) => {
           this.generalService.showFeedback('Table was successfully deleted', 'successMessage');
           this.refetchDatabases();
+          this.applyMigration(result.sql);
         },
         error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
       });
@@ -204,9 +203,10 @@ export class TablesViewComponent implements OnInit, OnDestroy {
         this.selectedDatabase,
         tableName,
         item.name).subscribe({
-          next: () => {
+          next: (result: any) => {
             this.generalService.showFeedback('Column successfully deleted', 'successMessage');
             this.refetchDatabases();
+            this.applyMigration(result.sql);
           },
           error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
         });
@@ -240,6 +240,7 @@ export class TablesViewComponent implements OnInit, OnDestroy {
           }).afterClosed().subscribe((result: any) => {
             if (result) {
               this.generalService.showLoading();
+
               // Invokes endpoint to save content to a module folder.
               this.sqlService.exportToModule(
                 this.selectedDbType,
@@ -265,9 +266,32 @@ export class TablesViewComponent implements OnInit, OnDestroy {
       });
   }
 
-  ngOnDestroy(): void {
+  ngOnDestroy() {
     if (this.tableSubscription) {
       this.tableSubscription.unsubscribe();
     }
+  }
+
+  /*
+   * Open up apply migrate script dialog.
+   */
+  private applyMigration(sql: string) {
+    this.dialog.open(AddMigrateScriptComponent, {
+      width: '80vw',
+      data: {
+        sql,
+      }
+    }).afterClosed().subscribe((res: any) => {
+      if (res) {
+        this.sqlService.createMigrationScript(
+          this.selectedDbType,
+          this.selectedDatabase,
+          sql).subscribe({
+            next: () => {
+              this.generalService.showFeedback('Migration script successfully applied');
+            },
+          });
+      }
+    });
   }
 }

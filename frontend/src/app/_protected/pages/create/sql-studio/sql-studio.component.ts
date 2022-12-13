@@ -11,6 +11,7 @@ import { Databases } from 'src/app/_general/models/databases.model';
 import { CacheService } from 'src/app/_general/services/cache.service';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { SqlService } from '../../../../_general/services/sql.service';
+import { AddMigrateScriptComponent } from './components/add-migrate-script/add-migrate-script.component';
 import { ExportDdlComponent } from './components/export-ddl/export-ddl.component';
 import { LinkTableComponent } from './components/link-table/link-table.component';
 import { NewTableComponent } from './components/new-table/new-table.component';
@@ -210,9 +211,10 @@ export class SQLStudioComponent implements OnInit {
           result.pkType,
           result.pkLength,
           result.pkDefault).subscribe({
-            next: () => {
+            next: (result: any) => {
               this.generalService.showFeedback('Table successfully added.', 'successMessage');
               this.getDatabases();
+              this.applyMigration(result.sql);
             },
             error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)
           });
@@ -267,6 +269,7 @@ export class SQLStudioComponent implements OnInit {
         next: (result: any) => {
           this.generalService.showFeedback('Link table successfully created', 'successMessage');
           this.getDatabases();
+          this.applyMigration(result.sql);
         },
         error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
       });
@@ -353,5 +356,28 @@ export class SQLStudioComponent implements OnInit {
           this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
         }
       })
+  }
+
+  /*
+   * Open up apply migrate script dialog.
+   */
+  private applyMigration(sql: string) {
+    this.dialog.open(AddMigrateScriptComponent, {
+      width: '80vw',
+      data: {
+        sql,
+      }
+    }).afterClosed().subscribe((res: any) => {
+      if (res) {
+        this.sqlService.createMigrationScript(
+          this.selectedDbType,
+          this.selectedDatabase,
+          sql).subscribe({
+            next: () => {
+              this.generalService.showFeedback('Migration script successfully applied');
+            },
+          });
+      }
+    });
   }
 }

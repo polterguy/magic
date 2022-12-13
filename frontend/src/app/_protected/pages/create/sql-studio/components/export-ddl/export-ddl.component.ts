@@ -28,10 +28,6 @@ export class ExportTablesModel {
 })
 export class ExportDdlComponent implements OnInit {
 
-  // Known file extensions we've got editors for.
-  // Used to make sure we reuse default JSON settings for CodeMirror editor.
-  private extensions = fileTypes;
-
   /**
    * CodeMirror options for SQL.
    */
@@ -45,18 +41,6 @@ export class ExportDdlComponent implements OnInit {
 
   ngOnInit(): void {
     this.getCodeMirrorOptions();
-  }
-
-  private getOptions() {
-    (async () => {
-      while (!(this.extensions || this.extensions.length))
-        await new Promise(resolve => setTimeout(resolve, 100));
-
-      if (this.extensions && this.extensions.length) {
-        this.options = this.extensions.filter(x => x.extensions.indexOf('sql') !== -1)[0].options;
-        this.codemirrorInit();
-      }
-    })();
   }
 
   private getCodeMirrorOptions() {

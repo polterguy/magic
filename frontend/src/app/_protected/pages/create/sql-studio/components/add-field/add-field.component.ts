@@ -3,7 +3,7 @@
  * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
 import { CommonRegEx } from 'src/app/_general/classes/common-regex';
@@ -35,7 +35,7 @@ interface ExpectedData {
   templateUrl: './add-field.component.html',
   styleUrls: ['./add-field.component.scss']
 })
-export class AddFieldComponent implements OnInit {
+export class AddFieldComponent {
 
   public formData: NewField = {
     columnName: '',
@@ -54,9 +54,6 @@ export class AddFieldComponent implements OnInit {
     private generalService: GeneralService,
     private dialogRef: MatDialogRef<AddFieldComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ExpectedData) { }
-
-  ngOnInit(): void {
-  }
 
   public changeDefaultValue() {
     this.formData.defaultValue = '';
@@ -154,7 +151,6 @@ const fieldTypes: any = {
       size: {
         min: 0,
         max: 16383,
-        defaultSize: 100
       },
       defaultValue: 'string'
     },
