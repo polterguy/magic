@@ -296,11 +296,11 @@ export class HeaderComponent implements OnInit {
             disabled: !(this.permissions.token)
           },
           {
-            name: 'Help center',
+            name: 'Help Center',
             url: '/help-center'
           },
           {
-            name: 'Generate token',
+            name: 'Generate Token',
           },
           {
             name: 'Logout',
