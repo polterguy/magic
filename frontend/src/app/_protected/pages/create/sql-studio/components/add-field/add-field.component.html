@@ -4,20 +4,22 @@
   <div mat-dialog-content class="new-field-dialog">
     <mat-tab-group mat-stretch-tabs dynamicHeight animationDuration="0ms" (selectedTabChange)="tabsCahnged($event)">
       <mat-tab label="Column">
-        <mat-form-field class="w-100 text-prefix mt-4">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
-            Column name
+        <mat-form-field class="w-100 standalone-field mt-4">
+          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>edit</mat-icon>
+            <span class="text-muted">|</span>
           </span>
 
-          <input matInput type="text" placeholder="Column name" [(ngModel)]="formData.columnName" name="column_name"
+          <input matInput type="text" placeholder="Name" [(ngModel)]="formData.columnName" name="column_name"
             autocomplete="off"
             #name cdkFocusInitial [pattern]="CommonRegEx.appNameWithUppercase">
           <mat-error>{{CommonErrorMessages.appNameWithUppercase}}</mat-error>
         </mat-form-field>
 
-        <mat-form-field class="w-100 text-prefix">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
-            Field type
+        <mat-form-field class="w-100 standalone-field">
+          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>dehaze</mat-icon>
+            <span class="text-muted">|</span>
           </span>
 
           <mat-select placeholder="Type" [(ngModel)]="formData.fieldType" (ngModelChange)="changeDefaultValue()"
@@ -65,12 +67,13 @@
       </mat-tab>
 
       <mat-tab label="Foreign key">
-        <mat-form-field class="w-100 text-prefix mt-4">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
-            Foreign table
+        <mat-form-field class="w-100 standalone-field mt-4">
+          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>conversion_path</mat-icon>
+            <span class="text-muted">|</span>
           </span>
 
-          <mat-select placeholder="Foreign table" [(ngModel)]="formData.selectedTable" name="selected_table"
+          <mat-select placeholder="Table" [(ngModel)]="formData.selectedTable" name="selected_table"
             (selectionChange)="changeTable()">
             <mat-select-trigger>
               {{formData?.selectedTable?.name}}
@@ -80,12 +83,13 @@
           </mat-select>
         </mat-form-field>
 
-        <mat-form-field class="w-100 text-prefix">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
-            Foreign table's column
+        <mat-form-field class="w-100 standalone-field">
+          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>apps</mat-icon>
+            <span class="text-muted">|</span>
           </span>
 
-          <mat-select placeholder="Foreign table's column" [(ngModel)]="formData.foreignField" name="foreign_field"
+          <mat-select placeholder="Column" [(ngModel)]="formData.foreignField" name="foreign_field"
             (selectionChange)="changeColumnName()">
             <mat-option class="multiline-mat-option" *ngFor="let item of formData.selectedTable?.columns"
               [value]="item?.name">{{item?.name}}
@@ -93,12 +97,13 @@
           </mat-select>
         </mat-form-field>
 
-        <mat-form-field class="w-100 text-prefix">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
-            Column name
+        <mat-form-field class="w-100 standalone-field">
+          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>edit</mat-icon>
+            <span class="text-muted">|</span>
           </span>
 
-          <input matInput type="text" placeholder="Column name"
+          <input matInput type="text" placeholder="Name"
             autocomplete="off"
             [value]="formData.foreignField ? formData.foreignField + '_column' : ''" [(ngModel)]="formData.columnName"
             name="column_name" [pattern]="CommonRegEx.appNameWithUppercase">
