@@ -45,7 +45,7 @@ const routes: Routes = [
       },
       {
         path: 'endpoint-generator',
-        loadChildren: () => import('./_protected/pages/tools/endpoints/_module/endpoint.module').then(m => m.EndpointModule)
+        loadChildren: () => import('./_protected/pages/create/endpoint-generator/_module/endpoint.module').then(m => m.EndpointModule)
       },
       {
         path: 'frontend-generator',
