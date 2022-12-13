@@ -125,16 +125,17 @@ export class DashboardComponent implements OnInit {
     if (configured) {
       return;
     }
-    this.dialog.open(SplashDialogComponent, {
+    const dialog = this.dialog.open(SplashDialogComponent, {
       width: '550px',
     });
-    localStorage.setItem('configured', 'true');
+    dialog.afterClosed().subscribe(() => {
+      localStorage.setItem('configured', 'true');
+    });
   }
 
   hidePanel() {
     this.showInfoPanel = 'hide';
     this.cdr.detectChanges();
-
     sessionStorage.setItem('infoPanel', this.showInfoPanel);
   }
 
