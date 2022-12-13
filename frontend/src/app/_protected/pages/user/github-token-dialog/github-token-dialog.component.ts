@@ -4,7 +4,7 @@
  */
 
 import { Component, Inject, OnInit } from '@angular/core';
-import { CryptoService } from 'src/app/_protected/pages/misc/cryptography/_services/crypto.service';
+import { CryptoService } from 'src/app/_protected/pages/user/cryptography/_services/crypto.service';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { GeneralService } from '../../../../_general/services/general.service';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
