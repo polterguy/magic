@@ -16,7 +16,7 @@ import { CrudifyService } from '../../../create/endpoint-generator/_services/cru
 import { TransformModelService } from '../../../create/endpoint-generator/_services/transform-model.service';
 import { Argument } from '../../../manage/endpoints/_models/argument.model';
 import { Role } from '../../../manage/user-and-roles/_models/role.model';
-import { SqlService } from '../../../create/database/_services/sql.service';
+import { SqlService } from '../../../../../_general/services/sql.service';
 import { AddArgumentDialogComponent } from '../components/add-argument-dialog/add-argument-dialog.component';
 import { SqlSnippetDialogComponent } from '../../../create/sql-studio/components/sql-snippet-dialog/sql-snippet-dialog.component';
 

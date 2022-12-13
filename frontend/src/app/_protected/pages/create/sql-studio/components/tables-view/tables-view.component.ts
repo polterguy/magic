@@ -8,7 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Observable, Subscription } from 'rxjs';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { SqlService } from 'src/app/_protected/pages/create/database/_services/sql.service';
+import { SqlService } from 'src/app/_general/services/sql.service';
 import { AddFieldComponent } from '../add-field/add-field.component';
 import { ExportDdlComponent } from '../export-ddl/export-ddl.component';
 

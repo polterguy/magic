@@ -10,7 +10,7 @@ import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { CryptoService } from '../../_services/crypto.service';
 import { Response } from 'src/app/_protected/models/common/response.model';
-import { ConfigService } from '../../../../misc/configuration/_services/config.service';
+import { ConfigService } from '../../../../../../_general/services/config.service';
 
 class NewKey {
   subject: string = '';

@@ -6,7 +6,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { SqlService } from '../../_services/sql.service';
+import { SqlService } from '../../../../../../_general/services/sql.service';
 
 @Component({
   selector: 'app-catalog-name',

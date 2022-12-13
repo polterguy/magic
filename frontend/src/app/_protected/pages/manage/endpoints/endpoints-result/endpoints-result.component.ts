@@ -10,7 +10,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Clipboard } from '@angular/cdk/clipboard';
 
 import { Argument } from '../_models/argument.model';
-import { EndpointService } from '../_services/endpoint.service';
+import { EndpointService } from '../../../../../_general/services/endpoint.service';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { BackendService } from 'src/app/_general/services/backend.service';
 
@@ -22,7 +22,7 @@ import json_readonly from '../../../../../codemirror/options/json_readonly.json'
 import markdown_readonly from '../../../../../codemirror/options/markdown_readonly.json';
 import hyperlambda_readonly from '../../../../../codemirror/options/hyperlambda_readonly.json';
 import { FormBuilder, FormControl } from '@angular/forms';
-import { AssumptionService } from '../../../misc/health-check/_services/assumption.service';
+import { AssumptionService } from '../../../../../_general/services/assumption.service';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateAssumptionTestDialogComponent, TestModel } from 'src/app/_general/components/create-assumption-test-dialog/create-assumption-test-dialog.component';
 

@@ -14,7 +14,7 @@ import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Argument } from '../../../_protected/pages/manage/endpoints/_models/argument.model';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { BackendService } from 'src/app/_general/services/backend.service';
-import { EndpointService } from '../../../_protected/pages/manage/endpoints/_services/endpoint.service';
+import { EndpointService } from '../../services/endpoint.service';
 import { InvocationResult } from '../../../_protected/pages/manage/endpoints/endpoints-result/endpoints-result.component';
 
 // CodeMirror options.
@@ -25,7 +25,7 @@ import json_readonly from '../../../codemirror/options/json_readonly.json';
 import markdown_readonly from '../../../codemirror/options/markdown_readonly.json';
 import hyperlambda_readonly from '../../../codemirror/options/hyperlambda_readonly.json';
 import { CreateAssumptionTestDialogComponent, TestModel } from '../create-assumption-test-dialog/create-assumption-test-dialog.component';
-import { AssumptionService } from 'src/app/_protected/pages/misc/health-check/_services/assumption.service';
+import { AssumptionService } from 'src/app/_general/services/assumption.service';
 import { AssumptionsComponent } from '../assumptions/assumptions.component';
 
 @Component({

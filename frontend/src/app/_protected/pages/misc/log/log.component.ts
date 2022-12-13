@@ -5,7 +5,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { LogService } from './_services/log.service';
+import { LogService } from '../../../../_general/services/log.service';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { LogItem } from './_models/log-item.model';
 import { PageEvent } from '@angular/material/paginator';

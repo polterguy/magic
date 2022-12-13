@@ -5,7 +5,7 @@
 
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { Endpoint } from './_models/endpoint.model';
+import { Endpoint } from '../../../../_general/models/endpoint.model';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { EndpointsGeneralService } from 'src/app/_general/services/endpoints-general.service';
 

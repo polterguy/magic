@@ -15,14 +15,14 @@ import { BackendService } from 'src/app/_general/services/backend.service';
 import { LocResult } from '../../../create/endpoint-generator/_models/loc-result.model';
 import { CrudifyService } from '../../../create/endpoint-generator/_services/crudify.service';
 import { TransformModelService } from '../../../create/endpoint-generator/_services/transform-model.service';
-import { LogService } from '../../../misc/log/_services/log.service';
+import { LogService } from '../../../../../_general/services/log.service';
 import { Role } from '../../../manage/user-and-roles/_models/role.model';
 
 // CodeMirror options.
 import hyperlambda from '../../../../../codemirror/options/hyperlambda.json';
 import { CodemirrorActionsService } from '../../../create/hyper-ide/_services/codemirror-actions.service';
 import { MatDialog } from '@angular/material/dialog';
-import { EvaluatorService } from '../../../manage/hyperlambda-playground/_services/evaluator.service';
+import { EvaluatorService } from '../../../../../_general/services/evaluator.service';
 import { LoadSnippetDialogComponent } from 'src/app/_general/components/load-snippet-dialog/load-snippet-dialog.component';
 import { SnippetNameDialogComponent } from 'src/app/_general/components/snippet-name-dialog/snippet-name-dialog.component';
 import { CacheService } from 'src/app/_general/services/cache.service';

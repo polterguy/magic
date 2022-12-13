@@ -11,9 +11,9 @@ import { GeneralService } from 'src/app/_general/services/general.service';
 import { BackendService } from 'src/app/_general/services/backend.service';
 import { CatalogNameComponent } from '../components/catalog-name/catalog-name.component';
 import { ViewDbListComponent } from '../components/view-db-list/view-db-list.component';
-import { SqlService } from '../_services/sql.service';
-import { DiagnosticsService } from '../../../dashboard/_services/diagnostics.service';
-import { ConfigService } from '../../../misc/configuration/_services/config.service';
+import { SqlService } from '../../../../../_general/services/sql.service';
+import { DiagnosticsService } from '../../../../../_general/services/diagnostics.service';
+import { ConfigService } from '../../../../../_general/services/config.service';
 
 @Component({
   selector: 'app-connect',

@@ -8,7 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { BackendService } from 'src/app/_general/services/backend.service';
-import { ConfigService } from './_services/config.service';
+import { ConfigService } from '../../../../_general/services/config.service';
 
 import json from '../../../../codemirror/options/json.json'
 import { CodemirrorActionsService } from '../../create/hyper-ide/_services/codemirror-actions.service';
