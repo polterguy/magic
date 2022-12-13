@@ -7,7 +7,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { Message } from 'src/app/_protected/models/common/message.model';
-import { BackendService } from 'src/app/services/backend.service';
+import { BackendService } from 'src/app/_general/services/backend.service';
 import { SocketUser } from '../../endpoints/_models/socket-user.model';
 import { MessageWrapper, PublishDialogComponent } from '../components/publish-dialog/publish-dialog.component';
 import { SocketService } from '../_services/socket.service';

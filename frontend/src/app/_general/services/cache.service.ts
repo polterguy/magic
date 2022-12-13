@@ -5,12 +5,11 @@
 
 // Angular and system imports.
 import { Injectable } from '@angular/core';
+import { Count } from 'src/app/models/count.model';
 
 // Application specific imports.
-import { Count } from '../_protected/models/common/count.model';
-import { Response } from '../_protected/models/common/response.model';
-import { CacheItem } from '../_protected/models/common/cache-item.model';
 import { HttpService } from 'src/app/_general/services/http.service';
+import { CacheItem } from 'src/app/_protected/models/common/cache-item.model';
 
 /**
  * Cache service allowing the user to modify his or her cache, viewing items, removing

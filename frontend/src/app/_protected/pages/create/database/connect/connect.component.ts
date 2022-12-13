@@ -8,12 +8,12 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { BackendService } from 'src/app/services/backend.service';
-import { ConfigService } from 'src/app/services/config.service';
+import { BackendService } from 'src/app/_general/services/backend.service';
 import { CatalogNameComponent } from '../components/catalog-name/catalog-name.component';
 import { ViewDbListComponent } from '../components/view-db-list/view-db-list.component';
 import { SqlService } from '../_services/sql.service';
 import { DiagnosticsService } from '../../../dashboard/_services/diagnostics.service';
+import { ConfigService } from '../../../misc/configuration/_services/config.service';
 
 @Component({
   selector: 'app-connect',

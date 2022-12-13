@@ -21,10 +21,10 @@ import { AddArgumentDialogComponent } from '../components/add-argument-dialog/ad
 import { SqlSnippetDialogComponent } from '../../../create/sql-studio/components/sql-snippet-dialog/sql-snippet-dialog.component';
 
 // CodeMirror options.
-import { BackendService } from 'src/app/services/backend.service';
-import { MessageService } from 'src/app/services/message.service';
+import { BackendService } from 'src/app/_general/services/backend.service';
 import { CodemirrorActionsService } from '../../../create/hyper-ide/_services/codemirror-actions.service';
 import { SnippetNameDialogComponent } from 'src/app/_general/components/snippet-name-dialog/snippet-name-dialog.component';
+import { MessageService } from 'src/app/_general/services/message.service';
 
 @Component({
   selector: 'app-manual-generator',

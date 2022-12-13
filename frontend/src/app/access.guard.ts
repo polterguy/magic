@@ -15,7 +15,7 @@ import {
 } from '@angular/router';
 
 // Application specific imports.
-import { BackendService } from './services/backend.service';
+import { BackendService } from './_general/services/backend.service';
 
 /**
  * Access guard verifying router link can be activated.

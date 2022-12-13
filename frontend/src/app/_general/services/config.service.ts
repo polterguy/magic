@@ -9,11 +9,10 @@ import { Injectable } from '@angular/core';
 
 // Application specific imports.
 import { BackendService } from './backend.service';
-import { Response } from '../_protected/models/common/response.model';
-import { Backend } from '../_protected/models/common/backend.model';
-import { NameEmailModel } from '../_protected/models/common/name-email.model';
-import { AuthenticateResponse } from '../_protected/models/auth/authenticate-response.model';
 import { HttpService } from 'src/app/_general/services/http.service';
+import { NameEmailModel } from 'src/app/_protected/models/auth/name-email.model';
+import { AuthenticateResponse } from 'src/app/_protected/models/auth/authenticate-response.model';
+import { Backend } from 'src/app/_protected/models/common/backend.model';
 
 /**
  * Configuration service, allows you to setup system and read or manipulate your configuration

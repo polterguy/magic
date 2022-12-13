@@ -6,11 +6,10 @@
 // Angular and system imports.
 import { throwError } from 'rxjs';
 import { Injectable } from '@angular/core';
+import { HttpService } from './http.service';
+import { FileService } from 'src/app/_protected/pages/create/hyper-ide/_services/file.service';
 
 // Application specific imports.
-import { Response } from '../models/response.model';
-import { HttpService } from '../_general/services/http.service';
-import { FileService } from '../_protected/pages/create/hyper-ide/_services/file.service';
 
 /**
  * Hyperlambda evaluator service allowing you to evaluate Hyperlambda in

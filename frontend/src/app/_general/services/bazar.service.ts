@@ -10,13 +10,13 @@ import { HttpClient } from '@angular/common/http';
 
 // Application specific imports.
 import { Count } from 'src/app/models/count.model';
-import { BazarApp } from '../models/bazar-app.model';
-import { AppManifest } from '../models/app-manifest';
 import { Response } from 'src/app/models/response.model';
-import { environment } from '../../environments/environment';
-import { PurchaseStatus } from '../models/purchase-status.model';
-import { FileService } from '../_protected/pages/create/hyper-ide/_services/file.service';
 import { HttpService } from 'src/app/_general/services/http.service';
+import { FileService } from 'src/app/_protected/pages/create/hyper-ide/_services/file.service';
+import { BazarApp } from 'src/app/models/bazar-app.model';
+import { environment } from 'src/environments/environment';
+import { AppManifest } from 'src/app/models/app-manifest';
+import { PurchaseStatus } from 'src/app/models/purchase-status.model';
 
 /**
  * Bazar service allowing you to query Aista's Bazar, and/or install Bazar items locally on your

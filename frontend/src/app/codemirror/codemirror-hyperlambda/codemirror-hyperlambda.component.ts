@@ -12,9 +12,9 @@ import {
 } from '@angular/core';
 
 // Application specific imports.
-import { VocabularyService } from 'src/app/services/vocabulary.service';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { Subscription } from 'rxjs';
+import { VocabularyService } from 'src/app/_general/services/vocabulary.service';
 
 /**
  * Model class for CodeMirror instance's Hyperlambda.

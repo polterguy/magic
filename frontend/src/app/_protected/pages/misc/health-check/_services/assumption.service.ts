@@ -9,7 +9,7 @@ import { Injectable } from '@angular/core';
 
 // Application specific imports.
 import { Response } from '../../../../../models/response.model';
-import { BackendService } from 'src/app/services/backend.service';
+import { BackendService } from 'src/app/_general/services/backend.service';
 import { HttpService } from 'src/app/_general/services/http.service';
 
 /**

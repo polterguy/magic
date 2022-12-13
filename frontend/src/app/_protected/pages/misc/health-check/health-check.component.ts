@@ -8,7 +8,7 @@ import { bufferCount, concatMap, forkJoin, from } from 'rxjs';
 import { Model } from 'src/app/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 import { Response } from 'src/app/_protected/models/common/response.model';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { BackendService } from 'src/app/services/backend.service';
+import { BackendService } from 'src/app/_general/services/backend.service';
 import { FileService } from '../../create/hyper-ide/_services/file.service';
 import { AssumptionService } from './_services/assumption.service';
 
