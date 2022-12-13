@@ -8,7 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ReplaySubject, Subject } from 'rxjs';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { CacheService } from 'src/app/_protected/services/common/cache.service';
+import { CacheService } from 'src/app/_protected/services/cache.service';
 import { Databases } from '../database/_models/databases.model';
 import { SqlService } from '../database/_services/sql.service';
 import { ExportDdlComponent } from './components/export-ddl/export-ddl.component';

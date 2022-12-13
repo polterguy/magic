@@ -11,9 +11,9 @@ import { Model } from 'src/app/codemirror/codemirror-hyperlambda/codemirror-hype
 import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
 import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { BackendService } from 'src/app/_protected/services/common/backend.service';
-import { CacheService } from 'src/app/_protected/services/common/cache.service';
-import { MessageService } from 'src/app/_protected/services/common/message.service';
+import { BackendService } from 'src/app/_protected/services/backend.service';
+import { CacheService } from 'src/app/_protected/services/cache.service';
+import { MessageService } from 'src/app/_protected/services/message.service';
 import { LocResult } from '../../../create/endpoint-generator/_models/loc-result.model';
 import { CrudifyService } from '../../../create/endpoint-generator/_services/crudify.service';
 import { TransformModelService } from '../../../create/endpoint-generator/_services/transform-model.service';

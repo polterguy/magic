@@ -6,7 +6,7 @@
 import { Component, OnInit } from '@angular/core';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { Endpoint } from 'src/app/_protected/models/common/endpoint.model';
-import { BackendService } from 'src/app/_protected/services/common/backend.service';
+import { BackendService } from 'src/app/_protected/services/backend.service';
 import { EndpointService } from '../../../manage/endpoints/_services/endpoint.service';
 import { CrudifyService } from '../../endpoint-generator/_services/crudify.service';
 import { CodemirrorActionsService } from '../../hyper-ide/_services/codemirror-actions.service';

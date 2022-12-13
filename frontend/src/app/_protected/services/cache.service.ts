@@ -7,9 +7,9 @@
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
-import { Count } from '../../models/common/count.model';
-import { Response } from '../../models/common/response.model';
-import { CacheItem } from '../../models/common/cache-item.model';
+import { Count } from '../models/common/count.model';
+import { Response } from '../models/common/response.model';
+import { CacheItem } from '../models/common/cache-item.model';
 import { HttpService } from 'src/app/_general/services/http.service';
 
 /**

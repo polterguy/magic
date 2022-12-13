@@ -8,7 +8,7 @@ import { Observable, of } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
-import { HttpService } from '../../../_general/services/http.service';
+import { HttpService } from '../../_general/services/http.service';
 
 /**
  * Hyperlambda vocabulary service allowing you to retrieve all Hyperlambda slots existing in your backend.

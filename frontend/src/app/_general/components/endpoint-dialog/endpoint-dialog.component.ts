@@ -13,7 +13,7 @@ import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { Argument } from '../../../_protected/pages/manage/endpoints/_models/argument.model';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { BackendService } from 'src/app/_protected/services/common/backend.service';
+import { BackendService } from 'src/app/_protected/services/backend.service';
 import { EndpointService } from '../../../_protected/pages/manage/endpoints/_services/endpoint.service';
 import { InvocationResult } from '../../../_protected/pages/manage/endpoints/endpoints-result/endpoints-result.component';
 

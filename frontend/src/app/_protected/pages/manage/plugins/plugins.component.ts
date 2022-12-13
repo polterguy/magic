@@ -9,8 +9,8 @@ import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@aspnet/
 import { Observable } from 'rxjs';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { BazarService } from 'src/app/_protected/services/common/bazar.service';
-import { CacheService } from 'src/app/_protected/services/common/cache.service';
+import { BazarService } from 'src/app/_protected/services/bazar.service';
+import { CacheService } from 'src/app/_protected/services/cache.service';
 import { environment } from 'src/environments/environment';
 import { ConfigService } from '../../misc/configuration/_services/config.service';
 import { FileService } from '../../create/hyper-ide/_services/file.service';

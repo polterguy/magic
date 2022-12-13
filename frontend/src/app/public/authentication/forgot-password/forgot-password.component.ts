@@ -9,7 +9,7 @@ import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messa
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { RecaptchaComponent } from 'ng-recaptcha';
 import { Router } from '@angular/router';
-import { BackendService } from 'src/app/_protected/services/common/backend.service';
+import { BackendService } from 'src/app/_protected/services/backend.service';
 
 @Component({
   selector: 'app-forgot-password',
