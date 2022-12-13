@@ -2,8 +2,8 @@
   <div class="grid mb-4" *ngFor="let item of (tables | async)">
     <mat-card [id]="item.name" [class]="activeTable === item.name ? 'active' : ''">
       <mat-card-content>
-        <div class="d-flex align-items-center justify-content-between mb-4">
-          <p class="fw-bold mb-0 table-title">{{item.name}}</p>
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <p class="fw-bold mb-0 table-title mx-3">{{item.name}}</p>
           <div class="d-flex align-items-center justify-content-between action-btn">
             <button mat-icon-button color="primary" (click)="addField(item)" title="Add field ...">
               <mat-icon>add</mat-icon>

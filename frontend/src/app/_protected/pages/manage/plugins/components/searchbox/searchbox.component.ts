@@ -33,7 +33,7 @@ export class SearchboxComponent implements OnInit {
    * @params event
    */
    public applyFilter(keyword: string) {
-    this.filter()
+    this.filter();
   }
 
   /**
@@ -45,6 +45,10 @@ export class SearchboxComponent implements OnInit {
   }
 
   public filter() {
-    this.filterList.emit({ installedOnly: this.installedOnly, showSystem: this.showSystem, searchKey: this.filterControl.value });
+    this.filterList.emit({
+      installedOnly: this.installedOnly,
+      showSystem: this.showSystem,
+      searchKey: this.filterControl.value
+    });
   }
 }

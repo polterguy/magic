@@ -63,6 +63,7 @@ export class PluginsComponent implements OnInit {
     this.bazarService.listBazarItems('%%', 0, 1000).subscribe({
       next: (apps: BazarApp[]) => {
         this.plugins = apps;
+        this.originalPlugins = apps;
         this.loadDetails();
       },
       error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
@@ -104,10 +105,8 @@ export class PluginsComponent implements OnInit {
       next: (res: any) => {
         if (res) {
           this.versionComparision(module_name, appVersion, res[0].version);
-          // this.backendService.showObscurer(false);
         }
       },
-      error: (error: any) => { }
     })
   }
 
@@ -292,18 +291,15 @@ export class PluginsComponent implements OnInit {
   }
 
   public filterList(event: { installedOnly: boolean, searchKey: string }) {
-    if (event?.searchKey !== '' || event.installedOnly === true) {
-      if (event.installedOnly) {
-        this.plugins = this.originalPlugins.filter((item: any) => item.name.toLowerCase().indexOf(event?.searchKey.toLowerCase()) > -1 && item.details);
-      } else {
-        this.plugins = this.originalPlugins.filter((item: any) => item.name.toLowerCase().indexOf(event?.searchKey.toLowerCase()) > -1)
+    this.plugins = this.originalPlugins.filter(x => {
+      let result = true;
+      if (event.searchKey && event.searchKey.length > 0) {
+        result = x.name.toLowerCase().indexOf(event.searchKey) > -1;
       }
-    } else {
-      if (event.installedOnly) {
-        this.plugins = this.originalPlugins.filter((item: any) => item.details);
-      } else {
-        this.plugins = this.originalPlugins;
+      if (result && event.installedOnly) {
+        result = x.details;
       }
-    }
+      return result;
+    });
   }
 }
