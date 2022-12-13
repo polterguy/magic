@@ -5,7 +5,7 @@
 
 import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { AssumptionService } from 'src/app/_protected/pages/settings/health-check/_services/assumption.service';
+import { AssumptionService } from 'src/app/_protected/pages/misc/health-check/_services/assumption.service';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { BackendService } from 'src/app/_protected/services/common/backend.service';
 import { InvocationResult } from '../../../_protected/pages/manage/endpoints/endpoints-result/endpoints-result.component';

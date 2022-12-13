@@ -25,7 +25,7 @@ import json_readonly from '../../../codemirror/options/json_readonly.json';
 import markdown_readonly from '../../../codemirror/options/markdown_readonly.json';
 import hyperlambda_readonly from '../../../codemirror/options/hyperlambda_readonly.json';
 import { CreateAssumptionTestDialogComponent, TestModel } from '../create-assumption-test-dialog/create-assumption-test-dialog.component';
-import { AssumptionService } from 'src/app/_protected/pages/settings/health-check/_services/assumption.service';
+import { AssumptionService } from 'src/app/_protected/pages/misc/health-check/_services/assumption.service';
 import { AssumptionsComponent } from '../assumptions/assumptions.component';
 
 @Component({

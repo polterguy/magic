@@ -79,19 +79,19 @@ const routes: Routes = [
       },
       {
         path: 'endpoints-health-check',
-        loadChildren: () => import('./_protected/pages/settings/health-check/_module/health-check.module').then(m => m.HealthCheckModule)
+        loadChildren: () => import('./_protected/pages/misc/health-check/_module/health-check.module').then(m => m.HealthCheckModule)
       },
       {
         path: 'configuration',
-        loadChildren: () => import('./_protected/pages/settings/configuration/_module/config.module').then(m => m.ConfigModule)
+        loadChildren: () => import('./_protected/pages/misc/configuration/_module/config.module').then(m => m.ConfigModule)
       },
       {
         path: 'log',
-        loadChildren: () => import('./_protected/pages/settings/log/_module/log.module').then(m => m.LogModule)
+        loadChildren: () => import('./_protected/pages/misc/log/_module/log.module').then(m => m.LogModule)
       },
       {
         path: 'server-key-setting',
-        loadChildren: () => import('./_protected/pages/settings/cryptography/_module/server-key.module').then(m => m.ServerKeyModule)
+        loadChildren: () => import('./_protected/pages/misc/cryptography/_module/server-key.module').then(m => m.ServerKeyModule)
       },
       {
         path: 'user-profile',

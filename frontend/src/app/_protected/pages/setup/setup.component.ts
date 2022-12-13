@@ -12,7 +12,7 @@ import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { SetupModel } from '../../models/common/status.model';
-import { ConfigService } from '../settings/configuration/_services/config.service';
+import { ConfigService } from '../misc/configuration/_services/config.service';
 
 class MyErrorStateMatcher implements ErrorStateMatcher {
   isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {

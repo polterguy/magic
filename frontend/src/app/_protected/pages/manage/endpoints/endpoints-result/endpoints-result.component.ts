@@ -22,7 +22,7 @@ import json_readonly from '../../../../../codemirror/options/json_readonly.json'
 import markdown_readonly from '../../../../../codemirror/options/markdown_readonly.json';
 import hyperlambda_readonly from '../../../../../codemirror/options/hyperlambda_readonly.json';
 import { FormBuilder, FormControl } from '@angular/forms';
-import { AssumptionService } from '../../../settings/health-check/_services/assumption.service';
+import { AssumptionService } from '../../../misc/health-check/_services/assumption.service';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateAssumptionTestDialogComponent, TestModel } from 'src/app/_general/components/create-assumption-test-dialog/create-assumption-test-dialog.component';
 
