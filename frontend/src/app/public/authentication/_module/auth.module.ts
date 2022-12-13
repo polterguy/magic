@@ -14,12 +14,14 @@ import { ComponentsModule } from 'src/app/_general/components/components.module'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RecaptchaV3Module, RecaptchaModule, RecaptchaFormsModule } from "ng-recaptcha";
 import { HttpClientModule } from '@angular/common/http';
+import { AutoAuthComponent } from '../auto-auth/auto-auth.component';
 
 @NgModule({
   declarations: [
     LoginComponent,
     ResetPasswordComponent,
-    ForgotPasswordComponent
+    ForgotPasswordComponent,
+    AutoAuthComponent,
   ],
   imports: [
     CommonModule,
