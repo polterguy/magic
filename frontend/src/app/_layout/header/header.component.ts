@@ -182,42 +182,50 @@ export class HeaderComponent implements OnInit {
       {
         name: 'Dashboard',
         url: '/',
-        expandable: false
+        expandable: false,
+        exact: true,
       },
       {
         name: 'Create',
         url: null,
         expandable: true,
+        exact: false,
         submenu: [
           {
             name: 'Databases',
             url: '/databases',
-            disabled: !(this.permissions.access.sql.execute_access && this.permissions.setupDone)
+            disabled: !(this.permissions.access.sql.execute_access && this.permissions.setupDone),
+            exact: false,
           },
           {
             name: 'SQL Studio',
             url: '/sql-studio',
-            disabled: !(this.permissions.access.endpoints.view && this.permissions.setupDone)
+            disabled: !(this.permissions.access.endpoints.view && this.permissions.setupDone),
+            exact: false,
           },
           {
             name: 'Endpoint Generator',
             url: '/endpoint-generator',
-            disabled: !(this.permissions.access.crud.generate_crud && this.permissions.access.crud.generate_sql && this.permissions.access.crud.generate_frontend && this.permissions.setupDone)
+            disabled: !(this.permissions.access.crud.generate_crud && this.permissions.access.crud.generate_sql && this.permissions.access.crud.generate_frontend && this.permissions.setupDone),
+            exact: false,
           },
           {
             name: 'Frontend Generator',
             url: '/frontend-generator',
-            disabled: !(this.permissions.access.crud.generate_crud && this.permissions.access.crud.generate_sql && this.permissions.access.crud.generate_frontend && this.permissions.setupDone)
+            disabled: !(this.permissions.access.crud.generate_crud && this.permissions.access.crud.generate_sql && this.permissions.access.crud.generate_frontend && this.permissions.setupDone),
+            exact: false,
           },
           {
             name: 'Hyper IDE',
             url: '/hyper-ide',
-            disabled: !(this.permissions.access.files.list_files && this.permissions.access.files.list_folders && this.permissions.setupDone)
+            disabled: !(this.permissions.access.files.list_files && this.permissions.access.files.list_folders && this.permissions.setupDone),
+            exact: false,
           },
           {
             name: 'Frontend IDE',
             url: '/frontend-ide',
-            disabled: !(this.permissions.access.crud.generate_crud && this.permissions.access.crud.generate_sql && this.permissions.access.crud.generate_frontend && this.permissions.setupDone)
+            disabled: !(this.permissions.access.crud.generate_crud && this.permissions.access.crud.generate_sql && this.permissions.access.crud.generate_frontend && this.permissions.setupDone),
+            exact: false,
           },
         ],
       },
@@ -225,36 +233,43 @@ export class HeaderComponent implements OnInit {
         name: 'Manage',
         url: null,
         expandable: true,
+        exact: false,
         submenu: [
           {
             name: 'Users & roles',
             url: '/user-roles-management',
-            disabled: !(this.permissions.access.auth.view_users && this.permissions.access.auth.view_roles && this.permissions.setupDone)
+            disabled: !(this.permissions.access.auth.view_users && this.permissions.access.auth.view_roles && this.permissions.setupDone),
+            exact: false,
           },
           {
             name: 'Endpoints',
             url: '/endpoints',
-            disabled: !(this.permissions.access.endpoints.view && this.permissions.setupDone)
+            disabled: !(this.permissions.access.endpoints.view && this.permissions.setupDone),
+            exact: false,
           },
           {
             name: 'Tasks',
             url: '/tasks',
-            disabled: !(this.permissions.access.tasks.read && this.permissions.setupDone)
+            disabled: !(this.permissions.access.tasks.read && this.permissions.setupDone),
+            exact: false,
           },
           {
             name: 'Hyperlambda Playground',
             url: '/hyperlambda-playground',
-            disabled: !(this.permissions.access.eval.execute && this.permissions.setupDone)
+            disabled: !(this.permissions.access.eval.execute && this.permissions.setupDone),
+            exact: false,
           },
           {
             name: 'Sockets',
             url: '/sockets',
-            disabled: !(this.permissions.access.sockets.read && this.permissions.setupDone)
+            disabled: !(this.permissions.access.sockets.read && this.permissions.setupDone),
+            exact: false,
           },
           {
             name: 'Plugins',
             url: '/plugins',
-            disabled: !(this.permissions.access.bazar.get_manifests && this.permissions.setupDone)
+            disabled: !(this.permissions.access.bazar.get_manifests && this.permissions.setupDone),
+            exact: false,
           },
         ],
       },
@@ -262,25 +277,30 @@ export class HeaderComponent implements OnInit {
         name: 'Misc',
         url: null,
         expandable: true,
+        exact: false,
         submenu: [
           {
             name: 'Configuration',
             url: '/configuration',
-            disabled: !(this.permissions.access.config.load)
+            disabled: !(this.permissions.access.config.load),
+            exact: false,
           },
           {
             name: 'Health Check',
             url: '/endpoints-health-check',
-            disabled: !(this.permissions.access.log.read && this.permissions.setupDone)
+            disabled: !(this.permissions.access.log.read && this.permissions.setupDone),
+            exact: false,
           },
           {
             name: 'Log',
             url: '/log',
-            disabled: !(this.permissions.access.log.read && this.permissions.setupDone)
+            disabled: !(this.permissions.access.log.read && this.permissions.setupDone),
+            exact: false,
           },
           {
             name: 'Help Center',
-            url: '/help-center'
+            url: '/help-center',
+            exact: false,
           },
         ],
       },
@@ -288,16 +308,19 @@ export class HeaderComponent implements OnInit {
         name: this.username,
         url: null,
         expandable: true,
+        exact: false,
         submenu: [
           {
             name: 'Profile',
             url: '/user-profile',
-            disabled: !(this.permissions.token)
+            disabled: !(this.permissions.token),
+            exact: false,
           },
           {
             name: 'Cryptography',
             url: '/server-key-setting',
-            disabled: !(this.permissions.access.crypto.import_public_key)
+            disabled: !(this.permissions.access.crypto.import_public_key),
+            exact: false,
           },
           {
             name: 'Generate Token',
@@ -318,7 +341,7 @@ export class HeaderComponent implements OnInit {
   public checkActiveLink(currentUrl: string) {
     this.navLinks.forEach((item: any) => {
       if (item.submenu) {
-        item.isActive = item.submenu.findIndex((el: any) => el.url === currentUrl) > -1;
+        item.isActive = item.submenu.findIndex((el: any) => currentUrl.startsWith(el.url)) > -1;
       }
     })
   }
