@@ -12,7 +12,7 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { Argument } from '../_models/argument.model';
 import { EndpointService } from '../_services/endpoint.service';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { BackendService } from 'src/app/_protected/services/common/backend.service';
+import { BackendService } from 'src/app/_protected/services/backend.service';
 
 // CodeMirror options.
 import json from '../../../../../codemirror/options/json.json';

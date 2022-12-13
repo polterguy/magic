@@ -6,7 +6,7 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { BackendService } from 'src/app/_protected/services/common/backend.service';
+import { BackendService } from 'src/app/_protected/services/backend.service';
 import { Observable } from 'rxjs';
 import { AssumptionsComponent } from 'src/app/_general/components/assumptions/assumptions.component';
 import { MatDialog } from '@angular/material/dialog';

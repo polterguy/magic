@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { BackendService } from '../../services/common/backend.service';
+import { BackendService } from '../../services/backend.service';
 import { DiagnosticsService } from './_services/diagnostics.service';
 import moment from 'moment';
 import { LogTypes, SystemReport } from './_models/dashboard.model';

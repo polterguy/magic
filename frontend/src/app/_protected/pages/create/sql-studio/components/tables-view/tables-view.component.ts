@@ -9,8 +9,8 @@ import { Observable, Subscription } from 'rxjs';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { SqlService } from 'src/app/_protected/pages/create/database/_services/sql.service';
-import { BackendService } from 'src/app/_protected/services/common/backend.service';
-import { CacheService } from 'src/app/_protected/services/common/cache.service';
+import { BackendService } from 'src/app/_protected/services/backend.service';
+import { CacheService } from 'src/app/_protected/services/cache.service';
 import { AddFieldComponent } from '../add-field/add-field.component';
 import { ExportDdlComponent } from '../export-ddl/export-ddl.component';
 

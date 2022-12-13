@@ -7,7 +7,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { BackendService } from 'src/app/_protected/services/common/backend.service';
+import { BackendService } from 'src/app/_protected/services/backend.service';
 import { ConfigService } from './_services/config.service';
 
 import json from '../../../../codemirror/options/json.json'
