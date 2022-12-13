@@ -13,7 +13,7 @@
               <mat-icon>file_download</mat-icon>
             </button>
             <div class="me-1"></div>
-            <button mat-icon-button color="warn" [disabled]="selectedDatabase === 'magic'" title="Delete table ..."
+            <button mat-icon-button color="warn" title="Delete table ..."
               (click)="dropTable(item, 'table')">
               <mat-icon>delete</mat-icon>
             </button>
@@ -34,7 +34,7 @@
             </p>
           </div>
           <div class="col-lg-1 col-2 action-btn d-flex justify-content-end">
-            <button mat-icon-button color="warn" title="Delete column ..." [disabled]="selectedDatabase === 'magic'"
+            <button mat-icon-button color="warn" title="Delete column ..."
               (click)="dropTable(column, 'column', item.foreign_keys, item.name)">
               <mat-icon>delete</mat-icon>
             </button>
