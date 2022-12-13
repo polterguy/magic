@@ -6,10 +6,10 @@
       <mat-tab label="New column">
         <mat-form-field class="w-100 text-prefix mt-4">
           <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
-            Column's name
+            Column name
           </span>
 
-          <input matInput type="text" placeholder="Column's name" [(ngModel)]="formData.columnName" name="column_name"
+          <input matInput type="text" placeholder="Column name" [(ngModel)]="formData.columnName" name="column_name"
             autocomplete="off"
             #name cdkFocusInitial [pattern]="CommonRegEx.appNameWithUppercase">
           <mat-error>{{CommonErrorMessages.appNameWithUppercase}}</mat-error>
@@ -53,7 +53,7 @@
             Default value (optional)
           </span>
 
-          <input matInput type="text" placeholder="Column's default value" [(ngModel)]="formData.defaultValue"
+          <input matInput type="text" placeholder="Column default value" [(ngModel)]="formData.defaultValue"
             autocomplete="off"
             name="default_value" [pattern]="CommonRegEx.appNameWithUppercase">
           <mat-error>{{CommonErrorMessages.appNameWithUppercase}}</mat-error>
@@ -98,7 +98,7 @@
             Column name
           </span>
 
-          <input matInput type="text" placeholder="Column's name"
+          <input matInput type="text" placeholder="Column name"
             autocomplete="off"
             [value]="formData.foreignField ? formData.foreignField + '_column' : ''" [(ngModel)]="formData.columnName"
             name="column_name" [pattern]="CommonRegEx.appNameWithUppercase">
