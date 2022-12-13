@@ -2,10 +2,9 @@
 
 <div mat-dialog-content class="new-field-dialog">
 
-  <p>
-    <ngx-codemirror *ngIf="codemirrorReady" [(ngModel)]="data.sql" [options]="options" name="content">
-    </ngx-codemirror>
-  </p>
+  <mat-form-field class="w-100 standalone-field mt-2">
+    <textarea disabled matInput [(ngModel)]="data.sql" rows="10"></textarea>
+  </mat-form-field>
 
 </div>
 
