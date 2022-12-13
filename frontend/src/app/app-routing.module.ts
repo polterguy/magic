@@ -97,6 +97,10 @@ const routes: Routes = [
         path: 'user-profile',
         loadChildren: () => import('./_protected/pages/user/profile/_module/profile.module').then(m => m.ProfileModule)
       },
+      {
+        path: 'help-center',
+        loadChildren: () => import('./_protected/pages/user/help-center/_module/help-center.module').then(m => m.HelpCenterModule)
+      },
     ]
   },
   {
