@@ -31,7 +31,6 @@ export class SqlViewComponent implements OnInit, OnDestroy {
   @Input() selectedDatabase: string = '';
   @Input() selectedDbType: string = '';
   @Input() selectedConnectionString: string = '';
-  @Input() saveSnippet: Subject<any>;
   @Output() getDatabases: EventEmitter<any> = new EventEmitter<any>();
 
   input: Model = null;
@@ -46,7 +45,6 @@ export class SqlViewComponent implements OnInit, OnDestroy {
 
   sqlFile: any;
 
-  private saveSnippetSubscription!: Subscription;
   private tablesList: any = null;
   private tableSubscription!: Subscription;
 
@@ -72,7 +70,6 @@ export class SqlViewComponent implements OnInit, OnDestroy {
         this.canLoadSnippet = this.backendService.active?.access.sql.list_files;
         this.codemirrorInit();
         this.watchForActions();
-        this.waitForSavingSnippet();
         this.tableSubscription = this.tables.subscribe((res: any) => {
           this.tablesList = res;
           if (this.input) {
@@ -156,17 +153,6 @@ export class SqlViewComponent implements OnInit, OnDestroy {
             });
       }
     });
-  }
-
-  private waitForSavingSnippet() {
-    this.saveSnippetSubscription = this.saveSnippet.subscribe((res: any) => {
-      if (res === 'save') {
-        this.save();
-      }
-      if (res && res.action === 'importFile') {
-        this.importSqlFile(res.event)
-      }
-    })
   }
 
   /**
@@ -255,7 +241,7 @@ export class SqlViewComponent implements OnInit, OnDestroy {
         title: 'Attention please!',
         description: 'Disabling safe mode might result in you exhausting your server or client if you select thousands of records.',
         description_extra: '<span class="fw-bold">Are you sure you want to continue?</span>',
-        action_btn: 'Yes, enable',
+        action_btn: 'Yes, disable',
         action_btn_color: 'warn'
       }
     }).afterClosed().subscribe((result: string) => {
@@ -263,11 +249,6 @@ export class SqlViewComponent implements OnInit, OnDestroy {
         this.safeMode = false;
       }
     })
-  }
-
-  public clearSQLEditor() {
-    this.input.sql = '';
-    this.selectedSnippet = '';
   }
 
   public importSqlFile(event: any) {
@@ -288,7 +269,7 @@ export class SqlViewComponent implements OnInit, OnDestroy {
       data: {
         type: ['save', 'execute']
       }
-    })
+    });
   }
 
   private refetchDatabases() {
@@ -316,12 +297,9 @@ export class SqlViewComponent implements OnInit, OnDestroy {
     })
   }
 
-  ngOnDestroy(): void {
+  ngOnDestroy() {
     if (this.tableSubscription) {
       this.tableSubscription.unsubscribe();
-    }
-    if (this.saveSnippetSubscription) {
-      this.saveSnippetSubscription.unsubscribe();
     }
   }
 }

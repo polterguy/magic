@@ -7,7 +7,7 @@
         Name
       </span>
 
-      <input matInput type="text" placeholder="Snippet's name" [(ngModel)]="data" [ngModelOptions]="{standalone: true}"
+      <input matInput type="text" placeholder="Snippet name" [(ngModel)]="data" [ngModelOptions]="{standalone: true}"
         [pattern]="CommonRegEx.appNames">
       <mat-error>{{CommonErrorMessages.appNames}}</mat-error>
     </mat-form-field>

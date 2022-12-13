@@ -81,9 +81,6 @@
               {{selectedDatabase === 'magic' || selectedDbType === 'sqlite' || selectedDbType === 'mysql' ||
               selectedDbType === 'pgsql' ? 'View database as DDL' : 'Export database'}}
             </button>
-            <button mat-menu-item (click)="callParentAction('save')">
-              Save SQL snippet
-            </button>
             <button mat-menu-item (click)="sqlView ? sqlFileImport.click() : callParentAction('')">
               Import SQL file
             </button>
@@ -112,7 +109,7 @@
       <ng-container *ngSwitchCase="true">
         <app-sql-view [dbLoading]="dbLoading|async" [tables]="hintTables" [databases]="databases"
           [selectedDatabase]="selectedDatabase" [selectedDbType]="selectedDbType"
-          [selectedConnectionString]="selectedConnectionString" [saveSnippet]="saveSnippet"
+          [selectedConnectionString]="selectedConnectionString"
           (getDatabases)="getDatabases($event)"></app-sql-view>
       </ng-container>
     </container-element>
