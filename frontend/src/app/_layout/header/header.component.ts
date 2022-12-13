@@ -274,7 +274,7 @@ export class HeaderComponent implements OnInit {
             disabled: !(this.permissions.access.crypto.import_public_key)
           },
           {
-            name: 'Health check',
+            name: 'Health Check',
             url: '/endpoints-health-check',
             disabled: !(this.permissions.access.log.read && this.permissions.setupDone)
           },
