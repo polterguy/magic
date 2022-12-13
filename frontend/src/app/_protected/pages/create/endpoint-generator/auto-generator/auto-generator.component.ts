@@ -17,7 +17,7 @@ import { MessageService } from 'src/app/_protected/services/common/message.servi
 import { LocResult } from '../../../create/endpoint-generator/_models/loc-result.model';
 import { CrudifyService } from '../../../create/endpoint-generator/_services/crudify.service';
 import { TransformModelService } from '../../../create/endpoint-generator/_services/transform-model.service';
-import { LogService } from '../../../settings/log/_services/log.service';
+import { LogService } from '../../../misc/log/_services/log.service';
 import { Role } from '../../../manage/user-and-roles/_models/role.model';
 
 // CodeMirror options.

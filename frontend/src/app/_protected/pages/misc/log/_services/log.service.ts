@@ -8,7 +8,7 @@ import { Injectable } from '@angular/core';
 
 // Application specific imports.
 import { Count } from '../../../../../models/count.model';
-import { LogItem } from 'src/app/_protected/pages/settings/log/_models/log-item.model';
+import { LogItem } from 'src/app/_protected/pages/misc/log/_models/log-item.model';
 import { HttpService } from 'src/app/_general/services/http.service';
 
 /**
