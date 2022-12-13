@@ -40,7 +40,10 @@
             ],
             "scripts": [],
             "allowedCommonJsDependencies": [
-              "codemirror"
+              "codemirror",
+              "file-saver",
+              "buffer",
+              "moment"
             ],
             "vendorChunk": true,
             "extractLicenses": false,
