@@ -241,7 +241,7 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
 
   private saveSnippet() {
     if (!this.sql?.sql || this.sql?.sql === '') {
-      this.generalService.showFeedback('Write an SQL command and then save it.', 'errorMessage')
+      this.generalService.showFeedback('Write some SQL first, then save it', 'errorMessage')
       return;
     }
 

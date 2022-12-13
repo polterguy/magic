@@ -122,12 +122,12 @@ export class SqlViewComponent implements OnInit, OnDestroy {
 
   public save() {
     if (!this.input?.sql && this.input.sql === '') {
-      this.generalService.showFeedback('Write an SQL command and then save it.', 'errorMessage', 'Ok', 5000)
+      this.generalService.showFeedback('Write some SQL first, then save it', 'errorMessage', 'Ok', 5000)
       return;
     }
 
     if (!this.backendService.active?.access.sql.save_file) {
-      this.generalService.showFeedback('You need a proper permission.', 'errorMessage', 'Ok', 5000)
+      this.generalService.showFeedback('You need proper permissions', 'errorMessage', 'Ok', 5000)
       return;
     }
 
@@ -160,7 +160,7 @@ export class SqlViewComponent implements OnInit, OnDestroy {
    */
   public execute() {
     if (!this.input.sql && this.input.sql === '') {
-      this.generalService.showFeedback('Write an SQL command and then save it.', 'errorMessage', 'Ok', 5000)
+      this.generalService.showFeedback('Write some SQL first, then execute it', 'errorMessage', 'Ok', 5000)
       return;
     }
     if (this.input && this.input.editor) {
