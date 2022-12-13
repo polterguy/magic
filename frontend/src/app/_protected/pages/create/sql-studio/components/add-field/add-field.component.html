@@ -35,9 +35,22 @@
           </mat-select>
         </mat-form-field>
 
-        <mat-form-field class="w-100 text-prefix" *ngIf="formData?.fieldType?.size">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
-            Field's size
+        <mat-form-field class="w-100 standalone-field" *ngIf="formData?.fieldType?.defaultValue">
+          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>account_balance</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+
+          <input matInput type="text" placeholder="Default value" [(ngModel)]="formData.defaultValue"
+            autocomplete="off"
+            name="default_value">
+          <mat-error>{{CommonErrorMessages.appNameWithUppercase}}</mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="w-100 standalone-field" *ngIf="formData?.fieldType?.size">
+          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>format_size</mat-icon>
+            <span class="text-muted">|</span>
           </span>
 
           <input matInput type="number"
@@ -48,17 +61,6 @@
             *ngIf="formData.columnLength < formData.fieldType.size.min || formData.columnLength > formData.fieldType.size.max">
             {{'Size between ' + formData.fieldType.size.min + ' and ' + formData.fieldType.size.max}}
           </mat-hint>
-        </mat-form-field>
-
-        <mat-form-field class="w-100 text-prefix" *ngIf="formData?.fieldType?.defaultValue">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
-            Default value (optional)
-          </span>
-
-          <input matInput type="text" placeholder="Column default value" [(ngModel)]="formData.defaultValue"
-            autocomplete="off"
-            name="default_value" [pattern]="CommonRegEx.appNameWithUppercase">
-          <mat-error>{{CommonErrorMessages.appNameWithUppercase}}</mat-error>
         </mat-form-field>
 
         <p class="d-flex justify-content-end">

@@ -19,6 +19,7 @@ import { TablesViewComponent } from '../components/tables-view/tables-view.compo
 import { SQLStudioComponent } from '../sql-studio.component';
 import { SqlViewComponent } from '../components/sql-view/sql-view.component';
 import { GDatabaseRoutingModule } from './g-database.routing.module';
+import { AddMigrateScriptComponent } from '../components/add-migrate-script/add-migrate-script.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { GDatabaseRoutingModule } from './g-database.routing.module';
     AddFieldComponent,
     LinkTableComponent,
     ExportDdlComponent,
-    SqlViewComponent
+    SqlViewComponent,
+    AddMigrateScriptComponent,
   ],
   imports: [
     CommonModule,
@@ -38,7 +40,7 @@ import { GDatabaseRoutingModule } from './g-database.routing.module';
     CodemirrorModule,
     FormsModule,
     SharedModule,
-    CmModule
+    CmModule,
   ]
 })
 export class GDatabaseModule { }
