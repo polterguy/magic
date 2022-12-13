@@ -22,7 +22,7 @@
                 {{item.description}}
               </p>
               <div class="d-flex justify-content-end">
-                <button mat-button color="primary" (click)="viewAppDetails(item)">Detail</button>
+                <button mat-button color="primary" (click)="viewAppDetails(item)">Details</button>
                 <button mat-flat-button color="warn" class="px-5" *ngIf="item?.details"
                   (click)="uninstallDb(item.details)">Uninstall</button>
                 <button mat-flat-button color="primary" class="px-5" *ngIf="!item?.details"
