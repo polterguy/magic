@@ -8,9 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { BackendService } from 'src/app/services/backend.service';
-import { BazarService } from 'src/app/services/bazar.service';
-import { ConfigService } from 'src/app/services/config.service';
+import { BackendService } from 'src/app/_general/services/backend.service';
 import { environment } from 'src/environments/environment';
 import { FileService } from '../../hyper-ide/_services/file.service';
 import { AppManifest } from '../../../manage/plugins/_models/app-manifest';
@@ -19,7 +17,9 @@ import { ViewDbComponent } from '../components/view-db/view-db.component';
 import { Databases } from '../_models/databases.model';
 import { DefaultDatabaseType } from '../_models/default-database-type.model';
 import { SqlService } from '../_services/sql.service';
-import { CacheService } from 'src/app/services/cache.service';
+import { BazarService } from 'src/app/_general/services/bazar.service';
+import { CacheService } from 'src/app/_general/services/cache.service';
+import { ConfigService } from 'src/app/_general/services/config.service';
 
 @Component({
   selector: 'app-add-new-database',

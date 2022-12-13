@@ -9,7 +9,7 @@ import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messa
 import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { ThemeService } from 'src/app/_general/services/theme.service';
-import { BackendService } from 'src/app/services/backend.service';
+import { BackendService } from 'src/app/_general/services/backend.service';
 import { UserService } from '../../manage/user-and-roles/_services/user.service';
 
 @Component({

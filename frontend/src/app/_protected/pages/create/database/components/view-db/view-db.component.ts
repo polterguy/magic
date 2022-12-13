@@ -6,9 +6,9 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { BazarService } from 'src/app/services/bazar.service';
 import { Response } from '../../../../../models/common/response.model';
-import { BackendService } from 'src/app/services/backend.service';
+import { BackendService } from 'src/app/_general/services/backend.service';
+import { BazarService } from 'src/app/_general/services/bazar.service';
 
 @Component({
   selector: 'app-view-db',
@@ -29,7 +29,7 @@ export class ViewDbComponent implements OnInit {
     private backendService: BackendService,
     @Inject(MAT_DIALOG_DATA) public data: any) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.getAppDetails();
   }
 

@@ -12,8 +12,8 @@ import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messa
 import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { Backend } from 'src/app/_protected/models/common/backend.model';
-import { BackendService } from 'src/app/services/backend.service';
-import { BackendsStorageService } from 'src/app/services/backendsstorage.service';
+import { BackendService } from 'src/app/_general/services/backend.service';
+import { BackendsStorageService } from 'src/app/_general/services/backendsstorage.service';
 
 @Component({
   selector: 'app-login',

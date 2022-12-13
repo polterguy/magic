@@ -5,9 +5,9 @@
 
 // Angular and system imports.
 import { Injectable } from '@angular/core';
+import { Backend } from 'src/app/_protected/models/common/backend.model';
 
 // Application specific imports.
-import { Backend } from '../_protected/models/common/backend.model';
 import { environment } from 'src/environments/environment';
 
 /**

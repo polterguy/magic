@@ -9,15 +9,15 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 
 // Application specific imports.
-import { Token } from '../_protected/models/common/token.model';
-import { Status } from '../_protected/models/common/status.model';
-import { Backend } from '../_protected/models/common/backend.model';
-import { Endpoint } from '../_protected/models/common/endpoint.model';
-import { Response } from '../_protected/models/common/response.model';
-import { CoreVersion } from '../_protected/models/common/core-version.model';
+import { Token } from '../../_protected/models/common/token.model';
+import { Status } from '../../_protected/models/common/status.model';
+import { Backend } from '../../_protected/models/common/backend.model';
+import { Endpoint } from '../../_protected/models/common/endpoint.model';
+import { Response } from '../../_protected/models/common/response.model';
+import { CoreVersion } from '../../_protected/models/common/core-version.model';
 import { environment } from 'src/environments/environment';
 import { BackendsStorageService } from './backendsstorage.service';
-import { AuthenticateResponse } from '../_protected/models/auth/authenticate-response.model';
+import { AuthenticateResponse } from '../../_protected/models/auth/authenticate-response.model';
 
 /**
  * Keeps track of your backends and your currently selected backend.

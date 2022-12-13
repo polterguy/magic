@@ -6,9 +6,9 @@
 // Angular and system imports.
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
+import { EvaluatorService } from '../../services/evaluator.service';
 
 // Application specific imports.
-import { EvaluatorService } from 'src/app/services/evaluator.service';
 import { GeneralService } from '../../services/general.service';
 
 /**

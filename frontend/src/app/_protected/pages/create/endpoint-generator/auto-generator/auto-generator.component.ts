@@ -11,9 +11,7 @@ import { Model } from 'src/app/codemirror/codemirror-hyperlambda/codemirror-hype
 import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
 import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { BackendService } from 'src/app/services/backend.service';
-import { CacheService } from 'src/app/services/cache.service';
-import { MessageService } from 'src/app/services/message.service';
+import { BackendService } from 'src/app/_general/services/backend.service';
 import { LocResult } from '../../../create/endpoint-generator/_models/loc-result.model';
 import { CrudifyService } from '../../../create/endpoint-generator/_services/crudify.service';
 import { TransformModelService } from '../../../create/endpoint-generator/_services/transform-model.service';
@@ -27,6 +25,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { EvaluatorService } from '../../../manage/hyperlambda-playground/_services/evaluator.service';
 import { LoadSnippetDialogComponent } from 'src/app/_general/components/load-snippet-dialog/load-snippet-dialog.component';
 import { SnippetNameDialogComponent } from 'src/app/_general/components/snippet-name-dialog/snippet-name-dialog.component';
+import { CacheService } from 'src/app/_general/services/cache.service';
+import { MessageService } from 'src/app/_general/services/message.service';
 
 @Component({
   selector: 'app-auto-generator',
