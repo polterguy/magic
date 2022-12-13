@@ -15,6 +15,7 @@ import { SocketUser } from '../endpoints/_models/socket-user.model';
 import { SubscribeDialogComponent } from './components/subscribe-dialog/subscribe-dialog.component';
 import { PublishedMessages } from './_models/socket';
 import { SocketService } from './_services/socket.service';
+import { MessageWrapper, PublishDialogComponent } from './components/publish-dialog/publish-dialog.component';
 
 @Component({
   selector: 'app-generated-sockets',
@@ -130,6 +131,31 @@ export class GeneratedSocketsComponent implements OnInit, OnDestroy {
         this.CopyPublishedMessages = res || [];
       },
       error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+    });
+  }
+
+  /**
+   * Publishes a socket message.
+   */
+  public publish() {
+    this.dialog.open(PublishDialogComponent, {
+      width: '550px',
+      panelClass: 'light',
+      data: {
+        message: {
+          content: '{\r\n  "foo": "bar"\r\n}',
+        },
+        client: '',
+        groups: '',
+        roles: '',
+      }
+    }).afterClosed().subscribe((data: MessageWrapper) => {
+      if (data) {
+        this.socketService.publishMessage(data.message, data.client, data.roles, data.groups).subscribe({
+          next: () => this.generalService.showFeedback('Message was successfully published', 'successMessage'),
+          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+        });
+      }
     });
   }
 
