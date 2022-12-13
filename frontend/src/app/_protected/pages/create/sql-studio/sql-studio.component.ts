@@ -76,7 +76,6 @@ export class SQLStudioComponent implements OnInit {
   private _dbLoading: ReplaySubject<boolean> = new ReplaySubject();
   public dbLoading = this._dbLoading.asObservable();
 
-  public saveSnippet: Subject<any> = new Subject();
   public sqlFile: any;
 
   constructor(
@@ -360,11 +359,6 @@ export class SQLStudioComponent implements OnInit {
     if (!this.sqlView) {
       this.generalService.showFeedback('Switch to SQL view first.', 'errorMessage');
       return;
-    }
-    if (!event) {
-      this.saveSnippet.next(action);
-    } else if (event) {
-      this.saveSnippet.next({ action: action, event: event, slqFile: this.sqlFile });
     }
   }
 }
