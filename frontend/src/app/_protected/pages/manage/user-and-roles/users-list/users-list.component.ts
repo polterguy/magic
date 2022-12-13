@@ -6,7 +6,7 @@
 import { PlatformLocation } from '@angular/common';
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { User } from 'src/app/_protected/pages/manage/user-and-roles/_models/user.model';
-import { BackendService } from 'src/app/_protected/services/backend.service';
+import { BackendService } from 'src/app/services/backend.service';
 import { AuthenticateResponse } from '../_models/authenticate-response.model';
 import { UserService } from '../_services/user.service';
 import { Clipboard } from '@angular/cdk/clipboard';

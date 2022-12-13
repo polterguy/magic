@@ -9,7 +9,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 // Application specific imports.
-import { BackendService } from '../../_protected/services/backend.service';
+import { BackendService } from '../../services/backend.service';
 
 /**
  * HTTP service for invoking endpoints towards your currently active backend.

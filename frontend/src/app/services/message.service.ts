@@ -4,7 +4,7 @@
  */
 import { Subject } from 'rxjs';
 import { Injectable } from '@angular/core';
-import { Message } from '../models/common/message.model';
+import { Message } from '../_protected/models/common/message.model';
 
 /**
  * Message send/receive class, allowing you to subscribe to events,

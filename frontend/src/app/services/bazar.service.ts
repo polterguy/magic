@@ -10,12 +10,12 @@ import { HttpClient } from '@angular/common/http';
 
 // Application specific imports.
 import { Count } from 'src/app/models/count.model';
-import { BazarApp } from '../../models/bazar-app.model';
-import { AppManifest } from '../../models/app-manifest';
+import { BazarApp } from '../models/bazar-app.model';
+import { AppManifest } from '../models/app-manifest';
 import { Response } from 'src/app/models/response.model';
-import { environment } from '../../../environments/environment';
-import { PurchaseStatus } from '../../models/purchase-status.model';
-import { FileService } from '../pages/create/hyper-ide/_services/file.service';
+import { environment } from '../../environments/environment';
+import { PurchaseStatus } from '../models/purchase-status.model';
+import { FileService } from '../_protected/pages/create/hyper-ide/_services/file.service';
 import { HttpService } from 'src/app/_general/services/http.service';
 
 /**

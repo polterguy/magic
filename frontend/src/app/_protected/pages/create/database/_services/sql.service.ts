@@ -12,7 +12,7 @@ import { DefaultDatabaseType } from '../_models/default-database-type.model';
 import { Databases } from '../_models/databases.model';
 import { FileService } from '../../hyper-ide/_services/file.service';
 import { HttpService } from 'src/app/_general/services/http.service';
-import { CacheService } from 'src/app/_protected/services/cache.service';
+import { CacheService } from 'src/app/services/cache.service';
 
 /**
  * SQL service allowing you to execute SQL and retrieve meta information about

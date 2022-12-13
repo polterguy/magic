@@ -5,7 +5,7 @@
 
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Backend } from 'src/app/_protected/models/common/backend.model';
-import { BackendService } from 'src/app/_protected/services/backend.service';
+import { BackendService } from 'src/app/services/backend.service';
 import { GeneralService } from '../../services/general.service';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { Router } from '@angular/router';

@@ -5,7 +5,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BackendService } from 'src/app/_protected/services/backend.service';
+import { BackendService } from 'src/app/services/backend.service';
 import { NavLinks } from './_model/nav-links';
 import { Backend } from 'src/app/_protected/models/common/backend.model';
 import { MatDialog } from '@angular/material/dialog';

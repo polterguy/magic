@@ -10,7 +10,7 @@ import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messa
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BackendService } from 'src/app/_protected/services/backend.service';
+import { BackendService } from 'src/app/services/backend.service';
 
 @Component({
   selector: 'app-reset-password',

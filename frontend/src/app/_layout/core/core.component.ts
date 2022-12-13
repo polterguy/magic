@@ -6,7 +6,7 @@
 import { ChangeDetectorRef, Component, HostListener, OnInit } from '@angular/core';
 import { UpdatePwaService } from 'src/app/_general/services/update-pwa.service';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { BackendService } from 'src/app/_protected/services/backend.service';
+import { BackendService } from 'src/app/services/backend.service';
 
 @Component({
   selector: 'app-core',

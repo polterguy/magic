@@ -6,9 +6,9 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { BazarService } from 'src/app/_protected/services/bazar.service';
+import { BazarService } from 'src/app/services/bazar.service';
 import { Response } from '../../../../../models/common/response.model';
-import { BackendService } from 'src/app/_protected/services/backend.service';
+import { BackendService } from 'src/app/services/backend.service';
 
 @Component({
   selector: 'app-view-db',
