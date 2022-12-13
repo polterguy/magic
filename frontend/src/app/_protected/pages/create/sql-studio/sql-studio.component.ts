@@ -37,6 +37,8 @@ export class SQLStudioComponent implements OnInit {
    */
   public selectedDbType: string = '';
 
+  public migrate: boolean = false;
+
   /**
    * List of connection strings available for the selected database type.
    */
@@ -362,6 +364,9 @@ export class SQLStudioComponent implements OnInit {
    * Open up apply migrate script dialog.
    */
   private applyMigration(sql: string) {
+    if (!this.migrate) {
+      return;
+    }
     this.dialog.open(AddMigrateScriptComponent, {
       width: '80vw',
       data: {

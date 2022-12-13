@@ -26,6 +26,7 @@ export class TablesViewComponent implements OnInit, OnDestroy {
   @Input() selectedDatabase: string = '';
   @Input() selectedDbType: string = '';
   @Input() selectedConnectionString: string = '';
+  @Input() migrate: boolean;
 
   @Output() getDatabases: EventEmitter<any> = new EventEmitter<any>();
 
@@ -276,6 +277,9 @@ export class TablesViewComponent implements OnInit, OnDestroy {
    * Open up apply migrate script dialog.
    */
   private applyMigration(sql: string) {
+    if (!this.migrate) {
+      return;
+    }
     this.dialog.open(AddMigrateScriptComponent, {
       width: '80vw',
       data: {

@@ -85,6 +85,9 @@
               Clear server side cache
             </button>
             <button mat-menu-item routerLink="/databases">Create new database</button>
+            <div class="m-3">
+              <mat-slide-toggle labelPosition="before" [(ngModel)]="migrate">Auto migrate</mat-slide-toggle>
+            </div>
           </mat-menu>
 
         </div>
@@ -97,7 +100,7 @@
   <div class="col-12">
     <container-element [ngSwitch]="sqlView">
       <ng-container *ngSwitchCase="false">
-        <app-tables-view [dbLoading]="dbLoading|async" [tables]="tables" [databases]="databases"
+        <app-tables-view [migrate]="migrate" [dbLoading]="dbLoading|async" [tables]="tables" [databases]="databases"
           [selectedDatabase]="selectedDatabase" [selectedDbType]="selectedDbType"
           [selectedConnectionString]="selectedConnectionString" (getDatabases)="getDatabases($event)"></app-tables-view>
       </ng-container>
