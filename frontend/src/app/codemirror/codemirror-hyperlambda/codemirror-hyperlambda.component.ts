@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 
 // Application specific imports.
-import { VocabularyService } from 'src/app/_protected/services/vocabulary.service';
+import { VocabularyService } from 'src/app/services/vocabulary.service';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { Subscription } from 'rxjs';
 

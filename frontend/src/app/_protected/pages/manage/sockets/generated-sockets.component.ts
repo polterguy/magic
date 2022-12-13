@@ -10,7 +10,7 @@ import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@aspnet/
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { Count } from 'src/app/_protected/models/common/count.model';
 import { Message } from 'src/app/_protected/models/common/message.model';
-import { BackendService } from 'src/app/_protected/services/backend.service';
+import { BackendService } from 'src/app/services/backend.service';
 import { SocketUser } from '../endpoints/_models/socket-user.model';
 import { SubscribeDialogComponent } from './components/subscribe-dialog/subscribe-dialog.component';
 import { PublishedMessages } from './_models/socket';

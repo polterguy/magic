@@ -15,7 +15,7 @@ import { MacroDefinition } from '../../../../models/common/macro-definition.mode
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { HttpService } from 'src/app/_general/services/http.service';
 import { Observable } from 'rxjs';
-import { CacheService } from 'src/app/_protected/services/cache.service';
+import { CacheService } from 'src/app/services/cache.service';
 
 /**
  * File service allowing you to read, download, upload, and delete files.

@@ -9,7 +9,7 @@ import { Observable, Subject, Subscription } from 'rxjs';
 import { Model } from 'src/app/codemirror/codemirror-sql/codemirror-sql.component';
 import { ShortkeysComponent } from 'src/app/_general/components/shortkeys/shortkeys.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { BackendService } from 'src/app/_protected/services/backend.service';
+import { BackendService } from 'src/app/services/backend.service';
 
 // CodeMirror options.
 import { CodemirrorActionsService } from '../../../hyper-ide/_services/codemirror-actions.service';
