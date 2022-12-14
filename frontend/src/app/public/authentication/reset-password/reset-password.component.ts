@@ -8,9 +8,8 @@ import { Validators, UntypedFormBuilder } from '@angular/forms';
 import { PasswordsMatchingValidator } from 'src/app/_general/classes/passwords-matching-validator';
 import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { Location } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
 import { BackendService } from 'src/app/_general/services/backend.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-reset-password',
@@ -27,13 +26,9 @@ export class ResetPasswordComponent {
    * defining the forgot password form fields
    */
   resetPassForm = this.formBuilder.group({
-    passwordGroup: this.formBuilder.group({
-      password: ['', [
-        Validators.required
-      ]],
-      confirmPassword: ['', Validators.required]
-    }, { validator: PasswordsMatchingValidator('password', 'confirmPassword') })
-  });
+    password: ['', [Validators.required]],
+    confirmPassword: ['', Validators.required]
+    }, { validator: PasswordsMatchingValidator('password', 'confirmPassword') });
 
   /**
    * handling errors
@@ -51,39 +46,21 @@ export class ResetPasswordComponent {
     private formBuilder: UntypedFormBuilder,
     private backendService: BackendService,
     private generalService: GeneralService,
-    private activatedRouer: ActivatedRoute,
-    private router: Router) {
-    this.activatedRouer.queryParams.subscribe(params => {
-      if (params) {
-        if (params.token) {
-          if (params.token.indexOf('.') > -1) {
-            this.passwordToken = params.token;
-          } else {
-            this.router.navigateByUrl('/authentication')
-          }
-        }
-      }
-    });
-  }
+    private router: Router) { }
 
   /**
    * forgot password form
    */
   resetPass() {
-    const data: any = {
-      password: this.resetPassForm.value.passwordGroup.password
-    }
 
     if (this.resetPassForm.valid) {
       this.waiting = true;
-      this.backendService.changePassword(data).subscribe({
+      this.backendService.changePassword(this.resetPassForm.value.password).subscribe({
         next: (res: any) => {
           this.waiting = false;
-          if (res && res?.Error) {
-
-          } else {
+          if (res.result === 'success') {
             this.generalService.showFeedback('Password successfully changed', 'successMessage', 'Ok', 10000);
-            this.router.navigateByUrl('/');
+            this.router.navigate(['/authentication/login']);
           }
         },
         error: (error: any) => {

@@ -87,7 +87,7 @@ export class UsersListComponent implements OnInit {
       next: (result: AuthenticateResponse) => {
         const location: any = this.platformLocation;
         const url = location.location.origin.toString() +
-          '/?token=' +
+          '/authentication/auto-auth?token=' +
           encodeURIComponent(result.ticket) +
           '&username=' +
           encodeURIComponent(user.username) +
