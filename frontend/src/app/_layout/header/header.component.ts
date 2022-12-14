@@ -4,15 +4,14 @@
  */
 
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { BackendService } from 'src/app/_general/services/backend.service';
 import { NavLinks } from './_model/nav-links';
-import { Backend } from 'src/app/_protected/models/common/backend.model';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogComponent } from 'src/app/_general/components/dialog/dialog.component';
 import { BackendsListComponent } from 'src/app/_general/components/backends-list/backends-list.component';
 import { GithubTokenDialogComponent } from 'src/app/_protected/pages/user/github-token-dialog/github-token-dialog.component';
 import { Status } from 'src/app/_protected/models/common/status.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -197,7 +196,7 @@ export class HeaderComponent implements OnInit {
           },
           {
             name: 'Health Check',
-            url: '/endpoints-health-check',
+            url: '/health-check',
             disabled: !(this.permissions.access.log.read && this.permissions.setupDone),
             exact: false,
           },
