@@ -78,7 +78,7 @@ export class AutoAuthComponent implements OnInit {
             if (this.backendService.active.token.in_role('reset-password')) {
 
               // Change password request.
-              this.router.navigate(['/change-password']);
+              this.router.navigate(['/authentication/reset-password']);
 
             } else {
 
