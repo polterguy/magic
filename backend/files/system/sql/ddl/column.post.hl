@@ -55,7 +55,18 @@ set-value:x:@.sql
    strings.concat
       .:"alter table "
       get-value:x:@.arguments/*/tableName
-      .:" add column "
+      .:" add "
+if
+   neq:x:@.arguments/*/databaseType
+      .:mssql
+   .lambda
+      set-value:x:@.sql
+         strings.concat
+            get-value:x:@.sql
+            .:"column "
+set-value:x:@.sql
+   strings.concat
+      get-value:x:@.sql
       get-value:x:@.arguments/*/columnName
       .:" "
       get-value:x:@.arguments/*/columnType
