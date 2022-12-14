@@ -108,7 +108,7 @@ export class UsersListComponent implements OnInit {
     this.userService.generateLoginLink(user.username).subscribe({
       next: (result: AuthenticateResponse) => {
         const location: any = this.platformLocation;
-        const url = location.location.origin.toString() + '/authentication/login' +
+        const url = location.location.origin.toString() + '/authentication/auto-auth' +
           '/?token=' +
           encodeURIComponent(result.ticket) +
           '&username=' +
