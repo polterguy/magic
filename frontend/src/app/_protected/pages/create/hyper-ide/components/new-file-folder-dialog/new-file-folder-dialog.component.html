@@ -2,34 +2,37 @@
 <form>
   <div mat-dialog-content>
 
-    <mat-form-field class="w-100 prefix-alignment">
+    <mat-form-field class="w-100 standalone-field mt-4">
       <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-        Folder
+        <mat-icon>folder</mat-icon>
         <span class="text-muted">|</span>
       </span>
-      <mat-select [(ngModel)]="data.path" class="dark" name="path">
+
+      <mat-select [(ngModel)]="data.path" class="dark" name="path" placeholder="Folder name">
         <mat-option *ngFor="let idx of data.folders" [value]="idx">{{idx}}</mat-option>
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field class="w-100 prefix-alignment" *ngIf="templates.length > 0 && data.type ==='file'">
+    <mat-form-field class="w-100 standalone-field" *ngIf="templates.length > 0 && data.type ==='file'">
       <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-        Templates
+        <mat-icon>list</mat-icon>
         <span class="text-muted">|</span>
       </span>
-      <mat-select [(ngModel)]="activeTemplate" name="activeTemplate" (selectionChange)="templateChanged()" class="dark">
+
+      <mat-select [(ngModel)]="activeTemplate" name="activeTemplate" (selectionChange)="templateChanged()" class="dark"
+        placeholder="Template">
         <mat-option *ngFor="let idx of getTemplates()" [value]="idx">{{getFileName(idx.name)}}</mat-option>
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field class="w-100 prefix-alignment">
+    <mat-form-field class="w-100 standalone-field">
       <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-        Name
+        <mat-icon>edit</mat-icon>
         <span class="text-muted">|</span>
       </span>
-      <input #fileName type="text" matInput autocomplete="off" [(ngModel)]="data.name" name="name" cdkFocusInitial>
-      <mat-hint *ngIf="!pathValid()" class="warning">Name is required and cannot contain blank space or special
-        characters.</mat-hint>
+
+      <input #fileName type="text" placeholder="Filename" matInput autocomplete="off" [(ngModel)]="data.name"
+        name="name" cdkFocusInitial>
     </mat-form-field>
 
   </div>
