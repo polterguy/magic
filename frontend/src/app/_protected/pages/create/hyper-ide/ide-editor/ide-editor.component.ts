@@ -62,7 +62,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     private vocabularyService: VocabularyService,
     private codemirrorActionsService: CodemirrorActionsService) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.watchForActions();
     this.cdr.detectChanges();
   }
@@ -81,11 +81,8 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
             editor.doc.markClean();
             editor.doc.clearHistory(); // To avoid having initial loading of file becoming an "undo operation".
           }, 100);
-
         }
-
       }
-
     }
   }
 

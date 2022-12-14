@@ -123,4 +123,4 @@
    set-value:x:@.lambda
       strings.concat
          .:folders-changed|
-         get-value:x:@strings.concat/@strings.concat
+         get-value:x:@.module-path

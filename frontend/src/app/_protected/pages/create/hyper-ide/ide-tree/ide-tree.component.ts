@@ -12,10 +12,13 @@ import { ConfirmationDialogComponent } from 'src/app/_general/components/confirm
 import { EndpointsGeneralService } from 'src/app/_general/services/endpoints-general.service';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { Endpoint } from 'src/app/_protected/models/common/endpoint.model';
+import { ExecuteMacroDialogComponent } from '../components/execute-macro-dialog/execute-macro-dialog.component';
 import { IncompatibleFileDialogComponent } from '../components/incompatible-file-dialog/incompatible-file-dialog.component';
 import { NewFileFolderDialogComponent } from '../components/new-file-folder-dialog/new-file-folder-dialog.component';
+import { Macro, SelectMacroDialogComponent } from '../components/select-macro-dialog/select-macro-dialog.component';
 import { FileNode } from '../_models/file-node.model';
 import { FlatNode } from '../_models/flat-node.model';
+import { MacroDefinition } from '../_models/macro-definition.model';
 import { TreeNode } from '../_models/tree-node.model';
 import { CodemirrorActionsService } from '../_services/codemirror-actions.service';
 import { FileService } from '../_services/file.service';
@@ -111,6 +114,94 @@ export class IdeTreeComponent implements OnInit, OnDestroy {
         this.refetchEndpointsList();
       }
     })
+  }
+
+  /**
+   * Invoked when user wants to execute a macro.
+   */
+  public selectMacro() {
+    const dialogRef = this.dialog.open(SelectMacroDialogComponent, {
+      width: '550px',
+      data: {
+        name: '',
+      },
+    });
+    dialogRef.afterClosed().subscribe((result: Macro) => {
+      if (result) {
+        this.executeMacro(result.name);
+      }
+    });
+  }
+
+  /*
+   * Executes the specified macro.
+   */
+  private executeMacro(file: string) {
+    this.fileService.getMacroDefinition(file).subscribe({
+      next: (result: MacroDefinition) => {
+
+        /*
+         * Filling out default values for anything we can intelligently figure
+         * out according to selected folder.
+         */
+        const splits = this.activeFolder.split('/');
+        if (splits.length === 4 && splits[1] === 'modules') {
+          const moduleArgs = result.arguments.filter(x => x.name === 'module' || x.name === 'database');
+          if (moduleArgs.length > 0) {
+            for (const idx of moduleArgs) {
+              idx.value = splits[2];
+            }
+          }
+        }
+        const authArgs = result.arguments.filter(x => x.name === 'auth');
+        if (authArgs.length > 0) {
+          for (const idx of authArgs) {
+            idx.value = 'root';
+          }
+        }
+        const dialogRef = this.dialog.open(ExecuteMacroDialogComponent, {
+          width: '500px',
+          data: result,
+        });
+        dialogRef.afterClosed().subscribe((result: MacroDefinition) => {
+          if (result && result.name) {
+            const payload = {};
+            for (const idx of result.arguments.filter(x => x.value)) {
+              payload[idx.name] = idx.value;
+            }
+            this.fileService.executeMacro(file, payload).subscribe({
+              next: (exeResult: any) => {
+                this.generalService.showFeedback('Macro successfully executed', 'successMessage');
+                if (exeResult.result === 'folders-changed') {
+
+                  this.dialog.open(ConfirmationDialogComponent, {
+                    width: '500px',
+                    data: {
+                      title: `Refresh folders`,
+                      description_extra: 'Macro execution changed your file system, do you want to refresh your files and folders?',
+                      action_btn: 'Refresh',
+                      action_btn_color: 'primary',
+                      bold_description: true
+                    }
+                  }).afterClosed().subscribe((result: string) => {
+                    if (result === 'confirm') {
+                      this.getFilesFromServer();
+                    }
+                  })
+                } else if (exeResult.result.startsWith('folders-changed|')) {
+                  var fileObject = exeResult.result.split('|')[1];
+                  this.updateFileObject(fileObject);
+                }
+              },
+              error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+            });
+          } else if (result) {
+            this.selectMacro();
+          }
+        });
+      },
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+    });
   }
 
   /**
