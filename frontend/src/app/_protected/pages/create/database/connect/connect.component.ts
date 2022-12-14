@@ -107,12 +107,14 @@ export class ConnectComponent implements OnInit {
             databaseType: this.databaseType,
             connectionString: this.connectionString,
           };
+          this.generalService.showLoading();
           this.configService.connectionStringValidity(data).subscribe({
             next: (res: any) => {
               if (res.result === 'success') {
                 if (toTestBeforeSubmit !== true) {
                   this.waitingTest = false;
                   this.generalService.showFeedback('Connection successful', 'successMessage');
+                  this.generalService.hideLoading();
                   return;
                 } else {
                   this.connect();
@@ -120,11 +122,13 @@ export class ConnectComponent implements OnInit {
               } else if (res.result === 'failure') {
                 this.waitingTest = false;
                 this.generalService.showFeedback(res.message, 'errorMessage', 'Ok', 5000);
+                this.generalService.hideLoading();
               }
             },
             error: (error: any) => {
               this.waitingTest = false;
               this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+              this.generalService.hideLoading();
             },
           });
         } else {
@@ -158,7 +162,8 @@ export class ConnectComponent implements OnInit {
           status: 'Live',
           cStringKey: this.cStringName,
           isClicked: false
-        }]
+        }];
+        this.generalService.hideLoading();
         this.cdr.detectChanges();
         this.cStringName = '';
         this.connectionString = '';
@@ -292,7 +297,7 @@ export class ConnectComponent implements OnInit {
         item.isClicked = false;
         this.generalService.hideLoading();
       },
-      error: (error: any) => {
+      error: () => {
         this.generalService.showFeedback('Something went wrong, please try again later.', 'errorMessage');
         item.isClicked = false;
         this.generalService.hideLoading();
