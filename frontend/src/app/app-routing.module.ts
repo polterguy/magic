@@ -78,7 +78,7 @@ const routes: Routes = [
         loadChildren: () => import('./_protected/pages/manage/tasks/_module/task.module').then(m => m.TaskModule)
       },
       {
-        path: 'endpoints-health-check',
+        path: 'health-check',
         loadChildren: () => import('./_protected/pages/misc/health-check/_module/health-check.module').then(m => m.HealthCheckModule)
       },
       {
