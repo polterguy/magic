@@ -92,7 +92,7 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
   private getItems() {
     this.bazarService.listBazarItems('%%', 0, 1000).subscribe({
       next: (apps: BazarApp[]) => {
-        this.databases = apps.filter((item: any) => { return item.name.indexOf('DB') > -1 }) || [];
+        this.databases = apps.filter((item: any) => { return item.name.indexOf('SQLite') > -1 }) || [];
         this.databases.map((item: any) => {
           this.plugins[item.name] = item;
           item.hasUpdate = false;
@@ -110,6 +110,7 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
     this.bazarService.localManifests().subscribe({
       next: (manifests: AppManifest[]) => {
         this.appDetails = manifests || [];
+        this.isLoadingPlugins = false;
         if (manifests) {
           this.databases.map((item: any) => this.appDetails.map((el: any) => {
             if (item.name === el.name) {
@@ -122,11 +123,6 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
         }
       },
       error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage'),
-      complete: () => {
-        if (this.appDetails.length === 0) {
-          this.isLoadingPlugins = false;
-        }
-      }
     });
   }
 
