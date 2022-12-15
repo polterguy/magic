@@ -5,7 +5,7 @@
 
       <div class="col-12">
         <h3 class="fw-bold">Create database</h3>
-        <p class="text-muted">Provide a name and create a new SQLite database below</p>
+        <p class="text-muted">Provide a name and create a new {{getDbName(defaultDbType)}} database below</p>
       </div>
       <div class="col-12 my-5">
         <form class="d-flex flex-nowrap align-items-stretch w-100">
@@ -58,7 +58,7 @@
   <div class="col-md-6 col-12 position-relative ps-lg-5">
     <div class="v-line"></div>
     <h3 class="fw-bold">Existing databases</h3>
-    <p class="text-muted">SQLite databases you have already installed or created</p>
+    <p class="text-muted">{{getDbName(defaultDbType)}} databases you have already installed or created</p>
 
     <ng-container *ngIf="isLoadingDbs">
       <app-loading-skeleton [amount]="8" [colClass]="'col-12'" [blockHeight]="'48px'"
@@ -85,7 +85,7 @@
           <td mat-cell *matCellDef="let element" class="px-0">
             <button mat-button color="primary" class="ps-0" routerLink="/sql-studio"
               [queryParams]="{dbType: element.type, dbName: element.name, dbCString: element.connectionString}">Edit</button>
-            <button mat-button color="primary" class="ps-0" (click)="downloadBackup(element)">Backup</button>
+            <button *ngIf="defaultDbType === 'sqlite'" mat-button color="primary" class="ps-0" (click)="downloadBackup(element)">Backup</button>
             <button mat-button color="warn" class="ps-0" (click)="deleteDb(element)"
               [disabled]="element.name === 'magic'">Delete</button>
             <button mat-button color="primary" class="px-0" routerLink="/endpoint-generator"
@@ -101,11 +101,11 @@
     </div>
 
     <div class="text-end button-row mt-3 w-100 upload-backup-row">
-      <button mat-flat-button color="primary" (click)="zipfile.click()">Upload
+      <button *ngIf="defaultDbType === 'sqlite'" mat-flat-button color="primary" (click)="zipfile.click()">Upload
         backup</button>
     </div>
 
-    <input type="file" [(ngModel)]="zipFileInput" #zipfile class="d-none" accept="db"
+    <input *ngIf="defaultDbType === 'sqlite'" type="file" [(ngModel)]="zipFileInput" #zipfile class="d-none" accept="db"
       (change)="uploadBackup($event.target.files)">
 
   </div>
