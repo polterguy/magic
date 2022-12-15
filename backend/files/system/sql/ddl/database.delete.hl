@@ -64,37 +64,37 @@ else
             .:information_schema
          set-value:x:@.sql
             strings.concat
-               .:"drop database "
+               .:"drop database `"
                get-value:x:@.arguments/*/databaseName
-               .:;
+               .:"`;"
 
       case:pgsql
          set-value:x:@.master
             .:template1
          set-value:x:@.sql
             strings.concat
-               .:"revoke connect on database "
+               .:"revoke connect on database `"
                get-value:x:@.arguments/*/databaseName
-               .:" from public; "
+               .:"` from public; "
                .:"select pid, pg_terminate_backend(pid) from pg_stat_activity "
                .:"where datname = '"
                get-value:x:@.arguments/*/databaseName
                .:"'; "
-               .:"drop database "
+               .:"drop database `"
                get-value:x:@.arguments/*/databaseName
-               .:;
+               .:"`;"
 
       case:mssql
          set-value:x:@.master
             .:master
          set-value:x:@.sql
             strings.concat
-               .:"alter database "
+               .:"alter database ["
                .:x:@.arguments/*/databaseName
-               .:" set single_user with rollback immediate; "
-               .:"drop database "
+               .:"] set single_user with rollback immediate; "
+               .:"drop database ["
                get-value:x:@.arguments/*/databaseName
-               .:;
+               .:"];"
 
    // Checking if caller only wants to generate SQL statement.
    if:x:@.arguments/*/generate
