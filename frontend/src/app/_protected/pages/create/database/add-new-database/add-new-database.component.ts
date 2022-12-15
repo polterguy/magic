@@ -81,9 +81,18 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
     private generalService: GeneralService,
     private backendService: BackendService) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.getItems();
     this.getDefaultDbType();
+  }
+
+  getDbName(db: string) {
+    switch (db) {
+      case 'mysql': return 'MySQL';
+      case 'SQLite': return 'SQLite';
+      case 'mssql': return 'SQL Server';
+      case 'pgsql': return 'PostgreSQL';
+    }
   }
 
   /*
@@ -262,10 +271,6 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
                   }
                 })
 
-                /*
-                  * Making sure we turn OFF socket connections if these have been created.
-                  * Notice, socket connections are NOT turned on for immediate downloads (free apps).
-                  */
                 if (this.hubConnection) {
                   this.hubConnection.stop();
                   this.hubConnection = null;
@@ -383,8 +388,6 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
       next: (connectionStrings: any) => {
         if (connectionStrings) {
           this.databaseType = dbType;
-          // this.cStringList = connectionStrings;
-          // this.selectedCString = Object.keys(connectionStrings)[0];
           this.connectionString = Object.keys(connectionStrings)[0];
           this.getDatabases();
         }
@@ -409,13 +412,10 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
           });
           this.existingDatabases = [...this.existingDatabases, ...res.databases];
 
-          // Makes difference only after a successful installation.
-
           this.waitingInstallation = false;
           this.isLoadingDbs = false;
           this.generalService.hideLoading();
         },
-        error: (error: any) => { }
       })
   }
 
@@ -456,12 +456,7 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
       });
   }
 
-  ngOnDestroy(): void {
-    /*
-      * Making sure we turn OFF socket connections if these have been created.
-      *
-      * Notice, socket connections are NOT turned on for immediate downloads (free apps).
-      */
+  ngOnDestroy() {
     if (this.hubConnection) {
       this.hubConnection.stop();
       this.hubConnection = null;
