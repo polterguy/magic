@@ -10,7 +10,7 @@
             <span class="text-muted">|</span>
           </span>
 
-          <input matInput placeholder="Full name" [disabled]="!data.savePermission" [(ngModel)]="data.key.subject"
+          <input matInput placeholder="Full name" disabled [(ngModel)]="data.key.subject"
             [ngModelOptions]="{standalone: true}">
         </mat-form-field>
       </div>
@@ -21,7 +21,7 @@
             <span class="text-muted">|</span>
           </span>
 
-          <input matInput placeholder="Email address" [disabled]="!data.savePermission" [(ngModel)]="data.key.email"
+          <input matInput placeholder="Email address" disabled [(ngModel)]="data.key.email"
             [ngModelOptions]="{standalone: true}">
         </mat-form-field>
       </div>
@@ -32,7 +32,7 @@
             <span class="text-muted">|</span>
           </span>
 
-          <input matInput placeholder="Domain" [disabled]="!data.savePermission" [(ngModel)]="data.key.domain"
+          <input matInput placeholder="Domain" disabled [(ngModel)]="data.key.domain"
             [ngModelOptions]="{standalone: true}">
         </mat-form-field>
       </div>
@@ -43,7 +43,7 @@
             <span class="text-muted">|</span>
           </span>
 
-          <input matInput placeholder="Associated user" [disabled]="!data.savePermission"
+          <input matInput placeholder="Associated user" disabled
             [(ngModel)]="data.key.username" [ngModelOptions]="{standalone: true}">
         </mat-form-field>
       </div>
@@ -74,7 +74,7 @@
             <mat-form-field class="w-100">
               <textarea
                 spellcheck="false"
-                matInput rows="12" [disabled]="!data.savePermission" [(ngModel)]="data.key.content"
+                matInput rows="12" disabled [(ngModel)]="data.key.content"
                 [ngModelOptions]="{standalone: true}"></textarea>
             </mat-form-field>
           </div>
