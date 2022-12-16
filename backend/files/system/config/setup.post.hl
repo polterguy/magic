@@ -138,7 +138,7 @@ try
     * Notice, even though this is bananas, it is necessary since we're using the appsettings
     * connection string to connect to database further down in this file.
     */
-   sleep:5000
+   sleep:2000
 
    /*
     * We now have a new JWT/AUTH secret, and a database connection string
@@ -271,7 +271,7 @@ try
       request.host
    unwrap:x:+/*
    io.file.execute:/system/crypto/generate-keypair.post.hl
-      strength:int:2048
+      strength:int:1024
       seed:x:@crypto.random
       subject:x:@.arguments/*/name
       email:x:@.arguments/*/email
