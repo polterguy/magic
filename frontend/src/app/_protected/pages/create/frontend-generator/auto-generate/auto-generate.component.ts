@@ -264,6 +264,7 @@ export class AutoGenerateComponent implements OnInit {
     }
 
     const svcModel = this.createServiceModel(this.endpoints.filter(x => x.selected));
+    this.generalService.showLoading();
     this.crudifyService.generate(
       this.frontendType,
       apiUrl + '/',
@@ -273,8 +274,13 @@ export class AutoGenerateComponent implements OnInit {
       deployLocally,
       args,
       () => {
+        this.generalService.hideLoading();
         this.generalService.showFeedback(deployLocally ? 'Success, edit the generated code in Frontend IDE' : 'Successfully generated', 'successMessage', 'Ok', 5000);
-      })
+      },
+      () => {
+        this.generalService.showFeedback('Something went wrong as we tried to generate your frontend', 'errorMessage', 'Ok', 5000);
+        this.generalService.hideLoading();
+      });
   }
 
   /*
