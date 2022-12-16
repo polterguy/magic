@@ -271,7 +271,7 @@ try
       request.host
    unwrap:x:+/*
    io.file.execute:/system/crypto/generate-keypair.post.hl
-      strength:int:4096
+      strength:int:2048
       seed:x:@crypto.random
       subject:x:@.arguments/*/name
       email:x:@.arguments/*/email
