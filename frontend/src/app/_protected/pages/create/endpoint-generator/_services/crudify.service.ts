@@ -120,7 +120,8 @@ export class CrudifyService {
     endpoints: any[],
     deployLocally: boolean,
     args: any,
-    onAfter: () => void = null) {
+    onAfter: () => void = null,
+    onError: () => void = null) {
     const payload = {
       templateName,
       apiUrl,
