@@ -11,6 +11,7 @@ import { GeneralService } from 'src/app/_general/services/general.service';
 import { CryptoService } from '../../_services/crypto.service';
 import { Response } from 'src/app/_protected/models/common/response.model';
 import { ConfigService } from '../../../../../../_general/services/config.service';
+import { BackendService } from 'src/app/_general/services/backend.service';
 
 class NewKey {
   subject: string = '';
@@ -60,6 +61,7 @@ export class NewServerKeyComponent implements OnInit {
     private configService: ConfigService,
     private cryptoService: CryptoService,
     private generalService: GeneralService,
+    private backendService: BackendService,
     private dialogRef: MatDialogRef<NewServerKeyComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { type: string }) { }
 
@@ -175,7 +177,8 @@ export class NewServerKeyComponent implements OnInit {
       this.newKey.content,
       this.newKey.subject,
       this.newKey.email,
-      this.newKey.domain.replace(/\/$/, '')).subscribe({
+      this.newKey.domain.replace(/\/$/, ''),
+      this.backendService.active.username).subscribe({
         next: () => {
           this.isWaiting = false;
           this.generalService.showFeedback('New key pair created successfully and the old key is backed up.', 'successMessage', 'Ok', 4000);
