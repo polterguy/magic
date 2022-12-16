@@ -172,13 +172,15 @@ export class CryptoService {
     seed: string,
     subject: string,
     email: string,
-    domain: string) {
+    domain: string,
+    username: string) {
     return this.httpService.post<KeyPair>('/magic/system/crypto/generate-keypair', {
       strength,
       seed,
       subject,
       email,
-      domain
+      domain,
+      username,
     });
   }
 
