@@ -5,7 +5,7 @@
 
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Observable, Subject, Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { Model } from 'src/app/codemirror/codemirror-sql/codemirror-sql.component';
 import { ShortkeysComponent } from 'src/app/_general/components/shortkeys/shortkeys.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
@@ -47,6 +47,7 @@ export class SqlViewComponent implements OnInit, OnDestroy {
 
   private tablesList: any = null;
   private tableSubscription!: Subscription;
+  private actionSubscription!: Subscription;
 
   /**
    * If true prevents returning more than 200 records from backend to avoid
@@ -61,7 +62,7 @@ export class SqlViewComponent implements OnInit, OnDestroy {
     private generalService: GeneralService,
     private codemirrorActionsService: CodemirrorActionsService) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     (async () => {
       while (!(this.tables))
         await new Promise(resolve => setTimeout(resolve, 100));
@@ -277,7 +278,7 @@ export class SqlViewComponent implements OnInit, OnDestroy {
   }
 
   private watchForActions() {
-    this.codemirrorActionsService.action.subscribe((action: string) => {
+    this.actionSubscription = this.codemirrorActionsService.action.subscribe((action: string) => {
       switch (action) {
         case 'save':
           this.save();
@@ -298,8 +299,7 @@ export class SqlViewComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.tableSubscription) {
-      this.tableSubscription.unsubscribe();
-    }
+    this.tableSubscription?.unsubscribe();
+    this.actionSubscription?.unsubscribe();
   }
 }
