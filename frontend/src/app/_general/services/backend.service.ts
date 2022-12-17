@@ -104,6 +104,18 @@ export class BackendService {
 
     this._obscure = new BehaviorSubject<boolean>(false);
     this.obscure = this._obscure.asObservable();
+
+    if (this.active) {
+      this.getEndpoints().subscribe({
+        next: () => {
+          if (!this.active.token?.expired && this.active.token?.in_role('root')) {
+            this.retrieveStatusAndVersion().subscribe({
+              next: () => { }
+            });
+          }
+        }
+      });
+    }
   }
 
   /**
@@ -136,9 +148,7 @@ export class BackendService {
    */
   activate(value: Backend) {
     value = this.backendsStorageService.activate(value);
-    this.getEndpoints().subscribe({
-      next: () => this._activeChanged.next(value)
-    });
+    this._activeChanged.next(value);
   }
 
   /**
@@ -327,6 +337,10 @@ export class BackendService {
     return this._obscure.value;
   }
 
+  refetchEndpoints() {
+    this.getEndpoints();
+  }
+
   /*
    * Private helper methods.
    */
@@ -417,7 +431,7 @@ export class BackendService {
   /*
    * Retrieves endpoints for currently selected backend.
    */
-  public getEndpoints() {
+  private getEndpoints() {
     return new Observable<Endpoint[]>(observer => {
       if (this.active.endpoints?.length > 0) {
         this.active.createAccessRights();
