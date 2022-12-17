@@ -57,37 +57,47 @@
           </mat-select>
         </mat-form-field>
       </div>
+
       <div class="col align-self-center">
         <div class="d-flex justify-content-end flex-sm-nowrap flex-wrap mt-xl-0 mt-3">
+
           <button mat-button color="primary" class="mat-caption px-1"
             [disabled]="(dbLoading | async) || sqlView" (click)="addNewTable()">
             New table
           </button>
+
           <button mat-button color="primary" class="mat-caption px-1"
             [disabled]="(dbLoading | async) || sqlView" (click)="createNewLinkTable()">
             Link table
           </button>
+
           <button mat-button color="primary" class="mat-caption px-1" [disabled]="(dbLoading | async)"
             [matMenuTriggerFor]="menu">
             More
           </button>
+
           <button mat-button color="primary" class="ms-3 mat-caption px-1" (click)="sqlView = !sqlView">
             {{sqlView ? 'Table view' : 'SQL view'}}
           </button>
 
           <!-- Menu for more button -->
           <mat-menu #menu="matMenu">
+
             <button mat-menu-item (click)="exportDatabase()">
               {{selectedDatabase === 'magic' || selectedDbType === 'sqlite' || selectedDbType === 'mysql' ||
               selectedDbType === 'pgsql' ? 'View database as DDL' : 'Export database'}}
             </button>
+
             <button mat-menu-item (click)="clearServerCache()">
               Clear server side cache
             </button>
+
             <button mat-menu-item routerLink="/databases">Create new database</button>
+
             <div class="m-3">
               <mat-slide-toggle labelPosition="before" [(ngModel)]="migrate">Auto migrate</mat-slide-toggle>
             </div>
+
           </mat-menu>
 
         </div>
@@ -98,19 +108,14 @@
 
 <div class="row mt-4">
   <div class="col-12">
-    <container-element [ngSwitch]="sqlView">
-      <ng-container *ngSwitchCase="false">
-        <app-tables-view [migrate]="migrate" [dbLoading]="dbLoading|async" [tables]="tables" [databases]="databases"
-          [selectedDatabase]="selectedDatabase" [selectedDbType]="selectedDbType"
-          [selectedConnectionString]="selectedConnectionString" (getDatabases)="getDatabases($event)"></app-tables-view>
-      </ng-container>
+    <app-tables-view *ngIf="sqlView === false" [migrate]="migrate" [dbLoading]="dbLoading|async" [tables]="tables" [databases]="databases"
+      [selectedDatabase]="selectedDatabase" [selectedDbType]="selectedDbType"
+      [selectedConnectionString]="selectedConnectionString" (getDatabases)="getDatabases($event)"></app-tables-view>
 
-      <ng-container *ngSwitchCase="true">
-        <app-sql-view [dbLoading]="dbLoading|async" [tables]="hintTables" [databases]="databases"
-          [selectedDatabase]="selectedDatabase" [selectedDbType]="selectedDbType"
-          [selectedConnectionString]="selectedConnectionString"
-          (getDatabases)="getDatabases($event)"></app-sql-view>
-      </ng-container>
-    </container-element>
+    <app-sql-view *ngIf="sqlView === true" [dbLoading]="dbLoading|async" [tables]="hintTables" [databases]="databases"
+      [selectedDatabase]="selectedDatabase" [selectedDbType]="selectedDbType"
+      [selectedConnectionString]="selectedConnectionString"
+      (getDatabases)="getDatabases($event)"></app-sql-view>
+
   </div>
 </div>
