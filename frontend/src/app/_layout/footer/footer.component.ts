@@ -8,6 +8,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { PrivacyModalComponent } from 'src/app/_general/components/privacy-modal/privacy-modal.component';
 import { TermsModalComponent } from 'src/app/_general/components/terms-modal/terms-modal.component';
 
+/**
+ * Footer component showing copyright and terms of service, plus privacy declaration.
+ */
 @Component({
   selector: 'app-footer',
   templateUrl: './footer.component.html',
