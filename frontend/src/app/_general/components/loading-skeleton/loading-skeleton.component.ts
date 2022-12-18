@@ -5,6 +5,9 @@
 
 import { Component, Input, OnInit } from '@angular/core';
 
+/**
+ * Loading skeleton component showing user some animations while we wait for something to load from the backend.
+ */
 @Component({
   selector: 'app-loading-skeleton',
   templateUrl: './loading-skeleton.component.html',
@@ -19,9 +22,7 @@ export class LoadingSkeletonComponent implements OnInit {
 
   public itemsArray: string[] = [];
 
-  constructor() { }
-
-  ngOnInit(): void {
+  ngOnInit() {
     this.generateArray();
   }
 
