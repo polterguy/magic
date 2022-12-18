@@ -1,9 +1,12 @@
 <div class="row fullPage">
   <div class="col-xl-4 col-lg-6 col-md-5 col-12 mb-md-0 mb-4">
+
     <mat-card class="h-100 tree-card">
       <mat-card-content class="h-100 max-height-full">
         <div class="row">
           <div class="col-12">
+
+            <!-- Search textbox to filter available files -->
             <app-ide-searchbox [type]="type" (toggleFileSystems)="tree.systemFiles = $event;tree.updateFileObject('/')"
               (filterList)="filterList($event)" #search></app-ide-searchbox>
           </div>
@@ -12,20 +15,24 @@
         <div class="row scrollable-row">
           <div class="col-12 max-height">
 
+            <!-- Tree to allow for browsing and opening files -->
             <app-ide-tree #tree [searchKey]="searchKey" [type]="type" (showEditor)="showEditor($event)"
               (clearEditorHistory)="editor.clearEditorHistory($event)"
               (setFocusToActiveEditor)="editor.setFocusToActiveEditor()"></app-ide-tree>
-
           </div>
         </div>
 
       </mat-card-content>
     </mat-card>
+
   </div>
+
   <div class="col-xl-8 col-lg-6 col-md-7 col-12">
+
     <mat-card class="h-100 px-3 py-2">
       <mat-card-content class="h-100 max-height-full">
 
+        <!-- Editor surface for allowing user to edit open files -->
         <app-ide-editor class="h-100 d-block" #editor [currentFileData]="currentFileData"
           [activeFolder]="tree.activeFolder" [openFiles]="tree.openFiles"
           (updateFileObject)="tree.updateFileObject($event)" (getFilesFromServer)="tree.getFilesFromServer()"
@@ -39,5 +46,6 @@
 
       </mat-card-content>
     </mat-card>
+
   </div>
 </div>
