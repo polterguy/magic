@@ -16,6 +16,9 @@ import { ConfirmationDialogComponent } from 'src/app/_general/components/confirm
 import { ChangePasswordDialogComponent } from '../components/change-password-dialog/change-password-dialog.component';
 import { EditUserDialogComponent } from '../components/edit-user-dialog/edit-user-dialog.component';
 
+/**
+ * Helper component for displaying all users in the system, and allowing the user to edit and manage his users.
+ */
 @Component({
   selector: 'app-users-list',
   templateUrl: './users-list.component.html',

@@ -12,6 +12,9 @@ import { Role } from '../../_models/role.model';
 import { ManageRoleDialogComponent } from '../manage-role-dialog/manage-role-dialog.component';
 import { NewUserDialogComponent } from '../new-user-dialog/new-user-dialog.component';
 
+/**
+ * Common helper component to allow user to filter for users or roles.
+ */
 @Component({
   selector: 'app-shared-top-bar',
   templateUrl: './shared-top-bar.component.html'
