@@ -8,6 +8,9 @@ import { Subject, BehaviorSubject } from 'rxjs';
 import { GeneralService } from './_general/services/general.service';
 import { ThemeService } from './_general/services/theme.service';
 
+/**
+ * Primary component for dashboard, encapsulating progress bar, and router outlet.
+ */
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
