@@ -1,7 +1,9 @@
 <h3 mat-dialog-title>Overview items</h3>
-<p class="text-muted">Manage items to be displayed in the overview section.</p>
+
+<p class="text-muted">Manage items to be displayed in the overview section</p>
 
 <div mat-dialog-content>
+
   <mat-selection-list [(ngModel)]="data.titles" dense>
     <mat-list-option color="primary"
       *ngFor="let item of data.fullList"
@@ -10,6 +12,7 @@
       {{item.name}}
     </mat-list-option>
   </mat-selection-list>
+
 </div>
 
 <div mat-dialog-actions [align]="'end'">

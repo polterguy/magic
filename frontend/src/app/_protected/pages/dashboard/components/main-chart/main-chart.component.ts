@@ -8,6 +8,10 @@ import { Subscription } from 'rxjs';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { ThemeService } from 'src/app/_general/services/theme.service';
 
+/**
+ * Primary chart component for dashboard, showing a line chart with statistics as returned
+ * from the backend.
+ */
 @Component({
   selector: 'app-main-chart',
   templateUrl: './main-chart.component.html',
@@ -45,7 +49,6 @@ export class MainChartComponent implements OnInit {
       }
     })
     this.waitForData();
-
   }
 
   /**

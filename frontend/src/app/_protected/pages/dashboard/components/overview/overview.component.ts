@@ -5,8 +5,12 @@
 import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { SystemReport } from 'src/app/models/dashboard.model';
-import { OverviewDialogComponent } from '../overview-dialog/overview-dialog.component';
+import { OverviewDialogComponent } from './components/overview-dialog/overview-dialog.component';
 
+/**
+ * General information component, showing user key information about his system,
+ * such as backend version, IP address of cloudlet, etc.
+ */
 @Component({
   selector: 'app-overview',
   templateUrl: './overview.component.html',
@@ -29,7 +33,7 @@ export class OverviewComponent {
     const storedSelections: string = localStorage.getItem('overviewItems') || '';
     if (storedSelections && storedSelections !== '') {
       this.titles = JSON.parse(storedSelections);
-      this.displayableList = this.fullList.filter((item: any) => this.titles.find((el: any) => {return el === item.name}));
+      this.displayableList = this.fullList.filter((item: any) => this.titles.find((el: any) => { return el === item.name }));
     } else {
       this.displayableList = this.fullList.filter((el: any) => { return el.isDefault === true });
       this.fullList.map((el: any) => {
@@ -52,7 +56,7 @@ export class OverviewComponent {
     }).afterClosed().subscribe((newTitles: any) => {
       if (newTitles) {
         this.titles = newTitles;
-        this.displayableList = this.fullList.filter((item: any) => this.titles.find((el: any) => {return el === item.name}));
+        this.displayableList = this.fullList.filter((item: any) => this.titles.find((el: any) => { return el === item.name }));
       }
     })
   }
