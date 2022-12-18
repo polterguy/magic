@@ -6,7 +6,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
-import { Observable } from 'rxjs';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { environment } from 'src/environments/environment';
@@ -30,7 +29,6 @@ export class PluginsComponent implements OnInit {
 
   public isLoading: boolean = true;
 
-  private originalPlugins: any = [];
   public plugins: any = [];
 
   private appDetails: any = [];
@@ -41,7 +39,8 @@ export class PluginsComponent implements OnInit {
 
   private hubConnection: HubConnection = null;
 
-  public searchKey: Observable<string>;
+  public searchKey: string = null;
+  public installedOnly: boolean = false;
 
   constructor(
     private dialog: MatDialog,
@@ -62,7 +61,6 @@ export class PluginsComponent implements OnInit {
     this.bazarService.listBazarItems('%%', 0, 1000).subscribe({
       next: (apps: BazarApp[]) => {
         this.plugins = apps;
-        this.originalPlugins = apps;
         this.loadDetails();
       },
       error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
@@ -81,7 +79,7 @@ export class PluginsComponent implements OnInit {
             if (item.name === el.name) {
               item.details = el;
             }
-          }))
+          }));
           manifests.forEach((item: any) => {
             this.getVersion(item.module_name, item.version);
           })
@@ -127,16 +125,15 @@ export class PluginsComponent implements OnInit {
               item.newVersion = lastestVersion;
             }
           }
-          this.originalPlugins = [...this.plugins];
           this.isLoading = false;
         },
-        error: (error: any) => { }
+        error: () => { }
       });
 
     }
   }
 
-  public installDb(database: any) {
+  public install(database: any) {
     this.waitingInstallation = true;
     this.configService.rootUserEmailAddress().subscribe({
       next: (userDerails: any) => {
@@ -178,18 +175,18 @@ export class PluginsComponent implements OnInit {
      * once app is ready to be downloaded.
      */
     this.hubConnection.on('bazar.package.avilable.' + token, (args: string) => {
-      this.getDb(database, token);
+      this.getPlugin(database, token);
     });
 
     this.hubConnection.start().then(() => {
-      this.getDb(database, token);
+      this.getPlugin(database, token);
     });
   }
 
   /*
    * Invoked when app should be installed.
    */
-  private getDb(app: BazarApp, token: string) {
+  private getPlugin(app: BazarApp, token: string) {
     this.currentStage = 'Downloading plugin';
     this.bazarService.downloadBazarItem(app, token).subscribe({
       next: (download: any) => {
@@ -242,7 +239,7 @@ export class PluginsComponent implements OnInit {
    * Uninstalls the selected database.
    * @param database Item to uninstall
    */
-  public uninstallDb(database: any) {
+  public uninstall(database: any) {
     this.dialog.open(ConfirmationDialogComponent, {
       width: '500px',
       data: {
@@ -255,7 +252,7 @@ export class PluginsComponent implements OnInit {
     }).afterClosed().subscribe((result: string) => {
       if (result === 'confirm') {
         this.fileService.deleteFolder('/modules/' + database.module_name + '/').subscribe({
-          next: (res: any) => {
+          next: () => {
             this.generalService.showFeedback(database.name + ' uninstalled successfully.', 'successMessage');
             this.clearServersideCache();
             this.getItems();
@@ -272,32 +269,36 @@ export class PluginsComponent implements OnInit {
       data: item
     }).afterClosed().subscribe((res: string) => {
       if (res === 'uninstall') {
-        this.uninstallDb(item.details);
+        this.uninstall(item.details);
       }
       if (res === 'install') {
-        this.installDb(item);
+        this.install(item);
       }
     })
   }
 
   private clearServersideCache() {
+
     // Purging server side database cache in case user just recently created a new database.
     this.cacheService.delete('magic.sql.databases.*').subscribe({
-      next: () => { },
-      error: (error: any) => { }
+      next: () => {},
     });
   }
 
   public filterList(event: { installedOnly: boolean, searchKey: string }) {
-    this.plugins = this.originalPlugins.filter(x => {
-      let result = true;
-      if (event.searchKey && event.searchKey.length > 0) {
-        result = x.name.toLowerCase().indexOf(event.searchKey) > -1;
+    this.installedOnly = event.installedOnly ?? false;
+    this.searchKey = event.searchKey ?? null;
+  }
+
+  public getPluginsToDisplay() {
+    return this.plugins.filter((x: any) => {
+      if (this.installedOnly && !x.details) {
+        return false;
       }
-      if (result && event.installedOnly) {
-        result = x.details;
+      if (this.searchKey && this.searchKey.length > 0 && x.name.toLowerCase().indexOf(this.searchKey.toLowerCase()) === -1) {
+        return false;
       }
-      return result;
+      return true;
     });
   }
 }

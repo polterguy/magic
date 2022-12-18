@@ -131,7 +131,7 @@ export class HyperlambdaPlaygroundComponent implements OnInit, OnDestroy {
    */
   public execute() {
     if (!this.input.hyperlambda || this.input.hyperlambda === '') {
-      this.generalService.showFeedback('Insert some code and try executing.', 'errorMessage');
+      this.generalService.showFeedback('There is nothing to execute', 'errorMessage');
       return;
     }
     const domNode = (<any>document.querySelector('.CodeMirror'));
