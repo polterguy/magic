@@ -12,6 +12,9 @@ import { SocketUser } from '../../endpoints/_models/socket-user.model';
 import { MessageWrapper, PublishDialogComponent } from '../components/publish-dialog/publish-dialog.component';
 import { SocketService } from '../_services/socket.service';
 
+/**
+ * Helper component for displaying results from a message pushed by the backend to the client.
+ */
 @Component({
   selector: 'app-socket-result',
   templateUrl: './socket-result.component.html'
@@ -35,7 +38,7 @@ export class SocketResultComponent {
    *
    * @param connection Which connection to transmit message to
    */
-   sendMessageToConnection(connection: string) {
+  sendMessageToConnection(connection: string) {
 
     // Creating modal dialogue that asks user what message and payload to transmit to server.
     const dialogRef = this.dialog.open(PublishDialogComponent, {
@@ -61,7 +64,8 @@ export class SocketResultComponent {
         // Invoking backend to transmit message to client.
         this.socketService.publishMessage(data.message, data.client, data.roles, data.groups).subscribe({
           next: () => this.generalService.showFeedback('Message was successfully sent', 'successMessage'),
-          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')});
+          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+        });
       }
     });
   }

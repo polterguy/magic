@@ -5,7 +5,7 @@
 
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { GeneratedSocketsComponent } from '../generated-sockets.component';
+import { GeneratedSocketsComponent } from '../sockets.component';
 import { SocketRoutingModule } from './socket.routing.module';
 import { MaterialModule } from 'src/app/material.module';
 import { SocketSearchboxComponent } from '../components/socket-searchbox/socket-searchbox.component';

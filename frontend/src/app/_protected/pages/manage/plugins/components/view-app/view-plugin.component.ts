@@ -9,6 +9,9 @@ import { GeneralService } from 'src/app/_general/services/general.service';
 import { Response } from '../../../../../models/common/response.model';
 import { BazarService } from 'src/app/_general/services/bazar.service';
 
+/**
+ * View details modal dialog for showing user general information about some specific plugin.
+ */
 @Component({
   selector: 'app-view-plugin',
   templateUrl: './view-plugin.component.html',

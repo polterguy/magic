@@ -1,6 +1,8 @@
 <h3 mat-dialog-title>Publish message</h3>
+
 <form>
   <div mat-dialog-content>
+
     <mat-form-field class="w-100">
       <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
         <mat-icon>edit_note</mat-icon>
@@ -10,6 +12,7 @@
       <input matInput placeholder="Message's name" [(ngModel)]="data.message.name" [ngModelOptions]="{standalone: true}"
         autocomplete="off" name="-">
     </mat-form-field>
+
     <mat-form-field class="w-100" *ngIf="data.client === null || data.client === ''">
       <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
         <mat-icon>group</mat-icon>
@@ -35,6 +38,7 @@
         name="content">
       </ngx-codemirror>
     </ng-container>
+
   </div>
 
   <div mat-dialog-actions [align]="'end'">
@@ -43,4 +47,5 @@
       Publish
     </button>
   </div>
+
 </form>

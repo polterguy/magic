@@ -10,16 +10,19 @@ import { Message } from 'src/app/_protected/models/common/message.model';
 import { BackendService } from 'src/app/_general/services/backend.service';
 import { SocketUser } from '../../endpoints/_models/socket-user.model';
 import { MessageWrapper, PublishDialogComponent } from '../components/publish-dialog/publish-dialog.component';
-import { PublishedMessages } from '../_models/socket';
+import { PublishedMessage } from '../_models/published-message';
 import { SocketService } from '../_services/socket.service';
 
+/**
+ * Helper component for displaying socket messages published by the backend.
+ */
 @Component({
   selector: 'app-socket-list',
   templateUrl: './socket-list.component.html'
 })
 export class SocketListComponent {
 
-  @Input() publishedMessages: PublishedMessages[] = [];
+  @Input() publishedMessages: PublishedMessage[] = [];
   @Input() users: SocketUser[] = [];
 
   @Output() getConnections: EventEmitter<any> = new EventEmitter<any>();
@@ -60,38 +63,5 @@ export class SocketListComponent {
         });
       }
     });
-  }
-
-  /**
-   * Deletes a single message from list of messages.
-   *
-   * @param msg Message to delete
-   */
-  deleteMessage(msg: Message) {
-    // this.messages.splice(this.messages.indexOf(msg), 1);
-    // this.feedbackService.showInfoShort('Message was removed');
-  }
-
-  /**
-   * Invoked when a socket subscription should be removed.
-   *
-   * @param subscription What subscription to remove
-   */
-  removeSubscription(subscription: string) {
-    // this.hubConnection.off(subscription);
-    // this.subscriptions.splice(this.subscriptions.indexOf(subscription), 1);
-    // if (this.subscriptions.length === 0) {
-    //   this.hubConnection.stop();
-    //   this.hubConnection = null;
-    //   this.getConnections();
-    //   this.messages = [];
-    // }
-  }
-
-  /**
-   * Clears messages.
-   */
-  clearMessages() {
-    // this.messages = [];
   }
 }
