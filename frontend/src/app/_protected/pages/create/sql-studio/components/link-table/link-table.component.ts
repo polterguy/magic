@@ -3,15 +3,19 @@
  * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { GeneralService } from 'src/app/_general/services/general.service';
 
+/**
+ * Helper componnt for allowing user to create new link tables, implying many to many
+ * relationship tables.
+ */
 @Component({
   selector: 'app-link-table',
   templateUrl: './link-table.component.html'
 })
-export class LinkTableComponent implements OnInit {
+export class LinkTableComponent {
 
   public formData: any = {
     table1: '',
@@ -22,10 +26,6 @@ export class LinkTableComponent implements OnInit {
     private generalService: GeneralService,
     private dialogRef: MatDialogRef<LinkTableComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any) { }
-
-  ngOnInit(): void {
-
-  }
 
   public secondTableList() {
     if (this.formData.table1 !== '') {

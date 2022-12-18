@@ -7,7 +7,6 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // CodeMirror options according to file extensions needed to show JSON CodeMirror editor.
-import fileTypes from 'src/app/codemirror/file-types.json';
 import { CodemirrorActionsService } from 'src/app/_protected/pages/create/hyper-ide/_services/codemirror-actions.service';
 
 /**
@@ -21,6 +20,9 @@ export class ExportTablesModel {
   type?: string // for tables only ... to be used in the UI.
 }
 
+/**
+ * Helper component for viewing and optionally exporting DDL for database or table.
+ */
 @Component({
   selector: 'app-export-ddl',
   templateUrl: './export-ddl.component.html',
@@ -39,7 +41,7 @@ export class ExportDdlComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: ExportTablesModel,
     private codemirrorActionsService: CodemirrorActionsService) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.getCodeMirrorOptions();
   }
 

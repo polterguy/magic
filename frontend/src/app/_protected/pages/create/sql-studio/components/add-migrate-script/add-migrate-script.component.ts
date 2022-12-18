@@ -10,10 +10,13 @@ interface Sql {
   sql: string,
 }
 
+/**
+ * Helper component to allow user to apply migration scripts as he or she is editing
+ * the database DDL.
+ */
 @Component({
   selector: 'app-add-migrate-script',
-  templateUrl: './add-migrate-script.component.html',
-  styleUrls: ['./add-migrate-script.component.scss']
+  templateUrl: './add-migrate-script.component.html'
 })
 export class AddMigrateScriptComponent {
 

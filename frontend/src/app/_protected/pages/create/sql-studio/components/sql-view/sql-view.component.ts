@@ -18,6 +18,10 @@ import { SqlSnippetDialogComponent } from '../sql-snippet-dialog/sql-snippet-dia
 import { SnippetNameDialogComponent } from '../../../../../../_general/components/snippet-name-dialog/snippet-name-dialog.component';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 
+/**
+ * Helper component to allo user to view his database in SQL view, as in allowing to
+ * write and execute SQL towards his currently open database in SQL Studio.
+ */
 @Component({
   selector: 'app-sql-view',
   templateUrl: './sql-view.component.html',
