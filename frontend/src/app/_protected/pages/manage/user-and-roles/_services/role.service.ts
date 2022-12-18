@@ -42,12 +42,6 @@ export class RoleService {
    * @param filter Optional query filter deciding which items to count
    */
   count(params: string) {
-    let query = '';
-    // if (filter !== null) {
-    //   if (filter.filter && filter.filter !== '') {
-    //     query += '?name.like=' + encodeURIComponent(filter.filter + '%');
-    //   }
-    // }
     return this.httpService.get<Count>('/magic/system/magic/roles-count' + params);
   }
 

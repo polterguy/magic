@@ -13,8 +13,11 @@ import { Role } from '../../_models/role.model';
 import { User } from '../../_models/user.model';
 import { RoleService } from '../../_services/role.service';
 import { UserService } from '../../_services/user.service';
-import { AddExtraFieldsComponent } from '../add-extra-fields/add-extra-fields.component';
+import { AddExtraFieldsDialogComponent } from '../add-extra-fields-dialog/add-extra-fields-dialog.component';
 
+/**
+ * Helper modal dialog to allow user to edit a single user.
+ */
 @Component({
   selector: 'app-edit-user-dialog',
   templateUrl: './edit-user-dialog.component.html'
@@ -53,21 +56,12 @@ export class EditUserDialogComponent implements OnInit {
    */
   public userForm = this.fb.group({});
 
-  ngOnInit(): void {
-    (async () => {
-      while (this.data && !Object.keys(this.data).length)
-        await new Promise(resolve => setTimeout(resolve, 100));
-
-      if (this.data && Object.keys(this.data).length > 0) {
-        this.formData = this.data.user?.extra || [];
-        this.setFormFields();
-
-        this.sortRolesBySelected();
-        this.userIsLocked = this.data.user.locked;
-
-        this.getRolesList();
-      }
-    })();
+  ngOnInit() {
+    this.formData = this.data.user?.extra || [];
+    this.setFormFields();
+    this.sortRolesBySelected();
+    this.userIsLocked = this.data.user.locked;
+    this.getRolesList();
   }
 
   private getRolesList() {
@@ -86,7 +80,6 @@ export class EditUserDialogComponent implements OnInit {
   setFormFields() {
     this.formData.forEach((element: any) => {
       this.userForm.setControl(element.type, new FormControl(element.value));
-
     });
   }
 
@@ -153,7 +146,7 @@ export class EditUserDialogComponent implements OnInit {
   }
 
   public addField() {
-    this.dialog.open(AddExtraFieldsComponent, {
+    this.dialog.open(AddExtraFieldsDialogComponent, {
       width: '350px',
       data: this.data.user.username
     }).afterClosed().subscribe((result: any) => {

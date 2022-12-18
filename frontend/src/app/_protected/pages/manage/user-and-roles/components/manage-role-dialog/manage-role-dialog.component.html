@@ -1,12 +1,15 @@
 <form [formGroup]="roleForm">
+
   <ng-container *ngIf="data.action === 'edit';else newRole">
     <h3 mat-dialog-title>Edit role {{data.role.name}}</h3>
   </ng-container>
+
   <ng-template #newRole>
-    <h3 mat-dialog-title>Create a new role</h3>
+    <h3 mat-dialog-title>Create new role</h3>
   </ng-template>
 
   <div mat-dialog-content>
+
     <mat-form-field class="w-100">
       <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
         <mat-icon>shield</mat-icon>
@@ -27,7 +30,9 @@
       <textarea matInput type="text" name="-" autocomplete="off" placeholder="Description" formControlName="description"
         required rows="5"></textarea>
     </mat-form-field>
+
   </div>
+
   <div mat-dialog-actions [align]="'end'">
     <button mat-button mat-dialog-close>Cancel</button>
     <button mat-flat-button color="primary" (click)="save()" [disabled]="isLoading" type="submit">Save role</button>
