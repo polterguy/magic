@@ -11,7 +11,7 @@ import { MaterialModule } from 'src/app/material.module';
 import { SharedModule } from 'src/app/shared.module';
 import { ComponentsModule } from 'src/app/_general/components/components.module';
 import { ChartComponent } from '../components/chart/chart.component';
-import { InfoPanelComponent } from '../components/info-panel/info-panel.component';
+import { SplashComponnt } from '../components/splash/splash.component';
 import { LastLogItemsComponent } from '../components/last-log-items/last-log-items.component';
 import { MainChartComponent } from '../components/main-chart/main-chart.component';
 import { OverviewDialogComponent } from '../components/overview-dialog/overview-dialog.component';
@@ -23,7 +23,7 @@ import { DashboardRoutingModule } from './dashboard-routing.module';
 @NgModule({
   declarations: [
     DashboardComponent,
-    InfoPanelComponent,
+    SplashComponnt,
     LastLogItemsComponent,
     MainChartComponent,
     OverviewComponent,

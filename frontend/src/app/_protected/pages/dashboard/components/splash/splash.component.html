@@ -1,12 +1,15 @@
 <mat-card class="h-100">
   <mat-card-content class="h-100 p-0 d-flex flex-column">
+
     <div class="row info-panel">
       <div class="col-lg-7 col-md-8 col-sm-6 col-12">
+
+        <!-- Left hand section display bullet list and links to components -->
         <div class="d-flex justify-content-between">
           <h2 class="mb-0">Welcome, we are happy to see you 🎉</h2>
-
           <button mat-button class="mat-caption text-muted" (click)="hidePanel()">Dismiss</button>
         </div>
+
         <ol class="ps-3">
           <li class="pt-3">Connect to your existing database, create a new database, or install a plugin database <a class="text-primary btn-link pointer"
               routerLink="/databases">here</a></li>
@@ -23,7 +26,10 @@
           <li class="pt-3">Get help <a class="text-primary btn-link pointer"
               routerLink="/help-center">here</a></li>
         </ol>
+
       </div>
+
+      <!-- Right hand section displaying getting started YouTube video -->
       <div class="col-lg-5 col-md-4 col-sm-6 col-12">
         <div class="video-wrapper">
           <iframe width="560" height="315" class="w-100 h-100" src="https://www.youtube.com/embed/pJHuUiItrnc"
@@ -33,5 +39,6 @@
         </div>
       </div>
     </div>
+
   </mat-card-content>
 </mat-card>

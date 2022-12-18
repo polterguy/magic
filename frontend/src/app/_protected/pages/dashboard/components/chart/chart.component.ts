@@ -9,6 +9,9 @@ import { GeneralService } from 'src/app/_general/services/general.service';
 import { ThemeService } from 'src/app/_general/services/theme.service';
 import { SystemReport } from '../../_models/dashboard.model';
 
+/**
+ * Chart helper component used on the dashboard to display statistics.
+ */
 @Component({
   selector: 'app-chart',
   templateUrl: './chart.component.html',

@@ -25,7 +25,7 @@ import { GithubTokenDialogComponent } from '../../_protected/pages/user/github-t
 import { PwaUpdateDialogComponent } from './pwa-update-dialog/pwa-update-dialog.component';
 import { LogItemDetailsComponent } from './log-item-details/log-item-details.component';
 import { SearchboxComponent } from 'src/app/_protected/pages/manage/plugins/components/searchbox/searchbox.component';
-import { SplashDialogComponent } from '../../_protected/pages/dashboard/components/splash-dialog/splash-dialog.component';
+import { ConfigureThemeDialog } from '../../_protected/pages/dashboard/components/configure-theme/configure-theme-dialog.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +46,7 @@ import { SplashDialogComponent } from '../../_protected/pages/dashboard/componen
     PwaUpdateDialogComponent,
     LogItemDetailsComponent,
     SearchboxComponent,
-    SplashDialogComponent,
+    ConfigureThemeDialog,
   ],
   imports: [
     CommonModule,
