@@ -8,6 +8,9 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { TaskService } from '../../_services/task.service';
 
+/**
+ * Helper component for scheduling tasks in the system.
+ */
 @Component({
   selector: 'app-schedule-task',
   templateUrl: './schedule-task.component.html'
@@ -22,10 +25,11 @@ export class ScheduleTaskComponent implements OnInit {
 
   public period: string[] = [
     'seconds', 'minutes', 'hours', 'days', 'weeks', 'months'
-  ]
+  ];
+
   public numbers: number[] = [
     5, 10, 15, 20, 25, 30
-  ]
+  ];
 
   public selectedPeriod: string;
   public selectedNumber: number;
@@ -37,7 +41,7 @@ export class ScheduleTaskComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<ScheduleTaskComponent>) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.minDate = new Date();
     this.scheduleOption = 'fixed';
   }

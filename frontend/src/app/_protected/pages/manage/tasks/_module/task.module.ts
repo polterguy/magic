@@ -5,7 +5,7 @@
 
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TaskSchedulerComponent } from '../task-scheduler.component';
+import { TasksComponent } from '../tasks.component';
 import { ComponentsModule } from 'src/app/_general/components/components.module';
 import { MaterialModule } from 'src/app/material.module';
 import { TaskRoutingModule } from './task.routing.module';
@@ -16,11 +16,9 @@ import { ScheduleTaskComponent } from '../components/schedule-task/schedule-task
 import { NgxMatDatetimePickerModule, NgxMatNativeDateModule } from '@angular-material-components/datetime-picker';
 import { ManageTaskComponent } from '../components/manage-task/manage-task.component';
 
-
-
 @NgModule({
   declarations: [
-    TaskSchedulerComponent,
+    TasksComponent,
     TaskSearchboxComponent,
     ScheduleTaskComponent,
     ManageTaskComponent

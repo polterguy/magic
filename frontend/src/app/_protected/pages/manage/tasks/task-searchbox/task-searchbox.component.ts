@@ -7,6 +7,9 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 
+/**
+ * Helper component for searching through tasks for tasks starting with the specified filter.
+ */
 @Component({
   selector: 'app-task-searchbox',
   templateUrl: './task-searchbox.component.html'

@@ -30,11 +30,11 @@ class TaskEx {
 }
 
 @Component({
-  selector: 'app-task-scheduler',
-  templateUrl: './task-scheduler.component.html',
-  styleUrls: ['./task-scheduler.component.scss']
+  selector: 'app-tasks',
+  templateUrl: './tasks.component.html',
+  styleUrls: ['./tasks.component.scss']
 })
-export class TaskSchedulerComponent implements OnInit {
+export class TasksComponent implements OnInit {
 
   /**
    * Tasks that are currently being viewed.

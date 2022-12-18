@@ -4,13 +4,13 @@
  */
 
 import { NgModule } from '@angular/core';
-import { TaskSchedulerComponent } from '../task-scheduler.component';
+import { TasksComponent } from '../tasks.component';
 import { Routes, RouterModule } from '@angular/router';
 
 const routes: Routes = [
   {
     path: '',
-    component: TaskSchedulerComponent
+    component: TasksComponent
   }
 ];
 
