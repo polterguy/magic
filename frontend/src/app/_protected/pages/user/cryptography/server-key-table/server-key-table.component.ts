@@ -8,11 +8,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { BackendService } from 'src/app/_general/services/backend.service';
 import { ServerKeyDetailsComponent } from '../components/server-key-details/server-key-details.component';
 import { PublicKey } from '../_models/public-key.model';
 import { CryptoService } from '../_services/crypto.service';
 
+// TODO: Rename, it doesn't display servr key, but public keys.
 @Component({
   selector: 'app-server-key-table',
   templateUrl: './server-key-table.component.html',

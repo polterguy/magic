@@ -22,6 +22,9 @@ class MyErrorStateMatcher implements ErrorStateMatcher {
   }
 }
 
+/**
+ * Setup component allowing the user to configure the system initially.
+ */
 @Component({
   selector: 'app-setup',
   templateUrl: './setup.component.html'
@@ -68,7 +71,7 @@ export class SetupComponent implements OnInit {
     this.configForm.addValidators(this.checkPasswords);
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.configForm.controls.password.valueChanges.subscribe(() => {
       if (this.showPassword) {
         this.configForm.controls.passwordRepeat.setValue(this.configForm.controls.password.value);
@@ -123,9 +126,8 @@ export class SetupComponent implements OnInit {
       email: this.configForm.controls.email.value,
     };
     this.configService.setup(payload).subscribe({
-      next: (auth: any) => {
+      next: () => {
         this.waiting = false;
-        // this.router.navigateByUrl('/');
         window.location.href = '/';
         this.generalService.hideLoading();
       },

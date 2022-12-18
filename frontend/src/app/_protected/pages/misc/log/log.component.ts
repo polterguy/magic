@@ -12,6 +12,9 @@ import { PageEvent } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
 import { LogItemDetailsComponent } from '../../../../_general/components/log-item-details/log-item-details.component';
 
+/**
+ * Log component, allowing user to view log items.
+ */
 @Component({
   selector: 'app-log',
   templateUrl: './log.component.html',
@@ -114,7 +117,7 @@ export class LogComponent implements OnInit {
     this.generalService.showFeedback('Contentis copied on your clipboard');
   }
 
-  public filterList(filter: any) {    
+  public filterList(filter: any) {
     this.filter = filter;
     this.currentPage = 0;
     this.getItems();

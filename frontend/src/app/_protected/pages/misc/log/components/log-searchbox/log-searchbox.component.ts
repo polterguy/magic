@@ -7,6 +7,9 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 
+/**
+ * Search textbox for log items.
+ */
 @Component({
   selector: 'app-log-searchbox',
   templateUrl: './log-searchbox.component.html'
@@ -26,10 +29,6 @@ export class LogSearchboxComponent implements OnInit {
       });
   }
 
-  /**
-   * Removes the search keyword.
-   * @callback filterList To refetch the unfiltered list.
-   */
   public removeSearchTerm() {
     this.filter.setValue('');
   }

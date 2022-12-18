@@ -138,11 +138,9 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
   private watchForActions() {
     this.codemirrorActionSubscription = this.codemirrorActionsService.action.subscribe((action: string) => {
       switch (action) {
+
         case 'save':
           this.save();
-          break;
-
-        default:
           break;
       }
     })

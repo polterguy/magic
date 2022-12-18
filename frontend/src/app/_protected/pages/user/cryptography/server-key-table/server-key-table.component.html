@@ -1,3 +1,4 @@
+<!-- Loading skeleton -->
 <ng-container *ngIf="isLoading;else loaded">
   <app-loading-skeleton [amount]="5" [blockHeight]="'40px'" [hasShadow]="false"></app-loading-skeleton>
 </ng-container>
@@ -60,6 +61,7 @@
       <tr class="mat-row" *matNoDataRow>
         <td class="mat-cell" colspan="4">Start creating server keys</td>
       </tr>
+
     </table>
   </div>
 

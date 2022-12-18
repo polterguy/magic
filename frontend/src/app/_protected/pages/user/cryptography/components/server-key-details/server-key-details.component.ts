@@ -40,6 +40,9 @@ class PublicKeyEx {
   options: Model;
 }
 
+/**
+ * Helper component displaying details about the currently activated server key pair.
+ */
 @Component({
   selector: 'app-server-key-details',
   templateUrl: './server-key-details.component.html',
@@ -67,9 +70,6 @@ export class ServerKeyDetailsComponent implements OnInit {
     this.getCodeMirrorOptions();
   }
 
-  /**
-   * Invoked when detailed view is requested for the specified key.
-   */
   private getUserAssociation() {
     if (!this.data.key.username) {
       this.cryptoService.getUserAssociation(this.data.key.id).subscribe({
@@ -104,11 +104,6 @@ export class ServerKeyDetailsComponent implements OnInit {
     });
   }
 
-  /**
-   * Invoked when user wants to save a public key.
-   *
-   * @param key Key user wants to save
-   */
   save() {
     this.waiting = true;
     const key: PublicKeyEx = {
@@ -170,9 +165,6 @@ export class ServerKeyDetailsComponent implements OnInit {
     });
   }
 
-  /*
-   * Saves the specified key, and evicts key from server's cache.
-   */
   private saveKeyImplementation(key: PublicKeyEx, extraInfo?: string) {
     this.cryptoService.updatePublicKey(key.key).subscribe({
       next: () => {
