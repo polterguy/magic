@@ -7,19 +7,19 @@ import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject, Observable } from 'rxjs';
 
+/**
+ * Gneral service with helpers for subscribing to screen size changes, showing loader, etc.
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class GeneralService {
 
-  /**
-   * general loading definition
-   */
   private _loading = new BehaviorSubject<boolean>(false);
   public readonly loading$ = this._loading.asObservable();
 
   /**
-   * observing the screen size to be used throughout the site
+   * Observer for when screen size changes above threshold defining "large".
    */
   private largeScreen = new BehaviorSubject<boolean>(undefined!);
 
@@ -31,6 +31,7 @@ export class GeneralService {
   showLoading() {
     this._loading.next(true);
   }
+
   /**
    * to hide general loading
    */
@@ -46,9 +47,6 @@ export class GeneralService {
    * @param duration optional; if available, the default value of 2000 ms will be overwritten
    */
   showFeedback(message: string, panelClass?: string, actionButton?: string, duration?: number) {
-    // if (message && message?.startsWith('Guru meditation')) {
-    //   return;
-    // }
     this._snackBar.open(message, actionButton, {
       duration: duration || 2000, // if exists use it, otherwise use default
       horizontalPosition: 'right',
@@ -64,6 +62,7 @@ export class GeneralService {
   getScreenSize(): Observable<boolean> {
     return this.largeScreen.asObservable();
   }
+
   /**
    *
    * @param status boolean

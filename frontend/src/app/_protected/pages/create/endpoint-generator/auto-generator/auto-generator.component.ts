@@ -103,7 +103,6 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private logService: LogService,
     private cdr: ChangeDetectorRef,
-    private cacheService: CacheService,
     private messageService: MessageService,
     private generalService: GeneralService,
     private crudifyService: CrudifyService,
