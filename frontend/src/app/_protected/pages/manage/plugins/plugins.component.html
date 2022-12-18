@@ -22,7 +22,7 @@
 
         <!-- List of plugins available, and/or already installed in the system -->
         <div class="row" *ngIf="!isLoading">
-          <div class="col-lg-4 col-md-6 col-12 mb-4" *ngFor="let item of plugins">
+          <div class="col-lg-4 col-md-6 col-12 mb-4" *ngFor="let item of getPluginsToDisplay(plugins)">
             <div class="w-100 h-100 bg-light p-3">
               <p>{{item.name}}</p>
               <p class="line-truncate text-muted mt-3 mb-4">
@@ -31,9 +31,9 @@
               <div class="d-flex justify-content-end">
                 <button mat-button color="primary" (click)="viewAppDetails(item)">Details</button>
                 <button mat-flat-button color="warn" class="px-5" *ngIf="item?.details"
-                  (click)="uninstallDb(item.details)">Uninstall</button>
+                  (click)="uninstall(item.details)">Uninstall</button>
                 <button mat-flat-button color="primary" class="px-5" *ngIf="!item?.details"
-                  (click)="installDb(item)">Install</button>
+                  (click)="install(item)">Install</button>
               </div>
             </div>
           </div>
