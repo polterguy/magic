@@ -42,6 +42,15 @@ export class IdeTreeComponent implements OnInit {
   @Output() clearEditorHistory: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output() setFocusToActiveEditor: EventEmitter<any> = new EventEmitter<any>();
 
+  root: TreeNode = {
+    name: '',
+    path: '/',
+    isFolder: true,
+    children: [],
+    level: 0,
+  };
+
+
   // Flattens tree structure.
   private treeFlattener = new MatTreeFlattener(_transformer, node => node.level, node => node.expandable, node => node.children);
 
@@ -106,7 +115,6 @@ export class IdeTreeComponent implements OnInit {
     private codemirrorActionsService: CodemirrorActionsService) { }
 
   ngOnInit() {
-    root.children = [];
     if (this.type === 'frontend') {
       this.activeFolder = '/etc/www/';
       this.currentFolder = '/etc/www/';
@@ -227,7 +235,7 @@ export class IdeTreeComponent implements OnInit {
       const functor = (objects: string[], isFolder: boolean) => {
         for (const idx of objects) {
           const entities = idx.split('/').filter(x => x !== '');
-          let parent = root;
+          let parent = this.root;
           let level = 1;
           for (const idxPeek of entities.slice(0, -1)) {
             parent = parent.children.filter(x => x.name === idxPeek)[0];
@@ -254,15 +262,15 @@ export class IdeTreeComponent implements OnInit {
                 // Preparing a list of file systems, if system files are enabled.
                 const name1: any = [];
                 if (this.systemFiles) {
-                  name1.push(root.children.filter(newData => !this.dataSource.data.map(oldData => oldData.name).includes(newData.name)));
+                  name1.push(this.root.children.filter(newData => !this.dataSource.data.map(oldData => oldData.name).includes(newData.name)));
                 }
 
                 if (this.type === 'frontend') {
-                  const etcPath: any = root.children.find((item: any) => item.name === 'etc');
+                  const etcPath: any = this.root.children.find((item: any) => item.name === 'etc');
                   const frontendFolders = etcPath.children.filter((item: any) => item.path === '/etc/frontends/' || item.path === '/etc/www/');
                   this.dataSource.data = frontendFolders;
                 } else {
-                  this.dataSource.data = root.children;
+                  this.dataSource.data = this.root.children;
                 }
 
                 // If system files are enabled, set field valu to recognise them in view.
@@ -289,15 +297,9 @@ export class IdeTreeComponent implements OnInit {
     })
   }
 
-  /**
-   * Invoked when user wants to open a file.
-   *
-   * @param file Tree node wrapping file to open
-   */
   public async openFile(file: TreeNode) {
     if (this.openFiles.filter(x => x.path === file.path).length > 0) {
       this.currentFileData = this.openFiles.filter(x => x.path === file.path)[0];
-      // this.setFocusToActiveEditor();
       this.showEditor.emit({ currentFileData: this.currentFileData })
     } else {
       if (await this.getCodeMirrorOptions(file.path) === null) {
@@ -348,11 +350,6 @@ export class IdeTreeComponent implements OnInit {
     this.activeFolder = file.path.substring(0, file.path.lastIndexOf('/') + 1);
   }
 
-  /**
-   * Invoked when a file should be deleted.
-   *
-   * @callback deleteActiveFileFromParent calling a function in the parent component for managing the tree
-   */
   public deleteActiveFile(file: any, noConfirmation?: boolean) {
     if (noConfirmation === true) {
       const folderPath: string = file.path.toString().replace(file.name, '');
@@ -398,13 +395,6 @@ export class IdeTreeComponent implements OnInit {
     }
   }
 
-  /**
-   * Invoked when a file should be deleted.
-   *
-   * @callback closeFileImpl to close the active file if it's from the same folder.
-   * @callback removeNode To remove the node after successful deletion.
-   * @callback dataBindTree To rebind the tree after changes.
-   */
   public deleteActiveFolder(folder: any) {
     let path: string = '';
     folder.node ? path = folder.node.path : path = folder;
@@ -451,10 +441,7 @@ export class IdeTreeComponent implements OnInit {
     })
   }
 
-  /*
-   * Invoked when a node should be removed from tree node collection.
-   */
-  private removeNode(path: string, node: TreeNode = root) {
+  private removeNode(path: string, node: TreeNode = this.root) {
     const toBeRemoved = node.children.filter(x => x.path === path);
     if (toBeRemoved.length > 0) {
       node.children.splice(node.children.indexOf(toBeRemoved[0]), 1);
@@ -468,25 +455,16 @@ export class IdeTreeComponent implements OnInit {
     return false;
   }
 
-  /*
-   * Returns options for CodeMirror editor.
-   */
   private getCodeMirrorOptions(path: string): Promise<any> {
     return this.codemirrorActionsService.getActions(path).then((res: any) => { return res });
   }
 
-  /**
-   * Scroll to the last file.
-   */
   private scrollToLastOpenFile() {
     const el = document.getElementById('active');
     if (el)
       el.scrollIntoView();
   }
 
-  /*
-   * Databinds tree control such that expanded items stays expanded.
-   */
   public dataBindTree() {
     const expanded: FlatNode[] = [];
     for (const idx of this.treeControl.dataNodes) {
@@ -497,11 +475,11 @@ export class IdeTreeComponent implements OnInit {
     }
 
     if (this.type === 'frontend') {
-      const etcPath: any = root.children.find((item: any) => item.name === 'etc');
+      const etcPath: any = this.root.children.find((item: any) => item.name === 'etc');
       const frontendFolders = etcPath.children.filter((item: any) => item.path === '/etc/frontends/' || item.path === '/etc/www/');
       this.dataSource.data = frontendFolders;
     } else {
-      this.dataSource.data = root.children;
+      this.dataSource.data = this.root.children;
     }
 
     for (const idx of this.treeControl.dataNodes) {
@@ -511,9 +489,6 @@ export class IdeTreeComponent implements OnInit {
     }
   }
 
-  /**
-     * Actual method responsible for closing file.
-     */
   public closeFileImpl(file: any = null) {
     this.cdr.markForCheck();
     let idx: number;
@@ -547,10 +522,6 @@ export class IdeTreeComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
-  /**
-   * Toggles the rename input field and sets focus on the input.
-   * @param item either file or folder
-   */
   public showRenameInput(item: any) {
     this.showRenameBox = item;
     setTimeout(() => {
@@ -558,21 +529,13 @@ export class IdeTreeComponent implements OnInit {
     }, 10);
   }
 
-  /**
-   * Invokes endpoint to rename the selected file.
-   * @param file Selected file to be renamed.
-   * @param name New name to be replaced with the current one.
-   * @returns nothing, if the new name and the current one are identical.
-   * @callback dataBindTree To rebind the tree with the selected file having a new name.
-   * @callback refetchEndpointsList To refetch the list of endpoint and update it throughout the project.
-   */
   public renameActiveFile(event: { file: any, name: string }) {
     let path: string = '';
     event.file.node ? path = event.file.node.path : path = event.file.path;
     if (event.name !== '' && event.name !== event.file.name && this.nameValidation(event.name)) {
       this.fileService.rename(path, event.name).subscribe({
         next: () => {
-          const treeNode = this.findTreeNodeFolder(root, path);
+          const treeNode = this.findTreeNodeFolder(this.root, path);
           treeNode.name = event.name;
           treeNode.path = path.substring(0, path.lastIndexOf('/') + 1) + event.name;
           event.file.name = treeNode.name;
@@ -595,14 +558,6 @@ export class IdeTreeComponent implements OnInit {
     }
   }
 
-  /**
-   * Invokes endpoint to rename the selected folder.
-   * @param folder Selected folder to be renamed.
-   * @param name New name to be replaced with the current one.
-   * @returns nothing, if the new name and the current one are identical.
-   * @callback dataBindTree To rebind the tree with the selected folder having a new name.
-   * @callback refetchEndpointsList To refetch the list of endpoint and update it throughout the project.
-   */
   public renameActiveFolder(folder: any, name?: string) {
     let givenName: string;
     name !== undefined ? givenName = name : givenName = folder.newName;
@@ -674,11 +629,6 @@ export class IdeTreeComponent implements OnInit {
     });
   }
 
-  /**
-   * Downloads the active file or optionally the given file to the client
-   *
-   * @param path Optional override of which file to actually download
-   */
   public downloadActiveFile(path?: string) {
     if (!path && this.currentFileData) {
       this.fileService.downloadFile(this.currentFileData.path);
@@ -694,21 +644,11 @@ export class IdeTreeComponent implements OnInit {
     }
   }
 
-  /**
-     * Invoked when user wants to open a folder.
-     *
-     * @param folder Tree node wrapping folder to open
-     */
   selectFolder(folder: any, keepOpen?: boolean) {
     this.activeFolder = folder.node.path;
     this.openFolder = folder;
   }
 
-  /**
-     * Returns true if path is valid.
-     *
-     * @returns True if path is valid
-     */
   nameValidation(name: string) {
     if (!name || name.length === 0) {
       return false;
@@ -721,11 +661,6 @@ export class IdeTreeComponent implements OnInit {
     return true
   }
 
-  /**
-   * Uploads one or more files to the currently active folder.
-   *
-   * @param files List of files to upload
-   */
   uploadFiles(files: FileList) {
     for (let idx = 0; idx < files.length; idx++) {
       this.fileService.uploadFile(this.activeFolder, files.item(idx)).subscribe({
@@ -741,10 +676,7 @@ export class IdeTreeComponent implements OnInit {
     };
   }
 
-  /*
-   * Returns all folders in system to caller.
-   */
-  private getFolders(current: any = root) {
+  private getFolders(current: any = this.root) {
     const result: string[] = [];
     if (current.isFolder) {
       result.push(current.path);
@@ -758,10 +690,7 @@ export class IdeTreeComponent implements OnInit {
     return result;
   }
 
-  /**
-   * Returns all folders in system to caller.
-   */
-  private getFiles(current: any = root) {
+  private getFiles(current: any = this.root) {
     let result: string[] = [];
     for (const idx of current.children.filter(x => !x.isFolder)) {
       result.push(idx.path);
@@ -772,11 +701,6 @@ export class IdeTreeComponent implements OnInit {
     return result;
   }
 
-  /**
-     * Updates the specified folder or file object only and re-renders TreeView.
-     *
-     * @param fileObject File object to update
-     */
   public updateFileObject(fileObject: string) {
     let folder = fileObject;
     let isFile = false;
@@ -785,7 +709,7 @@ export class IdeTreeComponent implements OnInit {
       isFile = true;
     }
 
-    let parent = root;
+    let parent = this.root;
     const entities = folder.split('/').filter(x => x !== '');
     for (const idxPeek of entities.slice(0, entities.length)) {
       parent = parent.children.filter(x => x.name === idxPeek)[0];
@@ -847,7 +771,7 @@ export class IdeTreeComponent implements OnInit {
   }
 
   private sort(event: any) {
-    const node = this.findTreeNodeFolder(root, event.dialogResult.path);
+    const node = this.findTreeNodeFolder(this.root, event.dialogResult.path);
     const sorter = () => {
       node.children.sort((lhs: TreeNode, rhs: TreeNode) => {
         if (lhs.isFolder && !rhs.isFolder) {
@@ -892,9 +816,6 @@ export class IdeTreeComponent implements OnInit {
     }
   }
 
-  /*
-     * Invoked when we need to find the specified tree node.
-     */
   private findTreeNodeFolder(node: TreeNode, path: string): TreeNode {
     if (node.path === path) {
       return node;
@@ -908,19 +829,10 @@ export class IdeTreeComponent implements OnInit {
     return null;
   }
 
-  /**
-   * Returns true if specified node has children.
-   */
   public isExpandable(_: number, node: FlatNode) {
     return node.expandable;
   }
 
-  /**
-   * Searches in the files' name to apply filtering in the view.
-   * @param node
-   * @param searchKeyword coming from the searchbox.
-   * @returns true if search keyword exists inside the node item's name
-   */
   filterLeafNode(node: FlatNode, searchKeyword: string): boolean {
     if (!searchKeyword) {
       return false
@@ -929,42 +841,18 @@ export class IdeTreeComponent implements OnInit {
       .indexOf(searchKeyword?.toLowerCase()) === -1
   }
 
-  /**
-   * Searches in the folders' name to apply filtering in the view.
-   * @param node
-   * @param searchKeyword coming from the searchbox.
-   * @returns true if search keyword exists inside the node item's name
-   */
   filterParentNode(node: FlatNode, searchKeyword: string): boolean {
-    if (
-      !searchKeyword ||
-      node.name.toLowerCase()
-        .indexOf(
-          searchKeyword?.toLowerCase()
-        ) !== -1
-    ) {
+    if (!searchKeyword || node.name.toLowerCase().indexOf(searchKeyword?.toLowerCase()) !== -1) {
       return false
     }
     const descendants = this.treeControl.getDescendants(node)
 
-    if (
-      descendants.some(
-        (descendantNode) =>
-          descendantNode.name
-            .toLowerCase()
-            .indexOf(searchKeyword?.toLowerCase()) !== -1
-      )
-    ) {
+    if (descendants.some((descendantNode) => descendantNode.name.toLowerCase().indexOf(searchKeyword?.toLowerCase()) !== -1)) {
       return false
     }
     return true
   }
 
-  /**
-   * Uploads and installs a zip file on the server.
-   *
-   * @param file Zip file to upload and install
-   */
   public installModule(file: FileList) {
     if (file[0].name.split('.')[1] === 'zip') {
       this.fileService.installModule(file.item(0)).subscribe({
@@ -989,15 +877,4 @@ const _transformer = (node: TreeNode, level: number) => {
     level: level,
     node: node,
   };
-};
-
-/**
-* Root tree node pointing to root folder.
-*/
-const root: TreeNode = {
-  name: '',
-  path: '/',
-  isFolder: true,
-  children: [],
-  level: 0,
 };
