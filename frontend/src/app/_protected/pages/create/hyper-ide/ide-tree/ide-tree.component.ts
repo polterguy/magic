@@ -50,7 +50,6 @@ export class IdeTreeComponent implements OnInit {
     level: 0,
   };
 
-
   // Flattens tree structure.
   private treeFlattener = new MatTreeFlattener(_transformer, node => node.level, node => node.expandable, node => node.children);
 
@@ -126,9 +125,6 @@ export class IdeTreeComponent implements OnInit {
     });
   }
 
-  /**
-   * Invoked when user wants to execute a macro.
-   */
   public selectMacro() {
     const dialogRef = this.dialog.open(SelectMacroDialogComponent, {
       width: '550px',
@@ -143,9 +139,6 @@ export class IdeTreeComponent implements OnInit {
     });
   }
 
-  /*
-   * Executes the specified macro.
-   */
   private executeMacro(file: string) {
     this.fileService.getMacroDefinition(file).subscribe({
       next: (result: MacroDefinition) => {
@@ -214,9 +207,6 @@ export class IdeTreeComponent implements OnInit {
     });
   }
 
-  /**
-   * Reading endpoints' list from the already fetched instance.
-   */
   private getEndpoints() {
     this.endpointService.endpoints().subscribe({
       next: (result: Endpoint[]) => {
@@ -227,9 +217,6 @@ export class IdeTreeComponent implements OnInit {
     });
   }
 
-  /**
-   * Invoked when files needs to be fetched from the server.
-   */
   public getFilesFromServer(folder: string = '/') {
     return new Promise(resolve => {
       const functor = (objects: string[], isFolder: boolean) => {
