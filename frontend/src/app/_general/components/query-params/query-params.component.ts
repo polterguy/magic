@@ -28,6 +28,9 @@ export class ArgumentModel {
   old: any;
 }
 
+/**
+ * Component allowing user to declare query parameters for executing endpoint.
+ */
 @Component({
   selector: 'app-query-params',
   templateUrl: './query-params.component.html',

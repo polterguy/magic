@@ -23,7 +23,6 @@ import { CodemirrorActionsService } from '../../../create/hyper-ide/_services/co
 import { MatDialog } from '@angular/material/dialog';
 import { EvaluatorService } from '../../../../../_general/services/evaluator.service';
 import { LoadSnippetDialogComponent } from 'src/app/_general/components/load-snippet-dialog/load-snippet-dialog.component';
-import { SnippetNameDialogComponent } from 'src/app/_general/components/snippet-name-dialog/snippet-name-dialog.component';
 import { CacheService } from 'src/app/_general/services/cache.service';
 import { MessageService } from 'src/app/_general/services/message.service';
 import { EndpointService } from 'src/app/_general/services/endpoint.service';
@@ -450,34 +449,9 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
     });
   }
 
-  /**
-   * Shows the save snippet dialog.
-   */
-  private saveSnippet() {
-    if (!this.hlInput?.hyperlambda || this.hlInput?.hyperlambda === '') {
-      this.generalService.showFeedback('Code editor is empty.', 'errorMessage')
-      return;
-    }
-
-    this.dialog.open(SnippetNameDialogComponent, {
-      width: '550px',
-      data: this.snippetName || '',
-    }).afterClosed().subscribe((filename: string) => {
-      if (filename) {
-        this.evaluatorService.saveSnippet(filename, this.hlInput.hyperlambda).subscribe({
-          next: () => this.generalService.showFeedback('Snippet successfully saved', 'successMessage'),
-          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
-        });
-      }
-    });
-  }
-
   private watchForActions() {
     this.codemirrorActionsSubscription = this.codemirrorActionsService.action.subscribe((action: string) => {
       switch (action) {
-        case 'save':
-          this.saveSnippet();
-          break;
 
         case 'insertSnippet':
           this.loadSnippet();

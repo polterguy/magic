@@ -11,6 +11,9 @@ interface Keys {
   key: string
 }
 
+/**
+ * Dialog for showing user keyboard shortcuts for CodeMirror editors.
+ */
 @Component({
   selector: 'app-shortkeys',
   templateUrl: './shortkeys.component.html'
@@ -21,7 +24,7 @@ export class ShortkeysComponent implements OnInit {
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: { type: string[] }) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.prepareData();
   }
 
@@ -33,7 +36,6 @@ export class ShortkeysComponent implements OnInit {
           name: 'Save',
           key: 'Alt + S'
         }
-
       ];
     }
     if (this.data.type.indexOf('execute') > -1) {
@@ -49,8 +51,7 @@ export class ShortkeysComponent implements OnInit {
       this.shortkeys = [
         ...this.shortkeys,
         ...fullkeys
-      ]
-      console.log(this.shortkeys)
+      ];
     }
   }
 }
