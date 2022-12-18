@@ -3,7 +3,7 @@
 <form>
   <div mat-dialog-content>
 
-    <mat-form-field class="w-100 standalone-field mt-4">
+    <mat-form-field class="w-100 standalone-field">
       <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
         <mat-icon>folder</mat-icon>
         <span class="text-muted">|</span>
@@ -32,7 +32,7 @@
         <span class="text-muted">|</span>
       </span>
 
-      <input #fileName type="text" placeholder="Filename" matInput autocomplete="off" [(ngModel)]="data.name"
+      <input #fileName type="text" [placeholder]="data.type === 'file' ? 'Filename' : 'Folder name'" matInput autocomplete="off" [(ngModel)]="data.name"
         name="name" cdkFocusInitial>
     </mat-form-field>
 

@@ -311,7 +311,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
       return;
     }
     if (this.activeFolder === '/' || this.activeFolder === '/system/' || this.activeFolder === '/modules/') {
-      this.generalService.showFeedback('You cannot rename the system folders', 'errorMessage', 'Ok', 3000);
+      this.generalService.showFeedback('You cannot rename system folders', 'errorMessage', 'Ok', 3000);
       return;
     }
     const dialog = this.dialog.open(RenameFolderDialogComponent, {
