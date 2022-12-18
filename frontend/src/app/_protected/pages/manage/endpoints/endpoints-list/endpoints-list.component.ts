@@ -35,7 +35,6 @@ export class EndpointsListComponent {
   constructor(
     private clipboard: Clipboard,
     private dialog: MatDialog,
-    private cdr: ChangeDetectorRef,
     private generalService: GeneralService,
     private fileService: FileService,
     private backendService: BackendService) { }
@@ -97,9 +96,5 @@ export class EndpointsListComponent {
    */
   public trackFilterList(item: any) {
     return item;
-  }
-
-  public refetchAssumptions() {
-    this.assumptions.getAssumptions()
   }
 }
