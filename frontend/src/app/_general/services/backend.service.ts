@@ -12,7 +12,6 @@ import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { Token } from '../../_protected/models/common/token.model';
 import { Status } from '../../_protected/models/common/status.model';
 import { Backend } from '../../_protected/models/common/backend.model';
-import { Endpoint } from '../../_protected/models/common/endpoint.model';
 import { Response } from '../../_protected/models/common/response.model';
 import { CoreVersion } from '../../_protected/models/common/core-version.model';
 import { environment } from 'src/environments/environment';
@@ -31,7 +30,6 @@ import { AuthenticateResponse } from '../../_protected/models/auth/authenticate-
 export class BackendService {
 
   private _authenticated: BehaviorSubject<boolean>;
-  private _endpointsRetrieved: BehaviorSubject<boolean>;
   private _activeChanged: BehaviorSubject<Backend>;
   private _statusRetrieved: BehaviorSubject<Status>;
   private _versionRetrieved: BehaviorSubject<string>;
@@ -50,11 +48,6 @@ export class BackendService {
    * To allow consumers to subscribe to active backend changed events.
    */
   activeBackendChanged: Observable<Backend>;
-
-  /**
-   * To allow consumers to subscribe when endpoints are retrieved.
-   */
-  endpointsFetched: Observable<boolean>;
 
   /**
    * To allow consumers to subscribe when endpoints are retrieved.
@@ -87,11 +80,9 @@ export class BackendService {
         this.ensureRefreshJWTTokenTimer(idx);
       }
     }
+
     this._authenticated = new BehaviorSubject<boolean>(this.active !== null && this.active.token !== null);
     this.authenticatedChanged = this._authenticated.asObservable();
-
-    this._endpointsRetrieved = new BehaviorSubject<boolean>(false);
-    this.endpointsFetched = this._endpointsRetrieved.asObservable();
 
     this._activeChanged = new BehaviorSubject<Backend>(null);
     this.activeBackendChanged = this._activeChanged.asObservable();
@@ -104,18 +95,6 @@ export class BackendService {
 
     this._obscure = new BehaviorSubject<boolean>(false);
     this.obscure = this._obscure.asObservable();
-
-    if (this.active) {
-      this.getEndpoints().subscribe({
-        next: () => {
-          if (!this.active.token?.expired && this.active.token?.in_role('root')) {
-            this.retrieveStatusAndVersion().subscribe({
-              next: () => { }
-            });
-          }
-        }
-      });
-    }
   }
 
   /**
@@ -207,18 +186,10 @@ export class BackendService {
           this.backendsStorageService.persistBackends();
           this.ensureRefreshJWTTokenTimer(this.active);
           this._authenticated.next(true);
-          this.getEndpoints().subscribe({
+          this.retrieveStatusAndVersion().subscribe({
             next: () => {
-              this.retrieveStatusAndVersion().subscribe({
-                next: () => {
-                  observer.next(auth);
-                  observer.complete();
-                },
-                error: (error: any) => {
-                  observer.error(error);
-                  observer.complete();
-                }
-              });
+              observer.next(auth);
+              observer.complete();
             },
             error: (error: any) => {
               observer.error(error);
@@ -249,7 +220,6 @@ export class BackendService {
       this.active.password = null;
     }
     this.backendsStorageService.persistBackends();
-    this.active.createAccessRights();
     this._authenticated.next(false);
   }
 
@@ -337,10 +307,6 @@ export class BackendService {
     return this._obscure.value;
   }
 
-  refetchEndpoints() {
-    this.getEndpoints();
-  }
-
   /*
    * Private helper methods.
    */
@@ -381,7 +347,6 @@ export class BackendService {
     }
     backend.token = null;
     this.backendsStorageService.persistBackends();
-    backend.createAccessRights();
     if (this.active === backend) {
       this._authenticated.next(false);
     }
@@ -426,36 +391,6 @@ export class BackendService {
           console.error(error);
         }
       });
-  }
-
-  /*
-   * Retrieves endpoints for currently selected backend.
-   */
-  private getEndpoints() {
-    return new Observable<Endpoint[]>(observer => {
-      if (this.active.endpoints?.length > 0) {
-        this.active.createAccessRights();
-        observer.next(this.active.endpoints);
-        observer.complete()
-      } else {
-        this.httpClient.get<Endpoint[]>(this.active.url + '/magic/system/auth/endpoints').subscribe({
-          next: (res) => {
-            this.active.applyEndpoints(res || []);
-            this.active.createAccessRights();
-            this._endpointsRetrieved.next(true);
-            observer.next(res);
-            observer.complete()
-          },
-          error: (error: any) => {
-            this.active.applyEndpoints([]);
-            this.active.createAccessRights();
-            this._endpointsRetrieved.next(false);
-            observer.error(error);
-            observer.complete();
-          }
-        });
-      }
-    });
   }
 
   /*

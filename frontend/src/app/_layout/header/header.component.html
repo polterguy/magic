@@ -17,7 +17,7 @@
     <a mat-button class="nav-link" *ngFor="let item of navLinks" [routerLink]="item.url"
       (click)="item.expandable ? null : closeSidebarInSidePanel(item.url)"
       [matMenuTriggerFor]="item.expandable ? subMenu : null" [matMenuTriggerData]="item" routerLinkActive="active-link"
-      [routerLinkActiveOptions]="{exact: item.exact}" [class.active-link]="item?.isActive" [disabled]="waitingSetupStatus">
+      [routerLinkActiveOptions]="{exact: item.exact}" [class.active-link]="item?.isActive">
 
       {{item.name}} <mat-icon *ngIf="item.expandable">expand_more</mat-icon>
 
@@ -25,7 +25,7 @@
 
     <mat-menu #subMenu="matMenu">
       <ng-template matMenuContent let-submenuItems="submenu">
-        <a mat-menu-item [class.warn]="item.color" *ngFor="let item of submenuItems" [disabled]="item.disabled"
+        <a mat-menu-item [class.warn]="item.color" *ngFor="let item of submenuItems" 
           [routerLink]="item.disabled ? null : item.url" [routerLinkActiveOptions]="{exact: item.exact}"
           routerLinkActive="active-link" #isActiveLink="routerLinkActive"
           (click)="getGithubToken(item.name);logout(item.name);closeSidebarInSidePanel(item.url)">
@@ -37,7 +37,7 @@
 
   <div class="d-flex align-items-center">
 
-    <button mat-flat-button color="primary" class="url-btn" (click)="viewBackends()" [disabled]="waitingSetupStatus">
+    <button mat-flat-button color="primary" class="url-btn" (click)="viewBackends()">
       <div class="d-flex flex-nowrap align-items-center ps-1">
         <mat-icon>database</mat-icon>
         <p class="my-0 mx-2 text-truncate url-text">{{activeUrl}}</p>

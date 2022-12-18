@@ -162,8 +162,6 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
 
         this.selectedRoles.setValue(['root', 'guest']);
 
-        this.canLoadSnippet = this.backendService.active?.access.sql.list_files;
-
         this.changeDatabase();
         this.cdr.detectChanges();
       }
@@ -242,11 +240,6 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
   private saveSnippet() {
     if (!this.sql?.sql || this.sql?.sql === '') {
       this.generalService.showFeedback('Write some SQL first, then save it', 'errorMessage')
-      return;
-    }
-
-    if (!this.backendService.active?.access.sql.save_file) {
-      this.generalService.showFeedback('You need a proper permission.', 'errorMessage', 'Ok', 5000)
       return;
     }
 

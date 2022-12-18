@@ -43,15 +43,8 @@ export class ProfileComponent implements OnInit {
   }
 
   private getUsername() {
-    (async () => {
-      while (this.backendService.active.access && !Object.keys(this.backendService.active.access.auth).length)
-        await new Promise(resolve => setTimeout(resolve, 100));
-
-      if (this.backendService.active.access && Object.keys(this.backendService.active.access.auth).length > 0) {
-        this.user.username = this.backendService.active.token['_username'];
-        this.getUser();
-      }
-    })();
+    this.user.username = this.backendService.active.token['_username'];
+    this.getUser();
   }
 
   private getUser() {

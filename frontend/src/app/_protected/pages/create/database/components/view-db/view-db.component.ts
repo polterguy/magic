@@ -20,13 +20,11 @@ export class ViewDbComponent implements OnInit {
   public installed: boolean = false;
   public canInstall: boolean = false;
   public needsCoreUpdate: boolean = false;
-  public deletePermission: boolean = false;
 
   constructor(
     private dialogRef: MatDialogRef<ViewDbComponent>,
     private bazarService: BazarService,
     private generalService: GeneralService,
-    private backendService: BackendService,
     @Inject(MAT_DIALOG_DATA) public data: any) { }
 
   ngOnInit() {
@@ -36,7 +34,6 @@ export class ViewDbComponent implements OnInit {
   private getAppDetails() {
     this.bazarService.canInstall(this.data.min_magic_version).subscribe({
       next: (result: Response) => {
-        this.deletePermission = this.backendService.active?.access.files.delete_folder;
         if (result.result === 'SUCCESS') {
           this.canInstall = true;
         } else {

@@ -32,29 +32,14 @@ export class ServerKeyTableComponent implements OnInit {
 
   public isLoading: boolean = true;
 
-  private savePermission: boolean = undefined;
-
   constructor(
     private dialog: MatDialog,
     private cryptoService: CryptoService,
-    private generalService: GeneralService,
-    private backendService: BackendService) { }
+    private generalService: GeneralService) { }
 
   ngOnInit(): void {
-    this.getPermissions();
     this.getKeys();
     this.getCount();
-  }
-
-  private getPermissions() {
-    (async () => {
-      while (!this.backendService.active.access || !Object.keys(this.backendService.active.access.crypto).length)
-        await new Promise(resolve => setTimeout(resolve, 100));
-
-      if (this.backendService.active.access && Object.keys(this.backendService.active.access.crypto).length > 0) {
-        this.savePermission = this.backendService.active?.access.crypto.save_public_key;
-      }
-    })();
   }
 
   /*
@@ -138,7 +123,6 @@ export class ServerKeyTableComponent implements OnInit {
       panelClass: ['light'],
       data: {
         key: keyData,
-        savePermission: this.savePermission
       }
     }).afterClosed().subscribe((res: any) => {
       if (res === true) {

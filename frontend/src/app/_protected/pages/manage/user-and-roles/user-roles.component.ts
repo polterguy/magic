@@ -24,7 +24,6 @@ export class UserRolesComponent implements OnInit {
   isLoading: boolean = true;
   users = new BehaviorSubject<User[] | null>([]);
   roles = new BehaviorSubject<Role[]>([]);
-  accessPermissions: any = [];
   resultsLength: number = 0;
   pageSize: number = 10;
   pageSizeOptions: number[] = [5, 10, 25, 100];
@@ -36,19 +35,10 @@ export class UserRolesComponent implements OnInit {
   constructor(
     private cdr: ChangeDetectorRef,
     private userService: UserService,
-    private roleService: RoleService,
-    private backendService: BackendService) { }
+    private roleService: RoleService) { }
 
   ngOnInit() {
     this.getUsersList();
-    (async () => {
-      while (this.backendService.active.access && !Object.keys(this.backendService.active.access.auth).length)
-        await new Promise(resolve => setTimeout(resolve, 100));
-      if (this.backendService.active.access && Object.keys(this.backendService.active.access.auth).length > 0) {
-        this.accessPermissions = this.backendService.active?.access;
-        this.cdr.detectChanges();
-      }
-    })();
   }
 
   public tabChange(event: MatTabChangeEvent) {

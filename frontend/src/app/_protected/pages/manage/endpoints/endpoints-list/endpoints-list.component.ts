@@ -3,7 +3,7 @@
  * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { BackendService } from 'src/app/_general/services/backend.service';
@@ -18,7 +18,7 @@ import { FileService } from '../../../create/hyper-ide/_services/file.service';
   templateUrl: './endpoints-list.component.html',
   styleUrls: ['./endpoints-list.component.scss']
 })
-export class EndpointsListComponent implements OnInit {
+export class EndpointsListComponent {
 
   @Input() endpoints: any = [];
   @Input() defaultListToShow: string = 'system';
@@ -30,9 +30,6 @@ export class EndpointsListComponent implements OnInit {
   @Output() changeEditor = new EventEmitter<any>();
   @Output() reload = new EventEmitter<any>();
 
-  public assumptionsPermission: boolean = false;
-  public testPermission: boolean = false;
-
   public selectedItem: any;
 
   constructor(
@@ -42,21 +39,6 @@ export class EndpointsListComponent implements OnInit {
     private generalService: GeneralService,
     private fileService: FileService,
     private backendService: BackendService) { }
-
-  ngOnInit(): void {
-    (async () => {
-      while (this.backendService.active.access && !Object.keys(this.backendService.active.access.endpoints).length)
-        await new Promise(resolve => setTimeout(resolve, 100));
-
-      if (this.backendService.active.access && Object.keys(this.backendService.active.access.endpoints).length > 0) {
-
-        this.assumptionsPermission = this.backendService.active.access.endpoints.assumptions;
-        this.testPermission = this.backendService.active.access.diagnostics.execute_test
-
-        this.cdr.detectChanges();
-      }
-    })();
-  }
 
   public panelExpanded(el: any) {
     el.expanded = true;

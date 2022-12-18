@@ -21,7 +21,7 @@
               (getUsersList)="getUsersList($event)"></app-shared-top-bar>
 
             <app-users-list [usersList]="users | async" [rolesList]="roles | async"
-              [accessPermissions]="accessPermissions" (getUsersList)="getUsersList($event)"></app-users-list>
+              (getUsersList)="getUsersList($event)"></app-users-list>
           </ng-template>
         </ng-template>
       </mat-tab>

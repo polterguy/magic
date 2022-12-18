@@ -39,15 +39,12 @@ export class CoreComponent implements OnInit {
     this.updatePwaService.checkForUpdates();
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.onWindowResize();
     this.backendService.authenticatedChanged.subscribe((res: any) => {
       this.cdr.detectChanges();
     });
     this.backendService.activeBackendChanged.subscribe((res: any) => {
-      this.cdr.detectChanges();
-    });
-    this.backendService.endpointsFetched.subscribe((res: any) => {
       this.cdr.detectChanges();
     });
     this.backendService.versionRetrieved.subscribe((res: any) => {

@@ -4,7 +4,7 @@
  */
 
 import { PlatformLocation } from '@angular/common';
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
 import { User } from 'src/app/_protected/pages/manage/user-and-roles/_models/user.model';
 import { BackendService } from 'src/app/_general/services/backend.service';
 import { AuthenticateResponse } from '../_models/authenticate-response.model';
@@ -21,30 +21,14 @@ import { EditUserDialogComponent } from '../components/edit-user-dialog/edit-use
   templateUrl: './users-list.component.html',
   styleUrls: ['./users-list.component.scss']
 })
-export class UsersListComponent implements OnInit {
+export class UsersListComponent {
 
   @Input() usersList: any = [];
   @Input() rolesList: any = [];
-  @Input() accessPermissions: any = [];
 
   @Output() getUsersList = new EventEmitter<any>();
 
   displayedColumns: string[] = ['username', 'name', 'email', 'role', 'creationDate', 'status', 'actions'];
-
-  /**
-   * Specify if the user can change password for the selected user
-   */
-  public userCanUpdate: boolean = undefined;
-
-  /**
-   * Specify if the user can generate "reset password link" for the selected user
-   */
-  public userCanChange: boolean = undefined;
-
-  /**
-   * Specify if the user can lock the selected user
-   */
-  public userCanLock: boolean = undefined;
 
   /**
    * Specify if the user can delete the selected user
@@ -55,27 +39,9 @@ export class UsersListComponent implements OnInit {
     private dialog: MatDialog,
     private clipboard: Clipboard,
     private userService: UserService,
-    private cdr: ChangeDetectorRef,
     private generalService: GeneralService,
     private backendService: BackendService,
     private platformLocation: PlatformLocation) { }
-
-  ngOnInit(): void {
-
-    (async () => {
-      while (this.accessPermissions && this.accessPermissions.length === 0)
-        await new Promise(resolve => setTimeout(resolve, 100));
-
-      if (this.accessPermissions && Object.keys(this.accessPermissions.auth).length > 0) {
-        this.userCanUpdate = this.accessPermissions.auth.update_user;
-        this.userCanChange = this.accessPermissions.auth.impersonate;
-        this.userCanLock = this.accessPermissions.auth.jail;
-        this.userCanDelete = this.accessPermissions.auth.delete_user;
-
-        this.cdr.detectChanges();
-      }
-    })();
-  }
 
   /**
    * Invoked when user wants to create a reset password link for a specific user.

@@ -85,26 +85,24 @@ export class AssumptionsComponent implements OnInit {
    * Retrieves assumptions for endpoint
    */
   public getAssumptions() {
-    if (this.backendService.active?.access.endpoints.assumptions) {
-      this.assumptionService.list('/' + this.itemDetails.path, this.itemDetails.verb).subscribe({
-        next: (assumptions: any) => {
-          if (assumptions && assumptions.length) {
-            const arr: Assumption[] = [];
-            assumptions.forEach((element: any) => {
-              const name = element.file.substring(element.file.lastIndexOf('/') + 1);
-              arr.push({
-                file: element.file,
-                description: element.description,
-                success: null,
-                name: name.substring(0, name.length - 3)
-              });
+    this.assumptionService.list('/' + this.itemDetails.path, this.itemDetails.verb).subscribe({
+      next: (assumptions: any) => {
+        if (assumptions && assumptions.length) {
+          const arr: Assumption[] = [];
+          assumptions.forEach((element: any) => {
+            const name = element.file.substring(element.file.lastIndexOf('/') + 1);
+            arr.push({
+              file: element.file,
+              description: element.description,
+              success: null,
+              name: name.substring(0, name.length - 3)
             });
-            this.assumptions = arr;
-            this.cdr.detectChanges();
-          }
-        },
-        error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
-      });
-    }
+          });
+          this.assumptions = arr;
+          this.cdr.detectChanges();
+        }
+      },
+      error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
+    });
   }
 }
