@@ -8,6 +8,9 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { FileNode } from './_models/file-node.model';
 
+/**
+ * Primary Hyper IDE component, allowing users to browse and edit files.
+ */
 @Component({
   selector: 'app-ide',
   templateUrl: './ide.component.html',
@@ -39,5 +42,4 @@ export class IdeComponent implements OnInit {
   public filterList(event: any) {
     this.searchKey = event;
   }
-
 }
