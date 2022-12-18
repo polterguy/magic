@@ -24,7 +24,7 @@ export interface Extra {
 export class ConfirmationDialogComponent implements OnInit {
 
   /**
-   * Stores the username, if applicable.
+   * Textbox asking user to write action to allow for executing action.
    */
   public inputValue: FormControl = new FormControl<string>('');
 
@@ -32,20 +32,19 @@ export class ConfirmationDialogComponent implements OnInit {
     private generalService: GeneralService,
     private dialogRef: MatDialogRef<ConfirmationDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: {
-      title?: string, // default is "please confirm"
-      description?: string, // default is "Are you sure?"
+      title?: string,
+      description?: string,
       description_extra: string,
       action_btn: string,
-      action_btn_color?: string, // default is "primary"
+      action_btn_color?: string,
       bold_description?: boolean,
-      extra?: Extra // Optional extra field
+      extra?: Extra
     }) { }
 
-  ngOnInit(): void {
-    this.data['title'] ? this.data['title'] = this.data['title'] : this.data['title'] = 'Please confirm';
-    this.data['description'] ? this.data['description'] = this.data['description'] : this.data['description'] = 'Are you sure?';
-    this.data['action_btn_color'] ? this.data['action_btn_color'] = this.data['action_btn_color'] : this.data['action_btn_color'] = 'primary';
-
+  ngOnInit() {
+    this.data['title'] = this.data['title'] ?? 'Please confirm';
+    this.data['description'] = this.data['description'] ?? 'Are you sure?';
+    this.data['action_btn_color'] = this.data['action_btn_color'] ?? 'primary';
   }
 
   public confirm() {
