@@ -1,11 +1,17 @@
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { GeneralService } from 'src/app/_general/services/general.service';
 
+/**
+ * Modal dialog allowing user to select which items to display in his "overview" component.
+ */
 @Component({
   selector: 'app-overview-dialog',
-  templateUrl: './overview-dialog.component.html',
-  styleUrls: ['./overview-dialog.component.scss']
+  templateUrl: './overview-dialog.component.html'
 })
 export class OverviewDialogComponent implements OnInit {
 

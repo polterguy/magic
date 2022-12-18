@@ -14,7 +14,7 @@ import { ChartComponent } from '../components/chart/chart.component';
 import { SplashComponnt } from '../components/splash/splash.component';
 import { LastLogItemsComponent } from '../components/last-log-items/last-log-items.component';
 import { MainChartComponent } from '../components/main-chart/main-chart.component';
-import { OverviewDialogComponent } from '../components/overview-dialog/overview-dialog.component';
+import { OverviewDialogComponent } from '../components/overview/components/overview-dialog/overview-dialog.component';
 import { OverviewComponent } from '../components/overview/overview.component';
 import { ViewLogComponent } from '../components/view-log/view-log.component';
 import { DashboardComponent } from '../dashboard.component';
