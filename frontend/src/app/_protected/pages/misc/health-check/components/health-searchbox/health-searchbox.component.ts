@@ -3,6 +3,9 @@
  * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
+/**
+ * Filtering text box to allow the user to filter through his test cases.
+ */
 import { Component, EventEmitter, Output } from '@angular/core';
 
 @Component({

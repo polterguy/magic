@@ -1,7 +1,10 @@
 <mat-card>
   <mat-card-content>
+
     <form [formGroup]="configForm" (ngSubmit)="submit()">
+
       <div class="row">
+
         <div class="col-12">
           <h3 class="my-0 fw-bold">Setup</h3>
           <p class="text-muted">Initial setting for your account and the connected backend.</p>
@@ -11,19 +14,21 @@
           <p class="fw-bold">Default database configuration</p>
           <div class="row">
             <div class="col-xl-3 col-sm-6 col-12 order-1">
+
               <mat-form-field class="w-100 text-prefix">
                 <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
                   Database type
                 </span>
-
                 <mat-select formControlName="selectedDatabaseType" (selectionChange)="selectedDatabaseTypeChanged()">
                   <mat-option *ngFor="let idx of databaseTypes" [value]="idx.value">
                     {{idx.name}}
                   </mat-option>
                 </mat-select>
               </mat-form-field>
+
             </div>
             <div class="col-xl-3 col-sm-6 col-12 order-xl-3 order-2">
+
               <mat-form-field class="w-100 text-prefix">
                 <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
                   Default time zone
@@ -35,8 +40,10 @@
                   <mat-option value="local">Local</mat-option>
                 </mat-select>
               </mat-form-field>
+
             </div>
             <div class="col-xl-6 col-sm-12 col-12 order-xl-2 order-3">
+
               <mat-form-field class="w-100 text-prefix">
                 <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
                   Connection
@@ -48,6 +55,7 @@
                   Connection string in not valid.
                 </mat-error>
               </mat-form-field>
+
             </div>
           </div>
         </div>
@@ -55,7 +63,9 @@
         <div class="col-12 mt-4">
           <p class="fw-bold">Default account configuration</p>
           <div class="row">
+
             <div class="col-xl-3 col-md-6 col-12">
+
               <mat-form-field class="w-100 text-prefix">
                 <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
                   Name
@@ -64,8 +74,11 @@
                 <input matInput autocomplete="name" formControlName="name" name="name">
                 <mat-error>Name is required.</mat-error>
               </mat-form-field>
+
             </div>
+
             <div class="col-xl-3 col-md-6 col-12">
+
               <mat-form-field class="w-100 text-prefix">
                 <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
                   Email
@@ -74,8 +87,11 @@
                 <input matInput autocomplete="email" formControlName="email" name="email" [pattern]="CommonRegEx.email">
                 <mat-error>{{CommonErrorMessages.email}}</mat-error>
               </mat-form-field>
+
             </div>
+
             <div class="col-xl-3 col-md-6 col-12">
+
               <mat-form-field class="w-100 text-prefix">
                 <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
                   Password
@@ -89,8 +105,11 @@
 
                 <mat-error>{{CommonErrorMessages.password}}</mat-error>
               </mat-form-field>
+
             </div>
+
             <div class="col-xl-3 col-md-6 col-12">
+
               <mat-form-field class="w-100 text-prefix">
                 <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
                   Repeat password
@@ -100,6 +119,7 @@
                   [type]="showPassword ? 'text' : 'password'" [errorStateMatcher]="matcher" name="password">
                 <mat-error *ngIf="configForm.hasError('notSame')">Passwords must match</mat-error>
               </mat-form-field>
+
             </div>
           </div>
         </div>
@@ -109,7 +129,10 @@
             Save
           </button>
         </div>
+
       </div>
+
     </form>
+
   </mat-card-content>
 </mat-card>

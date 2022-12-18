@@ -37,6 +37,9 @@ class NewKey {
     `;
 }
 
+/**
+ * Helper component allowing user to generate a new server key pair.
+ */
 @Component({
   selector: 'app-new-server-key',
   templateUrl: './new-server-key.component.html'
@@ -65,7 +68,7 @@ export class NewServerKeyComponent implements OnInit {
     private dialogRef: MatDialogRef<NewServerKeyComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { type: string }) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     if (this.data.type === 'create') {
       this.getContent();
       this.newKey.strength = this.strengthArray[2];
@@ -81,7 +84,7 @@ export class NewServerKeyComponent implements OnInit {
       next: (result: Response) => {
         this.newKey.content = result.result;
       },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
     });
   }
 
@@ -134,7 +137,7 @@ export class NewServerKeyComponent implements OnInit {
       next: (result: Response) => {
         this.newKey.fingerprint = result.result;
       },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
     });
   }
 
@@ -161,7 +164,7 @@ export class NewServerKeyComponent implements OnInit {
       },
       error: (error: any) => {
         this.isWaiting = false;
-        this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
       }
     });
   }
@@ -184,9 +187,9 @@ export class NewServerKeyComponent implements OnInit {
           this.generalService.showFeedback('New key pair created successfully and the old key is backed up.', 'successMessage', 'Ok', 4000);
           this.dialogRef.close(true);
         },
-        error: (error:any) => {
+        error: (error: any) => {
           this.isWaiting = false;
-          this.generalService.showFeedback(error?.error?.message??error, 'errorMessage')
+          this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
         }
       });
   }

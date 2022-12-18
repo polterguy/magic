@@ -10,6 +10,9 @@ import { CryptoInvocation } from '../_models/crypto-invocations.model';
 import { PublicKey } from '../_models/public-key.model';
 import { CryptoService } from '../_services/crypto.service';
 
+/**
+ * Helper component displaying receipts for crypto invocations towards the server.
+ */
 @Component({
   selector: 'app-server-key-receipts',
   templateUrl: './server-key-receipts.component.html'
@@ -32,7 +35,7 @@ export class ServerKeyReceiptsComponent implements OnInit {
     private cryptoService: CryptoService,
     private generalService: GeneralService) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.getInvocations();
     this.getCount();
   }
@@ -72,11 +75,6 @@ export class ServerKeyReceiptsComponent implements OnInit {
     });
   }
 
-  /**
-   * Invoked when paginator wants to page data table.
-   *
-   * @param e Page event argument
-   */
   public changePage(e: PageEvent) {
     this.pageSize = e.pageSize;
     this.pageIndex = e.pageIndex;

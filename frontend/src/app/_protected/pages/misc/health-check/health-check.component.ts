@@ -34,6 +34,10 @@ class TestModel {
   content?: Model;
 }
 
+/**
+ * Helper component to show user all test cases in the system, allowing him to run all tests,
+ * verify sanity of system, and also administer existing test cases.
+ */
 @Component({
   selector: 'app-health-check',
   templateUrl: './health-check.component.html',
@@ -72,9 +76,6 @@ export class HealthCheckComponent implements OnInit {
     private generalService: GeneralService,
     private assumptionService: AssumptionService) { }
 
-  /**
-   * Implementation of OnInit.
-   */
   ngOnInit() {
     this.getList();
   }
@@ -102,11 +103,6 @@ export class HealthCheckComponent implements OnInit {
     });
   }
 
-  /**
-   * Toggles the details view for a single test.
-   *
-   * @param test Test to toggle details for
-   */
   ensureTestContent(item: any) {
     if (item.content) {
       this.openContent(item);
@@ -134,11 +130,6 @@ export class HealthCheckComponent implements OnInit {
     })
   }
 
-  /**
-   * Runs the specified test.
-   *
-   * @param item item to be tested.
-   */
   executeTest(item: any) {
     this.assumptionService.execute(item.filename).subscribe({
       next: (res: Response) => {
@@ -158,11 +149,6 @@ export class HealthCheckComponent implements OnInit {
     });
   }
 
-  /**
-   * Deletes the specified assumption test.
-   *
-   * @param test Test to delete
-   */
   deleteTest(item: any) {
     this.dialog.open(ConfirmationDialogComponent, {
       width: '500px',
@@ -188,9 +174,6 @@ export class HealthCheckComponent implements OnInit {
     });
   }
 
-  /**
-   * Invoked when user wants to execute all tests.
-   */
   public testAll() {
     const parallellNo = 2;
     let idxNo = 0;

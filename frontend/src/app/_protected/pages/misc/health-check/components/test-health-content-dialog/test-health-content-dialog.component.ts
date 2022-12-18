@@ -13,6 +13,9 @@ import { FileService } from 'src/app/_protected/pages/create/hyper-ide/_services
 import { EvaluatorService } from '../../../../../../_general/services/evaluator.service';
 import { AssumptionService } from '../../../../../../_general/services/assumption.service';
 
+/**
+ * Helper modal dialog to allow user to view and manage an individual test case.
+ */
 @Component({
   selector: 'app-test-health-content-dialog',
   templateUrl: './test-health-content-dialog.component.html'
@@ -32,10 +35,11 @@ export class TestHealthContentDialogComponent implements OnInit, OnDestroy {
     private dialogRef: MatDialogRef<TestHealthContentDialogComponent>,
     private codemirrorActionsService: CodemirrorActionsService) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.getCodeMirrorOptions();
     this.watchForActions();
   }
+
   private async getCodeMirrorOptions() {
     this.codemirrorActionsService.getActions(null, 'hl').then((res: any) => {
       if (res) {
@@ -50,6 +54,7 @@ export class TestHealthContentDialogComponent implements OnInit, OnDestroy {
   private watchForActions() {
     this.codemirrorActionSubscription = this.codemirrorActionsService.action.subscribe((action: string) => {
       switch (action) {
+
         case 'save':
           this.saveTest();
           break;
@@ -61,16 +66,10 @@ export class TestHealthContentDialogComponent implements OnInit, OnDestroy {
         case 'execute':
           this.executeTest();
           break;
-
-        default:
-          break;
       }
     })
   }
 
-  /**
-   * Shows load snippet dialog.
-   */
   load() {
     const dialogRef = this.dialog.open(LoadSnippetDialogComponent, {
       width: '550px',
@@ -87,12 +86,6 @@ export class TestHealthContentDialogComponent implements OnInit, OnDestroy {
     });
   }
 
-  /**
-   * Saves an assumption test.
-   *
-   * @param filename Filename of test
-   * @param content Content of test
-   */
   public saveTest() {
     this.fileService.saveFile(this.data.filename, this.data.content).subscribe({
       next: () => {
@@ -122,7 +115,7 @@ export class TestHealthContentDialogComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy(): void {
+  ngOnDestroy() {
     if (this.codemirrorActionSubscription) {
       this.codemirrorActionSubscription.unsubscribe();
     }
