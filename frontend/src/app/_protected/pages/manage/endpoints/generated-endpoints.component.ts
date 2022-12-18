@@ -6,15 +6,15 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { Endpoint } from '../../../../_general/models/endpoint.model';
-import { BehaviorSubject, Subscription } from 'rxjs';
-import { EndpointsGeneralService } from 'src/app/_general/services/endpoints-general.service';
+import { BehaviorSubject } from 'rxjs';
+import { EndpointService } from 'src/app/_general/services/endpoint.service';
 
 @Component({
   selector: 'app-generated-endpoints',
   templateUrl: './generated-endpoints.component.html',
   styleUrls: ['./generated-endpoints.component.scss']
 })
-export class GeneratedEndpointsComponent implements OnInit, OnDestroy {
+export class GeneratedEndpointsComponent implements OnInit  {
 
   public selectedDb: string = 'Magic';
 
@@ -37,15 +37,13 @@ export class GeneratedEndpointsComponent implements OnInit, OnDestroy {
 
   public itemToBeTried = new BehaviorSubject<any>({});
 
-  private endpointSubscription!: Subscription;
-
   public isLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
 
   constructor(
     private generalService: GeneralService,
-    private endpointsGeneralService: EndpointsGeneralService) { }
+    private endpointsService: EndpointService) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.getEndpoints();
   }
 
@@ -53,7 +51,7 @@ export class GeneratedEndpointsComponent implements OnInit, OnDestroy {
    * Invokes backend to retrieve meta data about endpoints.
    */
   private getEndpoints() {
-    this.endpointSubscription = this.endpointsGeneralService.endpoints.subscribe({
+    this.endpointsService.endpoints().subscribe({
       next: (endpoints: Endpoint[]) => {
         if (endpoints) {
           let groups: any = [];
@@ -95,8 +93,6 @@ export class GeneratedEndpointsComponent implements OnInit, OnDestroy {
       },
       error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
     });
-
-    this.endpointsGeneralService.getEndpoints();
   }
 
   reloadEndpoints(e: any) {
@@ -116,9 +112,5 @@ export class GeneratedEndpointsComponent implements OnInit, OnDestroy {
 
   public changeEditor(event: any) {
     this.itemToBeTried.next(event);
-  }
-
-  ngOnDestroy(): void {
-    this.endpointSubscription.unsubscribe();
   }
 }

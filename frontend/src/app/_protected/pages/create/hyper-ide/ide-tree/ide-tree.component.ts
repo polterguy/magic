@@ -4,12 +4,12 @@
  */
 
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTreeFlattener, MatTreeFlatDataSource } from '@angular/material/tree';
-import { Observable, Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
-import { EndpointsGeneralService } from 'src/app/_general/services/endpoints-general.service';
+import { EndpointService } from 'src/app/_general/services/endpoint.service';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { Endpoint } from 'src/app/_protected/models/common/endpoint.model';
 import { ExecuteMacroDialogComponent } from '../components/execute-macro-dialog/execute-macro-dialog.component';
@@ -28,7 +28,7 @@ import { FileService } from '../_services/file.service';
   templateUrl: './ide-tree.component.html',
   styleUrls: ['./ide-tree.component.scss']
 })
-export class IdeTreeComponent implements OnInit, OnDestroy {
+export class IdeTreeComponent implements OnInit {
 
   @Input() searchKey!: Observable<string>;
   @Input() type: string;
@@ -50,8 +50,6 @@ export class IdeTreeComponent implements OnInit, OnDestroy {
    * Actual data source for tree control.
    */
   dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
-
-  private endpointSubscription!: Subscription;
 
   /**
    * Currently edited files.
@@ -100,7 +98,7 @@ export class IdeTreeComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private fileService: FileService,
     private generalService: GeneralService,
-    private endpointsGeneralService: EndpointsGeneralService,
+    private endpointService: EndpointService,
     private codemirrorActionsService: CodemirrorActionsService) { }
 
   ngOnInit() {
@@ -209,14 +207,14 @@ export class IdeTreeComponent implements OnInit, OnDestroy {
    * Only invokes when requesting a refrech of the list.
    */
   public refetchEndpointsList() {
-    this.endpointsGeneralService.getEndpoints();
+    this.getEndpoints();
   }
 
   /**
    * Reading endpoints' list from the already fetched instance.
    */
   private getEndpoints() {
-    this.endpointSubscription = this.endpointsGeneralService.endpoints.subscribe({
+    this.endpointService.endpoints().subscribe({
       next: (result: Endpoint[]) => {
         this.endpoints = result;
         this.cdr.detectChanges();
@@ -984,13 +982,6 @@ export class IdeTreeComponent implements OnInit, OnDestroy {
       });
     } else {
       this.generalService.showFeedback('Only zip files without . are accepted', 'errorMessage', 'Ok', 5000);
-    }
-  }
-
-  ngOnDestroy(): void {
-    if (this.endpointSubscription) {
-      this.endpointSubscription.unsubscribe();
-      root.children = [];
     }
   }
 }
