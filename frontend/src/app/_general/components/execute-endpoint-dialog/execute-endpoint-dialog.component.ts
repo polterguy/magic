@@ -29,11 +29,11 @@ import { AssumptionService } from 'src/app/_general/services/assumption.service'
 import { AssumptionsComponent } from '../assumptions/assumptions.component';
 
 @Component({
-  selector: 'app-endpoint-dialog',
-  templateUrl: './endpoint-dialog.component.html',
-  styleUrls: ['./endpoint-dialog.component.scss']
+  selector: 'app-execute-endpoint-dialog',
+  templateUrl: './execute-endpoint-dialog.component.html',
+  styleUrls: ['./execute-endpoint-dialog.component.scss']
 })
-export class EndpointDialogComponent implements OnInit {
+export class ExecuteEndpointDialogComponent implements OnInit {
 
   private originalPath: string = '';
   public itemDetails: any = {};

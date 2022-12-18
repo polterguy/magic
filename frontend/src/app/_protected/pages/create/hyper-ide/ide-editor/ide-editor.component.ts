@@ -17,7 +17,7 @@ import { RenameFolderDialogComponent } from '../components/rename-folder-dialog/
 import { SelectMacroDialogComponent, Macro } from '../components/select-macro-dialog/select-macro-dialog.component';
 import { UnsavedChangesDialogComponent } from '../components/unsaved-changes-dialog/unsaved-changes-dialog.component';
 import { EvaluatorService } from '../../../../../_general/services/evaluator.service';
-import { EndpointDialogComponent } from '../../../../../_general/components/endpoint-dialog/endpoint-dialog.component';
+import { ExecuteEndpointDialogComponent } from '../../../../../_general/components/execute-endpoint-dialog/execute-endpoint-dialog.component';
 import { FileNode } from '../_models/file-node.model';
 import { MacroDefinition } from '../_models/macro-definition.model';
 import { TreeNode } from '../_models/tree-node.model';
@@ -202,7 +202,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     if (await this.getEndpointToExecute() !== null) {
-      this.dialog.open(EndpointDialogComponent, {
+      this.dialog.open(ExecuteEndpointDialogComponent, {
         data: { itemToBeTried: await this.getEndpointToExecute() },
         minWidth: '80vw',
         minHeight: '50vh',

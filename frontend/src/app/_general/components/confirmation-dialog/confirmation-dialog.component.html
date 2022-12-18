@@ -1,28 +1,33 @@
 <h3 mat-dialog-title>{{data.title}}</h3>
+
 <form (ngSubmit)="confirm()">
   <div mat-dialog-content>
+
     <p [class.fw-bold]="data.bold_description">{{data.description}}</p>
+
     <p *ngIf="data.description_extra" [innerHTML]="data.description_extra"></p>
 
     <ng-container *ngIf="data?.extra?.details && data?.extra?.action === 'confirmInput'">
+
       <mat-form-field class="w-100 ">
         <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
           <mat-icon>{{data?.extra?.icon}}</mat-icon>
           <span class="text-muted">|</span>
         </span>
-
-        <input cdkFocusInitial matInput placeholder="Type in the {{data.extra.fieldToBeTypedTitle}}"
-          autocomplete="off"
+        <input cdkFocusInitial matInput placeholder="Type in the {{data.extra.fieldToBeTypedTitle}}" autocomplete="off"
           [formControl]="inputValue">
         <mat-hint *ngIf="inputValue.value !== '' && data.extra.fieldToBeTypedValue !== inputValue.value"
           class="text-danger">
           Inserted {{data.extra.fieldToBeTypedTitle}} doesn't match.
         </mat-hint>
       </mat-form-field>
+
     </ng-container>
+
   </div>
   <div mat-dialog-actions [align]="'end'">
     <button mat-button mat-dialog-close cdkFocusInitial>Cancel</button>
     <button mat-flat-button (click)="confirm()" color="{{data.action_btn_color}}">{{data.action_btn}}</button>
   </div>
+
 </form>

@@ -12,7 +12,7 @@
       </mat-expansion-panel-header>
 
       <mat-accordion multi>
-        <mat-expansion-panel (opened)="panelExpanded(el)" class="mat-elevation-z1 mb-3" id="inner-panel"
+        <mat-expansion-panel (opened)="panelExpanded(el);" class="mat-elevation-z1 mb-3" id="inner-panel"
           *ngFor="let el of item.value">
           <mat-expansion-panel-header class="px-3 py-2" #header>
             <mat-panel-title>

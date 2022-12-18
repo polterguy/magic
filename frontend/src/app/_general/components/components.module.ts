@@ -19,7 +19,7 @@ import { QueryParamsComponent } from './query-params/query-params.component';
 import { AssumptionsComponent } from './assumptions/assumptions.component';
 import { CreateAssumptionTestDialogComponent } from './create-assumption-test-dialog/create-assumption-test-dialog.component';
 import { SnippetNameDialogComponent } from './snippet-name-dialog/snippet-name-dialog.component';
-import { EndpointDialogComponent } from './endpoint-dialog/endpoint-dialog.component';
+import { ExecuteEndpointDialogComponent } from './execute-endpoint-dialog/execute-endpoint-dialog.component';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import { GithubTokenDialogComponent } from '../../_protected/pages/user/github-token-dialog/github-token-dialog.component';
 import { PwaUpdateDialogComponent } from './pwa-update-dialog/pwa-update-dialog.component';
@@ -41,7 +41,7 @@ import { SplashDialogComponent } from '../../_protected/pages/dashboard/componen
     AssumptionsComponent,
     CreateAssumptionTestDialogComponent,
     SnippetNameDialogComponent,
-    EndpointDialogComponent,
+    ExecuteEndpointDialogComponent,
     GithubTokenDialogComponent,
     PwaUpdateDialogComponent,
     LogExceptionComponent,
@@ -68,7 +68,7 @@ import { SplashDialogComponent } from '../../_protected/pages/dashboard/componen
     AssumptionsComponent,
     CreateAssumptionTestDialogComponent,
     SnippetNameDialogComponent,
-    EndpointDialogComponent,
+    ExecuteEndpointDialogComponent,
     GithubTokenDialogComponent,
     LogExceptionComponent,
     SearchboxComponent,
