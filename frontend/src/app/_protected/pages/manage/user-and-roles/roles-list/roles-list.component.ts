@@ -3,7 +3,7 @@
  * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
@@ -20,7 +20,7 @@ import { RoleService } from '../_services/role.service';
   templateUrl: './roles-list.component.html',
   styleUrls: ['./roles-list.component.scss']
 })
-export class RolesListComponent implements OnInit {
+export class RolesListComponent {
 
   @Input() rolesList: any = [];
   @Input() accessPermissions: any = [];
@@ -29,35 +29,11 @@ export class RolesListComponent implements OnInit {
 
   displayedColumns: string[] = ['name', 'description', 'actions'];
 
-  /**
-   * Specify if the user can update roles
-   */
-  public userCanUpdate: boolean = undefined;
-
-  /**
-  * Specify if the user can delete roles
-  */
-  public userCanDelete: boolean = undefined;
-
   constructor(
     private dialog: MatDialog,
     private cdr: ChangeDetectorRef,
     private roleService: RoleService,
     private generalService: GeneralService) { }
-
-  ngOnInit(): void {
-    (async () => {
-      while (this.accessPermissions && this.accessPermissions.length === 0)
-        await new Promise(resolve => setTimeout(resolve, 100));
-
-      if (this.accessPermissions && Object.keys(this.accessPermissions.auth).length > 0) {
-        this.userCanUpdate = this.accessPermissions.auth.update_role;
-        this.userCanDelete = this.accessPermissions.auth.delete_role;
-
-        this.cdr.detectChanges();
-      }
-    })();
-  }
 
   systemRole(role: string) {
     switch (role) {
