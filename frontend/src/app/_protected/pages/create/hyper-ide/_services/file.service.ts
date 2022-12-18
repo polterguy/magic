@@ -217,8 +217,6 @@ export class FileService {
    * @param file File you want to upload
    */
   public uploadStaticWebsite(data: FormData) {
-    // const formData: FormData = new FormData();
-    // formData.append('file', file);
     return this.httpService.put<any>('/magic/system/file-system/overwrite-folder', data);
   }
 

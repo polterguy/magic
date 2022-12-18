@@ -8,6 +8,9 @@ import CodeMirror from 'codemirror';
 import { Subject } from 'rxjs';
 import fileTypes from 'src/app/codemirror/file-types.json';
 
+/**
+ * CodeMirror keyboard shortcut action service for listening to keyboard shortcuts.
+ */
 @Injectable({
   providedIn: 'root'
 })
