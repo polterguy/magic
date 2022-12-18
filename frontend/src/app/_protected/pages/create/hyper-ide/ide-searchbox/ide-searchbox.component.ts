@@ -6,6 +6,10 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
+/**
+ * Search for files component for Hyper IDE, allowing user to filter files, looking for files
+ * with specific filenames.
+ */
 @Component({
   selector: 'app-ide-searchbox',
   templateUrl: './ide-searchbox.component.html',
