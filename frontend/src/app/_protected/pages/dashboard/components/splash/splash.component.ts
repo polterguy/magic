@@ -5,12 +5,16 @@
 
 import { Component, EventEmitter, Output } from '@angular/core';
 
+/**
+ * Splash info panel component, helping out user to getting started the first
+ * time he logs into his or her dashboard.
+ */
 @Component({
-  selector: 'app-info-panel',
-  templateUrl: './info-panel.component.html',
-  styleUrls: ['./info-panel.component.scss']
+  selector: 'app-splash',
+  templateUrl: './splash.component.html',
+  styleUrls: ['./splash.component.scss']
 })
-export class InfoPanelComponent {
+export class SplashComponnt {
 
   @Output() hideInfoPanel = new EventEmitter<any>();
 

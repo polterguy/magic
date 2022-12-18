@@ -4,7 +4,7 @@ import { BackendService } from '../../../_general/services/backend.service';
 import { DiagnosticsService } from '../../../_general/services/diagnostics.service';
 import moment from 'moment';
 import { LogTypes, SystemReport } from './_models/dashboard.model';
-import { SplashDialogComponent } from 'src/app/_protected/pages/dashboard/components/splash-dialog/splash-dialog.component';
+import { ConfigureThemeDialog } from 'src/app/_protected/pages/dashboard/components/configure-theme/configure-theme-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 
@@ -125,7 +125,7 @@ export class DashboardComponent implements OnInit {
     if (configured) {
       return;
     }
-    const dialog = this.dialog.open(SplashDialogComponent, {
+    const dialog = this.dialog.open(ConfigureThemeDialog, {
       width: '550px',
     });
     dialog.afterClosed().subscribe(() => {
