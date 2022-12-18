@@ -8,6 +8,9 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { SqlService } from '../../../../../../_general/services/sql.service';
 
+/**
+ * 
+ */
 @Component({
   selector: 'app-sql-snippet-dialog',
   templateUrl: './sql-snippet-dialog.component.html'

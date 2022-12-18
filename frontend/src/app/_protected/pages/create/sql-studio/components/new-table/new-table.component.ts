@@ -17,6 +17,9 @@ export interface NewTableModel {
   pkDefault: string;
 }
 
+/**
+ * Helper component allowing user to create a new table, and its associated primary key.
+ */
 @Component({
   selector: 'app-new-table',
   templateUrl: './new-table.component.html'
@@ -65,10 +68,6 @@ export class NewTableComponent {
 }
 
 const PkType: any = [
-  {
-    value: 'auto_increment', name: 'Auto increment'
-  },
-  {
-    value: 'varchar', name: 'Varchar'
-  }
+  { value: 'auto_increment', name: 'Auto increment' },
+  { value: 'varchar', name: 'Varchar' }
 ]

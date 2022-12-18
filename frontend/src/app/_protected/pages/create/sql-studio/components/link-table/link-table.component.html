@@ -1,4 +1,5 @@
 <h3 mat-dialog-title class="mb-1">Add new link table</h3>
+
 <p class="text-muted mb-4">Create a link table connecting two tables together</p>
 
 <div mat-dialog-content class="new-field-dialog">
@@ -13,7 +14,6 @@
       <mat-select-trigger>
         {{formData?.table1?.name}}
       </mat-select-trigger>
-
       <mat-option *ngFor="let item of data" [value]="item">
         {{item.name}}
       </mat-option>
@@ -30,7 +30,6 @@
       <mat-select-trigger>
         {{formData?.table2?.name}}
       </mat-select-trigger>
-
       <mat-option *ngFor="let item of secondTableList()" [value]="item">
         {{item.name}}
       </mat-option>
