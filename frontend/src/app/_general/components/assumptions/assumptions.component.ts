@@ -37,13 +37,11 @@ export class AssumptionsComponent implements OnInit {
   assumptions: Assumption[] = [];
 
   constructor(
-    private dialog: MatDialog,
     private cdr: ChangeDetectorRef,
     private generalService: GeneralService,
-    private backendService: BackendService,
     private assumptionService: AssumptionService) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.getAssumptions();
   }
 
@@ -78,8 +76,6 @@ export class AssumptionsComponent implements OnInit {
       }
     });
   }
-
-
 
   /*
    * Retrieves assumptions for endpoint

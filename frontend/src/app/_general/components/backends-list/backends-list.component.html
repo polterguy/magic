@@ -6,11 +6,7 @@
   </a>
 </div>
 
-<ng-container *ngIf="isLoading">
-  <app-loading-skeleton [amount]="3" [blockHeight]="'40px'" [hasShadow]="false"></app-loading-skeleton>
-</ng-container>
-
-<div class="table-responsive backend-list" *ngIf="!isLoading">
+<div class="table-responsive backend-list">
   <table mat-table [dataSource]="backendsList" class="w-100 borderless">
 
     <!-- username Column -->
