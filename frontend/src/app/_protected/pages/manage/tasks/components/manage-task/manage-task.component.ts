@@ -49,9 +49,10 @@ export class ManageTaskComponent implements OnInit {
 
   private getCodeMirrorOptions() {
     this.codemirrorActionsService.getActions(null, 'hl').then((res: any) => {
+      res.autofocus = false;
       this.hlModel = {
         hyperlambda: this.task.hyperlambda,
-        options: res
+        options: res,
       }
       setTimeout(() => {
         this.hlReady = true;
