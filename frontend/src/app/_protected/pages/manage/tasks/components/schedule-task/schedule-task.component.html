@@ -2,13 +2,16 @@
 
 <form>
   <div mat-dialog-content>
+
     <mat-radio-group aria-label="Select an option" [(ngModel)]="scheduleOption" [ngModelOptions]="{standalone: true}">
       <div class="row align-items-center">
+
         <div class="col-md-4 col-12">
           <p class="my-0">
             <mat-radio-button value="fixed" color="primary">Specific date &amp; time</mat-radio-button>
           </p>
         </div>
+
         <div class="col-md-8 col-12 mt-md-0 mt-3">
           <mat-form-field class="w-100 standalone-field">
             <input matInput name="-" autocomplete="off" placeholder="Pick date & time" [ngxMatDatetimePicker]="picker"
@@ -25,9 +28,11 @@
             <mat-radio-button value="repeat" color="primary">Repeated every</mat-radio-button>
           </p>
         </div>
+
         <div class="col-md-8 col-12 mt-3">
           <div class="row">
             <div class="col-sm-6 col-12">
+
               <mat-form-field class="w-100 standalone-field">
                 <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
                   <mat-icon>unfold_more</mat-icon>
@@ -41,8 +46,10 @@
                   </mat-option>
                 </mat-select>
               </mat-form-field>
+
             </div>
             <div class="col-sm-6 col-12 mt-sm-0 mt-3">
+
               <mat-form-field class="w-100 standalone-field">
                 <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
                   <mat-icon>schedule</mat-icon>
@@ -56,6 +63,7 @@
                   </mat-option>
                 </mat-select>
               </mat-form-field>
+
             </div>
           </div>
         </div>
@@ -65,26 +73,32 @@
             <mat-radio-button value="custom" color="primary">Custom repetition</mat-radio-button>
           </p>
         </div>
+
         <div class="col-md-8 col-12 mt-3">
+
           <mat-form-field class="w-100 standalone-field">
             <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
               <mat-icon>repeat</mat-icon>
               <span class="text-muted">|</span>
             </span>
-
             <input matInput type="text" placeholder="Custom value" [(ngModel)]="customRepetition"
               [ngModelOptions]="{standalone: true}" [disabled]="scheduleOption !== 'custom'">
           </mat-form-field>
+
           <ng-container *ngIf="scheduleOption === 'custom'">
+
             <mat-hint class="d-block mat-caption">
               <span class="fw-bold">e.g. 10.20.15.22.22</span> ->
               <span class="d-block text-muted">MM.dd.HH.mm.ss: Months.days in months.hours.minutes.seconds</span>
             </mat-hint>
+
             <mat-hint class="d-block mat-caption">
               <span class="fw-bold">e.g. Sunday.15.22.22</span> ->
               <span class="d-block text-muted">ww.HH.mm.ss: Weekdays.hour.minute.second</span>
             </mat-hint>
+
           </ng-container>
+
         </div>
       </div>
 

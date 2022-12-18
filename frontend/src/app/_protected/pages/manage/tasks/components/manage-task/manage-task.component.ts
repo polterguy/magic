@@ -11,6 +11,9 @@ import { GeneralService } from 'src/app/_general/services/general.service';
 import { CodemirrorActionsService } from '../../../../create/hyper-ide/_services/codemirror-actions.service';
 import { TaskService } from '../../_services/task.service';
 
+/**
+ * Helper component allowing you to manage and schedule tasks in the system.
+ */
 @Component({
   selector: 'app-manage-task',
   templateUrl: './manage-task.component.html'
@@ -37,7 +40,7 @@ export class ManageTaskComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: Task,
     private codemirrorActionsService: CodemirrorActionsService) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     if (this.data) {
       this.task = this.data;
     }
