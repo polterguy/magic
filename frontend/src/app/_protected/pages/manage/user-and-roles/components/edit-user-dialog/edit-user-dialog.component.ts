@@ -147,7 +147,7 @@ export class EditUserDialogComponent implements OnInit {
 
   public addField() {
     this.dialog.open(AddExtraFieldsDialogComponent, {
-      width: '350px',
+      width: '450px',
       data: this.data.user.username
     }).afterClosed().subscribe((result: any) => {
       if (result) {

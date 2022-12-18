@@ -52,11 +52,11 @@ export class RenameFileDialogComponent {
    */
   ok() {
     if (!this.pathValid()) {
-      this.generalService.showFeedback('Name is required and cannot contain blank space or special characters.', 'errorMessage', 'Ok', 5000);
+      this.generalService.showFeedback('Name is required and cannot contain blank space or special characters', 'errorMessage', 'Ok', 5000);
       return;
     }
     if (this.data.name === this.originalName) {
-      this.generalService.showFeedback('New name cannot be the same as the current name.', 'errorMessage', 'Ok', 5000);
+      this.generalService.showFeedback('New name cannot be the same as the current name', 'errorMessage', 'Ok', 5000);
       return;
     }
     this.dialogRef.close(this.data);

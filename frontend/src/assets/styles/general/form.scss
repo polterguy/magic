@@ -110,9 +110,11 @@ form fields
   }
 
   .form-with-label {
-    .mat-form-field-appearance-outline .mat-form-field-prefix {
-      top: 0px;
-      min-width: 95px;
+    .label-element {
+      &.mat-form-field-appearance-outline .mat-form-field-prefix  {
+        top: 0px;
+        min-width: 95px;
+      }
     }
   }
 
