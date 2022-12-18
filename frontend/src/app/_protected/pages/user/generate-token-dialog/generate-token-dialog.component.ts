@@ -9,10 +9,13 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { GeneralService } from '../../../../_general/services/general.service';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
+/**
+ * Helper modal dialog to generate a new JWT token.
+ */
 @Component({
-  selector: 'app-github-token-dialog',
-  templateUrl: './github-token-dialog.component.html',
-  styleUrls: ['./github-token-dialog.component.scss']
+  selector: 'app-generate-token-dialog',
+  templateUrl: './generate-token-dialog.component.html',
+  styleUrls: ['./generate-token-dialog.component.scss']
 })
 export class GithubTokenDialogComponent implements OnInit {
 
