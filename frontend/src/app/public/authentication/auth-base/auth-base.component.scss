@@ -25,12 +25,9 @@ main styling for all components in AUTH
     color: $aista_default;
     padding-bottom: 30px;
 
-    ::ng-deep {
-
-      .mat-input-element,
-      .mat-form-field-suffix {
-        color: $aista_default_grey1;
-      }
+    .mat-input-element,
+    .mat-form-field-suffix {
+      color: $aista_default_grey1;
     }
   }
 

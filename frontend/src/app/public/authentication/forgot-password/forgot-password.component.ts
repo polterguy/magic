@@ -11,6 +11,9 @@ import { RecaptchaComponent } from 'ng-recaptcha';
 import { Router } from '@angular/router';
 import { BackendService } from 'src/app/_general/services/backend.service';
 
+/**
+ * Helper component to allow user to have a reset password email sent to him on his configured email address.
+ */
 @Component({
   selector: 'app-forgot-password',
   templateUrl: './forgot-password.component.html'

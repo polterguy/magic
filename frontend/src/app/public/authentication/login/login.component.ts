@@ -15,6 +15,9 @@ import { Backend } from 'src/app/_protected/models/common/backend.model';
 import { BackendService } from 'src/app/_general/services/backend.service';
 import { BackendsStorageService } from 'src/app/_general/services/backendsstorage.service';
 
+/**
+ * Login component allowing user to authenticat towards the backend.
+ */
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html'
@@ -52,53 +55,43 @@ export class LoginComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private activatedRoute: ActivatedRoute) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.waitForBackend();
   }
 
   private waitForBackend() {
-    this.readBackendService().then((res: any) => {
-      if (res && res.active && res.active.access && res.active.access.auth) {
-        this.backendList = res.backends;
-        this.backendHasBeenSelected = true;
+    this.backendList = this.backendService.backends;
+    this.backendHasBeenSelected = true;
 
-        this.activatedRoute.queryParams.subscribe((params: any) => {
-          if (params.switchTo) {
-            this.loginForm.controls.backend.setValue(params.switchTo);
-            const defaultBackend: Backend = this.backendList.find((item: any) => item.url === params.switchTo);
-            if (defaultBackend) {
-              this.loginForm.controls.username.setValue(defaultBackend.username);
-              this.loginForm.controls.password.setValue(defaultBackend.password);
-            }
-          } else if (params.backend) {
-            this.loginForm.controls.backend.setValue(params.backend);
-            const defaultBackend: Backend = this.backendList.find((item: any) => item.url === params.backend.url);
-            if (defaultBackend) {
-              this.loginForm.controls.username.setValue(defaultBackend.username);
-              this.loginForm.controls.password.setValue(defaultBackend.password);
-            }
-          } else if (this.backendList.length > 0) {
-            const defaultBackend: Backend = this.backendList[0];
-            this.loginForm.controls.backend.setValue(defaultBackend.url);
-            this.loginForm.controls.username.setValue(defaultBackend.username);
-            this.loginForm.controls.password.setValue(defaultBackend.password);
-          }
-        })
-        this.backendService._activeCaptchaValue.subscribe((key: string) => {
-          this.recaptchaKey = key;
-        })
-        this.cdr.detectChanges();
+    this.activatedRoute.queryParams.subscribe((params: any) => {
+      if (params.switchTo) {
+        this.loginForm.controls.backend.setValue(params.switchTo);
+        const defaultBackend: Backend = this.backendList.find((item: any) => item.url === params.switchTo);
+        if (defaultBackend) {
+          this.loginForm.controls.username.setValue(defaultBackend.username);
+          this.loginForm.controls.password.setValue(defaultBackend.password);
+        }
+      } else if (params.backend) {
+        this.loginForm.controls.backend.setValue(params.backend);
+        const defaultBackend: Backend = this.backendList.find((item: any) => item.url === params.backend.url);
+        if (defaultBackend) {
+          this.loginForm.controls.username.setValue(defaultBackend.username);
+          this.loginForm.controls.password.setValue(defaultBackend.password);
+        }
+      } else if (this.backendList.length > 0) {
+        const defaultBackend: Backend = this.backendList[0];
+        this.loginForm.controls.backend.setValue(defaultBackend.url);
+        this.loginForm.controls.username.setValue(defaultBackend.username);
+        this.loginForm.controls.password.setValue(defaultBackend.password);
       }
     })
-  }
-
-  private readBackendService(): Promise<any> {
-    return new Promise((resolve) => {
-      resolve(this.backendService)
+    this.backendService._activeCaptchaValue.subscribe((key: string) => {
+      this.recaptchaKey = key;
     });
+    this.cdr.detectChanges();
   }
 
-  backendActivated(e: MatAutocompleteActivatedEvent) {console.log(this.backendList)
+  backendActivated(e: MatAutocompleteActivatedEvent) {
     const defaultBackend: Backend = this.backendList.find((item: any) => item.url === e.option.value);
     this.loginForm.controls.username.setValue(defaultBackend.username);
     if (defaultBackend.password) {
@@ -106,9 +99,6 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  /**
-   * login form
-   */
   login() {
     if (!CommonRegEx.backend.test(this.loginForm.controls.backend.value.replace(/\/$/, ''))) {
       this.generalService.showFeedback('Backend URL is not valid.', 'errorMessage', 'Ok');

@@ -38,7 +38,8 @@ export class Model {
 }
 
 /**
- * CodeMirror Hyperlambda component for making it easy
+ * CodeMirror Hyperlambda component for making it easy to edit Hyperlambda files with
+ * syntax highlightning and auto complete.
  */
 @Component({
   selector: 'app-codemirror-hyperlambda',

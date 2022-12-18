@@ -12,8 +12,6 @@ import {
 } from '@angular/common/http';
 import { BackendsStorageService } from '../_general/services/backendsstorage.service';
 
-// Application specific imports.
-
 /**
  * HTTP client Authorization interceptor, to attach JWT token to all HTTP requests.
  */
