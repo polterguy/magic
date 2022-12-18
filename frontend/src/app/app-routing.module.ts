@@ -57,7 +57,7 @@ const routes: Routes = [
       },
       {
         path: 'hyperlambda-playground',
-        loadChildren: () => import('./_protected/pages/manage/hyperlambda-playground/_module/hl-playground.module').then(m => m.HlPlaygroundModule)
+        loadChildren: () => import('./_protected/pages/manage/hyperlambda-playground/_module/hyperlambda-playground.module').then(m => m.HyperlambdaPlaygroundModule)
       },
       {
         path: 'hyper-ide',

@@ -23,11 +23,11 @@ import hyperlambda_readonly from 'src/app/codemirror/options/hyperlambda_readonl
 import { FileService } from '../../create/hyper-ide/_services/file.service';
 
 @Component({
-  selector: 'app-hl-playground',
-  templateUrl: './hl-playground.component.html',
-  styleUrls: ['./hl-playground.component.scss']
+  selector: 'app-hyperlambda-playground',
+  templateUrl: './hyperlambda-playground.component.html',
+  styleUrls: ['./hyperlambda-playground.component.scss']
 })
-export class HlPlaygroundComponent implements OnInit, OnDestroy {
+export class HyperlambdaPlaygroundComponent implements OnInit, OnDestroy {
 
   /**
    * Input Hyperlambda component model and options.

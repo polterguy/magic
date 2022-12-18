@@ -4,13 +4,13 @@
  */
 
 import { NgModule } from '@angular/core';
-import { HlPlaygroundComponent } from '../hl-playground.component';
+import { HyperlambdaPlaygroundComponent } from '../hyperlambda-playground.component';
 import { Routes, RouterModule } from '@angular/router';
 
 const routes: Routes = [
   {
     path: '',
-    component: HlPlaygroundComponent
+    component: HyperlambdaPlaygroundComponent
   }
 ];
 
@@ -18,4 +18,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class HlPlaygroundRoutingModule { }
+export class HyperlambdaPlaygroundRoutingModule { }
