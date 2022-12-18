@@ -9,12 +9,16 @@ import { Endpoint } from '../../../../_general/models/endpoint.model';
 import { BehaviorSubject } from 'rxjs';
 import { EndpointService } from 'src/app/_general/services/endpoint.service';
 
+/**
+ * Endpoints component for displaying endpoints to user in a Swagger like UI, allowing
+ * the user to invoke endpoints, and/or see meta information associated with endpoints.
+ */
 @Component({
-  selector: 'app-generated-endpoints',
-  templateUrl: './generated-endpoints.component.html',
-  styleUrls: ['./generated-endpoints.component.scss']
+  selector: 'app-endpoints',
+  templateUrl: './endpoints.component.html',
+  styleUrls: ['./endpoints.component.scss']
 })
-export class GeneratedEndpointsComponent implements OnInit  {
+export class EndpointsComponent implements OnInit  {
 
   public selectedDb: string = 'Magic';
 

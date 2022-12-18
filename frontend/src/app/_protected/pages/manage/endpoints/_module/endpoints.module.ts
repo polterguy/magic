@@ -13,12 +13,12 @@ import { ComponentsModule } from 'src/app/_general/components/components.module'
 import { PreviewFileDialogComponent } from '../../../create/hyper-ide/components/preview-file-dialog/preview-file-dialog.component';
 import { EndpointsListComponent } from '../endpoints-list/endpoints-list.component';
 import { EndpointsResultComponent } from '../endpoints-result/endpoints-result.component';
-import { GeneratedEndpointsComponent } from '../generated-endpoints.component';
-import { GeneratedEndpointsRoutingModule } from './generated-endpoints.routing.module';
+import { EndpointsComponent } from '../endpoints.component';
+import { EndpointsRoutingModule } from './endpoints.routing.module';
 
 @NgModule({
   declarations: [
-    GeneratedEndpointsComponent,
+    EndpointsComponent,
     EndpointsListComponent,
     EndpointsResultComponent,
     PreviewFileDialogComponent,
@@ -30,8 +30,8 @@ import { GeneratedEndpointsRoutingModule } from './generated-endpoints.routing.m
     MaterialModule,
     CodemirrorModule,
     ComponentsModule,
-    GeneratedEndpointsRoutingModule,
+    EndpointsRoutingModule,
     SharedModule
   ]
 })
-export class GeneratedEndpointsModule { }
+export class EndpointsModule { }

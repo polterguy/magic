@@ -33,7 +33,7 @@ const routes: Routes = [
       },
       {
         path: 'endpoints',
-        loadChildren: () => import('./_protected/pages/manage/endpoints/_module/generated-endpoints.module').then(m => m.GeneratedEndpointsModule)
+        loadChildren: () => import('./_protected/pages/manage/endpoints/_module/endpoints.module').then(m => m.EndpointsModule)
       },
       {
         path: 'sockets',
