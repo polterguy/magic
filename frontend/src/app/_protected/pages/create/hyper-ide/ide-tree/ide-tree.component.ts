@@ -383,8 +383,11 @@ export class IdeTreeComponent implements OnInit {
   }
 
   public deleteActiveFolder(folder: any) {
-    let path: string = '';
-    folder.node ? path = folder.node.path : path = folder;
+    let path: string = folder.node ? folder.node.path : folder;
+    if (path === '/' || path === '/system/' || path === '/modules/') {
+      this.generalService.showFeedback('You cannot delete system folders', 'errorMessage', 'Ok', 3000);
+      return;
+    }
     this.dialog.open(ConfirmationDialogComponent, {
       width: '500px',
       data: {
