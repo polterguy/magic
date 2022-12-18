@@ -7,7 +7,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthRoutingModule } from './auth.routing.module';
 import { LoginComponent } from '../login/login.component';
-import { ResetPasswordComponent } from '../reset-password/reset-password.component';
 import { ForgotPasswordComponent } from '../forgot-password/forgot-password.component';
 import { MaterialModule } from 'src/app/material.module';
 import { ComponentsModule } from 'src/app/_general/components/components.module';
@@ -19,7 +18,6 @@ import { AutoAuthComponent } from '../auto-auth/auto-auth.component';
 @NgModule({
   declarations: [
     LoginComponent,
-    ResetPasswordComponent,
     ForgotPasswordComponent,
     AutoAuthComponent,
   ],

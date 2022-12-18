@@ -7,7 +7,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from '../login/login.component';
 import { ForgotPasswordComponent } from '../forgot-password/forgot-password.component';
-import { ResetPasswordComponent } from '../reset-password/reset-password.component';
 import { AutoAuthComponent } from '../auto-auth/auto-auth.component';
 
 const routes: Routes = [
@@ -18,10 +17,6 @@ const routes: Routes = [
   {
     path: 'forgot-password',
     component: ForgotPasswordComponent
-  },
-  {
-    path: 'reset-password',
-    component: ResetPasswordComponent
   },
   {
     path: 'auto-auth',
