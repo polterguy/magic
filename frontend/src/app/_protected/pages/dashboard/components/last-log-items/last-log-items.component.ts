@@ -7,6 +7,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { LastLogItems } from 'src/app/models/dashboard.model';
 import { LogItemDetailsComponent } from 'src/app/_general/components/log-item-details/log-item-details.component';
 
+/**
+ * Helper component for displaying latest log items from the dashboard.
+ */
 @Component({
   selector: 'app-last-log-items',
   templateUrl: './last-log-items.component.html',
@@ -36,11 +39,11 @@ export class LastLogItemsComponent implements OnInit, OnChanges {
 
   constructor(private dialog: MatDialog) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.watingData();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges() {
     this.watingData();
   }
 

@@ -1,5 +1,6 @@
 <mat-card class="h-100">
   <mat-card-content class="h-100">
+
     <div class="d-flex justify-content-between align-items-center">
       <p class="mb-0 mat-body-2 fw-bold">System logs</p>
       <a mat-button color="primary" routerLink="/log" class="p-0">See all</a>
@@ -7,28 +8,29 @@
 
     <div class="table-responsive w-100 log-table leave-as-normal">
       <table mat-table [dataSource]="dataSource" class="w-100">
-        <!-- data/time Column -->
+
+        <!-- Created column -->
         <ng-container matColumnDef="created">
           <th mat-header-cell *matHeaderCellDef> Date/time </th>
           <td mat-cell *matCellDef="let element" class="pr-3 text-nowrap"> {{element.created | since}} </td>
         </ng-container>
 
-        <!-- type Column -->
+        <!-- Type column -->
         <ng-container matColumnDef="type">
           <th mat-header-cell *matHeaderCellDef> Type </th>
           <td mat-cell *matCellDef="let element" class="pr-3"
             [class.error]="element.type === 'error' || element.type === 'fatal'"> {{element.type}} </td>
         </ng-container>
 
-        <!-- result Column -->
+        <!-- Content column -->
         <ng-container matColumnDef="content">
-          <th mat-header-cell *matHeaderCellDef> Result </th>
+          <th mat-header-cell *matHeaderCellDef> Content </th>
           <td mat-cell *matCellDef="let element" class="pr-3">
             <p class="my-0 text-truncate mx-width-100">{{element.content}} </p>
           </td>
         </ng-container>
 
-        <!-- more Column -->
+        <!-- More column, implying action buttons -->
         <ng-container matColumnDef="more">
           <th mat-header-cell *matHeaderCellDef>
             <span class="d-flex justify-content-end me-2">Details</span>
@@ -41,8 +43,11 @@
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
       </table>
     </div>
+
   </mat-card-content>
 </mat-card>
