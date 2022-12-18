@@ -115,12 +115,11 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
     private messageService: MessageService,
     private generalService: GeneralService,
     private sqlService: SqlService,
-    private backendService: BackendService,
     protected transformService: TransformModelService,
     private codemirrorActionsService: CodemirrorActionsService,
     @Inject(LOCALE_ID) public locale: string) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.watchDbLoading();
   }
 
@@ -130,7 +129,6 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
       this.selectedConnectionString = '';
       this.tables = [];
       if (isLoading === false) {
-
         this.waitingData();
         this.getOptions();
         this.watchForActions();
@@ -308,7 +306,7 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
     }
 
     this.crudifyService.generateSqlEndpoint(data).subscribe({
-      next: (res: any) => {
+      next: (y) => {
         this.generalService.showFeedback('SQL endpoint successfully created', 'successMessage');
         this.messageService.sendMessage({
           name: 'magic.folders.update',

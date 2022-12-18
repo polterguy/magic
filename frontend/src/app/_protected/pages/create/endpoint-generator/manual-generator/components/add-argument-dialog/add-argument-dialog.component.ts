@@ -39,7 +39,7 @@ export class AddArgumentDialogComponent implements OnInit {
     private dialogRef: MatDialogRef<AddArgumentDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Argument[]) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.selectedType = 'string';
   }
 

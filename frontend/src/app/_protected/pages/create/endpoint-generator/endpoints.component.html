@@ -1,6 +1,8 @@
 <mat-card class="h-100">
   <mat-card-content class="endpoint-generator h-100">
+
     <mat-tab-group mat-stretch-tabs dynamicHeight animationDuration="0ms" #tabs>
+
       <mat-tab>
         <ng-template mat-tab-label>Auto <span class="d-sm-inline d-none px-1">endpoint</span> generator</ng-template>
         <ng-template matTabContent>
@@ -10,6 +12,7 @@
             (getConnectionString)="getConnectionString($event)"></app-auto-generator>
         </ng-template>
       </mat-tab>
+
       <mat-tab>
         <ng-template mat-tab-label>SQL <span class="d-sm-inline d-none px-1">endpoint </span> generator</ng-template>
         <ng-template matTabContent>
@@ -19,6 +22,7 @@
             (getConnectionString)="getConnectionString($event)"></app-manual-generator>
         </ng-template>
       </mat-tab>
+
     </mat-tab-group>
 
   </mat-card-content>

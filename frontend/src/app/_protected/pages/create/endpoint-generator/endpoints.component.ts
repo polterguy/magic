@@ -13,6 +13,9 @@ import { SqlService } from '../../../../_general/services/sql.service';
 import { DefaultDatabaseType } from 'src/app/_general/models/default-database-type.model';
 import { Databases } from 'src/app/_general/models/databases.model';
 
+/**
+ * Common endpoint generator component for both auto CRUD API generator and SQL generator.
+ */
 @Component({
   selector: 'app-endpoints',
   templateUrl: './endpoints.component.html',
