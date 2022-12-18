@@ -12,6 +12,9 @@ import { ThemeService } from 'src/app/_general/services/theme.service';
 import { BackendService } from 'src/app/_general/services/backend.service';
 import { UserService } from '../../manage/user-and-roles/_services/user.service';
 
+/**
+ * Profile component, allowing user to edit his or her profile.
+ */
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',

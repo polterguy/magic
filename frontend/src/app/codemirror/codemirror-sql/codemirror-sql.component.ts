@@ -44,7 +44,7 @@ export class Model {
 }
 
 /**
- * CodeMirror component for allowing user to execute SQL.
+ * CodeMirror component for allowing user to edit SQL with syntax highlightning and auto complete.
  */
 @Component({
   selector: 'app-codemirror-sql',

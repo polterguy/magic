@@ -10,8 +10,7 @@ import { Backend } from 'src/app/_protected/models/common/backend.model';
 
 @Component({
   selector: 'app-auto-auth',
-  templateUrl: './auto-auth.component.html',
-  styleUrls: ['./auto-auth.component.scss']
+  templateUrl: './auto-auth.component.html'
 })
 export class AutoAuthComponent implements OnInit {
 
