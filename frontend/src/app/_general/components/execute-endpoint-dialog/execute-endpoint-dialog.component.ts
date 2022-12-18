@@ -28,6 +28,9 @@ import { CreateAssumptionTestDialogComponent, TestModel } from '../create-assump
 import { AssumptionService } from 'src/app/_general/services/assumption.service';
 import { AssumptionsComponent } from '../assumptions/assumptions.component';
 
+/**
+ * Dialog for executing endpoints from Hyper IDE.
+ */
 @Component({
   selector: 'app-execute-endpoint-dialog',
   templateUrl: './execute-endpoint-dialog.component.html',
@@ -119,7 +122,6 @@ export class ExecuteEndpointDialogComponent implements OnInit {
   }
 
   private getItemDetails() {
-
     this.itemDetails = [];
     this.parameters = [];
     this.result = null;
@@ -170,8 +172,7 @@ export class ExecuteEndpointDialogComponent implements OnInit {
         }
         payload[idx.name] = type;
       }
-      this.payload = JSON.stringify(payload, null, 2)
-      // setTimeout(() => this.payload = JSON.stringify(payload, null, 2), 250);
+      this.payload = JSON.stringify(payload, null, 2);
       setTimeout(() => {
         document.querySelectorAll('.CodeMirror').forEach(item => {
           var domNode = (<any>item);
@@ -495,6 +496,7 @@ export class ExecuteEndpointDialogComponent implements OnInit {
           (res.matchResponse && !this.result?.blob) ? this.result?.response : null,
           this.itemDetails.produces).subscribe({
             next: () => {
+
               /*
                * Snippet saved, showing user some feedback, and reloading assumptions.
                *

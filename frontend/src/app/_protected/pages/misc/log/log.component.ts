@@ -10,7 +10,7 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { LogItem } from './_models/log-item.model';
 import { PageEvent } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
-import { LogExceptionComponent } from '../../../../_general/components/log-exception/log-exception.component';
+import { LogItemDetailsComponent } from '../../../../_general/components/log-item-details/log-item-details.component';
 
 @Component({
   selector: 'app-log',
@@ -98,7 +98,7 @@ export class LogComponent implements OnInit {
   }
 
   viewException(item: any) {
-    this.dialog.open(LogExceptionComponent, {
+    this.dialog.open(LogItemDetailsComponent, {
       width: '700px',
       data: item
     })

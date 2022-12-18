@@ -23,7 +23,7 @@ import { ExecuteEndpointDialogComponent } from './execute-endpoint-dialog/execut
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import { GithubTokenDialogComponent } from '../../_protected/pages/user/github-token-dialog/github-token-dialog.component';
 import { PwaUpdateDialogComponent } from './pwa-update-dialog/pwa-update-dialog.component';
-import { LogExceptionComponent } from './log-exception/log-exception.component';
+import { LogItemDetailsComponent } from './log-item-details/log-item-details.component';
 import { SearchboxComponent } from 'src/app/_protected/pages/manage/plugins/components/searchbox/searchbox.component';
 import { SplashDialogComponent } from '../../_protected/pages/dashboard/components/splash-dialog/splash-dialog.component';
 
@@ -44,7 +44,7 @@ import { SplashDialogComponent } from '../../_protected/pages/dashboard/componen
     ExecuteEndpointDialogComponent,
     GithubTokenDialogComponent,
     PwaUpdateDialogComponent,
-    LogExceptionComponent,
+    LogItemDetailsComponent,
     SearchboxComponent,
     SplashDialogComponent,
   ],
@@ -70,7 +70,7 @@ import { SplashDialogComponent } from '../../_protected/pages/dashboard/componen
     SnippetNameDialogComponent,
     ExecuteEndpointDialogComponent,
     GithubTokenDialogComponent,
-    LogExceptionComponent,
+    LogItemDetailsComponent,
     SearchboxComponent,
   ]
 })

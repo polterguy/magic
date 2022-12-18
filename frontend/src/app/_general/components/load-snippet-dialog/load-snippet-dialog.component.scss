@@ -1,9 +1,8 @@
-
 /*
  * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
- .mat-list-option {
+.mat-list-option {
   height: 40px;
 }
 
@@ -14,7 +13,7 @@
 
 .file-content {
 
-  ::ng-deep .mat-list-base .mat-list-item .mat-list-item-content-reverse,
+  .mat-list-base .mat-list-item .mat-list-item-content-reverse,
   .mat-list-base .mat-list-option .mat-list-item-content-reverse {
     word-break: break-all;
     height: unset;
