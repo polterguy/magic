@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { BackendService } from '../../../_general/services/backend.service';
@@ -8,6 +13,10 @@ import { ConfigureThemeDialog } from 'src/app/_protected/pages/dashboard/compone
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 
+/**
+ * Primary dashboard component, displaying dashboard information, such as
+ * charts, statistics, general information, etc.
+ */
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html'
@@ -54,7 +63,6 @@ export class DashboardComponent implements OnInit {
   }
 
   private waitForData() {
-
     if (this.backendService.active?.token?.in_role('root')) {
       this.getSystemReport();
       this.userIsRoot = (this.backendService.active?.token?.in_role('root'));
@@ -70,6 +78,7 @@ export class DashboardComponent implements OnInit {
    */
   private getSystemReport() {
     this.cdr.markForCheck();
+
     // Avoiding race conditions.
     if (this._isRetrievingSystemReport) {
       return;
