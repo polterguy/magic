@@ -1,4 +1,5 @@
 <h3 mat-dialog-title>Rename folder</h3>
+
 <form>
   <div mat-dialog-content>
 
@@ -7,12 +8,12 @@
         <mat-icon class="mat-icon-rtl-mirror">folder</mat-icon>
         <span class="text-muted">|</span>
       </span>
+
       <input type="text" matInput autocomplete="off" [(ngModel)]="newName" name="name">
       <mat-hint *ngIf="(data.name && !pathValid()) || data.name === originalName">
         <span *ngIf="!pathValid()">Name is required and cannot contain blank space or special characters.</span>
         <span *ngIf="data.name === originalName">New name cannot be the same as the current name.</span>
       </mat-hint>
-
     </mat-form-field>
 
   </div>
