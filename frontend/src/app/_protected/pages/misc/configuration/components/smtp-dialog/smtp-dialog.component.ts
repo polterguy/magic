@@ -6,6 +6,9 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
+/**
+ * Helper modal dialog to allow user to configure his SMTP server settings.
+ */
 @Component({
   selector: 'app-smtp-dialog',
   templateUrl: './smtp-dialog.component.html'
@@ -30,7 +33,7 @@ export class SmtpDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<SmtpDialogComponent>) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     if (this.data) {
       this.setFormFields();
     }

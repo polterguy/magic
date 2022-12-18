@@ -15,6 +15,9 @@ import { CodemirrorActionsService } from '../../create/hyper-ide/_services/codem
 import { Subscription } from 'rxjs';
 import { SmtpDialogComponent } from './components/smtp-dialog/smtp-dialog.component';
 
+/**
+ * Helper component allowing user to edit his configuration settings.
+ */
 @Component({
   selector: 'app-configuration',
   templateUrl: './configuration.component.html',
@@ -58,7 +61,6 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     private configService: ConfigService,
     public backendService: BackendService,
     private generalService: GeneralService,
-    private activatedRoute: ActivatedRoute,
     private codemirrorActionsService: CodemirrorActionsService) {
   }
 
@@ -146,9 +148,7 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     })
   }
 
-  ngOnDestroy(): void {
-    if (this.codemirrorActionSubscription) {
-      this.codemirrorActionSubscription.unsubscribe();
-    }
+  ngOnDestroy() {
+    this.codemirrorActionSubscription?.unsubscribe();
   }
 }
