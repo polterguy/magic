@@ -11,6 +11,10 @@ import { ManageRoleDialogComponent } from '../components/manage-role-dialog/mana
 import { Role } from '../_models/role.model';
 import { RoleService } from '../_services/role.service';
 
+/**
+ * Helper component for displaying all roles in the system, and allowing the user to edit
+ * and manage his or her roles.
+ */
 @Component({
   selector: 'app-roles-list',
   templateUrl: './roles-list.component.html',

@@ -7,12 +7,14 @@ import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { BehaviorSubject } from 'rxjs';
-import { BackendService } from '../../../../_general/services/backend.service';
 import { Role } from './_models/role.model';
 import { User } from './_models/user.model';
 import { RoleService } from './_services/role.service';
 import { UserService } from './_services/user.service';
 
+/**
+ * Helper component allowing user to edit and manage his or her roles and users in the system.
+ */
 @Component({
   selector: 'app-user-roles',
   templateUrl: './user-roles.component.html'
@@ -30,7 +32,7 @@ export class UserRolesComponent implements OnInit {
   currentPage: number = 0;
   pageEvent!: PageEvent;
 
-  @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
+  @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -43,14 +45,13 @@ export class UserRolesComponent implements OnInit {
 
   public tabChange(event: MatTabChangeEvent) {
     if (event.index === 0) {
-      this.getUsersList({search: ''});
+      this.getUsersList({ search: '' });
     } else {
-      this.getRolesList({search: ''});
+      this.getRolesList({ search: '' });
     }
   }
 
   public getUsersList(event?: { search: string }) {
-    // Resets pagination while sorting the table.
     if (event && event.search) {
       this.paginator.pageIndex = 0;
       this.currentPage = 0;
@@ -67,7 +68,7 @@ export class UserRolesComponent implements OnInit {
         res ? this.countUser(event) : this.resultsLength = 0;
         this.cdr.detectChanges();
       },
-      error: (error: any) => {}
+      error: (error: any) => { }
     })
   }
 
@@ -101,7 +102,7 @@ export class UserRolesComponent implements OnInit {
         res ? this.countRole(event) : this.resultsLength = 0;
         this.cdr.detectChanges();
       },
-      error: (error: any) => {}
+      error: (error: any) => { }
     })
   }
 
@@ -117,7 +118,7 @@ export class UserRolesComponent implements OnInit {
           this.isLoading = false;
           this.cdr.detectChanges();
         },
-        error: (error: any) => {}
+        error: (error: any) => { }
       })
     } else { this.isLoading = false; return }
   }

@@ -3,9 +3,14 @@
 
     <mat-tab-group mat-stretch-tabs dynamicHeight animationDuration="0ms" (selectedTabChange)="tabChange($event)" #tabs>
 
+      <!-- User management -->
       <mat-tab>
+
         <ng-template mat-tab-label>User <span class="d-sm-inline d-none ps-1">Management</span></ng-template>
+
         <ng-template matTabContent>
+
+          <!-- Loader skeleton -->
           <ng-container *ngIf="isLoading;else dataLoadedUsers">
 
             <div class="row mt-3">
@@ -16,6 +21,8 @@
             </div>
 
           </ng-container>
+
+          <!-- Users in the system -->
           <ng-template #dataLoadedUsers>
             <app-shared-top-bar [tab]="'user'" [rolesList]="roles | async" [accessPermissions]="accessPermissions"
               (getUsersList)="getUsersList($event)"></app-shared-top-bar>
@@ -23,18 +30,25 @@
             <app-users-list [usersList]="users | async" [rolesList]="roles | async"
               (getUsersList)="getUsersList($event)"></app-users-list>
           </ng-template>
+
         </ng-template>
+
       </mat-tab>
 
+      <!-- Role management -->
       <mat-tab>
-        <ng-template mat-tab-label>Role <span class="d-sm-inline d-none ps-1">Management</span></ng-template>
-        <ng-template matTabContent>
-          <ng-container *ngIf="isLoading;else dataLoadedRoles">
 
+        <ng-template mat-tab-label>Role <span class="d-sm-inline d-none ps-1">Management</span></ng-template>
+
+        <ng-template matTabContent>
+
+          <!-- Loader skeleton -->
+          <ng-container *ngIf="isLoading;else dataLoadedRoles">
             <app-loading-skeleton [amount]="5" [colClass]="'col-12'" [blockHeight]="'40px'"
               [hasShadow]="false"></app-loading-skeleton>
-
           </ng-container>
+
+          <!-- Role management  -->
           <ng-template #dataLoadedRoles>
             <app-shared-top-bar [tab]="'role'" [rolesList]="roles | async" [accessPermissions]="accessPermissions"
               (getRolesList)="getRolesList($event)"></app-shared-top-bar>
@@ -42,7 +56,9 @@
             <app-roles-list [rolesList]="roles | async" [accessPermissions]="accessPermissions"
               (getRolesList)="getRolesList($event)"></app-roles-list>
           </ng-template>
+
         </ng-template>
+
       </mat-tab>
     </mat-tab-group>
 
