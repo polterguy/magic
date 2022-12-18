@@ -17,7 +17,7 @@ import { TransformModelService } from '../../../create/endpoint-generator/_servi
 import { Argument } from '../../../manage/endpoints/_models/argument.model';
 import { Role } from '../../../manage/user-and-roles/_models/role.model';
 import { SqlService } from '../../../../../_general/services/sql.service';
-import { AddArgumentDialogComponent } from '../components/add-argument-dialog/add-argument-dialog.component';
+import { AddArgumentDialogComponent } from './components/add-argument-dialog/add-argument-dialog.component';
 import { SqlSnippetDialogComponent } from '../../../create/sql-studio/components/sql-snippet-dialog/sql-snippet-dialog.component';
 
 // CodeMirror options.
@@ -186,6 +186,7 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
   }
 
   public generateEndpoints() { }
+
   public addArgument() {
     this.dialog.open(AddArgumentDialogComponent, {
       width: '500px',
