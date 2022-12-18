@@ -17,6 +17,10 @@ export interface FKModel {
   long_data: boolean
 }
 
+/**
+ * Popup that display all possibly foreign key string references, allowing user to select how to display
+ * foreign key.
+ */
 @Component({
   selector: 'app-foreign-key-list',
   templateUrl: './foreign-key-list.component.html',
@@ -37,7 +41,7 @@ export class ForeignKeyListComponent implements AfterViewInit {
     this.data.currentForeignKey = table.foreign_keys.find((fk: any) => fk.column === this.data.columnName)
 
     currentDb.tables.map((item: any) => {
-      if (item.name ===  this.data.currentForeignKey.foreign_table) {
+      if (item.name === this.data.currentForeignKey.foreign_table) {
         this.fkList = item.columns;
       }
     })

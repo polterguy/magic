@@ -76,10 +76,8 @@
         <mat-menu #templateMenu="matMenu">
           <ng-template matMenuContent let-element="element">
             <button mat-menu-item (click)="element.handling = ''; element.locked = false;">None</button>
-            <button mat-menu-item *ngFor="let item of templateList | keyvalue"
-              (click)="changeTemplate(element, item);"
-              [matTooltip]="getTemplateTooltip(item.key)"
-              matTooltipPosition="after">{{item.value}}</button>
+            <button mat-menu-item *ngFor="let item of templateList | keyvalue" (click)="changeTemplate(element, item);"
+              [matTooltip]="getTemplateTooltip(item.key)" matTooltipPosition="after">{{item.value}}</button>
           </ng-template>
         </mat-menu>
       </td>

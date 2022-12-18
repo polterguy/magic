@@ -14,8 +14,6 @@ import { UploadExistingComponent } from '../upload-existing/upload-existing.comp
 import { FormsModule } from '@angular/forms';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 
-
-
 @NgModule({
   declarations: [
     FrontendGeneratorComponent,

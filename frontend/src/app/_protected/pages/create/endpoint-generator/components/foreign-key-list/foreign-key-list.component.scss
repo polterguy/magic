@@ -1,4 +1,3 @@
-
 @import '../../../../../../../assets/styles/_variables/colors.scss';
 @import '../../../../../../../assets/styles/_variables/mixin.scss';
 
@@ -8,9 +7,11 @@
   min-width: 200px;
   overflow: hidden auto;
   @include scrollbar($aista_default_alt, $aista_default_grey4, 5px);
+
   .text-muted {
     opacity: 0.5;
   }
+
   .selected {
     font-weight: bold;
   }

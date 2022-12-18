@@ -1,15 +1,19 @@
 <div class="foreign-keys">
+
   <mat-selection-list [multiple]="false" dense [(ngModel)]="foreignKey" (selectionChange)="save()">
-    <mat-list-option *ngFor="let item of fkList" [class.selected]="item.name === data.currentForeignKey.column" [class.d-none]="item.hl !== 'string'" [value]="item.name">
+    <mat-list-option *ngFor="let item of fkList" [class.selected]="item.name === data.currentForeignKey.column"
+      [class.d-none]="item.hl !== 'string'" [value]="item.name">
       {{data.currentForeignKey.foreign_table}}.{{item.name}}[{{item.hl}}]
     </mat-list-option>
   </mat-selection-list>
+
   <mat-list role="list" dense>
     <mat-list-item role="listitem" class="text-muted" *ngFor="let item of fkList" [class.d-none]="item.hl === 'string'"
       (click)="$event.stopPropagation()">
       {{data.currentForeignKey.foreign_table}}.{{item.name}}[{{item.hl}}]
     </mat-list-item>
   </mat-list>
+
 </div>
 
 <p class="d-flex justify-content-end pe-3" (click)="$event.stopPropagation()">
