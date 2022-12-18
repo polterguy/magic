@@ -3,7 +3,7 @@
  * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
 import { CommonRegEx } from 'src/app/_general/classes/common-regex';
@@ -13,7 +13,7 @@ import { GeneralService } from 'src/app/_general/services/general.service';
   selector: 'app-snippet-name-dialog',
   templateUrl: './snippet-name-dialog.component.html'
 })
-export class SnippetNameDialogComponent implements OnInit {
+export class SnippetNameDialogComponent {
 
   public CommonRegEx = CommonRegEx;
   public CommonErrorMessages = CommonErrorMessages;
@@ -22,9 +22,6 @@ export class SnippetNameDialogComponent implements OnInit {
     private generalService: GeneralService,
     private dialogRef: MatDialogRef<SnippetNameDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: string) { }
-
-  ngOnInit(): void {
-  }
 
   public save() {
     if (!this.validateName() || this.data === '') {

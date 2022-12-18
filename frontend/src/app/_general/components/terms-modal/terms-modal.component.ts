@@ -5,6 +5,9 @@
 
 import { Component } from '@angular/core';
 
+/**
+ * Dialog for showing user terms of service.
+ */
 @Component({
   selector: 'app-terms-modal',
   templateUrl: './terms-modal.component.html'
