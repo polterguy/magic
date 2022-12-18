@@ -6,7 +6,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ReplaySubject, Subject } from 'rxjs';
+import { ReplaySubject } from 'rxjs';
 import { Databases } from 'src/app/_general/models/databases.model';
 import { CacheService } from 'src/app/_general/services/cache.service';
 import { GeneralService } from 'src/app/_general/services/general.service';
@@ -16,6 +16,9 @@ import { ExportDdlComponent } from './components/export-ddl/export-ddl.component
 import { LinkTableComponent } from './components/link-table/link-table.component';
 import { NewTableComponent } from './components/new-table/new-table.component';
 
+/**
+ * SQL Studio component allowing user to execute SQL, and edit his or her database.
+ */
 @Component({
   selector: 'app-sql-studio',
   templateUrl: './sql-studio.component.html'

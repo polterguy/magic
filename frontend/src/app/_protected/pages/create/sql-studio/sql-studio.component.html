@@ -1,12 +1,14 @@
 <mat-card>
   <mat-card-content>
+
     <div class="row align-items-stretch">
       <div class="col-lg-auto col-12 align-self-center">
         <p class="fw-bold mb-lg-0">Select a database</p>
       </div>
 
-      <!-- database types -->
+      <!-- Database types -->
       <div class="col-md col-sm-6 col-12" [class.col-md-3]="dbLoading | async">
+
         <mat-form-field class="w-100 standalone-field mb-lg-0 mb-2">
           <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>database</mat-icon>
@@ -18,14 +20,17 @@
             <mat-option *ngFor="let item of databaseTypes" [value]="item.type">{{item.name}}</mat-option>
           </mat-select>
         </mat-form-field>
+
       </div>
 
-      <!-- connection string -->
+      <!-- Connection strings for currently selected database type -->
       <div class="col-md col-sm-6 col-12" [class.col-md-2]="dbLoading | async">
+
         <ng-container *ngIf="dbLoading | async">
           <app-loading-skeleton [amount]="1" [colClass]="'col-12'" [blockHeight]="'45px'"
             [hasShadow]="false"></app-loading-skeleton>
         </ng-container>
+
         <mat-form-field class="w-100 standalone-field mb-lg-0 mb-2" *ngIf="!(dbLoading | async)">
           <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>conversion_path</mat-icon>
@@ -37,14 +42,17 @@
             <mat-option *ngFor="let item of connectionStrings | keyvalue" [value]="item.key">{{item.key}}</mat-option>
           </mat-select>
         </mat-form-field>
+
       </div>
 
-      <!-- databases list -->
+      <!-- List of databases in currently open connection string -->
       <div class="col-md col-sm-6 col-12" [class.col-md-2]="dbLoading | async">
+
         <ng-container *ngIf="dbLoading | async">
           <app-loading-skeleton [amount]="1" [colClass]="'col-12'" [blockHeight]="'45px'"
             [hasShadow]="false"></app-loading-skeleton>
         </ng-container>
+
         <mat-form-field class="w-100 standalone-field mb-lg-0 mb-2" *ngIf="!(dbLoading | async)">
           <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>database</mat-icon>
@@ -56,6 +64,7 @@
                 class="ms-2 mat-caption text-muted">{{item?.tables?.length ?? 0}} table(s)</span></mat-option>
           </mat-select>
         </mat-form-field>
+
       </div>
 
       <div class="col align-self-center">
@@ -80,7 +89,7 @@
             {{sqlView ? 'Table view' : 'SQL view'}}
           </button>
 
-          <!-- Menu for more button -->
+          <!-- "More" button showing additional action menu items -->
           <mat-menu #menu="matMenu">
 
             <button mat-menu-item (click)="exportDatabase()">
@@ -103,11 +112,14 @@
         </div>
       </div>
     </div>
+
   </mat-card-content>
 </mat-card>
 
 <div class="row mt-4">
+
   <div class="col-12">
+
     <app-tables-view *ngIf="sqlView === false" [migrate]="migrate" [dbLoading]="dbLoading|async" [tables]="tables" [databases]="databases"
       [selectedDatabase]="selectedDatabase" [selectedDbType]="selectedDbType"
       [selectedConnectionString]="selectedConnectionString" (getDatabases)="getDatabases($event)"></app-tables-view>
@@ -118,4 +130,5 @@
       (getDatabases)="getDatabases($event)"></app-sql-view>
 
   </div>
+
 </div>

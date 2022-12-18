@@ -13,6 +13,10 @@ import { AddFieldComponent } from '../add-field/add-field.component';
 import { AddMigrateScriptComponent } from '../add-migrate-script/add-migrate-script.component';
 import { ExportDdlComponent } from '../export-ddl/export-ddl.component';
 
+/**
+ * Helper component for SQL Studio allowing user to view database in table view, and
+ * editing database, by adding new tables, fields, keys, etc to his database fo choice.
+ */
 @Component({
   selector: 'app-tables-view',
   templateUrl: './tables-view.component.html',
@@ -41,7 +45,7 @@ export class TablesViewComponent implements OnInit, OnDestroy {
     private sqlService: SqlService,
     private generalService: GeneralService) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.tableSubscription = this.tables.subscribe((res: any) => {
       this.tablesList = res;
     });
@@ -273,9 +277,6 @@ export class TablesViewComponent implements OnInit, OnDestroy {
     }
   }
 
-  /*
-   * Open up apply migrate script dialog.
-   */
   private applyMigration(sql: string) {
     if (!this.migrate) {
       return;
