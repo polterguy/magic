@@ -9,8 +9,6 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { MacroDefinition } from '../../_models/macro-definition.model';
 
-// Application specific imports.
-
 /**
  * Modal dialog allowing you to parametrise and execute a macro.
  */

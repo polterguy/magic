@@ -15,7 +15,6 @@ import { IdeEditorComponent } from '../ide-editor/ide-editor.component';
 import { IdeSearchboxComponent } from '../ide-searchbox/ide-searchbox.component';
 import { IdeTreeComponent } from '../ide-tree/ide-tree.component';
 import { IdeRoutingModule } from './ide.routing.module';
-import { ExecuteEndpointDialogComponent } from '../components/execute-endpoint-dialog/execute-endpoint-dialog.component';
 import { ExecuteMacroDialogComponent } from '../components/execute-macro-dialog/execute-macro-dialog.component';
 import { IncompatibleFileDialogComponent } from '../components/incompatible-file-dialog/incompatible-file-dialog.component';
 import { NewFileFolderDialogComponent } from '../components/new-file-folder-dialog/new-file-folder-dialog.component';
@@ -30,7 +29,6 @@ import { UnsavedChangesDialogComponent } from '../components/unsaved-changes-dia
     IdeTreeComponent,
     IdeEditorComponent,
     IdeSearchboxComponent,
-    ExecuteEndpointDialogComponent,
     ExecuteMacroDialogComponent,
     IncompatibleFileDialogComponent,
     NewFileFolderDialogComponent,
