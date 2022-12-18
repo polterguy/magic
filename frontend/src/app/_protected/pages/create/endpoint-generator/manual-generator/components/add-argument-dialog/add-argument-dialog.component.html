@@ -2,19 +2,21 @@
 <h3 mat-dialog-title>Add new argument</h3>
 
 <div mat-dialog-content>
-  <mat-form-field class="w-100 text-prefix">
-    <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
-      Name
+  <mat-form-field class="w-100">
+    <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+      <mat-icon>edit</mat-icon>
+      <span class="text-muted">|</span>
     </span>
 
-    <input matInput type="text" placeholder="Argument's name" [(ngModel)]="name" [pattern]="CommonRegEx.appNames"
+    <input matInput type="text" placeholder="Name" [(ngModel)]="name" [pattern]="CommonRegEx.appNames"
       #argName>
     <mat-error>{{CommonErrorMessages.appNames}}</mat-error>
   </mat-form-field>
 
-  <mat-form-field class="w-100 text-prefix">
-    <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
-      Type
+  <mat-form-field class="w-100">
+    <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+      <mat-icon>dehaze</mat-icon>
+      <span class="text-muted">|</span>
     </span>
 
     <mat-select placeholder="Type" [(ngModel)]="selectedType">
