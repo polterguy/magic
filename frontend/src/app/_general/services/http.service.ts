@@ -66,7 +66,7 @@ export class HttpService {
   }
 
   /**
-   * Invokes the HTTP GET verb towards your specified URL
+   * Invokes the HTTP POST verb towards your specified URL
    * in your currently selected backend, and returns the result.
    *
    * @param url Backend URL to endpoint
