@@ -22,6 +22,10 @@ import hyperlambda from 'src/app/codemirror/options/hyperlambda.json';
 import hyperlambda_readonly from 'src/app/codemirror/options/hyperlambda_readonly.json';
 import { FileService } from '../../create/hyper-ide/_services/file.service';
 
+/**
+ * Hyperlambda Playground component, allowing user to execute arbitrary Hyperlambda, and/or
+ * save/load snippets for later.
+ */
 @Component({
   selector: 'app-hyperlambda-playground',
   templateUrl: './hyperlambda-playground.component.html',

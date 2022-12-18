@@ -13,14 +13,18 @@ import { Message } from 'src/app/_protected/models/common/message.model';
 import { BackendService } from 'src/app/_general/services/backend.service';
 import { SocketUser } from '../endpoints/_models/socket-user.model';
 import { SubscribeDialogComponent } from './components/subscribe-dialog/subscribe-dialog.component';
-import { PublishedMessages } from './_models/socket';
+import { PublishedMessage } from './_models/published-message';
 import { SocketService } from './_services/socket.service';
 import { MessageWrapper, PublishDialogComponent } from './components/publish-dialog/publish-dialog.component';
 
+/**
+ * Helper component for displaying all socket messages as published by backend, and allowing
+ * user to subscribe to messages, and/or publish messages.
+ */
 @Component({
-  selector: 'app-generated-sockets',
-  templateUrl: './generated-sockets.component.html',
-  styleUrls: ['./generated-sockets.component.scss']
+  selector: 'app-sockets',
+  templateUrl: './sockets.component.html',
+  styleUrls: ['./sockets.component.scss']
 })
 export class GeneratedSocketsComponent implements OnInit, OnDestroy {
 
@@ -45,8 +49,8 @@ export class GeneratedSocketsComponent implements OnInit, OnDestroy {
    */
   selectedUsers: string[] = [];
 
-  public publishedMessages: PublishedMessages[] = [];
-  public CopyPublishedMessages: PublishedMessages[] = [];
+  public publishedMessages: PublishedMessage[] = [];
+  public CopyPublishedMessages: PublishedMessage[] = [];
 
   public searchKey: string = '';
 
@@ -126,7 +130,7 @@ export class GeneratedSocketsComponent implements OnInit, OnDestroy {
 
   private getMessages() {
     this.socketService.socketMessages().subscribe({
-      next: (res: PublishedMessages[]) => {
+      next: (res: PublishedMessage[]) => {
         this.publishedMessages = res || [];
         this.CopyPublishedMessages = res || [];
       },

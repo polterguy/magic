@@ -6,6 +6,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
+/**
+ * Search textbox for filtering stuff in general.
+ */
 @Component({
   selector: 'app-searchbox',
   templateUrl: './searchbox.component.html'

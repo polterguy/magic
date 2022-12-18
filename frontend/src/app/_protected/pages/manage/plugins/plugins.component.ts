@@ -18,6 +18,9 @@ import { CacheService } from 'src/app/_general/services/cache.service';
 import { BazarService } from 'src/app/_general/services/bazar.service';
 import { BazarApp } from 'src/app/models/bazar-app.model';
 
+/**
+ * Plugin component displaying available plugins that can be installed in the system.
+ */
 @Component({
   selector: 'app-plugins',
   templateUrl: './plugins.component.html',
@@ -36,10 +39,6 @@ export class PluginsComponent implements OnInit {
 
   public currentStage: string = 'Preparing plugin to be downloaded.';
 
-  /**
-   * SignalR hub connection, used to connect to Bazar server and get notifications
-   * when app is ready to be installed.
-   */
   private hubConnection: HubConnection = null;
 
   public searchKey: Observable<string>;
@@ -52,7 +51,7 @@ export class PluginsComponent implements OnInit {
     private configService: ConfigService,
     private generalService: GeneralService) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.getItems();
   }
 

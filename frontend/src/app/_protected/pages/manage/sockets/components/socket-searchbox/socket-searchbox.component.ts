@@ -5,6 +5,9 @@
 
 import { Component, EventEmitter, Output } from '@angular/core';
 
+/**
+ * Filtering textbox for searching through socket messages as published by the backend.
+ */
 @Component({
   selector: 'app-socket-searchbox',
   templateUrl: './socket-searchbox.component.html'
@@ -17,7 +20,7 @@ export class SocketSearchboxComponent {
    * Invoking endpoint to search in unique fields.
    * @params event
    */
-   public applyFilter(keyword: string) {
+  public applyFilter(keyword: string) {
     this.filterList.emit(keyword);
   }
 
@@ -28,5 +31,4 @@ export class SocketSearchboxComponent {
   public removeSearchTerm() {
     this.filterList.emit('');
   }
-
 }

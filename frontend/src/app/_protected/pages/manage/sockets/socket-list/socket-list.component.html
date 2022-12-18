@@ -1,19 +1,24 @@
 <mat-card *ngFor="let item of publishedMessages" class="mb-3">
   <mat-card-content>
+
     <div class="d-flex justify-content-between flex-xl-row flex-column align-items-xl-center">
+
       <div>
         <p>
-          Name: <span class="text-muted">{{item?.name}}</span>
+          Name: <span class="text-muted">{{item.name}}</span>
         </p>
         <p>
-          Path: <span class="text-muted">{{item?.path}}</span>
+          Path: <span class="text-muted">{{item.path}}</span>
         </p>
       </div>
+
       <div class="d-flex justify-content-end">
         <button mat-button color="primary" (click)="publish(item)">Publish</button>
         <button mat-flat-button color="primary" class="px-4"
           (click)="subscribeToPublishedMessage(item.name)">Subscribe</button>
       </div>
+
     </div>
+
   </mat-card-content>
 </mat-card>

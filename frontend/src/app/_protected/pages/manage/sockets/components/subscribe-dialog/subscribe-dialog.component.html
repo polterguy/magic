@@ -1,6 +1,8 @@
 <h3 mat-dialog-title>Subscribe to message</h3>
+
 <form>
   <div mat-dialog-content>
+    
     <mat-form-field class="w-100 standalone-field">
       <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
         <mat-icon>edit_note</mat-icon>
@@ -9,10 +11,12 @@
 
       <input matInput placeholder="Message name" [(ngModel)]="name" name="-" autocomplete="off">
     </mat-form-field>
+
   </div>
 
   <div mat-dialog-actions [align]="'end'">
     <button mat-button color="primary" class="me-2" type="button">Cancel</button>
     <button mat-flat-button color="primary" type="submit" class="px-5" (click)="connect()">Subscribe</button>
   </div>
+
 </form>
