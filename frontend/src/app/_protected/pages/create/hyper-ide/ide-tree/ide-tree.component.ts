@@ -106,6 +106,7 @@ export class IdeTreeComponent implements OnInit {
     private codemirrorActionsService: CodemirrorActionsService) { }
 
   ngOnInit() {
+    root.children = [];
     if (this.type === 'frontend') {
       this.activeFolder = '/etc/www/';
       this.currentFolder = '/etc/www/';
@@ -115,7 +116,7 @@ export class IdeTreeComponent implements OnInit {
         this.getEndpoints();
         this.refetchEndpointsList();
       }
-    })
+    });
   }
 
   /**
@@ -259,8 +260,7 @@ export class IdeTreeComponent implements OnInit {
               functor(files || [], false);
               if (folder === '/') {
 
-                // Preparing a list of file systems,
-                // if file system is enabled
+                // Preparing a list of file systems, if system files are enabled.
                 const name1: any = [];
                 if (this.systemFiles) {
                   name1.push(root.children.filter(newData => !this.dataSource.data.map(oldData => oldData.name).includes(newData.name)));
@@ -274,13 +274,13 @@ export class IdeTreeComponent implements OnInit {
                   this.dataSource.data = root.children;
                 }
 
-                // if file system is enabled, then set a new field as systemFile to true
+                // If system files are enabled, set field valu to recognise them in view.
                 if (this.systemFiles) {
                   this.dataSource.data.map(x => name1[0].forEach((element: any) => {
                     if (x.name === element.name) {
                       x['systemFile'] = true;
                     }
-                  }))
+                  }));
                 }
               }
 
