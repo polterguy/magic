@@ -13,6 +13,9 @@ import { GithubTokenDialogComponent } from 'src/app/_protected/pages/user/genera
 import { Status } from 'src/app/_protected/models/common/status.model';
 import { Router } from '@angular/router';
 
+/**
+ * Header component showing navbar links and backend switcher.
+ */
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
@@ -20,24 +23,12 @@ import { Router } from '@angular/router';
 })
 export class HeaderComponent implements OnInit {
 
-  /**
-   * Header's links.
-   */
   public navLinks: NavLinks[] = [];
 
-  /**
-   * Specifies the active backend's url.
-   */
   public activeUrl: string = '';
 
-  /**
-   * Stores the list of backends.
-   */
   public backendList: any = [];
 
-  /**
-   * a variable to define the sidebar status
-   */
   public sideExpanded: boolean = false;
 
   public isAffiliate: boolean = false;
@@ -193,10 +184,6 @@ export class HeaderComponent implements OnInit {
     this.checkActiveLink(this.router.url);
   }
 
-  /**
-   * To set the active link visually.
-   * @param currentUrl active nav item's url.
-   */
   public checkActiveLink(currentUrl: string) {
     this.navLinks.forEach((item: any) => {
       if (item.submenu) {
@@ -205,9 +192,6 @@ export class HeaderComponent implements OnInit {
     })
   }
 
-  /**
-   * changing status of the sidebar
-   */
   public toggleSidebar() {
     this.sideExpanded = !this.sideExpanded;
   }
@@ -220,9 +204,6 @@ export class HeaderComponent implements OnInit {
     this.toggleSidebar();
   }
 
-  /**
-   * Logs the user out of his current backend.
-   */
   public getGithubToken(clickType: string) {
     if (clickType !== 'Generate Token') {
       return;
@@ -239,9 +220,6 @@ export class HeaderComponent implements OnInit {
     })
   }
 
-  /**
-   * Logs the user out of his current backend.
-   */
   public logout(clickType: string) {
     if (clickType !== 'Logout') {
       return;
