@@ -172,8 +172,7 @@
 <!-- Invisible helper input for allowing user to upload filrs -->
 <input type="file" [(ngModel)]="fileInput" #file multiple class="d-none" (change)="uploadFiles($event.target.files)">
 
-<input type="file" [(ngModel)]="zipFileInput" #zipfile class="d-none"
-  accept="zip"
+<input type="file" [(ngModel)]="zipFileInput" #zipfile class="d-none" accept="zip"
   (change)="installModule($event.target.files)">
 
 <div class="overlay" *ngIf="showRenameBox!==null" (click)="showRenameBox=null"></div>
