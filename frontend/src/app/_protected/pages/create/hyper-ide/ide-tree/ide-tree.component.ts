@@ -114,7 +114,6 @@ export class IdeTreeComponent implements OnInit {
     this.getFilesFromServer().then((res: boolean) => {
       if (res === true) {
         this.getEndpoints();
-        this.refetchEndpointsList();
       }
     });
   }
@@ -205,14 +204,6 @@ export class IdeTreeComponent implements OnInit {
       },
       error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
     });
-  }
-
-  /**
-   * Fetching list of endpoints to be used throughout the app.
-   * Only invokes when requesting a refrech of the list.
-   */
-  public refetchEndpointsList() {
-    this.getEndpoints();
   }
 
   /**
@@ -590,7 +581,7 @@ export class IdeTreeComponent implements OnInit {
           this.dataBindTree();
           this.cdr.detectChanges();
           this.generalService.showFeedback('File successfully renamed', 'successMessage');
-          this.refetchEndpointsList();
+          this.getEndpoints();
           this.showRenameBox = null;
 
         },
@@ -849,7 +840,7 @@ export class IdeTreeComponent implements OnInit {
         })
       } else {
         this.dataBindTree();
-        this.refetchEndpointsList();
+        this.getEndpoints();
         this.cdr.detectChanges();
       }
     })
