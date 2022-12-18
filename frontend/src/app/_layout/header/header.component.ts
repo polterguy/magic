@@ -26,11 +26,6 @@ export class HeaderComponent implements OnInit {
   public navLinks: NavLinks[] = [];
 
   /**
-   * An instance for the list of permissions specified in the backendService.
-   */
-  private permissions: any = [];
-
-  /**
    * Specifies the active backend's url.
    */
   public activeUrl: string = '';
@@ -45,45 +40,17 @@ export class HeaderComponent implements OnInit {
    */
   public sideExpanded: boolean = false;
 
-  public username: string = '';
-
   public isAffiliate: boolean = false;
-
-  public waitingSetupStatus: boolean = true;
 
   constructor(
     private dialog: MatDialog,
     private router: Router,
-    private backendService: BackendService) {
-
-  }
+    private backendService: BackendService) { }
 
   ngOnInit() {
-    this.getPermissions();
-  }
-
-  public getPermissions() {
-    if ((this.backendService?.active?.access && Object.keys(this.backendService?.active?.access?.auth).length > 0)) {
-      this.permissions = this.backendService.active;
-      this.username = this.permissions.token ? this.permissions.token['_username'] : 'anonymous';
-      this.backendService.active ? this.activeUrl = this.backendService.active.url.replace('http://', '').replace('https://', '') : this.activeUrl = 'not connected';
-      this.backendList = this.backendService.backends;
-
-      const notAuthorized: boolean = (!this.backendService.active || Object.values(this.backendService.active.access.auth ?? {}).every((item: any) => { return item === false }))
-
-      if (notAuthorized || this.backendService.active.token === null) {
-        this.router.navigate(['/authentication/login']);
-      }
-
-      this.createMenu();
-      this.getSetupStatus();
-
-    } else {
-      const notAuthorized: boolean = (!this.backendService.active || Object.values(this.backendService.active.access.auth ?? {}).every((item: any) => { return item === false }))
-      if (notAuthorized || this.backendService.active.token === null) {
-        this.router.navigate(['/authentication/login']);
-      }
-    }
+    this.createMenu();
+    this.getSetupStatus();
+    this.activeUrl = this.backendService.active.url.replace('http://', '').replace('https://', '');
   }
 
   private createMenu() {
@@ -103,37 +70,31 @@ export class HeaderComponent implements OnInit {
           {
             name: 'Databases',
             url: '/databases',
-            disabled: !(this.permissions.access.sql.execute_access && this.permissions.setupDone),
             exact: false,
           },
           {
             name: 'SQL Studio',
             url: '/sql-studio',
-            disabled: !(this.permissions.access.endpoints.view && this.permissions.setupDone),
             exact: false,
           },
           {
             name: 'Endpoint Generator',
             url: '/endpoint-generator',
-            disabled: !(this.permissions.access.crud.generate_crud && this.permissions.access.crud.generate_sql && this.permissions.access.crud.generate_frontend && this.permissions.setupDone),
             exact: false,
           },
           {
             name: 'Frontend Generator',
             url: '/frontend-generator',
-            disabled: !(this.permissions.access.crud.generate_crud && this.permissions.access.crud.generate_sql && this.permissions.access.crud.generate_frontend && this.permissions.setupDone),
             exact: false,
           },
           {
             name: 'Hyper IDE',
             url: '/hyper-ide',
-            disabled: !(this.permissions.access.files.list_files && this.permissions.access.files.list_folders && this.permissions.setupDone),
             exact: false,
           },
           {
             name: 'Frontend IDE',
             url: '/frontend-ide',
-            disabled: !(this.permissions.access.crud.generate_crud && this.permissions.access.crud.generate_sql && this.permissions.access.crud.generate_frontend && this.permissions.setupDone),
             exact: false,
           },
         ],
@@ -147,37 +108,31 @@ export class HeaderComponent implements OnInit {
           {
             name: 'Users & roles',
             url: '/user-roles-management',
-            disabled: !(this.permissions.access.auth.view_users && this.permissions.access.auth.view_roles && this.permissions.setupDone),
             exact: false,
           },
           {
             name: 'Endpoints',
             url: '/endpoints',
-            disabled: !(this.permissions.access.endpoints.view && this.permissions.setupDone),
             exact: false,
           },
           {
             name: 'Tasks',
             url: '/tasks',
-            disabled: !(this.permissions.access.tasks.read && this.permissions.setupDone),
             exact: false,
           },
           {
             name: 'Hyperlambda Playground',
             url: '/hyperlambda-playground',
-            disabled: !(this.permissions.access.eval.execute && this.permissions.setupDone),
             exact: false,
           },
           {
             name: 'Sockets',
             url: '/sockets',
-            disabled: !(this.permissions.access.sockets.read && this.permissions.setupDone),
             exact: false,
           },
           {
             name: 'Plugins',
             url: '/plugins',
-            disabled: !(this.permissions.access.bazar.get_manifests && this.permissions.setupDone),
             exact: false,
           },
         ],
@@ -191,19 +146,16 @@ export class HeaderComponent implements OnInit {
           {
             name: 'Configuration',
             url: '/configuration',
-            disabled: !(this.permissions.access.config.load),
             exact: false,
           },
           {
             name: 'Health Check',
             url: '/health-check',
-            disabled: !(this.permissions.access.log.read && this.permissions.setupDone),
             exact: false,
           },
           {
             name: 'Log',
             url: '/log',
-            disabled: !(this.permissions.access.log.read && this.permissions.setupDone),
             exact: false,
           },
           {
@@ -214,7 +166,7 @@ export class HeaderComponent implements OnInit {
         ],
       },
       {
-        name: this.username,
+        name: this.backendService.active.username,
         url: null,
         expandable: true,
         exact: false,
@@ -222,13 +174,11 @@ export class HeaderComponent implements OnInit {
           {
             name: 'Profile',
             url: '/user-profile',
-            disabled: !(this.permissions.token),
             exact: false,
           },
           {
             name: 'Cryptography',
             url: '/server-key-setting',
-            disabled: !(this.permissions.access.crypto.import_public_key),
             exact: false,
           },
           {
@@ -282,8 +232,8 @@ export class HeaderComponent implements OnInit {
       width: '500px',
       autoFocus: false,
       data: {
-        username: this.username,
-        role: this.permissions.token['_roles'].toString(),
+        username: this.backendService.active.username,
+        role: 'root',
         expires: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString()
       }
     })
@@ -317,7 +267,6 @@ export class HeaderComponent implements OnInit {
     // Subscribing to status changes and redirect accordingly if we need user to setup system.
     this.backendService.statusRetrieved.subscribe((status: Status) => {
       if (status) {
-        this.waitingSetupStatus = false;
         if (!status.result) {
           this.router.navigate(['/setup']);
         }

@@ -46,9 +46,9 @@
       <td mat-cell *matCellDef="let element">
         <div class="d-flex justify-content-between align-items-center">
           <div>
-            <button mat-button color="primary" class="p-0 me-4" [disabled]="element?.username === 'root'"
+            <button mat-button color="primary" class="p-0 me-4"
               (click)="editUser(element)">Edit</button>
-            <button mat-button color="primary" class="p-0" [disabled]="element?.username === 'root' || !userCanUpdate"
+            <button mat-button color="primary" class="p-0" 
               (click)="changePassword(element)">Change password</button>
           </div>
           <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Open more menu">
@@ -56,20 +56,16 @@
           </button>
         </div>
         <mat-menu #menu="matMenu">
-          <button mat-menu-item (click)="lockedChanged(element)"
-            [disabled]="element?.username === 'root' || !userCanLock">
+          <button mat-menu-item (click)="lockedChanged(element)">
             {{element?.locked ? 'Unlock' : 'Lock'}}
           </button>
-          <button mat-menu-item (click)="generateResetPasswordLink(element)"
-            [disabled]="element?.username === 'root' || !userCanChange">
+          <button mat-menu-item (click)="generateResetPasswordLink(element)">
             Create reset password link
           </button>
-          <button mat-menu-item (click)="generateLoginLink(element)"
-            [disabled]="element?.username === 'root' || !userCanChange">
+          <button mat-menu-item (click)="generateLoginLink(element)">
             Login as {{element?.username}}
           </button>
-          <button mat-menu-item (click)="deleteUser(element)"
-            [disabled]="element?.username === 'root' || !userCanDelete">
+          <button mat-menu-item (click)="deleteUser(element)">
             Delete
           </button>
         </mat-menu>

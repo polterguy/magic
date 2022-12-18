@@ -11,7 +11,6 @@ import { Model } from 'src/app/codemirror/codemirror-hyperlambda/codemirror-hype
 import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
 import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { BackendService } from 'src/app/_general/services/backend.service';
 import { LocResult } from '../../../create/endpoint-generator/_models/loc-result.model';
 import { CrudifyService } from '../../../create/endpoint-generator/_services/crudify.service';
 import { TransformModelService } from '../../../create/endpoint-generator/_services/transform-model.service';
@@ -27,6 +26,7 @@ import { LoadSnippetDialogComponent } from 'src/app/_general/components/load-sni
 import { SnippetNameDialogComponent } from 'src/app/_general/components/snippet-name-dialog/snippet-name-dialog.component';
 import { CacheService } from 'src/app/_general/services/cache.service';
 import { MessageService } from 'src/app/_general/services/message.service';
+import { EndpointService } from 'src/app/_general/services/endpoint.service';
 
 @Component({
   selector: 'app-auto-generator',
@@ -108,13 +108,12 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
     private messageService: MessageService,
     private generalService: GeneralService,
     private crudifyService: CrudifyService,
-    private backendService: BackendService,
     private evaluatorService: EvaluatorService,
     protected transformService: TransformModelService,
     private codemirrorActionsService: CodemirrorActionsService,
     @Inject(LOCALE_ID) public locale: string) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.watchDbLoading();
   }
 
@@ -158,8 +157,6 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
         this.updateRoles.setValue(['root', 'guest']);
         this.deleteRoles.setValue(['root', 'guest']);
         this.createRoles.setValue(['root', 'guest']);
-
-        this.canLoadSnippet = this.backendService.active?.access.sql.list_files;
 
         this.changeDatabase();
         this.cdr.detectChanges();
@@ -241,7 +238,6 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
                 this.logService.createLocItem(loc, 'backend', `${this.selectedDatabase}`).subscribe({
                   next: () => {
                     this.generalService.showFeedback(`${formatNumber(loc, this.locale, '1.0')} lines of code generated.`, 'successMessage');
-                    this.flushEndpointsAuthRequirements();
                     this.messageService.sendMessage({
                       name: 'magic.folders.update',
                       content: '/modules/'
@@ -463,10 +459,6 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (!this.backendService.active?.access.sql.save_file) {
-      this.generalService.showFeedback('You need a proper permission.', 'errorMessage', 'Ok', 5000)
-      return;
-    }
     this.dialog.open(SnippetNameDialogComponent, {
       width: '550px',
       data: this.snippetName || '',
@@ -477,16 +469,6 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
           error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
         });
       }
-    });
-  }
-
-  /*
-   * Will flush server side cache of endpoints (auth invocations) and re-retrieve these again.
-   */
-  private flushEndpointsAuthRequirements() {
-    this.cacheService.delete('magic.auth.endpoints').subscribe({
-      next: () => this.backendService.refetchEndpoints(),
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
     });
   }
 

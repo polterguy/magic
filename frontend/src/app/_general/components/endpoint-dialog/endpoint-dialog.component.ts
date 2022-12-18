@@ -98,9 +98,6 @@ export class EndpointDialogComponent implements OnInit {
 
   public paramsForm = this.formBuilder.group({});
 
-  public assumptionsPermission: boolean = false;
-  public testPermission: boolean = false;
-
   public codemirrorIsReady: boolean = false;
 
   public canCreateAssumption: boolean = false;
@@ -117,40 +114,17 @@ export class EndpointDialogComponent implements OnInit {
     private assumptionService: AssumptionService,
     @Inject(MAT_DIALOG_DATA) public data: { itemToBeTried: any }) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.getItemDetails();
-    this.getPermissions();
   }
 
   private getItemDetails() {
-    (async () => {
-      while (!(this.data.itemToBeTried && Object.keys(this.data.itemToBeTried).length))
-        await new Promise(resolve => setTimeout(resolve, 100));
 
-      if (Object.keys(this.data.itemToBeTried).length > 0) {
-
-        this.itemDetails = [];
-        this.parameters = [];
-        this.result = null;
-        this.paramsForm = this.formBuilder.group({});
-        this.prepareData(this.data.itemToBeTried);
-      }
-    })();
-  }
-
-  private getPermissions() {
-    (async () => {
-      while (this.backendService.active.access && !Object.keys(this.backendService.active.access.endpoints).length)
-        await new Promise(resolve => setTimeout(resolve, 100));
-
-      if (this.backendService.active.access && Object.keys(this.backendService.active.access.endpoints).length > 0) {
-
-        this.assumptionsPermission = this.backendService.active.access.endpoints.assumptions;
-        this.testPermission = this.backendService.active.access.diagnostics.execute_test
-
-        this.cdr.detectChanges();
-      }
-    })();
+    this.itemDetails = [];
+    this.parameters = [];
+    this.result = null;
+    this.paramsForm = this.formBuilder.group({});
+    this.prepareData(this.data.itemToBeTried);
   }
 
   private prepareData(item: any) {

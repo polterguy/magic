@@ -15,7 +15,7 @@
   <button *ngIf="data.has_update" mat-flat-button matTooltip="Automatically updates your app" color="warn"
     (click)="update()">Update</button>
 
-  <button *ngIf="data?.details" mat-flat-button color="warn" [disabled]="!deletePermission"
+  <button *ngIf="data?.details" mat-flat-button color="warn"
     (click)="uninstall()">Uninstall</button>
 
   <button *ngIf="!data?.details" mat-flat-button color="primary" (click)="install()">Install</button>

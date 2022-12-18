@@ -7,7 +7,6 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { Response } from '../../../../../models/common/response.model';
-import { BackendService } from 'src/app/_general/services/backend.service';
 import { BazarService } from 'src/app/_general/services/bazar.service';
 
 @Component({
@@ -26,7 +25,6 @@ export class ViewPluginComponent implements OnInit {
     private dialogRef: MatDialogRef<ViewPluginComponent>,
     private bazarService: BazarService,
     private generalService: GeneralService,
-    private backendService: BackendService,
     @Inject(MAT_DIALOG_DATA) public data: any) { }
 
   ngOnInit(): void {
@@ -36,7 +34,6 @@ export class ViewPluginComponent implements OnInit {
   private getAppDetails() {
     this.bazarService.canInstall(this.data.min_magic_version).subscribe({
       next: (result: Response) => {
-        this.deletePermission = this.backendService.active?.access.files.delete_folder;
         if (result.result === 'SUCCESS') {
           this.canInstall = true;
         } else {

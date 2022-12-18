@@ -58,29 +58,22 @@ export class SqlViewComponent implements OnInit, OnDestroy {
   constructor(
     private dialog: MatDialog,
     private sqlService: SqlService,
-    private backendService: BackendService,
     private generalService: GeneralService,
     private codemirrorActionsService: CodemirrorActionsService) { }
 
   ngOnInit() {
-    (async () => {
-      while (!(this.tables))
-        await new Promise(resolve => setTimeout(resolve, 100));
-
-      if (this.tables) {
-        this.canLoadSnippet = this.backendService.active?.access.sql.list_files;
-        this.codemirrorInit();
-        this.watchForActions();
-        this.tableSubscription = this.tables.subscribe((res: any) => {
-          this.tablesList = res;
-          if (this.input) {
-            this.input.options.hintOptions = {
-              tables: this.tablesList,
-            };
-          }
-        });
-      }
-    })();
+    if (this.tables) {
+      this.codemirrorInit();
+      this.watchForActions();
+      this.tableSubscription = this.tables.subscribe((res: any) => {
+        this.tablesList = res;
+        if (this.input) {
+          this.input.options.hintOptions = {
+            tables: this.tablesList,
+          };
+        }
+      });
+    }
   }
 
   private async getCodeMirrorOptions(): Promise<any> {
@@ -124,11 +117,6 @@ export class SqlViewComponent implements OnInit, OnDestroy {
   public save() {
     if (!this.input?.sql && this.input.sql === '') {
       this.generalService.showFeedback('Write some SQL first, then save it', 'errorMessage', 'Ok', 5000)
-      return;
-    }
-
-    if (!this.backendService.active?.access.sql.save_file) {
-      this.generalService.showFeedback('You need proper permissions', 'errorMessage', 'Ok', 5000)
       return;
     }
 
