@@ -89,7 +89,7 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
   getDbName(db: string) {
     switch (db) {
       case 'mysql': return 'MySQL';
-      case 'SQLite': return 'SQLite';
+      case 'sqlite': return 'SQLite';
       case 'mssql': return 'SQL Server';
       case 'pgsql': return 'PostgreSQL';
     }
