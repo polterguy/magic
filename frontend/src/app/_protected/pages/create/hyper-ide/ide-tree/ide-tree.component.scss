@@ -1,9 +1,8 @@
-
 /*
  * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
- @import '../../../../../../assets/styles/_variables/colors.scss';
+@import '../../../../../../assets/styles/_variables/colors.scss';
 @import '../../../../../../assets/styles/_variables/mixin.scss';
 
 .panel-1 {
@@ -30,7 +29,11 @@
   left: 0;
   z-index: 1;
 }
-.fixed-width {min-width: 22px;}
+
+.fixed-width {
+  min-width: 22px;
+}
+
 ::ng-deep #hyper-ide {
   .action-menu-general {
     .mat-icon-button {
@@ -160,6 +163,7 @@
       line-height: 21px;
       padding-left: 5px;
     }
+
     button.mat-icon-button {
       height: unset;
     }

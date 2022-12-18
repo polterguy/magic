@@ -26,6 +26,9 @@ import { FileService } from '../_services/file.service';
 import { VocabularyService } from '../_services/vocabulary.service';
 import { Endpoint } from 'src/app/_protected/models/common/endpoint.model';
 
+/**
+ * Hyper IDE editor component, wrapping currently open files, allowing user to edit the code.
+ */
 @Component({
   selector: 'app-ide-editor',
   templateUrl: './ide-editor.component.html',

@@ -23,6 +23,10 @@ import { TreeNode } from '../_models/tree-node.model';
 import { CodemirrorActionsService } from '../_services/codemirror-actions.service';
 import { FileService } from '../_services/file.service';
 
+/**
+ * Tree component for Hyper IDE displaying files and folders, allowing user
+ * to select and open files, and/or switch to open file, or close open files.
+ */
 @Component({
   selector: 'app-ide-tree',
   templateUrl: './ide-tree.component.html',
