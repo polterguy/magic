@@ -13,6 +13,9 @@ import { User_Extra } from '../../_models/user.model';
 import { RoleService } from '../../_services/role.service';
 import { UserService } from '../../_services/user.service';
 
+/**
+ * Helper modal dialog for creating a new user
+ */
 @Component({
   selector: 'app-new-user-dialog',
   templateUrl: './new-user-dialog.component.html',

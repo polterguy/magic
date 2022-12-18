@@ -9,6 +9,9 @@ import { GeneralService } from 'src/app/_general/services/general.service';
 import { User } from '../../_models/user.model';
 import { UserService } from '../../_services/user.service';
 
+/**
+ * Helper modal dialog to allow user to change password of users in the system.
+ */
 @Component({
   selector: 'app-change-password-dialog',
   templateUrl: './change-password-dialog.component.html'

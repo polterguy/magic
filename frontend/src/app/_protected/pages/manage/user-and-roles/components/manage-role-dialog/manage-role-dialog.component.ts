@@ -12,6 +12,9 @@ import { GeneralService } from 'src/app/_general/services/general.service';
 import { Role } from '../../_models/role.model';
 import { RoleService } from '../../_services/role.service';
 
+/**
+ * Helper modal dialog for editing an existing role, or creating a new role.
+ */
 @Component({
   selector: 'app-manage-role-dialog',
   templateUrl: './manage-role-dialog.component.html'
@@ -84,5 +87,4 @@ export class ManageRoleDialogComponent implements OnInit {
       this.generalService.showFeedback('Please provide all fields', 'errorMessage', 'Ok')
     }
   }
-
 }
