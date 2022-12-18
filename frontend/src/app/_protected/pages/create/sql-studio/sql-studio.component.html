@@ -70,22 +70,22 @@
       <div class="col align-self-center">
         <div class="d-flex justify-content-end flex-sm-nowrap flex-wrap mt-xl-0 mt-3">
 
-          <button mat-button color="primary" class="mat-caption px-1"
+          <button mat-button color="primary" 
             [disabled]="(dbLoading | async) || sqlView" (click)="addNewTable()">
             New table
           </button>
 
-          <button mat-button color="primary" class="mat-caption px-1"
+          <button mat-button color="primary" 
             [disabled]="(dbLoading | async) || sqlView" (click)="createNewLinkTable()">
             Link table
           </button>
 
-          <button mat-button color="primary" class="mat-caption px-1" [disabled]="(dbLoading | async)"
+          <button mat-button color="primary" [disabled]="(dbLoading | async)"
             [matMenuTriggerFor]="menu">
             More
           </button>
 
-          <button mat-button color="primary" class="ms-3 mat-caption px-1" (click)="sqlView = !sqlView">
+          <button mat-button color="primary" (click)="sqlView = !sqlView">
             {{sqlView ? 'Table view' : 'SQL view'}}
           </button>
 
