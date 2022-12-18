@@ -66,7 +66,7 @@ export class RenameFolderDialogComponent {
       return;
     }
     if (this.data.name === this.originalName) {
-      this.generalService.showFeedback('New name cannot be the same as the current name.', 'errorMessage', 'Ok', 5000);
+      this.generalService.showFeedback('New name cannot be the same as the current name', 'errorMessage', 'Ok', 5000);
       return;
     }
     this.data.name = this.newName;

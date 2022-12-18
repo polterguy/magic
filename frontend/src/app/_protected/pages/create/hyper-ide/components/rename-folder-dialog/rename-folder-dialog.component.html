@@ -11,8 +11,8 @@
 
       <input type="text" matInput autocomplete="off" [(ngModel)]="newName" name="name">
       <mat-hint *ngIf="(data.name && !pathValid()) || data.name === originalName">
-        <span *ngIf="!pathValid()">Name is required and cannot contain blank space or special characters.</span>
-        <span *ngIf="data.name === originalName">New name cannot be the same as the current name.</span>
+        <span *ngIf="!pathValid()">Name is required and cannot contain blank space or special characters</span>
+        <span *ngIf="data.name === originalName">New name cannot be the same as the current name</span>
       </mat-hint>
     </mat-form-field>
 

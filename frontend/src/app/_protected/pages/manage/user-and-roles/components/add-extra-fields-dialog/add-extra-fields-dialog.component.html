@@ -4,11 +4,19 @@
   <div mat-dialog-content>
 
     <mat-form-field class="w-100">
-      <input matInput placeholder="Field's name" #type autocomplete="off">
+      <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        <mat-icon>list</mat-icon>
+        <span class="text-muted">|</span>
+      </span>
+      <input matInput placeholder="Name" #type autocomplete="off">
     </mat-form-field>
 
     <mat-form-field class="w-100">
-      <input matInput placeholder="Field's value" #value autocomplete="off">
+      <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        <mat-icon>edit</mat-icon>
+        <span class="text-muted">|</span>
+      </span>
+      <input matInput placeholder="Value" #value autocomplete="off">
     </mat-form-field>
 
   </div>
