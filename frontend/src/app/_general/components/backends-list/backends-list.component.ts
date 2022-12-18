@@ -33,11 +33,6 @@ export class BackendsListComponent implements OnInit {
    */
   public activeBackend: string = '';
 
-  /**
-   * Turns to true when backendService is ready.
-   */
-  public isLoading: boolean = true;
-
   constructor(
     private router: Router,
     private dialogRef: DialogRef<BackendsListComponent>,
@@ -53,7 +48,6 @@ export class BackendsListComponent implements OnInit {
   private getBackends() {
     this.backendsList = this.backendService.backends;
     this.activeBackend = this.backendService.active.url;
-    this.isLoading = false;
     this.cdr.detectChanges();
   }
 
@@ -73,8 +67,6 @@ export class BackendsListComponent implements OnInit {
    * @param backend Backend to switch to
    */
   switchBackend(backend: Backend) {
-    this.isLoading = true;
-    this.isLoading = false;
     this.router.navigate(['/authentication/login'], {
       queryParams: { switchTo: backend.url }
     });
