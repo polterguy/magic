@@ -35,7 +35,10 @@ export class ExportDdlComponent implements OnInit {
    */
   options: any = null;
 
-  public codemirrorReady: boolean = false;
+  /**
+   * If true, CodeMirror instance can be shown.
+   */
+  codemirrorReady: boolean = false;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: ExportTablesModel,
@@ -45,17 +48,21 @@ export class ExportDdlComponent implements OnInit {
     this.getCodeMirrorOptions();
   }
 
+  /*
+   * Private helper methods.
+   */
+
+  // Returns CodeMirror options for SQL type.
   private getCodeMirrorOptions() {
     this.codemirrorActionsService.getActions(null, 'sql').then((options: any) => {
       this.options = options;
-      if (options) {
-        setTimeout(() => {
-          this.codemirrorInit();
-        }, 100);
-      }
+      setTimeout(() => {
+        this.codemirrorInit();
+      }, 100);
     });
   }
 
+  // Enables CodeMirror instance, and clears undo history.
   private codemirrorInit() {
     this.codemirrorReady = true;
     setTimeout(() => {
