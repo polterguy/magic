@@ -15,7 +15,7 @@
 
   <button mat-button mat-dialog-close>Cancel</button>
 
-  <button mat-flat-button color="primary" class="px-4" *ngIf="data.canExport" [mat-dialog-close]="data">
+  <button mat-flat-button color="primary" class="px-4" [disabled]="!data.canExport" [mat-dialog-close]="data">
     Export to module
   </button>
 
