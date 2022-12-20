@@ -10,7 +10,7 @@ import { MaterialModule } from 'src/app/material.module';
 import { SharedModule } from 'src/app/shared.module';
 import { ComponentsModule } from 'src/app/_general/components/components.module';
 import { EndpointRoutingModule } from './endpoint.routing.module';
-import { EndpointsComponent } from '../endpoints.component';
+import { EndpointGeneratorComponent } from '../endpoint-generator.component';
 import { AutoGeneratorComponent } from '../auto-endpoint-generator/auto-endpoint-generator.component';
 import { ManualGeneratorComponent } from '../sql-endpoint-generator/sql-endpoint-generator.component';
 import { AddArgumentDialogComponent } from '../sql-endpoint-generator/components/add-argument-dialog/add-argument-dialog.component';
@@ -22,7 +22,7 @@ import { ForeignKeyListComponent } from '../components/foreign-key-list/foreign-
 
 @NgModule({
   declarations: [
-    EndpointsComponent,
+    EndpointGeneratorComponent,
     AutoGeneratorComponent,
     ManualGeneratorComponent,
     AddArgumentDialogComponent,
