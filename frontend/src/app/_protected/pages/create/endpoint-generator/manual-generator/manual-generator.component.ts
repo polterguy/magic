@@ -53,6 +53,7 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
   public logCreate: boolean = false;
   public logUpdate: boolean = false;
   public logDelete: boolean = false;
+  hintTables: any = {};
 
   public tables: any = [];
 
@@ -139,6 +140,9 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
   private getOptions() {
     this.codemirrorActionsService.getActions('', 'sql').then((options: any) => {
       options.autofocus = false;
+      options.hintOptions = {
+        tables: this.hintTables,
+      };
       this.sql.options = options;
       this.codeMirrorReady = true;
     });
@@ -176,6 +180,9 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
       this.tables = this.databases.find((item: any) => item.name === this.selectedDatabase).tables;
       let names: any = this.tables.map((item: any) => { return item.name });
       this.selectedTables = new FormControl({ value: names, disabled: false });
+      let hintTables = this.tables.map((x: any) => [x.name, x.columns.map((y: any) => y.name)]);
+      this.hintTables = Object.fromEntries(hintTables);
+      this.getOptions();
     } else {
       this.selectedTables = new FormControl({ value: '', disabled: true });
     }
