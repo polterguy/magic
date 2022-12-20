@@ -20,8 +20,8 @@
 
             <div class="me-1"></div>
 
-            <button mat-icon-button color="warn" title="Delete table ..."
-              (click)="dropTable(item, 'table')">
+            <button mat-icon-button color="warn" title="Drop table ..."
+              (click)="dropItem(item, 'table')">
               <mat-icon>delete</mat-icon>
             </button>
 
@@ -46,8 +46,8 @@
           </div>
 
           <div class="col-lg-1 col-2 action-btn d-flex justify-content-end">
-            <button mat-icon-button color="warn" title="Delete column ..."
-              (click)="dropTable(column, 'column', item.foreign_keys, item.name)">
+            <button mat-icon-button color="warn" title="Drop column ..."
+              (click)="dropItem(column, 'column', item.foreign_keys, item.name)">
               <mat-icon>delete</mat-icon>
             </button>
           </div>

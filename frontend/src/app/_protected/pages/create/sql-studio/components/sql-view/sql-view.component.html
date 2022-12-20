@@ -7,15 +7,19 @@
         <div class="d-flex justify-content-between align-items-center">
           <h3 class="my-0 fw-bold">SQL</h3>
           <div>
+
             <button mat-button color="primary" (click)="viewShortkeys()">Shortkeys</button>
-            <button mat-button color="primary" (click)="loadSnippet()">Snippets</button>
+
+            <button mat-button color="primary" (click)="sqlFileImport.click()">Import</button>
 
             <button mat-button color="primary" (click)="toggleSafeMode()" *ngIf="safeMode">
               Disable safe mode
             </button>
+
             <button mat-button color="warn" (click)="toggleSafeMode()" *ngIf="!safeMode">
               Enable safe mode
             </button>
+
           </div>
         </div>
 
@@ -28,12 +32,17 @@
         </div>
 
         <div class="d-flex justify-content-end align-items-center">
-          <button mat-button color="primary" (click)="sqlFileImport.click()">Import</button>
+
+          <button mat-button color="primary" (click)="loadSnippet()">Load</button>
+
           <button mat-button color="primary" (click)="save()">Save</button>
+
           <button mat-flat-button color="primary" class="px-4" [disabled]="waitingRun"
             (click)="execute()">Execute</button>
+
           <input type="file" name="sqlFile" id="sqlFile" #sqlFileImport class="d-none" accept=".sql" [(ngModel)]="sqlFile"
             (change)="importSqlFile($event)">
+
         </div>
 
       </mat-card-content>
