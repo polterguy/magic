@@ -29,6 +29,10 @@ export class OverviewDialogComponent implements OnInit {
       return;
     }
     localStorage.setItem('overviewItems', JSON.stringify(this.data.titles));
-    this.dialogRef.close(this.data.titles)
+    this.dialogRef.close(this.data.titles);
+  }
+
+  public cancel() {
+    this.dialogRef.close(null);
   }
 }
