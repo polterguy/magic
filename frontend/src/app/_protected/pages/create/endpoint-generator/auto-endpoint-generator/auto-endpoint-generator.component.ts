@@ -11,25 +11,23 @@ import { Model } from 'src/app/codemirror/codemirror-hyperlambda/codemirror-hype
 import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
 import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { LocResult } from '../../../create/endpoint-generator/_models/loc-result.model';
-import { CrudifyService } from '../../../create/endpoint-generator/_services/crudify.service';
-import { TransformModelService } from '../../../create/endpoint-generator/_services/transform-model.service';
+import { LocResult } from '../_models/loc-result.model';
+import { CrudifyService } from '../_services/crudify.service';
+import { TransformModelService } from '../_services/transform-model.service';
 import { LogService } from '../../../../../_general/services/log.service';
 import { Role } from '../../../manage/user-and-roles/_models/role.model';
 
 // CodeMirror options.
 import hyperlambda from '../../../../../codemirror/options/hyperlambda.json';
-import { CodemirrorActionsService } from '../../../create/hyper-ide/_services/codemirror-actions.service';
+import { CodemirrorActionsService } from '../../hyper-ide/_services/codemirror-actions.service';
 import { MatDialog } from '@angular/material/dialog';
 import { EvaluatorService } from '../../../../../_general/services/evaluator.service';
 import { LoadSnippetDialogComponent } from 'src/app/_general/components/load-snippet-dialog/load-snippet-dialog.component';
-import { CacheService } from 'src/app/_general/services/cache.service';
 import { MessageService } from 'src/app/_general/services/message.service';
-import { EndpointService } from 'src/app/_general/services/endpoint.service';
 
 @Component({
-  selector: 'app-auto-generator',
-  templateUrl: './auto-generator.component.html'
+  selector: 'app-auto-endpoint-generator',
+  templateUrl: './auto-endpoint-generator.component.html'
 })
 export class AutoGeneratorComponent implements OnInit, OnDestroy {
 
