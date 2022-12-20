@@ -40,7 +40,10 @@ interface ExpectedData {
 })
 export class AddFieldComponent {
 
-  public formData: NewField = {
+  /**
+   * Form data.
+   */
+  formData: NewField = {
     columnName: '',
     fieldType: {},
     columnLength: undefined,
@@ -48,19 +51,28 @@ export class AddFieldComponent {
     nullable: true
   };
 
+  /**
+   * Types supported by the different databases we support.
+   */
   fieldTypeList: any = fieldTypes;
 
-  public CommonRegEx = CommonRegEx;
-  public CommonErrorMessages = CommonErrorMessages;
+  /**
+   * Regular expressions used to test if user's input is bogus or not.
+   */
+  CommonRegEx = CommonRegEx;
+
+  /**
+   * Error messages used in case user provides bogus input values.
+   */
+  CommonErrorMessages = CommonErrorMessages;
 
   constructor(
     private generalService: GeneralService,
     private dialogRef: MatDialogRef<AddFieldComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ExpectedData) { }
 
-  public changeDefaultValue() {
+  changeDefaultValue() {
     this.formData.defaultValue = '';
-
     const dbTypeForInt: boolean =
       this.data.slectedDbType === 'mysql' ||
       this.data.slectedDbType === 'sqlite';
@@ -69,7 +81,6 @@ export class AddFieldComponent {
       this.data.slectedDbType === 'sqlite' ||
       this.data.slectedDbType === 'pgsql';
 
-
     if (this.formData.fieldType.size) {
       this.formData.columnLength = this.formData?.fieldType?.size?.defaultSize;
     } else if (this.formData.fieldType.defaultValue === 'date' && dbTypeForDate) {
@@ -77,20 +88,19 @@ export class AddFieldComponent {
     } else if (this.formData.fieldType.defaultValue === 'int' && dbTypeForInt) {
       this.formData.defaultValue = 'auto_increment';
     }
-
     this.formData.columnType = this.formData.fieldType.name;
   }
 
-  public changeTable() {
+  changeTable() {
     this.formData.foreignField = this.data.tables.find((item: any) => item.name === this.formData.selectedTable.name).columns[0].name;
     this.changeColumnName();
   }
 
-  public changeColumnName() {
+  changeColumnName() {
     this.formData.columnName = this.formData.foreignField;
   }
 
-  public tabsCahnged(event: any) {
+  tabsChanged(event: any) {
     let refreshedData: NewField = {
       nullable: false
     }
@@ -100,7 +110,7 @@ export class AddFieldComponent {
     this.formData = refreshedData;
   }
 
-  public create() {
+  create() {
     if (!this.validateName()) {
       this.generalService.showFeedback('Invalid name.', 'errorMessage');
       return;
@@ -133,9 +143,14 @@ export class AddFieldComponent {
     }
   }
 
+  /*
+   * Private helper methods.
+   */
+
   private validateName() {
     return this.CommonRegEx.appNameWithUppercase.test(this.formData.columnName);
   }
+
   private validateDefaultValue() {
     return this.CommonRegEx.appNameWithUppercase.test(this.formData.defaultValue);
   }
