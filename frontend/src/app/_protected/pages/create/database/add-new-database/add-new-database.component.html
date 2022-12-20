@@ -81,16 +81,20 @@
 
         <!-- actions Column -->
         <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef class="ps-3"> Actions </th>
+          <th mat-header-cell *matHeaderCellDef class="ps-3">Actions</th>
           <td mat-cell *matCellDef="let element" class="px-0">
+
             <button mat-button color="primary" routerLink="/sql-studio"
               [queryParams]="{dbType: element.type, dbName: element.name, dbCString: element.connectionString}">Edit</button>
             <button *ngIf="defaultDbType === 'sqlite'" mat-button color="primary" (click)="downloadBackup(element)">Backup</button>
+
             <button mat-button color="warn" (click)="deleteDb(element)"
               [disabled]="element.name === 'magic'">Delete</button>
+
             <button mat-button color="primary" routerLink="/endpoint-generator"
-              [queryParams]="{dbType: element.type, dbName: element.name, dbCString: element.connectionString}">Generate
-              endpoints</button>
+              [queryParams]="{dbType: element.type, dbName: element.name, dbCString: element.connectionString}"
+              [disabled]="element.name === 'magic'">Generate endpoints</button>
+
           </td>
         </ng-container>
 
