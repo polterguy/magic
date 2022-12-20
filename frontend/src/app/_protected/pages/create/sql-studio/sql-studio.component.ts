@@ -114,7 +114,6 @@ export class SQLStudioComponent implements OnInit {
     this.generalService.showLoading();
     this.sqlService.defaultDatabaseType().subscribe({
       next: () => {
-
         this.getConnectionString(this.selectedDbType, this.selectedConnectionString);
       },
       error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)

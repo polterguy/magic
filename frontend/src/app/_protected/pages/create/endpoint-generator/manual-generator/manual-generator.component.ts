@@ -141,7 +141,7 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
       options.autofocus = false;
       this.sql.options = options;
       this.codeMirrorReady = true;
-    })
+    });
   }
 
   private waitingData() {
@@ -182,8 +182,6 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
     this.primaryURL = this.selectedDatabase.toLowerCase();
     this.cdr.detectChanges();
   }
-
-  public generateEndpoints() { }
 
   public addArgument() {
     this.dialog.open(AddArgumentDialogComponent, {
