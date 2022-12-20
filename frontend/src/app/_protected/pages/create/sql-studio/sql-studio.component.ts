@@ -17,7 +17,7 @@ import { LinkTableComponent } from './components/link-table/link-table.component
 import { NewTableComponent } from './components/new-table/new-table.component';
 
 /**
- * SQL Studio component allowing user to execute SQL, and edit his or her database.
+ * SQL Studio component allowing user to execute SQL, and edit his or her databases.
  */
 @Component({
   selector: 'app-sql-studio',
@@ -25,10 +25,14 @@ import { NewTableComponent } from './components/new-table/new-table.component';
 })
 export class SQLStudioComponent implements OnInit {
 
+  private _tables: ReplaySubject<any[]> = new ReplaySubject();
+  private _hintTables: ReplaySubject<any> = new ReplaySubject();
+  private _dbLoading: ReplaySubject<boolean> = new ReplaySubject();
+
   /**
    * List of all database types, including type and the human readable name of each.
    */
-  public databaseTypes: any = [] = [
+  databaseTypes: any = [] = [
     {type: 'sqlite', name: 'SQLite'},
     {type: 'mysql', name: 'MySQL'},
     {type: 'mssql', name: 'SQL Server'},
@@ -38,51 +42,53 @@ export class SQLStudioComponent implements OnInit {
   /**
    * The user's default database type.
    */
-  public selectedDbType: string = '';
+  selectedDbType: string = '';
 
-  public migrate: boolean = false;
+  /**
+   * If true, automatic migration scripts have been turned on.
+   */
+  migrate: boolean = false;
 
   /**
    * List of connection strings available for the selected database type.
    */
-  public connectionStrings: string[] = [];
+  connectionStrings: string[] = [];
 
   /**
-   * The connection string of the user's default database type.
+   * Currently selected connection string.
    */
-  public selectedConnectionString: string = '';
+  selectedConnectionString: string = '';
 
   /**
-   * Available databases based on the user's selected database type and the connection string.
+   * Databases availkable to the user on the currently selected connection string.
    */
-  public databases: any = [];
+  databases: any = [];
 
   /**
-   * The user's selected database name.
+   * The user's currently selected database.
    */
-  public selectedDatabase: string = '';
+  selectedDatabase: string = '';
 
   /**
    * Specifies the view.
    * will be used to switch between table and SQLview.
    */
-  public sqlView: boolean = false;
+  sqlView: boolean = false;
 
   /**
    * Tables in the user's selected database.
    */
-  private _tables: ReplaySubject<any[]> = new ReplaySubject();
-  public tables = this._tables.asObservable();
-  private _hintTables: ReplaySubject<any> = new ReplaySubject();
-  public hintTables = this._hintTables.asObservable();
+  tables = this._tables.asObservable();
+
+  /**
+   * Hint tables for SQL CodeMirror editor.
+   */
+  hintTables = this._hintTables.asObservable();
 
   /**
    * To watch for the changes in database changes.
    */
-  private _dbLoading: ReplaySubject<boolean> = new ReplaySubject();
-  public dbLoading = this._dbLoading.asObservable();
-
-  public sqlFile: any;
+  dbLoading = this._dbLoading.asObservable();
 
   constructor(
     private router: Router,
@@ -93,6 +99,8 @@ export class SQLStudioComponent implements OnInit {
     private generalService: GeneralService) { }
 
   ngOnInit() {
+
+    // Checking if we've got query parameters pointing to a specific database and catalog.
     this.activatedRoute.queryParams.subscribe((param: any) => {
       if (param && param.dbName && param.dbType && param.dbCString) {
         this.selectedDbType = param.dbType;
@@ -112,19 +120,17 @@ export class SQLStudioComponent implements OnInit {
   private getDefaultDbType() {
     this._dbLoading.next(true);
     this.generalService.showLoading();
+
     this.sqlService.defaultDatabaseType().subscribe({
-      next: () => {
-        this.getConnectionString(this.selectedDbType, this.selectedConnectionString);
-      },
+      next: () => this.getConnectionStrings(this.selectedDbType, this.selectedConnectionString),
       error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
     });
   }
 
   /**
    * Retrieves the connection string of the default database.
-   * @param selectedDbType Default type of the databases, sets during the initial configuration.
    */
-  public getConnectionString(selectedDbType: string, selectedConnectionString?: string) {
+  public getConnectionStrings(selectedDbType: string, selectedConnectionString?: string) {
     this._dbLoading.next(true);
     this.selectedConnectionString = '';
     this.connectionStrings = [];
@@ -146,9 +152,7 @@ export class SQLStudioComponent implements OnInit {
           this._hintTables.next({});
         }
       },
-      error: (error: any) => {
-        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000);
-      }
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
     });
   }
 
@@ -159,6 +163,7 @@ export class SQLStudioComponent implements OnInit {
     this._dbLoading.next(true);
     this.generalService.showLoading();
     this.databases = [];
+
     this.sqlService.getDatabaseMetaInfo(
       this.selectedDbType,
       this.selectedConnectionString).subscribe({
@@ -166,18 +171,6 @@ export class SQLStudioComponent implements OnInit {
           this.databases = res.databases || [];
           if (this.selectedDatabase === '') {
             this.selectedDatabase = this.databases[0].name;
-          } else {
-            const existingDb: any = this.databases.find((db: any) => db.name === this.selectedDatabase) || [];
-            if (!existingDb || existingDb.length === 0) {
-              this.router.navigate([], {
-                queryParams: {
-                  dbName: null,
-                  dbType: null,
-                  dbCString: null,
-                },
-                queryParamsHandling: 'merge'
-              });
-            }
           }
 
           const tables = this.databases.find((db: any) => db.name === this.selectedDatabase)?.tables || [];
@@ -193,7 +186,7 @@ export class SQLStudioComponent implements OnInit {
           this.generalService.hideLoading();
           this.generalService.showFeedback(error?.error?.message, 'errorMessage', 'Ok', 5000);
         }
-      })
+      });
   }
 
   /**
@@ -216,7 +209,7 @@ export class SQLStudioComponent implements OnInit {
           result.pkLength,
           result.pkDefault).subscribe({
             next: (result: any) => {
-              this.generalService.showFeedback('Table successfully added.', 'successMessage');
+              this.generalService.showFeedback('Table successfully added', 'successMessage');
               this.getDatabases();
               this.applyMigration(result.sql);
             },
@@ -238,51 +231,48 @@ export class SQLStudioComponent implements OnInit {
     this.dialog.open(LinkTableComponent, {
       width: '500px',
       data: tables
-    }).afterClosed().subscribe((res: any) => {
-      if (res) {
-        this.linkTables(res);
-      }
-    })
-  }
+    }).afterClosed().subscribe((selectedTables: any) => {
+      if (selectedTables) {
+        const table1pk: any[] = selectedTables.table1.columns.filter((x: any) => x.primary);
+        const table2pk: any[] = selectedTables.table2.columns.filter((x: any) => x.primary);
+        const payload = {
+          name: selectedTables.table1.name.replace('dbo.', '').replace('.', '_') + '_' + selectedTables.table2.name.replace('dbo.', '').replace('.', '_'),
+          table1: selectedTables.table1.name,
+          table2: selectedTables.table2.name,
+          table1pk: table1pk.map((x: any) => {
+            return {
+              type: x.db,
+              name: x.name,
+            }
+          }),
+          table2pk: table2pk.map((x: any) => {
+            return {
+              type: x.db,
+              name: x.name,
+            }
+          }),
+        };
 
-  private linkTables(selectedTables: any) {
-    const table1pk: any[] = selectedTables.table1.columns.filter((x: any) => x.primary);
-    const table2pk: any[] = selectedTables.table2.columns.filter((x: any) => x.primary);
-    const payload = {
-      name: selectedTables.table1.name.replace('dbo.', '').replace('.', '_') + '_' + selectedTables.table2.name.replace('dbo.', '').replace('.', '_'),
-      table1: selectedTables.table1.name,
-      table2: selectedTables.table2.name,
-      table1pk: table1pk.map((x: any) => {
-        return {
-          type: x.db,
-          name: x.name,
+        this.sqlService.addLinkTable(
+          this.selectedDbType,
+          this.selectedConnectionString,
+          this.selectedDatabase,
+          payload).subscribe({
+            next: (result: any) => {
+              this.generalService.showFeedback('Link table successfully created', 'successMessage');
+              this.getDatabases();
+              this.applyMigration(result.sql);
+            },
+            error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
+          });
         }
-      }),
-      table2pk: table2pk.map((x: any) => {
-        return {
-          type: x.db,
-          name: x.name,
-        }
-      }),
-    };
-    this.sqlService.addLinkTable(
-      this.selectedDbType,
-      this.selectedConnectionString,
-      this.selectedDatabase,
-      payload).subscribe({
-        next: (result: any) => {
-          this.generalService.showFeedback('Link table successfully created', 'successMessage');
-          this.getDatabases();
-          this.applyMigration(result.sql);
-        },
-        error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
-      });
+    });
   }
 
   /**
    * Exports the entire database as DDL and shows in a modal window.
    */
-  public exportDatabase() {
+  public viewDatabaseDDL() {
 
     if (this.selectedDatabase === '') {
       return;
@@ -302,6 +292,7 @@ export class SQLStudioComponent implements OnInit {
       }
       return 0;
     });
+
     this.sqlService.exportDdl(
       this.selectedDbType,
       this.selectedConnectionString,
@@ -339,7 +330,10 @@ export class SQLStudioComponent implements OnInit {
       });
   }
 
-  public changeTable() {
+  /**
+   * Invoked when user is changing his currently active database catalog.
+   */
+  public changeDatabase() {
     const tables = this.databases.find((db: any) => db.name === this.selectedDatabase)?.tables || [];
     this._tables.next(tables);
     let hintTables = this.databases.find((db: any) => db.name === this.selectedDatabase)?.tables || [];
@@ -347,19 +341,21 @@ export class SQLStudioComponent implements OnInit {
     this._hintTables.next(Object.fromEntries(hintTables));
   }
 
+  /**
+   * Invoked when user wants to clear server side cache.
+   */
   public clearServerCache() {
     this.generalService.showLoading();
-    this.cacheService.delete('magic.sql.databases.*').subscribe(
-      {
-        next: () => {
-          window.location.href = window.location.href;
-          this.generalService.hideLoading();
-        },
-        error: (error: any) => {
-          this.generalService.hideLoading();
-          this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
-        }
-      })
+    this.cacheService.delete('magic.sql.databases.*').subscribe({
+      next: () => {
+        window.location.href = window.location.href;
+        this.generalService.hideLoading();
+      },
+      error: (error: any) => {
+        this.generalService.hideLoading();
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
+      }
+    });
   }
 
   /*
