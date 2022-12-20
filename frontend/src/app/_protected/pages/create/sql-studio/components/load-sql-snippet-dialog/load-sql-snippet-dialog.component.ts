@@ -12,8 +12,8 @@ import { SqlService } from '../../../../../../_general/services/sql.service';
  * 
  */
 @Component({
-  selector: 'app-sql-snippet-dialog',
-  templateUrl: './sql-snippet-dialog.component.html'
+  selector: 'app-load-sql-snippet-dialog',
+  templateUrl: './load-sql-snippet-dialog.component.html'
 })
 export class SqlSnippetDialogComponent implements OnInit {
 
