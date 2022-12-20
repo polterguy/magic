@@ -48,6 +48,9 @@ export class EndpointGeneratorComponent implements OnInit {
    */
   public databases: any = [];
 
+  /**
+   * Available roles as published by the backend.
+   */
   public roles: Role[] = [];
 
   /**
@@ -74,7 +77,7 @@ export class EndpointGeneratorComponent implements OnInit {
     })
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.getDefaultDbType();
     this.getRoles();
   }
@@ -133,13 +136,15 @@ export class EndpointGeneratorComponent implements OnInit {
           this.getDatabases(event.selectedDbType, event.selectedConnectionString ?? this.defaultConnectionString);
         }
       },
-      error: (error: any) => {
-        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000);
-      }
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
     });
   }
 
-  /**
+  /*
+   * Private helper methods.
+   */
+
+  /*
    * Retrieves a list of databases already available on the user's backend.
    */
   private getDatabases(selectedDbType: string, selectedConnectionString: string) {
@@ -151,19 +156,19 @@ export class EndpointGeneratorComponent implements OnInit {
           this.databases = res.databases || [];
           this._dbLoading.next(false);
         },
-        error: (error: any) => {
-          this.generalService.showFeedback(error?.error?.message, 'errorMessage', 'Ok', 5000);
-        }
-      })
+        error: (error: any) => this.generalService.showFeedback(error?.error?.message, 'errorMessage', 'Ok', 5000)
+      });
   }
 
+  /*
+   * Returns all available roles from the backend
+   */
   private getRoles() {
-    this.roleService.list('').subscribe({
+    this.roleService.list().subscribe({
       next: (res: Role[]) => {
         this.roles = res || [];
       },
-      error: (error: any) => { }
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message, 'errorMessage', 'Ok', 5000)
     })
   }
-
 }
