@@ -9,14 +9,12 @@ import { Observable, Subscription } from 'rxjs';
 import { Model } from 'src/app/codemirror/codemirror-sql/codemirror-sql.component';
 import { ShortkeysComponent } from 'src/app/_general/components/shortkeys/shortkeys.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { BackendService } from 'src/app/_general/services/backend.service';
 
 // CodeMirror options.
 import { CodemirrorActionsService } from '../../../hyper-ide/_services/codemirror-actions.service';
 import { SqlService } from '../../../../../../_general/services/sql.service';
 import { SqlSnippetDialogComponent } from '../sql-snippet-dialog/sql-snippet-dialog.component';
 import { SnippetNameDialogComponent } from '../../../../../../_general/components/snippet-name-dialog/snippet-name-dialog.component';
-import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 
 /**
  * Helper component to allo user to view his database in SQL view, as in allowing to
@@ -29,29 +27,61 @@ import { ConfirmationDialogComponent } from 'src/app/_general/components/confirm
 })
 export class SqlViewComponent implements OnInit, OnDestroy {
 
-  @Input() dbLoading: boolean;
-  @Input() tables: Observable<any>;
-  @Input() databases: any;
-  @Input() selectedDatabase: string = '';
-  @Input() selectedDbType: string = '';
-  @Input() selectedConnectionString: string = '';
-  @Output() getDatabases: EventEmitter<any> = new EventEmitter<any>();
-
-  input: Model = null;
-  canLoadSnippet: boolean = undefined;
-  queryResult: any = [];
-
-  displayedColumns: any = [];
-
-  public selectedSnippet: string = '';
-
-  public waitingRun: boolean = false;
-
-  sqlFile: any;
-
+  // Name of currently SQL snippet, as provided when saving or loading a snippet from the backend.
+  private selectedSnippet: string = '';
   private tablesList: any = null;
   private tableSubscription!: Subscription;
   private actionSubscription!: Subscription;
+
+  /**
+   * List of tables in currently selected database.
+   */
+  @Input() hintTables: Observable<any[]>;
+
+  /**
+   * Currently selected database catalog.
+   */
+  @Input() selectedDatabase: string = '';
+
+  /**
+   * Currently selected database type.
+   */
+  @Input() selectedDbType: string = '';
+
+  /**
+   * Currently selected connection string.
+   */
+  @Input() selectedConnectionString: string = '';
+
+  /**
+   * Invoked when we for some reasons need to fetch databases from the backend.
+   */
+  @Output() getDatabases: EventEmitter<any> = new EventEmitter<any>();
+
+  /**
+   * CodeMirror model for options, etc.
+   */
+  input: Model = null;
+
+  /**
+   * Query result as returned from the backend by executing some SQL statement.
+   */
+  queryResult: any = [];
+
+  /**
+   * Columns we should display in our SQL query result table.
+   */
+  displayedColumns: any = [];
+
+  /**
+   * If true, we are currently waiting for result of executins some SQL towards the backend.
+   */
+  executingSql: boolean = false;
+
+  /**
+   * Model for file input form element allowing us to import SQL file from local machine.
+   */
+  sqlFile: any;
 
   /**
    * If true prevents returning more than 200 records from backend to avoid
@@ -66,25 +96,19 @@ export class SqlViewComponent implements OnInit, OnDestroy {
     private codemirrorActionsService: CodemirrorActionsService) { }
 
   ngOnInit() {
-    if (this.tables) {
-      this.codemirrorInit();
-      this.watchForActions();
-      this.tableSubscription = this.tables.subscribe((res: any) => {
-        this.tablesList = res;
-        if (this.input) {
-          this.input.options.hintOptions = {
-            tables: this.tablesList,
-          };
-        }
-      });
-    }
+    this.codeMirrorInit();
+    this.watchForActions();
+    this.tableSubscription = this.hintTables.subscribe((res: any) => {
+      this.tablesList = res;
+      if (this.input) {
+        this.input.options.hintOptions = {
+          tables: this.tablesList,
+        };
+      }
+    });
   }
 
-  private async getCodeMirrorOptions(): Promise<any> {
-    return this.codemirrorActionsService.getActions(null, 'sql').then((res: any) => { return res });
-  }
-
-  public async codemirrorInit() {
+  async codeMirrorInit() {
     this.input = {
       databaseType: this.selectedDatabase,
       connectionString: this.selectedConnectionString,
@@ -101,7 +125,7 @@ export class SqlViewComponent implements OnInit, OnDestroy {
   /**
    * Opens the load snippet dialog, to allow user to select a previously saved snippet.
    */
-  public loadSnippet() {
+  loadSnippet() {
     this.dialog.open(SqlSnippetDialogComponent, {
       width: '550px',
       data: this.selectedDbType,
@@ -118,7 +142,10 @@ export class SqlViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  public save() {
+  /**
+   * Opens the save snippet dialog, to allow user to save his current SQL as an SQL snippet.
+   */
+  save() {
     if (!this.input?.sql && this.input.sql === '') {
       this.generalService.showFeedback('Write some SQL first, then save it', 'errorMessage', 'Ok', 5000)
       return;
@@ -151,13 +178,13 @@ export class SqlViewComponent implements OnInit, OnDestroy {
   /**
    * Executes the current SQL towards your backend.
    */
-  public execute() {
+  execute() {
     if (!this.input.sql && this.input.sql === '') {
       this.generalService.showFeedback('Write some SQL first, then execute it', 'errorMessage', 'Ok', 5000)
       return;
     }
     if (this.input && this.input.editor) {
-      this.waitingRun = true;
+      this.executingSql = true;
       const selectedText = this.input.editor.getSelection();
       this.generalService.showLoading();
       this.sqlService.executeSql(
@@ -183,16 +210,11 @@ export class SqlViewComponent implements OnInit, OnDestroy {
             this.queryResult = result || [];
 
             this.buildTable();
-            if (this.input.sql.indexOf('CREATE TABLE') > -1) {
-              this.refetchDatabases();
-            } else {
-              this.generalService.hideLoading();
-            }
-            this.waitingRun = false;
-            // this.applyMigration(selectedText == '' ? this.input.sql : selectedText, true);
+            this.generalService.hideLoading();
+            this.executingSql = false;
           },
           error: (error: any) => {
-            this.waitingRun = false;
+            this.executingSql = false;
             if (error.error &&
               error?.error?.message &&
               error?.error?.message &&
@@ -207,6 +229,43 @@ export class SqlViewComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Invoked when user wants to import an SQL file from his local machine.
+   */
+  importSqlFile(event: any) {
+    this.sqlFile = event.target.files[0];
+    let fileReader = new FileReader();
+
+    fileReader.onload = (e) => {
+      this.input.sql = <any>fileReader.result;
+    }
+
+    fileReader.readAsText(this.sqlFile);
+    this.sqlFile = '';
+  }
+
+  /**
+   * Invoked when user wants to see what keyboard shortcuts he or she can use.
+   */
+  viewShortkeys() {
+    this.dialog.open(ShortkeysComponent, {
+      width: '900px',
+      data: {
+        type: ['save', 'execute', 'insertSnippet'],
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this.tableSubscription?.unsubscribe();
+    this.actionSubscription?.unsubscribe();
+  }
+
+  /*
+   * Private helper methods.
+   */
+
+  // Builds result table.
   private buildTable() {
     if (this.queryResult && this.queryResult.length > 0) {
       this.displayedColumns = [];
@@ -223,52 +282,7 @@ export class SqlViewComponent implements OnInit, OnDestroy {
     }
   }
 
-  public toggleSafeMode() {
-    this.safeMode === true ? this.showWarning() : this.safeMode = true;
-  }
-
-  private showWarning() {
-    this.dialog.open(ConfirmationDialogComponent, {
-      width: '500px',
-      data: {
-        title: 'Attention please!',
-        description: 'Disabling safe mode might result in you exhausting your server or client if you select thousands of records.',
-        description_extra: '<span class="fw-bold">Are you sure you want to continue?</span>',
-        action_btn: 'Yes, disable',
-        action_btn_color: 'warn'
-      }
-    }).afterClosed().subscribe((result: string) => {
-      if (result === 'confirm') {
-        this.safeMode = false;
-      }
-    })
-  }
-
-  public importSqlFile(event: any) {
-    this.sqlFile = event.target.files[0];
-    let fileReader = new FileReader();
-
-    fileReader.onload = (e) => {
-      this.input.sql = <any>fileReader.result;
-    }
-
-    fileReader.readAsText(this.sqlFile);
-    this.sqlFile = '';
-  }
-
-  public viewShortkeys() {
-    this.dialog.open(ShortkeysComponent, {
-      width: '900px',
-      data: {
-        type: ['save', 'execute']
-      }
-    });
-  }
-
-  private refetchDatabases() {
-    this.getDatabases.emit(true);
-  }
-
+  // Invoked when some keyboard shortcut has been triggered.
   private watchForActions() {
     this.actionSubscription = this.codemirrorActionsService.action.subscribe((action: string) => {
       switch (action) {
@@ -290,8 +304,8 @@ export class SqlViewComponent implements OnInit, OnDestroy {
     })
   }
 
-  ngOnDestroy() {
-    this.tableSubscription?.unsubscribe();
-    this.actionSubscription?.unsubscribe();
+  // Returns CodeMirror options for SQL type of editor.
+  private async getCodeMirrorOptions(): Promise<any> {
+    return this.codemirrorActionsService.getActions(null, 'sql').then((res: any) => { return res });
   }
 }

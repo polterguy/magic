@@ -47,6 +47,15 @@ export class ShortkeysComponent implements OnInit {
         }
       ];
     }
+    if (this.data.type.indexOf('insertSnippet') > -1) {
+      this.shortkeys = [
+        ...this.shortkeys,
+        {
+          name: 'Load snippet',
+          key: 'ALT + V'
+        }
+      ];
+    }
     if (this.data.type.indexOf('full') > -1) {
       this.shortkeys = [
         ...this.shortkeys,

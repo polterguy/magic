@@ -216,9 +216,7 @@ export class TablesViewComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.tableSubscription) {
-      this.tableSubscription.unsubscribe();
-    }
+    this.tableSubscription?.unsubscribe();
   }
 
   /*
