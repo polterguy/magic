@@ -14,7 +14,7 @@ import { EndpointsComponent } from '../endpoints.component';
 import { AutoGeneratorComponent } from '../auto-generator/auto-generator.component';
 import { ManualGeneratorComponent } from '../manual-generator/manual-generator.component';
 import { AddArgumentDialogComponent } from '../manual-generator/components/add-argument-dialog/add-argument-dialog.component';
-import { SqlSnippetDialogComponent } from '../../sql-studio/components/sql-snippet-dialog/sql-snippet-dialog.component';
+import { SqlSnippetDialogComponent } from '../../sql-studio/components/load-sql-snippet-dialog/load-sql-snippet-dialog.component';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import { SingleTableConfigComponent } from '../components/single-table-config/single-table-config.component';
 import { CmModule } from 'src/app/codemirror/_module/cm.module';
