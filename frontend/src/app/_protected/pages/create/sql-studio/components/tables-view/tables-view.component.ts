@@ -131,7 +131,7 @@ export class TablesViewComponent implements OnInit, OnDestroy {
     }, 2000);
   }
 
-  public dropTable(item: any, field: string, foreign_keys?: any, tableName?: string) {
+  public dropItem(item: any, field: string, foreign_keys?: any, tableName?: string) {
     if (this.selectedDatabase !== 'magic') {
       let fkName = null;
       if (field === 'column' && foreign_keys && (foreign_keys?.filter((x: any) => x.column === item.name) || []).length > 0) {
@@ -168,7 +168,7 @@ export class TablesViewComponent implements OnInit, OnDestroy {
         }
       })
     } else {
-      this.generalService.showFeedback('This table cannot be deleted.', 'errorMessage');
+      this.generalService.showFeedback('This item cannot be dropped', 'errorMessage');
     }
   }
 
