@@ -8,11 +8,11 @@
           <h3 class="my-0 fw-bold">SQL</h3>
           <div>
 
-            <button mat-button color="primary" (click)="viewShortkeys()">Shortkeys</button>
+            <button mat-button color="primary" (click)="viewShortkeys()" class="mat-caption">Shortkeys</button>
 
-            <button mat-button color="primary" (click)="sqlFileImport.click()">Import</button>
+            <button mat-button color="primary" (click)="sqlFileImport.click()" class="mat-caption">Import</button>
 
-            <mat-slide-toggle labelPosition="before" [(ngModel)]="safeMode">Safe mode</mat-slide-toggle>
+            <mat-slide-toggle labelPosition="before" [(ngModel)]="safeMode" class="mat-caption">Safe mode</mat-slide-toggle>
 
           </div>
         </div>

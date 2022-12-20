@@ -17,7 +17,10 @@ import { GeneralService } from 'src/app/_general/services/general.service';
 })
 export class LinkTableComponent {
 
-  public formData: any = {
+  /**
+   * Tables to link together.
+   */
+  formData: any = {
     table1: '',
     table2: ''
   }
@@ -27,14 +30,20 @@ export class LinkTableComponent {
     private dialogRef: MatDialogRef<LinkTableComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any) { }
 
-  public secondTableList() {
+  /**
+   * Returns all tables except the one selected as our left hand side link table.
+   */
+  secondTableList() {
     if (this.formData.table1 !== '') {
       return this.data.filter((table: any) => { return table.name !== this.formData.table1.name });
     }
     return [];
   }
 
-  public create() {
+  /**
+   * Invoked when user wants to create his link table.
+   */
+  create() {
     if (this.formData.table1 !== '' && this.formData.table2 !== '') {
       this.dialogRef.close(this.formData);
     } else {
