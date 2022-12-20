@@ -50,7 +50,13 @@ export class NewTableComponent {
    * Invoked when name changes.
    */
   public nameChanged() {
-    this.data.pkName = this.data.name + '_id';
+
+    // Avoiding plural form in case user types in English plural for for entity
+    let name = this.data.name;
+    if (name.endsWith('s')) {
+      name = name.substring(0, name.length - 1);
+    }
+    this.data.pkName = name + '_id';
   }
 
   public create() {
