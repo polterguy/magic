@@ -1,4 +1,4 @@
-<mat-card class="py-2">
+<mat-card class="py-3">
   <mat-card-content>
 
     <div class="row align-items-stretch">
@@ -67,29 +67,29 @@
       <div class="col align-self-center">
         <div class="d-flex justify-content-end flex-sm-nowrap flex-wrap mt-xl-0 mt-3">
 
-          <button mat-button color="primary" 
+          <button mat-button color="primary" [disabled]="sqlView" class="mat-caption"
             [disabled]="(dbLoading | async) || sqlView" (click)="addNewTable()">
             New table
           </button>
 
-          <button mat-button color="primary" 
+          <button mat-button color="primary" [disabled]="sqlView" class="mat-caption"
             [disabled]="(dbLoading | async) || sqlView" (click)="createNewLinkTable()">
             Link table
           </button>
 
-          <button mat-button color="primary" [disabled]="(dbLoading | async)"
+          <button mat-button color="primary" [disabled]="(dbLoading | async)" class="mat-caption"
             [matMenuTriggerFor]="menu">
             More
           </button>
 
-          <button mat-button color="primary" (click)="sqlView = !sqlView">
+          <button mat-button color="primary" (click)="sqlView = !sqlView" class="mat-caption">
             {{sqlView ? 'Table view' : 'SQL view'}}
           </button>
 
           <!-- "More" button showing additional action menu items -->
           <mat-menu #menu="matMenu">
 
-            <button mat-menu-item (click)="viewDatabaseDDL()">
+            <button mat-menu-item (click)="viewDatabaseDDL()" [disabled]="sqlView">
               {{selectedDatabase === 'magic' || selectedDbType === 'sqlite' || selectedDbType === 'mysql' ||
               selectedDbType === 'pgsql' ? 'View database as DDL' : 'Export database'}}
             </button>
@@ -99,7 +99,7 @@
             </button>
 
             <div class="m-3">
-              <mat-slide-toggle labelPosition="before" [(ngModel)]="migrate">Auto migrate</mat-slide-toggle>
+              <mat-slide-toggle [disabled]="sqlView" labelPosition="before" [(ngModel)]="migrate">Auto migrate</mat-slide-toggle>
             </div>
 
           </mat-menu>
