@@ -19,4 +19,4 @@ const routes: Routes = [
   exports: [RouterModule]
 })
 
-export class GDatabaseRoutingModule { }
+export class SqlStudioRoutingModule { }
