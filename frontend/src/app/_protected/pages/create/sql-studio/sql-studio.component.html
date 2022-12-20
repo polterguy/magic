@@ -14,9 +14,8 @@
             <mat-icon>database</mat-icon>
             <span class="text-muted">|</span>
           </span>
-
           <mat-select placeholder="Database type" [(ngModel)]="selectedDbType"
-            (selectionChange)="getConnectionString(selectedDbType)">
+            (selectionChange)="getConnectionStrings(selectedDbType)">
             <mat-option *ngFor="let item of databaseTypes" [value]="item.type">{{item.name}}</mat-option>
           </mat-select>
         </mat-form-field>
@@ -36,7 +35,6 @@
             <mat-icon>conversion_path</mat-icon>
             <span class="text-muted">|</span>
           </span>
-
           <mat-select placeholder="Connection string" [(ngModel)]="selectedConnectionString"
             (selectionChange)="getDatabases(selectedDbType, selectedConnectionString)">
             <mat-option *ngFor="let item of connectionStrings | keyvalue" [value]="item.key">{{item.key}}</mat-option>
@@ -58,8 +56,7 @@
             <mat-icon>database</mat-icon>
             <span class="text-muted">|</span>
           </span>
-
-          <mat-select placeholder="Databases" [(ngModel)]="selectedDatabase" (selectionChange)="changeTable()">
+          <mat-select placeholder="Databases" [(ngModel)]="selectedDatabase" (selectionChange)="changeDatabase()">
             <mat-option *ngFor="let item of databases | sortBy: 'name'" [value]="item.name">{{item.name}} <span
                 class="ms-2 mat-caption text-muted">{{item?.tables?.length ?? 0}} table(s)</span></mat-option>
           </mat-select>
@@ -92,7 +89,7 @@
           <!-- "More" button showing additional action menu items -->
           <mat-menu #menu="matMenu">
 
-            <button mat-menu-item (click)="exportDatabase()">
+            <button mat-menu-item (click)="viewDatabaseDDL()">
               {{selectedDatabase === 'magic' || selectedDbType === 'sqlite' || selectedDbType === 'mysql' ||
               selectedDbType === 'pgsql' ? 'View database as DDL' : 'Export database'}}
             </button>
@@ -120,12 +117,24 @@
 
   <div class="col-12">
 
-    <app-tables-view *ngIf="sqlView === false" [migrate]="migrate" [dbLoading]="dbLoading|async" [tables]="tables" [databases]="databases"
-      [selectedDatabase]="selectedDatabase" [selectedDbType]="selectedDbType"
-      [selectedConnectionString]="selectedConnectionString" (getDatabases)="getDatabases($event)"></app-tables-view>
+    <app-tables-view
+      *ngIf="sqlView === false"
+      [migrate]="migrate"
+      [dbLoading]="dbLoading|async"
+      [tables]="tables"
+      [databases]="databases"
+      [selectedDatabase]="selectedDatabase"
+      [selectedDbType]="selectedDbType"
+      [selectedConnectionString]="selectedConnectionString"
+      (getDatabases)="getDatabases($event)"></app-tables-view>
 
-    <app-sql-view *ngIf="sqlView === true" [dbLoading]="dbLoading|async" [tables]="hintTables" [databases]="databases"
-      [selectedDatabase]="selectedDatabase" [selectedDbType]="selectedDbType"
+    <app-sql-view
+      *ngIf="sqlView === true"
+      [dbLoading]="dbLoading|async"
+      [tables]="hintTables"
+      [databases]="databases"
+      [selectedDatabase]="selectedDatabase"
+      [selectedDbType]="selectedDbType"
       [selectedConnectionString]="selectedConnectionString"
       (getDatabases)="getDatabases($event)"></app-sql-view>
 
