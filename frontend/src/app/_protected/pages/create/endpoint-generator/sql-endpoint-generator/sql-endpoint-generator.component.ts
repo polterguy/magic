@@ -12,8 +12,8 @@ import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messa
 import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 import { ShortkeysComponent } from 'src/app/_general/components/shortkeys/shortkeys.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { CrudifyService } from '../../../create/endpoint-generator/_services/crudify.service';
-import { TransformModelService } from '../../../create/endpoint-generator/_services/transform-model.service';
+import { CrudifyService } from '../_services/crudify.service';
+import { TransformModelService } from '../_services/transform-model.service';
 import { Argument } from '../../../manage/endpoints/_models/argument.model';
 import { Role } from '../../../manage/user-and-roles/_models/role.model';
 import { SqlService } from '../../../../../_general/services/sql.service';
@@ -21,14 +21,13 @@ import { AddArgumentDialogComponent } from './components/add-argument-dialog/add
 import { SqlSnippetDialogComponent } from '../../sql-studio/components/load-sql-snippet-dialog/load-sql-snippet-dialog.component';
 
 // CodeMirror options.
-import { BackendService } from 'src/app/_general/services/backend.service';
-import { CodemirrorActionsService } from '../../../create/hyper-ide/_services/codemirror-actions.service';
+import { CodemirrorActionsService } from '../../hyper-ide/_services/codemirror-actions.service';
 import { SnippetNameDialogComponent } from 'src/app/_general/components/snippet-name-dialog/snippet-name-dialog.component';
 import { MessageService } from 'src/app/_general/services/message.service';
 
 @Component({
-  selector: 'app-manual-generator',
-  templateUrl: './manual-generator.component.html'
+  selector: 'app-sql-endpoint-generator',
+  templateUrl: './sql-endpoint-generator.component.html'
 })
 export class ManualGeneratorComponent implements OnInit, OnDestroy {
 

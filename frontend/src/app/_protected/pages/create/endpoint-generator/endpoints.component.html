@@ -6,20 +6,38 @@
       <mat-tab>
         <ng-template mat-tab-label>Auto <span class="d-sm-inline d-none px-1">endpoint</span> generator</ng-template>
         <ng-template matTabContent>
-          <app-auto-generator [dbLoading]="dbLoading" [databaseTypes]="databaseTypes" [defaultDbType]="defaultDbType"
-            [defaultDbName]="paramDbName" [connectionStrings]="connectionStrings"
-            [defaultConnectionString]="defaultConnectionString" [databases]="databases" [roles]="roles"
-            (getConnectionString)="getConnectionString($event)"></app-auto-generator>
+
+          <app-auto-endpoint-generator
+            [dbLoading]="dbLoading"
+            [databaseTypes]="databaseTypes"
+            [defaultDbType]="defaultDbType"
+            [defaultDbName]="paramDbName"
+            [connectionStrings]="connectionStrings"
+            [defaultConnectionString]="defaultConnectionString"
+            [databases]="databases"
+            [roles]="roles"
+            (getConnectionString)="getConnectionString($event)">
+          </app-auto-endpoint-generator>
+
         </ng-template>
       </mat-tab>
 
       <mat-tab>
         <ng-template mat-tab-label>SQL <span class="d-sm-inline d-none px-1">endpoint </span> generator</ng-template>
         <ng-template matTabContent>
-          <app-manual-generator [dbLoading]="dbLoading" [databaseTypes]="databaseTypes" [defaultDbType]="defaultDbType"
-            [defaultDbName]="paramDbName" [connectionStrings]="connectionStrings"
-            [defaultConnectionString]="defaultConnectionString" [databases]="databases" [roles]="roles"
-            (getConnectionString)="getConnectionString($event)"></app-manual-generator>
+
+          <app-sql-endpoint-generator
+            [dbLoading]="dbLoading"
+            [databaseTypes]="databaseTypes"
+            [defaultDbType]="defaultDbType"
+            [defaultDbName]="paramDbName"
+            [connectionStrings]="connectionStrings"
+            [defaultConnectionString]="defaultConnectionString"
+            [databases]="databases"
+            [roles]="roles"
+            (getConnectionString)="getConnectionString($event)">
+          </app-sql-endpoint-generator>
+
         </ng-template>
       </mat-tab>
 
