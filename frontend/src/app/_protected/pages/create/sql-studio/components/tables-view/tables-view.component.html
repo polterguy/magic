@@ -73,6 +73,11 @@
 </div>
 
 <ng-container *ngIf="dbLoading">
-  <app-loading-skeleton [amount]="3" [colClass]="'col-4'" [blockHeight]="'250px'"
+
+  <app-loading-skeleton
+    [amount]="3"
+    [colClass]="'col-4'"
+    [blockHeight]="'250px'"
     [hasShadow]="true"></app-loading-skeleton>
+
 </ng-container>

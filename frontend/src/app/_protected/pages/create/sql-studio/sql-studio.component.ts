@@ -5,7 +5,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { ReplaySubject } from 'rxjs';
 import { Databases } from 'src/app/_general/models/databases.model';
 import { CacheService } from 'src/app/_general/services/cache.service';
@@ -91,7 +91,6 @@ export class SQLStudioComponent implements OnInit {
   dbLoading = this._dbLoading.asObservable();
 
   constructor(
-    private router: Router,
     private dialog: MatDialog,
     private sqlService: SqlService,
     private cacheService: CacheService,
@@ -109,21 +108,14 @@ export class SQLStudioComponent implements OnInit {
       } else {
         this.selectedDbType = 'sqlite';
       }
-      this.getDefaultDbType();
-    });
-  }
 
-  /**
-   * Invokes endpoint to get the default database type.
-   * Retrieves all available database types and specifies the default one.
-   */
-  private getDefaultDbType() {
-    this._dbLoading.next(true);
-    this.generalService.showLoading();
-
-    this.sqlService.defaultDatabaseType().subscribe({
-      next: () => this.getConnectionStrings(this.selectedDbType, this.selectedConnectionString),
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
+      // Retrieving default database type and all supported database types from backend.
+      this._dbLoading.next(true);
+      this.generalService.showLoading();
+      this.sqlService.defaultDatabaseType().subscribe({
+        next: () => this.getConnectionStrings(this.selectedDbType, this.selectedConnectionString),
+        error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
+      });
     });
   }
 
