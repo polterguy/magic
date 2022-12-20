@@ -33,7 +33,7 @@ export class RoleService {
    * @param filter Optional query filter deciding which items to return
    */
   list(params?: string) {
-    return this.httpService.get<Role[]>('/magic/system/magic/roles' + params);
+    return this.httpService.get<Role[]>('/magic/system/magic/roles' + (params ?? ''));
   }
 
   /**

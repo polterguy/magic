@@ -25,6 +25,9 @@ import { EvaluatorService } from '../../../../../_general/services/evaluator.ser
 import { LoadSnippetDialogComponent } from 'src/app/_general/components/load-snippet-dialog/load-snippet-dialog.component';
 import { MessageService } from 'src/app/_general/services/message.service';
 
+/**
+ * Auto endpoint generator, automatically wrapping your database tables in CRUD endpoints.
+ */
 @Component({
   selector: 'app-auto-endpoint-generator',
   templateUrl: './auto-endpoint-generator.component.html'
@@ -93,8 +96,6 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
 
   public codeMirrorReady: boolean = false;
 
-  private snippetName: string = '';
-  public canLoadSnippet: boolean = undefined;
   private codemirrorActionsSubscription: Subscription;
 
   constructor(
@@ -308,8 +309,6 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
 
           idxTable.validators = this.hlInput.hyperlambda;
 
-
-
           if (this.selectedTables.value.length > 1) {
             idxTable.moduleUrl = idxTable.name;
             for (const idxColumn of columns) {
@@ -332,7 +331,6 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
                       .filter(x => x.name === keys[0].foreign_table)[0].columns.filter(x => x.hl === 'string')[0].name,
                   };
                 }
-                // console.log(keys, foreignTable)
               }
 
               idxColumn.expanded = false;
@@ -427,10 +425,6 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
    * Shows load snippet dialog.
    */
   public loadSnippet() {
-    if (!this.canLoadSnippet) {
-      this.generalService.showFeedback('You need a proper permission.', 'errorMessage', 'Ok', 5000)
-      return;
-    }
     this.dialog.open(LoadSnippetDialogComponent, {
       width: '550px',
     }).afterClosed().subscribe((filename: string) => {
@@ -438,7 +432,6 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
         this.evaluatorService.loadSnippet(filename).subscribe({
           next: (content: string) => {
             this.hlInput.hyperlambda = content;
-            this.snippetName = filename;
           },
           error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
         });
@@ -460,19 +453,8 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
     })
   }
 
-  ngOnDestroy(): void {
-    if (this.dbLoadingSubscription) {
-      this.dbLoadingSubscription.unsubscribe();
-    }
-    if (this.codemirrorActionsSubscription) {
-      this.codemirrorActionsSubscription.unsubscribe();
-    }
+  ngOnDestroy() {
+    this.dbLoadingSubscription?.unsubscribe();
+    this.codemirrorActionsSubscription?.unsubscribe();
   }
 }
-
-const crudMethods: string[] = [
-  'post',
-  'get',
-  'put',
-  'delete'
-]
