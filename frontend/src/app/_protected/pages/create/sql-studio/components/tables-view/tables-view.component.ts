@@ -15,7 +15,7 @@ import { ExportDdlComponent } from '../export-ddl/export-ddl.component';
 
 /**
  * Helper component for SQL Studio allowing user to view database in table view, and
- * editing database, by adding new tables, fields, keys, etc to his database fo choice.
+ * editing database, by adding new tables, fields, keys, etc to his database of choice.
  */
 @Component({
   selector: 'app-tables-view',
@@ -24,21 +24,53 @@ import { ExportDdlComponent } from '../export-ddl/export-ddl.component';
 })
 export class TablesViewComponent implements OnInit, OnDestroy {
 
-  @Input() dbLoading: boolean;
-  @Input() tables: Observable<any>;
-  @Input() databases: any;
-  @Input() selectedDatabase: string = '';
-  @Input() selectedDbType: string = '';
-  @Input() selectedConnectionString: string = '';
-  @Input() migrate: boolean;
-
-  @Output() getDatabases: EventEmitter<any> = new EventEmitter<any>();
-
   private tablesList: any = [];
-
   private tableSubscription!: Subscription;
 
-  public activeTable: string = null;
+  /**
+   * If true, we're getting data from the server.
+   */
+  @Input() dbLoading: boolean;
+
+  /**
+   * List of tables in currently selected database.
+   */
+  @Input() tables: Observable<any[]>;
+
+  /**
+   * List of currently selected databases from active connection string.
+   */
+  @Input() databases: any[];
+
+  /**
+   * Currently selected database.
+   */
+  @Input() selectedDatabase: string = '';
+
+  /**
+   * Currently selected database type.
+   */
+  @Input() selectedDbType: string = '';
+
+  /**
+   * Currently selected connection string.
+   */
+  @Input() selectedConnectionString: string = '';
+
+  /**
+   * If true, automatic migration scripts are turned on.
+   */
+  @Input() migrate: boolean;
+
+  /**
+   * Invoked when we need to fetch databases from the backend again for some reason.
+   */
+  @Output() getDatabases: EventEmitter<any> = new EventEmitter<any>();
+
+  /**
+   * Used to track active table implying table flashing up as we click foreign key.
+   */
+  activeTable: string = null;
 
   constructor(
     private dialog: MatDialog,
@@ -51,7 +83,10 @@ export class TablesViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  public addField(item: any) {
+  /**
+   * Invoked when user wants to add a new field or foreign key.
+   */
+  public addColumnOrKey(item: any) {
     this.dialog.open(AddFieldComponent, {
       width: '500px',
       data: {
@@ -71,57 +106,9 @@ export class TablesViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  private addColumn(res: any, table: any) {
-    let defaultValue = null;
-    if (res.defaultValue && res.defaultValue !== '') {
-      if (res.fieldType.defaultValue === 'string') {
-        defaultValue = '\'' + res.defaultValue + '\'';
-      } else {
-        defaultValue = res.defaultValue;
-      }
-    }
-    this.sqlService.addColumn(
-      this.selectedDbType,
-      this.selectedConnectionString,
-      this.selectedDatabase,
-      table.name,
-      res.columnName,
-      res.columnType,
-      defaultValue,
-      res.nullable,
-      res.columnLength).subscribe({
-        next: (result: any) => {
-          this.generalService.showFeedback('Column successfully added to table', 'successMessage');
-          this.refetchDatabases();
-          this.applyMigration(result.sql);
-        },
-        error: (error) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
-      });
-  }
-
-  private addForeignKey(res: any, table: any) {
-    const selectedTable: any = res.selectedTable.columns.find((item: any) => item.name === res?.foreignField);
-    this.sqlService.addReferencedColumn(
-      this.selectedDbType,
-      this.selectedConnectionString,
-      this.selectedDatabase,
-      table.name,
-      res.columnName,
-      selectedTable.db,
-      res.selectedTable.name,
-      res.foreignField,
-      res.nullable,
-      res.columnLength,
-      res.cascading).subscribe({
-        next: (result: any) => {
-          this.generalService.showFeedback('Foreign key successfully added to table.', 'successMessage');
-          this.refetchDatabases();
-          this.applyMigration(result.sql);
-        },
-        error: (error) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
-      });
-  }
-
+  /**
+   * Invoked when user clicks a foreign key, and we want to scroll table into view.
+   */
   public scrollTableIntoView(el: any) {
     const domEl = document.getElementById(el.foreign_table);
     domEl.scrollIntoView();
@@ -131,10 +118,13 @@ export class TablesViewComponent implements OnInit, OnDestroy {
     }, 2000);
   }
 
-  public dropItem(item: any, field: string, foreign_keys?: any, tableName?: string) {
+  /**
+   * Invoked when user wants to drop a column or a table
+   */
+  public dropItem(item: any, type: string, foreign_keys?: any, tableName?: string) {
     if (this.selectedDatabase !== 'magic') {
       let fkName = null;
-      if (field === 'column' && foreign_keys && (foreign_keys?.filter((x: any) => x.column === item.name) || []).length > 0) {
+      if (type === 'column' && foreign_keys && (foreign_keys?.filter((x: any) => x.column === item.name) || []).length > 0) {
         if (this.selectedDbType === 'sqlite') {
           this.generalService.showFeedback('SQLite doesn\'t allow for deleting columns with foreign keys', 'errorMessage', 'Ok', 5000);
           return;
@@ -145,24 +135,24 @@ export class TablesViewComponent implements OnInit, OnDestroy {
       this.dialog.open(ConfirmationDialogComponent, {
         width: '500px',
         data: {
-          title: `Delete ${field} ${item?.name}`,
-          description_extra: `This action is permanent and you will lose all data in your ${field}.<br/><br/>Please type in the <span class="fw-bold">${field} name</span> below.`,
-          action_btn: `Delete ${field}`,
+          title: `Delete ${type} ${item?.name}`,
+          description_extra: `This action is permanent and you will lose all data in your ${type}.<br/><br/>Please type in the <span class="fw-bold">${type} name</span> below.`,
+          action_btn: `Delete ${type}`,
           action_btn_color: 'warn',
           bold_description: true,
           extra: {
             details: item,
             action: 'confirmInput',
-            fieldToBeTypedTitle: `${field} name`,
+            fieldToBeTypedTitle: `${type} name`,
             fieldToBeTypedValue: item.name,
             icon: 'table',
           }
         }
       }).afterClosed().subscribe((result: string) => {
         if (result === 'confirm') {
-          if (field === 'table') {
+          if (type === 'table') {
             this.deleteTable(item);
-          } else if (field === 'column') {
+          } else if (type === 'column') {
             this.deleteColumn(item, tableName, fkName);
           }
         }
@@ -172,58 +162,12 @@ export class TablesViewComponent implements OnInit, OnDestroy {
     }
   }
 
-  private deleteTable(item: any) {
-    this.sqlService.dropTable(
-      this.selectedDbType,
-      this.selectedConnectionString,
-      this.selectedDatabase,
-      item.name).subscribe({
-        next: (result: any) => {
-          this.generalService.showFeedback('Table was successfully deleted', 'successMessage');
-          this.refetchDatabases();
-          this.applyMigration(result.sql);
-        },
-        error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
-      });
-  }
-
-  private deleteColumn(item: any, tableName: string, fkName: string) {
-    if (fkName) {
-      this.sqlService.deleteFk(
-        this.selectedDbType,
-        this.selectedConnectionString,
-        this.selectedDatabase,
-        tableName,
-        fkName,
-        false).subscribe({
-          next: () => {
-            this.deleteColumn(item, tableName, null);
-          },
-          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
-        });
-    } else {
-      this.sqlService.deleteColumn(
-        this.selectedDbType,
-        this.selectedConnectionString,
-        this.selectedDatabase,
-        tableName,
-        item.name).subscribe({
-          next: (result: any) => {
-            this.generalService.showFeedback('Column successfully deleted', 'successMessage');
-            this.refetchDatabases();
-            this.applyMigration(result.sql);
-          },
-          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
-        });
-    }
-  }
-
-  private refetchDatabases() {
-    this.getDatabases.emit(true);
-  }
-
-  public exportTable(tableName: string) {
+  /**
+   * Invoked when user wants to view DDL for one specific table.
+   */
+  public viewTableDDL(tableName: string) {
     this.generalService.showLoading();
+
     this.sqlService.exportDdl(
       this.selectedDbType,
       this.selectedConnectionString,
@@ -277,6 +221,59 @@ export class TablesViewComponent implements OnInit, OnDestroy {
     }
   }
 
+  /*
+   * Private helper methods.
+   */
+
+  // Deletes the specified table.
+  private deleteTable(item: any) {
+    this.sqlService.dropTable(
+      this.selectedDbType,
+      this.selectedConnectionString,
+      this.selectedDatabase,
+      item.name).subscribe({
+        next: (result: any) => {
+          this.generalService.showFeedback('Table was successfully deleted', 'successMessage');
+          this.getDatabases.emit(true);
+          this.applyMigration(result.sql);
+        },
+        error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
+      });
+  }
+
+  // Deletes the specified column.
+  private deleteColumn(item: any, tableName: string, fkName: string) {
+    if (fkName) {
+      this.sqlService.deleteFk(
+        this.selectedDbType,
+        this.selectedConnectionString,
+        this.selectedDatabase,
+        tableName,
+        fkName,
+        false).subscribe({
+          next: () => {
+            this.deleteColumn(item, tableName, null);
+          },
+          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
+        });
+    } else {
+      this.sqlService.deleteColumn(
+        this.selectedDbType,
+        this.selectedConnectionString,
+        this.selectedDatabase,
+        tableName,
+        item.name).subscribe({
+          next: (result: any) => {
+            this.generalService.showFeedback('Column successfully deleted', 'successMessage');
+            this.getDatabases.emit(true);
+            this.applyMigration(result.sql);
+          },
+          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
+        });
+    }
+  }
+
+  // Invoked when user wants to apply migration script.
   private applyMigration(sql: string) {
     if (!this.migrate) {
       return;
@@ -298,5 +295,58 @@ export class TablesViewComponent implements OnInit, OnDestroy {
           });
       }
     });
+  }
+
+  // Invoked when user wants to create a new column.
+  private addColumn(res: any, table: any) {
+    let defaultValue = null;
+    if (res.defaultValue && res.defaultValue !== '') {
+      if (res.fieldType.defaultValue === 'string') {
+        defaultValue = '\'' + res.defaultValue + '\'';
+      } else {
+        defaultValue = res.defaultValue;
+      }
+    }
+    this.sqlService.addColumn(
+      this.selectedDbType,
+      this.selectedConnectionString,
+      this.selectedDatabase,
+      table.name,
+      res.columnName,
+      res.columnType,
+      defaultValue,
+      res.nullable,
+      res.columnLength).subscribe({
+        next: (result: any) => {
+          this.generalService.showFeedback('Column successfully added to table', 'successMessage');
+          this.getDatabases.emit(true);
+          this.applyMigration(result.sql);
+        },
+        error: (error) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
+      });
+  }
+
+  // Invoked when user wants to create a new foreign key.
+  private addForeignKey(res: any, table: any) {
+    const selectedTable: any = res.selectedTable.columns.find((item: any) => item.name === res?.foreignField);
+    this.sqlService.addReferencedColumn(
+      this.selectedDbType,
+      this.selectedConnectionString,
+      this.selectedDatabase,
+      table.name,
+      res.columnName,
+      selectedTable.db,
+      res.selectedTable.name,
+      res.foreignField,
+      res.nullable,
+      res.columnLength,
+      res.cascading).subscribe({
+        next: (result: any) => {
+          this.generalService.showFeedback('Foreign key successfully added to table.', 'successMessage');
+          this.getDatabases.emit(true);
+          this.applyMigration(result.sql);
+        },
+        error: (error) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
+      });
   }
 }
