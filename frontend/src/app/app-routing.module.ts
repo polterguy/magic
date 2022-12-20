@@ -29,7 +29,7 @@ const routes: Routes = [
       },
       {
         path: 'sql-studio',
-        loadChildren: () => import('./_protected/pages/create/sql-studio/_module/g-database.module').then(m => m.GDatabaseModule)
+        loadChildren: () => import('./_protected/pages/create/sql-studio/_module/sql-studio.module').then(m => m.SqlStudioModule)
       },
       {
         path: 'endpoints',

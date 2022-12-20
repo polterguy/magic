@@ -18,7 +18,7 @@ import { NewTableComponent } from '../components/new-table/new-table.component';
 import { TablesViewComponent } from '../components/tables-view/tables-view.component';
 import { SQLStudioComponent } from '../sql-studio.component';
 import { SqlViewComponent } from '../components/sql-view/sql-view.component';
-import { GDatabaseRoutingModule } from './g-database.routing.module';
+import { SqlStudioRoutingModule } from './sql-studio-routing.module';
 import { AddMigrateScriptComponent } from '../components/add-migrate-script/add-migrate-script.component';
 
 @NgModule({
@@ -34,7 +34,7 @@ import { AddMigrateScriptComponent } from '../components/add-migrate-script/add-
   ],
   imports: [
     CommonModule,
-    GDatabaseRoutingModule,
+    SqlStudioRoutingModule,
     ComponentsModule,
     MaterialModule,
     CodemirrorModule,
@@ -43,4 +43,4 @@ import { AddMigrateScriptComponent } from '../components/add-migrate-script/add-
     CmModule,
   ]
 })
-export class GDatabaseModule { }
+export class SqlStudioModule { }
