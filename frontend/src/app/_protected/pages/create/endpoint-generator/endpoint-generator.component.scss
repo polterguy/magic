@@ -4,6 +4,10 @@
 
 @import '../../../../../assets/styles/_variables/colors.scss';
 
+mat-card.generator {
+  padding-bottom: .5rem !important;
+}
+
 ::ng-deep .select-all-checkbox {
   height: 3em;
   line-height: 3em;
