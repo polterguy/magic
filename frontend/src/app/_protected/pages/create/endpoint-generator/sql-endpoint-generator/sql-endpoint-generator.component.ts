@@ -186,19 +186,15 @@ export class ManualGeneratorComponent extends GeneratorBase implements OnInit, O
       return;
     }
     if (this.primaryURL === '' && this.secondaryURL === '') {
-      this.generalService.showFeedback('Please check the route(s).', 'errorMessage');
+      this.generalService.showFeedback('Please check URLs', 'errorMessage');
       return;
     }
     if (this.selectedMethod === '') {
-      this.generalService.showFeedback('Please select a method.', 'errorMessage');
-      return;
-    }
-    if (this.selectedRoles.value.length === 0) {
-      this.generalService.showFeedback('Please select role(s).', 'errorMessage');
+      this.generalService.showFeedback('Please select an HTTP method', 'errorMessage');
       return;
     }
     if (this.sql.sql.trim() === '') {
-      this.generalService.showFeedback('Did you forget to add your code?', 'errorMessage');
+      this.generalService.showFeedback('Please add some SQL', 'errorMessage');
       return;
     }
     this.generalService.showLoading();
