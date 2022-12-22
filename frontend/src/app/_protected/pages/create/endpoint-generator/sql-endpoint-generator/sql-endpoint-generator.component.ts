@@ -37,14 +37,16 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
   @Input() connectionStrings: any = [];
   @Input() roles: Role[] = [];
 
-  @Input() defaultDbType: string = '';
-  @Input() defaultConnectionString: string = '';
-  @Input() defaultDbName: string = '';
+  @Input() selectedDbType: string = '';
+  @Output() selectedDbTypeChange = new EventEmitter<string>();
+
+  @Input() selectedConnectionString: string = '';
+  @Output() selectedConnectionStringChange = new EventEmitter<string>();
+
+  @Input() selectedDbName: string = '';
+  @Output() selectedDbNameChange  = new EventEmitter<string>();
 
   public allDatabasesList: any = [];
-  public selectedDatabase: string = '';
-  public selectedDbType: string = '';
-  public selectedConnectionString: string = '';
   public selectedTables: FormControl = new FormControl<any>('');
   public selectedRoles: FormControl = new FormControl<any>('');
   public primaryURL: string = '';
@@ -53,8 +55,6 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
   public logUpdate: boolean = false;
   public logDelete: boolean = false;
   hintTables: any = {};
-
-  public tables: any = [];
 
   @Output() getConnectionString: EventEmitter<any> = new EventEmitter<any>();
 
@@ -102,7 +102,7 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
   public sql: Model = {
     databaseType: this.selectedDbType,
     connectionString: this.selectedConnectionString,
-    database: '[' + this.selectedConnectionString + '|' + this.selectedDatabase + ']',
+    database: '[' + this.selectedConnectionString + '|' + this.selectedDbName + ']',
     sql: '',
     options: [],
     editor: ''
@@ -124,16 +124,9 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
   }
 
   private watchDbLoading() {
-    this.dbLoadingSubscription = this.dbLoading.subscribe((isLoading: boolean) => {
-      this.selectedDatabase = '';
-      this.selectedConnectionString = '';
-      this.tables = [];
-      if (isLoading === false) {
-        this.waitingData();
-        this.getOptions();
-        this.watchForActions();
-      }
-    })
+    this.waitingData();
+    this.getOptions();
+    this.watchForActions();
   }
 
   private getOptions() {
@@ -149,20 +142,13 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
 
   private waitingData() {
     (async () => {
-      while (!(this.databaseTypes && this.databaseTypes.length && this.defaultConnectionString && this.defaultConnectionString !== '' && this.databases && this.databases.length))
+      while (!(this.databaseTypes && this.databaseTypes.length && this.selectedConnectionString && this.selectedConnectionString !== '' && this.databases && this.databases.length))
         await new Promise(resolve => setTimeout(resolve, 100));
 
-      if (this.databaseTypes && this.databaseTypes.length > 0 && this.defaultConnectionString && this.defaultConnectionString !== '' && this.databases && this.databases.length > 0) {
-
+      if (this.databaseTypes && this.databaseTypes.length > 0 && this.selectedConnectionString && this.selectedConnectionString !== '' && this.databases && this.databases.length > 0) {
         this.allDatabasesList = [...this.databases];
-
-        this.selectedDbType = this.defaultDbType;
-        this.selectedConnectionString = this.defaultConnectionString;
-        this.selectedDatabase = this.defaultDbName !== '' ? this.defaultDbName : this.databases[0].name;
-        this.primaryURL = this.selectedDatabase.toLowerCase();
-
+        this.primaryURL = this.selectedDbName.toLowerCase();
         this.selectedRoles.setValue(['root', 'guest']);
-
         this.changeDatabase();
         this.cdr.detectChanges();
       }
@@ -170,22 +156,22 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
   }
 
   public changeConnectionStrings() {
-    this.getConnectionString.emit({ selectedDbType: this.selectedDbType, selectedConnectionString: this.selectedConnectionString });
+    this.getConnectionString.emit();
   }
 
   public changeDatabase() {
-    const db = this.databases.find((item: any) => item.name === this.selectedDatabase);
-    if (this.selectedDatabase && db && db.tables?.length) {
-      this.tables = this.databases.find((item: any) => item.name === this.selectedDatabase).tables;
-      let names: any = this.tables.map((item: any) => { return item.name });
+    const db = this.databases.find((item: any) => item.name === this.selectedDbName);
+    if (this.selectedDbName && db && db.tables?.length) {
+      const tables = this.databases.find((item: any) => item.name === this.selectedDbName).tables;
+      let names: any = tables.map((item: any) => { return item.name });
       this.selectedTables = new FormControl({ value: names, disabled: false });
-      let hintTables = this.tables.map((x: any) => [x.name, x.columns.map((y: any) => y.name)]);
+      let hintTables = tables.map((x: any) => [x.name, x.columns.map((y: any) => y.name)]);
       this.hintTables = Object.fromEntries(hintTables);
       this.getOptions();
     } else {
       this.selectedTables = new FormControl({ value: '', disabled: true });
     }
-    this.primaryURL = this.selectedDatabase.toLowerCase();
+    this.primaryURL = this.selectedDbName.toLowerCase();
     this.cdr.detectChanges();
   }
 
@@ -273,7 +259,7 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
    * Generates your SQL endpoint.
    */
   public generate() {
-    const hasTables = this.databases.find((item: any) => item.name === this.selectedDatabase).tables !== null;
+    const hasTables = this.databases.find((item: any) => item.name === this.selectedDbName).tables !== null;
     if (!hasTables) {
       this.generalService.showFeedback('Please create tables in the selected database.', 'errorMessage', 'Ok', 5000);
       return;
@@ -298,7 +284,7 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
     this.waiting = true;
     const data: any = {
       databaseType: this.selectedDbType,
-      database: this.selectedDatabase,
+      database: this.selectedDbName,
       authorization: this.selectedRoles.value.toString(),
       moduleName: this.primaryURL,
       endpointName: this.secondaryURL,

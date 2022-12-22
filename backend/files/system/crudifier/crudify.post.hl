@@ -143,6 +143,10 @@ semaphore:crudifier
             eq
                get-value:x:@.arguments/*/log
                .:
+         not
+            eq
+               get-value:x:@.arguments/*/log
+               .
       .lambda
          unwrap:x:+/*/*/log.info
          insert-after:x:@apply/*/.type

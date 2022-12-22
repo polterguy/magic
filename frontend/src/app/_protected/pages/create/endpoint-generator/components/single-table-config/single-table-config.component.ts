@@ -3,8 +3,7 @@
  * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
+import { Component, Input, OnInit } from '@angular/core';
 import { ColumnEx } from 'src/app/_protected/pages/create/endpoint-generator/_models/column-ex.model';
 
 @Component({
@@ -12,12 +11,11 @@ import { ColumnEx } from 'src/app/_protected/pages/create/endpoint-generator/_mo
   templateUrl: './single-table-config.component.html',
   styleUrls: ['./single-table-config.component.scss']
 })
-export class SingleTableConfigComponent implements OnInit, OnDestroy {
+export class SingleTableConfigComponent implements OnInit {
 
   @Input() selectedTable: string = '';
   @Input() selectedDatabase: string = '';
   @Input() databases: any = [];
-  @Input() dbLoading: Observable<boolean>;
 
   displayedColumns: string[] = [
     'name',
@@ -36,12 +34,11 @@ export class SingleTableConfigComponent implements OnInit, OnDestroy {
 
   public templateList: any = TemplateList;
 
-  private dbLoadingSubscription!: Subscription;
-
   fkLong: any = {}
 
   ngOnInit() {
     this.watchDbLoading();
+    console.log(this.fkLong);
   }
 
   hasForeignKey(el: any) {
@@ -53,63 +50,59 @@ export class SingleTableConfigComponent implements OnInit, OnDestroy {
   }
 
   private watchDbLoading() {
-    this.dbLoadingSubscription = this.dbLoading.subscribe((isLoading: boolean) => {
-      this.dataSource = [];
-      if (isLoading === false) {
-        const db: any = this.databases.find((db: any) => db.name === this.selectedDatabase);
-        const table: any = db.tables.find((table: any) => table.name === this.selectedTable.toString());
+    this.dataSource = [];
+    const db: any = this.databases.find((db: any) => db.name === this.selectedDatabase);
+    const table: any = db.tables.find((table: any) => table.name === this.selectedTable.toString());
 
-        this.foreign_keys = table.foreign_keys || [];
+    this.foreign_keys = table.foreign_keys || [];
 
-        const columns = (table.columns || []);
+    const columns = (table.columns || []);
 
-        this.dataSource = table.columns;
+    this.dataSource = table.columns;
 
-        for (const idxColumn of columns) {
+    for (const idxColumn of columns) {
 
-          idxColumn.post = !(idxColumn.automatic && idxColumn.primary);
-          if (idxColumn.automatic && idxColumn.name?.toLowerCase() === 'created') {
-            idxColumn.post = false;
-          }
-          idxColumn.get = true;
-          idxColumn.put = !idxColumn.automatic || idxColumn.primary;
-          idxColumn.delete = idxColumn.primary;
-
-          idxColumn.postDisabled = false;
-          idxColumn.getDisabled = false;
-          idxColumn.putDisabled = idxColumn.primary;
-          idxColumn.deleteDisabled = true;
-
-          if ((idxColumn.name === 'user' || idxColumn.name === 'username') && idxColumn.hl === 'string') {
-            idxColumn.locked = true;
-          }
-
-          if (idxColumn.name?.toLowerCase() === 'picture' || idxColumn.name?.toLowerCase() === 'image' || idxColumn.name?.toLowerCase() === 'photo') {
-            idxColumn.handling = 'image';
-          }
-
-          if (idxColumn.name?.toLowerCase() === 'file') {
-            idxColumn.handling = 'file';
-          }
-
-          if (idxColumn.name?.toLowerCase() === 'youtube' || idxColumn.name?.toLowerCase() === 'video') {
-            idxColumn.handling = 'youtube';
-          }
-
-          if (idxColumn.name?.toLowerCase() === 'email' || idxColumn.name?.toLowerCase() === 'mail') {
-            idxColumn.handling = 'email';
-          }
-
-          if (idxColumn.name?.toLowerCase() === 'url' || idxColumn.name?.toLowerCase() === 'link') {
-            idxColumn.handling = 'url';
-          }
-
-          if (idxColumn.name?.toLowerCase() === 'phone' || idxColumn.name?.toLowerCase() === 'tel') {
-            idxColumn.handling = 'phone';
-          }
-        }
+      idxColumn.post = !(idxColumn.automatic && idxColumn.primary);
+      if (idxColumn.automatic && idxColumn.name?.toLowerCase() === 'created') {
+        idxColumn.post = false;
       }
-    });
+      idxColumn.get = true;
+      idxColumn.put = !idxColumn.automatic || idxColumn.primary;
+      idxColumn.delete = idxColumn.primary;
+
+      idxColumn.postDisabled = false;
+      idxColumn.getDisabled = false;
+      idxColumn.putDisabled = idxColumn.primary;
+      idxColumn.deleteDisabled = true;
+
+      if ((idxColumn.name === 'user' || idxColumn.name === 'username') && idxColumn.hl === 'string') {
+        idxColumn.locked = true;
+      }
+
+      if (idxColumn.name?.toLowerCase() === 'picture' || idxColumn.name?.toLowerCase() === 'image' || idxColumn.name?.toLowerCase() === 'photo') {
+        idxColumn.handling = 'image';
+      }
+
+      if (idxColumn.name?.toLowerCase() === 'file') {
+        idxColumn.handling = 'file';
+      }
+
+      if (idxColumn.name?.toLowerCase() === 'youtube' || idxColumn.name?.toLowerCase() === 'video') {
+        idxColumn.handling = 'youtube';
+      }
+
+      if (idxColumn.name?.toLowerCase() === 'email' || idxColumn.name?.toLowerCase() === 'mail') {
+        idxColumn.handling = 'email';
+      }
+
+      if (idxColumn.name?.toLowerCase() === 'url' || idxColumn.name?.toLowerCase() === 'link') {
+        idxColumn.handling = 'url';
+      }
+
+      if (idxColumn.name?.toLowerCase() === 'phone' || idxColumn.name?.toLowerCase() === 'tel') {
+        idxColumn.handling = 'phone';
+      }
+    }
   }
 
   getForeignKeyName(el: any) {
@@ -163,12 +156,6 @@ export class SingleTableConfigComponent implements OnInit, OnDestroy {
 
   getTemplateTooltip(name: string) {
     return TemplateListTooltip[name];
-  }
-
-  ngOnDestroy(): void {
-    if (this.dbLoadingSubscription) {
-      this.dbLoadingSubscription.unsubscribe();
-    }
   }
 }
 

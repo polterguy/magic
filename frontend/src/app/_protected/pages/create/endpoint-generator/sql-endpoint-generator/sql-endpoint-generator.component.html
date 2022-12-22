@@ -7,7 +7,7 @@
   <div class="col-xxl-9 col-xl-10 col-lg-11 col-12">
     <div class="row align-items-stretch mt-4">
 
-      <!-- database types -->
+      <!-- Database types -->
       <div class="col-md-4 col-sm-6 col-12">
         <mat-form-field class="w-100">
           <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
@@ -22,7 +22,7 @@
         </mat-form-field>
       </div>
 
-      <!-- connection string -->
+      <!-- Connection strings -->
       <div class="col-md-4 col-sm-6 col-12">
         <ng-container *ngIf="dbLoading | async">
           <app-loading-skeleton [amount]="1" [colClass]="'col-12'" [blockHeight]="'45px'"
@@ -36,12 +36,12 @@
 
           <mat-select placeholder="Connection string" [(ngModel)]="selectedConnectionString"
             (selectionChange)="changeConnectionStrings()">
-            <mat-option *ngFor="let item of connectionStrings | keyvalue" [value]="item.key">{{item.key}}</mat-option>
+            <mat-option *ngFor="let item of connectionStrings" [value]="item">{{item}}</mat-option>
           </mat-select>
         </mat-form-field>
       </div>
 
-      <!-- databases list -->
+      <!-- Database list -->
       <div class="col-md-4 col-sm-6 col-12">
         <ng-container *ngIf="dbLoading | async">
           <app-loading-skeleton [amount]="1" [colClass]="'col-12'" [blockHeight]="'45px'"
@@ -53,7 +53,7 @@
             <span class="text-muted">|</span>
           </span>
 
-          <mat-select placeholder="Databases" [(ngModel)]="selectedDatabase" (selectionChange)="changeDatabase()">
+          <mat-select placeholder="Databases" [(ngModel)]="selectedDbName" (selectionChange)="changeDatabase()">
             <mat-option *ngFor="let item of databases | sortBy: 'name'" [value]="item.name">{{item.name}}</mat-option>
           </mat-select>
         </mat-form-field>
@@ -142,10 +142,10 @@
         <div class="col-12">
           <div class="d-flex align-items-center flex-wrap mt-1">
             <mat-checkbox color="primary" [(ngModel)]="isScalar"
-              [disabled]="selectedDatabase === ''">Scalar</mat-checkbox>
+              [disabled]="selectedDbName === ''">Scalar</mat-checkbox>
             <div class="px-xl-5 px-lg-4 px-sm-3 px-1"></div>
             <mat-checkbox color="primary" [(ngModel)]="overwrite"
-              [disabled]="selectedDatabase === ''">Overwrite</mat-checkbox>
+              [disabled]="selectedDbName === ''">Overwrite</mat-checkbox>
           </div>
         </div>
       </div>
