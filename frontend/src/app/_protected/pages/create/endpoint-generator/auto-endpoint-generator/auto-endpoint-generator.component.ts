@@ -4,18 +4,15 @@
  */
 
 import { formatNumber } from '@angular/common';
-import { ChangeDetectorRef, Component, EventEmitter, Inject, Input, LOCALE_ID, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, Inject, LOCALE_ID, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { forkJoin, Observable, Subscription } from 'rxjs';
 import { Model } from 'src/app/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
-import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
-import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { LocResult } from '../_models/loc-result.model';
 import { CrudifyService } from '../_services/crudify.service';
 import { TransformModelService } from '../_services/transform-model.service';
 import { LogService } from '../../../../../_general/services/log.service';
-import { Role } from '../../../manage/user-and-roles/_models/role.model';
 
 // CodeMirror options.
 import hyperlambda from '../../../../../codemirror/options/hyperlambda.json';
@@ -24,6 +21,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { EvaluatorService } from '../../../../../_general/services/evaluator.service';
 import { LoadSnippetDialogComponent } from 'src/app/_general/components/load-snippet-dialog/load-snippet-dialog.component';
 import { MessageService } from 'src/app/_general/services/message.service';
+import { ActivatedRoute } from '@angular/router';
+import { SqlService } from 'src/app/_general/services/sql.service';
+import { GeneratorBase } from '../generator-base';
+import { RoleService } from '../../../manage/user-and-roles/_services/role.service';
 
 /**
  * Auto endpoint generator, automatically wrapping your database tables in CRUD endpoints.
@@ -32,59 +33,122 @@ import { MessageService } from 'src/app/_general/services/message.service';
   selector: 'app-auto-endpoint-generator',
   templateUrl: './auto-endpoint-generator.component.html'
 })
-export class AutoGeneratorComponent implements OnInit, OnDestroy {
+export class AutoGeneratorComponent extends GeneratorBase implements OnInit, OnDestroy {
 
-  @Input() dbLoading: Observable<boolean>;
-  @Input() databases: any = [];
-  @Input() databaseTypes: any = [];
-  @Input() connectionStrings: any = [];
-  @Input() roles: Role[] = [];
-
-  @Input() defaultDbType: string = '';
-  @Input() defaultConnectionString: string = '';
-  @Input() defaultDbName: string = '';
-
-  public allDatabasesList: any = [];
-  public selectedDatabase: string = '';
-  public selectedDbType: string = '';
-  public selectedConnectionString: string = '';
-  public selectedTables: FormControl = new FormControl<any>('');
-  public readRoles: FormControl = new FormControl<any>('');
-  public updateRoles: FormControl = new FormControl<any>('');
-  public deleteRoles: FormControl = new FormControl<any>('');
-  public createRoles: FormControl = new FormControl<any>('');
-  public primaryURL: string = '';
-  public secondaryURL: string = '';
-  public logCreate: boolean = false;
-  public logUpdate: boolean = false;
-  public logDelete: boolean = false;
-
-  public captchaCreate: boolean = false;
-  public captchaRead: boolean = false;
-  public captchaUpdate: boolean = false;
-  public captchaDelete: boolean = false;
-  public captchaValue: number;
-
-  public cachePublic: boolean = false;
-  public cacheDuration: boolean = false;
-
-  public generateSocket: boolean = false;
-  public generateSocketMessage: string;
-  public authRoles: FormControl = new FormControl<any>('');
+  // Subscription for CodeMirror keyboard shortcut listener.
+  private codemirrorActionsSubscription: Subscription;
 
   /**
-   * Authorisation requirements for SignalR messages published during invocation of endpoint.
+   * Selected tables form control, allowing user to select multiple tables to generate CRUD endpoints for.
    */
-  cqrsAuthorisationTypes: string[] = ['none', 'inherited', 'roles', 'groups', 'users'];
+  selectedTables: FormControl = new FormControl<any>('');
 
-  public tables: any = [];
+  /**
+   * Form control for roles require to invoke read endpoint(s).
+   */
+  readRoles: FormControl = new FormControl<any>('');
 
-  @Output() getConnectionString: EventEmitter<any> = new EventEmitter<any>();
+  /**
+   * Form control for roles require to invoke update endpoint(s).
+   */
+  updateRoles: FormControl = new FormControl<any>('');
 
-  private dbLoadingSubscription!: Subscription;
+  /**
+   * Form control for roles require to invoke delete endpoint(s).
+   */
+  deleteRoles: FormControl = new FormControl<any>('');
 
-  public CommonRegEx = CommonRegEx;
-  public CommonErrorMessages = CommonErrorMessages;
+  /**
+   * Form control for roles require to invoke create endpoint(s).
+   */
+  createRoles: FormControl = new FormControl<any>('');
+
+  /**
+   * Databound value for the primary URL of module, defaults to name of database catalog.
+   */
+  primaryURL: string = '';
+
+  /**
+   * Databound value for secondary URL to endpoints, defaults to name of table.
+   */
+  secondaryURL: string = '';
+
+  /**
+   * Whether or not invocations to create endpoints should create a log entry.
+   */
+  logCreate: boolean = false;
+
+  /**
+   * Whether or not invocations to update endpoints should create a log entry.
+   */
+  logUpdate: boolean = false;
+
+  /**
+   * Whether or not invocations to delete endpoints should create a log entry.
+   */
+  logDelete: boolean = false;
+
+  /**
+   * reCAPTCHA value to use for endpoints.
+   */
+  captchaValue: number;
+
+  /**
+   * If true, reCAPTCHA should be applied to create endpoint(s).
+   */
+  captchaCreate: boolean = false;
+
+  /**
+   * If true, reCAPTCHA should be applied to read endpoint(s).
+   */
+  captchaRead: boolean = false;
+
+  /**
+   * If true, reCAPTCHA should be applied to update endpoint(s).
+   */
+  captchaUpdate: boolean = false;
+
+  /**
+   * If true, reCAPTCHA should be applied to delete endpoint(s).
+   */
+  captchaDelete: boolean = false;
+
+  /**
+   * Duration of HTTP Cache-Control header for read and count endpoint(s).
+   */
+  cacheDuration: boolean = false;
+
+  /**
+   * If true, caching should be applied publicly, such that proxies can cache values.
+   */
+  cachePublic: boolean = false;
+
+  /**
+   * If true, user wants to have socket messages published upon invocation to write
+   * endpoints (PUT/POST/DELETE).
+   */
+  publishSocketMessages: boolean = false;
+
+  /**
+   * Selected authorisation type for socket messages published by backend.
+   */
+  socketAuthorisationTypes: string[] = ['none', 'inherited', 'roles'];
+
+  /**
+   * Authorisation type for socket messages published, implying who should be given access
+   * to socket messages published by backend.
+   */
+  socketAuthorisationTypeValue: string;
+
+  /**
+   * Roles users must belong to in order to be notified when socket messages are published.
+   */
+  socketAuthorisationRoles: FormControl = new FormControl<any>('');
+
+  /**
+   * Available tables from currently selected database catalog.
+   */
+  availableTables: any[] = [];
 
   /**
    * Input Hyperlambda component model and options.
@@ -94,331 +158,202 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
     options: hyperlambda,
   };
 
-  public codeMirrorReady: boolean = false;
-
-  private codemirrorActionsSubscription: Subscription;
-
   constructor(
     private dialog: MatDialog,
     private logService: LogService,
-    private cdr: ChangeDetectorRef,
+    protected sqlService: SqlService,
     private messageService: MessageService,
-    private generalService: GeneralService,
+    protected generalService: GeneralService,
+    protected activatedRoute: ActivatedRoute,
     private crudifyService: CrudifyService,
     private evaluatorService: EvaluatorService,
+    protected roleService: RoleService,
     protected transformService: TransformModelService,
     private codemirrorActionsService: CodemirrorActionsService,
-    @Inject(LOCALE_ID) public locale: string) { }
+    @Inject(LOCALE_ID) public locale: string) {
+      super(generalService, roleService, activatedRoute, sqlService);
+    }
 
   ngOnInit() {
-    this.watchDbLoading();
+    this.getOptions();
+    this.watchForActions();
+    this.init();
   }
 
-  private watchDbLoading() {
-    this.dbLoadingSubscription = this.dbLoading.subscribe((isLoading: boolean) => {
-      this.selectedDatabase = '';
-      this.selectedConnectionString = '';
-      this.tables = [];
-      if (isLoading === false) {
-
-        this.waitingData();
-        this.getOptions();
-        this.watchForActions();
-      }
-    })
+  /**
+   * Invoked when database type is changed.
+   */
+  public changeDbType() {
+    this.getConnectionString();
   }
 
-  private getOptions() {
-    this.codemirrorActionsService.getActions('', 'hl').then((options: any) => {
-      options.autofocus = false;
-      this.hlInput.options = options;
-      this.codeMirrorReady = true;
-    })
+  /**
+   * Invoked when active connection string is changed.
+   */
+  public changeConnectionString() {
+    this.getDatabases();
   }
 
-  private waitingData() {
-    (async () => {
-      while (!(this.databaseTypes && this.databaseTypes.length && this.defaultConnectionString && this.defaultConnectionString !== '' && this.databases && this.databases.length))
-        await new Promise(resolve => setTimeout(resolve, 100));
-
-      if (this.databaseTypes && this.databaseTypes.length > 0 && this.defaultConnectionString && this.defaultConnectionString !== '' && this.databases && this.databases.length > 0) {
-
-        this.allDatabasesList = [...this.databases];
-
-        this.selectedDbType = this.defaultDbType;
-        this.selectedConnectionString = this.defaultConnectionString;
-        this.selectedDatabase = this.defaultDbName !== '' ? this.defaultDbName : this.databases[0].name;
-        this.primaryURL = this.selectedDatabase.toLowerCase();
-
-        this.readRoles.setValue(['root', 'guest']);
-        this.updateRoles.setValue(['root', 'guest']);
-        this.deleteRoles.setValue(['root', 'guest']);
-        this.createRoles.setValue(['root', 'guest']);
-
-        this.changeDatabase();
-        this.cdr.detectChanges();
-      }
-    })();
-  }
-
-  public changeConnectionStrings() {
-    this.getConnectionString.emit({ selectedDbType: this.selectedDbType, selectedConnectionString: this.selectedConnectionString });
-  }
-
+  /**
+   * Invoked when active database catalog is changed.
+   */
   public changeDatabase() {
+
+    // Finding table names from currently selected database catalog.
     const db = this.databases.find((item: any) => item.name === this.selectedDatabase);
-    if (this.selectedDatabase && db && db.tables?.length) {
-      this.tables = this.databases.find((item: any) => item.name === this.selectedDatabase).tables;
-      let names: any = this.tables.map((item: any) => { return item.name });
+    if (db?.tables?.length) {
+      this.availableTables = this.databases.find((item: any) => item.name === this.selectedDatabase).tables;
+      let names: string[] = this.availableTables.map((item: any) => { return item.name });
       this.selectedTables = new FormControl({ value: names, disabled: false });
     } else {
       this.selectedTables = new FormControl({ value: '', disabled: true });
     }
-    this.primaryURL = this.selectedDatabase.toLowerCase();
-    if (this.tables.length === 1) {
-      this.secondaryURL = this.tables[0].name
-    }
-    this.cdr.detectChanges();
+
+    // Using database name as default primary URL of endpoints.
+    this.primaryURL = this.selectedDatabase;
   }
 
+  /**
+   * Invoked when selected table is changed.
+   */
   public selectedTableChanged() {
     this.selectedTables.value.length === 1 ?
       this.secondaryURL = this.selectedTables.value.toString().toLowerCase() :
       '';
   }
 
+  /**
+   * Invoked when user is toggling all tables, either selcting all tables, or de-selecting all tables.
+   */
   public toggleAllTables(checked: boolean) {
     if (!checked) {
       this.selectedTables.setValue('');
     } else {
-      let names: any = this.tables.map((item: any) => { return item.name });
+      let names: any = this.availableTables.map((item: any) => { return item.name });
       this.selectedTables.setValue(names);
     }
-    this.cdr.detectChanges();
   }
 
+  /**
+   * Invoked when user wants to generate endpoints for all currently selected tables.
+   */
   public generateEndpoints() {
-    if (!(this.tables && this.tables.length > 0 && this.selectedTables.value.length > 0)) {
-      this.generalService.showFeedback('Please select table(s) and try generating endpoints.', 'errorMessage');
+
+    // Making sure user has selected at least one table before proceeding.
+    if (this.selectedTables.value.length == 0) {
+      this.generalService.showFeedback('Please select one or more table(s) before you generate endpoints', 'errorMessage');
       return;
     }
-    if (this.selectedDatabase !== 'magic') {
-      if (this.databases.find((db: any) => db.name === this.selectedDatabase).tables) {
-        const subscribers: Observable<LocResult>[] = [];
-        this.generalService.showLoading();
-        this.createDefaultOptionsForDatabase().then((resolve: boolean) => {
-          if (resolve) {
-            const tables = this.databases.find((item: any) => item.name === this.selectedDatabase).tables.filter((el: any) => el.verbs);
 
-            for (const table of tables) {
-              table.captchaPost = this.captchaCreate ? this.captchaValue : null;
-              table.captchaGet = this.captchaRead ? this.captchaValue : null;
-              table.captchaPut = this.captchaUpdate ? this.captchaValue : null;
-              table.captchaDelete = this.captchaDelete ? this.captchaValue : null;
-              table.cqrs = this.generateSocket;
-              const verbs = (table.verbs || []).filter((method: any) => method.generate).map((method: any) => {
-                return this.crudifyService.crudify(
-                  this.transformService.transform(
-                    this.selectedDbType,
-                    '[' + this.selectedConnectionString + '|' + this.selectedDatabase + ']',
-                    table,
-                    method.name));
-              });
-              for (const tmpIdx of verbs) {
-                subscribers.push(tmpIdx);
-              }
-            }
-
-            forkJoin(subscribers).subscribe({
-              next: (results: LocResult[]) => {
-                const loc = results.reduce((x, y) => x + y.loc, 0);
-                this.logService.createLocItem(loc, 'backend', `${this.selectedDatabase}`).subscribe({
-                  next: () => {
-                    this.generalService.showFeedback(`${formatNumber(loc, this.locale, '1.0')} lines of code generated.`, 'successMessage');
-                    this.messageService.sendMessage({
-                      name: 'magic.folders.update',
-                      content: '/modules/'
-                    });
-                    this.generalService.hideLoading();
-                  },
-                  error: (error: any) => {
-                    this.generalService.hideLoading();
-                    this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)
-                  }
-                });
-
-              },
-              error: (error: any) => {
-                this.generalService.hideLoading();
-                this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000);
-              }
-            });
-          } else {
-            this.generalService.hideLoading();
-          }
-        })
-      } else {
-        this.generalService.showFeedback('This database doesn\'t have tables', 'errorMessage', 'Ok', 5000);
-      }
-    } else {
-      this.generalService.showFeedback('You cannot generate endpoints for this table.', 'errorMessage', 'Ok', 5000);
+    // Making sure user doesn't generate endpoints for his magic database.
+    if (this.selectedDatabase === 'magic') {
+      this.generalService.showFeedback('You cannot generate endpoints for your Magic database', 'errorMessage', 'Ok', 5000);
     }
-  }
 
-  /*
-   * Creates default crudify options for current database.
-   */
-  private createDefaultOptionsForDatabase() {
-    return new Promise(resolve => {
-      const db = this.databases.find((item: any) => item.name === this.selectedDatabase);
-      for (let index = 0; index < this.selectedTables.value.length; index++) {
-        const element = this.selectedTables.value[index];
+    // Showing loader to user.
+    this.generalService.showLoading();
 
-        const selectedTables: any = this.tables.filter((item: any) => item.name === element);
-        for (const idxTable of selectedTables) {
-          for (const col of idxTable.columns || []) {
-            if (col.locked === true) {
-              col.locked = 'auth.ticket.get';
-            }
-          }
-          idxTable.moduleName = this.selectedDatabase;
-          idxTable.moduleUrl = this.secondaryURL;
-          const columns = (idxTable.columns || []);
-          idxTable.verbs = [
-            { name: 'post', generate: columns.length > 0 },
-            { name: 'get', generate: columns.length > 0 },
-          ];
-          if (columns.filter(x => !x.primary).length > 0 &&
-            columns.filter(x => x.primary).length > 0) {
-            idxTable.verbs.push({ name: 'put', generate: columns.filter(x => !x.primary && !x.automatic).length > 0 });
-          }
-          if (columns.filter(x => x.primary).length > 0) {
-            idxTable.verbs.push({ name: 'delete', generate: true });
-          }
-          idxTable.authPost = this.createRoles.value.toString() ?? 'root, admin';
-          idxTable.authGet = this.readRoles.value.toString() ?? 'root, admin';
-          idxTable.authPut = this.updateRoles.value.toString() ?? 'root, admin';
-          idxTable.authDelete = this.deleteRoles.value.toString() ?? 'root, admin';
+    // List of endpoint invocations we forkJoin further down in method.
+    const observables: Observable<LocResult>[] = [];
 
-          idxTable.cqrsAuthorisation = this.generateSocket === true && this.generateSocketMessage !== '' ? this.generateSocketMessage : 'inherited';
-          idxTable.cqrsAuthorisationValues =
-            this.generateSocket === true && this.generateSocketMessage !== '' && this.authRoles.value.length > 0 ? this.authRoles.value.toString() : null;
+    // Finding selected database.
+    const db: any = this.databases
+      .find((db: any) => db.name === this.selectedDatabase);
 
-          idxTable.cache = this.cacheDuration;
-          idxTable.publicCache = this.cachePublic;
+    // Finding selected tables.
+    const selectedTables: any[] = db
+      .tables
+      .filter((x: any) => this.selectedTables.value.indexOf(x.name) > -1);
 
-          idxTable.validators = this.hlInput.hyperlambda;
+    // Decorating options for selected tables.
+    this.createDefaultOptions(db, selectedTables);
 
-          if (this.selectedTables.value.length > 1) {
-            idxTable.moduleUrl = idxTable.name;
-            for (const idxColumn of columns) {
-              const keys = idxTable.foreign_keys?.filter((foreign_key: any) => foreign_key.column === idxColumn.name) ?? [];
-              if (keys.length > 0) {
-                let shouldCreateForeignKey = false;
-                const foreignTable = db.tables.filter((table: any) => table.name === keys[0].foreign_table)[0];
-                for (const idxCol of foreignTable.columns) {
-                  if (idxCol.hl === 'string') {
-                    shouldCreateForeignKey = true;
-                    break;
-                  }
-                }
-                if (shouldCreateForeignKey) {
-                  idxColumn.foreign_key = {
-                    foreign_table: keys[0].foreign_table,
-                    foreign_column: keys[0].foreign_column,
-                    long_data: true,
-                    foreign_name: db.tables
-                      .filter(x => x.name === keys[0].foreign_table)[0].columns.filter(x => x.hl === 'string')[0].name,
-                  };
-                }
-              }
+    // Looping through all selected tables.
+    for (const idxTable of selectedTables) {
 
-              idxColumn.expanded = false;
-
-              idxColumn.post = !(idxColumn.automatic && idxColumn.primary);
-              if (idxColumn.automatic && idxColumn.name?.toLowerCase() === 'created') {
-                idxColumn.post = false;
-              }
-              idxColumn.get = true;
-              idxColumn.put = !idxColumn.automatic || idxColumn.primary;
-              idxColumn.delete = idxColumn.primary;
-
-              idxColumn.postDisabled = false; // idxColumn.primary && !idxColumn.automatic;
-              idxColumn.getDisabled = false;
-              idxColumn.putDisabled = idxColumn.primary;
-              idxColumn.deleteDisabled = true;
-
-              if ((idxColumn.name === 'user' || idxColumn.name === 'username') && idxColumn.hl === 'string') {
-                idxColumn.locked = 'auth.ticket.get';
-                idxColumn.expanded = true;
-                idxColumn.warning = 'Warning, I automatically associated this column with the currently authenticated user due to its name. You might want to sanity check my decision.';
-              }
-
-              if (idxColumn.name?.toLowerCase() === 'picture' || idxColumn.name?.toLowerCase() === 'image' || idxColumn.name?.toLowerCase() === 'photo') {
-                idxColumn.handling = 'image';
-                idxColumn.expanded = true;
-                idxColumn.warning = 'Notice, by default this field will be handled as an image field. You might want to double check my decision.';
-              }
-
-              if (idxColumn.name?.toLowerCase() === 'file') {
-                idxColumn.handling = 'file';
-                idxColumn.expanded = true;
-                idxColumn.warning = 'Notice, by default this field will be handled as a file upload field. You might want to double check my decision.';
-              }
-
-              if (idxColumn.name?.toLowerCase() === 'youtube' || idxColumn.name?.toLowerCase() === 'video') {
-                idxColumn.handling = 'youtube';
-                idxColumn.expanded = true;
-                idxColumn.warning = 'Notice, by default this field will be handled as a YouTube field. You might want to double check my decision.';
-              }
-
-              if (idxColumn.name?.toLowerCase() === 'email' || idxColumn.name?.toLowerCase() === 'mail') {
-                idxColumn.handling = 'email';
-                idxColumn.expanded = true;
-                idxColumn.warning = 'Notice, by default this field will be handled as an email field. You mght want to double check my decision.';
-              }
-
-              if (idxColumn.name?.toLowerCase() === 'url' || idxColumn.name?.toLowerCase() === 'link') {
-                idxColumn.handling = 'url';
-                idxColumn.expanded = true;
-                idxColumn.warning = 'Notice, by default this field will be handled as an url field. You mght want to double check my decision.';
-              }
-
-              if (idxColumn.name?.toLowerCase() === 'phone' || idxColumn.name?.toLowerCase() === 'tel') {
-                idxColumn.handling = 'phone';
-                idxColumn.expanded = true;
-                idxColumn.warning = 'Notice, by default this field will be handled as a phone field. You mght want to double check my decision.';
-              }
-
-              /*
-               * Notice, if we're not sure whether or not column should be a part of POST and PUT
-               * we expand the column by default, to give visual clues to the user that he needs to
-               * pay particular attention to this column, and attach a warning with the column.
-               */
-              if (idxColumn.automatic && !idxColumn.primary) {
-                idxColumn.expanded = true;
-                idxColumn.warning = 'Warning, I could not determine with certainty if this column should be included in your create and update endpoints. Please carefully look at it and decide for yourself.';
-              }
-
-              /*
-               * If column is a foreign key, we also warn the user such that he can associate it with the
-               * correct field in the foreign table.
-               */
-              if (idxColumn.foreign_key) {
-                idxColumn.expanded = true;
-                if (idxColumn.warning) {
-                  idxColumn.warning += ' ';
-                } else {
-                  idxColumn.warning = '';
-                }
-                idxColumn.warning += 'You need to make sure this column is associated with the correct value field in the referenced table.';
-              }
-            }
-          }
+      // Making sure we don't generate verbs that doesn't have at least one column.
+      for (const idxVerb of idxTable.verbs) {
+        idxVerb.generate = idxTable.columns.filter((x: any) => x[idxVerb.name]).length > 0;
+        switch (idxVerb.name) {
+          case 'delete': idxTable.logDelete = this.logDelete; break;
+          case 'post': idxTable.logPost = this.logCreate; break;
+          case 'put': idxTable.logPut = this.logUpdate; break;
         }
       }
-      resolve(true)
-    })
+
+      // Applying reCAPTCHA for POST verb if requested by user.
+      if (this.captchaCreate) {
+        idxTable.captchaPost = this.captchaValue;
+      } else {
+        delete idxTable.captchaPost;
+      }
+
+      // Applying reCAPTCHA for GET verb if requested by user.
+      if (this.captchaRead) {
+        idxTable.captchaGet = this.captchaValue;
+      } else {
+        delete idxTable.captchaGet;
+      }
+
+      // Applying reCAPTCHA for PUT verb if requested by user.
+      if (this.captchaUpdate) {
+        idxTable.captchaPut = this.captchaValue;
+      } else {
+        delete idxTable.captchaPut;
+      }
+
+      // Applying reCAPTCHA for DELETE verb if requested by user.
+      if (this.captchaDelete) {
+        idxTable.captchaDelete = this.captchaValue;
+      } else {
+        delete idxTable.captchaDelete;
+      }
+
+      // Applying publish socket messages if user requested it.
+      idxTable.cqrs = this.publishSocketMessages;
+      if (this.publishSocketMessages) {
+        idxTable.cqrsAuthorisation = this.socketAuthorisationTypeValue;
+        if (this.socketAuthorisationTypeValue === 'roles' && this.socketAuthorisationRoles.value) {
+          idxTable.cqrsAuthorisationValues = this.socketAuthorisationRoles.value.join(',');
+        }
+      }
+
+      // Iterating through all enabled verbs, creating our observables.
+      observables.push(...idxTable.verbs.filter((method: any) => method.generate).map((method: any) => {
+        return this.crudifyService.crudify(
+          this.transformService.transform(
+            this.selectedDbType,
+            '[' + this.selectedConnectionString + '|' + this.selectedDatabase + ']',
+            idxTable,
+            method.name));
+      }));
+    }
+
+    // Invoking every single endpoint observable.
+    forkJoin(observables).subscribe({
+      next: (results: LocResult[]) => {
+        const loc = results.reduce((x, y) => x + y.loc, 0);
+        this.logService.createLocItem(loc, 'backend', `${this.selectedDatabase}`).subscribe({
+          next: () => {
+            this.generalService.showFeedback(`${formatNumber(loc, this.locale, '1.0')} lines of code generated.`, 'successMessage');
+            this.messageService.sendMessage({
+              name: 'magic.folders.update',
+              content: '/modules/'
+            });
+            this.generalService.hideLoading();
+          },
+          error: (error: any) => {
+            this.generalService.hideLoading();
+            this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)
+          }
+        });
+
+      },
+      error: (error: any) => {
+        this.generalService.hideLoading();
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000);
+      }
+    });
   }
 
   /**
@@ -439,6 +374,32 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
     });
   }
 
+  ngOnDestroy() {
+    this.codemirrorActionsSubscription?.unsubscribe();
+  }
+
+  /*
+   * Protected implementations of base class methods.
+   */
+
+  /**
+   * Invoked when database meta data has been loaded.
+   */
+  protected databaseLoaded(): void {
+    this.changeDatabase();
+    this.readRoles.setValue(['root', 'guest']);
+    this.updateRoles.setValue(['root', 'guest']);
+    this.deleteRoles.setValue(['root', 'guest']);
+    this.createRoles.setValue(['root', 'guest']);
+  }
+
+  /*
+   * Private helper methods.
+   */
+
+  /*
+   * Invoked when some keyboard shortcut has been clicked.
+   */
   private watchForActions() {
     this.codemirrorActionsSubscription = this.codemirrorActionsService.action.subscribe((action: string) => {
       switch (action) {
@@ -446,15 +407,153 @@ export class AutoGeneratorComponent implements OnInit, OnDestroy {
         case 'insertSnippet':
           this.loadSnippet();
           break;
-
-        default:
-          break;
       }
-    })
+    });
   }
 
-  ngOnDestroy() {
-    this.dbLoadingSubscription?.unsubscribe();
-    this.codemirrorActionsSubscription?.unsubscribe();
+  /*
+   * Returns CodeMirror options to caller.
+   */
+  private getOptions() {
+    this.codemirrorActionsService.getActions('', 'hl').then((options: any) => {
+      options.autofocus = false;
+      this.hlInput.options = options;
+    });
+  }
+
+  /*
+   * Creates default crudify options for current database.
+   */
+  private createDefaultOptions(db: any, tables: any[]) {
+
+    // Iterating through each table specified by caller.
+    for (const idxTable of tables) {
+
+      // Correcting model for columns user wants to apply "row level security" on.
+      for (const col of idxTable.columns || []) {
+        if (col.locked === true) {
+          col.locked = 'auth.ticket.get';
+        }
+      }
+
+      // Applying verbs for table.
+      const columns = idxTable.columns || [];
+      idxTable.verbs = [
+        { name: 'post', generate: columns.length > 0 },
+        { name: 'get', generate: columns.length > 0 },
+      ];
+      if (columns.filter((x: any) => !x.primary).length > 0 &&
+        columns.filter((x: any) => x.primary).length > 0) {
+        idxTable.verbs.push({ name: 'put', generate: columns.filter((x: any) => !x.primary && !x.automatic).length > 0 });
+      }
+      if (columns.filter((x: any) => x.primary).length > 0) {
+        idxTable.verbs.push({ name: 'delete', generate: true });
+      }
+
+      // Applying suthorisation requirements for verbs.
+      idxTable.authPost = this.createRoles.value.toString();
+      idxTable.authGet = this.readRoles.value.toString();
+      idxTable.authPut = this.updateRoles.value.toString();
+      idxTable.authDelete = this.deleteRoles.value.toString();
+
+      // Applying socket publishing authorisation requirements.
+      idxTable.cqrsAuthorisation = this.publishSocketMessages === true && this.socketAuthorisationTypeValue !== '' ?
+        this.socketAuthorisationTypeValue :
+        'inherited';
+      idxTable.cqrsAuthorisationValues =
+        this.publishSocketMessages === true && this.socketAuthorisationTypeValue !== '' && this.socketAuthorisationRoles.value.length > 0 ?
+          this.socketAuthorisationRoles.value.toString() :
+          null;
+
+      // Applying cache settings.
+      idxTable.cache = this.cacheDuration;
+      idxTable.publicCache = this.cachePublic;
+
+      // applying additional Hyperlambda validators.
+      idxTable.validators = this.hlInput.hyperlambda;
+
+      // Applying primary URL.
+      idxTable.moduleName = this.primaryURL;
+
+      /*
+       * Notice, if we are generating more than one table, we need to apply default values for fields,
+       * according to database name, table names, etc.
+       * 
+       * If only one table is crudified, we use whatever input user supplied
+       */
+      if (this.selectedTables.value.length === 1) {
+
+        // Notice, if only one table is crudified, we use textbox input as URL.
+        idxTable.moduleUrl = this.secondaryURL;
+
+      } else  {
+
+        // If more than one table is crudified, we default URLs to table name.
+        idxTable.moduleUrl = idxTable.name;
+
+        // Iterating through each column of currently iterated table.
+        for (const idxColumn of columns) {
+
+          // Figuring out if current column is a foreign key.
+          const keys = idxTable.foreign_keys?.filter((foreign_key: any) => foreign_key.column === idxColumn.name) ?? [];
+          if (keys.length > 0) {
+
+            // Finding foreign table.
+            const foreignTable = db.tables.find((x: any) => x.name === keys[0].foreign_table);
+
+            // Notice, we only create a FK reference if we can find a string field in foreign table.
+            if (foreignTable.columns.find((x: any) => x.hl === 'string')) {
+              idxColumn.foreign_key = {
+                foreign_table: keys[0].foreign_table,
+                foreign_column: keys[0].foreign_column,
+                long_data: true,
+                foreign_name: foreignTable.columns.filter((x: any) => x.hl === 'string')[0].name,
+              };
+            }
+          }
+
+          idxColumn.post = !(idxColumn.automatic && idxColumn.primary);
+          if (idxColumn.automatic && idxColumn.name?.toLowerCase() === 'created') {
+            idxColumn.post = false;
+          }
+          idxColumn.get = true;
+          idxColumn.put = !idxColumn.automatic || idxColumn.primary;
+          idxColumn.delete = idxColumn.primary;
+
+          idxColumn.postDisabled = false;
+          idxColumn.getDisabled = false;
+          idxColumn.putDisabled = idxColumn.primary;
+          idxColumn.deleteDisabled = true;
+
+          if ((idxColumn.name === 'user' || idxColumn.name === 'username') && idxColumn.hl === 'string') {
+            idxColumn.locked = 'auth.ticket.get';
+          }
+
+          if (idxColumn.name?.toLowerCase() === 'picture' || idxColumn.name?.toLowerCase() === 'image' || idxColumn.name?.toLowerCase() === 'photo') {
+            idxColumn.handling = 'image';
+          }
+
+          if (idxColumn.name?.toLowerCase() === 'file') {
+            idxColumn.handling = 'file';
+          }
+
+          if (idxColumn.name?.toLowerCase() === 'youtube' || idxColumn.name?.toLowerCase() === 'video') {
+            idxColumn.handling = 'youtube';
+          }
+
+          if (idxColumn.name?.toLowerCase() === 'email' || idxColumn.name?.toLowerCase() === 'mail') {
+            idxColumn.handling = 'email';
+          }
+
+          if (idxColumn.name?.toLowerCase() === 'url' || idxColumn.name?.toLowerCase() === 'link') {
+            idxColumn.handling = 'url';
+          }
+
+          if (idxColumn.name?.toLowerCase() === 'phone' || idxColumn.name?.toLowerCase() === 'tel') {
+            idxColumn.handling = 'phone';
+          }
+        }
+      }
+    }
   }
 }

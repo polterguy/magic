@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ */
+
 import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/core';
 
 interface FKData {
@@ -58,7 +63,6 @@ export class ForeignKeyListComponent implements AfterViewInit {
       foreign_column: this.data.currentForeignKey.column,
       long_data: this.data.long_data
     };
-
     this.changeForeignKey.emit({ selectedForeignKey: selectedForeignKey, columnName: this.data.columnName });
   }
 }
