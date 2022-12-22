@@ -183,21 +183,21 @@ export class AutoGeneratorComponent extends GeneratorBase implements OnInit, OnD
   /**
    * Invoked when database type is changed.
    */
-  public changeDbType() {
+  changeDbType() {
     this.getConnectionString();
   }
 
   /**
    * Invoked when active connection string is changed.
    */
-  public changeConnectionString() {
+  changeConnectionString() {
     this.getDatabases();
   }
 
   /**
    * Invoked when active database catalog is changed.
    */
-  public changeDatabase() {
+  changeDatabase() {
 
     // Finding table names from currently selected database catalog.
     const db = this.databases.find((item: any) => item.name === this.selectedDatabase);
@@ -216,7 +216,7 @@ export class AutoGeneratorComponent extends GeneratorBase implements OnInit, OnD
   /**
    * Invoked when selected table is changed.
    */
-  public selectedTableChanged() {
+  selectedTableChanged() {
     this.selectedTables.value.length === 1 ?
       this.secondaryURL = this.selectedTables.value.toString().toLowerCase() :
       '';
@@ -225,7 +225,7 @@ export class AutoGeneratorComponent extends GeneratorBase implements OnInit, OnD
   /**
    * Invoked when user is toggling all tables, either selcting all tables, or de-selecting all tables.
    */
-  public toggleAllTables(checked: boolean) {
+  toggleAllTables(checked: boolean) {
     if (!checked) {
       this.selectedTables.setValue('');
     } else {
@@ -237,7 +237,7 @@ export class AutoGeneratorComponent extends GeneratorBase implements OnInit, OnD
   /**
    * Invoked when user wants to generate endpoints for all currently selected tables.
    */
-  public generateEndpoints() {
+  generateEndpoints() {
 
     // Making sure user has selected at least one table before proceeding.
     if (this.selectedTables.value.length == 0) {
@@ -359,7 +359,7 @@ export class AutoGeneratorComponent extends GeneratorBase implements OnInit, OnD
   /**
    * Shows load snippet dialog.
    */
-  public loadSnippet() {
+  loadSnippet() {
     this.dialog.open(LoadSnippetDialogComponent, {
       width: '550px',
     }).afterClosed().subscribe((filename: string) => {
@@ -387,10 +387,10 @@ export class AutoGeneratorComponent extends GeneratorBase implements OnInit, OnD
    */
   protected databaseLoaded(): void {
     this.changeDatabase();
-    this.readRoles.setValue(['root', 'guest']);
-    this.updateRoles.setValue(['root', 'guest']);
-    this.deleteRoles.setValue(['root', 'guest']);
-    this.createRoles.setValue(['root', 'guest']);
+    this.readRoles.setValue(['root', 'admin']);
+    this.updateRoles.setValue(['root', 'admin']);
+    this.deleteRoles.setValue(['root', 'admin']);
+    this.createRoles.setValue(['root', 'admin']);
   }
 
   /*
