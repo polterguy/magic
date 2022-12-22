@@ -8,7 +8,13 @@
       <span class="text-muted">|</span>
     </span>
 
-    <input matInput type="text" placeholder="Name" [(ngModel)]="name" [pattern]="CommonRegEx.appNames"
+    <input
+      matInput
+      type="text"
+      placeholder="Name"
+      [(ngModel)]="name"
+      autocomplete="off"
+      [pattern]="CommonRegEx.appNames"
       #argName>
     <mat-error>{{CommonErrorMessages.appNames}}</mat-error>
   </mat-form-field>
