@@ -45,6 +45,7 @@ export class TransformModelService {
     database: string,
     table: TableEx,
     verb: string) {
+
     const result = new Crudify();
     result.databaseType = databaseType;
     result.database = database;

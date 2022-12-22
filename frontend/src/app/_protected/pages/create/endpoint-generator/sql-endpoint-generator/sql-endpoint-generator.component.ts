@@ -3,19 +3,16 @@
  * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
-import { ChangeDetectorRef, Component, EventEmitter, Inject, Input, LOCALE_ID, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, LOCALE_ID, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { Model } from 'src/app/codemirror/codemirror-sql/codemirror-sql.component';
-import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
-import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 import { ShortkeysComponent } from 'src/app/_general/components/shortkeys/shortkeys.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { CrudifyService } from '../_services/crudify.service';
 import { TransformModelService } from '../_services/transform-model.service';
 import { Argument } from '../../../manage/endpoints/_models/argument.model';
-import { Role } from '../../../manage/user-and-roles/_models/role.model';
 import { SqlService } from '../../../../../_general/services/sql.service';
 import { AddArgumentDialogComponent } from './components/add-argument-dialog/add-argument-dialog.component';
 import { SqlSnippetDialogComponent } from '../../sql-studio/components/load-sql-snippet-dialog/load-sql-snippet-dialog.component';
@@ -24,85 +21,79 @@ import { SqlSnippetDialogComponent } from '../../sql-studio/components/load-sql-
 import { CodemirrorActionsService } from '../../hyper-ide/_services/codemirror-actions.service';
 import { SnippetNameDialogComponent } from 'src/app/_general/components/snippet-name-dialog/snippet-name-dialog.component';
 import { MessageService } from 'src/app/_general/services/message.service';
+import { GeneratorBase } from '../generator-base';
+import { ActivatedRoute } from '@angular/router';
+import { RoleService } from '../../../manage/user-and-roles/_services/role.service';
 
+/**
+ * SQL endpoint generator component, allowing user to create HTTP endpoints using SQL.
+ */
 @Component({
   selector: 'app-sql-endpoint-generator',
   templateUrl: './sql-endpoint-generator.component.html'
 })
-export class ManualGeneratorComponent implements OnInit, OnDestroy {
+export class ManualGeneratorComponent extends GeneratorBase implements OnInit, OnDestroy {
 
-  @Input() dbLoading: Observable<boolean>;
-  @Input() databases: any = [];
-  @Input() databaseTypes: any = [];
-  @Input() connectionStrings: any = [];
-  @Input() roles: Role[] = [];
+  // Subscription for CodeMirror keyboard shortcut listener.
+  private codemirrorActionsSubscription: Subscription;
 
-  @Input() selectedDbType: string = '';
-  @Output() selectedDbTypeChange = new EventEmitter<string>();
+  /**
+   * Form control wrapping roles that are allowed to invoke endpoint.
+   */
+  selectedRoles: FormControl = new FormControl<any>('');
 
-  @Input() selectedConnectionString: string = '';
-  @Output() selectedConnectionStringChange = new EventEmitter<string>();
+  /**
+   * Primary URL of endpoint.
+   */
+  primaryURL: string = '';
 
-  @Input() selectedDbName: string = '';
-  @Output() selectedDbNameChange  = new EventEmitter<string>();
+  /**
+   * Secondary URL of endpoint.
+   */
+  secondaryURL: string = 'custom-sql';
 
-  public allDatabasesList: any = [];
-  public selectedTables: FormControl = new FormControl<any>('');
-  public selectedRoles: FormControl = new FormControl<any>('');
-  public primaryURL: string = '';
-  public secondaryURL: string = 'custom-sql';
-  public logCreate: boolean = false;
-  public logUpdate: boolean = false;
-  public logDelete: boolean = false;
+  /**
+   * Autocomplete data for SQL CodeMirror editor, containing tables and columns from selected database.
+   */
   hintTables: any = {};
-
-  @Output() getConnectionString: EventEmitter<any> = new EventEmitter<any>();
-
-  private dbLoadingSubscription!: Subscription;
-
-  @ViewChild('urlName', { static: true }) private urlName: HTMLElement;
-
-  public CommonRegEx = CommonRegEx;
-  public CommonErrorMessages = CommonErrorMessages;
 
   /**
    * Verbs user can select from.
    */
-  public methods: string[] = Methods;
+  methods: string[] = Methods;
 
-  public selectedMethod: string = '';
+  /**
+   * Selected verb for endpoint.
+   */
+  selectedMethod: string = '';
 
   /**
    * Whether or not endpoint returns a list of items or a single item.
    */
-  public isScalar = false;
+  isScalar = false;
 
   /**
    * Whether or not existing endpoints should be overwritten or not.
    */
-  public overwrite = false;
+  overwrite = false;
 
   /**
    * List of arguments endpoint can handle.
    */
-  public arguments: Argument[] = [];
-
-  public sqlInput: string = '';
-
-  public canLoadSnippet: boolean = undefined;
-
-  public waiting: boolean = false;
-
-  public codeMirrorReady: boolean = false;
-  private codemirrorActionsSubscription: Subscription;
+  arguments: Argument[] = [];
 
   /**
-   * Input SQL component model and options.
+   * If true the endpoint is currently being created
    */
-  public sql: Model = {
+  waiting: boolean = false;
+
+  /**
+   * Input SQL CodeMirror component model and options.
+   */
+  sql: Model = {
     databaseType: this.selectedDbType,
     connectionString: this.selectedConnectionString,
-    database: '[' + this.selectedConnectionString + '|' + this.selectedDbName + ']',
+    database: '[' + this.selectedConnectionString + '|' + this.selectedDatabase + ']',
     sql: '',
     options: [],
     editor: ''
@@ -113,69 +104,41 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private crudifyService: CrudifyService,
     private messageService: MessageService,
-    private generalService: GeneralService,
-    private sqlService: SqlService,
+    protected generalService: GeneralService,
+    protected sqlService: SqlService,
+    protected roleService: RoleService,
+    protected activatedRoute: ActivatedRoute,
     protected transformService: TransformModelService,
     private codemirrorActionsService: CodemirrorActionsService,
-    @Inject(LOCALE_ID) public locale: string) { }
+    @Inject(LOCALE_ID) public locale: string) {
+      super(generalService, roleService, activatedRoute, sqlService);
+    }
 
   ngOnInit() {
-    this.watchDbLoading();
-  }
-
-  private watchDbLoading() {
-    this.waitingData();
     this.getOptions();
     this.watchForActions();
+    this.init();
   }
 
-  private getOptions() {
-    this.codemirrorActionsService.getActions('', 'sql').then((options: any) => {
-      options.autofocus = false;
-      options.hintOptions = {
-        tables: this.hintTables,
-      };
-      this.sql.options = options;
-      this.codeMirrorReady = true;
-    });
-  }
-
-  private waitingData() {
-    (async () => {
-      while (!(this.databaseTypes && this.databaseTypes.length && this.selectedConnectionString && this.selectedConnectionString !== '' && this.databases && this.databases.length))
-        await new Promise(resolve => setTimeout(resolve, 100));
-
-      if (this.databaseTypes && this.databaseTypes.length > 0 && this.selectedConnectionString && this.selectedConnectionString !== '' && this.databases && this.databases.length > 0) {
-        this.allDatabasesList = [...this.databases];
-        this.primaryURL = this.selectedDbName.toLowerCase();
-        this.selectedRoles.setValue(['root', 'guest']);
-        this.changeDatabase();
-        this.cdr.detectChanges();
-      }
-    })();
-  }
-
-  public changeConnectionStrings() {
-    this.getConnectionString.emit();
-  }
-
-  public changeDatabase() {
-    const db = this.databases.find((item: any) => item.name === this.selectedDbName);
-    if (this.selectedDbName && db && db.tables?.length) {
-      const tables = this.databases.find((item: any) => item.name === this.selectedDbName).tables;
-      let names: any = tables.map((item: any) => { return item.name });
-      this.selectedTables = new FormControl({ value: names, disabled: false });
+  /**
+   * Invoked when active database catalog is changed.
+   */
+  changeDatabase() {
+    const db = this.databases.find((item: any) => item.name === this.selectedDatabase);
+    if (this.selectedDatabase && db && db.tables?.length) {
+      const tables = this.databases.find((item: any) => item.name === this.selectedDatabase).tables;
       let hintTables = tables.map((x: any) => [x.name, x.columns.map((y: any) => y.name)]);
       this.hintTables = Object.fromEntries(hintTables);
       this.getOptions();
-    } else {
-      this.selectedTables = new FormControl({ value: '', disabled: true });
     }
-    this.primaryURL = this.selectedDbName.toLowerCase();
+    this.primaryURL = this.selectedDatabase.toLowerCase();
     this.cdr.detectChanges();
   }
 
-  public addArgument() {
+  /**
+   * Invoked when user wants to create a new argument for endpoint.
+   */
+  addArgument() {
     this.dialog.open(AddArgumentDialogComponent, {
       width: '500px',
       data: this.arguments
@@ -187,30 +150,17 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Returns the string (Hyperlambda) representation of declared arguments.
-   */
-  private getArguments() {
-    return this.arguments.map(x => x.name + ':' + x.type).join('\r\n');
-  }
-
-  /**
    * Invoked when user wants to remove an argument from collection of arguments
    * endpoint can handle.
-   *
-   * @param argument Argument to remove
    */
-  public removeArgument(argument: Argument) {
+  removeArgument(argument: Argument) {
     this.arguments.splice(this.arguments.indexOf(argument), 1);
   }
 
   /**
    * Opens the load snippet dialog, to allow user to select a previously saved snippet.
    */
-  public loadSnippet() {
-    if (!this.canLoadSnippet) {
-      this.generalService.showFeedback('You need a proper permission.', 'errorMessage', 'Ok', 5000)
-      return;
-    }
+  loadSnippet() {
     this.dialog.open(SqlSnippetDialogComponent, {
       width: '550px',
       data: this.selectedDbType,
@@ -224,6 +174,115 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
         })
       }
     });
+  }
+
+  /**
+   * Generates your SQL endpoint.
+   */
+  generate() {
+    const hasTables = this.databases.find((item: any) => item.name === this.selectedDatabase).tables !== null;
+    if (!hasTables) {
+      this.generalService.showFeedback('Please create tables in the selected database.', 'errorMessage', 'Ok', 5000);
+      return;
+    }
+    if (this.primaryURL === '' && this.secondaryURL === '') {
+      this.generalService.showFeedback('Please check the route(s).', 'errorMessage');
+      return;
+    }
+    if (this.selectedMethod === '') {
+      this.generalService.showFeedback('Please select a method.', 'errorMessage');
+      return;
+    }
+    if (this.selectedRoles.value.length === 0) {
+      this.generalService.showFeedback('Please select role(s).', 'errorMessage');
+      return;
+    }
+    if (this.sql.sql.trim() === '') {
+      this.generalService.showFeedback('Did you forget to add your code?', 'errorMessage');
+      return;
+    }
+    this.generalService.showLoading();
+    this.waiting = true;
+    const data: any = {
+      databaseType: this.selectedDbType,
+      database: this.selectedDatabase,
+      authorization: this.selectedRoles.value.toString(),
+      moduleName: this.primaryURL,
+      endpointName: this.secondaryURL,
+      verb: this.selectedMethod,
+      sql: this.sql.sql,
+      arguments: this.getArguments(),
+      overwrite: this.overwrite,
+      isList: !this.isScalar
+    }
+
+    this.crudifyService.generateSqlEndpoint(data).subscribe({
+      next: (y) => {
+        this.generalService.showFeedback('SQL endpoint successfully created', 'successMessage');
+        this.messageService.sendMessage({
+          name: 'magic.folders.update',
+          content: '/modules/'
+        });
+        this.generalService.hideLoading();
+        this.waiting = false;
+      },
+      error: (error: any) => {
+        this.generalService.hideLoading();
+        this.waiting = false;
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 3000)
+      }
+    })
+  }
+
+  viewShortkeys() {
+    this.dialog.open(ShortkeysComponent, {
+      width: '900px',
+      data: {
+        type: ['save']
+      }
+    })
+  }
+
+  ngOnDestroy() {
+    if (this.codemirrorActionsSubscription) {
+      this.codemirrorActionsSubscription.unsubscribe();
+    }
+  }
+
+  /*
+   * Protected implementations of base class methods.
+   */
+
+  /**
+   * Invoked when database meta data has been loaded.
+   */
+  protected databaseLoaded() {
+    this.changeDatabase();
+    this.selectedRoles.setValue(['root', 'admin']);
+  }
+
+  /*
+   * Private helper methods.
+   */
+
+  /*
+   * Returns CodeMirror options to caller.
+   */
+  private getOptions() {
+    this.codemirrorActionsService.getActions('', 'sql').then((options: any) => {
+      options.autofocus = false;
+      options.hintOptions = {
+        tables: this.hintTables,
+      };
+      this.sql.options = options;
+    });
+  }
+
+  /**
+   * Returns the string (Hyperlambda) representation of declared arguments.
+   */
+  private getArguments() {
+    return this.arguments.map(x => x.name + ':' + x.type).join('\r\n');
   }
 
   private saveSnippet() {
@@ -255,73 +314,6 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
     });
   }
 
-  /**
-   * Generates your SQL endpoint.
-   */
-  public generate() {
-    const hasTables = this.databases.find((item: any) => item.name === this.selectedDbName).tables !== null;
-    if (!hasTables) {
-      this.generalService.showFeedback('Please create tables in the selected database.', 'errorMessage', 'Ok', 5000);
-      return;
-    }
-    if (this.primaryURL === '' && this.secondaryURL === '') {
-      this.generalService.showFeedback('Please check the route(s).', 'errorMessage');
-      return;
-    }
-    if (this.selectedMethod === '') {
-      this.generalService.showFeedback('Please select a method.', 'errorMessage');
-      return;
-    }
-    if (this.selectedRoles.value.length === 0) {
-      this.generalService.showFeedback('Please select role(s).', 'errorMessage');
-      return;
-    }
-    if (this.sql.sql.trim() === '') {
-      this.generalService.showFeedback('Did you forget to add your code?', 'errorMessage');
-      return;
-    }
-    this.generalService.showLoading();
-    this.waiting = true;
-    const data: any = {
-      databaseType: this.selectedDbType,
-      database: this.selectedDbName,
-      authorization: this.selectedRoles.value.toString(),
-      moduleName: this.primaryURL,
-      endpointName: this.secondaryURL,
-      verb: this.selectedMethod,
-      sql: this.sql.sql,
-      arguments: this.getArguments(),
-      overwrite: this.overwrite,
-      isList: !this.isScalar
-    }
-
-    this.crudifyService.generateSqlEndpoint(data).subscribe({
-      next: (y) => {
-        this.generalService.showFeedback('SQL endpoint successfully created', 'successMessage');
-        this.messageService.sendMessage({
-          name: 'magic.folders.update',
-          content: '/modules/'
-        });
-        this.generalService.hideLoading();
-        this.waiting = false;
-      },
-      error: (error: any) => {
-        this.generalService.hideLoading();
-        this.waiting = false;
-        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 3000)
-      }
-    })
-  }
-
-  public viewShortkeys() {
-    this.dialog.open(ShortkeysComponent, {
-      width: '900px',
-      data: {
-        type: ['save']
-      }
-    })
-  }
-
   private watchForActions() {
     this.codemirrorActionsSubscription = this.codemirrorActionsService.action.subscribe((action: string) => {
       switch (action) {
@@ -338,17 +330,7 @@ export class ManualGeneratorComponent implements OnInit, OnDestroy {
       }
     })
   }
-
-  ngOnDestroy(): void {
-    if (this.dbLoadingSubscription) {
-      this.dbLoadingSubscription.unsubscribe();
-    }
-    if (this.codemirrorActionsSubscription) {
-      this.codemirrorActionsSubscription.unsubscribe();
-    }
-  }
 }
-
 
 const Methods: string[] = [
   'post',
