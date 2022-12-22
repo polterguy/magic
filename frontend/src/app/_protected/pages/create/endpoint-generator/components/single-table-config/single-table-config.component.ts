@@ -109,7 +109,7 @@ export class SingleTableConfigComponent implements OnInit {
     const db: any = this.databases.find((db: any) => db.name === this.selectedDatabase);
     const table: any = db.tables.find((table: any) => table.name === this.selectedTable.toString());
     const column: any = table.columns.find((column: any) => column.name === el.name);
-    return column.foreign_key ? column.foreign_key.foreign_table + '.' + column.foreign_key.foreign_name : '[default]';
+    return column.foreign_key ? column.foreign_key.foreign_table + '.' + column.foreign_key.foreign_name : '[none]';
   }
 
   public changeForeignKey(event: any) {
