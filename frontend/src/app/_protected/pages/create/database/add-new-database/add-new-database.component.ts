@@ -48,7 +48,7 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
 
   public waitingInstallation: boolean = false;
 
-  public currentStage: string = 'Prepering database to be downloaded.';
+  public currentStage: string = 'Preparing database to be downloaded.';
 
   public isLoadingDbs: boolean = true;
   public isLoadingPlugins: boolean = true;
