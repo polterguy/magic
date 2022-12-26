@@ -27,8 +27,8 @@ import { VocabularyService } from '../_services/vocabulary.service';
 import { Endpoint } from 'src/app/_protected/models/common/endpoint.model';
 import { OpenAIService } from 'src/app/_general/services/openai.service';
 import { Response } from 'src/app/models/response.model';
-import { ConfigureOpenaiComponent } from '../components/openai/configure-openai/configure-openai.component';
-import { TrainingDialogComponent } from '../components/openai/openai-training-dialog/openai-training-dialog.component';
+import { OpenAIConfigurationDialogComponent } from '../components/openai/openai-configuration-dialog/openai-configuration-dialog.component';
+import { OpenAITrainingDialogComponent } from '../components/openai/openai-training-dialog/openai-training-dialog.component';
 import { OpenAIAnswerDialogComponent } from '../components/openai/openai-answer-dialog/openai-answer-dialog.component';
 
 /**
@@ -133,7 +133,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   configureOpenAi() {
-    const dialog = this.dialog.open(ConfigureOpenaiComponent, {
+    const dialog = this.dialog.open(OpenAIConfigurationDialogComponent, {
       width: '80vw',
       maxWidth: '650px',
     });
@@ -141,7 +141,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
       if (result?.configured) {
         this.openAiEnabled = true;
         if (result?.start_training) {
-          const dialog = this.dialog.open(TrainingDialogComponent, {
+          const dialog = this.dialog.open(OpenAITrainingDialogComponent, {
             width: '80vw',
             maxWidth: '850px',
           });
