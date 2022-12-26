@@ -26,36 +26,33 @@
 
   <div class="d-flex justify-content-end align-items-center w-100 mt-0 mb-0" *ngIf="currentFileData">
 
-    <mat-form-field
-      *ngIf="openAiEnabled"
-      class="w-100 standalone-field prompt">
-      <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-        <mat-icon>search</mat-icon>
-        <span class="text-muted">|</span>
-      </span>
-  
-      <input
-        matInput
-        placeholder="OpenAI prompt ..."
-        [(ngModel)]="openAiPrompt"
-        autocomplete="off">
+    <form (ngSubmit)="askOpenAi()" class="w-100 open-ai-form">
+      <mat-form-field
+        *ngIf="openAiEnabled"
+        class="w-100 standalone-field prompt">
+        <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+          <mat-icon>search</mat-icon>
+          <span class="text-muted">|</span>
+        </span>
+    
+        <input
+          matInput
+          placeholder="OpenAI prompt ..."
+          name="openAiPrompt"
+          [(ngModel)]="openAiPrompt"
+          autocomplete="off">
+      </mat-form-field>
+
       <button
-        mat-icon-button
-        matSuffix
-        (click)="openAiPrompt = ''"
-        *ngIf="openAiPrompt !== ''">
-        <mat-icon>close</mat-icon>
-      </button>
-    </mat-form-field>
+        mat-button
+        type="submit"
+        *ngIf="openAiEnabled"
+        color="primary"
+        class="px-3">Ask</button>
+
+    </form>
 
     <button
-      mat-button
-      *ngIf="openAiEnabled"
-      color="primary"
-      class="px-3"
-      (click)="askOpenAi()">Ask</button>
-
-      <button
       mat-button
       color="primary"
       class="px-3"

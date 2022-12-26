@@ -134,6 +134,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     this.openAiService.query(this.openAiPrompt).subscribe({
       next: (result: Response) => {
         const dialog = this.dialog.open(CodeDialogComponent, {
+          width: '50%',
           data: {
             code: result.result,
           }
@@ -155,10 +156,8 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  ngOnDestroy(): void {
-    if (this.codemirrorActionSubscription) {
-      this.codemirrorActionSubscription.unsubscribe();
-    }
+  ngOnDestroy() {
+    this.codemirrorActionSubscription?.unsubscribe();
   }
 
   private saveActiveFile(thenClose: boolean = false) {
@@ -167,8 +166,9 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
         this.markEditorClean();
         this.generalService.showFeedback('File successfully saved', 'successMessage');
         this.getEndpoints.emit();
-        // if invoked from closeActiveFile function, the recall to close after saving file.
-        thenClose === true ? this.closeActiveFile(true) : '';
+        if (thenClose) {
+          this.closeActiveFile(true);
+        }
       },
       error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
     });

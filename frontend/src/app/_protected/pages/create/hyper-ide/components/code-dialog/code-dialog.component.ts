@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
@@ -14,7 +15,8 @@ export class CodeModel {
  */
 @Component({
   selector: 'app-code-dialog',
-  templateUrl: './code-dialog.component.html'
+  templateUrl: './code-dialog.component.html',
+  styleUrls: ['./code-dialog.component.scss']
 })
 export class CodeDialogComponent {
 
