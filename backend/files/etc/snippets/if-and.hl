@@ -1,0 +1,9 @@
+// Evaluate specified [.lambda] if condition evaluates to true.
+if
+   and
+      eq:bool:true
+      eq:bool:true
+   .lambda
+      log.info:Condition was true
+else
+   log.info:Condition was false

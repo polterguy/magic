@@ -1,8 +1,6 @@
-// Evaluates specified [.lambda] if condition evaluates to true.
-if:x:@SOME_EXPRESSION
-
-   // Lambda evaluates if condition is true.
-
+// Create an if/else block that checks to see if some value equals to true
+.args
+if:x:@.args
+   log.info:Value is true
 else
-
-   // Lambda evaluated if condition is NOT true.
+   log.info:Value is false

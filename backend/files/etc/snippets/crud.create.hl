@@ -1,9 +1,8 @@
-// Creates a new item in DATABASE_NAME database and its TABLE_NAME table.
-data.connect:DATABASE_NAME
-   database-type:sqlite
-
-   // Creating our record.
+// Insert name, email and age into the tbl table in the db database
+data.connect:db
    data.create
-      database-type:sqlite
-      table:TABLE_NAME
+      table:tbl
       values
+         name:John Doe
+         email:john@doe.com
+         age:int:67
