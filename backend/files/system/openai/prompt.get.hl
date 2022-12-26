@@ -76,7 +76,17 @@ if
          public:bool:true
          status:500
 
+/*
+ * Applying some HTTP caching to avoid invoking OpenAI again with
+ * the same question before some minimum amount of time has passed.
+ */
+response.headers.set
+   Cache-Control:max-age=300
+
+// Trimming text
+strings.trim:x:@http.post/*/content/*/choices/0/*/text
+
 // Returning result to caller
 unwrap:x:+/*
 return
-   result:x:@http.post/*/content/*/choices/0/*/text
+   result:x:@strings.trim

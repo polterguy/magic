@@ -2,13 +2,13 @@
 
 <div mat-dialog-content>
 
-  <div
-    matInput
-    [innerHTML]="data.code | marked">
+  <div class="code">
+    {{data.code}}
   </div>
 
 </div>
 
 <div mat-dialog-actions [align]="'end'">
-  <button mat-button mat-dialog-close>Close</button>
+  <button mat-button>Copy</button>
+  <button mat-flat-button mat-dialog-close>Close</button>
 </div>
