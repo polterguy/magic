@@ -1,6 +1,7 @@
 
 /*
  * Asks OpenAI a question, and returns the answer to caller.
+ *
  * Requires that you've already registered for an OpenAI account,
  * and that you've stored your configuration API key in your configuration
  * settings.
@@ -60,6 +61,25 @@ http.post:"https://api.openai.com/v1/completions"
       temperature:x:@.args/*/temperature
       max_tokens:x:@.args/*/max_tokens
    convert:true
+
+// Sanity checking above invocation
+if
+   and
+      not
+         mte:x:@http.post
+            .:int:200
+      not
+         lt:x:@http.post
+            .:int:300
+   .lambda
+
+      // Oops, error - Logging error and returning status 500 to caller.
+      lambda2hyper:x:@http.post
+      log.error:Something went wrong while invoking OpenAI
+         error:x:@lambda2hyper
+      throw:Something went wrong while invoking OpenAI, check your log for details
+         public:bool:true
+         status:500
 
 // Returning result to caller
 unwrap:x:+/*
