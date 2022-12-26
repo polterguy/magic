@@ -24,6 +24,8 @@ export class ConfigureOpenaiComponent implements OnInit {
   type: string = 'password';
   models: string[] = [];
   selectedModel: string = '';
+  max_tokens: number = 200;
+  temperature: number = 0.1;
 
   constructor(
     private dialogRef: MatDialogRef<ConfigureOpenaiComponent>,
@@ -56,7 +58,7 @@ export class ConfigureOpenaiComponent implements OnInit {
 
   save() {
     this.generalService.showLoading();
-    this.openAiService.configure(this.openApiKey, this.selectedModel).subscribe({
+    this.openAiService.configure(this.openApiKey, this.selectedModel, this.max_tokens, this.temperature).subscribe({
       next: () => {
         this.generalService.hideLoading();
         this.dialogRef.close({

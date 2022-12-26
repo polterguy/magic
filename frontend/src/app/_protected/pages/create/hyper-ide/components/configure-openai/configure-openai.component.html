@@ -36,6 +36,41 @@
     </mat-select>
   </mat-form-field>
 
+  <mat-form-field class="w-100 standalone-field">
+    <span
+      matPrefix
+      class="d-flex flex-nowrap align-items-center justify-content-between">
+      <mat-icon>key</mat-icon>
+      <span class="text-muted">|</span>
+    </span>
+    <input
+      matInput
+      placeholder="Max tokens"
+      [(ngModel)]="max_tokens"
+      type="number"
+      min="20"
+      max="4096"
+      autocomplete="off">
+  </mat-form-field>
+
+  <mat-form-field class="w-100 standalone-field">
+    <span
+      matPrefix
+      class="d-flex flex-nowrap align-items-center justify-content-between">
+      <mat-icon>key</mat-icon>
+      <span class="text-muted">|</span>
+    </span>
+    <input
+      matInput
+      placeholder="Temperature"
+      [(ngModel)]="temperature"
+      type="number"
+      min="0"
+      max="1"
+      step="0.1"
+      autocomplete="off">
+  </mat-form-field>
+
   <mat-checkbox
     [(ngModel)]="startTraining"
     class="mb-3 mt-1"

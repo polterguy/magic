@@ -4,17 +4,25 @@
  * and the specified API key.
  */
 .arguments
-   key:string
    model:string
+   key:string
+   max_tokens:int
+   temperature:decimal
 
 // Making sure user has access to invoked endpoint.
 auth.ticket.verify:root
 
 // Sanity checking invocation
+validators.mandatory:x:@.arguments/*/temperature
+validators.mandatory:x:@.arguments/*/max_tokens
+validators.mandatory:x:@.arguments/*/model
 validators.mandatory:x:@.arguments/*/key
 validators.string:x:@.arguments/*/key
    min:20
    max:200
+validators.integer:x:@.arguments/*/max_tokens
+   min:10
+   max:4096
 
 // Loading configuration.
 config.load
@@ -35,6 +43,8 @@ add:x:@json2lambda/*/magic
       openai
          key:x:@.arguments/*/key
          model:x:@.arguments/*/model
+         max_tokens:x:@.arguments/*/max_tokens
+         temperature:x:@.arguments/*/temperature
 
 // Transforming to JSON and saving configuration.
 lambda2json:x:@json2lambda/*
