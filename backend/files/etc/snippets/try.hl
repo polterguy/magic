@@ -1,13 +1,7 @@
-// Creates a try/catch/finally block
+// Create a try/catch/finally block that logs the exception text of some exception occurs
 try
-
-   // Perform your unsafe operation here.
    throw:Some error is thrown here
 .catch
-
-   // If an exception is triggered, this lambda will be evaluated.
    log.info:x:@.arguments/*/message
 .finally
-
-   // If an exception is triggered, this lambda will be evaluated.
    log.info:Try finished evaluating

@@ -1,0 +1,5 @@
+// Concatenate the strings 'foo', '-' and 'bar'
+strings.concat
+   .:foo
+   .:-
+   .:bar

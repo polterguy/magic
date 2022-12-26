@@ -1,7 +1,4 @@
-/*
- * Changes the name of the specified node(s) to whatever the results of its
- * parameter is.
- */
+// Set the name of the [.destination] node to 'foo'
 .destination
 set-name:x:@.destination
    .:foo

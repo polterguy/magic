@@ -1,13 +1,9 @@
-// Evaluates specified [.lambda] for as long as condition evaluates to true.
+// Create a while loop that iterates from 1 to 20, logging the text 'Howdy from while' as it iterates
 .no:int:0
 while
    lt
       get-value:x:@.no
       .:int:20
    .lambda
-
-      // Your lambda goes here.
       log.info:Howdy from while
-
-      // Incrementing counter.
       math.increment:x:@.no

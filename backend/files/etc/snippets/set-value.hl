@@ -1,7 +1,4 @@
-/*
- * Changes the value of the specified node(s) to whatever the results of its
- * parameter is.
- */
+// Set the value of the [.destination] node to 'new_value'
 .destination
 set-value:x:@.destination
-   .:value
+   .:new_value
