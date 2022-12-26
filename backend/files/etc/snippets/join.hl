@@ -1,7 +1,4 @@
-/*
- * And example of waiting for multiple threads to
- * finish parallel execution.
- */
+// Create two threads that retrieves two URLs using HTTP GET invocations, for then to wait for both threads to finish
 join
    fork
       http.get:"https://gaiasoul.com"

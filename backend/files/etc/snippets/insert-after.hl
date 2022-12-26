@@ -1,4 +1,4 @@
-// Inserts a bunch of nodes after the specified destination expression's node.
+// Insert a [foo2] node after the [foo1] node found inside of a [.destination] node
 .destination
    foo1
 insert-after:x:@.destination/*/foo1

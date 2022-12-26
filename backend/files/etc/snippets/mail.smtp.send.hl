@@ -1,10 +1,14 @@
-// Example of how to send an email using Hyperlambda.
+// Send an email to Thomas Hansen having the email address of thomas@gaiasoul.com from John Doe having the email of john@doe.com
 mail.smtp.send
    message
       to
-         Thomas Hansen:thomas@gaiasoul.com
+         .
+            name:Thomas Hansen
+            email:thomas@gaiasoul.com
       from
-         Testing Gmail:testing.anarchy@gmail.com
-      subject:This is subject
+         .
+            name:John Doe
+            email:john@doe.com
+      subject:This is the email subject
       entity:text/plain
-         content:This is body
+         content:This is the email body
