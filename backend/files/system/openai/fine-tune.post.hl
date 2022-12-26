@@ -1,0 +1,65 @@
+
+/*
+ * Uploads a file to your OpenAI account, such as for instance a training file, etc.
+ */
+.arguments
+   file
+      file:string
+      stream:*
+.description:Uploads a file to your OpenAI account, such as for instance a training file, etc
+
+// Making sure user has access to invoked endpoint.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/file
+
+// Reading input stream.
+io.stream.read:x:@.arguments/*/file/*/stream
+
+/*
+ * Creating our Bearer token by reading our OpenAI
+ * configuration settings.
+ */
+.token
+set-value:x:@.token
+   strings.concat
+      .:"Bearer "
+      config.get:"magic:openai:key"
+   
+// Creating our Content-Disposition HTTP header.
+.disposition
+set-value:x:@.disposition
+   strings.concat
+      .:"attachment; filename=\""
+      get-value:x:@.arguments/*/file/*/file
+      .:"\";"
+      .:" purpose=\"fine-tune\";"
+
+// Uploading file to OpenAI.
+http.post:"https://api.openai.com/v1/files"
+   headers
+      Authorization:x:@.token
+      Content-Type:application/json
+   payload:x:@io.stream.read
+   convert:true
+
+/*
+ * Using uploaded file to create a fine tuning.
+ * First getting the ID of the file as stored in OpenAI's servers.
+ */
+.id
+set-value:x:@.id
+   get-value:x:@http.post/*/content/*/id
+
+// Starting training session.
+http.post:"https://api.openai.com/v1/fine-tunes"
+   headers
+      Authorization:x:@.token
+      Content-Type:application/json
+   payload
+      training_file:x:@.id
+
+// Returning success to caller.
+return
+   result:success

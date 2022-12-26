@@ -1,0 +1,65 @@
+
+/*
+ * Asks OpenAI a question, and returns tha answer to caller.
+ * Requires that you've already registered for an OpenAI account,
+ * and that you've stored your configuration API key in your configuration
+ * settings.
+ */
+.arguments
+   query:string
+   model:string
+   temperature:int
+   max_tokens:int
+.description:Asks OpenAI a question, and returns tha answer to caller
+
+// Making sure user has access to invoked endpoint.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/query
+
+/*
+ * Making sure we use sane defaults in case user did never provide arguments
+ * besides the prompt itself.
+ */
+.args
+   model
+   temperature
+   max_tokens
+set-value:x:@.args/*/model
+   get-first-value
+      get-value:x:@.arguments/*/model
+      .:text-davinci-003
+set-value:x:@.args/*/temperature
+   get-first-value
+      get-value:x:@.arguments/*/temperature
+      .:int:0
+set-value:x:@.args/*/max_tokens
+   get-first-value
+      get-value:x:@.arguments/*/max_tokens
+      .:int:100
+
+/*
+ * Creating our Bearer token by reading our OpenAI
+ * configuration settings.
+ */
+strings.concat
+   .:"Bearer "
+   config.get:"magic:openai:key"
+
+// Creating an HTTP POST request towards OpenAI, now decorated.
+http.post:"https://api.openai.com/v1/completions"
+   headers
+      Authorization:x:@strings.concat
+      Content-Type:application/json
+   payload
+      prompt:x:@.arguments/*/query
+      model:x:@.args/*/prompt
+      temperature:x:@.args/*/temperature
+      max_tokens:x:@.args/*/max_tokens
+   convert:true
+
+// Returning result to caller
+unwrap:x:+/*
+return
+   result:x:@http.post/*/content/*/choices/0/*/text
