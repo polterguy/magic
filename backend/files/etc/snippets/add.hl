@@ -1,4 +1,5 @@
-// Adds a bunch of nodes into specified destination expression's children collection.
+// Add the [foo] node to the [.destination] node
+.destination
 add:x:@.destination
    .
       foo:bar

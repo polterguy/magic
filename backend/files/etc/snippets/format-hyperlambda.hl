@@ -1,8 +1,5 @@
-/*
- * Script that formats all Hyperlambda files recursively within
- * the specified folder.
- */
-.folder:/modules/YOUR-MODULE-FOLDER-HERE/
+// Format all Hyperlambda in the module names sakila
+.folder:/modules/sakila/
 io.file.list-recursively:x:-
 for-each:x:-/*
    if

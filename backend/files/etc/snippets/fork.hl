@@ -1,11 +1,3 @@
-/*
- * Notice, the whole idea with this Hyperlambda,
- * is to demonstrate how the log invocation inside of
- * the [fork] is being executed after the outer log
- * invocation, due to the sleep invocation, and the
- * fact that it runs on a different thread.
- */
+// Create a thread that writes the text 'Hello from thread' to the server's log
 fork
-   sleep:1000
-   log.info:INSIDE
-log.info:OUTSIDE
+   log.info:Hello from thread

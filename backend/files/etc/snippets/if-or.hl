@@ -1,0 +1,11 @@
+// Create an if block that is executed if one of two values equals to some comparison
+if
+   or
+      eq:x:@.args/*/arg1
+         .:value1
+      eq:x:@.args/*/arg2
+         .:value2
+   .lambda
+      log.info:One or more of our conditions were true
+else
+   log.info:None of our conditions were true

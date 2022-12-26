@@ -1,4 +1,4 @@
-// Illustrates how to use a [for-each] loop to iterate some node-set.
+// Iterate through each child node in our [.data] lambda collection, and write its value to the log
 .data
    item1:Hello from Item1
    item2:Hello from Item2

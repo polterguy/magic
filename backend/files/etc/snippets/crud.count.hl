@@ -1,11 +1,7 @@
-// Counts items from your DATABASE_NAME and TABLE_NAME.
-data.connect:DATABASE_NAME
-   database-type:sqlite
-
-   // Reading data from database.
+// Connects to the foo database and counts items from the tbl table
+data.connect:db
    data.read
-      database-type:sqlite
-      table:TABLE_NAME
+      table:tbl
       columns
          count(*)
             as:count

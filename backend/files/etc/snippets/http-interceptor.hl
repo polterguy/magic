@@ -1,3 +1,4 @@
+// Create an HTTP interceptor that intercepts an invocation to another HTTP endpoint
 .arguments:*
 .description:HTTP gateway endpoint intercepting another endpoint, allowing you to evaluate some lambda object both before and after invoking your original HTTP endpoint
 

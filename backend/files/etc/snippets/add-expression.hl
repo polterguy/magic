@@ -1,0 +1,8 @@
+// Add all nodes from the [.source] node's children collection into the [.destination] node's children collection
+.source
+   foo1:bar1
+   foo2:bar2
+   foo3:bar3
+.destination
+add:x:@.destination
+   get-nodes:x:@.source/*
