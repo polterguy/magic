@@ -16,12 +16,12 @@ import { OpenAIService } from 'src/app/_general/services/openai.service';
   templateUrl: './openai-training-dialog.component.html',
   styleUrls: ['./openai-training-dialog.component.scss']
 })
-export class TrainingDialogComponent implements OnInit {
+export class OpenAITrainingDialogComponent implements OnInit {
 
   dataSource: any[] = [];
 
   constructor(
-    private dialogRef: MatDialogRef<TrainingDialogComponent>,
+    private dialogRef: MatDialogRef<OpenAITrainingDialogComponent>,
     private generalService: GeneralService,
     private openAiService: OpenAIService) { }
 

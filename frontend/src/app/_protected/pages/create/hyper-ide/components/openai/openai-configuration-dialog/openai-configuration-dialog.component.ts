@@ -13,11 +13,11 @@ import { OpenAIService } from 'src/app/_general/services/openai.service';
  * OpenAI configuration modal dialog.
  */
 @Component({
-  selector: 'app-configure-openai',
-  templateUrl: './configure-openai.component.html',
-  styleUrls: ['./configure-openai.component.scss']
+  selector: 'app-openai-configuration-dialog',
+  templateUrl: './openai-configuration-dialog.component.html',
+  styleUrls: ['./openai-configuration-dialog.component.scss']
 })
-export class ConfigureOpenaiComponent implements OnInit {
+export class OpenAIConfigurationDialogComponent implements OnInit {
 
   openApiKey: string = '';
   startTraining: boolean = true;
@@ -28,7 +28,7 @@ export class ConfigureOpenaiComponent implements OnInit {
   temperature: number = 0.1;
 
   constructor(
-    private dialogRef: MatDialogRef<ConfigureOpenaiComponent>,
+    private dialogRef: MatDialogRef<OpenAIConfigurationDialogComponent>,
     private openAiService: OpenAIService,
     private generalService: GeneralService) { }
 
