@@ -36,7 +36,7 @@ for-each:x:@io.file.list/*
             .
                .
                   prompt:x:@.prompt
-                  answer:x:@lambda2hyper
+                  completion:x:@lambda2hyper
 
 // Returning result to caller.
 return

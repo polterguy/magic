@@ -146,7 +146,9 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
             maxWidth: '850px',
           });
           dialog.afterClosed().subscribe((result: boolean) => {
-            console.log('foo');
+            if (result) {
+              this.generalService.showFeedback('Notice, training your model might take several minutes, even hours');
+            }
           });
         }
       }
@@ -187,6 +189,10 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   ngOnDestroy() {
     this.codemirrorActionSubscription?.unsubscribe();
   }
+
+  /*
+   * Private helper methods.
+   */
 
   private saveActiveFile(thenClose: boolean = false) {
     this.fileService.saveFile(this.currentFileData.path, this.currentFileData.content).subscribe({
