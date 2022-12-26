@@ -64,6 +64,25 @@ http.post:"https://api.openai.com/v1/files"
    payload:x:@io.stream.read
    convert:true
 
+// Sanity checking above invocation
+if
+   and
+      not
+         mte:x:@http.post
+            .:int:200
+      not
+         lt:x:@http.post
+            .:int:300
+   .lambda
+
+      // Oops, error - Logging error and returning status 500 to caller.
+      lambda2hyper:x:@http.post
+      log.error:Something went wrong while invoking OpenAI
+         error:x:@lambda2hyper
+      throw:Something went wrong while invoking OpenAI, check your log for details
+         public:bool:true
+         status:500
+
 /*
  * Using uploaded file to create a fine tuning.
  * First getting the ID of the file as stored in OpenAI's servers.
@@ -80,6 +99,25 @@ http.post:"https://api.openai.com/v1/fine-tunes"
    payload
       training_file:x:@.id
       model:x:@.arguments/*/model
+
+// Sanity checking above invocation
+if
+   and
+      not
+         mte:x:@http.post
+            .:int:200
+      not
+         lt:x:@http.post
+            .:int:300
+   .lambda
+
+      // Oops, error - Logging error and returning status 500 to caller.
+      lambda2hyper:x:@http.post
+      log.error:Something went wrong while invoking OpenAI
+         error:x:@lambda2hyper
+      throw:Something went wrong while invoking OpenAI, check your log for details
+         public:bool:true
+         status:500
 
 // Returning success to caller.
 return
