@@ -57,20 +57,15 @@ http.post:"https://api.openai.com/v1/completions"
       Content-Type:application/json
    payload
       prompt:x:@.arguments/*/query
-      model:x:@.args/*/prompt
+      model:x:@.args/*/model
       temperature:x:@.args/*/temperature
       max_tokens:x:@.args/*/max_tokens
    convert:true
 
 // Sanity checking above invocation
 if
-   and
-      not
-         mte:x:@http.post
-            .:int:200
-      not
-         lt:x:@http.post
-            .:int:300
+   neq:x:@http.post
+      .:int:200
    .lambda
 
       // Oops, error - Logging error and returning status 500 to caller.
