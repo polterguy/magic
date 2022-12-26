@@ -28,6 +28,8 @@ import { Endpoint } from 'src/app/_protected/models/common/endpoint.model';
 import { OpenAIService } from 'src/app/_general/services/openai.service';
 import { Response } from 'src/app/models/response.model';
 import { CodeDialogComponent } from '../components/code-dialog/code-dialog.component';
+import { ConfigureOpenaiComponent } from '../components/configure-openai/configure-openai.component';
+import { TrainingDialogComponent } from '../components/training-dialog/training-dialog.component';
 
 /**
  * Hyper IDE editor component, wrapping currently open files, allowing user to edit the code.
@@ -130,9 +132,32 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     })
   }
 
+  configureOpenAi() {
+    const dialog = this.dialog.open(ConfigureOpenaiComponent, {
+      width: '80vw',
+      maxWidth: '650px',
+    });
+    dialog.afterClosed().subscribe((result: {configured: boolean, start_training: boolean}) => {
+      if (result.configured) {
+        this.openAiEnabled = true;
+        if (result.start_training) {
+          const dialog = this.dialog.open(TrainingDialogComponent, {
+            width: '80vw',
+            maxWidth: '850px',
+          });
+          dialog.afterClosed().subscribe((result: boolean) => {
+            console.log('foo');
+          });
+        }
+      }
+    });
+  }
+
   askOpenAi() {
+    this.generalService.showLoading();
     this.openAiService.query(this.openAiPrompt).subscribe({
       next: (result: Response) => {
+        this.generalService.hideLoading();
         const dialog = this.dialog.open(CodeDialogComponent, {
           width: '50%',
           data: {
@@ -143,7 +168,10 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
           console.log(data);
         });
       },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+      error: (error: any) => {
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+        this.generalService.hideLoading();
+      }
     });
   }
 

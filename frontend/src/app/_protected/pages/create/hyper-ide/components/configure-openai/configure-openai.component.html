@@ -1,0 +1,49 @@
+
+<h3 mat-dialog-title class="mb-1">Configure OpenAI</h3>
+
+<div mat-dialog-content>
+
+  <p class="text-muted mt-0 mb-4">
+    Configure OpenAI with your API key, and optionally start training it using the default training data.
+    Notice, you can create your API key <a href="https://beta.openai.com/account/api-keys" target="_blank">here</a>.
+  </p>
+
+  <mat-form-field class="w-100 standalone-field">
+    <span
+      matPrefix
+      class="d-flex flex-nowrap align-items-center justify-content-between">
+      <mat-icon>key</mat-icon>
+      <span class="text-muted">|</span>
+    </span>
+    <input
+      matInput
+      placeholder="OpenAI API key"
+      [(ngModel)]="openApiKey"
+      autocomplete="off">
+  </mat-form-field>
+
+  <mat-form-field class="w-100 standalone-field">
+    <span
+      matPrefix
+      class="d-flex flex-nowrap align-items-center justify-content-between">
+      <mat-icon>home</mat-icon>
+      <span class="text-muted ms-1">|</span>
+    </span>
+    <mat-select [(ngModel)]="selectedModel">
+      <mat-option
+        *ngFor="let idx of models"
+        [value]="idx">{{idx}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-checkbox
+    [(ngModel)]="startTraining"
+    class="mb-3 mt-1"
+    color="primary">Start training</mat-checkbox>
+
+</div>
+
+<div mat-dialog-actions [align]="'end'">
+  <button mat-button (click)="close()">Close</button>
+  <button mat-flat-button (click)="save()" [disabled]="!openApiKey || openApiKey.length === 0">Save</button>
+</div>

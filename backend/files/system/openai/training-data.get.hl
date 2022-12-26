@@ -1,0 +1,42 @@
+
+/*
+ * Returns OpenAI training data to caller.
+ */
+.arguments
+.description:Returns OpenAI training data to caller
+
+// Making sure user has access to invoked endpoint.
+auth.ticket.verify:root
+
+// Listing all files in snippets folder.
+io.file.list:/etc/snippets/
+
+// Loading all files, and creating structured data to caller.
+for-each:x:@io.file.list/*
+
+   if
+      strings.ends-with:x:@.dp/#
+         .:.hl
+      .lambda
+
+         /*
+          * Loads file and creates training material from it,
+          * by assuming the first node is a comment node, explaining the prompt.
+          */
+         io.file.load:x:@.dp/#
+         hyper2lambda:x:@io.file.load
+            comments:true
+         .prompt
+         set-value:x:@.prompt
+            get-value:x:@hyper2lambda/0
+         remove-nodes:x:@hyper2lambda/**/\..
+         lambda2hyper:x:@hyper2lambda/*
+         unwrap:x:+/*/*/*
+         add:x:../*/return
+            .
+               .
+                  prompt:x:@.prompt
+                  answer:x:@lambda2hyper
+
+// Returning result to caller.
+return

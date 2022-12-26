@@ -5,7 +5,12 @@
 
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Clipboard } from '@angular/cdk/clipboard';
+import { GeneralService } from 'src/app/_general/services/general.service';
 
+/**
+ * Model for displaying code result.
+ */
 export class CodeModel {
   code: string;
 }
@@ -20,5 +25,13 @@ export class CodeModel {
 })
 export class CodeDialogComponent {
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: CodeModel) { }
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: CodeModel,
+    private generalService: GeneralService,
+    private clipBoard: Clipboard) { }
+
+  copy() {
+    this.clipBoard.copy(this.data.code);
+    this.generalService.showFeedback('Content can be found on your clipboard');
+  }
 }

@@ -9,13 +9,9 @@ auth.ticket.verify:root
 
 // Returning available models to caller.
 return
-   .:ada
-   .:babbage
-   .:curie
-   .:davinci
+   .:code-davinci-002
+   .:code-cushman-001
    .:text-davinci-003
    .:text-curie-001
    .:text-babbage-001
    .:text-ada-001
-   .:code-davinci-002
-   .:code-cushman-001

@@ -40,4 +40,39 @@ export class OpenAIService {
   enabled() {
     return this.httpService.get<any>('/magic/system/openai/enabled');
   }
+
+  /**
+   * Configures OpenAI with the specified API key, and optionally starts
+   * training it using the default training set.
+   */
+  configure(key: string, model: string) {
+    return this.httpService.post<any>('/magic/system/openai/configure', {
+      key,
+      model,
+    });
+  }
+
+  /**
+   * Returns OpenAI API key to caller.
+   */
+  key() {
+    return this.httpService.get<any>('/magic/system/openai/api-key');
+  }
+
+  /**
+   * Returns all possible base models user can use.
+   */
+  base_models() {
+    return this.httpService.get<string[]>('/magic/system/openai/base-models');
+  }
+
+  /**
+   * Returns default training to caller.
+   */
+  get_training_data() {
+    return this.httpService.get<any[]>('/magic/system/openai/training-data');
+  }
+
+  start_training() {
+  }
 }

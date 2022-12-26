@@ -66,8 +66,13 @@
 
             <!-- Name textbox for renaming files -->
             <span class="d-{{showRenameBox === file ? 'flex' : 'none'}} rename-box">
-              <input type="text" [value]="file.name" class="w-100 ms-2" [id]="showRenameBox === file ? 'renameFile':''"
-                #fileInput (keyup.enter)="renameActiveFile({file: file, name: fileInput?.value})"
+              <input
+                type="text"
+                [value]="file.name"
+                class="w-100 ms-2"
+                [id]="showRenameBox === file ? 'renameFile':''"
+                #fileInput
+                (keyup.enter)="renameActiveFile({file: file, name: fileInput?.value})"
                 (keyup.esc)="showRenameBox = null">
             </span>
 
@@ -110,8 +115,12 @@
 
             <!-- Name textbox for renaming folder -->
             <span class="d-{{showRenameBox === folder ? 'flex' : 'none'}} rename-box">
-              <input type="text" [value]="folder.name" class="w-100 ms-2"
-                [id]="showRenameBox === folder ? 'renameFile':''" #folderInput
+              <input
+                type="text"
+                [value]="folder.name"
+                class="w-100 ms-2"
+                [id]="showRenameBox === folder ? 'renameFile':''"
+                #folderInput
                 (keyup.enter)="renameActiveFolder(folder, folderInput?.value)" (keyup.esc)="showRenameBox = null">
             </span>
 
@@ -170,9 +179,23 @@
 </div>
 
 <!-- Invisible helper input for allowing user to upload filrs -->
-<input type="file" [(ngModel)]="fileInput" #file multiple class="d-none" (change)="uploadFiles($event.target.files)">
+<input
+  type="file"
+  [(ngModel)]="fileInput"
+  #file
+  multiple
+  class="d-none"
+  (change)="uploadFiles($event.target.files)">
 
-<input type="file" [(ngModel)]="zipFileInput" #zipfile class="d-none" accept="zip"
+<input
+  type="file"
+  [(ngModel)]="zipFileInput"
+  #zipfile
+  class="d-none"
+  accept="zip"
   (change)="installModule($event.target.files)">
 
-<div class="overlay" *ngIf="showRenameBox!==null" (click)="showRenameBox=null"></div>
+<div
+  class="overlay"
+  *ngIf="showRenameBox !== null"
+  (click)="showRenameBox = null"></div>

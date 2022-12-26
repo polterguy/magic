@@ -1,0 +1,16 @@
+
+<h3 mat-dialog-title class="mb-1">Train OpenAI</h3>
+
+<div mat-dialog-content>
+
+  <div *ngFor="let idx of dataSource" class="mat-elevation-z2 card my-4 p-4">
+    <strong class="title mb-4">{{idx.prompt}}</strong>
+    <div class="code">{{idx.answer}}</div>
+  </div>
+
+</div>
+
+<div mat-dialog-actions [align]="'end'">
+  <button mat-button (click)="close()">Close</button>
+  <button mat-flat-button (click)="start_training()">Start training</button>
+</div>
