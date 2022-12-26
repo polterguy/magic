@@ -29,7 +29,7 @@ import { OpenAIService } from 'src/app/_general/services/openai.service';
 import { Response } from 'src/app/models/response.model';
 import { OpenAIAnswerDialogComponent } from '../components/openai-answer-dialog/openai-answer-dialog.component';
 import { ConfigureOpenaiComponent } from '../components/configure-openai/configure-openai.component';
-import { TrainingDialogComponent } from '../components/training-dialog/training-dialog.component';
+import { TrainingDialogComponent } from '../components/openai-training-dialog/openai-training-dialog.component';
 
 /**
  * Hyper IDE editor component, wrapping currently open files, allowing user to edit the code.
@@ -138,9 +138,9 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
       maxWidth: '650px',
     });
     dialog.afterClosed().subscribe((result: {configured: boolean, start_training: boolean}) => {
-      if (result.configured) {
+      if (result?.configured) {
         this.openAiEnabled = true;
-        if (result.start_training) {
+        if (result?.start_training) {
           const dialog = this.dialog.open(TrainingDialogComponent, {
             width: '80vw',
             maxWidth: '850px',

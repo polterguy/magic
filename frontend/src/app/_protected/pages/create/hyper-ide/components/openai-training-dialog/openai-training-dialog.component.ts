@@ -12,9 +12,9 @@ import { OpenAIService } from 'src/app/_general/services/openai.service';
  * OpenAI training dialog component.
  */
 @Component({
-  selector: 'app-training-dialog',
-  templateUrl: './training-dialog.component.html',
-  styleUrls: ['./training-dialog.component.scss']
+  selector: 'app-openai-training-dialog',
+  templateUrl: './openai-training-dialog.component.html',
+  styleUrls: ['./openai-training-dialog.component.scss']
 })
 export class TrainingDialogComponent implements OnInit {
 

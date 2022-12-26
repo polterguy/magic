@@ -1,0 +1,10 @@
+// Create an HTTP GET endpoint that takes two string arguments, concatenates these arguments, and returns the result to caller
+.arguments
+   arg1:string
+   arg2:string
+strings.concat
+   get-value:x:@.arguments/*/arg1
+   get-value:x:@.arguments/*/arg2
+unwrap:x:+/*
+return
+   result:x:@strings.concat

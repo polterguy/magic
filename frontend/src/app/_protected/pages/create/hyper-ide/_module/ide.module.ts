@@ -24,7 +24,7 @@ import { SelectMacroDialogComponent } from '../components/select-macro-dialog/se
 import { UnsavedChangesDialogComponent } from '../components/unsaved-changes-dialog/unsaved-changes-dialog.component';
 import { OpenAIAnswerDialogComponent } from '../components/openai-answer-dialog/openai-answer-dialog.component';
 import { ConfigureOpenaiComponent } from '../components/configure-openai/configure-openai.component';
-import { TrainingDialogComponent } from '../components/training-dialog/training-dialog.component';
+import { TrainingDialogComponent } from '../components/openai-training-dialog/openai-training-dialog.component';
 
 @NgModule({
   declarations: [

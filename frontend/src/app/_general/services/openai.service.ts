@@ -45,10 +45,12 @@ export class OpenAIService {
    * Configures OpenAI with the specified API key, and optionally starts
    * training it using the default training set.
    */
-  configure(key: string, model: string) {
+  configure(key: string, model: string, max_tokens: number, temperature: number) {
     return this.httpService.post<any>('/magic/system/openai/configure', {
       key,
       model,
+      max_tokens,
+      temperature,
     });
   }
 

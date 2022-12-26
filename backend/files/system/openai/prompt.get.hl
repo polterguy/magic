@@ -27,17 +27,27 @@ validators.mandatory:x:@.arguments/*/query
    model
    temperature
    max_tokens
+config.get:"magic:openai:model"
 set-value:x:@.args/*/model
    get-first-value
       get-value:x:@.arguments/*/model
-      .:text-davinci-003
+      get-value:x:@config.get
+      .:code-davinci-002
+config.get:"magic:openai:temperature"
+convert:x:-
+   type:decimal
 set-value:x:@.args/*/temperature
    get-first-value
       get-value:x:@.arguments/*/temperature
-      .:int:0
+      get-value:x:@convert
+      .:decimal:0
+config.get:"magic:openai:temperature"
+convert:x:-
+   type:int
 set-value:x:@.args/*/max_tokens
    get-first-value
       get-value:x:@.arguments/*/max_tokens
+      get-value:x:@convert
       .:int:100
 
 /*
