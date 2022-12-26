@@ -43,14 +43,16 @@ set-value:x:@.args/*/max_tokens
  * Creating our Bearer token by reading our OpenAI
  * configuration settings.
  */
-strings.concat
-   .:"Bearer "
-   config.get:"magic:openai:key"
+.token
+set-value:x:@.token
+   strings.concat
+      .:"Bearer "
+      config.get:"magic:openai:key"
 
 // Creating an HTTP POST request towards OpenAI, now decorated.
 http.post:"https://api.openai.com/v1/completions"
    headers
-      Authorization:x:@strings.concat
+      Authorization:x:@.token
       Content-Type:application/json
    payload
       prompt:x:@.arguments/*/query

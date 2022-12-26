@@ -1,0 +1,39 @@
+
+/*
+ * Lists your fine-tune jobs, and status of jobs.
+ */
+.arguments
+.description:Lists your fine-tune jobs, and status of jobs
+
+// Making sure user has access to invoked endpoint.
+auth.ticket.verify:root
+
+/*
+ * Creating our Bearer token by reading our OpenAI
+ * configuration settings.
+ */
+.token
+set-value:x:@.token
+   strings.concat
+      .:"Bearer "
+      config.get:"magic:openai:key"
+
+// Invoking OpenAI to list fine tuning jobs.
+http.get:"https://api.openai.com/v1/fine-tunes"
+   headers
+      Authorization:x:@.token
+   convert:true
+
+// Iterating through each result returned from above HTTP invocation.
+for-each:x:@http.get/*/content/*/data/*
+   date.from-unix:x:@.dp/#/*/created_at
+   add:x:../*/return
+      .
+         .
+            id:x:@.dp/#/*/id
+            model:x:@.dp/#/*/model
+            status:x:@.dp/#/*/status
+            created:x:@date.from-unix
+
+// Returning result to caller.
+return
