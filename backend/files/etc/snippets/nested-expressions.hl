@@ -1,9 +1,9 @@
+// Create a nested expression where a sub section of the expression is a reference to the value of a node, that returns the name 'thomas' given the specified data
 .arg1:.data
-.arg2:foo2
 .result
 .data
    foo1:john
    foo2:thomas
    foo3:peter
 set-value:x:@.result
-   get-value:x:../*/{@.arg1}/*/{@.arg2}
+   get-value:x:../*/{@.arg1}/*/foo2

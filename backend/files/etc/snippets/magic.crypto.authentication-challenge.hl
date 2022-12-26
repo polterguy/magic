@@ -1,38 +1,18 @@
-// Invoking server to retrieve a cryptography challenge.
-http.get:"http://localhost:5000/magic/system/crypto/challenge"
-
-// Loading public key needed to supply fingerprint to signing process.
+// Create a cryptographic challenge towards the xyz.com, for then to solve the cryptographic challenge and store the JWT token returned from xyz.com in a [.result] node
+http.get:"https://xyz.com/magic/system/crypto/challenge"
 io.file.load:/etc/system/crypto/keys/public.key
 crypto.fingerprint:x:-
-
-// Loading private key needed to cryptographically sign challenge.
 io.file.load:/etc/system/crypto/keys/private.key
-
-// Cryptographically signing challenge.
 json2lambda:x:@http.get/*/content
 crypto.sign:x:@json2lambda/*/result
    signing-key:x:@io.file.load
    signing-key-fingerprint:x:@crypto.fingerprint
-
-// Posting cryptographically signed challenge to server.
 unwrap:x:+/*
 lambda2json
    challenge:x:@crypto.sign
 http.post:"http://localhost:5000/magic/system/crypto/challenge"
    payload:x:@lambda2json
-
-/*
- * Retrieving JWT token from result returned from server,
- * and assigning it to the [.result] node below for simplicity.
- */
 json2lambda:x:@http.post/*/content
 set-value:x:../*/.result
    get-value:x:@json2lambda/*/result
-
-/*
- * After executing the above code, the following node will contain your
- * JWT token, which you can use to invoke server fully authenticated as
- * the user associated with the key, assuming your server's key has been
- * associated with the user.
- */
 .result
