@@ -22,9 +22,9 @@ import { RenameFileDialogComponent } from '../components/rename-file-dialog/rena
 import { RenameFolderDialogComponent } from '../components/rename-folder-dialog/rename-folder-dialog.component';
 import { SelectMacroDialogComponent } from '../components/select-macro-dialog/select-macro-dialog.component';
 import { UnsavedChangesDialogComponent } from '../components/unsaved-changes-dialog/unsaved-changes-dialog.component';
-import { OpenAIAnswerDialogComponent } from '../components/openai-answer-dialog/openai-answer-dialog.component';
-import { ConfigureOpenaiComponent } from '../components/configure-openai/configure-openai.component';
-import { TrainingDialogComponent } from '../components/openai-training-dialog/openai-training-dialog.component';
+import { ConfigureOpenaiComponent } from '../components/openai/configure-openai/configure-openai.component';
+import { OpenAIAnswerDialogComponent } from '../components/openai/openai-answer-dialog/openai-answer-dialog.component';
+import { TrainingDialogComponent } from '../components/openai/openai-training-dialog/openai-training-dialog.component';
 
 @NgModule({
   declarations: [
