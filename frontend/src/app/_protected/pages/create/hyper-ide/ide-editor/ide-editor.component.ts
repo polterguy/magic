@@ -25,6 +25,9 @@ import { CodemirrorActionsService } from '../_services/codemirror-actions.servic
 import { FileService } from '../_services/file.service';
 import { VocabularyService } from '../_services/vocabulary.service';
 import { Endpoint } from 'src/app/_protected/models/common/endpoint.model';
+import { OpenAIService } from 'src/app/_general/services/openai.service';
+import { Response } from 'src/app/models/response.model';
+import { CodeDialogComponent } from '../components/code-dialog/code-dialog.component';
 
 /**
  * Hyper IDE editor component, wrapping currently open files, allowing user to edit the code.
@@ -35,6 +38,9 @@ import { Endpoint } from 'src/app/_protected/models/common/endpoint.model';
   styleUrls: ['./ide-editor.component.scss']
 })
 export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
+
+  private codemirrorActionSubscription!: Subscription;
+  private codemirrorOptions: any = {};
 
   @Input() currentFileData: FileNode;
   @Input() activeFolder: string = '';
@@ -52,9 +58,8 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   @Output() renameActiveFolderFromParent: EventEmitter<any> = new EventEmitter<any>();
   @Output() createNewFileObjectFromParent: EventEmitter<any> = new EventEmitter<any>();
 
-  private codemirrorActionSubscription!: Subscription;
-
-  private codemirrorOptions: any = {};
+  openAiPrompt: string = '';
+  openAiEnabled: boolean = false;
 
   constructor(
     private dialog: MatDialog,
@@ -63,11 +68,17 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     private generalService: GeneralService,
     private evaluatorService: EvaluatorService,
     private vocabularyService: VocabularyService,
+    private openAiService: OpenAIService,
     private codemirrorActionsService: CodemirrorActionsService) { }
 
   ngOnInit() {
     this.watchForActions();
     this.cdr.detectChanges();
+    this.openAiService.enabled().subscribe({
+      next: (result: any) => {
+        this.openAiEnabled = result.result;
+      }
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -89,13 +100,6 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  private async getCodeMirrorOptions() {
-    this.codemirrorActionsService.getActions(null, this.currentFileData?.path.split('.').pop()).then((options: any) => {
-      this.codemirrorOptions[this.currentFileData.path] = options;
-      this.currentFileData.options = options;
-    });
-  }
-
   clearEditorHistory(clear: boolean) {
     const fileExisting: number = this.openFiles.findIndex((item: any) => item.path === this.currentFileData.path);
     const activeWrapper = document.querySelector('.active-codemirror-editor-' + fileExisting);
@@ -104,12 +108,44 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     editor.doc.clearHistory(); // To avoid having initial loading of file becoming an "undo operation".
   }
 
-  /**
-   * Implementation of AfterViewInit.
-   *
-   * This is needed to ensure we retrieve Hyperlambda vocabulary from backend to
-   * have autocomplete data for Hyperlambda language.
-   */
+  setFocusToActiveEditor() {
+    setTimeout(() => {
+      const fileExisting: number = this.openFiles.findIndex((item: any) => item.path === this.currentFileData.path);
+      const activeWrapper = document.querySelector('.active-codemirror-editor-' + fileExisting);
+      if (activeWrapper) {
+        var editor = (<any>activeWrapper.querySelector('.CodeMirror'))?.CodeMirror;
+        if (editor) {
+          editor.focus();
+        }
+      }
+    }, 1);
+  }
+
+  openShortkeys() {
+    this.dialog.open(ShortkeysComponent, {
+      width: '900px',
+      data: {
+        type: ['full']
+      }
+    })
+  }
+
+  askOpenAi() {
+    this.openAiService.query(this.openAiPrompt).subscribe({
+      next: (result: Response) => {
+        const dialog = this.dialog.open(CodeDialogComponent, {
+          data: {
+            code: result.result,
+          }
+        });
+        dialog.afterClosed().subscribe((data: any) => {
+          console.log(data);
+        });
+      },
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+    });
+  }
+
   ngAfterViewInit() {
     if (!window['_vocabulary']) {
       this.vocabularyService.vocabulary().subscribe({
@@ -119,10 +155,12 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  /**
-   * Invoked when a file should be saved.
-   * @param thenClose Boolean, only turns to true if invoked from close function.
-   */
+  ngOnDestroy(): void {
+    if (this.codemirrorActionSubscription) {
+      this.codemirrorActionSubscription.unsubscribe();
+    }
+  }
+
   private saveActiveFile(thenClose: boolean = false) {
     this.fileService.saveFile(this.currentFileData.path, this.currentFileData.content).subscribe({
       next: () => {
@@ -136,11 +174,6 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     });
   }
 
-  /**
-   * Invoked when a file should be deleted.
-   *
-   * @callback deleteActiveFileFromParent calling a function in the parent component for managing the tree
-   */
   private deleteActiveFile() {
     const file: any = {
       name: this.currentFileData.name,
@@ -151,20 +184,10 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     this.deleteActiveFileFromParent.emit(file);
   }
 
-  /**
-   * Invoked when a folder should be deleted.
-   *
-   * @callback deleteActiveFolderFromParent calling a function in the parent component for managing the tree
-   */
   private deleteActiveFolder() {
     this.deleteActiveFolderFromParent.emit(this.currentFileData.folder);
   }
 
-  /**
-   * Invoked when a file should be closed.
-   *
-   * @param noDirtyWarnings If true user will be warned about unsaved changes
-   */
   private async closeActiveFile(noDirtyWarnings: boolean = false) {
     if (!this.currentFileData) {
       return;
@@ -192,13 +215,6 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     })
   }
 
-  /**
-   * Invoked when a Hyperlambda file should be executed.
-   *
-   * How the file is executed depends upon if the file is an endpoint file or not.
-   * If the file is an endpoint file, a modal dialog will be displayed, allowing
-   * the user to parametrise invocation as an HTTP request first.
-   */
   private async executeActiveFile() {
     if (this.openFiles.length === 0 || !this.currentFileData.path.endsWith('.hl')) {
       return;
@@ -219,10 +235,6 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  /*
-   * Returns an endpoint matching the specified file node, or null if file cannot
-   * be matched to an endpoint.
-   */
   private getEndpointToExecute(): Promise<any> {
     if (this.currentFileData?.path?.startsWith('/modules/') || this.currentFileData?.path?.startsWith('/system/')) {
       const lastSplits = this.currentFileData.name.split('.');
@@ -252,9 +264,6 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     return null;
   }
 
-  /**
-   * Returns true if active file is dirty.
-   */
   private activeFileIsClean() {
     return new Promise((resolve) => {
       const fileExisting: number = this.openFiles.findIndex((item: any) => item.path === this.currentFileData.path);
@@ -277,11 +286,6 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     editor.doc.clearHistory(); // To avoid having initial loading of file becoming an "undo operation".
   }
 
-  /**
-   * Invoked when a file should be renamed.
-   *
-   * @callback renameActiveFileFromParent to update the file inside the tree with the given name
-   */
   private renameActiveFile() {
     if (!this.currentFileData) {
       return;
@@ -504,31 +508,6 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     });
   }
 
-  /*
-   * Sets focus to active editor.
-   */
-  public setFocusToActiveEditor() {
-    setTimeout(() => {
-      const fileExisting: number = this.openFiles.findIndex((item: any) => item.path === this.currentFileData.path);
-      const activeWrapper = document.querySelector('.active-codemirror-editor-' + fileExisting);
-      if (activeWrapper) {
-        var editor = (<any>activeWrapper.querySelector('.CodeMirror'))?.CodeMirror;
-        if (editor) {
-          editor.focus();
-        }
-      }
-    }, 1);
-  }
-
-  public openShortkeys() {
-    this.dialog.open(ShortkeysComponent, {
-      width: '900px',
-      data: {
-        type: ['full']
-      }
-    })
-  }
-
   private watchForActions() {
     this.codemirrorActionSubscription = this.codemirrorActionsService.action.subscribe((action: string) => {
       switch (action) {
@@ -586,10 +565,11 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     })
   }
 
-  ngOnDestroy(): void {
-    if (this.codemirrorActionSubscription) {
-      this.codemirrorActionSubscription.unsubscribe();
-    }
+  private async getCodeMirrorOptions() {
+    this.codemirrorActionsService.getActions(null, this.currentFileData?.path.split('.').pop()).then((options: any) => {
+      this.codemirrorOptions[this.currentFileData.path] = options;
+      this.currentFileData.options = options;
+    });
   }
 }
 

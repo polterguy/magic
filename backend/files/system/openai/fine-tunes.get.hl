@@ -26,13 +26,8 @@ http.get:"https://api.openai.com/v1/fine-tunes"
 
 // Sanity checking above invocation
 if
-   and
-      not
-         mte:x:@http.get
-            .:int:200
-      not
-         lt:x:@http.get
-            .:int:300
+   neq:x:@http.post
+      .:int:200
    .lambda
 
       // Oops, error - Logging error and returning status 500 to caller.

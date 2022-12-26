@@ -22,6 +22,7 @@ import { RenameFileDialogComponent } from '../components/rename-file-dialog/rena
 import { RenameFolderDialogComponent } from '../components/rename-folder-dialog/rename-folder-dialog.component';
 import { SelectMacroDialogComponent } from '../components/select-macro-dialog/select-macro-dialog.component';
 import { UnsavedChangesDialogComponent } from '../components/unsaved-changes-dialog/unsaved-changes-dialog.component';
+import { CodeDialogComponent } from '../components/code-dialog/code-dialog.component';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import { UnsavedChangesDialogComponent } from '../components/unsaved-changes-dia
     RenameFolderDialogComponent,
     SelectMacroDialogComponent,
     UnsavedChangesDialogComponent,
+    CodeDialogComponent,
   ],
   imports: [
     CommonModule,

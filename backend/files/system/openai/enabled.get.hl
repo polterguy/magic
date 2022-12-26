@@ -1,0 +1,24 @@
+
+/*
+ * Returns true if OpenAI has been enabled, which is the case if
+ * user have added an OpenAI API key to his or her configuration.
+ */
+.arguments
+
+// Making sure user has access to invoked endpoint.
+auth.ticket.verify:root
+
+// Checking if configuration setting for OpenAI API key exists.
+config.get:"magic:openai:key"
+if
+   eq:x:@config.get
+      .
+   .lambda
+
+      // No API key found for OpenAI
+      return
+         result:bool:false
+
+// OpenAI API key exists.
+return
+   result:bool:true

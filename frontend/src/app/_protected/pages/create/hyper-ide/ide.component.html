@@ -7,8 +7,13 @@
           <div class="col-12">
 
             <!-- Search textbox to filter available files -->
-            <app-ide-searchbox [type]="type" (toggleFileSystems)="tree.systemFiles = $event;tree.updateFileObject('/')"
-              (filterList)="filterList($event)" #search></app-ide-searchbox>
+            <app-ide-searchbox
+              [type]="type"
+              (toggleFileSystems)="tree.systemFiles = $event;tree.updateFileObject('/')"
+              (filterList)="filterList($event)"
+              #search>
+            </app-ide-searchbox>
+
           </div>
         </div>
 
@@ -16,9 +21,15 @@
           <div class="col-12 max-height">
 
             <!-- Tree to allow for browsing and opening files -->
-            <app-ide-tree #tree [searchKey]="searchKey" [type]="type" (showEditor)="showEditor($event)"
+            <app-ide-tree
+              #tree
+              [searchKey]="searchKey"
+              [type]="type"
+              (showEditor)="showEditor($event)"
               (clearEditorHistory)="editor.clearEditorHistory($event)"
-              (setFocusToActiveEditor)="editor.setFocusToActiveEditor()"></app-ide-tree>
+              (setFocusToActiveEditor)="editor.setFocusToActiveEditor()">
+            </app-ide-tree>
+
           </div>
         </div>
 
@@ -33,16 +44,24 @@
       <mat-card-content class="h-100 max-height-full">
 
         <!-- Editor surface for allowing user to edit open files -->
-        <app-ide-editor class="h-100 d-block" #editor [currentFileData]="currentFileData"
-          [activeFolder]="tree.activeFolder" [openFiles]="tree.openFiles"
-          (updateFileObject)="tree.updateFileObject($event)" (getFilesFromServer)="tree.getFilesFromServer()"
-          (getEndpoints)="tree.refetchEndpointsList()" [endpoints]="tree.endpoints" (dataBindTree)="tree.dataBindTree()"
+        <app-ide-editor
+          class="h-100 d-block"
+          #editor
+          [currentFileData]="currentFileData"
+          [activeFolder]="tree.activeFolder"
+          [openFiles]="tree.openFiles"
+          (updateFileObject)="tree.updateFileObject($event)"
+          (getFilesFromServer)="tree.getFilesFromServer()"
+          (getEndpoints)="tree.getEndpoints()"
+          [endpoints]="tree.endpoints"
+          (dataBindTree)="tree.dataBindTree()"
           (deleteActiveFolderFromParent)="tree.deleteActiveFolder($event)"
           (deleteActiveFileFromParent)="tree.deleteActiveFile($event)"
           (renameActiveFileFromParent)="tree.renameActiveFile($event)"
           (renameActiveFolderFromParent)="tree.renameActiveFolder($event)"
           (createNewFileObjectFromParent)="tree.createNewFileObject($event)"
-          (closeFileImpl)="tree.closeFileImpl()"></app-ide-editor>
+          (closeFileImpl)="tree.closeFileImpl()">
+        </app-ide-editor>
 
       </mat-card-content>
     </mat-card>

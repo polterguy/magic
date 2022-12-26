@@ -21,10 +21,16 @@ export class IdeComponent implements OnInit {
   /**
    * Currently selected file.
    */
-  public currentFileData: FileNode;
+  currentFileData: FileNode;
 
-  public searchKey: Observable<string>;
+  /**
+   * Filtering key for files in tree.
+   */
+  searchKey: Observable<string>;
 
+  /**
+   * Type of IDE, canbe 'backend' or 'frontend'.
+   */
   public type: Observable<string>;
 
   constructor(private route: ActivatedRoute) { }
