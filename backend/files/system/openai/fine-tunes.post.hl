@@ -1,11 +1,14 @@
 
 /*
- * Uploads a file to your OpenAI account, such as for instance a training file, etc.
+ * Fine tunes your OpenAI account, allowing you to train it using JSONL data.
  */
 .arguments
    file
       file:string
       stream:*
+   model:string
+   suffix:string
+.accept:multipart/form-data
 .description:Uploads a file to your OpenAI account, such as for instance a training file, etc
 
 // Making sure user has access to invoked endpoint.
@@ -13,6 +16,23 @@ auth.ticket.verify:root
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/file
+validators.mandatory:x:@.arguments/*/suffix
+validators.regex:x:@.arguments/*/suffix
+   regex:^[a-z0-9-_]{5,100}$
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/model
+validators.enum:x:@.arguments/*/model
+   .:ada
+   .:babbage
+   .:curie
+   .:davinci
+   .:text-davinci-003
+   .:text-curie-001
+   .:text-babbage-001
+   .:text-ada-001
+   .:code-davinci-002
+   .:code-cushman-001
 
 // Reading input stream.
 io.stream.read:x:@.arguments/*/file/*/stream
@@ -59,6 +79,7 @@ http.post:"https://api.openai.com/v1/fine-tunes"
       Content-Type:application/json
    payload
       training_file:x:@.id
+      model:x:@.arguments/*/model
 
 // Returning success to caller.
 return
