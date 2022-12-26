@@ -27,7 +27,7 @@ import { VocabularyService } from '../_services/vocabulary.service';
 import { Endpoint } from 'src/app/_protected/models/common/endpoint.model';
 import { OpenAIService } from 'src/app/_general/services/openai.service';
 import { Response } from 'src/app/models/response.model';
-import { CodeDialogComponent } from '../components/code-dialog/code-dialog.component';
+import { OpenAIAnswerDialogComponent } from '../components/openai-answer-dialog/openai-answer-dialog.component';
 import { ConfigureOpenaiComponent } from '../components/configure-openai/configure-openai.component';
 import { TrainingDialogComponent } from '../components/training-dialog/training-dialog.component';
 
@@ -158,7 +158,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     this.openAiService.query(this.openAiPrompt).subscribe({
       next: (result: Response) => {
         this.generalService.hideLoading();
-        const dialog = this.dialog.open(CodeDialogComponent, {
+        const dialog = this.dialog.open(OpenAIAnswerDialogComponent, {
           width: '50%',
           data: {
             code: result.result,

@@ -22,7 +22,7 @@ import { RenameFileDialogComponent } from '../components/rename-file-dialog/rena
 import { RenameFolderDialogComponent } from '../components/rename-folder-dialog/rename-folder-dialog.component';
 import { SelectMacroDialogComponent } from '../components/select-macro-dialog/select-macro-dialog.component';
 import { UnsavedChangesDialogComponent } from '../components/unsaved-changes-dialog/unsaved-changes-dialog.component';
-import { CodeDialogComponent } from '../components/code-dialog/code-dialog.component';
+import { OpenAIAnswerDialogComponent } from '../components/openai-answer-dialog/openai-answer-dialog.component';
 import { ConfigureOpenaiComponent } from '../components/configure-openai/configure-openai.component';
 import { TrainingDialogComponent } from '../components/training-dialog/training-dialog.component';
 
@@ -39,7 +39,7 @@ import { TrainingDialogComponent } from '../components/training-dialog/training-
     RenameFolderDialogComponent,
     SelectMacroDialogComponent,
     UnsavedChangesDialogComponent,
-    CodeDialogComponent,
+    OpenAIAnswerDialogComponent,
     ConfigureOpenaiComponent,
     TrainingDialogComponent,
   ],

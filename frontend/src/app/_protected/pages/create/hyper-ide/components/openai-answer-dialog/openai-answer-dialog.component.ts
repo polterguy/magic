@@ -19,11 +19,11 @@ export class CodeModel {
  * Code dialog, showing user some code snippet.
  */
 @Component({
-  selector: 'app-code-dialog',
-  templateUrl: './code-dialog.component.html',
-  styleUrls: ['./code-dialog.component.scss']
+  selector: 'app-openai-answer-dialog',
+  templateUrl: './openai-answer-dialog.component.html',
+  styleUrls: ['./openai-answer-dialog.component.scss']
 })
-export class CodeDialogComponent {
+export class OpenAIAnswerDialogComponent {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: CodeModel,
