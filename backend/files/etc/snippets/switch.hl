@@ -1,22 +1,12 @@
-// Switch case comparison, evaluating lambda object matching expression.
-.source:foo
+// Create a switch comparison that sets the [.result] node to 'Is foo' of the switch value has the value of 'foo', 'Is bar' of the switch value has 'bar' and 'None of the above' if the switch value is neither 'foo' nor 'bar'
 .result
 switch:x:@.source
    case:foo
-
-      // Lambda object to evaluate if expression's value equals 'foo'.
       set-value:x:@.result
          .:Is foo
    case:bar
-
-      // Lambda object to evaluate if expression's value equals 'bar'.
       set-value:x:@.result
          .:Is bar
    default
-
-      /*
-       * Lambda object to evaluate if expression is not matched to any
-       * of the above values.
-       */
       set-value:x:@.result
          .:None of the above

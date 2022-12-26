@@ -1,0 +1,3 @@
+// Create a new Hyperlambda slot that returns the value of 57
+slots.create:meaning-of-life
+   return-value:int:57
