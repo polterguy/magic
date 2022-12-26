@@ -21,8 +21,12 @@
 
 <div mat-dialog-actions [align]="'end'">
 
-  <mat-checkbox [(ngModel)]="data.matchResponse" color="primary">Match response</mat-checkbox>
+  <mat-checkbox
+    [(ngModel)]="data.matchResponse"
+    color="primary">Match response</mat-checkbox>
+
   <div class="p-2"></div>
+
   <button mat-flat-button color="primary" class="px-5" (click)="create()">Create</button>
 
 </div>

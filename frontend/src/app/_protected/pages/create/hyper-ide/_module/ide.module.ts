@@ -23,6 +23,8 @@ import { RenameFolderDialogComponent } from '../components/rename-folder-dialog/
 import { SelectMacroDialogComponent } from '../components/select-macro-dialog/select-macro-dialog.component';
 import { UnsavedChangesDialogComponent } from '../components/unsaved-changes-dialog/unsaved-changes-dialog.component';
 import { CodeDialogComponent } from '../components/code-dialog/code-dialog.component';
+import { ConfigureOpenaiComponent } from '../components/configure-openai/configure-openai.component';
+import { TrainingDialogComponent } from '../components/training-dialog/training-dialog.component';
 
 @NgModule({
   declarations: [
@@ -38,6 +40,8 @@ import { CodeDialogComponent } from '../components/code-dialog/code-dialog.compo
     SelectMacroDialogComponent,
     UnsavedChangesDialogComponent,
     CodeDialogComponent,
+    ConfigureOpenaiComponent,
+    TrainingDialogComponent,
   ],
   imports: [
     CommonModule,
