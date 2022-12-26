@@ -24,8 +24,8 @@ export class OpenAIConfigurationDialogComponent implements OnInit {
   type: string = 'password';
   models: string[] = [];
   selectedModel: string = '';
-  max_tokens: number = 200;
-  temperature: number = 0.1;
+  max_tokens: number = 100;
+  temperature: number = 0;
 
   constructor(
     private dialogRef: MatDialogRef<OpenAIConfigurationDialogComponent>,
@@ -39,9 +39,18 @@ export class OpenAIConfigurationDialogComponent implements OnInit {
         this.openApiKey = result.result || '';
         this.openAiService.base_models().subscribe({
           next: (models: string[]) => {
-            this.generalService.hideLoading();
             this.models = models;
             this.selectedModel = this.models[0];
+            this.openAiService.get_training_status().subscribe({
+              next: (result: any[]) => {
+                this.generalService.hideLoading();
+                console.log(result);
+              },
+              error: (error: any) => {
+                this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+                this.generalService.hideLoading();
+              }
+            });
           },
           error: (error: any) => {
             this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');

@@ -3,39 +3,14 @@
  * Fine tunes your OpenAI account, allowing you to train it using JSONL data.
  */
 .arguments
-   file
-      file:string
-      stream:*
-   model:string
-   suffix:string
-.accept:multipart/form-data
-.description:Uploads a file to your OpenAI account, such as for instance a training file, etc
+   content:string
+.description:Uploads training data to your OpenAI account, and starts training the model using the provided data
 
 // Making sure user has access to invoked endpoint.
 auth.ticket.verify:root
 
 // Sanity checking invocation.
-validators.mandatory:x:@.arguments/*/file
-validators.mandatory:x:@.arguments/*/suffix
-validators.regex:x:@.arguments/*/suffix
-   regex:^[a-z0-9-_]{5,100}$
-
-// Sanity checking invocation.
-validators.mandatory:x:@.arguments/*/model
-validators.enum:x:@.arguments/*/model
-   .:ada
-   .:babbage
-   .:curie
-   .:davinci
-   .:text-davinci-003
-   .:text-curie-001
-   .:text-babbage-001
-   .:text-ada-001
-   .:code-davinci-002
-   .:code-cushman-001
-
-// Reading input stream.
-io.stream.read:x:@.arguments/*/file/*/stream
+validators.mandatory:x:@.arguments/*/content
 
 /*
  * Creating our Bearer token by reading our OpenAI
@@ -47,21 +22,20 @@ set-value:x:@.token
       .:"Bearer "
       config.get:"magic:openai:key"
    
-// Creating our Content-Disposition HTTP header.
-.disposition
-set-value:x:@.disposition
-   strings.concat
-      .:"attachment; filename=\""
-      get-value:x:@.arguments/*/file/*/file
-      .:"\";"
-      .:" purpose=\"fine-tune\";"
-
 // Uploading file to OpenAI.
 http.post:"https://api.openai.com/v1/files"
    headers
       Authorization:x:@.token
-      Content-Type:application/json
-   payload:x:@io.stream.read
+      Content-Type:multipart/form-data
+   payload
+      entity:application/jsonl
+         headers
+            Content-Disposition:"attachment; name=file; filename=\"training.jsonl\""
+         content:x:@.arguments/*/content
+      entity:text/plain
+         headers
+            Content-Disposition:"form-data; name=purpose"
+         content:fine-tune
    convert:true
 
 
@@ -87,6 +61,11 @@ if
 set-value:x:@.id
    get-value:x:@http.post/*/content/*/id
 
+// Getting base model to use.
+.model
+set-value:x:@.model
+   config.get:"magic:openai:model"
+
 // Starting training session.
 http.post:"https://api.openai.com/v1/fine-tunes"
    headers
@@ -94,7 +73,9 @@ http.post:"https://api.openai.com/v1/fine-tunes"
       Content-Type:application/json
    payload
       training_file:x:@.id
-      model:x:@.arguments/*/model
+      model:x:@.model
+      suffix:hyperlambda
+   convert:true
 
 // Sanity checking above invocation
 if
@@ -109,6 +90,10 @@ if
       throw:Something went wrong while invoking OpenAI, check your log for details
          public:bool:true
          status:500
+
+// Storing fine tuned model.
+lambda2hyper:x:../*
+log.info:x:-
 
 // Returning success to caller.
 return

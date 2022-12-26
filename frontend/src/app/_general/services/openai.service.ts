@@ -75,6 +75,16 @@ export class OpenAIService {
     return this.httpService.get<any[]>('/magic/system/openai/training-data');
   }
 
-  start_training() {
+  /**
+   * Starts training
+   */
+  start_training(content: string) {
+    return this.httpService.post<Response>('/magic/system/openai/fine-tunes', {
+      content
+    });
+  }
+
+  get_training_status() {
+    return this.httpService.get<any[]>('/magic/system/openai/fine-tunes');
   }
 }

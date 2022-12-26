@@ -41,7 +41,7 @@ set-value:x:@.args/*/temperature
       get-value:x:@.arguments/*/temperature
       get-value:x:@convert
       .:decimal:0
-config.get:"magic:openai:temperature"
+config.get:"magic:openai:max_tokens"
 convert:x:-
    type:int
 set-value:x:@.args/*/max_tokens

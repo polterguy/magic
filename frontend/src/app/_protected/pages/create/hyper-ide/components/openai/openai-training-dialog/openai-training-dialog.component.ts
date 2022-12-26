@@ -39,10 +39,30 @@ export class OpenAITrainingDialogComponent implements OnInit {
     });
   }
 
-  start_training() {
-  }
-
   close() {
     this.dialogRef.close();
+  }
+
+  start_training() {
+
+    // OpenAI API requires JSONL format.
+    let jsonl = JSON.stringify(this.dataSource).substring(1);
+    jsonl = jsonl.substring(0, jsonl.length - 1);
+    while (jsonl.includes('},')) {
+      jsonl = jsonl.replace('},', '}\r\n');
+    }
+
+    // Uploading as file to backend.
+    this.generalService.showLoading();
+    this.openAiService.start_training(jsonl).subscribe({
+      next: () => {
+        this.dialogRef.close(true);
+        this.generalService.hideLoading();
+      },
+      error: (error: any) => {
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+        this.generalService.hideLoading();
+      }
+    });
   }
 }

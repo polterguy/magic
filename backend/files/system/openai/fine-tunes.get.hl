@@ -26,7 +26,7 @@ http.get:"https://api.openai.com/v1/fine-tunes"
 
 // Sanity checking above invocation
 if
-   neq:x:@http.post
+   neq:x:@http.get
       .:int:200
    .lambda
 
@@ -41,6 +41,7 @@ if
 // Iterating through each result returned from above HTTP invocation.
 for-each:x:@http.get/*/content/*/data/*
    date.from-unix:x:@.dp/#/*/created_at
+   unwrap:x:+/*/*/*
    add:x:../*/return
       .
          .
@@ -48,6 +49,7 @@ for-each:x:@http.get/*/content/*/data/*
             model:x:@.dp/#/*/model
             status:x:@.dp/#/*/status
             created:x:@date.from-unix
+            fine_tuned_model:x:@.dp/#/*/fine_tuned_model
 
 // Returning result to caller.
 return
