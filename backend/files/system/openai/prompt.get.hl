@@ -1,6 +1,6 @@
 
 /*
- * Asks OpenAI a question, and returns tha answer to caller.
+ * Asks OpenAI a question, and returns the answer to caller.
  * Requires that you've already registered for an OpenAI account,
  * and that you've stored your configuration API key in your configuration
  * settings.
