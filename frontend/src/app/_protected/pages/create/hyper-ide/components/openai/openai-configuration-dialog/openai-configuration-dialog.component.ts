@@ -24,7 +24,7 @@ export class OpenAIConfigurationDialogComponent implements OnInit {
   type: string = 'password';
   models: string[] = [];
   selectedModel: string = '';
-  max_tokens: number = 100;
+  max_tokens: number = 500;
   temperature: number = 0;
 
   constructor(

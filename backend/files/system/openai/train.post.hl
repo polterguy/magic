@@ -101,6 +101,9 @@ if
          public:bool:true
          status:500
 
+// Training has begun
+log.info:Successfully started training of OpenAI model
+
 /*
  * Creating a task that repeats once every 1 minute until training is completed,
  * for then to make sure we use the new and updated model.
@@ -111,14 +114,13 @@ set-value:x:@.task-id
       .:openai-waiting-for-training-
       guid.new
 unwrap:x:./*/tasks.create/*/*/.task-id
-unwrap:x:./*/tasks.create/*/*/.model
+unwrap:x:./*/tasks.create/*/*/.model-id
 tasks.create:x:@.task-id
-   repeats:1.minutes
+   repeats:30.seconds
    .lambda
 
       // Forward evaluated above
       .task-id:x:@.lambda/@.task-id
-      .model:x:@http.post/*/content/*/fine_tuned_model
       .model-id:x:@http.post/*/content/*/id
 
       // Doing some logging
@@ -153,9 +155,13 @@ tasks.create:x:@.task-id
                   config.load
                   json2lambda:x:@config.load
                   set-value:x:@json2lambda/*/magic/*/openai/*/model
-                     get-value:x:@.model
+                     get-value:x:@http.get/*/content/*/fine_tuned_model
                   lambda2json:x:@json2lambda/*
                   config.save:x:@lambda2json
+
+                  // Basic logging
+                  log.info:Successfully updated configuration to use newly trained OpenAI model
+                     model:x:@http.get/*/content/*/fine_tuned_model
 
                   // Deleting task
                   tasks.delete:x:@.task-id

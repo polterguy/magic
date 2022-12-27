@@ -1,0 +1,14 @@
+// Create an array using Hyperlambda containing all months | Create Hyperlambda array \ Hyperlambda array with months
+.array
+   .:January
+   .:February
+   .:March
+   .:April
+   .:May
+   .:June
+   .:July
+   .:August
+   .:September
+   .:October
+   .:November
+   .:December

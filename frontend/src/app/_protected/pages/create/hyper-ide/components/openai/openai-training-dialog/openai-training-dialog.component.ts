@@ -30,7 +30,17 @@ export class OpenAITrainingDialogComponent implements OnInit {
     this.openAiService.get_training_data().subscribe({
       next: (result: any[]) => {
         this.generalService.hideLoading();
-        this.dataSource = result;
+        const unfoldedResult: any[] = [];
+        for (const idx of result) {
+          const prompts = idx.prompt.split('|');
+          unfoldedResult.push(...prompts.map((x: any) => {
+            return {
+              prompt: x.trim(),
+              completion: idx.completion,
+            }
+          }));
+        }
+        this.dataSource = unfoldedResult;
       },
       error: (error: any) => {
         this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
@@ -46,10 +56,13 @@ export class OpenAITrainingDialogComponent implements OnInit {
   start_training() {
 
     // OpenAI API requires JSONL format.
+    for(const idx of this.dataSource) {
+      idx.completion = idx.completion + '###';
+    }
     let jsonl = JSON.stringify(this.dataSource).substring(1);
     jsonl = jsonl.substring(0, jsonl.length - 1);
     while (jsonl.includes('},')) {
-      jsonl = jsonl.replace('},', '}\r\n');
+      jsonl = jsonl.replace('},', '}\n');
     }
 
     // Uploading as file to backend.
