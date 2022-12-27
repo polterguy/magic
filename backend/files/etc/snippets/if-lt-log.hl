@@ -1,4 +1,4 @@
-// Compare the value of [.arg1] with the value of [.arg2] and if [.arg1] is less than [.arg2] create a log entry
+// Use Hyperlambda to compare the value of [.arg1] with the value of [.arg2] and if [.arg1] is less than [.arg2] create a log entry
 .arg1:value 1
 .arg2:value 2
 

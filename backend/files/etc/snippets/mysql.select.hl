@@ -1,3 +1,3 @@
-// Select all columns from the table called 'roles' in the database named 'magic'
+// Use Hyperlambda to select all columns from the table called 'roles' in the database named 'magic'
 mysql.connect:magic
    mysql.select:select * from roles

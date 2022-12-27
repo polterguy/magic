@@ -1,5 +1,4 @@
-
-// Create a file download endpoint that downloads the specified file to the client found within the /etc/foo/ folder
+// Use Hyperlambda to create a file download endpoint that downloads the specified file to the client found within the /etc/foo/ folder
 .arguments
    file:string
 .description:Returns the specified file to caller

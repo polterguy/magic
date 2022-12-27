@@ -1,2 +1,2 @@
-// Clear my server side cache for all cache items having a key starting out with 'magic.'
+// Use Hyperlambda to clear my server side cache for all cache items having a key starting out with 'magic.'
 cache.clear:magic.

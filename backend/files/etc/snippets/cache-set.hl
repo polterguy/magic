@@ -1,3 +1,3 @@
-// Create a server side cache with having a key of 'foo' and store 'some cache value' into it
+// Use Hyperlambda to create a server side cache with having a key of 'foo' and store 'some cache value' into it
 cache.set:foo
    value:some cache value

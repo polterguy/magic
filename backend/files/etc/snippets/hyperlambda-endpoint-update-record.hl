@@ -1,4 +1,4 @@
-// Create a Hyperlambda endpoint that updates an existing record in the Categories table in the [generic|northwind] database allowing the caller to provide new values for CategoryName and Description
+// Use Hyperlambda to create a Hyperlambda endpoint that updates an existing record in the Categories table in the [generic|northwind] database allowing the caller to provide new values for CategoryName and Description
 .arguments
    CategoryID:long
    CategoryName:string

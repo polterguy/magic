@@ -1,4 +1,4 @@
-// Connect to an SQLite database with the name of magic in the default connection string, and return multiple result sets, all values from roles and users
+// Use Hyperlambda to connect to an SQLite database with the name of magic in the default connection string, and return multiple result sets, all values from roles and users
 data.connect:magic
    data.select:"select * from roles; select * from users;"
       multiple-result-sets:bool:true

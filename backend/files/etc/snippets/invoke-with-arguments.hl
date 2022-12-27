@@ -1,4 +1,4 @@
-// Execute [.lambda] and pass in arguments to the invocation
+// Use Hyperlambda to execute [.lambda] and pass in arguments to the invocation
 
 // Lambda object we're executing
 .lambda

@@ -1,4 +1,4 @@
-// Create a Hyperlambda endpoint that deletes one record from the Categories table in the [generic|northwind] database requiring one mandatory argument being CategoryID which is the primary key of the Categories table
+// Use Hyperlambda to create a Hyperlambda endpoint that deletes one record from the Categories table in the [generic|northwind] database requiring one mandatory argument being CategoryID which is the primary key of the Categories table
 .arguments
    CategoryID:long
 validators.mandatory:x:@.arguments/*/CategoryID

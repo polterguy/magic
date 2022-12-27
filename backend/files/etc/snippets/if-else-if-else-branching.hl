@@ -1,4 +1,4 @@
-// Create an [if]/[else-if] block that conditionally checks the value of [.input]
+// Use Hyperlambda to create an [if]/[else-if] block that conditionally checks the value of [.input]
 
 .input:foo
 .dest

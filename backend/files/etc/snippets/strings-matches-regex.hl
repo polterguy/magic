@@ -1,4 +1,4 @@
-// Return all regular expression matches from [.input] that is matching {match1} and {match2}
+// Use Hyperlambda to return all regular expression matches from [.input] that is matching {match1} and {match2}
 .input:Foo Bar Howdy World {match1} and {match2} and that was it
 strings.matches:x:-
    .:"\\{.+?\\}"

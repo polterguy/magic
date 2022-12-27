@@ -1,4 +1,4 @@
-// Post some Hyperlambda to the foo.com HTTP endpoint
+// Use Hyperlambda to post some Hyperlambda to the foo.com HTTP endpoint
 http.post:"https://foo.com"
    headers
       Content-Type:application/hyperlambda

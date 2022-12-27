@@ -1,3 +1,3 @@
-// Convert foo.png to a JPEG image
+// Use Hyperlambda to convert foo.png to a JPEG image
 image.convert:/foo.png
    type:jpeg

@@ -26,13 +26,9 @@
     </div>
   </div>
 
-  <div *ngIf="!currentFileData" class="h-100 hyper-ide-splash pt-2">
-    <img src="/assets/images/og-logo-official.png" alt="Where the Machine Creates the Code">
-  </div>
-
   <ng-container *ngFor="let file of openFiles;let index = index">
     <div
-      class="active-codemirror-editor-{{index}} h-100 frontend-editor"
+      class="active-codemirror-editor-{{index}} editor"
       [class.d-none]="currentFileData.path !== file.path">
 
       <ngx-codemirror
@@ -46,22 +42,21 @@
 
   <div class="d-flex justify-content-end align-items-center w-100 mt-2 mb-0">
 
-    <form *ngIf="openAiEnabled" (ngSubmit)="askOpenAi()" class="w-100 open-ai-form">
+    <form *ngIf="openAiEnabled" (ngSubmit)="askOpenAi()" class="w-100 open-ai-form p-2">
+
       <mat-form-field
         class="w-100 standalone-field prompt">
         <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
           <mat-icon>search</mat-icon>
           <span class="text-muted">|</span>
         </span>
-    
         <input
           matInput
-          placeholder="OpenAI prompt ..."
+          placeholder="Ask OpenAI ..."
           [disabled]="waitingForAnswer"
           name="openAiPrompt"
           [(ngModel)]="openAiPrompt"
           autocomplete="off">
-
       </mat-form-field>
 
       <button
@@ -72,21 +67,21 @@
         color="primary"
         class="px-3">Ask</button>
 
+      <button
+        *ngIf="currentFileData"
+        mat-button
+        color="primary"
+        class="px-3"
+        (click)="closeActiveFile()">Close</button>
+
+      <button
+        *ngIf="currentFileData"
+        mat-button
+        color="primary"
+        class="px-3"
+        (click)="saveActiveFile()">Save</button>
+
     </form>
-
-    <button
-      *ngIf="currentFileData"
-      mat-button
-      color="primary"
-      class="px-3"
-      (click)="closeActiveFile()">Close</button>
-
-    <button
-      *ngIf="currentFileData"
-      mat-button
-      color="primary"
-      class="px-3"
-      (click)="saveActiveFile()">Save</button>
 
   </div>
 

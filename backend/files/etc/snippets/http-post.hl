@@ -1,4 +1,4 @@
-// Create an HTTP POST invocation towards microsoft.com, passing in some JSON document
+// Use Hyperlambda to create an HTTP POST invocation towards microsoft.com, passing in some JSON document
 http.post:"https://microsoft.com"
    payload
       json_document

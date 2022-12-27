@@ -1,4 +1,4 @@
-// Create a join SQL using the semantic slots from Hyperlambda that joins the table film with the table film_actor, for then to join film_actor with the actor table, and return film's description and title, in addition to actor's first_name and last_name, where actor's first_name equals NICK
+// Use Hyperlambda to create a join SQL using the semantic slots from Hyperlambda that joins the table film with the table film_actor, for then to join film_actor with the actor table, and return film's description and title, in addition to actor's first_name and last_name, where actor's first_name equals NICK
 mysql.connect:sakila
    mysql.read
       columns

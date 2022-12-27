@@ -1,2 +1,2 @@
-// Throw an exception that is not returned to the client
+// Use Hyperlambda to throw an exception that is not returned to the client
 throw:Exception message

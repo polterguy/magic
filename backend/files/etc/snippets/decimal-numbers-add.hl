@@ -1,4 +1,4 @@
-// Create an endpoint that takes two decimal numbers, adds them together, and returns the result of the addition to the caller
+// Use Hyperlambda to create an endpoint that takes two decimal numbers, adds them together, and returns the result of the addition to the caller
 .arguments
    number1:decimal
    number2:decimal

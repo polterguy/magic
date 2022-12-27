@@ -1,4 +1,4 @@
-// Create a Hyperlambda HTTP endpoint that takes two arguments, for then to concatenate the arguments, and save the result to '/result.txt'
+// Use Hyperlambda to create a Hyperlambda HTTP endpoint that takes two arguments, for then to concatenate the arguments, and save the result to '/result.txt'
 .arguments
    argument1:string
    argument2:string

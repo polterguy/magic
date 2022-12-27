@@ -1,4 +1,4 @@
-// Unwrap the value of [.dest] such that it gets the value from [.src]
+// Use Hyperlambda to unwrap the value of [.dest] such that it gets the value from [.src]
 .src:Hello World
 unwrap:x:+
 .dest:x:@.src

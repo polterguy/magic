@@ -1,4 +1,4 @@
-// Transform the specified Markdown into HTML
+// Use Hyperlambda to transform the specified Markdown into HTML
 .markdown:@"
 Howdy world
 

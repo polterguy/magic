@@ -1,4 +1,4 @@
-// Publish the 'foo' web socket message to users belonging to either the role of admin or user with a JSON payload being {"foo1":"bar1"}
+// Use Hyperlambda to publish the 'foo' web socket message to users belonging to either the role of admin or user with a JSON payload being {"foo1":"bar1"}
 sockets.signal:foo
    roles:user,admin
    args

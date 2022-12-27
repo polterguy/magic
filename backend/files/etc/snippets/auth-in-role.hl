@@ -1,4 +1,4 @@
-// Set the value of [.foo] to boolean true if the authenticated user belongs to the role of admin or root
+// Use Hyperlambda to set the value of [.foo] to boolean true if the authenticated user belongs to the role of admin or root
 .foo
 if
    auth.ticket.in-role:admin, root

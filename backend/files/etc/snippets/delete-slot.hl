@@ -1,4 +1,4 @@
-// Delete the my_slot slot
+// Use Hyperlambda to delete the my_slot slot
 
 // Creating our slot
 slots.delete:my_slot

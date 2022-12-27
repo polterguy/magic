@@ -1,3 +1,3 @@
-// Decrement the [.foo] variable by one
+// Use Hyperlambda to decrement the [.foo] variable by one
 .foo:int:5
 math.decrement:x:@.foo

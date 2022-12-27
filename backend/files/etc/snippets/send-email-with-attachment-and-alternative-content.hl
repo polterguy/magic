@@ -1,4 +1,4 @@
-// Send an email with both HTML and plain text content to John Doe from Jane Doe with a file attachment
+// Use Hyperlambda to send an email with both HTML and plain text content to John Doe from Jane Doe with a file attachment
 mail.smtp.send
    message
 

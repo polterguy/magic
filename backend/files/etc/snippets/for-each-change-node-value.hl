@@ -1,4 +1,4 @@
-// Iterate through each child node of [.data] and set the value of the node to done
+// Use Hyperlambda to iterate through each child node of [.data] and set the value of the node to done
 .data
    foo1:bar1
    foo2:bar2

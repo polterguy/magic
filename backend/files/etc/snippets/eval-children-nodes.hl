@@ -1,4 +1,4 @@
-// Create an [eval] invocation with children nodes that are to be executed
+// Use Hyperlambda to create an [eval] invocation with children nodes that are to be executed
 
 // Result node
 .res

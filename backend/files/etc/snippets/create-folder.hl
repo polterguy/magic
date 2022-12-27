@@ -1,2 +1,2 @@
-// Create folder on disc inside the '/foo' folder and name the new folder 'bar'
+// Use Hyperlambda to create folder on disc inside the '/foo' folder and name the new folder 'bar'
 io.folder.create:/foo/bar/

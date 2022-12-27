@@ -1,4 +1,4 @@
-// Iterate through each item in [.data] and log its value, but only if the name of the node currently iterated is success
+// // Use Hyperlambda to iterate through each item in [.data] and log its value, but only if the name of the node currently iterated is success
 .data
    failure:This should not be logged
    success:This should end up in your log

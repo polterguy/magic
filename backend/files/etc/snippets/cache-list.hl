@@ -1,2 +1,2 @@
-// List all server side cache items having a key starting out with 'magic.'
+// Use Hyperlambda to list all server side cache items having a key starting out with 'magic.'
 cache.list:magic.

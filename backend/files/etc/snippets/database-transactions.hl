@@ -1,5 +1,4 @@
-
-// Create a database transaction
+// Use Hyperlambda to create a database transaction
 data.connect:sakila
    data.transaction.create
 

@@ -1,4 +1,4 @@
-// Create an idempotent cryptographically signed HTTP invocation towards xyz.com that executes the Hyperlambda found inside of our [.lambda] block
+// Use Hyperlambda to create an idempotent cryptographically signed HTTP invocation towards xyz.com that executes the Hyperlambda found inside of our [.lambda] block
 guid.new
 unwrap:x:+/**/.request-id
 signal:magic.crypto.http.eval
