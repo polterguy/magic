@@ -1,0 +1,5 @@
+// Retrieve a substring of [.src] starting from the 5th character returning the 7 next characters
+.src:This is a string which we will execute subsctring upon
+strings.substring:x:-
+   .:5
+   .:7
