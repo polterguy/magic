@@ -42,7 +42,7 @@
 
   <div class="d-flex justify-content-end align-items-center w-100 mt-2 mb-0">
 
-    <form *ngIf="openAiEnabled" (ngSubmit)="askOpenAi()" class="w-100 open-ai-form p-2">
+    <form *ngIf="openAiEnabled" (ngSubmit)="askOpenAi()" class="w-100 open-ai-form p-2 px-3">
 
       <mat-form-field
         class="w-100 standalone-field prompt">
@@ -52,7 +52,7 @@
         </span>
         <input
           matInput
-          placeholder="Ask the Machine to Create Code ..."
+          placeholder="Ask the Machine to Create Hyperlambda ..."
           [disabled]="waitingForAnswer"
           name="openAiPrompt"
           [(ngModel)]="openAiPrompt"
