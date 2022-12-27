@@ -1,0 +1,14 @@
+// Find email address of Harry and assign to [.email] | Find Harry's email address | Assign Harry's email address to [.email]
+.email
+.data
+   .
+      name:Jane
+      email:jane@doe.com
+   .
+      name:Harry
+      email:harry@gmail.com
+   .
+      name:Peter
+      email:peter@jazz.no
+set-value:x:@.email
+   get-value:x:@.data/*/*/name/=Harry/./*/email

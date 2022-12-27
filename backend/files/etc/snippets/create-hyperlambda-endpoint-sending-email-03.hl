@@ -1,0 +1,17 @@
+// Create a Hyperlambda endpoint that sends an from to Pete Johnsen with email pete@johnsen.com | Create endpoint that sends email from pete@johnsen.com to email and name specified as arguments
+.arguments
+   name:string
+   email:string
+mail.smtp.send
+   message
+      to
+         .
+            name:x:@.arguments/*/name
+            email:x:@.arguments/*/email
+      from
+         .
+            name:Pete Johnsen
+            email:pete@johnsen.com
+      subject:Some subject line goes here
+      entity:text/plain
+         content:Email body goes here
