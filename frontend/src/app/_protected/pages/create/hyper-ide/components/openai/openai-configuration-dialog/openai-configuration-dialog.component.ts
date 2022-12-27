@@ -34,17 +34,44 @@ export class OpenAIConfigurationDialogComponent implements OnInit {
 
   ngOnInit() {
     this.generalService.showLoading();
+
     this.openAiService.key().subscribe({
       next: (result: Response) => {
         this.openApiKey = result.result || '';
+
         this.openAiService.base_models().subscribe({
           next: (models: string[]) => {
             this.models = models;
             this.selectedModel = this.models[0];
+
             this.openAiService.get_training_status().subscribe({
               next: (result: any[]) => {
                 this.generalService.hideLoading();
-                console.log(result);
+                result = result || [];
+                if (result.length > 0) {
+
+                  // Verifying we've got trained models.
+                  result.sort((lhs, rhs) => {
+                    if (lhs.created > rhs.created) {
+                      return -1;
+                    }
+                    if (lhs.created < rhs.created) {
+                      return 1;
+                    }
+                    return 0;
+                  });
+
+                  // Filtering in only models that succeeded their training.
+                  const succeeded = result.filter(x => x.status === 'succeeded');
+
+                  if (succeeded.length > 0) {
+                    this.startTraining = false;
+                    this.models = succeeded
+                      .map(x => x.fine_tuned_model)
+                      .concat(this.models);
+                    this.selectedModel = this.models[0];
+                  }
+                }
               },
               error: (error: any) => {
                 this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');

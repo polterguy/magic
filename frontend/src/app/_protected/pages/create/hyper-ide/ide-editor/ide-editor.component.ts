@@ -135,7 +135,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   configureOpenAi() {
     const dialog = this.dialog.open(OpenAIConfigurationDialogComponent, {
       width: '80vw',
-      maxWidth: '650px',
+      maxWidth: '550px',
     });
     dialog.afterClosed().subscribe((result: {configured: boolean, start_training: boolean}) => {
       if (result?.configured) {

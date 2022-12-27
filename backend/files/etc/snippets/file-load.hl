@@ -1,0 +1,2 @@
+// Load the file found at /README.md
+io.file.load:/README.md

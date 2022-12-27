@@ -1,0 +1,3 @@
+// Verify that the user belongs to either the role of root, admin or guest before executing the [log.info] slot
+auth.ticket.verify:root,admin,guest
+log.info:This is only executed if user is either root, admin or guest

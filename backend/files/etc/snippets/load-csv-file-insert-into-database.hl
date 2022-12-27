@@ -1,0 +1,10 @@
+// Create a Hyperlambda snippet that reads CSV data from the file called '/customers.csv', transforms it to a lambda object, and inserts first_name and last_name into a database table called customers in my crm database
+io.file.load:/customers.csv
+csv2lambda:x:@io.file.load
+data.connect:crm
+   for-each:x:@csv2lambda
+      data.create
+         table:customers
+         values
+            first_name:x:@.dp/#/*/name
+            last_name:x:@.dp/#/*/name

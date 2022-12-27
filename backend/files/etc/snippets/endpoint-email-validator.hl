@@ -1,0 +1,7 @@
+// Create an Hyperlambda endpoint that accepts a name and an email argument, where the email argument must be a valid email
+.arguments
+   name:string
+   email:string
+validators.email:x:@.arguments/*/email
+return
+   result:success
