@@ -1,0 +1,7 @@
+// Check if the folder named '/foo/bar/' exists, if if it does, set the value of [.result] to EXISTS
+.result
+if
+   io.folder.exists:/foo/bar/
+   .lambda
+      set-value:x:@.result
+         .:EXISTS
