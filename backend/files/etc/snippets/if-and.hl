@@ -1,4 +1,4 @@
-// Use Hyperlambda to evaluate specified [.lambda] if condition evaluates to true.
+// Use Hyperlambda to evaluate specified [.lambda] if condition evaluates to true | if/else block | Hyperlambda conditional execution
 if
    and
       eq:bool:true

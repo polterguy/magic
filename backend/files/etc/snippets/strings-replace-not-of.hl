@@ -1,4 +1,4 @@
-// Use Hyperlambda to replace all characters that is not an alpha numeric character with the character '-'
+// Use Hyperlambda to replace all characters that is not an alpha numeric character with the character '-' | String replace all characters not in | String replace
 .src:howdy foo hello foo this will be foo replaced
 strings.replace-not-of:x:@.src
    .:abcdefghijklmnopqrstuvwxyz

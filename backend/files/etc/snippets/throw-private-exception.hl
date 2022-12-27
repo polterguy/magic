@@ -1,2 +1,2 @@
-// Use Hyperlambda to throw an exception that is not returned to the client
+// Use Hyperlambda to throw an exception that is not returned to the client | Throw exception | Private exception | Exception not leaving server
 throw:Exception message

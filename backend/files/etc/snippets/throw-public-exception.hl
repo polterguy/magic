@@ -1,4 +1,4 @@
-// Use Hyperlambda to throw an exception that is returned to the client with a status code of 456 and a message being 'error'
+// Use Hyperlambda to throw an exception that is returned to the client with a status code of 456 and a message being 'error' | Public exception | Throw exception
 throw:error
    status:456
    public:true

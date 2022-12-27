@@ -1,2 +1,2 @@
-// Use Hyperlambda to load the configuration value found in 'magic:smtp:host'
+// Use Hyperlambda to load the configuration value found in 'magic:smtp:host' | Get configuration setting | Return config setting | Read from config
 config.get:"magic:smtp:host"

@@ -1,4 +1,4 @@
-// Use Hyperlambda to update table tbl in database db and set name to John Doe where id equals 555
+// Use Hyperlambda to update table tbl in database db and set name to John Doe where id equals 555 | Update records in my database | Update records in database table | Do the same as SQL UPDATE
 data.connect:DATABASE_NAME
    data.update
       table:TABLE_NAME

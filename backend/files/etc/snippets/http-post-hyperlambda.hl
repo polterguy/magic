@@ -1,4 +1,4 @@
-// Use Hyperlambda to post some Hyperlambda to the foo.com HTTP endpoint
+// Use Hyperlambda to post some Hyperlambda to the foo.com HTTP endpoint | Hyperlambda HTTP POST invocation | Create HTTP POST invocation | HTTP REST with POST method
 http.post:"https://foo.com"
    headers
       Content-Type:application/hyperlambda

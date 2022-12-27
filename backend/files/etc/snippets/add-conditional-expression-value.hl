@@ -1,4 +1,4 @@
-// Use Hyperlambda to add all nodes from [.src] into [.dest] but only if their values are 'qwerty'
+// Use Hyperlambda to add all nodes from [.src] into [.dest] but only if their values are 'qwerty' | Add all nodes with the value of qwerty from [.src] into [.dest] using Hyperlambda | Add everything having values of qwerty from [.src] into [.dest]
 .src
    nope:not at all
    match1:qwerty

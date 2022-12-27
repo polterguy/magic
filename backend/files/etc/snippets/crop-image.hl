@@ -1,4 +1,4 @@
-// Use Hyperlambda to crop the /foo.jpg image and remove 50 pixels from all sides and save the image as foo2.jpg
+// Use Hyperlambda to crop the /foo.jpg image and remove 50 pixels from all sides and save the image as foo2.jpg | Crop image using Hyperlambda | Crop image
 image.crop:/foo.jpg
    left:50
    right:50

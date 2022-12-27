@@ -159,7 +159,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   askOpenAi() {
     this.generalService.showLoading();
     this.waitingForAnswer = true;
-    this.openAiService.query(this.openAiPrompt).subscribe({
+    this.openAiService.query(this.openAiPrompt + ' ->').subscribe({
       next: (result: Response) => {
         this.generalService.hideLoading();
         this.waitingForAnswer = false;

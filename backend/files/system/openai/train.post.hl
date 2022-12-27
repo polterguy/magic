@@ -166,6 +166,17 @@ tasks.create:x:@.task-id
                   // Deleting task
                   tasks.delete:x:@.task-id
 
+            else-if
+               eq:x:@http.get/*/content/*/status
+                  .:failed
+               .lambda
+
+                  // Training is done, and it FAILED!
+                  log.error:Training of OpenAI model FAILED!!
+
+                  // Deleting task
+                  tasks.delete:x:@.task-id
+
             else
 
                // Training session is still not done.

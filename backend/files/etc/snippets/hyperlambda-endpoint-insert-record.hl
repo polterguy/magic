@@ -1,4 +1,4 @@
-// Use Hyperlambda to create a Hyperlambda endpoint that inserts one new record into the Categories table in the [generic|northwind] database allowing the caller to provide CategoryName and Description for the new record
+// Use Hyperlambda to create a Hyperlambda endpoint that inserts one new record into the Categories table in the [generic|northwind] database allowing the caller to provide CategoryName and Description for the new record | Endpoint creating new record in database | Create new row in SQL database
 .arguments
    CategoryName:string
    Description:string
