@@ -1,0 +1,3 @@
+// Select all records from the roles table in the magic database | Select roles from magic
+data.connect:magic
+   data.select:select * from roles
