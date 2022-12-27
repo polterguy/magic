@@ -62,6 +62,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
 
   openAiPrompt: string = '';
   openAiEnabled: boolean = false;
+  waitingForAnswer: boolean = false;
 
   constructor(
     private dialog: MatDialog,
@@ -157,9 +158,11 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
 
   askOpenAi() {
     this.generalService.showLoading();
+    this.waitingForAnswer = true;
     this.openAiService.query(this.openAiPrompt).subscribe({
       next: (result: Response) => {
         this.generalService.hideLoading();
+        this.waitingForAnswer = false;
         const dialog = this.dialog.open(OpenAIAnswerDialogComponent, {
           width: '50%',
           data: {
@@ -173,6 +176,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
       error: (error: any) => {
         this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
         this.generalService.hideLoading();
+        this.waitingForAnswer = false;
       }
     });
   }
