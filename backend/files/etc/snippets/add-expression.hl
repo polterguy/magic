@@ -4,5 +4,7 @@
    foo2:bar2
    foo3:bar3
 .destination
+
+// Invoking [add] with a source expression leading to all children nodes of [.source]
 add:x:@.destination
    get-nodes:x:@.source/*

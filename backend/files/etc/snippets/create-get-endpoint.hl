@@ -1,10 +1,18 @@
 // Use Hyperlambda to create an HTTP GET endpoint that takes two string arguments, concatenates these arguments, and returns the result to caller | Create HTTP GET endpoint | Create Hyperlambda endpoint | Create GET Hyperlambda endpoint
+
+// Arguments endpoint can handle
 .arguments
    arg1:string
    arg2:string
+
+// Concatenating both arguments
 strings.concat
    get-value:x:@.arguments/*/arg1
    get-value:x:@.arguments/*/arg2
+
+// Forward evaluating the children of our [return] node
 unwrap:x:+/*
+
+// Returning the concatenated string to caller
 return
    result:x:@strings.concat

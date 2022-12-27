@@ -1,9 +1,15 @@
 // Use Hyperlambda to add all nodes from [.src] into [.dest] but only if their values are 'qwerty' | Add all nodes with the value of qwerty from [.src] into [.dest] using Hyperlambda | Add everything having values of qwerty from [.src] into [.dest]
+
+// Our [.src] node, being the source for our [add] invocation
 .src
    nope:not at all
    match1:qwerty
    neither:this
    match2:qwerty
+
+// Our [.dest] node, being the destination for our [add] invocation
 .dest
+
+// Invoking the [add] slot, adding all nodes we can find as children nodes of [.src] having a value of qwerty into [.dest]
 add:x:@.dest
    get-nodes:x:@.src/*/=qwerty

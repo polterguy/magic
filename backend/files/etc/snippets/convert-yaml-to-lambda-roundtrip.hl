@@ -7,5 +7,9 @@ children:
 - howdy
 - some
 "
+
+// Converting from YAML to lambda
 yaml2lambda:x:@.yaml
+
+// Converting from lambda back to YAML again
 lambda2yaml:x:-/*

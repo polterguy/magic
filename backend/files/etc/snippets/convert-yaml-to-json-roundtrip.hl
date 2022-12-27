@@ -6,5 +6,9 @@ children:
 - howdy
 - some
 "
+
+// Converting from YAML to JSON
 yaml2json:x:@.yaml
+
+// Converting back to JSON again from YAML
 json2yaml:x:-

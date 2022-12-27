@@ -5,5 +5,7 @@
    neither:this
    qwerty:world
 .dest
+
+// Adding all nodes having the name of qwerty from our [.src] node into our [.dest] node as children
 add:x:@.dest
    get-nodes:x:@.src/*/qwerty

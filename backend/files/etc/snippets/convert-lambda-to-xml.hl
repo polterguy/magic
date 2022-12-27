@@ -14,4 +14,6 @@
             #text:$2.44
          AVAILABILITY
             #text:031599
+
+// Converting all children nodes of the previous node's children to XML
 lambda2xml:x:-/*

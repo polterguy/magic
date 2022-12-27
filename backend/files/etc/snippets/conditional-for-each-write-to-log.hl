@@ -3,5 +3,7 @@
    failure:This should not be logged
    success:This should end up in your log
    failure:This should not be logged
+
+// Looping through all children nodes of [.data] having the name of 'success'
 for-each:x:@.data/*/success
    log.info:x:@.dp/#

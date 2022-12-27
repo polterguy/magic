@@ -30,8 +30,9 @@ for-each:x:@io.file.list/*
          .prompt
          set-value:x:@.prompt
             get-value:x:@hyper2lambda/0
-         remove-nodes:x:@hyper2lambda/**/\..
+         remove-nodes:x:@hyper2lambda/0
          lambda2hyper:x:@hyper2lambda/*
+            comments:true
          unwrap:x:+/*/*/*
          add:x:../*/return
             .
