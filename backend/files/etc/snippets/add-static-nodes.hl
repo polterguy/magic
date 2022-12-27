@@ -1,0 +1,6 @@
+// Add two static nodes into [.destination]
+.destination
+add:x:@.destination
+   .
+      static1:some value
+      static2:some value

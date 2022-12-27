@@ -1,0 +1,8 @@
+// Select the first 2 records from actor, but alias the first_name record as foo
+data.connect:sakila
+   data.read
+      table:actor
+      columns
+         first_name
+            as:foo
+      limit:2

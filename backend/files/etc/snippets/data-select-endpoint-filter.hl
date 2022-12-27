@@ -1,0 +1,19 @@
+// Create an HTTP endpoint that accepts a filter argument, and uses this argument as a filter condition to an SQL, returning actors to the caller having a first name that matches the filter condition
+.arguments
+   filter:string
+
+// Ensures that the [filter] argument is specified, or throws an exception.
+validators.mandatory:x:@.arguments/*/filter
+
+// Opening up a database connection
+data.connect:sakila
+
+   // Parametrizing [data.select].
+   add:x:./*/data.select
+      get-nodes:x:@.arguments/*
+
+   // Evaluating [xxx.select] slot.
+   data.select:select a.first_name, a.last_name from actor a where a.first_name like @filter
+
+   // Returning result back to caller
+   return-nodes:x:@data.select/*

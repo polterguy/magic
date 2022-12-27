@@ -1,0 +1,4 @@
+// Create an HTTP GET invocation towards foo.com that informs the server of that it can only accept a Hyperlambda response
+http.get:"https://foo.com"
+   headers
+      Accept:application/hyperlambda

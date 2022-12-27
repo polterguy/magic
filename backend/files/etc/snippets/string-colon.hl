@@ -1,0 +1,2 @@
+// Create a string containing a " character
+.foo:"This is a string : with a colon character in it. It needs to be escaped since the : character normally declares the type"

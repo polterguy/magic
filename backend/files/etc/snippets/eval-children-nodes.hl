@@ -1,0 +1,9 @@
+// Create an [eval] invocation with children nodes that are to be executed
+
+// Result node
+.res
+
+// Evaluates the children nodes of [eval]
+eval
+   set-value:x:@.res
+      .:Yup!

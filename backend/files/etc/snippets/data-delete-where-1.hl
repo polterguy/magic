@@ -1,0 +1,7 @@
+// Delete all items from sakila's film table where title equals to 'Howdy world'
+data.connect:sakila
+   data.delete
+      table:film
+      where
+         and
+            title.eq:Howdy world

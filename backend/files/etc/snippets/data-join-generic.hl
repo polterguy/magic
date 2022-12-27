@@ -1,0 +1,23 @@
+// Select title and description from the film table in sakila database, and join through film_actor into actor, such that we can retrieve last_name and first_name from film
+data.connect:sakila
+   data.read
+
+      columns
+         title
+         description
+         last_name
+         first_name
+
+      table:film
+
+         join:film_actor
+            type:inner
+            on
+               and
+                  film.film_id:film_actor.film_id
+
+            join:actor
+               type:inner
+               on
+                  and
+                     film_actor.actor_id:actor.actor_id

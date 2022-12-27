@@ -1,0 +1,2 @@
+// Create an expression leading to an argument named email
+.expression:x:@.arguments/*/email

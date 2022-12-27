@@ -1,0 +1,9 @@
+// Create en exception try/catch block that allows me to execute unsafe code, catching exceptions, and logging exception message to my log as an error log entry
+try
+
+   // Unsafe code here
+
+.catch
+
+   // Logging error
+   log.error:x:@.arguments/*/message

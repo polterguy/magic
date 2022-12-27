@@ -1,0 +1,2 @@
+// Count all server side cache items
+cache.count

@@ -1,0 +1,9 @@
+// Add all nodes from [.src] into [.dest] but only if their names are 'qwerty'
+.src
+   nope:not at all
+   qwerty:hello
+   neither:this
+   qwerty:world
+.dest
+add:x:@.dest
+   get-nodes:x:@.src/*/qwerty
