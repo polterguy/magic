@@ -7,6 +7,8 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { GeneralService } from 'src/app/_general/services/general.service';
+import { CodemirrorActionsService } from '../../../_services/codemirror-actions.service';
+
 
 /**
  * Code dialog, showing user some code snippet.
@@ -18,15 +20,16 @@ import { GeneralService } from 'src/app/_general/services/general.service';
 })
 export class OpenAIAnswerDialogComponent implements OnInit {
 
-  text: string = '';
+  hlModel: HlModel;
+  hlReady: boolean = false;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private generalService: GeneralService,
+    private codemirrorActionsService: CodemirrorActionsService,
     private clipBoard: Clipboard) { }
 
   ngOnInit() {
-    console.log(this.data);
     this.data.sort((lhs: any, rhs: any) => {
       if (lhs.finish_reason === 'stop') {
         return -1;
@@ -36,11 +39,25 @@ export class OpenAIAnswerDialogComponent implements OnInit {
       }
       return 0;
     });
-    this.text = this.data[0].text;
+    this.codemirrorActionsService.getActions(null, 'hl').then((res: any) => {
+      res.autofocus = false;
+      this.hlModel = {
+        hyperlambda: this.data[0].text,
+        options: res,
+      }
+      setTimeout(() => {
+        this.hlReady = true;
+      }, 250);
+    });
   }
 
   copy() {
-    this.clipBoard.copy(this.data.code);
+    this.clipBoard.copy(this.hlModel.hyperlambda);
     this.generalService.showFeedback('Content can be found on your clipboard');
   }
+}
+
+interface HlModel {
+  hyperlambda: string,
+  options: any
 }

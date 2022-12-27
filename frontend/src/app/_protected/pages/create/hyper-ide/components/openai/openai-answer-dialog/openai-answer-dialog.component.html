@@ -1,10 +1,14 @@
+
+<h3 mat-dialog-title class="mb-1">Hyperlambda returned by OpenAI</h3>
+
 <div mat-dialog-content>
 
-  <div class="code">{{text}}</div>
+  <app-codemirror-hyperlambda *ngIf="hlReady" class="h-100" [(model)]="hlModel">
+  </app-codemirror-hyperlambda>
 
 </div>
 
 <div mat-dialog-actions [align]="'end'">
-  <button mat-button>Copy</button>
+  <button mat-button (click)="copy()">Copy</button>
   <button mat-flat-button mat-dialog-close>Close</button>
 </div>

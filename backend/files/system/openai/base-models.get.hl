@@ -9,7 +9,7 @@ auth.ticket.verify:root
 
 // Returning available models to caller.
 return
+   .:curie
+   .:babbage
    .:davinci
    .:ada
-   .:babbage
-   .:curie

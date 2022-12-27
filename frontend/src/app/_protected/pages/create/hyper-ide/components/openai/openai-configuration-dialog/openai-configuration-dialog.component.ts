@@ -69,6 +69,11 @@ export class OpenAIConfigurationDialogComponent implements OnInit {
                   // Filtering in only models that succeeded their training.
                   const succeeded = result.filter(x => x.status === 'succeeded');
 
+                // Checking if there are models being trained.
+                if (result.filter(x => x.status === 'running').length > 0) {
+                  this.generalService.showFeedback('You have models currently in training');
+                }
+
                   if (succeeded.length > 0) {
                     this.startTraining = false;
                     this.models = succeeded
@@ -122,6 +127,11 @@ export class OpenAIConfigurationDialogComponent implements OnInit {
                 // Filtering in only models that succeeded their training.
                 const succeeded = result.filter(x => x.status === 'succeeded');
                 this.generalService.hideLoading();
+
+                // Checking if there are models being trained.
+                if (result.filter(x => x.status === 'running').length > 0) {
+                  this.generalService.showFeedback('You have models currently in training');
+                }
       
                 if (succeeded.length > 0) {
                   this.startTraining = false;

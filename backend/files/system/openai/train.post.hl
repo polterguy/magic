@@ -177,11 +177,6 @@ tasks.create:x:@.task-id
                   // Deleting task
                   tasks.delete:x:@.task-id
 
-            else
-
-               // Training session is still not done.
-               log.info:OpenAI training session is not done
-
       else
 
          // Invocation failed

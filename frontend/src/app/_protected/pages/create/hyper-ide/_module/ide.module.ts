@@ -25,6 +25,7 @@ import { UnsavedChangesDialogComponent } from '../components/unsaved-changes-dia
 import { OpenAIConfigurationDialogComponent } from '../components/openai/openai-configuration-dialog/openai-configuration-dialog.component';
 import { OpenAIAnswerDialogComponent } from '../components/openai/openai-answer-dialog/openai-answer-dialog.component';
 import { OpenAITrainingDialogComponent } from '../components/openai/openai-training-dialog/openai-training-dialog.component';
+import { CmModule } from 'src/app/codemirror/_module/cm.module';
 
 @NgModule({
   declarations: [
@@ -51,7 +52,8 @@ import { OpenAITrainingDialogComponent } from '../components/openai/openai-train
     CodemirrorModule,
     FormsModule,
     ReactiveFormsModule,
-    SharedModule
+    SharedModule,
+    CmModule,
   ]
 })
 export class IdeModule { }

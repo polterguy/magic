@@ -44,10 +44,6 @@ export class ManageTaskComponent implements OnInit {
     if (this.data) {
       this.task = this.data;
     }
-    this.getCodeMirrorOptions();
-  }
-
-  private getCodeMirrorOptions() {
     this.codemirrorActionsService.getActions(null, 'hl').then((res: any) => {
       res.autofocus = false;
       this.hlModel = {
