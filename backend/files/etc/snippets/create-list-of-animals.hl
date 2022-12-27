@@ -1,0 +1,8 @@
+// Create a list of animals using Hyperlambda | List of animals using Hyperlambda
+.list
+   .:Tiger
+   .:Puma
+   .:Lion
+   .:Horse
+   .:Dog
+   .:Cat

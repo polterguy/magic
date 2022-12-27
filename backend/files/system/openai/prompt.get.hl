@@ -93,10 +93,7 @@ if
 response.headers.set
    Cache-Control:max-age=300
 
-// Trimming text
-strings.trim:x:@http.post/*/content/*/choices/0/*/text
-
-// Returning result to caller
-unwrap:x:+/*
+// Returning results returned from invocation above to caller
+add:x:../*/return
+   get-nodes:x:@http.post/*/content/*/choices/*
 return
-   result:x:@strings.trim
