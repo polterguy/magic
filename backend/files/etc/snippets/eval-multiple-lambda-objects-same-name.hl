@@ -1,4 +1,4 @@
-// Evaluate multiple lambda objects having the same name
+// Use Hyperlambda to evaluate multiple lambda objects having the same name
 
 // Result after invocation
 .res:

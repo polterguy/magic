@@ -1,4 +1,4 @@
-// Hash the text 'secret text' using SHA1, MD5, SHA256, SHA384 and SHA512
+// Use Hyperlambda to hash the text 'secret text' using SHA1, MD5, SHA256, SHA384 and SHA512
 
 .text:secret text
 

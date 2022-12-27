@@ -1,4 +1,4 @@
-// Iterate through each child node of [.data] and set the name of the node to new-name
+// Use Hyperlambda to iterate through each child node of [.data] and set the name of the node to new-name
 .data
    foo1:bar1
    foo2:bar2

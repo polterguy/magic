@@ -1,4 +1,4 @@
-// Create some Hyperlambda that sets the value of [.res] to boolean true, but only if [.data] does not have any children nodes with the name of 'foo'. If condition is not met, set value of [.res] to false
+// Use Hyperlambda to create some Hyperlambda that sets the value of [.res] to boolean true, but only if [.data] does not have any children nodes with the name of 'foo'. If condition is not met, set value of [.res] to false
 .data
    nope
    jada

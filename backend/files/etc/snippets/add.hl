@@ -1,4 +1,4 @@
-// Add the [foo] node to the [.destination] node
+// Use Hyperlambda to add the [foo] node to the [.destination] node
 .destination
 add:x:@.destination
    .

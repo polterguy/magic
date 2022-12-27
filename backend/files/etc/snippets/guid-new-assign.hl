@@ -1,4 +1,4 @@
-// Create a random GUID and assign it to [.guid]
+// Use Hyperlambda to create a random GUID and assign it to [.guid]
 .guid
 set-value:x:-
    guid.new

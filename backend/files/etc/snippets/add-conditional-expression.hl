@@ -1,4 +1,4 @@
-// Add all nodes from [.src] into [.dest] but only if their names are 'qwerty'
+// Use Hyperlambda to add all nodes from [.src] into [.dest] but only if their names are 'qwerty'
 .src
    nope:not at all
    qwerty:hello

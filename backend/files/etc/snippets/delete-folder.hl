@@ -1,2 +1,2 @@
-// Delete the '/foo/bar/' folder
+// Use Hyperlambda to delete the '/foo/bar/' folder
 io.folder.delete:/foo/bar/

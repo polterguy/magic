@@ -1,4 +1,4 @@
-// Compare the value of [.arg1] with the value of [.arg2] and if they are the same, create a log entry
+// Use Hyperlambda to compare the value of [.arg1] with the value of [.arg2] and if they are the same, create a log entry
 .arg1:foo
 .arg2:foo
 

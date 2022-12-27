@@ -1,4 +1,4 @@
-// Create a Hyperlambda snippet that loads an image from /foo.jpg and resizes it such that it becomes 640x480 in width and height and stores it as a PNG file
+// Use Hyperlambda to create a Hyperlambda snippet that loads an image from /foo.jpg and resizes it such that it becomes 640x480 in width and height and stores it as a PNG file
 image.resize:/foo.jpg
    width:640
    height:480

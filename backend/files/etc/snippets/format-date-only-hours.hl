@@ -1,4 +1,4 @@
-// Format the specified date and time, such that it only displays military hours, and no date
+// Use Hyperlambda to format the specified date and time, such that it only displays military hours, and no date
 .data:date:"2022-01-01T23:59:57"
 date.format:x:-
    format:"HH:mm:ss"

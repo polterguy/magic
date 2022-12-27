@@ -1,4 +1,4 @@
-// Iterate through each child node in our [.data] lambda collection, and write its value to the log
+// Use Hyperlambda to iterate through each child node in our [.data] lambda collection, and write its value to the log
 .data
    item1:Hello from Item1
    item2:Hello from Item2

@@ -1,4 +1,4 @@
-// Create an if block that is executed if one of two values equals to some comparison
+// Use Hyperlambda to create an if block that is executed if one of two values equals to some comparison
 if
    or
       eq:x:@.args/*/arg1

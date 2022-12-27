@@ -1,4 +1,4 @@
-// Create an upload file HTTP endpoint that saves whatever file it is given to the /etc/foo/ folder
+// Use Hyperlambda to create an upload file HTTP endpoint that saves whatever file it is given to the /etc/foo/ folder
 .description:Upload file endpoint, allowing you to upload a file to the backend.
 .arguments
    file

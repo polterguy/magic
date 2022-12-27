@@ -1,3 +1,3 @@
-// Create a thread that writes the text 'Hello from thread' to the server's log
+// Use Hyperlambda to create a thread that writes the text 'Hello from thread' to the server's log
 fork
    log.info:Hello from thread

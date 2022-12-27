@@ -1,4 +1,4 @@
-// Count how many nodes can be found inside of our [.data] object and assign the count to .result
+// Use Hyperlambda to count how many nodes can be found inside of our [.data] object and assign the count to .result
 .result
 .data
    foo1:bar1

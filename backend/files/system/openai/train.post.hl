@@ -21,6 +21,15 @@ set-value:x:@.token
    strings.concat
       .:"Bearer "
       config.get:"magic:openai:key"
+
+// Creating a unique training data filename.
+.filename
+set-value:x:@.filename
+   strings.concat
+      .:"attachment; name=file; filename=\"training-file-"
+      guid.new
+      .:".jsonl"
+      .:"\""
    
 // Uploading file to OpenAI.
 http.post:"https://api.openai.com/v1/files"
@@ -30,7 +39,7 @@ http.post:"https://api.openai.com/v1/files"
    payload
       entity:application/jsonl
          headers
-            Content-Disposition:"attachment; name=file; filename=\"training.jsonl\""
+            Content-Disposition:x:@.filename
          content:x:@.arguments/*/content
       entity:text/plain
          headers
@@ -75,6 +84,7 @@ http.post:"https://api.openai.com/v1/fine-tunes"
       training_file:x:@.id
       model:x:@.model
       suffix:hyperlambda
+      learning_rate_multiplier:decimal:0.2
    convert:true
 
 // Sanity checking above invocation
@@ -91,9 +101,77 @@ if
          public:bool:true
          status:500
 
-// Storing fine tuned model.
-lambda2hyper:x:../*
-log.info:x:-
+/*
+ * Creating a task that repeats once every 1 minute until training is completed,
+ * for then to make sure we use the new and updated model.
+ */
+.task-id
+set-value:x:@.task-id
+   strings.concat
+      .:openai-waiting-for-training-
+      guid.new
+unwrap:x:./*/tasks.create/*/*/.task-id
+unwrap:x:./*/tasks.create/*/*/.model
+tasks.create:x:@.task-id
+   repeats:1.minutes
+   .lambda
+
+      // Forward evaluated above
+      .task-id:x:@.lambda/@.task-id
+      .model:x:@http.post/*/content/*/fine_tuned_model
+      .model-id:x:@http.post/*/content/*/id
+
+      // Doing some logging
+      log.info:Checking if OpenAI is finished training
+
+      // Checking model status using OpenAI API, making sure we parametrise Authorization header with token
+      .token
+      set-value:x:@.token
+         strings.concat
+            .:"Bearer "
+            config.get:"magic:openai:key"
+      strings.concat
+         .:"https://api.openai.com/v1/fine-tunes/"
+         get-value:x:@.model-id
+      http.get:x:@strings.concat
+         headers
+            Authorization:x:@.token
+         convert:true
+      if
+         eq:x:@http.get
+            .:int:200
+         .lambda
+
+            // Checking if job succeeded.
+            if
+               eq:x:@http.get/*/content/*/status
+                  .:succeeded
+               .lambda
+
+                  // Training is done, updating configuration with new model
+                  log.info:Training of OpenAI model completed successfully
+                  config.load
+                  json2lambda:x:@config.load
+                  set-value:x:@json2lambda/*/magic/*/openai/*/model
+                     get-value:x:@.model
+                  lambda2json:x:@json2lambda/*
+                  config.save:x:@lambda2json
+
+                  // Deleting task
+                  tasks.delete:x:@.task-id
+
+            else
+
+               // Training session is still not done.
+               log.info:OpenAI training session is not done
+
+      else
+
+         // Invocation failed
+         lambda2hyper:x:@http.get
+         log.error:Retrieving training session status from OpenAI failed
+            result:x:@lambda2hyper
+
 
 // Returning success to caller.
 return

@@ -1,4 +1,4 @@
-// Set the value of the [.destination] node to 'new_value'
+// Use Hyperlambda to set the value of the [.destination] node to 'new_value'
 .destination
 set-value:x:@.destination
    .:new_value

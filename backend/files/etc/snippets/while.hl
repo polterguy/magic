@@ -1,4 +1,4 @@
-// Create a while loop that iterates from 1 to 20, logging the text 'Howdy from while' as it iterates
+// Use Hyperlambda to create a while loop that iterates from 1 to 20, logging the text 'Howdy from while' as it iterates
 
 // Loop counter
 .no:int:0

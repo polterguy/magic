@@ -1,4 +1,4 @@
-// Add all nodes from the [.source] node's children collection into the [.destination] node's children collection
+// Use Hyperlambda to add all nodes from the [.source] node's children collection into the [.destination] node's children collection
 .source
    foo1:bar1
    foo2:bar2

@@ -1,4 +1,4 @@
-// Create a JWT token with foo as username belonging to the roles of admin and root
+// Use Hyperlambda to create a JWT token with foo as username belonging to the roles of admin and root
 auth.ticket.create
    username:foo
    roles

@@ -1,4 +1,4 @@
-// Create a string variable with multiple lines containing some example text
+// Use Hyperlambda to create a string variable with multiple lines containing some example text
 .variable:@"This is a multi line string
 and the carriage returns in it
 will be preserved"

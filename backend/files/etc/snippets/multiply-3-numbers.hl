@@ -1,4 +1,4 @@
-// Multiply 3 numbers and set the result of the multiplication to the [.foo] node's value
+// Use Hyperlambda to multiply 3 numbers and set the result of the multiplication to the [.foo] node's value
 .foo
 .data
    number1:float:5.0

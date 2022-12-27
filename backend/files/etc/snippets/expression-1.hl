@@ -1,2 +1,2 @@
-// Create an expression leading to an argument named email
+// Use Hyperlambda to create an expression leading to an argument named email
 .expression:x:@.arguments/*/email

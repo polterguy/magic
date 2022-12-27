@@ -44,6 +44,11 @@ export class OpenAIConfigurationDialogComponent implements OnInit {
             this.models = models;
             this.selectedModel = this.models[0];
 
+            if (!this.openApiKey || this.openApiKey === '') {
+              this.generalService.hideLoading();
+              return;
+            }
+
             this.openAiService.get_training_status().subscribe({
               next: (result: any[]) => {
                 this.generalService.hideLoading();

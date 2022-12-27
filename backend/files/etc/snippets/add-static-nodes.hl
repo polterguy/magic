@@ -1,4 +1,4 @@
-// Add two static nodes into [.destination]
+// Use Hyperlambda to add two static nodes into [.destination]
 .destination
 add:x:@.destination
    .

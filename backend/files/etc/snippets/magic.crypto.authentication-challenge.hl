@@ -1,4 +1,4 @@
-// Create a cryptographic challenge towards the xyz.com, for then to solve the cryptographic challenge and store the JWT token returned from xyz.com in a [.result] node
+// Use Hyperlambda to create a cryptographic challenge towards the xyz.com, for then to solve the cryptographic challenge and store the JWT token returned from xyz.com in a [.result] node
 http.get:"https://xyz.com/magic/system/crypto/challenge"
 io.file.load:/etc/system/crypto/keys/public.key
 crypto.fingerprint:x:-
