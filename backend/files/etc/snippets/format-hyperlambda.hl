@@ -1,4 +1,4 @@
-// Use Hyperlambda to format all Hyperlambda in the module names sakila
+// Use Hyperlambda to format all Hyperlambda in the module names sakila | Format Hyperlambda code
 .folder:/modules/sakila/
 io.file.list-recursively:x:-
 for-each:x:-/*

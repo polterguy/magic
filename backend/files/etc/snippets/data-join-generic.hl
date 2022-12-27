@@ -1,4 +1,4 @@
-// Use Hyperlambda to select title and description from the film table in sakila database, and join through film_actor into actor, such that we can retrieve last_name and first_name from film
+// Use Hyperlambda to select title and description from the film table in sakila database, and join through film_actor into actor, such that we can retrieve last_name and first_name from film | SQL join in Hyperlambda | Select joined records from database
 data.connect:sakila
    data.read
 

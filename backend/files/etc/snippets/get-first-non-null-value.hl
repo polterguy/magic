@@ -1,4 +1,4 @@
-// Use Hyperlambda to create some Hyperlambda that returns the first non-null value from 3 arguments specified
+// Use Hyperlambda to create some Hyperlambda that returns the first non-null value from 3 arguments specified | Retrieve first non null value | First non null value
 .arguments
    foo1
    foo2:hello

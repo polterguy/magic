@@ -1,4 +1,4 @@
-// Use Hyperlambda to send an email with both HTML and plain text content to John Doe from Jane Doe with a file attachment | Send an email using Hyperlambda with HTML content and a file attachment | How do you send en email with an attachment using Hyperlambda
+// Use Hyperlambda to send an email with both HTML and plain text content to John Doe from Jane Doe with a file attachment | Send an email using Hyperlambda with HTML content and a file attachment | How do you send en email with an attachment using Hyperlambda | Email with attachment | Send email with file attachment | File attachment in email
 mail.smtp.send
    message
 

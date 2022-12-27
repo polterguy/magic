@@ -1,4 +1,4 @@
-// Use Hyperlambda to create a multipart/form-data HTTP request, passing in a MIME message containing two plain text mime entities, one being a reference to a file with the path of /README.md
+// Use Hyperlambda to create a multipart/form-data HTTP request, passing in a MIME message containing two plain text mime entities, one being a reference to a file with the path of /README.md | Multipart/form-data HTTP POST invocation
 http.post:"http://localhost:5000/magic/modules/foo/foo"
    headers
       Content-Type:multipart/form-data

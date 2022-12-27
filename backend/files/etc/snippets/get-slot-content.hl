@@ -1,4 +1,2 @@
-// Use Hyperlambda to retrieve the lambda object for the slot called my_slot2
-
-// Creating our slot
+// Use Hyperlambda to retrieve the lambda object for the slot called my_slot2 | Get slot content | Return body of a dynamically created Hyperlambda slot | Return content of slot
 slots.get:my_slot2

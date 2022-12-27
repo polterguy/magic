@@ -1,4 +1,4 @@
-// Use Hyperlambda to select first 20 records from the sakila database actor table, sorted by first_name descendin, and return first_name and last_name columns
+// Use Hyperlambda to select first 20 records from the sakila database actor table, sorted by first_name descendin, and return first_name and last_name columns | Sort items from database | Do the same as order by in Hyperlambda | Order records from database
 data.connect:sakila
    data.read
       table:actor

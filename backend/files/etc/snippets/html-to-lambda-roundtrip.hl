@@ -1,4 +1,4 @@
-// Use Hyperlambda to transform the specified HTML into a lambda object, then exchange the 'foo' CSS class with 'bar', and transform the lambda back to HTML again
+// Use Hyperlambda to transform the specified HTML into a lambda object, then exchange the 'foo' CSS class with 'bar', and transform the lambda back to HTML again | Convert from HTML to lambda and back again
 .html:@"<html>
   <head>
     <title>Howdy</title>

@@ -1,4 +1,4 @@
-// Use Hyperlambda to select title from film in sakila where title starts out with the characters ADA
+// Use Hyperlambda to select title from film in sakila where title starts out with the characters ADA | Read records from database | Select records from table with where
 data.connect:sakila
    data.read
       columns

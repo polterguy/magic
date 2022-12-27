@@ -1,4 +1,4 @@
-// Use Hyperlambda to iterate through each child node of [.data] and add all nodes found in [.data] as children nodes to each node found in [.data]
+// Use Hyperlambda to iterate through each child node of [.data] and add all nodes found in [.data] as children nodes to each node found in [.data] | For-each loop with Hyperlambda | Create a foreach loop with Hyperlambda | Iterate through all nodes | Loop through all nodes
 .src
    foo1:bar1
    foo2:bar2

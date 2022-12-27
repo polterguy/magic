@@ -1,3 +1,3 @@
-// Use Hyperlambda to execute the specified SQL towards the database1 database catalog
+// Use Hyperlambda to execute the specified SQL towards the database1 database catalog | Execute SQL using Hyperlambda | Execute SQL | Execute select SQL statement in Hyperlambda | Use Hyperlambda to read records from database using SQL
 data.connect:database1
    data.select:select * from table1

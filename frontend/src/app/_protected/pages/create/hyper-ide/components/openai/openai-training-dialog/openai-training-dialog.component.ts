@@ -57,7 +57,8 @@ export class OpenAITrainingDialogComponent implements OnInit {
 
     // OpenAI API requires JSONL format.
     for(const idx of this.dataSource) {
-      idx.completion = idx.completion + '###';
+      idx.prompt = idx.prompt + ' ->';
+      idx.completion = idx.completion + ' END';
     }
     let jsonl = JSON.stringify(this.dataSource).substring(1);
     jsonl = jsonl.substring(0, jsonl.length - 1);

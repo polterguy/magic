@@ -1,4 +1,4 @@
-// Use Hyperlambda to check if the folder named '/foo/bar/' exists, if if it does, set the value of [.result] to EXISTS
+// Use Hyperlambda to check if the folder named '/foo/bar/' exists, if if it does, set the value of [.result] to EXISTS | Exexcute Hyperlambda if folder exists | Only if folder exists execute lambda object | Conditionally execute lambda object if some folder exists
 .result
 if
    io.folder.exists:/foo/bar/

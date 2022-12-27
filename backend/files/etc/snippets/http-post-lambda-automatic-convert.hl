@@ -1,4 +1,4 @@
-// Use Hyperlambda to transform a parametrised lambda object to JSON automatically and post it using HTTP POST to jsonplaceholder.typicode.com/posts while automatically converting the response to lambda
+// Use Hyperlambda to transform a parametrised lambda object to JSON automatically and post it using HTTP POST to jsonplaceholder.typicode.com/posts while automatically converting the response to lambda | Create Hyperlambda HTTP POST invocation passing in JSON
 .userId:int:1
 http.post:"https://jsonplaceholder.typicode.com/posts"
    payload

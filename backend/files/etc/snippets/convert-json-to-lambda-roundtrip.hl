@@ -1,4 +1,4 @@
-// Use Hyperlambda to convert the specified JSON to a lambda object, for then to convert it back to lambda again
+// Use Hyperlambda to convert the specified JSON to a lambda object, for then to convert it back to lambda again | Convert from JSON to lambda | Convert JSON using Hyperlambda | Create lambda object from JSON using Hyperlambda | Use Hyperlambda to convert JSON to lambda
 
 // JSON input
 .json:"{\"foo\": \"bar\"}"

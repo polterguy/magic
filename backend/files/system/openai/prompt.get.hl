@@ -86,12 +86,23 @@ if
          public:bool:true
          status:500
 
+// Looping through each response, making sure we chop of everything after the END parts
+for-each:x:@http.post/*/content/*/choices/*
+   if
+      strings.contains:x:@.dp/#/*/text
+         .:END
+      .lambda
+         strings.split:x:@.dp/#/*/text
+            .:END
+         set-value:x:@.dp/#/*/text
+            get-value:x:@strings.split/0
+
 /*
  * Applying some HTTP caching to avoid invoking OpenAI again with
  * the same question before some minimum amount of time has passed.
  */
 response.headers.set
-   Cache-Control:max-age=300
+   Cache-Control:max-age=120
 
 // Returning results returned from invocation above to caller
 add:x:../*/return

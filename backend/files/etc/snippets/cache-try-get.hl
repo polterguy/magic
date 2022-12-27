@@ -1,4 +1,4 @@
-// Use Hyperlambda to retrieve cache item with key of 'cache-key', and if it is not existing, create a new cache item by executing the specified [.lambda] object. If you need to create the cache item, make sure it is stored in the cache for 5 seconds
+// Use Hyperlambda to retrieve cache item with key of 'cache-key', and if it is not existing, create a new cache item by executing the specified [.lambda] object. If you need to create the cache item, make sure it is stored in the cache for 5 seconds | Use try-get to retrieve or create cache item | Create cache item if not exists
 cache.try-get:cache-key
    expiration:5
    .lambda

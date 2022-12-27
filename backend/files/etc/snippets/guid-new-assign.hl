@@ -1,4 +1,4 @@
-// Use Hyperlambda to create a random GUID and assign it to [.guid]
+// Use Hyperlambda to create a random GUID and assign it to [.guid] | Assign random GUID to variable | Guid.New
 .guid
 set-value:x:-
    guid.new

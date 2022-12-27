@@ -1,4 +1,4 @@
-// Use Hyperlambda to create a Hyperlambda snippet that reads CSV data from the file called '/customers.csv', transforms it to a lambda object, and inserts first_name and last_name into a database table called customers in my crm database
+// Use Hyperlambda to create a Hyperlambda snippet that reads CSV data from the file called '/customers.csv', transforms it to a lambda object, and inserts first_name and last_name into a database table called customers in my crm database | Load CSV file and insert into database | Insert CSV file into database
 io.file.load:/customers.csv
 csv2lambda:x:@io.file.load
 data.connect:crm

@@ -1,4 +1,4 @@
-// Use Hyperlambda to send an email to Thomas Hansen having the email address of thomas@gaiasoul.com from John Doe having the email of john@doe.com | Use Hyperlambda to send an email | Send an email using Hyperlambda | Send a plain text email using Hyperlambda
+// Use Hyperlambda to send an email to Thomas Hansen having the email address of thomas@gaiasoul.com from John Doe having the email of john@doe.com | Use Hyperlambda to send an email | Send an email using Hyperlambda | Send a plain text email using Hyperlambda | Send email Hyperlambda | Send email using SMTP
 mail.smtp.send
    message
       to
