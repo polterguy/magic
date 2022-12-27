@@ -1,4 +1,4 @@
-What is Hyperlambda?
+What is Hyperlambda? | Explain Hyperlambda
 
 Hyperlambda is a graph based programming language based upon declarative programming and meta programming,
 making it much easier to understand than traditional programming languages, since you need to

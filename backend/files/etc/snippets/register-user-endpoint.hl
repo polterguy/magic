@@ -1,0 +1,40 @@
+// Hyperlambda endpoint that creates a new user as guest role and sends user an email | Hyperlambda registration endpoint | Hyperlambda endpoint creating user and sending email | Endpoint registering user, associating with guest role, and sends user an email
+.arguments
+   username:string
+   email:string
+   password:string
+validators.email:x:@.arguments/*/email
+validators.string:x:@.arguments/*/password
+   min:8
+   max:100
+crypto.password.hash:x:@.arguments/*/password
+data.connect:magic
+   data.create
+      table:users
+      values
+         username:x:@.arguments/*/username
+         password:x:@crypto.password.hash
+   data.create
+      table:users_extra
+      values
+         type:email
+         value:x:@.arguments/*/email
+   data.create
+      table:roles
+      values
+         user:x:@.arguments/*/username
+         role:guest
+
+mail.smtp.send
+   message
+      to
+         .
+            name:Dear User
+            email:x:@.arguments/*/email
+      from
+         .
+            name:John Doe
+            email:info@aista.com
+      subject:Welcome as a registered user
+      entity:text/plain
+         content:Thank you for registering as a user at our website

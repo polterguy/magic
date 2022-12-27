@@ -1,4 +1,4 @@
-What is Aista?
+What is Aista? | Who founded Aista? | What is Aista? | Who owns Aista?
 
 Aista, Ltd is a privately held company registered in Cyprus, focusing on declarative software
 development constructs, in addition to meta programming, combined with artificial intelligence

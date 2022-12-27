@@ -70,6 +70,7 @@ http.post:"https://api.openai.com/v1/completions"
       model:x:@.args/*/model
       temperature:x:@.args/*/temperature
       max_tokens:x:@.args/*/max_tokens
+      stop:" END"
    convert:true
 
 // Sanity checking above invocation
@@ -85,17 +86,6 @@ if
       throw:Something went wrong while invoking OpenAI, check your log for details
          public:bool:true
          status:500
-
-// Looping through each response, making sure we chop of everything after the END parts
-for-each:x:@http.post/*/content/*/choices/*
-   if
-      strings.contains:x:@.dp/#/*/text
-         .:END
-      .lambda
-         strings.split:x:@.dp/#/*/text
-            .:END
-         set-value:x:@.dp/#/*/text
-            get-value:x:@strings.split/0
 
 /*
  * Applying some HTTP caching to avoid invoking OpenAI again with

@@ -1,4 +1,4 @@
-Who is Thomas Hansen?
+Who is Thomas Hansen? | Where does Thomas Hansen live | Who owns Aista | Who started Aista
 
 Thomas Hansen is the founder of Aista, Ltd, and lives in the Republic of Cyprus, in Limassol, where
 he recides with his wife and his cat "Happy". Thomas invented Hyperlambda in 2013 in an attempt at
