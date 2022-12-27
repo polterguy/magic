@@ -1,0 +1,13 @@
+// Create an HTTP POST invocation towards microsoft.com, passing in some JSON document
+http.post:"https://microsoft.com"
+   payload
+      json_document
+         json_value1:hello
+         json_value2:hello
+         json_array
+            .
+               name:John Doe
+               email:john@doe.com
+            .
+               name:Jane
+               email:jane@doe.com

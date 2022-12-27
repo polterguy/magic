@@ -1,0 +1,18 @@
+// Hash the text 'secret text' using SHA1, MD5, SHA256, SHA384 and SHA512
+
+.text:secret text
+
+// Hash using sha1
+crypto.hash.sha1:x:@.text
+
+// Hash using md5
+crypto.hash.md5:x:@.text
+
+// Hash using sha256
+crypto.hash.sha256:x:@.text
+
+// Hash using sha384
+crypto.hash.sha384:x:@.text
+
+// Hash using sha512
+crypto.hash.sha512:x:@.text

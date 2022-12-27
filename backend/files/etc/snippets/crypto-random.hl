@@ -1,0 +1,4 @@
+// Generate some cryptographically secure random character at least 50 characters in length and no more than 200 characters in total
+crypto.random
+   min:50
+   max:200

@@ -1,0 +1,3 @@
+// Symmetrically encrypt the text 'Secret text' using AES encryption
+crypto.aes.encrypt:Secret text
+   password:password

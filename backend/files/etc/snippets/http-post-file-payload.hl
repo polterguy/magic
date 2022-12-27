@@ -1,0 +1,3 @@
+// Create an HTTP POST invocation towards microsoft.com that uses the file named README.md as its payload
+http.post:"https://microsoft.com"
+   filename:/README.md

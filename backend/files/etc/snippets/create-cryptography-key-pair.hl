@@ -1,0 +1,3 @@
+// Create an cryptography key pair with bit strength of 1024
+crypto.rsa.create-key
+   strength:1024
