@@ -1,0 +1,7 @@
+// Create 3 threads | Create three threads that logs to the server log | Create 3 threads running in parallel | Run 3 tasks in parallel | Multithread 3 tasks
+fork
+   log.info:Hello from thread number 1
+fork
+   log.info:Hello from thread number 2
+fork
+   log.info:Hello from thread number 3

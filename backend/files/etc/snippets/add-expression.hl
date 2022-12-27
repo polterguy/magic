@@ -1,4 +1,4 @@
-// Use Hyperlambda to add all nodes from the [.source] node's children collection into the [.destination] node's children collection | Add all nodes into [.destination] using a source expression with Hyperlambda | Use Hyperlambda expression to add nodes | Use expression to add nodes in Hyperlambda
+// Use Hyperlambda to add all nodes from the [.source] node's children collection into the [.destination] node's children collection | Add all nodes into [.destination] using a source expression with Hyperlambda | Use Hyperlambda expression to add nodes | Use expression to add nodes in Hyperlambda | Add a bunch of children nodes to a node using lambda expressions
 .source
    foo1:bar1
    foo2:bar2

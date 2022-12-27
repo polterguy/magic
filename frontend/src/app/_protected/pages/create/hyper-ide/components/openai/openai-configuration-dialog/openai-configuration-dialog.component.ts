@@ -21,11 +21,10 @@ export class OpenAIConfigurationDialogComponent implements OnInit {
 
   openApiKey: string = '';
   startTraining: boolean = true;
-  type: string = 'password';
   models: string[] = [];
   selectedModel: string = '';
   max_tokens: number = 500;
-  temperature: number = 0;
+  temperature: number = 0.4;
 
   constructor(
     private dialogRef: MatDialogRef<OpenAIConfigurationDialogComponent>,
