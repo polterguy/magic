@@ -1,0 +1,3 @@
+// Select all records from the users table in the customers database | Select users from customers
+data.connect:customers
+   data.select:select * from users
