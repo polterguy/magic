@@ -26,6 +26,10 @@
     </div>
   </div>
 
+  <div *ngIf="!currentFileData" class="h-100 hyper-ide-splash pt-2">
+    <img src="/assets/images/og-logo-official.png" alt="Where the Machine Creates the Code">
+  </div>
+
   <ng-container *ngFor="let file of openFiles;let index = index">
     <div
       class="active-codemirror-editor-{{index}} h-100 frontend-editor"
@@ -40,7 +44,7 @@
     </div>
   </ng-container>
 
-  <div class="d-flex justify-content-end align-items-center w-100 mt-2 mb-0" *ngIf="currentFileData">
+  <div class="d-flex justify-content-end align-items-center w-100 mt-2 mb-0">
 
     <form *ngIf="openAiEnabled" (ngSubmit)="askOpenAi()" class="w-100 open-ai-form">
       <mat-form-field
@@ -53,6 +57,7 @@
         <input
           matInput
           placeholder="OpenAI prompt ..."
+          [disabled]="waitingForAnswer"
           name="openAiPrompt"
           [(ngModel)]="openAiPrompt"
           autocomplete="off">
@@ -63,18 +68,21 @@
         mat-button
         type="submit"
         *ngIf="openAiEnabled"
+        [disabled]="waitingForAnswer"
         color="primary"
         class="px-3">Ask</button>
 
     </form>
 
     <button
+      *ngIf="currentFileData"
       mat-button
       color="primary"
       class="px-3"
       (click)="closeActiveFile()">Close</button>
 
     <button
+      *ngIf="currentFileData"
       mat-button
       color="primary"
       class="px-3"

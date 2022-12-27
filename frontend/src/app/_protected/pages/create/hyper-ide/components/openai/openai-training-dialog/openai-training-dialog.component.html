@@ -3,10 +3,10 @@
 
 <div mat-dialog-content>
 
-  <div *ngFor="let idx of dataSource" class="mat-elevation-z2 card my-4 p-4">
+  <mat-card *ngFor="let idx of dataSource" class="card my-4 p-4">
     <strong class="title mb-4">{{idx.prompt}}</strong>
     <div class="code">{{idx.completion}}</div>
-  </div>
+  </mat-card>
 
 </div>
 
