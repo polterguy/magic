@@ -1,0 +1,11 @@
+// Convert the specified YAML to a lambda object and back to YAML again
+.yaml:@"
+foo: howdy
+bar: jo
+howdy: !!bool true
+children:
+- howdy
+- some
+"
+yaml2lambda:x:@.yaml
+lambda2yaml:x:-/*

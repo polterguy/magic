@@ -1,0 +1,4 @@
+// Retrieve the lambda object for the slot called my_slot2
+
+// Creating our slot
+slots.get:my_slot2

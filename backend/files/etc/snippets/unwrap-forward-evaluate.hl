@@ -1,0 +1,7 @@
+// Forward evaluate the value of our [foo] node
+.src:This will end up in our [foo] node
+unwrap:x:+/**/foo
+.data
+   howdy
+      world
+         foo:x:@.src

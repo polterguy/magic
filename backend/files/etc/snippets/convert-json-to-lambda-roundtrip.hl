@@ -1,0 +1,10 @@
+// Convert the specified JSON to a lambda object, for then to convert it back to lambda again
+
+// JSON input
+.json:"{\"foo\": \"bar\"}"
+
+// Converting JSON to a lambda object
+json2lambda:x:@.json
+
+// Converting the lambda object back to JSON again
+lambda2json:x:@json2lambda/*

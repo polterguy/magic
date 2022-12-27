@@ -1,0 +1,32 @@
+// Send an email with both HTML and plain text content to John Doe from Jane Doe with a file attachment
+mail.smtp.send
+   message
+
+      // Recipient of email
+      to
+         .
+            name:John Doe
+            email:john@doe.com
+
+      // Sender of email
+      from
+         .
+            name:Jane Doe
+            email:jane@doe.com
+            
+      // Subject of email
+      subject:Subject of email
+
+      // Creating our multipart mixed MIME entity such that we can add attachments to our email
+      entity:multipart/mixed
+
+         // Creating our HTML and plain text alternatives
+         entity:multipart/alternative
+            entity:text/plain
+               content:Plain text email content
+            entity:text/html
+               content:<p>HTML alternative content</p>
+
+         // Attaching our file to the email
+         entity:text/plain
+            filename:/README.md

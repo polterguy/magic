@@ -1,0 +1,18 @@
+// List all folders inside of the etc folder, and add all folder names containing the text 'sql' into the [.destination] node
+.destination
+
+// Listing all folders in our etc folder
+io.folder.list:/etc/
+
+// Looping through each folder returned above
+for-each:x:@io.folder.list/*
+
+   // Checking if folder name contains the text 'sql'
+   if
+      strings.contains:x:@.dp/#
+         .:sql
+      .lambda
+
+         // Folder name contains the text 'sql' so we add it to our [.destination] node above
+         add:x:@.destination
+            get-nodes:x:@.dp/#

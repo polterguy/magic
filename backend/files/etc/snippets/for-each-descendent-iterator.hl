@@ -1,0 +1,18 @@
+// Find all descendent nodes of [.data] with the name of [howdy] and write its value to our log as an error log entry
+.data
+   howdy:Error1
+      hello
+         jada:jada
+      nothing:to se here
+   data
+      howdy:Error2
+         labbetuss:har-bursdag
+         another-node
+            not-our-guy:Nope!
+               howdy:Error3
+
+// Creating a [for-each] loop that iterates through all descendents of [.data] finding all nodes with the name of 'howdy'
+for-each:x:@.data/**/howdy
+
+   // Logging an error
+   log.error:x:@.dp/#

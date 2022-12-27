@@ -1,0 +1,4 @@
+// Split [.src] into words
+.src:Split will divide this into multiple strings
+strings.split:x:-
+   .:" "

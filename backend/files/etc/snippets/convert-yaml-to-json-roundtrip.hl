@@ -1,0 +1,10 @@
+// Convert the specified YAML to JSON and back to YAML again
+.yaml:@"foo: howdy
+bar: jo
+howdy: !!bool true
+children:
+- howdy
+- some
+"
+yaml2json:x:@.yaml
+json2yaml:x:-

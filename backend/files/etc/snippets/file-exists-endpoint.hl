@@ -1,0 +1,14 @@
+// Create an endpoint that takes one argument being a filename, and if the file exists, the endpoint returns SUCCESS, otherwise the endpoint returns FAILURE
+.arguments
+   filename:string
+
+// Checking if file exists
+if
+   io.file.exists:x:@.arguments/*/filename
+   .lambda
+      return
+         result:SUCCESS
+
+// File didn't exist, returning FAILURE to caller
+return
+   result:FAILURE

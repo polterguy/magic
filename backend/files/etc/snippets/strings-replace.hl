@@ -1,0 +1,6 @@
+// Replace 'foo' in [.src] with 'bar' and assign the result back to [.src]
+.src:howdy foo hello foo this will be foo replaced
+set-value:x:@.src
+   strings.replace:x:@.src
+      .:foo
+      .:bar
