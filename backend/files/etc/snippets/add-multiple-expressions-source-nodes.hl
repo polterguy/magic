@@ -6,6 +6,8 @@
    foo3:bar3
    foo4:bar4
 .destination
+
+// Adding all children nodes from both [.src1] and [.src2] into [.destination]
 add:x:@.destination
    get-nodes:x:@.src1/*
    get-nodes:x:@.src2/*

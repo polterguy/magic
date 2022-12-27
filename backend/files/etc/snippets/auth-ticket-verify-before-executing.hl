@@ -1,3 +1,7 @@
 // Use Hyperlambda to verify that the user belongs to either the role of root, admin or guest before executing the [log.info] slot
+
+// Verify user belongs to either root, admin or guest role
 auth.ticket.verify:root,admin,guest
+
+// Creating log entry in server log
 log.info:This is only executed if user is either root, admin or guest

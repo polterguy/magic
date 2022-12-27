@@ -1,0 +1,2 @@
+// Expression leading to [email] node in [.arguments] collection | Find [email] in [.arguments] | Get [email] argument
+:x:@.arguments/*/email
