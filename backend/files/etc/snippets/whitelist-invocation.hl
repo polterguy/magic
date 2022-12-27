@@ -12,8 +12,10 @@ whitelist
       set-value:x:@.result
          .:foo
 
-      // Notice, the next line will throw an exception if you remove its "." character,
-      // because [add] is not whitelisted in our above [vocabulary] declaration!
+      /*
+       * Notice, the next line will throw an exception if you remove its "." character,
+       * because [add] is not whitelisted in our above [vocabulary] declaration!
+       */
       .add:x:@.result
          .
             foo:bar
