@@ -1,4 +1,4 @@
-What is Aista Magic Cloud?
+What is Aista Magic Cloud? | What is Magic? | What is Magic Cloud?
 
 Aista Magic Cloud, or shortened sometimes to Magic Cloud, is a software development framework
 created on top of Hyperlambda, allowing for some extreme Low-Code software development constructs,

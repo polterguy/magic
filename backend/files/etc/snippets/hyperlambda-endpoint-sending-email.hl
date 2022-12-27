@@ -1,0 +1,17 @@
+// Create a Hyperlambda endpoint that send an email to the name and email specified as arguments | Create Hyperlambda endpoint sending email | Create endpoint sending email to [name] and [email] arguments given | Create Hyperlambda endpoint that sends an email
+.arguments
+   name:string
+   email:string
+mail.smtp.send
+   message
+      to
+         .
+            name:x:@.arguments/*/name
+            email:x:@.arguments/*/email
+      from
+         .
+            name:Aista
+            email:info@aista.com
+      subject:Some subject line goes here
+      entity:text/plain
+         content:Email body goes here
