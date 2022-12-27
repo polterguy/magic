@@ -13,8 +13,16 @@
             <span class="text-muted">|</span>
           </span>
 
-          <input matInput placeholder="Task name" type="text" name="-" autocomplete="off" [(ngModel)]="task.id"
-            [disabled]="data" [ngModelOptions]="{standalone: true}" [pattern]="CommonRegEx.appNames">
+          <input
+            matInput
+            placeholder="Task name"
+            type="text"
+            name="-"
+            autocomplete="off"
+            [(ngModel)]="task.id"
+            [disabled]="data"
+            [ngModelOptions]="{standalone: true}"
+            [pattern]="CommonRegEx.appNames">
           <mat-error>{{CommonErrorMessages.appNames}}</mat-error>
         </mat-form-field>
 
@@ -28,8 +36,14 @@
             <span class="text-muted">|</span>
           </span>
 
-          <input matInput placeholder="Task description" type="text" name="-" autocomplete="off"
-            [(ngModel)]="task.description" [ngModelOptions]="{standalone: true}">
+          <input
+            matInput
+            placeholder="Task description"
+            type="text"
+            name="-"
+            autocomplete="off"
+            [(ngModel)]="task.description"
+            [ngModelOptions]="{standalone: true}">
         </mat-form-field>
 
       </div>

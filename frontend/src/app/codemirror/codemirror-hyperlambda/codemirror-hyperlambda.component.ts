@@ -59,7 +59,6 @@ export class HyperlambdaComponent implements AfterViewInit {
    * If true, vocabulary has been loaded from server.
    */
   public vocabularyLoaded = false;
-  private codemirrorActionSubscription!: Subscription;
 
   /**
    * Creates an instance of your component.
@@ -118,7 +117,5 @@ export class HyperlambdaComponent implements AfterViewInit {
         this.model.editor.doc.clearHistory(); // To avoid having initial loading of file becoming an "undo operation".
       }
     })();
-
   }
-
 }
