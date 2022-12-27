@@ -1,0 +1,2 @@
+// Load the file called hello.hl from the etc folder | Load the hello.hl file in the etc folder
+io.file.load:/etc/hello.hl
