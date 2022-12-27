@@ -97,6 +97,55 @@ export class OpenAIConfigurationDialogComponent implements OnInit {
     });
   }
 
+  apiKeyChanged() {
+    this.generalService.showLoading();
+    this.openAiService.configure(this.openApiKey, this.selectedModel, this.max_tokens, this.temperature).subscribe({
+      next: () => {
+        setTimeout(() => {
+          this.openAiService.get_training_status().subscribe({
+            next: (result: any[]) => {
+              this.generalService.hideLoading();
+              result = result || [];
+              if (result.length > 0) {
+      
+                // Verifying we've got trained models.
+                result.sort((lhs, rhs) => {
+                  if (lhs.created > rhs.created) {
+                    return -1;
+                  }
+                  if (lhs.created < rhs.created) {
+                    return 1;
+                  }
+                  return 0;
+                });
+      
+                // Filtering in only models that succeeded their training.
+                const succeeded = result.filter(x => x.status === 'succeeded');
+                this.generalService.hideLoading();
+      
+                if (succeeded.length > 0) {
+                  this.startTraining = false;
+                  this.models = succeeded
+                    .map(x => x.fine_tuned_model)
+                    .concat(this.models);
+                  this.selectedModel = this.models[0];
+                }
+              }
+            },
+            error: (error: any) => {
+              this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+              this.generalService.hideLoading();
+            }
+          });
+        }, 500);
+      },
+      error: (error: any) => {
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+        this.generalService.hideLoading();
+      }
+    });
+  }
+
   save() {
     this.generalService.showLoading();
     this.openAiService.configure(this.openApiKey, this.selectedModel, this.max_tokens, this.temperature).subscribe({
