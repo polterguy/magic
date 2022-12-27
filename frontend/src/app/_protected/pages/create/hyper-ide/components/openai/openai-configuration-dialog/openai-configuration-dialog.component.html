@@ -18,6 +18,7 @@
     <input
       matInput
       placeholder="OpenAI API key"
+      (change)="apiKeyChanged()"
       [(ngModel)]="openApiKey"
       autocomplete="off">
   </mat-form-field>
