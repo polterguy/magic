@@ -1,0 +1,20 @@
+// Create an endpoint that requires two integer arguments, and returns the modulo of these two arguments
+.arguments
+   int1:int
+   int2:int
+
+// Making sure user provided both arguments
+validators.mandatory:x:@.arguments/*/int1
+validators.mandatory:x:@.arguments/*/int2
+
+// Calculating the modulo of the arguments
+math.modulo
+   get-value:x:@.arguments/*/int1
+   get-value:x:@.arguments/*/int2
+
+// Forward evaluating the [modulo] node returned below
+unwrap:x:+/*
+
+// Returning the modulo to caller.
+return
+   modulo:x:@math.modulo

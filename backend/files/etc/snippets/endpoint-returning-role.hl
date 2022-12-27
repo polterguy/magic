@@ -1,0 +1,33 @@
+// Create an endpoint that requires one argument, and if the argument is 'Thomas Hansen' it returns the name of the first role from the magic database sorted alphabetically as plain text. If it is given anything but Thomas Hansen it should return status code 400 with 'Some error text'
+.arguments
+   argument:string
+
+// Changing Content-Type to text/plain
+response.headers.set
+   Content-Type:text/plain
+
+// Checking if the argument is 'Thomas Hansen'
+if
+   eq:x:@.arguments/*/argument
+      .:Thomas Hansen
+   .lambda
+
+      // Connecting to our database
+      data.connect:magic
+
+         // Reading the name of the first role found in our magic database sorted alphabetically
+         data.read
+            table:roles
+            columns
+               name
+            limit:1
+            order:name
+            direction:asc
+
+         // Returning the name of the role to caller
+         return:x:@data.read/*/*/name
+else
+
+   // Argument's value was not 'Thomas Hansen', so we return status code 400, with some error text
+   response.status.set:400
+   return:Some error text

@@ -1,0 +1,18 @@
+// Retrieve username of currently authenticated user and store it into the [.username] node and retrieve roles of user and store into [.roles]
+
+// This node will contain username
+.username
+
+// This node will contain all roles user belongs to
+.roles
+
+// Invokes slot that returns the username of the currently authenticated user and its roles
+auth.ticket.get
+
+// Setting the value of our [.username] node to the username returned from our [auth.ticket.get] slot invocation
+set-value:x:@.username
+   get-value:x:@auth.ticket.get
+
+// Storing roles user belongs to into our [.roles] node
+add:x:@.roles
+   get-nodes:x:@auth.ticket.get/*/roles/*

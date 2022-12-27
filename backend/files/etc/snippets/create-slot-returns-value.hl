@@ -1,0 +1,8 @@
+// Create a new slot named my_slot that returns the integer value of 42, and then invoke the slot
+
+// Creating our slot
+slots.create:my_slot
+   return-value:int:42
+
+// Invoking our slot
+signal:my_slot
