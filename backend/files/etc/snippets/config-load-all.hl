@@ -1,0 +1,3 @@
+// Load my entire configuration and transform it to a lambda object
+config.load
+json2lambda:x:-

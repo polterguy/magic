@@ -1,0 +1,40 @@
+// Create an upload file HTTP endpoint that saves whatever file it is given to the /etc/foo/ folder
+.description:Upload file endpoint, allowing you to upload a file to the backend.
+.arguments
+   file
+      name:string
+      stream:*
+.type:file-upload
+.accept:multipart/form-data
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/file
+validators.mandatory:x:@.arguments/*/file/*/name
+validators.mandatory:x:@.arguments/*/file/*/stream
+
+// Folder where file should be saved.
+.folder:/etc/foo/
+
+// Verifying the folder exists, and if not, creating it.
+if
+   not
+      io.folder.exists:x:@.folder
+   .lambda
+
+      // Need to create folder.
+      io.folder.create:x:@.folder
+
+// Saving file with the specified filename to our folder.
+.full-path
+set-value:x:@.full-path
+   strings.concat
+      get-value:x:@.folder
+      get-value:x:@.arguments/*/file/*/name
+io.stream.save-file:x:@.full-path
+   get-value:x:@.arguments/*/file/*/stream
+
+// Returning success to caller in addition to the complete path of the file.
+unwrap:x:+/*/filename
+return
+   result:success
+   filename:x:@.full-path

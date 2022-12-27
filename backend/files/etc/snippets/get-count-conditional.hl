@@ -1,0 +1,9 @@
+// Count how many nodes can be found inside of our [.data] object that has the value of 'howdy' and assign the count to [.result]
+.result
+.data
+   foo1:bar1
+   foo2:howdy
+   foo3:bar3
+   foo4:howdy
+set-value:x:@.result
+   get-count:x:@.data/*/=howdy

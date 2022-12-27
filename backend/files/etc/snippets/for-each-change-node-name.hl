@@ -1,0 +1,7 @@
+// Iterate through each child node of [.data] and set the name of the node to new-name
+.data
+   foo1:bar1
+   foo2:bar2
+for-each:x:@.data/*
+   set-name:x:@.dp/#
+      .:new-name

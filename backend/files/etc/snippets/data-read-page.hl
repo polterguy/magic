@@ -1,0 +1,6 @@
+// Select 10 records with all columns from the actor table in the sakila database, but start from the 5th result
+data.connect:sakila
+   data.read
+      table:actor
+      limit:10
+      offset:5

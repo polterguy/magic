@@ -1,0 +1,8 @@
+// Transform the specified Markdown into HTML
+.markdown:@"
+Howdy world
+
+* Foo
+* Bar
+"
+markdown2html:x:@.markdown

@@ -1,0 +1,16 @@
+// Extract all descendent nodes of [.data] having a name of 'hello' and concatenate their values into [.result]
+.result
+.data
+   not-match:nope!
+      hello:have
+   hello:a
+      nope:not our guy
+         hello:merry
+      not-here
+   hello:x-mas
+for-each:x:@.data/**/hello
+   set-value:x:@.result
+      strings.concat
+         get-value:x:@.result
+         get-value:x:@.dp/#
+         .:" "

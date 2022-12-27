@@ -1,0 +1,7 @@
+// Transform a parametrised lambda object to JSON automatically and post it using HTTP POST to jsonplaceholder.typicode.com/posts while automatically converting the response to lambda
+.userId:int:1
+http.post:"https://jsonplaceholder.typicode.com/posts"
+   payload
+      userId:x:@.userId
+      id:int:1
+   convert:true

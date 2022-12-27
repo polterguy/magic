@@ -1,0 +1,6 @@
+// Create a multi line comment
+
+/*
+ * This is a multi line comment,
+ * and it is similar to C style comments.
+ */

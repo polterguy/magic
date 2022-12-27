@@ -1,0 +1,3 @@
+// Count actors in my sakila database
+data.connect:sakila
+   data.scalar:select count(*) from actor

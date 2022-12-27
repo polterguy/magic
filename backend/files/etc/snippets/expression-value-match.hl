@@ -1,0 +1,2 @@
+// Create an expression that finds all children nodes of [.data] having a value of 'match'
+.expression:x:@.data/*/=match

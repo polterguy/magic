@@ -1,0 +1,14 @@
+// Compare the value of [.arg1] with the value of [.arg2] and if [.arg1] is less than [.arg2] create a log entry
+.arg1:value 1
+.arg2:value 2
+
+// Doing our comparison
+if
+
+   // The [eq] slot implies 'equals to'
+   lt:x:@.arg1
+      get-value:x:@.arg2
+   .lambda
+
+      // Match, creating our log item
+      log.info:Matches!

@@ -1,0 +1,2 @@
+// Retrieve the width and height of the /foo.png image
+image.size:/foo.png

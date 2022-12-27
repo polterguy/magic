@@ -1,0 +1,25 @@
+// Evaluate multiple lambda objects having the same name
+
+// Result after invocation
+.res:
+
+// First lambda object
+.lambda
+
+   // Concatenates the text ' OK 1 ' to [.res]
+   set-value:x:@.res
+      strings.concat
+         get-value:x:@.res
+         .:" OK 1 "
+
+// Second lamba object
+.lambda
+
+   // Concatenates the text ' OK 2 ' to [.res]
+   set-value:x:@.res
+      strings.concat
+         get-value:x:@.res
+         .:" OK 2 "
+
+// Evaluate all lambda objects with the name of [.lambda]
+eval:x:../*/.lambda

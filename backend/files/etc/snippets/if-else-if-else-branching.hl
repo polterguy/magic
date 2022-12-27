@@ -1,0 +1,29 @@
+// Create an [if]/[else-if] block that conditionally checks the value of [.input]
+
+.input:foo
+.dest
+if
+   eq
+      get-value:x:@.input
+      .:foo
+   .lambda
+
+      // Value of [.input] was 'foo'
+      set-value:x:@.dest
+         .:Value was foo
+
+else-if
+   eq
+      get-value:x:@.input
+      .:bar
+   .lambda
+
+      // Value of [.input] was 'bar'
+      set-value:x:@.dest
+         .:Value was bar
+
+else
+
+   // Value of [.input] was neither 'foo' nor 'bar'
+   set-value:x:@.dest
+      .:Value was neither

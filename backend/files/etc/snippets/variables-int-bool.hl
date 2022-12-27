@@ -1,0 +1,3 @@
+// Create two variables, one named [.int] holding an integer and another named [.bool] holding a boolean value
+.int:int:555
+.bool:bool:true

@@ -1,0 +1,3 @@
+// Convert foo.png to a JPEG image
+image.convert:/foo.png
+   type:jpeg

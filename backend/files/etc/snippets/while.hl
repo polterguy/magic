@@ -1,9 +1,17 @@
 // Create a while loop that iterates from 1 to 20, logging the text 'Howdy from while' as it iterates
+
+// Loop counter
 .no:int:0
+
+// Invoking while loop's lambda object for as long as [.no] is less than 20
 while
    lt
       get-value:x:@.no
       .:int:20
    .lambda
+
+      // Creating a log entry
       log.info:Howdy from while
+
+      // Incrementing [.no] value
       math.increment:x:@.no

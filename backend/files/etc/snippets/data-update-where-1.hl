@@ -1,0 +1,10 @@
+// Update title in film table in sakila database where title equals to 'ADAPTATION HOLES' or title equals to 'ACADEMY DINOSAUR' and set the new title to 'Howdy world'
+data.connect:sakila
+   data.update
+      table:film
+      values
+         title:Howdy world
+      where
+         or
+            title.eq:ADAPTATION HOLES
+            title.eq:ACADEMY DINOSAUR
