@@ -3,9 +3,12 @@
 
 <form>
   <div mat-dialog-content>
-    <mat-form-field class="w-100 text-prefix">
-      <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
-        Name
+    <mat-form-field class="w-100 standaloone-field">
+      <span
+        matPrefix
+        class="d-flex flex-nowrap align-items-center justify-content-between">
+        <mat-icon>edit</mat-icon>
+        <span class="text-muted">|</span>
       </span>
 
       <input matInput type="text" placeholder="Snippet name" [(ngModel)]="data" [ngModelOptions]="{standalone: true}"

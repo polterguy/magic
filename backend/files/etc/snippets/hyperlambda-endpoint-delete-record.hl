@@ -1,0 +1,17 @@
+// Create a Hyperlambda endpoint that deletes one record from the Categories table in the [generic|northwind] database requiring one mandatory argument being CategoryID which is the primary key of the Categories table
+.arguments
+   CategoryID:long
+validators.mandatory:x:@.arguments/*/CategoryID
+data.connect:[generic|northwind]
+   add:x:./*/data.delete/*/where/*/and
+      get-nodes:x:@.arguments/*
+   data.delete
+      database-type:sqlite
+      table:Categories
+      where
+         and
+
+   // Returning result of above invocation to caller.
+   unwrap:x:+/*
+   return
+      affected:x:@data.delete

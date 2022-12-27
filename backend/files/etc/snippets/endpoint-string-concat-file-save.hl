@@ -1,0 +1,9 @@
+// Create a Hyperlambda HTTP endpoint that takes two arguments, for then to concatenate the arguments, and save the result to '/result.txt'
+.arguments
+   argument1:string
+   argument2:string
+strings.concat
+   get-value:x:@.arguments/*/argument1
+   get-value:x:@.arguments/*/argument2
+io.file.save:/result.txt
+   get-value:x:@strings.concat

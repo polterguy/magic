@@ -1,0 +1,8 @@
+// Create an Hyperlambda endpoint that accepts an integer value that must be between 20 and 100
+.arguments
+   argument:int
+validators.integer:x:@.arguments/*/argument
+   min:20
+   max:100
+return
+   result:success
