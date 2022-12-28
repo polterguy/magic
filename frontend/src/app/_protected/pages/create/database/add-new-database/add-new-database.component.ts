@@ -341,7 +341,7 @@ export class AddNewDatabaseComponent implements OnInit, OnDestroy {
         extra: {
           details: item,
           action: 'confirmInput',
-          fieldToBeTypedTitle: `Database name`,
+          fieldToBeTypedTitle: `database name`,
           fieldToBeTypedValue: item.name,
           icon: 'database',
         }

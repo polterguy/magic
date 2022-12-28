@@ -15,6 +15,10 @@ import { SqlService } from '../../../../../_general/services/sql.service';
 import { DiagnosticsService } from '../../../../../_general/services/diagnostics.service';
 import { ConfigService } from '../../../../../_general/services/config.service';
 
+/**
+ * Helper component allowing user to connect to existing database, and/or create new catalogs
+ * in existing databases.
+ */
 @Component({
   selector: 'app-connect',
   templateUrl: './connect.component.html',
@@ -22,43 +26,23 @@ import { ConfigService } from '../../../../../_general/services/config.service';
 })
 export class ConnectComponent implements OnInit {
 
-  /**
-   * Options user has for selecting database types.
-   */
-  public dbTypes: any = [
+  private configFile: any = {};
+
+  dbTypes: any = [
     {name: 'MySQL', type: 'mysql'},
     {name: 'PostgreSQL', type: 'pgsql'},
     {name: 'SQL Server', type: 'mssql'},
   ];
 
-  /**
-   * What database type user has selected.
-   */
-  public databaseType: string = 'mysql';
-
-  /**
-   * What connection string user has selected.
-   */
-  public connectionString: string = '';
-
-  /**
-   * Stores the given name for a new database to be connected.
-   */
-  public cStringName: string = '';
-
-  /**
-   * List of connected databases.
-   */
-  public databases: any = [];
-
-  private configFile: any = {};
-
-  public waitingTest: boolean = false;
-
+  databaseType: string = 'mysql';
+  connectionString: string = '';
+  cStringName: string = '';
+  databases: any = [];
+  waitingTest: boolean = false;
   displayedColumns: string[] = ['dbType', 'cStringName', 'cString', 'status', 'actions'];
 
-  public isLoading: boolean = true;
-  public ip_address: string = 'unknown';
+  isLoading: boolean = true;
+  ip_address: string = 'unknown';
 
   constructor(
     private dialog: MatDialog,
@@ -94,91 +78,53 @@ export class ConnectComponent implements OnInit {
     this.generalService.showFeedback('Cloudlet\'s IP address can be found on your clipboard');
   }
 
-  /**
-   * Invokes the endpoint to make sure the connection is valid
-   * @param toTestBeforeSubmit Will be true if submit is requested and the connections string will be submitted only if the string is valid.
-   */
-  public testConnectionString(toTestBeforeSubmit?: boolean) {
-    if (!(this.cStringName === '' || this.connectionString === '')) {
-      if (this.validateConnectionString() === true) {
-        if (this.checkName() === true) {
-          this.waitingTest = true;
-          const data: any = {
-            databaseType: this.databaseType,
-            connectionString: this.connectionString,
-          };
-          this.generalService.showLoading();
-          this.configService.connectionStringValidity(data).subscribe({
-            next: (res: any) => {
-              if (res.result === 'success') {
-                if (toTestBeforeSubmit !== true) {
-                  this.waitingTest = false;
-                  this.generalService.showFeedback('Connection successful', 'successMessage');
-                  this.generalService.hideLoading();
-                  return;
-                } else {
-                  this.connect();
-                }
-              } else if (res.result === 'failure') {
+  testConnectionString(toTestBeforeSubmit?: boolean) {
+
+    // Sanity checking input
+    if (this.cStringName === '' || this.connectionString === '') {
+      this.generalService.showFeedback('Please provide both connection name and string', 'errorMessage');
+    }
+
+    if (this.validateConnectionString() === true) {
+      if (this.checkName() === true) {
+        this.waitingTest = true;
+        const data: any = {
+          databaseType: this.databaseType,
+          connectionString: this.connectionString,
+        };
+        this.generalService.showLoading();
+        this.configService.connectionStringValidity(data).subscribe({
+          next: (res: any) => {
+            if (res.result === 'success') {
+              if (toTestBeforeSubmit !== true) {
                 this.waitingTest = false;
-                this.generalService.showFeedback(res.message, 'errorMessage', 'Ok', 5000);
+                this.generalService.showFeedback('Connection successful', 'successMessage');
                 this.generalService.hideLoading();
+                return;
+              } else {
+                this.connect();
               }
-            },
-            error: (error: any) => {
+            } else if (res.result === 'failure') {
               this.waitingTest = false;
-              this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+              this.generalService.showFeedback(res.message, 'errorMessage', 'Ok', 5000);
               this.generalService.hideLoading();
-            },
-          });
-        } else {
-          this.generalService.showFeedback('Connection already exists', 'errorMessage', 'Ok', 3000);
-        }
+            }
+          },
+          error: (error: any) => {
+            this.waitingTest = false;
+            this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+            this.generalService.hideLoading();
+          },
+        });
       } else {
-        this.generalService.showFeedback('Connection string needs a {database} declaration', 'errorMessage', 'Ok', 3000);
+        this.generalService.showFeedback('Connection string already exists', 'errorMessage', 'Ok', 3000);
       }
     } else {
-      this.generalService.showFeedback('Please provide all fields', 'errorMessage');
+      this.generalService.showFeedback('Connection string needs a {database} declaration', 'errorMessage', 'Ok', 3000);
     }
   }
 
-  /**
-   * Saves the new connection string.
-   */
-  private connect() {
-    const data: any = {
-      databaseType: this.databaseType,
-      name: this.cStringName,
-      connectionString: this.connectionString
-    }
-    this.sqlService.addConnectionString(data).subscribe({
-      next: () => {
-        this.generalService.showFeedback('Successfully connected.', 'successMessage');
-        this.waitingTest = false;
-        this.databases = [...this.databases, {
-          dbType: this.dbTypes.find((db: any) => db.type === this.databaseType).name,
-          dbTypeValue: this.databaseType,
-          cString: this.connectionString,
-          status: 'Live',
-          cStringKey: this.cStringName,
-          isClicked: false
-        }];
-        this.generalService.hideLoading();
-        this.cdr.detectChanges();
-        this.cStringName = '';
-        this.connectionString = '';
-        setTimeout(() => {
-          this.backendService.getRecaptchaKey();
-        }, 1000);
-      },
-      error: (error: any) => {
-        this.waitingTest = false;
-        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
-      }
-    });
-  }
-
-  public deleteDb(item: any) {
+  deleteDb(item: any) {
     this.dialog.open(ConfirmationDialogComponent, {
       width: '500px',
       data: {
@@ -214,23 +160,52 @@ export class ConnectComponent implements OnInit {
     })
   }
 
-  /**
-   * Validates the provided connection string, to make sure it contains {database}.
+  createCatalog(item: any) {
+    this.dialog.open(CatalogNameComponent, {
+      width: '500px',
+      data: item
+    });
+  }
+
+  getDatabasesList(item: any) {
+    item.isClicked = true;
+    this.generalService.showLoading();
+    this.sqlService.getDatabaseMetaInfo(item.dbTypeValue, item.cStringKey).subscribe({
+      next: (res: any) => {
+        if (res) {
+          this.dialog.open(ViewDbListComponent, {
+            width: '800px',
+            data: {
+              list: res.databases,
+              item: item
+            }
+          })
+        } else {
+          this.generalService.showFeedback('No database was found.', null, 'Ok', 4000);
+        }
+        item.isClicked = false;
+        this.generalService.hideLoading();
+      },
+      error: () => {
+        this.generalService.showFeedback('Something went wrong, please try again later.', 'errorMessage');
+        item.isClicked = false;
+        this.generalService.hideLoading();
+      }
+    })
+  }
+
+  /*
+   * Private helper methods
    */
+
   private validateConnectionString() {
     return this.connectionString.includes('{database}')
   }
 
-  /**
-   * Making sure the given name doesn't already exist in the selected database.
-   */
   private checkName() {
     return !this.configFile.databases[this.databaseType]?.[this.cStringName] ?? false;
   }
 
-  /**
-   * Loads configuration from backend.
-   */
   private loadConfig() {
     this.configService.loadConfig().subscribe({
       next: (res: any) => {
@@ -278,37 +253,36 @@ export class ConnectComponent implements OnInit {
     });
   }
 
-  public getDatabasesList(item: any) {
-    item.isClicked = true;
-    this.generalService.showLoading();
-    this.sqlService.getDatabaseMetaInfo(item.dbTypeValue, item.cStringKey).subscribe({
-      next: (res: any) => {
-        if (res) {
-          this.dialog.open(ViewDbListComponent, {
-            width: '800px',
-            data: {
-              list: res.databases,
-              item: item
-            }
-          })
-        } else {
-          this.generalService.showFeedback('No database was found.', null, 'Ok', 4000);
-        }
-        item.isClicked = false;
+  private connect() {
+    const data: any = {
+      databaseType: this.databaseType,
+      name: this.cStringName,
+      connectionString: this.connectionString
+    }
+    this.sqlService.addConnectionString(data).subscribe({
+      next: () => {
+        this.generalService.showFeedback('Successfully connected.', 'successMessage');
+        this.waitingTest = false;
+        this.databases = [...this.databases, {
+          dbType: this.dbTypes.find((db: any) => db.type === this.databaseType).name,
+          dbTypeValue: this.databaseType,
+          cString: this.connectionString,
+          status: 'Live',
+          cStringKey: this.cStringName,
+          isClicked: false
+        }];
         this.generalService.hideLoading();
+        this.cdr.detectChanges();
+        this.cStringName = '';
+        this.connectionString = '';
+        setTimeout(() => {
+          this.backendService.getRecaptchaKey();
+        }, 1000);
       },
-      error: () => {
-        this.generalService.showFeedback('Something went wrong, please try again later.', 'errorMessage');
-        item.isClicked = false;
-        this.generalService.hideLoading();
+      error: (error: any) => {
+        this.waitingTest = false;
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
       }
-    })
-  }
-
-  public createCatalog(item: any) {
-    this.dialog.open(CatalogNameComponent, {
-      width: '500px',
-      data: item
     });
   }
 }

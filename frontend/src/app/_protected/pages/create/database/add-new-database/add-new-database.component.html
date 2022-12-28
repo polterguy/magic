@@ -105,11 +105,23 @@
     </div>
 
     <div class="text-end button-row mt-3 w-100 upload-backup-row">
-      <button *ngIf="defaultDbType === 'sqlite'" mat-flat-button color="primary" (click)="zipfile.click()">Upload
-        backup</button>
+
+      <button
+        *ngIf="defaultDbType === 'sqlite'"
+        mat-flat-button
+        color="primary"
+        (click)="zipfile.click()">
+        Upload backup
+      </button>
+
     </div>
 
-    <input *ngIf="defaultDbType === 'sqlite'" type="file" [(ngModel)]="zipFileInput" #zipfile class="d-none" accept="db"
+    <input
+      type="file"
+      [(ngModel)]="zipFileInput"
+      #zipfile
+      class="d-none"
+      accept=".db"
       (change)="uploadBackup($event.target.files)">
 
   </div>
