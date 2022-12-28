@@ -1,7 +1,9 @@
 
-<h3 mat-dialog-title class="mb-3">The Machine says</h3>
+<h3 mat-dialog-title class="mb-0">The Machine says</h3>
 
 <div mat-dialog-content>
+
+  <p class="text-muted text-small mb-3">{{data.prompt}}</p>
 
   <app-codemirror-hyperlambda *ngIf="hlReady" class="h-100" [(model)]="hlModel">
   </app-codemirror-hyperlambda>
