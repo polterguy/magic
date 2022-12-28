@@ -27,7 +27,6 @@ export class LogComponent implements OnInit {
   displayedColumns: string[] = ['id', 'date', 'content', 'type', 'action'];
   dataSource: LogItem[] = [];
   count: number = 0;
-  currentPage: number = 0;
   pageSize: number = 10;
   pageOffset: string[] = [];
 
@@ -42,7 +41,6 @@ export class LogComponent implements OnInit {
   }
 
   page(event: PageEvent) {
-    this.currentPage = event.pageIndex;
     if (event.previousPageIndex < event.pageIndex) {
       this.pageOffset.push(this.dataSource[this.dataSource.length - 1].id);
     } else {
@@ -60,7 +58,7 @@ export class LogComponent implements OnInit {
 
   filterList(filter: string) {
     this.filter = filter;
-    this.currentPage = 0;
+    this.pageOffset = [];
     this.getItems();
     this.getCount();
   }
