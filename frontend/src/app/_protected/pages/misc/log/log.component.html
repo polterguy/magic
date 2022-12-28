@@ -98,7 +98,7 @@
           <!-- Pager -->
           <mat-paginator
             [length]="count"
-            [(pageIndex)]="currentPage"
+            [pageIndex]="pageOffset.length"
             [pageSize]="pageSize"
             (page)="page($event)"
             aria-label="Select page">
