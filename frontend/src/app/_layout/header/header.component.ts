@@ -135,7 +135,7 @@ export class HeaderComponent implements OnInit {
         exact: false,
         submenu: [
           {
-            name: 'Cloudlet Configuration',
+            name: 'Configuration',
             url: '/configuration',
             exact: false,
           },

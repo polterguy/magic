@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
@@ -15,9 +16,6 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 })
 export class SmtpDialogComponent implements OnInit {
 
-  /**
-   * Form builder
-   */
   smtpForm = this.formBuilder.group({
     host: [''],
     port: [''],
@@ -35,23 +33,16 @@ export class SmtpDialogComponent implements OnInit {
 
   ngOnInit() {
     if (this.data) {
-      this.setFormFields();
+      this.smtpForm.setValue({
+        host: this.data.host,
+        port: this.data.port,
+        secure: this.data.secure,
+        username: this.data.username,
+        password: this.data.password,
+        name: this.data.from.name,
+        address: this.data.from.address
+      });
     }
-  }
-
-  /**
-   * sets form fields
-   */
-  setFormFields() {
-    this.smtpForm.setValue({
-      host: this.data.host,
-      port: this.data.port,
-      secure: this.data.secure,
-      username: this.data.username,
-      password: this.data.password,
-      name: this.data.from.name,
-      address: this.data.from.address
-    })
   }
 
   /**
@@ -71,5 +62,4 @@ export class SmtpDialogComponent implements OnInit {
     }
     this.dialogRef.close(data);
   }
-
 }
