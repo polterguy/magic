@@ -12,7 +12,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { LogItemDetailsComponent } from '../../../../_general/components/log-item-details/log-item-details.component';
 
 /**
- * Log component, allowing user to view log items.
+ * Log component, allowing user to search through and view log items.
  */
 @Component({
   selector: 'app-log',

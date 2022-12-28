@@ -4,22 +4,35 @@
     <mat-card class="h-100">
       <mat-card-content class="h-100">
 
+        <!-- Top parts containing title of component and search textbox -->
         <div class="row align-items-center">
+
           <div class="col-xxl-8 col-xl-7 col-lg-6 col-12 mb-lg-0 mb-2">
             <h3 class="my-0 fw-bold">System log</h3>
           </div>
+
           <div class="col-xxl-4 col-xl-5 col-lg-6 col-12">
+
+            <!-- Loading skeleton for search textbox -->
             <ng-container *ngIf="isLoading;else loaded">
-              <app-loading-skeleton [amount]="1" [colClass]="'col-12'" [blockHeight]="'41px'"
-                [hasShadow]="false"></app-loading-skeleton>
+              <app-loading-skeleton
+                [amount]="1"
+                [colClass]="'col-12'"
+                [blockHeight]="'41px'"
+                [hasShadow]="false">
+              </app-loading-skeleton>
             </ng-container>
+
+            <!-- Search textbox -->
             <ng-template #loaded>
-              <app-log-searchbox (filterList)="filterList($event)"></app-log-searchbox>
+              <app-log-searchbox (filterList)="filterList($event)">
+              </app-log-searchbox>
             </ng-template>
+
           </div>
         </div>
 
-        <!-- Loading skeleton -->
+        <!-- Loading skeleton for datagrid -->
         <ng-container *ngIf="isLoading;else dataReady">
           <app-loading-skeleton
             [amount]="6"
@@ -31,7 +44,10 @@
 
         <ng-template #dataReady>
           <div class="table-responsive mt-4">
-            <table mat-table [dataSource]="dataSource" class="w-100 borderless hoverable">
+            <table
+              mat-table
+              [dataSource]="dataSource"
+              class="w-100 borderless hoverable">
 
               <!-- id Column -->
               <ng-container matColumnDef="id">
@@ -71,6 +87,7 @@
 
               <tr mat-header-row *matHeaderRowDef="displayedColumns;sticky: true"></tr>
               <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
             </table>
 
           </div>
