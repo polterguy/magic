@@ -145,6 +145,11 @@ export class HeaderComponent implements OnInit {
             exact: false,
           },
           {
+            name: 'Cryptography',
+            url: '/server-key-setting',
+            exact: false,
+          },
+          {
             name: 'Log',
             url: '/log',
             exact: false,
@@ -165,11 +170,6 @@ export class HeaderComponent implements OnInit {
           {
             name: 'Profile',
             url: '/user-profile',
-            exact: false,
-          },
-          {
-            name: 'Cryptography',
-            url: '/server-key-setting',
             exact: false,
           },
           {
