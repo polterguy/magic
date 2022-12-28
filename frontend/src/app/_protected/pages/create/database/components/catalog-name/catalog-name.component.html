@@ -1,15 +1,26 @@
+
 <h3 mat-dialog-title>Give your catalog a name</h3>
 
 <form>
   <div mat-dialog-content>
+
     <mat-form-field class="w-100">
-      <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+      <span
+        matPrefix
+        matTooltip="Catalog or database name"
+        class="d-flex flex-nowrap align-items-center justify-content-between me-2">
         <mat-icon>database</mat-icon>
         <span class="text-muted">|</span>
       </span>
-
-      <input matInput type="text" [(ngModel)]="name" name="-" placeholder="Catalog name" autocomplete="off">
+      <input
+        matInput
+        type="text"
+        [(ngModel)]="name"
+        name="-"
+        placeholder="Catalog name"
+        autocomplete="off">
     </mat-form-field>
+
   </div>
 
   <div mat-dialog-actions [align]="'end'">

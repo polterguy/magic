@@ -9,6 +9,9 @@ import { GeneralService } from 'src/app/_general/services/general.service';
 import { Response } from '../../../../../models/common/response.model';
 import { BazarService } from 'src/app/_general/services/bazar.service';
 
+/**
+ * 
+ */
 @Component({
   selector: 'app-view-db',
   templateUrl: './view-db.component.html',
@@ -30,23 +33,6 @@ export class ViewDbComponent implements OnInit {
     this.getAppDetails();
   }
 
-  private getAppDetails() {
-    this.bazarService.canInstall(this.data.min_magic_version).subscribe({
-      next: (result: Response) => {
-        if (result.result === 'SUCCESS') {
-          this.canInstall = true;
-        } else {
-          this.generalService.showFeedback('Incompatible with your Magic version', 'errorMessage', 'Ok', 5000);
-          this.needsCoreUpdate = true;
-        }
-      },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
-    });
-  }
-
-  /**
-   * Invoked when user wants to update the app.
-   */
   update() {
     this.bazarService.updateBazarItem(this.data).subscribe({
       next: (result: Response) => {
@@ -70,14 +56,29 @@ export class ViewDbComponent implements OnInit {
     });
   }
 
-  /**
-   * Invoked when user wants to uninstall app from local server.
-   */
   uninstall() {
     this.dialogRef.close('uninstall');
   }
 
-  public install() {
+  install() {
     this.dialogRef.close('install');
+  }
+
+  /*
+   * Private helper methods.
+   */
+
+  private getAppDetails() {
+    this.bazarService.canInstall(this.data.min_magic_version).subscribe({
+      next: (result: Response) => {
+        if (result.result === 'SUCCESS') {
+          this.canInstall = true;
+        } else {
+          this.generalService.showFeedback('Incompatible with your Magic version', 'errorMessage', 'Ok', 5000);
+          this.needsCoreUpdate = true;
+        }
+      },
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+    });
   }
 }

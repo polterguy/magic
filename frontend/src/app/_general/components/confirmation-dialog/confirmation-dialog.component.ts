@@ -8,6 +8,9 @@ import { FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { GeneralService } from '../../services/general.service';
 
+/**
+ * Data model to bind towards UI in form.
+ */
 export interface Extra {
   details: any,
   action?: string, // if provided, then confirmation textbox will be appeared.
@@ -16,6 +19,10 @@ export interface Extra {
   icon?: string
 }
 
+/**
+ * Helper component to allow user to confirm some specific action, such as deleting item
+ * that cannot be undone, etc.
+ */
 @Component({
   selector: 'app-confirmation-dialog',
   templateUrl: './confirmation-dialog.component.html',
@@ -23,10 +30,7 @@ export interface Extra {
 })
 export class ConfirmationDialogComponent implements OnInit {
 
-  /**
-   * Textbox asking user to write action to allow for executing action.
-   */
-  public inputValue: FormControl = new FormControl<string>('');
+  inputValue: FormControl = new FormControl<string>('');
 
   constructor(
     private generalService: GeneralService,
@@ -38,8 +42,7 @@ export class ConfirmationDialogComponent implements OnInit {
       action_btn: string,
       action_btn_color?: string,
       bold_description?: boolean,
-      extra?: Extra
-    }) { }
+      extra?: Extra}) { }
 
   ngOnInit() {
     this.data['title'] = this.data['title'] ?? 'Please confirm';

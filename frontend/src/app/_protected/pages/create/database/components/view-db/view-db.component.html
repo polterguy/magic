@@ -1,23 +1,47 @@
+
 <div mat-dialog-content class="file-content">
   <div [innerHTML]="data.description | marked"></div>
-
 </div>
 
 <div mat-dialog-actions [align]="'end'">
 
-  <div *ngIf="needsCoreUpdate" class="d-flex justify-content-end mt-5">
-    Incompatible with your current version of Magic. <a target="_blank"
-      href="https://docs.aista.com/tutorials/getting-started/">Download the latest verion.</a>
+  <div
+    *ngIf="needsCoreUpdate"
+    class="d-flex justify-content-end mt-5">
+    Incompatible with your current version of Magic.
+    <a target="_blank" href="https://docs.aista.com/tutorials/getting-started/">Download the latest verion.</a>
   </div>
 
-  <button *ngIf="!data.has_update" mat-button mat-dialog-close>Close</button>
+  <button
+    *ngIf="!data.has_update"
+    mat-button
+    mat-dialog-close>
+    Close
+  </button>
 
-  <button *ngIf="data.has_update" mat-flat-button matTooltip="Automatically updates your app" color="warn"
-    (click)="update()">Update</button>
+  <button
+    *ngIf="data.has_update"
+    mat-flat-button
+    matTooltip="Automatically updates your app"
+    color="warn"
+    (click)="update()">
+    Update
+  </button>
 
-  <button *ngIf="data?.details" mat-flat-button color="warn"
-    (click)="uninstall()">Uninstall</button>
+  <button
+    *ngIf="data?.details"
+    mat-flat-button
+    color="warn"
+    (click)="uninstall()">
+    Uninstall
+  </button>
 
-  <button *ngIf="!data?.details" mat-flat-button color="primary" (click)="install()">Install</button>
+  <button
+    *ngIf="!data?.details"
+    mat-flat-button
+    color="primary"
+    (click)="install()">
+    Install
+  </button>
 
 </div>
