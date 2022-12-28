@@ -30,7 +30,7 @@ export class OpenAIAnswerDialogComponent implements OnInit {
     private clipBoard: Clipboard) { }
 
   ngOnInit() {
-    this.data.sort((lhs: any, rhs: any) => {
+    this.data.snippets.sort((lhs: any, rhs: any) => {
       if (lhs.finish_reason === 'stop') {
         return -1;
       }
@@ -42,7 +42,7 @@ export class OpenAIAnswerDialogComponent implements OnInit {
     this.codemirrorActionsService.getActions(null, 'hl').then((res: any) => {
       res.autofocus = false;
       this.hlModel = {
-        hyperlambda: this.data[0].text,
+        hyperlambda: this.data.snippets[0].text,
         options: res,
       }
       setTimeout(() => {

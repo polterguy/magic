@@ -165,7 +165,10 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
         this.waitingForAnswer = false;
         const dialog = this.dialog.open(OpenAIAnswerDialogComponent, {
           width: '50%',
-          data: result,
+          data: {
+            snippets: result,
+            prompt: this.openAiPrompt,
+          },
         });
         dialog.afterClosed().subscribe((data: any) => {
           console.log(data);
