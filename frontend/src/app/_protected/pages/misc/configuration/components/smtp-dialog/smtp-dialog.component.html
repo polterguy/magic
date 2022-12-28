@@ -1,24 +1,28 @@
 
 <h3 mat-dialog-title class="mb-1">SMTP settings</h3>
 
-<p class="text-muted mb-4">Changes your email SMTP settings</p>
+<p class="text-muted mb-4">Change your email SMTP settings</p>
 
 <form [formGroup]="smtpForm">
+
   <div mat-dialog-content>
 
     <div class="row">
 
       <div class="col-sm-6 col-12">
 
-        <mat-form-field class="w-100 text-prefix">
+        <mat-form-field class="w-100 standalone-field">
           <span
             matPrefix
-            class="d-flex flex-nowrap align-items-center justify-content-between me-3">
-            SMTP host
+            matTooltip="SMTP host name"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>http</mat-icon>
+            <span class="text-muted">|</span>
           </span>
           <input
             matInput
             type="text"
+            placeholder="SMTP host name"
             formControlName="host"
             autocomplete="off"
             name="host" />
@@ -28,15 +32,18 @@
 
       <div class="col-sm-6 col-12">
 
-        <mat-form-field class="w-100 text-prefix">
+        <mat-form-field class="w-100 standalone-field">
           <span
             matPrefix
-            class="d-flex flex-nowrap align-items-center justify-content-between me-3">
-            SMTP port
+            matTooltip="SMTP port"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>settings_input_component</mat-icon>
+            <span class="text-muted">|</span>
           </span>
           <input
             matInput
             type="number"
+            placeholder="SMTP port"
             formControlName="port"
             name="port" />
         </mat-form-field>
@@ -45,32 +52,18 @@
 
       <div class="col-sm-6 col-12">
 
-        <mat-form-field class="w-100 text-prefix">
+        <mat-form-field class="w-100 standalone-field">
           <span
             matPrefix
-            class="d-flex flex-nowrap align-items-center justify-content-between me-3">
-            Name
+            matTooltip="Username"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>contact_mail</mat-icon>
+            <span class="text-muted">|</span>
           </span>
           <input
             matInput
             type="text"
-            formControlName="name"
-            name="name" />
-        </mat-form-field>
-
-      </div>
-
-      <div class="col-sm-6 col-12">
-
-        <mat-form-field class="w-100 text-prefix">
-          <span
-            matPrefix
-            class="d-flex flex-nowrap align-items-center justify-content-between me-3">
-            Username
-          </span>
-          <input
-            matInput
-            type="text"
+            placeholder="username"
             formControlName="username"
             name="username" />
         </mat-form-field>
@@ -79,34 +72,60 @@
 
       <div class="col-sm-6 col-12">
 
-        <mat-form-field class="w-100 text-prefix">
+        <mat-form-field class="w-100 standalone-field">
           <span
             matPrefix
-            class="d-flex flex-nowrap align-items-center justify-content-between me-3">
-            Email address
+            matTooltip="Password"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>password</mat-icon>
+            <span class="text-muted">|</span>
           </span>
           <input
             matInput
             type="text"
-            formControlName="address"
-            name="address" />
+            placeholder="Password"
+            formControlName="password"
+            name="password" />
         </mat-form-field>
 
       </div>
 
       <div class="col-sm-6 col-12">
 
-        <mat-form-field class="w-100 text-prefix">
+        <mat-form-field class="w-100 standalone-field">
           <span
             matPrefix
-            class="d-flex flex-nowrap align-items-center justify-content-between me-3">
-            Password
+            matTooltip="Default from name"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>person</mat-icon>
+            <span class="text-muted">|</span>
           </span>
           <input
             matInput
             type="text"
-            formControlName="password"
-            name="password" />
+            placeholder="Default from name"
+            formControlName="name"
+            name="name" />
+        </mat-form-field>
+
+      </div>
+
+      <div class="col-sm-6 col-12">
+
+        <mat-form-field class="w-100 standalone-field">
+          <span
+            matPrefix
+            matTooltip="Default from email"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>email</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            type="text"
+            placeholder="Default from email"
+            formControlName="address"
+            name="address" />
         </mat-form-field>
 
       </div>
@@ -122,6 +141,7 @@
         </mat-checkbox>
 
       </div>
+
     </div>
   </div>
 
@@ -145,4 +165,5 @@
     </button>
 
   </div>
+
 </form>

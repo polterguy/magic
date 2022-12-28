@@ -6,17 +6,29 @@
 
   <div *ngFor="let idx of data.arguments">
 
-    <mat-form-field *ngIf="idx.type === 'string'" class="w-100 prefix-alignment">
-      <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2"
+    <mat-form-field
+      *ngIf="idx.type === 'string'"
+      class="w-100 prefix-alignment">
+      <span
+        matPrefix
+        class="d-flex flex-nowrap align-items-center justify-content-between me-2"
         [matTooltip]="idx.description">
         {{idx.name}}
         <span class="text-muted ms-1">|</span>
       </span>
-      <input type="text" matInput autocomplete="off" [(ngModel)]="idx.value">
+      <input
+        type="text"
+        matInput
+        autocomplete="off"
+        [(ngModel)]="idx.value">
     </mat-form-field>
 
-    <mat-form-field *ngIf="idx.type === 'multi_string'" class="w-100 prefix-alignment custom-fields">
-      <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2 mt-2"
+    <mat-form-field
+      *ngIf="idx.type === 'multi_string'"
+      class="w-100 prefix-alignment custom-fields">
+      <span
+        matPrefix
+        class="d-flex flex-nowrap align-items-center justify-content-between me-2 mt-2"
         [matTooltip]="idx.description">
         {{idx.name}}
         <span class="text-muted ms-1">|</span>
