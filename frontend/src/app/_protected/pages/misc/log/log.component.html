@@ -21,8 +21,12 @@
 
         <!-- Loading skeleton -->
         <ng-container *ngIf="isLoading;else dataReady">
-          <app-loading-skeleton [amount]="6" [colClass]="'col-12'" [blockHeight]="'40px'"
-            [hasShadow]="false"></app-loading-skeleton>
+          <app-loading-skeleton
+            [amount]="6"
+            [colClass]="'col-12'"
+            [blockHeight]="'40px'"
+            [hasShadow]="false">
+          </app-loading-skeleton>
         </ng-container>
 
         <ng-template #dataReady>
@@ -59,7 +63,7 @@
                 <th mat-header-cell *matHeaderCellDef class="ps-sm-3"> Action </th>
                 <td mat-cell *matCellDef="let element" class="ps-sm-3 text-nowrap"
                   [class.text-danger]="element?.type === 'error'">
-                  <button mat-button color="primary" (click)="viewException(element)">
+                  <button mat-button color="primary" (click)="showDetails(element)">
                     Show details
                   </button>
                 </td>
@@ -69,10 +73,14 @@
               <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
             </table>
 
-
           </div>
 
-          <mat-paginator [length]="count" [(pageIndex)]="currentPage" [pageSize]="pageSize" (page)="page($event)"
+          <!-- Pager -->
+          <mat-paginator
+            [length]="count"
+            [(pageIndex)]="currentPage"
+            [pageSize]="pageSize"
+            (page)="page($event)"
             aria-label="Select page">
           </mat-paginator>
 
