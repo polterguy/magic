@@ -41,21 +41,6 @@ export class LogComponent implements OnInit {
     this.getCount();
   }
 
-  getItems() {
-    this.logService.list(
-      this.pageOffset.length > 0 ? this.pageOffset[this.pageOffset.length - 1] : null,
-      this.pageSize,
-      this.filter).subscribe({
-      next: (logitems) => {
-        this.dataSource = logitems || [];
-        this.isLoading = false;
-      },
-      error: (error: any) => {
-        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
-      }
-    });
-  }
-
   page(event: PageEvent) {
     this.currentPage = event.pageIndex;
     if (event.previousPageIndex < event.pageIndex) {
@@ -83,6 +68,21 @@ export class LogComponent implements OnInit {
   /*
    * Private helper methods.
    */
+
+  private getItems() {
+    this.logService.list(
+      this.pageOffset.length > 0 ? this.pageOffset[this.pageOffset.length - 1] : null,
+      this.pageSize,
+      this.filter).subscribe({
+      next: (logitems) => {
+        this.dataSource = logitems || [];
+        this.isLoading = false;
+      },
+      error: (error: any) => {
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+      }
+    });
+  }
 
   private getCount() {
     this.logService.count(this.filter).subscribe({

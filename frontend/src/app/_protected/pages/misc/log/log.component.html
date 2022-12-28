@@ -79,7 +79,10 @@
                 <th mat-header-cell *matHeaderCellDef class="ps-sm-3"> Action </th>
                 <td mat-cell *matCellDef="let element" class="ps-sm-3 text-nowrap"
                   [class.text-danger]="element?.type === 'error'">
-                  <button mat-button color="primary" (click)="showDetails(element)">
+                  <button
+                    mat-button
+                    color="primary"
+                    (click)="showDetails(element)">
                     Show details
                   </button>
                 </td>
