@@ -166,6 +166,13 @@ tasks.create:x:@.task-id
                   // Deleting task
                   tasks.delete:x:@.task-id
 
+                  // Signaling root users in the frontend
+                  sockets.signal:magic.backend.message
+                     roles:root
+                     args
+                        message:Training of your OpenAI model succeeded!
+                        type:success
+
             else-if
                eq:x:@http.get/*/content/*/status
                   .:failed
@@ -176,6 +183,13 @@ tasks.create:x:@.task-id
 
                   // Deleting task
                   tasks.delete:x:@.task-id
+
+                  // Signaling root users in the frontend
+                  sockets.signal:magic.backend.message
+                     roles:root
+                     args
+                        message:Training of your OpenAI model FAILED!
+                        type:error
 
       else
 
