@@ -1,6 +1,7 @@
+
 <h3 mat-dialog-title class="mb-1">SMTP settings</h3>
 
-<p class="text-muted mb-4">Set your email server configuration.</p>
+<p class="text-muted mb-4">Changes your email SMTP settings</p>
 
 <form [formGroup]="smtpForm">
   <div mat-dialog-content>
@@ -8,75 +9,140 @@
     <div class="row">
 
       <div class="col-sm-6 col-12">
+
         <mat-form-field class="w-100 text-prefix">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
+          <span
+            matPrefix
+            class="d-flex flex-nowrap align-items-center justify-content-between me-3">
             SMTP host
           </span>
-
-          <input matInput type="text" formControlName="host" name="host" />
+          <input
+            matInput
+            type="text"
+            formControlName="host"
+            autocomplete="off"
+            name="host" />
         </mat-form-field>
+
       </div>
 
       <div class="col-sm-6 col-12">
+
         <mat-form-field class="w-100 text-prefix">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
+          <span
+            matPrefix
+            class="d-flex flex-nowrap align-items-center justify-content-between me-3">
             SMTP port
           </span>
-
-          <input matInput type="number" formControlName="port" name="port" />
+          <input
+            matInput
+            type="number"
+            formControlName="port"
+            name="port" />
         </mat-form-field>
+
       </div>
 
       <div class="col-sm-6 col-12">
+
         <mat-form-field class="w-100 text-prefix">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
+          <span
+            matPrefix
+            class="d-flex flex-nowrap align-items-center justify-content-between me-3">
             Name
           </span>
-
-          <input matInput type="text" formControlName="name" name="name" />
+          <input
+            matInput
+            type="text"
+            formControlName="name"
+            name="name" />
         </mat-form-field>
+
       </div>
 
       <div class="col-sm-6 col-12">
+
         <mat-form-field class="w-100 text-prefix">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
+          <span
+            matPrefix
+            class="d-flex flex-nowrap align-items-center justify-content-between me-3">
             Username
           </span>
-
-          <input matInput type="text" formControlName="username" name="username" />
+          <input
+            matInput
+            type="text"
+            formControlName="username"
+            name="username" />
         </mat-form-field>
+
       </div>
 
       <div class="col-sm-6 col-12">
+
         <mat-form-field class="w-100 text-prefix">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
+          <span
+            matPrefix
+            class="d-flex flex-nowrap align-items-center justify-content-between me-3">
             Email address
           </span>
-
-          <input matInput type="text" formControlName="address" name="address" />
+          <input
+            matInput
+            type="text"
+            formControlName="address"
+            name="address" />
         </mat-form-field>
+
       </div>
 
       <div class="col-sm-6 col-12">
+
         <mat-form-field class="w-100 text-prefix">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
+          <span
+            matPrefix
+            class="d-flex flex-nowrap align-items-center justify-content-between me-3">
             Password
           </span>
-
-          <input matInput type="text" formControlName="password" name="password" />
+          <input
+            matInput
+            type="text"
+            formControlName="password"
+            name="password" />
         </mat-form-field>
+
       </div>
 
       <div class="col-12 d-flex justify-content-end">
-        <p>
-          <mat-checkbox formControlName="secure" name="secure" color="primary"> Secure</mat-checkbox>
-        </p>
+
+        <mat-checkbox
+          formControlName="secure"
+          name="secure"
+          class="mb-2"
+          color="primary">
+          Secure
+        </mat-checkbox>
+
       </div>
     </div>
   </div>
 
   <div mat-dialog-actions [align]="'end'">
-    <button mat-button mat-dialog-close type="button" color="primary">Cancel</button>
-    <button mat-flat-button type="submit" color="primary" (click)="submit()" class="px-5">Save</button>
+
+    <button
+      mat-button
+      mat-dialog-close
+      type="button"
+      color="primary">
+      Cancel
+    </button>
+
+    <button
+      mat-flat-button
+      type="submit"
+      color="primary"
+      (click)="submit()"
+      class="px-5">
+      Save
+    </button>
+
   </div>
 </form>
