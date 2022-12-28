@@ -146,7 +146,7 @@ export class HeaderComponent implements OnInit {
           },
           {
             name: 'Cryptography',
-            url: '/server-key-setting',
+            url: '/cryptography',
             exact: false,
           },
           {

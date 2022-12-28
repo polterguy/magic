@@ -90,7 +90,7 @@ const routes: Routes = [
         loadChildren: () => import('./_protected/pages/misc/log/_module/log.module').then(m => m.LogModule)
       },
       {
-        path: 'server-key-setting',
+        path: 'cryptography',
         loadChildren: () => import('./_protected/pages/user/cryptography/_module/server-key.module').then(m => m.ServerKeyModule)
       },
       {
