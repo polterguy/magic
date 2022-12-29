@@ -9,17 +9,17 @@
 
       <mat-tab>
 
-        <ng-template mat-tab-label>Add<span class="d-sm-inline d-none px-1"> new</span> database</ng-template>
+        <ng-template mat-tab-label>Manage</ng-template>
 
         <ng-template matTabContent>
-          <app-add-new-database (dbTypes)="passDbTypesToParent($event)"></app-add-new-database>
+          <app-manage-databases (dbTypes)="passDbTypesToParent($event)"></app-manage-databases>
         </ng-template>
 
       </mat-tab>
 
       <mat-tab>
 
-        <ng-template mat-tab-label>Connect<span class="d-sm-inline d-none ps-1"> to database</span></ng-template>
+        <ng-template mat-tab-label>Connect</ng-template>
 
         <ng-template matTabContent>
           <app-connect [databaseTypes]="databaseTypes"></app-connect>

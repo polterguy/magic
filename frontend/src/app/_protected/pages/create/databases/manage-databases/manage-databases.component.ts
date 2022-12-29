@@ -21,12 +21,16 @@ import { DefaultDatabaseType } from 'src/app/_general/models/default-database-ty
 import { Databases } from 'src/app/_general/models/databases.model';
 import { BazarApp } from 'src/app/models/bazar-app.model';
 
+/**
+ * Helper component allowing you to manage your existing locally installed
+ * SQLite databases.
+ */
 @Component({
-  selector: 'app-add-new-database',
-  templateUrl: './add-new-database.component.html',
-  styleUrls: ['./add-new-database.component.scss']
+  selector: 'app-manage-databases',
+  templateUrl: './manage-databases.component.html',
+  styleUrls: ['./manage-databases.component.scss']
 })
-export class AddNewDatabaseComponent implements OnInit, OnDestroy {
+export class ManageDatabasesComponent implements OnInit, OnDestroy {
 
   @Output() dbTypes: EventEmitter<string[]> = new EventEmitter<string[]>();
 
