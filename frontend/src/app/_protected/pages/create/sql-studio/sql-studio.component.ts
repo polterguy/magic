@@ -270,6 +270,11 @@ export class SQLStudioComponent implements OnInit {
       return;
     }
 
+    if (this.selectedDbType === 'mssql') {
+      this.generalService.showFeedback('SQL Server does not allow us to easily view DDL');
+      return;
+    }
+
     // Retrieving tables and sorting such that tables with foreign keys to other tables ends up after the table they're pointing to.
     let tables = this.databases.find((db: any) => db.name === this.selectedDatabase).tables || [];
     if (tables.length === 0) {
