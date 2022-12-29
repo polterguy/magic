@@ -160,11 +160,18 @@
           </mat-panel-title>
         </mat-expansion-panel-header>
 
-        <div class="justify-content-between d-flex w-100 open-files" *ngFor="let item of openFiles;let index=index"
-          [id]="currentFileData.name === item.name ? 'active' : ''" (click)="openFile(item)"
+        <div
+          class="justify-content-between d-flex w-100 open-files"
+          *ngFor="let item of openFiles;let index=index"
+          [id]="currentFileData.name === item.name ? 'active' : ''"
+          (click)="openFile(item)"
           [class.active-file]="currentFileData.name === item.name">
 
-          <button mat-button class="justify-content-start d-flex w-100">{{item.name}}</button>
+          <button
+            mat-button
+            class="justify-content-start d-flex w-100">
+            {{item.name}}
+          </button>
 
           <button mat-icon-button (click)="closeFileImpl(item)">
             <mat-icon>close</mat-icon>
