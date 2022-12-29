@@ -15,6 +15,7 @@ import { SqlService } from '../../../../../_general/services/sql.service';
 import { DiagnosticsService } from '../../../../../_general/services/diagnostics.service';
 import { ConfigService } from '../../../../../_general/services/config.service';
 import { DefaultDatabaseType } from 'src/app/_general/models/default-database-type.model';
+import { Response } from 'src/app/models/response.model';
 
 /**
  * Helper component allowing user to connect to existing database, and/or create new catalogs
@@ -87,6 +88,7 @@ export class ConnectComponent implements OnInit {
     this.generalService.showLoading();
     this.configService.connectionStringValidity(this.databaseType, this.connectionString).subscribe({
       next: (res: any) => {
+
         if (res.result === 'success') {
           if (connectAfterTesting) {
             this.connect();
@@ -95,13 +97,16 @@ export class ConnectComponent implements OnInit {
           this.waitingTest = false;
           this.generalService.showFeedback('Connection successful', 'successMessage');
           this.generalService.hideLoading();
+
         } else if (res.result === 'failure') {
+
           this.waitingTest = false;
           this.generalService.showFeedback(res.message, 'errorMessage', 'Ok', 5000);
           this.generalService.hideLoading();
         }
       },
       error: (error: any) => {
+
         this.waitingTest = false;
         this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
         this.generalService.hideLoading();
@@ -171,8 +176,8 @@ export class ConnectComponent implements OnInit {
         item.isClicked = false;
         this.generalService.hideLoading();
       },
-      error: () => {
-        this.generalService.showFeedback('Something went wrong, please try again later.', 'errorMessage');
+      error: (error: any) => {
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
         item.isClicked = false;
         this.generalService.hideLoading();
       }
@@ -189,6 +194,7 @@ export class ConnectComponent implements OnInit {
         this.ip_address = result.server_ip || 'unknown';
         this.cdr.detectChanges();
       },
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
     });
   }
 
@@ -214,21 +220,21 @@ export class ConnectComponent implements OnInit {
         this.isLoading = false;
         this.getStatus();
       },
-      error: (error: any) => this.generalService.showFeedback('Something went wrong, please refresh the page.', 'errorMessage')
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
     });
   }
 
   private getStatus() {
     this.databases.forEach((element: any) => {
       this.configService.connectionStringValidity(element.dbTypeValue, element.cString).subscribe({
-        next: (res: any) => {
-          if (res?.result === 'failure') {
+        next: (res: Response) => {
+          if (res.result === 'failure') {
             element.status = 'Down';
           } else {
             element.status = 'Live';
           }
         },
-        error: (res: any) => {
+        error: () => {
           element.status = 'Down';
         }
       })
@@ -236,12 +242,10 @@ export class ConnectComponent implements OnInit {
   }
 
   private connect() {
-    const data: any = {
-      databaseType: this.databaseType,
-      name: this.cStringName,
-      connectionString: this.connectionString
-    }
-    this.sqlService.addConnectionString(data).subscribe({
+    this.sqlService.addConnectionString(
+      this.databaseType,
+      this.cStringName,
+      this.connectionString).subscribe({
       next: () => {
         this.generalService.showFeedback('Successfully connected.', 'successMessage');
         this.waitingTest = false;

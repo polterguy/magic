@@ -88,8 +88,12 @@ export class SqlService {
       connectionString);
   }
 
-  addConnectionString(data: any) {
-    return this.httpService.post('/magic/system/sql/connection-string', data);
+  addConnectionString(databaseType: string, name: string, connectionString: string) {
+    return this.httpService.post('/magic/system/sql/connection-string', {
+      databaseType,
+      name,
+      connectionString,
+    });
   }
 
   deleteConnectionString(databaseType: string, connectionStringName: string) {
