@@ -2,10 +2,10 @@
 
   <!-- Connect to existing database section -->
   <div class="col-12">
-    <h3 class="fw-bold">Connect to existing database</h3>
+    <h3 class="fw-bold">Add connection string</h3>
     <p class="text-muted">
-      Connect to an existing database by providing a connection name and connection string. Your cloudlet's
-      IP address is {{ip_address}}.
+      Connect to an existing database by providing a connection name and a connection string substituting
+      catalog name with {{'{'}}database{{'}'}}. Your cloudlet's IP address is {{ip_address}}.
 
       <button
         *ngIf="ip_address !== 'unknown'"
@@ -102,7 +102,7 @@
 
   <!-- List of database connection strings -->
   <div class="col-12 mt-5">
-    <h3 class="fw-bold">List of connected databases</h3>
+    <h3 class="fw-bold">Connection strings</h3>
 
     <!-- Loading skeleton -->
     <ng-container *ngIf="isLoading">
@@ -122,13 +122,13 @@
 
         <!-- dbType Column -->
         <ng-container matColumnDef="dbType">
-          <th mat-header-cell *matHeaderCellDef class="text-nowrap ps-0">Database type</th>
+          <th mat-header-cell *matHeaderCellDef class="text-nowrap ps-0">Type</th>
           <td mat-cell *matCellDef="let element" class="ps-0">{{element?.dbType}}</td>
         </ng-container>
 
         <!-- cStringName Column -->
         <ng-container matColumnDef="cStringName">
-          <th mat-header-cell *matHeaderCellDef class="text-nowrap ps-0">Connection name</th>
+          <th mat-header-cell *matHeaderCellDef class="text-nowrap ps-0">Name</th>
           <td mat-cell *matCellDef="let element" class="ps-0 text-truncate">{{element?.cStringKey}}</td>
         </ng-container>
 
@@ -158,7 +158,7 @@
               <button
                 mat-button
                 color="primary"
-                (click)="getDatabasesList(element)"
+                (click)="manageCatalogs(element)"
                 [disabled]="element.isClicked === true || element.status !== 'Live'">
                 Manage
               </button>

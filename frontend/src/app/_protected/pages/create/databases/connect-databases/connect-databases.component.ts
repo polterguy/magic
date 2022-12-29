@@ -158,7 +158,7 @@ export class ConnectComponent implements OnInit {
     });
   }
 
-  getDatabasesList(item: any) {
+  manageCatalogs(item: any) {
     item.isClicked = true;
     this.generalService.showLoading();
     this.sqlService.getDatabaseMetaInfo(item.dbTypeValue, item.cStringKey).subscribe({
