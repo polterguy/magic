@@ -6,16 +6,17 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { Response } from '../../../../../models/common/response.model';
+import { Response } from '../../../../../../models/common/response.model';
 import { BazarService } from 'src/app/_general/services/bazar.service';
 
 /**
- * 
+ * Helper component showing user information about some specified plugin database that can
+ * be installed from the Bazar.
  */
 @Component({
-  selector: 'app-view-db',
-  templateUrl: './view-db.component.html',
-  styleUrls: ['./view-db.component.scss']
+  selector: 'app-view-plugin-database',
+  templateUrl: './view-plugin-database.component.html',
+  styleUrls: ['./view-plugin-database.component.scss']
 })
 export class ViewDbComponent implements OnInit {
 

@@ -11,7 +11,7 @@ import { GeneralService } from 'src/app/_general/services/general.service';
 import { environment } from 'src/environments/environment';
 import { FileService } from '../../hyper-ide/_services/file.service';
 import { AppManifest } from '../../../../../_general/models/app-manifest';
-import { ViewDbComponent } from '../components/view-db/view-db.component';
+import { ViewDbComponent } from './components/view-plugin-database/view-plugin-database.component';
 import { SqlService } from '../../../../../_general/services/sql.service';
 import { BazarService } from 'src/app/_general/services/bazar.service';
 import { CacheService } from 'src/app/_general/services/cache.service';

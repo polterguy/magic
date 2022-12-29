@@ -3,20 +3,24 @@
  * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { SqlService } from '../../../../../../_general/services/sql.service';
+import { SqlService } from '../../../../../../../_general/services/sql.service';
 
+/**
+ * Helper component allowing user to provide name of a new catalog he or she wants
+ * to create in the specified database instance.
+ */
 @Component({
   selector: 'app-catalog-name',
   templateUrl: './catalog-name.component.html'
 })
-export class CatalogNameComponent implements OnInit {
+export class CatalogNameComponent {
 
-  public waitingCreation: boolean = false;
+  waitingCreation: boolean = false;
 
-  public name: string = '';
+  name: string = '';
 
   constructor(
     private sqlService: SqlService,
@@ -24,13 +28,12 @@ export class CatalogNameComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<CatalogNameComponent>) { }
 
-  ngOnInit(): void {
-  }
-
   public save() {
+
     if (this.name === '') {
       this.generalService.showFeedback('Name is required.', 'errorMessage');
     }
+
     this.waitingCreation = true;
     this.sqlService.createDatabase(
       this.data.dbTypeValue,
