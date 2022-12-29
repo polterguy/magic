@@ -9,9 +9,9 @@ import { Observable, Subscription } from 'rxjs';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { SqlService } from 'src/app/_general/services/sql.service';
-import { AddFieldComponent } from '../add-field-or-key/add-field-or-key.component';
-import { AddMigrateScriptComponent } from '../apply-migrate-script/apply-migrate-script.component';
-import { ExportDdlComponent } from '../export-ddl/export-ddl.component';
+import { AddFieldComponent } from './components/add-field-or-key/add-field-or-key.component';
+import { AddMigrateScriptComponent } from './components/apply-migrate-script/apply-migrate-script.component';
+import { ExportDdlComponent } from './components/export-ddl/export-ddl.component';
 
 /**
  * Helper component for SQL Studio allowing user to view database in table view, and

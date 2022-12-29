@@ -53,9 +53,17 @@
 
           <div class="col-lg-6 col-5">
             <p class="text-truncate my-0 table-icons">
-              <mat-icon *ngIf="column.primary" title="Primary key">key</mat-icon>
-              <mat-icon *ngIf="column?.nullable === true && !column.primary" class="flipped text-muted"
-                title="Nullable">motion_photos_off</mat-icon>
+              <mat-icon
+                *ngIf="column.primary"
+                title="Primary key">
+                key
+              </mat-icon>
+              <mat-icon
+                *ngIf="column?.nullable === true && !column.primary"
+                class="flipped text-muted"
+                title="Nullable">
+                motion_photos_off
+              </mat-icon>
               {{column.name}}
             </p>
           </div>
