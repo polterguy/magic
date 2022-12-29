@@ -18,14 +18,14 @@ import { BazarService } from 'src/app/_general/services/bazar.service';
   templateUrl: './view-plugin-database.component.html',
   styleUrls: ['./view-plugin-database.component.scss']
 })
-export class ViewDbComponent implements OnInit {
+export class ViewPluginDatabaseComponent implements OnInit {
 
   public installed: boolean = false;
   public canInstall: boolean = false;
   public needsCoreUpdate: boolean = false;
 
   constructor(
-    private dialogRef: MatDialogRef<ViewDbComponent>,
+    private dialogRef: MatDialogRef<ViewPluginDatabaseComponent>,
     private bazarService: BazarService,
     private generalService: GeneralService,
     @Inject(MAT_DIALOG_DATA) public data: any) { }
