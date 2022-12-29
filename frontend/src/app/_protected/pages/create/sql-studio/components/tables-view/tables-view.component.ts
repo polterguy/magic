@@ -166,6 +166,10 @@ export class TablesViewComponent implements OnInit, OnDestroy {
    * Invoked when user wants to view DDL for one specific table.
    */
   public viewTableDDL(tableName: string) {
+    if (this.selectedDbType === 'mssql') {
+      this.generalService.showFeedback('SQL Server does not allow us to easily view DDL');
+      return;
+    }
     this.generalService.showLoading();
 
     this.sqlService.exportDdl(

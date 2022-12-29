@@ -21,13 +21,21 @@
           <p class="fw-bold mb-0 table-title mx-3">{{item.name}}</p>
           <div class="d-flex align-items-center justify-content-between action-btn">
 
-            <button mat-icon-button color="primary" (click)="addColumnOrKey(item)" title="Add field ...">
+            <button
+              mat-icon-button
+              color="primary"
+              (click)="addColumnOrKey(item)"
+              title="Add field ...">
               <mat-icon>add</mat-icon>
             </button>
 
             <div class="me-1"></div>
 
-            <button mat-icon-button color="primary" title="Export table ..." (click)="viewTableDDL(item.name)">
+            <button
+              mat-icon-button
+              color="primary"
+              title="Export table ..."
+              (click)="viewTableDDL(item.name)">
               <mat-icon>file_download</mat-icon>
             </button>
 
