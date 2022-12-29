@@ -11,7 +11,7 @@ import { MaterialModule } from 'src/app/material.module';
 import { DatabasesComponent } from '../databases.component';
 import { FormsModule } from '@angular/forms';
 import { SharedModule } from 'src/app/shared.module';
-import { ViewDbComponent } from '../manage-databases/components/view-plugin-database/view-plugin-database.component';
+import { ViewPluginDatabaseComponent } from '../manage-databases/components/view-plugin-database/view-plugin-database.component';
 import { ConnectComponent } from '../connect-databases/connect-databases.component';
 import { ManageDatabasesComponent } from '../manage-databases/manage-databases.component';
 import { ManageCatalogsComponent } from '../connect-databases/components/manage-catalogs/manage-catalogs.component';
@@ -22,7 +22,7 @@ import { CatalogNameComponent } from '../connect-databases/components/catalog-na
     DatabasesComponent,
     ManageDatabasesComponent,
     ConnectComponent,
-    ViewDbComponent,
+    ViewPluginDatabaseComponent,
     ManageCatalogsComponent,
     CatalogNameComponent
   ],
