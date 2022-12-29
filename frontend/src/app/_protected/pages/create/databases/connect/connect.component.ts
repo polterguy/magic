@@ -14,6 +14,7 @@ import { ViewDbListComponent } from '../components/view-db-list/view-db-list.com
 import { SqlService } from '../../../../../_general/services/sql.service';
 import { DiagnosticsService } from '../../../../../_general/services/diagnostics.service';
 import { ConfigService } from '../../../../../_general/services/config.service';
+import { DefaultDatabaseType } from 'src/app/_general/models/default-database-type.model';
 
 /**
  * Helper component allowing user to connect to existing database, and/or create new catalogs
@@ -27,6 +28,8 @@ import { ConfigService } from '../../../../../_general/services/config.service';
 export class ConnectComponent implements OnInit {
 
   private configFile: any = {};
+
+  databaseTypes: DefaultDatabaseType = null;
 
   dbTypes: any = [
     {name: 'MySQL', type: 'mysql'},
@@ -57,6 +60,7 @@ export class ConnectComponent implements OnInit {
   ngOnInit() {
     this.loadConfig();
     this.getIPAddress();
+    this.getDefaultDbType();
   }
 
   copyConnectionString(element: any) {
@@ -64,67 +68,51 @@ export class ConnectComponent implements OnInit {
     this.generalService.showFeedback('Connection string can be found on your clipboard');
   }
 
-  getIPAddress() {
-    this.diagnosticService.getSystemReport().subscribe({
-      next: (result: any) => {
-        this.ip_address = result.server_ip || 'unknown';
-        this.cdr.detectChanges();
-      },
-    });
-  }
-
   copyIpAddress() {
     this.clipboard.copy(this.ip_address);
     this.generalService.showFeedback('Cloudlet\'s IP address can be found on your clipboard');
   }
 
-  testConnectionString(toTestBeforeSubmit?: boolean) {
+  testConnectionString(connectAfterTesting: boolean) {
 
     // Sanity checking input
     if (this.cStringName === '' || this.connectionString === '') {
       this.generalService.showFeedback('Please provide both connection name and string', 'errorMessage');
     }
-
-    if (this.validateConnectionString() === true) {
-      if (this.checkName() === true) {
-        this.waitingTest = true;
-        const data: any = {
-          databaseType: this.databaseType,
-          connectionString: this.connectionString,
-        };
-        this.generalService.showLoading();
-        this.configService.connectionStringValidity(data).subscribe({
-          next: (res: any) => {
-            if (res.result === 'success') {
-              if (toTestBeforeSubmit !== true) {
-                this.waitingTest = false;
-                this.generalService.showFeedback('Connection successful', 'successMessage');
-                this.generalService.hideLoading();
-                return;
-              } else {
-                this.connect();
-              }
-            } else if (res.result === 'failure') {
-              this.waitingTest = false;
-              this.generalService.showFeedback(res.message, 'errorMessage', 'Ok', 5000);
-              this.generalService.hideLoading();
-            }
-          },
-          error: (error: any) => {
-            this.waitingTest = false;
-            this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
-            this.generalService.hideLoading();
-          },
-        });
-      } else {
-        this.generalService.showFeedback('Connection string already exists', 'errorMessage', 'Ok', 3000);
-      }
-    } else {
-      this.generalService.showFeedback('Connection string needs a {database} declaration', 'errorMessage', 'Ok', 3000);
+    if (!this.connectionString.includes('{database}')) {
+      this.generalService.showFeedback('Your connection string must have a {database} part', 'errorMessage');
     }
+    if (this.configFile.databases[this.databaseType]?.[this.cStringName]) {
+      this.generalService.showFeedback('A connection string with that name already exists', 'errorMessage');
+    }
+
+    this.waitingTest = true;
+    this.generalService.showLoading();
+    this.configService.connectionStringValidity(this.databaseType, this.connectionString).subscribe({
+      next: (res: any) => {
+        if (res.result === 'success') {
+          if (connectAfterTesting) {
+            this.connect();
+            return;
+          }
+          this.waitingTest = false;
+          this.generalService.showFeedback('Connection successful', 'successMessage');
+          this.generalService.hideLoading();
+        } else if (res.result === 'failure') {
+          this.waitingTest = false;
+          this.generalService.showFeedback(res.message, 'errorMessage', 'Ok', 5000);
+          this.generalService.hideLoading();
+        }
+      },
+      error: (error: any) => {
+        this.waitingTest = false;
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+        this.generalService.hideLoading();
+      },
+    });
   }
 
-  deleteDb(item: any) {
+  deleteConnectionString(item: any) {
     this.dialog.open(ConfirmationDialogComponent, {
       width: '500px',
       data: {
@@ -198,12 +186,22 @@ export class ConnectComponent implements OnInit {
    * Private helper methods
    */
 
-  private validateConnectionString() {
-    return this.connectionString.includes('{database}')
+  private getIPAddress() {
+    this.diagnosticService.getSystemReport().subscribe({
+      next: (result: any) => {
+        this.ip_address = result.server_ip || 'unknown';
+        this.cdr.detectChanges();
+      },
+    });
   }
 
-  private checkName() {
-    return !this.configFile.databases[this.databaseType]?.[this.cStringName] ?? false;
+  private getDefaultDbType() {
+    this.sqlService.defaultDatabaseType().subscribe({
+      next: (result: DefaultDatabaseType) => {
+        this.databaseTypes = result;
+      },
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+    });
   }
 
   private loadConfig() {
@@ -234,11 +232,7 @@ export class ConnectComponent implements OnInit {
 
   private getStatus() {
     this.databases.forEach((element: any) => {
-      const data: any = {
-        databaseType: element.dbTypeValue,
-        connectionString: element.cString,
-      };
-      this.configService.connectionStringValidity(data).subscribe({
+      this.configService.connectionStringValidity(element.dbTypeValue, element.cString).subscribe({
         next: (res: any) => {
           if (res?.result === 'failure') {
             element.status = 'Down';

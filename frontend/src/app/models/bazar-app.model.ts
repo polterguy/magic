@@ -54,4 +54,14 @@ export class BazarApp {
    * When the app was published.
    */
   created: Date;
+
+  /**
+   * If true, app has update in Magic Bazar.
+   */
+  hasUpdate?: boolean = false;
+
+  /**
+   * If app has update this will be the new available version from the Bazar.
+   */
+  newVersion?: string = null;
 }
