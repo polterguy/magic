@@ -76,17 +76,20 @@ export class ConnectComponent implements OnInit {
     // Sanity checking input
     if (this.cStringName === '' || this.connectionString === '') {
       this.generalService.showFeedback('Please provide both connection name and string', 'errorMessage');
+      return;
     }
     if (!this.connectionString.includes('{database}')) {
       this.generalService.showFeedback('Your connection string must have a {database} part', 'errorMessage');
+      return;
     }
     if (this.configFile.databases[this.databaseType]?.[this.cStringName]) {
       this.generalService.showFeedback('A connection string with that name already exists', 'errorMessage');
+      return;
     }
 
     this.waitingTest = true;
     this.generalService.showLoading();
-    this.configService.connectionStringValidity(this.databaseType, this.connectionString).subscribe({
+    this.configService.testConnectionString(this.databaseType, this.connectionString).subscribe({
       next: (res: any) => {
 
         if (res.result === 'success') {
@@ -95,7 +98,7 @@ export class ConnectComponent implements OnInit {
             return;
           }
           this.waitingTest = false;
-          this.generalService.showFeedback('Connection successful', 'successMessage');
+          this.generalService.showFeedback('Successfully connected to database', 'successMessage');
           this.generalService.hideLoading();
 
         } else if (res.result === 'failure') {
@@ -226,7 +229,7 @@ export class ConnectComponent implements OnInit {
 
   private getStatus() {
     this.databases.forEach((element: any) => {
-      this.configService.connectionStringValidity(element.dbTypeValue, element.cString).subscribe({
+      this.configService.testConnectionString(element.dbTypeValue, element.cString).subscribe({
         next: (res: Response) => {
           if (res.result === 'failure') {
             element.status = 'Down';
