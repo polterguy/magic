@@ -119,7 +119,7 @@ export class ConfigService {
     return this.httpService.get('/magic/system/sql/default-database-type');
   }
 
-  connectionStringValidity(databaseType: string, connectionString: string) {
+  testConnectionString(databaseType: string, connectionString: string) {
     return this.httpService.post('/magic/system/sql/test-connection-string', {
       databaseType,
       connectionString,
