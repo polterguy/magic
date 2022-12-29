@@ -149,7 +149,7 @@ export class ConnectComponent implements OnInit {
           }
         });
       }
-    })
+    });
   }
 
   createCatalog(item: any) {
@@ -183,7 +183,7 @@ export class ConnectComponent implements OnInit {
         item.isClicked = false;
         this.generalService.hideLoading();
       }
-    })
+    });
   }
 
   /*
