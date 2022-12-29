@@ -33,10 +33,7 @@ import { DefaultDatabaseType } from 'src/app/_general/models/default-database-ty
 export class ManageDatabasesComponent implements OnInit, OnDestroy {
 
   private appDetails: any = [];
-  private connectionString: string = '';
   private hubConnection: HubConnection = null;
-
-  @Input() databaseTypes: DefaultDatabaseType;
 
   displayedColumns: string[] = ['name', 'tables', 'actions'];
   databases: any = [];
@@ -60,7 +57,7 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.getPluginDatabases();
-    this.getConnectionString();
+    this.getDatabases();
   }
 
   createNewDatabase() {
@@ -70,7 +67,7 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
     }
     this.sqlService.createDatabase(
       'sqlite',
-      this.connectionString,
+      'generic',
       this.databaseName).subscribe({
         next: () => {
           this.generalService.showFeedback('Database successfully created', 'successMessage');
@@ -185,7 +182,7 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
       if (result === 'confirm') {
         this.sqlService.dropDatabase(
           'sqlite',
-          this.connectionString,
+          'generic',
           item.name).subscribe({
             next: () => {
               this.generalService.showFeedback('Database successfully deleted', 'successMessage');
@@ -274,11 +271,11 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
   private getDatabases() {
     this.existingDatabases = [];
     this.isLoadingDbs = true;
-    this.sqlService.getDatabaseMetaInfo(this.databaseTypes.default, this.connectionString).subscribe({
+    this.sqlService.getDatabaseMetaInfo('sqlite', 'generic').subscribe({
         next: (res: Databases) => {
           res.databases.map((item: any) => {
-            item.type = this.databaseTypes.default;
-            item.connectionString = this.connectionString;
+            item.type = 'sqlite';
+            item.connectionString = 'generic';
           });
           this.existingDatabases = [...this.existingDatabases, ...res.databases];
 
@@ -288,18 +285,6 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
         },
         error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
       });
-  }
-
-  private getConnectionString() {
-    this.sqlService.connectionStrings(this.databaseTypes.default).subscribe({
-      next: (connectionStrings: any) => {
-        if (connectionStrings) {
-          this.connectionString = Object.keys(connectionStrings)[0];
-          this.getDatabases();
-        }
-      },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
-    });
   }
 
   private downloadBazarItem(app: BazarApp, token: string) {
@@ -382,6 +367,6 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
           error: (error: any) => { this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage') }
         });
       }
-    })
+    });
   }
 }
