@@ -29,8 +29,6 @@ export class ConnectComponent implements OnInit {
 
   private configFile: any = {};
 
-  databaseTypes: DefaultDatabaseType = null;
-
   dbTypes: any = [
     {name: 'MySQL', type: 'mysql'},
     {name: 'PostgreSQL', type: 'pgsql'},
@@ -60,7 +58,6 @@ export class ConnectComponent implements OnInit {
   ngOnInit() {
     this.loadConfig();
     this.getIPAddress();
-    this.getDefaultDbType();
   }
 
   copyConnectionString(element: any) {
@@ -192,15 +189,6 @@ export class ConnectComponent implements OnInit {
         this.ip_address = result.server_ip || 'unknown';
         this.cdr.detectChanges();
       },
-    });
-  }
-
-  private getDefaultDbType() {
-    this.sqlService.defaultDatabaseType().subscribe({
-      next: (result: DefaultDatabaseType) => {
-        this.databaseTypes = result;
-      },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
     });
   }
 
