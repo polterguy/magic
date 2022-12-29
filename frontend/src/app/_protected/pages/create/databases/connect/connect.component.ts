@@ -94,7 +94,7 @@ export class ConnectComponent implements OnInit {
 
         if (res.result === 'success') {
           if (connectAfterTesting) {
-            this.connect();
+            this.addConnectionString();
             return;
           }
           this.waitingTest = false;
@@ -122,14 +122,14 @@ export class ConnectComponent implements OnInit {
       width: '500px',
       data: {
         title: 'Delete connection string',
-        description_extra: `You are deleting the following connection string: <br/> <span class="fw-bold">${item.cStringKey}</span> from ${item.dbType}.<br/><br/> Do you want to continue?`,
+        description_extra: `You are deleting the following ${item.dbType} connection string: <br/> <span class="fw-bold">${item.cStringKey}</span>.<br/><br/>Do you want to continue?`,
         action_btn: 'Delete',
         action_btn_color: 'warn',
         bold_description: true,
         extra: {
           details: item,
           action: 'confirmInput',
-          fieldToBeTypedTitle: `Connection string's name`,
+          fieldToBeTypedTitle: `connection string's name`,
           fieldToBeTypedValue: item.cStringKey,
           icon: 'conversion_path',
         }
@@ -142,7 +142,6 @@ export class ConnectComponent implements OnInit {
             item.isClicked = false;
             this.generalService.showFeedback('Successfully deleted.', 'successMessage');
             this.databases = this.databases.filter((el: any) => item !== el);
-            this.cdr.detectChanges();
           },
           error: (error: any) => {
             item.isClicked = false;
@@ -244,7 +243,7 @@ export class ConnectComponent implements OnInit {
     });
   }
 
-  private connect() {
+  private addConnectionString() {
     this.sqlService.addConnectionString(
       this.databaseType,
       this.cStringName,
