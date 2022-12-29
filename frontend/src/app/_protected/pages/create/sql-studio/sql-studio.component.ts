@@ -29,9 +29,6 @@ export class SQLStudioComponent implements OnInit {
   private _hintTables: ReplaySubject<any> = new ReplaySubject();
   private _dbLoading: ReplaySubject<boolean> = new ReplaySubject();
 
-  /**
-   * List of all database types, including type and the human readable name of each.
-   */
   databaseTypes: any = [] = [
     {type: 'sqlite', name: 'SQLite'},
     {type: 'mysql', name: 'MySQL'},
@@ -39,55 +36,15 @@ export class SQLStudioComponent implements OnInit {
     {type: 'pgsql', name: 'PostgreSQL'},
   ];
 
-  /**
-   * The user's default database type.
-   */
   selectedDbType: string = '';
-
-  /**
-   * If true, automatic migration scripts have been turned on.
-   */
   migrate: boolean = false;
-
-  /**
-   * List of connection strings available for the selected database type.
-   */
   connectionStrings: string[] = [];
-
-  /**
-   * Currently selected connection string.
-   */
   selectedConnectionString: string = '';
-
-  /**
-   * Databases availkable to the user on the currently selected connection string.
-   */
   databases: any = [];
-
-  /**
-   * The user's currently selected database.
-   */
   selectedDatabase: string = '';
-
-  /**
-   * Specifies the view.
-   * will be used to switch between table and SQLview.
-   */
   sqlView: boolean = false;
-
-  /**
-   * Tables in the user's selected database.
-   */
   tables = this._tables.asObservable();
-
-  /**
-   * Hint tables for SQL CodeMirror editor.
-   */
   hintTables = this._hintTables.asObservable();
-
-  /**
-   * To watch for the changes in database changes.
-   */
   dbLoading = this._dbLoading.asObservable();
 
   constructor(
@@ -101,13 +58,9 @@ export class SQLStudioComponent implements OnInit {
 
     // Checking if we've got query parameters pointing to a specific database and catalog.
     this.activatedRoute.queryParams.subscribe((param: any) => {
-      if (param && param.dbName && param.dbType && param.dbCString) {
-        this.selectedDbType = param.dbType;
-        this.selectedConnectionString = param.dbCString;
-        this.selectedDatabase = param.dbName;
-      } else {
-        this.selectedDbType = 'sqlite';
-      }
+      this.selectedDbType = param.dbType ?? 'sqlite';
+      this.selectedConnectionString = param.dbCString ?? 'generic';
+      this.selectedDatabase = param.dbName ?? 'magic';
 
       // Retrieving default database type and all supported database types from backend.
       this._dbLoading.next(true);
@@ -119,14 +72,11 @@ export class SQLStudioComponent implements OnInit {
     });
   }
 
-  /**
-   * Retrieves the connection string of the default database.
-   */
-  public getConnectionStrings(selectedDbType: string, selectedConnectionString?: string) {
+  getConnectionStrings(selectedDbType: string, selectedConnectionString?: string) {
     this._dbLoading.next(true);
-    this.selectedConnectionString = '';
-    this.connectionStrings = [];
     this.selectedDbType = selectedDbType;
+    this.connectionStrings = [];
+    this.selectedConnectionString = selectedConnectionString ?? '';
 
     this.sqlService.connectionStrings(selectedDbType).subscribe({
       next: (connectionStrings: any) => {
@@ -148,10 +98,7 @@ export class SQLStudioComponent implements OnInit {
     });
   }
 
-  /**
-   * Retrieves a list of databases already available on the user's backend.
-   */
-  public getDatabases() {
+  getDatabases() {
     this._dbLoading.next(true);
     this.generalService.showLoading();
     this.databases = [];
@@ -181,10 +128,7 @@ export class SQLStudioComponent implements OnInit {
       });
   }
 
-  /**
-   * Invoked when user wants to create a new table.
-   */
-  public addNewTable() {
+  addNewTable() {
     this.dialog.open(NewTableComponent, {
       width: '500px'
     }).afterClosed().subscribe((result: any) => {
@@ -211,10 +155,7 @@ export class SQLStudioComponent implements OnInit {
     });
   }
 
-  /**
-   * Invoked for creating a new link table.
-   */
-  public createNewLinkTable() {
+  createNewLinkTable() {
     const tables: any = this.databases.find((db: any) => db.name === this.selectedDatabase).tables || [];
     if (tables.length === 0) {
       this.generalService.showFeedback('This database doesn\'t have tables.', 'errorMessage');
@@ -261,21 +202,14 @@ export class SQLStudioComponent implements OnInit {
     });
   }
 
-  /**
-   * Exports the entire database as DDL and shows in a modal window.
-   */
-  public viewDatabaseDDL() {
-
+  viewDatabaseDDL() {
     if (this.selectedDatabase === '') {
       return;
     }
-
     if (this.selectedDbType === 'mssql') {
       this.generalService.showFeedback('SQL Server does not allow us to easily view DDL');
       return;
     }
-
-    // Retrieving tables and sorting such that tables with foreign keys to other tables ends up after the table they're pointing to.
     let tables = this.databases.find((db: any) => db.name === this.selectedDatabase).tables || [];
     if (tables.length === 0) {
       this.generalService.showFeedback('This database doesn\'t have tables.');
@@ -327,10 +261,7 @@ export class SQLStudioComponent implements OnInit {
       });
   }
 
-  /**
-   * Invoked when user is changing his currently active database catalog.
-   */
-  public changeDatabase() {
+  changeDatabase() {
     const tables = this.databases.find((db: any) => db.name === this.selectedDatabase)?.tables || [];
     this._tables.next(tables);
     let hintTables = this.databases.find((db: any) => db.name === this.selectedDatabase)?.tables || [];
@@ -338,10 +269,7 @@ export class SQLStudioComponent implements OnInit {
     this._hintTables.next(Object.fromEntries(hintTables));
   }
 
-  /**
-   * Invoked when user wants to clear server side cache.
-   */
-  public clearServerCache() {
+  clearServerCache() {
     this.generalService.showLoading();
     this.cacheService.delete('magic.sql.databases.*').subscribe({
       next: () => {
@@ -356,8 +284,9 @@ export class SQLStudioComponent implements OnInit {
   }
 
   /*
-   * Open up apply migrate script dialog.
+   * Private helper methods
    */
+
   private applyMigration(sql: string) {
     if (!this.migrate) {
       return;

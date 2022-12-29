@@ -1,7 +1,9 @@
+
 <mat-card class="py-3">
   <mat-card-content>
 
     <div class="row align-items-stretch">
+
       <div class="col-lg-auto col-12 align-self-center">
         <p class="fw-bold mb-lg-0">Select a database</p>
       </div>
@@ -10,13 +12,19 @@
       <div class="col-md col-sm-6 col-12" [class.col-md-3]="dbLoading | async">
 
         <mat-form-field class="w-100 standalone-field mb-lg-0 mb-2">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+          <span
+            matPrefix
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>database</mat-icon>
             <span class="text-muted">|</span>
           </span>
-          <mat-select placeholder="Database type" [(ngModel)]="selectedDbType"
+          <mat-select
+            placeholder="Database type"
+            [(ngModel)]="selectedDbType"
             (selectionChange)="getConnectionStrings(selectedDbType)">
-            <mat-option *ngFor="let item of databaseTypes" [value]="item.type">{{item.name}}</mat-option>
+            <mat-option
+              *ngFor="let item of databaseTypes"
+              [value]="item.type">{{item.name}}</mat-option>
           </mat-select>
         </mat-form-field>
 
@@ -25,17 +33,28 @@
       <!-- Connection strings for currently selected database type -->
       <div class="col-md col-sm-6 col-12" [class.col-md-2]="dbLoading | async">
 
+        <!-- Loading skeleton -->
         <ng-container *ngIf="dbLoading | async">
-          <app-loading-skeleton [amount]="1" [colClass]="'col-12'" [blockHeight]="'45px'"
-            [hasShadow]="false"></app-loading-skeleton>
+          <app-loading-skeleton
+            [amount]="1"
+            [colClass]="'col-12'"
+            [blockHeight]="'45px'"
+            [hasShadow]="false">
+          </app-loading-skeleton>
         </ng-container>
 
-        <mat-form-field class="w-100 standalone-field mb-lg-0 mb-2" *ngIf="!(dbLoading | async)">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        <mat-form-field
+          class="w-100 standalone-field mb-lg-0 mb-2"
+          *ngIf="!(dbLoading | async)">
+          <span
+            matPrefix
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>conversion_path</mat-icon>
             <span class="text-muted">|</span>
           </span>
-          <mat-select placeholder="Connection string" [(ngModel)]="selectedConnectionString"
+          <mat-select
+            placeholder="Connection string"
+            [(ngModel)]="selectedConnectionString"
             (selectionChange)="getDatabases(selectedDbType, selectedConnectionString)">
             <mat-option *ngFor="let item of connectionStrings | keyvalue" [value]="item.key">{{item.key}}</mat-option>
           </mat-select>
@@ -46,60 +65,102 @@
       <!-- List of databases in currently open connection string -->
       <div class="col-md col-sm-6 col-12" [class.col-md-2]="dbLoading | async">
 
+        <!-- Loading skeleton -->
         <ng-container *ngIf="dbLoading | async">
-          <app-loading-skeleton [amount]="1" [colClass]="'col-12'" [blockHeight]="'45px'"
-            [hasShadow]="false"></app-loading-skeleton>
+          <app-loading-skeleton
+            [amount]="1"
+            [colClass]="'col-12'"
+            [blockHeight]="'45px'"
+            [hasShadow]="false">
+          </app-loading-skeleton>
         </ng-container>
 
-        <mat-form-field class="w-100 standalone-field mb-lg-0 mb-2" *ngIf="!(dbLoading | async)">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        <mat-form-field
+          class="w-100 standalone-field mb-lg-0 mb-2"
+          *ngIf="!(dbLoading | async)">
+          <span
+            matPrefix
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>database</mat-icon>
             <span class="text-muted">|</span>
           </span>
-          <mat-select placeholder="Databases" [(ngModel)]="selectedDatabase" (selectionChange)="changeDatabase()">
-            <mat-option *ngFor="let item of databases | sortBy: 'name'" [value]="item.name">{{item.name}} <span
-                class="ms-2 mat-caption text-muted">{{item?.tables?.length ?? 0}} table(s)</span></mat-option>
+          <mat-select
+            placeholder="Databases"
+            [(ngModel)]="selectedDatabase"
+            (selectionChange)="changeDatabase()">
+            <mat-option
+              *ngFor="let item of databases | sortBy: 'name'"
+              [value]="item.name">{{item.name}}
+              <span class="ms-2 mat-caption text-muted">{{item?.tables?.length ?? 0}} table(s)</span></mat-option>
           </mat-select>
         </mat-form-field>
 
       </div>
 
+      <!-- Toolbar action buttons -->
       <div class="col align-self-center">
         <div class="d-flex justify-content-end flex-sm-nowrap flex-wrap mt-xl-0 mt-3">
 
-          <button mat-button color="primary" [disabled]="sqlView" class="mat-caption"
-            [disabled]="(dbLoading | async) || sqlView" (click)="addNewTable()">
+          <button
+            mat-button
+            color="primary"
+            [disabled]="sqlView"
+            class="mat-caption"
+            [disabled]="(dbLoading | async) || sqlView"
+            (click)="addNewTable()">
             New table
           </button>
 
-          <button mat-button color="primary" [disabled]="sqlView" class="mat-caption"
-            [disabled]="(dbLoading | async) || sqlView" (click)="createNewLinkTable()">
+          <button
+            mat-button
+            color="primary"
+            [disabled]="sqlView"
+            class="mat-caption"
+            [disabled]="(dbLoading | async) || sqlView"
+            (click)="createNewLinkTable()">
             Link table
           </button>
 
-          <button mat-button color="primary" [disabled]="(dbLoading | async)" class="mat-caption"
+          <button
+            mat-button
+            color="primary"
+            [disabled]="(dbLoading | async)"
+            class="mat-caption"
             [matMenuTriggerFor]="menu">
             More
           </button>
 
-          <button mat-button color="primary" (click)="sqlView = !sqlView" class="mat-caption">
+          <button
+            mat-button
+            color="primary"
+            (click)="sqlView = !sqlView"
+            class="mat-caption">
             {{sqlView ? 'Table view' : 'SQL view'}}
           </button>
 
           <!-- "More" button showing additional action menu items -->
           <mat-menu #menu="matMenu">
 
-            <button mat-menu-item (click)="viewDatabaseDDL()" [disabled]="sqlView">
-              {{selectedDatabase === 'magic' || selectedDbType === 'sqlite' || selectedDbType === 'mysql' ||
-              selectedDbType === 'pgsql' ? 'View database as DDL' : 'Export database'}}
+            <button
+              mat-menu-item
+              (click)="viewDatabaseDDL()"
+              [disabled]="sqlView">
+              Database DDL
             </button>
 
-            <button mat-menu-item (click)="clearServerCache()">
-              Clear server side cache
+            <button
+              mat-menu-item
+              (click)="clearServerCache()">
+              Clear server cache
             </button>
 
             <div class="m-3">
-              <mat-slide-toggle [disabled]="sqlView" labelPosition="before" [(ngModel)]="migrate">Auto migrate</mat-slide-toggle>
+              <mat-slide-toggle
+                [disabled]="sqlView"
+                labelPosition="before"
+                [(ngModel)]="migrate">
+                Auto migrate
+              </mat-slide-toggle>
             </div>
 
           </mat-menu>
@@ -115,6 +176,7 @@
 
   <div class="col-12">
 
+    <!-- Table (design) view -->
     <app-tables-view
       *ngIf="sqlView === false"
       [migrate]="migrate"
@@ -124,8 +186,10 @@
       [selectedDatabase]="selectedDatabase"
       [selectedDbType]="selectedDbType"
       [selectedConnectionString]="selectedConnectionString"
-      (getDatabases)="getDatabases($event)"></app-tables-view>
+      (getDatabases)="getDatabases($event)">
+    </app-tables-view>
 
+    <!-- SQL (execute) view -->
     <app-sql-view
       *ngIf="sqlView === true"
       [dbLoading]="dbLoading|async"
@@ -134,7 +198,8 @@
       [selectedDatabase]="selectedDatabase"
       [selectedDbType]="selectedDbType"
       [selectedConnectionString]="selectedConnectionString"
-      (getDatabases)="getDatabases($event)"></app-sql-view>
+      (getDatabases)="getDatabases($event)">
+    </app-sql-view>
 
   </div>
 
