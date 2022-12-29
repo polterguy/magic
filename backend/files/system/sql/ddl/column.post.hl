@@ -165,16 +165,16 @@ if
                   get-value:x:@.arguments/*/cascading
                   .:bool:true
             .lambda
-               set-value:x:@.sql
+               set-value:x:@.tail
                   strings.concat
-                     get-value:x:@.sql
+                     get-value:x:@.tail
                      .:" on delete cascade"
 
 // Appending semi colon at end.
 set-value:x:@.sql
    strings.concat
       get-value:x:@.sql
-      .:;
+      .:"; "
       get-value:x:@.tail
 
 // Checking if caller only wants to generate SQL statement.
@@ -185,6 +185,7 @@ if:x:@.arguments/*/generate
 
 
 // Opening our database connection.
+log.info:x:@.sql
 strings.concat
    .:[
    get-value:x:@.arguments/*/connectionString
