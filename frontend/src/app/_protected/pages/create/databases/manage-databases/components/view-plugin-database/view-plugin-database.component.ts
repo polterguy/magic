@@ -34,7 +34,7 @@ export class ViewPluginDatabaseComponent implements OnInit {
     this.getAppDetails();
   }
 
-  update() {
+  updatePlugin() {
     this.bazarService.updateBazarItem(this.data).subscribe({
       next: (result: Response) => {
         if (result.result === 'success') {
