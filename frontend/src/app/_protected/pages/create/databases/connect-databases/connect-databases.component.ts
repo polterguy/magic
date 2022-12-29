@@ -139,7 +139,7 @@ export class ConnectComponent implements OnInit {
         this.sqlService.deleteConnectionString(item.dbTypeValue, item.cStringKey).subscribe({
           next: () => {
             item.isClicked = false;
-            this.generalService.showFeedback('Successfully deleted.', 'successMessage');
+            this.generalService.showFeedback('Connection string was deleted', 'successMessage');
             this.databases = this.databases.filter((el: any) => item !== el);
           },
           error: (error: any) => {
