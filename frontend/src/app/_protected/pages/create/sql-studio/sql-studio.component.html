@@ -56,7 +56,9 @@
             placeholder="Connection string"
             [(ngModel)]="selectedConnectionString"
             (selectionChange)="getDatabases(selectedDbType, selectedConnectionString)">
-            <mat-option *ngFor="let item of connectionStrings | keyvalue" [value]="item.key">{{item.key}}</mat-option>
+            <mat-option
+              *ngFor="let item of connectionStrings | keyvalue"
+              [value]="item.key">{{item.key}}</mat-option>
           </mat-select>
         </mat-form-field>
 
@@ -138,7 +140,7 @@
             {{sqlView ? 'Table view' : 'SQL view'}}
           </button>
 
-          <!-- "More" button showing additional action menu items -->
+          <!-- "More" button, action menu items -->
           <mat-menu #menu="matMenu">
 
             <button
