@@ -9,8 +9,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { BackendService } from 'src/app/_general/services/backend.service';
-import { CatalogNameComponent } from '../components/catalog-name/catalog-name.component';
-import { ViewDbListComponent } from '../components/view-db-list/view-db-list.component';
+import { CatalogNameComponent } from './components/catalog-name/catalog-name.component';
+import { ManageCatalogsComponent } from './components/manage-catalogs/manage-catalogs.component';
 import { SqlService } from '../../../../../_general/services/sql.service';
 import { DiagnosticsService } from '../../../../../_general/services/diagnostics.service';
 import { ConfigService } from '../../../../../_general/services/config.service';
@@ -164,7 +164,7 @@ export class ConnectComponent implements OnInit {
     this.sqlService.getDatabaseMetaInfo(item.dbTypeValue, item.cStringKey).subscribe({
       next: (res: any) => {
         if (res) {
-          this.dialog.open(ViewDbListComponent, {
+          this.dialog.open(ManageCatalogsComponent, {
             width: '800px',
             data: {
               list: res.databases,

@@ -7,18 +7,18 @@ import { Component, Inject } from '@angular/core';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { SqlService } from '../../../../../../_general/services/sql.service';
+import { SqlService } from '../../../../../../../_general/services/sql.service';
 
 /**
  * Helper component allowing you to view and administrate catalogs in
  * a database instance.
  */
 @Component({
-  selector: 'app-view-db-list',
-  templateUrl: './view-db-list.component.html',
-  styleUrls: ['./view-db-list.component.scss']
+  selector: 'app-manage-catalogs',
+  templateUrl: './manage-catalogs.component.html',
+  styleUrls: ['./manage-catalogs.component.scss']
 })
-export class ViewDbListComponent {
+export class ManageCatalogsComponent {
 
   displayedColumns: string[] = ['name', 'tables', 'action'];
 

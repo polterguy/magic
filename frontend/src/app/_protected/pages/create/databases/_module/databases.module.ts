@@ -11,11 +11,11 @@ import { MaterialModule } from 'src/app/material.module';
 import { DatabasesComponent } from '../databases.component';
 import { FormsModule } from '@angular/forms';
 import { SharedModule } from 'src/app/shared.module';
-import { ViewDbComponent } from '../components/view-db/view-db.component';
+import { ViewDbComponent } from '../manage-databases/components/view-plugin-database/view-plugin-database.component';
 import { ConnectComponent } from '../connect-databases/connect-databases.component';
 import { ManageDatabasesComponent } from '../manage-databases/manage-databases.component';
-import { ViewDbListComponent } from '../components/view-db-list/view-db-list.component';
-import { CatalogNameComponent } from '../components/catalog-name/catalog-name.component';
+import { ManageCatalogsComponent } from '../connect-databases/components/manage-catalogs/manage-catalogs.component';
+import { CatalogNameComponent } from '../connect-databases/components/catalog-name/catalog-name.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +23,7 @@ import { CatalogNameComponent } from '../components/catalog-name/catalog-name.co
     ManageDatabasesComponent,
     ConnectComponent,
     ViewDbComponent,
-    ViewDbListComponent,
+    ManageCatalogsComponent,
     CatalogNameComponent
   ],
   imports: [
