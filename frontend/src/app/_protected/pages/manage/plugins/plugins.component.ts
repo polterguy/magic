@@ -115,21 +115,10 @@ export class PluginsComponent implements OnInit {
    * @param lastestVersion Retrieved from getVersion function.
    */
   private versionComparision(module_name: string, appVersion: string, lastestVersion: string) {
-    if (this.plugins) {
-      const item = this.plugins.find((item: any) => item?.details?.module_name === module_name);
-      this.configService.versionCompare(appVersion, lastestVersion).subscribe({
-        next: (versionCompare: any) => {
-          if (+versionCompare.result === -1) {
-            if (item) {
-              item.hasUpdate = true;
-              item.newVersion = lastestVersion;
-            }
-          }
-          this.isLoading = false;
-        },
-        error: () => { }
-      });
-
+    const plugins = this.plugins.find((item: any) => item?.details?.module_name === module_name);
+    if (this.configService.versionCompare(appVersion, lastestVersion) === -1) {
+      plugins.hasUpdate = true;
+      plugins.newVersion = lastestVersion;
     }
   }
 

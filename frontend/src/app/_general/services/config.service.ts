@@ -102,11 +102,17 @@ export class ConfigService {
    * @param version_2 Second version to compare
    */
   versionCompare(version_1: string, version_2: string) {
-    return this.httpService.get(
-      '/magic/system/config/version-compare?version_1=' +
-      encodeURIComponent(version_1) +
-      '&version_2=' +
-      encodeURIComponent(version_2));
+    const lhs = version_1.substring(1).split('.');
+    const rhs = version_2.substring(1).split('.');
+    for (let idx = 0; idx < 3; idx++) {
+      if (lhs[idx] < rhs[idx]) {
+        return -1;
+      }
+      if (lhs[idx] > rhs[idx]) {
+        return 1;
+      }
+    }
+    return 0;
   }
 
   getDatabases() {

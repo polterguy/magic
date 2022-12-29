@@ -3,12 +3,11 @@
  * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { BackendService } from 'src/app/_general/services/backend.service';
 import { environment } from 'src/environments/environment';
 import { FileService } from '../../hyper-ide/_services/file.service';
 import { AppManifest } from '../../../../../_general/models/app-manifest';
@@ -19,7 +18,6 @@ import { CacheService } from 'src/app/_general/services/cache.service';
 import { ConfigService } from 'src/app/_general/services/config.service';
 import { Databases } from 'src/app/_general/models/databases.model';
 import { BazarApp } from 'src/app/models/bazar-app.model';
-import { DefaultDatabaseType } from 'src/app/_general/models/default-database-type.model';
 
 /**
  * Helper component allowing you to manage your existing locally installed
@@ -52,8 +50,7 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
     private bazarService: BazarService,
     private cacheService: CacheService,
     private configService: ConfigService,
-    private generalService: GeneralService,
-    private backendService: BackendService) { }
+    private generalService: GeneralService) { }
 
   ngOnInit() {
     this.getPluginDatabases();
@@ -91,7 +88,7 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
       if (res === 'install') {
         this.installPluginDatabase(item);
       }
-    })
+    });
   }
 
   installPluginDatabase(database: any) {
@@ -103,7 +100,7 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
           database,
           userDerails.name,
           userDerails.email,
-          false,
+          true,
           null).subscribe({
             next: (status: any) => {
               this.connectSocket(status.code, database);
@@ -120,7 +117,7 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
         this.waitingInstallation = false;
         this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
       }
-    })
+    });
   }
 
   uninstallDatabase(database: any) {
@@ -128,7 +125,7 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
       width: '500px',
       data: {
         title: `Uninstall database module`,
-        description_extra: `You are uninstalling the following database module: <br/> <span class="fw-bold">${database?.name}</span> <br/><br/> Do you want to continue?`,
+        description_extra: `You are uninstalling the following database module: <br/> <span class="fw-bold">${database?.name}</span> <br/><br/>This will not delete the database itself. Do you want to continue?`,
         action_btn: 'Uninstall',
         action_btn_color: 'warn',
         bold_description: true
@@ -143,7 +140,7 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
           error: (error: any) => { this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage') }
         });
       }
-    })
+    });
   }
 
   downloadDatabaseBackup(database: any) {
@@ -166,7 +163,7 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
       width: '500px',
       data: {
         title: `Delete database`,
-        description_extra: `You are deleting the following database: <br/> <span class="fw-bold">${item.name}</span> <br/><br/> Do you want to continue?`,
+        description_extra: `You are deleting the following database: <br/> <span class="fw-bold">${item.name}</span> <br/><br/>This action is permanent. Do you want to continue?`,
         action_btn: 'Delete',
         action_btn_color: 'warn',
         bold_description: true,
@@ -192,7 +189,7 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
             error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
           });
       }
-    })
+    });
   }
 
   ngOnDestroy() {
@@ -205,19 +202,19 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
    */
 
   private getPluginDatabases() {
-    this.bazarService.listBazarItems('%SQLite%', 0, 5).subscribe({
+    this.bazarService.listBazarItems('SQLite%', 0, 5).subscribe({
       next: (apps: BazarApp[]) => {
         this.databases = apps || [];
         this.databases.map((item: any) => {
           item.hasUpdate = false;
         });
-        this.loadDetails();
+        this.loadLocalManifests();
       },
       error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
     });
   }
 
-  private loadDetails() {
+  private loadLocalManifests() {
     this.bazarService.localManifests().subscribe({
       next: (manifests: AppManifest[]) => {
         this.appDetails = manifests || [];
@@ -227,10 +224,10 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
             if (db.name === manifest.name) {
               db.details = manifest;
             }
-          }))
+          }));
           manifests.forEach((manifest: any) => {
             this.getVersion(manifest.module_name, manifest.version);
-          })
+          });
         }
       },
       error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
@@ -241,31 +238,15 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
     this.bazarService.getBazarItem(module_name).subscribe({
       next: (res: any) => {
         if (res) {
-          this.versionComparision(module_name, appVersion, res[0].version);
-          this.backendService.showObscurer(false);
+          const database = this.databases.find((item: any) => item?.details?.module_name === module_name);
+          if (this.configService.versionCompare(appVersion, res[0].version) === -1) {
+            database.hasUpdate = true;
+            database.newVersion = res[0].version;
+          }
         }
       },
       error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
-    })
-  }
-
-  private versionComparision(module_name: string, appVersion: string, lastestVersion: string) {
-    if (this.databases) {
-      const item = this.databases.find((item: any) => item?.details?.module_name === module_name);
-      this.configService.versionCompare(appVersion, lastestVersion).subscribe({
-        next: (versionCompare: any) => {
-          if (+versionCompare.result === -1) {
-            if (item) {
-              item.hasUpdate = true;
-              item.newVersion = lastestVersion;
-            }
-          }
-
-          this.isLoadingPlugins = false;
-        },
-        error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
-      });
-    }
+    });
   }
 
   private getDatabases() {
@@ -301,7 +282,7 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
                 this.cacheService.delete('magic.sql.databases.sqlite.*').subscribe({
                   next: () => {
                     this.getDatabases();
-                    this.loadDetails();
+                    this.loadLocalManifests();
                   },
                   error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
                 });
