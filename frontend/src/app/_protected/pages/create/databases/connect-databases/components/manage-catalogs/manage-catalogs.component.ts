@@ -28,7 +28,7 @@ export class ManageCatalogsComponent {
     private generalService: GeneralService,
     @Inject(MAT_DIALOG_DATA) public data: any) { }
 
-  public deleteDb(item: any) {
+  public deleteCatalog(item: any) {
     this.dialog.open(ConfirmationDialogComponent, {
       width: '500px',
       data: {
@@ -57,9 +57,11 @@ export class ManageCatalogsComponent {
               this.data.list = this.data.list.filter((el: any) => el.name !== item.name);
               this.generalService.showFeedback('Database successfully deleted', 'successMessage');
             },
-            error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
-          });
+            error: (error: any) => {
+              this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+              this.generalService.hideLoading();
+          }});
       }
-    })
+    });
   }
 }

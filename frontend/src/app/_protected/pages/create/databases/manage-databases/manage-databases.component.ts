@@ -186,8 +186,9 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
               this.getDatabases();
               this.getPluginDatabases();
             },
-            error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
-          });
+            error: (error: any) => {
+              this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+            }});
       }
     });
   }
