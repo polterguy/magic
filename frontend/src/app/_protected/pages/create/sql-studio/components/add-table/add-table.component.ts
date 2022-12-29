@@ -21,8 +21,8 @@ export interface NewTableModel {
  * Helper component allowing user to create a new table, and its associated primary key.
  */
 @Component({
-  selector: 'app-new-table',
-  templateUrl: './new-table.component.html'
+  selector: 'app-add-table',
+  templateUrl: './add-table.component.html'
 })
 export class NewTableComponent {
 

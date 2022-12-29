@@ -12,8 +12,8 @@ import { GeneralService } from 'src/app/_general/services/general.service';
  * relationship tables.
  */
 @Component({
-  selector: 'app-link-table',
-  templateUrl: './link-table.component.html'
+  selector: 'app-add-link-table',
+  templateUrl: './add-link-table.component.html'
 })
 export class LinkTableComponent {
 

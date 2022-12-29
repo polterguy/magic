@@ -15,8 +15,8 @@ interface Sql {
  * the database DDL.
  */
 @Component({
-  selector: 'app-add-migrate-script',
-  templateUrl: './add-migrate-script.component.html'
+  selector: 'app-apply-migrate-script',
+  templateUrl: './apply-migrate-script.component.html'
 })
 export class AddMigrateScriptComponent {
 
