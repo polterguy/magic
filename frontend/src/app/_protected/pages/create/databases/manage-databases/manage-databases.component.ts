@@ -120,7 +120,7 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
     });
   }
 
-  uninstallDatabase(database: any) {
+  uninstallPluginDatabase(database: any) {
     this.dialog.open(ConfirmationDialogComponent, {
       width: '500px',
       data: {
@@ -325,29 +325,6 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
 
     this.hubConnection.start().then(() => {
       this.downloadBazarItem(database, token);
-    });
-  }
-
-  private uninstallPluginDatabase(database: any) {
-    this.dialog.open(ConfirmationDialogComponent, {
-      width: '500px',
-      data: {
-        title: `Uninstall module`,
-        description_extra: `You are uninstalling the following database module: <br/> <span class="fw-bold">${database?.name}</span> <br/><br/> Do you want to continue?`,
-        action_btn: 'Uninstall',
-        action_btn_color: 'warn',
-        bold_description: true
-      }
-    }).afterClosed().subscribe((result: string) => {
-      if (result === 'confirm') {
-        this.fileService.deleteFolder('/modules/' + database.module_name + '/').subscribe({
-          next: () => {
-            this.generalService.showFeedback(database.name + ' uninstalled successfully.', 'successMessage');
-            this.getPluginDatabases();
-          },
-          error: (error: any) => { this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage') }
-        });
-      }
     });
   }
 }
