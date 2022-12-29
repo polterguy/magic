@@ -13,13 +13,13 @@ import { SharedModule } from 'src/app/shared.module';
 import { ComponentsModule } from 'src/app/_general/components/components.module';
 import { AddFieldComponent } from '../components/add-field-or-key/add-field-or-key.component';
 import { ExportDdlComponent } from '../components/export-ddl/export-ddl.component';
-import { LinkTableComponent } from '../components/link-table/link-table.component';
-import { NewTableComponent } from '../components/new-table/new-table.component';
+import { LinkTableComponent } from '../components/add-link-table/add-link-table.component';
+import { NewTableComponent } from '../components/add-table/add-table.component';
 import { TablesViewComponent } from '../components/tables-view/tables-view.component';
 import { SQLStudioComponent } from '../sql-studio.component';
 import { SqlViewComponent } from '../components/sql-view/sql-view.component';
 import { SqlStudioRoutingModule } from './sql-studio-routing.module';
-import { AddMigrateScriptComponent } from '../components/add-migrate-script/add-migrate-script.component';
+import { AddMigrateScriptComponent } from '../components/apply-migrate-script/apply-migrate-script.component';
 
 @NgModule({
   declarations: [

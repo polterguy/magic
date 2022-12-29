@@ -10,7 +10,7 @@ import { ConfirmationDialogComponent } from 'src/app/_general/components/confirm
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { SqlService } from 'src/app/_general/services/sql.service';
 import { AddFieldComponent } from '../add-field-or-key/add-field-or-key.component';
-import { AddMigrateScriptComponent } from '../add-migrate-script/add-migrate-script.component';
+import { AddMigrateScriptComponent } from '../apply-migrate-script/apply-migrate-script.component';
 import { ExportDdlComponent } from '../export-ddl/export-ddl.component';
 
 /**
