@@ -5,7 +5,10 @@
     <h3 class="fw-bold">Add connection string</h3>
     <p class="text-muted">
       Connect to an existing database by providing a connection name and a connection string substituting
-      catalog name with {{'{'}}database{{'}'}}. Your cloudlet's IP address is {{ip_address}}.
+      catalog name with {{'{'}}database{{'}'}}.
+      <span *ngIf="ip_address && ip_address !== 'unknown'">
+        Your cloudlet's IP address is {{ip_address}}.
+      </span>
 
       <button
         *ngIf="ip_address !== 'unknown'"
