@@ -11,10 +11,10 @@ import { Databases } from 'src/app/_general/models/databases.model';
 import { CacheService } from 'src/app/_general/services/cache.service';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { SqlService } from '../../../../_general/services/sql.service';
-import { AddMigrateScriptComponent } from './components/apply-migrate-script/apply-migrate-script.component';
-import { ExportDdlComponent } from './components/export-ddl/export-ddl.component';
-import { LinkTableComponent } from './components/add-link-table/add-link-table.component';
-import { NewTableComponent } from './components/add-table/add-table.component';
+import { AddMigrateScriptComponent } from './components/tables-view/components/apply-migrate-script/apply-migrate-script.component';
+import { ExportDdlComponent } from './components/tables-view/components/export-ddl/export-ddl.component';
+import { LinkTableComponent } from './components/tables-view/components/add-link-table/add-link-table.component';
+import { NewTableComponent } from './components/tables-view/components/add-table/add-table.component';
 
 /**
  * SQL Studio component allowing user to execute SQL, and edit his or her databases.

@@ -15,7 +15,7 @@ import { TransformModelService } from '../_services/transform-model.service';
 import { Argument } from '../../../manage/endpoints/_models/argument.model';
 import { SqlService } from '../../../../../_general/services/sql.service';
 import { AddArgumentDialogComponent } from './components/add-argument-dialog/add-argument-dialog.component';
-import { SqlSnippetDialogComponent } from '../../sql-studio/components/load-sql-snippet-dialog/load-sql-snippet-dialog.component';
+import { SqlSnippetDialogComponent } from '../../sql-studio/components/sql-view/components/load-sql-snippet-dialog/load-sql-snippet-dialog.component';
 
 // CodeMirror options.
 import { CodemirrorActionsService } from '../../hyper-ide/_services/codemirror-actions.service';
