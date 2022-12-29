@@ -11,7 +11,7 @@ import { CmModule } from 'src/app/codemirror/_module/cm.module';
 import { MaterialModule } from 'src/app/material.module';
 import { SharedModule } from 'src/app/shared.module';
 import { ComponentsModule } from 'src/app/_general/components/components.module';
-import { AddFieldComponent } from '../components/add-field/add-field.component';
+import { AddFieldComponent } from '../components/add-field-or-key/add-field-or-key.component';
 import { ExportDdlComponent } from '../components/export-ddl/export-ddl.component';
 import { LinkTableComponent } from '../components/link-table/link-table.component';
 import { NewTableComponent } from '../components/new-table/new-table.component';

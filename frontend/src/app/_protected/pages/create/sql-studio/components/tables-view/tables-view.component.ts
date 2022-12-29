@@ -9,7 +9,7 @@ import { Observable, Subscription } from 'rxjs';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { SqlService } from 'src/app/_general/services/sql.service';
-import { AddFieldComponent } from '../add-field/add-field.component';
+import { AddFieldComponent } from '../add-field-or-key/add-field-or-key.component';
 import { AddMigrateScriptComponent } from '../add-migrate-script/add-migrate-script.component';
 import { ExportDdlComponent } from '../export-ddl/export-ddl.component';
 
