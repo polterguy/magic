@@ -1,0 +1,228 @@
+
+<div class="row mt-4">
+
+  <div class="col-md-6 col-12 pe-lg-5">
+    <div class="row">
+
+      <!-- Create new database section -->
+      <div class="col-12">
+        <h3 class="fw-bold">Create database</h3>
+        <p class="text-muted">Provide a name and create a new {{getDbName(defaultDbType)}} database below</p>
+      </div>
+
+      <div class="col-12 my-5">
+        <form class="d-flex flex-nowrap align-items-stretch w-100">
+
+          <mat-form-field class="w-65 standalone-field">
+            <span
+              matPrefix
+              matTooltip="Give your database a new name"
+              class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+              <mat-icon>database</mat-icon>
+              <span class="text-muted">|</span>
+            </span>
+            <input
+              matInput
+              type="text"
+              name="-"
+              autocomplete="off"
+              placeholder="Name"
+              [(ngModel)]="databaseName"
+              required />
+          </mat-form-field>
+
+          <div class="p-2"></div>
+
+          <button
+            mat-flat-button
+            class="w-35"
+            color="primary"
+            type="submit"
+            (click)="createNewDatabase()">
+            Create now
+          </button>
+
+        </form>
+      </div>
+
+      <!-- Install plugin database section -->
+      <div class="col-12">
+        <h3 class="fw-bold">Install database</h3>
+        <p class="text-muted">Install a plugin database below and start using it right away</p>
+      </div>
+
+      <!-- Loading skeleton -->
+      <ng-container *ngIf="isLoadingPlugins">
+        <app-loading-skeleton
+          [amount]="3"
+          [colClass]="'col-12'"
+          [blockHeight]="'80px'"
+          [hasShadow]="false">
+        </app-loading-skeleton>
+      </ng-container>
+
+      <ng-container *ngIf="!isLoadingPlugins">
+        <div class="col-12 bg-light mt-4 py-3 mb-2" *ngFor="let item of databases">
+          <div class="row">
+
+            <div class="col-xl-7 col-lg-6 col-12 ps-4">
+              <p class="mat-body-2 mb-1">{{item?.name}}</p>
+              <p class="text-muted text-truncate my-0">{{item?.description}}</p>
+            </div>
+
+            <div class="col-xl-5 col-lg-6 col-12 d-flex flex-nowrap align-self-center justifycontent-between mt-lg-0 mt-3">
+
+              <button
+                mat-button
+                color="primary"
+                (click)="viewAppDetails(item)">
+                Details
+              </button>
+
+              <button
+                mat-flat-button
+                color="primary"
+                class="w-100 px-4 ms-2"
+                *ngIf="!item?.details"
+                (click)="installDb(item)">
+                Install
+              </button>
+
+              <button
+                mat-flat-button
+                color="warn"
+                class="w-100 px-4 ms-2"
+                *ngIf="item?.details"
+                (click)="uninstallDb(item.details)">
+                Uninstall
+              </button>
+
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+
+  <!-- Databases table -->
+  <div class="col-md-6 col-12 position-relative ps-lg-5">
+
+    <h3 class="fw-bold">Existing databases</h3>
+
+    <p class="text-muted">{{getDbName(defaultDbType)}} databases you have already installed or created</p>
+
+    <!-- Loading skeleton -->
+    <ng-container *ngIf="isLoadingDbs">
+      <app-loading-skeleton
+        [amount]="8"
+        [colClass]="'col-12'"
+        [blockHeight]="'48px'"
+        [hasShadow]="false">
+      </app-loading-skeleton>
+    </ng-container>
+
+    <!-- List of existing databases -->
+    <div class="table-responsive" *ngIf="!isLoadingDbs">
+      <table
+        mat-table
+        [dataSource]="existingDatabases"
+        class="w-100 borderless hoverable">
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="dbName">
+          <th mat-header-cell *matHeaderCellDef class="text-nowrap ps-0">Name</th>
+          <td mat-cell *matCellDef="let element" class="ps-0 text-truncate">{{element?.name}}</td>
+        </ng-container>
+
+        <!-- Tables Column -->
+        <ng-container matColumnDef="tables">
+          <th mat-header-cell *matHeaderCellDef class="text-nowrap ps-0">Tables</th>
+          <td mat-cell *matCellDef="let element" class="ps-0">{{element?.tables?.length ?? '-'}}</td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef class="ps-3">Actions</th>
+          <td mat-cell *matCellDef="let element" class="px-0">
+
+            <button
+              mat-button
+              color="primary"
+              routerLink="/sql-studio"
+              [queryParams]="{dbType: element.type, dbName: element.name, dbCString: element.connectionString}">
+              Edit
+            </button>
+
+            <button
+              *ngIf="defaultDbType === 'sqlite'"
+              mat-button
+              color="primary"
+              (click)="downloadBackup(element)">
+              Backup
+            </button>
+
+            <button
+              mat-button
+              color="warn"
+              (click)="deleteDb(element)"
+              [disabled]="element.name === 'magic'">
+              Delete
+            </button>
+
+            <button
+              mat-button
+              color="primary"
+              routerLink="/endpoint-generator"
+              [queryParams]="{dbType: element.type, dbName: element.name, dbCString: element.connectionString}"
+              [disabled]="element.name === 'magic'">
+              Generate endpoints
+            </button>
+
+          </td>
+        </ng-container>
+
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+
+    <div class="text-end button-row mt-3 w-100 upload-backup-row">
+
+      <button
+        *ngIf="defaultDbType === 'sqlite'"
+        mat-flat-button
+        color="primary"
+        (click)="zipfile.click()">
+        Upload backup
+      </button>
+
+    </div>
+
+    <input
+      type="file"
+      [(ngModel)]="zipFileInput"
+      #zipfile
+      class="d-none"
+      accept=".db"
+      (change)="uploadBackup($event.target.files)">
+
+  </div>
+</div>
+
+<!-- Installation obscurer making sure user doesn't leave the page -->
+<div class="waiting-overlay" *ngIf="waitingInstallation">
+  <div class="row h-100 align-items-center justify-content-center">
+    <div class="col-xxl-2 col-xl-3 col-md-4 col-sm-5 col-6">
+
+      <div class="d-flex w-100 justify-content-center">
+        <div class="wating-dot-animation"></div>
+      </div>
+
+      <h3 class="text-center mt-5">{{currentStage}}</h3>
+
+      <p class="mat-h3 text-center mt-4">Please do NOT leave this page until the installation is completed.</p>
+
+    </div>
+  </div>
+</div>

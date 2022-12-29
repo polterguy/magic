@@ -4,13 +4,13 @@
  */
 
 import { NgModule } from '@angular/core';
-import { DatabaseComponent } from '../database.component';
+import { DatabasesComponent } from '../databases.component';
 import { Routes, RouterModule } from '@angular/router';
 
 const routes: Routes = [
   {
     path: '',
-    component: DatabaseComponent
+    component: DatabasesComponent
   }
 ];
 
@@ -18,4 +18,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class DatabaseRoutingModule { }
+export class DatabasesRoutingModule { }
