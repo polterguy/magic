@@ -1,93 +1,149 @@
 <div class="row mt-4">
+
+  <!-- Connect to existing database section -->
   <div class="col-12">
     <h3 class="fw-bold">Connect to existing database</h3>
     <p class="text-muted">
       Connect to an existing database by providing a connection name and connection string. Your cloudlet's
       IP address is {{ip_address}}.
-      <button *ngIf="ip_address !== 'unknown'" mat-button color="primary" (click)="copyIpAddress()" class="ps-0 ip-address-btn">Copy IP address</button>
+
+      <button
+        *ngIf="ip_address !== 'unknown'"
+        mat-button color="primary"
+        (click)="copyIpAddress()"
+        class="ps-0 ip-address-btn">Copy IP address
+      </button>
+
     </p>
   </div>
+
   <div class="col-12">
     <div class="row align-items-stretch mt-4">
+
       <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+
         <mat-form-field class="w-100 standalone-field">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+          <span
+            matPrefix
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>database</mat-icon>
             <span class="text-muted">|</span>
           </span>
-
-          <mat-select placeholder="Database type" [(ngModel)]="databaseType">
-            <mat-option *ngFor="let item of dbTypes" [value]="item.type">{{item.name}}</mat-option>
+          <mat-select
+            placeholder="Database type"
+            [(ngModel)]="databaseType">
+            <mat-option
+              *ngFor="let item of dbTypes"
+              [value]="item.type">{{item.name}}</mat-option>
           </mat-select>
         </mat-form-field>
+
       </div>
+
       <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+
         <mat-form-field class="w-100 standalone-field">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+          <span
+            matPrefix
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>database</mat-icon>
             <span class="text-muted">|</span>
           </span>
-
-          <input matInput type="text" [(ngModel)]="cStringName" placeholder="Connection name" autocomplete="off"
+          <input
+            matInput
+            type="text"
+            [(ngModel)]="cStringName"
+            placeholder="Connection name"
+            autocomplete="off"
             spellcheck="false">
         </mat-form-field>
+
       </div>
       <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+
         <mat-form-field class="w-100 standalone-field">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+          <span
+            matPrefix
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>conversion_path</mat-icon>
             <span class="text-muted">|</span>
           </span>
-
-          <input matInput type="text" [(ngModel)]="connectionString" placeholder="Connection string" spellcheck="false"
+          <input
+            matInput type="text"
+            [(ngModel)]="connectionString"
+            placeholder="Connection string"
+            spellcheck="false"
             autocomplete="off">
         </mat-form-field>
+
       </div>
-      <div
-        class="col-lg-3 col-md-12 col-sm-6 col-12 d-flex align-items-center button-row justify-content-end mt-md-2 mt-lg-1 mt-sm-2 mt-2">
-        <button mat-button color="primary" (click)="testConnectionString()" [disabled]="waitingTest">Test
-          connection</button>
-        <button mat-flat-button color="primary" (click)="testConnectionString(true)" [disabled]="waitingTest"
-          class="px-xxl-5 px-xl-4">Connect</button>
+      <div class="col-lg-3 col-md-12 col-sm-6 col-12 d-flex align-items-center button-row justify-content-end mt-md-2 mt-lg-1 mt-sm-2 mt-2">
+
+        <button
+          mat-button
+          color="primary"
+          (click)="testConnectionString(false)"
+          [disabled]="waitingTest">
+          Test connection
+        </button>
+
+        <button
+          mat-flat-button
+          color="primary"
+          (click)="testConnectionString(true)"
+          [disabled]="waitingTest"
+          class="px-xxl-5 px-xl-4">
+          Connect
+        </button>
+
       </div>
     </div>
   </div>
 
+  <!-- List of database connection strings -->
   <div class="col-12 mt-5">
     <h3 class="fw-bold">List of connected databases</h3>
 
+    <!-- Loading skeleton -->
     <ng-container *ngIf="isLoading">
-      <app-loading-skeleton [amount]="3" [colClass]="'col-12'" [blockHeight]="'48px'"
-        [hasShadow]="false"></app-loading-skeleton>
+      <app-loading-skeleton
+        [amount]="3"
+        [colClass]="'col-12'"
+        [blockHeight]="'48px'"
+        [hasShadow]="false">
+      </app-loading-skeleton>
     </ng-container>
 
     <div class="table-responsive" *ngIf="!isLoading">
-      <table mat-table [dataSource]="databases" class="w-100 borderless hoverable">
+      <table
+        mat-table
+        [dataSource]="databases"
+        class="w-100 borderless hoverable">
 
         <!-- dbType Column -->
         <ng-container matColumnDef="dbType">
-          <th mat-header-cell *matHeaderCellDef class="text-nowrap ps-0"> Database type </th>
-          <td mat-cell *matCellDef="let element" class="ps-0"> {{element?.dbType}} </td>
+          <th mat-header-cell *matHeaderCellDef class="text-nowrap ps-0">Database type</th>
+          <td mat-cell *matCellDef="let element" class="ps-0">{{element?.dbType}}</td>
         </ng-container>
 
         <!-- cStringName Column -->
         <ng-container matColumnDef="cStringName">
-          <th mat-header-cell *matHeaderCellDef class="text-nowrap ps-0"> Connection name </th>
-          <td mat-cell *matCellDef="let element" class="ps-0 text-truncate"> {{element?.cStringKey}} </td>
+          <th mat-header-cell *matHeaderCellDef class="text-nowrap ps-0">Connection name</th>
+          <td mat-cell *matCellDef="let element" class="ps-0 text-truncate">{{element?.cStringKey}}</td>
         </ng-container>
 
         <!-- cString Column -->
         <ng-container matColumnDef="cString">
-          <th mat-header-cell *matHeaderCellDef class="text-nowrap ps-0"> Connection string </th>
-          <td mat-cell *matCellDef="let element" class="ps-0 text-truncate"> {{element?.cString}} </td>
+          <th mat-header-cell *matHeaderCellDef class="text-nowrap ps-0">Connection string</th>
+          <td mat-cell *matCellDef="let element" class="ps-0 text-truncate">{{element?.cString}}</td>
         </ng-container>
 
         <!-- status Column -->
         <ng-container matColumnDef="status">
-          <th mat-header-cell *matHeaderCellDef class="text-nowrap ps-0"> Status </th>
+          <th mat-header-cell *matHeaderCellDef class="text-nowrap ps-0">Status</th>
           <td mat-cell *matCellDef="let element" class="ps-0">
-            <div class="d-flex align-items-center text-truncate ps-3"
-              [class.text-muted]="element?.status !== 'Live' && element?.status !== 'Down'">
+            <div
+              class="d-flex align-items-center text-truncate ps-3">
               <span class="status {{element?.status}} me-1"></span>
             </div>
           </td>
@@ -98,14 +154,38 @@
           <th mat-header-cell *matHeaderCellDef class="px-3"> Actions </th>
           <td mat-cell *matCellDef="let element" class="px-0">
             <div class="d-flex">
-              <button mat-button color="primary" (click)="getDatabasesList(element)"
-                [disabled]="element.isClicked === true || element.status !== 'Live'">Manage</button>
-              <button mat-button color="warn" (click)="deleteDb(element)"
-                [disabled]="element.name === 'magic'">Delete</button>
-              <button mat-button color="primary" (click)="copyConnectionString(element)">Copy</button>
-              <button mat-button [disabled]="element.status !== 'Live'" color="primary"
-                (click)="createCatalog(element)">Create new
-                catalog</button>
+
+              <button
+                mat-button
+                color="primary"
+                (click)="getDatabasesList(element)"
+                [disabled]="element.isClicked === true || element.status !== 'Live'">
+                Manage
+              </button>
+
+              <button
+                mat-button
+                color="warn"
+                (click)="deleteConnectionString(element)"
+                [disabled]="element.name === 'magic'">
+                Delete
+              </button>
+
+              <button
+                mat-button
+                color="primary"
+                (click)="copyConnectionString(element)">
+                Copy
+              </button>
+
+              <button
+                mat-button
+                [disabled]="element.status !== 'Live'"
+                color="primary"
+                (click)="createCatalog(element)">
+                Create new catalog
+              </button>
+
             </div>
           </td>
         </ng-container>
@@ -118,6 +198,7 @@
         <tr class="mat-row" *matNoDataRow>
           <td class="mat-cell ps-0" colspan="4">Connect to a database to see the details here.</td>
         </tr>
+
       </table>
     </div>
   </div>

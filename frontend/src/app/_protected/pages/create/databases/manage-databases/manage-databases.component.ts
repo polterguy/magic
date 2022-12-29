@@ -236,7 +236,7 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
 
   private getVersion(module_name: string, appVersion: string) {
     this.bazarService.getBazarItem(module_name).subscribe({
-      next: (res: any) => {
+      next: (res: BazarApp[]) => {
         if (res) {
           const database = this.databases.find((item: any) => item?.details?.module_name === module_name);
           if (this.configService.versionCompare(appVersion, res[0].version) === -1) {
