@@ -48,7 +48,7 @@
       <!-- Install plugin database section -->
       <div class="col-12">
         <h3 class="fw-bold">Install database</h3>
-        <p class="text-muted">Install a plugin database below and start using it right away</p>
+        <p class="text-muted">Install a plugin SQLite database below and start using it right away</p>
       </div>
 
       <!-- Loading skeleton -->
@@ -93,7 +93,7 @@
                 color="warn"
                 class="w-100 px-4 ms-2"
                 *ngIf="item?.details"
-                (click)="installPluginDatabase(item.details)">
+                (click)="uninstallDatabase(item.details)">
                 Uninstall
               </button>
 
@@ -154,7 +154,6 @@
             </button>
 
             <button
-              *ngIf="databaseTypes.default === 'sqlite'"
               mat-button
               color="primary"
               (click)="downloadDatabaseBackup(element)">
@@ -190,7 +189,6 @@
     <div class="text-end button-row mt-3 w-100 upload-backup-row">
 
       <button
-        *ngIf="databaseTypes.default === 'sqlite'"
         mat-flat-button
         color="primary"
         (click)="zipfile.click()">
