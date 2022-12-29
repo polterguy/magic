@@ -156,7 +156,7 @@ export class TablesViewComponent implements OnInit, OnDestroy {
             this.deleteColumn(item, tableName, fkName);
           }
         }
-      })
+      });
     } else {
       this.generalService.showFeedback('This item cannot be dropped', 'errorMessage');
     }
