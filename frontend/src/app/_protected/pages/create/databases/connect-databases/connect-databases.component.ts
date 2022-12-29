@@ -14,7 +14,6 @@ import { ViewDbListComponent } from '../components/view-db-list/view-db-list.com
 import { SqlService } from '../../../../../_general/services/sql.service';
 import { DiagnosticsService } from '../../../../../_general/services/diagnostics.service';
 import { ConfigService } from '../../../../../_general/services/config.service';
-import { DefaultDatabaseType } from 'src/app/_general/models/default-database-type.model';
 import { Response } from 'src/app/models/response.model';
 
 /**
@@ -22,9 +21,9 @@ import { Response } from 'src/app/models/response.model';
  * in existing databases.
  */
 @Component({
-  selector: 'app-connect',
-  templateUrl: './connect.component.html',
-  styleUrls: ['./connect.component.scss']
+  selector: 'app-connect-databases',
+  templateUrl: './connect-databases.component.html',
+  styleUrls: ['./connect-databases.component.scss']
 })
 export class ConnectComponent implements OnInit {
 

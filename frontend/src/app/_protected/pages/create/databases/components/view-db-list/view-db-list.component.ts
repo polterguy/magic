@@ -9,6 +9,10 @@ import { ConfirmationDialogComponent } from 'src/app/_general/components/confirm
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { SqlService } from '../../../../../../_general/services/sql.service';
 
+/**
+ * Helper component allowing you to view and administrate catalogs in
+ * a database instance.
+ */
 @Component({
   selector: 'app-view-db-list',
   templateUrl: './view-db-list.component.html',

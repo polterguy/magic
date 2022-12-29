@@ -12,7 +12,7 @@ import { DatabasesComponent } from '../databases.component';
 import { FormsModule } from '@angular/forms';
 import { SharedModule } from 'src/app/shared.module';
 import { ViewDbComponent } from '../components/view-db/view-db.component';
-import { ConnectComponent } from '../connect/connect.component';
+import { ConnectComponent } from '../connect-databases/connect-databases.component';
 import { ManageDatabasesComponent } from '../manage-databases/manage-databases.component';
 import { ViewDbListComponent } from '../components/view-db-list/view-db-list.component';
 import { CatalogNameComponent } from '../components/catalog-name/catalog-name.component';
