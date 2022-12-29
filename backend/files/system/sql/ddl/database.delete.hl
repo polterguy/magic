@@ -73,16 +73,16 @@ else
             .:template1
          set-value:x:@.sql
             strings.concat
-               .:"revoke connect on database `"
+               .:"revoke connect on database \""
                get-value:x:@.arguments/*/databaseName
-               .:"` from public; "
+               .:"\" from public; "
                .:"select pid, pg_terminate_backend(pid) from pg_stat_activity "
                .:"where datname = '"
                get-value:x:@.arguments/*/databaseName
                .:"'; "
-               .:"drop database `"
+               .:"drop database \""
                get-value:x:@.arguments/*/databaseName
-               .:"`;"
+               .:"\";"
 
       case:mssql
          set-value:x:@.master
