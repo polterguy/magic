@@ -97,7 +97,7 @@ export class ConnectComponent implements OnInit {
             return;
           }
           this.waitingTest = false;
-          this.generalService.showFeedback('Successfully connected to database', 'successMessage');
+          this.generalService.showFeedback('Success', 'successMessage');
           this.generalService.hideLoading();
 
         } else if (res.result === 'failure') {
@@ -248,7 +248,7 @@ export class ConnectComponent implements OnInit {
       this.cStringName,
       this.connectionString).subscribe({
       next: () => {
-        this.generalService.showFeedback('Successfully connected.', 'successMessage');
+        this.generalService.showFeedback('Successfully connected to database', 'successMessage');
         this.waitingTest = false;
         this.databases = [...this.databases, {
           dbType: this.dbTypes.find((db: any) => db.type === this.databaseType).name,
