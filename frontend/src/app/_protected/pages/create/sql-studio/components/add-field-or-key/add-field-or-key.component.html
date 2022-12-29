@@ -1,0 +1,224 @@
+<h3 mat-dialog-title>Add field or foreign key</h3>
+
+<form (ngSubmit)="create()">
+  <div mat-dialog-content class="new-field-dialog">
+
+    <mat-tab-group
+      mat-stretch-tabs
+      dynamicHeight
+      animationDuration="0ms"
+      (selectedTabChange)="tabsChanged($event)">
+
+      <mat-tab label="Column">
+
+        <mat-form-field class="w-100 standalone-field mt-4">
+          <span
+            matPrefix
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>edit</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            type="text"
+            placeholder="Column name"
+            [(ngModel)]="formData.columnName"
+            name="column_name"
+            autocomplete="off"
+            #name
+            cdkFocusInitial
+            [pattern]="CommonRegEx.appNameWithUppercase">
+          <mat-error>{{CommonErrorMessages.appNameWithUppercase}}</mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="w-100 standalone-field">
+          <span
+            matPrefix
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>dehaze</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+
+          <mat-select
+            placeholder="Column type"
+            [(ngModel)]="formData.fieldType"
+            (ngModelChange)="changeDefaultValue()"
+            name="field_type">
+            <mat-select-trigger>
+              {{formData?.fieldType?.name}}
+            </mat-select-trigger>
+            <mat-option
+              class="multiline-mat-option"
+              *ngFor="let item of fieldTypeList[data.slectedDbType]"
+              [value]="item">
+              <span class="d-block name-line" #typeName>{{item.name}}</span>
+              <span class="d-block description-line">{{item.description}}</span>
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field
+          class="w-100 standalone-field"
+          *ngIf="formData?.fieldType?.defaultValue">
+          <span
+            matPrefix
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>account_balance</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            type="text"
+            placeholder="Default value"
+            [(ngModel)]="formData.defaultValue"
+            autocomplete="off"
+            name="default_value">
+          <mat-error>{{CommonErrorMessages.appNameWithUppercase}}</mat-error>
+        </mat-form-field>
+
+        <mat-form-field
+          class="w-100 standalone-field"
+          *ngIf="formData?.fieldType?.size">
+          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>format_size</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+
+          <input
+            matInput
+            type="number"
+            [placeholder]="'Size between ' + formData.fieldType.size.min + ' and ' + formData.fieldType.size.max"
+            [(ngModel)]="formData.columnLength"
+            [pattern]="CommonRegEx.appNameWithUppercase"
+            name="column_length"
+            [min]="formData.fieldType.size.min"
+            [max]="formData.fieldType.size.max"
+            autocomplete="off"
+            name="-">
+          <mat-hint
+            class="text-danger"
+            *ngIf="formData.columnLength < formData.fieldType.size.min || formData.columnLength > formData.fieldType.size.max">
+            {{'Size between ' + formData.fieldType.size.min + ' and ' + formData.fieldType.size.max}}
+          </mat-hint>
+        </mat-form-field>
+
+        <p class="d-flex justify-content-end">
+          <mat-checkbox
+            [(ngModel)]="formData.nullable"
+            color="primary"
+            name="nullable">
+            Nullable
+          </mat-checkbox>
+        </p>
+
+      </mat-tab>
+
+      <mat-tab label="Foreign key">
+
+        <mat-form-field class="w-100 standalone-field mt-4">
+          <span
+            matPrefix
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>conversion_path</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+
+          <mat-select
+            placeholder="Foreign table"
+            [(ngModel)]="formData.selectedTable"
+            name="selected_table"
+            (selectionChange)="changeTable()">
+            <mat-select-trigger>
+              {{formData?.selectedTable?.name}}
+            </mat-select-trigger>
+            <mat-option
+              class="multiline-mat-option"
+              *ngFor="let item of data.tables"
+              [value]="item">
+              {{item?.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="w-100 standalone-field">
+          <span
+            matPrefix
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>apps</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+
+          <mat-select
+            placeholder="Foreign column"
+            [(ngModel)]="formData.foreignField"
+            name="foreign_field"
+            (selectionChange)="changeColumnName()">
+            <mat-option
+              class="multiline-mat-option"
+              *ngFor="let item of formData.selectedTable?.columns"
+              [value]="item?.name">
+              {{item?.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="w-100 standalone-field">
+          <span
+            matPrefix
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>edit</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            type="text"
+            placeholder="Key name"
+            autocomplete="off"
+            [value]="formData.foreignField ? formData.foreignField + '_column' : ''"
+            [(ngModel)]="formData.columnName"
+            name="column_name"
+            [pattern]="CommonRegEx.appNameWithUppercase">
+          <mat-error>{{CommonErrorMessages.appNameWithUppercase}}</mat-error>
+        </mat-form-field>
+
+        <p class="d-flex justify-content-end">
+
+          <mat-checkbox
+            [(ngModel)]="formData.nullable"
+            color="primary"
+            class="me-2"
+            name="nullable">
+            Nullable
+          </mat-checkbox>
+
+          <mat-checkbox
+            [(ngModel)]="formData.cascading"
+            color="primary"
+            name="cascade">
+            Cascade
+          </mat-checkbox>
+
+        </p>
+
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+
+  <div mat-dialog-actions [align]="'end'">
+
+    <button
+      mat-button
+      mat-dialog-close>
+      Cancel
+    </button>
+
+    <button
+      mat-flat-button
+      color="primary"
+      class="px-4"
+      type="submit">
+      Add
+    </button>
+
+  </div>
+</form>

@@ -34,9 +34,9 @@ interface ExpectedData {
  * SQL studio helper dialog to allow user to add new column or foreign key.
  */
 @Component({
-  selector: 'app-add-field',
-  templateUrl: './add-field.component.html',
-  styleUrls: ['./add-field.component.scss']
+  selector: 'app-add-field-or-key',
+  templateUrl: './add-field-or-key.component.html',
+  styleUrls: ['./add-field-or-key.component.scss']
 })
 export class AddFieldComponent {
 
@@ -272,4 +272,4 @@ const fieldTypes: any = {
       defaultValue: 'string'
     }
   ]
-}
+};
