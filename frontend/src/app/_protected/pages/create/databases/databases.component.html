@@ -12,7 +12,10 @@
         <ng-template mat-tab-label>Manage</ng-template>
 
         <ng-template matTabContent>
-          <app-manage-databases (dbTypes)="passDbTypesToParent($event)"></app-manage-databases>
+          <app-manage-databases
+            *ngIf="databaseTypes"
+            [databaseTypes]="databaseTypes">
+          </app-manage-databases>
         </ng-template>
 
       </mat-tab>
@@ -22,7 +25,10 @@
         <ng-template mat-tab-label>Connect</ng-template>
 
         <ng-template matTabContent>
-          <app-connect [databaseTypes]="databaseTypes"></app-connect>
+          <app-connect
+            *ngIf="databaseTypes"
+            [databaseTypes]="databaseTypes">
+          </app-connect>
         </ng-template>
 
       </mat-tab>

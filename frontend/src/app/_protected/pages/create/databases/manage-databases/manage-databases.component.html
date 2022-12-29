@@ -7,7 +7,7 @@
       <!-- Create new database section -->
       <div class="col-12">
         <h3 class="fw-bold">Create database</h3>
-        <p class="text-muted">Provide a name and create a new {{getDbName(defaultDbType)}} database below</p>
+        <p class="text-muted">Provide a name and create a new SQLite database below</p>
       </div>
 
       <div class="col-12 my-5">
@@ -75,7 +75,7 @@
               <button
                 mat-button
                 color="primary"
-                (click)="viewAppDetails(item)">
+                (click)="viewPluginDatabaseDetails(item)">
                 Details
               </button>
 
@@ -84,7 +84,7 @@
                 color="primary"
                 class="w-100 px-4 ms-2"
                 *ngIf="!item?.details"
-                (click)="installDb(item)">
+                (click)="installPluginDatabase(item)">
                 Install
               </button>
 
@@ -93,7 +93,7 @@
                 color="warn"
                 class="w-100 px-4 ms-2"
                 *ngIf="item?.details"
-                (click)="uninstallDb(item.details)">
+                (click)="installPluginDatabase(item.details)">
                 Uninstall
               </button>
 
@@ -109,7 +109,7 @@
 
     <h3 class="fw-bold">Existing databases</h3>
 
-    <p class="text-muted">{{getDbName(defaultDbType)}} databases you have already installed or created</p>
+    <p class="text-muted">SQLite databases you have already installed or created</p>
 
     <!-- Loading skeleton -->
     <ng-container *ngIf="isLoadingDbs">
@@ -129,7 +129,7 @@
         class="w-100 borderless hoverable">
 
         <!-- Name Column -->
-        <ng-container matColumnDef="dbName">
+        <ng-container matColumnDef="name">
           <th mat-header-cell *matHeaderCellDef class="text-nowrap ps-0">Name</th>
           <td mat-cell *matCellDef="let element" class="ps-0 text-truncate">{{element?.name}}</td>
         </ng-container>
@@ -154,17 +154,17 @@
             </button>
 
             <button
-              *ngIf="defaultDbType === 'sqlite'"
+              *ngIf="databaseTypes.default === 'sqlite'"
               mat-button
               color="primary"
-              (click)="downloadBackup(element)">
+              (click)="downloadDatabaseBackup(element)">
               Backup
             </button>
 
             <button
               mat-button
               color="warn"
-              (click)="deleteDb(element)"
+              (click)="deleteDatabase(element)"
               [disabled]="element.name === 'magic'">
               Delete
             </button>
@@ -190,7 +190,7 @@
     <div class="text-end button-row mt-3 w-100 upload-backup-row">
 
       <button
-        *ngIf="defaultDbType === 'sqlite'"
+        *ngIf="databaseTypes.default === 'sqlite'"
         mat-flat-button
         color="primary"
         (click)="zipfile.click()">
@@ -205,7 +205,7 @@
       #zipfile
       class="d-none"
       accept=".db"
-      (change)="uploadBackup($event.target.files)">
+      (change)="uploadDatabaseBackup($event.target.files)">
 
   </div>
 </div>
