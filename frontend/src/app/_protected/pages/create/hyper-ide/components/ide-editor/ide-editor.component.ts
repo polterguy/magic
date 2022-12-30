@@ -29,6 +29,7 @@ import { Response } from 'src/app/models/response.model';
 import { OpenAIConfigurationDialogComponent } from '../openai/openai-configuration-dialog/openai-configuration-dialog.component';
 import { OpenAITrainingDialogComponent } from '../openai/openai-training-dialog/openai-training-dialog.component';
 import { OpenAIAnswerDialogComponent } from '../openai/openai-answer-dialog/openai-answer-dialog.component';
+import { TreeNode } from '../ide-tree/models/tree-node.model';
 
 /**
  * Hyper IDE editor component, wrapping currently open files, allowing user to edit the code.
@@ -55,7 +56,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   @Output() closeFile: EventEmitter<string> = new EventEmitter<string>();
   @Output() deleteActiveFolderFromParent: EventEmitter<any> = new EventEmitter<any>();
   @Output() deleteActiveFileFromParent: EventEmitter<any> = new EventEmitter<any>();
-  @Output() renameActiveFileFromParent: EventEmitter<any> = new EventEmitter<any>();
+  @Output() renameFileFromParent: EventEmitter<{ file: { name: string, path: string }, newName: string }> = new EventEmitter<{ file: { name: string, path: string }, newName: string }>();
   @Output() renameActiveFolderFromParent: EventEmitter<any> = new EventEmitter<any>();
   @Output() createNewFileObjectFromParent: EventEmitter<any> = new EventEmitter<any>();
 
@@ -318,7 +319,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     editor.doc.clearHistory(); // To avoid having initial loading of file becoming an "undo operation".
   }
 
-  private renameActiveFile() {
+  private renameFile() {
     if (!this.currentFileData) {
       return;
     }
@@ -330,10 +331,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     });
     dialog.afterClosed().subscribe((data: FileObjectName) => {
       if (data) {
-        this.renameActiveFileFromParent.emit({ file: this.currentFileData, name: data.name });
-        this.currentFileData.name = data.name;
-        this.currentFileData.path = this.currentFileData.path.substring(0, this.currentFileData.path.lastIndexOf('/') + 1) +
-          data.name;
+        this.renameFileFromParent.emit({ file: this.currentFileData, newName: data.name });
       }
     });
   }
@@ -556,7 +554,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
           break;
 
         case 'renameFile':
-          this.renameActiveFile();
+          this.renameFile();
           break;
 
         case 'renameFolder':
