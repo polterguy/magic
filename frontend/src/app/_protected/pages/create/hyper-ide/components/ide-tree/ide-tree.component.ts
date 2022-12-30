@@ -4,7 +4,7 @@
  */
 
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTreeFlattener, MatTreeFlatDataSource } from '@angular/material/tree';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
@@ -44,7 +44,7 @@ export class IdeTreeComponent implements OnInit {
   };
 
   @Input() searchKey: string;
-  
+
   @Output() showEditor: EventEmitter<any> = new EventEmitter<any>();
   @Output() clearEditorHistory: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output() setFocusToActiveEditor: EventEmitter<any> = new EventEmitter<any>();
@@ -64,21 +64,31 @@ export class IdeTreeComponent implements OnInit {
 
   constructor(
     private dialog: MatDialog,
-    private cdr: ChangeDetectorRef,
     private fileService: FileService,
     private generalService: GeneralService,
     private endpointService: EndpointService,
     private codemirrorActionsService: CodemirrorActionsService) { }
 
   ngOnInit() {
+
+    // Retrieving files from server, and data binding tree to its initial state.
     this.getFilesFromServer().then((res: boolean) => {
+
+      // Making sure we succeeded in getting files from backend.
       if (res === true) {
+
+        // Data binding tree.
         this.dataSource.data = this.root.children;
+
+        // We need endpoints to be able to determine how to execute Hyperlambda files (execute or invoke).
         this.getEndpoints();
       }
     });
   }
 
+  /**
+   * Retrieves files and folders from backend.
+   */
   getFilesFromServer(folder: string = '/') {
     return new Promise<boolean>(resolve => {
 
@@ -127,6 +137,9 @@ export class IdeTreeComponent implements OnInit {
     });
   }
 
+  /**
+   * Invoked when user wants to execute a macro.
+   */
   selectMacro() {
     const dialogRef = this.dialog.open(SelectMacroDialogComponent, {
       width: '550px',
@@ -141,6 +154,9 @@ export class IdeTreeComponent implements OnInit {
     });
   }
 
+  /**
+   * Invoked when user wants to open a file for editing.
+   */
   openFile(file: TreeNode) {
 
     // Checking if file is already open.
@@ -223,10 +239,16 @@ export class IdeTreeComponent implements OnInit {
     this.activeFolder = TreeNode.parentFolder(file);
   }
 
+  /**
+   * Deletes currently activated and open file.
+   */
   deleteActiveFile() {
     this.deleteFile(this.currentFileData.path);
   }
 
+  /**
+   * Deletes the specified file, optionally asking user to confirm action.
+   */
   deleteFile(path: string, askForConfirmation: boolean = true) {
 
     // Callback invoked when file should be deleted.
@@ -284,10 +306,16 @@ export class IdeTreeComponent implements OnInit {
     }
   }
 
+  /**
+   * Deletes currently activated folder.
+   */
   deleteActiveFolder() {
     this.deleteFolder(this.activeFolder);
   }
 
+  /**
+   * Deletes the specified folder.
+   */
   deleteFolder(path: string) {
 
     // Making sure user doesn't delete system folders.
@@ -339,6 +367,10 @@ export class IdeTreeComponent implements OnInit {
     });
   }
 
+  /**
+   * Data bind the tree, such that folders that are already expanded stays expanded
+   * after data binding is done.
+   */
   dataBindTree() {
 
     // Storing currently expanded nodes such that we can re-expand them after data binding.
@@ -361,6 +393,9 @@ export class IdeTreeComponent implements OnInit {
     }
   }
 
+  /**
+   * Closes the specified file.
+   */
   closeFile(path: string) {
 
     // Removing file from currently open files.
@@ -380,6 +415,9 @@ export class IdeTreeComponent implements OnInit {
     this.setFocusToActiveEditor.emit();
   }
 
+  /**
+   * Shows the in place rename textbox.
+   */
   showRenameInput(node: TreeNode) {
 
     // Making sure we display renaming textbox for specified tree node.
@@ -391,6 +429,9 @@ export class IdeTreeComponent implements OnInit {
     }, 10);
   }
 
+  /**
+   * Renames the specified file to its new name.
+   */
   renameFile(event: { file: { name: string, path: string }, newName: string }) {
 
     // Sanity checking new name.
@@ -470,7 +511,6 @@ export class IdeTreeComponent implements OnInit {
           }
 
           this.updateFileObject(toUpdate);
-          this.cdr.detectChanges();
           this.generalService.showFeedback('Folder successfully renamed', 'successMessage');
           this.showRenameBox = null;
         },
@@ -593,7 +633,6 @@ export class IdeTreeComponent implements OnInit {
                 this.showEditor.emit({ currentFileData: this.currentFileData });
                 this.setFocusToActiveEditor.emit();
               }
-              this.cdr.detectChanges();
 
               // If the code mirror can't open the file.
               // Lets the user decide what to do with it.
@@ -625,7 +664,6 @@ export class IdeTreeComponent implements OnInit {
         } else {
           this.dataBindTree();
           this.getEndpoints();
-          this.cdr.detectChanges();
         }
       }
     })
@@ -741,7 +779,6 @@ export class IdeTreeComponent implements OnInit {
 
       sorter();
       this.dataBindTree();
-      this.cdr.detectChanges();
       this.getEndpoints();
       this.updateFileObject(event.objectPath);
     }
@@ -832,7 +869,6 @@ export class IdeTreeComponent implements OnInit {
     this.endpointService.endpoints().subscribe({
       next: (result: Endpoint[]) => {
         this.endpoints = result;
-        this.cdr.detectChanges();
       },
       error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
     });
