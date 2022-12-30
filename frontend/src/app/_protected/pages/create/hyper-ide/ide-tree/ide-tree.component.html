@@ -98,10 +98,10 @@
             [class.d-none]="filterLeafNode(file, searchKey)">
 
             <!-- Button for opening file -->
-            <div class="w-100 h-100 flex-nowrap align-items-center d-{{showRenameBox !== folder ? 'flex' : 'none'}}">
+            <div class="w-100 h-100 flex-nowrap align-items-center d-{{showRenameBox !== file.node ? 'flex' : 'none'}}">
 
               <button
-                class="w-100 file-button px-1 justify-content-start d-{{showRenameBox !== file ? 'flex' : 'none'}}"
+                class="w-100 file-button px-1 justify-content-start d-{{showRenameBox !== file.node ? 'flex' : 'none'}}"
                 mat-button
                 (click)="openFile(file.node);currentSelection = 'file'">
                 <mat-icon>insert_drive_file</mat-icon>{{file.name}} {{file.node.systemFile}}
@@ -110,12 +110,12 @@
             </div>
 
             <!-- Name textbox for renaming files -->
-            <span class="d-{{showRenameBox === file ? 'flex' : 'none'}} rename-box">
+            <span class="d-{{showRenameBox === file.node ? 'flex' : 'none'}} rename-box">
               <input
                 type="text"
                 [value]="file.name"
                 class="w-100 ms-2"
-                [id]="showRenameBox === file ? 'renameFile':''"
+                [id]="showRenameBox === file.node ? 'renameFile':''"
                 #fileInput
                 (keyup.enter)="renameActiveFile({file: file, name: fileInput?.value})"
                 (keyup.esc)="showRenameBox = null">
@@ -129,7 +129,7 @@
               <button
                 mat-icon-button
                 color="primary"
-                (click)="showRenameInput(file)">
+                (click)="showRenameInput(file.node)">
                 <mat-icon>edit</mat-icon>
               </button>
 
@@ -155,7 +155,7 @@
             [isExpanded]="activeFolder === folder.node.path" class="justify-content-betwee"
             [class.d-none]="filterParentNode(folder, searchKey)">
 
-            <div class="w-100 h-100 flex-nowrap align-items-center d-{{showRenameBox !== folder ? 'flex' : 'none'}}">
+            <div class="w-100 h-100 flex-nowrap align-items-center d-{{showRenameBox !== folder.node ? 'flex' : 'none'}}">
 
               <!-- Buttons for expanding and collapsing tree node -->
               <button
@@ -186,12 +186,12 @@
             </div>
 
             <!-- Name textbox for renaming folder -->
-            <span class="d-{{showRenameBox === folder ? 'flex' : 'none'}} rename-box">
+            <span class="d-{{showRenameBox === folder.node ? 'flex' : 'none'}} rename-box">
               <input
                 type="text"
                 [value]="folder.name"
                 class="w-100 ms-2"
-                [id]="showRenameBox === folder ? 'renameFile':''"
+                [id]="showRenameBox === folder.node ? 'renameFile':''"
                 #folderInput
                 (keyup.enter)="renameActiveFolder(folder, folderInput?.value)" (keyup.esc)="showRenameBox = null">
             </span>
@@ -202,7 +202,7 @@
               <button
                 mat-icon-button
                 color="primary"
-                (click)="showRenameInput(folder)">
+                (click)="showRenameInput(folder.node)">
                 <mat-icon>edit</mat-icon>
               </button>
 

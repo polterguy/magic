@@ -33,15 +33,8 @@ import { FileService } from '../_services/file.service';
 })
 export class IdeTreeComponent implements OnInit {
 
-  @Input() searchKey: string;
-  
-  @Output() showEditor: EventEmitter<any> = new EventEmitter<any>();
-  @Output() clearEditorHistory: EventEmitter<boolean> = new EventEmitter<boolean>();
-  @Output() setFocusToActiveEditor: EventEmitter<any> = new EventEmitter<any>();
-
-  endpoints: Endpoint[];
-
-  root: TreeNode = {
+  private openFolder: FlatNode;
+  private root: TreeNode = {
     name: '',
     path: '/',
     isFolder: true,
@@ -49,17 +42,23 @@ export class IdeTreeComponent implements OnInit {
     level: 0,
   };
 
+  @Input() searchKey: string;
+  
+  @Output() showEditor: EventEmitter<any> = new EventEmitter<any>();
+  @Output() clearEditorHistory: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output() setFocusToActiveEditor: EventEmitter<any> = new EventEmitter<any>();
+
+  endpoints: Endpoint[];
+  systemFiles: boolean = false;
+
   treeControl = new FlatTreeControl<FlatNode>(node => node.level, node => node.expandable);
   dataSource = new MatTreeFlatDataSource(this.treeControl, treeFlattener);
   openFiles: FileNode[] = [];
   currentFileData: FileNode;
   activeFolder: string = '/';
-  currentFolder = '/';
-  openFolder: any;
-  systemFiles: boolean = false;
-  fileInput: string[];
-  zipFileInput: any;
-  showRenameBox: any = null;
+  fileInput: string;
+  zipFileInput: string;
+  showRenameBox: TreeNode = null;
   currentSelection: string = '';
 
   constructor(
@@ -351,7 +350,7 @@ export class IdeTreeComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
-  showRenameInput(item: any) {
+  showRenameInput(item: TreeNode) {
     this.showRenameBox = item;
     setTimeout(() => {
       (document.querySelector('#renameFile') as HTMLElement).focus();
@@ -472,21 +471,9 @@ export class IdeTreeComponent implements OnInit {
     }
   }
 
-  selectFolder(folder: any, keepOpen?: boolean) {
+  selectFolder(folder: FlatNode) {
     this.activeFolder = folder.node.path;
     this.openFolder = folder;
-  }
-
-  nameValidation(name: string) {
-    if (!name || name.length === 0) {
-      return false;
-    }
-    for (const idx of name) {
-      if ('abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_-.'.indexOf(idx.toLowerCase()) === -1) {
-        return false;
-      }
-    }
-    return true
   }
 
   uploadFiles(files: FileList) {
@@ -776,6 +763,18 @@ export class IdeTreeComponent implements OnInit {
       },
       error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
     });
+  }
+
+  private nameValidation(name: string) {
+    if (!name || name.length === 0) {
+      return false;
+    }
+    for (const idx of name) {
+      if ('abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_-.'.indexOf(idx.toLowerCase()) === -1) {
+        return false;
+      }
+    }
+    return true
   }
 
   private removeNode(path: string, node: TreeNode = this.root) {
