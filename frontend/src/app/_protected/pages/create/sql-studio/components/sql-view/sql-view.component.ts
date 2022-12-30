@@ -113,7 +113,7 @@ export class SqlViewComponent implements OnInit, OnDestroy {
       databaseType: this.selectedDatabase,
       connectionString: this.selectedConnectionString,
       database: this.selectedDatabase,
-      options: await this.getCodeMirrorOptions(),
+      options: this.getCodeMirrorOptions(),
       sql: '',
     };
     this.input.options.hintOptions = {
@@ -305,7 +305,7 @@ export class SqlViewComponent implements OnInit, OnDestroy {
   }
 
   // Returns CodeMirror options for SQL type of editor.
-  private async getCodeMirrorOptions(): Promise<any> {
-    return this.codemirrorActionsService.getActions(null, 'sql').then((res: any) => { return res });
+  private getCodeMirrorOptions() {
+    return this.codemirrorActionsService.getActions(null, 'sql');
   }
 }

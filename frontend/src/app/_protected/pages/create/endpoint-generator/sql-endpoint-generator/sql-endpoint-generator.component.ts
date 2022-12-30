@@ -265,13 +265,12 @@ export class ManualGeneratorComponent extends GeneratorBase implements OnInit, O
    * Returns CodeMirror options to caller.
    */
   private getOptions() {
-    this.codemirrorActionsService.getActions('', 'sql').then((options: any) => {
-      options.autofocus = false;
-      options.hintOptions = {
-        tables: this.hintTables,
-      };
-      this.sql.options = options;
-    });
+    const options = this.codemirrorActionsService.getActions('', 'sql');
+    options.autofocus = false;
+    options.hintOptions = {
+      tables: this.hintTables,
+    };
+    this.sql.options = options;
   }
 
   /**

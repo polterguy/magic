@@ -72,7 +72,7 @@ export class AutoGenerateComponent implements OnInit {
     this.frontendType = this.frontendTypes[1].value;
     this.getPalette();
     this.getEndpoints();
-    this.codemirrorActionsService.getActions('html').then((res: any) => { this.codemirrorOptions = res })
+    this.codemirrorOptions = this.codemirrorActionsService.getActions('html');
   }
 
   private getPalette() {

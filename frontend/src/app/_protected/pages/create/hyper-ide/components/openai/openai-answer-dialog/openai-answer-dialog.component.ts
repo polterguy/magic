@@ -39,16 +39,15 @@ export class OpenAIAnswerDialogComponent implements OnInit {
       }
       return 0;
     });
-    this.codemirrorActionsService.getActions(null, 'hl').then((res: any) => {
-      res.autofocus = false;
-      this.hlModel = {
-        hyperlambda: this.data.snippets[0].text,
-        options: res,
-      }
-      setTimeout(() => {
-        this.hlReady = true;
-      }, 250);
-    });
+    const res = this.codemirrorActionsService.getActions(null, 'hl');
+    res.autofocus = false;
+    this.hlModel = {
+      hyperlambda: this.data.snippets[0].text,
+      options: res,
+    }
+    setTimeout(() => {
+      this.hlReady = true;
+    }, 250);
   }
 
   copy() {

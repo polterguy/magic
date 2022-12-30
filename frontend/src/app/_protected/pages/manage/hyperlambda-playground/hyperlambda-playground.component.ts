@@ -77,10 +77,9 @@ export class HyperlambdaPlaygroundComponent implements OnInit, OnDestroy {
     this.getCodeMirrorOptions();
     this.watchForActions();
   }
-  private async getCodeMirrorOptions() {
-    this.codemirrorActionsService.getActions(null, 'hl').then((res: any) => {
-      this.input.options = res;
-    });
+  private getCodeMirrorOptions() {
+    const options = this.codemirrorActionsService.getActions(null, 'hl');
+    this.input.options = options;
   }
 
   /**

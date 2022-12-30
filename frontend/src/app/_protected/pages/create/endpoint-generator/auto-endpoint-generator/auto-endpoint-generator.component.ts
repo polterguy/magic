@@ -415,10 +415,9 @@ export class AutoGeneratorComponent extends GeneratorBase implements OnInit, OnD
    * Returns CodeMirror options to caller.
    */
   private getOptions() {
-    this.codemirrorActionsService.getActions('', 'hl').then((options: any) => {
-      options.autofocus = false;
-      this.hlInput.options = options;
-    });
+    const options = this.codemirrorActionsService.getActions('', 'hl');
+    options.autofocus = false;
+    this.hlInput.options = options;
   }
 
   /*
