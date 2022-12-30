@@ -34,11 +34,12 @@ import { FileService } from '../_services/file.service';
 export class IdeTreeComponent implements OnInit {
 
   @Input() searchKey: string;
-  endpoints: Endpoint[];
-
+  
   @Output() showEditor: EventEmitter<any> = new EventEmitter<any>();
   @Output() clearEditorHistory: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output() setFocusToActiveEditor: EventEmitter<any> = new EventEmitter<any>();
+
+  endpoints: Endpoint[];
 
   root: TreeNode = {
     name: '',
