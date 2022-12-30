@@ -48,4 +48,14 @@ export class TreeNode {
     }
     return tmp.substring(0, tmp.lastIndexOf('/') + 1);
   }
+
+  /**
+   * Returns parent folder of path.
+   */
+  static parentFolderFromPath(path: string) {
+    if (path.endsWith('/')) {
+      path = path.substring(0, path.length - 1);
+    }
+    return path.substring(0, path.lastIndexOf('/') + 1);
+  }
 }
