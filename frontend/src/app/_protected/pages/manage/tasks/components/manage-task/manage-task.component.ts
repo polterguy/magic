@@ -44,16 +44,15 @@ export class ManageTaskComponent implements OnInit {
     if (this.data) {
       this.task = this.data;
     }
-    this.codemirrorActionsService.getActions(null, 'hl').then((res: any) => {
-      res.autofocus = false;
-      this.hlModel = {
-        hyperlambda: this.task.hyperlambda,
-        options: res,
-      }
-      setTimeout(() => {
-        this.hlReady = true;
-      }, 500);
-    });
+    const res = this.codemirrorActionsService.getActions(null, 'hl');
+    res.autofocus = false;
+    this.hlModel = {
+      hyperlambda: this.task.hyperlambda,
+      options: res,
+    }
+    setTimeout(() => {
+      this.hlReady = true;
+    }, 500);
   }
 
   /**

@@ -21,100 +21,97 @@ export class CodemirrorActionsService {
 
   constructor(private ngZone: NgZone) { }
 
-  public getActions(path?: any, type?: string) {
-    return new Promise<any>((resolve: any) => {
-      let options = [];
+  public getActions(path?: string, type?: string) {
+    let options = [];
 
-      if (path) {
-        const extension = path.substring(path.lastIndexOf('.') + 1).toLowerCase();
-        options = this.extensions.filter(x => x.extensions.indexOf(extension) !== -1);
-      } else if (type) {
-        options = this.extensions.filter(x => x.extensions.indexOf(type) !== -1);
-      }
+    if (path) {
+      const extension = path.substring(path.lastIndexOf('.') + 1).toLowerCase();
+      options = this.extensions.filter(x => x.extensions.indexOf(extension) !== -1);
+    } else if (type) {
+      options = this.extensions.filter(x => x.extensions.indexOf(type) !== -1);
+    }
 
-      if (options.length === 0) {
-        resolve(null);
-        return;
-      } else {
-        options[0] = this.clone(options[0]);
-        if (options[0].options.extraKeys) {
-          options[0].options.extraKeys['Alt-M'] = (cm: any) => {
-            cm.setOption('fullScreen', !cm.getOption('fullScreen'));
-          };
-          options[0].options.extraKeys['Alt-S'] = (cm: any) => {
+    if (options.length === 0) {
+      return null;
+    } else {
+      const res = this.clone(options[0]);
+      if (res.options.extraKeys) {
+        res.options.extraKeys['Alt-M'] = (cm: any) => {
+          cm.setOption('fullScreen', !cm.getOption('fullScreen'));
+        };
+        res.options.extraKeys['Alt-S'] = () => {
+          this.ngZone.run(() => {
+            this.action.next('save')
+          })
+        };
+        res.options.extraKeys['Alt-D'] = () => {
+          this.ngZone.run(() => {
+            this.action.next('deleteFile');
+          })
+        };
+        res.options.extraKeys['Alt-C'] = () => {
+          this.ngZone.run(() => {
+            this.action.next('close');
+          })
+        };
+        res.options.extraKeys['Alt-R'] = () => {
+          this.ngZone.run(() => {
+            this.action.next('renameFile');
+          })
+        };
+        res.options.extraKeys['Alt-L'] = () => {
+          this.ngZone.run(() => {
+            this.action.next('renameFolder');
+          })
+        };
+        res.options.extraKeys['Alt-V'] = () => {
+          this.ngZone.run(() => {
+            this.action.next('insertSnippet');
+          })
+        };
+        res.options.extraKeys['Alt-O'] = () => {
+          this.ngZone.run(() => {
+            this.action.next('macro');
+          })
+        };
+        res.options.extraKeys['Alt-A'] = () => {
+          this.ngZone.run(() => {
+            this.action.next('newFile');
+          })
+        };
+        res.options.extraKeys['Alt-B'] = () => {
+          this.ngZone.run(() => {
+            this.action.next('newFolder');
+          })
+        };
+        res.options.extraKeys['Alt-X'] = () => {
+          this.ngZone.run(() => {
+            this.action.next('deleteFolder');
+          })
+        };
+        res.options.extraKeys['Alt-P'] = () => {
+          this.ngZone.run(() => {
+            this.action.next('preview');
+          })
+        };
+        res.options.extraKeys['F5'] = () => {
+          this.ngZone.run(() => {
+            this.action.next('execute');
+          })
+        };
+        if (type === 'sql') {
+          res.options.extraKeys['Ctrl-Space'] = (cm: any) => {
             this.ngZone.run(() => {
-              this.action.next('save')
+              cm.showHint({
+                hint: CodeMirror.hint.sql,
+                completeSingle: false,
+              });
             })
           };
-          options[0].options.extraKeys['Alt-D'] = (cm: any) => {
-            this.ngZone.run(() => {
-              this.action.next('deleteFile');
-            })
-          };
-          options[0].options.extraKeys['Alt-C'] = (cm: any) => {
-            this.ngZone.run(() => {
-              this.action.next('close');
-            })
-          };
-          options[0].options.extraKeys['Alt-R'] = (cm: any) => {
-            this.ngZone.run(() => {
-              this.action.next('renameFile');
-            })
-          };
-          options[0].options.extraKeys['Alt-L'] = (cm: any) => {
-            this.ngZone.run(() => {
-              this.action.next('renameFolder');
-            })
-          };
-          options[0].options.extraKeys['Alt-V'] = (cm: any) => {
-            this.ngZone.run(() => {
-              this.action.next('insertSnippet');
-            })
-          };
-          options[0].options.extraKeys['Alt-O'] = (cm: any) => {
-            this.ngZone.run(() => {
-              this.action.next('macro');
-            })
-          };
-          options[0].options.extraKeys['Alt-A'] = (cm: any) => {
-            this.ngZone.run(() => {
-              this.action.next('newFile');
-            })
-          };
-          options[0].options.extraKeys['Alt-B'] = (cm: any) => {
-            this.ngZone.run(() => {
-              this.action.next('newFolder');
-            })
-          };
-          options[0].options.extraKeys['Alt-X'] = (cm: any) => {
-            this.ngZone.run(() => {
-              this.action.next('deleteFolder');
-            })
-          };
-          options[0].options.extraKeys['Alt-P'] = (cm: any) => {
-            this.ngZone.run(() => {
-              this.action.next('preview');
-            })
-          };
-          options[0].options.extraKeys['F5'] = (cm: any) => {
-            this.ngZone.run(() => {
-              this.action.next('execute');
-            })
-          };
-          if (type === 'sql') {
-            options[0].options.extraKeys['Ctrl-Space'] = (cm: any) => {
-              this.ngZone.run(() => {
-                cm.showHint({
-                  hint: CodeMirror.hint.sql,
-                  completeSingle: false,
-                });
-              })
-            };
-          }
         }
-        resolve(options[0].options)
       }
-    });
+      return res.options;
+    }
   }
 
   /*

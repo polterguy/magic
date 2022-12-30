@@ -67,12 +67,11 @@ export class PublishDialogComponent implements OnInit {
   }
 
   private getCodeMirrorOptions() {
-    this.codemirrorActionsService.getActions(null, 'json').then((res: any) => {
-      this.options = res;
-      setTimeout(() => {
-        this.codemirrorIsReady = true;
-      }, 500);
-    });
+    const res = this.codemirrorActionsService.getActions(null, 'json');
+    this.options = res;
+    setTimeout(() => {
+      this.codemirrorIsReady = true;
+    }, 500);
   }
 
   /**

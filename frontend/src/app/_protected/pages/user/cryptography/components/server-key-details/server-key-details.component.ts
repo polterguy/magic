@@ -89,19 +89,18 @@ export class ServerKeyDetailsComponent implements OnInit {
     this.generalService.showFeedback('Public key can be found on your clipboard');
   }
 
-  private async getCodeMirrorOptions() {
-    this.codemirrorActionsService.getActions(null, 'hl').then((option: any) => {
-      const hlOptions: any = {
-        hyperlambda: this.data.key.vocabulary,
-        options: option
-      }
-      hlOptions.options.autofocus = false;
-      this.data.key.options = hlOptions;
+  private getCodeMirrorOptions() {
+    const options = this.codemirrorActionsService.getActions(null, 'hl');
+    const hlOptions: any = {
+      hyperlambda: this.data.key.vocabulary,
+      options: options
+    }
+    hlOptions.options.autofocus = false;
+    this.data.key.options = hlOptions;
 
-      setTimeout(() => {
-        this.codemirrorReady = true;
-      }, 300);
-    });
+    setTimeout(() => {
+      this.codemirrorReady = true;
+    }, 300);
   }
 
   save() {

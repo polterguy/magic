@@ -40,15 +40,12 @@ export class TestHealthContentDialogComponent implements OnInit, OnDestroy {
     this.watchForActions();
   }
 
-  private async getCodeMirrorOptions() {
-    this.codemirrorActionsService.getActions(null, 'hl').then((res: any) => {
-      if (res) {
-        this.data.content.options = res;
-        setTimeout(() => {
-          this.codemirrorOptionsReady = true;
-        }, 100);
-      }
-    });
+  private getCodeMirrorOptions() {
+    const res = this.codemirrorActionsService.getActions(null, 'hl');
+    this.data.content.options = res;
+    setTimeout(() => {
+      this.codemirrorOptionsReady = true;
+    }, 100);
   }
 
   private watchForActions() {

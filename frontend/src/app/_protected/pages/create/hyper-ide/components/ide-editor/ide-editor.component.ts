@@ -603,10 +603,9 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     })
   }
 
-  private async getCodeMirrorOptions() {
-    this.codemirrorActionsService.getActions(null, this.currentFileData?.path.split('.').pop()).then((options: any) => {
-      this.codemirrorOptions[this.currentFileData.path] = options;
-      this.currentFileData.options = options;
-    });
+  private getCodeMirrorOptions() {
+    const options = this.codemirrorActionsService.getActions(null, this.currentFileData?.path.split('.').pop());
+    this.codemirrorOptions[this.currentFileData.path] = options;
+    this.currentFileData.options = options;
   }
 }

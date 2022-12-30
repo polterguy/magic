@@ -129,10 +129,9 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
       });
   }
 
-  private async getCodeMirrorOptions() {
-    this.codemirrorActionsService.getActions(null, 'json').then((options: any) => {
-      this.cmOptions.json = options;
-    });
+  private getCodeMirrorOptions() {
+    const options = this.codemirrorActionsService.getActions(null, 'json');
+    this.cmOptions.json = options;
   }
 
   private watchForActions() {

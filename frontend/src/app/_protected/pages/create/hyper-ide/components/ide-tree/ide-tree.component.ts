@@ -139,12 +139,12 @@ export class IdeTreeComponent implements OnInit {
     });
   }
 
-  async openFile(file: TreeNode) {
+  openFile(file: TreeNode) {
     if (this.openFiles.filter(x => x.path === file.path).length > 0) {
       this.currentFileData = this.openFiles.filter(x => x.path === file.path)[0];
       this.showEditor.emit({ currentFileData: this.currentFileData })
     } else {
-      if (await this.getCodeMirrorOptions(file.path) === null) {
+      if (this.getCodeMirrorOptions(file.path) === null) {
         const dialog = this.dialog.open(IncompatibleFileDialogComponent, {
           width: '550px',
           data: {
@@ -175,7 +175,7 @@ export class IdeTreeComponent implements OnInit {
             path: file.path,
             folder: file.path.substring(0, file.path.lastIndexOf('/') + 1),
             content: content,
-            options: await this.getCodeMirrorOptions(file.path),
+            options: this.getCodeMirrorOptions(file.path),
           });
 
           this.currentFileData = this.openFiles.filter(x => x.path === file.path)[0];
@@ -499,13 +499,13 @@ export class IdeTreeComponent implements OnInit {
           this.fileService.loadFile(fileObject).subscribe({
             next: async (content: string) => {
 
-              if (await this.getCodeMirrorOptions(fileObject) !== null) {
+              if (this.getCodeMirrorOptions(fileObject) !== null) {
                 this.openFiles.push({
                   name: fileObject.substring(fileObject.lastIndexOf('/') + 1),
                   path: fileObject,
                   folder: fileObject.substring(0, fileObject.lastIndexOf('/') + 1),
                   content: content,
-                  options: await this.getCodeMirrorOptions(fileObject),
+                  options: this.getCodeMirrorOptions(fileObject),
                 });
                 this.currentFileData = this.openFiles.filter(x => x.path === fileObject)[0];
                 this.showEditor.emit({ currentFileData: this.currentFileData });
@@ -515,7 +515,7 @@ export class IdeTreeComponent implements OnInit {
 
               // If the code mirror can't open the file.
               // Lets the user decide what to do with it.
-              if (await this.getCodeMirrorOptions(fileObject) === null) {
+              if (this.getCodeMirrorOptions(fileObject) === null) {
                 this.dialog.open(IncompatibleFileDialogComponent, {
                   width: '550px',
                   data: {
@@ -527,7 +527,7 @@ export class IdeTreeComponent implements OnInit {
                     path: fileObject,
                     folder: fileObject.substring(0, fileObject.lastIndexOf('/') + 1),
                     content: content,
-                    options: await this.getCodeMirrorOptions(fileObject)
+                    options: this.getCodeMirrorOptions(fileObject)
                   }
                   if (data && data.download) {
                     this.downloadActiveFile(fileObject);
@@ -782,8 +782,8 @@ export class IdeTreeComponent implements OnInit {
     return false;
   }
 
-  private getCodeMirrorOptions(path: string): Promise<any> {
-    return this.codemirrorActionsService.getActions(path).then((res: any) => { return res });
+  private getCodeMirrorOptions(path: string) {
+    return this.codemirrorActionsService.getActions(path);
   }
 
   private scrollToLastOpenFile() {
