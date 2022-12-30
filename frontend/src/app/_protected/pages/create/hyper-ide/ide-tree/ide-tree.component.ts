@@ -7,7 +7,6 @@ import { FlatTreeControl } from '@angular/cdk/tree';
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTreeFlattener, MatTreeFlatDataSource } from '@angular/material/tree';
-import { Observable } from 'rxjs';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { EndpointService } from 'src/app/_general/services/endpoint.service';
 import { GeneralService } from 'src/app/_general/services/general.service';
@@ -25,7 +24,7 @@ import { FileService } from '../_services/file.service';
 
 /**
  * Tree component for Hyper IDE displaying files and folders, allowing user
- * to select and open files, and/or switch to open file, or close open files.
+ * to select and open files, and/or switch to open file, rename file, or close open files.
  */
 @Component({
   selector: 'app-ide-tree',
@@ -34,9 +33,7 @@ import { FileService } from '../_services/file.service';
 })
 export class IdeTreeComponent implements OnInit {
 
-  private treeFlattener = new MatTreeFlattener(_transformer, node => node.level, node => node.expandable, node => node.children);
-
-  @Input() searchKey!: Observable<string>;
+  @Input() searchKey: string;
   endpoints: Endpoint[];
 
   @Output() showEditor: EventEmitter<any> = new EventEmitter<any>();
@@ -52,7 +49,7 @@ export class IdeTreeComponent implements OnInit {
   };
 
   treeControl = new FlatTreeControl<FlatNode>(node => node.level, node => node.expandable);
-  dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
+  dataSource = new MatTreeFlatDataSource(this.treeControl, treeFlattener);
   openFiles: FileNode[] = [];
   currentFileData: FileNode;
   activeFolder: string = '/';
@@ -814,3 +811,5 @@ const _transformer = (node: TreeNode, level: number) => {
     node: node,
   };
 };
+
+const treeFlattener = new MatTreeFlattener(_transformer, node => node.level, node => node.expandable, node => node.children);

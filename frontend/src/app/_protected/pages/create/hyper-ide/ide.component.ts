@@ -18,13 +18,13 @@ import { FileNode } from './_models/file-node.model';
 export class IdeComponent {
 
   currentFileData: FileNode;
-  searchKey: Observable<string>;
+  searchKey: string;
 
   showEditor(event: { currentFileData: any }) {
     this.currentFileData = event.currentFileData;
   }
 
   filterList(event: any) {
-    this.searchKey = event;
+    this.searchKey = event.value;
   }
 }
