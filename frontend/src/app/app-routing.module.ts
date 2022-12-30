@@ -67,13 +67,6 @@ const routes: Routes = [
         loadChildren: () => import('./_protected/pages/create/hyper-ide/_module/ide.module').then(m => m.IdeModule)
       },
       {
-        path: 'frontend-ide',
-        data: {
-          type: 'frontend',
-        },
-        loadChildren: () => import('./_protected/pages/create/hyper-ide/_module/ide.module').then(m => m.IdeModule)
-      },
-      {
         path: 'tasks',
         loadChildren: () => import('./_protected/pages/manage/tasks/_module/task.module').then(m => m.TaskModule)
       },
