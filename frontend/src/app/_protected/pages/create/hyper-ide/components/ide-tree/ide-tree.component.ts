@@ -176,7 +176,7 @@ export class IdeTreeComponent implements OnInit {
           } else if (data && data.deleteFile) {
 
             // Deleting file.
-            this.deleteFile(file.path, true);
+            this.deleteFile(file.path, false);
 
           } else if (data && data.unzip) {
 
@@ -227,68 +227,76 @@ export class IdeTreeComponent implements OnInit {
     this.deleteFile(this.currentFileData.path);
   }
 
-  deleteFile(file: string, askForConfirmation: boolean = true) {
+  deleteFile(path: string, askForConfirmation: boolean = true) {
 
-    // Callback invoked after file has been successfully deleted.
-    const afterDeletion = () => {
+    // Callback invoked when file should be deleted.
+    const deleteFileImplementation = () => {
 
-      this.updateFileObject(TreeNode.parentFolderFromPath(file));
-      this.generalService.showFeedback('File was deleted successfully', 'successMessage');
+      this.fileService.deleteFile(path).subscribe({
+        next: () => {
 
-      // Making sure we close file if it's the currently open file.
-      if (this.currentFileData?.path === file) {
-        this.closeFileImpl();
-      }
+          // Updating parent folder.
+          this.updateFileObject(TreeNode.parentFolderFromPath(path));
+    
+          // Making sure we close file if it's currently open.
+          if (this.currentFileData?.path === path) {
+            this.closeFileImpl();
+          }
+    
+          // Making sure we remove file from list of open files.
+          const open = this.openFiles.findIndex(x => x.path === path);
+          if (open !== -1) {
+            this.openFiles.splice(open, 1);
+          }
 
-      // Making sure we remove file from list of open files.
-      const open = this.openFiles.findIndex(x => x.path === file);
-      if (open !== -1) {
-        this.openFiles.splice(open, 1);
-      }
-    };
+          // Providing feedback to user.
+          this.generalService.showFeedback('File was deleted successfully', 'successMessage');
 
-    // Checking if we should show confirm operation dialog to user.
-    if (askForConfirmation === false) {
-
-      // Caller does not want to ask user to confirm action.
-      this.fileService.deleteFile(file).subscribe({
-        next: () => afterDeletion(),
+        },
         error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
       });
+    };
+
+    if (askForConfirmation === false) {
+
+      // Deleting file immediately without asking for confirmation.
+      deleteFileImplementation();
 
     } else {
 
-      // Asking user to confirm operation.
+      // Asking user to confirm action.
       this.dialog.open(ConfirmationDialogComponent, {
         width: '500px',
         data: {
           title: 'Confirm operation',
-          description_extra: `This operation is permanent, please confirm you wish to delete;<br/><span class="fw-bold">${file}</span>`,
+          description_extra: `This operation is permanent, please confirm you wish to delete;<br/><span class="fw-bold">${path}</span>`,
           action_btn: 'Delete',
           action_btn_color: 'warn',
           bold_description: true
         }
       }).afterClosed().subscribe((result: string) => {
 
-        // Verifying user confirmed operation.
         if (result === 'confirm') {
 
-          // Deleting file.
-          this.fileService.deleteFile(file).subscribe({
-            next: () => afterDeletion(),
-            error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
-          });
+          deleteFileImplementation();
         }
-      })
+      });
     }
   }
 
-  deleteActiveFolder(folder: any) {
-    let path: string = folder.node ? folder.node.path : folder;
-    if (path === '/' || path === '/system/' || path === '/modules/' || path === '/data/' || path === '/config/' || path === '/etc/') {
+  deleteActiveFolder() {
+    this.deleteFolder(this.activeFolder);
+  }
+
+  deleteFolder(path: string) {
+
+    // Making sure user doesn't delete system folders.
+    if (this.isSystemFolder(path)) {
       this.generalService.showFeedback('You cannot delete system folders', 'errorMessage', 'Ok', 3000);
       return;
     }
+
+    // Asking user to confirm action.
     this.dialog.open(ConfirmationDialogComponent, {
       width: '500px',
       data: {
@@ -299,32 +307,31 @@ export class IdeTreeComponent implements OnInit {
         bold_description: true
       }
     }).afterClosed().subscribe((result: string) => {
-      if (result === 'confirm') {
-        if (this.currentFileData?.folder.indexOf(path) > -1) {
-          this.closeFileImpl();
-        }
-        this.fileService.deleteFolder(path).subscribe({
-          next: (res: { result: string }) => {
-            if (res.result === 'success') {
-              this.removeNode(path);
-              this.generalService.showFeedback('Folder successfully deleted', 'successMessage');
 
-              this.openFiles = this.openFiles.filter(x => !x.path.startsWith(this.activeFolder));
-              if (this.openFiles.filter(x => x.path === this.currentFileData.path).length === 0) {
-                if (this.openFiles.length > 0) {
-                  this.currentFileData = this.openFiles.filter(x => x.path === this.openFiles[0].path)[0];
-                } else {
-                  this.currentFileData = null;
-                }
-              }
-              this.dataBindTree();
-              let newFolder = this.activeFolder.substring(0, this.activeFolder.length - 1);
-              newFolder = newFolder.substring(0, newFolder.lastIndexOf('/') + 1);
-              this.activeFolder = newFolder;
-              this.cdr.detectChanges();
-            } else {
-              this.generalService.showFeedback('Something went wrong, please try again.', 'errorMessage')
+      if (result === 'confirm') {
+
+        // Deleting folder on server.
+        this.fileService.deleteFolder(path).subscribe({
+
+          next: () => {
+
+            // Updating parent folder.
+            this.updateFileObject(TreeNode.parentFolderFromPath(path));
+
+            // Making sure we turn parent folder to currently active folder.
+            this.activeFolder = TreeNode.parentFolderFromPath(path);
+
+            // Checking if currently active open file is inside of deleted folder.
+            if (this.currentFileData?.folder.startsWith(path)) {
+              this.closeFileImpl();
             }
+
+            // Databinding tree again now that folder has been removed.
+            this.dataBindTree();
+
+            // Showing feedback to user.
+            this.generalService.showFeedback('Folder successfully deleted', 'successMessage');
+
           },
           error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
         });
@@ -351,7 +358,6 @@ export class IdeTreeComponent implements OnInit {
   }
 
   closeFileImpl(file: any = null) {
-    this.cdr.markForCheck();
     let idx: number;
     file = file || this.currentFileData;
     let isActiveFile = false;
@@ -578,7 +584,7 @@ export class IdeTreeComponent implements OnInit {
                   if (data && data.download) {
                     this.downloadActiveFile(fileObject);
                   } else if (data && data.deleteFile) {
-                    this.deleteFile(objectToDelete, true)
+                    this.deleteFile(objectToDelete, false);
                   }
                 });
                 return;
@@ -839,7 +845,19 @@ export class IdeTreeComponent implements OnInit {
   }
 
   private isSystemPath(path: string) {
-    return path.startsWith('/system/') || path.startsWith('/misc/') || path.startsWith('/data/') || path.startsWith('/config/');
+    return path.startsWith('/system/') ||
+      path.startsWith('/misc/') ||
+      path.startsWith('/data/') ||
+      path.startsWith('/config/');
+  }
+
+  private isSystemFolder(path: string) {
+    return path === '/' ||
+      path === '/system/' ||
+      path === '/modules/' ||
+      path === '/data/' ||
+      path === '/config/' ||
+      path === '/etc/';
   }
 }
 

@@ -210,7 +210,7 @@
               <button
                 mat-icon-button
                 color="warn"
-                (click)="deleteActiveFolder(folder)">
+                (click)="deleteFolder(folder.node.path)">
                 <mat-icon>close</mat-icon>
               </button>
 
@@ -249,7 +249,7 @@
           *ngFor="let item of openFiles;let index=index"
           [id]="currentFileData.name === item.name ? 'active' : ''"
           (click)="openFile(item)"
-          [class.active-file]="currentFileData.name === item.name">
+          [class.active-file]="currentFileData.path === item.path">
 
           <!-- Button for selecting file, opening it for editing -->
           <button
