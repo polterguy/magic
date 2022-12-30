@@ -95,7 +95,7 @@
             [matTreeNodePaddingIndent]="10"
             level="level"
             class="justify-content-between"
-            [class.d-none]="filterLeafNode(file, (searchKey|async))">
+            [class.d-none]="filterLeafNode(file, searchKey)">
 
             <!-- Button for opening file -->
             <div class="w-100 h-100 flex-nowrap align-items-center d-{{showRenameBox !== folder ? 'flex' : 'none'}}">
@@ -153,7 +153,7 @@
             matTreeNodePadding
             matTreeNodePaddingIndent="10"
             [isExpanded]="activeFolder === folder.node.path" class="justify-content-betwee"
-            [class.d-none]="filterParentNode(folder, (searchKey|async))">
+            [class.d-none]="filterParentNode(folder, searchKey)">
 
             <div class="w-100 h-100 flex-nowrap align-items-center d-{{showRenameBox !== folder ? 'flex' : 'none'}}">
 
