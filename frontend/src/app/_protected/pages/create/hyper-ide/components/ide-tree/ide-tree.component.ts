@@ -391,7 +391,7 @@ export class IdeTreeComponent implements OnInit {
     }, 10);
   }
 
-  renameFile(event: { file: TreeNode, newName: string }) {
+  renameFile(event: { file: { name: string, path: string }, newName: string }) {
 
     // Sanity checking new name.
     if (!this.nameValidation(event.newName)) {
