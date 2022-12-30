@@ -5,7 +5,7 @@
 
 import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
-import { FileNode } from './_models/file-node.model';
+import { FileNode } from './models/file-node.model';
 
 /**
  * Primary Hyper IDE component, allowing users to browse and edit files.

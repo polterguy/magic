@@ -11,16 +11,16 @@ import { ConfirmationDialogComponent } from 'src/app/_general/components/confirm
 import { EndpointService } from 'src/app/_general/services/endpoint.service';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { Endpoint } from 'src/app/_protected/models/common/endpoint.model';
-import { ExecuteMacroDialogComponent } from '../components/execute-macro-dialog/execute-macro-dialog.component';
-import { IncompatibleFileDialogComponent } from '../components/incompatible-file-dialog/incompatible-file-dialog.component';
-import { NewFileFolderDialogComponent } from '../components/new-file-folder-dialog/new-file-folder-dialog.component';
-import { Macro, SelectMacroDialogComponent } from '../components/select-macro-dialog/select-macro-dialog.component';
-import { FileNode } from '../_models/file-node.model';
-import { FlatNode } from '../_models/flat-node.model';
-import { MacroDefinition } from '../_models/macro-definition.model';
-import { TreeNode } from '../_models/tree-node.model';
-import { CodemirrorActionsService } from '../_services/codemirror-actions.service';
-import { FileService } from '../_services/file.service';
+import { ExecuteMacroDialogComponent } from '../execute-macro-dialog/execute-macro-dialog.component';
+import { IncompatibleFileDialogComponent } from '../incompatible-file-dialog/incompatible-file-dialog.component';
+import { NewFileFolderDialogComponent } from '../new-file-folder-dialog/new-file-folder-dialog.component';
+import { Macro, SelectMacroDialogComponent } from '../select-macro-dialog/select-macro-dialog.component';
+import { FileNode } from '../../models/file-node.model';
+import { FlatNode } from './models/flat-node.model';
+import { MacroDefinition } from '../../models/macro-definition.model';
+import { TreeNode } from './models/tree-node.model';
+import { CodemirrorActionsService } from '../../services/codemirror-actions.service';
+import { FileService } from '../../services/file.service';
 
 /**
  * Tree component for Hyper IDE displaying files and folders, allowing user
@@ -73,20 +73,6 @@ export class IdeTreeComponent implements OnInit {
     this.getFilesFromServer().then((res: boolean) => {
       if (res === true) {
         this.getEndpoints();
-      }
-    });
-  }
-
-  selectMacro() {
-    const dialogRef = this.dialog.open(SelectMacroDialogComponent, {
-      width: '550px',
-      data: {
-        name: '',
-      },
-    });
-    dialogRef.afterClosed().subscribe((result: Macro) => {
-      if (result) {
-        this.executeMacro(result.name);
       }
     });
   }
@@ -150,6 +136,20 @@ export class IdeTreeComponent implements OnInit {
         }
       });
     })
+  }
+
+  selectMacro() {
+    const dialogRef = this.dialog.open(SelectMacroDialogComponent, {
+      width: '550px',
+      data: {
+        name: '',
+      },
+    });
+    dialogRef.afterClosed().subscribe((result: Macro) => {
+      if (result) {
+        this.executeMacro(result.name);
+      }
+    });
   }
 
   async openFile(file: TreeNode) {

@@ -5,7 +5,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { FileService } from '../../hyper-ide/_services/file.service';
+import { FileService } from '../../hyper-ide/services/file.service';
 
 @Component({
   selector: 'app-upload-existing',

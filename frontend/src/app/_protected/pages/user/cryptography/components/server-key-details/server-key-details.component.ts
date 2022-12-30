@@ -8,7 +8,7 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { CryptoService } from '../../_services/crypto.service';
-import { CodemirrorActionsService } from 'src/app/_protected/pages/create/hyper-ide/_services/codemirror-actions.service';
+import { CodemirrorActionsService } from 'src/app/_protected/pages/create/hyper-ide/services/codemirror-actions.service';
 import { Response } from 'src/app/_protected/models/common/response.model';
 import { PublicKey } from '../../_models/public-key.model';
 import { Model } from 'src/app/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';

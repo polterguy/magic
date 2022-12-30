@@ -9,7 +9,7 @@ import { Injectable } from '@angular/core';
 
 // Application specific imports.
 import { Response } from '../../models/response.model';
-import { FileService } from '../../_protected/pages/create/hyper-ide/_services/file.service';
+import { FileService } from '../../_protected/pages/create/hyper-ide/services/file.service';
 import { HttpService } from 'src/app/_general/services/http.service';
 
 /**
