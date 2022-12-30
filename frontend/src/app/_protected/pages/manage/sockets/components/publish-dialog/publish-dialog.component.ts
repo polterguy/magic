@@ -9,7 +9,7 @@ import { Message } from 'src/app/models/message.model';
 
 // CodeMirror options according to file extensions needed to show JSON CodeMirror editor.
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { CodemirrorActionsService } from 'src/app/_protected/pages/create/hyper-ide/_services/codemirror-actions.service';
+import { CodemirrorActionsService } from 'src/app/_protected/pages/create/hyper-ide/services/codemirror-actions.service';
 
 /**
  * Message wrapper for what message to publish.

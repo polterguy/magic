@@ -18,7 +18,7 @@ import { AddArgumentDialogComponent } from './components/add-argument-dialog/add
 import { SqlSnippetDialogComponent } from '../../sql-studio/components/sql-view/components/load-sql-snippet-dialog/load-sql-snippet-dialog.component';
 
 // CodeMirror options.
-import { CodemirrorActionsService } from '../../hyper-ide/_services/codemirror-actions.service';
+import { CodemirrorActionsService } from '../../hyper-ide/services/codemirror-actions.service';
 import { SnippetNameDialogComponent } from 'src/app/_general/components/snippet-name-dialog/snippet-name-dialog.component';
 import { MessageService } from 'src/app/_general/services/message.service';
 import { GeneratorBase } from '../generator-base';

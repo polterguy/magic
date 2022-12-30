@@ -64,7 +64,7 @@ const routes: Routes = [
         data: {
           type: 'backend'
         },
-        loadChildren: () => import('./_protected/pages/create/hyper-ide/_module/ide.module').then(m => m.IdeModule)
+        loadChildren: () => import('./_protected/pages/create/hyper-ide/module/ide.module').then(m => m.IdeModule)
       },
       {
         path: 'tasks',

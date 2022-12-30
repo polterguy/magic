@@ -16,7 +16,7 @@ import { LogService } from '../../../../../_general/services/log.service';
 
 // CodeMirror options.
 import hyperlambda from '../../../../../codemirror/options/hyperlambda.json';
-import { CodemirrorActionsService } from '../../hyper-ide/_services/codemirror-actions.service';
+import { CodemirrorActionsService } from '../../hyper-ide/services/codemirror-actions.service';
 import { MatDialog } from '@angular/material/dialog';
 import { EvaluatorService } from '../../../../../_general/services/evaluator.service';
 import { LoadSnippetDialogComponent } from 'src/app/_general/components/load-snippet-dialog/load-snippet-dialog.component';

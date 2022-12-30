@@ -11,7 +11,7 @@ import { BackendService } from 'src/app/_general/services/backend.service';
 import { ConfigService } from '../../../../_general/services/config.service';
 
 import json from '../../../../codemirror/options/json.json'
-import { CodemirrorActionsService } from '../../create/hyper-ide/_services/codemirror-actions.service';
+import { CodemirrorActionsService } from '../../create/hyper-ide/services/codemirror-actions.service';
 import { Subscription } from 'rxjs';
 import { SmtpDialogComponent } from './components/smtp-dialog/smtp-dialog.component';
 

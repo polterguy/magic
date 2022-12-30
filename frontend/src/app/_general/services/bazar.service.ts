@@ -12,7 +12,7 @@ import { HttpClient } from '@angular/common/http';
 import { Count } from 'src/app/models/count.model';
 import { Response } from 'src/app/models/response.model';
 import { HttpService } from 'src/app/_general/services/http.service';
-import { FileService } from 'src/app/_protected/pages/create/hyper-ide/_services/file.service';
+import { FileService } from 'src/app/_protected/pages/create/hyper-ide/services/file.service';
 import { BazarApp } from 'src/app/models/bazar-app.model';
 import { environment } from 'src/environments/environment';
 import { AppManifest } from 'src/app/models/app-manifest';

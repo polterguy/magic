@@ -10,26 +10,25 @@ import { ConfirmationDialogComponent } from 'src/app/_general/components/confirm
 import { LoadSnippetDialogComponent } from 'src/app/_general/components/load-snippet-dialog/load-snippet-dialog.component';
 import { ShortkeysComponent } from 'src/app/_general/components/shortkeys/shortkeys.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { ExecuteMacroDialogComponent } from '../components/execute-macro-dialog/execute-macro-dialog.component';
-import { PreviewFileDialogComponent } from '../components/preview-file-dialog/preview-file-dialog.component';
-import { RenameFileDialogComponent, FileObjectName } from '../components/rename-file-dialog/rename-file-dialog.component';
-import { RenameFolderDialogComponent } from '../components/rename-folder-dialog/rename-folder-dialog.component';
-import { SelectMacroDialogComponent, Macro } from '../components/select-macro-dialog/select-macro-dialog.component';
-import { UnsavedChangesDialogComponent } from '../components/unsaved-changes-dialog/unsaved-changes-dialog.component';
-import { EvaluatorService } from '../../../../../_general/services/evaluator.service';
-import { ExecuteEndpointDialogComponent } from '../../../../../_general/components/execute-endpoint-dialog/execute-endpoint-dialog.component';
-import { FileNode } from '../_models/file-node.model';
-import { MacroDefinition } from '../_models/macro-definition.model';
-import { TreeNode } from '../_models/tree-node.model';
-import { CodemirrorActionsService } from '../_services/codemirror-actions.service';
-import { FileService } from '../_services/file.service';
-import { VocabularyService } from '../_services/vocabulary.service';
+import { ExecuteMacroDialogComponent } from '../execute-macro-dialog/execute-macro-dialog.component';
+import { PreviewFileDialogComponent } from '../preview-file-dialog/preview-file-dialog.component';
+import { RenameFileDialogComponent, FileObjectName } from '../rename-file-dialog/rename-file-dialog.component';
+import { RenameFolderDialogComponent } from '../rename-folder-dialog/rename-folder-dialog.component';
+import { SelectMacroDialogComponent, Macro } from '../select-macro-dialog/select-macro-dialog.component';
+import { UnsavedChangesDialogComponent } from '../unsaved-changes-dialog/unsaved-changes-dialog.component';
+import { EvaluatorService } from '../../../../../../_general/services/evaluator.service';
+import { ExecuteEndpointDialogComponent } from '../../../../../../_general/components/execute-endpoint-dialog/execute-endpoint-dialog.component';
+import { FileNode } from '../../models/file-node.model';
+import { MacroDefinition } from '../../models/macro-definition.model';
+import { CodemirrorActionsService } from '../../services/codemirror-actions.service';
+import { FileService } from '../../services/file.service';
+import { VocabularyService } from '../../services/vocabulary.service';
 import { Endpoint } from 'src/app/_protected/models/common/endpoint.model';
 import { OpenAIService } from 'src/app/_general/services/openai.service';
 import { Response } from 'src/app/models/response.model';
-import { OpenAIConfigurationDialogComponent } from '../components/openai/openai-configuration-dialog/openai-configuration-dialog.component';
-import { OpenAITrainingDialogComponent } from '../components/openai/openai-training-dialog/openai-training-dialog.component';
-import { OpenAIAnswerDialogComponent } from '../components/openai/openai-answer-dialog/openai-answer-dialog.component';
+import { OpenAIConfigurationDialogComponent } from '../openai/openai-configuration-dialog/openai-configuration-dialog.component';
+import { OpenAITrainingDialogComponent } from '../openai/openai-training-dialog/openai-training-dialog.component';
+import { OpenAIAnswerDialogComponent } from '../openai/openai-answer-dialog/openai-answer-dialog.component';
 
 /**
  * Hyper IDE editor component, wrapping currently open files, allowing user to edit the code.
@@ -611,14 +610,3 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     });
   }
 }
-
-/**
-* Root tree node pointing to root folder.
-*/
-const root: TreeNode = {
-  name: '/',
-  path: '/',
-  isFolder: true,
-  children: [],
-  level: 0,
-};

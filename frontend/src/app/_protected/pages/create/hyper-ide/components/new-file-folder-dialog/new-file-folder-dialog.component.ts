@@ -10,7 +10,7 @@ import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 
 // Application specific imports.
 import { Template } from 'src/app/models/template.model';
-import { FileService } from 'src/app/_protected/pages/create/hyper-ide/_services/file.service';
+import { FileService } from 'src/app/_protected/pages/create/hyper-ide/services/file.service';
 import { GeneralService } from 'src/app/_general/services/general.service';
 
 /**

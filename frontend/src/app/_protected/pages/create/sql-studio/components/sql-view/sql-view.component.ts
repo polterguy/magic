@@ -11,7 +11,7 @@ import { ShortkeysComponent } from 'src/app/_general/components/shortkeys/shortk
 import { GeneralService } from 'src/app/_general/services/general.service';
 
 // CodeMirror options.
-import { CodemirrorActionsService } from '../../../hyper-ide/_services/codemirror-actions.service';
+import { CodemirrorActionsService } from '../../../hyper-ide/services/codemirror-actions.service';
 import { SqlService } from '../../../../../../_general/services/sql.service';
 import { SqlSnippetDialogComponent } from './components/load-sql-snippet-dialog/load-sql-snippet-dialog.component';
 import { SnippetNameDialogComponent } from '../../../../../../_general/components/snippet-name-dialog/snippet-name-dialog.component';

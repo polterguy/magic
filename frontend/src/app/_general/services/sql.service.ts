@@ -8,7 +8,7 @@ import { Observable, throwError } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
-import { FileService } from '../../_protected/pages/create/hyper-ide/_services/file.service';
+import { FileService } from '../../_protected/pages/create/hyper-ide/services/file.service';
 import { HttpService } from 'src/app/_general/services/http.service';
 import { CacheService } from 'src/app/_general/services/cache.service';
 import { DefaultDatabaseType } from '../models/default-database-type.model';

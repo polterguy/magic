@@ -8,7 +8,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
 import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { CodemirrorActionsService } from '../../../../create/hyper-ide/_services/codemirror-actions.service';
+import { CodemirrorActionsService } from '../../../../create/hyper-ide/services/codemirror-actions.service';
 import { TaskService } from '../../_services/task.service';
 
 /**

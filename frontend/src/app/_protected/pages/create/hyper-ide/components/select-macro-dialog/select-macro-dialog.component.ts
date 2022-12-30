@@ -9,7 +9,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { FileService } from '../../_services/file.service';
+import { FileService } from '../../services/file.service';
 
 /**
  * Encapsulating a single macro.
