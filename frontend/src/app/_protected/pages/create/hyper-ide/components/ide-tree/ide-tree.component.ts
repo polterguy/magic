@@ -229,17 +229,30 @@ export class IdeTreeComponent implements OnInit {
 
   deleteFile(file: string, askForConfirmation: boolean = true) {
 
+    // Callback invoked after file has been successfully deleted.
+    const afterDeletion = () => {
+
+      this.updateFileObject(TreeNode.parentFolderFromPath(file));
+      this.generalService.showFeedback('File was deleted successfully', 'successMessage');
+
+      // Making sure we close file if it's the currently open file.
+      if (this.currentFileData?.path === file) {
+        this.closeFileImpl();
+      }
+
+      // Making sure we remove file from list of open files.
+      const open = this.openFiles.findIndex(x => x.path === file);
+      if (open !== -1) {
+        this.openFiles.splice(open, 1);
+      }
+    };
+
     // Checking if we should show confirm operation dialog to user.
     if (askForConfirmation === false) {
 
       // Caller does not want to ask user to confirm action.
       this.fileService.deleteFile(file).subscribe({
-        next: () => {
-
-          this.updateFileObject(TreeNode.parentFolderFromPath(file));
-          this.closeFileImpl();
-          this.generalService.showFeedback('File is deleted successfully.', 'successMessage');
-        },
+        next: () => afterDeletion(),
         error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
       });
 
@@ -256,17 +269,13 @@ export class IdeTreeComponent implements OnInit {
           bold_description: true
         }
       }).afterClosed().subscribe((result: string) => {
+
+        // Verifying user confirmed operation.
         if (result === 'confirm') {
+
+          // Deleting file.
           this.fileService.deleteFile(file).subscribe({
-            next: (res: { result: string }) => {
-              if (res.result === 'success') {
-                this.updateFileObject(TreeNode.parentFolderFromPath(file));
-                this.closeFileImpl();
-                this.generalService.showFeedback('File is deleted successfully.', 'successMessage');
-              } else {
-                this.generalService.showFeedback('Something went wrong, please try again.', 'errorMessage')
-              }
-            },
+            next: () => afterDeletion(),
             error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
           });
         }
