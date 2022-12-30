@@ -1,3 +1,4 @@
+
 <div class="row fullPage">
   <div class="col-xl-4 col-lg-6 col-md-5 col-12 mb-md-0 mb-4">
 
@@ -8,7 +9,6 @@
 
             <!-- Search textbox to filter available files -->
             <app-ide-searchbox
-              [type]="type"
               (toggleFileSystems)="tree.systemFiles = $event;tree.updateFileObject('/')"
               (filterList)="filterList($event)"
               #search>
@@ -24,7 +24,6 @@
             <app-ide-tree
               #tree
               [searchKey]="searchKey"
-              [type]="type"
               (showEditor)="showEditor($event)"
               (clearEditorHistory)="editor.clearEditorHistory($event)"
               (setFocusToActiveEditor)="editor.setFocusToActiveEditor()">

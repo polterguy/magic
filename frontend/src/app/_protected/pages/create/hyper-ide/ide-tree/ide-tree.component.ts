@@ -37,7 +37,6 @@ export class IdeTreeComponent implements OnInit {
   private treeFlattener = new MatTreeFlattener(_transformer, node => node.level, node => node.expandable, node => node.children);
 
   @Input() searchKey!: Observable<string>;
-  @Input() type: string;
   endpoints: Endpoint[];
 
   @Output() showEditor: EventEmitter<any> = new EventEmitter<any>();
@@ -74,10 +73,6 @@ export class IdeTreeComponent implements OnInit {
     private codemirrorActionsService: CodemirrorActionsService) { }
 
   ngOnInit() {
-    if (this.type === 'frontend') {
-      this.activeFolder = '/etc/www/';
-      this.currentFolder = '/etc/www/';
-    }
     this.getFilesFromServer().then((res: boolean) => {
       if (res === true) {
         this.getEndpoints();
@@ -134,13 +129,7 @@ export class IdeTreeComponent implements OnInit {
                   name1.push(this.root.children.filter(newData => !this.dataSource.data.map(oldData => oldData.name).includes(newData.name)));
                 }
 
-                if (this.type === 'frontend') {
-                  const etcPath: any = this.root.children.find((item: any) => item.name === 'etc');
-                  const frontendFolders = etcPath.children.filter((item: any) => item.path === '/etc/frontends/' || item.path === '/etc/www/');
-                  this.dataSource.data = frontendFolders;
-                } else {
-                  this.dataSource.data = this.root.children;
-                }
+                this.dataSource.data = this.root.children;
 
                 // If system files are enabled, set field valu to recognise them in view.
                 if (this.systemFiles) {
@@ -322,13 +311,7 @@ export class IdeTreeComponent implements OnInit {
       }
     }
 
-    if (this.type === 'frontend') {
-      const etcPath: any = this.root.children.find((item: any) => item.name === 'etc');
-      const frontendFolders = etcPath.children.filter((item: any) => item.path === '/etc/frontends/' || item.path === '/etc/www/');
-      this.dataSource.data = frontendFolders;
-    } else {
-      this.dataSource.data = this.root.children;
-    }
+    this.dataSource.data = this.root.children;
 
     for (const idx of this.treeControl.dataNodes) {
       if (expanded.filter(x => (<any>x)?.node?.path === (<any>idx).node.path).length > 0) {

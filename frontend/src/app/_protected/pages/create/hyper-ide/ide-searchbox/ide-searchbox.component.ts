@@ -19,7 +19,6 @@ export class IdeSearchboxComponent {
 
   @Output() filterList = new EventEmitter<any>();
   @Output() toggleFileSystems = new EventEmitter<any>();
-  @Input() type: string;
 
   private _inputValue: BehaviorSubject<string> = new BehaviorSubject<string>('');
   public inputValue = this._inputValue.asObservable();

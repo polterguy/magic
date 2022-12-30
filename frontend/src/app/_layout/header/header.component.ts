@@ -83,11 +83,6 @@ export class HeaderComponent implements OnInit {
             url: '/hyper-ide',
             exact: false,
           },
-          {
-            name: 'Frontend IDE',
-            url: '/frontend-ide',
-            exact: false,
-          },
         ],
       },
       {
