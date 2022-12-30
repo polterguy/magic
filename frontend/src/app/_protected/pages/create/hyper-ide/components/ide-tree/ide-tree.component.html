@@ -99,10 +99,10 @@
             [class.d-none]="filterLeafNode(file, searchKey)">
 
             <!-- Button for opening file -->
-            <div class="w-100 h-100 flex-nowrap align-items-center d-{{showRenameBox !== file.node ? 'flex' : 'none'}}">
+            <div class="w-100 h-100 flex-nowrap align-items-center d-{{showRenameBox === file.node ? 'none' : 'flex'}}">
 
               <button
-                class="w-100 file-button px-1 justify-content-start d-{{showRenameBox !== file.node ? 'flex' : 'none'}}"
+                class="w-100 file-button px-1 justify-content-start d-flex"
                 mat-button
                 (click)="openFile(file.node);currentSelection = 'file'">
                 <mat-icon>insert_drive_file</mat-icon>{{file.name}}
@@ -156,7 +156,7 @@
             [isExpanded]="activeFolder === folder.node.path" class="justify-content-betwee"
             [class.d-none]="filterParentNode(folder, searchKey)">
 
-            <div class="w-100 h-100 flex-nowrap align-items-center d-{{showRenameBox !== folder.node ? 'flex' : 'none'}}">
+            <div class="w-100 h-100 flex-nowrap align-items-center d-{{showRenameBox === folder.node ? 'none' : 'flex'}}">
 
               <!-- Buttons for expanding and collapsing tree node -->
               <button
