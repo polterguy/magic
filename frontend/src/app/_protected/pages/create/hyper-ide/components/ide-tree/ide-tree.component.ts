@@ -82,6 +82,7 @@ export class IdeTreeComponent implements OnInit {
   getFilesFromServer(folder: string = '/') {
     return new Promise<boolean>(resolve => {
 
+      // Helper function to insert files and folders correctly into TreeNode hierarchy.
       const addToRoot = (objects: string[], isFolder: boolean) => {
         for (const idx of objects) {
           const entities = idx.split('/').filter(x => x !== '');
@@ -102,17 +103,18 @@ export class IdeTreeComponent implements OnInit {
         }
       }
 
+      // Getting folders recursively.
       this.fileService.listFoldersRecursively(folder, this.systemFiles).subscribe({
         next: (folders: string[]) => {
 
           addToRoot(folders || [], true);
 
+          // Getting files recursively.
           this.fileService.listFilesRecursively(folder, this.systemFiles).subscribe({
             next: (files: string[]) => {
 
               addToRoot(files || [], false);
               resolve(true);
-              this.cdr.detectChanges();
             },
             error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)
           });
@@ -150,6 +152,7 @@ export class IdeTreeComponent implements OnInit {
       this.showEditor.emit({
         currentFileData: this.currentFileData
       });
+
     } else {
 
       // File is not open from before.
@@ -167,16 +170,21 @@ export class IdeTreeComponent implements OnInit {
 
           if (data && data.download) {
 
+            // Downloading file.
             this.downloadActiveFile(file.path);
 
           } else if (data && data.deleteFile) {
 
+            // Deleting file.
             this.deleteActiveFile(file, true);
 
           } else if (data && data.unzip) {
 
+            // Unzipping file.
             this.fileService.unzip(file.path).subscribe({
               next: () => {
+
+                // Updating parent folder since unzip operation highly likely produced additional files and/or folder for us.
                 this.updateFileObject(TreeNode.parentFolder(file));
               },
               error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
@@ -185,8 +193,10 @@ export class IdeTreeComponent implements OnInit {
         });
         return;
       }
+
+      // File type has a registered CodeMirror editor.
       this.fileService.loadFile(file.path).subscribe({
-        next: async (content: string) => {
+        next: (content: string) => {
           this.openFiles.push({
             name: file.name,
             path: file.path,
@@ -197,16 +207,20 @@ export class IdeTreeComponent implements OnInit {
 
           this.currentFileData = this.openFiles.filter(x => x.path === file.path)[0];
           this.showEditor.emit({ currentFileData: this.currentFileData })
-          this.cdr.detectChanges();
+
+          // Hack to make sure initial loading of file does not become an "undo" operation.
           setTimeout(() => {
             this.scrollToLastOpenFile();
             this.clearEditorHistory.emit(true);
           }, 1);
+
         },
         error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
       });
     }
-    this.activeFolder = file.path.substring(0, file.path.lastIndexOf('/') + 1);
+
+    // When a file is opened, we set the active folder to the file's parent folder.
+    this.activeFolder = TreeNode.parentFolder(file);
   }
 
   deleteActiveFile(file: any, noConfirmation?: boolean) {
