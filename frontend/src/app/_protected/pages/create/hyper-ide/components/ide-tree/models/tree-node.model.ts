@@ -11,25 +11,30 @@ export class TreeNode {
   /**
    * File name only.
    */
-  public name: string;
+  name: string;
 
   /**
    * Full path of file, including folder(s).
    */
-  public path: string;
+  path: string;
 
   /**
    * if true, this is a folder.
    */
-  public isFolder: boolean;
+  isFolder: boolean;
 
   /**
    * Level from base.
    */
-  public level: number;
+  level: number;
 
   /**
    * Children nodes.
    */
-  public children: TreeNode[];
+  children: TreeNode[];
+
+  /**
+   * If true, this is a system file
+   */
+  systemFile: boolean;
 }

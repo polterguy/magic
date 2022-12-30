@@ -16,21 +16,13 @@ import fileTypes from 'src/app/codemirror/file-types.json';
 })
 export class CodemirrorActionsService {
 
+  private extensions = fileTypes;
+  action: Subject<string> = new Subject();
+
   constructor(private ngZone: NgZone) { }
 
-  // Known file extensions we've got editors for.
-  private extensions = fileTypes;
-
-  public action: Subject<string> = new Subject();
-
-  /**
-   *
-   * @param path If file is to be displayed.
-   * @param type If a fixed file type is to be displayed.
-   * @returns actions as observable.
-   */
   public getActions(path?: any, type?: string) {
-    return new Promise((resolve: any) => {
+    return new Promise<any>((resolve: any) => {
       let options = [];
 
       if (path) {
@@ -42,7 +34,7 @@ export class CodemirrorActionsService {
 
       if (options.length === 0) {
         resolve(null);
-        return null;
+        return;
       } else {
         options[0] = this.clone(options[0]);
         if (options[0].options.extraKeys) {
@@ -122,7 +114,7 @@ export class CodemirrorActionsService {
         }
         resolve(options[0].options)
       }
-    })
+    });
   }
 
   /*
