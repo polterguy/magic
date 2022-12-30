@@ -213,13 +213,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private deleteActiveFile() {
-    const file: any = {
-      name: this.currentFileData.name,
-      node: {
-        path: this.currentFileData.path
-      }
-    }
-    this.deleteActiveFileFromParent.emit(file);
+    this.deleteActiveFileFromParent.emit();
   }
 
   private deleteActiveFolder() {

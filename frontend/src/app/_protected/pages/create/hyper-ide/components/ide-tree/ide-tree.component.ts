@@ -176,7 +176,7 @@ export class IdeTreeComponent implements OnInit {
           } else if (data && data.deleteFile) {
 
             // Deleting file.
-            this.deleteActiveFile(file, true);
+            this.deleteFile(file.path, true);
 
           } else if (data && data.unzip) {
 
@@ -223,38 +223,44 @@ export class IdeTreeComponent implements OnInit {
     this.activeFolder = TreeNode.parentFolder(file);
   }
 
-  deleteActiveFile(file: any, noConfirmation?: boolean) {
-    if (noConfirmation === true) {
-      const folderPath: string = file.path.toString().replace(file.name, '');
-      this.fileService.deleteFile(file.path).subscribe({
-        next: (res: { result: string }) => {
-          if (res.result === 'success') {
-            this.updateFileObject(folderPath);
-            this.closeFileImpl();
-            this.generalService.showFeedback('File is deleted successfully.', 'successMessage');
-          } else {
-            this.generalService.showFeedback('Something went wrong, please try again.', 'errorMessage')
-          }
+  deleteActiveFile() {
+    this.deleteFile(this.currentFileData.path);
+  }
+
+  deleteFile(file: string, askForConfirmation: boolean = true) {
+
+    // Checking if we should show confirm operation dialog to user.
+    if (askForConfirmation === false) {
+
+      // Caller does not want to ask user to confirm action.
+      this.fileService.deleteFile(file).subscribe({
+        next: () => {
+
+          this.updateFileObject(TreeNode.parentFolderFromPath(file));
+          this.closeFileImpl();
+          this.generalService.showFeedback('File is deleted successfully.', 'successMessage');
         },
         error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
       });
+
     } else {
+
+      // Asking user to confirm operation.
       this.dialog.open(ConfirmationDialogComponent, {
         width: '500px',
         data: {
-          title: `Delete ${file.name}`,
-          description_extra: 'You are deleting the selected file. Do you want to continue?',
+          title: 'Confirm operation',
+          description_extra: `This operation is permanent, please confirm you wish to delete;<br/><span class="fw-bold">${file}</span>`,
           action_btn: 'Delete',
           action_btn_color: 'warn',
           bold_description: true
         }
       }).afterClosed().subscribe((result: string) => {
         if (result === 'confirm') {
-          const folderPath: string = file.node.path.toString().replace(file.name, '');
-          this.fileService.deleteFile(file.node.path).subscribe({
+          this.fileService.deleteFile(file).subscribe({
             next: (res: { result: string }) => {
               if (res.result === 'success') {
-                this.updateFileObject(folderPath);
+                this.updateFileObject(TreeNode.parentFolderFromPath(file));
                 this.closeFileImpl();
                 this.generalService.showFeedback('File is deleted successfully.', 'successMessage');
               } else {
@@ -563,7 +569,7 @@ export class IdeTreeComponent implements OnInit {
                   if (data && data.download) {
                     this.downloadActiveFile(fileObject);
                   } else if (data && data.deleteFile) {
-                    this.deleteActiveFile(objectToDelete, true)
+                    this.deleteFile(objectToDelete, true)
                   }
                 });
                 return;
