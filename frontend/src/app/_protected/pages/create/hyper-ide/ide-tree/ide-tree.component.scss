@@ -8,10 +8,16 @@
 .panel-1 {
   flex: 1 1 auto;
   overflow: hidden;
+  .mat-expansion-panel {
+    max-height: 100%;
+  }
 }
 
 .panel-2 {
   flex: 0 0 auto;
+  .mat-expansion-panel {
+    max-height: 15vh;
+  }
 }
 
 .rename-box {
@@ -46,14 +52,6 @@
     }
   }
 
-  .panel-1 .mat-expansion-panel {
-    max-height: 100%;
-  }
-
-  .panel-2 .mat-expansion-panel {
-    max-height: 15vh;
-  }
-
   .mat-accordion {
     padding: 0 0 16px;
     max-height: 100%;
@@ -86,15 +84,17 @@
     }
   }
 
-  .mat-tree-node.file-node .file-button {
-    margin-left: 28px !important;
-  }
-
   .mat-tree-node {
     min-height: 30px;
     position: relative;
     overflow: visible;
     @include general_transition(0.3s);
+
+    &.file-node {
+      .file-button {
+        margin-left: 28px !important;
+      }
+    }
 
     button {
       font-size: 12px;
