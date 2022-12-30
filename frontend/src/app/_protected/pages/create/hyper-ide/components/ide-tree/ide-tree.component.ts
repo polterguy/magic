@@ -240,7 +240,7 @@ export class IdeTreeComponent implements OnInit {
     
           // Making sure we close file if it's currently open.
           if (this.currentFileData?.path === path) {
-            this.closeFileImpl();
+            this.closeFile(path);
           }
     
           // Making sure we remove file from list of open files.
@@ -323,7 +323,7 @@ export class IdeTreeComponent implements OnInit {
 
             // Checking if currently active open file is inside of deleted folder.
             if (this.currentFileData?.folder.startsWith(path)) {
-              this.closeFileImpl();
+              this.closeFile(this.currentFileData.path);
             }
 
             // Databinding tree again now that folder has been removed.
@@ -340,6 +340,8 @@ export class IdeTreeComponent implements OnInit {
   }
 
   dataBindTree() {
+
+    // Storing currently expanded nodes such that we can re-expand them after data binding.
     const expanded: FlatNode[] = [];
     for (const idx of this.treeControl.dataNodes) {
       if (this.treeControl.isExpanded(idx)) {
@@ -348,8 +350,10 @@ export class IdeTreeComponent implements OnInit {
       }
     }
 
+    // Updating data source.
     this.dataSource.data = this.root.children;
 
+    // Expanding folders that were previously expanded.
     for (const idx of this.treeControl.dataNodes) {
       if (expanded.filter(x => (<any>x)?.node?.path === (<any>idx).node.path).length > 0) {
         this.treeControl.expand(idx);
@@ -357,36 +361,23 @@ export class IdeTreeComponent implements OnInit {
     }
   }
 
-  closeFileImpl(file: any = null) {
-    let idx: number;
-    file = file || this.currentFileData;
-    let isActiveFile = false;
-    this.openFiles.forEach(element => {
-      if (element.path === file.path) {
-        idx = this.openFiles.indexOf(element);
-        if (this.currentFileData.path === file.path) {
-          isActiveFile = true;
-        }
-      }
-    });
-    this.openFiles.splice(idx, 1);
+  closeFile(path: string) {
 
-    if (!isActiveFile) {
+    // Removing file from currently open files.
+    this.openFiles = this.openFiles.filter(x => x.path !== path);
+
+    // Checking if file that's being closed is currently activated open file.
+    if (this.currentFileData.path !== path) {
       return;
     }
 
-    if (this.openFiles.length === 0) {
-      this.currentFileData = null;
-    } else {
-      if (idx === 0) {
-        this.currentFileData = this.openFiles.filter(x => x.path === this.openFiles[0].path)[0];
-      } else {
-        this.currentFileData = this.openFiles.filter(x => x.path === this.openFiles[idx - 1].path)[0];
-      }
-    }
+    // Trying our best to open another file.
+    this.currentFileData = this.openFiles.length > 0 ? this.openFiles[this.openFiles.length - 1] : null;
+    this.scrollToLastOpenFile();
+
+    // Signaling other components to let them know active file was changed.
     this.showEditor.emit({ currentFileData: this.currentFileData })
     this.setFocusToActiveEditor.emit();
-    this.cdr.detectChanges();
   }
 
   showRenameInput(item: TreeNode) {
