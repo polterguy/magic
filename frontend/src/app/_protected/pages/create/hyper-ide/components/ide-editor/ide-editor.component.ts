@@ -52,7 +52,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   @Output() getFilesFromServer: EventEmitter<any> = new EventEmitter<any>();
   @Output() getEndpoints: EventEmitter<any> = new EventEmitter<any>();
   @Output() dataBindTree: EventEmitter<any> = new EventEmitter<any>();
-  @Output() closeFileImpl: EventEmitter<any> = new EventEmitter<any>();
+  @Output() closeFile: EventEmitter<string> = new EventEmitter<string>();
   @Output() deleteActiveFolderFromParent: EventEmitter<any> = new EventEmitter<any>();
   @Output() deleteActiveFileFromParent: EventEmitter<any> = new EventEmitter<any>();
   @Output() renameActiveFileFromParent: EventEmitter<any> = new EventEmitter<any>();
@@ -226,7 +226,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     }
     await this.activeFileIsClean().then((res: boolean) => {
       if (res === true) {
-        this.closeFileImpl.emit();
+        this.closeFile.emit(this.currentFileData.path);
       } else {
         const dialog = this.dialog.open(UnsavedChangesDialogComponent, {
           width: '550px',
@@ -237,7 +237,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
             this.saveActiveFile(true);
           } else if (data && data.save === false) {
             this.markEditorClean();
-            this.closeFileImpl.emit();
+            this.closeFile.emit(this.currentFileData.path);
             this.setFocusToActiveEditor();
           } else {
             return;

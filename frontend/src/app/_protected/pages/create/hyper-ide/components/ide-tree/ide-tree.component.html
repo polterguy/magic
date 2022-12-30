@@ -261,7 +261,7 @@
           <!-- Button for closing file -->
           <button
             mat-icon-button
-            (click)="closeFileImpl(item)">
+            (click)="closeFile(item.path)">
             <mat-icon>close</mat-icon>
           </button>
 
@@ -293,4 +293,5 @@
 <div
   class="overlay"
   *ngIf="showRenameBox !== null"
-  (click)="showRenameBox = null"></div>
+  (click)="showRenameBox = null">
+</div>
