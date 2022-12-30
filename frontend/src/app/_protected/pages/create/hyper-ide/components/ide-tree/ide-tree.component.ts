@@ -140,11 +140,23 @@ export class IdeTreeComponent implements OnInit {
   }
 
   openFile(file: TreeNode) {
-    if (this.openFiles.filter(x => x.path === file.path).length > 0) {
-      this.currentFileData = this.openFiles.filter(x => x.path === file.path)[0];
-      this.showEditor.emit({ currentFileData: this.currentFileData })
+
+    // Checking if file is already open.
+    const alreadyOpen = this.openFiles.filter(x => x.path === file.path).pop();
+    if (alreadyOpen) {
+
+      // File is already open.
+      this.currentFileData = alreadyOpen;
+      this.showEditor.emit({
+        currentFileData: this.currentFileData
+      });
     } else {
-      if (this.getCodeMirrorOptions(file.path) === null) {
+
+      // File is not open from before.
+      const cmOptions = this.getCodeMirrorOptions(file.path);
+      if (cmOptions === null) {
+
+        // No registered editor for file, asking user what to do with file.
         const dialog = this.dialog.open(IncompatibleFileDialogComponent, {
           width: '550px',
           data: {
@@ -152,15 +164,20 @@ export class IdeTreeComponent implements OnInit {
           },
         });
         dialog.afterClosed().subscribe((data: { deleteFile: false, download: false, unzip: false }) => {
+
           if (data && data.download) {
+
             this.downloadActiveFile(file.path);
+
           } else if (data && data.deleteFile) {
+
             this.deleteActiveFile(file, true);
+
           } else if (data && data.unzip) {
+
             this.fileService.unzip(file.path).subscribe({
               next: () => {
-                const update = file.path.substring(0, file.path.lastIndexOf('/') + 1);
-                this.updateFileObject(update);
+                this.updateFileObject(TreeNode.parentFolder(file));
               },
               error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
             });
@@ -175,7 +192,7 @@ export class IdeTreeComponent implements OnInit {
             path: file.path,
             folder: file.path.substring(0, file.path.lastIndexOf('/') + 1),
             content: content,
-            options: this.getCodeMirrorOptions(file.path),
+            options: cmOptions,
           });
 
           this.currentFileData = this.openFiles.filter(x => x.path === file.path)[0];
