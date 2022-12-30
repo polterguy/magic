@@ -93,6 +93,7 @@
             [class]="currentFileData?.path === file.node.path ? 'active-file file-node' : 'node file-node'"
             matTreeNodePadding
             [matTreeNodePaddingIndent]="10"
+            [class.text-danger]="file.node.systemFile"
             level="level"
             class="justify-content-between"
             [class.d-none]="filterLeafNode(file, searchKey)">
@@ -104,7 +105,7 @@
                 class="w-100 file-button px-1 justify-content-start d-{{showRenameBox !== file.node ? 'flex' : 'none'}}"
                 mat-button
                 (click)="openFile(file.node);currentSelection = 'file'">
-                <mat-icon>insert_drive_file</mat-icon>{{file.name}} {{file.node.systemFile}}
+                <mat-icon>insert_drive_file</mat-icon>{{file.name}}
               </button>
 
             </div>

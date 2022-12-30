@@ -40,6 +40,7 @@ export class IdeTreeComponent implements OnInit {
     isFolder: true,
     children: [],
     level: 0,
+    systemFile: false,
   };
 
   @Input() searchKey: string;
@@ -78,8 +79,9 @@ export class IdeTreeComponent implements OnInit {
   }
 
   getFilesFromServer(folder: string = '/') {
-    return new Promise(resolve => {
-      const functor = (objects: string[], isFolder: boolean) => {
+    return new Promise<boolean>(resolve => {
+
+      const addToRoot = (objects: string[], isFolder: boolean) => {
         for (const idx of objects) {
           const entities = idx.split('/').filter(x => x !== '');
           let parent = this.root;
@@ -94,34 +96,23 @@ export class IdeTreeComponent implements OnInit {
             isFolder: isFolder,
             level: level,
             children: [],
+            systemFile: this.isSystemPath(idx),
           });
         }
       }
 
       this.fileService.listFoldersRecursively(folder, this.systemFiles).subscribe({
         next: (folders: string[]) => {
-          functor(folders || [], true);
+
+          addToRoot(folders || [], true);
+
           this.fileService.listFilesRecursively(folder, this.systemFiles).subscribe({
             next: (files: string[]) => {
-              functor(files || [], false);
+
+              addToRoot(files || [], false);
+
               if (folder === '/') {
-
-                // Preparing a list of file systems, if system files are enabled.
-                const name1: any = [];
-                if (this.systemFiles) {
-                  name1.push(this.root.children.filter(newData => !this.dataSource.data.map(oldData => oldData.name).includes(newData.name)));
-                }
-
                 this.dataSource.data = this.root.children;
-
-                // If system files are enabled, set field valu to recognise them in view.
-                if (this.systemFiles) {
-                  this.dataSource.data.map(x => name1[0].forEach((element: any) => {
-                    if (x.name === element.name) {
-                      x['systemFile'] = true;
-                    }
-                  }));
-                }
               }
 
               resolve(true);
@@ -135,7 +126,7 @@ export class IdeTreeComponent implements OnInit {
           this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
         }
       });
-    })
+    });
   }
 
   selectMacro() {
@@ -252,7 +243,7 @@ export class IdeTreeComponent implements OnInit {
 
   deleteActiveFolder(folder: any) {
     let path: string = folder.node ? folder.node.path : folder;
-    if (path === '/' || path === '/system/' || path === '/modules/') {
+    if (path === '/' || path === '/system/' || path === '/modules/' || path === '/data/' || path === '/config/' || path === '/etc/') {
       this.generalService.showFeedback('You cannot delete system folders', 'errorMessage', 'Ok', 3000);
       return;
     }
@@ -506,56 +497,58 @@ export class IdeTreeComponent implements OnInit {
     }
     parent.children = [];
 
-    this.getFilesFromServer(folder).then((res: any) => {
-      if (isFile) {
-        this.fileService.loadFile(fileObject).subscribe({
-          next: async (content: string) => {
+    this.getFilesFromServer(folder).then((success: any) => {
+      if (success) {
+        if (isFile) {
+          this.fileService.loadFile(fileObject).subscribe({
+            next: async (content: string) => {
 
-            if (await this.getCodeMirrorOptions(fileObject) !== null) {
-              this.openFiles.push({
-                name: fileObject.substring(fileObject.lastIndexOf('/') + 1),
-                path: fileObject,
-                folder: fileObject.substring(0, fileObject.lastIndexOf('/') + 1),
-                content: content,
-                options: await this.getCodeMirrorOptions(fileObject),
-              });
-              this.currentFileData = this.openFiles.filter(x => x.path === fileObject)[0];
-              this.showEditor.emit({ currentFileData: this.currentFileData });
-              this.setFocusToActiveEditor.emit();
-            }
-            this.cdr.detectChanges();
-
-            // If the code mirror can't open the file.
-            // Lets the user decide what to do with it.
-            if (await this.getCodeMirrorOptions(fileObject) === null) {
-              this.dialog.open(IncompatibleFileDialogComponent, {
-                width: '550px',
-                data: {
-                  name: fileObject.substring(fileObject.lastIndexOf('/') + 1),
-                },
-              }).afterClosed().subscribe(async (data: { deleteFile: false, download: false }) => {
-                const objectToDelete: any = {
+              if (await this.getCodeMirrorOptions(fileObject) !== null) {
+                this.openFiles.push({
                   name: fileObject.substring(fileObject.lastIndexOf('/') + 1),
                   path: fileObject,
                   folder: fileObject.substring(0, fileObject.lastIndexOf('/') + 1),
                   content: content,
-                  options: await this.getCodeMirrorOptions(fileObject)
-                }
-                if (data && data.download) {
-                  this.downloadActiveFile(fileObject);
-                } else if (data && data.deleteFile) {
-                  this.deleteActiveFile(objectToDelete, true)
-                }
-              });
-              return;
-            }
-          },
-          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
-        })
-      } else {
-        this.dataBindTree();
-        this.getEndpoints();
-        this.cdr.detectChanges();
+                  options: await this.getCodeMirrorOptions(fileObject),
+                });
+                this.currentFileData = this.openFiles.filter(x => x.path === fileObject)[0];
+                this.showEditor.emit({ currentFileData: this.currentFileData });
+                this.setFocusToActiveEditor.emit();
+              }
+              this.cdr.detectChanges();
+
+              // If the code mirror can't open the file.
+              // Lets the user decide what to do with it.
+              if (await this.getCodeMirrorOptions(fileObject) === null) {
+                this.dialog.open(IncompatibleFileDialogComponent, {
+                  width: '550px',
+                  data: {
+                    name: fileObject.substring(fileObject.lastIndexOf('/') + 1),
+                  },
+                }).afterClosed().subscribe(async (data: { deleteFile: false, download: false }) => {
+                  const objectToDelete: any = {
+                    name: fileObject.substring(fileObject.lastIndexOf('/') + 1),
+                    path: fileObject,
+                    folder: fileObject.substring(0, fileObject.lastIndexOf('/') + 1),
+                    content: content,
+                    options: await this.getCodeMirrorOptions(fileObject)
+                  }
+                  if (data && data.download) {
+                    this.downloadActiveFile(fileObject);
+                  } else if (data && data.deleteFile) {
+                    this.deleteActiveFile(objectToDelete, true)
+                  }
+                });
+                return;
+              }
+            },
+            error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+          })
+        } else {
+          this.dataBindTree();
+          this.getEndpoints();
+          this.cdr.detectChanges();
+        }
       }
     })
   }
@@ -654,6 +647,7 @@ export class IdeTreeComponent implements OnInit {
         isFolder: true,
         level: event.dialogResult.path.split('/').filter(x => x !== '').length + 1,
         children: [],
+        systemFile: this.isSystemPath(event.objectPath),
       });
       sorter();
       this.dataBindTree();
@@ -664,6 +658,7 @@ export class IdeTreeComponent implements OnInit {
         isFolder: false,
         level: event.dialogResult.path.split('/').filter(x => x !== '').length + 1,
         children: [],
+        systemFile: this.isSystemPath(event.objectPath),
       });
 
       sorter();
@@ -736,7 +731,7 @@ export class IdeTreeComponent implements OnInit {
                     }
                   }).afterClosed().subscribe((result: string) => {
                     if (result === 'confirm') {
-                      this.getFilesFromServer();
+                      this.getFilesFromServer().then();
                     }
                   })
                 } else if (exeResult.result.startsWith('folders-changed|')) {
@@ -799,6 +794,10 @@ export class IdeTreeComponent implements OnInit {
     const el = document.getElementById('active');
     if (el)
       el.scrollIntoView();
+  }
+
+  private isSystemPath(path: string) {
+    return path.startsWith('/system/') || path.startsWith('/misc/') || path.startsWith('/data/') || path.startsWith('/config/');
   }
 }
 

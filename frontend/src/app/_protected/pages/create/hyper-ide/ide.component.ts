@@ -4,7 +4,6 @@
  */
 
 import { Component } from '@angular/core';
-import { Observable } from 'rxjs';
 import { FileNode } from './models/file-node.model';
 
 /**
