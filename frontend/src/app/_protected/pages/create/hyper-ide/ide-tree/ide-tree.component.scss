@@ -30,11 +30,7 @@
   z-index: 1;
 }
 
-.fixed-width {
-  min-width: 22px;
-}
-
-::ng-deep #hyper-ide {
+::ng-deep #tree {
   .action-menu-general {
     .mat-icon-button {
       height: 25px;
