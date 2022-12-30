@@ -73,6 +73,7 @@ export class IdeTreeComponent implements OnInit {
   ngOnInit() {
     this.getFilesFromServer().then((res: boolean) => {
       if (res === true) {
+        this.dataSource.data = this.root.children;
         this.getEndpoints();
       }
     });
@@ -110,11 +111,6 @@ export class IdeTreeComponent implements OnInit {
             next: (files: string[]) => {
 
               addToRoot(files || [], false);
-
-              if (folder === '/') {
-                this.dataSource.data = this.root.children;
-              }
-
               resolve(true);
               this.cdr.detectChanges();
             },
@@ -122,8 +118,8 @@ export class IdeTreeComponent implements OnInit {
           });
         },
         error: (error: any) => {
-          resolve(false)
-          this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+          resolve(false);
+          this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
         }
       });
     });
