@@ -380,39 +380,78 @@ export class IdeTreeComponent implements OnInit {
     this.setFocusToActiveEditor.emit();
   }
 
-  showRenameInput(item: TreeNode) {
-    this.showRenameBox = item;
+  showRenameInput(node: TreeNode) {
+
+    // Making sure we display renaming textbox for specified tree node.
+    this.showRenameBox = node;
+
+    // Making sure input element is given focus.
     setTimeout(() => {
       (document.querySelector('#renameFile') as HTMLElement).focus();
     }, 10);
   }
 
-  renameActiveFile(event: { file: any, name: string }) {
-    let path: string = '';
-    event.file.node ? path = event.file.node.path : path = event.file.path;
-    if (event.name !== '' && event.name !== event.file.name && this.nameValidation(event.name)) {
-      this.fileService.rename(path, event.name).subscribe({
-        next: () => {
-          const treeNode = this.findTreeNodeFolder(this.root, path);
-          treeNode.name = event.name;
-          treeNode.path = event.file.path;
-          event.file.name = treeNode.name;
-          path = treeNode.path;
-          event.file.node && this.currentFileData ? this.currentFileData.path = path : '';
-          this.dataBindTree();
-          this.cdr.detectChanges();
-          this.generalService.showFeedback('File successfully renamed', 'successMessage');
-          this.getEndpoints();
-          this.showRenameBox = null;
-        },
-        error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
-      })
-    } else if (!this.nameValidation(event.name)) {
-      this.generalService.showFeedback('Invalid characters', 'errorMessage');
-    } else {
-      this.showRenameBox = null;
+  renameFile(event: { file: TreeNode, newName: string }) {
+
+    // Sanity checking new name.
+    if (!this.nameValidation(event.newName)) {
+      this.generalService.showFeedback(`${event.newName} is not an aceptable filename`);
       return;
     }
+
+    // Renaming file on server.
+    this.fileService.rename(event.file.path, event.newName).subscribe({
+      next: () => {
+
+        // Finding tree node reference.
+        const treeNode = this.findTreeNodeFolder(this.root, event.file.path);
+
+        // Finding file amongst open files.
+        const openRef = this.openFiles.filter(x => x.path == event.file.path).pop();
+
+        // Figuring out new path of file.
+        const newPath = event.file.path.substring(0, event.file.path.lastIndexOf('/') + 1) + event.newName;
+
+        // Checking if file is open, at which point we need to modify reference.
+        if (openRef) {
+
+          // Updating reference to currently open file.
+          openRef.path = newPath;
+          openRef.name = event.newName;
+
+          // Checking if renamed file is currently activated file, and if so changing it to reflect its new path.
+          if (this.currentFileData?.path === event.file.path) {
+
+            // Updating name and path.
+            this.currentFileData.path = newPath;
+            this.currentFileData.name = event.newName;
+
+            // Signaling other components.
+            this.showEditor.emit({
+              currentFileData: this.currentFileData
+            });
+          }
+        }
+
+        // Updating tree node.
+        treeNode.name = event.newName;
+        treeNode.path = newPath;
+
+        // Data binding tree again, the node name changed.
+        this.dataBindTree();
+
+        // In case file changed file extension, we need to retrieve endpoints again.
+        this.getEndpoints();
+
+        // Hiding rename textbox.
+        this.showRenameBox = null;
+
+        // Showing feedback to user.
+        this.generalService.showFeedback('File successfully renamed', 'successMessage');
+
+      },
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+    });
   }
 
   renameActiveFolder(folder: any, name?: string) {
@@ -809,20 +848,6 @@ export class IdeTreeComponent implements OnInit {
       }
     }
     return true
-  }
-
-  private removeNode(path: string, node: TreeNode = this.root) {
-    const toBeRemoved = node.children.filter(x => x.path === path);
-    if (toBeRemoved.length > 0) {
-      node.children.splice(node.children.indexOf(toBeRemoved[0]), 1);
-      return true;
-    }
-    for (const idx of node.children.filter(x => path.startsWith(x.path))) {
-      if (this.removeNode(path, idx)) {
-        return true;
-      }
-    }
-    return false;
   }
 
   private getCodeMirrorOptions(path: string) {

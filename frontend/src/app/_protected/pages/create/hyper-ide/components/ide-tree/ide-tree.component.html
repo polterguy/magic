@@ -118,7 +118,7 @@
                 class="w-100 ms-2"
                 [id]="showRenameBox === file.node ? 'renameFile':''"
                 #fileInput
-                (keyup.enter)="renameActiveFile({file: file, name: fileInput?.value})"
+                (keyup.enter)="renameFile({file: file.node, newName: fileInput?.value})"
                 (keyup.esc)="showRenameBox = null">
             </span>
 
