@@ -7,7 +7,7 @@
       <mat-icon>search</mat-icon>
       <span class="text-muted">|</span>
     </span>
-    <input matInput placeholder="Search through snippets" #input>
+    <input matInput placeholder="Filter ..." #input>
     <button mat-icon-button matSuffix (click)="input.value = ''" *ngIf="input.value!==''">
       <mat-icon>close</mat-icon>
     </button>
