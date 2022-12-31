@@ -6,7 +6,7 @@
 /**
  * Filtering text box to allow the user to filter through his test cases.
  */
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-health-searchbox',
@@ -18,23 +18,17 @@ export class HealthSearchboxComponent {
   @Output() filterList = new EventEmitter<any>();
   @Output() testAll = new EventEmitter<any>();
 
-  /**
-   * Invoking endpoint to search in unique fields.
-   * @params event
-   */
-  public applyFilter(keyword: string) {
+  @Input() isRunning: boolean;
+
+  applyFilter(keyword: string) {
     this.filterList.emit(keyword);
   }
 
-  /**
-   * Removes the search keyword.
-   * @callback filterList To refetch the unfiltered list.
-   */
-  public removeSearchTerm() {
+  removeSearchTerm() {
     this.filterList.emit('');
   }
 
-  public invokeTestAll() {
+  invokeTestAll() {
     this.testAll.emit();
   }
 }
