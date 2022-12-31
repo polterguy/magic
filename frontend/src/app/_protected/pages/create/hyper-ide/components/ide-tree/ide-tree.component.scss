@@ -8,6 +8,7 @@
 .panel-1 {
   flex: 1 1 auto;
   overflow: hidden;
+
   .mat-expansion-panel {
     max-height: 100%;
   }
@@ -15,6 +16,7 @@
 
 .panel-2 {
   flex: 0 0 auto;
+
   .mat-expansion-panel {
     max-height: 15vh;
   }
@@ -134,14 +136,12 @@
       }
     }
 
-    &.active-folder {
-      button {
-        font-weight: 900;
-      }
+    &.active-folder, &.active-folder:hover {
+      background-color: transparentize($color: $aista_default_grey4, $amount: 0.75);
     }
 
-    &.active-file {
-      background-color: transparentize($color: $aista_default_grey5, $amount: 0.5);
+    &.active-file, &.active-file:hover {
+      background-color: transparentize($color: $aista_default_grey4, $amount: 0.75);
     }
 
     &:hover {
