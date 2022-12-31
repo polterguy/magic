@@ -169,7 +169,7 @@ export class SQLStudioComponent implements OnInit {
         const table1pk: any[] = selectedTables.table1.columns.filter((x: any) => x.primary);
         const table2pk: any[] = selectedTables.table2.columns.filter((x: any) => x.primary);
         const payload = {
-          name: selectedTables.table1.name.replace('dbo.', '').replace('.', '_') + '_' + selectedTables.table2.name.replace('dbo.', '').replace('.', '_'),
+          name: selectedTables.table1.name.replace('.', '_') + '_' + selectedTables.table2.name.replace('.', '_'),
           table1: selectedTables.table1.name,
           table2: selectedTables.table2.name,
           table1pk: table1pk.map((x: any) => {
