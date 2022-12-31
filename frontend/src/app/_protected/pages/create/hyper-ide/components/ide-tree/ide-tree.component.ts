@@ -432,7 +432,7 @@ export class IdeTreeComponent implements OnInit {
   /**
    * Renames the specified file to its new name.
    */
-  renameFile(event: { file: { name: string, path: string }, newName: string }) {
+  renameFile(event: { file: { path: string }, newName: string }) {
 
     // Sanity checking new name.
     if (!this.nameValidation(event.newName)) {
@@ -495,34 +495,46 @@ export class IdeTreeComponent implements OnInit {
     });
   }
 
-  renameActiveFolder(folder: any, name?: string) {
-    let givenName: string;
-    name !== undefined ? givenName = name : givenName = folder.newName;
+  /**
+   * Renames the specified folder to its new name.
+   */
+  renameFolder(event: { folder: string, newName: string }) {
 
-    if (givenName !== '' && givenName !== folder.name && this.nameValidation(givenName)) {
-      const newName = folder.node.path.toString().replace(folder.name, givenName);
-      this.fileService.rename(folder.node.path, newName).subscribe({
-        next: () => {
-          var toUpdate = folder.node.path.substring(0, folder.node.path.length - 1);
-          toUpdate = toUpdate.substring(0, toUpdate.lastIndexOf('/') + 1);
-          if (this.currentFileData) {
-            this.currentFileData.path = this.currentFileData.path.toString().replace(folder.name, givenName);
-            this.currentFileData.folder = this.currentFileData.path.toString().replace(folder.name, givenName);
-          }
-
-          this.updateFileObject(toUpdate);
-          this.generalService.showFeedback('Folder successfully renamed', 'successMessage');
-          this.showRenameBox = null;
-        },
-        error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
-      })
-
-    } else if (!this.nameValidation(givenName)) {
+    // Sanity checking new name.
+    if (!this.nameValidation(event.newName)) {
       this.generalService.showFeedback('Invalid characters', 'errorMessage');
-    } else {
-      this.showRenameBox = null;
       return;
     }
+
+    // Figuring out new folder path after renaming.
+    const newFolderPath = TreeNode.parentFolderFromPath(event.folder) + event.newName + '/';
+
+    // Renaming folder on server.
+    this.fileService.rename(event.folder, newFolderPath).subscribe({
+      next: () => {
+
+        // Looping through all open files that are within renamed folder.
+        for (const idxOpen of this.openFiles.filter(x => x.folder.startsWith(event.folder))) {
+          idxOpen.folder = newFolderPath + idxOpen.folder.substring(event.folder.length);
+          idxOpen.path = newFolderPath + idxOpen.path.substring(event.folder.length);
+        }
+
+        // Updating active folder, if it's affected by renaming process.
+        if (this.activeFolder.startsWith(event.folder)) {
+          this.activeFolder = newFolderPath + this.activeFolder.substring(event.folder.length);
+        }
+
+        // Hiding rename textbox.
+        this.showRenameBox = null;
+
+        // Updating folder.
+        this.updateFileObject(TreeNode.parentFolderFromPath(event.folder));
+
+        // Showing feedback to user.
+        this.generalService.showFeedback('Folder successfully renamed', 'successMessage');
+      },
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+    });
   }
 
   createNewFileObject(type: string) {

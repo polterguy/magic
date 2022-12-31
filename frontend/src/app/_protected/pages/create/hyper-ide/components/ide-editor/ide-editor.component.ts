@@ -56,8 +56,8 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   @Output() closeFile: EventEmitter<string> = new EventEmitter<string>();
   @Output() deleteActiveFolderFromParent: EventEmitter<any> = new EventEmitter<any>();
   @Output() deleteActiveFileFromParent: EventEmitter<any> = new EventEmitter<any>();
-  @Output() renameFileFromParent: EventEmitter<{ file: { name: string, path: string }, newName: string }> = new EventEmitter<{ file: { name: string, path: string }, newName: string }>();
-  @Output() renameActiveFolderFromParent: EventEmitter<any> = new EventEmitter<any>();
+  @Output() renameFileFromParent: EventEmitter<{ file: { path: string }, newName: string }> = new EventEmitter<{ file: { path: string }, newName: string }>();
+  @Output() renameFolderFromParent: EventEmitter<any> = new EventEmitter<any>();
   @Output() createNewFileObjectFromParent: EventEmitter<any> = new EventEmitter<any>();
 
   openAiPrompt: string = '';
@@ -337,10 +337,8 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   }
   /**
    * Invoked when a file should be renamed.
-   *
-   * @callback renameActiveFolderFromParent to update the file inside the tree with the given name
    */
-  private renameActiveFolder() {
+  private renameFolder() {
     if (!this.currentFileData) {
       return;
     }
@@ -357,15 +355,10 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     dialog.afterClosed().subscribe((data: string) => {
       if (data) {
         const path: string = this.activeFolder.substring(0, this.activeFolder.lastIndexOf('/'));
-        const folder: any = {
+        this.renameFolderFromParent.emit({
+          folder: this.activeFolder,
           newName: data,
-          name: path.split('/').pop(),
-          node: {
-            path: this.activeFolder
-          }
-        }
-        this.renameActiveFolderFromParent.emit(folder);
-        this.updateFileObject.emit(folder);
+        });
         this.activeFolder = this.activeFolder.substring(0, this.activeFolder.substring(0, this.activeFolder.length - 1).lastIndexOf('/') + 1) + data + '/';
       }
     });
@@ -558,7 +551,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
           break;
 
         case 'renameFolder':
-          this.renameActiveFolder();
+          this.renameFolder();
           break;
 
         case 'insertSnippet':
