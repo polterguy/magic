@@ -5,7 +5,6 @@
 
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { bufferCount, concatMap, forkJoin, from } from 'rxjs';
-import { Model } from 'src/app/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 import { Response } from 'src/app/_protected/models/common/response.model';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { BackendService } from 'src/app/_general/services/backend.service';
@@ -19,21 +18,6 @@ import { ConfirmationDialogComponent } from 'src/app/_general/components/confirm
 import { TestHealthContentDialogComponent } from './components/test-health-content-dialog/test-health-content-dialog.component';
 import { Sort } from '@angular/material/sort';
 
-/*
- * Test model encapsulating a single test, and possibly its result.
- */
-class TestModel {
-
-  // Filename for test.
-  filename: string;
-
-  // Whether or not execution was a success or not.
-  success?: boolean;
-
-  // Content of test.
-  content?: Model;
-}
-
 /**
  * Helper component to show user all test cases in the system, allowing him to run all tests,
  * verify sanity of system, and also administer existing test cases.
@@ -45,29 +29,12 @@ class TestModel {
 })
 export class HealthCheckComponent implements OnInit {
 
-  // Filter for which items to display.
-  private filter: string = '';
+  originalDataSource: any = [];
+  dataSource: any = [];
+  displayedColumns: string[] = ['name', 'status', 'action'];
+  isLoading: boolean = true;
+  isRunning: boolean = false;
 
-  /**
-   * Currently expanded assumption.
-   */
-  expandedElement: TestModel;
-
-  public originalDataSource: any = [];
-  public dataSource: any = [];
-  public displayedColumns: string[] = ['name', 'status', 'action'];
-
-  public isLoading: boolean = true;
-
-  /**
-   * Creates an instance of your component.
-   *
-   * @param fileService Needed to load test files from backend
-   * @param messageService Needed to publish message when all assumptions succeeds
-   * @param feedbackService Needed to provide feedback to user
-   * @param loaderInterceptor Used to manually increment invocation count to avoid flickering as we execute all tests
-   * @param assumptionService Needed to be able to create and execute assumptions
-   */
   constructor(
     private dialog: MatDialog,
     private cdr: ChangeDetectorRef,
@@ -78,29 +45,6 @@ export class HealthCheckComponent implements OnInit {
 
   ngOnInit() {
     this.getList();
-  }
-
-  private getList() {
-    this.assumptionService.list().subscribe({
-      next: (tests: string[]) => {
-        let tableData: any;
-        tableData = tests.filter(x => x.endsWith('.hl')).map((item: any) => {
-          const name = item.substring(item.lastIndexOf('/') + 1);
-          return {
-            status: 'Untested',
-            name: name.substring(0, name.length - 3),
-            filename: item,
-            success: null,
-            content: null,
-          }
-        });
-        this.originalDataSource = [...tableData];
-        this.dataSource = tableData;
-
-        this.isLoading = false;
-      },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
-    });
   }
 
   ensureTestContent(item: any) {
@@ -122,17 +66,11 @@ export class HealthCheckComponent implements OnInit {
     }
   }
 
-  private openContent(item: any) {
-    this.dialog.open(TestHealthContentDialogComponent, {
-      width: '900px',
-      data: item,
-      panelClass: ['light']
-    })
-  }
-
   executeTest(item: any) {
+    this.isRunning = true;
     this.assumptionService.execute(item.filename).subscribe({
       next: (res: Response) => {
+        this.isRunning = false;
         item.success = res.result === 'success';
         item.status = res.result === 'success' ? 'Passed' : 'Failed';
         if (res.result === 'success') {
@@ -142,6 +80,7 @@ export class HealthCheckComponent implements OnInit {
         }
       },
       error: (error: any) => {
+        this.isRunning = false;
         item.success = false;
         item.status = 'Failed';
         this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
@@ -174,7 +113,7 @@ export class HealthCheckComponent implements OnInit {
     });
   }
 
-  public testAll() {
+  testAll() {
     const parallellNo = 2;
     let idxNo = 0;
 
@@ -182,7 +121,8 @@ export class HealthCheckComponent implements OnInit {
     const startTime = new Date();
     let timeDiff: number = null;
     this.generalService.showLoading();
-    from(this.dataSource.map(x => this.assumptionService.execute(x.filename)))
+    this.isRunning = true;
+    from(this.dataSource.map((x: any) => this.assumptionService.execute(x.filename)))
       .pipe(
         bufferCount(parallellNo),
         concatMap((buffer: any) => forkJoin(buffer))).subscribe({
@@ -203,43 +143,14 @@ export class HealthCheckComponent implements OnInit {
           },
           error: (error: any) => {
             this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
-
-            /*
-             * Filtering out tests according to result,
-             * and making sure Ajax loader is hidden again.
-             *
-             * Notice, we can't use decrement here, because as one of our
-             * requests results in an error, all callbacks for all
-             * consecutive requests stops being invoked.
-             */
             this.filterTests();
-
           },
           complete: () => {
             this.generalService.hideLoading();
             this.filterTests(timeDiff);
+            this.isRunning = false;
           }
         });
-  }
-
-  /*
-   * Private helper methods
-   */
-
-  /*
-   * Filters tests according to result.
-   */
-  private filterTests(timeDiff: number = null) {
-    if (this.dataSource.filter(x => x.success !== true).length === 0) {
-
-      // Perfect health! Publishing succeeded message and showing user some feedback.
-      this.generalService.showFeedback('All tests succeeded' + (timeDiff !== null ? ' in ' + new Intl.NumberFormat('en-us').format(timeDiff) + ' milliseconds' : ''), 'successMessage', 'Ok', 5000);
-
-    } else {
-      this.generalService.hideLoading();
-      // One or more tests failed, removing all successful tests.
-      this.generalService.showFeedback('One or more tests failed!', 'errorMessage', 'Ok', 5000);
-    }
   }
 
   public filterList(event: string) {
@@ -260,8 +171,10 @@ export class HealthCheckComponent implements OnInit {
     this.dataSource = data.sort((a: any, b: any) => {
       const isAsc = sort.direction === 'asc';
       switch (sort.active) {
+
         case 'name':
           return compare(a.name, b.name, isAsc);
+
         case 'status':
           return compare(a.status, b.status, isAsc);
 
@@ -270,6 +183,54 @@ export class HealthCheckComponent implements OnInit {
       }
     });
   }
+
+  /*
+   * Private helper methods
+   */
+
+  private getList() {
+    this.assumptionService.list().subscribe({
+      next: (tests: string[]) => {
+        let tableData: any;
+        tableData = tests.filter(x => x.endsWith('.hl')).map((item: any) => {
+          const name = item.substring(item.lastIndexOf('/') + 1);
+          return {
+            status: 'Untested',
+            name: name.substring(0, name.length - 3),
+            filename: item,
+            success: null,
+            content: null,
+          }
+        });
+        this.originalDataSource = [...tableData];
+        this.dataSource = tableData;
+
+        this.isLoading = false;
+      },
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+    });
+  }
+
+  private filterTests(timeDiff: number = null) {
+    if (this.dataSource.filter(x => x.success !== true).length === 0) {
+
+      // Perfect health! Publishing succeeded message and showing user some feedback.
+      this.generalService.showFeedback('All tests succeeded' + (timeDiff !== null ? ' in ' + new Intl.NumberFormat('en-us').format(timeDiff) + ' milliseconds' : ''), 'successMessage', 'Ok', 5000);
+
+    } else {
+      this.generalService.hideLoading();
+      // One or more tests failed, removing all successful tests.
+      this.generalService.showFeedback('One or more tests failed!', 'errorMessage', 'Ok', 5000);
+    }
+  }
+
+  private openContent(item: any) {
+    this.dialog.open(TestHealthContentDialogComponent, {
+      width: '900px',
+      data: item,
+      panelClass: ['light']
+    })
+  };
 }
 
 function compare(a: number | string, b: number | string, isAsc: boolean) {

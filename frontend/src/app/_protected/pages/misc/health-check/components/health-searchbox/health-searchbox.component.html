@@ -28,6 +28,7 @@
     mat-flat-button
     color="primary"
     class="mw-set mt-sm-0 mt-2"
+    [disabled]="isRunning"
     (click)="invokeTestAll();">
     Run {{input.value === '' ? 'all' : 'filtered'}} tests
   </button>
