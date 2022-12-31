@@ -1,23 +1,44 @@
-<div
-  class="d-flex justify-content-md-between align-items-md-center align-items-end flex-md-row flex-column-reverse w-100">
 
-  <mat-checkbox *ngIf="type === 'plugin'" color="primary" class="mt-md-0 mt-1 me-3" [(ngModel)]="installedOnly" (change)="filter()">
+<div class="d-flex justify-content-md-between align-items-md-center align-items-end flex-md-row flex-column-reverse w-100">
+
+  <mat-checkbox
+    *ngIf="type === 'plugin'"
+    color="primary"
+    class="mt-md-0 mt-1 me-3"
+    [(ngModel)]="installedOnly"
+    (change)="filter()">
     Show installed only
   </mat-checkbox>
 
   <mat-form-field class="w-100 standalone-field">
-    <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+    <span
+      matPrefix
+      class="d-flex flex-nowrap align-items-center justify-content-between me-2">
       <mat-icon>search</mat-icon>
       <span class="text-muted">|</span>
     </span>
-
-    <input matInput [placeholder]="'Search for ' + type" [formControl]="filterControl" #input autocomplete="off">
-    <button mat-icon-button matSuffix (click)="removeSearchTerm();" *ngIf="input.value !== ''">
+    <input
+      matInput
+      placeholder="Filter ..."
+      [formControl]="filterControl"
+      #input
+      autocomplete="off">
+    <button
+      mat-icon-button
+      matSuffix
+      (click)="removeSearchTerm();"
+      *ngIf="input.value !== ''">
       <mat-icon>close</mat-icon>
     </button>
   </mat-form-field>
 
-  <mat-checkbox *ngIf="type === 'endpoint'" color="primary" class="mt-md-0 mt-1 ms-3" [(ngModel)]="showSystem" (change)="filter();">
+  <mat-checkbox
+    *ngIf="type === 'endpoint'"
+    color="primary"
+    class="mt-md-0 mt-1 ms-3"
+    [(ngModel)]="showSystem"
+    (change)="filter();">
     System endpoints
   </mat-checkbox>
+
 </div>
