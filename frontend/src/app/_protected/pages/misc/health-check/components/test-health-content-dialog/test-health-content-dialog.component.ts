@@ -84,7 +84,7 @@ export class TestHealthContentDialogComponent implements OnInit, OnDestroy {
   }
 
   public saveTest() {
-    this.fileService.saveFile(this.data.filename, this.data.content).subscribe({
+    this.fileService.saveFile(this.data.filename, this.data.content.hyperlambda).subscribe({
       next: () => {
         this.generalService.showFeedback('Assumption successfully saved', 'successMessage', 'Ok', 3000);
         this.dialogRef.close();
