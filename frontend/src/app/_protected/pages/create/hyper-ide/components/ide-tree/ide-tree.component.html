@@ -90,12 +90,12 @@
           <!-- Tree nodes for files -->
           <mat-tree-node
             *matTreeNodeDef="let file"
-            [class]="currentFileData?.path === file.node.path ? 'active-file file-node' : 'node file-node'"
             matTreeNodePadding
             [matTreeNodePaddingIndent]="10"
             [class.text-danger]="file.node.systemFile"
+            [class.active-file]="currentFileData?.path === file.node.path"
             level="level"
-            class="justify-content-between"
+            class="justify-content-between file-node"
             [class.d-none]="filterLeafNode(file, searchKey)">
 
             <!-- Button for opening file -->
@@ -148,12 +148,11 @@
           <!-- Tree nodes for folders -->
           <mat-tree-node
             *matTreeNodeDef="let folder; when: isExpandable"
-            [class]="activeFolder === folder.node.path ? 'active-folder' : 'node'"
+            [class.active-folder]="activeFolder === folder.node.path"
             [class.text-danger]="folder.node.systemFile"
             level="level"
             matTreeNodePadding
             matTreeNodePaddingIndent="10"
-            [isExpanded]="activeFolder === folder.node.path" class="justify-content-betwee"
             [class.d-none]="filterParentNode(folder, searchKey)">
 
             <div class="w-100 h-100 flex-nowrap align-items-center d-{{showRenameBox === folder.node ? 'none' : 'flex'}}">
