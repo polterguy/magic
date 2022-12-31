@@ -194,7 +194,7 @@
                 class="w-100 ms-2"
                 [id]="showRenameBox === folder.node ? 'renameFile':''"
                 #folderInput
-                (keyup.enter)="renameActiveFolder(folder, folderInput?.value)" (keyup.esc)="showRenameBox = null">
+                (keyup.enter)="renameFolder({folder: folder.node.path, newName: folderInput?.value})" (keyup.esc)="showRenameBox = null">
             </span>
 
             <!-- Action buttons for renaming and deleting folder -->
@@ -248,6 +248,7 @@
           class="justify-content-between d-flex w-100 open-files"
           *ngFor="let item of openFiles;let index=index"
           [id]="currentFileData.name === item.name ? 'active' : ''"
+          [title]="item.path"
           (click)="openFile(item)"
           [class.active-file]="currentFileData.path === item.path">
 
