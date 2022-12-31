@@ -16,15 +16,26 @@
             </div>
           </div>
 
+          <!-- Configuration CodeMirror editor -->
           <div class="col-12 full-height">
-            <ngx-codemirror class="h-100" [(ngModel)]="config" [options]="cmOptions.json">
+            <ngx-codemirror
+              class="h-100"
+              [(ngModel)]="config"
+              [options]="cmOptions.json">
             </ngx-codemirror>
           </div>
 
+          <!-- Save button -->
           <div class="col-12 d-flex justify-content-end mt-4">
-            <button mat-button color="primary" (click)="reset()">Reset</button>
-            <div class="px-1"></div>
-            <button mat-flat-button color="primary" class="px-5" (click)="save()">Save</button>
+
+            <button
+              mat-flat-button
+              color="primary"
+              class="px-5"
+              (click)="save()">
+              Save
+            </button>
+
           </div>
 
         </div>
