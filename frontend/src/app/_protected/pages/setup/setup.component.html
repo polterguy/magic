@@ -7,7 +7,7 @@
 
         <div class="col-12">
           <h3 class="my-0 fw-bold">Setup</h3>
-          <p class="text-muted">Initial setting for your account and the connected backend.</p>
+          <p class="text-muted">Initial settings for your account and the connected backend</p>
         </div>
 
         <div class="col-12 mt-4">
@@ -15,11 +15,17 @@
           <div class="row">
             <div class="col-xl-3 col-sm-6 col-12 order-1">
 
-              <mat-form-field class="w-100 text-prefix">
-                <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
-                  Database type
+              <mat-form-field class="w-100 standalone-field">
+                <span
+                  matPrefix
+                  matTooltip="Default database type"
+                  class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+                  <mat-icon>database</mat-icon>
+                  <span class="text-muted">|</span>
                 </span>
-                <mat-select formControlName="selectedDatabaseType" (selectionChange)="selectedDatabaseTypeChanged()">
+                <mat-select
+                  formControlName="selectedDatabaseType"
+                  (selectionChange)="selectedDatabaseTypeChanged()">
                   <mat-option *ngFor="let idx of databaseTypes" [value]="idx.value">
                     {{idx.name}}
                   </mat-option>
@@ -29,11 +35,15 @@
             </div>
             <div class="col-xl-3 col-sm-6 col-12 order-xl-3 order-2">
 
-              <mat-form-field class="w-100 text-prefix">
-                <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
-                  Default time zone
+              <mat-form-field class="w-100 standalone-field">
+                <span
+                  matPrefix
+                  matTooltip="Default time zone"
+                  class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+                  <mat-icon>query_builder</mat-icon>
+                  <span class="text-muted">|</span>
                 </span>
-
+    
                 <mat-select formControlName="defaultTimeZone">
                   <mat-option value="none">None</mat-option>
                   <mat-option value="utc">UTC</mat-option>
@@ -44,15 +54,23 @@
             </div>
             <div class="col-xl-6 col-sm-12 col-12 order-xl-2 order-3">
 
-              <mat-form-field class="w-100 text-prefix">
-                <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
-                  Connection
+              <mat-form-field class="w-100 standalone-field">
+                <span
+                  matPrefix
+                  matTooltip="Default connection string"
+                  class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+                  <mat-icon>conversion_path</mat-icon>
+                  <span class="text-muted">|</span>
                 </span>
-
-                <input matInput autocomplete="connectionString" placeholder="Connection string"
-                  formControlName="connectionString" name="connectionString">
+    
+                <input
+                  matInput
+                  autocomplete="connectionString"
+                  placeholder="Connection string"
+                  formControlName="connectionString"
+                  name="connectionString">
                 <mat-error>
-                  Connection string in not valid.
+                  Connection string in not valid
                 </mat-error>
               </mat-form-field>
 
@@ -66,25 +84,44 @@
 
             <div class="col-xl-3 col-md-6 col-12">
 
-              <mat-form-field class="w-100 text-prefix">
-                <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
-                  Name
+              <mat-form-field class="w-100 standalone-field">
+                <span
+                  matPrefix
+                  matTooltip="Your full name"
+                  class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+                  <mat-icon>person</mat-icon>
+                  <span class="text-muted">|</span>
                 </span>
-
-                <input matInput autocomplete="name" formControlName="name" name="name">
-                <mat-error>Name is required.</mat-error>
+    
+                <input
+                  matInput
+                  autocomplete="name"
+                  formControlName="name"
+                  name="name">
+                <mat-error>
+                  Name is required
+                </mat-error>
               </mat-form-field>
 
             </div>
 
             <div class="col-xl-3 col-md-6 col-12">
 
-              <mat-form-field class="w-100 text-prefix">
-                <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
-                  Email
+              <mat-form-field class="w-100 standalone-field">
+                <span
+                  matPrefix
+                  matTooltip="Your email address"
+                  class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+                  <mat-icon>mail</mat-icon>
+                  <span class="text-muted">|</span>
                 </span>
-
-                <input matInput autocomplete="email" formControlName="email" name="email" [pattern]="CommonRegEx.email">
+    
+                <input
+                  matInput
+                  autocomplete="email"
+                  formControlName="email"
+                  name="email"
+                  [pattern]="CommonRegEx.email">
                 <mat-error>{{CommonErrorMessages.email}}</mat-error>
               </mat-form-field>
 
@@ -92,14 +129,28 @@
 
             <div class="col-xl-3 col-md-6 col-12">
 
-              <mat-form-field class="w-100 text-prefix">
-                <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
-                  Password
+              <mat-form-field class="w-100 standalone-field">
+                <span
+                  matPrefix
+                  matTooltip="Choose a password"
+                  class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+                  <mat-icon>password</mat-icon>
+                  <span class="text-muted">|</span>
                 </span>
-
-                <input matInput autocomplete="new-password" formControlName="password"
-                  [type]="showPassword ? 'text' : 'password'" name="password" [pattern]="CommonRegEx.password">
-                <button mat-icon-button (click)="toggleShowPassword()" type="button" matSuffix tabindex="-1">
+    
+                <input
+                  matInput
+                  autocomplete="new-password"
+                  formControlName="password"
+                  [type]="showPassword ? 'text' : 'password'"
+                  name="password"
+                  [pattern]="CommonRegEx.password">
+                <button
+                  mat-icon-button
+                  (click)="toggleShowPassword()"
+                  type="button"
+                  matSuffix
+                  tabindex="-1">
                   <mat-icon>visibility{{showPassword ? '_off' : ''}}</mat-icon>
                 </button>
 
@@ -110,13 +161,22 @@
 
             <div class="col-xl-3 col-md-6 col-12">
 
-              <mat-form-field class="w-100 text-prefix">
-                <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
-                  Repeat password
+              <mat-form-field class="w-100 standalone-field">
+                <span
+                  matPrefix
+                  matTooltip="Repeat password"
+                  class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+                  <mat-icon>password</mat-icon>
+                  <span class="text-muted">|</span>
                 </span>
-
-                <input matInput autocomplete="new-password" formControlName="passwordRepeat"
-                  [type]="showPassword ? 'text' : 'password'" [errorStateMatcher]="matcher" name="password">
+    
+                <input
+                  matInput
+                  autocomplete="new-password"
+                  formControlName="passwordRepeat"
+                  [type]="showPassword ? 'text' : 'password'"
+                  [errorStateMatcher]="matcher"
+                  name="password">
                 <mat-error *ngIf="configForm.hasError('notSame')">Passwords must match</mat-error>
               </mat-form-field>
 
@@ -125,9 +185,16 @@
         </div>
 
         <div class="col-12 d-flex justify-content-end mt-3">
-          <button mat-flat-button type="submit" class="px-5" color="primary" [disabled]="waiting">
+
+          <button
+            mat-flat-button
+            type="submit"
+            class="px-5"
+            color="primary"
+            [disabled]="waiting">
             Save
           </button>
+
         </div>
 
       </div>
