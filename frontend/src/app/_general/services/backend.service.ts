@@ -111,9 +111,7 @@ export class BackendService {
       // Authenticating towards backend.
       this.httpClient.get<AuthenticateResponse>(
         this.active.url +
-        '/magic/system/auth/authenticate' + query, {
-        withCredentials: query === '' ? true : false,
-      }).subscribe({
+        '/magic/system/auth/authenticate' + query).subscribe({
         next: (auth: AuthenticateResponse) => {
           this.active.token = new Token(auth.ticket);
           if (storePassword) {
@@ -163,10 +161,6 @@ export class BackendService {
     return this.httpClient.get<Response>(
       this.active.url +
       '/magic/system/auth/verify-ticket');
-  }
-
-  autoAuth(url: string) {
-    return this.httpClient.get<Response>(url.replace(/\s/g, '').replace(/(\/)+$/, '') + '/magic/system/auth/auto-auth');
   }
 
   changePassword(password: string) {
