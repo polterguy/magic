@@ -14,6 +14,7 @@
         <mat-form-field class="w-100 standalone-field mt-4">
           <span
             matPrefix
+            matTooltip="Name of column"
             class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>edit</mat-icon>
             <span class="text-muted">|</span>
@@ -34,6 +35,7 @@
         <mat-form-field class="w-100 standalone-field">
           <span
             matPrefix
+            matTooltip="Type of column"
             class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>dehaze</mat-icon>
             <span class="text-muted">|</span>
@@ -62,6 +64,7 @@
           *ngIf="formData?.fieldType?.defaultValue">
           <span
             matPrefix
+            matTooltip="Default value of column"
             class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>account_balance</mat-icon>
             <span class="text-muted">|</span>
@@ -79,7 +82,10 @@
         <mat-form-field
           class="w-100 standalone-field"
           *ngIf="formData?.fieldType?.size">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+          <span
+            matPrefix
+            matTooltip="Maximum size of column"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>format_size</mat-icon>
             <span class="text-muted">|</span>
           </span>
@@ -118,6 +124,7 @@
         <mat-form-field class="w-100 standalone-field mt-4">
           <span
             matPrefix
+            matTooltip="Foreign table"
             class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>conversion_path</mat-icon>
             <span class="text-muted">|</span>
@@ -143,6 +150,7 @@
         <mat-form-field class="w-100 standalone-field">
           <span
             matPrefix
+            matTooltip="Foreign column"
             class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>apps</mat-icon>
             <span class="text-muted">|</span>
@@ -165,6 +173,7 @@
         <mat-form-field class="w-100 standalone-field">
           <span
             matPrefix
+            matTooltip="Name of foreign key"
             class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>edit</mat-icon>
             <span class="text-muted">|</span>
@@ -172,7 +181,7 @@
           <input
             matInput
             type="text"
-            placeholder="Key name"
+            placeholder="Foreign key name"
             autocomplete="off"
             [value]="formData.foreignField ? formData.foreignField + '_column' : ''"
             [(ngModel)]="formData.columnName"

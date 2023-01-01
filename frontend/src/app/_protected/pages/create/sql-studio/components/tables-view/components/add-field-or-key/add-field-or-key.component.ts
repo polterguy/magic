@@ -40,9 +40,6 @@ interface ExpectedData {
 })
 export class AddFieldComponent {
 
-  /**
-   * Form data.
-   */
   formData: NewField = {
     columnName: '',
     fieldType: {},
@@ -50,20 +47,9 @@ export class AddFieldComponent {
     defaultValue: '',
     nullable: true
   };
-
-  /**
-   * Types supported by the different databases we support.
-   */
   fieldTypeList: any = fieldTypes;
 
-  /**
-   * Regular expressions used to test if user's input is bogus or not.
-   */
   CommonRegEx = CommonRegEx;
-
-  /**
-   * Error messages used in case user provides bogus input values.
-   */
   CommonErrorMessages = CommonErrorMessages;
 
   constructor(
@@ -112,11 +98,12 @@ export class AddFieldComponent {
 
   create() {
     if (!this.validateName()) {
-      this.generalService.showFeedback('Invalid name.', 'errorMessage');
+      this.generalService.showFeedback('Invalid name', 'errorMessage');
       return;
     }
+
     if (this.formData.defaultValue !== '' && !this.validateDefaultValue()) {
-      this.generalService.showFeedback('Invalid default value.', 'errorMessage');
+      this.generalService.showFeedback('Invalid default value', 'errorMessage');
       return;
     }
 
@@ -139,7 +126,7 @@ export class AddFieldComponent {
     if (condition) {
       this.dialogRef.close(this.formData);
     } else {
-      this.generalService.showFeedback('Please fill the required fields.', 'errorMessage');
+      this.generalService.showFeedback('Please fill the required fields', 'errorMessage');
     }
   }
 
