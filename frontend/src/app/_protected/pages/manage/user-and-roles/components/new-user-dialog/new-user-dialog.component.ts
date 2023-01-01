@@ -12,6 +12,8 @@ import { Role } from '../../_models/role.model';
 import { User_Extra } from '../../_models/user.model';
 import { RoleService } from '../../_services/role.service';
 import { UserService } from '../../_services/user.service';
+import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
+import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 
 /**
  * Helper modal dialog for creating a new user
@@ -23,19 +25,13 @@ import { UserService } from '../../_services/user.service';
 })
 export class NewUserDialogComponent implements OnInit {
 
-  /**
-   * Toggles the visibility of the given password.
-   */
-  public showPassword: boolean = false;
-
-  /**
-   * Sets to true when the process of creating a new user is started.
-   */
-  public isLoading: boolean = false;
-
-  public data: Role[] = [];
-
+  showPassword: boolean = false;
+  isLoading: boolean = false;
+  data: Role[] = [];
   roleControl = new FormControl();
+
+  CommonRegEx = CommonRegEx;
+  CommonErrorMessages = CommonErrorMessages;
 
   constructor(
     private fb: FormBuilder,
@@ -53,7 +49,8 @@ export class NewUserDialogComponent implements OnInit {
     role: []
   })
 
-  ngOnInit(): void {
+  ngOnInit() {
+
     this.roleService.list('?limit=-1').subscribe({
       next: (roles: Role[]) => {
         this.data = roles;
@@ -64,7 +61,8 @@ export class NewUserDialogComponent implements OnInit {
     });
   }
 
-  public createUser() {
+  createUser() {
+
     if (this.userForm.valid) {
       this.isLoading = true;
       this.userService.create(this.userForm.value.username, this.userForm.value.password).subscribe({
@@ -111,6 +109,10 @@ export class NewUserDialogComponent implements OnInit {
     }
   }
 
+  /*
+   * Private helper methods.
+   */
+
   private addRole(role: string) {
     return new Promise<string>((resolve) => {
       this.userService.addRole(this.userForm.value.username, role).subscribe({
@@ -121,7 +123,7 @@ export class NewUserDialogComponent implements OnInit {
         },
         error: () => { resolve('error') }
       });
-    })
+    });
   }
 
   private addEmail() {
@@ -159,6 +161,6 @@ export class NewUserDialogComponent implements OnInit {
         error: () => { resolve('error') }
       })
       resolve('ok')
-    })
+    });
   }
 }
