@@ -11,7 +11,7 @@
 
 <!-- Database tables -->
 <div class="masonry" *ngIf="!dbLoading">
-  <div class="grid pb-1 pt-1" *ngFor="let item of (tables | async)">
+  <div class="grid pb-2 pt-2" *ngFor="let item of (tables | async)">
 
     <mat-card
       [id]="item.name"
