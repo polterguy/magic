@@ -5,17 +5,30 @@
 
 import { Pipe, PipeTransform } from '@angular/core';
 
+/**
+ * Sort pipe that sorts an array of objects according to the specified parameter.
+ */
 @Pipe({
   name: 'sortBy',
   pure: false
 })
 export class SortByPipe implements PipeTransform {
 
+  /**
+   * Sorts the specified array according to the field specified.
+   * 
+   * @param array Array to sort
+   * @param field Field to sort by
+   * @returns Sorted array
+   */
   transform(array: any, field: string) {
     if (!Array.isArray(array)) {
       return;
     }
-    if (field === '') {
+
+    if (!field || field === '') {
+
+      // No field specified, sorting by items themselves.
       array.sort((a: any, b: any) => {
         if (a < b) {
           return -1;
@@ -26,11 +39,15 @@ export class SortByPipe implements PipeTransform {
         }
       });
     } else {
+
+      // Sorting by specified key
       array.sort((a: any, b: any) => {
         if (typeof a[field] === 'string' && typeof b[field] === 'string') {
-          if (((<string>a[field] || '').toLowerCase()) < ((<string>b[field] || '').toLowerCase())) {
+          const lhs = (<string>a[field] || '').toLowerCase();
+          const rhs = (<string>b[field] || '').toLowerCase();
+          if (lhs < rhs) {
             return -1;
-          } else if (((<string>a[field] || '').toLowerCase()) > ((<string>b[field] || '').toLowerCase())) {
+          } else if (lhs > rhs) {
             return 1;
           } else {
             return 0;
@@ -40,8 +57,6 @@ export class SortByPipe implements PipeTransform {
         }
       });
     }
-
     return array;
   }
-
 }

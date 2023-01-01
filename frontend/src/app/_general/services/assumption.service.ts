@@ -20,22 +20,10 @@ import { HttpService } from 'src/app/_general/services/http.service';
 })
 export class AssumptionService {
 
-  /**
-   * Creates an instance of your service.
-   *
-   * @param httpService HTTP service to use for backend invocations
-   * @param backendService Needed to extract root URL
-   */
   constructor(
     private httpService: HttpService,
     private backendService: BackendService) { }
 
-  /**
-   * Returns a list of all assumption/integration tests the backend has stored.
-   *
-   * @param endpointPath If specified only returns tests belonging to endpoint specified
-   * @param verb If specified only returns tests for specified path
-   */
   list(endpointPath: string = null, verb: string = null) {
     if (endpointPath) {
       return this.httpService.get<string[]>(
@@ -48,18 +36,6 @@ export class AssumptionService {
     }
   }
 
-  /**
-   * Saves the specified assumption/integration test according to the specified argument.
-   *
-   * @param filename Filename to save snippet as. Notice, assumes we're only given the filename, and not the entire path. The service is responsible for prepending the folder.
-   * @param verb HTTP verb assumption is using during invocation towards URL
-   * @param url HTTP URL assumption invokes
-   * @param status HTTP status code assumption assumes invocation returns
-   * @param description Descriptive text for assumption
-   * @param payload Payload for HTTP invocation towards URL
-   * @param response Response assumption assumes invocation towards URL will return
-   * @param produces Content-Type assumption assumes invocation towards URL will return
-   */
   create(
     filename: string,
     verb: string,
@@ -97,11 +73,6 @@ export class AssumptionService {
     return this.httpService.post('/magic/system/assumptions/create', input);
   }
 
-  /**
-   * Executes the specified tests.
-   *
-   * @param filename Full path of test to execute
-   */
   execute(filename: string) {
     return this.httpService.get<Response>(
       '/magic/system/assumptions/execute?root_url=' +
