@@ -20,19 +20,9 @@ import { CacheItem } from 'src/app/_protected/models/common/cache-item.model';
 })
 export class CacheService {
 
-  /**
-   * Creates an instance of your service.
-   *
-   * @param httpService HTTP service to use for backend invocations
-   */
   constructor(private httpService: HttpService) { }
 
-  /**
-   * Returns all cache items from backend matching optional filter.
-   *
-   * @param filter Optional query filter deciding which items to return
-   */
-  public list(filter: any = null) {
+  list(filter: any = null) {
     let query = '';
     if (filter !== null) {
       query += '?limit=' + filter.limit;
@@ -44,12 +34,7 @@ export class CacheService {
     return this.httpService.get<CacheItem[]>('/magic/system/cache/list' + query);
   }
 
-  /**
-   * Returns count of all cache items from backend matching optional filter.
-   *
-   * @param filter Optional query filter deciding which items to include when counting
-   */
-  public count(filter: string = null) {
+  count(filter: string = null) {
     let query = '';
     if (filter !== null && filter !== '') {
       query += '?filter=' + encodeURIComponent(filter);
@@ -57,21 +42,11 @@ export class CacheService {
     return this.httpService.get<Count>('/magic/system/cache/count' + query);
   }
 
-  /**
-   * Deletes a single cache item.
-   *
-   * @param id ID of item to delete
-   */
-  public delete(id: string) {
+  delete(id: string) {
     return this.httpService.delete<Response>('/magic/system/cache/delete?id=' + encodeURIComponent(id));
   }
 
-  /**
-   * Deletes all cache items matching the optional filter condition.
-   *
-   * @param filter Optional query filter deciding which items to include when deleting items
-   */
-  public clear(filter: string = null) {
+  clear(filter: string = null) {
     let query = '';
     if (filter !== null && filter !== '') {
       query += '?filter=' + encodeURIComponent(filter);

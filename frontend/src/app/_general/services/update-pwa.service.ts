@@ -22,6 +22,7 @@ export class UpdatePwaService {
     appRef: ApplicationRef,
     private swUpdate: SwUpdate,
     private matDialog: MatDialog) {
+
     if (swUpdate.isEnabled) {
       const appIsStable$ = appRef.isStable.pipe(first(isStable => isStable === true));
       const everySixHours$ = interval(5 * 60 * 1000);
@@ -30,7 +31,7 @@ export class UpdatePwaService {
     }
   }
 
-  public checkForUpdates(): void {
+  checkForUpdates() {
 
     this.swUpdate.versionUpdates.subscribe(evt => {
       switch (evt.type) {
@@ -51,6 +52,10 @@ export class UpdatePwaService {
       }
     });
   }
+
+  /*
+   * Private helper methods.
+   */
 
   private activateUpdate() {
     const dialogExist = this.matDialog.getDialogById('message-pop-up');

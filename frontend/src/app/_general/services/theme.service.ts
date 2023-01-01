@@ -18,15 +18,10 @@ export class ThemeService {
 
   private _themeChanged: BehaviorSubject<string>;
 
-  /**
-   * To allow consumers to subscribe to theme change events.
-   */
   themeChanged: Observable<string>;
 
-  /**
-   * Creates an instance of your type.
-   */
   constructor() {
+
     const theme = localStorage.getItem('theme') || 'default';
     this._themeChanged = new BehaviorSubject<string>(theme);
     this.themeChanged = this._themeChanged.asObservable();
@@ -42,16 +37,10 @@ export class ThemeService {
     ];
   }
 
-  /**
-   * Returns theme to caller.
-   */
   get theme() {
     return localStorage.getItem('theme') || 'default';
   }
 
-  /**
-   * Sets theme to specified value and persists into localStorage.
-   */
   set theme(value: string) {
 
     // Disabling old theme, if existing.
@@ -69,9 +58,6 @@ export class ThemeService {
     this._themeChanged.next(value);
   }
 
-  /**
-   * Returns options for currently selected theme.
-   */
   get theme_options() {
     return themes[this.theme];
   }
@@ -80,9 +66,6 @@ export class ThemeService {
    * Private helper methods
    */
 
-  /*
-   * Injects a CSS file dynamically into the HTML head section
-   */
   private injectTheme(theme: string) {
     if (!document.getElementById(theme)) {
       var head = document.getElementsByTagName('head')[0];
@@ -98,9 +81,6 @@ export class ThemeService {
     }
   }
 
-  /*
-   * Disables the specified CSS element
-   */
   private disableTheme(theme: string) {
     const el = <any>document.getElementById(theme);
     if (el) {

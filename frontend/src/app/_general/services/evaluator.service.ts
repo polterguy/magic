@@ -21,39 +21,20 @@ import { HttpService } from 'src/app/_general/services/http.service';
 })
 export class EvaluatorService {
 
-  /**
-   * Creates an instance of your service.
-   *
-   * @param httpService HTTP service to use for backend invocations
-   * @param fileService Used to retrieve and update snippets from your backend
-   */
   constructor(
     private httpService: HttpService,
     private fileService: FileService) { }
 
-  /**
-   * Evaluates a piece of Hyperlambda and returns its result.
-   *
-   * @param hyperlambda Hyperlambda to evaluate
-   */
   execute(hyperlambda: string) {
     return this.httpService.post<Response>('/magic/system/evaluator/evaluate', {
       hyperlambda
     });
   }
 
-  /**
-   * Returns a list of all Hyperlambda snippets the backend has stored.
-   */
   snippets() {
     return this.fileService.listFiles('/etc/snippets/');
   }
 
-  /**
-   * Loads a snippet from the backend.
-   *
-   * @param filename Filename (only, no extension or folder) of snippet to load
-   */
   loadSnippet(filename: string) {
     if (filename.indexOf('/') !== -1) {
       return throwError(() => new Error('Not a valid filename'));
@@ -65,12 +46,6 @@ export class EvaluatorService {
     return this.fileService.loadFile(filename);
   }
 
-  /**
-   * Saves the specified snippet according to the specified argument.
-   *
-   * @param filename Filename to save snippet as. Notice, assumes we're only given the filename, and not the entire path. The service is responsible for prepending the folder.
-   * @param content Content of snippet
-   */
   saveSnippet(filename: string, content: string) {
     if (filename.indexOf('/') !== -1) {
       return throwError(() => new Error('Not a valid filename'));
