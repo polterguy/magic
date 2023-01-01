@@ -38,8 +38,8 @@ export class CatalogNameComponent {
       this.generalService.showFeedback('Name is required', 'errorMessage');
     }
 
-    if (!this.CommonRegEx.appNameWithUppercaseHyphen.test(this.name)) {
-      this.generalService.showFeedback(this.CommonErrorMessages.appNameWithUppercaseHyphen, 'errorMessage');
+    if (!this.CommonRegEx.appNameWithUppercase.test(this.name)) {
+      this.generalService.showFeedback(this.CommonErrorMessages.appNameWithUppercase, 'errorMessage');
       return;
     }
 
