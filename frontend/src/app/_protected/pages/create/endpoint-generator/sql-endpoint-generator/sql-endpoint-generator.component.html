@@ -22,7 +22,10 @@
         </ng-container>
 
         <mat-form-field class="w-100" *ngIf="!isLoading">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+          <span
+            matPrefix
+            matTooltip="Choose database type"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>database</mat-icon>
             <span class="text-muted">|</span>
           </span>
@@ -30,7 +33,9 @@
             placeholder="Database type"
             [(ngModel)]="selectedDbType"
             (selectionChange)="getConnectionString()">
-            <mat-option *ngFor="let item of databaseTypes" [value]="item.type">{{item.name}}</mat-option>
+            <mat-option
+              *ngFor="let item of databaseTypes"
+              [value]="item.type">{{item.name}}</mat-option>
           </mat-select>
         </mat-form-field>
 
@@ -50,13 +55,20 @@
         </ng-container>
 
         <mat-form-field class="w-100" *ngIf="!isLoading">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+          <span
+            matPrefix
+            matTooltip="Choose connection string"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>conversion_path</mat-icon>
             <span class="text-muted">|</span>
           </span>
-          <mat-select placeholder="Connection string" [(ngModel)]="selectedConnectionString"
+          <mat-select
+            placeholder="Connection string"
+            [(ngModel)]="selectedConnectionString"
             (selectionChange)="getConnectionString()">
-            <mat-option *ngFor="let item of connectionStrings" [value]="item">{{item}}</mat-option>
+            <mat-option
+              *ngFor="let item of connectionStrings"
+              [value]="item">{{item}}</mat-option>
           </mat-select>
         </mat-form-field>
 
@@ -76,12 +88,20 @@
         </ng-container>
 
         <mat-form-field class="w-100" *ngIf="!isLoading">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+          <span
+            matPrefix
+            matTooltip="Choose database or catalog"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>database</mat-icon>
             <span class="text-muted">|</span>
           </span>
-          <mat-select placeholder="Databases" [(ngModel)]="selectedDatabase" (selectionChange)="changeDatabase()">
-            <mat-option *ngFor="let item of databases | sortBy: 'name'" [value]="item.name">{{item.name}}</mat-option>
+          <mat-select
+            placeholder="Databases"
+            [(ngModel)]="selectedDatabase"
+            (selectionChange)="changeDatabase()">
+            <mat-option
+              *ngFor="let item of databases | sortBy: 'name'"
+              [value]="item.name">{{item.name}}</mat-option>
           </mat-select>
         </mat-form-field>
 
@@ -111,12 +131,19 @@
         </ng-container>
 
         <mat-form-field class="w-100" *ngIf="!isLoading">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+          <span
+            matPrefix
+            matTooltip="Choose HTTP method of endpoint"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>http</mat-icon>
             <span class="text-muted">|</span>
           </span>
-          <mat-select placeholder="Choose method" [(ngModel)]="selectedMethod">
-            <mat-option *ngFor="let item of methods" [value]="item">{{item}}</mat-option>
+          <mat-select
+            placeholder="Choose method"
+            [(ngModel)]="selectedMethod">
+            <mat-option
+              *ngFor="let item of methods"
+              [value]="item">{{item}}</mat-option>
           </mat-select>
         </mat-form-field>
 
@@ -136,11 +163,18 @@
         </ng-container>
 
         <mat-form-field class="w-100" *ngIf="!isLoading">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+          <span
+            matPrefix
+            matTooltip="Primary URL of endpoint"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>link</mat-icon>
             <span class="text-muted">|</span>
           </span>
-          <input matInput type="text" placeholder="Primary URL" [(ngModel)]="primaryURL">
+          <input
+            matInput
+            type="text"
+            placeholder="Primary URL"
+            [(ngModel)]="primaryURL">
         </mat-form-field>
 
       </div>
@@ -159,11 +193,18 @@
         </ng-container>
 
         <mat-form-field class="w-100" *ngIf="!isLoading">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+          <span
+            matPrefix
+            matTooltip="Secondary URL of endpoint"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>link</mat-icon>
             <span class="text-muted">|</span>
           </span>
-          <input matInput type="text" placeholder="Secondary URL" [(ngModel)]="secondaryURL">
+          <input
+            matInput
+            type="text"
+            placeholder="Secondary URL"
+            [(ngModel)]="secondaryURL">
         </mat-form-field>
 
       </div>
@@ -182,11 +223,18 @@
         </ng-container>
 
         <mat-form-field class="w-100" *ngIf="!isLoading">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-            <mat-icon>table</mat-icon>
+          <span
+            matPrefix
+            matTooltip="Role(s) required to invoke endpoint"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>shield</mat-icon>
             <span class="text-muted">|</span>
           </span>
-          <mat-select placeholder="Add roles" multiple [formControl]="selectedRoles" disableOptionCentering
+          <mat-select
+            placeholder="Role(s) required to invoke endpoint"
+            multiple
+            [formControl]="selectedRoles"
+            disableOptionCentering
             panelClass="custom-select-option">
             <mat-option *ngFor="let item of roles | sortBy: 'name'" [value]="item.name">
               {{item.name}}
