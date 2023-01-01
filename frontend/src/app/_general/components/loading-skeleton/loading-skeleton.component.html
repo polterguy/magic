@@ -1,5 +1,12 @@
+
 <div class="row">
-  <div [class]="colClass" *ngFor="let item of itemsArray">
-    <div class="block mb-3" [ngStyle]="{'height': blockHeight}" [class.mat-elevation-z1]="hasShadow"></div>
+  <div
+    [class]="colClass"
+    *ngFor="let item of itemsArray">
+    <div
+      class="block mb-3"
+      [ngStyle]="{'height': blockHeight}"
+      [class.mat-elevation-z1]="hasShadow">
+    </div>
   </div>
 </div>
