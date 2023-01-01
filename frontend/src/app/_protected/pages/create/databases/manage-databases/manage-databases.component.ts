@@ -18,6 +18,8 @@ import { CacheService } from 'src/app/_general/services/cache.service';
 import { ConfigService } from 'src/app/_general/services/config.service';
 import { Databases } from 'src/app/_general/models/databases.model';
 import { BazarApp } from 'src/app/models/bazar-app.model';
+import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
+import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 
 /**
  * Helper component allowing you to manage your existing locally installed
@@ -43,6 +45,9 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
   zipFileInput: any;
   databaseName: string = '';
 
+  CommonRegEx = CommonRegEx;
+  CommonErrorMessages = CommonErrorMessages;
+
   constructor(
     private dialog: MatDialog,
     private sqlService: SqlService,
@@ -58,10 +63,17 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
   }
 
   createNewDatabase() {
+
     if (this.databaseName === '') {
-      this.generalService.showFeedback('Please provide a name.', 'errorMessage');
+      this.generalService.showFeedback('Please provide a name', 'errorMessage');
       return;
     }
+
+    if (!this.CommonRegEx.appNameWithUppercaseHyphen.test(this.databaseName)) {
+      this.generalService.showFeedback(this.CommonErrorMessages.appNameWithUppercaseHyphen, 'errorMessage');
+      return;
+    }
+
     this.sqlService.createDatabase(
       'sqlite',
       'generic',
@@ -69,7 +81,6 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
         next: () => {
           this.generalService.showFeedback('Database successfully created', 'successMessage');
           this.getDatabases();
-          this.databaseName = '';
         },
         error: (error: any) => {
           this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', -1)

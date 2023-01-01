@@ -28,7 +28,9 @@
               autocomplete="off"
               placeholder="Name of database"
               [(ngModel)]="databaseName"
-              required />
+              required
+              [pattern]="CommonRegEx.appNameWithUppercaseHyphen" />
+            <mat-error>{{CommonErrorMessages.appNameWithUppercaseHyphen}}</mat-error>
           </mat-form-field>
 
           <div class="p-2"></div>

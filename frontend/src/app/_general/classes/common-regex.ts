@@ -17,5 +17,5 @@ export const CommonRegEx: { [key: string]: RegExp } = {
   domain: /(^https?:\/\/)([\w\-])+\.{1}([a-zA-Z]{2,63})([\/\w-]*)*\/?\??([^#\n\r]*)?#?([^\n\r]*)/,
   backend: /^https?:\/\/([\w\-.])+(:[0-9]*)?(\.\w+)?$/,
   email: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
-  password: /^.{12,}$/
+  password: /^.{12,}$/,
 };
