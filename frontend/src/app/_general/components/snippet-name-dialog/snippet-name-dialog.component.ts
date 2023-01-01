@@ -9,28 +9,36 @@ import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messa
 import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 import { GeneralService } from 'src/app/_general/services/general.service';
 
+/**
+ * Helper component used when saving SQL and Hyperlambda snippets, allowing
+ * user to provide a name for snippet.
+ */
 @Component({
   selector: 'app-snippet-name-dialog',
   templateUrl: './snippet-name-dialog.component.html'
 })
 export class SnippetNameDialogComponent {
 
-  public CommonRegEx = CommonRegEx;
-  public CommonErrorMessages = CommonErrorMessages;
+  CommonRegEx = CommonRegEx;
+  CommonErrorMessages = CommonErrorMessages;
 
   constructor(
     private generalService: GeneralService,
     private dialogRef: MatDialogRef<SnippetNameDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: string) { }
 
-  public save() {
+  save() {
+
     if (!this.validateName() || this.data === '') {
       this.generalService.showFeedback('Invalid input.', 'errorMessage');
       return;
     }
-
     this.dialogRef.close(this.data);
   }
+
+  /*
+   * Private helper methods.
+   */
 
   private validateName() {
     return this.CommonRegEx.appNames.test(this.data);

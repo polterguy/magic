@@ -3,6 +3,7 @@
 
 <form>
   <div mat-dialog-content>
+
     <mat-form-field class="w-100 standaloone-field">
       <span
         matPrefix
@@ -10,15 +11,34 @@
         <mat-icon>edit</mat-icon>
         <span class="text-muted">|</span>
       </span>
-
-      <input matInput type="text" placeholder="Snippet name" [(ngModel)]="data" [ngModelOptions]="{standalone: true}"
+      <input
+        matInput
+        type="text"
+        placeholder="Snippet name"
+        [(ngModel)]="data"
+        [ngModelOptions]="{standalone: true}"
         [pattern]="CommonRegEx.appNames">
       <mat-error>{{CommonErrorMessages.appNames}}</mat-error>
     </mat-form-field>
+
   </div>
 
   <div mat-dialog-actions [align]="'end'">
-    <button mat-button mat-dialog-close>Cancel</button>
-    <button mat-flat-button color="primary" class="px-4" (click)="save()" type="submit">Create</button>
+
+    <button
+      mat-button
+      mat-dialog-close>
+      Cancel
+    </button>
+
+    <button
+      mat-flat-button
+      color="primary"
+      class="px-4"
+      (click)="save()"
+      type="submit">
+      Create
+    </button>
+
   </div>
 </form>

@@ -28,6 +28,10 @@ export class ShortkeysComponent implements OnInit {
     this.prepareData();
   }
 
+  /*
+   * Private helper methods.
+   */
+
   private prepareData() {
     if (this.data.type.indexOf('save') > -1) {
       this.shortkeys = [
