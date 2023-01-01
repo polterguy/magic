@@ -1,3 +1,4 @@
+
 <div class="row mt-4 frontend-generator">
   <div class="col-md-6 col-12 pe-lg-4 mb-3">
 
@@ -6,12 +7,20 @@
       <div class="col-sm-6 col-12">
 
         <mat-form-field class="w-100">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+          <span
+            matPrefix
+            matTooltip="Type of application"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>apps</mat-icon>
             <span class="text-muted">|</span>
           </span>
-          <mat-select placeholder="Frontend type" [(ngModel)]="frontendType" (selectionChange)="changeFrontendType()">
-            <mat-option *ngFor="let item of frontendTypes" [value]="item.value">{{item.name}}</mat-option>
+          <mat-select
+            placeholder="Frontend type"
+            [(ngModel)]="frontendType"
+            (selectionChange)="changeFrontendType()">
+            <mat-option
+              *ngFor="let item of frontendTypes"
+              [value]="item.value">{{item.name}}</mat-option>
           </mat-select>
         </mat-form-field>
 
@@ -19,12 +28,18 @@
       <div class="col-sm-6 col-12">
 
         <mat-form-field class="w-100">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+          <span
+            matPrefix
+            matTooltip="Name of app"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>edit</mat-icon>
             <span class="text-muted">|</span>
           </span>
-          <input matInput [placeholder]="frontendType === frontendTypes[1].value ? 'App name' : 'Service name'"
-            [(ngModel)]="frontendName" autocomplete="off">
+          <input
+            matInput
+            [placeholder]="frontendType === frontendTypes[1].value ? 'App name' : 'Service name'"
+            [(ngModel)]="frontendName"
+            autocomplete="off">
         </mat-form-field>
 
       </div>
@@ -37,12 +52,20 @@
       <div class="col-sm-6 col-12">
 
         <mat-form-field class="w-100">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+          <span
+            matPrefix
+            matTooltip="Color theme of app"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>palette</mat-icon>
             <span class="text-muted">|</span>
           </span>
-          <mat-select placeholder="Colour palette" [(ngModel)]="colorPalette" [disabled]="!isApp">
-            <mat-option *ngFor="let item of colorPalettes" [value]="item.value">{{item.name}}</mat-option>
+          <mat-select
+            placeholder="Colour palette"
+            [(ngModel)]="colorPalette"
+            [disabled]="!isApp">
+            <mat-option
+              *ngFor="let item of colorPalettes"
+              [value]="item.value">{{item.name}}</mat-option>
           </mat-select>
         </mat-form-field>
 
@@ -50,12 +73,20 @@
       <div class="col-sm-6 col-12">
 
         <mat-form-field class="w-100">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+          <span
+            matPrefix
+            matTooltip="Dark or light theme"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>invert_colors</mat-icon>
             <span class="text-muted">|</span>
           </span>
-          <mat-select placeholder="Theme" [(ngModel)]="theme" [disabled]="!isApp">
-            <mat-option *ngFor="let item of themes" [value]="item.value">{{item.name}}</mat-option>
+          <mat-select
+            placeholder="Theme"
+            [(ngModel)]="theme"
+            [disabled]="!isApp">
+            <mat-option
+              *ngFor="let item of themes"
+              [value]="item.value">{{item.name}}</mat-option>
           </mat-select>
         </mat-form-field>
 
@@ -68,13 +99,23 @@
       <p class="fw-bold my-0">Step 3 - Modules</p>
     </div>
 
-    <mat-chip-list aria-label="table selection" multiple>
-      <mat-chip color="primary" *ngFor="let item of databases" [selected]="moduleSelected(item.name)"
+    <mat-chip-list
+      aria-label="table selection"
+      multiple>
+      <mat-chip
+        color="primary"
+        *ngFor="let item of databases"
+        [selected]="moduleSelected(item.name)"
         (click)="moduleClicked(item.name)">{{item.name}}</mat-chip>
     </mat-chip-list>
 
-    <app-loading-skeleton *ngIf="!databases" [amount]="1" [colClass]="'col-12'" [blockHeight]="'45px'"
-      [hasShadow]="false"></app-loading-skeleton>
+    <app-loading-skeleton
+      *ngIf="!databases"
+      [amount]="1"
+      [colClass]="'col-12'"
+      [blockHeight]="'45px'"
+      [hasShadow]="false">
+    </app-loading-skeleton>
 
   </div>
 
@@ -84,13 +125,25 @@
       <p class="fw-bold my-0">Step 4 - Components</p>
     </div>
 
-    <mat-chip-list aria-label="table selection" multiple>
-      <mat-chip color="primary" *ngFor="let item of tables" [selected]="componentSelected(item.name)"
-        (click)="componentClicked(item.name)">{{item.name}}</mat-chip>
+    <mat-chip-list
+      aria-label="table selection"
+      multiple>
+      <mat-chip
+        color="primary"
+        *ngFor="let item of tables"
+        [selected]="componentSelected(item.name)"
+        (click)="componentClicked(item.name)">
+        {{item.name}}
+      </mat-chip>
     </mat-chip-list>
 
-    <app-loading-skeleton *ngIf="!tables" [amount]="1" [colClass]="'col-12'" [blockHeight]="'45px'"
-      [hasShadow]="false"></app-loading-skeleton>
+    <app-loading-skeleton
+      *ngIf="!tables"
+      [amount]="1"
+      [colClass]="'col-12'"
+      [blockHeight]="'45px'"
+      [hasShadow]="false">
+    </app-loading-skeleton>
 
   </div>
 
@@ -102,13 +155,22 @@
 
     <div class="endpoints-list w-100 pe-2">
 
-      <app-loading-skeleton *ngIf="!endpoints" [amount]="5" [colClass]="'col-12'" [blockHeight]="'40px'"
-        [hasShadow]="false"></app-loading-skeleton>
+      <app-loading-skeleton
+        *ngIf="!endpoints"
+        [amount]="5"
+        [colClass]="'col-12'"
+        [blockHeight]="'40px'"
+        [hasShadow]="false">
+      </app-loading-skeleton>
 
       <div class="d-flex mb-2 bg-light px-3 py-2" *ngFor="let item of endpoints">
-        <mat-checkbox [(ngModel)]="item.selected" color="primary" class="">
+
+        <mat-checkbox
+          [(ngModel)]="item.selected"
+          color="primary" class="">
           <span class="span me-3 methods {{item?.verb}}">{{item?.verb}}</span> {{item.path}}
         </mat-checkbox>
+
       </div>
 
     </div>
@@ -118,26 +180,50 @@
 
     <p class="fw-bold pb-3 mt-2">Step 6 - Homepage</p>
 
-    <ngx-codemirror *ngIf="isApp" class="h-100 large" [(ngModel)]="template" [options]="codemirrorOptions">
+    <ngx-codemirror
+      *ngIf="isApp"
+      class="h-100 large"
+      [(ngModel)]="template"
+      [options]="codemirrorOptions">
     </ngx-codemirror>
 
     <p class="fw-bold pb-3 mt-4" *ngIf="isApp">Step 7 - Copyright</p>
 
     <mat-form-field class="w-100" *ngIf="isApp">
-      <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+      <span
+        matPrefix
+        matTooltip="Copyright file header for code"
+        class="d-flex flex-nowrap align-items-center justify-content-between me-2">
         <mat-icon>copyright</mat-icon>
         <span class="text-muted">|</span>
       </span>
-
-      <input matInput [(ngModel)]="copyRight" autocomplete="off">
+      <input
+        matInput
+        [(ngModel)]="copyRight"
+        autocomplete="off">
     </mat-form-field>
 
     <div class="fake-container bg-light" *ngIf="!isApp"></div>
   </div>
 
   <div class="col-12 d-flex justify-content-end button-row">
-    <button mat-button color="primary" class="px-5" (click)="generate(false)">Download</button>
-    <button mat-flat-button color="primary" class="px-5" (click)="generate(true)">Generate</button>
+
+    <button
+      mat-button
+      color="primary"
+      class="px-5"
+      (click)="generate(false)">
+      Download
+    </button>
+
+    <button
+      mat-flat-button
+      color="primary"
+      class="px-5"
+      (click)="generate(true)">
+      Generate
+    </button>
+
   </div>
 
 </div>
