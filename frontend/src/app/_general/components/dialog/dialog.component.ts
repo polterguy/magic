@@ -17,6 +17,5 @@ export class DialogComponent {
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: {
     component?: any,
-    title?: string
-  }) { }
+    title?: string}) { }
 }
