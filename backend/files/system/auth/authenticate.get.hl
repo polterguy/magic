@@ -6,6 +6,10 @@
 .description:Authenticates a user returning a JWT token if successful
 .type:public
 
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/username
+validators.mandatory:x:@.arguments/*/password
+
 /*
  * Invokes [magic.auth.authenticate] that does the heavy lifting, and creates our JWT token,
  * making sure we return that token to caller.
