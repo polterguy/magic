@@ -1,6 +1,6 @@
 <form [formGroup]="userForm">
 
-  <h3 mat-dialog-title>Create new user</h3>
+  <h3 mat-dialog-title>Add user</h3>
 
   <div mat-dialog-content>
     <div class="row">
@@ -10,6 +10,7 @@
         <mat-form-field class="w-100">
           <span
             matPrefix
+            matTooltip="User's username"
             class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>person</mat-icon>
             <span class="text-muted">|</span>
@@ -31,8 +32,9 @@
         <mat-form-field class="w-100">
           <span
             matPrefix
+            matTooltip="User's password"
             class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-            <mat-icon>key</mat-icon>
+            <mat-icon>password</mat-icon>
             <span class="text-muted">|</span>
           </span>
           <input
@@ -58,6 +60,28 @@
         <mat-form-field class="w-100">
           <span
             matPrefix
+            matTooltip="User's full name (optional)"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>edit</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            type="text"
+            name="-"
+            autocomplete="off"
+            formControlName="name"
+            placeholder="Full name (optional)" />
+        </mat-form-field>
+
+      </div>
+
+      <div class="col-md-6 col-12">
+
+        <mat-form-field class="w-100">
+          <span
+            matPrefix
+            matTooltip="User's email address (optional)"
             class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>mail</mat-icon>
             <span class="text-muted">|</span>
@@ -73,30 +97,12 @@
 
       </div>
 
-      <div class="col-md-6 col-12">
-
-        <mat-form-field class="w-100">
-          <span
-            matPrefix
-            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-            <mat-icon>person</mat-icon>
-            <span class="text-muted">|</span>
-          </span>
-          <input
-            matInput
-            type="text" name="-"
-            autocomplete="off"
-            formControlName="name"
-            placeholder="Full name (optional)" />
-        </mat-form-field>
-
-      </div>
-
       <div class="col-12">
 
         <mat-form-field class="w-100">
           <span
             matPrefix
+            matTooltip="Role(s) user should be associated with"
             class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>shield</mat-icon>
             <span class="text-muted">|</span>
