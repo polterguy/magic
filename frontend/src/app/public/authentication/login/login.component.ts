@@ -38,13 +38,8 @@ export class LoginComponent implements OnInit {
   rememberPassword: boolean = false;
   waiting: boolean = false;
 
-  public CommonRegEx = CommonRegEx;
-  public CommonErrorMessages = CommonErrorMessages;
-
-  /**
-   * to set the user's site_key for recaptcha
-   */
-  recaptchaKey: string = null;
+  CommonRegEx = CommonRegEx;
+  CommonErrorMessages = CommonErrorMessages;
 
   constructor(
     private formBuilder: UntypedFormBuilder,
@@ -85,9 +80,6 @@ export class LoginComponent implements OnInit {
         this.loginForm.controls.password.setValue(defaultBackend.password);
       }
     })
-    this.backendService._activeCaptchaValue.subscribe((key: string) => {
-      this.recaptchaKey = key;
-    });
     this.cdr.detectChanges();
   }
 
