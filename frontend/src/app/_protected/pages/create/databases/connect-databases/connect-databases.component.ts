@@ -15,6 +15,8 @@ import { SqlService } from '../../../../../_general/services/sql.service';
 import { DiagnosticsService } from '../../../../../_general/services/diagnostics.service';
 import { ConfigService } from '../../../../../_general/services/config.service';
 import { Response } from 'src/app/models/response.model';
+import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
+import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 
 /**
  * Helper component allowing user to connect to existing database, and/or create new catalogs
@@ -44,6 +46,9 @@ export class ConnectComponent implements OnInit {
 
   isLoading: boolean = true;
   ip_address: string = 'unknown';
+
+  CommonRegEx = CommonRegEx;
+  CommonErrorMessages = CommonErrorMessages;
 
   constructor(
     private dialog: MatDialog,
@@ -77,10 +82,17 @@ export class ConnectComponent implements OnInit {
       this.generalService.showFeedback('Please provide both connection name and string', 'errorMessage');
       return;
     }
+
     if (!this.connectionString.includes('{database}')) {
       this.generalService.showFeedback('Your connection string must have a {database} part', 'errorMessage');
       return;
     }
+
+    if (!this.CommonRegEx.appNameWithUppercase.test(this.cStringName)) {
+      this.generalService.showFeedback(this.CommonErrorMessages.appNameWithUppercase, 'errorMessage');
+      return;
+    }
+
     if (this.configFile.databases[this.databaseType]?.[this.cStringName]) {
       this.generalService.showFeedback('A connection string with that name already exists', 'errorMessage');
       return;
