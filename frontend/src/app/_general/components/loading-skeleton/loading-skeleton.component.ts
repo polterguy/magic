@@ -20,13 +20,9 @@ export class LoadingSkeletonComponent implements OnInit {
   @Input() blockHeight: string = '375px';
   @Input() hasShadow: boolean = true;
 
-  public itemsArray: string[] = [];
+  itemsArray: string[] = [];
 
   ngOnInit() {
-    this.generateArray();
-  }
-
-  generateArray() {
     for (let index = 0; index < this.amount; index++) {
       this.itemsArray.push('item' + index);
     }
