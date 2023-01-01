@@ -251,8 +251,7 @@ export class TablesViewComponent implements OnInit, OnDestroy {
         this.selectedConnectionString,
         this.selectedDatabase,
         tableName,
-        fkName,
-        false).subscribe({
+        fkName).subscribe({
           next: () => {
             this.deleteColumn(item, tableName, null);
           },

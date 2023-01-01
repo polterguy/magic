@@ -19,23 +19,10 @@ import { BackendService } from './backend.service';
 })
 export class HttpService {
 
-  /**
-   * Creates an instance of your service.
-   *
-   * @param httpClient HTTP client to use for HTTP invocations
-   * @param backendService Backend service keeping track of currently connected backend
-   */
   constructor(
     private httpClient: HttpClient,
     private backendService: BackendService) { }
 
-  /**
-   * Invokes the HTTP GET verb towards your specified URL
-   * in your currently selected backend, and returns the result.
-   *
-   * @param url Backend URL to endpoint
-   * @param requestOptions Request options for invocation
-   */
   get<Response>(url: string, requestOptions: object = null) {
     if (!this.backendService.active) {
       return throwError(() => new Error('Not connected to a backend'));
@@ -48,12 +35,6 @@ export class HttpService {
     }
   }
 
-  /**
-   * Invokes the HTTP GET verb towards your specified URL
-   * in your currently selected backend, and returns the result.
-   *
-   * @param url Backend URL to endpoint
-   */
   download(url: string) {
     if (!this.backendService.active) {
       return throwError(() => new Error('Not connected to a backend'));
@@ -65,13 +46,6 @@ export class HttpService {
     }
   }
 
-  /**
-   * Invokes the HTTP POST verb towards your specified URL
-   * in your currently selected backend, and returns the result.
-   *
-   * @param url Backend URL to endpoint
-   * @param args Payload to invocation
-   */
   downloadPost(url: string, args: any) {
     if (!this.backendService.active) {
       return throwError(() => new Error('Not connected to a backend'));
@@ -84,15 +58,6 @@ export class HttpService {
     }
   }
 
-  /**
-   * Invokes the HTTP POST verb towards your specified URL
-   * in your currently selected backend, passing in the specified
-   * payload, and returns the result.
-   *
-   * @param url Backend URL of endpoint
-   * @param req Request payload to post
-   * @param requestOptions Request options for invocation
-   */
   post<Response>(url: string, req: any, requestOptions: object = null) {
     if (!this.backendService.active) {
       return throwError(() => new Error('Not connected to a backend'));
@@ -105,15 +70,6 @@ export class HttpService {
     }
   }
 
-  /**
-   * Invokes the HTTP PUT verb towards your specified URL
-   * in your currently selected backend, passing in the specified
-   * payload, and returns the result.
-   *
-   * @param url Backend URL of endpoint
-   * @param req Request payload to post
-   * @param requestOptions Request options for invocation
-   */
   put<Response>(url: string, req: any, requestOptions: object = null) {
     if (!this.backendService.active) {
       return throwError(() => new Error('Not connected to a backend'));
@@ -126,15 +82,6 @@ export class HttpService {
     }
   }
 
-  /**
-   * Invokes the HTTP PATCH verb towards your specified URL
-   * in your currently selected backend, passing in the specified
-   * payload, and returns the result.
-   *
-   * @param url Backend URL of endpoint
-   * @param req Request payload to post
-   * @param requestOptions Request options for invocation
-   */
   patch<Response>(url: string, req: any, requestOptions: object = null) {
     if (!this.backendService.active) {
       return throwError(() => new Error('Not connected to a backend'));
@@ -147,13 +94,6 @@ export class HttpService {
     }
   }
 
-  /**
-   * Invokes the HTTP DELETE verb towards your specified URL
-   * in your currently selected backend, and returns the result.
-   *
-   * @param url Backend URL to endpoint
-   * @param requestOptions Request options for invocation
-   */
   delete<Response>(url: string, requestOptions: object = null) {
     if (!this.backendService.active) {
       return throwError(() => new Error('Not connected to a backend'));

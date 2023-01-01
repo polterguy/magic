@@ -20,12 +20,8 @@ import { environment } from 'src/environments/environment';
 })
 export class BackendsStorageService {
 
-  // Backends we are currently connected to.
   private _backends: Backend[] = [];
 
-  /**
-   * Creates an instance of your type.
-   */
   constructor() {
     let backends: any[] = [];
     const storage = localStorage.getItem('magic.backends');
@@ -37,26 +33,14 @@ export class BackendsStorageService {
     this._backends = backends.map(x => new Backend(x.url, x.username, x.password, x.token));
   }
 
-  /**
-   * Returns the currently used backend.
-   */
   get active() {
     return this._backends.length === 0 ? null : this._backends[0];
   }
 
-  /**
-   * Returns all backends.
-   */
   get backends() {
     return this._backends;
   }
 
-  /**
-   * Upserts the specified backend and returns true if backend was inserted, otherwise false.
-   *
-   * @param value Backend to upsert
-   * @returns True if backend was inserted, otherwise false.
-   */
   upsert(value: Backend) {
     const existing = this._backends.filter(x => x.url === value.url);
     if (existing.length > 0) {
@@ -70,11 +54,6 @@ export class BackendsStorageService {
     return existing.length === 0;
   }
 
-  /**
-   * Activates the specified backend.
-   *
-   * @param value Backend to activate
-   */
   activate(value: Backend) {
     this._backends = this._backends.sort((lhs, rhs) => {
       if (lhs.url === value.url) {
@@ -88,11 +67,6 @@ export class BackendsStorageService {
     return this._backends[0];
   }
 
-  /**
-   * Removes the specified backend.
-   *
-   * @param value Backend to remove
-   */
   remove(value: Backend) {
     const removed = this._backends.splice(this._backends.indexOf(value), 1);
     if (removed.length === 0) {
@@ -101,16 +75,10 @@ export class BackendsStorageService {
     this.persistBackends();
   }
 
-  /**
-   * Sets all backends.
-   */
   set backends(value: Backend[]) {
     this._backends = value;
   }
 
-  /**
-   * Persists all backends into local storage.
-   */
   persistBackends() {
     const toPersist: any[] = [];
     for (const idx of this._backends) {

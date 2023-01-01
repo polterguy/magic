@@ -20,16 +20,8 @@ export class VocabularyService {
 
   private _vocabulary: string[] = [];
 
-  /**
-   * Creates an instance of your service.
-   *
-   * @param httpService HTTP service to use for backend invocations
-   */
   constructor(private httpService: HttpService) { }
 
-  /**
-   * Returns server's Hyperlambda vocabulary to caller.
-   */
   vocabulary() {
     if (this._vocabulary.length > 0) {
       of(this._vocabulary);
