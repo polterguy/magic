@@ -91,23 +91,14 @@ export class AutoGeneratorComponent extends GeneratorBase implements OnInit, OnD
     this.init();
   }
 
-  /**
-   * Invoked when database type is changed.
-   */
   changeDbType() {
     this.getConnectionString();
   }
 
-  /**
-   * Invoked when active connection string is changed.
-   */
   changeConnectionString() {
     this.getDatabases();
   }
 
-  /**
-   * Invoked when active database catalog is changed.
-   */
   changeDatabase() {
 
     // Finding table names from currently selected database catalog.
@@ -124,18 +115,12 @@ export class AutoGeneratorComponent extends GeneratorBase implements OnInit, OnD
     this.primaryURL = this.selectedDatabase;
   }
 
-  /**
-   * Invoked when selected table is changed.
-   */
   selectedTableChanged() {
     this.selectedTables.value.length === 1 ?
       this.secondaryURL = this.selectedTables.value.toString().toLowerCase() :
       '';
   }
 
-  /**
-   * Invoked when user is toggling all tables, either selcting all tables, or de-selecting all tables.
-   */
   toggleAllTables(checked: boolean) {
     if (!checked) {
       this.selectedTables.setValue('');
@@ -145,9 +130,6 @@ export class AutoGeneratorComponent extends GeneratorBase implements OnInit, OnD
     }
   }
 
-  /**
-   * Invoked when user wants to generate endpoints for all currently selected tables.
-   */
   generateEndpoints() {
 
     // Making sure user has selected at least one table before proceeding.
@@ -267,9 +249,6 @@ export class AutoGeneratorComponent extends GeneratorBase implements OnInit, OnD
     });
   }
 
-  /**
-   * Shows load snippet dialog.
-   */
   loadSnippet() {
     this.dialog.open(LoadSnippetDialogComponent, {
       width: '550px',
@@ -293,9 +272,6 @@ export class AutoGeneratorComponent extends GeneratorBase implements OnInit, OnD
    * Protected implementations of base class methods.
    */
 
-  /**
-   * Invoked when database meta data has been loaded.
-   */
   protected databaseLoaded(): void {
     this.changeDatabase();
     this.readRoles.setValue(['root', 'admin']);
@@ -308,9 +284,6 @@ export class AutoGeneratorComponent extends GeneratorBase implements OnInit, OnD
    * Private helper methods.
    */
 
-  /*
-   * Invoked when some keyboard shortcut has been clicked.
-   */
   private watchForActions() {
     this.codemirrorActionsSubscription = this.codemirrorActionsService.action.subscribe((action: string) => {
       switch (action) {
@@ -322,18 +295,12 @@ export class AutoGeneratorComponent extends GeneratorBase implements OnInit, OnD
     });
   }
 
-  /*
-   * Returns CodeMirror options to caller.
-   */
   private getOptions() {
     const options = this.codemirrorActionsService.getActions('', 'hl');
     options.autofocus = false;
     this.hlInput.options = options;
   }
 
-  /*
-   * Creates default crudify options for current database.
-   */
   private createDefaultOptions(db: any, tables: any[]) {
 
     // Iterating through each table specified by caller.
