@@ -3,80 +3,8 @@
 .arguments
    username:string
    password:string
-   recaptcha_response:string
 .description:Authenticates a user returning a JWT token if successful
 .type:public
-
-/*
- * Notice, if no username was supplied to invocation, and system has
- * been configured to allow for "auto-auth", neither the [username]
- * nor the [password] arguments are mandatory, and if not given, we
- * invoke slot responsible for retrieving username.
- */
-config.get:"magic:auth:auto-auth"
-if
-   and
-      not
-         exists:x:@.arguments/*/username
-      not
-         eq
-            get-value:x:@config.get
-            .:
-      not
-         eq
-            get-value:x:@config.get
-            .
-   .lambda
-
-      // System is configured to use automatic authentication.
-      set-name:x:./*/auth-slot
-         get-value:x:@config.get
-      auth-slot
-      if
-         eq
-            get-value:x:@if/-
-            .
-         .lambda
-
-            // No username returned by auto-auth slot invocation.
-            log.error:Authentication failed
-               slot:x:@if/-
-            throw:Access denied
-               status:int:401
-               public:bool:true
-      else
-
-         /*
-          * User is automatically authenticated somehow.
-          * 
-          * Adding user's username to [.arguments] collection for
-          * simplicity reasons, and turning OFF password checking during
-          * invocation to [magic.auth.authenticate].
-          */
-         get-name:x:@if/-
-         log.info:Automatically authenticating user
-            username:x:@if/-
-            slot:x:@get-name
-         remove-nodes:x:../*/signal/*
-         unwrap:x:+/*/*/username
-         add:x:../*/signal
-            .
-               username:x:@if/-
-               check-password:bool:false
-else
-
-   /*
-    * System has not been setup to do automatic Windows
-    * authentication, hence we'll need to verify that
-    * invocation was given a username and a password as
-    * arguments.
-    */
-   validators.mandatory:x:@.arguments/*/username
-   validators.mandatory:x:@.arguments/*/password
-
-   // Trimming username before proceeding.
-   set-value:x:@.arguments/*/username
-      strings.trim:x:@.arguments/*/username
 
 /*
  * Invokes [magic.auth.authenticate] that does the heavy lifting, and creates our JWT token,
