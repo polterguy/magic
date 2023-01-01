@@ -3,11 +3,9 @@
  * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { Component, Input, OnInit } from '@angular/core';
 import { AssumptionService } from 'src/app/_general/services/assumption.service';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { BackendService } from 'src/app/_general/services/backend.service';
 import { InvocationResult } from '../../../_protected/pages/manage/endpoints/endpoints-result/endpoints-result.component';
 
 /*
@@ -20,6 +18,10 @@ class Assumption {
   name?: string // in app only
 }
 
+/**
+ * Helper component that displays assumptions for one single endpoint, allowing user to
+ * run the assumption.
+ */
 @Component({
   selector: 'app-assumptions',
   templateUrl: './assumptions.component.html',
@@ -31,13 +33,9 @@ export class AssumptionsComponent implements OnInit {
   @Input() result: InvocationResult = null;
   @Input() payload: any;
 
-  /**
-   * Assumptions about endpoint.
-   */
   assumptions: Assumption[] = [];
 
   constructor(
-    private cdr: ChangeDetectorRef,
     private generalService: GeneralService,
     private assumptionService: AssumptionService) { }
 
@@ -45,23 +43,15 @@ export class AssumptionsComponent implements OnInit {
     this.getAssumptions();
   }
 
-  /**
-   * Returns assumption name to caller.
-   *
-   * @param path Full path of assumption
-   */
   getAssumptionName(path: string) {
     const name = path.substring(path.lastIndexOf('/') + 1);
     return name.substring(0, name.length - 3);
   }
 
-  /**
-   * Runs the specified assumption, and giving feedback to user if it was successfully assumed or not.
-   *
-   * @param assumption What assumption to run
-   */
-  runAssumption(assumption: any) {
+  runAssumption(assumption: Assumption) {
+
     this.assumptionService.execute(assumption.file).subscribe({
+
       next: (res: any) => {
         if (res.result === 'success') {
           assumption.success = true;
@@ -71,18 +61,18 @@ export class AssumptionsComponent implements OnInit {
         }
       },
       error: (error: any) => {
+
         this.generalService.showFeedback(error, 'errorMessage', 'Ok');
         assumption.success = false;
       }
     });
   }
 
-  /*
-   * Retrieves assumptions for endpoint
-   */
-  public getAssumptions() {
+  getAssumptions() {
+
     this.assumptionService.list('/' + this.itemDetails.path, this.itemDetails.verb).subscribe({
       next: (assumptions: any) => {
+
         if (assumptions && assumptions.length) {
           const arr: Assumption[] = [];
           assumptions.forEach((element: any) => {
@@ -95,7 +85,6 @@ export class AssumptionsComponent implements OnInit {
             });
           });
           this.assumptions = arr;
-          this.cdr.detectChanges();
         }
       },
       error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
