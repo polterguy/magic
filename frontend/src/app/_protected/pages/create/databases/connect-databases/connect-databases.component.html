@@ -57,8 +57,10 @@
             type="text"
             [(ngModel)]="cStringName"
             placeholder="Connection name"
+            [pattern]="CommonRegEx.appNameWithUppercase"
             autocomplete="off"
             spellcheck="false">
+          <mat-error>{{CommonErrorMessages.appNameWithUppercase}}</mat-error>
         </mat-form-field>
 
       </div>
