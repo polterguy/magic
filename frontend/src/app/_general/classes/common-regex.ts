@@ -12,6 +12,7 @@ export const CommonRegEx: { [key: string]: RegExp } = {
   subject: /^.{4,1000}$/,
   appNames: /^[a-z0-9_.-]+$/,
   appNamesWithDot: /^[a-z0-9_.-]+$/,
+  appNamesWithUppercaseDot: /^[a-zA-Z0-9_.-]+$/,
   appNameWithUppercase: /^[a-zA-Z0-9_]+$/,
   appNameWithUppercaseHyphen: /^[a-zA-Z0-9_-]+$/,
   domain: /(^https?:\/\/)([\w\-])+\.{1}([a-zA-Z]{2,63})([\/\w-]*)*\/?\??([^#\n\r]*)?#?([^\n\r]*)/,

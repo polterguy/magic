@@ -5,11 +5,11 @@
 
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
-import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { CodemirrorActionsService } from '../../../../create/hyper-ide/services/codemirror-actions.service';
 import { TaskService } from '../../_services/task.service';
+import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
+import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 
 /**
  * Helper component allowing you to manage and schedule tasks in the system.
@@ -27,6 +27,7 @@ export class ManageTaskComponent implements OnInit {
   };
   hlModel: HlModel;
   hlReady: boolean = false;
+
   CommonRegEx = CommonRegEx;
   CommonErrorMessages = CommonErrorMessages;
 

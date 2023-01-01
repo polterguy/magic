@@ -6,6 +6,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Message } from 'src/app/models/message.model';
+import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
+import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 
 // CodeMirror options according to file extensions needed to show JSON CodeMirror editor.
 import { GeneralService } from 'src/app/_general/services/general.service';
@@ -37,47 +39,32 @@ export class MessageWrapper {
   roles?: string;
 }
 
+/**
+ * Helper component to vide, debug and publish socket messages.
+ */
 @Component({
   selector: 'app-publish-dialog',
   templateUrl: './publish-dialog.component.html'
 })
 export class PublishDialogComponent implements OnInit {
 
-  /**
-   * CodeMirror options for JSON file types.
-   */
-  public options: any = null;
+  options: any = null;
+  codemirrorIsReady: boolean = false;
 
-  public codemirrorIsReady: boolean = false;
+  CommonRegEx = CommonRegEx;
+  CommonErrorMessages = CommonErrorMessages;
 
-  /**
-   * Creates an instance of your component.
-   *
-   * @param dialogRef Needed to be able to close dialog
-   * @param data Injected data to be returned to caller once closed
-   */
   constructor(
     private generalService: GeneralService,
     private dialogRef: MatDialogRef<PublishDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: MessageWrapper,
     private codemirrorActionsService: CodemirrorActionsService) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.getCodeMirrorOptions();
   }
 
-  private getCodeMirrorOptions() {
-    const res = this.codemirrorActionsService.getActions(null, 'json');
-    this.options = res;
-    setTimeout(() => {
-      this.codemirrorIsReady = true;
-    }, 500);
-  }
-
-  /**
-   * Invoked when user wants to send message.
-   */
-  public send() {
+  send() {
     if (!this.good()) {
       this.generalService.showFeedback('Your code is not valid', 'errorMessage');
       return;
@@ -86,10 +73,7 @@ export class PublishDialogComponent implements OnInit {
     this.dialogRef.close(this.data);
   }
 
-  /**
-   * Returns false if JSON is not valid.
-   */
-  public good() {
+  good() {
 
     // A bit of a hack, but it works.
     try {
@@ -106,4 +90,16 @@ export class PublishDialogComponent implements OnInit {
     }
   }
 
+  /*
+   * Private helper methods.
+   */
+
+  private getCodeMirrorOptions() {
+    const res = this.codemirrorActionsService.getActions(null, 'json');
+    res.autofocus = false;
+    this.options = res;
+    setTimeout(() => {
+      this.codemirrorIsReady = true;
+    }, 500);
+  }
 }

@@ -17,23 +17,18 @@ import { TaskService } from '../../_services/task.service';
 })
 export class ScheduleTaskComponent implements OnInit {
 
-  public minDate: Date;
-
-  public fixedDateTime: string;
-
-  public scheduleOption: string; // fixed || repeat || custom
-
-  public period: string[] = [
+  minDate: Date;
+  fixedDateTime: string;
+  scheduleOption: string; // fixed || repeat || custom
+  period: string[] = [
     'seconds', 'minutes', 'hours', 'days', 'weeks', 'months'
   ];
-
-  public numbers: number[] = [
+  numbers: number[] = [
     5, 10, 15, 20, 25, 30
   ];
-
-  public selectedPeriod: string;
-  public selectedNumber: number;
-  public customRepetition: string;
+  selectedPeriod: string;
+  selectedNumber: number;
+  customRepetition: string;
 
   constructor(
     private taskService: TaskService,
@@ -46,7 +41,7 @@ export class ScheduleTaskComponent implements OnInit {
     this.scheduleOption = 'fixed';
   }
 
-  public save() {
+  save() {
 
     let repeating: string = null;
     let date: Date = null;
