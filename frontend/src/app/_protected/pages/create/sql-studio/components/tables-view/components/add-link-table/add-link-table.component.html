@@ -1,34 +1,49 @@
-<h3 mat-dialog-title class="mb-1">Add new link table</h3>
+
+<h3 mat-dialog-title class="mb-1">Add link table</h3>
 
 <p class="text-muted mb-4">Create a link table connecting two tables together</p>
 
 <div mat-dialog-content class="new-field-dialog">
 
   <mat-form-field class="w-100 standalone-field mt-2">
-    <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+    <span
+      matPrefix
+      matTooltip="Table 1"
+      class="d-flex flex-nowrap align-items-center justify-content-between me-2">
       <mat-icon>conversion_path</mat-icon>
       <span class="text-muted">|</span>
     </span>
-    <mat-select placeholder="Table 1" [(ngModel)]="formData.table1">
+    <mat-select
+      placeholder="Table 1"
+      [(ngModel)]="formData.table1">
       <mat-select-trigger>
         {{formData?.table1?.name}}
       </mat-select-trigger>
-      <mat-option *ngFor="let item of data" [value]="item">
+      <mat-option
+        *ngFor="let item of data"
+        [value]="item">
         {{item.name}}
       </mat-option>
     </mat-select>
   </mat-form-field>
 
   <mat-form-field class="w-100 standalone-field">
-    <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+    <span
+      matPrefix
+      matTooltip="Table 2"
+      class="d-flex flex-nowrap align-items-center justify-content-between me-2">
       <mat-icon>conversion_path</mat-icon>
       <span class="text-muted">|</span>
     </span>
-    <mat-select placeholder="Table 2" [(ngModel)]="formData.table2">
+    <mat-select
+      placeholder="Table 2"
+      [(ngModel)]="formData.table2">
       <mat-select-trigger>
         {{formData?.table2?.name}}
       </mat-select-trigger>
-      <mat-option *ngFor="let item of secondTableList()" [value]="item">
+      <mat-option
+        *ngFor="let item of secondTableList()"
+        [value]="item">
         {{item.name}}
       </mat-option>
     </mat-select>
@@ -37,6 +52,19 @@
 </div>
 
 <div mat-dialog-actions [align]="'end'">
-  <button mat-button mat-dialog-close>Cancel</button>
-  <button mat-flat-button color="primary" class="px-4" (click)="create()">Create</button>
+
+  <button
+    mat-button
+    mat-dialog-close>
+    Cancel
+  </button>
+
+  <button
+    mat-flat-button
+    color="primary"
+    class="px-4"
+    (click)="create()">
+    Create
+  </button>
+
 </div>
