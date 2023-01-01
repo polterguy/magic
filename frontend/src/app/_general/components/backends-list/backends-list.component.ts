@@ -11,6 +11,10 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { Router } from '@angular/router';
 import { DialogRef } from '@angular/cdk/dialog';
 
+/**
+ * Helper component to display list of all backends, allowing user to switch backend, and/or
+ * change to another backend.
+ */
 @Component({
   selector: 'app-backends-list',
   templateUrl: './backends-list.component.html',
@@ -18,54 +22,29 @@ import { DialogRef } from '@angular/cdk/dialog';
 })
 export class BackendsListComponent implements OnInit {
 
-  /**
-   * List of existing backends
-   */
-  public backendsList: any = [];
-
-  /**
-   * Table's columns initiation
-   */
+  backendsList: any = [];
   displayedColumns: string[] = ['username', 'backendURL', 'status', 'actions'];
-
-  /**
-   * Specifies the currently in-use backend.
-   */
-  public activeBackend: string = '';
+  activeBackend: string = '';
 
   constructor(
     private router: Router,
     private dialogRef: DialogRef<BackendsListComponent>,
     private clipboard: Clipboard,
-    private cdr: ChangeDetectorRef,
     private generalService: GeneralService,
     private backendService: BackendService) { }
 
   ngOnInit() {
-    this.getBackends();
-  }
-
-  private getBackends() {
     this.backendsList = this.backendService.backends;
     this.activeBackend = this.backendService.active.url;
-    this.cdr.detectChanges();
   }
 
-  /**
-   * Invoked when user wants to copy the full URL of the endpoint.
-   */
   copyUrlWithBackend(url: string) {
     const currentURL = window.location.protocol + '//' + window.location.host;
     const param = currentURL + '?backend='
     this.clipboard.copy(param + encodeURIComponent(url));
-    this.generalService.showFeedback('Backend URL was copied to your clipboard');
+    this.generalService.showFeedback('Backend URL can be found on your clipboard');
   }
 
-  /**
-   * Switching to specified backend.
-   *
-   * @param backend Backend to switch to
-   */
   switchBackend(backend: Backend) {
     this.router.navigate(['/authentication/login'], {
       queryParams: { switchTo: backend.url }
@@ -75,11 +54,6 @@ export class BackendsListComponent implements OnInit {
     }
   }
 
-  /**
-   * Removes specified backend from local storage
-   *
-   * @param backend Backend to remove
-   */
   removeBackend(backend: Backend) {
     if (this.backendsList.length === 1) {
       const anotherWithToken: any = this.backendsList.find((item: any) => item !== backend && item.token !== null);
@@ -98,7 +72,7 @@ export class BackendsListComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  public addNew() {
+  addNew() {
     window.location.href = '/authentication/login';
   }
 }

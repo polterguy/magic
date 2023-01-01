@@ -1,10 +1,9 @@
-
 /*
  * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
-@import '../../../../assets/styles/_variables/colors.scss';
-@import '../../../../assets/styles/_variables/mixin.scss';
+@import "../../../../assets/styles/_variables/colors.scss";
+@import "../../../../assets/styles/_variables/mixin.scss";
 
 @media (max-width: 576px) {
   .backend-list {
@@ -16,7 +15,7 @@
 
       &:nth-child(1) {
         &::before {
-          content: 'Username: ';
+          content: "Username: ";
           min-width: 60px;
           display: inline-block;
         }
@@ -24,7 +23,7 @@
 
       &:nth-child(2) {
         &::before {
-          content: 'URL: ';
+          content: "URL: ";
           min-width: 60px;
           display: inline-block;
         }
@@ -32,7 +31,7 @@
 
       &:nth-child(3) {
         &::before {
-          content: 'Status: ';
+          content: "Status: ";
           min-width: 60px;
           display: inline-block;
         }
