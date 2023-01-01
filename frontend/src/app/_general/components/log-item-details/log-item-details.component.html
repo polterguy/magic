@@ -12,14 +12,20 @@
   <p class="pre-formatted">{{data.content}}</p>
 
   <p class="fw-bold mt-4" *ngIf="data.meta">Meta</p>
-  <p *ngFor="let item of data.meta | keyvalue">
-    {{item.key}}: {{item.value}}
-  </p>
+  <p *ngFor="let item of data.meta | keyvalue">{{item.key}}: {{item.value}}</p>
 
   <p class="fw-bold mt-4" *ngIf="data.exception">Exception</p>
   <p [innerHTML]="data.exception" class="pre-formatted"></p>
+
 </div>
 
 <div mat-dialog-actions [align]="'end'">
-  <button mat-flat-button color="primary" mat-dialog-close>Close</button>
+
+  <button
+    mat-flat-button
+    color="primary"
+    mat-dialog-close>
+    Close
+  </button>
+
 </div>
