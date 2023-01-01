@@ -6,6 +6,9 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
+/**
+ * Helper component to display a single long entry and its details.
+ */
 @Component({
   selector: 'app-log-item-details',
   templateUrl: './log-item-details.component.html',

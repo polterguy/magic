@@ -21,22 +21,25 @@ export class PwaUpdateDialogComponent {
     private dialogRef: MatDialogRef<PwaUpdateDialogComponent>,
     private matDialog: MatDialog) { }
 
-  public reloadPage() {
+  reloadPage() {
+
     this.swUpdate.activateUpdate().then(() => {
       this.dialogRef.close();
       window.location.href = window.location.href;
     });
   }
 
-  public remindLater() {
-    this.dialogRef.close();
+  remindLater() {
+
+    // Reminding user 5 minutes from now
     setTimeout(() => {
       this.matDialog.open(PwaUpdateDialogComponent, {
         position: { top: '7px' },
         width: '500px',
         panelClass: ['pwa-update-panel'],
         hasBackdrop: false
-      })
-    }, 1000 * 60 * 5); // Reminding user 5 minutes from now
+      });
+    }, 1000 * 60 * 5);
+    this.dialogRef.close();
   }
 }
