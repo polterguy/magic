@@ -1,3 +1,4 @@
+
 <mat-card *ngFor="let item of publishedMessages" class="mb-3">
   <mat-card-content>
 
@@ -13,9 +14,22 @@
       </div>
 
       <div class="d-flex justify-content-end">
-        <button mat-button color="primary" (click)="publish(item)">Publish</button>
-        <button mat-flat-button color="primary" class="px-4"
-          (click)="subscribeToPublishedMessage(item.name)">Subscribe</button>
+
+        <button
+          mat-button
+          color="primary"
+          (click)="publish(item)">
+          Publish
+        </button>
+
+        <button
+          mat-flat-button
+          color="primary"
+          class="px-4"
+          (click)="subscribeToPublishedMessage(item.name)">
+          Subscribe
+        </button>
+
       </div>
 
     </div>
