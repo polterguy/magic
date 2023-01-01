@@ -1,3 +1,4 @@
+
 <div class="row">
   <div class="col-12 mb-2">
     <p class="mat-title mb-2 fw-bold">Sign in</p>
@@ -5,21 +6,39 @@
   </div>
 </div>
 
-<form [formGroup]="loginForm" (ngSubmit)="login()" class="w-100">
+<form
+  [formGroup]="loginForm"
+  (ngSubmit)="login()"
+  class="w-100">
   <div class="row">
 
     <div class="col-12 mb-2">
 
       <mat-form-field class="w-100">
-        <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        <span
+          matPrefix
+          class="d-flex flex-nowrap align-items-center justify-content-between me-2">
           <mat-icon>database</mat-icon>
           <span class="text-muted mx-2">|</span>
         </span>
-        <input type="text" matInput autocomplete="off" formControlName="backend" [matAutocomplete]="auto">
-        <mat-error *ngIf="loginForm.controls.backend.errors?.['required']">Backend is required</mat-error>
-        <mat-error *ngIf="loginForm.controls.backend.errors?.['pattern']">Backend must be a valid URL</mat-error>
-        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="backendActivated($event)">
-          <mat-option *ngFor="let option of backendStorageService.backends" [value]="option.url">
+        <input
+          type="text"
+          matInput
+          autocomplete="off"
+          formControlName="backend"
+          [matAutocomplete]="auto">
+        <mat-error *ngIf="loginForm.controls.backend.errors?.['required']">
+          Backend is required
+        </mat-error>
+        <mat-error *ngIf="loginForm.controls.backend.errors?.['pattern']">
+          Backend must be a valid URL
+        </mat-error>
+        <mat-autocomplete
+          #auto="matAutocomplete"
+          (optionSelected)="backendActivated($event)">
+          <mat-option
+            *ngFor="let option of backendStorageService.backends"
+            [value]="option.url">
             {{option.url}}
           </mat-option>
         </mat-autocomplete>
@@ -31,12 +50,20 @@
     <div class="col-12 mb-2">
 
       <mat-form-field class="w-100">
-        <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        <span
+          matPrefix
+          class="d-flex flex-nowrap align-items-center justify-content-between me-2">
           <mat-icon>contact_mail</mat-icon>
           <span class="text-muted mx-2">|</span>
         </span>
-        <input matInput="text" autofocus placeholder="Username" formControlName="username" name="username"
-          type="username" autocomplete="username">
+        <input
+          matInput="text"
+          autofocus
+          placeholder="Username"
+          formControlName="username"
+          name="username"
+          type="username"
+          autocomplete="username">
         <mat-error *ngIf="loginForm.controls.username.errors?.['required']">Username is required</mat-error>
       </mat-form-field>
 
@@ -45,30 +72,54 @@
     <div class="col-12 mb-lg-0 mb-2">
 
       <mat-form-field class="w-100">
-        <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        <span
+          matPrefix
+          class="d-flex flex-nowrap align-items-center justify-content-between me-2">
           <mat-icon>password</mat-icon>
           <span class="text-muted mx-2">|</span>
         </span>
-        <input matInput="password" placeholder="Password" formControlName="password" name="password"
-          [type]="viewPassword ? 'text' : 'password'" autocomplete="password">
-        <button mat-icon-button (click)="viewPassword = !viewPassword" type="button" matSuffix tabindex="-1">
+        <input
+          matInput="password"
+          placeholder="Password"
+          formControlName="password"
+          name="password"
+          [type]="viewPassword ? 'text' : 'password'"
+          autocomplete="password">
+        <button
+          mat-icon-button
+          (click)="viewPassword = !viewPassword"
+          type="button"
+          matSuffix
+          tabindex="-1">
           <mat-icon>visibility{{viewPassword ? '_off' : ''}}</mat-icon>
         </button>
-        <mat-error *ngIf="loginForm.controls.password.errors?.['required']">Password is required</mat-error>
+        <mat-error *ngIf="loginForm.controls.password.errors?.['required']">
+          Password is required
+        </mat-error>
       </mat-form-field>
 
     </div>
 
     <div class="col-12 mb-4">
       <div class="d-flex justify-content-end">
-        <a mat-button class="pe-0 mat-body-1" color="primary" routerLink="/authentication/forgot-password">Forgot
-          password?</a>
+        <a
+          mat-button
+          class="pe-0 mat-body-1"
+          color="primary"
+          routerLink="/authentication/forgot-password">
+          Forgot password?
+        </a>
       </div>
     </div>
   </div>
 
-  <button type="submit" mat-flat-button color="primary" class="d-block w-100 mb-4 auth-submit-button"
+  <button
+    type="submit"
+    mat-flat-button
+    color="primary"
+    class="d-block w-100 mb-4 auth-submit-button"
     [disabled]="waiting">
     Sign in
   </button>
+
 </form>
