@@ -2,7 +2,7 @@
 
   <!-- 1 - Database -->
   <div class="col-12">
-    <p class="fw-bold mb-0">Step 1 - Choose table(s)</p>
+    <p class="fw-bold mb-0">Step 1 - Choose database table(s)</p>
   </div>
 
   <div class="col-xxl-9 col-xl-10 col-lg-11 col-12">
@@ -13,18 +13,29 @@
 
         <!-- Loading skeleton -->
         <ng-container *ngIf="isLoading">
-          <app-loading-skeleton [amount]="1" [colClass]="'col-12'" [blockHeight]="'45px'"
-            [hasShadow]="false"></app-loading-skeleton>
+          <app-loading-skeleton
+            [amount]="1"
+            [colClass]="'col-12'"
+            [blockHeight]="'45px'"
+            [hasShadow]="false">
+          </app-loading-skeleton>
         </ng-container>
 
         <mat-form-field class="w-100" *ngIf="!isLoading">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+          <span
+            matPrefix
+            matTooltip="Choose database type"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>database</mat-icon>
             <span class="text-muted">|</span>
           </span>
-          <mat-select placeholder="Database type" [(ngModel)]="selectedDbType"
+          <mat-select
+            placeholder="Database type"
+            [(ngModel)]="selectedDbType"
             (selectionChange)="changeDbType()">
-            <mat-option *ngFor="let item of databaseTypes" [value]="item.type">{{item.name}}</mat-option>
+            <mat-option
+              *ngFor="let item of databaseTypes"
+              [value]="item.type">{{item.name}}</mat-option>
           </mat-select>
         </mat-form-field>
 
@@ -35,18 +46,29 @@
 
         <!-- Loading skeleton -->
         <ng-container *ngIf="isLoading">
-          <app-loading-skeleton [amount]="1" [colClass]="'col-12'" [blockHeight]="'45px'"
-            [hasShadow]="false"></app-loading-skeleton>
+          <app-loading-skeleton
+            [amount]="1"
+            [colClass]="'col-12'"
+            [blockHeight]="'45px'"
+            [hasShadow]="false">
+          </app-loading-skeleton>
         </ng-container>
 
         <mat-form-field class="w-100" *ngIf="!isLoading">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+          <span
+            matPrefix
+            matTooltip="Choose connection string"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>conversion_path</mat-icon>
             <span class="text-muted">|</span>
           </span>
-          <mat-select placeholder="Connection string" [(ngModel)]="selectedConnectionString"
+          <mat-select
+            placeholder="Connection string"
+            [(ngModel)]="selectedConnectionString"
             (selectionChange)="changeConnectionString()">
-            <mat-option *ngFor="let item of connectionStrings" [value]="item">{{item}}</mat-option>
+            <mat-option
+              *ngFor="let item of connectionStrings"
+              [value]="item">{{item}}</mat-option>
           </mat-select>
         </mat-form-field>
 
@@ -57,17 +79,29 @@
 
         <!-- Loading skeleton -->
         <ng-container *ngIf="isLoading">
-          <app-loading-skeleton [amount]="1" [colClass]="'col-12'" [blockHeight]="'45px'"
-            [hasShadow]="false"></app-loading-skeleton>
+          <app-loading-skeleton
+            [amount]="1"
+            [colClass]="'col-12'"
+            [blockHeight]="'45px'"
+            [hasShadow]="false">
+          </app-loading-skeleton>
         </ng-container>
 
         <mat-form-field class="w-100" *ngIf="!isLoading">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+          <span
+            matPrefix
+            matTooltip="Choose database or catalog"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>database</mat-icon>
             <span class="text-muted">|</span>
           </span>
-          <mat-select placeholder="Databases" [(ngModel)]="selectedDatabase" (selectionChange)="changeDatabase()">
-            <mat-option *ngFor="let item of databases | sortBy: 'name'" [value]="item.name">{{item.name}}</mat-option>
+          <mat-select
+            placeholder="Databases"
+            [(ngModel)]="selectedDatabase"
+            (selectionChange)="changeDatabase()">
+            <mat-option
+              *ngFor="let item of databases | sortBy: 'name'"
+              [value]="item.name">{{item.name}}</mat-option>
           </mat-select>
         </mat-form-field>
 
@@ -78,37 +112,62 @@
 
         <!-- Loading skeleton -->
         <ng-container *ngIf="isLoading">
-          <app-loading-skeleton [amount]="1" [colClass]="'col-12'" [blockHeight]="'45px'"
-            [hasShadow]="false"></app-loading-skeleton>
+          <app-loading-skeleton
+            [amount]="1"
+            [colClass]="'col-12'"
+            [blockHeight]="'45px'"
+            [hasShadow]="false">
+          </app-loading-skeleton>
         </ng-container>
 
         <mat-form-field class="w-100" *ngIf="!isLoading">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+          <span
+            matPrefix
+            matTooltip="Choose tables from catalog"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>table</mat-icon>
             <span class="text-muted">|</span>
           </span>
-          <mat-select placeholder="Tables" multiple [formControl]="selectedTables" disableOptionCentering
-            panelClass="custom-select-option" (selectionChange)="selectedTableChanged()">
+          <mat-select
+            placeholder="Tables"
+            multiple
+            [formControl]="selectedTables"
+            disableOptionCentering
+            panelClass="custom-select-option"
+            (selectionChange)="selectedTableChanged()">
             <mat-select-trigger>
               {{selectedTables.value?.length ? selectedTables.value?.length + ' tables' : 'Nothing is selected'}}
             </mat-select-trigger>
             <div class="d-flex align-items-center w-100 search-list-input">
-              <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+              <span
+                matPrefix
+                class="d-flex flex-nowrap align-items-center justify-content-between me-2">
                 <mat-icon>search</mat-icon>
                 <span class="text-muted ms-2">|</span>
               </span>
-              <input matInput type="text" #filterTables autocomplete="off">
+              <input
+                matInput
+                type="text"
+                #filterTables autocomplete="off">
             </div>
-            <mat-checkbox #allSelected color="primary" class="w-100 select-all-checkbox"
+
+            <mat-checkbox
+              #allSelected
+              color="primary"
+              class="w-100 select-all-checkbox"
               [checked]="selectedTables.value.length === availableTables.length"
               [indeterminate]="selectedTables.value.length > 0 && selectedTables.value.length !== availableTables.length"
               (change)="toggleAllTables($event.checked)">
               All tables
             </mat-checkbox>
-            <mat-option *ngFor="let item of availableTables | sortBy: 'name'" [value]="item.name"
+
+            <mat-option
+              *ngFor="let item of availableTables | sortBy: 'name'"
+              [value]="item.name"
               [class.d-none]="filterTables.value !== '' && item.name.toLowerCase().indexOf(filterTables.value.toLowerCase()) === -1">
               {{item.name}}
             </mat-option>
+
           </mat-select>
         </mat-form-field>
 
@@ -154,7 +213,10 @@
         </ng-container>
 
         <mat-form-field class="w-100 text-prefix" *ngIf="!isLoading">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
+          <span
+            matPrefix
+            matTooltip="Roles required to invoke read endpoint(s)"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-3">
             Read
           </span>
           <mat-select
@@ -163,7 +225,9 @@
             [formControl]="readRoles"
             disableOptionCentering
             panelClass="custom-select-option">
-            <mat-option *ngFor="let item of roles | sortBy: 'name'" [value]="item.name">
+            <mat-option
+              *ngFor="let item of roles | sortBy: 'name'"
+              [value]="item.name">
               {{item.name}}
             </mat-option>
           </mat-select>
@@ -184,10 +248,11 @@
           </app-loading-skeleton>
         </ng-container>
 
-        <mat-form-field
-          class="w-100 text-prefix"
-          *ngIf="!isLoading">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
+        <mat-form-field class="w-100 text-prefix" *ngIf="!isLoading">
+          <span
+            matPrefix
+            matTooltip="Roles required to invoke create endpoint(s)"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-3">
             Create
           </span>
           <mat-select
@@ -196,7 +261,9 @@
             [formControl]="createRoles"
             disableOptionCentering
             panelClass="custom-select-option">
-            <mat-option *ngFor="let item of roles | sortBy: 'name'" [value]="item.name">
+            <mat-option
+              *ngFor="let item of roles | sortBy: 'name'"
+              [value]="item.name">
               {{item.name}}
             </mat-option>
           </mat-select>
@@ -218,7 +285,10 @@
         </ng-container>
 
         <mat-form-field class="w-100 text-prefix" *ngIf="!isLoading">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
+          <span
+            matPrefix
+            matTooltip="Roles required to invoke update endpoint(s)"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-3">
             Update
           </span>
           <mat-select
@@ -227,7 +297,9 @@
             [formControl]="updateRoles"
             disableOptionCentering
             panelClass="custom-select-option">
-            <mat-option *ngFor="let item of roles | sortBy: 'name'" [value]="item.name">
+            <mat-option
+              *ngFor="let item of roles | sortBy: 'name'"
+              [value]="item.name">
               {{item.name}}
             </mat-option>
           </mat-select>
@@ -249,7 +321,10 @@
         </ng-container>
 
         <mat-form-field class="w-100 text-prefix" *ngIf="!isLoading">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
+          <span
+            matPrefix
+            matTooltip="Roles required to invoke delete endpoint(s)"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-3">
             Delete
           </span>
           <mat-select
@@ -258,7 +333,9 @@
             [formControl]="deleteRoles"
             disableOptionCentering
             panelClass="custom-select-option">
-            <mat-option *ngFor="let item of roles | sortBy: 'name'" [value]="item.name">
+            <mat-option
+              *ngFor="let item of roles | sortBy: 'name'"
+              [value]="item.name">
               {{item.name}}
             </mat-option>
           </mat-select>
@@ -282,7 +359,10 @@
         <mat-form-field
           class="w-100 text-prefix"
           *ngIf="!isLoading">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
+          <span
+            matPrefix
+            matTooltip="Primary URL of endpoint(s)"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-3">
             Primary URL
           </span>
           <input
@@ -310,7 +390,10 @@
         </ng-container>
 
         <mat-form-field class="w-100 text-prefix" *ngIf="!isLoading">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
+          <span
+            matPrefix
+            matTooltip="Secondary URL of endpoint(s)"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-3">
             Secondary URL
           </span>
           <input
@@ -328,21 +411,27 @@
           <mat-checkbox
             color="primary"
             [(ngModel)]="logCreate"
-            [disabled]="!(availableTables && availableTables.length > 0 && selectedTables.value.length > 0)">Log Create</mat-checkbox>
+            [disabled]="!(availableTables && availableTables.length > 0 && selectedTables.value.length > 0)">
+            Log create
+          </mat-checkbox>
 
           <div class="px-xl-4 px-lg-3 px-sm-2 px-1"></div>
 
           <mat-checkbox
             color="primary"
             [(ngModel)]="logUpdate"
-            [disabled]="!(availableTables && availableTables.length > 0 && selectedTables.value.length > 0)">Log Update</mat-checkbox>
+            [disabled]="!(availableTables && availableTables.length > 0 && selectedTables.value.length > 0)">
+            Log update
+          </mat-checkbox>
 
           <div class="px-xl-4 px-lg-3 px-sm-2 px-1"></div>
 
           <mat-checkbox
             color="primary"
             [(ngModel)]="logDelete"
-            [disabled]="!(availableTables && availableTables.length > 0 && selectedTables.value.length > 0)">Log Delete</mat-checkbox>
+            [disabled]="!(availableTables && availableTables.length > 0 && selectedTables.value.length > 0)">
+            Log delete
+          </mat-checkbox>
 
         </div>
       </div>
@@ -356,7 +445,10 @@
       <p class="fw-bold">Step 4 - reCAPTCHA</p>
 
       <mat-form-field class="w-100 text-prefix" *ngIf="!isLoading">
-        <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
+        <span
+          matPrefix
+          matTooltip="reCAPTCHA value required to invoke endpoint(s)"
+          class="d-flex flex-nowrap align-items-center justify-content-between me-3">
           reCaptcha
         </span>
         <input
@@ -405,7 +497,10 @@
       <p class="fw-bold">Step 5 - Caching</p>
 
       <mat-form-field class="w-100 text-prefix" *ngIf="!isLoading">
-        <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-3">
+        <span
+          matPrefix
+          matTooltip="HTTP cache value in seconds"
+          class="d-flex flex-nowrap align-items-center justify-content-between me-3">
           Duration
         </span>
         <input
@@ -439,21 +534,29 @@
 
       <!-- Authorisation type for socket messages published -->
       <mat-form-field class="w-100 mt-2" *ngIf="publishSocketMessages">
-        <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        <span
+          matPrefix
+          matTooltip="Authorisation type for socket messages published"
+          class="d-flex flex-nowrap align-items-center justify-content-between me-2">
           <mat-icon>Message auth type</mat-icon>
           <span class="text-muted">|</span>
         </span>
         <mat-select
           placeholder="Authorisation"
           [(ngModel)]="socketAuthorisationTypeValue">
-          <mat-option *ngFor="let item of socketAuthorisationTypes" [value]="item">{{item}}</mat-option>
+          <mat-option
+            *ngFor="let item of socketAuthorisationTypes"
+            [value]="item">{{item}}</mat-option>
         </mat-select>
       </mat-form-field>
 
       <!-- Roles authorisation, only applicable if authorisation type is "roles" -->
       <mat-form-field class="w-100"
         *ngIf="publishSocketMessages && socketAuthorisationTypeValue === 'roles'">
-        <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        <span
+          matPrefix
+          matTooltip="Roles required for user(s) to receive published socket messages"
+          class="d-flex flex-nowrap align-items-center justify-content-between me-2">
           <mat-icon>Message auth type</mat-icon>
           <span class="text-muted">|</span>
         </span>
@@ -463,7 +566,9 @@
           [formControl]="socketAuthorisationRoles"
           disableOptionCentering
           panelClass="custom-select-option">
-          <mat-option *ngFor="let item of roles | sortBy: 'name'" [value]="item.name">
+          <mat-option
+            *ngFor="let item of roles | sortBy: 'name'"
+            [value]="item.name">
             {{item.name}}
           </mat-option>
         </mat-select>
@@ -482,21 +587,27 @@
       <mat-checkbox
         color="primary"
         [(ngModel)]="transformService.join"
-        [disabled]="!(availableTables && availableTables.length > 0 && selectedTables.value.length > 0)">Left join</mat-checkbox>
+        [disabled]="!(availableTables && availableTables.length > 0 && selectedTables.value.length > 0)">
+        Left join
+      </mat-checkbox>
 
       <div class="px-xl-5 px-lg-4 px-sm-3 px-1"></div>
 
       <mat-checkbox
         color="primary"
         [(ngModel)]="transformService.verbose"
-        [disabled]="!(availableTables && availableTables.length > 0 && selectedTables.value.length > 0)">Verbose filtering</mat-checkbox>
+        [disabled]="!(availableTables && availableTables.length > 0 && selectedTables.value.length > 0)">
+        Verbose filtering
+      </mat-checkbox>
 
       <div class="px-xl-5 px-lg-4 px-sm-3 px-1"></div>
 
       <mat-checkbox
         color="primary"
         [(ngModel)]="transformService.overwrite"
-        [disabled]="!(availableTables && availableTables.length > 0 && selectedTables.value.length > 0)">Overwrite</mat-checkbox>
+        [disabled]="!(availableTables && availableTables.length > 0 && selectedTables.value.length > 0)">
+        Overwrite
+      </mat-checkbox>
 
     </div>
   </div>
@@ -508,7 +619,14 @@
       <div class="d-flex justify-content-between align-items-center">
         <p class="fw-bold mb-0">Step 8 - Additional POST/PUT Hyperlambda</p>
         <div>
-          <button mat-button color="primary" (click)="loadSnippet()">Snippets</button>
+
+          <button
+            mat-button
+            color="primary"
+            (click)="loadSnippet()">
+            Snippets
+          </button>
+
         </div>
       </div>
     </div>
@@ -524,12 +642,16 @@
   </ng-container>
 
   <div class="col-12 d-flex justify-content-end button-row mt-4">
+
     <button
       mat-flat-button
       [disabled]="!(availableTables && availableTables.length > 0 && selectedTables.value.length > 0)"
       color="primary"
       class="px-5"
-      (click)="generateEndpoints()">Generate endpoints</button>
+      (click)="generateEndpoints()">
+      Generate endpoints
+    </button>
+
   </div>
 
 </div>
