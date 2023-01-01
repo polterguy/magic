@@ -7,14 +7,15 @@
     [colClass]="'col-4'"
     [blockHeight]="'250px'"
     [hasShadow]="true"></app-loading-skeleton>
-
 </ng-container>
 
 <!-- Database tables -->
 <div class="masonry" *ngIf="!dbLoading">
-  <div class="grid mb-4" *ngFor="let item of (tables | async)">
+  <div class="grid pb-1 pt-1" *ngFor="let item of (tables | async)">
 
-    <mat-card [id]="item.name" [class]="activeTable === item.name ? 'active' : ''">
+    <mat-card
+      [id]="item.name"
+      [class]="activeTable === item.name ? 'active' : ''">
       <mat-card-content>
 
         <div class="d-flex align-items-center justify-content-between mb-3">
@@ -84,8 +85,11 @@
         </div>
 
         <div class="row" [class.mt-4]="item.foreign_keys && item.foreign_keys.length > 0">
-          <div class="col-12 bg-light action-btn pointer py-0 small ms-3" (click)="scrollTableIntoView(fk)"
-            *ngFor="let fk of item.foreign_keys;let last = last" [class.mb-2]="!last">
+          <div
+            class="col-12 bg-light action-btn pointer py-0 small ms-3"
+            (click)="scrollTableIntoView(fk)"
+            *ngFor="let fk of item.foreign_keys;let last = last"
+            [class.mb-2]="!last">
             <div class="d-flex justify-content-between align-items-center">
               <p class="my-0 d-flex justify-content-between align-items-center">
                 {{fk?.column}} <mat-icon class="mx-2">trending_flat</mat-icon>
