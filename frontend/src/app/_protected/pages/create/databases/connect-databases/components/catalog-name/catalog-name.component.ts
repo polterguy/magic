@@ -7,6 +7,8 @@ import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { SqlService } from '../../../../../../../_general/services/sql.service';
+import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
+import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 
 /**
  * Helper component allowing user to provide name of a new catalog he or she wants
@@ -19,8 +21,10 @@ import { SqlService } from '../../../../../../../_general/services/sql.service';
 export class CatalogNameComponent {
 
   waitingCreation: boolean = false;
-
   name: string = '';
+
+  CommonRegEx = CommonRegEx;
+  CommonErrorMessages = CommonErrorMessages;
 
   constructor(
     private sqlService: SqlService,
@@ -31,10 +35,16 @@ export class CatalogNameComponent {
   public save() {
 
     if (this.name === '') {
-      this.generalService.showFeedback('Name is required.', 'errorMessage');
+      this.generalService.showFeedback('Name is required', 'errorMessage');
+    }
+
+    if (!this.CommonRegEx.appNameWithUppercaseHyphen.test(this.name)) {
+      this.generalService.showFeedback(this.CommonErrorMessages.appNameWithUppercaseHyphen, 'errorMessage');
+      return;
     }
 
     this.waitingCreation = true;
+
     this.sqlService.createDatabase(
       this.data.dbTypeValue,
       this.data.cStringKey,

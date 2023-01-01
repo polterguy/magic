@@ -4,7 +4,7 @@
 <form>
   <div mat-dialog-content>
 
-    <mat-form-field class="w-100">
+    <mat-form-field class="w-100 standalone-field">
       <span
         matPrefix
         matTooltip="Catalog or database name"
@@ -17,8 +17,10 @@
         type="text"
         [(ngModel)]="name"
         name="-"
+        [pattern]="CommonRegEx.appNameWithUppercaseHyphen"
         placeholder="Catalog name"
         autocomplete="off">
+        <mat-error>{{CommonErrorMessages.appNameWithUppercaseHyphen}}</mat-error>
     </mat-form-field>
 
   </div>
