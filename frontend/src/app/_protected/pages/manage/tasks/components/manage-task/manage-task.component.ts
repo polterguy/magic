@@ -20,18 +20,15 @@ import { TaskService } from '../../_services/task.service';
 })
 export class ManageTaskComponent implements OnInit {
 
-  public task: Task = {
+  task: Task = {
     id: '',
     description: '',
     hyperlambda: 'log.info:Hello world from task'
   };
-
-  public hlModel: HlModel;
-
-  public hlReady: boolean = false;
-
-  public CommonRegEx = CommonRegEx;
-  public CommonErrorMessages = CommonErrorMessages;
+  hlModel: HlModel;
+  hlReady: boolean = false;
+  CommonRegEx = CommonRegEx;
+  CommonErrorMessages = CommonErrorMessages;
 
   constructor(
     private taskService: TaskService,
@@ -55,10 +52,7 @@ export class ManageTaskComponent implements OnInit {
     }, 500);
   }
 
-  /**
-   * Invoked when user clicks the create button to create a new role.
-   */
-  public create() {
+  create() {
     if (!this.validateName()) {
       this.generalService.showFeedback('Name is not valid', 'errorMessage')
       return;
@@ -86,6 +80,10 @@ export class ManageTaskComponent implements OnInit {
     }
 
   }
+
+  /*
+   * Private helper methods.
+   */
 
   private validateName() {
     return this.CommonRegEx.appNames.test(this.task.id);

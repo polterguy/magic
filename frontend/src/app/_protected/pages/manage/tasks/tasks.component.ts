@@ -29,6 +29,9 @@ class TaskEx {
   model?: Model;
 }
 
+/**
+ * Helper component to administrate Hyperlambda tasks.
+ */
 @Component({
   selector: 'app-tasks',
   templateUrl: './tasks.component.html',
@@ -36,81 +39,30 @@ class TaskEx {
 })
 export class TasksComponent implements OnInit {
 
-  /**
-   * Tasks that are currently being viewed.
-   */
-  public tasks: TaskEx[] = [];
-
-  public displayedColumns: string[] = ['name', 'description', 'duration', 'created', 'actions'];
-
-  public dataSource: any = [];
-
+  tasks: TaskEx[] = [];
+  displayedColumns: string[] = ['name', 'description', 'duration', 'created', 'actions'];
+  dataSource: any = [];
   pageIndex: number = 0;
   pageSize: number = 13;
   totalItems: number = 0;
-
-  public isLoading: boolean = true;
-
-  public searchText: string = '';
+  isLoading: boolean = true;
+  searchText: string = '';
 
   constructor(
     private dialog: MatDialog,
     private taskService: TaskService,
     private generalService: GeneralService) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.getTasks();
     this.getCount();
   }
 
-  /**
-   * Retrieves tasks from your backend and re-databinds UI.
-   */
-  private getTasks() {
-    this.taskService.list(
-      this.searchText,
-      this.pageIndex * this.pageSize,
-      this.pageSize).subscribe({
-        next: (tasks: Task[]) => {
-          if (tasks) {
-            tasks.forEach((item: any) => this.getDetails(item))
-          }
-          this.dataSource = tasks || [];
-          this.isLoading = false;
-        },
-        error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
-      });
-  }
-
-  private getCount() {
-    this.taskService.count(this.searchText).subscribe({
-      next: (count: Count) => this.totalItems = count.count,
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
-    });
-  }
-
-  private getDetails(item: any) {
-    this.taskService.get(item.id).subscribe({
-      next: (task: Task) => {
-        item.hyperlambda = task.hyperlambda;
-        if (task.schedules) {
-          item.schedules = task.schedules.map(x => {
-            return {
-              id: x.id,
-              due: new Date(x.due),
-              repeats: x.repeats,
-            };
-          });
-        }
-      },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
-    });
-  }
-
-  public addTask() {
+  addTask() {
     this.dialog.open(ManageTaskComponent, {
       width: '800px',
-      panelClass: ['light']
+      panelClass: ['light'],
+      disableClose: true,
     }).afterClosed().subscribe((res: boolean) => {
       if (res) {
         this.getTasks();
@@ -119,7 +71,7 @@ export class TasksComponent implements OnInit {
     })
   }
 
-  public editTask(task: any) {
+  editTask(task: any) {
     this.dialog.open(ManageTaskComponent, {
       width: '800px',
       panelClass: ['light'],
@@ -132,24 +84,14 @@ export class TasksComponent implements OnInit {
     })
   }
 
-  /**
-   * Invoked when user wants to execute a task.
-   *
-   * @param task Task caller wants to save
-   */
-  public execute(task: any) {
+  execute(task: any) {
     this.taskService.execute(task.id).subscribe({
       next: () => this.generalService.showFeedback('Task successfully executed', 'successMessage'),
       error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)
     });
   }
 
-  /**
-   * Deletes a task in your backend.
-   *
-   * @param task Task to delete
-   */
-  public deleteTask(task: any) {
+  deleteTask(task: any) {
     this.dialog.open(ConfirmationDialogComponent, {
       width: '500px',
       data: {
@@ -173,12 +115,7 @@ export class TasksComponent implements OnInit {
     });
   }
 
-  /**
-   * Schedules task for execution in the future.
-   *
-   * @param task Task user wants to schedule
-   */
-  public schedule(task: any) {
+  schedule(task: any) {
     this.dialog.open(ScheduleTaskComponent, {
       width: '800px',
       data: task,
@@ -190,12 +127,6 @@ export class TasksComponent implements OnInit {
     });
   }
 
-  /**
-   * Invoked when user wants to delete a schedule for a task.
-   *
-   * @param task Task that contains schedule
-   * @param schedule Schedule to remove from task
-   */
   deleteSchedule(schedule: Schedule, task: any) {
     this.dialog.open(ConfirmationDialogComponent, {
       width: '500px',
@@ -219,20 +150,63 @@ export class TasksComponent implements OnInit {
     })
   }
 
-  /**
-   * Invoked when paginator wants to page data table.
-   *
-   * @param e Page event argument
-   */
-  public changePage(e: PageEvent) {
+  changePage(e: PageEvent) {
     this.pageSize = e.pageSize;
     this.pageIndex = e.pageIndex;
     this.getTasks();
   }
 
-  public filterList(event: string) {
+  filterList(event: string) {
     this.searchText = event;
     this.getTasks();
     this.getCount();
+  }
+
+  /*
+   * Private helper methods
+   */
+
+  private getTasks() {
+
+    this.taskService.list(
+      this.searchText,
+      this.pageIndex * this.pageSize,
+      this.pageSize).subscribe({
+        next: (tasks: Task[]) => {
+          if (tasks) {
+            tasks.forEach((item: any) => this.getDetails(item))
+          }
+          this.dataSource = tasks || [];
+          this.isLoading = false;
+        },
+        error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+      });
+  }
+
+  private getCount() {
+
+    this.taskService.count(this.searchText).subscribe({
+      next: (count: Count) => this.totalItems = count.count,
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+    });
+  }
+
+  private getDetails(item: any) {
+
+    this.taskService.get(item.id).subscribe({
+      next: (task: Task) => {
+        item.hyperlambda = task.hyperlambda;
+        if (task.schedules) {
+          item.schedules = task.schedules.map(x => {
+            return {
+              id: x.id,
+              due: new Date(x.due),
+              repeats: x.repeats,
+            };
+          });
+        }
+      },
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+    });
   }
 }
