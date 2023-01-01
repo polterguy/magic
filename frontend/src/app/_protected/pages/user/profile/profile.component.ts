@@ -54,13 +54,10 @@ export class ProfileComponent implements OnInit {
     }
 
     this.userService.editExtra(data).subscribe({
-      next: (res: any) => {
+      next: () => {
         this.generalService.showFeedback('Details saved successfully', 'successMessage');
       },
-      error: (error: any) => {
-        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
-      }
-    })
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')});
   }
 
   savePassword() {
@@ -120,7 +117,7 @@ export class ProfileComponent implements OnInit {
           this.user = user;
         }
       },
-      error: (error: any) => { }
-    })
+      error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
+    });
   }
 }
