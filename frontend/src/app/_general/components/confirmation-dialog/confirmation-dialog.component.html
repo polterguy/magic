@@ -1,3 +1,4 @@
+
 <h3 mat-dialog-title>{{data.title}}</h3>
 
 <form (ngSubmit)="confirm()">
@@ -5,7 +6,10 @@
 
     <p [class.fw-bold]="data.bold_description">{{data.description}}</p>
 
-    <p *ngIf="data.description_extra" [innerHTML]="data.description_extra"></p>
+    <p
+      *ngIf="data.description_extra"
+      [innerHTML]="data.description_extra">
+    </p>
 
     <ng-container *ngIf="data?.extra?.details && data?.extra?.action === 'confirmInput'">
 
@@ -33,6 +37,7 @@
     </ng-container>
 
   </div>
+
   <div mat-dialog-actions [align]="'end'">
 
     <button
