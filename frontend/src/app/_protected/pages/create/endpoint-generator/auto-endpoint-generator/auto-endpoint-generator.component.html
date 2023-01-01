@@ -199,42 +199,6 @@
   <div class="col-xxl-9 col-xl-10 col-lg-11 col-12">
     <div class="row align-items-stretch mt-4">
 
-      <!-- Read -->
-      <div class="col-md-3 col-sm-6 col-12">
-
-        <!-- Loading skeleton -->
-        <ng-container *ngIf="isLoading">
-          <app-loading-skeleton
-            [amount]="1"
-            [colClass]="'col-12'"
-            [blockHeight]="'45px'"
-            [hasShadow]="false">
-          </app-loading-skeleton>
-        </ng-container>
-
-        <mat-form-field class="w-100 text-prefix" *ngIf="!isLoading">
-          <span
-            matPrefix
-            matTooltip="Roles required to invoke read endpoint(s)"
-            class="d-flex flex-nowrap align-items-center justify-content-between me-3">
-            Read
-          </span>
-          <mat-select
-            placeholder="Add roles"
-            multiple
-            [formControl]="readRoles"
-            disableOptionCentering
-            panelClass="custom-select-option">
-            <mat-option
-              *ngFor="let item of roles | sortBy: 'name'"
-              [value]="item.name">
-              {{item.name}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-
-      </div>
-
       <!-- Create -->
       <div class="col-md-3 col-sm-6 col-12">
 
@@ -259,6 +223,42 @@
             placeholder="Add roles"
             multiple
             [formControl]="createRoles"
+            disableOptionCentering
+            panelClass="custom-select-option">
+            <mat-option
+              *ngFor="let item of roles | sortBy: 'name'"
+              [value]="item.name">
+              {{item.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+      </div>
+
+      <!-- Read -->
+      <div class="col-md-3 col-sm-6 col-12">
+
+        <!-- Loading skeleton -->
+        <ng-container *ngIf="isLoading">
+          <app-loading-skeleton
+            [amount]="1"
+            [colClass]="'col-12'"
+            [blockHeight]="'45px'"
+            [hasShadow]="false">
+          </app-loading-skeleton>
+        </ng-container>
+
+        <mat-form-field class="w-100 text-prefix" *ngIf="!isLoading">
+          <span
+            matPrefix
+            matTooltip="Roles required to invoke read endpoint(s)"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-3">
+            Read
+          </span>
+          <mat-select
+            placeholder="Add roles"
+            multiple
+            [formControl]="readRoles"
             disableOptionCentering
             panelClass="custom-select-option">
             <mat-option
@@ -357,21 +357,27 @@
         </ng-container>
 
         <mat-form-field
-          class="w-100 text-prefix"
+          class="w-100 standalone-field"
           *ngIf="!isLoading">
           <span
             matPrefix
             matTooltip="Primary URL of endpoint(s)"
-            class="d-flex flex-nowrap align-items-center justify-content-between me-3">
-            Primary URL
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>http</mat-icon>
+            <span class="text-muted">|</span>
           </span>
           <input
             matInput
             [disabled]="!(availableTables && availableTables.length > 0 && selectedTables.value.length > 0)"
             type="text"
-            placeholder="Add URL"
+            placeholder="Primary URL"
             [name]="selectedDatabase"
+            [pattern]="CommonRegEx.appNameWithUppercaseHyphen"
+            autocomplete="off"
+            required
+            spellcheck="false"
             [(ngModel)]="primaryURL">
+          <mat-error>{{CommonErrorMessages.appNameWithUppercaseHyphen}}</mat-error>
         </mat-form-field>
 
       </div>
@@ -389,18 +395,24 @@
           </app-loading-skeleton>
         </ng-container>
 
-        <mat-form-field class="w-100 text-prefix" *ngIf="!isLoading">
+        <mat-form-field class="w-100 standalone-field" *ngIf="!isLoading">
           <span
             matPrefix
             matTooltip="Secondary URL of endpoint(s)"
-            class="d-flex flex-nowrap align-items-center justify-content-between me-3">
-            Secondary URL
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>http</mat-icon>
+            <span class="text-muted">|</span>
           </span>
           <input
             matInput
             type="text"
-            placeholder="Add URL"
+            placeholder="Secondary URL"
+            [pattern]="CommonRegEx.appNameWithUppercaseHyphen"
+            autocomplete="off"
+            required
+            spellcheck="false"
             [(ngModel)]="secondaryURL">
+          <mat-error>{{CommonErrorMessages.appNameWithUppercaseHyphen}}</mat-error>
         </mat-form-field>
 
       </div>
@@ -499,7 +511,7 @@
       <mat-form-field class="w-100 text-prefix" *ngIf="!isLoading">
         <span
           matPrefix
-          matTooltip="HTTP cache value in seconds"
+          matTooltip="HTTP cache duration in seconds"
           class="d-flex flex-nowrap align-items-center justify-content-between me-3">
           Duration
         </span>
