@@ -39,71 +39,27 @@ import { AssumptionsComponent } from '../assumptions/assumptions.component';
 export class ExecuteEndpointDialogComponent implements OnInit {
 
   private originalPath: string = '';
-  public itemDetails: any = {};
 
-  public parameters: any = [];
+  itemDetails: any = {};
+  parameters: any = [];
 
   @ViewChild('assumptions', { static: false }) assumptions: AssumptionsComponent;
 
-  /**
-   * CodeMirror options object, taken from common settings.
-   */
-  cmOptions = {
-    json: json,
+  cm = {
+    json,
+    json_readonly,
+    hyperlambda,
+    hyperlambda_readonly,
+    markdown,
+    markdown_readonly,
   };
 
-  /**
-   * CodeMirror options object, taken from common settings.
-   */
-  cmOptionsHyperlambda = {
-    json: hyperlambda,
-  };
-
-  /**
-   * CodeMirror options object, taken from common settings.
-   */
-  cmOptionsMarkdown = {
-    json: markdown,
-  };
-
-  /**
-   * CodeMirror options object, taken from common settings.
-   */
-  cmOptionsReadonly = {
-    json: json_readonly,
-  };
-
-  /**
-   * CodeMirror options object, taken from common settings.
-   */
-  cmHlOptionsReadonly = {
-    hl: hyperlambda_readonly,
-  };
-
-  /**
-   * CodeMirror options object, taken from common settings.
-   */
-  markdownOptionsReadonly = {
-    md: markdown_readonly,
-  };
-
-  /**
-   * Payload example for JSON type of endpoints.
-   */
   payload: string = null;
-
-  /**
-   * Result of invocation.
-   */
   result: InvocationResult = null;
-
-  public isExecuting: boolean = false;
-
-  public paramsForm = this.formBuilder.group({});
-
-  public codemirrorIsReady: boolean = false;
-
-  public canCreateAssumption: boolean = false;
+  isExecuting: boolean = false;
+  paramsForm = this.formBuilder.group({});
+  codemirrorIsReady: boolean = false;
+  canCreateAssumption: boolean = false;
 
   constructor(
     private dialog: MatDialog,
@@ -118,10 +74,6 @@ export class ExecuteEndpointDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: { itemToBeTried: any }) { }
 
   ngOnInit() {
-    this.getItemDetails();
-  }
-
-  private getItemDetails() {
     this.itemDetails = [];
     this.parameters = [];
     this.result = null;
@@ -129,89 +81,7 @@ export class ExecuteEndpointDialogComponent implements OnInit {
     this.prepareData(this.data.itemToBeTried);
   }
 
-  private prepareData(item: any) {
-    this.itemDetails = item;
-
-    this.originalPath = item.path;
-
-    item.input ? this.setForm() : '';
-    this.getParams();
-
-    if (this.itemDetails.consumes === 'application/json') {
-      let payload = {};
-      for (var idx of this.itemDetails.input ?? []) {
-        let type: any = idx.type;
-        switch (type) {
-
-          case "long":
-          case "ulong":
-          case "int":
-          case "uint":
-          case "short":
-          case "ushort":
-            type = 42;
-            break;
-
-          case "date":
-            type = new Date().toISOString();
-            break;
-
-          case "bool":
-            type = true;
-            break;
-
-          case "string":
-            type = "foo";
-            break;
-
-          case "decimal":
-          case "float":
-          case "double":
-            type = 5.5;
-            break;
-        }
-        payload[idx.name] = type;
-      }
-      this.payload = JSON.stringify(payload, null, 2);
-      setTimeout(() => {
-        document.querySelectorAll('.CodeMirror').forEach(item => {
-          var domNode = (<any>item);
-          var editor = domNode.CodeMirror;
-          editor.doc.markClean();
-          editor.doc.clearHistory(); // To avoid having initial loading of file becoming an "undo operation".
-        })
-      }, 800);
-
-    } else if (this.itemDetails.consumes === 'application/x-hyperlambda') {
-      setTimeout(() => this.payload = '', 250);
-    } else if (this.itemDetails?.consumes?.startsWith('text/')) {
-      setTimeout(() => this.payload = '', 250);
-    }
-    setTimeout(() => {
-      this.codemirrorIsReady = true;
-    }, 500);
-    this.cdr.detectChanges();
-  }
-
-  private getParams() {
-    this.parameters = (this.itemDetails.input as any)?.map((item: any) => { return item.name }) || [];
-  }
-
-  private setForm() {
-    this.itemDetails.input.forEach((element: any) => {
-      this.paramsForm.setControl(element.name, new FormControl<any>(''));
-    });
-
-    this.cdr.detectChanges();
-  }
-
-  /**
-   * Returns arguments for endpoint.
-   *
-   * @param args List of all arguments for endpoint
-   * @param controlArguments Whether or not to return control arguments or non-control arguments
-   */
-  public getArguments(args: Argument[], controlArguments: boolean) {
+  getArguments(args: Argument[], controlArguments: boolean) {
     if (this.itemDetails.type === 'crud-read' || this.itemDetails.type === 'crud-count') {
       return args.filter(x => {
         switch (x.name) {
@@ -234,12 +104,7 @@ export class ExecuteEndpointDialogComponent implements OnInit {
     }
   }
 
-  /**
-   * Returns tooltip information for specified argument.
-   *
-   * @param arg Argument to retrieve tooltip for
-   */
-  public getDescription(arg: any) {
+  getDescription(arg: any) {
     if (this.itemDetails.type === 'crud-read' || this.itemDetails.type === 'crud-count') {
       switch (arg.name) {
 
@@ -297,12 +162,6 @@ export class ExecuteEndpointDialogComponent implements OnInit {
     }
   }
 
-  /**
-   * Returns true if endpoint can be invoked.
-   *
-   * Notice, we don't support invoking endpoints with for instance application/octet-stream types
-   * of input, since we don't have the means to supply the required input to these endpoints.
-   */
   canInvoke() {
     return this.itemDetails?.verb === 'get' ||
       this.itemDetails?.verb === 'delete' ||
@@ -311,9 +170,6 @@ export class ExecuteEndpointDialogComponent implements OnInit {
       this.itemDetails?.consumes?.startsWith(<String>'text/');
   }
 
-  /**
-     * Invoked when user wants to invoke endpoint.
-     */
   invoke() {
     this.itemDetails.path = this.originalPath;
     if (Object.values(this.paramsForm.value).length) {
@@ -448,14 +304,11 @@ export class ExecuteEndpointDialogComponent implements OnInit {
     }
   }
 
-  /**
-   * Returns whether or not the current invocation was successful or not.
-   */
   isSuccess() {
     return this.result && this.result.status >= 200 && this.result.status < 400;
   }
 
-  public inputTypes(item: string) {
+  inputTypes(item: string) {
     switch (item) {
 
       case 'bool':
@@ -476,9 +329,6 @@ export class ExecuteEndpointDialogComponent implements OnInit {
     }
   }
 
-  /**
-   * Allows the user to create an assumption/integration test for the current request/response.
-   */
   createTest() {
     const dialogRef = this.dialog.open(CreateAssumptionTestDialogComponent, {
       width: '550px',
@@ -497,12 +347,6 @@ export class ExecuteEndpointDialogComponent implements OnInit {
           this.itemDetails.produces).subscribe({
             next: () => {
 
-              /*
-               * Snippet saved, showing user some feedback, and reloading assumptions.
-               *
-               * Checking if caller wants response to match, and response is blob,
-               * at which point we inform user this is not possible.
-               */
               if (res.matchResponse && this.result.blob) {
                 this.generalService.showFeedback('Assumption successfully saved. Notice, blob types of invocations cannot assume response equality.', 'successMessage', 'Ok', 5000);
               } else {
@@ -518,8 +362,86 @@ export class ExecuteEndpointDialogComponent implements OnInit {
     });
   }
 
-  public copyResult(response: any) {
+  copyResult(response: any) {
     this.clipboard.copy(response);
     this.generalService.showFeedback('Result can be found on your clipboard');
+  }
+
+  /*
+   * Private helper methods.
+   */
+
+  private prepareData(item: any) {
+    this.itemDetails = item;
+
+    this.originalPath = item.path;
+
+    item.input ? this.setForm() : '';
+    this.getParams();
+
+    if (this.itemDetails.consumes === 'application/json') {
+      let payload = {};
+      for (var idx of this.itemDetails.input ?? []) {
+        let type: any = idx.type;
+        switch (type) {
+
+          case "long":
+          case "ulong":
+          case "int":
+          case "uint":
+          case "short":
+          case "ushort":
+            type = 42;
+            break;
+
+          case "date":
+            type = new Date().toISOString();
+            break;
+
+          case "bool":
+            type = true;
+            break;
+
+          case "string":
+            type = "foo";
+            break;
+
+          case "decimal":
+          case "float":
+          case "double":
+            type = 5.5;
+            break;
+        }
+        payload[idx.name] = type;
+      }
+      this.payload = JSON.stringify(payload, null, 2);
+      setTimeout(() => {
+        document.querySelectorAll('.CodeMirror').forEach(item => {
+          var domNode = (<any>item);
+          var editor = domNode.CodeMirror;
+          editor.doc.markClean();
+          editor.doc.clearHistory();
+        })
+      }, 800);
+
+    } else if (this.itemDetails.consumes === 'application/x-hyperlambda') {
+      setTimeout(() => this.payload = '', 250);
+    } else if (this.itemDetails?.consumes?.startsWith('text/')) {
+      setTimeout(() => this.payload = '', 250);
+    }
+    setTimeout(() => {
+      this.codemirrorIsReady = true;
+    }, 500);
+    this.cdr.detectChanges();
+  }
+
+  private getParams() {
+    this.parameters = (this.itemDetails.input as any)?.map((item: any) => { return item.name }) || [];
+  }
+
+  private setForm() {
+    this.itemDetails.input.forEach((element: any) => {
+      this.paramsForm.setControl(element.name, new FormControl<any>(''));
+    });
   }
 }
