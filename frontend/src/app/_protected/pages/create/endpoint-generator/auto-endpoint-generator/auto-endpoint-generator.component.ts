@@ -13,6 +13,8 @@ import { LocResult } from '../_models/loc-result.model';
 import { CrudifyService } from '../_services/crudify.service';
 import { TransformModelService } from '../_services/transform-model.service';
 import { LogService } from '../../../../../_general/services/log.service';
+import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
+import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 
 // CodeMirror options.
 import hyperlambda from '../../../../../codemirror/options/hyperlambda.json';
@@ -35,124 +37,33 @@ import { RoleService } from '../../../manage/user-and-roles/_services/role.servi
 })
 export class AutoGeneratorComponent extends GeneratorBase implements OnInit, OnDestroy {
 
-  // Subscription for CodeMirror keyboard shortcut listener.
   private codemirrorActionsSubscription: Subscription;
 
-  /**
-   * Selected tables form control, allowing user to select multiple tables to generate CRUD endpoints for.
-   */
+  CommonRegEx = CommonRegEx;
+  CommonErrorMessages = CommonErrorMessages;
+
   selectedTables: FormControl = new FormControl<any>('');
-
-  /**
-   * Form control for roles require to invoke read endpoint(s).
-   */
   readRoles: FormControl = new FormControl<any>('');
-
-  /**
-   * Form control for roles require to invoke update endpoint(s).
-   */
   updateRoles: FormControl = new FormControl<any>('');
-
-  /**
-   * Form control for roles require to invoke delete endpoint(s).
-   */
   deleteRoles: FormControl = new FormControl<any>('');
-
-  /**
-   * Form control for roles require to invoke create endpoint(s).
-   */
   createRoles: FormControl = new FormControl<any>('');
-
-  /**
-   * Databound value for the primary URL of module, defaults to name of database catalog.
-   */
   primaryURL: string = '';
-
-  /**
-   * Databound value for secondary URL to endpoints, defaults to name of table.
-   */
   secondaryURL: string = '';
-
-  /**
-   * Whether or not invocations to create endpoints should create a log entry.
-   */
   logCreate: boolean = false;
-
-  /**
-   * Whether or not invocations to update endpoints should create a log entry.
-   */
   logUpdate: boolean = false;
-
-  /**
-   * Whether or not invocations to delete endpoints should create a log entry.
-   */
   logDelete: boolean = false;
-
-  /**
-   * reCAPTCHA value to use for endpoints.
-   */
   captchaValue: number;
-
-  /**
-   * If true, reCAPTCHA should be applied to create endpoint(s).
-   */
   captchaCreate: boolean = false;
-
-  /**
-   * If true, reCAPTCHA should be applied to read endpoint(s).
-   */
   captchaRead: boolean = false;
-
-  /**
-   * If true, reCAPTCHA should be applied to update endpoint(s).
-   */
   captchaUpdate: boolean = false;
-
-  /**
-   * If true, reCAPTCHA should be applied to delete endpoint(s).
-   */
   captchaDelete: boolean = false;
-
-  /**
-   * Duration of HTTP Cache-Control header for read and count endpoint(s).
-   */
   cacheDuration: boolean = false;
-
-  /**
-   * If true, caching should be applied publicly, such that proxies can cache values.
-   */
   cachePublic: boolean = false;
-
-  /**
-   * If true, user wants to have socket messages published upon invocation to write
-   * endpoints (PUT/POST/DELETE).
-   */
   publishSocketMessages: boolean = false;
-
-  /**
-   * Selected authorisation type for socket messages published by backend.
-   */
   socketAuthorisationTypes: string[] = ['none', 'inherited', 'roles'];
-
-  /**
-   * Authorisation type for socket messages published, implying who should be given access
-   * to socket messages published by backend.
-   */
   socketAuthorisationTypeValue: string;
-
-  /**
-   * Roles users must belong to in order to be notified when socket messages are published.
-   */
   socketAuthorisationRoles: FormControl = new FormControl<any>('');
-
-  /**
-   * Available tables from currently selected database catalog.
-   */
   availableTables: any[] = [];
-
-  /**
-   * Input Hyperlambda component model and options.
-   */
   hlInput: Model = {
     hyperlambda: '',
     options: hyperlambda,

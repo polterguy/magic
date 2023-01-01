@@ -5,9 +5,9 @@
 
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { GeneralService } from 'src/app/_general/services/general.service';
 import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
 import { CommonRegEx } from 'src/app/_general/classes/common-regex';
-import { GeneralService } from 'src/app/_general/services/general.service';
 
 interface NewField {
   columnName?: string,
