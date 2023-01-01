@@ -1,4 +1,5 @@
-<h3 mat-dialog-title class="mb-1">Add new table</h3>
+
+<h3 mat-dialog-title class="mb-1">Add table</h3>
 
 <p class="text-muted mb-4">Create a new table and its primary key</p>
 
@@ -6,39 +7,77 @@
   <div mat-dialog-content>
 
     <mat-form-field class="w-100 standalone-field mt-2">
-      <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+      <span
+        matPrefix
+        matTooltip="Name of table"
+        class="d-flex flex-nowrap align-items-center justify-content-between me-2">
         <mat-icon>edit</mat-icon>
         <span class="text-muted">|</span>
       </span>
-      <input matInput type="text" placeholder="Table name" [(ngModel)]="data.name" name="table_name"
-        [pattern]="CommonRegEx.appNameWithUppercase" (ngModelChange)="nameChanged()">
+      <input
+        matInput
+        type="text"
+        placeholder="Table name"
+        [(ngModel)]="data.name"
+        name="table_name"
+        [pattern]="CommonRegEx.appNameWithUppercase"
+        (ngModelChange)="nameChanged()">
       <mat-error>{{CommonErrorMessages.appNameWithUppercase}}</mat-error>
     </mat-form-field>
 
     <mat-form-field class="w-100 standalone-field">
-      <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+      <span
+        matPrefix
+        matTooltip="Name of primary key"
+        class="d-flex flex-nowrap align-items-center justify-content-between me-2">
         <mat-icon>key</mat-icon>
         <span class="text-muted">|</span>
       </span>
-      <input matInput type="text" placeholder="Primary key name" [(ngModel)]="data.pkName" name="pk_name"
+      <input
+        matInput
+        type="text"
+        placeholder="Primary key name"
+        [(ngModel)]="data.pkName"
+        name="pk_name"
         [pattern]="CommonRegEx.appNameWithUppercase">
       <mat-error>{{CommonErrorMessages.appNameWithUppercase}}</mat-error>
     </mat-form-field>
 
     <mat-form-field class="w-100 standalone-field">
-      <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+      <span
+        matPrefix
+        matTooltip="Type of primary key"
+        class="d-flex flex-nowrap align-items-center justify-content-between me-2">
         <mat-icon>dehaze</mat-icon>
         <span class="text-muted">|</span>
       </span>
-      <mat-select placeholder="Primary key type" [(ngModel)]="data.pkType" name="pk_type">
-        <mat-option *ngFor="let item of primaryKeyTypeList" [value]="item.value">{{item.name}}</mat-option>
+      <mat-select
+        placeholder="Primary key type"
+        [(ngModel)]="data.pkType"
+        name="pk_type">
+        <mat-option
+          *ngFor="let item of primaryKeyTypeList"
+          [value]="item.value">{{item.name}}</mat-option>
       </mat-select>
     </mat-form-field>
 
   </div>
 
   <div mat-dialog-actions [align]="'end'">
-    <button mat-button mat-dialog-close>Cancel</button>
-    <button mat-flat-button color="primary" class="px-4" type="submit">Create</button>
+
+    <button
+      mat-button
+      mat-dialog-close>
+      Cancel
+    </button>
+
+    <button
+      mat-flat-button
+      color="primary"
+      class="px-4"
+      type="submit">
+      Create
+    </button>
+
   </div>
 </form>

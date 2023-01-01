@@ -26,50 +26,55 @@ export interface NewTableModel {
 })
 export class NewTableComponent {
 
-  /**
-   * Name of table.
-   */
-  public data: NewTableModel = {
+  data: NewTableModel = {
     name: '',
     pkName: '',
     pkType: 'auto_increment',
     pkLength: 10,
     pkDefault: '',
   }
-
   primaryKeyTypeList: any = PkType;
 
-  public CommonRegEx = CommonRegEx;
-  public CommonErrorMessages = CommonErrorMessages;
+  CommonRegEx = CommonRegEx;
+  CommonErrorMessages = CommonErrorMessages;
 
   constructor(
     private generalService: GeneralService,
     private dialogRef: MatDialogRef<NewTableComponent>) { }
 
-  /**
-   * Invoked when name changes.
-   */
-  public nameChanged() {
+  nameChanged() {
 
     // Avoiding plural form in case user types in English plural for for entity
     let name = this.data.name;
     if (name.endsWith('s')) {
       name = name.substring(0, name.length - 1);
     }
+
+    if (name === '') {
+      this.data.pkName = '';
+      return;
+    }
     this.data.pkName = name + '_id';
   }
 
-  public create() {
-    if (!this.validateUrlName()) {
-      this.generalService.showFeedback('Invalid input.', 'errorMessage');
+  create() {
+
+    if (!this.validateName()) {
+      this.generalService.showFeedback('Invalid name of table or primary key', 'errorMessage');
       return;
     }
 
     this.dialogRef.close(this.data);
   }
 
-  private validateUrlName() {
-    return this.CommonRegEx.appNameWithUppercase.test(this.data.name) && this.CommonRegEx.appNameWithUppercase.test(this.data.pkName) && this.data.pkLength > 9;
+  /*
+   * Private helper methods.
+   */
+
+  private validateName() {
+    return this.CommonRegEx.appNameWithUppercase.test(this.data.name) &&
+      this.CommonRegEx.appNameWithUppercase.test(this.data.pkName) &&
+      this.data.pkLength > 3;
   }
 }
 
