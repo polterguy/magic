@@ -6,6 +6,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
+import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 
 /**
  * Helper modal dialog to allow user to configure his SMTP server settings.
@@ -25,6 +27,9 @@ export class SmtpDialogComponent implements OnInit {
     name: [''],
     address: ['']
   });
+
+  CommonRegEx = CommonRegEx;
+  CommonErrorMessages = CommonErrorMessages;
 
   constructor(
     private formBuilder: UntypedFormBuilder,

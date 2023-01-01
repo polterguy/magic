@@ -24,6 +24,7 @@
             type="text"
             placeholder="SMTP host name"
             formControlName="host"
+            spellcheck="false"
             autocomplete="off"
             name="host" />
         </mat-form-field>
@@ -44,6 +45,7 @@
             matInput
             type="number"
             placeholder="SMTP port"
+            autocomplete="off"
             formControlName="port"
             name="port" />
         </mat-form-field>
@@ -64,6 +66,8 @@
             matInput
             type="text"
             placeholder="username"
+            autocomplete="off"
+            spellcheck="false"
             formControlName="username"
             name="username" />
         </mat-form-field>
@@ -84,6 +88,8 @@
             matInput
             type="text"
             placeholder="Password"
+            autocomplete="off"
+            spellcheck="false"
             formControlName="password"
             name="password" />
         </mat-form-field>
@@ -103,7 +109,9 @@
           <input
             matInput
             type="text"
+            spellcheck="false"
             placeholder="Default from name"
+            autocomplete="off"
             formControlName="name"
             name="name" />
         </mat-form-field>
@@ -124,8 +132,11 @@
             matInput
             type="text"
             placeholder="Default from email"
+            spellcheck="false"
             formControlName="address"
-            name="address" />
+            name="address"
+            [pattern]="CommonRegEx.email" />
+          <mat-error>{{CommonErrorMessages.email}}</mat-error>
         </mat-form-field>
 
       </div>
