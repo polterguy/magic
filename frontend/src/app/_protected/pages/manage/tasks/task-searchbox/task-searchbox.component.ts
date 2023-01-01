@@ -35,23 +35,19 @@ export class TaskSearchboxComponent implements OnInit {
       });
   }
 
-  /**
-   * Invoking endpoint to search in unique fields.
-   * @params event
-   */
-  private applyFilter(keyword: string) {
-    this.filterList.emit(keyword);
-  }
-
-  /**
-   * Removes the search keyword.
-   * @callback filterList To refetch the unfiltered list.
-   */
-  public removeSearchTerm() {
+  removeSearchTerm() {
     this.filterControl.setValue('');
   }
 
-  public invokeAddTask() {
+  invokeAddTask() {
     this.addTask.emit();
+  }
+
+  /*
+   * Private helper methods.
+   */
+
+  private applyFilter(keyword: string) {
+    this.filterList.emit(keyword);
   }
 }

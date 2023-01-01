@@ -1,17 +1,16 @@
-
 /*
  * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
- .playground ::ng-deep {
+.playground ::ng-deep {
   .cm-s-aista.CodeMirror {
     height: 100%;
-    max-height: calc(100vh - (368px + 36px));
+    max-height: calc(100vh - (368px));
   }
 
   @media (max-width: 991px) {
     .cm-s-aista.CodeMirror {
-      max-height: calc(100vh - (368px + 50px));
+      max-height: calc(100vh - (368px));
     }
   }
 }

@@ -1,33 +1,83 @@
+
 <div class="row fullPage playground">
   <div class="col-md-6 col-12 mb-md-0 mb-4">
-    <mat-card class="h-100">
+
+    <mat-card class="h-100 py-2 px-4">
       <mat-card-content class="endpoint-generator h-100">
-        <div class="d-flex justify-content-between align-items-lg-center flex-lg-row flex-column w-100 mb-3">
-          <p class="fw-bold mb-0">Hyperlambda Playground</p>
+
+        <div class="d-flex justify-content-between align-items-lg-center flex-lg-row flex-column w-100 mb-1">
+
+          <h3 class="fw-bold mb-0">Hyperlambda Playground</h3>
+
           <div class="d-flex justify-content-end">
-            <button mat-button color="primary" (click)="load()">Snippets</button>
-            <button mat-button color="primary" (click)="viewShortkeys()">Shortkeys</button>
+
+            <button
+              mat-button
+              color="primary"
+              (click)="load()">
+              Snippets
+            </button>
+
+            <button
+              mat-button
+              color="primary"
+              (click)="viewShortkeys()">
+              Shortkeys
+            </button>
+
           </div>
         </div>
-        <app-codemirror-hyperlambda [(model)]="input" class="full-height d-block"></app-codemirror-hyperlambda>
+
+        <app-codemirror-hyperlambda
+          [(model)]="input"
+          class="full-height d-block">
+        </app-codemirror-hyperlambda>
 
         <div class="d-flex justify-content-end align-items-center w-100 mt-3">
-          <button mat-button color="primary" class="px-sm-5" (click)="save()">Save</button>
-          <button mat-flat-button color="primary" class="px-sm-5" (click)="execute()">Run</button>
+
+          <button
+            mat-button
+            color="primary"
+            class="px-sm-5"
+            (click)="save()">
+            Save
+          </button>
+
+          <button
+            mat-flat-button
+            color="primary"
+            class="px-sm-5"
+            (click)="execute()">
+            Run
+          </button>
+
         </div>
+
       </mat-card-content>
     </mat-card>
+
   </div>
 
   <div class="col-md-6 col-12">
-    <mat-card class="h-100">
+
+    <mat-card class="h-100 py-2 px-4">
       <mat-card-content class="endpoint-generator h-100">
-        <div class="d-flex justify-content-between align-items-lg-center flex-lg-row flex-column w-100 mb-3">
-          <p class="fw-bold mb-0">Results</p>
+
+        <div class="d-flex justify-content-between align-items-lg-center flex-lg-row flex-column w-100 mb-1">
+
+          <h3 class="fw-bold mb-0">Result</h3>
+
           <button mat-button class="dummy-element">dd</button>
+
         </div>
-        <app-codemirror-hyperlambda [(model)]="output" class="full-height d-block"></app-codemirror-hyperlambda>
+
+        <app-codemirror-hyperlambda
+          [(model)]="output"
+          class="full-height d-block">
+        </app-codemirror-hyperlambda>
+
       </mat-card-content>
     </mat-card>
+
   </div>
 </div>
