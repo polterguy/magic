@@ -3,11 +3,10 @@
  * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
  */
 
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Validators, UntypedFormBuilder } from '@angular/forms';
 import { MatAutocompleteActivatedEvent } from '@angular/material/autocomplete';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable } from 'rxjs';
 import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
 import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 import { GeneralService } from 'src/app/_general/services/general.service';
@@ -24,20 +23,16 @@ import { BackendsStorageService } from 'src/app/_general/services/backendsstorag
 })
 export class LoginComponent implements OnInit {
 
+  private backendList: Backend[] = [];
+
   loginForm = this.formBuilder.group({
     username: ['', [Validators.required]],
     password: ['', [Validators.required]],
     backend: ['', [Validators.required, Validators.pattern(/^(http|https):\/\/[^ "]+$/)]],
   });
 
-  backendHasBeenSelected: boolean = false;
-  backendList: Backend[] = [];
-  filteredBackends: Observable<any[]>;
-  savePassword: boolean = true;
   viewPassword: boolean = false;
-  rememberPassword: boolean = false;
   waiting: boolean = false;
-
   CommonRegEx = CommonRegEx;
   CommonErrorMessages = CommonErrorMessages;
 
@@ -47,7 +42,6 @@ export class LoginComponent implements OnInit {
     private backendService: BackendService,
     private router: Router,
     public backendStorageService: BackendsStorageService,
-    private cdr: ChangeDetectorRef,
     private activatedRoute: ActivatedRoute) { }
 
   ngOnInit() {
@@ -56,7 +50,6 @@ export class LoginComponent implements OnInit {
 
   private waitForBackend() {
     this.backendList = this.backendService.backends;
-    this.backendHasBeenSelected = true;
 
     this.activatedRoute.queryParams.subscribe((params: any) => {
       if (params.switchTo) {
@@ -80,7 +73,6 @@ export class LoginComponent implements OnInit {
         this.loginForm.controls.password.setValue(defaultBackend.password);
       }
     })
-    this.cdr.detectChanges();
   }
 
   backendActivated(e: MatAutocompleteActivatedEvent) {
@@ -93,7 +85,7 @@ export class LoginComponent implements OnInit {
 
   login() {
     if (!CommonRegEx.backend.test(this.loginForm.controls.backend.value.replace(/\/$/, ''))) {
-      this.generalService.showFeedback('Backend URL is not valid.', 'errorMessage', 'Ok');
+      this.generalService.showFeedback('Backend URL is not valid', 'errorMessage', 'Ok');
       return;
     }
 
@@ -111,7 +103,7 @@ export class LoginComponent implements OnInit {
     this.backendService.login(
       this.loginForm.value.username,
       this.loginForm.value.password,
-      this.savePassword).subscribe({
+      true).subscribe({
         next: () => {
           this.router.navigate(['/']);
           setTimeout(() => {
