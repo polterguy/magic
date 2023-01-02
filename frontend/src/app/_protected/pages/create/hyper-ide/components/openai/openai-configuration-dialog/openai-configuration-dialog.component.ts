@@ -7,7 +7,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Response } from 'src/app/models/response.model';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { OpenAIService } from 'src/app/_general/services/openai.service';
+import { OpenAIModel, OpenAIService } from 'src/app/_general/services/openai.service';
 import { OpenAITrainingDialogComponent } from '../openai-training-dialog/openai-training-dialog.component';
 
 /**
@@ -22,10 +22,10 @@ export class OpenAIConfigurationDialogComponent implements OnInit {
 
   openApiKey: string = '';
   startTraining: boolean = true;
-  models: string[] = [];
-  selectedModel: string = '';
-  max_tokens: number = 500;
-  temperature: number = 0.4;
+  models: OpenAIModel[] = [];
+  selectedModel: OpenAIModel = null;
+  max_tokens: number = 1000;
+  temperature: number = 0.5;
 
   constructor(
     private dialogRef: MatDialogRef<OpenAIConfigurationDialogComponent>,
@@ -47,7 +47,7 @@ export class OpenAIConfigurationDialogComponent implements OnInit {
         }
 
         this.openAiService.base_models().subscribe({
-          next: (models: string[]) => {
+          next: (models: OpenAIModel[]) => {
 
             this.models = models;
             this.selectedModel = this.models[0];
@@ -86,7 +86,12 @@ export class OpenAIConfigurationDialogComponent implements OnInit {
 
                   if (succeeded.length > 0) {
                     this.models = succeeded
-                      .map(x => x.fine_tuned_model)
+                      .map(x => {
+                        return {
+                          name: x.fine_tuned_model,
+                          description: 'Fine tuned model',
+                        }
+                      })
                       .concat(this.models);
 
                     // Making sure we select the most recent model as our default.
@@ -123,7 +128,7 @@ export class OpenAIConfigurationDialogComponent implements OnInit {
 
     this.openAiService.configure(
       this.openApiKey,
-      this.selectedModel,
+      this.selectedModel.name,
       this.max_tokens,
       this.temperature).subscribe({
       next: () => {
@@ -201,7 +206,11 @@ export class OpenAIConfigurationDialogComponent implements OnInit {
 
     this.generalService.showLoading();
 
-    this.openAiService.configure(this.openApiKey, this.selectedModel, this.max_tokens, this.temperature).subscribe({
+    this.openAiService.configure(
+      this.openApiKey,
+      this.selectedModel.name,
+      this.max_tokens,
+      this.temperature).subscribe({
       next: () => {
         this.generalService.hideLoading();
 

@@ -1,16 +1,31 @@
 
-<h3 mat-dialog-title class="mb-0">The Machine says</h3>
+<h3 mat-dialog-title class="mb-0">Your question</h3>
 
 <div mat-dialog-content>
 
   <p class="text-muted text-small mb-3">{{data.prompt}}</p>
 
-  <app-codemirror-hyperlambda *ngIf="hlReady" class="h-100" [(model)]="hlModel">
-  </app-codemirror-hyperlambda>
+  <ngx-codemirror
+    class="codemirror-container h-100"
+    [(ngModel)]="data.snippet"
+    *ngIf="cmReady"
+    [options]="options">
+  </ngx-codemirror>
 
 </div>
 
 <div mat-dialog-actions [align]="'end'">
-  <button mat-button (click)="copy()">Copy</button>
-  <button mat-flat-button mat-dialog-close>Close</button>
+
+  <button
+    mat-button
+    (click)="copy()">
+    Copy
+  </button>
+
+  <button
+    mat-flat-button
+    mat-dialog-close>
+    Close
+  </button>
+
 </div>

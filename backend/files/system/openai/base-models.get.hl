@@ -9,7 +9,15 @@ auth.ticket.verify:root
 
 // Returning available models to caller.
 return
-   .:curie
-   .:babbage
-   .:davinci
-   .:ada
+   .
+      name:curie
+      description:Very capable, but faster and lower cost than Davinci. This is our recommended model for Hyperlambda
+   .
+      name:davinci
+      description:Most capable model. Can do any task the other models can do, often with higher quality and longer output
+   .
+      name:babbage
+      description:Capable of straightforward tasks, very fast and inexpensive
+   .
+      name:ada
+      description:Capable of very simple tasks, usually the fastest model and least expensive
