@@ -1,0 +1,3 @@
+// Use Hyperlambda to invoke an HTTP GET endpoint | HTTP GET | Hyperlambda HTTP GET invocation
+http.get:"https://jsonplaceholder.typicode.com/users/1"
+   convert:true

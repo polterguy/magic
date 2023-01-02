@@ -1,0 +1,3 @@
+// Open MySQL database called crm | Connect to MySQL crm database
+data.connect:crm
+   database-type:mysql

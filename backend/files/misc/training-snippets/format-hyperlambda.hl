@@ -1,0 +1,15 @@
+// Use Hyperlambda to format all Hyperlambda in the module names sakila | Format Hyperlambda code
+.folder:/modules/sakila/
+io.file.list-recursively:x:-
+for-each:x:-/*
+   if
+      strings.ends-with:x:@.dp/#
+         .:.hl
+      .lambda
+         io.file.load:x:@.dp/#
+         hyper2lambda:x:-
+            comments:true
+         lambda2hyper:x:-/*
+            comments:true
+         io.file.save:x:@.dp/#
+            get-value:x:@lambda2hyper

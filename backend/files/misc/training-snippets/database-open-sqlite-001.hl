@@ -1,0 +1,3 @@
+// Open SQLite database called crm | Connect to SQLite crm database
+data.connect:crm
+   database-type:sqlite

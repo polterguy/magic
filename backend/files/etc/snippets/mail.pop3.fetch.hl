@@ -1,3 +1,15 @@
-// Use Hyperlambda to retrieve new emails from the default POP3 configuration
+/*
+ * A small script that connects to a POP3 server,
+ * and retrieves all emails on the server, simply
+ * creating a log entry for each email found on POP3
+ * server.
+ */
 mail.pop3.fetch
    .lambda
+
+      /*
+       * Lambda object evaluated once for every
+       * email fetched from POP3 server.
+       */
+      log.info
+         lambda2hyper:x:./.

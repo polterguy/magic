@@ -1,4 +1,7 @@
-// Use Hyperlambda to set the name of the [.destination] node to 'foo' | Set name of node | Change the name of a node using Hyperlambda | Change node name
+/*
+ * Changes the name of the specified node(s) to whatever the results of its
+ * parameter is.
+ */
 .destination
 set-name:x:@.destination
    .:foo

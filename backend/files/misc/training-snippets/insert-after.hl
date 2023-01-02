@@ -1,0 +1,6 @@
+// Use Hyperlambda to insert a [foo2] node after the [foo1] node found inside of a [.destination] node
+.destination
+   foo1
+insert-after:x:@.destination/*/foo1
+   .
+      foo2:bar

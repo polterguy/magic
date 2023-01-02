@@ -1,0 +1,3 @@
+// Read all records from customers table | Select records from customers
+data.read
+   table:customers

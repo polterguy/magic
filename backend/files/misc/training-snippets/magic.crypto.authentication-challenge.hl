@@ -1,0 +1,18 @@
+// Use Hyperlambda to create a cryptographic challenge towards the xyz.com, for then to solve the cryptographic challenge and store the JWT token returned from xyz.com in a [.result] node
+http.get:"https://xyz.com/magic/system/crypto/challenge"
+io.file.load:/etc/system/crypto/keys/public.key
+crypto.fingerprint:x:-
+io.file.load:/etc/system/crypto/keys/private.key
+json2lambda:x:@http.get/*/content
+crypto.sign:x:@json2lambda/*/result
+   signing-key:x:@io.file.load
+   signing-key-fingerprint:x:@crypto.fingerprint
+unwrap:x:+/*
+lambda2json
+   challenge:x:@crypto.sign
+http.post:"http://localhost:5000/magic/system/crypto/challenge"
+   payload:x:@lambda2json
+json2lambda:x:@http.post/*/content
+set-value:x:../*/.result
+   get-value:x:@json2lambda/*/result
+.result

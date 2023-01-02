@@ -1,0 +1,8 @@
+// Use Hyperlambda to connects to the foo database and counts items from the tbl table | Count records in database | Count records using Hyperlambda | Count records in table | Do the same as count(*) in SQL
+data.connect:db
+   data.read
+      table:tbl
+      columns
+         count(*)
+            as:count
+      limit:long:1

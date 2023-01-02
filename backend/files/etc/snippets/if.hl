@@ -1,6 +1,8 @@
-// Use Hyperlambda to create an if/else block that checks to see if some value equals to true
-.args
-if:x:@.args
-   log.info:Value is true
+// Evaluates specified [.lambda] if condition evaluates to true.
+if:x:@SOME_EXPRESSION
+
+   // Lambda evaluates if condition is true.
+
 else
-   log.info:Value is false
+
+   // Lambda evaluated if condition is NOT true.

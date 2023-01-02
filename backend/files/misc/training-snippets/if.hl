@@ -1,0 +1,6 @@
+// Use Hyperlambda to create an if/else block that checks to see if some value equals to true
+.args
+if:x:@.args
+   log.info:Value is true
+else
+   log.info:Value is false

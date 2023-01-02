@@ -1,0 +1,7 @@
+// Open database called government and select first 20 records from companies | Select first 20 records from companies in government
+data.connect:government
+
+   // Read 20 records from names
+   data.read
+      table:companies
+      limit:20

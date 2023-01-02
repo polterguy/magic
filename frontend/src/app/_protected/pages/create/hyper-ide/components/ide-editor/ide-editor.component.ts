@@ -27,9 +27,7 @@ import { Endpoint } from 'src/app/_protected/models/common/endpoint.model';
 import { OpenAIService } from 'src/app/_general/services/openai.service';
 import { Response } from 'src/app/models/response.model';
 import { OpenAIConfigurationDialogComponent } from '../openai/openai-configuration-dialog/openai-configuration-dialog.component';
-import { OpenAITrainingDialogComponent } from '../openai/openai-training-dialog/openai-training-dialog.component';
 import { OpenAIAnswerDialogComponent } from '../openai/openai-answer-dialog/openai-answer-dialog.component';
-import { TreeNode } from '../ide-tree/models/tree-node.model';
 
 /**
  * Hyper IDE editor component, wrapping currently open files, allowing user to edit the code.
@@ -134,21 +132,29 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   configureOpenAi() {
+
     const dialog = this.dialog.open(OpenAIConfigurationDialogComponent, {
       width: '80vw',
       maxWidth: '550px',
     });
     dialog.afterClosed().subscribe((result: {configured: boolean, start_training: boolean}) => {
+
       if (result?.configured) {
+
         this.openAiEnabled = true;
-        if (result?.start_training) {
-          const dialog = this.dialog.open(OpenAITrainingDialogComponent, {
-            width: '80vw',
-            maxWidth: '850px',
-          });
-          dialog.afterClosed().subscribe((result: boolean) => {
-            if (result) {
-              this.generalService.showFeedback('Notice, training your model might take several minutes, even hours');
+        if (result.start_training) {
+
+          this.generalService.showLoading();
+
+          this.openAiService.start_training().subscribe({
+            next: () => {
+
+              this.generalService.showFeedback('Training of OpenAI successfully started');
+              this.generalService.hideLoading();
+            },
+            error: (error: any) => {
+              this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+              this.generalService.hideLoading();
             }
           });
         }
@@ -157,12 +163,16 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   askOpenAi() {
+
     this.generalService.showLoading();
     this.waitingForAnswer = true;
+
     this.openAiService.query(this.openAiPrompt + ' ->').subscribe({
       next: (result: Response) => {
+
         this.generalService.hideLoading();
         this.waitingForAnswer = false;
+
         const dialog = this.dialog.open(OpenAIAnswerDialogComponent, {
           width: '50%',
           data: {
@@ -335,9 +345,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
       }
     });
   }
-  /**
-   * Invoked when a file should be renamed.
-   */
+
   private renameFolder() {
     if (!this.currentFileData) {
       return;
@@ -368,9 +376,6 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     this.createNewFileObjectFromParent.emit(type);
   }
 
-  /**
-   * Invoked when a file should be previewed.
-   */
   private previewActiveFile() {
     if (!this.currentFileData.path.endsWith('.md')) {
       return;
@@ -383,9 +388,6 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     });
   }
 
-  /**
-   * Invoked when a file should be previewed.
-   */
   private insertSnippet() {
     if (!this.currentFileData.path.endsWith('.hl')) {
       return;
@@ -442,9 +444,6 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  /**
-   * Invoked when user wants to execute a macro.
-   */
   private selectMacro() {
     const dialogRef = this.dialog.open(SelectMacroDialogComponent, {
       width: '550px',
@@ -459,9 +458,6 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     });
   }
 
-  /*
-   * Executes the specified macro.
-   */
   private executeMacro(file: string) {
     this.fileService.getMacroDefinition(file).subscribe({
       next: (result: MacroDefinition) => {

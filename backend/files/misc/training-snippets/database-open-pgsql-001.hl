@@ -1,0 +1,3 @@
+// Open PostgreSQL database called crm | Connect to Postgres crm database
+data.connect:crm
+   database-type:pgsql

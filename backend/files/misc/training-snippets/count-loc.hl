@@ -1,0 +1,26 @@
+// Use Hyperlambda to count lines of code in the /system/auth/ folder | Count LOC in folder | Count LOC | Count lines of code
+.folder:/system/auth/
+.loc:int:0
+
+// Forward evaluating the argument we are passing into [signal]
+unwrap:x:+/*
+
+// Signaling the dynamic slot called 'magic.io.file.load-recursively'
+signal:magic.io.file.load-recursively
+   .:x:@.folder
+
+// Looping through all nodes returned from above invocation
+for-each:x:@signal/*
+
+   // Checking if file is a Hyperlambda file and ends with .hl extension
+   if
+      strings.ends-with:x:@.dp/#
+         .:.hl
+      .lambda
+
+         // Converting Hyperlambda to a lambda object
+         hyper2lambda:x:@.dp/#/0
+
+         // Incrementing the value of [.loc] by the number of nodes in file
+         math.increment:x:@.loc
+            get-count:x:@hyper2lambda/**

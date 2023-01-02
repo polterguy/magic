@@ -1,0 +1,10 @@
+// Endpoint concatenating two strings | Concatenate 2 strings in endpoint and return result | Concatenate two strings in endpoint
+.arguments
+   arg1:string
+   arg2:string
+strings.concat
+   get-value:x:@.arguments/*/arg1
+   get-value:x:@.arguments/*/arg2
+unwrap:x:+/*
+return
+   result:x:@strings.concat
