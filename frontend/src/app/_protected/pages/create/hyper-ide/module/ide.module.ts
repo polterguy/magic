@@ -26,6 +26,7 @@ import { OpenAIConfigurationDialogComponent } from '../components/openai/openai-
 import { OpenAIAnswerDialogComponent } from '../components/openai/openai-answer-dialog/openai-answer-dialog.component';
 import { OpenAITrainingDialogComponent } from '../components/openai/openai-training-dialog/openai-training-dialog.component';
 import { CmModule } from 'src/app/codemirror/_module/cm.module';
+import { OpenaiPromptComponent } from '../components/openai/openai-prompt/openai-prompt.component';
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { CmModule } from 'src/app/codemirror/_module/cm.module';
     OpenAIAnswerDialogComponent,
     OpenAIConfigurationDialogComponent,
     OpenAITrainingDialogComponent,
+    OpenaiPromptComponent,
   ],
   imports: [
     CommonModule,

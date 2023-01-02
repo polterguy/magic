@@ -15,12 +15,6 @@
       <button
         mat-button
         color="primary"
-        class="px-3"
-        (click)="configureOpenAi()">OpenAI</button>
-
-      <button
-        mat-button
-        color="primary"
         (click)="openShortkeys()">Shortkeys</button>
 
     </div>
@@ -42,46 +36,25 @@
 
   <div class="d-flex justify-content-end align-items-center w-100 mt-2 mb-0">
 
-    <form *ngIf="openAiEnabled" (ngSubmit)="askOpenAi()" class="w-100 open-ai-form p-2 px-3">
+    <app-openai-prompt
+      *ngIf="currentFileData"
+      [fileType]="fileType()"
+      class="w-100">
+    </app-openai-prompt>
 
-      <mat-form-field
-        class="w-100 standalone-field prompt">
-        <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-          <mat-icon>search</mat-icon>
-          <span class="text-muted">|</span>
-        </span>
-        <input
-          matInput
-          placeholder="Use AI to Create Hyperlambda ..."
-          [disabled]="waitingForAnswer"
-          name="openAiPrompt"
-          [(ngModel)]="openAiPrompt"
-          autocomplete="off">
-      </mat-form-field>
+    <button
+      *ngIf="currentFileData"
+      mat-button
+      color="primary"
+      class="px-3"
+      (click)="closeActiveFile()">Close</button>
 
-      <button
-        mat-button
-        type="submit"
-        *ngIf="openAiEnabled"
-        [disabled]="waitingForAnswer"
-        color="primary"
-        class="px-3">Ask</button>
-
-      <button
-        *ngIf="currentFileData"
-        mat-button
-        color="primary"
-        class="px-3"
-        (click)="closeActiveFile()">Close</button>
-
-      <button
-        *ngIf="currentFileData"
-        mat-button
-        color="primary"
-        class="px-3"
-        (click)="saveActiveFile()">Save</button>
-
-    </form>
+    <button
+      *ngIf="currentFileData"
+      mat-button
+      color="primary"
+      class="px-3"
+      (click)="saveActiveFile()">Save</button>
 
   </div>
 

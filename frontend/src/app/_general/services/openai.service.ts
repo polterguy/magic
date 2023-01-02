@@ -20,10 +20,13 @@ export class OpenAIService {
 
   constructor(private httpService: HttpService) { }
 
-  query(query: string) {
+  query(query: string, lang: string = null) {
+    let filter = '?query=' + encodeURIComponent(query);
+    if (lang && lang !== 'hl') {
+      filter += '&model=text-davinci-003'
+    }
     return this.httpService.get<Response>(
-      '/magic/system/openai/prompt?query=' +
-      encodeURIComponent(query));
+      '/magic/system/openai/prompt' + filter);
   }
 
   enabled() {
