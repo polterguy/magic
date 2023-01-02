@@ -1,0 +1,13 @@
+// Endpoint returning the specified file to caller as JSON content | Returns content of the file given as filename argument to caller as JSON content
+.arguments
+   filename:string
+
+// Loading file
+io.file.load:x:@.arguments/*/filename
+
+// Making sure we return content as binary content
+response.headers.set
+   Content-Type:application/json
+
+// Returning content of file to caller.
+return:x:@io.file.load
