@@ -1097,6 +1097,16 @@ semaphore:crudifier
          .:{table}
          get-value:x:@.arguments/*/table
 
+   // Applying the correct comment to the file.
+   set-value:x:@apply/0
+      strings.replace:x:@apply/0
+         .:{database}
+         get-value:x:@.arguments/*/database
+   set-value:x:@apply/0
+      strings.replace:x:@apply/0
+         .:{table}
+         get-value:x:@.arguments/*/table
+
    /*
     * Transforming lambda to Hyperlambda, and saving it to the correct file, making sure
     * we give the filename the correct HTTP verb, extension, etc.
@@ -1181,6 +1191,10 @@ semaphore:crudifier
             .:crud-count
          set-value:x:@apply/*/.description
             strings.replace:x:@apply/*/.description
+               .:Returns
+               .:Counts
+         set-value:x:@apply/0
+            strings.replace:x:@apply/0
                .:Returns
                .:Counts
          add:x:@apply/**/columns

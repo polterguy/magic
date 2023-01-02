@@ -1,8 +1,4 @@
-
-/*
- * Template for HTTP GET CRUD requests.
- * This file was automatically generated using Magic's CRUDifier.
- */
+// Returns items from your {table} table in your {database} database according to the specified arguments
 .arguments
    limit:long
    offset:long
