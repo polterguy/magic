@@ -1,5 +1,5 @@
 // Create a gateway endpoint that returns whatever someplace.com returns | Hyperlambda gateway endpoint | Hyperlambda endpoint serving as gateway endpoint to another endpoint | API gateway in Hyperlambda
-.arguments
+.arguments:*
 http.get:"https://someplace.com"
    convert:true
 return-nodes:x:@http.get/*/content/*
