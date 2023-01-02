@@ -27,12 +27,6 @@ export class AccessGuard implements CanActivate {
 
   hasAccess: boolean = undefined;
 
-  /**
-   * Creates an instance of your type.
-   *
-   * @param router Needed to redirect if user doesn't have access
-   * @param backendService Needed to determine access rights of user
-   */
   constructor(
     private router: Router,
     private backendService: BackendService) { }
