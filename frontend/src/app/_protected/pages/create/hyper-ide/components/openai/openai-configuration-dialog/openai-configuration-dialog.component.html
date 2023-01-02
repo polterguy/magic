@@ -4,7 +4,7 @@
 <div mat-dialog-content>
 
   <p class="text-muted mt-0 mb-4">
-    Configure OpenAI with your API key, and optionally start training it using the default training data.
+    Configure OpenAI with your API key, and optionally start training it using the default Hyperlambda training data.
     Notice, you can create your API key <a href="https://beta.openai.com/account/api-keys" target="_blank">here</a>.
   </p>
 
@@ -80,7 +80,7 @@
   <mat-checkbox
     [(ngModel)]="startTraining"
     class="mb-3 mt-1"
-    color="primary">Start training</mat-checkbox>
+    color="primary">Start Hyperlambda training</mat-checkbox>
 
 </div>
 
@@ -88,14 +88,14 @@
 
   <button
     mat-button
-    (click)="close()">
-    Close
+    (click)="training_data()">
+    Training data
   </button>
 
   <button
     mat-button
-    (click)="training_data()">
-    Training data
+    (click)="close()">
+    Close
   </button>
 
   <button

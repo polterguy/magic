@@ -32,7 +32,7 @@ set-value:x:@.args/*/model
    get-first-value
       get-value:x:@.arguments/*/model
       get-value:x:@config.get
-      .:code-davinci-002
+      .:text-davinci-003
 config.get:"magic:openai:temperature"
 convert:x:-
    type:decimal
@@ -49,6 +49,15 @@ set-value:x:@.args/*/max_tokens
       get-value:x:@.arguments/*/max_tokens
       get-value:x:@convert
       .:int:100
+
+// Adding END sequence, but only if we're not using a default model
+if
+   strings.contains:x:@.args/*/model
+      .:hyperlambda
+   .lambda
+      add:x:../*/http.post/*/payload
+         .
+            stop:" END"
 
 /*
  * Creating our Bearer token by reading our OpenAI
@@ -70,7 +79,6 @@ http.post:"https://api.openai.com/v1/completions"
       model:x:@.args/*/model
       temperature:x:@.args/*/temperature
       max_tokens:x:@.args/*/max_tokens
-      stop:" END"
    convert:true
 
 // Sanity checking above invocation

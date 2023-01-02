@@ -3,7 +3,7 @@
  * Copyright (c) Aista Ltd, 2021 - 2023 info@aista.com, all rights reserved.
  */
 
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
@@ -24,10 +24,6 @@ import { CodemirrorActionsService } from '../../services/codemirror-actions.serv
 import { FileService } from '../../services/file.service';
 import { VocabularyService } from '../../services/vocabulary.service';
 import { Endpoint } from 'src/app/_protected/models/common/endpoint.model';
-import { OpenAIService } from 'src/app/_general/services/openai.service';
-import { Response } from 'src/app/models/response.model';
-import { OpenAIConfigurationDialogComponent } from '../openai/openai-configuration-dialog/openai-configuration-dialog.component';
-import { OpenAIAnswerDialogComponent } from '../openai/openai-answer-dialog/openai-answer-dialog.component';
 
 /**
  * Hyper IDE editor component, wrapping currently open files, allowing user to edit the code.
@@ -58,28 +54,16 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   @Output() renameFolderFromParent: EventEmitter<any> = new EventEmitter<any>();
   @Output() createNewFileObjectFromParent: EventEmitter<any> = new EventEmitter<any>();
 
-  openAiPrompt: string = '';
-  openAiEnabled: boolean = false;
-  waitingForAnswer: boolean = false;
-
   constructor(
     private dialog: MatDialog,
-    private cdr: ChangeDetectorRef,
     private fileService: FileService,
     private generalService: GeneralService,
     private evaluatorService: EvaluatorService,
     private vocabularyService: VocabularyService,
-    private openAiService: OpenAIService,
     private codemirrorActionsService: CodemirrorActionsService) { }
 
   ngOnInit() {
     this.watchForActions();
-    this.cdr.detectChanges();
-    this.openAiService.enabled().subscribe({
-      next: (result: any) => {
-        this.openAiEnabled = result.result;
-      }
-    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -109,6 +93,10 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     editor.doc.clearHistory(); // To avoid having initial loading of file becoming an "undo operation".
   }
 
+  fileType() {
+    return this.currentFileData?.path.substring(this.currentFileData.path.lastIndexOf('.') + 1);
+  }
+
   setFocusToActiveEditor() {
     setTimeout(() => {
       const fileExisting: number = this.openFiles.findIndex((item: any) => item.path === this.currentFileData.path);
@@ -129,67 +117,6 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
         type: ['full']
       }
     })
-  }
-
-  configureOpenAi() {
-
-    const dialog = this.dialog.open(OpenAIConfigurationDialogComponent, {
-      width: '80vw',
-      maxWidth: '550px',
-    });
-    dialog.afterClosed().subscribe((result: {configured: boolean, start_training: boolean}) => {
-
-      if (result?.configured) {
-
-        this.openAiEnabled = true;
-        if (result.start_training) {
-
-          this.generalService.showLoading();
-
-          this.openAiService.start_training().subscribe({
-            next: () => {
-
-              this.generalService.showFeedback('Training of OpenAI successfully started');
-              this.generalService.hideLoading();
-            },
-            error: (error: any) => {
-              this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
-              this.generalService.hideLoading();
-            }
-          });
-        }
-      }
-    });
-  }
-
-  askOpenAi() {
-
-    this.generalService.showLoading();
-    this.waitingForAnswer = true;
-
-    this.openAiService.query(this.openAiPrompt + ' ->').subscribe({
-      next: (result: Response) => {
-
-        this.generalService.hideLoading();
-        this.waitingForAnswer = false;
-
-        const dialog = this.dialog.open(OpenAIAnswerDialogComponent, {
-          width: '50%',
-          data: {
-            snippets: result,
-            prompt: this.openAiPrompt,
-          },
-        });
-        dialog.afterClosed().subscribe((data: any) => {
-          console.log(data);
-        });
-      },
-      error: (error: any) => {
-        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
-        this.generalService.hideLoading();
-        this.waitingForAnswer = false;
-      }
-    });
   }
 
   ngAfterViewInit() {
