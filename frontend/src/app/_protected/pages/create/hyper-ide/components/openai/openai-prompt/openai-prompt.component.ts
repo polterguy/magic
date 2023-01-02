@@ -103,6 +103,11 @@ export class OpenaiPromptComponent implements OnInit {
 
   askOpenAi() {
 
+    if (!this.openAiPrompt || this.openAiPrompt === '') {
+      this.generalService.showFeedback('No question specified', 'errorMessage');
+      return;
+    }
+
     this.generalService.showLoading();
     this.waitingForAnswer = true;
 
