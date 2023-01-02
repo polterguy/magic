@@ -15,7 +15,7 @@ import { SortByPipe } from "./_general/pipes/sort-by.pipe";
     DateSincePipe,
     DatePipe,
     MarkedPipe,
-    SortByPipe
+    SortByPipe,
   ],
   imports: [
     CommonModule
@@ -24,7 +24,7 @@ import { SortByPipe } from "./_general/pipes/sort-by.pipe";
     DateSincePipe,
     DatePipe,
     MarkedPipe,
-    SortByPipe
+    SortByPipe,
   ]
 })
 export class SharedModule { }

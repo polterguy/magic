@@ -22,11 +22,11 @@ import { RenameFileDialogComponent } from '../components/rename-file-dialog/rena
 import { RenameFolderDialogComponent } from '../components/rename-folder-dialog/rename-folder-dialog.component';
 import { SelectMacroDialogComponent } from '../components/select-macro-dialog/select-macro-dialog.component';
 import { UnsavedChangesDialogComponent } from '../components/unsaved-changes-dialog/unsaved-changes-dialog.component';
-import { OpenAIConfigurationDialogComponent } from '../components/openai/openai-configuration-dialog/openai-configuration-dialog.component';
-import { OpenAIAnswerDialogComponent } from '../components/openai/openai-answer-dialog/openai-answer-dialog.component';
-import { OpenAITrainingDialogComponent } from '../components/openai/openai-training-dialog/openai-training-dialog.component';
+import { OpenAIConfigurationDialogComponent } from '../../../../../_general/components/openai/openai-configuration-dialog/openai-configuration-dialog.component';
+import { OpenAIAnswerDialogComponent } from '../../../../../_general/components/openai/openai-answer-dialog/openai-answer-dialog.component';
+import { OpenAITrainingDialogComponent } from '../../../../../_general/components/openai/openai-training-dialog/openai-training-dialog.component';
 import { CmModule } from 'src/app/codemirror/_module/cm.module';
-import { OpenaiPromptComponent } from '../components/openai/openai-prompt/openai-prompt.component';
+import { OpenaiPromptComponent } from '../../../../../_general/components/openai/openai-prompt/openai-prompt.component';
 
 @NgModule({
   declarations: [
