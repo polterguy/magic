@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) Aista Ltd, 2021 - 2022 info@aista.com, all rights reserved.
+ * Copyright (c) Aista Ltd, 2021 - 2023 info@aista.com, all rights reserved.
  */
 
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
