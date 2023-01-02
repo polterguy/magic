@@ -9,6 +9,7 @@ import { HelpCenterRoutingModule } from './help-center.routing.module';
 import { MaterialModule } from 'src/app/material.module';
 import { FormsModule } from '@angular/forms';
 import { HelpCenterComponent } from '../help-center.component';
+import { ComponentsModule } from 'src/app/_general/components/components.module';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { HelpCenterComponent } from '../help-center.component';
     HelpCenterRoutingModule,
     MaterialModule,
     FormsModule,
+    ComponentsModule,
   ]
 })
 export class HelpCenterModule { }
