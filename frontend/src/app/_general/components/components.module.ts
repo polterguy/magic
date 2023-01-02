@@ -26,6 +26,10 @@ import { PwaUpdateDialogComponent } from './pwa-update-dialog/pwa-update-dialog.
 import { LogItemDetailsComponent } from './log-item-details/log-item-details.component';
 import { SearchboxComponent } from 'src/app/_protected/pages/manage/plugins/components/searchbox/searchbox.component';
 import { ConfigureThemeDialog } from '../../_protected/pages/dashboard/components/configure-theme/configure-theme-dialog.component';
+import { OpenAIAnswerDialogComponent } from './openai/openai-answer-dialog/openai-answer-dialog.component';
+import { OpenAIConfigurationDialogComponent } from './openai/openai-configuration-dialog/openai-configuration-dialog.component';
+import { OpenAITrainingDialogComponent } from './openai/openai-training-dialog/openai-training-dialog.component';
+import { OpenaiPromptComponent } from './openai/openai-prompt/openai-prompt.component';
 
 @NgModule({
   declarations: [
@@ -47,6 +51,10 @@ import { ConfigureThemeDialog } from '../../_protected/pages/dashboard/component
     LogItemDetailsComponent,
     SearchboxComponent,
     ConfigureThemeDialog,
+    OpenAIAnswerDialogComponent,
+    OpenAIConfigurationDialogComponent,
+    OpenAITrainingDialogComponent,
+    OpenaiPromptComponent,
   ],
   imports: [
     CommonModule,
@@ -72,6 +80,10 @@ import { ConfigureThemeDialog } from '../../_protected/pages/dashboard/component
     GithubTokenDialogComponent,
     LogItemDetailsComponent,
     SearchboxComponent,
+    OpenAIAnswerDialogComponent,
+    OpenAIConfigurationDialogComponent,
+    OpenAITrainingDialogComponent,
+    OpenaiPromptComponent,
   ]
 })
 export class ComponentsModule { }
