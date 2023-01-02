@@ -1,0 +1,17 @@
+// Endpoint allowing root user to upload file | File upload endpoint for root user | Create endpoint for uploading files only allowing root users to invoke it
+.arguments
+   file
+      name:string
+      stream:*
+
+// Making sure user belongs to root role
+auth.ticket.verify:root
+
+// Storing file in etc folder
+strings.concat
+   .:/etc/
+   get-value:x:@.arguments/*/name
+
+// Saving stream to full path for file
+io.stream.save-file:x:@strings.concat
+   get-value:x:@.arguments/*/file/*/stream
