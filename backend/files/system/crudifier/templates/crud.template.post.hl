@@ -1,8 +1,4 @@
-
-/*
- * Template for HTTP POST CRUD requests.
- * This file was automatically generated using Magic's CRUDifier.
- */
+// Creates an item in your {table} table in your {database} database according to the specified arguments
 .arguments
 .description:Creates an item in your {table} table in your {database} database according to the specified arguments
 .type:crud-create
