@@ -65,7 +65,8 @@ export class OpenAIConfigurationDialogComponent implements OnInit {
                 if (result.length > 0) {
 
                   // Filtering out such that only succeeded Hyperlambda models are shown to user.
-                  const succeeded = result.filter(x => x.fine_tuned_model.includes('hyperlambda') && x.status === 'succeeded');
+                  const succeeded = result
+                    .filter(x => x.fine_tuned_model.includes('hyperlambda') && x.status === 'succeeded');
 
                   // Sorting such that most recent model comes first.
                   succeeded.sort((lhs, rhs) => {
@@ -78,10 +79,10 @@ export class OpenAIConfigurationDialogComponent implements OnInit {
                     return 0;
                   });
 
-                // Checking if there are models being trained.
-                if (succeeded.filter(x => x.status === 'running').length > 0) {
-                  this.generalService.showFeedback('You have models currently in training');
-                }
+                  // Checking if there are models being trained.
+                  if (succeeded.filter(x => x.status === 'running').length > 0) {
+                    this.generalService.showFeedback('You have models currently in training');
+                  }
 
                   if (succeeded.length > 0) {
                     this.models = succeeded
@@ -90,7 +91,11 @@ export class OpenAIConfigurationDialogComponent implements OnInit {
 
                     // Making sure we select the most recent model as our default.
                     this.selectedModel = this.models[0];
+                  } else {
+                    this.startTraining = true;
                   }
+                } else {
+                  this.startTraining = true;
                 }
               },
               error: (error: any) => {
@@ -123,7 +128,7 @@ export class OpenAIConfigurationDialogComponent implements OnInit {
       this.temperature).subscribe({
       next: () => {
 
-        this.generalService.showFeedback('Your API key was saved in your configuration');
+        this.generalService.showFeedback('Your OpenAI API key was saved to your configuration', 'successMessage');
 
         // To allow for configuration to kick in we need to sleep for 1 second
         setTimeout(() => {
@@ -161,6 +166,8 @@ export class OpenAIConfigurationDialogComponent implements OnInit {
                     .map(x => x.fine_tuned_model)
                     .concat(this.models);
                   this.selectedModel = this.models[0];
+                } else {
+                  this.startTraining = true;
                 }
               }
             },
