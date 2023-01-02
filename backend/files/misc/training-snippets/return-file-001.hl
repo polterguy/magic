@@ -1,0 +1,12 @@
+// Endpoint returning a file to caller | Returns content of the /README.md file to caller
+.arguments
+
+// Loading file
+io.file.load:/README.md
+
+// Changing Content-Type to plain text
+response.headers.set
+   Content-Type:text/plain
+   
+// Returning content of file to caller.
+return:x:@io.file.load

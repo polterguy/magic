@@ -1,0 +1,12 @@
+// Endpoint returning the specified file to caller with authentication | Returns content of the file given as filename argument to caller if user is root
+.arguments
+   filename:string
+
+// Ensuring user belongs to root role
+auth.ticket.verify:root
+
+// Loading file
+io.file.load:x:@.arguments/*/filename
+   
+// Returning content of file to caller.
+return:x:@io.file.load
