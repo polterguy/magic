@@ -1,7 +1,11 @@
-// Use Hyperlambda to connects to the foo database and counts items from the tbl table | Count records in database | Count records using Hyperlambda | Count records in table | Do the same as count(*) in SQL
-data.connect:db
+// Counts items from your DATABASE_NAME and TABLE_NAME.
+data.connect:DATABASE_NAME
+   database-type:sqlite
+
+   // Reading data from database.
    data.read
-      table:tbl
+      database-type:sqlite
+      table:TABLE_NAME
       columns
          count(*)
             as:count

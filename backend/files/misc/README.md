@@ -1,7 +1,7 @@
 
 # Your misc folder
 
-This folder contains module specific miscellaneous files, such as SQL scripts to create your Magic
+This folder contains module miscellaneous files, such as SQL scripts to create your Magic
 database, etc.
 
 The default docker-compose.yml file does _not_ mount this folder as a volume, implying changes to files and

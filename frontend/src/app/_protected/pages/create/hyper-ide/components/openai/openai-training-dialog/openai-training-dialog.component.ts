@@ -9,7 +9,7 @@ import { GeneralService } from 'src/app/_general/services/general.service';
 import { OpenAIService } from 'src/app/_general/services/openai.service';
 
 /**
- * OpenAI training dialog component.
+ * OpenAI training dialog component showing user all snippets used for training Hyperlambda model.
  */
 @Component({
   selector: 'app-openai-training-dialog',
@@ -26,9 +26,12 @@ export class OpenAITrainingDialogComponent implements OnInit {
     private openAiService: OpenAIService) { }
 
   ngOnInit() {
+
     this.generalService.showLoading();
+
     this.openAiService.get_training_data().subscribe({
       next: (result: any[]) => {
+
         this.generalService.hideLoading();
         const unfoldedResult: any[] = [];
         for (const idx of result) {
@@ -51,32 +54,5 @@ export class OpenAITrainingDialogComponent implements OnInit {
 
   close() {
     this.dialogRef.close();
-  }
-
-  start_training() {
-
-    // OpenAI API requires JSONL format.
-    for(const idx of this.dataSource) {
-      idx.prompt = idx.prompt + ' ->';
-      idx.completion = idx.completion + ' END';
-    }
-    let jsonl = JSON.stringify(this.dataSource).substring(1);
-    jsonl = jsonl.substring(0, jsonl.length - 1);
-    while (jsonl.includes('},')) {
-      jsonl = jsonl.replace('},', '}\n');
-    }
-
-    // Uploading as file to backend.
-    this.generalService.showLoading();
-    this.openAiService.start_training(jsonl).subscribe({
-      next: () => {
-        this.dialogRef.close(true);
-        this.generalService.hideLoading();
-      },
-      error: (error: any) => {
-        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
-        this.generalService.hideLoading();
-      }
-    });
   }
 }

@@ -1,0 +1,19 @@
+// Create endpoint returning name and year from books in inventory filtering on name | Endpoint filtering on name returning books from inventory
+.arguments
+   filter:string
+
+// Making sure filter argument is mandatory
+validators.mandatory:x:@.arguments/*/filter
+
+// Connecting to inventory database
+data.connect:inventory
+
+   // Reading items from books matching filter from arguments
+   data.read
+      table:books
+      columns
+         name
+         year
+      where
+         and
+            name.like:x:@.arguments/*/filter

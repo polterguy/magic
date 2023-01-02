@@ -1,17 +1,13 @@
-// Use Hyperlambda to create a while loop that iterates from 1 to 20, logging the text 'Howdy from while' as it iterates | Hyperlambda while | Looping in Hyperlambda
-
-// Loop counter
+// Evaluates specified [.lambda] for as long as condition evaluates to true.
 .no:int:0
-
-// Invoking while loop's lambda object for as long as [.no] is less than 20
 while
    lt
       get-value:x:@.no
       .:int:20
    .lambda
 
-      // Creating a log entry
+      // Your lambda goes here.
       log.info:Howdy from while
 
-      // Incrementing [.no] value
+      // Incrementing counter.
       math.increment:x:@.no

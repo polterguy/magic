@@ -84,6 +84,24 @@
 </div>
 
 <div mat-dialog-actions [align]="'end'">
-  <button mat-button (click)="close()">Close</button>
-  <button mat-flat-button (click)="save()" [disabled]="!openApiKey || openApiKey.length === 0">Save</button>
+
+  <button
+    mat-button
+    (click)="close()">
+    Close
+  </button>
+
+  <button
+    mat-button
+    (click)="training_data()">
+    Training data
+  </button>
+
+  <button
+    mat-flat-button
+    (click)="save()"
+    [disabled]="!openApiKey || openApiKey.length === 0">
+    Save
+  </button>
+
 </div>

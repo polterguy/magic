@@ -1,16 +1,12 @@
 
 /*
- * Fine tunes your OpenAI account, allowing you to train it using JSONL data.
+ * Uploads training data to your OpenAI API account, and starts training the model using the default training data.
  */
 .arguments
-   content:string
-.description:Uploads training data to your OpenAI account, and starts training the model using the provided data
+.description:Uploads training data to your OpenAI API account, and starts training the model using the default training data
 
 // Making sure user has access to invoked endpoint.
 auth.ticket.verify:root
-
-// Sanity checking invocation.
-validators.mandatory:x:@.arguments/*/content
 
 /*
  * Creating our Bearer token by reading our OpenAI
@@ -21,6 +17,72 @@ set-value:x:@.token
    strings.concat
       .:"Bearer "
       config.get:"magic:openai:key"
+
+// Loading training data.
+.file-data
+.snippets
+io.file.list:/misc/training-snippets/
+io.file.list:/etc/snippets/
+for-each:x:../*/io.file.list/*
+
+   if
+      strings.ends-with:x:@.dp/#
+         .:.hl
+      .lambda
+
+         /*
+          * Loads file and creates training material from it,
+          * assuming the first node is a comment node being the prompt,
+          * and the rest of the file the completion.
+          */
+         io.file.load:x:@.dp/#
+         hyper2lambda:x:@io.file.load
+            comments:true
+         .prompt
+         set-value:x:@.prompt
+            get-value:x:@hyper2lambda/0
+         remove-nodes:x:@hyper2lambda/0
+         lambda2hyper:x:@hyper2lambda/*
+            comments:true
+         strings.split:x:@.prompt
+            .:|
+
+         // Each comment might contain multiple prompts, making sure we split these into their individual prompts.
+         for-each:x:@strings.split/*
+
+            // Trimming prompt, adding stop sequence, and prompt arrow.
+            strings.trim:x:@.dp/#
+            .prompt
+            set-value:x:@.prompt
+               strings.concat
+                  get-value:x:@strings.trim
+                  .:" ->"
+            .completion
+            set-value:x:@.completion
+               strings.concat
+                  get-value:x:@lambda2hyper
+                  .:" END"
+
+            // Adding prompt and completion to [.snippets] collection.
+            unwrap:x:+/*/*/*
+            add:x:@.snippets
+               .
+                  .
+                     prompt:x:@.prompt
+                     completion:x:@.completion
+
+// Converting [.snippets] to JSON, for then to convert manually to JSONL.
+lambda2json:x:@.snippets/*
+set-value:x:@.file-data
+   strings.replace:x:@lambda2json
+      .:"},{"
+      .:"}\n{"
+set-value:x:@.file-data
+   strings.substring:x:@.file-data
+      .:1
+      math.subtract
+         strings.length:x:@.file-data
+         .:int:2
 
 // Creating a unique training data filename.
 .filename
@@ -40,13 +102,12 @@ http.post:"https://api.openai.com/v1/files"
       entity:application/jsonl
          headers
             Content-Disposition:x:@.filename
-         content:x:@.arguments/*/content
+         content:x:@.file-data
       entity:text/plain
          headers
             Content-Disposition:"form-data; name=purpose"
          content:fine-tune
    convert:true
-
 
 // Sanity checking above invocation
 if

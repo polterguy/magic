@@ -1,5 +1,4 @@
-// Use Hyperlambda to add the [foo] node to the [.destination] node | Add a node into [.destination] | Add nodes using Hyperlambda | Append nodes to some node in Hyperlambda
-.destination
+// Adds a bunch of nodes into specified destination expression's children collection.
 add:x:@.destination
    .
       foo:bar

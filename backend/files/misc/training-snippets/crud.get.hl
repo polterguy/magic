@@ -1,0 +1,6 @@
+// Use Hyperlambda to return all items from the tbl table in the db database where name starts with John | Return records from database | Do the same as SELECT from SQL in Hyperlambda | Return records from database
+data.connect:db
+   data.read
+      table:tbl
+      where
+         name.like:John%

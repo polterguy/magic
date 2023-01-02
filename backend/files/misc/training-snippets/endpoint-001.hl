@@ -1,0 +1,4 @@
+// Create empty endpoint returning OK | Empty endpoints
+.arguments
+return
+   result:OK

@@ -1,2 +1,0 @@
-// Expression leading to [name] node in [.arguments] collection | Find [name] in [.arguments] | Get [name] argument
-:x:@.arguments/*/name

@@ -1,7 +1,0 @@
-// Create an endpoint taking animal, country and city as arguments | Create endpoint taking two strings and one integer as arguments | Create endpoint taking 3 arguments
-.arguments
-   animal:string
-   country:string
-   city:int
-return
-   result:success

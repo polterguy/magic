@@ -1,0 +1,8 @@
+// Open database called scanning and select 10 records from factories offset 30 | Offset 30 select 10 records from factories in scanning
+data.connect:scanning
+
+   // Read 10 records from factories offset 30
+   data.read
+      table:factories
+      limit:10
+      offset:30

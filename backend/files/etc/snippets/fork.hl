@@ -1,3 +1,11 @@
-// Use Hyperlambda to create a thread that writes the text 'Hello from thread' to the server's log | Create a new thread using Hyperlambda | Create thread | Execute in parallel | Threading in Hyperlambda
+/*
+ * Notice, the whole idea with this Hyperlambda,
+ * is to demonstrate how the log invocation inside of
+ * the [fork] is being executed after the outer log
+ * invocation, due to the sleep invocation, and the
+ * fact that it runs on a different thread.
+ */
 fork
-   log.info:Hello from thread
+   sleep:1000
+   log.info:INSIDE
+log.info:OUTSIDE

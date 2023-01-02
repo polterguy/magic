@@ -9,10 +9,11 @@
 auth.ticket.verify:root
 
 // Listing all files in snippets folder.
+io.file.list:/misc/training-snippets/
 io.file.list:/etc/snippets/
 
 // Loading all files, and creating structured data to caller.
-for-each:x:@io.file.list/*
+for-each:x:../*/io.file.list/*
 
    if
       strings.ends-with:x:@.dp/#
@@ -39,33 +40,6 @@ for-each:x:@io.file.list/*
                .
                   prompt:x:@.prompt
                   completion:x:@lambda2hyper
-   else-if
-      strings.ends-with:x:@.dp/#
-         .:.md
-      .lambda
-
-         /*
-          * Loads file and creates training material from it,
-          * assuming the first line in the file is the prompt,
-          * and the rest of the file is the completion.
-          */
-         io.file.load:x:@.dp/#
-         .prompt
-         strings.split:x:@io.file.load
-            .:"\r\n"
-         set-value:x:@.prompt
-            get-value:x:@strings.split/0
-         remove-nodes:x:@strings.split/0
-         .completion
-         set-value:x:@.completion
-            strings.join:x:@strings.split/*
-               .:"\r\n"
-         unwrap:x:+/*/*/*
-         add:x:../*/return
-            .
-               .
-                  prompt:x:@.prompt
-                  completion:x:@.completion
 
 // Returning result to caller.
 return
