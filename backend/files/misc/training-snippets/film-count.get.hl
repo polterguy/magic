@@ -1,0 +1,83 @@
+
+// Counts items from your film table in your sakila database according to the specified arguments
+.arguments
+   operator:string
+   film.film_id.eq:long
+   film.title.like:string
+   film.title.eq:string
+   film.description.like:string
+   film.description.eq:string
+   film.release_year.like:string
+   film.release_year.eq:string
+   film.language_id.eq:long
+   film.original_language_id.eq:long
+   film.rental_duration.eq:long
+   film.rental_rate.eq:decimal
+   film.length.eq:long
+   film.replacement_cost.eq:decimal
+   film.rating.like:string
+   film.rating.eq:string
+   film.special_features.like:string
+   film.special_features.eq:string
+   film.last_update.eq:date
+   language_id.name.eq:string
+   language_id.name.like:string
+   original_language_id.name.eq:string
+   original_language_id.name.like:string
+.description:Counts items from your film table in your sakila database according to the specified arguments
+.type:crud-count
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root,admin
+
+// Sanity checking invocation.
+validators.enum:x:@.arguments/*/operator
+   .:or
+   .:and
+
+/*
+ * Checking if user supplied an [operator] argument, and if so
+ * changing the boolean operator for comparison operations.
+ */
+if
+   exists:x:@.arguments/*/operator
+   .lambda
+
+      // User provided a boolean comparison [operator] argument.
+      set-name:x:../*/data.connect/*/data.read/*/where/0
+         get-value:x:@.arguments/*/operator
+
+// Opening up our database connection.
+data.connect:sakila
+
+   // Parametrising our read invocation.
+   add:x:./*/data.read
+      get-nodes:x:@.arguments/*/operator
+   remove-nodes:x:@.arguments/*/operator
+   add:x:+/*/where/*
+      get-nodes:x:@.arguments/*
+
+   // Reading data from database.
+   data.read
+      table:film
+         join:language
+            as:language_id
+            type:left
+            on
+               and
+                  film.language_id:language_id.language_id
+         join:language
+            as:original_language_id
+            type:left
+            on
+               and
+                  film.original_language_id:original_language_id.language_id
+      columns
+         count(*)
+            as:count
+      where
+         and
+      limit:long:1
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@data.read/*/*

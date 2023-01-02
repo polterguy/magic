@@ -1,0 +1,37 @@
+
+// Creates an item in your inventory table in your sakila database according to the specified arguments
+.arguments
+   film_id:long
+   store_id:long
+   last_update:date
+.description:Creates an item in your inventory table in your sakila database according to the specified arguments
+.type:crud-create
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root,admin
+.foreign-keys
+   .
+      column:film_id
+      table:film
+      foreign_column:film_id
+      foreign_name:title
+      long:bool:true
+
+// Opening up database connection.
+data.connect:sakila
+
+   // Parametrising our create invocation.
+   add:x:./*/data.create/*/values
+      get-nodes:x:@.arguments/*
+
+   // Creating our record.
+   data.create
+      table:inventory
+      return-id:bool:true
+      values
+
+   // Returning result of above invoction to caller.
+   response.status.set:201
+   unwrap:x:+/*
+   return
+      id:x:@data.create
