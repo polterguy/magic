@@ -113,10 +113,12 @@ export class OpenaiPromptComponent implements OnInit {
         this.waitingForAnswer = false;
 
         const dialog = this.dialog.open(OpenAIAnswerDialogComponent, {
-          width: '50%',
+          width: '80vw',
+          maxWidth: '1024px',
           data: {
-            snippets: result,
+            snippet: result[0].text,
             prompt: this.openAiPrompt,
+            fileType: this.fileType,
           },
         });
         dialog.afterClosed().subscribe((data: any) => {

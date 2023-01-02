@@ -30,13 +30,20 @@
       matPrefix
       matTooltip="Model to use"
       class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-      <mat-icon>home</mat-icon>
+      <mat-icon>help_outline</mat-icon>
       <span class="text-muted ms-1">|</span>
     </span>
     <mat-select [(ngModel)]="selectedModel">
+      <mat-select-trigger>
+        {{selectedModel?.name}}
+      </mat-select-trigger>
       <mat-option
-        *ngFor="let idx of models"
-        [value]="idx">{{idx}}</mat-option>
+        class="multiline-mat-option"
+        *ngFor="let item of models"
+        [value]="item">
+        <span class="d-block name-line" #typeName>{{item.name}}</span>
+        <span class="d-block description-line">{{item.description}}</span>
+      </mat-option>
     </mat-select>
   </mat-form-field>
 
@@ -45,7 +52,7 @@
       matPrefix
       matTooltip="Maximum amount of tokens to use per question"
       class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-      <mat-icon>account_balance</mat-icon>
+      <mat-icon>timeline</mat-icon>
       <span class="text-muted">|</span>
     </span>
     <input
@@ -63,7 +70,7 @@
       matPrefix
       matTooltip="Temperature or 'creativity'"
       class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-      <mat-icon>track_changes</mat-icon>
+      <mat-icon>opacity</mat-icon>
       <span class="text-muted">|</span>
     </span>
     <input

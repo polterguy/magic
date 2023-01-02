@@ -11,6 +11,14 @@ import { Response } from 'src/app/models/response.model';
 import { HttpService } from 'src/app/_general/services/http.service';
 
 /**
+ * OpenAI model.
+ */
+export class OpenAIModel {
+  name: string;
+  description: string;
+}
+
+/**
  * OpenAI service, allowing user to interact with OpenAI.
  */
 @Injectable({
@@ -47,7 +55,7 @@ export class OpenAIService {
   }
 
   base_models() {
-    return this.httpService.get<string[]>('/magic/system/openai/base-models');
+    return this.httpService.get<OpenAIModel[]>('/magic/system/openai/base-models');
   }
 
   get_training_data() {
