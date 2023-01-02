@@ -1,0 +1,5 @@
+// Endpoint that only guest and admin users can invoke | Only allow guest and admin to invoke endpoint
+.arguments
+auth.ticket.verify:guest,admin
+return
+   result:success
