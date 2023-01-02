@@ -6,9 +6,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IdeComponent } from '../ide.component';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { CodemirrorModule } from '@ctrl/ngx-codemirror';
-import { MaterialModule } from 'src/app/material.module';
 import { SharedModule } from 'src/app/shared.module';
 import { ComponentsModule } from 'src/app/_general/components/components.module';
 import { IdeEditorComponent } from '../components/ide-editor/ide-editor.component';
@@ -22,11 +19,7 @@ import { RenameFileDialogComponent } from '../components/rename-file-dialog/rena
 import { RenameFolderDialogComponent } from '../components/rename-folder-dialog/rename-folder-dialog.component';
 import { SelectMacroDialogComponent } from '../components/select-macro-dialog/select-macro-dialog.component';
 import { UnsavedChangesDialogComponent } from '../components/unsaved-changes-dialog/unsaved-changes-dialog.component';
-import { OpenAIConfigurationDialogComponent } from '../../../../../_general/components/openai/openai-configuration-dialog/openai-configuration-dialog.component';
-import { OpenAIAnswerDialogComponent } from '../../../../../_general/components/openai/openai-answer-dialog/openai-answer-dialog.component';
-import { OpenAITrainingDialogComponent } from '../../../../../_general/components/openai/openai-training-dialog/openai-training-dialog.component';
 import { CmModule } from 'src/app/codemirror/_module/cm.module';
-import { OpenaiPromptComponent } from '../../../../../_general/components/openai/openai-prompt/openai-prompt.component';
 
 @NgModule({
   declarations: [
@@ -41,19 +34,11 @@ import { OpenaiPromptComponent } from '../../../../../_general/components/openai
     RenameFolderDialogComponent,
     SelectMacroDialogComponent,
     UnsavedChangesDialogComponent,
-    OpenAIAnswerDialogComponent,
-    OpenAIConfigurationDialogComponent,
-    OpenAITrainingDialogComponent,
-    OpenaiPromptComponent,
   ],
   imports: [
     CommonModule,
     IdeRoutingModule,
     ComponentsModule,
-    MaterialModule,
-    CodemirrorModule,
-    FormsModule,
-    ReactiveFormsModule,
     SharedModule,
     CmModule,
   ]

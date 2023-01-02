@@ -5,14 +5,33 @@
     <mat-card class="h-100 py-3">
       <mat-card-content class="h-100 d-flex flex-column w-100">
         <div class="d-flex justify-content-between align-items-center">
+
           <h3 class="my-0 fw-bold">SQL</h3>
+
           <div>
 
-            <button mat-button color="primary" (click)="viewShortkeys()" class="mat-caption">Shortkeys</button>
+            <button
+              mat-button
+              color="primary"
+              (click)="viewShortkeys()"
+              class="mat-caption">
+              Shortkeys
+            </button>
 
-            <button mat-button color="primary" (click)="sqlFileImport.click()" class="mat-caption">Import</button>
+            <button
+              mat-button
+              color="primary"
+              (click)="sqlFileImport.click()"
+              class="mat-caption">
+              Import
+            </button>
 
-            <mat-slide-toggle labelPosition="before" [(ngModel)]="safeMode" class="mat-caption">Safe mode</mat-slide-toggle>
+            <mat-slide-toggle
+              labelPosition="before"
+              [(ngModel)]="safeMode"
+              class="mat-caption">
+              Safe mode
+            </mat-slide-toggle>
 
           </div>
         </div>
@@ -20,21 +39,51 @@
         <div class="row mt-3 mb-4 h-100">
           <div class="col-12">
             <ng-container *ngIf="input?.options">
+
               <app-codemirror-sql [(model)]="input"></app-codemirror-sql>
+
             </ng-container>
           </div>
         </div>
 
         <div class="d-flex justify-content-end align-items-center">
 
-          <button mat-button color="primary" (click)="loadSnippet()">Snippets</button>
+          <app-openai-prompt
+            fileType="sql"
+            class="w-100">
+          </app-openai-prompt>
+    
+          <button
+            mat-button
+            color="primary"
+            (click)="loadSnippet()">
+            Snippets
+          </button>
 
-          <button mat-button color="primary" (click)="save()">Save</button>
+          <button
+            mat-button
+            color="primary"
+            (click)="save()">
+            Save
+          </button>
 
-          <button mat-flat-button color="primary" class="px-4" [disabled]="executingSql"
-            (click)="execute()">Execute</button>
+          <button
+            mat-flat-button
+            color="primary"
+            class="px-4"
+            [disabled]="executingSql"
+            (click)="execute()">
+            Execute
+          </button>
 
-          <input type="file" name="sqlFile" id="sqlFile" #sqlFileImport class="d-none" accept=".sql" [(ngModel)]="sqlFile"
+          <input
+            type="file"
+            name="sqlFile"
+            id="sqlFile"
+            #sqlFileImport
+            class="d-none"
+            accept=".sql"
+            [(ngModel)]="sqlFile"
             (change)="importSqlFile($event)">
 
         </div>

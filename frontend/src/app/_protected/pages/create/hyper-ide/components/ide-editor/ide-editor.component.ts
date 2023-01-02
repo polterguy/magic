@@ -94,12 +94,12 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   fileType() {
-    return this.currentFileData?.path.substring(this.currentFileData.path.lastIndexOf('.') + 1);
+    return this.currentFileData?.path.substring(this.currentFileData?.path.lastIndexOf('.') + 1);
   }
 
   setFocusToActiveEditor() {
     setTimeout(() => {
-      const fileExisting: number = this.openFiles.findIndex((item: any) => item.path === this.currentFileData.path);
+      const fileExisting: number = this.openFiles.findIndex((item: FileNode) => item.path === this.currentFileData.path);
       const activeWrapper = document.querySelector('.active-codemirror-editor-' + fileExisting);
       if (activeWrapper) {
         var editor = (<any>activeWrapper.querySelector('.CodeMirror'))?.CodeMirror;
