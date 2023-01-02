@@ -1,0 +1,68 @@
+
+// Counts items from your film_category table in your sakila database according to the specified arguments
+.arguments
+   operator:string
+   film_category.film_id.eq:long
+   film_category.category_id.eq:long
+   film_category.last_update.eq:date
+   film_id.title.eq:string
+   film_id.title.like:string
+   category_id.name.eq:string
+   category_id.name.like:string
+.description:Counts items from your film_category table in your sakila database according to the specified arguments
+.type:crud-count
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root,admin
+
+// Sanity checking invocation.
+validators.enum:x:@.arguments/*/operator
+   .:or
+   .:and
+
+/*
+ * Checking if user supplied an [operator] argument, and if so
+ * changing the boolean operator for comparison operations.
+ */
+if
+   exists:x:@.arguments/*/operator
+   .lambda
+
+      // User provided a boolean comparison [operator] argument.
+      set-name:x:../*/data.connect/*/data.read/*/where/0
+         get-value:x:@.arguments/*/operator
+
+// Opening up our database connection.
+data.connect:sakila
+
+   // Parametrising our read invocation.
+   add:x:./*/data.read
+      get-nodes:x:@.arguments/*/operator
+   remove-nodes:x:@.arguments/*/operator
+   add:x:+/*/where/*
+      get-nodes:x:@.arguments/*
+
+   // Reading data from database.
+   data.read
+      table:film_category
+         join:film
+            as:film_id
+            type:left
+            on
+               and
+                  film_category.film_id:film_id.film_id
+         join:category
+            as:category_id
+            type:left
+            on
+               and
+                  film_category.category_id:category_id.category_id
+      columns
+         count(*)
+            as:count
+      where
+         and
+      limit:long:1
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@data.read/*/*

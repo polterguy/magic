@@ -1,0 +1,43 @@
+
+// Creates an item in your address table in your sakila database according to the specified arguments
+.arguments
+   address:string
+   address2:string
+   district:string
+   city_id:long
+   postal_code:string
+   phone:string
+   last_update:date
+.description:Creates an item in your address table in your sakila database according to the specified arguments
+.type:crud-create
+.handling
+   phone:phone
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root,admin
+.foreign-keys
+   .
+      column:city_id
+      table:city
+      foreign_column:city_id
+      foreign_name:city
+      long:bool:true
+
+// Opening up database connection.
+data.connect:sakila
+
+   // Parametrising our create invocation.
+   add:x:./*/data.create/*/values
+      get-nodes:x:@.arguments/*
+
+   // Creating our record.
+   data.create
+      table:address
+      return-id:bool:true
+      values
+
+   // Returning result of above invoction to caller.
+   response.status.set:201
+   unwrap:x:+/*
+   return
+      id:x:@data.create
