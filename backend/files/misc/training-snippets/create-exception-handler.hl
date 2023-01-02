@@ -1,0 +1,26 @@
+// Create an exception handler | Create a default exception handler that logs the exception as an error
+log.error:x:@.arguments/*/message
+   url:x:@.arguments/*/path
+   exception:x:@.arguments/*/stack
+
+/*
+ * Notice, unless the [public] argument exists, and is true,
+ * we return a "generic" error to caller to make sure we don't
+ * disclose any security information originating from exceptions.
+ */
+if
+   and
+      exists:x:@.arguments/*/public
+      get-value:x:@.arguments/*/public
+   .lambda
+   
+      // Exception message is supposed to propagate to client.
+      set-value:x:../*/return/*/message
+         get-value:x:@.arguments/*/message
+
+// Adding status and field arguments to returned value.
+add:x:+
+   get-nodes:x:@.arguments/*/status
+   get-nodes:x:@.arguments/*/field
+return
+   message:Guru meditation, come back when Universe is in order!
