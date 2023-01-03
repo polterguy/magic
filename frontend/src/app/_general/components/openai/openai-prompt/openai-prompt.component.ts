@@ -121,7 +121,7 @@ export class OpenaiPromptComponent implements OnInit {
           width: '80vw',
           maxWidth: '1024px',
           data: {
-            snippet: result[0].text,
+            snippet: result[0].text.trim() + '\r\n',
             prompt: this.openAiPrompt,
             fileType: this.fileType,
           },
