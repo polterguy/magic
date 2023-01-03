@@ -1,5 +1,5 @@
 
-# A Low-Code CRUD generator with AI
+# A Low-Code software platform with AI
 
 ![Build status](https://github.com/polterguy/magic/actions/workflows/codeql-analysis.yml/badge.svg)
 
