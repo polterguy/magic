@@ -28,6 +28,14 @@ language, including Hyperlambda.
 
 ![Use AI to produce software](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/ai-hyper-ide.jpeg)
 
+## Use SQL Studio to design your database
+
+Magic also gives you SQL Studio, allowing you to visually design your database, even if you have zero
+SQL knowledge. You can use SQL studio to design your SQL Server database, PostgreSQL database, MySQL database,
+or SQLite. You can also connect to your existing database to manage your existing database from SQL Studio.
+
+![Visually design your database using SQL Studio](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/sql-studio-new.jpeg)
+
 ## Useful links
 
 * [Create a Low-Code CRUD app in seconds](https://aista.com)
