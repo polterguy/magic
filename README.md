@@ -19,6 +19,15 @@ optionally generate a datagrid giving you a full stack web app as the screenshot
 Every time you have some complex task, you can ask the integrated AI assistant in plain English
 to show you the code required to solve your problem.
 
+## Use AI to create software
+
+Magic integrates AI and machine learning where ever it makes sense. In Hyper IDE you can for instance
+simply ask the machine in plain English what you want to achieve, and most of the time the AI integration
+will automatically generate the correct code for you automatically. This works with any programming
+language, including Hyperlambda.
+
+![Use AI to produce software](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/ai-hyper-ide.jpeg)
+
 ## Useful links
 
 * [Create a Low-Code CRUD app in seconds](https://aista.com)
