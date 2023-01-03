@@ -27,67 +27,22 @@ import { SnippetNameDialogComponent } from '../../../../../../_general/component
 })
 export class SqlViewComponent implements OnInit, OnDestroy {
 
-  // Name of currently SQL snippet, as provided when saving or loading a snippet from the backend.
   private selectedSnippet: string = '';
   private tablesList: any = null;
   private tableSubscription!: Subscription;
   private actionSubscription!: Subscription;
 
-  /**
-   * List of tables in currently selected database.
-   */
   @Input() hintTables: Observable<any[]>;
-
-  /**
-   * Currently selected database catalog.
-   */
   @Input() selectedDatabase: string = '';
-
-  /**
-   * Currently selected database type.
-   */
   @Input() selectedDbType: string = '';
-
-  /**
-   * Currently selected connection string.
-   */
   @Input() selectedConnectionString: string = '';
-
-  /**
-   * Invoked when we for some reasons need to fetch databases from the backend.
-   */
   @Output() getDatabases: EventEmitter<any> = new EventEmitter<any>();
-
-  /**
-   * CodeMirror model for options, etc.
-   */
   input: Model = null;
-
-  /**
-   * Query result as returned from the backend by executing some SQL statement.
-   */
   queryResult: any = [];
-
-  /**
-   * Columns we should display in our SQL query result table.
-   */
   displayedColumns: any = [];
-
-  /**
-   * If true, we are currently waiting for result of executins some SQL towards the backend.
-   */
   executingSql: boolean = false;
-
-  /**
-   * Model for file input form element allowing us to import SQL file from local machine.
-   */
   sqlFile: any;
-
-  /**
-   * If true prevents returning more than 200 records from backend to avoid
-   * exhausting server.
-   */
-  public safeMode: boolean = true;
+  safeMode: boolean = true;
 
   constructor(
     private dialog: MatDialog,
@@ -108,7 +63,7 @@ export class SqlViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  async codeMirrorInit() {
+  codeMirrorInit() {
     this.input = {
       databaseType: this.selectedDatabase,
       connectionString: this.selectedConnectionString,
@@ -122,9 +77,6 @@ export class SqlViewComponent implements OnInit, OnDestroy {
     this.input.options.autofocus = true;
   };
 
-  /**
-   * Opens the load snippet dialog, to allow user to select a previously saved snippet.
-   */
   loadSnippet() {
     this.dialog.open(SqlSnippetDialogComponent, {
       width: '550px',
@@ -142,9 +94,6 @@ export class SqlViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  /**
-   * Opens the save snippet dialog, to allow user to save his current SQL as an SQL snippet.
-   */
   save() {
     if (!this.input?.sql && this.input.sql === '') {
       this.generalService.showFeedback('Write some SQL first, then save it', 'errorMessage', 'Ok', 5000)
@@ -175,9 +124,10 @@ export class SqlViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  /**
-   * Executes the current SQL towards your backend.
-   */
+  insertFromOpenAI(snippet: string) {
+    this.input.sql = snippet;
+  }
+
   execute() {
     if (!this.input.sql && this.input.sql === '') {
       this.generalService.showFeedback('Write some SQL first, then execute it', 'errorMessage', 'Ok', 5000)
@@ -229,9 +179,6 @@ export class SqlViewComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Invoked when user wants to import an SQL file from his local machine.
-   */
   importSqlFile(event: any) {
     this.sqlFile = event.target.files[0];
     let fileReader = new FileReader();
@@ -244,9 +191,6 @@ export class SqlViewComponent implements OnInit, OnDestroy {
     this.sqlFile = '';
   }
 
-  /**
-   * Invoked when user wants to see what keyboard shortcuts he or she can use.
-   */
   viewShortkeys() {
     this.dialog.open(ShortkeysComponent, {
       width: '900px',
@@ -265,7 +209,6 @@ export class SqlViewComponent implements OnInit, OnDestroy {
    * Private helper methods.
    */
 
-  // Builds result table.
   private buildTable() {
     if (this.queryResult && this.queryResult.length > 0) {
       this.displayedColumns = [];
@@ -282,7 +225,6 @@ export class SqlViewComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Invoked when some keyboard shortcut has been triggered.
   private watchForActions() {
     this.actionSubscription = this.codemirrorActionsService.action.subscribe((action: string) => {
       switch (action) {
@@ -304,7 +246,6 @@ export class SqlViewComponent implements OnInit, OnDestroy {
     })
   }
 
-  // Returns CodeMirror options for SQL type of editor.
   private getCodeMirrorOptions() {
     return this.codemirrorActionsService.getActions(null, 'sql');
   }

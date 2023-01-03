@@ -17,33 +17,26 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class IdeSearchboxComponent {
 
+  private _inputValue: BehaviorSubject<string> = new BehaviorSubject<string>('');
+
   @Output() filterList = new EventEmitter<any>();
   @Output() toggleFileSystems = new EventEmitter<any>();
 
-  private _inputValue: BehaviorSubject<string> = new BehaviorSubject<string>('');
-  public inputValue = this._inputValue.asObservable();
+  inputValue = this._inputValue.asObservable();
 
-  public fileSystem: boolean;
+  fileSystem: boolean;
 
-  /**
-   * Invoking endpoint to search in unique fields.
-   * @params event
-   */
-  public applyFilter(keyword: string) {
+  applyFilter(keyword: string) {
     this._inputValue.next(keyword);
     this.filterList.emit(this._inputValue);
   }
 
-  /**
-   * Removes the search keyword.
-   * @callback getExportList To refetch the unfiltered list.
-   */
-  public removeSearchTerm() {
+  removeSearchTerm() {
     this._inputValue.next('');
     this.filterList.emit(this._inputValue);
   }
 
-  public toggleFileSystem() {
+  toggleFileSystem() {
     this.toggleFileSystems.emit(this.fileSystem);
   }
 }

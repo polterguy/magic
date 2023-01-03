@@ -3,7 +3,7 @@
  * Copyright (c) Aista Ltd, 2021 - 2023 info@aista.com, all rights reserved.
  */
 
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { OpenAIService } from 'src/app/_general/services/openai.service';
@@ -21,6 +21,8 @@ import { OpenAIConfigurationDialogComponent } from '../openai-configuration-dial
 export class OpenaiPromptComponent implements OnInit {
 
   @Input() fileType: string;
+  @Output() callback? = new EventEmitter<string>();
+  @Input() callbackText?: string = null;
 
   openAiEnabled: boolean = false;
   waitingForAnswer: boolean = false;
@@ -124,6 +126,8 @@ export class OpenaiPromptComponent implements OnInit {
             snippet: result[0].text.trim() + '\r\n',
             prompt: this.openAiPrompt,
             fileType: this.fileType,
+            callback: this.callback,
+            callbackText: this.callbackText,
           },
         });
         dialog.afterClosed().subscribe((data: any) => {

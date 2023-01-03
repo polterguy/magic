@@ -33,36 +33,20 @@ import { FileService } from '../../create/hyper-ide/services/file.service';
 })
 export class HyperlambdaPlaygroundComponent implements OnInit, OnDestroy {
 
-  /**
-   * Input Hyperlambda component model and options.
-   */
+  private codemirrorActionSubscription!: Subscription;
+
   input: Model = {
     hyperlambda: '',
     options: hyperlambda,
   };
 
-  /**
-   * Output Hyperlambda component model and options.
-   */
   output: Model = {
     hyperlambda: '',
     options: hyperlambda_readonly,
   };
 
-  /**
-   * Currently edited snippet.
-   */
   filename: string = null;
 
-  private codemirrorActionSubscription!: Subscription;
-
-  /**
-   * Creates an instance of your component.
-   *
-   * @param evaluatorService Used to execute Hyperlambda specified by user
-   * @param generalService Needed to display feedback to user
-   * @param dialog Needed to be able to create model dialogs
-   */
   constructor(
     private evaluatorService: EvaluatorService,
     private generalService: GeneralService,
@@ -70,21 +54,15 @@ export class HyperlambdaPlaygroundComponent implements OnInit, OnDestroy {
     private fileService: FileService,
     private codemirrorActionsService: CodemirrorActionsService) { }
 
-  /**
-   * OnInit implementation.
-   */
   ngOnInit() {
     this.getCodeMirrorOptions();
     this.watchForActions();
   }
-  private getCodeMirrorOptions() {
-    const options = this.codemirrorActionsService.getActions(null, 'hl');
-    this.input.options = options;
+
+  insertFromOpenAI(snippet: string) {
+    this.input.hyperlambda = snippet;
   }
 
-  /**
-   * Shows load snippet dialog.
-   */
   load() {
     this.dialog.open(LoadSnippetDialogComponent, {
       width: '550px',
@@ -101,9 +79,6 @@ export class HyperlambdaPlaygroundComponent implements OnInit, OnDestroy {
     });
   }
 
-  /**
-   * Shows the save snippet dialog.
-   */
   save() {
     if (!this.input?.hyperlambda || this.input?.hyperlambda === '') {
       this.generalService.showFeedback('Code editor is empty.', 'errorMessage')
@@ -125,10 +100,7 @@ export class HyperlambdaPlaygroundComponent implements OnInit, OnDestroy {
     });
   }
 
-  /**
-   * Executes the Hyperlambda from the input CodeMirror component.
-   */
-  public execute() {
+  execute() {
     if (!this.input.hyperlambda || this.input.hyperlambda === '') {
       this.generalService.showFeedback('There is nothing to execute', 'errorMessage');
       return;
@@ -153,13 +125,28 @@ export class HyperlambdaPlaygroundComponent implements OnInit, OnDestroy {
     });
   }
 
-  public viewShortkeys() {
+  viewShortkeys() {
     this.dialog.open(ShortkeysComponent, {
       width: '900px',
       data: {
         type: ['save', 'execute']
       }
     })
+  }
+
+  ngOnDestroy(): void {
+    if (this.codemirrorActionSubscription) {
+      this.codemirrorActionSubscription.unsubscribe();
+    }
+  }
+
+  /*
+   * Private helper methods.
+   */
+
+  private getCodeMirrorOptions() {
+    const options = this.codemirrorActionsService.getActions(null, 'hl');
+    this.input.options = options;
   }
 
   private watchForActions() {
@@ -180,12 +167,6 @@ export class HyperlambdaPlaygroundComponent implements OnInit, OnDestroy {
         default:
           break;
       }
-    })
-  }
-
-  ngOnDestroy(): void {
-    if (this.codemirrorActionSubscription) {
-      this.codemirrorActionSubscription.unsubscribe();
-    }
+    });
   }
 }
