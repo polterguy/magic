@@ -50,6 +50,8 @@
 
           <app-openai-prompt
             fileType="sql"
+            (callback)="insertFromOpenAI($event)"
+            callbackText="Use"
             class="w-100">
           </app-openai-prompt>
     

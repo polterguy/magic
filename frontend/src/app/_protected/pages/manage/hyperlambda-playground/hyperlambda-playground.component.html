@@ -80,6 +80,8 @@
 
           <app-openai-prompt
             fileType="hl"
+            (callback)="insertFromOpenAI($event)"
+            callbackText="Use"
             class="w-100">
           </app-openai-prompt>
 

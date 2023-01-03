@@ -97,6 +97,10 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     return this.currentFileData?.path.substring(this.currentFileData?.path.lastIndexOf('.') + 1);
   }
 
+  insertFromOpenAI(snippet: string) {
+    this.currentFileData.content = snippet;
+  }
+
   setFocusToActiveEditor() {
     setTimeout(() => {
       const fileExisting: number = this.openFiles.findIndex((item: FileNode) => item.path === this.currentFileData.path);

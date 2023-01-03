@@ -17,6 +17,13 @@
 <div mat-dialog-actions [align]="'end'">
 
   <button
+    *ngIf="data.callback"
+    mat-button
+    (click)="callbackInvoked()">
+    {{data.callbackText}}
+  </button>
+
+  <button
     mat-button
     (click)="copy()">
     Copy
