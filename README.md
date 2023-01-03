@@ -64,4 +64,4 @@ To sum up each license.
 
 See the enclosed LICENSE files within each folder, and/or plugin if in doubt.
 
-Copyright(c) Aista, Ltd 2019 - 2022, info@aista.com
+Copyright(c) Aista, Ltd 2019 - 2023, info@aista.com
