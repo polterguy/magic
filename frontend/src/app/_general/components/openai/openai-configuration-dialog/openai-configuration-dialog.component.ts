@@ -168,7 +168,12 @@ export class OpenAIConfigurationDialogComponent implements OnInit {
                 if (succeeded.length > 0) {
                   this.startTraining = false;
                   this.models = succeeded
-                    .map(x => x.fine_tuned_model)
+                    .map(x => {
+                      return {
+                        name: x.fine_tuned_model,
+                        description: 'Fine tuned model',
+                      }
+                    })
                     .concat(this.models);
                   this.selectedModel = this.models[0];
                 } else {

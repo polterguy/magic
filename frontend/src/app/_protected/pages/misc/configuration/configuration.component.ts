@@ -13,6 +13,7 @@ import { CodemirrorActionsService } from '../../create/hyper-ide/services/codemi
 import { Subscription } from 'rxjs';
 import { SmtpDialogComponent } from './components/smtp-dialog/smtp-dialog.component';
 import json from '../../../../codemirror/options/json.json'
+import { OpenAIConfigurationDialogComponent } from 'src/app/_general/components/openai/openai-configuration-dialog/openai-configuration-dialog.component';
 
 /**
  * Helper component allowing user to edit his configuration settings.
@@ -92,6 +93,20 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
       });
   }
 
+  manageOpenAI() {
+    this.dialog
+      .open(OpenAIConfigurationDialogComponent, {
+        width: '80vw',
+        maxWidth: '550px',
+      })
+      .afterClosed()
+      .subscribe((result: {configured: boolean, start_training: boolean}) => {
+        if (result?.configured) {
+          this.loadConfig();
+        }
+      });
+  }
+
   ngOnDestroy() {
     this.codemirrorActionSubscription?.unsubscribe();
   }
@@ -113,6 +128,6 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
           this.save();
           break;
       }
-    })
+    });
   }
 }
