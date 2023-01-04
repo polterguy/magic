@@ -1,0 +1,5 @@
+// create endpoint selecting number of unique names from contacts table in dbxyz database
+.arguments
+data.connect:dbxyz
+   data.select:select name, count(*) as value from contacts group by name
+   return-nodes:x:-/*

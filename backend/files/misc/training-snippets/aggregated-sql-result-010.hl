@@ -1,0 +1,42 @@
+// endpoint returning number of new contacts on a daily basis for the last 30 days in robo-crm database
+.arguments
+.now
+set-value:x:-
+   math.subtract
+      date.now
+      time
+         days:30
+data.connect:robo-crm
+   while
+      lt:x:@.now
+         date.now
+      .lambda
+         .max
+         set-value:x:@.max
+            math.add:x:@.now
+               time
+                  days:1
+         date.format:x:@.now
+            format:yyyy-MM-dd
+         date.format:x:@.max
+            format:yyyy-MM-dd
+         data.read
+            table:contacts
+            columns
+               count(*)
+                  as:name
+            where
+               and
+                  created.mt:x:@date.format/@date.format
+                  created.lt:x:@date.format
+         unwrap:x:+/*/*/*
+         add:x:../*/return
+            .
+               .
+                  name:x:@date.format/@date.format
+                  value:x:@data.read/*/*
+         set-value:x:@.now
+            math.add:x:@.now
+               time
+                  days:1
+return

@@ -1,0 +1,15 @@
+// endpoint returning number of cloudlets per cluster
+.arguments
+data.connect:[generic|hub]
+   data.read
+      table:cloudlets
+      columns
+         count(*)
+            as:cloudlets
+         cluster
+      group
+         cluster
+      order:cloudlets
+      direction:desc
+      limit:10
+   return-nodes:x:@data.read/*
