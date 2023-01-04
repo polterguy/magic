@@ -1,0 +1,9 @@
+// endpoint executing SQL counting records in foo towards qwe database having email matching filter argument
+.arguments
+   filter:string
+data.connect:qwe
+   data.scalar:select count(*) from foo where email like @filter
+      filter:x:@.arguments/*/filter
+   unwrap:x:+/*
+   return-nodes
+      count:x:@data.scalar
