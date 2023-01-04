@@ -1,0 +1,5 @@
+// endpoint executing SQL towards hub database and my_table table
+.arguments
+data.connect:hub
+   data.select:select * from my_table
+   return-nodes:x:@data.select/*
