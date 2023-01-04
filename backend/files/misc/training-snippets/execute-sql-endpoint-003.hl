@@ -1,0 +1,8 @@
+// executing SQL endpoint counting records from customers table in contacts database only allowing root to invoke
+.arguments
+auth.ticket.verify:root
+data.connect:contacts
+   data.scalar:select count(*) from customers
+   unwrap:x:+/*
+   return
+      result:x:@data.scalar
