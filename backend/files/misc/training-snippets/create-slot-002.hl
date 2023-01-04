@@ -1,0 +1,15 @@
+// create howdy_world slot that returns name and phone from ctcs in cst database
+
+/*
+ * Notice, you would typically want to add this code into a file inside of
+ * your module's magic.startup folder to ensure it is re-created if the
+ * server reboots for some reasons.
+ */
+slots.create:howdy_world
+   data.connect:cst
+      data.read
+         table:ctcs
+         columns
+            name
+            phone
+      return-nodes:x:@data.read/*

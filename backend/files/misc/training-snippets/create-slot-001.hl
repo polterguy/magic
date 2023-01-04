@@ -1,0 +1,12 @@
+// create a foo_bar slot that returns contacts from customers database
+
+/*
+ * Notice, you would typically want to add this code into a file inside of
+ * your module's magic.startup folder to ensure it is re-created if the
+ * server reboots for some reasons.
+ */
+slots.create:foo_bar
+   data.connect:customers
+      data.read
+         table:contacts
+      return-nodes:x:@data.read/*

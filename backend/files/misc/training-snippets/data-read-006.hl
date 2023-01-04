@@ -1,0 +1,15 @@
+// Give me an endpoint returning name and isbn from books table in library database
+.arguments
+
+// Connecting to CRM database
+data.connect:library
+
+   // Reading records from customers table
+   data.read
+      table:books
+      columns
+         name
+         isbn
+
+   // Returning result from [data.read] invocation to caller
+   return:x:@data.read/*
