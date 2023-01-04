@@ -1,0 +1,5 @@
+// argument zip can only be ca, be or ad
+validators.enum:x:@.arguments/*/zip
+   .:ca
+   .:be
+   .:ad
