@@ -1,0 +1,4 @@
+// create endpoint that loads howdy.xml and returns the result to caller
+.arguments
+io.file.load:/howdy.xml
+return:x:@io.file.load

@@ -1,0 +1,4 @@
+// create endpoint that loads foo.xml and returns the result to caller
+.arguments
+io.file.load:/foo.xml
+return:x:@io.file.load

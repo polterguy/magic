@@ -1,0 +1,18 @@
+// Create endpoint that concatenates 3 strings and returns result
+.arguments
+   argument1:string
+   argument2:string
+   argument3:string
+
+// Concatenating our arguments
+strings.concat
+   get-value:x:@.arguments/*/argument1
+   get-value:x:@.arguments/*/argument2
+   get-value:x:@.arguments/*/argument3
+
+// Forward evaluating children nodes of [return]
+unwrap:x:+/*
+
+// Returning the concatenated string to caller
+return
+   result:x:@strings.concat

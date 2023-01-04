@@ -1,0 +1,7 @@
+// Join 3 strings add space between each string
+.strings
+   string1:foo1
+   string2:foo2
+   string3:foo3
+strings.join:x:@.strings/*
+   .:" "

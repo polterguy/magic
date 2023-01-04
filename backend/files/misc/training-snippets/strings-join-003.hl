@@ -1,0 +1,5 @@
+// Create slot that joins all arguments adding SP between and returns result to caller
+slot.create:join-strings
+   strings.join:x:@.arguments/*
+      .:" "
+   return:x:@strings.join
