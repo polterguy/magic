@@ -1,0 +1,5 @@
+// publish a socket message named foo.bar.howdy with name and email payload
+sockets.signal:foo.bar.howdy
+   args
+      name:John Doe
+      email:john@doe.com

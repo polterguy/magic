@@ -1,0 +1,5 @@
+// publish howdy-hello socket message with adr1 and adr2
+sockets.signal:howdy-hello
+   args
+      adr1:First address line
+      adr2:Second address line

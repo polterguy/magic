@@ -1,0 +1,6 @@
+// create endpoint that loads my_xml.xml and returns the result to caller as XML content
+.arguments
+io.file.load:/my_xml.xml
+response.headers.set
+   Content-Type:application/xml
+return:x:@io.file.load

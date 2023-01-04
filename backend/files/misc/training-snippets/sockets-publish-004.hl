@@ -1,0 +1,5 @@
+// publish my_message socket message with blah node having qwe value to guest and partners users
+sockets.signal:howdy-hello
+   roles:guest,partners
+   args
+      blah:qwe
