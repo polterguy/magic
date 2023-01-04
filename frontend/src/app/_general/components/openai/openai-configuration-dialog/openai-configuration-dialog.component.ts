@@ -24,7 +24,7 @@ export class OpenAIConfigurationDialogComponent implements OnInit {
   startTraining: boolean = true;
   models: OpenAIModel[] = [];
   selectedModel: OpenAIModel = null;
-  max_tokens: number = 2000;
+  max_tokens: number = 1000;
   temperature: number = 0.5;
 
   constructor(

@@ -1,0 +1,16 @@
+// Endpoint that deletes one record from foo_bar table in howdy_crm database with a primary key named id
+.arguments
+   id:long
+
+// Deleting record from foo_bar table
+data.connect:howdy_crm
+   data.delete
+      table:foo_bar
+      where
+         and
+            id.eq:x:@.arguments/*/id
+
+// Returning result of above invocation to caller
+unwrap:x:+/*
+return
+   result:x:@data.delete

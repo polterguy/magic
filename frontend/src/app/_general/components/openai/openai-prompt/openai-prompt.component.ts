@@ -90,7 +90,7 @@ export class OpenaiPromptComponent implements OnInit {
           this.openAiService.start_training().subscribe({
             next: () => {
 
-              this.generalService.showFeedback('Training of OpenAI successfully started');
+              this.generalService.showFeedback('Training of OpenAI successfully started', 'successMessage');
               this.generalService.hideLoading();
             },
             error: (error: any) => {

@@ -1,0 +1,37 @@
+// Endpoint updating customers table in howdy database with name and email having a primary key named id verifying record exists
+.arguments
+   name:string
+   email:string
+   id:long
+
+// Loading howdy database
+data.connect:howdy
+
+   // Parametrising our invocation
+   add:x:./*/data.update/*/values
+      get-nodes:x:@.arguments/*/name
+      get-nodes:x:@.arguments/*/email
+
+   // Invoking our update slot
+   data.update
+      table:customers
+      values
+      where
+         and
+            id.eq:x:@.arguments/*/id
+
+   // Verifying record exists
+   if
+      eq
+         get-value:x:@data.update
+         .:int:0
+      .lambda
+         response.status.set:404
+         return
+            result:Record not found
+
+   // Returning success to caller
+   response.status.set:202
+   unwrap:x:+/*
+   return
+      affected:x:@data.update

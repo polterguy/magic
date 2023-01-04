@@ -1,0 +1,16 @@
+// Endpoint sending email to thomas@foo.com from the specified name and email arguments
+.arguments
+   name:string
+   email:string
+mail.smtp.send
+   message
+      to
+         .
+            email:thomas@foo.com
+      from
+         .
+            name:x:@.arguments/*/name
+            email:x:@.arguments/*/email
+      subject:Replace this with your subject line
+      entity:text/plain
+         content:Replace this with the body of the email

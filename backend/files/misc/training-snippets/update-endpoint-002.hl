@@ -1,0 +1,27 @@
+// Endpoint updating name and email in xyz table in qwe database having a primary key named id
+.arguments
+   name:string
+   email:string
+   id:long
+
+// Loading howdy database
+data.connect:qwe
+
+   // Parametrising our invocation
+   add:x:./*/data.update/*/values
+      get-nodes:x:@.arguments/*/name
+      get-nodes:x:@.arguments/*/email
+
+   // Invoking our update slot
+   data.update
+      table:xyz
+      values
+      where
+         and
+            id.eq:x:@.arguments/*/id
+
+   // Returning success to caller
+   response.status.set:202
+   unwrap:x:+/*
+   return
+      affected:x:@data.update

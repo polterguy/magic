@@ -1,0 +1,10 @@
+// insert all arguments into contacts table
+
+// Decorating [data.create] invocation
+add:x:./*/data.create/*/values
+   get-nodes:x:@.arguments/*
+
+// Inserting into contacts table
+data.create
+   table:contacts
+   values
