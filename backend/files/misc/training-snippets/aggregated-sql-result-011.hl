@@ -1,6 +1,6 @@
 // endpoint returning number of cloudlets per cluster
 .arguments
-data.connect:[generic|hub]
+data.connect:hub
    data.read
       table:cloudlets
       columns
