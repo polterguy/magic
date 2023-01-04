@@ -1,2 +1,2 @@
-// list all folders in directory | List all folders in the /etc/ folder | List all folders
+// List all folders in the /etc/ folder
 io.folder.list:/etc/

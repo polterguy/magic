@@ -1,4 +1,4 @@
-// Use Hyperlambda to retrieve username of currently authenticated user and store it into the [.username] node and retrieve roles of user and store into [.roles]
+// Retrieve username of currently authenticated user and store it into the [.username] node and retrieve roles of user and store into [.roles]
 
 // This node will contain username
 .username

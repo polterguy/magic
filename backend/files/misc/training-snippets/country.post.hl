@@ -1,5 +1,5 @@
 
-// Endpoint creating one item in country table in sakila database with the specified country requiring authentication to invoke
+// Endpoint creating one item in country table in sakila database with the specified country requiring user to be authorised as root or admin to invoke
 .arguments
    country:string
 

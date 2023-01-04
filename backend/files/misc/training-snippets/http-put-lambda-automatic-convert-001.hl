@@ -1,0 +1,6 @@
+// Put lambda object as JSON having zip and street to jsonplaceholder.typicode.com/posts
+http.put:"https://jsonplaceholder.typicode.com/posts"
+   payload
+      zip:int:12345
+      street:Market St. 111
+   convert:true

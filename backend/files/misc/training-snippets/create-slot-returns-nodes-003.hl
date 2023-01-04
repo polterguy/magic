@@ -1,0 +1,6 @@
+// Create slot with the name of qwe that returns the content from stackoverflow.com
+
+// Creating our slot
+slots.create:qwe
+   http.get:"https://stackoverflow.com"
+   return:x:@http.get/*/content

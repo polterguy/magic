@@ -1,5 +1,5 @@
 
-// Endpoint returning items from actor table in sakila database allowing for filtering on first_name and last_name with paging and sorting requiring authentication to invoke
+// Endpoint returning items from actor table in sakila database allowing for filtering on first_name and last_name with paging, sorting, and authorisation requirements
 .arguments
    limit:long
    offset:long

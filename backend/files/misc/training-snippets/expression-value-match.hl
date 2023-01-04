@@ -1,2 +1,2 @@
-// Use Hyperlambda to create an expression that finds all children nodes of [.data] having a value of 'match' | Value match expression | Expression matching value with Hyperlambda
+// Expression returning children nodes of [.data] having a value of 'match'
 .expression:x:@.data/*/=match

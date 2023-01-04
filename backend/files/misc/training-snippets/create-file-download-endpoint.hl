@@ -1,8 +1,6 @@
-// Use Hyperlambda to create a file download endpoint that downloads the specified file to the client found within the /etc/foo/ folder | Create download file endpoint | Download file endpoint using Hyperlambda | Hyperlambda download file endpoint | Download file endpoint
+// Create a file download endpoint that downloads the specified file to the client found within the /etc/foo/ folder as a binary file
 .arguments
    file:string
-.description:Returns the specified file to caller
-.type:file-download
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/file
@@ -36,5 +34,5 @@ response.headers.set
    Content-Type:application/octet-stream
    Content-Disposition:x:@strings.concat
 
-// Returning image to caller.
+// Returning file to caller.
 return:x:@io.stream.open-file

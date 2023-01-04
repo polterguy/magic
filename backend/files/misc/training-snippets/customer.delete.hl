@@ -1,10 +1,10 @@
 
-// Endpoint deleting one item from customer table in sakila database having the specified customer_id requiring authentication to invoke
+// Endpoint deleting one item from customer table in sakila database having the specified customer_id requiring authentication as root to invoke
 .arguments
    customer_id:long
 
 // Verifying user is authorized to access endpoint.
-auth.ticket.verify:root,admin
+auth.ticket.verify:root
 
 // customer_id is mandatory argument
 validators.mandatory:x:@.arguments/*/customer_id

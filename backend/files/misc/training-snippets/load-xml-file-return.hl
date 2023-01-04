@@ -1,0 +1,6 @@
+// Endpoint loading /hello.xml XML file and returning content as XML
+.arguments
+io.file.load:/hello.xml
+response.headers.set
+   Content-Type:application/xml
+return:x:@io.file.load

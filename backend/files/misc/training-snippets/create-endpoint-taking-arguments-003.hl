@@ -1,0 +1,8 @@
+// Endpoint taking 4 arguments
+.arguments
+   arg1:string
+   arg2:string
+   arg3:string
+   arg4:string
+return
+   result:success

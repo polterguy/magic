@@ -1,4 +1,4 @@
-// Use Hyperlambda to create an HTTP endpoint that accepts a filter argument, and uses this argument as a filter condition to an SQL, returning actors to the caller having a first name that matches the filter condition | Create Hyperlambda endpoint executing SQL | Execute SQL in Hyperlambda endpoint | Run SQL in endpoint with parameters
+// Create an endpoint that accepts a filter argument, and uses this argument as a filter condition to an SQL, returning actors from sakila database to the caller having a first name that matches the filter condition
 .arguments
    filter:string
 

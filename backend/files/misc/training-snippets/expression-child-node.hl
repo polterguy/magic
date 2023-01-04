@@ -1,2 +1,2 @@
-// Use Hyperlambda to create an expression that returns the 3rd child node of [.data] | Expression returning 3rd child node
+// Expression that returns the 3rd child node of [.data]
 .expression:x:@.data/2

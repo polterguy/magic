@@ -1,0 +1,5 @@
+// Endpoint loading /foo.csv CSV file and returning content
+.arguments
+io.file.load:/foo.csv
+csv2lambda:x:@io.file.load
+return-nodes:x:@csv2lambda/*

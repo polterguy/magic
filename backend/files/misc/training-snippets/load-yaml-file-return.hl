@@ -1,0 +1,5 @@
+// Endpoint loading /my_file.yaml YAML file and returning content as JSON
+.arguments
+io.file.load:/my_file.yaml
+yaml2lambda:x:@io.file.load
+return:x:@yaml2lambda/*

@@ -1,3 +1,3 @@
-// Use Hyperlambda to save the text 'Hello World' to a new file with the path of '/foo.md' | Save new file | Use Hyperlambda to save Hello World into a new file | Save the content Hello World to foo.md file
+// Save Hello World to /foo.md
 io.file.save:/foo.md
    .:Hello World

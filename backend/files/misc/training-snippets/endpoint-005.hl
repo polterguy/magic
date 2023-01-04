@@ -1,0 +1,6 @@
+// Create endpoint returning the value of [.result]
+.arguments
+.result:this is the value
+unwrap:x:+/*
+return
+   result:x:@.result

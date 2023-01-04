@@ -1,4 +1,4 @@
-// Use Hyperlambda to create some Hyperlambda that sets the value of [.res] to boolean true, but only if a child node can be found inside of [.data] having a name of 'foo' | If exists execute lambda object | Execute lambda if a node exists
+// Set the value of [.res] to boolean true if a child node of [.data] has the name of 'foo'
 .data
    nope
    jada

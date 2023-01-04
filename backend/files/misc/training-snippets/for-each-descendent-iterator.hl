@@ -1,4 +1,4 @@
-// Use Hyperlambda to find all descendent nodes of [.data] with the name of [howdy] and write its value to our log as an error log entry
+// Log value of each descendent node of [.data] having a name of howdy as error
 .data
    howdy:Error1
       hello

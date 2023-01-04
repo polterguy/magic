@@ -1,4 +1,4 @@
-// Use Hyperlambda to select all records from sakila's film table where title is more than or equal to M
+// Select all records from sakila's film table where title is more than or equal to M
 data.connect:sakila
    data.read
       table:film

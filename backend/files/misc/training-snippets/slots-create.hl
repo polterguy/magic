@@ -1,3 +1,3 @@
-// Use Hyperlambda to create a new Hyperlambda slot that returns the value of 42 | Create slot | Create a lot returning 42 | Slot returns 42 to caller
+// Create a slot that returns the value of 42 with the name of meaning-of-life
 slots.create:meaning-of-life
    return-value:int:42

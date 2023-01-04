@@ -1,0 +1,3 @@
+// Execute the specified SOME-QUERY-HERE SQL towards the database1 database
+data.connect:database1
+   data.select:SOME-QUERY-HERE

@@ -1,0 +1,7 @@
+// Create a new slot named my_slot2 that returns a lambda object with [lambda1] and [lambda2] as children
+
+// Creating our slot
+slots.create:my_slot2
+   return
+      lambda1:foo
+      lambda2:bar

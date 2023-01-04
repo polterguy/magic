@@ -1,4 +1,4 @@
-// Create endpoint returning name and year from books in inventory filtering on name | Endpoint filtering on name returning books from inventory
+// Create endpoint returning name and year from books in inventory filtering on name
 .arguments
    filter:string
 

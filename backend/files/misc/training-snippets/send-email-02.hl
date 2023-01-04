@@ -1,4 +1,4 @@
-// How do you send an email using Hyperlambda | Send email with Hyperlambda | SMTP send email | Send email
+// Send an email to thomas@gaiasoul.com from john@doe.com
 
 // This sends an email to thomas@gaiasoul.com from john@doe.com, with a simple subject and a plain text body
 mail.smtp.send

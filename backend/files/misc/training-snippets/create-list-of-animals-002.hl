@@ -1,0 +1,6 @@
+// Create a list of 4 animals
+.list
+   .:Donkey
+   .:Dolphin
+   .:Fish
+   .:Bird

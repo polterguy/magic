@@ -1,0 +1,5 @@
+// Endpoint that only partner and leader users can invoke
+.arguments
+auth.ticket.verify:partner,leader
+return
+   result:success

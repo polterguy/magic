@@ -1,2 +1,2 @@
-// Create an info log entry | Log the text 'This is some information' as an info log entrye to the server log | Log information
+// Log This is some information as an information log entry
 log.error:This is some information

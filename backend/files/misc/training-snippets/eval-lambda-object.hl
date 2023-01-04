@@ -1,4 +1,4 @@
-// Use Hyperlambda to evaluate the [.execute] lambda object
+// Evaluate the [.execute] lambda object
 .execute
    log.info:Hello from [eval]
 eval:x:@.execute

@@ -1,0 +1,3 @@
+// Execute the specified 'select * from roles' SQL towards the customers database
+data.connect:customers
+   data.select:select * from roles

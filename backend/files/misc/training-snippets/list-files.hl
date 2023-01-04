@@ -1,2 +1,2 @@
-// list all files in some folder | List all files in the /etc/ folder | List all files
+// List all files in the /etc/ folder
 io.file.list:/etc/

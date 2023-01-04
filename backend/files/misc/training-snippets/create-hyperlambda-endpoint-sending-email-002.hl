@@ -1,0 +1,22 @@
+// Create an endpoint that sends an email from Pete Johnsen with email pete@johnsen.com to the email and name specified as arguments with 'hello my friend' as subject and 'I just wanted to check in on you' as body
+.arguments
+   name:string
+   email:string
+
+// Making sure email argument is a valid email address
+validators.email:x:@.arguments/*/email
+
+// Sending an email to the specified name and email from pete@johnsen.com
+mail.smtp.send
+   message
+      to
+         .
+            name:x:@.arguments/*/name
+            email:x:@.arguments/*/email
+      from
+         .
+            name:Pete Johnsen
+            email:pete@johnsen.com
+      subject:hello my friend
+      entity:text/plain
+         content:I just wanted to check in on you

@@ -1,4 +1,4 @@
-// Use Hyperlambda to create a try/catch/finally block that logs the exception text of some exception occurs | Try/catch block | Execute unsafe code
+// Create a try/catch/finally block that logs the exception text of some exception occurs
 try
    throw:Some error is thrown here
 .catch

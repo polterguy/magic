@@ -23,12 +23,6 @@ data.connect:sakila
    // Reading data from database.
    data.read
       table:address
-         join:city
-            as:city_id
-            type:left
-            on
-               and
-                  address.city_id:city_id.city_id
       columns
          count(*)
             as:count

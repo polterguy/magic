@@ -1,6 +1,11 @@
-// Use Hyperlambda to create a database transaction | Create Hyperlambda database transaction
+// Connect to sakila database and create a database transaction that is committed after executing [.lambda]
 data.connect:sakila
+
+   // Creating our transaction
    data.transaction.create
+
+      .lambda
+      eval:x:@.lambda
 
       // Committing transation, at which point all changes will be committed to the database
       data.transaction.commit

@@ -1,4 +1,4 @@
-// Use Hyperlambda to count lines of code in the /system/auth/ folder | Count LOC in folder | Count LOC | Count lines of code
+// Count lines of code in the /system/auth/ folder
 .folder:/system/auth/
 .loc:int:0
 

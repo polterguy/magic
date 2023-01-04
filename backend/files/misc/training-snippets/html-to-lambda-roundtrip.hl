@@ -1,19 +1,19 @@
-// Use Hyperlambda to transform the specified HTML into a lambda object, then exchange the 'foo' CSS class with 'bar', and transform the lambda back to HTML again | Convert from HTML to lambda and back again
+// Exchange the class attribute of all HTML tags having class of old-class to new-class
 .html:@"<html>
   <head>
     <title>Howdy</title>
   </head>
   <body>
-    <p class=""foo"">Howdy <strong>world</strong> - This is cool!</p>
+    <p class=""old-class"">Howdy <strong>world</strong> - This is cool!</p>
   </body>
 </html>"
 
 // Transforming above HTML to a lambda object
 html2lambda:x:@.html
 
-// Changing the 'foo' CSS class to 'bar'
-set-value:x:@html2lambda/*/*/*/*/\@class
-   .:bar
+// Changing 'old-class' to 'new-class'
+set-value:x:@html2lambda/**/\@class/=old-class
+   .:new-class
 
 // Transforming lambda back to HTML again, and updating the [.html] node's value
 set-value:x:@.html

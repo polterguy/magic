@@ -1,0 +1,6 @@
+// Post lambda object as JSON having name and email to my-repo.com
+http.post:"https://jsonplaceholder.typicode.com/posts"
+   payload
+      name:Thomas Hansen
+      email:th@aista.com
+   convert:true

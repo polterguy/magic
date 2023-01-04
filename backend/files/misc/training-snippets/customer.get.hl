@@ -36,12 +36,6 @@ data.connect:sakila
    // Reading data from database.
    data.read
       table:customer
-         join:address
-            as:address_id
-            type:left
-            on
-               and
-                  customer.address_id:address_id.address_id
       columns
          customer.customer_id
          customer.store_id
@@ -52,8 +46,6 @@ data.connect:sakila
          customer.active
          customer.create_date
          customer.last_update
-         address_id.address
-            as:address_id.address
       where
          and
 

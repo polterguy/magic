@@ -1,4 +1,4 @@
-// Create an exception handler | Create a default exception handler that logs the exception as an error
+// Create an exception handler
 log.error:x:@.arguments/*/message
    url:x:@.arguments/*/path
    exception:x:@.arguments/*/stack

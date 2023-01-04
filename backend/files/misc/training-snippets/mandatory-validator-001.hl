@@ -1,4 +1,0 @@
-// Endpoint with mandatory name argument | Mandatory name argument
-.arguments
-   name:string
-validators.mandatory:x:@.arguments/*/name

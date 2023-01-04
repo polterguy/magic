@@ -1,5 +1,5 @@
 
-// Endpoint deleting one item from country table in sakila database having the specified country_id
+// Endpoint deleting one item from country table in sakila database having the specified country_id returning number of records that was affected
 .arguments
    country_id:long
 

@@ -1,4 +1,4 @@
-// Use Hyperlambda to create an if lambda block that is executed if [.arguments]/[name] is equal to 'John Doe'
+// Create an if lambda block that is executed if name argument is John Doe
 if
    eq:x:@.arguments/*/name
       .:John Doe

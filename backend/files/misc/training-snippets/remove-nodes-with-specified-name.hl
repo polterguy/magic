@@ -1,4 +1,4 @@
-// Use Hyperlambda to remove all nodes having the name of 'to-be-removed' from the [.data] lambda object | Conditionally remove nodes | Remove nodes
+// Remove all nodes having the name of 'to-be-removed' from the [.data] lambda object
 .lambda
    foo1:Stays
    to-be-removed:Removed 1

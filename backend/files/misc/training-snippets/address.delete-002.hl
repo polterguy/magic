@@ -1,0 +1,22 @@
+
+// Endpoint deleting a record from sakila's address table with the specified address_id value given as an argument returning affected records
+.arguments
+   address_id:long
+
+// address_id is mandatory argument
+validators.mandatory:x:@.arguments/*/address_id
+
+// Opening up our database connection.
+data.connect:sakila
+
+   // Deleting item from database.
+   data.delete
+      table:address
+      where
+         and
+            address_id.eq:x:@.arguments/*/address_id
+
+   // Returning result of above invocation to caller.
+   unwrap:x:+/*
+   return
+      affected:x:@data.delete

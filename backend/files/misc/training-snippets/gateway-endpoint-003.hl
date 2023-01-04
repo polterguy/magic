@@ -1,4 +1,4 @@
-// Create an authorised gateway endpoint that returns whatever microsoft.com returns forwarding whatever arguments it is given | Authenticated Hyperlambda gateway endpoint forwarding arguments | Hyperlambda endpoint serving as gateway endpoint to another endpoint with arguments and authorization | API gateway in Hyperlambda taking arguments only allowing admin users to invoke
+// Create an authorised gateway endpoint that returns whatever microsoft.com returns forwarding whatever arguments it is given only allowing admin users to invoke
 .arguments:*
 
 // Verifying user is in admin role

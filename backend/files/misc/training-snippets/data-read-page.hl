@@ -1,4 +1,4 @@
-// Use Hyperlambda to select 10 records with all columns from the actor table in the sakila database, but start from the 5th result | Select items from database in Hyperlambda using paging | Retrieve items from database table with paging
+// Select 10 records with all columns from the actor table in the sakila database, but start from the 5th result
 data.connect:sakila
    data.read
       table:actor

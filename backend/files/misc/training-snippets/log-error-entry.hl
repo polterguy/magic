@@ -1,2 +1,2 @@
-// Create an error log entry | Log the text 'This is an error' as an error to the server log | Log error
+// Log This is an error as an error log entry
 log.error:This is an error

@@ -1,4 +1,4 @@
-// Find email address of Harry and assign to [.email] | Find Harry's email address | Assign Harry's email address to [.email]
+// Assign email address of Harry to [.email]
 .email
 .data
    .

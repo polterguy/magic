@@ -1,4 +1,4 @@
-// Use Hyperlambda to create an Hyperlambda endpoint that accepts a name and an email argument, where the email argument must be a valid email | Validate input is email | Make sure argument is a valid email address
+// Create an endpoint that accepts a name and an email argument, where the email argument must be a valid email
 .arguments
    name:string
    email:string

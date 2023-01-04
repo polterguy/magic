@@ -1,0 +1,8 @@
+// Create a new slot named xyz that returns all roles that exists in the magic database
+
+// Creating our slot
+slots.create:xyz
+   data.connect:magic
+      data.read
+         table:roles
+      return-nodes:x:@data.read/*

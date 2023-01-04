@@ -1,0 +1,2 @@
+// Load the configuration value found in 'foo:qwe'
+config.get:"foo:qwe"

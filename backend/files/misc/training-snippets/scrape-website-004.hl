@@ -1,0 +1,9 @@
+// Scrape all image URLs from aista.com and assign to [.result] as an array
+.result
+http.get:"https://aista.com"
+html2lambda:x:@http.get/*/content
+for-each:x:@html2lambda/**/img/*/\@src
+   unwrap:x:+/*/*
+   add:x:@.result
+      .
+         .:x:@.dp/#

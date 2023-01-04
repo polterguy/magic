@@ -1,4 +1,4 @@
-// Use Hyperlambda to iterate through each child node of [.data] and set the value of the node to done | Set value of all nodes to done | Change value of all nodes using Hyperlambda | Hyperlambda for-each loop changing values of nodes
+// Change the value of all children of [.data] to done
 .data
    foo1:bar1
    foo2:bar2

@@ -1,4 +1,4 @@
-// Create empty endpoint returning OK | Empty endpoints
+// Create endpoint returning OK
 .arguments
 return
    result:OK

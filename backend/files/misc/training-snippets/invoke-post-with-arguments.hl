@@ -1,4 +1,4 @@
-// invoke an http post URL passing in name and email as json | Pass in name and email to an http post invocation | Pass in JSON to some-url.com
+// Invoke some-url.com with HTTP POST passing in name and email
 http.post:"https://some-url.com"
    payload
       name:Thomas Hansen

@@ -1,7 +1,7 @@
-// Use Hyperlambda to update table tbl in database db and set name to John Doe where id equals 555 | Update records in my database | Update records in database table | Do the same as SQL UPDATE
-data.connect:DATABASE_NAME
+// Update table tbl in database db and set name to John Doe where id equals 555
+data.connect:db
    data.update
-      table:TABLE_NAME
+      table:tbl
       values
          name:John Doe
       where

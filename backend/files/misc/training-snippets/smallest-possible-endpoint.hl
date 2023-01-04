@@ -1,4 +1,4 @@
-// Create a Hyperlambda endpoint that cannot be given arguments returning the text SUCCESS as plain text MIME type | Create smalles Hyperlambda endpoint | Hyperlambda endpoint | Create plain text Hyperlambda endpoint | Create endpoint returning SUCCESS as text
+// Endpoint without arguments returning the text SUCCESS as plain text MIME type
 .arguments
 response.headers.set
    Content-Type:text/plain
