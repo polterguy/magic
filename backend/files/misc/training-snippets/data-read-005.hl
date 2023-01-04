@@ -1,0 +1,15 @@
+// Create endpoint returning adr1 and adr2 from contacts table in logistics database
+.arguments
+
+// Connecting to CRM database
+data.connect:logistics
+
+   // Reading records from customers table
+   data.read
+      table:contacts
+      columns
+         adr1
+         adr2
+
+   // Returning result from [data.read] invocation to caller
+   return:x:@data.read/*
