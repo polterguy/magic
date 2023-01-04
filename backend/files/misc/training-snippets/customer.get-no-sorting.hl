@@ -1,5 +1,5 @@
 
-// Endpoint returning items from customer table in sakila database with filtering on store_id, first_name, last_name, email and address_id to specify items to return with paging
+// Endpoint returning items from customer table in sakila database with filtering on store_id, first_name, last_name, email and address_id to specify items to return with paging joining on the address table returning its street
 .arguments
    limit:long
    offset:long
@@ -44,7 +44,7 @@ data.connect:sakila
          customer.create_date
          customer.last_update
          address_id.address
-            as:address_id.address
+            as:address_id.street
       where
          and
 

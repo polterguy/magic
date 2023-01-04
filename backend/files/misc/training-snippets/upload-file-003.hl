@@ -1,4 +1,4 @@
-// Endpoint allowing root and guest users to upload file | File upload endpoint for root and guest users | Create endpoint for uploading files only allowing root users and guest users to invoke it
+// File upload endpoint storing file to etc folder for root and guest users only
 .arguments
    file
       name:string

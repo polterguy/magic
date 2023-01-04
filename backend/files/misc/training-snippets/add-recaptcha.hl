@@ -1,5 +1,5 @@
 
-// Add recaptcha | recaptcha validator
+// Recaptcha validator
 
 // [recaptcha_response] is a mandatory field.
 validators.mandatory:x:@.arguments/*/recaptcha_response

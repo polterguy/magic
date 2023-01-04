@@ -1,4 +1,4 @@
-// Endpoint returning the specified file to caller with authentication | Returns content of the file given as filename argument to caller if user is root
+// Endpoint returning the specified filename argument file to caller for root users
 .arguments
    filename:string
 

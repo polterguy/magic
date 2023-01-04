@@ -1,5 +1,5 @@
-// Create a Hyperlambda endpoint that returns the date and time of today | Hyperlambda endpoint returning DateTime.Now | Today Hyperlambda endpoint
+// Create an endpoint that returns the date and time of today
 date.now
 unwrap:x:+/*
 return
-   today:x:@date.now
+   now:x:@date.now

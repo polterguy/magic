@@ -1,4 +1,4 @@
-// Use Hyperlambda to create a multipart/mixed MIME  message containing the content of the file named README.md in addition to a text/plain entity containing the static text of 'Bar' | Create MIME message
+// Create a multipart/mixed MIME message containing the content of the file named README.md in addition to a text/plain entity containing the static text of 'Bar'
 mime.create:multipart/mixed
    entity:text/plain
       filename:/README.md

@@ -1,0 +1,2 @@
+// Create folder on disc inside the '/qwe' folder and name the new folder 'xyz'
+io.folder.create:/qwe/xyz/

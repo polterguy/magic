@@ -1,4 +1,4 @@
-// Use Hyperlambda to create a nested expression where a sub section of the expression is a reference to the value of a node, that returns the name 'thomas' given the specified data | Nested Hyperlambda expressions | Extrapolated expressions
+// Nested expression where {@.arg1} is substituted with the value of [.arg1]
 .arg1:.data
 .result
 .data

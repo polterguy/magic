@@ -1,0 +1,10 @@
+// Add the [.xyz] node into the [.qwe] node
+.xyz
+   foo1:bar1
+   foo2:bar2
+   foo3:bar3
+.qwe
+
+// Invoking [add] with a source expression
+add:x:@.qwe
+   get-nodes:x:@.xyz

@@ -1,5 +1,5 @@
 
-// Endpoint returning items from address table in sakila database allowing for filtering on address, address2, district, city_id, postal_code and phone to specify items to return with paging and sorting requiring authentication to invoke
+// Endpoint returning items from address table in sakila database allowing for filtering on address, address2, district, city_id, postal_code and phone to specify items to return with paging and sorting requiring authentication and authorization, joined with city table returning city name
 .arguments
    limit:long
    offset:long
@@ -40,11 +40,10 @@ data.connect:sakila
    data.read
       table:address
          join:city
-            as:city_id
             type:left
             on
                and
-                  address.city_id:city_id.city_id
+                  address.city_id:city.city_id
       columns
          address.address_id
          address.address
@@ -54,8 +53,8 @@ data.connect:sakila
          address.postal_code
          address.phone
          address.last_update
-         city_id.city
-            as:city_id.city
+         city.name
+            as:city_name
       where
          and
 

@@ -1,2 +1,2 @@
-// Load the file called foo.txt | Load the foo.txt file
+// Load file called foo.txt
 io.file.load:/foo.txt

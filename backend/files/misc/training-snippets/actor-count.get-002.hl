@@ -1,0 +1,28 @@
+
+// Endpoint counting items from actor table in sakila database with filtering on first_name that can only be invoked by guest or partner users
+.arguments
+   actor.first_name.like:string
+   actor.first_name.eq:string
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:guest,partner
+
+// Opening up our database connection.
+data.connect:sakila
+
+   // Parametrising our read invocation.
+   add:x:+/*/where/*
+      get-nodes:x:@.arguments/*
+
+   // Reading data from database.
+   data.read
+      table:actor
+      columns
+         count(*)
+            as:count
+      where
+         and
+      limit:long:1
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@data.read/*/*

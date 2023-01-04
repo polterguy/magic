@@ -1,4 +1,4 @@
-// Use Hyperlambda to create an HTTP GET endpoint that takes two string arguments, concatenates these arguments, and returns the result to caller | Create HTTP GET endpoint | Create Hyperlambda endpoint | Create GET Hyperlambda endpoint
+// Create an HTTP GET endpoint that takes two string arguments, concatenates these arguments, and returns the result to caller
 
 // Arguments endpoint can handle
 .arguments

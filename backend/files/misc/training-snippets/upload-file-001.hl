@@ -1,4 +1,4 @@
-// Endpoint allowing user to upload file | File upload endpoint | Create endpoint for uploading files
+// File upload endpoint storing file to etc folder
 .arguments
    file
       name:string

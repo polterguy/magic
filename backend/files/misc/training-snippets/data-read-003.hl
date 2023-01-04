@@ -1,3 +1,4 @@
-// Read all records from pages table | Select records from pages
+// Read 25 records from pages
 data.read
    table:pages
+   limit:25

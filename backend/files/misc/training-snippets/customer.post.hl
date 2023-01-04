@@ -1,5 +1,5 @@
 
-// Endpoint creating one item in customer table in sakila database with the specified store_id, first_name, last_name, email and address_id with authorisation only allowing root and admin users to invoke endpoint
+// Endpoint creating one item in customer table in sakila database with the specified store_id, first_name, last_name, email and address_id with authorisation only allowing root and admin users to invoke endpoint returning the automatically generated id of the created item
 .arguments
    store_id:long
    first_name:string

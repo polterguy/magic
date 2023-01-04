@@ -1,2 +1,2 @@
-// Use Hyperlambda to count all server side cache items | Count cache items | Hyperlambda count cache items
+// Count all server side cache items
 cache.count

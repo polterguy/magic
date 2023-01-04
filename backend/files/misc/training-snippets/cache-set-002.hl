@@ -1,0 +1,4 @@
+// Create a server side cache having a key of cache1 and store the value of the [.arg] variable in it
+.arg:This will end up in your cache
+cache.set:cache1
+   value:x:@.arg

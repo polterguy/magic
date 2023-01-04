@@ -1,0 +1,8 @@
+// Create a new slot named cvcv that takes 2 arguments and returns the sum of the the arguments given
+
+// Creating our slot
+slots.create:cvcv
+   math.add
+      get-value:x:@.arguments/0
+      get-value:x:@.arguments/1
+   return:x:@math.add

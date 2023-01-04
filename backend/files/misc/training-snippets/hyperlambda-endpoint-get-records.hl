@@ -1,4 +1,4 @@
-// Use Hyperlambda to create a Hyperlambda endpoint that returns records from the Categories table in the [generic|northwind] database allowing the caller to filter records and add paging | Endpoint returning records from database
+// Endpoint returning records from Categories table in northwind database with filtering on CategoryName and Description, in addition to paging
 .arguments
    limit:long
    offset:long

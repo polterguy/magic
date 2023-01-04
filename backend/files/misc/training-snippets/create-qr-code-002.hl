@@ -1,0 +1,3 @@
+// Create a QR code leading to aista.com
+image.generate-qr:"https://aista.com"
+   size:8

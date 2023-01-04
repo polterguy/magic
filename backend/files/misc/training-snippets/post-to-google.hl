@@ -1,4 +1,4 @@
-// Invoke Google.com with an http post invocation passing in JSON | Pass in JSON to Google.com create HTTP POST invocation
+// Invoke Google.com HTTP POST passing in userId and id as payload
 .userId:int:1
 http.post:"https://google.com"
    payload

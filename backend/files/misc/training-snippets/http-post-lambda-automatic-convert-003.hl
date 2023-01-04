@@ -1,0 +1,16 @@
+// Post list of objects having name, email, and address to microsoft.com
+http.post:"https://microsoft.com"
+   payload
+      .
+         name:Thomas Hansen
+         email:th@aista.com
+         address:Foo Bar St 97
+      .
+         name:John Doe
+         email:john@doe.com
+         address:Secret st. 58
+      .
+         name:Jane Doe
+         email:jane@doe.com
+         address:Market St. 108
+   convert:true

@@ -1,4 +1,4 @@
-// Use Hyperlambda to increment the [.foo] variable by 3 | Increment variable | Increment by one
+// Increment the [.foo] variable by 3
 .foo:int:5
 math.increment:x:@.foo
    .:int:3

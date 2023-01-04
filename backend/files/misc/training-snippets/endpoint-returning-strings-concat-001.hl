@@ -1,4 +1,4 @@
-// Endpoint concatenating two strings | Concatenate 2 strings in endpoint and return result | Concatenate two strings in endpoint
+// Endpoint concatenating two strings
 .arguments
    arg1:string
    arg2:string

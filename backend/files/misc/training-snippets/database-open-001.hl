@@ -1,2 +1,2 @@
-// Open database called crm | Connect to crm database
+// Connect to crm database
 data.connect:crm

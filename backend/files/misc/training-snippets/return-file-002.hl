@@ -1,4 +1,4 @@
-// Endpoint returning a file to caller with authentication | Returns content of the /README.md file to caller to root users
+// Endpoint returning content of the /README.md file to root users
 .arguments
 
 // Ensuring user belongs to root role

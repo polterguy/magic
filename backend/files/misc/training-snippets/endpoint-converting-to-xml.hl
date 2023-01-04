@@ -1,0 +1,12 @@
+// Endpoint accepting JSON converting input to XML and returning to caller
+.arguments:*
+
+// Converting arguments to XML
+lambda2xml:x:@.arguments/*
+
+// Applying the correct MIME Content-Type HTTP header to response
+response.headers.set
+   Content-Type:application/xml
+
+// Returing XML to caller
+return:x:@lambda2xml

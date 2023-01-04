@@ -1,3 +1,4 @@
-// Read all records from customers table | Select records from customers
+// Select all records from customers
 data.read
    table:customers
+   limit:-1

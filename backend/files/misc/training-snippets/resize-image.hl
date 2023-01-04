@@ -1,4 +1,5 @@
-// Use Hyperlambda to create a Hyperlambda snippet that loads an image from /foo.jpg and resizes it such that it becomes 640x480 in width and height and stores it as a PNG file | Resize image | Change size of image
+// Endpoint loading /foo.png and resizing it to 640x480 pixels before returning it to client as png
+.arguments
 image.resize:/foo.jpg
    width:640
    height:480

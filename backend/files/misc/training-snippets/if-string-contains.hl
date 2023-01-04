@@ -1,4 +1,4 @@
-// Use Hyperlambda to set the value of the [.result] node to boolean true if the string found in [.arg1] contains Thomas
+// Set the value of the [.result] node to boolean true if the string found in [.arg1] contains Thomas
 .arg1:This is a string containing the value Thomas
 .result
 if

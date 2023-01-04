@@ -1,0 +1,16 @@
+// Create an endpoint that takes three decimal numbers, adds them together, and returns the result of the addition to the caller
+.arguments
+   number1:decimal
+   number2:decimal
+   number3:decimal
+
+// Adding our numbers together
+math.add
+   get-value:x:@.arguments/*/number1
+   get-value:x:@.arguments/*/number2
+   get-value:x:@.arguments/*/number3
+
+// Returning the result to caller
+unwrap:x:+/*
+return
+   result:x:@math.add

@@ -1,4 +1,4 @@
-// Use Hyperlambda to create an endpoint that takes one argument being a filename, and if the file exists, the endpoint returns SUCCESS, otherwise the endpoint returns FAILURE | If file exists return SUCCESS
+// Endpoint returning SUCCESS if filename argument is an existing file and FAILURE if not
 .arguments
    filename:string
 
