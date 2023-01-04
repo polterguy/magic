@@ -1,0 +1,5 @@
+// create endpoint selecting number of unique status values from accounts table in robo-crm database
+.arguments
+data.connect:robo-crm
+   data.select:select status as name, count(*) as value from accounts group by status
+   return-nodes:x:-/*
