@@ -1,12 +1,9 @@
 
-// Deletes one item from your address table in your sakila database matching the specified argument(s)
+// Endpoint deleting one item from address table in sakila database having the specified address_id
 .arguments
    address_id:long
-.description:Deletes one item from your address table in your sakila database matching the specified argument(s)
-.type:crud-delete
 
-// Verifying user is authorized to access endpoint.
-auth.ticket.verify:root,admin
+// address_id is mandatory argument
 validators.mandatory:x:@.arguments/*/address_id
 
 // Opening up our database connection.

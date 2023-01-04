@@ -1,14 +1,10 @@
 
-// Endpoint returning items from actor table in sakila database allowing for filtering on first_name and last_name with paging and sorting requiring authentication to invoke
+// Endpoint returning items from country table in sakila database with filtering on country to specify items to return with sorting requiring authentication to invoke
 .arguments
-   limit:long
-   offset:long
    order:string
    direction:string
-   actor.first_name.like:string
-   actor.first_name.eq:string
-   actor.last_name.like:string
-   actor.last_name.eq:string
+   country.country.like:string
+   country.country.eq:string
 
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:root,admin
@@ -18,12 +14,8 @@ data.connect:sakila
 
    // Parametrising our read invocation.
    add:x:./*/data.read
-      get-nodes:x:@.arguments/*/limit
-      get-nodes:x:@.arguments/*/offset
       get-nodes:x:@.arguments/*/order
       get-nodes:x:@.arguments/*/direction
-   remove-nodes:x:@.arguments/*/limit
-   remove-nodes:x:@.arguments/*/offset
    remove-nodes:x:@.arguments/*/order
    remove-nodes:x:@.arguments/*/direction
    add:x:./*/data.read/*/where/*
@@ -31,12 +23,11 @@ data.connect:sakila
 
    // Reading data from database.
    data.read
-      table:actor
+      table:country
       columns
-         actor.actor_id
-         actor.first_name
-         actor.last_name
-         actor.last_update
+         country.country_id
+         country.country
+         country.last_update
       where
          and
 

@@ -1,14 +1,11 @@
 
-// Updates an existing item in your country table in your sakila database according to the specified arguments
+// Endpoint updating an existing item in country table in sakila database having a country_id as specified giving it a new country value
 .arguments
    country_id:long
    country:string
-.description:Updates an existing item in your country table in your sakila database according to the specified arguments
-.type:crud-update
 
-// Verifying user is authorized to access endpoint.
+// country_id is mandatory argument
 validators.mandatory:x:@.arguments/*/country_id
-auth.ticket.verify:root,admin
 
 // Opening up our database connection.
 data.connect:sakila

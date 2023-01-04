@@ -1,10 +1,7 @@
 
-// Creates an item in your country table in your sakila database according to the specified arguments
+// Endpoint creating one item in country table in sakila database with the specified country requiring authentication to invoke
 .arguments
    country:string
-   last_update:date
-.description:Creates an item in your country table in your sakila database according to the specified arguments
-.type:crud-create
 
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:root,admin
