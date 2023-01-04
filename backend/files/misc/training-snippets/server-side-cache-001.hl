@@ -1,0 +1,5 @@
+// 60 seconds of server side caching with cache key my_key
+cache.try-get:my_key
+   expiration:60
+   .lambda
+      return:Cached value
