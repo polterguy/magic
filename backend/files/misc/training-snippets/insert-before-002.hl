@@ -1,0 +1,4 @@
+// insert foo2 node with bar2 value before email argument
+insert-before:x:@.arguments/*/email
+   .
+      foo2:bar2
