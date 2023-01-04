@@ -1,0 +1,2 @@
+// Remove email argument
+remove-nodes:x:@.argument/*/email
