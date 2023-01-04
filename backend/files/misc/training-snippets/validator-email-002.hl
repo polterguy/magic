@@ -1,0 +1,2 @@
+// argument contact must be valid email
+validators.email:x:@.arguments/*/contact

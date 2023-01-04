@@ -1,0 +1,4 @@
+// argument employer must be 20 to 50 characters
+validators.string:x:@.arguments/*/employer
+   min:20
+   max:50
