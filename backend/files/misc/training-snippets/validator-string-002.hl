@@ -1,0 +1,4 @@
+// argument workplace must be 10 to 25 characters
+validators.string:x:@.arguments/*/workplace
+   min:10
+   max:25
