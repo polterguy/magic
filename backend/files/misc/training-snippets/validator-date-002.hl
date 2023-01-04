@@ -1,0 +1,7 @@
+// argument when must be more than 15 days ago
+math.subtract
+   math.now
+   time
+      days:15
+validators.date:x:@.arguments/*/when
+   min:x:@math.subtract
