@@ -1,0 +1,16 @@
+// endpoint returning nurse_id, phone and adr1 from nurses table in hospital database
+.arguments
+
+// Connecting to hospital database
+data.connect:hospital
+
+   // Reading records from nurses table
+   data.read
+      table:nurses
+      columns
+         nurse_id
+         phone
+         adr1
+
+   // Returning result from [data.read] invocation to caller
+   return:x:@data.read/*
