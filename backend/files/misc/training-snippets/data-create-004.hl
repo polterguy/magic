@@ -1,0 +1,11 @@
+// insert name and age argument into patients table
+
+// Decorating [data.create] invocation
+add:x:./*/data.create/*/values
+   get-nodes:x:@.arguments/*/name
+   get-nodes:x:@.arguments/*/age
+
+// Inserting into patients table
+data.create
+   table:patients
+   values

@@ -177,7 +177,7 @@ set-value:x:@.task-id
 unwrap:x:./*/tasks.create/*/*/.task-id
 unwrap:x:./*/tasks.create/*/*/.model-id
 tasks.create:x:@.task-id
-   repeats:30.seconds
+   repeats:60.seconds
    .lambda
 
       // Forward evaluated above

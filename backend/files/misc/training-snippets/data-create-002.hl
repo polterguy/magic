@@ -1,0 +1,8 @@
+// insert address and zip into clients table
+
+// Inserting into clients table
+data.create
+   table:clients
+   values
+      address:Rick St. 67
+      zip:int:56789

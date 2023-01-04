@@ -14,6 +14,7 @@ import { Subscription } from 'rxjs';
 import { SmtpDialogComponent } from './components/smtp-dialog/smtp-dialog.component';
 import json from '../../../../codemirror/options/json.json'
 import { OpenAIConfigurationDialogComponent } from 'src/app/_general/components/openai/openai-configuration-dialog/openai-configuration-dialog.component';
+import { OpenAIService } from 'src/app/_general/services/openai.service';
 
 /**
  * Helper component allowing user to edit his configuration settings.
@@ -39,6 +40,7 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     private configService: ConfigService,
     public backendService: BackendService,
     private generalService: GeneralService,
+    private openAiService: OpenAIService,
     private codemirrorActionsService: CodemirrorActionsService) {
   }
 
@@ -103,6 +105,22 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
       .subscribe((result: {configured: boolean, start_training: boolean}) => {
         if (result?.configured) {
           this.loadConfig();
+          if (result.start_training) {
+
+            this.generalService.showLoading();
+  
+            this.openAiService.start_training().subscribe({
+              next: () => {
+  
+                this.generalService.showFeedback('Training of OpenAI successfully started', 'successMessage');
+                this.generalService.hideLoading();
+              },
+              error: (error: any) => {
+                this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+                this.generalService.hideLoading();
+              }
+            });
+          }
         }
       });
   }
