@@ -1,0 +1,3 @@
+// Set the name of the [.destination] to value of name argument
+set-name:x:@.destination
+   get-value:x:@.arguments/*/name

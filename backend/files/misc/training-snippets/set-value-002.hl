@@ -1,0 +1,3 @@
+// Set the value of the [.arg1] to foo
+set-value:x:@.arg1
+   .:foo

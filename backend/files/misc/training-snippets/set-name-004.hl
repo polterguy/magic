@@ -1,0 +1,3 @@
+// Set the name of the [.dest] to value of name [.arg1]
+set-name:x:@.dest
+   get-value:x:@.arg1
