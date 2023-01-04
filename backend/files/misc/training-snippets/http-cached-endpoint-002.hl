@@ -1,0 +1,3 @@
+// 30 seconds of HTTP cache
+response.headers.set
+   Cache-Control:max-age=30
