@@ -1,0 +1,9 @@
+// connect to bar database and return count of customers
+data.connect:bar
+
+   // Read count of customers
+   data.read
+      table:customers
+      columns
+         count(*)
+            as:count
