@@ -1,4 +1,4 @@
-// Use Hyperlambda to convert the specified lambda to CSV and back to lambda again, while preserving type information | Convert CVS content | Convert from CSV to lambda using Hyperlambda | Convert CSV to lambda
+// Convert lambda to CSV and convert back to lambda again
 
 // Lambda object we want to convert to CSV
 .data

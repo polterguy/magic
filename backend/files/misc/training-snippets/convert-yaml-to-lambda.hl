@@ -1,0 +1,11 @@
+// Convert YAML to JSON
+.yaml:@"foo: howdy
+bar: jo
+howdy: !!bool true
+children:
+- howdy
+- some
+"
+
+// Converting from YAML to JSON
+yaml2lambda:x:@.yaml

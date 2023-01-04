@@ -19,6 +19,7 @@ import { OpenAIService } from 'src/app/_general/services/openai.service';
 export class OpenAITrainingDialogComponent implements OnInit {
 
   dataSource: any[] = [];
+  filter: string = '';
 
   constructor(
     private dialogRef: MatDialogRef<OpenAITrainingDialogComponent>,
@@ -50,6 +51,13 @@ export class OpenAITrainingDialogComponent implements OnInit {
         this.generalService.hideLoading();
       }
     });
+  }
+
+  getFilteredItems() {
+    if (this.filter === '') {
+      return this.dataSource;
+    }
+    return this.dataSource.filter(x => x.prompt.includes(this.filter) || x.completion.includes(this.filter));
   }
 
   close() {
