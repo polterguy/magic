@@ -1,0 +1,16 @@
+// delete endpoint allowing me to delete a record in my contacts table in my crm database
+.arguments
+   id:long
+
+// Deleting record from foo_bar table
+data.connect:crm
+   data.delete
+      table:contacts
+      where
+         and
+            id.eq:x:@.arguments/*/id
+
+// Returning result of above invocation to caller
+unwrap:x:+/*
+return
+   result:x:@data.delete

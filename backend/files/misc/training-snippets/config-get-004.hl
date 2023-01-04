@@ -1,0 +1,2 @@
+// get config key my_app:url
+config.get:"my_app:url"

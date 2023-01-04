@@ -1,0 +1,2 @@
+// get config key magic:foo:bar
+config.get:"magic:foo:bar"
