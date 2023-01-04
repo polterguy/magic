@@ -1,0 +1,4 @@
+
+// Load JSON file
+io.file.load:/some-file.json
+json2lambda:x:@io.file.load
