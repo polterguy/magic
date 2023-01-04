@@ -1,0 +1,4 @@
+
+// Load CSV file
+io.file.load:/some-file.csv
+csv2lambda:x:@io.file.load
