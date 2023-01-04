@@ -1,0 +1,16 @@
+// create endpoint inserting name, email, and address into customers table in crm database
+.arguments
+   name:string
+   email:string
+   address:string
+data.connect:crm
+   data.create
+      table:customers
+      values
+         name:x:@.arguments/*/name
+         email:x:@.arguments/*/email
+         address:x:@.arguments/*/address
+
+   // Returning success
+   return
+      result:Insert was a success

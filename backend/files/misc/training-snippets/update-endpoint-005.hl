@@ -1,0 +1,22 @@
+// endpoint taking email argument and contact_id updating clients table in customers database
+.arguments
+   email:string
+   contact_id:long
+
+// Connecting to customers database
+data.connect:customers
+
+   // Invoking our update slot
+   data.update
+      table:clients
+      values
+         email:x:@.arguments/*/email
+      where
+         and
+            contact_id.eq:x:@.arguments/*/contact_id
+
+   // Returning success to caller
+   response.status.set:202
+   unwrap:x:+/*
+   return
+      affected:x:@data.update

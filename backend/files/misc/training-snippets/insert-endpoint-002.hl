@@ -1,0 +1,16 @@
+// endpoint creating address record in contacts database with adr1, zip and county arguments
+.arguments
+   adr1:string
+   zip:string
+   county:string
+data.connect:contacts
+   data.create
+      table:address
+      values
+         adr1:x:@.arguments/*/adr1
+         zip:x:@.arguments/*/zip
+         county:x:@.arguments/*/county
+
+   // Returning success
+   return
+      result:Insert was a success

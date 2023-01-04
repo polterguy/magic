@@ -1,0 +1,6 @@
+// return affected records from delete
+
+// Returning result of above invocation to caller
+unwrap:x:+/*
+return
+   result:x:@data.delete
