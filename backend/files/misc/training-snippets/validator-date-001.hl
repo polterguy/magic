@@ -1,0 +1,7 @@
+// argument date must be more than 5 days ago
+math.subtract
+   math.now
+   time
+      days:5
+validators.date:x:@.arguments/*/date
+   min:x:@math.subtract
