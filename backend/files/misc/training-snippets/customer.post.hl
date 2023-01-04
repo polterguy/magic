@@ -1,28 +1,14 @@
 
-// Creates an item in your customer table in your sakila database according to the specified arguments
+// Endpoint creating one item in customer table in sakila database with the specified store_id, first_name, last_name, email and address_id with authorisation only allowing root and admin users to invoke endpoint
 .arguments
    store_id:long
    first_name:string
    last_name:string
    email:string
    address_id:long
-   active:string
-   create_date:date
-   last_update:date
-.description:Creates an item in your customer table in your sakila database according to the specified arguments
-.type:crud-create
-.handling
-   email:email
 
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:root,admin
-.foreign-keys
-   .
-      column:address_id
-      table:address
-      foreign_column:address_id
-      foreign_name:address
-      long:bool:true
 
 // Opening up database connection.
 data.connect:sakila

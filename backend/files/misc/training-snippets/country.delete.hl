@@ -1,12 +1,9 @@
 
-// Deletes one item from your country table in your sakila database matching the specified argument(s)
+// Endpoint deleting one item from country table in sakila database having the specified country_id
 .arguments
    country_id:long
-.description:Deletes one item from your country table in your sakila database matching the specified argument(s)
-.type:crud-delete
 
-// Verifying user is authorized to access endpoint.
-auth.ticket.verify:root,admin
+// country_id is mandatory argument
 validators.mandatory:x:@.arguments/*/country_id
 
 // Opening up our database connection.

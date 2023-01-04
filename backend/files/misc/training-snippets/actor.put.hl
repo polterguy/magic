@@ -1,15 +1,15 @@
 
-// Updates an existing item in your actor table in your sakila database according to the specified arguments
+// Endpoint updating an existing item in your actor table in sakila database having an actor_id as specified giving it a new first_name and last_name requiring authentication to invoke
 .arguments
    actor_id:long
    first_name:string
    last_name:string
-.description:Updates an existing item in your actor table in your sakila database according to the specified arguments
-.type:crud-update
 
 // Verifying user is authorized to access endpoint.
-validators.mandatory:x:@.arguments/*/actor_id
 auth.ticket.verify:root,admin
+
+// actor_id is mandatory argument
+validators.mandatory:x:@.arguments/*/actor_id
 
 // Opening up our database connection.
 data.connect:sakila

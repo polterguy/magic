@@ -1,10 +1,8 @@
 
-// Endpoint returning items from customer table in sakila database with filtering on store_id, first_name, last_name, email and address_id to specify items to return with paging and sorting with authentication
+// Endpoint returning items from customer table in sakila database with filtering on store_id, first_name, last_name, email and address_id to specify items to return with paging
 .arguments
    limit:long
    offset:long
-   order:string
-   direction:string
    customer.store_id.eq:long
    customer.first_name.like:string
    customer.first_name.eq:string
@@ -14,9 +12,6 @@
    customer.email.eq:string
    customer.address_id.eq:long
 
-// Verifying user is authorized to access endpoint.
-auth.ticket.verify:root,admin
-
 // Opening up our database connection.
 data.connect:sakila
 
@@ -24,12 +19,8 @@ data.connect:sakila
    add:x:./*/data.read
       get-nodes:x:@.arguments/*/limit
       get-nodes:x:@.arguments/*/offset
-      get-nodes:x:@.arguments/*/order
-      get-nodes:x:@.arguments/*/direction
    remove-nodes:x:@.arguments/*/limit
    remove-nodes:x:@.arguments/*/offset
-   remove-nodes:x:@.arguments/*/order
-   remove-nodes:x:@.arguments/*/direction
    add:x:./*/data.read/*/where/*
       get-nodes:x:@.arguments/*
 

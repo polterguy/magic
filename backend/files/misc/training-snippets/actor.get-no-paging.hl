@@ -1,8 +1,6 @@
 
-// Endpoint returning items from actor table in sakila database allowing for filtering on first_name and last_name with paging and sorting requiring authentication to invoke
+// Endpoint returning items from actor table in sakila database allowing for filtering on first_name and last_name with sorting requiring authentication to invoke
 .arguments
-   limit:long
-   offset:long
    order:string
    direction:string
    actor.first_name.like:string
@@ -18,12 +16,8 @@ data.connect:sakila
 
    // Parametrising our read invocation.
    add:x:./*/data.read
-      get-nodes:x:@.arguments/*/limit
-      get-nodes:x:@.arguments/*/offset
       get-nodes:x:@.arguments/*/order
       get-nodes:x:@.arguments/*/direction
-   remove-nodes:x:@.arguments/*/limit
-   remove-nodes:x:@.arguments/*/offset
    remove-nodes:x:@.arguments/*/order
    remove-nodes:x:@.arguments/*/direction
    add:x:./*/data.read/*/where/*

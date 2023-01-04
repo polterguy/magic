@@ -1,26 +1,18 @@
 
-// Updates an existing item in your address table in your sakila database according to the specified arguments
+// Endpoint updating an existing item in address table in sakila database having an address_id as specified giving it a new address, address2, district, city_id and phone requiring authentication to invoke
 .arguments
    address_id:long
    address:string
+   address2:string
    district:string
    city_id:long
    phone:string
-.description:Updates an existing item in your address table in your sakila database according to the specified arguments
-.type:crud-update
-.handling
-   phone:phone
 
 // Verifying user is authorized to access endpoint.
-validators.mandatory:x:@.arguments/*/address_id
 auth.ticket.verify:root,admin
-.foreign-keys
-   .
-      column:city_id
-      table:city
-      foreign_column:city_id
-      foreign_name:city
-      long:bool:true
+
+// address_id is mandatory argument
+validators.mandatory:x:@.arguments/*/address_id
 
 // Opening up our database connection.
 data.connect:sakila

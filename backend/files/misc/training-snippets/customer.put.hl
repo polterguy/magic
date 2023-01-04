@@ -1,24 +1,14 @@
 
-// Updates an existing item in your customer table in your sakila database according to the specified arguments
+// Endpoint updating an existing item in customer table in sakila database having a customer_id as specified giving it a new store_id, first_name, last_name and address_id
 .arguments
    customer_id:long
    store_id:long
    first_name:string
    last_name:string
    address_id:long
-.description:Updates an existing item in your customer table in your sakila database according to the specified arguments
-.type:crud-update
 
-// Verifying user is authorized to access endpoint.
+// customer_id is mandatory argument
 validators.mandatory:x:@.arguments/*/customer_id
-auth.ticket.verify:root,admin
-.foreign-keys
-   .
-      column:address_id
-      table:address
-      foreign_column:address_id
-      foreign_name:address
-      long:bool:true
 
 // Opening up our database connection.
 data.connect:sakila
