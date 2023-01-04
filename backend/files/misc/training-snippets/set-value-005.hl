@@ -1,0 +1,3 @@
+// Set the value of the [.email] to value of email argument
+set-value:x:@.email
+   get-value:x:@.arguments/*/email
