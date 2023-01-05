@@ -248,7 +248,8 @@ semaphore:crudifier
          set-value:x:@.tail-tail
             strings.concat
                get-value:x:@.tail-tail
-               .:" with reCAPTCHA"
+               .:" with reCAPTCHA value of "
+               get-value:x:@.arguments/*/captcha
 
          add:x:@apply/*/.arguments
             .
@@ -419,12 +420,6 @@ semaphore:crudifier
                 * Caller wants results of endpoint to be cached, figuring out
                 * if we should publicly or privately cache the result.
                 */
-               set-value:x:@.tail-tail
-                  strings.concat
-                     get-value:x:@.tail-tail
-                     .:" with HTTP caching for "
-                     get-value:x:@.arguments/*/cache
-                     .:" seconds"
                .scope:private
                if
                   eq
@@ -433,6 +428,14 @@ semaphore:crudifier
                   .lambda
                      set-value:x:@.scope
                         .:public
+               set-value:x:@.tail-tail
+                  strings.concat
+                     get-value:x:@.tail-tail
+                     .:" with "
+                     get-value:x:@.scope
+                     .:" HTTP caching for "
+                     get-value:x:@.arguments/*/cache
+                     .:" seconds"
                strings.concat
                   get-value:x:@.scope
                   .:, max-age=
