@@ -391,7 +391,7 @@ export class AutoGeneratorComponent extends GeneratorBase implements OnInit, OnD
           }
 
           idxColumn.post = !(idxColumn.automatic && idxColumn.primary);
-          if (idxColumn.automatic && idxColumn.name?.toLowerCase() === 'created') {
+          if (idxColumn.automatic && (idxColumn.name?.toLowerCase() === 'created' || idxColumn.name?.toLowerCase() === 'last_update')) {
             idxColumn.post = false;
           }
           idxColumn.get = true;
