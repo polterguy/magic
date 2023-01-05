@@ -1,5 +1,5 @@
 
-// Counts items from your staff table in your sakila database according to the specified arguments
+// Endpoint counting records from your staff table in your sakila database filtering on staff_id, first_name, last_name, address_id, picture, email, store_id, active, username, password, last_update with authentication and authorisation for guest,root roles
 .arguments
    staff.staff_id.eq:long
    staff.first_name.like:string
@@ -16,13 +16,11 @@
    staff.password.like:string
    staff.password.eq:string
    staff.last_update.eq:date
-   address_id.address.eq:string
-   address_id.address.like:string
-.description:Counts items from your staff table in your sakila database according to the specified arguments
+.description:Endpoint counting records from your staff table in your sakila database filtering on staff_id, first_name, last_name, address_id, picture, email, store_id, active, username, password, last_update with authentication and authorisation for guest,root roles
 .type:crud-count
 
 // Verifying user is authorized to access endpoint.
-auth.ticket.verify:root,admin
+auth.ticket.verify:guest,root
 
 // Making sure we retrieve lock value for column.
 auth.ticket.get
@@ -31,21 +29,12 @@ auth.ticket.get
 data.connect:sakila
 
    // Parametrising our read invocation.
-   add:x:./*/data.read
-      get-nodes:x:@.arguments/*/operator
-   remove-nodes:x:@.arguments/*/operator
    add:x:+/*/where/*
       get-nodes:x:@.arguments/*
 
    // Reading data from database.
    data.read
       table:staff
-         join:address
-            as:address_id
-            type:left
-            on
-               and
-                  staff.address_id:address_id.address_id
       columns
          count(*)
             as:count

@@ -1,0 +1,43 @@
+
+// CRUD endpoint reading records from your Territories table in your northwind database filtering on TerritoryID, TerritoryDescription, RegionID
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   Territories.TerritoryID.like:string
+   Territories.TerritoryID.eq:string
+   Territories.TerritoryDescription.like:string
+   Territories.TerritoryDescription.eq:string
+   Territories.RegionID.eq:long
+.description:CRUD endpoint reading records from your Territories table in your northwind database filtering on TerritoryID, TerritoryDescription, RegionID
+.type:crud-read
+
+// Opening up our database connection.
+data.connect:northwind
+
+   // Parametrising our read invocation.
+   add:x:./*/data.read
+      get-nodes:x:@.arguments/*/limit
+      get-nodes:x:@.arguments/*/offset
+      get-nodes:x:@.arguments/*/order
+      get-nodes:x:@.arguments/*/direction
+   remove-nodes:x:@.arguments/*/limit
+   remove-nodes:x:@.arguments/*/offset
+   remove-nodes:x:@.arguments/*/order
+   remove-nodes:x:@.arguments/*/direction
+   add:x:./*/data.read/*/where/*
+      get-nodes:x:@.arguments/*
+
+   // Reading data from database.
+   data.read
+      table:Territories
+      columns
+         Territories.TerritoryID
+         Territories.TerritoryDescription
+         Territories.RegionID
+      where
+         and
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@data.read/*

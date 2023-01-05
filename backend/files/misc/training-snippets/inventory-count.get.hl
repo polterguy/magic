@@ -1,55 +1,26 @@
 
-// Counts items from your inventory table in your sakila database according to the specified arguments joined on film
+// Endpoint counting records from your inventory table in your sakila database filtering on inventory_id, film_id, store_id, last_update with authentication and authorisation for guest,root roles
 .arguments
-   operator:string
    inventory.inventory_id.eq:long
    inventory.film_id.eq:long
    inventory.store_id.eq:long
    inventory.last_update.eq:date
-   film_id.title.eq:string
-   film_id.title.like:string
-.description:Counts items from your inventory table in your sakila database according to the specified arguments
+.description:Endpoint counting records from your inventory table in your sakila database filtering on inventory_id, film_id, store_id, last_update with authentication and authorisation for guest,root roles
 .type:crud-count
 
 // Verifying user is authorized to access endpoint.
-auth.ticket.verify:root,admin
-
-// Sanity checking invocation.
-validators.enum:x:@.arguments/*/operator
-   .:or
-   .:and
-
-/*
- * Checking if user supplied an [operator] argument, and if so
- * changing the boolean operator for comparison operations.
- */
-if
-   exists:x:@.arguments/*/operator
-   .lambda
-
-      // User provided a boolean comparison [operator] argument.
-      set-name:x:../*/data.connect/*/data.read/*/where/0
-         get-value:x:@.arguments/*/operator
+auth.ticket.verify:guest,root
 
 // Opening up our database connection.
 data.connect:sakila
 
    // Parametrising our read invocation.
-   add:x:./*/data.read
-      get-nodes:x:@.arguments/*/operator
-   remove-nodes:x:@.arguments/*/operator
    add:x:+/*/where/*
       get-nodes:x:@.arguments/*
 
    // Reading data from database.
    data.read
       table:inventory
-         join:film
-            as:film_id
-            type:left
-            on
-               and
-                  inventory.film_id:film_id.film_id
       columns
          count(*)
             as:count

@@ -1,12 +1,14 @@
 
-// Deletes one item from your language table in your sakila database matching the specified argument(s)
+// CRUD endpoint deleting one record from your language table in your sakila database with language_id matching argument with authentication and authorisation for admin roles
 .arguments
    language_id:long
-.description:Deletes one item from your language table in your sakila database matching the specified argument(s)
+.description:CRUD endpoint deleting one record from your language table in your sakila database with language_id matching argument with authentication and authorisation for admin roles
 .type:crud-delete
 
 // Verifying user is authorized to access endpoint.
-auth.ticket.verify:root,admin
+auth.ticket.verify:admin
+
+// Sanity checking invocation, making sure primary key(s) are specified.
 validators.mandatory:x:@.arguments/*/language_id
 
 // Opening up our database connection.

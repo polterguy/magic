@@ -1,7 +1,6 @@
 
-// Counts items from your address table in your sakila database according to the specified arguments joining on address
+// Endpoint counting records from your address table in your sakila database filtering on address_id, address, address2, district, city_id, postal_code, phone, last_update
 .arguments
-   operator:string
    address.address_id.eq:long
    address.address.like:string
    address.address.eq:string
@@ -15,50 +14,19 @@
    address.phone.like:string
    address.phone.eq:string
    address.last_update.eq:date
-   city_id.city.eq:string
-   city_id.city.like:string
-.description:Counts items from your address table in your sakila database according to the specified arguments
+.description:Endpoint counting records from your address table in your sakila database filtering on address_id, address, address2, district, city_id, postal_code, phone, last_update
 .type:crud-count
-
-// Verifying user is authorized to access endpoint.
-auth.ticket.verify:root,admin
-
-// Sanity checking invocation.
-validators.enum:x:@.arguments/*/operator
-   .:or
-   .:and
-
-/*
- * Checking if user supplied an [operator] argument, and if so
- * changing the boolean operator for comparison operations.
- */
-if
-   exists:x:@.arguments/*/operator
-   .lambda
-
-      // User provided a boolean comparison [operator] argument.
-      set-name:x:../*/data.connect/*/data.read/*/where/0
-         get-value:x:@.arguments/*/operator
 
 // Opening up our database connection.
 data.connect:sakila
 
    // Parametrising our read invocation.
-   add:x:./*/data.read
-      get-nodes:x:@.arguments/*/operator
-   remove-nodes:x:@.arguments/*/operator
    add:x:+/*/where/*
       get-nodes:x:@.arguments/*
 
    // Reading data from database.
    data.read
       table:address
-         join:city
-            as:city_id
-            type:left
-            on
-               and
-                  address.city_id:city_id.city_id
       columns
          count(*)
             as:count

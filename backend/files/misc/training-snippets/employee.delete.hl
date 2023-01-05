@@ -1,0 +1,37 @@
+
+// CRUD endpoint deleting one record from your Employee table in your chinook database with EmployeeId matching argument with logging with authentication and authorisation for admin roles
+.arguments
+   EmployeeId:long
+.description:CRUD endpoint deleting one record from your Employee table in your chinook database with EmployeeId matching argument with logging with authentication and authorisation for admin roles
+.type:crud-delete
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:admin
+
+// Logging invocation
+auth.ticket.get
+lambda2hyper:x:@.arguments/*
+log.info:chinook.Employee entry deleted
+   username:x:@auth.ticket.get
+   arguments:x:@lambda2hyper
+
+// Sanity checking invocation, making sure primary key(s) are specified.
+validators.mandatory:x:@.arguments/*/EmployeeId
+
+// Opening up our database connection.
+data.connect:chinook
+
+   // Parametrising our delete invocation.
+   add:x:./*/data.delete/*/where/*/and
+      get-nodes:x:@.arguments/*
+
+   // Deleting item from database.
+   data.delete
+      table:Employee
+      where
+         and
+
+   // Returning result of above invocation to caller.
+   unwrap:x:+/*
+   return
+      affected:x:@data.delete

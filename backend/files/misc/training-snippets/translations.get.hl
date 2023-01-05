@@ -1,0 +1,47 @@
+
+// CRUD endpoint reading records from your translations table in your babelfish database filtering on id, locale, content with authentication and authorisation for guest,translator roles
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   translations.id.like:string
+   translations.id.eq:string
+   translations.locale.like:string
+   translations.locale.eq:string
+   translations.content.like:string
+   translations.content.eq:string
+.description:CRUD endpoint reading records from your translations table in your babelfish database filtering on id, locale, content with authentication and authorisation for guest,translator roles
+.type:crud-read
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:guest,translator
+
+// Opening up our database connection.
+data.connect:babelfish
+
+   // Parametrising our read invocation.
+   add:x:./*/data.read
+      get-nodes:x:@.arguments/*/limit
+      get-nodes:x:@.arguments/*/offset
+      get-nodes:x:@.arguments/*/order
+      get-nodes:x:@.arguments/*/direction
+   remove-nodes:x:@.arguments/*/limit
+   remove-nodes:x:@.arguments/*/offset
+   remove-nodes:x:@.arguments/*/order
+   remove-nodes:x:@.arguments/*/direction
+   add:x:./*/data.read/*/where/*
+      get-nodes:x:@.arguments/*
+
+   // Reading data from database.
+   data.read
+      table:translations
+      columns
+         translations.id
+         translations.locale
+         translations.content
+      where
+         and
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@data.read/*

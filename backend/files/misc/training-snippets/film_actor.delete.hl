@@ -1,13 +1,19 @@
 
-// Deletes one item from your film_actor table in your sakila database matching the specified argument(s)
+// CRUD endpoint deleting one record from your film_actor table in your sakila database with actor_id, film_id matching argument with logging publishing sakila.film_actor.delete socket message when invoked
 .arguments
    actor_id:long
    film_id:long
-.description:Deletes one item from your film_actor table in your sakila database matching the specified argument(s)
+.description:CRUD endpoint deleting one record from your film_actor table in your sakila database with actor_id, film_id matching argument with logging publishing sakila.film_actor.delete socket message when invoked
 .type:crud-delete
 
-// Verifying user is authorized to access endpoint.
-auth.ticket.verify:root,admin
+// Logging invocation
+auth.ticket.get
+lambda2hyper:x:@.arguments/*
+log.info:sakila.film_actor entry deleted
+   username:x:@auth.ticket.get
+   arguments:x:@lambda2hyper
+
+// Sanity checking invocation, making sure primary key(s) are specified.
 validators.mandatory:x:@.arguments/*/actor_id
 validators.mandatory:x:@.arguments/*/film_id
 
@@ -23,6 +29,12 @@ data.connect:sakila
       table:film_actor
       where
          and
+
+   // Publishing socket message
+   add:x:./*/sockets.signal/*/args
+      get-nodes:x:@.arguments/*
+   sockets.signal:sakila.film_actor.delete
+      args
 
    // Returning result of above invocation to caller.
    unwrap:x:+/*

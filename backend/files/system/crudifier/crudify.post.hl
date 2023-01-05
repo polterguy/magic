@@ -307,7 +307,7 @@ semaphore:crudifier
          set-value:x:@.comment-tail
             strings.concat
                get-value:x:@.comment-tail
-               .:" filtering on which item to delete according to"
+               .:" with"
 
          /*
           * Applying DELETE arguments.
@@ -360,6 +360,12 @@ semaphore:crudifier
             insert-before:x:@apply/*/data.connect/-
                .
                   validators.mandatory
+
+         // Adding delete text to comment's tail parts.
+         set-value:x:@.comment-tail
+            strings.concat
+               get-value:x:@.comment-tail
+               .:" matching argument"
 
          // Making sure we apply "locked" columns.
          for-each:x:@.arguments/*/args/*/columns/*/*/locked/.
@@ -1406,12 +1412,12 @@ semaphore:crudifier
             .:crud-count
          set-value:x:@apply/*/.description
             strings.replace:x:@apply/*/.description
-               .:returning
-               .:counting
+               .:CRUD endpoint reading
+               .:Endpoint counting
          set-value:x:@apply/0
             strings.replace:x:@apply/0
-               .:returning
-               .:counting
+               .:CRUD endpoint reading
+               .:Endpoint counting
          add:x:@apply/**/columns
             .
                count(*)

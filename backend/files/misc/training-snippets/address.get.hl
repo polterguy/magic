@@ -1,11 +1,10 @@
 
-// Returns items from your address table in your sakila database according to the specified arguments joining with city returning name from city table
+// CRUD endpoint reading records from your address table in your sakila database filtering on address_id, address, address2, district, city_id, postal_code, phone, last_update
 .arguments
    limit:long
    offset:long
    order:string
    direction:string
-   operator:string
    address.address_id.eq:long
    address.address.like:string
    address.address.eq:string
@@ -19,32 +18,12 @@
    address.phone.like:string
    address.phone.eq:string
    address.last_update.eq:date
-   city_id.name.eq:string
-   city_id.name.like:string
-.description:Returns items from your address table in your sakila database according to the specified arguments
+.description:CRUD endpoint reading records from your address table in your sakila database filtering on address_id, address, address2, district, city_id, postal_code, phone, last_update
 .type:crud-read
+
+// Columns with custom handling as we generate a frontend
 .handling
    address.phone:phone
-
-// Verifying user is authorized to access endpoint.
-auth.ticket.verify:root,admin
-
-// Sanity checking invocation.
-validators.enum:x:@.arguments/*/operator
-   .:or
-   .:and
-
-/*
- * Checking if user supplied an [operator] argument, and if so
- * changing the boolean operator for comparison operations.
- */
-if
-   exists:x:@.arguments/*/operator
-   .lambda
-
-      // User provided a boolean comparison [operator] argument.
-      set-name:x:../*/data.connect/*/data.read/*/where/0
-         get-value:x:@.arguments/*/operator
 
 // Opening up our database connection.
 data.connect:sakila
@@ -55,7 +34,6 @@ data.connect:sakila
       get-nodes:x:@.arguments/*/offset
       get-nodes:x:@.arguments/*/order
       get-nodes:x:@.arguments/*/direction
-   remove-nodes:x:@.arguments/*/operator
    remove-nodes:x:@.arguments/*/limit
    remove-nodes:x:@.arguments/*/offset
    remove-nodes:x:@.arguments/*/order
@@ -66,12 +44,6 @@ data.connect:sakila
    // Reading data from database.
    data.read
       table:address
-         join:city
-            as:city_id
-            type:left
-            on
-               and
-                  address.city_id:city_id.city_id
       columns
          address.address_id
          address.address
@@ -81,8 +53,6 @@ data.connect:sakila
          address.postal_code
          address.phone
          address.last_update
-         city_id.name
-            as:city_id.name
       where
          and
 

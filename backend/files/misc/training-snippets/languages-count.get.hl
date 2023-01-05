@@ -1,0 +1,32 @@
+
+// Endpoint counting records from your languages table in your babelfish database filtering on locale, language with authentication and authorisation for guest,translator roles
+.arguments
+   languages.locale.like:string
+   languages.locale.eq:string
+   languages.language.like:string
+   languages.language.eq:string
+.description:Endpoint counting records from your languages table in your babelfish database filtering on locale, language with authentication and authorisation for guest,translator roles
+.type:crud-count
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:guest,translator
+
+// Opening up our database connection.
+data.connect:babelfish
+
+   // Parametrising our read invocation.
+   add:x:+/*/where/*
+      get-nodes:x:@.arguments/*
+
+   // Reading data from database.
+   data.read
+      table:languages
+      columns
+         count(*)
+            as:count
+      where
+         and
+      limit:long:1
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@data.read/*/*

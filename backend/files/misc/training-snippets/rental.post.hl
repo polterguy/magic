@@ -1,30 +1,43 @@
 
-// Creates an item in your rental table in your sakila database according to the specified arguments
+// CRUD endpoint creating one record in your rental table in your sakila database taking rental_date, inventory_id, customer_id, return_date, staff_id, last_update with authentication and authorisation for admin,guest roles with reCAPTCHA value of 0.3
 .arguments
+   recaptcha:string
    rental_date:date
    inventory_id:long
    customer_id:long
    return_date:date
    staff_id:long
    last_update:date
-.description:Creates an item in your rental table in your sakila database according to the specified arguments
+.description:CRUD endpoint creating one record in your rental table in your sakila database taking rental_date, inventory_id, customer_id, return_date, staff_id, last_update with authentication and authorisation for admin,guest roles with reCAPTCHA value of 0.3
 .type:crud-create
 
+// Checking reCAPTCHA value if backend is configured with reCAPTCHA configuration settings.
+config.get:"magic:auth:recaptcha:key"
+config.get:"magic:auth:recaptcha:secret"
+if
+   and
+      neq:x:@config.get
+         .
+      neq:x:@config.get
+         .:
+      neq:x:@config.get/@config.get
+         .
+      neq:x:@config.get/@config.get
+         .:
+   .lambda
+
+      // reCAPTCHA configuration settings found.
+      validators.mandatory:x:@.arguments/*/recaptcha
+      validators.recaptcha:x:@.arguments/*/recaptcha/[0,1]
+         site-key:x:@config.get/@config.get
+         secret:x:@config.get
+         min:decimal:0.3
+
+// To remove reCAPTCHA value preventing it from being used as an argument further down in file.
+remove-nodes:x:@.arguments/*/recaptcha/[0,1]
+
 // Verifying user is authorized to access endpoint.
-auth.ticket.verify:root,admin
-.foreign-keys
-   .
-      column:customer_id
-      table:customer
-      foreign_column:customer_id
-      foreign_name:first_name
-      long:bool:true
-   .
-      column:staff_id
-      table:staff
-      foreign_column:staff_id
-      foreign_name:first_name
-      long:bool:true
+auth.ticket.verify:admin,guest
 
 // Opening up database connection.
 data.connect:sakila
@@ -39,8 +52,10 @@ data.connect:sakila
       return-id:bool:true
       values
 
-   // Returning result of above invoction to caller.
+   // Returning the correct status code.
    response.status.set:201
+
+   // Returning result of above invocation to caller.
    unwrap:x:+/*
    return
       id:x:@data.create

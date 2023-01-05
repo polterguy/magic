@@ -1,15 +1,14 @@
 
-// Updates an existing item in your actor table in your sakila database according to the specified arguments
+// CRUD endpoint updating one record in your actor table in your sakila database filtering which item to update with actor_id updating first_name, last_name fields
 .arguments
    actor_id:long
    first_name:string
    last_name:string
-.description:Updates an existing item in your actor table in your sakila database according to the specified arguments
+.description:CRUD endpoint updating one record in your actor table in your sakila database filtering which item to update with actor_id updating first_name, last_name fields
 .type:crud-update
 
-// Verifying user is authorized to access endpoint.
+// Sanity checking invocation, making sure primary key(s) are specified.
 validators.mandatory:x:@.arguments/*/actor_id
-auth.ticket.verify:root,admin
 
 // Opening up our database connection.
 data.connect:sakila
@@ -37,8 +36,10 @@ data.connect:sakila
          return
             result:Record not found
 
-   // Returning success to caller.
+   // Returning the correct status code.
    response.status.set:202
+
+   // Returning success to caller.
    unwrap:x:+/*
    return
       affected:x:@data.update

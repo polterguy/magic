@@ -1,0 +1,42 @@
+
+// CRUD endpoint deleting one record from your transactions table in your stripe database with transaction matching argument with authentication and authorisation for guest roles publishing stripe.transactions.delete socket message when invoked
+.arguments
+   transaction:string
+.description:CRUD endpoint deleting one record from your transactions table in your stripe database with transaction matching argument with authentication and authorisation for guest roles publishing stripe.transactions.delete socket message when invoked
+.type:crud-delete
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:guest
+
+// Sanity checking invocation, making sure primary key(s) are specified.
+validators.mandatory:x:@.arguments/*/transaction
+
+// Making sure we retrieve lock value for column.
+auth.ticket.get
+
+// Opening up our database connection.
+data.connect:stripe
+
+   // Parametrising our delete invocation.
+   add:x:./*/data.delete/*/where/*/and
+      get-nodes:x:@.arguments/*
+
+   // Deleting item from database.
+   data.delete
+      table:transactions
+      where
+         and
+
+            // Table is locked on the following field.
+            username.eq:x:@auth.ticket.get
+
+   // Publishing socket message
+   add:x:./*/sockets.signal/*/args
+      get-nodes:x:@.arguments/*
+   sockets.signal:stripe.transactions.delete
+      args
+
+   // Returning result of above invocation to caller.
+   unwrap:x:+/*
+   return
+      affected:x:@data.delete

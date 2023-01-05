@@ -1,22 +1,17 @@
 
-// Updates an existing item in your city table in your sakila database according to the specified arguments
+// CRUD endpoint updating one record in your city table in your sakila database filtering which item to update with city_id updating city, country_id fields with authentication and authorisation for guest roles
 .arguments
    city_id:long
    city:string
    country_id:long
-.description:Updates an existing item in your city table in your sakila database according to the specified arguments
+.description:CRUD endpoint updating one record in your city table in your sakila database filtering which item to update with city_id updating city, country_id fields with authentication and authorisation for guest roles
 .type:crud-update
 
-// Verifying user is authorized to access endpoint.
+// Sanity checking invocation, making sure primary key(s) are specified.
 validators.mandatory:x:@.arguments/*/city_id
-auth.ticket.verify:root,admin
-.foreign-keys
-   .
-      column:country_id
-      table:country
-      foreign_column:country_id
-      foreign_name:country
-      long:bool:true
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:guest
 
 // Opening up our database connection.
 data.connect:sakila
@@ -44,8 +39,10 @@ data.connect:sakila
          return
             result:Record not found
 
-   // Returning success to caller.
+   // Returning the correct status code.
    response.status.set:202
+
+   // Returning success to caller.
    unwrap:x:+/*
    return
       affected:x:@data.update

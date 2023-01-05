@@ -1,12 +1,14 @@
 
-// Deletes one item from your customer table in your sakila database matching the specified argument(s)
+// CRUD endpoint deleting one record from your customer table in your sakila database with customer_id matching argument with authentication and authorisation for root roles
 .arguments
    customer_id:long
-.description:Deletes one item from your customer table in your sakila database matching the specified argument(s)
+.description:CRUD endpoint deleting one record from your customer table in your sakila database with customer_id matching argument with authentication and authorisation for root roles
 .type:crud-delete
 
 // Verifying user is authorized to access endpoint.
-auth.ticket.verify:root,admin
+auth.ticket.verify:root
+
+// Sanity checking invocation, making sure primary key(s) are specified.
 validators.mandatory:x:@.arguments/*/customer_id
 
 // Opening up our database connection.

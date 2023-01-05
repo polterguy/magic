@@ -1,27 +1,21 @@
 
-// Creates an item in your film_actor table in your sakila database according to the specified arguments
+// CRUD endpoint creating one record in your film_actor table in your sakila database taking actor_id, film_id, last_update with logging with authentication and authorisation for translator roles publishing sakila.film_actor.post socket message when invoked
 .arguments
    actor_id:long
    film_id:long
    last_update:date
-.description:Creates an item in your film_actor table in your sakila database according to the specified arguments
+.description:CRUD endpoint creating one record in your film_actor table in your sakila database taking actor_id, film_id, last_update with logging with authentication and authorisation for translator roles publishing sakila.film_actor.post socket message when invoked
 .type:crud-create
 
 // Verifying user is authorized to access endpoint.
-auth.ticket.verify:root,admin
-.foreign-keys
-   .
-      column:actor_id
-      table:actor
-      foreign_column:actor_id
-      foreign_name:first_name
-      long:bool:true
-   .
-      column:film_id
-      table:film
-      foreign_column:film_id
-      foreign_name:title
-      long:bool:true
+auth.ticket.verify:translator
+
+// Logging invocation
+auth.ticket.get
+lambda2hyper:x:@.arguments/*
+log.info:sakila.film_actor entry created
+   username:x:@auth.ticket.get
+   arguments:x:@lambda2hyper
 
 // Opening up database connection.
 data.connect:sakila
@@ -36,8 +30,16 @@ data.connect:sakila
       return-id:bool:false
       values
 
-   // Returning result of above invoction to caller.
+   // Returning the correct status code.
    response.status.set:201
+
+   // Publishing socket message
+   add:x:./*/sockets.signal/*/args
+      get-nodes:x:@.arguments/*
+   sockets.signal:sakila.film_actor.post
+      args
+
+   // Returning result of above invocation to caller.
    unwrap:x:+/*
    return
       result:success

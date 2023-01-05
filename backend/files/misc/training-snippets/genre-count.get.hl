@@ -1,0 +1,35 @@
+
+// Endpoint counting records from your Genre table in your chinook database filtering on GenreId, Name with authentication and authorisation for admin roles with public HTTP caching for 120 seconds
+.arguments
+   Genre.GenreId.eq:long
+   Genre.Name.like:string
+   Genre.Name.eq:string
+.description:Endpoint counting records from your Genre table in your chinook database filtering on GenreId, Name with authentication and authorisation for admin roles with public HTTP caching for 120 seconds
+.type:crud-count
+
+// Adding Cache-Control HTTP header
+response.headers.set
+   Cache-Control:public, max-age=120
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:admin
+
+// Opening up our database connection.
+data.connect:chinook
+
+   // Parametrising our read invocation.
+   add:x:+/*/where/*
+      get-nodes:x:@.arguments/*
+
+   // Reading data from database.
+   data.read
+      table:Genre
+      columns
+         count(*)
+            as:count
+      where
+         and
+      limit:long:1
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@data.read/*/*

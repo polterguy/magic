@@ -1,0 +1,62 @@
+
+// CRUD endpoint reading records from your activities_contacts table in your aista-crm database filtering on activity_id, contact_id with authentication and authorisation for root,admin roles
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   activities_contacts.activity_id.eq:long
+   activities_contacts.contact_id.eq:long
+   activity_id.name.eq:string
+   activity_id.name.like:string
+   contact_id.name.eq:string
+   contact_id.name.like:string
+.description:CRUD endpoint reading records from your activities_contacts table in your aista-crm database filtering on activity_id, contact_id with authentication and authorisation for root,admin roles
+.type:crud-read
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root,admin
+
+// Opening up our database connection.
+data.connect:aista-crm
+
+   // Parametrising our read invocation.
+   add:x:./*/data.read
+      get-nodes:x:@.arguments/*/limit
+      get-nodes:x:@.arguments/*/offset
+      get-nodes:x:@.arguments/*/order
+      get-nodes:x:@.arguments/*/direction
+   remove-nodes:x:@.arguments/*/limit
+   remove-nodes:x:@.arguments/*/offset
+   remove-nodes:x:@.arguments/*/order
+   remove-nodes:x:@.arguments/*/direction
+   add:x:./*/data.read/*/where/*
+      get-nodes:x:@.arguments/*
+
+   // Reading data from database.
+   data.read
+      table:activities_contacts
+         join:activities
+            as:activity_id
+            type:left
+            on
+               and
+                  activities_contacts.activity_id:activity_id.activity_id
+         join:contacts
+            as:contact_id
+            type:left
+            on
+               and
+                  activities_contacts.contact_id:contact_id.contact_id
+      columns
+         activities_contacts.activity_id
+         activities_contacts.contact_id
+         activity_id.name
+            as:activity_id.name
+         contact_id.name
+            as:contact_id.name
+      where
+         and
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@data.read/*

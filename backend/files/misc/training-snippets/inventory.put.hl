@@ -1,22 +1,17 @@
 
-// Updates an existing item in your inventory table in your sakila database according to the specified arguments
+// CRUD endpoint updating one record in your inventory table in your sakila database filtering which item to update with inventory_id updating film_id, store_id fields with authentication and authorisation for admin,guest,root,translator roles
 .arguments
    inventory_id:long
    film_id:long
    store_id:long
-.description:Updates an existing item in your inventory table in your sakila database according to the specified arguments
+.description:CRUD endpoint updating one record in your inventory table in your sakila database filtering which item to update with inventory_id updating film_id, store_id fields with authentication and authorisation for admin,guest,root,translator roles
 .type:crud-update
 
-// Verifying user is authorized to access endpoint.
+// Sanity checking invocation, making sure primary key(s) are specified.
 validators.mandatory:x:@.arguments/*/inventory_id
-auth.ticket.verify:root,admin
-.foreign-keys
-   .
-      column:film_id
-      table:film
-      foreign_column:film_id
-      foreign_name:title
-      long:bool:true
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:admin,guest,root,translator
 
 // Opening up our database connection.
 data.connect:sakila
@@ -44,8 +39,10 @@ data.connect:sakila
          return
             result:Record not found
 
-   // Returning success to caller.
+   // Returning the correct status code.
    response.status.set:202
+
+   // Returning success to caller.
    unwrap:x:+/*
    return
       affected:x:@data.update

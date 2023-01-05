@@ -1,12 +1,21 @@
 
-// Deletes one item from your inventory table in your sakila database matching the specified argument(s)
+// CRUD endpoint deleting one record from your inventory table in your sakila database with inventory_id matching argument with logging with authentication and authorisation for admin roles
 .arguments
    inventory_id:long
-.description:Deletes one item from your inventory table in your sakila database matching the specified argument(s)
+.description:CRUD endpoint deleting one record from your inventory table in your sakila database with inventory_id matching argument with logging with authentication and authorisation for admin roles
 .type:crud-delete
 
 // Verifying user is authorized to access endpoint.
-auth.ticket.verify:root,admin
+auth.ticket.verify:admin
+
+// Logging invocation
+auth.ticket.get
+lambda2hyper:x:@.arguments/*
+log.info:sakila.inventory entry deleted
+   username:x:@auth.ticket.get
+   arguments:x:@lambda2hyper
+
+// Sanity checking invocation, making sure primary key(s) are specified.
 validators.mandatory:x:@.arguments/*/inventory_id
 
 // Opening up our database connection.

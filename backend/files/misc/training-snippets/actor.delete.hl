@@ -1,12 +1,11 @@
 
-// Deletes one item from your actor table in your sakila database matching the specified argument(s)
+// CRUD endpoint deleting one record from your actor table in your sakila database with actor_id matching argument
 .arguments
    actor_id:long
-.description:Deletes one item from your actor table in your sakila database matching the specified argument(s)
+.description:CRUD endpoint deleting one record from your actor table in your sakila database with actor_id matching argument
 .type:crud-delete
 
-// Verifying user is authorized to access endpoint.
-auth.ticket.verify:root,admin
+// Sanity checking invocation, making sure primary key(s) are specified.
 validators.mandatory:x:@.arguments/*/actor_id
 
 // Opening up our database connection.

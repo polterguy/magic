@@ -1,11 +1,10 @@
 
-// Returns items from your payment table in your sakila database according to the specified arguments
+// CRUD endpoint reading records from your payment table in your sakila database filtering on payment_id, customer_id, staff_id, rental_id, amount, payment_date, last_update with authentication and authorisation for guest,root roles
 .arguments
    limit:long
    offset:long
    order:string
    direction:string
-   operator:string
    payment.payment_id.eq:long
    payment.customer_id.eq:long
    payment.staff_id.eq:long
@@ -13,32 +12,11 @@
    payment.amount.eq:decimal
    payment.payment_date.eq:date
    payment.last_update.eq:date
-   customer_id.first_name.eq:string
-   customer_id.first_name.like:string
-   staff_id.first_name.eq:string
-   staff_id.first_name.like:string
-.description:Returns items from your payment table in your sakila database according to the specified arguments
+.description:CRUD endpoint reading records from your payment table in your sakila database filtering on payment_id, customer_id, staff_id, rental_id, amount, payment_date, last_update with authentication and authorisation for guest,root roles
 .type:crud-read
 
 // Verifying user is authorized to access endpoint.
-auth.ticket.verify:root,admin
-
-// Sanity checking invocation.
-validators.enum:x:@.arguments/*/operator
-   .:or
-   .:and
-
-/*
- * Checking if user supplied an [operator] argument, and if so
- * changing the boolean operator for comparison operations.
- */
-if
-   exists:x:@.arguments/*/operator
-   .lambda
-
-      // User provided a boolean comparison [operator] argument.
-      set-name:x:../*/data.connect/*/data.read/*/where/0
-         get-value:x:@.arguments/*/operator
+auth.ticket.verify:guest,root
 
 // Opening up our database connection.
 data.connect:sakila
@@ -49,7 +27,6 @@ data.connect:sakila
       get-nodes:x:@.arguments/*/offset
       get-nodes:x:@.arguments/*/order
       get-nodes:x:@.arguments/*/direction
-   remove-nodes:x:@.arguments/*/operator
    remove-nodes:x:@.arguments/*/limit
    remove-nodes:x:@.arguments/*/offset
    remove-nodes:x:@.arguments/*/order
@@ -60,18 +37,6 @@ data.connect:sakila
    // Reading data from database.
    data.read
       table:payment
-         join:customer
-            as:customer_id
-            type:left
-            on
-               and
-                  payment.customer_id:customer_id.customer_id
-         join:staff
-            as:staff_id
-            type:left
-            on
-               and
-                  payment.staff_id:staff_id.staff_id
       columns
          payment.payment_id
          payment.customer_id
@@ -80,10 +45,6 @@ data.connect:sakila
          payment.amount
          payment.payment_date
          payment.last_update
-         customer_id.first_name
-            as:customer_id.first_name
-         staff_id.first_name
-            as:staff_id.first_name
       where
          and
 

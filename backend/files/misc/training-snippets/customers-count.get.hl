@@ -1,0 +1,36 @@
+
+// Endpoint counting records from your customers table in your stripe database filtering on username, customer_id with authentication and authorisation for guest,root,translator roles
+.arguments
+   customers.customer_id.like:string
+   customers.customer_id.eq:string
+.description:Endpoint counting records from your customers table in your stripe database filtering on username, customer_id with authentication and authorisation for guest,root,translator roles
+.type:crud-count
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:guest,root,translator
+
+// Making sure we retrieve lock value for column.
+auth.ticket.get
+
+// Opening up our database connection.
+data.connect:stripe
+
+   // Parametrising our read invocation.
+   add:x:+/*/where/*
+      get-nodes:x:@.arguments/*
+
+   // Reading data from database.
+   data.read
+      table:customers
+      columns
+         count(*)
+            as:count
+      where
+         and
+
+            // Table is locked on the following field.
+            username.eq:x:@auth.ticket.get
+      limit:long:1
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@data.read/*/*

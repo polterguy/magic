@@ -1,0 +1,44 @@
+
+// CRUD endpoint creating one record in your activities_employees table in your aista-crm database taking activity_id, employee_id with authentication and authorisation for root,admin roles
+.arguments
+   activity_id:long
+   employee_id:long
+.description:CRUD endpoint creating one record in your activities_employees table in your aista-crm database taking activity_id, employee_id with authentication and authorisation for root,admin roles
+.type:crud-create
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root,admin
+.foreign-keys
+   .
+      column:activity_id
+      table:activities
+      foreign_column:activity_id
+      foreign_name:name
+      long:bool:true
+   .
+      column:employee_id
+      table:employees
+      foreign_column:employee_id
+      foreign_name:name
+      long:bool:true
+
+// Opening up database connection.
+data.connect:aista-crm
+
+   // Parametrising our create invocation.
+   add:x:./*/data.create/*/values
+      get-nodes:x:@.arguments/*
+
+   // Creating our record.
+   data.create
+      table:activities_employees
+      return-id:bool:false
+      values
+
+   // Returning the correct status code.
+   response.status.set:201
+
+   // Returning result of above invocation to caller.
+   unwrap:x:+/*
+   return
+      result:success

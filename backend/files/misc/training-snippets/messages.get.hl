@@ -1,0 +1,73 @@
+
+// CRUD endpoint reading records from your messages table in your tickets database filtering on id, ticket, created, user, description with authentication and authorisation for translator roles with reCAPTCHA value of 0.9 with public HTTP caching for 48 seconds
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   recaptcha:string
+   messages.id.eq:long
+   messages.ticket.eq:long
+   messages.created.eq:date
+   messages.description.like:string
+   messages.description.eq:string
+   ticket.user.eq:string
+   ticket.user.like:string
+.description:CRUD endpoint reading records from your messages table in your tickets database filtering on id, ticket, created, user, description with authentication and authorisation for translator roles with reCAPTCHA value of 0.9 with public HTTP caching for 48 seconds
+.type:crud-read
+
+// Adding Cache-Control HTTP header
+response.headers.set
+   Cache-Control:public, max-age=48
+
+// Checking reCAPTCHA value if backend is configured with reCAPTCHA configuration settings.
+config.get:"magic:auth:recaptcha:key"
+
+// To remove reCAPTCHA value preventing it from being used as an argument further down in file.
+remove-nodes:x:@.arguments/*/recaptcha/[0,1]
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:translator
+
+// Making sure we retrieve lock value for column.
+auth.ticket.get
+
+// Opening up our database connection.
+data.connect:tickets
+
+   // Parametrising our read invocation.
+   add:x:./*/data.read
+      get-nodes:x:@.arguments/*/limit
+      get-nodes:x:@.arguments/*/offset
+      get-nodes:x:@.arguments/*/order
+      get-nodes:x:@.arguments/*/direction
+   remove-nodes:x:@.arguments/*/offset
+   remove-nodes:x:@.arguments/*/order
+   remove-nodes:x:@.arguments/*/direction
+   add:x:./*/data.read/*/where/*
+      get-nodes:x:@.arguments/*
+
+   // Reading data from database.
+   data.read
+      table:messages
+         join:tickets
+            as:ticket
+            type:left
+            on
+               and
+                  messages.ticket:ticket.id
+      columns
+         messages.id
+         messages.ticket
+         messages.created
+         messages.description
+         ticket.user
+            as:ticket.user
+      where
+         and
+
+            // Table is locked on the following field.
+            user.eq:x:@auth.ticket.get
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@data.read/*

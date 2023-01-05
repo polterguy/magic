@@ -1,37 +1,19 @@
 
-// Returns items from your language table in your sakila database according to the specified arguments
+// CRUD endpoint reading records from your language table in your sakila database filtering on language_id, name, last_update with authentication and authorisation for guest,root roles
 .arguments
    limit:long
    offset:long
    order:string
    direction:string
-   operator:string
    language.language_id.eq:long
    language.name.like:string
    language.name.eq:string
    language.last_update.eq:date
-.description:Returns items from your language table in your sakila database according to the specified arguments
+.description:CRUD endpoint reading records from your language table in your sakila database filtering on language_id, name, last_update with authentication and authorisation for guest,root roles
 .type:crud-read
 
 // Verifying user is authorized to access endpoint.
-auth.ticket.verify:root,admin
-
-// Sanity checking invocation.
-validators.enum:x:@.arguments/*/operator
-   .:or
-   .:and
-
-/*
- * Checking if user supplied an [operator] argument, and if so
- * changing the boolean operator for comparison operations.
- */
-if
-   exists:x:@.arguments/*/operator
-   .lambda
-
-      // User provided a boolean comparison [operator] argument.
-      set-name:x:../*/data.connect/*/data.read/*/where/0
-         get-value:x:@.arguments/*/operator
+auth.ticket.verify:guest,root
 
 // Opening up our database connection.
 data.connect:sakila
@@ -42,7 +24,6 @@ data.connect:sakila
       get-nodes:x:@.arguments/*/offset
       get-nodes:x:@.arguments/*/order
       get-nodes:x:@.arguments/*/direction
-   remove-nodes:x:@.arguments/*/operator
    remove-nodes:x:@.arguments/*/limit
    remove-nodes:x:@.arguments/*/offset
    remove-nodes:x:@.arguments/*/order

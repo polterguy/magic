@@ -1,28 +1,17 @@
 
-// Updates an existing item in your film_category table in your sakila database according to the specified arguments
+// CRUD endpoint updating one record in your film_category table in your sakila database filtering which item to update with film_id updating category_id, last_update fields with authentication and authorisation for guest roles
 .arguments
    film_id:long
    category_id:long
    last_update:date
-.description:Updates an existing item in your film_category table in your sakila database according to the specified arguments
+.description:CRUD endpoint updating one record in your film_category table in your sakila database filtering which item to update with film_id updating category_id, last_update fields with authentication and authorisation for guest roles
 .type:crud-update
 
-// Verifying user is authorized to access endpoint.
+// Sanity checking invocation, making sure primary key(s) are specified.
 validators.mandatory:x:@.arguments/*/film_id
-auth.ticket.verify:root,admin
-.foreign-keys
-   .
-      column:category_id
-      table:category
-      foreign_column:category_id
-      foreign_name:name
-      long:bool:true
-   .
-      column:film_id
-      table:film
-      foreign_column:film_id
-      foreign_name:title
-      long:bool:true
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:guest
 
 // Opening up our database connection.
 data.connect:sakila
@@ -50,8 +39,10 @@ data.connect:sakila
          return
             result:Record not found
 
-   // Returning success to caller.
+   // Returning the correct status code.
    response.status.set:202
+
+   // Returning success to caller.
    unwrap:x:+/*
    return
       affected:x:@data.update

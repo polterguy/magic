@@ -1,0 +1,38 @@
+
+// CRUD endpoint deleting one record from your EmployeeTerritories table in your northwind database with EmployeeID, TerritoryID matching argument with authentication and authorisation for guest,root,translator roles publishing northwind.employeeterritories.delete socket message when invoked
+.arguments
+   EmployeeID:long
+   TerritoryID:string
+.description:CRUD endpoint deleting one record from your EmployeeTerritories table in your northwind database with EmployeeID, TerritoryID matching argument with authentication and authorisation for guest,root,translator roles publishing northwind.employeeterritories.delete socket message when invoked
+.type:crud-delete
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:guest,root,translator
+
+// Sanity checking invocation, making sure primary key(s) are specified.
+validators.mandatory:x:@.arguments/*/EmployeeID
+validators.mandatory:x:@.arguments/*/TerritoryID
+
+// Opening up our database connection.
+data.connect:northwind
+
+   // Parametrising our delete invocation.
+   add:x:./*/data.delete/*/where/*/and
+      get-nodes:x:@.arguments/*
+
+   // Deleting item from database.
+   data.delete
+      table:EmployeeTerritories
+      where
+         and
+
+   // Publishing socket message
+   add:x:./*/sockets.signal/*/args
+      get-nodes:x:@.arguments/*
+   sockets.signal:northwind.employeeterritories.delete
+      args
+
+   // Returning result of above invocation to caller.
+   unwrap:x:+/*
+   return
+      affected:x:@data.delete

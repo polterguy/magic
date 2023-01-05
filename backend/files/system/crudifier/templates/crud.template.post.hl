@@ -1,6 +1,6 @@
 // dynamically populated
 .arguments
-.description:CRUD endpoint creating one item in your {table} table in your {database} database
+.description:CRUD endpoint creating one record in your {table} table in your {database} database
 .type:crud-create
 .foreign-keys
 
