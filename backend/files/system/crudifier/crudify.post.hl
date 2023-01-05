@@ -1195,17 +1195,12 @@ semaphore:crudifier
                         strings.concat
                            get-value:x:@.tail-tail
                            .:" publishing "
-
-               set-value:x:@.tail-tail
-                  strings.concat
-                     get-value:x:@.tail-tail
-                     strings.concat
-                        get-value:x:@.arguments/*/moduleName
-                        .:.
-                        get-value:x:@.arguments/*/moduleUrl
-                        .:.
-                        get-value:x:@.arguments/*/verb
-                        .:" socket message when invoked"
+                           get-value:x:@.arguments/*/moduleName
+                           .:.
+                           get-value:x:@.arguments/*/moduleUrl
+                           .:.
+                           get-value:x:@.arguments/*/verb
+                           .:" socket message when invoked"
 
                /*
                 * Applying [sockets.signal] just before returning from endpoint.
