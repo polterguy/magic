@@ -1,0 +1,40 @@
+
+// Endpoint counting records from your Album table in your chinook database filtering on AlbumId, Title, ArtistId with authentication and authorisation for guest,translator roles
+.arguments
+   Album.AlbumId.eq:long
+   Album.Title.like:string
+   Album.Title.eq:string
+   Album.ArtistId.eq:long
+   ArtistId.Name.eq:string
+   ArtistId.Name.like:string
+.description:Endpoint counting records from your Album table in your chinook database filtering on AlbumId, Title, ArtistId with authentication and authorisation for guest,translator roles
+.type:crud-count
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:guest,translator
+
+// Opening up our database connection.
+data.connect:chinook
+
+   // Parametrising our read invocation.
+   add:x:+/*/where/*
+      get-nodes:x:@.arguments/*
+
+   // Reading data from database.
+   data.read
+      table:Album
+         join:Artist
+            as:ArtistId
+            type:left
+            on
+               and
+                  Album.ArtistId:ArtistId.ArtistId
+      columns
+         count(*)
+            as:count
+      where
+         and
+      limit:long:1
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@data.read/*/*

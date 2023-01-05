@@ -1,5 +1,5 @@
 
-// Returns items from your staff table in your sakila database according to the specified arguments
+// CRUD endpoint reading records from your staff table in your sakila database filtering on staff_id, first_name, last_name, address_id, picture, email, store_id, active, username, password, last_update with authentication and authorisation for guest,root roles
 .arguments
    limit:long
    offset:long
@@ -20,16 +20,16 @@
    staff.password.like:string
    staff.password.eq:string
    staff.last_update.eq:date
-   address_id.address.eq:string
-   address_id.address.like:string
-.description:Returns items from your staff table in your sakila database according to the specified arguments
+.description:CRUD endpoint reading records from your staff table in your sakila database filtering on staff_id, first_name, last_name, address_id, picture, email, store_id, active, username, password, last_update with authentication and authorisation for guest,root roles
 .type:crud-read
+
+// Columns with custom handling as we generate a frontend
 .handling
    staff.picture:image
    staff.email:email
 
 // Verifying user is authorized to access endpoint.
-auth.ticket.verify:root,admin
+auth.ticket.verify:guest,root
 
 // Making sure we retrieve lock value for column.
 auth.ticket.get
@@ -43,7 +43,6 @@ data.connect:sakila
       get-nodes:x:@.arguments/*/offset
       get-nodes:x:@.arguments/*/order
       get-nodes:x:@.arguments/*/direction
-   remove-nodes:x:@.arguments/*/limit
    remove-nodes:x:@.arguments/*/offset
    remove-nodes:x:@.arguments/*/order
    remove-nodes:x:@.arguments/*/direction
@@ -53,12 +52,6 @@ data.connect:sakila
    // Reading data from database.
    data.read
       table:staff
-         join:address
-            as:address_id
-            type:left
-            on
-               and
-                  staff.address_id:address_id.address_id
       columns
          staff.staff_id
          staff.first_name
@@ -70,8 +63,6 @@ data.connect:sakila
          staff.active
          staff.password
          staff.last_update
-         address_id.address
-            as:address_id.address
       where
          and
 

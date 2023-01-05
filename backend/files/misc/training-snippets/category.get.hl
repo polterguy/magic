@@ -1,37 +1,16 @@
 
-// Returns items from your category table in your sakila database according to the specified arguments
+// CRUD endpoint reading records from your category table in your sakila database filtering on category_id, name, last_update
 .arguments
    limit:long
    offset:long
    order:string
    direction:string
-   operator:string
    category.category_id.eq:long
    category.name.like:string
    category.name.eq:string
    category.last_update.eq:date
-.description:Returns items from your category table in your sakila database according to the specified arguments
+.description:CRUD endpoint reading records from your category table in your sakila database filtering on category_id, name, last_update
 .type:crud-read
-
-// Verifying user is authorized to access endpoint.
-auth.ticket.verify:root,admin
-
-// Sanity checking invocation.
-validators.enum:x:@.arguments/*/operator
-   .:or
-   .:and
-
-/*
- * Checking if user supplied an [operator] argument, and if so
- * changing the boolean operator for comparison operations.
- */
-if
-   exists:x:@.arguments/*/operator
-   .lambda
-
-      // User provided a boolean comparison [operator] argument.
-      set-name:x:../*/data.connect/*/data.read/*/where/0
-         get-value:x:@.arguments/*/operator
 
 // Opening up our database connection.
 data.connect:sakila
@@ -42,7 +21,6 @@ data.connect:sakila
       get-nodes:x:@.arguments/*/offset
       get-nodes:x:@.arguments/*/order
       get-nodes:x:@.arguments/*/direction
-   remove-nodes:x:@.arguments/*/operator
    remove-nodes:x:@.arguments/*/limit
    remove-nodes:x:@.arguments/*/offset
    remove-nodes:x:@.arguments/*/order

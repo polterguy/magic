@@ -1,0 +1,69 @@
+
+// CRUD endpoint reading records from your accounts table in your aista-crm database filtering on account_id, status, name, account_manager, created with authentication and authorisation for root,admin roles
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   accounts.account_id.eq:long
+   accounts.status.eq:long
+   accounts.name.like:string
+   accounts.name.eq:string
+   accounts.account_manager.eq:long
+   accounts.created.eq:date
+   status.status.eq:string
+   status.status.like:string
+   account_manager.name.eq:string
+   account_manager.name.like:string
+.description:CRUD endpoint reading records from your accounts table in your aista-crm database filtering on account_id, status, name, account_manager, created with authentication and authorisation for root,admin roles
+.type:crud-read
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root,admin
+
+// Opening up our database connection.
+data.connect:aista-crm
+
+   // Parametrising our read invocation.
+   add:x:./*/data.read
+      get-nodes:x:@.arguments/*/limit
+      get-nodes:x:@.arguments/*/offset
+      get-nodes:x:@.arguments/*/order
+      get-nodes:x:@.arguments/*/direction
+   remove-nodes:x:@.arguments/*/limit
+   remove-nodes:x:@.arguments/*/offset
+   remove-nodes:x:@.arguments/*/order
+   remove-nodes:x:@.arguments/*/direction
+   add:x:./*/data.read/*/where/*
+      get-nodes:x:@.arguments/*
+
+   // Reading data from database.
+   data.read
+      table:accounts
+         join:status
+            as:status
+            type:left
+            on
+               and
+                  accounts.status:status.status_id
+         join:employees
+            as:account_manager
+            type:left
+            on
+               and
+                  accounts.account_manager:account_manager.employee_id
+      columns
+         accounts.account_id
+         accounts.status
+         accounts.name
+         accounts.account_manager
+         accounts.created
+         status.status
+            as:status.status
+         account_manager.name
+            as:account_manager.name
+      where
+         and
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@data.read/*

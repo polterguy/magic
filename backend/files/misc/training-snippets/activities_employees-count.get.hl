@@ -1,0 +1,46 @@
+
+// Endpoint counting records from your activities_employees table in your aista-crm database filtering on activity_id, employee_id with authentication and authorisation for root,admin roles
+.arguments
+   activities_employees.activity_id.eq:long
+   activities_employees.employee_id.eq:long
+   activity_id.name.eq:string
+   activity_id.name.like:string
+   employee_id.name.eq:string
+   employee_id.name.like:string
+.description:Endpoint counting records from your activities_employees table in your aista-crm database filtering on activity_id, employee_id with authentication and authorisation for root,admin roles
+.type:crud-count
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root,admin
+
+// Opening up our database connection.
+data.connect:aista-crm
+
+   // Parametrising our read invocation.
+   add:x:+/*/where/*
+      get-nodes:x:@.arguments/*
+
+   // Reading data from database.
+   data.read
+      table:activities_employees
+         join:activities
+            as:activity_id
+            type:left
+            on
+               and
+                  activities_employees.activity_id:activity_id.activity_id
+         join:employees
+            as:employee_id
+            type:left
+            on
+               and
+                  activities_employees.employee_id:employee_id.employee_id
+      columns
+         count(*)
+            as:count
+      where
+         and
+      limit:long:1
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@data.read/*/*

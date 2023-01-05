@@ -1,7 +1,6 @@
 
-// Counts items from your film table in your sakila database according to the specified arguments joining on language
+// Endpoint counting records from your film table in your sakila database filtering on film_id, title, description, release_year, language_id, original_language_id, rental_duration, rental_rate, length, replacement_cost, rating, special_features, last_update with authentication and authorisation for admin,guest roles
 .arguments
-   operator:string
    film.film_id.eq:long
    film.title.like:string
    film.title.eq:string
@@ -20,58 +19,22 @@
    film.special_features.like:string
    film.special_features.eq:string
    film.last_update.eq:date
-   language_id.name.eq:string
-   language_id.name.like:string
-   original_language_id.name.eq:string
-   original_language_id.name.like:string
-.description:Counts items from your film table in your sakila database according to the specified arguments
+.description:Endpoint counting records from your film table in your sakila database filtering on film_id, title, description, release_year, language_id, original_language_id, rental_duration, rental_rate, length, replacement_cost, rating, special_features, last_update with authentication and authorisation for admin,guest roles
 .type:crud-count
 
 // Verifying user is authorized to access endpoint.
-auth.ticket.verify:root,admin
-
-// Sanity checking invocation.
-validators.enum:x:@.arguments/*/operator
-   .:or
-   .:and
-
-/*
- * Checking if user supplied an [operator] argument, and if so
- * changing the boolean operator for comparison operations.
- */
-if
-   exists:x:@.arguments/*/operator
-   .lambda
-
-      // User provided a boolean comparison [operator] argument.
-      set-name:x:../*/data.connect/*/data.read/*/where/0
-         get-value:x:@.arguments/*/operator
+auth.ticket.verify:admin,guest
 
 // Opening up our database connection.
 data.connect:sakila
 
    // Parametrising our read invocation.
-   add:x:./*/data.read
-      get-nodes:x:@.arguments/*/operator
-   remove-nodes:x:@.arguments/*/operator
    add:x:+/*/where/*
       get-nodes:x:@.arguments/*
 
    // Reading data from database.
    data.read
       table:film
-         join:language
-            as:language_id
-            type:left
-            on
-               and
-                  film.language_id:language_id.language_id
-         join:language
-            as:original_language_id
-            type:left
-            on
-               and
-                  film.original_language_id:original_language_id.language_id
       columns
          count(*)
             as:count

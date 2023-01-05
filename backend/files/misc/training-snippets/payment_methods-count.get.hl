@@ -1,0 +1,46 @@
+
+// Endpoint counting records from your payment_methods table in your stripe database filtering on payment_method, username, card_no, card_type, hidden with authentication and authorisation for guest,translator roles with public HTTP caching for 60 seconds
+.arguments
+   payment_methods.payment_method.like:string
+   payment_methods.payment_method.eq:string
+   payment_methods.card_no.like:string
+   payment_methods.card_no.eq:string
+   payment_methods.card_type.like:string
+   payment_methods.card_type.eq:string
+   payment_methods.hidden.like:string
+   payment_methods.hidden.eq:string
+.description:Endpoint counting records from your payment_methods table in your stripe database filtering on payment_method, username, card_no, card_type, hidden with authentication and authorisation for guest,translator roles with public HTTP caching for 60 seconds
+.type:crud-count
+
+// Adding Cache-Control HTTP header
+response.headers.set
+   Cache-Control:public, max-age=60
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:guest,translator
+
+// Making sure we retrieve lock value for column.
+auth.ticket.get
+
+// Opening up our database connection.
+data.connect:stripe
+
+   // Parametrising our read invocation.
+   add:x:+/*/where/*
+      get-nodes:x:@.arguments/*
+
+   // Reading data from database.
+   data.read
+      table:payment_methods
+      columns
+         count(*)
+            as:count
+      where
+         and
+
+            // Table is locked on the following field.
+            username.eq:x:@auth.ticket.get
+      limit:long:1
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@data.read/*/*

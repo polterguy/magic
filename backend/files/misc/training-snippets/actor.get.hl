@@ -1,39 +1,18 @@
 
-// Returns items from your actor table in your sakila database according to the specified arguments
+// CRUD endpoint reading records from your actor table in your sakila database filtering on actor_id, first_name, last_name, last_update
 .arguments
    limit:long
    offset:long
    order:string
    direction:string
-   operator:string
    actor.actor_id.eq:long
    actor.first_name.like:string
    actor.first_name.eq:string
    actor.last_name.like:string
    actor.last_name.eq:string
    actor.last_update.eq:date
-.description:Returns items from your actor table in your sakila database according to the specified arguments
+.description:CRUD endpoint reading records from your actor table in your sakila database filtering on actor_id, first_name, last_name, last_update
 .type:crud-read
-
-// Verifying user is authorized to access endpoint.
-auth.ticket.verify:root,admin
-
-// Sanity checking invocation.
-validators.enum:x:@.arguments/*/operator
-   .:or
-   .:and
-
-/*
- * Checking if user supplied an [operator] argument, and if so
- * changing the boolean operator for comparison operations.
- */
-if
-   exists:x:@.arguments/*/operator
-   .lambda
-
-      // User provided a boolean comparison [operator] argument.
-      set-name:x:../*/data.connect/*/data.read/*/where/0
-         get-value:x:@.arguments/*/operator
 
 // Opening up our database connection.
 data.connect:sakila
@@ -44,7 +23,6 @@ data.connect:sakila
       get-nodes:x:@.arguments/*/offset
       get-nodes:x:@.arguments/*/order
       get-nodes:x:@.arguments/*/direction
-   remove-nodes:x:@.arguments/*/operator
    remove-nodes:x:@.arguments/*/limit
    remove-nodes:x:@.arguments/*/offset
    remove-nodes:x:@.arguments/*/order

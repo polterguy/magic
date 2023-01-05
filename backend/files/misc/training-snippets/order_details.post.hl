@@ -1,0 +1,40 @@
+
+// CRUD endpoint creating one record in your Order Details table in your northwind database taking OrderID, ProductID, UnitPrice, Quantity, Discount with authentication and authorisation for guest,root,translator roles publishing northwind.order details.post socket message when invoked
+.arguments
+   OrderID:long
+   ProductID:long
+   UnitPrice:decimal
+   Quantity:long
+   Discount:double
+.description:CRUD endpoint creating one record in your Order Details table in your northwind database taking OrderID, ProductID, UnitPrice, Quantity, Discount with authentication and authorisation for guest,root,translator roles publishing northwind.order details.post socket message when invoked
+.type:crud-create
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:guest,root,translator
+
+// Opening up database connection.
+data.connect:northwind
+
+   // Parametrising our create invocation.
+   add:x:./*/data.create/*/values
+      get-nodes:x:@.arguments/*
+
+   // Creating our record.
+   data.create
+      table:Order Details
+      return-id:bool:false
+      values
+
+   // Returning the correct status code.
+   response.status.set:201
+
+   // Publishing socket message
+   add:x:./*/sockets.signal/*/args
+      get-nodes:x:@.arguments/*
+   sockets.signal:northwind.order details.post
+      args
+
+   // Returning result of above invocation to caller.
+   unwrap:x:+/*
+   return
+      result:success

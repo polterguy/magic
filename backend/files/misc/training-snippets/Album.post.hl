@@ -1,0 +1,46 @@
+
+// CRUD endpoint creating one record in your Album table in your chinook database taking AlbumId, Title, ArtistId with logging with authentication and authorisation for guest,translator roles
+.arguments
+   AlbumId:long
+   Title:string
+   ArtistId:long
+.description:CRUD endpoint creating one record in your Album table in your chinook database taking AlbumId, Title, ArtistId with logging with authentication and authorisation for guest,translator roles
+.type:crud-create
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:guest,translator
+
+// Logging invocation
+auth.ticket.get
+lambda2hyper:x:@.arguments/*
+log.info:chinook.Album entry created
+   username:x:@auth.ticket.get
+   arguments:x:@lambda2hyper
+.foreign-keys
+   .
+      column:ArtistId
+      table:Artist
+      foreign_column:ArtistId
+      foreign_name:Name
+      long:bool:true
+
+// Opening up database connection.
+data.connect:chinook
+
+   // Parametrising our create invocation.
+   add:x:./*/data.create/*/values
+      get-nodes:x:@.arguments/*
+
+   // Creating our record.
+   data.create
+      table:Album
+      return-id:bool:false
+      values
+
+   // Returning the correct status code.
+   response.status.set:201
+
+   // Returning result of above invocation to caller.
+   unwrap:x:+/*
+   return
+      result:success

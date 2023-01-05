@@ -1,14 +1,11 @@
 
-// Creates an item in your actor table in your sakila database according to the specified arguments
+// CRUD endpoint creating one record in your actor table in your sakila database taking first_name, last_name, last_update
 .arguments
    first_name:string
    last_name:string
    last_update:date
-.description:Creates an item in your actor table in your sakila database according to the specified arguments
+.description:CRUD endpoint creating one record in your actor table in your sakila database taking first_name, last_name, last_update
 .type:crud-create
-
-// Verifying user is authorized to access endpoint.
-auth.ticket.verify:root,admin
 
 // Opening up database connection.
 data.connect:sakila
@@ -23,8 +20,10 @@ data.connect:sakila
       return-id:bool:true
       values
 
-   // Returning result of above invoction to caller.
+   // Returning the correct status code.
    response.status.set:201
+
+   // Returning result of above invocation to caller.
    unwrap:x:+/*
    return
       id:x:@data.create

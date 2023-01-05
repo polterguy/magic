@@ -1,43 +1,19 @@
 
-// Counts items from your actor table in your sakila database according to the specified arguments
+// Endpoint counting records from your actor table in your sakila database filtering on actor_id, first_name, last_name, last_update
 .arguments
-   operator:string
    actor.actor_id.eq:long
    actor.first_name.like:string
    actor.first_name.eq:string
    actor.last_name.like:string
    actor.last_name.eq:string
    actor.last_update.eq:date
-.description:Counts items from your actor table in your sakila database according to the specified arguments
+.description:Endpoint counting records from your actor table in your sakila database filtering on actor_id, first_name, last_name, last_update
 .type:crud-count
-
-// Verifying user is authorized to access endpoint.
-auth.ticket.verify:root,admin
-
-// Sanity checking invocation.
-validators.enum:x:@.arguments/*/operator
-   .:or
-   .:and
-
-/*
- * Checking if user supplied an [operator] argument, and if so
- * changing the boolean operator for comparison operations.
- */
-if
-   exists:x:@.arguments/*/operator
-   .lambda
-
-      // User provided a boolean comparison [operator] argument.
-      set-name:x:../*/data.connect/*/data.read/*/where/0
-         get-value:x:@.arguments/*/operator
 
 // Opening up our database connection.
 data.connect:sakila
 
    // Parametrising our read invocation.
-   add:x:./*/data.read
-      get-nodes:x:@.arguments/*/operator
-   remove-nodes:x:@.arguments/*/operator
    add:x:+/*/where/*
       get-nodes:x:@.arguments/*
 

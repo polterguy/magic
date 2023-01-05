@@ -1,14 +1,23 @@
 
-// Updates an existing item in your language table in your sakila database according to the specified arguments
+// CRUD endpoint updating one record in your language table in your sakila database filtering which item to update with language_id updating name fields with logging with authentication and authorisation for admin,guest,root,translator roles
 .arguments
    language_id:long
    name:string
-.description:Updates an existing item in your language table in your sakila database according to the specified arguments
+.description:CRUD endpoint updating one record in your language table in your sakila database filtering which item to update with language_id updating name fields with logging with authentication and authorisation for admin,guest,root,translator roles
 .type:crud-update
 
-// Verifying user is authorized to access endpoint.
+// Sanity checking invocation, making sure primary key(s) are specified.
 validators.mandatory:x:@.arguments/*/language_id
-auth.ticket.verify:root,admin
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:admin,guest,root,translator
+
+// Logging invocation
+auth.ticket.get
+lambda2hyper:x:@.arguments/*
+log.info:sakila.language entry updated
+   username:x:@auth.ticket.get
+   arguments:x:@lambda2hyper
 
 // Opening up our database connection.
 data.connect:sakila
@@ -36,8 +45,10 @@ data.connect:sakila
          return
             result:Record not found
 
-   // Returning success to caller.
+   // Returning the correct status code.
    response.status.set:202
+
+   // Returning success to caller.
    unwrap:x:+/*
    return
       affected:x:@data.update

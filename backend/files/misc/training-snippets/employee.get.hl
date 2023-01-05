@@ -1,0 +1,84 @@
+
+// CRUD endpoint reading records from your Employee table in your chinook database filtering on EmployeeId, LastName, FirstName, Title, ReportsTo, BirthDate, HireDate, Address, City, State, Country, PostalCode, Phone, Fax, Email with authentication and authorisation for admin roles
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   Employee.EmployeeId.eq:long
+   Employee.LastName.like:string
+   Employee.LastName.eq:string
+   Employee.FirstName.like:string
+   Employee.FirstName.eq:string
+   Employee.Title.like:string
+   Employee.Title.eq:string
+   Employee.ReportsTo.eq:long
+   Employee.BirthDate.eq:date
+   Employee.HireDate.eq:date
+   Employee.Address.like:string
+   Employee.Address.eq:string
+   Employee.City.like:string
+   Employee.City.eq:string
+   Employee.State.like:string
+   Employee.State.eq:string
+   Employee.Country.like:string
+   Employee.Country.eq:string
+   Employee.PostalCode.like:string
+   Employee.PostalCode.eq:string
+   Employee.Phone.like:string
+   Employee.Phone.eq:string
+   Employee.Fax.like:string
+   Employee.Fax.eq:string
+   Employee.Email.like:string
+   Employee.Email.eq:string
+.description:CRUD endpoint reading records from your Employee table in your chinook database filtering on EmployeeId, LastName, FirstName, Title, ReportsTo, BirthDate, HireDate, Address, City, State, Country, PostalCode, Phone, Fax, Email with authentication and authorisation for admin roles
+.type:crud-read
+
+// Columns with custom handling as we generate a frontend
+.handling
+   Employee.Phone:phone
+   Employee.Email:email
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:admin
+
+// Opening up our database connection.
+data.connect:chinook
+
+   // Parametrising our read invocation.
+   add:x:./*/data.read
+      get-nodes:x:@.arguments/*/limit
+      get-nodes:x:@.arguments/*/offset
+      get-nodes:x:@.arguments/*/order
+      get-nodes:x:@.arguments/*/direction
+   remove-nodes:x:@.arguments/*/limit
+   remove-nodes:x:@.arguments/*/offset
+   remove-nodes:x:@.arguments/*/order
+   remove-nodes:x:@.arguments/*/direction
+   add:x:./*/data.read/*/where/*
+      get-nodes:x:@.arguments/*
+
+   // Reading data from database.
+   data.read
+      table:Employee
+      columns
+         Employee.EmployeeId
+         Employee.LastName
+         Employee.FirstName
+         Employee.Title
+         Employee.ReportsTo
+         Employee.BirthDate
+         Employee.HireDate
+         Employee.Address
+         Employee.City
+         Employee.State
+         Employee.Country
+         Employee.PostalCode
+         Employee.Phone
+         Employee.Fax
+         Employee.Email
+      where
+         and
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@data.read/*

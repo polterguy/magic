@@ -1,0 +1,45 @@
+
+// CRUD endpoint creating one record in your accounts table in your aista-crm database taking status, name, account_manager with authentication and authorisation for root,admin roles
+.arguments
+   status:long
+   name:string
+   account_manager:long
+.description:CRUD endpoint creating one record in your accounts table in your aista-crm database taking status, name, account_manager with authentication and authorisation for root,admin roles
+.type:crud-create
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root,admin
+.foreign-keys
+   .
+      column:status
+      table:status
+      foreign_column:status_id
+      foreign_name:status
+      long:bool:true
+   .
+      column:account_manager
+      table:employees
+      foreign_column:employee_id
+      foreign_name:name
+      long:bool:true
+
+// Opening up database connection.
+data.connect:aista-crm
+
+   // Parametrising our create invocation.
+   add:x:./*/data.create/*/values
+      get-nodes:x:@.arguments/*
+
+   // Creating our record.
+   data.create
+      table:accounts
+      return-id:bool:true
+      values
+
+   // Returning the correct status code.
+   response.status.set:201
+
+   // Returning result of above invocation to caller.
+   unwrap:x:+/*
+   return
+      id:x:@data.create

@@ -1,24 +1,19 @@
 
-// Updates an existing item in your customer table in your sakila database according to the specified arguments
+// CRUD endpoint updating one record in your customer table in your sakila database filtering which item to update with customer_id updating store_id, first_name, last_name, address_id fields with authentication and authorisation for root roles
 .arguments
    customer_id:long
    store_id:long
    first_name:string
    last_name:string
    address_id:long
-.description:Updates an existing item in your customer table in your sakila database according to the specified arguments
+.description:CRUD endpoint updating one record in your customer table in your sakila database filtering which item to update with customer_id updating store_id, first_name, last_name, address_id fields with authentication and authorisation for root roles
 .type:crud-update
 
-// Verifying user is authorized to access endpoint.
+// Sanity checking invocation, making sure primary key(s) are specified.
 validators.mandatory:x:@.arguments/*/customer_id
-auth.ticket.verify:root,admin
-.foreign-keys
-   .
-      column:address_id
-      table:address
-      foreign_column:address_id
-      foreign_name:address
-      long:bool:true
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root
 
 // Opening up our database connection.
 data.connect:sakila
@@ -46,8 +41,10 @@ data.connect:sakila
          return
             result:Record not found
 
-   // Returning success to caller.
+   // Returning the correct status code.
    response.status.set:202
+
+   // Returning success to caller.
    unwrap:x:+/*
    return
       affected:x:@data.update

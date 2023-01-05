@@ -1,40 +1,20 @@
 
-// Returns items from your city table in your sakila database according to the specified arguments
+// CRUD endpoint reading records from your city table in your sakila database filtering on city_id, city, country_id, last_update with authentication and authorisation for guest roles
 .arguments
    limit:long
    offset:long
    order:string
    direction:string
-   operator:string
    city.city_id.eq:long
    city.city.like:string
    city.city.eq:string
    city.country_id.eq:long
    city.last_update.eq:date
-   country_id.country.eq:string
-   country_id.country.like:string
-.description:Returns items from your city table in your sakila database according to the specified arguments
+.description:CRUD endpoint reading records from your city table in your sakila database filtering on city_id, city, country_id, last_update with authentication and authorisation for guest roles
 .type:crud-read
 
 // Verifying user is authorized to access endpoint.
-auth.ticket.verify:root,admin
-
-// Sanity checking invocation.
-validators.enum:x:@.arguments/*/operator
-   .:or
-   .:and
-
-/*
- * Checking if user supplied an [operator] argument, and if so
- * changing the boolean operator for comparison operations.
- */
-if
-   exists:x:@.arguments/*/operator
-   .lambda
-
-      // User provided a boolean comparison [operator] argument.
-      set-name:x:../*/data.connect/*/data.read/*/where/0
-         get-value:x:@.arguments/*/operator
+auth.ticket.verify:guest
 
 // Opening up our database connection.
 data.connect:sakila
@@ -45,7 +25,6 @@ data.connect:sakila
       get-nodes:x:@.arguments/*/offset
       get-nodes:x:@.arguments/*/order
       get-nodes:x:@.arguments/*/direction
-   remove-nodes:x:@.arguments/*/operator
    remove-nodes:x:@.arguments/*/limit
    remove-nodes:x:@.arguments/*/offset
    remove-nodes:x:@.arguments/*/order
@@ -56,19 +35,11 @@ data.connect:sakila
    // Reading data from database.
    data.read
       table:city
-         join:country
-            as:country_id
-            type:left
-            on
-               and
-                  city.country_id:country_id.country_id
       columns
          city.city_id
          city.city
          city.country_id
          city.last_update
-         country_id.country
-            as:country_id.country
       where
          and
 

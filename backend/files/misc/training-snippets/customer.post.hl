@@ -1,5 +1,5 @@
 
-// Creates an item in your customer table in your sakila database according to the specified arguments
+// CRUD endpoint creating one record in your customer table in your sakila database taking store_id, first_name, last_name, email, address_id, active, create_date, last_update with authentication and authorisation for root roles
 .arguments
    store_id:long
    first_name:string
@@ -9,20 +9,15 @@
    active:string
    create_date:date
    last_update:date
-.description:Creates an item in your customer table in your sakila database according to the specified arguments
+.description:CRUD endpoint creating one record in your customer table in your sakila database taking store_id, first_name, last_name, email, address_id, active, create_date, last_update with authentication and authorisation for root roles
 .type:crud-create
+
+// Columns with custom handling as we generate a frontend
 .handling
    email:email
 
 // Verifying user is authorized to access endpoint.
-auth.ticket.verify:root,admin
-.foreign-keys
-   .
-      column:address_id
-      table:address
-      foreign_column:address_id
-      foreign_name:address
-      long:bool:true
+auth.ticket.verify:root
 
 // Opening up database connection.
 data.connect:sakila
@@ -37,8 +32,10 @@ data.connect:sakila
       return-id:bool:true
       values
 
-   // Returning result of above invoction to caller.
+   // Returning the correct status code.
    response.status.set:201
+
+   // Returning result of above invocation to caller.
    unwrap:x:+/*
    return
       id:x:@data.create

@@ -1,5 +1,5 @@
 
-// Creates an item in your payment table in your sakila database according to the specified arguments
+// CRUD endpoint creating one record in your payment table in your sakila database taking payment_id, customer_id, staff_id, rental_id, amount, payment_date, last_update with authentication and authorisation for admin,guest roles
 .arguments
    payment_id:long
    customer_id:long
@@ -8,24 +8,11 @@
    amount:decimal
    payment_date:date
    last_update:date
-.description:Creates an item in your payment table in your sakila database according to the specified arguments
+.description:CRUD endpoint creating one record in your payment table in your sakila database taking payment_id, customer_id, staff_id, rental_id, amount, payment_date, last_update with authentication and authorisation for admin,guest roles
 .type:crud-create
 
 // Verifying user is authorized to access endpoint.
-auth.ticket.verify:root,admin
-.foreign-keys
-   .
-      column:customer_id
-      table:customer
-      foreign_column:customer_id
-      foreign_name:first_name
-      long:bool:true
-   .
-      column:staff_id
-      table:staff
-      foreign_column:staff_id
-      foreign_name:first_name
-      long:bool:true
+auth.ticket.verify:admin,guest
 
 // Opening up database connection.
 data.connect:sakila
@@ -40,8 +27,10 @@ data.connect:sakila
       return-id:bool:false
       values
 
-   // Returning result of above invoction to caller.
+   // Returning the correct status code.
    response.status.set:201
+
+   // Returning result of above invocation to caller.
    unwrap:x:+/*
    return
       result:success

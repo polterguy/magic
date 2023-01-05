@@ -1,12 +1,14 @@
 
-// Deletes one item from your rental table in your sakila database matching the specified argument(s)
+// CRUD endpoint deleting one record from your rental table in your sakila database with rental_id matching argument with authentication and authorisation for admin roles
 .arguments
    rental_id:long
-.description:Deletes one item from your rental table in your sakila database matching the specified argument(s)
+.description:CRUD endpoint deleting one record from your rental table in your sakila database with rental_id matching argument with authentication and authorisation for admin roles
 .type:crud-delete
 
 // Verifying user is authorized to access endpoint.
-auth.ticket.verify:root,admin
+auth.ticket.verify:admin
+
+// Sanity checking invocation, making sure primary key(s) are specified.
 validators.mandatory:x:@.arguments/*/rental_id
 
 // Opening up our database connection.

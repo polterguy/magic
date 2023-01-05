@@ -1,26 +1,20 @@
 
-// Updates an existing item in your address table in your sakila database according to the specified arguments
+// CRUD endpoint updating one record in your address table in your sakila database filtering which item to update with address_id updating address, district, city_id, phone fields
 .arguments
    address_id:long
    address:string
    district:string
    city_id:long
    phone:string
-.description:Updates an existing item in your address table in your sakila database according to the specified arguments
+.description:CRUD endpoint updating one record in your address table in your sakila database filtering which item to update with address_id updating address, district, city_id, phone fields
 .type:crud-update
+
+// Columns with custom handling as we generate a frontend
 .handling
    phone:phone
 
-// Verifying user is authorized to access endpoint.
+// Sanity checking invocation, making sure primary key(s) are specified.
 validators.mandatory:x:@.arguments/*/address_id
-auth.ticket.verify:root,admin
-.foreign-keys
-   .
-      column:city_id
-      table:city
-      foreign_column:city_id
-      foreign_name:city
-      long:bool:true
 
 // Opening up our database connection.
 data.connect:sakila
@@ -48,8 +42,10 @@ data.connect:sakila
          return
             result:Record not found
 
-   // Returning success to caller.
+   // Returning the correct status code.
    response.status.set:202
+
+   // Returning success to caller.
    unwrap:x:+/*
    return
       affected:x:@data.update
