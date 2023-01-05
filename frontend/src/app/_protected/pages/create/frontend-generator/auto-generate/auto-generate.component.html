@@ -160,10 +160,14 @@
       <app-loading-skeleton
         *ngIf="!endpoints"
         [amount]="5"
-        [colClass]="'col-12'"
-        [blockHeight]="'40px'"
-        [hasShadow]="false">
+        colClass="col-12"
+        blockHeight="40px"
+        hasShadow="false">
       </app-loading-skeleton>
+
+      <p *ngIf="endpoints?.length === 0">
+        You have no endpoints, <a routerLink="/endpoint-generator" class="link">create endpoints here</a>
+      </p>
 
       <div class="d-flex mb-2 bg-light px-3 py-2" *ngFor="let item of endpoints">
 
