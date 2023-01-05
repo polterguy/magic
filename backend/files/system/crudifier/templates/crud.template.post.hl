@@ -19,8 +19,10 @@ data.connect:{database}
       return-id:{return-id}
       values
 
-   // Returning result of above invoction to caller.
+   // Returning the correct status code.
    response.status.set:201
+
+   // Returning result of above invocation to caller.
    unwrap:x:+/*
    return
       id:x:@data.create

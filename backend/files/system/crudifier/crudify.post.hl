@@ -48,6 +48,7 @@ validators.enum:x:@.arguments/*/template
    .:/system/crudifier/templates/crud.template.get.hl
    .:/system/crudifier/templates/crud.template.put.hl
    .:/system/crudifier/templates/crud.template.delete.hl
+   .:/system/crudifier/templates/crud.template-no-operator.get.hl
 validators.enum:x:@.arguments/*/cqrsAuthorisation
    .:inherited
    .:roles
@@ -159,6 +160,7 @@ semaphore:crudifier
          unwrap:x:+/*/*/log.info
          insert-after:x:@apply/*/.type
             .
+               ..:Logging invocation
                auth.ticket.get
                lambda2hyper:x:@.arguments/*
                log.info:x:@.arguments/*/log
@@ -246,7 +248,7 @@ semaphore:crudifier
          set-value:x:@.tail-tail
             strings.concat
                get-value:x:@.tail-tail
-               .:" and reCAPTCHA logic"
+               .:" with reCAPTCHA"
 
          add:x:@apply/*/.arguments
             .
@@ -420,7 +422,9 @@ semaphore:crudifier
                set-value:x:@.tail-tail
                   strings.concat
                      get-value:x:@.tail-tail
-                     .:" with HTTP caching"
+                     .:" with HTTP caching for "
+                     get-value:x:@.arguments/*/cache
+                     .:" seconds"
                .scope:private
                if
                   eq
@@ -1178,29 +1182,29 @@ semaphore:crudifier
                // Removing [.foreign-key] declaration altogether.
                remove-nodes:x:@apply/*/.foreign-keys
 
-         // Notice, we only apply the CQRS pattern to post, put and delete endpoints.
-         switch:x:@.arguments/*/verb
-            case:put
-            case:post
-            case:delete
+   // Notice, we only apply the CQRS pattern to post, put and delete endpoints.
+   switch:x:@.arguments/*/verb
+      case:put
+      case:post
+      case:delete
 
-               // Checking if caller wants to publish socket messages in his endpoint.
-               if
-                  and
-                     exists:x:@.arguments/*/cqrs
-                     get-value:x:@.arguments/*/cqrs
-                  .lambda
+         // Checking if caller wants to publish socket messages in his endpoint.
+         if
+            and
+               exists:x:@.arguments/*/cqrs
+               get-value:x:@.arguments/*/cqrs
+            .lambda
 
-                     set-value:x:@.tail-tail
-                        strings.concat
-                           get-value:x:@.tail-tail
-                           .:" publishing "
-                           get-value:x:@.arguments/*/moduleName
-                           .:.
-                           get-value:x:@.arguments/*/moduleUrl
-                           .:.
-                           get-value:x:@.arguments/*/verb
-                           .:" socket message when invoked"
+               set-value:x:@.tail-tail
+                  strings.concat
+                     get-value:x:@.tail-tail
+                     .:" publishing "
+                     get-value:x:@.arguments/*/moduleName
+                     .:.
+                     get-value:x:@.arguments/*/moduleUrl
+                     .:.
+                     get-value:x:@.arguments/*/verb
+                     .:" socket message when invoked"
 
                /*
                 * Applying [sockets.signal] just before returning from endpoint.
@@ -1218,8 +1222,9 @@ semaphore:crudifier
 
                // Adding [sockets.signal] invocation to lambda.
                unwrap:x:+/*/*/sockets.signal
-               insert-before:x:@apply/*/data.connect/*/unwrap
+               insert-before:x:@apply/*/data.connect/*/unwrap/-
                   .
+                     ..:Publishing socket message
                      add:x:./*/sockets.signal/*/args
                         get-nodes:x:@.arguments/*
                      sockets.signal:x:@.signal
@@ -1411,13 +1416,25 @@ semaphore:crudifier
          add:x:@apply/**/table/.
             .
                limit:long:1
-         insert-before:x:@apply/**/table/./-
-            .
-               add:x:./*/data.read
-                  get-nodes:x:@.arguments/*/operator
-               remove-nodes:x:@.arguments/*/operator
-               add:x:+/*/where/*
-                  get-nodes:x:@.arguments/*
+         if
+            and
+               exists:x:@.arguments/*/verbose
+               get-value:x:@.arguments/*/verbose
+            .lambda
+               insert-before:x:@apply/**/table/./-
+                  .
+                     add:x:./*/data.read
+                        get-nodes:x:@.arguments/*/operator
+                     remove-nodes:x:@.arguments/*/operator
+                     add:x:+/*/where/*
+                        get-nodes:x:@.arguments/*
+
+         else
+            insert-before:x:@apply/**/table/./-
+               .
+                  add:x:+/*/where/*
+                     get-nodes:x:@.arguments/*
+
          insert-after:x:@apply/**/table/./+
             .
                return-nodes:x:@data.read/*/*
