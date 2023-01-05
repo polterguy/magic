@@ -34,6 +34,10 @@
   @include scrollbar($aista_default_alt, $aista_default_grey4, 5px);
 }
 
+.link {
+  text-decoration: none;
+}
+
 .methods {
   min-width: 50px;
   min-height: 20px;
