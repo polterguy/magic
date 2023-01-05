@@ -1,5 +1,5 @@
 
-# A Low-Code software platform with AI
+# An AI-based Low-Code software development platform
 
 ![Build status](https://github.com/polterguy/magic/actions/workflows/codeql-analysis.yml/badge.svg)
 
