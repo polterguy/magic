@@ -1,4 +1,4 @@
-// Connect to database called clients and select first 25 records from names
+// Open database called clients and select first 25 records from names | Select first 25 records from names in clients
 data.connect:clients
 
    // Read 25 records from names

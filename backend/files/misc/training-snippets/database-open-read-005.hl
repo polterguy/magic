@@ -1,4 +1,4 @@
-// Connect to database called db and select zip and street from address table
+// Open database called db and select zip and street from address table | Select zip and street from address in db
 data.connect:db
 
    // Read zip and street from address

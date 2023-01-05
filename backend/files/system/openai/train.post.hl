@@ -60,6 +60,7 @@ for-each:x:../*/io.file.list/*
             .completion
             set-value:x:@.completion
                strings.concat
+                  .:" "
                   get-value:x:@lambda2hyper
                   .:" END"
 
@@ -145,6 +146,7 @@ http.post:"https://api.openai.com/v1/fine-tunes"
       training_file:x:@.id
       model:x:@.model
       suffix:hyperlambda
+      n_epochs:int:2
       learning_rate_multiplier:decimal:0.2
    convert:true
 

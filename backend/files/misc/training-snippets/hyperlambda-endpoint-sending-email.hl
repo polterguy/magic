@@ -1,4 +1,4 @@
-// Endpoint sending email to the specified name and email arguments from Aista having info@aista.com as email address with Some subject as subject line and Email body as body
+// Create a Hyperlambda endpoint that send an email to the name and email specified as arguments | Create Hyperlambda endpoint sending email | Create endpoint sending email to [name] and [email] arguments given | Create Hyperlambda endpoint that sends an email
 .arguments
    name:string
    email:string
@@ -12,6 +12,6 @@ mail.smtp.send
          .
             name:Aista
             email:info@aista.com
-      subject:Some subject
+      subject:Some subject line goes here
       entity:text/plain
-         content:Email body
+         content:Email body goes here

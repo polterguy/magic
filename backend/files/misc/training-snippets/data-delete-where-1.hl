@@ -1,4 +1,4 @@
-// Delete all items from sakila's film table where title is 'Howdy world'
+// Use Hyperlambda to delete all items from sakila's film table where title equals to 'Howdy world' | Delete records in database matching where | Delete records in database
 data.connect:sakila
    data.delete
       table:film

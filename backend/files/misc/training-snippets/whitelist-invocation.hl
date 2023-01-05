@@ -1,4 +1,4 @@
-// Create a lambda object that only allows executing [set-value] and [return]
+// Use Hyperlambda to create a lambda object that only allows me to execute [set-value] and [return] | Whitelist eval | Only execute subset of vocabulary | Only allow for set-value and return to be executed
 whitelist
 
    vocabulary

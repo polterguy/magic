@@ -1,10 +1,12 @@
 
-// Endpoint returning items from customer table in sakila database with filtering on store_id, first_name, last_name, email and address_id to specify items to return with paging and sorting with authentication
+// Returns items from your customer table in your sakila database according to the specified arguments
 .arguments
    limit:long
    offset:long
    order:string
    direction:string
+   operator:string
+   customer.customer_id.eq:long
    customer.store_id.eq:long
    customer.first_name.like:string
    customer.first_name.eq:string
@@ -13,9 +15,36 @@
    customer.email.like:string
    customer.email.eq:string
    customer.address_id.eq:long
+   customer.active.like:string
+   customer.active.eq:string
+   customer.create_date.eq:date
+   customer.last_update.eq:date
+   address_id.address.eq:string
+   address_id.address.like:string
+.description:Returns items from your customer table in your sakila database according to the specified arguments
+.type:crud-read
+.handling
+   customer.email:email
 
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:root,admin
+
+// Sanity checking invocation.
+validators.enum:x:@.arguments/*/operator
+   .:or
+   .:and
+
+/*
+ * Checking if user supplied an [operator] argument, and if so
+ * changing the boolean operator for comparison operations.
+ */
+if
+   exists:x:@.arguments/*/operator
+   .lambda
+
+      // User provided a boolean comparison [operator] argument.
+      set-name:x:../*/data.connect/*/data.read/*/where/0
+         get-value:x:@.arguments/*/operator
 
 // Opening up our database connection.
 data.connect:sakila
@@ -26,6 +55,7 @@ data.connect:sakila
       get-nodes:x:@.arguments/*/offset
       get-nodes:x:@.arguments/*/order
       get-nodes:x:@.arguments/*/direction
+   remove-nodes:x:@.arguments/*/operator
    remove-nodes:x:@.arguments/*/limit
    remove-nodes:x:@.arguments/*/offset
    remove-nodes:x:@.arguments/*/order
@@ -36,6 +66,12 @@ data.connect:sakila
    // Reading data from database.
    data.read
       table:customer
+         join:address
+            as:address_id
+            type:left
+            on
+               and
+                  customer.address_id:address_id.address_id
       columns
          customer.customer_id
          customer.store_id
@@ -46,6 +82,8 @@ data.connect:sakila
          customer.active
          customer.create_date
          customer.last_update
+         address_id.address
+            as:address_id.address
       where
          and
 

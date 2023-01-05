@@ -1,2 +1,2 @@
-// Get value of [howdy] argument
+// Get value of [howdy] argument | Get value of [howdy] argument found in [.arguments] | Get howdy argument
 get-value:x:@.arguments/*/howdy

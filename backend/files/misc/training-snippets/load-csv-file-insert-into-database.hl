@@ -1,18 +1,8 @@
-// Read CSV data from /customers.csv and insert first_name and last_name into customers table in crm database
-
-// Loading CSV file
+// Use Hyperlambda to create a Hyperlambda snippet that reads CSV data from the file called '/customers.csv', transforms it to a lambda object, and inserts first_name and last_name into a database table called customers in my crm database | Load CSV file and insert into database | Insert CSV file into database
 io.file.load:/customers.csv
-
-// Converting to lambda object
 csv2lambda:x:@io.file.load
-
-// Connecting to database
 data.connect:crm
-
-   // Looping through each CSV record
-   for-each:x:@csv2lambda/*
-
-      // Inserting into database
+   for-each:x:@csv2lambda
       data.create
          table:customers
          values

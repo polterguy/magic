@@ -1,9 +1,9 @@
-// Execute [.lambda] if both conditions are true
+// Use Hyperlambda to evaluate specified [.lambda] if condition evaluates to true | if/else block | Hyperlambda conditional execution
 if
    and
       eq:bool:true
       eq:bool:true
    .lambda
-      log.info:Both conditions were true
+      log.info:Condition was true
 else
-   log.info:At least one condition was false
+   log.info:Condition was false

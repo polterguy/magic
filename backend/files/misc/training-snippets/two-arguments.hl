@@ -1,4 +1,4 @@
-// Two arguments with the name of arg1 and arg2
+// Two arguments | create a hello world Hyperlambda endpoint taking two arguments | Create an endpoint taking name and email as arguments
 .arguments
-   arg1:string
-   arg2:string
+   name:string
+   email:string

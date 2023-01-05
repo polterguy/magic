@@ -1,2 +1,2 @@
-// Retrieve the size of the /foo.png image
+// Use Hyperlambda to retrieve the width and height of the /foo.png image | Get image size | Image size | Return size of image using Hyperlambda
 image.size:/foo.png

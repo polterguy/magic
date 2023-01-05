@@ -1,2 +1,2 @@
-// List all dynamically created slots starting with the text 'magic.' | List dynamic slots
+// Use Hyperlambda to list all dynamically created slots starting with the text 'magic.' | List dynamic slots
 slots.vocabulary:magic.

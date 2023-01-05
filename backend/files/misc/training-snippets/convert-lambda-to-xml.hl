@@ -1,4 +1,4 @@
-// Convert  [.lambda] object's children to XML
+// Use Hyperlambda to convert the specified [.lambda] object to XML | Convert to XML from lambda | Convert to lambda from XML using Hyperlambda | Convert to XML
 .lambda
    CATALOG
       PLANT

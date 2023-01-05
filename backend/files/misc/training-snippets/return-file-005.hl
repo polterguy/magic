@@ -1,4 +1,4 @@
-// Endpoint returning the specified filename argument file to caller as JSON content
+// Endpoint returning the specified file to caller as JSON content | Returns content of the file given as filename argument to caller as JSON content
 .arguments
    filename:string
 

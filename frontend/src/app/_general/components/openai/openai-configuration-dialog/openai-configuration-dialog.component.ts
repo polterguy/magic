@@ -66,7 +66,7 @@ export class OpenAIConfigurationDialogComponent implements OnInit {
 
                   // Filtering out such that only succeeded Hyperlambda models are shown to user.
                   const succeeded = result
-                    .filter(x => x.fine_tuned_model.includes('hyperlambda') && x.status === 'succeeded');
+                    .filter(x => x.fine_tuned_model?.includes('hyperlambda') && x.status === 'succeeded');
 
                   // Sorting such that most recent model comes first.
                   succeeded.sort((lhs, rhs) => {
@@ -80,8 +80,8 @@ export class OpenAIConfigurationDialogComponent implements OnInit {
                   });
 
                   // Checking if there are models being trained.
-                  if (succeeded.filter(x => x.status === 'running').length > 0) {
-                    this.generalService.showFeedback('You have models currently in training');
+                  if (result.filter(x => x.status === 'pending' || x.status === 'running').length > 0) {
+                    this.generalService.showFeedback('You have models currently in training', 'successMessage');
                   }
 
                   if (succeeded.length > 0) {

@@ -1,4 +1,3 @@
-// Create hello world endpoint
-.arguments
+// Use Hyperlambda to create a Hyperlambda hello world endpoint that returns the text Hello World to the caller when invoked | Hello world | Hello world Hyperlambda | Hyperlambda hello world HTTP endpoint
 return
    result:Hello World

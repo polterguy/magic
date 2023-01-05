@@ -1,4 +1,4 @@
-// Add all nodes from [.src1] and [.src2] into [.destination]
+// Use Hyperlambda to add nodes resulting from two expressions into the [.destination] node | Add nodes into some destination taken from two different sources
 .src1
    foo1:bar1
    foo2:bar2

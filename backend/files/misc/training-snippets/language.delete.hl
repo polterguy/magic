@@ -1,0 +1,28 @@
+
+// Deletes one item from your language table in your sakila database matching the specified argument(s)
+.arguments
+   language_id:long
+.description:Deletes one item from your language table in your sakila database matching the specified argument(s)
+.type:crud-delete
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root,admin
+validators.mandatory:x:@.arguments/*/language_id
+
+// Opening up our database connection.
+data.connect:sakila
+
+   // Parametrising our delete invocation.
+   add:x:./*/data.delete/*/where/*/and
+      get-nodes:x:@.arguments/*
+
+   // Deleting item from database.
+   data.delete
+      table:language
+      where
+         and
+
+   // Returning result of above invocation to caller.
+   unwrap:x:+/*
+   return
+      affected:x:@data.delete

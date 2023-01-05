@@ -1,2 +1,2 @@
-// Connect to cms database
+// Open database called cms | Connect to cms database
 data.connect:cms

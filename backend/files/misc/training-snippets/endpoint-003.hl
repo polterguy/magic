@@ -1,4 +1,4 @@
-// Create endpoint returning failed and status code 500
+// Create empty endpoint returning failed and status code 500 | Empty endpoint returning 500 and failed
 .arguments
 response.status.set:400
 return

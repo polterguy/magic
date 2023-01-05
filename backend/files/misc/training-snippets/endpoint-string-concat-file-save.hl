@@ -1,13 +1,9 @@
-// Create an endpoint that concatenates two arguments and saves the concatenated result to '/result.txt'
+// Use Hyperlambda to create a Hyperlambda HTTP endpoint that takes two arguments, for then to concatenate the arguments, and save the result to '/result.txt' | Concatenate two strings and save to file | Save file with content being two strings added together | Add two string and save result to file
 .arguments
    argument1:string
    argument2:string
-
-// Concatenating our arguments
 strings.concat
    get-value:x:@.arguments/*/argument1
    get-value:x:@.arguments/*/argument2
-
-// Saving the concatenated result to /result.txt
 io.file.save:/result.txt
    get-value:x:@strings.concat

@@ -1,4 +1,4 @@
-// Convert the string value found in [.source] node's value to an integer and store it in [.destination]
+// Use Hyperlambda to convert the string value found in [.source] node's value to an integer and store it in [.destination] | Convert from string to integer | Convert value to integer
 .source:55
 .destination
 

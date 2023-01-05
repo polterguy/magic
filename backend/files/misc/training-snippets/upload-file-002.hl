@@ -1,4 +1,4 @@
-// File upload endpoint storing file to etc folder for root users only
+// Endpoint allowing root user to upload file | File upload endpoint for root user | Create endpoint for uploading files only allowing root users to invoke it
 .arguments
    file
       name:string

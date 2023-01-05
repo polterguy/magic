@@ -1,4 +1,3 @@
-// Select first 8 records from contacts
+// Read all records from contacts table | Select records from contacts
 data.read
    table:contacts
-   limit:8

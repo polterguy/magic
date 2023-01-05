@@ -1,2 +1,2 @@
-// Verify email argument is a valid email address
+// Sanity check the email argument and verify it's a valid email | Make sure email argument is a valid email address | Sanity check email argument
 validators.email:x:@.arguments/*/email

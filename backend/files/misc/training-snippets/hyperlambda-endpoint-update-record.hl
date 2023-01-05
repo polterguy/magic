@@ -1,0 +1,41 @@
+// Use Hyperlambda to create a Hyperlambda endpoint that updates an existing record in the Categories table in the [generic|northwind] database allowing the caller to provide new values for CategoryName and Description | Update record in SQL database | Update record in table
+.arguments
+   CategoryID:long
+   CategoryName:string
+   Description:string
+
+// Making sure caller provided a primary key for which record to update
+validators.mandatory:x:@.arguments/*/CategoryID
+
+// Opening up our database connection
+data.connect:[generic|northwind]
+
+   // Parametrising our invocation
+   add:x:./*/data.update/*/values
+      get-nodes:x:@.arguments/*/[1,1000]
+   add:x:./*/data.update/*/where/*/and
+      get-nodes:x:@.arguments/*/[0,1]
+
+   // Invoking our update slot
+   data.update
+      database-type:sqlite
+      table:Categories
+      values
+      where
+         and
+
+   // Verifying record exists
+   if
+      eq
+         get-value:x:@data.update
+         .:int:0
+      .lambda
+         response.status.set:404
+         return
+            result:Record not found
+
+   // Returning success to caller
+   response.status.set:202
+   unwrap:x:+/*
+   return
+      affected:x:@data.update

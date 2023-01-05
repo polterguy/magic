@@ -1,4 +1,4 @@
-// Convert YAML to lambda and back to YAML again
+// Use Hyperlambda to convert the specified YAML to a lambda object and back to YAML again
 .yaml:@"
 foo: howdy
 bar: jo

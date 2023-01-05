@@ -1,0 +1,59 @@
+
+// Updates an existing item in your rental table in your sakila database according to the specified arguments
+.arguments
+   rental_id:long
+   rental_date:date
+   inventory_id:long
+   customer_id:long
+   staff_id:long
+.description:Updates an existing item in your rental table in your sakila database according to the specified arguments
+.type:crud-update
+
+// Verifying user is authorized to access endpoint.
+validators.mandatory:x:@.arguments/*/rental_id
+auth.ticket.verify:root,admin
+.foreign-keys
+   .
+      column:customer_id
+      table:customer
+      foreign_column:customer_id
+      foreign_name:first_name
+      long:bool:true
+   .
+      column:staff_id
+      table:staff
+      foreign_column:staff_id
+      foreign_name:first_name
+      long:bool:true
+
+// Opening up our database connection.
+data.connect:sakila
+
+   // Parametrising our invocation.
+   add:x:./*/data.update/*/values
+      get-nodes:x:@.arguments/*/[1,1000]
+   add:x:./*/data.update/*/where/*/and
+      get-nodes:x:@.arguments/*/[0,1]
+
+   // Invoking our update slot.
+   data.update
+      table:rental
+      values
+      where
+         and
+
+   // Verifying record exists.
+   if
+      eq
+         get-value:x:@data.update
+         .:int:0
+      .lambda
+         response.status.set:404
+         return
+            result:Record not found
+
+   // Returning success to caller.
+   response.status.set:202
+   unwrap:x:+/*
+   return
+      affected:x:@data.update

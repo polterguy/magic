@@ -1,0 +1,18 @@
+// endpoint inserting adr1, adr2, zip and county into clients table | Insert endpoint creating record in clients taking adr1, adr2, zip and county arguments
+.arguments
+   adr1:string
+   adr2:string
+   zip:string
+   county:string
+data.connect:YOUR_DATABASE
+   data.create
+      table:clients
+      values
+         adr1:x:@.arguments/*/adr1
+         adr2:x:@.arguments/*/adr2
+         zip:x:@.arguments/*/zip
+         county:x:@.arguments/*/county
+
+   // Returning success
+   return
+      result:Insert was a success

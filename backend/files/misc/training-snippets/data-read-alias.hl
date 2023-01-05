@@ -1,4 +1,4 @@
-// Select the first 2 records from actor aliasing first_name column as foo
+// Use Hyperlambda to select the first 2 records from actor, but alias the first_name record as foo | SELECT with alias using Hyperlambda
 data.connect:sakila
    data.read
       table:actor

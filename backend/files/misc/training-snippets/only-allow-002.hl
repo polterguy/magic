@@ -1,0 +1,2 @@
+// only allow root
+auth.ticket.verify:root

@@ -1,0 +1,8 @@
+// Use Hyperlambda to crop the /foo.jpg image and remove 50 pixels from all sides and save the image as foo2.jpg | Crop image using Hyperlambda | Crop image
+image.crop:/foo.jpg
+   left:50
+   right:50
+   top:50
+   bottom:50
+io.stream.save-file:/foo2.jpg
+   get-value:x:@image.crop

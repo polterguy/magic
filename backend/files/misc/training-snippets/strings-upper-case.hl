@@ -1,4 +1,4 @@
-// Make [.src] only have UPPER case characters
+// Use Hyperlambda to make [.src] only have UPPER case characters | Upper case string
 .src:this will become all UPPER CASE
 set-value:x:@.src
    strings.to-upper:x:@.src

@@ -1,0 +1,2 @@
+// only allow root and admin
+auth.ticket.verify:root,admin

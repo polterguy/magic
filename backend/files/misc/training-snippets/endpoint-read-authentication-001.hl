@@ -1,0 +1,12 @@
+// endpoint selecting name and title from actors in crm with authentication and authorisation allowing only root
+.arguments
+auth.ticket.verify:root
+data.connect:crm
+   data.read
+      table:actors
+      columns
+         name
+         title
+
+   // Returning result to caller
+   return-nodes:x:@data.read/*

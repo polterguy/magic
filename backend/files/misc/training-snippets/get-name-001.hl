@@ -1,2 +1,2 @@
-// Get name of argument having a value of Thomas
-get-name:x:@.arguments/*/=Thomas
+// Get name of [address] argument | Get name of [address] argument found in [.arguments] | Get name argument's name
+get-name:x:@.arguments/*/address

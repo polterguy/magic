@@ -1,2 +1,2 @@
-// Return a previously cached item that was cached with the key of 'foo'
+// Use Hyperlambda to return a previously cached item that was cached with the key of 'foo' | Return cached item | Get cache item with Hyperlambda
 cache.get:foo

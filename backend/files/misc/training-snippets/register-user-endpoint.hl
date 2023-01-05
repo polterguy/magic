@@ -1,54 +1,39 @@
-// User registration endpoint that creates a new user as guest role and sends user an email
+// Hyperlambda endpoint that creates a new user as guest role and sends user an email | Hyperlambda registration endpoint | Hyperlambda endpoint creating user and sending email | Endpoint registering user, associating with guest role, and sends user an email
 .arguments
    username:string
    email:string
    password:string
-
-// Making sure email argument is a valid email address
 validators.email:x:@.arguments/*/email
-
-// Making sure pasword is at least 8 characters long and no more than 100 characters long
 validators.string:x:@.arguments/*/password
    min:8
    max:100
-
-// Hashing password using cryptographic secure hashing
 crypto.password.hash:x:@.arguments/*/password
-
-// Connecting to magic database
 data.connect:magic
-
-   // Creating a new user
    data.create
       table:users
       values
          username:x:@.arguments/*/username
          password:x:@crypto.password.hash
-
-   // Storing email address of user
    data.create
       table:users_extra
       values
          type:email
          value:x:@.arguments/*/email
-
-   // Associating user with the guest role
    data.create
       table:roles
       values
          user:x:@.arguments/*/username
          role:guest
 
-// Sending an email to the user
 mail.smtp.send
    message
       to
          .
-            name:x:@.arguments/*/username
+            name:Dear User
             email:x:@.arguments/*/email
       from
          .
-            name:Aista
+            name:John Doe
             email:info@aista.com
       subject:Welcome as a registered user
       entity:text/plain
