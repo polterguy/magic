@@ -6,10 +6,10 @@
       <input
         matInput
         type="number"
-        name="[[column-name]]"
+        name="[[form-control-name]]"
         step="any"
         (change)="changed('[[column-name]]')"
-        [(ngModel)]="data.entity.[[column-name]]"
+        [(ngModel)]="data.entity['[[column-name]]']"
         autocomplete="off">
     </mat-form-field>
 

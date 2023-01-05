@@ -307,10 +307,11 @@ for-each:x:@.arguments/*/.crud-methods/*
             set-value:x:@.substitutions/*/delete-input
                strings.concat
                   get-value:x:@.substitutions/*/delete-input
-                  .:", "
+                  .:", '"
                   get-value:x:@.dp/#/*/name
-                  .:": el."
+                  .:"': el['"
                   get-value:x:@.dp/#/*/name
+                  .:"']"
 
          // Trimming away additional ',' and ' ' characters.
          set-value:x:@.substitutions/*/delete-input
@@ -538,6 +539,11 @@ for-each:x:@.arguments/*/.crud-methods/*
                   strings.replace:x:@strings.replace
                      .:[[lookup_table_with_namespace]]
                      get-value:x:@.dp/#/*/lookup/*/table
+                  strings.replace:x:@strings.replace
+                     .:[[form-control-name]]
+                     strings.replace-not-of:x:@.dp/#/*/name
+                        .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
+                        .:_
                   set-value:x:@.substitutions/*/view-details
                      strings.concat
                         get-value:x:@.substitutions/*/view-details
@@ -654,8 +660,8 @@ for-each:x:@.arguments/*/.crud-methods/*
                      get-value:x:@.substitutions/*/form-controls
                      strings.replace:x:@.form-control-file
                         .:[[form-control-name]]
-                        strings.replace:x:@.dp/#/*/name
-                           .:.
+                        strings.replace-not-of:x:@.dp/#/*/name
+                           .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
                            .:_
 
                /*
@@ -669,8 +675,8 @@ for-each:x:@.arguments/*/.crud-methods/*
                   case:string
                      strings.replace:x:@.form-control-instantiation-file/*/string
                         .:[[form-control-name]]
-                        strings.replace:x:@.dp/#/*/name
-                           .:.
+                        strings.replace-not-of:x:@.dp/#/*/name
+                           .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
                            .:_
                      set-value:x:@.substitutions/*/form-controls-instantiations
                         strings.concat
@@ -683,8 +689,8 @@ for-each:x:@.arguments/*/.crud-methods/*
                   default
                      strings.replace:x:@.form-control-instantiation-file
                         .:[[form-control-name]]
-                        strings.replace:x:@.dp/#/*/name
-                           .:.
+                        strings.replace-not-of:x:@.dp/#/*/name
+                           .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
                            .:_
                      set-value:x:@.substitutions/*/form-controls-instantiations
                         strings.concat
@@ -705,8 +711,8 @@ for-each:x:@.arguments/*/.crud-methods/*
                   case:int
                      strings.replace:x:@.column-file/*/long
                         .:[[form-control-name]]
-                        strings.replace:x:@.dp/#/*/name
-                           .:.
+                        strings.replace-not-of:x:@.dp/#/*/name
+                           .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
                            .:_
                      set-value:x:@.substitutions/*/ng-containers
                         strings.concat
@@ -719,8 +725,8 @@ for-each:x:@.arguments/*/.crud-methods/*
                   case:date
                      strings.replace:x:@.column-file/*/date
                         .:[[form-control-name]]
-                        strings.replace:x:@.dp/#/*/name
-                           .:.
+                        strings.replace-not-of:x:@.dp/#/*/name
+                           .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
                            .:_
                      set-value:x:@.substitutions/*/ng-containers
                         strings.concat
@@ -733,8 +739,8 @@ for-each:x:@.arguments/*/.crud-methods/*
                   case:bool
                      strings.replace:x:@.column-file/*/bool
                         .:[[form-control-name]]
-                        strings.replace:x:@.dp/#/*/name
-                           .:.
+                        strings.replace-not-of:x:@.dp/#/*/name
+                           .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
                            .:_
                      set-value:x:@.substitutions/*/ng-containers
                         strings.concat
@@ -751,8 +757,8 @@ for-each:x:@.arguments/*/.crud-methods/*
                         .lambda
                            strings.replace:x:@.column-file/*/image
                               .:[[form-control-name]]
-                              strings.replace:x:@.dp/#/*/name
-                                 .:.
+                              strings.replace-not-of:x:@.dp/#/*/name
+                                 .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
                                  .:_
                            set-value:x:@.substitutions/*/ng-containers
                               strings.concat
@@ -766,8 +772,8 @@ for-each:x:@.arguments/*/.crud-methods/*
                         .lambda
                            strings.replace:x:@.column-file/*/file
                               .:[[form-control-name]]
-                              strings.replace:x:@.dp/#/*/name
-                                 .:.
+                              strings.replace-not-of:x:@.dp/#/*/name
+                                 .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
                                  .:_
                            set-value:x:@.substitutions/*/ng-containers
                               strings.concat
@@ -778,8 +784,8 @@ for-each:x:@.arguments/*/.crud-methods/*
                      else
                         strings.replace:x:@.column-file
                            .:[[form-control-name]]
-                           strings.replace:x:@.dp/#/*/name
-                              .:.
+                           strings.replace-not-of:x:@.dp/#/*/name
+                              .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
                               .:_
                         set-value:x:@.substitutions/*/ng-containers
                            strings.concat
@@ -920,37 +926,57 @@ for-each:x:@.arguments/*/.crud-methods/*
                   // Long type.
                   case:long
                   case:int
+                     strings.replace:x:@.form-field-file/*/long
+                        .:[[form-control-name]]
+                        strings.replace-not-of:x:@.dp/#/*/name
+                           .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
+                           .:_
                      set-value:x:@.substitutions/*/form-fields
                         strings.concat
                            get-value:x:@.substitutions/*/form-fields
-                           strings.replace:x:@.form-field-file/*/long
+                           strings.replace:x:@strings.replace
                               .:[[column-name]]
                               get-value:x:@.dp/#/*/name
 
                   // Decimal type.
                   case:decimal
+                     strings.replace:x:@.form-field-file/*/decimal
+                        .:[[form-control-name]]
+                        strings.replace-not-of:x:@.dp/#/*/name
+                           .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
+                           .:_
                      set-value:x:@.substitutions/*/form-fields
                         strings.concat
                            get-value:x:@.substitutions/*/form-fields
-                           strings.replace:x:@.form-field-file/*/decimal
+                           strings.replace:x:@strings.replace
                               .:[[column-name]]
                               get-value:x:@.dp/#/*/name
 
                   // Boolean type.
                   case:bool
+                     strings.replace:x:@.form-field-file/*/bool
+                        .:[[form-control-name]]
+                        strings.replace-not-of:x:@.dp/#/*/name
+                           .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
+                           .:_
                      set-value:x:@.substitutions/*/form-fields
                         strings.concat
                            get-value:x:@.substitutions/*/form-fields
-                           strings.replace:x:@.form-field-file/*/bool
+                           strings.replace:x:@strings.replace
                               .:[[column-name]]
                               get-value:x:@.dp/#/*/name
 
                   // Date type.
                   case:date
+                     strings.replace:x:@.form-field-file/*/date
+                        .:[[form-control-name]]
+                        strings.replace-not-of:x:@.dp/#/*/name
+                           .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
+                           .:_
                      set-value:x:@.substitutions/*/form-fields
                         strings.concat
                            get-value:x:@.substitutions/*/form-fields
-                           strings.replace:x:@.form-field-file/*/date
+                           strings.replace:x:@strings.replace
                               .:[[column-name]]
                               get-value:x:@.dp/#/*/name
                      set-value:x:@.substitutions/*/dates-to-format
@@ -966,29 +992,44 @@ for-each:x:@.arguments/*/.crud-methods/*
                         eq:x:@.dp/#/*/handling
                            .:image
                         .lambda
+                           strings.replace:x:@.form-field-file/*/image
+                              .:[[form-control-name]]
+                              strings.replace-not-of:x:@.dp/#/*/name
+                                 .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
+                                 .:_
                            set-value:x:@.substitutions/*/form-fields
                               strings.concat
                                  get-value:x:@.substitutions/*/form-fields
-                                 strings.replace:x:@.form-field-file/*/image
+                                 strings.replace:x:@strings.replace
                                     .:[[column-name]]
                                     get-value:x:@.dp/#/*/name
                      else-if
                         eq:x:@.dp/#/*/handling
                            .:textarea
                         .lambda
+                           strings.replace:x:@.form-field-file/*/textarea
+                              .:[[form-control-name]]
+                              strings.replace-not-of:x:@.dp/#/*/name
+                                 .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
+                                 .:_
                            set-value:x:@.substitutions/*/form-fields
                               strings.concat
                                  get-value:x:@.substitutions/*/form-fields
-                                 strings.replace:x:@.form-field-file/*/textarea
+                                 strings.replace:x:@strings.replace
                                     .:[[column-name]]
                                     get-value:x:@.dp/#/*/name
                      else-if
                         eq:x:@.dp/#/*/handling
                            .:file
                         .lambda
+                           strings.replace:x:@.form-field-file/*/file
+                              .:[[form-control-name]]
+                              strings.replace-not-of:x:@.dp/#/*/name
+                                 .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
+                                 .:_
                            set-value:x:@.substitutions/*/form-fields
                               strings.concat
-                                 get-value:x:@.substitutions/*/form-fields
+                                 get-value:x:@strings.replace
                                  strings.replace:x:@.form-field-file/*/file
                                     .:[[column-name]]
                                     get-value:x:@.dp/#/*/name
@@ -996,17 +1037,27 @@ for-each:x:@.arguments/*/.crud-methods/*
                         eq:x:@.dp/#/*/handling
                            .:username_lookup
                         .lambda
+                           strings.replace:x:@.form-field-file/*/username_lookup
+                              .:[[form-control-name]]
+                              strings.replace-not-of:x:@.dp/#/*/name
+                                 .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
+                                 .:_
                            set-value:x:@.substitutions/*/form-fields
                               strings.concat
                                  get-value:x:@.substitutions/*/form-fields
-                                 strings.replace:x:@.form-field-file/*/username_lookup
+                                 strings.replace:x:@strings.replace
                                     .:[[column-name]]
                                     get-value:x:@.dp/#/*/name
                      else
+                        strings.replace:x:@.form-field-file
+                           .:[[form-control-name]]
+                           strings.replace-not-of:x:@.dp/#/*/name
+                              .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
+                              .:_
                         set-value:x:@.substitutions/*/form-fields
                            strings.concat
                               get-value:x:@.substitutions/*/form-fields
-                              strings.replace:x:@.form-field-file
+                              strings.replace:x:@strings.replace
                                  .:[[column-name]]
                                  get-value:x:@.dp/#/*/name
 

@@ -1,1 +1,1 @@
-  public [[form-control-name]]: FormControl;
+  public _[[form-control-name]]: FormControl;
