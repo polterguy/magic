@@ -160,7 +160,7 @@ semaphore:crudifier
          unwrap:x:+/*/*/log.info
          insert-after:x:@apply/*/.type
             .
-               ..:Logging invocation
+               ..:Logging invocation.
                auth.ticket.get
                lambda2hyper:x:@.arguments/*
                log.info:x:@.arguments/*/log
@@ -449,7 +449,7 @@ semaphore:crudifier
                unwrap:x:+/*/*/*
                insert-after:x:@apply/*/.type
                   .
-                     ..:Adding Cache-Control HTTP header
+                     ..:Adding Cache-Control HTTP header.
                      response.headers.set
                         Cache-Control:x:@strings.concat
 
@@ -608,7 +608,7 @@ semaphore:crudifier
             .lambda
                insert-after:x:@apply/*/.type
                   .
-                     ..:Columns with custom handling as we generate a frontend
+                     ..:Columns with custom handling as frontend is generated.
                      .handling
 
          for-each:x:@.arguments/*/args/*/columns/*/*/handling
@@ -1233,7 +1233,7 @@ semaphore:crudifier
                unwrap:x:+/*/*/sockets.signal
                insert-before:x:@apply/*/data.connect/*/unwrap/-
                   .
-                     ..:Publishing socket message
+                     ..:Publishing socket message.
                      add:x:./*/sockets.signal/*/args
                         get-nodes:x:@.arguments/*
                      sockets.signal:x:@.signal
