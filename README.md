@@ -36,6 +36,17 @@ or SQLite database. You can also connect to your existing database to manage you
 
 ![Visually design your database using SQL Studio](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/sql-studio-new.jpeg)
 
+## CRUD API generator
+
+Magic allows you to automagically generate a secure CRUD API wrapping any database. The API generator
+supports Microsoft SQL Server, PostgreSQL, MySQL and SQLite. Point Magic to your database, click a button,
+and some few seconds later you've got a CRUD API wrapping every single table in your database. The
+CRUD API is generated as Hyperlambda endpoints, allowing you to edit and modify the code after generating
+your API, to add custom business logic to your endpoints as you see fit.
+
+![CRUD API generator](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/crud-generator-new.jpeg)
+
+
 ## Useful links
 
 * [Create a Low-Code CRUD app in seconds](https://aista.com)
