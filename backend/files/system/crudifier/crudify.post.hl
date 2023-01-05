@@ -68,6 +68,10 @@ if
          .
             databaseType:x:@config.get
 
+// This is added as a tail to our comment, describing the endpoint accurately.
+.comment-tail
+.tail-tail
+
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
@@ -148,6 +152,10 @@ semaphore:crudifier
                get-value:x:@.arguments/*/log
                .
       .lambda
+         set-value:x:@.tail-tail
+            strings.concat
+               get-value:x:@.tail-tail
+               .:" with logging"
          unwrap:x:+/*/*/log.info
          insert-after:x:@apply/*/.type
             .
@@ -200,6 +208,11 @@ semaphore:crudifier
                .:*
             .lambda
 
+               set-value:x:@.tail-tail
+                  strings.concat
+                     get-value:x:@.tail-tail
+                     .:" with authentication"
+
                // No roles specified, but user must be authenticated.
                insert-after:x:@apply/*/.type
                   .
@@ -207,6 +220,13 @@ semaphore:crudifier
                      ..:Verifying user is authorized to access endpoint.
                      auth.ticket.verify
          else
+
+            set-value:x:@.tail-tail
+               strings.concat
+                  get-value:x:@.tail-tail
+                  .:" with authentication and authorisation for "
+                  get-value:x:@.arguments/*/auth
+                  .:" roles"
 
             // Comma separated list of roles specified.
             unwrap:x:+/*/*/auth.ticket.verify
@@ -222,6 +242,12 @@ semaphore:crudifier
    if
       exists:x:@.arguments/*/captcha
       .lambda
+
+         set-value:x:@.tail-tail
+            strings.concat
+               get-value:x:@.tail-tail
+               .:" and reCAPTCHA logic"
+
          add:x:@apply/*/.arguments
             .
                recaptcha:string
@@ -274,6 +300,12 @@ semaphore:crudifier
                   public:true
                   status:401
 
+         // Adding delete text to comment's tail parts.
+         set-value:x:@.comment-tail
+            strings.concat
+               get-value:x:@.comment-tail
+               .:" filtering on which item to delete according to"
+
          /*
           * Applying DELETE arguments.
           * 
@@ -283,15 +315,37 @@ semaphore:crudifier
          add:x:@apply/*/.arguments
             get-nodes:x:@.arguments/*/args/*/primary/*/*
          for-each:x:@.arguments/*/args/*/primary/*/*
+
+            // Checking if this is our first loop iteration.
             if
                get-value:x:@.first
                .lambda
+
+                  // Making sure we don't come here again.
                   set-value:x:@.first
                      .:bool:false
+
+                  // Adding currently iterated argument into comment's tail.
+                  set-value:x:@.comment-tail
+                     strings.concat
+                        get-value:x:@.comment-tail
+                        .:" "
+                        get-name:x:@.dp/#
+
+                  // Inserting comment describing what we're doing.
                   insert-before:x:@apply/*/data.connect/-
                      .
+                        ..:Sanity checking invocation, making sure primary key(s) are specified.
 
-                        // Sanity checking invocation, making sure primary key(s) are specified.
+            else
+
+               // Adding currently iterated argument into comment's tail.
+               set-value:x:@.comment-tail
+                  strings.concat
+                     get-value:x:@.comment-tail
+                     .:", "
+                     get-name:x:@.dp/#
+
             .x:@.arguments/*/
             set-value:x:@.x
                strings.concat
@@ -363,6 +417,10 @@ semaphore:crudifier
                 * Caller wants results of endpoint to be cached, figuring out
                 * if we should publicly or privately cache the result.
                 */
+               set-value:x:@.tail-tail
+                  strings.concat
+                     get-value:x:@.tail-tail
+                     .:" with HTTP caching"
                .scope:private
                if
                   eq
@@ -378,6 +436,7 @@ semaphore:crudifier
                unwrap:x:+/*/*/*
                insert-after:x:@apply/*/.type
                   .
+                     ..:Adding Cache-Control HTTP header
                      response.headers.set
                         Cache-Control:x:@strings.concat
 
@@ -427,8 +486,40 @@ semaphore:crudifier
                   remove-nodes:x:@.operators/*/lteq
                   remove-nodes:x:@.operators/*/neq
 
+            .first:bool:true
+            set-value:x:@.comment-tail
+               strings.concat
+                  get-value:x:@.comment-tail
+                  .:" filtering on"
+
             // Applying arguments to endpoint.
             for-each:x:@.arguments/*/args/*/columns/*
+
+               // Checking if this is our first loop iteration.
+               if
+                  get-value:x:@.first
+                  .lambda
+
+                     // Making sure we don't come here again.
+                     set-value:x:@.first
+                        .:bool:false
+
+                     // Adding currently iterated argument into comment's tail.
+                     set-value:x:@.comment-tail
+                        strings.concat
+                           get-value:x:@.comment-tail
+                           .:" "
+                           get-value:x:@.dp/#/*/name
+
+               else
+
+                  // Adding currently iterated argument into comment's tail.
+                  set-value:x:@.comment-tail
+                     strings.concat
+                        get-value:x:@.comment-tail
+                        .:", "
+                        get-value:x:@.dp/#/*/name
+
                if
                   not-exists:x:@.dp/#/*/locked
                   .lambda
@@ -504,7 +595,9 @@ semaphore:crudifier
             .lambda
                insert-after:x:@apply/*/.type
                   .
+                     ..:Columns with custom handling as we generate a frontend
                      .handling
+
          for-each:x:@.arguments/*/args/*/columns/*/*/handling
             set-value:x:+/+/*/*
                get-value:x:@.dp/#/./*/handling
@@ -682,7 +775,38 @@ semaphore:crudifier
           * invokers of endpoint are allowed to insert during creationg of
           * record.
           */
+         .first:bool:true
+         set-value:x:@.comment-tail
+            strings.concat
+               get-value:x:@.comment-tail
+               .:" taking"
          for-each:x:@.arguments/*/args/*/columns/*
+
+            // Checking if this is our first loop iteration.
+            if
+               get-value:x:@.first
+               .lambda
+
+                  // Making sure we don't come here again.
+                  set-value:x:@.first
+                     .:bool:false
+
+                  // Adding currently iterated argument into comment's tail.
+                  set-value:x:@.comment-tail
+                     strings.concat
+                        get-value:x:@.comment-tail
+                        .:" "
+                        get-value:x:@.dp/#/*/name
+
+            else
+
+               // Adding currently iterated argument into comment's tail.
+               set-value:x:@.comment-tail
+                  strings.concat
+                     get-value:x:@.comment-tail
+                     .:", "
+                     get-value:x:@.dp/#/*/name
+
             if
                not-exists:x:@.dp/#/*/locked
                .lambda
@@ -737,7 +861,9 @@ semaphore:crudifier
             .lambda
                insert-after:x:@apply/*/.type
                   .
+                     ..:Columns with custom handling as we generate a frontend
                      .handling
+
          for-each:x:@.arguments/*/args/*/columns/*/*/handling
             set-value:x:+/+/*/*
                get-value:x:@.dp/#/./*/handling
@@ -777,7 +903,38 @@ semaphore:crudifier
           * This is done by making sure all specified primary keys becomes mandatory
           * arguments when invoking the endpoint.
           */
+         .first:bool:true
+         set-value:x:@.comment-tail
+            strings.concat
+               get-value:x:@.comment-tail
+               .:" filtering which item to update with"
          for-each:x:@.arguments/*/args/*/primary/*
+
+            // Checking if this is our first loop iteration.
+            if
+               get-value:x:@.first
+               .lambda
+
+                  // Making sure we don't come here again.
+                  set-value:x:@.first
+                     .:bool:false
+
+                  // Adding currently iterated argument into comment's tail.
+                  set-value:x:@.comment-tail
+                     strings.concat
+                        get-value:x:@.comment-tail
+                        .:" "
+                        get-value:x:@.dp/#/*/name
+
+            else
+
+               // Adding currently iterated argument into comment's tail.
+               set-value:x:@.comment-tail
+                  strings.concat
+                     get-value:x:@.comment-tail
+                     .:", "
+                     get-value:x:@.dp/#/*/name
+
             set-name:x:+/+/*/*
                get-value:x:@.dp/#/*/name
             set-value:x:+/*/*
@@ -794,8 +951,8 @@ semaphore:crudifier
                      .:bool:false
                   insert-after:x:@apply/*/.type
                      .
+                        ..:Sanity checking invocation, making sure primary key(s) are specified.
 
-                        // Sanity checking invocation, making sure primary key(s) are specified.
             .x:@.arguments/*/
             set-value:x:@.x
                strings.concat
@@ -814,7 +971,38 @@ semaphore:crudifier
           * which we can get away with, since we know that all primary keys are mandatory,
           * and declared first in our [.arguments] node in our endpoint.
           */
+         .first:bool:true
+         set-value:x:@.comment-tail
+            strings.concat
+               get-value:x:@.comment-tail
+               .:" updating"
          for-each:x:@.arguments/*/args/*/columns/*
+
+            // Checking if this is our first loop iteration.
+            if
+               get-value:x:@.first
+               .lambda
+
+                  // Making sure we don't come here again.
+                  set-value:x:@.first
+                     .:bool:false
+
+                  // Adding currently iterated argument into comment's tail.
+                  set-value:x:@.comment-tail
+                     strings.concat
+                        get-value:x:@.comment-tail
+                        .:" "
+                        get-value:x:@.dp/#/*/name
+
+            else
+
+               // Adding currently iterated argument into comment's tail.
+               set-value:x:@.comment-tail
+                  strings.concat
+                     get-value:x:@.comment-tail
+                     .:", "
+                     get-value:x:@.dp/#/*/name
+
             if
                not-exists:x:@.dp/#/*/locked
                .lambda
@@ -825,6 +1013,11 @@ semaphore:crudifier
                   add:x:@apply/*/.arguments
                      .
                         .
+
+         set-value:x:@.comment-tail
+            strings.concat
+               get-value:x:@.comment-tail
+               .:" fields"
 
          // First adding the [add] into [where] parts, which are the primary keys.
          .x:@.arguments/*/[0,
@@ -896,6 +1089,7 @@ semaphore:crudifier
             .lambda
                insert-after:x:@apply/*/.type
                   .
+                     ..:Columns with custom handling as we generate a frontend
                      .handling
          for-each:x:@.arguments/*/args/*/columns/*/*/handling
             set-value:x:+/+/*/*
@@ -984,18 +1178,34 @@ semaphore:crudifier
                // Removing [.foreign-key] declaration altogether.
                remove-nodes:x:@apply/*/.foreign-keys
 
-   // Checking if caller wants to apply the CQRS pattern to his endpoint.
-   if
-      and
-         exists:x:@.arguments/*/cqrs
-         get-value:x:@.arguments/*/cqrs
-      .lambda
-
          // Notice, we only apply the CQRS pattern to post, put and delete endpoints.
          switch:x:@.arguments/*/verb
             case:put
             case:post
             case:delete
+
+               // Checking if caller wants to publish socket messages in his endpoint.
+               if
+                  and
+                     exists:x:@.arguments/*/cqrs
+                     get-value:x:@.arguments/*/cqrs
+                  .lambda
+
+                     set-value:x:@.tail-tail
+                        strings.concat
+                           get-value:x:@.tail-tail
+                           .:" publishing "
+
+               set-value:x:@.tail-tail
+                  strings.concat
+                     get-value:x:@.tail-tail
+                     strings.concat
+                        get-value:x:@.arguments/*/moduleName
+                        .:.
+                        get-value:x:@.arguments/*/moduleUrl
+                        .:.
+                        get-value:x:@.arguments/*/verb
+                        .:" socket message when invoked"
 
                /*
                 * Applying [sockets.signal] just before returning from endpoint.
@@ -1022,6 +1232,7 @@ semaphore:crudifier
 
                // Applying authorisation requirements for signal invocation.
                switch:x:@.arguments/*/cqrsAuthorisation
+
                   case:inherited
 
                      // SignalR socket invocation should use same authorisation as endpoint.
@@ -1031,6 +1242,7 @@ semaphore:crudifier
                               get-nodes:x:@auth.ticket.verify
                            set-name:x:./*/sockets.signal/*/auth.ticket.verify
                               .:roles
+
                   case:roles
 
                      // SignalR socket invocation should use explicit roles when published.
@@ -1038,6 +1250,7 @@ semaphore:crudifier
                      add:x:@apply/*/data.connect/*/sockets.signal
                         .
                            roles:x:@.arguments/*/cqrsAuthorisationValues
+
                   case:groups
 
                      // SignalR socket invocation should use explicit roles when published.
@@ -1045,6 +1258,7 @@ semaphore:crudifier
                      add:x:@apply/*/data.connect/*/sockets.signal
                         .
                            groups:x:@.arguments/*/cqrsAuthorisationValues
+
                   case:users
 
                      // SignalR socket invocation should use explicit roles when published.
@@ -1052,17 +1266,6 @@ semaphore:crudifier
                      add:x:@apply/*/data.connect/*/sockets.signal
                         .
                            users:x:@.arguments/*/cqrsAuthorisationValues
-
-               /*
-                * Updating the endpoint's description to make sure consumers understands
-                * it will publish a SignalR signal.
-                */
-               set-value:x:@apply/*/.description
-                  strings.concat
-                     get-value:x:@apply/*/.description
-                     .:, and publishes the [
-                     get-value:x:@.signal
-                     .:] web socket SignalR message to users authorised to invoke the endpoint, passing in the arguments specified
 
    /*
     * Then creating our folder if necessary.
@@ -1088,24 +1291,32 @@ semaphore:crudifier
    io.folder.create:x:@.folder
 
    // Applying the correct description to the file.
+   .database-name
+   strings.split:x:@.arguments/*/database
+      .:|
+   strings.split:x:@strings.split/1
+      .:]
+   set-value:x:@.database-name
+      get-value:x:@strings.split/0
    set-value:x:@apply/*/.description
       strings.replace:x:@apply/*/.description
          .:{database}
-         get-value:x:@.arguments/*/database
+         get-value:x:@.database-name
    set-value:x:@apply/*/.description
       strings.replace:x:@apply/*/.description
          .:{table}
          get-value:x:@.arguments/*/table
 
+   // Applying comment's tail.
+   set-value:x:@apply/*/.description
+      strings.concat
+         get-value:x:@apply/*/.description
+         get-value:x:@.comment-tail
+         get-value:x:@.tail-tail
+
    // Applying the correct comment to the file.
    set-value:x:@apply/0
-      strings.replace:x:@apply/0
-         .:{database}
-         get-value:x:@.arguments/*/database
-   set-value:x:@apply/0
-      strings.replace:x:@apply/0
-         .:{table}
-         get-value:x:@.arguments/*/table
+      get-value:x:@apply/*/.description
 
    /*
     * Transforming lambda to Hyperlambda, and saving it to the correct file, making sure
@@ -1172,12 +1383,13 @@ semaphore:crudifier
       .lambda
 
          /*
-          * First removing [.foreign-keys], [columns], adding [count(
-          * ) as count, and then transforming lambda
+          * First removing [.foreign-keys], [columns], adding [count(*)
+          * as count, and then transforming lambda
           * to Hyperlambda, and saving it to the correct file - Which is the same filename as the
           * plain get, except appending "-count" to it.
           */
          remove-nodes:x:@apply/*/.foreign-keys
+         remove-nodes:x:@apply/*/.handling/-
          remove-nodes:x:@apply/*/.handling
          remove-nodes:x:@apply/**/columns/*
          remove-nodes:x:@apply/**/table/././*/remove-nodes
@@ -1191,12 +1403,12 @@ semaphore:crudifier
             .:crud-count
          set-value:x:@apply/*/.description
             strings.replace:x:@apply/*/.description
-               .:Returns
-               .:Counts
+               .:returning
+               .:counting
          set-value:x:@apply/0
             strings.replace:x:@apply/0
-               .:Returns
-               .:Counts
+               .:returning
+               .:counting
          add:x:@apply/**/columns
             .
                count(*)

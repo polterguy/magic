@@ -1,11 +1,11 @@
-// Returns items from your {table} table in your {database} database according to the specified arguments
+// dynamically populated
 .arguments
    limit:long
    offset:long
    order:string
    direction:string
    operator:string
-.description:Returns items from your {table} table in your {database} database according to the specified arguments
+.description:CRUD endpoint reading items from your {table} table in your {database} database
 .type:crud-read
 .foreign-keys
 
