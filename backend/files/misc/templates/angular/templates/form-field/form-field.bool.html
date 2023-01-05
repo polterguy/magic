@@ -1,7 +1,7 @@
     <mat-slide-toggle
       *ngIf="canEditColumn('[[column-name]]')"
       class="entity-edit-field"
-      name="[[column-name]]"
+      name="[[form-control-name]]"
       (change)="changed('[[column-name]]')"
-      [(ngModel)]="data.entity.[[column-name]]">[[column-name]]</mat-slide-toggle>
+      [(ngModel)]="data.entity['[[column-name]]']">[[column-name]]</mat-slide-toggle>
 

@@ -136,13 +136,15 @@ export class SqlViewComponent implements OnInit, OnDestroy {
     if (this.input && this.input.editor) {
       this.executingSql = true;
       const selectedText = this.input.editor.getSelection();
+      const toBeExecuted = selectedText == '' ? this.input.sql : selectedText;
+      const batch = this.selectedDbType === 'mssql' && toBeExecuted.includes('go');
       this.generalService.showLoading();
       this.sqlService.executeSql(
         this.selectedDbType,
         '[' + this.selectedConnectionString + '|' + this.selectedDatabase + ']',
-        selectedText == '' ? this.input.sql : selectedText,
+        toBeExecuted,
         this.safeMode,
-        false).subscribe({
+        batch).subscribe({
           next: (result: any[][]) => {
             if (result) {
               let count = 0;
@@ -170,6 +172,7 @@ export class SqlViewComponent implements OnInit, OnDestroy {
               error?.error?.message &&
               (<string>error?.error?.message).toLowerCase().indexOf('incorrect syntax near \'go\'') !== -1) {
               this.generalService.showFeedback('Turn ON batch mode to execute this SQL', 'errorMessage', 'Ok', 5000);
+              this.generalService.hideLoading();
               return;
             }
             this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000);

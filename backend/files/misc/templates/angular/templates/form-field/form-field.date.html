@@ -5,16 +5,16 @@
       <mat-label>{{'[[column-name]]' | translate}}</mat-label>
       <input
         matInput
-        name="[[column-name]]"
+        name="[[form-control-name]]"
         (change)="changed('[[column-name]]')"
-        [owlDateTime]="picker[[column-name]]"
-        [(ngModel)]="data.entity.[[column-name]]"
+        [owlDateTime]="picker[[form-control-name]]"
+        [(ngModel)]="data.entity['[[column-name]]']"
         autocomplete="off">
       <owl-date-time
-        #picker[[column-name]]
+        #picker[[form-control-name]]
         (afterPickerClosed)="changed('[[column-name]]')"></owl-date-time>
       <mat-icon
-        [owlDateTimeTrigger]="picker[[column-name]]"
+        [owlDateTimeTrigger]="picker[[form-control-name]]"
         matSuffix
         role="button"
         class="button-icon"
