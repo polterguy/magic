@@ -114,7 +114,11 @@ export class TransformModelService {
         break;
 
       case 'get':
-        result.template = '/system/crudifier/templates/crud.template.get.hl';
+        if (this.verbose) {
+          result.template = '/system/crudifier/templates/crud.template.get.hl';
+        } else {
+          result.template = '/system/crudifier/templates/crud.template-no-operator.get.hl';
+        }
         break;
 
       case 'put':

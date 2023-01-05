@@ -1,0 +1,37 @@
+// dynamically populated
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+.description:CRUD endpoint reading items from your {table} table in your {database} database
+.type:crud-read
+.foreign-keys
+
+// Opening up our database connection.
+data.connect:{database}
+   database-type:{database-type}
+
+   // Parametrising our read invocation.
+   add:x:./*/data.read
+      get-nodes:x:@.arguments/*/limit
+      get-nodes:x:@.arguments/*/offset
+      get-nodes:x:@.arguments/*/order
+      get-nodes:x:@.arguments/*/direction
+   remove-nodes:x:@.arguments/*/limit
+   remove-nodes:x:@.arguments/*/offset
+   remove-nodes:x:@.arguments/*/order
+   remove-nodes:x:@.arguments/*/direction
+   add:x:./*/data.read/*/where/*
+      get-nodes:x:@.arguments/*
+
+   // Reading data from database.
+   data.read
+      database-type:{database-type}
+      table:{table}
+      columns
+      where
+         and
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@data.read/*
