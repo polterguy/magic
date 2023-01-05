@@ -1,4 +1,4 @@
-// if/else-if/else block that conditionally checking value of [.input] changing value of [.dest]
+// Use Hyperlambda to create an [if]/[else-if] block that conditionally checks the value of [.input] | if/else-if/else with Hyperlambda | Conditionally execute Hyperlambda | Branching in Hyperlambda
 
 .input:foo
 .dest

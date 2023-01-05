@@ -17,4 +17,4 @@ data.connect:hospital
             name.like:x:@.arguments/*/name
 
    // Returning result from [data.read] invocation to caller
-   return:x:@data.read/*
+   return-nodes:x:@data.read/*

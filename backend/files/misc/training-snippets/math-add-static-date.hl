@@ -1,12 +1,13 @@
-// Add 3 seconds to [.variable] and assign to [.result]
+// Use Hyperlambda to create a variable containing a date value, then add 3 seconds to it and assign the result of the addition to [.result] | Add 3 seconds to date | Add 3 seconds using Hyperlambda
 .variable:date:"2022-01-01T23:59:59"
 .result
 
+// Adding 3 seconds to our [.variable] node
+math.add
+   get-value:x:@.variable
+   time
+      seconds:3
+
 // Assigning the result of [math.add] to the [.result] node
 set-value:x:@.result
-
-   // Adding 3 seconds to our [.variable] node
-   math.add
-      get-value:x:@.variable
-      time
-         seconds:3
+   get-value:x:@math.add

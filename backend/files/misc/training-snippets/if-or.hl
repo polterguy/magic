@@ -1,4 +1,4 @@
-// Log if [arg1] equals value1 or [arg2] equals value2
+// Use Hyperlambda to create an if block that is executed if one of two values equals to some comparison
 if
    or
       eq:x:@.args/*/arg1
@@ -7,3 +7,5 @@ if
          .:value2
    .lambda
       log.info:One or more of our conditions were true
+else
+   log.info:None of our conditions were true

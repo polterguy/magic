@@ -1,4 +1,4 @@
-// Forward all arguments given to microsoft.com and return whatever microsoft.com returns to caller
+// Create a gateway endpoint that returns whatever microsoft.com returns forwarding whatever arguments it is given | Hyperlambda gateway endpoint forwarding arguments | Hyperlambda endpoint serving as gateway endpoint to another endpoint with arguments | API gateway in Hyperlambda taking arguments
 .arguments:*
 add:x:../*/http.post/*/payload
    get-nodes:x:@.arguments/*

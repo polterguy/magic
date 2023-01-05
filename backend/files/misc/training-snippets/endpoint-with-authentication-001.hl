@@ -1,4 +1,4 @@
-// Endpoint that only root users can invoke
+// Endpoint that only root users can invoke | Only allow root to invoke endpoint
 .arguments
 auth.ticket.verify:root
 return

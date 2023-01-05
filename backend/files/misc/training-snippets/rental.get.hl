@@ -1,0 +1,91 @@
+
+// Returns items from your rental table in your sakila database according to the specified arguments
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   operator:string
+   rental.rental_id.eq:long
+   rental.rental_date.eq:date
+   rental.inventory_id.eq:long
+   rental.customer_id.eq:long
+   rental.return_date.eq:date
+   rental.staff_id.eq:long
+   rental.last_update.eq:date
+   customer_id.first_name.eq:string
+   customer_id.first_name.like:string
+   staff_id.first_name.eq:string
+   staff_id.first_name.like:string
+.description:Returns items from your rental table in your sakila database according to the specified arguments
+.type:crud-read
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root,admin
+
+// Sanity checking invocation.
+validators.enum:x:@.arguments/*/operator
+   .:or
+   .:and
+
+/*
+ * Checking if user supplied an [operator] argument, and if so
+ * changing the boolean operator for comparison operations.
+ */
+if
+   exists:x:@.arguments/*/operator
+   .lambda
+
+      // User provided a boolean comparison [operator] argument.
+      set-name:x:../*/data.connect/*/data.read/*/where/0
+         get-value:x:@.arguments/*/operator
+
+// Opening up our database connection.
+data.connect:sakila
+
+   // Parametrising our read invocation.
+   add:x:./*/data.read
+      get-nodes:x:@.arguments/*/limit
+      get-nodes:x:@.arguments/*/offset
+      get-nodes:x:@.arguments/*/order
+      get-nodes:x:@.arguments/*/direction
+   remove-nodes:x:@.arguments/*/operator
+   remove-nodes:x:@.arguments/*/limit
+   remove-nodes:x:@.arguments/*/offset
+   remove-nodes:x:@.arguments/*/order
+   remove-nodes:x:@.arguments/*/direction
+   add:x:./*/data.read/*/where/*
+      get-nodes:x:@.arguments/*
+
+   // Reading data from database.
+   data.read
+      table:rental
+         join:customer
+            as:customer_id
+            type:left
+            on
+               and
+                  rental.customer_id:customer_id.customer_id
+         join:staff
+            as:staff_id
+            type:left
+            on
+               and
+                  rental.staff_id:staff_id.staff_id
+      columns
+         rental.rental_id
+         rental.rental_date
+         rental.inventory_id
+         rental.customer_id
+         rental.return_date
+         rental.staff_id
+         rental.last_update
+         customer_id.first_name
+            as:customer_id.first_name
+         staff_id.first_name
+            as:staff_id.first_name
+      where
+         and
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@data.read/*

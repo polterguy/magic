@@ -1,10 +1,10 @@
-// Endpoint counting items from Categories table in northwind database with filtering on CategoryName and Description
+// Use Hyperlambda to create a Hyperlambda endpoint that counts items from the Categories table in the [generic|northwind] database allowing for filtering on CategoryName and Description | Endpoint counting records from database
 .arguments
    Categories.CategoryName.like:string
    Categories.CategoryName.eq:string
    Categories.Description.like:string
    Categories.Description.eq:string
-data.connect:northwind
+data.connect:[generic|northwind]
    add:x:+/*/where/*
       get-nodes:x:@.arguments/*
    data.read

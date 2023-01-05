@@ -1,0 +1,8 @@
+// create new record in clients table logistics database and change first_name to Peter, last_name to Jensen and phone to 90909090
+data.connect:logistics
+   data.create
+      table:clients
+      values
+         first_name:Peter
+         last_name:Jensen
+         phone:90909090

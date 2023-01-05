@@ -1,0 +1,8 @@
+// create new record in ggg table in hhh database and change first_name to John, last_name to Hansen and phone to 55667788
+data.connect:hhh
+   data.create
+      table:ggg
+      values
+         first_name:John
+         last_name:Hansen
+         phone:55667788

@@ -1,4 +1,4 @@
-// List all folders inside of the etc folder, and add all folder names containing the text 'sql' into the [.destination] node
+// Use Hyperlambda to list all folders inside of the etc folder, and add all folder names containing the text 'sql' into the [.destination] node | Loop through folders | For each folder that contains sql in its name
 .destination
 
 // Listing all folders in our etc folder

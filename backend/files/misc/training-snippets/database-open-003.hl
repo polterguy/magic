@@ -1,2 +1,2 @@
-// Connect to customers database
+// Open database called customers | Connect to customers database
 data.connect:customers

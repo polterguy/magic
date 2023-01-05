@@ -13,4 +13,4 @@ data.connect:hospital
          adr1
 
    // Returning result from [data.read] invocation to caller
-   return:x:@data.read/*
+   return-nodes:x:@data.read/*

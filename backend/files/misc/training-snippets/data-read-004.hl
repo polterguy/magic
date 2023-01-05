@@ -1,7 +1,7 @@
 // Create endpoint returning name and email from customers table in crm database
 .arguments
 
-// Connecting to CRM database
+// Connecting to crm database
 data.connect:crm
 
    // Reading records from customers table
@@ -12,4 +12,4 @@ data.connect:crm
          email
 
    // Returning result from [data.read] invocation to caller
-   return:x:@data.read/*
+   return-nodes:x:@data.read/*

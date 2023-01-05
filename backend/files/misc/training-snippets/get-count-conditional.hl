@@ -1,4 +1,4 @@
-// Count how many nodes can be found inside of our [.data] object that has the value of 'howdy' and assign the count to [.result]
+// Use Hyperlambda to count how many nodes can be found inside of our [.data] object that has the value of 'howdy' and assign the count to [.result] | Count nodes in Hyperlambda | Get count of children nodes | Count nodes matching the specified expression
 .result
 .data
    foo1:bar1

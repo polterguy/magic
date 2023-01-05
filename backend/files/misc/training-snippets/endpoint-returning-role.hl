@@ -1,4 +1,4 @@
-// Create an endpoint that requires one argument, and if the argument is 'Thomas Hansen' it returns the name of the first role from the magic database sorted alphabetically as plain text. If it is given anything but Thomas Hansen it should return status code 400 with 'Some error text'
+// Use Hyperlambda to create an endpoint that requires one argument, and if the argument is 'Thomas Hansen' it returns the name of the first role from the magic database sorted alphabetically as plain text. If it is given anything but Thomas Hansen it should return status code 400 with 'Some error text' | Hyperlambda endpoint with conditionally executed if statement, returning first role from magic database
 .arguments
    argument:string
 

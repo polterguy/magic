@@ -1,4 +1,4 @@
-// Post some JSON payload to jsonplaceholder.typicode.com/posts and automatically convert the response to a lambda object
+// Use Hyperlambda to post some JSON payload to jsonplaceholder.typicode.com/posts and automatically convert the response to a lambda object
 http.post:"https://jsonplaceholder.typicode.com/posts"
    payload:@"{""userId"": 1, ""id"": 1}"
    convert:true

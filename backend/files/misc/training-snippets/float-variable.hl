@@ -1,2 +1,2 @@
-// Create a variable containing the floating point value of 5.555
+// Use Hyperlambda to create a variable containing the floating point value of 5.555 | Float variable | Create a floating point variable
 .variable:float:5.555

@@ -1,5 +1,5 @@
 
-// Endpoint creating one item in your address table in sakila database with the specified address, address2, district, city_id, postal_code and phone
+// Creates an item in your address table in your sakila database according to the specified arguments
 .arguments
    address:string
    address2:string
@@ -7,6 +7,21 @@
    city_id:long
    postal_code:string
    phone:string
+   last_update:date
+.description:Creates an item in your address table in your sakila database according to the specified arguments
+.type:crud-create
+.handling
+   phone:phone
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root,admin
+.foreign-keys
+   .
+      column:city_id
+      table:city
+      foreign_column:city_id
+      foreign_name:city
+      long:bool:true
 
 // Opening up database connection.
 data.connect:sakila

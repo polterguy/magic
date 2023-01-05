@@ -1,4 +1,4 @@
-// Create an HTTP GET invocation towards foo.com only accepting Hyperlambda response
+// Use Hyperlambda to create an HTTP GET invocation towards foo.com that informs the server of that it can only accept a Hyperlambda response | Create Hyperlambda HTTP GET
 http.get:"https://foo.com"
    headers
       Accept:application/hyperlambda

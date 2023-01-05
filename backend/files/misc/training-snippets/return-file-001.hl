@@ -1,4 +1,4 @@
-// Endpoint returning content of the /README.md file to caller
+// Endpoint returning a file to caller | Returns content of the /README.md file to caller
 .arguments
 
 // Loading file

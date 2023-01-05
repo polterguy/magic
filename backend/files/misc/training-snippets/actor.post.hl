@@ -1,8 +1,11 @@
 
-// Endpoint creating one item in actor table in sakila database with the specified first_name and last_name requiring authentication to invoke
+// Creates an item in your actor table in your sakila database according to the specified arguments
 .arguments
    first_name:string
    last_name:string
+   last_update:date
+.description:Creates an item in your actor table in your sakila database according to the specified arguments
+.type:crud-create
 
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:root,admin

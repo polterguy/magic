@@ -1,4 +1,4 @@
-// Endpoint taking one argument that needs to match the a regular expression ^[a-z0-9]*$
+// Hyperlambda endpoint taking one argument that needs to match the a regular expression ^[a-z0-9]*$ | Hyperlambda endpoint taking alpha numeric argument | Hyperlambda endpoint only taking alpha numeric characters | Hyperlambda endpoint with regex validator | Regex endpoint argument
 .arguments
    arg1:string
 validators.regex:x:@.arguments/*/arg1

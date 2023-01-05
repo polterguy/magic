@@ -1,4 +1,4 @@
-// Set the value of [.result] to Is foo if [.source] is foo, Is bar if [.source] is bar and None of the above if none are matching
+// Use Hyperlambda to create a switch comparison that sets the [.result] node to 'Is foo' of the switch value has the value of 'foo', 'Is bar' of the switch value has 'bar' and 'None of the above' if the switch value is neither 'foo' nor 'bar' | Switch/case with Hyperlambda | switch/case block
 .result
 .source:foo
 switch:x:@.source

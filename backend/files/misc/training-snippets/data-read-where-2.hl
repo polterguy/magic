@@ -1,4 +1,4 @@
-// Select description from film in sakila where title equals to 'ADAPTATION HOLES' or title equals to 'ACADEMY DINOSAUR'
+// Use Hyperlambda to select description from film in sakila where title equals to 'ADAPTATION HOLES' or title equals to 'ACADEMY DINOSAUR'
 data.connect:sakila
    data.read
       columns

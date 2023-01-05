@@ -1,0 +1,7 @@
+// update first_name and last_name in customers table in clients database and set values to John and Doe
+data.connect:clients
+   data.update
+      table:customers
+      values
+         first_name:John
+         last_name:Doe

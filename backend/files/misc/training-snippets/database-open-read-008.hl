@@ -1,4 +1,4 @@
-// Connect to database called car_shops and select first 55 records from cars
+// Open database called car_shops and select first 55 records from cars | Select first 55 records from cars in car_shops
 data.connect:car_shops
 
    // Read 55 records from names

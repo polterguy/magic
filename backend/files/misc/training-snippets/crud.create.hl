@@ -1,8 +1,8 @@
-// Insert name, email and age into the contacts table in kronos database
-data.connect:kronos
+// Use Hyperlambda to insert name, email and age into the tbl table in the db database | Insert new item into database | Save record to database | Create a new record in database table | Do the same as SQL insert
+data.connect:db
    data.create
-      table:contacts
+      table:tbl
       values
-         name:Peter
-         email:peter@gmail.com
-         age:int:55
+         name:John Doe
+         email:john@doe.com
+         age:int:67

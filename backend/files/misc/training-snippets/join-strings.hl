@@ -1,4 +1,4 @@
-// Join all strings in [.data] and add a , between each string
+// Hyperlambda snippet that joins all strings found at the expression and adds , between each string | Join strings using Hyperlambda | Hyperlambda joining 3 strings and adds , between each string | string.join with Hyperlambda | Joining strings
 .data
    .:string1
    .:string2

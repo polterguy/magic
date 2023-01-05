@@ -1,4 +1,4 @@
-// Add 5 days to the current date and time and store the result in [.dest]
+// Use Hyperlambda to add 5 days to the current date and time and store the result in [.dest] | Add 5 days to now | Set [.dest] to today's date plus 5 days
 .dest
 set-value:x:@.dest
    math.add

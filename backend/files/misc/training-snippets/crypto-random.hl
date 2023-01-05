@@ -1,4 +1,4 @@
-// Generate some cryptographically secure random character at least 50 characters in length and no more than 200 characters in total
+// Use Hyperlambda to generate some cryptographically secure random character at least 50 characters in length and no more than 200 characters in total | Generate random gibberish | Generate random string
 crypto.random
    min:50
    max:200

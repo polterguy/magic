@@ -1,4 +1,4 @@
-// Endpoint requiring two integer arguments returning the modulo
+// Use Hyperlambda to create an endpoint that requires two integer arguments, and returns the modulo of these two arguments | Use modulo in Hyperlambda
 .arguments
    int1:int
    int2:int

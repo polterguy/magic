@@ -1,0 +1,4 @@
+// Endpoint with mandatory email argument | Mandatory email argument
+.arguments
+   email:string
+validators.mandatory:x:@.arguments/*/email

@@ -1,4 +1,4 @@
-// Extract all descendent nodes of [.data] having a name of 'hello' and concatenate their values into [.result]
+// Use Hyperlambda to extract all descendent nodes of [.data] having a name of 'hello' and concatenate their values into [.result] | Concatenate all strongs matching expression | Loop through all descendent nodes and concatenate their values if condition matches
 .result
 .data
    not-match:nope!

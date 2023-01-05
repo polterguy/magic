@@ -1,0 +1,7 @@
+// update first_name and last_name in gokk table in gerky database and set values to Thomas and Hansen
+data.connect:gerky
+   data.update
+      table:gokk
+      values
+         first_name:Thomas
+         last_name:Hansen

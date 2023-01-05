@@ -1,4 +1,4 @@
-// Add [static1] and [static2] into [.destination]
+// Use Hyperlambda to add two static nodes into [.destination] | Add two static nodes using Hyperlambda | Add two nodes into [.destination] using Hyperlambda | Add nodes into [.destination] | Add nodes into another node | Add multiple nodes into another node
 .destination
 
 // Adding two static nodes into [.destination]

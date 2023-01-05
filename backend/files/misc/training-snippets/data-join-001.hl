@@ -1,4 +1,4 @@
-// Select title and description from films table in movies database, and join with directors and select director's name
+// Select title and description from films table in movies database, and join with directors and select name | Inner join films and directors from movies and select film name, film description and director's name
 data.connect:movies
 
    // Selecting title, description and director name from films and directors
