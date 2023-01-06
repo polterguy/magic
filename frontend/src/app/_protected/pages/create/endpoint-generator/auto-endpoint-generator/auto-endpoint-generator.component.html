@@ -178,7 +178,7 @@
   <ng-container *ngIf="selectedTables.value.length === 1">
 
     <!-- 2 - config table -->
-    <div class="col-12 mt-4">
+    <div class="col-12 mt-3">
       <p class="fw-bold">Step 2 - Configure fields</p>
 
       <app-single-table-config
@@ -192,7 +192,7 @@
   </ng-container>
 
   <!-- ? - Endpoint configuration -->
-  <div class="col-12 mt-4">
+  <div class="col-12 mt-{{selectedTables.value.length === 1 ? '4' : '3'}}">
     <p class="fw-bold mb-0">Step {{selectedTables.value.length === 1 ? '3' : '2'}} - Endpoint configuration</p>
   </div>
 
@@ -383,7 +383,7 @@
       </div>
 
       <!-- Secondary URL -->
-      <div class="col-xl-3 col-lg-4 col-md-5 col-sm-6 col-12" *ngIf="selectedTables.value.length === 1">
+      <div class="col-xl-3 col-lg-4 col-md-5 col-sm-6 col-12 mb-3" *ngIf="selectedTables.value.length === 1">
 
         <!-- Loading skeleton -->
         <ng-container *ngIf="isLoading">
@@ -424,7 +424,7 @@
             color="primary"
             [(ngModel)]="generate_training_data"
             [disabled]="!(availableTables && availableTables.length > 0 && selectedTables.value.length > 0)">
-            Train
+            AI train
           </mat-checkbox>
 
           <div class="px-2"></div>
@@ -480,7 +480,7 @@
   <ng-container *ngIf="selectedTables.value.length === 1">
 
     <!-- ? - reCaptcha -->
-    <div class="col-md-6 col-12 mt-4">
+    <div class="col-md-6 col-12 mt-5">
       <p class="fw-bold">Step 4 - reCAPTCHA</p>
 
       <mat-form-field class="w-100 text-prefix" *ngIf="!isLoading">
@@ -531,7 +531,7 @@
     </div>
 
     <!-- ? - Cache -->
-    <div class="col-md-6 col-12 mt-4">
+    <div class="col-md-6 col-12 mt-5">
 
       <p class="fw-bold">Step 5 - Caching</p>
 
@@ -617,7 +617,7 @@
   </ng-container>
 
   <!-- ? - Settings -->
-  <div class="col-md-6 col-12 mt-md-{{selectedTables.value.length === 1 ? '5' : '4'}} mt-4">
+  <div class="col-md-6 col-12 mt-5">
 
     <p class="fw-bold">Step {{selectedTables.value.length === 1 ? '7' : '3'}} - Settings</p>
 
