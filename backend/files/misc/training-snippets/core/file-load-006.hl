@@ -1,3 +1,4 @@
+
 // Endpoint loading my_xml.xml and returns to caller as XML content
 .arguments
 io.file.load:/my_xml.xml

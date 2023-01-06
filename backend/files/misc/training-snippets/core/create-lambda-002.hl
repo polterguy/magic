@@ -1,3 +1,4 @@
+
 // Create new record in clients table in logistics database with adr1 being Market st 67 and state being California
 data.connect:logistics
    data.create

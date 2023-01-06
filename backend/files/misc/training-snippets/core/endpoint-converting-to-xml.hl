@@ -1,3 +1,4 @@
+
 // Endpoint converting all arguments to XML returning result
 .arguments:*
 

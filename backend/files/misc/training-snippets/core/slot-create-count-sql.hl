@@ -1,3 +1,4 @@
+
 // Create slot 'count_records' counting records in roles table in magic database returning result
 slots.create:count_records
    data.connect:magic

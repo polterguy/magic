@@ -1,3 +1,4 @@
+
 // Connect to foo database and select all records from bar table
 data.connect:foo
 

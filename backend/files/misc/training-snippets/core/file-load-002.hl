@@ -1,2 +1,3 @@
+
 // Load /foo.txt file
 io.file.load:/foo.txt

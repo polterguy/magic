@@ -1,3 +1,4 @@
+
 // Endpoint validating my_number argument being at least 20 and maximum 100
 .arguments
    my_number:int

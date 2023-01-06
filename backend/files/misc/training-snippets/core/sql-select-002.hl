@@ -1,3 +1,4 @@
+
 // Connect to magic database and select username from users table
 data.connect:magic
    data.select:select username from users

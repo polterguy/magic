@@ -1,3 +1,4 @@
+
 // Read all records from contacts table | Select all records from contacts
 data.read
    table:contacts

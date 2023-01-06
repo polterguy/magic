@@ -1,3 +1,4 @@
+
 // HTTP POST interceptor endpoint invoking your-app.com/your-endpoint passing in all arguments to your-app.com/your-endpoint invoking [.before] before and [.after] after
 .arguments:*
 .description:HTTP POST interceptor endpoint invoking your-app.com/your-endpoint passing in all arguments to your-app.com/your-endpoint invoking [.before] before and [.after] after
@@ -64,7 +65,6 @@ if
       throw:Intercepted endpoint did not return success
          public:true
          status:502
-         
 
 /*
  * Lambda object to execute after invocation to

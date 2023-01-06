@@ -1,3 +1,4 @@
+
 // Add all children from [.src1] and [.src2] into [.destination]
 .src1
    foo1:bar1

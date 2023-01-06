@@ -1,3 +1,4 @@
+
 // Invoke OpenAI API ask 'What is Hyperlambda?' using 'text-davinci-003' model
 strings.concat
    .:"Bearer "

@@ -1,3 +1,4 @@
+
 // Publish 'my_message2' socket message with blah node having 'qwe' value to guest and partners roles
 sockets.signal:my_message2
    roles:guest,partners

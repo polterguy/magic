@@ -1,3 +1,4 @@
+
 // Endpoint taking arg1 argument, and if the argument is 'Thomas Hansen' it returns the name of the first role from the magic database sorted alphabetically as plain text
 .arguments
    arg1:string

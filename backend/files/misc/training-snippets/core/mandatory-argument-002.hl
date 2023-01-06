@@ -1,2 +1,3 @@
+
 // Name argument is mandatory
 validators.mandatory:x:@.arguments/*/name

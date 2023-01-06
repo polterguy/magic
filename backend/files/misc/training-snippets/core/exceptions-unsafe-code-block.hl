@@ -1,8 +1,8 @@
+
 // Exception try/catch block logging errors
 try
 
    // Unsafe code here
-
 .catch
 
    // Logging error

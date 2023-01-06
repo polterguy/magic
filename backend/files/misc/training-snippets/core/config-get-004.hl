@@ -1,2 +1,3 @@
+
 // Get config value 'my_app:url'
 config.get:"my_app:url"

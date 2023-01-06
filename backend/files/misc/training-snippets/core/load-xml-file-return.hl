@@ -1,3 +1,4 @@
+
 // Endpoint loading /hello.xml XML file and returning content as XML
 .arguments
 

@@ -1,3 +1,4 @@
+
 // Gateway POST endpoint passing in arguments to microsoft.com/chin/contacts returning result of POST invocation
 .arguments:*
 add:x:../*/http.post/*/payload

@@ -1,3 +1,4 @@
+
 // Endpoint with guest and admin authentication and authorisation
 .arguments
 auth.ticket.verify:guest,admin

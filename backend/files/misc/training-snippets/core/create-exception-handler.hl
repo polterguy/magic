@@ -1,3 +1,4 @@
+
 // Exception handler catching all exceptions logging error
 log.error:x:@.arguments/*/message
    url:x:@.arguments/*/path
@@ -13,7 +14,7 @@ if
       exists:x:@.arguments/*/public
       get-value:x:@.arguments/*/public
    .lambda
-   
+
       // Exception message is supposed to propagate to client.
       set-value:x:../*/return/*/message
          get-value:x:@.arguments/*/message

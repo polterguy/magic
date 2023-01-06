@@ -1,2 +1,3 @@
+
 // Clear server side cache for all items
 cache.clear

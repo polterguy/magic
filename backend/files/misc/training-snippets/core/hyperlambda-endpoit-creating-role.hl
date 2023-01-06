@@ -1,3 +1,4 @@
+
 // Endpoint creating a new role in our magic database and roles table
 .arguments
    name:string

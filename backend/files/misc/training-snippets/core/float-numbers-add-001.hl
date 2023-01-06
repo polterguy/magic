@@ -1,3 +1,4 @@
+
 // Endpoint adding number1 and number2 float arguments returning result
 .arguments
    number1:float

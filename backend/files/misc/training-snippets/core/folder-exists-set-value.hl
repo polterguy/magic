@@ -1,3 +1,4 @@
+
 // Assign YES to [.result] if /foo/bar/ folder exists
 .result
 if

@@ -1,3 +1,4 @@
+
 // 60 seconds of public HTTP cache
 response.headers.set
    Cache-Control:public; max-age=60

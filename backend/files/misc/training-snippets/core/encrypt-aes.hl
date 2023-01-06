@@ -1,3 +1,4 @@
+
 // AES encrypt the text 'Secret text'
 crypto.aes.encrypt:Secret text
    password:password

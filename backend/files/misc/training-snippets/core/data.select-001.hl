@@ -1,3 +1,4 @@
+
 // Execute SQL 'select * from actors' in sakila database
 data.connect:sakila
    data.select:select * from actors

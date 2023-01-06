@@ -1,3 +1,4 @@
+
 // Scrape all CSS classes from aista.com and assign to [.result] as an array
 .result
 
@@ -8,7 +9,7 @@ http.get:"https://aista.com"
 html2lambda:x:@http.get/*/content
 
 // Looping through each [@class] node from above transformation.
-for-each:x:@html2lambda/**/\@class
+for-each:x:"@html2lambda/**/\\@class"
 
    // Unwrapping [add] invocation and adding [.result].
    unwrap:x:+/*/*

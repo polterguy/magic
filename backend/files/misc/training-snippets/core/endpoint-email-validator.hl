@@ -1,3 +1,4 @@
+
 // Endpoint accepting email argument with validator returning success
 .arguments
    email:string

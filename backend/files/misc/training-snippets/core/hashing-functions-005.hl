@@ -1,5 +1,5 @@
-// Hash the text in the [.text] node using SHA512
 
+// Hash the text in the [.text] node using SHA512
 .text:secret text
 
 // Hash using sha512

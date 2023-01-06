@@ -1,3 +1,4 @@
+
 // Endpoint adding 3 decimal numbers given as arguments returning result
 .arguments
    number1:decimal

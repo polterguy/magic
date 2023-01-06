@@ -1,3 +1,4 @@
+
 // Content-Type JavaScript
 response.headers.set
    Content-Type:application/javascript

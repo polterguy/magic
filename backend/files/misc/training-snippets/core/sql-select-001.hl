@@ -1,3 +1,4 @@
+
 // Connect to magic database and select name and description from roles table
 data.connect:magic
    data.select:select name, description from roles
