@@ -503,7 +503,7 @@ semaphore:crudifier
             set-value:x:@.comment-tail
                strings.concat
                   get-value:x:@.comment-tail
-                  .:" filtering on"
+                  .:" returning"
 
             // Applying arguments to endpoint.
             for-each:x:@.arguments/*/args/*/columns/*
@@ -601,6 +601,43 @@ semaphore:crudifier
                                  get-name:x:@.dp/#
                            add:x:@apply/*/.arguments
                               get-nodes:x:@.buffer/*
+
+            /*
+             * More semantic commenting.
+             */
+            .first:bool:true
+            set-value:x:@.comment-tail
+               strings.concat
+                  get-value:x:@.comment-tail
+                  .:" filtering on"
+
+            // Applying arguments to endpoint.
+            for-each:x:@.arguments/*/args/*/columns/*
+
+               // Checking if this is our first loop iteration.
+               if
+                  get-value:x:@.first
+                  .lambda
+
+                     // Making sure we don't come here again.
+                     set-value:x:@.first
+                        .:bool:false
+
+                     // Adding currently iterated argument into comment's tail.
+                     set-value:x:@.comment-tail
+                        strings.concat
+                           get-value:x:@.comment-tail
+                           .:" "
+                           get-value:x:@.dp/#/*/name
+
+               else
+
+                  // Adding currently iterated argument into comment's tail.
+                  set-value:x:@.comment-tail
+                     strings.concat
+                        get-value:x:@.comment-tail
+                        .:", "
+                        get-value:x:@.dp/#/*/name
 
          // Making sure we add [.handling] section if needed.
          if
@@ -1411,13 +1448,15 @@ semaphore:crudifier
          set-value:x:@apply/*/.type
             .:crud-count
          set-value:x:@apply/*/.description
+            strings.replace:Endpoint counting items in your {table} table in your {database} database
+               .:{database}
+               get-value:x:@.database-name
+         set-value:x:@apply/*/.description
             strings.replace:x:@apply/*/.description
-               .:CRUD endpoint reading
-               .:Endpoint counting
+               .:{table}
+               get-value:x:@.arguments/*/table
          set-value:x:@apply/0
-            strings.replace:x:@apply/0
-               .:CRUD endpoint reading
-               .:Endpoint counting
+            get-value:x:@apply/*/.description
          add:x:@apply/**/columns
             .
                count(*)
