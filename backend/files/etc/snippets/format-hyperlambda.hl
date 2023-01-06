@@ -7,9 +7,9 @@ for-each:x:-/*
          .:.hl
       .lambda
          io.file.load:x:@.dp/#
-         hyper2lambda:x:-
+         hyper2lambda:x:@io.file.load
             comments:true
-         lambda2hyper:x:-/*
+         lambda2hyper:x:@hyper2lambda/*
             comments:true
          io.file.save:x:@.dp/#
             get-value:x:@lambda2hyper
