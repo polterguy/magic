@@ -9,9 +9,6 @@ auth.ticket.verify:guest
 // Sanity checking invocation, making sure primary key(s) are specified.
 validators.mandatory:x:@.arguments/*/user_id
 
-// Making sure we retrieve lock value for column.
-auth.ticket.get
-
 // Opening up our database connection.
 data.connect:headless_cms
 
@@ -24,9 +21,6 @@ data.connect:headless_cms
       table:users
       where
          and
-
-            // Table is locked on the following field.
-            username.eq:x:@auth.ticket.get
 
    // Returning result of above invocation to caller.
    unwrap:x:+/*

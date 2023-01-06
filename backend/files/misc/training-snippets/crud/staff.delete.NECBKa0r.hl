@@ -13,9 +13,6 @@ log.info:sakila.staff entry deleted
 // Sanity checking invocation, making sure primary key(s) are specified.
 validators.mandatory:x:@.arguments/*/staff_id
 
-// Making sure we retrieve lock value for column.
-auth.ticket.get
-
 // Opening up our database connection.
 data.connect:sakila
 
@@ -28,9 +25,6 @@ data.connect:sakila
       table:staff
       where
          and
-
-            // Table is locked on the following field.
-            username.eq:x:@auth.ticket.get
 
    // Returning result of above invocation to caller.
    unwrap:x:+/*

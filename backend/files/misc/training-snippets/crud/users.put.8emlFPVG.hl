@@ -13,9 +13,6 @@ validators.mandatory:x:@.arguments/*/user_id
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:guest
 
-// Making sure we retrieve lock value for column.
-auth.ticket.get
-
 // Opening up our database connection.
 data.connect:headless_cms
 
@@ -31,9 +28,6 @@ data.connect:headless_cms
       values
       where
          and
-
-            // Table is locked on the following field.
-            username.eq:x:@auth.ticket.get
 
    // Verifying record exists.
    if

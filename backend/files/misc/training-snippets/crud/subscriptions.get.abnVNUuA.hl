@@ -62,9 +62,6 @@ remove-nodes:x:@.arguments/*/recaptcha/[0,1]
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:admin,guest,root,translator
 
-// Making sure we retrieve lock value for column.
-auth.ticket.get
-
 // Opening up our database connection.
 data.connect:stripe
 
@@ -97,9 +94,6 @@ data.connect:stripe
          subscriptions.completed
       where
          and
-
-            // Table is locked on the following field.
-            username.eq:x:@auth.ticket.get
 
    // Returning result of above read invocation to caller.
    return-nodes:x:@data.read/*

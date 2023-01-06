@@ -17,9 +17,6 @@ log.info:sakila.staff entry updated
    username:x:@auth.ticket.get
    arguments:x:@lambda2hyper
 
-// Making sure we retrieve lock value for column.
-auth.ticket.get
-
 // Opening up our database connection.
 data.connect:sakila
 
@@ -35,9 +32,6 @@ data.connect:sakila
       values
       where
          and
-
-            // Table is locked on the following field.
-            username.eq:x:@auth.ticket.get
 
    // Verifying record exists.
    if

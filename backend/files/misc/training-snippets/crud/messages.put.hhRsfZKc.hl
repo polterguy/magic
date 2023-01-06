@@ -11,9 +11,6 @@ validators.mandatory:x:@.arguments/*/id
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:admin,guest,translator
 
-// Making sure we retrieve lock value for column.
-auth.ticket.get
-
 // Opening up our database connection.
 data.connect:tickets
 
@@ -29,9 +26,6 @@ data.connect:tickets
       values
       where
          and
-
-            // Table is locked on the following field.
-            user.eq:x:@auth.ticket.get
 
    // Verifying record exists.
    if
