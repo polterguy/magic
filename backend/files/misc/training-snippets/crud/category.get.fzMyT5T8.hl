@@ -1,5 +1,5 @@
 
-// CRUD read endpoint with paging, sorting, filtering selecting records from your category table in your sakila database returning category_id, name, last_update filtering on category_id, name, last_update
+// CRUD read endpoint with paging, ordering, filtering selecting records from your category table in your sakila database returning category_id, name, last_update filtering on category_id, name, last_update
 .arguments
    limit:long
    offset:long

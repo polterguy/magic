@@ -1,5 +1,5 @@
 
-// CRUD read endpoint with paging, sorting, filtering selecting records from your actor table in your sakila database returning actor_id, first_name, last_name, last_update filtering on actor_id, first_name, last_name, last_update with authentication and authorisation for guest roles
+// CRUD read endpoint with paging, ordering, filtering selecting records from your actor table in your sakila database returning actor_id, first_name, last_name, last_update filtering on actor_id, first_name, last_name, last_update with authentication and authorisation for guest roles
 .arguments
    limit:long
    offset:long

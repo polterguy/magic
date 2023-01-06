@@ -1,5 +1,5 @@
 
-// CRUD read endpoint with sorting, filtering selecting records from your rental table in your sakila database returning rental_id, rental_date, inventory_id, customer_id, return_date, staff_id, last_update filtering on rental_id, rental_date, inventory_id, customer_id, return_date, staff_id, last_update with authentication and authorisation for guest roles with public HTTP caching for 15 seconds
+// CRUD read endpoint with ordering, filtering selecting records from your rental table in your sakila database returning rental_id, rental_date, inventory_id, customer_id, return_date, staff_id, last_update filtering on rental_id, rental_date, inventory_id, customer_id, return_date, staff_id, last_update with authentication and authorisation for guest roles with public HTTP caching for 15 seconds
 .arguments
    order:string
    direction:string

@@ -1,5 +1,5 @@
 
-// CRUD read endpoint with paging, sorting, filtering selecting records from your payment_methods table in your stripe database returning payment_method, username, card_no, card_type, hidden filtering on payment_method, username, card_no, card_type, hidden with public HTTP caching for 20 seconds
+// CRUD read endpoint with paging, ordering, filtering selecting records from your payment_methods table in your stripe database returning payment_method, username, card_no, card_type, hidden filtering on payment_method, username, card_no, card_type, hidden with public HTTP caching for 20 seconds
 .arguments
    limit:long
    offset:long

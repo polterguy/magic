@@ -1,0 +1,26 @@
+
+// CRUD create endpoint inserting one record in your content_categories table in your headless_cms database taking category_name, created_at
+.arguments
+   category_name:string
+   created_at:date
+
+// Opening up database connection.
+data.connect:headless_cms
+
+   // Parametrising our create invocation.
+   add:x:./*/data.create/*/values
+      get-nodes:x:@.arguments/*
+
+   // Creating our record.
+   data.create
+      table:content_categories
+      return-id:bool:true
+      values
+
+   // Returning the correct status code.
+   response.status.set:201
+
+   // Returning result of above invocation to caller.
+   unwrap:x:+/*
+   return
+      id:x:@data.create

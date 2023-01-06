@@ -1,5 +1,5 @@
 
-// CRUD read endpoint with paging, sorting, filtering selecting records from your address table in your sakila database returning address_id, address, address2, district, city_id, postal_code, phone, last_update filtering on address_id, address, address2, district, city_id, postal_code, phone, last_update with authentication and authorisation for guest roles
+// CRUD read endpoint with paging, ordering, filtering selecting records from your address table in your sakila database returning address_id, address, address2, district, city_id, postal_code, phone, last_update filtering on address_id, address, address2, district, city_id, postal_code, phone, last_update with authentication and authorisation for guest roles
 .arguments
    limit:long
    offset:long

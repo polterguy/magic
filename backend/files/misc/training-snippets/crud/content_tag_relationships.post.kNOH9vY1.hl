@@ -1,0 +1,33 @@
+
+// CRUD create endpoint inserting one record in your content_tag_relationships table in your headless_cms database taking content_id, tag_id with logging
+.arguments
+   content_id:long
+   tag_id:long
+
+// Logging invocation.
+auth.ticket.get
+lambda2hyper:x:@.arguments/*
+log.info:headless_cms.content_tag_relationships entry created
+   username:x:@auth.ticket.get
+   arguments:x:@lambda2hyper
+
+// Opening up database connection.
+data.connect:headless_cms
+
+   // Parametrising our create invocation.
+   add:x:./*/data.create/*/values
+      get-nodes:x:@.arguments/*
+
+   // Creating our record.
+   data.create
+      table:content_tag_relationships
+      return-id:bool:true
+      values
+
+   // Returning the correct status code.
+   response.status.set:201
+
+   // Returning result of above invocation to caller.
+   unwrap:x:+/*
+   return
+      id:x:@data.create

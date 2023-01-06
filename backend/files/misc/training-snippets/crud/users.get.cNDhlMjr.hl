@@ -1,0 +1,49 @@
+
+// CRUD read endpoint with sorting, filtering selecting records from your users table in your headless_cms database returning user_id, username, password, email, created_at filtering on user_id, username, password, email, created_at with authentication and authorisation for guest roles
+.arguments
+   order:string
+   direction:string
+   users.user_id.eq:long
+   users.password.like:string
+   users.password.eq:string
+   users.email.like:string
+   users.email.eq:string
+   users.created_at.eq:date
+
+// Columns with custom handling as frontend is generated.
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:guest
+
+// Making sure we retrieve lock value for column.
+auth.ticket.get
+
+// Opening up our database connection.
+data.connect:headless_cms
+
+   // Parametrising our read invocation with ordering arguments if specified.
+   add:x:./*/data.read
+      get-nodes:x:@.arguments/*/order
+      get-nodes:x:@.arguments/*/direction
+   remove-nodes:x:@.arguments/*/direction
+
+   // Parametrising our read invocation with filtering arguments.
+   add:x:./*/data.read/*/where/*
+      get-nodes:x:@.arguments/*
+
+   // Reading data from database.
+   data.read
+      table:users
+      columns
+         users.user_id
+         users.password
+         users.email
+         users.created_at
+      where
+         and
+
+            // Table is locked on the following field.
+            username.eq:x:@auth.ticket.get
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@data.read/*

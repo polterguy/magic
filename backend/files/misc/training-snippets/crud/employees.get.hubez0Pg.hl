@@ -1,5 +1,5 @@
 
-// CRUD read endpoint with paging, sorting, filtering selecting records from your employees table in your aista-crm database returning employee_id, name, email, phone, linkedIn, facebook, twitter, created filtering on employee_id, name, email, phone, linkedIn, facebook, twitter, created with authentication and authorisation for root roles
+// CRUD read endpoint with paging, ordering, filtering selecting records from your employees table in your aista-crm database returning employee_id, name, email, phone, linkedIn, facebook, twitter, created filtering on employee_id, name, email, phone, linkedIn, facebook, twitter, created with authentication and authorisation for root roles
 .arguments
    limit:long
    offset:long

@@ -1,5 +1,5 @@
 
-// CRUD read endpoint with paging, sorting, filtering selecting records from your Suppliers table in your northwind database returning SupplierID, CompanyName, ContactName, ContactTitle, Address, City, Region, PostalCode, Country, Phone, Fax, HomePage filtering on SupplierID, CompanyName, ContactName, ContactTitle, Address, City, Region, PostalCode, Country, Phone, Fax, HomePage with reCAPTCHA value of 0.7 with public HTTP caching for 28 seconds
+// CRUD read endpoint with paging, ordering, filtering selecting records from your Suppliers table in your northwind database returning SupplierID, CompanyName, ContactName, ContactTitle, Address, City, Region, PostalCode, Country, Phone, Fax, HomePage filtering on SupplierID, CompanyName, ContactName, ContactTitle, Address, City, Region, PostalCode, Country, Phone, Fax, HomePage with reCAPTCHA value of 0.7 with public HTTP caching for 28 seconds
 .arguments
    limit:long
    offset:long

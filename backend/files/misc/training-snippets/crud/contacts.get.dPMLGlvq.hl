@@ -1,5 +1,5 @@
 
-// CRUD read endpoint with paging, sorting, filtering selecting records from your contacts table in your aista-crm database returning contact_id, account, name, phone, email, country, city, linkedIn, facebook, twitter, created filtering on contact_id, account, name, phone, email, country, city, linkedIn, facebook, twitter, created with authentication and authorisation for root roles
+// CRUD read endpoint with paging, ordering, filtering selecting records from your contacts table in your aista-crm database returning contact_id, account, name, phone, email, country, city, linkedIn, facebook, twitter, created filtering on contact_id, account, name, phone, email, country, city, linkedIn, facebook, twitter, created with authentication and authorisation for root roles
 .arguments
    limit:long
    offset:long

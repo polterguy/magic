@@ -1,5 +1,5 @@
 
-// CRUD read endpoint with sorting, filtering selecting records from your inventory table in your sakila database returning inventory_id, film_id, store_id, last_update filtering on inventory_id, film_id, store_id, last_update with authentication and authorisation for guest,root roles
+// CRUD read endpoint with ordering, filtering selecting records from your inventory table in your sakila database returning inventory_id, film_id, store_id, last_update filtering on inventory_id, film_id, store_id, last_update with authentication and authorisation for guest,root roles
 .arguments
    order:string
    direction:string

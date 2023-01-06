@@ -1,5 +1,5 @@
 
-// CRUD read endpoint with paging, sorting, filtering selecting records from your status table in your aista-crm database returning status_id, status filtering on status_id, status with authentication and authorisation for root roles
+// CRUD read endpoint with paging, ordering, filtering selecting records from your status table in your aista-crm database returning status_id, status filtering on status_id, status with authentication and authorisation for root roles
 .arguments
    limit:long
    offset:long

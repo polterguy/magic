@@ -1,5 +1,5 @@
 
-// CRUD read endpoint with paging, sorting, filtering selecting records from your Regions table in your northwind database returning RegionID, RegionDescription filtering on RegionID, RegionDescription with reCAPTCHA value of 0.5 with private HTTP caching for 35 seconds
+// CRUD read endpoint with paging, ordering, filtering selecting records from your Regions table in your northwind database returning RegionID, RegionDescription filtering on RegionID, RegionDescription with reCAPTCHA value of 0.5 with private HTTP caching for 35 seconds
 .arguments
    limit:long
    offset:long
