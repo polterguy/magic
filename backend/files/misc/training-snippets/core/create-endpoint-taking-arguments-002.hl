@@ -1,3 +1,4 @@
+
 // Endpoint accepting animal, country and city arguments
 .arguments
    animal:string

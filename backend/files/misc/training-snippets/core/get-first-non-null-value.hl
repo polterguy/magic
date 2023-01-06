@@ -1,3 +1,4 @@
+
 // Assign to [.res] first non null value from children of [.data]
 .data
    foo1

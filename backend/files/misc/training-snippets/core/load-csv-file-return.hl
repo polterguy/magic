@@ -1,3 +1,4 @@
+
 // Endpoint returning content of /foo.csv CSV file
 .arguments
 

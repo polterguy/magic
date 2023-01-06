@@ -1,3 +1,4 @@
+
 // Endpoint creating nurses record in hospital database with name, email and phone given as arguments
 .arguments
    name:string

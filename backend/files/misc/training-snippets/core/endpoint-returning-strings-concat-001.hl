@@ -1,3 +1,4 @@
+
 // Endpoint concatenating two strings given as [arg1] and [arg2]
 .arguments
    arg1:string

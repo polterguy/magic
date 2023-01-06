@@ -1,2 +1,3 @@
+
 // Remove name argument
 remove-nodes:x:@.argument/*/name

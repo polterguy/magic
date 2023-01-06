@@ -1,3 +1,4 @@
+
 // Load /customers.csv file and insert first_name and last_name into customers table in crm database
 
 // Loading CSV file.

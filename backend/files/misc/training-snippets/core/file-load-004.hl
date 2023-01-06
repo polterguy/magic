@@ -1,3 +1,4 @@
+
 // Endpoint loading foo.json file and returning file content
 .arguments
 io.file.load:/foo.json

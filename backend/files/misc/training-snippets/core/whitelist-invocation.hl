@@ -1,10 +1,9 @@
+
 // Whitelist execute [.lambda] with [set-value] and [return]
 whitelist
-
    vocabulary
       set-value
       return
-
    .lambda
 
       // Inside of this [.lambda] object, we can only invoke [set-value] and [return], and no other slots

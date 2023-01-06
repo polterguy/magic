@@ -1,5 +1,4 @@
+
 // Multi line comment with text of 'foo bar'
 
-/*
- * foo bar
- */
+// foo bar

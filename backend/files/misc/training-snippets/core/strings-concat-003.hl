@@ -1,3 +1,4 @@
+
 // Endpoint concatenating [argument1], [argument2], [argument3] and returning result
 .arguments
    argument1:string

@@ -1,3 +1,4 @@
+
 // Thread creating log entry
 fork
    log.info:Hello from thread

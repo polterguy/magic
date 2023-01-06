@@ -1,3 +1,4 @@
+
 // Select first 2 records from actor table in sakila database
 data.connect:sakila
    data.read

@@ -1,3 +1,4 @@
+
 // Convert [.html] to lambda object change its CSS class from 'foo' to 'bar' and transform back to HTML again
 .html:@"<html>
   <head>
@@ -12,7 +13,7 @@
 html2lambda:x:@.html
 
 // Changing the 'foo' CSS class to 'bar'
-set-value:x:@html2lambda/*/*/*/*/\@class
+set-value:x:"@html2lambda/*/*/*/*/\\@class"
    .:bar
 
 // Transforming lambda back to HTML again, and updating the [.html] node's value

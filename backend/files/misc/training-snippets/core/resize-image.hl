@@ -1,3 +1,4 @@
+
 // Load image /foo.jpg and resizes to 640x480
 image.resize:/foo.jpg
    width:640

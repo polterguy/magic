@@ -1,3 +1,4 @@
+
 // Endpoint executing SQL counting records from customers table in contacts database
 .arguments
 data.connect:contacts

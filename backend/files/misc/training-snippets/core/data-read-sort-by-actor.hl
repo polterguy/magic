@@ -1,3 +1,4 @@
+
 // Select 20 records from actor table in sakila database ordered by first_name
 data.connect:sakila
    data.read

@@ -1,3 +1,4 @@
+
 // Empty endpoint returning failure and 400 status code
 .arguments
 

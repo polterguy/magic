@@ -1,3 +1,4 @@
+
 // Endpoint executing SQL counting records in foo table in bar database returning result
 .arguments
 data.connect:bar

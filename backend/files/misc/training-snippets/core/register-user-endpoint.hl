@@ -1,3 +1,4 @@
+
 // Endpoint that registers user as guest role sending email
 .arguments
    username:string

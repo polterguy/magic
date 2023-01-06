@@ -1,3 +1,4 @@
+
 // Endpoint with reCAPTCHA validator
 .arguments
    recaptcha_response:string
@@ -15,10 +16,10 @@ if
       neq:x:@config.get
          .:
    .lambda
-   
+
       // [recaptcha_response] is a mandatory field.
       validators.mandatory:x:@.arguments/*/recaptcha_response
-      
+
       // Retrieving secret and invoking slot responsible for verifying reCAPTCHA value.
       config.get:"magic:auth:recaptcha:secret"
       validators.recaptcha:x:@.arguments/*/recaptcha_response

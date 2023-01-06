@@ -1,3 +1,4 @@
+
 // Create server side cache with key of cache1 and store the value of [.arg]
 .arg:This will end up in your cache
 cache.set:cache1

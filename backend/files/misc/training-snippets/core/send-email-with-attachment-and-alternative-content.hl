@@ -1,3 +1,4 @@
+
 // Send email with /README.md attachment to John Doe john@doe.com from Jane Doe jane@doe.com
 mail.smtp.send
    message
@@ -13,7 +14,7 @@ mail.smtp.send
          .
             name:Jane Doe
             email:jane@doe.com
-            
+
       // Subject of email.
       subject:Subject of email
 

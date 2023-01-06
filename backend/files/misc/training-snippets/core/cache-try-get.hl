@@ -1,3 +1,4 @@
+
 // Retrieve cache with key 'cache-key', and if not existing, create new cache item by executing [.lambda] and store in 'Howdy world' in cache for 5 seconds
 cache.try-get:cache-key
    expiration:5

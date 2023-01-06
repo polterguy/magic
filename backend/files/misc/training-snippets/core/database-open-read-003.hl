@@ -1,3 +1,4 @@
+
 // Connect to crm database and select all columns and all records from contacts table
 data.connect:crm
 

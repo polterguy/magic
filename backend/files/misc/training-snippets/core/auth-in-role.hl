@@ -1,7 +1,9 @@
+
 // Execute [.lambda] if user is admin or root
 
 // Conditional if statement
 if
+
    // Checking if user belongs to either admin or root role
    auth.ticket.in-role:admin, root
    .lambda

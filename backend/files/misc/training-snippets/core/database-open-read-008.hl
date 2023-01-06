@@ -1,3 +1,4 @@
+
 // Connect to car_shops database and read first 55 records from cars table
 data.connect:car_shops
 

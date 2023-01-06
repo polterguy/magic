@@ -1,3 +1,4 @@
+
 // Endpoint with root authentication and authorisation
 .arguments
 auth.ticket.verify:root

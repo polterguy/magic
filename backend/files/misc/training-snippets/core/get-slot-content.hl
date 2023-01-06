@@ -1,2 +1,3 @@
+
 // Get body of dynamic slot my_slot2
 slots.get:my_slot2

@@ -1,3 +1,4 @@
+
 // Endpoint with authentication and authorisation for root and admin users
 .arguments
 auth.ticket.verify:admin, user
