@@ -21,9 +21,8 @@ set-value:x:@.token
 // Loading training data.
 .file-data
 .snippets
-io.file.list:/misc/training-snippets/
-io.file.list:/etc/snippets/
-for-each:x:../*/io.file.list/*
+io.file.list-recursively:/misc/training-snippets/
+for-each:x:../*/io.file.list-recursively/*
 
    if
       strings.ends-with:x:@.dp/#

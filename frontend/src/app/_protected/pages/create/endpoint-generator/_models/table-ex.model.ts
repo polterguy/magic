@@ -149,4 +149,9 @@ export class TableEx {
    * If true adds sorting to the table
    */
   sorting: boolean;
+
+  /*
+   * If true, will copy the file into our OpenAI training data folder.
+   */
+  generate_training_data: boolean;
 }

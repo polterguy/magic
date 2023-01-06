@@ -51,6 +51,7 @@ export class AutoGeneratorComponent extends GeneratorBase implements OnInit, OnD
   secondaryURL: string = '';
   paging: boolean = true;
   sorting: boolean = true;
+  generate_training_data: boolean = false;
   logCreate: boolean = false;
   logUpdate: boolean = false;
   logDelete: boolean = false;
@@ -174,7 +175,11 @@ export class AutoGeneratorComponent extends GeneratorBase implements OnInit, OnD
           case 'delete': idxTable.logDelete = this.logDelete; break;
           case 'post': idxTable.logPost = this.logCreate; break;
           case 'put': idxTable.logPut = this.logUpdate; break;
-          case 'get': idxTable.paging = this.paging; idxTable.sorting = this.sorting; break;
+          case 'get':
+            idxTable.paging = this.paging;
+            idxTable.sorting = this.sorting;
+            idxTable.generate_training_data = this.generate_training_data;
+            break;
         }
       }
 

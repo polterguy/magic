@@ -60,6 +60,7 @@ export class TransformModelService {
     result.validators = table.validators;
     result.cqrs = table.cqrs;
     result.cqrsAuthorisation = table.cqrsAuthorisation;
+    result.generate_training_data = table.generate_training_data;
     if (table.cqrsAuthorisation === 'roles' || table.cqrsAuthorisation === 'groups' || table.cqrsAuthorisation === 'users') {
       result.cqrsAuthorisationValues = table.cqrsAuthorisationValues;
     }

@@ -9,11 +9,10 @@
 auth.ticket.verify:root
 
 // Listing all files in snippets folder.
-io.file.list:/misc/training-snippets/
-io.file.list:/etc/snippets/
+io.file.list-recursively:/misc/training-snippets/
 
 // Loading all files, and creating structured data to caller.
-for-each:x:../*/io.file.list/*
+for-each:x:../*/io.file.list-recursively/*
 
    if
       strings.ends-with:x:@.dp/#
