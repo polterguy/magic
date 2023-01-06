@@ -1,5 +1,5 @@
 
-// CRUD create endpoint inserting one record in your Employee table in your chinook database taking EmployeeId, LastName, FirstName, Title, ReportsTo, BirthDate, HireDate, Address, City, State, Country, PostalCode, Phone, Fax, Email with authentication and authorisation for admin roles
+// CRUD create endpoint inserting one record into your Employee table in your chinook database taking EmployeeId, LastName, FirstName, Title, ReportsTo, BirthDate, HireDate, Address, City, State, Country, PostalCode, Phone, Fax, Email with authentication and authorisation for admin roles
 .arguments
    EmployeeId:long
    LastName:string

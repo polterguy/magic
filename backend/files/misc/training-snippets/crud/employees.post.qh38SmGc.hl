@@ -1,5 +1,5 @@
 
-// CRUD create endpoint inserting one record in your Employees table in your northwind database taking LastName, FirstName, Title, TitleOfCourtesy, BirthDate, HireDate, Address, City, Region, PostalCode, Country, HomePhone, Extension, Photo, Notes, ReportsTo, PhotoPath with authentication and authorisation for admin,guest roles
+// CRUD create endpoint inserting one record into your Employees table in your northwind database taking LastName, FirstName, Title, TitleOfCourtesy, BirthDate, HireDate, Address, City, Region, PostalCode, Country, HomePhone, Extension, Photo, Notes, ReportsTo, PhotoPath with authentication and authorisation for admin,guest roles
 .arguments
    LastName:string
    FirstName:string

@@ -1,5 +1,5 @@
 
-// CRUD create endpoint inserting one record in your customers table in your stripe database taking username, customer_id with reCAPTCHA value of 0.5
+// CRUD create endpoint inserting one record into your customers table in your stripe database taking username, customer_id with reCAPTCHA value of 0.5
 .arguments
    recaptcha:string
    customer_id:string

@@ -1,5 +1,5 @@
 
-// CRUD create endpoint inserting one record in your CustomerDemographics table in your northwind database taking CustomerTypeID, CustomerDesc with authentication and authorisation for admin,guest roles with reCAPTCHA value of 0.3
+// CRUD create endpoint inserting one record into your CustomerDemographics table in your northwind database taking CustomerTypeID, CustomerDesc with authentication and authorisation for admin,guest roles with reCAPTCHA value of 0.3
 .arguments
    recaptcha:string
    CustomerTypeID:string

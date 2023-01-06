@@ -1,5 +1,5 @@
 
-// CRUD create endpoint inserting one record in your inventory table in your sakila database taking film_id, store_id, last_update with authentication and authorisation for admin,translator roles
+// CRUD create endpoint inserting one record into your inventory table in your sakila database taking film_id, store_id, last_update with authentication and authorisation for admin,translator roles
 .arguments
    film_id:long
    store_id:long

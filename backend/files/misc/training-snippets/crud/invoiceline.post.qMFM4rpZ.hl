@@ -1,5 +1,5 @@
 
-// CRUD create endpoint inserting one record in your InvoiceLine table in your chinook database taking InvoiceLineId, InvoiceId, TrackId, UnitPrice, Quantity with authentication and authorisation for admin,guest roles
+// CRUD create endpoint inserting one record into your InvoiceLine table in your chinook database taking InvoiceLineId, InvoiceId, TrackId, UnitPrice, Quantity with authentication and authorisation for admin,guest roles
 .arguments
    InvoiceLineId:long
    InvoiceId:long

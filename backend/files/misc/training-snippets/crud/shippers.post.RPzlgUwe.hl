@@ -1,5 +1,5 @@
 
-// CRUD create endpoint inserting one record in your Shippers table in your northwind database taking CompanyName, Phone with logging with reCAPTCHA value of 0.5 publishing northwind.shippers.post socket message when invoked
+// CRUD create endpoint inserting one record into your Shippers table in your northwind database taking CompanyName, Phone with logging with reCAPTCHA value of 0.5 publishing northwind.shippers.post socket message when invoked
 .arguments
    recaptcha:string
    CompanyName:string

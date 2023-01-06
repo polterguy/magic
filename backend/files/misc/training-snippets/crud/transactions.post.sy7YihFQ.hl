@@ -1,5 +1,5 @@
 
-// CRUD create endpoint inserting one record in your transactions table in your stripe database taking transaction, username, amount, invoice, type, payment_method, affiliate with logging with authentication and authorisation for admin,guest,root,translator roles with reCAPTCHA value of 0.6 publishing stripe.transactions.post socket message when invoked
+// CRUD create endpoint inserting one record into your transactions table in your stripe database taking transaction, username, amount, invoice, type, payment_method, affiliate with logging with authentication and authorisation for admin,guest,root,translator roles with reCAPTCHA value of 0.6 publishing stripe.transactions.post socket message when invoked
 .arguments
    recaptcha:string
    transaction:string

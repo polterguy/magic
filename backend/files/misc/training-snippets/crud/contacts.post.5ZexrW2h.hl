@@ -1,5 +1,5 @@
 
-// CRUD create endpoint inserting one record in your contacts table in your aista-crm database taking account, name, phone, email, country, city, linkedIn, facebook, twitter with authentication and authorisation for root roles
+// CRUD create endpoint inserting one record into your contacts table in your aista-crm database taking account, name, phone, email, country, city, linkedIn, facebook, twitter with authentication and authorisation for root roles
 .arguments
    account:long
    name:string

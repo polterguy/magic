@@ -1,5 +1,5 @@
 
-// CRUD create endpoint inserting one record in your Products table in your northwind database taking ProductName, SupplierID, CategoryID, QuantityPerUnit, UnitPrice, UnitsInStock, UnitsOnOrder, ReorderLevel, Discontinued with logging with reCAPTCHA value of 0.3 publishing northwind.products.post socket message when invoked
+// CRUD create endpoint inserting one record into your Products table in your northwind database taking ProductName, SupplierID, CategoryID, QuantityPerUnit, UnitPrice, UnitsInStock, UnitsOnOrder, ReorderLevel, Discontinued with logging with reCAPTCHA value of 0.3 publishing northwind.products.post socket message when invoked
 .arguments
    recaptcha:string
    ProductName:string

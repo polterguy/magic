@@ -1,5 +1,5 @@
 
-// CRUD create endpoint inserting one record in your category table in your sakila database taking name, last_update
+// CRUD create endpoint inserting one record into your category table in your sakila database taking name, last_update
 .arguments
    name:string
    last_update:date

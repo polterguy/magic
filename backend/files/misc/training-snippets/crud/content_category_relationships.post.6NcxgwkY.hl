@@ -1,5 +1,5 @@
 
-// CRUD create endpoint inserting one record in your content_category_relationships table in your headless_cms database taking content_id, category_id with authentication and authorisation for root,admin roles
+// CRUD create endpoint inserting one record into your content_category_relationships table in your headless_cms database taking content_id, category_id with authentication and authorisation for root,admin roles
 .arguments
    content_id:long
    category_id:long

@@ -1,5 +1,5 @@
 
-// CRUD create endpoint inserting one record in your shipping table in your shipping database taking item_id, address_id with authentication and authorisation for root,admin roles
+// CRUD create endpoint inserting one record into your shipping table in your shipping database taking item_id, address_id with authentication and authorisation for root,admin roles
 .arguments
    item_id:long
    address_id:long

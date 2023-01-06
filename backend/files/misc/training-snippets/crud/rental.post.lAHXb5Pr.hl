@@ -1,5 +1,5 @@
 
-// CRUD create endpoint inserting one record in your rental table in your sakila database taking rental_date, inventory_id, customer_id, return_date, staff_id, last_update with authentication and authorisation for translator roles
+// CRUD create endpoint inserting one record into your rental table in your sakila database taking rental_date, inventory_id, customer_id, return_date, staff_id, last_update with authentication and authorisation for translator roles
 .arguments
    rental_date:date
    inventory_id:long

@@ -1,5 +1,5 @@
 
-// CRUD create endpoint inserting one record in your Album table in your chinook database taking AlbumId, Title, ArtistId with authentication and authorisation for admin roles
+// CRUD create endpoint inserting one record into your Album table in your chinook database taking AlbumId, Title, ArtistId with authentication and authorisation for admin roles
 .arguments
    AlbumId:long
    Title:string

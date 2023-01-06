@@ -1,5 +1,5 @@
 
-// CRUD create endpoint inserting one record in your CustomerCustomerDemo table in your northwind database taking CustomerID, CustomerTypeID with authentication and authorisation for admin,guest roles
+// CRUD create endpoint inserting one record into your CustomerCustomerDemo table in your northwind database taking CustomerID, CustomerTypeID with authentication and authorisation for admin,guest roles
 .arguments
    CustomerID:string
    CustomerTypeID:string

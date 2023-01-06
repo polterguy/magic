@@ -1,5 +1,5 @@
 
-// CRUD create endpoint inserting one record in your tags table in your headless_cms database taking tag_name, created_at with authentication and authorisation for root,admin roles
+// CRUD create endpoint inserting one record into your tags table in your headless_cms database taking tag_name, created_at with authentication and authorisation for root,admin roles
 .arguments
    tag_name:string
    created_at:date

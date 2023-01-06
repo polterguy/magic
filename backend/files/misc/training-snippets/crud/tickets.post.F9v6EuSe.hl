@@ -1,5 +1,5 @@
 
-// CRUD create endpoint inserting one record in your tickets table in your tickets database taking user, priority, status, department, title, description with authentication and authorisation for translator roles
+// CRUD create endpoint inserting one record into your tickets table in your tickets database taking user, priority, status, department, title, description with authentication and authorisation for translator roles
 .arguments
    priority:string
    status:string

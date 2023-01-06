@@ -1,5 +1,5 @@
 
-// CRUD create endpoint inserting one record in your Order Details table in your northwind database taking OrderID, ProductID, UnitPrice, Quantity, Discount with authentication and authorisation for admin,guest roles
+// CRUD create endpoint inserting one record into your Order Details table in your northwind database taking OrderID, ProductID, UnitPrice, Quantity, Discount with authentication and authorisation for admin,guest roles
 .arguments
    OrderID:long
    ProductID:long

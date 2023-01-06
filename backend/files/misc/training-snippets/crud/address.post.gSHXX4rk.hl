@@ -1,5 +1,5 @@
 
-// CRUD create endpoint inserting one record in your address table in your sakila database taking address, address2, district, city_id, postal_code, phone, last_update with authentication and authorisation for admin roles
+// CRUD create endpoint inserting one record into your address table in your sakila database taking address, address2, district, city_id, postal_code, phone, last_update with authentication and authorisation for admin roles
 .arguments
    address:string
    address2:string

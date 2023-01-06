@@ -1,5 +1,5 @@
 
-// CRUD create endpoint inserting one record in your payments table in your stripe database taking payment, username, amount, currency, payment_method, completed
+// CRUD create endpoint inserting one record into your payments table in your stripe database taking payment, username, amount, currency, payment_method, completed
 .arguments
    payment:string
    amount:long

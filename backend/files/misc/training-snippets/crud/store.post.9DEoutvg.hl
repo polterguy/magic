@@ -1,5 +1,5 @@
 
-// CRUD create endpoint inserting one record in your store table in your sakila database taking manager_staff_id, address_id, last_update with logging
+// CRUD create endpoint inserting one record into your store table in your sakila database taking manager_staff_id, address_id, last_update with logging
 .arguments
    manager_staff_id:long
    address_id:long

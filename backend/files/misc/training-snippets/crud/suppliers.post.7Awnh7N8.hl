@@ -1,5 +1,5 @@
 
-// CRUD create endpoint inserting one record in your Suppliers table in your northwind database taking CompanyName, ContactName, ContactTitle, Address, City, Region, PostalCode, Country, Phone, Fax, HomePage with logging with reCAPTCHA value of 0.7
+// CRUD create endpoint inserting one record into your Suppliers table in your northwind database taking CompanyName, ContactName, ContactTitle, Address, City, Region, PostalCode, Country, Phone, Fax, HomePage with logging with reCAPTCHA value of 0.7
 .arguments
    recaptcha:string
    CompanyName:string

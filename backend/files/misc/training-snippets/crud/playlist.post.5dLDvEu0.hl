@@ -1,5 +1,5 @@
 
-// CRUD create endpoint inserting one record in your Playlist table in your chinook database taking PlaylistId, Name with authentication and authorisation for admin,guest roles
+// CRUD create endpoint inserting one record into your Playlist table in your chinook database taking PlaylistId, Name with authentication and authorisation for admin,guest roles
 .arguments
    PlaylistId:long
    Name:string
