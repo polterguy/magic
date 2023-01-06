@@ -12,10 +12,6 @@
    Shippers.Phone.like:string
    Shippers.Phone.eq:string
 
-// Columns with custom handling as frontend is generated.
-.handling
-   Shippers.Phone:phone
-
 // Adding Cache-Control HTTP header.
 response.headers.set
    Cache-Control:public, max-age=35

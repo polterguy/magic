@@ -11,11 +11,6 @@
    password:string
    last_update:date
 
-// Columns with custom handling as we generate a frontend
-.handling
-   picture:image
-   email:email
-
 // Logging invocation.
 auth.ticket.get
 lambda2hyper:x:@.arguments/*

@@ -14,11 +14,6 @@
    leads.phone.eq:string
    leads.company_id.eq:long
 
-// Columns with custom handling as frontend is generated.
-.handling
-   leads.email:email
-   leads.phone:phone
-
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:key_account_manager
 .foreign-keys

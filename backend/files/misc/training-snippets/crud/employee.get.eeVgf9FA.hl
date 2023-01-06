@@ -30,11 +30,6 @@
    Employee.Email.like:string
    Employee.Email.eq:string
 
-// Columns with custom handling as frontend is generated.
-.handling
-   Employee.Phone:phone
-   Employee.Email:email
-
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:admin
 

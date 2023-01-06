@@ -6,11 +6,6 @@
    phone:string
    company_id:long
 
-// Columns with custom handling as we generate a frontend
-.handling
-   email:email
-   phone:phone
-
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:key_account_manager
 .foreign-keys

@@ -25,11 +25,6 @@
    contacts.twitter.eq:string
    contacts.created.eq:date
 
-// Columns with custom handling as frontend is generated.
-.handling
-   contacts.phone:phone
-   contacts.email:email
-
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:root
 

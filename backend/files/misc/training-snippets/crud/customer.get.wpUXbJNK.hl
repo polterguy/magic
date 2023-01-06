@@ -28,11 +28,6 @@
    Customer.Email.eq:string
    Customer.SupportRepId.eq:long
 
-// Columns with custom handling as frontend is generated.
-.handling
-   Customer.Phone:phone
-   Customer.Email:email
-
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:admin
 

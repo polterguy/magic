@@ -21,11 +21,6 @@
    staff.password.eq:string
    staff.last_update.eq:date
 
-// Columns with custom handling as frontend is generated.
-.handling
-   staff.picture:image
-   staff.email:email
-
 // Adding Cache-Control HTTP header.
 response.headers.set
    Cache-Control:public, max-age=15

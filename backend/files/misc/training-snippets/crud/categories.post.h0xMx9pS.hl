@@ -5,10 +5,6 @@
    Description:string
    Picture:string
 
-// Columns with custom handling as we generate a frontend
-.handling
-   Picture:image
-
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:admin,guest
 

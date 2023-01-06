@@ -34,10 +34,6 @@
    Employees.PhotoPath.like:string
    Employees.PhotoPath.eq:string
 
-// Columns with custom handling as frontend is generated.
-.handling
-   Employees.Photo:image
-
 // Adding Cache-Control HTTP header.
 response.headers.set
    Cache-Control:public, max-age=45

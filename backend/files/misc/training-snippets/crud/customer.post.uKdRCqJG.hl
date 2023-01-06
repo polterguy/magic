@@ -10,10 +10,6 @@
    create_date:date
    last_update:date
 
-// Columns with custom handling as we generate a frontend
-.handling
-   email:email
-
 // Opening up database connection.
 data.connect:sakila
 

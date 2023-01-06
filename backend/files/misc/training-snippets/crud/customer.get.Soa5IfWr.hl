@@ -19,10 +19,6 @@
    customer.create_date.eq:date
    customer.last_update.eq:date
 
-// Columns with custom handling as frontend is generated.
-.handling
-   customer.email:email
-
 // Opening up our database connection.
 data.connect:sakila
 
