@@ -5,7 +5,7 @@
    order:string
    direction:string
    operator:string
-.description:CRUD endpoint with paging, sorting and filtering reading records from your {table} table in your {database} database
+.description:CRUD endpoint with {paging}{sorting}verbose filtering reading records from your {table} table in your {database} database
 .type:crud-read
 .foreign-keys
 
@@ -25,22 +25,13 @@ if
       // User provided a boolean comparison [operator] argument.
       set-name:x:../*/data.connect/*/data.read/*/where/0
          get-value:x:@.arguments/*/operator
+      remove-nodes:x:@.arguments/*/operator
 
 // Opening up our database connection.
 data.connect:{database}
    database-type:{database-type}
 
-   // Parametrising our read invocation.
-   add:x:./*/data.read
-      get-nodes:x:@.arguments/*/limit
-      get-nodes:x:@.arguments/*/offset
-      get-nodes:x:@.arguments/*/order
-      get-nodes:x:@.arguments/*/direction
-   remove-nodes:x:@.arguments/*/operator
-   remove-nodes:x:@.arguments/*/limit
-   remove-nodes:x:@.arguments/*/offset
-   remove-nodes:x:@.arguments/*/order
-   remove-nodes:x:@.arguments/*/direction
+   // Parametrising our read invocation with filtering arguments.
    add:x:./*/data.read/*/where/*
       get-nodes:x:@.arguments/*
 

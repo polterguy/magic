@@ -23,6 +23,8 @@
    cqrsAuthorisationValues:string
    args:*
    conditions:*
+   paging:bool
+   sorting:bool
 .description:Creates an HTTP REST CRUD endpoint, wrapping your database and table according to the specified arguments
 .type:internal
 
@@ -769,6 +771,64 @@ semaphore:crudifier
                            .
                               eq:string
                               like:string
+
+         // Checking if paging is turned off.
+         if
+            and
+               exists:x:@.arguments/*/paging
+               eq:x:@.arguments/*/paging
+                  .:bool:false
+            .lambda
+               remove-nodes:x:@apply/*/.arguments/*/limit
+               remove-nodes:x:@apply/*/.arguments/*/offset
+               set-value:x:@apply/*/.description
+                  strings.replace:x:@apply/*/.description
+                     .:"{paging}"
+                     .:
+
+         else
+
+            insert-after:x:@apply/*/data.connect/0
+               .
+                  ..:Parametrising our read invocation with paging arguments if specified.
+                  add:x:./*/data.read
+                     get-nodes:x:@.arguments/*/limit
+                     get-nodes:x:@.arguments/*/offset
+                  remove-nodes:x:@.arguments/*/limit
+                  remove-nodes:x:@.arguments/*/offset
+            set-value:x:@apply/*/.description
+               strings.replace:x:@apply/*/.description
+                  .:"{paging}"
+                  .:"paging, "
+
+         // Checking if sorting is turned off.
+         if
+            and
+               exists:x:@.arguments/*/sorting
+               eq:x:@.arguments/*/sorting
+                  .:bool:false
+            .lambda
+               remove-nodes:x:@apply/*/.arguments/*/order
+               remove-nodes:x:@apply/*/.arguments/*/direction
+               set-value:x:@apply/*/.description
+                  strings.replace:x:@apply/*/.description
+                     .:"{sorting}"
+                     .:
+
+         else
+
+            insert-after:x:@apply/*/data.connect/0
+               .
+                  ..:Parametrising our read invocation with ordering arguments if specified.
+                  add:x:./*/data.read
+                     get-nodes:x:@.arguments/*/order
+                     get-nodes:x:@.arguments/*/direction
+                  remove-nodes:x:@.arguments/*/order
+                  remove-nodes:x:@.arguments/*/direction
+            set-value:x:@apply/*/.description
+               strings.replace:x:@apply/*/.description
+                  .:"{sorting}"
+                  .:"sorting, "
 
          // Removing [operator] argument if there are "locked" columns.
          if:x:@.arguments/*/args/*/columns/*/*/locked

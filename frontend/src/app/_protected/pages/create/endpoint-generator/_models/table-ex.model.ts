@@ -139,4 +139,14 @@ export class TableEx {
    * Foreign keys in table.
    */
   foreign_keys: ForeignKey[];
+
+  /**
+   * If true adds paging to the table
+   */
+  paging: boolean;
+
+  /**
+   * If true adds sorting to the table
+   */
+  sorting: boolean;
 }
