@@ -9,10 +9,6 @@
    phone:string
    last_update:date
 
-// Columns with custom handling as we generate a frontend
-.handling
-   phone:phone
-
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:admin
 

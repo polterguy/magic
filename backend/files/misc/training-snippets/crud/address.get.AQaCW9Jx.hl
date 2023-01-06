@@ -60,10 +60,6 @@
    address.last_update.neq:date
    address.last_update.eq:date
 
-// Columns with custom handling as frontend is generated.
-.handling
-   address.phone:phone
-
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:guest
 

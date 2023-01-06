@@ -15,10 +15,6 @@
    Fax:string
    HomePage:string
 
-// Columns with custom handling as we generate a frontend
-.handling
-   Phone:phone
-
 // Sanity checking invocation, making sure primary key(s) are specified.
 validators.mandatory:x:@.arguments/*/SupplierID
 

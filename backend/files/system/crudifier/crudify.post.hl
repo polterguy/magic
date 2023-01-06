@@ -1510,6 +1510,7 @@ semaphore:crudifier
          remove-nodes:x:@hyper2lambda/**/database-type
          remove-nodes:x:@hyper2lambda/*/.type
          remove-nodes:x:@hyper2lambda/*/.description
+         remove-nodes:x:@hyper2lambda/*/.handling
          set-value:x:@hyper2lambda/*/data.connect
             get-value:x:@.database-name
          lambda2hyper:x:@hyper2lambda/*

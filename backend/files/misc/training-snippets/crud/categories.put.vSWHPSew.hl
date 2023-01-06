@@ -6,10 +6,6 @@
    Description:string
    Picture:string
 
-// Columns with custom handling as we generate a frontend
-.handling
-   Picture:image
-
 // Sanity checking invocation, making sure primary key(s) are specified.
 validators.mandatory:x:@.arguments/*/CategoryID
 

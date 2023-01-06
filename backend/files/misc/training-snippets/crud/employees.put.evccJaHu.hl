@@ -9,11 +9,6 @@
    facebook:string
    twitter:string
 
-// Columns with custom handling as we generate a frontend
-.handling
-   email:email
-   phone:phone
-
 // Sanity checking invocation, making sure primary key(s) are specified.
 validators.mandatory:x:@.arguments/*/employee_id
 

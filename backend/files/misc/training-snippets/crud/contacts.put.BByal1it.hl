@@ -7,11 +7,6 @@
    email:string
    phone:string
 
-// Columns with custom handling as we generate a frontend
-.handling
-   email:email
-   phone:phone
-
 // Sanity checking invocation, making sure primary key(s) are specified.
 validators.mandatory:x:@.arguments/*/contact_id
 

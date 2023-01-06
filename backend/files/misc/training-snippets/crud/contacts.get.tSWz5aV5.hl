@@ -11,11 +11,6 @@
    contacts.phone.like:string
    contacts.phone.eq:string
 
-// Columns with custom handling as frontend is generated.
-.handling
-   contacts.email:email
-   contacts.phone:phone
-
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:key_account_manager
 

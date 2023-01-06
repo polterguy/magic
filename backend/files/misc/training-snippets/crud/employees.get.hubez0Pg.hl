@@ -20,11 +20,6 @@
    employees.twitter.eq:string
    employees.created.eq:date
 
-// Columns with custom handling as frontend is generated.
-.handling
-   employees.email:email
-   employees.phone:phone
-
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:root
 

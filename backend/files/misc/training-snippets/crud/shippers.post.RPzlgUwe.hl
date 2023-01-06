@@ -5,10 +5,6 @@
    CompanyName:string
    Phone:string
 
-// Columns with custom handling as we generate a frontend
-.handling
-   Phone:phone
-
 // Checking reCAPTCHA value if backend is configured with reCAPTCHA configuration settings.
 config.get:"magic:auth:recaptcha:key"
 config.get:"magic:auth:recaptcha:secret"

@@ -12,11 +12,6 @@
    facebook:string
    twitter:string
 
-// Columns with custom handling as we generate a frontend
-.handling
-   phone:phone
-   email:email
-
 // Sanity checking invocation, making sure primary key(s) are specified.
 validators.mandatory:x:@.arguments/*/contact_id
 

@@ -9,10 +9,6 @@
    companies.phone.like:string
    companies.phone.eq:string
 
-// Columns with custom handling as frontend is generated.
-.handling
-   companies.phone:phone
-
 // Adding Cache-Control HTTP header.
 response.headers.set
    Cache-Control:public, max-age=180

@@ -9,10 +9,6 @@
    Categories.Picture.like:string
    Categories.Picture.eq:string
 
-// Columns with custom handling as frontend is generated.
-.handling
-   Categories.Picture:image
-
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:admin,guest
 

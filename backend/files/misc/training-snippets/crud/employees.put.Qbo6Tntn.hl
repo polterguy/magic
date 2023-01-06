@@ -20,10 +20,6 @@
    ReportsTo:long
    PhotoPath:string
 
-// Columns with custom handling as we generate a frontend
-.handling
-   Photo:image
-
 // Sanity checking invocation, making sure primary key(s) are specified.
 validators.mandatory:x:@.arguments/*/EmployeeID
 

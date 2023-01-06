@@ -8,11 +8,6 @@
    facebook:string
    twitter:string
 
-// Columns with custom handling as we generate a frontend
-.handling
-   email:email
-   phone:phone
-
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:root
 
