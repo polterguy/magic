@@ -29,9 +29,6 @@ if
 // To remove reCAPTCHA value preventing it from being used as an argument further down in file.
 remove-nodes:x:@.arguments/*/recaptcha/[0,1]
 
-// Making sure we retrieve lock value for column.
-auth.ticket.get
-
 // Opening up database connection.
 data.connect:stripe
 
@@ -44,9 +41,6 @@ data.connect:stripe
       table:customers
       return-id:bool:false
       values
-
-         // Table is locked on the following field.
-         username:x:@auth.ticket.get
 
    // Returning the correct status code.
    response.status.set:201

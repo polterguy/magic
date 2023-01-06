@@ -32,9 +32,6 @@ remove-nodes:x:@.arguments/*/recaptcha/[0,1]
 // Sanity checking invocation, making sure primary key(s) are specified.
 validators.mandatory:x:@.arguments/*/payment_method
 
-// Making sure we retrieve lock value for column.
-auth.ticket.get
-
 // Opening up our database connection.
 data.connect:stripe
 
@@ -47,9 +44,6 @@ data.connect:stripe
       table:payment_methods
       where
          and
-
-            // Table is locked on the following field.
-            username.eq:x:@auth.ticket.get
 
    // Returning result of above invocation to caller.
    unwrap:x:+/*

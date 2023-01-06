@@ -7,9 +7,6 @@
    payment_method:string
    completed:string
 
-// Making sure we retrieve lock value for column.
-auth.ticket.get
-
 // Opening up database connection.
 data.connect:stripe
 
@@ -22,9 +19,6 @@ data.connect:stripe
       table:payments
       return-id:bool:false
       values
-
-         // Table is locked on the following field.
-         username:x:@auth.ticket.get
 
    // Returning the correct status code.
    response.status.set:201

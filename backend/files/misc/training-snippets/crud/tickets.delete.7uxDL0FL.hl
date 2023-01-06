@@ -9,9 +9,6 @@ auth.ticket.verify:translator
 // Sanity checking invocation, making sure primary key(s) are specified.
 validators.mandatory:x:@.arguments/*/id
 
-// Making sure we retrieve lock value for column.
-auth.ticket.get
-
 // Opening up our database connection.
 data.connect:tickets
 
@@ -24,9 +21,6 @@ data.connect:tickets
       table:tickets
       where
          and
-
-            // Table is locked on the following field.
-            user.eq:x:@auth.ticket.get
 
    // Returning result of above invocation to caller.
    unwrap:x:+/*

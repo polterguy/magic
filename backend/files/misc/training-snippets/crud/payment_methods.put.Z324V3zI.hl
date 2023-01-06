@@ -9,9 +9,6 @@
 // Sanity checking invocation, making sure primary key(s) are specified.
 validators.mandatory:x:@.arguments/*/payment_method
 
-// Making sure we retrieve lock value for column.
-auth.ticket.get
-
 // Opening up our database connection.
 data.connect:stripe
 
@@ -27,9 +24,6 @@ data.connect:stripe
       values
       where
          and
-
-            // Table is locked on the following field.
-            username.eq:x:@auth.ticket.get
 
    // Verifying record exists.
    if

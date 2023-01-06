@@ -19,9 +19,6 @@
 response.headers.set
    Cache-Control:private, max-age=25
 
-// Making sure we retrieve lock value for column.
-auth.ticket.get
-
 // Opening up our database connection.
 data.connect:stripe
 
@@ -53,9 +50,6 @@ data.connect:stripe
          payments.completed
       where
          and
-
-            // Table is locked on the following field.
-            username.eq:x:@auth.ticket.get
 
    // Returning result of above read invocation to caller.
    return-nodes:x:@data.read/*

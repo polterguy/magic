@@ -15,9 +15,6 @@
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:guest
 
-// Making sure we retrieve lock value for column.
-auth.ticket.get
-
 // Opening up our database connection.
 data.connect:headless_cms
 
@@ -41,9 +38,6 @@ data.connect:headless_cms
          users.created_at
       where
          and
-
-            // Table is locked on the following field.
-            username.eq:x:@auth.ticket.get
 
    // Returning result of above read invocation to caller.
    return-nodes:x:@data.read/*
