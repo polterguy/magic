@@ -5,7 +5,7 @@
    order:string
    direction:string
    operator:string
-.description:CRUD endpoint with {paging}{sorting}verbose filtering reading records from your {table} table in your {database} database
+.description:CRUD read endpoint with {paging}{sorting}filtering selecting records from your {table} table in your {database} database
 .type:crud-read
 .foreign-keys
 

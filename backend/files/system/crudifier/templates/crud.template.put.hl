@@ -1,6 +1,6 @@
 // dynamically populated
 .arguments
-.description:CRUD endpoint updating one record in your {table} table in your {database} database
+.description:CRUD update endpoint updating one record in your {table} table in your {database} database
 .type:crud-update
 .foreign-keys
 
