@@ -1,8 +1,8 @@
 
-// CRUD read endpoint with ordering, filtering selecting records from your users table in your headless_cms database returning user_id, username, password, email, created_at filtering on user_id, username, password, email, created_at with authentication and authorisation for guest roles
+// CRUD read endpoint with paging, filtering selecting records from your users table in your headless_cms database returning user_id, username, password, email, created_at filtering on user_id, username, password, email, created_at with authentication and authorisation for root,admin roles
 .arguments
-   order:string
-   direction:string
+   limit:long
+   offset:long
    users.user_id.eq:long
    users.password.like:string
    users.password.eq:string
@@ -13,7 +13,7 @@
 // Columns with custom handling as frontend is generated.
 
 // Verifying user is authorized to access endpoint.
-auth.ticket.verify:guest
+auth.ticket.verify:root,admin
 
 // Making sure we retrieve lock value for column.
 auth.ticket.get
@@ -21,11 +21,11 @@ auth.ticket.get
 // Opening up our database connection.
 data.connect:headless_cms
 
-   // Parametrising our read invocation with ordering arguments if specified.
+   // Parametrising our read invocation with paging arguments if specified.
    add:x:./*/data.read
-      get-nodes:x:@.arguments/*/order
-      get-nodes:x:@.arguments/*/direction
-   remove-nodes:x:@.arguments/*/direction
+      get-nodes:x:@.arguments/*/limit
+      get-nodes:x:@.arguments/*/offset
+   remove-nodes:x:@.arguments/*/offset
 
    // Parametrising our read invocation with filtering arguments.
    add:x:./*/data.read/*/where/*

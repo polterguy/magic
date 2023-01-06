@@ -1,0 +1,44 @@
+
+// CRUD read endpoint with paging, filtering selecting records from your content table in your headless_cms database returning content_id, title, body, created_at, updated_at filtering on content_id, title, body, created_at, updated_at with authentication and authorisation for root,admin roles
+.arguments
+   limit:long
+   offset:long
+   content.content_id.eq:long
+   content.title.like:string
+   content.title.eq:string
+   content.body.like:string
+   content.body.eq:string
+   content.created_at.eq:date
+   content.updated_at.eq:date
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root,admin
+
+// Opening up our database connection.
+data.connect:headless_cms
+
+   // Parametrising our read invocation with paging arguments if specified.
+   add:x:./*/data.read
+      get-nodes:x:@.arguments/*/limit
+      get-nodes:x:@.arguments/*/offset
+   remove-nodes:x:@.arguments/*/limit
+   remove-nodes:x:@.arguments/*/offset
+
+   // Parametrising our read invocation with filtering arguments.
+   add:x:./*/data.read/*/where/*
+      get-nodes:x:@.arguments/*
+
+   // Reading data from database.
+   data.read
+      table:content
+      columns
+         content.content_id
+         content.title
+         content.body
+         content.created_at
+         content.updated_at
+      where
+         and
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@data.read/*
