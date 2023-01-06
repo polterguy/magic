@@ -1,0 +1,56 @@
+
+// CRUD read endpoint with filtering selecting records from your emails table in your salesforce-clone database returning email_id, subject, body, contact_id, lead_id, deal_id filtering on email_id, subject, body, contact_id, lead_id, deal_id with authentication and authorisation for key_account_manager roles
+.arguments
+   emails.email_id.eq:long
+   emails.subject.like:string
+   emails.subject.eq:string
+   emails.body.like:string
+   emails.body.eq:string
+   emails.contact_id.eq:long
+   emails.lead_id.eq:long
+   emails.deal_id.eq:long
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:key_account_manager
+.foreign-keys
+   .
+      column:contact_id
+      table:contacts
+      foreign_column:contact_id
+      foreign_name:first_name
+      long:bool:true
+   .
+      column:lead_id
+      table:leads
+      foreign_column:lead_id
+      foreign_name:name
+      long:bool:true
+   .
+      column:deal_id
+      table:deals
+      foreign_column:deal_id
+      foreign_name:name
+      long:bool:true
+
+// Opening up our database connection.
+data.connect:salesforce-clone
+
+   // Parametrising our read invocation with filtering arguments.
+   add:x:./*/data.read/*/where/*
+      get-nodes:x:@.arguments/*
+
+   // Reading data from database.
+   data.read
+      table:emails
+      columns
+         emails.email_id
+         emails.subject
+         emails.body
+         emails.contact_id
+         emails.lead_id
+         emails.deal_id
+      where
+         and
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@data.read/*

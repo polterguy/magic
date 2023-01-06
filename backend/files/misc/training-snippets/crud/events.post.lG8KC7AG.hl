@@ -1,0 +1,46 @@
+
+// CRUD create endpoint inserting one record in your events table in your salesforce-clone database taking name, description, start_date, end_date, contact_id, deal_id with authentication and authorisation for key_account_manager roles
+.arguments
+   name:string
+   description:string
+   start_date:date
+   end_date:date
+   contact_id:long
+   deal_id:long
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:key_account_manager
+.foreign-keys
+   .
+      column:contact_id
+      table:contacts
+      foreign_column:contact_id
+      foreign_name:first_name
+      long:bool:true
+   .
+      column:deal_id
+      table:deals
+      foreign_column:deal_id
+      foreign_name:name
+      long:bool:true
+
+// Opening up database connection.
+data.connect:salesforce-clone
+
+   // Parametrising our create invocation.
+   add:x:./*/data.create/*/values
+      get-nodes:x:@.arguments/*
+
+   // Creating our record.
+   data.create
+      table:events
+      return-id:bool:true
+      values
+
+   // Returning the correct status code.
+   response.status.set:201
+
+   // Returning result of above invocation to caller.
+   unwrap:x:+/*
+   return
+      id:x:@data.create

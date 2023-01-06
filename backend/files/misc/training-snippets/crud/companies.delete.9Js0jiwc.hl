@@ -1,0 +1,28 @@
+
+// CRUD delete endpoint deleting one record from your companies table in your salesforce-clone database with company_id matching argument with authentication and authorisation for admin,key_account_manager roles
+.arguments
+   company_id:long
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:admin,key_account_manager
+
+// Sanity checking invocation, making sure primary key(s) are specified.
+validators.mandatory:x:@.arguments/*/company_id
+
+// Opening up our database connection.
+data.connect:salesforce-clone
+
+   // Parametrising our delete invocation.
+   add:x:./*/data.delete/*/where/*/and
+      get-nodes:x:@.arguments/*
+
+   // Deleting item from database.
+   data.delete
+      table:companies
+      where
+         and
+
+   // Returning result of above invocation to caller.
+   unwrap:x:+/*
+   return
+      affected:x:@data.delete
