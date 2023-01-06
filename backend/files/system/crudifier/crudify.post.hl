@@ -1498,8 +1498,22 @@ semaphore:crudifier
                   min:8
                   max:8
                .:.hl
+
+         // Copying file.
          io.file.copy:x:@if/@strings.replace
             get-value:x:@.filename
+
+         // Loading file and doing some cleanups before saving again.
+         io.file.load:x:@.filename
+         hyper2lambda:x:@io.file.load
+            comments:true
+         remove-nodes:x:@hyper2lambda/**/database-type
+         set-value:x:@hyper2lambda/*/data.connect
+            get-value:x:@.database-name
+         lambda2hyper:x:@hyper2lambda/*
+            comments:true
+         io.file.save:x:@.filename
+            get-value:x:@lambda2hyper
 
    /*
     * Calculating how many lines of code we created.
