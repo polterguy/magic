@@ -1,6 +1,6 @@
 // dynamically populated
 .arguments
-.description:CRUD endpoint deleting one record from your {table} table in your {database} database
+.description:CRUD delete endpoint deleting one record from your {table} table in your {database} database
 .type:crud-delete
 
 // Opening up our database connection.
