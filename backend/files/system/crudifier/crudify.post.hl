@@ -1508,6 +1508,8 @@ semaphore:crudifier
          hyper2lambda:x:@io.file.load
             comments:true
          remove-nodes:x:@hyper2lambda/**/database-type
+         remove-nodes:x:@hyper2lambda/*/.type
+         remove-nodes:x:@hyper2lambda/*/.description
          set-value:x:@hyper2lambda/*/data.connect
             get-value:x:@.database-name
          lambda2hyper:x:@hyper2lambda/*
