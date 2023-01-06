@@ -1,2 +1,2 @@
-// Delete my_slot slot
+// Delete 'my_slot' slot
 slots.delete:my_slot

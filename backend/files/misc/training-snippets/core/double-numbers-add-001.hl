@@ -1,14 +1,14 @@
-// Endpoint adding 2 double numbers given as arguments returning result
+// Endpoint adding [number1] and [number2] double arguments returning result
 .arguments
    number1:double
    number2:double
 
-// Adding our numbers together
+// Adding our numbers together.
 math.add
    get-value:x:@.arguments/*/number1
    get-value:x:@.arguments/*/number2
 
-// Returning the result to caller
+// Returning the result to caller.
 unwrap:x:+/*
 return
    result:x:@math.add

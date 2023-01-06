@@ -1,7 +1,7 @@
-// Open database called car_shops and select first 55 records from cars | Select first 55 records from cars in car_shops
+// Connect to car_shops database and read first 55 records from cars table
 data.connect:car_shops
 
    // Read 55 records from names
    data.read
-      table:names
+      table:cars
       limit:55

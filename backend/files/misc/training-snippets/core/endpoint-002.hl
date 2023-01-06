@@ -1,5 +1,9 @@
 // Empty endpoint returning failure and 400 status code
 .arguments
+
+// Setting HTTP status code to 400 Bad Request
 response.status.set:400
+
+// Returning 'failure' as result.
 return
    result:failure

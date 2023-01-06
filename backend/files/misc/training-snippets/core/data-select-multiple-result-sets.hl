@@ -1,4 +1,4 @@
-// Select all records from both roles and users table in magic database
+// Select all records from roles table and users table in magic database
 data.connect:magic
    data.select:"select * from roles; select * from users;"
       multiple-result-sets:bool:true

@@ -9,6 +9,6 @@ http.post:"https://api.openai.com/v1/completions"
    payload
       model:text-davinci-003
       prompt:What is Hyperlambda?
-      temperature:int:0.5
+      temperature:decimal:0.5
       max_tokens:int:1000
    convert:true

@@ -1,4 +1,4 @@
-// Endpoint loading /my_file.yaml YAML file and returning content as JSON
+// Endpoint loading /my_file.yaml YAML file and returning content
 .arguments
 
 // Loading YAML file.

@@ -2,15 +2,17 @@
 .arguments
    foo_bar_id:long
 
-// Deleting record from foo_bar table
+// Connecting to howdy_crm database.
 data.connect:howdy_crm
+
+   // Deleting record matching foo_bar_id argument from foo_bar table.
    data.delete
       table:foo_bar
       where
          and
             foo_bar_id.eq:x:@.arguments/*/foo_bar_id
 
-// Returning result of above invocation to caller
+// Returning affected records.
 unwrap:x:+/*
 return
    result:x:@data.delete

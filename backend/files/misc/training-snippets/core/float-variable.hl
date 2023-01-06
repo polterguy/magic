@@ -1,2 +1,2 @@
-// Float variable name [.variable] with value of 5.555
-.variable:float:5.555
+// Float [.my_number] variable with value of 5.555
+.my_number:float:5.555
