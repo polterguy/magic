@@ -1,0 +1,31 @@
+
+// CRUD create endpoint inserting one record in your address table in your shipping database taking street, city, state, zip with authentication and authorisation for root,admin roles
+.arguments
+   street:string
+   city:string
+   state:string
+   zip:string
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root,admin
+
+// Opening up database connection.
+data.connect:shipping
+
+   // Parametrising our create invocation.
+   add:x:./*/data.create/*/values
+      get-nodes:x:@.arguments/*
+
+   // Creating our record.
+   data.create
+      table:address
+      return-id:bool:true
+      values
+
+   // Returning the correct status code.
+   response.status.set:201
+
+   // Returning result of above invocation to caller.
+   unwrap:x:+/*
+   return
+      id:x:@data.create

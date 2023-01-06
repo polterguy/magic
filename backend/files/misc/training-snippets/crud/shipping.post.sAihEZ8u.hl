@@ -1,0 +1,36 @@
+
+// CRUD create endpoint inserting one record in your shipping table in your shipping database taking item_id, address_id with authentication and authorisation for root,admin roles
+.arguments
+   item_id:long
+   address_id:long
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root,admin
+.foreign-keys
+   .
+      column:address_id
+      table:address
+      foreign_column:address_id
+      foreign_name:street
+      long:bool:true
+
+// Opening up database connection.
+data.connect:shipping
+
+   // Parametrising our create invocation.
+   add:x:./*/data.create/*/values
+      get-nodes:x:@.arguments/*
+
+   // Creating our record.
+   data.create
+      table:shipping
+      return-id:bool:true
+      values
+
+   // Returning the correct status code.
+   response.status.set:201
+
+   // Returning result of above invocation to caller.
+   unwrap:x:+/*
+   return
+      id:x:@data.create

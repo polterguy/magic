@@ -1,0 +1,42 @@
+
+// CRUD read endpoint with paging, filtering selecting records from your products table in your shipping database returning product_id, name, description, price filtering on product_id, name, description, price with authentication and authorisation for root,admin roles
+.arguments
+   limit:long
+   offset:long
+   products.product_id.eq:long
+   products.name.like:string
+   products.name.eq:string
+   products.description.like:string
+   products.description.eq:string
+   products.price.eq:double
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root,admin
+
+// Opening up our database connection.
+data.connect:shipping
+
+   // Parametrising our read invocation with paging arguments if specified.
+   add:x:./*/data.read
+      get-nodes:x:@.arguments/*/limit
+      get-nodes:x:@.arguments/*/offset
+   remove-nodes:x:@.arguments/*/limit
+   remove-nodes:x:@.arguments/*/offset
+
+   // Parametrising our read invocation with filtering arguments.
+   add:x:./*/data.read/*/where/*
+      get-nodes:x:@.arguments/*
+
+   // Reading data from database.
+   data.read
+      table:products
+      columns
+         products.product_id
+         products.name
+         products.description
+         products.price
+      where
+         and
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@data.read/*
