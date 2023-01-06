@@ -1,5 +1,5 @@
 
-// Recaptcha validator
+// Recaptcha validator | Show me reCAPTCHA | How do I create captcha | Create captcha validator | reCAPTCHA validator | reCAPTCHA validator for endpoint | captcha validator for endpoint
 
 // [recaptcha_response] is a mandatory field.
 validators.mandatory:x:@.arguments/*/recaptcha_response

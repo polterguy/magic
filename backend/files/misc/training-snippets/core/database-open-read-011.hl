@@ -1,8 +1,0 @@
-// Open database called ticks and select 15 records from symbols offset 20 | Offset 20 select 15 records from symbols in ticks
-data.connect:ticks
-
-   // Read 15 records from symbols offset 20
-   data.read
-      table:symbols
-      limit:15
-      offset:20

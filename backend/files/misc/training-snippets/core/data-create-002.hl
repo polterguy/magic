@@ -1,4 +1,4 @@
-// insert address and zip into clients table
+// Insert address and zip into clients table
 
 // Inserting into clients table
 data.create

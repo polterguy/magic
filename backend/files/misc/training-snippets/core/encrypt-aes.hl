@@ -1,3 +1,3 @@
-// Use Hyperlambda to symmetrically encrypt the text 'Secret text' using AES encryption | Encrypt some secret | AES encrypt something using Hyperlambda | AES encrypt something | Use AES cryptography
+// AES encrypt the text 'Secret text'
 crypto.aes.encrypt:Secret text
    password:password

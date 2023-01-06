@@ -1,2 +1,2 @@
-// get config key magic:foo:bar
+// Get config value 'magic:foo:bar'
 config.get:"magic:foo:bar"

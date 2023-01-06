@@ -1,4 +1,4 @@
-// create howdy_world slot that returns name and phone from ctcs in cst database
+// Create howdy_world slot that returns name and phone from ctcs table in cst database
 
 /*
  * Notice, you would typically want to add this code into a file inside of

@@ -1,4 +1,4 @@
-// Use Hyperlambda to update title in film table in sakila database where title equals to 'ADAPTATION HOLES' or title equals to 'ACADEMY DINOSAUR' and set the new title to 'Howdy world'
+// Update title to 'Howdy world' in film table in sakila database where title is 'ADAPTATION HOLES' or 'ACADEMY DINOSAUR'
 data.connect:sakila
    data.update
       table:film

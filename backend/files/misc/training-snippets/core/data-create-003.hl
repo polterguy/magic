@@ -1,4 +1,4 @@
-// insert all arguments into contacts table
+// Insert all arguments into contacts table
 
 // Decorating [data.create] invocation
 add:x:./*/data.create/*/values

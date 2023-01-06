@@ -1,4 +1,4 @@
-// insert name and age argument into patients table
+// Insert name and age argument into patients table
 
 // Decorating [data.create] invocation
 add:x:./*/data.create/*/values

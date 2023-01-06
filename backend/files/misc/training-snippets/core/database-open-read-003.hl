@@ -1,4 +1,4 @@
-// Open database called crm and select all columns in all records from contacts table | Connect to crm and select everything from contacts
+// Connect to crm database and select all columns and all records from contacts table
 data.connect:crm
 
    // Read all records from contacts

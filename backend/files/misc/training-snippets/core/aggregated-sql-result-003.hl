@@ -1,4 +1,4 @@
-// Joins actors with films from sakila database, and orders by film title
+// Joins actor with film and film_actor from movies database, and orders by film title
 data.connect:movies
    data.select:@"select a.first_name || ' ' || a.last_name as actor, f.title as film
   from actor a

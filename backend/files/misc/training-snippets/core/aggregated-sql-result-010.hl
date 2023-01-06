@@ -1,4 +1,4 @@
-// endpoint returning number of new contacts on a daily basis for the last 30 days in robo-crm database
+// Endpoint returning number of new contacts on a daily basis for the last 30 days in robo-crm database
 .arguments
 .now
 set-value:x:-

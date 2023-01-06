@@ -1,4 +1,4 @@
-// Open database called foo and select all columns in all records from bar table | Connect to foo and select everything from bar
+// Connect to foo database and select all records from bar table
 data.connect:foo
 
    // Read all records from bar

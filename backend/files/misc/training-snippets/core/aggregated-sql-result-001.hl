@@ -1,7 +1,7 @@
-// endpoint returning how many actors participated in each film from our film and film_actor tables in our movies database
+// Endpoint returning how many actor participated in each film from our film and film_actor tables in our movies database
 .arguments
 data.connect:movies
-   data.select:@"select f.title as 'Film', count(fa.actor_id) as 'Number of Actors'
+   data.select:@"select f.title as value, count(fa.actor_id) as count
 	from film as f
   	join film_actor as fa on f.film_id = fa.film_id
 	group by f.title"

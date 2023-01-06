@@ -1,4 +1,4 @@
-// Use Hyperlambda to create an cryptography key pair with bit strength of 1024 | Create RSA key par | Create cryptography key
+// Create cryptography key pair with bit strength of 1024
 crypto.rsa.create-key
 
    // bit key strength of RSA key pair, can be 1024, 2048 and 4096

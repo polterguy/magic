@@ -1,4 +1,4 @@
-// create slot that adds 2 numbers and returns the result
+// Create slot adding 2 numbers returning result
 
 /*
  * Notice, you would typically want to add this code into a file inside of

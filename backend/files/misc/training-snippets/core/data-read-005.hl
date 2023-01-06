@@ -1,4 +1,4 @@
-// Create endpoint returning adr1 and adr2 from contacts table in logistics database
+// Endpoint returning adr1 and adr2 from contacts table in logistics database
 .arguments
 
 // Connecting to logistics database

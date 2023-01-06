@@ -1,4 +1,4 @@
-// Use Hyperlambda to create an Hyperlambda endpoint that can only be invoked by an authenticated user belonging to the role of either admin or user | Deny users that are not root or admin | Only allow root and admin users to execute endpoint
+// Endpoint with authentication and authorisation for root and admin users
 .arguments
 auth.ticket.verify:admin, user
 return

@@ -1,5 +1,5 @@
-// Convert YAML to JSON
-.yaml:@"foo: howdy
+// Convert [.src] YAML to JSON
+.src:@"foo: howdy
 bar: jo
 howdy: !!bool true
 children:
@@ -8,4 +8,4 @@ children:
 "
 
 // Converting from YAML to JSON
-yaml2json:x:@.yaml
+yaml2json:x:@.src

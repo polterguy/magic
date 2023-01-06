@@ -1,4 +1,4 @@
-// Create an endpoint that takes two double numbers, adds them together, and returns the result of the addition to the caller
+// Endpoint adding 2 double numbers given as arguments returning result
 .arguments
    number1:double
    number2:double

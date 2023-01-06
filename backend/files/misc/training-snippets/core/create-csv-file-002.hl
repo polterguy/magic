@@ -1,4 +1,4 @@
-// Create a CSV file with email, name and address columns
+// Create CSV file with email, name and address columns
 io.file.save:/foo.csv
    .:@"email,name,address
 thomas@gaiasoul.com, Thomas Hansen, Foo St. 67

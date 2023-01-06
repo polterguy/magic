@@ -1,4 +1,4 @@
-// Endpoint sending email from Pete Johnsen pete@johnsen.com to email and name arguments
+// Endpoint sending email to Thomas Hansen th@aista.com from email and name arguments
 .arguments
    name:string
    email:string
@@ -11,12 +11,12 @@ mail.smtp.send
    message
       to
          .
-            name:x:@.arguments/*/name
-            email:x:@.arguments/*/email
+            name:Thomas Hansen
+            email:th@aista.com
       from
          .
-            name:Pete Johnsen
-            email:pete@johnsen.com
+            name:x:@.arguments/*/name
+            email:x:@.arguments/*/email
       subject:This is subject of email
       entity:text/plain
          content:This is some email body

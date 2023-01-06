@@ -1,4 +1,4 @@
-// Endpoint accepting JSON converting input to XML and returning to caller
+// Endpoint taking JSON converting to XML and returning result
 .arguments:*
 
 // Converting arguments to XML

@@ -1,4 +1,4 @@
-// Use Hyperlambda to convert the specified lambda to CSV and back to lambda again, while preserving type information | Convert CVS content | Convert from CSV to lambda using Hyperlambda | Convert CSV to lambda
+// Convert [.data] children to CSV
 
 // Lambda object we want to convert to CSV
 .data
@@ -9,13 +9,5 @@
       name:John Doe
       age:int:67
 
-// Converting lambda object to CSV, preserving type information as children nodes of our [lambda2csv] invocation
+// Converting result of expression to CSV
 lambda2csv:x:-/*
-
-// Adding type information returned above to our [csv2lambda] invocation
-add:x:+/*/types
-   get-nodes:x:@lambda2csv/*
-
-// Converting our CSV to a lambda object again, now preserving type information
-csv2lambda:x:@lambda2csv
-   types

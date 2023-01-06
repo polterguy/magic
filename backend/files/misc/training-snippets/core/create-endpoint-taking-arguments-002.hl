@@ -1,4 +1,4 @@
-// Create an endpoint taking animal, country and city as arguments | Create endpoint taking 3 strings as arguments | Endpoint taking 3 arguments
+// Endpoint accepting animal, country and city arguments
 .arguments
    animal:string
    country:string

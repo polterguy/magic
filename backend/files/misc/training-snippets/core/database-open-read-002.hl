@@ -1,4 +1,4 @@
-// Open database called logistics and select all columns in all records from items table | Connect to logistics and select everything from items
+// Connect to logistics database and select all columns and all records from items table
 data.connect:logistics
 
    // Read all records from items

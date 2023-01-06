@@ -1,4 +1,4 @@
-// Use Hyperlambda to convert the specified YAML to JSON and back to YAML again | Convert to and from YAML to lambda | Convert YAML using Hyperlambda | Convert from YAML
+// Convert [.yaml] YAML to JSON
 .yaml:@"foo: howdy
 bar: jo
 howdy: !!bool true
@@ -9,6 +9,3 @@ children:
 
 // Converting from YAML to JSON
 yaml2json:x:@.yaml
-
-// Converting back to JSON again from YAML
-json2yaml:x:-
