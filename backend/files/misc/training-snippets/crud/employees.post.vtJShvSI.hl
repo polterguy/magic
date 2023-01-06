@@ -1,5 +1,5 @@
 
-// CRUD create endpoint inserting one record in your employees table in your aista-crm database taking name, email, phone, linkedIn, facebook, twitter with authentication and authorisation for root roles
+// CRUD create endpoint inserting one record into your employees table in your aista-crm database taking name, email, phone, linkedIn, facebook, twitter with authentication and authorisation for root roles
 .arguments
    name:string
    email:string

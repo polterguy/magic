@@ -1,5 +1,5 @@
 
-// CRUD create endpoint inserting one record in your country table in your sakila database taking country, last_update
+// CRUD create endpoint inserting one record into your country table in your sakila database taking country, last_update
 .arguments
    country:string
    last_update:date

@@ -1,5 +1,5 @@
 
-// CRUD create endpoint inserting one record in your EmployeeTerritories table in your northwind database taking EmployeeID, TerritoryID with authentication and authorisation for admin,guest roles
+// CRUD create endpoint inserting one record into your EmployeeTerritories table in your northwind database taking EmployeeID, TerritoryID with authentication and authorisation for admin,guest roles
 .arguments
    EmployeeID:long
    TerritoryID:string

@@ -1,5 +1,5 @@
 
-// CRUD create endpoint inserting one record in your payment table in your sakila database taking payment_id, customer_id, staff_id, rental_id, amount, payment_date, last_update with authentication and authorisation for translator roles
+// CRUD create endpoint inserting one record into your payment table in your sakila database taking payment_id, customer_id, staff_id, rental_id, amount, payment_date, last_update with authentication and authorisation for translator roles
 .arguments
    payment_id:long
    customer_id:long

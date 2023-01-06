@@ -1,5 +1,5 @@
 
-// CRUD create endpoint inserting one record in your customer table in your sakila database taking store_id, first_name, last_name, email, address_id, active, create_date, last_update
+// CRUD create endpoint inserting one record into your customer table in your sakila database taking store_id, first_name, last_name, email, address_id, active, create_date, last_update
 .arguments
    store_id:long
    first_name:string

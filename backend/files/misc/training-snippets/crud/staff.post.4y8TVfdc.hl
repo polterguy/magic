@@ -1,5 +1,5 @@
 
-// CRUD create endpoint inserting one record in your staff table in your sakila database taking first_name, last_name, address_id, picture, email, store_id, active, username, password, last_update with logging
+// CRUD create endpoint inserting one record into your staff table in your sakila database taking first_name, last_name, address_id, picture, email, store_id, active, username, password, last_update with logging
 .arguments
    first_name:string
    last_name:string

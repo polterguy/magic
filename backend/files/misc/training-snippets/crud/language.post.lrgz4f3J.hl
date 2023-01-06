@@ -1,5 +1,5 @@
 
-// CRUD create endpoint inserting one record in your language table in your sakila database taking name, last_update with authentication and authorisation for admin,translator roles
+// CRUD create endpoint inserting one record into your language table in your sakila database taking name, last_update with authentication and authorisation for admin,translator roles
 .arguments
    name:string
    last_update:date

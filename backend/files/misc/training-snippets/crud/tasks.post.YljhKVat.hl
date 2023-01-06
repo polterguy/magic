@@ -1,5 +1,5 @@
 
-// CRUD create endpoint inserting one record in your tasks table in your salesforce-clone database taking name, description, due_date, contact_id, deal_id with authentication and authorisation for key_account_manager roles
+// CRUD create endpoint inserting one record into your tasks table in your salesforce-clone database taking name, description, due_date, contact_id, deal_id with authentication and authorisation for key_account_manager roles
 .arguments
    name:string
    description:string

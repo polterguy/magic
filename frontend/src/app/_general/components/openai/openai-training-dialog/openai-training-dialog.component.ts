@@ -60,6 +60,13 @@ export class OpenAITrainingDialogComponent implements OnInit {
     return this.dataSource.filter(x => x.prompt.includes(this.filter) || x.completion.includes(this.filter));
   }
 
+  getFilteredItemsCount() {
+    if (this.filter === '') {
+      return this.dataSource.length;
+    }
+    return this.dataSource?.filter(x => x.prompt.includes(this.filter) || x.completion.includes(this.filter)).length || 0;
+  }
+
   close() {
     this.dialogRef.close();
   }

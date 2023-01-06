@@ -1,5 +1,5 @@
 
-// CRUD create endpoint inserting one record in your companies table in your salesforce-clone database taking name, website, phone with authentication and authorisation for admin,key_account_manager roles
+// CRUD create endpoint inserting one record into your companies table in your salesforce-clone database taking name, website, phone with authentication and authorisation for admin,key_account_manager roles
 .arguments
    name:string
    website:string

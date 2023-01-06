@@ -1,5 +1,5 @@
 
-// CRUD create endpoint inserting one record in your leads table in your salesforce-clone database taking name, email, phone, company_id with authentication and authorisation for key_account_manager roles
+// CRUD create endpoint inserting one record into your leads table in your salesforce-clone database taking name, email, phone, company_id with authentication and authorisation for key_account_manager roles
 .arguments
    name:string
    email:string

@@ -1,5 +1,5 @@
 
-// CRUD create endpoint inserting one record in your activities table in your aista-crm database taking activity_type, name, description with authentication and authorisation for root,admin roles
+// CRUD create endpoint inserting one record into your activities table in your aista-crm database taking activity_type, name, description with authentication and authorisation for root,admin roles
 .arguments
    activity_type:long
    name:string
