@@ -1,2 +1,2 @@
-// Delete the my_folder folder
+// Delete /my_folder/ folder
 io.folder.delete:/my_folder/

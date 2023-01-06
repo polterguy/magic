@@ -1,2 +1,2 @@
-// Delete the '/qwe/xyz/' folder
+// Delete /qwe/xyz/ folder
 io.folder.delete:/qwe/xyz/

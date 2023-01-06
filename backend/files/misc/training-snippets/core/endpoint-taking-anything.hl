@@ -1,4 +1,2 @@
-// Endpoint accepting any arguments returning success
+// Endpoint accepting any arguments
 .arguments:*
-return
-   result:success

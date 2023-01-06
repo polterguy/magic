@@ -1,3 +1,3 @@
-// Retrieve new email using POP3
+// Retrieve emails with POP3
 mail.pop3.fetch
    .lambda

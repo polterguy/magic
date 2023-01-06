@@ -2,9 +2,13 @@
 .arguments
    arg1:string
    arg2:string
+
+// Concatenating [arg1] and [arg2].
 strings.concat
    get-value:x:@.arguments/*/arg1
    get-value:x:@.arguments/*/arg2
+
+// Returning result.
 unwrap:x:+/*
 return
    result:x:@strings.concat

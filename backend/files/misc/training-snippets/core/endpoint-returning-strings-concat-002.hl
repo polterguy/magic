@@ -1,9 +1,13 @@
-// Endpoint concatenating name argument with static string 'Hello ' returning result
+// Endpoint concatenating 'Hello ' with name argument returning result
 .arguments
    name:string
+
+// Concatenating 'Hello ' and name argument.
 strings.concat
    .:"Hello "
    get-value:x:@.arguments/*/name
+
+// Returning result.
 unwrap:x:+/*
 return
    result:x:@strings.concat

@@ -1,4 +1,4 @@
-// Evaluate the [.execute] lambda object
+// Evaluate [.execute]
 .execute
    log.info:Hello from [eval]
 eval:x:@.execute

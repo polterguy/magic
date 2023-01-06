@@ -1,4 +1,4 @@
-// Executing SQL endpoint counting records from customers table in contacts database
+// Endpoint executing SQL counting records from customers table in contacts database
 .arguments
 data.connect:contacts
    data.scalar:select count(*) from customers

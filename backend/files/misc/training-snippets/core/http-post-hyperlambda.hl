@@ -1,4 +1,4 @@
-// POST Hyperlambda to the foo.com
+// POST Hyperlambda to foo.com
 http.post:"https://foo.com"
    headers
       Content-Type:application/hyperlambda

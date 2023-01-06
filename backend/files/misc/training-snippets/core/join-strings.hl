@@ -1,4 +1,4 @@
-// Joins all children of [data] with , separator
+// Join all children of [.data] with , separator
 .data
    .:string1
    .:string2

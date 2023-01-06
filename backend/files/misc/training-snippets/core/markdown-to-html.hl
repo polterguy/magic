@@ -1,8 +1,2 @@
-// Transform [.markdown22] Markdown to HTML
-.markdown22:@"
-Howdy world
-
-* Foo
-* Bar
-"
-markdown2html:x:@.markdown22
+// Transform [.my-arg] Markdown to HTML
+markdown2html:x:@.my-arg

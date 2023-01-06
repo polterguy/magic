@@ -1,7 +1,5 @@
-// Endpoint with regex validator confirming arg1 matches regular expression ^[a-z0-9]*$ returning OK
+// Endpoint with regex validator validating arg1 matches regular expression '^[a-z0-9]*$'
 .arguments
    arg1:string
 validators.regex:x:@.arguments/*/arg1
    regex:^[a-z0-9]*$
-return
-   result:OK
