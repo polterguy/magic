@@ -1,0 +1,29 @@
+
+// CRUD read endpoint with filtering selecting records from your CustomerCustomerDemo table in your northwind database returning CustomerID, CustomerTypeID filtering on CustomerID, CustomerTypeID with authentication and authorisation for admin,guest roles
+.arguments
+   CustomerCustomerDemo.CustomerID.like:string
+   CustomerCustomerDemo.CustomerID.eq:string
+   CustomerCustomerDemo.CustomerTypeID.like:string
+   CustomerCustomerDemo.CustomerTypeID.eq:string
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:admin,guest
+
+// Opening up our database connection.
+data.connect:northwind
+
+   // Parametrising our read invocation with filtering arguments.
+   add:x:./*/data.read/*/where/*
+      get-nodes:x:@.arguments/*
+
+   // Reading data from database.
+   data.read
+      table:CustomerCustomerDemo
+      columns
+         CustomerCustomerDemo.CustomerID
+         CustomerCustomerDemo.CustomerTypeID
+      where
+         and
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@data.read/*

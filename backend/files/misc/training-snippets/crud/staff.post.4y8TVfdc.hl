@@ -1,0 +1,51 @@
+
+// CRUD create endpoint inserting one record in your staff table in your sakila database taking first_name, last_name, address_id, picture, email, store_id, active, username, password, last_update with logging
+.arguments
+   first_name:string
+   last_name:string
+   address_id:long
+   picture:string
+   email:string
+   store_id:long
+   active:long
+   password:string
+   last_update:date
+
+// Columns with custom handling as we generate a frontend
+.handling
+   picture:image
+   email:email
+
+// Logging invocation.
+auth.ticket.get
+lambda2hyper:x:@.arguments/*
+log.info:sakila.staff entry created
+   username:x:@auth.ticket.get
+   arguments:x:@lambda2hyper
+
+// Making sure we retrieve lock value for column.
+auth.ticket.get
+
+// Opening up database connection.
+data.connect:sakila
+
+   // Parametrising our create invocation.
+   add:x:./*/data.create/*/values
+      get-nodes:x:@.arguments/*
+
+   // Creating our record.
+   data.create
+      table:staff
+      return-id:bool:true
+      values
+
+         // Table is locked on the following field.
+         username:x:@auth.ticket.get
+
+   // Returning the correct status code.
+   response.status.set:201
+
+   // Returning result of above invocation to caller.
+   unwrap:x:+/*
+   return
+      id:x:@data.create

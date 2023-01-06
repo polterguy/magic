@@ -1,0 +1,42 @@
+
+// CRUD create endpoint inserting one record in your Customers table in your northwind database taking CustomerID, CompanyName, ContactName, ContactTitle, Address, City, Region, PostalCode, Country, Phone, Fax with authentication and authorisation for admin,guest roles
+.arguments
+   CustomerID:string
+   CompanyName:string
+   ContactName:string
+   ContactTitle:string
+   Address:string
+   City:string
+   Region:string
+   PostalCode:string
+   Country:string
+   Phone:string
+   Fax:string
+
+// Columns with custom handling as we generate a frontend
+.handling
+   Phone:phone
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:admin,guest
+
+// Opening up database connection.
+data.connect:northwind
+
+   // Parametrising our create invocation.
+   add:x:./*/data.create/*/values
+      get-nodes:x:@.arguments/*
+
+   // Creating our record.
+   data.create
+      table:Customers
+      return-id:bool:false
+      values
+
+   // Returning the correct status code.
+   response.status.set:201
+
+   // Returning result of above invocation to caller.
+   unwrap:x:+/*
+   return
+      result:success

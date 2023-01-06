@@ -1,0 +1,29 @@
+
+// CRUD create endpoint inserting one record in your PlaylistTrack table in your chinook database taking PlaylistId, TrackId with authentication and authorisation for admin,guest roles
+.arguments
+   PlaylistId:long
+   TrackId:long
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:admin,guest
+
+// Opening up database connection.
+data.connect:chinook
+
+   // Parametrising our create invocation.
+   add:x:./*/data.create/*/values
+      get-nodes:x:@.arguments/*
+
+   // Creating our record.
+   data.create
+      table:PlaylistTrack
+      return-id:bool:false
+      values
+
+   // Returning the correct status code.
+   response.status.set:201
+
+   // Returning result of above invocation to caller.
+   unwrap:x:+/*
+   return
+      result:success

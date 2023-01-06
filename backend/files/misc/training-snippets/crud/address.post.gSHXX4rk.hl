@@ -1,0 +1,38 @@
+
+// CRUD create endpoint inserting one record in your address table in your sakila database taking address, address2, district, city_id, postal_code, phone, last_update with authentication and authorisation for admin roles
+.arguments
+   address:string
+   address2:string
+   district:string
+   city_id:long
+   postal_code:string
+   phone:string
+   last_update:date
+
+// Columns with custom handling as we generate a frontend
+.handling
+   phone:phone
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:admin
+
+// Opening up database connection.
+data.connect:sakila
+
+   // Parametrising our create invocation.
+   add:x:./*/data.create/*/values
+      get-nodes:x:@.arguments/*
+
+   // Creating our record.
+   data.create
+      table:address
+      return-id:bool:true
+      values
+
+   // Returning the correct status code.
+   response.status.set:201
+
+   // Returning result of above invocation to caller.
+   unwrap:x:+/*
+   return
+      id:x:@data.create

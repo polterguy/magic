@@ -1,0 +1,29 @@
+
+// CRUD create endpoint inserting one record in your activities_contacts table in your aista-crm database taking activity_id, contact_id with authentication and authorisation for root,admin roles
+.arguments
+   activity_id:long
+   contact_id:long
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root,admin
+
+// Opening up database connection.
+data.connect:aista-crm
+
+   // Parametrising our create invocation.
+   add:x:./*/data.create/*/values
+      get-nodes:x:@.arguments/*
+
+   // Creating our record.
+   data.create
+      table:activities_contacts
+      return-id:bool:false
+      values
+
+   // Returning the correct status code.
+   response.status.set:201
+
+   // Returning result of above invocation to caller.
+   unwrap:x:+/*
+   return
+      result:success

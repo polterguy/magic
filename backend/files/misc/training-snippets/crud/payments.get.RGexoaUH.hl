@@ -1,0 +1,61 @@
+
+// CRUD read endpoint with paging, sorting, filtering selecting records from your payments table in your stripe database returning payment, username, amount, currency, payment_method, completed filtering on payment, username, amount, currency, payment_method, completed with private HTTP caching for 25 seconds
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   payments.payment.like:string
+   payments.payment.eq:string
+   payments.amount.eq:long
+   payments.currency.like:string
+   payments.currency.eq:string
+   payments.payment_method.like:string
+   payments.payment_method.eq:string
+   payments.completed.like:string
+   payments.completed.eq:string
+
+// Adding Cache-Control HTTP header.
+response.headers.set
+   Cache-Control:private, max-age=25
+
+// Making sure we retrieve lock value for column.
+auth.ticket.get
+
+// Opening up our database connection.
+data.connect:stripe
+
+   // Parametrising our read invocation with ordering arguments if specified.
+   add:x:./*/data.read
+      get-nodes:x:@.arguments/*/order
+      get-nodes:x:@.arguments/*/direction
+   remove-nodes:x:@.arguments/*/direction
+
+   // Parametrising our read invocation with paging arguments if specified.
+   add:x:./*/data.read
+      get-nodes:x:@.arguments/*/limit
+      get-nodes:x:@.arguments/*/offset
+   remove-nodes:x:@.arguments/*/limit
+   remove-nodes:x:@.arguments/*/offset
+
+   // Parametrising our read invocation with filtering arguments.
+   add:x:./*/data.read/*/where/*
+      get-nodes:x:@.arguments/*
+
+   // Reading data from database.
+   data.read
+      table:payments
+      columns
+         payments.payment
+         payments.amount
+         payments.currency
+         payments.payment_method
+         payments.completed
+      where
+         and
+
+            // Table is locked on the following field.
+            username.eq:x:@auth.ticket.get
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@data.read/*

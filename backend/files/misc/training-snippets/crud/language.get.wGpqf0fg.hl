@@ -1,0 +1,39 @@
+
+// CRUD read endpoint with sorting, filtering selecting records from your language table in your sakila database returning language_id, name, last_update filtering on language_id, name, last_update with authentication and authorisation for guest,root roles
+.arguments
+   order:string
+   direction:string
+   language.language_id.eq:long
+   language.name.like:string
+   language.name.eq:string
+   language.last_update.eq:date
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:guest,root
+
+// Opening up our database connection.
+data.connect:sakila
+
+   // Parametrising our read invocation with ordering arguments if specified.
+   add:x:./*/data.read
+      get-nodes:x:@.arguments/*/order
+      get-nodes:x:@.arguments/*/direction
+   remove-nodes:x:@.arguments/*/order
+   remove-nodes:x:@.arguments/*/direction
+
+   // Parametrising our read invocation with filtering arguments.
+   add:x:./*/data.read/*/where/*
+      get-nodes:x:@.arguments/*
+
+   // Reading data from database.
+   data.read
+      table:language
+      columns
+         language.language_id
+         language.name
+         language.last_update
+      where
+         and
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@data.read/*

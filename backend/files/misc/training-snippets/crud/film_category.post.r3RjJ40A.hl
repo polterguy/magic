@@ -1,0 +1,29 @@
+
+// CRUD create endpoint inserting one record in your film_category table in your sakila database taking category_id, last_update with authentication and authorisation for admin,translator roles
+.arguments
+   category_id:long
+   last_update:date
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:admin,translator
+
+// Opening up database connection.
+data.connect:sakila
+
+   // Parametrising our create invocation.
+   add:x:./*/data.create/*/values
+      get-nodes:x:@.arguments/*
+
+   // Creating our record.
+   data.create
+      table:film_category
+      return-id:bool:true
+      values
+
+   // Returning the correct status code.
+   response.status.set:201
+
+   // Returning result of above invocation to caller.
+   unwrap:x:+/*
+   return
+      id:x:@data.create

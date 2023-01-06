@@ -1,0 +1,64 @@
+
+// CRUD read endpoint with filtering selecting records from your Customers table in your northwind database returning CustomerID, CompanyName, ContactName, ContactTitle, Address, City, Region, PostalCode, Country, Phone, Fax filtering on CustomerID, CompanyName, ContactName, ContactTitle, Address, City, Region, PostalCode, Country, Phone, Fax with authentication and authorisation for admin,guest roles with public HTTP caching for 30 seconds
+.arguments
+   Customers.CustomerID.like:string
+   Customers.CustomerID.eq:string
+   Customers.CompanyName.like:string
+   Customers.CompanyName.eq:string
+   Customers.ContactName.like:string
+   Customers.ContactName.eq:string
+   Customers.ContactTitle.like:string
+   Customers.ContactTitle.eq:string
+   Customers.Address.like:string
+   Customers.Address.eq:string
+   Customers.City.like:string
+   Customers.City.eq:string
+   Customers.Region.like:string
+   Customers.Region.eq:string
+   Customers.PostalCode.like:string
+   Customers.PostalCode.eq:string
+   Customers.Country.like:string
+   Customers.Country.eq:string
+   Customers.Phone.like:string
+   Customers.Phone.eq:string
+   Customers.Fax.like:string
+   Customers.Fax.eq:string
+
+// Columns with custom handling as frontend is generated.
+.handling
+   Customers.Phone:phone
+
+// Adding Cache-Control HTTP header.
+response.headers.set
+   Cache-Control:public, max-age=30
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:admin,guest
+
+// Opening up our database connection.
+data.connect:northwind
+
+   // Parametrising our read invocation with filtering arguments.
+   add:x:./*/data.read/*/where/*
+      get-nodes:x:@.arguments/*
+
+   // Reading data from database.
+   data.read
+      table:Customers
+      columns
+         Customers.CustomerID
+         Customers.CompanyName
+         Customers.ContactName
+         Customers.ContactTitle
+         Customers.Address
+         Customers.City
+         Customers.Region
+         Customers.PostalCode
+         Customers.Country
+         Customers.Phone
+         Customers.Fax
+      where
+         and
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@data.read/*

@@ -1,0 +1,34 @@
+
+// CRUD delete endpoint deleting one record from your messages table in your tickets database with id matching argument with authentication and authorisation for admin,guest,root roles
+.arguments
+   id:long
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:admin,guest,root
+
+// Sanity checking invocation, making sure primary key(s) are specified.
+validators.mandatory:x:@.arguments/*/id
+
+// Making sure we retrieve lock value for column.
+auth.ticket.get
+
+// Opening up our database connection.
+data.connect:tickets
+
+   // Parametrising our delete invocation.
+   add:x:./*/data.delete/*/where/*/and
+      get-nodes:x:@.arguments/*
+
+   // Deleting item from database.
+   data.delete
+      table:messages
+      where
+         and
+
+            // Table is locked on the following field.
+            user.eq:x:@auth.ticket.get
+
+   // Returning result of above invocation to caller.
+   unwrap:x:+/*
+   return
+      affected:x:@data.delete
