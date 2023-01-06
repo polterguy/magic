@@ -1,5 +1,5 @@
 
-// CRUD read endpoint with paging, sorting, filtering selecting records from your transactions table in your stripe database returning transaction, created, username, amount, invoice, type, payment_method, affiliate filtering on transaction, created, username, amount, invoice, type, payment_method, affiliate with authentication and authorisation for admin,guest,root,translator roles with reCAPTCHA value of 0.6 with public HTTP caching for 300 seconds
+// CRUD read endpoint with paging, ordering, filtering selecting records from your transactions table in your stripe database returning transaction, created, username, amount, invoice, type, payment_method, affiliate filtering on transaction, created, username, amount, invoice, type, payment_method, affiliate with authentication and authorisation for admin,guest,root,translator roles with reCAPTCHA value of 0.6 with public HTTP caching for 300 seconds
 .arguments
    limit:long
    offset:long

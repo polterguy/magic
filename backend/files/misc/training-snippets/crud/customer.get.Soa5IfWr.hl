@@ -1,5 +1,5 @@
 
-// CRUD read endpoint with paging, sorting, filtering selecting records from your customer table in your sakila database returning customer_id, store_id, first_name, last_name, email, address_id, active, create_date, last_update filtering on customer_id, store_id, first_name, last_name, email, address_id, active, create_date, last_update
+// CRUD read endpoint with paging, ordering, filtering selecting records from your customer table in your sakila database returning customer_id, store_id, first_name, last_name, email, address_id, active, create_date, last_update filtering on customer_id, store_id, first_name, last_name, email, address_id, active, create_date, last_update
 .arguments
    limit:long
    offset:long

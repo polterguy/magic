@@ -1,0 +1,34 @@
+
+// CRUD delete endpoint deleting one record from your users table in your headless_cms database with user_id matching argument with authentication and authorisation for guest roles
+.arguments
+   user_id:long
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:guest
+
+// Sanity checking invocation, making sure primary key(s) are specified.
+validators.mandatory:x:@.arguments/*/user_id
+
+// Making sure we retrieve lock value for column.
+auth.ticket.get
+
+// Opening up our database connection.
+data.connect:headless_cms
+
+   // Parametrising our delete invocation.
+   add:x:./*/data.delete/*/where/*/and
+      get-nodes:x:@.arguments/*
+
+   // Deleting item from database.
+   data.delete
+      table:users
+      where
+         and
+
+            // Table is locked on the following field.
+            username.eq:x:@auth.ticket.get
+
+   // Returning result of above invocation to caller.
+   unwrap:x:+/*
+   return
+      affected:x:@data.delete

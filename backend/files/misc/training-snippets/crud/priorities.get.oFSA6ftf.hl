@@ -1,5 +1,5 @@
 
-// CRUD read endpoint with paging, sorting, filtering selecting records from your priorities table in your tickets database returning name filtering on name with authentication and authorisation for admin,translator roles
+// CRUD read endpoint with paging, ordering, filtering selecting records from your priorities table in your tickets database returning name filtering on name with authentication and authorisation for admin,translator roles
 .arguments
    limit:long
    offset:long

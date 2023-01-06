@@ -1,5 +1,5 @@
 
-// CRUD read endpoint with paging, sorting, filtering selecting records from your country table in your sakila database returning country_id, country, last_update filtering on country_id, country, last_update
+// CRUD read endpoint with paging, ordering, filtering selecting records from your country table in your sakila database returning country_id, country, last_update filtering on country_id, country, last_update
 .arguments
    limit:long
    offset:long

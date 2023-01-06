@@ -1,5 +1,5 @@
 
-// CRUD read endpoint with paging, sorting, filtering selecting records from your customers table in your stripe database returning username, customer_id filtering on username, customer_id with reCAPTCHA value of 0.5 with private HTTP caching for 15 seconds
+// CRUD read endpoint with paging, ordering, filtering selecting records from your customers table in your stripe database returning username, customer_id filtering on username, customer_id with reCAPTCHA value of 0.5 with private HTTP caching for 15 seconds
 .arguments
    limit:long
    offset:long

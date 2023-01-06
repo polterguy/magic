@@ -1,5 +1,5 @@
 
-// CRUD read endpoint with paging, sorting, filtering selecting records from your staff table in your sakila database returning staff_id, first_name, last_name, address_id, picture, email, store_id, active, username, password, last_update filtering on staff_id, first_name, last_name, address_id, picture, email, store_id, active, username, password, last_update with public HTTP caching for 15 seconds
+// CRUD read endpoint with paging, ordering, filtering selecting records from your staff table in your sakila database returning staff_id, first_name, last_name, address_id, picture, email, store_id, active, username, password, last_update filtering on staff_id, first_name, last_name, address_id, picture, email, store_id, active, username, password, last_update with public HTTP caching for 15 seconds
 .arguments
    limit:long
    offset:long

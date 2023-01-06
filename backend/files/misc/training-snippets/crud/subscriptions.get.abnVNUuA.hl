@@ -1,5 +1,5 @@
 
-// CRUD read endpoint with paging, sorting, filtering selecting records from your subscriptions table in your stripe database returning subscription, username, payment_method, meta, price, product, completed filtering on subscription, username, payment_method, meta, price, product, completed with authentication and authorisation for admin,guest,root,translator roles with reCAPTCHA value of 0.8 with public HTTP caching for 300 seconds
+// CRUD read endpoint with paging, ordering, filtering selecting records from your subscriptions table in your stripe database returning subscription, username, payment_method, meta, price, product, completed filtering on subscription, username, payment_method, meta, price, product, completed with authentication and authorisation for admin,guest,root,translator roles with reCAPTCHA value of 0.8 with public HTTP caching for 300 seconds
 .arguments
    limit:long
    offset:long

@@ -1,5 +1,5 @@
 
-// CRUD read endpoint with sorting, filtering selecting records from your notes table in your salesforce-clone database returning note_id, title, content, contact_id, deal_id filtering on note_id, title, content, contact_id, deal_id with authentication and authorisation for key_account_manager roles
+// CRUD read endpoint with ordering, filtering selecting records from your notes table in your salesforce-clone database returning note_id, title, content, contact_id, deal_id filtering on note_id, title, content, contact_id, deal_id with authentication and authorisation for key_account_manager roles
 .arguments
    order:string
    direction:string

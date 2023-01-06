@@ -1,5 +1,5 @@
 
-// CRUD read endpoint with paging, sorting, filtering selecting records from your Territories table in your northwind database returning TerritoryID, TerritoryDescription, RegionID filtering on TerritoryID, TerritoryDescription, RegionID
+// CRUD read endpoint with paging, ordering, filtering selecting records from your Territories table in your northwind database returning TerritoryID, TerritoryDescription, RegionID filtering on TerritoryID, TerritoryDescription, RegionID
 .arguments
    limit:long
    offset:long

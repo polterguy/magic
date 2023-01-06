@@ -1,5 +1,5 @@
 
-// CRUD read endpoint with paging, sorting, filtering selecting records from your activities_employees table in your aista-crm database returning activity_id, employee_id filtering on activity_id, employee_id with authentication and authorisation for root,admin roles
+// CRUD read endpoint with paging, ordering, filtering selecting records from your activities_employees table in your aista-crm database returning activity_id, employee_id filtering on activity_id, employee_id with authentication and authorisation for root,admin roles
 .arguments
    limit:long
    offset:long

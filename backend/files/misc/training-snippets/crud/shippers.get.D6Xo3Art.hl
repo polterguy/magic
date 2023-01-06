@@ -1,5 +1,5 @@
 
-// CRUD read endpoint with paging, sorting, filtering selecting records from your Shippers table in your northwind database returning ShipperID, CompanyName, Phone filtering on ShipperID, CompanyName, Phone with reCAPTCHA value of 0.5 with public HTTP caching for 35 seconds
+// CRUD read endpoint with paging, ordering, filtering selecting records from your Shippers table in your northwind database returning ShipperID, CompanyName, Phone filtering on ShipperID, CompanyName, Phone with reCAPTCHA value of 0.5 with public HTTP caching for 35 seconds
 .arguments
    limit:long
    offset:long

@@ -1,5 +1,5 @@
 
-// CRUD read endpoint with sorting, filtering selecting records from your Invoice table in your chinook database returning InvoiceId, CustomerId, InvoiceDate, BillingAddress, BillingCity, BillingState, BillingCountry, BillingPostalCode, Total filtering on InvoiceId, CustomerId, InvoiceDate, BillingAddress, BillingCity, BillingState, BillingCountry, BillingPostalCode, Total with authentication and authorisation for admin roles
+// CRUD read endpoint with ordering, filtering selecting records from your Invoice table in your chinook database returning InvoiceId, CustomerId, InvoiceDate, BillingAddress, BillingCity, BillingState, BillingCountry, BillingPostalCode, Total filtering on InvoiceId, CustomerId, InvoiceDate, BillingAddress, BillingCity, BillingState, BillingCountry, BillingPostalCode, Total with authentication and authorisation for admin roles
 .arguments
    order:string
    direction:string

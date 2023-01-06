@@ -1,31 +1,21 @@
 
-// CRUD read endpoint with paging, ordering, filtering selecting records from your leads table in your salesforce-clone database returning lead_id, name, email, phone, company_id filtering on lead_id, name, email, phone, company_id with authentication and authorisation for key_account_manager roles
+// CRUD read endpoint with paging, sorting, filtering selecting records from your content_categories table in your headless_cms database returning category_id, category_name, created_at filtering on category_id, category_name, created_at with private HTTP caching for 130 seconds
 .arguments
    limit:long
    offset:long
    order:string
    direction:string
-   leads.lead_id.eq:long
-   leads.name.like:string
-   leads.name.eq:string
-   leads.email.like:string
-   leads.email.eq:string
-   leads.phone.like:string
-   leads.phone.eq:string
-   leads.company_id.eq:long
+   content_categories.category_id.eq:long
+   content_categories.category_name.like:string
+   content_categories.category_name.eq:string
+   content_categories.created_at.eq:date
 
-// Verifying user is authorized to access endpoint.
-auth.ticket.verify:key_account_manager
-.foreign-keys
-   .
-      column:company_id
-      table:companies
-      foreign_column:company_id
-      foreign_name:name
-      long:bool:true
+// Adding Cache-Control HTTP header.
+response.headers.set
+   Cache-Control:private, max-age=130
 
 // Opening up our database connection.
-data.connect:salesforce-clone
+data.connect:headless_cms
 
    // Parametrising our read invocation with ordering arguments if specified.
    add:x:./*/data.read
@@ -47,13 +37,11 @@ data.connect:salesforce-clone
 
    // Reading data from database.
    data.read
-      table:leads
+      table:content_categories
       columns
-         leads.lead_id
-         leads.name
-         leads.email
-         leads.phone
-         leads.company_id
+         content_categories.category_id
+         content_categories.category_name
+         content_categories.created_at
       where
          and
 

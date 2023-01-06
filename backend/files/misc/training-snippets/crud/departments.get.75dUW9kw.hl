@@ -1,5 +1,5 @@
 
-// CRUD read endpoint with paging, sorting, filtering selecting records from your departments table in your tickets database returning name filtering on name with authentication and authorisation for admin,root,translator roles with public HTTP caching for 300 seconds
+// CRUD read endpoint with paging, ordering, filtering selecting records from your departments table in your tickets database returning name filtering on name with authentication and authorisation for admin,root,translator roles with public HTTP caching for 300 seconds
 .arguments
    limit:long
    offset:long

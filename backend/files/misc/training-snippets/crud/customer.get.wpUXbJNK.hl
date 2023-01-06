@@ -1,5 +1,5 @@
 
-// CRUD read endpoint with sorting, filtering selecting records from your Customer table in your chinook database returning CustomerId, FirstName, LastName, Company, Address, City, State, Country, PostalCode, Phone, Fax, Email, SupportRepId filtering on CustomerId, FirstName, LastName, Company, Address, City, State, Country, PostalCode, Phone, Fax, Email, SupportRepId with authentication and authorisation for admin roles
+// CRUD read endpoint with ordering, filtering selecting records from your Customer table in your chinook database returning CustomerId, FirstName, LastName, Company, Address, City, State, Country, PostalCode, Phone, Fax, Email, SupportRepId filtering on CustomerId, FirstName, LastName, Company, Address, City, State, Country, PostalCode, Phone, Fax, Email, SupportRepId with authentication and authorisation for admin roles
 .arguments
    order:string
    direction:string

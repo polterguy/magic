@@ -1,5 +1,5 @@
 
-// CRUD read endpoint with paging, sorting, filtering selecting records from your activity_types table in your aista-crm database returning activity_type_id, type filtering on activity_type_id, type with authentication and authorisation for root roles
+// CRUD read endpoint with paging, ordering, filtering selecting records from your activity_types table in your aista-crm database returning activity_type_id, type filtering on activity_type_id, type with authentication and authorisation for root roles
 .arguments
    limit:long
    offset:long

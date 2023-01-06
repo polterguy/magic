@@ -1,5 +1,5 @@
 
-// CRUD read endpoint with paging, sorting, filtering selecting records from your messages table in your tickets database returning id, ticket, created, user, description filtering on id, ticket, created, user, description with authentication and authorisation for admin,root,translator roles with public HTTP caching for 180 seconds
+// CRUD read endpoint with paging, ordering, filtering selecting records from your messages table in your tickets database returning id, ticket, created, user, description filtering on id, ticket, created, user, description with authentication and authorisation for admin,root,translator roles with public HTTP caching for 180 seconds
 .arguments
    limit:long
    offset:long
