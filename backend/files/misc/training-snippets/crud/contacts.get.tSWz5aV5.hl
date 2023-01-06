@@ -1,0 +1,42 @@
+
+// CRUD read endpoint with filtering selecting records from your contacts table in your salesforce-clone database returning contact_id, first_name, last_name, email, phone filtering on contact_id, first_name, last_name, email, phone with authentication and authorisation for key_account_manager roles
+.arguments
+   contacts.contact_id.eq:long
+   contacts.first_name.like:string
+   contacts.first_name.eq:string
+   contacts.last_name.like:string
+   contacts.last_name.eq:string
+   contacts.email.like:string
+   contacts.email.eq:string
+   contacts.phone.like:string
+   contacts.phone.eq:string
+
+// Columns with custom handling as frontend is generated.
+.handling
+   contacts.email:email
+   contacts.phone:phone
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:key_account_manager
+
+// Opening up our database connection.
+data.connect:salesforce-clone
+
+   // Parametrising our read invocation with filtering arguments.
+   add:x:./*/data.read/*/where/*
+      get-nodes:x:@.arguments/*
+
+   // Reading data from database.
+   data.read
+      table:contacts
+      columns
+         contacts.contact_id
+         contacts.first_name
+         contacts.last_name
+         contacts.email
+         contacts.phone
+      where
+         and
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@data.read/*

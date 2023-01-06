@@ -1,0 +1,42 @@
+
+// CRUD read endpoint with filtering selecting records from your companies table in your salesforce-clone database returning company_id, name, website, phone filtering on company_id, name, website, phone with authentication and authorisation for admin,key_account_manager roles with public HTTP caching for 180 seconds
+.arguments
+   companies.company_id.eq:long
+   companies.name.like:string
+   companies.name.eq:string
+   companies.website.like:string
+   companies.website.eq:string
+   companies.phone.like:string
+   companies.phone.eq:string
+
+// Columns with custom handling as frontend is generated.
+.handling
+   companies.phone:phone
+
+// Adding Cache-Control HTTP header.
+response.headers.set
+   Cache-Control:public, max-age=180
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:admin,key_account_manager
+
+// Opening up our database connection.
+data.connect:salesforce-clone
+
+   // Parametrising our read invocation with filtering arguments.
+   add:x:./*/data.read/*/where/*
+      get-nodes:x:@.arguments/*
+
+   // Reading data from database.
+   data.read
+      table:companies
+      columns
+         companies.company_id
+         companies.name
+         companies.website
+         companies.phone
+      where
+         and
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@data.read/*
