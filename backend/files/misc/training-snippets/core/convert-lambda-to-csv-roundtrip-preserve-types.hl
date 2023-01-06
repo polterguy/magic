@@ -1,13 +1,4 @@
-// Convert [.data] children to CSV
+// Convert children of [.data] to CSV
 
-// Lambda object we want to convert to CSV
-.data
-   .
-      name:Thomas Hansen
-      age:int:47
-   .
-      name:John Doe
-      age:int:67
-
-// Converting result of expression to CSV
-lambda2csv:x:-/*
+// Converting result of expression to CSV.
+lambda2csv:x:@.data/*

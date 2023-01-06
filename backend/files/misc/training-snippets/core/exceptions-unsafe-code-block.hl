@@ -1,4 +1,4 @@
-// Use Hyperlambda to create en exception try/catch block that allows me to execute unsafe code, catching exceptions, and logging exception message to my log as an error log entry | Unsafe code using try/catch | Use try and catch to execute unsafe code | Hyperlambda exception
+// Exception try/catch block logging errors
 try
 
    // Unsafe code here

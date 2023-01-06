@@ -1,5 +1,11 @@
-// Endpoint loading /foo.csv CSV file and returning content
+// Endpoint returning content of /foo.csv CSV file
 .arguments
+
+// Loading /foo.csv file
 io.file.load:/foo.csv
+
+// Converting CSV string to lambda.
 csv2lambda:x:@io.file.load
+
+// Returning result of conversion to caller.
 return-nodes:x:@csv2lambda/*

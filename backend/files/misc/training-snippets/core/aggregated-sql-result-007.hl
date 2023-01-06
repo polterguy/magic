@@ -1,8 +1,0 @@
-// endpoint selecting all English films starting with the character 'K' and returning to caller
-.arguments
-data.connect:movies
-   data.select:@"select f.title
-  from film as f
-    join language as l on f.language_id = l.language_id
-  where f.title like 'K%' and l.name = 'English';"
-   return:x:@data.select/*

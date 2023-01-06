@@ -1,14 +1,14 @@
-// Use Hyperlambda to create an endpoint that requires one argument, and if the argument is 'Thomas Hansen' it returns the name of the first role from the magic database sorted alphabetically as plain text. If it is given anything but Thomas Hansen it should return status code 400 with 'Some error text' | Hyperlambda endpoint with conditionally executed if statement, returning first role from magic database
+// Endpoint taking arg1 argument, and if the argument is 'Thomas Hansen' it returns the name of the first role from the magic database sorted alphabetically as plain text
 .arguments
-   argument:string
+   arg1:string
 
 // Changing Content-Type to text/plain
 response.headers.set
    Content-Type:text/plain
 
-// Checking if the argument is 'Thomas Hansen'
+// Checking if [arg1] is 'Thomas Hansen'
 if
-   eq:x:@.arguments/*/argument
+   eq:x:@.arguments/*/arg1
       .:Thomas Hansen
    .lambda
 

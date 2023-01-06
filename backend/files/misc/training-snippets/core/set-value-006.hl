@@ -1,3 +1,0 @@
-// Set the value of [.email] to the name of [.args] first child
-set-value:x:@.email
-   get-name:x:@.args/0

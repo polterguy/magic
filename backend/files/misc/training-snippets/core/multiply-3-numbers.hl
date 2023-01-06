@@ -1,10 +1,10 @@
-// Use Hyperlambda to multiply 3 numbers and set the result of the multiplication to the [.foo] node's value | Multiply 3 numbers
-.foo
+// Set [.fooxx] to result of multiplying number1, number2 and number3
+.fooxx
 .data
    number1:float:5.0
    number2:float:7.0
    number3:float:100.0
-set-value:x:@.foo
+set-value:x:@.fooxx
    math.multiply
       get-value:x:@.data/*/number1
       get-value:x:@.data/*/number2

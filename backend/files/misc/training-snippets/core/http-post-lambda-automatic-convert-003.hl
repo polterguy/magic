@@ -1,4 +1,4 @@
-// Post list of objects having name, email, and address to microsoft.com
+// POST list of objects having name, email, and address to microsoft.com
 http.post:"https://microsoft.com"
    payload
       .

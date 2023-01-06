@@ -1,4 +1,4 @@
-// Add [foo] to the [.dest2] node | Append [foo] into [.dest2]
+// Add [foo] into [.dest2]
 .dest2
 add:x:@.dest2
    .

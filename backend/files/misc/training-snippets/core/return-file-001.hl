@@ -1,10 +1,10 @@
-// Endpoint returning a file to caller | Returns content of the /README.md file to caller
+// Endpoint returning content of the /README.md as plain text
 .arguments
 
-// Loading file
+// Loading file.
 io.file.load:/README.md
 
-// Changing Content-Type to plain text
+// Changing Content-Type to plain text.
 response.headers.set
    Content-Type:text/plain
    

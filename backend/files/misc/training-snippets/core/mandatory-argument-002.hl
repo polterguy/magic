@@ -1,2 +1,2 @@
-// Make sure the name argument was given to invocation | Mandatory name argument
+// Name argument is mandatory
 validators.mandatory:x:@.arguments/*/name

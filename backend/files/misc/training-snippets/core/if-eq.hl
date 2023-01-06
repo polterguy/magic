@@ -1,6 +1,0 @@
-// Use Hyperlambda to create an if lambda block that is executed if [.arguments]/[name] is equal to 'John Doe'
-if
-   eq:x:@.arguments/*/name
-      .:John Doe
-   .lambda
-      log.info:Name was John Doe

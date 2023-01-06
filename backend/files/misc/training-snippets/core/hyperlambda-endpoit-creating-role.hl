@@ -1,4 +1,4 @@
-// Hyperlambda endpoint that insert name and description into roles table in magic database where name and description is specified as arguments | Hyperlambda endpoint inserting into database table | Hyperlambda endpoint creating new role | Hyperlambda endpoint taking two arguments | Endpoint taking name and description which it inserts into roles table
+// Endpoint creating a new role in our magic database and roles table
 .arguments
    name:string
    description:string

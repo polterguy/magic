@@ -1,4 +1,2 @@
-
-// Load XML file
+// Load /some-file.xml XML file
 io.file.load:/some-file.xml
-xml2lambda:x:@io.file.load

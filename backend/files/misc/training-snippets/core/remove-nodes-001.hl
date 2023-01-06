@@ -1,2 +1,2 @@
-// Remove all children of [.args]
+// Remove children of [.args]
 remove-nodes:x:@.args/*

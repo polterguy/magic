@@ -1,4 +1,4 @@
-// Add all nodes from the [.source] node's children collection into [.destination] node | Add all nodes into [.destination] using expression leading to [.source] children | Use expression to add nodes from [.source] into [.dest]
+// Add all children from [.source] into [.destination]
 .source
    foo1:bar1
    foo2:bar2

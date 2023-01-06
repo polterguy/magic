@@ -1,4 +1,4 @@
-// Post lambda object as JSON having name and email to my-repo.com
+// Post name and email to jsonplaceholder.typicode.com/posts
 http.post:"https://jsonplaceholder.typicode.com/posts"
    payload
       name:Thomas Hansen

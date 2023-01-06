@@ -1,4 +1,4 @@
-// endpoint selecting name and title from actors in crm with authentication and authorisation allowing only root and admin
+// Endpoint selecting name and title from actors table in crm database with authentication and authorisation allowing only root and admin
 .arguments
 auth.ticket.verify:root,admin
 data.connect:crm

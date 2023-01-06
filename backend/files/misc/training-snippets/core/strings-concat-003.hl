@@ -1,4 +1,4 @@
-// Create endpoint that concatenates 3 strings and returns result
+// Endpoint concatenating [argument1], [argument2], [argument3] and returning result
 .arguments
    argument1:string
    argument2:string

@@ -1,4 +1,4 @@
-// endpoint returning nurse_id, phone and adr1 from nurses table in hospital database with filtering on name
+// Endpoint returning nurse_id, phone and adr1 from nurses table in hospital database with filtering on name
 .arguments
    name:string
 

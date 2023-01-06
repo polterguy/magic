@@ -1,2 +1,2 @@
-// Create a debug log entry | Log the text 'This is debugging' as a debug log entry to the server log | Log debug information
+// Log debug entry 'This is debugging'
 log.debug:This is debugging

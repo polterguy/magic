@@ -1,4 +1,3 @@
-// Use Hyperlambda to split [.src] into words | Split s tring into words | String splitting | string.split
-.src:Split will divide this into multiple strings
-strings.split:x:-
+// Split [.src] into words
+strings.split:x:@.src
    .:" "

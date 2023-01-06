@@ -1,3 +1,2 @@
-// Load config object | Load config settings | Load configuration
+// Load config
 config.load
-json2lambda:x:-

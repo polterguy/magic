@@ -1,7 +1,2 @@
-// Use Hyperlambda to remove all nodes having the name of 'to-be-removed' from the [.data] lambda object | Conditionally remove nodes | Remove nodes
-.lambda
-   foo1:Stays
-   to-be-removed:Removed 1
-   foo2:Stays
-   to-be-removed:Removed 1
+// Remove children of [.lambda] with name 'to-be-removed'
 remove-nodes:x:@.lambda/*/to-be-removed

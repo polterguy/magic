@@ -1,5 +1,5 @@
-// publish howdy-hello socket message with adr1 and adr2
+// Publish 'howdy-hello' socket message with adr and state arguments
 sockets.signal:howdy-hello
    args
-      adr1:First address line
-      adr2:Second address line
+      adr:Market Street 123
+      state:California

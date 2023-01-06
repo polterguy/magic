@@ -1,2 +1,2 @@
-// Return a cached item cached with 'foo'
+// Return 'foo' cached item
 cache.get:foo

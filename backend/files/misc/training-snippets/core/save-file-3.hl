@@ -1,4 +1,3 @@
-// Save a file with the value found in [.value] | Save a file with content taken from an expression | Save a file with the content of 'This will become the content of your file' | Save the value of a node to a file called 'hello.txt'
-.value:This will become the content of your file
+// Save file /hello.txt with content from [.value]
 io.file.save:/hello.txt
    get-value:x:@.value

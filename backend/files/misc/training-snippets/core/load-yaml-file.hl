@@ -1,4 +1,2 @@
-
-// Load YAML file
+// Load /some-file.yaml YAML file
 io.file.load:/some-file.yaml
-yaml2lambda:x:@io.file.load

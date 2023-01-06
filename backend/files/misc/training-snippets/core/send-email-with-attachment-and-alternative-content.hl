@@ -1,32 +1,29 @@
-// Send an email with HTML and plain text content to John Doe from Jane Doe with a file attachment | Send an email with HTML content and a file attachment | How do you send en email with an attachment using Hyperlambda | Email with attachment | Send email with file attachment | File attachment in email
+// Send email with /README.md attachment to John Doe john@doe.com from Jane Doe jane@doe.com
 mail.smtp.send
    message
 
-      // Recipient of email
+      // Recipient of email.
       to
          .
             name:John Doe
             email:john@doe.com
 
-      // Sender of email
+      // Sender of email.
       from
          .
             name:Jane Doe
             email:jane@doe.com
             
-      // Subject of email
+      // Subject of email.
       subject:Subject of email
 
-      // Creating our multipart mixed MIME entity such that we can add attachments to our email
+      // Creating multipart/mixed MIME entity.
       entity:multipart/mixed
 
-         // Creating our HTML and plain text alternatives
-         entity:multipart/alternative
-            entity:text/plain
-               content:Plain text email content
-            entity:text/html
-               content:<p>HTML alternative content</p>
+         // Body of email.
+         entity:text/plain
+            content:Plain text email content
 
-         // Attaching our file to the email
+         // Attaching file to email.
          entity:text/plain
             filename:/README.md

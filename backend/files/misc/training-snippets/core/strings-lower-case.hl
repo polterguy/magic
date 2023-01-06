@@ -1,4 +1,3 @@
-// Use Hyperlambda to make [.src] only have lower case characters | Lower case strings | string.ToLower
-.src:THIS WILL BECOME ALL LOWER CASE
+// Make [.src] lower case
 set-value:x:@.src
    strings.to-lower:x:@.src

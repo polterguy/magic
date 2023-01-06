@@ -1,4 +1,4 @@
-// Add nodes resulting from two expressions leading to [.src1] and [.src2] children into [.destination] | Add nodes into [.destination] taken from [.src1] and [.src2]
+// Add all children from [.src1] and [.src2] into [.destination]
 .src1
    foo1:bar1
    foo2:bar2

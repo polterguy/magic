@@ -1,2 +1,2 @@
-// List all cache items having key starting with 'magic.'
+// List cache items with 'magic.'
 cache.list:magic.

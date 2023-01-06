@@ -1,4 +1,4 @@
-// Use Hyperlambda to format the specified date and time, such that it only displays military hours, and no date | Format date | Hyperlambda date formatting
+// String format [.data] and display hours, minutes and seconds
 .data:date:"2022-01-01T23:59:57"
-date.format:x:-
+date.format:x:@.data
    format:"HH:mm:ss"

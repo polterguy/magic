@@ -1,2 +1,2 @@
-// Make sure the address argument was given to invocation | Mandatory address argument
+// Address argument is mandatory
 validators.mandatory:x:@.arguments/*/address

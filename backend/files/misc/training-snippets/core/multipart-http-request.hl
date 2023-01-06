@@ -1,12 +1,12 @@
-// Use Hyperlambda to create a multipart/form-data HTTP request, passing in a MIME message containing two plain text mime entities, one being a reference to a file with the path of /README.md | Multipart/form-data HTTP POST invocation
-http.post:"http://localhost:5000/magic/modules/foo/foo"
+// Invoke hello_my.com/magic/modules/foo as multipart/form-data passing in 'Hello there' as variable_mime and /README.md file
+http.post:"http://hello_my.com/magic/modules/foo"
    headers
       Content-Type:multipart/form-data
    payload
       entity:text/plain
          headers
-            Content-Disposition:"form-data; name=\"foo\""
-         content:Foo bar
+            Content-Disposition:"form-data; name=\"variable_mime\""
+         content:Hello there
       entity:text/plain
          headers
             Content-Disposition:"form-data; filename=\"README.md\""

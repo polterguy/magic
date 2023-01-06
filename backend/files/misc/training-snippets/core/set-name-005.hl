@@ -1,3 +1,0 @@
-// Set the name of the [.dest] to foo
-set-name:x:@.dest
-   .:foo

@@ -1,7 +1,4 @@
 // Convert [.json] to lambda
 
-// JSON input
-.json:"{\"foo\": \"bar\"}"
-
-// Converting JSON to a lambda object
+// Converting JSON to a lambda object.
 json2lambda:x:@.json

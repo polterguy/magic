@@ -1,6 +1,6 @@
-// return affected records from update
+// Return affected records from [data.update]
 
-// Returning result of above invocation to caller
+// Returning result [data.update] to caller
 unwrap:x:+/*
 return
    result:x:@data.update

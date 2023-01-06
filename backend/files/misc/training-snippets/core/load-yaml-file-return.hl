@@ -1,5 +1,11 @@
 // Endpoint loading /my_file.yaml YAML file and returning content as JSON
 .arguments
+
+// Loading YAML file.
 io.file.load:/my_file.yaml
+
+// Converting YAML text to lambda.
 yaml2lambda:x:@io.file.load
+
+// Returning lambda to caller.
 return:x:@yaml2lambda/*

@@ -1,2 +1,2 @@
-// loop through all children of [.input]
+// Loop through all children of [.input]
 for-each:x:@.input/*

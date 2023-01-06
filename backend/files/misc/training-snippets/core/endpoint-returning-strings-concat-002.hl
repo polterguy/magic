@@ -1,4 +1,4 @@
-// Endpoint concatenating name argument with static string returning result | Endpoint with name argument returning concatenated result
+// Endpoint concatenating name argument with static string 'Hello ' returning result
 .arguments
    name:string
 strings.concat

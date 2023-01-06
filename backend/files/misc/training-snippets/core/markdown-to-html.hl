@@ -1,8 +1,8 @@
-// Use Hyperlambda to transform the specified Markdown into HTML | Convert from Markdown to HTML
-.markdown:@"
+// Transform [.markdown22] Markdown to HTML
+.markdown22:@"
 Howdy world
 
 * Foo
 * Bar
 "
-markdown2html:x:@.markdown
+markdown2html:x:@.markdown22

@@ -1,7 +1,0 @@
-// Endpoint executing SQL counting records in foo towards qwe database
-.arguments
-data.connect:qwe
-   data.scalar:select count(*) from foo
-   unwrap:x:+/*
-   return-nodes
-      count:x:@data.scalar

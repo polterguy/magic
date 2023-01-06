@@ -1,4 +1,4 @@
-// Hyperlambda endpoint invoking the my_slot slot returning nodes returned from invocation taking no arguments | Hyperlambda endpoint returning result of slot invocation | Hyperlambda endpoint invoking dynamic slot | Endpoint invoking slot
+// Endpoint executing my_slot dynamic slot returning result to caller
 .arguments
 add:x:+
    signal:my_slot

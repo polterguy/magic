@@ -1,8 +1,8 @@
-// Use Hyperlambda to create some Hyperlambda that returns the first non-null value from 3 arguments specified | Retrieve first non null value | First non null value
-.arguments
+// Assign to [.res] first non null value from children of [.data]
+.data
    foo1
    foo2:hello
    foo3
 .res
 set-value:x:@.res
-   get-first-value:x:@.arguments/*
+   get-first-value:x:@.data/*

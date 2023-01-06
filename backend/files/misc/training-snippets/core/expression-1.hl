@@ -1,2 +1,0 @@
-// Use Hyperlambda to create an expression leading to an argument named email | Create expression returning email argument | Lambda expression returning email value
-.expression:x:@.arguments/*/email
