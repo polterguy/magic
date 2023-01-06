@@ -1,0 +1,28 @@
+
+// CRUD delete endpoint deleting one record from your tags table in your headless_cms database with tag_id matching argument with authentication and authorisation for root,admin roles
+.arguments
+   tag_id:long
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root,admin
+
+// Sanity checking invocation, making sure primary key(s) are specified.
+validators.mandatory:x:@.arguments/*/tag_id
+
+// Opening up our database connection.
+data.connect:headless_cms
+
+   // Parametrising our delete invocation.
+   add:x:./*/data.delete/*/where/*/and
+      get-nodes:x:@.arguments/*
+
+   // Deleting item from database.
+   data.delete
+      table:tags
+      where
+         and
+
+   // Returning result of above invocation to caller.
+   unwrap:x:+/*
+   return
+      affected:x:@data.delete

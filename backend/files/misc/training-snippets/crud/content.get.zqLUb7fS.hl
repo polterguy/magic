@@ -1,5 +1,5 @@
 
-// CRUD read endpoint with paging, sorting, filtering selecting records from your content table in your headless_cms database returning content_id, title, body, created_at, updated_at filtering on content_id, title, body, created_at, updated_at with reCAPTCHA value of 0.9
+// CRUD read endpoint with paging, ordering, filtering selecting records from your content table in your headless_cms database returning content_id, title, body, created_at, updated_at filtering on content_id, title, body, created_at, updated_at with reCAPTCHA value of 0.9
 .arguments
    limit:long
    offset:long

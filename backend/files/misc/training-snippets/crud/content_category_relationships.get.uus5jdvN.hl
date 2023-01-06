@@ -1,5 +1,5 @@
 
-// CRUD read endpoint with paging, sorting, filtering selecting records from your content_category_relationships table in your headless_cms database returning content_id, category_id filtering on content_id, category_id with private HTTP caching for 130 seconds
+// CRUD read endpoint with paging, ordering, filtering selecting records from your content_category_relationships table in your headless_cms database returning content_id, category_id filtering on content_id, category_id with private HTTP caching for 130 seconds
 .arguments
    limit:long
    offset:long

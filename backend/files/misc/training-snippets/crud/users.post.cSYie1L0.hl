@@ -1,0 +1,38 @@
+
+// CRUD create endpoint inserting one record in your users table in your headless_cms database taking username, password, email, created_at with authentication and authorisation for root,admin roles
+.arguments
+   password:string
+   email:string
+   created_at:date
+
+// Columns with custom handling as we generate a frontend
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root,admin
+
+// Making sure we retrieve lock value for column.
+auth.ticket.get
+
+// Opening up database connection.
+data.connect:headless_cms
+
+   // Parametrising our create invocation.
+   add:x:./*/data.create/*/values
+      get-nodes:x:@.arguments/*
+
+   // Creating our record.
+   data.create
+      table:users
+      return-id:bool:true
+      values
+
+         // Table is locked on the following field.
+         username:x:@auth.ticket.get
+
+   // Returning the correct status code.
+   response.status.set:201
+
+   // Returning result of above invocation to caller.
+   unwrap:x:+/*
+   return
+      id:x:@data.create
