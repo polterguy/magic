@@ -1,0 +1,74 @@
+
+// CRUD read endpoint with sorting, filtering selecting records from your Customer table in your chinook database returning CustomerId, FirstName, LastName, Company, Address, City, State, Country, PostalCode, Phone, Fax, Email, SupportRepId filtering on CustomerId, FirstName, LastName, Company, Address, City, State, Country, PostalCode, Phone, Fax, Email, SupportRepId with authentication and authorisation for admin roles
+.arguments
+   order:string
+   direction:string
+   Customer.CustomerId.eq:long
+   Customer.FirstName.like:string
+   Customer.FirstName.eq:string
+   Customer.LastName.like:string
+   Customer.LastName.eq:string
+   Customer.Company.like:string
+   Customer.Company.eq:string
+   Customer.Address.like:string
+   Customer.Address.eq:string
+   Customer.City.like:string
+   Customer.City.eq:string
+   Customer.State.like:string
+   Customer.State.eq:string
+   Customer.Country.like:string
+   Customer.Country.eq:string
+   Customer.PostalCode.like:string
+   Customer.PostalCode.eq:string
+   Customer.Phone.like:string
+   Customer.Phone.eq:string
+   Customer.Fax.like:string
+   Customer.Fax.eq:string
+   Customer.Email.like:string
+   Customer.Email.eq:string
+   Customer.SupportRepId.eq:long
+
+// Columns with custom handling as frontend is generated.
+.handling
+   Customer.Phone:phone
+   Customer.Email:email
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:admin
+
+// Opening up our database connection.
+data.connect:chinook
+
+   // Parametrising our read invocation with ordering arguments if specified.
+   add:x:./*/data.read
+      get-nodes:x:@.arguments/*/order
+      get-nodes:x:@.arguments/*/direction
+   remove-nodes:x:@.arguments/*/order
+   remove-nodes:x:@.arguments/*/direction
+
+   // Parametrising our read invocation with filtering arguments.
+   add:x:./*/data.read/*/where/*
+      get-nodes:x:@.arguments/*
+
+   // Reading data from database.
+   data.read
+      table:Customer
+      columns
+         Customer.CustomerId
+         Customer.FirstName
+         Customer.LastName
+         Customer.Company
+         Customer.Address
+         Customer.City
+         Customer.State
+         Customer.Country
+         Customer.PostalCode
+         Customer.Phone
+         Customer.Fax
+         Customer.Email
+         Customer.SupportRepId
+      where
+         and
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@data.read/*

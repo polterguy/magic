@@ -1,0 +1,125 @@
+
+// CRUD read endpoint with paging, sorting, filtering selecting records from your address table in your sakila database returning address_id, address, address2, district, city_id, postal_code, phone, last_update filtering on address_id, address, address2, district, city_id, postal_code, phone, last_update with authentication and authorisation for guest roles
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   operator:string
+   address.address_id.mt:long
+   address.address_id.lt:long
+   address.address_id.mteq:long
+   address.address_id.lteq:long
+   address.address_id.neq:long
+   address.address_id.eq:long
+   address.address.like:string
+   address.address.mt:string
+   address.address.lt:string
+   address.address.mteq:string
+   address.address.lteq:string
+   address.address.neq:string
+   address.address.eq:string
+   address.address2.like:string
+   address.address2.mt:string
+   address.address2.lt:string
+   address.address2.mteq:string
+   address.address2.lteq:string
+   address.address2.neq:string
+   address.address2.eq:string
+   address.district.like:string
+   address.district.mt:string
+   address.district.lt:string
+   address.district.mteq:string
+   address.district.lteq:string
+   address.district.neq:string
+   address.district.eq:string
+   address.city_id.mt:long
+   address.city_id.lt:long
+   address.city_id.mteq:long
+   address.city_id.lteq:long
+   address.city_id.neq:long
+   address.city_id.eq:long
+   address.postal_code.like:string
+   address.postal_code.mt:string
+   address.postal_code.lt:string
+   address.postal_code.mteq:string
+   address.postal_code.lteq:string
+   address.postal_code.neq:string
+   address.postal_code.eq:string
+   address.phone.like:string
+   address.phone.mt:string
+   address.phone.lt:string
+   address.phone.mteq:string
+   address.phone.lteq:string
+   address.phone.neq:string
+   address.phone.eq:string
+   address.last_update.mt:date
+   address.last_update.lt:date
+   address.last_update.mteq:date
+   address.last_update.lteq:date
+   address.last_update.neq:date
+   address.last_update.eq:date
+
+// Columns with custom handling as frontend is generated.
+.handling
+   address.phone:phone
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:guest
+
+// Sanity checking invocation.
+validators.enum:x:@.arguments/*/operator
+   .:or
+   .:and
+
+/*
+ * Checking if user supplied an [operator] argument, and if so
+ * changing the boolean operator for comparison operations.
+ */
+if
+   exists:x:@.arguments/*/operator
+   .lambda
+
+      // User provided a boolean comparison [operator] argument.
+      set-name:x:../*/data.connect/*/data.read/*/where/0
+         get-value:x:@.arguments/*/operator
+      remove-nodes:x:@.arguments/*/operator
+
+// Opening up our database connection.
+data.connect:sakila
+
+   // Parametrising our read invocation with ordering arguments if specified.
+   add:x:./*/data.read
+      get-nodes:x:@.arguments/*/order
+      get-nodes:x:@.arguments/*/direction
+   remove-nodes:x:@.arguments/*/order
+   remove-nodes:x:@.arguments/*/direction
+
+   // Parametrising our read invocation with paging arguments if specified.
+   add:x:./*/data.read
+      get-nodes:x:@.arguments/*/limit
+      get-nodes:x:@.arguments/*/offset
+   remove-nodes:x:@.arguments/*/limit
+   remove-nodes:x:@.arguments/*/offset
+
+   // Parametrising our read invocation with filtering arguments.
+   add:x:./*/data.read/*/where/*
+      get-nodes:x:@.arguments/*
+
+   // Reading data from database.
+   data.read
+      table:address
+      columns
+         address.address_id
+         address.address
+         address.address2
+         address.district
+         address.city_id
+         address.postal_code
+         address.phone
+         address.last_update
+      where
+         and
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@data.read/*

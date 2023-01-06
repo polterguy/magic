@@ -1,0 +1,36 @@
+
+// CRUD create endpoint inserting one record in your film table in your sakila database taking title, description, release_year, language_id, original_language_id, rental_duration, rental_rate, length, replacement_cost, rating, special_features, last_update
+.arguments
+   title:string
+   description:string
+   release_year:string
+   language_id:long
+   original_language_id:long
+   rental_duration:long
+   rental_rate:decimal
+   length:long
+   replacement_cost:decimal
+   rating:string
+   special_features:string
+   last_update:date
+
+// Opening up database connection.
+data.connect:sakila
+
+   // Parametrising our create invocation.
+   add:x:./*/data.create/*/values
+      get-nodes:x:@.arguments/*
+
+   // Creating our record.
+   data.create
+      table:film
+      return-id:bool:true
+      values
+
+   // Returning the correct status code.
+   response.status.set:201
+
+   // Returning result of above invocation to caller.
+   unwrap:x:+/*
+   return
+      id:x:@data.create

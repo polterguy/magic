@@ -1,0 +1,34 @@
+
+// CRUD create endpoint inserting one record in your payment_methods table in your stripe database taking payment_method, username, card_no, card_type, hidden
+.arguments
+   payment_method:string
+   card_no:string
+   card_type:string
+   hidden:string
+
+// Making sure we retrieve lock value for column.
+auth.ticket.get
+
+// Opening up database connection.
+data.connect:stripe
+
+   // Parametrising our create invocation.
+   add:x:./*/data.create/*/values
+      get-nodes:x:@.arguments/*
+
+   // Creating our record.
+   data.create
+      table:payment_methods
+      return-id:bool:false
+      values
+
+         // Table is locked on the following field.
+         username:x:@auth.ticket.get
+
+   // Returning the correct status code.
+   response.status.set:201
+
+   // Returning result of above invocation to caller.
+   unwrap:x:+/*
+   return
+      result:success

@@ -1,0 +1,30 @@
+
+// CRUD create endpoint inserting one record in your actor table in your sakila database taking first_name, last_name, last_update with authentication and authorisation for admin roles
+.arguments
+   first_name:string
+   last_name:string
+   last_update:date
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:admin
+
+// Opening up database connection.
+data.connect:sakila
+
+   // Parametrising our create invocation.
+   add:x:./*/data.create/*/values
+      get-nodes:x:@.arguments/*
+
+   // Creating our record.
+   data.create
+      table:actor
+      return-id:bool:true
+      values
+
+   // Returning the correct status code.
+   response.status.set:201
+
+   // Returning result of above invocation to caller.
+   unwrap:x:+/*
+   return
+      id:x:@data.create

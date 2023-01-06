@@ -1,0 +1,186 @@
+
+// CRUD read endpoint with paging, sorting, filtering selecting records from your Suppliers table in your northwind database returning SupplierID, CompanyName, ContactName, ContactTitle, Address, City, Region, PostalCode, Country, Phone, Fax, HomePage filtering on SupplierID, CompanyName, ContactName, ContactTitle, Address, City, Region, PostalCode, Country, Phone, Fax, HomePage with reCAPTCHA value of 0.7 with public HTTP caching for 28 seconds
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   operator:string
+   recaptcha:string
+   Suppliers.SupplierID.mt:long
+   Suppliers.SupplierID.lt:long
+   Suppliers.SupplierID.mteq:long
+   Suppliers.SupplierID.lteq:long
+   Suppliers.SupplierID.neq:long
+   Suppliers.SupplierID.eq:long
+   Suppliers.CompanyName.like:string
+   Suppliers.CompanyName.mt:string
+   Suppliers.CompanyName.lt:string
+   Suppliers.CompanyName.mteq:string
+   Suppliers.CompanyName.lteq:string
+   Suppliers.CompanyName.neq:string
+   Suppliers.CompanyName.eq:string
+   Suppliers.ContactName.like:string
+   Suppliers.ContactName.mt:string
+   Suppliers.ContactName.lt:string
+   Suppliers.ContactName.mteq:string
+   Suppliers.ContactName.lteq:string
+   Suppliers.ContactName.neq:string
+   Suppliers.ContactName.eq:string
+   Suppliers.ContactTitle.like:string
+   Suppliers.ContactTitle.mt:string
+   Suppliers.ContactTitle.lt:string
+   Suppliers.ContactTitle.mteq:string
+   Suppliers.ContactTitle.lteq:string
+   Suppliers.ContactTitle.neq:string
+   Suppliers.ContactTitle.eq:string
+   Suppliers.Address.like:string
+   Suppliers.Address.mt:string
+   Suppliers.Address.lt:string
+   Suppliers.Address.mteq:string
+   Suppliers.Address.lteq:string
+   Suppliers.Address.neq:string
+   Suppliers.Address.eq:string
+   Suppliers.City.like:string
+   Suppliers.City.mt:string
+   Suppliers.City.lt:string
+   Suppliers.City.mteq:string
+   Suppliers.City.lteq:string
+   Suppliers.City.neq:string
+   Suppliers.City.eq:string
+   Suppliers.Region.like:string
+   Suppliers.Region.mt:string
+   Suppliers.Region.lt:string
+   Suppliers.Region.mteq:string
+   Suppliers.Region.lteq:string
+   Suppliers.Region.neq:string
+   Suppliers.Region.eq:string
+   Suppliers.PostalCode.like:string
+   Suppliers.PostalCode.mt:string
+   Suppliers.PostalCode.lt:string
+   Suppliers.PostalCode.mteq:string
+   Suppliers.PostalCode.lteq:string
+   Suppliers.PostalCode.neq:string
+   Suppliers.PostalCode.eq:string
+   Suppliers.Country.like:string
+   Suppliers.Country.mt:string
+   Suppliers.Country.lt:string
+   Suppliers.Country.mteq:string
+   Suppliers.Country.lteq:string
+   Suppliers.Country.neq:string
+   Suppliers.Country.eq:string
+   Suppliers.Phone.like:string
+   Suppliers.Phone.mt:string
+   Suppliers.Phone.lt:string
+   Suppliers.Phone.mteq:string
+   Suppliers.Phone.lteq:string
+   Suppliers.Phone.neq:string
+   Suppliers.Phone.eq:string
+   Suppliers.Fax.like:string
+   Suppliers.Fax.mt:string
+   Suppliers.Fax.lt:string
+   Suppliers.Fax.mteq:string
+   Suppliers.Fax.lteq:string
+   Suppliers.Fax.neq:string
+   Suppliers.Fax.eq:string
+   Suppliers.HomePage.like:string
+   Suppliers.HomePage.mt:string
+   Suppliers.HomePage.lt:string
+   Suppliers.HomePage.mteq:string
+   Suppliers.HomePage.lteq:string
+   Suppliers.HomePage.neq:string
+   Suppliers.HomePage.eq:string
+
+// Columns with custom handling as frontend is generated.
+.handling
+   Suppliers.Phone:phone
+
+// Adding Cache-Control HTTP header.
+response.headers.set
+   Cache-Control:public, max-age=28
+
+// Checking reCAPTCHA value if backend is configured with reCAPTCHA configuration settings.
+config.get:"magic:auth:recaptcha:key"
+config.get:"magic:auth:recaptcha:secret"
+if
+   and
+      neq:x:@config.get
+         .
+      neq:x:@config.get
+         .:
+      neq:x:@config.get/@config.get
+         .
+      neq:x:@config.get/@config.get
+         .:
+   .lambda
+
+      // reCAPTCHA configuration settings found.
+      validators.mandatory:x:@.arguments/*/recaptcha
+      validators.recaptcha:x:@.arguments/*/recaptcha/[0,1]
+         site-key:x:@config.get/@config.get
+         secret:x:@config.get
+         min:decimal:0.7
+
+// To remove reCAPTCHA value preventing it from being used as an argument further down in file.
+remove-nodes:x:@.arguments/*/recaptcha/[0,1]
+
+// Sanity checking invocation.
+validators.enum:x:@.arguments/*/operator
+   .:or
+   .:and
+
+/*
+ * Checking if user supplied an [operator] argument, and if so
+ * changing the boolean operator for comparison operations.
+ */
+if
+   exists:x:@.arguments/*/operator
+   .lambda
+
+      // User provided a boolean comparison [operator] argument.
+      set-name:x:../*/data.connect/*/data.read/*/where/0
+         get-value:x:@.arguments/*/operator
+      remove-nodes:x:@.arguments/*/operator
+
+// Opening up our database connection.
+data.connect:northwind
+
+   // Parametrising our read invocation with ordering arguments if specified.
+   add:x:./*/data.read
+      get-nodes:x:@.arguments/*/order
+      get-nodes:x:@.arguments/*/direction
+   remove-nodes:x:@.arguments/*/order
+   remove-nodes:x:@.arguments/*/direction
+
+   // Parametrising our read invocation with paging arguments if specified.
+   add:x:./*/data.read
+      get-nodes:x:@.arguments/*/limit
+      get-nodes:x:@.arguments/*/offset
+   remove-nodes:x:@.arguments/*/limit
+   remove-nodes:x:@.arguments/*/offset
+
+   // Parametrising our read invocation with filtering arguments.
+   add:x:./*/data.read/*/where/*
+      get-nodes:x:@.arguments/*
+
+   // Reading data from database.
+   data.read
+      table:Suppliers
+      columns
+         Suppliers.SupplierID
+         Suppliers.CompanyName
+         Suppliers.ContactName
+         Suppliers.ContactTitle
+         Suppliers.Address
+         Suppliers.City
+         Suppliers.Region
+         Suppliers.PostalCode
+         Suppliers.Country
+         Suppliers.Phone
+         Suppliers.Fax
+         Suppliers.HomePage
+      where
+         and
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@data.read/*

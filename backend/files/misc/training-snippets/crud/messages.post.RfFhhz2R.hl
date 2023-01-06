@@ -1,0 +1,35 @@
+
+// CRUD create endpoint inserting one record in your messages table in your tickets database taking ticket, user, description with authentication and authorisation for guest,root,translator roles
+.arguments
+   ticket:long
+   description:string
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:guest,root,translator
+
+// Making sure we retrieve lock value for column.
+auth.ticket.get
+
+// Opening up database connection.
+data.connect:tickets
+
+   // Parametrising our create invocation.
+   add:x:./*/data.create/*/values
+      get-nodes:x:@.arguments/*
+
+   // Creating our record.
+   data.create
+      table:messages
+      return-id:bool:true
+      values
+
+         // Table is locked on the following field.
+         user:x:@auth.ticket.get
+
+   // Returning the correct status code.
+   response.status.set:201
+
+   // Returning result of above invocation to caller.
+   unwrap:x:+/*
+   return
+      id:x:@data.create

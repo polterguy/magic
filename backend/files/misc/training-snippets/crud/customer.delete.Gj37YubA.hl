@@ -1,0 +1,28 @@
+
+// CRUD delete endpoint deleting one record from your Customer table in your chinook database with CustomerId matching argument with authentication and authorisation for admin roles
+.arguments
+   CustomerId:long
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:admin
+
+// Sanity checking invocation, making sure primary key(s) are specified.
+validators.mandatory:x:@.arguments/*/CustomerId
+
+// Opening up our database connection.
+data.connect:chinook
+
+   // Parametrising our delete invocation.
+   add:x:./*/data.delete/*/where/*/and
+      get-nodes:x:@.arguments/*
+
+   // Deleting item from database.
+   data.delete
+      table:Customer
+      where
+         and
+
+   // Returning result of above invocation to caller.
+   unwrap:x:+/*
+   return
+      affected:x:@data.delete

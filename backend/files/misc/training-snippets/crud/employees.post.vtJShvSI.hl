@@ -1,0 +1,38 @@
+
+// CRUD create endpoint inserting one record in your employees table in your aista-crm database taking name, email, phone, linkedIn, facebook, twitter with authentication and authorisation for root roles
+.arguments
+   name:string
+   email:string
+   phone:string
+   linkedIn:string
+   facebook:string
+   twitter:string
+
+// Columns with custom handling as we generate a frontend
+.handling
+   email:email
+   phone:phone
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Opening up database connection.
+data.connect:aista-crm
+
+   // Parametrising our create invocation.
+   add:x:./*/data.create/*/values
+      get-nodes:x:@.arguments/*
+
+   // Creating our record.
+   data.create
+      table:employees
+      return-id:bool:true
+      values
+
+   // Returning the correct status code.
+   response.status.set:201
+
+   // Returning result of above invocation to caller.
+   unwrap:x:+/*
+   return
+      id:x:@data.create

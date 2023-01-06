@@ -1,0 +1,28 @@
+
+// CRUD read endpoint with filtering selecting records from your Playlist table in your chinook database returning PlaylistId, Name filtering on PlaylistId, Name with authentication and authorisation for admin,guest roles
+.arguments
+   Playlist.PlaylistId.eq:long
+   Playlist.Name.like:string
+   Playlist.Name.eq:string
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:admin,guest
+
+// Opening up our database connection.
+data.connect:chinook
+
+   // Parametrising our read invocation with filtering arguments.
+   add:x:./*/data.read/*/where/*
+      get-nodes:x:@.arguments/*
+
+   // Reading data from database.
+   data.read
+      table:Playlist
+      columns
+         Playlist.PlaylistId
+         Playlist.Name
+      where
+         and
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@data.read/*

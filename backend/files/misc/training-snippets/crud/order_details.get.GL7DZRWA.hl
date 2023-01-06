@@ -1,0 +1,37 @@
+
+// CRUD read endpoint with filtering selecting records from your Order Details table in your northwind database returning OrderID, ProductID, UnitPrice, Quantity, Discount filtering on OrderID, ProductID, UnitPrice, Quantity, Discount with authentication and authorisation for admin,guest roles with private HTTP caching for 300 seconds
+.arguments
+   Order Details.OrderID.eq:long
+   Order Details.ProductID.eq:long
+   Order Details.UnitPrice.eq:decimal
+   Order Details.Quantity.eq:long
+   Order Details.Discount.eq:double
+
+// Adding Cache-Control HTTP header.
+response.headers.set
+   Cache-Control:private, max-age=300
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:admin,guest
+
+// Opening up our database connection.
+data.connect:northwind
+
+   // Parametrising our read invocation with filtering arguments.
+   add:x:./*/data.read/*/where/*
+      get-nodes:x:@.arguments/*
+
+   // Reading data from database.
+   data.read
+      table:Order Details
+      columns
+         Order Details.OrderID
+         Order Details.ProductID
+         Order Details.UnitPrice
+         Order Details.Quantity
+         Order Details.Discount
+      where
+         and
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@data.read/*

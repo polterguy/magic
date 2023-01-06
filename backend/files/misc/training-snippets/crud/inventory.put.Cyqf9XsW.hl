@@ -1,0 +1,46 @@
+
+// CRUD update endpoint updating one record in your inventory table in your sakila database filtering which item to update with inventory_id updating film_id, store_id fields with authentication and authorisation for guest,root roles
+.arguments
+   inventory_id:long
+   film_id:long
+   store_id:long
+
+// Sanity checking invocation, making sure primary key(s) are specified.
+validators.mandatory:x:@.arguments/*/inventory_id
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:guest,root
+
+// Opening up our database connection.
+data.connect:sakila
+
+   // Parametrising our invocation.
+   add:x:./*/data.update/*/values
+      get-nodes:x:@.arguments/*/[1,1000]
+   add:x:./*/data.update/*/where/*/and
+      get-nodes:x:@.arguments/*/[0,1]
+
+   // Invoking our update slot.
+   data.update
+      table:inventory
+      values
+      where
+         and
+
+   // Verifying record exists.
+   if
+      eq
+         get-value:x:@data.update
+         .:int:0
+      .lambda
+         response.status.set:404
+         return
+            result:Record not found
+
+   // Returning the correct status code.
+   response.status.set:202
+
+   // Returning success to caller.
+   unwrap:x:+/*
+   return
+      affected:x:@data.update

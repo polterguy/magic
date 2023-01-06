@@ -1,0 +1,47 @@
+
+// CRUD read endpoint with paging, sorting, filtering selecting records from your city table in your sakila database returning city_id, city, country_id, last_update filtering on city_id, city, country_id, last_update
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   city.city_id.eq:long
+   city.city.like:string
+   city.city.eq:string
+   city.country_id.eq:long
+   city.last_update.eq:date
+
+// Opening up our database connection.
+data.connect:sakila
+
+   // Parametrising our read invocation with ordering arguments if specified.
+   add:x:./*/data.read
+      get-nodes:x:@.arguments/*/order
+      get-nodes:x:@.arguments/*/direction
+   remove-nodes:x:@.arguments/*/order
+   remove-nodes:x:@.arguments/*/direction
+
+   // Parametrising our read invocation with paging arguments if specified.
+   add:x:./*/data.read
+      get-nodes:x:@.arguments/*/limit
+      get-nodes:x:@.arguments/*/offset
+   remove-nodes:x:@.arguments/*/limit
+   remove-nodes:x:@.arguments/*/offset
+
+   // Parametrising our read invocation with filtering arguments.
+   add:x:./*/data.read/*/where/*
+      get-nodes:x:@.arguments/*
+
+   // Reading data from database.
+   data.read
+      table:city
+      columns
+         city.city_id
+         city.city
+         city.country_id
+         city.last_update
+      where
+         and
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@data.read/*

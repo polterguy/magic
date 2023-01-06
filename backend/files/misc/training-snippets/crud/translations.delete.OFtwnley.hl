@@ -1,0 +1,30 @@
+
+// CRUD delete endpoint deleting one record from your translations table in your babelfish database with id, locale matching argument with authentication and authorisation for root roles
+.arguments
+   id:string
+   locale:string
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Sanity checking invocation, making sure primary key(s) are specified.
+validators.mandatory:x:@.arguments/*/id
+validators.mandatory:x:@.arguments/*/locale
+
+// Opening up our database connection.
+data.connect:babelfish
+
+   // Parametrising our delete invocation.
+   add:x:./*/data.delete/*/where/*/and
+      get-nodes:x:@.arguments/*
+
+   // Deleting item from database.
+   data.delete
+      table:translations
+      where
+         and
+
+   // Returning result of above invocation to caller.
+   unwrap:x:+/*
+   return
+      affected:x:@data.delete

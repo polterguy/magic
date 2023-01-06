@@ -1,0 +1,45 @@
+
+// CRUD create endpoint inserting one record in your Customer table in your chinook database taking CustomerId, FirstName, LastName, Company, Address, City, State, Country, PostalCode, Phone, Fax, Email, SupportRepId with authentication and authorisation for admin roles
+.arguments
+   CustomerId:long
+   FirstName:string
+   LastName:string
+   Company:string
+   Address:string
+   City:string
+   State:string
+   Country:string
+   PostalCode:string
+   Phone:string
+   Fax:string
+   Email:string
+   SupportRepId:long
+
+// Columns with custom handling as we generate a frontend
+.handling
+   Phone:phone
+   Email:email
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:admin
+
+// Opening up database connection.
+data.connect:chinook
+
+   // Parametrising our create invocation.
+   add:x:./*/data.create/*/values
+      get-nodes:x:@.arguments/*
+
+   // Creating our record.
+   data.create
+      table:Customer
+      return-id:bool:false
+      values
+
+   // Returning the correct status code.
+   response.status.set:201
+
+   // Returning result of above invocation to caller.
+   unwrap:x:+/*
+   return
+      result:success
