@@ -1,9 +1,3 @@
-// Use Hyperlambda to create a nested expression where a sub section of the expression is a reference to the value of a node, that returns the name 'thomas' given the specified data | Nested Hyperlambda expressions | Extrapolated expressions
-.arg1:.data
-.result
-.data
-   foo1:john
-   foo2:thomas
-   foo3:peter
+// Extrapolated expression referencing [.arg-name]
 set-value:x:@.result
-   get-value:x:../*/{@.arg1}/*/foo2
+   get-value:x:@.arguments/*/{@.arg-name}

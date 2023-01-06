@@ -1,4 +1,4 @@
-// Add [static1] and [static2] into [.foo] | Add into [.foo] both [static1] and [static2] | Append [static1] and [static2] into [.foo]
+// Add [static1] and [static2] into [.foo]
 .foo
 
 // Adding two static nodes into [.destination]

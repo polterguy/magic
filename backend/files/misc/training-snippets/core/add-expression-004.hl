@@ -1,4 +1,4 @@
-// Add the [.xyz] node into the [.qwe] node
+// Add [.xyz] children into [.qwe]
 .xyz
    foo1:bar1
    foo2:bar2
@@ -7,4 +7,4 @@
 
 // Invoking [add] with a source expression
 add:x:@.qwe
-   get-nodes:x:@.xyz
+   get-nodes:x:@.xyz/*

@@ -1,2 +1,2 @@
-// Use Hyperlambda to load the file found at /README.md | Load file using Hyperlambda | Load file
+// Load /README.md file
 io.file.load:/README.md

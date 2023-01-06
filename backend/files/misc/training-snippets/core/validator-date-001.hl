@@ -1,4 +1,4 @@
-// argument date must be more than 5 days ago
+// Argument date validator ensuring date argument is more than 5 days ago
 math.subtract
    math.now
    time

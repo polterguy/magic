@@ -1,2 +1,2 @@
-// expression leading to birth_date argument
+// Expression leading to birth_date argument
 :x:@.arguments/*/birth_date

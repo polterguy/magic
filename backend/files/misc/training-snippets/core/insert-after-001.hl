@@ -1,4 +1,4 @@
-// insert foo node after email argument
+// Insert foo node after email argument
 insert-after:x:@.arguments/*/email
    .
       foo

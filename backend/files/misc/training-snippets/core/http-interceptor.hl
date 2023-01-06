@@ -1,6 +1,6 @@
-// Use Hyperlambda to create an HTTP interceptor that intercepts an invocation to another HTTP endpoint | Create HTTP interceptor endpoint | Hyperlambda interceptor endpoint
+// HTTP POST interceptor endpoint invoking your-app.com/your-endpoint passing in all arguments to your-app.com/your-endpoint invoking [.before] before and [.after] after
 .arguments:*
-.description:HTTP gateway endpoint intercepting another endpoint, allowing you to evaluate some lambda object both before and after invoking your original HTTP endpoint
+.description:HTTP POST interceptor endpoint invoking your-app.com/your-endpoint passing in all arguments to your-app.com/your-endpoint invoking [.before] before and [.after] after
 
 // Endpoint we're intercepting.
 .endpoint:"https://your-app.com/your-endpoint"

@@ -1,3 +1,0 @@
-// Create server side cache with key 'foo' and store 'some cache value' into it
-cache.set:foo
-   value:some cache value

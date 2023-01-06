@@ -1,3 +1,3 @@
-// save a file with 'foo bar' as the content of the file | Create a new file and name the file howdy.txt | Save a file at root with content foo bar | Create a new txt file
+// Save file /howdy.txt with content 'foo bar'
 io.file.save:/howdy.txt
    .:foo bar

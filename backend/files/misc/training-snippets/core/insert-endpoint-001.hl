@@ -1,4 +1,4 @@
-// create endpoint inserting name, email, and address into customers table in crm database
+// Endpoint inserting name, email, and address into customers table in crm database
 .arguments
    name:string
    email:string

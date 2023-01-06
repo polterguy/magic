@@ -1,2 +1,2 @@
-// Expression leading to [address] node in [.arguments] collection | Find [address] in [.arguments] | Get [address] argument
+// Expression leading address argument
 :x:@.arguments/*/address

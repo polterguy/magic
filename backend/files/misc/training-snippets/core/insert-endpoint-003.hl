@@ -1,4 +1,4 @@
-// endpoint inserting nurses record in hospital database with name, email and phone arguments
+// Endpoint inserting nurses record in hospital database with name, email and phone arguments
 .arguments
    name:string
    email:string

@@ -1,4 +1,4 @@
-// Add all nodes from [.src] into [.dest] but only if their values are 'qwerty' | Add all nodes with the value of qwerty from [.src] into [.dest] | Add everything having values of qwerty from [.src] into [.dest]
+// Add all nodes having value of 'qwerty' from [.src] into [.dest]
 
 // Our [.src] node, being the source for our [add] invocation
 .src

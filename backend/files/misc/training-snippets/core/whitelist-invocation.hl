@@ -1,4 +1,4 @@
-// Use Hyperlambda to create a lambda object that only allows me to execute [set-value] and [return] | Whitelist eval | Only execute subset of vocabulary | Only allow for set-value and return to be executed
+// Whitelist execute [.lambda] with [set-value] and [return]
 whitelist
 
    vocabulary
@@ -8,16 +8,3 @@ whitelist
    .lambda
 
       // Inside of this [.lambda] object, we can only invoke [set-value] and [return], and no other slots
-      .result
-      set-value:x:@.result
-         .:foo
-
-      /*
-       * Notice, the next line will throw an exception if you remove its "." character,
-       * because [add] is not whitelisted in our above [vocabulary] declaration!
-       */
-      .add:x:@.result
-         .
-            foo:bar
-      return
-         result:success

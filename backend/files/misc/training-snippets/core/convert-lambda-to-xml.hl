@@ -1,19 +1,4 @@
-// Convert [.lambda] to XML
-.lambda
-   CATALOG
-      PLANT
-         COMMON
-            #text:Bloodroot
-         BOTANICAL
-            #text:Sanguinaria canadensis
-         ZONE
-            #text:4
-         LIGHT
-            #text:Mostly Shady
-         PRICE
-            #text:$2.44
-         AVAILABILITY
-            #text:031599
+// Convert children of [.lambda] to XML
 
 // Converting all children nodes of the previous node's children to XML
-lambda2xml:x:-/*
+lambda2xml:x:@.lambda/*

@@ -1,4 +1,4 @@
-// Use Hyperlambda to transform the specified Markdown into HTML with the specified front matter | Convert from markdown to HTML
+// Transform [.markdown] Markdown to HTML with front matter
 .markdown:@"---
 foo: bar
 list:

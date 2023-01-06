@@ -1,6 +1,0 @@
-// Use Hyperlambda to change the name of the [.data] node's first child to 'howdy'
-.data
-   node1:hello
-   node2:world
-set-name:x:@.data/0
-   .:howdy

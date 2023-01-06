@@ -1,4 +1,4 @@
-// Create Hyperlambda endpoint that can be given any arguments that returns result equal to success to caller | Hyperlambda endpoint taking any arguments | Any arguments can be specified to endpoint
+// Endpoint accepting any arguments returning success
 .arguments:*
 return
    result:success

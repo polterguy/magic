@@ -1,4 +1,4 @@
-// Concatenate two strings | Concatenate 2 strings
+// Concatenate 2 strings
 strings.concat
    .:string1
    .:string2

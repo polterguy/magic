@@ -1,7 +1,0 @@
-// argument born must be 21 years or more
-math.subtract
-   date.now
-   time
-      years:21
-validators.date:x:@.arguments/*/born
-   max:x:@math.subtract

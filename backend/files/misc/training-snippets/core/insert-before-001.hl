@@ -1,4 +1,4 @@
-// insert foo node before email argument
+// Insert foo node before email argument
 insert-before:x:@.arguments/*/email
    .
       foo

@@ -1,2 +1,0 @@
-// only allow guest and partner
-auth.ticket.verify:guest,partner

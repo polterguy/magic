@@ -1,4 +1,4 @@
-// Use Hyperlambda to invoke OpenAI's API to and have it ask the question 'What is Hyperlambda?' using the OpenAI API key found in the server's configuration, using the model called 'text-davinci-003' | Invoke OpenAI with Hyperlambda | Read configuration settings | Create authorized HTTP POST invocation
+// Invoke OpenAI API ask 'What is Hyperlambda?' using 'text-davinci-003' model
 strings.concat
    .:"Bearer "
    config.get:"magic:openai:key"
@@ -9,6 +9,6 @@ http.post:"https://api.openai.com/v1/completions"
    payload
       model:text-davinci-003
       prompt:What is Hyperlambda?
-      temperature:int:0
-      max_tokens:int:100
+      temperature:int:0.5
+      max_tokens:int:1000
    convert:true

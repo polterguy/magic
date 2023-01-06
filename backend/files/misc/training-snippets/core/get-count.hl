@@ -1,0 +1,9 @@
+// Assign to [.result] number of children in [.data]
+.result
+.data
+   foo1:bar1
+   foo2:howdy
+   foo3:bar3
+   foo4:howdy
+set-value:x:@.result
+   get-count:x:@.data/*

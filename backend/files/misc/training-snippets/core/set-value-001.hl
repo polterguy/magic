@@ -1,4 +1,3 @@
-// Set the value of the [.destination] node to 'new_value'
-.destination
+// Set value of [.destination] to 'new_value'
 set-value:x:@.destination
    .:new_value

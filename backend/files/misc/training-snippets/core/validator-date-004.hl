@@ -1,7 +1,0 @@
-// argument birth_date must be 18 years or more
-math.subtract
-   date.now
-   time
-      years:18
-validators.date:x:@.arguments/*/birth_date
-   max:x:@math.subtract

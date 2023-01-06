@@ -1,7 +1,7 @@
-// Use Hyperlambda to check if the folder named '/foo/bar/' exists, if if it does, set the value of [.result] to EXISTS | Exexcute Hyperlambda if folder exists | Only if folder exists execute lambda object | Conditionally execute lambda object if some folder exists
+// Assign YES to [.result] if /foo/bar/ folder exists
 .result
 if
    io.folder.exists:/foo/bar/
    .lambda
       set-value:x:@.result
-         .:EXISTS
+         .:YES

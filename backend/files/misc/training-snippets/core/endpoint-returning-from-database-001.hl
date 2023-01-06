@@ -1,4 +1,4 @@
-// endpoint returning nurse_id, phone and adr1 from nurses table in hospital database
+// Endpoint returning nurse_id, phone and adr1 from nurses table in hospital database
 .arguments
 
 // Connecting to hospital database

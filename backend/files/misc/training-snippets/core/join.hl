@@ -1,4 +1,4 @@
-// Use Hyperlambda to create two threads that retrieves two URLs using HTTP GET invocations, for then to wait for both threads to finish
+// Invoke gaiasoul.com and servergardens.com in parallel wait for both
 join
    fork
       http.get:"https://gaiasoul.com"

@@ -1,8 +1,8 @@
-// Create a gateway endpoint that returns whatever microsoft.com returns forwarding whatever arguments it is given | Hyperlambda gateway endpoint forwarding arguments | Hyperlambda endpoint serving as gateway endpoint to another endpoint with arguments | API gateway in Hyperlambda taking arguments
+// Gateway POST endpoint passing in arguments to microsoft.com/chin/contacts returning result of POST invocation
 .arguments:*
 add:x:../*/http.post/*/payload
    get-nodes:x:@.arguments/*
-http.post:"https://microsoft.com"
+http.post:"https://microsoft.com/chin/contacts"
    convert:true
    payload
 return-nodes:x:@http.get/*/content/*

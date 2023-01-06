@@ -1,5 +1,0 @@
-// 15 seconds of server side caching with cache key my_other_key
-cache.try-get:my_other_key
-   expiration:15
-   .lambda
-      return:Some cached value here

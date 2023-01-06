@@ -1,4 +1,4 @@
-// Endpoint that returns name, email and age from contacts table, and company_name from accounts table in crm database joining contacts and accounts on account_id
+// Endpoint that returns name, email and age from contacts table, and company_name from accounts table in crm database and accounts table joining contacts and accounts on account_id
 .arguments
 
 // Opening up our database connection.

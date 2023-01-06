@@ -1,2 +1,2 @@
-// Get value of [arg1] argument | Get value of [arg1] argument found in [.arguments] | Get arg1 argument
+// Get value of [arg1] argument
 get-value:x:@.arguments/*/arg1

@@ -1,2 +1,0 @@
-// Use Hyperlambda to create a string containing a carriage return | Hyperlambda string with CR/LF | Hyperlambda strings
-.foo:"This is a string \r\n with carriage return characters"

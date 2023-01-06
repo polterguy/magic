@@ -1,2 +1,0 @@
-// Use Hyperlambda to create an expression that returns children nodes of [.data] starting from the 2nd node to the 5th node | Sub section expression
-.expression:x:@.data/*/[2,5]

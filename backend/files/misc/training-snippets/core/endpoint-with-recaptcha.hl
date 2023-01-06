@@ -1,5 +1,4 @@
-
-// Endpoint with recaptcha argument
+// Endpoint with reCAPTCHA validator
 .arguments
    recaptcha_response:string
 

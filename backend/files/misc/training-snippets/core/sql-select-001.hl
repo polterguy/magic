@@ -1,3 +1,3 @@
-// Select all records from the roles table in the magic database | Select roles from magic
+// Connect to magic database and select name and description from roles table
 data.connect:magic
-   data.select:select * from roles
+   data.select:select name, description from roles

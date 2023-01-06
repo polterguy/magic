@@ -1,2 +1,0 @@
-// Use Hyperlambda to connect to a MySQL database with the name of my_database in the generic connection string | Connect to MySQL database
-mysql.connect:[generic|my_database]

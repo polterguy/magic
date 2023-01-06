@@ -1,4 +1,4 @@
-// Log all children of [.data] having name of 'success' | Log all success children of [.data]
+// Log all children of [.data] having name of 'success'
 .data
    failure:This should not be logged
    success:This should end up in your log

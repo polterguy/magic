@@ -1,4 +1,3 @@
-// Regex validator | Regular expression matching alpha numeric characters | Regular expression validator matching only alpha numeric characters | Validate [.src] is alpha numeric and if not throw an exception
-.src:sdfoughdf
+// Regex validator matching [.src] to '^[a-z0-9]*$'
 validators.regex:x:@.src
    regex:^[a-z0-9]*$

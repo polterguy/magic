@@ -1,7 +1,7 @@
-// update first_name and last_name in customers table in clients database and set values to John and Doe
-data.connect:clients
+// Update name and company in synergy table in partners database set name to Johnny and company to Acme
+data.connect:partners
    data.update
-      table:customers
+      table:synergy
       values
-         first_name:John
-         last_name:Doe
+         name:Johnny
+         company:Acme

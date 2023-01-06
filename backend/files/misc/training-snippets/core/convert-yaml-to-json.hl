@@ -1,11 +1,4 @@
 // Convert [.src] YAML to JSON
-.src:@"foo: howdy
-bar: jo
-howdy: !!bool true
-children:
-- howdy
-- some
-"
 
 // Converting from YAML to JSON
 yaml2json:x:@.src

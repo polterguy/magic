@@ -1,4 +1,4 @@
-// create endpoint that loads my_xml.xml and returns the result to caller as XML content
+// Endpoint loading my_xml.xml and returns to caller as XML content
 .arguments
 io.file.load:/my_xml.xml
 response.headers.set

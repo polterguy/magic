@@ -1,2 +1,2 @@
-// Count server side cache items | Count server cache items
+// Count cache items
 cache.count

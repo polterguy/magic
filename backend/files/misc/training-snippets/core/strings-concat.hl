@@ -1,4 +1,4 @@
-// Use Hyperlambda to concatenate the strings 'foo', '-' and 'bar' | Concatenate three strings | Contenate strings
+// Concatenate the strings 'foo', '-' and 'bar'
 strings.concat
    .:foo
    .:-

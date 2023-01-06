@@ -1,12 +1,9 @@
-// Set the value of [.foo] to true if the authenticated user belongs to the role of admin or root | Conditionall execute Hyperlambda if user belongs to admin or root | If user belongs to admin or root set [.foo] to true
-.foo
+// Execute [.lambda] if user is admin or root
 
 // Conditional if statement
 if
-   // Checking if user belongs to either admin or root
+   // Checking if user belongs to either admin or root role
    auth.ticket.in-role:admin, root
    .lambda
 
-      // Setting the value of [.foo] to boolean true
-      set-value:x:@.foo
-         .:bool:true
+      // This will only be executed if user is admin or root

@@ -1,7 +1,0 @@
-// Use Hyperlambda to forward evaluate the value of our [foo] node | Forward evaluate node's value | Unwrap node
-.src:This will end up in our [foo] node
-unwrap:x:+/**/foo
-.data
-   howdy
-      world
-         foo:x:@.src
