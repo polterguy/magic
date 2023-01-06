@@ -1,4 +1,4 @@
-// Select title and description from films table in movies database, and join with directors and select name | Inner join films and directors from movies and select film name, film description and director's name
+// Select title and description from films table and name from directors table in movies database join directors and films on film_id
 data.connect:movies
 
    // Selecting title, description and director name from films and directors
@@ -12,4 +12,4 @@ data.connect:movies
             type:inner
             on
                and
-                  films.id:directors.film_id
+                  films.film_id:directors.film_id

@@ -1,3 +1,3 @@
-// Read all records from customers table | Select records from customers
+// Read all records from customers table | Select all records from customers
 data.read
    table:customers

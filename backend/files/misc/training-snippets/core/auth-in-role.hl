@@ -1,4 +1,4 @@
-// Use Hyperlambda to set the value of [.foo] to boolean true if the authenticated user belongs to the role of admin or root | Conditionall execute Hyperlambda if user belongs to role | If user belongs to role, execute [if] statement
+// Set the value of [.foo] to true if the authenticated user belongs to the role of admin or root | Conditionall execute Hyperlambda if user belongs to admin or root | If user belongs to admin or root set [.foo] to true
 .foo
 
 // Conditional if statement

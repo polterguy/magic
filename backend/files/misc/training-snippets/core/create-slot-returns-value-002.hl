@@ -1,4 +1,4 @@
-// Create a new slot named cvcv that takes 2 arguments and returns the sum of the the arguments given
+// Create slot cvcv with adding two arguments returning result
 
 // Creating our slot
 slots.create:cvcv

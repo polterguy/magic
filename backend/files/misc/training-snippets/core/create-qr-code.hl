@@ -1,3 +1,0 @@
-// Use Hyperlambda to create a QR code with a hyperlink leading to docs.aista.com | Create QR code | QR code in Hyperlambda
-image.generate-qr:"https://docs.aista.com"
-   size:8

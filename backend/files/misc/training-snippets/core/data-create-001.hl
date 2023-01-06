@@ -1,4 +1,4 @@
-// insert name and email into actor table
+// Insert name and email into actor table
 
 // Inserting into actor table
 data.create

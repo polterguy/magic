@@ -1,2 +1,2 @@
-// get the configuration value found in 'magic:smtp:host'
+// Get config value 'magic:smtp:host'
 config.get:"magic:smtp:host"

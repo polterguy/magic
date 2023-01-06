@@ -1,7 +1,7 @@
-// Store the email argument to cache for 15 seconds with the key of zxc
+// Store the email argument to cache for 15 seconds with the key of email_cache
 .arguments
    email:string
 
-cache.set:zxc
+cache.set:email_cache
    value:x:@.arguments/*/email
    expiration:15

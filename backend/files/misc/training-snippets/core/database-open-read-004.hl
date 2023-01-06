@@ -1,9 +1,0 @@
-// Open database called my_db and select name and email from my_tbl | Select name and email from my_tbl in my_db
-data.connect:my_db
-
-   // Read name and email from my_tbl
-   data.read
-      table:my_tbl
-      columns
-         name
-         email

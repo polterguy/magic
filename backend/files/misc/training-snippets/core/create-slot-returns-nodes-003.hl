@@ -1,4 +1,4 @@
-// Create slot with the name of qwe that returns the content from stackoverflow.com
+// Create slot qwe returning content from stackoverflow.com
 
 // Creating our slot
 slots.create:qwe

@@ -1,4 +1,4 @@
-// Give me an endpoint returning name and isbn from books table in library database
+// Endpoint returning name and isbn from books table in library database
 .arguments
 
 // Connecting to CRM database

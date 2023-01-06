@@ -1,3 +1,0 @@
-// Open SQL Server database called crm | Connect to SQL Server crm database
-data.connect:crm
-   database-type:mssql

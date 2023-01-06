@@ -2,5 +2,3 @@
 image.crop:/bar.png
    right:65
    top:75
-io.stream.save-file:/foo2.jpg
-   get-value:x:@image.crop

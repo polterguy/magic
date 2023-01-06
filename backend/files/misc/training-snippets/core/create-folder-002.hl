@@ -1,2 +1,2 @@
-// Create folder on disc inside the '/qwe' folder and name the new folder 'xyz'
+// Create '/qwe/xyz/' folder | Create folder '/qwe/xyz/'
 io.folder.create:/qwe/xyz/

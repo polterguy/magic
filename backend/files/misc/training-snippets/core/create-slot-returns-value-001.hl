@@ -1,4 +1,4 @@
-// Create a new slot named my_slotqwqw that returns the integer value of 42
+// Create slot my_slotqwqw returning 42
 
 // Creating our slot
 slots.create:my_slotqwqw

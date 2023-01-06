@@ -1,4 +1,4 @@
-// Open database called library and select month and year from books table | Select month and year from books in library
+// Connect to library database and select month and year from books table
 data.connect:library
 
    // Read month and year from books

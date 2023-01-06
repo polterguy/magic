@@ -1,3 +1,3 @@
-// Use Hyperlambda to load my entire configuration and transform it to a lambda object | Load config settings
+// Load config object | Load config settings | Load configuration
 config.load
 json2lambda:x:-

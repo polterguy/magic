@@ -1,4 +1,4 @@
-// Use Hyperlambda to convert the specified XML to a lambda object | Convert XML to Hyperlambda | Convert XML | Parse XML string | Parse XML
+// Convert [.xml] XML to lambda
 .xml:@"<CATALOG>
   <PLANT>
     <COMMON>Bloodroot</COMMON>

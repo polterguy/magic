@@ -1,4 +1,4 @@
-// Create endpoint returning the value of [.result]
+// Endpoint returning the value of expression leading to [.result]
 .arguments
 .result:this is the value
 unwrap:x:+/*

@@ -1,4 +1,4 @@
-// Create a new slot named xyz that returns all roles that exists in the magic database
+// Create slot named xyz returning roles from magic database
 
 // Creating our slot
 slots.create:xyz

@@ -1,4 +1,0 @@
-// Create endpoint returning success
-.arguments
-return
-   result:success

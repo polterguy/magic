@@ -1,4 +1,4 @@
-// endpoint returning number of cloudlets per cluster
+// Endpoint returning number of cloudlets per cluster
 .arguments
 data.connect:hub
    data.read
@@ -9,7 +9,4 @@ data.connect:hub
          cluster
       group
          cluster
-      order:cloudlets
-      direction:desc
-      limit:10
    return-nodes:x:@data.read/*

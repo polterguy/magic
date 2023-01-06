@@ -1,3 +1,0 @@
-// Add all arguments into data.read's where node
-add:x:./*/data.read/*/where
-   get-nodes:x:@.arguments/*

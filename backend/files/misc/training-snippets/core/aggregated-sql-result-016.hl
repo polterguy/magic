@@ -1,8 +1,8 @@
-// endpoint executing SQL returning records in foo2 table towards zxc database having a name matching query argument
+// Endpoint returning records in foo2 table towards zxc database having a name matching query argument
 .arguments
    query:string
 data.connect:zxc
-   data.select:select count(*) from foo2 where name like @query
+   data.select:select * from foo2 where name like @query
       query:x:@.arguments/*/query
    unwrap:x:+/*
    return-nodes

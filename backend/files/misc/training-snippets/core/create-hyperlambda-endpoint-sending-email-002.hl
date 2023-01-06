@@ -1,4 +1,4 @@
-// Create an endpoint that sends an email from Pete Johnsen with email pete@johnsen.com to the email and name specified as arguments with 'hello my friend' as subject and 'I just wanted to check in on you' as body
+// Endpoint sending email from John Doe john@doe.com to email and name arguments
 .arguments
    name:string
    email:string
@@ -15,8 +15,8 @@ mail.smtp.send
             email:x:@.arguments/*/email
       from
          .
-            name:Pete Johnsen
-            email:pete@johnsen.com
-      subject:hello my friend
+            name:John Doe
+            email:john@doe.com
+      subject:This is subject of email
       entity:text/plain
-         content:I just wanted to check in on you
+         content:This is some email body

@@ -1,2 +1,2 @@
-// Create folder on disc inside the '/foo' folder and name the new folder 'bar'
+// Create '/foo/' folder | Create folder '/foo/'
 io.folder.create:/foo/bar/

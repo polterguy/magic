@@ -1,4 +1,4 @@
-// Create an endpoint taking name, email and age as arguments | Create endpoint taking name, email and age, sanity checking all arguments | Create Hyperlambda endpoint with 3 arguments using validators
+// Endpoint with name, email and age arguments with validators
 .arguments
    name:string
    email:string

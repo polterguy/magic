@@ -1,2 +1,0 @@
-// Use Hyperlambda to delete the '/foo/bar/' folder | Delete folder using Hyperlambda | Use Hyperlambda to delete folder
-io.folder.delete:/foo/bar/

@@ -1,4 +1,4 @@
-// create a foo_bar slot that returns contacts from customers database
+// Create foo_bar slot returning contacts from customers database
 
 /*
  * Notice, you would typically want to add this code into a file inside of
@@ -6,7 +6,13 @@
  * server reboots for some reasons.
  */
 slots.create:foo_bar
+
+   // Connecting to database.
    data.connect:customers
+
+      // Reaing all records from contacts table.
       data.read
          table:contacts
+
+      // Returning records to caller.
       return-nodes:x:@data.read/*

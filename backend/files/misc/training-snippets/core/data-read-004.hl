@@ -1,4 +1,4 @@
-// Create endpoint returning name and email from customers table in crm database
+// Endpoint returning name and email from customers table in crm database
 .arguments
 
 // Connecting to crm database
