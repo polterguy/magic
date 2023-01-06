@@ -422,12 +422,30 @@
 
           <mat-checkbox
             color="primary"
+            [(ngModel)]="paging"
+            [disabled]="!(availableTables && availableTables.length > 0 && selectedTables.value.length > 0)">
+            Paging
+          </mat-checkbox>
+
+          <div class="px-2"></div>
+
+          <mat-checkbox
+            color="primary"
+            [(ngModel)]="sorting"
+            [disabled]="!(availableTables && availableTables.length > 0 && selectedTables.value.length > 0)">
+            Sorting
+          </mat-checkbox>
+
+          <div class="px-2"></div>
+
+          <mat-checkbox
+            color="primary"
             [(ngModel)]="logCreate"
             [disabled]="!(availableTables && availableTables.length > 0 && selectedTables.value.length > 0)">
             Log create
           </mat-checkbox>
 
-          <div class="px-xl-4 px-lg-3 px-sm-2 px-1"></div>
+          <div class="px-2"></div>
 
           <mat-checkbox
             color="primary"
@@ -436,7 +454,7 @@
             Log update
           </mat-checkbox>
 
-          <div class="px-xl-4 px-lg-3 px-sm-2 px-1"></div>
+          <div class="px-2"></div>
 
           <mat-checkbox
             color="primary"

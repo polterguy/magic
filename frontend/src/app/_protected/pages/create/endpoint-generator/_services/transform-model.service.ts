@@ -86,6 +86,8 @@ export class TransformModelService {
     }
     if (verb === 'get' && table.authGet) {
       result.auth = table.authGet;
+      result.paging = table.paging;
+      result.sorting = table.sorting;
     }
     if (verb === 'put' && table.authPut) {
       result.auth = table.authPut;

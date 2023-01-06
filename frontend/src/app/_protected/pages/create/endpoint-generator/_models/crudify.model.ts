@@ -146,4 +146,14 @@ export class Crudify {
    * the comma separated list of which roles messages are published to.
    */
   cqrsAuthorisationValues?: string;
+
+  /**
+   * If true adds paging to the table
+   */
+  paging: boolean;
+
+  /**
+   * If true adds sorting to the table
+   */
+  sorting: boolean;
 }
