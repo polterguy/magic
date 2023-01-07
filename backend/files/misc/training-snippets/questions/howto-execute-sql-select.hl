@@ -1,0 +1,33 @@
+// How to execute SQL select?
+
+/*
+ * To execute an SQL select statement, you would typically use [data.select].
+ * This slot allows you to specify any SQL, in addition to SQL parameters,
+ * for then to have the slot return the record set resulting from your SQL.
+ *
+ * The example below is using [data.select], with a @filter SQL parameter,
+ * avoiding SQL injection attacks, by allowing you to parametrise your SQL
+ * without unsafe constructs such as string concatenation, etc.
+ */
+
+// Connecting to our sakila database.
+data.connect:sakila
+
+   .filter:AD%
+
+   // Returning first_name and last_name from actor table limiting result to 5 records.
+   data.select:select * from film where description like @filter limit 5
+      filter:x:@.filter
+
+/*
+ * The above would become; "select * from film where description like 'AD%' limit 5"
+ * Resulting in selecting the first 5 records from your film table having a name
+ * starting out with the characters 'AD' for then to continue with any (wildcard)
+ * characters. In SQL the % character is your 'wildcard character' implying 'whatever'
+ * character.
+ *
+ * The [data.select] slot accepts any SQL, including where conditions, join parts,
+ * group parts, aggregate functions such as count, order parts, etc. Whatever SQL
+ * you can legally execute towards your database of choice, can be supplied to the
+ * [data.select] slot.
+ */
