@@ -1,0 +1,44 @@
+// How to use reCAPTCHA?
+
+/*
+ * reCAPTCHA is a CAPTCHA service delivered by Google, allowing you to
+ * secure your HTTP API endpoints from automated bots invoking your
+ * endpoints. To use reCAPTCHA in your own Hyperlambda endpoint is
+ * easy, and can be done as follows.
+ *
+ * 1. First you must create a reCAPTCHA version 3 account
+ * 2. Then you need to save your site key and secret into your config
+ *
+ * When you have done the above, you can add reCAPTCHA support to your
+ * endpoint as follows.
+ */
+
+.arguments
+   recaptcha_response:string
+
+// Sanity checking invocation making sure [recaptcha_response] argument was supplied.
+validators.mandatory:x:@.arguments/*/recaptcha_response
+
+// Retrieving reCAPTCHA site key.
+.key
+set-value:x:-
+   config.get:"magic:auth:recaptcha:key"
+
+// Retrieving reCAPTCHA secret.
+.secret
+set-value:x:-
+   config.get:"magic:auth:recaptcha:secret"
+
+// Validating request originated from a human and not a bot.
+validators.recaptcha:x:@.arguments/*/recaptcha_response
+   min:decimal:0.5
+   site-key:x:@.key
+   secret:x:@.secret
+
+/*
+ * The above will internally invoke Google's reCAPTCHA 3 service, validating the
+ * [recaptcha_response] originating from a human being, and not an automated bot.
+ *
+ * Notice, Hyperlambda only supports version 3 of reCAPTCHA, and the above Hyperlambda
+ * requires that you have saved your site key and secret into your config settings.
+ */

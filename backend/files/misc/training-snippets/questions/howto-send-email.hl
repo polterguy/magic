@@ -31,3 +31,8 @@ mail.smtp.send
       subject:This argument contains your subject line
       entity:text/plain
          content:This argument contains the body of your email
+
+/*
+ * This method can be used to integrate towards most service providers allowing
+ * you to use SMTP to access their services, such as GMail and SendGrid, etc.
+ */
