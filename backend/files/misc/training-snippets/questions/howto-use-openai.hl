@@ -1,0 +1,97 @@
+// How to use OpenAI or ChatGPT?
+
+/*
+ * Implementing ChatGPT or OpenAI from client side code is dangerous.
+ * The reason is because invocations towards OpenAI's API requires an
+ * API key. An OpenAI API key allows malicious adversaries to use your
+ * OpenAI account to perform extremely expensive operations, and OpenAI
+ * themselves are warning you as you create such API keys that they
+ * might delete keys that "have been found to be leaked to the public"
+ * for these reasons.
+ *
+ * This implies that you have to have an API gateway you expose to your
+ * client, that does not allow clients to invoke OpenAI's API
+ * directly. This API gateway can securely store your API key,
+ * such that only it knows your actual key, and then forwards whatever
+ * prompt your users are providing to OpenAI's API.
+ *
+ * This technique allows you to for instance expose your OpenAI
+ * implementation to only authenticated users, add reCAPTCHA on
+ * invocations, etc.
+ *
+ * Below is a Hyperlambda example of how you could use Hyperlambda
+ * and Magic as such an API gateway, reading the API key from
+ * your config settings, adding reCAPTCHA on your own endpoint,
+ * to avoid bots invoking millions of HTTP requests towards your
+ * OpenAI API account, resulting in you losing thousands of dollars
+ * due to erronously having implemented your own OpenAI and ChatGPT
+ * integration.
+ */
+
+// HTTP endpoint taking prompt from client, adding reCAPTCHA validation, for then to invoke OpenAI's API.
+.arguments
+   query:string
+   recaptcha_response:string
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/query
+validators.mandatory:x:@.arguments/*/recaptcha_response
+
+// Retrieving reCAPTCHA site key.
+.key
+set-value:x:-
+   config.get:"magic:auth:recaptcha:key"
+
+// Retrieving reCAPTCHA secret.
+.secret
+set-value:x:-
+   config.get:"magic:auth:recaptcha:secret"
+
+// Validating reCAPTCHA invocation confirms request originated from a human.
+validators.recaptcha:x:@.arguments/*/recaptcha_response
+   min:decimal:0.3
+   site-key:x:@.key
+   secret:x:@.secret
+
+// Retrieving OpenAI API key from config settings.
+.token
+set-value:x:@.token
+   strings.concat
+      .:"Bearer "
+      config.get:"magic:openai:key"
+
+// Creating an HTTP POST request towards OpenAI API with API key.
+http.post:"https://api.openai.com/v1/completions"
+   headers
+      Authorization:x:@.token
+      Content-Type:application/json
+   payload
+      prompt:x:@.arguments/*/query
+      model:text-davinci-003
+      temperature:int:0
+      max_tokens:int:2000
+   convert:true
+
+// Returning results from above invocation to caller
+add:x:../*/return
+   get-nodes:x:@http.post/*/content/*/choices/*
+return
+
+/*
+ * The above is a safe and secure method to implement your own OpenAI and ChatGPT integration,
+ * without having to expose your API key to client side code.
+ *
+ * Notice, even though OpenAI's API is an HTTP based API, easily implemented into
+ * client side code, doing this will expose your API key, resulting in security breaches,
+ * where you might end up having OpenAI bills in the hundreds of thousands of dollars,
+ * because of a malicious adversary using your key in a bot script, to continuously
+ * train models based upon a database dump of the entire WikiPedia in an infinite loop
+ * for instance.
+ *
+ * You can also add authentication and authorisation to your endpoint, using
+ * [auth.ticket.verify] to only allow for authorised users to consume your API
+ * integration.
+ *
+ * To use OpenAI's API you MUST have an HTTP gateway endpoint if you intend to
+ * expose your integration towards clients.
+ */

@@ -1,4 +1,4 @@
-// How to pass arguments to an endpoint?
+// How to pass arguments to endpoint?
 
 /*
  * How arguments are passed to an endpoint depends upon what HTTP verb

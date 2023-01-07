@@ -1,15 +1,18 @@
-// How to create an HTTP endpoint?
+// How to create HTTP endpoint?
 
 /*
- * You can use Hyper IDE and create a file inside a module. A module
- * again is simply a folder inside your /modules/ folder, implying your
+ * You can use Hyper IDE to create a file inside a module. A module
+ * is simply a folder inside your /modules/ folder, implying your
  * endpoint file's complete path could be for instance
- *  '/modules/my_module/address.get.hl'.
+ * '/modules/my_module/address.get.hl'.
  *
  * The above path would translate to the URL '/magic/modules/my_module/address' 
- * and result in an HTTP GET endpoint. This is so Magic is using filenames
+ * and result in an HTTP GET endpoint. This is because Magic is using filenames
  * and paths semantically, implying the filename declares the URL of the file,
- * and what HTTP verb to use to invoke the endpoint.
+ * and what HTTP verb to use to invoke the endpoint. To create an HTTP POST
+ * endpoint, you could create a file with the following path;
+ *
+ * /modules/some_module/clients.get.hl
  *
  * Typically, an HTTP endpoint would also take arguments. This is declared
  * using an [.arguments] lambda node, implying the simplest possible
@@ -19,3 +22,21 @@
 
 // Example endpoint content
 .arguments
+
+/*
+ * There are 5 basic HTTP verbs you can use when creating HTTP endpoints
+ * with Hyperlambda. Examples of all 5 can be found below.
+ *
+ * - get - /modules/my_module/foo.get.hl
+ * - post - /modules/my_module/foo.post.hl
+ * - put - /modules/my_module/foo.put.hl
+ * - patch - /modules/my_module/foo.patch.hl
+ * - delete - /modules/my_module/foo.delete.hl
+ *
+ * POST, PUT and PATCH endpoints can be given payloads, such as for
+ * instance JSON payloads, which will automatically transform
+ * into lambda objects inside your endpoint's Hyperlambda code.
+ * GET and DELETE endpoints can only take arguments as HTTP QUERY
+ * parameters, which also will be automatically transformed to lambda
+ * arguments.
+ */

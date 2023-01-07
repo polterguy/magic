@@ -1,4 +1,4 @@
-// How to send an email?
+// How to send email?
 
 /*
  * To send an email you would use the [mail.smtp.send] slot.
