@@ -1,0 +1,55 @@
+// How to add nodes?
+
+/*
+ * Since Hyperlambda doesn't have 'variables' in the traditional sense,
+ * and don't even contain 'arrays' as a construct the same way other
+ * programming languages does, but rather exclusively relies upon graph objects,
+ * with a name/value/children structure - This begs the question of how you can
+ * dynamically change your tree, moving nodes around, and/or add nodes
+ * to other nodes, to parametrise invocations to slots.
+ *
+ * In the following code we illustrate how this process works by having
+ * and HTTP endpoint that accepts a [name] argument and a [phone] argument,
+ * which then adds these arguments into an invocation to [http.post], for
+ * then to add the returned nodes from our [http.post] invocation to
+ * our [return] invocation, resulting in that whatever our POST invocation
+ * returns, is returned to the client as JSON.
+ */
+
+// This your endpoint's arguments collection, and declares which arguments your endpoint can legally accept.
+.arguments
+   name:string
+   phone:string
+
+// Adding input arguments to [http.post] invocation further down.
+add:x:./*/http.post/*/payload
+   get-nodes:x:@.arguments/*/name
+   get-nodes:x:@.arguments/*/phone
+
+// Invoking [http.post] now parametrised with [name] and [phone].
+http.post:"https://your_domain.com/your-api-url"
+   convert:true
+   payload
+
+      // When our [http.post] is invoked it will contain [name] and [phone] from [.arguments] here.
+
+// Adding the result of above [http.post] invocation to our [return] lambda object.
+add:x:./*/return
+   get-nodes:x:@http.post/*/content/*
+
+// Returning result of POST invocation to caller as JSON.
+return
+
+/*
+ * You can also use [add] with statically declared nodes, such as the
+ * following Hyperlambda illustrates.
+ */
+
+// Further down we will use [add] to add [foo1] and [foo2] to this lambda object.
+.destination
+
+// Adding [foo1] and [foo2] to the above [.destination]
+add:x:@.destination
+   .
+      foo1:bar1
+      foo2:bar2
