@@ -1,0 +1,40 @@
+// How to pass arguments to an endpoint?
+
+/*
+ * How arguments are passed to an endpoint depends upon what HTTP verb
+ * your endpoint is. For a GET or DELETE endpoint, arguments are passed
+ * in as HTTP QUERY parameters, for instance '/foo/bar?howdy=world'.
+ *
+ * For POST, PUT and PATCH endpoints arguments are typically passed in
+ * as a JSON payload. However, from your Hyperlambda code's point of view,
+ * the code to handle arguments inside your endpoint is the exact same,
+ * except GET and DELETE endpoints don't allow for passing in graph objects,
+ * only simple key/value type of arguments.
+ *
+ * Below is an endpoint that expects email and name arguments, where both
+ * arguments are mandatory, and validated such that [email] must be
+ * a valid email address and [name] must be at least 5 characters in length.
+ *
+ * If either [name] or [email] is not given, or [email] is not a valid
+ * email address, or [name] is not at least 5 characters long, the
+ * Hyperlambda below will throw an exception, returning to the client which
+ * argument was in violation of what rule.
+ */
+
+ // Example endpoint content
+.arguments
+   email:string
+   name:string
+
+// Making sure [name] argument was specified.
+validators.mandatory:x:@.arguments/*/name
+
+// Making sure [email] argument was specified.
+validators.mandatory:x:@.arguments/*/email
+
+// Making sure [email] argument is a valid email address.
+validators.email:x:@.arguments/*/email
+
+// Making sure [name] argument is at least 5 characters in length.
+validators.string:x:@.arguments/*/name
+   min:5

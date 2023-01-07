@@ -1,0 +1,21 @@
+// How to create an HTTP endpoint?
+
+/*
+ * You can use Hyper IDE and create a file inside a module. A module
+ * again is simply a folder inside your /modules/ folder, implying your
+ * endpoint file's complete path could be for instance
+ *  '/modules/my_module/address.get.hl'.
+ *
+ * The above path would translate to the URL '/magic/modules/my_module/address' 
+ * and result in an HTTP GET endpoint. This is so Magic is using filenames
+ * and paths semantically, implying the filename declares the URL of the file,
+ * and what HTTP verb to use to invoke the endpoint.
+ *
+ * Typically, an HTTP endpoint would also take arguments. This is declared
+ * using an [.arguments] lambda node, implying the simplest possible
+ * endpoint you could create, would typically resemble the following,
+ * implying an endpoint taking zero arguments.
+ */
+
+ // Example endpoint content
+.arguments

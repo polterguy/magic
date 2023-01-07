@@ -1,0 +1,32 @@
+// How to create function?
+
+/*
+ * Technically Hyperlambda does not have functions, but rather 'slots'.
+ * A slot is similar to a function, but much more dynamic, and can be
+ * changed as your program executes. A slot is created using
+ * [slots.create], which is a static slot taking a name and
+ * a lambda object, where the lambda object becomes the 'body' of
+ * your slot.
+ *
+ * A slot can contain any Hyperlambda, allowing you to create slots
+ * that performs some task, and later invoke the slot using [signal].
+ *
+ * Notice, dynamically created slots are not stored, implying if your
+ * Magic server is restarted for some reason, the slot will disappear,
+ * unless you have somehow taken steps to assure the slot is re-created
+ * as your server restarts.
+ */
+
+// Create a slot named 'my_app.my_slot' that returns the 'magic:databases:default' config setting.
+slots.create:my_app.my_slot
+   config.get:"magic:databases:default"
+   return:x:@config.get
+
+// Invoking the above slot.
+signal:my_app.my_slot
+
+/*
+ * Notice, to avoid having your slots crash with other slots, it's a
+ * good strategy to 'namespace' your slots, such as illustrated above,
+ * where the name space of our slot is 'my_app'.
+ */
