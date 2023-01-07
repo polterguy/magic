@@ -89,7 +89,7 @@ return
  * for instance.
  *
  * You can also add authentication and authorisation to your endpoint, using
- * [auth.ticket.verify] to only allow for authorised users to consume your API
+ * [auth.ticket.verify] to only allow for authorised users to use your API
  * integration.
  *
  * To use OpenAI's API you MUST have an HTTP gateway endpoint if you intend to
