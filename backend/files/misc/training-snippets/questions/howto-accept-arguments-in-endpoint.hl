@@ -15,7 +15,7 @@
  * is executed.
  */
 
- // Example endpoint content
+// Example endpoint content
 .arguments
    my_arg1:string
    my_arg2:decimal

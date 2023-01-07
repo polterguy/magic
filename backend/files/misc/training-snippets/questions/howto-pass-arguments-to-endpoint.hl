@@ -21,7 +21,7 @@
  * argument was in violation of what rule.
  */
 
- // Example endpoint content
+// Example endpoint content
 .arguments
    email:string
    name:string

@@ -17,5 +17,5 @@
  * implying an endpoint taking zero arguments.
  */
 
- // Example endpoint content
+// Example endpoint content
 .arguments
