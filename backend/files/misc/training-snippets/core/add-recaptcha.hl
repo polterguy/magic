@@ -1,12 +1,29 @@
 
 // Recaptcha validator | Captcha validator
 
+/*
+ * Notice, to use this snippet you need a reCAPTCHA account, in addition
+ * to having stored your reCAPTCHA site key and secret in your config,
+ * in addition to that the endpoint needs to declare a [recaptcha_response]
+ * argument, and your client side code needs to somehow submit a reCAPTCHA
+ * value during invocations.
+ */
+
 // [recaptcha_response] is a mandatory field.
 validators.mandatory:x:@.arguments/*/recaptcha_response
 
-// Retrieving secret and invoking slot responsible for verifying reCAPTCHA value.
-config.get:"magic:auth:recaptcha:secret"
+// Retrieving reCAPTCHA site key.
+.key
+set-value:x:-
+   config.get:"magic:auth:recaptcha:key"
+
+// Retrieving reCAPTCHA secret.
+.secret
+set-value:x:-
+   config.get:"magic:auth:recaptcha:secret"
+
+// Validating reCAPTCHA invocation confirms request originated from a human.
 validators.recaptcha:x:@.arguments/*/recaptcha_response
    min:decimal:0.3
-   site-key:x:@config.get/@config.get
-   secret:x:@config.get
+   site-key:x:@.key
+   secret:x:@.secret

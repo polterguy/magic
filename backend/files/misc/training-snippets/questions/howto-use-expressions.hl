@@ -1,0 +1,45 @@
+// How to use expressions?
+
+/*
+ * An expression or a lambda expression allows you to reference nodes in your
+ * graph object, and/or lambda object, and/or Hyperlambda code. To understand
+ * expressions implies understanding that Hyperlambda is fundamentally nothing
+ * more than a graph object, or a tree structure. Expressions allows you to
+ * reference individual nodes, and/or sub sections of this graph object, using
+ * a syntax that is logically similar to XPath.
+ *
+ * Below is an expression with 3 iterators referencing the [.data] node's
+ * child node having a name of 'name'.
+ */
+
+// An example data segment.
+.data
+   email:john@doe.com
+   name:John Doe
+   phone:555-415-1234
+
+// Changing the value of the above [name] node using an expression.
+set-value:x:@.data/*/name
+   .:Howdy John!
+
+/*
+ * Expressions are built from iterators, and iterators are left associative,
+ * implying the iterator to the left is evaluated first, and then the result
+ * of the iterator is being given as input to the next iterator in the chain
+ * of iterators. There are many different classes of iterators, such as the @
+ * iterator, name filter iterator, n'th child iterator, etc.
+ *
+ * The above expression in our [set-value] slot translates to;
+ *
+ * Return all nodes having a name of 'name' (/name) in all children (/*) of [.data] (@.data)
+ *
+ * Each iterator is separated by a slash character (/) and the way to think about
+ * expressions is that they're basically chained enumerators. An expression can lead
+ * to nothing (void expression), one node, or several nodes. If you add another
+ * [name] child to the above [.data] node, the above expression would resolve to
+ * both [name] nodes, allowing [set-value] to change the value of multiple nodes
+ * simultaneously using only one invocation.
+ *
+ * Almost all slots in Hyperlambda can optionally be given expressions instead of
+ * static values, including slots such as [io.file.load], [http.get], etc, etc, etc.
+ */

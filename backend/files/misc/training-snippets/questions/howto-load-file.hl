@@ -1,0 +1,21 @@
+// How to load file?
+
+/*
+ * Hyperlambda has strong support for loading files, and/or manage your
+ * file system, at least for text files - Not as much for binary files.
+ * The primary slot you would use to load a file from disc is the
+ * [io.file.load] slot. This lot takes a filename as its value, and
+ * loads the file, assuming it is text, and returns the content of
+ * the file.
+ *
+ * Below is example usage of how to load the file called /README.md
+ * using [io.file.load].
+ */
+
+// Loads /README.md from your file system.
+io.file.load:/README.md
+
+/*
+ * After executing the above Hyperlambda, the content of your file can
+ * be found as the value of the [io.file.load] node or slot invocation.
+ */
