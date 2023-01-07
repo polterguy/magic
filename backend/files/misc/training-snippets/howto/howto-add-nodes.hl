@@ -48,7 +48,7 @@ return
 // Further down we will use [add] to add [foo1] and [foo2] to this lambda object.
 .destination
 
-// Adding [foo1] and [foo2] to the above [.destination]
+// Adding [foo1] and [foo2] to the above [.destination].
 add:x:@.destination
    .
       foo1:bar1
