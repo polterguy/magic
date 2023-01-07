@@ -1,0 +1,21 @@
+// How to accept arguments in endpoint?
+
+/*
+ * Arguments endpoints can accept is declared using an [.arguments]
+ * lambda object such as illustrated below. The name of the argument
+ * is the left hand side of the node, and the type declaration of
+ * the argument is the right hand side of the node. Below is an
+ * arguments declaration accepting two arguments called 'my_arg1'
+ * and 'my_arg2' where my_arg1 is of type string, and my_arg2 is
+ * of type decimal.
+ *
+ * If you invoke the endpoint with something that is not a string
+ * or a decimal, and not possible to convert, the endpoint resolver
+ * in Magic will throw an exception before any code in your endpoint
+ * is executed.
+ */
+
+ // Example endpoint content
+.arguments
+   my_arg1:string
+   my_arg2:decimal

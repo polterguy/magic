@@ -1,0 +1,33 @@
+// How to send an email?
+
+/*
+ * To send an email you would use the [mail.smtp.send] slot.
+ * This slot automatically connects to your SMTP server configuration
+ * from your configuration.
+ *
+ * You can optionally connect to a different SMTP server
+ * by providing a [server] argument to the slot, with [host], [port],
+ * [secure], [username] and [password] arguments, but by default the
+ * slot will use your SMTP settings from your configuration.
+ *
+ * Below is an example sending an email to Frank Johnsen having an
+ * email address of frank_johnsen@gmail.com from Peter Bush having
+ * an email address of peter_bush@outlook.com with a subject line
+ * and a single MIME entity of type text/plain containing some example
+ * email body. The [entity] argument to the slot can be any MIME entity,
+ * allowing you to create multipart/mixed content, and/or adding
+ * file attachments.
+ */
+mail.smtp.send
+   message
+      to
+         .
+            name:Frank Johnsen
+            email:frank_johnsen@gmail.com
+      from
+         .
+            name:Peter Bush
+            email:peter_bush@outlook.com
+      subject:This argument contains your subject line
+      entity:text/plain
+         content:This argument contains the body of your email
