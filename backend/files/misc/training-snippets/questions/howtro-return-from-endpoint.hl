@@ -1,0 +1,126 @@
+// How to return JSON from endpoint?
+
+/*
+ * Hyperlambda's purpose is to solve all the most common problems automagically.
+ * This makes is super expressive, allowing you to add a lot of functionality
+ * with very little code sometimes. The constructs Hyperlambda is based upon
+ * is therefor often referred to as 'declarative programming', because
+ * you care less about the 'how' and more about the 'what'.
+ *
+ * For your HTTP endpoints this implies Hyperlambda will automatically convert
+ * your lambda objects to JSON by default, unless you explicitly tell it to
+ * not do so. Hence, returning JSON from a Hyperlambda endpoint, implies simply
+ * declaring your lambda object such as illustrated below, and the runtime
+ * will by default convert your lambda object to JSON and return it as such
+ * to the client.
+ */
+
+// Returning some static JSON to caller.
+return
+   message:Insert was success
+   id:int:555
+
+/*
+ * The above lambda object will be returned as the following JSON
+
+{"message": "Insert was success", id:555}
+
+ * You can also dynamically resolve nodes before returning your JSON, such as
+ * the following illustrates, which is using [unwrap] to forward evaluate the
+ * [id] node inside the [return] invocation.
+ */
+
+// The value of [.id] will become the value of the [id] node below.
+.id:int:555
+
+// Returning some dynamically parametrised JSON to caller.
+unwrap:x:+/*
+return
+   message:Insert was success
+   id:x:@.id
+
+/*
+ * In the above example, the [id] return value will be forward evaluated because
+ * of the [unwrap] invocation, and the JSON returned to the client will be
+ * identical to the JSON returned to the client in our first example, implying
+ * the following JSON will be returned to the client.
+
+{"message": "Insert was success", id:555}
+
+ * [unwrap] allows you to 'parametrise' your lambda objects, and is typically
+ * only used when you want to pass lambda objects into lambda invocations,
+ * such as slot invocations, or return lambda objects from lambda object
+ * invocations, such as HTTP endpoints.
+ *
+ * To return more complex objects, such as arrays, you can use something
+ * resembling the following.
+ */
+
+// Returning an array of items containing name and email.
+return
+   .
+      name:John
+      email:john@gmail.com
+   .
+      name:Peter
+      email:peter@outlook.com
+   .
+      name:Jane
+      email:jane@hotmail.com
+
+/*
+ * The above will result in the following JSON returned from your endpoint.
+[
+  {"name": "John", "email": "john@gmail.com"},
+  {"name": "Peter", "email": "peter@outlook.com"},
+  {"name": "Jane", "email": "jane@hotmail.com"}
+]
+ * Basically, any JSON object can be described as a lambda object, and Hyperlambda
+ * will automatically convert whatever lambda object you return from your
+ * endpoint to JSON, and return it to the client.
+ *
+ * To dynamically return lambda objects from your endpoint, you can use
+ * something such as the following code, that returns all actor records
+ * from your sakila database as an array.
+ */
+
+// Connecting to sakila database
+data.connect:sakila
+
+   // Reading all actor records
+   data.read
+      table:actor
+      limit:-1
+
+   // Adding all nodes returned from above invocation to our [return] invocation.
+   add:x:./*/return
+      get-nodes:x:@data.read/*
+
+   // Returning whatever was dynamically added to [return] above to the client as JSON.
+   return
+
+/*
+ * The reason why the above works, is because the [data.read] slot
+ * will return data such as illustrated below, which happens to create a JSON
+ * array by the lambda to JSON converter.
+ */
+data.read
+   .
+      first_name:John
+      last_name:Hansen
+   .
+      first_name:Jane
+      last_name:Doe
+
+/*
+ * So when we are adding all records resulting from the invocation to [data.read]
+ * to [return] above, this ends up resembling the following as [return] returns its lambda
+ * object from your endpoint.
+ */
+return
+   .
+      first_name:John
+      last_name:Hansen
+   .
+      first_name:Jane
+      last_name:Doe
