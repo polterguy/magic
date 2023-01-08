@@ -1,0 +1,26 @@
+// How to or?
+
+/*
+ * When branching your code using either [if], [else-if] or [while],
+ * you often might need for one or more conditions to be true before executing
+ * some piece of lambda. This is accomplished by using the [or] slot,
+ * that evaluates to true as a whole if any child condition
+ * evaluates to true.
+ *
+ * The code below requires any one of of [.cond_1] or [.cond_2] to be true
+ * to execute the [.lambda] object.
+ */
+
+// The 'variables' we're checking further down.
+.cond_1:bool:false
+.cond_2:bool:true
+
+// Verifying that either of the above variables are true.
+if
+   or
+      get-value:x:@.cond_1
+      get-value:x:@.cond_2
+   .lambda
+
+      // Creating a log entry.
+      log.info:Both [.cond_1] and [.cond_2] was true
