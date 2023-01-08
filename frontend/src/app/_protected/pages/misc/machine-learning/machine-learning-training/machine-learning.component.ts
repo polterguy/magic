@@ -23,6 +23,7 @@ export class MachineLearningTrainingComponent implements OnInit {
   dataSource: any[] = [];
   count: number = 0;
   index: number = 0;
+  pageSize: number = 10;
   displayedColumns: string[] = [
     'type',
     'prompt',
@@ -35,6 +36,7 @@ export class MachineLearningTrainingComponent implements OnInit {
     private machineLearningTrainingService: MachineLearningTrainingService) { }
 
   ngOnInit() {
+    this.isLoading = true;
     this.getItems();
   }
 
@@ -43,7 +45,8 @@ export class MachineLearningTrainingComponent implements OnInit {
   }
 
   page(event: PageEvent) {
-    console.log(event);
+    this.index = event.pageIndex;
+    this.getItems(false);
   }
 
   filterList(event: any) {
@@ -54,18 +57,38 @@ export class MachineLearningTrainingComponent implements OnInit {
    * Private helper methods.
    */
 
-  getItems() {
-    this.machineLearningTrainingService.list().subscribe({
+  getItems(count: boolean = true) {
+    const filter: any = {
+      limit: this.pageSize,
+    };
+    if (this.index !== 0) {
+      filter.offset = this.index * this.pageSize;
+    }
+
+    this.machineLearningTrainingService.list(filter).subscribe({
       next: (result: any[]) => {
+
         this.dataSource = result || [];
+        if (count) {
+
+          this.machineLearningTrainingService.count().subscribe({
+            next: (result: any) => {
+              this.count = result.count;
+              this.isLoading = false;
+            },
+            error: (error: any) => {
+              this.generalService.showFeedback(error, 'errorMessage', 'Ok');
+              this.isLoading = false;
+            }
+          });
+        }
       },
-      error: (error: any) => this.generalService.showFeedback(error, 'errorMessage', 'Ok')
+      error: (error: any) => {
+
+        this.generalService.showFeedback(error, 'errorMessage', 'Ok');
+        this.isLoading = false;
+      }
     });
-    this.machineLearningTrainingService.count().subscribe({
-      next: (result: any) => {
-        this.count = result.count;
-      },
-      error: (error: any) => this.generalService.showFeedback(error, 'errorMessage', 'Ok')
-    });
+
   }
 }
