@@ -1,0 +1,70 @@
+// How to branch?
+
+/*
+ * Branching your code implies conditionally executing a lambda object
+ * if some condition is true. This is typically implemented using if/else-if/else
+ * logic in a traditional programming language, and Hyperlambda contains
+ * similar constructs allowing you to branch your code conditionally.
+ *
+ * The code below executes the [.lambda] object, but only if the value
+ * of [.condition] is equal to 'foo'.
+ */
+
+// Our 'variable' which we're checking further down.
+.condition:foo
+
+// Branching our code using [if].
+if
+   eq:x:@.condition
+      .:foo
+   .lambda
+
+      // Creating a log entry.
+      log.info:"[.condition] had the value of 'foo'"
+
+/*
+ * Hyperlambda also contains an [else-if] slot, in addition to [else].
+ * This allows you to create multiple if statements, testing one after the
+ * other, and have a default lambda block executed if none of your statements
+ * are true. In the code below we're executing our [if] if value of
+ * [.condition] is 'foo', while executing our [else-if] if [.condition]
+ * is 'bar', defaulting to executing our [else] if neither of our above
+ * comparisons yields true.
+ */
+
+// Our 'variable' which we're checking further down.
+.condition:bar
+
+// Branching our code using [if] and [else-if].
+if
+   eq:x:@.condition
+      .:foo
+   .lambda
+
+      // Creating a log entry.
+      log.info:"[.condition] had the value of 'foo'"
+
+else-if
+   eq:x:@.condition
+      .:bar
+   .lambda
+
+      // Creating a log entry.
+      log.info:"[.condition] had the value of 'bar'"
+
+else
+
+   log.info:"[.condition] was neither 'foo' nor 'bar'"
+
+/*
+ * Notice, both [if] and [else-if] requires you to declare your conditionally
+ * executed lambda object as a [.lambda] lambda object. This is not the case
+ * for our [else]. The reasons for this is because [else] does not require a
+ * condition to test for, so adding the lambda object to execute directly as
+ * a child node collection to our [else] makes it less verbose and more easily
+ * understood.
+ *
+ * [eq] above implies 'equal' and Hyperlambda has a whole list of different
+ * comparison slots, such as [neq] implying 'not-equals', [mt] implying 'more than',
+ * etc.
+ */

@@ -1,0 +1,26 @@
+// How to and?
+
+/*
+ * When branching your code using either [if], [else-if] or [while],
+ * you often might need for several conditions to be true before executing
+ * some piece of lambda. This is accomplished by using the [and] slot,
+ * that only evaluates to true as a whole if all children conditions
+ * evaluates to true.
+ *
+ * The code below requires both [.cond_1] to be true and [.cond_2] to be
+ * true to execute the [.lambda] object.
+ */
+
+// The 'variables' we're checking further down.
+.cond_1:bool:true
+.cond_2:bool:true
+
+// Verifying that both of the above variables are true
+if
+   and
+      get-value:x:@.cond_1
+      get-value:x:@.cond_2
+   .lambda
+
+      // Creating a log entry.
+      log.info:Both [.cond_1] and [.cond_2] was true
