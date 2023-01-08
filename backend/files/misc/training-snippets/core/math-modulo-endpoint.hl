@@ -9,7 +9,7 @@ math.modulo
    get-value:x:@.arguments/*/int1
    get-value:x:@.arguments/*/int2
 
-// Forward evaluating the [modulo] node returned below
+// Forward evaluating the [modulo] node returned below.
 unwrap:x:+/*
 
 // Returning the modulo to caller.
