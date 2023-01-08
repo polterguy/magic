@@ -5,6 +5,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
+import { GeneralService } from 'src/app/_general/services/general.service';
 import { MachineLearningTrainingService } from 'src/app/_general/services/machine-learning-training.service';
 
 /**
@@ -29,7 +30,9 @@ export class MachineLearningTrainingComponent implements OnInit {
     'action',
   ];
 
-  constructor(private machineLearningTrainingService: MachineLearningTrainingService) { }
+  constructor(
+    private generalService: GeneralService,
+    private machineLearningTrainingService: MachineLearningTrainingService) { }
 
   ngOnInit() {
     this.getItems();
@@ -56,6 +59,13 @@ export class MachineLearningTrainingComponent implements OnInit {
       next: (result: any[]) => {
         this.dataSource = result || [];
       },
+      error: (error: any) => this.generalService.showFeedback(error, 'errorMessage', 'Ok')
+    });
+    this.machineLearningTrainingService.count().subscribe({
+      next: (result: any) => {
+        this.count = result.count;
+      },
+      error: (error: any) => this.generalService.showFeedback(error, 'errorMessage', 'Ok')
     });
   }
 }

@@ -23,4 +23,8 @@ export class MachineLearningTrainingService {
   list() {
     return this.httpService.get<any>('/magic/system/magic/training_snippets');
   }
+
+  count() {
+    return this.httpService.get<any>('/magic/system/magic/training_snippets-count');
+  }
 }
