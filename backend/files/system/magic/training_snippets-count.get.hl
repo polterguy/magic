@@ -1,7 +1,7 @@
 
 // Endpoint counting items in your training_snippets table in your magic database
 .arguments
-   training_snippets.type.like:string
+   training_snippets.type.eq:string
    training_snippets.pushed.eq:long
    training_snippets.uri.like:string
    training_snippets.uri.eq:string
@@ -29,7 +29,7 @@ data.connect:[generic|magic]
          count(*)
             as:count
       where
-         and
+         or
       limit:long:1
 
    // Returning result of above read invocation to caller.

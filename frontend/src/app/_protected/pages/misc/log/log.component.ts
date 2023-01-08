@@ -56,8 +56,8 @@ export class LogComponent implements OnInit {
     })
   }
 
-  filterList(filter: string) {
-    this.filter = filter;
+  filterList(event: {searchKey: string}) {
+    this.filter = event.searchKey;
     this.pageOffset = [];
     this.getItems();
     this.getCount();
