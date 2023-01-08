@@ -141,12 +141,6 @@ export class AutoGeneratorComponent extends GeneratorBase implements OnInit, OnD
       return;
     }
 
-    // Making sure user doesn't generate endpoints for his magic database.
-    if (this.selectedDatabase === 'magic') {
-      this.generalService.showFeedback('You cannot generate endpoints for your Magic database', 'errorMessage', 'Ok', 5000);
-      return;
-    }
-
     // Showing loader to user.
     this.generalService.showLoading();
 
