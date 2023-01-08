@@ -1,0 +1,17 @@
+// Execute SQL towards sakila database with filtering
+
+.arguments
+   filter:string
+
+// Ensures that the [filter] argument is specified, or throws an exception.
+validators.mandatory:x:@.arguments/*/filter
+
+// Opening up a database connection
+data.connect:sakila
+
+   // Evaluating [xxx.select] slot.
+   data.select:@"select * from actor where name like @filter"
+      filter:x:@.arguments/*/filter
+
+   // Returning result of SQL select statement to client.
+   return-nodes:x:@data.select/*

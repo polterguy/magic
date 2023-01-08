@@ -1,0 +1,19 @@
+// Executing [.lambda] of two conditions are true
+
+// In our [if] below we are comparing both of these two nodes.
+.s1:bool:true
+.s2:bool:true
+
+// If both of our above [.s1] and [.s2] nodes have a value of true, this node will get a value of OK.
+.res
+
+// Our comparison
+if
+   and
+      get-value:x:@.s1
+      get-value:x:@.s2
+   .lambda
+
+      // Both [.s1] and [.s2] has a value of boolean true.
+      set-value:x:@.res
+         .:OK

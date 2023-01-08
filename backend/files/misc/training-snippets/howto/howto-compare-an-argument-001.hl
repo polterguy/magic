@@ -1,0 +1,17 @@
+// How to compare argument for equality?
+
+/*
+ * To compare an argument towards some value you would typically use the
+ * [eq] slot as a child to an [if] slot, which would result in executing
+ * the [if] slot's [.lambda] object if the comparison yields true.
+ */
+
+// Checking if name argument is equal to 'Thomas Hansen'.
+if
+   eq
+      get-value:x:@.arguments/*/name
+      .:Thomas Hansen
+   .lambda
+
+      // Name argument had a value of 'Thomas Hansen'.
+      log.info:Argument was Thomas Hansen
