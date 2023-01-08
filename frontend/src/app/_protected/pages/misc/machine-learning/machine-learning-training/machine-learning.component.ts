@@ -6,18 +6,18 @@
 import { Component, OnInit } from '@angular/core';
 
 /**
- * Helper component to administrate training data for OpenAI integration.
+ * Helper component to administrate training data for OpenAI integration
+ * and Machine Learning integration.
  */
 @Component({
   selector: 'app-machine-learning',
   templateUrl: './machine-learning.component.html',
   styleUrls: ['./machine-learning.component.scss']
 })
-export class OpenAITrainingComponent implements OnInit {
+export class MachineLearningTrainingComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit(): void {
+  ngOnInit() {
   }
-
 }

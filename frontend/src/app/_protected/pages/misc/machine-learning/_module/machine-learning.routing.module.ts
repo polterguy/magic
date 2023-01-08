@@ -5,12 +5,12 @@
 
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { OpenAITrainingComponent } from '../machine-learning-training/machine-learning.component';
+import { MachineLearningTrainingComponent } from '../machine-learning-training/machine-learning.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: OpenAITrainingComponent
+    component: MachineLearningTrainingComponent
   }
 ];
 
@@ -18,4 +18,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class OpenAITrainingRoutingModule { }
+export class MachineLearningTrainingRoutingModule { }
