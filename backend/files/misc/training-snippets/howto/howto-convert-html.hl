@@ -1,0 +1,21 @@
+// How to convert HTML?
+
+/*
+ * To convert an HTML string to a lambda object has several advantages, allowing you
+ * to semantically traverse your HTML, using Hyperlambda and expressions to reference
+ * nodes in your HTML semantically. The code below converts the [.arg] node's value
+ * to a lambda object.
+ */
+
+// HTML we're converting further down.
+.arg:@"<html>
+  <head>
+    <title>Page title</title>
+  </head>
+  <body>
+    <p>Some HTML paragraph</p>
+  </body>
+</html>"
+
+// Transforming above HTML to a lambda object
+html2lambda:x:@.arg
