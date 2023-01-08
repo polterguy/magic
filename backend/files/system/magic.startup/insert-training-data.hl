@@ -4,7 +4,7 @@
  * 
  * Notice, to make sure we don't do this until after the migration script has
  * been executed, we do it on a separate thread, waiting 10 seconds before
- * start our insert job.
+ * starting our insert job.
  */
 fork
 
