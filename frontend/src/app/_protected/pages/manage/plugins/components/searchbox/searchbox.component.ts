@@ -5,6 +5,7 @@
 
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 
 /**
  * Search textbox for filtering stuff in general.
@@ -20,34 +21,26 @@ export class SearchboxComponent implements OnInit {
 
   filterControl: FormControl;
 
-  public installedOnly: boolean = false;
-  public showSystem: boolean = false;
+  installedOnly: boolean = false;
+  showSystem: boolean = false;
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.filterControl = new FormControl('');
     this.filterControl.valueChanges
-      .subscribe((query: string) => {
-        this.applyFilter(query);
+      .pipe(debounceTime(400), distinctUntilChanged())
+      .subscribe(() => {
+        this.filterList.emit({
+          searchKey: this.filterControl.value
+        });
       });
   }
 
-  /**
-   * Invoking endpoint to search in unique fields.
-   * @params event
-   */
-   public applyFilter(keyword: string) {
-    this.filter();
-  }
-
-  /**
-   * Removes the search keyword.
-   * @callback getExportList To refetch the unfiltered list.
-   */
-  public removeSearchTerm() {
+  removeSearchTerm() {
     this.filterControl.setValue('');
   }
 
-  public filter() {
+  filter() {
+
     this.filterList.emit({
       installedOnly: this.installedOnly,
       showSystem: this.showSystem,

@@ -21,6 +21,7 @@ export class MachineLearningTrainingComponent implements OnInit {
 
   isLoading: boolean = false;
   dataSource: any[] = [];
+  filter: string = '';
   count: number = 0;
   index: number = 0;
   pageSize: number = 10;
@@ -49,8 +50,9 @@ export class MachineLearningTrainingComponent implements OnInit {
     this.getItems(false);
   }
 
-  filterList(event: any) {
-    console.log(event);
+  filterList(event: {searchKey: string}) {
+    this.filter = event.searchKey;
+    this.getItems(true);
   }
 
   /*
@@ -64,6 +66,10 @@ export class MachineLearningTrainingComponent implements OnInit {
     if (this.index !== 0) {
       filter.offset = this.index * this.pageSize;
     }
+    if (this.filter?.length > 0) {
+      filter['training_snippets.prompt.like'] = this.filter;
+      filter['training_snippets.type.eq'] = this.filter;
+    }
 
     this.machineLearningTrainingService.list(filter).subscribe({
       next: (result: any[]) => {
@@ -71,7 +77,13 @@ export class MachineLearningTrainingComponent implements OnInit {
         this.dataSource = result || [];
         if (count) {
 
-          this.machineLearningTrainingService.count().subscribe({
+          const countFilter: any = { };
+          if (this.filter?.length > 0) {
+            countFilter['training_snippets.prompt.like'] = this.filter;
+            countFilter['training_snippets.type.eq'] = this.filter;
+          }
+      
+          this.machineLearningTrainingService.count(countFilter).subscribe({
             next: (result: any) => {
               this.count = result.count;
               this.isLoading = false;
@@ -89,6 +101,5 @@ export class MachineLearningTrainingComponent implements OnInit {
         this.isLoading = false;
       }
     });
-
   }
 }

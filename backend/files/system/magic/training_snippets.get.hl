@@ -54,7 +54,7 @@ data.connect:[generic|magic]
          training_snippets.prompt
          training_snippets.completion
       where
-         and
+         or
 
    // Returning result of above read invocation to caller.
    return-nodes:x:@data.read/*

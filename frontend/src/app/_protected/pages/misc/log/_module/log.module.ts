@@ -9,14 +9,12 @@ import { LogComponent } from '../log.component';
 import { LogRoutingModule } from './log.routing.module';
 import { ComponentsModule } from 'src/app/_general/components/components.module';
 import { MaterialModule } from 'src/app/material.module';
-import { LogSearchboxComponent } from '../components/log-searchbox/log-searchbox.component';
 import { SharedModule } from 'src/app/shared.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
     LogComponent,
-    LogSearchboxComponent
   ],
   imports: [
     CommonModule,
