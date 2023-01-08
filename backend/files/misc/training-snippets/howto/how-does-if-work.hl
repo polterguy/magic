@@ -1,0 +1,63 @@
+// How does if work?
+
+/*
+ * [if], [else-if] and [while] are logically similar to each other, and all 3 slots
+ * requires two arguments; Its condition and some [.lambda] object to execute if its
+ * condition is true. The condition can really be anything, including invocations to
+ * dynamic slots returning boolean true or false, in addition to invocations to [or]
+ * and [and] slots creating complex comparison hierarchies, allowing you to create
+ * any type of branching you can create in a traditional programming language.
+ *
+ * The code below is the simplest form of [if] we could create.
+ */
+
+// This will always evaluate to true.
+if
+   .:bool:true
+   .lambda
+
+      // This code will ALWAYS execute.
+      log.info:Yup, the universe is still sane!
+
+/*
+ * The condition is always the first child node of [if], and the code
+ * to execute if the condition is true must always be the second child
+ * node, and it must always have the name of [.lambda].
+ *
+ * To create a slightly more complex [if], that conditionally checks the
+ * value of [.src] and only evaluates if the expression leading to [.src]
+ * yields true, we could do something such as the following.
+ */
+
+// Variable to check
+.var:bool:true
+
+// Conditionally executing [.lambda] if [.var] is true.
+if
+   get-value:x:@.var
+   .lambda
+
+      // Creating log entry.
+      log.info:Yup, [.var] is true!
+
+/*
+ * Since [and], [or] and [not] slots always returns a boolean value to us,
+ * this allows us to combine [and], [or] and [not] slot invocations to complex
+ * hierarchies, testing for multiple conditions, with boolean algebraic logic,
+ * similarly to how you would test for such in traditional programming languages.
+ *
+ * The code below assumes you've got a dynamic slot named 'foo_1' and a dynamic
+ * slot named 'foo_2', and executes its [.lambda] object if both of these slots
+ * returns boolean true.
+ */
+
+// Conditionally executes [.lambda] if both 'foo_1' and 'foo_2' returns true.
+if
+   and
+      signal:foo_1
+      signal:foo_2
+   .lambda
+
+      // Creating log entry.
+      log.info:Both foo_1 and foo_2 returned true
+
