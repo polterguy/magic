@@ -15,7 +15,7 @@
 .cond_1:bool:true
 .cond_2:bool:true
 
-// Verifying that both of the above variables are true
+// Verifying that both of the above variables are true.
 if
    and
       get-value:x:@.cond_1
