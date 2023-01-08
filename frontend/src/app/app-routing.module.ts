@@ -61,9 +61,6 @@ const routes: Routes = [
       },
       {
         path: 'hyper-ide',
-        data: {
-          type: 'backend'
-        },
         loadChildren: () => import('./_protected/pages/create/hyper-ide/module/ide.module').then(m => m.IdeModule)
       },
       {
@@ -93,6 +90,10 @@ const routes: Routes = [
       {
         path: 'help-center',
         loadChildren: () => import('./_protected/pages/misc/help-center/_module/help-center.module').then(m => m.HelpCenterModule)
+      },
+      {
+        path: 'machine-learning',
+        loadChildren: () => import('./_protected/pages/misc/machine-learning/_module/machine-learning.module').then(m => m.OpenAITrainingModule)
       },
     ]
   },
