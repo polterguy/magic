@@ -70,7 +70,7 @@ export class ManualGeneratorComponent extends GeneratorBase implements OnInit, O
   /**
    * Whether or not endpoint returns a list of items or a single item.
    */
-  isScalar = false;
+  generate_training_data = false;
 
   /**
    * Whether or not existing endpoints should be overwritten or not.
@@ -209,7 +209,7 @@ export class ManualGeneratorComponent extends GeneratorBase implements OnInit, O
       sql: this.sql.sql,
       arguments: this.getArguments(),
       overwrite: this.overwrite,
-      isList: !this.isScalar
+      generate_training_data: this.generate_training_data,
     }
 
     this.crudifyService.generateSqlEndpoint(data).subscribe({

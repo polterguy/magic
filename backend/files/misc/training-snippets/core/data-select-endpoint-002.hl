@@ -1,0 +1,14 @@
+
+// Create endpoint executing SQL 'select * from clients' in epj database
+
+// This endpoint cannot be given arguments.
+.arguments
+
+// Opening up a database connection
+data.connect:epj
+
+   // Executing our 'select * from clients' SQL
+   data.select:select * from clients
+
+   // Returning result back to caller
+   return-nodes:x:@data.select/*
