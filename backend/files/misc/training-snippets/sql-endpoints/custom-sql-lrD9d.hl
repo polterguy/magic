@@ -1,0 +1,19 @@
+
+// Executes SQL and returns result of invocation to caller with authentication and authorisation for translator roles
+.arguments
+.description:Executes SQL and returns result of invocation to caller with authentication and authorisation for translator roles
+
+// Making sure user is authorized to invoke endpoint.
+auth.ticket.verify:translator
+
+// Connecting to database.
+data.connect:chinook
+
+   // Executing [data.select] slot with our SQL.
+   data.select:@"select BillingCountry, round(sum(Total),2) as Revenue
+  from Invoice
+  group by BillingCountry
+  order by Revenue Desc"
+
+   // Returning a result of above invocation to caller.
+   return-nodes:x:@data.select/*

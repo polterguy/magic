@@ -1,0 +1,17 @@
+
+// Executes SQL and returns result of invocation to caller
+.arguments
+.description:Executes SQL and returns result of invocation to caller
+
+// Connecting to database.
+data.connect:chinook
+
+   // Executing [data.select] slot with our SQL.
+   data.select:@"select mt.Name, count(mt.MediaTypeId) as Amount 
+  from MediaType mt
+    inner join Track t on mt.MediaTypeId = t.MediaTypeId
+  group by mt.MediaTypeId
+  order by Amount desc"
+
+   // Returning a result of above invocation to caller.
+   return-nodes:x:@data.select/*

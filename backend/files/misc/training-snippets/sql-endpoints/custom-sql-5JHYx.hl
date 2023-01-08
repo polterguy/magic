@@ -1,0 +1,17 @@
+
+// Executes SQL and returns result of invocation to caller
+.arguments
+.description:Executes SQL and returns result of invocation to caller
+
+// Connecting to database.
+data.connect:chinook
+
+   // Executing [data.select] slot with our SQL.
+   data.select:@"select ar.Name, count(*) as count
+  from Album al, Artist ar where al.ArtistId = ar.ArtistId
+  group by al.ArtistId
+  order by count desc
+  limit 25"
+
+   // Returning a result of above invocation to caller.
+   return-nodes:x:@data.select/*
