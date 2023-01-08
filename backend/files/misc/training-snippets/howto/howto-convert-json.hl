@@ -1,0 +1,13 @@
+// How to convert JSON?
+
+/*
+ * To convert a string containing JSON to a lambda object is accomplished
+ * using the [json2lambda] slot. This slot accepts any JSON, and creates
+ * a lambda object from it.
+ */
+
+// JSON text to convert.
+.json:"{\"userId\": 1, \"id\": 1}"
+
+// Converting above JSON to a lambda object.
+json2lambda:x:@.json

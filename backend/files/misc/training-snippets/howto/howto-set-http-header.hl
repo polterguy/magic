@@ -1,0 +1,17 @@
+// How to set HTTP header?
+
+/*
+ * If you have an endpoint and you want to return a customer HTTP header
+ * such as Content-Type or Cache-Control, this can be accomplished using
+ * the [response.headers.set] slot. This slot takes any number of children
+ * arguments, each being a name/value argument returning in adding the 'name'
+ * HTTP header with the 'value' as its value.
+ *
+ * Below is an example of how to add Cache-Control to your endpoint using
+ * the [response.headers.set] slot resulting in HTTP cache for your endpoint
+ * of 300 seconds, implying 5 minutes.
+ */
+
+// Adds Cache-Control HTTP header to the response.
+response.headers.set
+   Cache-Control:max-age=300

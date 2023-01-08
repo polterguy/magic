@@ -1,0 +1,21 @@
+// How to convert XML?
+
+/*
+ * To convert a string containing XML to a lambda object is accomplished
+ * using the [xml2lambda] slot. This slot accepts any XML, and creates
+ * a lambda object from it.
+ */
+
+// XML text to convert.
+.xml:@"
+<notes>
+  <note>
+    <to>Tove</to>
+    <from>Jani</from>
+    <heading>Reminder</heading>
+    <body>Don't forget me this weekend!</body>
+  </note>
+</notes>"
+
+// Converting above XML text to a lambda object.
+xml2lambda:x:@.xml
