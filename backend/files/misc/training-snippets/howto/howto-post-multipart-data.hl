@@ -1,0 +1,24 @@
+// How to POST multipart/form-data?
+
+/*
+ * The [http.post] slot can optionally transfer data as multipart/form-data by
+ * creating a MIME message semantically as a lambda object, that is automatically
+ * converted into MIME by Hyperlambda. the code below invokes my_website.com with
+ * an HTTP POST invocation, passing in a 'foo' argument with the value of 'Foo bar',
+ * and the /README.md file as a file attachment. The payload will be automatically
+ * converted into multipart/form-data by Hyperlambda before posted towards my_website.com.
+ */
+
+// Creating HTTP POST invocation towards my_website.com passing in 'foo' as 'Foo bar' argument and /README.md as file attachment using multipart/form-data
+http.post:"https://my_website.com"
+   headers
+      Content-Type:multipart/form-data
+   payload
+      entity:text/plain
+         headers
+            Content-Disposition:"form-data; name=\"foo\""
+         content:Foo bar
+      entity:text/plain
+         headers
+            Content-Disposition:"form-data; filename=\"README.md\""
+         filename:/README.md
