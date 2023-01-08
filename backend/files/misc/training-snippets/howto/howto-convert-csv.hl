@@ -1,0 +1,27 @@
+// How to convert CSV?
+
+/*
+ * To convert a string containing CSV data to a lambda object is accomplished
+ * using the [csv2lambda] slot. This slot accepts any CSV data, and creates
+ * a lambda object from it.
+ */
+
+// CSV text to convert.
+.csv:@"name,email
+Thomas,th@aista.com
+John,john@gmail.com"
+
+// Converting above CSV string to a lambda object.
+csv2lambda:x:@.csv
+
+/*
+ * Sometimes you have your CSV data in a file somewhere, at which point
+ * you need to load it first, and then afterwards convert it. This can
+ * be accomplished using the following code.
+ */
+
+// Loading CSV file.
+io.file.load:/foo.csv
+
+// Converting CSV now found as value of [io.file.load] node.
+csv2lambda:x:@io.file.load
