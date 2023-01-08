@@ -1,5 +1,5 @@
 
-// Executes SQL and returns result of invocation to caller with argument query, genre_id with authentication and authorisation for admin roles
+// Endpoint executing SQL returning result of SQL to caller with argument query, genre_id with authentication and authorisation for admin roles
 .arguments
    query:string
    genre_id:long

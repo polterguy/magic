@@ -1,5 +1,5 @@
 
-// Executes SQL and returns result of invocation to caller with argument actor, title with authentication and authorisation for admin,guest,root,translator roles
+// Endpoint executing SQL returning result of SQL to caller with argument actor, title with authentication and authorisation for admin,guest,root,translator roles
 .arguments
    actor:string
    title:string

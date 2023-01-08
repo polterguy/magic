@@ -1,5 +1,5 @@
 
-// Executes SQL and returns result of invocation to caller with argument last_name, first_name with authentication and authorisation for guest roles
+// Endpoint executing SQL returning result of SQL to caller with argument last_name, first_name with authentication and authorisation for guest roles
 .arguments
    last_name:string
    first_name:string
