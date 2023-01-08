@@ -223,7 +223,7 @@ export class HeaderComponent implements OnInit {
             exact: false,
           },
           {
-            name: 'Machine Learning',
+            name: 'Machine Learning Training',
             url: '/machine-learning',
             exact: false,
           },
