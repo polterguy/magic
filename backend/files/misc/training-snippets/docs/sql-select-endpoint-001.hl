@@ -1,0 +1,27 @@
+// Execute select SQL towards sakila database with authentication and authorisation for root and admin users, allowing for filtering records
+
+.arguments
+   filter:string
+
+// Making sure only root and admin users can access endpoint.
+auth.ticket.verify:root, admin
+
+// Ensures that the [filter] argument is specified, or throws an exception.
+validators.mandatory:x:@.arguments/*/filter
+
+// Opening up a database connection
+data.connect:sakila
+
+   // Evaluating [xxx.select] slot.
+   data.select:@"
+select a.first_name, f.title, f.description
+   from actor a
+   inner join film_actor fa on a.actor_id = fa.actor_id
+   inner join film f on f.film_id = fa.film_id
+where a.first_name like @filter
+   or f.title like @filter
+   or f.description like @filter"
+      filter:x:@.arguments/*/filter
+
+   // Returning result of SQL select statement to client.
+   return-nodes:x:@data.select/*

@@ -1,0 +1,17 @@
+
+// Send email to Ann email address ann.hardington@gmail.com subject 'Hello Ann' body 'Just checking in'
+mail.smtp.send
+   message
+
+      // Recipient of email.
+      to
+         .
+            name:Ann
+            email:ann.hardington@gmail.com
+
+      // Subject of email.
+      subject:Hello Ann
+
+      // Body of email.
+      entity:text/plain
+         content:Just checking in

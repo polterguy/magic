@@ -1,0 +1,9 @@
+// Not equal comparison
+
+// Source node to [eq] invocation.
+.src:int:5
+
+// [neq] becomes true if its first argument is NOT equal to its second argument.
+neq
+   get-value:x:@.src
+   .:int:5

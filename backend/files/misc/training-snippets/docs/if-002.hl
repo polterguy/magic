@@ -1,0 +1,34 @@
+// if/else-if/else lambda block conditionally setting value of [.dest] according to the value of [.src]
+
+// Argument we're checking in if/else-if/else block.
+.src:int:3
+
+// Node conditionally changed according to value of [.src].
+.dest
+
+// Conditionally executing the correct lambda object.
+if
+   eq
+      get-value:x:@.src
+      .:int:1
+   .lambda
+
+      // [.src] has a value of 1
+      set-value:x:@.dest
+         .:yup!
+
+else-if
+   eq
+      get-value:x:@.src
+      .:int:2
+   .lambda
+
+      // [.src] has a value of 2
+      set-value:x:@.dest
+         .:almost!
+
+else
+
+   // [.src] does not have a value of neither 1 nor 2
+   set-value:x:@.dest
+      .:nope
