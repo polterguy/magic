@@ -117,10 +117,19 @@ try
    config.load
    json2lambda:x:@config.load
 
-   set-value:x:@json2lambda/*/magic/*/databases/*/default
+   // Creating our default database configuration object.
+   remove-nodes:x:@json2lambda/*/magic/*/databases/*
+   unwrap:x:+/*/*
+   add:x:@json2lambda/*/magic/*/databases
+      .
+         default:x:@.arguments/*/databaseType
+   set-name:x:+/+/*/*
       get-value:x:@.arguments/*/databaseType
-   set-value:x:@json2lambda/*/magic/*/databases/*/{@.arguments/*/databaseType}/*/generic
-      get-value:x:@.arguments/*/connectionString
+   unwrap:x:+/*/*/*
+   add:x:@json2lambda/*/magic/*/databases
+      .
+         .
+            generic:x:@.arguments/*/connectionString
    set-value:x:@json2lambda/*/magic/*/auth/*/secret
       crypto.random
          min:100

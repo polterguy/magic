@@ -96,6 +96,7 @@
                 <input
                   matInput
                   autocomplete="name"
+                  placeholder="Full name"
                   formControlName="name"
                   name="name">
                 <mat-error>
@@ -120,6 +121,7 @@
                   matInput
                   autocomplete="email"
                   formControlName="email"
+                  placeholder="Your email address"
                   name="email"
                   [pattern]="CommonRegEx.email">
                 <mat-error>{{CommonErrorMessages.email}}</mat-error>
@@ -142,6 +144,7 @@
                   matInput
                   autocomplete="new-password"
                   formControlName="password"
+                  placeholder="Choose a password"
                   [type]="showPassword ? 'text' : 'password'"
                   name="password"
                   [pattern]="CommonRegEx.password">
@@ -174,6 +177,7 @@
                   matInput
                   autocomplete="new-password"
                   formControlName="passwordRepeat"
+                  placeholder="Repeat password"
                   [type]="showPassword ? 'text' : 'password'"
                   [errorStateMatcher]="matcher"
                   name="password">
