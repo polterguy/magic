@@ -249,6 +249,9 @@ try
          // Then we need to make sure we run any database migration scripts.
          io.file.execute:/system/magic.startup/008-migrate-magic-database.hl
 
+         // Inserting default training data into database.
+         io.file.execute:/system/magic.startup/009-insert-training-data.hl
+
    else
 
       /*
@@ -263,6 +266,9 @@ try
 
       // Then we need to make sure we run any database migration scripts.
       io.file.execute:/system/magic.startup/008-migrate-magic-database.hl
+
+      // Inserting default training data into database.
+      io.file.execute:/system/magic.startup/009-insert-training-data.hl
 
    /*
     * Starting task scheduler now that we have created our database.
