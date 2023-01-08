@@ -137,6 +137,7 @@ try
    set-value:x:@json2lambda/*/magic/*/culture/*/defaultTimeZone
       get-value:x:@.arguments/*/defaultTimeZone
 
+   // Saving changed configuration now.
    lambda2json:x:@json2lambda/*
    config.save:x:-
 
