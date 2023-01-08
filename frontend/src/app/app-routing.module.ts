@@ -93,7 +93,7 @@ const routes: Routes = [
       },
       {
         path: 'machine-learning',
-        loadChildren: () => import('./_protected/pages/misc/machine-learning/_module/machine-learning.module').then(m => m.OpenAITrainingModule)
+        loadChildren: () => import('./_protected/pages/misc/machine-learning/_module/machine-learning.module').then(m => m.MachineLearningTrainingModule)
       },
     ]
   },
