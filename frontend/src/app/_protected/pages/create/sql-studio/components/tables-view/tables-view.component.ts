@@ -122,44 +122,41 @@ export class TablesViewComponent implements OnInit, OnDestroy {
    * Invoked when user wants to drop a column or a table
    */
   public dropItem(item: any, type: string, foreign_keys?: any, tableName?: string) {
-    if (this.selectedDatabase !== 'magic') {
-      let fkName = null;
-      if (type === 'column' && foreign_keys && (foreign_keys?.filter((x: any) => x.column === item.name) || []).length > 0) {
-        if (this.selectedDbType === 'sqlite') {
-          this.generalService.showFeedback('SQLite doesn\'t allow for deleting columns with foreign keys', 'errorMessage', 'Ok', 5000);
-          return;
-        } else {
-          fkName = foreign_keys?.filter((x: any) => x.column === item.name)[0].name;
+
+    let fkName = null;
+    if (type === 'column' && foreign_keys && (foreign_keys?.filter((x: any) => x.column === item.name) || []).length > 0) {
+      if (this.selectedDbType === 'sqlite') {
+        this.generalService.showFeedback('SQLite doesn\'t allow for deleting columns with foreign keys', 'errorMessage', 'Ok', 5000);
+        return;
+      } else {
+        fkName = foreign_keys?.filter((x: any) => x.column === item.name)[0].name;
+      }
+    }
+    this.dialog.open(ConfirmationDialogComponent, {
+      width: '500px',
+      data: {
+        title: `Delete ${type} ${item?.name}`,
+        description_extra: `This action is permanent and you will lose all data in your ${type}.<br/><br/>Please type in the <span class="fw-bold">${type} name</span> below.`,
+        action_btn: `Delete ${type}`,
+        action_btn_color: 'warn',
+        bold_description: true,
+        extra: {
+          details: item,
+          action: 'confirmInput',
+          fieldToBeTypedTitle: `${type} name`,
+          fieldToBeTypedValue: item.name,
+          icon: 'table',
         }
       }
-      this.dialog.open(ConfirmationDialogComponent, {
-        width: '500px',
-        data: {
-          title: `Delete ${type} ${item?.name}`,
-          description_extra: `This action is permanent and you will lose all data in your ${type}.<br/><br/>Please type in the <span class="fw-bold">${type} name</span> below.`,
-          action_btn: `Delete ${type}`,
-          action_btn_color: 'warn',
-          bold_description: true,
-          extra: {
-            details: item,
-            action: 'confirmInput',
-            fieldToBeTypedTitle: `${type} name`,
-            fieldToBeTypedValue: item.name,
-            icon: 'table',
-          }
+    }).afterClosed().subscribe((result: string) => {
+      if (result === 'confirm') {
+        if (type === 'table') {
+          this.deleteTable(item);
+        } else if (type === 'column') {
+          this.deleteColumn(item, tableName, fkName);
         }
-      }).afterClosed().subscribe((result: string) => {
-        if (result === 'confirm') {
-          if (type === 'table') {
-            this.deleteTable(item);
-          } else if (type === 'column') {
-            this.deleteColumn(item, tableName, fkName);
-          }
-        }
-      });
-    } else {
-      this.generalService.showFeedback('This item cannot be dropped', 'errorMessage');
-    }
+      }
+    });
   }
 
   /**
