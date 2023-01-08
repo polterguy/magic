@@ -18,7 +18,7 @@ import { OpenAIConfigurationDialogComponent } from '../openai-configuration-dial
   templateUrl: './openai-prompt.component.html',
   styleUrls: ['./openai-prompt.component.scss']
 })
-export class OpenaiPromptComponent implements OnInit {
+export class OpenAIPromptComponent implements OnInit {
 
   @Input() fileType: string;
   @Output() callback? = new EventEmitter<string>();

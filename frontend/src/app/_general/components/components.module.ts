@@ -29,7 +29,7 @@ import { ConfigureThemeDialog } from '../../_protected/pages/dashboard/component
 import { OpenAIAnswerDialogComponent } from './openai/openai-answer-dialog/openai-answer-dialog.component';
 import { OpenAIConfigurationDialogComponent } from './openai/openai-configuration-dialog/openai-configuration-dialog.component';
 import { OpenAITrainingDialogComponent } from './openai/openai-training-dialog/openai-training-dialog.component';
-import { OpenaiPromptComponent } from './openai/openai-prompt/openai-prompt.component';
+import { OpenAIPromptComponent } from './openai/openai-prompt/openai-prompt.component';
 
 @NgModule({
   declarations: [
@@ -54,7 +54,7 @@ import { OpenaiPromptComponent } from './openai/openai-prompt/openai-prompt.comp
     OpenAIAnswerDialogComponent,
     OpenAIConfigurationDialogComponent,
     OpenAITrainingDialogComponent,
-    OpenaiPromptComponent,
+    OpenAIPromptComponent,
   ],
   imports: [
     CommonModule,
@@ -83,7 +83,7 @@ import { OpenaiPromptComponent } from './openai/openai-prompt/openai-prompt.comp
     OpenAIAnswerDialogComponent,
     OpenAIConfigurationDialogComponent,
     OpenAITrainingDialogComponent,
-    OpenaiPromptComponent,
+    OpenAIPromptComponent,
   ]
 })
 export class ComponentsModule { }
