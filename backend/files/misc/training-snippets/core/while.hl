@@ -12,3 +12,4 @@ while
    .lambda
 
       // Executing this [.lambda] block 20 times.
+      math.decrement:x:@.no
