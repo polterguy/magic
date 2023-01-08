@@ -1,0 +1,34 @@
+
+// CRUD create endpoint inserting one record into your training_snippets table in your magic database taking type, pushed, uri, prompt, completion with authentication and authorisation for root,admin roles
+.arguments
+   type:string
+   pushed:long
+   uri:string
+   prompt:string
+   completion:string
+.description:CRUD create endpoint inserting one record into your training_snippets table in your magic database taking type, pushed, uri, prompt, completion with authentication and authorisation for root,admin roles
+.type:crud-create
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Opening up database connection.
+data.connect:[generic|magic]
+
+   // Parametrising our create invocation.
+   add:x:./*/data.create/*/values
+      get-nodes:x:@.arguments/*
+
+   // Creating our record.
+   data.create
+      table:training_snippets
+      return-id:bool:true
+      values
+
+   // Returning the correct status code.
+   response.status.set:201
+
+   // Returning result of above invocation to caller.
+   unwrap:x:+/*
+   return
+      id:x:@data.create
