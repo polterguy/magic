@@ -1,0 +1,27 @@
+// How to scrape website?
+
+/*
+ * To scrape a website typically includes retrieving the HTML document found at
+ * some URL, for then to semantically traverse the document found at the specified
+ * URL, and either manipulate the original document, and/or extract parts of it.
+ *
+ * Hyperlambda have strong support for both above concepts, and you can for instance
+ * retrieve all Hyperlinks found at aista.com and store in an array
+ * by using the following code.
+ */
+
+// Used to store all hyperlink URLs found at aista.com
+.result
+
+// Retrieve HTML document from aista.com
+http.get:"https://aista.com"
+
+// Converting HTML to lambda
+html2lambda:x:@http.get/*/content
+
+// Adding all hyperlink URLs found at aista.com to [.result]
+for-each:x:@html2lambda/**/a/*/\@href
+   unwrap:x:+/*/*
+   add:x:@.result
+      .
+         .:x:@.dp/#
