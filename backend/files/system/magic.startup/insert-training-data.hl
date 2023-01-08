@@ -3,7 +3,7 @@
  * Runs through all training data for OpenAI and inserts into magic database.
  * 
  * Notice, to make sure we don't do this until after the migration script has
- * been executed, we do it on a separate thread, waiting 30 seconds before
+ * been executed, we do it on a separate thread, waiting 10 seconds before
  * start our insert job.
  */
 fork
@@ -11,7 +11,7 @@ fork
    try
 
       // Making sure we don't continue before migration scripts for Magic database are done executing.
-      sleep:30000
+      sleep:10000
       
       // Connecting to Magic database.
       data.connect:magic
@@ -78,7 +78,7 @@ fork
                               values
                                  content:x:@.content
                                  description:x:@.description
-                                 filename:x:@.dp/@.dp/#
+                                 filename:x:@.dp/#
 
                // Creating a log entry.
                get-count:x:@io.file.list-recursively/*
