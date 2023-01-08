@@ -1,4 +1,4 @@
-create table openai_training_snippets(
+create table training_snippets(
   id int not null identity(1,1),
   created datetime not null default getutcdate(),
   type nvarchar(256) not null default 'hyperlambda',
@@ -6,5 +6,5 @@ create table openai_training_snippets(
   uri nvarchar(1024) null,
   prompt ntext not null,
   completion ntext not null,
-  constraint pk_openai_training_snippets primary key clustered(id asc)
+  constraint pk_training_snippets primary key clustered(id asc)
 );

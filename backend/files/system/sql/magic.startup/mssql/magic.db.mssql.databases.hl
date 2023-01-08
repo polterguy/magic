@@ -9,9 +9,10 @@
 slots.create:magic.db.mssql.databases
 
    // Opens up our connection
-   .connection:[master]
+   .connection:master
    if
       and
+         exists:x:@.arguments/*/connection-string
          not
             eq
                get-value:x:@.arguments/*/connection-string
@@ -33,7 +34,7 @@ slots.create:magic.db.mssql.databases
       mssql.select:select name from master.dbo.sysdatabases where has_dbaccess(name) = 1
 
       // Renaming "Database" nodes.
-      set-name:x:@mssql.select/*/*
+      .set-name:x:@mssql.select/*/*
          .:db
 
       // Returns the remaining databases to caller.

@@ -1,4 +1,4 @@
-create table openai_training_snippets(
+create table training_snippets(
   "id" integer not null primary key autoincrement,
   "created" timestamp not null default current_timestamp,
   "type" text not null default 'hyperlambda',
