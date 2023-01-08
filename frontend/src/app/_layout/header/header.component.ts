@@ -23,15 +23,11 @@ import { Router } from '@angular/router';
 })
 export class HeaderComponent implements OnInit {
 
-  public navLinks: NavLinks[] = [];
-
-  public activeUrl: string = '';
-
-  public backendList: any = [];
-
-  public sideExpanded: boolean = false;
-
-  public isAffiliate: boolean = false;
+  navLinks: NavLinks[] = [];
+  activeUrl: string = '';
+  backendList: any = [];
+  sideExpanded: boolean = false;
+  isAffiliate: boolean = false;
 
   constructor(
     private dialog: MatDialog,
@@ -42,6 +38,78 @@ export class HeaderComponent implements OnInit {
     this.createMenu();
     this.getSetupStatus();
     this.activeUrl = this.backendService.active.url.replace('http://', '').replace('https://', '');
+  }
+
+  checkActiveLink(currentUrl: string) {
+    this.navLinks.forEach((item: any) => {
+      if (item.submenu) {
+        item.isActive = item.submenu.findIndex((el: any) => (currentUrl || '').startsWith(el.url)) > -1;
+      }
+    })
+  }
+
+  toggleSidebar() {
+    this.sideExpanded = !this.sideExpanded;
+  }
+
+  closeSidebarInSidePanel(currentUrl: string) {
+    this.checkActiveLink(currentUrl)
+    if (!this.sideExpanded) {
+      return;
+    }
+    this.toggleSidebar();
+  }
+
+  getGithubToken(clickType: string) {
+    if (clickType !== 'Generate Token') {
+      return;
+    }
+
+    this.dialog.open(GithubTokenDialogComponent, {
+      width: '500px',
+      autoFocus: false,
+      data: {
+        username: this.backendService.active.username,
+        role: 'root',
+        expires: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString()
+      }
+    })
+  }
+
+  logout(clickType: string) {
+    if (clickType !== 'Logout') {
+      return;
+    }
+    this.backendService.logout(false);
+    this.router.navigate(['/authentication']);
+  }
+
+  viewBackends() {
+    this.dialog.open(DialogComponent, {
+      width: '80vw',
+      maxWidth: '90vw',
+      minHeight: '100px',
+      autoFocus: false,
+      data: {
+        component: BackendsListComponent
+      }
+    })
+  }
+
+  /*
+   * Private helper methods.
+   */
+
+  private getSetupStatus() {
+
+    // Subscribing to status changes and redirect accordingly if we need user to setup system.
+    this.backendService.statusRetrieved.subscribe((status: Status) => {
+      if (status) {
+        if (!status.result) {
+          this.router.navigate(['/setup']);
+        }
+      }
+    });
   }
 
   private createMenu() {
@@ -154,6 +222,11 @@ export class HeaderComponent implements OnInit {
             url: '/help-center',
             exact: false,
           },
+          {
+            name: 'Machine Learning',
+            url: '/machine-learning',
+            exact: false,
+          },
         ],
       },
       {
@@ -177,73 +250,5 @@ export class HeaderComponent implements OnInit {
       }
     ];
     this.checkActiveLink(this.router.url);
-  }
-
-  public checkActiveLink(currentUrl: string) {
-    this.navLinks.forEach((item: any) => {
-      if (item.submenu) {
-        item.isActive = item.submenu.findIndex((el: any) => (currentUrl || '').startsWith(el.url)) > -1;
-      }
-    })
-  }
-
-  public toggleSidebar() {
-    this.sideExpanded = !this.sideExpanded;
-  }
-
-  public closeSidebarInSidePanel(currentUrl: string) {
-    this.checkActiveLink(currentUrl)
-    if (!this.sideExpanded) {
-      return;
-    }
-    this.toggleSidebar();
-  }
-
-  public getGithubToken(clickType: string) {
-    if (clickType !== 'Generate Token') {
-      return;
-    }
-
-    this.dialog.open(GithubTokenDialogComponent, {
-      width: '500px',
-      autoFocus: false,
-      data: {
-        username: this.backendService.active.username,
-        role: 'root',
-        expires: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString()
-      }
-    })
-  }
-
-  public logout(clickType: string) {
-    if (clickType !== 'Logout') {
-      return;
-    }
-    this.backendService.logout(false);
-    this.router.navigate(['/authentication']);
-  }
-
-  public viewBackends() {
-    this.dialog.open(DialogComponent, {
-      width: '80vw',
-      maxWidth: '90vw',
-      minHeight: '100px',
-      autoFocus: false,
-      data: {
-        component: BackendsListComponent
-      }
-    })
-  }
-
-  private getSetupStatus() {
-
-    // Subscribing to status changes and redirect accordingly if we need user to setup system.
-    this.backendService.statusRetrieved.subscribe((status: Status) => {
-      if (status) {
-        if (!status.result) {
-          this.router.navigate(['/setup']);
-        }
-      }
-    });
   }
 }
