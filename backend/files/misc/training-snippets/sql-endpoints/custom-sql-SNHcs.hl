@@ -1,5 +1,5 @@
 
-// Executes SQL and returns result of invocation to caller with argument filter with authentication and authorisation for guest,translator roles
+// Endpoint executing SQL returning result of SQL to caller with argument filter with authentication and authorisation for guest,translator roles
 .arguments
    filter:string
 .description:Executes SQL and returns result of invocation to caller with argument filter with authentication and authorisation for guest,translator roles

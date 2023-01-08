@@ -1,5 +1,5 @@
 
-// Executes SQL and returns result of invocation to caller
+// Endpoint executing SQL and returns result of invocation to caller
 .arguments
 
 // Connecting to database.

@@ -1,5 +1,5 @@
 
-// Executes SQL and returns result of invocation to caller with authentication and authorisation for root,admin roles
+// Endpoint executing SQL returning result of SQL to caller with authentication and authorisation for root,admin roles
 .arguments
 .description:Executes SQL and returns result of invocation to caller with authentication and authorisation for root,admin roles
 
