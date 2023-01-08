@@ -68,11 +68,13 @@ export class LogComponent implements OnInit {
    */
 
   private getItems() {
+
     this.logService.list(
       this.pageOffset.length > 0 ? this.pageOffset[this.pageOffset.length - 1] : null,
       this.pageSize,
       this.filter).subscribe({
       next: (logitems) => {
+
         this.dataSource = logitems || [];
         this.isLoading = false;
       },
@@ -83,8 +85,10 @@ export class LogComponent implements OnInit {
   }
 
   private getCount() {
+
     this.logService.count(this.filter).subscribe({
       next: (count) => {
+
         this.count = count.count;
       },
       error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')

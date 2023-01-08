@@ -20,11 +20,43 @@ export class MachineLearningTrainingService {
 
   constructor(private httpService: HttpService) { }
 
-  list() {
-    return this.httpService.get<any>('/magic/system/magic/training_snippets');
+  list(filter?: any) {
+    return this.httpService.get<any>('/magic/system/magic/training_snippets' + this.getQueryArgs(filter));
   }
 
   count() {
     return this.httpService.get<any>('/magic/system/magic/training_snippets-count');
+  }
+
+  /*
+   * Private helper methods.
+   */
+
+  /*
+   * Creates QUERY parameters from the specified "args" argument given.
+   *
+   * Used by CRUD service methods to create the correct QUERY parameters
+   * during invocations towards your backend.
+   */
+  private getQueryArgs(args: any) {
+    let result = '';
+    for(const idx in args || {}) {
+      if (Object.prototype.hasOwnProperty.call(args, idx)) {
+        const idxFilter = args[idx];
+        if (idxFilter !== null && idxFilter !== undefined && idxFilter !== '') {
+          if (result === '') {
+            result += '?';
+          } else {
+            result += '&';
+          }
+          if (idx.endsWith('.like') && idxFilter.indexOf('%') === -1) {
+            result += idx + '=' + encodeURIComponent(idxFilter + '%');
+          } else {
+            result += idx + '=' + encodeURIComponent(idxFilter);
+          }
+        }
+      }
+    }
+    return result;
   }
 }
