@@ -58,6 +58,7 @@ fork
                         
                         // Converting the rest of the file back to Hyperlambda again.
                         lambda2hyper:x:@hyper2lambda/*
+                           comments:true
 
                         // Used as buffer for content.
                         .content
