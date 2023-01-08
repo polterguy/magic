@@ -1550,6 +1550,7 @@ semaphore:crudifier
          remove-nodes:x:@apply/**/columns/*
          remove-nodes:x:@apply/**/table/././*/remove-nodes
          remove-nodes:x:@apply/**/return-nodes
+         remove-nodes:x:@apply/**/table/././*/add/-
          remove-nodes:x:@apply/**/table/././*/add
          remove-nodes:x:@apply/*/.arguments/*/limit
          remove-nodes:x:@apply/*/.arguments/*/offset
