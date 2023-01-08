@@ -1,11 +1,12 @@
-// How to create interceptor gateway endpoint?
+// How to create interceptor endpoint?
 
 /*
- * An interceptor or API gateway andpoint allows you to encapsulate some
+ * An interceptor or API gateway endpoint allows you to encapsulate some
  * existing endpoint, and inject your own functionality either before or
  * after invoking the encapsulated HTTP endpoint. Logically this is
  * the same as inheriting from a class in OOP and using polymorphism
- * to override one of your base classes methods.
+ * to override one of your base classes methods and execute logic
+ * before you call your original base class method.
  *
  * The code below accepts a name and email argument, for then to use
  * these arguments in its [.before] lambda object, before passing
