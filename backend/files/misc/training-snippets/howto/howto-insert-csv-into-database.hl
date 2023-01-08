@@ -8,7 +8,7 @@
 // CSV text to convert.
 .csv:@"nurse,phone
 Jane,91919191
-Clara,92929292
+Clara,92929292"
 
 // Converting above CSV string to a lambda object resulting in an array of [nurse] and [phone] nodes for each CSV record.
 csv2lambda:x:@.csv
