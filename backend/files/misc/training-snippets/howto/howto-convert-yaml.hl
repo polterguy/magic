@@ -1,0 +1,18 @@
+// How to convert YAML?
+
+/*
+ * To convert a string containing YAML to a lambda object is accomplished
+ * using the [yaml2lambda] slot. This slot accepts any YAML, and creates
+ * a lambda object from it.
+ */
+
+// YAML text to convert.
+.yaml:@"
+foo: bar
+howdy:
+- howdy1
+- howdy2
+"
+
+// Converting above YAML text to a lambda object.
+yaml2lambda:x:@.yaml

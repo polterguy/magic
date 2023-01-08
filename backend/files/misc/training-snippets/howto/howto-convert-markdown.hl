@@ -1,0 +1,22 @@
+// How to convert Markdown?
+
+/*
+ * To convert a string containing Markdown to HTML is accomplished
+ * using the [markdown2lambda] slot. This slot accepts any Markdown, and creates
+ * HTML from it.
+ */
+
+// Markdown to convert.
+.markdown:@"
+# This is an H1 header
+
+This is a paragraph
+
+1. Numbered list no 1
+2. Numbered list no 2
+
+Another paragraph
+"
+
+// Converting above YAML text to a lambda object.
+markdown2lambda:x:@.markdown
