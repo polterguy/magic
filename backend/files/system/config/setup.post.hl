@@ -246,6 +246,9 @@ try
             extra
                source:setup
 
+         // Then we need to make sure we run any database migration scripts.
+         io.file.execute:/system/magic.startup/008-migrate-magic-database.hl
+
    else
 
       /*
@@ -259,7 +262,7 @@ try
          is_hashed:x:@.arguments/*/is_hashed
 
       // Then we need to make sure we run any database migration scripts.
-      io.file.execute:/system/magic.startup/migrate-magic-database.hl
+      io.file.execute:/system/magic.startup/008-migrate-magic-database.hl
 
    /*
     * Starting task scheduler now that we have created our database.
