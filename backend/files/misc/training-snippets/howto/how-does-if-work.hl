@@ -60,4 +60,3 @@ if
 
       // Creating log entry.
       log.info:Both foo_1 and foo_2 returned true
-
