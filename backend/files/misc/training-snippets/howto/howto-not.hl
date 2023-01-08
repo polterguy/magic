@@ -2,8 +2,8 @@
 
 /*
  * Sometimes you need to logically 'not' some comparison. This is done with the
- * [not] slot, that basically sets its value to false if its child node's value is
- * true, and set its value to true if its child node's value is false. This becomes
+ * [not] slot. [not] sets its value to false if its child node's value is
+ * true, and sets its value to true if its child node's value is false. This becomes
  * the equivalent of the ! operator in a traditional programming language.
  *
  * The code below will create a log entry, but only if [.cond_1] is NOT
@@ -21,3 +21,9 @@ if
 
       // Creating a log entry.
       log.info:[.cond_1] was not true
+
+/*
+ * The [not] slot allows you to negate much more complex conditions than
+ * the above, by combining it with any of the comparisons slots in Hyperlambda,
+ * in addition to the [or] and [and] slots.
+ */
