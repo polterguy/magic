@@ -48,14 +48,15 @@ fork
                         // Converting to lambda such that we can extract initial comment and use as prompt.
                         hyper2lambda:x:@io.file.load
                            comments:true
+                        
+                        // Splitting file comment into its individual prompt value.
+                        strings.split:x:@hyper2lambda/0
+                           .:|
 
-                        // Used as buffers for prompt or description.
-                        .description
-                        set-value:x:@.description
-                           get-value:x:@hyper2lambda/0
-
-                        // Removing prompt parts and converting the rest of the file back to Hyperlambda again.
+                        // Removing prompt parts of lambda object.
                         remove-nodes:x:@hyper2lambda/0
+                        
+                        // Converting the rest of the file back to Hyperlambda again.
                         lambda2hyper:x:@hyper2lambda/*
 
                         // Used as buffer for content.
@@ -63,13 +64,21 @@ fork
                         set-value:x:@.content
                            get-value:x:@lambda2hyper
 
-                        // Inserting record into database.
-                        data.create
-                           table:openai_training_snippets
-                           values
-                              content:x:@.content
-                              description:x:@.description
-                              filename:x:@.dp/#
+                        // Looping through each individual prompt value.
+                        for-each:x:@strings.split/*
+                        
+                           // Used as buffers for prompt or description.
+                           .description
+                           set-value:x:@.description
+                              strings.trim:x:@.dp/#
+
+                           // Inserting record into database.
+                           data.create
+                              table:openai_training_snippets
+                              values
+                                 content:x:@.content
+                                 description:x:@.description
+                                 filename:x:@.dp/@.dp/#
 
                // Creating a log entry.
                get-count:x:@io.file.list-recursively/*
