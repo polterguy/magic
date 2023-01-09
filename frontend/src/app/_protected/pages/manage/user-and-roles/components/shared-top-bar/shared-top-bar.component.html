@@ -1,26 +1,10 @@
 
 <div class="d-flex justify-content-between align-items-center w-100 my-3">
 
-  <mat-form-field class="w-100 standalone-field">
-    <span
-      matPrefix
-      class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-      <mat-icon>search</mat-icon>
-      <span class="text-muted">|</span>
-    </span>
-    <input
-      matInput
-      placeholder="Filter ..."
-      (input)="applyFilter(input.value)"
-      #input>
-    <button
-      mat-icon-button
-      matSuffix
-      (click)="removeSearchTerm();input.value = ''"
-      *ngIf="input.value!==''">
-      <mat-icon>close</mat-icon>
-    </button>
-  </mat-form-field>
+  <div class="searchbox">
+    <app-searchbox (filterList)="filterList($event)">
+    </app-searchbox>
+  </div>
 
   <div class="d-flex justify-content-end button-row align-items-center w-100">
 
@@ -36,9 +20,8 @@
       mat-flat-button
       color="primary"
       class="py-1"
-      [disabled]="(tab !== 'user' && userCanCreateRole === false) || (tab === 'user' && userCanCreateUser === false)"
       (click)="tab === 'user' ? createNewUser() : createNewRole()">
-      Add {{tab === 'user' ? 'user' : 'role'}}
+      Add {{tab}}
     </button>
 
     <input

@@ -3,9 +3,8 @@
  * Copyright (c) Aista Ltd, 2021 - 2023 info@aista.com, all rights reserved.
  */
 
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Subject, ReplaySubject, debounceTime } from 'rxjs';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { FileService } from 'src/app/_protected/pages/create/hyper-ide/services/file.service';
 import { Role } from '../../_models/role.model';
@@ -17,47 +16,27 @@ import { NewUserDialogComponent } from '../new-user-dialog/new-user-dialog.compo
  */
 @Component({
   selector: 'app-shared-top-bar',
-  templateUrl: './shared-top-bar.component.html'
+  templateUrl: './shared-top-bar.component.html',
+  styleUrls: ['./shared-top-bar.component.scss']
 })
-export class SharedTopBarComponent implements OnInit {
+export class SharedTopBarComponent {
+
+  private searchTerm: string = null;
 
   @Input() tab: string = 'user';
   @Input() rolesList: Role[] = [];
-
   @Output() getUsersList = new EventEmitter<any>();
   @Output() getRolesList = new EventEmitter<any>();
 
   csvFileInput: any = null;
 
-  /**
-   * Stores the search input value.
-   */
-  searchTerm: string = '';
-
-  /**
-  * Specify if the user can create roles
-  */
-  public userCanCreateRole: boolean = undefined;
-
-  /**
-   * Specify if the user can create user
-   */
-  public userCanCreateUser: boolean = undefined;
-
-  searchKeySubject: Subject<string> = new Subject<string>();
-  private inputValue: ReplaySubject<string> = new ReplaySubject();
-
   constructor(
     private dialog: MatDialog,
     private fileService: FileService,
-    private generalService: GeneralService,
-    private cdr: ChangeDetectorRef) { }
-
-  ngOnInit(): void {
-    this.watchSearchInputChanges();
-  }
+    private generalService: GeneralService) { }
 
   uploadUsers(files: any) {
+
     this.fileService.importUsers(files.item(0)).subscribe({
       next: (res: any) => {
         this.csvFileInput = null;
@@ -67,47 +46,28 @@ export class SharedTopBarComponent implements OnInit {
     });
   }
 
-  private watchSearchInputChanges() {
-    this.inputValue.pipe(debounceTime(500)).subscribe((event: string) => {
-      if (event.length > 2) {
-        this.searchTerm = event;
-        this.tab === 'user' ? this.getUsers() : this.getRoles();
-      }
-      if (event.length === 0) {
-        this.removeSearchTerm();
-      }
-    })
+  filterList(event: { searchKey: string }) {
+
+    this.searchTerm = event.searchKey;
+    if (this.tab === 'user') {
+      this.getUsers();
+    } else {
+      this.getRoles();
+    }
   }
 
-  /**
-   * Invoking endpoint to search in unique fields.
-   * @params event
-   */
-  public applyFilter(keyword: string) {
-    this.inputValue.next(keyword);
-  }
+  removeSearchTerm() {
 
-  /**
-   * Removes the search keyword.
-   * @callback getExportList To refetch the unfiltered list.
-   */
-  public removeSearchTerm() {
     this.searchTerm = '';
-    this.tab === 'user' ? this.getUsers() : this.getRoles();
+    if (this.tab === 'user') {
+      this.getUsers();
+    } else {
+      this.getRoles();
+    }
   }
 
-  private getUsers() {
-    this.getUsersList.emit({ search: this.searchTerm });
-  }
+  createNewUser() {
 
-  private getRoles() {
-    this.getRolesList.emit({ search: this.searchTerm });
-  }
-
-  /**
-   * Opens a dialog for creating a new user.
-   */
-  public createNewUser() {
     this.dialog.open(NewUserDialogComponent, {
       width: '700px',
       data: this.rolesList
@@ -115,13 +75,11 @@ export class SharedTopBarComponent implements OnInit {
       if (result) {
         this.getUsersList.emit({});
       }
-    })
+    });
   }
 
-  /**
-   * Opens a dialog for creating a new role.
-   */
-  public createNewRole() {
+  createNewRole() {
+
     this.dialog.open(ManageRoleDialogComponent, {
       width: '500px',
       data: {
@@ -132,5 +90,17 @@ export class SharedTopBarComponent implements OnInit {
         this.getRolesList.emit({});
       }
     })
+  }
+
+  /*
+   * Private helper methods.
+   */
+
+  private getUsers() {
+    this.getUsersList.emit({ search: this.searchTerm });
+  }
+
+  private getRoles() {
+    this.getRolesList.emit({ search: this.searchTerm });
   }
 }
