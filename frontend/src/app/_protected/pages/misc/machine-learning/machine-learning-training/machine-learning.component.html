@@ -37,6 +37,7 @@
               </span>
               <input
                 matInput
+                (change)="apiKeyChanged()"
                 placeholder="OpenAI API key"
                 [(ngModel)]="key"
                 autocomplete="off">
