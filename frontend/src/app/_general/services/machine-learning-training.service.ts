@@ -20,12 +20,25 @@ export class MachineLearningTrainingService {
 
   constructor(private httpService: HttpService) { }
 
+  /**
+   * Returns all training snippets from backend matching filter condition.
+   */
   list(filter?: any) {
     return this.httpService.get<any>('/magic/system/magic/ml_training_snippets' + this.getQueryArgs(filter));
   }
 
+  /**
+   * Counts training snippets matching condition.
+   */
   count(filter?: any) {
-    return this.httpService.get<any>('/magic/system/magic/ml_training_snippets-count' + this.getQueryArgs(filter));
+    return this.httpService.get<Response>('/magic/system/magic/ml_training_snippets-count' + this.getQueryArgs(filter));
+  }
+
+  /**
+   * Returns all distinct types of training snippets from your backend.
+   */
+  types() {
+    return this.httpService.get<any[]>('/magic/system/openai/types');
   }
 
   /*

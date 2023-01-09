@@ -104,10 +104,10 @@
             <!-- Loading skeleton for search textbox -->
             <ng-container *ngIf="isLoadingGrid;else loaded">
               <app-loading-skeleton
-                [amount]="1"
-                [colClass]="'col-12'"
-                [blockHeight]="'41px'"
-                [hasShadow]="false">
+                amount="2"
+                colClass="col-6"
+                blockHeight="41px"
+                hasShadow="false">
               </app-loading-skeleton>
             </ng-container>
 
@@ -115,7 +115,7 @@
             <ng-template #loaded>
               <app-searchbox
                 (filterList)="filterList($event)"
-                type="ml">
+                [types]="types">
               </app-searchbox>
             </ng-template>
 
@@ -184,8 +184,8 @@
           <!-- Pager -->
           <mat-paginator
             [length]="count"
-            [pageIndex]="index"
-            [pageSize]="pageSize"
+            [pageIndex]="filter.offset / filter.limit"
+            [pageSize]="filter.limit"
             (page)="page($event)">
           </mat-paginator>
 
