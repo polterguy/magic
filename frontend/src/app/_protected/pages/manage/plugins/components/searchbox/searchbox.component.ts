@@ -17,14 +17,12 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
 export class SearchboxComponent implements OnInit {
 
   @Output() filterList = new EventEmitter<any>();
-  @Input() type: string;
   @Input() types: string[];
+  @Input() checkBoxText: string = null;
 
   filterControl: FormControl;
-
-  installedOnly: boolean = false;
-  showSystem: boolean = false;
   selectedType: string = null;
+  checked: boolean = false;
 
   ngOnInit() {
     this.filterControl = new FormControl('');
@@ -48,13 +46,9 @@ export class SearchboxComponent implements OnInit {
     if (this.selectedType) {
       filter.type = this.selectedType;
     }
-    if (this.installedOnly) {
-      filter.installedOnly = this.installedOnly;
+    if (this.checkBoxText) {
+      filter.checked = this.checked;
     }
-    if (this.showSystem) {
-      filter.showSystem = this.showSystem;
-    }
-
     this.filterList.emit(filter);
   }
 }

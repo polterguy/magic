@@ -274,8 +274,8 @@ export class PluginsComponent implements OnInit {
     });
   }
 
-  public filterList(event: { installedOnly: boolean, searchKey: string }) {
-    this.installedOnly = event.installedOnly ?? false;
+  public filterList(event: { checked: boolean, searchKey: string }) {
+    this.installedOnly = event.checked ?? false;
     this.searchKey = event.searchKey ?? null;
   }
 
