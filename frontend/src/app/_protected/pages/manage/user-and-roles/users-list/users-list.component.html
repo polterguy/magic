@@ -1,42 +1,51 @@
 <div class="table-responsive">
-  <table mat-table [dataSource]="usersList" class="w-100 borderless hoverable">
+
+  <table
+    mat-table
+    [dataSource]="usersList"
+    class="w-100 borderless hoverable">
 
     <!-- Username Column -->
     <ng-container matColumnDef="username">
-      <th mat-header-cell *matHeaderCellDef> Username </th>
-      <td mat-cell *matCellDef="let element"> {{element.username}} </td>
+      <th mat-header-cell *matHeaderCellDef>Username</th>
+      <td mat-cell *matCellDef="let element">{{element.username}}</td>
     </ng-container>
 
     <!-- Name Column -->
     <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef> Name </th>
-      <td mat-cell *matCellDef="let element"> {{getExtra('name', element)}} </td>
+      <th mat-header-cell *matHeaderCellDef>Name</th>
+      <td mat-cell *matCellDef="let element">{{getExtra('name', element)}}</td>
     </ng-container>
 
     <!-- Email Column -->
     <ng-container matColumnDef="email">
-      <th mat-header-cell *matHeaderCellDef> Email </th>
-      <td mat-cell *matCellDef="let element"> {{getExtra('email', element)}} </td>
+      <th mat-header-cell *matHeaderCellDef>Email</th>
+      <td mat-cell *matCellDef="let element">{{getExtra('email', element)}}</td>
     </ng-container>
 
     <!-- Role Column -->
     <ng-container matColumnDef="role">
-      <th mat-header-cell *matHeaderCellDef> Roles </th>
-      <td mat-cell *matCellDef="let element"> {{element?.roles?.toString() ?? 'N/A'}} </td>
+      <th mat-header-cell *matHeaderCellDef>Roles</th>
+      <td mat-cell *matCellDef="let element">{{element?.roles?.toString() ?? 'N/A'}}</td>
     </ng-container>
 
     <!-- Created Column -->
     <ng-container matColumnDef="creationDate">
-      <th mat-header-cell *matHeaderCellDef class="text-nowrap"> Created </th>
-      <td mat-cell *matCellDef="let element"> {{element?.created | date:'dd.MM.YYYY'}} </td>
+      <th mat-header-cell *matHeaderCellDef class="text-nowrap">Created</th>
+      <td mat-cell *matCellDef="let element">{{element?.created | date:'dd.MM.YYYY'}}</td>
     </ng-container>
 
     <!-- status Column -->
     <ng-container matColumnDef="status">
       <th mat-header-cell *matHeaderCellDef> Status </th>
       <td mat-cell *matCellDef="let element" class="ps-3">
-        <span class="status {{element?.status}} me-1" [class.locked]="element.locked === true"
-          [class.unlocked]="element.locked === false"></span>
+
+        <span
+          class="status {{element?.status}} me-1"
+          [class.locked]="element.locked === true"
+          [class.unlocked]="element.locked === false">
+        </span>
+
       </td>
     </ng-container>
 
@@ -46,28 +55,56 @@
       <td mat-cell *matCellDef="let element">
         <div class="d-flex justify-content-between align-items-center">
           <div>
-            <button mat-button color="primary" 
-              (click)="editUser(element)">Edit</button>
-            <button mat-button color="primary" 
-              (click)="changePassword(element)">Change password</button>
+
+            <button
+              mat-button
+              color="primary" 
+              (click)="editUser(element)">
+              Edit
+            </button>
+
+            <button
+              mat-button
+              color="primary" 
+              (click)="changePassword(element)">
+              Change password
+            </button>
+
           </div>
-          <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Open more menu">
+
+          <button
+            mat-icon-button
+            [matMenuTriggerFor]="menu">
             <mat-icon>more_vert</mat-icon>
           </button>
+
         </div>
         <mat-menu #menu="matMenu">
-          <button mat-menu-item (click)="lockedChanged(element)">
+
+          <button
+            mat-menu-item
+            (click)="lockedChanged(element)">
             {{element?.locked ? 'Unlock' : 'Lock'}}
           </button>
-          <button mat-menu-item (click)="generateResetPasswordLink(element)">
+
+          <button
+            mat-menu-item
+            (click)="generateResetPasswordLink(element)">
             Create reset password link
           </button>
-          <button mat-menu-item (click)="generateLoginLink(element)">
+
+          <button
+            mat-menu-item
+            (click)="generateLoginLink(element)">
             Login as {{element?.username}}
           </button>
-          <button mat-menu-item (click)="deleteUser(element)">
+
+          <button
+            mat-menu-item
+            (click)="deleteUser(element)">
             Delete
           </button>
+
         </mat-menu>
       </td>
     </ng-container>
