@@ -10,7 +10,6 @@ import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import { CmModule } from 'src/app/codemirror/_module/cm.module';
 import { MaterialModule } from 'src/app/material.module';
 import { ComponentsModule } from 'src/app/_general/components/components.module';
-import { HealthSearchboxComponent } from '../components/health-searchbox/health-searchbox.component';
 import { TestHealthContentDialogComponent } from '../components/test-health-content-dialog/test-health-content-dialog.component';
 import { HealthCheckComponent } from '../health-check.component';
 
@@ -18,7 +17,6 @@ import { HealthCheckComponent } from '../health-check.component';
   declarations: [
     HealthCheckComponent,
     TestHealthContentDialogComponent,
-    HealthSearchboxComponent
   ],
   imports: [
     CommonModule,

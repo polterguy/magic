@@ -56,4 +56,13 @@
     </button>
   </mat-form-field>
 
+  <button
+    mat-flat-button
+    *ngIf="buttonText"
+    color="primary"
+    class="ms-3"
+    (click)="buttonClicked()">
+    {{buttonText}}
+  </button>
+
 </div>
