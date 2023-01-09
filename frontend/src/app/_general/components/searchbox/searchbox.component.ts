@@ -17,8 +17,10 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
 export class SearchboxComponent implements OnInit {
 
   @Output() filterList = new EventEmitter<any>();
+  @Output() buttonClick = new EventEmitter();
   @Input() types: string[];
   @Input() checkBoxText: string = null;
+  @Input() buttonText: string = null;
 
   filterControl: FormControl;
   selectedType: string = null;
@@ -50,5 +52,9 @@ export class SearchboxComponent implements OnInit {
       filter.checked = this.checked;
     }
     this.filterList.emit(filter);
+  }
+
+  buttonClicked() {
+    this.buttonClick.emit();
   }
 }

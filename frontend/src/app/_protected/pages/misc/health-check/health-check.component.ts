@@ -153,9 +153,9 @@ export class HealthCheckComponent implements OnInit {
         });
   }
 
-  public filterList(event: string) {
-    if (event !== '') {
-      this.dataSource = this.originalDataSource.filter((item: any) => item.name.indexOf(event) > -1);
+  public filterList(event: { searchKey: string }) {
+    if (event.searchKey) {
+      this.dataSource = this.originalDataSource.filter((item: any) => item.name.indexOf(event.searchKey) > -1);
     } else {
       this.dataSource = this.originalDataSource;
     }
@@ -212,14 +212,11 @@ export class HealthCheckComponent implements OnInit {
   }
 
   private filterTests(timeDiff: number = null) {
-    if (this.dataSource.filter(x => x.success !== true).length === 0) {
 
-      // Perfect health! Publishing succeeded message and showing user some feedback.
+    if (this.dataSource.filter((x: any) => x.success !== true).length === 0) {
       this.generalService.showFeedback('All tests succeeded' + (timeDiff !== null ? ' in ' + new Intl.NumberFormat('en-us').format(timeDiff) + ' milliseconds' : ''), 'successMessage', 'Ok', 5000);
-
     } else {
       this.generalService.hideLoading();
-      // One or more tests failed, removing all successful tests.
       this.generalService.showFeedback('One or more tests failed!', 'errorMessage', 'Ok', 5000);
     }
   }

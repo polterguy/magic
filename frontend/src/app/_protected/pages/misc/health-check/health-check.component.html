@@ -24,11 +24,11 @@
             </ng-container>
 
             <ng-template #loaded>
-              <app-health-searchbox
-                (testAll)="testAll()"
-                [isRunning]="isRunning"
+              <app-searchbox
+                buttonText="Run"
+                (buttonClick)="testAll()"
                 (filterList)="filterList($event)">
-              </app-health-searchbox>
+              </app-searchbox>
             </ng-template>
           </div>
         </div>
