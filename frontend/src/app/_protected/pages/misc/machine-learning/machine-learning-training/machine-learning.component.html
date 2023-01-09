@@ -25,7 +25,9 @@
 
             <!-- Search textbox -->
             <ng-template #loaded>
-              <app-searchbox (filterList)="filterList($event)">
+              <app-searchbox
+                (filterList)="filterList($event)"
+                type="ml">
               </app-searchbox>
             </ng-template>
 
@@ -64,7 +66,11 @@
               <!-- pushed Column -->
               <ng-container matColumnDef="pushed">
                 <th mat-header-cell *matHeaderCellDef class="px-sm-3">Pushed</th>
-                <td mat-cell *matCellDef="let element" class="text-truncate px-sm-3">{{element.pushed}}</td>
+                <td mat-cell
+                  *matCellDef="let element"
+                  class="ps-3">
+                  <span class="status {{element.status}} me-1"></span>
+                </td>
               </ng-container>
 
               <!-- action Column -->
