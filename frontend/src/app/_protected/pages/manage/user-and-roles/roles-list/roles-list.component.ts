@@ -23,7 +23,6 @@ import { RoleService } from '../_services/role.service';
 export class RolesListComponent {
 
   @Input() rolesList: any = [];
-  @Input() accessPermissions: any = [];
 
   @Output() getRolesList = new EventEmitter<any>();
 
@@ -36,6 +35,7 @@ export class RolesListComponent {
     private generalService: GeneralService) { }
 
   systemRole(role: string) {
+
     switch (role) {
       case 'root':
       case 'guest':
@@ -48,11 +48,8 @@ export class RolesListComponent {
     }
   }
 
-  /**
-   * Deleting the selected role upon confirmation.
-   * @param role Selected role.
-   */
-  public deleteRole(role: Role) {
+  deleteRole(role: Role) {
+
     this.dialog.open(ConfirmationDialogComponent, {
       width: '500px',
       data: {
@@ -82,7 +79,8 @@ export class RolesListComponent {
     })
   }
 
-  public editRole(role: Role) {
+  editRole(role: Role) {
+
     this.dialog.open(ManageRoleDialogComponent, {
       width: '500px',
       data: {
@@ -95,6 +93,10 @@ export class RolesListComponent {
       }
     })
   }
+
+  /*
+   * Private helper methods.
+   */
 
   private updateList(obj: any = undefined) {
     this.getRolesList.emit(obj);
