@@ -1,9 +1,28 @@
 
+
+/*
+ * Checking if JWT secret has been changed, and
+ * if is has, we throw an exception, to prevent the
+ * system from being setup again, overriding the default
+ * setup configuration.
+ */
+config.get:"magic:auth:secret"
+if
+   or
+      null:x:@config.get
+      lt
+         strings.length:x:@config.get
+         .:int:50
+   .lambda
+
+      // System has not yet been setup.
+      return:bool:false
+
 // Runs through all training data for OpenAI and inserts into magic database.
 try
 
    // Connecting to Magic database.
-   data.connect:magic
+   data.connect:[generic|magic]
 
       /*
        * No training snippets found, hence inserting into database.
