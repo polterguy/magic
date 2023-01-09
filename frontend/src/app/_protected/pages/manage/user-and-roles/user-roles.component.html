@@ -15,8 +15,14 @@
 
             <div class="row mt-3">
               <div class="col-12">
-                <app-loading-skeleton [amount]="5" [colClass]="'col-12'" [blockHeight]="'40px'"
-                  [hasShadow]="false"></app-loading-skeleton>
+
+                <app-loading-skeleton
+                  amount="5"
+                  colClass="col-12"
+                  blockHeight="40px"
+                  hasShadow="false">
+                </app-loading-skeleton>
+
               </div>
             </div>
 
@@ -24,11 +30,17 @@
 
           <!-- Users in the system -->
           <ng-template #dataLoadedUsers>
-            <app-shared-top-bar [tab]="'user'" [rolesList]="roles | async" [accessPermissions]="accessPermissions"
-              (getUsersList)="getUsersList($event)"></app-shared-top-bar>
+            <app-shared-top-bar
+              tab="user"
+              [rolesList]="roles | async"
+              (getUsersList)="getUsersList($event)">
+            </app-shared-top-bar>
 
-            <app-users-list [usersList]="users | async" [rolesList]="roles | async"
-              (getUsersList)="getUsersList($event)"></app-users-list>
+            <app-users-list
+              [usersList]="users | async"
+              [rolesList]="roles | async"
+              (getUsersList)="getUsersList($event)">
+            </app-users-list>
           </ng-template>
 
         </ng-template>

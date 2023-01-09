@@ -23,7 +23,6 @@ export class SharedTopBarComponent implements OnInit {
 
   @Input() tab: string = 'user';
   @Input() rolesList: Role[] = [];
-  @Input() accessPermissions: any = [];
 
   @Output() getUsersList = new EventEmitter<any>();
   @Output() getRolesList = new EventEmitter<any>();
@@ -56,17 +55,6 @@ export class SharedTopBarComponent implements OnInit {
 
   ngOnInit(): void {
     this.watchSearchInputChanges();
-    (async () => {
-      while (this.accessPermissions && this.accessPermissions.length === 0)
-        await new Promise(resolve => setTimeout(resolve, 100));
-
-      if (this.accessPermissions && Object.keys(this.accessPermissions.auth).length > 0) {
-        this.userCanCreateRole = this.accessPermissions.auth.create_role;
-        this.userCanCreateUser = this.accessPermissions.auth.create_user;
-
-        this.cdr.detectChanges();
-      }
-    })();
   }
 
   uploadUsers(files: any) {
