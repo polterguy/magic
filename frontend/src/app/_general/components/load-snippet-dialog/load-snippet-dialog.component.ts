@@ -22,7 +22,7 @@ import { GeneralService } from '../../services/general.service';
 export class LoadSnippetDialogComponent implements OnInit {
 
   files: string[] = [];
-  filter: string = '';
+  filter: string = null;
 
   constructor(
     private dialogRef: MatDialogRef<LoadSnippetDialogComponent>,
@@ -39,9 +39,13 @@ export class LoadSnippetDialogComponent implements OnInit {
     });
   }
 
+  filterList(event: { searchKey: string }) {
+    this.filter = event.searchKey;
+  }
+
   getFiles() {
 
-    if (this.filter === '') {
+    if (!this.filter) {
       return this.files;
     } else {
       return this.files.filter(x => this.getFilename(x).indexOf(this.filter) !== -1);
