@@ -21,11 +21,11 @@ export class MachineLearningTrainingService {
   constructor(private httpService: HttpService) { }
 
   list(filter?: any) {
-    return this.httpService.get<any>('/magic/system/magic/training_snippets' + this.getQueryArgs(filter));
+    return this.httpService.get<any>('/magic/system/magic/ml_training_snippets' + this.getQueryArgs(filter));
   }
 
   count(filter?: any) {
-    return this.httpService.get<any>('/magic/system/magic/training_snippets-count' + this.getQueryArgs(filter));
+    return this.httpService.get<any>('/magic/system/magic/ml_training_snippets-count' + this.getQueryArgs(filter));
   }
 
   /*

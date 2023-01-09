@@ -23,7 +23,7 @@ try
 
                // Checking that we haven't already inserted this training snippet previously.
                data.read
-                  table:training_snippets
+                  table:ml_training_snippets
                   columns
                      id
                   where
@@ -66,7 +66,7 @@ try
 
                         // Inserting record into database.
                         data.create
-                           table:training_snippets
+                           table:ml_training_snippets
                            values
                               completion:x:@.completion
                               prompt:x:@.prompt

@@ -1,0 +1,36 @@
+
+// Endpoint counting items in your ml_training_snippets table in your magic database
+.arguments
+   ml_training_snippets.type.eq:string
+   ml_training_snippets.pushed.eq:long
+   ml_training_snippets.uri.like:string
+   ml_training_snippets.uri.eq:string
+   ml_training_snippets.prompt.like:string
+   ml_training_snippets.prompt.eq:string
+   ml_training_snippets.completion.like:string
+   ml_training_snippets.completion.eq:string
+.description:Endpoint counting items in your ml_training_snippets table in your magic database
+.type:crud-count
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Opening up our database connection.
+data.connect:[generic|magic]
+
+   // Parametrising our read invocation with filtering arguments.
+   add:x:+/*/where/*
+      get-nodes:x:@.arguments/*
+
+   // Reading data from database.
+   data.read
+      table:ml_training_snippets
+      columns
+         count(*)
+            as:count
+      where
+         or
+      limit:long:1
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@data.read/*/*

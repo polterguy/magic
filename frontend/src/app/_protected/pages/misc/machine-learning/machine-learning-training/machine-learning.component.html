@@ -1,20 +1,108 @@
 <div class="row fullPage">
   <div class="col-12">
 
-    <mat-card class="h-100">
+    <!-- Configuration -->
+    <mat-card>
+      <mat-card-content class="h-100">
+
+        <div class="col-xxl-8 col-xl-7 col-lg-6 col-12 mb-lg-0">
+          <h3 class="fw-bold mb-2">Machine Learning</h3>
+          <p class="text-muted">
+            Configure your Machine Learning account.
+            Get your API key <a href="https://beta.openai.com/account/api-keys" target="_blank">here</a>.
+          </p>
+        </div>
+
+        <div class="mt-4 row mt-2">
+
+          <div class="col-xl-4 col-lg-6 col-12">
+
+            <!-- Loading skeleton -->
+            <ng-container *ngIf="isLoadingConfig">
+              <app-loading-skeleton
+                [amount]="1"
+                [colClass]="'col-12'"
+                [blockHeight]="'45px'"
+                [hasShadow]="false">
+              </app-loading-skeleton>
+            </ng-container>
+
+            <mat-form-field class="w-100 standalone-field" *ngIf="!isLoadingConfig">
+              <span
+                matPrefix
+                matTooltip="OpenAI API key"
+                class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+                <mat-icon>key</mat-icon>
+                <span class="text-muted">|</span>
+              </span>
+              <input
+                matInput
+                placeholder="OpenAI API key"
+                [(ngModel)]="key"
+                autocomplete="off">
+            </mat-form-field>
+
+          </div>
+
+          <div class="col-xl-4 col-lg-6 col-12">
+
+            <!-- Loading skeleton -->
+            <ng-container *ngIf="isLoadingConfig">
+              <app-loading-skeleton
+                [amount]="1"
+                [colClass]="'col-12'"
+                [blockHeight]="'45px'"
+                [hasShadow]="false">
+              </app-loading-skeleton>
+            </ng-container>
+
+            <mat-form-field class="w-100 standalone-field" *ngIf="!isLoadingConfig">
+              <span
+                matPrefix
+                matTooltip="Active OpenAI model"
+                class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+                <mat-icon>help_outline</mat-icon>
+                <span class="text-muted ms-1">|</span>
+              </span>
+              <mat-select
+                [(ngModel)]="selectedModel"
+                placeholder="Active OpenAI model">
+                <mat-select-trigger>
+                  {{selectedModel?.name}}
+                </mat-select-trigger>
+                <mat-option
+                  class="multiline-mat-option"
+                  *ngFor="let item of models"
+                  [value]="item">
+                  <span class="d-block name-line" #typeName>{{item.name}}</span>
+                  <span class="d-block description-line">{{item.description}}</span>
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+          </div>
+
+        </div>
+      
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Training snippets datagrid -->
+    <mat-card class="mt-4">
       <mat-card-content class="h-100">
 
         <!-- Top parts containing title of component and search textbox -->
         <div class="row align-items-center">
 
           <div class="col-xxl-8 col-xl-7 col-lg-6 col-12 mb-lg-0 mb-2">
-            <h3 class="my-0 fw-bold">Machine Learning</h3>
+            <h3 class="mb-2 fw-bold">Training data</h3>
+            <p class="text-muted">Manage your OpenAI training data</p>
           </div>
 
           <div class="col-xxl-4 col-xl-5 col-lg-6 col-12">
 
             <!-- Loading skeleton for search textbox -->
-            <ng-container *ngIf="isLoading;else loaded">
+            <ng-container *ngIf="isLoadingGrid;else loaded">
               <app-loading-skeleton
                 [amount]="1"
                 [colClass]="'col-12'"
@@ -35,7 +123,7 @@
         </div>
 
         <!-- Loading skeleton for datagrid -->
-        <ng-container *ngIf="isLoading;else dataReady">
+        <ng-container *ngIf="isLoadingGrid;else dataReady">
           <app-loading-skeleton
             [amount]="6"
             [colClass]="'col-12'"
