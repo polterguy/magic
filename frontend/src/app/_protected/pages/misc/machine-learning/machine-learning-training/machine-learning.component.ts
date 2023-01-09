@@ -81,7 +81,7 @@ export class MachineLearningTrainingComponent implements OnInit {
     this.getItems(false);
   }
 
-  filterList(event: { searchKey: string, type: string }) {
+  filterList(event: { searchKey: string, type?: string }) {
     this.filter = {
       limit: this.filter.limit,
       offset: 0,
