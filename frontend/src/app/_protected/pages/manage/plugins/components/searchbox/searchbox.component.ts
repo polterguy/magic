@@ -41,21 +41,20 @@ export class SearchboxComponent implements OnInit {
 
   filter() {
 
-    this.filterList.emit({
-      installedOnly: this.installedOnly,
-      showSystem: this.showSystem,
-      searchKey: this.filterControl.value,
-      type: this.selectedType,
-    });
-  }
+    const filter: any = {};
+    if (this.filterControl.value?.length > 0) {
+      filter.searchKey = this.filterControl.value;
+    }
+    if (this.selectedType) {
+      filter.type = this.selectedType;
+    }
+    if (this.installedOnly) {
+      filter.installedOnly = this.installedOnly;
+    }
+    if (this.showSystem) {
+      filter.showSystem = this.showSystem;
+    }
 
-  typeChanged() {
-
-    this.filterList.emit({
-      installedOnly: this.installedOnly,
-      showSystem: this.showSystem,
-      searchKey: this.filterControl.value,
-      type: this.selectedType,
-    });
+    this.filterList.emit(filter);
   }
 }

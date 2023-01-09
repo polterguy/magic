@@ -20,8 +20,11 @@
     </span>
     <mat-select
       [(ngModel)]="selectedType"
-      (selectionChange)="typeChanged()"
+      (selectionChange)="filter()"
       placeholder="Type ...">
+      <mat-option [value]="null">
+        Remove filter
+      </mat-option>
       <mat-option
         *ngFor="let item of types"
         [value]="item">
