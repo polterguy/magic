@@ -4,19 +4,10 @@
   <!-- Dialog title -->
   <h3 mat-dialog-title class="mb-0">List of catalogs</h3>
 
-  <mat-form-field class="standalone">
-    <span
-      matPrefix
-      class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-      <mat-icon>search</mat-icon>
-      <span class="text-muted">|</span>
-    </span>
-    <input
-      matInput
-      type="text"
-      #search
-      placeholder="Filter ...">
-  </mat-form-field>
+  <div class="searchbox">
+    <app-searchbox (filterList)="filterList($event)">
+    </app-searchbox>
+  </div>
 
 </div>
 
@@ -84,7 +75,7 @@
       <tr
         mat-row
         *matRowDef="let row; columns: displayedColumns;"
-        [class.d-none]="row.name.indexOf(search.value) === -1"></tr>
+        [class.d-none]="filter && row.name.indexOf(filter) === -1"></tr>
     </table>
 
   </div>

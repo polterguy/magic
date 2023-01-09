@@ -20,6 +20,7 @@ import { SqlService } from '../../../../../../../_general/services/sql.service';
 })
 export class ManageCatalogsComponent {
 
+  filter: string = null;
   displayedColumns: string[] = ['name', 'tables', 'action'];
 
   constructor(
@@ -28,7 +29,8 @@ export class ManageCatalogsComponent {
     private generalService: GeneralService,
     @Inject(MAT_DIALOG_DATA) public data: any) { }
 
-  public deleteCatalog(item: any) {
+  deleteCatalog(item: any) {
+
     this.dialog.open(ConfirmationDialogComponent, {
       width: '500px',
       data: {
@@ -63,5 +65,9 @@ export class ManageCatalogsComponent {
           }});
       }
     });
+  }
+
+  filterList(event: { searchKey: string }) {
+    this.filter = event.searchKey;
   }
 }
