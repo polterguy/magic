@@ -52,6 +52,7 @@ export class MachineLearningTrainingComponent implements OnInit {
 
   filterList(event: {searchKey: string}) {
     this.filter = event.searchKey;
+    this.index = 0;
     this.getItems(true);
   }
 
