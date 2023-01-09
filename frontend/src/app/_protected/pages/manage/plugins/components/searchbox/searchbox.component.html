@@ -2,12 +2,12 @@
 <div class="d-flex justify-content-md-between align-items-md-center align-items-end flex-md-row flex-column-reverse w-100">
 
   <mat-checkbox
-    *ngIf="type === 'plugin'"
+    *ngIf="checkBoxText"
     color="primary"
     class="mt-md-0 mt-1 me-3"
-    [(ngModel)]="installedOnly"
+    [(ngModel)]="checked"
     (change)="filter()">
-    Show installed only
+    {{checkBoxText}}
   </mat-checkbox>
 
   <mat-form-field class="w-100 standalone-field me-3" *ngIf="types?.length > 0">
@@ -55,14 +55,5 @@
       <mat-icon>close</mat-icon>
     </button>
   </mat-form-field>
-
-  <mat-checkbox
-    *ngIf="type === 'endpoint'"
-    color="primary"
-    class="mt-md-0 mt-1 ms-3"
-    [(ngModel)]="showSystem"
-    (change)="filter()">
-    System endpoints
-  </mat-checkbox>
 
 </div>

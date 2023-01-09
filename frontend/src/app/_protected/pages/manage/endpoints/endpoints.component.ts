@@ -103,8 +103,8 @@ export class EndpointsComponent implements OnInit  {
     this.getEndpoints();
   }
 
-  public filterList(event: any) {
-    this.defaultListToShow = event.showSystem ? 'system' : 'other';
+  public filterList(event: { searchKey: string, checked: boolean }) {
+    this.defaultListToShow = event.checked ? 'system' : 'other';
     let instance: any = { ...this.originalEndpoints[this.defaultListToShow] };
     if (event.searchKey) {
       Object.keys(instance).map((element: any) => {

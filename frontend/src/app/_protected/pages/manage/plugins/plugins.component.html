@@ -9,7 +9,10 @@
       </div>
 
       <div class="col-xl-5 col-lg-6 col-md-7 col-sm-6 col-12">
-        <app-searchbox (filterList)="filterList($event)" type="plugin"></app-searchbox>
+        <app-searchbox
+          (filterList)="filterList($event)"
+          checkBoxText="Show installed only">
+        </app-searchbox>
       </div>
 
       <div class="col-12 mt-md-0 mt-4">
