@@ -1,8 +1,8 @@
 
-// CRUD delete endpoint deleting one record from your training_snippets table in your magic database with id matching argument with authentication and authorisation for root,admin roles
+// CRUD delete endpoint deleting one record from your ml_training_snippets table in your magic database with id matching argument with authentication and authorisation for root,admin roles
 .arguments
    id:long
-.description:CRUD delete endpoint deleting one record from your training_snippets table in your magic database with id matching argument with authentication and authorisation for root,admin roles
+.description:CRUD delete endpoint deleting one record from your ml_training_snippets table in your magic database with id matching argument with authentication and authorisation for root,admin roles
 .type:crud-delete
 
 // Verifying user is authorized to access endpoint.
@@ -20,7 +20,7 @@ data.connect:[generic|magic]
 
    // Deleting item from database.
    data.delete
-      table:training_snippets
+      table:ml_training_snippets
       where
          and
 

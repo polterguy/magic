@@ -1,12 +1,12 @@
 
-// CRUD create endpoint inserting one record into your training_snippets table in your magic database taking type, pushed, uri, prompt, completion with authentication and authorisation for root,admin roles
+// CRUD create endpoint inserting one record into your ml_training_snippets table in your magic database taking type, pushed, uri, prompt, completion with authentication and authorisation for root,admin roles
 .arguments
    type:string
    pushed:long
    uri:string
    prompt:string
    completion:string
-.description:CRUD create endpoint inserting one record into your training_snippets table in your magic database taking type, pushed, uri, prompt, completion with authentication and authorisation for root,admin roles
+.description:CRUD create endpoint inserting one record into your ml_training_snippets table in your magic database taking type, pushed, uri, prompt, completion with authentication and authorisation for root,admin roles
 .type:crud-create
 
 // Verifying user is authorized to access endpoint.
@@ -21,7 +21,7 @@ data.connect:[generic|magic]
 
    // Creating our record.
    data.create
-      table:training_snippets
+      table:ml_training_snippets
       return-id:bool:true
       values
 

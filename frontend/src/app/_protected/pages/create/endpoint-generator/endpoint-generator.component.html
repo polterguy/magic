@@ -1,23 +1,34 @@
 <mat-card class="h-100 generator">
   <mat-card-content class="endpoint-generator h-100">
 
-    <mat-tab-group mat-stretch-tabs dynamicHeight animationDuration="0ms" #tabs>
+    <mat-tab-group
+      mat-stretch-tabs
+      dynamicHeight
+      animationDuration="0ms"
+      #tabs>
 
       <mat-tab>
-        <ng-template mat-tab-label>Auto <span class="d-sm-inline d-none px-1">endpoint</span> generator</ng-template>
+
+        <ng-template mat-tab-label>
+          Auto <span class="d-sm-inline d-none px-1">endpoint</span> generator
+        </ng-template>
+
         <ng-template matTabContent>
-
-          <app-auto-endpoint-generator [roles]="roles"></app-auto-endpoint-generator>
-
+          <app-auto-endpoint-generator
+            [roles]="roles">
+          </app-auto-endpoint-generator>
         </ng-template>
       </mat-tab>
 
       <mat-tab>
-        <ng-template mat-tab-label>SQL <span class="d-sm-inline d-none px-1">endpoint </span> generator</ng-template>
+        <ng-template mat-tab-label>
+          SQL <span class="d-sm-inline d-none px-1">endpoint </span> generator
+        </ng-template>
+
         <ng-template matTabContent>
-
-          <app-sql-endpoint-generator [roles]="roles"></app-sql-endpoint-generator>
-
+          <app-sql-endpoint-generator
+            [roles]="roles">
+          </app-sql-endpoint-generator>
         </ng-template>
       </mat-tab>
 

@@ -7,6 +7,7 @@ import { Component, OnInit } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { MachineLearningTrainingService } from 'src/app/_general/services/machine-learning-training.service';
+import { OpenAIService } from 'src/app/_general/services/openai.service';
 
 /**
  * Helper component to administrate training data for OpenAI integration
@@ -19,7 +20,8 @@ import { MachineLearningTrainingService } from 'src/app/_general/services/machin
 })
 export class MachineLearningTrainingComponent implements OnInit {
 
-  isLoading: boolean = false;
+  isLoadingGrid: boolean = false;
+  isLoadingConfig: boolean = false;
   dataSource: any[] = [];
   filter: string = '';
   count: number = 0;
@@ -31,14 +33,30 @@ export class MachineLearningTrainingComponent implements OnInit {
     'pushed',
     'action',
   ];
+  key: string = null;
+  selectedModel: any = null;
+  models: any[] = [];
 
   constructor(
     private generalService: GeneralService,
+    private openAIService: OpenAIService,
     private machineLearningTrainingService: MachineLearningTrainingService) { }
 
   ngOnInit() {
-    this.isLoading = true;
+    this.isLoadingGrid = true;
+    this.isLoadingConfig = true;
     this.getItems();
+
+    this.openAIService.key().subscribe({
+      next: (result: any) => {
+
+        this.key = result.result;
+        this.getModels();
+      },
+      error: (error: any) => {
+        this.generalService.showFeedback(error, 'errorMessage', 'Ok');
+      }
+    });
   }
 
   showDetails(el: any) {
@@ -68,8 +86,8 @@ export class MachineLearningTrainingComponent implements OnInit {
       filter.offset = this.index * this.pageSize;
     }
     if (this.filter?.length > 0) {
-      filter['training_snippets.prompt.like'] = this.filter;
-      filter['training_snippets.type.eq'] = this.filter;
+      filter['ml_training_snippets.prompt.like'] = this.filter;
+      filter['ml_training_snippets.type.eq'] = this.filter;
     }
 
     this.machineLearningTrainingService.list(filter).subscribe({
@@ -80,18 +98,18 @@ export class MachineLearningTrainingComponent implements OnInit {
 
           const countFilter: any = { };
           if (this.filter?.length > 0) {
-            countFilter['training_snippets.prompt.like'] = this.filter;
-            countFilter['training_snippets.type.eq'] = this.filter;
+            countFilter['ml_training_snippets.prompt.like'] = this.filter;
+            countFilter['ml_training_snippets.type.eq'] = this.filter;
           }
       
           this.machineLearningTrainingService.count(countFilter).subscribe({
             next: (result: any) => {
               this.count = result.count;
-              this.isLoading = false;
+              this.isLoadingGrid = false;
             },
             error: (error: any) => {
               this.generalService.showFeedback(error, 'errorMessage', 'Ok');
-              this.isLoading = false;
+              this.isLoadingGrid = false;
             }
           });
         }
@@ -99,7 +117,45 @@ export class MachineLearningTrainingComponent implements OnInit {
       error: (error: any) => {
 
         this.generalService.showFeedback(error, 'errorMessage', 'Ok');
-        this.isLoading = false;
+        this.isLoadingGrid = false;
+      }
+    });
+  }
+
+  private getModels() {
+    this.openAIService.base_models().subscribe({
+      next: (result: any[]) => {
+
+        this.models = result;
+
+        if (!this.key) {
+          this.isLoadingConfig = false;
+          return;
+        }
+
+        this.openAIService.get_training_status().subscribe({
+          next: (result: any[]) => {
+
+            this.models = result.map(x => {
+              return {
+                name: x.fine_tuned_model,
+                description: 'Fine tuned custom model',
+              };
+            }).concat(this.models);
+
+            this.isLoadingConfig = false;
+          },
+          error: (error: any) => {
+
+            this.generalService.showFeedback(error, 'errorMessage', 'Ok');
+            this.isLoadingConfig = false;
+          }
+        });
+      },
+      error: (error: any) => {
+
+        this.generalService.showFeedback(error, 'errorMessage', 'Ok');
+        this.isLoadingConfig = false;
       }
     });
   }

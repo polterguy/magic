@@ -1,4 +1,5 @@
-create table training_snippets(
+
+create table ml_training_snippets(
   "id" integer not null primary key autoincrement,
   "created" timestamp not null default current_timestamp,
   "type" text not null default 'hyperlambda',
