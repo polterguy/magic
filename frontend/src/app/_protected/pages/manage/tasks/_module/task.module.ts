@@ -9,7 +9,6 @@ import { TasksComponent } from '../tasks.component';
 import { ComponentsModule } from 'src/app/_general/components/components.module';
 import { MaterialModule } from 'src/app/material.module';
 import { TaskRoutingModule } from './task.routing.module';
-import { TaskSearchboxComponent } from '../task-searchbox/task-searchbox.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CmModule } from 'src/app/codemirror/_module/cm.module';
 import { ScheduleTaskComponent } from '../components/schedule-task/schedule-task.component';
@@ -19,7 +18,6 @@ import { ManageTaskComponent } from '../components/manage-task/manage-task.compo
 @NgModule({
   declarations: [
     TasksComponent,
-    TaskSearchboxComponent,
     ScheduleTaskComponent,
     ManageTaskComponent
   ],

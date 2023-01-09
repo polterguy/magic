@@ -16,16 +16,8 @@ import { ManageTaskComponent } from './components/manage-task/manage-task.compon
 import { Schedule } from './_models/schedule.model';
 import { PageEvent } from '@angular/material/paginator';
 
-/*
- * Helper class to encapsulate a task and its details,
- * in addition to its CodeMirror options and model.
- */
 class TaskEx {
-
-  // Actual task as returned from backend.
   task: Task;
-
-  // CodeMirror model for editing task's details.
   model?: Model;
 }
 
@@ -54,11 +46,13 @@ export class TasksComponent implements OnInit {
     private generalService: GeneralService) { }
 
   ngOnInit() {
+
     this.getTasks();
     this.getCount();
   }
 
   addTask() {
+
     this.dialog.open(ManageTaskComponent, {
       width: '800px',
       panelClass: ['light'],
@@ -72,6 +66,7 @@ export class TasksComponent implements OnInit {
   }
 
   editTask(task: any) {
+
     this.dialog.open(ManageTaskComponent, {
       width: '800px',
       panelClass: ['light'],
@@ -85,6 +80,7 @@ export class TasksComponent implements OnInit {
   }
 
   execute(task: any) {
+
     this.taskService.execute(task.id).subscribe({
       next: () => this.generalService.showFeedback('Task successfully executed', 'successMessage'),
       error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)
@@ -92,6 +88,7 @@ export class TasksComponent implements OnInit {
   }
 
   deleteTask(task: any) {
+
     this.dialog.open(ConfirmationDialogComponent, {
       width: '500px',
       data: {
@@ -116,6 +113,7 @@ export class TasksComponent implements OnInit {
   }
 
   schedule(task: any) {
+
     this.dialog.open(ScheduleTaskComponent, {
       width: '800px',
       data: task,
@@ -128,6 +126,7 @@ export class TasksComponent implements OnInit {
   }
 
   deleteSchedule(schedule: Schedule, task: any) {
+
     this.dialog.open(ConfirmationDialogComponent, {
       width: '500px',
       data: {
@@ -151,13 +150,15 @@ export class TasksComponent implements OnInit {
   }
 
   changePage(e: PageEvent) {
+
     this.pageSize = e.pageSize;
     this.pageIndex = e.pageIndex;
     this.getTasks();
   }
 
-  filterList(event: string) {
-    this.searchText = event;
+  filterList(event: { searchKey: string }) {
+
+    this.searchText = event.searchKey;
     this.getTasks();
     this.getCount();
   }
