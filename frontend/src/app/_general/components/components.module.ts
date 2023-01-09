@@ -24,7 +24,7 @@ import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import { GithubTokenDialogComponent } from '../../_protected/pages/user/generate-token-dialog/generate-token-dialog.component';
 import { PwaUpdateDialogComponent } from './pwa-update-dialog/pwa-update-dialog.component';
 import { LogItemDetailsComponent } from './log-item-details/log-item-details.component';
-import { SearchboxComponent } from 'src/app/_protected/pages/manage/plugins/components/searchbox/searchbox.component';
+import { SearchboxComponent } from 'src/app/_general/components/searchbox/searchbox.component';
 import { ConfigureThemeDialog } from '../../_protected/pages/dashboard/components/configure-theme/configure-theme-dialog.component';
 import { OpenAIAnswerDialogComponent } from './openai/openai-answer-dialog/openai-answer-dialog.component';
 import { OpenAIConfigurationDialogComponent } from './openai/openai-configuration-dialog/openai-configuration-dialog.component';
