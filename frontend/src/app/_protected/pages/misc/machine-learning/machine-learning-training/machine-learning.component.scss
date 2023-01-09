@@ -16,5 +16,20 @@
    .text-truncate {
      max-width: 30vw;
    }
- }
+
+  .status {
+    min-width: 7px;
+    min-height: 7px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: $aista_default_grey3;
+    display: inline-block;
+    background-color: $aista_default_grey3;
+
+    &.pushed {
+      background-color: $aista_success;
+    }
+  }
+}
  
