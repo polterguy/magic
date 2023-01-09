@@ -10,17 +10,37 @@
     Show installed only
   </mat-checkbox>
 
+  <mat-form-field class="w-100 standalone-field me-3" *ngIf="types?.length > 0">
+    <span
+      matPrefix
+      matTooltip="Filter on type"
+      class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+      <mat-icon>filter_list</mat-icon>
+      <span class="text-muted ms-1">|</span>
+    </span>
+    <mat-select
+      [(ngModel)]="selectedType"
+      (selectionChange)="typeChanged()"
+      placeholder="Type ...">
+      <mat-option
+        *ngFor="let item of types"
+        [value]="item">
+        <span class="d-block name-line">{{item}}</span>
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
   <mat-form-field class="w-100 standalone-field">
     <span
       matPrefix
-      matTooltip="Search for or filter your items"
+      matTooltip="Search for item(s)"
       class="d-flex flex-nowrap align-items-center justify-content-between me-2">
       <mat-icon>search</mat-icon>
       <span class="text-muted">|</span>
     </span>
     <input
       matInput
-      placeholder="Filter ..."
+      placeholder="Search ..."
       [formControl]="filterControl"
       #input
       autocomplete="off">
@@ -38,7 +58,7 @@
     color="primary"
     class="mt-md-0 mt-1 ms-3"
     [(ngModel)]="showSystem"
-    (change)="filter();">
+    (change)="filter()">
     System endpoints
   </mat-checkbox>
 

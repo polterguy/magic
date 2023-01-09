@@ -18,20 +18,20 @@ export class SearchboxComponent implements OnInit {
 
   @Output() filterList = new EventEmitter<any>();
   @Input() type: string;
+  @Input() types: string[];
 
   filterControl: FormControl;
 
   installedOnly: boolean = false;
   showSystem: boolean = false;
+  selectedType: string = null;
 
   ngOnInit() {
     this.filterControl = new FormControl('');
     this.filterControl.valueChanges
       .pipe(debounceTime(400), distinctUntilChanged())
       .subscribe(() => {
-        this.filterList.emit({
-          searchKey: this.filterControl.value
-        });
+        this.filter();
       });
   }
 
@@ -44,7 +44,18 @@ export class SearchboxComponent implements OnInit {
     this.filterList.emit({
       installedOnly: this.installedOnly,
       showSystem: this.showSystem,
-      searchKey: this.filterControl.value
+      searchKey: this.filterControl.value,
+      type: this.selectedType,
+    });
+  }
+
+  typeChanged() {
+
+    this.filterList.emit({
+      installedOnly: this.installedOnly,
+      showSystem: this.showSystem,
+      searchKey: this.filterControl.value,
+      type: this.selectedType,
     });
   }
 }

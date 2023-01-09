@@ -23,10 +23,11 @@ export class MachineLearningTrainingComponent implements OnInit {
   isLoadingGrid: boolean = false;
   isLoadingConfig: boolean = false;
   dataSource: any[] = [];
-  filter: string = '';
+  filter: any = {
+    limit: 10,
+    offset: 0,
+  };
   count: number = 0;
-  index: number = 0;
-  pageSize: number = 10;
   displayedColumns: string[] = [
     'type',
     'prompt',
@@ -36,6 +37,7 @@ export class MachineLearningTrainingComponent implements OnInit {
   key: string = null;
   selectedModel: any = null;
   models: any[] = [];
+  types: string[] = null;
 
   constructor(
     private generalService: GeneralService,
@@ -43,9 +45,20 @@ export class MachineLearningTrainingComponent implements OnInit {
     private machineLearningTrainingService: MachineLearningTrainingService) { }
 
   ngOnInit() {
+
     this.isLoadingGrid = true;
     this.isLoadingConfig = true;
-    this.getItems();
+
+    this.machineLearningTrainingService.types().subscribe({
+      next: (types: any[]) => {
+
+        this.types = types.map(x => x.type);
+        this.getItems();
+      },
+      error: (error: any) => {
+        this.generalService.showFeedback(error, 'errorMessage', 'Ok');
+      }
+    });
 
     this.openAIService.key().subscribe({
       next: (result: any) => {
@@ -64,13 +77,21 @@ export class MachineLearningTrainingComponent implements OnInit {
   }
 
   page(event: PageEvent) {
-    this.index = event.pageIndex;
+    this.filter.offset = event.pageIndex * event.pageSize;
     this.getItems(false);
   }
 
-  filterList(event: {searchKey: string}) {
-    this.filter = event.searchKey;
-    this.index = 0;
+  filterList(event: { searchKey: string, type: string }) {
+    this.filter = {
+      limit: this.filter.limit,
+      offset: 0,
+    };
+    if (event.searchKey) {
+      this.filter['ml_training_snippets.prompt.like'] = '%' + event.searchKey + '%';
+    }
+    if (event.type) {
+      this.filter['ml_training_snippets.type.eq'] = event.type;
+    }
     this.getItems(true);
   }
 
@@ -79,31 +100,23 @@ export class MachineLearningTrainingComponent implements OnInit {
    */
 
   getItems(count: boolean = true) {
-    const filter: any = {
-      limit: this.pageSize,
-    };
-    if (this.index !== 0) {
-      filter.offset = this.index * this.pageSize;
-    }
-    if (this.filter?.length > 0) {
-      filter['ml_training_snippets.prompt.like'] = this.filter;
-      filter['ml_training_snippets.type.eq'] = this.filter;
-    }
 
-    this.machineLearningTrainingService.list(filter).subscribe({
+    this.machineLearningTrainingService.list(this.filter).subscribe({
       next: (result: any[]) => {
 
         this.dataSource = result || [];
         if (count) {
 
-          const countFilter: any = { };
-          if (this.filter?.length > 0) {
-            countFilter['ml_training_snippets.prompt.like'] = this.filter;
-            countFilter['ml_training_snippets.type.eq'] = this.filter;
+          const countFilter: any = {};
+          for (const idx in this.filter) {
+            if (idx !== 'limit' && idx !== 'offset') {
+              countFilter[idx] = this.filter[idx];
+            }
           }
       
           this.machineLearningTrainingService.count(countFilter).subscribe({
             next: (result: any) => {
+
               this.count = result.count;
               this.isLoadingGrid = false;
             },
