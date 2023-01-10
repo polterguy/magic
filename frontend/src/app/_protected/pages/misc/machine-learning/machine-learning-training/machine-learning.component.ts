@@ -125,6 +125,8 @@ export class MachineLearningTrainingComponent implements OnInit {
     this.machineLearningTrainingService.types().subscribe({
       next: (types: any[]) => {
 
+        types = types || [];
+
         this.types = types.map(x => x.type);
         this.getTrainingData();
       },
