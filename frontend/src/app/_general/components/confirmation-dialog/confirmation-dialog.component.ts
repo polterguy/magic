@@ -40,6 +40,7 @@ export class ConfirmationDialogComponent implements OnInit {
       description?: string,
       description_extra: string,
       action_btn: string,
+      close_btn: string,
       action_btn_color?: string,
       bold_description?: boolean,
       extra?: Extra}) { }

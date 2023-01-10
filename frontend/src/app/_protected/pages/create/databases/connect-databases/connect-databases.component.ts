@@ -61,16 +61,19 @@ export class ConnectComponent implements OnInit {
     private generalService: GeneralService) { }
 
   ngOnInit() {
+
     this.loadConfig();
     this.getIPAddress();
   }
 
   copyConnectionString(element: any) {
+
     this.clipboard.copy(element.cString);
     this.generalService.showFeedback('Connection string can be found on your clipboard');
   }
 
   copyIpAddress() {
+
     this.clipboard.copy(this.ip_address);
     this.generalService.showFeedback('Cloudlet\'s IP address can be found on your clipboard');
   }
@@ -98,37 +101,32 @@ export class ConnectComponent implements OnInit {
       return;
     }
 
-    this.waitingTest = true;
-    this.generalService.showLoading();
-    this.configService.testConnectionString(this.databaseType, this.connectionString).subscribe({
-      next: (res: any) => {
+    if (connectAfterTesting && this.cStringName === 'generic') {
 
-        if (res.result === 'success') {
-          if (connectAfterTesting) {
-            this.addConnectionString();
-            return;
-          }
-          this.waitingTest = false;
-          this.generalService.showFeedback('Success', 'successMessage');
-          this.generalService.hideLoading();
-
-        } else if (res.result === 'failure') {
-
-          this.waitingTest = false;
-          this.generalService.showFeedback(res.message, 'errorMessage', 'Ok', 5000);
-          this.generalService.hideLoading();
+      // Asking user if he wants to use this connection string as his or her default connection string.
+      this.dialog.open(ConfirmationDialogComponent, {
+        width: '500px',
+        data: {
+          title: 'Use as default database?',
+          description: 'Do you want to use this connection string as your default database and connection string?',
+          action_btn: 'Yes',
+          close_btn: 'No',
         }
-      },
-      error: (error: any) => {
+      }).afterClosed().subscribe((result: string) => {
+        if (result === 'confirm') {
+          this.testConnectionStringImplementation(connectAfterTesting, true);
+          return;
+        }
+        this.testConnectionStringImplementation(connectAfterTesting);
+      });
+      return;
+    }
 
-        this.waitingTest = false;
-        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
-        this.generalService.hideLoading();
-      },
-    });
+    this.testConnectionStringImplementation(connectAfterTesting);
   }
 
   deleteConnectionString(item: any) {
+
     this.dialog.open(ConfirmationDialogComponent, {
       width: '500px',
       data: {
@@ -171,8 +169,10 @@ export class ConnectComponent implements OnInit {
   }
 
   manageCatalogs(item: any) {
+
     item.isClicked = true;
     this.generalService.showLoading();
+
     this.sqlService.getDatabaseMetaInfo(item.dbTypeValue, item.cStringKey).subscribe({
       next: (res: any) => {
         if (res) {
@@ -201,7 +201,41 @@ export class ConnectComponent implements OnInit {
    * Private helper methods
    */
 
+  private testConnectionStringImplementation(connectAfterTesting: boolean, useAsDefault: boolean = false) {
+
+    this.generalService.showLoading();
+    this.waitingTest = true;
+
+    this.configService.testConnectionString(this.databaseType, this.connectionString).subscribe({
+      next: (res: any) => {
+
+        if (res.result === 'success') {
+          if (connectAfterTesting) {
+            this.addConnectionString(useAsDefault);
+            return;
+          }
+          this.waitingTest = false;
+          this.generalService.showFeedback('Success', 'successMessage');
+          this.generalService.hideLoading();
+
+        } else if (res.result === 'failure') {
+
+          this.waitingTest = false;
+          this.generalService.showFeedback(res.message, 'errorMessage', 'Ok', 5000);
+          this.generalService.hideLoading();
+        }
+      },
+      error: (error: any) => {
+
+        this.waitingTest = false;
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+        this.generalService.hideLoading();
+      },
+    });
+  }
+
   private getIPAddress() {
+
     this.diagnosticService.getSystemReport().subscribe({
       next: (result: any) => {
         this.ip_address = result.server_ip || 'unknown';
@@ -212,6 +246,7 @@ export class ConnectComponent implements OnInit {
   }
 
   private loadConfig() {
+
     this.configService.loadConfig().subscribe({
       next: (res: any) => {
         this.configFile = res.magic;
@@ -238,6 +273,7 @@ export class ConnectComponent implements OnInit {
   }
 
   private getStatus() {
+
     this.databases.forEach((element: any) => {
       this.configService.testConnectionString(element.dbTypeValue, element.cString).subscribe({
         next: (res: Response) => {
@@ -254,12 +290,15 @@ export class ConnectComponent implements OnInit {
     });
   }
 
-  private addConnectionString() {
+  private addConnectionString(useAsDefault: boolean = false) {
+
     this.sqlService.addConnectionString(
       this.databaseType,
       this.cStringName,
-      this.connectionString).subscribe({
+      this.connectionString,
+      useAsDefault).subscribe({
       next: () => {
+
         this.generalService.showFeedback('Successfully connected to database', 'successMessage');
         this.waitingTest = false;
         this.databases = [...this.databases, {
@@ -270,13 +309,12 @@ export class ConnectComponent implements OnInit {
           cStringKey: this.cStringName,
           isClicked: false
         }];
+
         this.generalService.hideLoading();
         this.cdr.detectChanges();
         this.cStringName = '';
         this.connectionString = '';
-        setTimeout(() => {
-          this.backendService.getRecaptchaKey();
-        }, 1000);
+
       },
       error: (error: any) => {
         this.waitingTest = false;

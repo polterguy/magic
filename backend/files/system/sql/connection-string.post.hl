@@ -6,11 +6,13 @@
  * - [databaseType] - Database type, typically 'mssql' or 'mysql'.
  * - [name] - Name of connection string.
  * - [connectionString] - Connection string to add.
+ * - [useAsDefault] - If true will become the default connection string for the magic database
  */
 .arguments
    databaseType:string
    name:string
    connectionString:string
+   useAsDefault:bool
 .description:Adds the specified connection string, making sure the backend can somehow actually connect to the database
 .type:internal
 
@@ -87,7 +89,30 @@ try
    lambda2json:x:@json2lambda/*
    config.save:x:-
 
-   // Success, connetion string is valid.
+   // Checking if caller wants to use this connection string as the default
+   if
+      and
+         eq:x:@.arguments/*/name
+            .:generic
+         exists:x:@.arguments/*/useAsDefault
+         get-value:x:@.arguments/*/useAsDefault
+      .lambda
+
+         // Changing database type to specified database type.
+         set-value:x:@json2lambda/*/magic/*/databases/*/default
+            get-value:x:@.arguments/*/databaseType
+
+         // Saving config now with a changed default database type.
+         lambda2json:x:@json2lambda/*
+         config.save:x:-
+
+         // Sleeping for two seconds to make sure configuration object is not going stale.
+         sleep:2000
+
+         // Now we need to ensure database is created.
+         io.file.execute:/system/ensure-magic-database.hl
+
+   // Returning success to caller.
    return
       result:success
 
