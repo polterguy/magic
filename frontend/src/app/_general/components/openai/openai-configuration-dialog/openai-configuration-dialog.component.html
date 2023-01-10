@@ -1,115 +1,47 @@
 
 <h3 mat-dialog-title class="mb-1">Configure OpenAI</h3>
 
-<div mat-dialog-content>
+<form (ngSubmit)="save()">
+  <div mat-dialog-content>
 
-  <p class="text-muted mt-0 mb-4">
-    Configure OpenAI with your API key, and optionally start training it using the default Hyperlambda training data.
-    Notice, you can create your API key <a href="https://beta.openai.com/account/api-keys" target="_blank">here</a>.
-  </p>
+    <p class="text-muted mt-0 mb-4">
+      Supply your OpenAI API key.
+      Notice, you can create an API key <a href="https://beta.openai.com/account/api-keys" target="_blank">here</a>.
+    </p>
 
-  <mat-form-field class="w-100 standalone-field">
-    <span
-      matPrefix
-      matTooltip="OpenAI API key"
-      class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-      <mat-icon>key</mat-icon>
-      <span class="text-muted">|</span>
-    </span>
-    <input
-      matInput
-      cdkFocusInitial
-      placeholder="OpenAI API key"
-      (change)="apiKeyChanged()"
-      [(ngModel)]="openApiKey"
-      autocomplete="off">
-  </mat-form-field>
+    <mat-form-field class="w-100 standalone-field">
+      <span
+        matPrefix
+        matTooltip="OpenAI API key"
+        class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        <mat-icon>key</mat-icon>
+        <span class="text-muted">|</span>
+      </span>
+      <input
+        matInput
+        cdkFocusInitial
+        placeholder="OpenAI API key"
+        [(ngModel)]="openApiKey"
+        name="openApiKey"
+        autocomplete="off">
+    </mat-form-field>
 
-  <mat-form-field class="w-100 standalone-field">
-    <span
-      matPrefix
-      matTooltip="Model to use"
-      class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-      <mat-icon>help_outline</mat-icon>
-      <span class="text-muted ms-1">|</span>
-    </span>
-    <mat-select [(ngModel)]="selectedModel">
-      <mat-select-trigger>
-        {{selectedModel?.name}}
-      </mat-select-trigger>
-      <mat-option
-        class="multiline-mat-option"
-        *ngFor="let item of models"
-        [value]="item">
-        <span class="d-block name-line" #typeName>{{item.name}}</span>
-        <span class="d-block description-line">{{item.description}}</span>
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
+  </div>
 
-  <mat-form-field class="w-100 standalone-field">
-    <span
-      matPrefix
-      matTooltip="Maximum amount of tokens to use per question"
-      class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-      <mat-icon>timeline</mat-icon>
-      <span class="text-muted">|</span>
-    </span>
-    <input
-      matInput
-      placeholder="Max tokens"
-      [(ngModel)]="max_tokens"
-      type="number"
-      min="20"
-      max="4096"
-      autocomplete="off">
-  </mat-form-field>
+  <div mat-dialog-actions [align]="'end'">
 
-  <mat-form-field class="w-100 standalone-field">
-    <span
-      matPrefix
-      matTooltip="Temperature or 'creativity'"
-      class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-      <mat-icon>opacity</mat-icon>
-      <span class="text-muted">|</span>
-    </span>
-    <input
-      matInput
-      placeholder="Temperature"
-      [(ngModel)]="temperature"
-      type="number"
-      min="0"
-      max="1"
-      step="0.1"
-      autocomplete="off">
-  </mat-form-field>
+    <button
+      mat-button
+      [mat-dialog-close]="{ configured: false }">
+      Close
+    </button>
 
-  <mat-checkbox
-    [(ngModel)]="startTraining"
-    class="mb-3 mt-1"
-    color="primary">Start Hyperlambda training</mat-checkbox>
+    <button
+      mat-flat-button
+      type="submit">
+      Save
+    </button>
 
-</div>
+  </div>
 
-<div mat-dialog-actions [align]="'end'">
-
-  <button
-    mat-button
-    (click)="training_data()">
-    Training data
-  </button>
-
-  <button
-    mat-button
-    (click)="close()">
-    Close
-  </button>
-
-  <button
-    mat-flat-button
-    (click)="save()"
-    [disabled]="!openApiKey || openApiKey.length === 0">
-    Save
-  </button>
-
-</div>
+</form>

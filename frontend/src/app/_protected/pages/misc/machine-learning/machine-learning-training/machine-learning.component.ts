@@ -60,8 +60,12 @@ export class MachineLearningTrainingComponent implements OnInit {
       })
       .afterClosed()
       .subscribe((result: {configured: boolean}) => {
+
         if (result?.configured) {
-          this.getConfiguredStatus();
+          this.generalService.showLoading();
+
+          // Needed to make sure configuration is applied in backend.
+          setTimeout(() => this.getConfiguredStatus(), 500);
         }
       });
   }
