@@ -1,5 +1,8 @@
 
-// Creates the magic database.
+/*
+ * Creates the magic database, and applies
+ * all migration SQL scripts.
+ */
 
 // Figuring out what our default database type is.
 .db-type
@@ -45,11 +48,13 @@ if
 
          // Special case for MS SQL to use [mssql.execute-batch].
          case:mssql
+
             mssql.connect
                mssql.execute-batch:x:@io.file.load
 
          // Special case for PG SQL to create database in a different connection.
          case:pgsql
+
             pgsql.connect:[generic|postgres]
                pgsql.execute:create database magic
             pgsql.connect:[generic|magic]
@@ -134,3 +139,16 @@ data.connect:[generic|magic]
                   .:"' failed"
                console.log:x:@strings.concat
                console.log:x:@.arguments/*/message
+
+// Applying all common Hyperlambda files
+io.file.list-recursively:/misc/common/
+for-each:x:@io.file.list-recursively/*
+
+   // Verifying file is a Hyperlambda file.
+   if
+      strings.ends-with:x:@.dp/#
+         .:.hl
+      .lambda
+
+         // Executes file.
+         io.file.execute:x:@.dp/#

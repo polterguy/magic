@@ -78,5 +78,7 @@ try
          count:x:@get-count
 
 .catch
+
+   // Doing some basic logging.
    log.error:Something went wrong as we tried to insert OpenAI training database into magic database
       message:x:@.arguments/*/message
