@@ -37,7 +37,6 @@ if
        * determine which script to execute, which differs according to what database
        * type Magic is configured to use as default database type.
        */
-      console.log:Magic database does not exists, attempting to create it
       strings.concat
          .:/misc/
          get-value:x:@.db-type
@@ -83,6 +82,7 @@ if
 
       // Magic database successfully created
       console.log:Magic databases was successfully created
+      log.info:Magic databases was successfully created
 
 /*
  * Listing all SQL migration scripts, and executing these sequentially,
@@ -133,7 +133,8 @@ data.connect:[generic|magic]
                   .:"Script '"
                   get-value:x:@.dp/#
                   .:"' succeeded"
-               console.log:x:-
+               console.log:x:@strings.concat
+               log.info:x:@strings.concat
 
             .catch
 
@@ -144,13 +145,15 @@ data.connect:[generic|magic]
                   .:"Script '"
                   get-value:x:@.dp/#
                   .:"' failed"
-               console.log:x:-
+               console.log:x:@strings.concat
+               log.error:x:@strings.concat
 
 /*
  * Starting task scheduler now that we have created our database.
  */
 tasks.scheduler.start
 console.log:Task scheduler successfully started
+log.info:Task scheduler successfully started
 
 // Executing all magic.startup Hyperlambda files.
 io.file.list-recursively:/modules/
