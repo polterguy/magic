@@ -58,11 +58,12 @@ export class SqlService {
       connectionString);
   }
 
-  addConnectionString(databaseType: string, name: string, connectionString: string) {
+  addConnectionString(databaseType: string, name: string, connectionString: string, useAsDefault: boolean = false) {
     return this.httpService.post('/magic/system/sql/connection-string', {
       databaseType,
       name,
       connectionString,
+      useAsDefault,
     });
   }
 
