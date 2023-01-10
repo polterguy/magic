@@ -133,4 +133,5 @@ data.connect:[generic|magic]
                   get-value:x:@.dp/#
                   .:"' failed"
                console.log:x:@strings.concat
+               console.log:x:@.arguments/*/message
                log.error:x:@strings.concat
