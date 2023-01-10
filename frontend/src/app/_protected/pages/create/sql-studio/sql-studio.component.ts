@@ -80,6 +80,7 @@ export class SQLStudioComponent implements OnInit {
   }
 
   getConnectionStrings(selectedDbType: string, selectedConnectionString?: string) {
+
     this._dbLoading.next(true);
     this.selectedDbType = selectedDbType;
     this.connectionStrings = [];
@@ -87,13 +88,17 @@ export class SQLStudioComponent implements OnInit {
 
     this.sqlService.connectionStrings(selectedDbType).subscribe({
       next: (connectionStrings: any) => {
+
         this.connectionStrings = connectionStrings;
         if (connectionStrings) {
+
           this.selectedConnectionString = selectedConnectionString ?
             selectedConnectionString :
             (Object.keys(connectionStrings).indexOf('generic') > -1 ? 'generic' : Object.keys(connectionStrings)[0]);
           this.getDatabases();
+
         } else {
+
           this._dbLoading.next(false);
           this.generalService.hideLoading();
           this.databases = [];
@@ -106,6 +111,7 @@ export class SQLStudioComponent implements OnInit {
   }
 
   getDatabases() {
+
     this._dbLoading.next(true);
     this.generalService.showLoading();
     this.databases = [];
@@ -114,6 +120,7 @@ export class SQLStudioComponent implements OnInit {
       this.selectedDbType,
       this.selectedConnectionString).subscribe({
         next: (res: Databases) => {
+
           this.databases = res.databases || [];
           if (this.selectedDatabase === '') {
             this.selectedDatabase = this.databases[0].name;
@@ -128,6 +135,7 @@ export class SQLStudioComponent implements OnInit {
           this.generalService.hideLoading();
         },
         error: (error: any) => {
+
           this._dbLoading.next(false);
           this.generalService.hideLoading();
           this.generalService.showFeedback(error?.error?.message, 'errorMessage', 'Ok', 5000);
@@ -136,6 +144,7 @@ export class SQLStudioComponent implements OnInit {
   }
 
   addNewTable() {
+
     this.dialog.open(NewTableComponent, {
       width: '500px'
     }).afterClosed().subscribe((result: any) => {
@@ -152,6 +161,7 @@ export class SQLStudioComponent implements OnInit {
           result.pkLength,
           result.pkDefault).subscribe({
             next: (result: any) => {
+
               this.generalService.showFeedback('Table successfully added', 'successMessage');
               this.getDatabases();
               this.applyMigration(result.sql);
@@ -163,8 +173,10 @@ export class SQLStudioComponent implements OnInit {
   }
 
   createNewLinkTable() {
+
     const tables: any = this.databases.find((db: any) => db.name === this.selectedDatabase).tables || [];
     if (tables.length === 0) {
+
       this.generalService.showFeedback('This database doesn\'t have tables.', 'errorMessage');
       return;
     }
@@ -172,6 +184,7 @@ export class SQLStudioComponent implements OnInit {
       width: '500px',
       data: tables
     }).afterClosed().subscribe((selectedTables: any) => {
+
       if (selectedTables) {
         const table1pk: any[] = selectedTables.table1.columns.filter((x: any) => x.primary);
         const table2pk: any[] = selectedTables.table2.columns.filter((x: any) => x.primary);
@@ -199,6 +212,7 @@ export class SQLStudioComponent implements OnInit {
           this.selectedDatabase,
           payload).subscribe({
             next: (result: any) => {
+
               this.generalService.showFeedback('Link table successfully created', 'successMessage');
               this.getDatabases();
               this.applyMigration(result.sql);
@@ -210,19 +224,24 @@ export class SQLStudioComponent implements OnInit {
   }
 
   viewDatabaseDDL() {
+
     if (this.selectedDatabase === '') {
       return;
     }
+
     if (this.selectedDbType === 'mssql') {
       this.generalService.showFeedback('SQL Server does not allow us to easily view DDL');
       return;
     }
+
     let tables = this.databases.find((db: any) => db.name === this.selectedDatabase).tables || [];
     if (tables.length === 0) {
+
       this.generalService.showFeedback('This database doesn\'t have tables.');
       return;
     }
     tables = tables.sort((lhs: any, rhs: any) => {
+
       if (lhs.foreign_keys?.filter((x: any) => x.foreign_table === rhs.name)) {
         return 1;
       } else if (rhs.foreign_keys?.filter((x: any) => x.foreign_table === lhs.name)) {
@@ -238,6 +257,7 @@ export class SQLStudioComponent implements OnInit {
       tables.map((table: any) => table.name),
       true).subscribe({
         next: (result: any) => {
+
           const dialogRef = this.dialog.open(ExportDdlComponent, {
             width: '80vw',
             panelClass: 'light',
@@ -248,15 +268,16 @@ export class SQLStudioComponent implements OnInit {
               canExport: (this.selectedDatabase !== 'magic' && (this.selectedDbType === 'sqlite' || this.selectedDbType === 'mysql' || this.selectedDbType === 'pgsql'))
             }
           }).afterClosed().subscribe((result: any) => {
+
             if (result) {
 
               // Invokes endpoint to save content to a module folder.
               this.sqlService.exportToModule(
                 this.selectedDbType,
                 this.selectedDatabase,
-                result.result,
-              ).subscribe({
+                result.result).subscribe({
                 next: () => {
+
                   this.generalService.showFeedback('Database successfully exported', 'successMessage');
                 },
                 error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
@@ -269,6 +290,7 @@ export class SQLStudioComponent implements OnInit {
   }
 
   changeDatabase() {
+
     const tables = this.databases.find((db: any) => db.name === this.selectedDatabase)?.tables || [];
     this._tables.next(tables);
     let hintTables = this.databases.find((db: any) => db.name === this.selectedDatabase)?.tables || [];
@@ -277,13 +299,17 @@ export class SQLStudioComponent implements OnInit {
   }
 
   clearServerCache() {
+
     this.generalService.showLoading();
+
     this.cacheService.delete('magic.sql.databases.*').subscribe({
       next: () => {
+
         window.location.href = window.location.href;
         this.generalService.hideLoading();
       },
       error: (error: any) => {
+
         this.generalService.hideLoading();
         this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
       }
@@ -295,6 +321,7 @@ export class SQLStudioComponent implements OnInit {
    */
 
   private applyMigration(sql: string) {
+
     if (!this.migrate) {
       return;
     }
@@ -304,14 +331,15 @@ export class SQLStudioComponent implements OnInit {
         sql,
       }
     }).afterClosed().subscribe((res: any) => {
+
       if (res) {
+
         this.sqlService.createMigrationScript(
           this.selectedDbType,
           this.selectedDatabase,
           sql).subscribe({
-            next: () => {
-              this.generalService.showFeedback('Migration script successfully applied');
-            },
+            next: () => this.generalService.showFeedback('Migration script successfully applied'),
+            error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
           });
       }
     });
