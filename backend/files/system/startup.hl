@@ -1,0 +1,175 @@
+
+/*
+ * Startup Hyperlambda file, executed as system is initially started.
+ *
+ * Creates the magic database, and applies some sane default configuration
+ * settings.
+ */
+
+// Before we can check if magic db exists, we'll need the slots that does the heavy lifting for us.
+io.file.execute:/system/sql/magic.startup/mssql/magic.db.mssql.databases.hl
+io.file.execute:/system/sql/magic.startup/mysql/magic.db.mysql.databases.hl
+io.file.execute:/system/sql/magic.startup/pgsql/magic.db.pgsql.databases.hl
+io.file.execute:/system/sql/magic.startup/sqlite/magic.db.sqlite.databases.hl
+
+// Figuring out what our default database type is.
+.db-type
+set-value:x:@.db-type
+   config.get:"magic:databases:default"
+
+// Checking if magic db exists, and if not, creating it.
+.slot
+set-value:x:@.slot
+   strings.concat
+      .:magic.db.
+      get-value:x:@.db-type
+      .:.databases
+signal:x:@.slot
+if
+   not
+      exists:x:@signal/*/*/=magic
+   .lambda
+
+      /*
+       * Database does not exist.
+       * 
+       * Executing SQL script that creates database, but first we must dynamically
+       * determine which script to execute, which differs according to what database
+       * type Magic is configured to use as default database type.
+       */
+      console.log:Magic database does not exists, attempting to create it
+      strings.concat
+         .:/misc/
+         get-value:x:@.db-type
+         .:/magic.sql
+
+      // Loading create database SQL script file.
+      io.file.load:x:@strings.concat
+
+      /*
+       * Notice, for MS SQL we need to explicitly invoke [mssql.execute-batch] to
+       * accommodate for "go" statements.
+       *
+       * For PG SQL we'll need to first create the database in a separate [pgsql.connect] invocation,
+       * then run the execute script with the created database as our selected database.
+       */
+      switch:x:@.db-type
+
+         // Special case for MS SQL to use [mssql.execute-batch].
+         case:mssql
+            mssql.connect
+               mssql.execute-batch:x:@io.file.load
+
+         // Special case for PG SQL to create database in a different connection.
+         case:pgsql
+            pgsql.connect:[generic|postgres]
+               pgsql.execute:create database magic
+            pgsql.connect:[generic|magic]
+               pgsql.execute:x:@io.file.load
+
+         // MySQL version, simply doing everything as normal and plain as possible.
+         case:mysql
+
+            // Executing create database SQL script without any special cases.
+            mysql.connect
+               mysql.execute:x:@io.file.load
+
+         // SQLite version.
+         case:sqlite
+
+            // Executing create database SQL script without any special cases.
+            sqlite.connect:[generic|magic]
+               sqlite.execute:x:@io.file.load
+
+      // Magic database successfully created
+      console.log:Magic databases was successfully created
+
+/*
+ * Listing all SQL migration scripts, and executing these sequentially,
+ * making sure we're using the correct folder, according to what database
+ * type Magic has been configured with.
+ */
+strings.concat
+   .:/misc/
+   get-value:x:@.db-type
+   .:/migrations/
+io.file.list:x:@strings.concat
+
+// Connecting to Magic database.
+data.connect:[generic|magic]
+
+   // Iterating through each file in folder.
+   for-each:x:@io.file.list/*
+
+      // Verifying file ends with ".sql".
+      if
+         strings.ends-with:x:@.dp/#
+            .:.sql
+         .lambda
+
+            // This is an SQL file, hence loading it, and executing it.
+            io.file.load:x:@.dp/#
+
+            /*
+             * Notice, to avoid having ONE failing migration script
+             * aborting the entire migration job, we need to do a try/catch/ignore
+             * here. This might occur if for instance some of the migration scripts
+             * has executed successfully previously.
+             */
+            try
+
+               // Ensuring we're doing the "batch execute" thing in case we're in MS SQL land.
+               if
+                  eq
+                     get-value:x:@.db-type
+                     .:mssql
+                  .lambda
+                     set-name:x:@if/./*/data.execute
+                        .:mssql.execute-batch
+
+               // Executing migration script and logging result.
+               data.execute:x:@io.file.load
+               strings.concat
+                  .:"Script '"
+                  get-value:x:@.dp/#
+                  .:"' succeeded"
+               console.log:x:-
+
+            .catch
+
+               /*
+                * We might end up here if migration script has been previously executed ...
+                */
+               strings.concat
+                  .:"Script '"
+                  get-value:x:@.dp/#
+                  .:"' failed"
+               console.log:x:-
+
+/*
+ * Starting task scheduler now that we have created our database.
+ */
+tasks.scheduler.start
+console.log:Task scheduler successfully started
+
+// Executing all magic.startup Hyperlambda files.
+io.file.list-recursively:/modules/
+io.file.list-recursively:/system/
+for-each:x:./*/io.file.list-recursively/*
+
+   // Checking if file is a startup Hyperlambda file.
+   if
+      and
+         strings.contains:x:@.dp/#
+            .:/magic.startup/
+         strings.ends-with:x:@.dp/#
+            .:.hl
+      .lambda
+
+         // Executing file.
+         strings.concat
+            .:"Executing startup file '"
+            get-value:x:@.dp/#
+            .:"."
+         console.log:x:-
+         io.file.execute:x:@.dp/#

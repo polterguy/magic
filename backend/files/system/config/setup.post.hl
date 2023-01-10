@@ -101,7 +101,7 @@ try
                pgsql.select:select datname from pg_database
 
          case:sqlite
-            // No need to verify database exists.
+            // No need to verify if connection string is good.
             .
 
    .catch
@@ -142,95 +142,45 @@ try
    config.save:x:-
 
    /*
-    * Sleeping for 5 seconds to allow configuration to kick
+    * Sleeping for 2 seconds to allow configuration to kick
     * in on thread pools threads.
     *
     * Notice, even though this is bananas, it is necessary since we're using the appsettings
-    * connection string to connect to database further down in this file.
+    * connection string to connect to database further down in this file and the configuration
+    * object is stale unless we sleep the thread for a couple of seconds.
     */
    sleep:2000
 
    /*
-    * We now have a new JWT/AUTH secret, and a database connection string
-    * that we know we can use to connect to either a MySQL instance, PgSQL instance
-    * or an SQL Server instance. Hence, now we can start the setup process, creating the
-    * magic database, and inserting a root user, etc ...
+    * We can start the setup process, inserting a root user, etc ...
+    *
+    * We only insert a new root user if no root user exists in users table though.
+    * If root user already exists, we change its password instead.
+    *
+    * This allows users to "reset" their Magic backend by changing the JWT
+    * secret to anything less than 50 characters in length, and such re-configure
+    * their backend with a new username/password.
     */
+   data.connect:[generic|magic]
+      data.read
+         table:users
+         where
+            and
+               username.eq:x:@.arguments/*/username
 
-   /*
-    * Retrieving all databases from selected database type,
-    * to see if 'magic' database has previously been created.
-    * 
-    * If not, we create the 'magic' database using the specialised
-    * schema declaration SQL file for the database type, and we later
-    * insert a default user into its 'user' table.
-    */
-   strings.concat
-      .:magic.db.
-      get-value:x:@.arguments/*/databaseType
-      .:.databases
-   signal:x:-
+      // Checking if root user already exists.
+      if
+         exists:x:@data.read/*/*
+         .lambda
 
-   // Checking if magic was returned from above invocation.
-   if
-      not
-         exists:x:@signal/*/*/=magic
-      .lambda
+            // Root user already exists, hence simply changing its password.
+            unwrap:x:+/*
+            signal:magic.auth.change-password
+               password:x:@.arguments/*/password
+               database-type:x:@.arguments/*/databaseType
+               is_hashed:x:@.arguments/*/is_hashed
 
-         /*
-          * Database does not exist.
-          * 
-          * Evaluating SQL script that creates our database, but first we must dynamically
-          * determine which script to execute.
-          */
-         strings.concat
-            .:/misc/
-            get-value:x:@.arguments/*/databaseType
-            .:/magic.sql
-
-         /*
-          * Loading create database SQL script file, which is different
-          * according to what database type client supplied us with.
-          */
-         io.file.load:x:@strings.concat
-
-         /*
-          * Notice, for MS SQL we need to explicitly invoke [mssql.execute-batch] to
-          * accommodate for "go" statements and such.
-          *
-          * For PG SQL we'll need to first create the database in a separate [pgsql.connect] invocation,
-          * then run the execute script with the created database as our selected database.
-          *
-          * For SQLite we'll need to create an empty database file first before we execute the create
-          * database script.
-          */
-         switch:x:@.arguments/*/databaseType
-
-            // Special case for MS SQL to use [mssql.execute-batch].
-            case:mssql
-               mssql.connect
-                  mssql.execute-batch:x:@io.file.load
-
-            // Special case for PG SQL to create database in a different connection.
-            case:pgsql
-               pgsql.connect:[generic|postgres]
-                  pgsql.execute:create database magic
-               pgsql.connect:[generic|magic]
-                  pgsql.execute:x:@io.file.load
-
-            // MySQL version, simply doing everything as normal and plain as possible.
-            case:mysql
-
-               // Executing create database SQL script without any special cases.
-               mysql.connect
-                  mysql.execute:x:@io.file.load
-
-            // SQLite version.
-            case:sqlite
-
-               // Executing create database SQL script without any special cases.
-               sqlite.connect:[generic|magic]
-                  sqlite.execute:x:@io.file.load
+      else
 
          // Inserting root user.
          unwrap:x:+/*
@@ -244,72 +194,43 @@ try
             extra
                source:setup
 
-         // Then we need to make sure we run any database migration scripts.
-         io.file.execute:/system/magic.startup/008-migrate-magic-database.hl
-
-         // Inserting default training data into database.
-         io.file.execute:/system/magic.startup/009-insert-training-data.hl
-
-   else
-
       /*
-       * Database already exists, so we simply change root user's password
-       * according to arguments specified.
+       * Explicitly seeding CSRNG with password to create more entropy.
        */
+      crypto.seed:x:@.arguments/*/password
+
+      // Creating cryptography key pair.
+      crypto.random
+         min:100
+         max:200
+      strings.concat
+         request.scheme
+         .:"://"
+         request.host
       unwrap:x:+/*
-      signal:magic.auth.change-password
-         password:x:@.arguments/*/password
-         database-type:x:@.arguments/*/databaseType
-         is_hashed:x:@.arguments/*/is_hashed
+      io.file.execute:/system/crypto/generate-keypair.post.hl
+         strength:int:2048
+         seed:x:@crypto.random
+         subject:x:@.arguments/*/name
+         email:x:@.arguments/*/email
+         username:x:@.arguments/*/username
+         domain:x:@strings.concat
 
-      // Then we need to make sure we run any database migration scripts.
-      io.file.execute:/system/magic.startup/008-migrate-magic-database.hl
+      // Authenticating user and returning new JWT token to client.
+      unwrap:x:+/*
+      signal:magic.auth.authenticate
+         username:x:@.arguments/*/username
+         check-password:bool:false
 
-      // Inserting default training data into database.
-      io.file.execute:/system/magic.startup/009-insert-training-data.hl
+      // Re-initialising time zone in case it was changed from its default setting.
+      timezone.init
 
-   /*
-    * Starting task scheduler now that we have created our database.
-    */
-   tasks.scheduler.start
+      // Returns the authentication JWT ticket created above to caller.
+      return-nodes:x:@signal/*
 
-   /*
-    * Explicitly seeding CSRNG with password to create more entropy.
-    */
-   crypto.seed:x:@.arguments/*/password
+   .catch
 
-   // Creating cryptography key pair.
-   crypto.random
-      min:100
-      max:200
-   strings.concat
-      request.scheme
-      .:"://"
-      request.host
-   unwrap:x:+/*
-   io.file.execute:/system/crypto/generate-keypair.post.hl
-      strength:int:2048
-      seed:x:@crypto.random
-      subject:x:@.arguments/*/name
-      email:x:@.arguments/*/email
-      username:x:@.arguments/*/username
-      domain:x:@strings.concat
-
-   // Authenticating user and returning new JWT token to client.
-   unwrap:x:+/*
-   signal:magic.auth.authenticate
-      username:x:@.arguments/*/username
-      check-password:bool:false
-
-   // Re-initialising time zone in case it was changed from its default setting.
-   timezone.init
-
-   // Returns the authentication JWT ticket created above to caller.
-   return-nodes:x:@signal/*
-
-.catch
-
-   // Making sure we make exception publicly visible for frontend.
-   throw:x:@.arguments/*/message
-      public:true
-      status:400
+      // Making sure we make exception publicly visible for frontend.
+      throw:x:@.arguments/*/message
+         public:true
+         status:400
