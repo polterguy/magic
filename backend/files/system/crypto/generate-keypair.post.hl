@@ -39,13 +39,11 @@ if
             username:root
 
 // Checking to see if a key pair already exists.
-log.info:Generating an RSA key pair for server
 if
    io.file.exists:/etc/system/crypto/keys/public.key
    .lambda
 
       // Creating a backup of the old key pair.
-      log.info:Creating a backup of the old key pair
       .public-key
       set-value:x:@.public-key
          io.file.load:/etc/system/crypto/keys/public.key
