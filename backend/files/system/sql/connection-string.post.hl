@@ -86,8 +86,6 @@ try
    add:x:@json2lambda/*/magic/*/databases/*/{@.arguments/*/databaseType}
       .
          foo:x:@.arguments/*/connectionString
-   lambda2json:x:@json2lambda/*
-   config.save:x:-
 
    // Checking if caller wants to use this connection string as the default
    if
@@ -97,6 +95,50 @@ try
          exists:x:@.arguments/*/useAsDefault
          get-value:x:@.arguments/*/useAsDefault
       .lambda
+
+         /*
+          * Since user wants to change default database,
+          * we need to retrieve username, password, email and name
+          * from old database.
+          */
+         .username
+         .password
+         .email
+         .name
+         auth.ticket.get
+         data.connect:[generic|magic]
+            data.read
+               table:users
+                  join:users_extra
+                     as:ue1
+                     on
+                        and
+                           users.username.eq:ue1.user
+                  join:users_extra
+                     as:ue2
+                     on
+                        and
+                           users.username.eq:ue2.user
+               columns
+                  users.username
+                  users.password
+                  ue1.value
+                     as:email
+                  ue2.value
+                     as:name
+               where
+                  and
+                     ue1.type.eq:email
+                     ue2.type.eq:name
+                     users.username.eq:x:@auth.ticket.get
+            set-value:x:@.username
+               get-value:x:@data.read/*/*/username
+            set-value:x:@.password
+               get-value:x:@data.read/*/*/password
+            set-value:x:@.email
+               get-value:x:@data.read/*/*/email
+            set-value:x:@.name
+               get-value:x:@data.read/*/*/name
 
          // Changing database type to specified database type.
          set-value:x:@json2lambda/*/magic/*/databases/*/default
@@ -111,6 +153,46 @@ try
 
          // Now we need to ensure database is created.
          io.file.execute:/system/ensure-magic-database.hl
+
+         // Now we need to make sure root user exists in new database.
+         data.connect:[generic|magic]
+            data.delete
+               table:users
+               where
+                  and
+                     username.eq:x:@.username
+            data.create
+               table:users
+               values
+                  username:x:@.username
+                  password:x:@.password
+            data.create
+               table:users_extra
+               values
+                  user:x:@.username
+                  type:email
+                  value:x:@.email
+            data.create
+               table:users_extra
+               values
+                  user:x:@.username
+                  type:name
+                  value:x:@.name
+            for-each:x:@auth.ticket.get/*/roles/*
+               data.create
+                  table:users_roles
+                  values
+                     user:x:@.username
+                     role:x:@.dp/#
+
+         // Clearing cache to avoid stale items from database in server.
+         cache.clear
+
+   else
+
+      // Saving configuration, now with changes applied.
+      lambda2json:x:@json2lambda/*
+      config.save:x:-
 
    // Returning success to caller.
    return
