@@ -9,6 +9,8 @@
       <span *ngIf="ip_address && ip_address !== 'unknown'">
         Your cloudlet's IP address is {{ip_address}}.
       </span>
+      To use another database as your default database, name your connection string 'generic' and answer yes
+      when asked if you want to change the default database as you connect to it.
 
       <button
         *ngIf="ip_address !== 'unknown'"
