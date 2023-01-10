@@ -10,7 +10,9 @@
     {{checkBoxText}}
   </mat-checkbox>
 
-  <mat-form-field class="w-100 standalone-field me-3" *ngIf="types?.length > 0">
+  <mat-form-field
+    class="w-100 standalone-field me-3"
+    *ngIf="types?.length > 0">
     <span
       matPrefix
       matTooltip="Filter on type"
@@ -58,10 +60,11 @@
 
   <button
     mat-flat-button
-    *ngIf="buttonText"
+    *ngIf="buttonText || buttonIcon"
     color="primary"
     class="ms-3"
     (click)="buttonClicked()">
+    <mat-icon *ngIf="buttonIcon">{{buttonIcon}}</mat-icon>
     {{buttonText}}
   </button>
 
