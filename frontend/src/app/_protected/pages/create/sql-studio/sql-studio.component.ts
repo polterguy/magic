@@ -67,7 +67,9 @@ export class SQLStudioComponent implements OnInit {
       this.generalService.showLoading();
 
       this.sqlService.defaultDatabaseType().subscribe({
-        next: (defaultDb: any) => {
+        next: (defaultDb: {default: string, options: string[]}) => {
+
+          this.databaseTypes = this.databaseTypes.filter(x => defaultDb.options.includes(x.type));
 
           this.selectedDbType = param.dbType ?? defaultDb.default;
           this.getConnectionStrings(this.selectedDbType, this.selectedConnectionString);
