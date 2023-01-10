@@ -58,15 +58,20 @@ export class SQLStudioComponent implements OnInit {
 
     // Checking if we've got query parameters pointing to a specific database and catalog.
     this.activatedRoute.queryParams.subscribe((param: any) => {
-      this.selectedDbType = param.dbType ?? 'sqlite';
+
       this.selectedConnectionString = param.dbCString ?? 'generic';
       this.selectedDatabase = param.dbName ?? 'magic';
 
       // Retrieving default database type and all supported database types from backend.
       this._dbLoading.next(true);
       this.generalService.showLoading();
+
       this.sqlService.defaultDatabaseType().subscribe({
-        next: () => this.getConnectionStrings(this.selectedDbType, this.selectedConnectionString),
+        next: (defaultDb: any) => {
+
+          this.selectedDbType = param.dbType ?? defaultDb.default;
+          this.getConnectionStrings(this.selectedDbType, this.selectedConnectionString);
+        },
         error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
       });
     });
