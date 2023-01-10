@@ -28,7 +28,6 @@ import { SearchboxComponent } from 'src/app/_general/components/searchbox/search
 import { ConfigureThemeDialog } from '../../_protected/pages/dashboard/components/configure-theme/configure-theme-dialog.component';
 import { OpenAIAnswerDialogComponent } from './openai/openai-answer-dialog/openai-answer-dialog.component';
 import { OpenAIConfigurationDialogComponent } from './openai/openai-configuration-dialog/openai-configuration-dialog.component';
-import { OpenAITrainingDialogComponent } from './openai/openai-training-dialog/openai-training-dialog.component';
 import { OpenAIPromptComponent } from './openai/openai-prompt/openai-prompt.component';
 
 @NgModule({
@@ -53,7 +52,6 @@ import { OpenAIPromptComponent } from './openai/openai-prompt/openai-prompt.comp
     ConfigureThemeDialog,
     OpenAIAnswerDialogComponent,
     OpenAIConfigurationDialogComponent,
-    OpenAITrainingDialogComponent,
     OpenAIPromptComponent,
   ],
   imports: [
@@ -82,7 +80,6 @@ import { OpenAIPromptComponent } from './openai/openai-prompt/openai-prompt.comp
     SearchboxComponent,
     OpenAIAnswerDialogComponent,
     OpenAIConfigurationDialogComponent,
-    OpenAITrainingDialogComponent,
     OpenAIPromptComponent,
   ]
 })
