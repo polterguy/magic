@@ -83,27 +83,6 @@ go
 
 
 /*
- * Creating users' extra table.
- */
-create table users_extra (
-  [user] nvarchar(128) not null,
-  [type] nvarchar(45) not null,
-  [value] nvarchar(1024) not null,
-  constraint pk_users_extra primary key clustered([user] asc, [type] asc)
-);
-
-go
-
-
-alter table users_extra
-  add foreign key ([user])
-  references users(username)
-  on delete cascade;
-
-go
-
-
-/*
  * Creating tasks table.
  */
 create table tasks (
@@ -148,7 +127,6 @@ create table log_entries (
   created datetime not null default getutcdate(),
   type nvarchar(10) not null,
   content ntext not null,
-  meta ntext null,
   exception ntext null,
   constraint pk_log_entries primary key clustered(id asc)
 );

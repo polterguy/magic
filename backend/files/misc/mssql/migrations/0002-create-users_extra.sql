@@ -8,6 +8,7 @@ create table users_extra (
 
 go
 
+
 alter table users_extra
   add foreign key ([user])
   references users(username)
