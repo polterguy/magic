@@ -140,7 +140,7 @@ data.connect:[generic|magic]
                console.log:x:@strings.concat
                console.log:x:@.arguments/*/message
 
-// Applying all common Hyperlambda files
+// Applying all common Hyperlambda files.
 io.file.list-recursively:/misc/common/
 for-each:x:@io.file.list-recursively/*
 
@@ -152,3 +152,8 @@ for-each:x:@io.file.list-recursively/*
 
          // Executes file.
          io.file.execute:x:@.dp/#
+         strings.concat
+            .:"Hyperlambda file '"
+            get-value:x:@.dp/#
+            .:"' successfully executed"
+         console.log:x:@strings.concat
