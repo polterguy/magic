@@ -24,13 +24,14 @@
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
+// Sanity checking invocation.
 validators.enum:x:@.arguments/*/databaseType
    .:mssql
    .:mysql
    .:pgsql
    .:sqlite
 
-// Default [is_hashed] to false.
+// Defaulting [is_hashed] to false.
 if
    not
       exists:x:@.arguments/*/is_hashed
@@ -48,28 +49,28 @@ if
          .
             username:root
 
+/*
+ * Checking if JWT secret has been changed, and
+ * if is has, we throw an exception, to prevent the
+ * system from being setup again, overriding the default
+ * setup configuration.
+ */
+config.get:"magic:auth:secret"
+if
+   and
+      not-null:x:@config.get
+      mte
+         strings.length:x:@config.get
+         .:int:50
+   .lambda
+
+      // System has been setup before
+      throw:Your system has already been setup
+         status:401
+         public:true
+
 // Making sure we're able to return exceptions to caller.
 try
-
-   /*
-    * Checking if JWT secret has been changed, and
-    * if is has, we throw an exception, to prevent the
-    * system from being setup again, overriding the default
-    * setup configuration.
-    */
-   config.get:"magic:auth:secret"
-   if
-      and
-         not-null:x:@config.get
-         mte
-            strings.length:x:@config.get
-            .:int:50
-      .lambda
-
-         // System has been setup before
-         throw:Your system has already been setup
-            status:401
-            public:true
 
    /*
     * Testing connection string before we save it, to make sure
@@ -77,6 +78,7 @@ try
     * not valid.
     */
    try
+
       switch:x:@.arguments/*/databaseType
 
          case:mssql
@@ -117,6 +119,11 @@ try
    config.load
    json2lambda:x:@config.load
 
+   // Storing old default database, since if it's being changed, we must ensure database is created.
+   .old-db
+   set-value:x:@.old-db
+      get-value:x:@json2lambda/*/magic/*/databases/*/default
+
    // Creating our default database configuration object.
    remove-nodes:x:@json2lambda/*/magic/*/databases/*
    unwrap:x:+/*/*
@@ -152,7 +159,13 @@ try
    sleep:2000
 
    // Creating our magic database since default database might have changed.
-   io.file.execute:/system/ensure-magic-database.hl
+   if
+      neq:x:@.old-db
+         get-value:x:@.arguments/*/databaseType
+      .lambda
+
+         // Database type was changed, hence we must ensure we create database if not already existing.
+         io.file.execute:/system/ensure-magic-database.hl
 
    /*
     * We can start the setup process, inserting a root user, etc ...
