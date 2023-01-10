@@ -134,4 +134,3 @@ data.connect:[generic|magic]
                   .:"' failed"
                console.log:x:@strings.concat
                console.log:x:@.arguments/*/message
-               log.error:x:@strings.concat
