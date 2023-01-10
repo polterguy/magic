@@ -21,6 +21,7 @@ export class SearchboxComponent implements OnInit {
   @Input() types: string[];
   @Input() checkBoxText: string = null;
   @Input() buttonText: string = null;
+  @Input() buttonIcon: string = null;
 
   filterControl: FormControl;
   selectedType: string = null;

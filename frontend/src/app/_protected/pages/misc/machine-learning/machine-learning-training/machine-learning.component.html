@@ -54,6 +54,8 @@
             <!-- Search textbox -->
             <app-searchbox
               (filterList)="filterList($event)"
+              buttonIcon="settings"
+              (buttonClick)="configure()"
               [types]="types">
             </app-searchbox>
 
