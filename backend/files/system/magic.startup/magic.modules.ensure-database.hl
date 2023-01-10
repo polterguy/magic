@@ -28,19 +28,6 @@ slots.create:magic.modules.ensure-database
    // Returned to caller to signal whether or not operation was a success or not.
    .result:bool:true
 
-   // Ensuring system has been setup.
-   config.get:"magic:auth:secret"
-   if
-      or
-         null:x:@config.get
-         lt
-            strings.length:x:@config.get
-            .:int:50
-      .lambda
-
-         // We cannot create any databases before system has been setup.
-         return:bool:false
-
    /*
     * Figuring out folder from where to read migration scripts and
     * main 'create-database.sql' script.
