@@ -37,13 +37,12 @@ export class OpenAIService {
       '/magic/system/openai/prompt' + filter);
   }
 
-  enabled() {
-    return this.httpService.get<any>('/magic/system/openai/enabled');
+  isConfigured() {
+    return this.httpService.get<{ result: boolean }>('/magic/system/openai/is-configured');
   }
 
-  configure(key: string, model: string, max_tokens: number, temperature: number) {
+  configure(model: string, max_tokens: number, temperature: number) {
     return this.httpService.post<any>('/magic/system/openai/configure', {
-      key,
       model,
       max_tokens,
       temperature,
@@ -52,6 +51,12 @@ export class OpenAIService {
 
   key() {
     return this.httpService.get<any>('/magic/system/openai/api-key');
+  }
+
+  setKey(key: string) {
+    return this.httpService.post<any>('/magic/system/openai/key', {
+      key,
+    });
   }
 
   base_models() {

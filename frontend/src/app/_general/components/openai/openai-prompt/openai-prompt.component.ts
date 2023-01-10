@@ -35,7 +35,7 @@ export class OpenAIPromptComponent implements OnInit {
 
   ngOnInit() {
 
-    this.openAiService.enabled().subscribe({
+    this.openAiService.isConfigured().subscribe({
       next: (result: any) => {
         this.openAiEnabled = result.result;
       }

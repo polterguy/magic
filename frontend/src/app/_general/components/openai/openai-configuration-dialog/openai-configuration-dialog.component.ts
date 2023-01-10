@@ -127,7 +127,6 @@ export class OpenAIConfigurationDialogComponent implements OnInit {
     this.generalService.showLoading();
 
     this.openAiService.configure(
-      this.openApiKey,
       this.selectedModel.name,
       this.max_tokens,
       this.temperature).subscribe({
@@ -212,7 +211,6 @@ export class OpenAIConfigurationDialogComponent implements OnInit {
     this.generalService.showLoading();
 
     this.openAiService.configure(
-      this.openApiKey,
       this.selectedModel.name,
       this.max_tokens,
       this.temperature).subscribe({
