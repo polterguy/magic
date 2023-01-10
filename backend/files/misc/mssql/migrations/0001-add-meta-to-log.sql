@@ -1,2 +1,2 @@
 
-alter table log_entries add meta text after content;
+alter table log_entries add meta ntext;
