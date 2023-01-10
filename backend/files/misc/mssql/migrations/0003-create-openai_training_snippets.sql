@@ -23,3 +23,12 @@ create table ml_training_snippets(
   completion ntext not null,
   constraint pk_ml_training_snippets primary key clustered(id asc)
 );
+
+
+go
+
+
+alter table ml_training_snippets
+  add foreign key ([type])
+  references ml_types(type)
+  on delete cascade;
