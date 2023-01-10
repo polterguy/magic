@@ -1,6 +1,7 @@
 
 /*
- * Installs the specified module.
+ * Installs the specified module by executing all magic.startup Hyperlambda
+ * files inside of it.
  * 
  * Arguments.
  * 
@@ -19,52 +20,19 @@ slots.create:magic.modules.install-module
       .:/modules/
       get-value:x:@.arguments/*/module
       .:/
-   io.folder.list:x:-
 
-   /*
-    * Looping through results from above, to check if we have a
-    * "magic.startup" folder within module.
-    */
-   for-each:x:@io.folder.list/*
-      strings.split:x:@.dp/#
-         .:/
+   // Executing all magic.startup Hyperlambda files inside module.
+   io.file.list-recursively:x:@strings.concat
+   for-each:x:@io.file.list-recursively/*
+
+      // Checking if file is a startup Hyperlambda file.
       if
-         eq
-            get-value:x:@strings.split/0/-
-            .:magic.startup
+         and
+            strings.contains:x:@.dp/#
+               .:/magic.startup/
+            strings.ends-with:x:@.dp/#
+               .:.hl
          .lambda
 
-            /*
-             * Found a "magic.startup" folder in module's main folder,
-             * making sure we execute all files within it recursively.
-             */
-            io.file.list-recursively:x:@.dp/#
-            for-each:x:@io.file.list-recursively/*
-               if
-                  strings.ends-with:x:@.dp/#
-                     .:.hl
-                  .lambda
-                     io.file.execute:x:@.dp/#
-
-            // Looping through all sub-folders/modules of module.
-            io.folder.list:x:@.dp/#
-            for-each:x:@io.folder.list/*
-               strings.split:x:@.dp/#
-                  .:/
-               if
-                  eq
-                     get-value:x:@strings.split/0/-
-                     .:magic.startup
-                  .lambda
-
-                     /*
-                      * Sub folder "magic.startup" folder of module, making sure we execute
-                      * all files within it recursively.
-                      */
-                     io.file.list-recursively:x:@.dp/#
-                     for-each:x:@io.file.list-recursively/*
-                        if
-                           strings.ends-with:x:@.dp/#
-                              .:.hl
-                           .lambda
-                              io.file.execute:x:@.dp/#
+            // Executing file.
+            io.file.execute:x:@.dp/#
