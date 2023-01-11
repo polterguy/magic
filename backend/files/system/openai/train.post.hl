@@ -4,6 +4,7 @@
  */
 .arguments
 .description:Uploads training data to your OpenAI API account, and starts training the model using the default training data
+.type:internal
 
 // Making sure user has access to invoked endpoint.
 auth.ticket.verify:root
