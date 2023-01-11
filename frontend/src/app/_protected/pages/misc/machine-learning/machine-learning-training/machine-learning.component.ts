@@ -140,7 +140,7 @@ export class MachineLearningTrainingComponent implements OnInit {
 
   private getTrainingData(count: boolean = true) {
 
-    this.machineLearningTrainingService.list(this.filter).subscribe({
+    this.machineLearningTrainingService.ml_training_snippets(this.filter).subscribe({
       next: (result: any[]) => {
 
         this.dataSource = result || [];
@@ -157,7 +157,7 @@ export class MachineLearningTrainingComponent implements OnInit {
           }
         }
     
-        this.machineLearningTrainingService.count(countFilter).subscribe({
+        this.machineLearningTrainingService.ml_training_snippets_count(countFilter).subscribe({
           next: (result: any) => {
 
             this.count = result.count;

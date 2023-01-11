@@ -23,14 +23,14 @@ export class MachineLearningTrainingService {
   /**
    * Returns all training snippets from backend matching filter condition.
    */
-  list(filter?: any) {
+  ml_training_snippets(filter?: any) {
     return this.httpService.get<any>('/magic/system/magic/ml_training_snippets' + this.getQueryArgs(filter));
   }
 
   /**
    * Counts training snippets matching condition.
    */
-  count(filter?: any) {
+  ml_training_snippets_count(filter?: any) {
     return this.httpService.get<Response>('/magic/system/magic/ml_training_snippets-count' + this.getQueryArgs(filter));
   }
 
