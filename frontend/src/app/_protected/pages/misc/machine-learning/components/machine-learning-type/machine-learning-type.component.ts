@@ -33,5 +33,12 @@ export class MachineLearningTypeComponent implements OnInit {
   }
 
   save() {
+
+    const data: any = {
+      type: this.type,
+      max_tokens: this.max_tokens,
+      temperature: this.temperature,
+    };
+    this.dialogRef.close(data);
   }
 }
