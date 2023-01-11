@@ -1,0 +1,53 @@
+
+<h3 mat-dialog-title class="mb-3">Item details</h3>
+
+<form (ngSubmit)="save()">
+  <div mat-dialog-content>
+
+    <!-- Prompt -->
+    <mat-form-field class="w-100 standalone-field">
+      <span
+        matPrefix
+        matTooltip="Prompt"
+        class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        <mat-icon>help_outline</mat-icon>
+        <span class="text-muted">|</span>
+      </span>
+      <input
+        matInput
+        cdkFocusInitial
+        placeholder="Prompt"
+        [(ngModel)]="prompt"
+        name="prompt"
+        autocomplete="off">
+    </mat-form-field>
+
+    <!-- CodeMirror editor in case data is Hyperlambda -->
+
+    <div class="col-12 mt-2" *ngIf="hlReady">
+
+      <app-codemirror-hyperlambda
+        [(model)]="hlModel">
+      </app-codemirror-hyperlambda>
+
+    </div>
+
+  </div>
+
+  <div mat-dialog-actions [align]="'end'">
+
+    <button
+      mat-button
+      mat-dialog-close>
+      Close
+    </button>
+
+    <button
+      mat-flat-button
+      type="submit">
+      Save
+    </button>
+
+  </div>
+
+</form>
