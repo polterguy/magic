@@ -5,11 +5,6 @@
 @import '../../../../../assets/styles/_variables/colors.scss';
 @import '../../../../../assets/styles/_variables/mixin.scss';
 
-.table-responsive {
-  max-height: 62vh;
-  @include scrollbar($aista_default_alt, $aista_default_grey4, 8px);
-}
-
 .status {
   min-width: 7px;
   min-height: 7px;

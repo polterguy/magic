@@ -68,16 +68,16 @@
             [dataSource]="dataSource"
             class="w-100 borderless hoverable">
 
-            <!-- Type column -->
-            <ng-container matColumnDef="type">
-              <th mat-header-cell *matHeaderCellDef class="pe-sm-3">Type</th>
-              <td mat-cell *matCellDef="let element" class="pe-sm-3">{{element.type}}</td>
-            </ng-container>
-
             <!-- Prompt column -->
             <ng-container matColumnDef="prompt">
               <th mat-header-cell *matHeaderCellDef class="text-nowrap px-sm-3">Prompt</th>
               <td mat-cell *matCellDef="let element" class="text-truncate px-sm-3">{{element.prompt}}</td>
+            </ng-container>
+
+            <!-- Type column -->
+            <ng-container matColumnDef="type">
+              <th mat-header-cell *matHeaderCellDef class="pe-sm-3">Type</th>
+              <td mat-cell *matCellDef="let element" class="pe-sm-3">{{element.type}}</td>
             </ng-container>
 
             <!-- Pushed column -->

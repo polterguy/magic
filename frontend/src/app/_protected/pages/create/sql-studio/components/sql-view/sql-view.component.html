@@ -102,7 +102,10 @@
         <mat-card-content class="h-100 max-height-full">
 
           <div class="table-responsive w-100">
-            <table mat-table class="w-100 borderless hoverable" [dataSource]="item">
+            <table
+              mat-table
+              class="w-100 borderless hoverable"
+              [dataSource]="item">
 
               <ng-container *ngFor="let column of displayedColumns[queryResultIndex]" [matColumnDef]="column">
 
