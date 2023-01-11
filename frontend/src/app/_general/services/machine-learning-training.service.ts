@@ -37,8 +37,8 @@ export class MachineLearningTrainingService {
   /**
    * Returns all distinct types of training snippets from your backend.
    */
-  types() {
-    return this.httpService.get<any[]>('/magic/system/openai/types');
+  ml_types() {
+    return this.httpService.get<any[]>('/magic/system/magic/ml_types');
   }
 
   /*

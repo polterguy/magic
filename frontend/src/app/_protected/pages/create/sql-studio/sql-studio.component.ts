@@ -265,7 +265,6 @@ export class SQLStudioComponent implements OnInit {
               result: result.result,
               full: true,
               module: this.selectedDatabase,
-              canExport: (this.selectedDatabase !== 'magic' && (this.selectedDbType === 'sqlite' || this.selectedDbType === 'mysql' || this.selectedDbType === 'pgsql'))
             }
           }).afterClosed().subscribe((result: any) => {
 

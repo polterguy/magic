@@ -16,7 +16,6 @@ export class ExportTablesModel {
   result: string;
   full: boolean;
   module: string;
-  canExport: boolean;
   type?: string // for tables only ... to be used in the UI.
 }
 
@@ -30,14 +29,7 @@ export class ExportTablesModel {
 })
 export class ExportDdlComponent implements OnInit {
 
-  /**
-   * CodeMirror options for SQL.
-   */
   options: any = null;
-
-  /**
-   * If true, CodeMirror instance can be shown.
-   */
   codemirrorReady: boolean = false;
 
   constructor(
@@ -45,6 +37,7 @@ export class ExportDdlComponent implements OnInit {
     private codemirrorActionsService: CodemirrorActionsService) { }
 
   ngOnInit() {
+
     this.getCodeMirrorOptions();
   }
 
@@ -54,6 +47,7 @@ export class ExportDdlComponent implements OnInit {
 
   // Returns CodeMirror options for SQL type.
   private getCodeMirrorOptions() {
+
     const options = this.codemirrorActionsService.getActions(null, 'sql');
     this.options = options;
     setTimeout(() => {
@@ -63,6 +57,7 @@ export class ExportDdlComponent implements OnInit {
 
   // Enables CodeMirror instance, and clears undo history.
   private codemirrorInit() {
+
     this.codemirrorReady = true;
     setTimeout(() => {
       const domNode = (<any>document.querySelector('.CodeMirror'));

@@ -185,7 +185,6 @@ export class TablesViewComponent implements OnInit, OnDestroy {
               full: false,
               module: this.selectedDatabase,
               type: 'table',
-              canExport: (this.selectedDatabase !== 'magic')
             }
           }).afterClosed().subscribe((result: any) => {
             if (result) {
