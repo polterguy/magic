@@ -99,6 +99,18 @@ export class MachineLearningTrainingComponent implements OnInit {
       });
   }
 
+  delete(el: any) {
+
+    this.machineLearningTrainingService.ml_training_snippets_delete(el.id).subscribe({
+      next: () => {
+
+        this.generalService.showFeedback('Snippet successfully deleted', 'successMessage');
+        this.getTrainingData(true);
+      },
+      error: () => this.generalService.showFeedback('Something went wrong as we tried to delete your snippet', 'errorMessage')
+    });
+  }
+
   page(event: PageEvent) {
 
     this.filter.offset = event.pageIndex * event.pageSize;
