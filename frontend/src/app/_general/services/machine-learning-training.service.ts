@@ -35,6 +35,20 @@ export class MachineLearningTrainingService {
   }
 
   /**
+   * Updates an existing training snippet.
+   */
+  ml_training_snippets_update(el: any) {
+    return this.httpService.put<Response>('/magic/system/magic/ml_training_snippets', el);
+  }
+
+  /**
+   * Creates a new training snippet.
+   */
+  ml_training_snippets_create(el: any) {
+    return this.httpService.post<Response>('/magic/system/magic/ml_training_snippets', el);
+  }
+
+  /**
    * Returns all distinct types of training snippets from your backend.
    */
   ml_types() {
