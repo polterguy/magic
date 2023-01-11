@@ -11,7 +11,8 @@
    model:string
    temperature:int
    max_tokens:int
-.description:Asks OpenAI a question, and returns tha answer to caller
+.description:Asks OpenAI a question, and returns the answer to caller
+.type:public
 
 // Making sure user has access to invoked endpoint.
 auth.ticket.verify:root

@@ -1,6 +1,7 @@
 
 // Returns all distinct training snippets types.
 .arguments
+.type:internal
 
 // Making sure user has access to invoked endpoint.
 auth.ticket.verify:root
@@ -9,7 +10,7 @@ auth.ticket.verify:root
 data.connect:[generic|magic]
 
    // Reading all distinct types from ml_training_snippets table.
-   data.select:select distinct type from ml_training_snippets
+   data.select:select * from ml_types
 
    // Returning result to caller.
    return-nodes:x:@data.select/*

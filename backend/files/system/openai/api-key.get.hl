@@ -3,6 +3,8 @@
  * Returns OpenAI API key to caller.
  */
 .arguments
+.description:Returns your OpenAI API key
+.type:internal
 
 // Making sure user has access to invoked endpoint.
 auth.ticket.verify:root

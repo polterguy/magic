@@ -4,6 +4,8 @@
  * user have added an OpenAI API key to his or her configuration.
  */
 .arguments
+.description:Returns true if OpenAI is configured and can be used
+.type:internal
 
 // Making sure user has access to invoked endpoint.
 auth.ticket.verify:root

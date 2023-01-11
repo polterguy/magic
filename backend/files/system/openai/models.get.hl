@@ -1,10 +1,10 @@
 
 /*
- * Lists your fine-tune jobs, and status of jobs.
+ * Returns all OpenAI models to caller.
  */
 .arguments
-.description:Returns ths status of all OpenAI training sessions
 .type:internal
+.description:Returns all base models from OpenAI
 
 // Making sure user has access to invoked endpoint.
 auth.ticket.verify:root
@@ -19,8 +19,8 @@ set-value:x:@.token
       .:"Bearer "
       config.get:"magic:openai:key"
 
-// Invoking OpenAI to list fine tuning jobs.
-http.get:"https://api.openai.com/v1/fine-tunes"
+// Creating an HTTP POST request towards OpenAI, now decorated.
+http.get:"https://api.openai.com/v1/models"
    headers
       Authorization:x:@.token
    convert:true
@@ -39,18 +39,14 @@ if
          public:bool:true
          status:500
 
-// Iterating through each result returned from above HTTP invocation.
-for-each:x:@http.get/*/content/*/data/*
-   date.from-unix:x:@.dp/#/*/created_at
-   unwrap:x:+/*/*/*
-   add:x:../*/return
-      .
-         .
-            id:x:@.dp/#/*/id
-            model:x:@.dp/#/*/model
-            status:x:@.dp/#/*/status
-            created:x:@date.from-unix
-            fine_tuned_model:x:@.dp/#/*/fine_tuned_model
+/*
+ * Applying some HTTP caching to avoid invoking OpenAI again with
+ * the same question before some minimum amount of time has passed.
+ */
+response.headers.set
+   Cache-Control:max-age=20
 
-// Returning result to caller.
+// Returning results returned from invocation above to caller
+add:x:../*/return
+   get-nodes:x:@http.get/*/content/*/data/*
 return

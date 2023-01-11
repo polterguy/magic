@@ -415,6 +415,7 @@ export class EndpointsResultComponent implements OnInit {
 
       if (invocation) {
         const startTime = new Date();
+        this.generalService.showLoading();
         invocation.subscribe({
           next: (res: any) => {
             const endTime = new Date();
@@ -433,6 +434,7 @@ export class EndpointsResultComponent implements OnInit {
             }
             this.isExecuting = false;
             this.canCreateAssumption = true;
+            this.generalService.hideLoading();
           },
           error: (error: any) => {
             this.isExecuting = false;
@@ -444,6 +446,7 @@ export class EndpointsResultComponent implements OnInit {
               blob: null,
               responseType,
             };
+            this.generalService.hideLoading();
           }
         });
       }

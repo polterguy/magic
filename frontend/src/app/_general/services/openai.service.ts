@@ -59,12 +59,8 @@ export class OpenAIService {
     });
   }
 
-  base_models() {
-    return this.httpService.get<OpenAIModel[]>('/magic/system/openai/base-models');
-  }
-
-  get_training_data() {
-    return this.httpService.get<any[]>('/magic/system/openai/training-data');
+  models() {
+    return this.httpService.get<OpenAIModel[]>('/magic/system/openai/models');
   }
 
   start_training() {

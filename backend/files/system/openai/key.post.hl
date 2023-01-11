@@ -5,6 +5,8 @@
  */
 .arguments
    key:string
+.type:internal
+.description:Saves your OpenAI API key to your configuration object
 
 // Making sure user has access to invoked endpoint.
 auth.ticket.verify:root
