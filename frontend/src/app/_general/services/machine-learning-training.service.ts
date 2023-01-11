@@ -49,6 +49,13 @@ export class MachineLearningTrainingService {
   }
 
   /**
+   * Deletes an existing training snippet.
+   */
+  ml_training_snippets_delete(id: number) {
+    return this.httpService.delete<Response>('/magic/system/magic/ml_training_snippets?id=' + id);
+  }
+
+  /**
    * Returns all distinct types of training snippets from your backend.
    */
   ml_types() {
