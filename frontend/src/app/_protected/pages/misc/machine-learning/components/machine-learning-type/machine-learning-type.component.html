@@ -22,7 +22,25 @@
         autocomplete="off">
     </mat-form-field>
 
-    <div class="row mt-2">
+    <mat-form-field class="w-100 standalone-field">
+      <span
+        matPrefix
+        matTooltip="Model to use"
+        class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        <mat-icon>help_outline</mat-icon>
+        <span class="text-muted">|</span>
+      </span>
+      <mat-select
+        [(ngModel)]="model"
+        placeholder="Model to use"
+        name="model">
+        <mat-option
+          *ngFor="let idx of models"
+          [value]="idx">{{idx.id}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    
+      <div class="row mt-2">
 
       <div class="col-6">
 
