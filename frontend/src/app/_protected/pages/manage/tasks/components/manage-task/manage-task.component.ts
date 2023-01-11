@@ -39,6 +39,7 @@ export class ManageTaskComponent implements OnInit {
     private codemirrorActionsService: CodemirrorActionsService) { }
 
   ngOnInit() {
+
     if (this.data) {
       this.task = this.data;
     }
@@ -54,32 +55,36 @@ export class ManageTaskComponent implements OnInit {
   }
 
   create() {
+
     if (!this.validateName()) {
       this.generalService.showFeedback('Name is not valid', 'errorMessage')
       return;
     }
 
     if (this.data) {
+
       this.taskService.update(
         this.data.id,
         this.hlModel.hyperlambda,
         this.task.description).subscribe({
           next: () => {
+
             this.generalService.showFeedback('Task successfully edited', 'successMessage')
             this.dialogRef.close(true);
           },
           error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)
         });
     } else {
+
       this.taskService.create(this.task.id, this.hlModel.hyperlambda, this.task.description).subscribe({
         next: () => {
+
           this.generalService.showFeedback('New task is created successfully', 'successMessage')
           this.dialogRef.close(true);
         },
         error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)
       });
     }
-
   }
 
   /*
