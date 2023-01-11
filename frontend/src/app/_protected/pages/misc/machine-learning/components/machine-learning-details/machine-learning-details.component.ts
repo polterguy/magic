@@ -37,22 +37,29 @@ export class MachineLearningDetailsComponent implements OnInit {
 
     this.prompt = this.data?.prompt;
     this.completion = this.data?.completion;
+    this.type = this.data?.type;
 
     this.machineLearningTrainingService.ml_types().subscribe({
       next: (result: any[]) => {
 
         this.types = result.map(x => x.type);
         if (this.data) {
-          this.type = this.types.filter(x => x === this.data.type)[0];
-        } else {
-          this.type = this.types[0];
+          this.typeChanged();
+          return;
         }
+
+        // Defaulting to first type we can find.
+        this.type = this.types[0];
+        this.typeChanged();
       },
       error: () => this.generalService.showFeedback('Something went wrong as we tried to delete your snippet', 'errorMessage')
     });
+  }
+
+  typeChanged() {
 
     // Checking if training snippet is Hyperlambda, at which point we display CodeMirror editor for content.
-    if (this.data?.type === 'hl') {
+    if (this.type === 'hl') {
       const res = this.codemirrorActionsService.getActions(null, 'hl');
       res.autofocus = false;
       this.hlModel = {
@@ -62,6 +69,8 @@ export class MachineLearningDetailsComponent implements OnInit {
       setTimeout(() => {
         this.hlReady = true;
       }, 500);
+    } else {
+      this.hlReady = false;
     }
   }
 
