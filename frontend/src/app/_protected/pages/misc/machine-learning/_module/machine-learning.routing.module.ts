@@ -5,7 +5,7 @@
 
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { MachineLearningTrainingComponent } from '../machine-learning-training/machine-learning.component';
+import { MachineLearningTrainingComponent } from '../machine-learning-training/machine-learning-training.component';
 
 const routes: Routes = [
   {
