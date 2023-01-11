@@ -21,8 +21,8 @@
       <span class="text-muted ms-1">|</span>
     </span>
     <mat-select
-      [(ngModel)]="selectedType"
-      (selectionChange)="filter()"
+      [(ngModel)]="type"
+      (selectionChange)="filter(); typeChanged();"
       placeholder="Type ...">
       <mat-option [value]="null">
         Remove filter

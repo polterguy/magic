@@ -20,13 +20,14 @@ export class SearchboxComponent implements OnInit {
   @Output() buttonClick = new EventEmitter();
   @Output() button2Click = new EventEmitter();
   @Input() types: string[];
+  @Input() type: string;
+  @Output() typeChange: EventEmitter<string> = new EventEmitter<string>();
   @Input() checkBoxText: string = null;
   @Input() buttonText: string = null;
   @Input() button2Text: string = null;
   @Input() buttonIcon: string = null;
 
   filterControl: FormControl;
-  selectedType: string = null;
   checked: boolean = false;
 
   ngOnInit() {
@@ -48,13 +49,17 @@ export class SearchboxComponent implements OnInit {
     if (this.filterControl.value?.length > 0) {
       filter.searchKey = this.filterControl.value;
     }
-    if (this.selectedType) {
-      filter.type = this.selectedType;
+    if (this.type) {
+      filter.type = this.type;
     }
     if (this.checkBoxText) {
       filter.checked = this.checked;
     }
     this.filterList.emit(filter);
+  }
+
+  typeChanged() {
+    this.typeChange?.emit(this.type);
   }
 
   buttonClicked() {

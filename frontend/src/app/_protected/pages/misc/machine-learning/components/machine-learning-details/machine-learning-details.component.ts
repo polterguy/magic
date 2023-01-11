@@ -39,20 +39,26 @@ export class MachineLearningDetailsComponent implements OnInit {
     this.completion = this.data?.completion;
     this.type = this.data?.type;
 
+    this.generalService.showLoading();
+
     this.machineLearningTrainingService.ml_types().subscribe({
       next: (result: any[]) => {
 
+        this.generalService.hideLoading();
         this.types = result.map(x => x.type);
-        if (this.data) {
-          this.typeChanged();
-          return;
-        }
 
-        // Defaulting to first type we can find.
-        this.type = this.types[0];
+        if (!this.data?.type) {
+
+          // Defaulting to first type we can find.
+          this.type = this.types[0];
+        }
         this.typeChanged();
       },
-      error: () => this.generalService.showFeedback('Something went wrong as we tried to delete your snippet', 'errorMessage')
+      error: () => {
+
+        this.generalService.hideLoading();
+        this.generalService.showFeedback('Something went wrong as we tried to delete your snippet', 'errorMessage');
+      }
     });
   }
 
