@@ -33,8 +33,8 @@ export class MachineLearningTrainingComponent implements OnInit {
     offset: 0,
   };
   displayedColumns: string[] = [
-    'type',
     'prompt',
+    'type',
     'pushed',
     'action',
   ];
