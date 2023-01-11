@@ -62,6 +62,13 @@ export class MachineLearningTrainingService {
     return this.httpService.get<any[]>('/magic/system/magic/ml_types');
   }
 
+  /**
+   * Creates a new machine learning type declaration.
+   */
+  ml_types_create(type: any) {
+    return this.httpService.post<any[]>('/magic/system/magic/ml_types', type);
+  }
+
   /*
    * Private helper methods.
    */
