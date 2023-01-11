@@ -4,26 +4,56 @@
 <form (ngSubmit)="save()">
   <div mat-dialog-content>
 
-    <!-- Prompt -->
-    <mat-form-field class="w-100 standalone-field">
-      <span
-        matPrefix
-        matTooltip="Prompt"
-        class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-        <mat-icon>help_outline</mat-icon>
-        <span class="text-muted">|</span>
-      </span>
-      <input
-        matInput
-        cdkFocusInitial
-        placeholder="Prompt"
-        [(ngModel)]="prompt"
-        name="prompt"
-        autocomplete="off">
-    </mat-form-field>
+    <div class="row">
+
+      <!-- Prompt -->
+      <div class="col-8">
+
+        <mat-form-field class="w-100 standalone-field">
+          <span
+            matPrefix
+            matTooltip="Prompt"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>help_outline</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            cdkFocusInitial
+            placeholder="Prompt"
+            [(ngModel)]="prompt"
+            name="prompt"
+            autocomplete="off">
+        </mat-form-field>
+
+      </div>
+
+      <!-- Type -->
+      <div class="col-4">
+
+        <mat-form-field class="w-100 standalone-field">
+          <span
+            matPrefix
+            matTooltip="Type of snippet"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2 pe-2 min-width">
+            <mat-icon>list</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <mat-select
+            [(ngModel)]="type"
+            placeholder="Type of snippet"
+            name="type">
+            <mat-option
+              *ngFor="let idx of types"
+              [value]="idx">{{idx}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+      </div>
+
+    </div>
 
     <!-- CodeMirror editor in case data is Hyperlambda -->
-
     <div class="col-12 mt-2" *ngIf="hlReady">
 
       <app-codemirror-hyperlambda
