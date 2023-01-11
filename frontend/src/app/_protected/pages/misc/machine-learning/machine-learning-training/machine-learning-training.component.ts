@@ -82,7 +82,20 @@ export class MachineLearningTrainingComponent implements OnInit {
       })
       .afterClosed()
       .subscribe((result: any) => {
-        console.log(result);
+
+        if (result) {
+          if (result?.id) {
+            this.machineLearningTrainingService.ml_training_snippets_update(result).subscribe({
+              next: () => {
+                this.generalService.showFeedback('Snippet updated successfully', 'successMessage');
+                this.getTrainingData(false);
+              },
+              error: () => this.generalService.showFeedback('Something went wrong as we tried to update your snippet', 'errorMessage')
+            });
+          } else {
+            this.machineLearningTrainingService.ml_training_snippets_create(result);
+          }
+        }
       });
   }
 
