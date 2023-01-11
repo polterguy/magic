@@ -63,6 +63,26 @@
 
     </div>
 
+    <!-- Any other types of content besides Hyperlambda -->
+    <div class="col-12 mt-2" *ngIf="type && type !== 'hl'">
+
+      <mat-form-field class="w-100 standalone-field">
+        <span
+          matPrefix
+          class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+          <mat-icon>featured_play_list</mat-icon>
+          <span class="text-muted">|</span>
+        </span>
+        <textarea
+          matInput
+          placeholder="Completion"
+          [(ngModel)]="completion"
+          rows="10">
+        </textarea>
+      </mat-form-field>
+
+    </div>
+
   </div>
 
   <div mat-dialog-actions [align]="'end'">
