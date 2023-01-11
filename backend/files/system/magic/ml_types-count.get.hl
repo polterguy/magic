@@ -1,0 +1,34 @@
+
+// Endpoint counting items in your ml_types table in your magic database
+.arguments
+   ml_types.type.like:string
+   ml_types.type.eq:string
+   ml_types.model.like:string
+   ml_types.model.eq:string
+   ml_types.max_tokens.eq:long
+   ml_types.temperature.eq:double
+.description:Endpoint counting items in your ml_types table in your magic database
+.type:crud-count
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Opening up our database connection.
+data.connect:[generic|magic]
+   database-type:sqlite
+   add:x:+/*/where/*
+      get-nodes:x:@.arguments/*
+
+   // Reading data from database.
+   data.read
+      database-type:sqlite
+      table:ml_types
+      columns
+         count(*)
+            as:count
+      where
+         and
+      limit:long:1
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@data.read/*/*

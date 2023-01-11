@@ -122,7 +122,7 @@ export class MachineLearningTrainingComponent implements OnInit {
 
   private getTypes() {
 
-    this.machineLearningTrainingService.types().subscribe({
+    this.machineLearningTrainingService.ml_types().subscribe({
       next: (types: any[]) => {
 
         types = types || [];
