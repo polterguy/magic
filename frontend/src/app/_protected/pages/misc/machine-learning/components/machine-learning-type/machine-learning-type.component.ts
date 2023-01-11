@@ -46,6 +46,7 @@ export class MachineLearningTypeComponent implements OnInit {
         this.generalService.hideLoading();
       },
       error: () => {
+
         this.generalService.showFeedback('Something went wrong as we tried to create your snippet', 'errorMessage');
         this.generalService.hideLoading();
       }
@@ -58,6 +59,7 @@ export class MachineLearningTypeComponent implements OnInit {
       type: this.type,
       max_tokens: this.max_tokens,
       temperature: this.temperature,
+      model: this.model.id,
     };
     this.dialogRef.close(data);
   }

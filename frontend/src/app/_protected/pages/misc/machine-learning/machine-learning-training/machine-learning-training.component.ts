@@ -94,7 +94,19 @@ export class MachineLearningTrainingComponent implements OnInit {
 
         if (result) {
 
-          console.log(result);
+          this.generalService.showLoading();
+          this.machineLearningTrainingService.ml_types_create(result).subscribe({
+            next: () => {
+
+              this.getTypes(false);
+              this.generalService.showFeedback('Type successfully saved', 'successMessage');
+            },
+            error: () => {
+
+              this.generalService.hideLoading();
+              this.generalService.showFeedback('Something went wrong as we tried to create your type', 'errorMessage');
+            }
+          });
         }
     });
   }
@@ -188,7 +200,7 @@ export class MachineLearningTrainingComponent implements OnInit {
     });
   }
 
-  private getTypes() {
+  private getTypes(getTrainingData: boolean = true) {
 
     this.machineLearningTrainingService.ml_types().subscribe({
       next: (types: any[]) => {
@@ -196,7 +208,13 @@ export class MachineLearningTrainingComponent implements OnInit {
         types = types || [];
 
         this.types = types.map(x => x.type);
-        this.getTrainingData();
+
+        if (getTrainingData) {
+          this.getTrainingData();
+          return;
+        }
+
+        this.generalService.hideLoading();
       },
       error: (error: any) => {
 
