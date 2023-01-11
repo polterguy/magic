@@ -78,7 +78,8 @@ export class MachineLearningDetailsComponent implements OnInit {
 
     const data: any = {
       prompt: this.prompt,
-      completion: this.data?.type === 'hl' ? this.hlModel.hyperlambda : this.completion,
+      completion: this.type === 'hl' ? this.hlModel.hyperlambda : this.completion,
+      type: this.type,
     };
     if (this.data) {
       data.id = this.data.id;

@@ -55,7 +55,9 @@
             <app-searchbox
               (filterList)="filterList($event)"
               buttonText="Add"
+              button2Text="Type"
               (buttonClick)="create()"
+              (button2Click)="addType()"
               [types]="types">
             </app-searchbox>
 
