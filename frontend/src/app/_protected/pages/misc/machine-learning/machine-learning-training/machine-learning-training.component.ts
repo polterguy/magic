@@ -10,15 +10,16 @@ import { OpenAIConfigurationDialogComponent } from 'src/app/_general/components/
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { MachineLearningTrainingService } from 'src/app/_general/services/machine-learning-training.service';
 import { OpenAIService } from 'src/app/_general/services/openai.service';
+import { MachineLearningDetailsComponent } from '../components/machine-learning-details/machine-learning-details.component';
 
 /**
  * Helper component to administrate training data for OpenAI integration
  * and Machine Learning integration.
  */
 @Component({
-  selector: 'app-machine-learning',
-  templateUrl: './machine-learning.component.html',
-  styleUrls: ['./machine-learning.component.scss']
+  selector: 'app-machine-learning-training',
+  templateUrl: './machine-learning-training.component.html',
+  styleUrls: ['./machine-learning-training.component.scss']
 })
 export class MachineLearningTrainingComponent implements OnInit {
 
@@ -71,7 +72,18 @@ export class MachineLearningTrainingComponent implements OnInit {
   }
 
   showDetails(el: any) {
-    console.log(el);
+
+    this.dialog
+      .open(MachineLearningDetailsComponent, {
+        width: '80vw',
+        maxWidth: '850px',
+        disableClose: true,
+        data: el,
+      })
+      .afterClosed()
+      .subscribe((result: any) => {
+        console.log(result);
+      });
   }
 
   page(event: PageEvent) {
