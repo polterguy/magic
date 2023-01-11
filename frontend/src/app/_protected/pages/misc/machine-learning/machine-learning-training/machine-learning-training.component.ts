@@ -6,7 +6,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
-import { OpenAIConfigurationDialogComponent } from 'src/app/_general/components/openai/openai-configuration-dialog/openai-configuration-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { MachineLearningTrainingService } from 'src/app/_general/services/machine-learning-training.service';
 import { OpenAIService } from 'src/app/_general/services/openai.service';
@@ -52,23 +51,23 @@ export class MachineLearningTrainingComponent implements OnInit {
     this.getConfiguredStatus();
   }
 
-  configure() {
+  create() {
+
+    if (this.types.length === 0) {
+      this.generalService.showFeedback('You need to create at least one type first', 'errorMessage');
+      return;
+    }
 
     this.dialog
-      .open(OpenAIConfigurationDialogComponent, {
+      .open(MachineLearningDetailsComponent, {
         width: '80vw',
-        maxWidth: '550px',
+        maxWidth: '850px',
+        disableClose: true,
       })
       .afterClosed()
-      .subscribe((result: {configured: boolean}) => {
-
-        if (result?.configured) {
-          this.generalService.showLoading();
-
-          // Needed to make sure configuration is applied in backend.
-          setTimeout(() => this.getConfiguredStatus(), 500);
-        }
-      });
+      .subscribe((result: any) => {
+        console.log(result);
+    });
   }
 
   showDetails(el: any) {
@@ -96,7 +95,7 @@ export class MachineLearningTrainingComponent implements OnInit {
             this.machineLearningTrainingService.ml_training_snippets_create(result);
           }
         }
-      });
+    });
   }
 
   delete(el: any) {
