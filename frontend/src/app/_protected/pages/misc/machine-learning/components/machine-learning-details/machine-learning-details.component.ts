@@ -10,7 +10,7 @@ import { MachineLearningTrainingService } from 'src/app/_general/services/machin
 import { CodemirrorActionsService } from 'src/app/_protected/pages/create/hyper-ide/services/codemirror-actions.service';
 
 /**
- * Helper component to view details of one single training item.
+ * Helper component to edit details of one single training item.
  */
 @Component({
   selector: 'app-machine-learning-details',

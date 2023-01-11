@@ -10,6 +10,7 @@ import { GeneralService } from 'src/app/_general/services/general.service';
 import { MachineLearningTrainingService } from 'src/app/_general/services/machine-learning-training.service';
 import { OpenAIService } from 'src/app/_general/services/openai.service';
 import { MachineLearningDetailsComponent } from '../components/machine-learning-details/machine-learning-details.component';
+import { MachineLearningTypeComponent } from '../components/machine-learning-type/machine-learning-type.component';
 
 /**
  * Helper component to administrate training data for OpenAI integration
@@ -67,19 +68,35 @@ export class MachineLearningTrainingComponent implements OnInit {
       .afterClosed()
       .subscribe((result: any) => {
 
-        this.machineLearningTrainingService.ml_training_snippets_create(result).subscribe({
-          next: () => {
+        if (result) {
 
-            this.generalService.showFeedback('Snippet successfully created', 'successMessage');
-            this.getTrainingData(true);
-          },
-          error: () => this.generalService.showFeedback('Something went wrong as we tried to update your snippet', 'errorMessage')
-        });
+          this.machineLearningTrainingService.ml_training_snippets_create(result).subscribe({
+            next: () => {
+
+              this.generalService.showFeedback('Snippet successfully created', 'successMessage');
+              this.getTrainingData(true);
+            },
+            error: () => this.generalService.showFeedback('Something went wrong as we tried to create your snippet', 'errorMessage')
+          });
+        }
     });
   }
 
   addType() {
-    console.log('Add type clicked');
+
+    this.dialog
+      .open(MachineLearningTypeComponent, {
+        width: '80vw',
+        maxWidth: '550px',
+      })
+      .afterClosed()
+      .subscribe((result: any) => {
+
+        if (result) {
+
+          console.log(result);
+        }
+    });
   }
 
   showDetails(el: any) {
@@ -96,14 +113,17 @@ export class MachineLearningTrainingComponent implements OnInit {
 
         if (result) {
           if (result?.id) {
+
             this.machineLearningTrainingService.ml_training_snippets_update(result).subscribe({
               next: () => {
+
                 this.generalService.showFeedback('Snippet updated successfully', 'successMessage');
                 this.getTrainingData(false);
               },
               error: () => this.generalService.showFeedback('Something went wrong as we tried to update your snippet', 'errorMessage')
             });
           } else {
+
             this.machineLearningTrainingService.ml_training_snippets_create(result);
           }
         }

@@ -12,11 +12,13 @@ import { MachineLearningTrainingComponent } from '../machine-learning-training/m
 import { MachineLearningTrainingRoutingModule } from './machine-learning.routing.module';
 import { MachineLearningDetailsComponent } from '../components/machine-learning-details/machine-learning-details.component';
 import { CmModule } from 'src/app/codemirror/_module/cm.module';
+import { MachineLearningTypeComponent } from '../components/machine-learning-type/machine-learning-type.component';
 
 @NgModule({
   declarations: [
     MachineLearningTrainingComponent,
     MachineLearningDetailsComponent,
+    MachineLearningTypeComponent,
   ],
   imports: [
     CommonModule,
