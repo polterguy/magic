@@ -18,9 +18,11 @@ export class SearchboxComponent implements OnInit {
 
   @Output() filterList = new EventEmitter<any>();
   @Output() buttonClick = new EventEmitter();
+  @Output() button2Click = new EventEmitter();
   @Input() types: string[];
   @Input() checkBoxText: string = null;
   @Input() buttonText: string = null;
+  @Input() button2Text: string = null;
   @Input() buttonIcon: string = null;
 
   filterControl: FormControl;
@@ -57,5 +59,9 @@ export class SearchboxComponent implements OnInit {
 
   buttonClicked() {
     this.buttonClick.emit();
+  }
+
+  button2Clicked() {
+    this.button2Click.emit();
   }
 }
