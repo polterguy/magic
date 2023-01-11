@@ -19,7 +19,7 @@ import { CodemirrorActionsService } from 'src/app/_protected/pages/create/hyper-
 })
 export class MachineLearningDetailsComponent implements OnInit {
 
-  type: string;
+  type: string = null;
   types: string[] = [];
   prompt: string;
   completion: string;
