@@ -64,7 +64,7 @@
     </div>
 
     <!-- Any other types of content besides Hyperlambda -->
-    <div class="col-12 mt-2" *ngIf="type && type !== 'hl'">
+    <div class="col-12 mt-2 mb-0" *ngIf="type && type !== 'hl'">
 
       <mat-form-field class="w-100 custom-alignment">
         <span
@@ -78,7 +78,7 @@
           name="txt_completion"
           placeholder="Completion"
           [(ngModel)]="completion"
-          rows="10">
+          rows="18">
         </textarea>
       </mat-form-field>
 
