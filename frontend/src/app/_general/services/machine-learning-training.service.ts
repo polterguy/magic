@@ -69,6 +69,15 @@ export class MachineLearningTrainingService {
     return this.httpService.post<any[]>('/magic/system/magic/ml_types', type);
   }
 
+  /**
+   * Deletes an existing machine learning type declaration.
+   */
+  ml_types_delete(type: string) {
+    return this.httpService.delete<any>(
+      '/magic/system/magic/ml_types?type=' +
+      encodeURIComponent(type));
+  }
+
   /*
    * Private helper methods.
    */
