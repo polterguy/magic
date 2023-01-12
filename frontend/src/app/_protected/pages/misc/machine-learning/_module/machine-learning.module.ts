@@ -14,6 +14,7 @@ import { MachineLearningDetailsComponent } from '../components/machine-learning-
 import { CmModule } from 'src/app/codemirror/_module/cm.module';
 import { MachineLearningTypeComponent } from '../components/machine-learning-type/machine-learning-type.component';
 import { MachineLearningComponent } from '../machine-learning.component';
+import { MachineLearningTypesComponent } from '../components/machine-learning-types/machine-learning-types.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { MachineLearningComponent } from '../machine-learning.component';
     MachineLearningDetailsComponent,
     MachineLearningTypeComponent,
     MachineLearningComponent,
+    MachineLearningTypesComponent,
   ],
   imports: [
     CommonModule,
