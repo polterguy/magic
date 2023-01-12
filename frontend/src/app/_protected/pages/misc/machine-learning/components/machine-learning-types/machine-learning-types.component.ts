@@ -5,6 +5,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { MachineLearningTrainingService } from 'src/app/_general/services/machine-learning-training.service';
 import { MachineLearningTypeComponent } from '../machine-learning-type/machine-learning-type.component';
@@ -70,6 +71,35 @@ export class MachineLearningTypesComponent implements OnInit {
   }
 
   delete(el: any) {
+
+    this.dialog.open(ConfirmationDialogComponent, {
+      width: '500px',
+      data: {
+        title: 'Delete model',
+        description_extra: `You are deleting the following model: <br/> <span class="fw-bold">${el.type}</span> <br/><br/>This will delete all data associated with your model. Do you want to continue?`,
+        action_btn: 'Yes',
+        close_btn: 'No',
+        action_btn_color: 'warn',
+        bold_description: true,
+      }
+    }).afterClosed().subscribe((result: string) => {
+      if (result === 'confirm') {
+
+        this.generalService.showLoading();
+        this.machineLearningTrainingService.ml_types_delete(el.type).subscribe({
+          next: () => {
+    
+            this.generalService.showFeedback('Model successfully deleted', 'successMessage');
+            this.getTypes();
+          },
+          error: (error: any) => {
+    
+            this.generalService.showFeedback(error, 'errorMessage', 'Ok');
+            this.generalService.hideLoading();
+          }
+        });
+      }
+    });
   }
 
   /*

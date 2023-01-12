@@ -229,6 +229,7 @@ export class PluginsComponent implements OnInit {
    * @param database Item to uninstall
    */
   public uninstall(database: any) {
+
     this.dialog.open(ConfirmationDialogComponent, {
       width: '500px',
       data: {
@@ -236,7 +237,7 @@ export class PluginsComponent implements OnInit {
         description_extra: `You are deleting the following database: <br/> <span class="fw-bold">${database?.name}</span> <br/><br/> Do you want to continue?`,
         action_btn: 'Delete',
         action_btn_color: 'warn',
-        bold_description: true
+        bold_description: true,
       }
     }).afterClosed().subscribe((result: string) => {
       if (result === 'confirm') {
@@ -249,7 +250,7 @@ export class PluginsComponent implements OnInit {
           error: (error: any) => { this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage') }
         });
       }
-    })
+    });
   }
 
   public viewAppDetails(item: any) {

@@ -5,13 +5,25 @@
 
     <div class="row">
 
-      <div class="col-12">
+      <div class="col-lg-6 col-12 mb-lg-0 mb-2">
         <h3 class="fw-bold mb-2">
           Machine Learning models
         </h3>
         <p class="text-muted">
           Manage your Machine Learning models here
         </p>
+      </div>
+
+      <div class="col-lg-6 col-12 text-end">
+
+        <button
+          mat-flat-button
+          color="primary"
+          class="me-2"
+          (click)="addType()">
+          Add
+        </button>
+
       </div>
 
       <div class="table-responsive mt-4 col-12">
@@ -27,7 +39,7 @@
             <td mat-cell *matCellDef="let element" class="text-truncate px-sm-3">{{element.type}}</td>
           </ng-container>
   
-          <!-- Type column -->
+          <!-- Model column -->
           <ng-container matColumnDef="model">
             <th mat-header-cell *matHeaderCellDef class="pe-sm-3">Model</th>
             <td mat-cell *matCellDef="let element" class="pe-sm-3">{{element.model}}</td>
