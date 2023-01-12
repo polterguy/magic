@@ -9,8 +9,8 @@ import { PageEvent } from '@angular/material/paginator';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { MachineLearningTrainingService } from 'src/app/_general/services/machine-learning-training.service';
 import { OpenAIService } from 'src/app/_general/services/openai.service';
-import { MachineLearningDetailsComponent } from '../components/machine-learning-details/machine-learning-details.component';
-import { MachineLearningTypeComponent } from '../components/machine-learning-type/machine-learning-type.component';
+import { MachineLearningDetailsComponent } from '../machine-learning-details/machine-learning-details.component';
+import { MachineLearningTypeComponent } from '../machine-learning-type/machine-learning-type.component';
 
 /**
  * Helper component to administrate training data for OpenAI integration
@@ -26,6 +26,7 @@ export class MachineLearningTrainingComponent implements OnInit {
   isLoadingKey: boolean = false;
   isConfigured: boolean = false;
   types: string[] = null;
+  type: string = null;
   dataSource: any[] = null;
   count: number = 0;
   filter: any = {
@@ -64,6 +65,9 @@ export class MachineLearningTrainingComponent implements OnInit {
         width: '80vw',
         maxWidth: '850px',
         disableClose: true,
+        data: {
+          type: this.type,
+        }
       })
       .afterClosed()
       .subscribe((result: any) => {

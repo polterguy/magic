@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
 import { FormsModule } from '@angular/forms';
 import { ComponentsModule } from 'src/app/_general/components/components.module';
-import { MachineLearningTrainingComponent } from '../machine-learning-training/machine-learning-training.component';
+import { MachineLearningTrainingComponent } from '../components/machine-learning-training/machine-learning-training.component';
 import { MachineLearningTrainingRoutingModule } from './machine-learning.routing.module';
 import { MachineLearningDetailsComponent } from '../components/machine-learning-details/machine-learning-details.component';
 import { CmModule } from 'src/app/codemirror/_module/cm.module';
