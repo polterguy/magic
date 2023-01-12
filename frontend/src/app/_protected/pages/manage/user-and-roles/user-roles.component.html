@@ -1,12 +1,19 @@
 <mat-card>
   <mat-card-content>
 
-    <mat-tab-group mat-stretch-tabs dynamicHeight animationDuration="0ms" (selectedTabChange)="tabChange($event)" #tabs>
+    <mat-tab-group
+      mat-stretch-tabs
+      dynamicHeight
+      animationDuration="0ms"
+      (selectedTabChange)="tabChange($event)"
+      #tabs>
 
       <!-- User management -->
       <mat-tab>
 
-        <ng-template mat-tab-label>User <span class="d-sm-inline d-none ps-1">Management</span></ng-template>
+        <ng-template mat-tab-label>
+          User <span class="d-sm-inline d-none ps-1">Management</span>
+        </ng-template>
 
         <ng-template matTabContent>
 
@@ -54,19 +61,30 @@
 
         <ng-template matTabContent>
 
-          <!-- Loader skeleton -->
+          <!-- Loading skeleton -->
           <ng-container *ngIf="isLoading;else dataLoadedRoles">
-            <app-loading-skeleton [amount]="5" [colClass]="'col-12'" [blockHeight]="'40px'"
-              [hasShadow]="false"></app-loading-skeleton>
+            <app-loading-skeleton
+              amount="5"
+              colClass="col-12"
+              blockHeight="40px"
+              hasShadow="false">
+            </app-loading-skeleton>
           </ng-container>
 
           <!-- Role management  -->
           <ng-template #dataLoadedRoles>
-            <app-shared-top-bar [tab]="'role'" [rolesList]="roles | async" [accessPermissions]="accessPermissions"
-              (getRolesList)="getRolesList($event)"></app-shared-top-bar>
 
-            <app-roles-list [rolesList]="roles | async" [accessPermissions]="accessPermissions"
-              (getRolesList)="getRolesList($event)"></app-roles-list>
+            <app-shared-top-bar
+              tab="role"
+              [rolesList]="roles | async"
+              (getRolesList)="getRolesList($event)">
+            </app-shared-top-bar>
+
+            <app-roles-list
+              [rolesList]="roles | async"
+              (getRolesList)="getRolesList($event)">
+            </app-roles-list>
+
           </ng-template>
 
         </ng-template>
@@ -74,9 +92,16 @@
       </mat-tab>
     </mat-tab-group>
 
-    <mat-paginator #paginator [length]="resultsLength" (page)="pageChange($event, tabs.selectedIndex)"
-      [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" [showFirstLastButtons]="true" class="mt-4"
-      aria-label="Select page" [class.d-none]="resultsLength <= 10">
+    <mat-paginator
+      #paginator
+      [length]="resultsLength"
+      (page)="pageChange($event, tabs.selectedIndex)"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="pageSizeOptions"
+      [showFirstLastButtons]="true"
+      class="mt-4"
+      aria-label="Select page"
+      [class.d-none]="resultsLength <= 10">
     </mat-paginator>
 
   </mat-card-content>

@@ -1,0 +1,41 @@
+<mat-card>
+  <mat-card-content>
+
+    <mat-tab-group
+      mat-stretch-tabs
+      dynamicHeight
+      animationDuration="0ms"
+      #tabs>
+
+      <!-- Training snippets -->
+      <mat-tab>
+
+        <ng-template mat-tab-label>
+          Training
+        </ng-template>
+
+        <ng-template matTabContent>
+
+          <app-machine-learning-training>
+          </app-machine-learning-training>
+
+        </ng-template>
+
+      </mat-tab>
+
+      <!-- Training data types -->
+      <mat-tab>
+
+        <ng-template mat-tab-label>
+          Types
+        </ng-template>
+
+        <ng-template matTabContent>
+          Types here ...
+        </ng-template>
+
+      </mat-tab>
+    </mat-tab-group>
+
+  </mat-card-content>
+</mat-card>

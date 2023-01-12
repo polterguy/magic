@@ -5,12 +5,12 @@
 
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MaterialModule } from 'src/app/material.module';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UsersRolesRoutingModule } from './users-roles.routing.module';
 import { UsersListComponent } from '../users-list/users-list.component';
 import { RolesListComponent } from '../roles-list/roles-list.component';
 import { ComponentsModule } from 'src/app/_general/components/components.module';
-import { MaterialModule } from 'src/app/material.module';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UserRolesComponent } from '../user-roles.component';
 import { SharedTopBarComponent } from '../components/shared-top-bar/shared-top-bar.component';
 import { ChangePasswordDialogComponent } from '../components/change-password-dialog/change-password-dialog.component';
