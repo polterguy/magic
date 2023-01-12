@@ -5,12 +5,12 @@
 
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { MachineLearningTrainingComponent } from '../components/machine-learning-training/machine-learning-training.component';
+import { MachineLearningComponent } from '../machine-learning.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: MachineLearningTrainingComponent
+    component: MachineLearningComponent
   }
 ];
 
