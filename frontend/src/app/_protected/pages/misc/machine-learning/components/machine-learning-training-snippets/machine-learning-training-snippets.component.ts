@@ -11,18 +11,18 @@ import { OpenAIConfigurationDialogComponent } from 'src/app/_general/components/
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { MachineLearningTrainingService } from 'src/app/_general/services/machine-learning-training.service';
 import { OpenAIService } from 'src/app/_general/services/openai.service';
-import { MachineLearningDetailsComponent } from '../machine-learning-details/machine-learning-details.component';
+import { MachineLearningEditSnippetComponent } from '../machine-learning-edit-snippet/machine-learning-edit-snippet.component';
 
 /**
  * Helper component to administrate training data for OpenAI integration
  * and Machine Learning integration.
  */
 @Component({
-  selector: 'app-machine-learning-training',
-  templateUrl: './machine-learning-training.component.html',
-  styleUrls: ['./machine-learning-training.component.scss']
+  selector: 'app-machine-learning-training-snippets',
+  templateUrl: './machine-learning-training-snippets.component.html',
+  styleUrls: ['./machine-learning-training-snippets.component.scss']
 })
-export class MachineLearningTrainingComponent implements OnInit {
+export class MachineLearningTrainingSnippetsComponent implements OnInit {
 
   isLoadingKey: boolean = false;
   isConfigured: boolean = false;
@@ -62,7 +62,7 @@ export class MachineLearningTrainingComponent implements OnInit {
     }
 
     this.dialog
-      .open(MachineLearningDetailsComponent, {
+      .open(MachineLearningEditSnippetComponent, {
         width: '80vw',
         maxWidth: '850px',
         disableClose: true,
@@ -107,7 +107,7 @@ export class MachineLearningTrainingComponent implements OnInit {
   showDetails(el: any) {
 
     this.dialog
-      .open(MachineLearningDetailsComponent, {
+      .open(MachineLearningEditSnippetComponent, {
         width: '80vw',
         maxWidth: '850px',
         disableClose: true,

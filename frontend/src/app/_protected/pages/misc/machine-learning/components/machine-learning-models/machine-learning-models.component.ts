@@ -8,18 +8,18 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { MachineLearningTrainingService } from 'src/app/_general/services/machine-learning-training.service';
-import { MachineLearningTypeComponent } from '../machine-learning-type/machine-learning-type.component';
+import { MachineLearningEditModelComponent } from '../machine-learning-edit-model/machine-learning-edit-model.component';
 
 /**
  * Helper component to manage machine learning types, different models, and configurations
  * for your types.
  */
 @Component({
-  selector: 'app-machine-learning-types',
-  templateUrl: './machine-learning-types.component.html',
-  styleUrls: ['./machine-learning-types.component.scss']
+  selector: 'app-machine-learning-models',
+  templateUrl: './machine-learning-models.component.html',
+  styleUrls: ['./machine-learning-models.component.scss']
 })
-export class MachineLearningTypesComponent implements OnInit {
+export class MachineLearningModelsComponent implements OnInit {
 
   displayedColumns: string[] = [
     'model',
@@ -42,7 +42,7 @@ export class MachineLearningTypesComponent implements OnInit {
   addType() {
 
     this.dialog
-      .open(MachineLearningTypeComponent, {
+      .open(MachineLearningEditModelComponent, {
         width: '80vw',
         maxWidth: '550px',
       })
