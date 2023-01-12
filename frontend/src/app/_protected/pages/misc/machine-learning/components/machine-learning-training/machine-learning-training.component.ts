@@ -6,6 +6,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
+import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { OpenAIConfigurationDialogComponent } from 'src/app/_general/components/openai/openai-configuration-dialog/openai-configuration-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { MachineLearningTrainingService } from 'src/app/_general/services/machine-learning-training.service';
@@ -136,13 +137,33 @@ export class MachineLearningTrainingComponent implements OnInit {
 
   delete(el: any) {
 
-    this.machineLearningTrainingService.ml_training_snippets_delete(el.id).subscribe({
-      next: () => {
+    this.dialog.open(ConfirmationDialogComponent, {
+      width: '500px',
+      data: {
+        title: 'Delete snippet',
+        description_extra: 'Are you sure you want to delete this snippet?',
+        action_btn: 'Delete',
+        close_btn: 'Cancel',
+        action_btn_color: 'warn',
+        bold_description: true,
+      }
+    }).afterClosed().subscribe((result: string) => {
+      if (result === 'confirm') {
 
-        this.generalService.showFeedback('Snippet successfully deleted', 'successMessage');
-        this.getTrainingData(true);
-      },
-      error: () => this.generalService.showFeedback('Something went wrong as we tried to delete your snippet', 'errorMessage')
+        this.generalService.showLoading();
+        this.machineLearningTrainingService.ml_training_snippets_delete(el.id).subscribe({
+          next: () => {
+    
+            this.generalService.showFeedback('Snippet successfully deleted', 'successMessage');
+            this.getTrainingData(true);
+          },
+          error: () => {
+
+            this.generalService.hideLoading();
+            this.generalService.showFeedback('Something went wrong as we tried to delete your snippet', 'errorMessage');
+          }
+        });
+      }
     });
   }
 
