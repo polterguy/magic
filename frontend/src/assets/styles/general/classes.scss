@@ -113,6 +113,11 @@ table
     padding-right: 5px;
   }
 
+  th.small-table-column,
+  td.small-table-column {
+    width: 10px;
+  }
+
   @media(min-width: 577px) {
     th.mat-header-cell {
       border-bottom: 1px solid $aista_default_grey5;

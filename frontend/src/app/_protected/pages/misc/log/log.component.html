@@ -49,42 +49,92 @@
               [dataSource]="dataSource"
               class="w-100 borderless hoverable">
 
-              <!-- id Column -->
-              <ng-container matColumnDef="id">
-                <th mat-header-cell *matHeaderCellDef class="pe-sm-3">ID</th>
-                <td mat-cell *matCellDef="let element" class="pe-sm-3">{{element.id}}</td>
-              </ng-container>
-
-              <!-- created Column -->
-              <ng-container matColumnDef="date">
-                <th mat-header-cell *matHeaderCellDef class="text-nowrap px-sm-3">Date &amp; time</th>
-                <td mat-cell *matCellDef="let element" class="text-nowrap px-sm-3">{{element?.created | since}}</td>
-              </ng-container>
-
-              <!-- content Column -->
+              <!-- Content column -->
               <ng-container matColumnDef="content">
-                <th mat-header-cell *matHeaderCellDef class="px-sm-3">Content</th>
-                <td mat-cell *matCellDef="let element" class="text-truncate px-sm-3">{{element?.content}}</td>
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                  class="px-sm-3">
+                  Content
+                </th>
+                <td
+                  mat-cell
+                  *matCellDef="let element"
+                  class="text-truncate px-sm-3">
+                  {{element?.content}}
+                </td>
               </ng-container>
 
-              <!-- type Column -->
+              <!-- Created column -->
+              <ng-container matColumnDef="date">
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                  class="text-nowrap px-sm-3 small-table-column">
+                  Date &amp; time
+                </th>
+                <td
+                  mat-cell
+                  *matCellDef="let element"
+                  class="text-nowrap px-sm-3 small-table-column">
+                  {{element?.created | since}}
+                </td>
+              </ng-container>
+
+              <!-- Id column -->
+              <ng-container matColumnDef="id">
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                  class="pe-sm-3 small-table-column">
+                  ID
+                </th>
+                <td
+                  mat-cell
+                  *matCellDef="let element"
+                  class="pe-sm-3 small-table-column">
+                  {{element.id}}
+                </td>
+              </ng-container>
+
+              <!-- Type column -->
               <ng-container matColumnDef="type">
-                <th mat-header-cell *matHeaderCellDef class="px-sm-3">Type</th>
-                <td mat-cell *matCellDef="let element" class="px-sm-3" [class.text-danger]="element?.type === 'error'">
-                  {{element?.type}} </td>
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                  class="px-sm-3 small-table-column">
+                  Type
+                </th>
+                <td
+                  mat-cell
+                  *matCellDef="let element"
+                  class="px-sm-3 small-table-column"
+                  [class.text-danger]="element?.type === 'error'">
+                  {{element?.type}}
+                </td>
               </ng-container>
 
-              <!-- action Column -->
+              <!-- Actions column -->
               <ng-container matColumnDef="action">
-                <th mat-header-cell *matHeaderCellDef class="ps-sm-3">Actions</th>
-                <td mat-cell *matCellDef="let element" class="ps-sm-3 text-nowrap"
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                  class="ps-sm-3 small-table-column">
+                  Actions
+                </th>
+                <td
+                  mat-cell
+                  *matCellDef="let element"
+                  class="ps-sm-3 text-nowrap small-table-column"
                   [class.text-danger]="element?.type === 'error'">
+
                   <button
                     mat-button
                     color="primary"
                     (click)="showDetails(element)">
-                    Show details
+                    Details
                   </button>
+
                 </td>
               </ng-container>
 

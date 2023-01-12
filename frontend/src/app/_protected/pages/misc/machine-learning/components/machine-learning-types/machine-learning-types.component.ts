@@ -22,8 +22,8 @@ import { MachineLearningTypeComponent } from '../machine-learning-type/machine-l
 export class MachineLearningTypesComponent implements OnInit {
 
   displayedColumns: string[] = [
-    'type',
     'model',
+    'type',
     'temperature',
     'action'
   ];
