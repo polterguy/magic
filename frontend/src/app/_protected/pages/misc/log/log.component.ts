@@ -24,7 +24,13 @@ export class LogComponent implements OnInit {
   private filter: string = '';
 
   isLoading: boolean = true;
-  displayedColumns: string[] = ['id', 'date', 'content', 'type', 'action'];
+  displayedColumns: string[] = [
+    'content',
+    'date',
+    'id',
+    'type',
+    'action'
+  ];
   dataSource: LogItem[] = [];
   count: number = 0;
   pageSize: number = 10;

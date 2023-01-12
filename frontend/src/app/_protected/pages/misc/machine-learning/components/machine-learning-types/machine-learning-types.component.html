@@ -33,28 +33,28 @@
           [dataSource]="types"
           class="w-100 borderless hoverable">
   
-          <!-- Type column -->
-          <ng-container matColumnDef="type">
-            <th mat-header-cell *matHeaderCellDef class="text-nowrap px-sm-3">Type</th>
-            <td mat-cell *matCellDef="let element" class="text-truncate px-sm-3">{{element.type}}</td>
-          </ng-container>
-  
           <!-- Model column -->
           <ng-container matColumnDef="model">
             <th mat-header-cell *matHeaderCellDef class="pe-sm-3">Model</th>
             <td mat-cell *matCellDef="let element" class="pe-sm-3">{{element.model}}</td>
           </ng-container>
   
+          <!-- Type column -->
+          <ng-container matColumnDef="type">
+            <th mat-header-cell *matHeaderCellDef class="text-nowrap px-sm-3 small-table-column">Type</th>
+            <td mat-cell *matCellDef="let element" class="text-truncate px-sm-3 small-table-column">{{element.type}}</td>
+          </ng-container>
+  
           <!-- Temperature column -->
           <ng-container matColumnDef="temperature">
-            <th mat-header-cell *matHeaderCellDef class="px-sm-3">Temperature</th>
-            <td mat-cell *matCellDef="let element" class="pe-sm-3">{{element.temperature}}</td>
+            <th mat-header-cell *matHeaderCellDef class="small-table-column">Temperature</th>
+            <td mat-cell *matCellDef="let element" class="small-table-column">{{element.temperature}}</td>
           </ng-container>
   
           <!-- Actions column -->
           <ng-container matColumnDef="action">
-            <th mat-header-cell *matHeaderCellDef class="ps-sm-3">Actions</th>
-            <td mat-cell *matCellDef="let element" class="ps-sm-3 text-nowrap">
+            <th mat-header-cell *matHeaderCellDef class="ps-sm-3 small-table-column">Actions</th>
+            <td mat-cell *matCellDef="let element" class="ps-sm-3 text-nowrap small-table-column">
   
               <button
                 mat-button
