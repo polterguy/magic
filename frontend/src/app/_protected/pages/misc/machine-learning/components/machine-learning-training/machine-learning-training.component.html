@@ -14,13 +14,12 @@
     </ng-container>
 
     <ng-container *ngIf="!isLoadingKey">
-      <div class="col-12">
-        <h3 class="fw-bold mb-2">Machine Learning</h3>
-        <p class="text-muted">
-          To get started with Machine Learning you'll need to configure your OpenAI account.
-        </p>
-
-        <div class="text-end button-row mt-1 pe-0 pb-0 w-100">
+      <div class="row ms-1">
+        <div class="col-12">
+          <h3 class="fw-bold mb-2">Machine Learning</h3>
+          <p class="text-muted">
+            To get started with Machine Learning you'll need to configure your OpenAI account.
+          </p>
 
           <button
             (click)="configure()"

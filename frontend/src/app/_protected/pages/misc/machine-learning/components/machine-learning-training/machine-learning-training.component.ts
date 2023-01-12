@@ -6,11 +6,11 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
+import { OpenAIConfigurationDialogComponent } from 'src/app/_general/components/openai/openai-configuration-dialog/openai-configuration-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { MachineLearningTrainingService } from 'src/app/_general/services/machine-learning-training.service';
 import { OpenAIService } from 'src/app/_general/services/openai.service';
 import { MachineLearningDetailsComponent } from '../machine-learning-details/machine-learning-details.component';
-import { MachineLearningTypeComponent } from '../machine-learning-type/machine-learning-type.component';
 
 /**
  * Helper component to administrate training data for OpenAI integration
@@ -84,6 +84,23 @@ export class MachineLearningTrainingComponent implements OnInit {
           });
         }
     });
+  }
+
+  configure() {
+
+    this.dialog
+      .open(OpenAIConfigurationDialogComponent, {
+        width: '80vw',
+        maxWidth: '550px',
+      })
+      .afterClosed()
+      .subscribe((result: {configured: boolean}) => {
+
+        if (result.configured) {
+          this.isConfigured = true;
+          this.getTypes(true);
+        }
+      });
   }
 
   /*

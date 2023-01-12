@@ -100,28 +100,6 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
       .open(OpenAIConfigurationDialogComponent, {
         width: '80vw',
         maxWidth: '550px',
-      })
-      .afterClosed()
-      .subscribe((result: {configured: boolean, start_training: boolean}) => {
-        if (result?.configured) {
-          this.loadConfig();
-          if (result.start_training) {
-
-            this.generalService.showLoading();
-  
-            this.openAiService.start_training().subscribe({
-              next: () => {
-  
-                this.generalService.showFeedback('Training of OpenAI successfully started', 'successMessage');
-                this.generalService.hideLoading();
-              },
-              error: (error: any) => {
-                this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
-                this.generalService.hideLoading();
-              }
-            });
-          }
-        }
       });
   }
 
