@@ -117,7 +117,9 @@ export class MachineLearningModelsComponent implements OnInit {
   private getTypes() {
 
     this.generalService.showLoading();
-    this.machineLearningTrainingService.ml_types().subscribe({
+    this.machineLearningTrainingService.ml_types({
+      limit: -1, // We don't care about paging here, since there's probably not that many different models.
+    }).subscribe({
       next: (types: any[]) => {
 
         this.types = types || [];
