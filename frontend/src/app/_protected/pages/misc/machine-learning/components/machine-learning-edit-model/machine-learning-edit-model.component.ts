@@ -12,11 +12,11 @@ import { OpenAIModel, OpenAIService } from 'src/app/_general/services/openai.ser
  * Helper component to create or edit existing Machine Learning type.
  */
 @Component({
-  selector: 'app-machine-learning-type',
-  templateUrl: './machine-learning-type.component.html',
-  styleUrls: ['./machine-learning-type.component.scss']
+  selector: 'app-machine-learning-edit-model',
+  templateUrl: './machine-learning-edit-model.component.html',
+  styleUrls: ['./machine-learning-edit-model.component.scss']
 })
-export class MachineLearningTypeComponent implements OnInit {
+export class MachineLearningEditModelComponent implements OnInit {
 
   type: string = null;
   temperature: string = null;
@@ -28,7 +28,7 @@ export class MachineLearningTypeComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private generalService: GeneralService,
     private openAIService: OpenAIService,
-    private dialogRef: MatDialogRef<MachineLearningTypeComponent>,) { }
+    private dialogRef: MatDialogRef<MachineLearningEditModelComponent>,) { }
 
   ngOnInit() {
 

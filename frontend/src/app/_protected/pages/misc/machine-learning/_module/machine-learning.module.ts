@@ -8,21 +8,21 @@ import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
 import { FormsModule } from '@angular/forms';
 import { ComponentsModule } from 'src/app/_general/components/components.module';
-import { MachineLearningTrainingComponent } from '../components/machine-learning-training/machine-learning-training.component';
+import { MachineLearningTrainingSnippetsComponent } from '../components/machine-learning-training-snippets/machine-learning-training-snippets.component';
 import { MachineLearningTrainingRoutingModule } from './machine-learning.routing.module';
-import { MachineLearningDetailsComponent } from '../components/machine-learning-details/machine-learning-details.component';
+import { MachineLearningEditSnippetComponent } from '../components/machine-learning-edit-snippet/machine-learning-edit-snippet.component';
 import { CmModule } from 'src/app/codemirror/_module/cm.module';
-import { MachineLearningTypeComponent } from '../components/machine-learning-type/machine-learning-type.component';
+import { MachineLearningEditModelComponent } from '../components/machine-learning-edit-model/machine-learning-edit-model.component';
 import { MachineLearningComponent } from '../machine-learning.component';
-import { MachineLearningTypesComponent } from '../components/machine-learning-types/machine-learning-types.component';
+import { MachineLearningModelsComponent } from '../components/machine-learning-models/machine-learning-models.component';
 
 @NgModule({
   declarations: [
-    MachineLearningTrainingComponent,
-    MachineLearningDetailsComponent,
-    MachineLearningTypeComponent,
+    MachineLearningTrainingSnippetsComponent,
+    MachineLearningEditSnippetComponent,
+    MachineLearningEditModelComponent,
     MachineLearningComponent,
-    MachineLearningTypesComponent,
+    MachineLearningModelsComponent,
   ],
   imports: [
     CommonModule,
