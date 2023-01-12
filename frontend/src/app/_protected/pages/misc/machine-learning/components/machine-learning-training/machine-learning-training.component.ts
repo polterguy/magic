@@ -86,6 +86,7 @@ export class MachineLearningTrainingComponent implements OnInit {
     });
   }
 
+  /*
   addType() {
 
     this.dialog
@@ -114,6 +115,7 @@ export class MachineLearningTrainingComponent implements OnInit {
         }
     });
   }
+  */
 
   showDetails(el: any) {
 
