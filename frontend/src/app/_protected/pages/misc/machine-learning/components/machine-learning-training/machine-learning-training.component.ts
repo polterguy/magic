@@ -103,37 +103,6 @@ export class MachineLearningTrainingComponent implements OnInit {
       });
   }
 
-  /*
-  addType() {
-
-    this.dialog
-      .open(MachineLearningTypeComponent, {
-        width: '80vw',
-        maxWidth: '550px',
-      })
-      .afterClosed()
-      .subscribe((result: any) => {
-
-        if (result) {
-
-          this.generalService.showLoading();
-          this.machineLearningTrainingService.ml_types_create(result).subscribe({
-            next: () => {
-
-              this.getTypes(false);
-              this.generalService.showFeedback('Type successfully saved', 'successMessage');
-            },
-            error: () => {
-
-              this.generalService.hideLoading();
-              this.generalService.showFeedback('Something went wrong as we tried to create your type', 'errorMessage');
-            }
-          });
-        }
-    });
-  }
-  */
-
   showDetails(el: any) {
 
     this.dialog
