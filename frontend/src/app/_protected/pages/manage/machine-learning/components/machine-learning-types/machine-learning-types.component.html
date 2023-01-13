@@ -18,14 +18,18 @@
         <div class="col-12">
           <h3 class="fw-bold mb-2">Machine Learning</h3>
           <p class="text-muted">
-            To get started with Machine Learning you'll need to configure your OpenAI account.
+            To get started with Machine Learning you'll need an OpenAI API key.
+            Get your API key <a href="https://beta.openai.com/account/api-keys" target="_blank">here</a>.
           </p>
 
           <button
             (click)="configure()"
             class="mt-2"
             mat-flat-button>
-            Configure
+            <div class="d-flex flex-nowrap align-items-center ps-1">
+              <mat-icon>key</mat-icon>
+              <p class="my-0 mx-2 text-truncate url-text">OpenAI API key</p>
+            </div>
           </button>
 
         </div>
