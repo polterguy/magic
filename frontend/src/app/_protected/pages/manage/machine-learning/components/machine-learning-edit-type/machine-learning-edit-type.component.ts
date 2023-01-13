@@ -9,6 +9,8 @@ import { GeneralService } from 'src/app/_general/services/general.service';
 import { OpenAIModel, OpenAIService } from 'src/app/_general/services/openai.service';
 import { Role } from '../../../user-and-roles/_models/role.model';
 import { RoleService } from '../../../user-and-roles/_services/role.service';
+import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
+import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 
 /**
  * Helper component to create or edit existing Machine Learning type.
@@ -24,10 +26,14 @@ export class MachineLearningEditTypeComponent implements OnInit {
   temperature: string = null;
   max_tokens: string = null;
   recaptcha: 0;
-  auth: string = null;
+  auth: string[] = [];
+  supervised: boolean = false;
   model: OpenAIModel = null;
   models: OpenAIModel[] = [];
   roles: Role[] = [];
+
+  CommonRegEx = CommonRegEx;
+  CommonErrorMessages = CommonErrorMessages;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -39,9 +45,11 @@ export class MachineLearningEditTypeComponent implements OnInit {
   ngOnInit() {
 
     this.type = this.data?.type;
-    this.max_tokens = this.data?.max_tokens ?? 2000;
-    this.temperature = this.data?.temperature ?? 0.5;
-    this.recaptcha = this.data?.recaptcha ?? 0.3;
+    this.max_tokens = this.data?.max_tokens ?? 500;
+    this.temperature = this.data?.temperature ?? 0.1;
+    this.recaptcha = this.data?.recaptcha ?? 0;
+    this.auth = this.data?.auth?.split(',') ?? ['root'];
+    this.supervised = this.data?.supervised === 1 ? true : false;
 
     this.generalService.showLoading();
 
@@ -78,11 +86,19 @@ export class MachineLearningEditTypeComponent implements OnInit {
 
   save() {
 
+    if (!this.type || this.type.length < 2) {
+      this.generalService.showFeedback('You need to provide a type name', 'errorMessage');
+      return;
+    }
+
     const data: any = {
       type: this.type,
       max_tokens: this.max_tokens,
       temperature: this.temperature,
       model: this.model.id,
+      supervised: this.supervised ? 1 : 0,
+      recaptcha: this.recaptcha,
+      auth: this.auth?.length > 0 ? this.auth.join(',') : null,
     };
     this.dialogRef.close(data);
   }

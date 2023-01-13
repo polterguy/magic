@@ -14,11 +14,14 @@
       </span>
       <input
         matInput
+        required
         [disabled]="data"
         placeholder="Type name"
+        [pattern]="CommonRegEx.appNameWithUppercaseHyphen"
         [(ngModel)]="type"
         name="type"
         autocomplete="off">
+        <mat-error>{{CommonErrorMessages.appNameWithUppercaseHyphen}}</mat-error>
     </mat-form-field>
 
     <mat-form-field class="w-100 standalone-field">
@@ -149,6 +152,13 @@
   </div>
 
   <div mat-dialog-actions [align]="'end'">
+
+    <mat-checkbox
+      [(ngModel)]="supervised"
+      name="supervised"
+      class="me-2"
+      labelPosition="before"
+      color="primary">Supervised</mat-checkbox>
 
     <button
       mat-button

@@ -1,0 +1,24 @@
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2023 info@aista.com, all rights reserved.
+ */
+
+ @import '../../../../../../../assets/styles/_variables/colors.scss';
+ @import '../../../../../../../assets/styles/_variables/mixin.scss';
+ 
+.status {
+  min-width: 7px;
+  min-height: 7px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: $aista_default_grey3;
+  display: inline-block;
+
+  &.unsupervised {
+    background-color: $aista_error;
+  }
+
+  &.supervised {
+    background-color: $aista_success;
+  }
+}
