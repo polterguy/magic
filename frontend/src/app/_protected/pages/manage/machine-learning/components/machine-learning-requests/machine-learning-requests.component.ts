@@ -50,10 +50,10 @@ export class MachineLearningRequestsComponent implements OnInit {
       offset: 0,
     };
     if (event.searchKey) {
-      this.filter['ml_training_snippets.prompt.like'] = '%' + event.searchKey + '%';
+      this.filter['ml_requests.prompt.like'] = '%' + event.searchKey + '%';
     }
     if (event.type) {
-      this.filter['ml_training_snippets.type.eq'] = event.type;
+      this.filter['ml_requests.type.eq'] = event.type;
     }
     this.getRequests(true);
   }
