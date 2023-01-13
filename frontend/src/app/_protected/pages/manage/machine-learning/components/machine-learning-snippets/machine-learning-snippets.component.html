@@ -1,40 +1,8 @@
 
 <div class="row fullPage">
 
-  <!-- Supply key part -->
-  <div *ngIf="!isConfigured" class="col-12 mt-4">
-
-    <ng-container *ngIf="isLoadingKey">
-      <app-loading-skeleton
-        amount="5"
-        colClass="col-12"
-        blockHeight="45px"
-        hasShadow="false">
-      </app-loading-skeleton>
-    </ng-container>
-
-    <ng-container *ngIf="!isLoadingKey">
-      <div class="row ms-1">
-        <div class="col-12">
-          <h3 class="fw-bold mb-2">Machine Learning</h3>
-          <p class="text-muted">
-            To get started with Machine Learning you'll need to configure your OpenAI account.
-          </p>
-
-          <button
-            (click)="configure()"
-            mat-flat-button>
-            Configure
-          </button>
-
-        </div>
-      </div>
-    </ng-container>
-
-  </div>
-
   <!-- Training snippets datagrid -->
-  <div *ngIf="isConfigured" class="mt-4 col-12">
+  <div class="mt-4 col-12">
 
     <!-- Top parts containing title of component and search textbox -->
     <div class="row align-items-center me-1">
@@ -127,7 +95,7 @@
   </div>
 
   <!-- Upload training data part -->
-  <div *ngIf="isConfigured && type" class="col-xl-6 offset-xl-3 col-lg-8 offset-lg-2 col-12 mt-4">
+  <div *ngIf="type" class="col-xl-6 offset-xl-3 col-lg-8 offset-lg-2 col-12 mt-4">
 
     <form>
 

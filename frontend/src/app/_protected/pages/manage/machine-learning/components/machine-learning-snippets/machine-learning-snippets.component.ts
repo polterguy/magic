@@ -26,8 +26,6 @@ export class MachineLearningSnippetsComponent implements OnInit {
 
   @Input() type: string;
 
-  isLoadingKey: boolean = false;
-  isConfigured: boolean = false;
   types: string[] = null;
   dataSource: any[] = null;
   count: number = 0;
@@ -57,8 +55,7 @@ export class MachineLearningSnippetsComponent implements OnInit {
       this.filter['ml_training_snippets.type.eq'] = this.type;
     }
     this.generalService.showLoading();
-    this.isLoadingKey = true;
-    this.getConfiguredStatus();
+    this.getTypes(true);
   }
 
   create() {
@@ -92,23 +89,6 @@ export class MachineLearningSnippetsComponent implements OnInit {
           });
         }
     });
-  }
-
-  configure() {
-
-    this.dialog
-      .open(OpenAIConfigurationDialogComponent, {
-        width: '80vw',
-        maxWidth: '550px',
-      })
-      .afterClosed()
-      .subscribe((result: {configured: boolean}) => {
-
-        if (result.configured) {
-          this.isConfigured = true;
-          this.getTypes(true);
-        }
-      });
   }
 
   showDetails(el: any) {
@@ -232,27 +212,6 @@ export class MachineLearningSnippetsComponent implements OnInit {
   /*
    * Private helper methods.
    */
-
-  private getConfiguredStatus() {
-
-    this.openAIService.isConfigured().subscribe({
-      next: (result: { result: boolean }) => {
-
-        if (!result.result) {
-          this.isLoadingKey = false;
-          this.generalService.hideLoading();
-          return;
-        }
-        this.isConfigured = true;
-        this.getTypes();
-      },
-      error: (error: any) => {
-
-        this.generalService.showFeedback(error, 'errorMessage', 'Ok');
-        this.generalService.hideLoading();
-      }
-    });
-  }
 
   private getTypes(getTrainingData: boolean = true) {
 
