@@ -135,6 +135,8 @@
 
         <input
           type="file"
+          [(ngModel)]="trainingFileModel"
+          name="trainingFileModel"
           class="w-100 h-100 hide pointer"
           #upload
           (change)="getFile($event)"
@@ -144,16 +146,16 @@
           mat-button
           class="w-100"
           (click)="upload.click()"
-          *ngIf="!file"
+          *ngIf="trainingFileModel === ''"
           [disabled]="uploading">
           <i>Drag & drop or click to upload your training material here</i> <br />
           <span class="text-primary">Choose a file</span>
         </button>
 
-        <ng-container *ngIf="file">
-          <h4 class="my-0">{{file.name}}</h4>
+        <ng-container *ngIf="trainingFileModel !== ''">
+          <h4 class="my-0">{{getFileName()}}</h4>
           <p class="text-center mt-3" *ngIf="uploading">Uploading ...</p>
-          <p class="text-center mt-3" *ngIf="!uploading">Uploaded!</p>
+          <p class="text-center mt-3" *ngIf="!uploading">Done!</p>
         </ng-container>
 
       </div>
