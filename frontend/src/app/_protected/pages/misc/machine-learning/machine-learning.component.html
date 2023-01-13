@@ -4,24 +4,9 @@
     <mat-tab-group
       mat-stretch-tabs
       dynamicHeight
+      [(selectedIndex)]="index"
       animationDuration="0ms"
       #tabs>
-
-      <!-- Training snippets -->
-      <mat-tab>
-
-        <ng-template mat-tab-label>
-          <span class="d-sm-inline d-none ps-1">Training&nbsp;</span>Snippets
-        </ng-template>
-
-        <ng-template matTabContent>
-
-          <app-machine-learning-training-snippets>
-          </app-machine-learning-training-snippets>
-
-        </ng-template>
-
-      </mat-tab>
 
       <!-- Training data types -->
       <mat-tab>
@@ -32,12 +17,31 @@
 
         <ng-template matTabContent>
 
-          <app-machine-learning-models>
+          <app-machine-learning-models
+            (trainModel)="trainModel($event)">
           </app-machine-learning-models>
 
         </ng-template>
 
       </mat-tab>
+
+      <!-- Training snippets -->
+      <mat-tab>
+
+        <ng-template mat-tab-label>
+          <span class="d-sm-inline d-none ps-1">Training&nbsp;</span>Snippets
+        </ng-template>
+
+        <ng-template matTabContent>
+
+          <app-machine-learning-training-snippets
+            [(type)]="type">
+          </app-machine-learning-training-snippets>
+
+        </ng-template>
+
+      </mat-tab>
+
     </mat-tab-group>
 
   </mat-card-content>

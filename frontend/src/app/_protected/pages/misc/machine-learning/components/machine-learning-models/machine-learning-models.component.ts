@@ -3,7 +3,7 @@
  * Copyright (c) Aista Ltd, 2021 - 2023 info@aista.com, all rights reserved.
  */
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
@@ -20,6 +20,8 @@ import { MachineLearningEditModelComponent } from '../machine-learning-edit-mode
   styleUrls: ['./machine-learning-models.component.scss']
 })
 export class MachineLearningModelsComponent implements OnInit {
+
+  @Output() trainModel = new EventEmitter<string>();
 
   displayedColumns: string[] = [
     'type',
@@ -97,6 +99,11 @@ export class MachineLearningModelsComponent implements OnInit {
           });
         }
     });
+  }
+
+  train(el:any) {
+
+    this.trainModel?.emit(el.type);
   }
 
   delete(el: any) {
