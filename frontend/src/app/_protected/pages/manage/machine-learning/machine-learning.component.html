@@ -18,6 +18,7 @@
         <ng-template matTabContent>
 
           <app-machine-learning-types
+            [(isConfigured)]="isConfigured"
             (trainModel)="trainModel($event)">
           </app-machine-learning-types>
 
@@ -26,7 +27,7 @@
       </mat-tab>
 
       <!-- Training snippets -->
-      <mat-tab>
+      <mat-tab [disabled]="!isConfigured">
 
         <ng-template mat-tab-label>
           Training

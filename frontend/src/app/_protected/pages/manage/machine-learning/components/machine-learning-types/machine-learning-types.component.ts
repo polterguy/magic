@@ -3,7 +3,7 @@
  * Copyright (c) Aista Ltd, 2021 - 2023 info@aista.com, all rights reserved.
  */
 
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { OpenAIConfigurationDialogComponent } from 'src/app/_general/components/openai/openai-configuration-dialog/openai-configuration-dialog.component';
@@ -25,7 +25,9 @@ export class MachineLearningTypesComponent implements OnInit {
 
   @Output() trainModel = new EventEmitter<string>();
 
-  isConfigured: boolean = false;
+  @Input() isConfigured: boolean = false;
+  @Output() isConfiguredChange = new EventEmitter<boolean>();
+
   isLoadingKey: boolean = false;
   displayedColumns: string[] = [
     'type',
@@ -63,6 +65,7 @@ export class MachineLearningTypesComponent implements OnInit {
 
         if (result.configured) {
           this.isConfigured = true;
+          this.isConfiguredChange.emit(this.isConfigured);
           this.getModels();
         }
       });
@@ -205,6 +208,7 @@ export class MachineLearningTypesComponent implements OnInit {
           return;
         }
         this.isConfigured = true;
+        this.isConfiguredChange.emit(this.isConfigured);
         this.getModels();
       },
       error: (error: any) => {
