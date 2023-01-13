@@ -41,8 +41,8 @@ export class MachineLearningTrainingSnippetsComponent implements OnInit {
     'action',
   ];
 
-  file: any;
   uploading: boolean = false;
+  trainingFileModel: string = '';
 
   constructor(
     private dialog: MatDialog,
@@ -198,21 +198,20 @@ export class MachineLearningTrainingSnippetsComponent implements OnInit {
     }
 
     this.uploading = true;
-    this.file = event.target.files[0];
 
     const formData = new FormData();
-    formData.append("file", this.file, this.file.name);
+    formData.append("file", event.target.files[0], event.target.files[0].name);
     formData.append("type", this.type);
 
     this.openAIService.uploadTrainingFile(formData).subscribe({
       next: () => {
 
         this.uploading = false;
-        setTimeout(() => {
-          this.file = null;
-          this.getTrainingData();
-        }, 2000);
         this.generalService.showFeedback('Training data successfully uploaded', 'successMessage');
+        this.getTrainingData();
+
+        // Giving user some time to register feedback.
+        setTimeout(() => this.trainingFileModel = '', 2000);
       },
       error: (error: any) => {
 
@@ -220,6 +219,10 @@ export class MachineLearningTrainingSnippetsComponent implements OnInit {
         this.generalService.hideLoading();
       }
     });
+  }
+
+  getFileName() {
+    return this.trainingFileModel.split('\\').pop().split('/').pop();
   }
 
   /*
