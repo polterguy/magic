@@ -85,6 +85,20 @@ export class MachineLearningTrainingService {
       encodeURIComponent(type));
   }
 
+  /**
+   * Returns all requests from backend matching filter condition.
+   */
+  ml_requests(filter?: any) {
+    return this.httpService.get<any>('/magic/system/magic/ml_requests' + this.getQueryArgs(filter));
+  }
+
+  /**
+   * Counts requests matching condition.
+   */
+  ml_requests_count(filter?: any) {
+    return this.httpService.get<Response>('/magic/system/magic/ml_requests-count' + this.getQueryArgs(filter));
+  }
+
   /*
    * Private helper methods.
    */

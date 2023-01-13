@@ -15,6 +15,7 @@ import { CmModule } from 'src/app/codemirror/_module/cm.module';
 import { MachineLearningEditTypeComponent } from '../components/machine-learning-edit-type/machine-learning-edit-type.component';
 import { MachineLearningComponent } from '../machine-learning.component';
 import { MachineLearningTypesComponent } from '../components/machine-learning-types/machine-learning-types.component';
+import { MachineLearningRequestsComponent } from '../components/machine-learning-requests/machine-learning-requests.component';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { MachineLearningTypesComponent } from '../components/machine-learning-ty
     MachineLearningEditTypeComponent,
     MachineLearningComponent,
     MachineLearningTypesComponent,
+    MachineLearningRequestsComponent,
   ],
   imports: [
     CommonModule,
