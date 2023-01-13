@@ -22,8 +22,8 @@ import { MachineLearningEditModelComponent } from '../machine-learning-edit-mode
 export class MachineLearningModelsComponent implements OnInit {
 
   displayedColumns: string[] = [
-    'model',
     'type',
+    'model',
     'temperature',
     'action'
   ];
@@ -36,7 +36,7 @@ export class MachineLearningModelsComponent implements OnInit {
 
   ngOnInit() {
 
-    this.getTypes();
+    this.getModels();
   }
 
   addType() {
@@ -55,8 +55,8 @@ export class MachineLearningModelsComponent implements OnInit {
           this.machineLearningTrainingService.ml_types_create(result).subscribe({
             next: () => {
 
-              this.getTypes();
-              this.generalService.showFeedback('Type successfully saved', 'successMessage');
+              this.getModels();
+              this.generalService.showFeedback('Model successfully saved', 'successMessage');
             },
             error: () => {
 
@@ -69,6 +69,33 @@ export class MachineLearningModelsComponent implements OnInit {
   }
 
   edit(el: any) {
+
+    this.dialog
+      .open(MachineLearningEditModelComponent, {
+        width: '80vw',
+        maxWidth: '550px',
+        data: el,
+      })
+      .afterClosed()
+      .subscribe((result: any) => {
+
+        if (result) {
+
+          this.generalService.showLoading();
+          this.machineLearningTrainingService.ml_types_update(result).subscribe({
+            next: () => {
+
+              this.getModels();
+              this.generalService.showFeedback('Model successfully saved', 'successMessage');
+            },
+            error: () => {
+
+              this.generalService.hideLoading();
+              this.generalService.showFeedback('Something went wrong as we tried to create your type', 'errorMessage');
+            }
+          });
+        }
+    });
   }
 
   delete(el: any) {
@@ -98,7 +125,7 @@ export class MachineLearningModelsComponent implements OnInit {
           next: () => {
     
             this.generalService.showFeedback('Model successfully deleted', 'successMessage');
-            this.getTypes();
+            this.getModels();
           },
           error: (error: any) => {
     
@@ -114,7 +141,7 @@ export class MachineLearningModelsComponent implements OnInit {
    * Private helper methods.
    */
 
-  private getTypes() {
+  private getModels() {
 
     this.generalService.showLoading();
     this.machineLearningTrainingService.ml_types({
