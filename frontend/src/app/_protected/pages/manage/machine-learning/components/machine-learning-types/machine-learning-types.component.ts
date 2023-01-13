@@ -63,7 +63,7 @@ export class MachineLearningTypesComponent implements OnInit {
       .afterClosed()
       .subscribe((result: {configured: boolean}) => {
 
-        if (result.configured) {
+        if (result?.configured) {
           this.isConfigured = true;
           this.isConfiguredChange.emit(this.isConfigured);
           this.getModels();
