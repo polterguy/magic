@@ -34,7 +34,7 @@
   </div>
 
   <!-- Training snippets datagrid -->
-  <div *ngIf="isConfigured" class="mt-4">
+  <div *ngIf="isConfigured" class="mt-4 col-12">
 
     <!-- Top parts containing title of component and search textbox -->
     <div class="row align-items-center me-1">
@@ -59,6 +59,7 @@
     </div>
 
     <div class="table-responsive mt-4">
+
       <table
         mat-table
         [dataSource]="dataSource"
@@ -122,6 +123,42 @@
       [pageSize]="filter.limit"
       (page)="page($event)">
     </mat-paginator>
+
+  </div>
+
+  <!-- Upload training data part -->
+  <div *ngIf="isConfigured" class="col-xl-6 offset-xl-3 col-lg-8 offset-lg-2 col-12 mt-4">
+
+    <form>
+
+      <div class="drop-container pointer border-color">
+
+        <input
+          type="file"
+          class="w-100 h-100 hide pointer"
+          #upload
+          (change)="getFile($event)"
+          accept=".csv">
+
+        <button
+          mat-button
+          class="w-100"
+          (click)="upload.click()"
+          *ngIf="!file"
+          [disabled]="uploading">
+          <i>Drag & drop or click to upload your training material here</i> <br />
+          <span class="text-primary">Choose a file</span>
+        </button>
+
+        <ng-container *ngIf="file">
+          <h4 class="my-0">{{file.name}}</h4>
+          <p class="text-center mt-3" *ngIf="uploading">Uploading ...</p>
+          <p class="text-center mt-3" *ngIf="!uploading">Uploaded!</p>
+        </ng-container>
+
+      </div>
+
+    </form>
 
   </div>
 

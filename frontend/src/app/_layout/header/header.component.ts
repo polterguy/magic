@@ -189,6 +189,11 @@ export class HeaderComponent implements OnInit {
             url: '/plugins',
             exact: false,
           },
+          {
+            name: 'Machine Learning',
+            url: '/machine-learning',
+            exact: false,
+          },
         ],
       },
       {
@@ -220,11 +225,6 @@ export class HeaderComponent implements OnInit {
           {
             name: 'Help Center',
             url: '/help-center',
-            exact: false,
-          },
-          {
-            name: 'Machine Learning Training',
-            url: '/machine-learning',
             exact: false,
           },
         ],

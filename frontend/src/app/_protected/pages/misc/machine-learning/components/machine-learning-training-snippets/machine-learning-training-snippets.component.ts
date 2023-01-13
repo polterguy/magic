@@ -41,6 +41,9 @@ export class MachineLearningTrainingSnippetsComponent implements OnInit {
     'action',
   ];
 
+  file: any;
+  uploading: boolean = false;
+
   constructor(
     private dialog: MatDialog,
     private generalService: GeneralService,
@@ -186,6 +189,9 @@ export class MachineLearningTrainingSnippetsComponent implements OnInit {
       this.filter['ml_training_snippets.type.eq'] = event.type;
     }
     this.getTrainingData(true);
+  }
+
+  getFile(e: any) {
   }
 
   /*

@@ -25,6 +25,7 @@ export class UploadExistingComponent {
     private fileService: FileService) { }
 
   getFile(event: any) {
+
     this.uploading = true;
     this.file = event.target.files[0];
 
@@ -34,10 +35,12 @@ export class UploadExistingComponent {
 
     this.fileService.uploadStaticWebsite(formData).subscribe({
       next: (res: any) => {
+
         this.uploading = false;
         this.generalService.showFeedback('Website successfully uploaded to /etc/www/', 'successMessage', 'Ok', 4000);
       },
       error: (error: any) => {
+
         this.uploading = false;
         this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000);
       }

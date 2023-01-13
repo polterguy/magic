@@ -42,7 +42,11 @@ export class MachineLearningEditModelComponent implements OnInit {
       next: (models: OpenAIModel[]) => {
 
         this.models = models;
-        this.model = this.models.filter(x => x.id === 'curie')[0];
+        if (this.data?.model) {
+          this.model = this.models.filter(x => x.id === this.data.model)[0];
+        } else {
+          this.model = this.models.filter(x => x.id === 'curie')[0];
+        }
         this.generalService.hideLoading();
       },
       error: () => {
