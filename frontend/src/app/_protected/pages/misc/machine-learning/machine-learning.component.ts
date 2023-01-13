@@ -14,4 +14,13 @@ import { Component } from '@angular/core';
   styleUrls: ['./machine-learning.component.scss']
 })
 export class MachineLearningComponent {
+
+  type: string = null;
+  index: number = 0;
+
+  trainModel(type: string) {
+
+    this.type = type;
+    this.index = 1;
+  }
 }

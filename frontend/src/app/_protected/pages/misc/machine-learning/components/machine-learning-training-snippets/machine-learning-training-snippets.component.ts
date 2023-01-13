@@ -3,7 +3,7 @@
  * Copyright (c) Aista Ltd, 2021 - 2023 info@aista.com, all rights reserved.
  */
 
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
@@ -24,10 +24,11 @@ import { MachineLearningEditSnippetComponent } from '../machine-learning-edit-sn
 })
 export class MachineLearningTrainingSnippetsComponent implements OnInit {
 
+  @Input() type: string;
+
   isLoadingKey: boolean = false;
   isConfigured: boolean = false;
   types: string[] = null;
-  type: string = null;
   dataSource: any[] = null;
   count: number = 0;
   filter: any = {
@@ -52,6 +53,9 @@ export class MachineLearningTrainingSnippetsComponent implements OnInit {
 
   ngOnInit() {
 
+    if (this.type && this.type !== '') {
+      this.filter['ml_training_snippets.type.eq'] = this.type;
+    }
     this.generalService.showLoading();
     this.isLoadingKey = true;
     this.getConfiguredStatus();
