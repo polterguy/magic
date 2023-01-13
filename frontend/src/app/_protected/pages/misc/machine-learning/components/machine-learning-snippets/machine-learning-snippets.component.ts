@@ -18,11 +18,11 @@ import { MachineLearningEditSnippetComponent } from '../machine-learning-edit-sn
  * and Machine Learning integration.
  */
 @Component({
-  selector: 'app-machine-learning-training-snippets',
-  templateUrl: './machine-learning-training-snippets.component.html',
-  styleUrls: ['./machine-learning-training-snippets.component.scss']
+  selector: 'app-machine-learning-snippets',
+  templateUrl: './machine-learning-snippets.component.html',
+  styleUrls: ['./machine-learning-snippets.component.scss']
 })
-export class MachineLearningTrainingSnippetsComponent implements OnInit {
+export class MachineLearningSnippetsComponent implements OnInit {
 
   @Input() type: string;
 

@@ -8,18 +8,18 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { MachineLearningTrainingService } from 'src/app/_general/services/machine-learning-training.service';
-import { MachineLearningEditModelComponent } from '../machine-learning-edit-model/machine-learning-edit-model.component';
+import { MachineLearningEditTypeComponent } from '../machine-learning-edit-type/machine-learning-edit-type.component';
 
 /**
  * Helper component to manage machine learning types, different models, and configurations
  * for your types.
  */
 @Component({
-  selector: 'app-machine-learning-models',
-  templateUrl: './machine-learning-models.component.html',
-  styleUrls: ['./machine-learning-models.component.scss']
+  selector: 'app-machine-learning-types',
+  templateUrl: './machine-learning-types.component.html',
+  styleUrls: ['./machine-learning-types.component.scss']
 })
-export class MachineLearningModelsComponent implements OnInit {
+export class MachineLearningTypesComponent implements OnInit {
 
   @Output() trainModel = new EventEmitter<string>();
 
@@ -45,7 +45,7 @@ export class MachineLearningModelsComponent implements OnInit {
   addType() {
 
     this.dialog
-      .open(MachineLearningEditModelComponent, {
+      .open(MachineLearningEditTypeComponent, {
         width: '80vw',
         maxWidth: '550px',
       })
@@ -74,7 +74,7 @@ export class MachineLearningModelsComponent implements OnInit {
   edit(el: any) {
 
     this.dialog
-      .open(MachineLearningEditModelComponent, {
+      .open(MachineLearningEditTypeComponent, {
         width: '80vw',
         maxWidth: '550px',
         data: el,

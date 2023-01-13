@@ -12,14 +12,14 @@
       <mat-tab>
 
         <ng-template mat-tab-label>
-          <span class="d-sm-inline d-none ps-1">Training&nbsp;</span>Models
+          Types
         </ng-template>
 
         <ng-template matTabContent>
 
-          <app-machine-learning-models
+          <app-machine-learning-types
             (trainModel)="trainModel($event)">
-          </app-machine-learning-models>
+          </app-machine-learning-types>
 
         </ng-template>
 
@@ -29,14 +29,14 @@
       <mat-tab>
 
         <ng-template mat-tab-label>
-          <span class="d-sm-inline d-none ps-1">Training&nbsp;</span>Snippets
+          Snippets
         </ng-template>
 
         <ng-template matTabContent>
 
-          <app-machine-learning-training-snippets
+          <app-machine-learning-snippets
             [(type)]="type">
-          </app-machine-learning-training-snippets>
+          </app-machine-learning-snippets>
 
         </ng-template>
 
