@@ -1,0 +1,38 @@
+
+// Endpoint counting items in your ml_requests table in your magic database
+.arguments
+   ml_requests.id.eq:long
+   ml_requests.created.eq:date
+   ml_requests.type.like:string
+   ml_requests.type.eq:string
+   ml_requests.prompt.like:string
+   ml_requests.prompt.eq:string
+   ml_requests.completion.like:string
+   ml_requests.completion.eq:string
+   ml_requests.finish_reason.like:string
+   ml_requests.finish_reason.eq:string
+.description:Endpoint counting items in your ml_requests table in your magic database
+.type:crud-count
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Opening up our database connection.
+data.connect:[generic|magic]
+   database-type:sqlite
+   add:x:+/*/where/*
+      get-nodes:x:@.arguments/*
+
+   // Reading data from database.
+   data.read
+      database-type:sqlite
+      table:ml_requests
+      columns
+         count(*)
+            as:count
+      where
+         and
+      limit:long:1
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@data.read/*/*

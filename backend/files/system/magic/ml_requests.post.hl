@@ -1,0 +1,35 @@
+
+// CRUD create endpoint inserting one record into your ml_requests table in your magic database taking type, prompt, completion, finish_reason with authentication and authorisation for root roles
+.arguments
+   type:string
+   prompt:string
+   completion:string
+   finish_reason:string
+.description:CRUD create endpoint inserting one record into your ml_requests table in your magic database taking type, prompt, completion, finish_reason with authentication and authorisation for root roles
+.type:crud-create
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Opening up database connection.
+data.connect:[generic|magic]
+   database-type:sqlite
+
+   // Parametrising our create invocation.
+   add:x:./*/data.create/*/values
+      get-nodes:x:@.arguments/*
+
+   // Creating our record.
+   data.create
+      database-type:sqlite
+      table:ml_requests
+      return-id:bool:true
+      values
+
+   // Returning the correct status code.
+   response.status.set:201
+
+   // Returning result of above invocation to caller.
+   unwrap:x:+/*
+   return
+      id:x:@data.create
