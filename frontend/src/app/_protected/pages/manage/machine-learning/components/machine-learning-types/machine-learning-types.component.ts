@@ -6,8 +6,10 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
+import { OpenAIConfigurationDialogComponent } from 'src/app/_general/components/openai/openai-configuration-dialog/openai-configuration-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { MachineLearningTrainingService } from 'src/app/_general/services/machine-learning-training.service';
+import { OpenAIService } from 'src/app/_general/services/openai.service';
 import { MachineLearningEditTypeComponent } from '../machine-learning-edit-type/machine-learning-edit-type.component';
 
 /**
@@ -23,6 +25,8 @@ export class MachineLearningTypesComponent implements OnInit {
 
   @Output() trainModel = new EventEmitter<string>();
 
+  isConfigured: boolean = false;
+  isLoadingKey: boolean = false;
   displayedColumns: string[] = [
     'type',
     'model',
@@ -34,12 +38,31 @@ export class MachineLearningTypesComponent implements OnInit {
 
   constructor(
     private dialog: MatDialog,
+    private openAIService: OpenAIService,
     private generalService: GeneralService,
     private machineLearningTrainingService: MachineLearningTrainingService) { }
 
   ngOnInit() {
 
-    this.getModels();
+    this.isLoadingKey = true;
+    this.getConfiguredStatus();
+  }
+
+  configure() {
+
+    this.dialog
+      .open(OpenAIConfigurationDialogComponent, {
+        width: '80vw',
+        maxWidth: '550px',
+      })
+      .afterClosed()
+      .subscribe((result: {configured: boolean}) => {
+
+        if (result.configured) {
+          this.isConfigured = true;
+          this.getModels();
+        }
+      });
   }
 
   addType() {
@@ -159,6 +182,27 @@ export class MachineLearningTypesComponent implements OnInit {
 
         this.types = types || [];
         this.generalService.hideLoading();
+      },
+      error: (error: any) => {
+
+        this.generalService.showFeedback(error, 'errorMessage', 'Ok');
+        this.generalService.hideLoading();
+      }
+    });
+  }
+
+  private getConfiguredStatus() {
+
+    this.openAIService.isConfigured().subscribe({
+      next: (result: { result: boolean }) => {
+
+        if (!result.result) {
+          this.isLoadingKey = false;
+          this.generalService.hideLoading();
+          return;
+        }
+        this.isConfigured = true;
+        this.getModels();
       },
       error: (error: any) => {
 
