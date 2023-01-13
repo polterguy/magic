@@ -48,6 +48,9 @@ data.connect:[generic|magic]
          ml_types.model
          ml_types.max_tokens
          ml_types.temperature
+         ml_types.recaptcha
+         ml_types.auth
+         ml_types.monitor
       where
          and
 
