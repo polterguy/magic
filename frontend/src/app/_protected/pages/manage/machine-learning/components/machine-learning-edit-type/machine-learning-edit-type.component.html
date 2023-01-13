@@ -39,7 +39,7 @@
       </mat-select>
     </mat-form-field>
     
-      <div class="row mt-2">
+    <div class="row mt-2">
 
       <div class="col-6">
 
@@ -61,7 +61,7 @@
             name="max_tokens"
             autocomplete="off">
         </mat-form-field>
-    
+
       </div>
 
       <div class="col-6">
@@ -86,6 +86,62 @@
             autocomplete="off">
         </mat-form-field>
     
+      </div>
+
+    </div>
+
+    <div class="row mt-2">
+
+      <div class="col-6">
+
+        <mat-form-field class="w-100 standalone-field">
+          <span
+            matPrefix
+            matTooltip="reCAPTCHA value"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>verified_user</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            placeholder="reCAPTCHA"
+            type="number"
+            min="0"
+            max="1"
+            step="0.1"
+            [(ngModel)]="recaptcha"
+            name="recaptcha"
+            autocomplete="off">
+        </mat-form-field>
+
+      </div>
+
+      <div class="col-6">
+
+        <mat-form-field class="w-100">
+          <span
+            matPrefix
+            matTooltip="Authorisation requirements"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>Message auth type</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <mat-select
+            placeholder="Add roles"
+            multiple
+            name="auth"
+            [(ngModel)]="auth"
+            disableOptionCentering
+            panelClass="custom-select-option">
+            <mat-option
+              *ngFor="let item of roles"
+              [value]="item.name">
+              {{item.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+
       </div>
 
     </div>
