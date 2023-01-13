@@ -17,6 +17,7 @@ export class MachineLearningComponent {
 
   type: string = null;
   index: number = 0;
+  isConfigured: boolean = false;
 
   trainModel(type: string) {
 
