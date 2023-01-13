@@ -3,40 +3,28 @@
  * Copyright (c) Aista Ltd, 2021 - 2023 info@aista.com, all rights reserved.
  */
 
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { FileService } from '../../hyper-ide/services/file.service';
 
+/**
+ * Helper component to upload an existing website as a ZIP file.
+ */
 @Component({
   selector: 'app-upload-existing',
   templateUrl: './upload-existing.component.html',
   styleUrls: ['./upload-existing.component.scss']
 })
-export class UploadExistingComponent implements OnInit {
+export class UploadExistingComponent {
 
-  /**
-  * selected file
-  */
-  public file: any;
-
-  /**
- * specifies if the file is being uploaded.
- */
-  public uploading: boolean = false;
+  file: any;
+  uploading: boolean = false;
 
   constructor(
     private generalService: GeneralService,
     private fileService: FileService) { }
 
-  ngOnInit(): void {
-
-  }
-
-  /**
-   * getting the selected file to upload
-   * @param event
-   */
-  public getFile(event: any) {
+  getFile(event: any) {
     this.uploading = true;
     this.file = event.target.files[0];
 
@@ -53,6 +41,6 @@ export class UploadExistingComponent implements OnInit {
         this.uploading = false;
         this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000);
       }
-    })
+    });
   }
 }
