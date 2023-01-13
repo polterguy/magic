@@ -29,6 +29,9 @@ export class OpenAIService {
 
   constructor(private httpService: HttpService) { }
 
+  /**
+   * Queries OpenAI with the specified prompt and returns result to caller.
+   */
   query(query: string, lang: string = null) {
     let filter = '?query=' + encodeURIComponent(query);
     if (lang && lang !== 'hl') {
@@ -38,36 +41,50 @@ export class OpenAIService {
       '/magic/system/openai/prompt' + filter);
   }
 
+  /**
+   * Returns true if OpenAI has been configured.
+   */
   isConfigured() {
     return this.httpService.get<{ result: boolean }>('/magic/system/openai/is-configured');
   }
 
-  configure(model: string, max_tokens: number, temperature: number) {
-    return this.httpService.post<any>('/magic/system/openai/configure', {
-      model,
-      max_tokens,
-      temperature,
-    });
-  }
-
+  /**
+   * Returns OpenAI API key to caller.
+   */
   key() {
-    return this.httpService.get<any>('/magic/system/openai/api-key');
+    return this.httpService.get<any>('/magic/system/openai/key');
   }
 
+  /**
+   * Saves the specified OpenAI API key.
+   */
   setKey(key: string) {
     return this.httpService.post<any>('/magic/system/openai/key', {
       key,
     });
   }
 
+  /**
+   * Returns all models from OpenAI, including fine tuned models and base models.
+   */
   models() {
     return this.httpService.get<OpenAIModel[]>('/magic/system/openai/models');
   }
 
+  uploadTrainingFile(data: FormData) {
+    return this.httpService.post<any>('/magic/system/openai/upload-training-data', data);
+  }
+
+  /**
+   * Uploads training data to OpenAI and starts a new training session.
+   */
   start_training() {
     return this.httpService.post<Response>('/magic/system/openai/train', {});
   }
 
+  /**
+   * Returns all training sessions to calller.
+   */
   get_training_status() {
     return this.httpService.get<any[]>('/magic/system/openai/training-sessions');
   }

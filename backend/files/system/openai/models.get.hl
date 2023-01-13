@@ -1,10 +1,10 @@
 
 /*
- * Returns all OpenAI models to caller.
+ * Returns all models from OpenAI, including fine tuned models.
  */
 .arguments
 .type:internal
-.description:Returns all base models from OpenAI
+.description:Returns all models from OpenAI, including fine tuned models
 
 // Making sure user has access to invoked endpoint.
 auth.ticket.verify:root

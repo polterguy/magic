@@ -1,0 +1,53 @@
+
+/*
+ * Stores the specified file as training data for the specified model.
+ */
+.arguments
+   file:*
+   type:string
+.type:internal
+.accept:multipart/form-data
+.description:Stores the specified file as training data for the specified model
+
+// Ensures user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/file
+validators.mandatory:x:@.arguments/*/file/*/name
+validators.mandatory:x:@.arguments/*/file/*/stream
+
+// Reading file data from stream.
+io.stream.read:x:@.arguments/*/file/*/stream
+
+// Converting string to CSV.
+csv2lambda:x:@io.stream.read
+
+// Connecting to database.
+data.connect:[generic|magic]
+
+   // Looping through each CSV record inserting into database.
+   for-each:x:@csv2lambda/*
+
+      // Creating a unique URI based upon the prompt.
+      crypto.hash.sha256:x:@.dp/#/*/prompt
+
+      // Deleting existing record with similar URI.
+      data.delete
+         table:ml_training_snippets
+         where
+            and
+               uri.eq:x:@crypto.hash.sha256
+
+      // Inserting into database.
+      data.create
+         table:ml_training_snippets
+         values
+            type:x:@.arguments/*/type
+            uri:x:@crypto.hash.sha256
+            prompt:x:@.dp/#/*/prompt
+            completion:x:@.dp/#/*/completion
+
+// Returning success to caller.
+return
+   result:success
