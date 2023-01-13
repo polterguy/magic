@@ -29,10 +29,13 @@ export class MachineLearningTypesComponent implements OnInit {
   isLoadingKey: boolean = false;
   displayedColumns: string[] = [
     'type',
-    'model',
-    'max_tokens',
     'temperature',
-    'action'
+    'max_tokens',
+    'supervised',
+    'auth',
+    'recaptcha',
+    'model',
+    'action',
   ];
   types: any[] = null;
 
