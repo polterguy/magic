@@ -191,7 +191,35 @@ export class MachineLearningTrainingSnippetsComponent implements OnInit {
     this.getTrainingData(true);
   }
 
-  getFile(e: any) {
+  getFile(event: any) {
+
+    if (!event || !event.target.files || event.target.files.length === 0) {
+      return;
+    }
+
+    this.uploading = true;
+    this.file = event.target.files[0];
+
+    const formData = new FormData();
+    formData.append("file", this.file, this.file.name);
+    formData.append("type", this.type);
+
+    this.openAIService.uploadTrainingFile(formData).subscribe({
+      next: () => {
+
+        this.uploading = false;
+        setTimeout(() => {
+          this.file = null;
+          this.getTrainingData();
+        }, 2000);
+        this.generalService.showFeedback('Training data successfully uploaded', 'successMessage');
+      },
+      error: (error: any) => {
+
+        this.generalService.showFeedback(error, 'errorMessage', 'Ok');
+        this.generalService.hideLoading();
+      }
+    });
   }
 
   /*

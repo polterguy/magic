@@ -24,6 +24,7 @@ export class MachineLearningModelsComponent implements OnInit {
   displayedColumns: string[] = [
     'type',
     'model',
+    'max_tokens',
     'temperature',
     'action'
   ];
