@@ -10,6 +10,10 @@
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/prompt
 
+// Trimming prompt.
+set-value:x:@.arguments/*/prompt
+   strings.trim:x:@.arguments/*/prompt
+
 // Connecting to database to retrieve model settings.
 data.connect:[generic|magic]
 
