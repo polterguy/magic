@@ -134,7 +134,7 @@ data.connect:[generic|magic]
    response.headers.set
       Cache-Control:max-age=30
 
-   // Returning results returned from invocation above to caller
+   // Returning results returned from invocation above to caller.
    unwrap:x:+/*
    return
       result:x:@http.post/*/content/*/choices/0/*/text
