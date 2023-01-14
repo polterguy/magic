@@ -51,7 +51,7 @@
           <td mat-cell
             *matCellDef="let element"
             class="ps-3">
-            <span class="status {{element.status}} me-1 small-table-column"></span>
+            <span class="status {{element.pushed > 0 ? 'pushed ' : ' '}}me-1 small-table-column"></span>
           </td>
         </ng-container>
 

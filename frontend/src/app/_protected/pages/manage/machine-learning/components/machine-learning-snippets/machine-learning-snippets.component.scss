@@ -17,9 +17,8 @@
     width: 7px;
     height: 7px;
     border-radius: 50%;
-    background-color: $aista_default_grey3;
     display: inline-block;
-    background-color: $aista_default_grey3;
+    background-color: $aista_warning;
 
     &.pushed {
       background-color: $aista_success;

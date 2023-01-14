@@ -23,6 +23,7 @@ export class MachineLearningEditSnippetComponent implements OnInit {
   types: string[] = [];
   prompt: string;
   completion: string;
+  pushed: boolean;
   hlReady: boolean = false;
   hlModel: HlModel;
 
@@ -38,6 +39,7 @@ export class MachineLearningEditSnippetComponent implements OnInit {
     this.prompt = this.data?.prompt;
     this.completion = this.data?.completion;
     this.type = this.data?.type;
+    this.pushed = this.data?.pushed > 0 ? true : false;
 
     this.generalService.showLoading();
 
@@ -86,6 +88,7 @@ export class MachineLearningEditSnippetComponent implements OnInit {
       prompt: this.prompt,
       completion: this.type === 'hl' ? this.hlModel.hyperlambda : this.completion,
       type: this.type,
+      pushed: this.pushed ? 1 : 0,
     };
     if (this.data) {
       data.id = this.data.id;
