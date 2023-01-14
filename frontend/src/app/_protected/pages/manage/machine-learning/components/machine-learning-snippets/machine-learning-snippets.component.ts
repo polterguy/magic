@@ -134,6 +134,7 @@ export class MachineLearningSnippetsComponent implements OnInit {
         bold_description: true,
       }
     }).afterClosed().subscribe((result: string) => {
+
       if (result === 'confirm') {
 
         this.generalService.showLoading();
