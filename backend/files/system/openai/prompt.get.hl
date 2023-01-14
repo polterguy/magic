@@ -114,6 +114,18 @@ data.connect:[generic|magic]
          .:"Bearer "
          config.get:"magic:openai:key"
 
+   // Associating request with user, if applicable.
+   auth.ticket.get
+   if
+      not-null:x:@auth.ticket.get
+      .lambda
+
+         // Associating request with username.
+         unwrap:x:+/*/*
+         add:x:@data.connect/*/http.post/*/payload
+            .
+               user:x:@auth.ticket.get
+
    // Creating an HTTP POST request towards OpenAI, now decorated.
    http.post:"https://api.openai.com/v1/completions"
       headers
