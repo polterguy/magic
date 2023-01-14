@@ -77,8 +77,10 @@ export class OpenAIService {
   /**
    * Uploads training data to OpenAI and starts a new training session.
    */
-  start_training() {
-    return this.httpService.post<Response>('/magic/system/openai/train', {});
+  start_training(type: string) {
+    return this.httpService.post<Response>('/magic/system/openai/train', {
+      type,
+    });
   }
 
   /**
