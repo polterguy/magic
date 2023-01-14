@@ -68,23 +68,53 @@
         <table
           mat-table
           [dataSource]="types"
-          class="w-100 borderless hoverable">
+          matSort
+          class="w-100 borderless hoverable"
+          (matSortChange)="sortData($event)">
 
           <!-- Type column -->
           <ng-container matColumnDef="type">
-            <th mat-header-cell *matHeaderCellDef class="text-nowrap px-sm-3">Type</th>
-            <td mat-cell *matCellDef="let element" class="text-truncate px-sm-3">{{element.type}}</td>
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              class="text-nowrap px-sm-3"
+              mat-sort-header>
+              Type
+            </th>
+            <td
+              mat-cell
+              *matCellDef="let element"
+              class="text-truncate px-sm-3">
+              {{element.type}}
+            </td>
           </ng-container>
 
           <!-- Model column -->
           <ng-container matColumnDef="model">
-            <th mat-header-cell *matHeaderCellDef class="pe-sm-3 text-nowrap small-table-column">Model</th>
-            <td mat-cell *matCellDef="let element" class="pe-sm-3 text-nowrap small-table-column">{{element.model}}</td>
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              class="pe-sm-3 text-nowrap small-table-column"
+              mat-sort-header>
+              Model
+            </th>
+            <td
+              mat-cell
+              *matCellDef="let element"
+              class="pe-sm-3 text-nowrap small-table-column">
+              {{element.model}}
+            </td>
           </ng-container>
 
           <!-- Cached column -->
           <ng-container matColumnDef="cached">
-            <th mat-header-cell *matHeaderCellDef class="small-table-column">Cached</th>
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              class="small-table-column"
+              mat-sort-header>
+              Cached
+            </th>
             <td
               mat-cell
               *matCellDef="let element"
@@ -95,19 +125,47 @@
 
           <!-- Temperature column -->
           <ng-container matColumnDef="temperature">
-            <th mat-header-cell *matHeaderCellDef class="small-table-column">Temperature</th>
-            <td mat-cell *matCellDef="let element" class="small-table-column">{{element.temperature}}</td>
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              class="small-table-column"
+              mat-sort-header>
+              Temperature
+            </th>
+            <td
+              mat-cell
+              *matCellDef="let element"
+              class="small-table-column">
+              {{element.temperature}}
+            </td>
           </ng-container>
 
           <!-- Max tokens column -->
           <ng-container matColumnDef="max_tokens">
-            <th mat-header-cell *matHeaderCellDef class="pe-sm-3 small-table-column">Tokens</th>
-            <td mat-cell *matCellDef="let element" class="pe-sm-3 small-table-column">{{element.max_tokens}}</td>
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              class="pe-sm-3 small-table-column"
+              mat-sort-header>
+              Tokens
+            </th>
+            <td
+              mat-cell
+              *matCellDef="let element"
+              class="pe-sm-3 small-table-column">
+              {{element.max_tokens}}
+            </td>
           </ng-container>
 
           <!-- Supervised column -->
           <ng-container matColumnDef="supervised">
-            <th mat-header-cell *matHeaderCellDef class="small-table-column">Supervised</th>
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              class="small-table-column"
+              mat-sort-header>
+              Supervised
+            </th>
             <td
               mat-cell
               *matCellDef="let element"
@@ -118,20 +176,50 @@
 
           <!-- Auth column -->
           <ng-container matColumnDef="auth">
-            <th mat-header-cell *matHeaderCellDef class="pe-sm-3 small-table-column">Auth</th>
-            <td mat-cell *matCellDef="let element" class="pe-sm-3 small-table-column">{{element.auth}}</td>
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              class="pe-sm-3 small-table-column"
+              mat-sort-header>
+              Auth
+            </th>
+            <td
+              mat-cell
+              *matCellDef="let element"
+              class="pe-sm-3 small-table-column">
+              {{element.auth}}
+            </td>
           </ng-container>
 
           <!-- reCAPTCHA column -->
           <ng-container matColumnDef="recaptcha">
-            <th mat-header-cell *matHeaderCellDef class="pe-sm-3 small-table-column">reCAPTCHA</th>
-            <td mat-cell *matCellDef="let element" class="pe-sm-3 small-table-column">{{element.recaptcha}}</td>
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              class="pe-sm-3 small-table-column"
+              mat-sort-header>
+              reCAPTCHA
+            </th>
+            <td
+              mat-cell
+              *matCellDef="let element"
+              class="pe-sm-3 small-table-column">
+              {{element.recaptcha}}
+            </td>
           </ng-container>
 
           <!-- Actions column -->
           <ng-container matColumnDef="action">
-            <th mat-header-cell *matHeaderCellDef class="ps-sm-3 small-table-column">Actions</th>
-            <td mat-cell *matCellDef="let element" class="ps-sm-3 text-nowrap small-table-column">
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              class="ps-sm-3 small-table-column">
+              Actions
+            </th>
+            <td
+              mat-cell
+              *matCellDef="let element"
+              class="ps-sm-3 text-nowrap small-table-column">
 
               <button
                 mat-button

@@ -27,6 +27,9 @@ export class MachineLearningTypesComponent implements OnInit {
   @Input() isConfigured: boolean = false;
   @Output() isConfiguredChange = new EventEmitter<boolean>();
 
+  filter: any = {
+    limit: -1,
+  };
   isLoadingKey: boolean = false;
   displayedColumns: string[] = [
     'type',
@@ -51,6 +54,21 @@ export class MachineLearningTypesComponent implements OnInit {
 
     this.isLoadingKey = true;
     this.getConfiguredStatus();
+  }
+
+  sortData(e: any) {
+
+    if (e.direction === '') {
+
+      delete this.filter['order'];
+      delete this.filter['direction'];
+      this.getModels();
+      return;
+    }
+
+    this.filter['order'] = e.active;
+    this.filter['direction'] = e.direction;
+    this.getModels();
   }
 
   configure() {
@@ -186,9 +204,7 @@ export class MachineLearningTypesComponent implements OnInit {
   private getModels() {
 
     this.generalService.showLoading();
-    this.machineLearningTrainingService.ml_types({
-      limit: -1, // We don't care about paging here, since there's probably not that many different models.
-    }).subscribe({
+    this.machineLearningTrainingService.ml_types(this.filter).subscribe({
       next: (types: any[]) => {
 
         this.types = types || [];
