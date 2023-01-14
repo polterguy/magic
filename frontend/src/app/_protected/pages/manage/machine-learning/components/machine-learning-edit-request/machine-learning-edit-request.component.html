@@ -56,6 +56,13 @@
 
   <div mat-dialog-actions [align]="'end'">
 
+    <mat-checkbox
+      [(ngModel)]="train"
+      name="train"
+      class="me-2"
+      labelPosition="before"
+      color="primary">Train</mat-checkbox>
+
     <button
       mat-button
       mat-dialog-close>
