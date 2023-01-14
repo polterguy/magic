@@ -24,8 +24,6 @@ import { MachineLearningTestComponent } from '../machine-learning-test/machine-l
 })
 export class MachineLearningTypesComponent implements OnInit {
 
-  @Output() trainModel = new EventEmitter<string>();
-
   @Input() isConfigured: boolean = false;
   @Output() isConfiguredChange = new EventEmitter<boolean>();
 
@@ -140,11 +138,6 @@ export class MachineLearningTypesComponent implements OnInit {
           });
         }
     });
-  }
-
-  train(el:any) {
-
-    this.trainModel?.emit(el.type);
   }
 
   delete(el: any) {

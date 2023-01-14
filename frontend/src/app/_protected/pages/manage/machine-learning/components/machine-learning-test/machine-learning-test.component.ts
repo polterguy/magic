@@ -20,7 +20,7 @@ import { OpenAIService } from 'src/app/_general/services/openai.service';
 export class MachineLearningTestComponent {
 
   prompt: string = '';
-  completion: string = 'Will contain result of query ...';
+  completion: string = 'Result ...';
   isLoading: boolean = false;
 
   constructor(
