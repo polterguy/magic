@@ -689,8 +689,7 @@ export class IdeTreeComponent implements OnInit {
     if (!searchKeyword) {
       return false
     }
-    return node.name.toLowerCase()
-      .indexOf(searchKeyword?.toLowerCase()) === -1
+    return node.node.path.toLowerCase().indexOf(searchKeyword?.toLowerCase()) === -1
   }
 
   filterParentNode(node: FlatNode, searchKeyword: string): boolean {
