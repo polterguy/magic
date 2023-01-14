@@ -225,6 +225,21 @@ export class MachineLearningSnippetsComponent implements OnInit {
     });
   }
 
+  sortData(e: any) {
+
+    if (e.direction === '') {
+
+      delete this.filter['order'];
+      delete this.filter['direction'];
+      this.getTrainingData();
+      return;
+    }
+
+    this.filter['order'] = e.active;
+    this.filter['direction'] = e.direction;
+    this.getTrainingData();
+  }
+
   /*
    * Private helper methods.
    */
@@ -267,7 +282,7 @@ export class MachineLearningSnippetsComponent implements OnInit {
 
         const countFilter: any = {};
         for (const idx in this.filter) {
-          if (idx !== 'limit' && idx !== 'offset') {
+          if (idx !== 'limit' && idx !== 'offset' && idx !== 'order' && idx !== 'direction') {
             countFilter[idx] = this.filter[idx];
           }
         }
