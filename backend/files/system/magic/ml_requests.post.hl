@@ -13,7 +13,6 @@ auth.ticket.verify:root
 
 // Opening up database connection.
 data.connect:[generic|magic]
-   database-type:sqlite
 
    // Parametrising our create invocation.
    add:x:./*/data.create/*/values
@@ -21,7 +20,6 @@ data.connect:[generic|magic]
 
    // Creating our record.
    data.create
-      database-type:sqlite
       table:ml_requests
       return-id:bool:true
       values

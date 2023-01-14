@@ -13,7 +13,6 @@ validators.mandatory:x:@.arguments/*/type
 
 // Opening up our database connection.
 data.connect:[generic|magic]
-   database-type:sqlite
 
    // Parametrising our delete invocation.
    add:x:./*/data.delete/*/where/*/and
@@ -21,7 +20,6 @@ data.connect:[generic|magic]
 
    // Deleting item from database.
    data.delete
-      database-type:sqlite
       table:ml_types
       where
          and

@@ -23,7 +23,6 @@ auth.ticket.verify:root
 
 // Opening up our database connection.
 data.connect:[generic|magic]
-   database-type:sqlite
 
    // Parametrising our read invocation with ordering arguments if specified.
    add:x:./*/data.read
@@ -45,7 +44,6 @@ data.connect:[generic|magic]
 
    // Reading data from database.
    data.read
-      database-type:sqlite
       table:ml_requests
       columns
          ml_requests.id
