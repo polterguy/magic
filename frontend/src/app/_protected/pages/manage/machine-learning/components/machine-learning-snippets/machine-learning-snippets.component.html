@@ -95,7 +95,7 @@
   </div>
 
   <!-- Upload training data part -->
-  <div *ngIf="type" class="col-xl-6 offset-xl-3 col-lg-8 offset-lg-2 col-12 mt-4">
+  <div *ngIf="type" class="col-xl-4 offset-xl-4 col-lg-8 offset-lg-2 col-12 mt-2">
 
     <form>
 
@@ -129,6 +129,19 @@
       </div>
 
     </form>
+
+  </div>
+
+  <!-- Bottom toolbar -->
+  <div
+    *ngIf="type"
+    class="text-end">
+
+    <button
+      class="me-2 mb-2"
+      mat-flat-button>
+      Start training
+    </button>
 
   </div>
 

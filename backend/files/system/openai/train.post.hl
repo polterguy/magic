@@ -3,263 +3,266 @@
  * Uploads training data to your OpenAI API account, and starts training the model using the default training data.
  */
 .arguments
+   type:string
 .description:Uploads training data to your OpenAI API account, and starts training the model using the default training data
 .type:internal
 
 // Making sure user has access to invoked endpoint.
 auth.ticket.verify:root
 
-/*
- * Creating our Bearer token by reading our OpenAI
- * configuration settings.
- */
-.token
-set-value:x:@.token
-   strings.concat
-      .:"Bearer "
-      config.get:"magic:openai:key"
+// Connecting to database.
+data.connect:[generic|magic]
 
-// Loading training data.
-.file-data
-.snippets
-io.file.list-recursively:/misc/training-snippets/
-for-each:x:../*/io.file.list-recursively/*
+   // Selecting all snippets that have not been pushed of specified type.
+   data.read
+      table:ml_training_snippets
+      columns
+         prompt
+         completion
+      where
+         and
+            type.eq:x:@.arguments/*/type
+            pushed.eq:int:0
+      limit:-1
 
+   // Buffer containing all snippets we're about to send to OpenAI API.
+   .snippets
+
+   // Looping through each result from above and creating training data.
+   for-each:x:@data.read/*
+
+      // Buffer for prompt and completion.
+      .prompt
+      .completion
+
+      // Getting data into correct format.
+      set-value:x:@.prompt
+         strings.concat
+            get-value:x:@.dp/#/*/prompt
+            .:" ->"
+      set-value:x:@.completion
+         strings.concat
+            get-value:x:@.dp/#/*/completion
+            .:" END"
+
+      // Adding currently iterated snippet to above buffer.
+      unwrap:x:+/*/*/*
+      add:x:@.snippets
+         .
+            .
+               prompt:x:@.prompt
+               completion:x:@.completion
+
+   // Creating our Bearer token by reading our OpenAI configuration settings.
+   .token
+   set-value:x:@.token
+      strings.concat
+         .:"Bearer "
+         config.get:"magic:openai:key"
+
+   // File data buffer containing JSONL content.
+   .file-data
+
+   // Converting [.snippets] to JSON, for then to convert manually to JSONL.
+   lambda2json:x:@.snippets/*
+   set-value:x:@.file-data
+      strings.replace:x:@lambda2json
+         .:"},{"
+         .:"}\n{"
+   set-value:x:@.file-data
+      strings.substring:x:@.file-data
+         .:1
+         math.subtract
+            strings.length:x:@.file-data
+            .:int:2
+
+   // Creating a unique training data filename.
+   .filename
+   set-value:x:@.filename
+      strings.concat
+         .:"attachment; name=file; filename=\"training-file-"
+         guid.new
+         .:".jsonl"
+         .:"\""
+   
+   // Uploading file to OpenAI.
+   http.post:"https://api.openai.com/v1/files"
+      headers
+         Authorization:x:@.token
+         Content-Type:multipart/form-data
+      payload
+         entity:application/jsonl
+            headers
+               Content-Disposition:x:@.filename
+            content:x:@.file-data
+         entity:text/plain
+            headers
+               Content-Disposition:"form-data; name=purpose"
+            content:fine-tune
+      convert:true
+
+   // Sanity checking above invocation.
    if
-      strings.ends-with:x:@.dp/#
-         .:.hl
+      not
+         and
+            mte:x:@http.post
+               .:int:200
+            lt:x:@http.post
+               .:int:300
       .lambda
 
-         /*
-          * Loads file and creates training material from it,
-          * assuming the first node is a comment node being the prompt,
-          * and the rest of the file the completion.
-          */
-         io.file.load:x:@.dp/#
-         hyper2lambda:x:@io.file.load
-            comments:true
-         .prompt
-         set-value:x:@.prompt
-            get-value:x:@hyper2lambda/0
-         remove-nodes:x:@hyper2lambda/0
-         lambda2hyper:x:@hyper2lambda/*
-            comments:true
-         strings.split:x:@.prompt
-            .:|
+         // Oops, error - Logging error and returning status 500 to caller.
+         lambda2hyper:x:@http.post
+         log.error:Something went wrong while invoking OpenAI
+            error:x:@lambda2hyper
+         response.status.set:500
+         return
+            message:Something went wrong as we invoked OpenAI API
 
-         // Each comment might contain multiple prompts, making sure we split these into their individual prompts.
-         for-each:x:@strings.split/*
+   /*
+    * Using uploaded file to create a fine tuning.
+    * First getting the ID of the file as stored in OpenAI's servers.
+    */
+   .id
+   set-value:x:@.id
+      get-value:x:@http.post/*/content/*/id
 
-            // Trimming prompt, adding stop sequence, and prompt arrow.
-            strings.trim:x:@.dp/#
-            .prompt
-            set-value:x:@.prompt
-               strings.concat
-                  get-value:x:@strings.trim
-                  .:" ->"
-            .completion
-            set-value:x:@.completion
-               strings.concat
-                  .:" "
-                  get-value:x:@lambda2hyper
-                  .:" END"
+   // Getting base model to use.
+   .model
+   data.read
+      table:ml_types
+      columns
+         model
+   set-value:x:@.model
+      get-value:x:@data.read/*/*/model
 
-            // Adding prompt and completion to [.snippets] collection.
-            unwrap:x:+/*/*/*
-            add:x:@.snippets
-               .
-                  .
-                     prompt:x:@.prompt
-                     completion:x:@.completion
+   // Starting training session.
+   http.post:"https://api.openai.com/v1/fine-tunes"
+      headers
+         Authorization:x:@.token
+         Content-Type:application/json
+      payload
+         training_file:x:@.id
+         model:x:@.model
+         suffix:x:@.arguments/*/type
+         n_epochs:int:2
+         learning_rate_multiplier:decimal:0.2
+      convert:true
 
-// Converting [.snippets] to JSON, for then to convert manually to JSONL.
-lambda2json:x:@.snippets/*
-set-value:x:@.file-data
-   strings.replace:x:@lambda2json
-      .:"},{"
-      .:"}\n{"
-set-value:x:@.file-data
-   strings.substring:x:@.file-data
-      .:1
-      math.subtract
-         strings.length:x:@.file-data
-         .:int:2
+   // Sanity checking above invocation
+   if
+      neq:x:@http.post
+         .:int:200
+      .lambda
 
-// Creating a unique training data filename.
-.filename
-set-value:x:@.filename
-   strings.concat
-      .:"attachment; name=file; filename=\"training-file-"
-      guid.new
-      .:".jsonl"
-      .:"\""
-   
-// Uploading file to OpenAI.
-http.post:"https://api.openai.com/v1/files"
-   headers
-      Authorization:x:@.token
-      Content-Type:multipart/form-data
-   payload
-      entity:application/jsonl
-         headers
-            Content-Disposition:x:@.filename
-         content:x:@.file-data
-      entity:text/plain
-         headers
-            Content-Disposition:"form-data; name=purpose"
-         content:fine-tune
-   convert:true
+         // Oops, error - Logging error and returning status 500 to caller.
+         lambda2hyper:x:@http.post
+         log.error:Something went wrong while invoking OpenAI
+            error:x:@lambda2hyper
+         response.status.set:500
+         return
+            message:Something went wrong as we started our training session
 
-// Sanity checking above invocation
-if
-   neq:x:@http.post
-      .:int:200
-   .lambda
+   // Training has begun.
+   log.info:Successfully started training of OpenAI model
+      type:x:@.arguments/*/type
 
-      // Oops, error - Logging error and returning status 500 to caller.
-      lambda2hyper:x:@http.post
-      log.error:Something went wrong while invoking OpenAI
-         error:x:@lambda2hyper
-      throw:Something went wrong while invoking OpenAI, check your log for details
-         public:bool:true
-         status:500
-
-/*
- * Using uploaded file to create a fine tuning.
- * First getting the ID of the file as stored in OpenAI's servers.
- */
-.id
-set-value:x:@.id
-   get-value:x:@http.post/*/content/*/id
-
-// Getting base model to use.
-.model
-set-value:x:@.model
-   config.get:"magic:openai:model"
-
-// Starting training session.
-http.post:"https://api.openai.com/v1/fine-tunes"
-   headers
-      Authorization:x:@.token
-      Content-Type:application/json
-   payload
-      training_file:x:@.id
-      model:x:@.model
-      suffix:hyperlambda
-      n_epochs:int:2
-      learning_rate_multiplier:decimal:0.2
-   convert:true
-
-// Sanity checking above invocation
-if
-   neq:x:@http.post
-      .:int:200
-   .lambda
-
-      // Oops, error - Logging error and returning status 500 to caller.
-      lambda2hyper:x:@http.post
-      log.error:Something went wrong while invoking OpenAI
-         error:x:@lambda2hyper
-      throw:Something went wrong while invoking OpenAI, check your log for details
-         public:bool:true
-         status:500
-
-// Training has begun
-log.info:Successfully started training of OpenAI model
-
-/*
- * Creating a task that repeats once every 1 minute until training is completed,
- * for then to make sure we use the new and updated model.
- */
-.task-id
-set-value:x:@.task-id
-   strings.concat
-      .:openai-waiting-for-training-
-      guid.new
-unwrap:x:./*/tasks.create/*/*/.task-id
-unwrap:x:./*/tasks.create/*/*/.model-id
-tasks.create:x:@.task-id
-   repeats:60.seconds
-   .lambda
-
-      // Forward evaluated above
-      .task-id:x:@.lambda/@.task-id
-      .model-id:x:@http.post/*/content/*/id
-
-      // Doing some logging
-      log.info:Checking if OpenAI is finished training
-
-      // Checking model status using OpenAI API, making sure we parametrise Authorization header with token
-      .token
-      set-value:x:@.token
-         strings.concat
-            .:"Bearer "
-            config.get:"magic:openai:key"
+   /*
+    * Creating a task that repeats once every 30 seconds until training is completed,
+    * for then to make sure we associate the new model with the specified type.
+    */
+   .task-id
+   set-value:x:@.task-id
       strings.concat
-         .:"https://api.openai.com/v1/fine-tunes/"
-         get-value:x:@.model-id
-      http.get:x:@strings.concat
-         headers
-            Authorization:x:@.token
-         convert:true
-      if
-         eq:x:@http.get
-            .:int:200
-         .lambda
+         .:magic.openai.training-session.
+         guid.new
+   unwrap:x:./*/tasks.create/*/*/.task-id
+   unwrap:x:./*/tasks.create/*/*/.model-id
+   unwrap:x:./*/tasks.create/*/*/.type
+   tasks.create:x:@.task-id
+      repeats:30.seconds
+      .lambda
 
-            // Checking if job succeeded.
-            if
-               eq:x:@http.get/*/content/*/status
-                  .:succeeded
-               .lambda
+         // Forward evaluated above.
+         .task-id:x:@.lambda/@.task-id
+         .model-id:x:@http.post/*/content/*/id
+         .type:x:@.arguments/*/type
 
-                  // Training is done, updating configuration with new model
-                  log.info:Training of OpenAI model completed successfully
-                  config.load
-                  json2lambda:x:@config.load
-                  set-value:x:@json2lambda/*/magic/*/openai/*/model
-                     get-value:x:@http.get/*/content/*/fine_tuned_model
-                  lambda2json:x:@json2lambda/*
-                  config.save:x:@lambda2json
+         // Checking model status using OpenAI API, making sure we parametrise Authorization header with token
+         .token
+         set-value:x:@.token
+            strings.concat
+               .:"Bearer "
+               config.get:"magic:openai:key"
+         strings.concat
+            .:"https://api.openai.com/v1/fine-tunes/"
+            get-value:x:@.model-id
+         http.get:x:@strings.concat
+            headers
+               Authorization:x:@.token
+            convert:true
+         if
+            and
+               mte:x:@http.get
+                  .:int:200
+               lt:x:@http.get
+                  .:int:300
+            .lambda
 
-                  // Basic logging
-                  log.info:Successfully updated configuration to use newly trained OpenAI model
-                     model:x:@http.get/*/content/*/fine_tuned_model
+               // Checking if job succeeded.
+               if
+                  eq:x:@http.get/*/content/*/status
+                     .:succeeded
+                  .lambda
 
-                  // Deleting task
-                  tasks.delete:x:@.task-id
+                     // Training is done, updating type declaration with new model.
+                     log.info:Training of OpenAI model completed successfully
 
-                  // Signaling root users in the frontend
-                  sockets.signal:magic.backend.message
-                     roles:root
-                     args
-                        message:Training of your OpenAI model succeeded!
-                        type:success
+                     // Updating type
+                     data.connect:[generic|magic]
+                        data.update
+                           table:ml_types
+                           values
+                              model:x:@http.get/*/content/*/fine_tuned_model
+                           where
+                              and
+                                 type.eq:x:@.type
 
-            else-if
-               eq:x:@http.get/*/content/*/status
-                  .:failed
-               .lambda
+                     // Deleting task
+                     tasks.delete:x:@.task-id
 
-                  // Training is done, and it FAILED!
-                  log.error:Training of OpenAI model FAILED!!
+                     // Signaling root users in the frontend
+                     sockets.signal:magic.backend.message
+                        roles:root
+                        args
+                           message:Training of your OpenAI model succeeded!
+                           type:success
 
-                  // Deleting task
-                  tasks.delete:x:@.task-id
 
-                  // Signaling root users in the frontend
-                  sockets.signal:magic.backend.message
-                     roles:root
-                     args
-                        message:Training of your OpenAI model FAILED!
-                        type:error
+               else-if
+                  eq:x:@http.get/*/content/*/status
+                     .:failed
+                  .lambda
 
-      else
+                     // Training is done, and it FAILED!
+                     log.error:Training of OpenAI model FAILED!!
 
-         // Invocation failed
-         lambda2hyper:x:@http.get
-         log.error:Retrieving training session status from OpenAI failed
-            result:x:@lambda2hyper
+                     // Deleting task
+                     tasks.delete:x:@.task-id
+
+                     // Signaling root users in the frontend
+                     sockets.signal:magic.backend.message
+                        roles:root
+                        args
+                           message:Training of your OpenAI model FAILED!
+                           type:error
+
+         else
+
+            // Invocation failed
+            lambda2hyper:x:@http.get
+            log.error:Retrieving training session status from OpenAI failed
+               result:x:@lambda2hyper
 
 
 // Returning success to caller.

@@ -15,13 +15,5 @@ import { Component } from '@angular/core';
 })
 export class MachineLearningComponent {
 
-  type: string = null;
-  index: number = 0;
   isConfigured: boolean = false;
-
-  trainModel(type: string) {
-
-    this.type = type;
-    this.index = 1;
-  }
 }
