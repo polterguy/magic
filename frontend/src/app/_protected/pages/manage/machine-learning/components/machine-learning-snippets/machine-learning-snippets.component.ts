@@ -3,7 +3,7 @@
  * Copyright (c) Aista Ltd, 2021 - 2023 info@aista.com, all rights reserved.
  */
 
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
@@ -23,7 +23,7 @@ import { MachineLearningEditSnippetComponent } from '../machine-learning-edit-sn
 })
 export class MachineLearningSnippetsComponent implements OnInit {
 
-  @Input() type: string;
+  type: string;
 
   types: string[] = null;
   dataSource: any[] = null;

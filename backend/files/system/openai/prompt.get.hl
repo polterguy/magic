@@ -9,6 +9,8 @@
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/prompt
+validators.string:x:@.arguments/*/prompt
+   min:1
 
 // Trimming prompt.
 set-value:x:@.arguments/*/prompt
