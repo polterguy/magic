@@ -1,109 +1,140 @@
 
-/*
- * Asks OpenAI a question, and returns the answer to caller.
- *
- * Requires that you've already registered for an OpenAI account,
- * and that you've stored your configuration API key in your configuration
- * settings.
- */
+// Asks OpenAI a question with the specified type, and returns the answer to caller.
 .arguments
-   query:string
-   model:string
-   temperature:int
-   max_tokens:int
-.description:Asks OpenAI a question, and returns the answer to caller
+   prompt:string
+   type:string
+   recaptcha_response:string
+.description:Asks OpenAI a question with the specified type, and returns the answer to caller
 .type:public
 
-// Making sure user has access to invoked endpoint.
-auth.ticket.verify:root
-
 // Sanity checking invocation.
-validators.mandatory:x:@.arguments/*/query
+validators.mandatory:x:@.arguments/*/prompt
 
-/*
- * Making sure we use sane defaults in case user did never provide arguments
- * besides the prompt itself.
- */
-.args
-   model
-   temperature
-   max_tokens
-config.get:"magic:openai:model"
-set-value:x:@.args/*/model
-   get-first-value
-      get-value:x:@.arguments/*/model
-      get-value:x:@config.get
-      .:text-davinci-003
-config.get:"magic:openai:temperature"
-convert:x:-
-   type:decimal
-set-value:x:@.args/*/temperature
-   get-first-value
-      get-value:x:@.arguments/*/temperature
-      get-value:x:@convert
-      .:decimal:0
-config.get:"magic:openai:max_tokens"
-convert:x:-
-   type:int
-set-value:x:@.args/*/max_tokens
-   get-first-value
-      get-value:x:@.arguments/*/max_tokens
-      get-value:x:@convert
-      .:int:100
+// Connecting to database to retrieve model settings.
+data.connect:[generic|magic]
 
-// Adding END sequence, but only if we're not using a default model
-if
-   strings.contains:x:@.args/*/model
-      .:hyperlambda
-   .lambda
-      add:x:../*/http.post/*/payload
-         .
-            stop:" END"
+   // Reading settings for type declaration.
+   data.read
+      table:ml_types
+      columns
+         model
+         max_tokens
+         temperature
+         recaptcha
+         auth
+         supervised
+      where
+         and
+            type.eq:x:@.arguments/*/type
 
-/*
- * Creating our Bearer token by reading our OpenAI
- * configuration settings.
- */
-.token
-set-value:x:@.token
-   strings.concat
-      .:"Bearer "
-      config.get:"magic:openai:key"
+   // Verifying type exists.
+   if
+      not-exists:x:@data.read/*/*
+      .lambda
 
-// Creating an HTTP POST request towards OpenAI, now decorated.
-http.post:"https://api.openai.com/v1/completions"
-   headers
-      Authorization:x:@.token
-      Content-Type:application/json
-   payload
-      prompt:x:@.arguments/*/query
-      model:x:@.args/*/model
-      temperature:x:@.args/*/temperature
-      max_tokens:x:@.args/*/max_tokens
-   convert:true
+         // Oops, no such type.
+         throw:No such type
+            status:int:400
+            public:bool:true
 
-// Sanity checking above invocation
-if
-   neq:x:@http.post
-      .:int:200
-   .lambda
+   // Checking if model requires authentication and authorisation.
+   if
+      not-null:x:@data.read/*/*/auth
+      .lambda
+      
+         // Making sure user is authorised to using type.
+         auth.ticket.verify:x:@data.read/*/*/auth
 
-      // Oops, error - Logging error and returning status 500 to caller.
-      lambda2hyper:x:@http.post
-      log.error:Something went wrong while invoking OpenAI
-         error:x:@lambda2hyper
-      throw:Something went wrong while invoking OpenAI, check your log for details
-         public:bool:true
-         status:500
+   // Checking id model requires reCAPTCHA.
+   if
+      mt
+         convert:x:@data.read/*/*/recaptcha
+            type:decimal
+         .:decimal:0
+      .lambda
 
-/*
- * Applying some HTTP caching to avoid invoking OpenAI again with
- * the same question before some minimum amount of time has passed.
- */
-response.headers.set
-   Cache-Control:max-age=120
+         // Making sure reCAPTCHA value was provided.
+         validators.mandatory:x:@.arguments/*/recaptcha_response
 
-// Returning results returned from invocation above to caller
-add:x:../*/return
-   get-nodes:x:@http.post/*/content/*/choices/*
-return
+         // Retrieving reCAPTCHA site key.
+         .key
+         set-value:x:@.key
+            config.get:"magic:auth:recaptcha:key"
+
+         // Retrieving reCAPTCHA secret.
+         .secret
+         set-value:x:@.secret
+            config.get:"magic:auth:recaptcha:secret"
+
+         // Validating reCAPTCHA invocation confirms request originated from a human.
+         validators.recaptcha:x:@.arguments/*/recaptcha_response
+            min:x:@data.read/*/*/recaptcha
+            site-key:x:@.key
+            secret:x:@.secret
+            
+   // Creating our Bearer token by reading our OpenAI configuration settings.
+   .token
+   set-value:x:@.token
+      strings.concat
+         .:"Bearer "
+         config.get:"magic:openai:key"
+
+   // Creating an HTTP POST request towards OpenAI, now decorated.
+   http.post:"https://api.openai.com/v1/completions"
+      headers
+         Authorization:x:@.token
+         Content-Type:application/json
+      payload
+         prompt:x:@.arguments/*/prompt
+         model:x:@data.read/*/*/model
+         max_tokens:x:@data.read/*/*/max_tokens
+         temperature:x:@data.read/*/*/temperature
+         stop:" END"
+      convert:true
+
+   // Sanity checking above invocation
+   if
+      not
+         and
+            mte:x:@http.post
+               .:int:200
+            lt:x:@http.post
+               .:int:300
+      .lambda
+
+         // Oops, error - Logging error and returning status 500 to caller.
+         lambda2hyper:x:@http.post
+         log.error:Something went wrong while invoking OpenAI
+            error:x:@lambda2hyper
+         response.status.set:500
+         return
+            result:Something went wrong as we invoked OpenAI API
+
+   // Checking if type is 'supervised', at which point we store prompt and completion.
+   if
+      mt
+         convert:x:@data.read/*/*/supervised
+            type:int
+         .:int:0
+      .lambda
+
+         // Storing prompt and completion in ml_requests table.
+         data.create
+            table:ml_requests
+            values
+               type:x:@.arguments/*/type
+               prompt:x:@.arguments/*/prompt
+               completion:x:@http.post/*/content/*/choices/0/*/text
+               finish_reason:x:@http.post/*/content/*/choices/0/*/finish_reason
+
+   /*
+    * Applying some HTTP caching to avoid invoking OpenAI again with
+    * the same question before some minimum amount of time has passed.
+    */
+   response.headers.set
+      Cache-Control:max-age=30
+
+   // Returning results returned from invocation above to caller
+   unwrap:x:+/*
+   return
+      result:x:@http.post/*/content/*/choices/0/*/text
