@@ -23,6 +23,7 @@ data.connect:[generic|magic]
          recaptcha
          auth
          supervised
+         cached
       where
          and
             type.eq:x:@.arguments/*/type
@@ -45,7 +46,7 @@ data.connect:[generic|magic]
          // Making sure user is authorised to using type.
          auth.ticket.verify:x:@data.read/*/*/auth
 
-   // Checking id model requires reCAPTCHA.
+   // Checking if model requires reCAPTCHA.
    if
       mt
          convert:x:@data.read/*/*/recaptcha
@@ -71,6 +72,35 @@ data.connect:[generic|magic]
             min:x:@data.read/*/*/recaptcha
             site-key:x:@.key
             secret:x:@.secret
+
+   // Checking if type is cached.
+   if
+      mt
+         convert:x:@data.read/*/*/cached
+            type:int
+         .:int:0
+      .lambda
+
+         // Checking if query already exists in ml_requests, and if so, returning cached version.
+         data.read
+            table:ml_requests
+            columns
+               completion
+            where
+               and
+                  prompt.eq:x:@.arguments/*/prompt
+                  type:x:@.arguments/*/type
+            limit:1
+            order:created
+            direction:desc
+         if
+            exists:x:@data.read/*/*
+            .lambda
+
+               // Returning cached completion.
+               unwrap:x:+/*
+               return
+                  result:x:@data.read/*/*/completion
             
    // Creating our Bearer token by reading our OpenAI configuration settings.
    .token
