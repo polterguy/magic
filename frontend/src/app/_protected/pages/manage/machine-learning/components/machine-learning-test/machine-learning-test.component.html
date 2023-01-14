@@ -1,6 +1,19 @@
 <div mat-dialog-content>
 
-  <div class="result mb-3 p-3" [innerHTML]="completion | marked">
+  <!-- CodeMirror editor in case data is Hyperlambda -->
+  <div class="col-12 mb-3" *ngIf="hlReady">
+
+    <app-codemirror-hyperlambda
+      [(model)]="hlModel">
+    </app-codemirror-hyperlambda>
+
+  </div>
+
+  <!-- Everything BUT Hyperlambda -->
+  <div
+    *ngIf="data.type !== 'hl'"
+    class="result mb-3 p-3"
+    [innerHTML]="completion | marked">
   </div>
 
   <form (ngSubmit)="submit()" class="d-flex justify-content-md-between align-items-md-center align-items-end flex-md-row flex-column-reverse w-100">
