@@ -89,7 +89,8 @@ data.connect:[generic|magic]
             where
                and
                   prompt.eq:x:@.arguments/*/prompt
-                  type:x:@.arguments/*/type
+                  type.eq:x:@.arguments/*/type
+                  finish_reason.eq:stop
             limit:1
             order:created
             direction:desc
