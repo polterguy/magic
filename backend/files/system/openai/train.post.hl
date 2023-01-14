@@ -163,9 +163,13 @@ data.connect:[generic|magic]
          return
             message:Something went wrong as we started our training session
 
-   // Training has begun.
+   // Logging that we've started training.
+   get-count:x:@data.read/*
    log.info:Successfully started training of OpenAI model
       type:x:@.arguments/*/type
+      snippets:x:@get-count
+      base-model:x:@.model
+      new-model-id:x:@http.post/*/content/*/id
 
    /*
     * Creating a task that repeats once every 30 seconds until training is completed,
@@ -220,6 +224,8 @@ data.connect:[generic|magic]
 
                      // Updating type.
                      data.connect:[generic|magic]
+                     
+                        // Making sure we mark all snippets we used for training as pushed.
                         data.update
                            table:ml_types
                            values
