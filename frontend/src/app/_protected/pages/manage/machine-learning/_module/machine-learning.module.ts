@@ -16,6 +16,7 @@ import { MachineLearningEditTypeComponent } from '../components/machine-learning
 import { MachineLearningComponent } from '../machine-learning.component';
 import { MachineLearningTypesComponent } from '../components/machine-learning-types/machine-learning-types.component';
 import { MachineLearningRequestsComponent } from '../components/machine-learning-requests/machine-learning-requests.component';
+import { MachineLearningEditRequestComponent } from '../components/machine-learning-edit-request/machine-learning-edit-request.component';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { MachineLearningRequestsComponent } from '../components/machine-learning
     MachineLearningComponent,
     MachineLearningTypesComponent,
     MachineLearningRequestsComponent,
+    MachineLearningEditRequestComponent,
   ],
   imports: [
     CommonModule,

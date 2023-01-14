@@ -99,6 +99,20 @@ export class MachineLearningTrainingService {
     return this.httpService.get<Response>('/magic/system/magic/ml_requests-count' + this.getQueryArgs(filter));
   }
 
+  /**
+   * Deletes an existing machine learning request.
+   */
+  ml_requests_delete(id: number) {
+    return this.httpService.delete<any>('/magic/system/magic/ml_requests?id=' + id);
+  }
+
+  /**
+   * Updates an existing machine learning request.
+   */
+  ml_requests_update(type: any) {
+    return this.httpService.put<any[]>('/magic/system/magic/ml_requests', type);
+  }
+
   /*
    * Private helper methods.
    */

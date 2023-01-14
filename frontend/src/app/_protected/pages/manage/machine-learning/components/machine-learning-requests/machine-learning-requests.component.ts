@@ -4,9 +4,11 @@
  */
 
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { MachineLearningTrainingService } from 'src/app/_general/services/machine-learning-training.service';
+import { MachineLearningEditRequestComponent } from '../machine-learning-edit-request/machine-learning-edit-request.component';
 
 /**
  * Helper component to view and manage Machine Learning requests
@@ -35,6 +37,7 @@ export class MachineLearningRequestsComponent implements OnInit {
   };
 
   constructor(
+    private dialog: MatDialog,
     private generalService: GeneralService,
     private machineLearningTrainingService: MachineLearningTrainingService) { }
 
@@ -66,7 +69,50 @@ export class MachineLearningRequestsComponent implements OnInit {
 
   showDetails(el: any) {
 
-    console.log(el);
+    this.dialog
+      .open(MachineLearningEditRequestComponent, {
+        width: '80vw',
+        maxWidth: '850px',
+        disableClose: true,
+        data: {
+          id: el.id,
+          prompt: el.prompt,
+          completion: el.completion,
+          type: el.type,
+        },
+      })
+      .afterClosed()
+      .subscribe((result: any) => {
+
+        if (result) {
+
+          this.machineLearningTrainingService.ml_requests_update(result).subscribe({
+            next: () => {
+
+              this.generalService.showFeedback('Request updated successfully', 'successMessage');
+              this.getRequests();
+            },
+            error: () => this.generalService.showFeedback('Something went wrong as we tried to update your request', 'errorMessage')
+          });
+        }
+    });
+  }
+
+  delete(el: any) {
+
+    this.generalService.showLoading();
+    this.machineLearningTrainingService.ml_requests_delete(el.id).subscribe({
+      next: () => {
+
+        this.generalService.showFeedback('Request successfully deleted', 'successMessage');
+        this.getRequests(true);
+      },
+      error: (error: any) => {
+
+        this.generalService.showFeedback(error, 'errorMessage', 'Ok');
+        this.generalService.hideLoading();
+      }
+    });
   }
 
   /*
