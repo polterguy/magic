@@ -5,6 +5,8 @@
 
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { GeneralService } from 'src/app/_general/services/general.service';
+import { MachineLearningTrainingService } from 'src/app/_general/services/machine-learning-training.service';
 import { CodemirrorActionsService } from 'src/app/_protected/pages/create/hyper-ide/services/codemirror-actions.service';
 
 /**
@@ -17,10 +19,13 @@ import { CodemirrorActionsService } from 'src/app/_protected/pages/create/hyper-
 })
 export class MachineLearningEditRequestComponent implements OnInit {
 
+  train: boolean = false;
   hlReady: boolean = false;
   hlModel: HlModel;
 
   constructor(
+    private generalService: GeneralService,
+    private machineLearningTrainingService: MachineLearningTrainingService,
     private dialogRef: MatDialogRef<MachineLearningEditRequestComponent>,
     private codemirrorActionsService: CodemirrorActionsService,
     @Inject(MAT_DIALOG_DATA) public data: any) { }
@@ -44,6 +49,37 @@ export class MachineLearningEditRequestComponent implements OnInit {
   }
 
   save() {
+
+    if (this.train) {
+
+      // Creating training data before we save request.
+      this.machineLearningTrainingService.ml_training_snippets_create({
+        prompt: this.data.prompt,
+        completion: this.data.completion,
+        type: this.data.type,
+      }).subscribe({
+        next: () => {
+
+          this.saveImplementation();
+        },
+        error: () => {
+
+          this.generalService.hideLoading();
+          this.generalService.showFeedback('Something went wrong as we tried to create training data', 'errorMessage');
+        }
+  });
+
+    } else {
+
+      this.saveImplementation();
+    }
+  }
+
+  /*
+   * Private helper methods.
+   */
+
+  private saveImplementation() {
 
     this.dialogRef.close({
       id: this.data.id,

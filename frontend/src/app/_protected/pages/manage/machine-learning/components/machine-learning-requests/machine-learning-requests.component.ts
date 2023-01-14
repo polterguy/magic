@@ -86,13 +86,18 @@ export class MachineLearningRequestsComponent implements OnInit {
 
         if (result) {
 
+          this.generalService.showLoading();
           this.machineLearningTrainingService.ml_requests_update(result).subscribe({
             next: () => {
 
               this.generalService.showFeedback('Request updated successfully', 'successMessage');
               this.getRequests();
             },
-            error: () => this.generalService.showFeedback('Something went wrong as we tried to update your request', 'errorMessage')
+            error: () => {
+
+              this.generalService.hideLoading();
+              this.generalService.showFeedback('Something went wrong as we tried to update your request', 'errorMessage');
+            }
           });
         }
     });
