@@ -19,7 +19,6 @@ auth.ticket.verify:root
 
 // Opening up our database connection.
 data.connect:[generic|magic]
-   database-type:sqlite
 
    // Parametrising our invocation.
    add:x:./*/data.update/*/values
@@ -29,7 +28,6 @@ data.connect:[generic|magic]
 
    // Invoking our update slot.
    data.update
-      database-type:sqlite
       table:ml_types
       values
       where

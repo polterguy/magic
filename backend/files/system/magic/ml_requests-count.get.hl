@@ -19,13 +19,11 @@ auth.ticket.verify:root
 
 // Opening up our database connection.
 data.connect:[generic|magic]
-   database-type:sqlite
    add:x:+/*/where/*
       get-nodes:x:@.arguments/*
 
    // Reading data from database.
    data.read
-      database-type:sqlite
       table:ml_requests
       columns
          count(*)
