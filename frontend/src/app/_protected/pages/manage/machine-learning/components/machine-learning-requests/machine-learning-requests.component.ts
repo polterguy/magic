@@ -6,6 +6,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
+import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { MachineLearningTrainingService } from 'src/app/_general/services/machine-learning-training.service';
 import { MachineLearningEditRequestComponent } from '../machine-learning-edit-request/machine-learning-edit-request.component';
@@ -120,17 +121,33 @@ export class MachineLearningRequestsComponent implements OnInit {
 
   delete(el: any) {
 
-    this.generalService.showLoading();
-    this.machineLearningTrainingService.ml_requests_delete(el.id).subscribe({
-      next: () => {
+    this.dialog.open(ConfirmationDialogComponent, {
+      width: '500px',
+      data: {
+        title: 'Delete request',
+        description_extra: 'Are you sure you want to delete this request?',
+        action_btn: 'Delete',
+        close_btn: 'Cancel',
+        action_btn_color: 'warn',
+        bold_description: true,
+      }
+    }).afterClosed().subscribe((result: string) => {
 
-        this.generalService.showFeedback('Request successfully deleted', 'successMessage');
-        this.getRequests(true);
-      },
-      error: (error: any) => {
+      if (result === 'confirm') {
 
-        this.generalService.showFeedback(error, 'errorMessage', 'Ok');
-        this.generalService.hideLoading();
+        this.generalService.showLoading();
+        this.machineLearningTrainingService.ml_requests_delete(el.id).subscribe({
+          next: () => {
+    
+            this.generalService.showFeedback('Request successfully deleted', 'successMessage');
+            this.getRequests(true);
+          },
+          error: (error: any) => {
+    
+            this.generalService.showFeedback(error, 'errorMessage', 'Ok');
+            this.generalService.hideLoading();
+          }
+        });
       }
     });
   }
