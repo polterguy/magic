@@ -31,12 +31,12 @@ export class MachineLearningTypesComponent implements OnInit {
   isLoadingKey: boolean = false;
   displayedColumns: string[] = [
     'type',
+    'model',
     'temperature',
     'max_tokens',
     'supervised',
     'auth',
     'recaptcha',
-    'model',
     'action',
   ];
   types: any[] = null;
