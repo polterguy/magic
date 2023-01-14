@@ -32,13 +32,12 @@ export class OpenAIService {
   /**
    * Queries OpenAI with the specified prompt and returns result to caller.
    */
-  query(query: string, lang: string = null) {
-    let filter = '?query=' + encodeURIComponent(query);
-    if (lang && lang !== 'hl') {
-      filter += '&model=text-davinci-003'
-    }
+  query(prompt: string, type: string) {
     return this.httpService.get<Response>(
-      '/magic/system/openai/prompt' + filter);
+      '/magic/system/openai/prompt?prompt=' +
+      encodeURIComponent(prompt) +
+      '&type=' +
+      encodeURIComponent(type));
   }
 
   /**

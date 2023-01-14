@@ -11,6 +11,7 @@ import { GeneralService } from 'src/app/_general/services/general.service';
 import { MachineLearningTrainingService } from 'src/app/_general/services/machine-learning-training.service';
 import { OpenAIService } from 'src/app/_general/services/openai.service';
 import { MachineLearningEditTypeComponent } from '../machine-learning-edit-type/machine-learning-edit-type.component';
+import { MachineLearningTestComponent } from '../machine-learning-test/machine-learning-test.component';
 
 /**
  * Helper component to manage machine learning types, different models, and configurations
@@ -99,6 +100,16 @@ export class MachineLearningTypesComponent implements OnInit {
           });
         }
     });
+  }
+
+  test(el: any) {
+
+    this.dialog
+      .open(MachineLearningTestComponent, {
+        width: '80vw',
+        maxWidth: '850px',
+        data: el,
+      });
   }
 
   edit(el: any) {

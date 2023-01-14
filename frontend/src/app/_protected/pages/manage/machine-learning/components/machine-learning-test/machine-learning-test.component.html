@@ -1,0 +1,44 @@
+<div mat-dialog-content>
+
+  <form (ngSubmit)="submit()" class="d-flex justify-content-md-between align-items-md-center align-items-end flex-md-row flex-column-reverse w-100">
+
+    <mat-form-field class="w-100 standalone-field">
+      <span
+        matPrefix
+        matTooltip="Prompt"
+        class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        <mat-icon>help_outline</mat-icon>
+        <span class="text-muted">|</span>
+      </span>
+      <input
+        matInput
+        placeholder="Prompt"
+        name="prompt"
+        [disabled]="isLoading"
+        [(ngModel)]="prompt"
+        autocomplete="off">
+    </mat-form-field>
+
+    <button
+      mat-flat-button
+      [disabled]="isLoading"
+      class="ms-2">
+      Submit
+    </button>
+
+  </form>
+
+  <div class="result mt-3 p-3" [innerHTML]="completion | marked">
+  </div>
+
+</div>
+
+<div mat-dialog-actions [align]="'end'">
+
+  <button
+    mat-button
+    mat-dialog-close>
+    Close
+  </button>
+
+</div>
