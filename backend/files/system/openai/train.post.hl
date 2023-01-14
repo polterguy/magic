@@ -218,12 +218,21 @@ data.connect:[generic|magic]
                      // Training is done, updating type declaration with new model.
                      log.info:Training of OpenAI model completed successfully
 
-                     // Updating type
+                     // Updating type.
                      data.connect:[generic|magic]
                         data.update
                            table:ml_types
                            values
                               model:x:@http.get/*/content/*/fine_tuned_model
+                           where
+                              and
+                                 type.eq:x:@.type
+
+                        // Marking all snippets we've sent as "pushed".
+                        data.update
+                           table:ml_training_snippets
+                           values
+                              pushed:int:1
                            where
                               and
                                  type.eq:x:@.type
