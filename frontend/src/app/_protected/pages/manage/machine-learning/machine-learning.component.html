@@ -4,7 +4,6 @@
     <mat-tab-group
       mat-stretch-tabs
       dynamicHeight
-      [(selectedIndex)]="index"
       animationDuration="0ms"
       #tabs>
 
@@ -43,7 +42,7 @@
       </mat-tab>
 
       <!-- Requests -->
-      <mat-tab>
+      <mat-tab [disabled]="!isConfigured">
 
         <ng-template mat-tab-label>
           Requests
