@@ -6,6 +6,7 @@
    uri:string
    prompt:string
    completion:string
+   type:string
 .description:CRUD create endpoint inserting one record into your ml_training_snippets table in your magic database taking type, pushed, uri, prompt, completion with authentication and authorisation for root,admin roles
 .type:crud-create
 

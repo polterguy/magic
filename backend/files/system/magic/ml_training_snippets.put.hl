@@ -5,6 +5,8 @@
    uri:string
    prompt:string
    completion:string
+   type:string
+   pushed:long
 .description:CRUD update endpoint updating one record in your ml_training_snippets table in your magic database filtering which item to update with id updating uri, prompt, completion fields with authentication and authorisation for root,admin roles
 .type:crud-update
 
