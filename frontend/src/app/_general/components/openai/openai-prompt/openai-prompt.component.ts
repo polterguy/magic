@@ -83,22 +83,7 @@ export class OpenAIPromptComponent implements OnInit {
       if (result?.configured) {
 
         this.openAiEnabled = true;
-        if (result.start_training) {
-
-          this.generalService.showLoading();
-
-          this.openAiService.start_training().subscribe({
-            next: () => {
-
-              this.generalService.showFeedback('Training of OpenAI successfully started', 'successMessage');
-              this.generalService.hideLoading();
-            },
-            error: (error: any) => {
-              this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
-              this.generalService.hideLoading();
-            }
-          });
-        }
+        this.generalService.hideLoading();
       }
     });
   }
