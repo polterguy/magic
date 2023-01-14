@@ -76,6 +76,12 @@
             <td mat-cell *matCellDef="let element" class="text-truncate px-sm-3">{{element.type}}</td>
           </ng-container>
 
+          <!-- Model column -->
+          <ng-container matColumnDef="model">
+            <th mat-header-cell *matHeaderCellDef class="pe-sm-3 text-nowrap small-table-column">Model</th>
+            <td mat-cell *matCellDef="let element" class="pe-sm-3 text-nowrap small-table-column">{{element.model}}</td>
+          </ng-container>
+
           <!-- Temperature column -->
           <ng-container matColumnDef="temperature">
             <th mat-header-cell *matHeaderCellDef class="small-table-column">Temperature</th>
@@ -109,12 +115,6 @@
           <ng-container matColumnDef="recaptcha">
             <th mat-header-cell *matHeaderCellDef class="pe-sm-3 small-table-column">reCAPTCHA</th>
             <td mat-cell *matCellDef="let element" class="pe-sm-3 small-table-column">{{element.recaptcha}}</td>
-          </ng-container>
-
-          <!-- Model column -->
-          <ng-container matColumnDef="model">
-            <th mat-header-cell *matHeaderCellDef class="pe-sm-3 small-table-column">Model</th>
-            <td mat-cell *matCellDef="let element" class="pe-sm-3 small-table-column">{{element.model}}</td>
           </ng-container>
 
           <!-- Actions column -->
