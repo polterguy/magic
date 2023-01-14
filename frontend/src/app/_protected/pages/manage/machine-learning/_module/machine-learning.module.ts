@@ -17,6 +17,8 @@ import { MachineLearningComponent } from '../machine-learning.component';
 import { MachineLearningTypesComponent } from '../components/machine-learning-types/machine-learning-types.component';
 import { MachineLearningRequestsComponent } from '../components/machine-learning-requests/machine-learning-requests.component';
 import { MachineLearningEditRequestComponent } from '../components/machine-learning-edit-request/machine-learning-edit-request.component';
+import { MachineLearningTestComponent } from '../components/machine-learning-test/machine-learning-test.component';
+import { SharedModule } from 'src/app/shared.module';
 
 @NgModule({
   declarations: [
@@ -27,6 +29,7 @@ import { MachineLearningEditRequestComponent } from '../components/machine-learn
     MachineLearningTypesComponent,
     MachineLearningRequestsComponent,
     MachineLearningEditRequestComponent,
+    MachineLearningTestComponent,
   ],
   imports: [
     CommonModule,
@@ -35,6 +38,7 @@ import { MachineLearningEditRequestComponent } from '../components/machine-learn
     CmModule,
     FormsModule,
     ComponentsModule,
+    SharedModule,
   ]
 })
 export class MachineLearningTrainingModule { }
