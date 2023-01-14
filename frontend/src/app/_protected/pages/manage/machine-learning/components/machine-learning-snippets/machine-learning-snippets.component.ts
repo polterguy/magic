@@ -231,13 +231,13 @@ export class MachineLearningSnippetsComponent implements OnInit {
 
       delete this.filter['order'];
       delete this.filter['direction'];
-      this.getTrainingData();
+      this.getTrainingData(false);
       return;
     }
 
     this.filter['order'] = e.active;
     this.filter['direction'] = e.direction;
-    this.getTrainingData();
+    this.getTrainingData(false);
   }
 
   /*
