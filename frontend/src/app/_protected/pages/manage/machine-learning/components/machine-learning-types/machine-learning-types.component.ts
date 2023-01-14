@@ -32,6 +32,7 @@ export class MachineLearningTypesComponent implements OnInit {
   displayedColumns: string[] = [
     'type',
     'model',
+    'cached',
     'temperature',
     'max_tokens',
     'supervised',

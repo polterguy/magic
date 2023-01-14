@@ -82,6 +82,17 @@
             <td mat-cell *matCellDef="let element" class="pe-sm-3 text-nowrap small-table-column">{{element.model}}</td>
           </ng-container>
 
+          <!-- Cached column -->
+          <ng-container matColumnDef="cached">
+            <th mat-header-cell *matHeaderCellDef class="small-table-column">Cached</th>
+            <td
+              mat-cell
+              *matCellDef="let element"
+              class="ps-3">
+              <span class="status {{element.cached === 1 ? 'cached' : 'uncached'}} me-1"></span>
+            </td>
+          </ng-container>
+
           <!-- Temperature column -->
           <ng-container matColumnDef="temperature">
             <th mat-header-cell *matHeaderCellDef class="small-table-column">Temperature</th>

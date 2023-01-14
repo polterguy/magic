@@ -49,6 +49,7 @@ data.connect:[generic|magic]
          ml_types.recaptcha
          ml_types.auth
          ml_types.supervised
+         ml_types.cached
       where
          and
 

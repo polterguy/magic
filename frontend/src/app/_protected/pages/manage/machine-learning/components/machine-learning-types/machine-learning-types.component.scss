@@ -15,10 +15,18 @@
   display: inline-block;
 
   &.unsupervised {
-    background-color: $aista_error;
+    background-color: $aista_warning;
   }
 
   &.supervised {
+    background-color: $aista_success;
+  }
+
+  &.uncached {
+    background-color: $aista_warning;
+  }
+
+  &.cached {
     background-color: $aista_success;
   }
 }
