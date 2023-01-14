@@ -14,9 +14,7 @@ validators.string:x:@.arguments/*/prompt
 
 // Trimming prompt.
 set-value:x:@.arguments/*/prompt
-   strings.concat
-      strings.trim:x:@.arguments/*/prompt
-      .:" ->"
+   strings.trim:x:@.arguments/*/prompt
 
 // Connecting to database to retrieve model settings.
 data.connect:[generic|magic]
@@ -130,13 +128,20 @@ data.connect:[generic|magic]
             .
                user:x:@auth.ticket.get
 
+   // Decorating prompt according to OpenAI's advice.
+   .decorated-prompt
+   set-value:x:-
+      strings.concat
+         get-value:x:@.arguments/*/prompt
+         .:" ->"
+
    // Creating an HTTP POST request towards OpenAI, now decorated.
    http.post:"https://api.openai.com/v1/completions"
       headers
          Authorization:x:@.token
          Content-Type:application/json
       payload
-         prompt:x:@.arguments/*/prompt
+         prompt:x:@.decorated-prompt
          model:x:@data.read/*/*/model
          max_tokens:x:@data.read/*/*/max_tokens
          temperature:x:@data.read/*/*/temperature
