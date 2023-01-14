@@ -157,6 +157,11 @@ data.connect:[generic|magic]
          return
             result:Something went wrong as we invoked OpenAI API
 
+   // Making sure we trim response.
+   .result
+   set-value:x:@.result
+      strings.trim:x:@http.post/*/content/*/choices/0/*/text
+
    // Checking if type is 'supervised', at which point we store prompt and completion.
    if
       mt
@@ -171,7 +176,7 @@ data.connect:[generic|magic]
             values
                type:x:@.arguments/*/type
                prompt:x:@.arguments/*/prompt
-               completion:x:@http.post/*/content/*/choices/0/*/text
+               completion:x:@.result
                finish_reason:x:@http.post/*/content/*/choices/0/*/finish_reason
 
    /*
@@ -184,4 +189,4 @@ data.connect:[generic|magic]
    // Returning results returned from invocation above to caller.
    unwrap:x:+/*
    return
-      result:x:@http.post/*/content/*/choices/0/*/text
+      result:x:@.result
