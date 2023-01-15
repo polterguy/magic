@@ -106,74 +106,6 @@
             </td>
           </ng-container>
 
-          <!-- Cached column -->
-          <ng-container matColumnDef="cached">
-            <th
-              mat-header-cell
-              *matHeaderCellDef
-              class="small-table-column"
-              mat-sort-header>
-              Cached
-            </th>
-            <td
-              mat-cell
-              *matCellDef="let element"
-              class="ps-3">
-              <span class="status {{element.cached === 1 ? 'cached' : 'uncached'}} me-1"></span>
-            </td>
-          </ng-container>
-
-          <!-- Temperature column -->
-          <ng-container matColumnDef="temperature">
-            <th
-              mat-header-cell
-              *matHeaderCellDef
-              class="small-table-column"
-              mat-sort-header>
-              Temperature
-            </th>
-            <td
-              mat-cell
-              *matCellDef="let element"
-              class="small-table-column">
-              {{element.temperature}}
-            </td>
-          </ng-container>
-
-          <!-- Max tokens column -->
-          <ng-container matColumnDef="max_tokens">
-            <th
-              mat-header-cell
-              *matHeaderCellDef
-              class="pe-sm-3 small-table-column"
-              mat-sort-header>
-              Tokens
-            </th>
-            <td
-              mat-cell
-              *matCellDef="let element"
-              class="pe-sm-3 small-table-column">
-              {{element.max_tokens}}
-            </td>
-          </ng-container>
-
-          <!-- Supervised column -->
-          <ng-container matColumnDef="supervised">
-            <th
-              mat-header-cell
-              *matHeaderCellDef
-              class="small-table-column"
-              mat-sort-header>
-              Supervised
-            </th>
-            <td
-              mat-cell
-              *matCellDef="let element"
-              class="ps-3">
-              <span class="status {{element.supervised === 1 ? 'supervised' : 'unsupervised'}} me-1"></span>
-            </td>
-          </ng-container>
-
           <!-- Auth column -->
           <ng-container matColumnDef="auth">
             <th
@@ -188,23 +120,6 @@
               *matCellDef="let element"
               class="pe-sm-3 small-table-column">
               {{element.auth}}
-            </td>
-          </ng-container>
-
-          <!-- reCAPTCHA column -->
-          <ng-container matColumnDef="recaptcha">
-            <th
-              mat-header-cell
-              *matHeaderCellDef
-              class="pe-sm-3 small-table-column"
-              mat-sort-header>
-              reCAPTCHA
-            </th>
-            <td
-              mat-cell
-              *matCellDef="let element"
-              class="pe-sm-3 small-table-column">
-              {{element.recaptcha}}
             </td>
           </ng-container>
 
@@ -224,8 +139,8 @@
               <button
                 mat-button
                 color="primary"
-                (click)="test(element)">
-                Test
+                (click)="train(element)">
+                Train
               </button>
 
               <button
@@ -233,6 +148,13 @@
                 color="primary"
                 (click)="edit(element)">
                 Edit
+              </button>
+
+              <button
+                mat-button
+                color="primary"
+                (click)="test(element)">
+                Test
               </button>
 
               <button

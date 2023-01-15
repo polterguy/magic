@@ -5,6 +5,7 @@
 
 // Angular and system imports.
 import { Injectable } from '@angular/core';
+import { Count } from 'src/app/models/count.model';
 import { Response } from 'src/app/models/response.model';
 
 // Application specific imports.
@@ -31,7 +32,7 @@ export class MachineLearningTrainingService {
    * Counts training snippets matching condition.
    */
   ml_training_snippets_count(filter?: any) {
-    return this.httpService.get<Response>('/magic/system/magic/ml_training_snippets-count' + this.getQueryArgs(filter));
+    return this.httpService.get<Count>('/magic/system/magic/ml_training_snippets-count' + this.getQueryArgs(filter));
   }
 
   /**

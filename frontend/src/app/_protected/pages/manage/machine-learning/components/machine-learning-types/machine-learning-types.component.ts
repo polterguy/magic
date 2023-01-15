@@ -12,6 +12,7 @@ import { MachineLearningTrainingService } from 'src/app/_general/services/machin
 import { OpenAIService } from 'src/app/_general/services/openai.service';
 import { MachineLearningEditTypeComponent } from '../machine-learning-edit-type/machine-learning-edit-type.component';
 import { MachineLearningTestComponent } from '../machine-learning-test/machine-learning-test.component';
+import { MachineLearningTrainComponent } from '../machine-learning-train/machine-learning-train.component';
 
 /**
  * Helper component to manage machine learning types, different models, and configurations
@@ -34,12 +35,7 @@ export class MachineLearningTypesComponent implements OnInit {
   displayedColumns: string[] = [
     'type',
     'model',
-    'cached',
-    'temperature',
-    'max_tokens',
-    'supervised',
     'auth',
-    'recaptcha',
     'action',
   ];
   types: any[] = null;
@@ -112,6 +108,36 @@ export class MachineLearningTypesComponent implements OnInit {
 
               this.generalService.hideLoading();
               this.generalService.showFeedback('Something went wrong as we tried to create your type', 'errorMessage');
+            }
+          });
+        }
+    });
+  }
+
+  train(el: any) {
+
+    this.dialog
+      .open(MachineLearningTrainComponent, {
+        width: '80vw',
+        maxWidth: '550px',
+        data: el,
+      })
+      .afterClosed()
+      .subscribe((result: any) => {
+
+        if (result) {
+
+          this.generalService.showLoading();
+          this.openAIService.start_training(result).subscribe({
+            next: () => {
+
+              this.generalService.hideLoading();
+              this.generalService.showFeedback('Training successfully started', 'successMessage');
+            },
+            error: () => {
+
+              this.generalService.hideLoading();
+              this.generalService.showFeedback('Something went wrong as we tried to start training', 'errorMessage');
             }
           });
         }

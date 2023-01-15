@@ -209,23 +209,6 @@ export class MachineLearningSnippetsComponent implements OnInit {
     return this.trainingFileModel.split('\\').pop().split('/').pop();
   }
 
-  startTraining() {
-
-    this.generalService.showLoading();
-    this.openAIService.start_training(this.type).subscribe({
-      next: () => {
-
-        this.generalService.hideLoading();
-        this.generalService.showFeedback('Training successfully started', 'successMessage');
-      },
-      error: (error: any) => {
-
-        this.generalService.hideLoading();
-        this.generalService.showFeedback(error, 'errorMessage', 'Ok');
-      }
-    });
-  }
-
   sortData(e: any) {
 
     if (e.direction === '') {

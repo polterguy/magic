@@ -1,0 +1,80 @@
+
+<h3 mat-dialog-title class="mb-3">Train {{data.type}} on {{count}} snippets</h3>
+
+<form (ngSubmit)="save()">
+  <div mat-dialog-content>
+
+    <mat-error *ngIf="count === 0" class="mb-2">
+      No training snippets found, you need to create some training data first.
+    </mat-error>
+
+    <div class="row">
+
+      <div class="col-6">
+
+        <mat-form-field class="w-100 standalone-field">
+          <span
+            matPrefix
+            matTooltip="Epochs"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>list</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            placeholder="Epochs"
+            [disabled]="count === 0"
+            [(ngModel)]="epochs"
+            min="1"
+            max="10"
+            name="epochs"
+            autocomplete="off">
+        </mat-form-field>
+    
+      </div>
+
+      <div class="col-6">
+
+        <mat-form-field class="w-100 standalone-field">
+          <span
+            matPrefix
+            matTooltip="Batch size"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>list</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            placeholder="Batch size"
+            [disabled]="count === 0"
+            [(ngModel)]="batch_size"
+            min="1"
+            max="256"
+            name="batch_size"
+            autocomplete="off">
+        </mat-form-field>
+    
+      </div>
+
+    </div>
+
+  </div>
+
+  <div mat-dialog-actions [align]="'end'">
+
+    <button
+      mat-button
+      mat-dialog-close>
+      Close
+    </button>
+
+    <button
+      mat-flat-button
+      [disabled]="count === 0"
+      type="submit">
+      Start
+    </button>
+
+  </div>
+
+</form>

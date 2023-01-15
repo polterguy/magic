@@ -19,6 +19,7 @@ import { MachineLearningRequestsComponent } from '../components/machine-learning
 import { MachineLearningEditRequestComponent } from '../components/machine-learning-edit-request/machine-learning-edit-request.component';
 import { MachineLearningTestComponent } from '../components/machine-learning-test/machine-learning-test.component';
 import { SharedModule } from 'src/app/shared.module';
+import { MachineLearningTrainComponent } from '../components/machine-learning-train/machine-learning-train.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { SharedModule } from 'src/app/shared.module';
     MachineLearningRequestsComponent,
     MachineLearningEditRequestComponent,
     MachineLearningTestComponent,
+    MachineLearningTrainComponent,
   ],
   imports: [
     CommonModule,
