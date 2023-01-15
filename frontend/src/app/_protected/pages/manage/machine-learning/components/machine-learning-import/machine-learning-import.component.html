@@ -3,43 +3,103 @@
 
 <div mat-dialog-content>
 
+  <form (ngSubmit)="importUrl()" class="d-flex justify-content-md-between align-items-md-center align-items-end flex-md-row flex-column-reverse w-100">
+
+    <mat-form-field class="w-100 standalone-field me-2 mb-2">
+      <span
+        matPrefix
+        matTooltip="Website URL"
+        class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        <mat-icon>http</mat-icon>
+        <span class="text-muted">|</span>
+      </span>
+      <input
+        matInput
+        placeholder="Website URL"
+        [(ngModel)]="url"
+        name="url"
+        autocomplete="off">
+    </mat-form-field>
+
+    <button
+      class="mb-2"
+      mat-flat-button>
+      Import
+    </button>
+
+  </form>
+
   <!-- Upload training data part -->
   <div class="row">
 
-    <div class="col-12 mt-2">
+    <div class="col-6">
 
-      <form>
+      <mat-form-field class="w-100 standalone-field">
+        <span
+          matPrefix
+          matTooltip="Prompt field"
+          class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+          <mat-icon>http</mat-icon>
+          <span class="text-muted">|</span>
+        </span>
+        <input
+          matInput
+          placeholder="Prompt field"
+          [(ngModel)]="prompt"
+          autocomplete="off">
+      </mat-form-field>
   
-        <div class="drop-container pointer border-color">
+    </div>
+
+    <div class="col-6">
+
+      <mat-form-field class="w-100 standalone-field">
+        <span
+          matPrefix
+          matTooltip="Completion field"
+          class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+          <mat-icon>http</mat-icon>
+          <span class="text-muted">|</span>
+        </span>
+        <input
+          matInput
+          placeholder="Completion field"
+          [(ngModel)]="completion"
+          autocomplete="off">
+      </mat-form-field>
+
+    </div>
+
+    <div class="col-12 mt-2">
   
-          <input
-            type="file"
-            [(ngModel)]="trainingFileModel"
-            name="trainingFileModel"
-            class="w-100 h-100 hide pointer"
-            #upload
-            (change)="getFile($event)"
-            accept=".csv">
-  
-          <button
-            mat-button
-            class="w-100"
-            (click)="upload.click()"
-            *ngIf="trainingFileModel === ''"
-            [disabled]="uploading">
-            <i>Drag & drop or click to upload your training material here</i> <br />
-            <span class="text-primary">Choose a file</span>
-          </button>
-  
-          <ng-container *ngIf="trainingFileModel !== ''">
-            <h4 class="my-0">{{getFileName()}}</h4>
-            <p class="text-center mt-3" *ngIf="uploading">Uploading ...</p>
-            <p class="text-center mt-3" *ngIf="!uploading">Done!</p>
-          </ng-container>
-  
-        </div>
-  
-      </form>
+      <div class="drop-container pointer border-color">
+
+        <input
+          type="file"
+          [(ngModel)]="trainingFileModel"
+          name="trainingFileModel"
+          class="w-100 h-100 hide pointer"
+          #upload
+          (change)="getFile($event)"
+          accept=".csv,.xml,.yaml,.yml,.json">
+
+        <button
+          mat-button
+          class="w-100"
+          (click)="upload.click()"
+          *ngIf="trainingFileModel === ''"
+          [disabled]="uploading">
+          <i>Drag & drop or click to upload your training data here, CSV, XML, JSON or YAML</i> <br />
+          <span class="text-primary">Choose a file</span>
+        </button>
+
+        <ng-container *ngIf="trainingFileModel !== ''">
+          <h4 class="my-0">{{getFileName()}}</h4>
+          <p class="text-center mt-3" *ngIf="uploading">Uploading ...</p>
+          <p class="text-center mt-3" *ngIf="!uploading">Done!</p>
+        </ng-container>
+
+      </div>
   
     </div>
 

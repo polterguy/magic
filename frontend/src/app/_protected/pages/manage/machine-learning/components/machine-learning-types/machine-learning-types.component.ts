@@ -120,7 +120,7 @@ export class MachineLearningTypesComponent implements OnInit {
     this.dialog
       .open(MachineLearningImportComponent, {
         width: '80vw',
-        maxWidth: '550px',
+        maxWidth: '850px',
         data: el,
       });
   }

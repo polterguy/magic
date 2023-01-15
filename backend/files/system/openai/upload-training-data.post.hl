@@ -5,6 +5,8 @@
 .arguments
    file:*
    type:string
+   prompt:string
+   completion:string
 .type:internal
 .accept:multipart/form-data
 .description:Stores the specified file as training data for the specified model
@@ -17,32 +19,86 @@ validators.mandatory:x:@.arguments/*/file
 validators.mandatory:x:@.arguments/*/file/*/name
 validators.mandatory:x:@.arguments/*/file/*/stream
 
+// Defaulting prompt and completion arguments to prompt and completion.
+if
+   not-exists:x:@.arguments/*/prompt
+   .lambda
+      add:x:@.arguments
+         .
+            prompt:prompt
+if
+   not-exists:x:@.arguments/*/completion
+   .lambda
+      add:x:@.arguments
+         .
+            completion:completion
+
 // Reading file data from stream.
 io.stream.read:x:@.arguments/*/file/*/stream
 
-// Converting string to CSV.
-csv2lambda:x:@io.stream.read
+// Buffer for file data.
+.file-data
+
+// Figuring out type of file.
+strings.split:x:@.arguments/*/file/*/name
+   .:.
+strings.to-lower:x:@strings.split/0/-
+
+// Converting file to lambda object according to its extention.
+switch:x:@strings.to-lower
+
+   // CSV file type.
+   case:csv
+      add:x:@.file-data
+         csv2lambda:x:@io.stream.read
+
+   // XML file type.
+   case:xml
+      xml2lambda:x:@io.stream.read
+      for-each:x:@xml2lambda/*/*
+         unwrap:x:./*/add/*/*/*
+         set-name:x:./*/add/*/*/*/prompt
+            get-value:x:@.arguments/*/prompt
+         set-name:x:./*/add/*/*/*/completion
+            get-value:x:@.arguments/*/completion
+         add:x:@.file-data
+            .
+               .
+                  prompt:x:@.dp/#/*/{@.arguments/*/prompt}/*/\#text
+                  completion:x:@.dp/#/*/{@.arguments/*/completion}/*/\#text
+
+   // JSON file type.
+   case:json
+      add:x:@.file-data
+         json2lambda:x:@io.stream.read
+
+   // YAML file type.
+   case:yaml
+      add:x:@.file-data
+         yaml2lambda:x:@io.stream.read
 
 // Sanity checking file.
+lambda2hyper:x:../*
+log.info:x:-
 if
    or
-      not-exists:x:@csv2lambda/*/*/prompt
-      not-exists:x:@csv2lambda/*/*/completion
+      not-exists:x:@.file-data/0/*/{@.arguments/*/prompt}
+      not-exists:x:@.file-data/0/*/{@.arguments/*/completion}
    .lambda
 
       // Returning error to caller.
       response.status.set:400
       return
-         message:Your CSV file needs to have at the very least prompt and completion fields
+         message:"Your CSV file needs to have at the very least prompt and completion fields, or you need to correctly apply the right fields to use as substitutes"
 
 // Connecting to database.
 data.connect:[generic|magic]
 
    // Looping through each CSV record inserting into database.
-   for-each:x:@csv2lambda/*
+   for-each:x:@.file-data/*
 
       // Creating a unique URI based upon the prompt.
-      crypto.hash.sha256:x:@.dp/#/*/prompt
+      crypto.hash.sha256:x:@.dp/#/*/{@.arguments/*/prompt}
 
       // Deleting existing record with similar URI.
       data.delete
@@ -57,8 +113,8 @@ data.connect:[generic|magic]
          values
             type:x:@.arguments/*/type
             uri:x:@crypto.hash.sha256
-            prompt:x:@.dp/#/*/prompt
-            completion:x:@.dp/#/*/completion
+            prompt:x:@.dp/#/*/{@.arguments/*/prompt}
+            completion:x:@.dp/#/*/{@.arguments/*/completion}
 
 // Returning success to caller.
 return
