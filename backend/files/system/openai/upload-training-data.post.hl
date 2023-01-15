@@ -23,6 +23,18 @@ io.stream.read:x:@.arguments/*/file/*/stream
 // Converting string to CSV.
 csv2lambda:x:@io.stream.read
 
+// Sanity checking file.
+if
+   or
+      not-exists:x:@csv2lambda/*/*/prompt
+      not-exists:x:@csv2lambda/*/*/completion
+   .lambda
+
+      // Returning error to caller.
+      response.status.set:400
+      return
+         message:Your CSV file needs to have at the very least prompt and completion fields
+
 // Connecting to database.
 data.connect:[generic|magic]
 
