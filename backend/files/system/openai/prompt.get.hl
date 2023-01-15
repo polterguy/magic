@@ -96,7 +96,6 @@ data.connect:[generic|magic]
                and
                   prompt.eq:x:@.arguments/*/prompt
                   type.eq:x:@.arguments/*/type
-                  finish_reason.eq:stop
             limit:1
             order:created
             direction:desc

@@ -98,7 +98,7 @@ export class OpenAIPromptComponent implements OnInit {
     this.generalService.showLoading();
     this.waitingForAnswer = true;
 
-    this.openAiService.query(this.openAiPrompt + (this.fileType === 'hl' ? ' ->' : ''), this.fileType).subscribe({
+    this.openAiService.query(this.openAiPrompt, this.fileType).subscribe({
       next: (result: any) => {
 
         this.generalService.hideLoading();
@@ -108,7 +108,7 @@ export class OpenAIPromptComponent implements OnInit {
           width: '80vw',
           maxWidth: '1024px',
           data: {
-            snippet: result[0].text.trim() + '\r\n',
+            snippet: result.result,
             prompt: this.openAiPrompt,
             fileType: this.fileType,
             callback: this.callback,
