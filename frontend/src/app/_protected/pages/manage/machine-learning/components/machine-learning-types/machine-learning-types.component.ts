@@ -11,6 +11,7 @@ import { GeneralService } from 'src/app/_general/services/general.service';
 import { MachineLearningTrainingService } from 'src/app/_general/services/machine-learning-training.service';
 import { OpenAIService } from 'src/app/_general/services/openai.service';
 import { MachineLearningEditTypeComponent } from '../machine-learning-edit-type/machine-learning-edit-type.component';
+import { MachineLearningImportComponent } from '../machine-learning-import/machine-learning-import.component';
 import { MachineLearningTestComponent } from '../machine-learning-test/machine-learning-test.component';
 import { MachineLearningTrainComponent } from '../machine-learning-train/machine-learning-train.component';
 
@@ -112,6 +113,16 @@ export class MachineLearningTypesComponent implements OnInit {
           });
         }
     });
+  }
+
+  import(el: any) {
+
+    this.dialog
+      .open(MachineLearningImportComponent, {
+        width: '80vw',
+        maxWidth: '550px',
+        data: el,
+      });
   }
 
   train(el: any) {

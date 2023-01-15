@@ -1,0 +1,29 @@
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2023 info@aista.com, all rights reserved.
+ */
+
+@import "../../../../../../../assets/styles/_variables/colors.scss";
+@import "../../../../../../../assets/styles/_variables/mixin.scss";
+@import "../../../../../../../assets/styles/_variables/sizing.scss";
+
+.drop-container {
+  position: relative;
+  height: 100px;
+  border-style: dashed;
+  border-width: 1px;
+  border-radius: $aista_radius;
+  border-color: $aista_primary;
+  background-color: $aista_default_alt;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.hide {
+  opacity: 0;
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 1;
+}
