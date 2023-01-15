@@ -17,6 +17,7 @@
         required
         [disabled]="data"
         placeholder="Type name"
+        spellcheck="false"
         [pattern]="CommonRegEx.appNameWithUppercaseHyphen"
         [(ngModel)]="type"
         name="type"
