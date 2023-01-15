@@ -15,6 +15,7 @@ import { HttpService } from 'src/app/_general/services/http.service';
  */
 export class OpenAIModel {
   id: string;
+  created: number;
   owned_by: string;
   parent: string;
 }

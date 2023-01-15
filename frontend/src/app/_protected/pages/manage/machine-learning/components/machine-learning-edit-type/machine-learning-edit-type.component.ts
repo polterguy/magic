@@ -64,6 +64,16 @@ export class MachineLearningEditTypeComponent implements OnInit {
           next: (models: OpenAIModel[]) => {
     
             this.models = models;
+            this.models.sort((lhs: OpenAIModel, rhs: OpenAIModel) => {
+              if (lhs.created < rhs.created) {
+                return 1;
+              }
+              if (lhs.created > rhs.created) {
+                return -1;
+              }
+              return 0;
+            });
+
             if (this.data?.model) {
               this.model = this.models.filter(x => x.id === this.data.model)[0];
             } else {
