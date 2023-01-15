@@ -46,7 +46,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
   ngOnInit() {
 
     this.type = this.data?.type;
-    this.max_tokens = this.data?.max_tokens ?? 500;
+    this.max_tokens = this.data?.max_tokens ?? 2000;
     this.temperature = this.data?.temperature ?? 0.1;
     this.recaptcha = this.data?.recaptcha ?? 0;
     this.auth = this.data?.auth?.split(',') ?? ['root'];
