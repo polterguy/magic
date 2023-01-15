@@ -49,7 +49,11 @@ export class MachineLearningEditTypeComponent implements OnInit {
     this.max_tokens = this.data?.max_tokens ?? 2000;
     this.temperature = this.data?.temperature ?? 0.1;
     this.recaptcha = this.data?.recaptcha ?? 0;
-    this.auth = this.data?.auth?.split(',') ?? ['root'];
+    if (!this.data) {
+      this.auth = ['root'];
+    } else {
+      this.auth = this.data.auth?.split(',');
+    }
     this.supervised = this.data?.supervised === 1 ? true : false;
     this.cached = this.data?.cached === 1 ? true : false;
 
