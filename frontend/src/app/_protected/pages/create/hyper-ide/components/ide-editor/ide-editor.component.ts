@@ -141,9 +141,11 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
    */
 
   private saveActiveFile(thenClose: boolean = false) {
+
     this.fileService.saveFile(this.currentFileData.path, this.currentFileData.content).subscribe({
       next: () => {
-        this.markEditorClean();
+
+        this.markEditorClean(false);
         this.generalService.showFeedback('File successfully saved', 'successMessage');
         this.getEndpoints.emit();
         if (thenClose) {
@@ -163,6 +165,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private async closeActiveFile(noDirtyWarnings: boolean = false) {
+
     if (!this.currentFileData) {
       return;
     }
@@ -252,12 +255,15 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     })
   }
 
-  private markEditorClean() {
+  private markEditorClean(clearHistory: boolean = true) {
+    
     const fileExisting: number = this.openFiles.findIndex((item: any) => item.path === this.currentFileData.path);
     const activeWrapper = document.querySelector('.active-codemirror-editor-' + fileExisting);
     const editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
     editor.doc.markClean();
-    editor.doc.clearHistory(); // To avoid having initial loading of file becoming an "undo operation".
+    if (clearHistory) {
+      editor.doc.clearHistory(); // To avoid having initial loading of file becoming an "undo operation".
+    }
   }
 
   private renameFile() {
