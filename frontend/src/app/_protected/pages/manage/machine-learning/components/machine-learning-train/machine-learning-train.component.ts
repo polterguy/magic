@@ -21,10 +21,10 @@ import { Count } from 'src/app/_protected/models/common/count.model';
 export class MachineLearningTrainComponent implements OnInit {
 
   count: number = 0;
-  epochs: number = 4;
-  batch_size: number = 0;
-  learning_rate_multiplier: number = 0.02;
-  prompt_loss_weight: number = 0.01;
+  epochs: number = null;
+  batch_size: number = null;
+  learning_rate_multiplier: number = null;
+  prompt_loss_weight: number = null;
   model: OpenAIModel = null;
   models: OpenAIModel[] = [];
 
@@ -50,8 +50,6 @@ export class MachineLearningTrainComponent implements OnInit {
           this.generalService.hideLoading();
           return;
         }
-
-        this.batch_size = Math.round(Math.min(Math.max(this.count / 500, 1), 256));
 
         this.openAIService.models().subscribe({
           next: (models: OpenAIModel[]) => {
@@ -84,6 +82,9 @@ export class MachineLearningTrainComponent implements OnInit {
     const data: any = {
       type: this.data.type,
       epochs: this.epochs,
+      batch_size: this.batch_size,
+      learning_rate_multiplier: this.learning_rate_multiplier,
+      prompt_loss_weight: this.prompt_loss_weight,
     };
     this.dialogRef.close(data);
   }

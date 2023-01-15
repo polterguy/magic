@@ -200,8 +200,8 @@ export class MachineLearningTypesComponent implements OnInit {
     this.dialog.open(ConfirmationDialogComponent, {
       width: '500px',
       data: {
-        title: 'Delete model',
-        description_extra: `You are deleting the following model: <br/> <span class="fw-bold">${el.type}</span> <br/><br/>This will delete all data associated with your model, including training data. Do you want to continue?`,
+        title: 'Delete type',
+        description_extra: `You are deleting the following type: <br/> <span class="fw-bold">${el.type}</span> <br/><br/>This will delete all data associated with your model, including training data. Do you want to continue?`,
         action_btn: 'Delete',
         close_btn: 'Cancel',
         action_btn_color: 'warn',

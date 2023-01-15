@@ -78,8 +78,6 @@ switch:x:@strings.to-lower
          yaml2lambda:x:@io.stream.read
 
 // Sanity checking file.
-lambda2hyper:x:../*
-log.info:x:-
 if
    or
       not-exists:x:@.file-data/0/*/{@.arguments/*/prompt}
