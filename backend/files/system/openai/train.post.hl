@@ -1,10 +1,15 @@
 
 /*
- * Uploads training data to your OpenAI API account, and starts training the model using the default training data.
+ * Uploads training data to your OpenAI API account,
+ * and starts training the model using the default training data.
  */
 .arguments
    type:string
-.description:Uploads training data to your OpenAI API account, and starts training the model using the default training data
+   epochs:int
+   batch_size:int
+   learning_rate_multiplier:decimal
+   prompt_loss_weight:decimal
+.description:Uploads training data to your OpenAI API account, and starts training the model associated with the specified type according to the arguments specified
 .type:internal
 
 // Making sure user has access to invoked endpoint.
@@ -133,8 +138,41 @@ data.connect:[generic|magic]
       table:ml_types
       columns
          model
+      where
+         and
+            type.eq:x:@.arguments/*/type
    set-value:x:@.model
       get-value:x:@data.read/*/*/model
+
+   // Parametrising training session invocation.
+   if
+      and
+         exists:x:@.arguments/*/epochs
+         not-null:x:@.arguments/*/epochs
+      .lambda
+         add:x:@data.connect/*/http.post/[1,2]/*/payload
+            get-nodes:x:@.arguments/*/epochs
+   if
+      and
+         exists:x:@.arguments/*/batch_size
+         not-null:x:@.arguments/*/batch_size
+      .lambda
+         add:x:@data.connect/*/http.post/[1,2]/*/payload
+            get-nodes:x:@.arguments/*/batch_size
+   if
+      and
+         exists:x:@.arguments/*/learning_rate_multiplier
+         not-null:x:@.arguments/*/learning_rate_multiplier
+      .lambda
+         add:x:@data.connect/*/http.post/[1,2]/*/payload
+            get-nodes:x:@.arguments/*/learning_rate_multiplier
+   if
+      and
+         exists:x:@.arguments/*/prompt_loss_weight
+         not-null:x:@.arguments/*/prompt_loss_weight
+      .lambda
+         add:x:@data.connect/*/http.post/[1,2]/*/payload
+            get-nodes:x:@.arguments/*/prompt_loss_weight
 
    // Starting training session.
    http.post:"https://api.openai.com/v1/fine-tunes"
@@ -145,11 +183,9 @@ data.connect:[generic|magic]
          training_file:x:@.id
          model:x:@.model
          suffix:x:@.arguments/*/type
-         n_epochs:int:2
-         learning_rate_multiplier:decimal:0.2
       convert:true
 
-   // Sanity checking above invocation
+   // Sanity checking above invocation.
    if
       neq:x:@http.post
          .:int:200
@@ -164,7 +200,7 @@ data.connect:[generic|magic]
             message:Something went wrong as we started our training session
 
    // Logging that we've started training.
-   get-count:x:@data.read/*
+   get-count:x:@data.read/@data.read/*
    log.info:Successfully started training of OpenAI model
       type:x:@.arguments/*/type
       snippets:x:@get-count

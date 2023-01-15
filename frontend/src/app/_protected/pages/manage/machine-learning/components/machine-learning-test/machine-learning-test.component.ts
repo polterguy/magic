@@ -60,7 +60,9 @@ export class MachineLearningTestComponent implements OnInit {
         this.generalService.hideLoading();
         this.isLoading = false;
         this.completion = result.result;
-        this.hlModel.hyperlambda = result.result;
+        if (this.hlModel) {
+          this.hlModel.hyperlambda = result.result;
+        }
         setTimeout(() => {
           const el = <any>document.getElementsByName('prompt')[0];
           el.focus();
