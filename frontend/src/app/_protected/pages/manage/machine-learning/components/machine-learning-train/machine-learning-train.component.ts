@@ -53,10 +53,18 @@ export class MachineLearningTrainComponent implements OnInit {
 
         this.openAIService.models().subscribe({
           next: (models: OpenAIModel[]) => {
-    
-            this.models = models;
+
+            // Making sure we filter away any models that cannot be fine tuned.
+            const tunedModels = [
+              'ada',
+              'babbage',
+              'curie',
+              'davinci'
+            ];
+            this.models = models
+              .filter(x => (x.owned_by !== 'system' && !x.owned_by.startsWith('openai') ) || tunedModels.includes(x.id));
             if (this.data?.model) {
-              this.model = this.models.filter(x => x.id === this.data.model)[0];
+              this.model = this.models.filter(x => x.id === this.data.model).pop();
             } else {
               this.model = this.models.filter(x => x.id === 'curie')[0];
             }
