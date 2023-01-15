@@ -20,8 +20,8 @@ import { CodemirrorActionsService } from 'src/app/_protected/pages/create/hyper-
 export class MachineLearningEditRequestComponent implements OnInit {
 
   train: boolean = false;
-  hlReady: boolean = false;
-  hlModel: HlModel;
+  ready: boolean = false;
+  model: HlModel;
 
   constructor(
     private generalService: GeneralService,
@@ -32,19 +32,17 @@ export class MachineLearningEditRequestComponent implements OnInit {
 
   ngOnInit() {
 
-    // Checking if training snippet is Hyperlambda, at which point we display CodeMirror editor for content.
-    if (this.data.type === 'hl') {
-      const res = this.codemirrorActionsService.getActions(null, 'hl');
+    // Checking if we have a registered CodeMirror editor for type.
+    const res = this.codemirrorActionsService.getActions(null, this.data.type);
+    if (res) {
       res.autofocus = false;
-      this.hlModel = {
+      this.model = {
         hyperlambda: this.data.completion,
         options: res,
       }
       setTimeout(() => {
-        this.hlReady = true;
+        this.ready = true;
       }, 500);
-    } else {
-      this.hlReady = false;
     }
   }
 
@@ -55,7 +53,7 @@ export class MachineLearningEditRequestComponent implements OnInit {
       // Creating training data before we save request.
       this.machineLearningTrainingService.ml_training_snippets_create({
         prompt: this.data.prompt,
-        completion: this.data.type === 'hl' ? this.hlModel.hyperlambda : this.data.completion,
+        completion: this.ready ? this.model.hyperlambda : this.data.completion,
         type: this.data.type,
       }).subscribe({
         next: () => {
@@ -67,7 +65,7 @@ export class MachineLearningEditRequestComponent implements OnInit {
           this.generalService.hideLoading();
           this.generalService.showFeedback('Something went wrong as we tried to create training data', 'errorMessage');
         }
-  });
+      });
 
     } else {
 
@@ -84,7 +82,7 @@ export class MachineLearningEditRequestComponent implements OnInit {
     this.dialogRef.close({
       id: this.data.id,
       prompt: this.data.prompt,
-      completion: this.data.type === 'hl' ? this.hlModel.hyperlambda : this.data.completion,
+      completion: this.ready ? this.model.hyperlambda : this.data.completion,
       type: this.data.type,
     });
   }

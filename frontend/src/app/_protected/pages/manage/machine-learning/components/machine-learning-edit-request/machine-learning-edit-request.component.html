@@ -21,17 +21,17 @@
         autocomplete="off">
     </mat-form-field>
 
-    <!-- CodeMirror editor in case data is Hyperlambda -->
-    <div class="col-12 mt-2" *ngIf="hlReady">
+    <!-- CodeMirror editor in case data is code -->
+    <div class="col-12 mt-2" *ngIf="ready">
 
       <app-codemirror-hyperlambda
-        [(model)]="hlModel">
+        [(model)]="model">
       </app-codemirror-hyperlambda>
 
     </div>
 
-    <!-- Any other types of content besides Hyperlambda -->
-    <div class="col-12 mt-2 mb-0" *ngIf="data.type && data.type !== 'hl'">
+    <!-- Any other types of content besides code -->
+    <div class="col-12 mt-2 mb-0" *ngIf="!ready">
 
       <mat-form-field class="w-100 custom-alignment">
         <span

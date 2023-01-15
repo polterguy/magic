@@ -24,8 +24,8 @@ export class MachineLearningEditSnippetComponent implements OnInit {
   prompt: string;
   completion: string;
   pushed: boolean;
-  hlReady: boolean = false;
-  hlModel: HlModel;
+  ready: boolean = false;
+  model: HlModel;
 
   constructor(
     private dialogRef: MatDialogRef<MachineLearningEditSnippetComponent>,
@@ -52,7 +52,7 @@ export class MachineLearningEditSnippetComponent implements OnInit {
         if (!this.data?.type) {
 
           // Defaulting to first type we can find.
-          this.type = this.types[0];
+          this.type = this.types.pop();
         }
         this.typeChanged();
       },
@@ -66,19 +66,17 @@ export class MachineLearningEditSnippetComponent implements OnInit {
 
   typeChanged() {
 
-    // Checking if training snippet is Hyperlambda, at which point we display CodeMirror editor for content.
-    if (this.type === 'hl') {
-      const res = this.codemirrorActionsService.getActions(null, 'hl');
+    // Checking if we have a registered CodeMirror editor for type.
+    const res = this.codemirrorActionsService.getActions(null, this.type);
+    if (res) {
       res.autofocus = false;
-      this.hlModel = {
-        hyperlambda: this.completion,
+      this.model = {
+        hyperlambda: this.data.completion,
         options: res,
       }
       setTimeout(() => {
-        this.hlReady = true;
+        this.ready = true;
       }, 500);
-    } else {
-      this.hlReady = false;
     }
   }
 
@@ -86,7 +84,7 @@ export class MachineLearningEditSnippetComponent implements OnInit {
 
     const data: any = {
       prompt: this.prompt,
-      completion: this.type === 'hl' ? this.hlModel.hyperlambda : this.completion,
+      completion: this.ready ? this.model.hyperlambda : this.completion,
       type: this.type,
       pushed: this.pushed ? 1 : 0,
     };
