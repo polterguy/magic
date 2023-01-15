@@ -49,29 +49,6 @@
         <mat-form-field class="w-100 standalone-field">
           <span
             matPrefix
-            matTooltip="Max tokens"
-            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-            <mat-icon>timeline</mat-icon>
-            <span class="text-muted">|</span>
-          </span>
-          <input
-            matInput
-            placeholder="Max tokens"
-            type="number"
-            min="1"
-            max="8000"
-            [(ngModel)]="max_tokens"
-            name="max_tokens"
-            autocomplete="off">
-        </mat-form-field>
-
-      </div>
-
-      <div class="col-6">
-
-        <mat-form-field class="w-100 standalone-field">
-          <span
-            matPrefix
             matTooltip="Temperature"
             class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>opacity</mat-icon>
@@ -89,6 +66,29 @@
             autocomplete="off">
         </mat-form-field>
     
+      </div>
+
+      <div class="col-6">
+
+        <mat-form-field class="w-100 standalone-field">
+          <span
+            matPrefix
+            matTooltip="Max tokens"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>timeline</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            placeholder="Max tokens"
+            type="number"
+            min="1"
+            max="8000"
+            [(ngModel)]="max_tokens"
+            name="max_tokens"
+            autocomplete="off">
+        </mat-form-field>
+
       </div>
 
     </div>
@@ -160,7 +160,7 @@
       labelPosition="before"
       color="primary">Supervised</mat-checkbox>
 
-      <mat-checkbox
+    <mat-checkbox
       [(ngModel)]="cached"
       name="cached"
       class="me-2"

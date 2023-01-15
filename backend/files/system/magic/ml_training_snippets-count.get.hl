@@ -29,7 +29,7 @@ data.connect:[generic|magic]
          count(*)
             as:count
       where
-         or
+         and
       limit:long:1
 
    // Returning result of above read invocation to caller.
