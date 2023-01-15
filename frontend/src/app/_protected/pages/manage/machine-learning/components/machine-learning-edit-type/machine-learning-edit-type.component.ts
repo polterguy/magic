@@ -17,8 +17,7 @@ import { CommonRegEx } from 'src/app/_general/classes/common-regex';
  */
 @Component({
   selector: 'app-machine-learning-edit-type',
-  templateUrl: './machine-learning-edit-type.component.html',
-  styleUrls: ['./machine-learning-edit-type.component.scss']
+  templateUrl: './machine-learning-edit-type.component.html'
 })
 export class MachineLearningEditTypeComponent implements OnInit {
 
@@ -69,11 +68,11 @@ export class MachineLearningEditTypeComponent implements OnInit {
     
             this.models = models;
             this.models.sort((lhs: OpenAIModel, rhs: OpenAIModel) => {
-              if (lhs.created < rhs.created) {
-                return 1;
-              }
-              if (lhs.created > rhs.created) {
+              if (lhs.id < rhs.id) {
                 return -1;
+              }
+              if (lhs.id > rhs.id) {
+                return 1;
               }
               return 0;
             });
