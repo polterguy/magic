@@ -1,5 +1,7 @@
 
-<h3 mat-dialog-title class="mb-3">Training snippet</h3>
+<h3 mat-dialog-title class="mb-3">
+  {{data.prompt ? 'Edit training snippet' : 'New training snippet'}}
+</h3>
 
 <form (ngSubmit)="save()">
   <div mat-dialog-content>
