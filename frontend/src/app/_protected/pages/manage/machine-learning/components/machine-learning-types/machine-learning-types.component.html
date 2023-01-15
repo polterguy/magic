@@ -72,54 +72,37 @@
           class="w-100 borderless hoverable"
           (matSortChange)="sortData($event)">
 
-          <!-- Type column -->
-          <ng-container matColumnDef="type">
-            <th
-              mat-header-cell
-              *matHeaderCellDef
-              class="text-nowrap px-sm-3"
-              mat-sort-header>
-              Type
-            </th>
-            <td
-              mat-cell
-              *matCellDef="let element"
-              class="text-truncate px-sm-3">
-              {{element.type}}
-            </td>
-          </ng-container>
-
           <!-- Model column -->
           <ng-container matColumnDef="model">
             <th
               mat-header-cell
               *matHeaderCellDef
-              class="pe-sm-3 text-nowrap small-table-column"
+              class="text-nowrap px-sm-3"
               mat-sort-header>
               Model
             </th>
             <td
               mat-cell
               *matCellDef="let element"
-              class="pe-sm-3 text-nowrap small-table-column">
+              class="text-truncate px-sm-3">
               {{element.model}}
             </td>
           </ng-container>
 
-          <!-- Auth column -->
-          <ng-container matColumnDef="auth">
+          <!-- Type column -->
+          <ng-container matColumnDef="type">
             <th
               mat-header-cell
               *matHeaderCellDef
-              class="pe-sm-3 small-table-column"
+              class="pe-sm-3 text-nowrap small-table-column"
               mat-sort-header>
-              Auth
+              Type
             </th>
             <td
               mat-cell
               *matCellDef="let element"
-              class="pe-sm-3 small-table-column">
-              {{element.auth}}
+              class="pe-sm-3 text-nowrap small-table-column">
+              {{element.type}}
             </td>
           </ng-container>
 
@@ -182,6 +165,14 @@
       </div>
 
     </div>
+
+    <!-- Pager -->
+    <mat-paginator
+      [length]="count"
+      [pageIndex]="filter.offset / filter.limit"
+      [pageSize]="filter.limit"
+      (page)="page($event)">
+    </mat-paginator>
 
   </div>
 
