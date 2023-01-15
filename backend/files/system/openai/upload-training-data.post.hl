@@ -115,5 +115,8 @@ data.connect:[generic|magic]
             completion:x:@.dp/#/*/{@.arguments/*/completion}
 
 // Returning success to caller.
+get-count:x:@.file-data/*
+unwrap:x:+/*
 return
    result:success
+   count:x:@get-count

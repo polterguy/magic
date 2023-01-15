@@ -122,6 +122,13 @@ export class MachineLearningTypesComponent implements OnInit {
         width: '80vw',
         maxWidth: '850px',
         data: el,
+      }).afterClosed()
+      .subscribe((result: { train: boolean }) =>{
+
+        if (result?.train) {
+
+          this.train(el);
+        }
       });
   }
 

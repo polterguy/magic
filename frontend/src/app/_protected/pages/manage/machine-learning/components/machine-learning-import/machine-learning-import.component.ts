@@ -4,7 +4,7 @@
  */
 
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { OpenAIService } from 'src/app/_general/services/openai.service';
 
@@ -26,6 +26,7 @@ export class MachineLearningImportComponent {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
+    private matDialog: MatDialogRef<MachineLearningImportComponent>,
     private generalService: GeneralService,
     private openAIService: OpenAIService) { }
 
@@ -54,13 +55,17 @@ export class MachineLearningImportComponent {
     formData.append('completion', this.completion);
 
     this.openAIService.uploadTrainingFile(formData).subscribe({
-      next: () => {
+      next: (result: any) => {
 
         this.uploading = false;
-        this.generalService.showFeedback('Training data successfully uploaded', 'successMessage');
+        this.generalService.showFeedback(`${result.count} training snippets successfully uploaded`, 'successMessage');
 
         // Giving user some time to register feedback.
-        setTimeout(() => this.trainingFileModel = '', 2000);
+        setTimeout(() => {
+
+          this.trainingFileModel = '';
+          this.matDialog.close({ train: true });
+        }, 1000);
       },
       error: (error: any) => {
 
