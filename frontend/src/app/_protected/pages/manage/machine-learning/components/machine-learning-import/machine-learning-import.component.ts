@@ -52,7 +52,9 @@ export class MachineLearningImportComponent implements OnInit {
       },
       error: (error: any) => {
 
-        this.generalService.showFeedback(error, 'errorMessage', 'Ok');
+        this.uploading = false;
+        this.trainingFileModel = '';
+        this.generalService.showFeedback(error?.error?.message, 'errorMessage', 'Ok');
         this.generalService.hideLoading();
       }
     });
