@@ -10,14 +10,40 @@
 
     <div class="row">
 
+      <div class="col-12">
+
+        <mat-form-field class="w-100 standalone-field">
+          <span
+            matPrefix
+            matTooltip="Base model to train from"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>help_outline</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <mat-select
+            [(ngModel)]="model"
+            placeholder="Base model"
+            name="model">
+            <mat-option
+              *ngFor="let idx of models"
+              [value]="idx">{{idx.id}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+    
+      </div>
+
+    </div>
+
+    <div class="row">
+
       <div class="col-6">
 
         <mat-form-field class="w-100 standalone-field">
           <span
             matPrefix
-            matTooltip="Epochs"
+            matTooltip="Epochs or full cycles through the training set"
             class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-            <mat-icon>list</mat-icon>
+            <mat-icon>autorenew</mat-icon>
             <span class="text-muted">|</span>
           </span>
           <input
@@ -25,8 +51,10 @@
             placeholder="Epochs"
             [disabled]="count === 0"
             [(ngModel)]="epochs"
+            type="number"
             min="1"
             max="10"
+            step="1"
             name="epochs"
             autocomplete="off">
         </mat-form-field>
@@ -38,9 +66,9 @@
         <mat-form-field class="w-100 standalone-field">
           <span
             matPrefix
-            matTooltip="Batch size"
+            matTooltip="Batch size or training examples used during a forward and backward pass"
             class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-            <mat-icon>list</mat-icon>
+            <mat-icon>swap_horiz</mat-icon>
             <span class="text-muted">|</span>
           </span>
           <input
@@ -48,12 +76,68 @@
             placeholder="Batch size"
             [disabled]="count === 0"
             [(ngModel)]="batch_size"
+            type="number"
             min="1"
             max="256"
+            step="1"
             name="batch_size"
             autocomplete="off">
         </mat-form-field>
     
+      </div>
+
+    </div>
+
+    <div class="row">
+
+      <div class="col-6">
+
+        <mat-form-field class="w-100 standalone-field">
+          <span
+            matPrefix
+            matTooltip="Learning rate multiplier"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>timeline</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            placeholder="Learning rate multiplier"
+            [disabled]="count === 0"
+            [(ngModel)]="learning_rate_multiplier"
+            type="number"
+            min="0"
+            max="1"
+            step="0.01"
+            name="learning_rate_multiplier"
+            autocomplete="off">
+        </mat-form-field>
+
+      </div>
+
+      <div class="col-6">
+
+        <mat-form-field class="w-100 standalone-field">
+          <span
+            matPrefix
+            matTooltip="Prompt loss weight"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>trending_down</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            placeholder="Prompt loss weight"
+            [disabled]="count === 0"
+            [(ngModel)]="prompt_loss_weight"
+            type="number"
+            min="0"
+            max="1"
+            step="0.01"
+            name="prompt_loss_weight"
+            autocomplete="off">
+        </mat-form-field>
+
       </div>
 
     </div>
