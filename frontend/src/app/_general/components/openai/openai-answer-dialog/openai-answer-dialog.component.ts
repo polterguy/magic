@@ -65,6 +65,7 @@ export class OpenAIAnswerDialogComponent implements OnInit {
     private clipBoard: Clipboard) { }
 
   ngOnInit() {
+
     this.options = this.codemirrorActionsService.getActions(null, this.data.fileType);
     setTimeout(() => {
       this.cmReady = true;
@@ -72,11 +73,13 @@ export class OpenAIAnswerDialogComponent implements OnInit {
   }
 
   callbackInvoked() {
+
     this.data.callback.emit(this.data.snippet);
     this.dialog.close();
   }
 
   copy() {
+
     this.clipBoard.copy(this.data.snippet);
     this.generalService.showFeedback('Content can be found on your clipboard');
   }
