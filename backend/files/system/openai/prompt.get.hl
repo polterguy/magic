@@ -39,10 +39,34 @@ data.connect:[generic|magic]
       not-exists:x:@data.read/*/*
       .lambda
 
-         // Oops, no such type.
-         throw:No such type
-            status:int:400
-            public:bool:true
+         // Oops, no such type, making sure we try default type.
+         data.read
+            table:ml_types
+            columns
+               model
+               max_tokens
+               temperature
+               recaptcha
+               auth
+               supervised
+               cached
+            where
+               and
+                  type.eq:default
+         if
+            not-exists:x:@data.read/*
+            .lambda
+
+               // Default type doesn't exist, nothing to do here.
+               throw:No such type
+                  status:int:400
+                  public:bool:true
+
+         // Resorting to default type.
+         add:x:@.lambda/@data.read
+            get-nodes:x:@data.read/*
+         set-value:x:@.arguments/*/type
+            .:default
 
    // Checking if model requires authentication and authorisation.
    if
