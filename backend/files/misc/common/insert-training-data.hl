@@ -5,105 +5,29 @@ try
    // Connecting to Magic database.
    data.connect:[generic|magic]
 
-      // Creating default code models.
+      // Creating default Hyperlambda model.
       data.create
          table:ml_types
          values
             type:hl
             model:curie
-            max_tokens:int:2000
+            max_tokens:int:4000
             temperature:decimal:0.1
+            supervised:int:1
+            cached:int:1
+            auth:root
+
+      // Creating default generic model.
       data.create
          table:ml_types
          values
-            type:py
-            model:code-davinci-002
-            max_tokens:int:2000
+            type:default
+            model:text-davinci-003
+            max_tokens:int:4000
             temperature:decimal:0.1
-      data.create
-         table:ml_types
-         values
-            type:js
-            model:code-davinci-002
-            max_tokens:int:2000
-            temperature:decimal:0.1
-      data.create
-         table:ml_types
-         values
-            type:html
-            model:code-davinci-002
-            max_tokens:int:2000
-            temperature:decimal:0.1
-      data.create
-         table:ml_types
-         values
-            type:css
-            model:code-davinci-002
-            max_tokens:int:2000
-            temperature:decimal:0.1
-      data.create
-         table:ml_types
-         values
-            type:rb
-            model:code-davinci-002
-            max_tokens:int:2000
-            temperature:decimal:0.1
-      data.create
-         table:ml_types
-         values
-            type:php
-            model:code-davinci-002
-            max_tokens:int:2000
-            temperature:decimal:0.1
-      data.create
-         table:ml_types
-         values
-            type:sql
-            model:code-davinci-002
-            max_tokens:int:2000
-            temperature:decimal:0.1
-      data.create
-         table:ml_types
-         values
-            type:yaml
-            model:code-davinci-002
-            max_tokens:int:2000
-            temperature:decimal:0.1
-      data.create
-         table:ml_types
-         values
-            type:xml
-            model:code-davinci-002
-            max_tokens:int:2000
-            temperature:decimal:0.1
-      data.create
-         table:ml_types
-         values
-            type:scss
-            model:code-davinci-002
-            max_tokens:int:2000
-            temperature:decimal:0.1
-      data.create
-         table:ml_types
-         values
-            type:ts
-            model:code-davinci-002
-            max_tokens:int:2000
-            temperature:decimal:0.1
-      data.create
-         table:ml_types
-         values
-            type:json
-            model:code-davinci-002
-            max_tokens:int:2000
-            temperature:decimal:0.1
-      data.create
-         table:ml_types
-         values
-            type:sh
-            model:code-davinci-002
-            max_tokens:int:2000
-            temperature:decimal:0.1
+            supervised:int:1
+            cached:int:1
+            auth:root
 
       /*
        * No training snippets found, hence inserting into database.
