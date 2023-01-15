@@ -42,7 +42,6 @@ export class MachineLearningSnippetsComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     private generalService: GeneralService,
-    private openAIService: OpenAIService,
     private machineLearningTrainingService: MachineLearningTrainingService) { }
 
   ngOnInit() {

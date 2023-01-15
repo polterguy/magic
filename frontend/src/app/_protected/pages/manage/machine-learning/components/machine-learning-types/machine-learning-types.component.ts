@@ -5,6 +5,8 @@
 
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { PageEvent } from '@angular/material/paginator';
+import { Count } from 'src/app/models/count.model';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { OpenAIConfigurationDialogComponent } from 'src/app/_general/components/openai/openai-configuration-dialog/openai-configuration-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
@@ -29,14 +31,15 @@ export class MachineLearningTypesComponent implements OnInit {
   @Input() isConfigured: boolean = false;
   @Output() isConfiguredChange = new EventEmitter<boolean>();
 
+  count: number = 0;
   filter: any = {
-    limit: -1,
+    limit: 10,
+    offset: 0,
   };
   isLoadingKey: boolean = false;
   displayedColumns: string[] = [
-    'type',
     'model',
-    'auth',
+    'type',
     'action',
   ];
   types: any[] = null;
@@ -51,6 +54,12 @@ export class MachineLearningTypesComponent implements OnInit {
 
     this.isLoadingKey = true;
     this.getConfiguredStatus();
+  }
+
+  page(event: PageEvent) {
+
+    this.filter.offset = event.pageIndex * event.pageSize;
+    this.getModels(false);
   }
 
   sortData(e: any) {
@@ -245,14 +254,36 @@ export class MachineLearningTypesComponent implements OnInit {
    * Private helper methods.
    */
 
-  private getModels() {
+  private getModels(count: boolean = true) {
 
     this.generalService.showLoading();
     this.machineLearningTrainingService.ml_types(this.filter).subscribe({
       next: (types: any[]) => {
 
         this.types = types || [];
-        this.generalService.hideLoading();
+        if (!count) {
+          this.generalService.hideLoading();
+          return;
+        }
+
+        const countFilter: any = {};
+        for (const idx in this.filter) {
+          if (idx !== 'limit' && idx !== 'offset' && idx !== 'order' && idx !== 'direction') {
+            countFilter[idx] = this.filter[idx];
+          }
+        }
+        this.machineLearningTrainingService.ml_types_count(countFilter).subscribe({
+          next: (result: Count) => {
+
+            this.count = result.count;
+            this.generalService.hideLoading();
+          },
+          error: (error: any) => {
+
+            this.generalService.showFeedback(error, 'errorMessage', 'Ok');
+            this.generalService.hideLoading();
+          }
+        });
       },
       error: (error: any) => {
 

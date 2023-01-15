@@ -57,10 +57,17 @@ export class MachineLearningTrainingService {
   }
 
   /**
-   * Returns all distinct types of training snippets from your backend.
+   * Returns all types from your backend.
    */
   ml_types(filter?: any) {
     return this.httpService.get<any[]>('/magic/system/magic/ml_types' + this.getQueryArgs(filter));
+  }
+
+  /**
+   * Counts all types from your backend.
+   */
+  ml_types_count(filter?: any) {
+    return this.httpService.get<Count>('/magic/system/magic/ml_types-count' + this.getQueryArgs(filter));
   }
 
   /**
