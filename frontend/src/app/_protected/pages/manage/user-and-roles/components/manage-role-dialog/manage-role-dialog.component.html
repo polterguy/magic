@@ -1,3 +1,4 @@
+
 <form [formGroup]="roleForm">
 
   <ng-container *ngIf="data.action === 'edit';else newRole">
@@ -11,12 +12,19 @@
   <div mat-dialog-content>
 
     <mat-form-field class="w-100">
-      <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+      <span
+        matPrefix
+        class="d-flex flex-nowrap align-items-center justify-content-between me-2">
         <mat-icon>shield</mat-icon>
         <span class="text-muted">|</span>
       </span>
-
-      <input matInput type="text" name="-" autocomplete="off" placeholder="Name" formControlName="name"
+      <input
+        matInput
+        type="text"
+        name="-"
+        autocomplete="off"
+        placeholder="Name"
+        formControlName="name"
         [readonly]="data.action === 'edit'" />
       <mat-error>{{CommonErrorMessages.appNameWithUppercaseHyphen}}</mat-error>
     </mat-form-field>

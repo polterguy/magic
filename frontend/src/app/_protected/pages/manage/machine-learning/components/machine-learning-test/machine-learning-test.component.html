@@ -1,21 +1,5 @@
 <div mat-dialog-content>
 
-  <!-- CodeMirror editor in case data is Hyperlambda -->
-  <div class="col-12 mb-3" *ngIf="hlReady">
-
-    <app-codemirror-hyperlambda
-      [(model)]="hlModel">
-    </app-codemirror-hyperlambda>
-
-  </div>
-
-  <!-- Everything BUT Hyperlambda -->
-  <div
-    *ngIf="data.type !== 'hl'"
-    class="result mb-3 p-3"
-    [innerHTML]="completion | marked">
-  </div>
-
   <form (ngSubmit)="submit()" class="d-flex justify-content-md-between align-items-md-center align-items-end flex-md-row flex-column-reverse w-100">
 
     <mat-form-field class="w-100 standalone-field">
@@ -51,5 +35,31 @@
     </button>
 
   </form>
+
+  <!-- CodeMirror editor in case data is Hyperlambda -->
+  <div class="col-12 mt-3" *ngIf="ready">
+
+    <app-codemirror-hyperlambda
+      [(model)]="model">
+    </app-codemirror-hyperlambda>
+
+  </div>
+
+  <!-- Everything BUT Hyperlambda -->
+  <mat-form-field *ngIf="!ready" class="w-100 mt-3 custom-alignment">
+    <span
+      matPrefix
+      matTooltip="Completion"
+      class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+      <mat-icon>edit</mat-icon>
+      <span class="text-muted">|</span>
+    </span>
+    <textarea
+      matInput
+      placeholder="Completion"
+      [(ngModel)]="completion"
+      rows="20">
+    </textarea>
+  </mat-form-field>
 
 </div>

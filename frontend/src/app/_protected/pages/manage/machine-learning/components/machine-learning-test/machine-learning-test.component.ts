@@ -15,16 +15,15 @@ import { CodemirrorActionsService } from 'src/app/_protected/pages/create/hyper-
  */
 @Component({
   selector: 'app-machine-learning-test',
-  templateUrl: './machine-learning-test.component.html',
-  styleUrls: ['./machine-learning-test.component.scss']
+  templateUrl: './machine-learning-test.component.html'
 })
 export class MachineLearningTestComponent implements OnInit {
 
   prompt: string = '';
   completion: string = 'Result ...';
   isLoading: boolean = false;
-  hlReady: boolean = false;
-  hlModel: HlModel;
+  ready: boolean = false;
+  model: HlModel;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -34,19 +33,17 @@ export class MachineLearningTestComponent implements OnInit {
 
   ngOnInit() {
 
-    // Checking if training snippet is Hyperlambda, at which point we display CodeMirror editor for content.
-    if (this.data.type === 'hl') {
-      const res = this.codemirrorActionsService.getActions(null, 'hl');
+    // Checking if we have a registered CodeMirror editor for type.
+    const res = this.codemirrorActionsService.getActions(null, this.data.type);
+    if (res) {
       res.autofocus = false;
-      this.hlModel = {
+      this.model = {
         hyperlambda: this.data.completion,
         options: res,
       }
       setTimeout(() => {
-        this.hlReady = true;
+        this.ready = true;
       }, 500);
-    } else {
-      this.hlReady = false;
     }
   }
 
@@ -60,8 +57,8 @@ export class MachineLearningTestComponent implements OnInit {
         this.generalService.hideLoading();
         this.isLoading = false;
         this.completion = result.result;
-        if (this.hlModel) {
-          this.hlModel.hyperlambda = result.result;
+        if (this.model) {
+          this.model.hyperlambda = result.result;
         }
         setTimeout(() => {
           const el = <any>document.getElementsByName('prompt')[0];
