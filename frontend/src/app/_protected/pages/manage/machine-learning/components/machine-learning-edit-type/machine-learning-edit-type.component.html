@@ -36,9 +36,20 @@
         [(ngModel)]="model"
         placeholder="Model to use"
         name="model">
+        <mat-select-trigger>
+          {{model?.id}}
+        </mat-select-trigger>
         <mat-option
+          class="multiline-mat-option"
           *ngFor="let idx of models"
-          [value]="idx">{{idx.id}}</mat-option>
+          [value]="idx">
+          <span class="d-block name-line" #typeName>
+            {{idx.id}}
+          </span>
+          <span class="d-block description-line">
+            Owned by {{idx.owned_by}}
+          </span>
+        </mat-option>
       </mat-select>
     </mat-form-field>
 
