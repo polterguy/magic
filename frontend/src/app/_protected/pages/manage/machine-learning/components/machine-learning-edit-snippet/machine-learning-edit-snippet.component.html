@@ -42,6 +42,7 @@
           <mat-select
             [(ngModel)]="type"
             placeholder="Type of snippet"
+            [disabled]="data?.prompt"
             (selectionChange)="typeChanged()"
             name="type">
             <mat-option
