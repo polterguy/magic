@@ -3,7 +3,7 @@
  * Copyright (c) Aista Ltd, 2021 - 2023 info@aista.com, all rights reserved.
  */
 
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { OpenAIService } from 'src/app/_general/services/openai.service';
@@ -16,17 +16,27 @@ import { OpenAIService } from 'src/app/_general/services/openai.service';
   templateUrl: './machine-learning-import.component.html',
   styleUrls: ['./machine-learning-import.component.scss']
 })
-export class MachineLearningImportComponent implements OnInit {
+export class MachineLearningImportComponent {
 
   uploading: boolean = false;
   trainingFileModel: string = '';
+  url: string = null;
+  prompt: string = 'prompt';
+  completion: string = 'completion';
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private generalService: GeneralService,
-    private openAIService: OpenAIService,) { }
+    private openAIService: OpenAIService) { }
 
-  ngOnInit() {
+  importUrl() {
+
+    console.log(this.url);
+    setTimeout(() => {
+      const el = <any>document.getElementsByName('url')[0];
+      el.select();
+      el.focus();
+    }, 250);
   }
 
   getFile(event: any) {
@@ -38,8 +48,10 @@ export class MachineLearningImportComponent implements OnInit {
     this.uploading = true;
 
     const formData = new FormData();
-    formData.append("file", event.target.files[0], event.target.files[0].name);
-    formData.append("type", this.data.type);
+    formData.append('file', event.target.files[0], event.target.files[0].name);
+    formData.append('type', this.data.type);
+    formData.append('prompt', this.prompt);
+    formData.append('completion', this.completion);
 
     this.openAIService.uploadTrainingFile(formData).subscribe({
       next: () => {
