@@ -7,8 +7,6 @@ create table ml_types(
   primary key (type)
 );
 
-insert into ml_types(type, model, max_tokens, temperature) values ('hl', 'curie', 2000, 0.1);
-
 create table ml_training_snippets(
   "id" serial not null,
   "created" timestamptz not null default now(),
