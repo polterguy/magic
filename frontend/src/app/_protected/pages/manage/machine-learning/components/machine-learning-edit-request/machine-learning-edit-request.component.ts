@@ -55,7 +55,7 @@ export class MachineLearningEditRequestComponent implements OnInit {
       // Creating training data before we save request.
       this.machineLearningTrainingService.ml_training_snippets_create({
         prompt: this.data.prompt,
-        completion: this.data.completion,
+        completion: this.data.type === 'hl' ? this.hlModel.hyperlambda : this.data.completion,
         type: this.data.type,
       }).subscribe({
         next: () => {
