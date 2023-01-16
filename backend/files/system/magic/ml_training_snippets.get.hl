@@ -1,5 +1,5 @@
 
-// CRUD read endpoint with paging, sorting, filtering selecting records from your ml_training_snippets table in your magic database returning id, created, type, pushed, uri, prompt, completion filtering on id, created, type, pushed, uri, prompt, completion with authentication and authorisation for root,admin roles
+// CRUD read endpoint with paging, sorting, filtering selecting records from your ml_training_snippets table in your magic database returning id, created, type, pushed, uri, prompt, completion filtering on id, created, type, pushed, uri, prompt, completion with authentication and authorisation for root roles
 .arguments
    limit:long
    offset:long
@@ -15,7 +15,7 @@
    ml_training_snippets.prompt.eq:string
    ml_training_snippets.completion.like:string
    ml_training_snippets.completion.eq:string
-.description:CRUD read endpoint with paging, sorting, filtering selecting records from your ml_training_snippets table in your magic database returning id, created, type, pushed, uri, prompt, completion filtering on id, created, type, pushed, uri, prompt, completion with authentication and authorisation for root,admin roles
+.description:CRUD read endpoint with paging, sorting, filtering selecting records from your ml_training_snippets table in your magic database returning id, created, type, pushed, uri, prompt, completion filtering on id, created, type, pushed, uri, prompt, completion with authentication and authorisation for root roles
 .type:crud-read
 
 // Verifying user is authorized to access endpoint.
