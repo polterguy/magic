@@ -20,7 +20,7 @@ validators.mandatory:x:@.arguments/*/type
 validators.mandatory:x:@.arguments/*/delay
 validators.integer:x:@.arguments/*/delay
    min:500
-   max:300000
+   max:30000
 validators.mandatory:x:@.arguments/*/max
 validators.integer:x:@.arguments/*/max
    min:1
