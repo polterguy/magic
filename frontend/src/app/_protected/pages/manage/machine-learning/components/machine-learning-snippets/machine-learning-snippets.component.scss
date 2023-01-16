@@ -14,18 +14,16 @@
 
   tr.expanded-row {
     height: 0 !important;
-    display: none;
 
-    &.expanded {
-      display: table-row;
+    td.hidden {
+      display: none !important;
+    }
+    td.visible {
+      display: table-cell !important;
+    }
 
-      .formatted {
-        white-space: pre-wrap;
-      }
-
-      .text-small {
-        font-size: 10px;
-      }
+    .formatted {
+      white-space: pre-wrap;
     }
 
     &:hover {
@@ -59,18 +57,4 @@
 
 a {
   text-decoration: none;
-}
-
-.drop-container {
-  position: relative;
-  height: 100px;
-  border-style: dashed;
-  border-width: 1px;
-  border-radius: $aista_radius;
-  border-color: $aista_primary;
-  background-color: $aista_default_alt;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
 }
