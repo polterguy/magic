@@ -81,11 +81,4 @@ export class OpenAIService {
   start_training(data: any) {
     return this.httpService.post<Response>('/magic/system/openai/train', data);
   }
-
-  /**
-   * Returns all training sessions to calller.
-   */
-  get_training_status() {
-    return this.httpService.get<any[]>('/magic/system/openai/training-sessions');
-  }
 }
