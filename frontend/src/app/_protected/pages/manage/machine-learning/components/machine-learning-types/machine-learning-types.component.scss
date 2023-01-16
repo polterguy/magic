@@ -30,3 +30,15 @@
     background-color: $aista_success;
   }
 }
+
+.obscurer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 10000;
+  background-color: rgba(0,0,0,.8);
+  color: white;
+  overflow-y: auto;
+}

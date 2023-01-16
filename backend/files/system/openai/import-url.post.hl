@@ -15,10 +15,15 @@ validators.mandatory:x:@.arguments/*/url
 validators.url:x:@.arguments/*/url
 validators.mandatory:x:@.arguments/*/type
 
-// Retrieving URL's content
+// Doing some basic logging.
+log.info:Crawling URL generating OpenAI training snippets
+   url:x:@.arguments/*/url
+   type:x:@.arguments/*/type
+
+// Retrieving URL's content.
 http.get:x:@.arguments/*/url
 
-// Sanity checking above invocation
+// Sanity checking above invocation.
 if
    not
       and
@@ -31,10 +36,11 @@ if
       // Oops, error - Logging error and returning status 500 to caller.
       lambda2hyper:x:@http.get
       log.error:Something went wrong while trying to import URL
+         url:x:@.arguments/*/url
          error:x:@lambda2hyper
-      response.status.set:500
       return
          message:Something went wrong while trying to import URL
+         count:int:0
 
 // Making sure URL returned HTML.
 if
@@ -48,12 +54,25 @@ if
       log.error:URL did not return HTML content
          content:x:@lambda2hyper
          url:x:@.arguments/*/url
-      response.status.set:400
+      response.status.set:200
       return
          message:URL did not return HTML content
+         count:int:0
 
 // Converting HTML to lambda.
 html2lambda:x:@http.get/*/content
+
+// Figuring out base URL, such that we can correctly return hyperlinks to caller.
+.base
+strings.split:x:@.arguments/*/url
+   .:"://"
+strings.split:x:@strings.split/1
+   .:/
+set-value:x:@.base
+   strings.concat
+      get-value:x:@strings.split/@strings.split/0
+      .:"://"
+      get-value:x:@strings.split/0
 
 // Buffer for training snippets.
 .snippets
@@ -86,10 +105,11 @@ for-each:x:@html2lambda/*/html/*/body/**
                // Local URL.
                strings.split:x:@.dp/#/*/\@href
                   .:#
+               strings.trim-end:x:@strings.split/0
+                  .:/
                strings.concat
-                  strings.trim-end:x:@.arguments/*/url
-                     .:/
-                  get-value:x:@strings.split/0
+                  get-value:x:@.base
+                  get-value:x:@strings.trim-end
                if
                   not-exists:x:@.url/*/{@strings.concat}
                   .lambda

@@ -6,6 +6,7 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
+import { bufferCount, concatMap, forkJoin, from } from 'rxjs';
 import { Count } from 'src/app/models/count.model';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { OpenAIConfigurationDialogComponent } from 'src/app/_general/components/openai/openai-configuration-dialog/openai-configuration-dialog.component';
@@ -31,6 +32,7 @@ export class MachineLearningTypesComponent implements OnInit {
   @Input() isConfigured: boolean = false;
   @Output() isConfiguredChange = new EventEmitter<boolean>();
 
+  importing: boolean = false;
   count: number = 0;
   filter: any = {
     limit: 10,
@@ -43,6 +45,7 @@ export class MachineLearningTypesComponent implements OnInit {
     'action',
   ];
   types: any[] = null;
+  seenUrls: string[] = [];
 
   constructor(
     private dialog: MatDialog,
@@ -132,11 +135,14 @@ export class MachineLearningTypesComponent implements OnInit {
         maxWidth: '850px',
         data: el,
       }).afterClosed()
-      .subscribe((result: { train: boolean }) =>{
+      .subscribe((result: { train: boolean, crawl: string }) =>{
 
-        if (result?.train) {
+        if (result?.crawl) {
 
-          //this.train(el);
+          this.generalService.showLoading();
+          this.importing = true;
+          this.seenUrls = [];
+          this.crawl([result.crawl], el.type);
         }
       });
   }
@@ -313,5 +319,35 @@ export class MachineLearningTypesComponent implements OnInit {
         this.generalService.hideLoading();
       }
     });
+  }
+
+  private crawl(urls: string[], type: string) {
+
+    const upcoming = urls.filter(x => !this.seenUrls.includes(x));
+
+    const observables = upcoming.map((url: string) => {
+      return this.openAIService.importUrl(url, type);
+    });
+    this.seenUrls.push(...upcoming);
+
+    from(observables)
+      .pipe(bufferCount(4),
+        concatMap((result: any) => forkJoin(result))).subscribe({
+          next: (results: any[]) => {
+            const toBe = [];
+            for (const idx of results) {
+              if (idx.urls) {
+                toBe.push(...idx.urls.filter(x => !toBe.includes(x)));
+              }
+            }
+            this.crawl(toBe, type);
+          },
+          error: (error: any) => {
+
+            console.log(error);
+          },
+          complete: () => {
+          },
+        });
   }
 }
