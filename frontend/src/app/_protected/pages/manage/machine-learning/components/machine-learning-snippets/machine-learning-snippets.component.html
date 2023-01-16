@@ -122,9 +122,7 @@
             *matCellDef="let el"
             colspan="4">
             <div [@detailExpand]="el === expandedElement ? 'expanded' : 'collapsed'">
-              <div class="text-muted py-3 formatted">
-                {{el.completion}}
-              </div>
+              <div class="text-muted py-3 formatted">{{el.completion}}</div>
             </div>
           </td>
         </ng-container>

@@ -58,6 +58,9 @@ html2lambda:x:@http.get/*/content
 // Buffer for training snippets.
 .snippets
 
+// Buffer for URLs found in document.
+.urls
+
 // Temp buffer for completion
 .tmp-completion:
 
@@ -67,6 +70,52 @@ for-each:x:@html2lambda/*/html/*/body/**
    // Checking if this is a tag we need to handle.
    get-name:x:@.dp/#
    switch:x:@get-name
+
+      // Checking if this is a hyperlink.
+      case:a
+
+         // Checking if it's a 'local' URL, implying within the same domain as we're currently scraping.
+         if
+            and
+               exists:x:@.dp/#/*/\@href
+               not-null:x:@.dp/#/*/\@href
+               strings.starts-with:x:@.dp/#/*/\@href
+                  .:/
+            .lambda
+
+               // Local URL.
+               strings.split:x:@.dp/#/*/\@href
+                  .:#
+               strings.concat
+                  strings.trim-end:x:@.arguments/*/url
+                     .:/
+                  get-value:x:@strings.split/0
+               if
+                  not-exists:x:@.url/*/{@strings.concat}
+                  .lambda
+                     unwrap:x:+/*/*
+                     add:x:@.urls
+                        .
+                           .:x:@strings.concat
+
+         else-if
+            and
+               exists:x:@.dp/#/*/\@href
+               not-null:x:@.dp/#/*/\@href
+               strings.starts-with:x:@.dp/#/*/\@href
+                  get-value:x:@.arguments/*/url
+            .lambda
+
+               // Absolute URL but still within base URL we're currently crawling.
+               strings.split:x:@.dp/#/*/\@href
+                  .:#
+               if
+                  not-exists:x:@.urls/*/{@strings.split/0}
+                  .lambda
+                     unwrap:x:+/*/*
+                     add:x:@.urls
+                        .
+                           .:x:@strings.split/0
 
       // Headers becomes prompts.
       case:h1
@@ -259,17 +308,29 @@ data.connect:[generic|magic]
                .:
          .lambda
          
+            .prompt
+            set-value:x:@.prompt
+               strings.trim:x:@.dp/#/*/prompt
+                  .:" \r\n\t"
+            .completion
+            set-value:x:@.completion
+               strings.trim:x:@.dp/#/*/completion
+                  .:" \r\n\t"
+         
             // Inserting prompt and completion into database.
             data.create
                table:ml_training_snippets
                values
-                  prompt:x:@.dp/#/*/prompt
-                  completion:x:@.dp/#/*/completion
+                  prompt:x:@.prompt
+                  completion:x:@.completion
                   type:x:@.arguments/*/type
             math.increment:x:@.count
 
 // Returning success to caller.
+add:x:./*/return/*/urls
+   get-nodes:x:@.urls/*
 unwrap:x:+/*
 return
    result:success
    count:x:@.count
+   urls

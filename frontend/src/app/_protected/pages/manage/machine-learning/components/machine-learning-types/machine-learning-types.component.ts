@@ -136,7 +136,7 @@ export class MachineLearningTypesComponent implements OnInit {
 
         if (result?.train) {
 
-          this.train(el);
+          //this.train(el);
         }
       });
   }
