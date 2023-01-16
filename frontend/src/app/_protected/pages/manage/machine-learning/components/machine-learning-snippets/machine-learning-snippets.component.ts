@@ -177,12 +177,17 @@ export class MachineLearningSnippetsComponent implements OnInit {
       if (result === 'confirm') {
 
         this.generalService.showLoading();
-        this.machineLearningTrainingService
-          .ml_training_snippets_delete_all(this.filter['ml_training_snippets.prompt.like'])
-          .subscribe({
+        const filter: any = {};
+        if (this.filter['ml_training_snippets.prompt.like']?.length > 0) {
+          filter['ml_training_snippets.prompt.like'] = this.filter['ml_training_snippets.prompt.like'];
+        }
+        if (this.filter['ml_training_snippets.type.eq']?.length > 0) {
+          filter['ml_training_snippets.type.eq'] = this.filter['ml_training_snippets.type.eq'];
+        }
+        this.machineLearningTrainingService.ml_training_snippets_delete_all(filter).subscribe({
           next: () => {
     
-            this.generalService.showFeedback('Snippets successfully deleted', 'successMessage');
+            this.generalService.showFeedback(`${this.count} snippets successfully deleted`, 'successMessage');
             this.getTrainingData(true);
           },
           error: () => {
