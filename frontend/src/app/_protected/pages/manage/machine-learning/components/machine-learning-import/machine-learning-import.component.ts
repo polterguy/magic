@@ -21,8 +21,8 @@ export class MachineLearningImportComponent {
   uploading: boolean = false;
   trainingFileModel: string = '';
   url: string = null;
-  delay: number = 5000;
-  max: number = 250;
+  delay: number = 5;
+  max: number = 100;
   prompt: string = 'prompt';
   completion: string = 'completion';
 
@@ -34,7 +34,13 @@ export class MachineLearningImportComponent {
 
   importUrl() {
 
-    this.matDialog.close({ crawl: this.url, delay: this.delay, max: this.max });
+    if (!this.url || this.delay < 1 || this.max > 2500) {
+      
+      this.generalService.showFeedback('Not valid input', 'errorMessage');
+      return;
+    }
+
+    this.matDialog.close({ crawl: this.url, delay: this.delay * 1000, max: this.max });
   }
 
   getFile(event: any) {

@@ -3,67 +3,80 @@
 
 <div mat-dialog-content>
 
-  <form (ngSubmit)="importUrl()" class="d-flex justify-content-md-between align-items-md-center align-items-end flex-md-row flex-column-reverse w-100">
+  <form (ngSubmit)="importUrl()" class="row mb-2">
 
-    <mat-form-field class="w-100 standalone-field me-2 mb-2">
-      <span
-        matPrefix
-        matTooltip="Root URL to crawl for training data"
-        class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-        <mat-icon>http</mat-icon>
-        <span class="text-muted">|</span>
-      </span>
-      <input
-        matInput
-        placeholder="URL"
-        [(ngModel)]="url"
-        name="url"
-        autocomplete="off">
-    </mat-form-field>
+    <div class="col-lg-6 col-12">
 
-    <mat-form-field class="standalone-field me-2 mb-2">
-      <span
-        matPrefix
-        matTooltip="Delay in milliseconds between page crawls"
-        class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-        <mat-icon>hourglass_empty</mat-icon>
-        <span class="text-muted">|</span>
-      </span>
-      <input
-        matInput
-        placeholder="Delay"
-        [(ngModel)]="delay"
-        type="number"
-        min="500"
-        max="300000"
-        name="delay"
-        autocomplete="off">
-    </mat-form-field>
+      <mat-form-field class="standalone-field w-100">
+        <span
+          matPrefix
+          matTooltip="Root URL to crawl for training data"
+          class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+          <mat-icon>http</mat-icon>
+          <span class="text-muted">|</span>
+        </span>
+        <input
+          matInput
+          placeholder="Website URL"
+          [(ngModel)]="url"
+          name="url"
+          autocomplete="off">
+      </mat-form-field>
+  
+    </div>
 
-    <mat-form-field class="standalone-field me-2 mb-2">
-      <span
-        matPrefix
-        matTooltip="Max pages to crawl"
-        class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-        <mat-icon>hourglass_empty</mat-icon>
-        <span class="text-muted">|</span>
-      </span>
-      <input
-        matInput
-        placeholder="Max pages"
-        [(ngModel)]="max"
-        type="number"
-        min="1"
-        max="1000"
-        name="max"
-        autocomplete="off">
-    </mat-form-field>
+    <div class="col-lg-6 col-12">
 
-    <button
-      class="mb-2"
-      mat-flat-button>
-      Crawl
-    </button>
+      <div class="d-flex justify-content-md-between align-items-md-center align-items-end flex-md-row flex-column-reverse w-100">
+
+        <mat-form-field class="standalone-field me-2">
+          <span
+            matPrefix
+            matTooltip="Delay in seconds between page crawls"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>hourglass_empty</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            placeholder="Delay"
+            [(ngModel)]="delay"
+            type="number"
+            min="1"
+            max="30"
+            step="1"
+            name="delay"
+            autocomplete="off">
+        </mat-form-field>
+    
+        <mat-form-field class="standalone-field me-2">
+          <span
+            matPrefix
+            matTooltip="Max pages to crawl"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>exit_to_app</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            placeholder="Max pages"
+            [(ngModel)]="max"
+            type="number"
+            min="1"
+            max="1000"
+            step="10"
+            name="max"
+            autocomplete="off">
+        </mat-form-field>
+
+        <button
+          mat-flat-button>
+          Crawl
+        </button>
+
+      </div>
+  
+    </div>
 
   </form>
 
