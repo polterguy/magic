@@ -90,6 +90,7 @@ export class IdeTreeComponent implements OnInit {
    * Retrieves files and folders from backend.
    */
   getFilesFromServer(folder: string = '/') {
+
     return new Promise<boolean>(resolve => {
 
       // Helper function to insert files and folders correctly into TreeNode hierarchy.
@@ -693,12 +694,13 @@ export class IdeTreeComponent implements OnInit {
   }
 
   filterParentNode(node: FlatNode, searchKeyword: string): boolean {
-    if (!searchKeyword || node.name.toLowerCase().indexOf(searchKeyword?.toLowerCase()) !== -1) {
+
+    if (!searchKeyword || node.node.path.toLowerCase().indexOf(searchKeyword?.toLowerCase()) !== -1) {
       return false
     }
     const descendants = this.treeControl.getDescendants(node)
 
-    if (descendants.some((descendantNode) => descendantNode.name.toLowerCase().indexOf(searchKeyword?.toLowerCase()) !== -1)) {
+    if (descendants.some((descendantNode) => descendantNode.node.path.toLowerCase().indexOf(searchKeyword?.toLowerCase()) !== -1)) {
       return false
     }
     return true
