@@ -75,77 +75,172 @@ for-each:x:@html2lambda/*/html/*/body/**
       case:h4
       case:h5
       case:h6
-      case:p
       
-         // Creating a new data part.
-         .data:
+         // Creating a new prompt.
+         .prompt:
          
-         // Trimming and making sure each text segment has exactly one space between the previous one.
+         // Trimming and adding one SP characters between each part.
          for-each:x:@.dp/#/**/\#text
-            set-value:x:@.data
+            set-value:x:@.prompt
                strings.concat
-                  get-value:x:@.data
+                  get-value:x:@.prompt
                   strings.trim:x:@.dp/#
                      .:"\r\n\t "
                   .:" "
-         set-value:x:@.data
-            strings.trim:x:@.data
+         set-value:x:@.prompt
+            strings.trim:x:@.prompt
                .:" "
 
-         // Checking if this is completion or prompt data.
+         // Adding new prompt to [.snippets] collection.
+         unwrap:x:+/*/*/*
+         add:x:@.snippets
+            .
+               .
+                  prompt:x:@.prompt
+
+      // Paragraphs becomes completions.
+      case:p
+
+         // Making sure we've added at least one prompt.
          if
-            and
-               neq:x:@.data
-                  .:
-               or
-                  eq:x:@get-name
-                     .:h1
-                  eq:x:@get-name
-                     .:h2
-                  eq:x:@get-name
-                     .:h3
-                  eq:x:@get-name
-                     .:h4
-                  eq:x:@get-name
-                     .:h5
-                  eq:x:@get-name
-                     .:h6
+            exists:x:@.snippets/*
             .lambda
-            
-               // Header becoming prompt, handling previous completion if we should.
+
+               // Creating a new completion.
+               .completion:
+
+               // Trimming and adding one SP characters between each part.
+               for-each:x:@.dp/#/**/\#text
+                  if
+                     and
+                        neq:x:@.dp/#
+                           .
+                        neq:x:@.dp/#
+                           .:
+                     .lambda
+                        strings.replace:x:@.dp/#
+                           .:"\r"
+                           .:" "
+                        strings.replace:x:@strings.replace
+                           .:"\n"
+                           .:" "
+                        strings.replace:x:@strings.replace
+                           .:"\t"
+                           .:" "
+                        strings.replace:x:@strings.replace
+                           .:"  "
+                           .:" "
+                        set-value:x:@.completion
+                           strings.concat
+                              get-value:x:@.completion
+                              strings.trim:x:@strings.replace
+                                 .:"\r\n\t "
+                              .:" "
+               set-value:x:@.completion
+                  strings.trim:x:@.completion
+                     .:" "
+
+               // Verifying that paragraph actually contained some content.
                if
-                  neq:x:@.tmp-completion
+                  neq:x:@.completion
                      .:
                   .lambda
-                     strings.trim:x:@.tmp-completion
-                        .:"\r\n\t "
-                     unwrap:x:+/*/*
-                     add:x:@.snippets/0/-
-                        .
-                           completion:x:@strings.trim
-                     set-value:x:@.tmp-completion
-                        .:
 
-               // Adding a new prompt.
-               unwrap:x:+/*/*/*
-               add:x:@.snippets
-                  .
-                     .
-                        prompt:x:@.data
-         else-if
-            and
-               neq:x:@.data
-                  .:
-               mt
-                  get-count:x:@.snippets/*
-                  .:int:0
+                     // Checking if we need to append paragraph to existing completion or create new completion.
+                     if
+                        exists:x:@.snippets/0/-/*/completion
+                        .lambda
+
+                           // Appending to existing completion.
+                           set-value:x:@.snippets/0/-/*/completion
+                              strings.concat
+                                 get-value:x:@.snippets/0/-/*/completion
+                                 .:"\r\n\r\n"
+                                 get-value:x:@.completion
+
+                     else
+
+                        // Adding new prompt to [.snippets] collection.
+                        unwrap:x:+/*/*
+                        add:x:@.snippets/0/-
+                           .
+                              completion:x:@.completion
+
+      // Lists becomes completions.
+      case:ul
+      case:ol
+
+         // Making sure we've added at least one prompt.
+         if
+            exists:x:@.snippets/*
             .lambda
 
-               // This is a completion data segment.
-               set-value:x:@.tmp-completion
-                  strings.concat
-                     get-value:x:@.data
-                     .:"\r\n\r\n"
+               // Looping through each list item below list element tag.
+               .completion:"\r\n"
+               for-each:x:@.dp/#/*/li
+
+                  // Buffer for list item
+                  .item:
+
+                  // Trimming and adding one SP characters between each part.
+                  for-each:x:@.dp/#/**/\#text
+                     if
+                        and
+                           neq:x:@.dp/#
+                              .
+                           neq:x:@.dp/#
+                              .:
+                        .lambda
+                           strings.replace:x:@.dp/#
+                              .:"\r"
+                              .:" "
+                           strings.replace:x:@strings.replace
+                              .:"\n"
+                              .:" "
+                           strings.replace:x:@strings.replace
+                              .:"\t"
+                              .:" "
+                           strings.replace:x:@strings.replace
+                              .:"  "
+                              .:" "
+                           set-value:x:@.item
+                              strings.concat
+                                 get-value:x:@.item
+                                 strings.trim:x:@strings.replace
+                                    .:"\r\n\t "
+                                 .:" "
+                  set-value:x:@.completion
+                     strings.concat
+                        get-value:x:@.completion
+                        .:"\r\n- "
+                        strings.trim:x:@.item
+                           .:" "
+
+               // Verifying that list actually contained some content.
+               if
+                  neq:x:@.completion
+                     .:"\r\n"
+                  .lambda
+
+                     // Checking if we need to append paragraph to existing completion or create new completion.
+                     if
+                        exists:x:@.snippets/0/-/*/completion
+                        .lambda
+
+                           // Appending to existing completion.
+                           set-value:x:@.snippets/0/-/*/completion
+                              strings.concat
+                                 get-value:x:@.snippets/0/-/*/completion
+                                 get-value:x:@.completion
+
+                     else
+
+                        // Adding new prompt to [.snippets] collection.
+                        unwrap:x:+/*/*
+                        add:x:@.snippets/0/-
+                           .
+                              completion:x:@.completion
+                        
 
 // Connecting to database.
 .count:int:0
