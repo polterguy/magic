@@ -40,14 +40,6 @@ data.connect:[generic|magic]
          // URL has been fetched previously.
          return:bool:true
 
-// Basic logging.
-strings.concat
-   .:"Crawling '"
-   get-value:x:@.arguments/*/url
-   .:"' for Machine Learning training data"
-log.info:x:-
-   type:x:@.arguments/*/type
-
 // Retrieving URL's content.
 http.get:x:@.arguments/*/url
    headers
@@ -65,7 +57,7 @@ if
 
       // Oops, logging error.
       lambda2hyper:x:@http.get
-      log.error:Something went wrong while trying to import URL
+      log.error:Something went wrong while trying to crawl URL for Machine Learning snippets
          url:x:@.arguments/*/url
          error:x:@lambda2hyper
       return:bool:true
@@ -79,7 +71,7 @@ if
 
       // Oops, doing some basic logging before we return failure to caller.
       lambda2hyper:x:@http.get
-      log.error:URL did not return HTML content
+      log.error:URL did not return HTML content when crawling for Machine Learning snippets
          content:x:@lambda2hyper
          url:x:@.arguments/*/url
       return:bool:true
