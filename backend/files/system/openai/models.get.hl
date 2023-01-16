@@ -32,12 +32,12 @@ if
    .lambda
 
       // Oops, error - Logging error and returning status 500 to caller.
-      lambda2hyper:x:@http.post
+      lambda2hyper:x:@http.get
       log.error:Something went wrong while invoking OpenAI
          error:x:@lambda2hyper
-      throw:Something went wrong while invoking OpenAI, check your log for details
-         public:bool:true
-         status:500
+      response.status.set:500
+      return
+         message:Something went wrong while invoking OpenAI, check your log for details
 
 /*
  * Applying some HTTP caching to avoid invoking OpenAI again with
