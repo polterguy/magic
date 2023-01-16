@@ -32,25 +32,7 @@ export class MachineLearningImportComponent {
 
   importUrl() {
 
-    this.generalService.showLoading();
-    this.openAIService.importUrl(this.url, this.data.type).subscribe({
-      next: (result: any) => {
-
-        this.generalService.showFeedback(`URL was successfully imported, ${result.count} training snippets imported`, 'successMessage', 'Ok', 5000);
-        this.generalService.hideLoading();
-
-        // Giving user some time to register feedback.
-        setTimeout(() => {
-
-          this.matDialog.close({ train: true });
-        }, 1000);
-      },
-      error: (error: any) => {
-
-        this.generalService.showFeedback(error?.error?.message, 'errorMessage', 'Ok');
-        this.generalService.hideLoading();
-      }
-    });
+    this.matDialog.close({ crawl: this.url });
   }
 
   getFile(event: any) {

@@ -86,7 +86,7 @@ export class OpenAIService {
    * Imports the specified URL as training data.
    */
   importUrl(url: string, type: string) {
-    return this.httpService.post<Response>('/magic/system/openai/import-url', {
+    return this.httpService.post<any>('/magic/system/openai/import-url', {
       url,
       type,
     });
