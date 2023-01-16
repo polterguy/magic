@@ -3,6 +3,7 @@
  * Copyright (c) Aista Ltd, 2021 - 2023 info@aista.com, all rights reserved.
  */
 
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
@@ -19,7 +20,14 @@ import { MachineLearningEditSnippetComponent } from '../machine-learning-edit-sn
 @Component({
   selector: 'app-machine-learning-snippets',
   templateUrl: './machine-learning-snippets.component.html',
-  styleUrls: ['./machine-learning-snippets.component.scss']
+  styleUrls: ['./machine-learning-snippets.component.scss'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({height: '0px', opacity: '0'})),
+      state('expanded', style({height: '*', opacity: '1'})),
+      transition('expanded <=> collapsed', animate('0.25s cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ])
+  ]
 })
 export class MachineLearningSnippetsComponent implements OnInit {
 
@@ -86,7 +94,7 @@ export class MachineLearningSnippetsComponent implements OnInit {
     });
   }
 
-  showDetails(el: any) {
+  showDetails(event: any, el: any) {
 
     this.dialog
       .open(MachineLearningEditSnippetComponent, {
@@ -115,9 +123,10 @@ export class MachineLearningSnippetsComponent implements OnInit {
           }
         }
     });
+    event.stopPropagation();
   }
 
-  delete(el: any) {
+  delete(event: any, el: any) {
 
     this.dialog.open(ConfirmationDialogComponent, {
       width: '500px',
@@ -148,6 +157,7 @@ export class MachineLearningSnippetsComponent implements OnInit {
         });
       }
     });
+    event.stopPropagation();
   }
 
   page(event: PageEvent) {

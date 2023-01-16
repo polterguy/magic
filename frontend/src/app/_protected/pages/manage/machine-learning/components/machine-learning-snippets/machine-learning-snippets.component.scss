@@ -7,6 +7,29 @@
 @import "../../../../../../../assets/styles/_variables/sizing.scss";
 
 .table-responsive {
+
+  tr:not(.expanded-row) {
+    cursor: pointer;
+  }
+
+  tr.expanded-row {
+    height: 0 !important;
+    display: none;
+
+    &.expanded {
+      display: table-row;
+    }
+
+    &:hover {
+      background-color: transparent !important;
+    }
+
+    td {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+  }
+
   .text-truncate {
     max-width: 30vw;
   }
@@ -42,12 +65,4 @@ a {
   align-items: center;
   justify-content: center;
   flex-direction: column;
-}
-
-.hide {
-  opacity: 0;
-  position: absolute;
-  left: 0;
-  right: 0;
-  z-index: 1;
 }
