@@ -1,7 +1,8 @@
 
 /*
- * Imports the specified URL as training data by scraping the webpage
- * and generate training data from its content.
+ * Imports the specified URL as training data by scraping the URL,
+ * including all internal hyperlinks, and generate training data
+ * from content found.
  */
 .arguments
    url:string
@@ -20,337 +21,37 @@ log.info:Crawling URL generating OpenAI training snippets
    url:x:@.arguments/*/url
    type:x:@.arguments/*/type
 
-// Retrieving URL's content.
-http.get:x:@.arguments/*/url
+// Creating a thread and invoking file doing the heavy lifting.
+insert-before:x:./*/fork/0
+   get-nodes:x:@.arguments
+fork
 
-// Sanity checking above invocation.
-if
-   not
-      and
-         mte:x:@http.get
-            .:int:200
-         lt:x:@http.get
-            .:int:300
-   .lambda
+   // Making sure exceptions does not leave thread.
+   try
 
-      // Oops, error - Logging error and returning status 500 to caller.
-      lambda2hyper:x:@http.get
-      log.error:Something went wrong while trying to import URL
+      // Executing file doing the heavy lifting.
+      add:x:./*/io.file.execute
+         get-nodes:x:@.arguments/*
+      io.file.execute:/system/openai/crawl.implementation/import-url.hl
+         done
+
+      // Making sure we notify client that we're done
+      sockets.signal:magic.backend.message
+         roles:root
+         args
+            message:Done creating OpenAI training data from URL
+            type:success
+
+      // Basic logging.
+      log.info:Generated OpenAI training data succeeded
          url:x:@.arguments/*/url
-         error:x:@lambda2hyper
-      return
-         message:Something went wrong while trying to import URL
-         count:int:0
+         type:x:@.arguments/*/type
 
-// Making sure URL returned HTML.
-if
-   not
-      strings.starts-with:x:@http.get/*/headers/*/Content-Type
-         .:text/html
-   .lambda
+   .catch
 
-      // Oops, doing some basic logging before we return failure to caller.
-      lambda2hyper:x:@http.get
-      log.error:URL did not return HTML content
-         content:x:@lambda2hyper
-         url:x:@.arguments/*/url
-      response.status.set:200
-      return
-         message:URL did not return HTML content
-         count:int:0
-
-// Converting HTML to lambda.
-html2lambda:x:@http.get/*/content
-
-// Figuring out base URL, such that we can correctly return hyperlinks to caller.
-.base
-strings.split:x:@.arguments/*/url
-   .:"://"
-strings.split:x:@strings.split/1
-   .:/
-set-value:x:@.base
-   strings.concat
-      get-value:x:@strings.split/@strings.split/0
-      .:"://"
-      get-value:x:@strings.split/0
-
-// Buffer for training snippets.
-.snippets
-
-// Buffer for URLs found in document.
-.urls
-
-// Temp buffer for completion
-.tmp-completion:
-
-// Looping through each HTML tag in document
-for-each:x:@html2lambda/*/html/*/body/**
-
-   // Checking if this is a tag we need to handle.
-   get-name:x:@.dp/#
-   switch:x:@get-name
-
-      // Checking if this is a hyperlink.
-      case:a
-
-         // Checking if it's a 'local' URL, implying within the same domain as we're currently scraping.
-         if
-            and
-               exists:x:@.dp/#/*/\@href
-               not-null:x:@.dp/#/*/\@href
-               strings.starts-with:x:@.dp/#/*/\@href
-                  .:/
-            .lambda
-
-               // Local URL.
-               strings.split:x:@.dp/#/*/\@href
-                  .:#
-               strings.trim-end:x:@strings.split/0
-                  .:/
-               strings.concat
-                  get-value:x:@.base
-                  get-value:x:@strings.trim-end
-               if
-                  not-exists:x:@.url/*/{@strings.concat}
-                  .lambda
-                     unwrap:x:+/*/*
-                     add:x:@.urls
-                        .
-                           .:x:@strings.concat
-
-         else-if
-            and
-               exists:x:@.dp/#/*/\@href
-               not-null:x:@.dp/#/*/\@href
-               strings.starts-with:x:@.dp/#/*/\@href
-                  get-value:x:@.arguments/*/url
-            .lambda
-
-               // Absolute URL but still within base URL we're currently crawling.
-               strings.split:x:@.dp/#/*/\@href
-                  .:#
-               if
-                  not-exists:x:@.urls/*/{@strings.split/0}
-                  .lambda
-                     unwrap:x:+/*/*
-                     add:x:@.urls
-                        .
-                           .:x:@strings.split/0
-
-      // Headers becomes prompts.
-      case:h1
-      case:h2
-      case:h3
-      case:h4
-      case:h5
-      case:h6
-      
-         // Creating a new prompt.
-         .prompt:
-         
-         // Trimming and adding one SP characters between each part.
-         for-each:x:@.dp/#/**/\#text
-            set-value:x:@.prompt
-               strings.concat
-                  get-value:x:@.prompt
-                  strings.trim:x:@.dp/#
-                     .:"\r\n\t "
-                  .:" "
-         set-value:x:@.prompt
-            strings.trim:x:@.prompt
-               .:" "
-
-         // Adding new prompt to [.snippets] collection.
-         unwrap:x:+/*/*/*
-         add:x:@.snippets
-            .
-               .
-                  prompt:x:@.prompt
-
-      // Paragraphs becomes completions.
-      case:p
-
-         // Making sure we've added at least one prompt.
-         if
-            exists:x:@.snippets/*
-            .lambda
-
-               // Creating a new completion.
-               .completion:
-
-               // Trimming and adding one SP characters between each part.
-               for-each:x:@.dp/#/**/\#text
-                  if
-                     and
-                        neq:x:@.dp/#
-                           .
-                        neq:x:@.dp/#
-                           .:
-                     .lambda
-                        strings.replace:x:@.dp/#
-                           .:"\r"
-                           .:" "
-                        strings.replace:x:@strings.replace
-                           .:"\n"
-                           .:" "
-                        strings.replace:x:@strings.replace
-                           .:"\t"
-                           .:" "
-                        strings.replace:x:@strings.replace
-                           .:"  "
-                           .:" "
-                        set-value:x:@.completion
-                           strings.concat
-                              get-value:x:@.completion
-                              strings.trim:x:@strings.replace
-                                 .:"\r\n\t "
-                              .:" "
-               set-value:x:@.completion
-                  strings.trim:x:@.completion
-                     .:" "
-
-               // Verifying that paragraph actually contained some content.
-               if
-                  neq:x:@.completion
-                     .:
-                  .lambda
-
-                     // Checking if we need to append paragraph to existing completion or create new completion.
-                     if
-                        exists:x:@.snippets/0/-/*/completion
-                        .lambda
-
-                           // Appending to existing completion.
-                           set-value:x:@.snippets/0/-/*/completion
-                              strings.concat
-                                 get-value:x:@.snippets/0/-/*/completion
-                                 .:"\r\n\r\n"
-                                 get-value:x:@.completion
-
-                     else
-
-                        // Adding new prompt to [.snippets] collection.
-                        unwrap:x:+/*/*
-                        add:x:@.snippets/0/-
-                           .
-                              completion:x:@.completion
-
-      // Lists becomes completions.
-      case:ul
-      case:ol
-
-         // Making sure we've added at least one prompt.
-         if
-            exists:x:@.snippets/*
-            .lambda
-
-               // Looping through each list item below list element tag.
-               .completion:"\r\n"
-               for-each:x:@.dp/#/*/li
-
-                  // Buffer for list item
-                  .item:
-
-                  // Trimming and adding one SP characters between each part.
-                  for-each:x:@.dp/#/**/\#text
-                     if
-                        and
-                           neq:x:@.dp/#
-                              .
-                           neq:x:@.dp/#
-                              .:
-                        .lambda
-                           strings.replace:x:@.dp/#
-                              .:"\r"
-                              .:" "
-                           strings.replace:x:@strings.replace
-                              .:"\n"
-                              .:" "
-                           strings.replace:x:@strings.replace
-                              .:"\t"
-                              .:" "
-                           strings.replace:x:@strings.replace
-                              .:"  "
-                              .:" "
-                           set-value:x:@.item
-                              strings.concat
-                                 get-value:x:@.item
-                                 strings.trim:x:@strings.replace
-                                    .:"\r\n\t "
-                                 .:" "
-                  set-value:x:@.completion
-                     strings.concat
-                        get-value:x:@.completion
-                        .:"\r\n- "
-                        strings.trim:x:@.item
-                           .:" "
-
-               // Verifying that list actually contained some content.
-               if
-                  neq:x:@.completion
-                     .:"\r\n"
-                  .lambda
-
-                     // Checking if we need to append paragraph to existing completion or create new completion.
-                     if
-                        exists:x:@.snippets/0/-/*/completion
-                        .lambda
-
-                           // Appending to existing completion.
-                           set-value:x:@.snippets/0/-/*/completion
-                              strings.concat
-                                 get-value:x:@.snippets/0/-/*/completion
-                                 get-value:x:@.completion
-
-                     else
-
-                        // Adding new prompt to [.snippets] collection.
-                        unwrap:x:+/*/*
-                        add:x:@.snippets/0/-
-                           .
-                              completion:x:@.completion
-                        
-
-// Connecting to database.
-.count:int:0
-data.connect:[generic|magic]
-
-   // Creating training data from all [.snippets].
-   for-each:x:@.snippets/*
-
-      if
-         and
-            exists:x:@.dp/#/*/prompt
-            exists:x:@.dp/#/*/completion
-            neq:x:@.dp/#/*/prompt
-               .:
-            neq:x:@.dp/#/*/completion
-               .:
-         .lambda
-         
-            .prompt
-            set-value:x:@.prompt
-               strings.trim:x:@.dp/#/*/prompt
-                  .:" \r\n\t"
-            .completion
-            set-value:x:@.completion
-               strings.trim:x:@.dp/#/*/completion
-                  .:" \r\n\t"
-         
-            // Inserting prompt and completion into database.
-            data.create
-               table:ml_training_snippets
-               values
-                  prompt:x:@.prompt
-                  completion:x:@.completion
-                  type:x:@.arguments/*/type
-            math.increment:x:@.count
+      // Oops ...!!
+      log.error:x:@.arguments/*/message
 
 // Returning success to caller.
-add:x:./*/return/*/urls
-   get-nodes:x:@.urls/*
-unwrap:x:+/*
 return
    result:success
-   count:x:@.count
-   urls
