@@ -4,9 +4,66 @@
  * and generate training data from its content.
  */
 
+// Figuring out base URL, such that we can correctly crawl hyperlinks in document.
+.base
+strings.split:x:@.arguments/*/url
+   .:"://"
+strings.split:x:@strings.split/1
+   .:/
+set-value:x:@.base
+   strings.concat
+      get-value:x:@strings.split/@strings.split/0
+      .:"://"
+      get-value:x:@strings.split/0
+
+// Connecting to database.
+data.connect:[generic|magic]
+
+   // Creating our filter query to check if we've fetched this URL previously.
+   strings.concat
+      get-value:x:@.arguments/*/url
+      .:":%"
+
+   // Checking if we've fetched this URL previously.
+   data.read
+      table:ml_training_snippets
+      where
+         and
+            uri.like:x:@strings.concat
+      limit:1
+
+   // Checking if above invocation yielded a result, at which point URL has been previously scraped.
+   if
+      exists:x:@data.read/*
+      .lambda
+
+         // URL has been fetched previously.
+         return:bool:true
+
+   // Checking if we've reached max limit.
+   strings.concat
+      get-value:x:@.base
+      .:"%"
+   data.scalar
+      table:ml_training_snippets
+      columns
+         count(*)
+      where
+         and
+            uri.like:x:@strings.concat
+   if
+      mte
+         convert:x:@data.scalar
+            type:int
+         get-value:x:@.arguments/*/max
+      .lambda
+
+         // We've reached max limit, and crawling should NOT continue.
+         return:bool:false
+
 // Basic logging.
 strings.concat
-   .:"Scraping '"
+   .:"Crawling '"
    get-value:x:@.arguments/*/url
    .:"' for Machine Learning training data"
 log.info:x:-
@@ -14,6 +71,8 @@ log.info:x:-
 
 // Retrieving URL's content.
 http.get:x:@.arguments/*/url
+   headers
+      User-Agent:Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36
 
 // Sanity checking above invocation.
 if
@@ -30,8 +89,7 @@ if
       log.error:Something went wrong while trying to import URL
          url:x:@.arguments/*/url
          error:x:@lambda2hyper
-      return
-         message:error
+      return:bool:true
 
 // Making sure URL returned HTML.
 if
@@ -45,24 +103,10 @@ if
       log.error:URL did not return HTML content
          content:x:@lambda2hyper
          url:x:@.arguments/*/url
-      response.status.set:200
-      return
-         message:error
+      return:bool:true
 
 // Converting HTML to lambda.
 html2lambda:x:@http.get/*/content
-
-// Figuring out base URL, such that we can correctly return hyperlinks to caller.
-.base
-strings.split:x:@.arguments/*/url
-   .:"://"
-strings.split:x:@strings.split/1
-   .:/
-set-value:x:@.base
-   strings.concat
-      get-value:x:@strings.split/@strings.split/0
-      .:"://"
-      get-value:x:@strings.split/0
 
 // Buffer for training snippets.
 .snippets
@@ -320,14 +364,33 @@ data.connect:[generic|magic]
                .:
          .lambda
 
+            // Prompt.
             .prompt
             set-value:x:@.prompt
                strings.trim:x:@.dp/#/*/prompt
                   .:" \r\n\t"
+
+            // Completion.
             .completion
             set-value:x:@.completion
                strings.trim:x:@.dp/#/*/completion
                   .:" \r\n\t"
+
+            // URI.
+            .uri
+            set-value:x:@.uri
+               strings.concat
+                  get-value:x:@.arguments/*/url
+                  .:":"
+                  crypto.hash.sha256:x:@.prompt
+
+            // Deleting old training snippets with similar type and URI.
+            data.delete
+               table:ml_training_snippets
+               where
+                  and
+                     type.eq:x:@.arguments/*/type
+                     uri.eq:x:@.uri
 
             // Inserting prompt and completion into database.
             data.create
@@ -336,55 +399,35 @@ data.connect:[generic|magic]
                   prompt:x:@.prompt
                   completion:x:@.completion
                   type:x:@.arguments/*/type
+                  uri:x:@.uri
 
 // Preserving some memory.
 remove-nodes:x:@http.get/*
 remove-nodes:x:@html2lambda/*
 
 /*
- * Adding SHA of currently processed URL to [done] collection,
- * such that we don't process it again.
+ * To avoid having web server believe it's under DOS attack, we wait [delay] milliseconds
+ * before we process the next URL.
  */
-crypto.hash.sha256:x:@.arguments/*/url
-unwrap:x:+/*/*
-add:x:@.arguments/*/done
-   .
-      .:x:@crypto.hash.sha256
+sleep:x:@.arguments/*/delay
 
 // Looping through all URLs found in document.
 for-each:x:@.urls/*
 
-   // Checking if we've reached our URL max limit.
+   // Crawling next URL.
+   unwrap:x:+/*
+   io.file.execute:/system/openai/crawl.implementation/import-url.hl
+      url:x:@.dp/#
+      type:x:@.arguments/*/type
+      delay:x:@.arguments/*/delay
+      max:x:@.arguments/*/max
    if
-      lt
-         get-count:x:@.arguments/*/done/*
-         get-value:x:@.arguments/*/max
+      eq:x:@io.file.execute
+         .:bool:false
       .lambda
 
-         /*
-          * To avoid having web server believe it's under DOS attack, we wait 1 second
-          * before we process the next URL.
-          */
-         sleep:x:@.arguments/*/delay
+         // Reached max value and we should stop crawling URLs.
+         return:bool:false
 
-         // Making sure we have not yet processed currently iterated URL.
-         crypto.hash.sha256:x:@.dp/#
-         if
-            not-exists:x:@.arguments/*/done/*/={@crypto.hash.sha256}
-            .lambda
-
-               // This URL has not been processed yet.
-               add:x:./*/io.file.execute/*/done
-                  get-nodes:x:@.arguments/*/done/*
-               unwrap:x:+/*
-               io.file.execute:/system/openai/crawl.implementation/import-url.hl
-                  type:x:@.arguments/*/type
-                  url:x:@.dp/#
-                  delay:x:@.arguments/*/delay
-                  max:x:@.arguments/*/max
-                  done
-               add:x:@.arguments/*/done
-                  get-nodes:x:@io.file.execute/*
-
-// Returning all URLs that have been processed so far to caller.
-return-nodes:x:@.arguments/*/done/*
+// Returning continue flag to caller.
+return:bool:true

@@ -24,7 +24,7 @@ validators.integer:x:@.arguments/*/delay
 validators.mandatory:x:@.arguments/*/max
 validators.integer:x:@.arguments/*/max
    min:1
-   max:1000
+   max:5000
 
 // Doing some basic logging.
 log.info:Crawling URL generating OpenAI training snippets
@@ -45,7 +45,6 @@ fork
       add:x:./*/io.file.execute
          get-nodes:x:@.arguments/*
       io.file.execute:/system/openai/crawl.implementation/import-url.hl
-         done
 
       // Making sure we notify client that we're done
       sockets.signal:magic.backend.message
