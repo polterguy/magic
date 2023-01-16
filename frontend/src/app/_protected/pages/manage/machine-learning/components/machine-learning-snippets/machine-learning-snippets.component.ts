@@ -10,7 +10,6 @@ import { PageEvent } from '@angular/material/paginator';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { MachineLearningTrainingService } from 'src/app/_general/services/machine-learning-training.service';
-import { OpenAIService } from 'src/app/_general/services/openai.service';
 import { MachineLearningEditSnippetComponent } from '../machine-learning-edit-snippet/machine-learning-edit-snippet.component';
 
 /**
