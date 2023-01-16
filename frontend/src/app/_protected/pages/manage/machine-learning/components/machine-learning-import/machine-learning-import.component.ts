@@ -21,6 +21,8 @@ export class MachineLearningImportComponent {
   uploading: boolean = false;
   trainingFileModel: string = '';
   url: string = null;
+  delay: number = 5000;
+  max: number = 250;
   prompt: string = 'prompt';
   completion: string = 'completion';
 
@@ -32,7 +34,7 @@ export class MachineLearningImportComponent {
 
   importUrl() {
 
-    this.matDialog.close({ crawl: this.url });
+    this.matDialog.close({ crawl: this.url, delay: this.delay, max: this.max });
   }
 
   getFile(event: any) {

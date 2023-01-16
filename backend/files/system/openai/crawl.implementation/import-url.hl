@@ -350,28 +350,37 @@ add:x:@.arguments/*/done
 // Looping through all URLs found in document.
 for-each:x:@.urls/*
 
-   /*
-    * To avoid having web server believe it's under DOS attack, we wait 1 second
-    * before we process the next URL.
-    */
-   sleep:1000
-
-   // Making sure we have not yet processed currently iterated URL.
-   crypto.hash.sha256:x:@.dp/#
+   // Checking if we've reached our URL max limit.
    if
-      not-exists:x:@.arguments/*/done/*/={@crypto.hash.sha256}
+      lt
+         get-count:x:@.arguments/*/done/*
+         get-value:x:@.arguments/*/max
       .lambda
 
-         // This URL has not been processed yet.
-         add:x:./*/io.file.execute/*/done
-            get-nodes:x:@.arguments/*/done/*
-         unwrap:x:+/*
-         io.file.execute:/system/openai/crawl.implementation/import-url.hl
-            type:x:@.arguments/*/type
-            url:x:@.dp/#
-            done
-         add:x:@.arguments/*/done
-            get-nodes:x:@io.file.execute/*
+         /*
+          * To avoid having web server believe it's under DOS attack, we wait 1 second
+          * before we process the next URL.
+          */
+         sleep:x:@.arguments/*/delay
+
+         // Making sure we have not yet processed currently iterated URL.
+         crypto.hash.sha256:x:@.dp/#
+         if
+            not-exists:x:@.arguments/*/done/*/={@crypto.hash.sha256}
+            .lambda
+
+               // This URL has not been processed yet.
+               add:x:./*/io.file.execute/*/done
+                  get-nodes:x:@.arguments/*/done/*
+               unwrap:x:+/*
+               io.file.execute:/system/openai/crawl.implementation/import-url.hl
+                  type:x:@.arguments/*/type
+                  url:x:@.dp/#
+                  delay:x:@.arguments/*/delay
+                  max:x:@.arguments/*/max
+                  done
+               add:x:@.arguments/*/done
+                  get-nodes:x:@io.file.execute/*
 
 // Returning all URLs that have been processed so far to caller.
 return-nodes:x:@.arguments/*/done/*

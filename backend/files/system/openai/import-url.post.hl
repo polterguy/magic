@@ -7,6 +7,8 @@
 .arguments
    url:string
    type:string
+   delay:int
+   max:int
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
@@ -15,11 +17,21 @@ auth.ticket.verify:root
 validators.mandatory:x:@.arguments/*/url
 validators.url:x:@.arguments/*/url
 validators.mandatory:x:@.arguments/*/type
+validators.mandatory:x:@.arguments/*/delay
+validators.integer:x:@.arguments/*/delay
+   min:500
+   max:300000
+validators.mandatory:x:@.arguments/*/max
+validators.integer:x:@.arguments/*/max
+   min:1
+   max:1000
 
 // Doing some basic logging.
 log.info:Crawling URL generating OpenAI training snippets
    url:x:@.arguments/*/url
    type:x:@.arguments/*/type
+   delay:x:@.arguments/*/delay
+   max:x:@.arguments/*/max
 
 // Creating a thread and invoking file doing the heavy lifting.
 insert-before:x:./*/fork/0
