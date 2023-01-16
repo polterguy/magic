@@ -59,10 +59,8 @@ export class MachineLearningTrainingService {
   /**
    * Deletes an existing training snippet.
    */
-  ml_training_snippets_delete_all(filter: string) {
-    return this.httpService.delete<Response>(
-      '/magic/system/magic/ml_training_snippets_all?ml_training_snippets.prompt.like=' +
-      encodeURIComponent(filter));
+  ml_training_snippets_delete_all(filter: any) {
+    return this.httpService.delete<Response>('/magic/system/magic/ml_training_snippets_all' + this.getQueryArgs(filter));
   }
 
   /**
