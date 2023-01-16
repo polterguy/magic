@@ -40,28 +40,6 @@ data.connect:[generic|magic]
          // URL has been fetched previously.
          return:bool:true
 
-   // Checking if we've reached max limit.
-   strings.concat
-      get-value:x:@.base
-      .:"%"
-   data.read
-      table:ml_training_snippets
-      columns
-         count(*)
-            as:count
-      where
-         and
-            uri.like:x:@strings.concat
-   if
-      mte
-         convert:x:@data.read/*/*/count
-            type:int
-         get-value:x:@.arguments/*/max
-      .lambda
-
-         // We've reached max limit, and crawling should NOT continue.
-         return:bool:false
-
 // Basic logging.
 strings.concat
    .:"Crawling '"
@@ -440,6 +418,14 @@ data.connect:[generic|magic]
 // Preserving some memory.
 remove-nodes:x:@http.get/*
 remove-nodes:x:@html2lambda/*
+
+// Decrementing max argument, and checking if we've reached limit.
+math.decrement:x:@.arguments/*/max
+if
+   lte:x:@.arguments/*/max
+      .:int:0
+   .lambda
+      return:bool:false
 
 /*
  * To avoid having web server believe it's under DOS attack, we wait [delay] milliseconds
