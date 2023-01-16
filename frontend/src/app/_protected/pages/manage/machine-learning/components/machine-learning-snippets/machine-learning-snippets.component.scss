@@ -18,8 +18,13 @@
 
     &.expanded {
       display: table-row;
+
       .formatted {
         white-space: pre-wrap;
+      }
+
+      .text-small {
+        font-size: 10px;
       }
     }
 

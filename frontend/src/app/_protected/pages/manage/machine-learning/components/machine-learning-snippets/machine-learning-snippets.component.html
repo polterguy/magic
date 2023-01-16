@@ -123,6 +123,9 @@
             colspan="4">
             <div [@detailExpand]="el === expandedElement ? 'expanded' : 'collapsed'">
               <div class="text-muted py-3 formatted">{{el.completion}}</div>
+              <p class="text-muted text-small">
+                URI; {{el.uri}}
+              </p>
             </div>
           </td>
         </ng-container>
