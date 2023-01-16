@@ -5,8 +5,11 @@
  */
 
 // Basic logging.
-log.info:Scraping page
-   url:x:@.arguments/*/url
+strings.concat
+   .:"Scraping '"
+   get-value:x:@.arguments/*/url
+   .:"' for Machine Learning training data"
+log.info:x:-
    type:x:@.arguments/*/type
 
 // Retrieving URL's content.
@@ -116,13 +119,15 @@ for-each:x:@html2lambda/*/html/*/body/**
                // Absolute URL but still within base URL we're currently crawling.
                strings.split:x:@.dp/#/*/\@href
                   .:#
+               strings.trim-end:x:@strings.split/0
+                  .:/
                if
                   not-exists:x:@.urls/*/{@strings.split/0}
                   .lambda
                      unwrap:x:+/*/*
                      add:x:@.urls
                         .
-                           .:x:@strings.split/0
+                           .:x:@strings.trim-end
 
       // Headers becomes prompts.
       case:h1
@@ -304,6 +309,7 @@ data.connect:[generic|magic]
    // Creating training data from all [.snippets].
    for-each:x:@.snippets/*
 
+      // Verifying that currently iterated snippet has both prompt and completion.
       if
          and
             exists:x:@.dp/#/*/prompt
@@ -331,19 +337,32 @@ data.connect:[generic|magic]
                   completion:x:@.completion
                   type:x:@.arguments/*/type
 
-// Finding URLs from document that we have not already traversed.
+/*
+ * Adding SHA of currently processed URL to [done] collection,
+ * such that we don't process it again.
+ */
 crypto.hash.sha256:x:@.arguments/*/url
 unwrap:x:+/*/*
 add:x:@.arguments/*/done
    .
       .:x:@crypto.hash.sha256
+
+// Looping through all URLs found in document.
 for-each:x:@.urls/*
+
+   /*
+    * To avoid having web server believe it's under DOS attack, we wait 1 second
+    * before we process the next URL.
+    */
+   sleep:1000
+
+   // Making sure we have not yet processed currently iterated URL.
    crypto.hash.sha256:x:@.dp/#
    if
       not-exists:x:@.arguments/*/done/*/={@crypto.hash.sha256}
       .lambda
 
-         // This URL has not been traversed yet.
+         // This URL has not been processed yet.
          add:x:./*/io.file.execute/*/done
             get-nodes:x:@.arguments/*/done/*
          unwrap:x:+/*
@@ -353,4 +372,6 @@ for-each:x:@.urls/*
             done
          add:x:@.arguments/*/done
             get-nodes:x:@io.file.execute/*
+
+// Returning all URLs that have been processed so far to caller.
 return-nodes:x:@.arguments/*/done/*
