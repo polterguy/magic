@@ -32,12 +32,22 @@ export class MachineLearningImportComponent {
 
   importUrl() {
 
-    console.log(this.url);
-    setTimeout(() => {
-      const el = <any>document.getElementsByName('url')[0];
-      el.select();
-      el.focus();
-    }, 250);
+    this.generalService.showLoading();
+    this.openAIService.importUrl(this.url, this.data.type).subscribe({
+      next: (result: any) => {
+
+        this.generalService.showFeedback(`URL was successfully imported, ${result.count} training snippets imported`, 'successMessage', 'Ok', 5000);
+        this.generalService.hideLoading();
+        const el = <any>document.getElementsByName('url')[0];
+        el.select();
+        el.focus();
+      },
+      error: (error: any) => {
+
+        this.generalService.showFeedback(error?.error?.message, 'errorMessage', 'Ok');
+        this.generalService.hideLoading();
+      }
+    });
   }
 
   getFile(event: any) {

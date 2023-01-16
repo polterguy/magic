@@ -1,0 +1,180 @@
+
+/*
+ * Imports the specified URL as training data by scraping the webpage
+ * and generate training data from its content.
+ */
+.arguments
+   url:string
+   type:string
+
+// Ensures user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/url
+validators.url:x:@.arguments/*/url
+validators.mandatory:x:@.arguments/*/type
+
+// Retrieving URL's content
+http.get:x:@.arguments/*/url
+
+// Sanity checking above invocation
+if
+   not
+      and
+         mte:x:@http.get
+            .:int:200
+         lt:x:@http.get
+            .:int:300
+   .lambda
+
+      // Oops, error - Logging error and returning status 500 to caller.
+      lambda2hyper:x:@http.get
+      log.error:Something went wrong while trying to import URL
+         error:x:@lambda2hyper
+      response.status.set:500
+      return
+         message:Something went wrong while trying to import URL
+
+// Making sure URL returned HTML.
+if
+   not
+      strings.starts-with:x:@http.get/*/headers/*/Content-Type
+         .:text/html
+   .lambda
+
+      // Oops, doing some basic logging before we return failure to caller.
+      lambda2hyper:x:@http.get
+      log.error:URL did not return HTML content
+         content:x:@lambda2hyper
+         url:x:@.arguments/*/url
+      response.status.set:400
+      return
+         message:URL did not return HTML content
+
+// Converting HTML to lambda.
+html2lambda:x:@http.get/*/content
+
+// Buffer for training snippets.
+.snippets
+
+// Temp buffer for completion
+.tmp-completion:
+
+// Looping through each HTML tag in document
+for-each:x:@html2lambda/*/html/*/body/**
+
+   // Checking if this is a tag we need to handle.
+   get-name:x:@.dp/#
+   switch:x:@get-name
+
+      // Headers becomes prompts.
+      case:h1
+      case:h2
+      case:h3
+      case:h4
+      case:h5
+      case:h6
+      case:p
+      
+         // Creating a new data part.
+         .data:
+         
+         // Trimming and making sure each text segment has exactly one space between the previous one.
+         for-each:x:@.dp/#/**/\#text
+            set-value:x:@.data
+               strings.concat
+                  get-value:x:@.data
+                  strings.trim:x:@.dp/#
+                     .:"\r\n\t "
+                  .:" "
+         set-value:x:@.data
+            strings.trim:x:@.data
+               .:" "
+
+         // Checking if this is completion or prompt data.
+         if
+            and
+               neq:x:@.data
+                  .:
+               or
+                  eq:x:@get-name
+                     .:h1
+                  eq:x:@get-name
+                     .:h2
+                  eq:x:@get-name
+                     .:h3
+                  eq:x:@get-name
+                     .:h4
+                  eq:x:@get-name
+                     .:h5
+                  eq:x:@get-name
+                     .:h6
+            .lambda
+            
+               // Header becoming prompt, handling previous completion if we should.
+               if
+                  neq:x:@.tmp-completion
+                     .:
+                  .lambda
+                     strings.trim:x:@.tmp-completion
+                        .:"\r\n\t "
+                     unwrap:x:+/*/*
+                     add:x:@.snippets/0/-
+                        .
+                           completion:x:@strings.trim
+                     set-value:x:@.tmp-completion
+                        .:
+
+               // Adding a new prompt.
+               unwrap:x:+/*/*/*
+               add:x:@.snippets
+                  .
+                     .
+                        prompt:x:@.data
+         else-if
+            and
+               neq:x:@.data
+                  .:
+               mt
+                  get-count:x:@.snippets/*
+                  .:int:0
+            .lambda
+
+               // This is a completion data segment.
+               set-value:x:@.tmp-completion
+                  strings.concat
+                     get-value:x:@.data
+                     .:"\r\n\r\n"
+
+// Connecting to database.
+.count:int:0
+data.connect:[generic|magic]
+
+   // Creating training data from all [.snippets].
+   for-each:x:@.snippets/*
+
+      if
+         and
+            exists:x:@.dp/#/*/prompt
+            exists:x:@.dp/#/*/completion
+            neq:x:@.dp/#/*/prompt
+               .:
+            neq:x:@.dp/#/*/completion
+               .:
+         .lambda
+         
+            // Inserting prompt and completion into database.
+            data.create
+               table:ml_training_snippets
+               values
+                  prompt:x:@.dp/#/*/prompt
+                  completion:x:@.dp/#/*/completion
+                  type:x:@.arguments/*/type
+            math.increment:x:@.count
+
+// Returning success to caller.
+unwrap:x:+/*
+return
+   result:success
+   count:x:@.count

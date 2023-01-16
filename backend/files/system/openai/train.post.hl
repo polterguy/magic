@@ -5,6 +5,7 @@
  */
 .arguments
    type:string
+   model:string
    epochs:int
    batch_size:int
    learning_rate_multiplier:decimal
@@ -14,6 +15,9 @@
 
 // Making sure user has access to invoked endpoint.
 auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/model
 
 // Connecting to database.
 data.connect:[generic|magic]
@@ -132,18 +136,6 @@ data.connect:[generic|magic]
    set-value:x:@.id
       get-value:x:@http.post/*/content/*/id
 
-   // Getting base model to use.
-   .model
-   data.read
-      table:ml_types
-      columns
-         model
-      where
-         and
-            type.eq:x:@.arguments/*/type
-   set-value:x:@.model
-      get-value:x:@data.read/*/*/model
-
    // Parametrising training session invocation.
    if
       and
@@ -181,7 +173,7 @@ data.connect:[generic|magic]
          Content-Type:application/json
       payload
          training_file:x:@.id
-         model:x:@.model
+         model:x:@.arguments/*/model
          suffix:x:@.arguments/*/type
       convert:true
 
@@ -204,7 +196,7 @@ data.connect:[generic|magic]
    log.info:Successfully started training of OpenAI model
       type:x:@.arguments/*/type
       snippets:x:@get-count
-      base-model:x:@.model
+      base-model:x:@.arguments/*/model
       new-model-id:x:@http.post/*/content/*/id
 
    /*

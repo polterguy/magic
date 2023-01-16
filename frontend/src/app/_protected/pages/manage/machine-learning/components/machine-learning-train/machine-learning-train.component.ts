@@ -89,6 +89,7 @@ export class MachineLearningTrainComponent implements OnInit {
 
     const data: any = {
       type: this.data.type,
+      model: this.model.id,
       epochs: this.epochs,
       batch_size: this.batch_size,
       learning_rate_multiplier: this.learning_rate_multiplier,
