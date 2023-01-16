@@ -18,6 +18,9 @@
 
     &.expanded {
       display: table-row;
+      .formatted {
+        white-space: pre-wrap;
+      }
     }
 
     &:hover {
