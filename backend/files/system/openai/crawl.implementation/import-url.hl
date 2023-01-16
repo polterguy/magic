@@ -337,6 +337,10 @@ data.connect:[generic|magic]
                   completion:x:@.completion
                   type:x:@.arguments/*/type
 
+// Preserving some memory.
+remove-nodes:x:@http.get/*
+remove-nodes:x:@html2lambda/*
+
 /*
  * Adding SHA of currently processed URL to [done] collection,
  * such that we don't process it again.
