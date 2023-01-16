@@ -38,9 +38,12 @@ export class MachineLearningImportComponent {
 
         this.generalService.showFeedback(`URL was successfully imported, ${result.count} training snippets imported`, 'successMessage', 'Ok', 5000);
         this.generalService.hideLoading();
-        const el = <any>document.getElementsByName('url')[0];
-        el.select();
-        el.focus();
+
+        // Giving user some time to register feedback.
+        setTimeout(() => {
+
+          this.matDialog.close({ train: true });
+        }, 1000);
       },
       error: (error: any) => {
 
