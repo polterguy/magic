@@ -1,15 +1,15 @@
 
-// CRUD delete endpoint deleting one record from your ml_training_snippets table in your magic database with id matching argument with authentication and authorisation for root roles
+// CRUD delete endpoint deleting multiple records from your ml_training_snippets table in your magic database matching filter authentication and authorisation for root roles
 .arguments
-   id:long
-.description:CRUD delete endpoint deleting one record from your ml_training_snippets table in your magic database with id matching argument with authentication and authorisation for root roles
+   ml_training_snippets.prompt.like:string
+.description:CRUD delete endpoint deleting multiple records from your ml_training_snippets table in your magic database matching filter authentication and authorisation for root roles
 .type:crud-delete
 
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:root
 
 // Sanity checking invocation, making sure primary key(s) are specified.
-validators.mandatory:x:@.arguments/*/id
+validators.mandatory:x:@.arguments/*/ml_training_snippets.prompt.like
 
 // Opening up our database connection.
 data.connect:[generic|magic]

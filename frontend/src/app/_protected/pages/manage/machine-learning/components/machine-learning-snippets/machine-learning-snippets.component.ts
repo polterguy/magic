@@ -160,6 +160,41 @@ export class MachineLearningSnippetsComponent implements OnInit {
     event.stopPropagation();
   }
 
+  deleteAll() {
+
+    this.dialog.open(ConfirmationDialogComponent, {
+      width: '500px',
+      data: {
+        title: 'Delete all filtered snippets',
+        description_extra: `Are you sure you want to delete all filtered ${this.count} snippets?`,
+        action_btn: 'Delete',
+        close_btn: 'Cancel',
+        action_btn_color: 'warn',
+        bold_description: true,
+      }
+    }).afterClosed().subscribe((result: string) => {
+
+      if (result === 'confirm') {
+
+        this.generalService.showLoading();
+        this.machineLearningTrainingService
+          .ml_training_snippets_delete_all(this.filter['ml_training_snippets.prompt.like'])
+          .subscribe({
+          next: () => {
+    
+            this.generalService.showFeedback('Snippets successfully deleted', 'successMessage');
+            this.getTrainingData(true);
+          },
+          error: () => {
+
+            this.generalService.hideLoading();
+            this.generalService.showFeedback('Something went wrong as we tried to delete your snippets', 'errorMessage');
+          }
+        });
+      }
+    });
+  }
+
   page(event: PageEvent) {
 
     this.filter.offset = event.pageIndex * event.pageSize;
