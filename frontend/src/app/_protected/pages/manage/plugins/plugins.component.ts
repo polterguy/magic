@@ -184,7 +184,7 @@ export class PluginsComponent implements OnInit {
           this.bazarService.installBazarItem(app.folder_name, app.version, app.name, token).subscribe({
             next: (install: any) => {
               if (install.result === 'success') {
-                this.generalService.showFeedback('Plugin was successfully installed on your server', 'successMessage');
+                this.generalService.showFeedback('Plugin was successfully installed on your cloudlet', 'successMessage');
 
                 this.loadDetails();
                 this.cacheService.delete('magic.sql.databases.sqlite.*').subscribe();

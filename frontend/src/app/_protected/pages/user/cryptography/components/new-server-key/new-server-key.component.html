@@ -82,9 +82,24 @@
   </div>
 
   <div mat-dialog-actions [align]="'end'">
-    <button mat-button color="primary" mat-dialog-close class="me-2">Cancel</button>
-    <button mat-flat-button type="submit" color="primary" class="px-5" (click)="save()" [disabled]="isWaiting">
+
+    <button
+      mat-button
+      color="primary"
+      mat-dialog-close
+      class="me-2">
+      Cancel
+    </button>
+
+    <button
+      mat-flat-button
+      type="submit"
+      color="primary"
+      class="px-3"
+      (click)="save()"
+      [disabled]="isWaiting">
       {{data?.type === 'create' ? 'Save' : 'Import'}}
     </button>
+
   </div>
 </form>

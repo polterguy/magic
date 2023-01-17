@@ -55,8 +55,6 @@ export class TasksComponent implements OnInit {
 
     this.dialog.open(ManageTaskComponent, {
       width: '800px',
-      panelClass: ['light'],
-      disableClose: true,
     }).afterClosed().subscribe((res: boolean) => {
       if (res) {
         this.getTasks();
@@ -69,7 +67,6 @@ export class TasksComponent implements OnInit {
 
     this.dialog.open(ManageTaskComponent, {
       width: '800px',
-      panelClass: ['light'],
       data: task
     }).afterClosed().subscribe((res: boolean) => {
       if (res) {
@@ -81,9 +78,18 @@ export class TasksComponent implements OnInit {
 
   execute(task: any) {
 
+    this.generalService.showLoading();
     this.taskService.execute(task.id).subscribe({
-      next: () => this.generalService.showFeedback('Task successfully executed', 'successMessage'),
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)
+      next: () => {
+
+        this.generalService.hideLoading();
+        this.generalService.showFeedback('Task successfully executed', 'successMessage');
+      },
+      error: (error: any) => {
+
+        this.generalService.hideLoading();
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000);
+      }
     });
   }
 
