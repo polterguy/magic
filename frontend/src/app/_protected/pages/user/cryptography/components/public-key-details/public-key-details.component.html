@@ -1,17 +1,25 @@
+
 <h3 mat-dialog-title>Details of {{data.key?.subject}} key</h3>
 
 <div mat-dialog-content>
   <form>
     <div class="row">
+
       <div class="col-lg-3 col-sm-6 col-12">
 
         <mat-form-field class="w-100">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-            <mat-icon>person</mat-icon>
+          <span
+            matPrefix
+            matTooltip="Full name of owner"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>edit</mat-icon>
             <span class="text-muted">|</span>
           </span>
-
-          <input matInput placeholder="Full name" disabled [(ngModel)]="data.key.subject"
+          <input
+            matInput
+            placeholder="Full name"
+            disabled
+            [(ngModel)]="data.key.subject"
             [ngModelOptions]="{standalone: true}">
         </mat-form-field>
 
@@ -20,12 +28,18 @@
       <div class="col-lg-3 col-sm-6 col-12">
 
         <mat-form-field class="w-100">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+          <span
+            matPrefix
+            matTooltip="Email address of owner"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>mail</mat-icon>
             <span class="text-muted">|</span>
           </span>
-
-          <input matInput placeholder="Email address" disabled [(ngModel)]="data.key.email"
+          <input
+            matInput
+            placeholder="Email address"
+            disabled
+            [(ngModel)]="data.key.email"
             [ngModelOptions]="{standalone: true}">
         </mat-form-field>
 
@@ -34,12 +48,18 @@
       <div class="col-lg-3 col-sm-6 col-12">
 
         <mat-form-field class="w-100">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+          <span
+            matPrefix
+            matTooltip="Domain associated with owner"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>language</mat-icon>
             <span class="text-muted">|</span>
           </span>
-
-          <input matInput placeholder="Domain" disabled [(ngModel)]="data.key.domain"
+          <input
+            matInput
+            placeholder="Domain"
+            disabled
+            [(ngModel)]="data.key.domain"
             [ngModelOptions]="{standalone: true}">
         </mat-form-field>
 
@@ -48,13 +68,19 @@
       <div class="col-lg-3 col-sm-6 col-12">
 
         <mat-form-field class="w-100">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-            <mat-icon>supervisor_account</mat-icon>
+          <span
+            matPrefix
+            matTooltip="Username associated with key"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>person</mat-icon>
             <span class="text-muted">|</span>
           </span>
-
-          <input matInput placeholder="Associated user" disabled
-            [(ngModel)]="data.key.username" [ngModelOptions]="{standalone: true}">
+          <input
+            matInput
+            placeholder="Associated user"
+            disabled
+            [(ngModel)]="data.key.username"
+            [ngModelOptions]="{standalone: true}">
         </mat-form-field>
 
       </div>
@@ -68,44 +94,108 @@
 
           <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
+
               <p class="mb-0">Fingerprint</p>
-              <button mat-button color="primary" class="custom-copy-btn" type="button"
+
+              <button
+                mat-button
+                color="primary"
+                class="custom-copy-btn"
+                type="button"
                 (click)="copyFingerprint(data.key.fingerprint)">
                 Copy
               </button>
+
             </div>
-            <mat-form-field class="w-100" id="custom-input">
-              <input matInput [disabled]="true" [(ngModel)]="data.key.fingerprint" [ngModelOptions]="{standalone: true}"
-                readonly>
+
+            <mat-form-field class="w-100">
+              <span
+                matPrefix
+                matTooltip="Fingerprint of public key"
+                class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+                <mat-icon>touch_app</mat-icon>
+                <span class="text-muted">|</span>
+              </span>
+              <input
+                matInput
+                placeholder="Fingerprint"
+                disabled
+                [(ngModel)]="data.key.fingerprint"
+                [ngModelOptions]="{standalone: true}">
             </mat-form-field>
+
           </div>
 
           <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
+
               <p class="mb-0">Public key</p>
-              <button mat-button color="primary" class="custom-copy-btn" type="button" (click)="copyContent(data.key.content)">
+
+              <button
+                mat-button
+                color="primary"
+                class="custom-copy-btn"
+                type="button"
+                (click)="copyContent(data.key.content)">
                 Copy
               </button>
+
             </div>
-            <mat-form-field class="w-100">
+
+            <mat-form-field class="w-100 custom-alignment">
+              <span
+                matPrefix
+                matTooltip="Public key"
+                class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+                <mat-icon>key</mat-icon>
+                <span class="text-muted">|</span>
+              </span>
               <textarea
+                matInput
+                disabled
                 spellcheck="false"
-                matInput rows="12" disabled [(ngModel)]="data.key.content"
-                [ngModelOptions]="{standalone: true}"></textarea>
+                rows="12"
+                name="-"
+                autocomplete="off"
+                [(ngModel)]="data.key.content"
+                [ngModelOptions]="{standalone: true}"
+                placeholder="Public key">
+              </textarea>
             </mat-form-field>
+        
           </div>
         </div>
 
       </div>
 
       <div class="col-lg-6 col-12 modal-custom-codemirror" *ngIf="codemirrorReady">
-        <app-codemirror-hyperlambda [(model)]="data.key.options"></app-codemirror-hyperlambda>
+
+        <app-codemirror-hyperlambda [(model)]="data.key.options">
+        </app-codemirror-hyperlambda>
+
       </div>
+
     </div>
   </form>
 </div>
 
 <div mat-dialog-actions [align]="'end'">
-  <button mat-button color="primary" mat-dialog-close class="me-2">Cancel</button>
-  <button mat-flat-button color="primary" class="px-5" [disabled]="waiting" (click)="save()">Save</button>
+
+  <button
+    mat-button
+    color="primary"
+    mat-dialog-close
+    class="me-2">
+    Cancel
+  </button>
+
+  <button
+    mat-flat-button
+    color="primary"
+    class="px-3"
+    [disabled]="waiting"
+    (click)="save()">
+    Save
+  </button>
+
 </div>
