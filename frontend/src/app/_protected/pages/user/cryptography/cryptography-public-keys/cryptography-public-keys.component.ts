@@ -16,11 +16,11 @@ import { CryptoService } from '../_services/crypto.service';
  * Helper component for displaying public keys cloudlet has stored.
  */
 @Component({
-  selector: 'app-server-key-table',
-  templateUrl: './server-key-table.component.html',
-  styleUrls: ['./server-key-table.component.scss']
+  selector: 'app-cryptography-public-keys',
+  templateUrl: './cryptography-public-keys.component.html',
+  styleUrls: ['./cryptography-public-keys.component.scss']
 })
-export class ServerKeyTableComponent implements OnInit {
+export class CryptographyPublicKeysComponent implements OnInit {
 
   @Output() invokeViewReceipts: EventEmitter<any> = new EventEmitter<any>();
 

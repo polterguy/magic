@@ -4,13 +4,13 @@
  */
 
 import { NgModule } from '@angular/core';
-import { ServerKeyComponent } from '../server-key.component';
+import { CryptographyComponent } from '../cryptography.component';
 import { Routes, RouterModule } from '@angular/router';
 
 const routes: Routes = [
   {
     path: '',
-    component: ServerKeyComponent
+    component: CryptographyComponent
   }
 ];
 
@@ -18,4 +18,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class ServerKeyRoutingModule { }
+export class CryptographyRoutingModule { }
