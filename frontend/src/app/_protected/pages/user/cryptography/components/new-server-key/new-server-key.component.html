@@ -1,6 +1,10 @@
+
 <h3 mat-dialog-title>
-  <ng-container *ngIf="data?.type === 'create'">Create new key pair</ng-container>
+
+  <ng-container *ngIf="data?.type === 'create'">Create new server key pair</ng-container>
+
   <ng-container *ngIf="data?.type === 'import'">Import new key</ng-container>
+
 </h3>
 
 <form>
@@ -10,12 +14,20 @@
       <div class="col-sm-6 col-12">
 
         <mat-form-field class="w-100">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-            <mat-icon>person</mat-icon>
+          <span
+            matPrefix
+            matTooltip="Full name of owner"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>edit</mat-icon>
             <span class="text-muted">|</span>
           </span>
-
-          <input matInput placeholder="Full name" type="text" name="name" [(ngModel)]="newKey.subject"
+          <input
+            matInput
+            placeholder="Full name"
+            type="text"
+            name="name"
+            autocomplete="off"
+            [(ngModel)]="newKey.subject"
             [ngModelOptions]="{standalone: true}">
         </mat-form-field>
 
@@ -24,12 +36,19 @@
       <div class="col-sm-6 col-12">
 
         <mat-form-field class="w-100">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+          <span
+            matPrefix
+            matTooltip="Email address of owner"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>mail</mat-icon>
             <span class="text-muted">|</span>
           </span>
-
-          <input matInput placeholder="Email address" [(ngModel)]="newKey.email" [ngModelOptions]="{standalone: true}"
+          <input
+            matInput
+            placeholder="Email address"
+            autocomplete="off"
+            [(ngModel)]="newKey.email"
+            [ngModelOptions]="{standalone: true}"
             [pattern]="CommonRegEx.email">
           <mat-error>{{CommonErrorMessages.email}}</mat-error>
         </mat-form-field>
@@ -39,13 +58,22 @@
       <div class="col-sm-6 col-12">
 
         <mat-form-field class="w-100">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+          <span
+            matPrefix
+            matTooltip="Domain associated with owner of key"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>language</mat-icon>
             <span class="text-muted">|</span>
           </span>
-
-          <input matInput placeholder="http://domain.com" type="url" name="url" [(ngModel)]="newKey.domain"
-            [ngModelOptions]="{standalone: true}" [pattern]="CommonRegEx.backend">
+          <input
+            matInput
+            placeholder="https://domain.com"
+            type="url"
+            name="url"
+            autocomplete="off"
+            [(ngModel)]="newKey.domain"
+            [ngModelOptions]="{standalone: true}"
+            [pattern]="CommonRegEx.backend">
           <mat-error *ngIf="!validateDomain()">{{CommonErrorMessages.backend}}</mat-error>
         </mat-form-field>
 
@@ -54,12 +82,17 @@
       <div class="col-sm-6 col-12" *ngIf="data.type === 'create'">
 
         <mat-form-field class="w-100">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+          <span
+            matPrefix
+            matTooltip="Strength of key in bits"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>nest_secure_alarm</mat-icon>
             <span class="text-muted">|</span>
           </span>
-
-          <mat-select placeholder="Strength" [(ngModel)]="newKey.strength" [ngModelOptions]="{standalone: true}">
+          <mat-select
+            placeholder="Strength"
+            [(ngModel)]="newKey.strength"
+            [ngModelOptions]="{standalone: true}">
             <mat-option *ngFor="let item of strengthArray" [value]="item">
               {{item}}
             </mat-option>
@@ -71,9 +104,23 @@
       <div class="col-12">
         <p>{{data?.type === 'create' ? 'Seed' : 'Public key'}}</p>
 
-        <mat-form-field class="w-100">
-          <textarea matInput rows="7" [(ngModel)]="newKey.content" [ngModelOptions]="{standalone: true}"
-            (ngModelChange)="publicKeyChanged()"></textarea>
+        <mat-form-field class="w-100 custom-alignment">
+          <span
+            matPrefix
+            [matTooltip]="data?.type === 'create' ? 'Seed for new key' : 'Public key'"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>key</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <textarea
+            matInput
+            spellcheck="false"
+            rows="7"
+            [(ngModel)]="newKey.content"
+            [ngModelOptions]="{standalone: true}"
+            [placeholder]="data?.type === 'create' ? 'Seed' : 'Public key'"
+            (ngModelChange)="publicKeyChanged()">
+          </textarea>
         </mat-form-field>
 
       </div>
