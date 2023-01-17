@@ -5,7 +5,7 @@
   <div mat-dialog-content>
 
     <mat-error *ngIf="count === 0" class="mb-2">
-      No training snippets found, you need to create some training data first.
+      No training data, you need to create or import training data first.
     </mat-error>
 
     <div class="row">
@@ -47,9 +47,9 @@
 
     <div class="row">
 
-      <div class="col-6">
+      <div class="col-12 d-flex justify-content-md-between align-items-md-center align-items-end flex-md-row">
 
-        <mat-form-field class="w-100 standalone-field">
+        <mat-form-field class="w-100 standalone-field me-2">
           <span
             matPrefix
             matTooltip="Epochs or full cycles through the training set"
@@ -69,10 +69,6 @@
             name="epochs"
             autocomplete="off">
         </mat-form-field>
-    
-      </div>
-
-      <div class="col-6">
 
         <mat-form-field class="w-100 standalone-field">
           <span
@@ -101,9 +97,9 @@
 
     <div class="row">
 
-      <div class="col-6">
+      <div class="col-12 d-flex justify-content-md-between align-items-md-center align-items-end flex-md-row">
 
-        <mat-form-field class="w-100 standalone-field">
+        <mat-form-field class="w-100 standalone-field me-2">
           <span
             matPrefix
             matTooltip="Learning rate multiplier"
@@ -123,10 +119,6 @@
             name="learning_rate_multiplier"
             autocomplete="off">
         </mat-form-field>
-
-      </div>
-
-      <div class="col-6">
 
         <mat-form-field class="w-100 standalone-field">
           <span
