@@ -95,10 +95,10 @@
 
             <ng-template matTabContent>
 
-              <app-server-key-table
+              <app-cryptography-public-keys
                 (invokeViewReceipts)="invokeViewReceipts($event)"
                 #tableComponent>
-              </app-server-key-table>
+              </app-cryptography-public-keys>
 
             </ng-template>
 
@@ -108,9 +108,9 @@
 
             <ng-template matTabContent>
 
-              <app-server-key-receipts
+              <app-cryptography-receipts
                 [selectedServerKey]="selectedServerKey">
-              </app-server-key-receipts>
+              </app-cryptography-receipts>
 
             </ng-template>
 

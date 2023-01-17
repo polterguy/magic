@@ -17,11 +17,11 @@ import { NewServerKeyComponent } from './components/new-server-key/new-server-ke
  * in addition to receipts associated with keys.
  */
 @Component({
-  selector: 'app-server-key',
-  templateUrl: './server-key.component.html',
-  styleUrls: ['./server-key.component.scss']
+  selector: 'app-cryptography',
+  templateUrl: './cryptography.component.html',
+  styleUrls: ['./cryptography.component.scss']
 })
-export class ServerKeyComponent implements OnInit {
+export class CryptographyComponent implements OnInit {
 
   @ViewChild('tableComponent') tableComponent: any;
   publicKeyFull: PublicKeyFull = null;

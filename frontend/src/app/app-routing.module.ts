@@ -81,7 +81,7 @@ const routes: Routes = [
       },
       {
         path: 'cryptography',
-        loadChildren: () => import('./_protected/pages/user/cryptography/_module/server-key.module').then(m => m.ServerKeyModule)
+        loadChildren: () => import('./_protected/pages/user/cryptography/_module/cryptography.module').then(m => m.CryptographyModule)
       },
       {
         path: 'user-profile',

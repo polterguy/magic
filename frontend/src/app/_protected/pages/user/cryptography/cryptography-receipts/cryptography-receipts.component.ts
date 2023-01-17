@@ -14,10 +14,10 @@ import { CryptoService } from '../_services/crypto.service';
  * Helper component displaying receipts for crypto invocations towards the server.
  */
 @Component({
-  selector: 'app-server-key-receipts',
-  templateUrl: './server-key-receipts.component.html'
+  selector: 'app-cryptography-receipts',
+  templateUrl: './cryptography-receipts.component.html'
 })
-export class ServerKeyReceiptsComponent implements OnInit {
+export class CryptographyReceiptsComponent implements OnInit {
 
   @Input() selectedServerKey: PublicKey;
 
