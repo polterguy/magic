@@ -21,64 +21,90 @@ export class ServerKeyReceiptsComponent implements OnInit {
 
   @Input() selectedServerKey: PublicKey;
 
-  displayedColumns: string[] = ['created', 'request', 'response'];
-
-  public dataSource: any = [];
-
+  dataSource: any = [];
+  isLoading: boolean = true;
   pageIndex: number = 0;
   pageSize: number = 5;
   totalItems: number = 0;
-
-  public isLoading: boolean = true;
+  displayedColumns: string[] = [
+    'created',
+    'request',
+    'response'
+  ];
 
   constructor(
     private cryptoService: CryptoService,
     private generalService: GeneralService) { }
 
   ngOnInit() {
+
     this.getInvocations();
     this.getCount();
   }
 
-  /**
-   * Retrieves invocations from backend.
+  changePage(e: PageEvent) {
+
+    this.pageSize = e.pageSize;
+    this.pageIndex = e.pageIndex;
+    this.getInvocations(false);
+  }
+
+  /*
+   * Private helper methods
    */
-  private getInvocations() {
-    this.isLoading = true;
+
+  private getInvocations(countItems: boolean = true) {
+
+    this.generalService.showLoading();
+
     const filter: any = {};
     if (this.selectedServerKey) {
       filter.crypto_key = this.selectedServerKey.id;
     }
+
     this.cryptoService.invocations({
       filter,
       offset: this.pageIndex * this.pageSize,
       limit: this.pageSize
     }).subscribe({
       next: (invocations: CryptoInvocation[]) => {
+
         this.dataSource = invocations || [];
-        this.isLoading = false;
+
+        if (!countItems) {
+
+          this.generalService.hideLoading();
+          return;
+        }
+        this.getCount();
       },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+      error: (error: any) =>{
+
+        this.generalService.hideLoading();
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+      }
     });
   }
 
   private getCount() {
+
     const filter: any = {};
     if (this.selectedServerKey) {
       filter.crypto_key = this.selectedServerKey.id;
     }
+
     this.cryptoService.countInvocations({ filter: filter }).subscribe({
       next: (res) => {
+
+        this.generalService.hideLoading();
+        this.isLoading = false;
         this.totalItems = res.count
       },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
-    });
-  }
+      error: (error: any) =>{
 
-  public changePage(e: PageEvent) {
-    this.pageSize = e.pageSize;
-    this.pageIndex = e.pageIndex;
-    this.getInvocations();
-    this.getCount();
+        this.generalService.hideLoading();
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+      }
+    });
   }
 }

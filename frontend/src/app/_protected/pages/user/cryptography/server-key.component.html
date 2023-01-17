@@ -7,25 +7,42 @@
             <div class="d-flex justify-content-between flex-sm-row flex-column align-items-sm-center mb-4">
               <h3 class="my-0 fw-bold">Server key</h3>
               <div class="ms-auto">
-                <button mat-button color="primary" (click)="newKey('import')">Import key</button>
-                <button mat-flat-button color="primary" (click)="newKey('create')">Create a new key</button>
+
+                <button
+                  mat-button
+                  color="primary"
+                  (click)="newKey('import')">
+                  Import key
+                </button>
+
+                <button
+                  mat-flat-button
+                  color="primary"
+                  (click)="newKey('create')">
+                  New key
+                </button>
+
               </div>
             </div>
           </div>
           <div class="col-lg-6 col-12">
             <div class="row">
+
               <div class="col-12 py-2">
                 <p class="fw-bold">Fingerprint</p>
                 <p class="mat-caption text-muted">{{publicKeyFull?.fingerprint}}</p>
               </div>
+
               <div class="col-sm-4 col-12">
                 <p class="fw-bold">Fingerprint format</p>
                 <p class="mat-caption text-muted">{{publicKeyFull?.fingerprintFormat}}</p>
               </div>
+
               <div class="col-sm-4 col-12">
                 <p class="fw-bold">Key format</p>
                 <p class="mat-caption text-muted">{{publicKeyFull?.keyFormat}}</p>
               </div>
+
               <div class="col-sm-4 col-12">
                 <p class="fw-bold">Key type</p>
                 <p class="mat-caption text-muted">{{publicKeyFull?.keyType}}</p>

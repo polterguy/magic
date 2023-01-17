@@ -44,7 +44,9 @@ export class ManageTaskComponent implements OnInit {
       this.task = this.data;
     }
     const res = this.codemirrorActionsService.getActions(null, 'hl');
-    res.autofocus = false;
+    if (!this.data) {
+      res.autofocus = false;
+    }
     this.hlModel = {
       hyperlambda: this.task.hyperlambda,
       options: res,
