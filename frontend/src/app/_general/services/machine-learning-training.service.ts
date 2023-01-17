@@ -5,6 +5,7 @@
 
 // Angular and system imports.
 import { Injectable } from '@angular/core';
+import { Affected } from 'src/app/models/affected.model';
 import { Count } from 'src/app/models/count.model';
 import { Response } from 'src/app/models/response.model';
 
@@ -40,6 +41,13 @@ export class MachineLearningTrainingService {
    */
   ml_training_snippets_update(el: any) {
     return this.httpService.put<Response>('/magic/system/magic/ml_training_snippets', el);
+  }
+
+  /**
+   * Updates all training snippet matching filter.
+   */
+  ml_training_snippets_update_all(el: any) {
+    return this.httpService.put<Affected>('/magic/system/magic/ml_training_snippets_all', el);
   }
 
   /**

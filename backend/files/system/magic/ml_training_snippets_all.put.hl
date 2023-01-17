@@ -1,0 +1,48 @@
+
+// CRUD update endpoint updating all filtered records in your ml_training_snippets table in your magic database with authentication and authorisation for root roles
+.arguments
+   filter
+      ml_training_snippets.prompt.like:string
+      ml_training_snippets.type.eq:string
+   values
+      type:string
+      pushed:long
+.description:CRUD update endpoint updating all filtered records in your ml_training_snippets table in your magic database with authentication and authorisation for root roles
+.type:crud-update
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Opening up our database connection.
+data.connect:[generic|magic]
+
+   // Parametrising our invocation.
+   add:x:./*/data.update/*/values
+      get-nodes:x:@.arguments/*/values/*
+   add:x:./*/data.update/*/where/*/and
+      get-nodes:x:@.arguments/*/filter/*
+
+   // Invoking our update slot.
+   data.update
+      table:ml_training_snippets
+      values
+      where
+         and
+
+   // Verifying record exists.
+   if
+      eq
+         get-value:x:@data.update
+         .:int:0
+      .lambda
+         response.status.set:404
+         return
+            result:Record not found
+
+   // Returning the correct status code.
+   response.status.set:202
+
+   // Returning success to caller.
+   unwrap:x:+/*
+   return
+      affected:x:@data.update
