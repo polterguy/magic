@@ -16,8 +16,8 @@ io.file.execute:/system/sql/magic.startup/sqlite/magic.db.sqlite.databases.hl
 io.file.execute:/system/ensure-magic-database.hl
 
 // Executing all magic.startup Hyperlambda files.
-io.file.list-recursively:/modules/
 io.file.list-recursively:/system/
+io.file.list-recursively:/modules/
 for-each:x:./*/io.file.list-recursively/*
 
    // Checking if file is a startup Hyperlambda file.
