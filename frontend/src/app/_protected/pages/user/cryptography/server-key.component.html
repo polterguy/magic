@@ -1,7 +1,9 @@
 <div class="row">
   <div class="col-12">
+
     <mat-card>
       <mat-card-content>
+
         <div class="row">
           <div class="col-12">
             <div class="d-flex justify-content-between flex-sm-row flex-column align-items-sm-center mb-4">
@@ -49,35 +51,75 @@
               </div>
             </div>
           </div>
+
           <div class="col-lg-6 col-12">
+
             <div class="d-flex justify-content-between align-items-center mb-2">
               <p class="fw-bold my-0">Public key</p>
-              <button mat-button color="primary" class="pe-0" (click)="copy(publicKeyFull?.publicKey)">Copy key</button>
+
+              <button
+                mat-button
+                color="primary"
+                (click)="copy(publicKeyFull?.publicKey)">
+                Copy key
+              </button>
+
             </div>
+
             <p class="mat-caption text-muted word-break">{{publicKeyFull?.publicKey}}</p>
+
           </div>
+
         </div>
+
       </mat-card-content>
     </mat-card>
+
   </div>
 </div>
+
 <div class="row mt-4">
   <div class="col-12">
+
     <mat-card class="pb-2">
       <mat-card-content>
-        <mat-tab-group mat-stretch-tabs dynamicHeight animationDuration="0ms" [selectedIndex]="selectedTabIndex"
+
+        <mat-tab-group
+          mat-stretch-tabs
+          dynamicHeight
+          animationDuration="0ms"
+          [selectedIndex]="selectedTabIndex"
           (selectedIndexChange)="tabChanged($event)">
+
           <mat-tab label="Keys">
-            <app-server-key-table (invokeViewReceipts)="invokeViewReceipts($event)"
-              #tableComponent></app-server-key-table>
-          </mat-tab>
-          <mat-tab label="Receipts">
+
             <ng-template matTabContent>
-              <app-server-key-receipts [selectedServerKey]="selectedServerKey"></app-server-key-receipts>
+
+              <app-server-key-table
+                (invokeViewReceipts)="invokeViewReceipts($event)"
+                #tableComponent>
+              </app-server-key-table>
+
             </ng-template>
+
           </mat-tab>
+
+          <mat-tab label="Receipts">
+
+            <ng-template matTabContent>
+
+              <app-server-key-receipts
+                [selectedServerKey]="selectedServerKey">
+              </app-server-key-receipts>
+
+            </ng-template>
+
+          </mat-tab>
+
         </mat-tab-group>
+
       </mat-card-content>
     </mat-card>
+
   </div>
 </div>

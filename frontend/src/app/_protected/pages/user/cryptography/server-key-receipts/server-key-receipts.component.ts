@@ -39,7 +39,6 @@ export class ServerKeyReceiptsComponent implements OnInit {
   ngOnInit() {
 
     this.getInvocations();
-    this.getCount();
   }
 
   changePage(e: PageEvent) {
