@@ -8,34 +8,6 @@
 
 .table-responsive {
 
-  tr:not(.expanded-row) {
-    cursor: pointer;
-  }
-
-  tr.expanded-row {
-    height: 0 !important;
-
-    td.hidden {
-      display: none !important;
-    }
-    td.visible {
-      display: table-cell !important;
-    }
-
-    .formatted {
-      white-space: pre-wrap;
-    }
-
-    &:hover {
-      background-color: transparent !important;
-    }
-
-    td {
-      padding-left: 16px;
-      padding-right: 16px;
-    }
-  }
-
   .text-truncate {
     max-width: 30vw;
   }

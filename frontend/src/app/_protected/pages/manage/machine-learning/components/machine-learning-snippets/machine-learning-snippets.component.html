@@ -116,19 +116,6 @@
           </td>
         </ng-container>
 
-        <ng-container matColumnDef="details">
-          <td
-            mat-cell
-            *matCellDef="let el"
-            [class.visible]="el === expandedElement"
-            [class.hidden]="el !== expandedElement"
-            colspan="1">
-            <div
-              [@detailExpand]="el === expandedElement ? 'expanded' : 'collapsed'"
-              class="text-muted formatted">{{el.completion}}</div>
-          </td>
-        </ng-container>
-
         <tr
           mat-header-row
           *matHeaderRowDef="displayedColumns;sticky: true">
@@ -136,14 +123,7 @@
 
         <tr
           mat-row
-          (click)="expandedElement = expandedElement === row ? null : row"
           *matRowDef="let row; columns: displayedColumns;">
-        </tr>
-
-        <tr
-          mat-row
-          class="expanded-row"
-          *matRowDef="let row; columns: ['details']; ">
         </tr>
 
       </table>

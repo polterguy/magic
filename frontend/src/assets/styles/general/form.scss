@@ -4,6 +4,7 @@ buttons
 :root .mat-flat-button,
 :root .mat-stroked-button {
   border-radius: $aista_radius_sm;
+  min-width: unset;
 }
 :root .mat-button {
   min-width: unset;
