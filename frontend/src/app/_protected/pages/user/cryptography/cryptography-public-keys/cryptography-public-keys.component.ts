@@ -8,7 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { ServerKeyDetailsComponent } from '../components/server-key-details/server-key-details.component';
+import { PublicKeyDetailsComponent } from '../components/public-key-details/public-key-details.component';
 import { PublicKey } from '../_models/public-key.model';
 import { CryptoService } from '../_services/crypto.service';
 
@@ -89,7 +89,7 @@ export class CryptographyPublicKeysComponent implements OnInit {
 
     const keyData: any = { ...key };
     keyData.original_content = key.content;
-    this.dialog.open(ServerKeyDetailsComponent, {
+    this.dialog.open(PublicKeyDetailsComponent, {
       width: '80vw',
       panelClass: ['light'],
       data: {

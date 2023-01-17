@@ -44,11 +44,11 @@ class PublicKeyEx {
  * Helper component displaying details about the currently activated server key pair.
  */
 @Component({
-  selector: 'app-server-key-details',
-  templateUrl: './server-key-details.component.html',
-  styleUrls: ['./server-key-details.component.scss']
+  selector: 'app-public-key-details',
+  templateUrl: './public-key-details.component.html',
+  styleUrls: ['./public-key-details.component.scss']
 })
-export class ServerKeyDetailsComponent implements OnInit {
+export class PublicKeyDetailsComponent implements OnInit {
 
   public username: string = '';
 
@@ -62,7 +62,7 @@ export class ServerKeyDetailsComponent implements OnInit {
     private cryptoService: CryptoService,
     private generalService: GeneralService,
     private codemirrorActionsService: CodemirrorActionsService,
-    private dialogRef: MatDialogRef<ServerKeyDetailsComponent>,
+    private dialogRef: MatDialogRef<PublicKeyDetailsComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { key: any, savePermission: boolean }) { }
 
   ngOnInit(): void {
