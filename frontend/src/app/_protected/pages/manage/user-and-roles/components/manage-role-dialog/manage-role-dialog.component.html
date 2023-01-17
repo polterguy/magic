@@ -14,6 +14,7 @@
     <mat-form-field class="w-100">
       <span
         matPrefix
+        matTooltip="Name of role"
         class="d-flex flex-nowrap align-items-center justify-content-between me-2">
         <mat-icon>shield</mat-icon>
         <span class="text-muted">|</span>
@@ -32,6 +33,7 @@
     <mat-form-field class="w-100 custom-alignment">
       <span
         matPrefix
+        matTooltip="Role's description"
         class="d-flex flex-nowrap align-items-center justify-content-between me-2">
         <mat-icon>featured_play_list</mat-icon>
         <span class="text-muted">|</span>
@@ -44,14 +46,29 @@
         autocomplete="off"
         placeholder="Description"
         formControlName="description"
-        required rows="5">
+        required
+        rows="5">
       </textarea>
     </mat-form-field>
 
   </div>
 
   <div mat-dialog-actions [align]="'end'">
-    <button mat-button mat-dialog-close>Cancel</button>
-    <button mat-flat-button color="primary" (click)="save()" [disabled]="isLoading" type="submit">Save role</button>
+
+    <button
+      mat-button
+      mat-dialog-close>
+      Cancel
+    </button>
+
+    <button
+      mat-flat-button
+      color="primary"
+      (click)="save()"
+      [disabled]="isLoading"
+      type="submit">
+      Save
+    </button>
+
   </div>
 </form>

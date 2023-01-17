@@ -89,7 +89,6 @@ export class MachineLearningRequestsComponent implements OnInit {
       .open(MachineLearningEditRequestComponent, {
         width: '80vw',
         maxWidth: '850px',
-        disableClose: true,
         data: {
           id: el.id,
           prompt: el.prompt,

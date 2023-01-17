@@ -19,14 +19,7 @@ import { MachineLearningEditSnippetComponent } from '../machine-learning-edit-sn
 @Component({
   selector: 'app-machine-learning-snippets',
   templateUrl: './machine-learning-snippets.component.html',
-  styleUrls: ['./machine-learning-snippets.component.scss'],
-  animations: [
-    trigger('detailExpand', [
-      state('collapsed', style({height: '0px', opacity: '0'})),
-      state('expanded', style({height: '*', opacity: '1'})),
-      transition('expanded <=> collapsed', animate('0.25s cubic-bezier(0.4, 0.0, 0.2, 1)')),
-    ])
-  ]
+  styleUrls: ['./machine-learning-snippets.component.scss']
 })
 export class MachineLearningSnippetsComponent implements OnInit {
 
@@ -71,7 +64,6 @@ export class MachineLearningSnippetsComponent implements OnInit {
       .open(MachineLearningEditSnippetComponent, {
         width: '80vw',
         maxWidth: '850px',
-        disableClose: true,
         data: {
           type: this.type,
         }
@@ -99,7 +91,6 @@ export class MachineLearningSnippetsComponent implements OnInit {
       .open(MachineLearningEditSnippetComponent, {
         width: '80vw',
         maxWidth: '850px',
-        disableClose: true,
         data: el,
       })
       .afterClosed()
