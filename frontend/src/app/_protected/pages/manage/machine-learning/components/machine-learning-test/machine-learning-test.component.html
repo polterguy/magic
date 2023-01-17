@@ -23,6 +23,7 @@
       <textarea
         matInput
         placeholder="Completion"
+        [disabled]="isLoading"
         [(ngModel)]="completion"
         rows="20">
       </textarea>
