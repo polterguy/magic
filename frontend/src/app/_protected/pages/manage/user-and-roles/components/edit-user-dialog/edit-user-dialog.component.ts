@@ -101,7 +101,7 @@ export class EditUserDialogComponent implements OnInit {
     this.userService.addRole(this.data.user.username, role).subscribe({
       next: (res: any) => {
         if (res && res.result === 'success') {
-          this.generalService.showFeedback('Roles successfully updated.', 'successMessage');
+          this.generalService.showFeedback('Roles successfully updated', 'successMessage');
           this.rolesCtrl.enable();
         }
       },
@@ -116,7 +116,7 @@ export class EditUserDialogComponent implements OnInit {
     this.userService.removeRole(item.user, item.role).subscribe({
       next: (res: any) => {
         if (res && res.affected > 0) {
-          this.generalService.showFeedback('Roles successfully updated.', 'successMessage');
+          this.generalService.showFeedback('Roles successfully updated', 'successMessage');
           this.rolesCtrl.enable();
         }
       },
