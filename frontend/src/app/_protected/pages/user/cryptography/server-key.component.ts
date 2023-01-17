@@ -12,6 +12,10 @@ import { PublicKey } from './_models/public-key.model';
 import { MatDialog } from '@angular/material/dialog';
 import { NewServerKeyComponent } from './components/new-server-key/new-server-key.component';
 
+/**
+ * Helper component for viewing cryptography keys, both public keys and server keys,
+ * in addition to receipts associated with keys.
+ */
 @Component({
   selector: 'app-server-key',
   templateUrl: './server-key.component.html',
@@ -19,18 +23,10 @@ import { NewServerKeyComponent } from './components/new-server-key/new-server-ke
 })
 export class ServerKeyComponent implements OnInit {
 
-  /**
-   * Server's public key information.
-   */
-  public publicKeyFull: PublicKeyFull = null;
-
-  public selectedTabIndex: number = 0;
-
-  public selectedServerKey: PublicKey;
-
-  public isNewKey: boolean = undefined;
-
   @ViewChild('tableComponent') tableComponent: any;
+  publicKeyFull: PublicKeyFull = null;
+  selectedTabIndex: number = 0;
+  selectedServerKey: PublicKey;
 
   constructor(
     private dialog: MatDialog,
@@ -38,59 +34,72 @@ export class ServerKeyComponent implements OnInit {
     private cryptoService: CryptoService,
     private generalService: GeneralService) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
+
     this.getServerPublicKey();
   }
 
-  /*
-   * Retrieves the server's public key.
-   */
-  private getServerPublicKey() {
-    this.cryptoService.serverPublicKey().subscribe({
-      next: (key: any) => {
-        if (key.result === 'FAILURE') {
-          this.generalService.showFeedback('No server key pair found, please create one', 'errorMessage');
-          return;
-        }
-        this.publicKeyFull = <PublicKeyFull>key;
-      },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
-    });
-  }
+  copy(text: string) {
 
-  public copy(text: string) {
     this.clipboard.copy(text);
-    this.generalService.showFeedback('Copied to your clipboard');
+    this.generalService.showFeedback('Public key can be found on your clipboard', 'successMessage');
   }
 
-  public tabChanged(event: any) {
+  tabChanged(event: any) {
+
     this.selectedTabIndex = event;
+    if (this.selectedTabIndex === 0) {
+      this.selectedServerKey = null;
+    }
   }
 
-  public invokeViewReceipts(event: any) {
-    if (event.key === this.selectedServerKey) {
-      this.isNewKey = false;
-    } else {
-      this.isNewKey = true;
-    }
+  invokeViewReceipts(event: any) {
+
     this.selectedServerKey = event.key;
     this.selectedTabIndex = event.index;
   }
 
-  public newKey(type: string) {
+  newKey(type: string) {
+
     this.dialog.open(NewServerKeyComponent, {
       width: '800px',
       data: {
         type: type
       }
     }).afterClosed().subscribe((result: any) => {
+
       if (result === true) {
+
         this.tableComponent.getKeys();
-        this.tableComponent.getCount();
         if (type === 'create') {
+
           this.getServerPublicKey();
         }
       }
-    })
+    });
+  }
+
+  /*
+   * Private helper methods.
+   */
+
+  private getServerPublicKey() {
+
+    this.generalService.showLoading();
+    this.cryptoService.serverPublicKey().subscribe({
+      next: (key: any) => {
+        if (key.result === 'FAILURE') {
+
+          this.generalService.showFeedback('No server key pair found, please create one', 'errorMessage');
+          return;
+        }
+        this.publicKeyFull = <PublicKeyFull>key;
+      },
+      error: (error: any) => {
+
+        this.generalService.hideLoading();
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+      }
+    });
   }
 }

@@ -12,7 +12,9 @@ import { ServerKeyDetailsComponent } from '../components/server-key-details/serv
 import { PublicKey } from '../_models/public-key.model';
 import { CryptoService } from '../_services/crypto.service';
 
-// TODO: Rename, it doesn't display servr key, but public keys.
+/**
+ * Helper component for displaying public keys cloudlet has stored.
+ */
 @Component({
   selector: 'app-server-key-table',
   templateUrl: './server-key-table.component.html',
@@ -22,61 +24,32 @@ export class ServerKeyTableComponent implements OnInit {
 
   @Output() invokeViewReceipts: EventEmitter<any> = new EventEmitter<any>();
 
-  displayedColumns: string[] = ['name', 'domain', 'email', 'created', 'enabled', 'actions'];
-
-  public dataSource: any = [];
-
+  isLoading: boolean = true;
+  dataSource: any = [];
   pageIndex: number = 0;
   pageSize: number = 5;
   totalItems: number = 0;
-
-  public isLoading: boolean = true;
+  displayedColumns: string[] = [
+    'name',
+    'domain',
+    'email',
+    'created',
+    'enabled',
+    'actions'
+  ];
 
   constructor(
     private dialog: MatDialog,
     private cryptoService: CryptoService,
     private generalService: GeneralService) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
+
     this.getKeys();
-    this.getCount();
   }
 
-  /*
-   * Returns public keys from backend.
-   */
-  public getKeys() {
-    this.isLoading = true;
-    this.cryptoService.publicKeys({
-      filter: '',
-      offset: this.pageIndex * this.pageSize,
-      limit: this.pageSize
-    }).subscribe({
-      next: (keys: PublicKey[]) => {
-        this.dataSource = keys || [];
-        this.isLoading = false;
-      },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
-    });
-  }
+  deleteKey(key: PublicKey) {
 
-  public getCount() {
-    const filter: string = '';
-    this.cryptoService.countPublicKeys({ filter: filter }).subscribe({
-      next: (res) => {
-        this.totalItems = res.count;
-      },
-
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
-    });
-  }
-
-  /**
-   * Deletes a public cryptography key from your backend.
-   *
-   * @param key Public key to delete
-   */
-  public deleteKey(key: PublicKey) {
     this.dialog.open(ConfirmationDialogComponent, {
       width: '500px',
       data: {
@@ -97,17 +70,14 @@ export class ServerKeyTableComponent implements OnInit {
           error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
         });
       }
-    })
+    });
   }
 
-  /**
-   * Changes the enabled state of the specified key.
-   *
-   * @param key What key to modify
-   */
-  public enabledChanged(event: any, key: PublicKey) {
+  enabledChanged(event: any, key: PublicKey) {
+
     this.cryptoService.setEnabled(key.id, event.checked).subscribe({
       next: () => {
+
         this.generalService.showFeedback(`Key was successfully ${event.checked ? 'enabled' : 'disabled'}`, 'successMessage')
         this.getKeys();
       },
@@ -115,7 +85,8 @@ export class ServerKeyTableComponent implements OnInit {
     });
   }
 
-  public viewDetails(key: PublicKey) {
+  viewDetails(key: PublicKey) {
+
     const keyData: any = { ...key };
     keyData.original_content = key.content;
     this.dialog.open(ServerKeyDetailsComponent, {
@@ -131,22 +102,68 @@ export class ServerKeyTableComponent implements OnInit {
     })
   }
 
-  public viewReceipts(key: PublicKey) {
+  viewReceipts(key: PublicKey) {
+
     const event: any = {
       key: key,
       index: 1
-    }
+    };
     this.invokeViewReceipts.emit(event);
   }
 
-  /**
-   * Invoked when paginator wants to page data table.
-   *
-   * @param e Page event argument
-   */
-  public changePage(e: PageEvent) {
+  changePage(e: PageEvent) {
+
     this.pageSize = e.pageSize;
     this.pageIndex = e.pageIndex;
-    this.getKeys();
+    this.getKeys(false);
+  }
+
+  /*
+   * Private helper methods
+   */
+
+  private getKeys(countItems: boolean = true) {
+
+    this.generalService.showLoading();
+    this.cryptoService.publicKeys({
+      filter: '',
+      offset: this.pageIndex * this.pageSize,
+      limit: this.pageSize
+    }).subscribe({
+      next: (keys: PublicKey[]) => {
+
+        this.dataSource = keys || [];
+        if (!countItems) {
+          this.generalService.hideLoading();
+          this.isLoading = false;
+          return;
+        }
+        this.getCount();
+      },
+      error: (error: any) => {
+
+        this.generalService.hideLoading();
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+      }
+    });
+  }
+
+  private getCount() {
+
+    const filter: string = '';
+    this.cryptoService.countPublicKeys({ filter: filter }).subscribe({
+      next: (res) => {
+
+        this.generalService.hideLoading();
+        this.totalItems = res.count;
+        this.isLoading = false;
+      },
+
+      error: (error: any) => {
+
+        this.generalService.hideLoading();
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+      }
+    });
   }
 }
