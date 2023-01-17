@@ -9,26 +9,30 @@
 
   </div>
 
-  <!-- Everything BUT Hyperlambda -->
-  <mat-form-field *ngIf="!ready" class="w-100 mb-2 custom-alignment">
-    <span
-      matPrefix
-      matTooltip="Completion"
-      class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-      <mat-icon>edit</mat-icon>
-      <span class="text-muted">|</span>
-    </span>
-    <textarea
-      matInput
-      placeholder="Completion"
-      [(ngModel)]="completion"
-      rows="20">
-    </textarea>
-  </mat-form-field>
+  <div class="col-12" *ngIf="!ready">
 
-  <form (ngSubmit)="submit()" class="d-flex justify-content-md-between align-items-md-center align-items-end flex-md-row flex-column-reverse w-100">
+    <!-- Everything BUT Hyperlambda -->
+    <mat-form-field class="w-100 custom-alignment">
+      <span
+        matPrefix
+        matTooltip="Completion"
+        class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        <mat-icon>edit</mat-icon>
+        <span class="text-muted">|</span>
+      </span>
+      <textarea
+        matInput
+        placeholder="Completion"
+        [(ngModel)]="completion"
+        rows="20">
+      </textarea>
+    </mat-form-field>
 
-    <mat-form-field class="w-100 standalone-field">
+  </div>
+
+  <form (ngSubmit)="submit()" class="d-flex justify-content-md-between align-items-md-center align-items-end flex-md-row w-100">
+
+    <mat-form-field class="w-100 standalone-field me-2">
       <span
         matPrefix
         matTooltip="Prompt"
@@ -48,17 +52,25 @@
 
     <button
       mat-button
-      type="submit"
       [disabled]="isLoading"
-      class="ms-2">
-      Submit
+      type="button"
+      mat-dialog-close>
+      Close
     </button>
 
     <button
       mat-button
-      [disabled]="isLoading"
-      mat-dialog-close>
-      Close
+      (click)="train()"
+      type="button"
+      [disabled]="isLoading">
+      Train
+    </button>
+
+    <button
+      mat-button
+      type="submit"
+      [disabled]="isLoading">
+      Submit
     </button>
 
   </form>

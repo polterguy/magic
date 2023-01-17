@@ -25,6 +25,7 @@ export class MachineLearningImportComponent {
   max: number = 100;
   prompt: string = 'prompt';
   completion: string = 'completion';
+  advanced: boolean = false;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -34,9 +35,25 @@ export class MachineLearningImportComponent {
 
   importUrl() {
 
-    if (!this.url || this.delay < 1 || this.max > 2500) {
+    if (!this.url || this.url.length === 0 || this.delay < 1 || this.max > 2500) {
       
       this.generalService.showFeedback('Not valid input', 'errorMessage');
+      return;
+    }
+
+    if (this.url.endsWith('/')) {
+      this.url = this.url.substring(0, this.url.length - 1);
+    }
+
+    const splits = this.url.split('://');
+    if (splits[0] !== 'http' && splits[0] !== 'https' && splits.length !== 2) {
+
+      this.generalService.showFeedback('Provide a domain name with its http(s) prefix', 'errorMessage');
+      return;
+    }
+    if (splits[1].includes('/')) {
+
+      this.generalService.showFeedback('For now we only support domains', 'errorMessage');
       return;
     }
 
