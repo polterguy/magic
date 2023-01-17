@@ -12,7 +12,7 @@ import { MaterialModule } from 'src/app/material.module';
 import { CryptographyPublicKeysComponent } from '../cryptography-public-keys/cryptography-public-keys.component';
 import { SharedModule } from 'src/app/shared.module';
 import { CryptographyReceiptsComponent } from '../cryptography-receipts/cryptography-receipts.component';
-import { ServerKeyDetailsComponent } from '../components/server-key-details/server-key-details.component';
+import { PublicKeyDetailsComponent } from '../components/public-key-details/public-key-details.component';
 import { FormsModule } from '@angular/forms';
 import { CmModule } from 'src/app/codemirror/_module/cm.module';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
@@ -23,7 +23,7 @@ import { NewServerKeyComponent } from '../components/new-server-key/new-server-k
     CryptographyComponent,
     CryptographyPublicKeysComponent,
     CryptographyReceiptsComponent,
-    ServerKeyDetailsComponent,
+    PublicKeyDetailsComponent,
     NewServerKeyComponent
   ],
   imports: [
