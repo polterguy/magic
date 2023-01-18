@@ -3,7 +3,6 @@
  * Copyright (c) Aista Ltd, 2021 - 2023 info@aista.com, all rights reserved.
  */
 
-import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
@@ -11,18 +10,18 @@ import { Affected } from 'src/app/models/affected.model';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { MachineLearningTrainingService } from 'src/app/_general/services/machine-learning-training.service';
-import { MachineLearningEditSnippetComponent } from '../components/machine-learning-edit-snippet/machine-learning-edit-snippet.component';
+import { MachineLearningEditTrainingSnippetComponent } from '../components/machine-learning-edit-training-snippet/machine-learning-edit-training-snippet.component';
 
 /**
  * Helper component to administrate training data for OpenAI integration
  * and Machine Learning integration.
  */
 @Component({
-  selector: 'app-machine-learning-snippets',
-  templateUrl: './machine-learning-snippets.component.html',
-  styleUrls: ['./machine-learning-snippets.component.scss']
+  selector: 'app-machine-learning-training-data',
+  templateUrl: './machine-learning-training-data.component.html',
+  styleUrls: ['./machine-learning-training-data.component.scss']
 })
-export class MachineLearningSnippetsComponent implements OnInit {
+export class MachineLearningTrainingDataComponent implements OnInit {
 
   type: string;
 
@@ -62,7 +61,7 @@ export class MachineLearningSnippetsComponent implements OnInit {
     }
 
     this.dialog
-      .open(MachineLearningEditSnippetComponent, {
+      .open(MachineLearningEditTrainingSnippetComponent, {
         width: '80vw',
         maxWidth: '850px',
         data: {
@@ -89,7 +88,7 @@ export class MachineLearningSnippetsComponent implements OnInit {
   showDetails(event: any, el: any) {
 
     this.dialog
-      .open(MachineLearningEditSnippetComponent, {
+      .open(MachineLearningEditTrainingSnippetComponent, {
         width: '80vw',
         maxWidth: '850px',
         data: el,

@@ -15,8 +15,7 @@ import { Count } from 'src/app/_protected/models/common/count.model';
  */
 @Component({
   selector: 'app-machine-learning-train',
-  templateUrl: './machine-learning-train.component.html',
-  styleUrls: ['./machine-learning-train.component.scss']
+  templateUrl: './machine-learning-train.component.html'
 })
 export class MachineLearningTrainComponent implements OnInit {
 

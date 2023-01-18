@@ -9,9 +9,9 @@
     <div class="row">
 
       <!-- Prompt -->
-      <div class="col-8">
+      <div class="col-12 d-flex justify-content-md-between align-items-md-center align-items-end flex-md-row">
 
-        <mat-form-field class="w-100 standalone-field">
+        <mat-form-field class="w-100 standalone-field me-2">
           <span
             matPrefix
             matTooltip="Prompt"
@@ -27,11 +27,6 @@
             name="prompt"
             autocomplete="off">
         </mat-form-field>
-
-      </div>
-
-      <!-- Type -->
-      <div class="col-4">
 
         <mat-form-field class="w-100 standalone-field">
           <span
@@ -58,7 +53,7 @@
     </div>
 
     <!-- CodeMirror editor in case data is Hyperlambda -->
-    <div class="col-12 mt-2" *ngIf="ready">
+    <div class="col-12" *ngIf="ready">
 
       <app-codemirror-hyperlambda
         [(model)]="model">
@@ -67,7 +62,7 @@
     </div>
 
     <!-- Any other types of content besides Hyperlambda -->
-    <div class="col-12 mt-2 mb-0" *ngIf="!ready">
+    <div class="col-12 mb-0" *ngIf="!ready">
 
       <mat-form-field class="w-100 custom-alignment">
         <span

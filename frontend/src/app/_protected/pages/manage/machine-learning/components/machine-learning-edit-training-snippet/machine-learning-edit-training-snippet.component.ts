@@ -13,11 +13,10 @@ import { CodemirrorActionsService } from 'src/app/_protected/pages/create/hyper-
  * Helper component to edit details of one single training item.
  */
 @Component({
-  selector: 'app-machine-learning-edit-snippet',
-  templateUrl: './machine-learning-edit-snippet.component.html',
-  styleUrls: ['./machine-learning-edit-snippet.component.scss']
+  selector: 'app-machine-learning-edit-training-snippet',
+  templateUrl: './machine-learning-edit-training-snippet.component.html'
 })
-export class MachineLearningEditSnippetComponent implements OnInit {
+export class MachineLearningEditTrainingSnippetComponent implements OnInit {
 
   type: string = null;
   types: string[] = [];
@@ -28,7 +27,7 @@ export class MachineLearningEditSnippetComponent implements OnInit {
   model: HlModel;
 
   constructor(
-    private dialogRef: MatDialogRef<MachineLearningEditSnippetComponent>,
+    private dialogRef: MatDialogRef<MachineLearningEditTrainingSnippetComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private generalService: GeneralService,
     private codemirrorActionsService: CodemirrorActionsService,

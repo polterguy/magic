@@ -14,8 +14,7 @@ import { CodemirrorActionsService } from 'src/app/_protected/pages/create/hyper-
  */
 @Component({
   selector: 'app-machine-learning-edit-request',
-  templateUrl: './machine-learning-edit-request.component.html',
-  styleUrls: ['./machine-learning-edit-request.component.scss']
+  templateUrl: './machine-learning-edit-request.component.html'
 })
 export class MachineLearningEditRequestComponent implements OnInit {
 
