@@ -12,7 +12,7 @@ import { OpenAIConfigurationDialogComponent } from 'src/app/_general/components/
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { MachineLearningTrainingService } from 'src/app/_general/services/machine-learning-training.service';
 import { OpenAIService } from 'src/app/_general/services/openai.service';
-import { MachineLearningEditTypeComponent } from '../components/machine-learning-edit-type/machine-learning-edit-type.component';
+import { MachineLearningEditTypeComponent } from '../components/machine-learning-edit-model/machine-learning-edit-model.component';
 import { MachineLearningImportComponent } from '../components/machine-learning-import/machine-learning-import.component';
 import { MachineLearningTestComponent } from '../components/machine-learning-test/machine-learning-test.component';
 import { MachineLearningTrainComponent } from '../components/machine-learning-train/machine-learning-train.component';

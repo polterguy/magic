@@ -13,11 +13,11 @@ import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messa
 import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 
 /**
- * Helper component to create or edit existing Machine Learning type.
+ * Helper component to create or edit existing Machine Learning model.
  */
 @Component({
-  selector: 'app-machine-learning-edit-type',
-  templateUrl: './machine-learning-edit-type.component.html'
+  selector: 'app-machine-learning-edit-model',
+  templateUrl: './machine-learning-edit-model.component.html'
 })
 export class MachineLearningEditTypeComponent implements OnInit {
 
@@ -53,7 +53,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
     } else {
       this.auth = this.data.auth?.split(',');
     }
-    this.supervised = this.data?.supervised === 1 ? true : false;
+    this.supervised = this.data?.supervised === 1 ? true : (!this.data ? true : false);
     this.cached = this.data?.cached === 1 ? true : false;
 
     this.generalService.showLoading();
@@ -97,6 +97,13 @@ export class MachineLearningEditTypeComponent implements OnInit {
         this.generalService.hideLoading();
       }
     });
+  }
+
+  supervisedChanged() {
+
+    if (!this.supervised) {
+      this.cached = false;
+    }
   }
 
   save() {
