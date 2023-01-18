@@ -1,6 +1,6 @@
 
 
-<h3 mat-dialog-title class="mb-3">Import <span class="d-md-inline d-none">Machine Learning data</span> for {{data.type}}</h3>
+<h3 mat-dialog-title class="mb-3">Import <span class="d-md-inline d-none">training data</span> for '{{data.type}}' model</h3>
 
 <div mat-dialog-content class="content">
 
@@ -33,7 +33,7 @@
         <mat-form-field class="standalone-field me-2 w-100">
           <span
             matPrefix
-            matTooltip="Delay in seconds between page crawls"
+            matTooltip="Delay in seconds between pages"
             class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>hourglass_empty</mat-icon>
             <span class="text-muted">|</span>
@@ -83,7 +83,7 @@
 
     <div class="col-12">
 
-      <p class="mt-2 text-muted">Crawls the specified website generating Machine Learning data in the process</p>
+      <p class="mt-2 text-muted">Crawl some URL to create Machine Learning training data</p>
 
     </div>
 

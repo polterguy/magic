@@ -1,10 +1,12 @@
 
-<h3 mat-dialog-title class="mb-3">Type configuration</h3>
+<h3 mat-dialog-title class="mb-3">
+  {{data ? ('\'' + data.type + '\' model configuration') : 'New model configuration'}}
+</h3>
 
 <form (ngSubmit)="save()">
   <div mat-dialog-content>
 
-    <mat-form-field class="w-100 standalone-field">
+    <mat-form-field class="w-100 standalone-field" [class.d-none]="data">
       <span
         matPrefix
         matTooltip="Type name"
@@ -160,6 +162,7 @@
     <mat-checkbox
       [(ngModel)]="supervised"
       name="supervised"
+      (change)="supervisedChanged()"
       class="me-2"
       labelPosition="before"
       color="primary">Supervised</mat-checkbox>
@@ -168,6 +171,7 @@
       [(ngModel)]="cached"
       name="cached"
       class="me-2"
+      [disabled]="!supervised"
       labelPosition="before"
       color="primary">Cached</mat-checkbox>
 

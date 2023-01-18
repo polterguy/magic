@@ -12,7 +12,7 @@ import { MachineLearningTrainingDataComponent } from '../machine-learning-traini
 import { MachineLearningTrainingRoutingModule } from './machine-learning.routing.module';
 import { MachineLearningEditTrainingSnippetComponent } from '../components/machine-learning-edit-training-snippet/machine-learning-edit-training-snippet.component';
 import { CmModule } from 'src/app/codemirror/_module/cm.module';
-import { MachineLearningEditTypeComponent } from '../components/machine-learning-edit-type/machine-learning-edit-type.component';
+import { MachineLearningEditTypeComponent } from '../components/machine-learning-edit-model/machine-learning-edit-model.component';
 import { MachineLearningComponent } from '../machine-learning.component';
 import { MachineLearningModelsComponent } from '../machine-learning-models/machine-learning-models.component';
 import { MachineLearningRequestsComponent } from '../machine-learning-requests/machine-learning-requests.component';
