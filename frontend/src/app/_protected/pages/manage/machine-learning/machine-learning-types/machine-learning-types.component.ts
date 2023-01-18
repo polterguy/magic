@@ -6,17 +6,16 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
-import { bufferCount, concatMap, forkJoin, from } from 'rxjs';
 import { Count } from 'src/app/models/count.model';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { OpenAIConfigurationDialogComponent } from 'src/app/_general/components/openai/openai-configuration-dialog/openai-configuration-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { MachineLearningTrainingService } from 'src/app/_general/services/machine-learning-training.service';
 import { OpenAIService } from 'src/app/_general/services/openai.service';
-import { MachineLearningEditTypeComponent } from '../machine-learning-edit-type/machine-learning-edit-type.component';
-import { MachineLearningImportComponent } from '../machine-learning-import/machine-learning-import.component';
-import { MachineLearningTestComponent } from '../machine-learning-test/machine-learning-test.component';
-import { MachineLearningTrainComponent } from '../machine-learning-train/machine-learning-train.component';
+import { MachineLearningEditTypeComponent } from '../components/machine-learning-edit-type/machine-learning-edit-type.component';
+import { MachineLearningImportComponent } from '../components/machine-learning-import/machine-learning-import.component';
+import { MachineLearningTestComponent } from '../components/machine-learning-test/machine-learning-test.component';
+import { MachineLearningTrainComponent } from '../components/machine-learning-train/machine-learning-train.component';
 
 /**
  * Helper component to manage machine learning types, different models, and configurations

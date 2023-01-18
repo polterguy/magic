@@ -9,15 +9,14 @@ import { PageEvent } from '@angular/material/paginator';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { MachineLearningTrainingService } from 'src/app/_general/services/machine-learning-training.service';
-import { MachineLearningEditRequestComponent } from '../machine-learning-edit-request/machine-learning-edit-request.component';
+import { MachineLearningEditRequestComponent } from '../components/machine-learning-edit-request/machine-learning-edit-request.component';
 
 /**
  * Helper component to view and manage Machine Learning requests
  */
 @Component({
   selector: 'app-machine-learning-requests',
-  templateUrl: './machine-learning-requests.component.html',
-  styleUrls: ['./machine-learning-requests.component.scss']
+  templateUrl: './machine-learning-requests.component.html'
 })
 export class MachineLearningRequestsComponent implements OnInit {
 
