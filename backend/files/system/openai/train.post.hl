@@ -192,7 +192,7 @@ data.connect:[generic|magic]
             message:Something went wrong as we started our training session
 
    // Logging that we've started training.
-   get-count:x:@data.read/@data.read/*
+   get-count:x:@data.read/*
    log.info:Successfully started training of OpenAI model
       type:x:@.arguments/*/type
       snippets:x:@get-count
