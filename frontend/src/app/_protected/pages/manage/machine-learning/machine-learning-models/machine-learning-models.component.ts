@@ -22,11 +22,11 @@ import { MachineLearningTrainComponent } from '../components/machine-learning-tr
  * for your types.
  */
 @Component({
-  selector: 'app-machine-learning-types',
-  templateUrl: './machine-learning-types.component.html',
-  styleUrls: ['./machine-learning-types.component.scss']
+  selector: 'app-machine-learning-models',
+  templateUrl: './machine-learning-models.component.html',
+  styleUrls: ['./machine-learning-models.component.scss']
 })
-export class MachineLearningTypesComponent implements OnInit {
+export class MachineLearningModelsComponent implements OnInit {
 
   @Input() isConfigured: boolean = false;
   @Output() isConfiguredChange = new EventEmitter<boolean>();

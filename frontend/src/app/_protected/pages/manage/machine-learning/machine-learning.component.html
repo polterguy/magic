@@ -16,10 +16,10 @@
 
         <ng-template matTabContent>
 
-          <app-machine-learning-types
+          <app-machine-learning-models
             [(isConfigured)]="isConfigured"
             (trainModel)="trainModel($event)">
-          </app-machine-learning-types>
+          </app-machine-learning-models>
 
         </ng-template>
 
@@ -29,13 +29,13 @@
       <mat-tab [disabled]="!isConfigured">
 
         <ng-template mat-tab-label>
-          Training
+          Training data
         </ng-template>
 
         <ng-template matTabContent>
 
-          <app-machine-learning-snippets>
-          </app-machine-learning-snippets>
+          <app-machine-learning-training-data>
+          </app-machine-learning-training-data>
 
         </ng-template>
 
