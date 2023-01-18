@@ -22,7 +22,7 @@
     </mat-form-field>
 
     <!-- CodeMirror editor in case data is code -->
-    <div class="col-12 mt-2" *ngIf="ready">
+    <div class="col-12" *ngIf="ready">
 
       <app-codemirror-hyperlambda
         [(model)]="model">
@@ -31,7 +31,7 @@
     </div>
 
     <!-- Any other types of content besides code -->
-    <div class="col-12 mt-2 mb-0" *ngIf="!ready">
+    <div class="col-12 mb-0" *ngIf="!ready">
 
       <mat-form-field class="w-100 custom-alignment">
         <span
