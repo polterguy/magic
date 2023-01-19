@@ -13,7 +13,7 @@ Try the app [here](https://sakila.aista.com).
 ![Low-Code CRUD generator](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/sakila.jpg)
 
 Magic works by reading meta data from your database, for then to automatically generate a
-backend API for you. The resuling API is secured automatically, and Magic takes care
+backend API for you. The resulting API is secured automatically, and Magic takes care
 of authentication, authorisation, user management, and everything else that's difficult. Afterwards you can
 optionally generate a datagrid giving you a full stack web app as the screenshot above illustrates.
 Every time you have some complex task, you can ask the integrated AI assistant in plain English
@@ -27,6 +27,23 @@ will automatically generate the correct code for you automatically. This works w
 language, including Hyperlambda.
 
 ![Use AI to produce software](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/ai-hyper-ide.jpeg)
+
+## Create your own Machine Learning model
+
+Magic allows you to generate your own Machine Learning model(s) by creating and importing
+training data from any source you might have, including scraping your website. This allows you to generate
+a custom AI based upon whatever existing data you may have in seconds instead of weeks and months.
+
+![Use AI to produce software](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/crawl-website-for-chatgpt-training-data.jpg)
+
+This is the method we use ourselves to teach our Machine Learning models about Aista and Hyperlambda
+in fact. Use cases for this could include.
+
+* AI models for lawyer firms answering questions about local law
+* AI models for the medical industry, diagnosing and providing answers about symptoms
+* News aggregating AI machine models answering questions about recent news related to some news website
+* Invetment advice AI models providing investment advice to people asking questions about somespecific investment instrument
+* Etc, etc, etc
 
 ## Use SQL Studio to design your database
 
