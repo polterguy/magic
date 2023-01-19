@@ -32,7 +32,7 @@ language, including Hyperlambda.
 
 Magic allows you to generate your own Machine Learning model(s) by creating and importing
 training data from any source you might have, including scraping your website. This allows you to generate
-a custom AI based upon whatever existing data you may have in seconds instead of weeks and months.
+a custom AI model based upon whatever existing data you may have in seconds instead of weeks and months.
 
 ![Use AI to produce software](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/crawl-website-for-chatgpt-training-data.jpg)
 
