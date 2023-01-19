@@ -53,6 +53,10 @@ or SQLite database. You can also connect to your existing database to manage you
 
 ![Visually design your database using SQL Studio](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/sql-studio-new.jpeg)
 
+In addition Magic gives you an SQL prompt with autocomplete and syntax highlighting for SQL, allowing you
+to execute any SQL you want to, seeing the results of your SQL immediately. This works transparently
+towards all of its supported database types; SQLite, SQL Server, MySQL and PostgreSQL.
+
 ## CRUD API generator
 
 Magic allows you to automagically generate a secure CRUD API wrapping any database. The API generator
