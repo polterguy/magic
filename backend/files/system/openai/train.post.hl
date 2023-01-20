@@ -17,6 +17,7 @@
 auth.ticket.verify:root
 
 // Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/type
 validators.mandatory:x:@.arguments/*/model
 
 // Connecting to database.
