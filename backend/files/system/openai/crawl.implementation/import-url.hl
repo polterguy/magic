@@ -30,6 +30,7 @@ data.connect:[generic|magic]
       where
          and
             uri.like:x:@strings.concat
+            type.eq:x:@.arguments/*/type
       limit:1
 
    // Checking if above invocation yielded a result, at which point URL has been previously scraped.
