@@ -16,7 +16,8 @@ import { MachineLearningEditRequestComponent } from '../components/machine-learn
  */
 @Component({
   selector: 'app-machine-learning-requests',
-  templateUrl: './machine-learning-requests.component.html'
+  templateUrl: './machine-learning-requests.component.html',
+  styleUrls: ['./machine-learning-requests.component.scss']
 })
 export class MachineLearningRequestsComponent implements OnInit {
 
