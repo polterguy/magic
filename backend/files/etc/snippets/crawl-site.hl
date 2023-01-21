@@ -1,0 +1,26 @@
+
+// Retrieves all URLs from sitemap on specified website.
+.url:"https://aista.com"
+
+// will contain all URLs from website
+.urls
+
+// Retrieving main sitemap.
+strings.concat
+   get-value:x:@.url
+   .:"/sitemap.xml"
+http.get:x:@strings.concat
+xml2lambda:x:@http.get/*/content
+
+// Iterating through each URL referenced in main sitemap.
+for-each:x:@xml2lambda/*/sitemapindex/*/sitemap/*/loc/*/\#text
+
+   // Getting XML from currently iterated sitemap subset.
+   unwrap:x:+/*/*
+   http.get:x:@.dp/#
+   xml2lambda:x:@http.get/*/content
+   for-each:x:@xml2lambda/*/urlset/*/url/*/loc/*/\#text
+      unwrap:x:+/*/*
+      add:x:@.urls
+         .
+            .:x:@.dp/#
