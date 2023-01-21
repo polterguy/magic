@@ -81,14 +81,38 @@ fork
                http.get:x:@.dp/#
                   headers
                      User-Agent:Aista-MachineLearning-Spider
-               xml2lambda:x:@http.get/*/content
 
-               // Iterating through each URL in currently iterated sitemap file.
-               for-each:x:@xml2lambda/*/urlset/*/url/*/loc/*/\#text
-                  unwrap:x:+/*/*
-                  add:x:@.urls
-                     .
-                        .:x:@.dp/#
+               // Verifying above invocation returned success.
+               if
+                  and
+                     mte:x:@http.get
+                        .:int:200
+                     lt:x:@http.get
+                        .:int:300
+                  .lambda
+
+                     // Above invocation returned success.
+                     xml2lambda:x:@http.get/*/content
+
+                     // Iterating through each URL in currently iterated sitemap file.
+                     for-each:x:@xml2lambda/*/urlset/*/url/*/loc/*/\#text
+                        unwrap:x:+/*/*
+                        add:x:@.urls
+                           .
+                              .:x:@.dp/#
+
+               else
+
+                  // Doing some logging.
+                  log.error:Bogus sitemap reference
+                     url:x:@.dp/#
+                     primary-url:x:@.arguments/*/url
+
+            // Doing some logging.
+            get-count:x:@.urls/*
+            log.info:URLs found from sitemap(s)
+               url:x:@.arguments/*/url
+               urls:x:@get-count
 
             // Looping through each URL found from sitemap(s).
             .no:int:0
@@ -137,7 +161,7 @@ fork
             type:success
 
       // Basic logging.
-      log.info:OpenAI training data successfully generated
+      log.info:OpenAI training data successfully created
          url:x:@.arguments/*/url
          type:x:@.arguments/*/type
 
@@ -145,6 +169,7 @@ fork
 
       // Oops ...!!
       log.error:x:@.arguments/*/message
+         url:x:@.arguments/*/url
 
 // Returning success to caller.
 return
