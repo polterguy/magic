@@ -70,7 +70,7 @@ if
          .:text/html
    .lambda
 
-      // Oops, doing some basic logging before we return failure to caller.
+      // Oops, doing some basic logging.
       lambda2hyper:x:@http.get
       log.error:URL did not return HTML content when crawling for Machine Learning snippets
          content:x:@lambda2hyper
@@ -85,6 +85,9 @@ html2lambda:x:@http.get/*/content
 
 // Buffer for URLs found in document.
 .urls
+
+// Temp buffer for entire page, using H1 as prompt, and ALL paragraphs as completion.
+.page
 
 // Temp buffer for completion.
 .tmp-completion:
@@ -210,6 +213,45 @@ for-each:x:@html2lambda/*/html/*/body/**
                .
                   prompt:x:@.prompt
 
+         // Checking if this was H1 tag.
+         if
+            and
+               eq:x:@get-name
+                  .:h1
+               eq
+                  get-count:x:@.page/*/prompt
+                  .:int:0
+            .lambda
+
+               // Adding H1 tag as prompt to page data.
+               unwrap:x:+/*/*/*
+               add:x:@.page
+                  .
+                     .
+                        prompt:x:@.prompt
+
+         else
+
+            // Checking if we need to append paragraph to existing page data completion or create new completion.
+            if
+               exists:x:@.page/0/-/*/completion
+               .lambda
+
+                  // Appending to existing completion.
+                  set-value:x:@.page/0/-/*/completion
+                     strings.concat
+                        get-value:x:@.page/0/-/*/completion
+                        .:"\r\n\r\n"
+                        get-value:x:@.prompt
+
+            else
+
+               // Adding new prompt to [.page] collection.
+               unwrap:x:+/*/*
+               add:x:@.page/0/-
+                  .
+                     completion:x:@.prompt
+
       // Paragraphs becomes completions.
       case:p
 
@@ -275,6 +317,26 @@ for-each:x:@html2lambda/*/html/*/body/**
                         // Adding new prompt to [.snippets] collection.
                         unwrap:x:+/*/*
                         add:x:@.snippets/0/-
+                           .
+                              completion:x:@.completion
+
+                     // Checking if we need to append paragraph to existing page data completion or create new completion.
+                     if
+                        exists:x:@.page/0/-/*/completion
+                        .lambda
+
+                           // Appending to existing completion.
+                           set-value:x:@.page/0/-/*/completion
+                              strings.concat
+                                 get-value:x:@.page/0/-/*/completion
+                                 .:"\r\n\r\n"
+                                 get-value:x:@.completion
+
+                     else
+
+                        // Adding new prompt to [.page] collection.
+                        unwrap:x:+/*/*
+                        add:x:@.page/0/-
                            .
                               completion:x:@.completion
 
@@ -353,6 +415,25 @@ for-each:x:@html2lambda/*/html/*/body/**
                            .
                               completion:x:@.completion
 
+                     // Checking if we need to append paragraph to existing page data completion or create new completion.
+                     if
+                        exists:x:@.page/0/-/*/completion
+                        .lambda
+
+                           // Appending to existing completion.
+                           set-value:x:@.page/0/-/*/completion
+                              strings.concat
+                                 get-value:x:@.page/0/-/*/completion
+                                 get-value:x:@.completion
+
+                     else
+
+                        // Adding new prompt to [.snippets] collection.
+                        unwrap:x:+/*/*
+                        add:x:@.page/0/-
+                           .
+                              completion:x:@.completion
+
 
 // Connecting to database.
 data.connect:[generic|magic]
@@ -391,13 +472,48 @@ data.connect:[generic|magic]
                   .:":"
                   crypto.hash.sha256:x:@.prompt
 
-            // Deleting old training snippets with similar type and URI.
-            data.delete
+            // Inserting prompt and completion into database.
+            data.create
                table:ml_training_snippets
-               where
-                  and
-                     type.eq:x:@.arguments/*/type
-                     uri.eq:x:@.uri
+               values
+                  prompt:x:@.prompt
+                  completion:x:@.completion
+                  type:x:@.arguments/*/type
+                  uri:x:@.uri
+
+   // Creating training data from all [.page] snippets.
+   for-each:x:@.page/*
+
+      // Verifying that currently iterated snippet has both prompt and completion.
+      if
+         and
+            exists:x:@.dp/#/*/prompt
+            exists:x:@.dp/#/*/completion
+            neq:x:@.dp/#/*/prompt
+               .:
+            neq:x:@.dp/#/*/completion
+               .:
+         .lambda
+
+            // Prompt.
+            .prompt
+            set-value:x:@.prompt
+               strings.trim:x:@.dp/#/*/prompt
+                  .:" \r\n\t"
+
+            // Completion.
+            .completion
+            set-value:x:@.completion
+               strings.trim:x:@.dp/#/*/completion
+                  .:" \r\n\t"
+
+            // URI.
+            .uri
+            set-value:x:@.uri
+               strings.concat
+                  get-value:x:@.arguments/*/url
+                  .:":"
+                  crypto.hash.sha256:x:@.prompt
 
             // Inserting prompt and completion into database.
             data.create
@@ -411,6 +527,8 @@ data.connect:[generic|magic]
 // Preserving some memory.
 remove-nodes:x:@http.get/*
 remove-nodes:x:@html2lambda/*
+remove-nodes:x:@.snippets/*
+remove-nodes:x:@.page/*
 
 // Decrementing max argument, and checking if we've reached limit.
 math.decrement:x:@.arguments/*/max
