@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2023 info@aista.com, all rights reserved.
+ */
+
 export interface NavLinks {
   name: string,
   url: string,

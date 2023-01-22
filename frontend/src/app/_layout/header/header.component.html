@@ -1,49 +1,108 @@
+
 <div id="navbar" class="d-flex align-items-center justify-content-lg-between mat-elevation-z2">
 
-  <button mat-icon-button color="primary" class="d-lg-none d-block me-2" (click)="toggleSidebar()">
+  <button
+    mat-icon-button
+    color="primary"
+    class="d-lg-none d-block me-2"
+    (click)="toggleSidebar()">
     <mat-icon>menu</mat-icon>
   </button>
+
   <a class="me-lg-0 me-auto pointer" routerLink="/">
-    <img src="../../../../assets/images/aista-logo.svg" alt="Aista Ltd." height="20" class="my-auto d-sm-block d-none">
-    <img src="../../../../assets/images/icons/apple-icon-180x180.png" alt="Aista Ltd." height="50"
+
+    <img
+      src="../../../../assets/images/aista-logo.svg"
+      alt="Aista Ltd."
+      height="20"
+      class="my-auto d-sm-block d-none">
+
+    <img
+      src="../../../../assets/images/icons/apple-icon-180x180.png"
+      alt="Aista Ltd."
+      height="50"
       class="my-auto d-sm-none d-block">
   </a>
 
 
   <div class="nav-links mx-auto  d-flex flex-lg-row flex-column" [class.open]="sideExpanded">
-    <img src="../../../../assets/images/aista-logo.svg" alt="Aista Ltd." height="20"
+
+    <img
+      src="../../../../assets/images/aista-logo.svg"
+      alt="Aista Ltd."
+      height="20"
       class="mx-auto d-block d-lg-none mb-4">
 
-    <a mat-button class="nav-link" *ngFor="let item of navLinks" [routerLink]="item.url"
+    <a
+      mat-button
+      class="nav-link"
+      *ngFor="let item of navLinks"
+      [routerLink]="item.url"
       (click)="item.expandable ? null : closeSidebarInSidePanel(item.url)"
-      [matMenuTriggerFor]="item.expandable ? subMenu : null" [matMenuTriggerData]="item" routerLinkActive="active-link"
-      [routerLinkActiveOptions]="{exact: item.exact}" [class.active-link]="item?.isActive">
-
+      [matMenuTriggerFor]="item.expandable ? subMenu : null"
+      [matMenuTriggerData]="item"
+      routerLinkActive="active-link"
+      [routerLinkActiveOptions]="{exact: item.exact}"
+      [class.active-link]="item?.isActive">
       {{item.name}} <mat-icon *ngIf="item.expandable">expand_more</mat-icon>
-
     </a>
 
     <mat-menu #subMenu="matMenu">
-      <ng-template matMenuContent let-submenuItems="submenu">
-        <a mat-menu-item [class.warn]="item.color" *ngFor="let item of submenuItems" 
-          [routerLink]="item.disabled ? null : item.url" [routerLinkActiveOptions]="{exact: item.exact}"
-          routerLinkActive="active-link" #isActiveLink="routerLinkActive"
+
+      <ng-template
+        matMenuContent
+        let-submenuItems="submenu">
+
+        <a
+          mat-menu-item
+          [class.warn]="item.color"
+          *ngFor="let item of submenuItems" 
+          [routerLink]="item.disabled ? null : item.url"
+          [routerLinkActiveOptions]="{exact: item.exact}"
+          routerLinkActive="active-link"
+          #isActiveLink="routerLinkActive"
           (click)="getGithubToken(item.name);logout(item.name);closeSidebarInSidePanel(item.url)">
           {{item.name}}
         </a>
+
       </ng-template>
+
     </mat-menu>
+
   </div>
 
   <div class="d-flex align-items-center">
 
-    <button mat-flat-button color="primary" class="url-btn" (click)="viewBackends()">
+    <button
+      mat-flat-button
+      color="primary"
+      class="url-btn"
+      (click)="viewBackends()">
       <div class="d-flex flex-nowrap align-items-center ps-1">
         <mat-icon>database</mat-icon>
         <p class="my-0 mx-2 text-truncate url-text">{{activeUrl}}</p>
       </div>
     </button>
 
+    <button
+      mat-button
+      color="primary"
+      class="ms-2 url-btn"
+      [matMenuTriggerFor]="help_menu">
+      <div class="d-flex flex-nowrap align-items-center ps-1">
+        <mat-icon>question_mark</mat-icon>
+      </div>
+    </button>
+
+    <mat-menu
+      #help_menu="matMenu"
+      class="px-4 py-3 m-0 help_menu">
+      <span class="text-muted">
+        {{getComponentDescription()}}
+      </span>
+    </mat-menu>
+
   </div>
 </div>
+
 <div class="overlay" *ngIf="sideExpanded" (click)="toggleSidebar()"></div>

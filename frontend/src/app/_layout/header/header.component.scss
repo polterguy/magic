@@ -221,3 +221,12 @@ a {
     border-radius: 0;
   }
 }
+
+::ng-deep {
+  .help_menu {
+    width: 500px;
+    min-width: 500px;
+    max-width: 80vw !important;
+    text-align: justify;
+  }
+}
