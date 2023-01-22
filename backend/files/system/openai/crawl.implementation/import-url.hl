@@ -434,9 +434,81 @@ for-each:x:@html2lambda/*/html/*/body/**
                            .
                               completion:x:@.completion
 
+/*
+ * Generating summary of page by using 'text-davinci-003' OpenAI model.
+ *
+ * This creates more learning data for us, allowing us to 'repeat' the training,
+ * with slightly modified wording, creating a stronger end model for us.
+ *
+ * However, we can only do this if it doesn't result in us having to send more
+ * than 4096 tokens to OpenAI.
+ */
+.summary
+if
+   and
+      exists:x:@.page/0/*/completion
+      lt
+         strings.length:x:@.page/0/*/completion
+         .:int:3096
+   .lambda
+
+      // We can invoke OpenAI to generate a summary.
+      .token
+      set-value:x:@.token
+         strings.concat
+            .:"Bearer "
+            config.get:"magic:openai:key"
+      .prompt
+      set-value:x:@.prompt
+         strings.concat
+            .:"Create a summary from the following text\r\n\r\n"
+            get-value:x:@.page/0/*/completion
+      http.post:"https://api.openai.com/v1/completions"
+         headers
+            Authorization:x:@.token
+            Content-Type:application/json
+         payload
+            prompt:x:@.prompt
+            model:text-davinci-003
+            temperature:decimal:0.5
+            max_tokens:int:1000
+         convert:true
+
+      // Sanity checking above invocation
+      if
+         and
+            mte:x:@http.post
+               .:int:200
+            lt:x:@http.post
+               .:int:300
+            eq:x:@http.post/*/content/*/choices/0/*/finish_reason
+               .:stop
+         .lambda
+            set-value:x:@.summary
+               strings.trim:x:@http.post/*/content/*/choices/0/*/text
+                  .:"\r\n \t-"
 
 // Connecting to database.
 data.connect:[generic|magic]
+
+   // Checking if we should insert summary
+   if
+      not-null:x:@.summary
+      .lambda
+
+         // Inserting prompt and completion into database.
+         .prompt
+         set-value:x:@.prompt
+            strings.concat
+               .:"Summary of "
+               get-value:x:@.page/0/*/prompt
+         data.create
+            table:ml_training_snippets
+            values
+               prompt:x:@.prompt
+               completion:x:@.summary
+               type:x:@.arguments/*/type
+               uri:x:@.arguments/*/url
 
    // Creating training data from all [.snippets].
    for-each:x:@.snippets/*
