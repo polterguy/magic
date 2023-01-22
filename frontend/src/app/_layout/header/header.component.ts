@@ -73,7 +73,7 @@ export class HeaderComponent implements OnInit {
         role: 'root',
         expires: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString()
       }
-    })
+    });
   }
 
   logout(clickType: string) {
@@ -93,7 +93,130 @@ export class HeaderComponent implements OnInit {
       data: {
         component: BackendsListComponent
       }
-    })
+    });
+  }
+
+  getComponentDescription() {
+
+    const vals = this.router.url.split('/');
+    const val = vals[1] === '' ? '/' : vals[1];
+
+    switch (val) {
+
+      case '/':
+        return `The Magic Dashboard is the primary tool for managing an Aista Magic Cloud installation.
+It provides a graphical user interface for managing tasks, machine learning models, Hyperlambda code,
+and other aspects of your cloudlet. It also contains key performance indicators, charts, and a YouTube
+tutorial for getting started with Magic and Hyperlambda.`;
+
+      case 'sql-studio':
+        return `SQL Studio is where you can both visually design your databases in addition to execute
+SQL towards your database of choice. It transparently supports any of the following databases; SQL Server, 
+MySQL, PostgreSQL, MariaDB and SQLite.`;
+
+      case 'databases':
+        return `The databases component is where you manage your databases, and your connection strings.
+It is also where you can create new databases. It transparently allows you to create a new database in
+SQLite, MySQL, MariaDB, PostgreSQL and SQL Server.`;
+
+      case 'endpoint-generator':
+        return `The endpoint generator is where you can automatically create CRUD endpoints wrapping
+your database of choice, in addition to creating SQL based endpoints. It give you a whole range of
+settings, such as turning on or off logging, publishing socket messages upon invocation to write endpoints,
+authentication and authorisation configuration options, etc.`;
+
+      case 'frontend-generator':
+        return `The frontend generator is where you generate your frontends. A frontend is incrementally built
+on top of a backend, so you'll first need to generate a backend before you can generate your frontend.
+Magic comes with a very good angular template our of the box, allowing you to generate a fully fledged
+Angular frontend, providing you with a UI for your database tables with all 4 CRUD operations.`;
+
+      case 'hyper-ide':
+        return `Hyper IDE is Magic's integrated IDE, and is particularly good for editing Hyperlambda files.
+It also gives you macros, machine learning and AI capabilities, in addition to a whole range of other
+features that simplifies your life as a software developer. You would typically want to use Hyper IDE
+on your generated Hyperlambda code after having used the endpoint generator to apply your own
+custom business logic according to your requirements.`;
+
+      case 'user-roles-management':
+        return `The users and roles component it where you can manage your users and roles.
+From this component you can create new users and roles, in addition to associate users with roles.
+You can also import users from CSV files. You can also edit users, and lock out specific users
+from your cloudlet using this component.`;
+
+      case 'endpoints':
+        return `The Endpoints component in Magic allows you to view and test your HTTP endpoints.
+It provides a search function, parameters, and the ability to simulate a client. It also includes
+meta data for each endpoint, such as the URL, HTTP verb, type of data consumed and produced,
+authorization requirements, and more. Once an endpoint is invoked, a health check test can be created
+to sanity check the system. This component also supports providing JSON payloads to POST and PUT endpoints.`;
+
+      case 'tasks':
+        return `The tasks component allows you to create and persist tasks to your database.
+You can either schedule tasks for later, either a specific date and time in the future or repeatedly,
+or you can trigger tasks from other parts of your Hyperlambda code. Tasks are persisted to
+your Magic database, so even if your server is restarted, scheduled tasks will for the most parts
+be correctly re-scheduled.`;
+
+      case 'hyperlambda-playground':
+        return `The Hyperlambda Playground component allows you to play with Hyperlambda code,
+execute your code in “immediate mode”, and see the result of your execution immediately.
+It also contains a range of “Hyperlambda snippets” which demonstrate Hyperlambda's capabilities
+and provide examples for you to learn Hyperlambda. The “Save” button allows you to store your Hyperlambda
+snippets as “admin snippets” which can be quickly executed later.`;
+
+      case 'sockets':
+        return `The sockets component allows you to play with and debug your socket messages.
+Subscribe to sockets you wish to debug, and/or publish socket messages as you see fit from this component,
+and see the result in this component.`;
+
+      case 'plugins':
+        return `Magic's plugin component is an integrated "AppStore" that allows you to install backend
+microservices on the fly without interrupting normal usage. It provides access to Aista's repository of
+pre-fabricated microservices, such as translations, ticket management, CRM, Stripe payments, and SQLite
+databases. Most plugins automatically create their databases and any other necessary components for
+initialization. You can view and edit the plugin code after installing a plugin using Hyper IDE and SQL Studio.`;
+
+      case 'machine-learning':
+        return `The machine learning component allows you to create and test AI models.
+It also allows you to import training data for your AI models, either from files containing your
+training data, or by crawling and scraping a website. When you have gathered training data, and
+quality assured your training data, you can upload it to OpenAI's API automatically using this component,
+resulting in a new machine learning model you can test from here, and consume in your own projects.`;
+
+      case 'configuration':
+        return `The configuration component is where can modify your server's configuration settings, and
+is typically used to for instance configure your server's SMTP settings, etc. Be careful as you're editing
+your server's configuration, since applying a wrong configuration setting might in theory make your
+server inaccessible.`;
+
+      case 'health-check':
+        return `The health check component allows you to easily sanity check your system, providing you with
+a diagnostic tool to ensure it is functioning correctly. Automated tests can be created with the "Endpoints"
+menu item or manually written in Hyperlambda. You can then run all tests automatically and view any errors that arise.`;
+
+      case 'cryptography':
+        return `This cryptography component allows you to manage and administrate your server's
+public and private keys, as well as public keys belonging to others. This allows you to securely
+communicate with other Magic servers and/or clients using cryptographic signatures and encryption.
+Additionally, it allows you to verify cryptographic signatures and payloads received from others.`;
+
+      case 'log':
+        return `The Log component in Magic allows you to browse your server's log and filter for specific items.
+There are 4 types of log entries you can create: debug, info, error, and fatal. You can configure the log
+level to adjust how much is logged. Refer to magic.lambda.logging to understand how you can create
+log items from your own Hyperlambda code.`;
+
+      case 'help-center':
+        return `The help center component is where you would go to learn, and get access to resources required
+to learning more about Aista Magic Cloud, such as teaching yourself Hyperlambda, and/or learning other things
+related to Aista Magic Cloud.`;
+
+      case 'user-profile':
+        return `The Profile component of Magic allows you to customize you profile by changing your password,
+theme, and name. However, you cannot change your username or email address due to the need for double
+optin verification and potential referential integrity issues.`;
+    }
   }
 
   /*
