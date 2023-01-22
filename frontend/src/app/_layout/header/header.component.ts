@@ -23,6 +23,8 @@ import { Router } from '@angular/router';
 })
 export class HeaderComponent implements OnInit {
 
+  help_description: string;
+  help_url: string;
   navLinks: NavLinks[] = [];
   activeUrl: string = '';
   backendList: any = [];
@@ -38,6 +40,8 @@ export class HeaderComponent implements OnInit {
     this.createMenu();
     this.getSetupStatus();
     this.activeUrl = this.backendService.active.url.replace('http://', '').replace('https://', '');
+    this.help_description = this.getComponentDescription();
+    this.help_url = this.getComponentURL();
   }
 
   checkActiveLink(currentUrl: string) {
@@ -96,7 +100,11 @@ export class HeaderComponent implements OnInit {
     });
   }
 
-  getComponentDescription() {
+  /*
+   * Private helper methods.
+   */
+
+  private getComponentDescription() {
 
     const vals = this.router.url.split('/');
     const val = vals[1] === '' ? '/' : vals[1];
@@ -219,9 +227,71 @@ optin verification and potential referential integrity issues.`;
     }
   }
 
-  /*
-   * Private helper methods.
-   */
+  private getComponentURL() {
+
+    const vals = this.router.url.split('/');
+    const val = vals[1] === '' ? '/' : vals[1];
+
+    switch (val) {
+
+      case '/':
+        return 'https://docs.aista.com';
+
+      case 'sql-studio':
+        return 'https://docs.aista.com/documentation/magic/components/sql/';
+
+      case 'databases':
+        return 'TODO';
+
+      case 'endpoint-generator':
+        return 'https://docs.aista.com/documentation/magic/components/crudifier/backend/';
+
+      case 'frontend-generator':
+        return 'https://docs.aista.com/documentation/magic/components/crudifier/frontend/';
+
+      case 'hyper-ide':
+        return '/documentation/magic/components/hyper-ide/';
+
+      case 'user-roles-management':
+        return 'https://docs.aista.com/documentation/magic/components/auth/';
+
+      case 'endpoints':
+        return 'https://docs.aista.com/documentation/magic/components/endpoints/';
+
+      case 'tasks':
+        return 'https://docs.aista.com/documentation/magic/components/tasks/';
+
+      case 'hyperlambda-playground':
+        return 'https://docs.aista.com/documentation/magic/components/evaluator/';
+
+      case 'sockets':
+        return 'https://docs.aista.com/documentation/magic/components/sockets/';
+
+      case 'plugins':
+        return 'https://docs.aista.com/documentation/magic/components/bazar/';
+
+      case 'machine-learning':
+        return '/documentation/magic/components/machine-learning/';
+
+      case 'configuration':
+        return 'https://docs.aista.com/documentation/magic/components/config/';
+
+      case 'health-check':
+        return 'https://docs.aista.com/documentation/magic/components/assumptions/';
+
+      case 'cryptography':
+        return 'https://docs.aista.com/documentation/magic/components/crypto/';
+
+      case 'log':
+        return 'https://docs.aista.com/documentation/magic/components/log/';
+
+      case 'help-center':
+        return 'https://docs.aista.com/documentation/magic/';
+
+      case 'user-profile':
+        return 'https://docs.aista.com/documentation/magic/components/profile/';
+    }
+  }
 
   private getSetupStatus() {
 

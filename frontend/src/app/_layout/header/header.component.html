@@ -98,8 +98,15 @@
       #help_menu="matMenu"
       class="px-4 py-3 m-0 help_menu">
       <span class="text-muted">
-        {{getComponentDescription()}}
+        {{help_description}}
       </span>
+      <a
+        class="read_more_help mt-2"
+        mat-button
+        target="_blank"
+        [href]="help_url">
+        Read more ...
+      </a>
     </mat-menu>
 
   </div>
