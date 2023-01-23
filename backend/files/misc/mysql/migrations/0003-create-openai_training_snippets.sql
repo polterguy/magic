@@ -14,7 +14,7 @@ create table ml_training_snippets(
   pushed int not null default 0,
   uri varchar(1024) null,
   prompt text not null,
-  completion text not null,
+  completion longtext not null,
   primary key (id),
   constraint ml_training_snippets_type_fky foreign key (type) references ml_types (type) on delete cascade
 );
