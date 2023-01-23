@@ -4,17 +4,47 @@
    file:string
    type:string
    header:string
+   button:string
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/file
 validators.mandatory:x:@.arguments/*/type
 
-// Loading file.
+// Checking if custom JavaScript file exists.
+.result
 strings.concat
-   .:/system/openai/front.files/
+   .:/etc/system/openai/
    get-value:x:@.arguments/*/file
    .:.js
-io.file.load:x:@strings.concat
+if
+   io.file.exists:x:@strings.concat
+   .lambda
+
+      // Generic template file.
+      set-value:x:@.result
+         io.file.load:x:@strings.concat
+
+else
+
+   //Checking if system JavaScript file exists.
+   strings.concat
+      .:/system/openai/front.files/
+      get-value:x:@.arguments/*/file
+      .:.js
+   if
+      io.file.exists:x:@strings.concat
+      .lambda
+
+         // Generic template file.
+         set-value:x:@.result
+            io.file.load:x:@strings.concat
+   else
+
+      // Oops, no such file exists.
+      throw:No such AI chat template file exists
+         public:bool:true
+         status:400
+
 
 // Figuring out API URL.
 .url
@@ -25,9 +55,8 @@ set-value:x:@.url
       request.host
 
 // Dynamically exchanging template fields in JavaScript file.
-.result
 set-value:x:@.result
-   strings.replace:x:@io.file.load
+   strings.replace:x:@.result
       .:[[url]]
       get-value:x:@.url
 set-value:x:@.result
@@ -39,6 +68,12 @@ set-value:x:@.result
       .:[[header]]
       get-first-value
          get-value:x:@.arguments/*/header
+         .:
+set-value:x:@.result
+   strings.replace:x:@.result
+      .:[[button]]
+      get-first-value
+         get-value:x:@.arguments/*/button
          .:
 
 // Making sure we return correct Content-Type to caller, and applying some cache.
