@@ -22,7 +22,7 @@ document.getElementsByTagName('head')[0].appendChild(css);
 
 // Create a chat button
 const cb = document.createElement('button');
-cb.innerHTML = 'Chat with the Machine';
+cb.innerHTML = '[[button]]';
 cb.style.position = 'fixed';
 cb.style.bottom = '5px';
 cb.style.right = '5px';
@@ -33,6 +33,7 @@ cb.style.padding = '15px';
 cb.style.fontSize = '16px';
 cb.style.zIndex = '9999';
 cb.style.color = '#fff';
+cb.style.cursor = 'pointer';
 document.body.appendChild(cb);
 
 // Create a dialogue window
@@ -67,6 +68,7 @@ close.style.color = '#fff';
 close.style.position = 'absolute';
 close.style.top = '10px';
 close.style.right = '12px';
+close.style.cursor = 'pointer';
 wnd.appendChild(close);
 
 // Messages container
