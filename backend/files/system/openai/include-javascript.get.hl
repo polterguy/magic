@@ -9,6 +9,7 @@
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/file
 validators.mandatory:x:@.arguments/*/type
+validators.mandatory:x:@.arguments/*/button
 
 // Checking if custom JavaScript file exists.
 .result
