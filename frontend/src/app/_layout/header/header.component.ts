@@ -37,26 +37,31 @@ export class HeaderComponent implements OnInit {
     private backendService: BackendService) { }
 
   ngOnInit() {
+
     this.createMenu();
     this.getSetupStatus();
     this.activeUrl = this.backendService.active.url.replace('http://', '').replace('https://', '');
     this.help_description = this.getComponentDescription();
     this.help_url = this.getComponentURL();
-  }
 
-  checkActiveLink(currentUrl: string) {
-    this.navLinks.forEach((item: any) => {
-      if (item.submenu) {
-        item.isActive = item.submenu.findIndex((el: any) => (currentUrl || '').startsWith(el.url)) > -1;
+    this.router.events.subscribe({
+      next: (result: any) => {
+
+        if (result.type === 1) {
+          this.help_description = this.getComponentDescription();
+          this.help_url = this.getComponentURL();
+        }
       }
-    })
+    });
   }
 
   toggleSidebar() {
+
     this.sideExpanded = !this.sideExpanded;
   }
 
   closeSidebarInSidePanel(currentUrl: string) {
+
     this.checkActiveLink(currentUrl)
     if (!this.sideExpanded) {
       return;
@@ -65,6 +70,7 @@ export class HeaderComponent implements OnInit {
   }
 
   getGithubToken(clickType: string) {
+
     if (clickType !== 'Generate Token') {
       return;
     }
@@ -81,6 +87,7 @@ export class HeaderComponent implements OnInit {
   }
 
   logout(clickType: string) {
+
     if (clickType !== 'Logout') {
       return;
     }
@@ -89,6 +96,7 @@ export class HeaderComponent implements OnInit {
   }
 
   viewBackends() {
+
     this.dialog.open(DialogComponent, {
       width: '80vw',
       maxWidth: '90vw',
@@ -103,6 +111,15 @@ export class HeaderComponent implements OnInit {
   /*
    * Private helper methods.
    */
+
+  private checkActiveLink(currentUrl: string) {
+
+    this.navLinks.forEach((item: any) => {
+      if (item.submenu) {
+        item.isActive = item.submenu.findIndex((el: any) => (currentUrl || '').startsWith(el.url)) > -1;
+      }
+    });
+  }
 
   private getComponentDescription() {
 
@@ -204,7 +221,7 @@ a diagnostic tool to ensure it is functioning correctly. Automated tests can be 
 menu item or manually written in Hyperlambda. You can then run all tests automatically and view any errors that arise.`;
 
       case 'cryptography':
-        return `This cryptography component allows you to manage and administrate your server's
+        return `The cryptography component allows you to manage and administrate your server's
 public and private keys, as well as public keys belonging to others. This allows you to securely
 communicate with other Magic servers and/or clients using cryptographic signatures and encryption.
 Additionally, it allows you to verify cryptographic signatures and payloads received from others.`;
@@ -241,7 +258,7 @@ optin verification and potential referential integrity issues.`;
         return 'https://docs.aista.com/documentation/magic/components/sql/';
 
       case 'databases':
-        return 'TODO';
+        return 'https://docs.aista.com/documentation/magic/components/databases/';
 
       case 'endpoint-generator':
         return 'https://docs.aista.com/documentation/magic/components/crudifier/backend/';
@@ -306,6 +323,7 @@ optin verification and potential referential integrity issues.`;
   }
 
   private createMenu() {
+
     this.navLinks = [
       {
         name: 'Dashboard',
