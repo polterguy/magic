@@ -1,0 +1,43 @@
+
+// Returns the specified JavaScript file wrapping the specified model to caller.
+.arguments
+   file:string
+   type:string
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/file
+validators.mandatory:x:@.arguments/*/type
+
+// Loading file.
+strings.concat
+   .:/system/openai/front.files/
+   get-value:x:@.arguments/*/file
+   .:.js
+io.file.load:x:@strings.concat
+
+// Figuring out API URL.
+.url
+set-value:x:@.url
+   strings.concat
+      request.scheme
+      .:"://"
+      request.host
+
+// Dynamically exchanging template fields in JavaScript file.
+.result
+set-value:x:@.result
+   strings.replace:x:@io.file.load
+      .:[[url]]
+      get-value:x:@.url
+set-value:x:@.result
+   strings.replace:x:@.result
+      .:[[type]]
+      get-value:x:@.arguments/*/type
+
+// Making sure we return correct Content-Type to caller, and applying some cache.
+response.headers.set
+   Content-Type:application/javascript
+   Cache-Control:public, max-age=300
+
+// Returning result to caller.
+return:x:@.result
