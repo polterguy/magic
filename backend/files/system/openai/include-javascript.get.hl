@@ -3,6 +3,7 @@
 .arguments
    file:string
    type:string
+   header:string
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/file
@@ -33,6 +34,12 @@ set-value:x:@.result
    strings.replace:x:@.result
       .:[[type]]
       get-value:x:@.arguments/*/type
+set-value:x:@.result
+   strings.replace:x:@.result
+      .:[[header]]
+      get-first-value
+         get-value:x:@.arguments/*/header
+         .:
 
 // Making sure we return correct Content-Type to caller, and applying some cache.
 response.headers.set
