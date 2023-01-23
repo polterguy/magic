@@ -57,6 +57,22 @@ In addition Magic gives you an SQL prompt with autocomplete and syntax highlight
 to execute any SQL you want to, seeing the results of your SQL immediately. This works transparently
 towards all of its supported database types; SQLite, SQL Server, MySQL and PostgreSQL.
 
+## Use ChatGPT to chat with your website
+
+Magic allows you to inject a simple JavaScript file into your website, which you can use
+to _"have a conversation with your website"_. It works by allowing you to crawl your website, and
+scrape it for data, which ends up becoming training data for a custom OpenAI based machine learning model,
+which later allows your clients to _"have a conversation with your website"_. Use cases might be.
+
+* Support bots
+* Sales and marketing bots
+* Pharmaceutical chat bots
+* Legal chat bots
+* Restaurant menu systems
+* Etc, etc, etc
+
+![Visually design your database using SQL Studio](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/where-the-machine-creates-the-code.jpg)
+
 ## CRUD API generator
 
 Magic allows you to automagically generate a secure CRUD API wrapping any database. The API generator
