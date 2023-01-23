@@ -1,7 +1,6 @@
 
 // Creating CSS
 var css = document.createElement('style');
-css.type = 'text/css';
 css.innerHTML = `
 @keyframes chatGptWaiting {
   0% { margin-left:-10px; opacity: 0; color: rgb(128,128,0); }
@@ -17,8 +16,32 @@ css.innerHTML = `
    animation-iteration-count: infinite;
    animation-direction: alternate;
 }
+.error {
+    background-color: rgb(255,230,230);
+    padding: 10px;
+}
+.grecaptcha-badge {
+    opacity:0;
+}
 `;
 document.getElementsByTagName('head')[0].appendChild(css);
+
+// Retrieving reCAPTCHA site key.
+let siteKey = null;
+fetch('[[url]]/magic/system/auth/recaptcha-key', {
+  method: 'GET',
+}).then(res => {
+  return res.json();
+}).then(res => {
+  siteKey = res.result;
+  if (siteKey) {
+
+    // Including reCAPTCHA version 3
+    const cap = document.createElement('script');
+    cap.src = 'https://www.google.com/recaptcha/api.js?render=' + siteKey;
+    document.getElementsByTagName('head')[0].appendChild(cap);
+  }
+});
 
 // Create a chat button
 const cb = document.createElement('button');
@@ -124,6 +147,7 @@ wnd.addEventListener('submit', (e) => {
   e.preventDefault();
   const msg = inp.value;
   const msgRow = document.createElement('div');
+  msgRow.id = 'aista_gpt_msg_row';
   msgRow.style.fontSize = '14px';
   msgRow.style.marginBottom = '10px';
   msgRow.style.fontWeight = 'bold';
@@ -133,10 +157,32 @@ wnd.addEventListener('submit', (e) => {
   msgRow.scrollIntoView({behavior: 'smooth'});
   inp.disabled = true;
   
-  // Invoking backend
-  fetch('[[url]]/magic/system/openai/prompt?prompt=' + encodeURIComponent(msg) + '&type=[[type]]', {
+  // Invoking backend, making sure we associate request with reCAPTCHA token if possible
+  if (siteKey) {
+    grecaptcha.ready(function() {
+      grecaptcha.execute(siteKey, {action: 'submit'}).then(function(token) {
+        ask(msg, token);
+      });
+    });
+  } else {
+    ask(msg, null);
+  }
+});
+
+function ask(msg, token) {
+  let url = '[[url]]/magic/system/openai/prompt?prompt=' + encodeURIComponent(msg) + '&type=[[type]]';
+  if (token) {
+    url += '&recaptcha_response=' + encodeURIComponent(token);
+  }
+  fetch(url, {
     method: 'GET',
-  }).then(res => res.json())
+  }).then(res => {
+    if (res.status >= 200 && res.status <= 299) {
+      return res.json();
+    } else {
+      throw Error(res.statusText);
+    }
+  })
   	.then(data => {
       inp.disabled = false;
       inp.focus();
@@ -145,7 +191,18 @@ wnd.addEventListener('submit', (e) => {
       row.style.marginBottom = '20px';
       row.innerText = data.result;
       msgs.appendChild(row);
+      const msgRow = document.getElementById('aista_gpt_msg_row');
       msgRow.className = '';
       msgRow.scrollIntoView({behavior: 'smooth'});
-  });
-});
+  })
+    .catch(error => {
+      const row = document.createElement('div');
+      row.style.marginBottom = '20px';
+      row.className = 'error';
+      row.innerText = error;
+      msgs.appendChild(row);
+      const msgRow = document.getElementById('aista_gpt_msg_row');
+      msgRow.className = '';
+      msgRow.scrollIntoView({behavior: 'smooth'});
+    });
+}

@@ -78,10 +78,13 @@ data.connect:[generic|magic]
 
    // Checking if model requires reCAPTCHA.
    if
-      mt
-         convert:x:@data.read/*/*/recaptcha
-            type:decimal
-         .:decimal:0
+      and
+         not
+            auth.ticket.in-role:root
+         mt
+            convert:x:@data.read/*/*/recaptcha
+               type:decimal
+            .:decimal:0
       .lambda
 
          // Making sure reCAPTCHA value was provided.
@@ -98,8 +101,10 @@ data.connect:[generic|magic]
             config.get:"magic:auth:recaptcha:secret"
 
          // Validating reCAPTCHA invocation confirms request originated from a human.
+         convert:x:@data.read/*/*/recaptcha
+            type:decimal
          validators.recaptcha:x:@.arguments/*/recaptcha_response
-            min:x:@data.read/*/*/recaptcha
+            min:x:@convert
             site-key:x:@.key
             secret:x:@.secret
 
