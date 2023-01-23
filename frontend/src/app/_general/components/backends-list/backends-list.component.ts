@@ -3,7 +3,7 @@
  * Copyright (c) Aista Ltd, 2021 - 2023 info@aista.com, all rights reserved.
  */
 
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Backend } from 'src/app/_protected/models/common/backend.model';
 import { BackendService } from 'src/app/_general/services/backend.service';
 import { GeneralService } from '../../services/general.service';
