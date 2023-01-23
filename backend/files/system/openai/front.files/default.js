@@ -46,24 +46,28 @@ wnd.style.maxWidth = '100%';
 wnd.style.backgroundColor = '#fafafa';
 wnd.style.borderRadius = '8px';
 wnd.style.border = 'solid 1px #999';
-wnd.style.boxShadow = '2px 2px 5px rgba(0,0,0,.5)';
+wnd.style.boxShadow = '2px 2px 15px rgba(0,0,0,.8)';
 wnd.style.display = 'none';
 
-const tlb = document.createElement('div');
-tlb.style.padding = '10px';
-tlb.style.textAlign = 'right';
+const header = document.createElement('div');
+header.innerHTML = '[[header]]';
+header.style.fontSize = '12px';
+header.style.margin = '18px 20px 15px 12px';
+header.style.color = 'rgb(128,128,128)';
+wnd.appendChild(header);
 
 const close = document.createElement('button');
 close.innerHTML = 'X';
-close.style.borderRadius = '5px';
+close.style.borderRadius = '8px';
 close.style.backgroundColor = '#0084ff';
 close.style.border = 'none';
-close.style.padding = '8px';
+close.style.padding = '8px 12px';
 close.style.fontSize = '12px';
 close.style.color = '#fff';
-
-tlb.appendChild(close);
-wnd.appendChild(tlb);
+close.style.position = 'absolute';
+close.style.top = '10px';
+close.style.right = '12px';
+wnd.appendChild(close);
 
 // Messages container
 const msgs = document.createElement('div');
@@ -83,7 +87,7 @@ frm.style.padding = '15px';
 
 const inp = document.createElement('input');
 inp.type = 'text';
-inp.placeholder = 'Where the Machine answers your Questions ...';
+inp.placeholder = 'Your question ...';
 inp.style.padding = '10px';
 inp.style.borderRadius = '8px';
 inp.style.border = 'solid 1px rgba(0,0,0,.2)';
