@@ -73,6 +73,10 @@ which later allows your clients to _"have a conversation with your website"_. Us
 
 ![Visually design your database using SQL Studio](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/where-the-machine-creates-the-code.jpg)
 
+You can try out how such a chat bot works at [docs.aista.com](https://docs.aista.com) - However, you can
+also of course scrape other websites, creating your own custom AI based chatbot based upon for instance
+publicly available information, such as government information, etc, etc, etc.
+
 ## CRUD API generator
 
 Magic allows you to automagically generate a secure CRUD API wrapping any database. The API generator
