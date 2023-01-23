@@ -267,7 +267,7 @@ optin verification and potential referential integrity issues.`;
         return 'https://docs.aista.com/documentation/magic/components/crudifier/frontend/';
 
       case 'hyper-ide':
-        return '/documentation/magic/components/hyper-ide/';
+        return 'https://docs.aista.com/documentation/magic/components/hyper-ide/';
 
       case 'user-roles-management':
         return 'https://docs.aista.com/documentation/magic/components/auth/';
@@ -288,7 +288,7 @@ optin verification and potential referential integrity issues.`;
         return 'https://docs.aista.com/documentation/magic/components/bazar/';
 
       case 'machine-learning':
-        return '/documentation/magic/components/machine-learning/';
+        return 'https://docs.aista.com/documentation/magic/components/machine-learning/';
 
       case 'configuration':
         return 'https://docs.aista.com/documentation/magic/components/config/';
