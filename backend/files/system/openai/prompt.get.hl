@@ -189,10 +189,11 @@ data.connect:[generic|magic]
          // Oops, error - Logging error and returning status 500 to caller.
          lambda2hyper:x:@http.post
          log.error:Something went wrong while invoking OpenAI
-            error:x:@lambda2hyper
-         response.status.set:500
+            error:x:@http.post/*/content/*/error/*/message
+         response.status.set:x:@http.post
+         unwrap:x:+/*
          return
-            result:Something went wrong as we invoked OpenAI API
+            result:x:@http.post/*/content/*/error/*/message
 
    // Making sure we trim response.
    .result
