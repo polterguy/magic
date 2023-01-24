@@ -31,10 +31,13 @@ export class MachineLearningTrainingDataComponent implements OnInit {
   filter: any = {
     limit: 10,
     offset: 0,
+    order: 'created',
+    direction: 'desc',
   };
   displayedColumns: string[] = [
     'prompt',
     'type',
+    'created',
     'pushed',
     'action',
   ];

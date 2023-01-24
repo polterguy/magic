@@ -32,9 +32,9 @@
       <table
         mat-table
         [dataSource]="dataSource"
+        matSort
         matSortActive="created"
         matSortDirection="desc"
-        matSort
         class="w-100 borderless hoverable"
         (matSortChange)="sortData($event)">
 
