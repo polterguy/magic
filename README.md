@@ -75,7 +75,7 @@ which later allows your clients to _"have a conversation with your website"_. Us
 
 You can try out how such a chat bot works at [docs.aista.com](https://docs.aista.com) - However, you can
 also of course scrape other websites, creating your own custom AI based chatbot based upon for instance
-publicly available information, such as government information, etc, etc, etc.
+publicly available information, such as government information, etc,
 
 ## CRUD API generator
 
