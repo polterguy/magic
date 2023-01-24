@@ -18,7 +18,9 @@ css.innerHTML = `
 }
 .error {
     background-color: rgb(255,230,230);
-    padding: 10px;
+    padding: 15px;
+    margin-left: -15px;
+    margin-right: -15px;
 }
 .grecaptcha-badge {
     opacity:0;
@@ -57,6 +59,8 @@ cb.style.fontSize = '16px';
 cb.style.zIndex = '9999';
 cb.style.color = '#fff';
 cb.style.cursor = 'pointer';
+cb.style.boxShadow = '3px 3px 5px rgba(0,0,0,.5)';
+cb.style.border = 'solid 1px #0080eb';
 document.body.appendChild(cb);
 
 // Create a dialogue window
@@ -202,7 +206,8 @@ function ask(msg, token) {
       const row = document.createElement('div');
       row.style.marginBottom = '20px';
       row.className = 'error';
-      row.innerText = error;
+      const msg = error.message === 'Too Many Requests' ? 'OpenAI is overloaded, try again later' : error.message;
+      row.innerText = msg;
       msgs.appendChild(row);
       msgRow.className = '';
       msgRow.scrollIntoView({behavior: 'smooth'});
