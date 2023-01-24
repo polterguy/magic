@@ -147,7 +147,6 @@ wnd.addEventListener('submit', (e) => {
   e.preventDefault();
   const msg = inp.value;
   const msgRow = document.createElement('div');
-  msgRow.id = 'aista_gpt_msg_row';
   msgRow.style.fontSize = '14px';
   msgRow.style.marginBottom = '10px';
   msgRow.style.fontWeight = 'bold';
@@ -184,6 +183,7 @@ function ask(msg, token) {
     }
   })
   	.then(data => {
+      const msgRow = document.getElementsByClassName('chatGptWaiting')[0];
       inp.disabled = false;
       inp.focus();
       inp.select();
@@ -191,17 +191,19 @@ function ask(msg, token) {
       row.style.marginBottom = '20px';
       row.innerText = data.result;
       msgs.appendChild(row);
-      const msgRow = document.getElementById('aista_gpt_msg_row');
       msgRow.className = '';
       msgRow.scrollIntoView({behavior: 'smooth'});
   })
     .catch(error => {
+      const msgRow = document.getElementsByClassName('chatGptWaiting')[0];
+      inp.disabled = false;
+      inp.focus();
+      inp.select();
       const row = document.createElement('div');
       row.style.marginBottom = '20px';
       row.className = 'error';
       row.innerText = error;
       msgs.appendChild(row);
-      const msgRow = document.getElementById('aista_gpt_msg_row');
       msgRow.className = '';
       msgRow.scrollIntoView({behavior: 'smooth'});
     });
