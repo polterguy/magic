@@ -28,8 +28,8 @@ export class MachineLearningRequestsComponent implements OnInit {
   types: string[] = null;
   displayedColumns: string[] = [
     'prompt',
-    'created',
     'type',
+    'created',
     'finish_reason',
     'action',
   ];
