@@ -28,6 +28,7 @@ export class MachineLearningRequestsComponent implements OnInit {
   types: string[] = null;
   displayedColumns: string[] = [
     'prompt',
+    'created',
     'type',
     'finish_reason',
     'action',
@@ -35,6 +36,8 @@ export class MachineLearningRequestsComponent implements OnInit {
   filter: any = {
     limit: 10,
     offset: 0,
+    order: 'created',
+    direction: 'desc',
   };
 
   constructor(
