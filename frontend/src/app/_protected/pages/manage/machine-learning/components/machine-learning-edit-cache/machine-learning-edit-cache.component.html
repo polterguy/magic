@@ -57,6 +57,15 @@
   <div mat-dialog-actions [align]="'end'">
 
     <mat-checkbox
+      [(ngModel)]="data.cached"
+      name="cached"
+      class="me-2"
+      labelPosition="before"
+      color="primary">
+      Cache
+    </mat-checkbox>
+
+    <mat-checkbox
       [(ngModel)]="train"
       name="train"
       class="me-2"

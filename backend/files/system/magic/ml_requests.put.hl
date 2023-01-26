@@ -6,6 +6,7 @@
    prompt:string
    completion:string
    finish_reason:string
+   cached:int
 .description:CRUD update endpoint updating one record in your ml_requests table in your magic database filtering which item to update with id updating type, prompt, completion, finish_reason fields with authentication and authorisation for root roles
 .type:crud-update
 

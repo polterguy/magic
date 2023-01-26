@@ -1,2 +1,2 @@
 
-alter table ml_types add column prefix text text null;
+alter table ml_types add column prefix text null;
