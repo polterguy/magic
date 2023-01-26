@@ -29,6 +29,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
   recaptcha: 0;
   auth: string[] = [];
   supervised: boolean = false;
+  prefix: string;
   cached: boolean = false;
   model: OpenAIModel = null;
   models: OpenAIModel[] = [];
@@ -59,6 +60,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
     }
     this.supervised = this.data?.supervised === 1 ? true : (!this.data ? true : false);
     this.cached = this.data?.cached === 1 ? true : false;
+    this.prefix = this.data?.prefix ?? '';
 
     this.generalService.showLoading();
 
@@ -126,6 +128,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
       recaptcha: this.recaptcha,
       auth: this.auth?.length > 0 ? this.auth.join(',') : null,
       cached: this.cached ? 1 : 0,
+      prefix: this.prefix,
     };
     this.dialogRef.close(data);
   }
