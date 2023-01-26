@@ -1,8 +1,29 @@
+(function() {
 
-// Creating CSS
+// Retrieving reCAPTCHA site key.
+let aistaReCaptchaSiteKey = null;
+fetch('[[url]]/magic/system/auth/recaptcha-key', {
+  method: 'GET',
+}).then(res => {
+  return res.json();
+}).then(res => {
+  aistaReCaptchaSiteKey = res.result;
+  if (aistaReCaptchaSiteKey) {
+
+    // Including reCAPTCHA version 3
+    const cap = document.createElement('script');
+    cap.src = 'https://www.google.com/recaptcha/api.js?render=' + aistaReCaptchaSiteKey;
+    document.getElementsByTagName('head')[0].appendChild(cap);
+  }
+});
+
+  // Creating CSS inclusion.
 var css = document.createElement('style');
 css.innerHTML = `
-@keyframes chatGptWaiting {
+.grecaptcha-badge {
+  opacity:0;
+}
+@keyframes aista-chat-question-waiting {
   0% { margin-left:-10px; opacity: 0; color: rgb(128,128,0); }
   10% { margin-left:-10px; opacity: 0; color: rgb(128,128,0); }
   23% { margin-left:0px; opacity: 1; color: rgb(128,128,128); }
@@ -10,206 +31,221 @@ css.innerHTML = `
   65% { margin-left:0px; opacity: 1; color: rgb(128,128,128); }
   100% { margin-left:-10px; opacity: 0; color: rgb(128,128,0); }
 }
-.chatGptWaiting {
-   animation-name: chatGptWaiting;
-   animation-duration: 1s;
-   animation-iteration-count: infinite;
-   animation-direction: alternate;
+.aista-chat-question-waiting {
+  animation-name: aista-chat-question-waiting;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  font-size: 14px;
+  margin-bottom: 10px;
+  font-weight: bold;
 }
-.error {
-    background-color: rgb(255,230,230);
-    padding: 15px;
-    margin-left: -15px;
-    margin-right: -15px;
+.aista-chat-question {
+  font-size: 14px;
+  margin-bottom: 10px;
+  font-weight: bold;
 }
-.grecaptcha-badge {
-    opacity:0;
+.aista-chat-btn {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  border-radius: 8px;
+  background-color: #0084ff;
+  border: none;
+  padding: 15px;
+  font-size: 16px;
+  z-index: 9999;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 3px 3px 5px rgba(0,0,0,.5);
+  border: solid 1px #0080eb;
+  font-family: Helvetica;
+  font-weight: normal;
+  text-align: center;
+  text-decoration: none !important;
+}
+.aista-chat-btn:hover {
+  text-decoration: none !important;
+}
+.aista-chat-wnd {
+  position: fixed;
+  z-index: 10000;
+  bottom: 10px;
+  right: 10px;
+  width: 350px;
+  max-width: calc(100% - 20px);
+  background-color: #fafafa;
+  border-radius: 8px;
+  border: solid 1px #999;
+  box-shadow: 2px 2px 15px rgba(0,0,0,.8);
+  display: none;
+}
+.aista-chat-header {
+  font-size: 12px;
+  margin: 18px 20px 15px 12px;
+  color: rgb(128,128,128);
+}
+.aista-chat-close-btn {
+  border-radius: 8px;
+  background-color: #0084ff;
+  border: none;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: #fff;
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  cursor: pointer;
+}
+.aista-chat-msg-container {
+  height: 300px;
+  margin: 0 10px;
+  background-color: rgb(240,240,255);
+  border-radius: 5px;
+  padding: 15px;
+  border: solid 1px rgba(0,0,0,.2);
+  overflow-y: auto;
+  font-size: 12px;
+}
+.aista-chat-error {
+  background-color: rgb(255,230,230);
+  padding: 15px;
+  margin-left: -15px;
+  margin-right: -15px;
+  margin-bottom: 20px;
+}
+.aista-chat-answer {
+  margin-bottom: 20px;
+}
+.aista-chat-prompt {
+  padding: 10px;
+  border-radius: 8px;
+  border: solid 1px rgba(0,0,0,.2);
+  width: 100%;
+}
+.aista-chat-form {
+  padding: 15px;
 }
 `;
 document.getElementsByTagName('head')[0].appendChild(css);
 
-// Retrieving reCAPTCHA site key.
-let siteKey = null;
-fetch('[[url]]/magic/system/auth/recaptcha-key', {
-  method: 'GET',
-}).then(res => {
-  return res.json();
-}).then(res => {
-  siteKey = res.result;
-  if (siteKey) {
-
-    // Including reCAPTCHA version 3
-    const cap = document.createElement('script');
-    cap.src = 'https://www.google.com/recaptcha/api.js?render=' + siteKey;
-    document.getElementsByTagName('head')[0].appendChild(cap);
-  }
-});
-
-// Create a chat button
-const cb = document.createElement('button');
-cb.innerHTML = '[[button]]';
-cb.style.position = 'fixed';
-cb.style.bottom = '5px';
-cb.style.right = '5px';
-cb.style.borderRadius = '8px';
-cb.style.backgroundColor = '#0084ff';
-cb.style.border = 'none';
-cb.style.padding = '15px';
-cb.style.fontSize = '16px';
-cb.style.zIndex = '9999';
-cb.style.color = '#fff';
-cb.style.cursor = 'pointer';
-cb.style.boxShadow = '3px 3px 5px rgba(0,0,0,.5)';
-cb.style.border = 'solid 1px #0080eb';
-document.body.appendChild(cb);
-
-// Create a dialogue window
-const wnd = document.createElement('div');
-wnd.style.position = 'fixed';
-wnd.style.zIndex = '10000';
-wnd.style.bottom = '10px';
-wnd.style.right = '10px';
-wnd.style.width = '350px';
-wnd.style.maxWidth = '100%';
-wnd.style.backgroundColor = '#fafafa';
-wnd.style.borderRadius = '8px';
-wnd.style.border = 'solid 1px #999';
-wnd.style.boxShadow = '2px 2px 15px rgba(0,0,0,.8)';
-wnd.style.display = 'none';
-
-const header = document.createElement('div');
-header.innerHTML = '[[header]]';
-header.style.fontSize = '12px';
-header.style.margin = '18px 20px 15px 12px';
-header.style.color = 'rgb(128,128,128)';
-wnd.appendChild(header);
-
-const close = document.createElement('button');
-close.innerHTML = 'X';
-close.style.borderRadius = '8px';
-close.style.backgroundColor = '#0084ff';
-close.style.border = 'none';
-close.style.padding = '8px 12px';
-close.style.fontSize = '12px';
-close.style.color = '#fff';
-close.style.position = 'absolute';
-close.style.top = '10px';
-close.style.right = '12px';
-close.style.cursor = 'pointer';
-wnd.appendChild(close);
-
-// Messages container
-const msgs = document.createElement('div');
-msgs.style.height = '300px';
-msgs.style.margin = '0 10px';
-msgs.style.backgroundColor = 'rgb(240,240,255)';
-msgs.style.borderRadius = '5px';
-msgs.style.padding = '15px';
-msgs.style.fontSize = '12px';
-msgs.style.border = 'solid 1px rgba(0,0,0,.2)';
-msgs.style.overflowY = 'auto';
-wnd.appendChild(msgs);
-
-// Form allowing user to submit chat message
-const frm = document.createElement('form');
-frm.style.padding = '15px';
-
-const inp = document.createElement('input');
-inp.type = 'text';
-inp.placeholder = 'Your question ...';
-inp.style.padding = '10px';
-inp.style.borderRadius = '8px';
-inp.style.border = 'solid 1px rgba(0,0,0,.2)';
-inp.style.width = '100%';
-inp.style.boxSizing = 'border-box';
-frm.appendChild(inp);
-wnd.appendChild(frm);
-
-// Append the dialogue window to the DOM
-document.body.appendChild(wnd);
-
-// Add an event listener to the chat button
-cb.addEventListener('click', () => {
+// Chat button.
+const aistaChatBtn = document.createElement('button');
+aistaChatBtn.innerHTML = '[[button]]';
+aistaChatBtn.className = 'aista-chat-btn';
+aistaChatBtn.addEventListener('click', () => {
+  const wnd = document.getElementsByClassName('aista-chat-wnd')[0];
   wnd.style.display = 'block';
-  cb.style.display = 'none';
+  aistaChatBtn.style.display = 'none';
+  const inp = document.getElementsByClassName('aista-chat-prompt')[0];
   inp.focus();
   inp.select();
 });
+document.body.appendChild(aistaChatBtn);
+
+// Chat window.
+const aistaChatWnd = document.createElement('div');
+aistaChatWnd.className = 'aista-chat-wnd';
+aistaChatWnd.innerHTML = `
+<div class="aista-chat-header">[[header]]</div>
+<div class="aista-chat-msg-container"></div>
+<button class="aista-chat-close-btn">X</button>
+<form class="aista-chat-form">
+<input type="text" class="aista-chat-prompt">
+</form>
+`;
+document.body.appendChild(aistaChatWnd);
 
 // Add an event listener to the close button
-close.addEventListener('click', () => {
-  wnd.style.display = 'none';
-  cb.style.display = 'block';
-  setTimeout(() => {
-    inp.focus();
-    inp.select();
-  }, 250);
+document.getElementsByClassName('aista-chat-close-btn')[0].addEventListener('click', () => {
+  aistaChatWnd.style.display = 'none';
+  aistaChatBtn.style.display = 'block';
 });
 
-// Add a submit event handler to the dialogue window
-wnd.addEventListener('submit', (e) => {
+// Add a submit event handler to the form
+document.getElementsByClassName('aista-chat-form')[0].addEventListener('submit', (e) => {
   e.preventDefault();
+  const inp = document.getElementsByClassName('aista-chat-prompt')[0];
   const msg = inp.value;
-  const msgRow = document.createElement('div');
-  msgRow.style.fontSize = '14px';
-  msgRow.style.marginBottom = '10px';
-  msgRow.style.fontWeight = 'bold';
-  msgRow.innerText = msg;
-  msgRow.className = 'chatGptWaiting';
-  msgs.appendChild(msgRow);
-  msgRow.scrollIntoView({behavior: 'smooth'});
+  const msgEl = document.createElement('div');
+  msgEl.innerText = msg;
+  msgEl.className = 'aista-chat-question-waiting';
+  const msgs = document.getElementsByClassName('aista-chat-msg-container')[0];
+  msgs.appendChild(msgEl);
+  msgEl.scrollIntoView({behavior: 'smooth'});
   inp.disabled = true;
   
   // Invoking backend, making sure we associate request with reCAPTCHA token if possible
-  if (siteKey) {
+  if (aistaReCaptchaSiteKey) {
     grecaptcha.ready(function() {
-      grecaptcha.execute(siteKey, {action: 'submit'}).then(function(token) {
-        ask(msg, token);
+      grecaptcha.execute(aistaReCaptchaSiteKey, {action: 'submit'}).then(function(token) {
+        aista_invoke_prompt(msg, token);
       });
     });
   } else {
-    ask(msg, null);
+    aista_invoke_prompt(msg, null);
   }
 });
 
-function ask(msg, token) {
+// Function that invokes our backend with the prompt to retrieve completion.
+function aista_invoke_prompt(msg, token) {
+
+  // Creating our URL
   let url = '[[url]]/magic/system/openai/prompt?prompt=' + encodeURIComponent(msg) + '&type=[[type]]';
   if (token) {
     url += '&recaptcha_response=' + encodeURIComponent(token);
   }
+
+  // Invoking backend, with reCAPTCHA response if we've got a site-key
   fetch(url, {
     method: 'GET',
-  }).then(res => {
-    if (res.status >= 200 && res.status <= 299) {
-      return res.json();
-    } else {
-      throw Error(res.statusText);
-    }
   })
+    .then(res => {
+      if (res.status >= 200 && res.status <= 299) {
+        return res.json();
+      } else {
+        throw Error(res.statusText);
+      }
+    })
   	.then(data => {
-      const msgRow = document.getElementsByClassName('chatGptWaiting')[0];
+
+      // Enabling input textbox such that user can ask next question
+      const inp = document.getElementsByClassName('aista-chat-prompt')[0];
       inp.disabled = false;
       inp.focus();
       inp.select();
+
+      // Appending answer to message container
       const row = document.createElement('div');
-      row.style.marginBottom = '20px';
       row.innerText = data.result;
+      row.className = 'aista-chat-answer';
+      const msgs = document.getElementsByClassName('aista-chat-msg-container')[0];
       msgs.appendChild(row);
-      msgRow.className = '';
+
+      // Removing flashing on question
+      const msgRow = document.getElementsByClassName('aista-chat-question-waiting')[0];
+      msgRow.className = 'aista-chat-question';
       msgRow.scrollIntoView({behavior: 'smooth'});
-  })
+    })
     .catch(error => {
-      const msgRow = document.getElementsByClassName('chatGptWaiting')[0];
+
+      // Enabling input textbox such that user can ask next question
+      const inp = document.getElementsByClassName('aista-chat-prompt')[0];
       inp.disabled = false;
       inp.focus();
       inp.select();
+
+      // Appending answer to message container
       const row = document.createElement('div');
-      row.style.marginBottom = '20px';
-      row.className = 'error';
+      row.className = 'aista-chat-error';
       const msg = error.message === 'Too Many Requests' ? 'OpenAI is overloaded, try again later' : error.message;
       row.innerText = msg;
+      const msgs = document.getElementsByClassName('aista-chat-msg-container')[0];
       msgs.appendChild(row);
-      msgRow.className = '';
+
+      // Removing flashing on question
+      const msgRow = document.getElementsByClassName('aista-chat-question-waiting')[0];
+      msgRow.className = 'aista-chat-question';
       msgRow.scrollIntoView({behavior: 'smooth'});
     });
-}
+}})();
