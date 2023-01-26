@@ -50,6 +50,7 @@ data.connect:[generic|magic]
          ml_types.auth
          ml_types.supervised
          ml_types.cached
+         ml_types.prefix
       where
          and
 
