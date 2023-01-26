@@ -21,6 +21,7 @@ import { MachineLearningTestComponent } from '../components/machine-learning-tes
 import { SharedModule } from 'src/app/shared.module';
 import { MachineLearningTrainComponent } from '../components/machine-learning-train/machine-learning-train.component';
 import { MachineLearningImportComponent } from '../components/machine-learning-import/machine-learning-import.component';
+import { MachineLearningEmbedUiComponent } from '../components/machine-learning-embed-ui/machine-learning-embed-ui.component';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { MachineLearningImportComponent } from '../components/machine-learning-i
     MachineLearningTestComponent,
     MachineLearningTrainComponent,
     MachineLearningImportComponent,
+    MachineLearningEmbedUiComponent,
   ],
   imports: [
     CommonModule,

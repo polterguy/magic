@@ -44,7 +44,7 @@ if
  * the same question before some minimum amount of time has passed.
  */
 response.headers.set
-   Cache-Control:max-age=60
+   Cache-Control:private, max-age=180
 
 // Returning results returned from invocation above to caller
 add:x:../*/return

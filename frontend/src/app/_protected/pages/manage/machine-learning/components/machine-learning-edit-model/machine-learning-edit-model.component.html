@@ -194,14 +194,6 @@
           [disabled]="!supervised"
           labelPosition="before"
           color="primary">Cached</mat-checkbox>
-
-        <button
-          mat-button
-          type="button"
-          matTooltip="Copy JavaScript inclusion to include a graphical chatbot on your website"
-          (click)="copyJs()">
-          Copy JS
-        </button>
       
       </div>
 
@@ -215,6 +207,13 @@
       mat-button
       mat-dialog-close>
       Cancel
+    </button>
+
+    <button
+      mat-button
+      type="button"
+      (click)="embed()">
+      Embed
     </button>
 
     <button

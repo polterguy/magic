@@ -1,0 +1,49 @@
+
+// Returns all available themes from the backend.
+.arguments
+.description:Returns all available themes from the backend
+.type:internal
+
+// Making sure user has access to invoked endpoint.
+auth.ticket.verify:root
+
+// Checking if custom CSS file exists.
+.result
+
+// Listing custom files.
+io.file.list:/etc/system/openai/css/
+for-each:x:@io.file.list/*
+   if
+      strings.ends-with:x:@.dp/#
+         .:css
+      .lambda
+         strings.split:x:@.dp/#
+            .:/
+         strings.split:x:@strings.split/0/-
+            .:.
+         unwrap:x:+/*/*
+         add:x:@.result
+            .
+               .:x:@strings.split/0
+
+// Listing system files.
+io.file.list:/system/openai/front.files/
+for-each:x:@io.file.list/*
+   if
+      strings.ends-with:x:@.dp/#
+         .:css
+      .lambda
+         strings.split:x:@.dp/#
+            .:/
+         strings.split:x:@strings.split/0/-
+            .:.
+         if
+            not-exists:x:@.result/*/={@strings.split/0}
+            .lambda
+               unwrap:x:+/*/*
+               add:x:@.result
+                  .
+                     .:x:@strings.split/0
+
+// Returning result to caller.
+return-nodes:x:@.result/*
