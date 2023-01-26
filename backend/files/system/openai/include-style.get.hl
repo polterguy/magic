@@ -1,0 +1,50 @@
+
+// Returns the specified JavaScript file wrapping the specified model to caller.
+.arguments
+   file:string
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/file
+
+// Checking if custom CSS file exists.
+.result
+strings.concat
+   .:/etc/system/openai/
+   get-value:x:@.arguments/*/file
+   .:.css
+if
+   io.file.exists:x:@strings.concat
+   .lambda
+
+      // Generic template file.
+      set-value:x:@.result
+         io.file.load:x:@strings.concat
+
+else
+
+   //Checking if system JavaScript file exists.
+   strings.concat
+      .:/system/openai/front.files/
+      get-value:x:@.arguments/*/file
+      .:.css
+   if
+      io.file.exists:x:@strings.concat
+      .lambda
+
+         // Generic template file.
+         set-value:x:@.result
+            io.file.load:x:@strings.concat
+   else
+
+      // Oops, no such file exists.
+      throw:No such AI chat template file exists
+         public:bool:true
+         status:400
+
+// Making sure we return correct Content-Type to caller, and applying some cache.
+response.headers.set
+   Content-Type:text/css
+   Cache-Control:public, max-age=300
+
+// Returning result to caller.
+return:x:@.result
