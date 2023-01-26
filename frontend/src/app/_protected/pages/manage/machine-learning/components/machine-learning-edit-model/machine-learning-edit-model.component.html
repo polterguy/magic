@@ -56,6 +56,24 @@
       </mat-select>
     </mat-form-field>
 
+    <mat-form-field class="w-100 standalone-field">
+      <span
+        matPrefix
+        matTooltip="Prefix inserted before all prompts"
+        class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        <mat-icon>keyboard_arrow_right</mat-icon>
+        <span class="text-muted">|</span>
+      </span>
+      <input
+        matInput
+        required
+        placeholder="Prefix"
+        spellcheck="false"
+        [(ngModel)]="prefix"
+        name="prefix"
+        autocomplete="off">
+    </mat-form-field>
+
     <div class="row">
 
       <div class="col-12 d-flex justify-content-md-between align-items-md-center align-items-end flex-md-row">
@@ -155,33 +173,43 @@
 
     </div>
 
+    <div class="row mt-2 mb-2">
+
+      <div class="col-12 text-end">
+
+        <mat-checkbox
+          [(ngModel)]="supervised"
+          name="supervised"
+          (change)="supervisedChanged()"
+          matTooltip="Will store all questions and answers"
+          class="me-4"
+          labelPosition="before"
+          color="primary">Supervised</mat-checkbox>
+    
+        <mat-checkbox
+          [(ngModel)]="cached"
+          name="cached"
+          class="me-4"
+          matTooltip="Will use cached answer if possible"
+          [disabled]="!supervised"
+          labelPosition="before"
+          color="primary">Cached</mat-checkbox>
+
+        <button
+          mat-button
+          type="button"
+          matTooltip="Copy JavaScript inclusion to include a graphical chatbot on your website"
+          (click)="copyJs()">
+          Copy JS
+        </button>
+      
+      </div>
+
+    </div>
+
   </div>
 
   <div mat-dialog-actions [align]="'end'">
-
-    <mat-checkbox
-      [(ngModel)]="supervised"
-      name="supervised"
-      (change)="supervisedChanged()"
-      class="me-2"
-      labelPosition="before"
-      color="primary">Supervised</mat-checkbox>
-
-    <mat-checkbox
-      [(ngModel)]="cached"
-      name="cached"
-      class="me-2"
-      [disabled]="!supervised"
-      labelPosition="before"
-      color="primary">Cached</mat-checkbox>
-
-    <button
-      mat-button
-      type="button"
-      matTooltip="Copy JavaScript inclusion to include a graphical chatbot on your website"
-      (click)="copyJs()">
-      Copy JS
-    </button>
 
     <button
       mat-button
