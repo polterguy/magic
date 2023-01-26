@@ -4,15 +4,15 @@
  */
 
 import { Component, Inject, OnInit } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { Clipboard } from '@angular/cdk/clipboard';
 import { OpenAIModel, OpenAIService } from 'src/app/_general/services/openai.service';
 import { Role } from '../../../user-and-roles/_models/role.model';
 import { RoleService } from '../../../user-and-roles/_services/role.service';
 import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
 import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 import { BackendService } from 'src/app/_general/services/backend.service';
+import { MachineLearningEmbedUiComponent } from '../machine-learning-embed-ui/machine-learning-embed-ui.component';
 
 /**
  * Helper component to create or edit existing Machine Learning model.
@@ -41,9 +41,8 @@ export class MachineLearningEditTypeComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private generalService: GeneralService,
-    private clipboard: Clipboard,
+    private dialog: MatDialog,
     private openAIService: OpenAIService,
-    private backendService: BackendService,
     private roleService: RoleService,
     private dialogRef: MatDialogRef<MachineLearningEditTypeComponent>,) { }
 
@@ -133,9 +132,12 @@ export class MachineLearningEditTypeComponent implements OnInit {
     this.dialogRef.close(data);
   }
 
-  copyJs() {
+  embed() {
 
-    this.clipboard.copy(`<script src="${this.backendService.active.url}/magic/system/openai/include-javascript?file=default&type=${encodeURIComponent(this.type)}&header=Ask%20and%20you%20shall%20be%20given%20an%20answer&button=Chat%20with%20AI" defer></script>`);
-    this.generalService.showFeedback('JavaScript inclusion for your AI bot can be found on your clipboard');
+    this.dialog
+      .open(MachineLearningEmbedUiComponent, {
+        width: '80vw',
+        maxWidth: '550px',
+      });
   }
 }

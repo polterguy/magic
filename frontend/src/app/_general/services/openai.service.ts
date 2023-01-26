@@ -71,6 +71,16 @@ export class OpenAIService {
     return this.httpService.get<OpenAIModel[]>('/magic/system/openai/models');
   }
 
+  /**
+   * Returns all themes from backend.
+   */
+  themes() {
+    return this.httpService.get<string[]>('/magic/system/openai/themes');
+  }
+
+  /**
+   * Uploads the specified training data file to the backend.
+   */
   uploadTrainingFile(data: FormData) {
     return this.httpService.post<any>('/magic/system/openai/upload-training-data', data);
   }
