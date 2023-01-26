@@ -5,28 +5,6 @@
 .grecaptcha-badge {
   opacity:0;
 }
-@keyframes aista-chat-question-waiting {
-  0% { margin-left:-10px; opacity: 0; color: rgb(128,128,0); }
-  10% { margin-left:-10px; opacity: 0; color: rgb(128,128,0); }
-  23% { margin-left:0px; opacity: 1; color: rgb(128,128,128); }
-  50% { margin-left:0px; opacity: 1; color: rgb(128,128,128); }
-  65% { margin-left:0px; opacity: 1; color: rgb(128,128,128); }
-  100% { margin-left:-10px; opacity: 0; color: rgb(128,128,0); }
-}
-.aista-chat-question-waiting {
-  animation-name: aista-chat-question-waiting;
-  animation-duration: 1s;
-  animation-iteration-count: infinite;
-  animation-direction: alternate;
-  font-size: 14px;
-  margin-bottom: 10px;
-  font-weight: bold;
-}
-.aista-chat-question {
-  font-size: 14px;
-  margin-bottom: 10px;
-  font-weight: bold;
-}
 .aista-chat-btn {
   position: fixed;
   bottom: 10px;
@@ -79,6 +57,11 @@
   right: 12px;
   cursor: pointer;
 }
+.aista-chat-close-btn:hover,
+.aista-chat-close-btn:active,
+.aista-chat-close-btn:focus {
+  outline: none;
+}
 .aista-chat-msg-container {
   height: 300px;
   margin: 0 10px;
@@ -88,6 +71,28 @@
   border: solid 1px rgba(0,0,0,.2);
   overflow-y: auto;
   font-size: 12px;
+}
+@keyframes aista-chat-question-waiting {
+  0% { margin-left:-10px; opacity: 0; color: rgb(128,128,0); }
+  10% { margin-left:-10px; opacity: 0; color: rgb(128,128,0); }
+  23% { margin-left:0px; opacity: 1; color: rgb(128,128,128); }
+  50% { margin-left:0px; opacity: 1; color: rgb(128,128,128); }
+  65% { margin-left:0px; opacity: 1; color: rgb(128,128,128); }
+  100% { margin-left:-10px; opacity: 0; color: rgb(128,128,0); }
+}
+.aista-chat-question-waiting {
+  animation-name: aista-chat-question-waiting;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  font-size: 14px;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+.aista-chat-question {
+  font-size: 14px;
+  margin-bottom: 10px;
+  font-weight: bold;
 }
 .aista-chat-error {
   background-color: rgb(255,230,230);
@@ -99,12 +104,12 @@
 .aista-chat-answer {
   margin-bottom: 20px;
 }
+.aista-chat-form {
+  padding: 15px;
+}
 .aista-chat-prompt {
   padding: 10px;
   border-radius: 8px;
   border: solid 1px rgba(0,0,0,.2);
   width: 100%;
-}
-.aista-chat-form {
-  padding: 15px;
 }
