@@ -30,6 +30,7 @@ data.connect:[generic|magic]
          auth
          supervised
          cached
+         prefix
       where
          and
             type.eq:x:@.arguments/*/type
@@ -50,6 +51,7 @@ data.connect:[generic|magic]
                auth
                supervised
                cached
+               prefix
             where
                and
                   type.eq:default
@@ -160,6 +162,7 @@ data.connect:[generic|magic]
    .decorated-prompt
    set-value:x:-
       strings.concat
+         get-value:x:@data.read/*/*/prefix
          get-value:x:@.arguments/*/prompt
          .:" ->"
 

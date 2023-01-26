@@ -9,6 +9,7 @@
    auth:string
    supervised:int
    cached:int
+   prefix:string
 .description:CRUD create endpoint inserting one record into your ml_types table in your magic database taking type, model, max_tokens, temperature with authentication and authorisation for root roles
 .type:crud-create
 
