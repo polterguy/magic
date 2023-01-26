@@ -9,7 +9,7 @@ import { PageEvent } from '@angular/material/paginator';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { MachineLearningTrainingService } from 'src/app/_general/services/machine-learning-training.service';
-import { MachineLearningEditRequestComponent } from '../components/machine-learning-edit-request/machine-learning-edit-request.component';
+import { MachineLearningEditCacheComponent } from '../components/machine-learning-edit-cache/machine-learning-edit-cache.component';
 
 /**
  * Helper component to view and manage Machine Learning requests
@@ -89,7 +89,7 @@ export class MachineLearningRequestsComponent implements OnInit {
   showDetails(el: any) {
 
     this.dialog
-      .open(MachineLearningEditRequestComponent, {
+      .open(MachineLearningEditCacheComponent, {
         width: '80vw',
         maxWidth: '850px',
         data: {
@@ -97,6 +97,7 @@ export class MachineLearningRequestsComponent implements OnInit {
           prompt: el.prompt,
           completion: el.completion,
           type: el.type,
+          cached: el.cached,
         },
       })
       .afterClosed()

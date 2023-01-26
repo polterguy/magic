@@ -16,7 +16,7 @@ import { MachineLearningEditTypeComponent } from '../components/machine-learning
 import { MachineLearningComponent } from '../machine-learning.component';
 import { MachineLearningModelsComponent } from '../machine-learning-models/machine-learning-models.component';
 import { MachineLearningRequestsComponent } from '../machine-learning-cache/machine-learning-cache.component';
-import { MachineLearningEditRequestComponent } from '../components/machine-learning-edit-request/machine-learning-edit-request.component';
+import { MachineLearningEditCacheComponent } from '../components/machine-learning-edit-cache/machine-learning-edit-cache.component';
 import { MachineLearningTestComponent } from '../components/machine-learning-test/machine-learning-test.component';
 import { SharedModule } from 'src/app/shared.module';
 import { MachineLearningTrainComponent } from '../components/machine-learning-train/machine-learning-train.component';
@@ -31,7 +31,7 @@ import { MachineLearningEmbedUiComponent } from '../components/machine-learning-
     MachineLearningComponent,
     MachineLearningModelsComponent,
     MachineLearningRequestsComponent,
-    MachineLearningEditRequestComponent,
+    MachineLearningEditCacheComponent,
     MachineLearningTestComponent,
     MachineLearningTrainComponent,
     MachineLearningImportComponent,

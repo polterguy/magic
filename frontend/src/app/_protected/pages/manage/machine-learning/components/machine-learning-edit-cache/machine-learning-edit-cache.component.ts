@@ -13,19 +13,20 @@ import { CodemirrorActionsService } from 'src/app/_protected/pages/create/hyper-
  * Helper component to edit details of one request.
  */
 @Component({
-  selector: 'app-machine-learning-edit-request',
-  templateUrl: './machine-learning-edit-request.component.html'
+  selector: 'app-machine-learning-edit-cache',
+  templateUrl: './machine-learning-edit-cache.component.html'
 })
-export class MachineLearningEditRequestComponent implements OnInit {
+export class MachineLearningEditCacheComponent implements OnInit {
 
   train: boolean = false;
+  cached: boolean = false;
   ready: boolean = false;
   model: HlModel;
 
   constructor(
     private generalService: GeneralService,
     private machineLearningTrainingService: MachineLearningTrainingService,
-    private dialogRef: MatDialogRef<MachineLearningEditRequestComponent>,
+    private dialogRef: MatDialogRef<MachineLearningEditCacheComponent>,
     private codemirrorActionsService: CodemirrorActionsService,
     @Inject(MAT_DIALOG_DATA) public data: any) { }
 
@@ -83,6 +84,7 @@ export class MachineLearningEditRequestComponent implements OnInit {
       prompt: this.data.prompt,
       completion: this.ready ? this.model.hyperlambda : this.data.completion,
       type: this.data.type,
+      cached: this.data.cached,
     });
   }
 }

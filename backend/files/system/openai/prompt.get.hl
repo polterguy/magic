@@ -60,7 +60,7 @@ data.connect:[generic|magic]
             .lambda
 
                // Default type doesn't exist, nothing to do here.
-               throw:No such type
+               throw:No such type, and no default type was found
                   status:int:400
                   public:bool:true
 
@@ -110,28 +110,38 @@ data.connect:[generic|magic]
             site-key:x:@.key
             secret:x:@.secret
 
-   // Checking if type is cached.
+   // Checking if request has been previously cached.
+   data.read
+      table:ml_requests
+      columns
+         completion
+         cached
+      where
+         and
+            prompt.eq:x:@.arguments/*/prompt
+            type.eq:x:@.arguments/*/type
+      limit:1
+      order:created
+      direction:desc
+
+   // Checking if we could find a matching request in cache.
    if
-      mt
-         convert:x:@data.read/*/*/cached
-            type:int
-         .:int:0
+      and
+         exists:x:@data.read/*/*
+         eq
+            convert:x:@data.read/*/*/cached
+               type:int
+            .:int:1
       .lambda
 
-         // Checking if query already exists in ml_requests, and if so, returning cached version.
-         data.read
-            table:ml_requests
-            columns
-               completion
-            where
-               and
-                  prompt.eq:x:@.arguments/*/prompt
-                  type.eq:x:@.arguments/*/type
-            limit:1
-            order:created
-            direction:desc
+         // Checking if type is cached.
          if
-            exists:x:@data.read/*/*
+            and
+               exists:x:@data.read/@data.read/*/*
+               eq
+                  convert:x:@data.read/@data.read/*/*/cached
+                     type:int
+                  .:int:1
             .lambda
 
                // Returning cached completion.
@@ -158,11 +168,11 @@ data.connect:[generic|magic]
             .
                user:x:@auth.ticket.get
 
-   // Decorating prompt according to OpenAI's advice.
+   // Decorating prompt with prefix and according to OpenAI's advice.
    .decorated-prompt
-   set-value:x:-
+   set-value:x:@.decorated-prompt
       strings.concat
-         get-value:x:@data.read/*/*/prefix
+         get-value:x:@data.read/@data.read/*/*/prefix
          get-value:x:@.arguments/*/prompt
          .:" ->"
 
@@ -173,9 +183,9 @@ data.connect:[generic|magic]
          Content-Type:application/json
       payload
          prompt:x:@.decorated-prompt
-         model:x:@data.read/*/*/model
-         max_tokens:x:@data.read/*/*/max_tokens
-         temperature:x:@data.read/*/*/temperature
+         model:x:@data.read/@data.read/*/*/model
+         max_tokens:x:@data.read/@data.read/*/*/max_tokens
+         temperature:x:@data.read/@data.read/*/*/temperature
          stop:" END"
       convert:true
 
@@ -203,12 +213,15 @@ data.connect:[generic|magic]
    set-value:x:@.result
       strings.trim:x:@http.post/*/content/*/choices/0/*/text
 
-   // Checking if type is 'supervised', at which point we store prompt and completion.
+   // Checking if type is 'supervised', at which point we store prompt and completion unless it already exists in cache.
    if
-      mt
-         convert:x:@data.read/*/*/supervised
-            type:int
-         .:int:0
+      and
+         not
+            exists:x:@data.read/*/*
+         mt
+            convert:x:@data.read/@data.read/*/*/supervised
+               type:int
+            .:int:0
       .lambda
 
          // Storing prompt and completion in ml_requests table.

@@ -5,6 +5,7 @@
    prompt:string
    completion:string
    finish_reason:string
+   cached:int
 .description:CRUD create endpoint inserting one record into your ml_requests table in your magic database taking type, prompt, completion, finish_reason with authentication and authorisation for root roles
 .type:crud-create
 
