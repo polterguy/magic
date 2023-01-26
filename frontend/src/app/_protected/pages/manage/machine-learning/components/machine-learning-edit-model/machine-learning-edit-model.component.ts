@@ -138,6 +138,9 @@ export class MachineLearningEditTypeComponent implements OnInit {
       .open(MachineLearningEmbedUiComponent, {
         width: '80vw',
         maxWidth: '550px',
+        data: {
+          type: this.type,
+        }
       });
   }
 }
