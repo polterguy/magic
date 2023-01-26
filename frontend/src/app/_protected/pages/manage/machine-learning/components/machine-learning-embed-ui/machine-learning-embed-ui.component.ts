@@ -54,7 +54,7 @@ export class MachineLearningEmbedUiComponent implements OnInit {
   embed() {
 
     this.clipboard.copy(`<script src="${this.backendService.active.url}/magic/system/openai/include-javascript?file=${encodeURIComponent(this.theme)}&type=${encodeURIComponent(this.type)}&header=${encodeURIComponent(this.header)}&button=${encodeURIComponent(this.buttonTxt)}" defer></script>`);
-    this.generalService.showFeedback('JavaScript inclusion for your AI bot can be found on your clipboard');
+    this.generalService.showFeedback('HTML to include your bot can be found on your clipboard', 'successMessage');
     this.dialogRef.close();
   }
 }
