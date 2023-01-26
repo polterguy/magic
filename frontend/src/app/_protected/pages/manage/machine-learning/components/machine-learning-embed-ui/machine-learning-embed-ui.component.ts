@@ -3,11 +3,12 @@
  * Copyright (c) Aista Ltd, 2021 - 2023 info@aista.com, all rights reserved.
  */
 
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { BackendService } from 'src/app/_general/services/backend.service';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { OpenAIService } from 'src/app/_general/services/openai.service';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 /**
  * Helper component to create HTML required to embed chatbot in HTML.
@@ -18,13 +19,21 @@ import { OpenAIService } from 'src/app/_general/services/openai.service';
 })
 export class MachineLearningEmbedUiComponent implements OnInit {
 
-  type: string = 'default';
+  theme: string = 'default';
+  themes: string[] = [];
+  type: string = null;
+  header: string = 'Ask and you shall receive an answer';
+  buttonTxt: string = 'AI Chat';
 
   constructor(
+    @Inject(MAT_DIALOG_DATA) public data: any,
     private clipboard: Clipboard,
     private backendService: BackendService,
     private openAiService: OpenAIService,
-    private generalService: GeneralService) { }
+    private dialogRef: MatDialogRef<MachineLearningEmbedUiComponent>,
+    private generalService: GeneralService) {
+      this.type = this.data.type;
+    }
 
   ngOnInit() {
 
@@ -32,7 +41,7 @@ export class MachineLearningEmbedUiComponent implements OnInit {
     this.openAiService.themes().subscribe({
       next: (themes: string[]) => {
 
-        console.log(themes);
+        this.themes = themes;
       },
       error: () => {
 
@@ -44,7 +53,8 @@ export class MachineLearningEmbedUiComponent implements OnInit {
 
   embed() {
 
-    this.clipboard.copy(`<script src="${this.backendService.active.url}/magic/system/openai/include-javascript?file=default&type=${encodeURIComponent(this.type)}&header=Ask%20and%20you%20shall%20be%20given%20an%20answer&button=Chat%20with%20AI" defer></script>`);
+    this.clipboard.copy(`<script src="${this.backendService.active.url}/magic/system/openai/include-javascript?file=${encodeURIComponent(this.theme)}&type=${encodeURIComponent(this.type)}&header=${encodeURIComponent(this.header)}&button=${encodeURIComponent(this.buttonTxt)}" defer></script>`);
     this.generalService.showFeedback('JavaScript inclusion for your AI bot can be found on your clipboard');
+    this.dialogRef.close();
   }
 }

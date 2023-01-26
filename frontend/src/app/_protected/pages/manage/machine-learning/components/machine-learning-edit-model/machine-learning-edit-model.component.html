@@ -61,7 +61,7 @@
         matPrefix
         matTooltip="Prefix inserted before all prompts"
         class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-        <mat-icon>keyboard_arrow_right</mat-icon>
+        <mat-icon>face</mat-icon>
         <span class="text-muted">|</span>
       </span>
       <input
@@ -181,7 +181,6 @@
           [(ngModel)]="supervised"
           name="supervised"
           (change)="supervisedChanged()"
-          matTooltip="Will store all questions and answers"
           class="me-4"
           labelPosition="before"
           color="primary">Supervised</mat-checkbox>
@@ -190,7 +189,6 @@
           [(ngModel)]="cached"
           name="cached"
           class="me-4"
-          matTooltip="Will use cached answer if possible"
           [disabled]="!supervised"
           labelPosition="before"
           color="primary">Cached</mat-checkbox>
