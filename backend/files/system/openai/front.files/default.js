@@ -66,7 +66,7 @@ function aista_create_chat_ui() {
   <div class="aista-chat-msg-container"></div>
   <button class="aista-chat-close-btn">X</button>
   <form class="aista-chat-form">
-  <input type="text" class="aista-chat-prompt">
+  <input type="text" placeholder="Ask me anything ..." class="aista-chat-prompt">
   </form>
   `;
   document.body.appendChild(aistaChatWnd);
