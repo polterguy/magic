@@ -1,6 +1,7 @@
 
 // Returns the specified JavaScript file wrapping the specified model to caller.
 .arguments
+   css:string
    file:string
    type:string
    header:string
@@ -86,6 +87,19 @@ set-value:x:@.result
       .:[[button]]
       get-first-value
          get-value:x:@.arguments/*/button
+         .:
+set-value:x:@.result
+   strings.replace:x:@.result
+      .:[[file]]
+      get-first-value
+         get-value:x:@.arguments/*/file
+         .:
+set-value:x:@.result
+   strings.replace:x:@.result
+      .:[[css]]
+      get-first-value
+         get-value:x:@.arguments/*/css
+         get-value:x:@.arguments/*/file
          .:
 
 // Making sure we return correct Content-Type to caller, and applying some cache.
