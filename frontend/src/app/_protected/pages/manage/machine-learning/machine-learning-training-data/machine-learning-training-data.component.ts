@@ -39,6 +39,7 @@ export class MachineLearningTrainingDataComponent implements OnInit {
     'type',
     'created',
     'pushed',
+    'embedding',
     'action',
   ];
 

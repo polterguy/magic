@@ -53,8 +53,20 @@ data.connect:[generic|magic]
          ml_training_snippets.uri
          ml_training_snippets.prompt
          ml_training_snippets.completion
+         ml_training_snippets.embedding
       where
          and
+
+   // Changing embedding to a boolean value to preserve bandwidth.
+   for-each:x:@data.read/*
+      if
+         not-null:x:@.dp/#/*/embedding
+         .lambda
+            set-value:x:@.dp/#/*/embedding
+               .:bool:true
+      else
+         set-value:x:@.dp/#/*/embedding
+            .:bool:false
 
    // Returning result of above read invocation to caller.
    return-nodes:x:@data.read/*

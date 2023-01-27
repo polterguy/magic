@@ -46,12 +46,14 @@ export class ConfirmationDialogComponent implements OnInit {
       extra?: Extra}) { }
 
   ngOnInit() {
+
     this.data['title'] = this.data['title'] ?? 'Please confirm';
     this.data['description'] = this.data['description'] ?? 'Are you sure?';
     this.data['action_btn_color'] = this.data['action_btn_color'] ?? 'primary';
   }
 
   public confirm() {
+
     if ((this.data.extra && this.data.extra.details) && (this.inputValue.value !== this.data.extra.fieldToBeTypedValue || this.inputValue.value === '')) {
       this.generalService.showFeedback(this.data.extra.fieldToBeTypedTitle + ' does not match', 'errorMessage', null, 2000);
       return;
