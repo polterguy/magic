@@ -157,7 +157,7 @@ fork
             crawl:bool:true
 
       /*
-       * Crawliing is done.
+       * Crawling is done.
        * Making sure we notify client that we're done and do some logging.
        */
       sockets.signal:magic.backend.message
