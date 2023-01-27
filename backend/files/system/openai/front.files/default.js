@@ -15,9 +15,9 @@ fetch('[[url]]/magic/system/auth/recaptcha-key', {
   if (aistaReCaptchaSiteKey) {
 
     // Including reCAPTCHA version 3
-    const cap = document.createElement('script');
+    const cap = window.document.createElement('script');
     cap.src = 'https://www.google.com/recaptcha/api.js?render=' + aistaReCaptchaSiteKey;
-    document.getElementsByTagName('head')[0].appendChild(cap);
+    window.document.getElementsByTagName('head')[0].appendChild(cap);
   }
 });
 
@@ -31,7 +31,7 @@ fetch('[[url]]/magic/system/openai/include-style?file=' + encodeURIComponent('[[
     // Injecting CSS into DOM.
     var css = document.createElement('style');
     css.innerHTML = res;
-    document.getElementsByTagName('head')[0].appendChild(css);
+    window.document.getElementsByTagName('head')[0].appendChild(css);
 
     // Creating our chat UI.
     aista_create_chat_ui();
@@ -42,24 +42,17 @@ fetch('[[url]]/magic/system/openai/include-style?file=' + encodeURIComponent('[[
  */
 function aista_create_chat_ui() {
 
-  // Chat button.
-  const aistaChatBtn = document.createElement('button');
-  aistaChatBtn.innerHTML = '[[button]]';
-  aistaChatBtn.className = 'aista-chat-btn';
-  aistaChatBtn.addEventListener('click', () => {
-    const wnd = document.getElementsByClassName('aista-chat-wnd')[0];
-    wnd.style.display = 'block';
-    aistaChatBtn.style.display = 'none';
-    const inp = document.getElementsByClassName('aista-chat-prompt')[0];
-    setTimeout(() => {
-      inp.focus();
-      inp.select();
-    }, 250)
-  });
-  document.body.appendChild(aistaChatBtn);
+  // Creating chat button if we should.
+  if ('[[render_button]]' === 'True') {
+    const aistaChatBtn = window.document.createElement('button');
+    aistaChatBtn.innerHTML = '[[button]]';
+    aistaChatBtn.className = 'aista-chat-btn';
+    aistaChatBtn.addEventListener('click', () => aista_show_chat_window());
+    window.document.body.appendChild(aistaChatBtn);
+  }
 
   // Chat window.
-  const aistaChatWnd = document.createElement('div');
+  const aistaChatWnd = window.document.createElement('div');
   aistaChatWnd.className = 'aista-chat-wnd';
   aistaChatWnd.innerHTML = `
   <div class="aista-chat-header">[[header]]</div>
@@ -69,23 +62,26 @@ function aista_create_chat_ui() {
   <input type="text" placeholder="Ask me anything ..." class="aista-chat-prompt">
   </form>
   `;
-  document.body.appendChild(aistaChatWnd);
+  window.document.body.appendChild(aistaChatWnd);
 
   // Add an event listener to the close button
-  document.getElementsByClassName('aista-chat-close-btn')[0].addEventListener('click', () => {
+  window.document.getElementsByClassName('aista-chat-close-btn')[0].addEventListener('click', () => {
     aistaChatWnd.style.display = 'none';
-    aistaChatBtn.style.display = 'block';
+    const btns = window.document.getElementsByClassName('aista-chat-btn');
+    if (btns.length > 0) {
+      btns[0].style.display = 'block';
+    }
   });
 
   // Add a submit event handler to the form
-  document.getElementsByClassName('aista-chat-form')[0].addEventListener('submit', (e) => {
+  window.document.getElementsByClassName('aista-chat-form')[0].addEventListener('submit', (e) => {
     e.preventDefault();
-    const inp = document.getElementsByClassName('aista-chat-prompt')[0];
+    const inp = window.document.getElementsByClassName('aista-chat-prompt')[0];
     const msg = inp.value;
-    const msgEl = document.createElement('div');
+    const msgEl = window.document.createElement('div');
     msgEl.innerText = msg;
     msgEl.className = 'aista-chat-question-waiting';
-    const msgs = document.getElementsByClassName('aista-chat-msg-container')[0];
+    const msgs = window.document.getElementsByClassName('aista-chat-msg-container')[0];
     msgs.appendChild(msgEl);
     msgEl.scrollIntoView({behavior: 'smooth'});
     inp.disabled = true;
@@ -103,6 +99,22 @@ function aista_create_chat_ui() {
   });
 }
 
+/*
+ * Shows chat window.
+ */
+function aista_show_chat_window() {
+  const wnd = window.document.getElementsByClassName('aista-chat-wnd')[0];
+  wnd.style.display = 'block';
+  const btns = window.document.getElementsByClassName('aista-chat-btn');
+  if (btns.length > 0) {
+    btns[0].style.display = 'none';
+  }
+  const inp = window.document.getElementsByClassName('aista-chat-prompt')[0];
+  setTimeout(() => {
+    inp.focus();
+    inp.select();
+  }, 250)
+}
 
 /*
  * Function that invokes our backend with the prompt to retrieve completion.
@@ -129,41 +141,41 @@ function aista_invoke_prompt(msg, token) {
     .then(data => {
 
       // Enabling input textbox such that user can ask next question
-      const inp = document.getElementsByClassName('aista-chat-prompt')[0];
+      const inp = window.document.getElementsByClassName('aista-chat-prompt')[0];
       inp.disabled = false;
       inp.focus();
       inp.select();
 
       // Appending answer to message container
-      const row = document.createElement('div');
+      const row = window.document.createElement('div');
       row.innerText = data.result;
       row.className = 'aista-chat-answer';
-      const msgs = document.getElementsByClassName('aista-chat-msg-container')[0];
+      const msgs = window.document.getElementsByClassName('aista-chat-msg-container')[0];
       msgs.appendChild(row);
 
       // Removing flashing on question
-      const msgRow = document.getElementsByClassName('aista-chat-question-waiting')[0];
+      const msgRow = window.document.getElementsByClassName('aista-chat-question-waiting')[0];
       msgRow.className = 'aista-chat-question';
       msgRow.scrollIntoView({behavior: 'smooth'});
     })
     .catch(error => {
 
       // Enabling input textbox such that user can ask next question
-      const inp = document.getElementsByClassName('aista-chat-prompt')[0];
+      const inp = window.document.getElementsByClassName('aista-chat-prompt')[0];
       inp.disabled = false;
       inp.focus();
       inp.select();
 
       // Appending answer to message container
-      const row = document.createElement('div');
+      const row = window.document.createElement('div');
       row.className = 'aista-chat-error';
       const msg = error.message === 'Too Many Requests' ? 'OpenAI is overloaded, try again later' : error.message;
       row.innerText = msg;
-      const msgs = document.getElementsByClassName('aista-chat-msg-container')[0];
+      const msgs = window.document.getElementsByClassName('aista-chat-msg-container')[0];
       msgs.appendChild(row);
 
       // Removing flashing on question
-      const msgRow = document.getElementsByClassName('aista-chat-question-waiting')[0];
+      const msgRow = window.document.getElementsByClassName('aista-chat-question-waiting')[0];
       msgRow.className = 'aista-chat-question';
       msgRow.scrollIntoView({behavior: 'smooth'});
     });
