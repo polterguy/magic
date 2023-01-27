@@ -1,0 +1,31 @@
+
+/*
+ * Vectorises all training snippets in the specified model/type.
+ */
+.arguments
+   type:string
+
+// Ensures user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/type
+
+// Creating a thread and invoking file doing the heavy lifting.
+insert-before:x:./*/fork/0
+   get-nodes:x:@.arguments
+fork
+
+   // Making sure exceptions does not leave thread.
+   try
+
+
+   .catch
+
+      // Oops ...!!
+      log.error:x:@.arguments/*/message
+         url:x:@.arguments/*/url
+
+// Returning success to caller.
+return
+   result:success
