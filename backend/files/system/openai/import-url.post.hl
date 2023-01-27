@@ -9,12 +9,14 @@
    type:string
    delay:int
    max:int
+   threshold:int
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/url
+validators.mandatory:x:@.arguments/*/threshold
 validators.url:x:@.arguments/*/url
 validators.mandatory:x:@.arguments/*/type
 validators.mandatory:x:@.arguments/*/delay
@@ -25,6 +27,8 @@ validators.mandatory:x:@.arguments/*/max
 validators.integer:x:@.arguments/*/max
    min:1
    max:5000
+validators.integer:x:@.arguments/*/threshold
+   min:25
 
 // Doing some basic logging.
 log.info:Crawling URL generating OpenAI training snippets
@@ -32,6 +36,7 @@ log.info:Crawling URL generating OpenAI training snippets
    type:x:@.arguments/*/type
    delay:x:@.arguments/*/delay
    max:x:@.arguments/*/max
+   threshold:x:@.arguments/*/threshold
 
 // Creating a thread and invoking file doing the heavy lifting.
 insert-before:x:./*/fork/0
@@ -132,6 +137,7 @@ fork
                         get-nodes:x:@.arguments/*/type
                         get-nodes:x:@.arguments/*/delay
                         get-nodes:x:@.arguments/*/max
+                        get-nodes:x:@.arguments/*/threshold
                      unwrap:x:+/*
                      io.file.execute:/system/openai/crawl.implementation/import-url.hl
                         url:x:@.dp/#

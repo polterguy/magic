@@ -133,12 +133,12 @@ export class MachineLearningModelsComponent implements OnInit {
         maxWidth: '850px',
         data: el,
       }).afterClosed()
-      .subscribe((result: { train?: boolean, crawl?: string, delay?: number, max?: number }) =>{
+      .subscribe((result: { train?: boolean, crawl?: string, delay?: number, max?: number, threshold?: number }) =>{
 
         if (result?.crawl) {
 
           this.generalService.showLoading();
-          this.openAIService.importUrl(result.crawl, el.type, result.delay, result.max).subscribe({
+          this.openAIService.importUrl(result.crawl, el.type, result.delay, result.max, result.threshold).subscribe({
             next: () => {
 
               this.generalService.hideLoading();
