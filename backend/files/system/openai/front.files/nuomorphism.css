@@ -9,8 +9,8 @@
   position: fixed;
   bottom: 10px;
   right: 10px;
-  padding: 15px;
-  font-size: 16px;
+  padding: 8px 15px;
+  font-size: 14px;
   z-index: 9999;
   cursor: pointer;
   font-family: Helvetica;
@@ -28,6 +28,9 @@
 }
 .aista-chat-btn:hover {
   text-decoration: none !important;
+  box-shadow: 1px 1px 2px #b8b9be, -3px -3px 6px #fff;
+  transition: box-shadow;
+  transition-duration: .25s;
 }
 .aista-chat-wnd {
   background-color: rgb(230, 231, 238) !important;
@@ -70,11 +73,16 @@
   box-shadow: 3px 3px 6px #b8b9be, -3px -3px 6px #fff;
   border: .0625rem solid #d1d9e6;
   border-radius: 5px;
+  transition: box-shadow;
+  transition-duration: .25s;
 }
 .aista-chat-close-btn:hover,
 .aista-chat-close-btn:active,
 .aista-chat-close-btn:focus {
   outline: none;
+  box-shadow: 1px 1px 2px #b8b9be, -3px -3px 6px #fff;
+  transition: box-shadow;
+  transition-duration: .25s;
 }
 .aista-chat-msg-container {
   height: 300px;

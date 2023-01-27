@@ -6,11 +6,20 @@
    type:string
    header:string
    button:string
+   render_button:bool
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/file
 validators.mandatory:x:@.arguments/*/type
 validators.mandatory:x:@.arguments/*/button
+
+// Defaulting button to be rendered by default.
+if
+   not-exists:x:@.arguments/*/render_button
+   .lambda
+      add:x:@.arguments
+         .
+            render_button:bool:true
 
 // Checking if custom JavaScript file exists.
 .result
@@ -101,6 +110,10 @@ set-value:x:@.result
          get-value:x:@.arguments/*/css
          get-value:x:@.arguments/*/file
          .:
+set-value:x:@.result
+   strings.replace:x:@.result
+      .:[[render_button]]
+      get-value:x:@.arguments/*/render_button
 
 // Making sure we return correct Content-Type to caller, and applying some cache.
 response.headers.set

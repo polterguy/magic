@@ -8,6 +8,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { PrivacyModalComponent } from 'src/app/_general/components/privacy-modal/privacy-modal.component';
 import { TermsModalComponent } from 'src/app/_general/components/terms-modal/terms-modal.component';
 
+declare function aista_show_chat_window(): any;
+
 /**
  * Footer component showing copyright and terms of service, plus privacy declaration.
  */
@@ -18,21 +20,21 @@ import { TermsModalComponent } from 'src/app/_general/components/terms-modal/ter
 })
 export class FooterComponent implements OnInit {
 
+  currentYear: number = 0;
+
   constructor(private dialog: MatDialog) { }
-  /**
-   * copyright year
-   */
-  public currentYear: number = 0;
 
   ngOnInit() {
     this.currentYear = new Date().getFullYear();
   }
 
-  public termsModal() {
+  termsModal() {
+
     this.dialog.open(TermsModalComponent);
   }
 
-  public privacyModal() {
+  privacyModal() {
+
     this.dialog.open(PrivacyModalComponent);
   }
 }
