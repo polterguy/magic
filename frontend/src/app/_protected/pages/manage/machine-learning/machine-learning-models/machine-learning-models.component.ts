@@ -184,6 +184,25 @@ export class MachineLearningModelsComponent implements OnInit {
     });
   }
 
+  vectorise(el: any) {
+
+      // Asking user to confirm action.
+      this.dialog.open(ConfirmationDialogComponent, {
+        width: '500px',
+        data: {
+          title: 'Confirm operation',
+          description_extra: `Do you want to start creating embeddings of the model called;<br/><span class="fw-bold">${el.type}</span>`,
+          action_btn: 'Yes',
+          bold_description: true
+        }
+      }).afterClosed().subscribe((result: string) => {
+
+        if (result === 'confirm') {
+
+        }
+      });
+  }
+
   test(el: any) {
 
     this.dialog

@@ -105,4 +105,14 @@ export class OpenAIService {
       threshold,
     });
   }
+
+  /**
+   * Vectorises all snippets in the specified type.
+   */
+  vectorise(type: string) {
+
+    return this.httpService.post<any>('/magic/system/openai/vectorise', {
+      type,
+    });
+  }
 }
