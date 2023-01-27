@@ -191,13 +191,28 @@ export class MachineLearningModelsComponent implements OnInit {
         width: '500px',
         data: {
           title: 'Confirm operation',
-          description_extra: `Do you want to start creating embeddings of the model called;<br/><span class="fw-bold">${el.type}</span>`,
-          action_btn: 'Yes',
+          description_extra: `Do you want to vectorise the model called; <span class="fw-bold">${el.type}</span><br/>`,
+          action_btn: 'Vectorise',
+          close_btn: 'Cancel',
           bold_description: true
         }
       }).afterClosed().subscribe((result: string) => {
 
         if (result === 'confirm') {
+
+          this.generalService.showLoading();
+          this.openAIService.vectorise(el.type).subscribe({
+            next: () => {
+
+              this.generalService.showFeedback('Started creating embeddings of model', 'successMessage');
+              this.generalService.hideLoading();
+            },
+            error: () => {
+
+              this.generalService.hideLoading();
+              this.generalService.showFeedback('Something went wrong as we tried to create embeddings for model', 'errorMessage');
+            }
+          });
 
         }
       });
