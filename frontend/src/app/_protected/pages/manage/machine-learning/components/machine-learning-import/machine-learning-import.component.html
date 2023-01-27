@@ -49,7 +49,7 @@
             name="delay"
             autocomplete="off">
         </mat-form-field>
-    
+
         <mat-form-field class="standalone-field me-2 w-100">
           <span
             matPrefix
@@ -67,6 +67,26 @@
             max="5000"
             step="1"
             name="max"
+            autocomplete="off">
+        </mat-form-field>
+
+        <mat-form-field class="standalone-field me-2 w-100">
+          <span
+            matPrefix
+            matTooltip="Minimum character count for completions"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>timeline</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            placeholder="Text length threshold"
+            [(ngModel)]="threshold"
+            type="number"
+            min="25"
+            max="500"
+            step="25"
+            name="threshold"
             autocomplete="off">
         </mat-form-field>
 

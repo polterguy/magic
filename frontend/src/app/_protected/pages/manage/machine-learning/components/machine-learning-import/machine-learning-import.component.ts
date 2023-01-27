@@ -26,6 +26,7 @@ export class MachineLearningImportComponent {
   prompt: string = 'prompt';
   completion: string = 'completion';
   advanced: boolean = false;
+  threshold: number = 150;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -35,7 +36,7 @@ export class MachineLearningImportComponent {
 
   importUrl() {
 
-    if (!this.url || this.url.length === 0 || this.delay < 1 || this.max > 2500) {
+    if (!this.url || this.url.length === 0 || this.delay < 1 || this.max > 2500 || this.threshold < 25) {
       
       this.generalService.showFeedback('Not valid input', 'errorMessage');
       return;
@@ -57,7 +58,7 @@ export class MachineLearningImportComponent {
       return;
     }
 
-    this.matDialog.close({ crawl: this.url, delay: this.delay * 1000, max: this.max });
+    this.matDialog.close({ crawl: this.url, delay: this.delay * 1000, max: this.max, threshold: this.threshold });
   }
 
   getFile(event: any) {
@@ -98,6 +99,7 @@ export class MachineLearningImportComponent {
   }
 
   getFileName() {
+
     return this.trainingFileModel.split('\\').pop().split('/').pop();
   }
 }

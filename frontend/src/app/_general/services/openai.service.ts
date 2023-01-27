@@ -95,12 +95,14 @@ export class OpenAIService {
   /**
    * Imports the specified URL as training data.
    */
-  importUrl(url: string, type: string, delay: number, max: number) {
+  importUrl(url: string, type: string, delay: number, max: number, threshold: number) {
+
     return this.httpService.post<any>('/magic/system/openai/import-url', {
       url,
       type,
       delay,
       max,
+      threshold,
     });
   }
 }

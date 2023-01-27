@@ -522,6 +522,9 @@ data.connect:[generic|magic]
                .:
             neq:x:@.dp/#/*/completion
                .:
+            mt
+               strings.length:x:@.dp/#/*/completion
+               get-value:x:@.arguments/*/threshold
          .lambda
 
             // Prompt.
