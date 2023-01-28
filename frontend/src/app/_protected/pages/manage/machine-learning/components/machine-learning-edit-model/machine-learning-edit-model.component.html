@@ -168,7 +168,6 @@
           </mat-select>
         </mat-form-field>
 
-
       </div>
 
     </div>
@@ -178,13 +177,20 @@
       <div class="col-12 text-end">
 
         <mat-checkbox
+          [(ngModel)]="use_embeddings"
+          name="use_embeddings"
+          class="me-4"
+          labelPosition="before"
+          color="primary">Use embeddings</mat-checkbox>
+
+        <mat-checkbox
           [(ngModel)]="supervised"
           name="supervised"
           (change)="supervisedChanged()"
           class="me-4"
           labelPosition="before"
           color="primary">Supervised</mat-checkbox>
-    
+
         <mat-checkbox
           [(ngModel)]="cached"
           name="cached"
@@ -192,7 +198,7 @@
           [disabled]="!supervised"
           labelPosition="before"
           color="primary">Cached</mat-checkbox>
-      
+
       </div>
 
     </div>
