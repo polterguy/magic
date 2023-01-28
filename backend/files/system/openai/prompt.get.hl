@@ -151,73 +151,48 @@ data.connect:[generic|magic]
                return
                   result:x:@data.read/*/*/completion
 
-   // Creating our Bearer token by reading our OpenAI configuration settings.
-   .token
-   set-value:x:@.token
-      strings.concat
-         .:"Bearer "
-         config.get:"magic:openai:key"
-
-   // Associating request with user, if applicable.
-   auth.ticket.get
-   if
-      not-null:x:@auth.ticket.get
-      .lambda
-
-         // Associating request with username.
-         unwrap:x:+/*/*
-         add:x:@data.connect/*/http.post/*/payload
-            .
-               user:x:@auth.ticket.get
-
-   // Decorating prompt with prefix and according to OpenAI's advice.
-   .decorated-prompt
-   set-value:x:@.decorated-prompt
-      strings.concat
-         get-value:x:@data.read/@data.read/*/*/prefix
-         get-value:x:@.arguments/*/prompt
-         .:" ->"
-
-   // Creating an HTTP POST request towards OpenAI, now decorated.
-   http.post:"https://api.openai.com/v1/completions"
-      headers
-         Authorization:x:@.token
-         Content-Type:application/json
-      payload
-         prompt:x:@.decorated-prompt
-         model:x:@data.read/@data.read/*/*/model
-         max_tokens:x:@data.read/@data.read/*/*/max_tokens
-         temperature:x:@data.read/@data.read/*/*/temperature
-         stop:" END"
-      convert:true
-
-   // Sanity checking above invocation
-   if
-      not
-         and
-            mte:x:@http.post
-               .:int:200
-            lt:x:@http.post
-               .:int:300
-      .lambda
-
-         // Oops, error - Logging error and returning status 500 to caller.
-         lambda2hyper:x:@http.post
-         log.error:Something went wrong while invoking OpenAI
-            error:x:@http.post/*/content/*/error/*/message
-         response.status.set:x:@http.post
-         unwrap:x:+/*
-         return
-            result:x:@http.post/*/content/*/error/*/message
-
-   // Making sure we trim response.
+   // Invoking Hyperlambda file doing the heavy lifting.
    .result
-   set-value:x:@.result
-      strings.trim:x:@http.post/*/content/*/choices/0/*/text
+   if
+      eq
+         convert:x:@data.read/@data.read/*/*/use_embeddings
+            type:int
+         .:int:1
+      .lambda
+
+         // Using embeddings API.
+         add:x:./*/io.file.execute
+            get-nodes:x:@.arguments/*/type
+            get-nodes:x:@.arguments/*/prefix
+            get-nodes:x:@.arguments/*/prompt
+            get-nodes:x:@data.read/@data.read/*/*/model
+            get-nodes:x:@data.read/@data.read/*/*/max_tokens
+            get-nodes:x:@data.read/@data.read/*/*/temperature
+         io.file.execute:/system/openai/prompt.implementation/embeddings-prompt.hl
+         add:x:@.result
+            get-nodes:x:@io.file.execute/*
+
+   else
+
+      // Not using embeddings.
+      add:x:./*/io.file.execute
+         get-nodes:x:@.arguments/*/type
+         get-nodes:x:@.arguments/*/prefix
+         get-nodes:x:@.arguments/*/prompt
+         get-nodes:x:@data.read/@data.read/*/*/model
+         get-nodes:x:@data.read/@data.read/*/*/max_tokens
+         get-nodes:x:@data.read/@data.read/*/*/temperature
+         .
+            fine_tuned:bool:true
+      io.file.execute:/system/openai/prompt.implementation/completion-prompt.hl
+      add:x:@.result
+         get-nodes:x:@io.file.execute/*
 
    // Checking if type is 'supervised', at which point we store prompt and completion unless it already exists in cache.
    if
       and
+         not
+            get-value:x:@.result/*/error
          not
             exists:x:@data.read/*/*
          mt
@@ -232,8 +207,8 @@ data.connect:[generic|magic]
             values
                type:x:@.arguments/*/type
                prompt:x:@.arguments/*/prompt
-               completion:x:@.result
-               finish_reason:x:@http.post/*/content/*/choices/0/*/finish_reason
+               completion:x:@.result/*/result
+               finish_reason:x:@.result/*/finish_reason
 
    /*
     * Applying some HTTP caching to avoid invoking OpenAI again with
@@ -245,4 +220,4 @@ data.connect:[generic|magic]
    // Returning results returned from invocation above to caller.
    unwrap:x:+/*
    return
-      result:x:@.result
+      result:x:@.result/*/result

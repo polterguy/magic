@@ -45,6 +45,7 @@ fork
                where
                   and
                      embedding.eq
+                     type.eq:x:@.arguments/*/type
                limit:50
                order:created
 
