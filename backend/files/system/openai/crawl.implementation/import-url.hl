@@ -401,7 +401,6 @@ data.connect:[generic|magic]
                   completion:x:@.completion
                   type:x:@.arguments/*/type
                   uri:x:@.uri
-                  uri:x:@.uri
 
 // Preserving some memory.
 remove-nodes:x:@http.get/*
