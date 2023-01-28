@@ -48,7 +48,15 @@ if
          error:bool:true
          result:x:@http.post/*/content/*/error/*/message
 
-// Looping through each vector in model, finding the most relevant snippets.
+/*
+ * Looping through each vector in model, finding the most relevant snippets.
+ *
+ * Notice, this will calculate the dot product from the question and all training snippets,
+ * and use the training snippets with the highest dot product as "the context from which to answer the question".
+ *
+ * Resulting in that we provide relevant information to OpenAI, allowing them to correctly assemble
+ * a completion, based upon the relevant information (context) and the way the question was phrased.
+ */
 .snippets
 .continue:bool:true
 .offset:int:0
@@ -109,13 +117,10 @@ while:x:@.continue
          set-value:x:@.result
             .:int:0
 
-   // Updating [.snippets] now with sorted nodes.
+   // Updating [.snippets] now with the 25 top most relevant snippets.
    remove-nodes:x:@.snippets/*
    add:x:@.snippets
-      get-nodes:x:@sort/*
-
-   // Making sure we remove irrelevant snippets.
-   remove-nodes:x:@.snippets/*/[5,100]
+      get-nodes:x:@sort/*/[0,25]
 
    // Checking if we're done.
    if
@@ -124,13 +129,13 @@ while:x:@.continue
          .:int:25
       .lambda
 
-         // We're done!
+         // We're done! We've found the top 5 most relevant snippets from our training material.
          set-value:x:@.continue
             .:bool:false
    
    // Incrementing offset.
    math.increment:x:@.offset
-      .:int:25
+      get-count:x:@data.read/*
 
 /*
  * Now we have our 5 most relevant snippets, and we can use these to generate an answer
@@ -149,7 +154,7 @@ if
       .:double:0.8
    .lambda
 
-      // Semantic search resulted in zero high quality snippets, invoking completion.
+      // Semantic search resulted in zero high quality snippets, invoking completion with question without context.
       add:x:./*/io.file.execute
          get-nodes:x:@.arguments/*
       io.file.execute:/system/openai/prompt.implementation/completion-prompt.hl
@@ -161,27 +166,72 @@ if
  * the question.
  */
 .context
+
+// Checking if we've got a prefix at which point our question changes.
+if
+   and
+      exists:x:@.arguments/*/prefix
+      not-null:x:@.arguments/*/prefix
+   .lambda
+      set-value:x:@.context
+         strings.concat
+            get-value:x:@.arguments/*/prefix
+            .:"\r\n\r\nQUESTION: "
+else
+   set-value:x:@.context
+      .:"Answer following QUESTION with the given CONTEXT.\r\n\r\nQUESTION: "
+
+// Removing prefix since we have manually create it.
+set-value:x:@.arguments/*/prefix
+   .:
+
+// Creating our "context".
 set-value:x:@.context
    strings.concat
-      .:"Answer the following QUESTION with the given CONTEXT.\r\n\r\nQUESTION: "
+      get-value:x:@.context
       get-value:x:@.arguments/*/prompt
       .:"\r\n\r\n"
       .:"CONTEXT: "
 for-each:x:@.snippets/*
-   set-value:x:@.context
-      strings.concat
-         get-value:x:@.context
-         .:"\r\n\r\n"
-         get-value:x:@.dp/#/*/prompt
-         .:"\r\n\r\n"
-         get-value:x:@.dp/#/*/completion
+
+   /*
+    * Making sure our prompt's complete length never exceeds 4,000 characters,
+    * and that we only use relevant snippets above 80% in threshold.
+    */
+   if
+      and
+         mt:x:@.dp/#/*/dot
+            .:double:0.8
+         not
+            mt
+               math.add
+                  strings.length:x:@.context
+                  strings.length:x:@.dp/#/*/prompt
+                  strings.length:x:@.dp/#/*/completion
+               .:int:4000
+      .lambda
+
+         // We still haven't reached our 4,000 character threshold yet, and we still have relevant snippets.
+         set-value:x:@.context
+            strings.concat
+               get-value:x:@.context
+               .:"\r\n\r\n"
+               get-value:x:@.dp/#/*/prompt
+               .:"\r\n\r\n"
+               get-value:x:@.dp/#/*/completion
+
+// Making sure OpenAI doesn't return "Answer:" to us
 set-value:x:@.context
    strings.concat
       get-value:x:@.context
       .:"\r\nANSWER: "
+
+// Invoking default prompt completion
 add:x:./*/io.file.execute
    get-nodes:x:@.arguments/*
 set-value:x:./*/io.file.execute/*/prompt
    get-value:x:@.context
 io.file.execute:/system/openai/prompt.implementation/completion-prompt.hl
+
+// Returning result of above invocation.
 return-nodes:x:@io.file.execute/*
