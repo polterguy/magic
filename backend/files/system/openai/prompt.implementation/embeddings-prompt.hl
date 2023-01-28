@@ -1,0 +1,187 @@
+
+// Invokes OpenAI to find a vector from the specified prompt.
+.token
+set-value:x:@.token
+   strings.concat
+      .:"Bearer "
+      config.get:"magic:openai:key"
+
+// Associating request with user, if applicable.
+auth.ticket.get
+if
+   not-null:x:@auth.ticket.get
+   .lambda
+
+      // Associating request with username.
+      unwrap:x:+/*/*
+      add:x:@../*/http.post/*/payload
+         .
+            user:x:@auth.ticket.get
+
+// Creating an HTTP POST request towards OpenAI, now decorated.
+http.post:"https://api.openai.com/v1/embeddings"
+   headers
+      Authorization:x:@.token
+      Content-Type:application/json
+   payload
+      input:x:@.arguments/*/prompt
+      model:text-embedding-ada-002
+   convert:true
+
+// Sanity checking above invocation
+if
+   not
+      and
+         mte:x:@http.post
+            .:int:200
+         lt:x:@http.post
+            .:int:300
+   .lambda
+
+      // Oops, error - Logging error and returning status 500 to caller.
+      lambda2hyper:x:@http.post
+      log.error:Something went wrong while invoking OpenAI
+         error:x:@http.post/*/content/*/error/*/message
+      response.status.set:x:@http.post
+      unwrap:x:+/*
+      return
+         error:bool:true
+         result:x:@http.post/*/content/*/error/*/message
+
+// Looping through each vector in model, finding the most relevant snippets.
+.snippets
+.continue:bool:true
+.offset:int:0
+while:x:@.continue
+
+   // Selecting 25 snippets from type.
+   data.read
+      table:ml_training_snippets
+      columns
+         id
+         prompt
+         completion
+         embedding
+      where
+         and
+            embedding.neq
+            type.eq:x:@.arguments/*/type
+      limit:25
+      offset:x:@.offset
+      order:created
+
+   // Looping through all records returned above.
+   for-each:x:@data.read/*
+
+      // Calculating dot product of currently iterated snippet and [.vector].
+      strings.split:x:@.dp/#/*/embedding
+         .:,
+      math.dot
+         get-nodes:x:@strings.split/*
+         get-nodes:x:@http.post/*/content/*/data/0/*/embedding/*
+
+      // Adding result to above [.snippets] collection.
+      unwrap:x:+/*/*/*
+      add:x:@.snippets
+         .
+            .
+               prompt:x:@.dp/#/*/prompt
+               completion:x:@.dp/#/*/completion
+               dot:x:@math.dot
+
+   // Sorting [.snippets] such that highest dot product comes first.
+   sort:x:@.snippets/*
+      if
+         mt
+            get-value:x:@.lhs/#/*/dot
+            get-value:x:@.rhs/#/*/dot
+         .lambda
+            set-value:x:@.result
+               .:int:-1
+      else-if
+         lt
+            get-value:x:@.lhs/#/*/dot
+            get-value:x:@.rhs/#/*/dot
+         .lambda
+            set-value:x:@.result
+               .:int:1
+      else
+         set-value:x:@.result
+            .:int:0
+
+   // Updating [.snippets] now with sorted nodes.
+   remove-nodes:x:@.snippets/*
+   add:x:@.snippets
+      get-nodes:x:@sort/*
+
+   // Making sure we remove irrelevant snippets.
+   remove-nodes:x:@.snippets/*/[5,100]
+
+   // Checking if we're done.
+   if
+      lt
+         get-count:x:@data.read/*
+         .:int:25
+      .lambda
+
+         // We're done!
+         set-value:x:@.continue
+            .:bool:false
+   
+   // Incrementing offset.
+   math.increment:x:@.offset
+      .:int:25
+
+/*
+ * Now we have our 5 most relevant snippets, and we can use these to generate an answer
+ * to whatever question the caller asked, by doing a little bit of "AI trickery".
+ *
+ * However, in case user asked a question that's completely irrelevant to the subject
+ * of our training snippets, we pass the question to OpenAI using
+ * the default model, and just keeping the question "as is".
+ *
+ * Our cut off threshold is 80% accuracy, before we give up and just use the default
+ * model as is.
+ */
+if
+   lt
+      get-value:x:@.snippets/0/*/dot
+      .:double:0.8
+   .lambda
+
+      // Semantic search resulted in zero high quality snippets, invoking completion.
+      add:x:./*/io.file.execute
+         get-nodes:x:@.arguments/*
+      io.file.execute:/system/openai/prompt.implementation/completion-prompt.hl
+      return-nodes:x:@io.file.execute/*
+
+/*
+ * Now we know which snippets are relevant, and we can generate our prompt, by creating a context
+ * which we pass on to OpenAI to help it answer the question based upon the snippets matching
+ * the question.
+ */
+.context
+set-value:x:@.context
+   strings.concat
+      .:"Answer the following QUESTION with the given CONTEXT.\r\n\r\nQUESTION: "
+      get-value:x:@.arguments/*/prompt
+      .:"\r\n\r\n"
+      .:"CONTEXT: "
+for-each:x:@.snippets/*
+   set-value:x:@.context
+      strings.concat
+         get-value:x:@.context
+         .:"\r\n\r\n"
+         get-value:x:@.dp/#/*/prompt
+         .:"\r\n\r\n"
+         get-value:x:@.dp/#/*/completion
+set-value:x:@.context
+   strings.concat
+      get-value:x:@.context
+      .:"\r\nANSWER: "
+add:x:./*/io.file.execute
+   get-nodes:x:@.arguments/*
+set-value:x:./*/io.file.execute/*/prompt
+   get-value:x:@.context
+io.file.execute:/system/openai/prompt.implementation/completion-prompt.hl
+return-nodes:x:@io.file.execute/*

@@ -74,7 +74,7 @@ export class MachineLearningTestComponent implements OnInit {
 
         this.generalService.hideLoading();
         this.isLoading = false;
-        this.generalService.showFeedback('Something went wrong as we tried to create your type', 'errorMessage');
+        this.generalService.showFeedback('Something went wrong as we tried to query OpenAI', 'errorMessage');
       }
     });
   }

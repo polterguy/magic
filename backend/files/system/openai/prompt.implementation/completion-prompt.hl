@@ -1,0 +1,86 @@
+
+// Invokes OpenAI to create a completion from the specified prompt.
+.token
+set-value:x:@.token
+   strings.concat
+      .:"Bearer "
+      config.get:"magic:openai:key"
+
+// Associating request with user, if applicable.
+auth.ticket.get
+if
+   not-null:x:@auth.ticket.get
+   .lambda
+
+      // Associating request with username.
+      unwrap:x:+/*/*
+      add:x:@../*/http.post/*/payload
+         .
+            user:x:@auth.ticket.get
+
+// Decorating prompt with prefix and according to OpenAI's advice.
+.decorated-prompt
+set-value:x:@.decorated-prompt
+   strings.concat
+      get-value:x:@.arguments/*/prefix
+      get-value:x:@.arguments/*/prompt
+
+// We only add " ->" and " END" if caller told us to do.
+if
+   get-value:x:@.arguments/*/fine_tuned
+   .lambda
+
+      // Letting OpenAI know where our prompt ends.
+      set-value:x:@.decorated-prompt
+         strings.concat
+            get-value:x:@.decorated-prompt
+            .:" ->"
+
+      // Letting OpenAI know what stop token to look for.
+      add:x:../*/http.post/*/payload
+         .
+            stop:" END"
+
+// Creating an HTTP POST request towards OpenAI, now decorated.
+http.post:"https://api.openai.com/v1/completions"
+   headers
+      Authorization:x:@.token
+      Content-Type:application/json
+   payload
+      prompt:x:@.decorated-prompt
+      model:x:@.arguments/*/model
+      max_tokens:x:@.arguments/*/max_tokens
+      temperature:x:@.arguments/*/temperature
+   convert:true
+
+// Sanity checking above invocation
+if
+   not
+      and
+         mte:x:@http.post
+            .:int:200
+         lt:x:@http.post
+            .:int:300
+   .lambda
+
+      // Oops, error - Logging error and returning status 500 to caller.
+      lambda2hyper:x:@http.post
+      log.error:Something went wrong while invoking OpenAI
+         error:x:@http.post/*/content/*/error/*/message
+      response.status.set:x:@http.post
+      unwrap:x:+/*
+      return
+         error:bool:true
+         result:x:@http.post/*/content/*/error/*/message
+
+// Making sure we trim response.
+.result
+set-value:x:@.result
+   strings.trim:x:@http.post/*/content/*/choices/0/*/text
+
+// Returning result to caller.
+unwrap:x:+/*
+return
+   error:bool:false
+   result:x:@.result
+   finish_reason:x:@http.post/*/content/*/choices/0/*/finish_reason
