@@ -11,7 +11,6 @@ import { Role } from '../../../user-and-roles/_models/role.model';
 import { RoleService } from '../../../user-and-roles/_services/role.service';
 import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
 import { CommonRegEx } from 'src/app/_general/classes/common-regex';
-import { MachineLearningEmbedUiComponent } from '../machine-learning-embed-ui/machine-learning-embed-ui.component';
 
 /**
  * Helper component to create or edit existing Machine Learning model.
@@ -132,17 +131,5 @@ export class MachineLearningEditTypeComponent implements OnInit {
       use_embeddings: this.use_embeddings,
     };
     this.dialogRef.close(data);
-  }
-
-  embed() {
-
-    this.dialog
-      .open(MachineLearningEmbedUiComponent, {
-        width: '80vw',
-        maxWidth: '550px',
-        data: {
-          type: this.type,
-        }
-      });
   }
 }
