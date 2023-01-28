@@ -86,9 +86,6 @@ html2lambda:x:@http.get/*/content
 // Buffer for URLs found in document.
 .urls
 
-// Temp buffer for entire page, using H1 as prompt, and ALL paragraphs as completion.
-.page
-
 // Temp buffer for completion.
 .tmp-completion:
 
@@ -213,45 +210,6 @@ for-each:x:@html2lambda/*/html/*/body/**
                .
                   prompt:x:@.prompt
 
-         // Checking if this was H1 tag.
-         if
-            and
-               eq:x:@get-name
-                  .:h1
-               eq
-                  get-count:x:@.page/*/prompt
-                  .:int:0
-            .lambda
-
-               // Adding H1 tag as prompt to page data.
-               unwrap:x:+/*/*/*
-               add:x:@.page
-                  .
-                     .
-                        prompt:x:@.prompt
-
-         else
-
-            // Checking if we need to append paragraph to existing page data completion or create new completion.
-            if
-               exists:x:@.page/0/-/*/completion
-               .lambda
-
-                  // Appending to existing completion.
-                  set-value:x:@.page/0/-/*/completion
-                     strings.concat
-                        get-value:x:@.page/0/-/*/completion
-                        .:"\r\n\r\n"
-                        get-value:x:@.prompt
-
-            else
-
-               // Adding new prompt to [.page] collection.
-               unwrap:x:+/*/*
-               add:x:@.page/0/-
-                  .
-                     completion:x:@.prompt
-
       // Paragraphs becomes completions.
       case:p
 
@@ -317,26 +275,6 @@ for-each:x:@html2lambda/*/html/*/body/**
                         // Adding new prompt to [.snippets] collection.
                         unwrap:x:+/*/*
                         add:x:@.snippets/0/-
-                           .
-                              completion:x:@.completion
-
-                     // Checking if we need to append paragraph to existing page data completion or create new completion.
-                     if
-                        exists:x:@.page/0/-/*/completion
-                        .lambda
-
-                           // Appending to existing completion.
-                           set-value:x:@.page/0/-/*/completion
-                              strings.concat
-                                 get-value:x:@.page/0/-/*/completion
-                                 .:"\r\n\r\n"
-                                 get-value:x:@.completion
-
-                     else
-
-                        // Adding new prompt to [.page] collection.
-                        unwrap:x:+/*/*
-                        add:x:@.page/0/-
                            .
                               completion:x:@.completion
 
@@ -415,100 +353,8 @@ for-each:x:@html2lambda/*/html/*/body/**
                            .
                               completion:x:@.completion
 
-                     // Checking if we need to append paragraph to existing page data completion or create new completion.
-                     if
-                        exists:x:@.page/0/-/*/completion
-                        .lambda
-
-                           // Appending to existing completion.
-                           set-value:x:@.page/0/-/*/completion
-                              strings.concat
-                                 get-value:x:@.page/0/-/*/completion
-                                 get-value:x:@.completion
-
-                     else
-
-                        // Adding new prompt to [.snippets] collection.
-                        unwrap:x:+/*/*
-                        add:x:@.page/0/-
-                           .
-                              completion:x:@.completion
-
-/*
- * Generating summary of page by using 'text-davinci-003' OpenAI model.
- *
- * This creates more learning data for us, allowing us to 'repeat' the training,
- * with slightly modified wording, creating a stronger end model for us.
- *
- * However, we can only do this if it doesn't result in us having to send more
- * than 4096 tokens to OpenAI.
- */
-.summary
-if
-   and
-      exists:x:@.page/0/*/completion
-      lt
-         strings.length:x:@.page/0/*/completion
-         .:int:3096
-   .lambda
-
-      // We can invoke OpenAI to generate a summary.
-      .token
-      set-value:x:@.token
-         strings.concat
-            .:"Bearer "
-            config.get:"magic:openai:key"
-      .prompt
-      set-value:x:@.prompt
-         strings.concat
-            .:"Create a summary from the following text\r\n\r\n"
-            get-value:x:@.page/0/*/completion
-      http.post:"https://api.openai.com/v1/completions"
-         headers
-            Authorization:x:@.token
-            Content-Type:application/json
-         payload
-            prompt:x:@.prompt
-            model:text-davinci-003
-            temperature:decimal:0.5
-            max_tokens:int:1000
-         convert:true
-
-      // Sanity checking above invocation
-      if
-         and
-            mte:x:@http.post
-               .:int:200
-            lt:x:@http.post
-               .:int:300
-            eq:x:@http.post/*/content/*/choices/0/*/finish_reason
-               .:stop
-         .lambda
-            set-value:x:@.summary
-               strings.trim:x:@http.post/*/content/*/choices/0/*/text
-                  .:"\r\n \t-"
-
 // Connecting to database.
 data.connect:[generic|magic]
-
-   // Checking if we should insert summary
-   if
-      not-null:x:@.summary
-      .lambda
-
-         // Inserting prompt and completion into database.
-         .prompt
-         set-value:x:@.prompt
-            strings.concat
-               .:"Summary of "
-               get-value:x:@.page/0/*/prompt
-         data.create
-            table:ml_training_snippets
-            values
-               prompt:x:@.prompt
-               completion:x:@.summary
-               type:x:@.arguments/*/type
-               uri:x:@.arguments/*/url
 
    // Creating training data from all [.snippets].
    for-each:x:@.snippets/*
@@ -555,55 +401,12 @@ data.connect:[generic|magic]
                   completion:x:@.completion
                   type:x:@.arguments/*/type
                   uri:x:@.uri
-
-   // Creating training data from all [.page] snippets.
-   for-each:x:@.page/*
-
-      // Verifying that currently iterated snippet has both prompt and completion.
-      if
-         and
-            exists:x:@.dp/#/*/prompt
-            exists:x:@.dp/#/*/completion
-            neq:x:@.dp/#/*/prompt
-               .:
-            neq:x:@.dp/#/*/completion
-               .:
-         .lambda
-
-            // Prompt.
-            .prompt
-            set-value:x:@.prompt
-               strings.trim:x:@.dp/#/*/prompt
-                  .:" \r\n\t"
-
-            // Completion.
-            .completion
-            set-value:x:@.completion
-               strings.trim:x:@.dp/#/*/completion
-                  .:" \r\n\t"
-
-            // URI.
-            .uri
-            set-value:x:@.uri
-               strings.concat
-                  get-value:x:@.arguments/*/url
-                  .:":"
-                  crypto.hash.sha256:x:@.prompt
-
-            // Inserting prompt and completion into database.
-            data.create
-               table:ml_training_snippets
-               values
-                  prompt:x:@.prompt
-                  completion:x:@.completion
-                  type:x:@.arguments/*/type
                   uri:x:@.uri
 
 // Preserving some memory.
 remove-nodes:x:@http.get/*
 remove-nodes:x:@html2lambda/*
 remove-nodes:x:@.snippets/*
-remove-nodes:x:@.page/*
 
 // Decrementing max argument, and checking if we've reached limit.
 math.decrement:x:@.arguments/*/max
