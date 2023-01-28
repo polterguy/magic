@@ -31,6 +31,7 @@ data.connect:[generic|magic]
          supervised
          cached
          prefix
+         use_embeddings
       where
          and
             type.eq:x:@.arguments/*/type
@@ -52,6 +53,7 @@ data.connect:[generic|magic]
                supervised
                cached
                prefix
+               use_embeddings
             where
                and
                   type.eq:default

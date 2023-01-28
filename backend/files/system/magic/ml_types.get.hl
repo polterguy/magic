@@ -51,6 +51,7 @@ data.connect:[generic|magic]
          ml_types.supervised
          ml_types.cached
          ml_types.prefix
+         ml_types.use_embeddings
       where
          and
 

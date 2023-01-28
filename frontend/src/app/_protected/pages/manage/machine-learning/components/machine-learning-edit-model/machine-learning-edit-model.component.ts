@@ -11,7 +11,6 @@ import { Role } from '../../../user-and-roles/_models/role.model';
 import { RoleService } from '../../../user-and-roles/_services/role.service';
 import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
 import { CommonRegEx } from 'src/app/_general/classes/common-regex';
-import { BackendService } from 'src/app/_general/services/backend.service';
 import { MachineLearningEmbedUiComponent } from '../machine-learning-embed-ui/machine-learning-embed-ui.component';
 
 /**
@@ -29,6 +28,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
   recaptcha: 0;
   auth: string[] = [];
   supervised: boolean = false;
+  use_embeddings: boolean = false;
   prefix: string;
   cached: boolean = false;
   model: OpenAIModel = null;
@@ -58,6 +58,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
       this.auth = this.data.auth?.split(',');
     }
     this.supervised = this.data?.supervised === 1 ? true : (!this.data ? true : false);
+    this.use_embeddings = this.data?.use_embeddings === 1 ? true : (!this.data ? true : false);
     this.cached = this.data?.cached === 1 ? true : false;
     this.prefix = this.data?.prefix ?? '';
 
@@ -85,7 +86,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
             if (this.data?.model) {
               this.model = this.models.filter(x => x.id === this.data.model)[0];
             } else {
-              this.model = this.models.filter(x => x.id === 'davinci')[0];
+              this.model = this.models.filter(x => x.id === 'text-davinci-003')[0];
             }
             this.generalService.hideLoading();
           },
@@ -128,6 +129,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
       auth: this.auth?.length > 0 ? this.auth.join(',') : null,
       cached: this.cached ? 1 : 0,
       prefix: this.prefix,
+      use_embeddings: this.use_embeddings,
     };
     this.dialogRef.close(data);
   }
