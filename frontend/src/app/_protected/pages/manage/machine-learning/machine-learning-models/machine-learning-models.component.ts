@@ -13,6 +13,7 @@ import { GeneralService } from 'src/app/_general/services/general.service';
 import { MachineLearningTrainingService } from 'src/app/_general/services/machine-learning-training.service';
 import { OpenAIService } from 'src/app/_general/services/openai.service';
 import { MachineLearningEditTypeComponent } from '../components/machine-learning-edit-model/machine-learning-edit-model.component';
+import { MachineLearningEmbedUiComponent } from '../components/machine-learning-embed-ui/machine-learning-embed-ui.component';
 import { MachineLearningImportComponent } from '../components/machine-learning-import/machine-learning-import.component';
 import { MachineLearningTestComponent } from '../components/machine-learning-test/machine-learning-test.component';
 import { MachineLearningTrainComponent } from '../components/machine-learning-train/machine-learning-train.component';
@@ -295,6 +296,18 @@ export class MachineLearningModelsComponent implements OnInit {
         });
       }
     });
+  }
+
+  embed(el: any) {
+
+    this.dialog
+      .open(MachineLearningEmbedUiComponent, {
+        width: '80vw',
+        maxWidth: '550px',
+        data: {
+          type: el.type,
+        }
+      });
   }
 
   /*
