@@ -17,7 +17,7 @@
       <input
         matInput
         required
-        [disabled]="data"
+        [disabled]="data || isLoading"
         placeholder="Type name"
         spellcheck="false"
         [pattern]="CommonRegEx.appNameWithUppercaseHyphen"
@@ -39,6 +39,7 @@
         matInput
         required
         placeholder="Prefix"
+        [disabled]="isLoading"
         spellcheck="false"
         [(ngModel)]="prefix"
         name="prefix"
@@ -53,14 +54,15 @@
         <mat-form-field class="w-100 standalone-field me-2">
           <span
             matPrefix
-            matTooltip="Model to use"
+            matTooltip="Completion model"
             class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>help_outline</mat-icon>
             <span class="text-muted">|</span>
           </span>
           <mat-select
             [(ngModel)]="model"
-            placeholder="Model to use"
+            [disabled]="isLoading"
+            placeholder="Completion model"
             name="model">
             <mat-select-trigger>
               {{model?.id}}
@@ -82,21 +84,31 @@
         <mat-form-field class="w-100 standalone-field">
           <span
             matPrefix
-            matTooltip="Threshold for vectors"
+            matTooltip="Vector model"
             class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-            <mat-icon>get_app</mat-icon>
+            <mat-icon>help_outline</mat-icon>
             <span class="text-muted">|</span>
           </span>
-          <input
-            matInput
-            placeholder="Threshold"
-            type="number"
-            min="0.5"
-            max="1"
-            step="0.01"
-            [(ngModel)]="threshold"
-            name="threshold"
-            autocomplete="off">
+          <mat-select
+            [(ngModel)]="vector_model"
+            [disabled]="isLoading"
+            placeholder="Vector model"
+            name="vector_model">
+            <mat-select-trigger>
+              {{vector_model?.id}}
+            </mat-select-trigger>
+            <mat-option
+              class="multiline-mat-option"
+              *ngFor="let idx of models"
+              [value]="idx">
+              <span class="d-block name-line" #typeName>
+                {{idx.id}}
+              </span>
+              <span class="d-block description-line">
+                Owned by {{idx.owned_by}}
+              </span>
+            </mat-option>
+          </mat-select>
         </mat-form-field>
 
       </div>
@@ -118,6 +130,7 @@
           <input
             matInput
             placeholder="Temperature"
+            [disabled]="isLoading"
             type="number"
             min="0"
             max="1"
@@ -127,7 +140,7 @@
             autocomplete="off">
         </mat-form-field>
 
-        <mat-form-field class="w-100 standalone-field">
+        <mat-form-field class="w-100 standalone-field me-2">
           <span
             matPrefix
             matTooltip="Max tokens"
@@ -138,6 +151,7 @@
           <input
             matInput
             placeholder="Max tokens"
+            [disabled]="isLoading"
             type="number"
             min="1"
             max="8000"
@@ -146,15 +160,28 @@
             autocomplete="off">
         </mat-form-field>
 
-      </div>
-
-    </div>
-
-    <div class="row">
-
-      <div class="col-12 d-flex justify-content-md-between align-items-md-center align-items-end flex-md-row">
-
         <mat-form-field class="w-100 standalone-field me-2">
+          <span
+            matPrefix
+            matTooltip="Threshold for vectors"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>get_app</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            placeholder="Threshold"
+            type="number"
+            [disabled]="isLoading"
+            min="0.5"
+            max="1"
+            step="0.01"
+            [(ngModel)]="threshold"
+            name="threshold"
+            autocomplete="off">
+        </mat-form-field>
+
+        <mat-form-field class="w-100 standalone-field">
           <span
             matPrefix
             matTooltip="reCAPTCHA value"
@@ -167,6 +194,7 @@
             placeholder="reCAPTCHA"
             type="number"
             min="0"
+            [disabled]="isLoading"
             max="1"
             step="0.1"
             [(ngModel)]="recaptcha"
@@ -174,32 +202,33 @@
             autocomplete="off">
         </mat-form-field>
 
-        <mat-form-field class="w-100 standalone-field">
-          <span
-            matPrefix
-            matTooltip="Authorisation requirements"
-            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-            <mat-icon>shield</mat-icon>
-            <span class="text-muted">|</span>
-          </span>
-          <mat-select
-            placeholder="Add roles"
-            multiple
-            name="auth"
-            [(ngModel)]="auth"
-            disableOptionCentering
-            panelClass="custom-select-option">
-            <mat-option
-              *ngFor="let item of roles"
-              [value]="item.name">
-              {{item.name}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-
       </div>
 
     </div>
+
+    <mat-form-field class="w-100 standalone-field">
+      <span
+        matPrefix
+        matTooltip="Authorisation requirements"
+        class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        <mat-icon>shield</mat-icon>
+        <span class="text-muted">|</span>
+      </span>
+      <mat-select
+        placeholder="Add roles"
+        multiple
+        name="auth"
+        [disabled]="isLoading"
+        [(ngModel)]="auth"
+        disableOptionCentering
+        panelClass="custom-select-option">
+        <mat-option
+          *ngFor="let item of roles"
+          [value]="item.name">
+          {{item.name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
 
     <div class="row mt-2 mb-2">
 
@@ -210,6 +239,7 @@
           name="supervised"
           (change)="supervisedChanged()"
           class="me-4"
+          [disabled]="isLoading"
           labelPosition="before"
           color="primary">Supervised</mat-checkbox>
 
@@ -217,13 +247,14 @@
           [(ngModel)]="cached"
           name="cached"
           class="me-4"
-          [disabled]="!supervised"
+          [disabled]="!supervised || isLoading"
           labelPosition="before"
           color="primary">Cached</mat-checkbox>
 
         <mat-checkbox
           [(ngModel)]="use_embeddings"
           name="use_embeddings"
+          [disabled]="isLoading"
           class="me-4"
           labelPosition="before"
           color="primary">Use vectors</mat-checkbox>
@@ -244,7 +275,7 @@
 
     <button
       mat-flat-button
-      [disabled]="models.length === 0"
+      [disabled]="isLoading"
       type="submit">
       Save
     </button>
