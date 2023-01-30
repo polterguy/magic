@@ -9,6 +9,7 @@ import { Observable, Subscription } from 'rxjs';
 import { Model } from 'src/app/codemirror/codemirror-sql/codemirror-sql.component';
 import { ShortkeysComponent } from 'src/app/_general/components/shortkeys/shortkeys.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
+import { saveAs } from 'file-saver';
 
 // CodeMirror options.
 import { CodemirrorActionsService } from '../../../hyper-ide/services/codemirror-actions.service';
@@ -51,6 +52,7 @@ export class SqlViewComponent implements OnInit, OnDestroy {
     private codemirrorActionsService: CodemirrorActionsService) { }
 
   ngOnInit() {
+
     this.codeMirrorInit();
     this.watchForActions();
     this.tableSubscription = this.hintTables.subscribe((res: any) => {
@@ -64,6 +66,7 @@ export class SqlViewComponent implements OnInit, OnDestroy {
   }
 
   codeMirrorInit() {
+
     this.input = {
       databaseType: this.selectedDatabase,
       connectionString: this.selectedConnectionString,
@@ -95,6 +98,7 @@ export class SqlViewComponent implements OnInit, OnDestroy {
   }
 
   save() {
+
     if (!this.input?.sql && this.input.sql === '') {
       this.generalService.showFeedback('Write some SQL first, then save it', 'errorMessage', 'Ok', 5000)
       return;
@@ -125,10 +129,12 @@ export class SqlViewComponent implements OnInit, OnDestroy {
   }
 
   insertFromOpenAI(snippet: string) {
+
     this.input.sql = snippet;
   }
 
   execute() {
+
     if (!this.input.sql && this.input.sql === '') {
       this.generalService.showFeedback('Write some SQL first, then execute it', 'errorMessage', 'Ok', 5000)
       return;
@@ -183,6 +189,7 @@ export class SqlViewComponent implements OnInit, OnDestroy {
   }
 
   importSqlFile(event: any) {
+
     this.sqlFile = event.target.files[0];
     let fileReader = new FileReader();
 
@@ -194,7 +201,45 @@ export class SqlViewComponent implements OnInit, OnDestroy {
     this.sqlFile = '';
   }
 
+  exportAsCsv(result: any) {
+
+    let content = '';
+    let firstHeader = true;
+    for (const idxHeader in result[0]) {
+      if (firstHeader) {
+        firstHeader = false;
+      } else {
+        content += ',';
+      }
+      content += idxHeader;
+    }
+    content += '\r\n';
+    for (const idxRow of result) {
+      let firstItem = true;
+      for (const idxHeader in idxRow) {
+        if (firstItem) {
+          firstItem = false;
+        } else {
+          content+= ',';
+        }
+        const value = idxRow[idxHeader];
+        if (typeof value === 'string') {
+          var idxContent = idxRow[idxHeader];
+          while (idxContent.indexOf('"') !== -1) {
+            idxContent = idxContent.replace('"', '""');
+          }
+          content += '"' + idxContent + '"';
+        } else {
+          content += idxRow[idxHeader];
+        }
+      }
+      content += '\r\n';
+    }
+    this.saveAsFile(content, 'sql-export.csv', 'text/csv');
+  }
+
   viewShortkeys() {
+
     this.dialog.open(ShortkeysComponent, {
       width: '900px',
       data: {
@@ -204,6 +249,7 @@ export class SqlViewComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+
     this.tableSubscription?.unsubscribe();
     this.actionSubscription?.unsubscribe();
   }
@@ -212,23 +258,25 @@ export class SqlViewComponent implements OnInit, OnDestroy {
    * Private helper methods.
    */
 
+  private saveAsFile(buffer: any, fileName: string, fileType: string) {
+
+    const data: Blob = new Blob([buffer], { type: fileType });
+    saveAs(data, fileName);
+  }
+
   private buildTable() {
+
     if (this.queryResult && this.queryResult.length > 0) {
       this.displayedColumns = [];
 
       this.queryResult.forEach((element: any, index: number) => {
-        const titles = Object.keys(element[index]);
-        if (titles.indexOf('password') > -1) {
-          const index: number = titles.findIndex((value: string) => value === 'password');
-          titles.splice(index, 1)
-        }
-
-        this.displayedColumns[index] = Object.keys(element[index]);
+        this.displayedColumns[index] = Object.keys(element[0]);
       });
     }
   }
 
   private watchForActions() {
+
     this.actionSubscription = this.codemirrorActionsService.action.subscribe((action: string) => {
       switch (action) {
         case 'save':
@@ -250,6 +298,7 @@ export class SqlViewComponent implements OnInit, OnDestroy {
   }
 
   private getCodeMirrorOptions() {
+
     return this.codemirrorActionsService.getActions(null, 'sql');
   }
 }
