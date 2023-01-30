@@ -4,7 +4,7 @@
  */
 
 import { Component, Inject, OnInit } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { OpenAIModel, OpenAIService } from 'src/app/_general/services/openai.service';
 import { Role } from '../../../user-and-roles/_models/role.model';
@@ -128,6 +128,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
       cached: this.cached ? 1 : 0,
       prefix: this.prefix,
       use_embeddings: this.use_embeddings,
+      threshold: this.threshold,
     };
     this.dialogRef.close(data);
   }
