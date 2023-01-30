@@ -53,6 +53,7 @@ data.connect:[generic|magic]
          ml_types.prefix
          ml_types.use_embeddings
          ml_types.threshold
+         ml_types.vector_model
       where
          and
 

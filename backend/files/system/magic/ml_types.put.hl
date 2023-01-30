@@ -12,6 +12,7 @@
    prefix:string
    use_embeddings:int
    threshold:decimal
+   vector_model:string
 .description:CRUD update endpoint updating one record in your ml_types table in your magic database filtering which item to update with type updating model, max_tokens, temperature fields with authentication and authorisation for root roles
 .type:crud-update
 
