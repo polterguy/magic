@@ -22,10 +22,11 @@ import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 export class MachineLearningEditTypeComponent implements OnInit {
 
   isLoading: boolean = false;
+  advanced: boolean = false;
   type: string = null;
   temperature: string = null;
   max_tokens: string = null;
-  threshold: number = 0.8;
+  threshold: number = 0.75;
   recaptcha: 0;
   auth: string[] = [];
   supervised: boolean = false;
@@ -53,7 +54,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
     this.type = this.data?.type;
     this.max_tokens = this.data?.max_tokens ?? 4000;
     this.temperature = this.data?.temperature ?? 0.1;
-    this.threshold = this.data?.threshold ?? 0.8;
+    this.threshold = this.data?.threshold ?? 0.75;
     this.recaptcha = this.data?.recaptcha ?? 0.3;
     if (this.data) {
       this.auth = this.data.auth?.split(',');

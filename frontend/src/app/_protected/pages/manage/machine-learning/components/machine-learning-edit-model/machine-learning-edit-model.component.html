@@ -27,7 +27,7 @@
         <mat-error>{{CommonErrorMessages.appNameWithUppercaseHyphen}}</mat-error>
     </mat-form-field>
 
-    <mat-form-field class="w-100 standalone-field">
+    <mat-form-field class="w-100 standalone-field" [class.d-none]="!advanced">
       <span
         matPrefix
         matTooltip="Prefix inserted before all prompts"
@@ -47,7 +47,7 @@
     </mat-form-field>
 
 
-    <div class="row">
+    <div class="row" [class.d-none]="!advanced">
 
       <div class="col-12 d-flex justify-content-md-between align-items-md-center align-items-end flex-md-row">
 
@@ -115,7 +115,7 @@
 
     </div>
 
-    <div class="row">
+    <div class="row" [class.d-none]="!advanced">
 
       <div class="col-12 d-flex justify-content-md-between align-items-md-center align-items-end flex-md-row">
 
@@ -206,7 +206,7 @@
 
     </div>
 
-    <mat-form-field class="w-100 standalone-field">
+    <mat-form-field class="w-100 standalone-field" [class.d-none]="!advanced">
       <span
         matPrefix
         matTooltip="Authorisation requirements"
@@ -230,7 +230,7 @@
       </mat-select>
     </mat-form-field>
 
-    <div class="row mt-2 mb-2">
+    <div class="row mt-2 mb-2" [class.d-none]="!advanced">
 
       <div class="col-12 text-end">
 
@@ -266,6 +266,13 @@
   </div>
 
   <div mat-dialog-actions [align]="'end'">
+
+    <mat-slide-toggle
+      labelPosition="before"
+      name="advanced"
+      [(ngModel)]="advanced">
+      Advanced
+    </mat-slide-toggle>
 
     <button
       mat-button
