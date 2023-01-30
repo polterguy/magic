@@ -1,0 +1,83 @@
+
+/*
+ * Vectorises all training snippets in the specified model/type.
+ */
+.arguments
+   id:long
+
+// Ensures user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/id
+
+// Getting OpenAI API token from configuration.
+.token
+set-value:x:@.token
+   strings.concat
+      .:"Bearer "
+      config.get:"magic:openai:key"
+
+// Connecting to database.
+data.connect:[generic|magic]
+
+   // Selecting snippet from database.
+   data.read
+      table:ml_training_snippets
+      columns
+         prompt
+         completion
+      where
+         and
+            id.eq:x:@.arguments/*/id
+
+   // Buffer for what we're creating embeddings from.
+   .embedding
+   set-value:x:@.embedding
+      strings.concat
+         get-value:x:@data.read/*/*/prompt
+         .:"\r\n\r\n"
+         get-value:x:@data.read/*/*/completion
+
+   // Creating an HTTP POST request towards OpenAI, now decorated.
+   http.post:"https://api.openai.com/v1/embeddings"
+      headers
+         Authorization:x:@.token
+         Content-Type:application/json
+      payload
+         model:text-embedding-ada-002
+         input:x:@.embedding
+      convert:true
+
+   // Sanity checking above invocation.
+   if
+      not
+         and
+            mte:x:@http.post
+               .:int:200
+            lt:x:@http.post
+               .:int:300
+      .lambda
+
+         // Oops, error - Logging error and returning status 500 to caller.
+         lambda2hyper:x:@http.post
+         log.error:Something went wrong while invoking OpenAI
+            error:x:@http.post/*/content/*/error/*/message
+         throw:Could not create embeddings for model
+
+   // Inserting embeddings for training snippet.
+   strings.join:x:@http.post/*/content/*/data/0/*/embedding/*
+      .:,
+   data.update
+      table:ml_training_snippets
+      values
+         embedding:x:@strings.join
+      where
+         and
+            id.eq:x:@.arguments/*/id
+
+// Returning success to caller.
+lambda2hyper:x:../*
+log.info:x:-
+return
+   result:success
