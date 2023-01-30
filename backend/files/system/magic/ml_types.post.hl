@@ -11,6 +11,7 @@
    cached:int
    prefix:string
    use_embeddings:int
+   threshold:decimal
 .description:CRUD create endpoint inserting one record into your ml_types table in your magic database taking type, model, max_tokens, temperature with authentication and authorisation for root roles
 .type:crud-create
 

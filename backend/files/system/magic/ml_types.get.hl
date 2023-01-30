@@ -52,6 +52,7 @@ data.connect:[generic|magic]
          ml_types.cached
          ml_types.prefix
          ml_types.use_embeddings
+         ml_types.threshold
       where
          and
 
