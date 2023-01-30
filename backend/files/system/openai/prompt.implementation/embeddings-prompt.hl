@@ -144,14 +144,12 @@ while:x:@.continue
  * However, in case user asked a question that's completely irrelevant to the subject
  * of our training snippets, we pass the question to OpenAI using
  * the default model, and just keeping the question "as is".
- *
- * Our cut off threshold is 80% accuracy, before we give up and just use the default
- * model as is.
  */
 if
    lt
       get-value:x:@.snippets/0/*/dot
-      .:double:0.8
+      convert:x:@.arguments/*/threshold
+         type:double
    .lambda
 
       // Semantic search resulted in zero high quality snippets, invoking completion with question without context.
