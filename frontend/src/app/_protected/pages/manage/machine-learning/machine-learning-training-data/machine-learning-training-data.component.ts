@@ -10,6 +10,7 @@ import { Affected } from 'src/app/models/affected.model';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { MachineLearningTrainingService } from 'src/app/_general/services/machine-learning-training.service';
+import { OpenAIService } from 'src/app/_general/services/openai.service';
 import { MachineLearningEditTrainingSnippetComponent } from '../components/machine-learning-edit-training-snippet/machine-learning-edit-training-snippet.component';
 
 /**
@@ -46,6 +47,7 @@ export class MachineLearningTrainingDataComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     private generalService: GeneralService,
+    private openAiService: OpenAIService,
     private machineLearningTrainingService: MachineLearningTrainingService) { }
 
   ngOnInit() {
@@ -89,7 +91,9 @@ export class MachineLearningTrainingDataComponent implements OnInit {
     });
   }
 
-  showDetails(event: any, el: any) {
+  editSnippet(event: any, el: any) {
+
+    const hasEmbedding: boolean = el.embedding;
 
     this.dialog
       .open(MachineLearningEditTrainingSnippetComponent, {
@@ -101,15 +105,40 @@ export class MachineLearningTrainingDataComponent implements OnInit {
       .subscribe((result: any) => {
 
         if (result) {
+
+          this.generalService.showLoading();
           if (result?.id) {
 
             this.machineLearningTrainingService.ml_training_snippets_update(result).subscribe({
               next: () => {
 
-                this.generalService.showFeedback('Snippet updated successfully', 'successMessage');
-                this.getTrainingData(false);
+                if (hasEmbedding) {
+
+                  // Need to update vector.
+                  this.openAiService.vectoriseSnippet(el.id).subscribe({
+                    next: () => {
+
+                      this.generalService.showFeedback('Snippet successfully updated and re-vectorised');
+                      this.getTrainingData(false);
+                    },
+                    error: () => {
+
+                      this.generalService.hideLoading();
+                      this.generalService.showFeedback('Something went wrong as we tried to vectorise your snippet', 'errorMessage');
+                    }
+                  });
+
+                } else {
+
+                  this.generalService.showFeedback('Snippet updated successfully', 'successMessage');
+                  this.getTrainingData(false);
+                }
               },
-              error: () => this.generalService.showFeedback('Something went wrong as we tried to update your snippet', 'errorMessage')
+              error: () => {
+
+                this.generalService.hideLoading();
+                this.generalService.showFeedback('Something went wrong as we tried to update your snippet', 'errorMessage');
+              }
             });
           } else {
 

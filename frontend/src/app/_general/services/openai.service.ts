@@ -115,4 +115,14 @@ export class OpenAIService {
       type,
     });
   }
+
+  /**
+   * Vectorises only the specified snippet.
+   */
+  vectoriseSnippet(id: number) {
+
+    return this.httpService.post<any>('/magic/system/openai/vectorise-snippet', {
+      id,
+    });
+  }
 }
