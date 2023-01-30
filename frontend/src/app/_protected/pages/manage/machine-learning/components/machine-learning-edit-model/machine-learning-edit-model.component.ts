@@ -24,6 +24,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
   type: string = null;
   temperature: string = null;
   max_tokens: string = null;
+  threshold: number = 0.8;
   recaptcha: 0;
   auth: string[] = [];
   supervised: boolean = false;
@@ -40,7 +41,6 @@ export class MachineLearningEditTypeComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private generalService: GeneralService,
-    private dialog: MatDialog,
     private openAIService: OpenAIService,
     private roleService: RoleService,
     private dialogRef: MatDialogRef<MachineLearningEditTypeComponent>,) { }
@@ -50,10 +50,9 @@ export class MachineLearningEditTypeComponent implements OnInit {
     this.type = this.data?.type;
     this.max_tokens = this.data?.max_tokens ?? 2000;
     this.temperature = this.data?.temperature ?? 0.1;
+    this.threshold = this.data?.threshold ?? 0.8;
     this.recaptcha = this.data?.recaptcha ?? 0;
-    if (!this.data) {
-      this.auth = ['root'];
-    } else {
+    if (this.data) {
       this.auth = this.data.auth?.split(',');
     }
     this.supervised = this.data?.supervised === 1 ? true : (!this.data ? true : false);

@@ -30,35 +30,6 @@
     <mat-form-field class="w-100 standalone-field">
       <span
         matPrefix
-        matTooltip="Model to use"
-        class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-        <mat-icon>help_outline</mat-icon>
-        <span class="text-muted">|</span>
-      </span>
-      <mat-select
-        [(ngModel)]="model"
-        placeholder="Model to use"
-        name="model">
-        <mat-select-trigger>
-          {{model?.id}}
-        </mat-select-trigger>
-        <mat-option
-          class="multiline-mat-option"
-          *ngFor="let idx of models"
-          [value]="idx">
-          <span class="d-block name-line" #typeName>
-            {{idx.id}}
-          </span>
-          <span class="d-block description-line">
-            Owned by {{idx.owned_by}}
-          </span>
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <mat-form-field class="w-100 standalone-field">
-      <span
-        matPrefix
         matTooltip="Prefix inserted before all prompts"
         class="d-flex flex-nowrap align-items-center justify-content-between me-2">
         <mat-icon>face</mat-icon>
@@ -73,6 +44,64 @@
         name="prefix"
         autocomplete="off">
     </mat-form-field>
+
+
+    <div class="row">
+
+      <div class="col-12 d-flex justify-content-md-between align-items-md-center align-items-end flex-md-row">
+
+        <mat-form-field class="w-100 standalone-field me-2">
+          <span
+            matPrefix
+            matTooltip="Model to use"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>help_outline</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <mat-select
+            [(ngModel)]="model"
+            placeholder="Model to use"
+            name="model">
+            <mat-select-trigger>
+              {{model?.id}}
+            </mat-select-trigger>
+            <mat-option
+              class="multiline-mat-option"
+              *ngFor="let idx of models"
+              [value]="idx">
+              <span class="d-block name-line" #typeName>
+                {{idx.id}}
+              </span>
+              <span class="d-block description-line">
+                Owned by {{idx.owned_by}}
+              </span>
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="w-100 standalone-field">
+          <span
+            matPrefix
+            matTooltip="Threshold for vectors"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>get_app</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            placeholder="Threshold"
+            type="number"
+            min="0.5"
+            max="1"
+            step="0.01"
+            [(ngModel)]="threshold"
+            name="threshold"
+            autocomplete="off">
+        </mat-form-field>
+
+      </div>
+
+    </div>
 
     <div class="row">
 
@@ -177,13 +206,6 @@
       <div class="col-12 text-end">
 
         <mat-checkbox
-          [(ngModel)]="use_embeddings"
-          name="use_embeddings"
-          class="me-4"
-          labelPosition="before"
-          color="primary">Use embeddings</mat-checkbox>
-
-        <mat-checkbox
           [(ngModel)]="supervised"
           name="supervised"
           (change)="supervisedChanged()"
@@ -198,6 +220,13 @@
           [disabled]="!supervised"
           labelPosition="before"
           color="primary">Cached</mat-checkbox>
+
+        <mat-checkbox
+          [(ngModel)]="use_embeddings"
+          name="use_embeddings"
+          class="me-4"
+          labelPosition="before"
+          color="primary">Use vectors</mat-checkbox>
 
       </div>
 
