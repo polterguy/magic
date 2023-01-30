@@ -21,6 +21,7 @@ import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 })
 export class MachineLearningEditTypeComponent implements OnInit {
 
+  isLoading: boolean = false;
   type: string = null;
   temperature: string = null;
   max_tokens: string = null;
@@ -32,6 +33,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
   prefix: string;
   cached: boolean = false;
   model: OpenAIModel = null;
+  vector_model: OpenAIModel = null;
   models: OpenAIModel[] = [];
   roles: Role[] = [];
 
@@ -47,11 +49,12 @@ export class MachineLearningEditTypeComponent implements OnInit {
 
   ngOnInit() {
 
+    this.isLoading = true;
     this.type = this.data?.type;
-    this.max_tokens = this.data?.max_tokens ?? 2000;
+    this.max_tokens = this.data?.max_tokens ?? 4000;
     this.temperature = this.data?.temperature ?? 0.1;
     this.threshold = this.data?.threshold ?? 0.8;
-    this.recaptcha = this.data?.recaptcha ?? 0;
+    this.recaptcha = this.data?.recaptcha ?? 0.3;
     if (this.data) {
       this.auth = this.data.auth?.split(',');
     }
@@ -86,7 +89,14 @@ export class MachineLearningEditTypeComponent implements OnInit {
             } else {
               this.model = this.models.filter(x => x.id === 'text-davinci-003')[0];
             }
+
+            if (this.data?.vector_model) {
+              this.vector_model = this.models.filter(x => x.id === this.data.vector_model)[0];
+            } else {
+              this.vector_model = this.models.filter(x => x.id === 'text-embedding-ada-002')[0];
+            }
             this.generalService.hideLoading();
+            this.isLoading = false;
           },
           error: () => {
     
