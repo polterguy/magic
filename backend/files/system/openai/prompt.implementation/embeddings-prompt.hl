@@ -25,7 +25,7 @@ http.post:"https://api.openai.com/v1/embeddings"
       Content-Type:application/json
    payload
       input:x:@.arguments/*/prompt
-      model:text-embedding-ada-002
+      model:x:@.arguments/*/vector_model
    convert:true
 
 // Sanity checking above invocation

@@ -29,6 +29,15 @@ fork
       // Connecting to database.
       data.connect:[generic|magic]
 
+         // Selecting vector model from database.
+         data.read
+            table:ml_types
+            columns
+               vector_model
+            where
+               and
+                  id.eq:x:@.arguments/*/id
+
          // To avoid exhausting server's memory, we iterate 50 snippets at the time.
          .continue:bool:true
          .failed:int:0
@@ -73,7 +82,7 @@ fork
                            Authorization:x:@.token
                            Content-Type:application/json
                         payload
-                           model:text-embedding-ada-002
+                           model:x:@data.read/@data.read/*/*/vector_model
                            input:x:@.embedding
                         convert:true
 

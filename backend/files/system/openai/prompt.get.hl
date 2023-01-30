@@ -33,6 +33,7 @@ data.connect:[generic|magic]
          prefix
          use_embeddings
          threshold
+         vector_model
       where
          and
             type.eq:x:@.arguments/*/type
@@ -56,6 +57,7 @@ data.connect:[generic|magic]
                prefix
                use_embeddings
                threshold
+               vector_model
             where
                and
                   type.eq:default
@@ -171,6 +173,7 @@ data.connect:[generic|magic]
             get-nodes:x:@data.read/@data.read/*/*/max_tokens
             get-nodes:x:@data.read/@data.read/*/*/temperature
             get-nodes:x:@data.read/@data.read/*/*/threshold
+            get-nodes:x:@data.read/@data.read/*/*/vector_model
             .
                fine_tuned:bool:false
          io.file.execute:/system/openai/prompt.implementation/embeddings-prompt.hl
