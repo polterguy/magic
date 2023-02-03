@@ -36,7 +36,7 @@ fork
                vector_model
             where
                and
-                  id.eq:x:@.arguments/*/id
+                  type.eq:x:@.arguments/*/type
 
          // To avoid exhausting server's memory, we iterate 50 snippets at the time.
          .continue:bool:true
