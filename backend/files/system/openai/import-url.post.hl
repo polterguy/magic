@@ -78,6 +78,13 @@ fork
                   .
                      .:x:@.dp/#
 
+            // Iterating through each CDATA URL in currently primary sitemap file.
+            for-each:x:@xml2lambda/*/urlset/*/url/*/loc/*/\#cdata-section
+               unwrap:x:+/*/*
+               add:x:@.urls
+                  .
+                     .:x:@.dp/#
+
             // Iterating through each URL referenced in main sitemap.
             for-each:x:@xml2lambda/*/sitemapindex/*/sitemap/*/loc/*/\#text
 
@@ -101,6 +108,41 @@ fork
 
                      // Iterating through each URL in currently iterated sitemap file.
                      for-each:x:@xml2lambda/*/urlset/*/url/*/loc/*/\#text
+                        unwrap:x:+/*/*
+                        add:x:@.urls
+                           .
+                              .:x:@.dp/#
+
+               else
+
+                  // Doing some logging.
+                  log.error:Bogus sitemap reference
+                     url:x:@.dp/#
+                     primary-url:x:@.arguments/*/url
+
+            // Iterating through each CDATA URL referenced in main sitemap.
+            for-each:x:@xml2lambda/*/sitemapindex/*/sitemap/*/loc/*/\#cdata-section
+
+               // Getting XML from currently iterated sitemap subset.
+               unwrap:x:+/*/*
+               http.get:x:@.dp/#
+                  headers
+                     User-Agent:Aista-MachineLearning-Spider
+
+               // Verifying above invocation returned success.
+               if
+                  and
+                     mte:x:@http.get
+                        .:int:200
+                     lt:x:@http.get
+                        .:int:300
+                  .lambda
+
+                     // Above invocation returned success.
+                     xml2lambda:x:@http.get/*/content
+
+                     // Iterating through each URL in currently iterated sitemap file.
+                     for-each:x:@xml2lambda/*/urlset/*/url/*/loc/*/\#cdata-section
                         unwrap:x:+/*/*
                         add:x:@.urls
                            .
