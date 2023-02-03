@@ -199,7 +199,8 @@ for-each:x:@.snippets/*
    if
       and
          mt:x:@.dp/#/*/dot
-            get-value:x:@.arguments/*/threshold
+            convert:x:@.arguments/*/threshold
+               type:double
          lt
             math.add
                strings.length:x:@.context
