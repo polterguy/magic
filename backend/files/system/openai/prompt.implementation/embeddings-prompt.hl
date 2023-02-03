@@ -62,7 +62,7 @@ if
 .offset:int:0
 while:x:@.continue
 
-   // Selecting 25 snippets from type.
+   // Selecting 50 snippets from type.
    data.read
       table:ml_training_snippets
       columns
@@ -74,7 +74,7 @@ while:x:@.continue
          and
             embedding.neq
             type.eq:x:@.arguments/*/type
-      limit:25
+      limit:50
       offset:x:@.offset
       order:created
 
@@ -117,16 +117,16 @@ while:x:@.continue
          set-value:x:@.result
             .:int:0
 
-   // Updating [.snippets] now with the 25 top most relevant snippets.
+   // Updating [.snippets] now with the 50 top most relevant snippets.
    remove-nodes:x:@.snippets/*
    add:x:@.snippets
-      get-nodes:x:@sort/*/[0,25]
+      get-nodes:x:@sort/*/[0,50]
 
    // Checking if we're done.
    if
       lt
          get-count:x:@data.read/*
-         .:int:25
+         .:int:50
       .lambda
 
          // We're done! We've found the top 5 most relevant snippets from our training material.
@@ -194,19 +194,18 @@ for-each:x:@.snippets/*
 
    /*
     * Making sure our prompt's complete length never exceeds 4,000 characters,
-    * and that we only use relevant snippets above 80% in threshold.
+    * and that we only use relevant snippets above specified threshold from our model.
     */
    if
       and
          mt:x:@.dp/#/*/dot
-            .:double:0.8
-         not
-            mt
-               math.add
-                  strings.length:x:@.context
-                  strings.length:x:@.dp/#/*/prompt
-                  strings.length:x:@.dp/#/*/completion
-               .:int:4000
+            get-value:x:@.arguments/*/threshold
+         lt
+            math.add
+               strings.length:x:@.context
+               strings.length:x:@.dp/#/*/prompt
+               strings.length:x:@.dp/#/*/completion
+            .:int:4000
       .lambda
 
          // We still haven't reached our 4,000 character threshold yet, and we still have relevant snippets.
