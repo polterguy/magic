@@ -131,7 +131,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     this.dialog.open(ShortkeysComponent, {
       width: '900px',
       data: {
-        type: ['full']
+        type: ['full', 'prompt']
       }
     })
   }
@@ -565,6 +565,8 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     const words = this.vocabularyService.words.filter(x => x === selection);
     if (words.length > 0) {
       prompt = 'How does [' + selection + '] work?';
+    } else {
+      prompt = 'Explain this Hyperlambda code\r\n\r\n' + selection;
     }
 
     this.generalService.showLoading();

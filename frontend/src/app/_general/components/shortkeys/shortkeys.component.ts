@@ -25,6 +25,7 @@ export class ShortkeysComponent implements OnInit {
   constructor(@Inject(MAT_DIALOG_DATA) public data: { type: string[] }) { }
 
   ngOnInit() {
+
     this.prepareData();
   }
 
@@ -33,6 +34,7 @@ export class ShortkeysComponent implements OnInit {
    */
 
   private prepareData() {
+
     if (this.data.type.indexOf('save') > -1) {
       this.shortkeys = [
         ...this.shortkeys,
@@ -48,6 +50,15 @@ export class ShortkeysComponent implements OnInit {
         {
           name: 'Execute',
           key: 'F5'
+        }
+      ];
+    }
+    if (this.data.type.indexOf('prompt') > -1) {
+      this.shortkeys = [
+        ...this.shortkeys,
+        {
+          name: 'Help for keyword',
+          key: 'F1'
         }
       ];
     }
