@@ -21,21 +21,17 @@ set-value:x:@.token
 // Connecting to database.
 data.connect:[generic|magic]
 
-   // Selecting vector model from database.
-   data.read
-      table:ml_types
-      columns
-         vector_model
-      where
-         and
-            id.eq:x:@.arguments/*/id
-
    // Selecting snippet from database.
    data.read
       table:ml_training_snippets
+         join:ml_types
+            on
+               and
+                  ml_training_snippets.type.eq:ml_types.type
       columns
          prompt
          completion
+         vector_model
       where
          and
             id.eq:x:@.arguments/*/id
@@ -54,7 +50,7 @@ data.connect:[generic|magic]
          Authorization:x:@.token
          Content-Type:application/json
       payload
-         model:x:@data.read/@data.read/*/*/vector_model
+         model:x:@data.read/*/*/vector_model
          input:x:@.embedding
       convert:true
 
