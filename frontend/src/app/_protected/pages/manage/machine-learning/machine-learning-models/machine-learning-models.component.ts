@@ -41,6 +41,7 @@ export class MachineLearningModelsComponent implements OnInit {
   isLoadingKey: boolean = false;
   displayedColumns: string[] = [
     'type',
+    'vector_model',
     'model',
     'action',
   ];
