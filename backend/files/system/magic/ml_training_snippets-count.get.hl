@@ -9,6 +9,7 @@
    ml_training_snippets.prompt.eq:string
    ml_training_snippets.completion.like:string
    ml_training_snippets.completion.eq:string
+   not_embedded:bool
 .description:Endpoint counting items in your ml_training_snippets table in your magic database
 .type:crud-count
 
@@ -19,6 +20,15 @@ auth.ticket.verify:root
 data.connect:[generic|magic]
 
    // Parametrising our read invocation with filtering arguments.
+   if
+      and
+         exists:x:@.arguments/*/not_embedded
+         get-value:x:@.arguments/*/not_embedded
+      .lambda
+         add:x:@data.connect/*/data.read/*/where/*/and
+            .
+               embedding.eq
+         remove-nodes:x:@.arguments/*/not_embedded
    add:x:+/*/where/*
       get-nodes:x:@.arguments/*
 
