@@ -51,18 +51,14 @@
         </p>
       </div>
 
-      <div class="col-lg-6 col-12 d-flex justify-content-md-between align-items-md-center align-items-end flex-md-row">
+      <div class="col-lg-4 offset-lg-2 col-12 mt-3">
 
-        <!-- Dummy element needed to align button correctly -->
-        <div></div>
-
-        <button
-          mat-flat-button
-          color="primary"
-          class="me-3"
-          (click)="addType()">
-          Add
-        </button>
+        <!-- Search textbox -->
+        <app-searchbox
+          (filterList)="filterList($event)"
+          buttonText="Add"
+          (buttonClick)="addType()">
+        </app-searchbox>
 
       </div>
 

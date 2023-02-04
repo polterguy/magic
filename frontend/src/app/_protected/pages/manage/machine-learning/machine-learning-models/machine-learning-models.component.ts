@@ -58,6 +58,18 @@ export class MachineLearningModelsComponent implements OnInit {
     this.getConfiguredStatus();
   }
 
+  filterList(event: { searchKey: string }) {
+
+    this.filter = {
+      limit: this.filter.limit,
+      offset: 0,
+    };
+    if (event.searchKey) {
+      this.filter['ml_types.type.like'] = '%' + event.searchKey + '%';
+    }
+    this.getModels(true);
+  }
+
   page(event: PageEvent) {
 
     this.filter.offset = event.pageIndex * event.pageSize;
