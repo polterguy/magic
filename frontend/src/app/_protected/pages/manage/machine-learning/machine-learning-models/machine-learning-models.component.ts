@@ -199,36 +199,54 @@ export class MachineLearningModelsComponent implements OnInit {
 
   vectorise(el: any) {
 
-      // Asking user to confirm action.
-      this.dialog.open(ConfirmationDialogComponent, {
-        width: '500px',
-        data: {
-          title: 'Confirm operation',
-          description_extra: `Do you want to vectorise the model called; <span class="fw-bold">${el.type}</span><br/>`,
-          action_btn: 'Vectorise',
-          close_btn: 'Cancel',
-          bold_description: true
+    this.generalService.showLoading();
+    this.machineLearningTrainingService.ml_training_snippets_count({
+      ['ml_training_snippets.type.eq']: el.type,
+      ['not_embedded']: true,
+    }).subscribe({
+      next: (result: Count) => {
+
+        this.generalService.hideLoading();
+        if (result.count === 0) {
+          this.generalService.showFeedback('Model have no snippets that are not already vectorised', 'successMessage');
+          return;
         }
-      }).afterClosed().subscribe((result: string) => {
 
-        if (result === 'confirm') {
+        // Asking user to confirm action.
+        this.dialog.open(ConfirmationDialogComponent, {
+          width: '500px',
+          data: {
+            title: 'Confirm operation',
+            description_extra: `Do you want to vectorise the model called; <span class="fw-bold">${el.type}</span><br/>It has ${result.count} snippets`,
+            action_btn: 'Vectorise',
+            close_btn: 'Cancel',
+            bold_description: true
+          }
+        }).afterClosed().subscribe((result: string) => {
 
-          this.generalService.showLoading();
-          this.openAIService.vectorise(el.type).subscribe({
-            next: () => {
+          if (result === 'confirm') {
 
-              this.generalService.showFeedback('Started creating embeddings of model', 'successMessage');
-              this.generalService.hideLoading();
-            },
-            error: () => {
+            this.openAIService.vectorise(el.type).subscribe({
+              next: () => {
 
-              this.generalService.hideLoading();
-              this.generalService.showFeedback('Something went wrong as we tried to create embeddings for model', 'errorMessage');
-            }
-          });
+                this.generalService.showFeedback('Started creating embeddings of model', 'successMessage');
+                this.generalService.hideLoading();
+              },
+              error: () => {
 
-        }
-      });
+                this.generalService.hideLoading();
+                this.generalService.showFeedback('Something went wrong as we tried to create embeddings for model', 'errorMessage');
+              }
+            });
+          }
+        });
+      },
+      error: () => {
+
+        this.generalService.hideLoading();
+        this.generalService.showFeedback('Something went wrong as we tried to create embeddings for model', 'errorMessage');
+      }
+    });
   }
 
   test(el: any) {
