@@ -40,8 +40,8 @@ export class MachineLearningModelsComponent implements OnInit {
   };
   isLoadingKey: boolean = false;
   displayedColumns: string[] = [
-    'model',
     'type',
+    'model',
     'action',
   ];
   types: any[] = null;
