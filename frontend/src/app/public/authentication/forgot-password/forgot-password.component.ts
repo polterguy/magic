@@ -104,6 +104,7 @@ export class ForgotPasswordComponent {
    * will be executed only if recaptcha key is available
    */
   executeRecaptcha() {
+
     this.captchaRef?.execute();
   }
 }

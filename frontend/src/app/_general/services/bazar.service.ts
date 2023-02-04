@@ -133,4 +133,13 @@ export class BazarService {
       token,
     });
   }
+
+  prompt(prompt: string, recaptch_response: string) {
+    const url = environment.bazarUrl + '/magic/system/openai/prompt?prompt=foo' +
+      encodeURIComponent(prompt) +
+      '&type=aista_com' +
+      '&recaptcha_response=' +
+      encodeURIComponent(recaptch_response);
+    return this.httpClient.get<Response>(url);
+  }
 }

@@ -13,6 +13,12 @@
   height: 70px;
   padding: 20px;
 
+  .menu_trigger {
+    width: 0px;
+    height: 0px;
+    display: inline;
+  }
+
   @media (max-width: 575px) {
     border-radius: 0;
     margin: 0 0 $aista_spacing 0;

@@ -28,6 +28,13 @@ export class VocabularyService {
   constructor(private httpService: HttpService) { }
 
   /**
+   * Returns all Hyperlambda keywords in context to caller.
+   */
+  get words() {
+    return this._vocabulary;
+  }
+
+  /**
    * Returns server's Hyperlambda vocabulary to caller.
    */
   vocabulary() {
