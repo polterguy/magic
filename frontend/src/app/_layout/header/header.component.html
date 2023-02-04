@@ -109,6 +109,20 @@
       </a>
     </mat-menu>
 
+    <button
+      mat-button
+      class="menu_trigger"
+      #completion_menu_trigger="matMenuTrigger"
+      [matMenuTriggerFor]="completion_menu">
+    </button>
+
+    <mat-menu
+      #completion_menu="matMenu"
+      class="px-4 py-3 m-0 help_menu">
+      <div class="text-muted" [innerHTML]="completion | marked">
+      </div>
+    </mat-menu>
+
   </div>
 </div>
 

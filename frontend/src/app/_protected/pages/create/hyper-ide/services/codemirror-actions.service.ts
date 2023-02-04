@@ -99,6 +99,11 @@ export class CodemirrorActionsService {
             this.action.next('execute');
           })
         };
+        res.options.extraKeys['F1'] = () => {
+          this.ngZone.run(() => {
+            this.action.next('prompt');
+          })
+        };
         if (type === 'sql') {
           res.options.extraKeys['Ctrl-Space'] = (cm: any) => {
             this.ngZone.run(() => {

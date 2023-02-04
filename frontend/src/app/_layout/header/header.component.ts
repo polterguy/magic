@@ -3,7 +3,7 @@
  * Copyright (c) Aista Ltd, 2021 - 2023 info@aista.com, all rights reserved.
  */
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { BackendService } from 'src/app/_general/services/backend.service';
 import { NavLinks } from './_model/nav-links';
 import { MatDialog } from '@angular/material/dialog';
@@ -12,6 +12,9 @@ import { BackendsListComponent } from 'src/app/_general/components/backends-list
 import { GithubTokenDialogComponent } from 'src/app/_protected/pages/user/generate-token-dialog/generate-token-dialog.component';
 import { Status } from 'src/app/_protected/models/common/status.model';
 import { Router } from '@angular/router';
+import { MessageService } from 'src/app/_general/services/message.service';
+import { Message } from 'src/app/models/message.model';
+import { MatMenuTrigger } from '@angular/material/menu';
 
 /**
  * Header component showing navbar links and backend switcher.
@@ -23,6 +26,8 @@ import { Router } from '@angular/router';
 })
 export class HeaderComponent implements OnInit {
 
+  @ViewChild('completion_menu_trigger') completion_menu_trigger: MatMenuTrigger;
+
   help_description: string;
   help_url: string;
   navLinks: NavLinks[] = [];
@@ -30,10 +35,12 @@ export class HeaderComponent implements OnInit {
   backendList: any = [];
   sideExpanded: boolean = false;
   isAffiliate: boolean = false;
+  completion: string = null;
 
   constructor(
-    private dialog: MatDialog,
     private router: Router,
+    private dialog: MatDialog,
+    private messageService: MessageService,
     private backendService: BackendService) { }
 
   ngOnInit() {
@@ -52,6 +59,12 @@ export class HeaderComponent implements OnInit {
           this.help_url = this.getComponentURL();
         }
       }
+    });
+
+    this.messageService.subscriber().subscribe((msg: Message) => {
+
+      this.completion = msg.content;
+      this.completion_menu_trigger.openMenu();
     });
   }
 

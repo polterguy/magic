@@ -24,6 +24,9 @@ import { CodemirrorActionsService } from '../../services/codemirror-actions.serv
 import { FileService } from '../../services/file.service';
 import { VocabularyService } from '../../services/vocabulary.service';
 import { Endpoint } from 'src/app/_protected/models/common/endpoint.model';
+import { ReCaptchaV3Service } from 'ng-recaptcha';
+import { BazarService } from 'src/app/_general/services/bazar.service';
+import { MessageService } from 'src/app/_general/services/message.service';
 
 /**
  * Hyper IDE editor component, wrapping currently open files, allowing user to edit the code.
@@ -57,16 +60,21 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   constructor(
     private dialog: MatDialog,
     private fileService: FileService,
+    private bazarService: BazarService,
     private generalService: GeneralService,
+    private messageService: MessageService,
     private evaluatorService: EvaluatorService,
     private vocabularyService: VocabularyService,
+    private recaptchaV3Service: ReCaptchaV3Service,
     private codemirrorActionsService: CodemirrorActionsService) { }
 
   ngOnInit() {
+
     this.watchForActions();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(changes: SimpleChanges) {
+
     const fileExisting: number = this.openFiles.findIndex((item: any) => item.path === this.currentFileData.path);
 
     if (changes['currentFileData'] && !changes['currentFileData'].firstChange) {
@@ -86,6 +94,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   clearEditorHistory() {
+
     const fileExisting: number = this.openFiles.findIndex((item: any) => item.path === this.currentFileData.path);
     const activeWrapper = document.querySelector('.active-codemirror-editor-' + fileExisting);
     const editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
@@ -94,14 +103,17 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   fileType() {
+
     return this.currentFileData?.path.substring(this.currentFileData?.path.lastIndexOf('.') + 1);
   }
 
   insertFromOpenAI(snippet: string) {
+
     this.currentFileData.content = snippet;
   }
 
   setFocusToActiveEditor() {
+
     setTimeout(() => {
       const fileExisting: number = this.openFiles.findIndex((item: FileNode) => item.path === this.currentFileData.path);
       const activeWrapper = document.querySelector('.active-codemirror-editor-' + fileExisting);
@@ -115,6 +127,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   openShortkeys() {
+
     this.dialog.open(ShortkeysComponent, {
       width: '900px',
       data: {
@@ -124,6 +137,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngAfterViewInit() {
+
     if (!window['_vocabulary']) {
       this.vocabularyService.vocabulary().subscribe({
         next: (vocabulary: string[]) => window['_vocabulary'] = vocabulary,
@@ -133,6 +147,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnDestroy() {
+
     this.codemirrorActionSubscription?.unsubscribe();
   }
 
@@ -157,10 +172,12 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private deleteActiveFile() {
+
     this.deleteActiveFileFromParent.emit();
   }
 
   private deleteActiveFolder() {
+
     this.deleteActiveFolderFromParent.emit(this.currentFileData.folder);
   }
 
@@ -193,6 +210,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private async executeActiveFile() {
+
     if (this.openFiles.length === 0 || !this.currentFileData.path.endsWith('.hl')) {
       return;
     }
@@ -213,6 +231,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private getEndpointToExecute(): Promise<any> {
+
     if (this.currentFileData?.path?.startsWith('/modules/') || this.currentFileData?.path?.startsWith('/system/')) {
       const lastSplits = this.currentFileData.name.split('.');
       if (lastSplits.length >= 3 && lastSplits[lastSplits.length - 1] === 'hl') {
@@ -242,6 +261,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private activeFileIsClean() {
+
     return new Promise((resolve) => {
       const fileExisting: number = this.openFiles.findIndex((item: any) => item.path === this.currentFileData.path);
       const activeWrapper = document.querySelector('.active-codemirror-editor-' + fileExisting);
@@ -267,6 +287,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private renameFile() {
+
     if (!this.currentFileData) {
       return;
     }
@@ -284,6 +305,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private renameFolder() {
+
     if (!this.currentFileData) {
       return;
     }
@@ -310,10 +332,12 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private createNewFileObject(type: string) {
+
     this.createNewFileObjectFromParent.emit(type);
   }
 
   private previewActiveFile() {
+
     if (!this.currentFileData.path.endsWith('.md')) {
       return;
     }
@@ -326,6 +350,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private insertSnippet() {
+
     if (!this.currentFileData.path.endsWith('.hl')) {
       return;
     }
@@ -348,6 +373,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private insertHyperlambda(content: string) {
+
     const fileExisting: number = this.openFiles.findIndex((item: any) => item.path === this.currentFileData.path);
     const activeWrapper = document.querySelector('.active-codemirror-editor-' + fileExisting);
     if (activeWrapper) {
@@ -382,6 +408,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private selectMacro() {
+
     const dialogRef = this.dialog.open(SelectMacroDialogComponent, {
       width: '550px',
       data: {
@@ -396,6 +423,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private executeMacro(file: string) {
+
     this.fileService.getMacroDefinition(file).subscribe({
       next: (result: MacroDefinition) => {
 
@@ -465,8 +493,10 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private watchForActions() {
+
     this.codemirrorActionSubscription = this.codemirrorActionsService.action.subscribe((action: string) => {
       switch (action) {
+
         case 'save':
           this.saveActiveFile();
           break;
@@ -515,13 +545,58 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
           this.executeActiveFile();
           break;
 
+        case 'prompt':
+          this.prompt();
+          break;
+
         default:
           break;
       }
     })
   }
 
+  private prompt() {
+
+    const fileExisting: number = this.openFiles.findIndex((item: any) => item.path === this.currentFileData.path);
+    const activeWrapper = document.querySelector('.active-codemirror-editor-' + fileExisting);
+    const editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
+    const selection = editor.getSelection();
+    let prompt = '';
+    const words = this.vocabularyService.words.filter(x => x === selection);
+    if (words.length > 0) {
+      prompt = 'How does [' + selection + '] work?';
+    }
+
+    this.generalService.showLoading();
+    this.recaptchaV3Service.execute('subscriptionFormSubmission').subscribe({
+      next: (token: string) => {
+
+        this.bazarService.prompt(prompt, token).subscribe({
+          next: (result: any) => {
+
+            this.generalService.hideLoading();
+            const completion = result.result;
+            this.messageService.sendMessage({
+              name: 'magic.show-help',
+              content: completion,
+            });
+          },
+          error: (error: any) => {
+
+            this.generalService.hideLoading();
+            this.generalService.showFeedback('Could not invoke magic API server to create completion', 'errorMessage');
+          }
+        });
+      },
+      error: () => {
+
+        this.generalService.hideLoading();
+      },
+    });
+  }
+
   private getCodeMirrorOptions() {
+
     const options = this.codemirrorActionsService.getActions(null, this.currentFileData?.path.split('.').pop());
     this.codemirrorOptions[this.currentFileData.path] = options;
     this.currentFileData.options = options;
