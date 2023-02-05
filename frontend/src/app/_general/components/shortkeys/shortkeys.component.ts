@@ -57,7 +57,7 @@ export class ShortkeysComponent implements OnInit {
       this.shortkeys = [
         ...this.shortkeys,
         {
-          name: 'Help for keyword',
+          name: 'AI based help',
           key: 'F1'
         }
       ];

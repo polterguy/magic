@@ -24,9 +24,7 @@ import { CodemirrorActionsService } from '../../services/codemirror-actions.serv
 import { FileService } from '../../services/file.service';
 import { VocabularyService } from '../../services/vocabulary.service';
 import { Endpoint } from 'src/app/_protected/models/common/endpoint.model';
-import { ReCaptchaV3Service } from 'ng-recaptcha';
-import { BazarService } from 'src/app/_general/services/bazar.service';
-import { MessageService } from 'src/app/_general/services/message.service';
+import { AiService } from 'src/app/_general/services/ai.service';
 
 /**
  * Hyper IDE editor component, wrapping currently open files, allowing user to edit the code.
@@ -60,12 +58,10 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   constructor(
     private dialog: MatDialog,
     private fileService: FileService,
-    private bazarService: BazarService,
+    private aiService: AiService,
     private generalService: GeneralService,
-    private messageService: MessageService,
     private evaluatorService: EvaluatorService,
     private vocabularyService: VocabularyService,
-    private recaptchaV3Service: ReCaptchaV3Service,
     private codemirrorActionsService: CodemirrorActionsService) { }
 
   ngOnInit() {
@@ -561,40 +557,9 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     const activeWrapper = document.querySelector('.active-codemirror-editor-' + fileExisting);
     const editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
     const selection = editor.getSelection();
-    let prompt = '';
-    const words = this.vocabularyService.words.filter(x => x === selection);
-    if (words.length > 0) {
-      prompt = 'How does [' + selection + '] work?';
-    } else {
-      prompt = 'Explain this Hyperlambda code\r\n\r\n' + selection;
+    if (selection?.length > 0) {
+      this.aiService.prompt(selection);
     }
-
-    this.generalService.showLoading();
-    this.recaptchaV3Service.execute('subscriptionFormSubmission').subscribe({
-      next: (token: string) => {
-
-        this.bazarService.prompt(prompt, token).subscribe({
-          next: (result: any) => {
-
-            this.generalService.hideLoading();
-            const completion = result.result;
-            this.messageService.sendMessage({
-              name: 'magic.show-help',
-              content: completion,
-            });
-          },
-          error: (error: any) => {
-
-            this.generalService.hideLoading();
-            this.generalService.showFeedback('Could not invoke magic API server to create completion', 'errorMessage');
-          }
-        });
-      },
-      error: () => {
-
-        this.generalService.hideLoading();
-      },
-    });
   }
 
   private getCodeMirrorOptions() {
