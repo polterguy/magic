@@ -1,0 +1,84 @@
+
+/*
+ * Lists all indexes in some PostgreSQL table.
+ * 
+ * Arguments
+ * 
+ * - [connection-string] - What connection string to use
+ * - [database] - What database you want to check
+ * - [table] - What table you want to check
+ */
+slots.create:magic.db.pgsql.indexes
+
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/database
+   validators.mandatory:x:@.arguments/*/table
+
+   // Opens up our connection
+   .connection:[postgres]
+   if
+      and
+         not
+            eq
+               get-value:x:@.arguments/*/connection-string
+               .
+         not
+            eq
+               get-value:x:@.arguments/*/connection-string
+               .:
+      .lambda
+         set-value:x:@.connection
+            strings.concat
+               .:[
+               get-value:x:@.arguments/*/connection-string
+               .:|
+               get-value:x:@.arguments/*/database
+               .:]
+   else
+      set-value:x:@.connection
+         strings.concat
+            .:[generic|
+            get-value:x:@.arguments/*/database
+            .:]
+   pgsql.connect:x:@.connection
+
+      // Dynamically creating our SQL.
+      strings.concat
+         .:@"
+select
+    t.relname as table_name,
+    i.relname as index_name,
+    a.attname as column_name
+from
+    pg_class t,
+    pg_class i,
+    pg_index ix,
+    pg_attribute a
+where
+    t.oid = ix.indrelid
+    and i.oid = ix.indexrelid
+    and a.attrelid = t.oid
+    and a.attnum = ANY(ix.indkey)
+    and t.relkind = 'r'
+    and t.relname = '"
+         get-value:x:@.arguments/*/table
+         .:"'"
+      pgsql.select:x:@strings.concat
+
+      /*
+       * Creating our return value, by projecting it into
+       * a generic form, that does not rely upon MySQL's syntactic
+       * details.
+       */
+      for-each:x:@pgsql.select/*
+         unwrap:x:+/*/*/*
+         add:x:@pgsql.connect/*/return-nodes
+            .
+               .
+                  name:x:@.dp/#/*/index_name
+                  columns
+         unwrap:x:+/*/*
+         add:x:@pgsql.connect/*/return-nodes/0/-/*/columns
+            .
+               .:x:@.dp/#/*/column_name
+      return-nodes
