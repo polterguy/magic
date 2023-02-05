@@ -30,6 +30,7 @@ data.connect:[generic|magic]
       where
          and
             fingerprint.eq:x:@signal/*/fingerprint
+      limit:1
 
    // Returning result to caller.
    unwrap:x:+/*
