@@ -82,7 +82,7 @@ export class TablesViewComponent implements OnInit, OnDestroy {
     }, 2000);
   }
 
-  dropItem(item: any, type: string, foreign_keys?: any, tableName?: string) {
+  dropItem(item: any, type: string, foreign_keys?: any, tableName?: string, table?: any) {
 
     let fkName = null;
 
@@ -121,7 +121,7 @@ export class TablesViewComponent implements OnInit, OnDestroy {
 
         } else if (type === 'column') {
 
-          this.deleteColumn(item, tableName, fkName);
+          this.deleteColumn(item, tableName, fkName, table);
 
         } else if (type === 'index') {
 
@@ -224,8 +224,16 @@ export class TablesViewComponent implements OnInit, OnDestroy {
       });
   }
 
-  // Deletes the specified column.
-  private deleteColumn(item: any, tableName: string, fkName: string) {
+  private deleteColumn(item: any, tableName: string, fkName: string, table?: any) {
+
+    if (table?.indexes) {
+      for (const idx of table.indexes) {
+        if (idx.columns.filter(x => x === item.name)) {
+          this.generalService.showFeedback('You need to drop indexes referencing column first', 'errorMessage');
+          return
+        }
+      }
+    }
 
     if (fkName) {
 
@@ -295,7 +303,6 @@ export class TablesViewComponent implements OnInit, OnDestroy {
       });
 }
 
-  // Invoked when user wants to apply migration script.
   private applyMigration(sql: string) {
 
     if (!this.migrate) {
