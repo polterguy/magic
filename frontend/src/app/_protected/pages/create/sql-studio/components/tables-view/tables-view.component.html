@@ -78,43 +78,65 @@
           </div>
 
           <div class="col-lg-1 col-2 action-btn d-flex justify-content-end">
-            <button mat-icon-button color="warn" title="Drop column ..."
+
+            <button
+              mat-icon-button
+              color="warn"
+              title="Drop column ..."
               (click)="dropItem(column, 'column', item.foreign_keys, item.name)">
               <mat-icon>delete</mat-icon>
             </button>
+
           </div>
 
         </div>
 
         <!-- Foreign keys -->
         <div class="row mt-4" *ngIf="item.foreign_keys && item.foreign_keys.length > 0">
+
           <div
             class="col-12 bg-light action-btn pointer py-0 small ms-3"
             (click)="scrollTableIntoView(fk)"
             *ngFor="let fk of item.foreign_keys;let last = last"
             [class.mb-2]="!last">
+
             <div class="d-flex justify-content-between align-items-center">
               <p class="my-0 d-flex justify-content-between align-items-center text-muted">
                 {{fk?.column}} <mat-icon class="mx-2">trending_flat</mat-icon>
                 {{fk?.foreign_table}}.{{fk.foreign_column}}
               </p>
             </div>
+
           </div>
+
         </div>
 
         <!-- Indexes -->
         <div class="row mt-4" *ngIf="item.indexes && item.indexes.length > 0">
+
           <div
-            class="col-12 bg-light action-btn py-0 small ms-3"
+            class="col-12 bg-light action-btn py-0 small ps-3"
             *ngFor="let idx of item.indexes;let last = last"
             [class.mb-2]="!last">
+
             <div class="d-flex justify-content-between align-items-center">
               <p class="my-0 d-flex justify-content-between align-items-center text-muted">
                 {{idx?.name}} <mat-icon class="mx-2">swap_horiz</mat-icon>
                 <span *ngFor="let col of idx.columns;let lastCol = last">{{col + (lastCol ? '' : ', ')}}</span>
               </p>
+
+              <button
+                mat-icon-button
+                color="warn"
+                title="Drop index ..."
+                (click)="dropItem(idx, 'index', item.foreign_keys, item.name)">
+                <mat-icon>delete</mat-icon>
+              </button>
+
             </div>
+
           </div>
+
         </div>
 
       </mat-card-content>
