@@ -436,6 +436,7 @@ export class SqlService {
     databaseType: string,
     connectionString: string,
     databaseName: string,
+    tableName: string,
     indexName: string) {
 
     return new Observable<any>(subscriber => {
@@ -446,6 +447,8 @@ export class SqlService {
         encodeURIComponent(connectionString) +
         '&databaseName=' +
         encodeURIComponent(databaseName) +
+        '&tableName=' +
+        encodeURIComponent(tableName) +
         '&indexName=' +
         encodeURIComponent(indexName)).subscribe({
           next: (result) => {

@@ -171,6 +171,10 @@ if
                   strings.concat
                      get-value:x:@.tail
                      .:" on delete cascade"
+         set-value:x:@.tail
+            strings.concat
+               get-value:x:@.tail
+               .:"; "
 
 // Appending semi colon at end.
 set-value:x:@.sql
@@ -178,7 +182,6 @@ set-value:x:@.sql
       get-value:x:@.sql
       .:"; "
       get-value:x:@.tail
-      .:"; "
 
 // Appending index if caller requested it.
 if
@@ -193,7 +196,7 @@ if
             get-value:x:@.arguments/*/columnName
             .:"_idx on "
             get-value:x:@.arguments/*/tableName
-            .:(
+            .:" ("
             get-value:x:@.arguments/*/columnName
             .:)
 

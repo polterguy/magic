@@ -1,0 +1,71 @@
+
+/*
+ * Lists all indexes keys in some MySQL table.
+ * 
+ * Arguments
+ * 
+ * - [connection-string] - What connection string to use
+ * - [database] - What database you want to check
+ * - [table] - What table you want to check
+ */
+slots.create:magic.db.mysql.indexes
+
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/database
+   validators.mandatory:x:@.arguments/*/table
+
+   // Opens up our connection
+   .connection:[information_schema]
+   if
+      and
+         not
+            eq
+               get-value:x:@.arguments/*/connection-string
+               .
+         not
+            eq
+               get-value:x:@.arguments/*/connection-string
+               .:
+      .lambda
+         set-value:x:@.connection
+            strings.concat
+               .:[
+               get-value:x:@.arguments/*/connection-string
+               .:|
+               get-value:x:@.arguments/*/database
+               .:]
+   else
+      set-value:x:@.connection
+         strings.concat
+            .:[generic|
+            get-value:x:@.arguments/*/database
+            .:]
+   mysql.connect:x:@.connection
+
+      // Dynamically creating our SQL.
+      strings.concat
+         .:@"show indexes from "
+         get-value:x:@.arguments/*/table
+      mysql.select:x:@strings.concat
+
+      /*
+       * Creating our return value, by projecting it into
+       * a generic form, that does not rely upon MySQL's syntactic
+       * details.
+       */
+      for-each:x:@mysql.select/*
+         if
+            neq:x:@.dp/#/*/Key_name
+               .:PRIMARY
+            .lambda
+               unwrap:x:+/*/*/*
+               add:x:@mysql.connect/*/return-nodes
+                  .
+                     .
+                        name:x:@.dp/#/*/Key_name
+                        columns
+               unwrap:x:+/*/*
+               add:x:@mysql.connect/*/return-nodes/0/-/*/columns
+                  .
+                     .:x:@.dp/#/*/Column_name
+      return-nodes

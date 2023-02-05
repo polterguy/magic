@@ -6,6 +6,7 @@
  * - [databaseType] - Database type, typically 'mssql' or 'mysql'.
  * - [connectionString] - Connection string to use
  * - [databaseName] - Name of database
+ * - [tableName] - Name of table where index can be found
  * - [indexName] - Name of table
  * - [generate] - If true will not execute SQL but only return DDL to caller
  */
@@ -13,6 +14,7 @@
    databaseType:string
    connectionString:string
    databaseName:string
+   tableName:string
    indexName:string
    generate:bool
 .description:Deletes the specified index from your database
@@ -24,6 +26,7 @@ auth.ticket.verify:root
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/connectionString
 validators.mandatory:x:@.arguments/*/databaseName
+validators.mandatory:x:@.arguments/*/tableName
 validators.mandatory:x:@.arguments/*/indexName
 validators.mandatory:x:@.arguments/*/databaseType
 validators.enum:x:@.arguments/*/databaseType
@@ -36,7 +39,9 @@ validators.enum:x:@.arguments/*/databaseType
 .sql
 set-value:x:@.sql
    strings.concat
-      .:"drop index "
+      .:"alter table "
+      get-value:x:@.arguments/*/tableName
+      .:" drop index "
       get-value:x:@.arguments/*/indexName
       .:;
 
