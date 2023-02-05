@@ -110,11 +110,20 @@ export class AutoGeneratorComponent extends GeneratorBase implements OnInit, OnD
 
     // Finding table names from currently selected database catalog.
     const db = this.databases.find((item: any) => item.name === this.selectedDatabase);
+
     if (db?.tables?.length) {
+
       this.availableTables = this.databases.find((item: any) => item.name === this.selectedDatabase).tables;
       let names: string[] = this.availableTables.map((item: any) => { return item.name });
       this.selectedTables = new FormControl({ value: names, disabled: false });
+
+      if (this.availableTables.length === 1) {
+
+        this.secondaryURL = this.selectedTables.value.toString().toLowerCase()
+      }
+
     } else {
+
       this.selectedTables = new FormControl({ value: '', disabled: true });
     }
 
