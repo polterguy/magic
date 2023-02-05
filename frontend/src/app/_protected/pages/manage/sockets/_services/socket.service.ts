@@ -10,9 +10,9 @@ import { Injectable } from '@angular/core';
 // Application specific imports.
 import { Count } from '../../../../../models/count.model';
 import { Message } from '../../../../../models/message.model';
-import { Response } from '../../../../../models/response.model';
 import { SocketUser } from '../../endpoints/_models/socket-user.model';
 import { HttpService } from 'src/app/_general/services/http.service';
+import { MagicResponse } from 'src/app/_general/models/magic-response.model';
 
 /**
  * Socket service, allowing you to retrieve data about sockets and publish socket messages.
@@ -81,7 +81,7 @@ export class SocketService {
     }
 
     // Invoking backend returning observable to caller.
-    return this.httpService.post<Response>('/magic/system/sockets/publish', {
+    return this.httpService.post<MagicResponse>('/magic/system/sockets/publish', {
       client,
       roles,
       groups,

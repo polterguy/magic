@@ -11,13 +11,13 @@ import { Inject, Injectable, LOCALE_ID } from '@angular/core';
 import { saveAs } from "file-saver";
 
 // Application specific imports.
-import { Crudify } from '../_models/crudify.model';
-import { LocResult } from '../_models/loc-result.model';
-import { CustomSql } from '../_models/custom-sql.model';
-import { Response } from 'src/app/models/response.model';
 import { Template } from 'src/app/models/template.model';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { HttpService } from 'src/app/_general/services/http.service';
+import { Crudify } from '../models/crudify.model';
+import { LocResult } from '../models/loc-result.model';
+import { CustomSql } from '../models/custom-sql.model';
+import { MagicResponse } from '../models/magic-response.model';
 
 /**
  * Crudify service, allows you to crudify your databases.
@@ -70,7 +70,7 @@ export class CrudifyService {
    * @param data Input for process
    */
   generateSqlEndpoint(data: CustomSql) {
-    return this.httpService.post<Response>('/magic/system/crudifier/custom-sql', data);
+    return this.httpService.post<MagicResponse>('/magic/system/crudifier/custom-sql', data);
   }
 
   /**

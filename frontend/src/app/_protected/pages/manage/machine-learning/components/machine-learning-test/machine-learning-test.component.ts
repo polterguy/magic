@@ -5,11 +5,11 @@
 
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Response } from 'src/app/models/response.model';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { MachineLearningTrainingService } from 'src/app/_general/services/machine-learning-training.service';
 import { OpenAIService } from 'src/app/_general/services/openai.service';
-import { CodemirrorActionsService } from 'src/app/_protected/pages/create/hyper-ide/services/codemirror-actions.service';
+import { CodemirrorActionsService } from 'src/app/_general/services/codemirror-actions.service';
+import { MagicResponse } from 'src/app/_general/models/magic-response.model';
 
 /**
  * Helper component to test model.
@@ -56,7 +56,7 @@ export class MachineLearningTestComponent implements OnInit {
     this.isLoading = true;
 
     this.openAIService.query(this.prompt, this.data.type).subscribe({
-      next: (result: Response) => {
+      next: (result: MagicResponse) => {
 
         this.generalService.hideLoading();
         this.isLoading = false;

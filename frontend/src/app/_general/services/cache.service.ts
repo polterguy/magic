@@ -10,6 +10,7 @@ import { Count } from 'src/app/models/count.model';
 // Application specific imports.
 import { HttpService } from 'src/app/_general/services/http.service';
 import { CacheItem } from 'src/app/_protected/models/common/cache-item.model';
+import { MagicResponse } from '../models/magic-response.model';
 
 /**
  * Cache service allowing the user to modify his or her cache, viewing items, removing
@@ -43,7 +44,7 @@ export class CacheService {
   }
 
   delete(id: string) {
-    return this.httpService.delete<Response>('/magic/system/cache/delete?id=' + encodeURIComponent(id));
+    return this.httpService.delete<MagicResponse>('/magic/system/cache/delete?id=' + encodeURIComponent(id));
   }
 
   clear(filter: string = null) {
@@ -51,6 +52,6 @@ export class CacheService {
     if (filter !== null && filter !== '') {
       query += '?filter=' + encodeURIComponent(filter);
     }
-    return this.httpService.delete<Response>('/magic/system/cache/empty' + query);
+    return this.httpService.delete<MagicResponse>('/magic/system/cache/empty' + query);
   }
 }

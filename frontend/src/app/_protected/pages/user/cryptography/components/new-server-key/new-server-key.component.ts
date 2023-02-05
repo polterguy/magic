@@ -9,7 +9,7 @@ import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messa
 import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { CryptoService } from '../../_services/crypto.service';
-import { Response } from 'src/app/_protected/models/common/response.model';
+import { MagicResponse } from 'src/app/_general/models/magic-response.model';
 import { ConfigService } from '../../../../../../_general/services/config.service';
 import { BackendService } from 'src/app/_general/services/backend.service';
 
@@ -106,7 +106,7 @@ export class NewServerKeyComponent implements OnInit {
     }
 
     this.cryptoService.getFingerprint(this.newKey.content).subscribe({
-      next: (result: Response) => {
+      next: (result: MagicResponse) => {
 
         this.newKey.fingerprint = result.result;
       },
@@ -126,7 +126,7 @@ export class NewServerKeyComponent implements OnInit {
   private getContent() {
 
     this.configService.getGibberish(100, 200).subscribe({
-      next: (result: Response) => {
+      next: (result: MagicResponse) => {
 
         this.newKey.content = result.result;
       },

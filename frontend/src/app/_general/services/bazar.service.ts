@@ -10,13 +10,13 @@ import { HttpClient } from '@angular/common/http';
 
 // Application specific imports.
 import { Count } from 'src/app/models/count.model';
-import { Response } from 'src/app/models/response.model';
 import { HttpService } from 'src/app/_general/services/http.service';
-import { FileService } from 'src/app/_protected/pages/create/hyper-ide/services/file.service';
+import { FileService } from 'src/app/_general/services/file.service';
 import { BazarApp } from 'src/app/models/bazar-app.model';
 import { environment } from 'src/environments/environment';
 import { AppManifest } from 'src/app/models/app-manifest';
 import { PurchaseStatus } from 'src/app/models/purchase-status.model';
+import { MagicResponse } from '../models/magic-response.model';
 
 /**
  * Bazar service allowing you to query Aista's Bazar, and/or install Bazar items locally on your
@@ -68,7 +68,7 @@ export class BazarService {
   }
 
   subscribeToNewsletter(data: any) {
-    return this.httpClient.post<Response>(environment.bazarUrl + '/magic/modules/bazar/subscribe', data);
+    return this.httpClient.post<MagicResponse>(environment.bazarUrl + '/magic/modules/bazar/subscribe', data);
   }
 
   purchaseBazarItem(
@@ -91,11 +91,11 @@ export class BazarService {
   }
 
   canDownloadBazarItem(token: string) {
-    return this.httpClient.get<Response>(environment.bazarUrl + '/magic/modules/bazar/can-download?token=' + encodeURIComponent(token));
+    return this.httpClient.get<MagicResponse>(environment.bazarUrl + '/magic/modules/bazar/can-download?token=' + encodeURIComponent(token));
   }
 
   downloadBazarItem(app: BazarApp, token: string) {
-    return this.httpService.post<Response>('/magic/system/bazar/download-from-bazar', {
+    return this.httpService.post<MagicResponse>('/magic/system/bazar/download-from-bazar', {
       url: environment.bazarUrl + '/magic/modules/bazar/download?token=' + token,
       name: app.folder_name
     });
@@ -105,7 +105,7 @@ export class BazarService {
     if (!app.token || app.token === '') {
       return throwError(() => new Error('No token found in app\'s manifest'));
     }
-    return this.httpService.post<Response>('/magic/system/bazar/download-from-bazar', {
+    return this.httpService.post<MagicResponse>('/magic/system/bazar/download-from-bazar', {
       url: environment.bazarUrl + '/magic/modules/bazar/download?token=' + app.token,
       name: app.module_name
     });
@@ -122,11 +122,11 @@ export class BazarService {
   }
 
   canInstall(required_magic_version: string) {
-    return this.httpService.get<Response>('/magic/system/bazar/can-install?required_magic_version=' + encodeURIComponent(required_magic_version));
+    return this.httpService.get<MagicResponse>('/magic/system/bazar/can-install?required_magic_version=' + encodeURIComponent(required_magic_version));
   }
 
   installBazarItem(folder: string, app_version: string, name: string, token: string) {
-    return this.httpService.put<Response>('/magic/system/file-system/install', {
+    return this.httpService.put<MagicResponse>('/magic/system/file-system/install', {
       folder: '/modules/' + folder + '/',
       app_version,
       name,
@@ -140,6 +140,6 @@ export class BazarService {
       '&type=aista_com' +
       '&recaptcha_response=' +
       encodeURIComponent(recaptch_response);
-    return this.httpClient.get<Response>(url);
+    return this.httpClient.get<MagicResponse>(url);
   }
 }

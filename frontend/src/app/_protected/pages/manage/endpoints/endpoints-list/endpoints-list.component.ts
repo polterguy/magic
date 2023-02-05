@@ -11,7 +11,7 @@ import { Observable } from 'rxjs';
 import { AssumptionsComponent } from 'src/app/_general/components/assumptions/assumptions.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
-import { FileService } from '../../../create/hyper-ide/services/file.service';
+import { FileService } from '../../../../../_general/services/file.service';
 
 @Component({
   selector: 'app-endpoints-list',

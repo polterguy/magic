@@ -7,7 +7,7 @@
  * Generic model for endpoints not returning anything but
  * a single string value.
  */
-export class Response {
+export class MagicResponse {
 
   /**
    * Value as returned from server.

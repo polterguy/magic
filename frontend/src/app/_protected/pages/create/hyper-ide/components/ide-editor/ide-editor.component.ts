@@ -20,8 +20,8 @@ import { EvaluatorService } from '../../../../../../_general/services/evaluator.
 import { ExecuteEndpointDialogComponent } from '../../../../../../_general/components/execute-endpoint-dialog/execute-endpoint-dialog.component';
 import { FileNode } from '../../models/file-node.model';
 import { MacroDefinition } from '../../models/macro-definition.model';
-import { CodemirrorActionsService } from '../../services/codemirror-actions.service';
-import { FileService } from '../../services/file.service';
+import { CodemirrorActionsService } from '../../../../../../_general/services/codemirror-actions.service';
+import { FileService } from '../../../../../../_general/services/file.service';
 import { VocabularyService } from '../../../../../../_general/services/vocabulary.service';
 import { Endpoint } from 'src/app/_protected/models/common/endpoint.model';
 import { AiService } from 'src/app/_general/services/ai.service';

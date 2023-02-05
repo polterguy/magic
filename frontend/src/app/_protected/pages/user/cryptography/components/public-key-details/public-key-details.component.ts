@@ -8,8 +8,8 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { CryptoService } from '../../_services/crypto.service';
-import { CodemirrorActionsService } from 'src/app/_protected/pages/create/hyper-ide/services/codemirror-actions.service';
-import { Response } from 'src/app/_protected/models/common/response.model';
+import { CodemirrorActionsService } from 'src/app/_general/services/codemirror-actions.service';
+import { MagicResponse } from 'src/app/_general/models/magic-response.model';
 import { PublicKey } from '../../_models/public-key.model';
 import { Model } from 'src/app/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
@@ -126,7 +126,7 @@ export class PublicKeyDetailsComponent implements OnInit {
 
     key.key.vocabulary = key.options.hyperlambda;
     this.cryptoService.getFingerprint(key.key.content).subscribe({
-      next: (response: Response) => {
+      next: (response: MagicResponse) => {
         const fingerprintUpdated = key.key.fingerprint !== response.result;
         key.key.fingerprint = response.result;
         if (fingerprintUpdated) {

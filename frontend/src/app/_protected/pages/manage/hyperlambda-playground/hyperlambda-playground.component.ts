@@ -10,17 +10,17 @@ import { LoadSnippetDialogComponent } from 'src/app/_general/components/load-sni
 import { SnippetNameDialogComponent } from 'src/app/_general/components/snippet-name-dialog/snippet-name-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { EvaluatorService } from '../../../../_general/services/evaluator.service';
-import { Response } from 'src/app/_protected/models/common/response.model';
+import { MagicResponse } from 'src/app/_general/models/magic-response.model';
 
 import { Subscription } from 'rxjs';
 import { ShortkeysComponent } from 'src/app/_general/components/shortkeys/shortkeys.component';
-import { CodemirrorActionsService } from '../../create/hyper-ide/services/codemirror-actions.service';
+import { CodemirrorActionsService } from '../../../../_general/services/codemirror-actions.service';
 import { Model } from 'src/app/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 
 // CodeMirror options.
 import hyperlambda from 'src/app/codemirror/options/hyperlambda.json';
 import hyperlambda_readonly from 'src/app/codemirror/options/hyperlambda_readonly.json';
-import { FileService } from '../../create/hyper-ide/services/file.service';
+import { FileService } from '../../../../_general/services/file.service';
 
 /**
  * Hyperlambda Playground component, allowing user to execute arbitrary Hyperlambda, and/or
@@ -113,7 +113,7 @@ export class HyperlambdaPlaygroundComponent implements OnInit, OnDestroy {
     this.generalService.showLoading();
     const selectedText = this.input.editor.getSelection();
     this.evaluatorService.execute(selectedText == '' ? this.input.hyperlambda : selectedText).subscribe({
-      next: (res: Response) => {
+      next: (res: MagicResponse) => {
         this.output.hyperlambda = res.result;
         this.generalService.showFeedback('Hyperlambda was successfully executed', 'successMessage');
         this.generalService.hideLoading();

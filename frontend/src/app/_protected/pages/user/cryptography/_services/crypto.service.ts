@@ -11,10 +11,10 @@ import { KeyPair } from '../_models/key-pair.model';
 import { Count } from '../../../../../models/count.model';
 import { PublicKey } from '../_models/public-key.model';
 import { Affected } from '../../../../../models/affected.model';
-import { Response } from '../../../../../models/response.model';
 import { PublicKeyFull } from '../_models/public-key-full.model';
 import { CryptoInvocation } from '../_models/crypto-invocations.model';
 import { HttpService } from 'src/app/_general/services/http.service';
+import { MagicResponse } from 'src/app/_general/models/magic-response.model';
 
 /**
  * Crypto service, allowing you to administrate your cryptography keys.
@@ -132,7 +132,7 @@ export class CryptoService {
    * @param username Username caller wants to associate with key.
    */
   associateWithUser(keyId: number, username: string) {
-    return this.httpService.put<Response>('/magic/system/crypto/associate-user', {
+    return this.httpService.put<MagicResponse>('/magic/system/crypto/associate-user', {
       keyId,
       username
     });
@@ -144,7 +144,7 @@ export class CryptoService {
    * @param keyId Key caller wants to retrieve association for.
    */
   getUserAssociation(keyId: number) {
-    return this.httpService.get<Response>('/magic/system/crypto/user-association?keyId=' + keyId);
+    return this.httpService.get<MagicResponse>('/magic/system/crypto/user-association?keyId=' + keyId);
   }
 
   /**
@@ -153,7 +153,7 @@ export class CryptoService {
    * @param keyId Key caller wants to associate with user.
    */
   deleteUserAssociation(keyId: number) {
-    return this.httpService.put<Response>('/magic/system/crypto/deassociate-user', {
+    return this.httpService.put<MagicResponse>('/magic/system/crypto/deassociate-user', {
       keyId,
     });
   }
@@ -190,7 +190,7 @@ export class CryptoService {
    * @param key Key caller wants to import
    */
   createPublicKey(key: PublicKey) {
-    return this.httpService.post<Response>('/magic/system/magic/crypto_keys', {
+    return this.httpService.post<MagicResponse>('/magic/system/magic/crypto_keys', {
       type: key.type,
       subject: key.subject,
       email: key.email,
@@ -215,7 +215,7 @@ export class CryptoService {
     email: string,
     domain: string,
     content: string) {
-    return this.httpService.post<Response>('/magic/system/crypto/import', {
+    return this.httpService.post<MagicResponse>('/magic/system/crypto/import', {
       subject,
       email,
       domain,
@@ -229,7 +229,7 @@ export class CryptoService {
    * @param key Key to retrieve fingerprint for
    */
   getFingerprint(key: string) {
-    return this.httpService.get<Response>('/magic/system/crypto/get-fingerprint?key=' + encodeURIComponent(key));
+    return this.httpService.get<MagicResponse>('/magic/system/crypto/get-fingerprint?key=' + encodeURIComponent(key));
   }
 
   /**

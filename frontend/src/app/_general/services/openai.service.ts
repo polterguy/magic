@@ -5,10 +5,10 @@
 
 // Angular and system imports.
 import { Injectable } from '@angular/core';
-import { Response } from 'src/app/models/response.model';
 
 // Application specific imports.
 import { HttpService } from 'src/app/_general/services/http.service';
+import { MagicResponse } from '../models/magic-response.model';
 
 /**
  * OpenAI model.
@@ -34,7 +34,7 @@ export class OpenAIService {
    * Queries OpenAI with the specified prompt and returns result to caller.
    */
   query(prompt: string, type: string) {
-    return this.httpService.get<Response>(
+    return this.httpService.get<MagicResponse>(
       '/magic/system/openai/prompt?prompt=' +
       encodeURIComponent(prompt) +
       '&type=' +
@@ -89,7 +89,7 @@ export class OpenAIService {
    * Uploads training data to OpenAI and starts a new training session.
    */
   start_training(data: any) {
-    return this.httpService.post<Response>('/magic/system/openai/train', data);
+    return this.httpService.post<MagicResponse>('/magic/system/openai/train', data);
   }
 
   /**

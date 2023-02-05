@@ -9,8 +9,8 @@ import { Injectable } from '@angular/core';
 // Application specific imports.
 import { Task } from '../_models/task.model';
 import { Count } from '../../../../../models/count.model';
-import { Response } from '../../../../../models/response.model';
 import { HttpService } from 'src/app/_general/services/http.service';
+import { MagicResponse } from 'src/app/_general/models/magic-response.model';
 
 /**
  * Task service, allows you to Read, Create, Update and Delete tasks
@@ -81,7 +81,7 @@ export class TaskService {
    * @param description Description for task as humanly readable text
    */
   create(id: string, hyperlambda: string, description: string = null) {
-    return this.httpService.post<Response>(
+    return this.httpService.post<MagicResponse>(
       '/magic/system/tasks/create', {
       id,
       hyperlambda,
@@ -97,7 +97,7 @@ export class TaskService {
    * @param description Description for task as humanly readable text
    */
   update(id: string, hyperlambda: string, description: string = null) {
-    return this.httpService.post<Response>(
+    return this.httpService.post<MagicResponse>(
       '/magic/system/tasks/update', {
       id,
       hyperlambda,
@@ -111,7 +111,7 @@ export class TaskService {
    * @param id Unique name or ID of task to execute
    */
   execute(id: string) {
-    return this.httpService.post<Response>(
+    return this.httpService.post<MagicResponse>(
       '/magic/system/tasks/execute', {
       id
     });
@@ -123,7 +123,7 @@ export class TaskService {
    * @param id Unique name or ID of task to delete
    */
   delete(id: string) {
-    return this.httpService.delete<Response>('/magic/system/tasks/delete?id=' + encodeURIComponent(id));
+    return this.httpService.delete<MagicResponse>('/magic/system/tasks/delete?id=' + encodeURIComponent(id));
   }
 
   /**
@@ -143,7 +143,7 @@ export class TaskService {
     if (repeats) {
       payload.repeats = repeats;
     }
-    return this.httpService.post<Response>('/magic/system/tasks/due/add', payload);
+    return this.httpService.post<MagicResponse>('/magic/system/tasks/due/add', payload);
   }
 
   /**
@@ -152,6 +152,6 @@ export class TaskService {
    * @param id ID of task schedule to delete
    */
   deleteSchedule(id: number) {
-    return this.httpService.delete<Response>('/magic/system/tasks/due/delete?id=' + id);
+    return this.httpService.delete<MagicResponse>('/magic/system/tasks/due/delete?id=' + id);
   }
 }

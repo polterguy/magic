@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
-import { Response } from 'src/app/_protected/models/common/response.model';
+import { MagicResponse } from 'src/app/_general/models/magic-response.model';
 import { BackendService } from 'src/app/_general/services/backend.service';
 import { AuthenticateResponse } from 'src/app/_protected/models/auth/authenticate-response.model';
 import { NameEmailModel } from 'src/app/_protected/models/auth/name-email.model';
@@ -38,7 +38,7 @@ export class ConfigService {
   }
 
   saveConfig(config: any) {
-    return this.httpService.post<Response>('/magic/system/config/save', config);
+    return this.httpService.post<MagicResponse>('/magic/system/config/save', config);
   }
 
   setup(payload: SetupModel) {
@@ -66,7 +66,7 @@ export class ConfigService {
   }
 
   getGibberish(min: number, max: number) {
-    return this.httpService.get<Response>('/magic/system/misc/gibberish?min=' + min + '&max=' + max);
+    return this.httpService.get<MagicResponse>('/magic/system/misc/gibberish?min=' + min + '&max=' + max);
   }
 
   versionCompare(version_1: string, version_2: string) {

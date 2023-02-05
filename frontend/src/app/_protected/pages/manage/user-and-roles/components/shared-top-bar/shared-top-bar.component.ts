@@ -6,7 +6,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { FileService } from 'src/app/_protected/pages/create/hyper-ide/services/file.service';
+import { FileService } from 'src/app/_general/services/file.service';
 import { Role } from '../../_models/role.model';
 import { ManageRoleDialogComponent } from '../manage-role-dialog/manage-role-dialog.component';
 import { NewUserDialogComponent } from '../new-user-dialog/new-user-dialog.component';

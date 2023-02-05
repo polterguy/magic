@@ -12,7 +12,7 @@ import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { Token } from '../../_protected/models/common/token.model';
 import { Status } from '../../_protected/models/common/status.model';
 import { Backend } from '../../_protected/models/common/backend.model';
-import { Response } from '../../_protected/models/common/response.model';
+import { MagicResponse } from '../models/magic-response.model';
 import { CoreVersion } from '../../_protected/models/common/core-version.model';
 import { environment } from 'src/environments/environment';
 import { BackendsStorageService } from './backendsstorage.service';
@@ -158,19 +158,19 @@ export class BackendService {
     if (!this.active?.token) {
       return throwError(() => new Error('No token to verify'));
     }
-    return this.httpClient.get<Response>(
+    return this.httpClient.get<MagicResponse>(
       this.active.url +
       '/magic/system/auth/verify-ticket');
   }
 
   changePassword(password: string) {
-    return this.httpClient.put<Response>(
+    return this.httpClient.put<MagicResponse>(
       this.active.url +
       '/magic/system/auth/change-password', { password });
   }
 
   resetPassword(data: any) {
-    return this.httpClient.post<Response>(
+    return this.httpClient.post<MagicResponse>(
       this.active.url +
       '/magic/system/auth/send-reset-password-link', data);
   }
@@ -306,10 +306,10 @@ export class BackendService {
                     observer.complete();
 
                   } else {
-                    this.httpClient.get<Response>(
+                    this.httpClient.get<MagicResponse>(
                       environment.bazarUrl +
                       '/magic/modules/bazar/core-version').subscribe({
-                        next: (latestVersion: Response) => {
+                        next: (latestVersion: MagicResponse) => {
                           this._latestBazarVersion = latestVersion.result;
                           this._versionRetrieved.next(this.active.version);
                           observer.next(status);
@@ -333,17 +333,17 @@ export class BackendService {
    * retrieving recaptcha, if existing
    */
   public getRecaptchaKey() {
-    this.httpClient.get<Response>(
+    this.httpClient.get<MagicResponse>(
       environment.bazarUrl +
       '/magic/system/auth/recaptcha-key').subscribe({
-        next: (recaptcha: Response) => {
+        next: (recaptcha: MagicResponse) => {
           this._bazaarCaptchaKey = recaptcha.result;
         }
       });
-    this.httpClient.get<Response>(
+    this.httpClient.get<MagicResponse>(
       this.active.url +
       '/magic/system/auth/recaptcha-key').subscribe({
-        next: (recaptcha: Response) => {
+        next: (recaptcha: MagicResponse) => {
           this._activeCaptcha.next(recaptcha.result);
         }
       });

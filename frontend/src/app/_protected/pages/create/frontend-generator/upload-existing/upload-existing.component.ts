@@ -5,7 +5,7 @@
 
 import { Component } from '@angular/core';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { FileService } from '../../hyper-ide/services/file.service';
+import { FileService } from '../../../../../_general/services/file.service';
 
 /**
  * Helper component to upload an existing website as a ZIP file.

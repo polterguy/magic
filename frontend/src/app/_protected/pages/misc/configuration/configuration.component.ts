@@ -9,7 +9,7 @@ import { GeneralService } from 'src/app/_general/services/general.service';
 import { BackendService } from 'src/app/_general/services/backend.service';
 import { ConfigService } from '../../../../_general/services/config.service';
 
-import { CodemirrorActionsService } from '../../create/hyper-ide/services/codemirror-actions.service';
+import { CodemirrorActionsService } from '../../../../_general/services/codemirror-actions.service';
 import { Subscription } from 'rxjs';
 import { SmtpDialogComponent } from './components/smtp-dialog/smtp-dialog.component';
 import json from '../../../../codemirror/options/json.json'

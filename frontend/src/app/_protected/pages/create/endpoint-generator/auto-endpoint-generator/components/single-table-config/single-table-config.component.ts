@@ -4,7 +4,7 @@
  */
 
 import { Component, Input, OnInit } from '@angular/core';
-import { ColumnEx } from 'src/app/_protected/pages/create/endpoint-generator/_models/column-ex.model';
+import { ColumnEx } from 'src/app/_general/models/column-ex.model';
 
 /**
  * Helper component to configure DRUD generator for a single table.

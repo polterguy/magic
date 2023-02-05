@@ -19,8 +19,8 @@ import { FileNode } from '../../models/file-node.model';
 import { FlatNode } from './models/flat-node.model';
 import { MacroDefinition } from '../../models/macro-definition.model';
 import { TreeNode } from './models/tree-node.model';
-import { CodemirrorActionsService } from '../../services/codemirror-actions.service';
-import { FileService } from '../../services/file.service';
+import { CodemirrorActionsService } from '../../../../../../_general/services/codemirror-actions.service';
+import { FileService } from '../../../../../../_general/services/file.service';
 
 /**
  * Tree component for Hyper IDE displaying files and folders, allowing user
