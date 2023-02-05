@@ -1,6 +1,6 @@
 
 /*
- * Lists all foreign keys in some MySQL table.
+ * Lists all foreign keys in some PostgreSQL table.
  * 
  * Arguments
  * 
