@@ -5,7 +5,6 @@
 
 // Angular and system imports.
 import {
-  AfterViewInit,
   Component,
   Input,
   OnInit,
@@ -39,8 +38,7 @@ export class HyperlambdaComponent implements OnInit {
 
   constructor(
     private vocabularyService: VocabularyService,
-    private generalService: GeneralService) {
-  }
+    private generalService: GeneralService) { }
 
   ngOnInit() {
 
