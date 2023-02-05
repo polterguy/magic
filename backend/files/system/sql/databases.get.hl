@@ -137,6 +137,26 @@ cache.try-get:x:@strings.concat
                   add:x:@for-each/@for-each/@for-each/@.dp/#/*/tables/0/-/*/foreign_keys
                      .
                         .
+
+               // Retrieving indexes.
+               add:x:@for-each/@for-each/@for-each/@.dp/#/*/tables/0/-
+                  .
+                     indexes
+               strings.concat
+                  .:magic.db.
+                  get-value:x:@.databaseType
+                  .:.indexes
+               unwrap:x:+/*
+               signal:x:@strings.concat
+                  connection-string:x:@.connection-string
+                  database:x:@for-each/@for-each/@for-each/@.dp/#/*/name
+                  table:x:@.dp/#/*/table
+               for-each:x:@signal/*
+                  add:x:+/*/*
+                     get-nodes:x:@.dp/#/*
+                  add:x:@for-each/@for-each/@for-each/@for-each/@.dp/#/*/tables/0/-/*/indexes
+                     .
+                        .
          .catch
 
             // Silently ignoring, after logging, probably don't have access to database.

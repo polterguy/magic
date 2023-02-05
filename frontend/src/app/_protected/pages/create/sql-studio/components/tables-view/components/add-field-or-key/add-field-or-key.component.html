@@ -109,12 +109,22 @@
         </mat-form-field>
 
         <p class="d-flex justify-content-end">
+
+          <mat-checkbox
+            [(ngModel)]="formData.indexed"
+            color="primary"
+            class="me-2"
+            name="indexed">
+            Indexed
+          </mat-checkbox>
+
           <mat-checkbox
             [(ngModel)]="formData.nullable"
             color="primary"
             name="nullable">
             Nullable
           </mat-checkbox>
+
         </p>
 
       </mat-tab>

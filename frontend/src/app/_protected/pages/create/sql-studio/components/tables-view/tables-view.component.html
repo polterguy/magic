@@ -3,10 +3,12 @@
 <ng-container *ngIf="dbLoading">
 
   <app-loading-skeleton
-    [amount]="3"
-    [colClass]="'col-4'"
-    [blockHeight]="'250px'"
-    [hasShadow]="true"></app-loading-skeleton>
+    amount="3"
+    colClass="col-4"
+    blockHeight="250px"
+    hasShadow="true">
+  </app-loading-skeleton>
+
 </ng-container>
 
 <!-- Database tables -->
@@ -84,16 +86,32 @@
 
         </div>
 
-        <div class="row" [class.mt-4]="item.foreign_keys && item.foreign_keys.length > 0">
+        <!-- Foreign keys -->
+        <div class="row mt-4" *ngIf="item.foreign_keys && item.foreign_keys.length > 0">
           <div
             class="col-12 bg-light action-btn pointer py-0 small ms-3"
             (click)="scrollTableIntoView(fk)"
             *ngFor="let fk of item.foreign_keys;let last = last"
             [class.mb-2]="!last">
             <div class="d-flex justify-content-between align-items-center">
-              <p class="my-0 d-flex justify-content-between align-items-center">
+              <p class="my-0 d-flex justify-content-between align-items-center text-muted">
                 {{fk?.column}} <mat-icon class="mx-2">trending_flat</mat-icon>
                 {{fk?.foreign_table}}.{{fk.foreign_column}}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Indexes -->
+        <div class="row mt-4" *ngIf="item.indexes && item.indexes.length > 0">
+          <div
+            class="col-12 bg-light action-btn py-0 small ms-3"
+            *ngFor="let idx of item.indexes;let last = last"
+            [class.mb-2]="!last">
+            <div class="d-flex justify-content-between align-items-center">
+              <p class="my-0 d-flex justify-content-between align-items-center text-muted">
+                {{idx?.name}} <mat-icon class="mx-2">swap_horiz</mat-icon>
+                <span *ngFor="let col of idx.columns;let lastCol = last">{{col + (lastCol ? '' : ', ')}}</span>
               </p>
             </div>
           </div>

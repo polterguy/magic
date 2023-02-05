@@ -91,7 +91,7 @@ export class HyperlambdaPlaygroundComponent implements OnInit, OnDestroy {
       if (filename) {
         this.evaluatorService.saveSnippet(filename, this.input.hyperlambda).subscribe({
           next: () => {
-            this.generalService.showFeedback('Snippet successfully saved');
+            this.generalService.showFeedback('Snippet successfully saved', 'successMessage');
             this.filename = filename
           },
           error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')

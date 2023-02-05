@@ -12,6 +12,7 @@
  * - [foreignTable] - Table column links to
  * - [foreignField] - Field column links to
  * - [nullable] - If false will create a column that does NOT accept null values
+ * - [indexed] - If true will create an index for column
  * - [generate] - If true will not execute SQL but only return DDL to caller
  */
 .arguments
@@ -27,6 +28,7 @@
    foreignField:string
    cascading:bool
    nullable:bool
+   indexed:bool
    generate:bool
 .description:Adds the specified column to your specified table
 .type:internal
@@ -176,6 +178,24 @@ set-value:x:@.sql
       get-value:x:@.sql
       .:"; "
       get-value:x:@.tail
+      .:"; "
+
+// Appending index if caller requested it.
+if
+   and
+      exists:x:@.arguments/*/indexed
+      get-value:x:@.arguments/*/indexed
+   .lambda
+      set-value:x:@.sql
+         strings.concat
+            get-value:x:@.sql
+            .:"create index "
+            get-value:x:@.arguments/*/columnName
+            .:"_idx on "
+            get-value:x:@.arguments/*/tableName
+            .:(
+            get-value:x:@.arguments/*/columnName
+            .:)
 
 // Checking if caller only wants to generate SQL statement.
 if:x:@.arguments/*/generate
@@ -185,7 +205,6 @@ if:x:@.arguments/*/generate
 
 
 // Opening our database connection.
-log.info:x:@.sql
 strings.concat
    .:[
    get-value:x:@.arguments/*/connectionString
