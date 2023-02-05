@@ -42,7 +42,6 @@ export class SingleTableConfigComponent implements OnInit {
   ngOnInit() {
 
     this.watchDbLoading();
-    console.log(this.fkLong);
   }
 
   hasForeignKey(el: any) {
