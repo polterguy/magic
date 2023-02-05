@@ -10,10 +10,10 @@ import { Injectable } from '@angular/core';
 import { User, User_Extra } from '../_models/user.model';
 import { Count } from '../../../../../models/count.model';
 import { UserRoles } from '../_models/user-roles.model';
-import { Response } from 'src/app/models/response.model';
 import { Affected } from '../../../../../models/affected.model';
 import { AuthenticateResponse } from '../_models/authenticate-response.model';
 import { HttpService } from 'src/app/_general/services/http.service';
+import { MagicResponse } from 'src/app/_general/models/magic-response.model';
 
 /**
  * User service, allowing you to administrate the users in your backend.
@@ -83,7 +83,7 @@ export class UserService {
    * @param releaseDate Date and time for when user can access Magic again
    */
   imprison(username: string, releaseDate: Date) {
-    return this.httpService.put<Response>('/magic/system/auth/imprison', {
+    return this.httpService.put<MagicResponse>('/magic/system/auth/imprison', {
       username,
       releaseDate,
     });

@@ -23,14 +23,14 @@ export class HttpService {
     private httpClient: HttpClient,
     private backendService: BackendService) { }
 
-  get<Response>(url: string, requestOptions: object = null) {
+  get<MagicResponse>(url: string, requestOptions: object = null) {
     if (!this.backendService.active) {
       return throwError(() => new Error('Not connected to a backend'));
     } else {
       if (!requestOptions) {
-        return this.httpClient.get<Response>(this.backendService.active.url + url);
+        return this.httpClient.get<MagicResponse>(this.backendService.active.url + url);
       } else {
-        return this.httpClient.get<Response>(this.backendService.active.url + url, requestOptions);
+        return this.httpClient.get<MagicResponse>(this.backendService.active.url + url, requestOptions);
       }
     }
   }
@@ -58,50 +58,50 @@ export class HttpService {
     }
   }
 
-  post<Response>(url: string, req: any, requestOptions: object = null) {
+  post<MagicResponse>(url: string, req: any, requestOptions: object = null) {
     if (!this.backendService.active) {
       return throwError(() => new Error('Not connected to a backend'));
     } else {
       if (!requestOptions) {
-        return this.httpClient.post<Response>(this.backendService.active.url + url, req);
+        return this.httpClient.post<MagicResponse>(this.backendService.active.url + url, req);
       } else {
-        return this.httpClient.post<Response>(this.backendService.active.url + url, req, requestOptions);
+        return this.httpClient.post<MagicResponse>(this.backendService.active.url + url, req, requestOptions);
       }
     }
   }
 
-  put<Response>(url: string, req: any, requestOptions: object = null) {
+  put<MagicResponse>(url: string, req: any, requestOptions: object = null) {
     if (!this.backendService.active) {
       return throwError(() => new Error('Not connected to a backend'));
     } else {
       if (!requestOptions) {
-        return this.httpClient.put<Response>(this.backendService.active.url + url, req);
+        return this.httpClient.put<MagicResponse>(this.backendService.active.url + url, req);
       } else {
-        return this.httpClient.put<Response>(this.backendService.active.url + url, req, requestOptions);
+        return this.httpClient.put<MagicResponse>(this.backendService.active.url + url, req, requestOptions);
       }
     }
   }
 
-  patch<Response>(url: string, req: any, requestOptions: object = null) {
+  patch<MagicResponse>(url: string, req: any, requestOptions: object = null) {
     if (!this.backendService.active) {
       return throwError(() => new Error('Not connected to a backend'));
     } else {
       if (!requestOptions) {
-        return this.httpClient.patch<Response>(this.backendService.active.url + url, req);
+        return this.httpClient.patch<MagicResponse>(this.backendService.active.url + url, req);
       } else {
-        return this.httpClient.patch<Response>(this.backendService.active.url + url, req, requestOptions);
+        return this.httpClient.patch<MagicResponse>(this.backendService.active.url + url, req, requestOptions);
       }
     }
   }
 
-  delete<Response>(url: string, requestOptions: object = null) {
+  delete<MagicResponse>(url: string, requestOptions: object = null) {
     if (!this.backendService.active) {
       return throwError(() => new Error('Not connected to a backend'));
     } else {
       if (!requestOptions) {
-        return this.httpClient.delete<Response>(this.backendService.active.url + url);
+        return this.httpClient.delete<MagicResponse>(this.backendService.active.url + url);
       } else {
-        return this.httpClient.delete<Response>(this.backendService.active.url + url, requestOptions);
+        return this.httpClient.delete<MagicResponse>(this.backendService.active.url + url, requestOptions);
       }
     }
   }

@@ -10,8 +10,8 @@ import { Injectable } from '@angular/core';
 import { saveAs } from "file-saver";
 
 // Application specific imports.
-import { Response } from '../../../../models/common/response.model';
-import { MacroDefinition } from '../../../../models/common/macro-definition.model';
+import { MagicResponse } from '../models/magic-response.model';
+import { MacroDefinition } from '../../_protected/models/common/macro-definition.model';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { HttpService } from 'src/app/_general/services/http.service';
 import { Observable } from 'rxjs';
@@ -106,7 +106,7 @@ export class FileService {
    */
   public rename(oldName: string, newName: string) {
 
-    return this.httpService.post<Response>(
+    return this.httpService.post<MagicResponse>(
       '/magic/system/file-system/rename', {
       oldName,
       newName,
@@ -118,7 +118,7 @@ export class FileService {
    */
   public deleteFile(file: string) {
 
-    return this.httpService.delete<Response>('/magic/system/file-system/file?file=' + encodeURIComponent(file));
+    return this.httpService.delete<MagicResponse>('/magic/system/file-system/file?file=' + encodeURIComponent(file));
   }
 
   /**
@@ -222,7 +222,7 @@ export class FileService {
    */
   public createFolder(folder: string) {
 
-    return this.httpService.put<Response>('/magic/system/file-system/folder', { folder });
+    return this.httpService.put<MagicResponse>('/magic/system/file-system/folder', { folder });
   }
 
   /**
@@ -230,7 +230,7 @@ export class FileService {
    */
   public deleteFolder(folder: string) {
 
-    return this.httpService.delete<Response>('/magic/system/file-system/folder?folder=' + encodeURIComponent(folder));
+    return this.httpService.delete<MagicResponse>('/magic/system/file-system/folder?folder=' + encodeURIComponent(folder));
   }
 
   /**
@@ -246,7 +246,7 @@ export class FileService {
    */
   public executeMacro(file: string, args: any) {
 
-    return this.httpService.post<Response>('/magic/system/ide/execute-macro', { macro: file, args });
+    return this.httpService.post<MagicResponse>('/magic/system/ide/execute-macro', { macro: file, args });
   }
 
   /**
@@ -264,7 +264,7 @@ export class FileService {
    */
   public unzip(file: string) {
 
-    return this.httpService.put<Response>('/magic/system/file-system/unzip', {
+    return this.httpService.put<MagicResponse>('/magic/system/file-system/unzip', {
       file,
       create_folder: true,
     });

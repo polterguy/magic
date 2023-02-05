@@ -9,16 +9,15 @@ import { FormControl } from '@angular/forms';
 import { forkJoin, Observable, Subscription } from 'rxjs';
 import { Model } from 'src/app/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { LocResult } from '../_models/loc-result.model';
-import { CrudifyService } from '../_services/crudify.service';
-import { TransformModelService } from '../_services/transform-model.service';
+import { CrudifyService } from '../../../../../_general/services/crudify.service';
+import { TransformModelService } from '../../../../../_general/services/transform-model.service';
 import { LogService } from '../../../../../_general/services/log.service';
 import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
 import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 
 // CodeMirror options.
 import hyperlambda from '../../../../../codemirror/options/hyperlambda.json';
-import { CodemirrorActionsService } from '../../hyper-ide/services/codemirror-actions.service';
+import { CodemirrorActionsService } from '../../../../../_general/services/codemirror-actions.service';
 import { MatDialog } from '@angular/material/dialog';
 import { EvaluatorService } from '../../../../../_general/services/evaluator.service';
 import { LoadSnippetDialogComponent } from 'src/app/_general/components/load-snippet-dialog/load-snippet-dialog.component';
@@ -27,6 +26,7 @@ import { ActivatedRoute } from '@angular/router';
 import { SqlService } from 'src/app/_general/services/sql.service';
 import { GeneratorBase } from '../generator-base';
 import { RoleService } from '../../../manage/user-and-roles/_services/role.service';
+import { LocResult } from 'src/app/_general/models/loc-result.model';
 
 /**
  * Auto endpoint generator, automatically wrapping your database tables in CRUD endpoints.

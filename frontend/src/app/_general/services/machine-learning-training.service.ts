@@ -7,10 +7,10 @@
 import { Injectable } from '@angular/core';
 import { Affected } from 'src/app/models/affected.model';
 import { Count } from 'src/app/models/count.model';
-import { Response } from 'src/app/models/response.model';
 
 // Application specific imports.
 import { HttpService } from 'src/app/_general/services/http.service';
+import { MagicResponse } from '../models/magic-response.model';
 
 /**
  * OpenAI service, allowing user to interact with OpenAI.
@@ -40,7 +40,7 @@ export class MachineLearningTrainingService {
    * Updates an existing training snippet.
    */
   ml_training_snippets_update(el: any) {
-    return this.httpService.put<Response>('/magic/system/magic/ml_training_snippets', el);
+    return this.httpService.put<MagicResponse>('/magic/system/magic/ml_training_snippets', el);
   }
 
   /**
@@ -54,21 +54,21 @@ export class MachineLearningTrainingService {
    * Creates a new training snippet.
    */
   ml_training_snippets_create(el: any) {
-    return this.httpService.post<Response>('/magic/system/magic/ml_training_snippets', el);
+    return this.httpService.post<MagicResponse>('/magic/system/magic/ml_training_snippets', el);
   }
 
   /**
    * Deletes an existing training snippet.
    */
   ml_training_snippets_delete(id: number) {
-    return this.httpService.delete<Response>('/magic/system/magic/ml_training_snippets?id=' + id);
+    return this.httpService.delete<MagicResponse>('/magic/system/magic/ml_training_snippets?id=' + id);
   }
 
   /**
    * Deletes an existing training snippet.
    */
   ml_training_snippets_delete_all(filter: any) {
-    return this.httpService.delete<Response>('/magic/system/magic/ml_training_snippets_all' + this.getQueryArgs(filter));
+    return this.httpService.delete<MagicResponse>('/magic/system/magic/ml_training_snippets_all' + this.getQueryArgs(filter));
   }
 
   /**
@@ -119,7 +119,7 @@ export class MachineLearningTrainingService {
    * Counts requests matching condition.
    */
   ml_requests_count(filter?: any) {
-    return this.httpService.get<Response>('/magic/system/magic/ml_requests-count' + this.getQueryArgs(filter));
+    return this.httpService.get<MagicResponse>('/magic/system/magic/ml_requests-count' + this.getQueryArgs(filter));
   }
 
   /**

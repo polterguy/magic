@@ -5,10 +5,10 @@
 
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { bufferCount, concatMap, forkJoin, from } from 'rxjs';
-import { Response } from 'src/app/_protected/models/common/response.model';
+import { MagicResponse } from 'src/app/_general/models/magic-response.model';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { BackendService } from 'src/app/_general/services/backend.service';
-import { FileService } from '../../create/hyper-ide/services/file.service';
+import { FileService } from '../../../../_general/services/file.service';
 import { AssumptionService } from '../../../../_general/services/assumption.service';
 
 // CodeMirror options.
@@ -69,7 +69,7 @@ export class HealthCheckComponent implements OnInit {
   executeTest(item: any) {
     this.isRunning = true;
     this.assumptionService.execute(item.filename).subscribe({
-      next: (res: Response) => {
+      next: (res: MagicResponse) => {
         this.isRunning = false;
         item.success = res.result === 'success';
         item.status = res.result === 'success' ? 'Passed' : 'Failed';

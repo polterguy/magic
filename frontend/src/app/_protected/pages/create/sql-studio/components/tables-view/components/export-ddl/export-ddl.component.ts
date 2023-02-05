@@ -7,7 +7,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // CodeMirror options according to file extensions needed to show JSON CodeMirror editor.
-import { CodemirrorActionsService } from 'src/app/_protected/pages/create/hyper-ide/services/codemirror-actions.service';
+import { CodemirrorActionsService } from 'src/app/_general/services/codemirror-actions.service';
 
 /**
  * Model for seeing DDL of tables.

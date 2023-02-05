@@ -10,15 +10,15 @@ import { Subscription } from 'rxjs';
 import { Model } from 'src/app/codemirror/codemirror-sql/codemirror-sql.component';
 import { ShortkeysComponent } from 'src/app/_general/components/shortkeys/shortkeys.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { CrudifyService } from '../_services/crudify.service';
-import { TransformModelService } from '../_services/transform-model.service';
+import { CrudifyService } from '../../../../../_general/services/crudify.service';
+import { TransformModelService } from '../../../../../_general/services/transform-model.service';
 import { Argument } from '../../../manage/endpoints/_models/argument.model';
 import { SqlService } from '../../../../../_general/services/sql.service';
 import { AddArgumentDialogComponent } from './components/add-argument-dialog/add-argument-dialog.component';
 import { SqlSnippetDialogComponent } from '../../sql-studio/components/sql-view/components/load-sql-snippet-dialog/load-sql-snippet-dialog.component';
 
 // CodeMirror options.
-import { CodemirrorActionsService } from '../../hyper-ide/services/codemirror-actions.service';
+import { CodemirrorActionsService } from '../../../../../_general/services/codemirror-actions.service';
 import { SnippetNameDialogComponent } from 'src/app/_general/components/snippet-name-dialog/snippet-name-dialog.component';
 import { MessageService } from 'src/app/_general/services/message.service';
 import { GeneratorBase } from '../generator-base';

@@ -4,8 +4,8 @@
  */
 
 import { Component, OnInit } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Response } from 'src/app/models/response.model';
+import { MatDialogRef } from '@angular/material/dialog';
+import { MagicResponse } from 'src/app/_general/models/magic-response.model';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { OpenAIService } from 'src/app/_general/services/openai.service';
 
@@ -32,7 +32,7 @@ export class OpenAIConfigurationDialogComponent implements OnInit {
     this.generalService.showLoading();
 
     this.openAiService.key().subscribe({
-      next: (result: Response) => {
+      next: (result: MagicResponse) => {
 
         this.openApiKey = result.result || '';
         this.generalService.hideLoading();

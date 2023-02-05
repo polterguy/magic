@@ -8,9 +8,9 @@ import { throwError } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
-import { Response } from '../../models/response.model';
-import { FileService } from '../../_protected/pages/create/hyper-ide/services/file.service';
+import { FileService } from './file.service';
 import { HttpService } from 'src/app/_general/services/http.service';
+import { MagicResponse } from '../models/magic-response.model';
 
 /**
  * Hyperlambda evaluator service allowing you to evaluate Hyperlambda in
@@ -26,7 +26,7 @@ export class EvaluatorService {
     private fileService: FileService) { }
 
   execute(hyperlambda: string) {
-    return this.httpService.post<Response>('/magic/system/evaluator/evaluate', {
+    return this.httpService.post<MagicResponse>('/magic/system/evaluator/evaluate', {
       hyperlambda
     });
   }

@@ -8,8 +8,8 @@ import { GeneralService } from 'src/app/_general/services/general.service';
 import { Endpoint } from 'src/app/_protected/models/common/endpoint.model';
 import { BackendService } from 'src/app/_general/services/backend.service';
 import { EndpointService } from '../../../../../_general/services/endpoint.service';
-import { CrudifyService } from '../../endpoint-generator/_services/crudify.service';
-import { CodemirrorActionsService } from '../../hyper-ide/services/codemirror-actions.service';
+import { CrudifyService } from '../../../../../_general/services/crudify.service';
+import { CodemirrorActionsService } from '../../../../../_general/services/codemirror-actions.service';
 import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
 import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 

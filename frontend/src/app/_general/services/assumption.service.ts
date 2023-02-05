@@ -8,9 +8,9 @@ import { throwError } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
-import { Response } from '../../models/response.model';
 import { BackendService } from 'src/app/_general/services/backend.service';
 import { HttpService } from 'src/app/_general/services/http.service';
+import { MagicResponse } from '../models/magic-response.model';
 
 /**
  * Assumption service, allowing you to retrieve, create and execute assumptions.
@@ -74,7 +74,7 @@ export class AssumptionService {
   }
 
   execute(filename: string) {
-    return this.httpService.get<Response>(
+    return this.httpService.get<MagicResponse>(
       '/magic/system/assumptions/execute?root_url=' +
       encodeURIComponent(this.backendService.active.url) +
       '&test_file=' +

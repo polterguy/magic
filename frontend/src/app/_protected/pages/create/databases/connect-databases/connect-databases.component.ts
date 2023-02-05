@@ -14,9 +14,9 @@ import { ManageCatalogsComponent } from './components/manage-catalogs/manage-cat
 import { SqlService } from '../../../../../_general/services/sql.service';
 import { DiagnosticsService } from '../../../../../_general/services/diagnostics.service';
 import { ConfigService } from '../../../../../_general/services/config.service';
-import { Response } from 'src/app/models/response.model';
 import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
 import { CommonRegEx } from 'src/app/_general/classes/common-regex';
+import { MagicResponse } from 'src/app/_general/models/magic-response.model';
 
 /**
  * Helper component allowing user to connect to existing database, and/or create new catalogs
@@ -276,7 +276,7 @@ export class ConnectComponent implements OnInit {
 
     this.databases.forEach((element: any) => {
       this.configService.testConnectionString(element.dbTypeValue, element.cString).subscribe({
-        next: (res: Response) => {
+        next: (res: MagicResponse) => {
           if (res.result === 'failure') {
             element.status = 'Down';
           } else {

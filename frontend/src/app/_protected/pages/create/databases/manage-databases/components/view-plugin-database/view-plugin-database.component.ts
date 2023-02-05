@@ -6,7 +6,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { Response } from '../../../../../../models/common/response.model';
+import { MagicResponse } from '../../../../../../../_general/models/magic-response.model';
 import { BazarService } from 'src/app/_general/services/bazar.service';
 
 /**
@@ -36,14 +36,14 @@ export class ViewPluginDatabaseComponent implements OnInit {
 
   updatePlugin() {
     this.bazarService.updateBazarItem(this.data).subscribe({
-      next: (result: Response) => {
+      next: (result: MagicResponse) => {
         if (result.result === 'success') {
           this.bazarService.installBazarItem(
             this.data.module_name,
             this.data.new_version,
             this.data.name,
             this.data.token).subscribe({
-              next: (install: Response) => {
+              next: (install: MagicResponse) => {
                 if (install.result === 'success') {
                   this.generalService.showFeedback('Database was successfully updated.');
                   this.dialogRef.close();
@@ -71,7 +71,7 @@ export class ViewPluginDatabaseComponent implements OnInit {
 
   private getAppDetails() {
     this.bazarService.canInstall(this.data.min_magic_version).subscribe({
-      next: (result: Response) => {
+      next: (result: MagicResponse) => {
         if (result.result === 'SUCCESS') {
           this.canInstall = true;
         } else {

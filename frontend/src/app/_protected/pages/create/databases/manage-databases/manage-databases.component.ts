@@ -9,7 +9,7 @@ import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@aspnet/
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { environment } from 'src/environments/environment';
-import { FileService } from '../../hyper-ide/services/file.service';
+import { FileService } from '../../../../../_general/services/file.service';
 import { AppManifest } from '../../../../../_general/models/app-manifest';
 import { ViewPluginDatabaseComponent } from './components/view-plugin-database/view-plugin-database.component';
 import { SqlService } from '../../../../../_general/services/sql.service';

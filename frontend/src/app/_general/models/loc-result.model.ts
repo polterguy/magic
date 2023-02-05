@@ -4,15 +4,20 @@
  */
 
 // Application specific imports
-import { Response } from '../../../../../models/response.model';
+import { MagicResponse } from './magic-response.model';
 
 /**
  * Model returned from backend when code is generated.
  */
-export class LocResult extends Response {
+export class LocResult extends MagicResponse {
 
   /**
    * Lines of code generated during invocation to backend.
    */
   loc: number;
+
+  /**
+   * Optional result message from server.
+   */
+  result: string;
 }
