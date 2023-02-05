@@ -36,12 +36,20 @@ validators.enum:x:@.arguments/*/databaseType
    .:mssql
 
 // SQL that executes to modify DDL.
-.sql
+.sql:
+if
+   eq:x:@.arguments/*/databaseType
+      .:mysql
+   .lamnda
+      set-value:x:@.sql
+         strings.concat
+            .:"alter table "
+            get-value:x:@.arguments/*/tableName
+            .:" "
 set-value:x:@.sql
    strings.concat
-      .:"alter table "
-      get-value:x:@.arguments/*/tableName
-      .:" drop index "
+      get-value:x:@.sql
+      .:"drop index "
       get-value:x:@.arguments/*/indexName
       .:;
 
