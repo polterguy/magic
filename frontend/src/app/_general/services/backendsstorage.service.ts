@@ -23,6 +23,7 @@ export class BackendsStorageService {
   private _backends: Backend[] = [];
 
   constructor() {
+
     let backends: any[] = [];
     const storage = localStorage.getItem('magic.backends');
     if (storage) {
@@ -34,14 +35,17 @@ export class BackendsStorageService {
   }
 
   get active() {
+
     return this._backends.length === 0 ? null : this._backends[0];
   }
 
   get backends() {
+
     return this._backends;
   }
 
   upsert(value: Backend) {
+
     const existing = this._backends.filter(x => x.url === value.url);
     if (existing.length > 0) {
       existing[0].username = value.username;
@@ -55,6 +59,7 @@ export class BackendsStorageService {
   }
 
   activate(value: Backend) {
+
     this._backends = this._backends.sort((lhs, rhs) => {
       if (lhs.url === value.url) {
         return -1;
@@ -68,6 +73,7 @@ export class BackendsStorageService {
   }
 
   remove(value: Backend) {
+
     const removed = this._backends.splice(this._backends.indexOf(value), 1);
     if (removed.length === 0) {
       throw 'No such backend';
@@ -76,10 +82,12 @@ export class BackendsStorageService {
   }
 
   set backends(value: Backend[]) {
+
     this._backends = value;
   }
 
   persistBackends() {
+
     const toPersist: any[] = [];
     for (const idx of this._backends) {
       var idxPersist: any = {

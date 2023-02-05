@@ -15,7 +15,9 @@
       <button
         mat-button
         color="primary"
-        (click)="openShortkeys()">Shortkeys</button>
+        (click)="openShortkeys()">
+        Shortkeys
+      </button>
 
     </div>
   </div>
@@ -49,14 +51,18 @@
       mat-button
       color="primary"
       class="px-3"
-      (click)="closeActiveFile()">Close</button>
+      (click)="closeActiveFile()">
+      Close
+    </button>
 
     <button
       *ngIf="currentFileData"
       mat-button
       color="primary"
       class="px-3"
-      (click)="saveActiveFile()">Save</button>
+      (click)="saveActiveFile()">
+      Save
+    </button>
 
   </div>
 

@@ -64,73 +64,53 @@ export class FileObject {
 })
 export class NewFileFolderDialogComponent implements OnInit {
 
-  /**
-   * Templates user can create file from.
-   */
   templates: Template[] = [];
-
-  /**
-   * Which template user has currently selected.
-   */
   activeTemplate: Template = null;
-
-  /**
-   * Whether or not we should attempt to intelligently filter templates or not.
-   */
   filterTemplates: boolean = true;
 
-  /**
-   * Element wrapping name input.
-   */
   @ViewChild('fileName') fileName: ElementRef;
 
-  /**
-   * Creates an instance of your component.
-   *
-   * @param fileService Needed to retrieve templates from backend
-   * @param feedbackService Needed to display errors and such to the user
-   * @param data File object type and name
-   */
   constructor(
     private fileService: FileService,
     private generalService: GeneralService,
     @Inject(MAT_DIALOG_DATA) public data: FileObject) { }
 
-  /**
-   * Implementation of OnInit.
-   */
   ngOnInit() {
+
     if (!this.data.isFolder) {
+
+      this.generalService.showLoading();
       this.fileService.listFiles('/misc/ide/templates/').subscribe({
         next: (result: string[]) => {
+
+          this.generalService.hideLoading();
           this.templates = result.map(x => {
             return {
               name: x,
             }
           });
         },
-        error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+        error: (error: any) => {
+
+          this.generalService.hideLoading();
+          this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+        }
       });
     }
   }
 
-  /**
-   * Returns only filename for specified path.
-   *
-   * @param path Full path of file we should return filename for
-   */
   getFileName(path: string) {
+
     return path.substring(path.lastIndexOf('/') + 1);
   }
 
-  /**
-   * Returns the relevant templates according to which folder is currently active.
-   */
   getTemplates() {
+
     if (!this.filterTemplates) {
       return this.templates;
     }
     switch (this.data.path) {
+
       default: // TODO: Wut ...??
 
         /*
@@ -205,10 +185,8 @@ export class NewFileFolderDialogComponent implements OnInit {
     }
   }
 
-  /**
-   * Invoked when selected template is changed.
-   */
   templateChanged() {
+
     this.fileService.loadFile(this.activeTemplate.name).subscribe({
       next: (result: string) => {
         this.data.template = result;
@@ -219,10 +197,8 @@ export class NewFileFolderDialogComponent implements OnInit {
     });
   }
 
-  /**
-   * Returns true if the filename is valid, otherwise false.
-   */
   pathValid() {
+
     if (!this.data.name || this.data.name.length === 0) {
       return false;
     }

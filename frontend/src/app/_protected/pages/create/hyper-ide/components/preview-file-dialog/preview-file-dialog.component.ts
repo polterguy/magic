@@ -17,10 +17,5 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 })
 export class PreviewFileDialogComponent {
 
-  /**
-   * Creates an instance of your component.
-   * 
-   * @param data File's content
-   */
   constructor(@Inject(MAT_DIALOG_DATA) public data: string) { }
 }

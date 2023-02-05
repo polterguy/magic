@@ -14,33 +14,10 @@ import { DialogRef } from '@angular/cdk/dialog';
  * Model for prompt result.
  */
 export class PromptResult {
-
-  /**
-   * Result from OpenAI.
-   */
   snippet: string;
-
-  /**
-   * Question that was asked.
-   */
   prompt: string;
-
-  /**
-   * File type question was associated with, such as sql, hl or HTML.
-   * 
-   * Helps us create the correct CodeMirror editor type.
-   */
   fileType: string;
-
-  /**
-   * Optional callback if exists will create a callback button allowing parent
-   * component to use code snippet for 'whatever'.
-   */
   callback?: EventEmitter<string>;
-
-  /**
-   * Optional callback text to display on callback button.
-   */
   callbackText?: string;
 }
 

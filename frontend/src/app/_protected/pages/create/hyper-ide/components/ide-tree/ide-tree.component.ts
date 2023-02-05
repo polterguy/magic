@@ -72,6 +72,7 @@ export class IdeTreeComponent implements OnInit {
   ngOnInit() {
 
     // Retrieving files from server, and data binding tree to its initial state.
+    this.generalService.showLoading();
     this.getFilesFromServer().then((res: boolean) => {
 
       // Making sure we succeeded in getting files from backend.
@@ -579,6 +580,7 @@ export class IdeTreeComponent implements OnInit {
   }
 
   downloadActiveFile(path?: string) {
+
     if (!path && this.currentFileData) {
       this.fileService.downloadFile(this.currentFileData.path);
     }
@@ -588,32 +590,43 @@ export class IdeTreeComponent implements OnInit {
   }
 
   downloadFolder() {
+
     if (this.activeFolder) {
       this.fileService.downloadFolder(this.activeFolder);
     }
   }
 
   selectFolder(folder: FlatNode) {
+
     this.activeFolder = folder.node.path;
     this.openFolder = folder;
   }
 
   uploadFiles(files: FileList) {
+
+    this.generalService.showLoading();
     for (let idx = 0; idx < files.length; idx++) {
       this.fileService.uploadFile(this.activeFolder, files.item(idx)).subscribe({
         next: () => {
+
+          this.generalService.hideLoading();
           this.generalService.showFeedback('File was successfully uploaded', 'successMessage');
           this.fileInput = null;
           if (idx === (files.length - 1)) {
             this.updateFileObject(this.activeFolder);
           }
         },
-        error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+        error: (error: any) => {
+
+          this.generalService.hideLoading();
+          this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+        }
       });
     };
   }
 
   updateFileObject(fileObject: string) {
+
     let folder = fileObject;
     let isFile = false;
     if (!fileObject.endsWith('/')) {
@@ -628,11 +641,14 @@ export class IdeTreeComponent implements OnInit {
     }
     parent.children = [];
 
+    this.generalService.showLoading();
     this.getFilesFromServer(folder).then((success: any) => {
       if (success) {
         if (isFile) {
           this.fileService.loadFile(fileObject).subscribe({
             next: async (content: string) => {
+
+              this.generalService.hideLoading();
 
               if (this.getCodeMirrorOptions(fileObject) !== null) {
                 this.openFiles.push({
@@ -672,9 +688,14 @@ export class IdeTreeComponent implements OnInit {
                 return;
               }
             },
-            error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+            error: (error: any) => {
+
+              this.generalService.hideLoading();
+              this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+            }
           })
         } else {
+
           this.dataBindTree();
           this.getEndpoints();
         }
@@ -683,17 +704,19 @@ export class IdeTreeComponent implements OnInit {
   }
 
   isExpandable(_: number, node: FlatNode) {
+
     return node.expandable;
   }
 
-  filterLeafNode(node: FlatNode, searchKeyword: string): boolean {
+  filterLeafNode(node: FlatNode, searchKeyword: string) {
+
     if (!searchKeyword) {
       return false
     }
     return node.node.path.toLowerCase().indexOf(searchKeyword?.toLowerCase()) === -1
   }
 
-  filterParentNode(node: FlatNode, searchKeyword: string): boolean {
+  filterParentNode(node: FlatNode, searchKeyword: string) {
 
     if (!searchKeyword || node.node.path.toLowerCase().indexOf(searchKeyword?.toLowerCase()) !== -1) {
       return false
@@ -707,14 +730,23 @@ export class IdeTreeComponent implements OnInit {
   }
 
   installModule(file: FileList) {
+
     if (file[0].name.split('.')[1] === 'zip') {
+
+      this.generalService.showLoading();
       this.fileService.installModule(file.item(0)).subscribe({
         next: () => {
+
+          this.generalService.hideLoading();
           this.generalService.showFeedback('File was successfully uploaded', 'successMessage');
           this.zipFileInput = null;
           this.updateFileObject('/modules/');
         },
-        error: (error: any) => this.generalService.showFeedback(error)
+        error: (error: any) => {
+
+          this.generalService.hideLoading();
+          this.generalService.showFeedback(error);
+        }
       });
     } else {
       this.generalService.showFeedback('Only zip files without . are accepted', 'errorMessage', 'Ok', 5000);
@@ -726,6 +758,7 @@ export class IdeTreeComponent implements OnInit {
    */
 
   private getFolders(current: any = this.root) {
+
     const result: string[] = [];
     if (current.isFolder) {
       result.push(current.path);
@@ -740,6 +773,7 @@ export class IdeTreeComponent implements OnInit {
   }
 
   private getFiles(current: any = this.root) {
+
     let result: string[] = [];
     for (const idx of current.children.filter(x => !x.isFolder)) {
       result.push(idx.path);
@@ -751,6 +785,7 @@ export class IdeTreeComponent implements OnInit {
   }
 
   private sort(event: any) {
+
     const node = this.findTreeNodeFolder(this.root, event.dialogResult.path);
     const sorter = () => {
       node.children.sort((lhs: TreeNode, rhs: TreeNode) => {
@@ -798,6 +833,7 @@ export class IdeTreeComponent implements OnInit {
   }
 
   private findTreeNodeFolder(node: TreeNode, path: string): TreeNode {
+
     if (node.path === path) {
       return node;
     }
@@ -811,8 +847,12 @@ export class IdeTreeComponent implements OnInit {
   }
 
   private executeMacro(file: string) {
+
+    this.generalService.showLoading();
     this.fileService.getMacroDefinition(file).subscribe({
       next: (result: MacroDefinition) => {
+
+        this.generalService.hideLoading();
 
         /*
          * Filling out default values for anything we can intelligently figure
@@ -838,13 +878,18 @@ export class IdeTreeComponent implements OnInit {
           data: result,
         });
         dialogRef.afterClosed().subscribe((result: MacroDefinition) => {
+
           if (result && result.name) {
             const payload = {};
             for (const idx of result.arguments.filter(x => x.value)) {
               payload[idx.name] = idx.value;
             }
+
+            this.generalService.showLoading();
             this.fileService.executeMacro(file, payload).subscribe({
               next: (exeResult: any) => {
+
+                this.generalService.hideLoading();
                 this.generalService.showFeedback('Macro successfully executed', 'successMessage');
                 if (exeResult.result === 'folders-changed') {
 
@@ -867,27 +912,44 @@ export class IdeTreeComponent implements OnInit {
                   this.updateFileObject(fileObject);
                 }
               },
-              error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+              error: (error: any) => {
+
+                this.generalService.hideLoading();
+                this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+              }
             });
           } else if (result) {
             this.selectMacro();
           }
         });
       },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+      error: (error: any) => {
+
+        this.generalService.hideLoading();
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+      }
     });
   }
 
   private getEndpoints() {
+
+    this.generalService.showLoading();
     this.endpointService.endpoints().subscribe({
       next: (result: Endpoint[]) => {
+
+        this.generalService.hideLoading();
         this.endpoints = result;
       },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+      error: (error: any) => {
+
+        this.generalService.hideLoading();
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+      }
     });
   }
 
   private nameValidation(name: string) {
+
     if (!name || name.length === 0) {
       return false;
     }
@@ -900,16 +962,19 @@ export class IdeTreeComponent implements OnInit {
   }
 
   private getCodeMirrorOptions(path: string) {
+
     return this.codemirrorActionsService.getActions(path);
   }
 
   private scrollToLastOpenFile() {
+
     const el = document.getElementById('active');
     if (el)
       el.scrollIntoView();
   }
 
   private isSystemPath(path: string) {
+
     return path.startsWith('/system/') ||
       path.startsWith('/misc/') ||
       path.startsWith('/data/') ||
@@ -917,6 +982,7 @@ export class IdeTreeComponent implements OnInit {
   }
 
   private isSystemFolder(path: string) {
+
     return path === '/' ||
       path === '/system/' ||
       path === '/modules/' ||
@@ -928,6 +994,7 @@ export class IdeTreeComponent implements OnInit {
 
 // Transforms from internal data structure to tree control's expectations.
 const _transformer = (node: TreeNode, level: number) => {
+
   return {
     expandable: node.isFolder,
     name: node.name,

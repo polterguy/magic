@@ -85,20 +85,24 @@ export class AutoGeneratorComponent extends GeneratorBase implements OnInit, OnD
     protected transformService: TransformModelService,
     private codemirrorActionsService: CodemirrorActionsService,
     @Inject(LOCALE_ID) public locale: string) {
+
       super(generalService, roleService, activatedRoute, sqlService);
     }
 
   ngOnInit() {
+
     this.getOptions();
     this.watchForActions();
     this.init();
   }
 
   changeDbType() {
+
     this.getConnectionString();
   }
 
   changeConnectionString() {
+
     this.getDatabases();
   }
 
@@ -119,12 +123,14 @@ export class AutoGeneratorComponent extends GeneratorBase implements OnInit, OnD
   }
 
   selectedTableChanged() {
+
     this.selectedTables.value.length === 1 ?
       this.secondaryURL = this.selectedTables.value.toString().toLowerCase() :
       '';
   }
 
   toggleAllTables(checked: boolean) {
+
     if (!checked) {
       this.selectedTables.setValue('');
     } else {
@@ -228,9 +234,11 @@ export class AutoGeneratorComponent extends GeneratorBase implements OnInit, OnD
     // Invoking every single endpoint observable.
     forkJoin(observables).subscribe({
       next: (results: LocResult[]) => {
+
         const loc = results.reduce((x, y) => x + y.loc, 0);
         this.logService.createLocItem(loc, 'backend', `${this.selectedDatabase}`).subscribe({
           next: () => {
+
             this.generalService.showFeedback(`${formatNumber(loc, this.locale, '1.0')} lines of code generated.`, 'successMessage');
             this.messageService.sendMessage({
               name: 'magic.folders.update',
@@ -239,6 +247,7 @@ export class AutoGeneratorComponent extends GeneratorBase implements OnInit, OnD
             this.generalService.hideLoading();
           },
           error: (error: any) => {
+
             this.generalService.hideLoading();
             this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)
           }
@@ -246,6 +255,7 @@ export class AutoGeneratorComponent extends GeneratorBase implements OnInit, OnD
 
       },
       error: (error: any) => {
+
         this.generalService.hideLoading();
         this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000);
       }
@@ -253,21 +263,31 @@ export class AutoGeneratorComponent extends GeneratorBase implements OnInit, OnD
   }
 
   loadSnippet() {
+
     this.dialog.open(LoadSnippetDialogComponent, {
       width: '550px',
     }).afterClosed().subscribe((filename: string) => {
       if (filename) {
+
+        this.generalService.showLoading();
         this.evaluatorService.loadSnippet(filename).subscribe({
           next: (content: string) => {
+
+            this.generalService.hideLoading();
             this.hlInput.hyperlambda = content;
           },
-          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+          error: (error: any) => {
+
+            this.generalService.hideLoading();
+            this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+          }
         });
       }
     });
   }
 
   ngOnDestroy() {
+
     this.codemirrorActionsSubscription?.unsubscribe();
   }
 
@@ -275,7 +295,8 @@ export class AutoGeneratorComponent extends GeneratorBase implements OnInit, OnD
    * Protected implementations of base class methods.
    */
 
-  protected databaseLoaded(): void {
+  protected databaseLoaded() {
+
     this.changeDatabase();
     this.readRoles.setValue(['root', 'admin']);
     this.updateRoles.setValue(['root', 'admin']);
@@ -288,6 +309,7 @@ export class AutoGeneratorComponent extends GeneratorBase implements OnInit, OnD
    */
 
   private watchForActions() {
+
     this.codemirrorActionsSubscription = this.codemirrorActionsService.action.subscribe((action: string) => {
       switch (action) {
 
@@ -299,6 +321,7 @@ export class AutoGeneratorComponent extends GeneratorBase implements OnInit, OnD
   }
 
   private getOptions() {
+
     const options = this.codemirrorActionsService.getActions('', 'hl');
     options.autofocus = false;
     this.hlInput.options = options;

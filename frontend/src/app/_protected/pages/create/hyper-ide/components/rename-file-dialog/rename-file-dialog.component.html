@@ -4,11 +4,18 @@
   <div mat-dialog-content>
 
     <mat-form-field class="w-100 standalone-field">
-      <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+      <span
+        matPrefix
+        class="d-flex flex-nowrap align-items-center justify-content-between me-2">
         <mat-icon class="mat-icon-rtl-mirror">insert_drive_file</mat-icon>
         <span class="text-muted">|</span>
       </span>
-      <input type="text" matInput autocomplete="off" [(ngModel)]="data.name" name="-">
+      <input
+        type="text"
+        matInput
+        autocomplete="off"
+        [(ngModel)]="data.name"
+        name="-">
     </mat-form-field>
 
     <mat-hint *ngIf="(data.name && !pathValid()) || data.name === originalName">
@@ -19,8 +26,21 @@
   </div>
 
   <div mat-dialog-actions [align]="'end'">
-    <button mat-button mat-dialog-close>Close</button>
-    <button mat-flat-button color="primary" type="submit" (click)="ok()">Rename</button>
+
+    <button
+      mat-button
+      mat-dialog-close>
+      Close
+    </button>
+
+    <button
+      mat-flat-button
+      color="primary"
+      type="submit"
+      (click)="ok()">
+      Rename
+    </button>
+
   </div>
 
 </form>

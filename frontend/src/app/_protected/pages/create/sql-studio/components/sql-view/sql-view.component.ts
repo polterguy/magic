@@ -81,17 +81,26 @@ export class SqlViewComponent implements OnInit, OnDestroy {
   };
 
   loadSnippet() {
+
     this.dialog.open(SqlSnippetDialogComponent, {
       width: '550px',
       data: this.selectedDbType,
     }).afterClosed().subscribe((filename: string) => {
       if (filename) {
         this.selectedSnippet = filename;
+
+        this.generalService.showLoading();
         this.sqlService.loadSnippet(this.selectedDbType, filename).subscribe({
           next: (content: string) => {
+
+            this.generalService.hideLoading();
             this.input.sql = content;
           },
-          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+          error: (error: any) => {
+
+            this.generalService.hideLoading();
+            this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+          }
         })
       }
     });
@@ -116,11 +125,14 @@ export class SqlViewComponent implements OnInit, OnDestroy {
           this.input.sql).subscribe(
             {
               next: () => {
+
                 this.generalService.showFeedback('SQL snippet successfully saved.', 'successMessage');
                 this.selectedSnippet = filename;
                 this.generalService.hideLoading();
-              }, error: (error: any) => {
-                this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
+              },
+              error: (error: any) => {
+
+                this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
                 this.generalService.hideLoading();
               }
             });
@@ -152,6 +164,7 @@ export class SqlViewComponent implements OnInit, OnDestroy {
         this.safeMode,
         batch).subscribe({
           next: (result: any[][]) => {
+
             if (result) {
               let count = 0;
               for (var idx of result) {
@@ -172,17 +185,17 @@ export class SqlViewComponent implements OnInit, OnDestroy {
             this.executingSql = false;
           },
           error: (error: any) => {
+
             this.executingSql = false;
+            this.generalService.hideLoading();
             if (error.error &&
               error?.error?.message &&
               error?.error?.message &&
               (<string>error?.error?.message).toLowerCase().indexOf('incorrect syntax near \'go\'') !== -1) {
               this.generalService.showFeedback('Turn ON batch mode to execute this SQL', 'errorMessage', 'Ok', 5000);
-              this.generalService.hideLoading();
               return;
             }
             this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000);
-            this.generalService.hideLoading();
           }
         });
     }
@@ -278,7 +291,9 @@ export class SqlViewComponent implements OnInit, OnDestroy {
   private watchForActions() {
 
     this.actionSubscription = this.codemirrorActionsService.action.subscribe((action: string) => {
+
       switch (action) {
+
         case 'save':
           this.save();
           break;
@@ -294,7 +309,7 @@ export class SqlViewComponent implements OnInit, OnDestroy {
         default:
           break;
       }
-    })
+    });
   }
 
   private getCodeMirrorOptions() {

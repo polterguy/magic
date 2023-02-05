@@ -6,7 +6,6 @@
 // Application specific imports.
 import { Token } from './token.model';
 import { Status } from './status.model';
-import { Endpoint } from './endpoint.model';
 
 /**
  * Encapsulates a backend instance, in addition to its username, password, and if existing also
@@ -35,6 +34,7 @@ export class Backend {
    * @param token Existing JWT token used to access backend
    */
   constructor(url: string, username: string = null, password: string = null, token: string = null) {
+
     this._url = url.replace(/\s/g, '').replace(/(\/)+$/, '');
     this._username = username;
     this._password = password;
@@ -46,14 +46,16 @@ export class Backend {
   /**
    * Returns root URL for backend.
    */
-  get url(): string {
+  get url() {
+
     return this._url;
   }
 
   /**
    * Returns username used to authenticate towards backend.
    */
-  get username(): string {
+  get username() {
+
     return this._username;
   }
 
@@ -61,13 +63,15 @@ export class Backend {
    * Changes username used to authenticate towards backend.
    */
   set username(value: string) {
+
     this._username = value;
   }
 
   /**
    * Returns password used to authenticate towards backend.
    */
-  get password(): string {
+  get password() {
+
     return this._password;
   }
 
@@ -75,13 +79,15 @@ export class Backend {
    * Changes password used to authenticate towards backend.
    */
   set password(value: string) {
+
     this._password = value;
   }
 
   /**
    * Returns token for backend.
    */
-  get token(): Token {
+  get token() {
+
     return this._token;
   }
 
@@ -89,13 +95,15 @@ export class Backend {
    * Sets the token for the backend.
    */
   set token(value: Token) {
+
     this._token = value?.expired ? null : value;
   }
 
   /**
    * Returns the status of the backend, if known.
    */
-  get status(): Status {
+  get status() {
+
     return this._status;
   }
 
@@ -103,6 +111,7 @@ export class Backend {
    * Changes the status of the backend.
    */
   set status(value: Status) {
+
     this._status = value;
   }
 
@@ -110,13 +119,15 @@ export class Backend {
    * Returns true it setup is done.
    */
   get setupDone() {
+
     return this._status === null || this._status.result;
   }
 
   /**
    * Returns the version of the backend, if known.
    */
-  get version(): string {
+  get version() {
+
     return this._version;
   }
 
@@ -124,6 +135,7 @@ export class Backend {
    * Changes the version of the backend.
    */
   set version(value: string) {
+
     this._version = value;
   }
 }

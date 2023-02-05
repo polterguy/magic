@@ -5,7 +5,6 @@
 
 import { Component, Input, OnInit } from '@angular/core';
 import { ControlContainer, FormGroupDirective } from '@angular/forms';
-import { Argument } from '../../../_protected/pages/manage/endpoints/_models/argument.model';
 
 /**
  * Component allowing user to declare query parameters for executing endpoint.
@@ -32,18 +31,28 @@ export class QueryParamsComponent implements OnInit {
   orders: string[] = [];
 
   ngOnInit() {
+
     this.setParams();
   }
 
   setParams() {
+
     if (this.item) {
+
       if (this.item.name === 'order' && this.item.type === 'string') {
+
         this.orders = this.allItems.filter((x:any) => x.name.endsWith('.eq')).map((x: any) => x.name.substring(0, x.name.length - 3));
+
       } else if (this.item.name === 'direction' && this.item.type === 'string') {
+
         this.value = this.directions.filter(x => x === 'asc')[0];
+
       } else if (this.item.name === 'operator' && this.item.type === 'string') {
+
         this.value = this.operators.filter(x => x === 'and')[0];
+
       } else {
+
         switch (this.item.type) {
 
           case 'bool':

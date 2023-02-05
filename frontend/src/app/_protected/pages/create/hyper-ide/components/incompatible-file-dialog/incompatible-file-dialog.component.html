@@ -6,8 +6,31 @@
 </div>
 
 <div mat-dialog-actions [align]="'end'">
-  <button mat-button mat-dialog-close>Cancel</button>
-  <button mat-button [mat-dialog-close]="{deleteFile: true}">Delete</button>
-  <button *ngIf="data?.name?.endsWith('.zip')" mat-button [mat-dialog-close]="{unzip: true}">Unzip</button>
-  <button mat-flat-button [mat-dialog-close]="{download: true}" color="primary">Download</button>
+
+  <button
+    mat-button
+    mat-dialog-close>
+    Cancel
+    </button>
+
+  <button
+    mat-button
+    [mat-dialog-close]="{deleteFile: true}">
+    Delete
+  </button>
+
+  <button
+    *ngIf="data?.name?.endsWith('.zip')"
+    mat-button
+    [mat-dialog-close]="{unzip: true}">
+    Unzip
+  </button>
+
+  <button
+    mat-flat-button
+    [mat-dialog-close]="{download: true}"
+    color="primary">
+    Download
+  </button>
+
 </div>

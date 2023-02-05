@@ -3,21 +3,7 @@
  * Copyright (c) Aista Ltd, 2021 - 2023 info@aista.com, all rights reserved.
  */
 
-/**
- * Argument type for crudify class.
- */
-export class ArgType {
-
-  /**
-   * Columns to include.
-   */
-  columns?: any[];
-
-  /**
-   * Primary keys to include.
-   */
-  primary?: any[];
-}
+import { ArgType } from "./arg-type.model";
 
 /**
  * Crudify model used as input when user wants to crudify a database table,

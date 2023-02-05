@@ -34,11 +34,13 @@ export class BackendsListComponent implements OnInit {
     private backendService: BackendService) { }
 
   ngOnInit() {
+
     this.backendsList = this.backendService.backends;
     this.activeBackend = this.backendService.active.url;
   }
 
   copyUrlWithBackend(url: string) {
+
     const currentURL = window.location.protocol + '//' + window.location.host;
     const param = currentURL + '?backend='
     this.clipboard.copy(param + encodeURIComponent(url));
@@ -46,6 +48,7 @@ export class BackendsListComponent implements OnInit {
   }
 
   switchBackend(backend: Backend) {
+
     this.router.navigate(['/authentication/login'], {
       queryParams: { switchTo: backend.url }
     });
@@ -55,6 +58,7 @@ export class BackendsListComponent implements OnInit {
   }
 
   removeBackend(backend: Backend) {
+
     if (this.backendsList.length === 1) {
       const anotherWithToken: any = this.backendsList.find((item: any) => item !== backend && item.token !== null);
       if (anotherWithToken) {
@@ -62,6 +66,7 @@ export class BackendsListComponent implements OnInit {
         return;
       }
     }
+
     this.backendService.remove(backend);
     if (this.backendService.backends.length === 0) {
       this.addNew();
@@ -73,6 +78,7 @@ export class BackendsListComponent implements OnInit {
   }
 
   addNew() {
+
     window.location.href = '/authentication/login';
   }
 }

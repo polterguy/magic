@@ -2,9 +2,14 @@
 
 <div mat-dialog-content>
 
-  <mat-selection-list #macro [multiple]="false" dense
+  <mat-selection-list
+    #macro
+    [multiple]="false"
+    dense
     (selectionChange)="selectMacro(macro.selectedOptions.selected[0]?.value)">
-    <mat-list-option *ngFor="let idx of macros" [value]="idx">
+    <mat-list-option
+      *ngFor="let idx of macros"
+      [value]="idx">
       {{getMacroName(idx)}}
     </mat-list-option>
   </mat-selection-list>
@@ -13,6 +18,11 @@
 
 <div mat-dialog-actions [align]="'end'">
 
-  <button mat-button mat-dialog-close tabindex="-1">Close</button>
+  <button
+    mat-button
+    mat-dialog-close
+    tabindex="-1">
+    Close
+  </button>
 
 </div>

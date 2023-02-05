@@ -18,30 +18,21 @@ import { ThemeService } from 'src/app/_general/services/theme.service';
   styleUrls: ['./main-chart.component.scss']
 })
 export class MainChartComponent implements OnInit {
-  /**
-   * The actual data received from the parent component, to be displayed on the chart.
-   */
+
+  private subscribeScreenSizeChange: Subscription;
+  private isLargeScreen: boolean = undefined;
+
   @Input() data: any = [];
 
-  /**
-  * Chart type.
-  */
   chartType: string = 'line'
-
   options: any;
-
-  /**
-   * Watches changes of the theme.
-   */
-  private subscribeScreenSizeChange: Subscription;
-
-  private isLargeScreen: boolean = undefined;
 
   constructor(
     private generalService: GeneralService,
     private themeService: ThemeService) { }
 
   ngOnInit() {
+
     this.subscribeScreenSizeChange = this.generalService.getScreenSize().subscribe((isLarge: boolean) => {
       this.isLargeScreen = isLarge;
       if (this.data && Object.keys(this.data).length) {
@@ -56,6 +47,7 @@ export class MainChartComponent implements OnInit {
    * then call the preparation function
    */
   private waitForData() {
+
     (async () => {
       while (!this.data || !Object.keys(this.data).length)
         await new Promise(resolve => setTimeout(resolve, 100));
@@ -67,6 +59,7 @@ export class MainChartComponent implements OnInit {
   }
 
   prepareChart() {
+
     let xAxis: any = {};
     let series: any = {};
 
@@ -150,10 +143,8 @@ export class MainChartComponent implements OnInit {
 
   }
 
-  /**
-   * Unsubscribes from the themeChange observable on page leave, for performance protection
-   */
-  ngOnDestroy(): void {
+  ngOnDestroy() {
+
     this.subscribeScreenSizeChange.unsubscribe();
   }
 }

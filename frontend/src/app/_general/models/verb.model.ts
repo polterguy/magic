@@ -19,4 +19,3 @@ export class Verb {
    */
   generate: boolean;
 }
-

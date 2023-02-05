@@ -28,18 +28,8 @@ export class FileObjectName {
 })
 export class RenameFileDialogComponent {
 
-  /**
-   * Need to keep track of original filename to disable rename button
-   * unless it's been changed.
-   */
   originalName: string;
 
-  /**
-   * Creates an instance of your component.
-   *
-   * @param dialogRef Needed to be able to close dialog
-   * @param data Name of file you want to rename
-   */
   constructor(
     private generalService: GeneralService,
     public dialogRef: MatDialogRef<RenameFileDialogComponent>,
@@ -47,10 +37,8 @@ export class RenameFileDialogComponent {
     this.originalName = data.name;
   }
 
-  /**
-   * Invoked when user wants to close dialog and rename file.
-   */
   ok() {
+
     if (!this.pathValid()) {
       this.generalService.showFeedback('Name is required and cannot contain blank space or special characters', 'errorMessage', 'Ok', 5000);
       return;
@@ -62,12 +50,8 @@ export class RenameFileDialogComponent {
     this.dialogRef.close(this.data);
   }
 
-  /**
-   * Returns true if path is valid.
-   *
-   * @returns True if path is valid
-   */
   pathValid() {
+
     if (!this.data.name || this.data.name.length === 0) {
       return false;
     }

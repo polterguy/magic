@@ -45,6 +45,7 @@ export class CrudifyService {
    * @param data Input for process
    */
   crudify(data: Crudify) {
+
     let generate = true;
     if (data.verb === 'post' && data.args.columns.length === 0 && data.args.primary.length === 0) {
       generate = false;
@@ -70,6 +71,7 @@ export class CrudifyService {
    * @param data Input for process
    */
   generateSqlEndpoint(data: CustomSql) {
+
     return this.httpService.post<MagicResponse>('/magic/system/crudifier/custom-sql', data);
   }
 
@@ -77,6 +79,7 @@ export class CrudifyService {
    * Returns a list of all templates the backend has stored.
    */
   templates() {
+
     return this.httpService.get<string[]>('/magic/system/crudifier/templates');
   }
 
@@ -86,6 +89,7 @@ export class CrudifyService {
    * @param name Name of template to retrieve README file for
    */
   template(name: string) {
+
     return this.httpService.get<Template>('/magic/system/crudifier/template?name=' + encodeURIComponent(name));
   }
 
@@ -95,6 +99,7 @@ export class CrudifyService {
    * @param name Name of template to retrieve custom arguments for
    */
   templateCustomArgs(name: string) {
+
     return this.httpService.get<any>('/magic/system/crudifier/template-args?name=' + encodeURIComponent(name));
   }
 
@@ -122,6 +127,7 @@ export class CrudifyService {
     args: any,
     onAfter: () => void = null,
     onError: () => void = null) {
+
     const payload = {
       templateName,
       apiUrl,
@@ -131,8 +137,10 @@ export class CrudifyService {
       deployLocally,
       args
     };
+
     this.httpService.downloadPost('/magic/system/crudifier/generate-frontend', payload).subscribe({
       next: (res) => {
+
         const disp = res.headers.get('Content-Disposition');
         if (disp) {
           let filename = disp.split(';')[1].trim().split('=')[1].replace(/"/g, '');
@@ -143,7 +151,12 @@ export class CrudifyService {
           onAfter();
         }
       },
-      error: () => this.generalService.showFeedback('Something went wrong while generating your app, check your log for details', 'errorMessage', 'Ok', 4000)
+      error: () => {
+
+        if (onError) {
+          onError();
+        }
+      }
     });
   }
 }

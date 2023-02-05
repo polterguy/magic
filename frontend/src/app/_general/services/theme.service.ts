@@ -31,6 +31,7 @@ export class ThemeService {
   }
 
   get themes() {
+
     return [
       'default',
       'nuomorphism',
@@ -38,6 +39,7 @@ export class ThemeService {
   }
 
   get theme() {
+
     return localStorage.getItem('theme') || 'default';
   }
 
@@ -59,6 +61,7 @@ export class ThemeService {
   }
 
   get theme_options() {
+
     return themes[this.theme];
   }
 
@@ -67,6 +70,7 @@ export class ThemeService {
    */
 
   private injectTheme(theme: string) {
+
     if (!document.getElementById(theme)) {
       var head = document.getElementsByTagName('head')[0];
       var link = document.createElement('link');
@@ -82,6 +86,7 @@ export class ThemeService {
   }
 
   private disableTheme(theme: string) {
+
     const el = <any>document.getElementById(theme);
     if (el) {
       el.disabled = true;

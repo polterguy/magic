@@ -48,18 +48,22 @@ export class ManageCatalogsComponent {
         }
       }
     }).afterClosed().subscribe((result: string) => {
+
       if (result === 'confirm') {
+
         this.generalService.showLoading();
         this.sqlService.dropDatabase(
           this.data.item.dbTypeValue,
           this.data.item.cStringKey,
           item.name).subscribe({
             next: () => {
+
               this.generalService.hideLoading();
               this.data.list = this.data.list.filter((el: any) => el.name !== item.name);
               this.generalService.showFeedback('Database successfully deleted', 'successMessage');
             },
             error: (error: any) => {
+
               this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
               this.generalService.hideLoading();
           }});
@@ -68,6 +72,7 @@ export class ManageCatalogsComponent {
   }
 
   filterList(event: { searchKey: string }) {
+
     this.filter = event.searchKey;
   }
 }

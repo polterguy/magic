@@ -34,6 +34,7 @@ export class OpenAIService {
    * Queries OpenAI with the specified prompt and returns result to caller.
    */
   query(prompt: string, type: string) {
+
     return this.httpService.get<MagicResponse>(
       '/magic/system/openai/prompt?prompt=' +
       encodeURIComponent(prompt) +
@@ -45,6 +46,7 @@ export class OpenAIService {
    * Returns true if OpenAI has been configured.
    */
   isConfigured() {
+
     return this.httpService.get<{ result: boolean }>('/magic/system/openai/is-configured');
   }
 
@@ -52,6 +54,7 @@ export class OpenAIService {
    * Returns OpenAI API key to caller.
    */
   key() {
+
     return this.httpService.get<any>('/magic/system/openai/key');
   }
 
@@ -59,6 +62,7 @@ export class OpenAIService {
    * Saves the specified OpenAI API key.
    */
   setKey(key: string) {
+
     return this.httpService.post<any>('/magic/system/openai/key', {
       key,
     });
@@ -68,6 +72,7 @@ export class OpenAIService {
    * Returns all models from OpenAI, including fine tuned models and base models.
    */
   models() {
+
     return this.httpService.get<OpenAIModel[]>('/magic/system/openai/models');
   }
 
@@ -75,6 +80,7 @@ export class OpenAIService {
    * Returns all themes from backend.
    */
   themes() {
+
     return this.httpService.get<string[]>('/magic/system/openai/themes');
   }
 
@@ -82,6 +88,7 @@ export class OpenAIService {
    * Uploads the specified training data file to the backend.
    */
   uploadTrainingFile(data: FormData) {
+
     return this.httpService.post<any>('/magic/system/openai/upload-training-data', data);
   }
 
@@ -89,6 +96,7 @@ export class OpenAIService {
    * Uploads training data to OpenAI and starts a new training session.
    */
   start_training(data: any) {
+
     return this.httpService.post<MagicResponse>('/magic/system/openai/train', data);
   }
 

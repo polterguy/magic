@@ -33,10 +33,12 @@ export class BazarService {
     private fileService: FileService) { }
 
   localManifests() {
+
     return this.httpService.get<AppManifest[]>('/magic/system/bazar/app-manifests');
   }
 
   listBazarItems(filter: string, offset: number, limit: number) {
+
     let query = '?limit=' + limit;
     if (offset && offset !== 0) {
       query += '&offset=' + offset;
@@ -49,11 +51,13 @@ export class BazarService {
   }
 
   getBazarItem(module_name: string) {
+
     const query = '?folder_name.eq=' + encodeURIComponent(module_name);
     return this.httpClient.get<BazarApp[]>(environment.bazarUrl + '/magic/modules/bazar/apps' + query);
   }
 
   countBazarItems(filter: string) {
+
     let query = '';
     if (filter && filter !== '') {
       query += '?name.like=' + encodeURIComponent(filter + '%');
@@ -68,6 +72,7 @@ export class BazarService {
   }
 
   subscribeToNewsletter(data: any) {
+
     return this.httpClient.post<MagicResponse>(environment.bazarUrl + '/magic/modules/bazar/subscribe', data);
   }
 
@@ -77,6 +82,7 @@ export class BazarService {
     email: string,
     subscribe: boolean,
     promo_code?: string) {
+
     const payload: any = {
       product_id: app.id,
       name,
@@ -91,10 +97,12 @@ export class BazarService {
   }
 
   canDownloadBazarItem(token: string) {
+
     return this.httpClient.get<MagicResponse>(environment.bazarUrl + '/magic/modules/bazar/can-download?token=' + encodeURIComponent(token));
   }
 
   downloadBazarItem(app: BazarApp, token: string) {
+
     return this.httpService.post<MagicResponse>('/magic/system/bazar/download-from-bazar', {
       url: environment.bazarUrl + '/magic/modules/bazar/download?token=' + token,
       name: app.folder_name
@@ -102,6 +110,7 @@ export class BazarService {
   }
 
   updateBazarItem(app: AppManifest) {
+
     if (!app.token || app.token === '') {
       return throwError(() => new Error('No token found in app\'s manifest'));
     }
@@ -122,10 +131,12 @@ export class BazarService {
   }
 
   canInstall(required_magic_version: string) {
+
     return this.httpService.get<MagicResponse>('/magic/system/bazar/can-install?required_magic_version=' + encodeURIComponent(required_magic_version));
   }
 
   installBazarItem(folder: string, app_version: string, name: string, token: string) {
+
     return this.httpService.put<MagicResponse>('/magic/system/file-system/install', {
       folder: '/modules/' + folder + '/',
       app_version,
@@ -135,6 +146,7 @@ export class BazarService {
   }
 
   prompt(prompt: string, recaptch_response: string) {
+
     const url = environment.bazarUrl + '/magic/system/openai/prompt?prompt=foo' +
       encodeURIComponent(prompt) +
       '&type=aista_com' +

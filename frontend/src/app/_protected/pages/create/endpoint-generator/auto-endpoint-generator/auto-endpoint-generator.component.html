@@ -1,3 +1,4 @@
+
 <div class="row mt-4">
 
   <!-- 1 - Database -->
@@ -13,12 +14,14 @@
 
         <!-- Loading skeleton -->
         <ng-container *ngIf="isLoading">
+
           <app-loading-skeleton
-            [amount]="1"
-            [colClass]="'col-12'"
-            [blockHeight]="'45px'"
-            [hasShadow]="false">
+            amount="1"
+            colClass="col-12"
+            blockHeight="45px"
+            hasShadow="false">
           </app-loading-skeleton>
+
         </ng-container>
 
         <mat-form-field class="w-100" *ngIf="!isLoading">
@@ -46,12 +49,14 @@
 
         <!-- Loading skeleton -->
         <ng-container *ngIf="isLoading">
+
           <app-loading-skeleton
-            [amount]="1"
-            [colClass]="'col-12'"
-            [blockHeight]="'45px'"
-            [hasShadow]="false">
+            amount="1"
+            colClass="col-12"
+            blockHeight="45px"
+            hasShadow="false">
           </app-loading-skeleton>
+
         </ng-container>
 
         <mat-form-field class="w-100" *ngIf="!isLoading">
@@ -79,12 +84,14 @@
 
         <!-- Loading skeleton -->
         <ng-container *ngIf="isLoading">
+
           <app-loading-skeleton
-            [amount]="1"
-            [colClass]="'col-12'"
-            [blockHeight]="'45px'"
-            [hasShadow]="false">
+            amount="1"
+            colClass="col-12"
+            blockHeight="45px"
+            hasShadow="false">
           </app-loading-skeleton>
+
         </ng-container>
 
         <mat-form-field class="w-100" *ngIf="!isLoading">
@@ -112,12 +119,14 @@
 
         <!-- Loading skeleton -->
         <ng-container *ngIf="isLoading">
+
           <app-loading-skeleton
-            [amount]="1"
-            [colClass]="'col-12'"
-            [blockHeight]="'45px'"
-            [hasShadow]="false">
+            amount="1"
+            colClass="col-12"
+            blockHeight="45px"
+            hasShadow="false">
           </app-loading-skeleton>
+
         </ng-container>
 
         <mat-form-field class="w-100" *ngIf="!isLoading">
@@ -204,12 +213,14 @@
 
         <!-- Loading skeleton -->
         <ng-container *ngIf="isLoading">
+
           <app-loading-skeleton
-            [amount]="1"
-            [colClass]="'col-12'"
-            [blockHeight]="'45px'"
-            [hasShadow]="false">
+            amount="1"
+            colClass="col-12"
+            blockHeight="45px"
+            hasShadow="false">
           </app-loading-skeleton>
+
         </ng-container>
 
         <mat-form-field class="w-100 text-prefix" *ngIf="!isLoading">
@@ -240,12 +251,14 @@
 
         <!-- Loading skeleton -->
         <ng-container *ngIf="isLoading">
+
           <app-loading-skeleton
-            [amount]="1"
-            [colClass]="'col-12'"
-            [blockHeight]="'45px'"
-            [hasShadow]="false">
+            amount="1"
+            colClass="col-12"
+            blockHeight="45px"
+            hasShadow="false">
           </app-loading-skeleton>
+
         </ng-container>
 
         <mat-form-field class="w-100 text-prefix" *ngIf="!isLoading">
@@ -276,12 +289,14 @@
 
         <!-- Loading skeleton -->
         <ng-container *ngIf="isLoading">
+
           <app-loading-skeleton
-            [amount]="1"
-            [colClass]="'col-12'"
-            [blockHeight]="'45px'"
-            [hasShadow]="false">
+            amount="1"
+            colClass="col-12"
+            blockHeight="45px"
+            hasShadow="false">
           </app-loading-skeleton>
+
         </ng-container>
 
         <mat-form-field class="w-100 text-prefix" *ngIf="!isLoading">
@@ -312,12 +327,14 @@
 
         <!-- Loading skeleton -->
         <ng-container *ngIf="isLoading">
+
           <app-loading-skeleton
-            [amount]="1"
-            [colClass]="'col-12'"
-            [blockHeight]="'45px'"
-            [hasShadow]="false">
+            amount="1"
+            colClass="col-12"
+            blockHeight="45px"
+            hasShadow="false">
           </app-loading-skeleton>
+
         </ng-container>
 
         <mat-form-field class="w-100 text-prefix" *ngIf="!isLoading">
@@ -348,12 +365,14 @@
 
         <!-- Loading skeleton -->
         <ng-container *ngIf="isLoading">
+
           <app-loading-skeleton
-            [amount]="1"
-            [colClass]="'col-12'"
-            [blockHeight]="'45px'"
-            [hasShadow]="false">
+            amount="1"
+            colClass="col-12"
+            blockHeight="45px"
+            hasShadow="false">
           </app-loading-skeleton>
+
         </ng-container>
 
         <mat-form-field
@@ -387,12 +406,14 @@
 
         <!-- Loading skeleton -->
         <ng-container *ngIf="isLoading">
+
           <app-loading-skeleton
-            [amount]="1"
-            [colClass]="'col-12'"
-            [blockHeight]="'45px'"
-            [hasShadow]="false">
+            amount="1"
+            colClass="col-12"
+            blockHeight="45px"
+            hasShadow="false">
           </app-loading-skeleton>
+
         </ng-container>
 
         <mat-form-field class="w-100 standalone-field" *ngIf="!isLoading">
@@ -507,25 +528,33 @@
 
         <mat-checkbox
           color="primary"
-          [(ngModel)]="captchaCreate">Create</mat-checkbox>
+          [(ngModel)]="captchaCreate">
+          Create
+        </mat-checkbox>
 
         <div class="px-xl-4 px-lg-3 px-sm-2 px-1"></div>
 
         <mat-checkbox
           color="primary"
-          [(ngModel)]="captchaRead">Read</mat-checkbox>
+          [(ngModel)]="captchaRead">
+          Read
+        </mat-checkbox>
 
         <div class="px-xl-4 px-lg-3 px-sm-2 px-1"></div>
 
         <mat-checkbox
           color="primary"
-          [(ngModel)]="captchaUpdate">Update</mat-checkbox>
+          [(ngModel)]="captchaUpdate">
+          Update
+        </mat-checkbox>
 
         <div class="px-xl-4 px-lg-3 px-sm-2 px-1"></div>
 
         <mat-checkbox
           color="primary"
-          [(ngModel)]="captchaDelete">Delete</mat-checkbox>
+          [(ngModel)]="captchaDelete">
+          Delete
+        </mat-checkbox>
 
       </div>
     </div>
@@ -553,9 +582,13 @@
       </mat-form-field>
 
       <div class="d-flex align-items-center flex-wrap mt-1">
+
         <mat-checkbox
           color="primary"
-          [(ngModel)]="cachePublic">Public cache</mat-checkbox>
+          [(ngModel)]="cachePublic">
+          Public cache
+        </mat-checkbox>
+
       </div>
 
     </div>
@@ -566,9 +599,13 @@
       <p class="fw-bold">Step 6 - Sockets (SignalR)</p>
 
       <div class="d-flex align-items-center flex-wrap mt-1">
+
         <mat-checkbox
           color="primary"
-          [(ngModel)]="publishSocketMessages">Publish socket messages</mat-checkbox>
+          [(ngModel)]="publishSocketMessages">
+          Publish socket messages
+        </mat-checkbox>
+
       </div>
 
       <!-- Authorisation type for socket messages published -->
@@ -672,10 +709,12 @@
 
     <!-- CodeMirror editor for additional Hyperlambda -->
     <div class="col-12">
+
       <app-codemirror-hyperlambda
         [(model)]="hlInput"
         class="codemirror-container">
       </app-codemirror-hyperlambda>
+
     </div>
 
   </ng-container>

@@ -21,6 +21,7 @@ export class OverviewDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data: { currentList: any, fullList: any, titles: string[] }) { }
 
   save() {
+
     if (!this.data.titles || this.data.titles.length < 1) {
       this.generalService.showFeedback('Please select minimum 3 items', 'errorMessage', null, 3000);
       return;
@@ -30,6 +31,7 @@ export class OverviewDialogComponent {
   }
 
   cancel() {
+
     this.dialogRef.close();
   }
 }

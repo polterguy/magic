@@ -1,3 +1,4 @@
+
 <div class="table-responsive">
   <table mat-table [dataSource]="dataSource" class="w-100 borderless hoverable">
 
@@ -23,26 +24,31 @@
       <th mat-header-cell *matHeaderCellDef class="text-nowrap"> Display as </th>
       <td mat-cell *matCellDef="let element">
         <ng-container *ngIf="hasForeignKey(element)">
+
           <button
             mat-button
             class="table-btn w-100 ps-0"
             [disableRipple]="true"
             [matMenuTriggerFor]="editForeignKeyMenu"
-            [matMenuTriggerData]="{data: {databases: databases, selectedDatabase: selectedDatabase, selectedTable: selectedTable, columnName: element?.name, foreign_keys: foreign_keys, long_data: fkLong[element?.name]??true}}"
-            aria-label="Edit foreign key">
+            [matMenuTriggerData]="{data: {databases: databases, selectedDatabase: selectedDatabase, selectedTable: selectedTable, columnName: element?.name, foreign_keys: foreign_keys, long_data: fkLong[element?.name]??true}}">
             <div class="d-flex w-100 justify-content-between align-items-center">
               {{getForeignKeyName(element)}}
             </div>
           </button>
+
           <mat-menu #editForeignKeyMenu="matMenu">
             <ng-template matMenuContent let-data="data">
               <div class="inner-menu w-100">
+
                 <app-foreign-key-list
                   [data]="data"
-                  (changeForeignKey)="changeForeignKey($event)"></app-foreign-key-list>
+                  (changeForeignKey)="changeForeignKey($event)">
+                </app-foreign-key-list>
+
               </div>
             </ng-template>
           </mat-menu>
+
         </ng-container>
       </td>
       <td mat-cell *matCellDef="let element" class="ps-0"> {{element?.db ?? '-'}} / {{element?.hl}}</td>
@@ -58,18 +64,37 @@
     <ng-container matColumnDef="template">
       <th mat-header-cell *matHeaderCellDef class="text-nowrap"> Template </th>
       <td mat-cell *matCellDef="let element">
-        <button mat-button class="table-btn w-100" [matMenuTriggerFor]="templateMenu"
-          [matMenuTriggerData]="{element: element}" aria-label="Select template handling" [disabled]="element?.primary">
+
+        <button
+          mat-button
+          class="table-btn w-100"
+          [matMenuTriggerFor]="templateMenu"
+          [matMenuTriggerData]="{element: element}"
+          [disabled]="element?.primary">
           <div class="d-flex w-100 justify-content-between align-items-center">
             {{element.locked ? 'Locked' : templateList[element.handling]}}
             <mat-icon *ngIf="!element?.primary">keyboard_arrow_down</mat-icon>
           </div>
         </button>
+
         <mat-menu #templateMenu="matMenu">
           <ng-template matMenuContent let-element="element">
-            <button mat-menu-item (click)="element.handling = ''; element.locked = false;">None</button>
-            <button mat-menu-item *ngFor="let item of templateList | keyvalue" (click)="changeTemplate(element, item);"
-              [matTooltip]="getTemplateTooltip(item.key)" matTooltipPosition="after">{{item.value}}</button>
+
+            <button
+              mat-menu-item
+              (click)="element.handling = ''; element.locked = false;">
+              None
+            </button>
+
+            <button
+              mat-menu-item
+              *ngFor="let item of templateList | keyvalue"
+              (click)="changeTemplate(element, item);"
+              [matTooltip]="getTemplateTooltip(item.key)"
+              matTooltipPosition="after">
+              {{item.value}}
+            </button>
+
           </ng-template>
         </mat-menu>
       </td>
@@ -81,8 +106,14 @@
         Create
       </th>
       <td mat-cell *matCellDef="let element">
-        <mat-checkbox color="primary" [disabled]="verbForColumnIsDisabled('post', element)"
-          [(ngModel)]="element.post">Create</mat-checkbox>
+
+        <mat-checkbox
+          color="primary"
+          [disabled]="verbForColumnIsDisabled('post', element)"
+          [(ngModel)]="element.post">
+          Create
+        </mat-checkbox>
+
       </td>
     </ng-container>
 
@@ -92,8 +123,14 @@
         Read
       </th>
       <td mat-cell *matCellDef="let element">
-        <mat-checkbox color="primary" [disabled]="verbForColumnIsDisabled('get', element)"
-          [(ngModel)]="element.get">Read</mat-checkbox>
+
+        <mat-checkbox
+          color="primary"
+          [disabled]="verbForColumnIsDisabled('get', element)"
+          [(ngModel)]="element.get">
+          Read
+        </mat-checkbox>
+
       </td>
     </ng-container>
 
@@ -103,8 +140,14 @@
         Update
       </th>
       <td mat-cell *matCellDef="let element">
-        <mat-checkbox color="primary" [disabled]="verbForColumnIsDisabled('put', element)"
-          [(ngModel)]="element.put">Update</mat-checkbox>
+
+        <mat-checkbox
+          color="primary"
+          [disabled]="verbForColumnIsDisabled('put', element)"
+          [(ngModel)]="element.put">
+          Update
+        </mat-checkbox>
+
       </td>
     </ng-container>
 
@@ -114,8 +157,14 @@
         Delete
       </th>
       <td mat-cell *matCellDef="let element">
-        <mat-checkbox color="primary" [disabled]="verbForColumnIsDisabled('delete', element)"
-          [(ngModel)]="element.delete">Delete</mat-checkbox>
+
+        <mat-checkbox
+          color="primary"
+          [disabled]="verbForColumnIsDisabled('delete', element)"
+          [(ngModel)]="element.delete">
+          Delete
+        </mat-checkbox>
+
       </td>
     </ng-container>
 

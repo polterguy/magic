@@ -28,23 +28,9 @@ export class FolderObjectName {
 })
 export class RenameFolderDialogComponent {
 
-  /**
-   * Need to keep track of original filename to disable rename button
-   * unless it's been changed.
-   */
   originalName: string;
-
-  /**
-   * Databound value of new name to give folder.
-   */
   newName: string;
 
-  /**
-   * Creates an instance of your component.
-   *
-   * @param dialogRef Needed to be abletoclose dialog
-   * @param data Name of folder you want to rename
-   */
   constructor(
     private generalService: GeneralService,
     public dialogRef: MatDialogRef<RenameFolderDialogComponent>,
@@ -55,12 +41,8 @@ export class RenameFolderDialogComponent {
     this.newName = name;
   }
 
-  /**
-   * Invoked when user wants to close dialog and rename folder.
-   */
   ok() {
-    // let newName = this.data.name.substring(0, this.data.name.length - 1);
-    // newName = newName.substring(0, newName.lastIndexOf('/')) + '/' + this.newName + '/';
+
     if (!this.pathValid()) {
       this.generalService.showFeedback('Name is required and cannot contain blank space or special characters.', 'errorMessage', 'Ok', 5000);
       return;
@@ -73,19 +55,13 @@ export class RenameFolderDialogComponent {
     this.dialogRef.close(this.newName);
   }
 
-  /**
-   * Invoked when user wants to close dialog without renaming folder.
-   */
   cancel() {
+
     this.dialogRef.close();
   }
 
-  /**
-   * Returns true if path is valid.
-   *
-   * @returns True if path is valid
-   */
   pathValid() {
+
     if (!this.newName || this.newName.length === 0) {
       return false;
     }

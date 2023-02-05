@@ -41,6 +41,7 @@ export class SnippetNameDialogComponent {
    */
 
   private validateName() {
+
     return this.CommonRegEx.appNames.test(this.data);
   }
 }

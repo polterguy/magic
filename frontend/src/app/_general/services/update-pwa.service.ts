@@ -34,6 +34,7 @@ export class UpdatePwaService {
   checkForUpdates() {
 
     this.swUpdate.versionUpdates.subscribe(evt => {
+
       switch (evt.type) {
 
         case 'VERSION_DETECTED':
@@ -58,6 +59,7 @@ export class UpdatePwaService {
    */
 
   private activateUpdate() {
+
     const dialogExist = this.matDialog.getDialogById('message-pop-up');
     if (!dialogExist) {
       this.matDialog.open(PwaUpdateDialogComponent, {

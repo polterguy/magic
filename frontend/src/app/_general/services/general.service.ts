@@ -22,14 +22,17 @@ export class GeneralService {
   constructor(private _snackBar: MatSnackBar) { }
 
   showLoading() {
+
     this._loading.next(true);
   }
 
   hideLoading() {
+
     this._loading.next(false);
   }
 
   showFeedback(message: string, panelClass?: string, actionButton?: string, duration?: number) {
+
     this._snackBar.open(message, actionButton, {
       duration: duration || 2000, // if exists use it, otherwise use default
       horizontalPosition: 'right',
@@ -39,10 +42,12 @@ export class GeneralService {
   }
 
   getScreenSize(): Observable<boolean> {
+
     return this.largeScreen.asObservable();
   }
 
   setScreenSize(status: boolean) {
+
     this.largeScreen.next(status);
   }
 }

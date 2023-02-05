@@ -28,10 +28,8 @@ export class AddMigrateScriptComponent {
     private dialogRef: MatDialogRef<AddMigrateScriptComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Sql) { }
 
-  /*
-   * Invoked if user wants to apply current SQL as a migration script.
-   */
   create() {
+
     this.dialogRef.close({
       apply: true,
     });

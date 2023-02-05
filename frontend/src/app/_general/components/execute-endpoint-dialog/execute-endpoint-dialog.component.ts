@@ -74,6 +74,7 @@ export class ExecuteEndpointDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: { itemToBeTried: any }) { }
 
   ngOnInit() {
+
     this.itemDetails = [];
     this.parameters = [];
     this.result = null;
@@ -82,6 +83,7 @@ export class ExecuteEndpointDialogComponent implements OnInit {
   }
 
   getArguments(args: Argument[], controlArguments: boolean) {
+
     if (this.itemDetails.type === 'crud-read' || this.itemDetails.type === 'crud-count') {
       return args.filter(x => {
         switch (x.name) {
@@ -105,7 +107,9 @@ export class ExecuteEndpointDialogComponent implements OnInit {
   }
 
   getDescription(arg: any) {
+
     if (this.itemDetails.type === 'crud-read' || this.itemDetails.type === 'crud-count') {
+
       switch (arg.name) {
 
         case 'operator':
@@ -163,6 +167,7 @@ export class ExecuteEndpointDialogComponent implements OnInit {
   }
 
   canInvoke() {
+
     return this.itemDetails?.verb === 'get' ||
       this.itemDetails?.verb === 'delete' ||
       this.itemDetails?.consumes === 'application/json' ||
@@ -171,6 +176,7 @@ export class ExecuteEndpointDialogComponent implements OnInit {
   }
 
   invoke() {
+
     this.itemDetails.path = this.originalPath;
     if (Object.values(this.paramsForm.value).length) {
       let url: string = `${this.itemDetails.path}`;
@@ -202,6 +208,7 @@ export class ExecuteEndpointDialogComponent implements OnInit {
     }
     try {
       let invocation: Observable<any> = null;
+
       switch (this.itemDetails.verb) {
 
         case 'get':
@@ -264,8 +271,12 @@ export class ExecuteEndpointDialogComponent implements OnInit {
 
       if (invocation) {
         const startTime = new Date();
+
+        this.generalService.showLoading();
         invocation.subscribe({
           next: (res: any) => {
+
+            this.generalService.hideLoading();
             const endTime = new Date();
             const timeDiff = endTime.getTime() - startTime.getTime();
             const response = responseType === 'json' ? JSON.stringify(res.body || '{}', null, 2) : res.body;
@@ -284,6 +295,8 @@ export class ExecuteEndpointDialogComponent implements OnInit {
             this.canCreateAssumption = true;
           },
           error: (error: any) => {
+
+            this.generalService.hideLoading();
             this.isExecuting = false;
             this.result = {
               status: error.status,
@@ -298,6 +311,7 @@ export class ExecuteEndpointDialogComponent implements OnInit {
       }
     }
     catch (error) {
+
       this.isExecuting = false;
       this.canCreateAssumption = true;
       this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
@@ -305,10 +319,12 @@ export class ExecuteEndpointDialogComponent implements OnInit {
   }
 
   isSuccess() {
+
     return this.result && this.result.status >= 200 && this.result.status < 400;
   }
 
   inputTypes(item: string) {
+
     switch (item) {
 
       case 'bool':
@@ -330,12 +346,14 @@ export class ExecuteEndpointDialogComponent implements OnInit {
   }
 
   createTest() {
+
     const dialogRef = this.dialog.open(CreateAssumptionTestDialogComponent, {
       width: '550px',
     });
     dialogRef.afterClosed().subscribe((res: TestModel) => {
       if (res) {
 
+        this.generalService.showLoading();
         this.assumptionService.create(
           res.filename,
           this.itemDetails.verb,
@@ -347,6 +365,7 @@ export class ExecuteEndpointDialogComponent implements OnInit {
           this.itemDetails.produces).subscribe({
             next: () => {
 
+              this.generalService.hideLoading();
               if (res.matchResponse && this.result.blob) {
                 this.generalService.showFeedback('Assumption successfully saved. Notice, blob types of invocations cannot assume response equality.', 'successMessage', 'Ok', 5000);
               } else {
@@ -356,13 +375,18 @@ export class ExecuteEndpointDialogComponent implements OnInit {
               this.assumptions.getAssumptions();
               this.cdr.detectChanges();
             },
-            error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+            error: (error: any) => {
+
+              this.generalService.hideLoading();
+              this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+            }
           });
       }
     });
   }
 
   copyResult(response: any) {
+
     this.clipboard.copy(response);
     this.generalService.showFeedback('Result can be found on your clipboard');
   }
@@ -372,6 +396,7 @@ export class ExecuteEndpointDialogComponent implements OnInit {
    */
 
   private prepareData(item: any) {
+
     this.itemDetails = item;
 
     this.originalPath = item.path;
@@ -436,10 +461,12 @@ export class ExecuteEndpointDialogComponent implements OnInit {
   }
 
   private getParams() {
+
     this.parameters = (this.itemDetails.input as any)?.map((item: any) => { return item.name }) || [];
   }
 
   private setForm() {
+
     this.itemDetails.input.forEach((element: any) => {
       this.paramsForm.setControl(element.name, new FormControl<any>(''));
     });

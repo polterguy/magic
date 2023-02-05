@@ -70,11 +70,14 @@ export class SQLStudioComponent implements OnInit {
         next: (defaultDb: {default: string, options: string[]}) => {
 
           this.databaseTypes = this.databaseTypes.filter(x => defaultDb.options.includes(x.type));
-
           this.selectedDbType = param.dbType ?? defaultDb.default;
           this.getConnectionStrings(this.selectedDbType, this.selectedConnectionString);
         },
-        error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
+        error: (error: any) => {
+
+          this.generalService.hideLoading();
+          this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+        }
       });
     });
   }
@@ -106,7 +109,11 @@ export class SQLStudioComponent implements OnInit {
           this._hintTables.next({});
         }
       },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
+      error: (error: any) => {
+
+        this.generalService.hideLoading();
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+      }
     });
   }
 

@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2023 info@aista.com, all rights reserved.
+ */
+
 import { Component } from '@angular/core';
 import { ThemeService } from 'src/app/_general/services/theme.service';
 

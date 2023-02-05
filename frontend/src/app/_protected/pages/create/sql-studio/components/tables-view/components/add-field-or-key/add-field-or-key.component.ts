@@ -60,6 +60,7 @@ export class AddFieldComponent {
     @Inject(MAT_DIALOG_DATA) public data: ExpectedData) { }
 
   changeDefaultValue() {
+
     this.formData.defaultValue = '';
     const dbTypeForInt: boolean =
       this.data.selectedDbType === 'mysql' ||
@@ -80,15 +81,18 @@ export class AddFieldComponent {
   }
 
   changeTable() {
+
     this.formData.foreignField = this.data.tables.find((item: any) => item.name === this.formData.selectedTable.name).columns[0].name;
     this.changeColumnName();
   }
 
   changeColumnName() {
+
     this.formData.columnName = this.formData.foreignField;
   }
 
   tabsChanged(event: any) {
+
     let refreshedData: NewField = {
       nullable: false,
       indexed: false,
@@ -100,6 +104,7 @@ export class AddFieldComponent {
   }
 
   create() {
+
     if (!this.validateName()) {
       this.generalService.showFeedback('Invalid name', 'errorMessage');
       return;
@@ -138,10 +143,12 @@ export class AddFieldComponent {
    */
 
   private validateName() {
+
     return this.CommonRegEx.appNameWithUppercase.test(this.formData.columnName);
   }
 
   private validateDefaultValue() {
+
     return this.CommonRegEx.appNameWithUppercase.test(this.formData.defaultValue);
   }
 }

@@ -2,10 +2,10 @@
  * Copyright (c) Aista Ltd, 2021 - 2023 info@aista.com, all rights reserved.
  */
 
-@import '../../../../../assets/styles/_variables/colors.scss';
+@import "../../../../../assets/styles/_variables/colors.scss";
 
 mat-card.generator {
-  padding-bottom: .5rem !important;
+  padding-bottom: 0.5rem !important;
 }
 
 ::ng-deep .select-all-checkbox {
@@ -21,7 +21,6 @@ mat-card.generator {
   .mat-checkbox-inner-container {
     margin-left: 0;
   }
-
 }
 
 .endpoint-generator ::ng-deep {
@@ -32,7 +31,7 @@ mat-card.generator {
   }
 }
 
-@media(max-width: 414px) {
+@media (max-width: 414px) {
   ::ng-deep .endpoint-generator {
     .mat-checkbox-layout .mat-checkbox-label {
       font-size: 12px;

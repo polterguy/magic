@@ -7,17 +7,31 @@
   </p>
 
   <mat-form-field class="w-100 standalone-field">
-    <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+    <span
+      matPrefix
+      class="d-flex flex-nowrap align-items-center justify-content-between me-2">
       <mat-icon>remove_red_eye</mat-icon>
       <span class="text-muted">|</span>
     </span>
-    <mat-select placeholder="Theme" [(ngModel)]="themeService.theme">
-      <mat-option *ngFor="let item of themeService.themes" [value]="item">{{item}}</mat-option>
+    <mat-select
+      placeholder="Theme"
+      [(ngModel)]="themeService.theme">
+      <mat-option
+        *ngFor="let item of themeService.themes"
+        [value]="item">
+        {{item}}
+      </mat-option>
     </mat-select>
   </mat-form-field>
 
 </div>
 
 <div mat-dialog-actions [align]="'end'">
-  <button mat-flat-button [mat-dialog-close]="true">Close</button>
+
+  <button
+    mat-flat-button
+    [mat-dialog-close]="true">
+    Close
+  </button>
+
 </div>

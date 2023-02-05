@@ -31,12 +31,16 @@ export class ViewPluginDatabaseComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any) { }
 
   ngOnInit() {
+
     this.getAppDetails();
   }
 
   updatePlugin() {
+
+    this.generalService.showLoading();
     this.bazarService.updateBazarItem(this.data).subscribe({
       next: (result: MagicResponse) => {
+
         if (result.result === 'success') {
           this.bazarService.installBazarItem(
             this.data.module_name,
@@ -44,24 +48,36 @@ export class ViewPluginDatabaseComponent implements OnInit {
             this.data.name,
             this.data.token).subscribe({
               next: (install: MagicResponse) => {
+
+                this.generalService.hideLoading();
                 if (install.result === 'success') {
                   this.generalService.showFeedback('Database was successfully updated.');
                   this.dialogRef.close();
                 }
               },
-              error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+              error: (error: any) => {
+
+                this.generalService.hideLoading();
+                this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+              }
             });
         }
       },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+      error: (error: any) => {
+
+        this.generalService.hideLoading();
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+      }
     });
   }
 
   uninstall() {
+
     this.dialogRef.close('uninstall');
   }
 
   install() {
+
     this.dialogRef.close('install');
   }
 
@@ -70,8 +86,12 @@ export class ViewPluginDatabaseComponent implements OnInit {
    */
 
   private getAppDetails() {
+
+    this.generalService.showLoading();
     this.bazarService.canInstall(this.data.min_magic_version).subscribe({
       next: (result: MagicResponse) => {
+
+        this.generalService.hideLoading();
         if (result.result === 'SUCCESS') {
           this.canInstall = true;
         } else {
@@ -79,7 +99,11 @@ export class ViewPluginDatabaseComponent implements OnInit {
           this.needsCoreUpdate = true;
         }
       },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+      error: (error: any) => {
+
+        this.generalService.hideLoading();
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+      }
     });
   }
 }

@@ -33,16 +33,19 @@ export class UploadExistingComponent {
     formData.append("file", this.file, this.file.name);
     formData.append("folder", '/etc/www/');
 
+    this.generalService.showLoading();
     this.fileService.uploadStaticWebsite(formData).subscribe({
-      next: (res: any) => {
+      next: () => {
 
         this.uploading = false;
-        this.generalService.showFeedback('Website successfully uploaded to /etc/www/', 'successMessage', 'Ok', 4000);
+        this.generalService.hideLoading();
+        this.generalService.showFeedback('Website successfully uploaded to /etc/www/', 'successMessage');
       },
       error: (error: any) => {
 
         this.uploading = false;
-        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000);
+        this.generalService.hideLoading();
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
       }
     });
   }

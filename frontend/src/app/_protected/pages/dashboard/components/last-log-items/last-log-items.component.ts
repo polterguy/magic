@@ -17,40 +17,26 @@ import { LogItemDetailsComponent } from 'src/app/_general/components/log-item-de
 })
 export class LastLogItemsComponent implements OnInit, OnChanges {
 
-  /**
-   * Actual data received from the parent component.
-   */
   @Input() data: LastLogItems[] = [];
-
-  /**
-   * Number of total logs passing from the parent component.
-   */
   @Input() totalLogs: number = 0;
 
-  /**
-   * Column titles to be displayed in the table.
-   */
   displayedColumns: string[] = ['created', 'type', 'content', 'more'];
-
-  /**
-   * Data to be displayed inside the table.
-   */
   dataSource: any;
 
   constructor(private dialog: MatDialog) { }
 
   ngOnInit() {
+
     this.watingData();
   }
 
   ngOnChanges() {
+
     this.watingData();
   }
 
-  /**
-   * Waiting for the data to reach from the parent component.
-   */
   watingData() {
+
     (async () => {
       while (this.data === null)
         await new Promise(resolve => setTimeout(resolve, 100));
@@ -61,11 +47,8 @@ export class LastLogItemsComponent implements OnInit, OnChanges {
     })();
   }
 
-  /**
-   * To show the full details.
-   * @param item All information about the selected log.
-   */
   viewLog(item: any) {
+
     this.dialog.open(LogItemDetailsComponent, {
       width: '700px',
       data: item

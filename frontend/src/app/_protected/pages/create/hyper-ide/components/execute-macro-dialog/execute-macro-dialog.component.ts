@@ -26,6 +26,7 @@ export class ExecuteMacroDialogComponent {
     private generalService: GeneralService,
     public dialogRef: MatDialogRef<ExecuteMacroDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: MacroDefinition) {
+
     for (const idx of this.data.arguments) {
       if (!idx.value && idx.default) {
         idx.value = idx.default;
@@ -33,30 +34,27 @@ export class ExecuteMacroDialogComponent {
     }
   }
 
-  /**
-   * Closes dialog without executing a macro, allowing user to select another macro.
-   */
   differentMacro() {
 
     delete this.data.name;
     this.dialogRef.close(this.data);
   }
 
-  /**
-   * Returns true if all mandatory arguments have been given values.
-   */
-  private canExecute() {
-    return this.data.arguments.filter(x => x.mandatory && !x.value).length === 0;
-  }
-
-  /**
-   * Invoked when user wants to execute macro after having decorated it.
-   */
   execute() {
+
     if (!this.canExecute()) {
       this.generalService.showFeedback('Please provide the necessary details.', 'errorMessage');
       return;
     }
     this.dialogRef.close(this.data);
+  }
+
+  /*
+   * Private helper methods.
+   */
+
+  private canExecute() {
+
+    return this.data.arguments.filter(x => x.mandatory && !x.value).length === 0;
   }
 }

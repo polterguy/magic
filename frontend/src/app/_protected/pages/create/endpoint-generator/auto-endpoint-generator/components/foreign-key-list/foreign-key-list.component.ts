@@ -40,7 +40,8 @@ export class ForeignKeyListComponent implements AfterViewInit {
 
   public foreignKey: string[] = [];
 
-  ngAfterViewInit(): void {
+  ngAfterViewInit() {
+
     const currentDb = this.data.databases.find((db: any) => db.name === this.data.selectedDatabase);
     const table: any = currentDb.tables.find((table: any) => table.name === this.data.selectedTable.toString());
     this.data.currentForeignKey = table.foreign_keys.find((fk: any) => fk.column === this.data.columnName)
@@ -57,6 +58,7 @@ export class ForeignKeyListComponent implements AfterViewInit {
   }
 
   public save() {
+
     const selectedForeignKey: FKModel = {
       foreign_table: this.data.currentForeignKey.foreign_table,
       foreign_name: this.foreignKey.toString() !== '' ? this.foreignKey.toString() : this.data.columnName,

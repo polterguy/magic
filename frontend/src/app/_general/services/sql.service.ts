@@ -34,6 +34,7 @@ export class SqlService {
     sql: string,
     safeMode: boolean,
     batch: boolean) {
+
     return this.httpService.post<any[]>('/magic/system/sql/evaluate', {
       databaseType,
       database,
@@ -44,14 +45,17 @@ export class SqlService {
   }
 
   defaultDatabaseType() {
+
     return this.httpService.get<DefaultDatabaseType>('/magic/system/sql/default-database-type');
   }
 
   connectionStrings(databaseType: string) {
+
     return this.httpService.get<any>('/magic/system/sql/connection-strings?databaseType=' + encodeURIComponent(databaseType));
   }
 
   getDatabaseMetaInfo(databaseType: string, connectionString: string) {
+
     return this.httpService.get<Databases>('/magic/system/sql/databases?databaseType=' +
       encodeURIComponent(databaseType) +
       '&connectionString=' +
@@ -59,6 +63,7 @@ export class SqlService {
   }
 
   addConnectionString(databaseType: string, name: string, connectionString: string, useAsDefault: boolean = false) {
+
     return this.httpService.post('/magic/system/sql/connection-string', {
       databaseType,
       name,
@@ -68,15 +73,18 @@ export class SqlService {
   }
 
   deleteConnectionString(databaseType: string, connectionStringName: string) {
+
     return this.httpService.delete('/magic/system/sql/connection-string?databaseType=' + encodeURIComponent(databaseType) + '&name=' +
       encodeURIComponent(connectionStringName));
   }
 
   listSnippets(databaseType: string) {
+
     return this.fileService.listFiles(`/etc/${databaseType}/templates/`);
   }
 
   loadSnippet(databaseType: string, filename: string) {
+
     if (filename.indexOf('/') !== -1) {
       return throwError(() => new Error('Not a valid filename'));
     }
@@ -88,6 +96,7 @@ export class SqlService {
   }
 
   saveSnippet(databaseType: string, filename: string, content: string) {
+
     if (filename.indexOf('/') !== -1) {
       return throwError(() => new Error('Not a valid filename'));
     }
@@ -102,6 +111,7 @@ export class SqlService {
     databaseType: string,
     connectionString: string,
     databaseName: string) {
+
     return new Observable<any>(subscriber => {
       this.httpService.post<any>('/magic/system/sql/ddl/database', {
         databaseType,
@@ -109,6 +119,7 @@ export class SqlService {
         databaseName,
       }).subscribe({
         next: (result: any) => {
+
           this.cacheService.delete('magic.sql.databases.' + databaseType + '.' + connectionString + '.*').subscribe({
             next: () => {
               subscriber.next(result);
@@ -121,6 +132,7 @@ export class SqlService {
           });
         },
         error: (error: any) => {
+
           subscriber.error(error);
           subscriber.complete();
         }
@@ -132,6 +144,7 @@ export class SqlService {
     databaseType: string,
     connectionString: string,
     databaseName: string) {
+
     return new Observable<any>(subscriber => {
       this.httpService.delete<any>(
         '/magic/system/sql/ddl/database?databaseType=' +
@@ -141,18 +154,22 @@ export class SqlService {
         '&databaseName=' +
         encodeURIComponent(databaseName)).subscribe({
           next: (result) => {
+
             this.cacheService.delete('magic.sql.databases.' + databaseType + '.' + connectionString + '.*').subscribe({
               next: () => {
+
                 subscriber.next(result);
                 subscriber.complete();
               },
               error: (error: any) => {
+
                 subscriber.error(error);
                 subscriber.complete();
               }
             });
           },
           error: (error: any) => {
+
             subscriber.error(error);
             subscriber.complete();
           }
@@ -166,6 +183,7 @@ export class SqlService {
     databaseName: string,
     tables: string[],
     full: boolean) {
+
     return this.httpService.post<any>('/magic/system/sql/ddl/export-tables', {
       databaseType,
       connectionString,
@@ -184,6 +202,7 @@ export class SqlService {
     pkType: string,
     pkLength: string,
     pkDefault: string) {
+
     return new Observable<any>(subscriber => {
       this.httpService.post<any>('/magic/system/sql/ddl/table', {
         databaseType,
@@ -196,18 +215,22 @@ export class SqlService {
         pkDefault
       }).subscribe({
         next: (result) => {
+
           this.cacheService.delete('magic.sql.databases.' + databaseType + '.' + connectionString + '.*').subscribe({
             next: () => {
+
               subscriber.next(result);
               subscriber.complete();
             },
             error: (error: any) => {
+
               subscriber.error(error);
               subscriber.complete();
             }
           });
         },
         error: (error: any) => {
+
           subscriber.error(error);
           subscriber.complete();
         }
@@ -228,18 +251,22 @@ export class SqlService {
         args
       }).subscribe({
         next: (result) => {
+
           this.cacheService.delete('magic.sql.databases.' + databaseType + '.' + connectionString + '.*').subscribe({
             next: () => {
+
               subscriber.next(result);
               subscriber.complete();
             },
             error: (error: any) => {
+
               subscriber.error(error);
               subscriber.complete();
             }
           });
         },
         error: (error: any) => {
+
           subscriber.error(error);
           subscriber.complete();
         }
@@ -252,6 +279,7 @@ export class SqlService {
     connectionString: string,
     databaseName: string,
     tableName: string) {
+
     return new Observable<any>(subscriber => {
       this.httpService.delete<any>(
         '/magic/system/sql/ddl/table?databaseType=' +
@@ -263,18 +291,22 @@ export class SqlService {
         '&tableName=' +
         encodeURIComponent(tableName)).subscribe({
           next: (result) => {
+
             this.cacheService.delete('magic.sql.databases.' + databaseType + '.' + connectionString + '.*').subscribe({
               next: () => {
+
                 subscriber.next(result);
                 subscriber.complete();
               },
               error: (error: any) => {
+
                 subscriber.error(error);
                 subscriber.complete();
               }
             });
           },
           error: (error: any) => {
+
             subscriber.error(error);
             subscriber.complete();
           }
@@ -293,6 +325,7 @@ export class SqlService {
     nullable: boolean,
     indexed: boolean,
     columnLength: number) {
+
     return new Observable<any>(subscriber => {
       return this.httpService.post<any>('/magic/system/sql/ddl/column', {
         databaseType,
@@ -307,18 +340,22 @@ export class SqlService {
         columnLength
       }).subscribe({
         next: (result) => {
+
           this.cacheService.delete('magic.sql.databases.' + databaseType + '.' + connectionString + '.*').subscribe({
             next: () => {
+
               subscriber.next(result);
               subscriber.complete();
             },
             error: (error: any) => {
+
               subscriber.error(error);
               subscriber.complete();
             }
           });
         },
         error: (error: any) => {
+
           subscriber.error(error);
           subscriber.complete();
         }
@@ -338,6 +375,7 @@ export class SqlService {
     nullable: boolean,
     columnLength: number,
     cascading: boolean) {
+
     return new Observable<any>(subscriber => {
       this.httpService.post<any>('/magic/system/sql/ddl/column', {
         databaseType,
@@ -353,18 +391,22 @@ export class SqlService {
         cascading,
       }).subscribe({
         next: (result) => {
+
           this.cacheService.delete('magic.sql.databases.' + databaseType + '.' + connectionString + '.*').subscribe({
             next: () => {
+
               subscriber.next(result);
               subscriber.complete();
             },
             error: (error: any) => {
+
               subscriber.error(error);
               subscriber.complete();
             }
           });
         },
         error: (error: any) => {
+
           subscriber.error(error);
           subscriber.complete();
         }
@@ -395,10 +437,12 @@ export class SqlService {
 
             this.cacheService.delete('magic.sql.databases.' + databaseType + '.' + connectionString + '.*').subscribe({
               next: () => {
+
                 subscriber.next(result);
                 subscriber.complete();
               },
               error: (error: any) => {
+
                 subscriber.error(error);
                 subscriber.complete();
               }
@@ -455,16 +499,19 @@ export class SqlService {
 
             this.cacheService.delete('magic.sql.databases.' + databaseType + '.' + connectionString + '.*').subscribe({
               next: () => {
+
                 subscriber.next(result);
                 subscriber.complete();
               },
               error: (error: any) => {
+
                 subscriber.error(error);
                 subscriber.complete();
               }
             });
           },
           error: (error: any) => {
+
             subscriber.error(error);
             subscriber.complete();
           }

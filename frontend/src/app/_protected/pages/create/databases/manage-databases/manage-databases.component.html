@@ -54,12 +54,14 @@
 
       <!-- Loading skeleton -->
       <ng-container *ngIf="isLoadingPlugins">
+
         <app-loading-skeleton
-          [amount]="3"
-          [colClass]="'col-12'"
-          [blockHeight]="'80px'"
-          [hasShadow]="false">
+          amount="3"
+          colClass="col-12"
+          blockHeight="80px"
+          hasShadow="false">
         </app-loading-skeleton>
+
       </ng-container>
 
       <ng-container *ngIf="!isLoadingPlugins">
@@ -114,12 +116,14 @@
 
     <!-- Loading skeleton -->
     <ng-container *ngIf="isLoadingDbs">
+
       <app-loading-skeleton
-        [amount]="8"
-        [colClass]="'col-12'"
-        [blockHeight]="'48px'"
-        [hasShadow]="false">
+        amount="8"
+        colClass="col-12"
+        blockHeight="48px"
+        hasShadow="false">
       </app-loading-skeleton>
+
     </ng-container>
 
     <!-- List of existing databases -->
@@ -129,19 +133,19 @@
         [dataSource]="existingDatabases"
         class="w-100 borderless hoverable">
 
-        <!-- Name Column -->
+        <!-- Name column -->
         <ng-container matColumnDef="name">
           <th mat-header-cell *matHeaderCellDef class="text-nowrap ps-0">Name</th>
           <td mat-cell *matCellDef="let element" class="ps-0 text-truncate">{{element?.name}}</td>
         </ng-container>
 
-        <!-- Tables Column -->
+        <!-- Tables column -->
         <ng-container matColumnDef="tables">
           <th mat-header-cell *matHeaderCellDef class="text-nowrap ps-0">Tables</th>
           <td mat-cell *matCellDef="let element" class="ps-0">{{element?.tables?.length ?? '-'}}</td>
         </ng-container>
 
-        <!-- Actions Column -->
+        <!-- Actions column -->
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef class="ps-3">Actions</th>
           <td mat-cell *matCellDef="let element" class="px-0">
