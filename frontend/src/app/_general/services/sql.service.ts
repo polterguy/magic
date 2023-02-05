@@ -378,7 +378,9 @@ export class SqlService {
     databaseName: string,
     tableName: string,
     columnName: string) {
+
     return new Observable<any>(subscriber => {
+
       this.httpService.delete<any>('/magic/system/sql/ddl/column?databaseType=' +
         encodeURIComponent(databaseType) +
         '&connectionString=' +
@@ -390,6 +392,64 @@ export class SqlService {
         '&columnName=' +
         encodeURIComponent(columnName)).subscribe({
           next: (result) => {
+
+            this.cacheService.delete('magic.sql.databases.' + databaseType + '.' + connectionString + '.*').subscribe({
+              next: () => {
+                subscriber.next(result);
+                subscriber.complete();
+              },
+              error: (error: any) => {
+                subscriber.error(error);
+                subscriber.complete();
+              }
+            });
+          },
+          error: (error: any) => {
+
+            subscriber.error(error);
+            subscriber.complete();
+          }
+        })
+    });
+  }
+
+  deleteFk(
+    databaseType: string,
+    connectionString: string,
+    databaseName: string,
+    tableName: string,
+    fkName: string) {
+
+    return this.httpService.delete<any>('/magic/system/sql/ddl/foreign-key?databaseType=' +
+      encodeURIComponent(databaseType) +
+      '&connectionString=' +
+      encodeURIComponent(connectionString) +
+      '&databaseName=' +
+      encodeURIComponent(databaseName) +
+      '&tableName=' +
+      encodeURIComponent(tableName) +
+      '&fkName=' +
+      encodeURIComponent(fkName));
+  }
+
+  deleteIndex(
+    databaseType: string,
+    connectionString: string,
+    databaseName: string,
+    indexName: string) {
+
+    return new Observable<any>(subscriber => {
+
+      this.httpService.delete<any>('/magic/system/sql/ddl/index?databaseType=' +
+        encodeURIComponent(databaseType) +
+        '&connectionString=' +
+        encodeURIComponent(connectionString) +
+        '&databaseName=' +
+        encodeURIComponent(databaseName) +
+        '&indexName=' +
+        encodeURIComponent(indexName)).subscribe({
+          next: (result) => {
+
             this.cacheService.delete('magic.sql.databases.' + databaseType + '.' + connectionString + '.*').subscribe({
               next: () => {
                 subscriber.next(result);
@@ -407,24 +467,6 @@ export class SqlService {
           }
         })
     });
-  }
-
-  deleteFk(
-    databaseType: string,
-    connectionString: string,
-    databaseName: string,
-    tableName: string,
-    fkName: string) {
-    return this.httpService.delete<any>('/magic/system/sql/ddl/foreign-key?databaseType=' +
-      encodeURIComponent(databaseType) +
-      '&connectionString=' +
-      encodeURIComponent(connectionString) +
-      '&databaseName=' +
-      encodeURIComponent(databaseName) +
-      '&tableName=' +
-      encodeURIComponent(tableName) +
-      '&fkName=' +
-      encodeURIComponent(fkName));
   }
 
   exportToModule(

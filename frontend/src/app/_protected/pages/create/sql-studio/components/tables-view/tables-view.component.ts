@@ -85,6 +85,7 @@ export class TablesViewComponent implements OnInit, OnDestroy {
   dropItem(item: any, type: string, foreign_keys?: any, tableName?: string) {
 
     let fkName = null;
+
     if (type === 'column' && foreign_keys && (foreign_keys?.filter((x: any) => x.column === item.name) || []).length > 0) {
       if (this.selectedDbType === 'sqlite') {
         this.generalService.showFeedback('SQLite doesn\'t allow for deleting columns with foreign keys', 'errorMessage', 'Ok', 5000);
@@ -93,6 +94,7 @@ export class TablesViewComponent implements OnInit, OnDestroy {
         fkName = foreign_keys?.filter((x: any) => x.column === item.name)[0].name;
       }
     }
+
     this.dialog.open(ConfirmationDialogComponent, {
       width: '500px',
       data: {
@@ -110,11 +112,21 @@ export class TablesViewComponent implements OnInit, OnDestroy {
         }
       }
     }).afterClosed().subscribe((result: string) => {
+
       if (result === 'confirm') {
+
         if (type === 'table') {
+
           this.deleteTable(item);
+
         } else if (type === 'column') {
+
           this.deleteColumn(item, tableName, fkName);
+
+        } else if (type === 'index') {
+
+          this.deleteIndex(item);
+
         }
       }
     });
@@ -259,6 +271,29 @@ export class TablesViewComponent implements OnInit, OnDestroy {
         });
     }
   }
+
+  private deleteIndex(item: any) {
+
+    this.generalService.showLoading();
+    this.sqlService.deleteIndex(
+      this.selectedDbType,
+      this.selectedConnectionString,
+      this.selectedDatabase,
+      item.name).subscribe({
+        next: (result: any) => {
+
+          this.generalService.hideLoading();
+          this.generalService.showFeedback('Column successfully deleted', 'successMessage');
+          this.getDatabases.emit(true);
+          this.applyMigration(result.sql);
+        },
+        error: (error: any) => {
+
+          this.generalService.hideLoading();
+          this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000);
+        }
+      });
+}
 
   // Invoked when user wants to apply migration script.
   private applyMigration(sql: string) {

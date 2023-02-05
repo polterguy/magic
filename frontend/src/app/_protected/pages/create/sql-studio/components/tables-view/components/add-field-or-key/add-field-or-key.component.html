@@ -108,12 +108,13 @@
           </mat-hint>
         </mat-form-field>
 
-        <p class="d-flex justify-content-end">
+        <p class="d-flex justify-content-end mt-2">
 
           <mat-checkbox
             [(ngModel)]="formData.indexed"
             color="primary"
-            class="me-2"
+            class="me-3"
+            labelPosition="before"
             name="indexed">
             Indexed
           </mat-checkbox>
@@ -121,6 +122,7 @@
           <mat-checkbox
             [(ngModel)]="formData.nullable"
             color="primary"
+            labelPosition="before"
             name="nullable">
             Nullable
           </mat-checkbox>
