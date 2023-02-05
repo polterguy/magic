@@ -147,7 +147,7 @@ export class BazarService {
 
   prompt(prompt: string, recaptch_response: string) {
 
-    const url = environment.bazarUrl + '/magic/system/openai/prompt?prompt=foo' +
+    const url = environment.bazarUrl + '/magic/system/openai/prompt?prompt=' +
       encodeURIComponent(prompt) +
       '&type=aista_com' +
       '&recaptcha_response=' +
