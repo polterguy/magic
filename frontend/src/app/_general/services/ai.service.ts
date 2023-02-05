@@ -5,7 +5,7 @@
 
 import { Injectable } from '@angular/core';
 import { ReCaptchaV3Service } from 'ng-recaptcha';
-import { VocabularyService } from 'src/app/_protected/pages/create/hyper-ide/services/vocabulary.service';
+import { VocabularyService } from 'src/app/_general/services/vocabulary.service';
 import { BazarService } from './bazar.service';
 import { GeneralService } from './general.service';
 import { MessageService } from './message.service';
