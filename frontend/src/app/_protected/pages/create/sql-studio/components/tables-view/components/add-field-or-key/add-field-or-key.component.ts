@@ -16,6 +16,7 @@ interface NewField {
   columnLength?: number, // only new column
   defaultValue?: string, // only new column
   nullable?: boolean,
+  indexed?: boolean,
   selectedTable?: any, // only for foreign key and will be used only in the UI
   foreignTable?: string, // only for foreign key
   foreignField?: string, // only for foreign key
@@ -45,7 +46,8 @@ export class AddFieldComponent {
     fieldType: {},
     columnLength: undefined,
     defaultValue: '',
-    nullable: true
+    nullable: true,
+    indexed: false,
   };
   fieldTypeList: any = fieldTypes;
 
@@ -88,7 +90,8 @@ export class AddFieldComponent {
 
   tabsChanged(event: any) {
     let refreshedData: NewField = {
-      nullable: false
+      nullable: false,
+      indexed: false,
     }
     if (event.index === 1) {
       refreshedData.cascading = false;

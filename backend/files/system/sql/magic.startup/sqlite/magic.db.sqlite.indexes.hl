@@ -8,7 +8,7 @@
  * - [database] - What database you want to check
  * - [table] - What table you want to check
  */
-slots.create:magic.db.sqlite.foreign_keys
+slots.create:magic.db.sqlite.indexes
 
    // Sanity checking invocation.
    validators.mandatory:x:@.arguments/*/database
@@ -43,14 +43,14 @@ slots.create:magic.db.sqlite.foreign_keys
    sqlite.connect:x:@.connection
 
       strings.concat
-         .:"pragma foreign_key_list('"
+         .:"select * from sqlite_master where type = 'index' and tbl_name='"
          get-value:x:@.arguments/*/table
-         .:"')"
+         .:"'"
       sqlite.select:x:@strings.concat
 
       /*
        * Creating our return value, by projecting it into
-       * a generic form, that does not rely upon SQLite's syntactic
+       * a generic form, that does not rely upon MySQL's syntactic
        * details.
        */
       for-each:x:@sqlite.select/*
@@ -58,7 +58,17 @@ slots.create:magic.db.sqlite.foreign_keys
          add:x:../*/return-nodes
             .
                .
-                  column:x:@.dp/#/*/from
-                  foreign_table:x:@.dp/#/*/table
-                  foreign_column:x:@.dp/#/*/to
+                  name:x:@.dp/#/*/name
+                  columns
+         strings.concat
+            .:"pragma index_info('"
+            get-value:x:@.dp/#/*/name
+            .:"')"
+         sqlite.select:x:@strings.concat
+         for-each:x:@sqlite.select/*
+            unwrap:x:+/*/*
+            add:x:../*/return-nodes/0/-/*/columns
+               .
+                  .:x:@.dp/#/*/name
+
    return-nodes

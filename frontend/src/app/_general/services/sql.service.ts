@@ -291,6 +291,7 @@ export class SqlService {
     columnType: string,
     defaultValue: string,
     nullable: boolean,
+    indexed: boolean,
     columnLength: number) {
     return new Observable<any>(subscriber => {
       return this.httpService.post<any>('/magic/system/sql/ddl/column', {
@@ -302,6 +303,7 @@ export class SqlService {
         columnType,
         defaultValue,
         nullable,
+        indexed,
         columnLength
       }).subscribe({
         next: (result) => {
