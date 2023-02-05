@@ -28,7 +28,7 @@ interface ExpectedData {
   table: any,
   tables: any,
   databases: any,
-  slectedDbType: string,
+  selectedDbType: string,
 }
 
 /**
@@ -62,12 +62,12 @@ export class AddFieldComponent {
   changeDefaultValue() {
     this.formData.defaultValue = '';
     const dbTypeForInt: boolean =
-      this.data.slectedDbType === 'mysql' ||
-      this.data.slectedDbType === 'sqlite';
+      this.data.selectedDbType === 'mysql' ||
+      this.data.selectedDbType === 'sqlite';
     const dbTypeForDate: boolean =
-      this.data.slectedDbType === 'mysql' ||
-      this.data.slectedDbType === 'sqlite' ||
-      this.data.slectedDbType === 'pgsql';
+      this.data.selectedDbType === 'mysql' ||
+      this.data.selectedDbType === 'sqlite' ||
+      this.data.selectedDbType === 'pgsql';
 
     if (this.formData.fieldType.size) {
       this.formData.columnLength = this.formData?.fieldType?.size?.defaultSize;
