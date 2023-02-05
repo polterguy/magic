@@ -119,7 +119,7 @@
             *ngFor="let idx of item.indexes;let last = last"
             [class.mb-2]="!last">
 
-            <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex ps-3 justify-content-between align-items-center">
               <p class="my-0 d-flex justify-content-between align-items-center text-muted">
                 {{idx?.name}} <mat-icon class="mx-2">swap_horiz</mat-icon>
                 <span *ngFor="let col of idx.columns;let lastCol = last">{{col + (lastCol ? '' : ', ')}}</span>
