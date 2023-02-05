@@ -23,6 +23,7 @@ export class CoreComponent implements OnInit, OnDestroy {
   // Needed to be able to figure out if we're on a small screen or not.
   @HostListener('window:resize', ['$event'])
   private onWindowResize() {
+
     const getScreenWidth = window.innerWidth;
     this.largeScreenStatus = getScreenWidth >= 992 ? true : false;
     this.generalService.setScreenSize(this.largeScreenStatus);
@@ -39,10 +40,12 @@ export class CoreComponent implements OnInit, OnDestroy {
     private generalService: GeneralService,
     private backendService: BackendService,
     private updatePwaService: UpdatePwaService) {
+
     this.updatePwaService.checkForUpdates();
   }
 
   ngOnInit() {
+
     this.onWindowResize();
     this.backendService.authenticatedChanged.subscribe((res: any) => {
       this.cdr.detectChanges();
@@ -65,6 +68,7 @@ export class CoreComponent implements OnInit, OnDestroy {
     this.hubConnection.start();
     this.hubConnection.on('magic.backend.message', (args) => {
       args = JSON.parse(args);
+
       switch (args.type) {
 
         case 'success':
@@ -79,6 +83,7 @@ export class CoreComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+
     this.hubConnection?.stop();
   }
 }

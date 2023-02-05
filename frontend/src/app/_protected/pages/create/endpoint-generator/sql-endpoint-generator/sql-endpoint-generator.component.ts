@@ -37,59 +37,16 @@ export class ManualGeneratorComponent extends GeneratorBase implements OnInit, O
   // Subscription for CodeMirror keyboard shortcut listener.
   private codemirrorActionsSubscription: Subscription;
 
-  /**
-   * Form control wrapping roles that are allowed to invoke endpoint.
-   */
   selectedRoles: FormControl = new FormControl<any>('');
-
-  /**
-   * Primary URL of endpoint.
-   */
   primaryURL: string = '';
-
-  /**
-   * Secondary URL of endpoint.
-   */
   secondaryURL: string = 'custom-sql';
-
-  /**
-   * Autocomplete data for SQL CodeMirror editor, containing tables and columns from selected database.
-   */
   hintTables: any = {};
-
-  /**
-   * Verbs user can select from.
-   */
   methods: string[] = Methods;
-
-  /**
-   * Selected verb for endpoint.
-   */
   selectedMethod: string = '';
-
-  /**
-   * Whether or not endpoint returns a list of items or a single item.
-   */
   generate_training_data = false;
-
-  /**
-   * Whether or not existing endpoints should be overwritten or not.
-   */
   overwrite = false;
-
-  /**
-   * List of arguments endpoint can handle.
-   */
   arguments: Argument[] = [];
-
-  /**
-   * If true the endpoint is currently being created
-   */
   waiting: boolean = false;
-
-  /**
-   * Input SQL CodeMirror component model and options.
-   */
   sql: Model = {
     databaseType: this.selectedDbType,
     connectionString: this.selectedConnectionString,
@@ -111,19 +68,19 @@ export class ManualGeneratorComponent extends GeneratorBase implements OnInit, O
     protected transformService: TransformModelService,
     private codemirrorActionsService: CodemirrorActionsService,
     @Inject(LOCALE_ID) public locale: string) {
+
       super(generalService, roleService, activatedRoute, sqlService);
     }
 
   ngOnInit() {
+
     this.getOptions();
     this.watchForActions();
     this.init();
   }
 
-  /**
-   * Invoked when active database catalog is changed.
-   */
   changeDatabase() {
+
     const db = this.databases.find((item: any) => item.name === this.selectedDatabase);
     if (this.selectedDatabase && db && db.tables?.length) {
       const tables = this.databases.find((item: any) => item.name === this.selectedDatabase).tables;
@@ -135,51 +92,52 @@ export class ManualGeneratorComponent extends GeneratorBase implements OnInit, O
     this.cdr.detectChanges();
   }
 
-  /**
-   * Invoked when user wants to create a new argument for endpoint.
-   */
   addArgument() {
+
     this.dialog.open(AddArgumentDialogComponent, {
       width: '500px',
       data: this.arguments
     }).afterClosed().subscribe((res: any) => {
+
       if (res) {
         this.arguments.push(res);
       }
     })
   }
 
-  /**
-   * Invoked when user wants to remove an argument from collection of arguments
-   * endpoint can handle.
-   */
   removeArgument(argument: Argument) {
+
     this.arguments.splice(this.arguments.indexOf(argument), 1);
   }
 
-  /**
-   * Opens the load snippet dialog, to allow user to select a previously saved snippet.
-   */
   loadSnippet() {
+
     this.dialog.open(SqlSnippetDialogComponent, {
       width: '550px',
       data: this.selectedDbType,
     }).afterClosed().subscribe((filename: string) => {
+
       if (filename) {
+
+        this.generalService.showLoading();
         this.sqlService.loadSnippet(this.selectedDbType, filename).subscribe({
           next: (content: string) => {
+
+            this.generalService.hideLoading();
             this.sql.sql = content;
           },
-          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+          error: (error: any) => {
+
+            this.generalService.hideLoading();
+            this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+          }
         })
       }
     });
   }
 
-  /**
-   * Generates your SQL endpoint.
-   */
   generate() {
+
     const hasTables = this.databases.find((item: any) => item.name === this.selectedDatabase).tables !== null;
     if (!hasTables) {
       this.generalService.showFeedback('Please create tables in the selected database.', 'errorMessage', 'Ok', 5000);
@@ -213,7 +171,8 @@ export class ManualGeneratorComponent extends GeneratorBase implements OnInit, O
     }
 
     this.crudifyService.generateSqlEndpoint(data).subscribe({
-      next: (y) => {
+      next: () => {
+
         this.generalService.showFeedback('SQL endpoint successfully created', 'successMessage');
         this.messageService.sendMessage({
           name: 'magic.folders.update',
@@ -223,6 +182,7 @@ export class ManualGeneratorComponent extends GeneratorBase implements OnInit, O
         this.waiting = false;
       },
       error: (error: any) => {
+
         this.generalService.hideLoading();
         this.waiting = false;
         this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 3000)
@@ -231,15 +191,17 @@ export class ManualGeneratorComponent extends GeneratorBase implements OnInit, O
   }
 
   viewShortkeys() {
+
     this.dialog.open(ShortkeysComponent, {
       width: '900px',
       data: {
         type: ['save']
       }
-    })
+    });
   }
 
   ngOnDestroy() {
+
     if (this.codemirrorActionsSubscription) {
       this.codemirrorActionsSubscription.unsubscribe();
     }
@@ -249,9 +211,6 @@ export class ManualGeneratorComponent extends GeneratorBase implements OnInit, O
    * Protected implementations of base class methods.
    */
 
-  /**
-   * Invoked when database meta data has been loaded.
-   */
   protected databaseLoaded() {
     this.changeDatabase();
     this.selectedRoles.setValue(['root', 'admin']);
@@ -261,10 +220,8 @@ export class ManualGeneratorComponent extends GeneratorBase implements OnInit, O
    * Private helper methods.
    */
 
-  /*
-   * Returns CodeMirror options to caller.
-   */
   private getOptions() {
+
     const options = this.codemirrorActionsService.getActions('', 'sql');
     options.autofocus = false;
     options.hintOptions = {
@@ -273,14 +230,13 @@ export class ManualGeneratorComponent extends GeneratorBase implements OnInit, O
     this.sql.options = options;
   }
 
-  /**
-   * Returns the string (Hyperlambda) representation of declared arguments.
-   */
   private getArguments() {
+
     return this.arguments.map(x => x.name + ':' + x.type).join('\r\n');
   }
 
   private saveSnippet() {
+
     if (!this.sql?.sql || this.sql?.sql === '') {
       this.generalService.showFeedback('Write some SQL first, then save it', 'errorMessage')
       return;
@@ -290,17 +246,20 @@ export class ManualGeneratorComponent extends GeneratorBase implements OnInit, O
       width: '550px',
       data: ''
     }).afterClosed().subscribe((filename: string) => {
+
       if (filename) {
+
         this.generalService.showLoading();
         this.sqlService.saveSnippet(
           this.selectedDbType,
           filename,
-          this.sql.sql).subscribe(
-            {
+          this.sql.sql).subscribe({
               next: () => {
+
                 this.generalService.showFeedback('SQL snippet successfully saved.', 'successMessage');
                 this.generalService.hideLoading();
               }, error: (error: any) => {
+
                 this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
                 this.generalService.hideLoading();
               }
@@ -310,8 +269,11 @@ export class ManualGeneratorComponent extends GeneratorBase implements OnInit, O
   }
 
   private watchForActions() {
+
     this.codemirrorActionsSubscription = this.codemirrorActionsService.action.subscribe((action: string) => {
+
       switch (action) {
+
         case 'save':
           this.saveSnippet();
           break;

@@ -109,7 +109,7 @@ const fixKeys: Keys[] = [
     name: 'Jump to line',
     key: 'Alt + G'
   }
-]
+];
 
 const fullkeys: Keys[] = [
 
@@ -173,4 +173,4 @@ const fullkeys: Keys[] = [
     name: 'Deindent',
     key: 'SHIFT + TAB'
   }
-]
+];

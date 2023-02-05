@@ -17,13 +17,10 @@ import { RoleService } from "../../manage/user-and-roles/_services/role.service"
 export abstract class GeneratorBase {
 
   roles: Role[] = [];
-
   isLoading: boolean = false;
-
   databaseTypes: any = [];
   connectionStrings: string[] = [];
   databases: any = [];
-
   selectedDbType: string = null;
   selectedConnectionString: string = null;
   selectedDatabase: string = null;
@@ -35,25 +32,38 @@ export abstract class GeneratorBase {
     protected sqlService: SqlService) { }
 
   getConnectionString(init: boolean = false) {
+
     this.isLoading = true;
+    this.generalService.showLoading();
     this.sqlService.connectionStrings(this.selectedDbType).subscribe({
       next: (connectionStrings: any) => {
+
         this.connectionStrings = Object.keys(connectionStrings || {});
         if (!init) {
           this.selectedConnectionString = this.connectionStrings[0];
         }
         this.getDatabases(init);
       },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
+      error: (error: any) => {
+
+        this.isLoading = false;
+        this.generalService.hideLoading();
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+      }
     });
   }
 
   getDatabases(init: boolean = false) {
+
     this.isLoading = true;
+    this.generalService.showLoading();
     this.sqlService.getDatabaseMetaInfo(
       this.selectedDbType,
       this.selectedConnectionString).subscribe({
         next: (res: Databases) => {
+
+          this.isLoading = false;
+          this.generalService.hideLoading();
           this.databases = res.databases || [];
           if (this.databases.length > 0) {
             if (!init) {
@@ -61,9 +71,13 @@ export abstract class GeneratorBase {
             }
             this.databaseLoaded();
           }
-          this.isLoading = false;
         },
-        error: (error: any) => this.generalService.showFeedback(error?.error?.message, 'errorMessage', 'Ok', 5000)
+        error: (error: any) => {
+
+          this.isLoading = false;
+          this.generalService.hideLoading();
+          this.generalService.showFeedback(error?.error?.message, 'errorMessage');
+        }
       });
   }
 
@@ -85,8 +99,10 @@ export abstract class GeneratorBase {
       }
 
       // Retrieving database types, and default to use.
+      this.generalService.showLoading();
       this.sqlService.defaultDatabaseType().subscribe({
         next: (dbTypes: DefaultDatabaseType) => {
+
           this.databaseTypes = dbTypes.options.map(x => {
             return {
               name: this.getDatabaseName(x),
@@ -100,16 +116,22 @@ export abstract class GeneratorBase {
             this.getConnectionString(true);
           }
         },
-        error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+        error: (error: any) => {
+          
+          this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+        }
       });
     });
 
     // Retreiving roles.
     this.roleService.list().subscribe({
       next: (res: Role[]) => {
+
         this.roles = res || [];
       },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message, 'errorMessage', 'Ok', 5000)
+      error: (error: any) => {
+        this.generalService.showFeedback(error?.error?.message, 'errorMessage', 'Ok', 5000);
+      }
     });
   }
 
@@ -118,10 +140,15 @@ export abstract class GeneratorBase {
    */
 
   private getDatabaseName(type: string) {
+
     switch (type) {
+
       case 'mssql': return 'SQL Server';
+
       case 'mysql': return 'MySQL';
+
       case 'pgsql': return 'PostgreSQL';
+
       case 'sqlite': return 'SQLite';
     }
   }

@@ -19,32 +19,17 @@ import { SystemReport } from '../../_models/dashboard.model';
 })
 export class ChartComponent implements OnInit, OnDestroy {
 
-  /**
-   * The actual data received from the parent component, to be displayed on the chart.
-   */
+  private subscribeScreenSizeChange: Subscription;
+  private isLargeScreen: boolean = undefined;
+
   @Input() data: SystemReport;
   @Input() log: boolean = false;
   @Input() complexity: boolean = false;
 
-  public options: any;
+  options: any;
+  logData: any = [];
+  complexityData: any = [];
 
-  /**
-  * The main chart data.
-  */
-  public logData: any = [];
-  public complexityData: any = [];
-
-  /**
-   * Watches changes of the theme.
-   */
-  private subscribeScreenSizeChange: Subscription;
-
-  private isLargeScreen: boolean = undefined;
-
-  /**
-   *
-   * @param themeService For listening to the changes on the theme.
-   */
   constructor(
     private cdr: ChangeDetectorRef,
     private generalService: GeneralService,
@@ -59,11 +44,8 @@ export class ChartComponent implements OnInit, OnDestroy {
     this.waitForData();
   }
 
-  /**
-     * waiting for the data to be ready
-     * then call the preparation function
-     */
   private waitForData() {
+
     (async () => {
       while (!this.data)
         await new Promise(resolve => setTimeout(resolve, 100));
@@ -83,6 +65,7 @@ export class ChartComponent implements OnInit, OnDestroy {
      * the preparation of the data for the pie chart
      */
   logDataPrep() {
+
     return new Promise(resolve => {
       this.logData = [];
       let errorLog = this.data.last_log_items.filter(n => n.type === 'error' || n.type === 'fatal').length;
@@ -92,10 +75,11 @@ export class ChartComponent implements OnInit, OnDestroy {
         { value: successLog, name: 'Success' }
       ];
       resolve('done')
-    })
+    });
   }
 
   private complexityDataPrep() {
+
     return new Promise(resolve => {
       this.complexityData = [];
       let keys = Object.keys(this.data.modules || []);
@@ -104,10 +88,11 @@ export class ChartComponent implements OnInit, OnDestroy {
         this.complexityData.push({ value: this.data.modules[key].files, name: key + ': ' + locNumber + ' lines of code' });
       })
       resolve('done')
-    })
+    });
   }
 
   getOptions() {
+
     this.options = {
       tooltip: {
         trigger: 'item',
@@ -155,7 +140,8 @@ export class ChartComponent implements OnInit, OnDestroy {
     this.cdr.detectChanges();
   }
 
-  ngOnDestroy(): void {
+  ngOnDestroy() {
+
     this.subscribeScreenSizeChange.unsubscribe();
   }
 }

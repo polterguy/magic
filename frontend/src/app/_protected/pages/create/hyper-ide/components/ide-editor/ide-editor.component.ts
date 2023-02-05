@@ -153,6 +153,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
 
   private saveActiveFile(thenClose: boolean = false) {
 
+    this.generalService.showLoading();
     this.fileService.saveFile(this.currentFileData.path, this.currentFileData.content).subscribe({
       next: () => {
 
@@ -163,7 +164,11 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
           this.closeActiveFile(true);
         }
       },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+      error: (error: any) => {
+
+        this.generalService.hideLoading();
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+      }
     });
   }
 
@@ -191,6 +196,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
           data: this.currentFileData.name
         });
         dialog.afterClosed().subscribe((data: { save: boolean }) => {
+
           if (data && data.save === true) {
             this.saveActiveFile(true);
           } else if (data && data.save === false) {
@@ -212,16 +218,28 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     if (await this.getEndpointToExecute() !== null) {
+
       this.dialog.open(ExecuteEndpointDialogComponent, {
         data: { itemToBeTried: await this.getEndpointToExecute() },
         minWidth: '80vw',
         minHeight: '50vh',
         panelClass: ['light']
       });
+
     } else {
+
+      this.generalService.showLoading();
       this.evaluatorService.execute(this.currentFileData.content).subscribe({
-        next: () => this.generalService.showFeedback('File successfully executed', 'successMessage'),
-        error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'erroorMessage', 'Ok', 5000)
+        next: () => {
+
+          this.generalService.hideLoading();
+          this.generalService.showFeedback('File successfully executed', 'successMessage');
+        },
+        error: (error: any) => {
+
+          this.generalService.hideLoading();
+          this.generalService.showFeedback(error?.error?.message ?? error, 'erroorMessage');
+        }
       });
     }
   }
@@ -420,8 +438,11 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
 
   private executeMacro(file: string) {
 
+    this.generalService.showLoading();
     this.fileService.getMacroDefinition(file).subscribe({
       next: (result: MacroDefinition) => {
+
+        this.generalService.hideLoading();
 
         /*
          * Filling out default values for anything we can intelligently figure
@@ -452,8 +473,12 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
             for (const idx of result.arguments.filter(x => x.value)) {
               payload[idx.name] = idx.value;
             }
+
+            this.generalService.showLoading();
             this.fileService.executeMacro(file, payload).subscribe({
               next: (exeResult: any) => {
+
+                this.generalService.hideLoading();
                 this.generalService.showFeedback('Macro successfully executed', 'successMessage');
                 if (exeResult.result === 'folders-changed') {
 
@@ -477,20 +502,29 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
 
                 }
               },
-              error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+              error: (error: any) => {
+
+                this.generalService.hideLoading();
+                this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+              }
             });
           } else if (result) {
             this.selectMacro();
           }
         });
       },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+      error: (error: any) => {
+
+        this.generalService.hideLoading();
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+      }
     });
   }
 
   private watchForActions() {
 
     this.codemirrorActionSubscription = this.codemirrorActionsService.action.subscribe((action: string) => {
+
       switch (action) {
 
         case 'save':

@@ -68,23 +68,28 @@ export class BackendService {
   }
 
   get active() {
+
     return this.backendsStorageService.active;
   }
 
   get backends() {
+
     return this.backendsStorageService.backends;
   }
 
   upsert(value: Backend) {
+
     this.backendsStorageService.upsert(value);
   }
 
   activate(value: Backend) {
+
     value = this.backendsStorageService.activate(value);
     this._activeChanged.next(value);
   }
 
   remove(value: Backend) {
+
     const activeChanged = value === this.active;
     this.backendsStorageService.remove(value);
     if (value.refreshTimer) {
@@ -97,10 +102,12 @@ export class BackendService {
   }
 
   get latestPublishedBazarVersion() {
+
     return this._latestBazarVersion;
   }
 
   login(username: string, password: string, storePassword: boolean) {
+
     return new Observable<AuthenticateResponse>(observer => {
       let query = '';
       if (username && username !== '') {
@@ -113,6 +120,7 @@ export class BackendService {
         this.active.url +
         '/magic/system/auth/authenticate' + query).subscribe({
         next: (auth: AuthenticateResponse) => {
+
           this.active.token = new Token(auth.ticket);
           if (storePassword) {
             this.active.password = password;
@@ -124,16 +132,19 @@ export class BackendService {
           this._authenticated.next(true);
           this.retrieveStatusAndVersion().subscribe({
             next: () => {
+
               observer.next(auth);
               observer.complete();
             },
             error: (error: any) => {
+
               observer.error(error);
               observer.complete();
             }
           });
         },
         error: (error: any) => {
+
           observer.error(error);
           observer.complete();
         }
@@ -142,6 +153,7 @@ export class BackendService {
   }
 
   logout(destroyPassword: boolean) {
+
     this.active.token = null;
     if (this.active.refreshTimer) {
       clearTimeout(this.active.refreshTimer);
@@ -155,6 +167,7 @@ export class BackendService {
   }
 
   verifyToken() {
+
     if (!this.active?.token) {
       return throwError(() => new Error('No token to verify'));
     }
@@ -164,18 +177,21 @@ export class BackendService {
   }
 
   changePassword(password: string) {
+
     return this.httpClient.put<MagicResponse>(
       this.active.url +
       '/magic/system/auth/change-password', { password });
   }
 
   resetPassword(data: any) {
+
     return this.httpClient.post<MagicResponse>(
       this.active.url +
       '/magic/system/auth/send-reset-password-link', data);
   }
 
   get shouldUpdate() {
+
     if (!this.active?.version || !this._latestBazarVersion) {
       return false;
     }
@@ -227,6 +243,7 @@ export class BackendService {
    * Logs out from the specified backend.
    */
   private logoutFromBackend(backend: Backend) {
+
     if (!backend.token) {
       return; // No change
     }
@@ -264,6 +281,7 @@ export class BackendService {
       backend.url +
       '/magic/system/auth/refresh-ticket').subscribe({
         next: (response: AuthenticateResponse) => {
+
           console.log({
             content: 'JWT token successfully refreshed',
             backend: backend.url,
@@ -273,6 +291,7 @@ export class BackendService {
           this.ensureRefreshJWTTokenTimer(backend);
         },
         error: (error: any) => {
+
           console.error(error);
         }
       });
@@ -299,6 +318,7 @@ export class BackendService {
               this.active.url +
               '/magic/system/version').subscribe({
                 next: (version: CoreVersion) => {
+
                   this.active.version = version.version;
                   if (this._latestBazarVersion) {
                     this._versionRetrieved.next(this.active.version);
@@ -310,20 +330,32 @@ export class BackendService {
                       environment.bazarUrl +
                       '/magic/modules/bazar/core-version').subscribe({
                         next: (latestVersion: MagicResponse) => {
+
                           this._latestBazarVersion = latestVersion.result;
                           this._versionRetrieved.next(this.active.version);
                           observer.next(status);
                           observer.complete();
                         },
                         error: (error: any) => {
+
                           observer.error(error);
                           observer.complete();
                         }
                       });
                   }
                   this.getRecaptchaKey();
+                },
+                error: (error: any) => {
+
+                  observer.error(error);
+                  observer.complete();
                 }
               });
+          },
+          error: (error: any) => {
+
+            observer.error(error);
+            observer.complete();
           }
         });
     });

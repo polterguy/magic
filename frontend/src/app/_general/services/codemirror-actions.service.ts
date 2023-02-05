@@ -22,6 +22,7 @@ export class CodemirrorActionsService {
   constructor(private ngZone: NgZone) { }
 
   public getActions(path?: string, type?: string) {
+
     let options = [];
 
     if (path) {
@@ -123,6 +124,7 @@ export class CodemirrorActionsService {
    * Helper method to clone any object.
    */
   private clone(obj: any) {
+
     var cloneObj: any = {};
     for (var attribut in obj) {
       if (typeof obj[attribut] === "object") {

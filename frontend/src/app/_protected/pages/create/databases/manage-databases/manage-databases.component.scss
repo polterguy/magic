@@ -2,9 +2,9 @@
  * Copyright (c) Aista Ltd, 2021 - 2023 info@aista.com, all rights reserved.
  */
 
-@import '../../../../../../assets/styles/_variables/colors.scss';
-@import '../../../../../../assets/styles/_variables/mixin.scss';
-@import '../../../../../../assets/styles/_variables/sizing.scss';
+@import "../../../../../../assets/styles/_variables/colors.scss";
+@import "../../../../../../assets/styles/_variables/mixin.scss";
+@import "../../../../../../assets/styles/_variables/sizing.scss";
 
 .align-items-stretch ::ng-deep {
   .mat-form-field-wrapper {
@@ -36,7 +36,6 @@
 .bg-light {
   border-radius: $aista_radius;
 }
-
 
 @keyframes fadeIn {
   0% {
@@ -72,11 +71,11 @@
   color: $aista_primary;
   box-shadow: 9999px 0 0 0 $aista_primary;
   animation: waitingDot 1s infinite linear;
-  animation-delay: .1s;
+  animation-delay: 0.1s;
 
   &::before,
   &::after {
-    content: '';
+    content: "";
     display: inline-block;
     position: absolute;
     top: 0;
@@ -99,7 +98,7 @@
     background-color: $aista_primary;
     color: $aista_primary;
     animation: waitingDotAfter 1s infinite linear;
-    animation-delay: .2s;
+    animation-delay: 0.2s;
   }
 }
 
@@ -152,7 +151,6 @@
 }
 
 .table-responsive {
-
   .text-truncate {
     max-width: 10vw;
   }

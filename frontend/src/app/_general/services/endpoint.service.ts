@@ -22,10 +22,12 @@ export class EndpointService {
   constructor(private httpService: HttpService) { }
 
   endpoints() {
+
     return this.httpService.get<Endpoint[]>('/magic/system/endpoints/list');
   }
 
   get(url: string, responseType: string = 'json') {
+
     return this.httpService.get<any>(url, {
       observe: 'response',
       responseType,
@@ -33,6 +35,7 @@ export class EndpointService {
   }
 
   delete(url: string, responseType: string = 'json') {
+
     return this.httpService.delete<any>(url, {
       observe: 'response',
       responseType,
@@ -40,6 +43,7 @@ export class EndpointService {
   }
 
   post(url: string, args: any, responseType: string = 'json') {
+
     return this.httpService.post<any>(url, args, {
       observe: 'response',
       responseType,
@@ -47,6 +51,7 @@ export class EndpointService {
   }
 
   put(url: string, args: any, responseType: string = 'json') {
+
     return this.httpService.put<any>(url, args, {
       observe: 'response',
       responseType,
@@ -54,6 +59,7 @@ export class EndpointService {
   }
 
   patch(url: string, args: any, responseType: string = 'json') {
+
     return this.httpService.patch<any>(url, args, {
       observe: 'response',
       responseType,

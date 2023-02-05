@@ -63,8 +63,13 @@ export class HeaderComponent implements OnInit {
 
     this.messageService.subscriber().subscribe((msg: Message) => {
 
-      this.completion = msg.content;
-      this.completion_menu_trigger.openMenu();
+      switch (msg.name) {
+
+        case 'magic.show-help':
+          this.completion = msg.content;
+          this.completion_menu_trigger.openMenu();
+          break;
+      }
     });
   }
 

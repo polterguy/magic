@@ -25,6 +25,7 @@ export class FooterComponent implements OnInit {
   constructor(private dialog: MatDialog) { }
 
   ngOnInit() {
+
     this.currentYear = new Date().getFullYear();
   }
 

@@ -40,6 +40,7 @@ export class LoadSnippetDialogComponent implements OnInit {
   }
 
   filterList(event: { searchKey: string }) {
+
     this.filter = event.searchKey;
   }
 

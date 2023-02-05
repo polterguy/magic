@@ -58,6 +58,7 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
     private generalService: GeneralService) { }
 
   ngOnInit() {
+
     this.getPluginDatabases();
     this.getDatabases();
   }
@@ -65,37 +66,46 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
   createNewDatabase() {
 
     if (this.databaseName === '') {
+
       this.generalService.showFeedback('Please provide a name', 'errorMessage');
       return;
     }
 
     if (!this.CommonRegEx.appNameWithUppercaseHyphen.test(this.databaseName)) {
+
       this.generalService.showFeedback(this.CommonErrorMessages.appNameWithUppercaseHyphen, 'errorMessage');
       return;
     }
 
+    this.generalService.showLoading();
     this.sqlService.createDatabase(
       'sqlite',
       'generic',
       this.databaseName).subscribe({
         next: () => {
+
           this.generalService.showFeedback('Database successfully created', 'successMessage');
           this.getDatabases();
         },
         error: (error: any) => {
+
+          this.generalService.hideLoading();
           this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', -1)
         }
       });
   }
 
   viewPluginDatabaseDetails(item: any) {
+
     this.dialog.open(ViewPluginDatabaseComponent, {
       minWidth: '500px',
       data: item
     }).afterClosed().subscribe((res: string) => {
+
       if (res === 'uninstall') {
         this.uninstallPluginDatabase(item.details);
       }
+
       if (res === 'install') {
         this.installPluginDatabase(item);
       }
@@ -103,10 +113,12 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
   }
 
   installPluginDatabase(database: any) {
+
     this.generalService.showLoading();
     this.waitingInstallation = true;
     this.configService.rootUserEmailAddress().subscribe({
       next: (userDerails: any) => {
+
         this.bazarService.purchaseBazarItem(
           database,
           userDerails.name,
@@ -114,9 +126,11 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
           true,
           null).subscribe({
             next: (status: any) => {
+
               this.connectSocket(status.code, database);
             },
             error: (error: any) => {
+
               this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
               this.generalService.hideLoading();
               this.waitingInstallation = false;
@@ -124,6 +138,7 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
           });
       },
       error: (error: any) => {
+
         this.generalService.hideLoading();
         this.waitingInstallation = false;
         this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
@@ -132,6 +147,8 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
   }
 
   uninstallPluginDatabase(database: any) {
+
+    this.generalService.showLoading();
     this.dialog.open(ConfirmationDialogComponent, {
       width: '500px',
       data: {
@@ -142,13 +159,19 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
         bold_description: true
       }
     }).afterClosed().subscribe((result: string) => {
+
       if (result === 'confirm') {
         this.fileService.deleteFolder('/modules/' + database.module_name + '/').subscribe({
           next: () => {
+
             this.generalService.showFeedback(database.name + ' uninstalled successfully.', 'successMessage');
             this.getPluginDatabases();
           },
-          error: (error: any) => { this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage') }
+          error: (error: any) => {
+
+            this.generalService.hideLoading();
+            this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+          }
         });
       }
     });
@@ -214,21 +237,30 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
    */
 
   private getPluginDatabases() {
+
     this.bazarService.listBazarItems('SQLite%', 0, 5).subscribe({
       next: (apps: BazarApp[]) => {
+
         this.databases = apps || [];
         this.databases.map((item: any) => {
           item.hasUpdate = false;
         });
         this.loadLocalManifests();
       },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+      error: (error: any) => {
+
+        this.generalService.hideLoading();
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+      }
     });
   }
 
   private loadLocalManifests() {
+
     this.bazarService.localManifests().subscribe({
       next: (manifests: AppManifest[]) => {
+
+        this.generalService.hideLoading();
         this.appDetails = manifests || [];
         this.isLoadingPlugins = false;
         if (manifests) {
@@ -242,13 +274,19 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
           });
         }
       },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+      error: (error: any) => {
+
+        this.generalService.hideLoading();
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+      }
     });
   }
 
   private getVersion(module_name: string, appVersion: string) {
+
     this.bazarService.getBazarItem(module_name).subscribe({
       next: (res: BazarApp[]) => {
+
         if (res) {
           const database = this.databases.find((item: any) => item?.details?.module_name === module_name);
           if (this.configService.versionCompare(appVersion, res[0].version) === -1) {
@@ -257,15 +295,20 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
           }
         }
       },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+      error: (error: any) => {
+
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+      }
     });
   }
 
   private getDatabases() {
+
     this.existingDatabases = [];
     this.isLoadingDbs = true;
     this.sqlService.getDatabaseMetaInfo('sqlite', 'generic').subscribe({
         next: (res: Databases) => {
+
           res.databases.map((item: any) => {
             item.type = 'sqlite';
             item.connectionString = 'generic';
@@ -276,18 +319,25 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
           this.isLoadingDbs = false;
           this.generalService.hideLoading();
         },
-        error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+        error: (error: any) => {
+
+          this.generalService.hideLoading();
+          this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+        }
       });
   }
 
   private downloadBazarItem(app: BazarApp, token: string) {
+
     this.currentStage = 'Downloading database';
     this.bazarService.downloadBazarItem(app, token).subscribe({
       next: (download: any) => {
+
         if (download.result === 'success') {
           this.currentStage = 'Installing database';
           this.bazarService.installBazarItem(app.folder_name, app.version, app.name, token).subscribe({
             next: (install: any) => {
+
               if (install.result === 'success') {
                 this.generalService.showFeedback('Plugin was successfully installed on your cloudlet', 'successMessage');
 
@@ -308,13 +358,17 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
                 this.generalService.showFeedback('Oops! Please check the system log.', 'errorMessage', 'Ok', 5000);
               }
             },
-            error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+            error: (error: any) => {
+
+              this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+            }
           });
         } else {
           this.generalService.showFeedback('Oops! Please check the system log.', 'errorMessage', 'Ok', 5000);
         }
       },
       error: () => {
+
         this.hubConnection?.stop();
         this.hubConnection = null;
         this.generalService.hideLoading();
@@ -325,17 +379,21 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
   }
 
   private connectSocket(token: string, database: any) {
+
     let builder = new HubConnectionBuilder();
     this.hubConnection = builder.withUrl(environment.bazarUrl + '/sockets', {
+
       skipNegotiation: true,
       transport: HttpTransportType.WebSockets,
     }).build();
 
     this.hubConnection.on('bazar.package.avilable.' + token, (args: string) => {
+
       this.downloadBazarItem(database, token);
     });
 
     this.hubConnection.start().then(() => {
+
       this.downloadBazarItem(database, token);
     });
   }

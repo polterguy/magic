@@ -27,16 +27,19 @@ export class IdeSearchboxComponent {
   fileSystem: boolean;
 
   applyFilter(keyword: string) {
+
     this._inputValue.next(keyword);
     this.filterList.emit(this._inputValue);
   }
 
   removeSearchTerm() {
+
     this._inputValue.next('');
     this.filterList.emit(this._inputValue);
   }
 
   toggleFileSystem() {
+
     this.toggleFileSystems.emit(this.fileSystem);
   }
 }

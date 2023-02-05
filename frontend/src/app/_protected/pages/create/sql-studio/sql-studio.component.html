@@ -13,12 +13,14 @@
 
         <!-- Loading skeleton -->
         <ng-container *ngIf="dbLoading | async">
+
           <app-loading-skeleton
             amount="1"
             colClass="col-12"
             blockHeight="45px"
             hasShadow="false">
           </app-loading-skeleton>
+
         </ng-container>
 
         <mat-form-field *ngIf="!(dbLoading | async)" class="w-100 standalone-field mb-lg-0 mb-2">
@@ -45,12 +47,14 @@
 
         <!-- Loading skeleton -->
         <ng-container *ngIf="dbLoading | async">
+
           <app-loading-skeleton
-            [amount]="1"
-            [colClass]="'col-12'"
-            [blockHeight]="'45px'"
-            [hasShadow]="false">
+            amount="1"
+            colClass="col-12"
+            blockHeight="45px"
+            hasShadow="false">
           </app-loading-skeleton>
+
         </ng-container>
 
         <mat-form-field
@@ -79,12 +83,14 @@
 
         <!-- Loading skeleton -->
         <ng-container *ngIf="dbLoading | async">
+
           <app-loading-skeleton
-            [amount]="1"
-            [colClass]="'col-12'"
-            [blockHeight]="'45px'"
-            [hasShadow]="false">
+            amount="1"
+            colClass="col-12"
+            blockHeight="45px"
+            hasShadow="false">
           </app-loading-skeleton>
+
         </ng-container>
 
         <mat-form-field

@@ -72,21 +72,25 @@ export class CreateAssumptionTestDialogComponent implements OnInit {
   }
 
   getFilename(path: string) {
+
     const result = path.substring(path.lastIndexOf('/') + 1);
     return result.substring(0, result.lastIndexOf('.'));
   }
 
   getFiltered() {
+
     return this.files.filter((idx: string) => {
       return this.getFilename(idx).indexOf(this.data.filename) !== -1;
     });
   }
 
   filenameValid() {
+
     return this.CommonRegEx.appNamesWithDot.test(this.data.filename);
   }
 
   create() {
+
     if (!this.filenameValid()) {
       this.generalService.showFeedback('Test name is not valid', 'errorMessage');
       return;

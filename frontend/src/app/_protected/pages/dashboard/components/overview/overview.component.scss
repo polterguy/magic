@@ -2,15 +2,15 @@
  * Copyright (c) Aista Ltd, 2021 - 2023 info@aista.com, all rights reserved.
  */
 
-@import '../../../../../../assets/styles/_variables/colors.scss';
-@import '../../../../../../assets/styles/_variables/mixin.scss';
+@import "../../../../../../assets/styles/_variables/colors.scss";
+@import "../../../../../../assets/styles/_variables/mixin.scss";
 
 .scrollable-row {
   max-height: 216px;
   overflow: hidden auto;
   @include scrollbar($aista_default_alt, $aista_default_grey4, 5px);
 
-  @media(max-width: 1199px) {
+  @media (max-width: 1199px) {
     max-height: 345px;
   }
 }

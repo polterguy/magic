@@ -1,10 +1,14 @@
 
 <ng-container *ngIf="assumptions && assumptions.length > 0">
+
+  <!-- Getting some space and separation between endpoint meta information and assumptions -->
   <div class="my-1">
     <mat-divider></mat-divider>
   </div>
+
   <p class="mt-4 mb-3 fw-bold">Test cases</p>
 
+  <!-- List of assumptions associated with endpoint -->
   <mat-chip-list>
     <mat-chip
       *ngFor="let item of assumptions"
@@ -13,11 +17,13 @@
       class="assumption mat-caption"
       selectable="false">
       {{getAssumptionName(item.file)}}
+
       <mat-icon
         class="ms-1"
         [ngClass]="{'text-success': item?.success === true, 'text-danger': item?.success === false}">
         {{item?.success === false ? 'error' : (item?.success === true ? 'done' : 'help_outline')}}
       </mat-icon>
+
     </mat-chip>
   </mat-chip-list>
 

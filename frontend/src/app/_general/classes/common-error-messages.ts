@@ -7,6 +7,7 @@
  * Collection of reusable error messages
  */
 export const CommonErrorMessages: { [key: string]: string } = {
+
   name: 'Name must be minimum 2 characters long',
   backendname: 'Alphanumeric characters between 2 to 20 (no space).',
   username: 'Alphanumeric between 2 and 20 characters (no space)',

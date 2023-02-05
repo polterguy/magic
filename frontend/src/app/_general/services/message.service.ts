@@ -18,10 +18,12 @@ export class MessageService {
   private subject = new Subject<Message>();
 
   sendMessage(message: Message) {
+
     this.subject.next(message);
   }
 
   subscriber() {
+
     return this.subject.asObservable();
   }
 }

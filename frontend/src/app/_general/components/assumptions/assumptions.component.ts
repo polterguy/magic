@@ -9,7 +9,7 @@ import { GeneralService } from 'src/app/_general/services/general.service';
 import { InvocationResult } from '../../../_protected/pages/manage/endpoints/endpoints-result/endpoints-result.component';
 
 /*
- * Assumption model for existing tests endpoint has declared.
+ * Assumption model for showing tests associated with endpoints.
  */
 class Assumption {
   file: string;
@@ -40,28 +40,37 @@ export class AssumptionsComponent implements OnInit {
     private assumptionService: AssumptionService) { }
 
   ngOnInit() {
+
     this.getAssumptions();
   }
 
   getAssumptionName(path: string) {
+
     const name = path.substring(path.lastIndexOf('/') + 1);
     return name.substring(0, name.length - 3);
   }
 
   runAssumption(assumption: Assumption) {
 
+    this.generalService.showLoading();
     this.assumptionService.execute(assumption.file).subscribe({
 
       next: (res: any) => {
+
+        this.generalService.hideLoading();
         if (res.result === 'success') {
+
           assumption.success = true;
+
         } else {
-          this.generalService.showFeedback('Test failed, check log for details', 'errorMessage', 'Ok', 5000);
+
+          this.generalService.showFeedback('Test failed, check log for details', 'errorMessage');
           assumption.success = false;
         }
       },
       error: (error: any) => {
 
+        this.generalService.hideLoading();
         this.generalService.showFeedback(error, 'errorMessage', 'Ok');
         assumption.success = false;
       }

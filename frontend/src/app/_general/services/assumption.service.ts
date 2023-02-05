@@ -25,6 +25,7 @@ export class AssumptionService {
     private backendService: BackendService) { }
 
   list(endpointPath: string = null, verb: string = null) {
+
     if (endpointPath) {
       return this.httpService.get<string[]>(
         '/magic/system/assumptions/query?endpoint=' +
@@ -45,6 +46,7 @@ export class AssumptionService {
     payload: string = null,
     response: string = null,
     produces: string = 'application/json') {
+
     if (filename.indexOf('/') !== -1) {
       return throwError(() => new Error('Not a valid filename'));
     }
@@ -74,6 +76,7 @@ export class AssumptionService {
   }
 
   execute(filename: string) {
+
     return this.httpService.get<MagicResponse>(
       '/magic/system/assumptions/execute?root_url=' +
       encodeURIComponent(this.backendService.active.url) +

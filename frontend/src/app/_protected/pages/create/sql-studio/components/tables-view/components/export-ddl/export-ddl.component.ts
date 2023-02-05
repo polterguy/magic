@@ -45,7 +45,6 @@ export class ExportDdlComponent implements OnInit {
    * Private helper methods.
    */
 
-  // Returns CodeMirror options for SQL type.
   private getCodeMirrorOptions() {
 
     const options = this.codemirrorActionsService.getActions(null, 'sql');
@@ -55,7 +54,6 @@ export class ExportDdlComponent implements OnInit {
     }, 100);
   }
 
-  // Enables CodeMirror instance, and clears undo history.
   private codemirrorInit() {
 
     this.codemirrorReady = true;

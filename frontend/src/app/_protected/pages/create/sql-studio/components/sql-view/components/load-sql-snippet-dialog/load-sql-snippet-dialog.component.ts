@@ -34,6 +34,7 @@ export class SqlSnippetDialogComponent implements OnInit {
   }
 
   filterList(event: { searchKey: string }) {
+
     this.filter = event.searchKey;
   }
 

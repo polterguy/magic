@@ -5,7 +5,25 @@
 </div>
 
 <div mat-dialog-actions [align]="'end'">
-  <button mat-button mat-dialog-close>Cancel</button>
-  <button mat-button [mat-dialog-close]="{save: false}">Don't save</button>
-  <button mat-flat-button color="primary" [mat-dialog-close]="{save: true}" cdkFocusInitial>Save</button>
+
+  <button
+    mat-button
+    mat-dialog-close>
+    Cancel
+  </button>
+
+  <button
+    mat-button
+    [mat-dialog-close]="{save: false}">
+    Don't save
+  </button>
+
+  <button
+    mat-flat-button
+    color="primary"
+    [mat-dialog-close]="{save: true}"
+    cdkFocusInitial>
+    Save
+  </button>
+
 </div>

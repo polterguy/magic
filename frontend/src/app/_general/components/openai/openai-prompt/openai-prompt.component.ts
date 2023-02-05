@@ -43,6 +43,7 @@ export class OpenAIPromptComponent implements OnInit {
   }
 
   getTooltip() {
+
     switch (this.fileType) {
 
       case 'hl':
@@ -120,6 +121,7 @@ export class OpenAIPromptComponent implements OnInit {
         });
       },
       error: (error: any) => {
+
         this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
         this.generalService.hideLoading();
         this.waitingForAnswer = false;

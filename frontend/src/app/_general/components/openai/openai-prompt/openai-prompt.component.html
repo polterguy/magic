@@ -17,16 +17,16 @@
         name="openAiPrompt"
         [(ngModel)]="openAiPrompt"
         autocomplete="off">
-        <button
-          mat-icon-button
-          matSuffix
-          tabIndex="-1"
-          type="reset"
-          (click)="openAiPrompt = ''"
-          *ngIf="openAiPrompt !== ''">
-          <mat-icon>close</mat-icon>
-        </button>
-      </mat-form-field>
+      <button
+        mat-icon-button
+        matSuffix
+        tabIndex="-1"
+        type="reset"
+        (click)="openAiPrompt = ''"
+        *ngIf="openAiPrompt !== ''">
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-form-field>
 
     <button
       mat-button
@@ -34,7 +34,9 @@
       *ngIf="openAiEnabled"
       [disabled]="waitingForAnswer"
       color="primary"
-      class="px-3">Ask</button>
+      class="px-3">
+      Ask
+    </button>
 
   </form>
 
@@ -43,6 +45,8 @@
     mat-button
     color="primary"
     class="px-3"
-    (click)="configureOpenAi()">Configure AI</button>
+    (click)="configureOpenAi()">
+    Configure AI
+  </button>
 
 </div>

@@ -46,7 +46,24 @@
 </div>
 
 <div mat-dialog-actions [align]="'end'">
-  <button mat-button mat-dialog-close>Close</button>
-  <button mat-button (click)="differentMacro()">Change macro</button>
-  <button mat-flat-button color="primary" (click)="execute()">Execute</button>
+
+  <button
+    mat-button
+    mat-dialog-close>
+    Close
+  </button>
+
+  <button
+    mat-button
+    (click)="differentMacro()">
+    Change macro
+  </button>
+
+  <button
+    mat-flat-button
+    color="primary"
+    (click)="execute()">
+    Execute
+  </button>
+
 </div>

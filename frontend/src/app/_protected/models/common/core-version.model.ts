@@ -7,5 +7,9 @@
  * Wrapper class for backend version.
  */
 export class CoreVersion {
+
+  /**
+   * Backend version, e.g. "v15.5.5".
+   */
   version: string;
 }

@@ -24,6 +24,7 @@ export class CacheService {
   constructor(private httpService: HttpService) { }
 
   list(filter: any = null) {
+
     let query = '';
     if (filter !== null) {
       query += '?limit=' + filter.limit;
@@ -36,6 +37,7 @@ export class CacheService {
   }
 
   count(filter: string = null) {
+
     let query = '';
     if (filter !== null && filter !== '') {
       query += '?filter=' + encodeURIComponent(filter);
@@ -44,10 +46,12 @@ export class CacheService {
   }
 
   delete(id: string) {
+
     return this.httpService.delete<MagicResponse>('/magic/system/cache/delete?id=' + encodeURIComponent(id));
   }
 
   clear(filter: string = null) {
+
     let query = '';
     if (filter !== null && filter !== '') {
       query += '?filter=' + encodeURIComponent(filter);

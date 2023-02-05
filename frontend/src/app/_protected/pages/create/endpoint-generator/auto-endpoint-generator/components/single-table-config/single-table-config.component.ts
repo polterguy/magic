@@ -40,11 +40,13 @@ export class SingleTableConfigComponent implements OnInit {
   fkLong: any = {}
 
   ngOnInit() {
+
     this.watchDbLoading();
     console.log(this.fkLong);
   }
 
   hasForeignKey(el: any) {
+
     const list = this.foreign_keys.filter(x => x.column === el.name);
     if (list.length === 0) {
       return false;
@@ -53,6 +55,7 @@ export class SingleTableConfigComponent implements OnInit {
   }
 
   private watchDbLoading() {
+
     this.dataSource = [];
     const db: any = this.databases.find((db: any) => db.name === this.selectedDatabase);
     const table: any = db.tables.find((table: any) => table.name === this.selectedTable.toString());
@@ -109,13 +112,15 @@ export class SingleTableConfigComponent implements OnInit {
   }
 
   getForeignKeyName(el: any) {
+
     const db: any = this.databases.find((db: any) => db.name === this.selectedDatabase);
     const table: any = db.tables.find((table: any) => table.name === this.selectedTable.toString());
     const column: any = table.columns.find((column: any) => column.name === el.name);
     return column.foreign_key ? column.foreign_key.foreign_table + '.' + column.foreign_key.foreign_name : '[none]';
   }
 
-  public changeForeignKey(event: any) {
+  changeForeignKey(event: any) {
+
     const db: any = this.databases.find((db: any) => db.name === this.selectedDatabase);
     const table: any = db.tables.find((table: any) => table.name === this.selectedTable.toString());
     const column: any = table.columns.find((column: any) => column.name === event.columnName);
@@ -123,14 +128,8 @@ export class SingleTableConfigComponent implements OnInit {
     this.fkLong[event.columnName] = column.foreign_key.long_data;
   }
 
-  /**
-   * Returns whether or not the specified HTTP verb is disabled
-   * for the specified column.
-   *
-   * @param verb HTTP verb to check
-   * @param column Column to check.
-   */
-  public verbForColumnIsDisabled(verb: string, column: ColumnEx) {
+  verbForColumnIsDisabled(verb: string, column: ColumnEx) {
+
     switch (verb) {
 
       case 'post':

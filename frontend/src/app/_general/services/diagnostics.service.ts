@@ -19,6 +19,7 @@ export class DiagnosticsService {
   constructor(private httpService: HttpService) { }
 
   getSystemReport() {
+
     return this.httpService.get<SystemReport[]>('/magic/system/diagnostics/system-information');
   }
 }

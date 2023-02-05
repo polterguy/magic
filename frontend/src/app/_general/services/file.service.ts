@@ -213,7 +213,7 @@ export class FileService {
         const file = new Blob([res.body], { type: 'application/zip' });
         saveAs(file, filename);
       },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
     });
   }
 

@@ -57,7 +57,6 @@ export class ConnectComponent implements OnInit {
     private clipboard: Clipboard,
     private diagnosticService: DiagnosticsService,
     private configService: ConfigService,
-    private backendService: BackendService,
     private generalService: GeneralService) { }
 
   ngOnInit() {
@@ -148,11 +147,13 @@ export class ConnectComponent implements OnInit {
         item.isClicked = true;
         this.sqlService.deleteConnectionString(item.dbTypeValue, item.cStringKey).subscribe({
           next: () => {
+
             item.isClicked = false;
             this.generalService.showFeedback('Connection string was deleted', 'successMessage');
             this.databases = this.databases.filter((el: any) => item !== el);
           },
           error: (error: any) => {
+
             item.isClicked = false;
             this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
           }
@@ -162,6 +163,7 @@ export class ConnectComponent implements OnInit {
   }
 
   createCatalog(item: any) {
+
     this.dialog.open(CatalogNameComponent, {
       width: '500px',
       data: item
@@ -175,6 +177,7 @@ export class ConnectComponent implements OnInit {
 
     this.sqlService.getDatabaseMetaInfo(item.dbTypeValue, item.cStringKey).subscribe({
       next: (res: any) => {
+
         if (res) {
           this.dialog.open(ManageCatalogsComponent, {
             width: '800px',
@@ -190,6 +193,7 @@ export class ConnectComponent implements OnInit {
         this.generalService.hideLoading();
       },
       error: (error: any) => {
+
         this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
         item.isClicked = false;
         this.generalService.hideLoading();

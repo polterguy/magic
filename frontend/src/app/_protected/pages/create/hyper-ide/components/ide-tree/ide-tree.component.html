@@ -193,7 +193,8 @@
                 class="w-100 ms-2"
                 [id]="showRenameBox === folder.node ? 'renameFile':''"
                 #folderInput
-                (keyup.enter)="renameFolder({folder: folder.node.path, newName: folderInput?.value})" (keyup.esc)="showRenameBox = null">
+                (keyup.enter)="renameFolder({folder: folder.node.path, newName: folderInput?.value})"
+                (keyup.esc)="showRenameBox = null">
             </span>
 
             <!-- Action buttons for renaming and deleting folder -->

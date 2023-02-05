@@ -2,8 +2,8 @@
  * Copyright (c) Aista Ltd, 2021 - 2023 info@aista.com, all rights reserved.
  */
 
-@import '../../../../../../../assets/styles/_variables/colors.scss';
-@import '../../../../../../../assets/styles/_variables/mixin.scss';
+@import "../../../../../../../assets/styles/_variables/colors.scss";
+@import "../../../../../../../assets/styles/_variables/mixin.scss";
 
 .panel-1 {
   flex: 1 1 auto;
@@ -136,11 +136,13 @@
       }
     }
 
-    &.active-folder, &.active-folder:hover {
+    &.active-folder,
+    &.active-folder:hover {
       background-color: transparentize($color: $aista_default_grey4, $amount: 0.75);
     }
 
-    &.active-file, &.active-file:hover {
+    &.active-file,
+    &.active-file:hover {
       background-color: transparentize($color: $aista_default_grey4, $amount: 0.75);
     }
 

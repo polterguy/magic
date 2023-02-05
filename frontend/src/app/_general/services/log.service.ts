@@ -22,6 +22,7 @@ export class LogService {
   constructor(private httpService: HttpService) { }
 
   list(from: string, max: number, query: string = null) {
+
     let url = '/magic/system/log/list?max=' + max;
     if (from) {
       url += '&from=' + encodeURIComponent(from);
@@ -36,10 +37,12 @@ export class LogService {
   }
 
   get(id: number) {
+
     return this.httpService.get<LogItem>('/magic/system/log/get?id=' + id);
   }
 
   count(filter?: string) {
+
     let query = '';
     if (filter) {
       if (!query.includes('%')) {
@@ -51,6 +54,7 @@ export class LogService {
   }
 
   createLocItem(loc: number, type: string, name: string) {
+
     return this.httpService.post<any>('/magic/system/log/log-loc', {
       loc,
       type,

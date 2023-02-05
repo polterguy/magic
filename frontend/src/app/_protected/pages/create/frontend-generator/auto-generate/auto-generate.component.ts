@@ -58,13 +58,15 @@ export class AutoGenerateComponent implements OnInit {
     private codemirrorActionsService: CodemirrorActionsService) { }
 
   ngOnInit() {
+
     this.frontendType = this.frontendTypes[1].value;
-    this.getPalette();
+    this.generalService.showLoading();
     this.getEndpoints();
     this.codemirrorOptions = this.codemirrorActionsService.getActions('html');
   }
 
   public changeFrontendType() {
+
     this.isApp = (this.frontendType === this.frontendTypes[1].value);
 
     if (!this.isApp) {
@@ -77,10 +79,12 @@ export class AutoGenerateComponent implements OnInit {
   }
 
   selectedEndpoints() {
+
     return this.endpoints.filter(x => x.selected).length;
   }
 
   moduleClicked(module: string) {
+
     const moduleEndpoints = this.endpoints.filter(x => x.path.startsWith('magic/modules/' + module + '/'));
     if (moduleEndpoints.filter(x => x.selected).length === moduleEndpoints.length) {
       for (const idx of moduleEndpoints) {
@@ -102,6 +106,7 @@ export class AutoGenerateComponent implements OnInit {
   }
 
   componentClicked(component: string) {
+
     const components = this.endpoints
       .filter(x => x.path.endsWith('/' + component) || x.path.endsWith('/' + component + '-count'));
     const shouldSelect = components.filter(x => !x.selected).length > 0;
@@ -111,6 +116,7 @@ export class AutoGenerateComponent implements OnInit {
   }
 
   moduleSelected(module: string) {
+
     const moduleEndpoints = this.endpoints.filter(x => x.path.startsWith('magic/modules/' + module + '/'));
     if (moduleEndpoints.filter(x => x.selected).length === moduleEndpoints.length) {
       return true;
@@ -120,6 +126,7 @@ export class AutoGenerateComponent implements OnInit {
   }
 
   componentSelected(component: string) {
+
     return this.endpoints
       .filter(x => x.selected)
       .filter(x => {
@@ -127,8 +134,8 @@ export class AutoGenerateComponent implements OnInit {
       }).length === 1;
   }
 
-  generate(
-    deployLocally: boolean = true) {
+  generate(deployLocally: boolean = true) {
+
     if (this.frontendName === '') {
       this.generalService.showFeedback('Please give your fontend a name', 'errorMessage');
       return;
@@ -176,6 +183,7 @@ export class AutoGenerateComponent implements OnInit {
    */
 
   private createServiceModel(endpoints: any) {
+
     const result: any[] = [];
     for (const idx of endpoints) {
       const tmp = {
@@ -357,24 +365,8 @@ export class AutoGenerateComponent implements OnInit {
     return result;
   }
 
-  private getPalette() {
-    this.crudifyService.templateCustomArgs(this.frontendType).subscribe({
-      next: (res: any) => {
-        if (res) {
-          this.colorPalettes = res?.palette || [];
-          this.colorPalette = this.colorPalettes[0].value;
-          this.themes = res?.theme || [];
-          this.theme = this.themes[0].value;
-          this.template = res?.intro;
-        }
-      },
-      error: (error: any) => {
-        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
-      }
-    })
-  };
-
   private getComponents() {
+
     this.tables = this.endpoints
       .filter(x => x.type === 'crud-count')
       .map(x => {
@@ -387,8 +379,10 @@ export class AutoGenerateComponent implements OnInit {
   }
 
   private getEndpoints() {
+
     this.endpointsService.endpoints().subscribe({
       next: (endpoints: Endpoint[]) => {
+
         if (endpoints) {
           this.endpoints = endpoints
             .filter((x: any) => !x.path.startsWith('magic/system/') && !x.path.startsWith('magic/modules/magic/'))
@@ -419,9 +413,35 @@ export class AutoGenerateComponent implements OnInit {
           }
           this.databases = modules;
           this.getComponents();
+          this.getPalette();
         }
       },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+      error: (error: any) => {
+        
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+      }
+    });
+  }
+
+  private getPalette() {
+
+    this.crudifyService.templateCustomArgs(this.frontendType).subscribe({
+      next: (res: any) => {
+
+        this.generalService.hideLoading();
+        if (res) {
+          this.colorPalettes = res?.palette || [];
+          this.colorPalette = this.colorPalettes[0].value;
+          this.themes = res?.theme || [];
+          this.theme = this.themes[0].value;
+          this.template = res?.intro;
+        }
+      },
+      error: (error: any) => {
+
+        this.generalService.hideLoading();
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+      }
     });
   }
 }

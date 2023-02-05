@@ -11,11 +11,13 @@ import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messa
 import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { SetupModel } from '../../models/common/status.model';
 import { ConfigService } from '../../../_general/services/config.service';
+import { SetupModel } from '../../models/common/setup.model';
 
 class MyErrorStateMatcher implements ErrorStateMatcher {
+
   isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
+
     const invalidCtrl = !!(control?.invalid && control?.parent?.dirty);
     const invalidParent = !!(control?.parent?.invalid && control?.parent?.dirty);
     return invalidCtrl || invalidParent;

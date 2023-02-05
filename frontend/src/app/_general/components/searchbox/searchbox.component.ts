@@ -31,6 +31,7 @@ export class SearchboxComponent implements OnInit {
   checked: boolean = false;
 
   ngOnInit() {
+
     this.filterControl = new FormControl('');
     this.filterControl.valueChanges
       .pipe(debounceTime(400), distinctUntilChanged())
@@ -40,6 +41,7 @@ export class SearchboxComponent implements OnInit {
   }
 
   removeSearchTerm() {
+
     this.filterControl.setValue('');
   }
 
@@ -59,14 +61,17 @@ export class SearchboxComponent implements OnInit {
   }
 
   typeChanged() {
+
     this.typeChange?.emit(this.type);
   }
 
   buttonClicked() {
+
     this.buttonClick.emit();
   }
 
   button2Clicked() {
+
     this.button2Click.emit();
   }
 }

@@ -20,10 +20,12 @@ export class IdeComponent {
   searchKey: string;
 
   showEditor(event: { currentFileData: any }) {
+
     this.currentFileData = event.currentFileData;
   }
 
   filterList(event: any) {
+
     this.searchKey = event.value;
   }
 }

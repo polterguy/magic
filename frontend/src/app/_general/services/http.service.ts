@@ -24,6 +24,7 @@ export class HttpService {
     private backendService: BackendService) { }
 
   get<MagicResponse>(url: string, requestOptions: object = null) {
+
     if (!this.backendService.active) {
       return throwError(() => new Error('Not connected to a backend'));
     } else {
@@ -36,6 +37,7 @@ export class HttpService {
   }
 
   download(url: string) {
+
     if (!this.backendService.active) {
       return throwError(() => new Error('Not connected to a backend'));
     } else {
@@ -47,6 +49,7 @@ export class HttpService {
   }
 
   downloadPost(url: string, args: any) {
+
     if (!this.backendService.active) {
       return throwError(() => new Error('Not connected to a backend'));
     } else {
@@ -59,6 +62,7 @@ export class HttpService {
   }
 
   post<MagicResponse>(url: string, req: any, requestOptions: object = null) {
+
     if (!this.backendService.active) {
       return throwError(() => new Error('Not connected to a backend'));
     } else {
@@ -71,6 +75,7 @@ export class HttpService {
   }
 
   put<MagicResponse>(url: string, req: any, requestOptions: object = null) {
+
     if (!this.backendService.active) {
       return throwError(() => new Error('Not connected to a backend'));
     } else {
@@ -83,6 +88,7 @@ export class HttpService {
   }
 
   patch<MagicResponse>(url: string, req: any, requestOptions: object = null) {
+
     if (!this.backendService.active) {
       return throwError(() => new Error('Not connected to a backend'));
     } else {
@@ -95,6 +101,7 @@ export class HttpService {
   }
 
   delete<MagicResponse>(url: string, requestOptions: object = null) {
+
     if (!this.backendService.active) {
       return throwError(() => new Error('Not connected to a backend'));
     } else {

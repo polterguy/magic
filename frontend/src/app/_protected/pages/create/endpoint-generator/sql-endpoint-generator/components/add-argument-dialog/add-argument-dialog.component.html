@@ -2,8 +2,11 @@
 <h3 mat-dialog-title>Add argument</h3>
 
 <div mat-dialog-content>
+
   <mat-form-field class="w-100">
-    <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+    <span
+      matPrefix
+      class="d-flex flex-nowrap align-items-center justify-content-between me-2">
       <mat-icon>edit</mat-icon>
       <span class="text-muted">|</span>
     </span>
@@ -20,18 +23,40 @@
   </mat-form-field>
 
   <mat-form-field class="w-100">
-    <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+    <span
+      matPrefix
+      class="d-flex flex-nowrap align-items-center justify-content-between me-2">
       <mat-icon>dehaze</mat-icon>
       <span class="text-muted">|</span>
     </span>
 
-    <mat-select placeholder="Type" [(ngModel)]="selectedType">
-      <mat-option *ngFor="let item of types | sortBy: 'item'" [value]="item">{{item}}</mat-option>
+    <mat-select
+      placeholder="Type"
+      [(ngModel)]="selectedType">
+      <mat-option
+        *ngFor="let item of types | sortBy: 'item'"
+        [value]="item">
+        {{item}}
+      </mat-option>
     </mat-select>
   </mat-form-field>
+
 </div>
 
 <div mat-dialog-actions [align]="'end'">
-  <button mat-button mat-dialog-close>Cancel</button>
-  <button mat-flat-button color="primary" class="px-4" (click)="add()">Save</button>
+
+  <button
+    mat-button
+    mat-dialog-close>
+    Cancel
+  </button>
+
+  <button
+    mat-flat-button
+    color="primary"
+    class="px-4"
+    (click)="add()">
+    Save
+  </button>
+
 </div>

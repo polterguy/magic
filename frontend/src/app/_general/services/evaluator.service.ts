@@ -26,16 +26,19 @@ export class EvaluatorService {
     private fileService: FileService) { }
 
   execute(hyperlambda: string) {
+
     return this.httpService.post<MagicResponse>('/magic/system/evaluator/evaluate', {
       hyperlambda
     });
   }
 
   snippets() {
+
     return this.fileService.listFiles('/etc/snippets/');
   }
 
   loadSnippet(filename: string) {
+
     if (filename.indexOf('/') !== -1) {
       return throwError(() => new Error('Not a valid filename'));
     }
@@ -47,6 +50,7 @@ export class EvaluatorService {
   }
 
   saveSnippet(filename: string, content: string) {
+
     if (filename.indexOf('/') !== -1) {
       return throwError(() => new Error('Not a valid filename'));
     }

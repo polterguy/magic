@@ -23,6 +23,7 @@ export class LoadingSkeletonComponent implements OnInit {
   itemsArray: string[] = [];
 
   ngOnInit() {
+
     for (let index = 0; index < this.amount; index++) {
       this.itemsArray.push('item' + index);
     }

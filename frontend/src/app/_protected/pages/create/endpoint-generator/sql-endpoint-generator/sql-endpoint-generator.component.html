@@ -1,3 +1,4 @@
+
 <div class="row mt-4">
 
   <!-- 1 - database -->
@@ -13,12 +14,14 @@
 
         <!-- Loading skeleton -->
         <ng-container *ngIf="isLoading">
+
           <app-loading-skeleton
-            [amount]="1"
-            [colClass]="'col-12'"
-            [blockHeight]="'45px'"
-            [hasShadow]="false">
+            amount="1"
+            colClass="col-12"
+            blockHeight="45px"
+            hasShadow="false">
           </app-loading-skeleton>
+
         </ng-container>
 
         <mat-form-field class="w-100" *ngIf="!isLoading">
@@ -46,12 +49,14 @@
 
         <!-- Loading skeleton -->
         <ng-container *ngIf="isLoading">
+
           <app-loading-skeleton
-            [amount]="1"
-            [colClass]="'col-12'"
-            [blockHeight]="'45px'"
-            [hasShadow]="false">
+            amount="1"
+            colClass="col-12"
+            blockHeight="45px"
+            hasShadow="false">
           </app-loading-skeleton>
+
         </ng-container>
 
         <mat-form-field class="w-100" *ngIf="!isLoading">
@@ -79,12 +84,14 @@
 
         <!-- Loading skeleton -->
         <ng-container *ngIf="isLoading">
+
           <app-loading-skeleton
-            [amount]="1"
-            [colClass]="'col-12'"
-            [blockHeight]="'45px'"
-            [hasShadow]="false">
+            amount="1"
+            colClass="col-12"
+            blockHeight="45px"
+            hasShadow="false">
           </app-loading-skeleton>
+
         </ng-container>
 
         <mat-form-field class="w-100" *ngIf="!isLoading">
@@ -122,12 +129,14 @@
 
         <!-- Loading skeleton -->
         <ng-container *ngIf="isLoading">
+
           <app-loading-skeleton
-            [amount]="1"
-            [colClass]="'col-12'"
-            [blockHeight]="'45px'"
-            [hasShadow]="false">
+            amount="1"
+            colClass="col-12"
+            blockHeight="45px"
+            hasShadow="false">
           </app-loading-skeleton>
+
         </ng-container>
 
         <mat-form-field class="w-100" *ngIf="!isLoading">
@@ -154,12 +163,14 @@
 
         <!-- Loading skeleton -->
         <ng-container *ngIf="isLoading">
+
           <app-loading-skeleton
-            [amount]="1"
-            [colClass]="'col-12'"
-            [blockHeight]="'45px'"
-            [hasShadow]="false">
+            amount="1"
+            colClass="col-12"
+            blockHeight="45px"
+            hasShadow="false">
           </app-loading-skeleton>
+
         </ng-container>
 
         <mat-form-field class="w-100" *ngIf="!isLoading">
@@ -184,12 +195,14 @@
 
         <!-- Loading skeleton -->
         <ng-container *ngIf="isLoading">
+
           <app-loading-skeleton
-            [amount]="1"
-            [colClass]="'col-12'"
-            [blockHeight]="'45px'"
-            [hasShadow]="false">
+            amount="1"
+            colClass="col-12"
+            blockHeight="45px"
+            hasShadow="false">
           </app-loading-skeleton>
+
         </ng-container>
 
         <mat-form-field class="w-100" *ngIf="!isLoading">
@@ -214,12 +227,14 @@
 
         <!-- Loading skeleton -->
         <ng-container *ngIf="isLoading">
+
           <app-loading-skeleton
-            [amount]="1"
-            [colClass]="'col-12'"
-            [blockHeight]="'45px'"
-            [hasShadow]="false">
+            amount="1"
+            colClass="col-12"
+            blockHeight="45px"
+            hasShadow="false">
           </app-loading-skeleton>
+
         </ng-container>
 
         <mat-form-field class="w-100" *ngIf="!isLoading">
@@ -263,14 +278,18 @@
             <mat-checkbox
               color="primary"
               [disabled]="isLoading"
-              [(ngModel)]="generate_training_data">Train AI</mat-checkbox>
+              [(ngModel)]="generate_training_data">
+              Train AI
+            </mat-checkbox>
 
             <div class="px-xl-5 px-lg-4 px-sm-3 px-1"></div>
 
             <mat-checkbox
               color="primary"
               [disabled]="isLoading"
-              [(ngModel)]="overwrite">Overwrite</mat-checkbox>
+              [(ngModel)]="overwrite">
+              Overwrite
+            </mat-checkbox>
 
           </div>
         </div>
@@ -280,11 +299,15 @@
       <div class="col-md-6 col-12">
         <div class="d-flex justify-content-between align-items-center mb-2">
           <p class="fw-bold text-nowrap my-0">Step 4 - Arguments</p>
+
           <button
             mat-button
             [disabled]="isLoading"
             color="primary"
-            (click)="addArgument()">Add argument</button>
+            (click)="addArgument()">
+            Add argument
+          </button>
+
         </div>
 
         <ng-container *ngIf="arguments && arguments.length === 0;else hasArguments">
@@ -292,13 +315,20 @@
         </ng-container>
 
         <ng-template #hasArguments>
+
           <mat-chip-list aria-label="Arguments for endpoint">
-            <mat-chip *ngFor="let item of arguments" (removed)="removeArgument(item)">
+
+            <mat-chip
+              *ngFor="let item of arguments"
+              (removed)="removeArgument(item)">
               {{item.name}}
+
               <button matChipRemove>
                 <mat-icon>cancel</mat-icon>
               </button>
+
             </mat-chip>
+
           </mat-chip-list>
 
         </ng-template>
@@ -312,26 +342,45 @@
     <div class="d-flex justify-content-between align-items-center">
       <p class="fw-bold mb-0">Step 5 - SQL</p>
       <div>
-        <button mat-button color="primary" (click)="viewShortkeys()">Shortkeys</button>
-        <button mat-button color="primary" (click)="loadSnippet()">Snippets</button>
+
+        <button
+          mat-button
+          color="primary"
+          (click)="viewShortkeys()">
+          Shortkeys
+        </button>
+
+        <button
+          mat-button
+          color="primary"
+          (click)="loadSnippet()">
+          Snippets
+        </button>
+
       </div>
     </div>
   </div>
 
   <div class="col-12 mt-3">
+
     <app-codemirror-sql
       [(model)]="sql"
       class="codemirror-container">
     </app-codemirror-sql>
+
   </div>
 
   <div class="col-12 d-flex justify-content-end button-row mt-5">
+
     <button
       mat-flat-button
       color="primary"
       class="px-5"
       (click)="generate()"
-      [disabled]="waiting">Generate endpoints</button>
+      [disabled]="waiting">
+      Generate endpoints
+    </button>
+
   </div>
 
 </div>

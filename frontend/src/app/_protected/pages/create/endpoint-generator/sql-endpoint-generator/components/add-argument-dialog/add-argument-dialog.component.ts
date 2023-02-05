@@ -16,23 +16,12 @@ import { Argument } from 'src/app/_protected/pages/manage/endpoints/_models/argu
 })
 export class AddArgumentDialogComponent implements OnInit {
 
-  /**
-  * Types of argument user can add.
-  */
-  public types: string[] = Types;
+  types: string[] = Types;
+  name = '';
+  selectedType = '';
 
-  /**
-   * Name of argument.
-   */
-  public name = '';
-
-   /**
-    * Hyperlambda type of argument.
-    */
-  public selectedType = '';
-
-  public CommonRegEx = CommonRegEx;
-  public CommonErrorMessages = CommonErrorMessages;
+  CommonRegEx = CommonRegEx;
+  CommonErrorMessages = CommonErrorMessages;
 
   constructor(
     private generalService: GeneralService,
@@ -40,14 +29,12 @@ export class AddArgumentDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: Argument[]) { }
 
   ngOnInit() {
+
     this.selectedType = 'string';
   }
 
-  private validateUrlName() {
-    return this.CommonRegEx.appNames.test(this.name);
-  }
+  add() {
 
-  public add() {
     if (!this.validateUrlName()) {
       this.generalService.showFeedback('Please give a proper name.', 'errorMessage');
       return;
@@ -60,6 +47,15 @@ export class AddArgumentDialogComponent implements OnInit {
       name: this.name,
       type: this.selectedType
     })
+  }
+
+  /*
+   * Private helper methods.
+   */
+
+  private validateUrlName() {
+
+    return this.CommonRegEx.appNames.test(this.name);
   }
 }
 

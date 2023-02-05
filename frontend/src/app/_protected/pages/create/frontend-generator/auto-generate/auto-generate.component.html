@@ -113,10 +113,10 @@
 
     <app-loading-skeleton
       *ngIf="!databases"
-      [amount]="1"
-      [colClass]="'col-12'"
-      [blockHeight]="'45px'"
-      [hasShadow]="false">
+      amount="1"
+      colClass="col-12"
+      blockHeight="45px"
+      hasShadow="false">
     </app-loading-skeleton>
 
   </div>
@@ -141,10 +141,10 @@
 
     <app-loading-skeleton
       *ngIf="!tables"
-      [amount]="1"
-      [colClass]="'col-12'"
-      [blockHeight]="'45px'"
-      [hasShadow]="false">
+      amount="1"
+      colClass="col-12"
+      blockHeight="45px"
+      hasShadow="false">
     </app-loading-skeleton>
 
   </div>
@@ -159,7 +159,7 @@
 
       <app-loading-skeleton
         *ngIf="!endpoints"
-        [amount]="5"
+        amount="5"
         colClass="col-12"
         blockHeight="40px"
         hasShadow="false">

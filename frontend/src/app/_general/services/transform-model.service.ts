@@ -141,6 +141,7 @@ export class TransformModelService {
       primary: [],
     };
     for (const idxColumn of (table.columns || [])) {
+
       switch (verb) {
 
         case 'post':

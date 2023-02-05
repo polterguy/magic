@@ -19,6 +19,7 @@ export class SplashComponnt {
   @Output() hideInfoPanel = new EventEmitter<any>();
 
   public hidePanel() {
+
     this.hideInfoPanel.emit();
   }
 }

@@ -18,18 +18,17 @@ import { OverviewDialogComponent } from './components/overview-dialog/overview-d
 })
 export class OverviewComponent {
 
-  /**
-   * Data coming from the parent component.
-   */
-  @Input() data: SystemReport;
-
-  public displayableList: any = [];
   private fullList: any = titles;
   private titles: string[] = [];
+
+  @Input() data: SystemReport;
+
+  displayableList: any = [];
 
   constructor(private dialog: MatDialog) { }
 
   ngOnInit() {
+
     const storedSelections: string = localStorage.getItem('overviewItems') || '';
     if (storedSelections && storedSelections !== '') {
       this.titles = JSON.parse(storedSelections);
@@ -38,13 +37,14 @@ export class OverviewComponent {
       this.displayableList = this.fullList.filter((el: any) => { return el.isDefault === true });
       this.fullList.map((el: any) => {
         if (el.isDefault === true) {
-          this.titles.push(el.name)
+          this.titles.push(el.name);
         }
       });
     }
   }
 
-  public more() {
+  more() {
+
     this.dialog.open(OverviewDialogComponent, {
       width: '500px',
       autoFocus: false,
@@ -58,7 +58,7 @@ export class OverviewComponent {
         this.titles = newTitles;
         this.displayableList = this.fullList.filter((item: any) => this.titles.find((el: any) => { return el === item.name }));
       }
-    })
+    });
   }
 }
 
@@ -122,4 +122,4 @@ const titles: any = [
     name: 'Slots',
     key: 'slots'
   }
-]
+];

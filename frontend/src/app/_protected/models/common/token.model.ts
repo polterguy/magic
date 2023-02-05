@@ -21,6 +21,7 @@ export class Token {
    * @param value Raw JWT token
    */
   constructor(value: string) {
+
     this.token = value;
   }
 
@@ -28,6 +29,7 @@ export class Token {
    * Returns the raw JWT token.
    */
   get token() {
+
     return this._token;
   }
 
@@ -64,6 +66,7 @@ export class Token {
    * Returns username token declares.
    */
   get username() {
+
     return this._username;
   }
 
@@ -71,6 +74,7 @@ export class Token {
    * Returns roles user belongs to.
    */
   get roles() {
+
     return this._roles;
   }
 
@@ -78,6 +82,7 @@ export class Token {
    * Returns "exp" value for token.
    */
   get exp() {
+
     return this._exp;
   }
 
@@ -85,6 +90,7 @@ export class Token {
    * Returns number of seconds from now that token will expire.
    */
   get expires_in() {
+
     const now = Math.floor(new Date().getTime() / 1000);
     return this.exp - now;
   }
@@ -93,6 +99,7 @@ export class Token {
    * Returns true if token is expired.
    */
   get expired() {
+
     return this._exp !== null && this.expires_in <= 0;
   }
 
@@ -103,6 +110,7 @@ export class Token {
    * @returns True if user belongs to specified role
    */
   in_role(value: string) {
+
     return this.roles.includes(value);
   }
 }

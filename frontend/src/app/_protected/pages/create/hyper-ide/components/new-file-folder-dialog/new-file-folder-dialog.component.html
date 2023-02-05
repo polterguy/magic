@@ -4,47 +4,88 @@
   <div mat-dialog-content>
 
     <mat-form-field class="w-100 standalone-field">
-      <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+      <span
+        matPrefix
+        class="d-flex flex-nowrap align-items-center justify-content-between me-2">
         <mat-icon>folder</mat-icon>
         <span class="text-muted">|</span>
       </span>
-
-      <mat-select [(ngModel)]="data.path" class="dark" name="path" placeholder="Folder name">
-        <mat-option *ngFor="let idx of data.folders" [value]="idx">{{idx}}</mat-option>
+      <mat-select
+        [(ngModel)]="data.path"
+        class="dark"
+        name="path"
+        placeholder="Folder name">
+        <mat-option
+          *ngFor="let idx of data.folders"
+          [value]="idx">
+          {{idx}}
+        </mat-option>
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field class="w-100 standalone-field" *ngIf="templates.length > 0 && data.type ==='file'">
-      <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+    <mat-form-field
+      class="w-100 standalone-field"
+      *ngIf="templates.length > 0 && data.type ==='file'">
+      <span
+        matPrefix
+        class="d-flex flex-nowrap align-items-center justify-content-between me-2">
         <mat-icon>list</mat-icon>
         <span class="text-muted">|</span>
       </span>
-
-      <mat-select [(ngModel)]="activeTemplate" name="activeTemplate" (selectionChange)="templateChanged()" class="dark"
+      <mat-select
+        [(ngModel)]="activeTemplate"
+        name="activeTemplate"
+        (selectionChange)="templateChanged()"
+        class="dark"
         placeholder="Template">
-        <mat-option *ngFor="let idx of getTemplates()" [value]="idx">{{getFileName(idx.name)}}</mat-option>
+        <mat-option
+          *ngFor="let idx of getTemplates()"
+          [value]="idx">
+          {{getFileName(idx.name)}}
+        </mat-option>
       </mat-select>
     </mat-form-field>
 
     <mat-form-field class="w-100 standalone-field">
-      <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+      <span
+        matPrefix
+        class="d-flex flex-nowrap align-items-center justify-content-between me-2">
         <mat-icon>edit</mat-icon>
         <span class="text-muted">|</span>
       </span>
-
-      <input #fileName type="text" [placeholder]="data.type === 'file' ? 'Filename' : 'Folder name'" matInput autocomplete="off" [(ngModel)]="data.name"
-        name="name" cdkFocusInitial>
+      <input
+        #fileName
+        type="text"
+        [placeholder]="data.type === 'file' ? 'Filename' : 'Folder name'"
+        matInput
+        autocomplete="off"
+        [(ngModel)]="data.name"
+        name="name"
+        cdkFocusInitial>
     </mat-form-field>
 
   </div>
 
   <div mat-dialog-actions [align]="'end'">
 
-    <mat-checkbox *ngIf="data?.type === 'file'" [(ngModel)]="filterTemplates" color="primary" name="filterTemplates"
-      matTooltip="Apply 'intelligent' filtering of templates" class="margin-right">Filter</mat-checkbox>
+    <mat-checkbox
+      *ngIf="data?.type === 'file'"
+      [(ngModel)]="filterTemplates"
+      color="primary"
+      name="filterTemplates"
+      matTooltip="Apply 'intelligent' filtering of templates"
+      class="margin-right">
+      Filter
+    </mat-checkbox>
 
-    <button mat-flat-button color="primary" type="submit" [disabled]="!pathValid()"
-      [mat-dialog-close]="data">Create</button>
+    <button
+      mat-flat-button
+      color="primary"
+      type="submit"
+      [disabled]="!pathValid()"
+      [mat-dialog-close]="data">
+      Create
+    </button>
 
   </div>
 </form>

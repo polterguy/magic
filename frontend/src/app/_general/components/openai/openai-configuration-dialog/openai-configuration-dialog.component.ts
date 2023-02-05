@@ -70,6 +70,7 @@ export class OpenAIConfigurationDialogComponent implements OnInit {
   }
 
   close() {
+
     this.dialogRef.close({ configured: false });
   }
 }
