@@ -16,7 +16,6 @@ import { LastLogItemsComponent } from '../components/last-log-items/last-log-ite
 import { MainChartComponent } from '../components/main-chart/main-chart.component';
 import { OverviewDialogComponent } from '../components/overview/components/overview-dialog/overview-dialog.component';
 import { OverviewComponent } from '../components/overview/overview.component';
-import { ViewLogComponent } from '../components/view-log/view-log.component';
 import { DashboardComponent } from '../dashboard.component';
 import { DashboardRoutingModule } from './dashboard-routing.module';
 
@@ -29,7 +28,6 @@ import { DashboardRoutingModule } from './dashboard-routing.module';
     OverviewComponent,
     OverviewDialogComponent,
     ChartComponent,
-    ViewLogComponent,
   ],
   imports: [
     CommonModule,
