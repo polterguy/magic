@@ -58,7 +58,7 @@ export class TablesViewComponent implements OnInit, OnDestroy {
         table: item,
         tables: this.tablesList,
         databases: this.databases,
-        slectedDbType: this.selectedDbType
+        selectedDbType: this.selectedDbType,
       }
     }).afterClosed().subscribe((res: any) => {
       if (res) {
@@ -228,7 +228,7 @@ export class TablesViewComponent implements OnInit, OnDestroy {
 
     if (table?.indexes) {
       for (const idx of table.indexes) {
-        if (idx.columns.filter(x => x === item.name)) {
+        if (idx.columns.filter((x: string) => x === item.name).length > 0) {
           this.generalService.showFeedback('You need to drop indexes referencing column first', 'errorMessage');
           return
         }

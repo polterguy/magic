@@ -51,7 +51,7 @@
             </mat-select-trigger>
             <mat-option
               class="multiline-mat-option"
-              *ngFor="let item of fieldTypeList[data.slectedDbType]"
+              *ngFor="let item of fieldTypeList[data.selectedDbType]"
               [value]="item">
               <span class="d-block name-line" #typeName>{{item.name}}</span>
               <span class="d-block description-line">{{item.description}}</span>

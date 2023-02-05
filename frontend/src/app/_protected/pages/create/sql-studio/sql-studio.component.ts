@@ -112,7 +112,6 @@ export class SQLStudioComponent implements OnInit {
 
   getDatabases() {
 
-    this._dbLoading.next(true);
     this.generalService.showLoading();
     this.databases = [];
 
