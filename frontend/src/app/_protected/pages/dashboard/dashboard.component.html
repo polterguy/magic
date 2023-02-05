@@ -4,17 +4,35 @@
 
   <div class="row">
     <div class="col-12 mb-4">
-      <app-loading-skeleton [amount]="1" [colClass]="'col-12'" [blockHeight]="'268px'"></app-loading-skeleton>
+
+      <app-loading-skeleton
+        amount="1"
+        colClass="col-12"
+        blockHeight="268px">
+      </app-loading-skeleton>
+
     </div>
   </div>
 
   <div class="row">
     <div class="col-12">
-      <app-loading-skeleton [amount]="3" [colClass]="'col-md-4 col-12'" [blockHeight]="'360px'"></app-loading-skeleton>
+
+      <app-loading-skeleton
+        amount="3"
+        colClass="col-md-4 col-1'"
+        blockHeight="360px">
+      </app-loading-skeleton>
+
     </div>
 
     <div class="col-12">
-      <app-loading-skeleton [amount]="2" [colClass]="'col-md-6 col-12'" [blockHeight]="'500px'"></app-loading-skeleton>
+
+      <app-loading-skeleton
+        amount="2"
+        colClass="col-md-6 col-12"
+        blockHeight="500px">
+      </app-loading-skeleton>
+
     </div>
 
   </div>
@@ -27,31 +45,57 @@
 
     <div class="row mb-1" *ngIf="showInfoPanel === 'show'">
       <div class="col-12 mb-4">
-        <app-splash (hideInfoPanel)="hidePanel()"></app-splash>
+
+        <app-splash
+          (hideInfoPanel)="hidePanel()">
+        </app-splash>
+
       </div>
     </div>
 
     <ng-container *ngIf="systemReportDisplayable !== null">
       <div class="row">
         <div class="col-xl-3 col-md-4 col-12 mb-4 order-xl-first order-2">
-          <app-overview [data]="systemReportDisplayable"></app-overview>
+
+          <app-overview
+            [data]="systemReportDisplayable">
+          </app-overview>
+
         </div>
         <div class="col-xl-9 col-12 order-xl-2 order-first">
           <div class="row">
             <div class="col-sm-6 col-12 mb-4">
-              <app-chart [data]="systemReportDisplayable" [log]="true"></app-chart>
+
+              <app-chart
+                [data]="systemReportDisplayable"
+                [log]="true">
+              </app-chart>
+
             </div>
             <div class="col-sm-6 col-12 mb-4">
-              <app-chart [data]="systemReportDisplayable" [complexity]="true"></app-chart>
+
+              <app-chart
+                [data]="systemReportDisplayable"
+                [complexity]="true">
+              </app-chart>
+
             </div>
           </div>
         </div>
         <div class="col-md-8 col-12 mb-4 order-3">
-          <app-main-chart [data]="chartData"></app-main-chart>
+
+          <app-main-chart
+            [data]="chartData">
+          </app-main-chart>
+
         </div>
         <div class="col-xl-4 col-12 mb-4 order-last">
-          <app-last-log-items [data]="systemReportDisplayable?.last_log_items"
-            [totalLogs]="systemReportDisplayable?.log_items"></app-last-log-items>
+
+          <app-last-log-items
+            [data]="systemReportDisplayable?.last_log_items"
+            [totalLogs]="systemReportDisplayable?.log_items">
+          </app-last-log-items>
+
         </div>
       </div>
     </ng-container>

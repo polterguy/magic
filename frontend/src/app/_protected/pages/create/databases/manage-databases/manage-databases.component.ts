@@ -59,7 +59,7 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
 
-    this.getPluginDatabases();
+    this.generalService.showLoading();
     this.getDatabases();
   }
 
@@ -148,7 +148,6 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
 
   uninstallPluginDatabase(database: any) {
 
-    this.generalService.showLoading();
     this.dialog.open(ConfirmationDialogComponent, {
       width: '500px',
       data: {
@@ -161,6 +160,8 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
     }).afterClosed().subscribe((result: string) => {
 
       if (result === 'confirm') {
+
+        this.generalService.showLoading();
         this.fileService.deleteFolder('/modules/' + database.module_name + '/').subscribe({
           next: () => {
 
@@ -246,6 +247,7 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
           item.hasUpdate = false;
         });
         this.loadLocalManifests();
+        this.generalService.hideLoading();
       },
       error: (error: any) => {
 
@@ -317,7 +319,7 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
 
           this.waitingInstallation = false;
           this.isLoadingDbs = false;
-          this.generalService.hideLoading();
+          this.getPluginDatabases();
         },
         error: (error: any) => {
 

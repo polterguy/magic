@@ -23,27 +23,16 @@ import { Router } from '@angular/router';
 })
 export class DashboardComponent implements OnInit {
 
+  private _isRetrievingSystemReport = false;
   systemReport: any = null;
   systemReportDisplayable: any;
   logTypesChart: LogTypes[];
-
-  // default is set for all charts to be displayed
   chartsList: any = [];
-
-  /**
-   * for preparing chart data + name and description dynamically
-   */
   chartData: any = [];
-
-  public userIsRoot: boolean = undefined;
-
-  private _isRetrievingSystemReport = false;
-
-  public isLoading: boolean = true;
-
-  public showInfoPanel: string = sessionStorage.getItem('infoPanel') || 'show';
-
-  public userAsUsername: string = '';
+  userIsRoot: boolean = undefined;
+  isLoading: boolean = true;
+  showInfoPanel: string = sessionStorage.getItem('infoPanel') || 'show';
+  userAsUsername: string = '';
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -54,6 +43,7 @@ export class DashboardComponent implements OnInit {
     private diagnosticsService: DiagnosticsService) { }
 
   ngOnInit() {
+
     if (!this.backendService.active.setupDone) {
       this.router.navigate(['/setup']);
       return;
@@ -62,7 +52,21 @@ export class DashboardComponent implements OnInit {
     this.showInitDialog();
   }
 
+  hidePanel() {
+
+    this.showInfoPanel = 'hide';
+    this.cdr.detectChanges();
+    sessionStorage.setItem('infoPanel', this.showInfoPanel);
+  }
+
+  unsorted() { }
+
+  /*
+   * Private helper methods.
+   */
+
   private waitForData() {
+
     if (this.backendService.active?.token?.in_role('root')) {
       this.getSystemReport();
       this.userIsRoot = (this.backendService.active?.token?.in_role('root'));
@@ -73,23 +77,18 @@ export class DashboardComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
-  /*
-   * Retrieving the system's report
-   */
   private getSystemReport() {
+
     this.cdr.markForCheck();
 
-    // Avoiding race conditions.
     if (this._isRetrievingSystemReport) {
       return;
     }
     this._isRetrievingSystemReport = true;
 
-    // Retrieving system report from backend.
     this.diagnosticsService.getSystemReport().subscribe({
       next: (report: SystemReport[]) => {
-        // emptying arrays to prevent displaying wrong information while switching between backends,
-        // if not, when system information is not available, the arrays are still filled with the previous system's information data.
+
         this.chartsList = [];
         this.chartData = {};
         this.systemReportDisplayable = null;
@@ -123,6 +122,7 @@ export class DashboardComponent implements OnInit {
         this.isLoading = false;
       },
       error: (error: any) => {
+
         this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
         this._isRetrievingSystemReport = false;
       }
@@ -130,6 +130,7 @@ export class DashboardComponent implements OnInit {
   }
 
   private showInitDialog() {
+
     const configured = localStorage.getItem('configured');
     if (configured) {
       return;
@@ -141,15 +142,4 @@ export class DashboardComponent implements OnInit {
       localStorage.setItem('configured', 'true');
     });
   }
-
-  hidePanel() {
-    this.showInfoPanel = 'hide';
-    this.cdr.detectChanges();
-    sessionStorage.setItem('infoPanel', this.showInfoPanel);
-  }
-
-  /**
-   * Just an empty function, needed to keep the chartData itteration unsorted by the keyvalue pipe.
-   */
-  unsorted() { }
 }

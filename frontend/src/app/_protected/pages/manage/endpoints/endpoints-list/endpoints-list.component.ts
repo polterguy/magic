@@ -3,7 +3,7 @@
  * Copyright (c) Aista Ltd, 2021 - 2023 info@aista.com, all rights reserved.
  */
 
-import { ChangeDetectorRef, Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { BackendService } from 'src/app/_general/services/backend.service';
@@ -13,6 +13,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { FileService } from '../../../../../_general/services/file.service';
 
+/**
+ * Helper component to display all endpoints in the system,
+ * allowing user to invoke endpoints, and search for endpoints.
+ */
 @Component({
   selector: 'app-endpoints-list',
   templateUrl: './endpoints-list.component.html',
@@ -26,11 +30,10 @@ export class EndpointsListComponent {
   @Input() payload: any;
   @Input() isLoading: Observable<boolean>;
   @ViewChild('assumptions', { static: false }) assumptions: AssumptionsComponent;
-
   @Output() changeEditor = new EventEmitter<any>();
   @Output() reload = new EventEmitter<any>();
 
-  public selectedItem: any;
+  selectedItem: any;
 
   constructor(
     private clipboard: Clipboard,
@@ -39,11 +42,13 @@ export class EndpointsListComponent {
     private fileService: FileService,
     private backendService: BackendService) { }
 
-  public panelExpanded(el: any) {
+  panelExpanded(el: any) {
+
     el.expanded = true;
   }
 
   deleteEndpoint(el: any) {
+
     const confirm = el.path.substring(el.path.lastIndexOf('/') + 1);
     this.dialog.open(ConfirmationDialogComponent, {
       width: '500px',
@@ -62,39 +67,47 @@ export class EndpointsListComponent {
         }
       }
     }).afterClosed().subscribe((result: string) => {
+
       if (result === 'confirm') {
+
+        this.generalService.showLoading();
         this.fileService.deleteFile(el.path.substring(5) + '.' + el.verb + '.hl').subscribe({
           next: () => {
+
+            this.generalService.hideLoading();
             this.generalService.showFeedback('Endpoint successfully deleted');
             this.reload.emit({});
           },
-          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+          error: (error: any) => {
+
+            this.generalService.hideLoading();
+            this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+          }
         });
       }
     })
   }
 
   getPath(path: string) {
+
     return path.split('?')[0];
   }
 
-  public requestEditor(item: any) {
+  requestEditor(item: any) {
+
     item.path = item.path.split('?')[0];
     this.selectedItem = item;
     this.changeEditor.emit(item);
   }
 
-  public copyUrl(url: string) {
+  copyUrl(url: string) {
+
     this.clipboard.copy(this.backendService.active.url + '/' + url);
     this.generalService.showFeedback('URL is copied to your clipboard');
   }
 
-  /**
-   * For tracking the virtual scrolling on filterList
-   * @param item
-   * @returns item
-   */
-  public trackFilterList(item: any) {
+  trackFilterList(item: any) {
+
     return item;
   }
 }

@@ -37,6 +37,9 @@ export class InvocationResult {
   responseType: string;
 }
 
+/**
+ * Helper component to display result of endpoint invocation.
+ */
 @Component({
   selector: 'app-endpoints-result',
   templateUrl: './endpoints-result.component.html',
@@ -44,73 +47,37 @@ export class InvocationResult {
 })
 export class EndpointsResultComponent implements OnInit {
 
-  @Input() itemToBeTried!: Observable<any>;
+  private originalPath: string = '';
 
+  @Input() itemToBeTried!: Observable<any>;
   @Output() refetchAssumptions: EventEmitter<any> = new EventEmitter<any>();
 
+  itemDetails: any = {};
+  parameters: any = [];
+  payload: string = null;
+  result: InvocationResult = null;
+  isExecuting: boolean = false;
+  paramsForm = this.formBuilder.group({});
+  canCreateAssumption: boolean = false;
 
-  private originalPath: string = '';
-  public itemDetails: any = {};
-
-  public parameters: any = [];
-
-  /**
-   * CodeMirror options object, taken from common settings.
-   */
   cmOptions = {
     json: json,
   };
-
-  /**
-   * CodeMirror options object, taken from common settings.
-   */
   cmOptionsHyperlambda = {
     json: hyperlambda,
   };
-
-  /**
-   * CodeMirror options object, taken from common settings.
-   */
   cmOptionsMarkdown = {
     json: markdown,
   };
-
-  /**
-   * CodeMirror options object, taken from common settings.
-   */
   cmOptionsReadonly = {
     json: json_readonly,
   };
-
-  /**
-   * CodeMirror options object, taken from common settings.
-   */
   cmHlOptionsReadonly = {
     hl: hyperlambda_readonly,
   };
-
-  /**
-   * CodeMirror options object, taken from common settings.
-   */
   markdownOptionsReadonly = {
     md: markdown_readonly,
   };
-
-  /**
-   * Payload example for JSON type of endpoints.
-   */
-  payload: string = null;
-
-  /**
-   * Result of invocation.
-   */
-  result: InvocationResult = null;
-
-  public isExecuting: boolean = false;
-
-  public paramsForm = this.formBuilder.group({});
-
-  public canCreateAssumption: boolean = false;
 
   constructor(
     private dialog: MatDialog,
@@ -123,103 +90,12 @@ export class EndpointsResultComponent implements OnInit {
     private endpointService: EndpointService,
     private assumptionService: AssumptionService) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
+
     this.getItemDetails();
   }
 
-  private getItemDetails() {
-    this.itemToBeTried.subscribe((value: any) => {
-      this.canCreateAssumption = false;
-      if (value && Object.keys(value).length) {
-        this.itemDetails = [];
-        this.parameters = [];
-        this.result = null;
-        this.paramsForm = this.formBuilder.group({});
-        this.prepareData(value);
-      }
-    });
-  }
-
-  private prepareData(item: any) {
-    this.itemDetails = item;
-    this.originalPath = item.path;
-
-    item.input ? this.setForm() : '';
-    this.getParams();
-
-    if (this.itemDetails.consumes === 'application/json') {
-      let payload = {};
-      for (var idx of this.itemDetails.input ?? []) {
-        let type: any = idx.type;
-        switch (type) {
-
-          case "long":
-          case "ulong":
-          case "int":
-          case "uint":
-          case "short":
-          case "ushort":
-            type = 42;
-            break;
-
-          case "date":
-            type = new Date().toISOString();
-            break;
-
-          case "bool":
-            type = true;
-            break;
-
-          case "string":
-            type = "foo";
-            break;
-
-          case "decimal":
-          case "float":
-          case "double":
-            type = 5.5;
-            break;
-        }
-        payload[idx.name] = type;
-      }
-      setTimeout(() => this.payload = JSON.stringify(payload, null, 2), 250);
-      setTimeout(() => {
-        document.querySelectorAll('.CodeMirror').forEach(item => {
-          var domNode = (<any>item);
-          var editor = domNode.CodeMirror;
-          editor.doc.markClean();
-          editor.doc.clearHistory(); // To avoid having initial loading of file becoming an "undo operation".
-        })
-      }, 800);
-
-    } else if (this.itemDetails.consumes === 'application/x-hyperlambda') {
-      setTimeout(() => this.payload = '', 250);
-    } else if (this.itemDetails?.consumes?.startsWith('text/')) {
-      setTimeout(() => this.payload = '', 250);
-    }
-
-    this.cdr.detectChanges();
-  }
-
-  private getParams() {
-    this.parameters = (this.itemDetails.input as any)?.map((item: any) => { return item.name }) || [];
-  }
-
-  private setForm() {
-    this.itemDetails.input.forEach((element: any) => {
-      this.paramsForm.setControl(element.name, new FormControl<any>(''));
-    });
-
-    this.cdr.detectChanges();
-  }
-
-  /**
-   * Returns arguments for endpoint.
-   *
-   * @param args List of all arguments for endpoint
-   * @param controlArguments Whether or not to return control arguments or non-control arguments
-   */
-  public getArguments(args: Argument[], controlArguments: boolean) {
+  getArguments(args: Argument[], controlArguments: boolean) {
     if (this.itemDetails.type === 'crud-read' || this.itemDetails.type === 'crud-count') {
       return args.filter(x => {
         switch (x.name) {
@@ -242,13 +118,10 @@ export class EndpointsResultComponent implements OnInit {
     }
   }
 
-  /**
-   * Returns tooltip information for specified argument.
-   *
-   * @param arg Argument to retrieve tooltip for
-   */
-  public getDescription(arg: any) {
+  getDescription(arg: any) {
+
     if (this.itemDetails.type === 'crud-read' || this.itemDetails.type === 'crud-count') {
+
       switch (arg.name) {
 
         case 'operator':
@@ -305,13 +178,8 @@ export class EndpointsResultComponent implements OnInit {
     }
   }
 
-  /**
-   * Returns true if endpoint can be invoked.
-   *
-   * Notice, we don't support invoking endpoints with for instance application/octet-stream types
-   * of input, since we don't have the means to supply the required input to these endpoints.
-   */
   canInvoke() {
+
     return this.itemDetails?.verb === 'get' ||
       this.itemDetails?.verb === 'delete' ||
       this.itemDetails?.consumes === 'application/json' ||
@@ -319,16 +187,18 @@ export class EndpointsResultComponent implements OnInit {
       this.itemDetails?.consumes?.startsWith(<String>'text/');
   }
 
-  /**
-     * Invoked when user wants to invoke endpoint.
-     */
   invoke() {
+
     this.itemDetails.path = this.originalPath;
     if (Object.values(this.paramsForm.value).length) {
+
       let url: string = `${this.itemDetails.path}`;
       url += '?';
+
       for (const key in this.paramsForm.value) {
+
         if (this.paramsForm.value[key]) {
+
           const type: string = this.itemDetails.input.find((element: any) => element.name === key).type;
           if (type === 'date') {
             url += key + '=' + encodeURIComponent(new Date(this.paramsForm.value[key]).toISOString()) + '&';
@@ -353,6 +223,7 @@ export class EndpointsResultComponent implements OnInit {
     }
     try {
       let invocation: Observable<any> = null;
+
       switch (this.itemDetails.verb) {
 
         case 'get':
@@ -452,20 +323,20 @@ export class EndpointsResultComponent implements OnInit {
       }
     }
     catch (error) {
+
       this.isExecuting = false;
       this.canCreateAssumption = true;
       this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
     }
   }
 
-  /**
-   * Returns whether or not the current invocation was successful or not.
-   */
   isSuccess() {
+
     return this.result && this.result.status >= 200 && this.result.status < 400;
   }
 
-  public inputTypes(item: string) {
+  inputTypes(item: string) {
+
     switch (item) {
 
       case 'bool':
@@ -490,15 +361,14 @@ export class EndpointsResultComponent implements OnInit {
     }
   }
 
-  public copyResult(response: any) {
+  copyResult(response: any) {
+
     this.clipboard.copy(response);
     this.generalService.showFeedback('Result can be found on your clipboard');
   }
 
-  /**
-   * Allows the user to create an assumption/integration test for the current request/response.
-   */
   createTest() {
+
     const dialogRef = this.dialog.open(CreateAssumptionTestDialogComponent, {
       width: '550px',
     });
@@ -515,6 +385,10 @@ export class EndpointsResultComponent implements OnInit {
           (res.matchResponse && !this.result?.blob) ? this.result?.response : null,
           this.itemDetails.produces).subscribe({
             next: () => {
+
+
+              this.generalService.showLoading();
+
               /*
                * Snippet saved, showing user some feedback, and reloading assumptions.
                *
@@ -530,9 +404,112 @@ export class EndpointsResultComponent implements OnInit {
               this.refetchAssumptions.emit();
 
             },
-            error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+            error: (error: any) => {
+
+              this.generalService.hideLoading();
+              this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+            }
           });
       }
     });
+  }
+
+  /*
+   * Private helper methods.
+   */
+
+  private getItemDetails() {
+
+    this.itemToBeTried.subscribe((value: any) => {
+
+      this.canCreateAssumption = false;
+      if (value && Object.keys(value).length) {
+
+        this.itemDetails = [];
+        this.parameters = [];
+        this.result = null;
+        this.paramsForm = this.formBuilder.group({});
+        this.prepareData(value);
+      }
+    });
+  }
+
+  private prepareData(item: any) {
+
+    this.itemDetails = item;
+    this.originalPath = item.path;
+
+    item.input ? this.setForm() : '';
+    this.getParams();
+
+    if (this.itemDetails.consumes === 'application/json') {
+
+      let payload = {};
+
+      for (var idx of this.itemDetails.input ?? []) {
+
+        let type: any = idx.type;
+        switch (type) {
+
+          case "long":
+          case "ulong":
+          case "int":
+          case "uint":
+          case "short":
+          case "ushort":
+            type = 42;
+            break;
+
+          case "date":
+            type = new Date().toISOString();
+            break;
+
+          case "bool":
+            type = true;
+            break;
+
+          case "string":
+            type = "foo";
+            break;
+
+          case "decimal":
+          case "float":
+          case "double":
+            type = 5.5;
+            break;
+        }
+        payload[idx.name] = type;
+      }
+      setTimeout(() => this.payload = JSON.stringify(payload, null, 2), 250);
+      setTimeout(() => {
+        document.querySelectorAll('.CodeMirror').forEach(item => {
+          var domNode = (<any>item);
+          var editor = domNode.CodeMirror;
+          editor.doc.markClean();
+          editor.doc.clearHistory(); // To avoid having initial loading of file becoming an "undo operation".
+        })
+      }, 800);
+
+    } else if (this.itemDetails.consumes === 'application/x-hyperlambda') {
+      setTimeout(() => this.payload = '', 250);
+    } else if (this.itemDetails?.consumes?.startsWith('text/')) {
+      setTimeout(() => this.payload = '', 250);
+    }
+
+    this.cdr.detectChanges();
+  }
+
+  private getParams() {
+
+    this.parameters = (this.itemDetails.input as any)?.map((item: any) => { return item.name }) || [];
+  }
+
+  private setForm() {
+
+    this.itemDetails.input.forEach((element: any) => {
+      this.paramsForm.setControl(element.name, new FormControl<any>(''));
+    });
+
+    this.cdr.detectChanges();
   }
 }
