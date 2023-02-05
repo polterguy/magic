@@ -125,7 +125,7 @@ export class TablesViewComponent implements OnInit, OnDestroy {
 
         } else if (type === 'index') {
 
-          this.deleteIndex(item);
+          this.deleteIndex(item, tableName);
 
         }
       }
@@ -280,18 +280,19 @@ export class TablesViewComponent implements OnInit, OnDestroy {
     }
   }
 
-  private deleteIndex(item: any) {
+  private deleteIndex(item: any, tableName: string) {
 
     this.generalService.showLoading();
     this.sqlService.deleteIndex(
       this.selectedDbType,
       this.selectedConnectionString,
       this.selectedDatabase,
+      tableName,
       item.name).subscribe({
         next: (result: any) => {
 
           this.generalService.hideLoading();
-          this.generalService.showFeedback('Column successfully deleted', 'successMessage');
+          this.generalService.showFeedback('Index successfully deleted', 'successMessage');
           this.getDatabases.emit(true);
           this.applyMigration(result.sql);
         },
