@@ -105,7 +105,7 @@ export class OpenAIPromptComponent implements OnInit {
         this.generalService.hideLoading();
         this.waitingForAnswer = false;
 
-        const dialog = this.dialog.open(OpenAIAnswerDialogComponent, {
+        this.dialog.open(OpenAIAnswerDialogComponent, {
           width: '80vw',
           maxWidth: '1024px',
           data: {
@@ -115,9 +115,6 @@ export class OpenAIPromptComponent implements OnInit {
             callback: this.callback,
             callbackText: this.callbackText,
           },
-        });
-        dialog.afterClosed().subscribe((data: any) => {
-          console.log(data);
         });
       },
       error: (error: any) => {
