@@ -22,7 +22,7 @@ import { FileNode } from '../../models/file-node.model';
 import { MacroDefinition } from '../../models/macro-definition.model';
 import { CodemirrorActionsService } from '../../services/codemirror-actions.service';
 import { FileService } from '../../services/file.service';
-import { VocabularyService } from '../../services/vocabulary.service';
+import { VocabularyService } from '../../../../../../_general/services/vocabulary.service';
 import { Endpoint } from 'src/app/_protected/models/common/endpoint.model';
 import { AiService } from 'src/app/_general/services/ai.service';
 
