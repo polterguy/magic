@@ -1,9 +1,21 @@
-<mat-accordion displayMode="flat" multi class="endpoints-list" [class.d-none]="isLoading | async">
-  <cdk-virtual-scroll-viewport class="virtual-viewport" appendOnly itemSize="5"
+
+<mat-accordion
+  displayMode="flat"
+  multi
+  class="endpoints-list"
+  [class.d-none]="isLoading | async">
+
+  <cdk-virtual-scroll-viewport
+    class="virtual-viewport"
+    appendOnly
+    itemSize="5"
     [maxBufferPx]="(endpoints[defaultListToShow] | keyvalue)?.length * 1000 || 200">
 
-    <mat-expansion-panel class="mat-elevation-z0" [class.d-none]="item.value.length === 0"
+    <mat-expansion-panel
+      class="mat-elevation-z0"
+      [class.d-none]="item.value.length === 0"
       *cdkVirtualFor="let item of endpoints[defaultListToShow] | keyvalue; let index = index;trackBy:trackFilterList">
+
       <mat-expansion-panel-header class="ps-0 pe-3">
         <mat-panel-title class="text-muted px-2">
           {{item.key}}
@@ -12,26 +24,45 @@
       </mat-expansion-panel-header>
 
       <mat-accordion multi>
-        <mat-expansion-panel (opened)="panelExpanded(el);" class="mat-elevation-z1 mb-3" id="inner-panel"
+        <mat-expansion-panel
+          (opened)="panelExpanded(el);"
+          class="mat-elevation-z1 mb-3"
+          id="inner-panel"
           *ngFor="let el of item.value">
-          <mat-expansion-panel-header class="px-3 py-2" #header>
+
+          <mat-expansion-panel-header
+            class="px-3 py-2"
+            #header>
+
             <mat-panel-title>
               <div class="d-flex justify-content-between align-items-center w-100">
+
                 <div class="d-flex justify-content-between align-items-center word-break">
                   <span class="span me-3 methods {{el?.verb}}">{{el?.verb === 'delete' ? 'del' : el.verb}}</span>
                   /{{getPath(el?.path)}}
                   <span *ngIf="el?.error" class="text-danger mat-caption"> &nbsp;-Syntax error</span>
                 </div>
+
                 <div>
-                  <button mat-icon-button color="primary" class="copy-btn"
+
+                  <button
+                    mat-icon-button
+                    color="primary"
+                    class="copy-btn"
                     (click)="requestEditor(el);$event.stopPropagation()">
                     <mat-icon>start</mat-icon>
                   </button>
-                  <button mat-icon-button color="primary" class="copy-btn"
+
+                  <button
+                    mat-icon-button
+                    color="primary"
+                    class="copy-btn"
                     (click)="copyUrl(el.path);$event.stopPropagation()">
                     <mat-icon>content_copy</mat-icon>
                   </button>
+
                 </div>
+
               </div>
             </mat-panel-title>
 
@@ -40,39 +71,53 @@
           <div class="container box-sizing mt-4">
 
             <div class="row mb-2" *ngIf="el?.produces">
+
               <div class="col-xxl-4 col-sm-5 col-12">
                 <p class="text-muted my-0">Response content type:</p>
               </div>
+
               <div class="col-xxl-8 col-sm-7 col-12">
                 <p class="my-0">
                   {{el?.produces}}
                 </p>
               </div>
+
             </div>
+
             <div class="row mb-2" *ngIf="el?.consumes">
+
               <div class="col-xxl-4 col-sm-5 col-12">
                 <p class="text-muted my-0">Request content type:</p>
               </div>
+
               <div class="col-xxl-8 col-sm-7 col-12">
                 <p class="my-0">
                   {{el?.consumes}}
                 </p>
               </div>
+
             </div>
+
             <div class="row mb-2" *ngIf="el?.type">
+
               <div class="col-xxl-4 col-sm-5 col-12">
                 <p class="text-muted my-0">Endpoint type:</p>
               </div>
+
               <div class="col-xxl-8 col-sm-7 col-12">
                 <p class="my-0">
                   {{el?.type}}
                 </p>
               </div>
+
             </div>
+
             <div class="row mb-2" *ngIf="el?.auth">
+
               <div class="col-xxl-4 col-sm-5 col-12">
                 <p class="text-muted my-0">Roles:</p>
               </div>
+
               <div class="col-xxl-8 col-sm-7 col-12">
                 <p class="my-0">
                   <span *ngFor="let role of el?.auth; let last = last">
@@ -80,30 +125,44 @@
                   </span>
                 </p>
               </div>
+
             </div>
+
             <div class="row mb-2" *ngIf="el?.description">
+
               <div class="col-xxl-4 col-sm-5 col-12">
                 <p class="text-muted my-0">Description:</p>
               </div>
+
               <div class="col-xxl-8 col-sm-7 col-12">
                 <p class="my-0">
                   {{el?.description}}
                 </p>
               </div>
+
             </div>
 
             <ng-container>
+
               <div class="row mt-4">
                 <div class="col-12">
                   <app-assumptions #assumptions [itemDetails]="el" [result]="result"
                     [payload]="payload"></app-assumptions>
                 </div>
               </div>
+
             </ng-container>
 
             <div class="row mb-2">
               <div class="col-col-12 d-flex justify-content-end px-0">
-                <button mat-button color="warn" (click)="deleteEndpoint(el)">Delete</button>
+
+                <button
+                  mat-button
+                  color="warn"
+                  (click)="deleteEndpoint(el)">
+                  Delete
+                </button>
+
               </div>
             </div>
 
@@ -118,6 +177,17 @@
 </mat-accordion>
 
 <ng-container *ngIf="isLoading | async">
-  <app-loading-skeleton [amount]="1" [colClass]="'col-12'" [blockHeight]="'64px'"></app-loading-skeleton>
-  <app-loading-skeleton [amount]="5" [colClass]="'col-12'" [blockHeight]="'56px'"></app-loading-skeleton>
+
+  <app-loading-skeleton
+    amount="1"
+    colClass="col-12"
+    blockHeight="64px">
+  </app-loading-skeleton>
+
+  <app-loading-skeleton
+    amount="5"
+    colClass="col-12"
+    blockHeight="56px">
+  </app-loading-skeleton>
+
 </ng-container>

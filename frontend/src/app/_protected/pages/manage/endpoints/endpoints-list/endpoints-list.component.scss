@@ -1,11 +1,10 @@
-
 /*
  * Copyright (c) Aista Ltd, 2021 - 2023 info@aista.com, all rights reserved.
  */
 
- @import '../../../../../../assets/styles/_variables/colors.scss';
-@import '../../../../../../assets/styles/_variables/mixin.scss';
-@import '../../../../../../assets/styles/_variables/sizing.scss';
+@import "../../../../../../assets/styles/_variables/colors.scss";
+@import "../../../../../../assets/styles/_variables/mixin.scss";
+@import "../../../../../../assets/styles/_variables/sizing.scss";
 
 ::ng-deep .endpoints-list {
   .mat-expansion-panel-body {
@@ -85,8 +84,7 @@
     background-color: white;
     display: flex;
     align-items: center;
-    box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
-      0 8px 10px 1px rgba(0, 0, 0, 0.14),
+    box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14),
       0 3px 14px 2px rgba(0, 0, 0, 0.12);
   }
 
