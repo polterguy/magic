@@ -41,6 +41,19 @@ if
          .
             stop:" END"
 
+// Making sure we don't exceed token count.
+if
+   mt
+      math.add
+         strings.length:x:@.decorated-prompt
+         get-value:x:@.arguments/*/max_tokens
+      .:int:4097
+   .lambda
+      set-value:x:@.arguments/*/max_tokens
+         math.subtract
+            .:int:4097
+            strings.length:x:@.decorated-prompt
+
 // Creating an HTTP POST request towards OpenAI, now decorated.
 http.post:"https://api.openai.com/v1/completions"
    headers
