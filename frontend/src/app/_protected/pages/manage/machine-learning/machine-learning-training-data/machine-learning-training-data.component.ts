@@ -315,6 +315,18 @@ export class MachineLearningTrainingDataComponent implements OnInit {
     });
   }
 
+  export() {
+
+    const filter = {};
+    if (this.filter['ml_training_snippets.prompt.like']) {
+      filter['ml_training_snippets.prompt.like'] = this.filter['ml_training_snippets.prompt.like'];
+    }
+    if (this.filter['ml_training_snippets.type.eq']) {
+      filter['ml_training_snippets.type.eq'] = this.filter['ml_training_snippets.type.eq'];
+    }
+    this.machineLearningTrainingService.ml_training_snippets_export(filter);
+  }
+
   page(event: PageEvent) {
 
     this.filter.offset = event.pageIndex * event.pageSize;

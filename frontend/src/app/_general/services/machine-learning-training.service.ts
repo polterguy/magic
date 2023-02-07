@@ -5,12 +5,14 @@
 
 // Angular and system imports.
 import { Injectable } from '@angular/core';
+import saveAs from 'file-saver';
 import { Affected } from 'src/app/models/affected.model';
 import { Count } from 'src/app/models/count.model';
 
 // Application specific imports.
 import { HttpService } from 'src/app/_general/services/http.service';
 import { MagicResponse } from '../models/magic-response.model';
+import { GeneralService } from './general.service';
 import { QueryArgService } from './query-arg.service';
 
 /**
@@ -23,6 +25,7 @@ export class MachineLearningTrainingService {
 
   constructor(
     private httpService: HttpService,
+    private generalService: GeneralService,
     private queryArgService: QueryArgService) { }
 
   /**
@@ -52,9 +55,31 @@ export class MachineLearningTrainingService {
   /**
    * Updates all training snippet matching filter.
    */
-  ml_training_snippets_update_all(el: any) {
+  ml_training_snippets_update_all(filter: any) {
 
-    return this.httpService.put<Affected>('/magic/system/magic/ml_training_snippets_all', el);
+    return this.httpService.put<Affected>('/magic/system/magic/ml_training_snippets_all', filter);
+  }
+
+  /**
+   * Exports all training snippet matching filter.
+   */
+  ml_training_snippets_export(filter: any) {
+
+    this.httpService.download(
+      '/magic/system/magic/ml_training_snippets_export' +
+      this.queryArgService.getQueryArgs(filter)).subscribe({
+      next: (res) => {
+
+        const disp = res.headers.get('Content-Disposition');
+        let filename = disp.split(';')[1].trim().split('=')[1].replace(/"/g, '');
+        const file = new Blob([res.body]);
+        saveAs(file, filename);
+      },
+      error: (error: any) => {
+
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+      }
+    });
   }
 
   /**

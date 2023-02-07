@@ -209,7 +209,7 @@ for-each:x:@.snippets/*
             .:int:7000
       .lambda
 
-         // We still haven't reached our 2,000 character threshold yet, and we still have relevant snippets.
+         // We still haven't reached our character threshold yet, and we still have relevant snippets.
          set-value:x:@.context
             strings.concat
                get-value:x:@.context
