@@ -95,27 +95,50 @@ data.connect:[generic|magic]
    // Looping through each CSV record inserting into database.
    for-each:x:@.file-data/*
 
-      // Creating a unique URI based upon the prompt.
-      crypto.hash.sha256:x:@.dp/#/*/{@.arguments/*/prompt}
+      // Creating a unique URI based upon the prompt unless the file contains a URI.
+      .uri
+      if
+         exists:x:@.dp/#/*/uri
+         .lambda
+            set-value:x:@.uri
+               get-value:x:@.dp/#/*/uri
+      else
+         set-value:x:@.uri
+            crypto.hash.sha256:x:@.dp/#/*/{@.arguments/*/prompt}
 
-      // Deleting existing record with similar URI.
-      data.delete
-         table:ml_training_snippets
-         where
-            and
-               uri.eq:x:@crypto.hash.sha256
+      // Using type from arguments unless file contains a type declaration.
+      .type
+      if
+         exists:x:@.dp/#/*/type
+         .lambda
+            set-value:x:@.type
+               get-value:x:@.dp/#/*/type
+      else-if
+         or
+            not-exists:x:@.arguments/*/type
+            eq:x:@.arguments/*/type
+               .
+            eq:x:@.arguments/*/type
+               .:
+         .lambda
+            set-value:x:@.type
+               .:default
+      else
+         set-value:x:@.type
+            get-value:x:@.arguments/*/type
 
       // Inserting into database.
       data.create
          table:ml_training_snippets
          values
-            type:x:@.arguments/*/type
-            uri:x:@crypto.hash.sha256
+            type:x:@.type
+            uri:x:@.uri
             prompt:x:@.dp/#/*/{@.arguments/*/prompt}
             completion:x:@.dp/#/*/{@.arguments/*/completion}
 
 // Returning success to caller.
 get-count:x:@.file-data/*
+log.info:x:-
 unwrap:x:+/*
 return
    result:success
