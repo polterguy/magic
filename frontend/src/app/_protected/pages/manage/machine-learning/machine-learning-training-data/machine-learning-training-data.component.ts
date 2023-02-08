@@ -37,6 +37,7 @@ export class MachineLearningTrainingDataComponent implements OnInit {
   };
   displayedColumns: string[] = [
     'prompt',
+    'uri',
     'type',
     'created',
     'pushed',
@@ -341,6 +342,7 @@ export class MachineLearningTrainingDataComponent implements OnInit {
     };
     if (event.searchKey) {
       this.filter['ml_training_snippets.prompt.like'] = '%' + event.searchKey + '%';
+      this.filter['ml_training_snippets.uri.like'] = '%' + event.searchKey + '%';
     }
     if (event.type) {
       this.filter['ml_training_snippets.type.eq'] = event.type;

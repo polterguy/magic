@@ -1,10 +1,14 @@
 
-<h3 mat-dialog-title class="mb-3">
+<h3 mat-dialog-title class="mb-0">
   {{data.prompt ? 'Edit training snippet' : 'New training snippet'}}
 </h3>
 
 <form (ngSubmit)="save()">
   <div mat-dialog-content>
+
+    <p class="text-muted text-small mb-3">
+      {{data.uri}}
+    </p>
 
     <div class="row">
 

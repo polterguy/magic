@@ -12,6 +12,13 @@
     max-width: 30vw;
   }
 
+  .text-truncate-2 {
+    max-width: 15vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   .status {
     min-width: 7px;
     min-height: 7px;
