@@ -39,8 +39,6 @@ data.connect:[generic|magic]
          remove-nodes:x:@data.connect/*/data.update/*/where/*/and/*/or
 
    // Invoking our update slot.
-   lambda2hyper:x:../*
-   log.info:x:-
    data.update
       table:ml_training_snippets
       values
