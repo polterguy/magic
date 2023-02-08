@@ -19,6 +19,16 @@ auth.ticket.verify:root
 // Opening up our database connection.
 data.connect:[generic|magic]
 
+   if
+      and
+         exists:x:@.arguments/*/not_embedded
+         get-value:x:@.arguments/*/not_embedded
+      .lambda
+         add:x:@data.connect/*/data.read/*/where/*/and
+            .
+               embedding.eq
+         remove-nodes:x:@.arguments/*/not_embedded
+
    // Parametrising our read invocation with filtering arguments.
    add:x:./*/data.read/*/where/*/*/or
       get-nodes:x:@.arguments/*/ml_training_snippets.prompt.like
