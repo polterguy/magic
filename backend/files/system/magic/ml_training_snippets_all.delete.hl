@@ -2,6 +2,7 @@
 // CRUD delete endpoint deleting multiple records from your ml_training_snippets table in your magic database matching filter authentication and authorisation for root roles
 .arguments
    ml_training_snippets.prompt.like:string
+   ml_training_snippets.uri.like:string
    ml_training_snippets.type.eq:string
 .description:CRUD delete endpoint deleting multiple records from your ml_training_snippets table in your magic database matching filter authentication and authorisation for root roles
 .type:crud-delete
@@ -12,15 +13,31 @@ auth.ticket.verify:root
 // Opening up our database connection.
 data.connect:[generic|magic]
 
-   // Parametrising our delete invocation.
-   add:x:./*/data.delete/*/where/*/and
+   // Parametrising our read invocation with filtering arguments.
+   add:x:./*/data.delete/*/where/*/*/or
+      get-nodes:x:@.arguments/*/ml_training_snippets.prompt.like
+      get-nodes:x:@.arguments/*/ml_training_snippets.uri.like
+      get-nodes:x:@.arguments/*/ml_training_snippets.prompt.eq
+      get-nodes:x:@.arguments/*/ml_training_snippets.uri.eq
+   remove-nodes:x:@.arguments/*/ml_training_snippets.prompt.like
+   remove-nodes:x:@.arguments/*/ml_training_snippets.uri.like
+   remove-nodes:x:@.arguments/*/ml_training_snippets.prompt.eq
+   remove-nodes:x:@.arguments/*/ml_training_snippets.uri.eq
+   add:x:./*/data.delete/*/where/*
       get-nodes:x:@.arguments/*
+
+   // Removing [or] parts unless we've got something to actually or.
+   if
+      not-exists:x:@data.connect/*/data.delete/*/where/*/and/*/or/*
+      .lambda
+         remove-nodes:x:@data.connect/*/data.delete/*/where/*/and/*/or
 
    // Deleting item from database.
    data.delete
       table:ml_training_snippets
       where
          and
+            or
 
    // Returning result of above invocation to caller.
    unwrap:x:+/*
