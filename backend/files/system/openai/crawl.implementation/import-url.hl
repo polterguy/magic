@@ -19,17 +19,12 @@ set-value:x:@.base
 // Connecting to database.
 data.connect:[generic|magic]
 
-   // Creating our filter query to check if we've fetched this URL previously.
-   strings.concat
-      get-value:x:@.arguments/*/url
-      .:":%"
-
    // Checking if we've fetched this URL previously.
    data.read
       table:ml_training_snippets
       where
          and
-            uri.like:x:@strings.concat
+            uri.like:x:@.arguments/*/url
             type.eq:x:@.arguments/*/type
       limit:1
 
@@ -385,14 +380,6 @@ data.connect:[generic|magic]
                strings.trim:x:@.dp/#/*/completion
                   .:" \r\n\t"
 
-            // URI.
-            .uri
-            set-value:x:@.uri
-               strings.concat
-                  get-value:x:@.arguments/*/url
-                  .:":"
-                  crypto.hash.sha256:x:@.prompt
-
             // Inserting prompt and completion into database.
             data.create
                table:ml_training_snippets
@@ -400,7 +387,7 @@ data.connect:[generic|magic]
                   prompt:x:@.prompt
                   completion:x:@.completion
                   type:x:@.arguments/*/type
-                  uri:x:@.uri
+                  uri:x:@.arguments/*/url
 
 // Preserving some memory.
 remove-nodes:x:@http.get/*
