@@ -70,6 +70,7 @@ while:x:@.continue
          prompt
          completion
          embedding
+         uri
       where
          and
             embedding.neq
@@ -93,6 +94,7 @@ while:x:@.continue
       add:x:@.snippets
          .
             .
+               uri:x:@.dp/#/*/uri
                prompt:x:@.dp/#/*/prompt
                completion:x:@.dp/#/*/completion
                dot:x:@math.dot
@@ -165,6 +167,9 @@ if
  */
 .context
 
+// URL of pages used to generate result.
+.above
+
 // Checking if we've got a prefix at which point our question changes.
 if
    and
@@ -217,6 +222,15 @@ for-each:x:@.snippets/*
                get-value:x:@.dp/#/*/prompt
                .:"\r\n\r\n"
                get-value:x:@.dp/#/*/completion
+         if
+            not-exists:x:@.above/*/*/uri/={@.dp/#/*/uri}
+            .lambda
+               unwrap:x:+/*/*/*
+               add:x:@.above
+                  .
+                     .
+                        uri:x:@.dp/#/*/uri
+                        prompt:x:@.dp/#/*/prompt
 
 // Making sure OpenAI doesn't return "Answer:" to us
 set-value:x:@.context
@@ -231,5 +245,19 @@ set-value:x:./*/io.file.execute/*/prompt
    get-value:x:@.context
 io.file.execute:/system/openai/prompt.implementation/completion-prompt.hl
 
+// Making sure we return URIs if caller asked for it.
+if
+   and
+      exists:x:@.arguments/*/references
+      get-value:x:@.arguments/*/references
+   .lambda
+      add:x:+/*/*
+         get-nodes:x:@.above/*
+      add:x:../*/return-nodes
+         .
+            references
+
 // Returning result of above invocation.
-return-nodes:x:@io.file.execute/*
+add:x:./*/return-nodes
+   get-nodes:x:@io.file.execute/*
+return-nodes
