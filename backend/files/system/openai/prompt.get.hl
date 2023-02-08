@@ -3,6 +3,7 @@
 .arguments
    prompt:string
    type:string
+   references:bool
    recaptcha_response:string
 .description:Asks OpenAI a question with the specified type, and returns the answer to caller
 .type:public
@@ -169,6 +170,7 @@ data.connect:[generic|magic]
             get-nodes:x:@.arguments/*/type
             get-nodes:x:@data.read/@data.read/*/*/prefix
             get-nodes:x:@.arguments/*/prompt
+            get-nodes:x:@.arguments/*/references
             get-nodes:x:@data.read/@data.read/*/*/model
             get-nodes:x:@data.read/@data.read/*/*/max_tokens
             get-nodes:x:@data.read/@data.read/*/*/temperature
@@ -226,6 +228,8 @@ data.connect:[generic|magic]
       Cache-Control:max-age=30
 
    // Returning results returned from invocation above to caller.
-   unwrap:x:+/*
+   add:x:+
+      get-nodes:x:@.result/*/result
+      get-nodes:x:@.result/*/finish_reason
+      get-nodes:x:@.result/*/references
    return
-      result:x:@.result/*/result
