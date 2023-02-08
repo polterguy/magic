@@ -147,6 +147,7 @@
   border-radius: 5px;
   outline: none;
   border: none;
+  box-sizing: border-box;
 }
 .aista-chat-prompt::placeholder {
   color: rgb(180,181,188);
