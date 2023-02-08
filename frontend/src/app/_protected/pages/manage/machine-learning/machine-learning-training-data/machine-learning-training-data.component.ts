@@ -118,7 +118,7 @@ export class MachineLearningTrainingDataComponent implements OnInit {
                   this.openAiService.vectoriseSnippet(el.id).subscribe({
                     next: () => {
 
-                      this.generalService.showFeedback('Snippet successfully updated and re-vectorised');
+                      this.generalService.showFeedback('Snippet successfully updated and re-vectorised', 'successMessage');
                       this.getTrainingData(false);
                     },
                     error: () => {
