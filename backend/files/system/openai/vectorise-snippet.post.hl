@@ -82,7 +82,5 @@ data.connect:[generic|magic]
             id.eq:x:@.arguments/*/id
 
 // Returning success to caller.
-lambda2hyper:x:../*
-log.info:x:-
 return
    result:success
