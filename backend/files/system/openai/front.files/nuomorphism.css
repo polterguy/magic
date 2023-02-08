@@ -64,7 +64,7 @@
 .aista-chat-close-btn {
   border-radius: 8px;
   border: none;
-  padding: 8px 12px;
+  padding: 5px 9px;
   font-size: 12px;
   position: absolute;
   top: 10px;
@@ -112,6 +112,7 @@
   font-weight: bold;
 }
 .aista-chat-question {
+  color: #555;
   font-size: 14px;
   margin-bottom: 10px;
   font-weight: bold;
