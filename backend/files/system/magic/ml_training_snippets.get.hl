@@ -39,8 +39,23 @@ data.connect:[generic|magic]
    remove-nodes:x:@.arguments/*/offset
 
    // Parametrising our read invocation with filtering arguments.
+   add:x:./*/data.read/*/where/*/*/or
+      get-nodes:x:@.arguments/*/ml_training_snippets.prompt.like
+      get-nodes:x:@.arguments/*/ml_training_snippets.uri.like
+      get-nodes:x:@.arguments/*/ml_training_snippets.prompt.eq
+      get-nodes:x:@.arguments/*/ml_training_snippets.uri.eq
+   remove-nodes:x:@.arguments/*/ml_training_snippets.prompt.like
+   remove-nodes:x:@.arguments/*/ml_training_snippets.uri.like
+   remove-nodes:x:@.arguments/*/ml_training_snippets.prompt.eq
+   remove-nodes:x:@.arguments/*/ml_training_snippets.uri.eq
    add:x:./*/data.read/*/where/*
       get-nodes:x:@.arguments/*
+
+   // Removing [or] parts unless we've got something to actually or.
+   if
+      not-exists:x:@data.connect/*/data.read/*/where/*/and/*/or/*
+      .lambda
+         remove-nodes:x:@data.connect/*/data.read/*/where/*/and/*/or
 
    // Reading data from database.
    data.read
@@ -56,6 +71,7 @@ data.connect:[generic|magic]
          ml_training_snippets.embedding
       where
          and
+            or
 
    // Changing embedding to a boolean value to preserve bandwidth.
    for-each:x:@data.read/*

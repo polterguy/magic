@@ -2,6 +2,9 @@
 // Returns all filtered training snippets as a CSV file.
 .arguments
    ml_training_snippets.prompt.like:string
+   ml_training_snippets.uri.like:string
+   ml_training_snippets.prompt.eq:string
+   ml_training_snippets.uri.eq:string
    ml_training_snippets.type.eq:string
 .description:Returns all filtered training snippets as a CSV file
 .type:internal
@@ -12,9 +15,24 @@ auth.ticket.verify:root
 // Opening up our database connection.
 data.connect:[generic|magic]
 
-   // Parametrising our invocation.
-   add:x:./*/data.read/*/where/*/and
+   // Parametrising our read invocation with filtering arguments.
+   add:x:./*/data.read/*/where/*/*/or
+      get-nodes:x:@.arguments/*/ml_training_snippets.prompt.like
+      get-nodes:x:@.arguments/*/ml_training_snippets.uri.like
+      get-nodes:x:@.arguments/*/ml_training_snippets.prompt.eq
+      get-nodes:x:@.arguments/*/ml_training_snippets.uri.eq
+   remove-nodes:x:@.arguments/*/ml_training_snippets.prompt.like
+   remove-nodes:x:@.arguments/*/ml_training_snippets.uri.like
+   remove-nodes:x:@.arguments/*/ml_training_snippets.prompt.eq
+   remove-nodes:x:@.arguments/*/ml_training_snippets.uri.eq
+   add:x:./*/data.read/*/where/*
       get-nodes:x:@.arguments/*
+
+   // Removing [or] parts unless we've got something to actually or.
+   if
+      not-exists:x:@data.connect/*/data.read/*/where/*/and/*/or/*
+      .lambda
+         remove-nodes:x:@data.connect/*/data.read/*/where/*/and/*/or
 
    // Invoking our read slot.
    data.read
@@ -26,6 +44,7 @@ data.connect:[generic|magic]
          completion
       where
          and
+            or
       limit:-1
 
    // Verifying records exists.

@@ -20,17 +20,23 @@ auth.ticket.verify:root
 data.connect:[generic|magic]
 
    // Parametrising our read invocation with filtering arguments.
-   if
-      and
-         exists:x:@.arguments/*/not_embedded
-         get-value:x:@.arguments/*/not_embedded
-      .lambda
-         add:x:@data.connect/*/data.read/*/where/*/and
-            .
-               embedding.eq
-         remove-nodes:x:@.arguments/*/not_embedded
-   add:x:+/*/where/*
+   add:x:./*/data.read/*/where/*/*/or
+      get-nodes:x:@.arguments/*/ml_training_snippets.prompt.like
+      get-nodes:x:@.arguments/*/ml_training_snippets.uri.like
+      get-nodes:x:@.arguments/*/ml_training_snippets.prompt.eq
+      get-nodes:x:@.arguments/*/ml_training_snippets.uri.eq
+   remove-nodes:x:@.arguments/*/ml_training_snippets.prompt.like
+   remove-nodes:x:@.arguments/*/ml_training_snippets.uri.like
+   remove-nodes:x:@.arguments/*/ml_training_snippets.prompt.eq
+   remove-nodes:x:@.arguments/*/ml_training_snippets.uri.eq
+   add:x:./*/data.read/*/where/*
       get-nodes:x:@.arguments/*
+
+   // Removing [or] parts unless we've got something to actually or.
+   if
+      not-exists:x:@data.connect/*/data.read/*/where/*/and/*/or/*
+      .lambda
+         remove-nodes:x:@data.connect/*/data.read/*/where/*/and/*/or
 
    // Reading data from database.
    data.read
@@ -40,6 +46,7 @@ data.connect:[generic|magic]
             as:count
       where
          and
+            or
       limit:long:1
 
    // Returning result of above read invocation to caller.

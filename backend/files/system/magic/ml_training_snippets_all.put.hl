@@ -3,6 +3,7 @@
 .arguments
    filter
       ml_training_snippets.prompt.like:string
+      ml_training_snippets.uri.like:string
       ml_training_snippets.type.eq:string
    values
       type:string
@@ -16,18 +17,36 @@ auth.ticket.verify:root
 // Opening up our database connection.
 data.connect:[generic|magic]
 
-   // Parametrising our invocation.
+   // Parametrising our read invocation with filtering arguments.
+   add:x:./*/data.update/*/where/*/*/or
+      get-nodes:x:@.arguments/*/filter/*/ml_training_snippets.prompt.like
+      get-nodes:x:@.arguments/*/filter/*/ml_training_snippets.uri.like
+      get-nodes:x:@.arguments/*/filter/*/ml_training_snippets.prompt.eq
+      get-nodes:x:@.arguments/*/filter/*/ml_training_snippets.uri.eq
+   remove-nodes:x:@.arguments/*/filter/*/ml_training_snippets.prompt.like
+   remove-nodes:x:@.arguments/*/filter/*/ml_training_snippets.uri.like
+   remove-nodes:x:@.arguments/*/filter/*/ml_training_snippets.prompt.eq
+   remove-nodes:x:@.arguments/*/filter/*/ml_training_snippets.uri.eq
+   add:x:./*/data.update/*/where/*
+      get-nodes:x:@.arguments/*/filter/*
    add:x:./*/data.update/*/values
       get-nodes:x:@.arguments/*/values/*
-   add:x:./*/data.update/*/where/*/and
-      get-nodes:x:@.arguments/*/filter/*
+
+   // Removing [or] parts unless we've got something to actually or.
+   if
+      not-exists:x:@data.connect/*/data.update/*/where/*/and/*/or/*
+      .lambda
+         remove-nodes:x:@data.connect/*/data.update/*/where/*/and/*/or
 
    // Invoking our update slot.
+   lambda2hyper:x:../*
+   log.info:x:-
    data.update
       table:ml_training_snippets
       values
       where
          and
+            or
 
    // Verifying record exists.
    if

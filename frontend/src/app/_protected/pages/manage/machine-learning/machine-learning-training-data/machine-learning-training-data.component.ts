@@ -205,6 +205,9 @@ export class MachineLearningTrainingDataComponent implements OnInit {
         if (this.filter['ml_training_snippets.prompt.like']?.length > 0) {
           filter['ml_training_snippets.prompt.like'] = this.filter['ml_training_snippets.prompt.like'];
         }
+        if (this.filter['ml_training_snippets.uri.like']?.length > 0) {
+          filter['ml_training_snippets.uri.like'] = this.filter['ml_training_snippets.uri.like'];
+        }
         if (this.filter['ml_training_snippets.type.eq']?.length > 0) {
           filter['ml_training_snippets.type.eq'] = this.filter['ml_training_snippets.type.eq'];
         }
@@ -249,6 +252,9 @@ export class MachineLearningTrainingDataComponent implements OnInit {
         };
         if (this.filter['ml_training_snippets.prompt.like']?.length > 0) {
           filter.filter['ml_training_snippets.prompt.like'] = this.filter['ml_training_snippets.prompt.like'];
+        }
+        if (this.filter['ml_training_snippets.uri.like']?.length > 0) {
+          filter.filter['ml_training_snippets.uri.like'] = this.filter['ml_training_snippets.uri.like'];
         }
         if (this.filter['ml_training_snippets.type.eq']?.length > 0) {
           filter.filter['ml_training_snippets.type.eq'] = this.filter['ml_training_snippets.type.eq'];
@@ -296,6 +302,9 @@ export class MachineLearningTrainingDataComponent implements OnInit {
         if (this.filter['ml_training_snippets.prompt.like']?.length > 0) {
           filter.filter['ml_training_snippets.prompt.like'] = this.filter['ml_training_snippets.prompt.like'];
         }
+        if (this.filter['ml_training_snippets.uri.like']?.length > 0) {
+          filter.filter['ml_training_snippets.uri.like'] = this.filter['ml_training_snippets.uri.like'];
+        }
         if (this.filter['ml_training_snippets.type.eq']?.length > 0) {
           filter.filter['ml_training_snippets.type.eq'] = this.filter['ml_training_snippets.type.eq'];
         }
@@ -322,6 +331,9 @@ export class MachineLearningTrainingDataComponent implements OnInit {
     if (this.filter['ml_training_snippets.prompt.like']) {
       filter['ml_training_snippets.prompt.like'] = this.filter['ml_training_snippets.prompt.like'];
     }
+    if (this.filter['ml_training_snippets.uri.like']) {
+      filter['ml_training_snippets.uri.like'] = this.filter['ml_training_snippets.uri.like'];
+    }
     if (this.filter['ml_training_snippets.type.eq']) {
       filter['ml_training_snippets.type.eq'] = this.filter['ml_training_snippets.type.eq'];
     }
@@ -342,7 +354,7 @@ export class MachineLearningTrainingDataComponent implements OnInit {
     };
     if (event.searchKey) {
       this.filter['ml_training_snippets.prompt.like'] = '%' + event.searchKey + '%';
-      this.filter['ml_training_snippets.uri.like'] = '%' + event.searchKey + '%';
+      this.filter['ml_training_snippets.uri.like'] = event.searchKey + '%';
     }
     if (event.type) {
       this.filter['ml_training_snippets.type.eq'] = event.type;
