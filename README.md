@@ -1,5 +1,5 @@
 
-# An AI-based Low-Code software development platform
+# AI-based Low-Code software development
 
 ![Build status](https://github.com/polterguy/magic/actions/workflows/codeql-analysis.yml/badge.svg)
 
@@ -17,14 +17,14 @@ backend API for you. The resulting API is secured automatically, and Magic takes
 of authentication, authorisation, user management, and everything else that's difficult. Afterwards you can
 optionally generate a datagrid giving you a full stack web app as the screenshot above illustrates.
 Every time you have some complex task, you can ask the integrated AI assistant in plain English
-to show you the code required to solve your problem.
+to create your code.
 
 ## Use AI to create software
 
 Magic integrates AI and machine learning where ever it makes sense. In Hyper IDE you can for instance
 simply ask the machine in plain English what you want to achieve, and most of the time the AI integration
 will automatically generate the correct code for you automatically. This works with any programming
-language, including Hyperlambda.
+language. If you train the integrated Hyperlambda model, it will even create Hyperlambda code for you.
 
 ![Use AI to produce software](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/ai-hyper-ide.jpeg)
 
@@ -36,18 +36,18 @@ a custom AI model based upon whatever existing data you may have in seconds inst
 
 ![Use AI to produce software](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/crawl-website-for-chatgpt-training-data.jpg)
 
-This is the method we use ourselves to teach our Machine Learning models about Aista and Hyperlambda
-in fact. Use cases for this could include.
+This is the method we use ourselves to teach our Machine Learning models about Aista and Hyperlambda. Use cases
+for this could be.
 
 * AI models for lawyer firms answering questions about local law
 * AI models for the medical industry, diagnosing and providing answers about symptoms
 * News aggregating AI machine models answering questions about recent news related to some news website
-* Invetment advice AI models providing investment advice to people asking questions about somespecific investment instrument
+* Investment advice AI models providing investment advice to people asking questions about some specific investment instrument
 * Etc, etc, etc
 
 ## Use SQL Studio to design your database
 
-Magic also gives you SQL Studio, allowing you to visually design your database, even if you have zero
+Magic also gives you SQL Studio. SQL Studio allows you to visually design your database even if you have zero
 SQL knowledge. You can use SQL studio to design your SQL Server database, PostgreSQL database, MySQL database,
 or SQLite database. You can also connect to your existing database to manage your existing database from SQL Studio.
 
@@ -59,10 +59,10 @@ towards all of its supported database types; SQLite, SQL Server, MySQL and Postg
 
 ## Use ChatGPT to chat with your website
 
-Magic allows you to inject a simple JavaScript file into your website, which you can use
-to _"have a conversation with your website"_. It works by allowing you to crawl your website, and
-scrape it for data, which ends up becoming training data for a custom OpenAI based machine learning model,
-which later allows your clients to _"have a conversation with your website"_. Use cases might be.
+Magic allows you to inject a JavaScript file into your website, allowing your visitors
+to _"have a conversation with your website"_. Magic will crawl your website scraping it for data,
+ending up becoming training data for a custom OpenAI based machine learning model.
+This allows your clients to _"have a conversation with your website"_. Use cases might be.
 
 * Support bots
 * Sales and marketing bots
@@ -73,9 +73,9 @@ which later allows your clients to _"have a conversation with your website"_. Us
 
 ![Visually design your database using SQL Studio](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/where-the-machine-creates-the-code.jpg)
 
-You can try out how such a chat bot works at [docs.aista.com](https://docs.aista.com) - However, you can
-also of course scrape other websites, creating your own custom AI based chatbot based upon for instance
-publicly available information, such as government information, etc,
+You can try out such a chat bot at [aista.com](https://aista.com). You can
+also scrape other websites, creating your own custom AI based chatbot based upon for instance
+publicly available information, such as government information, etc.
 
 ## CRUD API generator
 
@@ -97,7 +97,7 @@ your API, to add custom business logic to your endpoints as you see fit.
 * [SQL API generator](https://aista.com/sql-api-generator/)
 * [What is Hyperlambda](https://aista.com/hyperlambda/)
 * [Hyperlambda 101](https://aista.com/hyperlambda-101/)
-* [AI based software development](https://aista.com/blog/ai-based-software-development/)
+* [ChatGPT based website chatbots](https://aista.com/chatgpt-website-chatbot/)
 
 ## License
 
