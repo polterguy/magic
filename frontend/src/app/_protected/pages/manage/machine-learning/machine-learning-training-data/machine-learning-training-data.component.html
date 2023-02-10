@@ -21,6 +21,8 @@
         <app-searchbox
           (filterList)="filterList($event)"
           buttonText="Add"
+          button2Text="Spice"
+          (button2Click)="spice()"
           (buttonClick)="create()"
           [(type)]="type"
           [types]="types">
