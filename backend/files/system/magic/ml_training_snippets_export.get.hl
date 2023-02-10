@@ -3,8 +3,6 @@
 .arguments
    ml_training_snippets.prompt.like:string
    ml_training_snippets.uri.like:string
-   ml_training_snippets.prompt.eq:string
-   ml_training_snippets.uri.eq:string
    ml_training_snippets.type.eq:string
 .description:Returns all filtered training snippets as a CSV file
 .type:internal
@@ -19,12 +17,8 @@ data.connect:[generic|magic]
    add:x:./*/data.read/*/where/*/*/or
       get-nodes:x:@.arguments/*/ml_training_snippets.prompt.like
       get-nodes:x:@.arguments/*/ml_training_snippets.uri.like
-      get-nodes:x:@.arguments/*/ml_training_snippets.prompt.eq
-      get-nodes:x:@.arguments/*/ml_training_snippets.uri.eq
    remove-nodes:x:@.arguments/*/ml_training_snippets.prompt.like
    remove-nodes:x:@.arguments/*/ml_training_snippets.uri.like
-   remove-nodes:x:@.arguments/*/ml_training_snippets.prompt.eq
-   remove-nodes:x:@.arguments/*/ml_training_snippets.uri.eq
    add:x:./*/data.read/*/where/*
       get-nodes:x:@.arguments/*
 

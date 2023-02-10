@@ -21,12 +21,8 @@ data.connect:[generic|magic]
    add:x:./*/data.update/*/where/*/*/or
       get-nodes:x:@.arguments/*/filter/*/ml_training_snippets.prompt.like
       get-nodes:x:@.arguments/*/filter/*/ml_training_snippets.uri.like
-      get-nodes:x:@.arguments/*/filter/*/ml_training_snippets.prompt.eq
-      get-nodes:x:@.arguments/*/filter/*/ml_training_snippets.uri.eq
    remove-nodes:x:@.arguments/*/filter/*/ml_training_snippets.prompt.like
    remove-nodes:x:@.arguments/*/filter/*/ml_training_snippets.uri.like
-   remove-nodes:x:@.arguments/*/filter/*/ml_training_snippets.prompt.eq
-   remove-nodes:x:@.arguments/*/filter/*/ml_training_snippets.uri.eq
    add:x:./*/data.update/*/where/*
       get-nodes:x:@.arguments/*/filter/*
    add:x:./*/data.update/*/values
