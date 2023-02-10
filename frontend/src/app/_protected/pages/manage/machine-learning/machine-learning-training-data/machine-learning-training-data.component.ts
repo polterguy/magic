@@ -12,6 +12,7 @@ import { GeneralService } from 'src/app/_general/services/general.service';
 import { MachineLearningTrainingService } from 'src/app/_general/services/machine-learning-training.service';
 import { OpenAIService } from 'src/app/_general/services/openai.service';
 import { MachineLearningEditTrainingSnippetComponent } from '../components/machine-learning-edit-training-snippet/machine-learning-edit-training-snippet.component';
+import { MachineLearningSpiceComponent } from '../components/machine-learning-spice/machine-learning-spice.component';
 
 /**
  * Helper component to administrate training data for OpenAI integration
@@ -88,6 +89,31 @@ export class MachineLearningTrainingDataComponent implements OnInit {
             },
             error: () => this.generalService.showFeedback('Something went wrong as we tried to create your snippet', 'errorMessage')
           });
+        }
+    });
+  }
+
+  spice() {
+
+    if (!this.type || this.type === '') {
+      this.generalService.showFeedback('You need to select a model first', 'errorMessage');
+      return;
+    }
+
+    this.dialog
+      .open(MachineLearningSpiceComponent, {
+        width: '80vw',
+        maxWidth: '850px',
+        data: {
+          type: this.type,
+        }
+      })
+      .afterClosed()
+      .subscribe((result: any) => {
+
+        if (result) {
+
+          console.log(result);
         }
     });
   }
