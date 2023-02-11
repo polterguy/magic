@@ -115,6 +115,18 @@ export class OpenAIService {
   }
 
   /**
+   * Imports the specified page as training data.
+   */
+  importPage(url: string, type: string, threshold: number) {
+
+    return this.httpService.post<any>('/magic/system/openai/import-page', {
+      url,
+      type,
+      threshold,
+    });
+  }
+
+  /**
    * Vectorises all snippets in the specified type.
    */
   vectorise(type: string) {
