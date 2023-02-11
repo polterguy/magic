@@ -284,7 +284,6 @@ add:x:./*/io.file.execute
    get-nodes:x:@.arguments/*
 set-value:x:./*/io.file.execute/*/prompt
    get-value:x:@.context
-log.info:x:./*/io.file.execute/*/prompt
 io.file.execute:/system/openai/prompt.implementation/completion-prompt.hl
 
 // Making sure we return URIs if caller asked for it.
