@@ -216,7 +216,7 @@ switch:x:@.arguments/*/model
                .:int:4
 
             // Buffer for prompt decoration.
-            .:int:100
+            .:int:200
 
    case:text-ada-001
    case:text-curie-001
@@ -231,7 +231,7 @@ switch:x:@.arguments/*/model
                .:int:4
 
             // Buffer for prompt decoration.
-            .:int:100
+            .:int:200
 
 // Looping through all snippets to create our context.
 for-each:x:@.snippets/*
@@ -247,9 +247,9 @@ for-each:x:@.snippets/*
                type:double
          lt
             math.add
-               strings.length:x:@.context
-               strings.length:x:@.dp/#/*/prompt
-               strings.length:x:@.dp/#/*/completion
+               strings.byte-count:x:@.context
+               strings.byte-count:x:@.dp/#/*/prompt
+               strings.byte-count:x:@.dp/#/*/completion
             get-value:x:@.max-count
       .lambda
 
