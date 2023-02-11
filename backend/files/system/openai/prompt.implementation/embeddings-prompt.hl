@@ -266,19 +266,29 @@ for-each:x:@.snippets/*
          if
             not-exists:x:@.above/*/*/uri/={@.dp/#/*/uri}
             .lambda
-               strings.split:x:@.dp/#/*/uri
-                  .:"://"
-               strings.split:x:@strings.split/0/-
-                  .:":"
-               strings.concat
-                  get-value:x:@strings.split/@strings.split/0
-                  .:"://"
-                  get-value:x:@strings.split/0
+
+               // To support old-style URIs, we need to do some trickery here.
+               .uri
+               set-value:x:@.uri
+                  get-value:x:@.dp/#/*/uri
+               if
+                  strings.contains:x:@.dp/#/*/uri
+                     .:"://"
+                  .lambda
+                     strings.split:x:@.dp/#/*/uri
+                        .:"://"
+                     strings.split:x:@strings.split/0/-
+                        .:":"
+                     set-value:x:@.url
+                        strings.concat
+                           get-value:x:@strings.split/@strings.split/0
+                           .:"://"
+                           get-value:x:@strings.split/0
                unwrap:x:+/*/*/*
                add:x:@.above
                   .
                      .
-                        uri:x:@strings.concat
+                        uri:x:@.uri
                         prompt:x:@.dp/#/*/prompt
 
 // Making sure OpenAI doesn't return "Answer:" to us
