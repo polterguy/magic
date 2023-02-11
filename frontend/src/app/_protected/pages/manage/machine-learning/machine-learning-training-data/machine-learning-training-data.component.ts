@@ -113,7 +113,18 @@ export class MachineLearningTrainingDataComponent implements OnInit {
 
         if (result) {
 
-          console.log(result);
+          this.openAiService.importPage(result, this.type, 150).subscribe({
+            next: () => {
+
+              this.generalService.hideLoading();
+              this.generalService.showFeedback('Scraping page was successfully started', 'successMessage');
+            },
+            error: () => {
+
+              this.generalService.hideLoading();
+              this.generalService.showFeedback('Something went wrong as we tried to update your snippet', 'errorMessage');
+            }
+          });
         }
     });
   }

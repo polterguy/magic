@@ -1,0 +1,69 @@
+
+/*
+ * Imports the specified page as training data by scraping its content.
+ */
+.arguments
+   url:string
+   type:string
+   threshold:int
+
+// Ensures user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/url
+validators.mandatory:x:@.arguments/*/threshold
+validators.url:x:@.arguments/*/url
+validators.mandatory:x:@.arguments/*/type
+validators.integer:x:@.arguments/*/threshold
+   min:25
+
+// Doing some basic logging.
+log.info:Scraping page generating OpenAI training snippets
+   url:x:@.arguments/*/url
+   type:x:@.arguments/*/type
+   threshold:x:@.arguments/*/threshold
+
+// Creating a thread and invoking file doing the heavy lifting.
+insert-before:x:./*/fork/0
+   get-nodes:x:@.arguments
+fork
+
+   // Making sure exceptions does not leave thread.
+   try
+
+      /*
+       * Invoking crawl implementation file, now with explicit list of links,
+       * informing invocation that we do NOT want to process links.
+       */
+      add:x:./*/io.file.execute
+         get-nodes:x:@.arguments/*/url
+         get-nodes:x:@.arguments/*/type
+         get-nodes:x:@.arguments/*/threshold
+      io.file.execute:/system/openai/crawl.implementation/import-url.hl
+         crawl:bool:false
+
+      /*
+       * Crawling is done.
+       * Making sure we notify client that we're done and do some logging.
+       */
+      sockets.signal:magic.backend.message
+         roles:root
+         args
+            message:Done creating OpenAI training data from page
+            type:success
+
+      // Basic logging.
+      log.info:OpenAI training data successfully created from page
+         url:x:@.arguments/*/url
+         type:x:@.arguments/*/type
+
+   .catch
+
+      // Oops ...!!
+      log.error:x:@.arguments/*/message
+         url:x:@.arguments/*/url
+
+// Returning success to caller.
+return
+   result:success
