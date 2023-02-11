@@ -176,11 +176,16 @@ if
       exists:x:@.arguments/*/prefix
       not-null:x:@.arguments/*/prefix
    .lambda
+
+      // Prefixed model, making sure we use prefix.
       set-value:x:@.context
          strings.concat
             get-value:x:@.arguments/*/prefix
             .:"\r\n\r\nQUESTION: "
+
 else
+
+   // No prefix.
    set-value:x:@.context
       .:"Answer following QUESTION with the given CONTEXT.\r\n\r\nQUESTION: "
 
@@ -195,10 +200,12 @@ set-value:x:@.context
       get-value:x:@.arguments/*/prompt
       .:"\r\n\r\n"
       .:"CONTEXT: "
+
+// Looping through all snippets to create our context.
 for-each:x:@.snippets/*
 
    /*
-    * Making sure our prompt's complete length never exceeds 4,000 characters,
+    * Making sure our prompt's complete length never exceeds maximum characters,
     * and that we only use relevant snippets above specified threshold from our model.
     */
    if
