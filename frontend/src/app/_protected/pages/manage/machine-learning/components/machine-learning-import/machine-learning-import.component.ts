@@ -5,6 +5,8 @@
 
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
+import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { OpenAIService } from 'src/app/_general/services/openai.service';
 
@@ -28,6 +30,9 @@ export class MachineLearningImportComponent {
   advanced: boolean = false;
   threshold: number = 150;
 
+  CommonRegEx = CommonRegEx;
+  CommonErrorMessages = CommonErrorMessages;
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private matDialog: MatDialogRef<MachineLearningImportComponent>,
@@ -36,8 +41,13 @@ export class MachineLearningImportComponent {
 
   importUrl() {
 
-    if (!this.url || this.url.length === 0 || this.delay < 1 || this.max > 2500 || this.threshold < 25) {
-      
+    if (!this.url ||
+        this.url.length === 0 ||
+        this.delay < 1 ||
+        this.max > 2500 ||
+        this.threshold < 25 ||
+        !this.CommonRegEx.domain.test(this.url)) {
+
       this.generalService.showFeedback('Not valid input', 'errorMessage');
       return;
     }
