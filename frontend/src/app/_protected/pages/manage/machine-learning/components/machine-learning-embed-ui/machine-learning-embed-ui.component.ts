@@ -24,6 +24,7 @@ export class MachineLearningEmbedUiComponent implements OnInit {
   type: string = null;
   header: string = 'Ask and you shall receive an answer';
   buttonTxt: string = 'AI Chat';
+  search: boolean = false;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -53,7 +54,7 @@ export class MachineLearningEmbedUiComponent implements OnInit {
 
   embed() {
 
-    this.clipboard.copy(`<script src="${this.backendService.active.url}/magic/system/openai/include-javascript?css=${encodeURIComponent(this.theme)}&file=default&type=${encodeURIComponent(this.type)}&header=${encodeURIComponent(this.header)}&button=${encodeURIComponent(this.buttonTxt)}" defer></script>`);
+    this.clipboard.copy(`<script src="${this.backendService.active.url}/magic/system/openai/include-javascript?search=${this.search ? 'true' : 'false'}&css=${encodeURIComponent(this.theme)}&file=default&type=${encodeURIComponent(this.type)}&header=${encodeURIComponent(this.header)}&button=${encodeURIComponent(this.buttonTxt)}" defer></script>`);
     this.generalService.showFeedback('HTML to include your bot can be found on your clipboard', 'successMessage');
     this.dialogRef.close();
   }
