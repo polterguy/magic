@@ -127,6 +127,17 @@
 .aista-chat-answer {
   margin-bottom: 20px;
 }
+.aista-references-list {
+  padding-left: 10px;
+}
+.aista-references-list li {
+  list-style: none;
+  margin-top: 5px;
+}
+.aista-references-list li a {
+  text-decoration: none;
+  color: rgb(128,128,255);
+}
 .aista-chat-prompt {
   padding: 10px;
   width: 100%;
