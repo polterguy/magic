@@ -98,6 +98,7 @@ your API, to add custom business logic to your endpoints as you see fit.
 * [What is Hyperlambda](https://aista.com/hyperlambda/)
 * [Hyperlambda 101](https://aista.com/hyperlambda-101/)
 * [ChatGPT based website chatbots](https://aista.com/chatgpt-website-chatbot/)
+* [Bing and ChatGPT Website Search](https://aista.com/chatgpt-bing-website-search/)
 
 ## License
 
