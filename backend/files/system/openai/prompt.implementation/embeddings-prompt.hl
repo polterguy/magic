@@ -272,8 +272,11 @@ for-each:x:@.snippets/*
                set-value:x:@.uri
                   get-value:x:@.dp/#/*/uri
                if
-                  strings.contains:x:@.dp/#/*/uri
-                     .:"://"
+                  and
+                     exists:x:@.dp/#/*/uri
+                     not-null:x:@.dp/#/*/uri
+                     strings.contains:x:@.dp/#/*/uri
+                        .:"://"
                   .lambda
                      strings.split:x:@.dp/#/*/uri
                         .:"://"
