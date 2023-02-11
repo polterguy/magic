@@ -63,6 +63,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
     this.use_embeddings = this.data?.use_embeddings === 1 ? true : (!this.data ? true : false);
     this.cached = this.data?.cached === 1 ? true : false;
     this.prefix = this.data?.prefix ?? '';
+    this.advanced = !!this.data;
 
     this.generalService.showLoading();
 
