@@ -278,15 +278,19 @@ for-each:x:@.snippets/*
                      strings.contains:x:@.dp/#/*/uri
                         .:"://"
                   .lambda
+
+                     // URL contains "https://" parts.
                      strings.split:x:@.dp/#/*/uri
                         .:"://"
                      strings.split:x:@strings.split/0/-
                         .:":"
-                     set-value:x:@.url
+                     set-value:x:@.uri
                         strings.concat
                            get-value:x:@strings.split/@strings.split/0
                            .:"://"
                            get-value:x:@strings.split/0
+
+               // Adding reference to URL to [.above] collection.
                unwrap:x:+/*/*/*
                add:x:@.above
                   .
