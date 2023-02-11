@@ -4,6 +4,9 @@
  */
 (function() {
 
+// True if caller wants "references" as in site search.
+let aistaChatSearch = [[search]];
+
 // Retrieving reCAPTCHA site key.
 let aistaReCaptchaSiteKey = null;
 fetch('[[url]]/magic/system/auth/recaptcha-key', {
@@ -126,6 +129,9 @@ function aista_invoke_prompt(msg, token) {
   if (token) {
     url += '&recaptcha_response=' + encodeURIComponent(token);
   }
+  if (aistaChatSearch) {
+    url += '&references=true';
+  }
 
   // Invoking backend, with reCAPTCHA response if we've got a site-key
   fetch(url, {
@@ -156,6 +162,23 @@ function aista_invoke_prompt(msg, token) {
       // Removing flashing on question
       const msgRow = window.document.getElementsByClassName('aista-chat-question-waiting')[0];
       msgRow.className = 'aista-chat-question';
+    
+      // Checking if server returned references.
+      if (data.references && data.references.length > 0) {
+        const list = window.document.createElement('ul');
+        list.className = 'aista-references-list';
+        for (const idx of data.references) {
+          const li = window.document.createElement('li');
+          const hyp = window.document.createElement('a');
+          hyp.setAttribute('href', idx.uri);
+          hyp.innerHTML = idx.prompt;
+          li.appendChild(hyp);
+          list.appendChild(li);
+        }
+        row.appendChild(list);
+      }
+    
+      // Scrolling message row into view.
       msgRow.scrollIntoView({behavior: 'smooth'});
     })
     .catch(error => {

@@ -7,6 +7,7 @@
    header:string
    button:string
    render_button:bool
+   search:bool
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/file
@@ -114,6 +115,20 @@ set-value:x:@.result
    strings.replace:x:@.result
       .:[[render_button]]
       get-value:x:@.arguments/*/render_button
+if
+   and
+      exists:x:@.arguments/*/search
+      get-value:x:@.arguments/*/search
+   .lambda
+      set-value:x:@.result
+         strings.replace:x:@.result
+            .:[[search]]
+            .:true
+else
+   set-value:x:@.result
+      strings.replace:x:@.result
+         .:[[search]]
+         .:false
 
 // Making sure we return correct Content-Type to caller, and applying some cache.
 response.headers.set
