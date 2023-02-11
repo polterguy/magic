@@ -201,6 +201,38 @@ set-value:x:@.context
       .:"\r\n\r\n"
       .:"CONTEXT: "
 
+// Figuring out maximum length of context.
+.max-count
+switch:x:@.arguments/*/model
+
+   case:text-davinci-003
+
+      set-value:x:@.max-count
+         math.subtract
+            .:int:16384
+            math.multiply
+               convert:x:@.arguments/*/max_tokens
+                  type:int
+               .:int:4
+
+            // Buffer for prompt decoration.
+            .:int:100
+
+   case:text-ada-001
+   case:text-curie-001
+   case:text-babbage-001
+
+      set-value:x:@.max-count
+         math.subtract
+            .:int:8192
+            math.multiply
+               convert:x:@.arguments/*/max_tokens
+                  type:int
+               .:int:4
+
+            // Buffer for prompt decoration.
+            .:int:100
+
 // Looping through all snippets to create our context.
 for-each:x:@.snippets/*
 
@@ -218,7 +250,7 @@ for-each:x:@.snippets/*
                strings.length:x:@.context
                strings.length:x:@.dp/#/*/prompt
                strings.length:x:@.dp/#/*/completion
-            .:int:7000
+            get-value:x:@.max-count
       .lambda
 
          // We still haven't reached our character threshold yet, and we still have relevant snippets.
@@ -229,6 +261,8 @@ for-each:x:@.snippets/*
                get-value:x:@.dp/#/*/prompt
                .:"\r\n\r\n"
                get-value:x:@.dp/#/*/completion
+
+         // Checking if we need to store URI as reference.
          if
             not-exists:x:@.above/*/*/uri/={@.dp/#/*/uri}
             .lambda
@@ -245,11 +279,12 @@ set-value:x:@.context
       get-value:x:@.context
       .:"\r\nANSWER: "
 
-// Invoking default prompt completion
+// Invoking default prompt completion.
 add:x:./*/io.file.execute
    get-nodes:x:@.arguments/*
 set-value:x:./*/io.file.execute/*/prompt
    get-value:x:@.context
+log.info:x:./*/io.file.execute/*/prompt
 io.file.execute:/system/openai/prompt.implementation/completion-prompt.hl
 
 // Making sure we return URIs if caller asked for it.
