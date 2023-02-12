@@ -171,6 +171,7 @@ function aista_invoke_prompt(msg, token) {
           const li = window.document.createElement('li');
           const hyp = window.document.createElement('a');
           hyp.setAttribute('href', idx.uri);
+          hyp.setAttribute('target', '_blank');
           hyp.innerHTML = idx.prompt;
           li.appendChild(hyp);
           list.appendChild(li);
