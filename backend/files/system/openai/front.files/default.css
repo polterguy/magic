@@ -107,12 +107,59 @@
 .aista-references-list {
   padding-left: 10px;
 }
+@keyframes aista_fade_in {
+  0% {
+    margin-left: -100px;
+    opacity: 0;
+  }
+  100% {
+    margin-left: 0;
+    opacity: 1;
+  }
+}
 .aista-references-list li {
+  margin-left: -100px;
+  opacity: 0;
   list-style: none;
   margin-top: 5px;
+  animation-name: aista_fade_in;
+  animation-duration: .75s;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-in-out;
+}
+.aista-references-list li:nth-child(1) {
+  animation-delay: 0s;
+}
+.aista-references-list li:nth-child(2) {
+  animation-delay: .25s;
+}
+.aista-references-list li:nth-child(3) {
+  animation-delay: .5s;
+}
+.aista-references-list li:nth-child(4) {
+  animation-delay: .75s;
+}
+.aista-references-list li:nth-child(5) {
+  animation-delay: 1s;
+}
+.aista-references-list li:nth-child(6) {
+  animation-delay: 1.25s;
+}
+.aista-references-list li:nth-child(7) {
+  animation-delay: 1.5s;
+}
+.aista-references-list li:nth-child(8) {
+  animation-delay: 1.75s;
+}
+.aista-references-list li:nth-child(9) {
+  animation-delay: 2s;
+}
+.aista-references-list li:nth-child(10) {
+  animation-delay: 2.25s;
 }
 .aista-references-list li a {
   text-decoration: none;
+  color: rgb(128,128,255);
 }
 .aista-chat-form {
   padding: 10px;

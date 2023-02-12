@@ -286,7 +286,6 @@ for-each:x:@.snippets/*
                      get-value:x:@strings.split/0
 
          // Checking if we need to store URI as reference.
-         log.info:x:@.uri
          if
             and
                not-null:x:@.uri
