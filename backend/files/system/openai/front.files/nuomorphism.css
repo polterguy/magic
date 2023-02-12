@@ -95,12 +95,12 @@
   border-radius: 5px;
 }
 @keyframes aista-chat-question-waiting {
-  0% { opacity: 0; color: rgb(128,128,0); }
-  10% { opacity: 0; color: rgb(128,128,0); }
+  0% { opacity: .5; color: rgb(128,128,0); }
+  10% { opacity: .5; color: rgb(128,128,0); }
   23% { opacity: 1; color: rgb(128,128,128); }
   50% { opacity: 1; color: rgb(128,128,128); }
   65% { opacity: 1; color: rgb(128,128,128); }
-  100% { opacity: 0; color: rgb(128,128,0); }
+  100% { opacity: .5; color: rgb(128,128,0); }
 }
 .aista-chat-question-waiting {
   animation-name: aista-chat-question-waiting;
