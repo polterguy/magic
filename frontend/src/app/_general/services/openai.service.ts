@@ -9,6 +9,7 @@ import { Injectable } from '@angular/core';
 // Application specific imports.
 import { HttpService } from 'src/app/_general/services/http.service';
 import { MagicResponse } from '../models/magic-response.model';
+import { PromptResponse } from '../models/prompt-response.model';
 
 /**
  * OpenAI model.
@@ -33,11 +34,12 @@ export class OpenAIService {
   /**
    * Queries OpenAI with the specified prompt and returns result to caller.
    */
-  query(prompt: string, type: string) {
+  query(prompt: string, type: string, search: boolean = false) {
 
-    return this.httpService.get<MagicResponse>(
+    return this.httpService.get<PromptResponse>(
       '/magic/system/openai/prompt?prompt=' +
       encodeURIComponent(prompt) +
+      '&references=' + (search ? 'true' : 'false') +
       '&type=' +
       encodeURIComponent(type));
   }

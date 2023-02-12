@@ -10,6 +10,7 @@ import { MachineLearningTrainingService } from 'src/app/_general/services/machin
 import { OpenAIService } from 'src/app/_general/services/openai.service';
 import { CodemirrorActionsService } from 'src/app/_general/services/codemirror-actions.service';
 import { MagicResponse } from 'src/app/_general/models/magic-response.model';
+import { PromptResponse } from 'src/app/_general/models/prompt-response.model';
 
 /**
  * Helper component to test model.
@@ -55,15 +56,34 @@ export class MachineLearningTestComponent implements OnInit {
     this.generalService.showLoading();
     this.isLoading = true;
 
-    this.openAIService.query(this.prompt, this.data.type).subscribe({
-      next: (result: MagicResponse) => {
+    this.openAIService.query(this.prompt, this.data.type, true).subscribe({
+      next: (result: PromptResponse) => {
 
         this.generalService.hideLoading();
-        this.isLoading = false;
-        this.completion = result.result;
         if (this.model) {
+
+          // Hyperlambda result.
+          if (result.references?.length > 0) {
+            result.result += '\r\n/*';
+            for (var idx of result.references) {
+              result.result += `\r\n * ${idx.uri} - ${idx.prompt}`;
+            }
+            result.result += '\r\n */\r\n';
+          }
           this.model.hyperlambda = result.result;
+
+        } else {
+
+          // Anything BUT Hyperlambda result
+          if (result.references?.length > 0) {
+            result.result += '\r\n';
+            for (var idx of result.references) {
+              result.result += `\r\n* ${idx.uri}`;
+            }
+          }
+          this.completion = result.result;
         }
+        this.isLoading = false;
         setTimeout(() => {
           const el = <any>document.getElementsByName('prompt')[0];
           el.focus();
