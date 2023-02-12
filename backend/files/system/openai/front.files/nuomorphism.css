@@ -200,15 +200,6 @@
   transition: color, background-color .25s ease-in-out;
   background-color: rgba(0,0,0,.1);
 }
-.aista-chat-prompt {
-  padding: 10px;
-  width: 100%;
-  box-shadow: inset 2px 2px 5px #b8b9be, inset -3px -3px 7px #fff;
-  background-color: rgb(230, 231, 238);
-  border-radius: 5px;
-  outline: none;
-  border: none;
-}
 .aista-chat-form {
   padding: 10px;
   margin: 0;
@@ -222,6 +213,9 @@
   outline: none;
   border: none;
   box-sizing: border-box;
+}
+.aista-chat-prompt:disabled {
+  color: rgb(198,198,198);
 }
 .aista-chat-prompt::placeholder {
   color: rgb(180,181,188);

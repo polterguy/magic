@@ -13,7 +13,7 @@
   background-color: #0084ff;
   border: none;
   padding: 15px;
-  font-size: 16px;
+  font-size: 14px;
   z-index: 9999;
   color: #fff;
   cursor: pointer;
@@ -161,6 +161,20 @@
 .aista-references-list li a {
   text-decoration: none;
   color: rgb(128,128,255);
+  transition: color, background-color .25s ease-in-out;
+  padding: 5px;
+  display: block;
+  border-radius: 5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.aista-references-list li a:hover,
+.aista-references-list li a:active,
+.aista-references-list li a:focus {
+  color: rgb(90,90,235);
+  transition: color, background-color .25s ease-in-out;
+  background-color: rgba(0,0,0,.1);
 }
 .aista-chat-form {
   padding: 10px;
