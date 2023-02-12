@@ -62,6 +62,7 @@
     mat-flat-button
     *ngIf="buttonText || buttonIcon"
     color="primary"
+    [disabled]="buttonDisabled"
     class="ms-3"
     (click)="buttonClicked()">
     <mat-icon *ngIf="buttonIcon">{{buttonIcon}}</mat-icon>
@@ -72,6 +73,7 @@
     mat-flat-button
     *ngIf="button2Text"
     color="primary"
+    [disabled]="button2Disabled"
     class="ms-3"
     (click)="button2Clicked()">
     {{button2Text}}

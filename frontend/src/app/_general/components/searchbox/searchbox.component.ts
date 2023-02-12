@@ -26,6 +26,8 @@ export class SearchboxComponent implements OnInit {
   @Input() buttonText: string = null;
   @Input() button2Text: string = null;
   @Input() buttonIcon: string = null;
+  @Input() buttonDisabled: boolean = true;
+  @Input() button2Disabled: boolean = true;
 
   filterControl: FormControl;
   checked: boolean = false;
