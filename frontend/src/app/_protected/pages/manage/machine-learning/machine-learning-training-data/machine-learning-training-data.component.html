@@ -23,6 +23,7 @@
           buttonText="Add"
           button2Text="Spice"
           (button2Click)="spice()"
+          [button2Disabled]="!type"
           (buttonClick)="create()"
           [(type)]="type"
           [types]="types">
