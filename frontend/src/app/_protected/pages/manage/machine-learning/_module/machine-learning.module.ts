@@ -15,7 +15,7 @@ import { CmModule } from 'src/app/codemirror/_module/cm.module';
 import { MachineLearningEditTypeComponent } from '../components/machine-learning-edit-model/machine-learning-edit-model.component';
 import { MachineLearningComponent } from '../machine-learning.component';
 import { MachineLearningModelsComponent } from '../machine-learning-models/machine-learning-models.component';
-import { MachineLearningRequestsComponent } from '../machine-learning-cache/machine-learning-cache.component';
+import { MachineLearningRequestsComponent } from '../machine-learning-history/machine-learning-history.component';
 import { MachineLearningEditCacheComponent } from '../components/machine-learning-edit-cache/machine-learning-edit-cache.component';
 import { MachineLearningTestComponent } from '../components/machine-learning-test/machine-learning-test.component';
 import { SharedModule } from 'src/app/shared.module';

@@ -15,9 +15,9 @@ import { MachineLearningEditCacheComponent } from '../components/machine-learnin
  * Helper component to view and manage Machine Learning requests
  */
 @Component({
-  selector: 'app-machine-learning-cache',
-  templateUrl: './machine-learning-cache.component.html',
-  styleUrls: ['./machine-learning-cache.component.scss']
+  selector: 'app-machine-learning-history',
+  templateUrl: './machine-learning-history.component.html',
+  styleUrls: ['./machine-learning-history.component.scss']
 })
 export class MachineLearningRequestsComponent implements OnInit {
 
