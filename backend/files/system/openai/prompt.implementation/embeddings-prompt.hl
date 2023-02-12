@@ -262,33 +262,36 @@ for-each:x:@.snippets/*
                .:"\r\n\r\n"
                get-value:x:@.dp/#/*/completion
 
-         // Checking if we need to store URI as reference.
+         // To support old-style URIs, we need to do some trickery here.
+         .uri
+         set-value:x:@.uri
+            get-value:x:@.dp/#/*/uri
          if
-            not-exists:x:@.above/*/*/uri/={@.dp/#/*/uri}
+            and
+               exists:x:@.dp/#/*/uri
+               not-null:x:@.dp/#/*/uri
+               strings.contains:x:@.dp/#/*/uri
+                  .:"://"
             .lambda
 
-               // To support old-style URIs, we need to do some trickery here.
-               .uri
+               // URL contains "https://" parts.
+               strings.split:x:@.dp/#/*/uri
+                  .:"://"
+               strings.split:x:@strings.split/0/-
+                  .:":"
                set-value:x:@.uri
-                  get-value:x:@.dp/#/*/uri
-               if
-                  and
-                     exists:x:@.dp/#/*/uri
-                     not-null:x:@.dp/#/*/uri
-                     strings.contains:x:@.dp/#/*/uri
-                        .:"://"
-                  .lambda
+                  strings.concat
+                     get-value:x:@strings.split/@strings.split/0
+                     .:"://"
+                     get-value:x:@strings.split/0
 
-                     // URL contains "https://" parts.
-                     strings.split:x:@.dp/#/*/uri
-                        .:"://"
-                     strings.split:x:@strings.split/0/-
-                        .:":"
-                     set-value:x:@.uri
-                        strings.concat
-                           get-value:x:@strings.split/@strings.split/0
-                           .:"://"
-                           get-value:x:@strings.split/0
+         // Checking if we need to store URI as reference.
+         log.info:x:@.uri
+         if
+            and
+               not-null:x:@.uri
+               not-exists:x:@.above/*/*/uri/={@.uri}
+            .lambda
 
                // Adding reference to URL to [.above] collection.
                unwrap:x:+/*/*/*
