@@ -39,6 +39,7 @@
   border: solid 1px #999;
   box-shadow: 2px 2px 15px rgba(0,0,0,.8);
   display: none;
+  font-family: Arial, Helvetica, sans-serif;
 }
 .aista-chat-header {
   font-size: 12px;
@@ -70,7 +71,7 @@
   padding: 15px;
   border: solid 1px rgba(0,0,0,.2);
   overflow-y: auto;
-  font-size: 12px;
+  font-size: 16px;
 }
 @keyframes aista-chat-question-waiting {
   0% { margin-left:-10px; opacity: 0; color: rgb(128,128,0); }
