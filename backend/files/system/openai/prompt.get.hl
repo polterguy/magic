@@ -4,6 +4,7 @@
    prompt:string
    type:string
    references:bool
+   chat:bool
    recaptcha_response:string
 .description:Asks OpenAI a question with the specified type, and returns the answer to caller
 .type:public
@@ -168,6 +169,7 @@ data.connect:[generic|magic]
          // Using embeddings API.
          add:x:./*/io.file.execute
             get-nodes:x:@.arguments/*/type
+            get-nodes:x:@.arguments/*/chat
             get-nodes:x:@data.read/@data.read/*/*/prefix
             get-nodes:x:@.arguments/*/prompt
             get-nodes:x:@.arguments/*/references
