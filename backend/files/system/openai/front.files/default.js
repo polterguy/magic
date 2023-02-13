@@ -89,7 +89,9 @@ function aista_create_chat_ui() {
     msgEl.className = 'aista-chat-question-waiting';
     const msgs = window.document.getElementsByClassName('aista-chat-msg-container')[0];
     msgs.appendChild(msgEl);
-    msgEl.scrollIntoView({behavior: 'smooth'});
+    setTimeout(() => {
+      msgEl.scrollIntoView({behavior: 'smooth', block: 'start'});
+    }, 1)
     inp.disabled = true;
     
     // Invoking backend, making sure we associate request with reCAPTCHA token if possible
@@ -190,7 +192,7 @@ function aista_invoke_prompt(msg, token) {
       }
     
       // Scrolling message row into view.
-      msgRow.scrollIntoView({behavior: 'smooth'});
+      msgRow.scrollIntoView({behavior: 'smooth', block: 'start'});
     })
     .catch(error => {
 
@@ -211,6 +213,6 @@ function aista_invoke_prompt(msg, token) {
       // Removing flashing on question
       const msgRow = window.document.getElementsByClassName('aista-chat-question-waiting')[0];
       msgRow.className = 'aista-chat-question';
-      msgRow.scrollIntoView({behavior: 'smooth'});
+      msgRow.scrollIntoView({behavior: 'smooth', block: 'start'});
     });
 }})();
