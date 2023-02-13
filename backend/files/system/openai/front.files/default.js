@@ -7,6 +7,9 @@
 // True if caller wants "references" as in site search.
 let aistaChatSearch = [[search]];
 
+// True if caller wants "chatting" support.
+let aistaChatChat = [[chat]];
+
 // Retrieving reCAPTCHA site key.
 let aistaReCaptchaSiteKey = null;
 fetch('[[url]]/magic/system/auth/recaptcha-key', {
@@ -132,6 +135,11 @@ function aista_invoke_prompt(msg, token) {
   if (aistaChatSearch) {
     url += '&references=true';
   }
+  if (aistaChatChat) {
+    url += '&chat=true';
+  } else {
+    url += '&chat=false';
+  }
 
   // Invoking backend, with reCAPTCHA response if we've got a site-key
   fetch(url, {
@@ -154,7 +162,9 @@ function aista_invoke_prompt(msg, token) {
 
       // Appending answer to message container
       const row = window.document.createElement('div');
-      row.innerText = data.result;
+      if (aistaChatChat) {
+        row.innerText = data.result;
+      }
       row.className = 'aista-chat-answer ' + data.finish_reason;
       const msgs = window.document.getElementsByClassName('aista-chat-msg-container')[0];
       msgs.appendChild(row);
