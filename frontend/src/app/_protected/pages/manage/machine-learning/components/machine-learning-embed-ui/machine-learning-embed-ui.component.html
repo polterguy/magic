@@ -61,7 +61,15 @@
 
   <mat-checkbox
     [(ngModel)]="search"
+    labelPosition="before"
+    class="me-3"
     color="primary">Search</mat-checkbox>
+
+  <mat-checkbox
+    [(ngModel)]="chat"
+    labelPosition="before"
+    class="me-3"
+    color="primary">Chat</mat-checkbox>
 
   <button
     mat-button

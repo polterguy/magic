@@ -8,6 +8,7 @@
    button:string
    render_button:bool
    search:bool
+   chat:bool
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/file
@@ -128,6 +129,20 @@ else
    set-value:x:@.result
       strings.replace:x:@.result
          .:[[search]]
+         .:false
+if
+   and
+      exists:x:@.arguments/*/chat
+      get-value:x:@.arguments/*/chat
+   .lambda
+      set-value:x:@.result
+         strings.replace:x:@.result
+            .:[[chat]]
+            .:true
+else
+   set-value:x:@.result
+      strings.replace:x:@.result
+         .:[[chat]]
          .:false
 
 // Making sure we return correct Content-Type to caller, and applying some cache.

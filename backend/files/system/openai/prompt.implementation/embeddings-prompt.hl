@@ -148,10 +148,14 @@ while:x:@.continue
  * the default model, and just keeping the question "as is".
  */
 if
-   lt
-      get-value:x:@.snippets/0/*/dot
-      convert:x:@.arguments/*/threshold
-         type:double
+   and
+      lt
+         get-value:x:@.snippets/0/*/dot
+         convert:x:@.arguments/*/threshold
+            type:double
+      or
+         not-exists:x:@.arguments/*/chat
+         get-value:x:@.arguments/*/chat
    .lambda
 
       /*
@@ -314,12 +318,21 @@ set-value:x:@.context
       get-value:x:@.context
       .:"\r\nANSWER: "
 
-// Invoking default prompt completion.
-add:x:./*/io.file.execute
-   get-nodes:x:@.arguments/*
-set-value:x:./*/io.file.execute/*/prompt
-   get-value:x:@.context
-io.file.execute:/system/openai/prompt.implementation/completion-prompt.hl
+// Verifying that user actually wants to have a completion/chat response.
+if
+   or
+      not-exists:x:@.arguments/*/chat
+      get-value:x:@.arguments/*/chat
+   .lambda
+
+      // Invoking default prompt completion.
+      add:x:./*/io.file.execute
+         get-nodes:x:@.arguments/*
+      set-value:x:./*/io.file.execute/*/prompt
+         get-value:x:@.context
+      io.file.execute:/system/openai/prompt.implementation/completion-prompt.hl
+      add:x:../*/return-nodes
+         get-nodes:x:@io.file.execute/*
 
 // Making sure we return URIs if caller asked for it.
 if
@@ -334,6 +347,4 @@ if
             references
 
 // Returning result of above invocation.
-add:x:./*/return-nodes
-   get-nodes:x:@io.file.execute/*
 return-nodes
