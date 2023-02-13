@@ -149,13 +149,10 @@ while:x:@.continue
  */
 if
    and
-      lt
-         get-value:x:@.snippets/0/*/dot
+      lt:x:@.snippets/0/*/dot
          convert:x:@.arguments/*/threshold
             type:double
-      or
-         not-exists:x:@.arguments/*/chat
-         get-value:x:@.arguments/*/chat
+      get-value:x:@.arguments/*/chat
    .lambda
 
       /*
