@@ -23,6 +23,20 @@ if
          .
             render_button:bool:true
 
+// Defaulting chat and search arguments if not specified.
+if
+   not-exists:x:@.arguments/*/chat
+   .lambda
+      add:x:@.arguments
+         .
+            chat:bool:true
+if
+   not-exists:x:@.arguments/*/search
+   .lambda
+      add:x:@.arguments
+         .
+            search:bool:false
+
 // Checking if custom JavaScript file exists.
 .result
 strings.concat
@@ -116,29 +130,21 @@ set-value:x:@.result
    strings.replace:x:@.result
       .:[[render_button]]
       get-value:x:@.arguments/*/render_button
-if
-   and
-      exists:x:@.arguments/*/search
-      get-value:x:@.arguments/*/search
-   .lambda
-      set-value:x:@.result
-         strings.replace:x:@.result
-            .:[[search]]
-            .:true
+if:x:@.arguments/*/search
+   set-value:x:@.result
+      strings.replace:x:@.result
+         .:[[search]]
+         .:true
 else
    set-value:x:@.result
       strings.replace:x:@.result
          .:[[search]]
          .:false
-if
-   and
-      exists:x:@.arguments/*/chat
-      get-value:x:@.arguments/*/chat
-   .lambda
-      set-value:x:@.result
-         strings.replace:x:@.result
-            .:[[chat]]
-            .:true
+if:x:@.arguments/*/chat
+   set-value:x:@.result
+      strings.replace:x:@.result
+         .:[[chat]]
+         .:true
 else
    set-value:x:@.result
       strings.replace:x:@.result
