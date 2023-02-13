@@ -111,7 +111,7 @@
   color: unset;
 }
 .aista-references-list {
-  padding-left: 10px;
+  padding-left: 0;
 }
 @keyframes aista_fade_in {
   0% {
@@ -167,7 +167,7 @@
   text-decoration: none;
   color: rgb(128,128,255);
   transition: color, background-color .25s ease-in-out;
-  padding: 5px;
+  padding: 5px 5px 5px 10px;
   display: block;
   border-radius: 5px;
   overflow: hidden;

@@ -190,7 +190,7 @@
   text-decoration: none;
   color: rgb(128,128,255);
   transition: color, background-color .25s ease-in-out;
-  padding: 5px;
+  padding: 5px 5px 5px 10px;
   display: block;
   border-radius: 5px;
   overflow: hidden;
