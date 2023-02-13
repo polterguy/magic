@@ -140,7 +140,7 @@ while:x:@.continue
       get-count:x:@data.read/*
 
 /*
- * Now we have our 5 most relevant snippets, and we can use these to generate an answer
+ * Now we have our most relevant snippets and we can use these to generate an answer
  * to whatever question the caller asked, by doing a little bit of "AI trickery".
  *
  * However, in case user asked a question that's completely irrelevant to the subject
@@ -154,7 +154,10 @@ if
          type:double
    .lambda
 
-      // Semantic search resulted in zero high quality snippets, invoking completion with question without context.
+      /*
+       * Semantic search resulted in zero high quality snippets,
+       * invoking completion with question without context.
+       */
       add:x:./*/io.file.execute
          get-nodes:x:@.arguments/*
       io.file.execute:/system/openai/prompt.implementation/completion-prompt.hl
@@ -201,37 +204,42 @@ set-value:x:@.context
       .:"\r\n\r\n"
       .:"CONTEXT: "
 
-// Figuring out maximum length of context.
+/*
+ * Figuring out maximum length of context.
+ *
+ * Maximum length of context is the number of tokens the model can handle,
+ * subtracting the number of tokens requested, multiplied by 2 to get byte count.
+ */
 .max-count
 switch:x:@.arguments/*/model
 
    case:text-davinci-003
 
       set-value:x:@.max-count
-         math.subtract
-            .:int:16384
-            math.multiply
-               convert:x:@.arguments/*/max_tokens
-                  type:int
-               .:int:4
-
-            // Buffer for prompt decoration.
-            .:int:200
+         .:int:4096
 
    case:text-ada-001
    case:text-curie-001
    case:text-babbage-001
 
       set-value:x:@.max-count
-         math.subtract
-            .:int:8192
-            math.multiply
-               convert:x:@.arguments/*/max_tokens
-                  type:int
-               .:int:4
+         .:int:2048
 
-            // Buffer for prompt decoration.
-            .:int:200
+// Subtracting max_tokens from model from [.max-count].
+set-value:x:@.max-count
+   math.subtract
+      get-value:x:@.max-count
+      convert:x:@.arguments/*/max_tokens
+         type:int
+
+/*
+ * Multiplying [.max-count] by 2 as a buffer to ensure we never
+ * request more tokens than the model can handle.
+ */
+set-value:x:@.max-count
+   math.multiply
+      get-value:x:@.max-count
+      .:int:2
 
 // Looping through all snippets to create our context.
 for-each:x:@.snippets/*
