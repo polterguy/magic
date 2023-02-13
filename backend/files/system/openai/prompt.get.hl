@@ -156,6 +156,7 @@ data.connect:[generic|magic]
                unwrap:x:+/*
                return
                   result:x:@data.read/*/*/completion
+                  finish_reason:cached
 
    // Invoking Hyperlambda file doing the heavy lifting.
    .result
