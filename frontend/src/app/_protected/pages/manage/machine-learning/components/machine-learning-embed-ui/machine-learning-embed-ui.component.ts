@@ -22,7 +22,7 @@ export class MachineLearningEmbedUiComponent implements OnInit {
   theme: string = 'default';
   themes: string[] = [];
   type: string = null;
-  header: string = 'Ask and you shall receive an answer';
+  header: string = 'Ask about our services or products';
   buttonTxt: string = 'AI Chat';
   search: boolean = false;
 
