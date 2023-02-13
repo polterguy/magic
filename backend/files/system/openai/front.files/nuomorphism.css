@@ -96,8 +96,8 @@
   border-radius: 5px;
 }
 @keyframes aista-chat-question-waiting {
-  0% { opacity: .5; color: rgb(128,128,0); }
-  100% { opacity: 1; color: rgb(128,128,128); }
+  0% { opacity: .2; }
+  100% { opacity: 1; }
 }
 .aista-chat-question-waiting {
   animation-name: aista-chat-question-waiting;
