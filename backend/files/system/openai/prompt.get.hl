@@ -18,6 +18,20 @@ validators.string:x:@.arguments/*/prompt
 set-value:x:@.arguments/*/prompt
    strings.trim:x:@.arguments/*/prompt
 
+// Ensuring defaults.
+if
+   not-exists:x:@.arguments/*/chat
+   .lambda
+      add:x:@.arguments
+         .
+            chat:bool:true
+if
+   not-exists:x:@.arguments/*/references
+   .lambda
+      add:x:@.arguments
+         .
+            references:bool:false
+
 // Connecting to database to retrieve model settings.
 data.connect:[generic|magic]
 
