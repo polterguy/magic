@@ -115,7 +115,7 @@
   font-weight: bold;
 }
 .aista-chat-error {
-  background-color: rgba(255,230,230,.65)
+  background-color: rgba(255,230,230,.65);
   padding: 15px;
   margin-left: -15px;
   margin-right: -15px;
