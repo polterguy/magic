@@ -155,7 +155,7 @@ function aista_invoke_prompt(msg, token) {
       // Appending answer to message container
       const row = window.document.createElement('div');
       row.innerText = data.result;
-      row.className = 'aista-chat-answer';
+      row.className = 'aista-chat-answer ' + data.finish_reason;
       const msgs = window.document.getElementsByClassName('aista-chat-msg-container')[0];
       msgs.appendChild(row);
 

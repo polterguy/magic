@@ -122,7 +122,11 @@
   margin-bottom: 20px;
 }
 .aista-chat-answer {
+  color: rgb(128,128,128);
   margin-bottom: 20px;
+}
+.aista-chat-answer.stop {
+  color: unset;
 }
 .aista-references-list {
   margin: 10px 0;
