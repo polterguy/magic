@@ -19,6 +19,6 @@ if
          repeats:72.hours
          .lambda
             sqlite.connect:magic
-               sqlite.execute:"delete from ml_requests where created < date('now', '-14 day')"
+               sqlite.execute:"delete from ml_requests where created < date('now', '-14 day') and cached != 1"
             log.info:Task to cleanup old machine learning requests executed successfully
                deleted:x:@sqlite.connect/*/sqlite.execute
