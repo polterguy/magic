@@ -380,14 +380,32 @@ data.connect:[generic|magic]
                strings.trim:x:@.dp/#/*/completion
                   .:" \r\n\t"
 
-            // Inserting prompt and completion into database.
-            data.create
+            /*
+             * Checking if we already have a similar training
+             * snippet in our database, at which point we ignore it.
+             */
+            data.read
                table:ml_training_snippets
-               values
-                  prompt:x:@.prompt
-                  completion:x:@.completion
-                  type:x:@.arguments/*/type
-                  uri:x:@.arguments/*/url
+               columns
+                  id
+               where
+                  and
+                     prompt.eq:x:@.prompt
+                     completion.eq:x:@.completion
+                     type.eq:x:@.arguments/*/type
+               limit:1
+            if
+               not-exists:x:@data.read/*
+               .lambda
+
+                  // Inserting prompt, completion, type and URI into database.
+                  data.create
+                     table:ml_training_snippets
+                     values
+                        prompt:x:@.prompt
+                        completion:x:@.completion
+                        type:x:@.arguments/*/type
+                        uri:x:@.arguments/*/url
 
 // Preserving some memory.
 remove-nodes:x:@http.get/*
