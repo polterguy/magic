@@ -72,6 +72,10 @@ if
       return
          error:bool:true
          result:x:@http.post/*/content/*/error/*/message
+else
+
+   // Success! Logging as such!
+   log.info:Invoking OpenAI was a success
 
 // Making sure we trim response.
 .result
