@@ -96,7 +96,7 @@ data.connect:[generic|magic]
    if
       not-null:x:@data.read/*/*/auth
       .lambda
-      
+
          // Making sure user is authorised to using type.
          auth.ticket.verify:x:@data.read/*/*/auth
 
@@ -110,6 +110,16 @@ data.connect:[generic|magic]
                type:decimal
             .:decimal:0
       .lambda
+
+         // Verifying reCAPTCHA was supplied.
+         if
+            or
+               not-exists:x:@.arguments/*/recaptcha_response
+               null:x:@.arguments/*/recaptcha_response
+            .lambda
+               response.status.set:499
+               return
+                  error:No reCAPTCHA supplied
 
          // Making sure reCAPTCHA value was provided.
          validators.mandatory:x:@.arguments/*/recaptcha_response
