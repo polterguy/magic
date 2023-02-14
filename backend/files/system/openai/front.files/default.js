@@ -150,6 +150,12 @@ function aista_invoke_prompt(msg, token) {
     .then(res => {
       if (res.status >= 200 && res.status <= 299) {
         return res.json();
+      } else if (res.status === 499) {
+        throw Error('Access denied, missing reCAPTCHA. Either configure your model to not use reCAPTCHA, or setup reCAPTCHA for your bot');
+      } else if (res.status === 401) {
+        throw Error('Your model requires authentication, and you are not authorised to invoking it. Either turn off all roles, or add JWT token to requests somehow.');
+      } else if (res.status === 429) {
+        throw Error('Seriously, it is not us! OpenAI is overloaded. If it continues, try using \'text-curie-001\' as your \'transformer\' model instead of \'text-davinci-001\'. It is not as \'smart\', but much faster, and way more stable.');
       } else {
         throw Error(res.statusText);
       }
