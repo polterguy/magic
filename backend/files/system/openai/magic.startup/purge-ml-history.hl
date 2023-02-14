@@ -1,0 +1,24 @@
+
+/*
+ * Creates scheduled task that deletes all cached questions / answers
+ * from machine learning models that are older than 2 weeks, to preserve
+ * storage space.
+ *
+ * Notice, task ONLY executes if default database is SQLite, since database
+ * management is up to db-admin for serious databases.
+ */
+if
+   eq
+      config.get:"magic:databases:default"
+      .:sqlite
+   .lambda
+
+      // We need toperiodically delete historical requests.
+      tasks.create:delete-old-machine-learning-requests
+         description:Periodically deletes all machine learning requests older than 14 days
+         repeats:72.hours
+         .lambda
+            sqlite.connect:magic
+               sqlite.execute:"delete from ml_requests where created < date('now', '-14 day')"
+            log.info:Task to cleanup old machine learning requests executed successfully
+               deleted:x:@sqlite.connect/*/sqlite.execute
