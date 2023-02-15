@@ -67,6 +67,7 @@ if
       lambda2hyper:x:@http.post
       log.error:Something went wrong while invoking OpenAI
          error:x:@http.post/*/content/*/error/*/message
+         status:x:@http.post
       response.status.set:x:@http.post
       unwrap:x:+/*
       return
