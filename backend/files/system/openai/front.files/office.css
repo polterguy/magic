@@ -86,6 +86,9 @@
   font-size: 14px;
   line-height: 20px;
 }
+.aista-chat-msg-container a {
+  text-decoration: none;
+}
 @keyframes aista-chat-question-waiting {
   0% { opacity: .2; }
   100% { opacity: 1; }

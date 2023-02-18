@@ -95,6 +95,9 @@
   background-color: rgb(230, 231, 238);
   border-radius: 5px;
 }
+.aista-chat-msg-container a {
+  text-decoration: none;
+}
 @keyframes aista-chat-question-waiting {
   0% { opacity: .2; }
   100% { opacity: 1; }
