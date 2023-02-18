@@ -10,6 +10,9 @@ let aistaChatSearch = [[search]];
 // True if caller wants "chatting" support.
 let aistaChatChat = [[chat]];
 
+// True if caller wants Markdown support.
+let aistaChatMarkdown = [[markdown]];
+
 // Retrieving reCAPTCHA site key.
 let aistaReCaptchaSiteKey = null;
 fetch('[[url]]/magic/system/auth/recaptcha-key', {
@@ -26,6 +29,14 @@ fetch('[[url]]/magic/system/auth/recaptcha-key', {
     window.document.getElementsByTagName('head')[0].appendChild(cap);
   }
 });
+
+// Downloading ShowdownJS to be able to parse Markdown.
+if (aistaChatMarkdown) {
+  const showdownJS = window.document.createElement('script');
+  showdownJS.src = 'https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js';
+  window.document.getElementsByTagName('head')[0].appendChild(showdownJS);
+}
+
 
 // Creating CSS inclusion.
 fetch('[[url]]/magic/system/openai/include-style?file=' + encodeURIComponent('[[css]]'))
@@ -129,7 +140,7 @@ function aista_show_chat_window() {
  */
 function aista_invoke_prompt(msg, token) {
 
-  // Creating our URL
+  // Creating our URL.
   let url = '[[url]]/magic/system/openai/prompt?prompt=' + encodeURIComponent(msg) + '&type=[[type]]';
   if (token) {
     url += '&recaptcha_response=' + encodeURIComponent(token);
@@ -171,7 +182,12 @@ function aista_invoke_prompt(msg, token) {
       // Appending answer to message container
       const row = window.document.createElement('div');
       if (aistaChatChat) {
-        row.innerText = data.result;
+        if (aistaChatMarkdown) {
+          var converter = new showdown.Converter();
+          row.innerHTML = converter.makeHtml(data.result);
+        } else {
+          row.innerText = data.result;
+        }
       }
       row.className = 'aista-chat-answer ' + data.finish_reason;
       const msgs = window.document.getElementsByClassName('aista-chat-msg-container')[0];

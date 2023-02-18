@@ -9,6 +9,7 @@
    render_button:bool
    search:bool
    chat:bool
+   markdown:bool
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/file
@@ -36,6 +37,12 @@ if
       add:x:@.arguments
          .
             search:bool:false
+if
+   not-exists:x:@.arguments/*/markdown
+   .lambda
+      add:x:@.arguments
+         .
+            markdown:bool:false
 
 // Checking if custom JavaScript file exists.
 .result
@@ -149,6 +156,16 @@ else
    set-value:x:@.result
       strings.replace:x:@.result
          .:[[chat]]
+         .:false
+if:x:@.arguments/*/markdown
+   set-value:x:@.result
+      strings.replace:x:@.result
+         .:[[markdown]]
+         .:true
+else
+   set-value:x:@.result
+      strings.replace:x:@.result
+         .:[[markdown]]
          .:false
 
 // Making sure we return correct Content-Type to caller, and applying some cache.
