@@ -74,6 +74,9 @@
   font-size: 14px;
   line-height: 20px;
 }
+.aista-chat-msg-container a {
+  text-decoration: none;
+}
 @keyframes aista-chat-question-waiting {
   0% { margin-left:-10px; opacity: 0; color: rgb(128,128,0); }
   10% { margin-left:-10px; opacity: 0; color: rgb(128,128,0); }
