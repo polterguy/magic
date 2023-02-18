@@ -121,6 +121,14 @@
 .aista-chat-answer.cached {
   color: unset;
 }
+.aista-chat-answer p img {
+  display: block;
+  width: calc(100% - 20px);
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
 .aista-references-list {
   padding-left: 0;
 }
