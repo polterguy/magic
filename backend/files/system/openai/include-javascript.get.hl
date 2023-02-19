@@ -42,7 +42,7 @@ if
    .lambda
       add:x:@.arguments
          .
-            markdown:bool:false
+            markdown:bool:true
 
 // Checking if custom JavaScript file exists.
 .result
