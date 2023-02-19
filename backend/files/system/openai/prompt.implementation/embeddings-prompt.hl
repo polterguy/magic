@@ -191,7 +191,7 @@ else
 
    // No prefix.
    set-value:x:@.context
-      .:"Answer following QUESTION with the given CONTEXT.\r\n\r\nQUESTION: "
+      .:"Answer the following QUESTION with the given CONTEXT while preserving Markdown.\r\n\r\nQUESTION: "
 
 // Removing prefix since we have manually create it.
 set-value:x:@.arguments/*/prefix
