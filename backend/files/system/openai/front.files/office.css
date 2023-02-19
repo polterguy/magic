@@ -133,6 +133,8 @@
   margin-top: 10px;
   margin-bottom: 10px;
   cursor: pointer;
+  border-radius: 5px;
+  box-shadow: 3px 3px 5px rgba(0,0,0,.2);
 }
 @keyframes aista-zoom-image {
   0% {
@@ -175,6 +177,8 @@
   animation-duration: .25s;
   animation-delay: .25s;
   animation-fill-mode: forwards;
+  border-radius: 5px;
+  box-shadow: 0 0 15px rgba(255,255,0,.5);
 }
 .aista-references-list {
   padding-left: 0;
