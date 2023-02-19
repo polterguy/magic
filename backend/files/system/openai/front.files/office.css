@@ -160,9 +160,11 @@
 @keyframes aista-drop-down {
   0% {
     margin-top: -1000px;
+    opacity: 0;
   }
   100% {
     margin-top: 25px;
+    opacity: 1;
   }
 }
 .aista-zoom-image img {
