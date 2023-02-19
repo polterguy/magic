@@ -26,7 +26,7 @@ export class MachineLearningEmbedUiComponent implements OnInit {
   buttonTxt: string = 'AI Chat';
   search: boolean = false;
   chat: boolean = true;
-  markdown: boolean = false;
+  markdown: boolean = true;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
