@@ -131,9 +131,11 @@
 }
 .aista-chat-answer ul {
   padding-left: 20px;
+  margin: 0;
 }
 .aista-chat-answer ul li {
   list-style-type: circle;
+  margin: 0;
 }
 @keyframes aista-zoom-image {
   0% {
