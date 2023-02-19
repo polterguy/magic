@@ -76,6 +76,10 @@
 }
 .aista-chat-msg-container a {
   text-decoration: none;
+  color: #5555ff; 
+}
+.aista-chat-msg-container a:visited {
+  color: #5555ff; 
 }
 @keyframes aista-chat-question-waiting {
   0% { margin-left:-10px; opacity: 0; color: rgb(128,128,0); }
