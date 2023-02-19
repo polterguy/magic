@@ -273,12 +273,27 @@ for-each:x:@html2lambda/*/html/*/body/**
                         strings.replace:x:@strings.replace
                            .:"  "
                            .:" "
-                        set-value:x:@.completion
-                           strings.concat
-                              get-value:x:@.completion
-                              strings.trim:x:@strings.replace
-                                 .:"\r\n\t "
-                              .:" "
+                        if
+                           eq
+                              get-name:x:@.dp/#/.
+                              .:a
+                           .lambda
+                              set-value:x:@.completion
+                                 strings.concat
+                                    get-value:x:@.completion
+                                    .:[
+                                    strings.trim:x:@strings.replace
+                                       .:"\r\n\t "
+                                    .:](
+                                    get-value:x:@.dp/#/./*/\@href
+                                    .:)
+                        else
+                           set-value:x:@.completion
+                              strings.concat
+                                 get-value:x:@.completion
+                                 strings.trim:x:@strings.replace
+                                    .:"\r\n\t "
+                                 .:" "
                set-value:x:@.completion
                   strings.trim:x:@.completion
                      .:" "
