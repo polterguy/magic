@@ -58,11 +58,11 @@
   border-radius: 4px;
   background:linear-gradient(#eaeaea, #d0d0d0);
   border: solid 1px #c7c7c7;
-  padding: 8px 12px;
+  padding: 3px 12px;
   font-size: 12px;
   color: #707070;
   position: absolute;
-  top: 10px;
+  top: 13px;
   right: 12px;
   cursor: pointer;
   background-size: 1px 50px;
