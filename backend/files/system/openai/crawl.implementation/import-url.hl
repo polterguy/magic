@@ -126,6 +126,42 @@ for-each:x:@html2lambda/*/html/*/body/**
                      .
                         completion:x:@strings.concat
 
+      // Checking if this is an image.
+      case:img
+
+         // Checking if we need to append code to existing completion or create new completion.
+         if
+            exists:x:@.snippets/0/-/*/completion
+            .lambda
+
+               // Appending to existing completion.
+               set-value:x:@.snippets/0/-/*/completion
+                  strings.concat
+                     get-value:x:@.snippets/0/-/*/completion
+                     .:"\r\n\r\n!["
+                     get-first-value
+                        get-value:x:@.dp/#/*/\@alt
+                        .:Image
+                     .:"]("
+                     get-value:x:@.dp/#/*/\@src
+                     .:")\r\n"
+
+         else
+
+            // Adding new completion to [.snippets] collection.
+            strings.concat
+               .:"!["
+               get-first-value
+                  get-value:x:@.dp/#/*/\@alt
+                  .:Image
+               .:"]("
+               get-value:x:@.dp/#/*/\@src
+               .:")\r\n"
+            unwrap:x:+/*/*
+            add:x:@.snippets/0/-
+               .
+                  completion:x:@strings.concat
+
       // Checking if this is a hyperlink.
       case:a
 
