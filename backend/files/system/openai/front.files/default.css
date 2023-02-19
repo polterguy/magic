@@ -114,6 +114,57 @@
 .aista-chat-answer.cached {
   color: unset;
 }
+.aista-chat-answer p img {
+  display: block;
+  width: calc(100% - 20px);
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+@keyframes aista-zoom-image {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.aista-zoom-image {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 11000;
+  background-color: rgba(0,0,0,.7);
+  opacity: 0;
+  animation-name: aista-zoom-image;
+  animation-duration: .25s;
+  animation-fill-mode: forwards;
+}
+@keyframes aista-drop-down {
+  0% {
+    margin-top: -1000px;
+  }
+  100% {
+    margin-top: 25px;
+  }
+}
+.aista-zoom-image img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: auto;
+  max-width: calc(100% - 50px);
+  max-height: calc(100% - 50px);
+  margin-top: -1000px;
+  animation-name: aista-drop-down;
+  animation-duration: .25s;
+  animation-delay: .25s;
+  animation-fill-mode: forwards;
+}
 .aista-references-list {
   padding-left: 0;
 }
