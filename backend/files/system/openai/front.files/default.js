@@ -135,6 +135,20 @@ function aista_show_chat_window() {
   }, 250)
 }
 
+function aista_zoom_image(img) {
+  const lb = document.createElement('div');
+  lb.id = 'aista_zoom_image';
+  lb.className = 'aista-zoom-image';
+  lb.addEventListener('click', () => {
+    window.document.getElementsByTagName('body')[0].removeChild(lb);
+  });
+  const im = document.createElement('img');
+  im.src = img.src;
+  im.alt = img.alt;
+  lb.appendChild(im);
+  window.document.getElementsByTagName('body')[0].appendChild(lb);
+}
+
 /*
  * Function that invokes our backend with the prompt to retrieve completion.
  */
@@ -183,8 +197,12 @@ function aista_invoke_prompt(msg, token) {
       const row = window.document.createElement('div');
       if (aistaChatChat) {
         if (aistaChatMarkdown) {
-          var converter = new showdown.Converter();
+          const converter = new showdown.Converter();
           row.innerHTML = converter.makeHtml(data.result);
+          const images = row.querySelectorAll('img');
+          for (const idxImg of images) {
+            idxImg.addEventListener('click', () => aista_zoom_image(idxImg));
+          }
         } else {
           row.innerText = data.result;
         }
