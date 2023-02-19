@@ -136,6 +136,12 @@
   border-radius: 5px;
   box-shadow: 3px 3px 5px rgba(0,0,0,.2);
 }
+.aista-chat-answer ul {
+  padding-left: 20px;
+}
+.aista-chat-answer ul li {
+  list-style-type: circle;
+}
 @keyframes aista-zoom-image {
   0% {
     opacity: 0;
