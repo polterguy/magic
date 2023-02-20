@@ -380,6 +380,11 @@ optin verification and potential referential integrity issues.`;
             url: '/hyper-ide',
             exact: false,
           },
+          {
+            name: 'ChatGPT Chatbot Wizard',
+            url: '/chatbot-wizard',
+            exact: false,
+          },
         ],
       },
       {
