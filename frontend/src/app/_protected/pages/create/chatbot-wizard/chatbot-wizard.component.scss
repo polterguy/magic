@@ -1,0 +1,42 @@
+
+/*
+ * Copyright (c) Aista Ltd, 2021 - 2023 info@aista.com, all rights reserved.
+ */
+
+ .messages {
+  background-color: rgb(0,0,0);
+  padding: 25px 15px;
+  border-radius: 5px;
+  color: #f0f0f0;
+  line-height: 1.1rem;
+  position: relative;
+  max-height: 280px;
+  overflow: auto;
+
+  @keyframes fade-in {
+    0% {
+      margin-left: -300px;
+      opacity: 0;
+    }
+    100% {
+      margin-left: 0;
+      opacity: 1;
+    }
+  }
+
+  .msg {
+    opacity: 0;
+    animation-name: fade-in;
+    animation-duration: .25s;
+    animation-fill-mode: forwards;
+    animation-timing-function: ease-in-out;
+  }
+
+  .success {
+    color: rgb(0,255,0);
+  }
+
+  .error {
+    color: rgb(255,0,0);
+  }
+}

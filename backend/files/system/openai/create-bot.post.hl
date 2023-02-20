@@ -12,17 +12,99 @@ auth.ticket.verify:root
 validators.mandatory:x:@.arguments/*/url
 validators.url:x:@.arguments/*/url
 
-// Informing client that we've successfully started crawling.
-strings.concat
-   .:"Crawling website "
-   get-value:x:@.arguments/*/url
-unwrap:x:+/*/args/**
-sockets.signal:magic.backend.chatbot
-   roles:root
-   args
-      message:x:@strings.concat
-      type:info
+// Doing some basic logging.
+log.info:Crawling URL generating OpenAI training snippets
+   url:x:@.arguments/*/url
+   type:x:@.arguments/*/type
+   delay:x:@.arguments/*/delay
+   max:x:@.arguments/*/max
+   threshold:x:@.arguments/*/threshold
 
-// Returning success to caller.
-return
-   result:success
+// Making sure we trap exceptions.
+try
+
+   // Informing client that we've successfully started crawling.
+   strings.concat
+      .:"Crawling website "
+      get-value:x:@.arguments/*/url
+   unwrap:x:+/*/args/**
+   sockets.signal:magic.backend.chatbot
+      roles:root
+      args
+         message:x:@strings.concat
+         type:info
+
+   // Figuring out what to name our type.
+   .type
+   set-value:x:@.type
+      strings.replace:x:@.arguments/*/url
+         .:"http://"
+         .:
+   set-value:x:@.type
+      strings.replace:x:@.type
+         .:"https://"
+         .:
+   set-value:x:@.type
+      strings.replace:x:@.type
+         .:"."
+         .:_
+
+   // Creating our type
+   data.connect:[generic|magic]
+
+      // Checking if type already exists.
+      data.read
+         table:ml_types
+         columns
+            type
+         where
+            and
+               type.eq:x:@.type
+      if
+         exists:x:@data.read/*
+         .lambda
+            throw:Model already exists!
+
+      // Creating our type
+      data.create
+         table:ml_types
+         values
+            type:x:@.type
+            model:text-davinci-003
+            max_tokens:int:2000
+            temperature:decimal:0.1
+            recaptcha:decimal:0.3
+            supervised:int:1
+            cached:int:0
+            use_embeddings:int:1
+            threshold:decimal:0.75
+            vector_model:text-embedding-ada-002
+
+   // Invoking slot doing the heavy lifting
+   add:x:./*/signal
+      get-nodes:x:@.arguments/*
+   unwrap:x:+/*
+   signal:magic.ai.crawl-site
+      delay:int:1000
+      max:int:500
+      threshold:int:150
+      type:x:@.type
+
+   // Returning success to caller.
+   return
+      result:success
+
+.catch
+
+   // Signaling frontend.
+   unwrap:x:+/*/args/**
+   sockets.signal:magic.backend.chatbot
+      roles:root
+      args
+         message:x:@.arguments/*/message
+         type:error
+
+   // Returning failure to caller.
+   response.status.set:400
+   return
+      result:failure

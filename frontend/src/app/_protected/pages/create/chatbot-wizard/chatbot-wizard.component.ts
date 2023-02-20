@@ -29,6 +29,8 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
   isSaving: boolean = false;
   url: string = '';
   crawling: boolean = false;
+  messages: any[] = [];
+  doneCreatingBot: boolean = false;
 
   constructor(
     private openAIService: OpenAIService,
@@ -130,8 +132,9 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
 
     this.crawling = true;
     this.generalService.showLoading();
+    this.doneCreatingBot = false;
+    this.messages = [];
 
-    // Creating socket channel
     let builder = new HubConnectionBuilder();
     this.hubConnection = builder.withUrl(this.backendService.active.url + '/sockets', {
       accessTokenFactory: () => this.backendService.active.token.token,
@@ -140,11 +143,27 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
     }).build();
 
     this.hubConnection.on('magic.backend.chatbot', (args) => {
+
       args = JSON.parse(args);
-      console.log(args);
+      this.messages.push(args);
+      this.doneCreatingBot = args.type === 'success' || args.type === 'error';
+
+      if (args.type === 'success') {
+
+        this.generalService.showFeedback('Done creating bot', 'successMessage');
+
+      } else if (args.type === 'error') {
+
+        this.generalService.showFeedback('Something went wrong when creating your bot', 'errorMessage');
+      }
+      setTimeout(() => {
+        const domEl = document.getElementById('m_' + (this.messages.length - 1));
+        domEl.scrollIntoView()
+      }, 50);
     });
 
     this.hubConnection.start().then(() => {
+
       this.openAIService.createBot(this.url).subscribe({
         next: () => {
   
@@ -153,12 +172,17 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
         error: () => {
   
           this.generalService.hideLoading();
-          this.generalService.showFeedback('Something went wrong as we tried to check if OpenAI API key is configured', 'errorMessage');
-          this.crawling = false;
+          this.generalService.showFeedback('Something went wrong as we tried to create your bot', 'errorMessage');
+          this.doneCreatingBot = true;
           this.hubConnection.stop();
           this.hubConnection = null;
         }
       });
     });
+  }
+
+  closeBotCreator() {
+
+    this.crawling = false;
   }
 }
