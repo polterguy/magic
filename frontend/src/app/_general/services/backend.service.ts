@@ -361,10 +361,31 @@ export class BackendService {
     });
   }
 
+  public setReCaptchaKeySecret(key: string, secret: string) {
+
+    return this.httpClient.post<MagicResponse>(
+      this.active.url +
+      '/magic/system/auth/recaptcha-secret-key', {
+        key,
+        secret,
+      });
+  }
+
   /**
-   * retrieving recaptcha, if existing
+   * Returns both the reCAPTCHA secret and site key.
+   */
+  public getReCaptchaKeySecret() {
+
+    return this.httpClient.get<any>(
+      this.active.url +
+      '/magic/system/auth/recaptcha-secret-key');
+  }
+
+  /**
+   * Retrieving recaptcha, if existing.
    */
   public getRecaptchaKey() {
+
     this.httpClient.get<MagicResponse>(
       environment.bazarUrl +
       '/magic/system/auth/recaptcha-key').subscribe({

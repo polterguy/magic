@@ -1,5 +1,5 @@
 
-// Returns true if auto-auth is enabled.
+// Returns reCAPTCHA key.
 .description:This endpoint returns the reCAPTCHA key if registrations etc requires a reCAPTCHA token, otherwise it returns null or empty string.
 .type:public
 
