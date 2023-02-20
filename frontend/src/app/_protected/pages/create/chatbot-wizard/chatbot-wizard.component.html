@@ -184,5 +184,25 @@
 
     </form>
 
+    <div class="row" *ngIf="crawling" class="mt-4 messages">
+
+      <div
+        *ngFor="let idx of messages; index as i"
+        [class]="'msg ' + idx.type"
+        [id]="'m_' + i">{{idx.message}}</div>
+
+    </div>
+
+    <div class="text-end mt-2">
+
+      <button
+        (click)="closeBotCreator()"
+        [disabled]="!doneCreatingBot"
+        mat-button>
+        Close
+      </button>
+
+    </div>
+
   </mat-card-content>
 </mat-card>
