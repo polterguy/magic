@@ -64,6 +64,10 @@ const routes: Routes = [
         loadChildren: () => import('./_protected/pages/create/hyper-ide/module/ide.module').then(m => m.IdeModule)
       },
       {
+        path: 'chatbot-wizard',
+        loadChildren: () => import('./_protected/pages/create/chatbot-wizard/_module/chatbot-wizard.module').then(m => m.ChatbotWizardModule)
+      },
+      {
         path: 'tasks',
         loadChildren: () => import('./_protected/pages/manage/tasks/_module/task.module').then(m => m.TaskModule)
       },
