@@ -4,6 +4,8 @@
  */
 
 import { Component, OnInit } from '@angular/core';
+import { GeneralService } from 'src/app/_general/services/general.service';
+import { OpenAIService } from 'src/app/_general/services/openai.service';
 
 /**
  * Helper wizard component to create a chatbot rapidly, guiding the user through all
@@ -16,8 +18,26 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ChatbotWizardComponent implements OnInit {
 
-  constructor() { }
+  public apiKey: string = null;
+
+  constructor(
+    private openAIService: OpenAIService,
+    private generalService: GeneralService) { }
 
   ngOnInit() {
+
+    this.generalService.showLoading();
+    this.openAIService.key().subscribe({
+      next: (result: any) => {
+
+        this.apiKey = result.result;
+        this.generalService.hideLoading();
+      },
+      error: () => {
+
+        this.generalService.hideLoading();
+        this.generalService.showFeedback('Something went wrong as we tried to check if OpenAI API key is configured', 'errorMessage');
+      }
+    });
   }
 }

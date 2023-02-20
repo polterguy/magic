@@ -381,7 +381,7 @@ optin verification and potential referential integrity issues.`;
             exact: false,
           },
           {
-            name: 'ChatGPT Chatbot Wizard',
+            name: 'Chatbot Wizard',
             url: '/chatbot-wizard',
             exact: false,
           },
