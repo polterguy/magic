@@ -196,6 +196,13 @@
     <div class="text-end mt-2">
 
       <button
+        (click)="embed()"
+        [disabled]="!doneCreatingBot"
+        mat-button>
+        Embed
+      </button>
+
+      <button
         (click)="closeBotCreator()"
         [disabled]="!doneCreatingBot"
         mat-button>
