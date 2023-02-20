@@ -83,12 +83,18 @@ try
    // Invoking slot doing the heavy lifting
    add:x:./*/signal
       get-nodes:x:@.arguments/*
-   unwrap:x:+/*
+   unwrap:x:./*/signal/=magic.ai.crawl-site/*/type
+   unwrap:x:./*/signal/=magic.ai.crawl-site/*/.onafter/*/.type
    signal:magic.ai.crawl-site
       delay:int:1000
       max:int:500
       threshold:int:150
       type:x:@.type
+      .onafter
+         .type:x:@.type
+         unwrap:x:+/*
+         signal:magic.ai.vectorise
+            type:x:@.type
 
    // Returning success to caller.
    return
