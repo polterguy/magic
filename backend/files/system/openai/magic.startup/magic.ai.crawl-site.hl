@@ -192,7 +192,7 @@ slots.create:magic.ai.crawl-site
                   roles:root
                   args
                      message:x:@strings.concat
-                     type:success
+                     type:info
 
          else
 
@@ -218,6 +218,12 @@ slots.create:magic.ai.crawl-site
          log.info:OpenAI training data successfully created
             url:x:@.arguments/*/url
             type:x:@.arguments/*/type
+
+         // Checking if caller wants us to execute some lambda object once we're done.
+         if
+            exists:x:@.arguments/*/.onafter
+            .lambda
+               eval:x:@.arguments/*/.onafter
 
       .catch
 

@@ -1,0 +1,176 @@
+
+/*
+ * Vectorises the specified model.
+ */
+slots.create:magic.ai.vectorise
+
+   // Making sure we log exceptions.
+   try
+
+      // Getting OpenAI API token from configuration.
+      .token
+      set-value:x:@.token
+         strings.concat
+            .:"Bearer "
+            config.get:"magic:openai:key"
+
+      // Connecting to database.
+      data.connect:[generic|magic]
+
+         // Selecting vector model from database.
+         data.read
+            table:ml_types
+            columns
+               vector_model
+            where
+               and
+                  type.eq:x:@.arguments/*/type
+
+         // To avoid exhausting server's memory, we iterate 50 snippets at the time.
+         .continue:bool:true
+         .failed:int:0
+         .count:int:0
+         while:x:@.continue
+
+            // Selecting 50 snippets from type.
+            data.read
+               table:ml_training_snippets
+               columns
+                  id
+                  prompt
+                  completion
+               where
+                  and
+                     embedding.eq
+                     type.eq:x:@.arguments/*/type
+               limit:50
+               order:created
+
+            // Looping through all records returned above.
+            for-each:x:@data.read/*
+
+               // Signaling frontend.
+               strings.concat
+                  .:"Vectorising "
+                  get-value:x:@.dp/#/*/prompt
+               unwrap:x:+/*/args/*/message
+               sockets.signal:magic.backend.chatbot
+                  roles:root
+                  args
+                     message:x:@strings.concat
+                     type:info
+
+               // Buffer for what we're creating embeddings from.
+               .embedding
+               set-value:x:@.embedding
+                  strings.concat
+                     get-value:x:@.dp/#/*/prompt
+                     .:"\r\n\r\n"
+                     get-value:x:@.dp/#/*/completion
+
+               // Making sure we don't try to create embedding if it would exhaust the number of tokens for model.
+               if
+                  lt
+                     strings.length:x:@.embedding
+                     .:int:30000
+                  .lambda
+
+                     // Creating an HTTP POST request towards OpenAI, now decorated.
+                     http.post:"https://api.openai.com/v1/embeddings"
+                        headers
+                           Authorization:x:@.token
+                           Content-Type:application/json
+                        payload
+                           model:x:@data.read/@data.read/*/*/vector_model
+                           input:x:@.embedding
+                        convert:true
+
+                     // Sanity checking above invocation.
+                     if
+                        not
+                           and
+                              mte:x:@http.post
+                                 .:int:200
+                              lt:x:@http.post
+                                 .:int:300
+                        .lambda
+
+                           // Oops, error - Logging error and returning status 500 to caller.
+                           lambda2hyper:x:@http.post
+                           log.error:Something went wrong while invoking OpenAI
+                              error:x:@http.post/*/content/*/error/*/message
+                           sockets.signal:magic.backend.message
+                              roles:root
+                              args
+                                 message:Could not create embeddings for model
+                                 type:error
+                           throw:Could not create embeddings for model
+
+                     // Inserting embeddings for training snippet.
+                     strings.join:x:@http.post/*/content/*/data/0/*/embedding/*
+                        .:,
+                     data.update
+                        table:ml_training_snippets
+                        values
+                           embedding:x:@strings.join
+                        where
+                           and
+                              id.eq:x:@.dp/#/*/id
+
+                     // Incrementing count.
+                     math.increment:x:@.count
+
+               else
+
+                  // Making sure we count number of snippets that failed.
+                  math.increment:x:@.failed
+
+
+            // Counting how many records we currently processed.
+            get-count:x:@data.read/*
+
+            // Checking if we're done.
+            if
+               lt:x:@get-count
+                  .:int:50
+               .lambda
+                  set-value:x:@.continue
+                     .:bool:false
+
+         // Signaling frontend.
+         sockets.signal:magic.backend.message
+            roles:root
+            args
+               message:Done creating embeddings of your model
+               type:success
+
+         // Signaling frontend.
+         strings.concat
+            .:"Done vectorising model "
+            get-value:x:@.arguments/*/type
+            .:" containing "
+            get-value:x:@.count
+            .:" training snippets"
+         unwrap:x:+/*/args/*/message
+         sockets.signal:magic.backend.chatbot
+            roles:root
+            args
+               message:x:@strings.concat
+               type:info
+         sockets.signal:magic.backend.chatbot
+            roles:root
+            args
+               message:Your machine learning model is finished
+               type:success
+
+         // Basic logging.
+         log.info:Done with creating embeddings of model
+            type:x:@.arguments/*/type
+            count:x:@.count
+            failed:x:@.failed
+
+   .catch
+
+      // Oops ...!!
+      log.error:x:@.arguments/*/message
+         type:x:@.arguments/*/type
