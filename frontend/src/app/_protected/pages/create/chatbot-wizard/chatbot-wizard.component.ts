@@ -3,10 +3,11 @@
  * Copyright (c) Aista Ltd, 2021 - 2023 info@aista.com, all rights reserved.
  */
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { BackendService } from 'src/app/_general/services/backend.service';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { OpenAIService } from 'src/app/_general/services/openai.service';
+import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
 
 /**
  * Helper wizard component to create a chatbot rapidly, guiding the user through all
@@ -17,8 +18,9 @@ import { OpenAIService } from 'src/app/_general/services/openai.service';
   templateUrl: './chatbot-wizard.component.html',
   styleUrls: ['./chatbot-wizard.component.scss']
 })
-export class ChatbotWizardComponent implements OnInit {
+export class ChatbotWizardComponent implements OnInit, OnDestroy {
 
+  hubConnection: HubConnection = null;
   isLoading: boolean = true;
   apiKey: string = '';
   siteKey: string = '';
@@ -26,6 +28,7 @@ export class ChatbotWizardComponent implements OnInit {
   configured: boolean = false;
   isSaving: boolean = false;
   url: string = '';
+  crawling: boolean = false;
 
   constructor(
     private openAIService: OpenAIService,
@@ -68,6 +71,11 @@ export class ChatbotWizardComponent implements OnInit {
     });
   }
 
+  ngOnDestroy() {
+
+    this.hubConnection?.stop();
+  }
+
   configurationGood() {
 
     return this.apiKey?.length > 0 && this.siteKey?.length > 0 && this.secret?.length > 0;
@@ -80,7 +88,7 @@ export class ChatbotWizardComponent implements OnInit {
       return false;
     }
     const splits = this.url.split('://');
-    if (splits.length === 0 || splits[1].length < 5 || splits[1].indexOf('.') === -1) {
+    if (splits.length === 0 || splits[1].length < 5 || splits[1].indexOf('.') === -1 || splits[1].indexOf('/') !== -1) {
       return false;
     }
     return true;
@@ -120,6 +128,37 @@ export class ChatbotWizardComponent implements OnInit {
 
   createBot() {
 
-    console.log(this.url);
+    this.crawling = true;
+    this.generalService.showLoading();
+
+    // Creating socket channel
+    let builder = new HubConnectionBuilder();
+    this.hubConnection = builder.withUrl(this.backendService.active.url + '/sockets', {
+      accessTokenFactory: () => this.backendService.active.token.token,
+      skipNegotiation: true,
+      transport: HttpTransportType.WebSockets,
+    }).build();
+
+    this.hubConnection.on('magic.backend.chatbot', (args) => {
+      args = JSON.parse(args);
+      console.log(args);
+    });
+
+    this.hubConnection.start().then(() => {
+      this.openAIService.createBot(this.url).subscribe({
+        next: () => {
+  
+          this.generalService.hideLoading();
+        },
+        error: () => {
+  
+          this.generalService.hideLoading();
+          this.generalService.showFeedback('Something went wrong as we tried to check if OpenAI API key is configured', 'errorMessage');
+          this.crawling = false;
+          this.hubConnection.stop();
+          this.hubConnection = null;
+        }
+      });
+    });
   }
 }

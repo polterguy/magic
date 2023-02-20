@@ -147,4 +147,14 @@ export class OpenAIService {
       id,
     });
   }
+
+  /**
+   * Creates a new bot 100% automatically from the specified URL.
+   */
+  createBot(url: string) {
+
+    return this.httpService.post<any>('/magic/system/openai/create-bot', {
+      url,
+    });
+  }
 }

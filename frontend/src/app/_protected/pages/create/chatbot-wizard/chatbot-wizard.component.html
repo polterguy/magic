@@ -9,20 +9,9 @@
         <h3 class="fw-bold">Chatbot Wizard Configuration</h3>
 
         <p class="text-muted mb-4">
-          Before you can create your chatbot you will need an OpenAI API account, and a Google reCAPTCHA account.
-          If you don't have such account, you can click the links below.
+          Before you can create your chatbot you will need an OpenAI API account and a Google reCAPTCHA account.
+          If you don't have such accounts, you can click the links below.
         </p>
-
-        <a
-          mat-flat-button
-          target="_blank"
-          href="https://platform.openai.com/account/api-keys">Create OpenAI API key</a>
-
-        <a
-          mat-flat-button
-          class="ms-3"
-          target="_blank"
-          href="https://www.google.com/recaptcha">Create reCAPTCHA account</a>
 
       </div>
 
@@ -125,9 +114,20 @@
 
       <div class="col-12 text-end mt-3">
 
+        <a
+          mat-flat-button
+          target="_blank"
+          href="https://platform.openai.com/account/api-keys">Create OpenAI API key</a>
+
+        <a
+          mat-flat-button
+          class="ms-3"
+          target="_blank"
+          href="https://www.google.com/recaptcha">Create reCAPTCHA account</a>
+
         <button
           mat-flat-button
-          class="px-5"
+          class="px-5 ms-3"
           [disabled]="isSaving || !configurationGood()"
           type="submit">
           Save
@@ -166,14 +166,14 @@
               type="text"
               placeholder="Website URL"
               name="url"
-              [disabled]="isSaving"
+              [disabled]="crawling"
               [(ngModel)]="url"
               autocomplete="off">
           </mat-form-field>
 
           <button
             mat-flat-button
-            [disabled]="!goodWebsite()"
+            [disabled]="!goodWebsite() || crawling"
             class="ms-3 px-5">
             Start
           </button>
