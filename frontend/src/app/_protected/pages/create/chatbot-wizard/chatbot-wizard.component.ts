@@ -196,6 +196,8 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
         maxWidth: '550px',
         data: {
           type: this.model,
+          noClose: true,
+          search: true,
         }
       });
   }

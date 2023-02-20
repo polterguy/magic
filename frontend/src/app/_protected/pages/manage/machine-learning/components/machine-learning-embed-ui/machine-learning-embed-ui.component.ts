@@ -40,6 +40,10 @@ export class MachineLearningEmbedUiComponent implements OnInit {
 
   ngOnInit() {
 
+    if (this.data.search === true) {
+      this.search = true;
+    }
+
     // Retrieving all themes from the backend.
     this.openAiService.themes().subscribe({
       next: (themes: string[]) => {
@@ -64,6 +68,8 @@ export class MachineLearningEmbedUiComponent implements OnInit {
 
     this.clipboard.copy(`<script src="${this.backendService.active.url}/magic/system/openai/include-javascript?markdown=${this.markdown ? 'true' : 'false'}&search=${this.search ? 'true' : 'false'}&chat=${this.chat ? 'true' : 'false'}&css=${encodeURIComponent(this.theme)}&file=default&type=${encodeURIComponent(this.type)}&header=${encodeURIComponent(this.header)}&button=${encodeURIComponent(this.buttonTxt)}" defer></script>`);
     this.generalService.showFeedback('HTML to include your bot can be found on your clipboard', 'successMessage');
-    this.dialogRef.close();
+    if (this.data.noClose !== true) {
+      this.dialogRef.close();
+    }
   }
 }
