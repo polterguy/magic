@@ -2,14 +2,154 @@
 <mat-card>
   <mat-card-content>
 
-    <div class="row">
+    <form class="row" (ngSubmit)="saveConfiguration()" *ngIf="!configured">
 
-      <div class="col-12">
-        <h3 class="fw-bold">Chatbot Wizard</h3>
-        <p class="text-muted">Create a ChatGPT website chatbot in 5 minutes</p>
+      <div class="col-12 mb-5">
+
+        <h3 class="fw-bold">Chatbot Wizard Configuration</h3>
+
+        <p class="text-muted">
+          Before you can create your chatbot you will need an OpenAI API account, and a Google reCAPTCHA account.
+          If you don't have such account, you can click the links below.
+        </p>
+
+        <a
+          mat-button
+          class="ps-0"
+          target="_blank"
+          href="https://platform.openai.com/account/api-keys">Create OpenAI API key</a>
+
+        <a
+          mat-button
+          target="_blank"
+          href="https://www.google.com/recaptcha">Create reCAPTCHA account</a>
+
       </div>
 
-    </div>
+      <div class="col-md-4 col-12">
+
+        <p class="text-muted pb-1">OpenAI API key</p>
+
+        <app-loading-skeleton
+          *ngIf="isLoading"
+          amount="1"
+          colClass="col-12"
+          blockHeight="45px"
+          disabled="isLoading"
+          hasShadow="false">
+        </app-loading-skeleton>
+
+        <mat-form-field *ngIf="!isLoading" class="w-100 standalone-field mb-lg-0 mb-2">
+          <span
+            matPrefix
+            matTooltip="OpenAI API key"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>key</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            type="text"
+            placeholder="OpenAI API key"
+            name="apiKey"
+            [disabled]="isSaving"
+            [(ngModel)]="apiKey"
+            autocomplete="off">
+        </mat-form-field>
+
+      </div>
+
+      <div class="col-md-4 col-12">
+
+        <p class="text-muted pb-1">reCAPTCHA Site Key</p>
+
+        <app-loading-skeleton
+          *ngIf="isLoading"
+          amount="1"
+          colClass="col-12"
+          blockHeight="45px"
+          hasShadow="false">
+        </app-loading-skeleton>
+
+        <mat-form-field *ngIf="!isLoading" class="w-100 standalone-field mb-lg-0 mb-2">
+          <span
+            matPrefix
+            matTooltip="reCAPTCHA Site Key"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>key</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            type="text"
+            placeholder="reCAPTCHA Site Key"
+            name="siteKey"
+            [disabled]="isSaving"
+            [(ngModel)]="siteKey"
+            autocomplete="off">
+        </mat-form-field>
+
+      </div>
+
+      <div class="col-md-4 col-12">
+
+        <p class="text-muted pb-1">reCAPTCHA Secret</p>
+
+        <app-loading-skeleton
+          *ngIf="isLoading"
+          amount="1"
+          colClass="col-12"
+          blockHeight="45px"
+          hasShadow="false">
+        </app-loading-skeleton>
+
+        <mat-form-field *ngIf="!isLoading" class="w-100 standalone-field mb-lg-0 mb-2">
+          <span
+            matPrefix
+            matTooltip="reCAPTCHA Secret"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>key</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            type="text"
+            placeholder="reCAPTCHA Secret"
+            name="secret"
+            [disabled]="isSaving"
+            [(ngModel)]="secret"
+            autocomplete="off">
+        </mat-form-field>
+
+      </div>
+
+      <div class="col-12 text-end mt-3">
+
+        <button
+          mat-flat-button
+          class="px-5"
+          [disabled]="isSaving"
+          type="submit">
+          Save
+        </button>
+
+      </div>
+
+    </form>
+
+    <form class="row" (ngSubmit)="createBot()" *ngIf="configured">
+
+      <div class="col-12 mb-5">
+
+        <h3 class="fw-bold">Chatbot Wizard</h3>
+
+        <p class="text-muted">
+          What website do you wish to generate training data from?
+        </p>
+
+      </div>
+
+    </form>
 
   </mat-card-content>
 </mat-card>
