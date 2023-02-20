@@ -40,6 +40,8 @@ data.connect:[generic|magic]
 http.get:x:@.arguments/*/url
    headers
       User-Agent:Aista-MachineLearning-Spider
+      Accept:text/html
+      Accept-Encoding:identity
 
 // Sanity checking above invocation.
 if
