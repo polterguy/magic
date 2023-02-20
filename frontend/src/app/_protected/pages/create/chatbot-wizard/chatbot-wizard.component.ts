@@ -8,6 +8,9 @@ import { BackendService } from 'src/app/_general/services/backend.service';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { OpenAIService } from 'src/app/_general/services/openai.service';
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
+import { MagicResponse } from 'src/app/_general/models/magic-response.model';
+import { MachineLearningEmbedUiComponent } from '../../manage/machine-learning/components/machine-learning-embed-ui/machine-learning-embed-ui.component';
+import { MatDialog } from '@angular/material/dialog';
 
 /**
  * Helper wizard component to create a chatbot rapidly, guiding the user through all
@@ -31,8 +34,10 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
   crawling: boolean = false;
   messages: any[] = [];
   doneCreatingBot: boolean = false;
+  model: string = '';
 
   constructor(
+    private dialog: MatDialog,
     private openAIService: OpenAIService,
     private backendService: BackendService,
     private generalService: GeneralService) { }
@@ -151,6 +156,7 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
       if (args.type === 'success') {
 
         this.generalService.showFeedback('Done creating bot', 'successMessage');
+        this.embed();
 
       } else if (args.type === 'error') {
 
@@ -165,8 +171,9 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
     this.hubConnection.start().then(() => {
 
       this.openAIService.createBot(this.url).subscribe({
-        next: () => {
+        next: (result: MagicResponse) => {
   
+          this.model = result.result;
           this.generalService.hideLoading();
         },
         error: () => {
@@ -179,6 +186,18 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
         }
       });
     });
+  }
+
+  embed() {
+
+    this.dialog
+      .open(MachineLearningEmbedUiComponent, {
+        width: '80vw',
+        maxWidth: '550px',
+        data: {
+          type: this.model,
+        }
+      });
   }
 
   closeBotCreator() {

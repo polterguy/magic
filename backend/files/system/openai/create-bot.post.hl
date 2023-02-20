@@ -97,8 +97,9 @@ try
             type:x:@.type
 
    // Returning success to caller.
+   unwrap:x:+/*
    return
-      result:success
+      result:x:@.type
 
 .catch
 
