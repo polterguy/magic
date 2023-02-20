@@ -291,7 +291,7 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
 
         if (res) {
           const database = this.databases.find((item: any) => item?.details?.module_name === module_name);
-          if (this.configService.versionCompare(appVersion, res[0].version) === -1) {
+          if (database && this.configService.versionCompare(appVersion, res[0].version) === -1) {
             database.hasUpdate = true;
             database.newVersion = res[0].version;
           }

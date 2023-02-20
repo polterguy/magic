@@ -116,7 +116,7 @@ export class PluginsComponent implements OnInit {
    */
   private versionComparision(module_name: string, appVersion: string, lastestVersion: string) {
     const plugins = this.plugins.find((item: any) => item?.details?.module_name === module_name);
-    if (this.configService.versionCompare(appVersion, lastestVersion) === -1) {
+    if (plugins && this.configService.versionCompare(appVersion, lastestVersion) === -1) {
       plugins.hasUpdate = true;
       plugins.newVersion = lastestVersion;
     }
