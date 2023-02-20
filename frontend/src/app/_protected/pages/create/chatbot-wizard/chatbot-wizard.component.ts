@@ -20,11 +20,12 @@ import { OpenAIService } from 'src/app/_general/services/openai.service';
 export class ChatbotWizardComponent implements OnInit {
 
   isLoading: boolean = true;
-  apiKey: string = null;
-  siteKey: string = null;
-  secret: string = null;
+  apiKey: string = '';
+  siteKey: string = '';
+  secret: string = '';
   configured: boolean = false;
   isSaving: boolean = false;
+  url: string = '';
 
   constructor(
     private openAIService: OpenAIService,
@@ -67,6 +68,24 @@ export class ChatbotWizardComponent implements OnInit {
     });
   }
 
+  configurationGood() {
+
+    return this.apiKey?.length > 0 && this.siteKey?.length > 0 && this.secret?.length > 0;
+  }
+
+  goodWebsite() {
+
+    const good = this.url.length > 0 && (this.url.startsWith('http://') || this.url.startsWith('https://'));
+    if (!good) {
+      return false;
+    }
+    const splits = this.url.split('://');
+    if (splits.length === 0 || splits[1].length < 5 || splits[1].indexOf('.') === -1) {
+      return false;
+    }
+    return true;
+  }
+
   saveConfiguration() {
 
     this.isSaving = true;
@@ -101,6 +120,6 @@ export class ChatbotWizardComponent implements OnInit {
 
   createBot() {
 
-    console.log('create bot');
+    console.log(this.url);
   }
 }
