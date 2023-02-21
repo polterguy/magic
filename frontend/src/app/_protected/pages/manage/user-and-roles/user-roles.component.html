@@ -37,6 +37,7 @@
 
           <!-- Users in the system -->
           <ng-template #dataLoadedUsers>
+
             <app-shared-top-bar
               tab="user"
               [rolesList]="roles | async"
@@ -48,6 +49,7 @@
               [rolesList]="roles | async"
               (getUsersList)="getUsersList($event)">
             </app-users-list>
+
           </ng-template>
 
         </ng-template>

@@ -35,7 +35,6 @@ export class NewUserDialogComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private cdr: ChangeDetectorRef,
     private userService: UserService,
     private roleService: RoleService,
     private dialogRef: MatDialogRef<NewUserDialogComponent>,
@@ -47,66 +46,80 @@ export class NewUserDialogComponent implements OnInit {
     email: [''],
     name: [''],
     role: []
-  })
+  });
 
   ngOnInit() {
 
+    this.generalService.showLoading();
     this.roleService.list('?limit=-1').subscribe({
       next: (roles: Role[]) => {
+
+        this.generalService.hideLoading();
         this.data = roles;
         const guestExisting: any = this.data.find((item: Role) => item.name === 'guest');
         guestExisting ? this.userForm.patchValue({ role: ['guest'] }) : this.userForm.patchValue({ role: [this.data[0].name] })
-        this.cdr.detectChanges();
       }
     });
   }
 
   createUser() {
 
-    if (this.userForm.valid) {
-      this.isLoading = true;
-      this.userService.create(this.userForm.value.username, this.userForm.value.password).subscribe({
-        next: (res: any) => {
-          if (res) {
+    if (!this.userForm.valid) {
 
-            const promises: Promise<any>[] = [];
-            if (this.userForm.value.role.length) {
-              for (const role of this.userForm.value.role) {
-                promises.push(this.addRole(role));
-              }
+      this.generalService.showFeedback('Username and password are required.', 'errorMessage');
+      return;
+    }
+
+    this.isLoading = true;
+    this.generalService.showLoading();
+    this.userService.create(this.userForm.value.username, this.userForm.value.password).subscribe({
+      next: (res: any) => {
+
+        if (res) {
+
+          const promises: Promise<any>[] = [];
+          if (this.userForm.value.role.length) {
+            for (const role of this.userForm.value.role) {
+              promises.push(this.addRole(role));
             }
-            if (this.userForm.value.email) {
-              promises.push(this.addEmail());
-            }
-            if (this.userForm.value.name) {
-              promises.push(this.addName());
-            }
-            if (promises.length === 0) {
+          }
+          if (this.userForm.value.email) {
+            promises.push(this.addEmail());
+          }
+          if (this.userForm.value.name) {
+            promises.push(this.addName());
+          }
+          if (promises.length === 0) {
+
+            this.generalService.showFeedback('User is created successfully', 'successMessage');
+            this.dialogRef.close('done');
+            this.isLoading = false;
+            this.generalService.hideLoading();
+            return;
+          }
+          forkJoin(promises).subscribe({
+            next: () => {
+
               this.generalService.showFeedback('User is created successfully', 'successMessage');
               this.dialogRef.close('done');
               this.isLoading = false;
-              return;
+              this.generalService.hideLoading();
+            },
+            error: () => {
+
+              this.generalService.hideLoading();
+              this.generalService.showFeedback('Something went wrong', 'errorMessage', 'Ok');
             }
-            forkJoin(promises).subscribe({
-              next: () => {
-                this.generalService.showFeedback('User is created successfully', 'successMessage');
-                this.dialogRef.close('done');
-                this.isLoading = false;
-              },
-              error: () => {
-                this.generalService.showFeedback('Something went wrong', 'errorMessage', 'Ok');
-              }
-            });
-          }
-        },
-        error: () => {
-          this.isLoading = false;
-          this.generalService.showFeedback('Username is already existing.', 'errorMessage', 'Ok', 4000);
+          });
         }
-      })
-    } else {
-      this.generalService.showFeedback('Username and password are required.', 'errorMessage');
-    }
+      },
+      error: () => {
+
+        this.generalService.hideLoading();
+        this.isLoading = false;
+        this.generalService.showFeedback('Username is already existing.', 'errorMessage', 'Ok', 4000);
+      }
+    });
   }
 
   /*
