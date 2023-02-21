@@ -3,7 +3,7 @@
  * Default CSS style for OpenAI chat inclusion.
  */
 .grecaptcha-badge {
-  opacity:0;
+  opacity:0 !important;
 }
 .aista-chat-btn {
   position: fixed;
