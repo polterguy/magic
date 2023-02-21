@@ -4,7 +4,7 @@
  */
 
 import { PlatformLocation } from '@angular/common';
-import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { User } from 'src/app/_protected/pages/manage/user-and-roles/_models/user.model';
 import { BackendService } from 'src/app/_general/services/backend.service';
 import { AuthenticateResponse } from '../_models/authenticate-response.model';
@@ -28,15 +28,18 @@ export class UsersListComponent {
 
   @Input() usersList: any = [];
   @Input() rolesList: any = [];
-
   @Output() getUsersList = new EventEmitter<any>();
 
-  displayedColumns: string[] = ['username', 'name', 'email', 'role', 'creationDate', 'status', 'actions'];
-
-  /**
-   * Specify if the user can delete the selected user
-   */
-  public userCanDelete: boolean = undefined;
+  displayedColumns: string[] = [
+    'username',
+    'name',
+    'email',
+    'role',
+    'creationDate',
+    'status',
+    'actions'
+  ];
+  userCanDelete: boolean = undefined;
 
   constructor(
     private dialog: MatDialog,
@@ -46,14 +49,13 @@ export class UsersListComponent {
     private backendService: BackendService,
     private platformLocation: PlatformLocation) { }
 
-  /**
-   * Invoked when user wants to create a reset password link for a specific user.
-   *
-   * @param user User to create link for
-   */
   generateResetPasswordLink(user: User) {
+
+    this.generalService.showLoading();
     this.userService.generateResetPasswordLink(user.username).subscribe({
       next: (result: AuthenticateResponse) => {
+
+        this.generalService.hideLoading();
         const location: any = this.platformLocation;
         const url = location.location.origin.toString() +
           '/authentication/auto-auth?token=' +
@@ -62,20 +64,25 @@ export class UsersListComponent {
           encodeURIComponent(user.username) +
           '&url=' +
           encodeURIComponent(this.backendService.active.url);
+
         this.clipboard.copy(url);
-        this.generalService.showFeedback('Reset password link is copied to your clipboard', 'successMessage', 'Ok', 4000);
+        this.generalService.showFeedback('Reset password link is copied to your clipboard', 'successMessage');
       },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)
+      error: (error: any) => {
+
+        this.generalService.hideLoading();
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+      }
     });
   }
 
-  /**
-   * Invoked when user wants to create a login link for user.
-   * @param user Selected user.
-   */
   generateLoginLink(user: User) {
+
+    this.generalService.showLoading();
     this.userService.generateLoginLink(user.username).subscribe({
       next: (result: AuthenticateResponse) => {
+
+        this.generalService.hideLoading();
         const location: any = this.platformLocation;
         const url = location.location.origin.toString() + '/authentication/auto-auth' +
           '/?token=' +
@@ -86,21 +93,18 @@ export class UsersListComponent {
           encodeURIComponent(this.backendService.active.url);
 
         this.clipboard.copy(url);
-        this.generalService.showFeedback('Login link is copied to your clipboard', 'successMessage', 'Ok', 4000);
+        this.generalService.showFeedback('Login link is copied to your clipboard', 'successMessage');
       },
       error: (error: any) => {
-        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000);
-        return;
+
+        this.generalService.hideLoading();
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
       }
     });
   }
 
-  /**
-   * Invoked when user's locked status has changed.
-   *
-   * @param user User to change lock status of
-   */
   lockedChanged(user: User) {
+
     this.dialog.open(ConfirmationDialogComponent, {
       width: '500px',
       data: {
@@ -119,25 +123,30 @@ export class UsersListComponent {
       }
     }).afterClosed().subscribe((result: string) => {
       if (result === 'confirm') {
+
+        this.generalService.showLoading();
         this.userService.update({
           username: user.username,
           locked: !user.locked
         }).subscribe({
           next: () => {
+
+            this.generalService.hideLoading();
             user.locked = !user.locked;
-            this.generalService.showFeedback(`User is successfully ${user.locked ? 'locked out of system' : 'released to access the system'}`, 'successMessage', 'Ok', 4000);
+            this.generalService.showFeedback(`User is successfully ${user.locked ? 'locked out of system' : 'released to access the system'}`, 'successMessage');
           },
-          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)
-        })
+          error: (error: any) => {
+
+            this.generalService.hideLoading();
+            this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+          }
+        });
       }
-    })
+    });
   }
 
-  /**
-   * Deleting the selected user upon confirmation.
-   * @param user Selected user.
-   */
-  public deleteUser(user: User) {
+  deleteUser(user: User) {
+
     this.dialog.open(ConfirmationDialogComponent, {
       width: '500px',
       data: {
@@ -155,19 +164,29 @@ export class UsersListComponent {
         }
       }
     }).afterClosed().subscribe((result: string) => {
+
       if (result === 'confirm') {
+
+        this.generalService.showLoading();
         this.userService.delete(user.username).subscribe({
           next: () => {
-            this.generalService.showFeedback(`${user.username} was successfully deleted`, 'successMessage', 'Ok', 4000);
+
+            this.generalService.hideLoading();
+            this.generalService.showFeedback(`${user.username} was successfully deleted`, 'successMessage');
             this.updateList();
           },
-          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)
+          error: (error: any) => {
+            
+            this.generalService.hideLoading();
+            this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+          }
         });
       }
     });
   }
 
   getExtra(name: string, el: User) {
+
     const result = el?.extra?.filter(x => x.type === name) || [];
     if (result.length > 0) {
       return result[0].value;
@@ -175,34 +194,33 @@ export class UsersListComponent {
     return 'N/A';
   }
 
-  /**
-   * Opens a dialog for setting a new password.
-   * @param user Selected user.
-   */
-  public changePassword(user: User) {
+  changePassword(user: User) {
     this.dialog.open(ChangePasswordDialogComponent, {
       width: '500px',
       data: user
     })
   }
 
-  /**
-   * Opens a dialog for editing the selected user.
-   * @param user Selected user.
-   */
-  public editUser(user: User) {
+  editUser(user: User) {
+
     this.dialog.open(EditUserDialogComponent, {
       width: '800px',
       data: {
         user: user,
       },
       autoFocus: false
-    }).afterClosed().subscribe((result: string) => {
+    }).afterClosed().subscribe(() => {
+
       this.updateList();
     })
   }
 
+  /*
+   * Private helper methods.
+   */
+
   private updateList() {
-    this.getUsersList.emit({});
+
+    this.getUsersList.emit();
   }
 }

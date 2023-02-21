@@ -63,12 +63,14 @@
 
           <!-- Loading skeleton -->
           <ng-container *ngIf="isLoading;else dataLoadedRoles">
+
             <app-loading-skeleton
               amount="5"
               colClass="col-12"
               blockHeight="40px"
               hasShadow="false">
             </app-loading-skeleton>
+
           </ng-container>
 
           <!-- Role management  -->
@@ -101,7 +103,7 @@
       [showFirstLastButtons]="true"
       class="mt-4"
       aria-label="Select page"
-      [class.d-none]="resultsLength <= 10">
+      [class.d-none]="resultsLength <= pageSize">
     </mat-paginator>
 
   </mat-card-content>
