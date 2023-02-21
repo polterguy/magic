@@ -1,7 +1,13 @@
 
 <h3 mat-dialog-title class="mb-1">reCAPTCHA settings</h3>
 
-<p class="text-muted mb-4">Change your reCAPTCHA settings</p>
+<p class="text-muted mb-4">
+  Supply your reCAPTCHA settings. You can get a reCAPTCHA account
+  <a
+    target="_blank"
+    href="https://www.google.com/recaptcha">here</a>.
+
+</p>
 
 <form [formGroup]="captchaForm">
 
@@ -38,7 +44,7 @@
             matPrefix
             matTooltip="Secret"
             class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-            <mat-icon>key</mat-icon>
+            <mat-icon>shield</mat-icon>
             <span class="text-muted">|</span>
           </span>
           <input

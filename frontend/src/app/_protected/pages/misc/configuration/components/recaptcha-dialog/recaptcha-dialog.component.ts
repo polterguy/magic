@@ -13,6 +13,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 @Component({
   selector: 'app-recaptcha-dialog',
   templateUrl: './recaptcha-dialog.component.html',
+  styleUrls: ['./recaptcha-dialog.component.scss']
 })
 export class RecaptchaDialogComponent implements OnInit {
 
