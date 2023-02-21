@@ -55,6 +55,10 @@
     </mat-select>
   </mat-form-field>
 
+  <p class="text-muted mt-2" style="word-wrap: break-word;">
+    {{getEmbed()}}
+  </p>
+
 </div>
 
 <div mat-dialog-actions [align]="'end'">
@@ -86,7 +90,7 @@
   <button
     mat-flat-button
     (click)="embed()">
-    Embed
+    Copy
   </button>
 
 </div>

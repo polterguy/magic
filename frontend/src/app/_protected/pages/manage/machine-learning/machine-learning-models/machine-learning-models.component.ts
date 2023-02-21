@@ -337,6 +337,8 @@ export class MachineLearningModelsComponent implements OnInit {
         maxWidth: '550px',
         data: {
           type: el.type,
+          noClose: true,
+          search: true,
         }
       });
   }

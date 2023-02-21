@@ -58,6 +58,11 @@ export class MachineLearningEmbedUiComponent implements OnInit {
     });
   }
 
+  getEmbed() {
+
+    return `<script src="${this.backendService.active.url}/magic/system/openai/include-javascript?markdown=${this.markdown ? 'true' : 'false'}&search=${this.search ? 'true' : 'false'}&chat=${this.chat ? 'true' : 'false'}&css=${encodeURIComponent(this.theme)}&file=default&type=${encodeURIComponent(this.type)}&header=${encodeURIComponent(this.header)}&button=${encodeURIComponent(this.buttonTxt)}" defer></script>`;
+  }
+
   embed() {
 
     if (this.search === false && this.chat === false) {
@@ -66,7 +71,7 @@ export class MachineLearningEmbedUiComponent implements OnInit {
       return;
     }
 
-    this.clipboard.copy(`<script src="${this.backendService.active.url}/magic/system/openai/include-javascript?markdown=${this.markdown ? 'true' : 'false'}&search=${this.search ? 'true' : 'false'}&chat=${this.chat ? 'true' : 'false'}&css=${encodeURIComponent(this.theme)}&file=default&type=${encodeURIComponent(this.type)}&header=${encodeURIComponent(this.header)}&button=${encodeURIComponent(this.buttonTxt)}" defer></script>`);
+    this.clipboard.copy(this.getEmbed());
     this.generalService.showFeedback('HTML to include your bot can be found on your clipboard', 'successMessage');
     if (this.data.noClose !== true) {
       this.dialogRef.close();
