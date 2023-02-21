@@ -41,7 +41,8 @@ if
       // Oops, error - Logging error and returning status 500 to caller.
       lambda2hyper:x:@http.post
       log.error:Something went wrong while invoking OpenAI
-         error:x:@http.post/*/content/*/error/*/message
+         message:x:@http.post/*/content/*/error/*/message
+         error:x:@lambda2hyper
       response.status.set:x:@http.post
       unwrap:x:+/*
       return
