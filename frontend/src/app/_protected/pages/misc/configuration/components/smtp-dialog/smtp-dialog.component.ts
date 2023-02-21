@@ -37,6 +37,7 @@ export class SmtpDialogComponent implements OnInit {
     private dialogRef: MatDialogRef<SmtpDialogComponent>) { }
 
   ngOnInit() {
+
     if (this.data) {
       this.smtpForm.setValue({
         host: this.data.host,
@@ -50,10 +51,8 @@ export class SmtpDialogComponent implements OnInit {
     }
   }
 
-  /**
-   * Closes the dialog for the data to be saved in the parent component.
-   */
   submit() {
+
     const data = {
       host: this.smtpForm.value.host,
       port: this.smtpForm.value.port,
