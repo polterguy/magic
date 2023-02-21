@@ -14,7 +14,7 @@ import { Subscription } from 'rxjs';
 import { SmtpDialogComponent } from './components/smtp-dialog/smtp-dialog.component';
 import json from '../../../../codemirror/options/json.json'
 import { OpenAIConfigurationDialogComponent } from 'src/app/_general/components/openai/openai-configuration-dialog/openai-configuration-dialog.component';
-import { OpenAIService } from 'src/app/_general/services/openai.service';
+import { RecaptchaDialogComponent } from './components/recaptcha-dialog/recaptcha-dialog.component';
 
 /**
  * Helper component allowing user to edit his configuration settings.
@@ -28,56 +28,72 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
 
   private codemirrorActionSubscription!: Subscription;
 
+  config: string = '';
+  configExists: boolean = false;
   cmOptions = {
     json: json,
   };
-
-  config: string = '';
-  configExists: boolean = false;
 
   constructor(
     private dialog: MatDialog,
     private configService: ConfigService,
     public backendService: BackendService,
     private generalService: GeneralService,
-    private openAiService: OpenAIService,
-    private codemirrorActionsService: CodemirrorActionsService) {
-  }
+    private codemirrorActionsService: CodemirrorActionsService) { }
 
   ngOnInit() {
+
     this.loadConfig();
     this.getCodeMirrorOptions();
     this.watchForActions();
   }
 
   loadConfig() {
+
+    this.generalService.showLoading();
     this.configService.loadConfig().subscribe({
       next: (res: any) => {
+
         this.config = JSON.stringify(res, null, 2);
+        this.generalService.hideLoading();
       },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+      error: (error: any) => {
+        
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+        this.generalService.hideLoading();
+      }
     });
   }
 
   save() {
+
     try {
       const config = JSON.parse(this.config);
+      this.generalService.showLoading();
       this.configService.saveConfig(config).subscribe({
         next: () => {
+
           this.generalService.showFeedback('Configuration was successfully saved', 'successMessage');
+          this.generalService.hideLoading();
           setTimeout(() => {
             this.backendService.getRecaptchaKey();
           }, 1000);
         },
-        error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'ok', 4000)
+        error: (error: any) => {
+
+          this.generalService.hideLoading();
+          this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'ok', 4000);
+        }
       });
     }
     catch (error) {
+
       this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'ok', 4000);
     }
   }
 
   manageSMTP() {
+
     this.dialog
       .open(SmtpDialogComponent, {
         width: '650px',
@@ -85,25 +101,54 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
       })
       .afterClosed()
       .subscribe((result: any) => {
+
         if (result) {
           let config = JSON.parse(this.config);
           config.magic.smtp = result;
           this.config = JSON.stringify(config, null, 2)
           this.save();
-
         }
       });
   }
 
   manageOpenAI() {
+
     this.dialog
       .open(OpenAIConfigurationDialogComponent, {
         width: '80vw',
         maxWidth: '550px',
+      })
+      .afterClosed()
+      .subscribe((result: any) => {
+
+        if (result) {
+          this.loadConfig();
+        }
+      });
+  }
+
+  manageCAPTCHA() {
+
+    this.dialog
+      .open(RecaptchaDialogComponent, {
+        width: '80vw',
+        maxWidth: '550px',
+        data: JSON.parse(this.config).magic.auth.recaptcha,
+      })
+      .afterClosed()
+      .subscribe((result: any) => {
+
+        if (result) {
+          let config = JSON.parse(this.config);
+          config.magic.auth.recaptcha = result;
+          this.config = JSON.stringify(config, null, 2)
+          this.save();
+        }
       });
   }
 
   ngOnDestroy() {
+
     this.codemirrorActionSubscription?.unsubscribe();
   }
 
@@ -112,11 +157,13 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
    */
 
   private getCodeMirrorOptions() {
+
     const options = this.codemirrorActionsService.getActions(null, 'json');
     this.cmOptions.json = options;
   }
 
   private watchForActions() {
+
     this.codemirrorActionSubscription = this.codemirrorActionsService.action.subscribe((action: string) => {
       switch (action) {
 

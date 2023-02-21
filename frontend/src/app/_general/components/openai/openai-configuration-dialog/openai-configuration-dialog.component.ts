@@ -59,7 +59,7 @@ export class OpenAIConfigurationDialogComponent implements OnInit {
 
         this.generalService.showFeedback('Your OpenAI API key was saved to your configuration', 'successMessage');
         this.generalService.hideLoading();
-        this.dialogRef.close({ configured: true });
+        this.dialogRef.close({ configured: true, key: this.openApiKey });
       },
       error: (error: any) => {
 

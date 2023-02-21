@@ -13,11 +13,13 @@ import { MaterialModule } from 'src/app/material.module';
 import { ComponentsModule } from 'src/app/_general/components/components.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SmtpDialogComponent } from '../components/smtp-dialog/smtp-dialog.component';
+import { RecaptchaDialogComponent } from '../components/recaptcha-dialog/recaptcha-dialog.component';
 
 @NgModule({
   declarations: [
     ConfigurationComponent,
     SmtpDialogComponent,
+    RecaptchaDialogComponent,
   ],
   imports: [
     CommonModule,
@@ -27,7 +29,7 @@ import { SmtpDialogComponent } from '../components/smtp-dialog/smtp-dialog.compo
     CmModule,
     CodemirrorModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ]
 })
 export class ConfigModule { }
