@@ -4,20 +4,27 @@
 
     <form class="row" (ngSubmit)="saveConfiguration()" *ngIf="!configured">
 
-      <div class="col-12 mb-5">
+      <div class="col-12">
 
-        <h3 class="fw-bold">Chatbot Wizard Configuration</h3>
+        <div class="row">
+          <div class="col-12 col-md-8">
 
-        <p class="text-muted mb-4">
-          Before you can create your chatbot you will need an OpenAI API account and a Google reCAPTCHA account.
-          If you don't have such accounts, you can click the links below.
-        </p>
+            <h3 class="fw-bold">Chatbot Wizard Configuration</h3>
+
+            <p class="text-muted mb-4">
+              Before you can create your chatbot you will need an OpenAI API account and a Google reCAPTCHA account.
+              If you don't have such accounts, you can click the links below.
+              Notice, this requires registering with OpenAI and Google.
+            </p>
+    
+          </div>
+        </div>
 
       </div>
 
       <div class="col-md-4 col-12">
 
-        <p class="text-muted pb-1">OpenAI API key</p>
+        <p class="text-muted">OpenAI API key</p>
 
         <app-loading-skeleton
           *ngIf="isLoading"
@@ -50,7 +57,7 @@
 
       <div class="col-md-4 col-12">
 
-        <p class="text-muted pb-1">reCAPTCHA Site Key</p>
+        <p class="text-muted">reCAPTCHA Site Key</p>
 
         <app-loading-skeleton
           *ngIf="isLoading"
@@ -82,7 +89,7 @@
 
       <div class="col-md-4 col-12">
 
-        <p class="text-muted pb-1">reCAPTCHA Secret</p>
+        <p class="text-muted">reCAPTCHA Secret</p>
 
         <app-loading-skeleton
           *ngIf="isLoading"
@@ -115,15 +122,15 @@
       <div class="col-12 text-end mt-3">
 
         <a
-          mat-flat-button
+          mat-button
           target="_blank"
-          href="https://platform.openai.com/account/api-keys">Create OpenAI API key</a>
+          href="https://platform.openai.com/account/api-keys">Create API key</a>
 
         <a
-          mat-flat-button
+          mat-button
           class="ms-3"
           target="_blank"
-          href="https://www.google.com/recaptcha">Create reCAPTCHA account</a>
+          href="https://www.google.com/recaptcha">Create reCAPTCHA</a>
 
         <button
           mat-flat-button
@@ -190,24 +197,6 @@
         *ngFor="let idx of messages; index as i"
         [class]="'msg ' + idx.type"
         [id]="'m_' + i">{{idx.message}}</div>
-
-    </div>
-
-    <div class="text-end mt-2">
-
-      <button
-        (click)="embed()"
-        [disabled]="!doneCreatingBot"
-        mat-button>
-        Embed
-      </button>
-
-      <button
-        (click)="closeBotCreator()"
-        [disabled]="!doneCreatingBot"
-        mat-button>
-        Close
-      </button>
 
     </div>
 

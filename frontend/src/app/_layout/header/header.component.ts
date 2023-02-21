@@ -152,6 +152,13 @@ It provides a graphical user interface for managing tasks, machine learning mode
 and other aspects of your cloudlet. It also contains key performance indicators, charts, and a YouTube
 tutorial for getting started with Magic and Hyperlambda.`;
 
+      case 'chatbot-wizard':
+        return `The Chatbot Wizard allows you to rapidly create a chatbot for your website by providing
+your OpenAI API Key, your Google reCAPTCHA site-key and secret, and the URL for your website.
+It doesn't give you as many options as the Machine Learning component, but rapidly allows you to create
+a chatbot you can embed on your website. You can start out with this wizard, for then to later edit your
+model using the Machine Learning component.`;
+
       case 'sql-studio':
         return `SQL Studio is where you can both visually design your databases in addition to execute
 SQL towards your database of choice. It transparently supports any of the following databases; SQL Server, 
@@ -271,6 +278,9 @@ optin verification and potential referential integrity issues.`;
 
       case '/':
         return 'https://docs.aista.com';
+
+      case 'chatbot-wizard':
+        return 'https://docs.aista.com/documentation/magic/components/chatbot-wizard/';
 
       case 'sql-studio':
         return 'https://docs.aista.com/documentation/magic/components/sql/';
