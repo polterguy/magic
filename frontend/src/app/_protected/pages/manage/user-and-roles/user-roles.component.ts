@@ -3,10 +3,11 @@
  * Copyright (c) Aista Ltd, 2021 - 2023 info@aista.com, all rights reserved.
  */
 
-import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { BehaviorSubject } from 'rxjs';
+import { GeneralService } from 'src/app/_general/services/general.service';
 import { Role } from './_models/role.model';
 import { User } from './_models/user.model';
 import { RoleService } from './_services/role.service';
@@ -23,6 +24,10 @@ export class UserRolesComponent implements OnInit {
 
   private usersCount: number = 0;
   private rolesCount: number = 0;
+  private filter: string = null;
+
+  @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
+
   isLoading: boolean = true;
   users = new BehaviorSubject<User[] | null>([]);
   roles = new BehaviorSubject<Role[]>([]);
@@ -32,102 +37,158 @@ export class UserRolesComponent implements OnInit {
   currentPage: number = 0;
   pageEvent!: PageEvent;
 
-  @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
-
   constructor(
-    private cdr: ChangeDetectorRef,
     private userService: UserService,
+    private generalService: GeneralService,
     private roleService: RoleService) { }
 
   ngOnInit() {
+
     this.getUsersList();
   }
 
-  public tabChange(event: MatTabChangeEvent) {
+  tabChange(event: MatTabChangeEvent) {
+
     if (event.index === 0) {
-      this.getUsersList({ search: '' });
+
+      this.getUsersList();
+
     } else {
-      this.getRolesList({ search: '' });
+
+      this.getRolesList();
+
     }
   }
 
-  public getUsersList(event?: { search: string }) {
-    if (event && event.search) {
+  getUsersList(event?: { search: string }) {
+
+    if (event) {
       this.paginator.pageIndex = 0;
       this.currentPage = 0;
     }
-    let param: string = '';
-    if (event?.search) {
-      param = `?username.like=%${encodeURIComponent(event.search)}%`;
-    } else {
-      param = `?limit=${this.pageSize}&offset=${this.currentPage}`;
+    let param: string = `?limit=${this.pageSize}&offset=${this.currentPage}`;
+    if (event) {
+      this.filter = event.search;
     }
+    if (this.filter) {
+      param += `&username.like=%${encodeURIComponent(this.filter)}%`;
+    }
+
+    this.generalService.showLoading();
     this.userService.list(param).subscribe({
       next: (res: User[]) => {
+
         this.users.next(res || []);
-        res ? this.countUser(event) : this.resultsLength = 0;
-        this.cdr.detectChanges();
+
+        if (res) {
+
+          this.countUser();
+
+        } else {
+
+          this.resultsLength = 0;
+          this.generalService.hideLoading();
+        }
       },
-      error: (error: any) => { }
-    })
+      error: () => {
+
+        this.generalService.showFeedback('Something went wrong as we tried to retrieve users', 'errorMessage');
+        this.generalService.hideLoading();
+      }
+    });
   }
 
-  private countUser(event?: any) {
-    if (event || this.usersCount === 0) {
-      const param: string = `${event?.search ? `?username.like=%${encodeURIComponent(event.search)}%` : ''}`;
-      this.userService.count(param).subscribe({
-        next: (res: any) => {
-          if (res) {
-            this.resultsLength = res.count;
-            this.usersCount = res.count;
-          }
-          this.isLoading = false;
-          this.cdr.detectChanges();
-        },
-        error: (error: any) => { }
-      })
-    } else { this.isLoading = false; return }
-  }
+  getRolesList(event?: { search: string }) {
 
-  public getRolesList(event?: { search: string }) {
-    let param: string = '';
-    if (event?.search) {
-      param = `?name.like=${encodeURIComponent(event.search)}%`;
-    } else {
-      param = `?limit=${this.pageSize}&offset=${this.currentPage}`;
+    if (event) {
+      this.paginator.pageIndex = 0;
+      this.currentPage = 0;
     }
+    let param: string = `?limit=${this.pageSize}&offset=${this.currentPage}`;
+    if (event) {
+      this.filter = event.search;
+    }
+    if (this.filter) {
+      param += `&name.like=%${encodeURIComponent(this.filter)}%`;
+    }
+
+    this.generalService.showLoading();
     this.roleService.list(param).subscribe({
       next: (res: Role[]) => {
+
         this.roles.next(res || []);
-        res ? this.countRole(event) : this.resultsLength = 0;
-        this.cdr.detectChanges();
+
+        if (res) {
+
+          this.countRole();
+
+        } else {
+
+          this.resultsLength = 0;
+          this.generalService.hideLoading();
+        }
       },
-      error: (error: any) => { }
-    })
+      error: () => {
+
+        this.generalService.showFeedback('Something went wrong as we tried to retrieve roles', 'errorMessage');
+        this.generalService.hideLoading();
+      }
+    });
   }
 
-  private countRole(event: any) {
-    if (event || this.rolesCount === 0) {
-      const param: string = `${event?.search ? `?name.like=${encodeURIComponent(event.search)}%` : ''}`;
-      this.roleService.count(param).subscribe({
-        next: (res: any) => {
-          if (res) {
-            this.resultsLength = res.count
-            this.rolesCount = res.count;
-          }
-          this.isLoading = false;
-          this.cdr.detectChanges();
-        },
-        error: (error: any) => { }
-      })
-    } else { this.isLoading = false; return }
-  }
+  pageChange(event: PageEvent, activeTabIndex?: number) {
 
-  public pageChange(event: PageEvent, activeTabIndex?: number) {
     this.isLoading = true;
     this.pageEvent = event;
     this.currentPage = event.pageIndex * this.pageSize;
     this.pageSize = event.pageSize;
     activeTabIndex === 0 ? this.getUsersList() : this.getRolesList();
+  }
+
+  /*
+   * Private helper methods.
+   */
+
+  private countUser() {
+
+    const param: string = `${this.filter ? `?username.like=%${encodeURIComponent(this.filter)}%` : ''}`;
+
+    this.userService.count(param).subscribe({
+      next: (res: any) => {
+
+        if (res) {
+          this.resultsLength = res.count;
+          this.usersCount = res.count;
+        }
+        this.isLoading = false;
+        this.generalService.hideLoading();
+      },
+      error: () => {
+
+        this.generalService.hideLoading();
+      }
+    });
+  }
+
+  private countRole() {
+
+    const param: string = `${this.filter ? `?name.like=${encodeURIComponent(this.filter)}%` : ''}`;
+    this.roleService.count(param).subscribe({
+      next: (res: any) => {
+
+        if (res) {
+
+          this.resultsLength = res.count
+          this.rolesCount = res.count;
+        }
+        this.isLoading = false;
+        this.generalService.hideLoading();
+
+      },
+      error: () => {
+
+        this.generalService.hideLoading();
+      }
+    });
   }
 }

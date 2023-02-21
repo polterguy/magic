@@ -3,7 +3,7 @@
  * Copyright (c) Aista Ltd, 2021 - 2023 info@aista.com, all rights reserved.
  */
 
-import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
@@ -23,14 +23,16 @@ import { RoleService } from '../_services/role.service';
 export class RolesListComponent {
 
   @Input() rolesList: any = [];
-
   @Output() getRolesList = new EventEmitter<any>();
 
-  displayedColumns: string[] = ['name', 'description', 'actions'];
+  displayedColumns: string[] = [
+    'name',
+    'description',
+    'actions'
+  ];
 
   constructor(
     private dialog: MatDialog,
-    private cdr: ChangeDetectorRef,
     private roleService: RoleService,
     private generalService: GeneralService) { }
 
@@ -43,6 +45,7 @@ export class RolesListComponent {
       case 'unconfirmed':
       case 'blocked':
         return true;
+
       default:
         return false;
     }
@@ -67,13 +70,22 @@ export class RolesListComponent {
         }
       }
     }).afterClosed().subscribe((result: string) => {
+
       if (result === 'confirm') {
+
+        this.generalService.showLoading();
         this.roleService.delete(role.name).subscribe({
           next: () => {
-            this.generalService.showFeedback(`${role.name} was successfully deleted`, 'successMessage', 'Ok', 4000);
-            this.updateList({});
+
+            this.generalService.hideLoading();
+            this.generalService.showFeedback(`${role.name} was successfully deleted`, 'successMessage');
+            this.updateList();
           },
-          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)
+          error: (error: any) => {
+
+            this.generalService.hideLoading();
+            this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+          }
         });
       }
     })
@@ -98,7 +110,8 @@ export class RolesListComponent {
    * Private helper methods.
    */
 
-  private updateList(obj: any = undefined) {
-    this.getRolesList.emit(obj);
+  private updateList() {
+
+    this.getRolesList.emit();
   }
 }
