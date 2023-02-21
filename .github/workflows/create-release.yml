@@ -1,4 +1,3 @@
-
 # Builds and deploys Docker image to Docker hub when a new tag/release is created
 
 name: Builds and publishes new Docker images to Docker hub when a new tag is created
@@ -28,5 +27,6 @@ jobs:
         docker push aistamagic/magic-backend:latest
         docker build -t aistamagic/magic-backend:${{ steps.get_version.outputs.VERSION }} -f ./Dockerfile .
         docker push aistamagic/magic-backend:${{ steps.get_version.outputs.VERSION }}
+        dotnet remove reference magic.lambda.system
         docker build -t aistamagic/magic-backend:min-${{ steps.get_version.outputs.VERSION }} -f ./Dockerfile .
         docker push aistamagic/magic-backend:min-${{ steps.get_version.outputs.VERSION }}
