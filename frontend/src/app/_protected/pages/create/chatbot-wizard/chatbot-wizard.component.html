@@ -14,6 +14,24 @@
 
       </div>
 
+      <div class="col-12 text-end">
+
+        <button
+          mat-button
+          color="primary"
+          (click)="manageOpenAI()">
+          Configure OpenAI API key
+        </button>
+
+        <button
+          mat-button
+          color="primary"
+          (click)="manageCAPTCHA()">
+          Configure reCAPTCHA
+        </button>
+
+      </div>
+
     </div>
 
     <form class="row" (ngSubmit)="createBot()" *ngIf="configured">
@@ -69,28 +87,6 @@
         *ngFor="let idx of messages; index as i"
         [class]="'msg ' + idx.type"
         [id]="'m_' + i">{{idx.message}}</div>
-
-    </div>
-
-    <div class="row">
-
-      <div class="col-12 text-end">
-
-        <button
-          mat-button
-          color="primary"
-          (click)="manageOpenAI()">
-          Configure OpenAI API key
-        </button>
-
-        <button
-          mat-button
-          color="primary"
-          (click)="manageCAPTCHA()">
-          Configure reCAPTCHA
-        </button>
-
-      </div>
 
     </div>
 

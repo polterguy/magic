@@ -95,62 +95,6 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
     this.hubConnection?.stop();
   }
 
-  manageOpenAI() {
-
-    this.dialog
-      .open(OpenAIConfigurationDialogComponent, {
-        width: '80vw',
-        maxWidth: '550px',
-      })
-      .afterClosed()
-      .subscribe((result: any) => {
-
-        if (result) {
-          this.hasApiKey = true;
-          this.configured = this.hasReCaptcha;
-
-          if (!this.hasReCaptcha) {
-            this.manageCAPTCHA();
-          }
-        }
-      });
-  }
-
-  manageCAPTCHA() {
-
-    this.dialog
-      .open(RecaptchaDialogComponent, {
-        width: '80vw',
-        maxWidth: '550px',
-        data: this.reCaptcha,
-      })
-      .afterClosed()
-      .subscribe((result: any) => {
-
-        if (result) {
-          this.backendService.setReCaptchaKeySecret(result.key, result.secret).subscribe({
-            next: () => {
-
-              this.generalService.hideLoading();
-              this.generalService.showFeedback('reCAPTCHA settings successfully save', 'successMessage');
-              this.hasReCaptcha = true;
-              this.configured = this.hasApiKey;
-
-              if (!this.hasApiKey) {
-                this.manageOpenAI();
-              }
-            },
-            error: () => {
-
-              this.generalService.hideLoading();
-              this.generalService.showFeedback('Something went wrong as we tried to check if OpenAI API key is configured', 'errorMessage');
-              this.isLoading = false;
-            }
-          });
-        }
-      });
-  }
-
   goodWebsite() {
 
     const good = this.url.length > 0 && (this.url.startsWith('http://') || this.url.startsWith('https://'));
@@ -236,5 +180,69 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
   closeBotCreator() {
 
     this.crawling = false;
+  }
+
+  /*
+   * Private helper methods.
+   */
+
+  private manageOpenAI() {
+
+    this.dialog
+      .open(OpenAIConfigurationDialogComponent, {
+        width: '80vw',
+        maxWidth: '550px',
+        disableClose: true,
+      })
+      .afterClosed()
+      .subscribe((result: any) => {
+
+        if (result.configured) {
+
+          this.hasApiKey = true;
+          this.configured = this.hasReCaptcha;
+
+          if (!this.hasReCaptcha) {
+            this.manageCAPTCHA();
+          }
+        }
+      });
+  }
+
+  private manageCAPTCHA() {
+
+    this.dialog
+      .open(RecaptchaDialogComponent, {
+        width: '80vw',
+        maxWidth: '550px',
+        data: this.reCaptcha,
+        disableClose: true,
+      })
+      .afterClosed()
+      .subscribe((result: any) => {
+
+        if (result) {
+
+          this.backendService.setReCaptchaKeySecret(result.key, result.secret).subscribe({
+            next: () => {
+
+              this.generalService.hideLoading();
+              this.generalService.showFeedback('reCAPTCHA settings successfully save', 'successMessage');
+              this.hasReCaptcha = true;
+              this.configured = this.hasApiKey;
+
+              if (!this.hasApiKey) {
+                this.manageOpenAI();
+              }
+            },
+            error: () => {
+
+              this.generalService.hideLoading();
+              this.generalService.showFeedback('Something went wrong as we tried to check if OpenAI API key is configured', 'errorMessage');
+              this.isLoading = false;
+            }
+          });
+        }
+      });
   }
 }
