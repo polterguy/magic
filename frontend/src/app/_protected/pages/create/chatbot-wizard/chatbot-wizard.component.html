@@ -2,147 +2,19 @@
 <mat-card>
   <mat-card-content>
 
-    <form class="row" (ngSubmit)="saveConfiguration()" *ngIf="!configured">
+    <div *ngIf="!configured" class="row">
 
-      <div class="col-12">
+      <div class="col-12 mb-3">
 
-        <div class="row">
-          <div class="col-12 col-md-8">
+        <h3 class="fw-bold">Chatbot Wizard</h3>
 
-            <h3 class="fw-bold">Chatbot Wizard Configuration</h3>
-
-            <p class="text-muted mb-4">
-              Before you can create your chatbot you will need an OpenAI API account and a Google reCAPTCHA account.
-              If you don't have such accounts, you can click the links below.
-              Notice, this requires registering with OpenAI and Google.
-            </p>
-    
-          </div>
-        </div>
+        <p class="text-muted">
+          Before you can create a chatbot you need to supply your OpenAI API key, your reCAPTCHA site-key and secret.
+        </p>
 
       </div>
 
-      <div class="col-md-4 col-12">
-
-        <p class="text-muted">OpenAI API key</p>
-
-        <app-loading-skeleton
-          *ngIf="isLoading"
-          amount="1"
-          colClass="col-12"
-          blockHeight="45px"
-          disabled="isLoading"
-          hasShadow="false">
-        </app-loading-skeleton>
-
-        <mat-form-field *ngIf="!isLoading" class="w-100 standalone-field mb-lg-0 mb-2">
-          <span
-            matPrefix
-            matTooltip="OpenAI API key"
-            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-            <mat-icon>key</mat-icon>
-            <span class="text-muted">|</span>
-          </span>
-          <input
-            matInput
-            type="text"
-            placeholder="OpenAI API key"
-            name="apiKey"
-            [disabled]="isSaving"
-            [(ngModel)]="apiKey"
-            autocomplete="off">
-        </mat-form-field>
-
-      </div>
-
-      <div class="col-md-4 col-12">
-
-        <p class="text-muted">reCAPTCHA Site Key</p>
-
-        <app-loading-skeleton
-          *ngIf="isLoading"
-          amount="1"
-          colClass="col-12"
-          blockHeight="45px"
-          hasShadow="false">
-        </app-loading-skeleton>
-
-        <mat-form-field *ngIf="!isLoading" class="w-100 standalone-field mb-lg-0 mb-2">
-          <span
-            matPrefix
-            matTooltip="reCAPTCHA Site Key"
-            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-            <mat-icon>key</mat-icon>
-            <span class="text-muted">|</span>
-          </span>
-          <input
-            matInput
-            type="text"
-            placeholder="reCAPTCHA Site Key"
-            name="siteKey"
-            [disabled]="isSaving"
-            [(ngModel)]="siteKey"
-            autocomplete="off">
-        </mat-form-field>
-
-      </div>
-
-      <div class="col-md-4 col-12">
-
-        <p class="text-muted">reCAPTCHA Secret</p>
-
-        <app-loading-skeleton
-          *ngIf="isLoading"
-          amount="1"
-          colClass="col-12"
-          blockHeight="45px"
-          hasShadow="false">
-        </app-loading-skeleton>
-
-        <mat-form-field *ngIf="!isLoading" class="w-100 standalone-field mb-lg-0 mb-2">
-          <span
-            matPrefix
-            matTooltip="reCAPTCHA Secret"
-            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-            <mat-icon>shield</mat-icon>
-            <span class="text-muted">|</span>
-          </span>
-          <input
-            matInput
-            type="text"
-            placeholder="reCAPTCHA Secret"
-            name="secret"
-            [disabled]="isSaving"
-            [(ngModel)]="secret"
-            autocomplete="off">
-        </mat-form-field>
-
-      </div>
-
-      <div class="col-12 text-end mt-3">
-
-        <a
-          mat-button
-          target="_blank"
-          href="https://platform.openai.com/account/api-keys">Create API key</a>
-
-        <a
-          mat-button
-          class="ms-3"
-          target="_blank"
-          href="https://www.google.com/recaptcha">Create reCAPTCHA</a>
-
-        <button
-          mat-flat-button
-          class="px-5 ms-3"
-          [disabled]="isSaving || !configurationGood()"
-          type="submit">
-          Save
-        </button>
-
-      </div>
-
-    </form>
+    </div>
 
     <form class="row" (ngSubmit)="createBot()" *ngIf="configured">
 
@@ -197,6 +69,28 @@
         *ngFor="let idx of messages; index as i"
         [class]="'msg ' + idx.type"
         [id]="'m_' + i">{{idx.message}}</div>
+
+    </div>
+
+    <div class="row">
+
+      <div class="col-12 text-end">
+
+        <button
+          mat-button
+          color="primary"
+          (click)="manageOpenAI()">
+          Configure OpenAI API key
+        </button>
+
+        <button
+          mat-button
+          color="primary"
+          (click)="manageCAPTCHA()">
+          Configure reCAPTCHA
+        </button>
+
+      </div>
 
     </div>
 

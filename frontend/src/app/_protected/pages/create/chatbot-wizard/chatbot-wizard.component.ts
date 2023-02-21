@@ -11,6 +11,8 @@ import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@aspnet/
 import { MagicResponse } from 'src/app/_general/models/magic-response.model';
 import { MachineLearningEmbedUiComponent } from '../../manage/machine-learning/components/machine-learning-embed-ui/machine-learning-embed-ui.component';
 import { MatDialog } from '@angular/material/dialog';
+import { OpenAIConfigurationDialogComponent } from 'src/app/_general/components/openai/openai-configuration-dialog/openai-configuration-dialog.component';
+import { RecaptchaDialogComponent } from '../../misc/configuration/components/recaptcha-dialog/recaptcha-dialog.component';
 
 /**
  * Helper wizard component to create a chatbot rapidly, guiding the user through all
@@ -25,10 +27,10 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
 
   hubConnection: HubConnection = null;
   isLoading: boolean = true;
-  apiKey: string = '';
-  siteKey: string = '';
-  secret: string = '';
   configured: boolean = false;
+  hasApiKey: boolean = false;
+  hasReCaptcha: boolean = false;
+  reCaptcha: any = null;
   isSaving: boolean = false;
   url: string = '';
   crawling: boolean = false;
@@ -46,18 +48,28 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
 
     this.generalService.showLoading();
     this.openAIService.key().subscribe({
-      next: (result: any) => {
+      next: (apiKey: any) => {
 
-        this.apiKey = result.result;
+        this.hasApiKey = apiKey.result?.length > 0;
 
         this.backendService.getReCaptchaKeySecret().subscribe({
-          next: (result: any) => {
+          next: (reCaptcha: any) => {
 
-            this.siteKey = result.key;
-            this.secret = result.secret;
             this.generalService.hideLoading();
             this.isLoading = false;
-            this.configured = this.apiKey?.length > 0 && this.siteKey?.length > 0 && this.secret?.length > 0;
+            this.hasReCaptcha = reCaptcha.key?.length > 0 && reCaptcha.secret?.length > 0;
+            this.configured = this.hasApiKey && this.hasReCaptcha;
+            this.reCaptcha = reCaptcha;
+
+            if (!this.hasApiKey) {
+
+              this.manageOpenAI();
+
+            } else if (!this.hasReCaptcha) {
+
+              this.manageCAPTCHA();
+
+            }
           },
           error: () => {
 
@@ -83,9 +95,60 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
     this.hubConnection?.stop();
   }
 
-  configurationGood() {
+  manageOpenAI() {
 
-    return this.apiKey?.length > 0 && this.siteKey?.length > 0 && this.secret?.length > 0;
+    this.dialog
+      .open(OpenAIConfigurationDialogComponent, {
+        width: '80vw',
+        maxWidth: '550px',
+      })
+      .afterClosed()
+      .subscribe((result: any) => {
+
+        if (result) {
+          this.hasApiKey = true;
+          this.configured = this.hasReCaptcha;
+
+          if (!this.hasReCaptcha) {
+            this.manageCAPTCHA();
+          }
+        }
+      });
+  }
+
+  manageCAPTCHA() {
+
+    this.dialog
+      .open(RecaptchaDialogComponent, {
+        width: '80vw',
+        maxWidth: '550px',
+        data: this.reCaptcha,
+      })
+      .afterClosed()
+      .subscribe((result: any) => {
+
+        if (result) {
+          this.backendService.setReCaptchaKeySecret(result.key, result.secret).subscribe({
+            next: () => {
+
+              this.generalService.hideLoading();
+              this.generalService.showFeedback('reCAPTCHA settings successfully save', 'successMessage');
+              this.hasReCaptcha = true;
+              this.configured = this.hasApiKey;
+
+              if (!this.hasApiKey) {
+                this.manageOpenAI();
+              }
+            },
+            error: () => {
+
+              this.generalService.hideLoading();
+              this.generalService.showFeedback('Something went wrong as we tried to check if OpenAI API key is configured', 'errorMessage');
+              this.isLoading = false;
+            }
+          });
+        }
+      });
   }
 
   goodWebsite() {
@@ -99,38 +162,6 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
       return false;
     }
     return true;
-  }
-
-  saveConfiguration() {
-
-    this.isSaving = true;
-    this.generalService.showLoading();
-    this.openAIService.setKey(this.apiKey).subscribe({
-      next: () => {
-
-        this.backendService.setReCaptchaKeySecret(this.siteKey, this.secret).subscribe({
-          next: () => {
-
-            this.generalService.hideLoading();
-            this.generalService.showFeedback('API key and reCAPTCHA settings successfully applied', 'successMessage');
-            this.isSaving = false;
-            this.configured = true;
-          },
-          error: () => {
-
-            this.generalService.hideLoading();
-            this.generalService.showFeedback('Something went wrong as we tried to check if OpenAI API key is configured', 'errorMessage');
-            this.isSaving = false;
-          }
-        });
-      },
-      error: () => {
-
-        this.generalService.hideLoading();
-        this.generalService.showFeedback('Something went wrong as we tried to check if OpenAI API key is configured', 'errorMessage');
-        this.isSaving = false;
-      }
-    });
   }
 
   createBot() {
