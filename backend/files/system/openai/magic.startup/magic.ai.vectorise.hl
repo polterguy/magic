@@ -98,11 +98,17 @@ slots.create:magic.ai.vectorise
                            // Oops, error - Logging error and returning status 500 to caller.
                            lambda2hyper:x:@http.post
                            log.error:Something went wrong while invoking OpenAI
-                              error:x:@http.post/*/content/*/error/*/message
+                              message:x:@http.post/*/content/*/error/*/message
+                              error:x:@lambda2hyper
                            sockets.signal:magic.backend.message
                               roles:root
                               args
                                  message:Could not create embeddings for model
+                                 type:error
+                           sockets.signal:magic.backend.chatbot
+                              roles:root
+                              args
+                                 message:Could not vectorise snippet, check your log for details
                                  type:error
                            throw:Could not create embeddings for model
 
