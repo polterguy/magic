@@ -210,38 +210,26 @@ set-value:x:@.context
  * Figuring out maximum length of context.
  *
  * Maximum length of context is the number of tokens the model can handle,
- * subtracting the number of tokens requested, multiplied by 2 to get byte count.
+ * subtracting the number of tokens the model requests.
  */
-.max-count
+.max-context-token-count
 switch:x:@.arguments/*/model
 
    case:text-davinci-003
 
-      set-value:x:@.max-count
-         .:int:4096
+      set-value:x:@.max-context-token-count
+         math.subtract
+            .:int:4096
+            convert:x:@.arguments/*/max_tokens
+               type:int
 
-   case:text-ada-001
-   case:text-curie-001
-   case:text-babbage-001
+   default
 
-      set-value:x:@.max-count
-         .:int:2048
-
-// Subtracting max_tokens from model from [.max-count].
-set-value:x:@.max-count
-   math.subtract
-      get-value:x:@.max-count
-      convert:x:@.arguments/*/max_tokens
-         type:int
-
-/*
- * Multiplying [.max-count] by 2 as a buffer to ensure we never
- * request more tokens than the model can handle.
- */
-set-value:x:@.max-count
-   math.multiply
-      get-value:x:@.max-count
-      .:int:2
+      set-value:x:@.max-context-token-count
+         math.subtract
+            .:int:2048
+            convert:x:@.arguments/*/max_tokens
+               type:int
 
 // Looping through all snippets to create our context.
 for-each:x:@.snippets/*
@@ -250,27 +238,25 @@ for-each:x:@.snippets/*
     * Making sure our prompt's complete length never exceeds maximum characters,
     * and that we only use relevant snippets above specified threshold from our model.
     */
+   strings.concat
+      get-value:x:@.context
+      .:"\r\n\r\n"
+      get-value:x:@.dp/#/*/prompt
+      .:"\r\n\r\n"
+      get-value:x:@.dp/#/*/completion
    if
       and
          mt:x:@.dp/#/*/dot
             convert:x:@.arguments/*/threshold
                type:double
          lt
-            math.add
-               strings.byte-count:x:@.context
-               strings.byte-count:x:@.dp/#/*/prompt
-               strings.byte-count:x:@.dp/#/*/completion
-            get-value:x:@.max-count
+            openai.tokenize:x:@strings.concat
+            get-value:x:@.max-context-token-count
       .lambda
 
          // We still haven't reached our character threshold yet, and we still have relevant snippets.
          set-value:x:@.context
-            strings.concat
-               get-value:x:@.context
-               .:"\r\n\r\n"
-               get-value:x:@.dp/#/*/prompt
-               .:"\r\n\r\n"
-               get-value:x:@.dp/#/*/completion
+            get-value:x:@strings.concat
 
          // To support old-style URIs, we need to do some trickery here.
          .uri
