@@ -71,8 +71,8 @@ slots.create:magic.ai.vectorise
                // Making sure we don't try to create embedding if it would exhaust the number of tokens for model.
                if
                   lt
-                     strings.length:x:@.embedding
-                     .:int:30000
+                     openai.tokenize:x:@.embedding
+                     .:int:8191
                   .lambda
 
                      // Creating an HTTP POST request towards OpenAI, now decorated.
