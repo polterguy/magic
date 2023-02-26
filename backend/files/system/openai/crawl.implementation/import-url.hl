@@ -130,6 +130,24 @@ for-each:x:@html2lambda/*/html/*/body/**
 
       // Checking if this is an image.
       case:img
+      
+         // Normalising URL.
+         .url
+         if
+            strings.starts-with:x:@.dp/#/*/\@src
+               .:/
+            .lambda
+
+               // Prepending base URL.
+               set-value:x:@.url
+                  strings.concat
+                     get-value:x:@.base
+                     get-value:x:@.dp/#/*/\@src
+         else
+
+            // URL is absolute.
+            set-value:x:@.url
+               get-value:x:@.dp/#/*/\@src
 
          // Checking if we need to append code to existing completion or create new completion.
          if
@@ -145,8 +163,8 @@ for-each:x:@html2lambda/*/html/*/body/**
                         get-value:x:@.dp/#/*/\@alt
                         .:Image
                      .:"]("
-                     get-value:x:@.dp/#/*/\@src
-                     .:")\r\n"
+                     get-value:x:@.url
+                     .:")"
 
          else
 
@@ -157,7 +175,7 @@ for-each:x:@html2lambda/*/html/*/body/**
                   get-value:x:@.dp/#/*/\@alt
                   .:Image
                .:"]("
-               get-value:x:@.dp/#/*/\@src
+               get-value:x:@.url
                .:")\r\n"
             unwrap:x:+/*/*
             add:x:@.snippets/0/-
@@ -280,6 +298,26 @@ for-each:x:@html2lambda/*/html/*/body/**
                               get-name:x:@.dp/#/.
                               .:a
                            .lambda
+      
+                              // Normalising URL.
+                              .url
+                              if
+                                 strings.starts-with:x:@.dp/#/./*/\@href
+                                    .:/
+                                 .lambda
+
+                                    // Prepending base URL.
+                                    set-value:x:@.url
+                                       strings.concat
+                                          get-value:x:@.base
+                                          get-value:x:@.dp/#/./*/\@href
+                              else
+
+                                 // URL is absolute.
+                                 set-value:x:@.url
+                                    get-value:x:@.dp/#/./*/\@href
+
+                              // Adding URL as Markdown to completion
                               set-value:x:@.completion
                                  strings.concat
                                     get-value:x:@.completion
@@ -287,15 +325,18 @@ for-each:x:@html2lambda/*/html/*/body/**
                                     strings.trim:x:@strings.replace
                                        .:"\r\n\t "
                                     .:](
-                                    get-value:x:@.dp/#/./*/\@href
+                                    get-value:x:@.url
                                     .:)
                         else
+
+                           // Anything BUT a hyperlink.
                            set-value:x:@.completion
                               strings.concat
                                  get-value:x:@.completion
                                  strings.trim:x:@strings.replace
                                     .:"\r\n\t "
                                  .:" "
+
                set-value:x:@.completion
                   strings.trim:x:@.completion
                      .:" "
@@ -401,6 +442,9 @@ for-each:x:@html2lambda/*/html/*/body/**
                            .
                               completion:x:@.completion
 
+// Buffer for summary.
+.summary
+
 // Connecting to database.
 data.connect:[generic|magic]
 
@@ -459,6 +503,43 @@ data.connect:[generic|magic]
                         completion:x:@.completion
                         type:x:@.arguments/*/type
                         uri:x:@.arguments/*/url
+   
+                  // Checking if this is first iteration.
+                  if
+                     not-exists:x:@.summary/*
+                     .lambda
+
+                        // Creating our initial summary.
+                        unwrap:x:+/*/*
+                        add:x:@.summary
+                           .
+                              prompt:x:@.prompt
+                              completion:x:@.completion
+
+                  else
+                  
+                     // Concatenating into [.summary].
+                     set-value:x:@.summary/*/completion
+                        strings.concat
+                           get-value:x:@.summary/*/completion
+                           .:"\r\n\r\n"
+                           get-value:x:@.prompt
+                           .:"\r\n\r\n"
+                           get-value:x:@.completion
+
+   // Verifying we have a summary, and if so, inserting it.
+   if
+      exists:x:@.summary/*
+      .lambda
+
+         // Inserting summary prompt and completion.
+         data.create
+            table:ml_training_snippets
+            values
+               prompt:x:@.summary/*/prompt
+               completion:x:@.summary/*/completion
+               type:x:@.arguments/*/type
+               uri:x:@.arguments/*/url
 
 // Preserving some memory.
 remove-nodes:x:@http.get/*
