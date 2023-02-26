@@ -1,6 +1,6 @@
 
 /*
- * Vectorises all training snippets in the specified model/type.
+ * Vectorises the specified training snippet.
  */
 .arguments
    id:long
