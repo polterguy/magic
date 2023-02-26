@@ -167,7 +167,7 @@ if
 
 /*
  * Now we know which snippets are relevant, and we can generate our prompt, by creating a context
- * which we pass on to OpenAI to help it answer the question based upon the snippets matching
+ * that we pass on to OpenAI to help it answer the question based upon the snippets matching
  * the question.
  */
 .context
@@ -220,6 +220,7 @@ switch:x:@.arguments/*/model
       set-value:x:@.max-context-token-count
          math.subtract
             .:int:4096
+            .:int:15
             convert:x:@.arguments/*/max_tokens
                type:int
 
@@ -228,6 +229,7 @@ switch:x:@.arguments/*/model
       set-value:x:@.max-context-token-count
          math.subtract
             .:int:2048
+            .:int:15
             convert:x:@.arguments/*/max_tokens
                type:int
 
