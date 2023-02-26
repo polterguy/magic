@@ -225,7 +225,10 @@ data.connect:[generic|magic]
       add:x:@.result
          get-nodes:x:@io.file.execute/*
 
-   // Checking if type is 'supervised', at which point we store prompt and completion unless it already exists in cache.
+   /*
+    * Checking if type is 'supervised', at which point we store prompt and completion
+    * unless it already exists in cache.
+    */
    if
       and
          not

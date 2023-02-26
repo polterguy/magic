@@ -64,6 +64,14 @@ if
                            name:Access denied requests
                            description:Access denied requests
                            items
+                        openai_success
+                           name:OpenAI success
+                           description:Successful OpenAI API requests
+                           items
+                        openai_failure
+                           name:OpenAI failure
+                           description:Failed OpenAI API requests
+                           items
 
                // Retrieving count of log items grouped by day for root logins.
                add:x:@.lambda/*/lambda2hyper/*/timeshifts/*/logins/*/items
@@ -72,6 +80,14 @@ if
                // Retrieving access denied invocations.
                add:x:@.lambda/*/lambda2hyper/*/timeshifts/*/access_denied/*/items
                   log.timeshift:Access denied
+
+               // Retrieving successful OpenAI API requests
+               add:x:@.lambda/*/lambda2hyper/*/timeshifts/*/openai_success/*/items
+                  log.timeshift:Invoking OpenAI was a success
+
+               // Retrieving failed OpenAI API requests
+               add:x:@.lambda/*/lambda2hyper/*/timeshifts/*/openai_failure/*/items
+                  log.timeshift:Something went wrong while invoking OpenAI
 
             // Retrieving endpoints.
             endpoints.list

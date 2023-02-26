@@ -124,7 +124,7 @@ export class MainChartComponent implements OnInit {
         name: this.data[item].name,
         type: 'line',
         xAxisIndex: index,
-        smooth: false,
+        smooth: true,
         lineStyle: {
           width: 0
         },
