@@ -170,7 +170,7 @@ slots.create:magic.ai.vectorise
                type:success
 
          // Basic logging.
-         log.info:Done with creating embeddings of model
+         log.info:Done with creating vectors for model
             type:x:@.arguments/*/type
             count:x:@.count
             failed:x:@.failed
