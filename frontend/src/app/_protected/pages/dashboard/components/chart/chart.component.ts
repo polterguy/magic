@@ -44,26 +44,6 @@ export class ChartComponent implements OnInit, OnDestroy {
     this.waitForData();
   }
 
-  private waitForData() {
-
-    (async () => {
-      while (!this.data)
-        await new Promise(resolve => setTimeout(resolve, 100));
-      if (this.data) {
-        this.logDataPrep().then((result: string) => {
-          this.complexityDataPrep().then((res: string) => {
-            if (res === 'done') {
-              this.getOptions();
-            }
-          });
-        })
-      }
-    })();
-  }
-
-  /**
-     * the preparation of the data for the pie chart
-     */
   logDataPrep() {
 
     return new Promise(resolve => {
@@ -74,19 +54,6 @@ export class ChartComponent implements OnInit, OnDestroy {
         { value: errorLog, name: 'Failure' },
         { value: successLog, name: 'Success' }
       ];
-      resolve('done')
-    });
-  }
-
-  private complexityDataPrep() {
-
-    return new Promise(resolve => {
-      this.complexityData = [];
-      let keys = Object.keys(this.data.modules || []);
-      keys.forEach((key) => {
-        let locNumber = (this.data.modules[key].loc).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        this.complexityData.push({ value: this.data.modules[key].files, name: key + ': ' + locNumber + ' lines of code' });
-      })
       resolve('done')
     });
   }
@@ -143,5 +110,39 @@ export class ChartComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
 
     this.subscribeScreenSizeChange.unsubscribe();
+  }
+
+  /*
+   * Private helper methods.
+   */
+
+  private complexityDataPrep() {
+
+    return new Promise(resolve => {
+      this.complexityData = [];
+      let keys = Object.keys(this.data.modules || []);
+      keys.forEach((key) => {
+        let locNumber = (this.data.modules[key].loc).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        this.complexityData.push({ value: this.data.modules[key].files, name: key + ': ' + locNumber + ' lines of code' });
+      })
+      resolve('done')
+    });
+  }
+
+  private waitForData() {
+
+    (async () => {
+      while (!this.data)
+        await new Promise(resolve => setTimeout(resolve, 100));
+      if (this.data) {
+        this.logDataPrep().then((result: string) => {
+          this.complexityDataPrep().then((res: string) => {
+            if (res === 'done') {
+              this.getOptions();
+            }
+          });
+        })
+      }
+    })();
   }
 }
