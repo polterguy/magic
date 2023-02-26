@@ -85,8 +85,11 @@ set-value:x:@.result
    strings.trim:x:@http.post/*/content/*/choices/0/*/text
 
 // Returning result to caller.
+get-first-value
+   get-value:x:@http.post/*/content/*/choices/0/*/finish_reason
+   .:unknown
 unwrap:x:+/*
 return
    error:bool:false
    result:x:@.result
-   finish_reason:x:@http.post/*/content/*/choices/0/*/finish_reason
+   finish_reason:x:@get-first-value
