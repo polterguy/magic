@@ -12,13 +12,80 @@ slots.create:magic.ai.crawl-site
       // Making sure exceptions does not leave thread.
       try
 
-         // Checking if website has a sitemap.
-         strings.concat
-            get-value:x:@.arguments/*/url
-            .:"/sitemap.xml"
-         http.get:x:@strings.concat
+         /*
+          * Checking if website has a sitemap first.
+          * We do this by checking if we've got a "robots.txt" file, that contains a link
+          * to the sitemap, and if so, using this as the URL for our sitemap. And if not,
+          * defaulting the sitemap URL to "xyz.com/sitemap.xml" which is the default URL
+          * for sitemaps.
+          */
+         .sitemap-url
+         set-value:x:@.sitemap-url
+            strings.concat
+               get-value:x:@.arguments/*/url
+               .:"/sitemap.xml"
+
+         // Checking if site has a "robots.txt" file.
+         .robots-url
+         set-value:x:@.robots-url
+            strings.concat
+               get-value:x:@.arguments/*/url
+               .:"/robots.txt"
+
+         // Retrieving "robots.txt" file.
+         http.get:x:@.robots-url
             headers
                User-Agent:Aista-MachineLearning-Spider
+
+         // Checking if "robots.txt" exists.
+         if
+            and
+               mte:x:@http.get
+                  .:int:200
+               lt:x:@http.get
+                  .:int:300
+            .lambda
+
+               // Site has a "robots.txt" file.
+               sockets.signal:magic.backend.chatbot
+                  roles:root
+                  args
+                     message:Site has a robots.txt file, finding sitemap from it
+                     type:info
+
+               // Fiding sitemap's URL from robots.txt file
+               strings.split:x:@http.get/*/content
+                  .:"Sitemap:"
+               if
+                  mt
+                     get-count:x:@strings.split/*
+                     .:int:1
+                  .lambda
+                     strings.split:x:@strings.split/1
+                        .:"\n"
+                     strings.trim:x:@strings.split/0
+                        .:"\r\n\t "
+                     set-value:x:@.sitemap-url
+                        get-value:x:@strings.trim
+
+               // Site has a "robots.txt" file.
+               strings.concat
+                  .:"Loading sitemap from "
+                  get-value:x:@.sitemap-url
+               unwrap:x:+/*/args/*/message
+               sockets.signal:magic.backend.chatbot
+                  roles:root
+                  args
+                     message:x:@strings.concat
+                     type:info
+
+
+         // Retrieving sitemap.
+         http.get:x:@.sitemap-url
+            headers
+               User-Agent:Aista-MachineLearning-Spider
+
+         // Checking if sitemap exists.
          if
             and
                mte:x:@http.get
@@ -196,7 +263,10 @@ slots.create:magic.ai.crawl-site
 
          else
 
-            // Site does not have a sitemap.xml, processing HTML instead.
+            /*
+             * Site does not have a sitemap.xml, processing HTML instead,
+             * crawling links found from HTML instead.
+             */
             log.info:Site does not have a sitemap
                url:x:@.arguments/*/url
             add:x:./*/io.file.execute
