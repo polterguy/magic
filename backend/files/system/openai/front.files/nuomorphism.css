@@ -80,10 +80,11 @@
 .aista-chat-close-btn:hover,
 .aista-chat-close-btn:active,
 .aista-chat-close-btn:focus {
-  outline: none;
   box-shadow: 1px 1px 2px #b8b9be, -3px -3px 6px #fff !important;
   transition: box-shadow;
   transition-duration: .25s;
+  outline: none !important;
+  text-decoration: none !important;
 }
 .aista-chat-msg-container {
   height: 300px !important;
@@ -207,6 +208,16 @@
 .aista-references-list {
   margin: 10px 0 !important;
   padding: 0 !important;
+}
+.aista-references-list li {
+  display: none;
+}
+.aista-references-list li:nth-child(1),
+.aista-references-list li:nth-child(2),
+.aista-references-list li:nth-child(3),
+.aista-references-list li:nth-child(4),
+.aista-references-list li:nth-child(5) {
+  display: list-item;
 }
 .aista-references-list li {
   list-style: none !important;
