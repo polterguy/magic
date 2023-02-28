@@ -304,6 +304,26 @@
   border: none !important;
   box-sizing: border-box !important;
 }
+.aista-speech-button {
+  position: absolute;
+  right: 25px;
+  bottom: 14px;
+  height: 30px;
+  width: 20px;
+  font-size: 20px;
+  display: block;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  color: #b0b0b0;
+  transition: color .25s ease-in-out;
+}
+.aista-speech-button:hover,
+.aista-speech-button:focus,
+.aista-speech-button:active {
+  color: #808080;
+  transition: color .25s ease-in-out;
+}
 .aista-chat-prompt::placeholder {
   color: rgb(198,198,198) !important;
 }
