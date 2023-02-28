@@ -10,7 +10,7 @@
   position: fixed !important;
   bottom: 10px !important;
   right: 10px !important;
-  color: transparent;
+  color: transparent !important;
   background-image: url('https://aista.com/wp-content/uploads/2023/02/frank.png') !important;
   background-color: #fefefe !important;
   background-size:100px 100px;
@@ -18,13 +18,13 @@
   background-position: 10px 0;
   width: 120px !important;
   height: 100px !important;
-  cursor: pointer;
+  cursor: pointer !important;
   box-shadow: 3px 3px 10px rgba(0,234,255,.3);
-  border-radius: 50px 50px 0 50px;
+  border-radius: 50px 50px 0 50px !important;
   border: solid 1px rgba(0,234,255,.4) !important;
   z-index: 9999 !important;
   transition: box-shadow .25s ease-in-out, background-color .25s ease-in-out;
-  font-family: Red hat Display, sans-serif;
+  font-family: Red hat Display, sans-serif !important;
 }
 .aista-chat-btn:hover,
 .aista-chat-btn:active,
@@ -32,6 +32,7 @@
   background-color: #deeefe !important;
   transition: box-shadow .25s ease-in-out, background-color .25s ease-in-out;
   box-shadow: 1px 1px 2px rgba(0,234,255,.3);
+  text-decoration: none !important;
 }
 @keyframes aista_roll_down {
   0% {
