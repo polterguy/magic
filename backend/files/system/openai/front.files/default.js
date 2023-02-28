@@ -138,6 +138,11 @@ function aista_submit_form(speech) {
   }, 1)
   inp.disabled = true;
 
+  const speechBtns = window.document.getElementsByClassName('aista-speech-button');
+  if (speechBtns?.length > 0) {
+    speechBtns[0].disabled = true;
+  }
+
   // Invoking backend, making sure we associate request with reCAPTCHA token if possible
   if (aistaReCaptchaSiteKey) {
     grecaptcha.ready(function() {
@@ -224,7 +229,11 @@ function aista_invoke_prompt(msg, token, speech) {
       inp.disabled = false;
       inp.focus();
       inp.select();
-
+      const speechBtns = window.document.getElementsByClassName('aista-speech-button');
+      if (speechBtns?.length > 0) {
+        speechBtns[0].disabled = false;
+      }
+    
       // Appending answer to message container
       const row = window.document.createElement('div');
       if (aistaChatChat) {
@@ -279,6 +288,11 @@ function aista_invoke_prompt(msg, token, speech) {
       inp.disabled = false;
       inp.focus();
       inp.select();
+      const speechBtns = window.document.getElementsByClassName('aista-speech-button');
+      if (speechBtns?.length > 0) {
+        speechBtns[0].disabled = false;
+      }
+    
 
       // Appending answer to message container
       const row = window.document.createElement('div');
