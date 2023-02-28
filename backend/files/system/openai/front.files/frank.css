@@ -1,0 +1,296 @@
+
+/*
+ * Default CSS style for OpenAI chat inclusion.
+ */
+.grecaptcha-badge {
+  opacity:0 !important;
+}
+.aista-chat-btn {
+  position: fixed !important;
+  bottom: 10px !important;
+  right: 10px !important;
+  color: transparent;
+  background-image: url('https://aista.com/wp-content/uploads/2023/02/frank.png') !important;
+  background-color: #fefefe !important;
+  background-size:100px 100px;
+  background-repeat: no-repeat;
+  background-position: 10px 0;
+  width: 120px !important;
+  height: 100px !important;
+  cursor: pointer;
+  box-shadow: 3px 3px 10px rgba(0,234,255,.3);
+  border-radius: 50px 50px 0 50px;
+  border: solid 1px rgba(0,234,255,.4) !important;
+  z-index: 9999 !important;
+  transition: box-shadow .25s ease-in-out;
+}
+.aista-chat-btn:hover,
+.aista-chat-btn:active,
+.aista-chat-btn:focus {
+  transition: box-shadow .25s ease-in-out;
+  box-shadow: 1px 1px 2px rgba(0,234,255,.3);
+}
+.aista-chat-btn:hover {
+  text-decoration: none !important;
+}
+.aista-chat-wnd {
+  position: fixed !important;
+  z-index: 10000 !important;
+  bottom: 10px !important;
+  right: 10px !important;
+  width: 400px !important;
+  max-width: calc(100% - 20px) !important;
+  background-color: #fafafa !important;
+  border-radius: 8px !important;
+  border: solid 1px #999 !important;
+  box-shadow: 2px 2px 15px rgba(0,0,0,.8) !important;
+  display: none;
+  font-family: Arial, Helvetica, sans-serif !important;
+}
+.aista-chat-header {
+  font-size: 12px !important;
+  margin: 18px 20px 15px 12px !important;
+  color: rgb(128,128,128) !important;
+}
+.aista-chat-close-btn {
+  border-radius: 10px !important;
+  background-color: rgba(0,234,255,.4) !important;
+  border: solid 1px rgb(55, 159, 169) !important;
+  padding: 5px 12px !important;
+  font-size: 12px !important;
+  color: #0000ff !important;
+  position: absolute !important;
+  top: 10px !important;
+  right: 12px !important;
+  cursor: pointer !important;
+}
+.aista-chat-close-btn:hover,
+.aista-chat-close-btn:active,
+.aista-chat-close-btn:focus {
+  outline: none !important;
+}
+.aista-chat-msg-container {
+  height: 300px !important;
+  margin: 0 10px !important;
+  background-color: rgb(240,240,255) !important;
+  border-radius: 5px !important;
+  padding: 25px 15px 15px 15px !important;
+  border: solid 1px rgba(0,0,0,.2) !important;
+  overflow-y: auto !important;
+  font-size: 14px !important;
+  line-height: 20px !important;
+}
+.aista-chat-msg-container a {
+  text-decoration: none !important;
+  color: #5555ff !important;
+}
+.aista-chat-msg-container a:visited {
+  color: #5555ff !important;
+}
+@keyframes aista-chat-question-waiting {
+  0% { opacity: .2; }
+  100% { opacity: 1; }
+}
+.aista-chat-question-waiting {
+  animation-name: aista-chat-question-waiting;
+  animation-duration: .5s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  font-size: 14px !important;
+  margin-bottom: 10px !important;
+  border-radius: 15px 15px 0 15px;
+  margin-left: 60px !important;
+  background-color: #fafafa !important;
+  margin-bottom: 25px !important;
+  padding: 15px !important;
+  box-shadow: 3px 3px 5px rgba(0,0,0,.2);
+  border: solid 1px rgba(0,0,0,.2);
+}
+.aista-chat-question {
+  font-size: 14px !important;
+  margin-bottom: 10px !important;
+  border-radius: 15px 15px 0 15px;
+  margin-left: 60px !important;
+  background-color: #fafafa !important;
+  margin-bottom: 25px !important;
+  padding: 15px !important;
+  box-shadow: 3px 3px 5px rgba(0,0,0,.2);
+  border: solid 1px rgba(0,0,0,.2);
+}
+.aista-chat-error {
+  background-color: rgb(255,230,230) !important;
+  padding: 15px !important;
+  margin-left: -15px !important;
+  margin-right: -15px !important;
+  margin-bottom: 20px !important;
+}
+.aista-chat-answer {
+  color: rgb(128,128,128) !important;
+  margin-bottom: 20px !important;
+  border-radius: 25px 25px 25px 0;
+  margin-right: 60px !important;
+  margin-bottom: 25px !important;
+  background-color: #fafafa !important;
+  padding: 15px !important;
+  box-shadow: 3px 3px 5px rgba(0,0,0,.2);
+  border: solid 1px rgba(0,0,0,.2);
+}
+.aista-chat-answer.stop,
+.aista-chat-answer.cached {
+  color: unset !important;
+}
+.aista-chat-answer p:first-child,
+.aista-chat-answer p:last-child {
+  margin-top:0 !important;
+  margin-bottom:0 !important;
+}
+.aista-chat-answer p img {
+  display: block !important;
+  width: calc(100% - 20px) !important;
+  margin-left: 10px !important;
+  margin-right: 10px !important;
+  margin-top: 10px !important;
+  margin-bottom: 10px !important;
+  cursor: pointer !important;
+  border-radius: 5px !important;
+  box-shadow: 3px 3px 5px rgba(0,0,0,.2) !important;
+}
+.aista-chat-answer ul {
+  padding: 0 !important;
+  margin: 20px 0 0 0 !important;
+}
+.aista-chat-answer ul li {
+  list-style-type: none !important;
+}
+@keyframes aista-zoom-image {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.aista-zoom-image {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 11000 !important;
+  background-color: rgba(0,0,0,.7) !important;
+  opacity: 0;
+  animation-name: aista-zoom-image;
+  animation-duration: .25s;
+  animation-fill-mode: forwards;
+}
+@keyframes aista-drop-down {
+  0% {
+    margin-top: -1000px;
+    opacity: 0;
+  }
+  100% {
+    margin-top: 25px;
+    opacity: 1;
+  }
+}
+.aista-zoom-image img {
+  display: block !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  width: auto !important;
+  max-width: calc(100% - 50px) !important;
+  max-height: calc(100% - 50px) !important;
+  margin-top: -1000px;
+  animation-name: aista-drop-down;
+  animation-duration: .25s;
+  animation-delay: .25s;
+  animation-fill-mode: forwards;
+  border-radius: 5px !important;
+  box-shadow: 0 0 15px rgba(255,255,0,.5) !important;
+}
+.aista-references-list {
+  padding-left: 0 !important;
+}
+@keyframes aista_fade_in {
+  0% {
+    margin-left: -100px;
+    opacity: 0;
+  }
+  100% {
+    margin-left: 0;
+    opacity: 1;
+  }
+}
+.aista-references-list li {
+  margin-left: -100px;
+  opacity: 0;
+  list-style: none !important;
+  margin-top: 5px !important;
+  animation-name: aista_fade_in;
+  animation-duration: .75s;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-in-out;
+}
+.aista-references-list li:nth-child(1) {
+  animation-delay: 0s;
+}
+.aista-references-list li:nth-child(2) {
+  animation-delay: .25s;
+}
+.aista-references-list li:nth-child(3) {
+  animation-delay: .5s;
+}
+.aista-references-list li:nth-child(4) {
+  animation-delay: .75s;
+}
+.aista-references-list li:nth-child(5) {
+  animation-delay: 1s;
+}
+.aista-references-list li:nth-child(6) {
+  animation-delay: 1.25s;
+}
+.aista-references-list li:nth-child(7) {
+  animation-delay: 1.5s;
+}
+.aista-references-list li:nth-child(8) {
+  animation-delay: 1.75s;
+}
+.aista-references-list li:nth-child(9) {
+  animation-delay: 2s;
+}
+.aista-references-list li:nth-child(10) {
+  animation-delay: 2.25s;
+}
+.aista-references-list li a {
+  text-decoration: none !important;
+  color: rgb(128,128,255) !important;
+  transition: color, background-color .25s ease-in-out !important;
+  padding: 5px 5px 5px 10px !important;
+  display: block !important;
+  border-radius: 5px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+.aista-references-list li a:hover,
+.aista-references-list li a:active,
+.aista-references-list li a:focus {
+  color: rgb(90,90,235) !important;
+  transition: color, background-color .25s ease-in-out;
+  background-color: rgba(0,0,0,.1) !important;
+}
+.aista-chat-form {
+  padding: 10px !important;
+  margin: 0 !important;
+}
+.aista-chat-prompt {
+  padding: 10px !important;
+  border-radius: 8px !important;
+  border: solid 1px rgba(0,0,0,.2) !important;
+  outline: none !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+.aista-chat-prompt::placeholder {
+  color: rgb(180,181,188) !important;
+}
