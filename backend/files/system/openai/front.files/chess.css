@@ -2,6 +2,7 @@
 /*
  * Default CSS style for OpenAI chat inclusion.
  */
+ @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,700;1,400&display=swap');
 .grecaptcha-badge {
   opacity:0 !important;
 }
@@ -18,7 +19,7 @@
   cursor: pointer !important;
   font-weight: bold !important;
   border: solid 1px #c7c7c7;
-  font-family: Helvetica !important;
+  font-family: Roboto !important;
   text-align: center;
   text-decoration: none !important;
   font-family: Arial, Helvetica, sans-serif;
@@ -37,18 +38,18 @@
   color: #707070 !important;
 }
 .aista-chat-wnd {
+  font-family: Roboto !important;
   position: fixed !important;
   z-index: 10000 !important;
   bottom: 10px !important;
   right: 10px !important;
   width: 350px !important;
   max-width: calc(100% - 20px) !important;
-  background:linear-gradient(#fafafa, #e0e0e0) !important;
+  background:linear-gradient(#fafafa, #eaeaea) !important;
   border-radius: 4px !important;
   border: solid 1px #c7c7c7 !important;
   box-shadow: 3px 3px 5px rgba(0,0,0,.2) !important;
   display: none;
-  font-family: Arial, Helvetica, sans-serif !important;
 }
 .aista-chat-header {
   font-size: 12px !important;
@@ -80,7 +81,7 @@
 .aista-chat-msg-container {
   height: 300px !important;
   margin: 0 10px !important;
-  background:linear-gradient(#eaeaea, #fafafa) !important;
+  background-color: #f0f0f0;
   border-radius: 4px !important;
   padding: 15px !important;
   border: solid 1px rgba(0,0,0,.2) !important;
@@ -107,7 +108,6 @@
   animation-direction: alternate;
   font-size: 14px !important;
   margin-bottom: 10px !important;
-  font-weight: bold !important;
   margin-left: 60px !important;
   border-radius: 10px 10px 0 10px;
   margin-bottom: 25px !important;
@@ -162,11 +162,10 @@
   box-shadow: 3px 3px 5px rgba(0,0,0,.2) !important;
 }
 .aista-chat-answer ul {
-  padding-left: 20px !important;
-  margin: 0 !important;
+  padding-left: 0 !important;
 }
 .aista-chat-answer ul li {
-  list-style-type: circle !important;
+  list-style-type: none !important;
   margin: 0 !important;
 }
 @keyframes aista-zoom-image {
@@ -216,6 +215,7 @@
   box-shadow: 0 0 15px rgba(255,255,0,.5) !important;
 }
 .aista-references-list {
+  margin-top: 20px !important;
   padding-left: 0 !important;
 }
 @keyframes aista_fade_in {
