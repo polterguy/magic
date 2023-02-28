@@ -27,6 +27,7 @@ export class MachineLearningEmbedUiComponent implements OnInit {
   search: boolean = false;
   chat: boolean = true;
   markdown: boolean = true;
+  speech: boolean = true;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -60,7 +61,7 @@ export class MachineLearningEmbedUiComponent implements OnInit {
 
   getEmbed() {
 
-    return `<script src="${this.backendService.active.url}/magic/system/openai/include-javascript?markdown=${this.markdown ? 'true' : 'false'}&search=${this.search ? 'true' : 'false'}&chat=${this.chat ? 'true' : 'false'}&css=${encodeURIComponent(this.theme)}&file=default&type=${encodeURIComponent(this.type)}&header=${encodeURIComponent(this.header)}&button=${encodeURIComponent(this.buttonTxt)}" defer></script>`;
+    return `<script src="${this.backendService.active.url}/magic/system/openai/include-javascript?markdown=${this.markdown ? 'true' : 'false'}&speech=${this.speech ? 'true' : 'false'}&search=${this.search ? 'true' : 'false'}&chat=${this.chat ? 'true' : 'false'}&css=${encodeURIComponent(this.theme)}&file=default&type=${encodeURIComponent(this.type)}&header=${encodeURIComponent(this.header)}&button=${encodeURIComponent(this.buttonTxt)}" defer></script>`;
   }
 
   embed() {

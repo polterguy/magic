@@ -334,7 +334,7 @@ export class MachineLearningModelsComponent implements OnInit {
     this.dialog
       .open(MachineLearningEmbedUiComponent, {
         width: '80vw',
-        maxWidth: '550px',
+        maxWidth: '650px',
         data: {
           type: el.type,
           noClose: true,
