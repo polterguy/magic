@@ -10,6 +10,7 @@
    search:bool
    chat:bool
    markdown:bool
+   speech:bool
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/file
@@ -43,6 +44,12 @@ if
       add:x:@.arguments
          .
             markdown:bool:true
+if
+   not-exists:x:@.arguments/*/speech
+   .lambda
+      add:x:@.arguments
+         .
+            speech:bool:false
 
 // Checking if custom JavaScript file exists.
 .result
@@ -166,6 +173,16 @@ else
    set-value:x:@.result
       strings.replace:x:@.result
          .:[[markdown]]
+         .:false
+if:x:@.arguments/*/speech
+   set-value:x:@.result
+      strings.replace:x:@.result
+         .:[[speech]]
+         .:true
+else
+   set-value:x:@.result
+      strings.replace:x:@.result
+         .:[[speech]]
          .:false
 
 // Making sure we return correct Content-Type to caller, and applying some cache.

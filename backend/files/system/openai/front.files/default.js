@@ -13,6 +13,9 @@ let aistaChatChat = [[chat]];
 // True if caller wants Markdown support.
 let aistaChatMarkdown = [[markdown]];
 
+// True if speech is turned on.
+let aistaSpeech = [[speech]];
+
 // Retrieving reCAPTCHA site key.
 let aistaReCaptchaSiteKey = null;
 fetch('[[url]]/magic/system/auth/recaptcha-key', {
@@ -71,17 +74,24 @@ function aista_create_chat_ui() {
   // Chat window.
   const aistaChatWnd = window.document.createElement('div');
   aistaChatWnd.className = 'aista-chat-wnd';
-  aistaChatWnd.innerHTML = `
+  let html = `
   <div class="aista-chat-header">[[header]]</div>
   <div class="aista-chat-msg-container"></div>
   <button class="aista-chat-close-btn">X</button>
   <form class="aista-chat-form">
-  <input type="text" placeholder="Ask me anything ..." class="aista-chat-prompt">
-  </form>
-  `;
+  <input type="text" placeholder="Ask me anything ..." class="aista-chat-prompt">`;
+  if (aistaSpeech) {
+    html += `<button type="button" class="aista-speech-button fas fa-microphone"></button>`;
+    const fontAwesome = window.document.createElement('script');
+    fontAwesome.src = 'https://kit.fontawesome.com/a076d05399.js';
+    fontAwesome.crossorigin = 'anonymous';
+    window.document.getElementsByTagName('head')[0].appendChild(fontAwesome);
+  }
+  html += '</form>';
+  aistaChatWnd.innerHTML = html;
   window.document.body.appendChild(aistaChatWnd);
 
-  // Add an event listener to the close button
+  // Add an event listener to the close button.
   window.document.getElementsByClassName('aista-chat-close-btn')[0].addEventListener('click', () => {
     aistaChatWnd.style.display = 'none';
     const btns = window.document.getElementsByClassName('aista-chat-btn');
@@ -90,32 +100,54 @@ function aista_create_chat_ui() {
     }
   });
 
+  // Add an event listener to the microphone button.
+  if (aistaSpeech) {
+    window.document.getElementsByClassName('aista-speech-button')[0].addEventListener('click', () => {
+      var recognition = new webkitSpeechRecognition();
+      recognition.onresult = function(event) {
+        var output = document.getElementsByClassName('aista-chat-prompt')[0];
+        output.value = event.results[0][0].transcript;
+        output.select();
+        output.focus();
+        aista_submit_form(true);
+      };
+      recognition.start();
+    });
+  }
+
   // Add a submit event handler to the form
   window.document.getElementsByClassName('aista-chat-form')[0].addEventListener('submit', (e) => {
     e.preventDefault();
-    const inp = window.document.getElementsByClassName('aista-chat-prompt')[0];
-    const msg = inp.value;
-    const msgEl = window.document.createElement('div');
-    msgEl.innerText = msg;
-    msgEl.className = 'aista-chat-question-waiting';
-    const msgs = window.document.getElementsByClassName('aista-chat-msg-container')[0];
-    msgs.appendChild(msgEl);
-    setTimeout(() => {
-      msgEl.scrollIntoView({behavior: 'smooth', block: 'start'});
-    }, 1)
-    inp.disabled = true;
-    
-    // Invoking backend, making sure we associate request with reCAPTCHA token if possible
-    if (aistaReCaptchaSiteKey) {
-      grecaptcha.ready(function() {
-        grecaptcha.execute(aistaReCaptchaSiteKey, {action: 'submit'}).then(function(token) {
-          aista_invoke_prompt(msg, token);
-        });
-      });
-    } else {
-      aista_invoke_prompt(msg, null);
-    }
+    aista_submit_form(false);
   });
+}
+
+/*
+ * Submits form to backend.
+ */
+function aista_submit_form(speech) {
+  const inp = window.document.getElementsByClassName('aista-chat-prompt')[0];
+  const msg = inp.value;
+  const msgEl = window.document.createElement('div');
+  msgEl.innerText = msg;
+  msgEl.className = 'aista-chat-question-waiting';
+  const msgs = window.document.getElementsByClassName('aista-chat-msg-container')[0];
+  msgs.appendChild(msgEl);
+  setTimeout(() => {
+    msgEl.scrollIntoView({behavior: 'smooth', block: 'start'});
+  }, 1)
+  inp.disabled = true;
+
+  // Invoking backend, making sure we associate request with reCAPTCHA token if possible
+  if (aistaReCaptchaSiteKey) {
+    grecaptcha.ready(function() {
+      grecaptcha.execute(aistaReCaptchaSiteKey, {action: 'submit'}).then(function(token) {
+        aista_invoke_prompt(msg, token, speech);
+      });
+    });
+  } else {
+    aista_invoke_prompt(msg, null, speech);
+  }
 }
 
 /*
@@ -152,7 +184,7 @@ function aista_zoom_image(img) {
 /*
  * Function that invokes our backend with the prompt to retrieve completion.
  */
-function aista_invoke_prompt(msg, token) {
+function aista_invoke_prompt(msg, token, speech) {
 
   // Creating our URL.
   let url = '[[url]]/magic/system/openai/prompt?prompt=' + encodeURIComponent(msg) + '&type=[[type]]';
@@ -233,6 +265,12 @@ function aista_invoke_prompt(msg, token) {
     
       // Scrolling message row into view.
       msgRow.scrollIntoView({behavior: 'smooth', block: 'start'});
+
+      // Checking if we're supposed to speak the result.
+      if (aistaSpeech && speech) {
+        let utterance = new SpeechSynthesisUtterance(data.result);
+        speechSynthesis.speak(utterance);
+      }
     })
     .catch(error => {
 
