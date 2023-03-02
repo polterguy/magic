@@ -259,7 +259,7 @@ slots.create:magic.ai.crawl-site
                   roles:root
                   args
                      message:x:@strings.concat
-                     type:info
+                     type:done_crawling
 
          else
 

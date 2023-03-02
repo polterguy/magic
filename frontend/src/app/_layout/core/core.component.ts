@@ -29,12 +29,6 @@ export class CoreComponent implements OnInit, OnDestroy {
     this.generalService.setScreenSize(this.largeScreenStatus);
   }
 
-  /**
-   * Creates an instance of your component.
-   *
-   * @param cdr Needed to mark component as having changes
-   * @param backendService Service to keep track of currently selected backend
-   */
   constructor(
     private cdr: ChangeDetectorRef,
     private generalService: GeneralService,
