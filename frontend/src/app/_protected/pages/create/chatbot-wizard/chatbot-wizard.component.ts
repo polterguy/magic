@@ -138,6 +138,7 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
         this.generalService.showFeedback('Something went wrong when creating your bot', 'errorMessage');
       }
       setTimeout(() => {
+
         const domEl = document.getElementById('m_' + (this.messages.length - 1));
         domEl.scrollIntoView()
       }, 50);
