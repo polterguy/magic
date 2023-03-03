@@ -15,7 +15,7 @@ slots.create:magic.ai.summarize
    .decorated-prompt
    set-value:x:-
       strings.concat
-         .:"Create a 3 paragraph summary from the specified content and create a fitting title as the first line:\r\n"
+         .:"Create a summary from the specified content and create a fitting title as the first line while preserving all important information:\r\n"
          get-value:x:@.arguments/*/content
 
    // Creating an HTTP POST request towards OpenAI to create summary of specified content.
