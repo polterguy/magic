@@ -272,16 +272,27 @@ for-each:x:@.snippets/*
                   .:"://"
             .lambda
 
-               // URL contains "https://" parts.
+               // URL contains "https://" part or "http://" part.
                strings.split:x:@.dp/#/*/uri
                   .:"://"
-               strings.split:x:@strings.split/0/-
-                  .:":"
-               set-value:x:@.uri
-                  strings.concat
-                     get-value:x:@strings.split/@strings.split/0
-                     .:"://"
-                     get-value:x:@strings.split/0
+               if
+                  not
+                     strings.contains:x:@strings.split/0/-
+                        .:"localhost:"
+                  .lambda
+                     strings.split:x:@strings.split/0/-
+                        .:":"
+                     set-value:x:@.uri
+                        strings.concat
+                           get-value:x:@strings.split/@strings.split/0
+                           .:"://"
+                           get-value:x:@strings.split/0
+               else
+                  set-value:x:@.uri
+                     strings.concat
+                        get-value:x:@strings.split/0
+                        .:"://"
+                        get-value:x:@strings.split/1
 
          // Checking if we need to store URI as reference.
          if
