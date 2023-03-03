@@ -33,9 +33,6 @@ if
          .
             completion:completion
 
-// Reading file data from stream.
-io.stream.read:x:@.arguments/*/file/*/stream
-
 // Buffer for file data.
 .file-data
 
@@ -54,6 +51,11 @@ switch:x:@strings.to-lower
 
    // XML file type.
    case:xml
+
+      // Reading file data from stream.
+      io.stream.read:x:@.arguments/*/file/*/stream
+
+      // Parsing XML from stream's content.
       xml2lambda:x:@io.stream.read
       for-each:x:@xml2lambda/*/*
          unwrap:x:./*/add/*/*/*
@@ -69,13 +71,69 @@ switch:x:@strings.to-lower
 
    // JSON file type.
    case:json
+
+      // Reading file data from stream.
+      io.stream.read:x:@.arguments/*/file/*/stream
+
+      // Parsing JSON from stream's content
       add:x:@.file-data
          json2lambda:x:@io.stream.read
 
    // YAML file type.
    case:yaml
+
+      // Reading file data from stream.
+      io.stream.read:x:@.arguments/*/file/*/stream
+
+      // Parsing YAML from stream's content.
       add:x:@.file-data
          yaml2lambda:x:@io.stream.read
+
+   // PDF file type.
+   case:pdf
+
+      // Parsing PDF.
+      .filename
+      set-value:x:@.filename
+         strings.concat
+            crypto.random
+               min:20
+               max:30
+            get-value:x:@.arguments/*/file/*/name
+      .filepath
+      set-value:x:@.filepath
+         strings.concat
+            .:/etc/system/openai/pdf/
+            get-value:x:@.filename
+
+      // Saving file.
+      io.stream.save-file:x:@.filepath
+         get-value:x:@.arguments/*/file/*/stream
+
+      // Summarizing PDF content.
+      pdf2text:x:@.filepath
+      unwrap:x:+/*
+      signal:magic.ai.summarize
+         content:x:@pdf2text
+
+      // Creating our Hyperlink URI to allow for downloading the PDF file.
+      .uri
+      set-value:x:@.uri
+         strings.concat
+            request.scheme
+            .:"://"
+            request.host
+            .:"/magic/system/openai/download-pdf?file="
+            strings.url-encode:x:@.filename
+
+      // Creating a single training snippet from summary of PDF content.
+      unwrap:x:+/*/*/*
+      add:x:@.file-data
+         .
+            .
+               prompt:x:@signal/*/prompt
+               completion:x:@signal/*/completion
+               uri:x:@.uri
 
 // Sanity checking file.
 if
@@ -87,7 +145,7 @@ if
       // Returning error to caller.
       response.status.set:400
       return
-         message:"Your CSV file needs to have at the very least prompt and completion fields, or you need to correctly apply the right fields to use as substitutes"
+         message:"Your file needs to have at the very least prompt and completion fields, or you need to correctly apply the right fields to use as substitutes"
 
 // Connecting to database.
 data.connect:[generic|magic]
@@ -137,6 +195,7 @@ data.connect:[generic|magic]
             completion:x:@.dp/#/*/{@.arguments/*/completion}
 
 // Returning success to caller.
+get-count:x:@.file-data/*
 unwrap:x:+/*
 return
    result:success

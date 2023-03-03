@@ -1,0 +1,83 @@
+
+/*
+ * Creates a summary of the specified text and returns as [prompt] and [completion].
+ */
+slots.create:magic.ai.summarize
+
+   // Getting OpenAI API token from configuration.
+   .token
+   set-value:x:@.token
+      strings.concat
+         .:"Bearer "
+         config.get:"magic:openai:key"
+
+   // Creating our prompt.
+   .decorated-prompt
+   set-value:x:-
+      strings.concat
+         .:"Create a 3 paragraph summary from the specified content and create a fitting title as the first line:\r\n"
+         get-value:x:@.arguments/*/content
+
+   // Creating an HTTP POST request towards OpenAI to create summary of specified content.
+   .max-tokens
+   set-value:x:@.max-tokens
+      math.subtract
+         .:int:4000
+         openai.tokenize:x:@.decorated-prompt
+   http.post:"https://api.openai.com/v1/chat/completions"
+      headers
+         Authorization:x:@.token
+         Content-Type:application/json
+      payload
+         model:gpt-3.5-turbo
+         max_tokens:x:@.max-tokens
+         temperature:decimal:0.3
+         messages
+            .
+               role:user
+               content:x:@.decorated-prompt
+      convert:true
+
+   // Sanity checking above invocation.
+   if
+      not
+         and
+            mte:x:@http.post
+               .:int:200
+            lt:x:@http.post
+               .:int:300
+      .lambda
+
+         // Oops, error - Logging error and returning status 500 to caller.
+         lambda2hyper:x:@http.post
+         log.error:Something went wrong while invoking OpenAI
+            message:x:@http.post/*/content/*/error/*/message
+            status:x:@http.post
+            error:x:@lambda2hyper
+         throw:Failure while invoking OpenAI API
+            public:bool:true
+
+   // Creating our prompt.
+   .prompt
+   strings.split:x:@http.post/*/content/*/choices/0/*/message/*/content
+      .:"\n"
+   set-value:x:@.prompt
+      strings.trim:x:@strings.split/0
+   remove-nodes:x:@strings.split/0
+   
+   // Trimming the rest.
+   for-each:x:@strings.split/*
+      set-value:x:@.dp/#
+         strings.trim:x:@.dp/#
+
+   // Creating our completion.
+   .completion
+   set-value:x:@.completion
+      strings.join:x:@strings.split/*
+         .:"\r\n\r\n"
+
+   // Returning result of invocation to caller.
+   unwrap:x:+/*
+   return
+      prompt:x:@.prompt
+      completion:x:@.completion
