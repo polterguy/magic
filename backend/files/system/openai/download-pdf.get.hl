@@ -1,0 +1,29 @@
+
+/*
+ * Returns the specified PDF training data file to client.
+ */
+.arguments
+   file:string
+.description:Returns the specified OpenAI training PDF file to the client.
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/file
+
+// Figuringout full path of file.
+strings.concat
+   .:"/etc/system/openai/pdf/"
+   get-value:x:@.arguments/*/file
+
+// Getting our response HTTP headers sorted out.
+strings.concat
+   .:"attachment; filename=\""
+   get-value:x:@.arguments/*/file
+   .:"\""
+response.headers.set
+   Content-Type:application/pdf
+   Content-Disposition:x:@strings.concat
+   Access-Control-Expose-Headers:Content-Disposition
+
+// Returning file to caller.
+io.stream.open-file:x:@strings.concat/@strings.concat
+return:x:-
