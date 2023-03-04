@@ -2,7 +2,7 @@
 /*
  * Creates a summary of the specified text and returns as [prompt] and [completion].
  */
-slots.create:magic.ai.summarize
+slots.create:magic.ai.structure
 
    // Getting OpenAI API token from configuration.
    .token
@@ -15,7 +15,7 @@ slots.create:magic.ai.summarize
    .decorated-prompt
    set-value:x:-
       strings.concat
-         .:"Create a summary from the specified content and create a fitting title as the first line while preserving all important information:\r\n"
+         .:"Structure the following information and create a fitting title as the first line:\r\n"
          get-value:x:@.arguments/*/content
 
    // Creating an HTTP POST request towards OpenAI to create summary of specified content.
