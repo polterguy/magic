@@ -15,10 +15,10 @@ slots.create:magic.ai.structure
    .decorated-prompt
    set-value:x:-
       strings.concat
-         .:"Structure the following information and create a fitting title as the first line:\r\n"
+         .:"Structure the following information as Markdown with a title:\r\n"
          get-value:x:@.arguments/*/content
 
-   // Creating an HTTP POST request towards OpenAI to create summary of specified content.
+   // Creating an HTTP POST request towards OpenAI to create structured data of the specified content.
    .max-tokens
    set-value:x:@.max-tokens
       math.subtract
@@ -31,7 +31,7 @@ slots.create:magic.ai.structure
       payload
          model:gpt-3.5-turbo
          max_tokens:x:@.max-tokens
-         temperature:decimal:0.3
+         temperature:decimal:0.1
          messages
             .
                role:user
