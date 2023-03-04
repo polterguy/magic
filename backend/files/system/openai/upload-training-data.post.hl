@@ -46,6 +46,11 @@ switch:x:@strings.to-lower
 
    // CSV file type.
    case:csv
+
+      // Reading file data from stream.
+      io.stream.read:x:@.arguments/*/file/*/stream
+
+      // Parsing CSV from stream's content.
       add:x:@.file-data
          csv2lambda:x:@io.stream.read
 
