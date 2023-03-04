@@ -32,7 +32,6 @@ data.connect:[generic|magic]
    data.read
       table:ml_training_snippets
       columns
-         type
          uri
          prompt
          completion
