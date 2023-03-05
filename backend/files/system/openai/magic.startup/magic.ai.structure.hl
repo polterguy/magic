@@ -31,8 +31,11 @@ slots.create:magic.ai.structure
       payload
          model:gpt-3.5-turbo
          max_tokens:x:@.max-tokens
-         temperature:decimal:0.1
+         temperature:decimal:0.8
          messages
+            .
+               role:system
+               content:You are a helpful assistant
             .
                role:user
                content:x:@.decorated-prompt
