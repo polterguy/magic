@@ -186,7 +186,7 @@
 
         <ng-container *ngIf="trainingFileModel !== ''">
           <h4 class="my-0">{{getFileName()}}</h4>
-          <p class="text-center mt-3" *ngIf="uploading">Uploading ...</p>
+          <p class="text-center mt-3" *ngIf="uploading">Uploading {{uploadIndex + 1}} of {{files.length}}...</p>
           <p class="text-center mt-3" *ngIf="!uploading">Done!</p>
         </ng-container>
 
