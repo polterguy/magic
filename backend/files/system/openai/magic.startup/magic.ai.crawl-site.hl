@@ -217,7 +217,7 @@ slots.create:magic.ai.crawl-site
 
                   // Checking if we've reached limit.
                   if
-                     lte:x:@.no
+                     lt:x:@.no
                         get-value:x:@.arguments/*/max
                      .lambda
 
