@@ -172,23 +172,22 @@ data.connect:[generic|magic]
       // Using type from arguments unless file contains a type declaration.
       .type
       if
+         and
+            exists:x:@.arguments/*/type
+            not-null:x:@.arguments/*/type
+            neq:x:@.arguments/*/type
+               .:
+         .lambda
+            set-value:x:@.type
+               get-value:x:@.arguments/*/type
+      else-if
          exists:x:@.dp/#/*/type
          .lambda
             set-value:x:@.type
                get-value:x:@.dp/#/*/type
-      else-if
-         or
-            not-exists:x:@.arguments/*/type
-            eq:x:@.arguments/*/type
-               .
-            eq:x:@.arguments/*/type
-               .:
-         .lambda
-            set-value:x:@.type
-               .:default
       else
          set-value:x:@.type
-            get-value:x:@.arguments/*/type
+            .:default
 
       // Inserting into database.
       data.create
