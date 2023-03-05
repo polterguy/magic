@@ -111,38 +111,53 @@
   <!-- Upload training data part -->
   <div class="row" *ngIf="advanced">
 
-    <div class="col-12 d-flex justify-content-md-between align-items-md-center align-items-end flex-md-row">
+    <div class="col-12">
 
-      <mat-form-field class="w-100 standalone-field me-2">
-        <span
-          matPrefix
-          matTooltip="Prompt field"
-          class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-          <mat-icon>help_outline</mat-icon>
-          <span class="text-muted">|</span>
-        </span>
-        <input
-          matInput
-          placeholder="Prompt field"
-          [(ngModel)]="prompt"
-          autocomplete="off">
-      </mat-form-field>
-  
-      <mat-form-field class="w-100 standalone-field">
-        <span
-          matPrefix
-          matTooltip="Completion field"
-          class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-          <mat-icon>edit</mat-icon>
-          <span class="text-muted">|</span>
-        </span>
-        <input
-          matInput
-          placeholder="Completion field"
-          [(ngModel)]="completion"
-          autocomplete="off">
-      </mat-form-field>
+      <p class="text-muted text-small mb-3">
+        Upload file as training data. Notice PDF files will be restructured, and don't consider the prompt
+        and completion arguments
+      </p>
 
+      <div class="row">
+        <div class="col-md-6 col-12">
+
+          <mat-form-field class="w-100 standalone-field me-2">
+            <span
+              matPrefix
+              matTooltip="Prompt field"
+              class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+              <mat-icon>help_outline</mat-icon>
+              <span class="text-muted">|</span>
+            </span>
+            <input
+              matInput
+              placeholder="Prompt field"
+              [disabled]="uploading"
+              [(ngModel)]="prompt"
+              autocomplete="off">
+          </mat-form-field>
+
+        </div>
+        <div class="col-md-6 col-12">
+
+          <mat-form-field class="w-100 standalone-field">
+            <span
+              matPrefix
+              matTooltip="Completion field"
+              class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+              <mat-icon>edit</mat-icon>
+              <span class="text-muted">|</span>
+            </span>
+            <input
+              matInput
+              placeholder="Completion field"
+              [disabled]="uploading"
+              [(ngModel)]="completion"
+              autocomplete="off">
+          </mat-form-field>
+    
+        </div>
+      </div>
     </div>
 
     <div class="col-12 mt-2">
@@ -188,12 +203,14 @@
   <mat-slide-toggle
     labelPosition="before"
     class="me-2"
+    [disabled]="uploading"
     [(ngModel)]="advanced">
     Advanced
   </mat-slide-toggle>
 
   <button
     mat-button
+    [disabled]="uploading"
     mat-dialog-close>
     Cancel
   </button>
