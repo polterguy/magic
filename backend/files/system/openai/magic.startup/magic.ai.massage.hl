@@ -2,7 +2,7 @@
 /*
  * Creates a summary of the specified text and returns as [prompt] and [completion].
  */
-slots.create:magic.ai.structure
+slots.create:magic.ai.massage
 
    // Getting OpenAI API token from configuration.
    .token
@@ -11,11 +11,14 @@ slots.create:magic.ai.structure
          .:"Bearer "
          config.get:"magic:openai:key"
 
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/massage
+
    // Creating our prompt.
    .decorated-prompt
    set-value:x:-
       strings.concat
-         .:"Structure the following information as Markdown with a title:\r\n"
+         get-value:x:@.arguments/*/massage
          get-value:x:@.arguments/*/content
 
    // Creating an HTTP POST request towards OpenAI to create structured data of the specified content.
@@ -72,6 +75,7 @@ slots.create:magic.ai.structure
    for-each:x:@strings.split/*
       set-value:x:@.dp/#
          strings.trim:x:@.dp/#
+            .:"\r\n \t"
 
    // Creating our completion.
    .completion
@@ -80,7 +84,8 @@ slots.create:magic.ai.structure
          .:"\r\n\r\n"
 
    // Returning result of invocation to caller.
-   unwrap:x:+/*
+   unwrap:x:+/*/*
    return
-      prompt:x:@.prompt
-      completion:x:@.completion
+      .
+         prompt:x:@.prompt
+         completion:x:@.completion
