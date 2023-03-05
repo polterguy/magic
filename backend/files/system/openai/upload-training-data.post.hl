@@ -7,6 +7,7 @@
    type:string
    prompt:string
    completion:string
+   massage:string
 .type:internal
 .accept:multipart/form-data
 .description:Stores the specified file as training data for the specified model
@@ -118,8 +119,9 @@ switch:x:@strings.to-lower
       // Structuring PDF content.
       pdf2text:x:@.filepath
       unwrap:x:+/*
-      signal:magic.ai.structure
+      signal:magic.ai.massage
          content:x:@pdf2text
+         massage:x:@.arguments/*/massage
 
       // Creating our Hyperlink URI to allow for downloading the PDF file.
       .uri
@@ -132,13 +134,14 @@ switch:x:@strings.to-lower
             strings.url-encode:x:@.filename
 
       // Creating a single training snippet from structure of PDF content.
-      unwrap:x:+/*/*/*
+      add:x:+/*
+         get-nodes:x:@signal/*
       add:x:@.file-data
          .
-            .
-               prompt:x:@signal/*/prompt
-               completion:x:@signal/*/completion
-               uri:x:@.uri
+      unwrap:x:+/*/*
+      add:x:-/*/*
+         .
+            uri:x:@.uri
 
 // Sanity checking file.
 if
