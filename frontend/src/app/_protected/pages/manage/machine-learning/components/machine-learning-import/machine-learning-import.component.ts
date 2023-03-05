@@ -29,6 +29,9 @@ export class MachineLearningImportComponent {
   completion: string = 'completion';
   advanced: boolean = false;
   threshold: number = 150;
+  uploadIndex: number = 0;
+  uploadCount: number = 0;
+  files: FileList = null;
 
   CommonRegEx = CommonRegEx;
   CommonErrorMessages = CommonErrorMessages;
@@ -76,11 +79,29 @@ export class MachineLearningImportComponent {
     if (!event || !event.target.files || event.target.files.length === 0) {
       return;
     }
-
     this.uploading = true;
+    this.uploadIndex = 0;
+    this.uploadCount = 0;
+    this.files = event.target.files;
+    this.uploadCurrentFile();
+  }
+
+  getFileName() {
+
+    if (!this.files || this.files.length === 0 || this.uploadIndex >= this.files.length) {
+      return '';
+    }
+    return this.files[this.uploadIndex].name;
+  }
+
+  /*
+   * Private helper methods.
+   */
+
+  private uploadCurrentFile() {
 
     const formData = new FormData();
-    formData.append('file', event.target.files[0], event.target.files[0].name);
+    formData.append('file', this.files[this.uploadIndex], this.files[this.uploadIndex].name);
     formData.append('type', this.data.type);
     formData.append('prompt', this.prompt);
     formData.append('completion', this.completion);
@@ -88,15 +109,24 @@ export class MachineLearningImportComponent {
     this.openAIService.uploadTrainingFile(formData).subscribe({
       next: (result: any) => {
 
-        this.uploading = false;
-        this.generalService.showFeedback(`${result.count} training snippets successfully uploaded`, 'successMessage');
+        this.uploadCount += result.count;
 
-        // Giving user some time to register feedback.
         setTimeout(() => {
 
-          this.trainingFileModel = '';
-          this.matDialog.close({ train: true });
-        }, 1000);
+          // Incrementing upload index
+          this.uploadIndex += 1;
+          if (this.uploadIndex >= this.files.length) {
+            this.generalService.showFeedback(`${this.uploadCount} training snippets successfully imported, vectorising model now`, 'successMessage');
+            this.uploading = false;
+            this.trainingFileModel = '';
+            this.uploadIndex = 0;
+            this.files = null;
+            return;
+          }
+
+          // More files remaining.
+          this.uploadCurrentFile();
+        }, 100);
       },
       error: (error: any) => {
 
@@ -106,10 +136,5 @@ export class MachineLearningImportComponent {
         this.generalService.hideLoading();
       }
     });
-  }
-
-  getFileName() {
-
-    return this.trainingFileModel.split('\\').pop().split('/').pop();
   }
 }

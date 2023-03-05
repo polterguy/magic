@@ -153,10 +153,11 @@
           type="file"
           [(ngModel)]="trainingFileModel"
           name="trainingFileModel"
+          multiple
           class="w-100 h-100 hide pointer"
           #upload
           (change)="getFile($event)"
-          accept=".csv,.xml,.yaml,.yml,.json">
+          accept=".csv,.xml,.yaml,.yml,.json,.pdf">
 
         <button
           mat-button
@@ -164,7 +165,7 @@
           (click)="upload.click()"
           *ngIf="trainingFileModel === ''"
           [disabled]="uploading">
-          <i class="d-sm-inline d-none">Drag & drop your training data here, CSV, XML, JSON or YAML</i> <br />
+          <i class="d-sm-inline d-none">Drag & drop your training data here, CSV, XML, JSON, PDF or YAML</i> <br />
           <span class="text-primary">Choose a file</span>
         </button>
 
