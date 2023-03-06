@@ -176,16 +176,16 @@
 
         <button
           mat-button
-          class="w-100"
+          class="w-100 pt-2"
           (click)="upload.click()"
           *ngIf="trainingFileModel === ''"
           [disabled]="uploading">
-          <i class="d-sm-inline d-none">Drag & drop your training data here, CSV, XML, JSON, PDF or YAML</i> <br />
+          <i>Drag & drop your training data here, CSV, XML, JSON, PDF or YAML</i> <br />
           <span class="text-primary">Choose a file</span>
         </button>
 
         <ng-container *ngIf="trainingFileModel !== ''">
-          <h4 class="my-0">{{getFileName()}}</h4>
+          <h4 class="mb-0 mt-3 text-center">{{getFileName()}}</h4>
           <p class="text-center mt-3" *ngIf="uploading">Uploading {{uploadIndex + 1}} of {{files.length}}...</p>
           <p class="text-center mt-3" *ngIf="!uploading">Done!</p>
         </ng-container>

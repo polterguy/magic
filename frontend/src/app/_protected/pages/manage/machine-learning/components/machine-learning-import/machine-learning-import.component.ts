@@ -120,11 +120,12 @@ export class MachineLearningImportComponent {
           // Incrementing upload index
           this.uploadIndex += 1;
           if (this.uploadIndex >= this.files.length) {
-            this.generalService.showFeedback(`${this.uploadCount} training snippets successfully imported, vectorising model now`, 'successMessage');
+            this.generalService.showFeedback(`${this.uploadCount} training snippets successfully imported`, 'successMessage');
             this.uploading = false;
             this.trainingFileModel = '';
             this.uploadIndex = 0;
             this.files = null;
+            this.matDialog.close();
             return;
           }
 
