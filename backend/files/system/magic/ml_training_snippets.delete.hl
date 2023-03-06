@@ -14,6 +14,24 @@ validators.mandatory:x:@.arguments/*/id
 // Opening up our database connection.
 data.connect:[generic|magic]
 
+   // Parametrising our read invocation.
+   add:x:./*/data.read/*/where/*/and
+      get-nodes:x:@.arguments/*
+
+   // Checking if snippet has a filename value
+   data.read
+      table:ml_training_snippets
+      columns
+         filename
+      where
+         and
+   if
+      and
+         exists:x:@data.read/*
+         io.file.exists:x:@data.read/*/*/filename
+      .lambda
+         io.file.delete:x:@data.read/*/*/filename
+
    // Parametrising our delete invocation.
    add:x:./*/data.delete/*/where/*/and
       get-nodes:x:@.arguments/*

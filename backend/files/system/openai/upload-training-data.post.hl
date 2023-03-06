@@ -142,6 +142,7 @@ switch:x:@strings.to-lower
       add:x:@.file-data/0/-
          .
             uri:x:@.uri
+            filename:x:@.filepath
 
 // Sanity checking file.
 if
@@ -191,6 +192,13 @@ data.connect:[generic|magic]
       else
          set-value:x:@.type
             .:default
+
+      // Checking if we've got a filename value.
+      if
+         exists:x:@.dp/#/*/filename
+         .lambda
+            add:x:@for-each/*/data.create/*/values
+               get-nodes:x:@.dp/#/*/filename
 
       // Inserting into database.
       data.create
