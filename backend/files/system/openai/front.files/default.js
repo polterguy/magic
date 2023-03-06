@@ -33,6 +33,16 @@ fetch('[[url]]/magic/system/auth/recaptcha-key', {
   }
 });
 
+// Retrieving session identifier site key.
+let aistaSession = null;
+fetch('[[url]]/magic/system/misc/gibberish?min=20&max=30', {
+  method: 'GET',
+}).then(res => {
+  return res.json();
+}).then(res => {
+  aistaSession = res.result;
+});
+
 // Downloading ShowdownJS to be able to parse Markdown.
 if (aistaChatMarkdown) {
   const showdownJS = window.document.createElement('script');
@@ -203,6 +213,9 @@ function aista_invoke_prompt(msg, token, speech) {
     url += '&chat=true';
   } else {
     url += '&chat=false';
+  }
+  if (aistaSession) {
+    url += '&session=' + encodeURIComponent(aistaSession);
   }
 
   // Invoking backend, with reCAPTCHA response if we've got a site-key
