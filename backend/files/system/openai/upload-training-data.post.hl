@@ -139,7 +139,7 @@ switch:x:@strings.to-lower
       add:x:@.file-data
          .
       unwrap:x:+/*/*
-      add:x:-/*/*
+      add:x:@.file-data/0/-
          .
             uri:x:@.uri
 
