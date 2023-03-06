@@ -137,6 +137,14 @@ if
                      role:system
                      content:x:@.result
 
+            // Making sure we never store more than maximum 5 previous chats to preserve bandwidth.
+            while
+               mt
+                  get-count:x:@.new-session/*
+                  .:int:5
+               .lambda
+                  remove-nodes:x:@.new-session/0
+
             // Storing new session into cache.
             lambda2hyper:x:@.new-session/*
             cache.set:x:@.arguments/*/session
