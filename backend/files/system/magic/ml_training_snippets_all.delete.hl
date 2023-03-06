@@ -13,20 +13,41 @@ auth.ticket.verify:root
 // Opening up our database connection.
 data.connect:[generic|magic]
 
-   // Parametrising our read invocation with filtering arguments.
+   // Parametrising our delete and read invocation with filtering arguments.
+   add:x:./*/data.read/*/where/*/*/or
+      get-nodes:x:@.arguments/*/ml_training_snippets.prompt.like
+      get-nodes:x:@.arguments/*/ml_training_snippets.uri.like
    add:x:./*/data.delete/*/where/*/*/or
       get-nodes:x:@.arguments/*/ml_training_snippets.prompt.like
       get-nodes:x:@.arguments/*/ml_training_snippets.uri.like
    remove-nodes:x:@.arguments/*/ml_training_snippets.prompt.like
    remove-nodes:x:@.arguments/*/ml_training_snippets.uri.like
+   add:x:./*/data.read/*/where/*
+      get-nodes:x:@.arguments/*
    add:x:./*/data.delete/*/where/*
       get-nodes:x:@.arguments/*
 
    // Removing [or] parts unless we've got something to actually or.
    if
-      not-exists:x:@data.connect/*/data.delete/*/where/*/and/*/or/*
+      not-exists:x:@data.connect/*/data.read/*/where/*/and/*/or/*
       .lambda
+         remove-nodes:x:@data.connect/*/data.read/*/where/*/and/*/or
          remove-nodes:x:@data.connect/*/data.delete/*/where/*/and/*/or
+
+   // Reading items from database such that we can delete file associated with items.
+   data.read
+      table:ml_training_snippets
+      columns
+         filename
+      where
+         and
+            filename.neq
+            or
+   for-each:x:@data.read/*
+      if
+         io.file.exists:x:@.dp/#/*/filename
+         .lambda
+            io.file.delete:x:@.dp/#/*/filename
 
    // Deleting item from database.
    data.delete
