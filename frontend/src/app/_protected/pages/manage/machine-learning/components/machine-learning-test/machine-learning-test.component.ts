@@ -11,6 +11,7 @@ import { OpenAIService } from 'src/app/_general/services/openai.service';
 import { CodemirrorActionsService } from 'src/app/_general/services/codemirror-actions.service';
 import { MagicResponse } from 'src/app/_general/models/magic-response.model';
 import { PromptResponse } from 'src/app/_general/models/prompt-response.model';
+import { ConfigService } from 'src/app/_general/services/config.service';
 
 /**
  * Helper component to test model.
@@ -27,15 +28,31 @@ export class MachineLearningTestComponent implements OnInit {
   isLoading: boolean = false;
   ready: boolean = false;
   model: HlModel;
+  session: string;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private generalService: GeneralService,
+    private configService: ConfigService,
     private machineLearningTrainingService: MachineLearningTrainingService,
     private codemirrorActionsService: CodemirrorActionsService,
     private openAIService: OpenAIService,) { }
 
   ngOnInit() {
+
+    this.generalService.showLoading();
+    this.configService.getGibberish(20,30).subscribe({
+      next: (result: MagicResponse) => {
+
+        this.session = result.result;
+        this.generalService.hideLoading();
+      },
+      error: () => {
+
+        this.generalService.hideLoading();
+        this.generalService.showFeedback('Something went wrong while trying to create a session identifier', 'errorMessage');
+      }
+    });
 
     // Checking if we have a registered CodeMirror editor for type.
     const res = this.codemirrorActionsService.getActions(null, this.data.type);
@@ -56,7 +73,7 @@ export class MachineLearningTestComponent implements OnInit {
     this.generalService.showLoading();
     this.isLoading = true;
 
-    this.openAIService.query(this.prompt, this.data.type, true).subscribe({
+    this.openAIService.query(this.prompt, this.data.type, true, this.session).subscribe({
       next: (result: PromptResponse) => {
 
         this.generalService.hideLoading();

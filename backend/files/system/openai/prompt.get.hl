@@ -6,6 +6,7 @@
    references:bool
    chat:bool
    recaptcha_response:string
+   session:string
 .description:Asks OpenAI a question with the specified type, and returns the answer to caller
 .type:public
 
@@ -203,6 +204,7 @@ data.connect:[generic|magic]
             get-nodes:x:@data.read/@data.read/*/*/temperature
             get-nodes:x:@data.read/@data.read/*/*/threshold
             get-nodes:x:@data.read/@data.read/*/*/vector_model
+            get-nodes:x:@.arguments/*/session
             .
                fine_tuned:bool:false
          io.file.execute:/system/openai/prompt.implementation/embeddings-prompt.hl
@@ -219,6 +221,7 @@ data.connect:[generic|magic]
          get-nodes:x:@data.read/@data.read/*/*/model
          get-nodes:x:@data.read/@data.read/*/*/max_tokens
          get-nodes:x:@data.read/@data.read/*/*/temperature
+         get-nodes:x:@.arguments/*/session
          .
             fine_tuned:bool:true
       io.file.execute:/system/openai/prompt.implementation/completion-prompt.hl

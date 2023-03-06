@@ -34,14 +34,17 @@ export class OpenAIService {
   /**
    * Queries OpenAI with the specified prompt and returns result to caller.
    */
-  query(prompt: string, type: string, search: boolean = false) {
+  query(prompt: string, type: string, search: boolean = false, session: string = null) {
 
-    return this.httpService.get<PromptResponse>(
+    let query =
       '/magic/system/openai/prompt?prompt=' +
       encodeURIComponent(prompt) +
       '&references=' + (search ? 'true' : 'false') +
-      '&type=' +
-      encodeURIComponent(type));
+      '&type=' + encodeURIComponent(type);
+    if (session) {
+      query += '&session=' + encodeURIComponent(session)
+    }
+    return this.httpService.get<PromptResponse>(query);
   }
 
   /**

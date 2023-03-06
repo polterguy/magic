@@ -28,7 +28,7 @@ export class EvaluatorService {
   execute(hyperlambda: string) {
 
     return this.httpService.post<MagicResponse>('/magic/system/evaluator/evaluate', {
-      hyperlambda
+      hyperlambda,
     });
   }
 
