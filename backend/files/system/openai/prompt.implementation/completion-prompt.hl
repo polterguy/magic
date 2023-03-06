@@ -41,55 +41,169 @@ if
          .
             stop:" END"
 
-// Creating an HTTP POST request towards OpenAI, now decorated.
-http.post:"https://api.openai.com/v1/completions"
-   headers
-      Authorization:x:@.token
-      Content-Type:application/json
-   payload
-      prompt:x:@.decorated-prompt
-      model:x:@.arguments/*/model
-      max_tokens:x:@.arguments/*/max_tokens
-      temperature:x:@.arguments/*/temperature
-   convert:true
-
-// Sanity checking above invocation
+/*
+ * Checking if this is chat API model or completion model.
+ * Notice, Chat completions and completions are two different APIs.
+ * The Chat completion is basically "ChatGPT API", allowing for preserving context,
+ * so we preserve context in server side cache, allowing user to have "conversations"
+ * with the bot, contrary to the completions API which is stateless, and cannot
+ * follow conversations.
+ */
 if
-   not
-      and
-         mte:x:@http.post
-            .:int:200
-         lt:x:@http.post
-            .:int:300
+   strings.starts-with:x:@.arguments/*/model
+      .:gpt-
    .lambda
 
-      // Oops, error - Logging error and returning status 500 to caller.
-      lambda2hyper:x:@http.post
-      log.error:Something went wrong while invoking OpenAI
-         message:x:@http.post/*/content/*/error/*/message
-         status:x:@http.post
-         error:x:@lambda2hyper
-      response.status.set:x:@http.post
+      // Checking if caller supplied a session identifier.
+      .session
+      if
+         exists:x:@.arguments/*/session
+         .lambda
+
+            // Checking if we have a session matching specified session identifier.
+            cache.get:x:@.arguments/*/session
+            if
+               not-null:x:@cache.get
+               .lambda
+                  add:x:@.session
+                     hyper2lambda:x:@cache.get
+
+      // Parametrising POST invocation with session messages.
+      insert-before:x:./*/http.post/*/payload/*/messages/0
+         get-nodes:x:@.session/*
+
+      // Chat API model creating an HTTP POST request towards OpenAI, now decorated.
+      http.post:"https://api.openai.com/v1/chat/completions"
+         headers
+            Authorization:x:@.token
+            Content-Type:application/json
+         payload
+            model:x:@.arguments/*/model
+            max_tokens:x:@.arguments/*/max_tokens
+            temperature:x:@.arguments/*/temperature
+            messages
+               .
+                  role:user
+                  content:x:@.decorated-prompt
+         convert:true
+
+      // Sanity checking above invocation
+      if
+         not
+            and
+               mte:x:@http.post
+                  .:int:200
+               lt:x:@http.post
+                  .:int:300
+         .lambda
+
+            // Oops, error - Logging error and returning status 500 to caller.
+            lambda2hyper:x:@http.post
+            log.error:Something went wrong while invoking OpenAI
+               message:x:@http.post/*/content/*/error/*/message
+               status:x:@http.post
+               error:x:@lambda2hyper
+            response.status.set:x:@http.post
+            unwrap:x:+/*
+            return
+               error:bool:true
+               result:x:@http.post/*/content/*/error/*/message
+      else
+
+         // Success! Logging as such!
+         log.info:Invoking OpenAI was a success
+
+      // Making sure we trim response.
+      .result
+      set-value:x:@.result
+         strings.trim:x:@http.post/*/content/*/choices/0/*/message/*/content
+
+      // Storing session content for 10 minutes in server cache if a session identifier was supplied.
+      if
+         exists:x:@.arguments/*/session
+         .lambda
+
+            // Session identifier was supplied by caller.
+            .new-session
+            add:x:@.new-session
+               get-nodes:x:@.session/*
+            unwrap:x:+/*/*/*/content
+            add:x:@.new-session
+               .
+                  .
+                     role:user
+                     content:x:@.decorated-prompt
+                  .
+                     role:system
+                     content:x:@.result
+
+            // Storing new session into cache.
+            lambda2hyper:x:@.new-session/*
+            cache.set:x:@.arguments/*/session
+               expiration:600
+               value:x:@lambda2hyper
+
+      // Returning result to caller.
+      get-first-value
+         get-value:x:@http.post/*/content/*/choices/0/*/message/*/finish_reason
+         .:unknown
       unwrap:x:+/*
       return
-         error:bool:true
-         result:x:@http.post/*/content/*/error/*/message
+         error:bool:false
+         result:x:@.result
+         finish_reason:x:@get-first-value
+
 else
 
-   // Success! Logging as such!
-   log.info:Invoking OpenAI was a success
+   // Completion model creating an HTTP POST request towards OpenAI, now decorated.
+   http.post:"https://api.openai.com/v1/completions"
+      headers
+         Authorization:x:@.token
+         Content-Type:application/json
+      payload
+         prompt:x:@.decorated-prompt
+         model:x:@.arguments/*/model
+         max_tokens:x:@.arguments/*/max_tokens
+         temperature:x:@.arguments/*/temperature
+      convert:true
 
-// Making sure we trim response.
-.result
-set-value:x:@.result
-   strings.trim:x:@http.post/*/content/*/choices/0/*/text
+   // Sanity checking above invocation
+   if
+      not
+         and
+            mte:x:@http.post
+               .:int:200
+            lt:x:@http.post
+               .:int:300
+      .lambda
 
-// Returning result to caller.
-get-first-value
-   get-value:x:@http.post/*/content/*/choices/0/*/finish_reason
-   .:unknown
-unwrap:x:+/*
-return
-   error:bool:false
-   result:x:@.result
-   finish_reason:x:@get-first-value
+         // Oops, error - Logging error and returning status 500 to caller.
+         lambda2hyper:x:@http.post
+         log.error:Something went wrong while invoking OpenAI
+            message:x:@http.post/*/content/*/error/*/message
+            status:x:@http.post
+            error:x:@lambda2hyper
+         response.status.set:x:@http.post
+         unwrap:x:+/*
+         return
+            error:bool:true
+            result:x:@http.post/*/content/*/error/*/message
+   else
+
+      // Success! Logging as such!
+      log.info:Invoking OpenAI was a success
+
+   // Making sure we trim response.
+   .result
+   set-value:x:@.result
+      strings.trim:x:@http.post/*/content/*/choices/0/*/text
+
+   // Returning result to caller.
+   get-first-value
+      get-value:x:@http.post/*/content/*/choices/0/*/finish_reason
+      .:unknown
+   unwrap:x:+/*
+   return
+      error:bool:false
+      result:x:@.result
+      finish_reason:x:@get-first-value
