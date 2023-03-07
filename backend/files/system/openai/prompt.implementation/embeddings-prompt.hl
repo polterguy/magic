@@ -166,6 +166,16 @@ if
       return-nodes:x:@io.file.execute/*
 
 /*
+ * We had at least one training snippet giving us a match on question,
+ * hence we make sure cached messages are deleted and treat this question
+ * as a new context.
+ */
+if
+   not-null:x:@.arguments/*/session
+   .lambda
+      cache.set:x:@.arguments/*/session
+
+/*
  * Now we know which snippets are relevant, and we can generate our prompt, by creating a context
  * that we pass on to OpenAI to help it answer the question based upon the snippets matching
  * the question.
@@ -217,9 +227,36 @@ switch:x:@.arguments/*/model
 
    case:text-davinci-003
 
+      // No messages, so here we can use whatever we've got.
       set-value:x:@.max-context-token-count
          math.subtract
             .:int:4096
+            .:int:15
+            convert:x:@.arguments/*/max_tokens
+               type:int
+
+   case:gpt-3.5-turbo
+   case:gpt-3.5-turbo-0301
+
+      /*
+       * Notice, for chat completion endpoints we keep 1,000 tokens as
+       * a reserve for previous messages.
+       */
+      set-value:x:@.max-context-token-count
+         math.divide
+            math.subtract
+               .:int:4096
+               .:int:15
+               convert:x:@.arguments/*/max_tokens
+                  type:int
+            .:int:2
+
+   case:text-davinci-002
+   case:code-davinci-002
+
+      set-value:x:@.max-context-token-count
+         math.subtract
+            .:int:4000
             .:int:15
             convert:x:@.arguments/*/max_tokens
                type:int
