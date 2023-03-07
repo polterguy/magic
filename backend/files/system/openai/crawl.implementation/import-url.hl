@@ -62,9 +62,11 @@ if
 
 // Making sure URL returned HTML.
 if
-   not
-      strings.starts-with:x:@http.get/*/headers/*/Content-Type
-         .:text/html
+   or
+      not-exists:x:@http.get/*/headers/*/Content-Type
+      not
+         strings.starts-with:x:@http.get/*/headers/*/Content-Type
+            .:text/html
    .lambda
 
       // Oops, doing some basic logging.
@@ -130,57 +132,81 @@ for-each:x:@html2lambda/*/html/*/body/**
 
       // Checking if this is an image.
       case:img
+
+         // Verifying we actually have a [@src] attribute.
+         if
+            exists:x:@.dp/#/*/\@src
+            .lambda
       
-         // Normalising URL.
-         .url
-         if
-            strings.starts-with:x:@.dp/#/*/\@src
-               .:/
-            .lambda
+               // Normalising URL.
+               .url
+               if
+                  and
+                     not
+                        strings.starts-with:x:@.dp/#/*/\@src
+                           .:"http://"
+                     not
+                        strings.starts-with:x:@.dp/#/*/\@src
+                           .:"https://"
+                  .lambda
 
-               // Prepending base URL.
-               set-value:x:@.url
-                  strings.concat
-                     get-value:x:@.base
+                     // Local URL, prepending base URL.
+                     if
+                        strings.starts-with:x:@.dp/#/*/\@src
+                           .:/
+                        .lambda
+                           set-value:x:@.url
+                              strings.concat
+                                 get-value:x:@.base
+                                 get-value:x:@.dp/#/*/\@src
+                     else
+                        set-value:x:@.url
+                           strings.concat
+                              get-value:x:@.base
+                              .:/
+                              get-value:x:@.dp/#/*/\@src
+               else
+
+                  // URL is absolute.
+                  set-value:x:@.url
                      get-value:x:@.dp/#/*/\@src
-         else
 
-            // URL is absolute.
-            set-value:x:@.url
-               get-value:x:@.dp/#/*/\@src
+               // Checking if we need to append code to existing completion or create new completion.
+               if
+                  exists:x:@.snippets/0/-/*/completion
+                  .lambda
 
-         // Checking if we need to append code to existing completion or create new completion.
-         if
-            exists:x:@.snippets/0/-/*/completion
-            .lambda
+                     // Appending to existing completion.
+                     set-value:x:@.snippets/0/-/*/completion
+                        strings.concat
+                           get-value:x:@.snippets/0/-/*/completion
+                           .:"\r\n\r\n!["
+                           get-first-value
+                              strings.concat
+                                 .:"Image "
+                                 get-value:x:@.dp/#/*/\@alt
+                              .:Image
+                           .:"]("
+                           get-value:x:@.url
+                           .:")"
 
-               // Appending to existing completion.
-               set-value:x:@.snippets/0/-/*/completion
+               else
+
+                  // Adding new completion to [.snippets] collection.
                   strings.concat
-                     get-value:x:@.snippets/0/-/*/completion
-                     .:"\r\n\r\n!["
+                     .:"!["
                      get-first-value
-                        get-value:x:@.dp/#/*/\@alt
+                        strings.concat
+                           .:"Image "
+                           get-value:x:@.dp/#/*/\@alt
                         .:Image
                      .:"]("
                      get-value:x:@.url
-                     .:")"
-
-         else
-
-            // Adding new completion to [.snippets] collection.
-            strings.concat
-               .:"!["
-               get-first-value
-                  get-value:x:@.dp/#/*/\@alt
-                  .:Image
-               .:"]("
-               get-value:x:@.url
-               .:")\r\n"
-            unwrap:x:+/*/*
-            add:x:@.snippets/0/-
-               .
-                  completion:x:@strings.concat
+                     .:")\r\n"
+                  unwrap:x:+/*/*
+                  add:x:@.snippets/0/-
+                     .
+                        completion:x:@strings.concat
 
       // Checking if this is a hyperlink.
       case:a
@@ -190,8 +216,14 @@ for-each:x:@html2lambda/*/html/*/body/**
             and
                exists:x:@.dp/#/*/\@href
                not-null:x:@.dp/#/*/\@href
-               strings.starts-with:x:@.dp/#/*/\@href
-                  .:/
+               neq:x:@.dp/#/*/\@href
+                  .:#
+               not
+                  strings.starts-with:x:@.dp/#/*/\@href
+                     .:"http://"
+               not
+                  strings.starts-with:x:@.dp/#/*/\@href
+                     .:"https://"
             .lambda
 
                // Local URL.
@@ -199,21 +231,35 @@ for-each:x:@html2lambda/*/html/*/body/**
                   .:#
                strings.trim-end:x:@strings.split/0
                   .:/
-               strings.concat
-                  get-value:x:@.base
-                  get-value:x:@strings.trim-end
+               .tmp
+               if
+                  strings.starts-with:x:@strings.trim-end
+                     .:/
+                  .lambda
+                     set-value:x:@.tmp
+                        strings.concat
+                           get-value:x:@.base
+                           get-value:x:@strings.trim-end
+               else
+                  set-value:x:@.tmp
+                     strings.concat
+                        get-value:x:@.base
+                        .:/
+                        get-value:x:@strings.trim-end
                if
                   not-exists:x:@.url/*/{@strings.concat}
                   .lambda
                      unwrap:x:+/*/*
                      add:x:@.urls
                         .
-                           .:x:@strings.concat
+                           .:x:@.tmp
 
          else-if
             and
                exists:x:@.dp/#/*/\@href
                not-null:x:@.dp/#/*/\@href
+               neq:x:@.dp/#/*/\@href
+                  .:#
                strings.starts-with:x:@.dp/#/*/\@href
                   get-value:x:@.arguments/*/url
             .lambda
@@ -294,9 +340,12 @@ for-each:x:@html2lambda/*/html/*/body/**
                            .:"  "
                            .:" "
                         if
-                           eq
-                              get-name:x:@.dp/#/.
-                              .:a
+                           and
+                              eq
+                                 get-name:x:@.dp/#/.
+                                 .:a
+                              exists:x:@.dp/#/*/\@href
+                              not-null:x:@.dp/#/*/\@href
                            .lambda
       
                               // Normalising URL.
