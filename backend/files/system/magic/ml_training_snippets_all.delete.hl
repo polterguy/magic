@@ -45,7 +45,9 @@ data.connect:[generic|magic]
             or
    for-each:x:@data.read/*
       if
-         io.file.exists:x:@.dp/#/*/filename
+         and
+            not-null:x:@.dp/#/*/filename
+            io.file.exists:x:@.dp/#/*/filename
          .lambda
             io.file.delete:x:@.dp/#/*/filename
 

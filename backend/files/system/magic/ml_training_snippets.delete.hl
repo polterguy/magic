@@ -28,6 +28,7 @@ data.connect:[generic|magic]
    if
       and
          exists:x:@data.read/*
+         not-null:x:@data.read/*/*/filename
          io.file.exists:x:@data.read/*/*/filename
       .lambda
          io.file.delete:x:@data.read/*/*/filename
