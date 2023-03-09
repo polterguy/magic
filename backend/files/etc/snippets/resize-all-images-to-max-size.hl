@@ -1,0 +1,86 @@
+
+/*
+ * Deletes all images that are not referenced in
+ * text files inside your 'www' folder.
+ */
+throw:You do NOT want to execute this script unless you understand the consequences of executing it!
+
+// Buffer for holding all image files.
+.images
+
+// Images sorted by size such that largest image is first.
+.images-sorted
+
+// Images with size.
+.images-with-size
+
+// Finding all files recursively in 'www' folder.
+io.file.list-recursively:/etc/www/
+for-each:x:@io.file.list-recursively/*
+
+   // Finding file extension.
+   strings.split:x:@.dp/#
+      .:.
+
+   switch:x:@strings.split/0/-
+
+      // Image files stored in [.images]
+      case:jpg
+      case:jpeg
+      case:png
+      case:gif
+      case:bmp
+         add:x:@.images
+            get-nodes:x:@.dp/#
+
+// Iterating through all images and finding their size.
+for-each:x:@.images/*
+
+   // Finding image size.
+   image.size:x:@.dp/#
+   unwrap:x:+/*/*/*
+   add:x:@.images-with-size
+      .
+         .
+            file:x:@.dp/#
+            width:x:@image.size/*/width
+            height:x:@image.size/*/height
+
+// Cleanups.
+remove-nodes:x:@.images/*
+
+// Sorting images.
+sort:x:@.images-with-size/*
+   if
+      mt:x:@.lhs/#/*/width
+         get-value:x:@.rhs/#/*/width
+      .lambda
+         set-value:x:@.result
+            .:int:-1
+   else-if
+      lt:x:@.lhs/#/*/width
+         get-value:x:@.rhs/#/*/width
+      .lambda
+         set-value:x:@.result
+            .:int:1
+   else
+      set-value:x:@.result
+         .:int:0
+
+// Adding sorted images to [.images-sorted].
+add:x:@.images-sorted
+   get-nodes:x:@sort/*
+
+// Cleanups.
+remove-nodes:x:@.images-with-size/*
+remove-nodes:x:@io.file.list-recursively/*
+
+// Looping through all images and resizing them to maximum 1200px.
+for-each:x:@.images-sorted/*
+   if
+      mt:x:@.dp/#/*/width
+         .:int:1200
+      .lambda
+         image.resize:x:@.dp/#/*/file
+            width:1200
+            dest:x:@.dp/#/*/file
