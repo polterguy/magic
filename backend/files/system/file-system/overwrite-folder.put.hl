@@ -33,9 +33,11 @@ if
 
 // Emptying folder.
 io.folder.list:x:@.arguments/*/folder
+   display-hidden:true
 for-each:x:-/*
    io.folder.delete:x:@.dp/#
 io.file.list:x:@.arguments/*/folder
+   display-hidden:true
 for-each:x:-/*
    io.file.delete:x:@.dp/#
 
