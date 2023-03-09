@@ -1,0 +1,68 @@
+
+/*
+ * Deletes all images that are not referenced in
+ * text files inside your 'www' folder.
+ */
+throw:You do NOT want to execute this script unless you understand the consequences of executing it!
+
+// Buffer holding all images not referenced.
+.delete
+
+// Buffer for holding all text files.
+.text
+
+// Buffer for holding all image files.
+.images
+
+// Finding all files recursively in 'www' folder.
+io.file.list-recursively:/etc/www/
+for-each:x:@io.file.list-recursively/*
+
+   // Finding file extension.
+   strings.split:x:@.dp/#
+      .:.
+
+   switch:x:@strings.split/0/-
+
+      // Image files stored in [.images]
+      case:jpg
+      case:jpeg
+      case:svg
+      case:png
+      case:gif
+      case:bmp
+         add:x:@.images
+            get-nodes:x:@.dp/#
+
+      // Text files stored in [.text]
+      case:md
+      case:html
+      case:js
+      case:css
+      case:htm
+         add:x:@.text
+            get-nodes:x:@.dp/#
+
+// Iterating through all text files.
+.all-content
+for-each:x:@.text/*
+   set-value:x:@.all-content
+      strings.concat
+         get-value:x:@.all-content
+         io.file.load:x:@.dp/#
+
+// Iterating through all images
+for-each:x:@.images/*
+   strings.split:x:@.dp/#
+      .:/
+   if
+      not
+         strings.contains:x:@.all-content
+            get-value:x:@strings.split/0/-
+      .lambda
+         add:x:@.delete
+            get-nodes:x:@.dp/#
+
+// Iterating through each image not referenced and deleting it from disc.
+for-each:x:@.delete/*
+   io.file.delete:x:@.dp/#
