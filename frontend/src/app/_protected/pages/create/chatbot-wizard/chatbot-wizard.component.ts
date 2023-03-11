@@ -173,7 +173,7 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
         data: {
           type: this.model,
           noClose: true,
-          search: true,
+          search: false,
         }
       });
   }
