@@ -22,7 +22,7 @@ try
          table:ml_types
          values
             type:default
-            model:text-davinci-003
+            model:gpt-3.5-turbo
             max_tokens:int:4000
             temperature:decimal:0.1
             supervised:int:1
