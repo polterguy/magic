@@ -218,6 +218,8 @@ for-each:x:@html2lambda/*/html/*/body/**
                not-null:x:@.dp/#/*/\@href
                neq:x:@.dp/#/*/\@href
                   .:#
+               neq:x:@.dp/#/*/\@href
+                  .:
                not
                   strings.starts-with:x:@.dp/#/*/\@href
                      .:"http://"
@@ -260,6 +262,8 @@ for-each:x:@html2lambda/*/html/*/body/**
                not-null:x:@.dp/#/*/\@href
                neq:x:@.dp/#/*/\@href
                   .:#
+               neq:x:@.dp/#/*/\@href
+                  .:
                strings.starts-with:x:@.dp/#/*/\@href
                   get-value:x:@.arguments/*/url
             .lambda
