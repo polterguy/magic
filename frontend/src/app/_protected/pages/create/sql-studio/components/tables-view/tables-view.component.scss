@@ -47,6 +47,14 @@
     -moz-column-break-inside: avoid-column;
     break-inside: avoid;
 
+    .hoverable-row p {
+      margin-left: 15px;
+    }
+
+    .divider {
+      border-top: solid 1px rgba(0,0,0,.1);
+    }
+
     .small {
       font-size: 11px;
       word-break: break-all;
