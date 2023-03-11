@@ -89,7 +89,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
             if (this.data?.model) {
               this.model = this.models.filter(x => x.id === this.data.model)[0];
             } else {
-              this.model = this.models.filter(x => x.id === 'text-davinci-003')[0];
+              this.model = this.models.filter(x => x.id === 'gpt-3.5-turbo')[0];
             }
 
             if (this.data?.vector_model) {
