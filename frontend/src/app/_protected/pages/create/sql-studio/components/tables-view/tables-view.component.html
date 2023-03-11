@@ -91,11 +91,13 @@
 
         </div>
 
+        <hr class="mt-4 divider" *ngIf="(item.foreign_keys && item.foreign_keys.length > 0) || (item.indexes && item.indexes.length > 0)">
+
         <!-- Foreign keys -->
         <div class="row mt-4" *ngIf="item.foreign_keys && item.foreign_keys.length > 0">
 
           <div
-            class="col-12 bg-light action-btn pointer py-0 small ms-3"
+            class="col-12 bg-light action-btn pointer py-0 small ps-3 py-1"
             (click)="scrollTableIntoView(fk)"
             *ngFor="let fk of item.foreign_keys;let last = last"
             [class.mb-2]="!last">
@@ -115,11 +117,11 @@
         <div class="row mt-4" *ngIf="item.indexes && item.indexes.length > 0">
 
           <div
-            class="col-12 bg-light action-btn py-0 small ps-3"
+            class="col-12 bg-light action-btn py-0 small ps-3 py-1"
             *ngFor="let idx of item.indexes;let last = last"
             [class.mb-2]="!last">
 
-            <div class="d-flex ps-3 justify-content-between align-items-center">
+            <div class="d-flex justify-content-between align-items-center">
               <p class="my-0 d-flex justify-content-between align-items-center text-muted">
                 {{idx?.name}} <mat-icon class="mx-2">swap_horiz</mat-icon>
                 <span *ngFor="let col of idx.columns;let lastCol = last">{{col + (lastCol ? '' : ', ')}}</span>
