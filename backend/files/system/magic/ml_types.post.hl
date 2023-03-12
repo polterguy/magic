@@ -23,7 +23,7 @@ auth.ticket.verify:root
 data.connect:[generic|magic]
 
    // Parametrising our create invocation.
-   add:x:./*/data.create/*/values
+   add:x:./*/data.create/[0,1]/*/values
       get-nodes:x:@.arguments/*
 
    // Creating our record.
@@ -31,6 +31,29 @@ data.connect:[generic|magic]
       table:ml_types
       return-id:bool:false
       values
+
+   // Creating our default training snippets.
+   data.create
+      table:ml_training_snippets
+      values
+         type:x:@.arguments/*/type
+         prompt:What is this?
+         completion:@"This is a custom ChatGPT chatbot allowing you to use natural language to ask questions related to the website you're currently visiting. It was created by [AISTA](https://aista.com)."
+         uri:"https://aista.com"
+   data.create
+      table:ml_training_snippets
+      values
+         type:x:@.arguments/*/type
+         prompt:Who created this chatbot?
+         completion:@"This chatbot was created by [AISTA](https://aista.com)."
+         uri:"https://aista.com"
+   data.create
+      table:ml_training_snippets
+      values
+         type:x:@.arguments/*/type
+         prompt:Can I have a similar chatbot on my own website?
+         completion:@"Sure, just visit [AISTA](https://aista.com) and contact them for a quote, or use their DIY version."
+         uri:"https://aista.com"
 
    // Returning the correct status code.
    response.status.set:201
