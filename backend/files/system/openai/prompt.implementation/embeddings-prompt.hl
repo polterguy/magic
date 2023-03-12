@@ -185,8 +185,27 @@ if
 // URL of pages used to generate result.
 .above
 
+// Tracking that this is new context logic.
+.new-context:bool:false
+
 // Checking if we've got a prefix at which point our question changes.
 if
+   and
+      exists:x:@.arguments/*/prefix
+      not-null:x:@.arguments/*/prefix
+      strings.contains:x:@.arguments/*/prefix
+         .:[CONTEXT]
+      strings.contains:x:@.arguments/*/prefix
+         .:[QUESTION]
+   .lambda
+
+      // Prefixed model new style, making sure we use prefix correctly.
+      set-value:x:@.context
+         get-value:x:@.arguments/*/prefix
+      set-value:x:@.new-context
+         .:bool:true
+
+else-if
    and
       exists:x:@.arguments/*/prefix
       not-null:x:@.arguments/*/prefix
@@ -202,19 +221,31 @@ else
 
    // No prefix.
    set-value:x:@.context
-      .:"Answer the following QUESTION with the given CONTEXT while preserving Markdown.\r\n\r\nQUESTION: "
+      .:"Answer the following QUESTION given the following CONTEXT and preserve Markdown.\r\n\r\nQUESTION: [QUESTION]\r\n\r\nCONTEXT: [CONTEXT]"
+   set-value:x:@.new-context
+      .:bool:true
 
 // Removing prefix since we have manually create it.
 set-value:x:@.arguments/*/prefix
    .:
 
-// Creating our "context".
-set-value:x:@.context
-   strings.concat
-      get-value:x:@.context
-      get-value:x:@.arguments/*/prompt
-      .:"\r\n\r\n"
-      .:"CONTEXT: "
+if:x:@.new-context
+
+   // Creating our "context".
+   set-value:x:@.context
+      strings.replace:x:@.context
+         .:[QUESTION]
+         get-value:x:@.arguments/*/prompt
+
+else
+
+   // Creating our "context".
+   set-value:x:@.context
+      strings.concat
+         get-value:x:@.context
+         get-value:x:@.arguments/*/prompt
+         .:"\r\n\r\n"
+         .:"CONTEXT: "
 
 /*
  * Figuring out maximum length of context.
@@ -271,6 +302,7 @@ switch:x:@.arguments/*/model
                type:int
 
 // Looping through all snippets to create our context.
+.aggregated-context:
 for-each:x:@.snippets/*
 
    /*
@@ -279,6 +311,7 @@ for-each:x:@.snippets/*
     */
    strings.concat
       get-value:x:@.context
+      get-value:x:@.aggregated-context
       .:"\r\n\r\n"
       get-value:x:@.dp/#/*/prompt
       .:"\r\n\r\n"
@@ -294,8 +327,17 @@ for-each:x:@.snippets/*
       .lambda
 
          // We still haven't reached our character threshold yet, and we still have relevant snippets.
-         set-value:x:@.context
-            get-value:x:@strings.concat
+         if:x:@.new-context
+            set-value:x:@.aggregated-context
+               strings.concat
+                  get-value:x:@.aggregated-context
+                  .:" "
+                  get-value:x:@.dp/#/*/prompt
+                  .:" "
+                  get-value:x:@.dp/#/*/completion
+         else
+            set-value:x:@.context
+               get-value:x:@strings.concat
 
          // To support old-style URIs, we need to do some trickery here.
          .uri
@@ -346,11 +388,37 @@ for-each:x:@.snippets/*
                         uri:x:@.uri
                         prompt:x:@.dp/#/*/prompt
 
-// Making sure OpenAI doesn't return "Answer:" to us
-set-value:x:@.context
-   strings.concat
-      get-value:x:@.context
-      .:"\r\nANSWER: "
+// Checking if this is our new context logic or not.
+if:x:@.new-context
+
+   /*
+    * Checking if we're engaging in a "conversation" or not,
+    * implying if user asked a follow up question or if we have a new context
+    * to accommodate for.
+    */
+   if
+      neq:x:@.aggregated-context
+         .:
+      .lambda
+
+         // Using context.
+         set-value:x:@.context
+            strings.replace:x:@.context
+               .:[CONTEXT]
+               get-value:x:@.aggregated-context
+   else
+
+      // Follow up question.
+      set-value:x:@.context
+         get-value:x:@.arguments/*/prompt
+   
+else
+
+   // Making sure OpenAI doesn't return "Answer:" to us.
+   set-value:x:@.context
+      strings.concat
+         get-value:x:@.context
+         .:"\r\nANSWER: "
 
 // Verifying that user actually wants to have a completion/chat response.
 if

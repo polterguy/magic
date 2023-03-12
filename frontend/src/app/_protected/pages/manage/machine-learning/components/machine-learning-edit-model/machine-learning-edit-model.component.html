@@ -27,7 +27,7 @@
         <mat-error>{{CommonErrorMessages.appNameWithUppercaseHyphen}}</mat-error>
     </mat-form-field>
 
-    <mat-form-field class="w-100 custom-alignment" [class.d-none]="!advanced">
+    <mat-form-field class="w-100 custom-alignment">
       <span
         matPrefix
         matTooltip="Prefix inserted before all prompts"
@@ -40,7 +40,7 @@
         placeholder="Prefix"
         [disabled]="isLoading"
         spellcheck="true"
-        rows="5"
+        rows="7"
         [(ngModel)]="prefix"
         name="prefix">
       </textarea>
