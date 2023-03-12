@@ -111,17 +111,27 @@ slots.create:magic.ai.crawl-site
 
                // Iterating through each URL in currently primary sitemap file.
                for-each:x:@xml2lambda/*/urlset/*/url/*/loc/*/\#text
-                  unwrap:x:+/*/*
-                  add:x:@.urls
-                     .
-                        .:x:@.dp/#
+
+                  // Avoiding duplicates.
+                  if
+                     not-exists:x:@.urls/*/={@.dp/#}
+                     .lambda
+                        unwrap:x:+/*/*
+                        add:x:@.urls
+                           .
+                              .:x:@.dp/#
 
                // Iterating through each CDATA URL in currently primary sitemap file.
                for-each:x:@xml2lambda/*/urlset/*/url/*/loc/*/\#cdata-section
-                  unwrap:x:+/*/*
-                  add:x:@.urls
-                     .
-                        .:x:@.dp/#
+
+                  // Avoiding duplicates.
+                  if
+                     not-exists:x:@.urls/*/={@.dp/#}
+                     .lambda
+                        unwrap:x:+/*/*
+                        add:x:@.urls
+                           .
+                              .:x:@.dp/#
 
                // Iterating through each URL referenced in main sitemap.
                for-each:x:@xml2lambda/*/sitemapindex/*/sitemap/*/loc/*/\#text
@@ -146,10 +156,15 @@ slots.create:magic.ai.crawl-site
 
                         // Iterating through each URL in currently iterated sitemap file.
                         for-each:x:@xml2lambda/*/urlset/*/url/*/loc/*/\#text
-                           unwrap:x:+/*/*
-                           add:x:@.urls
-                              .
-                                 .:x:@.dp/#
+
+                           // Avoiding duplicates.
+                           if
+                              not-exists:x:@.urls/*/={@.dp/#}
+                              .lambda
+                                 unwrap:x:+/*/*
+                                 add:x:@.urls
+                                    .
+                                       .:x:@.dp/#
 
                   else
 
@@ -181,10 +196,27 @@ slots.create:magic.ai.crawl-site
 
                         // Iterating through each URL in currently iterated sitemap file.
                         for-each:x:@xml2lambda/*/urlset/*/url/*/loc/*/\#cdata-section
-                           unwrap:x:+/*/*
-                           add:x:@.urls
-                              .
-                                 .:x:@.dp/#
+
+                           // Avoiding duplicates.
+                           if
+                              not-exists:x:@.urls/*/={@.dp/#}
+                              .lambda
+                                 unwrap:x:+/*/*
+                                 add:x:@.urls
+                                    .
+                                       .:x:@.dp/#
+
+                        // Iterating through each URL referenced in iterated sitemap file.
+                        for-each:x:@xml2lambda/*/sitemapindex/*/sitemap/*/loc/*/\#text
+
+                           // Avoiding duplicates.
+                           if
+                              not-exists:x:@.urls/*/={@.dp/#}
+                              .lambda
+                                 unwrap:x:+/*/*
+                                 add:x:@.urls
+                                    .
+                                       .:x:@.dp/#
 
                   else
 
