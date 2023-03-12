@@ -114,7 +114,7 @@ for-each:x:@html2lambda/*/html/*/body/**
                            get-value:x:@.snippets/0/-/*/completion
                            .:"\r\n\r\n```\r\n"
                            strings.trim:x:@.dp/#/**/\#text/[0,1]
-                              .:"\r\n \t"
+                              .:"  \r\n\t"
                            .:"\r\n```"
 
                else
@@ -123,7 +123,7 @@ for-each:x:@html2lambda/*/html/*/body/**
                   strings.concat
                      .:"```\r\n"
                      strings.trim:x:@.dp/#/**/\#text/[0,1]
-                        .:"\r\n \t"
+                        .:"  \r\n\t"
                      .:"\r\n```"
                   unwrap:x:+/*/*
                   add:x:@.snippets/0/-
@@ -298,7 +298,7 @@ for-each:x:@html2lambda/*/html/*/body/**
                strings.concat
                   get-value:x:@.prompt
                   strings.trim:x:@.dp/#
-                     .:"\r\n\t "
+                     .:"  \r\n\t"
                   .:" "
          set-value:x:@.prompt
             strings.trim:x:@.prompt
@@ -392,7 +392,7 @@ for-each:x:@html2lambda/*/html/*/body/**
                                     get-value:x:@.completion
                                     .:[
                                     strings.trim:x:@strings.replace
-                                       .:"\r\n\t "
+                                       .:"  \r\n\t"
                                     .:](
                                     get-value:x:@.url
                                     .:)
@@ -403,7 +403,7 @@ for-each:x:@html2lambda/*/html/*/body/**
                               strings.concat
                                  get-value:x:@.completion
                                  strings.trim:x:@strings.replace
-                                    .:"\r\n\t "
+                                    .:"  \r\n\t"
                                  .:" "
 
                // Trimming completion. Notice, there's a non-breaking space in the following string (U+00A0).
@@ -478,7 +478,7 @@ for-each:x:@html2lambda/*/html/*/body/**
                               strings.concat
                                  get-value:x:@.item
                                  strings.trim:x:@strings.replace
-                                    .:"\r\n\t "
+                                    .:"  \r\n\t"
                                  .:" "
                   set-value:x:@.completion
                      strings.concat
@@ -541,13 +541,13 @@ data.connect:[generic|magic]
             .prompt
             set-value:x:@.prompt
                strings.trim:x:@.dp/#/*/prompt
-                  .:" \r\n\t"
+                  .:"  \r\n\t"
 
             // Completion.
             .completion
             set-value:x:@.completion
                strings.trim:x:@.dp/#/*/completion
-                  .:" \r\n\t"
+                  .:"  \r\n\t"
 
             /*
              * Checking if we already have a similar training
