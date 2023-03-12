@@ -62,7 +62,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
     this.supervised = this.data?.supervised === 1 ? true : (!this.data ? true : false);
     this.use_embeddings = this.data?.use_embeddings === 1 ? true : (!this.data ? true : false);
     this.cached = this.data?.cached === 1 ? true : false;
-    this.prefix = this.data?.prefix ?? 'Answer the following QUESTION with one or two sentences while using the information in the following CONTEXT and preserve Markdown. If you cannot answer the question, then answer "Unfortunately I don\'t know the answer, try to be more specific".\r\n\r\nQUESTION: [QUESTION]\r\n\r\nCONTEXT: [CONTEXT]\r\n\r\nANSWER:';
+    this.prefix = this.data?.prefix ?? 'Answer the following QUESTION with one or two sentences while using the information in the following CONTEXT and preserve Markdown. If you cannot answer the question using the specified CONTEXT then answer "Unfortunately I don\'t know the answer, try to be more specific".\r\n\r\nQUESTION: [QUESTION]\r\n\r\nCONTEXT: [CONTEXT]\r\n\r\nANSWER:';
     this.advanced = !!this.data;
 
     this.generalService.showLoading();
