@@ -509,6 +509,8 @@ data.connect:[generic|magic]
          and
             exists:x:@.dp/#/*/prompt
             exists:x:@.dp/#/*/completion
+            not-null:x:@.dp/#/*/prompt
+            not-null:x:@.dp/#/*/completion
             neq:x:@.dp/#/*/prompt
                .:
             neq:x:@.dp/#/*/completion
@@ -580,9 +582,19 @@ data.connect:[generic|magic]
                            .:"\r\n\r\n"
                            get-value:x:@.completion
 
-   // Verifying we have a summary, and if so, inserting it.
+   /*
+    * Verifying we have a summary, and if so, inserting it.
+    *
+    * Notice, if page only has one Hx tag, it will produce only OHE snippet,
+    * which of course will be the exact same as the summary, so we verify
+    * that summary doesn't exist in [.snippets] as an exact match before
+    * inserting summary.
+    */
    if
-      exists:x:@.summary/*
+      and
+         exists:x:@.summary/*
+         not-exists:x:@.snippets/*/prompt/={@.summary/*/prompt}
+         not-exists:x:@.snippets/*/completion/={@.summary/*/completion}
       .lambda
 
          // Inserting summary prompt and completion.
@@ -598,6 +610,7 @@ data.connect:[generic|magic]
 remove-nodes:x:@http.get/*
 remove-nodes:x:@html2lambda/*
 remove-nodes:x:@.snippets/*
+remove-nodes:x:@.summary/*
 
 // Decrementing max argument, and checking if we've reached limit.
 math.decrement:x:@.arguments/*/max
@@ -605,6 +618,8 @@ if
    lte:x:@.arguments/*/max
       .:int:0
    .lambda
+
+      // Reached max level hence stop crawling.
       return:bool:false
 
 /*
@@ -613,7 +628,12 @@ if
  */
 sleep:x:@.arguments/*/delay
 
-// Checking if caller wants us to crawl URLs found in document.
+/*
+ * Checking if caller wants us to crawl URLs found in document.
+ *
+ * Notice, we only crawl if site doesn't have a sitemap, at which point we
+ * crawl URLs found in HTML instead to scrape website content.
+ */
 if:x:@.arguments/*/crawl
 
    // Looping through all URLs found in document.
