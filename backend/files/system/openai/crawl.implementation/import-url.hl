@@ -364,6 +364,22 @@ for-each:x:@html2lambda/*/html/*/body/**
                                        strings.concat
                                           get-value:x:@.base
                                           get-value:x:@.dp/#/./*/\@href
+                              else-if
+                                 and
+                                    not
+                                       strings.starts-with:x:@.dp/#/./*/\@href
+                                          .:"http://"
+                                    not
+                                       strings.starts-with:x:@.dp/#/./*/\@href
+                                          .:"https://"
+                                 .lambda
+
+                                    // Prepending base URL.
+                                    set-value:x:@.url
+                                       strings.concat
+                                          get-value:x:@.base
+                                          .:/
+                                          get-value:x:@.dp/#/./*/\@href
                               else
 
                                  // URL is absolute.
@@ -390,9 +406,10 @@ for-each:x:@html2lambda/*/html/*/body/**
                                     .:"\r\n\t "
                                  .:" "
 
+               // Trimming completion. Notice, there's a non-breaking space in the following string (U+00A0).
                set-value:x:@.completion
                   strings.trim:x:@.completion
-                     .:" "
+                     .:"  \r\n\t"
 
                // Verifying that paragraph actually contained some content.
                if
@@ -593,18 +610,39 @@ data.connect:[generic|magic]
    if
       and
          exists:x:@.summary/*
-         not-exists:x:@.snippets/*/prompt/={@.summary/*/prompt}
-         not-exists:x:@.snippets/*/completion/={@.summary/*/completion}
+         not-exists:x:@.snippets/*/*/prompt/={@.summary/*/prompt}
+         not-exists:x:@.snippets/*/*/completion/={@.summary/*/completion}
       .lambda
 
-         // Inserting summary prompt and completion.
-         data.create
+         /*
+          * Checking if we already have a similar training
+          * snippet in our database, at which point we ignore it.
+          *
+          * Notice, in theory summary might exist from before if site
+          * contains duplicated content.
+          */
+         data.read
             table:ml_training_snippets
-            values
-               prompt:x:@.summary/*/prompt
-               completion:x:@.summary/*/completion
-               type:x:@.arguments/*/type
-               uri:x:@.arguments/*/url
+            columns
+               id
+            where
+               and
+                  prompt.eq:x:@.summary/*/prompt
+                  completion.eq:x:@.summary/*/completion
+                  type.eq:x:@.arguments/*/type
+            limit:1
+         if
+            not-exists:x:@data.read/*
+            .lambda
+
+               // Inserting summary prompt and completion.
+               data.create
+                  table:ml_training_snippets
+                  values
+                     prompt:x:@.summary/*/prompt
+                     completion:x:@.summary/*/completion
+                     type:x:@.arguments/*/type
+                     uri:x:@.arguments/*/url
 
 // Preserving some memory.
 remove-nodes:x:@http.get/*
