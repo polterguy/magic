@@ -24,12 +24,14 @@
       <ng-container matColumnDef="name">
         <th
           mat-header-cell
-          *matHeaderCellDef>
+          *matHeaderCellDef
+          class="text-truncate px-sm-3">
           Name
         </th>
         <td
           mat-cell
-          *matCellDef="let element">
+          *matCellDef="let element"
+          class="text-truncate px-sm-3">
           {{element?.subject}}
         </td>
       </ng-container>
@@ -38,12 +40,14 @@
       <ng-container matColumnDef="domain">
         <th
           mat-header-cell
-          *matHeaderCellDef>
+          *matHeaderCellDef
+          class="text-nowrap px-sm-3 small-table-column">
           Domain
         </th>
         <td
           mat-cell
-          *matCellDef="let element">
+          *matCellDef="let element"
+          class="text-nowrap px-sm-3 small-table-column">
           {{element?.domain}}
         </td>
       </ng-container>
@@ -52,12 +56,14 @@
       <ng-container matColumnDef="email">
         <th
           mat-header-cell
-          *matHeaderCellDef>
+          *matHeaderCellDef
+          class="text-nowrap px-sm-3 small-table-column">
           Email
         </th>
         <td
           mat-cell
-          *matCellDef="let element">
+          *matCellDef="let element"
+          class="text-nowrap px-sm-3 small-table-column">
           {{element?.email}}
         </td>
       </ng-container>
@@ -67,12 +73,13 @@
         <th
           mat-header-cell
           *matHeaderCellDef
-          class="text-nowrap">
+          class="text-nowrap px-sm-3 small-table-column">
           Created
         </th>
         <td
           mat-cell
-          *matCellDef="let element">
+          *matCellDef="let element"
+          class="text-nowrap px-sm-3 small-table-column">
           {{element?.imported | since}}
         </td>
       </ng-container>
@@ -82,12 +89,13 @@
         <th
           mat-header-cell
           *matHeaderCellDef
-          class="text-nowrap">
+          class="text-nowrap px-sm-3 small-table-column">
           Enabled
         </th>
         <td
           mat-cell
-          *matCellDef="let element">
+          *matCellDef="let element"
+          class="text-nowrap px-sm-3 small-table-column">
           <mat-checkbox
             [checked]="element?.enabled === 1 || element?.enabled === true"
             color="primary"
@@ -96,16 +104,18 @@
         </td>
       </ng-container>
 
-      <!-- Cction column -->
+      <!-- Action column -->
       <ng-container matColumnDef="actions">
         <th
           mat-header-cell
-          *matHeaderCellDef>
+          *matHeaderCellDef
+          class="text-nowrap px-sm-3 small-table-column">
           Actions
         </th>
         <td
           mat-cell
-          *matCellDef="let element">
+          *matCellDef="let element"
+          class="text-nowrap px-sm-3 small-table-column">
           <div class="d-flex justify-content-between align-items-center">
             <div>
 
@@ -149,7 +159,7 @@
         *matNoDataRow>
         <td
           class="mat-cell"
-          colspan="4">
+          colspan="6">
           You have no public keys
         </td>
       </tr>

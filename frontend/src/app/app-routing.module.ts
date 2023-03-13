@@ -85,7 +85,7 @@ const routes: Routes = [
       },
       {
         path: 'cryptography',
-        loadChildren: () => import('./_protected/pages/user/cryptography/_module/cryptography.module').then(m => m.CryptographyModule)
+        loadChildren: () => import('./_protected/pages/misc/cryptography/_module/cryptography.module').then(m => m.CryptographyModule)
       },
       {
         path: 'user-profile',
