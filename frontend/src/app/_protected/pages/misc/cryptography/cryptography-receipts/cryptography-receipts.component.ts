@@ -27,9 +27,9 @@ export class CryptographyReceiptsComponent implements OnInit {
   pageSize: number = 5;
   totalItems: number = 0;
   displayedColumns: string[] = [
-    'created',
     'request',
-    'response'
+    'response',
+    'created',
   ];
 
   constructor(
