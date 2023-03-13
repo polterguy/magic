@@ -6,12 +6,7 @@
 @import '../../../../../assets/styles/_variables/mixin.scss';
 
 .table-responsive {
-  max-height: 55vh;
   @include scrollbar($aista_default_alt, $aista_default_grey4, 8px);
-
-  @media (max-width: 576px) {
-    max-height: unset;
-  }
 
   .text-truncate {
     max-width: 30vw;
