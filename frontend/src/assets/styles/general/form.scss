@@ -67,7 +67,11 @@ icons
 /*=-=-=-=-=-=
 form fields
 =-=-=-=-=-=*/
+
 :root {
+  mat-form-field.mat-form-field {
+    overflow: hidden;
+  }
   .mat-form-field-appearance-outline {
 
     .mat-form-field-outline-start,
