@@ -4,6 +4,7 @@
  */
 .arguments
    url:string
+   flavor:string
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
@@ -71,15 +72,15 @@ try
          values
             type:x:@.type
             model:gpt-3.5-turbo
-            max_tokens:int:2000
-            temperature:decimal:0.1
+            max_tokens:int:4000
+            temperature:decimal:0.3
             recaptcha:decimal:0.3
-            supervised:int:1
+            supervised:int:0
             cached:int:0
             use_embeddings:int:1
-            threshold:decimal:0.75
+            threshold:decimal:0.8
             vector_model:text-embedding-ada-002
-            prefix:"Answer the following QUESTION with one or two sentences while using the information in the following CONTEXT. If you cannot answer the question using the specified CONTEXT or previous messages then answer \"I don't know the answer, try to be more specific and stay on subject\".\r\n\r\nQUESTION: [QUESTION]\r\n\r\nCONTEXT: [CONTEXT]\r\n\r\nANSWER:"
+            prefix:x:@.arguments/*/flavor
 
       // Creating our default training snippets.
       data.create

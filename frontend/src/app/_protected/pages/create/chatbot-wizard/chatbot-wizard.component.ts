@@ -37,6 +37,30 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
   messages: any[] = [];
   doneCreatingBot: boolean = false;
   model: string = '';
+  flavors: any[] = [
+    {name: 'Sales Executive', prefix: 'Answer the following as if you are a Sales Executive in the subject: '},
+    {name: 'The CEO', prefix: 'Answer the following as if you are the CEO of the company: '},
+    {name: 'Empathy', prefix: 'Answer the following as if you really care about the person: '},
+    {name: 'Funny', prefix: 'Answer the following and finish with a relevant joke about the subject: '},
+    {name: 'An Expert', prefix: 'Answer the following as if you are an expert in the subject: '},
+    {name: 'One liner', prefix: 'Answer the following with one sentence: '},
+    {name: 'Two liner', prefix: 'Answer the following with two sentences: '},
+    {name: 'Multilingual', prefix: 'Answer the following question in the same language: '},
+    {name: 'Wall of text', prefix: 'Answer the following with 5 paragraphs: '},
+    {name: 'Poet', prefix: 'Answer the following with a poem: '},
+    {name: 'Donald Trump', prefix: 'Answer the following in the style of Donald Trump: '},
+    {name: 'Joe Biden', prefix: 'Answer the following in the style of Joe Biden: '},
+    {name: 'Barack Obama', prefix: 'Answer the following in the style of Barack Obama: '},
+    {name: 'Thomas Jefferson', prefix: 'Answer the following in the style of Thomas Jefferson: '},
+    {name: 'Snoop Dog', prefix: 'Answer the following in the style of Snoop Dog: '},
+    {name: 'Bob Marley', prefix: 'Answer the following in the style of Bob Marley: '},
+    {name: 'Buddha', prefix: 'Answer the following in the style of the Buddha: '},
+    {name: 'Jesus', prefix: 'Answer the following in the style of Jesus: '},
+    {name: 'Pirate', prefix: 'Answer the following in the style of a Pirate: '},
+    {name: 'Alien from Zorg', prefix: 'Answer the following as if you are an alien from the planet Zorg who came here to conquer the Earth: '},
+    {name: 'Reddit Troll', prefix: 'Answer the following as if you are a Reddit troll: '},
+  ];
+  flavor: any = null;
 
   constructor(
     private dialog: MatDialog,
@@ -146,7 +170,7 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
 
     this.hubConnection.start().then(() => {
 
-      this.openAIService.createBot(this.url).subscribe({
+      this.openAIService.createBot(this.url, this.flavor?.prefix ?? '').subscribe({
         next: (result: MagicResponse) => {
   
           this.model = result.result;
