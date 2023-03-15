@@ -3,6 +3,8 @@
 .arguments
    prompt:string
    type:string
+   references:bool
+   chat:bool
    recaptcha_response:string
    session:string
 .description:OpenAI chat endpoint, for having conversations using "gpt-xxx" models
@@ -45,7 +47,7 @@ data.connect:[generic|magic]
 
    // Verifying type exists.
    if
-      not-exists:x:@data.read/*/*
+      not-exists:x:@data.read/*
       .lambda
 
          // Oops, no such type, making sure we try default type.
@@ -87,11 +89,11 @@ data.connect:[generic|magic]
 
    // Checking if model requires authentication and authorisation.
    if
-      not-null:x:@data.read/*/*/auth
+      not-null:x:@.model/*/auth
       .lambda
 
          // Making sure user is authorised to using type.
-         auth.ticket.verify:x:@data.read/*/*/auth
+         auth.ticket.verify:x:@.model/*/auth
 
    // Checking if model requires reCAPTCHA.
    if
@@ -99,7 +101,7 @@ data.connect:[generic|magic]
          not
             auth.ticket.in-role:root
          mt
-            convert:x:@data.read/*/*/recaptcha
+            convert:x:@.model/*/recaptcha
                type:decimal
             .:decimal:0
       .lambda
@@ -128,7 +130,7 @@ data.connect:[generic|magic]
             config.get:"magic:auth:recaptcha:secret"
 
          // Validating reCAPTCHA invocation confirms request originated from a human.
-         convert:x:@data.read/*/*/recaptcha
+         convert:x:@.model/*/recaptcha
             type:decimal
          validators.recaptcha:x:@.arguments/*/recaptcha_response
             min:x:@convert
@@ -269,7 +271,8 @@ data.connect:[generic|magic]
          // Checking if dot product is higher than threshold.
          if
             mte:x:@math.dot
-               get-value:x:@.model/threshold
+               convert:x:@.model/*/threshold
+                  type:double
             .lambda
 
                // Adding result to above [.snippets] collection.
@@ -329,6 +332,7 @@ data.connect:[generic|magic]
     * If the user asked a follow up question that did not kick in on training
     * data, we use the existing session messages in a conversational manner.
     */
+   .references
    if
       not-exists:x:@.snippets/*
       .lambda
@@ -376,6 +380,22 @@ data.connect:[generic|magic]
 
             else
 
+               // Checking if we should add currently iterated snippet as a reference.
+               if
+                  and
+                     exists:x:@.arguments/*/references
+                     get-value:x:@.arguments/*/references
+                     not-exists:x:@.references/*/*/uri/={@.snippets/0/*/uri}
+                  .lambda
+
+                     // Adding reference.
+                     unwrap:x:+/*/*/*
+                     add:x:@.references
+                        .
+                           .
+                              uri:x:@.snippets/0/*/uri
+                              prompt:x:@.snippets/0/*/prompt
+
                // We've got room for more context.
                set-value:x:@.context
                   get-value:x:@strings.concat
@@ -397,6 +417,14 @@ data.connect:[generic|magic]
             role:user
             content:x:@.arguments/*/prompt
 
+   // Figuring out max tokens to ask for.
+   lambda2hyper:x:@.session/*
+   .max-tokens
+   set-value:x:@.max-tokens
+      math.subtract
+         get-value:x:@.model-max-tokens
+         openai.tokenize:x:@lambda2hyper
+
    // Invoking OpenAI now with messages/session.
    add:x:./*/http.post/*/payload/*/messages
       get-nodes:x:@.session/*
@@ -406,7 +434,7 @@ data.connect:[generic|magic]
          Content-Type:application/json
       payload
          model:x:@.model/*/model
-         max_tokens:int:1000
+         max_tokens:x:@.max-tokens
          temperature:x:@.model/*/temperature
          messages
       convert:true
@@ -456,6 +484,16 @@ data.connect:[generic|magic]
    cache.set:x:@.arguments/*/session
       expiration:600
       value:x:@lambda2hyper
+      
+   // Checking if we've got references.
+   if
+      exists:x:@.references
+      .lambda
+         add:x:@data.connect/*/return
+            .
+               references
+         add:x:@data.connect/*/return/*/references
+            get-nodes:x:@.references/*
 
    /*
     * Applying some HTTP caching to avoid invoking OpenAI again with

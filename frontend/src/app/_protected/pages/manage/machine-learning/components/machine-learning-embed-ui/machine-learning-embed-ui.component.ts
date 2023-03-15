@@ -41,6 +41,7 @@ export class MachineLearningEmbedUiComponent implements OnInit {
 
   ngOnInit() {
 
+    console.log(this.data);
     if (this.data.search === true) {
       this.search = true;
     }
@@ -61,7 +62,7 @@ export class MachineLearningEmbedUiComponent implements OnInit {
 
   getEmbed() {
 
-    return `<script src="${this.backendService.active.url}/magic/system/openai/include-javascript?markdown=${this.markdown ? 'true' : 'false'}&speech=${this.speech ? 'true' : 'false'}&search=${this.search ? 'true' : 'false'}&chat=${this.chat ? 'true' : 'false'}&css=${encodeURIComponent(this.theme)}&file=default&type=${encodeURIComponent(this.type)}&header=${encodeURIComponent(this.header)}&button=${encodeURIComponent(this.buttonTxt)}" defer></script>`;
+    return `<script src="${this.backendService.active.url}/magic/system/openai/include-javascript?markdown=${this.markdown ? 'true' : 'false'}&speech=${this.speech ? 'true' : 'false'}&search=${this.search ? 'true' : 'false'}&chat=${this.chat ? 'true' : 'false'}&css=${encodeURIComponent(this.theme)}&file=default&type=${encodeURIComponent(this.type)}&header=${encodeURIComponent(this.header)}&button=${encodeURIComponent(this.buttonTxt)}&gpt=${this.data.model?.startsWith('gpt') ? 'true' : 'false'}" defer></script>`;
   }
 
   embed() {

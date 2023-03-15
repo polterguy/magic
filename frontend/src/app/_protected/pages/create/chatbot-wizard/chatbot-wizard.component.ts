@@ -174,6 +174,7 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
           type: this.model,
           noClose: true,
           search: false,
+          model: 'gpt-3.5-turbo',
         }
       });
   }

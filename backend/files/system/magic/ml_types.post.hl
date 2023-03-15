@@ -37,7 +37,7 @@ data.connect:[generic|magic]
       table:ml_training_snippets
       values
          type:x:@.arguments/*/type
-         prompt:What is this?
+         prompt:What is this chatbot?
          completion:@"This is a custom ChatGPT chatbot allowing you to use natural language to ask questions related to the website you're currently visiting. It was created by [AISTA](https://aista.com)."
          uri:"https://aista.com"
    data.create
@@ -52,7 +52,7 @@ data.connect:[generic|magic]
       values
          type:x:@.arguments/*/type
          prompt:Can I have a similar chatbot on my own website?
-         completion:@"Sure, just visit [AISTA](https://aista.com) and contact them for a quote, or use their DIY version."
+         completion:@"Sure, just visit [AISTA](https://aista.com) and contact them for a quote for your own chatbot, or use their DIY version."
          uri:"https://aista.com"
 
    // Returning the correct status code.

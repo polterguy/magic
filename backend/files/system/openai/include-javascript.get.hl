@@ -11,6 +11,7 @@
    chat:bool
    markdown:bool
    speech:bool
+   gpt:bool
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/file
@@ -24,6 +25,14 @@ if
       add:x:@.arguments
          .
             render_button:bool:true
+
+// Defaulting gpt to false
+if
+   not-exists:x:@.arguments/*/gpt
+   .lambda
+      add:x:@.arguments
+         .
+            gpt:bool:false
 
 // Defaulting chat and search arguments if not specified.
 if
@@ -67,7 +76,7 @@ if
 
 else
 
-   //Checking if system JavaScript file exists.
+   // Checking if system JavaScript file exists.
    strings.concat
       .:/system/openai/front.files/
       get-value:x:@.arguments/*/file
@@ -163,6 +172,16 @@ else
    set-value:x:@.result
       strings.replace:x:@.result
          .:[[chat]]
+         .:false
+if:x:@.arguments/*/gpt
+   set-value:x:@.result
+      strings.replace:x:@.result
+         .:[[gpt]]
+         .:true
+else
+   set-value:x:@.result
+      strings.replace:x:@.result
+         .:[[gpt]]
          .:false
 if:x:@.arguments/*/markdown
    set-value:x:@.result
