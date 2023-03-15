@@ -164,7 +164,7 @@ data.connect:[generic|magic]
       default
 
          log.error:Invoked chat endpoint with wrong model
-         throw:The chat endpoint only supports GTP type of models
+         throw:The chat endpoint only supports GPT type of models
             public:bool:true
             status:int:400
 
