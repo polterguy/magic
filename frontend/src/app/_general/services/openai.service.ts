@@ -154,10 +154,11 @@ export class OpenAIService {
   /**
    * Creates a new bot 100% automatically from the specified URL.
    */
-  createBot(url: string) {
+  createBot(url: string, flavor: string = null) {
 
     return this.httpService.post<any>('/magic/system/openai/create-bot', {
       url,
+      flavor,
     });
   }
 }

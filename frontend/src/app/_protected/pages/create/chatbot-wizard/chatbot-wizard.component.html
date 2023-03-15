@@ -46,7 +46,7 @@
 
       </div>
 
-      <div class="col-md-6 col-12">
+      <div class="col-md-9 col-12">
 
         <div class="d-flex justify-content-md-between align-items-md-center align-items-end flex-md-row w-100">
 
@@ -68,6 +68,28 @@
               autocomplete="off">
           </mat-form-field>
 
+          <mat-form-field class="w-100 standalone-field mx-2">
+            <span
+              matPrefix
+              matTooltip="Flavor"
+              class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+              <mat-icon>person</mat-icon>
+              <span class="text-muted">|</span>
+            </span>
+            <mat-select
+              [(ngModel)]="flavor"
+              [disabled]="isLoading"
+              [disabled]="crawling"
+              placeholder="Flavor"
+              name="flavor">
+              <mat-option
+                *ngFor="let idx of flavors"
+                [value]="idx">
+                {{idx.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+  
           <button
             mat-flat-button
             [disabled]="!goodWebsite() || crawling"

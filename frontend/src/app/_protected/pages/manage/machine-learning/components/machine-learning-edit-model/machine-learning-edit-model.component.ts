@@ -47,7 +47,6 @@ export class MachineLearningEditTypeComponent implements OnInit {
     {name: 'Two liner', prefix: 'Answer the following with two sentences: '},
     {name: 'Multilingual', prefix: 'Answer the following question in the same language: '},
     {name: 'Wall of text', prefix: 'Answer the following with 5 paragraphs: '},
-    {name: 'Markdown', prefix: 'Answer the following question and preserve all Markdown: '},
     {name: 'Poet', prefix: 'Answer the following with a poem: '},
     {name: 'Donald Trump', prefix: 'Answer the following in the style of Donald Trump: '},
     {name: 'Joe Biden', prefix: 'Answer the following in the style of Joe Biden: '},
@@ -58,6 +57,8 @@ export class MachineLearningEditTypeComponent implements OnInit {
     {name: 'Buddha', prefix: 'Answer the following in the style of the Buddha: '},
     {name: 'Jesus', prefix: 'Answer the following in the style of Jesus: '},
     {name: 'Pirate', prefix: 'Answer the following in the style of a Pirate: '},
+    {name: 'Alien from Zorg', prefix: 'Answer the following as if you are an alien from the planet Zorg who came here to conquer the Earth: '},
+    {name: 'Reddit Troll', prefix: 'Answer the following as if you are a Reddit troll: '},
   ];
   flavor: any = null;
 
