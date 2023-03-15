@@ -62,6 +62,7 @@
           <mat-select
             [(ngModel)]="model"
             [disabled]="isLoading"
+            (selectionChange)="modelChanged()"
             placeholder="Completion model"
             name="model">
             <mat-select-trigger>
@@ -81,7 +82,7 @@
           </mat-select>
         </mat-form-field>
 
-        <mat-form-field class="w-100 standalone-field">
+        <mat-form-field class="w-100 standalone-field me-2">
           <span
             matPrefix
             matTooltip="Vector model"
@@ -107,6 +108,28 @@
               <span class="d-block description-line">
                 Owned by {{idx.owned_by}}
               </span>
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="w-100 standalone-field">
+          <span
+            matPrefix
+            matTooltip="Flavor"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>home</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <mat-select
+            [(ngModel)]="flavor"
+            [disabled]="isLoading"
+            (selectionChange)="flavorChanged()"
+            placeholder="Flavor"
+            name="flavor">
+            <mat-option
+              *ngFor="let idx of flavors"
+              [value]="idx">
+              {{idx.name}}
             </mat-option>
           </mat-select>
         </mat-form-field>

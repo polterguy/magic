@@ -37,6 +37,29 @@ export class MachineLearningEditTypeComponent implements OnInit {
   vector_model: OpenAIModel = null;
   models: OpenAIModel[] = [];
   roles: Role[] = [];
+  flavors: any[] = [
+    {name: 'Sales Executive', prefix: 'Answer the following as if you are a Sales Executive in the subject: '},
+    {name: 'The CEO', prefix: 'Answer the following as if you are the CEO of the company: '},
+    {name: 'Empathy', prefix: 'Answer the following as if you really care about the person: '},
+    {name: 'Funny', prefix: 'Answer the following and finish with a relevant joke about the subject: '},
+    {name: 'An Expert', prefix: 'Answer the following as if you are an expert in the subject: '},
+    {name: 'One liner', prefix: 'Answer the following with one sentence: '},
+    {name: 'Two liner', prefix: 'Answer the following with two sentences: '},
+    {name: 'Multilingual', prefix: 'Answer the following question in the same language: '},
+    {name: 'Wall of text', prefix: 'Answer the following with 5 paragraphs: '},
+    {name: 'Markdown', prefix: 'Answer the following question and preserve all Markdown: '},
+    {name: 'Poet', prefix: 'Answer the following with a poem: '},
+    {name: 'Donald Trump', prefix: 'Answer the following in the style of Donald Trump: '},
+    {name: 'Joe Biden', prefix: 'Answer the following in the style of Joe Biden: '},
+    {name: 'Barack Obama', prefix: 'Answer the following in the style of Barack Obama: '},
+    {name: 'Thomas Jefferson', prefix: 'Answer the following in the style of Thomas Jefferson: '},
+    {name: 'Snoop Dog', prefix: 'Answer the following in the style of Snoop Dog: '},
+    {name: 'Bob Marley', prefix: 'Answer the following in the style of Bob Marley: '},
+    {name: 'Buddha', prefix: 'Answer the following in the style of the Buddha: '},
+    {name: 'Jesus', prefix: 'Answer the following in the style of Jesus: '},
+    {name: 'Pirate', prefix: 'Answer the following in the style of a Pirate: '},
+  ];
+  flavor: any = null;
 
   CommonRegEx = CommonRegEx;
   CommonErrorMessages = CommonErrorMessages;
@@ -62,7 +85,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
     this.supervised = this.data?.supervised === 1 ? true : (!this.data ? true : false);
     this.use_embeddings = this.data?.use_embeddings === 1 ? true : (!this.data ? true : false);
     this.cached = this.data?.cached === 1 ? true : false;
-    this.prefix = this.data?.prefix ?? 'Answer the following QUESTION with one or two sentences while using the information in the following CONTEXT and preserve Markdown. If you cannot answer the question using the specified CONTEXT or previous messages then answer "I don\'t know the answer, try to be more specific and stay on subject".\r\n\r\nQUESTION: [QUESTION]\r\n\r\nCONTEXT: [CONTEXT]\r\n\r\nANSWER:';
+    this.prefix = this.data?.prefix ?? '';
     this.advanced = !!this.data;
 
     this.generalService.showLoading();
@@ -113,6 +136,21 @@ export class MachineLearningEditTypeComponent implements OnInit {
         this.generalService.hideLoading();
       }
     });
+  }
+
+  flavorChanged() {
+
+    this.prefix = this.flavor.prefix;
+    setTimeout(() => this.flavor = null, 1);
+  }
+
+  modelChanged() {
+
+    if (this.model?.id?.startsWith('gpt-')) {
+      this.prefix = '';
+    } else {
+      this.prefix = 'Answer the following QUESTION with one or two sentences while using the information in the following CONTEXT and preserve Markdown. If you cannot answer the question using the specified CONTEXT or previous messages then answer "I don\'t know the answer, try to be more specific and stay on subject".\r\n\r\nQUESTION: [QUESTION]\r\n\r\nCONTEXT: [CONTEXT]\r\n\r\nANSWER:';
+    }
   }
 
   supervisedChanged() {

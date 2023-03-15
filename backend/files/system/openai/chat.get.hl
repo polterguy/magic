@@ -409,6 +409,19 @@ data.connect:[generic|magic]
                role:user
                content:x:@.context
 
+   // Checking if model is prefixed, at which point we prepend prefix to question.
+   if
+      and
+         exists:x:@.model/*/prefix
+         not-null:x:@.model/*/prefix
+         neq:x:@.model/*/prefix
+            .:
+      .lambda
+         set-value:x:@.arguments/*/prompt
+            strings.concat
+               get-value:x:@.model/*/prefix
+               get-value:x:@.arguments/*/prompt
+
    // Adding user's current prompt to session.
    unwrap:x:+/*/*/*/content
    add:x:@.session

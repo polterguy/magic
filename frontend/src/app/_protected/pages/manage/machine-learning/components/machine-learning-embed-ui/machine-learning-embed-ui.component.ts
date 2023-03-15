@@ -19,7 +19,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 })
 export class MachineLearningEmbedUiComponent implements OnInit {
 
-  theme: string = 'default';
+  theme: string = 'chess';
   themes: string[] = [];
   type: string = null;
   header: string = 'Ask about our services or products';
