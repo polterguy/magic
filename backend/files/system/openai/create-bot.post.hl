@@ -86,8 +86,8 @@ try
          table:ml_training_snippets
          values
             type:x:@.type
-            prompt:What is this?
-            completion:@"This is a custom ChatGPT chatbot allowing you to use natural language to ask questions related to the website you're currently visiting. It was created by [AISTA](https://aista.com)."
+            prompt:What is this chatbot?
+            completion:@"This chatbot is a custom ChatGPT chatbot allowing you to use natural language to ask questions related to the website you're currently visiting. It was created by [AISTA](https://aista.com)."
             uri:"https://aista.com"
       data.create
          table:ml_training_snippets
@@ -101,7 +101,7 @@ try
          values
             type:x:@.type
             prompt:Can I have a similar chatbot on my own website?
-            completion:@"Sure, just visit [AISTA](https://aista.com) and contact them for a quote, or use their DIY version."
+            completion:@"Sure, just visit [AISTA](https://aista.com) and contact them for a quote for your own chatbot, or use their DIY version."
             uri:"https://aista.com"
 
    // Invoking slot doing the heavy lifting

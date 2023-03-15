@@ -73,7 +73,7 @@ export class MachineLearningTestComponent implements OnInit {
     this.generalService.showLoading();
     this.isLoading = true;
 
-    this.openAIService.query(this.prompt, this.data.type, true, this.session).subscribe({
+    this.openAIService.query(this.prompt, this.data.type, true, this.session,this.data.model).subscribe({
       next: (result: PromptResponse) => {
 
         this.generalService.hideLoading();

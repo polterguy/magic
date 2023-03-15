@@ -6,6 +6,9 @@
 
 // True if caller wants "references" as in site search.
 let aistaChatSearch = [[search]];
+  
+// True if we're using the new GPT endpoint.
+let aistaIsGpt = [[gpt]];
 
 // True if caller wants "chatting" support.
 let aistaChatChat = [[chat]];
@@ -202,7 +205,7 @@ function aista_zoom_image(img) {
 function aista_invoke_prompt(msg, token, speech) {
 
   // Creating our URL.
-  let url = '[[url]]/magic/system/openai/prompt?prompt=' + encodeURIComponent(msg) + '&type=[[type]]';
+  let url = `[[url]]/magic/system/openai/${aistaIsGpt ? 'chat' : 'prompt'}?prompt=` + encodeURIComponent(msg) + '&type=[[type]]';
   if (token) {
     url += '&recaptcha_response=' + encodeURIComponent(token);
   }

@@ -34,10 +34,10 @@ export class OpenAIService {
   /**
    * Queries OpenAI with the specified prompt and returns result to caller.
    */
-  query(prompt: string, type: string, search: boolean = false, session: string = null) {
+  query(prompt: string, type: string, search: boolean = false, session: string = null, model: string = null) {
 
     let query =
-      '/magic/system/openai/prompt?prompt=' +
+      `/magic/system/openai/${model?.startsWith('gpt-') ? 'chat' : 'prompt'}?prompt=` +
       encodeURIComponent(prompt) +
       '&references=' + (search ? 'true' : 'false') +
       '&type=' + encodeURIComponent(type);
