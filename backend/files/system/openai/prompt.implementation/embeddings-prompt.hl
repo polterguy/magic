@@ -132,7 +132,7 @@ while:x:@.continue
          .:int:50
       .lambda
 
-         // We're done! We've found the top 5 most relevant snippets from our training material.
+         // We're done! We've found the top 50 most relevant snippets from our training material.
          set-value:x:@.continue
             .:bool:false
    
