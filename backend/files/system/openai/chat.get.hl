@@ -367,6 +367,8 @@ data.connect:[generic|magic]
             strings.concat
                get-value:x:@.context
                .:"\r\n\r\n"
+               get-value:x:@.snippets/0/*/prompt
+               .:"\r\n\r\n"
                get-value:x:@.snippets/0/*/completion
             if
                mt
