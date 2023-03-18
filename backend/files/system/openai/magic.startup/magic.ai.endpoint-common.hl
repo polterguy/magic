@@ -1,0 +1,145 @@
+
+/*
+ * Slot for commonalities between different endpoint responsible for 
+ * handling authentication, reCAPTCHA, opening database connection,
+ * and all other commonalities between the different endpoints.
+ */
+slots.create:magic.ai.endpoint-common
+
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/prompt
+   validators.string:x:@.arguments/*/prompt
+      min:1
+
+   // Trimming prompt.
+   set-value:x:@.arguments/*/prompt
+      strings.trim:x:@.arguments/*/prompt
+
+   // Connecting to database to retrieve model settings.
+   data.connect:[generic|magic]
+
+      // Buffer for model settings.
+      .model
+
+      // Reading settings for type.
+      data.read
+         table:ml_types
+         columns
+            model
+            max_tokens
+            temperature
+            recaptcha
+            auth
+            supervised
+            cached
+            prefix
+            use_embeddings
+            threshold
+            vector_model
+         where
+            and
+               type.eq:x:@.arguments/*/type
+
+      // Verifying type exists.
+      if
+         not-exists:x:@data.read/*
+         .lambda
+
+            // Oops, no such type, trying to see if default type exists.
+            data.read
+               table:ml_types
+               columns
+                  model
+                  max_tokens
+                  temperature
+                  recaptcha
+                  auth
+                  supervised
+                  cached
+                  prefix
+                  use_embeddings
+                  threshold
+                  vector_model
+               where
+                  and
+                     type.eq:default
+            if
+               not-exists:x:@data.read/*
+               .lambda
+
+                  // Default type doesn't exist, nothing to do here.
+                  throw:No such type, and no default type was found
+                     status:int:400
+                     public:bool:true
+
+            // Resorting to default type.
+            add:x:@.model
+               get-nodes:x:@data.read/*/*
+
+      else
+
+         // Model exists, populating above buffer.
+         add:x:@.model
+            get-nodes:x:@data.read/*/*
+
+      // Checking if model requires authentication and authorisation.
+      if
+         and
+            not-null:x:@.model/*/auth
+            neq:x:@.model/*/auth
+               .:
+         .lambda
+
+            // Making sure user is authorised to using type.
+            auth.ticket.verify:x:@.model/*/auth
+
+      // Checking if model requires reCAPTCHA.
+      if
+         and
+            not
+               auth.ticket.in-role:root
+            mt
+               convert:x:@.model/*/recaptcha
+                  type:decimal
+               .:decimal:0
+         .lambda
+
+            // Verifying reCAPTCHA was supplied.
+            if
+               or
+                  not-exists:x:@.arguments/*/recaptcha_response
+                  null:x:@.arguments/*/recaptcha_response
+               .lambda
+
+                  // Endpoint invoked without reCAPTCHA, making sure we abort invocation.
+                  response.status.set:499
+                  return
+                     error:No reCAPTCHA supplied
+
+            // Retrieving reCAPTCHA site key.
+            .key
+            set-value:x:@.key
+               config.get:"magic:auth:recaptcha:key"
+
+            // Retrieving reCAPTCHA secret.
+            .secret
+            set-value:x:@.secret
+               config.get:"magic:auth:recaptcha:secret"
+
+            // Validating reCAPTCHA invocation confirms request originated from a human.
+            convert:x:@.model/*/recaptcha
+               type:decimal
+            validators.recaptcha:x:@.arguments/*/recaptcha_response
+               min:x:@convert
+               site-key:x:@.key
+               secret:x:@.secret
+
+      // Invoking callback provided by caller.
+      add:x:./*/invoke
+         get-nodes:x:@.model/*
+         get-nodes:x:@.arguments/*
+      remove-nodes:x:./*/invoke/*/.arguments/*/.callback
+      invoke:x:@.arguments/*/.callback
+
+      // Returning result of invocation to caller.
+      return-nodes:x:@invoke/*

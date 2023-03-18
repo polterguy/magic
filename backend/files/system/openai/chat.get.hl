@@ -10,515 +10,397 @@
 .description:OpenAI chat endpoint, for having conversations using "gpt-xxx" models
 .type:public
 
-// Sanity checking invocation.
-validators.mandatory:x:@.arguments/*/session
-validators.mandatory:x:@.arguments/*/prompt
-validators.string:x:@.arguments/*/prompt
-   min:1
+// Invoking slot containing commonalities for all endpoints.
+add:x:./*/signal
+   get-nodes:x:@.arguments/*
+signal:magic.ai.endpoint-common
+   .callback
 
-// Trimming prompt.
-set-value:x:@.arguments/*/prompt
-   strings.trim:x:@.arguments/*/prompt
+      // Figuring out max tokens for model.
+      .model-max-tokens
+      .context-max
+      switch:x:@.arguments/*/model
 
-// Connecting to database to retrieve model settings.
-data.connect:[generic|magic]
+         case:gpt-3.5-turbo
+         case:gpt-3.5-turbo-0301
+            set-value:x:@.model-max-tokens
+               .:int:4096
+            set-value:x:@.context-max
+               .:int:1000
 
-   // Buffer for model settings.
-   .model
+         case:gpt-4
+         case:gpt-4-0314
+            set-value:x:@.model-max-tokens
+               .:int:8192
+            set-value:x:@.context-max
+               .:int:2000
 
-   // Reading settings for type declaration.
-   data.read
-      table:ml_types
-      columns
-         model
-         max_tokens
-         temperature
-         recaptcha
-         auth
-         supervised
-         cached
-         prefix
-         use_embeddings
-         threshold
-         vector_model
-      where
-         and
-            type.eq:x:@.arguments/*/type
+         case:gpt-4-32k
+         case:gpt-4-32k-0314
+            set-value:x:@.model-max-tokens
+               .:int:32768
+            set-value:x:@.context-max
+               .:int:4000
 
-   // Verifying type exists.
-   if
-      not-exists:x:@data.read/*
-      .lambda
+         default
 
-         // Oops, no such type, making sure we try default type.
-         data.read
-            table:ml_types
-            columns
-               model
-               max_tokens
-               temperature
-               recaptcha
-               auth
-               supervised
-               cached
-               prefix
-               use_embeddings
-               threshold
-               vector_model
-            where
-               and
-                  type.eq:default
-         if
-            not-exists:x:@data.read/*
-            .lambda
-
-               // Default type doesn't exist, nothing to do here.
-               throw:No such type, and no default type was found
-                  status:int:400
-                  public:bool:true
-
-         // Resorting to default type.
-         add:x:@.model
-            get-nodes:x:@data.read/*/*
-
-   else
-
-      // Model exists, populating above buffer.
-      add:x:@.model
-         get-nodes:x:@data.read/*/*
-
-   // Checking if model requires authentication and authorisation.
-   if
-      not-null:x:@.model/*/auth
-      .lambda
-
-         // Making sure user is authorised to using type.
-         auth.ticket.verify:x:@.model/*/auth
-
-   // Checking if model requires reCAPTCHA.
-   if
-      and
-         not
-            auth.ticket.in-role:root
-         mt
-            convert:x:@.model/*/recaptcha
-               type:decimal
-            .:decimal:0
-      .lambda
-
-         // Verifying reCAPTCHA was supplied.
-         if
-            or
-               not-exists:x:@.arguments/*/recaptcha_response
-               null:x:@.arguments/*/recaptcha_response
-            .lambda
-               response.status.set:499
-               return
-                  error:No reCAPTCHA supplied
-
-         // Making sure reCAPTCHA value was provided.
-         validators.mandatory:x:@.arguments/*/recaptcha_response
-
-         // Retrieving reCAPTCHA site key.
-         .key
-         set-value:x:@.key
-            config.get:"magic:auth:recaptcha:key"
-
-         // Retrieving reCAPTCHA secret.
-         .secret
-         set-value:x:@.secret
-            config.get:"magic:auth:recaptcha:secret"
-
-         // Validating reCAPTCHA invocation confirms request originated from a human.
-         convert:x:@.model/*/recaptcha
-            type:decimal
-         validators.recaptcha:x:@.arguments/*/recaptcha_response
-            min:x:@convert
-            site-key:x:@.key
-            secret:x:@.secret
-
-   // Figuring out max tokens for model.
-   .model-max-tokens
-   .context-max
-   switch:x:@.model/*/model
-
-      case:gpt-3.5-turbo
-      case:gpt-3.5-turbo-0301
-         set-value:x:@.model-max-tokens
-            .:int:4096
-         set-value:x:@.context-max
-            .:int:1000
-
-      case:gpt-4
-      case:gpt-4-0314
-         set-value:x:@.model-max-tokens
-            .:int:8192
-         set-value:x:@.context-max
-            .:int:2000
-
-      case:gpt-4-32k
-      case:gpt-4-32k-0314
-         set-value:x:@.model-max-tokens
-            .:int:32768
-         set-value:x:@.context-max
-            .:int:4000
-
-      default
-
-         log.error:Invoked chat endpoint with wrong model
-         throw:The chat endpoint only supports GPT type of models
-            public:bool:true
-            status:int:400
-
-   /*
-    * Checking if we've got an existing session.
-    *
-    * Notice, if we have an existing session, and we don't find embeddings matching prompt,
-    * we simply continue discussing subject in a "conversational manner".
-    */
-   .session
-   cache.get:x:@.arguments/*/session
-   if
-      not-null:x:@cache.get
-      .lambda
-
-         /*
-          * We have an existing session, hence continuing discussing subject
-          * unless embeddings returns a better match.
-          */
-         add:x:@.session
-            hyper2lambda:x:@cache.get
-
-   // Retrieving embeddings.
-   .token
-   set-value:x:@.token
-      strings.concat
-         .:"Bearer "
-         config.get:"magic:openai:key"
-
-   // Retrieving embedding for prompt.
-   http.post:"https://api.openai.com/v1/embeddings"
-      headers
-         Authorization:x:@.token
-         Content-Type:application/json
-      payload
-         input:x:@.arguments/*/prompt
-         model:x:@.model/*/vector_model
-      convert:true
-
-   // Sanity checking above invocation
-   if
-      not
-         and
-            mte:x:@http.post
-               .:int:200
-            lt:x:@http.post
-               .:int:300
-      .lambda
-
-         // Oops, error - Logging error and returning OpenAI's HTTP status code to caller.
-         lambda2hyper:x:@http.post
-         log.error:Something went wrong while invoking OpenAI
-            message:x:@http.post/*/content/*/error/*/message
-            error:x:@lambda2hyper
-         response.status.set:x:@http.post
-         unwrap:x:+/*
-         return
-            error:bool:true
-            result:x:@http.post/*/content/*/error/*/message
-
-   /*
-    * Looping through each vector in model, finding the most relevant snippets.
-    *
-    * Notice, this will calculate the dot product from the question and all training snippets,
-    * and use the training snippets with the highest dot product as "the context from which to answer the question".
-    *
-    * Resulting in that we provide relevant information to OpenAI, allowing them to correctly assemble
-    * a completion, based upon the relevant information (context) and the way the question was phrased.
-    */
-   .snippets
-   .continue:bool:true
-   .offset:int:0
-   while:x:@.continue
-
-      // Selecting 50 snippets from type.
-      data.read
-         table:ml_training_snippets
-         columns
-            id
-            prompt
-            completion
-            embedding
-            uri
-         where
-            and
-               embedding.neq
-               type.eq:x:@.arguments/*/type
-         limit:50
-         offset:x:@.offset
-         order:created
-
-      // Looping through all records returned above.
-      for-each:x:@data.read/*
-
-         // Calculating dot product of currently iterated snippet and [.vector].
-         strings.split:x:@.dp/#/*/embedding
-            .:,
-         math.dot
-            get-nodes:x:@strings.split/*
-            get-nodes:x:@http.post/*/content/*/data/0/*/embedding/*
-
-         // Checking if dot product is higher than threshold.
-         if
-            mte:x:@math.dot
-               convert:x:@.model/*/threshold
-                  type:double
-            .lambda
-
-               // Adding result to above [.snippets] collection.
-               unwrap:x:+/*/*/*
-               add:x:@.snippets
-                  .
-                     .
-                        uri:x:@.dp/#/*/uri
-                        prompt:x:@.dp/#/*/prompt
-                        completion:x:@.dp/#/*/completion
-                        dot:x:@math.dot
-
-      // Sorting [.snippets] such that highest dot product comes first.
-      sort:x:@.snippets/*
-         if
-            mt
-               get-value:x:@.lhs/#/*/dot
-               get-value:x:@.rhs/#/*/dot
-            .lambda
-               set-value:x:@.result
-                  .:int:-1
-         else-if
-            lt
-               get-value:x:@.lhs/#/*/dot
-               get-value:x:@.rhs/#/*/dot
-            .lambda
-               set-value:x:@.result
-                  .:int:1
-         else
-            set-value:x:@.result
-               .:int:0
-
-      // Updating [.snippets] now with the 50 top most relevant snippets.
-      remove-nodes:x:@.snippets/*
-      add:x:@.snippets
-         get-nodes:x:@sort/*/[0,50]
-
-      // Checking if we're done.
-      if
-         lt
-            get-count:x:@data.read/*
-            .:int:50
-         .lambda
-
-            // We're done! We've found the top 50 most relevant snippets from our training material.
-            set-value:x:@.continue
-               .:bool:false
-
-      // Incrementing offset.
-      math.increment:x:@.offset
-         get-count:x:@data.read/*
-
-   /*
-    * Creating messages such that if the user asked a question that kicked
-    * in on training data, we reset the session, and create a new context.
-    *
-    * If the user asked a follow up question that did not kick in on training
-    * data, we use the existing session messages in a conversational manner.
-    */
-   .references
-   if
-      not-exists:x:@.snippets/*
-      .lambda
-
-         /*
-          * Question did not trigger training data,
-          * invoking OpenAI in "conversational manner".
-          */
-         .new-session
-         add:x:@.new-session
-            get-nodes:x:@.session/0
-            get-nodes:x:@.session/0/-
-         remove-nodes:x:@.session/*
-         add:x:@.session
-            get-nodes:x:@.new-session/*
-
-   else
+            log.error:Invoked chat endpoint with wrong model
+            throw:The chat endpoint only supports GPT type of models
+               public:bool:true
+               status:int:400
 
       /*
-       * Question triggered training data, creating a new session.
+       * Checking if we've got an existing session.
+       *
+       * Notice, if we have an existing session, and we don't find embeddings matching prompt,
+       * we simply continue discussing subject in a "conversational manner".
        */
-      remove-nodes:x:@.session/*
-      .context:
-      .continue:bool:true
-      while
-         and
-            get-value:x:@.continue
-            exists:x:@.snippets/0
+      .session
+      cache.get:x:@.arguments/*/session
+      if
+         not-null:x:@cache.get
          .lambda
 
-            // Checking if we're about to overflow context size.
-            strings.concat
-               get-value:x:@.context
-               .:"\r\n\r\n"
-               get-value:x:@.snippets/0/*/prompt
-               .:"\r\n\r\n"
-               get-value:x:@.snippets/0/*/completion
+            /*
+             * We have an existing session, hence continuing discussing subject
+             * unless embeddings returns a better match.
+             */
+            add:x:@.session
+               hyper2lambda:x:@cache.get
+
+      // Retrieving embeddings.
+      .token
+      set-value:x:@.token
+         strings.concat
+            .:"Bearer "
+            config.get:"magic:openai:key"
+
+      // Retrieving embedding for prompt.
+      http.post:"https://api.openai.com/v1/embeddings"
+         headers
+            Authorization:x:@.token
+            Content-Type:application/json
+         payload
+            input:x:@.arguments/*/prompt
+            model:x:@.arguments/*/vector_model
+         convert:true
+
+      // Sanity checking above invocation
+      if
+         not
+            and
+               mte:x:@http.post
+                  .:int:200
+               lt:x:@http.post
+                  .:int:300
+         .lambda
+
+            // Oops, error - Logging error and returning OpenAI's HTTP status code to caller.
+            lambda2hyper:x:@http.post
+            log.error:Something went wrong while invoking OpenAI
+               message:x:@http.post/*/content/*/error/*/message
+               error:x:@lambda2hyper
+            response.status.set:x:@http.post
+            unwrap:x:+/*
+            return
+               error:bool:true
+               result:x:@http.post/*/content/*/error/*/message
+
+      /*
+       * Looping through each vector in model, finding the most relevant snippets.
+       *
+       * Notice, this will calculate the dot product from the question and all training snippets,
+       * and use the training snippets with the highest dot product as "the context from which to answer the question".
+       *
+       * Resulting in that we provide relevant information to OpenAI, allowing them to correctly assemble
+       * a completion, based upon the relevant information (context) and the way the question was phrased.
+       */
+      .snippets
+      .continue:bool:true
+      .offset:int:0
+      while:x:@.continue
+
+         // Selecting 50 snippets from type.
+         data.read
+            table:ml_training_snippets
+            columns
+               id
+               prompt
+               completion
+               embedding
+               uri
+            where
+               and
+                  embedding.neq
+                  type.eq:x:@.arguments/*/type
+            limit:50
+            offset:x:@.offset
+            order:created
+
+         // Looping through all records returned above.
+         for-each:x:@data.read/*
+
+            // Calculating dot product of currently iterated snippet and [.vector].
+            strings.split:x:@.dp/#/*/embedding
+               .:,
+            math.dot
+               get-nodes:x:@strings.split/*
+               get-nodes:x:@http.post/*/content/*/data/0/*/embedding/*
+
+            // Checking if dot product is higher than threshold.
             if
-               mt
-                  openai.tokenize:x:@strings.concat
-                  get-value:x:@.context-max
+               mte:x:@math.dot
+                  convert:x:@.arguments/*/threshold
+                     type:double
                .lambda
 
-                  // We've got enough context
-                  set-value:x:@.continue
-                     .:bool:false
+                  // Adding result to above [.snippets] collection.
+                  unwrap:x:+/*/*/*
+                  add:x:@.snippets
+                     .
+                        .
+                           uri:x:@.dp/#/*/uri
+                           prompt:x:@.dp/#/*/prompt
+                           completion:x:@.dp/#/*/completion
+                           dot:x:@math.dot
 
+         // Sorting [.snippets] such that highest dot product comes first.
+         sort:x:@.snippets/*
+            if
+               mt
+                  get-value:x:@.lhs/#/*/dot
+                  get-value:x:@.rhs/#/*/dot
+               .lambda
+                  set-value:x:@.result
+                     .:int:-1
+            else-if
+               lt
+                  get-value:x:@.lhs/#/*/dot
+                  get-value:x:@.rhs/#/*/dot
+               .lambda
+                  set-value:x:@.result
+                     .:int:1
             else
+               set-value:x:@.result
+                  .:int:0
 
-               // Checking if we should add currently iterated snippet as a reference.
+         // Updating [.snippets] now with the 50 top most relevant snippets.
+         remove-nodes:x:@.snippets/*
+         add:x:@.snippets
+            get-nodes:x:@sort/*/[0,50]
+
+         // Checking if we're done.
+         if
+            lt
+               get-count:x:@data.read/*
+               .:int:50
+            .lambda
+
+               // We're done! We've found the top 50 most relevant snippets from our training material.
+               set-value:x:@.continue
+                  .:bool:false
+
+         // Incrementing offset.
+         math.increment:x:@.offset
+            get-count:x:@data.read/*
+
+      /*
+       * Creating messages such that if the user asked a question that kicked
+       * in on training data, we reset the session, and create a new context.
+       *
+       * If the user asked a follow up question that did not kick in on training
+       * data, we use the existing session messages in a conversational manner.
+       */
+      .references
+      if
+         not-exists:x:@.snippets/*
+         .lambda
+
+            /*
+             * Question did not trigger training data,
+             * invoking OpenAI in "conversational manner".
+             */
+            .new-session
+            add:x:@.new-session
+               get-nodes:x:@.session/0
+               get-nodes:x:@.session/0/-
+            remove-nodes:x:@.session/*
+            add:x:@.session
+               get-nodes:x:@.new-session/*
+
+      else
+
+         /*
+          * Question triggered training data, creating a new session.
+          */
+         remove-nodes:x:@.session/*
+         .context:
+         .continue:bool:true
+         while
+            and
+               get-value:x:@.continue
+               exists:x:@.snippets/0
+            .lambda
+
+               // Checking if we're about to overflow context size.
+               strings.concat
+                  get-value:x:@.context
+                  .:"\r\n\r\n"
+                  get-value:x:@.snippets/0/*/prompt
+                  .:"\r\n\r\n"
+                  get-value:x:@.snippets/0/*/completion
                if
-                  and
-                     exists:x:@.arguments/*/references
-                     get-value:x:@.arguments/*/references
-                     not-exists:x:@.references/*/*/uri/={@.snippets/0/*/uri}
+                  mt
+                     openai.tokenize:x:@strings.concat
+                     get-value:x:@.context-max
                   .lambda
 
-                     // Adding reference.
-                     unwrap:x:+/*/*/*
-                     add:x:@.references
-                        .
+                     // We've got enough context
+                     set-value:x:@.continue
+                        .:bool:false
+
+               else
+
+                  // Checking if we should add currently iterated snippet as a reference.
+                  if
+                     and
+                        exists:x:@.arguments/*/references
+                        get-value:x:@.arguments/*/references
+                        not-exists:x:@.references/*/*/uri/={@.snippets/0/*/uri}
+                     .lambda
+
+                        // Adding reference.
+                        unwrap:x:+/*/*/*
+                        add:x:@.references
                            .
-                              uri:x:@.snippets/0/*/uri
-                              prompt:x:@.snippets/0/*/prompt
+                              .
+                                 uri:x:@.snippets/0/*/uri
+                                 prompt:x:@.snippets/0/*/prompt
 
-               // We've got room for more context.
-               set-value:x:@.context
-                  get-value:x:@strings.concat
-               remove-nodes:x:@.snippets/0
+                  // We've got room for more context.
+                  set-value:x:@.context
+                     get-value:x:@strings.concat
+                  remove-nodes:x:@.snippets/0
 
-      // Creating our new session from above context.
+         // Creating our new session from above context.
+         unwrap:x:+/*/*/*/content
+         add:x:@.session
+            .
+               .
+                  role:user
+                  content:x:@.context
+
+      // Checking if model is prefixed, at which point we prepend prefix to question.
+      if
+         and
+            exists:x:@.argument/*/prefix
+            not-null:x:@.arguments/*/prefix
+            neq:x:@.arguments/*/prefix
+               .:
+         .lambda
+            set-value:x:@.arguments/*/prompt
+               strings.concat
+                  get-value:x:@.arguments/*/prefix
+                  get-value:x:@.arguments/*/prompt
+
+      // Adding user's current prompt to session.
       unwrap:x:+/*/*/*/content
       add:x:@.session
          .
             .
                role:user
-               content:x:@.context
+               content:x:@.arguments/*/prompt
 
-   // Checking if model is prefixed, at which point we prepend prefix to question.
-   if
-      and
-         exists:x:@.model/*/prefix
-         not-null:x:@.model/*/prefix
-         neq:x:@.model/*/prefix
-            .:
-      .lambda
-         set-value:x:@.arguments/*/prompt
-            strings.concat
-               get-value:x:@.model/*/prefix
-               get-value:x:@.arguments/*/prompt
+      // Figuring out max tokens to ask for.
+      lambda2hyper:x:@.session/*
+      .max-tokens
+      set-value:x:@.max-tokens
+         math.subtract
+            get-value:x:@.model-max-tokens
+            openai.tokenize:x:@lambda2hyper
 
-   // Adding user's current prompt to session.
-   unwrap:x:+/*/*/*/content
-   add:x:@.session
-      .
+      // Invoking OpenAI now with messages/session.
+      add:x:./*/http.post/*/payload/*/messages
+         get-nodes:x:@.session/*
+      http.post:"https://api.openai.com/v1/chat/completions"
+         headers
+            Authorization:x:@.token
+            Content-Type:application/json
+         payload
+            model:x:@.arguments/*/model
+            max_tokens:x:@.max-tokens
+            temperature:x:@.arguments/*/temperature
+            messages
+         convert:true
+
+      // Sanity checking above invocation
+      if
+         not
+            and
+               mte:x:@http.post
+                  .:int:200
+               lt:x:@http.post
+                  .:int:300
+         .lambda
+
+            // Oops, error - Logging error and returning status 500 to caller.
+            lambda2hyper:x:@http.post
+            log.error:Something went wrong while invoking OpenAI
+               message:x:@http.post/*/content/*/error/*/message
+               status:x:@http.post
+               error:x:@lambda2hyper
+            response.status.set:x:@http.post
+            unwrap:x:+/*
+            return
+               error:bool:true
+               result:x:@http.post/*/content/*/error/*/message
+      else
+
+         // Success! Logging as such!
+         log.info:Invoking OpenAI was a success
+
+      // Making sure we trim response.
+      .result
+      set-value:x:@.result
+         strings.trim:x:@http.post/*/content/*/choices/0/*/message/*/content
+      get-first-value
+         get-value:x:@http.post/*/content/*/choices/0/*/message/*/finish_reason
+         .:unknown
+
+      // Adding current prompt to session.
+      unwrap:x:+/*/*/*/content
+      add:x:@.session
          .
-            role:user
-            content:x:@.arguments/*/prompt
-
-   // Figuring out max tokens to ask for.
-   lambda2hyper:x:@.session/*
-   .max-tokens
-   set-value:x:@.max-tokens
-      math.subtract
-         get-value:x:@.model-max-tokens
-         openai.tokenize:x:@lambda2hyper
-
-   // Invoking OpenAI now with messages/session.
-   add:x:./*/http.post/*/payload/*/messages
-      get-nodes:x:@.session/*
-   http.post:"https://api.openai.com/v1/chat/completions"
-      headers
-         Authorization:x:@.token
-         Content-Type:application/json
-      payload
-         model:x:@.model/*/model
-         max_tokens:x:@.max-tokens
-         temperature:x:@.model/*/temperature
-         messages
-      convert:true
-
-   // Sanity checking above invocation
-   if
-      not
-         and
-            mte:x:@http.post
-               .:int:200
-            lt:x:@http.post
-               .:int:300
-      .lambda
-
-         // Oops, error - Logging error and returning status 500 to caller.
-         lambda2hyper:x:@http.post
-         log.error:Something went wrong while invoking OpenAI
-            message:x:@http.post/*/content/*/error/*/message
-            status:x:@http.post
-            error:x:@lambda2hyper
-         response.status.set:x:@http.post
-         unwrap:x:+/*
-         return
-            error:bool:true
-            result:x:@http.post/*/content/*/error/*/message
-   else
-
-      // Success! Logging as such!
-      log.info:Invoking OpenAI was a success
-
-   // Making sure we trim response.
-   .result
-   set-value:x:@.result
-      strings.trim:x:@http.post/*/content/*/choices/0/*/message/*/content
-   get-first-value
-      get-value:x:@http.post/*/content/*/choices/0/*/message/*/finish_reason
-      .:unknown
-
-   // Adding current prompt to session.
-   unwrap:x:+/*/*/*/content
-   add:x:@.session
-      .
-         .
-            role:system
-            content:x:@.result
-   lambda2hyper:x:@.session/*
-   cache.set:x:@.arguments/*/session
-      expiration:600
-      value:x:@lambda2hyper
-      
-   // Checking if we've got references.
-   if
-      exists:x:@.references
-      .lambda
-         add:x:@data.connect/*/return
             .
-               references
-         add:x:@data.connect/*/return/*/references
-            get-nodes:x:@.references/*
+               role:system
+               content:x:@.result
+      lambda2hyper:x:@.session/*
+      cache.set:x:@.arguments/*/session
+         expiration:600
+         value:x:@lambda2hyper
 
-   /*
-    * Applying some HTTP caching to avoid invoking OpenAI again with
-    * the same question before some minimum amount of time has passed.
-    */
-   response.headers.set
-      Cache-Control:max-age=30
+      // Checking if we've got references.
+      if
+         exists:x:@.references
+         .lambda
+            add:x:@data.connect/*/return
+               .
+                  references
+            add:x:@data.connect/*/return/*/references
+               get-nodes:x:@.references/*
 
-   // Returning results returned from invocation above to caller.
-   unwrap:x:+/*
-   return
-      result:x:@.result
-      finish_reason:x:@get-first-value
+      /*
+       * Applying some HTTP caching to avoid invoking OpenAI again with
+       * the same question before some minimum amount of time has passed.
+       */
+      response.headers.set
+         Cache-Control:max-age=30
+
+      // Returning results returned from invocation above to caller.
+      unwrap:x:+/*
+      return
+         result:x:@.result
+         finish_reason:x:@get-first-value
+
+// Returning result of worker slot to caller.
+return-nodes:x:@signal/*
