@@ -57,8 +57,6 @@ signal:magic.ai.endpoint-common
          threshold:x:@.arguments/*/threshold
          max_tokens:x:@.context-max
          vector_model:x:@.arguments/*/vector_model
-      lambda2hyper:x:@signal
-      log.info:x:-
 
       // Taken from either training data or previous questions.
       .session
@@ -94,7 +92,7 @@ signal:magic.ai.endpoint-common
       // Checking if model is prefixed, at which point we prepend prefix to question.
       if
          and
-            exists:x:@.argument/*/prefix
+            exists:x:@.arguments/*/prefix
             not-null:x:@.arguments/*/prefix
             neq:x:@.arguments/*/prefix
                .:
@@ -114,13 +112,38 @@ signal:magic.ai.endpoint-common
                role:user
                content:x:@.arguments/*/prompt
 
-      // Figuring out max tokens to ask for, which is max_tokens of model minus size of context.
-      lambda2hyper:x:@.session/*
-      .max-tokens
-      set-value:x:@.max-tokens
-         math.subtract
-            get-value:x:@.model-max-tokens
-            openai.tokenize:x:@lambda2hyper
+      /*
+       * Figuring out max tokens to ask for, which is max_tokens of model minus size of context.
+       *
+       * Notice, if we don't have enough tokens according to model configuration, we remove
+       * parts of our session until we can request the amount of tokens that the model is
+       * configured to request.
+       */
+      .max-tokens:int:0
+      .cont:bool:true
+      while:x:@.cont
+
+         // Calculating how many tokens we can request, which is size of model minus context.
+         lambda2hyper:x:@.session/*
+         set-value:x:@.max-tokens
+            math.subtract
+               get-value:x:@.model-max-tokens
+               openai.tokenize:x:@lambda2hyper
+         if
+            mt:x:@.max-tokens
+               get-value:x:@.arguments/*/max_tokens
+            .lambda
+
+               // Context is small enough to answer according to max_tokens.
+               set-value:x:@.cont
+                  .:bool:false
+         else
+
+            /*
+             * Need to remove parts of the session to be able to have OpenAI return max_tokens.
+             * Notice, we make sure we always keep the first message.
+             */
+            remove-nodes:x:@.session/1
 
       // Retrieving token used to invoke OpenAI.
       .token

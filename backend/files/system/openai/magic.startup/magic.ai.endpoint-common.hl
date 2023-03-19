@@ -134,6 +134,14 @@ slots.create:magic.ai.endpoint-common
                site-key:x:@.key
                secret:x:@.secret
 
+      // Doing some common conversions.
+      set-value:x:@.model/*/threshold
+         convert:x:@.model/*/threshold
+            type:decimal
+      set-value:x:@.model/*/max_tokens
+         convert:x:@.model/*/max_tokens
+            type:int
+
       // Invoking callback provided by caller.
       add:x:./*/invoke
          get-nodes:x:@.arguments/*
