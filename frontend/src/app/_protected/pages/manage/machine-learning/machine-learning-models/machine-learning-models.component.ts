@@ -115,7 +115,7 @@ export class MachineLearningModelsComponent implements OnInit {
     this.dialog
       .open(MachineLearningEditTypeComponent, {
         width: '80vw',
-        maxWidth: '550px',
+        maxWidth: '750px',
       })
       .afterClosed()
       .subscribe((result: any) => {
@@ -265,7 +265,7 @@ export class MachineLearningModelsComponent implements OnInit {
     this.dialog
       .open(MachineLearningEditTypeComponent, {
         width: '80vw',
-        maxWidth: '550px',
+        maxWidth: '750px',
         data: el,
       })
       .afterClosed()
