@@ -1,0 +1,227 @@
+
+/*
+ * Slot that returns training data for the specified [type], given the
+ * specified [threshold], the specified [prompt], the specified [vector_model]
+ * and the specified [max_tokens].
+ */
+slots.create:magic.ai.get-context
+
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/type
+   validators.mandatory:x:@.arguments/*/prompt
+   validators.mandatory:x:@.arguments/*/threshold
+   validators.mandatory:x:@.arguments/*/max_tokens
+   validators.mandatory:x:@.arguments/*/vector_model
+   validators.string:x:@.arguments/*/prompt
+      min:1
+
+   // Retrieving embeddings.
+   .token
+   set-value:x:@.token
+      strings.concat
+         .:"Bearer "
+         config.get:"magic:openai:key"
+
+   // Retrieving embedding for prompt.
+   http.post:"https://api.openai.com/v1/embeddings"
+      headers
+         Authorization:x:@.token
+         Content-Type:application/json
+      payload
+         input:x:@.arguments/*/prompt
+         model:x:@.arguments/*/vector_model
+      convert:true
+
+   // Sanity checking above invocation.
+   if
+      not
+         and
+            mte:x:@http.post
+               .:int:200
+            lt:x:@http.post
+               .:int:300
+      .lambda
+
+         // Oops, error - Logging error and returning OpenAI's HTTP status code to caller.
+         lambda2hyper:x:@http.post
+         log.error:Something went wrong while invoking OpenAI
+            message:x:@http.post/*/content/*/error/*/message
+            error:x:@lambda2hyper
+         throw:x:@http.post/*/content/*/error/*/message
+            public:bool:true
+            status:x:@http.post
+
+   // Used to cache snippets matching prompt's threshold.
+   .snippets
+   .continue:bool:true
+   .offset:int:0
+   while:x:@.continue
+
+      // Selecting 100 snippets from type.
+      data.read
+         table:ml_training_snippets
+         columns
+            id
+            prompt
+            completion
+            embedding
+            uri
+         where
+            and
+               embedding.neq
+               type.eq:x:@.arguments/*/type
+         limit:100
+         offset:x:@.offset
+         order:created
+
+      // Looping through all records returned above.
+      for-each:x:@data.read/*
+
+         // Calculating dot product of currently iterated snippet and [.vector].
+         strings.split:x:@.dp/#/*/embedding
+            .:,
+         math.dot
+            get-nodes:x:@strings.split/*
+            get-nodes:x:@http.post/*/content/*/data/0/*/embedding/*
+
+         // Checking if dot product is higher than threshold.
+         if
+            mte:x:@math.dot
+               convert:x:@.arguments/*/threshold
+                  type:double
+            .lambda
+
+               // Adding result to above [.snippets] collection.
+               unwrap:x:+/*/*/*
+               add:x:@.snippets
+                  .
+                     .
+                        uri:x:@.dp/#/*/uri
+                        prompt:x:@.dp/#/*/prompt
+                        completion:x:@.dp/#/*/completion
+                        dot:x:@math.dot
+
+      // Sorting [.snippets] such that highest dot product comes first.
+      sort:x:@.snippets/*
+         if
+            mt
+               get-value:x:@.lhs/#/*/dot
+               get-value:x:@.rhs/#/*/dot
+            .lambda
+               set-value:x:@.result
+                  .:int:-1
+         else-if
+            lt
+               get-value:x:@.lhs/#/*/dot
+               get-value:x:@.rhs/#/*/dot
+            .lambda
+               set-value:x:@.result
+                  .:int:1
+         else
+            set-value:x:@.result
+               .:int:0
+
+      // Updating [.snippets] now with the 100 top most relevant snippets.
+      remove-nodes:x:@.snippets/*
+      add:x:@.snippets
+         get-nodes:x:@sort/*/[0,100]
+
+      // Checking if we're done.
+      if
+         lt
+            get-count:x:@data.read/*
+            .:int:100
+         .lambda
+
+            // We're done! We've found the top 100 most relevant snippets from our training material.
+            set-value:x:@.continue
+               .:bool:false
+
+      else
+
+         // Incrementing offset.
+         math.increment:x:@.offset
+            get-count:x:@data.read/*
+
+   // Used to hold the result we're returning to caller.
+   .result
+
+   // Temporary variable used to calculate tokens.
+   .tmp:
+
+   // Context value we return to caller.
+   .context:
+
+   // Pruning snippets until we've got less tokens than [max_tokens].
+   .continue:bool:true
+   while:x:@.continue
+
+      // Making sure we've got something at all.
+      if
+         not-exists:x:@.snippets/0
+         .lambda
+
+            // No snippets kicked in on question.
+            set-value:x:@.continue
+               .:bool:false
+
+      else
+
+         // Concatenating top snippet to [.tmp] buffer such that we can calculate total number of tokens.
+         set-value:x:@.tmp
+            strings.concat
+               get-value:x:@.tmp
+               .:"\r\n"
+               get-value:x:@.snippets/0/*/prompt
+               .:"\r\n"
+               .:"\r\n"
+               get-value:x:@.snippets/0/*/completion
+               .:"\r\n"
+
+         // Checking if we've got more context to work with.
+         if
+            lt
+               openai.tokenize:x:@.tmp
+               get-value:x:@.arguments/*/max_tokens
+            .lambda
+
+               // We've got room for more context.
+               set-value:x:@.context
+                  get-value:x:@.tmp
+               if
+                  not-exists:x:@.result/*/*/uri/={@.snippets/0/*/uri}
+                  .lambda
+
+                     // Adding current reference to [.result]
+                     unwrap:x:+/*/*/*
+                     add:x:@.result
+                        .
+                           .
+                              prompt:x:@.snippets/0/*/prompt
+                              uri:x:@.snippets/0/*/uri
+                              dot:x:@.snippets/0/*/dot
+               remove-nodes:x:@.snippets/0
+
+         else
+
+            // We're done, no more room for context.
+            set-value:x:@.continue
+               .:bool:false
+
+   // Making sure we found something at all.
+   if
+      exists:x:@.result/0
+      .lambda
+
+         // Trimming [.context] before we return it to caller.
+         set-value:x:@.context
+            strings.trim:x:@.context
+               .:"\r\n"
+
+         // Returning context and relevant snippets to caller.
+         add:x:./*/return/*/snippets
+            get-nodes:x:@.result/*
+         unwrap:x:./*/return/*/context
+         return
+            context:x:@.context
+            snippets

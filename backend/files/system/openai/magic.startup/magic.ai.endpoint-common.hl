@@ -136,9 +136,9 @@ slots.create:magic.ai.endpoint-common
 
       // Invoking callback provided by caller.
       add:x:./*/invoke
-         get-nodes:x:@.model/*
          get-nodes:x:@.arguments/*
-      remove-nodes:x:./*/invoke/*/.arguments/*/.callback
+         get-nodes:x:@.model/*
+      remove-nodes:x:./*/invoke/*/.callback
       invoke:x:@.arguments/*/.callback
 
       // Returning result of invocation to caller.
