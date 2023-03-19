@@ -4,6 +4,8 @@
    type:string
    model:string
    max_tokens:long
+   max_context_tokens:long
+   max_request_tokens:long
    temperature:double
    recaptcha:decimal
    auth:string

@@ -16,46 +16,13 @@ insert-before:x:../*/signal/*/.callback
 signal:magic.ai.endpoint-common
    .callback
 
-      // Figuring out max tokens for model.
-      .model-max-tokens
-      .context-max
-      switch:x:@.arguments/*/model
-
-         case:gpt-3.5-turbo
-         case:gpt-3.5-turbo-0301
-            set-value:x:@.model-max-tokens
-               .:int:4096
-            set-value:x:@.context-max
-               .:int:1000
-
-         case:gpt-4
-         case:gpt-4-0314
-            set-value:x:@.model-max-tokens
-               .:int:8192
-            set-value:x:@.context-max
-               .:int:2000
-
-         case:gpt-4-32k
-         case:gpt-4-32k-0314
-            set-value:x:@.model-max-tokens
-               .:int:32768
-            set-value:x:@.context-max
-               .:int:4000
-
-         default
-
-            log.error:Invoked chat endpoint with wrong model
-            throw:The chat endpoint only supports GPT type of models
-               public:bool:true
-               status:int:400
-
       // Retrieving relevant snippets.
       unwrap:x:+/*
       signal:magic.ai.get-context
          type:x:@.arguments/*/type
          prompt:x:@.arguments/*/prompt
          threshold:x:@.arguments/*/threshold
-         max_tokens:x:@.context-max
+         max_tokens:x:@.arguments/*/max_context_tokens
          vector_model:x:@.arguments/*/vector_model
 
       // Taken from either training data or previous questions.
@@ -113,25 +80,27 @@ signal:magic.ai.endpoint-common
                content:x:@.arguments/*/prompt
 
       /*
-       * Figuring out max tokens to ask for, which is max_tokens of model minus size of context.
+       * Pruning previous messages until size of context + max_tokens is less than whatever
+       * amount of tokens the model can handle.
        *
-       * Notice, if we don't have enough tokens according to model configuration, we remove
-       * parts of our session until we can request the amount of tokens that the model is
-       * configured to request.
+       * Notice, we never submit more than 4 previous messages to OpenAI as context.
+       * We also make sure we always submit the FIRST message if existing, since this
+       * is the context fetched from our training data.
        */
-      .max-tokens:int:0
       .cont:bool:true
       while:x:@.cont
 
-         // Calculating how many tokens we can request, which is size of model minus context.
          lambda2hyper:x:@.session/*
-         set-value:x:@.max-tokens
-            math.subtract
-               get-value:x:@.model-max-tokens
-               openai.tokenize:x:@lambda2hyper
          if
-            mt:x:@.max-tokens
-               get-value:x:@.arguments/*/max_tokens
+            and
+               lt
+                  get-count:x:@.session/*
+                  .:int:5
+               lt
+                  math.add
+                     get-value:x:@.arguments/*/max_tokens
+                     openai.tokenize:x:@lambda2hyper
+                  get-value:x:@.arguments/*/model_size
             .lambda
 
                // Context is small enough to answer according to max_tokens.
@@ -140,12 +109,15 @@ signal:magic.ai.endpoint-common
          else
 
             /*
-             * Need to remove parts of the session to be able to have OpenAI return max_tokens.
-             * Notice, we make sure we always keep the first message.
+             * Need to remove one of our previous messages to be able to have OpenAI return max_tokens.
+             * Notice, we make sure we always keep the first message, since it's the most important
+             * part that was created when we initially found our context.
              */
             remove-nodes:x:@.session/1
 
       // Retrieving token used to invoke OpenAI.
+      lambda2hyper:x:@.session
+      log.info:x:-
       .token
       set-value:x:@.token
          strings.concat
@@ -155,14 +127,13 @@ signal:magic.ai.endpoint-common
       // Invoking OpenAI now with context being either training data or previous messages.
       add:x:./*/http.post/*/payload/*/messages
          get-nodes:x:@.session/*
-      unwrap:x:./*/http.post/**
       http.post:"https://api.openai.com/v1/chat/completions"
          headers
             Authorization:x:@.token
             Content-Type:application/json
          payload
             model:x:@.arguments/*/model
-            max_tokens:x:@.max-tokens
+            max_tokens:x:@.arguments/*/max_tokens
             temperature:x:@.arguments/*/temperature
             messages
          convert:true

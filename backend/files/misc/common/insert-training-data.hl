@@ -5,101 +5,19 @@ try
    // Connecting to Magic database.
    data.connect:[generic|magic]
 
-      // Creating default Hyperlambda model.
-      data.create
-         table:ml_types
-         values
-            type:hl
-            model:curie
-            max_tokens:int:4000
-            temperature:decimal:0.1
-            supervised:int:1
-            cached:int:1
-            auth:root
-
       // Creating default generic model.
       data.create
          table:ml_types
          values
             type:default
             model:gpt-3.5-turbo
-            max_tokens:int:4000
+            max_tokens:int:2000
+            max_context_tokens:int:1000
+            max_response_tokens:int:1000
             temperature:decimal:0.1
             supervised:int:1
             cached:int:1
             auth:root
-
-      /*
-       * No training snippets found, hence inserting into database.
-       *
-       * Listing all files from /misc/training-snippets/ folder recursively first.
-       */
-      io.file.list-recursively:/misc/training-snippets/
-
-      // Looping through each file returned from above invocation, loading it, and inserting into database.
-      for-each:x:@io.file.list-recursively/*
-
-         // Verifying this is a Hyperlambda file.
-         if
-            strings.ends-with:x:@.dp/#
-               .:.hl
-            .lambda
-
-               // Checking that we haven't already inserted this training snippet previously.
-               data.read
-                  table:ml_training_snippets
-                  columns
-                     id
-                  where
-                     and
-                        uri.eq:x:@.dp/#
-               if
-                  not-exists:x:@data.read/*/*
-                  .lambda
-
-                     // Loading currrently iterated file.
-                     io.file.load:x:@.dp/#
-
-                     // Converting to lambda such that we can extract initial comment and use as prompt.
-                     hyper2lambda:x:@io.file.load
-                        comments:true
-
-                     // Splitting file comment into its individual prompt value.
-                     strings.split:x:@hyper2lambda/0
-                        .:|
-
-                     // Removing prompt parts of lambda object.
-                     remove-nodes:x:@hyper2lambda/0
-
-                     // Converting the rest of the file back to Hyperlambda again.
-                     lambda2hyper:x:@hyper2lambda/*
-                        comments:true
-
-                     // Used as buffer for completion.
-                     .completion
-                     set-value:x:@.completion
-                        get-value:x:@lambda2hyper
-
-                     // Looping through each individual prompt value.
-                     for-each:x:@strings.split/*
-
-                        // Used as buffers for prompt.
-                        .prompt
-                        set-value:x:@.prompt
-                           strings.trim:x:@.dp/#
-
-                        // Inserting record into database.
-                        data.create
-                           table:ml_training_snippets
-                           values
-                              completion:x:@.completion
-                              prompt:x:@.prompt
-                              uri:x:@.dp/@.dp/#
-
-      // Creating a log entry.
-      get-count:x:@io.file.list-recursively/*
-      log.info:OpenAI Hyperlambda snippets successfully inserted into Magic database
-         count:x:@get-count
 
 .catch
 

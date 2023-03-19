@@ -6,6 +6,8 @@
    ml_types.model.like:string
    ml_types.model.eq:string
    ml_types.max_tokens.eq:long
+   ml_types.max_context_tokens.eq:long
+   ml_types.max_request_tokens.eq:long
    ml_types.temperature.eq:double
 .description:Endpoint counting items in your ml_types table in your magic database
 .type:crud-count
