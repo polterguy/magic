@@ -82,7 +82,7 @@
           </mat-select>
         </mat-form-field>
 
-        <mat-form-field class="w-100 standalone-field me-2">
+        <mat-form-field class="w-100 standalone-field">
           <span
             matPrefix
             matTooltip="Vector model"
@@ -112,7 +112,15 @@
           </mat-select>
         </mat-form-field>
 
-        <mat-form-field class="w-100 standalone-field">
+      </div>
+
+    </div>
+
+    <div class="row" [class.d-none]="!advanced">
+
+      <div class="col-12 d-flex justify-content-md-between align-items-md-center align-items-end flex-md-row">
+
+        <mat-form-field class="w-100 standalone-field me-2">
           <span
             matPrefix
             matTooltip="Flavor"
@@ -134,15 +142,7 @@
           </mat-select>
         </mat-form-field>
 
-      </div>
-
-    </div>
-
-    <div class="row" [class.d-none]="!advanced">
-
-      <div class="col-12 d-flex justify-content-md-between align-items-md-center align-items-end flex-md-row">
-
-        <mat-form-field class="w-100 standalone-field me-2">
+        <mat-form-field class="w-100 standalone-field">
           <span
             matPrefix
             matTooltip="Temperature"
@@ -163,25 +163,13 @@
             autocomplete="off">
         </mat-form-field>
 
-        <mat-form-field class="w-100 standalone-field me-2">
-          <span
-            matPrefix
-            matTooltip="Max tokens"
-            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-            <mat-icon>timeline</mat-icon>
-            <span class="text-muted">|</span>
-          </span>
-          <input
-            matInput
-            placeholder="Max tokens"
-            [disabled]="isLoading"
-            type="number"
-            min="1"
-            max="8000"
-            [(ngModel)]="max_tokens"
-            name="max_tokens"
-            autocomplete="off">
-        </mat-form-field>
+      </div>
+
+    </div>
+
+    <div class="row" [class.d-none]="!advanced">
+
+      <div class="col-12 d-flex justify-content-md-between align-items-md-center align-items-end flex-md-row">
 
         <mat-form-field class="w-100 standalone-field me-2">
           <span
@@ -202,6 +190,98 @@
             [(ngModel)]="threshold"
             name="threshold"
             autocomplete="off">
+        </mat-form-field>
+
+        <mat-form-field class="w-100 standalone-field me-2">
+          <span
+            matPrefix
+            matTooltip="Max context tokens"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>timeline</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            placeholder="Max context tokens"
+            [disabled]="isLoading"
+            type="number"
+            min="1"
+            max="8000"
+            [(ngModel)]="max_context_tokens"
+            name="max_context_tokens"
+            autocomplete="off">
+        </mat-form-field>
+
+        <mat-form-field class="w-100 standalone-field me-2">
+          <span
+            matPrefix
+            matTooltip="Max request tokens"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>timeline</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            placeholder="Max request tokens"
+            [disabled]="isLoading"
+            type="number"
+            min="1"
+            max="8000"
+            [(ngModel)]="max_request_tokens"
+            name="max_request_tokens"
+            autocomplete="off">
+        </mat-form-field>
+
+        <mat-form-field class="w-100 standalone-field">
+          <span
+            matPrefix
+            matTooltip="Max response tokens"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>timeline</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            placeholder="Max response tokens"
+            [disabled]="isLoading"
+            type="number"
+            min="1"
+            max="8000"
+            [(ngModel)]="max_response_tokens"
+            name="max_response_tokens"
+            autocomplete="off">
+        </mat-form-field>
+
+      </div>
+
+    </div>
+
+    <div class="row" [class.d-none]="!advanced">
+
+      <div class="col-12 d-flex justify-content-md-between align-items-md-center align-items-end flex-md-row">
+
+        <mat-form-field class="w-100 standalone-field me-2" [class.d-none]="!advanced">
+          <span
+            matPrefix
+            matTooltip="Authorisation requirements"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>shield</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <mat-select
+            placeholder="Add roles"
+            multiple
+            name="auth"
+            [disabled]="isLoading"
+            [(ngModel)]="auth"
+            disableOptionCentering
+            panelClass="custom-select-option">
+            <mat-option
+              *ngFor="let item of roles"
+              [value]="item.name">
+              {{item.name}}
+            </mat-option>
+          </mat-select>
         </mat-form-field>
 
         <mat-form-field class="w-100 standalone-field">
@@ -228,30 +308,6 @@
       </div>
 
     </div>
-
-    <mat-form-field class="w-100 standalone-field" [class.d-none]="!advanced">
-      <span
-        matPrefix
-        matTooltip="Authorisation requirements"
-        class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-        <mat-icon>shield</mat-icon>
-        <span class="text-muted">|</span>
-      </span>
-      <mat-select
-        placeholder="Add roles"
-        multiple
-        name="auth"
-        [disabled]="isLoading"
-        [(ngModel)]="auth"
-        disableOptionCentering
-        panelClass="custom-select-option">
-        <mat-option
-          *ngFor="let item of roles"
-          [value]="item.name">
-          {{item.name}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
 
     <div class="row mt-2 mb-2" [class.d-none]="!advanced">
 
