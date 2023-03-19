@@ -25,9 +25,9 @@ export class MachineLearningEditTypeComponent implements OnInit {
   advanced: boolean = false;
   type: string = null;
   temperature: string = null;
-  max_context_tokens: string = null;
-  max_request_tokens: string = null;
-  max_tokens: string = null;
+  max_context_tokens: number = null;
+  max_request_tokens: number = null;
+  max_tokens: number = null;
   threshold: number = null;
   recaptcha: 0;
   auth: string[] = [];
@@ -79,9 +79,9 @@ export class MachineLearningEditTypeComponent implements OnInit {
     this.isLoading = true;
     this.type = this.data?.type;
     this.max_context_tokens = this.data?.max_context_tokens ?? 1000;
-    this.max_request_tokens = this.data?.max_request_tokens ?? 1000;
-    this.max_tokens = this.data?.max_tokens ?? 2000;
-    this.temperature = this.data?.temperature ?? 0.1;
+    this.max_request_tokens = this.data?.max_request_tokens ?? 100;
+    this.max_tokens = this.data?.max_tokens ?? 500;
+    this.temperature = this.data?.temperature ?? 0.3;
     this.threshold = this.data?.threshold ?? 0.8;
     this.recaptcha = this.data?.recaptcha ?? 0.3;
     if (this.data) {
@@ -166,10 +166,48 @@ export class MachineLearningEditTypeComponent implements OnInit {
     }
   }
 
+  getMessageTokens() {
+
+    let model_size = 0;
+    switch (this.model?.id ?? '') {
+
+      case 'text-davinci-003':
+      case 'gpt-3.5-turbo':
+      case 'gpt-3.5-turbo-0301':
+      case 'text-davinci-002':
+        model_size = 4096;
+        break
+
+      case 'code-davinci-002':
+        model_size = 8000;
+        break;
+
+      case 'gpt-4':
+      case 'gpt-4-0314':
+        model_size = 8192;
+        break;
+
+      case 'gpt-4-32k':
+      case 'gpt-4-32k-0314':
+        model_size = 32768;
+        break;
+
+      default:
+        model_size = 2049;
+        break;
+    }
+    return model_size - ((this.max_tokens ?? 0) + (this.max_request_tokens ?? 0) + (this.max_context_tokens ?? 0));
+  }
+
   save() {
 
     if (!this.type || this.type.length < 2) {
       this.generalService.showFeedback('You need to provide a type name', 'errorMessage');
+      return;
+    }
+
+    if (this.model?.id?.startsWith('gpt') && this.getMessageTokens() < 200) {
+      this.generalService.showFeedback('You must reserve at last 200 tokens for messages to effectively utilise GPT models', 'errorMessage');
       return;
     }
 
