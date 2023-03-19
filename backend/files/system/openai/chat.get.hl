@@ -116,8 +116,6 @@ signal:magic.ai.endpoint-common
             remove-nodes:x:@.session/1
 
       // Retrieving token used to invoke OpenAI.
-      lambda2hyper:x:@.session
-      log.info:x:-
       .token
       set-value:x:@.token
          strings.concat

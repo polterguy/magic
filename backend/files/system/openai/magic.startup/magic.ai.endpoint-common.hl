@@ -257,6 +257,14 @@ slots.create:magic.ai.endpoint-common
                   set-value:x:@.model/*/max_request_tokens
                      get-value:x:@math.divide
 
+      // Doing some common conversions.
+      set-value:x:@.model/*/max_context_tokens
+         convert:x:@.model/*/max_context_tokens
+            type:int
+      set-value:x:@.model/*/max_request_tokens
+         convert:x:@.model/*/max_request_tokens
+            type:int
+
       // Making sure prompt is not larger than [max_request_tokens].
       if
          mt
@@ -268,14 +276,6 @@ slots.create:magic.ai.endpoint-common
             throw:Your request is longer than what this type is configured to allow for
                public:bool:true
                status:int:400
-
-      // Doing some common conversions.
-      set-value:x:@.model/*/max_context_tokens
-         convert:x:@.model/*/max_context_tokens
-            type:int
-      set-value:x:@.model/*/max_request_tokens
-         convert:x:@.model/*/max_request_tokens
-            type:int
 
       // Invoking callback provided by caller.
       add:x:./*/invoke
