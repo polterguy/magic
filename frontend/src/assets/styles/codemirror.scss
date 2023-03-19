@@ -2,7 +2,7 @@
  * Aista CodeMirror theme.
  */
 .cm-s-aista.CodeMirror {
-  background: $aista_default_grey5;
+  background: #fefefe;
   color: #41323f;
 }
 
@@ -23,7 +23,7 @@
 }
 
 .cm-s-aista .CodeMirror-gutters {
-  background: $aista_default_grey5;
+  background: #fefefe;
   border-right: 0px;
   border-top-left-radius: $aista_radius;
   border-bottom-left-radius: $aista_radius;
