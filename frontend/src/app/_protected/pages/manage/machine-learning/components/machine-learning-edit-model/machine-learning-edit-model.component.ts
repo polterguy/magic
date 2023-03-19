@@ -27,7 +27,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
   temperature: string = null;
   max_context_tokens: string = null;
   max_request_tokens: string = null;
-  max_response_tokens: string = null;
+  max_tokens: string = null;
   threshold: number = null;
   recaptcha: 0;
   auth: string[] = [];
@@ -78,9 +78,9 @@ export class MachineLearningEditTypeComponent implements OnInit {
 
     this.isLoading = true;
     this.type = this.data?.type;
-    this.max_context_tokens = this.data?.max_tokens ?? 1000;
-    this.max_request_tokens = this.data?.max_tokens ?? 1000;
-    this.max_response_tokens = this.data?.max_tokens ?? 2000;
+    this.max_context_tokens = this.data?.max_context_tokens ?? 1000;
+    this.max_request_tokens = this.data?.max_request_tokens ?? 1000;
+    this.max_tokens = this.data?.max_tokens ?? 2000;
     this.temperature = this.data?.temperature ?? 0.1;
     this.threshold = this.data?.threshold ?? 0.8;
     this.recaptcha = this.data?.recaptcha ?? 0.3;
@@ -177,7 +177,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
       type: this.type,
       max_context_tokens: this.max_context_tokens,
       max_request_tokens: this.max_request_tokens,
-      max_response_tokens: this.max_response_tokens,
+      max_tokens: this.max_tokens,
       temperature: this.temperature,
       model: this.model.id,
       supervised: this.supervised ? 1 : 0,
