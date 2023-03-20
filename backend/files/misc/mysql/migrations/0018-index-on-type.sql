@@ -1,0 +1,1 @@
+alter table ml_types add index idx_ml_types_type (type);
