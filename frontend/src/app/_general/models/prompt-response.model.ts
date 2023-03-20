@@ -24,6 +24,11 @@ export class PromptResponse {
    * What source was used to generate the response.
    */
   references?: PromptReference[];
+
+  /**
+   * How much time was spent fetching embeddings from database.
+   */
+  db_time?: string;
 }
 
 export class PromptReference {

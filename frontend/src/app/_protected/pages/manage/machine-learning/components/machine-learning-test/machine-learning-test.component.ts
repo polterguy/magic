@@ -98,6 +98,9 @@ export class MachineLearningTestComponent implements OnInit {
               result.result += `\r\n* ${idx.uri}`;
             }
           }
+          if (result.db_time) {
+            result.result += '\r\n\r\n ==> ' + result.db_time + ' seconds fetching embeddings';
+          }
           this.completion = result.result;
         }
         this.isLoading = false;

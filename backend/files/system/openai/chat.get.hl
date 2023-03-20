@@ -207,6 +207,7 @@ signal:magic.ai.endpoint-common
       return
          result:x:@.result
          finish_reason:x:@get-first-value
+         db_time:x:@signal/*/db_time
 
 // Returning result of worker slot to caller.
 return-nodes:x:@signal/*
