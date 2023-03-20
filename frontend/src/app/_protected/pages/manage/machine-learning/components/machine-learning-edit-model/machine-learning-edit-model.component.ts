@@ -42,8 +42,6 @@ export class MachineLearningEditTypeComponent implements OnInit {
   flavors: any[] = [
     {name: 'Sales Executive', prefix: 'Answer the following as if you are a Sales Executive in the subject: '},
     {name: 'The CEO', prefix: 'Answer the following as if you are the CEO of the company: '},
-    {name: 'The Lover', prefix: 'Answer the following as if you really care about the person: '},
-    {name: 'The Joker', prefix: 'Answer the following and finish with a relevant joke about the subject: '},
     {name: 'The Expert', prefix: 'Answer the following as if you are an expert in the subject: '},
     {name: 'Explain as if I am 5', prefix: 'Answer the following andexplain it as if I am 5 years old: '},
     {name: 'One liner', prefix: 'Answer the following with one sentence: '},
