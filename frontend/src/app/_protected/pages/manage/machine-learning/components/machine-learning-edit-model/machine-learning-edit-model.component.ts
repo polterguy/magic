@@ -150,8 +150,10 @@ export class MachineLearningEditTypeComponent implements OnInit {
 
     if (this.model?.id?.startsWith('gpt-')) {
       this.prefix = '';
+    } else if (this.model?.id?.indexOf(':') !== -1) {
+      this.prefix = '';
     } else {
-      this.prefix = 'Answer the following QUESTION with one or two sentences while using the information in the following CONTEXT and preserve Markdown. If you cannot answer the question using the specified CONTEXT or previous messages then answer "I don\'t know the answer, try to be more specific and stay on subject".\r\n\r\nQUESTION: [QUESTION]\r\n\r\nCONTEXT: [CONTEXT]\r\n\r\nANSWER:';
+      this.prefix = 'Answer the following QUESTION while using the information in the following CONTEXT. If you cannot answer the question using the specified CONTEXT then answer "I don\'t know the answer, try to be more specific.".\r\n\r\nQUESTION: [QUESTION]\r\n\r\nCONTEXT: [CONTEXT]\r\n\r\nANSWER:';
     }
   }
 
@@ -192,7 +194,8 @@ export class MachineLearningEditTypeComponent implements OnInit {
         model_size = 2049;
         break;
     }
-    return model_size - ((this.max_tokens ?? 0) + (this.max_request_tokens ?? 0) + (this.max_context_tokens ?? 0));
+    const context_size = this.use_embeddings ? (this.max_context_tokens ?? 0) : 0;
+    return model_size - ((this.max_tokens ?? 0) + (this.max_request_tokens ?? 0) + context_size);
   }
 
   save() {

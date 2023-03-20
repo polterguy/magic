@@ -65,7 +65,8 @@ slots.create:magic.ai.vectorise
                set-value:x:@.embedding
                   strings.concat
                      get-value:x:@.dp/#/*/prompt
-                     .:"\r\n\r\n"
+                     .:"\r\n"
+                     .:"\r\n"
                      get-value:x:@.dp/#/*/completion
 
                // Making sure we don't try to create embedding if it would exhaust the number of tokens for model.
@@ -134,19 +135,21 @@ slots.create:magic.ai.vectorise
                                     type:error
                               throw:Could not create embeddings for model
 
-                     // Inserting embeddings for training snippet.
-                     strings.join:x:@http.post/*/content/*/data/0/*/embedding/*
-                        .:,
-                     data.update
-                        table:ml_training_snippets
-                        values
-                           embedding:x:@strings.join
-                        where
-                           and
-                              id.eq:x:@.dp/#/*/id
+                     else
 
-                     // Incrementing count.
-                     math.increment:x:@.count
+                        // Success creating embeddings, updating training snippet now.
+                        strings.join:x:@http.post/*/content/*/data/0/*/embedding/*
+                           .:,
+                        data.update
+                           table:ml_training_snippets
+                           values
+                              embedding:x:@strings.join
+                           where
+                              and
+                                 id.eq:x:@.dp/#/*/id
+
+                        // Incrementing count.
+                        math.increment:x:@.count
 
                else
 

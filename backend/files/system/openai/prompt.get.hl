@@ -16,37 +16,47 @@ add:x:./*/signal
 signal:magic.ai.endpoint-common
    .callback
 
-      // Checking if request has been previously cached.
-      data.read
-         table:ml_requests
-         columns
-            completion
-            cached
-         where
-            and
-               prompt.eq:x:@.arguments/*/prompt
-               type.eq:x:@.arguments/*/type
-         limit:1
-         order:created
-         direction:desc
-
-      // Checking if we could find a matching request in cache.
+      /*
+       * Checking if model is configured to return cached requests.
+       *
+       * Notice, the type needs to have turned on cache, and we need to have a
+       * historical request that's cached matching the prompt and the type,
+       * and caller must not have asked for references for the cache to kick in.
+       */
       if
          and
-            exists:x:@data.read/*/*
+            exists:x:@.arguments/*/cached
+            not-null:x:@.arguments/*/cached
             eq
-               convert:x:@data.read/*/*/cached
+               convert:x:@.arguments/*/cached
                   type:int
                .:int:1
+            or
+               not-exists:x:@.arguments/*/references
+               not
+                  get-value:x:@.arguments/*/references
          .lambda
 
-            // Checking if type is cached.
+            // Checking if we can find a cached request matching prompt and type.
+            data.read
+               table:ml_requests
+               columns
+                  completion
+                  cached
+               where
+                  and
+                     prompt.eq:x:@.arguments/*/prompt
+                     type.eq:x:@.arguments/*/type
+               limit:1
+               order:created
+               direction:desc
+
+            // Checking if we could find a matching request in cache.
             if
                and
-                  exists:x:@.arguments/*/cached
-                  not-null:x:@.arguments/*/cached
+                  exists:x:@data.read/*/*
                   eq
-                     convert:x:@.arguments/*/cached
+                     convert:x:@data.read/*/*/cached
                         type:int
                      .:int:1
                .lambda
@@ -60,8 +70,17 @@ signal:magic.ai.endpoint-common
       // Result we're returning to caller.
       .result
 
-      // Creating our decorated prompt.
+      // Buffer containing our result.
       .prompt
+
+      /*
+       * Checking if model is configured to use embeddings.
+       *
+       * If model is configured to using embeddings, we find relevant training snippets from
+       * training data and use as "CONTEXT". If not, it might be either a fine-tuned model,
+       * or a "mint" model, where mint implies no context or customisation having been done,
+       * which is true if user just wants the default AI model without any customisations.
+       */
       if
          eq
             convert:x:@.arguments/*/use_embeddings
@@ -126,14 +145,31 @@ signal:magic.ai.endpoint-common
 
       else
 
-         // Not using embeddings, either a mint model or a fine-tuned model.
-         set-value:x:@.prompt
-            strings.concat
+         /*
+          * Not using embeddings, either a mint model or a fine-tuned model.
+          *
+          * Checking if model is fine-tuned, which is true if model name contains
+          * a colon (:).
+          */
+         if
+            strings.contains:x:@.arguments/*/model
+               .:":"
+            .lambda
+
+               // Fine-tuned model, making sure we apply STOP characters to prompt and invocation.
+               set-value:x:@.prompt
+                  strings.concat
+                     get-value:x:@.arguments/*/prompt
+                     .:" ->"
+               add:x:@.callback/*/http.post/*/payload
+                  .
+                     stop:" END"
+
+         else
+         
+            // "Mint" model - Implying default model without any customisations.
+            set-value:x:@.prompt
                get-value:x:@.arguments/*/prompt
-               .:" ->"
-         add:x:@.callback/*/http.post/*/payload
-            .
-               stop:" END"
 
       // Retrieving token.
       .token
