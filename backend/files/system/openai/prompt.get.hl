@@ -57,51 +57,11 @@ signal:magic.ai.endpoint-common
                      result:x:@data.read/*/*/completion
                      finish_reason:cached
 
-      /*
-       * Making sure we always have room for context in case model has been configured
-       * to spend all tokens on its reply by making sure max_tokens never exceed 50%
-       * of the model's capacity.
-       */
-      switch:x:@.arguments/*/model
-
-         case:gpt-3.5-turbo
-         case:gpt-3.5-turbo-0301
-
-            if
-               mt
-                  convert:x:@.arguments/*/max_tokens
-                     type:int
-                  .:int:1000
-               .lambda
-                  set-value:x:@.arguments/*/max_tokens
-                     .:int:1000
-
-         case:text-davinci-003
-         case:text-davinci-002
-         case:code-davinci-002
-
-            if
-               mt
-                  convert:x:@.arguments/*/max_tokens
-                     type:int
-                  .:int:2000
-               .lambda
-                  set-value:x:@.arguments/*/max_tokens
-                     .:int:2000
-
-         default
-
-            if
-               mt
-                  convert:x:@.arguments/*/max_tokens
-                     type:int
-                  .:int:1000
-               .lambda
-                  set-value:x:@.arguments/*/max_tokens
-                     .:int:1000
-
-      // Invoking Hyperlambda file doing the heavy lifting.
+      // Result we're returning to caller.
       .result
+
+      // Creating our decorated prompt.
+      .prompt
       if
          eq
             convert:x:@.arguments/*/use_embeddings
@@ -109,41 +69,132 @@ signal:magic.ai.endpoint-common
             .:int:1
          .lambda
 
-            // Using embeddings API.
-            add:x:./*/io.file.execute
-               get-nodes:x:@.arguments/*/type
-               get-nodes:x:@.arguments/*/chat
-               get-nodes:x:@.arguments/*/prompt
-               get-nodes:x:@.arguments/*/session
-               get-nodes:x:@.arguments/*/references
-               get-nodes:x:@.arguments/*/prefix
-               get-nodes:x:@.arguments/*/model
-               get-nodes:x:@.arguments/*/max_tokens
-               get-nodes:x:@.arguments/*/temperature
-               get-nodes:x:@.arguments/*/threshold
-               get-nodes:x:@.arguments/*/vector_model
-               .
-                  fine_tuned:bool:false
-            io.file.execute:/system/openai/prompt.implementation/embeddings-prompt.hl
-            add:x:@.result
-               get-nodes:x:@io.file.execute/*
+            // Retrieving relevant snippets.
+            unwrap:x:+/*
+            signal:magic.ai.get-context
+               type:x:@.arguments/*/type
+               prompt:x:@.arguments/*/prompt
+               threshold:x:@.arguments/*/threshold
+               max_tokens:x:@.arguments/*/max_context_tokens
+               vector_model:x:@.arguments/*/vector_model
+
+            // Correctly applying prefix.
+            if
+               and
+                  strings.contains:x:@.arguments/*/prefix
+                     .:[CONTEXT]
+                  strings.contains:x:@.arguments/*/prefix
+                     .:[QUESTION]
+                  strings.contains:x:@.arguments/*/prefix
+                     .:"ANSWER:"
+               .lambda
+
+                  // Structured prefix.
+                  set-value:x:@.prompt
+                     strings.replace:x:@.arguments/*/prefix
+                        .:[QUESTION]
+                        get-value:x:@.arguments/*/prompt
+                  set-value:x:@.prompt
+                     strings.replace:x:@.prompt
+                        .:[CONTEXT]
+                        get-value:x:@signal/*/context
+
+            else
+
+               // Old style prefix.
+               set-value:x:@.prompt
+                  strings.concat
+                     get-value:x:@.arguments/*/prefix
+                     .:"\r\nQUESTION: "
+                     get-value:x:@.arguments/*/prompt
+                     .:"\r\nCONTEXT: \r\n"
+                     get-value:x:@signal/*/context
+                     .:"\r\nANSWER: "
+
+            // Checking if caller wants references.
+            if
+               and
+                  exists:x:@.arguments/*/references
+                  not-null:x:@.arguments/*/references
+                  get-value:x:@.arguments/*/references
+               .lambda
+                  add:x:@.result
+                     .
+                        references
+                  add:x:@.result/*/references
+                     get-nodes:x:@signal/*/snippets/*
 
       else
 
-         // Not using embeddings.
-         add:x:./*/io.file.execute
-            get-nodes:x:@.arguments/*/type
-            get-nodes:x:@.arguments/*/prompt
-            get-nodes:x:@.arguments/*/session
-            get-nodes:x:@.arguments/*/prefix
-            get-nodes:x:@.arguments/*/model
-            get-nodes:x:@.arguments/*/max_tokens
-            get-nodes:x:@.arguments/*/temperature
+         // Not using embeddings, either a mint model or a fine-tuned model.
+         set-value:x:@.prompt
+            strings.concat
+               get-value:x:@.arguments/*/prompt
+               .:" ->"
+         add:x:@.callback/*/http.post/*/payload
             .
-               fine_tuned:bool:true
-         io.file.execute:/system/openai/prompt.implementation/completion-prompt.hl
-         add:x:@.result
-            get-nodes:x:@io.file.execute/*
+               stop:" END"
+
+      // Retrieving token.
+      .token
+      set-value:x:@.token
+         strings.concat
+            .:"Bearer "
+            config.get:"magic:openai:key"
+
+      // Invoking OpenAI, now with a decorated prompt.
+      http.post:"https://api.openai.com/v1/completions"
+         headers
+            Authorization:x:@.token
+            Content-Type:application/json
+         payload
+            prompt:x:@.prompt
+            model:x:@.arguments/*/model
+            max_tokens:x:@.arguments/*/max_tokens
+            temperature:x:@.arguments/*/temperature
+         convert:true
+
+      // Sanity checking above invocation
+      if
+         not
+            and
+               mte:x:@http.post
+                  .:int:200
+               lt:x:@http.post
+                  .:int:300
+         .lambda
+
+            // Oops, error - Logging error and returning status 500 to caller.
+            lambda2hyper:x:@http.post
+            log.error:Something went wrong while invoking OpenAI
+               message:x:@http.post/*/content/*/error/*/message
+               status:x:@http.post
+               error:x:@lambda2hyper
+            response.status.set:x:@http.post
+            unwrap:x:+/*
+            return
+               error:bool:true
+               result:x:@http.post/*/content/*/error/*/message
+      else
+
+         // Success! Logging as such!
+         log.info:Invoking OpenAI was a success
+
+      // Making sure we trim response before adding it to [.result].
+      strings.trim:x:@http.post/*/content/*/choices/0/*/text
+      unwrap:x:+/*/*
+      add:x:@.result
+         .
+            result:x:@strings.trim
+
+      // Making sure we return finish reason to caller.
+      get-first-value
+         get-value:x:@http.post/*/content/*/choices/0/*/finish_reason
+         .:unknown
+      unwrap:x:+/*/*
+      add:x:@.result
+         .
+            finish_reason:x:@get-first-value
 
       // Checking if type is 'supervised', at which point we store prompt and completion.
       if
