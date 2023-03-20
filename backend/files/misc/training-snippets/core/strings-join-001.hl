@@ -1,8 +1,0 @@
-
-// Join 3 strings with THOM between
-.strings
-   string1:foo1
-   string2:foo2
-   string3:foo3
-strings.join:x:@.strings/*
-   .:THOM

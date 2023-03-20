@@ -1,4 +1,0 @@
-
-// Add all arguments into where in [data.update]
-add:x:./*/data.update/*/where/*
-   get-nodes:x:@.arguments/*

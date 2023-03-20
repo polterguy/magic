@@ -1,4 +1,0 @@
-
-// Make [.src] lower case
-set-value:x:@.src
-   strings.to-lower:x:@.src

@@ -1,7 +1,0 @@
-
-// Store email argument to cache for 15 seconds with key 'email_cache'
-.arguments
-   email:string
-cache.set:email_cache
-   expiration:15
-   value:x:@.arguments/*/email

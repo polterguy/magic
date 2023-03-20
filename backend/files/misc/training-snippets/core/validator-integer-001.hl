@@ -1,4 +1,0 @@
-
-// Argument age must be 18 or more
-validators.integer:x:@.arguments/*/age
-   min:18

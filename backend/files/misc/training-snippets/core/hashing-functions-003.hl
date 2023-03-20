@@ -1,6 +1,0 @@
-
-// Hash the text in the [.text] node using SHA256
-.text:secret text
-
-// Hash using sha256
-crypto.hash.sha256:x:@.text

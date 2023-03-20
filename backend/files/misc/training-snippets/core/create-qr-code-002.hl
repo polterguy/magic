@@ -1,4 +1,0 @@
-
-// Create QR code leading to microsoft.com
-image.generate-qr:"https://microsoft.com"
-   size:8

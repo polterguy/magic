@@ -1,9 +1,0 @@
-
-// Create slot named xyz returning roles from magic database
-
-// Creating our slot
-slots.create:xyz
-   data.connect:magic
-      data.read
-         table:roles
-      return-nodes:x:@data.read/*

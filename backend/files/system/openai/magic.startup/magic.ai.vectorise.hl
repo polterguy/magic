@@ -100,17 +100,39 @@ slots.create:magic.ai.vectorise
                            log.error:Something went wrong while invoking OpenAI
                               message:x:@http.post/*/content/*/error/*/message
                               error:x:@lambda2hyper
-                           sockets.signal:magic.backend.message
-                              roles:root
-                              args
-                                 message:Could not create embeddings for model
-                                 type:error
+                           strings.concat
+                              .:"Could not create embeddings for '"
+                              get-value:x:@.dp/#/*/prompt
+                              .:"'"
+                           unwrap:x:+/*/args/*/message
                            sockets.signal:magic.backend.chatbot
                               roles:root
                               args
-                                 message:Could not vectorise snippet, check your log for details
+                                 message:x:@strings.concat
                                  type:error
-                           throw:Could not create embeddings for model
+                           if
+                              eq:x:@http.post
+                                 .:int:429
+                              .lambda
+
+                                 // OpenAI server is busy, waiting 5 seconds to retry.
+                                 sockets.signal:magic.backend.chatbot
+                                    roles:root
+                                    args
+                                       message:Retrying in 5 seconds
+                                       type:info
+                                 sleep:5000
+
+                           else
+
+                              // Non-transitional error.
+                              unwrap:x:+/*/args/*/message
+                              sockets.signal:magic.backend.message
+                                 roles:root
+                                 args
+                                    message:x:@strings.concat
+                                    type:error
+                              throw:Could not create embeddings for model
 
                      // Inserting embeddings for training snippet.
                      strings.join:x:@http.post/*/content/*/data/0/*/embedding/*

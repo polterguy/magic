@@ -1,4 +1,0 @@
-
-// 30 seconds of private HTTP cache
-response.headers.set
-   Cache-Control:private; max-age=30

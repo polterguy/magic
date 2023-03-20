@@ -1,9 +1,0 @@
-
-// Endpoint with arg1, arg2, args3 and arg4
-.arguments
-   arg1:string
-   arg2:string
-   arg3:string
-   arg4:string
-return
-   result:success

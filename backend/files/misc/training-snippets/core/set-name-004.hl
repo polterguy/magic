@@ -1,4 +1,0 @@
-
-// Set name of [.dest] to value of [.arg1]
-set-name:x:@.dest
-   get-value:x:@.arg1

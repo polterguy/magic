@@ -1,4 +1,0 @@
-
-// Set name of [.destination] to 'foo'
-set-name:x:@.destination
-   .:foo

@@ -1,4 +1,0 @@
-
-// Add all arguments into values in [data.create]
-add:x:./*/data.create/*/values
-   get-nodes:x:@.arguments/*

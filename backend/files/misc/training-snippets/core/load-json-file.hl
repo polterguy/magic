@@ -1,3 +1,0 @@
-
-// Load /some-file.json JSON
-io.file.load:/some-file.json

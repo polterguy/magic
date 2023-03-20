@@ -25,7 +25,6 @@
    conditions:*
    paging:bool
    sorting:bool
-   generate_training_data:bool
 .description:Creates an HTTP REST CRUD endpoint, wrapping your database and table according to the specified arguments
 .type:internal
 
@@ -1468,55 +1467,6 @@ semaphore:crudifier
     */
    io.file.save:x:@strings.replace
       get-value:x:@lambda2hyper
-
-   /*
-    * Checking if caller wants to generate training data, and if so,
-    * copying file into training data folder.
-    */
-   if
-      and
-         exists:x:@.arguments/*/generate_training_data
-         eq:x:@.arguments/*/generate_training_data
-            .:bool:true
-      .lambda
-
-         // Creating unique filename.
-         strings.split:x:@strings.replace
-            .:/
-         strings.split:x:@strings.split/0/-
-            .:.
-         remove-nodes:x:@strings.split/0/-
-         strings.join:x:@strings.split/*
-            .:.
-         .filename
-         set-value:x:@.filename
-            strings.concat
-               .:/misc/training-snippets/crud/
-               get-value:x:@strings.join
-               .:.
-               crypto.random
-                  min:8
-                  max:8
-               .:.hl
-
-         // Copying file.
-         io.file.copy:x:@if/@strings.replace
-            get-value:x:@.filename
-
-         // Loading file and doing some cleanups before saving again.
-         io.file.load:x:@.filename
-         hyper2lambda:x:@io.file.load
-            comments:true
-         remove-nodes:x:@hyper2lambda/**/database-type
-         remove-nodes:x:@hyper2lambda/*/.type
-         remove-nodes:x:@hyper2lambda/*/.description
-         remove-nodes:x:@hyper2lambda/*/.handling
-         set-value:x:@hyper2lambda/*/data.connect
-            get-value:x:@.database-name
-         lambda2hyper:x:@hyper2lambda/*
-            comments:true
-         io.file.save:x:@.filename
-            get-value:x:@lambda2hyper
 
    /*
     * Calculating how many lines of code we created.

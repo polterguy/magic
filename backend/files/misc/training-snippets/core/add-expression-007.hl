@@ -1,4 +1,0 @@
-
-// Add all arguments into columns in [data.read]
-add:x:./*/data.read/*/columns
-   get-nodes:x:@.arguments/*

@@ -1,4 +1,0 @@
-
-// Execute 'select count(*) from cars' SQL towards MY_DATABASE database
-data.connect:MY_DATABASE
-   data.select:select count(*) from cars

@@ -1,3 +1,0 @@
-
-// Load /some-file.yaml YAML file
-io.file.load:/some-file.yaml

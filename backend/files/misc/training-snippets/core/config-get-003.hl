@@ -1,3 +1,0 @@
-
-// Get config value 'magic:foo:bar'
-config.get:"magic:foo:bar"

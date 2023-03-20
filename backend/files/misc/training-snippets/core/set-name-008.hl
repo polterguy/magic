@@ -1,4 +1,0 @@
-
-// Set name of first argument to 'howdy1'
-set-name:x:@.arguments/0
-   .:howdy1

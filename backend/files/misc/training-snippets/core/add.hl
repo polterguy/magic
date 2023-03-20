@@ -1,6 +1,0 @@
-
-// Add [foo] into [.dest2]
-.dest2
-add:x:@.dest2
-   .
-      foo:bar

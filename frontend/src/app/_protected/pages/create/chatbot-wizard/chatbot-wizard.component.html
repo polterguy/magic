@@ -1,5 +1,5 @@
 
-<mat-card>
+<mat-card class="mb-0">
   <mat-card-content>
 
     <div *ngIf="!configured" class="row">
@@ -92,6 +92,7 @@
   
           <button
             mat-flat-button
+            color="primary"
             [disabled]="!goodWebsite() || crawling"
             class="ms-3 px-5">
             Start

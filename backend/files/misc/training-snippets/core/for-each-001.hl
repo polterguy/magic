@@ -1,3 +1,0 @@
-
-// Loop through all children of [.data]
-for-each:x:@.data/*

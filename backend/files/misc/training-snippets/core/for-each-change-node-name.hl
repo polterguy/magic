@@ -1,8 +1,0 @@
-
-// Loop through all children of [.data] and change their name to 'new-name'
-.data
-   foo1:bar1
-   foo2:bar2
-for-each:x:@.data/*
-   set-name:x:@.dp/#
-      .:new-name

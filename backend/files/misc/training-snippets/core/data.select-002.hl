@@ -1,4 +1,0 @@
-
-// Execute SQL 'select * from clients' in crm database
-data.connect:crm
-   data.select:select * from clients

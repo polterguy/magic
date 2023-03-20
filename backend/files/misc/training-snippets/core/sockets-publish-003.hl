@@ -1,6 +1,0 @@
-
-// Publish 'my_message' socket message with ping node having bar value to root and admin roles
-sockets.signal:my_message
-   roles:root,admin
-   args
-      ping:bar

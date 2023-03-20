@@ -1,6 +1,0 @@
-
-// Create server side cache having key 'howdy' and store value of [.arg1] and keep for 10 seconds
-.arg1:This will end up in your cache
-cache.set:howdy
-   value:x:@.arg
-   expiration:10

@@ -1,3 +1,0 @@
-
-// Delete the '/foo/bar/' folder
-io.folder.delete:/foo/bar/

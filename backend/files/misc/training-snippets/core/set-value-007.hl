@@ -1,4 +1,0 @@
-
-// Set value of [.bar] to name of [.args] second child
-set-value:x:@.bar
-   get-name:x:@.args/1

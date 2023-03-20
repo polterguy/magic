@@ -1,7 +1,0 @@
-
-// Insert [foo2] before [foo1]
-.destination
-   foo1
-insert-before:x:@.destination/*/foo1
-   .
-      foo2:bar

@@ -1,4 +1,0 @@
-
-// Retrieve emails with POP3
-mail.pop3.fetch
-   .lambda

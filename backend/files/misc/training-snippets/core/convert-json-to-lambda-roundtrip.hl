@@ -1,5 +1,0 @@
-
-// Convert [.json] to lambda
-
-// Converting JSON to a lambda object.
-json2lambda:x:@.json

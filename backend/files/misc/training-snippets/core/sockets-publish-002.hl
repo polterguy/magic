@@ -1,6 +1,0 @@
-
-// Publish 'howdy-hello' socket message with adr and state arguments
-sockets.signal:howdy-hello
-   args
-      adr:Market Street 123
-      state:California

@@ -1,9 +1,0 @@
-
-// Exception try/catch block logging errors
-try
-
-   // Unsafe code here
-.catch
-
-   // Logging error
-   log.error:x:@.arguments/*/message

@@ -1,9 +1,0 @@
-
-// Add [static1] and [static2] into [.foo]
-.foo
-
-// Adding two static nodes into [.destination]
-add:x:@.foo
-   .
-      static1:some value
-      static2:some value

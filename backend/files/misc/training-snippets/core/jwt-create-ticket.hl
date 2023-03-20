@@ -1,7 +1,0 @@
-
-// Create JWT token with username foo belonging to admin and root roles
-auth.ticket.create
-   username:foo
-   roles
-      .:admin
-      .:root

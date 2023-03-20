@@ -1,3 +1,0 @@
-
-// Load /some-file.xml XML file
-io.file.load:/some-file.xml

@@ -10,7 +10,6 @@
    endpointName:string
    sql:string
    overwrite:bool
-   generate_training_data:bool
 .description:Creates a custom SQL HTTP endpoint according to the specified arguments
 .type:internal
 
@@ -188,27 +187,6 @@ if
 // Saving file.
 io.file.save:x:@.filename
    get-value:x:@lambda2hyper
-
-// Checking if caller specified he or she wanted to generate training data for OpenAI on endpoint's Hyperlambda.
-if
-   and
-      exists:x:@.arguments/*/generate_training_data
-      get-value:x:@.arguments/*/generate_training_data
-   .lambda
-
-      // Generating training data for OpenAI on Hyperlambda.
-      remove-nodes:x:@apply/**/database-type
-      lambda2hyper:x:@apply/*
-         comments:true
-      strings.concat
-         .:/misc/training-snippets/sql-endpoints/
-         .:custom-sql-
-         crypto.random
-            min:5
-            max:5
-         .:.hl
-      io.file.save:x:@strings.concat
-         get-value:x:@lambda2hyper
 
 // Returns success to caller.
 return-nodes

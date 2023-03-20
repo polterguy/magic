@@ -1,8 +1,0 @@
-
-// Join all children of [.data] with , separator
-.data
-   .:string1
-   .:string2
-   .:string3
-strings.join:x:@.data/*
-   .:,

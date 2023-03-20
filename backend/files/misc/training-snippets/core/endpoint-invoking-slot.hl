@@ -1,6 +1,0 @@
-
-// Endpoint executing 'my_slot' dynamic slot returning result to caller
-.arguments
-add:x:+
-   signal:my_slot
-return

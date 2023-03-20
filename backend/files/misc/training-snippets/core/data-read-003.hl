@@ -1,4 +1,0 @@
-
-// Read all records from pages table | Select all records from pages
-data.read
-   table:pages

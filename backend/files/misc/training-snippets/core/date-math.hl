@@ -1,8 +1,0 @@
-
-// Add 5 days to now and store result in [.dest]
-.dest
-set-value:x:@.dest
-   math.add
-      date.now
-      time
-         days:5

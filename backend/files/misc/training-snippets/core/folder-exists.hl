@@ -1,3 +1,0 @@
-
-// Check if /modules/crm/ folder exists
-io.folder.exists:/modules/crm/

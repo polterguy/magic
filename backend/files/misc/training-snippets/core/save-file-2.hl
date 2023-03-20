@@ -1,4 +1,0 @@
-
-// Save file /howdy.txt with content 'foo bar'
-io.file.save:/howdy.txt
-   .:foo bar

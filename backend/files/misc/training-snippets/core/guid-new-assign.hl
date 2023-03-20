@@ -1,5 +1,0 @@
-
-// Set value of [.guid] to new random GUID
-.guid
-set-value:x:@.guid
-   guid.new

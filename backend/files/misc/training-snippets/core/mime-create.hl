@@ -1,5 +1,0 @@
-
-// Create multipart/mixed MIME with content of file /README.md
-mime.create:multipart/mixed
-   entity:text/plain
-      filename:/README.md

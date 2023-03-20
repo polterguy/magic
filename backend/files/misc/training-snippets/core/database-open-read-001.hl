@@ -1,8 +1,0 @@
-
-// Connect to foo database and select all records from bar table
-data.connect:foo
-
-   // Read all records from bar
-   data.read
-      table:bar
-      limit:-1

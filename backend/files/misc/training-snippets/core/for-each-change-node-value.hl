@@ -1,8 +1,0 @@
-
-// Loop through all children of [.data] and change their value to 'done'
-.data
-   foo1:bar1
-   foo2:bar2
-for-each:x:@.data/*
-   set-value:x:@.dp/#
-      .:done

@@ -1,5 +1,0 @@
-
-// Substring [.str] from 5 to 7
-strings.substring:x:@.str
-   .:5
-   .:7

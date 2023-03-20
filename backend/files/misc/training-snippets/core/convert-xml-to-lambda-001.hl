@@ -1,5 +1,0 @@
-
-// Convert [.xml] XML to lambda
-
-// Converting the above XML to a lambda object
-xml2lambda:x:@.xml

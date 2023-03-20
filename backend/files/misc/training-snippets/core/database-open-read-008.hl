@@ -1,8 +1,0 @@
-
-// Connect to car_shops database and read first 55 records from cars table
-data.connect:car_shops
-
-   // Read 55 records from names
-   data.read
-      table:cars
-      limit:55

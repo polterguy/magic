@@ -1,7 +1,0 @@
-
-// Invoke gaiasoul.com and servergardens.com in parallel on threads wait for both
-join
-   fork
-      http.get:"https://gaiasoul.com"
-   fork
-      http.get:"https://servergardens.com"

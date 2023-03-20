@@ -1,4 +1,0 @@
-
-// Save file /hello.txt with content from [.value]
-io.file.save:/hello.txt
-   get-value:x:@.value

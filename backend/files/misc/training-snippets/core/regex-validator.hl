@@ -1,4 +1,0 @@
-
-// Regex validator matching [.src] to '^[a-z0-9]*$'
-validators.regex:x:@.src
-   regex:^[a-z0-9]*$

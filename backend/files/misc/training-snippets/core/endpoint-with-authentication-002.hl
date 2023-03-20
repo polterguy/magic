@@ -1,6 +1,0 @@
-
-// Endpoint with guest authentication and authorisation
-.arguments
-auth.ticket.verify:guest
-return
-   result:success

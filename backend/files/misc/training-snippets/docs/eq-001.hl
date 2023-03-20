@@ -1,9 +1,0 @@
-// Equality comparison
-
-// Source node to [eq] invocation.
-.src:int:5
-
-// [eq] becomes true if its first argument is equal to its second argument.
-eq
-   get-value:x:@.src
-   .:int:5

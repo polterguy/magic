@@ -1,4 +1,0 @@
-
-// Create QR code leading to docs.aista.com
-image.generate-qr:"https://docs.aista.com"
-   size:8

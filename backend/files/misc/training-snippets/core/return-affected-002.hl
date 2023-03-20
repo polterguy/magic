@@ -1,7 +1,0 @@
-
-// Return affected records from [data.update]
-
-// Returning result [data.update] to caller
-unwrap:x:+/*
-return
-   result:x:@data.update

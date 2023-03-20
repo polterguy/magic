@@ -1,8 +1,0 @@
-
-// Connect to clients database and select 25 records from names table
-data.connect:clients
-
-   // Read 25 records from names
-   data.read
-      table:names
-      limit:25

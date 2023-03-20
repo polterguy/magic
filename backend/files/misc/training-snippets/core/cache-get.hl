@@ -1,3 +1,0 @@
-
-// Return 'foo' cached item
-cache.get:foo

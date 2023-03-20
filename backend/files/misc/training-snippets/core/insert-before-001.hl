@@ -1,5 +1,0 @@
-
-// Insert [foo] before email argument
-insert-before:x:@.arguments/*/email
-   .
-      foo
