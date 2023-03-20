@@ -54,8 +54,6 @@ export class MachineLearningEditTypeComponent implements OnInit {
     {name: 'Joe Biden', prefix: 'Answer the following in the style of Joe Biden: '},
     {name: 'Snoop Dog', prefix: 'Answer the following in the style of Snoop Dog: '},
     {name: 'Bob Marley', prefix: 'Answer the following in the style of Bob Marley: '},
-    {name: 'Buddha', prefix: 'Answer the following in the style of the Buddha: '},
-    {name: 'Jesus', prefix: 'Answer the following in the style of Jesus: '},
     {name: 'Pirate', prefix: 'Answer the following in the style of a Pirate: '},
     {name: 'Alien from Zorg', prefix: 'Answer the following as if you are an alien from the planet Zorg who came to teach humans about superior technology: '},
     {name: 'Reddit Troll', prefix: 'Answer the following as if you are a Reddit troll: '},
