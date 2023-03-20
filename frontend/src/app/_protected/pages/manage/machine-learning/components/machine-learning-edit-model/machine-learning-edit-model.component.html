@@ -27,7 +27,7 @@
         <mat-error>{{CommonErrorMessages.appNameWithUppercaseHyphen}}</mat-error>
     </mat-form-field>
 
-    <mat-form-field class="w-100 custom-alignment" [class.d-none]="!advanced">
+    <mat-form-field class="w-100 custom-alignment" [class.d-none]="!advanced || !use_embeddings">
       <span
         matPrefix
         matTooltip="Prefix inserted before all prompts"
@@ -51,7 +51,7 @@
 
       <div class="col-12 d-flex justify-content-md-between align-items-md-center align-items-end flex-md-row">
 
-        <mat-form-field class="w-100 standalone-field me-2">
+        <mat-form-field class="w-100 standalone-field" [class.me-2]="use_embeddings">
           <span
             matPrefix
             matTooltip="Completion model"
@@ -82,7 +82,7 @@
           </mat-select>
         </mat-form-field>
 
-        <mat-form-field class="w-100 standalone-field">
+        <mat-form-field class="w-100 standalone-field" *ngIf="use_embeddings">
           <span
             matPrefix
             matTooltip="Vector model"
@@ -120,7 +120,7 @@
 
       <div class="col-12 d-flex justify-content-md-between align-items-md-center align-items-end flex-md-row">
 
-        <mat-form-field class="w-100 standalone-field me-2">
+        <mat-form-field class="w-100 standalone-field me-2" *ngIf="use_embeddings && model?.id?.startsWith('gpt')">
           <span
             matPrefix
             matTooltip="Flavor"
@@ -142,7 +142,7 @@
           </mat-select>
         </mat-form-field>
 
-        <mat-form-field class="w-100 standalone-field me-2">
+        <mat-form-field class="w-100 standalone-field" [class.me-2]="use_embeddings">
           <span
             matPrefix
             matTooltip="Temperature"
@@ -163,7 +163,7 @@
             autocomplete="off">
         </mat-form-field>
 
-        <mat-form-field class="w-100 standalone-field">
+        <mat-form-field class="w-100 standalone-field" *ngIf="use_embeddings">
           <span
             matPrefix
             matTooltip="Threshold for vectors"
@@ -192,7 +192,7 @@
 
       <div class="col-12 d-flex justify-content-md-between align-items-md-center align-items-end flex-md-row">
 
-        <mat-form-field class="w-100 standalone-field me-2">
+        <mat-form-field class="w-100 standalone-field me-2" *ngIf="use_embeddings">
           <span
             matPrefix
             matTooltip="Max context tokens"
