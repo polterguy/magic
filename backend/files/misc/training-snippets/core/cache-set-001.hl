@@ -1,4 +1,0 @@
-
-// Create a cache item with key 'foo' and value 'some cache value'
-cache.set:foo
-   value:some cache value

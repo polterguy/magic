@@ -1,5 +1,0 @@
-
-// Crop the /bar.png image and remove 65 pixels from its right side and 75 pixels from the top
-image.crop:/bar.png
-   right:65
-   top:75

@@ -1,9 +1,0 @@
-
-// Create slot cvcv with adding two arguments returning result
-
-// Creating our slot
-slots.create:cvcv
-   math.add
-      get-value:x:@.arguments/0
-      get-value:x:@.arguments/1
-   return:x:@math.add

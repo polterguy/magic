@@ -1,8 +1,0 @@
-
-// Update first_name and last_name in gokk table in gerky database set first_name to Thomas and last_name to Hansen
-data.connect:gerky
-   data.update
-      table:gokk
-      values
-         first_name:Thomas
-         last_name:Hansen

@@ -443,15 +443,6 @@
 
           <mat-checkbox
             color="primary"
-            [(ngModel)]="generate_training_data"
-            [disabled]="!(availableTables && availableTables.length > 0 && selectedTables.value.length > 0)">
-            AI train
-          </mat-checkbox>
-
-          <div class="px-2"></div>
-
-          <mat-checkbox
-            color="primary"
             [(ngModel)]="paging"
             [disabled]="!(availableTables && availableTables.length > 0 && selectedTables.value.length > 0)">
             Paging

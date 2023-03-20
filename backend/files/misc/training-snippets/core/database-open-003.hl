@@ -1,3 +1,0 @@
-
-// Connect to customers database
-data.connect:customers

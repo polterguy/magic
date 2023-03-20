@@ -1,3 +1,0 @@
-
-// Increment [.foo]
-math.increment:x:@.foo

@@ -1,5 +1,0 @@
-
-// Verify that the user belongs to either the role of partner or manager
-
-// Verify user belongs to either partner or manager role
-auth.ticket.verify:partner,manager

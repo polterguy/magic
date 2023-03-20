@@ -1,3 +1,0 @@
-
-// Validate email argument is valid email address
-validators.email:x:@.arguments/*/email

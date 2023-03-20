@@ -1,5 +1,0 @@
-
-// String format [.data] and display hours, minutes and seconds
-.data:date:"2022-01-01T23:59:57.000"
-date.format:x:@.data
-   format:"HH:mm:ss"

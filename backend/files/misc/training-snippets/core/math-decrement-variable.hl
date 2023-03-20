@@ -1,3 +1,0 @@
-
-// Decrement [.foo]
-math.decrement:x:@.foo

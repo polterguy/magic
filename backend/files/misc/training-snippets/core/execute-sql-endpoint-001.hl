@@ -1,8 +1,0 @@
-
-// Endpoint executing SQL counting records in foo table in bar database returning result
-.arguments
-data.connect:bar
-   data.scalar:select count(*) from foo
-   unwrap:x:+/*
-   return
-      result:x:@data.scalar

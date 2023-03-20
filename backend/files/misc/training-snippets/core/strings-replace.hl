@@ -1,5 +1,0 @@
-
-// Replace 'foo' in [.src] with 'bar'
-strings.replace:x:@.src
-   .:foo
-   .:bar

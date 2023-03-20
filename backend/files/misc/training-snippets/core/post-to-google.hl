@@ -1,7 +1,0 @@
-
-// HTTP POST [userId] and [id] to google.com
-http.post:"https://google.com"
-   payload
-      userId:int:55
-      id:int:667
-   convert:true

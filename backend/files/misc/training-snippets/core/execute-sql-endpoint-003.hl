@@ -1,8 +1,0 @@
-
-// Endpoint returning result of SQL 'select name, email, adr from my_database_table' in contacts database
-.arguments
-data.connect:contacts
-   data.select:select name, email, adr from my_database_table
-   unwrap:x:+/*
-   return
-      result:x:@data.select

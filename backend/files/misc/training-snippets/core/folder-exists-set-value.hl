@@ -1,8 +1,0 @@
-
-// Assign YES to [.result] if /foo/bar/ folder exists
-.result
-if
-   io.folder.exists:/foo/bar/
-   .lambda
-      set-value:x:@.result
-         .:YES

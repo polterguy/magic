@@ -1,5 +1,0 @@
-
-// Invoke foo.com with Accept HTTP header having application/hyperlambda
-http.get:"https://foo.com"
-   headers
-      Accept:application/hyperlambda

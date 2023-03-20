@@ -1,5 +1,0 @@
-
-// Convert children of [.data] to CSV
-
-// Converting result of expression to CSV.
-lambda2csv:x:@.data/*

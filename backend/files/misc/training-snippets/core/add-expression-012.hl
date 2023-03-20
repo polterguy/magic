@@ -1,4 +1,0 @@
-
-// Add all arguments into values in [data.update]
-add:x:./*/data.update/*/values
-   get-nodes:x:@.arguments/*

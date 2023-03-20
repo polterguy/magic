@@ -1,9 +1,0 @@
-
-// Gateway POST endpoint passing in arguments to microsoft.com/chin/contacts returning result of POST invocation
-.arguments:*
-add:x:../*/http.post/*/payload
-   get-nodes:x:@.arguments/*
-http.post:"https://microsoft.com/chin/contacts"
-   convert:true
-   payload
-return-nodes:x:@http.get/*/content/*

@@ -43,7 +43,6 @@ export class ManualGeneratorComponent extends GeneratorBase implements OnInit, O
   hintTables: any = {};
   methods: string[] = Methods;
   selectedMethod: string = '';
-  generate_training_data = false;
   overwrite = false;
   arguments: Argument[] = [];
   waiting: boolean = false;
@@ -167,7 +166,6 @@ export class ManualGeneratorComponent extends GeneratorBase implements OnInit, O
       sql: this.sql.sql,
       arguments: this.getArguments(),
       overwrite: this.overwrite,
-      generate_training_data: this.generate_training_data,
     }
 
     this.crudifyService.generateSqlEndpoint(data).subscribe({

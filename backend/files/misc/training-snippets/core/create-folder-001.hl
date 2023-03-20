@@ -1,3 +1,0 @@
-
-// Create '/foo/' folder | Create folder '/foo/'
-io.folder.create:/foo/bar/

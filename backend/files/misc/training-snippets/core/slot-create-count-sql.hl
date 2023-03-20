@@ -1,6 +1,0 @@
-
-// Create slot 'count_records' counting records in roles table in magic database returning result
-slots.create:count_records
-   data.connect:magic
-      data.scalar:select count(*) from roles
-      return:x:@data.scalar

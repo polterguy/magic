@@ -1,3 +1,0 @@
-
-// Clear server side cache for all items having a key starting with 'magic.'
-cache.clear:magic.

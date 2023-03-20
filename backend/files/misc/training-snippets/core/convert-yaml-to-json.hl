@@ -1,5 +1,0 @@
-
-// Convert [.src] YAML to JSON
-
-// Converting from YAML to JSON
-yaml2json:x:@.src

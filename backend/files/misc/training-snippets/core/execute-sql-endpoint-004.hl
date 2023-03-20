@@ -1,8 +1,0 @@
-
-// Endpoint returning result of SQL 'select * from partners' in synergy database
-.arguments
-data.connect:synergy
-   data.select:select * from partners
-   unwrap:x:+/*
-   return
-      result:x:@data.select

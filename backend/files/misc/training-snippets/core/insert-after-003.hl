@@ -1,4 +1,0 @@
-
-// Insert all arguments after [.args]'s first child
-insert-after:x:@.args/0
-   get-nodes:x:@.arguments/*

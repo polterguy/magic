@@ -1,6 +1,0 @@
-
-// Argument name can only be foo, bar or howdy
-validators.enum:x:@.arguments/*/name
-   .:foo
-   .:bar
-   .:howdy

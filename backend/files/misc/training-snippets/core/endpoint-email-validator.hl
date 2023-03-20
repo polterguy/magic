@@ -1,7 +1,0 @@
-
-// Endpoint accepting email argument with validator returning success
-.arguments
-   email:string
-validators.email:x:@.arguments/*/email
-return
-   result:success

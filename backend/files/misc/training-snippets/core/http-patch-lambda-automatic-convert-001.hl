@@ -1,7 +1,0 @@
-
-// Invoke jsonplaceholder.typicode.com/posts with HTTP PATCH passing in zip and street arguments
-http.patch:"https://jsonplaceholder.typicode.com/posts"
-   payload
-      zip:int:12345
-      street:Market St. 111
-   convert:true

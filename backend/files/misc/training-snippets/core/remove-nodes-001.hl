@@ -1,3 +1,0 @@
-
-// Remove children of [.args]
-remove-nodes:x:@.args/*

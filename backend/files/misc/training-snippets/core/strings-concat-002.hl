@@ -1,6 +1,0 @@
-
-// Concatenate 3 strings
-strings.concat
-   .:string1
-   .:string2
-   .:string3

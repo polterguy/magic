@@ -1,8 +1,0 @@
-
-// Update name and company in synergy table in partners database set name to Johnny and company to Acme
-data.connect:partners
-   data.update
-      table:synergy
-      values
-         name:Johnny
-         company:Acme

@@ -1,9 +1,0 @@
-
-// Assign to [.res] first non null value from children of [.data]
-.data
-   foo1
-   foo2:hello
-   foo3
-.res
-set-value:x:@.res
-   get-first-value:x:@.data/*

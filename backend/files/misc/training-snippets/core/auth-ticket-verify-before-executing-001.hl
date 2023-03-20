@@ -1,5 +1,0 @@
-
-// Verify that the user belongs to either the role of root, admin or guest
-
-// Verify user belongs to either root, admin or guest role
-auth.ticket.verify:root,admin,guest

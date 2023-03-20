@@ -1,8 +1,0 @@
-
-// Connect to crm database and select all columns and all records from contacts table
-data.connect:crm
-
-   // Read all records from contacts
-   data.read
-      table:contacts
-      limit:-1

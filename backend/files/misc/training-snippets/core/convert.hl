@@ -1,9 +1,0 @@
-
-// Convert [.source] node's value to an integer and store it in [.destination]
-.source:55
-.destination
-
-// Settings the value of our [.destination] node to the value of [.source] converting it to integer first
-set-value:x:@.destination
-   convert:x:@.source
-      type:int

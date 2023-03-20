@@ -1,3 +1,0 @@
-
-// Get value of [address] argument
-get-value:x:@.arguments/*/address

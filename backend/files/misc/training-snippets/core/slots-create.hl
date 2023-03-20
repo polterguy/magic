@@ -1,4 +1,0 @@
-
-// Create 'meaning-of-life' slot returning 42
-slots.create:meaning-of-life
-   return-value:int:42

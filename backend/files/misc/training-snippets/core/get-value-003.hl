@@ -1,3 +1,0 @@
-
-// Get value of [arg1] argument
-get-value:x:@.arguments/*/arg1

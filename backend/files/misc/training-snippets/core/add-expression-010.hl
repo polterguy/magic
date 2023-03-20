@@ -1,4 +1,0 @@
-
-// Add all arguments into where in [data.delete]
-add:x:./*/data.delete/*/where/*
-   get-nodes:x:@.arguments/*

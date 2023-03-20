@@ -1,4 +1,0 @@
-
-// Add all arguments into [.foo]
-add:x:./*/.foo
-   get-nodes:x:@.arguments/*

@@ -1,3 +1,0 @@
-
-// Remove children of [.lambda] with name 'to-be-removed'
-remove-nodes:x:@.lambda/*/to-be-removed

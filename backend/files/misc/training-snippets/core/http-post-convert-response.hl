@@ -1,5 +1,0 @@
-
-// Invoke jsonplaceholder.typicode.com/posts passing in JSON as payload
-http.post:"https://jsonplaceholder.typicode.com/posts"
-   payload:"{\"userId\": 1, \"id\": 1}"
-   convert:true

@@ -1,3 +1,0 @@
-
-// Remove [.args2] node
-remove-nodes:x:@.args2

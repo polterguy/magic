@@ -1,9 +1,0 @@
-
-// Insert name and email into actor table
-
-// Inserting into actor table
-data.create
-   table:actor
-   values
-      name:John Doe
-      email:john@doe.com

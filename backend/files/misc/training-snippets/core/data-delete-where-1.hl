@@ -1,8 +1,0 @@
-
-// Delete all items from sakila database and film table where title is 'Howdy world'
-data.connect:sakila
-   data.delete
-      table:film
-      where
-         and
-            title.eq:Howdy world
