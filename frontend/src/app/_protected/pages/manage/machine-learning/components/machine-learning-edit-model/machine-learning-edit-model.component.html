@@ -252,7 +252,7 @@
             autocomplete="off">
         </mat-form-field>
 
-        <mat-form-field class="w-100 standalone-field">
+        <mat-form-field class="w-100 standalone-field" *ngIf="model?.id?.startsWith('gpt')">
           <span
             matPrefix
             matTooltip="Max message tokens"

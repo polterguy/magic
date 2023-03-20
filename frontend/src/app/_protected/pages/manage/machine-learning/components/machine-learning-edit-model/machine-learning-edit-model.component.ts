@@ -150,9 +150,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
 
     if (this.model?.id?.startsWith('gpt-')) {
       this.prefix = '';
-    } else if (this.model?.id?.indexOf(':') !== -1) {
-      this.prefix = '';
-    } else {
+    } else if (this.use_embeddings) {
       this.prefix = 'Answer the following QUESTION while using the information in the following CONTEXT. If you cannot answer the question using the specified CONTEXT then answer "I don\'t know the answer, try to be more specific.".\r\n\r\nQUESTION: [QUESTION]\r\n\r\nCONTEXT: [CONTEXT]\r\n\r\nANSWER:';
     }
   }
