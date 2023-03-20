@@ -1,0 +1,1 @@
+alter table ml_training_snippets add index idx_ml_training_snippets_created (created);
