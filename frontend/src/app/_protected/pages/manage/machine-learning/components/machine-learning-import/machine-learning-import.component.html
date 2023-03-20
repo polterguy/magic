@@ -98,7 +98,8 @@
         <button
           class="px-3"
           matTooltip="Start crawling website"
-          mat-flat-button>
+          mat-flat-button
+          color="primary">
           Crawl
         </button>
 
@@ -114,8 +115,7 @@
     <div class="col-12">
 
       <p class="text-muted text-small mb-3">
-        Upload file as training data. Notice PDF files will be restructured, and don't consider the prompt
-        and completion arguments
+        Upload XML, JSON, YAML or CSV files as training data
       </p>
 
       <div class="row">
@@ -172,7 +172,7 @@
           class="w-100 h-100 hide pointer"
           #upload
           (change)="getFile($event)"
-          accept=".csv,.xml,.yaml,.yml,.json,.pdf">
+          accept=".csv,.xml,.yaml,.yml,.json">
 
         <button
           mat-button
@@ -180,7 +180,7 @@
           (click)="upload.click()"
           *ngIf="trainingFileModel === ''"
           [disabled]="uploading">
-          <i>Drag & drop your training data here, CSV, XML, JSON, PDF or YAML</i> <br />
+          <i>Drag & drop your training data here, CSV, XML, JSON or YAML</i> <br />
           <span class="text-primary">Choose a file</span>
         </button>
 
