@@ -96,6 +96,8 @@ signal:magic.ai.endpoint-common
                threshold:x:@.arguments/*/threshold
                max_tokens:x:@.arguments/*/max_context_tokens
                vector_model:x:@.arguments/*/vector_model
+            add:x:@.result
+               get-nodes:x:@signal/*/db_time
 
             // Correctly applying prefix.
             if
@@ -266,6 +268,7 @@ signal:magic.ai.endpoint-common
          get-nodes:x:@.result/*/result
          get-nodes:x:@.result/*/finish_reason
          get-nodes:x:@.result/*/references
+         get-nodes:x:@.result/*/db_time
       return
 
 // Returning result of worker slot to caller.
