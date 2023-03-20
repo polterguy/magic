@@ -232,7 +232,7 @@
             autocomplete="off">
         </mat-form-field>
 
-        <mat-form-field class="w-100 standalone-field me-2">
+        <mat-form-field class="w-100 standalone-field" [class.me-2]="(model?.id?.startsWith('gpt') ?? false)">
           <span
             matPrefix
             matTooltip="Max response tokens"
