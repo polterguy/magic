@@ -70,7 +70,7 @@ signal:magic.ai.endpoint-common
       // Result we're returning to caller.
       .result
 
-      // Buffer containing our result.
+      // Prompt that might be changed if model contains a prefix, and/or we're using embeddings.
       .prompt
 
       /*
@@ -149,7 +149,7 @@ signal:magic.ai.endpoint-common
           * Not using embeddings, either a mint model or a fine-tuned model.
           *
           * Checking if model is fine-tuned, which is true if model name contains
-          * a colon (:).
+          * a colon (:), at which point we apply "->" and " END" to help model roundtrip.
           */
          if
             strings.contains:x:@.arguments/*/model
