@@ -72,9 +72,9 @@ try
          values
             type:x:@.type
             model:gpt-3.5-turbo
-            max_tokens:int:2000
+            max_tokens:int:500
             max_context_tokens:int:1000
-            max_request_tokens:int:1000
+            max_request_tokens:int:100
             temperature:decimal:0.3
             recaptcha:decimal:0.3
             supervised:int:0
