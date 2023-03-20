@@ -1,0 +1,1 @@
+create index idx_ml_training_snippets_created on ml_training_snippets (created);
