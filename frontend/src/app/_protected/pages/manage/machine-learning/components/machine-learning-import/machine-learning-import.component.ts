@@ -32,7 +32,6 @@ export class MachineLearningImportComponent {
   uploadIndex: number = 0;
   uploadCount: number = 0;
   files: FileList = null;
-  massage: string = 'Structure the following information into a title and the rest: ';
 
   CommonRegEx = CommonRegEx;
   CommonErrorMessages = CommonErrorMessages;
@@ -106,9 +105,6 @@ export class MachineLearningImportComponent {
     formData.append('type', this.data.type);
     formData.append('prompt', this.prompt);
     formData.append('completion', this.completion);
-    if (this.files[this.uploadIndex].name.endsWith('.pdf') || this.files[this.uploadIndex].name.endsWith('.pdf')) {
-      formData.append('massage', this.massage);
-    }
 
     this.openAIService.uploadTrainingFile(formData).subscribe({
       next: (result: any) => {
