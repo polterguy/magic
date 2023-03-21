@@ -7,6 +7,9 @@ slots.create:magic.ai.vectorise
    // Making sure we log exceptions.
    try
 
+      // Maximum number of times we retry OpenAI's API before giving up.
+      .retries:int:10
+
       // Getting OpenAI API token from configuration.
       .token
       set-value:x:@.token
@@ -112,11 +115,15 @@ slots.create:magic.ai.vectorise
                                  message:x:@strings.concat
                                  type:error
                            if
-                              eq:x:@http.post
-                                 .:int:429
+                              and
+                                 eq:x:@http.post
+                                    .:int:429
+                                 mt:x:@.retries
+                                    .:int:0
                               .lambda
 
                                  // OpenAI server is busy, waiting 5 seconds to retry.
+                                 math.decrement:x:@.retries
                                  sockets.signal:magic.backend.chatbot
                                     roles:root
                                     args
@@ -126,7 +133,7 @@ slots.create:magic.ai.vectorise
 
                            else
 
-                              // Non-transitional error.
+                              // Non-transitional error or too many retries.
                               unwrap:x:+/*/args/*/message
                               sockets.signal:magic.backend.message
                                  roles:root

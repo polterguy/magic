@@ -124,7 +124,7 @@ slots.create:magic.ai.get-context
        * Updating [.snippets] now with the 50 top most relevant snippets.
        *
        * Notice, to make algorithm perform at least to some extent, we avoid
-       * adding more than 50 snippets max to [.snippets].
+       * adding more than max 50 snippets to [.snippets].
        * These are the top 50 performing snippets according to vectors and
        * dot product.
        */
@@ -208,7 +208,9 @@ slots.create:magic.ai.get-context
                set-value:x:@.context
                   get-value:x:@.tmp
                if
-                  not-exists:x:@.result/*/*/uri/={@data.read/0/*/uri}
+                  and
+                     not-null:x:@data.read/0/*/uri
+                     not-exists:x:@.result/*/*/uri/={@data.read/0/*/uri}
                   .lambda
 
                      // Adding current reference to [.result]
@@ -218,7 +220,6 @@ slots.create:magic.ai.get-context
                            .
                               prompt:x:@data.read/0/*/prompt
                               uri:x:@data.read/0/*/uri
-                              dot:x:@data.read/0/*/dot
                remove-nodes:x:@data.read/0
 
          else
