@@ -243,6 +243,25 @@ slots.create:magic.ai.crawl-site
                      message:x:@strings.concat
                      type:info
 
+               // Checking if we need to warn user about maximum URLs.
+               if
+                  mt
+                     get-value:x:@get-count
+                     get-value:x:@.arguments/*/max
+                  .lambda
+
+                     // Warning use that there are MORE than [max] URLs in sitemap.
+                     strings.concat
+                        .:"Warning, the site contains more than "
+                        get-value:x:@.arguments/*/max
+                        .:" pages, and will only be PARTIALLY scraped!"
+                     unwrap:x:+/*/args/*/message
+                     sockets.signal:magic.backend.chatbot
+                        roles:root
+                        args
+                           message:x:@strings.concat
+                           type:warning
+
                // Looping through each URL found from sitemap(s).
                .no:int:0
                for-each:x:@.urls/*
