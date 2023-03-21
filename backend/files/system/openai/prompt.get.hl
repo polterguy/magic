@@ -12,10 +12,12 @@
 
 /*
  * Forward invocation to chat file, since there are no real differences
- * between the two endpoints, since we're checking model type and acting
- * accordingly.
+ * between the two endpoints, since we're checking model type in chat file
+ * and acting accordingly.
+ *
+ * However, we still need to keep this file for legacy reasons.
  */
 add:x:+
    get-nodes:x:@.arguments/*
 io.file.execute:/system/openai/chat.get.hl
-return:x:@io.file.execute/*
+return:x:-/*
