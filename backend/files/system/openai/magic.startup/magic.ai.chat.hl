@@ -1,0 +1,198 @@
+
+/*
+ * Chat slot for having conversations with OpenAI's "gpt" type of models.
+ */
+slots.create:magic.ai.chat
+
+   // Retrieving relevant snippets.
+   unwrap:x:+/*
+   signal:magic.ai.get-context
+      type:x:@.arguments/*/type
+      prompt:x:@.arguments/*/prompt
+      threshold:x:@.arguments/*/threshold
+      max_tokens:x:@.arguments/*/max_context_tokens
+      vector_model:x:@.arguments/*/vector_model
+
+   // Taken from either training data or previous questions.
+   .session
+
+   // Checking if question triggered training data.
+   if
+      exists:x:@signal/*/snippets/*
+      .lambda
+
+         // Question triggered training data.
+         unwrap:x:+/*/*/*/content
+         add:x:@.session
+            .
+               .
+                  role:user
+                  content:x:@signal/*/context
+
+   else
+
+      // Question didn't kick in training data, hence checking if we've got a session.
+      cache.get:x:@.arguments/*/session
+      if
+         not-null:x:@cache.get
+         .lambda
+
+            /*
+             * We have an existing session, hence continuing discussing subject
+             * unless embeddings returns a better match.
+             */
+            add:x:@.session
+               hyper2lambda:x:@cache.get
+
+   // Checking if model is prefixed, at which point we prepend prefix to question.
+   if
+      and
+         exists:x:@.arguments/*/prefix
+         not-null:x:@.arguments/*/prefix
+         neq:x:@.arguments/*/prefix
+            .:
+      .lambda
+
+         // Prefixing prompt.
+         set-value:x:@.arguments/*/prompt
+            strings.concat
+               get-value:x:@.arguments/*/prefix
+               get-value:x:@.arguments/*/prompt
+
+   // Adding user's current question to session.
+   unwrap:x:+/*/*/*/content
+   add:x:@.session
+      .
+         .
+            role:user
+            content:x:@.arguments/*/prompt
+
+   /*
+    * Pruning previous messages until size of context + max_tokens is less than whatever
+    * amount of tokens the model can handle.
+    *
+    * Notice, we never submit more than 4 previous messages to OpenAI as context.
+    * We also make sure we always submit the FIRST message if existing, since this
+    * is the context fetched from our training data.
+    */
+   .cont:bool:true
+   while:x:@.cont
+
+      lambda2hyper:x:@.session/*
+      if
+         and
+            lt
+               get-count:x:@.session/*
+               .:int:5
+            lt
+               math.add
+                  get-value:x:@.arguments/*/max_tokens
+                  openai.tokenize:x:@lambda2hyper
+               get-value:x:@.arguments/*/model_size
+         .lambda
+
+            // Context is small enough to answer according to max_tokens.
+            set-value:x:@.cont
+               .:bool:false
+      else
+
+         /*
+          * Need to remove one of our previous messages to be able to have OpenAI return max_tokens.
+          * Notice, we make sure we always keep the first message, since it's the most important
+          * part that was created when we initially found our context.
+          */
+         remove-nodes:x:@.session/1
+
+   // Retrieving token used to invoke OpenAI.
+   .token
+   set-value:x:@.token
+      strings.concat
+         .:"Bearer "
+         config.get:"magic:openai:key"
+
+   // Invoking OpenAI now with context being either training data or previous messages.
+   add:x:./*/http.post/*/payload/*/messages
+      get-nodes:x:@.session/*
+   http.post:"https://api.openai.com/v1/chat/completions"
+      headers
+         Authorization:x:@.token
+         Content-Type:application/json
+      payload
+         model:x:@.arguments/*/model
+         max_tokens:x:@.arguments/*/max_tokens
+         temperature:x:@.arguments/*/temperature
+         messages
+      convert:true
+
+   // Sanity checking above invocation
+   if
+      not
+         and
+            mte:x:@http.post
+               .:int:200
+            lt:x:@http.post
+               .:int:300
+      .lambda
+
+         // Oops, error - Logging error and returning status 500 to caller.
+         lambda2hyper:x:@http.post
+         log.error:Something went wrong while invoking OpenAI
+            message:x:@http.post/*/content/*/error/*/message
+            status:x:@http.post
+            error:x:@lambda2hyper
+         throw:x:@http.post/*/content/*/error/*/message
+            public:bool:true
+            status:x:@http.post
+
+   else
+
+      // Success! Logging as such!
+      log.info:Invoking OpenAI was a success
+
+   // Making sure we trim response.
+   .result
+   set-value:x:@.result
+      strings.trim:x:@http.post/*/content/*/choices/0/*/message/*/content
+   get-first-value
+      get-value:x:@http.post/*/content/*/choices/0/*/message/*/finish_reason
+      .:unknown
+
+   // Adding current prompt to session.
+   unwrap:x:+/*/*/*/content
+   add:x:@.session
+      .
+         .
+            role:system
+            content:x:@.result
+   lambda2hyper:x:@.session/*
+   cache.set:x:@.arguments/*/session
+      expiration:600
+      value:x:@lambda2hyper
+
+   // Checking if we've got references.
+   if
+      and
+         exists:x:@.arguments/*/references
+         not-null:x:@.arguments/*/references
+         get-value:x:@.arguments/*/references
+         exists:x:@signal/*/snippets
+      .lambda
+         add:x:@.callback/*/return
+            .
+               references
+         add:x:@.callback/*/return/*/references
+            get-nodes:x:@signal/*/snippets/*
+
+   /*
+    * Applying some HTTP caching to avoid invoking OpenAI again with
+    * the same question before some minimum amount of time has passed.
+    */
+   response.headers.set
+      Cache-Control:max-age=30
+
+   // Returning results returned from invocation above to caller.
+   unwrap:x:+/*
+   return
+      result:x:@.result
+      finish_reason:x:@get-first-value
+      db_time:x:@signal/*/db_time
