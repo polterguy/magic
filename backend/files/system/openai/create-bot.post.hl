@@ -14,12 +14,9 @@ validators.mandatory:x:@.arguments/*/url
 validators.url:x:@.arguments/*/url
 
 // Doing some basic logging.
-log.info:Crawling URL generating OpenAI training snippets
+log.info:Crawling URL to generate OpenAI training data for a chatbot
    url:x:@.arguments/*/url
-   type:x:@.arguments/*/type
-   delay:x:@.arguments/*/delay
-   max:x:@.arguments/*/max
-   threshold:x:@.arguments/*/threshold
+   flavor:x:@.arguments/*/flavor
 
 // Making sure we trap exceptions.
 try
@@ -114,7 +111,7 @@ try
    unwrap:x:./*/signal/=magic.ai.crawl-site/*/.onafter/*/.type
    signal:magic.ai.crawl-site
       delay:int:1000
-      max:int:500
+      max:int:100
       threshold:int:150
       type:x:@.type
       .onafter

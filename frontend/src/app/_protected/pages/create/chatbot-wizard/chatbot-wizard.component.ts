@@ -157,6 +157,10 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
         this.generalService.showFeedback('Done creating bot', 'successMessage');
         this.embed();
 
+      } else if (args.type === 'warning') {
+
+        this.generalService.showFeedback(args.message);
+
       } else if (args.type === 'error') {
 
         this.generalService.showFeedback('Something went wrong when creating your bot', 'errorMessage');
