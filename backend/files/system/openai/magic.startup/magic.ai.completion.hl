@@ -151,7 +151,7 @@ slots.create:magic.ai.completion
                strings.concat
                   get-value:x:@.arguments/*/prompt
                   .:" ->"
-            add:x:@.callback/*/http.post/*/payload
+            add:x:../*/http.post/*/payload
                .
                   stop:" END"
 

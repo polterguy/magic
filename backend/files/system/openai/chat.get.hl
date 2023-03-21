@@ -36,5 +36,12 @@ signal:magic.ai.endpoint-common
          signal:magic.ai.completion
          return-nodes:x:@signal/*
 
+/*
+ * Applying some HTTP caching to avoid invoking OpenAI again with
+ * the same question before some minimum amount of time has passed.
+ */
+response.headers.set
+   Cache-Control:max-age=30
+
 // Returning result of worker slot to caller.
 return-nodes:x:@signal/*

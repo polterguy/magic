@@ -149,84 +149,89 @@ slots.create:magic.ai.get-context
          math.increment:x:@.offset
             get-count:x:@data.read/*
 
-   // Now fetching prompt, completion and URI from snippets.
-   add:x:./*/data.read/*/where/*/and/*/id.in
-      get-nodes:x:@.snippets/*/*/id
-   data.read
-      table:ml_training_snippets
-      columns
-         uri
-         prompt
-         completion
-      where
-         and
-            id.in
-
    // Used to hold the result we're returning to caller.
    .result
-
-   // Temporary variable used to calculate tokens.
-   .tmp:
 
    // Context value we return to caller.
    .context:
 
-   // Pruning snippets until we've got less tokens than [max_tokens].
-   .continue:bool:true
-   while:x:@.continue
+   // Verifying we actually found anything at all.
+   if
+      exists:x:@.snippets/*/*
+      .lambda
 
-      // Making sure we've got more snippets left.
-      if
-         not-exists:x:@data.read/0
-         .lambda
+         // Now fetching prompt, completion and URI from snippets.
+         add:x:./*/data.read/*/where/*/and/*/id.in
+            get-nodes:x:@.snippets/*/*/id
+         data.read
+            table:ml_training_snippets
+            columns
+               uri
+               prompt
+               completion
+            where
+               and
+                  id.in
 
-            // No snippets kicked in on question.
-            set-value:x:@.continue
-               .:bool:false
+         // Temporary variable used to calculate tokens.
+         .tmp:
 
-      else
+         // Pruning snippets until we've got less tokens than [max_tokens].
+         .continue:bool:true
+         while:x:@.continue
 
-         // Concatenating top snippet to [.tmp] buffer such that we can calculate total number of tokens.
-         set-value:x:@.tmp
-            strings.concat
-               get-value:x:@.tmp
-               .:"\r\n"
-               get-value:x:@data.read/0/*/prompt
-               .:"\r\n"
-               .:"\r\n"
-               get-value:x:@data.read/0/*/completion
-               .:"\r\n"
+            // Making sure we've got more snippets left.
+            if
+               not-exists:x:@data.read/0
+               .lambda
 
-         // Checking if we've got more context to work with.
-         if
-            lt
-               openai.tokenize:x:@.tmp
-               get-value:x:@.arguments/*/max_tokens
-            .lambda
+                  // No more snippets.
+                  set-value:x:@.continue
+                     .:bool:false
 
-               // We've got room for more context.
-               set-value:x:@.context
-                  get-value:x:@.tmp
+            else
+
+               // Concatenating top snippet to [.tmp] buffer such that we can calculate total number of tokens.
+               set-value:x:@.tmp
+                  strings.concat
+                     get-value:x:@.tmp
+                     .:"\r\n"
+                     get-value:x:@data.read/0/*/prompt
+                     .:"\r\n"
+                     .:"\r\n"
+                     get-value:x:@data.read/0/*/completion
+                     .:"\r\n"
+
+               // Checking if we've got more context to work with.
                if
-                  and
-                     not-null:x:@data.read/0/*/uri
-                     not-exists:x:@.result/*/*/uri/={@data.read/0/*/uri}
+                  lt
+                     openai.tokenize:x:@.tmp
+                     get-value:x:@.arguments/*/max_tokens
                   .lambda
 
-                     // Adding current reference to [.result]
-                     unwrap:x:+/*/*/*
-                     add:x:@.result
-                        .
-                           .
-                              prompt:x:@data.read/0/*/prompt
-                              uri:x:@data.read/0/*/uri
-               remove-nodes:x:@data.read/0
+                     // We've got room for more context.
+                     set-value:x:@.context
+                        get-value:x:@.tmp
+                     if
+                        and
+                           not-null:x:@data.read/0/*/uri
+                           not-exists:x:@.result/*/*/uri/={@data.read/0/*/uri}
+                        .lambda
 
-         else
+                           // Adding current reference to [.result]
+                           unwrap:x:+/*/*/*
+                           add:x:@.result
+                              .
+                                 .
+                                    prompt:x:@data.read/0/*/prompt
+                                    uri:x:@data.read/0/*/uri
+                     remove-nodes:x:@data.read/0
 
-            // We're done, no more room for context.
-            set-value:x:@.continue
-               .:bool:false
+               else
+
+                  // We're done, no more room for context.
+                  set-value:x:@.continue
+                     .:bool:false
 
    // Measuring how much time we spent looping through snippets.
    .end
@@ -259,3 +264,9 @@ slots.create:magic.ai.get-context
             context:x:@.context
             db_time:x:@.time
             snippets
+   else
+
+      // Nothing ...
+      unwrap:x:+/*
+      return
+         db_time:x:@.time
