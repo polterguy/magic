@@ -11,6 +11,8 @@
    chat:bool
    markdown:bool
    speech:bool
+   
+   // Legacy parameter, ignore, no longer in use.
    gpt:bool
 
 // Sanity checking invocation.
