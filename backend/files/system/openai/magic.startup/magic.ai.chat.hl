@@ -177,18 +177,11 @@ slots.create:magic.ai.chat
          get-value:x:@.arguments/*/references
          exists:x:@signal/*/snippets
       .lambda
-         add:x:@.callback/*/return
+         add:x:../*/return
             .
                references
-         add:x:@.callback/*/return/*/references
+         add:x:../*/return/*/references
             get-nodes:x:@signal/*/snippets/*
-
-   /*
-    * Applying some HTTP caching to avoid invoking OpenAI again with
-    * the same question before some minimum amount of time has passed.
-    */
-   response.headers.set
-      Cache-Control:max-age=30
 
    // Returning results returned from invocation above to caller.
    unwrap:x:+/*
