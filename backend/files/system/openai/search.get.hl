@@ -4,6 +4,7 @@
    prompt:string
    type:string
    recaptcha_response:string
+   max:int
 .description:OpenAI AI search endpoint returning only references to matching training snippets
 .type:public
 
@@ -13,12 +14,14 @@ insert-before:x:../*/signal/*/.callback
 signal:magic.ai.endpoint-common
    .callback
 
-      // Checking what type of model this is, and invoking correct slot accordingly.
+      // Invoking slot responsible for returning URLs to us.
       add:x:+
          get-nodes:x:@.arguments/*
-      signal:magic.ai.get-context
+      signal:magic.ai.search
+
+      // Returning results of above invocation to caller.
       add:x:./*/return-nodes/*/snippets
-         get-nodes:x:@signal/*/snippets/*/[0,5]
+         get-nodes:x:@signal/*/snippets/*
       add:x:./*/return-nodes
          get-nodes:x:@signal/*/db_time
       return-nodes
@@ -27,9 +30,13 @@ signal:magic.ai.endpoint-common
 /*
  * Applying some HTTP caching to avoid invoking OpenAI again with
  * the same question before some minimum amount of time has passed.
+ *
+ * Notice, we can apply more "aggressive" caching here than in our
+ * chat endpoints, since the same query will mostly always return
+ * the same result, since there is no room for "creativity" here.
  */
 response.headers.set
-   Cache-Control:max-age=30
+   Cache-Control:max-age=300
 
 // Returning result of worker slot to caller.
 return-nodes:x:@signal/*
