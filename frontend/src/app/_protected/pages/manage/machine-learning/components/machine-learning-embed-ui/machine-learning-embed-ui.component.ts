@@ -28,6 +28,10 @@ export class MachineLearningEmbedUiComponent implements OnInit {
   chat: boolean = true;
   markdown: boolean = true;
   speech: boolean = false;
+  placeholder: string = 'Search ...';
+  buttonTxtSearch: string = 'AI Search';
+  maxSearch: number = 5;
+  currentTabIndex: number = 0;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -60,12 +64,36 @@ export class MachineLearningEmbedUiComponent implements OnInit {
     });
   }
 
-  getEmbed() {
+  selectedIndexChange(tabIndex: number) {
+
+    this.currentTabIndex = tabIndex;
+  }
+
+  getChatbotEmbed() {
 
     return `<script src="${this.backendService.active.url}/magic/system/openai/include-javascript?markdown=${this.markdown ? 'true' : 'false'}&speech=${this.speech ? 'true' : 'false'}&search=${this.search ? 'true' : 'false'}&chat=${this.chat ? 'true' : 'false'}&css=${encodeURIComponent(this.theme)}&file=default&type=${encodeURIComponent(this.type)}&header=${encodeURIComponent(this.header)}&button=${encodeURIComponent(this.buttonTxt)}" defer></script>`;
   }
 
+  getSearchEmbed() {
+
+    return `<script src="${this.backendService.active.url}/magic/system/openai/include-search?css=${encodeURIComponent(this.theme)}&type=${encodeURIComponent(this.type)}&placeholder=${encodeURIComponent(this.placeholder)}&button=${encodeURIComponent(this.buttonTxtSearch)}&max=${this.maxSearch}" defer></script>`;
+  }
+
   embed() {
+
+    switch (this.currentTabIndex) {
+
+      case 0:
+        this.embedChatbot();
+        break;
+
+      case 1:
+        this.embedSearch();
+        break;
+    }
+  }
+
+  embedChatbot() {
 
     if (this.search === false && this.chat === false) {
 
@@ -73,8 +101,17 @@ export class MachineLearningEmbedUiComponent implements OnInit {
       return;
     }
 
-    this.clipboard.copy(this.getEmbed());
-    this.generalService.showFeedback('HTML to include your bot can be found on your clipboard', 'successMessage');
+    this.clipboard.copy(this.getChatbotEmbed());
+    this.generalService.showFeedback('HTML to include chatbot can be found on your clipboard', 'successMessage');
+    if (this.data.noClose !== true) {
+      this.dialogRef.close();
+    }
+  }
+
+  embedSearch() {
+
+    this.clipboard.copy(this.getSearchEmbed());
+    this.generalService.showFeedback('HTML to include search widget can be found on your clipboard', 'successMessage');
     if (this.data.noClose !== true) {
       this.dialogRef.close();
     }
