@@ -88,6 +88,7 @@ function aista_show_search_overlay() {
   aistaSearchInput.type = 'text';
   aistaSearchInput.placeholder = '[[placeholder]]';
   aistaSearchInput.className = 'aista-search-input';
+  aistaSearchInput.autocomplete = 'off';
   setTimeout(() => {
     aistaSearchInput.focus();
   }, 500);
@@ -183,6 +184,7 @@ function aista_invoke_search(msg, token) {
           const idxLi = window.document.createElement('li');
           const idxLnk = window.document.createElement('a');
           idxLnk.innerHTML = idx.prompt;
+          idxLnk.target = '_blank';
           idxLnk.href = idx.uri;
           idxLi.appendChild(idxLnk);
           list.appendChild(idxLi);
