@@ -56,7 +56,11 @@ fetch('[[url]]/magic/system/openai/include-style?file=' + encodeURIComponent('[[
  */
 function aista_create_search_ui() {
   const aistaChatBtn = window.document.createElement('button');
-  aistaChatBtn.innerHTML = '[[button]]';
+  let btnTxt = '[[button]]';
+  if (btnTxt === '') {
+    btnTxt = '<i class="icofont-search-1"></i>';
+  }
+  aistaChatBtn.innerHTML = btnTxt;
   aistaChatBtn.className = 'aista-search-btn';
   aistaChatBtn.addEventListener('click', () => aista_show_search_overlay());
   window.document.body.appendChild(aistaChatBtn);
@@ -92,6 +96,11 @@ function aista_show_search_overlay() {
   setTimeout(() => {
     aistaSearchInput.focus();
   }, 500);
+  aistaSearchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      aistaSearchOverlay.parentNode.removeChild(aistaSearchOverlay)
+    }
+  });
   aistaSearchForm.appendChild(aistaSearchInput);
 
   // Handling form submit.
@@ -106,7 +115,7 @@ function aista_show_search_overlay() {
   aistaSearchBtn.type = 'submit';
   aistaSearchBtn.id = 'aistaSearchBtn';
   aistaSearchBtn.className = 'aista-search-search-btn';
-  aistaSearchBtn.innerHTML = '<i class="icofont-search-1"></i>'
+  aistaSearchBtn.innerHTML = '<i class="icofont-search-1"></i>';
   aistaSearchForm.appendChild(aistaSearchBtn);
 
   // Search result wrapper.

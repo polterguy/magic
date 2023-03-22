@@ -1,102 +1,194 @@
 
 
-<h3 mat-dialog-title class="mb-3">Embed chatbot on website</h3>
+<h3 mat-dialog-title class="mb-3">Embed Chatbot or AI Search on your website</h3>
 
 <div mat-dialog-content class="content">
 
-  <mat-form-field class="w-100 standalone-field">
-    <span
-      matPrefix
-      matTooltip="Header of chat window"
-      class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-      <mat-icon>edit</mat-icon>
-      <span class="text-muted">|</span>
-    </span>
-    <input
-      matInput
-      placeholder="Header"
-      spellcheck="false"
-      [(ngModel)]="header"
-      autocomplete="off">
-  </mat-form-field>
+  <mat-tab-group
+    mat-stretch-tabs
+    (selectedIndexChange)="selectedIndexChange($event)"
+    dynamicHeight
+    animationDuration="0ms">
 
-  <mat-form-field class="w-100 standalone-field">
-    <span
-      matPrefix
-      matTooltip="Button text"
-      class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-      <mat-icon>touch_app</mat-icon>
-      <span class="text-muted">|</span>
-    </span>
-    <input
-      matInput
-      placeholder="Button text"
-      spellcheck="false"
-      [(ngModel)]="buttonTxt"
-      autocomplete="off">
-  </mat-form-field>
+    <mat-tab label="Chatbot">
 
-  <mat-form-field class="w-100 standalone-field">
-    <span
-      matPrefix
-      matTooltip="Theme to use"
-      class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-      <mat-icon>palette</mat-icon>
-      <span class="text-muted">|</span>
-    </span>
-    <mat-select
-      [(ngModel)]="theme"
-      placeholder="Theme">
-      <mat-option
-        *ngFor="let idx of themes"
-        [value]="idx">
-        {{idx}}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
+      <mat-form-field class="w-100 standalone-field pt-4">
+        <span
+          matPrefix
+          matTooltip="Header of chat window"
+          class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+          <mat-icon>edit</mat-icon>
+          <span class="text-muted">|</span>
+        </span>
+        <input
+          matInput
+          placeholder="Header"
+          spellcheck="false"
+          [(ngModel)]="header"
+          autocomplete="off">
+      </mat-form-field>
 
-  <p class="text-muted mt-2" style="word-wrap: break-word;">
-    {{getEmbed()}}
-  </p>
+      <mat-form-field class="w-100 standalone-field">
+        <span
+          matPrefix
+          matTooltip="Button text"
+          class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+          <mat-icon>touch_app</mat-icon>
+          <span class="text-muted">|</span>
+        </span>
+        <input
+          matInput
+          placeholder="Button text"
+          spellcheck="false"
+          [(ngModel)]="buttonTxt"
+          autocomplete="off">
+      </mat-form-field>
+
+      <mat-form-field class="w-100 standalone-field">
+        <span
+          matPrefix
+          matTooltip="Theme to use"
+          class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+          <mat-icon>palette</mat-icon>
+          <span class="text-muted">|</span>
+        </span>
+        <mat-select
+          [(ngModel)]="theme"
+          placeholder="Theme">
+          <mat-option
+            *ngFor="let idx of themes"
+            [value]="idx">
+            {{idx}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div class="mt-3">
+
+        <mat-checkbox
+          [(ngModel)]="search"
+          labelPosition="before"
+          class="me-3"
+          color="primary">Search</mat-checkbox>
+
+        <mat-checkbox
+          [(ngModel)]="chat"
+          labelPosition="before"
+          class="me-3"
+          color="primary">Chat</mat-checkbox>
+
+        <mat-checkbox
+          [(ngModel)]="markdown"
+          labelPosition="before"
+          class="me-3"
+          color="primary">Markdown</mat-checkbox>
+
+        <mat-checkbox
+          [(ngModel)]="speech"
+          labelPosition="before"
+          class="me-3"
+          color="primary">Speech</mat-checkbox>
+
+      </div>
+
+      <p class="text-muted mt-3" style="word-wrap: break-word;">
+        {{getChatbotEmbed()}}
+      </p>
+
+    </mat-tab>
+
+    <mat-tab label="AI Search">
+
+      <mat-form-field class="w-100 standalone-field pt-4">
+        <span
+          matPrefix
+          matTooltip="Placeholder of search field"
+          class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+          <mat-icon>edit</mat-icon>
+          <span class="text-muted">|</span>
+        </span>
+        <input
+          matInput
+          placeholder="Placeholder"
+          spellcheck="false"
+          [(ngModel)]="placeholder"
+          autocomplete="off">
+      </mat-form-field>
+  
+      <mat-form-field class="w-100 standalone-field">
+        <span
+          matPrefix
+          matTooltip="Button text"
+          class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+          <mat-icon>touch_app</mat-icon>
+          <span class="text-muted">|</span>
+        </span>
+        <input
+          matInput
+          placeholder="Button text"
+          spellcheck="false"
+          [(ngModel)]="buttonTxtSearch"
+          autocomplete="off">
+      </mat-form-field>
+
+      <mat-form-field class="w-100 standalone-field">
+        <span
+          matPrefix
+          matTooltip="Theme to use"
+          class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+          <mat-icon>palette</mat-icon>
+          <span class="text-muted">|</span>
+        </span>
+        <mat-select
+          [(ngModel)]="theme"
+          placeholder="Theme">
+          <mat-option
+            *ngFor="let idx of themes"
+            [value]="idx">
+            {{idx}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+  
+      <mat-form-field class="w-100 standalone-field">
+        <span
+          matPrefix
+          matTooltip="Max number of results"
+          class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+          <mat-icon>timeline</mat-icon>
+          <span class="text-muted">|</span>
+        </span>
+        <input
+          matInput
+          placeholder="Max results"
+          type="number"
+          step="1"
+          [(ngModel)]="maxSearch"
+          autocomplete="off">
+      </mat-form-field>
+  
+      <p class="text-muted mt-3" style="word-wrap: break-word;">
+        {{getSearchEmbed()}}
+      </p>
+  
+    </mat-tab>
+
+  </mat-tab-group>
 
 </div>
 
 <div mat-dialog-actions [align]="'end'">
 
-  <mat-checkbox
-    [(ngModel)]="search"
-    labelPosition="before"
-    class="me-3"
-    color="primary">Search</mat-checkbox>
-
-  <mat-checkbox
-    [(ngModel)]="chat"
-    labelPosition="before"
-    class="me-3"
-    color="primary">Chat</mat-checkbox>
-
-  <mat-checkbox
-    [(ngModel)]="markdown"
-    labelPosition="before"
-    class="me-3"
-    color="primary">Markdown</mat-checkbox>
-
-  <mat-checkbox
-    [(ngModel)]="speech"
-    labelPosition="before"
-    class="me-3"
-    color="primary">Speech</mat-checkbox>
+  <button
+    mat-flat-button
+    (click)="embed()">
+    Copy
+  </button>
 
   <button
     mat-button
     mat-dialog-close>
     Close
-  </button>
-
-  <button
-    mat-flat-button
-    (click)="embed()">
-    Copy
   </button>
 
 </div>
