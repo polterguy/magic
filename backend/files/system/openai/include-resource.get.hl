@@ -1,0 +1,23 @@
+
+// Returns the specified JavaScript file wrapping the specified model to caller.
+.arguments
+   file:string
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/file
+
+// Finds absolute path to file.
+strings.concat
+   .:/system/openai/front.files/
+   get-value:x:@.arguments/*/file
+
+// Opening file as stream.
+io.stream.open-file:x:@strings.concat
+
+// Applying some caching headers.
+response.headers.set
+   Content-Type:application/octet-stream
+   Cache-Control:public, max-age=300
+
+// Returning file to caller.
+return:x:@io.stream.open-file

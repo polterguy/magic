@@ -1,0 +1,76 @@
+
+// Returns the specified JavaScript file wrapping the specified model to caller.
+.arguments
+   css:string
+   type:string
+   button:string
+   placeholder:string
+   max:int
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/placeholder
+validators.mandatory:x:@.arguments/*/button
+validators.mandatory:x:@.arguments/*/type
+validators.mandatory:x:@.arguments/*/css
+validators.mandatory:x:@.arguments/*/max
+
+// Figuring out API URL.
+.scheme
+request.host
+if
+   strings.contains:x:@request.host
+      .:localhost
+   .lambda
+      set-value:x:@.scheme
+         .:"http"
+else
+   set-value:x:@.scheme
+      .:"https"
+.url
+set-value:x:@.url
+   strings.concat
+      get-value:x:@.scheme
+      .:"://"
+      request.host
+
+// Loading search JavaScript file.
+.result
+set-value:x:@.result
+   io.file.load:/system/openai/front.files/search.js
+
+// Dynamically exchanging template fields in JavaScript file.
+set-value:x:@.result
+   strings.replace:x:@.result
+      .:[[url]]
+      get-value:x:@.url
+set-value:x:@.result
+   strings.replace:x:@.result
+      .:[[max]]
+      get-value:x:@.arguments/*/max
+set-value:x:@.result
+   strings.replace:x:@.result
+      .:[[placeholder]]
+      get-value:x:@.arguments/*/placeholder
+set-value:x:@.result
+   strings.replace:x:@.result
+      .:[[button]]
+      get-value:x:@.arguments/*/button
+set-value:x:@.result
+   strings.replace:x:@.result
+      .:[[type]]
+      get-value:x:@.arguments/*/type
+set-value:x:@.result
+   strings.replace:x:@.result
+      .:[[css]]
+      get-first-value
+         get-value:x:@.arguments/*/css
+         get-value:x:@.arguments/*/file
+         .:
+
+// Making sure we return correct Content-Type to caller, and applying some cache.
+response.headers.set
+   Content-Type:application/javascript
+   Cache-Control:public, max-age=300
+
+// Returning result to caller.
+return:x:@.result

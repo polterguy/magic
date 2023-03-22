@@ -68,7 +68,7 @@ fetch('[[url]]/magic/system/openai/include-style?file=' + encodeURIComponent('[[
 
     // Creating our chat UI.
     aista_create_chat_ui();
-  });
+});
 
 /*
  * Function creating our chat UI.
