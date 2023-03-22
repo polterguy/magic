@@ -66,6 +66,13 @@
   cursor: pointer !important;
 }
 
+.aista-search-close:hover,
+.aista-search-close:active,
+.aista-search-close:focus {
+  text-decoration: none;
+}
+
+
 .aista-search-form {
   display: flex !important;
   margin-top: 150px !important;
@@ -95,10 +102,20 @@
   font-size: 15px !important;
 }
 
+.aista-search-search-btn:hover,
+.aista-search-search-btn:active,
+.aista-search-search-btn:focus {
+  text-decoration: none;
+}
+
 .aista-search-input:disabled,
 .aista-search-search-btn:disabled {
   background-color: #e0e0e0 !important;
   color: #888 !important;
+}
+
+.aista-search-search-btn i {
+  color: #444;
 }
 
 .aista-search-result-wrp {
