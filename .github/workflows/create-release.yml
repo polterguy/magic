@@ -22,6 +22,7 @@ jobs:
         docker push aistamagic/magic-frontend:latest
         docker push aistamagic/magic-frontend:${{ steps.get_version.outputs.VERSION }}
         cd ..
+
         cd ./backend
         docker build -t aistamagic/magic-backend:latest -f ./Dockerfile .
         docker push aistamagic/magic-backend:latest
@@ -30,3 +31,14 @@ jobs:
         dotnet remove reference magic.lambda.system
         docker build -t aistamagic/magic-backend:min-${{ steps.get_version.outputs.VERSION }} -f ./Dockerfile .
         docker push aistamagic/magic-backend:min-${{ steps.get_version.outputs.VERSION }}
+
+        cd ./files/etc/www/
+        git pull https://github.com/polterguy/expert-ai.git
+        npm i
+        ng build
+        ls
+        cd ..
+        cd ..
+        cd ..
+        docker build -t aistamagic/magic-backend-expert:min-${{ steps.get_version.outputs.VERSION }} -f ./Dockerfile .
+        docker push aistamagic/magic-backend-expert:min-${{ steps.get_version.outputs.VERSION }}
