@@ -92,9 +92,17 @@ slots.create:magic.ai.search
          // Checking if dot product is higher than threshold.
          if
             and
+               not-null:x:@.dp/#/*/uri
+               neq:x:@.dp/#/*/uri
+                  .:
+               not-exists:x:@.snippets/*/*/uri/={@.dp/#/*/uri}
+               or
+                  strings.starts-with:x:@.dp/#/*/uri
+                     .:"http://"
+                  strings.starts-with:x:@.dp/#/*/uri
+                     .:"https://"
                mte:x:@math.dot
                   get-value:x:@.arguments/*/threshold
-               not-exists:x:@.snippets/*/*/uri/={@.dp/#/*/uri}
             .lambda
 
                // Adding result to above [.snippets] collection.
