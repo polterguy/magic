@@ -132,6 +132,9 @@ function aista_show_search_overlay() {
 }
 
 function aista_search(prompt) {
+  if (prompt === '') {
+    return;
+  }
   document.getElementById('aistaSearchInput').disabled = true;
   document.getElementById('aistaSearchBtn').disabled = true;
   if (aistaReCaptchaSiteKeySearch) {
