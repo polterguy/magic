@@ -106,7 +106,6 @@ else
          public:bool:true
          status:400
 
-
 // Figuring out API URL.
 .scheme
 request.host

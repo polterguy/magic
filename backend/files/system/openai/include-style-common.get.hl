@@ -42,10 +42,35 @@ else
          public:bool:true
          status:400
 
+// Figuring out API URL.
+.scheme
+request.host
+if
+   strings.contains:x:@request.host
+      .:localhost
+   .lambda
+      set-value:x:@.scheme
+         .:"http"
+else
+   set-value:x:@.scheme
+      .:"https"
+.url
+set-value:x:@.url
+   strings.concat
+      get-value:x:@.scheme
+      .:"://"
+      request.host
+
+// Replacing URL in CSS file if existing.
+set-value:x:@.result
+   strings.replace:x:@.result
+      .:[[url]]
+      get-value:x:@.url
+
 // Making sure we return correct Content-Type to caller, and applying some cache.
 response.headers.set
    Content-Type:text/css
-   Cache-Control:public, max-age=300
+   Cache-Control:public, max-age=600
 
 // Returning result to caller.
 return:x:@.result
