@@ -34,8 +34,8 @@ jobs:
 
         cd ./files/etc/www/
         git clone https://github.com/polterguy/expert-ai.git
-        cd expert-ai
-        npm i
+        cd ./expert-ai
+        npm install
         ng build
         ls
         cd ..
