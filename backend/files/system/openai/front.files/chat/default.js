@@ -103,7 +103,7 @@ function aista_create_chat_ui() {
   let html = `
   <div class="aista-chat-header">[[header]]</div>
   <div class="aista-chat-msg-container"></div>
-  <button class="aista-chat-close-btn">X</button>
+  <button class="aista-chat-close-btn"><i class="icofont-close"></i></button>
   <form class="aista-chat-form">
   <input type="text" placeholder="Ask me anything ..." class="aista-chat-prompt">`;
   if (aistaSpeech) {
@@ -116,6 +116,18 @@ function aista_create_chat_ui() {
   html += '</form>';
   aistaChatWnd.innerHTML = html;
   window.document.body.appendChild(aistaChatWnd);
+
+  // Adding event listener to input field to allow for closing it with escape key.
+  const aistaChatInpField = document.getElementsByClassName('aista-chat-prompt')[0];
+  aistaChatInpField.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      aistaChatWnd.style.display = 'none';
+      const btns = window.document.getElementsByClassName('aista-chat-btn');
+      if (btns.length > 0) {
+        btns[0].style.display = 'block';
+      }
+    }
+  });
 
   // Add an event listener to the close button.
   window.document.getElementsByClassName('aista-chat-close-btn')[0].addEventListener('click', () => {

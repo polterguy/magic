@@ -16,11 +16,9 @@
    
    // Legacy parameter, ignore, no longer in use.
    gpt:bool
-
 .description:Returns the JavaScript required to embed a ChatGPT based chatbot on some website to caller.
 
 // Sanity checking invocation.
-validators.mandatory:x:@.arguments/*/file
 validators.mandatory:x:@.arguments/*/type
 
 // Defaulting button to be rendered by default.
@@ -30,6 +28,22 @@ if
       add:x:@.arguments
          .
             render_button:bool:true
+
+// Defaulting file to be rendered to default.
+if
+   not-exists:x:@.arguments/*/file
+   .lambda
+      add:x:@.arguments
+         .
+            file:default
+
+// Defaulting CSS to be rendered to default.
+if
+   not-exists:x:@.arguments/*/file
+   .lambda
+      add:x:@.arguments
+         .
+            css:default
 
 // Defaulting chat and search arguments if not specified.
 if
@@ -135,12 +149,6 @@ set-value:x:@.result
          .:
 set-value:x:@.result
    strings.replace:x:@.result
-      .:[[file]]
-      get-first-value
-         get-value:x:@.arguments/*/file
-         .:
-set-value:x:@.result
-   strings.replace:x:@.result
       .:[[css]]
       get-first-value
          get-value:x:@.arguments/*/css
@@ -169,16 +177,6 @@ else
    set-value:x:@.result
       strings.replace:x:@.result
          .:[[chat]]
-         .:false
-if:x:@.arguments/*/gpt
-   set-value:x:@.result
-      strings.replace:x:@.result
-         .:[[gpt]]
-         .:true
-else
-   set-value:x:@.result
-      strings.replace:x:@.result
-         .:[[gpt]]
          .:false
 if:x:@.arguments/*/markdown
    set-value:x:@.result
