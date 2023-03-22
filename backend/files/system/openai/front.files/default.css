@@ -412,7 +412,7 @@
   width: 100%;
   color: #fefefe;
   margin-top: 25px;
-  font-size: 15px;
+  font-size: 18px;
   line-height: 1.5;
 }
 
@@ -444,6 +444,15 @@
 .aista-search-result-wrp ul li a {
   color: #fefefe !important;
   text-decoration: none !important;
+  display: block;
+  transition: color .25s ease-in-out;
+}
+
+.aista-search-result-wrp ul li a:hover,
+.aista-search-result-wrp ul li a:focus,
+.aista-search-result-wrp ul li a:active {
+  color: #fed080 !important;
+  transition: color .25s ease-in-out;
 }
 
 .aista-search-result-wrp ul li:nth-child(1) {
