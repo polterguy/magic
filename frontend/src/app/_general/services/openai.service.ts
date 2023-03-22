@@ -90,6 +90,14 @@ export class OpenAIService {
   }
 
   /**
+   * Returns all themes for search from backend.
+   */
+  themesSearch() {
+
+    return this.httpService.get<string[]>('/magic/system/openai/themes-search');
+  }
+
+  /**
    * Uploads the specified training data file to the backend.
    */
   uploadTrainingFile(data: FormData) {

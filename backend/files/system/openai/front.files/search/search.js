@@ -1,10 +1,10 @@
 
 /*
- * Default JavaScript file for OpenAI chat inclusion.
+ * Default JavaScript file for OpenAI search embed.
  */
 (function() {
 
-fetch('[[url]]/magic/system/openai/include-style?file=icofont')
+fetch('[[url]]/magic/system/openai/include-style-common?file=icofont')
   .then(res => {
     return res.text()
   })
@@ -36,7 +36,7 @@ fetch('[[url]]/magic/system/auth/recaptcha-key', {
 
 
 // Creating CSS inclusion.
-fetch('[[url]]/magic/system/openai/include-style?file=' + encodeURIComponent('[[css]]'))
+fetch('[[url]]/magic/system/openai/include-style-search?file=' + encodeURIComponent('[[css]]'))
   .then(res => {
     return res.text()
   })

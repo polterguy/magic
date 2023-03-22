@@ -37,6 +37,9 @@
   text-decoration: none !important;
   color: #707070 !important;
 }
+.aista-chat-btn i {
+  font-size: 20px;
+}
 .aista-chat-wnd {
   font-family: Roboto !important;
   position: fixed !important;

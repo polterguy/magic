@@ -36,7 +36,7 @@ set-value:x:@.url
 // Loading search JavaScript file.
 .result
 set-value:x:@.result
-   io.file.load:/system/openai/front.files/search.js
+   io.file.load:/system/openai/front.files/search/search.js
 
 // Dynamically exchanging template fields in JavaScript file.
 set-value:x:@.result

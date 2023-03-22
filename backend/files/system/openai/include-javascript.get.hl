@@ -1,5 +1,7 @@
 
-// Returns the specified JavaScript file wrapping the specified model to caller.
+/*
+ * Returns the JavaScript required to embed a ChatGPT based chatbot on some website to caller.
+ */
 .arguments
    css:string
    file:string
@@ -15,10 +17,11 @@
    // Legacy parameter, ignore, no longer in use.
    gpt:bool
 
+.description:Returns the JavaScript required to embed a ChatGPT based chatbot on some website to caller.
+
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/file
 validators.mandatory:x:@.arguments/*/type
-validators.mandatory:x:@.arguments/*/button
 
 // Defaulting button to be rendered by default.
 if
@@ -27,14 +30,6 @@ if
       add:x:@.arguments
          .
             render_button:bool:true
-
-// Defaulting gpt to false
-if
-   not-exists:x:@.arguments/*/gpt
-   .lambda
-      add:x:@.arguments
-         .
-            gpt:bool:false
 
 // Defaulting chat and search arguments if not specified.
 if
@@ -80,7 +75,7 @@ else
 
    // Checking if system JavaScript file exists.
    strings.concat
-      .:/system/openai/front.files/
+      .:/system/openai/front.files/chat/
       get-value:x:@.arguments/*/file
       .:.js
    if
