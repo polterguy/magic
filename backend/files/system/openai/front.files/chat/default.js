@@ -6,9 +6,6 @@
 
 // True if caller wants "references" as in site search.
 let aistaChatSearch = [[search]];
-  
-// True if we're using the new GPT endpoint.
-let aistaIsGpt = [[gpt]];
 
 // True if caller wants "chatting" support.
 let aistaChatChat = [[chat]];
@@ -18,6 +15,18 @@ let aistaChatMarkdown = [[markdown]];
 
 // True if speech is turned on.
 let aistaSpeech = [[speech]];
+
+fetch('[[url]]/magic/system/openai/include-style-common?file=icofont')
+  .then(res => {
+    return res.text()
+  })
+  .then(res => {
+
+    // Injecting CSS into DOM.
+    var css = document.createElement('style');
+    css.innerHTML = res;
+    window.document.getElementsByTagName('head')[0].appendChild(css);
+});
 
 // Retrieving reCAPTCHA site key.
 let aistaReCaptchaSiteKey = null;
@@ -78,7 +87,11 @@ function aista_create_chat_ui() {
   // Creating chat button if we should.
   if ('[[render_button]]' === 'True') {
     const aistaChatBtn = window.document.createElement('button');
-    aistaChatBtn.innerHTML = '[[button]]';
+    let btnTxt = '[[button]]';
+    if (btnTxt === '') {
+      btnTxt = '<i class="icofont-chat"></i>';
+    }
+    aistaChatBtn.innerHTML = btnTxt;
     aistaChatBtn.className = 'aista-chat-btn';
     aistaChatBtn.addEventListener('click', () => aista_show_chat_window());
     window.document.body.appendChild(aistaChatBtn);
@@ -205,7 +218,7 @@ function aista_zoom_image(img) {
 function aista_invoke_prompt(msg, token, speech) {
 
   // Creating our URL.
-  let url = `[[url]]/magic/system/openai/${aistaIsGpt ? 'chat' : 'prompt'}?prompt=` + encodeURIComponent(msg) + '&type=[[type]]';
+  let url = `[[url]]/magic/system/openai/chat?prompt=` + encodeURIComponent(msg) + '&type=[[type]]';
   if (token) {
     url += '&recaptcha_response=' + encodeURIComponent(token);
   }

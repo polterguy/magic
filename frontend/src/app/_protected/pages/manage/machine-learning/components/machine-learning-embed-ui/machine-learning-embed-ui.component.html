@@ -140,10 +140,10 @@
           <span class="text-muted">|</span>
         </span>
         <mat-select
-          [(ngModel)]="theme"
+          [(ngModel)]="themeSearch"
           placeholder="Theme">
           <mat-option
-            *ngFor="let idx of themes"
+            *ngFor="let idx of themesSearch"
             [value]="idx">
             {{idx}}
           </mat-option>

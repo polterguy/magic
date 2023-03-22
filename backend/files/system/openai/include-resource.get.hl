@@ -8,7 +8,7 @@ validators.mandatory:x:@.arguments/*/file
 
 // Finds absolute path to file.
 strings.concat
-   .:/system/openai/front.files/
+   .:/system/openai/front.files/common/
    get-value:x:@.arguments/*/file
 
 // Opening file as stream.

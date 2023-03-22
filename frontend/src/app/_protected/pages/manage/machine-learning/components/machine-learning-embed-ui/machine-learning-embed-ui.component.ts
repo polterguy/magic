@@ -21,6 +21,8 @@ export class MachineLearningEmbedUiComponent implements OnInit {
 
   theme: string = 'chess';
   themes: string[] = [];
+  themeSearch: string = 'default';
+  themesSearch: string[] = [];
   type: string = null;
   header: string = 'Ask about our services or products';
   buttonTxt: string = 'AI Chat';
@@ -45,7 +47,6 @@ export class MachineLearningEmbedUiComponent implements OnInit {
 
   ngOnInit() {
 
-    console.log(this.data);
     if (this.data.search === true) {
       this.search = true;
     }
@@ -58,7 +59,20 @@ export class MachineLearningEmbedUiComponent implements OnInit {
       },
       error: () => {
 
-        this.generalService.showFeedback('Something went wrong as we tried to create your snippet', 'errorMessage');
+        this.generalService.showFeedback('Something went wrong as we tried to retrieve themes', 'errorMessage');
+        this.generalService.hideLoading();
+      }
+    });
+
+    // Retrieving all themes from the backend.
+    this.openAiService.themesSearch().subscribe({
+      next: (themes: string[]) => {
+
+        this.themesSearch = themes;
+      },
+      error: () => {
+
+        this.generalService.showFeedback('Something went wrong as we tried to retrieve themes', 'errorMessage');
         this.generalService.hideLoading();
       }
     });
@@ -76,7 +90,7 @@ export class MachineLearningEmbedUiComponent implements OnInit {
 
   getSearchEmbed() {
 
-    return `<script src="${this.backendService.active.url}/magic/system/openai/include-search?css=${encodeURIComponent(this.theme)}&type=${encodeURIComponent(this.type)}&placeholder=${encodeURIComponent(this.placeholder)}&button=${encodeURIComponent(this.buttonTxtSearch)}&max=${this.maxSearch}" defer></script>`;
+    return `<script src="${this.backendService.active.url}/magic/system/openai/include-search?css=${encodeURIComponent(this.themeSearch)}&type=${encodeURIComponent(this.type)}&placeholder=${encodeURIComponent(this.placeholder)}&button=${encodeURIComponent(this.buttonTxtSearch)}&max=${this.maxSearch}" defer></script>`;
   }
 
   embed() {
