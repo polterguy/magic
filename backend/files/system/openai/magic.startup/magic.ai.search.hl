@@ -1,0 +1,199 @@
+
+/*
+ * Slot that returns [max] search results for the specified [type], given the
+ * specified [threshold], the specified [prompt] and the specified [vector_model].
+ */
+slots.create:magic.ai.search
+
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/type
+   validators.mandatory:x:@.arguments/*/prompt
+   validators.mandatory:x:@.arguments/*/threshold
+   validators.mandatory:x:@.arguments/*/max
+   validators.mandatory:x:@.arguments/*/vector_model
+   validators.string:x:@.arguments/*/prompt
+      min:1
+
+   // Converting threshold in case we're given the wrong type.
+   set-value:x:@.arguments/*/threshold
+      convert:x:@.arguments/*/threshold
+         type:double
+
+   // Retrieving embeddings.
+   .token
+   set-value:x:@.token
+      strings.concat
+         .:"Bearer "
+         config.get:"magic:openai:key"
+
+   // Retrieving embedding for prompt.
+   http.post:"https://api.openai.com/v1/embeddings"
+      headers
+         Authorization:x:@.token
+         Content-Type:application/json
+      payload
+         input:x:@.arguments/*/prompt
+         model:x:@.arguments/*/vector_model
+      convert:true
+
+   // Sanity checking above invocation.
+   if
+      not
+         and
+            mte:x:@http.post
+               .:int:200
+            lt:x:@http.post
+               .:int:300
+      .lambda
+
+         // Oops, error - Logging error and returning OpenAI's HTTP status code to caller.
+         lambda2hyper:x:@http.post
+         log.error:Something went wrong while invoking OpenAI
+            message:x:@http.post/*/content/*/error/*/message
+            error:x:@lambda2hyper
+         throw:x:@http.post/*/content/*/error/*/message
+            public:bool:true
+            status:x:@http.post
+
+   // Fetching relevant snippets, making sure we profile the time it takes.
+   .begin
+   set-value:x:@.begin
+      date.now
+   .snippets
+   .continue:bool:true
+   .offset:int:0
+   while:x:@.continue
+
+      // Selecting 200 snippets from type.
+      data.read
+         table:ml_training_snippets
+         columns
+            id
+            embedding
+            uri
+            prompt
+         where
+            and
+               embedding.neq
+               type.eq:x:@.arguments/*/type
+         limit:200
+         offset:x:@.offset
+         order:created
+
+      // Looping through all records returned above.
+      for-each:x:@data.read/*
+
+         // Calculating dot product of currently iterated snippet and [.vector].
+         math.dot
+            strings.split:x:@.dp/#/*/embedding
+               .:,
+            get-nodes:x:@http.post/*/content/*/data/0/*/embedding/*
+
+         // Checking if dot product is higher than threshold.
+         if
+            and
+               mte:x:@math.dot
+                  get-value:x:@.arguments/*/threshold
+               not-exists:x:@.snippets/*/*/uri/={@.dp/#/*/uri}
+            .lambda
+
+               // Adding result to above [.snippets] collection.
+               unwrap:x:+/*/*/*
+               add:x:@.snippets
+                  .
+                     .
+                        id:x:@.dp/#/*/id
+                        dot:x:@math.dot
+                        uri:x:@.dp/#/*/uri
+                        prompt:x:@.dp/#/*/prompt
+
+      // Sorting [.snippets] such that highest dot product comes first.
+      sort:x:@.snippets/*
+         if
+            mt:x:@.lhs/#/*/dot
+               get-value:x:@.rhs/#/*/dot
+            .lambda
+               set-value:x:@.result
+                  .:int:-1
+         else-if
+            lt:x:@.lhs/#/*/dot
+               get-value:x:@.rhs/#/*/dot
+            .lambda
+               set-value:x:@.result
+                  .:int:1
+         else
+            set-value:x:@.result
+               .:int:0
+
+      /*
+       * Updating [.snippets] now with the 50 top most relevant snippets.
+       *
+       * Notice, to make algorithm perform at least to some extent, we avoid
+       * adding more than max 50 snippets to [.snippets].
+       * These are the top 50 performing snippets according to vectors and
+       * dot product.
+       */
+      remove-nodes:x:@.snippets/*
+      add:x:@.snippets
+         get-nodes:x:@sort/*/[0,50]
+
+      // Checking if we're done.
+      if
+         lt
+            get-count:x:@data.read/*
+            .:int:200
+         .lambda
+
+            // We're done! We've found the top 200 most relevant snippets from our training material.
+            set-value:x:@.continue
+               .:bool:false
+
+      else
+
+         // Incrementing offset.
+         math.increment:x:@.offset
+            get-count:x:@data.read/*
+
+   // Used to hold the result we're returning to caller.
+   .result
+
+   // Measuring how much time we spent looping through snippets.
+   .end
+   set-value:x:@.end
+      date.now
+   .time
+   set-value:x:@.time
+      math.subtract
+         get-value:x:@.end
+         get-value:x:@.begin
+   set-value:x:@.time
+      time.format:x:@.time
+         format:"ss\\.fff"
+
+   // Making sure we only return [max] snippets to caller.
+   while
+      and
+         exists:x:@.snippets/0
+         mt:x:@.arguments/*/max
+            .:int:0
+      .lambda
+
+         // Returning relevant snippets to caller.
+         add:x:../*/return/*/snippets
+            get-nodes:x:@.snippets/0
+         remove-nodes:x:@.snippets/0
+
+         // Decrementing max.
+         math.decrement:x:@.arguments/*/max
+
+   // Making sure we don't return [snippets] unless we actually have snippets.
+   if
+      not-exists:x:../*/return/*/snippets/*
+      .lambda
+         remove-nodes:x:../*/return/*/snippets
+
+   // Returning result to caller.
+   unwrap:x:./*/return/*
+   return
+      db_time:x:@.time
+      snippets
