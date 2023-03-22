@@ -33,7 +33,7 @@ jobs:
         docker push aistamagic/magic-backend:min-${{ steps.get_version.outputs.VERSION }}
 
         cd ./files/etc/www/
-        git pull https://github.com/polterguy/expert-ai.git
+        git clone https://github.com/polterguy/expert-ai.git
         npm i
         ng build
         ls
