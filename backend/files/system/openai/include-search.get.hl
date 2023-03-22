@@ -1,10 +1,10 @@
 
 // Returns the specified JavaScript file wrapping the specified model to caller.
 .arguments
-   css:string
-   type:string
-   button:string
    placeholder:string
+   button:string
+   type:string
+   css:string
    max:int
 
 // Sanity checking invocation.

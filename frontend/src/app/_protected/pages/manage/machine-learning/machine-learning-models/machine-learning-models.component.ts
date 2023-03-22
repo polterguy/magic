@@ -338,7 +338,6 @@ export class MachineLearningModelsComponent implements OnInit {
         data: {
           type: el.type,
           noClose: true,
-          search: true,
           model: el.model,
         }
       });

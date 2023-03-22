@@ -25,13 +25,13 @@ export class MachineLearningEmbedUiComponent implements OnInit {
   themesSearch: string[] = [];
   type: string = null;
   header: string = 'Ask about our services or products';
-  buttonTxt: string = 'AI Chat';
+  buttonTxt: string = '';
   search: boolean = false;
   chat: boolean = true;
   markdown: boolean = true;
   speech: boolean = false;
   placeholder: string = 'Search ...';
-  buttonTxtSearch: string = 'AI Search';
+  buttonTxtSearch: string = '';
   maxSearch: number = 5;
   currentTabIndex: number = 0;
 
