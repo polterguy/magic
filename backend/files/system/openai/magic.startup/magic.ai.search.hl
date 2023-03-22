@@ -68,7 +68,6 @@ slots.create:magic.ai.search
       data.read
          table:ml_training_snippets
          columns
-            id
             embedding
             uri
             prompt
@@ -110,8 +109,6 @@ slots.create:magic.ai.search
                add:x:@.snippets
                   .
                      .
-                        id:x:@.dp/#/*/id
-                        dot:x:@math.dot
                         uri:x:@.dp/#/*/uri
                         prompt:x:@.dp/#/*/prompt
 

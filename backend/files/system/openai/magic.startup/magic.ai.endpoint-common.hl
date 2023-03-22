@@ -79,6 +79,8 @@ slots.create:magic.ai.endpoint-common
             // Resorting to default type.
             add:x:@.model
                get-nodes:x:@data.read/*/*
+            set-value:x:@.arguments/*/type
+               .:default
 
       else
 

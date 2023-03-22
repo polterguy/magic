@@ -180,7 +180,7 @@ slots.create:magic.ai.completion
          temperature:x:@.arguments/*/temperature
       convert:true
 
-   // Sanity checking above invocation
+   // Sanity checking above invocation.
    if
       not
          and
