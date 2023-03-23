@@ -41,7 +41,9 @@ jobs:
         npm install -g @angular/cli@latest
         npm run build-prod
         cd ./dist
-        cp -r * ../../
+        cd ./frontend
+        cp -r * ../../../
+        cd ..
         cd ..
         cd ..
         rm -rf ./expert-ai
