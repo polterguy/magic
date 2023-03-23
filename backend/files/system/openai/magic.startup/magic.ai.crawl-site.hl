@@ -274,7 +274,7 @@ slots.create:magic.ai.crawl-site
 
                         // Informing frontend of what we're doing
                         strings.concat
-                           .:"Scraping "
+                           .:"Crawling "
                            get-value:x:@.dp/#
                         unwrap:x:+/*/args/*
                         sockets.signal:magic.backend.chatbot

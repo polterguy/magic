@@ -198,7 +198,7 @@ slots.create:magic.ai.vectorise
          sockets.signal:magic.backend.chatbot
             roles:root
             args
-               message:Your machine learning model is finished
+               message:Your machine learning model was successfully vectorised
                type:success
 
          // Basic logging.
