@@ -52,5 +52,5 @@ jobs:
         cd ..
         cd ..
         cd ..
-        docker build -t aistamagic/magic-backend:expert-${{ steps.get_version.outputs.VERSION }} -f ./Dockerfile .
-        docker push aistamagic/magic-backend:expert-${{ steps.get_version.outputs.VERSION }}
+        docker build -t aistamagic/magic-backend:expert-ai-${{ steps.get_version.outputs.VERSION }} -f ./Dockerfile .
+        docker push aistamagic/magic-backend:expert-ai-${{ steps.get_version.outputs.VERSION }}
