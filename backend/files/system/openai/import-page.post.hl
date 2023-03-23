@@ -19,7 +19,7 @@ validators.integer:x:@.arguments/*/threshold
    min:25
 
 // Doing some basic logging.
-log.info:Scraping page generating OpenAI training snippets
+log.info:Crawling page generating OpenAI training snippets
    url:x:@.arguments/*/url
    type:x:@.arguments/*/type
    threshold:x:@.arguments/*/threshold
