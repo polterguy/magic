@@ -57,4 +57,4 @@ jobs:
 
         cd ..
         zip -r magic-${{ steps.get_version.outputs.VERSION }}.zip *
-        curl -F -H "Authorization: Bearer ${{ secrets.DOCKER_PASSWORD }}" "folder=/etc/releases" -F "file=${{ steps.get_version.outputs.VERSION }}" "https://api.aista.com/magic/system/file-system/file"
+        curl -H "Authorization: Bearer ${{ secrets.DOCKER_PASSWORD }}" -F "folder=/etc/releases" -F "file=${{ steps.get_version.outputs.VERSION }}" "https://api.aista.com/magic/system/file-system/file"
