@@ -58,4 +58,4 @@ jobs:
         cd ..
         zip -r magic-${{ steps.get_version.outputs.VERSION }}.zip *
         ls
-        curl -X PUT -H "Authorization: Bearer ${{ secrets.API_TOKEN }}" -F "name=magic-{{ steps.get_version.outputs.VERSION }}.zip" -F "folder=/etc/www/releases" -F "file=magic-${{ steps.get_version.outputs.VERSION }}.zip" "https://api.aista.com/magic/system/file-system/file"
+        curl -X PUT -H "Content-Disposition: multipart/form-data;"  -H "Authorization: Bearer ${{ secrets.API_TOKEN }}" -F "folder=/etc/www/releases" -F "file=magic-${{ steps.get_version.outputs.VERSION }}.zip" "https://api.aista.com/magic/system/file-system/file"
