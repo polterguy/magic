@@ -11,81 +11,148 @@ slots.create:magic.ai.massage
          .:"Bearer "
          config.get:"magic:openai:key"
 
-   // Sanity checking invocation.
-   validators.mandatory:x:@.arguments/*/massage
-
-   // Creating our prompt.
-   .decorated-prompt
-   set-value:x:-
-      strings.concat
-         get-value:x:@.arguments/*/massage
-         get-value:x:@.arguments/*/content
-
-   // Creating an HTTP POST request towards OpenAI to create structured data of the specified content.
-   .max-tokens
-   set-value:x:@.max-tokens
-      math.subtract
-         .:int:4000
-         openai.tokenize:x:@.decorated-prompt
-   http.post:"https://api.openai.com/v1/chat/completions"
-      headers
-         Authorization:x:@.token
-         Content-Type:application/json
-      payload
-         model:gpt-3.5-turbo
-         max_tokens:x:@.max-tokens
-         temperature:decimal:0.8
-         messages
-            .
-               role:system
-               content:You are a helpful assistant
-            .
-               role:user
-               content:x:@.decorated-prompt
-      convert:true
-
-   // Sanity checking above invocation.
-   if
-      not
-         and
-            mte:x:@http.post
-               .:int:200
-            lt:x:@http.post
-               .:int:300
+   /*
+    * Buffer for snippets since a single invocation might have more
+    * characters than whatever OpenAI can maximum tolerate.
+    */
+   .snippets
+   
+   // Chopping up content into multiple snippets to avoid max_token overflow with OpenAI.
+   while
+      mt
+         strings.length:x:@.arguments/*/content
+         .:int:0
       .lambda
 
-         // Oops, error - Logging error and returning status 500 to caller.
-         lambda2hyper:x:@http.post
-         log.error:Something went wrong while invoking OpenAI
-            message:x:@http.post/*/content/*/error/*/message
-            status:x:@http.post
-            error:x:@lambda2hyper
-         throw:Failure while invoking OpenAI API
-            public:bool:true
+         // Creating a 2000 character long sub-section from initial content.
+         strings.substring:x:@.arguments/*/content
+            .:int:0
+            .:int:2000
+         unwrap:x:+/*/*/*
+         add:x:@.snippets
+            .
+               .
+                  content:x:@strings.substring
+         if
+            mt
+               strings.length:x:@.arguments/*/content
+               .:int:2000
+            .lambda
+               set-value:x:@.arguments/*/content
+                  strings.substring:x:@.arguments/*/content
+                     .:int:1950
+         else
+            set-value:x:@.arguments/*/content
+               .:
 
-   // Creating our prompt.
-   .prompt
-   strings.split:x:@http.post/*/content/*/choices/0/*/message/*/content
-      .:"\n"
-   set-value:x:@.prompt
-      strings.trim:x:@strings.split/0
-   remove-nodes:x:@strings.split/0
-   
-   // Trimming the rest.
-   for-each:x:@strings.split/*
-      set-value:x:@.dp/#
-         strings.trim:x:@.dp/#
-            .:"\r\n \t"
+   // Checking if user wants to "massage" content.
+   if
+      or
+         not-exists:x:@.arguments/*/massage
+         null:x:@.arguments/*/massage
+         eq:x:@.arguments/*/massage
+            .:
+      .lambda
 
-   // Creating our completion.
-   .completion
-   set-value:x:@.completion
-      strings.join:x:@strings.split/*
-         .:"\r\n\r\n"
+         // User wants to use PDF content as is.
+         for-each:x:@.snippets/*
+
+            // Adding currently iterated snippet to return invocation.
+            unwrap:x:+/*/*/*
+            add:x:../*/return
+               .
+                  .
+                     prompt:
+                     completion:x:@.dp/#/*/content
+
+   else
+
+      /*
+       * User wants to use OpenAI to create for instance summary or something
+       * out of the content from the PDF before creating training data.
+       *
+       * Iterating through each snippet created above.
+       */
+      for-each:x:@.snippets/*
+
+         // Creating our prompt.
+         .decorated-prompt
+         set-value:x:@.decorated-prompt
+            strings.concat
+               get-value:x:@.dp/#/*/massage
+               get-value:x:@.dp/#/*/content
+
+         // Creating an HTTP POST request towards OpenAI to create structured data of the specified content.
+         .max-tokens
+         set-value:x:@.max-tokens
+            math.subtract
+               .:int:4000
+               openai.tokenize:x:@.decorated-prompt
+         http.post:"https://api.openai.com/v1/chat/completions"
+            headers
+               Authorization:x:@.token
+               Content-Type:application/json
+            payload
+               model:gpt-3.5-turbo
+               max_tokens:x:@.max-tokens
+               temperature:decimal:0.8
+               messages
+                  .
+                     role:user
+                     content:You are a helpful assistant
+                  .
+                     role:user
+                     content:x:@.decorated-prompt
+            convert:true
+
+         // Sanity checking above invocation.
+         if
+            not
+               and
+                  mte:x:@http.post
+                     .:int:200
+                  lt:x:@http.post
+                     .:int:300
+            .lambda
+
+               // Oops, error - Logging error and returning status 500 to caller.
+               lambda2hyper:x:@http.post
+               log.error:Something went wrong while invoking OpenAI
+                  message:x:@http.post/*/content/*/error/*/message
+                  status:x:@http.post
+                  error:x:@lambda2hyper
+               throw:Failure while invoking OpenAI API
+                  public:bool:true
+
+         // Creating our prompt.
+         .prompt
+         strings.split:x:@http.post/*/content/*/choices/0/*/message/*/content
+            .:"\n"
+         set-value:x:@.prompt
+            strings.trim:x:@strings.split/0
+         remove-nodes:x:@strings.split/0
+
+         // Trimming the rest.
+         for-each:x:@strings.split/*
+            set-value:x:@.dp/#
+               strings.trim:x:@.dp/#
+                  .:"\r\n \t"
+
+         // Creating our completion.
+         .completion
+         set-value:x:@.completion
+            strings.join:x:@strings.split/*
+               .:"\r\n\r\n"
+
+         // Adding currently iterated snippets to return invocation.
+         unwrap:x:+/*/*/*
+         add:x:../*/return
+            .
+               .
+                  prompt:x:@.prompt
+                  completion:x:@.completion
 
    // Returning result of invocation to caller.
-   unwrap:x:+/*/*
+   lambda2hyper:x:../*/return
+   log.info:x:-
    return
-      .
-         prompt:x:@.prompt
-         completion:x:@.completion

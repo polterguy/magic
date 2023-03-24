@@ -133,16 +133,19 @@ switch:x:@strings.to-lower
             .:"/magic/system/openai/download-pdf?file="
             strings.url-encode:x:@.filename
 
-      // Creating a single training snippet from structure of PDF content.
-      add:x:+/*
-         get-nodes:x:@signal/*
-      add:x:@.file-data
-         .
+      /*
+       * Creating training snippets from PDF content.
+       *
+       * Notice, this might produce one training snippet or multiple training
+       * snippets, depending upon the size of the PDF document.
+       */
       unwrap:x:+/*/*
-      add:x:@.file-data/0/-
+      add:x:@signal/*
          .
             uri:x:@.uri
             filename:x:@.filepath
+      add:x:@.file-data
+         get-nodes:x:@signal/*
 
 // Sanity checking file.
 if
