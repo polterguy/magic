@@ -4,7 +4,7 @@
  */
 (function() {
 
-fetch('[[url]]/magic/system/openai/include-style-common?file=icofont')
+fetch('https://aista.com/assets/css/icofont.min.css')
   .then(res => {
     return res.text()
   })
