@@ -26,5 +26,6 @@ export const CommonErrorMessages: { [key: string]: string } = {
   appNameWithUppercaseHyphen: 'Accepts alphanumeric characters, - and _',
   domain: 'Domain is not valid',
   backend: 'Backend URL must contain http://',
-  password: 'Minimum 12 characters'
+  password: 'Minimum 12 characters',
+  recaptcha: 'Not valid reCAPTCHA secret or key',
 };
