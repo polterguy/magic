@@ -43,7 +43,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
     {name: 'Sales Executive', prefix: 'Answer the following as if you are a Sales Executive in the subject: '},
     {name: 'The CEO', prefix: 'Answer the following as if you are the CEO of the company: '},
     {name: 'The Expert', prefix: 'Answer the following as if you are an expert in the subject: '},
-    {name: 'Explain as if I am 5', prefix: 'Answer the following andexplain it as if I am 5 years old: '},
+    {name: 'Explain as if I am 5', prefix: 'Answer the following and explain it as if I am 5 years old: '},
     {name: 'One liner', prefix: 'Answer the following with one sentence: '},
     {name: 'Two liner', prefix: 'Answer the following with two sentences: '},
     {name: 'Three liner', prefix: 'Answer the following with three sentences: '},
