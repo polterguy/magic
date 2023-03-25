@@ -20,4 +20,5 @@ export const CommonRegEx: { [key: string]: RegExp } = {
   backend: /^https?:\/\/([\w\-.])+(:[0-9]*)?(\.\w+)?$/,
   email: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
   password: /^.{12,}$/,
+  recaptcha: /^([a-zA-Z-_0-9]{20,100})$/,
 };

@@ -30,10 +30,12 @@
             type="text"
             placeholder="Site key"
             formControlName="key"
+            [pattern]="CommonRegEx.recaptcha"
             cdkFocusInitial
             spellcheck="false"
             autocomplete="off"
             name="key" />
+            <mat-error>{{CommonErrorMessages.recaptcha}}</mat-error>
         </mat-form-field>
 
       </div>
@@ -53,8 +55,10 @@
             type="text"
             placeholder="Secret"
             autocomplete="off"
+            [pattern]="CommonRegEx.recaptcha"
             formControlName="secret"
             name="secret" />
+            <mat-error>{{CommonErrorMessages.recaptcha}}</mat-error>
         </mat-form-field>
 
       </div>
