@@ -29,21 +29,14 @@ fetch('https://docs.aista.com/assets/css/icofont.min.css')
 });
 
 // Retrieving reCAPTCHA site key.
-let aistaReCaptchaSiteKey = null;
-fetch('[[url]]/magic/system/auth/recaptcha-key', {
-  method: 'GET',
-}).then(res => {
-  return res.json();
-}).then(res => {
-  aistaReCaptchaSiteKey = res.result;
-  if (aistaReCaptchaSiteKey) {
+let aistaReCaptchaSiteKey = '[[recaptcha]]';
+if (aistaReCaptchaSiteKey && aistaReCaptchaSiteKey.length > 0) {
 
-    // Including reCAPTCHA version 3
-    const cap = window.document.createElement('script');
-    cap.src = 'https://www.google.com/recaptcha/api.js?render=' + aistaReCaptchaSiteKey;
-    window.document.getElementsByTagName('head')[0].appendChild(cap);
-  }
-});
+  // Including reCAPTCHA version 3
+  const cap = window.document.createElement('script');
+  cap.src = 'https://www.google.com/recaptcha/api.js?render=' + aistaReCaptchaSiteKey;
+  window.document.getElementsByTagName('head')[0].appendChild(cap);
+}
 
 // Retrieving session identifier site key.
 let aistaSession = null;
