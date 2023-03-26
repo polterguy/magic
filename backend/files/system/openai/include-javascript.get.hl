@@ -13,7 +13,7 @@
    chat:bool
    markdown:bool
    speech:bool
-   
+
    // Legacy parameter, ignore, no longer in use.
    gpt:bool
 .description:Returns the JavaScript required to embed a ChatGPT based chatbot on some website to caller.
@@ -21,55 +21,15 @@
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/type
 
-// Defaulting button to be rendered by default.
-if
-   not-exists:x:@.arguments/*/render_button
-   .lambda
-      add:x:@.arguments
-         .
-            render_button:bool:true
-
-// Defaulting file to be rendered to default.
-if
-   not-exists:x:@.arguments/*/file
-   .lambda
-      add:x:@.arguments
-         .
-            file:default
-
-// Defaulting CSS to be rendered to default.
-if
-   not-exists:x:@.arguments/*/file
-   .lambda
-      add:x:@.arguments
-         .
-            css:default
-
-// Defaulting chat and search arguments if not specified.
-if
-   not-exists:x:@.arguments/*/chat
-   .lambda
-      add:x:@.arguments
-         .
-            chat:bool:true
-if
-   not-exists:x:@.arguments/*/search
-   .lambda
-      add:x:@.arguments
-         .
-            search:bool:false
-if
-   not-exists:x:@.arguments/*/markdown
-   .lambda
-      add:x:@.arguments
-         .
-            markdown:bool:true
-if
-   not-exists:x:@.arguments/*/speech
-   .lambda
-      add:x:@.arguments
-         .
-            speech:bool:false
+// Applying default values if not specified.
+validators.default:x:@.arguments
+   render_button:bool:true
+   file:default
+   css:default
+   chat:bool:true
+   search:bool:false
+   markdown:bool:true
+   speech:bool:false
 
 // Checking if custom JavaScript file exists.
 .result
@@ -99,6 +59,7 @@ else
          // Generic template file.
          set-value:x:@.result
             io.file.load:x:@strings.concat
+
    else
 
       // Oops, no such file exists.
