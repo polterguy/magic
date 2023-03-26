@@ -62,7 +62,7 @@ slots.create:magic.ai.massage
             add:x:../*/return
                .
                   .
-                     prompt:
+                     prompt:x:@.arguments/*/prompt
                      completion:x:@.dp/#/*/content
 
    else
