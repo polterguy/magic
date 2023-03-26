@@ -38,11 +38,21 @@ set-value:x:@.url
 set-value:x:@.result
    io.file.load:/system/openai/front.files/search/search.js
 
+// Retrieving reCAPTCHA key.
+.captcha
+set-value:x:@.captcha
+   config.get:"magic:auth:recaptcha:key"
+      .:
+
 // Dynamically exchanging template fields in JavaScript file.
 set-value:x:@.result
    strings.replace:x:@.result
       .:[[url]]
       get-value:x:@.url
+set-value:x:@.result
+   strings.replace:x:@.result
+      .:[[recaptcha]]
+      get-value:x:@.captcha
 set-value:x:@.result
    strings.replace:x:@.result
       .:[[max]]

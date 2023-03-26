@@ -18,21 +18,14 @@ fetch('https://docs.aista.com/assets/css/icofont.min.css')
 
 
 // Retrieving reCAPTCHA site key.
-let aistaReCaptchaSiteKeySearch = null;
-fetch('[[url]]/magic/system/auth/recaptcha-key', {
-  method: 'GET',
-}).then(res => {
-  return res.json();
-}).then(res => {
-  aistaReCaptchaSiteKeySearch = res.result;
-  if (aistaReCaptchaSiteKeySearch) {
+let aistaReCaptchaSiteKeySearch = '[[recaptcha]]';
+if (aistaReCaptchaSiteKeySearch && aistaReCaptchaSiteKeySearch.length > 0) {
 
-    // Including reCAPTCHA version 3
-    const cap = window.document.createElement('script');
-    cap.src = 'https://www.google.com/recaptcha/api.js?render=' + aistaReCaptchaSiteKeySearch;
-    window.document.getElementsByTagName('head')[0].appendChild(cap);
-  }
-});
+  // Including reCAPTCHA version 3
+  const cap = window.document.createElement('script');
+  cap.src = 'https://www.google.com/recaptcha/api.js?render=' + aistaReCaptchaSiteKeySearch;
+  window.document.getElementsByTagName('head')[0].appendChild(cap);
+}
 
 
 // Creating CSS inclusion.
