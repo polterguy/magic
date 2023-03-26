@@ -31,9 +31,9 @@ if
 
 // Listing system files.
 if
-   io.folder.exists:/system/openai/front.files/
+   io.folder.exists:/system/openai/front.files/chat/
    .lambda
-      io.file.list:/system/openai/front.files/
+      io.file.list:/system/openai/front.files/chat/
       for-each:x:@io.file.list/*
          if
             strings.ends-with:x:@.dp/#
