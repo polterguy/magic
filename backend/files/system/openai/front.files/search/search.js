@@ -4,7 +4,7 @@
  */
 (function() {
 
-fetch('https://aista.com/assets/css/icofont.min.css')
+fetch('https://docs.aista.com/assets/css/icofont.min.css')
   .then(res => {
     return res.text()
   })
