@@ -9,7 +9,7 @@ validators.mandatory:x:@.arguments/*/file
 // Checking if custom CSS file exists.
 .result
 strings.concat
-   .:/etc/system/openai/css/
+   .:/etc/system/openai/css/chat/
    get-value:x:@.arguments/*/file
    .:.css
 if
