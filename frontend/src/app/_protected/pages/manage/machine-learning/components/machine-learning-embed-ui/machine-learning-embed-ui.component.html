@@ -22,7 +22,7 @@
         </span>
         <input
           matInput
-          placeholder="Header"
+          placeholder="Header ..."
           spellcheck="false"
           [(ngModel)]="header"
           autocomplete="off">
@@ -31,14 +31,14 @@
       <mat-form-field class="w-100 standalone-field">
         <span
           matPrefix
-          matTooltip="Button text"
+          matTooltip="Button text, defaults to chat icon"
           class="d-flex flex-nowrap align-items-center justify-content-between me-2">
           <mat-icon>touch_app</mat-icon>
           <span class="text-muted">|</span>
         </span>
         <input
           matInput
-          placeholder="Button text"
+          placeholder="Button text ..."
           spellcheck="false"
           [(ngModel)]="buttonTxt"
           autocomplete="off">
@@ -54,7 +54,7 @@
         </span>
         <mat-select
           [(ngModel)]="theme"
-          placeholder="Theme">
+          placeholder="Theme ...">
           <mat-option
             *ngFor="let idx of themes"
             [value]="idx">
