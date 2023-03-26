@@ -122,6 +122,7 @@ switch:x:@strings.to-lower
       signal:magic.ai.massage
          content:x:@pdf2text
          massage:x:@.arguments/*/massage
+         prompt:x:@.arguments/*/file/*/name
 
       // Creating our Hyperlink URI to allow for downloading the PDF file.
       .uri
