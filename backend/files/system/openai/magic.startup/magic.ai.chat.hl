@@ -29,20 +29,24 @@ slots.create:magic.ai.chat
                   role:user
                   content:x:@signal/*/context
 
-   else
+   else-if
+      and
+         exists:x:@.arguments/*/session
+         not-null:x:@.arguments/*/session
+      .lambda
 
-      // Question didn't kick in training data, hence checking if we've got a session.
-      cache.get:x:@.arguments/*/session
-      if
-         not-null:x:@cache.get
-         .lambda
+         // Question didn't kick in training data, hence checking if we've got a session.
+         cache.get:x:@.arguments/*/session
+         if
+            not-null:x:@cache.get
+            .lambda
 
-            /*
-             * We have an existing session, hence continuing discussing subject
-             * unless embeddings returns a better match.
-             */
-            add:x:@.session
-               hyper2lambda:x:@cache.get
+               /*
+                * We have an existing session, hence continuing discussing subject
+                * unless embeddings returns a better match.
+                */
+               add:x:@.session
+                  hyper2lambda:x:@cache.get
 
    // Checking if model is prefixed, at which point we prepend prefix to question.
    if
