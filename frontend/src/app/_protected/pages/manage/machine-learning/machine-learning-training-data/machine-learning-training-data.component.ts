@@ -87,7 +87,7 @@ export class MachineLearningTrainingDataComponent implements OnInit {
               this.generalService.showFeedback('Snippet successfully created', 'successMessage');
               this.getTrainingData(true);
             },
-            error: () => this.generalService.showFeedback('Something went wrong as we tried to create your snippet', 'errorMessage')
+            error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? 'Something went wrong as we tried to create your snippet', 'errorMessage')
           });
         }
     });

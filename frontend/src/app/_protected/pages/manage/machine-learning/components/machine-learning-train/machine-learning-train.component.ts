@@ -71,7 +71,7 @@ export class MachineLearningTrainComponent implements OnInit {
           },
           error: () => {
     
-            this.generalService.showFeedback('Something went wrong as we tried to create your snippet', 'errorMessage');
+            this.generalService.showFeedback('Something went wrong as we tried to retrieve models', 'errorMessage');
             this.generalService.hideLoading();
           }
         });
