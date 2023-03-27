@@ -70,7 +70,7 @@ export class CoreComponent implements OnInit, OnDestroy {
           break;
 
         case 'error':
-          this.generalService.showFeedback(args.message, 'errorMessage', 'OK');
+          this.generalService.showFeedback(args.message, 'errorMessage', 'OK', 10000);
           break;
       }
     });

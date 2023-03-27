@@ -117,12 +117,11 @@ export class MachineLearningTrainingDataComponent implements OnInit {
             next: () => {
 
               this.generalService.hideLoading();
-              this.generalService.showFeedback('Scraping page was successfully started', 'successMessage');
             },
             error: () => {
 
               this.generalService.hideLoading();
-              this.generalService.showFeedback('Something went wrong as we tried to update your snippet', 'errorMessage');
+              this.generalService.showFeedback('Something went wrong as we tried to spice your model', 'errorMessage');
             }
           });
         }
