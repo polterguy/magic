@@ -53,7 +53,7 @@ export class HyperlambdaComponent implements OnInit {
           window['_vocabulary'] = vocabulary;
           this.init();
         },
-        error: (error: any) => this.generalService.showFeedback(error.error.message??error, 'errorMessage')
+        error: (error: any) => this.generalService.showFeedback(error.error.message ?? error, 'errorMessage')
       })
     }
   }
