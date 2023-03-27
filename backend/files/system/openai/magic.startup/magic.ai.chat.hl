@@ -161,17 +161,24 @@ slots.create:magic.ai.chat
       get-value:x:@http.post/*/content/*/choices/0/*/message/*/finish_reason
       .:unknown
 
-   // Adding current prompt to session.
-   unwrap:x:+/*/*/*/content
-   add:x:@.session
-      .
-         .
-            role:system
-            content:x:@.result
-   lambda2hyper:x:@.session/*
-   cache.set:x:@.arguments/*/session
-      expiration:600
-      value:x:@lambda2hyper
+   // Adding current prompt to session, but only if caller provided a session.
+   if
+      and
+         exists:x:@.arguments/*/session
+         not-null:x:@.arguments/*/session
+      .lambda
+
+         // Caller provided a session.
+         unwrap:x:+/*/*/*/content
+         add:x:@.session
+            .
+               .
+                  role:system
+                  content:x:@.result
+         lambda2hyper:x:@.session/*
+         cache.set:x:@.arguments/*/session
+            expiration:600
+            value:x:@lambda2hyper
 
    // Checking if we've got references.
    if
