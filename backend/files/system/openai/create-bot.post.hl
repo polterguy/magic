@@ -63,6 +63,9 @@ try
          .lambda
             throw:Model already exists!
 
+      // Verifying user can create a-(nother) machine learning model.
+      try-signal:magic.ai.can-create-machine-learning-model
+
       // Creating our type.
       data.create
          table:ml_types
