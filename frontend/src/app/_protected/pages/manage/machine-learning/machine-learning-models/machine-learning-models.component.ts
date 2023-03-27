@@ -129,10 +129,10 @@ export class MachineLearningModelsComponent implements OnInit {
               this.getModels();
               this.generalService.showFeedback('Model successfully saved', 'successMessage');
             },
-            error: () => {
+            error: (error: any) => {
 
               this.generalService.hideLoading();
-              this.generalService.showFeedback('Something went wrong as we tried to create your type', 'errorMessage');
+              this.generalService.showFeedback(error.error.message, 'errorMessage');
             }
           });
         }
@@ -283,7 +283,7 @@ export class MachineLearningModelsComponent implements OnInit {
             error: () => {
 
               this.generalService.hideLoading();
-              this.generalService.showFeedback('Something went wrong as we tried to create your type', 'errorMessage');
+              this.generalService.showFeedback('Something went wrong as we tried to edit your snippet', 'errorMessage');
             }
           });
         }

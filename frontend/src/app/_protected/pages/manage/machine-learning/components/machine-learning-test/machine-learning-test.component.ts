@@ -138,7 +138,7 @@ export class MachineLearningTestComponent implements OnInit {
       error: () => {
 
         this.generalService.hideLoading();
-        this.generalService.showFeedback('Something went wrong as we tried to create your type', 'errorMessage');
+        this.generalService.showFeedback('Something went wrong as we tried to train on your snippet', 'errorMessage');
       }
     });
   }
