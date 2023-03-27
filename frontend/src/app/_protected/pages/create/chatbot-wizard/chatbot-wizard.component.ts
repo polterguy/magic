@@ -164,6 +164,7 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
       } else if (args.type === 'error') {
 
         this.generalService.showFeedback('Something went wrong when creating your bot', 'errorMessage');
+        this.embed();
       }
       setTimeout(() => {
 
