@@ -24,6 +24,9 @@ auth.ticket.verify:root
 // Opening up database connection.
 data.connect:[generic|magic]
 
+   // Verifying user can create a-(nother) machine learning model.
+   try-signal:magic.ai.can-create-machine-learning-model
+
    // Parametrising our create invocation.
    add:x:./*/data.create/[0,1]/*/values
       get-nodes:x:@.arguments/*
