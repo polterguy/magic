@@ -19,6 +19,9 @@ set-value:x:@.base
 // Connecting to database.
 data.connect:[generic|magic]
 
+   // Verifying user can create more snippets.
+   try-signal:magic.ai.can-create-snippet
+
    // Checking if we've fetched this URL previously.
    data.read
       table:ml_training_snippets
