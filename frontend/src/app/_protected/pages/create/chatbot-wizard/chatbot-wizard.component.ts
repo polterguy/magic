@@ -173,7 +173,7 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
           this.openAIService.vectorise(this.model).subscribe({
             next: () => {
 
-              this.embed();
+              console.log('Vectorising started');
             },
             error: (error: any) => {
 
