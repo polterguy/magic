@@ -126,14 +126,14 @@ export class MachineLearningEditTypeComponent implements OnInit {
           },
           error: () => {
     
-            this.generalService.showFeedback('Something went wrong as we tried to create your snippet', 'errorMessage');
+            this.generalService.showFeedback('Something went wrong as we tried to retrieve your models', 'errorMessage');
             this.generalService.hideLoading();
           }
         });
       },
       error: () => {
 
-        this.generalService.showFeedback('Something went wrong as we tried to create your snippet', 'errorMessage');
+        this.generalService.showFeedback('Something went wrong as we tried to retrieve roles', 'errorMessage');
         this.generalService.hideLoading();
       }
     });
