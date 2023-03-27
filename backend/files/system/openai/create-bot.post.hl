@@ -114,7 +114,7 @@ try
    unwrap:x:./*/signal/=magic.ai.crawl-site/*/.onafter/*/.type
    signal:magic.ai.crawl-site
       delay:int:1000
-      max:int:100
+      max:int:1250
       threshold:int:150
       type:x:@.type
       .onafter
