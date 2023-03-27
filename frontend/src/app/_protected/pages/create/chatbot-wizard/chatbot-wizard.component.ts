@@ -163,8 +163,24 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
 
       } else if (args.type === 'error') {
 
-        this.generalService.showFeedback('Something went wrong when creating your bot', 'errorMessage');
-        this.embed();
+        this.generalService.showFeedback(args.message, 'errorMessage');
+        if (args.message.includes('license')) {
+
+          /*
+           * Too many snippets according to license, still we'll vectorise the model explicitly to make sure
+           * user gets at least a somewhat working chatbot to embed on page.
+           */
+          this.openAIService.vectorise(this.model).subscribe({
+            next: () => {
+
+              this.embed();
+            },
+            error: (error: any) => {
+
+              this.generalService.showFeedback(error?.error?.message ?? 'Something went wrong as we tried to create your bot', 'errorMessage', 'Ok', 10000);
+            }
+          })
+        }
       }
       setTimeout(() => {
 
