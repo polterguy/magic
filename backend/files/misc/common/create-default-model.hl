@@ -1,5 +1,5 @@
 
-// Runs through all training data for OpenAI and inserts into magic database.
+// Created the default OpenAI machine learning model.
 try
 
    // Connecting to Magic database.
@@ -22,5 +22,5 @@ try
 .catch
 
    // Doing some basic logging.
-   log.error:Something went wrong as we tried to insert OpenAI training database into magic database
+   log.info:Default model has already been created
       message:x:@.arguments/*/message

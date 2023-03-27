@@ -254,7 +254,7 @@ data.connect:[generic|magic]
                      // Updating type.
                      data.connect:[generic|magic]
                      
-                        // Making sure we mark all snippets we used for training as pushed.
+                        // Updating type to use newly created model.
                         data.update
                            table:ml_types
                            values
