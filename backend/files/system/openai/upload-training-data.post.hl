@@ -163,6 +163,9 @@ if
 // Connecting to database.
 data.connect:[generic|magic]
 
+   // Verifying user can create more snippets.
+   try-signal:magic.ai.can-create-snippet
+
    // Looping through each CSV record inserting into database.
    for-each:x:@.file-data/*
 

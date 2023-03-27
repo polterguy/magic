@@ -16,6 +16,9 @@ auth.ticket.verify:root
 // Opening up database connection.
 data.connect:[generic|magic]
 
+   // Verifying user can create more snippets.
+   try-signal:magic.ai.can-create-snippet
+
    // Parametrising our create invocation.
    add:x:./*/data.create/*/values
       get-nodes:x:@.arguments/*

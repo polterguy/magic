@@ -132,7 +132,7 @@ export class MachineLearningModelsComponent implements OnInit {
             error: (error: any) => {
 
               this.generalService.hideLoading();
-              this.generalService.showFeedback(error.error.message, 'errorMessage');
+              this.generalService.showFeedback(error?.error?.message ?? 'Something went wrong', 'errorMessage', 'Ok', 10000);
             }
           });
         }
