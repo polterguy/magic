@@ -169,6 +169,20 @@ else
          .:[[speech]]
          .:false
 
+// Fetching greeting for model.
+data.connect:[generic|magic]
+   data.read
+      table:ml_types
+      columns
+         greeting
+      where
+         and
+            type.eq:x:@.arguments/*/type
+   set-value:x:@.result
+      strings.replace:x:@.result
+         .:[[greeting]]
+         get-value:x:@data.read/*/*/greeting
+
 // Making sure we return correct Content-Type to caller, and applying some cache.
 response.headers.set
    Content-Type:application/javascript

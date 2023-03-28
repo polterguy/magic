@@ -13,6 +13,9 @@ let aistaChatChat = [[chat]];
 // True if caller wants Markdown support.
 let aistaChatMarkdown = [[markdown]];
 
+// Greeting to welcome user with.
+let aistaChatGreeting = '[[greeting]]';
+
 // True if speech is turned on.
 let aistaSpeech = [[speech]];
 
@@ -151,6 +154,15 @@ function aista_create_chat_ui() {
     e.preventDefault();
     aista_submit_form(false);
   });
+
+  // Checking if we've got a greeting, and if so, adding it as initial chat message.
+  if (aistaChatGreeting && aistaChatGreeting.length > 0) {
+    const row = window.document.createElement('div');
+    row.innerText = aistaChatGreeting;
+    row.className = 'aista-chat-answer cached';
+    const msgs = window.document.getElementsByClassName('aista-chat-msg-container')[0];
+    msgs.appendChild(row);
+  }
 }
 
 /*
