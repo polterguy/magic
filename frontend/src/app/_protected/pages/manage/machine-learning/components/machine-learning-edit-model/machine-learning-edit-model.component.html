@@ -18,7 +18,7 @@
         matInput
         required
         [disabled]="data || isLoading"
-        placeholder="Type name"
+        placeholder="Type name ..."
         spellcheck="false"
         [pattern]="CommonRegEx.appNameWithUppercaseHyphen"
         [(ngModel)]="type"
@@ -81,7 +81,7 @@
             [(ngModel)]="model"
             [disabled]="isLoading"
             (selectionChange)="modelChanged()"
-            placeholder="Completion model"
+            placeholder="Completion model ..."
             name="model">
             <mat-select-trigger>
               {{model?.id}}
@@ -111,7 +111,7 @@
           <mat-select
             [(ngModel)]="vector_model"
             [disabled]="isLoading"
-            placeholder="Vector model"
+            placeholder="Vector model ..."
             name="vector_model">
             <mat-select-trigger>
               {{vector_model?.id}}
@@ -150,7 +150,7 @@
             [(ngModel)]="flavor"
             [disabled]="isLoading"
             (selectionChange)="flavorChanged()"
-            placeholder="Flavor"
+            placeholder="Flavor ..."
             name="flavor">
             <mat-option
               *ngFor="let idx of flavors"
@@ -170,7 +170,7 @@
           </span>
           <input
             matInput
-            placeholder="Temperature"
+            placeholder="Temperature ..."
             [disabled]="isLoading"
             type="number"
             min="0"
@@ -191,7 +191,7 @@
           </span>
           <input
             matInput
-            placeholder="Threshold"
+            placeholder="Threshold ..."
             type="number"
             [disabled]="isLoading"
             min="0.5"
@@ -220,7 +220,7 @@
           </span>
           <input
             matInput
-            placeholder="Max context tokens"
+            placeholder="Max context tokens ..."
             [disabled]="isLoading"
             type="number"
             min="1"
@@ -240,7 +240,7 @@
           </span>
           <input
             matInput
-            placeholder="Max request tokens"
+            placeholder="Max request tokens ..."
             [disabled]="isLoading"
             type="number"
             min="1"
@@ -260,7 +260,7 @@
           </span>
           <input
             matInput
-            placeholder="Max response tokens"
+            placeholder="Max response tokens ..."
             [disabled]="isLoading"
             type="number"
             min="1"
@@ -280,7 +280,7 @@
           </span>
           <input
             matInput
-            placeholder="Max message tokens"
+            placeholder="Max message tokens ..."
             [disabled]="true"
             type="number"
             min="1"
@@ -307,7 +307,7 @@
             <span class="text-muted">|</span>
           </span>
           <mat-select
-            placeholder="Add roles"
+            placeholder="Add roles ..."
             multiple
             name="auth"
             [disabled]="isLoading"
@@ -332,7 +332,7 @@
           </span>
           <input
             matInput
-            placeholder="reCAPTCHA"
+            placeholder="reCAPTCHA ..."
             type="number"
             min="0"
             [disabled]="isLoading"
