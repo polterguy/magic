@@ -37,15 +37,33 @@
       </span>
       <textarea
         matInput
-        placeholder="Prefix"
+        placeholder="Prefix ..."
         [disabled]="isLoading"
         spellcheck="true"
-        rows="7"
+        rows="4"
         [(ngModel)]="prefix"
         name="prefix">
       </textarea>
     </mat-form-field>
 
+    <mat-form-field class="w-100 custom-alignment" [class.d-none]="!advanced || !use_embeddings">
+      <span
+        matPrefix
+        matTooltip="Greeting to welcome user with"
+        class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        <mat-icon>edit</mat-icon>
+        <span class="text-muted">|</span>
+      </span>
+      <textarea
+        matInput
+        placeholder="Greeting ..."
+        [disabled]="isLoading"
+        spellcheck="true"
+        rows="4"
+        [(ngModel)]="greeting"
+        name="greeting">
+      </textarea>
+    </mat-form-field>
 
     <div class="row" [class.d-none]="!advanced">
 

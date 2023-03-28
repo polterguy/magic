@@ -34,6 +34,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
   supervised: boolean = false;
   use_embeddings: boolean = false;
   prefix: string;
+  greeting: string;
   cached: boolean = false;
   model: OpenAIModel = null;
   vector_model: OpenAIModel = null;
@@ -87,6 +88,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
     this.use_embeddings = this.data?.use_embeddings === 1 ? true : (!this.data ? true : false);
     this.cached = this.data?.cached === 1 ? true : false;
     this.prefix = this.data?.prefix ?? '';
+    this.greeting = this.data?.greeting ?? 'Hi there, how can I help you?';
     this.advanced = !!this.data;
 
     this.generalService.showLoading();
@@ -220,6 +222,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
       auth: this.auth?.length > 0 ? this.auth.join(',') : null,
       cached: this.cached ? 1 : 0,
       prefix: this.prefix,
+      greeting: this.greeting,
       use_embeddings: this.use_embeddings,
       threshold: this.threshold,
     };
