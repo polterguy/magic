@@ -18,6 +18,7 @@ try
             supervised:int:1
             cached:int:1
             auth:root
+            greeting:Hi there, how can I help you?
 
 .catch
 
