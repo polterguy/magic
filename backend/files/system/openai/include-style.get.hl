@@ -44,7 +44,7 @@ else
 // Making sure we return correct Content-Type to caller, and applying some cache.
 response.headers.set
    Content-Type:text/css
-   Cache-Control:public, max-age=300
+   Cache-Control:public, max-age=3600
 
 // Returning result to caller.
 return:x:@.result
