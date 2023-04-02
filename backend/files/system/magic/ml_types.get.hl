@@ -17,7 +17,7 @@
 .type:crud-read
 
 // Verifying user is authorized to access endpoint.
-auth.ticket.verify:root
+auth.ticket.verify
 
 // Opening up our database connection.
 data.connect:[generic|magic]
