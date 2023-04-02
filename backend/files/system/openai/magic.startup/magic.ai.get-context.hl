@@ -246,27 +246,16 @@ slots.create:magic.ai.get-context
       time.format:x:@.time
          format:"ss\\.fff"
 
-   // Making sure we found something at all.
-   if
-      exists:x:@.result/0
-      .lambda
+   // Trimming [.context] before we return it to caller.
+   set-value:x:@.context
+      strings.trim:x:@.context
+         .:"\r\n"
 
-         // Trimming [.context] before we return it to caller.
-         set-value:x:@.context
-            strings.trim:x:@.context
-               .:"\r\n"
-
-         // Returning context and relevant snippets to caller.
-         add:x:./*/return/*/snippets
-            get-nodes:x:@.result/*
-         unwrap:x:./*/return/*
-         return
-            context:x:@.context
-            db_time:x:@.time
-            snippets
-   else
-
-      // Nothing ...
-      unwrap:x:+/*
-      return
-         db_time:x:@.time
+   // Returning context and relevant snippets to caller.
+   add:x:./*/return/*/snippets
+      get-nodes:x:@.result/*
+   unwrap:x:./*/return/*
+   return
+      context:x:@.context
+      db_time:x:@.time
+      snippets
