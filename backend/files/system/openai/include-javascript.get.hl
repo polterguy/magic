@@ -186,7 +186,7 @@ data.connect:[generic|magic]
 // Making sure we return correct Content-Type to caller, and applying some cache.
 response.headers.set
    Content-Type:application/javascript; charset=utf-8
-   Cache-Control:public, max-age=300
+   Cache-Control:public, max-age=3600
 
 // Returning result to caller.
 return:x:@.result
