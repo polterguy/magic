@@ -69,8 +69,10 @@ slots.create:magic.ai.get-context
       data.read
          table:ml_training_snippets
          columns
-            id
             embedding
+            prompt
+            completion
+            uri
          where
             and
                embedding.neq
@@ -99,7 +101,9 @@ slots.create:magic.ai.get-context
                add:x:@.snippets
                   .
                      .
-                        id:x:@.dp/#/*/id
+                        prompt:x:@.dp/#/*/prompt
+                        completion:x:@.dp/#/*/completion
+                        uri:x:@.dp/#/*/uri
                         dot:x:@math.dot
 
       // Sorting [.snippets] such that highest dot product comes first.
@@ -160,19 +164,6 @@ slots.create:magic.ai.get-context
       exists:x:@.snippets/*/*
       .lambda
 
-         // Now fetching prompt, completion and URI from snippets.
-         add:x:./*/data.read/*/where/*/and/*/id.in
-            get-nodes:x:@.snippets/*/*/id
-         data.read
-            table:ml_training_snippets
-            columns
-               uri
-               prompt
-               completion
-            where
-               and
-                  id.in
-
          // Temporary variable used to calculate tokens.
          .tmp:
 
@@ -182,7 +173,7 @@ slots.create:magic.ai.get-context
 
             // Making sure we've got more snippets left.
             if
-               not-exists:x:@data.read/0
+               not-exists:x:@.snippets/0
                .lambda
 
                   // No more snippets.
@@ -196,10 +187,10 @@ slots.create:magic.ai.get-context
                   strings.concat
                      get-value:x:@.tmp
                      .:"\r\n"
-                     get-value:x:@data.read/0/*/prompt
+                     get-value:x:@.snippets/0/*/prompt
                      .:"\r\n"
                      .:"\r\n"
-                     get-value:x:@data.read/0/*/completion
+                     get-value:x:@.snippets/0/*/completion
                      .:"\r\n"
 
                // Checking if we've got more context to work with.
@@ -214,8 +205,8 @@ slots.create:magic.ai.get-context
                         get-value:x:@.tmp
                      if
                         and
-                           not-null:x:@data.read/0/*/uri
-                           not-exists:x:@.result/*/*/uri/={@data.read/0/*/uri}
+                           not-null:x:@.snippets/0/*/uri
+                           not-exists:x:@.result/*/*/uri/={@.snippets/0/*/uri}
                         .lambda
 
                            // Adding current reference to [.result]
@@ -223,9 +214,9 @@ slots.create:magic.ai.get-context
                            add:x:@.result
                               .
                                  .
-                                    prompt:x:@data.read/0/*/prompt
-                                    uri:x:@data.read/0/*/uri
-                     remove-nodes:x:@data.read/0
+                                    prompt:x:@.snippets/0/*/prompt
+                                    uri:x:@.snippets/0/*/uri
+                     remove-nodes:x:@.snippets/0
 
                else
 
