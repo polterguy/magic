@@ -1,6 +1,6 @@
 
 /*
- * Slot that returns training data for the specified [type], given the
+ * Slot that returns context and references for the specified [type], given the
  * specified [threshold], the specified [prompt], the specified [vector_model]
  * and the specified [max_tokens].
  */
@@ -60,9 +60,17 @@ slots.create:magic.ai.get-context
    .begin
    set-value:x:@.begin
       date.now
+
+   // Contains all snippets that are above [threshold].
    .snippets
+
+   // Condition for [while] loop, set to false when we have no more training snippets to inspect.
    .continue:bool:true
+
+   // Offset in table to start fetching records from, incremented as we proceed through table.
    .offset:int:0
+
+   // Looping through all training snippet records of specified type having embeddings.
    while:x:@.continue
 
       // Selecting 200 snippets from type.
@@ -81,10 +89,10 @@ slots.create:magic.ai.get-context
          offset:x:@.offset
          order:created
 
-      // Looping through all records returned above.
+      // Looping through all records returned from above invocation.
       for-each:x:@data.read/*
 
-         // Calculating dot product of currently iterated snippet and [.vector].
+         // Calculating dot product of currently iterated snippet's embedding and result from OpenAI for prompt.
          math.dot
             strings.split:x:@.dp/#/*/embedding
                .:,
@@ -130,7 +138,7 @@ slots.create:magic.ai.get-context
        * Notice, to make algorithm perform at least to some extent, we avoid
        * adding more than max 50 snippets to [.snippets].
        * These are the top 50 performing snippets according to vectors and
-       * dot product.
+       * dot product and should suffice for most use cases.
        */
       remove-nodes:x:@.snippets/*
       add:x:@.snippets
@@ -143,7 +151,7 @@ slots.create:magic.ai.get-context
             .:int:200
          .lambda
 
-            // We're done! We've found the top 200 most relevant snippets from our training material.
+            // We're done! We've found the top 50 most relevant snippets from our training material.
             set-value:x:@.continue
                .:bool:false
 
@@ -153,85 +161,104 @@ slots.create:magic.ai.get-context
          math.increment:x:@.offset
             get-count:x:@data.read/*
 
-   // Used to hold the result we're returning to caller.
+   /*
+    * Used to hold the referenced snippets used to create our context.
+    *
+    * Returned to caller as [snippets].
+    */
    .result
 
    // Context value we return to caller.
    .context:
 
-   // Verifying we actually found anything at all.
-   if
-      exists:x:@.snippets/*/*
+   // Temporary variable used to calculate tokens.
+   .tmp:
+
+   /*
+    * Running through all [.snippets] creating our context
+    * and storing referenced snippets in the process.
+    */
+   while
+      exists:x:@.snippets/0
       .lambda
 
-         // Temporary variable used to calculate tokens.
-         .tmp:
+         /*
+          * Concatenating top snippet to [.tmp] buffer
+          * such that we can calculate total number of tokens
+          * resulting from adding currently iterated snippet.
+          */
+         set-value:x:@.tmp
+            strings.concat
+               get-value:x:@.tmp
+               .:"\r\n"
+               get-value:x:@.snippets/0/*/prompt
+               .:"\r\n"
+               .:"\r\n"
+               get-value:x:@.snippets/0/*/completion
+               .:"\r\n"
 
-         // Pruning snippets until we've got less tokens than [max_tokens].
-         .continue:bool:true
-         while:x:@.continue
+         /*
+          * Verifying that adding currently iterated snippet doesn't
+          * produce more tokens than acceptable.
+          *
+          * Notice, even if currently iterated snippet might overflow threshold,
+          * it might be possible to add the NEXT snippet, with lower dot product score,
+          * if it is smaller.
+          */
+         if
+            lt
+               openai.tokenize:x:@.tmp
+               get-value:x:@.arguments/*/max_tokens
+            .lambda
 
-            // Making sure we've got more snippets left.
-            if
-               not-exists:x:@.snippets/0
-               .lambda
+               /*
+                * We've got room for more context, hence updating [.context]
+                * to the value of [.tmp].
+                */
+               set-value:x:@.context
+                  get-value:x:@.tmp
 
-                  // No more snippets.
-                  set-value:x:@.continue
-                     .:bool:false
-
-            else
-
-               // Concatenating top snippet to [.tmp] buffer such that we can calculate total number of tokens.
-               set-value:x:@.tmp
-                  strings.concat
-                     get-value:x:@.tmp
-                     .:"\r\n"
-                     get-value:x:@.snippets/0/*/prompt
-                     .:"\r\n"
-                     .:"\r\n"
-                     get-value:x:@.snippets/0/*/completion
-                     .:"\r\n"
-
-               // Checking if we've got more context to work with.
+               /*
+                * Checking if we can use currently iterated snippet as a "reference",
+                * which is only true if the snippet actually contains a [uri], and has
+                * not already been added as a reference.
+                */
                if
-                  lt
-                     openai.tokenize:x:@.tmp
-                     get-value:x:@.arguments/*/max_tokens
+                  and
+                     not-null:x:@.snippets/0/*/uri
+                     not-exists:x:@.result/*/*/uri/={@.snippets/0/*/uri}
                   .lambda
 
-                     // We've got room for more context.
-                     set-value:x:@.context
-                        get-value:x:@.tmp
-                     if
-                        and
-                           not-null:x:@.snippets/0/*/uri
-                           not-exists:x:@.result/*/*/uri/={@.snippets/0/*/uri}
-                        .lambda
+                     // Adding current reference to [.result]
+                     unwrap:x:+/*/*/*
+                     add:x:@.result
+                        .
+                           .
+                              prompt:x:@.snippets/0/*/prompt
+                              uri:x:@.snippets/0/*/uri
+         else
 
-                           // Adding current reference to [.result]
-                           unwrap:x:+/*/*/*
-                           add:x:@.result
-                              .
-                                 .
-                                    prompt:x:@.snippets/0/*/prompt
-                                    uri:x:@.snippets/0/*/uri
-                     remove-nodes:x:@.snippets/0
+            /*
+             * Removing the currently appended snippet from [.tmp]
+             * to allow the logic to correctly check if we can use the NEXT snippet.
+             */
+            set-value:x:@.tmp
+               get-value:x:@.context
 
-               else
-
-                  // We're done, no more room for context.
-                  set-value:x:@.continue
-                     .:bool:false
+         /*
+          * Removing currently iterated snippet.
+          *
+          * Notice, this logic allows us to add smaller snippets with "less accuracy"
+          * than larger snippets found as "better matches" since it will loop through
+          * all 50 snippets we found above, and add "whatever it can add" to the context.
+          */
+         remove-nodes:x:@.snippets/0
 
    // Measuring how much time we spent looping through snippets.
-   .end
-   set-value:x:@.end
-      date.now
    .time
    set-value:x:@.time
       math.subtract
-         get-value:x:@.end
+         date.now
          get-value:x:@.begin
    set-value:x:@.time
       time.format:x:@.time
@@ -240,7 +267,7 @@ slots.create:magic.ai.get-context
    // Trimming [.context] before we return it to caller.
    set-value:x:@.context
       strings.trim:x:@.context
-         .:"\r\n"
+         .:"\r\n \t"
 
    // Returning context and relevant snippets to caller.
    add:x:./*/return/*/snippets
