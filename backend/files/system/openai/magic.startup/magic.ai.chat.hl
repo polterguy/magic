@@ -77,7 +77,7 @@ slots.create:magic.ai.chat
     *
     * Notice, we never submit more than 4 previous messages to OpenAI as context.
     * We also make sure we always submit the FIRST message if existing, since this
-    * is the context fetched from our training data.
+    * is the context fetched from our training data from the first question.
     */
    .cont:bool:true
    while:x:@.cont
@@ -158,7 +158,7 @@ slots.create:magic.ai.chat
    set-value:x:@.result
       strings.trim:x:@http.post/*/content/*/choices/0/*/message/*/content
    get-first-value
-      get-value:x:@http.post/*/content/*/choices/0/*/message/*/finish_reason
+      get-value:x:@http.post/*/content/*/choices/0/*/finish_reason
       .:unknown
 
    // Adding current prompt to session, but only if caller provided a session.
@@ -179,6 +179,26 @@ slots.create:magic.ai.chat
          cache.set:x:@.arguments/*/session
             expiration:600
             value:x:@lambda2hyper
+
+   // Checking if type is "supervised".
+   if
+      and
+         exists:x:@.arguments/*/supervised
+         not-null:x:@.arguments/*/supervised
+         eq
+            convert:x:@.arguments/*/supervised
+               type:int
+            .:int:1
+      .lambda
+
+         // Storing response to ml_requests to keep history.
+         data.create
+            table:ml_requests
+            values
+               type:x:@.arguments/*/type
+               prompt:x:@.arguments/*/prompt
+               completion:x:@.result
+               finish_reason:x:@get-first-value
 
    // Checking if we've got references.
    if
