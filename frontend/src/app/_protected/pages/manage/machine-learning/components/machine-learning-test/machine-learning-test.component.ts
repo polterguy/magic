@@ -95,7 +95,7 @@ export class MachineLearningTestComponent implements OnInit {
           if (result.references?.length > 0) {
             result.result += '\r\n';
             for (var idx of result.references) {
-              result.result += `\r\n* ${idx.uri}`;
+              result.result += `\r\n* ${idx.uri} - ${idx.prompt}`;
             }
           }
           if (result.db_time) {
