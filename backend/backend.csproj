@@ -18,7 +18,7 @@
 
   <ItemGroup>
     <PackageReference Include="magic.lambda.system" Version="15.9.1" />
-    <PackageReference Include="magic.library" Version="15.9.1" />
+    <PackageReference Include="magic.library" Version="15.9.40" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.0" />
   </ItemGroup>
 
