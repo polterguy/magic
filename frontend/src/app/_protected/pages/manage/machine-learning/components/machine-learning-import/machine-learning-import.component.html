@@ -203,6 +203,15 @@
   <mat-slide-toggle
     labelPosition="before"
     class="me-2"
+    matTooltip="Summarize training snippets that are too long to be effectively used"
+    [disabled]="uploading"
+    [(ngModel)]="summarize">
+    Summarize
+  </mat-slide-toggle>
+
+  <mat-slide-toggle
+    labelPosition="before"
+    class="me-2"
     [disabled]="uploading"
     [(ngModel)]="advanced">
     Advanced

@@ -110,6 +110,7 @@ try
       delay:int:1000
       max:int:1250
       threshold:int:150
+      summarize:bool:true
       type:x:@.type
       .onafter
          .type:x:@.type
