@@ -676,6 +676,11 @@ data.connect:[generic|magic]
                                  message:Could not create a summary of snippet, check your log for details
                                  type:warning
 
+                  // Ensuring prompt is never null.
+                  set-value:x:@.prompt
+                     get-first-value:x:@.prompt
+                        .:
+
                   // Inserting prompt, completion, type and URI into database as is.
                   data.create
                      table:ml_training_snippets
