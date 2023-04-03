@@ -364,7 +364,7 @@
           [(ngModel)]="cached"
           name="cached"
           class="me-4"
-          [disabled]="!supervised || isLoading"
+          [disabled]="!supervised || isLoading || model?.id?.startsWith('gpt')"
           labelPosition="before"
           color="primary">Cached</mat-checkbox>
 
