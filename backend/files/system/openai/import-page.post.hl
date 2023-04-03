@@ -6,6 +6,7 @@
    url:string
    type:string
    threshold:int
+   summarize:bool
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
@@ -17,6 +18,8 @@ validators.url:x:@.arguments/*/url
 validators.mandatory:x:@.arguments/*/type
 validators.integer:x:@.arguments/*/threshold
    min:25
+validators.default:x:@.arguments
+   summarize:bool:false
 
 // Doing some basic logging.
 log.info:Crawling page generating OpenAI training snippets
@@ -40,6 +43,7 @@ fork
          get-nodes:x:@.arguments/*/url
          get-nodes:x:@.arguments/*/type
          get-nodes:x:@.arguments/*/threshold
+         get-nodes:x:@.arguments/*/summarize
       io.file.execute:/system/openai/crawl.implementation/import-url.hl
          crawl:bool:false
 

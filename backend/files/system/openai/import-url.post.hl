@@ -10,6 +10,7 @@
    delay:int
    max:int
    threshold:int
+   summarize:bool
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
@@ -29,6 +30,8 @@ validators.integer:x:@.arguments/*/max
    max:5000
 validators.integer:x:@.arguments/*/threshold
    min:25
+validators.default:x:@.arguments
+   summarize:bool:false
 
 // Doing some basic logging.
 log.info:Crawling URL generating OpenAI training snippets

@@ -32,6 +32,7 @@ export class MachineLearningImportComponent {
   uploadIndex: number = 0;
   uploadCount: number = 0;
   files: FileList = null;
+  summarize: boolean = true;
 
   CommonRegEx = CommonRegEx;
   CommonErrorMessages = CommonErrorMessages;
@@ -71,7 +72,7 @@ export class MachineLearningImportComponent {
       return;
     }
 
-    this.matDialog.close({ crawl: this.url, delay: this.delay * 1000, max: this.max, threshold: this.threshold });
+    this.matDialog.close({ crawl: this.url, delay: this.delay * 1000, max: this.max, threshold: this.threshold, summarize: this.summarize });
   }
 
   getFile(event: any) {

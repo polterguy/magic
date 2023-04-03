@@ -292,6 +292,7 @@ slots.create:magic.ai.crawl-site
                            get-nodes:x:@.arguments/*/delay
                            get-nodes:x:@.arguments/*/max
                            get-nodes:x:@.arguments/*/threshold
+                           get-nodes:x:@.arguments/*/summarize
                         unwrap:x:+/*/url
                         io.file.execute:/system/openai/crawl.implementation/import-url.hl
                            url:x:@.dp/#

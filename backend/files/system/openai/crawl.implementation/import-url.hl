@@ -16,6 +16,10 @@ set-value:x:@.base
       .:"://"
       get-value:x:@strings.split/0
 
+// Ensuring [summarize] defaults to true.
+validators.default:x:@.arguments
+   summarize:bool:true
+
 // Connecting to database.
 data.connect:[generic|magic]
 
@@ -521,6 +525,26 @@ for-each:x:@html2lambda/*/html/*/body/**
 // Connecting to database.
 data.connect:[generic|magic]
 
+   /*
+    * Retrieving max context tokens, such that we can ensure no snippet is longer
+    * than maximum 50% of [max_context_tokens], allowing the chatbot to create "associations"
+    * by always ensuring that it is using more than one training snippet each time it
+    * creates a context.
+    */
+   .max-size
+   data.read
+      table:ml_types
+      columns
+         max_context_tokens
+      where
+         and
+            type.eq:x:@.arguments/*/type
+   set-value:x:@.max-size
+      math.divide
+         convert:x:@data.read/*/*/max_context_tokens
+            type:int
+         .:int:2
+
    // Creating training data from all [.snippets].
    for-each:x:@.snippets/*
 
@@ -570,7 +594,89 @@ data.connect:[generic|magic]
                not-exists:x:@data.read/*
                .lambda
 
-                  // Inserting prompt, completion, type and URI into database.
+                  // Checking size of snippet.
+                  strings.concat
+                     get-value:x:@.prompt
+                     .:"\r\n"
+                     .:"\r\n"
+                     get-value:x:@.completion
+                  if
+                     and
+                        exists:x:@.arguments/*/summarize
+                        not-null:x:@.arguments/*/summarize
+                        get-value:x:@.arguments/*/summarize
+                        mt
+                           openai.tokenize:x:@strings.concat
+                           get-value:x:@.max-size
+                     .lambda
+
+                        /*
+                         * Snippet is too long, so we break it down by invoking ChatGPT asking it to
+                         * create a summary for us.
+                         */
+                        .content
+                        set-value:x:@.content
+                           strings.concat
+                              .:"Create a summary of the following information: "
+                              get-value:x:@strings.concat/@strings.concat
+                        .token
+                        set-value:x:@.token
+                           strings.concat
+                              .:"Bearer "
+                              config.get:"magic:openai:key"
+                        http.post:"https://api.openai.com/v1/chat/completions"
+                           headers
+                              Authorization:x:@.token
+                              Content-Type:application/json
+                           payload
+                              model:gpt-3.5-turbo
+                              max_tokens:x:@.max-size
+                              temperature:decimal:0.1
+                              messages
+                                 .
+                                    role:user
+                                    content:x:@.content
+                           convert:true
+
+                        // Checking that above invocation returned success.
+                        if
+                           and
+                              mte:x:@http.post
+                                 .:int:200
+                              lt:x:@http.post
+                                 .:int:300
+                           .lambda
+
+                              // Success creating summary.
+                              sockets.signal:magic.backend.chatbot
+                                 roles:root
+                                 args
+                                    message:Successfully created summary of snippet to shorten it
+                                    type:info
+                              set-value:x:@.prompt
+                                 strings.concat
+                                    .:"Summary of; "
+                                    strings.substring:x:@.prompt
+                                       .:int:0
+                                       .:int:150
+                              set-value:x:@.completion
+                                 strings.trim:x:@http.post/*/content/*/choices/0/*/message/*/content
+                                    .:"\r\n\t "
+                        else
+
+                           // Oops, still continuing ...
+                           lambda2hyper:x:@http.post
+                           log.error:Something went wrong while invoking OpenAI
+                              message:x:@http.post/*/content/*/error/*/message
+                              status:x:@http.post
+                              error:x:@lambda2hyper
+                           sockets.signal:magic.backend.chatbot
+                              roles:root
+                              args
+                                 message:Could not create a summary of snippet, check your log for details
+                                 type:warning
+
+                  // Inserting prompt, completion, type and URI into database as is.
                   data.create
                      table:ml_training_snippets
                      values
