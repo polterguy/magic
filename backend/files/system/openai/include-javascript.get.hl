@@ -178,10 +178,23 @@ data.connect:[generic|magic]
       where
          and
             type.eq:x:@.arguments/*/type
+   .greeting
+   set-value:x:@.greeting
+      strings.replace:x:@data.read/*/*/greeting
+         .:"\n"
+         .:"\\n"
+   set-value:x:@.greeting
+      strings.replace:x:@.greeting
+         .:"\r"
+         .:"\\r"
+   set-value:x:@.greeting
+      strings.replace:x:@.greeting
+         .:"'"
+         .:"\\'"
    set-value:x:@.result
       strings.replace:x:@.result
          .:[[greeting]]
-         get-value:x:@data.read/*/*/greeting
+         get-value:x:@.greeting
 
 // Making sure we return correct Content-Type to caller, and applying some cache.
 response.headers.set
