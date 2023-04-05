@@ -180,7 +180,11 @@ data.connect:[generic|magic]
             type.eq:x:@.arguments/*/type
    .greeting
    set-value:x:@.greeting
-      strings.replace:x:@data.read/*/*/greeting
+      get-first-value
+         get-value:x:@data.read/*/*/greeting
+         .:Hello there! How may I help you today?
+   set-value:x:@.greeting
+      strings.replace:x:@.greeting
          .:"\n"
          .:"\\n"
    set-value:x:@.greeting
