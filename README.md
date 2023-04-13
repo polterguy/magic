@@ -3,7 +3,7 @@
 
 ![Build status](https://github.com/polterguy/magic/actions/workflows/codeql-analysis.yml/badge.svg)
 
-Magic allows you to put ChatGPT on your website and have it say whatever you _want_ it to say. Below is an example.
+Magic allows you to put ChatGPT on your website and have it say whatever you _want_ it to say. We scrape your website, create a custom ChatGPT-based Machine Learning model, and you get an HTML script you can include on your website to have visitors _"talking with your website"_. Below is an example.
 
 <img src="https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/best-chatgpt-website-chatbot-alien-zorg.webp" alt="The best ChatGPT-based website chatbot" style="width: 320px;display: block; margin-left: auto; margin-right: auto;">
 
