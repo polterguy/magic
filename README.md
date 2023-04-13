@@ -11,6 +11,27 @@ We can use Magic to create chatbots that are used for customer support, answers 
 
 * [Try our ChatGPT-based website chatbot](https://ainiro.io)
 
+## Features
+
+In addition to the obvious allowing you to scrape your website, we also support the following;
+
+* Uploading PDF documents
+* Uploading XML, CSV, JSON and YAML documents
+* Spicing model with individual pages
+* Manually adding training data
+* History (log of all questions and answers)
+* Theming, comes with 7 themes out of the box, but you can also create your own
+* AI Search for only searching your website
+* AI Expert Systems which are password protected ChatGPT based prompt based upon your existing data
+* Voice recognition and speech synthesis for _"talking with your bot"_
+* Etc, etc, etc ...
+
+## AINIRO.IO
+
+AINIRO delivers chatbots based upon Magic technology and we will host it for you, for a fee. If you want to contact AINIRO to discuss hosting opportunities, you can contact us below.
+
+* [AINIRO, ChatGPT based Chatbots](https://ainiro.io)
+
 ## License
 
 **TL;TR** - You can create closed source applications with Magic, but you can _not_ close Magic itself.
