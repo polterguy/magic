@@ -1,16 +1,11 @@
 
-# AI-based Low-Code software development
+# Put ChatGPT on your Website
 
 ![Build status](https://github.com/polterguy/magic/actions/workflows/codeql-analysis.yml/badge.svg)
 
-Magic is a Low-Code CRUD generator with machine learning and artificial intelligence allowing you to
-generate most of your code 100% automatically. In addition it is a complete open source cloud platform
-and IDE, allowing you to create your own virtualized cloud on top of your own server, and/or other
-cloud systems. Magic is professionally maintained by [Aista](https://aista.com).
-Below is a screenshot of an app built in 5 minutes using our [Low-Code CRUD generator](https://aista.com/crud-datagrid/).
-Try the app [here](https://sakila.aista.com).
+Magic allows you to put ChatGPT on your website and have it say whatever you _want_ it to say. Below is an example.
 
-![Low-Code CRUD generator](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/sakila.jpg)
+![Put ChatGPT on your website](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/best-chatgpt-website-chatbot-alien-zorg.webp)
 
 Magic works by reading meta data from your database, for then to automatically generate a
 backend API for you. The resulting API is secured automatically, and Magic takes care
