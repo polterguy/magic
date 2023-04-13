@@ -5,7 +5,7 @@
 
 Magic allows you to put ChatGPT on your website and have it say whatever you _want_ it to say. Below is an example.
 
-<img src="https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/best-chatgpt-website-chatbot-alien-zorg.webp" alt="The best ChatGPT-based website chatbot" style="width: 320px;>
+<img src="https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/best-chatgpt-website-chatbot-alien-zorg.webp" alt="The best ChatGPT-based website chatbot" style="width: 320px;">
 
 Magic works by reading meta data from your database, for then to automatically generate a
 backend API for you. The resulting API is secured automatically, and Magic takes care
