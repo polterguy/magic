@@ -49,4 +49,6 @@ To sum up each license.
 
 See the enclosed LICENSE files within each folder, and/or plugin if in doubt.
 
-Copyright(c) Aista, Ltd 2019 - 2023
+## Copyright and maintenance
+
+The projects is copyright of Aista, Ltd 2021 - 2023, and professionally maintained by [AINIRO your friendly ChatGPT website chatbot vendor](https://ainiro.io).
