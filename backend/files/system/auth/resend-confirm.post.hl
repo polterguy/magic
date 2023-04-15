@@ -85,7 +85,7 @@ data.connect:magic
                   get-value:x:@.arguments/*/template
 
          // Default subject line for verify email address email.
-         .subject:Thank you for registering with Aista Magic Cloud
+         .subject:Thank you for registering with AINIRO.IO
 
          // Checking if caller supplied a different email subject to use.
          if
