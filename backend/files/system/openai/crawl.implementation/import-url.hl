@@ -46,7 +46,7 @@ data.connect:[generic|magic]
 // Retrieving URL's content.
 http.get:x:@.arguments/*/url
    headers
-      User-Agent:Aista-MachineLearning-Spider-v2.0.0
+      User-Agent:AINIRO-MachineLearning-Spider-v2.0.0
       Accept:text/html
       Accept-Encoding:identity
 

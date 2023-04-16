@@ -35,7 +35,7 @@ slots.create:magic.ai.crawl-site
          // Retrieving "robots.txt" file.
          http.get:x:@.robots-url
             headers
-               User-Agent:Aista-MachineLearning-Spider
+               User-Agent:AINIRO-MachineLearning-Spider
 
          // Checking if "robots.txt" exists.
          if
@@ -83,7 +83,7 @@ slots.create:magic.ai.crawl-site
          // Retrieving sitemap.
          http.get:x:@.sitemap-url
             headers
-               User-Agent:Aista-MachineLearning-Spider
+               User-Agent:AINIRO-MachineLearning-Spider
 
          // Checking if sitemap exists.
          if
@@ -140,7 +140,7 @@ slots.create:magic.ai.crawl-site
                   unwrap:x:+/*/*
                   http.get:x:@.dp/#
                      headers
-                        User-Agent:Aista-MachineLearning-Spider
+                        User-Agent:AINIRO-MachineLearning-Spider
 
                   // Verifying above invocation returned success.
                   if
@@ -180,7 +180,7 @@ slots.create:magic.ai.crawl-site
                   unwrap:x:+/*/*
                   http.get:x:@.dp/#
                      headers
-                        User-Agent:Aista-MachineLearning-Spider
+                        User-Agent:AINIRO-MachineLearning-Spider
 
                   // Verifying above invocation returned success.
                   if
