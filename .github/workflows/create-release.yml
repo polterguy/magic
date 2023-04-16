@@ -17,20 +17,20 @@ jobs:
       run: |
         echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
         cd ./frontend
-        docker build -t aistamagic/magic-frontend:latest -f ./Dockerfile .
-        docker build -t aistamagic/magic-frontend:${{ steps.get_version.outputs.VERSION }} -f ./Dockerfile .
-        docker push aistamagic/magic-frontend:latest
-        docker push aistamagic/magic-frontend:${{ steps.get_version.outputs.VERSION }}
+        docker build -t servergardens/magic-frontend:latest -f ./Dockerfile .
+        docker build -t servergardens/magic-frontend:${{ steps.get_version.outputs.VERSION }} -f ./Dockerfile .
+        docker push servergardens/magic-frontend:latest
+        docker push servergardens/magic-frontend:${{ steps.get_version.outputs.VERSION }}
         cd ..
 
         cd ./backend
-        docker build -t aistamagic/magic-backend:latest -f ./Dockerfile .
-        docker push aistamagic/magic-backend:latest
-        docker build -t aistamagic/magic-backend:${{ steps.get_version.outputs.VERSION }} -f ./Dockerfile .
-        docker push aistamagic/magic-backend:${{ steps.get_version.outputs.VERSION }}
+        docker build -t servergardens/magic-backend:latest -f ./Dockerfile .
+        docker push servergardens/magic-backend:latest
+        docker build -t servergardens/magic-backend:${{ steps.get_version.outputs.VERSION }} -f ./Dockerfile .
+        docker push servergardens/magic-backend:${{ steps.get_version.outputs.VERSION }}
         dotnet remove reference magic.lambda.system
-        docker build -t aistamagic/magic-backend:min-${{ steps.get_version.outputs.VERSION }} -f ./Dockerfile .
-        docker push aistamagic/magic-backend:min-${{ steps.get_version.outputs.VERSION }}
+        docker build -t servergardens/magic-backend:min-${{ steps.get_version.outputs.VERSION }} -f ./Dockerfile .
+        docker push servergardens/magic-backend:min-${{ steps.get_version.outputs.VERSION }}
 
         cd ./files/etc/www/
         mkdir tmp
@@ -52,8 +52,8 @@ jobs:
         cd ..
         cd ..
         cd ..
-        docker build -t aistamagic/magic-backend:expert-ai-${{ steps.get_version.outputs.VERSION }} -f ./Dockerfile .
-        docker push aistamagic/magic-backend:expert-ai-${{ steps.get_version.outputs.VERSION }}
+        docker build -t servergardens/magic-backend:expert-ai-${{ steps.get_version.outputs.VERSION }} -f ./Dockerfile .
+        docker push servergardens/magic-backend:expert-ai-${{ steps.get_version.outputs.VERSION }}
 
         cd ..
         zip -r magic-${{ steps.get_version.outputs.VERSION }}.zip *
