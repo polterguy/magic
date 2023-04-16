@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) Aista Ltd, 2021 - 2023 info@aista.com, all rights reserved.
+ * Copyright (c) Aista Ltd, 2021 - 2023 team@ainiro.io.
  */
 
 import { Component, EventEmitter, Inject, Input, OnInit } from '@angular/core';
