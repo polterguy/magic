@@ -1,6 +1,6 @@
 
 // Retrieves all URLs from sitemap on specified website.
-.url:"https://aista.com"
+.url:"https://ainiro.io"
 
 // will contain all URLs from website
 .urls

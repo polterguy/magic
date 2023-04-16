@@ -44,15 +44,15 @@ data.connect:[generic|magic]
       values
          type:x:@.arguments/*/type
          prompt:Who created this ChatGPT website chatbot?
-         completion:@"This chatbot is a custom ChatGPT chatbot allowing you to use natural language to ask questions related to the website you're currently visiting. It was created by [AISTA](https://aista.com). AISTA have ChatGPT solutions allowing you to scrape your website, upload document, and create publicly available ChatGPT-based chatbots and AI Based search similar to Bing, in addition to AI Expert Systems providing cognitive assistance."
-         uri:"https://aista.com"
+         completion:@"This chatbot is a custom ChatGPT chatbot allowing you to use natural language to ask questions related to the website you're currently visiting. It was created by [AINIRO.IO](https://ainiro.io). AINIRO have ChatGPT solutions allowing you to scrape your website, upload document, and create publicly available ChatGPT-based chatbots and AI Based search similar to Bing, in addition to AI Expert Systems providing cognitive assistance."
+         uri:"https://ainiro.io"
    data.create
       table:ml_training_snippets
       values
          type:x:@.arguments/*/type
          prompt:Can I have a similar ChatGPT chatbot on my own website?
-         completion:@"Yes you can. Visit [AISTA](https://aista.com) and contact them for a quote for your own ChatGPT chatbot, or use their DIY version. This allows you to scrape your website, or upload files to create your own chatbot based upon ChatGPT answering questions the way you want it to answer questions."
-         uri:"https://aista.com"
+         completion:@"Yes you can. Visit [AINIRO.IO](https://ainiro.io) and contact them for a quote for your own ChatGPT chatbot, or use their DIY version. This allows you to scrape your website, or upload files to create your own chatbot based upon ChatGPT answering questions the way you want it to answer questions."
+         uri:"https://ainiro.io"
 
    // Returning the correct status code.
    response.status.set:201
