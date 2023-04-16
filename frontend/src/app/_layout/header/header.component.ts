@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) Aista Ltd, 2021 - 2023 info@aista.com, all rights reserved.
+ * Copyright (c) Aista Ltd, 2021 - 2023 team@ainiro.io.
  */
 
 import { Component, OnInit, ViewChild } from '@angular/core';
@@ -277,64 +277,64 @@ optin verification and potential referential integrity issues.`;
     switch (val) {
 
       case '/':
-        return 'https://docs.aista.com';
+        return 'https://polterguy.github.io';
 
       case 'chatbot-wizard':
-        return 'https://docs.aista.com/documentation/magic/components/chatbot-wizard/';
+        return 'https://polterguy.github.io/documentation/magic/components/chatbot-wizard/';
 
       case 'sql-studio':
-        return 'https://docs.aista.com/documentation/magic/components/sql/';
+        return 'https://polterguy.github.io/documentation/magic/components/sql/';
 
       case 'databases':
-        return 'https://docs.aista.com/documentation/magic/components/databases/';
+        return 'https://polterguy.github.io/documentation/magic/components/databases/';
 
       case 'endpoint-generator':
-        return 'https://docs.aista.com/documentation/magic/components/crudifier/backend/';
+        return 'https://polterguy.github.io/documentation/magic/components/crudifier/backend/';
 
       case 'frontend-generator':
-        return 'https://docs.aista.com/documentation/magic/components/crudifier/frontend/';
+        return 'https://polterguy.github.io/documentation/magic/components/crudifier/frontend/';
 
       case 'hyper-ide':
-        return 'https://docs.aista.com/documentation/magic/components/hyper-ide/';
+        return 'https://polterguy.github.io/documentation/magic/components/hyper-ide/';
 
       case 'user-roles-management':
-        return 'https://docs.aista.com/documentation/magic/components/auth/';
+        return 'https://polterguy.github.io/documentation/magic/components/auth/';
 
       case 'endpoints':
-        return 'https://docs.aista.com/documentation/magic/components/endpoints/';
+        return 'https://polterguy.github.io/documentation/magic/components/endpoints/';
 
       case 'tasks':
-        return 'https://docs.aista.com/documentation/magic/components/tasks/';
+        return 'https://polterguy.github.io/documentation/magic/components/tasks/';
 
       case 'hyperlambda-playground':
-        return 'https://docs.aista.com/documentation/magic/components/evaluator/';
+        return 'https://polterguy.github.io/documentation/magic/components/evaluator/';
 
       case 'sockets':
-        return 'https://docs.aista.com/documentation/magic/components/sockets/';
+        return 'https://polterguy.github.io/documentation/magic/components/sockets/';
 
       case 'plugins':
-        return 'https://docs.aista.com/documentation/magic/components/bazar/';
+        return 'https://polterguy.github.io/documentation/magic/components/bazar/';
 
       case 'machine-learning':
-        return 'https://docs.aista.com/documentation/magic/components/machine-learning/';
+        return 'https://polterguy.github.io/documentation/magic/components/machine-learning/';
 
       case 'configuration':
-        return 'https://docs.aista.com/documentation/magic/components/config/';
+        return 'https://polterguy.github.io/documentation/magic/components/config/';
 
       case 'health-check':
-        return 'https://docs.aista.com/documentation/magic/components/assumptions/';
+        return 'https://polterguy.github.io/documentation/magic/components/assumptions/';
 
       case 'cryptography':
-        return 'https://docs.aista.com/documentation/magic/components/crypto/';
+        return 'https://polterguy.github.io/documentation/magic/components/crypto/';
 
       case 'log':
-        return 'https://docs.aista.com/documentation/magic/components/log/';
+        return 'https://polterguy.github.io/documentation/magic/components/log/';
 
       case 'help-center':
-        return 'https://docs.aista.com/documentation/magic/';
+        return 'https://polterguy.github.io/documentation/magic/';
 
       case 'user-profile':
-        return 'https://docs.aista.com/documentation/magic/components/profile/';
+        return 'https://polterguy.github.io/documentation/magic/components/profile/';
     }
   }
 
