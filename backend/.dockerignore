@@ -2,6 +2,7 @@
 files/modules/**
 files/data/**
 !files/data/.gitkeep
+!files/data/README.md
 !files/modules/README.md
 files/etc/system/crypto/keys/**
 !files/etc/system/crypto/keys/README.md
