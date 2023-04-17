@@ -58,5 +58,5 @@ jobs:
         cd ..
         zip -r magic-${{ steps.get_version.outputs.VERSION }}.zip *
         ls
-        curl -X PUT -H "Content-Type: multipart/form-data"  -H "Authorization: Bearer ${{ secrets.API_TOKEN }}" -F "folder=/etc/www/releases/" -F "file=@magic-${{ steps.get_version.outputs.VERSION }}.zip" "https://ainiro.io/magic/system/file-system/file"
+        curl -X PUT -H "Content-Type: multipart/form-data"  -H "Authorization: Bearer ${{ secrets.API_TOKEN }}" -F "folder=/etc/www/" -F "file=@magic-${{ steps.get_version.outputs.VERSION }}.zip" "https://ainiro.io/magic/system/file-system/file"
 
