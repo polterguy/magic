@@ -44,6 +44,7 @@ if
        * For PG SQL we'll need to first create the database in a separate [pgsql.connect] invocation,
        * then run the execute script with the created database as our selected database.
        */
+      console.log:Trying to create Magic database
       switch:x:@.db-type
 
          // Special case for MS SQL to use [mssql.execute-batch].
@@ -71,6 +72,8 @@ if
          case:sqlite
 
             // Executing create database SQL script without any special cases.
+            io.file.save:/data/magic.db
+               .:
             sqlite.connect:[generic|magic]
                sqlite.execute:x:@io.file.load
 
