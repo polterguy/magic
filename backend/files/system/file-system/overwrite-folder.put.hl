@@ -49,12 +49,7 @@ set-value:x:@.filename
       get-value:x:@.arguments/*/file/*/name
 
 // Saving stream to file.
-if
-   io.file.exists:x:@.filename
-   .lambda
-      io.file.delete:x:@.filename
 io.stream.save-file:x:@.filename
-   overwrite:false
    get-value:x:@.arguments/*/file/*/stream
 
 // Unzipping file.
