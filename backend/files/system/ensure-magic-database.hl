@@ -72,8 +72,6 @@ if
          case:sqlite
 
             // Executing create database SQL script without any special cases.
-            io.file.save:/data/magic.db
-               .:
             sqlite.connect:[generic|magic]
                sqlite.execute:x:@io.file.load
 
