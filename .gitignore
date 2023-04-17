@@ -352,7 +352,7 @@ backend/files/etc/tests/*.*
 
 backend/files/data/*.*
 !backend/files/data/.gitkeep
-!backend/files/data/sys.db
+!backend/files/data/README.md
 
 backend/files/etc/sqlite/templates/*.*
 !backend/files/etc/sqlite/templates/README.md
