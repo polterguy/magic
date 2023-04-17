@@ -23,4 +23,5 @@ set-value:x:@.full-path
       get-value:x:@.arguments/*/folder
       get-value:x:@.arguments/*/file/*/name
 io.stream.save-file:x:@.full-path
+   overwrite:false
    get-value:x:@.arguments/*/file/*/stream
