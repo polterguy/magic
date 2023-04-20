@@ -43,21 +43,16 @@ jobs:
         cd ./dist
         cd ./frontend
         cp -r * ../../../../
-        rm -rf tmp
         cd ..
         cd ..
         cd ..
-        rm -rf ./expert-ai
+        cd ..
+        rm -rf ./tmp
         ls
         cd ..
         cd ..
         cd ..
-        cd ..
-        docker build -t servergardens/magic-backend:expert-ai-${{ steps.get_version.outputs.VERSION }} -f ./Dockerfile .
-        docker push servergardens/magic-backend:expert-ai-${{ steps.get_version.outputs.VERSION }}
-
         cd ..
         zip -r magic-${{ steps.get_version.outputs.VERSION }}.zip *
-        ls
         curl -X PUT -H "Content-Type: multipart/form-data"  -H "Authorization: Bearer ${{ secrets.API_TOKEN }}" -F "folder=/etc/releases/" -F "file=@magic-${{ steps.get_version.outputs.VERSION }}.zip" "https://ainiro.io/magic/system/file-system/file"
 
