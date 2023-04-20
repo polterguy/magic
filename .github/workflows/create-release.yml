@@ -42,7 +42,8 @@ jobs:
         npm run build-prod
         cd ./dist
         cd ./frontend
-        cp -r * ../../../
+        cp -r * ../../../../
+        rm -rf tmp
         cd ..
         cd ..
         cd ..
