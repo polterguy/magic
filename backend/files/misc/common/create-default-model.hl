@@ -17,7 +17,7 @@ try
             temperature:decimal:0.3
             supervised:int:1
             cached:int:1
-            auth:guest, root
+            auth:guest,root
             greeting:Hi there, how can I help you?
 
 .catch
