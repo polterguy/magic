@@ -12,9 +12,9 @@ auth.ticket.verify:root
 
 // Listing custom files.
 if
-   io.folder.exists:/etc/system/openai/css/
+   io.folder.exists:/etc/system/openai/css/chat/
    .lambda
-      io.file.list:/etc/system/openai/css/
+      io.file.list:/etc/system/openai/css/chat/
       for-each:x:@io.file.list/*
          if
             strings.ends-with:x:@.dp/#
