@@ -31,15 +31,23 @@ fetch('https://polterguy.github.io/assets/css/icofont.min.css')
     window.document.getElementsByTagName('head')[0].appendChild(css);
 });
 
-// Retrieving reCAPTCHA site key.
-let aistaReCaptchaSiteKey = '[[recaptcha]]';
-if (aistaReCaptchaSiteKey && aistaReCaptchaSiteKey.length > 0) {
+let recaptchaFetched = false;
 
-  // Including reCAPTCHA version 3
-  const cap = window.document.createElement('script');
-  cap.src = 'https://www.google.com/recaptcha/api.js?render=' + aistaReCaptchaSiteKey;
-  cap.defer = true;
-  window.document.getElementsByTagName('head')[0].appendChild(cap);
+let aistaReCaptchaSiteKey = '[[recaptcha]]';
+function ensureReCaptchaHasBeenFetched() {
+  // Retrieving reCAPTCHA site key unless it's already been fetched.
+  if (recaptchaFetched) {
+    return;
+  }
+  recaptchaFetched = true;
+  if (aistaReCaptchaSiteKey && aistaReCaptchaSiteKey.length > 0) {
+
+    // Including reCAPTCHA version 3
+    const cap = window.document.createElement('script');
+    cap.src = 'https://www.google.com/recaptcha/api.js?render=' + aistaReCaptchaSiteKey;
+    cap.defer = true;
+    window.document.getElementsByTagName('head')[0].appendChild(cap);
+  }
 }
 
 // Retrieving session identifier site key.
@@ -203,6 +211,10 @@ function aista_submit_form(speech) {
  * Shows chat window.
  */
 function aista_show_chat_window() {
+
+  // Ensuring we fetch reCAPTCHA stuff.
+  ensureReCaptchaHasBeenFetched();
+
   const wnd = window.document.getElementsByClassName('aista-chat-wnd')[0];
   wnd.style.display = 'block';
   const btns = window.document.getElementsByClassName('aista-chat-btn');
