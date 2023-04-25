@@ -56,8 +56,8 @@
 
 .aista-search-close {
   position: fixed !important;
-  top: 50px !important;
-  right: 50px !important;
+  top: 5px !important;
+  right: 5px !important;
   background-color: transparent !important;
   border: none !important;
   color: #fefefe !important;

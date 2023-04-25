@@ -16,16 +16,24 @@ fetch('https://polterguy.github.io/assets/css/icofont.min.css')
     window.document.getElementsByTagName('head')[0].appendChild(css);
 });
 
+let recaptchaFetched = false;
 
-// Retrieving reCAPTCHA site key.
 let aistaReCaptchaSiteKeySearch = '[[recaptcha]]';
-if (aistaReCaptchaSiteKeySearch && aistaReCaptchaSiteKeySearch.length > 0) {
+function ensureReCaptchaHasBeenFetched() {
 
-  // Including reCAPTCHA version 3
-  const cap = window.document.createElement('script');
-  cap.src = 'https://www.google.com/recaptcha/api.js?render=' + aistaReCaptchaSiteKeySearch;
-  cap.defer = true;
-  window.document.getElementsByTagName('head')[0].appendChild(cap);
+  // Retrieving reCAPTCHA site key unless it's already been fetched.
+  if (recaptchaFetched) {
+    return;
+  }
+  recaptchaFetched = true;
+  if (aistaReCaptchaSiteKeySearch && aistaReCaptchaSiteKeySearch.length > 0) {
+
+    // Including reCAPTCHA version 3
+    const cap = window.document.createElement('script');
+    cap.src = 'https://www.google.com/recaptcha/api.js?render=' + aistaReCaptchaSiteKeySearch;
+    cap.defer = true;
+    window.document.getElementsByTagName('head')[0].appendChild(cap);
+  }
 }
 
 
@@ -62,13 +70,15 @@ function aista_create_search_ui() {
 
 function aista_show_search_overlay() {
 
+  ensureReCaptchaHasBeenFetched();
+
   // Overlay.
   const aistaSearchOverlay = window.document.createElement('div');
   aistaSearchOverlay.className = 'aista-search-overlay';
 
   // Close button.
   const aistaSearchClose = window.document.createElement('button');
-  aistaSearchClose.innerHTML = 'X';
+  aistaSearchClose.innerHTML = '<i class="icofont-close"></i>';
   aistaSearchClose.addEventListener('click', () => aistaSearchOverlay.parentNode.removeChild(aistaSearchOverlay));
   aistaSearchClose.className = 'aista-search-close';
 
