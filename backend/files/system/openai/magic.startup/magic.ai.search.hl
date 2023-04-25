@@ -111,6 +111,7 @@ slots.create:magic.ai.search
                      .
                         uri:x:@.dp/#/*/uri
                         prompt:x:@.dp/#/*/prompt
+                        dot:x:@math.dot
 
       // Sorting [.snippets] such that highest dot product comes first.
       sort:x:@.snippets/*
