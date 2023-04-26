@@ -4,7 +4,7 @@
  */
 (function() {
 
-fetch('https://ainiro.io/assets/icofont.min.css')
+fetch('https://ainiro.io/assets/css/icofont.min.css')
   .then(res => {
     return res.text()
   })
