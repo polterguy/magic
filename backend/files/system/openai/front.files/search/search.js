@@ -4,7 +4,7 @@
  */
 (function() {
 
-fetch('https://polterguy.github.io/assets/css/icofont.min.css')
+fetch('https://ainiro.io/assets/icofont.min.css')
   .then(res => {
     return res.text()
   })
