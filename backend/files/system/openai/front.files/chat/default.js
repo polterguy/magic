@@ -19,7 +19,7 @@ let aistaChatGreeting = '[[greeting]]';
 // True if speech is turned on.
 let aistaSpeech = [[speech]];
 
-fetch('https://polterguy.github.io/assets/css/icofont.min.css')
+fetch('https://ainiro.io/assets/icofont.min.css')
   .then(res => {
     return res.text()
   })
