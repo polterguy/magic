@@ -49,6 +49,9 @@ slots.create:magic.ai.chat
                   hyper2lambda:x:@cache.get
 
    // Checking if model is prefixed, at which point we prepend prefix to question.
+   .only-prompt
+   set-value:x:@.only-prompt
+      get-value:x:@.arguments/*/prompt
    if
       and
          exists:x:@.arguments/*/prefix
@@ -196,7 +199,7 @@ slots.create:magic.ai.chat
             table:ml_requests
             values
                type:x:@.arguments/*/type
-               prompt:x:@.arguments/*/prompt
+               prompt:x:@.only-prompt
                completion:x:@.result
                finish_reason:x:@get-first-value
 
