@@ -95,7 +95,7 @@ function aista_create_chat_ui() {
   // Creating chat button if we should.
   if ('[[render_button]]' === 'True') {
     const aistaChatBtn = window.document.createElement('button');
-    if (ainiroRtl) {
+    if (ainiroRtl && ainiroRtl === true) {
       aistaChatBtn.dir = 'rtl';
     }
     let btnTxt = '[[button]]';
@@ -110,7 +110,7 @@ function aista_create_chat_ui() {
 
   // Chat window.
   const aistaChatWnd = window.document.createElement('div');
-  if (ainiroRtl) {
+  if (ainiroRtl && ainiroRtl === true) {
     aistaChatWnd.dir = 'rtl';
   }
   aistaChatWnd.className = 'aista-chat-wnd';
