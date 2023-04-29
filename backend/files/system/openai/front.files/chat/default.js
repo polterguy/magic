@@ -16,6 +16,9 @@ let aistaChatMarkdown = [[markdown]];
 // Greeting to welcome user with.
 let aistaChatGreeting = '[[greeting]]';
 
+// RTL support.
+let ainiroRtl = '[[rtl]]';
+
 // True if speech is turned on.
 let aistaSpeech = [[speech]];
 
@@ -92,6 +95,9 @@ function aista_create_chat_ui() {
   // Creating chat button if we should.
   if ('[[render_button]]' === 'True') {
     const aistaChatBtn = window.document.createElement('button');
+    if (ainiroRtl) {
+      aistaChatBtn.dir = 'rtl';
+    }
     let btnTxt = '[[button]]';
     if (btnTxt === '') {
       btnTxt = '<i class="icofont-chat"></i>';
@@ -104,6 +110,9 @@ function aista_create_chat_ui() {
 
   // Chat window.
   const aistaChatWnd = window.document.createElement('div');
+  if (ainiroRtl) {
+    aistaChatWnd.dir = 'rtl';
+  }
   aistaChatWnd.className = 'aista-chat-wnd';
   let html = `
   <div class="aista-chat-header">[[header]]</div>

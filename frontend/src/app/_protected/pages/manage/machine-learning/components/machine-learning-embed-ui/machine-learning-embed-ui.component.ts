@@ -30,6 +30,7 @@ export class MachineLearningEmbedUiComponent implements OnInit {
   chat: boolean = true;
   markdown: boolean = true;
   speech: boolean = false;
+  rtl: boolean = false;
   placeholder: string = 'Search ...';
   buttonTxtSearch: string = '';
   maxSearch: number = 5;
@@ -85,7 +86,7 @@ export class MachineLearningEmbedUiComponent implements OnInit {
 
   getChatbotEmbed() {
 
-    return `<script src="${this.backendService.active.url}/magic/system/openai/include-javascript?markdown=${this.markdown ? 'true' : 'false'}&speech=${this.speech ? 'true' : 'false'}&search=${this.search ? 'true' : 'false'}&chat=${this.chat ? 'true' : 'false'}&css=${encodeURIComponent(this.theme)}&file=default&type=${encodeURIComponent(this.type)}&header=${encodeURIComponent(this.header)}&button=${encodeURIComponent(this.buttonTxt)}" defer></script>`;
+    return `<script src="${this.backendService.active.url}/magic/system/openai/include-javascript?markdown=${this.markdown ? 'true' : 'false'}&speech=${this.speech ? 'true' : 'false'}&rtl=${this.rtl ? 'true' : 'false'}&search=${this.search ? 'true' : 'false'}&chat=${this.chat ? 'true' : 'false'}&css=${encodeURIComponent(this.theme)}&file=default&type=${encodeURIComponent(this.type)}&header=${encodeURIComponent(this.header)}&button=${encodeURIComponent(this.buttonTxt)}" defer></script>`;
   }
 
   getSearchEmbed() {
