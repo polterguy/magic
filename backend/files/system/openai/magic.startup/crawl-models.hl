@@ -25,6 +25,7 @@ try
                   where
                      and
                         base_url.neq
+                        base_url.neq:
 
                // Looping through all types returned above.
                for-each:x:@data.read/*
