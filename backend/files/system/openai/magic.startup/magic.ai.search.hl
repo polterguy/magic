@@ -59,109 +59,28 @@ slots.create:magic.ai.search
    .begin
    set-value:x:@.begin
       date.now
-   .snippets
-   .continue:bool:true
-   .offset:int:0
-   while:x:@.continue
 
-      // Selecting 200 snippets from type.
-      data.read
-         table:ml_training_snippets
-         columns
-            embedding
-            uri
-            prompt
-         where
-            and
-               embedding.neq
-               type.eq:x:@.arguments/*/type
-         limit:200
-         offset:x:@.offset
-         order:created
-
-      // Looping through all records returned above.
-      for-each:x:@data.read/*
-
-         // Calculating dot product of currently iterated snippet and [.vector].
-         math.dot
-            strings.split:x:@.dp/#/*/embedding
-               .:,
-            get-nodes:x:@http.post/*/content/*/data/0/*/embedding/*
-
-         // Checking if dot product is higher than threshold.
-         if
-            and
-               not-null:x:@.dp/#/*/uri
-               neq:x:@.dp/#/*/uri
-                  .:
-               not-exists:x:@.snippets/*/*/uri/={@.dp/#/*/uri}
-               or
-                  strings.starts-with:x:@.dp/#/*/uri
-                     .:"http://"
-                  strings.starts-with:x:@.dp/#/*/uri
-                     .:"https://"
-               mte:x:@math.dot
-                  get-value:x:@.arguments/*/threshold
-            .lambda
-
-               // Adding result to above [.snippets] collection.
-               unwrap:x:+/*/*/*
-               add:x:@.snippets
-                  .
-                     .
-                        uri:x:@.dp/#/*/uri
-                        prompt:x:@.dp/#/*/prompt
-                        dot:x:@math.dot
-
-      // Sorting [.snippets] such that highest dot product comes first.
-      sort:x:@.snippets/*
-         if
-            mt:x:@.lhs/#/*/dot
-               get-value:x:@.rhs/#/*/dot
-            .lambda
-               set-value:x:@.result
-                  .:int:-1
-         else-if
-            lt:x:@.lhs/#/*/dot
-               get-value:x:@.rhs/#/*/dot
-            .lambda
-               set-value:x:@.result
-                  .:int:1
-         else
-            set-value:x:@.result
-               .:int:0
-
-      /*
-       * Updating [.snippets] now with the 50 top most relevant snippets.
-       *
-       * Notice, to make algorithm perform at least to some extent, we avoid
-       * adding more than max 50 snippets to [.snippets].
-       * These are the top 50 performing snippets according to vectors and
-       * dot product.
-       */
-      remove-nodes:x:@.snippets/*
-      add:x:@.snippets
-         get-nodes:x:@sort/*/[0,50]
-
-      // Checking if we're done.
-      if
-         lt
-            get-count:x:@data.read/*
-            .:int:200
-         .lambda
-
-            // We're done! We've found the top 200 most relevant snippets from our training material.
-            set-value:x:@.continue
-               .:bool:false
-
-      else
-
-         // Incrementing offset.
-         math.increment:x:@.offset
-            get-count:x:@data.read/*
-
-   // Used to hold the result we're returning to caller.
-   .result
+   // Contains all snippets that are above [threshold].
+   unwrap:x:./*/data.scan/*/threshold
+   add:x:./*/data.scan/*/vector
+      get-nodes:x:@http.post/*/content/*/data/0/*/embedding/*
+   data.scan
+      max:x:@.arguments/*/max
+      vector
+      threshold:x:@.arguments/*/threshold
+      table:ml_training_snippets
+      columns
+         embedding
+         prompt
+         completion
+         uri
+      where
+         and
+            embedding.neq
+            type.eq:x:@.arguments/*/type
+      limit:200
+      offset:x:@.offset
+      order:created
 
    // Measuring how much time we spent looping through snippets.
    .end
@@ -176,27 +95,14 @@ slots.create:magic.ai.search
       time.format:x:@.time
          format:"ss\\.fff"
 
-   // Making sure we only return [max] snippets to caller.
-   while
-      and
-         exists:x:@.snippets/0
-         mt:x:@.arguments/*/max
-            .:int:0
-      .lambda
-
-         // Returning relevant snippets to caller.
-         add:x:../*/return/*/snippets
-            get-nodes:x:@.snippets/0
-         remove-nodes:x:@.snippets/0
-
-         // Decrementing max.
-         math.decrement:x:@.arguments/*/max
-
    // Making sure we don't return [snippets] unless we actually have snippets.
    if
-      not-exists:x:../*/return/*/snippets/*
+      not-exists:x:@data.scan/*
       .lambda
          remove-nodes:x:../*/return/*/snippets
+   else
+      add:x:../*/return/*/snippets
+         get-nodes:x:@data.scan/*
 
    // Returning result to caller.
    unwrap:x:./*/return/*
