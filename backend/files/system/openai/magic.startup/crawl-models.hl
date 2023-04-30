@@ -20,6 +20,11 @@ try
          // Making sure exceptions never leave thread.
          try
 
+            // Verifying user can create more snippets.
+            add:x:+
+               get-nodes:x:@.arguments/*/type
+            try-signal:magic.ai.can-create-snippet
+
             // Connecting to database.
             data.connect:[generic|magic]
 
