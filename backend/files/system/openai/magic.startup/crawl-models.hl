@@ -1,72 +1,63 @@
 
-/*
- * Creates scheduled task that crawls all models periodically.
- */
-try
+// Deleting old task if it exists.
+tasks.list:ainiro-crawl-machine-learning-models
+if
+   exists:x:@tasks.list/*
+   .lambda
+      tasks.delete:ainiro-crawl-machine-learning-models
 
-   // Deleting old task if it exists.
-   tasks.list:ainiro-crawl-machine-learning-models
-   if
-      exists:x:@tasks.list/*
-      .lambda
-         tasks.delete:ainiro-crawl-machine-learning-models
+// Creating task that crawls all models periodically.
+tasks.create:ainiro-crawl-machine-learning-models
+   description:Periodically crawls all models once every day to add new pages to model
+   repeats:24.hours
+   .lambda
 
-   // Creating task that crawls all model periodically.
-   tasks.create:ainiro-crawl-machine-learning-models
-      description:Periodically crawls all models once every day to add new pages to model
-      repeats:24.hours
-      .lambda
+      // Connecting to database.
+      data.connect:[generic|magic]
 
-         // Making sure exceptions never leave thread.
-         try
+         // Finding all types with a [base_url].
+         data.read
+            table:ml_types
+            columns
+               type
+               base_url
+            where
+               and
+                  base_url.neq
+                  base_url.neq:
 
-            // Verifying user can create more snippets.
-            add:x:+
-               get-nodes:x:@.arguments/*/type
-            try-signal:magic.ai.can-create-snippet
+         // Looping through all types returned above.
+         for-each:x:@data.read/*
 
-            // Connecting to database.
-            data.connect:[generic|magic]
+            // Making sure exceptions never leave thread.
+            try
 
-               // Finding all types with a [base_url].
-               data.read
-                  table:ml_types
-                  columns
-                     type
-                     base_url
-                  where
-                     and
-                        base_url.neq
-                        base_url.neq:
+               // Verifying user can create more snippets.
+               add:x:+
+                  get-nodes:x:@.dp/#/*/type
+               try-signal:magic.ai.can-create-snippet
 
-               // Looping through all types returned above.
-               for-each:x:@data.read/*
+               // Doing some logging.
+               log.info:Crawling website
+                  url:x:@.dp/#/*/base_url
+                  type:x:@.dp/#/*/type
 
-                  // Doing some logging.
-                  log.info:Crawling website
-                     url:x:@.dp/#/*/base_url
-                     type:x:@.dp/#/*/type
+               // Invoking slot doing the heavy lifting.
+               unwrap:x:./*/signal/*
+               unwrap:x:./*/signal/*/.onafter/**
+               signal:magic.ai.crawl-site
+                  delay:int:2000
+                  threshold:int:150
+                  summarize:bool:true
+                  url:x:@.dp/#/*/base_url
+                  type:x:@.dp/#/*/type
+                  .onafter
+                     signal:magic.ai.vectorise
+                        type:x:@.dp/#/*/type
 
-                  // Invoking slot doing the heavy lifting.
-                  unwrap:x:./*/signal/*
-                  unwrap:x:./*/signal/*/.onafter/**
-                  signal:magic.ai.crawl-site
-                     delay:int:2000
-                     threshold:int:150
-                     summarize:bool:true
-                     url:x:@.dp/#/*/base_url
-                     type:x:@.dp/#/*/type
-                     .onafter
-                        signal:magic.ai.vectorise
-                           type:x:@.dp/#/*/type
+            .catch
 
-         .catch
-
-            // Logging.
-            log.error:Could not crawl site
-               error:x:@.arguments/*/message
-
-.catch
-
-   // Task already exists.
-   console.log:Task to periodically crawl models already exists
+               // Logging.
+               log.error:Could not crawl site
+                  error:x:@.arguments/*/message
+                  site:x:@.dp/#/*/base_url
