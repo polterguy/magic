@@ -4,6 +4,13 @@
  */
 try
 
+   // Deleting old task if it exists.
+   tasks.list:ainiro-crawl-machine-learning-models
+   if
+      exists:x:@tasks.list/*
+      .lambda
+         tasks.delete:ainiro-crawl-machine-learning-models
+
    // Creating task that crawls all model periodically.
    tasks.create:ainiro-crawl-machine-learning-models
       description:Periodically crawls all models once every day to add new pages to model
@@ -40,7 +47,6 @@ try
                   unwrap:x:./*/signal/*/.onafter/**
                   signal:magic.ai.crawl-site
                      delay:int:2000
-                     max:int:25
                      threshold:int:150
                      summarize:bool:true
                      url:x:@.dp/#/*/base_url

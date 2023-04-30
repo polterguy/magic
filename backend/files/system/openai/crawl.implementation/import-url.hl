@@ -684,6 +684,9 @@ data.connect:[generic|magic]
                         .:
 
                   // Inserting prompt, completion, type and URI into database as is.
+                  add:x:+
+                     get-nodes:x:@.arguments/*/type
+                  try-signal:magic.ai.can-create-snippet
                   data.create
                      table:ml_training_snippets
                      values
@@ -752,6 +755,9 @@ data.connect:[generic|magic]
             .lambda
 
                // Inserting summary prompt and completion.
+               add:x:+
+                  get-nodes:x:@.arguments/*/type
+               try-signal:magic.ai.can-create-snippet
                data.create
                   table:ml_training_snippets
                   values
