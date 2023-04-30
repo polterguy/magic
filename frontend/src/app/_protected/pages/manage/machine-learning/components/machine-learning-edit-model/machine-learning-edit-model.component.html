@@ -138,6 +138,23 @@
 
       <div class="col-12 d-flex justify-content-md-between align-items-md-center align-items-end flex-md-row">
 
+        <mat-form-field class="w-100 standalone-field" [class.me-2]="use_embeddings">
+          <span
+            matPrefix
+            matTooltip="Website"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>http</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            placeholder="Website ..."
+            [disabled]="isLoading"
+            [(ngModel)]="base_url"
+            name="base_url"
+            autocomplete="off">
+        </mat-form-field>
+
         <mat-form-field class="w-100 standalone-field me-2" *ngIf="use_embeddings && model?.id?.startsWith('gpt')">
           <span
             matPrefix
