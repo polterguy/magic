@@ -754,10 +754,12 @@ data.connect:[generic|magic]
             not-exists:x:@data.read/*
             .lambda
 
-               // Inserting summary prompt and completion.
+               // Checking if we can create training snippet.
                add:x:+
                   get-nodes:x:@.arguments/*/type
                try-signal:magic.ai.can-create-snippet
+
+               // Inserting summary prompt and completion.
                data.create
                   table:ml_training_snippets
                   values
