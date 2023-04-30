@@ -24,6 +24,8 @@ validators.default:x:@.arguments
 data.connect:[generic|magic]
 
    // Verifying user can create more snippets.
+   add:x:+
+      get-nodes:x:@.arguments/*/type
    try-signal:magic.ai.can-create-snippet
 
    // Checking if we've fetched this URL previously.
