@@ -245,9 +245,11 @@ slots.create:magic.ai.crawl-site
 
                // Checking if we need to warn user about maximum URLs.
                if
-                  mt
-                     get-value:x:@get-count
-                     get-value:x:@.arguments/*/max
+                  and
+                     exists:x:@.arguments/*/max
+                     mt
+                        get-value:x:@get-count
+                        get-value:x:@.arguments/*/max
                   .lambda
 
                      // Warning use that there are MORE than [max] URLs in sitemap.
@@ -261,6 +263,7 @@ slots.create:magic.ai.crawl-site
                         args
                            message:x:@strings.concat
                            type:warning
+                     log.info:x:@strings.concat
 
                // Looping through each URL found from sitemap(s).
                .no:int:0
@@ -268,8 +271,10 @@ slots.create:magic.ai.crawl-site
 
                   // Checking if we've reached limit.
                   if
-                     lt:x:@.no
-                        get-value:x:@.arguments/*/max
+                     or
+                        not-exists:x:@.arguments/*/max
+                        lt:x:@.no
+                           get-value:x:@.arguments/*/max
                      .lambda
 
                         // Informing frontend of what we're doing
@@ -304,7 +309,7 @@ slots.create:magic.ai.crawl-site
                // Signaling frontend
                strings.concat
                   .:"Done importing "
-                  get-value:x:@get-count
+                  get-value:x:@.no
                   .:" URLs"
                unwrap:x:+/*/args/*
                sockets.signal:magic.backend.chatbot
@@ -312,6 +317,7 @@ slots.create:magic.ai.crawl-site
                   args
                      message:x:@strings.concat
                      type:done_crawling
+               log.info:x:@strings.concat
 
          else
 
