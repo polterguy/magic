@@ -33,7 +33,7 @@ AINIRO delivers chatbots based upon Magic technology and we will host it for you
 
 ## Low-Code
 
-In addition the its OpenAI and ChatGPT features, Magic is also a complete Low-Code software development platform. You can read more about Magic's internals [here](https://polterguy.github.io).
+In addition the its OpenAI and ChatGPT features, Magic is also a complete Low-Code software development platform. You can read more about [Magic's Low-Code features here](https://polterguy.github.io).
 
 ## License
 
