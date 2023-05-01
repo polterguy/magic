@@ -31,6 +31,10 @@ AINIRO delivers chatbots based upon Magic technology and we will host it for you
 * [AINIRO, ChatGPT based Chatbots](https://ainiro.io/contact-us#demo)
 * [Sign up for a DIY ChatGPT website chatbot](https://ainiro.io/blog/how-to-get-chatgpt-on-your-website)
 
+## Low-Code
+
+In addition the its OpenAI and ChatGPT features, Magic is also a complete Low-Code software development platform. You can read more about Magic's internals [here](https://polterguy.github.io).
+
 ## License
 
 **TL;TR** - You can create closed source applications with Magic, but you can _not_ close Magic itself.
