@@ -1,15 +1,13 @@
 
-# Put ChatGPT on your Website
+# AI, Machine Learning and Low-Code
 
 ![Build status](https://github.com/polterguy/magic/actions/workflows/codeql-analysis.yml/badge.svg)
 
-Magic allows you to put ChatGPT on your website and have it say whatever you _want_ it to say. We scrape your website, create a custom ChatGPT-based Machine Learning model, and you get an HTML script you can include on your website to have visitors _"talk with your website"_.
+Magic is a software development platfor based upon AI and Machine Learning. It allows you to [put ChatGPT on your website](https://ainiro.io/chatgpt-website-chatbot) and have it say whatever you _want_ it to say among other things. Magic will scrape your website, create a custom ChatGPT-based Machine Learning model, and you get an HTML script you can include on your website to have visitors _"talk with your website"_.
 
 <img src="https://ainiro.io/assets/images/chatgpt-website-chatbot.jpeg" alt="The best ChatGPT-based website chatbot">
 
-We can use Magic to create chatbots that are used for customer support, answers as sales executives, generates leads, anything you want really. You can try our chatbot below.
-
-* [Try our ChatGPT-based website chatbot](https://ainiro.io)
+You can use Magic to create chatbots that are used for customer support, answers as sales executives, generates leads, anything you want really. In addition Magic allows you to create [AI Website Search](https://ainiro.io/ai-website-search) and [AI Expert Systems](https://ainiro.io/ai-expert-systems).
 
 ## Features
 
