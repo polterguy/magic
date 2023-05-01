@@ -9,9 +9,9 @@ Magic is a software development platfor based upon AI and Machine Learning. It a
 
 You can use Magic to create chatbots that are used for customer support, answers as sales executives, generates leads, anything you want really. In addition Magic allows you to create [AI Website Search](https://ainiro.io/ai-website-search) and [AI Expert Systems](https://ainiro.io/ai-expert-systems).
 
-## Features
+## AI Features
 
-In addition to the obvious allowing you to scrape your website, we also support the following;
+In addition to the obvious allowing you to scrape your website, [AINIRO.IO](https://ainiro.io) also gives you the following;
 
 * Uploading PDF documents
 * Uploading XML, CSV, JSON and YAML documents
@@ -28,7 +28,8 @@ In addition to the obvious allowing you to scrape your website, we also support 
 
 AINIRO delivers chatbots based upon Magic technology and we will host it for you, for a fee. If you want to contact AINIRO to discuss hosting opportunities, you can contact us below.
 
-* [AINIRO, ChatGPT based Chatbots](https://ainiro.io)
+* [AINIRO, ChatGPT based Chatbots](https://ainiro.io/contact-us#demo)
+* [Sign up for a DIY ChatGPT website chatbot](https://ainiro.io/blog/how-to-get-chatgpt-on-your-website)
 
 ## License
 
