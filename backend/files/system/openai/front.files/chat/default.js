@@ -17,7 +17,7 @@ let aistaChatMarkdown = [[markdown]];
 let aistaChatGreeting = '[[greeting]]';
 
 // RTL support.
-let ainiroRtl = '[[rtl]]';
+let ainiroRtl = [[rtl]];
 
 // True if speech is turned on.
 let aistaSpeech = [[speech]];
