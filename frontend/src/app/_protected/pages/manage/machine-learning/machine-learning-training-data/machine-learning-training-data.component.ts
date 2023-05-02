@@ -384,10 +384,17 @@ export class MachineLearningTrainingDataComponent implements OnInit {
 
   filterList(event: { searchKey: string, type?: string }) {
 
-    this.filter = {
+    const newFilter: any = {
       limit: this.filter.limit,
       offset: 0,
     };
+    if (this.filter.order) {
+      newFilter.order = this.filter.order;
+    }
+    if (this.filter.direction) {
+      newFilter.direction = this.filter.direction;
+    }
+    this.filter = newFilter;
     if (event.searchKey) {
       this.filter['ml_training_snippets.prompt.like'] = '%' + event.searchKey + '%';
       this.filter['ml_training_snippets.uri.like'] = event.searchKey + '%';
