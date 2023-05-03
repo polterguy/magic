@@ -13,6 +13,10 @@
    ml_types.temperature.eq:double
    ml_types.base_url.like:string
    ml_types.base_url.eq:string
+   ml_types.contact_us.like:string
+   ml_types.contact_us.eq:string
+   ml_types.lead_email.like:string
+   ml_types.lead_email.eq:string
 .description:Endpoint counting items in your ml_types table in your magic database
 .type:crud-count
 

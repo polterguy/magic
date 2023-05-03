@@ -65,9 +65,45 @@
       </textarea>
     </mat-form-field>
 
+    <mat-form-field class="w-100 custom-alignment" [class.d-none]="!advanced || !use_embeddings">
+      <span
+        matPrefix
+        matTooltip="Reply returned when user provides email address"
+        class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        <mat-icon>send</mat-icon>
+        <span class="text-muted">|</span>
+      </span>
+      <textarea
+        matInput
+        placeholder="Email reply ..."
+        [disabled]="isLoading"
+        spellcheck="true"
+        rows="4"
+        [(ngModel)]="contact_us"
+        name="contact_us">
+      </textarea>
+    </mat-form-field>
+
     <div class="row" [class.d-none]="!advanced">
 
       <div class="col-12 d-flex justify-content-md-between align-items-md-center align-items-end flex-md-row">
+
+        <mat-form-field class="w-100 standalone-field" [class.me-2]="use_embeddings">
+          <span
+            matPrefix
+            matTooltip="Lead email address"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>email</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            placeholder="Lead email ..."
+            [disabled]="isLoading"
+            [(ngModel)]="lead_email"
+            name="lead_email"
+            autocomplete="off">
+        </mat-form-field>
 
         <mat-form-field class="w-100 standalone-field" [class.me-2]="use_embeddings">
           <span

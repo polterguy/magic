@@ -75,6 +75,7 @@ slots.create:magic.ai.get-context
          prompt
          completion
          uri
+         cached
       where
          and
             embedding.neq
@@ -82,6 +83,26 @@ slots.create:magic.ai.get-context
       limit:200
       offset:x:@.offset
       order:created
+
+   /*
+    * Checking if first snippet is cached, at which point we return ONLY that snippet.
+    *
+    * This allows you to have responses that are statically cached, yet still
+    * dependent upon semantic AI search towards your training snippets.
+    */
+   if
+      and
+         exists:x:@data.scan/0
+         mt
+            convert:x:@data.scan/0/*/cached
+               type:int
+            .:int:0
+      .lambda
+
+         // First matching snippet has been cached.
+         unwrap:x:+/*
+         return
+            cached:x:@data.scan/0/*/completion
 
    /*
     * Used to hold the referenced snippets used to create our context.

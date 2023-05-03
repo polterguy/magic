@@ -1,0 +1,79 @@
+
+/*
+ * Tries to send a lead email if possible.
+ *
+ * Notice, only works is SMTP settings have been configured.
+ */
+slots.create:magic.ai.send-lead-email
+
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/type
+   validators.mandatory:x:@.arguments/*/prompt
+   validators.mandatory:x:@.arguments/*/session
+   validators.mandatory:x:@.arguments/*/lead_email
+
+   try
+
+      // Verifying that user provided a valid email address.
+      .email
+      strings.split:x:@.arguments/*/prompt
+         .:@
+      strings.split:x:@strings.split/0
+         .:" "
+      strings.split:x:@strings.split/@strings.split/1
+         .:" "
+      set-value:x:@.email
+         strings.concat
+            get-value:x:@strings.split/@strings.split/0/-
+            .:@
+            get-value:x:@strings.split/0
+      validators.email:x:@.email
+
+      // Reading all prompt/completion from current session.
+      data.read
+         table:ml_requests
+         columns
+            prompt
+            completion
+         where
+            and
+               session.eq:x:@.arguments/*/session
+
+      // Creating email.
+      .body:
+      for-each:x:@data.read/*
+         set-value:x:@.body
+            strings.concat
+               get-value:x:@.body
+               .:"<strong>"
+               get-value:x:@.dp/#/*/prompt
+               .:"</strong>"
+               .:"<br>"
+               .:"<div>"
+               get-value:x:@.dp/#/*/completion
+               .:"</div>"
+               .:"<br>"
+
+      // Sending email.
+      unwrap:x:+/**/content
+      mail.smtp.send
+         message
+            to
+               AINIRO Lead:x:@.arguments/*/lead_email
+            reply-to
+               AINIRO Lead:x:@.email
+            subject:Lead from AINIRO.IO
+            entity:text/html
+               content:x:@.body
+
+      // Returning success to caller.
+      return:bool:true
+
+   .catch
+
+      // Oops ...
+      log.error:SMTP settings was not valid. To use lead generation with AINIRO, please apply a valid SMTP configuration.
+         message:x:@.arguments/*/message
+
+      // Returning failure to caller.
+      return:bool:false

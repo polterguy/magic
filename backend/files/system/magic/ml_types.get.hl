@@ -15,6 +15,10 @@
    ml_types.temperature.eq:double
    ml_types.base_url.like:string
    ml_types.base_url.eq:string
+   ml_types.contact_us.like:string
+   ml_types.contact_us.eq:string
+   ml_types.lead_email.like:string
+   ml_types.lead_email.eq:string
 .description:CRUD read endpoint with paging, sorting, filtering selecting records from your ml_types table in your magic database returning type, model, max_tokens, temperature filtering on type, model, max_tokens, temperature with authentication and authorisation for root roles
 .type:crud-read
 
@@ -62,6 +66,8 @@ data.connect:[generic|magic]
          ml_types.vector_model
          ml_types.greeting
          ml_types.base_url
+         ml_types.contact_us
+         ml_types.lead_email
       where
          and
 

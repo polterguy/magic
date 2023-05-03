@@ -16,6 +16,30 @@ insert-before:x:../*/signal/*/.callback
 signal:magic.ai.endpoint-common
    .callback
 
+      // Checking if prompt contains an email address.
+      if
+         and
+            strings.contains:x:@.arguments/*/prompt
+               .:@
+            not-null:x:@.arguments/*/contact_us
+            neq:x:@.arguments/*/contact_us
+               .:
+         .lambda
+
+            // Prompt contains an email address, hence treating prompt as a lead if we can.
+            unwrap:x:+/*
+            signal:magic.ai.send-lead-email
+               type:x:@.arguments/*/type
+               prompt:x:@.arguments/*/prompt
+               session:x:@.arguments/*/session
+               lead_email:x:@.arguments/*/lead_email
+            if:x:@signal
+               unwrap:x:+/*
+               return
+                  db_time:decimal:0
+                  finish_reason:cached
+                  result:x:@.arguments/*/contact_us
+
       // Checking what type of model this is, and invoking correct slot accordingly.
       if
          strings.starts-with:x:@.arguments/*/model

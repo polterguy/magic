@@ -84,6 +84,19 @@ slots.create:magic.ai.completion
             threshold:x:@.arguments/*/threshold
             max_tokens:x:@.arguments/*/max_context_tokens
             vector_model:x:@.arguments/*/vector_model
+
+         // Checking if we've got a cached result.
+         if
+            exists:x:@signal/*/cached
+            .lambda
+
+               // Cached result.
+               unwrap:x:+/*
+               return
+                  result:x:@signal/*/cached
+                  finish_reason:cached
+
+         // Adding db_time to [.result].
          add:x:@.result
             get-nodes:x:@signal/*/db_time
 
@@ -243,6 +256,7 @@ slots.create:magic.ai.completion
                prompt:x:@.arguments/*/prompt
                completion:x:@.result/*/result
                finish_reason:x:@.result/*/finish_reason
+               session:x:@.arguments/*/session
 
    /*
     * Applying some HTTP caching to avoid invoking OpenAI again with

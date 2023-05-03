@@ -38,6 +38,8 @@ slots.create:magic.ai.endpoint-common
             use_embeddings
             threshold
             vector_model
+            contact_us
+            lead_email
          where
             and
                type.eq:x:@.arguments/*/type

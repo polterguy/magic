@@ -69,6 +69,7 @@ data.connect:[generic|magic]
          ml_training_snippets.prompt
          ml_training_snippets.completion
          ml_training_snippets.embedding
+         ml_training_snippets.cached
       where
          and
             or
