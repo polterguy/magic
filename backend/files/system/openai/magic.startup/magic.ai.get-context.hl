@@ -93,6 +93,7 @@ slots.create:magic.ai.get-context
    if
       and
          exists:x:@data.scan/0
+         not-null:x:@data.scan/0/*/cached
          mt
             convert:x:@data.scan/0/*/cached
                type:int
