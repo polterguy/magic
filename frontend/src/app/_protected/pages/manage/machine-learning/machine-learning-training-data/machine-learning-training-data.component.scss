@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Aista Ltd, 2021 - 2023 team@ainiro.io.
+ * Copyright (c) Aista Ltd, 2021 - 2023 and Thomas Hansen, 2023 - For questions contact team@ainiro.io.
  */
 
 @import "../../../../../../assets/styles/_variables/colors.scss";
@@ -29,6 +29,10 @@
     background-color: $aista_warning;
 
     &.pushed {
+      background-color: $aista_success;
+    }
+
+    &.cached {
       background-color: $aista_success;
     }
   }

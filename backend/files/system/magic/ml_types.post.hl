@@ -17,6 +17,8 @@
    vector_model:string
    greeting:string
    base_url:string
+   contact_us:string
+   lead_email:string
 .description:CRUD create endpoint inserting one record into your ml_types table in your magic database taking type, model, max_tokens, temperature with authentication and authorisation for root roles
 .type:crud-create
 

@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) Aista Ltd, 2021 - 2023 team@ainiro.io.
+ * Copyright (c) Aista Ltd, 2021 - 2023 and Thomas Hansen, 2023 - For questions contact team@ainiro.io.
  */
 
 import { Component, Inject, OnInit } from '@angular/core';
@@ -36,6 +36,8 @@ export class MachineLearningEditTypeComponent implements OnInit {
   use_embeddings: boolean = false;
   prefix: string;
   greeting: string;
+  contact_us: string;
+  lead_email: string;
   cached: boolean = false;
   model: OpenAIModel = null;
   vector_model: OpenAIModel = null;
@@ -91,6 +93,8 @@ export class MachineLearningEditTypeComponent implements OnInit {
     this.cached = this.data?.cached === 1 ? true : false;
     this.prefix = this.data?.prefix ?? '';
     this.greeting = this.data?.greeting ?? 'Hi there, how can I help you?';
+    this.contact_us = this.data?.contact_us ?? '';
+    this.lead_email = this.data?.lead_email ?? '';
     this.advanced = !!this.data;
 
     this.generalService.showLoading();
@@ -226,6 +230,8 @@ export class MachineLearningEditTypeComponent implements OnInit {
       cached: this.cached ? 1 : 0,
       prefix: this.prefix,
       greeting: this.greeting,
+      contact_us: this.contact_us,
+      lead_email: this.lead_email,
       use_embeddings: this.use_embeddings,
       threshold: this.threshold,
     };

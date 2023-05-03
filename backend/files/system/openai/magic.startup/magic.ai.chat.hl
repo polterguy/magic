@@ -13,6 +13,17 @@ slots.create:magic.ai.chat
       max_tokens:x:@.arguments/*/max_context_tokens
       vector_model:x:@.arguments/*/vector_model
 
+   // Checking if we've got a cached result.
+   if
+      exists:x:@signal/*/cached
+      .lambda
+
+         // Cached result.
+         unwrap:x:+/*
+         return
+            result:x:@signal/*/cached
+            finish_reason:cached
+
    // Taken from either training data or previous questions.
    .session
 
@@ -202,6 +213,7 @@ slots.create:magic.ai.chat
                prompt:x:@.only-prompt
                completion:x:@.result
                finish_reason:x:@get-first-value
+               session:x:@.arguments/*/session
 
    // Checking if we've got references.
    if

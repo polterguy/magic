@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) Aista Ltd, 2021 - 2023 team@ainiro.io.
+ * Copyright (c) Aista Ltd, 2021 - 2023 and Thomas Hansen, 2023 - For questions contact team@ainiro.io.
  */
 
 import { Component, Inject, OnInit } from '@angular/core';
@@ -23,6 +23,7 @@ export class MachineLearningEditTrainingSnippetComponent implements OnInit {
   prompt: string;
   completion: string;
   pushed: boolean;
+  cached: boolean;
   ready: boolean = false;
   model: HlModel;
 
@@ -39,6 +40,7 @@ export class MachineLearningEditTrainingSnippetComponent implements OnInit {
     this.completion = this.data?.completion;
     this.type = this.data?.type;
     this.pushed = this.data?.pushed > 0 ? true : false;
+    this.cached = this.data?.cached > 0 ? true : false;
 
     this.generalService.showLoading();
 
@@ -86,6 +88,7 @@ export class MachineLearningEditTrainingSnippetComponent implements OnInit {
       completion: this.ready ? this.model.hyperlambda : this.completion,
       type: this.type,
       pushed: this.pushed ? 1 : 0,
+      cached: this.cached ? 1 : 0,
     };
     if (this.data) {
       data.id = this.data.id;
