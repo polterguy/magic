@@ -33,10 +33,11 @@ signal:magic.ai.endpoint-common
                prompt:x:@.arguments/*/prompt
                session:x:@.arguments/*/session
                lead_email:x:@.arguments/*/lead_email
+               contact_us:x:@.arguments/*/contact_us
             if:x:@signal
                unwrap:x:+/*
                return
-                  db_time:decimal:0
+                  db_time:decimal:-1
                   finish_reason:cached
                   result:x:@.arguments/*/contact_us
 

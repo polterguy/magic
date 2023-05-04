@@ -11,6 +11,7 @@ slots.create:magic.ai.send-lead-email
    validators.mandatory:x:@.arguments/*/prompt
    validators.mandatory:x:@.arguments/*/session
    validators.mandatory:x:@.arguments/*/lead_email
+   validators.mandatory:x:@.arguments/*/contact_us
 
    try
 
@@ -53,6 +54,18 @@ slots.create:magic.ai.send-lead-email
                get-value:x:@.dp/#/*/completion
                .:"</div>"
                .:"<br>"
+
+      // Adding last prompt.
+      set-value:x:@.body
+         strings.concat
+            get-value:x:@.body
+            .:"<strong>"
+            get-value:x:@.arguments/*/prompt
+            .:"</strong>"
+            .:"<br>"
+            .:"<div>"
+            get-value:x:@.arguments/*/contact_us
+            .:"</div>"
 
       // Sending email.
       strings.split:x:@.arguments/*/lead_email

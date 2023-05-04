@@ -18,7 +18,28 @@ slots.create:magic.ai.chat
       exists:x:@signal/*/cached
       .lambda
 
-         // Cached result.
+         // Cached result, checking if type is "supervised".
+         if
+            and
+               exists:x:@.arguments/*/supervised
+               not-null:x:@.arguments/*/supervised
+               eq
+                  convert:x:@.arguments/*/supervised
+                     type:int
+                  .:int:1
+            .lambda
+
+               // Storing response to ml_requests to keep history.
+               data.create
+                  table:ml_requests
+                  values
+                     type:x:@.arguments/*/type
+                     prompt:x:@.arguments/*/prompt
+                     completion:x:@signal/*/cached
+                     finish_reason:cached
+                     session:x:@.arguments/*/session
+
+         // Returning cached result to caller.
          unwrap:x:+/*
          return
             result:x:@signal/*/cached
