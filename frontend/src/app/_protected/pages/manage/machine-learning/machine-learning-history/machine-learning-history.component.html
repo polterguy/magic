@@ -20,6 +20,8 @@
         <!-- Search textbox -->
         <app-searchbox
           (filterList)="filterList($event)"
+          buttonText="Export leads"
+          (buttonClick)="exportLeads()"
           [(type)]="type"
           [types]="types">
         </app-searchbox>

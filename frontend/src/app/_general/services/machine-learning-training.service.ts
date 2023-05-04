@@ -83,6 +83,28 @@ export class MachineLearningTrainingService {
   }
 
   /**
+   * Exports all leads.
+   */
+  ml_export_leads(filter: any = null) {
+
+    this.httpService.download(
+      '/magic/system/magic/ml_requests_export_leads' +
+      (filter?.type ? this.queryArgService.getQueryArgs(filter) : '')).subscribe({
+      next: (res) => {
+
+        const disp = res.headers.get('Content-Disposition');
+        let filename = disp.split(';')[1].trim().split('=')[1].replace(/"/g, '');
+        const file = new Blob([res.body]);
+        saveAs(file, filename);
+      },
+      error: (error: any) => {
+
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+      }
+    });
+  }
+
+  /**
    * Creates a new training snippet.
    */
   ml_training_snippets_create(el: any) {

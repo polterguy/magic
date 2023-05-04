@@ -1,0 +1,53 @@
+
+// Exports all leads from training requests and returns as a CSV file.
+.arguments
+   type:string
+.description:Exports all leads from training requests and returns as a CSV file
+.type:internal
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Opening up our database connection.
+data.connect:[generic|magic]
+
+   // Parametrising our read invocation with filtering arguments.
+   if
+      exists:x:@.arguments/*/type
+      .lambda
+         unwrap:x:+/*/*
+         add:x:@data.connect/*/data.read/*/where/*/and
+            .
+               type.eq:x:@.arguments/*/type
+
+   // Invoking our read slot.
+   data.read
+      table:ml_requests
+      columns
+         prompt
+            as:lead
+      where
+         and
+            finish_reason.eq:lead
+         
+      limit:-1
+
+   // Verifying records exists.
+   if
+      not-exists:x:@data.read/*
+      .lambda
+         response.status.set:404
+         return
+            result:No records found
+
+   // Converting result to CSV.
+   lambda2csv:x:@data.read/*
+
+   // Applying correct HTTP header.
+   response.headers.set
+      Content-Type:text/csv
+      Access-Control-Expose-Headers:Content-Disposition
+      Content-Disposition:"attachment; filename=\"leads.csv\""
+
+   // Returning content to caller.
+   return:x:@lambda2csv

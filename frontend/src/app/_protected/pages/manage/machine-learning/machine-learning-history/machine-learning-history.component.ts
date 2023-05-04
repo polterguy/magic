@@ -90,6 +90,13 @@ export class MachineLearningRequestsComponent implements OnInit {
     }
   }
 
+  exportLeads() {
+
+    this.machineLearningTrainingService.ml_export_leads({
+      type: this.type,
+    });
+  }
+
   sortData(e: any) {
 
     if (e.direction === '') {
