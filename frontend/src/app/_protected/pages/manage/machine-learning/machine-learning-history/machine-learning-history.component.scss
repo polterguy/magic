@@ -18,9 +18,17 @@
     height: 7px;
     border-radius: 50%;
     display: inline-block;
-    background-color: $aista_warning;
+    background-color: $aista_error;
 
-    &.success {
+    &.stop {
+      background-color: $aista_default_grey3;
+    }
+
+    &.cached {
+      background-color: $aista_info;
+    }
+
+    &.lead {
       background-color: $aista_success;
     }
   }

@@ -15,79 +15,102 @@ slots.create:magic.ai.send-lead-email
 
    try
 
-      // Verifying that user provided a valid email address.
-      .email
-      strings.split:x:@.arguments/*/prompt
-         .:@
-      strings.split:x:@strings.split/0
-         .:" "
-      strings.split:x:@strings.split/@strings.split/1
-         .:" "
-      set-value:x:@.email
-         strings.concat
-            get-value:x:@strings.split/@strings.split/0/-
-            .:@
-            get-value:x:@strings.split/0
-      validators.email:x:@.email
+      // Verifying user has configured SMTP settings.
+      config.get:"magic:smtp:host"
+      if
+         and
+            not-null:x:@config.get
+            neq:x:@config.get
+               .:
+         .lambda
 
-      // Reading all prompt/completion from current session.
-      data.read
+            // Verifying that user provided a valid email address.
+            .email
+            strings.split:x:@.arguments/*/prompt
+               .:@
+            strings.split:x:@strings.split/0
+               .:" "
+            strings.split:x:@strings.split/@strings.split/1
+               .:" "
+            set-value:x:@.email
+               strings.concat
+                  get-value:x:@strings.split/@strings.split/0/-
+                  .:@
+                  get-value:x:@strings.split/0
+            validators.email:x:@.email
+
+            // Reading all prompt/completion from current session.
+            data.read
+               table:ml_requests
+               columns
+                  prompt
+                  completion
+               where
+                  and
+                     session.eq:x:@.arguments/*/session
+
+            // Creating email.
+            .body:
+            for-each:x:@data.read/*
+               set-value:x:@.body
+                  strings.concat
+                     get-value:x:@.body
+                     .:"<strong>"
+                     get-value:x:@.dp/#/*/prompt
+                     .:"</strong>"
+                     .:"<br>"
+                     .:"<div>"
+                     get-value:x:@.dp/#/*/completion
+                     .:"</div>"
+                     .:"<br>"
+
+            // Adding last prompt.
+            set-value:x:@.body
+               strings.concat
+                  get-value:x:@.body
+                  .:"<strong>"
+                  get-value:x:@.arguments/*/prompt
+                  .:"</strong>"
+                  .:"<br>"
+                  .:"<div>"
+                  get-value:x:@.arguments/*/contact_us
+                  .:"</div>"
+
+            // Sending email.
+            strings.split:x:@.arguments/*/lead_email
+               .:,
+            for-each:x:@strings.split/*
+               strings.trim:x:@.dp/#
+                  .:" "
+               unwrap:x:+/*/*/*
+               add:x:../**/mail.smtp.send/*/message/*/to
+                  .
+                     .
+                        name:AINIRO Lead Inbox
+                        email:x:@strings.trim
+            unwrap:x:+/**/content
+            mail.smtp.send
+               message
+                  to
+                  reply-to
+                     AINIRO Lead:x:@.email
+                  subject:Lead from AINIRO.IO
+                  entity:text/html
+                     content:x:@.body
+
+
+      // Storing response to ml_requests to keep history.
+      data.create
          table:ml_requests
-         columns
-            prompt
-            completion
-         where
-            and
-               session.eq:x:@.arguments/*/session
+         values
+            type:x:@.arguments/*/type
+            prompt:x:@.arguments/*/prompt
+            completion:x:@.arguments/*/contact_us
+            finish_reason:lead
+            session:x:@.arguments/*/session
 
-      // Creating email.
-      .body:
-      for-each:x:@data.read/*
-         set-value:x:@.body
-            strings.concat
-               get-value:x:@.body
-               .:"<strong>"
-               get-value:x:@.dp/#/*/prompt
-               .:"</strong>"
-               .:"<br>"
-               .:"<div>"
-               get-value:x:@.dp/#/*/completion
-               .:"</div>"
-               .:"<br>"
-
-      // Adding last prompt.
-      set-value:x:@.body
-         strings.concat
-            get-value:x:@.body
-            .:"<strong>"
-            get-value:x:@.arguments/*/prompt
-            .:"</strong>"
-            .:"<br>"
-            .:"<div>"
-            get-value:x:@.arguments/*/contact_us
-            .:"</div>"
-
-      // Sending email.
-      strings.split:x:@.arguments/*/lead_email
-         .:,
-      for-each:x:@strings.split/*
-         strings.trim:x:@.dp/#
-            .:" "
-         unwrap:x:+/*/*/*
-         add:x:../**/mail.smtp.send/*/message/*/to
-            .
-               .
-                  name:AINIRO Lead Inbox
-                  email:x:@strings.trim
-      unwrap:x:+/**/content
-      mail.smtp.send
-         message
-            to
-            reply-to
-               AINIRO Lead:x:@.email
-            subject:Lead from AINIRO.IO
-            entity:text/html
-               content:x:@.body
+      // Logging the fact that a lead was generated.
+      log.info:Lead was generated
 
       // Returning success to caller.
       return:bool:true

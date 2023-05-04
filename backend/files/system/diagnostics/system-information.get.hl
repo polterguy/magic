@@ -57,11 +57,11 @@ if
                   .
                      timeshifts
                         logins
-                           name:Logins per day
+                           name:Logins
                            description:Successfully authenticated users
                            items
                         access_denied
-                           name:Access denied requests
+                           name:Access denied
                            description:Access denied requests
                            items
                         openai_success
@@ -71,6 +71,10 @@ if
                         openai_failure
                            name:OpenAI failure
                            description:Failed OpenAI API requests
+                           items
+                        lead_generated
+                           name:Lead
+                           description:Lead generated
                            items
 
                // Retrieving count of log items grouped by day for root logins.
@@ -88,6 +92,10 @@ if
                // Retrieving failed OpenAI API requests
                add:x:@.lambda/*/lambda2hyper/*/timeshifts/*/openai_failure/*/items
                   log.timeshift:Something went wrong while invoking OpenAI
+
+               // Retrieving leads
+               add:x:@.lambda/*/lambda2hyper/*/timeshifts/*/lead_generated/*/items
+                  log.timeshift:Lead was generated
 
             // Retrieving endpoints.
             endpoints.list
