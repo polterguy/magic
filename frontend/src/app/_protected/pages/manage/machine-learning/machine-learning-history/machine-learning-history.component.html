@@ -102,7 +102,7 @@
             mat-cell
             *matCellDef="let element"
             class="ps-3">
-            <span class="status {{element.finish_reason === 'stop' ? 'success ' : ' '}}me-1 small-table-column"></span>
+            <span class="status {{getStatus(element.finish_reason)}} me-1 small-table-column"></span>
           </td>
         </ng-container>
 

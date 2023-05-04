@@ -72,6 +72,24 @@ export class MachineLearningRequestsComponent implements OnInit {
     this.getRequests(true);
   }
 
+  getStatus (st: string) {
+    switch (st) {
+
+      case 'stop':
+        return 'stop';
+
+      case 'lead':
+        return 'lead';
+
+      case 'cached':
+        return 'cached';
+
+      default:
+        return '';
+
+    }
+  }
+
   sortData(e: any) {
 
     if (e.direction === '') {
