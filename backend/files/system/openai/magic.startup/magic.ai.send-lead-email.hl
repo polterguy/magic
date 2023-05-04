@@ -55,11 +55,21 @@ slots.create:magic.ai.send-lead-email
                .:"<br>"
 
       // Sending email.
+      strings.split:x:@.arguments/*/lead_email
+         .:,
+      for-each:x:@strings.split/*
+         strings.trim:x:@.dp/#
+            .:" "
+         unwrap:x:+/*/*/*
+         add:x:../**/mail.smtp.send/*/message/*/to
+            .
+               .
+                  name:AINIRO Lead Inbox
+                  email:x:@strings.trim
       unwrap:x:+/**/content
       mail.smtp.send
          message
             to
-               AINIRO Lead:x:@.arguments/*/lead_email
             reply-to
                AINIRO Lead:x:@.email
             subject:Lead from AINIRO.IO
