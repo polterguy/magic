@@ -1,5 +1,5 @@
 
-// Returns the specified JavaScript file wrapping the specified model to caller.
+// Returns the specified CSS file to caller.
 .arguments
    file:string
 
@@ -22,7 +22,7 @@ if
 
 else
 
-   //Checking if system JavaScript file exists.
+   //Checking if system CSS file exists.
    strings.concat
       .:/system/openai/front.files/chat/
       get-value:x:@.arguments/*/file
@@ -34,6 +34,7 @@ else
          // Generic template file.
          set-value:x:@.result
             io.file.load:x:@strings.concat
+
    else
 
       // Oops, no such file exists.
