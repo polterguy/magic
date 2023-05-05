@@ -185,6 +185,14 @@
 
 <div mat-dialog-actions [align]="'end'">
 
+  <a
+    *ngIf="landing_page"
+    mat-flat-button
+    target="_blank"
+    [href]="getLandingPage()">
+    Demo
+  </a>
+
   <button
     mat-flat-button
     (click)="embed()">

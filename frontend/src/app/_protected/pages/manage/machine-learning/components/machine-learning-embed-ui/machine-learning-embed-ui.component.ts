@@ -35,6 +35,7 @@ export class MachineLearningEmbedUiComponent implements OnInit {
   buttonTxtSearch: string = '';
   maxSearch: number = 5;
   currentTabIndex: number = 0;
+  landing_page: boolean = false;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -44,6 +45,7 @@ export class MachineLearningEmbedUiComponent implements OnInit {
     private dialogRef: MatDialogRef<MachineLearningEmbedUiComponent>,
     private generalService: GeneralService) {
       this.type = this.data.type;
+      this.landing_page = this.data.landing_page;
     }
 
   ngOnInit() {
@@ -92,6 +94,11 @@ export class MachineLearningEmbedUiComponent implements OnInit {
   getSearchEmbed() {
 
     return `<script src="${this.backendService.active.url}/magic/system/openai/include-search?css=${encodeURIComponent(this.themeSearch)}&type=${encodeURIComponent(this.type)}&placeholder=${encodeURIComponent(this.placeholder)}&button=${encodeURIComponent(this.buttonTxtSearch)}&max=${this.maxSearch}" defer></script>`;
+  }
+
+  getLandingPage() {
+
+    return this.backendService.active.url + '/' + this.type;
   }
 
   embed() {

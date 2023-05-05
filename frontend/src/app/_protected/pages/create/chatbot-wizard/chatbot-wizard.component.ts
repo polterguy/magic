@@ -217,6 +217,7 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
         maxWidth: '650px',
         data: {
           type: this.model,
+          landing_page: true,
           noClose: true,
           model: 'gpt-3.5-turbo',
         }
