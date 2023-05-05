@@ -1,0 +1,77 @@
+
+/*
+ * Chat slot for having conversations with OpenAI's "gpt" type of models.
+ */
+slots.create:magic.ai.create-landing-page
+
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/url
+   validators.mandatory:x:@.arguments/*/type
+
+   // Signaling frontend.
+   strings.concat
+      .:"Creating default landing page for "
+      get-value:x:@.arguments/*/type
+      .:" by copying "
+      get-value:x:@.arguments/*/url
+   unwrap:x:+/*/args/**
+   sockets.signal:magic.backend.chatbot
+      roles:root
+      args
+         message:x:@strings.concat
+         type:info
+
+   // Retrieving HTML document from URL specified.
+   http.get:x:@.arguments/*/url
+
+   // Converting to lambda to verify we've got a "base" element.
+   html2lambda:x:@http.get/*/content
+
+   // Checking if document has a "base" element.
+   if
+      not
+         exists:x:@html2lambda/*/html/*/head/*/base
+      .lambda
+
+         // Adding base.
+         unwrap:x:+/*/*/*
+         add:x:@html2lambda/*/html/*/head
+            .
+               base
+                  @href:x:@.arguments/*/url
+
+   // Adding chatbot embed script to page.
+   .chatbot
+   set-value:x:@.chatbot
+      strings.concat
+         .:"https://"
+         get-value:x:@.arguments/*/host
+         .:"/magic/system/openai/include-javascript?markdown=true&speech=false&search=false&chat=true&css=chess&file=default&type="
+         get-value:x:@.arguments/*/type
+         .:"&header=Ask%20about%20our%20services%20and%20products&button="
+   .search
+   set-value:x:@.search
+      strings.concat
+         .:"https://"
+         get-value:x:@.arguments/*/host
+         .:"/magic/system/openai/include-search?css=default&type="
+         get-value:x:@.arguments/*/type
+         .:"&placeholder=Search%20this%20site%20...&button=&max=10"
+   unwrap:x:+/*/*/*/\@src
+   add:x:@html2lambda/*/html/*/body
+      .
+         script
+            @src:x:@.chatbot
+            @defer
+         script
+            @src:x:@.search
+            @defer
+
+   // Converting to HTML and saving to "/etc/www/" folder.
+   lambda2html:x:@html2lambda/*
+   strings.concat
+      .:/etc/www/
+      get-value:x:@.arguments/*/type
+      .:.html
+   io.file.save:x:@strings.concat
+      get-value:x:@lambda2html

@@ -96,10 +96,13 @@ try
             uri:"https://ainiro.io"
 
    // Invoking slot doing the heavy lifting
+   request.host
    add:x:./*/signal
       get-nodes:x:@.arguments/*
    unwrap:x:./*/signal/=magic.ai.crawl-site/*/type
    unwrap:x:./*/signal/=magic.ai.crawl-site/*/.onafter/*/.type
+   unwrap:x:./*/signal/=magic.ai.crawl-site/*/.onafter/*/.url
+   unwrap:x:./*/signal/=magic.ai.crawl-site/*/.onafter/*/.host
    signal:magic.ai.crawl-site
       delay:int:1000
       max:int:1250
@@ -107,10 +110,24 @@ try
       summarize:bool:true
       type:x:@.type
       .onafter
+
+         // Forward evaluated further up.
          .type:x:@.type
+         .url:x:@.arguments/*/url
+         .host:x:@request.host
+
+         // Creating landing page.
+         unwrap:x:+/*
+         signal:magic.ai.create-landing-page
+            url:x:@.url
+            type:x:@.type
+            host:x:@.host
+
+         // Vectorising training data.
          unwrap:x:+/*
          signal:magic.ai.vectorise
             type:x:@.type
+            host:x:@.host
 
    // Returning success to caller.
    unwrap:x:+/*
