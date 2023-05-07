@@ -33,6 +33,7 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
   reCaptcha: any = null;
   isSaving: boolean = false;
   url: string = '';
+  max: number = 25;
   crawling: boolean = false;
   messages: any[] = [];
   doneCreatingBot: boolean = false;
@@ -191,7 +192,7 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
 
     this.hubConnection.start().then(() => {
 
-      this.openAIService.createBot(this.url, this.flavor?.prefix ?? '').subscribe({
+      this.openAIService.createBot(this.url, this.flavor?.prefix ?? '', this.max).subscribe({
         next: (result: MagicResponse) => {
   
           this.model = result.result;

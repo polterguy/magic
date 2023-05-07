@@ -265,6 +265,29 @@ slots.create:magic.ai.crawl-site
                            type:warning
                      log.info:x:@strings.concat
 
+               // Sorting URLs by length, which typically makes sure more important URLs are prioritised.
+               sort:x:@.urls/*
+                  if
+                     lt
+                        strings.length:x:@.lhs/#
+                        strings.length:x:@.rhs/#
+                     .lambda
+                        set-value:x:@.result
+                           .:int:-1
+                  else-if
+                     mt
+                        strings.length:x:@.lhs/#
+                        strings.length:x:@.rhs/#
+                     .lambda
+                        set-value:x:@.result
+                           .:int:1
+                  else
+                     set-value:x:@.result
+                        .:int:0
+               remove-nodes:x:@.urls/*
+               add:x:@.urls
+                  get-nodes:x:@sort/*
+
                // Looping through each URL found from sitemap(s).
                .no:int:0
                for-each:x:@.urls/*
