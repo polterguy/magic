@@ -40,11 +40,23 @@ slots.create:magic.ai.create-landing-page
                base
                   @href:x:@.arguments/*/url
 
+   // Moving base to the top of "head" section.
+   insert-before:x:@html2lambda/*/html/*/head/0
+      get-nodes:x:@html2lambda/*/html/*/head/*/base
+   remove-nodes:x:@html2lambda/*/html/*/head/*/base/[1,2]
+
    // Adding chatbot embed script to page.
+   .scheme:"https://"
+   if
+      strings.contains:x:@.arguments/*/host
+         .:localhost
+      .lambda
+         set-value:x:@.scheme
+            .:"http://"
    .chatbot
    set-value:x:@.chatbot
       strings.concat
-         .:"https://"
+         get-value:x:@.scheme
          get-value:x:@.arguments/*/host
          .:"/magic/system/openai/include-javascript?markdown=true&speech=false&search=false&chat=true&css=chess&file=default&type="
          get-value:x:@.arguments/*/type
@@ -52,7 +64,7 @@ slots.create:magic.ai.create-landing-page
    .search
    set-value:x:@.search
       strings.concat
-         .:"https://"
+         get-value:x:@.scheme
          get-value:x:@.arguments/*/host
          .:"/magic/system/openai/include-search?css=default&type="
          get-value:x:@.arguments/*/type

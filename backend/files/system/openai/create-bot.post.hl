@@ -5,6 +5,7 @@
 .arguments
    url:string
    flavor:string
+   max:int
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
@@ -12,6 +13,10 @@ auth.ticket.verify:root
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/url
 validators.url:x:@.arguments/*/url
+
+// Defaulting max snippets to 1,250 unless specified explicitly.
+validators.default:x:@.arguments
+   max:int:1250
 
 // Doing some basic logging.
 log.info:Crawling URL to generate OpenAI training data for a chatbot
@@ -105,7 +110,6 @@ try
    unwrap:x:./*/signal/=magic.ai.crawl-site/*/.onafter/*/.host
    signal:magic.ai.crawl-site
       delay:int:1000
-      max:int:1250
       threshold:int:150
       summarize:bool:true
       type:x:@.type

@@ -41,7 +41,7 @@
         <h3 class="fw-bold">Chatbot Wizard</h3>
 
         <p class="text-muted">
-          What website do you wish to generate training data from? Notice, for a demo bot we will only scrape the first 50 pages found.
+          What website do you wish to generate training data from?
         </p>
 
       </div>
@@ -68,7 +68,27 @@
               autocomplete="off">
           </mat-form-field>
 
-          <mat-form-field class="w-100 standalone-field mx-2">
+          <mat-form-field class="w-100 standalone-field ms-2">
+            <span
+              matPrefix
+              matTooltip="Max URLs to crawl"
+              class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+              <mat-icon>get_app</mat-icon>
+              <span class="text-muted">|</span>
+            </span>
+            <input
+              matInput
+              type="number"
+              min="1"
+              max="1250"
+              placeholder="Max URLs"
+              name="max"
+              [disabled]="crawling"
+              [(ngModel)]="max"
+              autocomplete="off">
+          </mat-form-field>
+
+          <mat-form-field class="w-100 standalone-field ms-2">
             <span
               matPrefix
               matTooltip="Flavor"
