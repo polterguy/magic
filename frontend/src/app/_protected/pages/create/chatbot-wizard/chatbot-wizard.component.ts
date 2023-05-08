@@ -34,6 +34,7 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
   isSaving: boolean = false;
   url: string = '';
   max: number = 25;
+  autocrawl: boolean = false;
   crawling: boolean = false;
   messages: any[] = [];
   doneCreatingBot: boolean = false;
@@ -192,7 +193,7 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
 
     this.hubConnection.start().then(() => {
 
-      this.openAIService.createBot(this.url, this.flavor?.prefix ?? '', this.max).subscribe({
+      this.openAIService.createBot(this.url, this.flavor?.prefix ?? '', this.max, this.autocrawl).subscribe({
         next: (result: MagicResponse) => {
   
           this.model = result.result;

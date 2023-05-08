@@ -109,7 +109,14 @@
               </mat-option>
             </mat-select>
           </mat-form-field>
-  
+
+          <mat-checkbox
+            [(ngModel)]="autocrawl"
+            name="autocrawl"
+            class="mx-4"
+            labelPosition="before"
+            color="primary">Auto crawl</mat-checkbox>
+
           <button
             mat-flat-button
             color="primary"
