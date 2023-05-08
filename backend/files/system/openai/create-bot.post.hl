@@ -6,6 +6,7 @@
    url:string
    flavor:string
    max:int
+   autocrawl:bool
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
@@ -17,6 +18,7 @@ validators.url:x:@.arguments/*/url
 // Defaulting max snippets to 1,250 unless specified explicitly.
 validators.default:x:@.arguments
    max:int:1250
+   autocrawl:bool:false
 
 // Doing some basic logging.
 log.info:Crawling URL to generate OpenAI training data for a chatbot
@@ -71,6 +73,13 @@ try
       // Verifying user can create a-(nother) machine learning model.
       try-signal:magic.ai.can-create-machine-learning-model
 
+      // Adding URL if [autocrawl] is true.
+      if:x:@.arguments/*/autocrawl
+         unwrap:x:+/*/*
+         add:x:@data.connect/*/data.create/[0,1]/*/values
+            .
+               base_url:x:@.arguments/*/url
+
       // Creating our type.
       data.create
          table:ml_types
@@ -89,7 +98,6 @@ try
             vector_model:text-embedding-ada-002
             prefix:x:@.arguments/*/flavor
             greeting:Hi there, how can I help you?
-            base_url:x:@.arguments/*/url
 
       // Creating our default training snippets.
       data.create
