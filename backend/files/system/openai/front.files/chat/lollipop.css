@@ -1,0 +1,343 @@
+
+/*
+ * Default CSS style for OpenAI chat inclusion.
+ */
+ @import url('https://fonts.googleapis.com/css?family=Red+Hat+Display:400,500,900&display=swap');
+.grecaptcha-badge {
+  opacity:0 !important;
+}
+.aista-chat-btn {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  border-radius: 23px !important;
+  border: none !important;
+  padding: 15px 35px;
+  font-size: 14px;
+  z-index: 9999;
+  color: #8c52ff !important;
+  cursor: pointer !important;
+  font-weight: bold !important;
+  border: solid 1px #c7c7c7;
+  font-family: Red hat Display, sans-serif !important;
+  text-align: center;
+  text-decoration: none !important;
+  font-family: Red hat Display, sans-serif !important;
+  box-shadow: 3px 3px 5px rgba(0,0,0,.2);
+  background: linear-gradient(#ffde59, #ff66c4);
+  background-size: 1px 100px;
+  transition: background-position .25s ease-in-out, box-shadow .25s ease-in-out;
+}
+.aista-chat-btn:hover,
+.aista-chat-btn:active
+.aista-chat-btn:focus {
+  box-shadow: 1px 1px 2px rgba(0,0,0,.2);
+  background-position: 50px;
+  transition: background-position .25s ease-in-out, box-shadow .25s ease-in-out;
+  text-decoration: none !important;
+  color: #8c52ff !important;
+}
+.aista-chat-btn i {
+  font-size: 20px;
+}
+.aista-chat-wnd {
+  font-family: Red hat Display, sans-serif;
+  position: fixed !important;
+  z-index: 10000 !important;
+  bottom: 10px !important;
+  right: 10px !important;
+  width: 350px !important;
+  max-width: calc(100% - 20px) !important;
+  background:linear-gradient(#ffde59, #ff66c4) !important;
+  border-radius: 5px !important;
+  border: solid 0px #ffde59 !important;
+  box-shadow: 3px 3px 5px rgba(0,0,0,.2) !important;
+  display: none;
+}
+.aista-chat-header {
+  font-size: 12px !important;
+  margin: 18px 60px 15px 12px !important;
+  color: #030a0a !important;
+}
+.aista-chat-close-btn {
+  border-radius: 5px !important;
+  background:linear-gradient(#fcfeff, #fcfeff) !important;
+  border: solid 0px #030a0a !important;
+  padding: 3px 12px !important;
+  font-size: 12px !important;
+  color: #ff66c4 !important;
+  position: absolute !important;
+  top: 13px !important;
+  right: 12px !important;
+  cursor: pointer !important;
+  background-size: 1px 50px !important;
+  transition: background-position .25s ease-in-out !important;
+}
+.aista-chat-close-btn:hover,
+.aista-chat-close-btn:active,
+.aista-chat-close-btn:focus {
+  background-position: 25px !important;
+  transition: background-position .25s ease-in-out !important;
+  color: #ff66c4 !important;
+  outline: none !important;
+  text-decoration: none !important;
+}
+.aista-chat-msg-container {
+  height: 300px !important;
+  margin: 0 10px !important;
+  background-color: #ffffff;
+  border-radius: 4px !important;
+  padding: 15px !important;
+  border: solid 1px rgba(0,0,0,.2) !important;
+  overflow-y: auto !important;
+  font-size: 14px !important;
+  line-height: 20px !important;
+  color: #030a0a !important;
+}
+.aista-chat-msg-container a {
+  text-decoration: none !important;
+  color: #ff66c4 !important;
+}
+.aista-chat-msg-container a:visited {
+  color: #ff66c4 !important;
+}
+@keyframes aista-chat-question-waiting {
+  0% { opacity: .2; }
+  100% { opacity: 1; }
+}
+.aista-chat-question-waiting {
+  animation-name: aista-chat-question-waiting;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  font-size: 14px !important;
+  margin-bottom: 10px !important;
+  margin-left: 60px !important;
+  border-radius: 10px 10px 0 10px;
+  margin-bottom: 25px !important;
+  background-color: #ff66c4;
+  color: #fcfcfc;
+  padding: 15px !important;
+  box-shadow: 3px 3px 5px rgba(0,0,0,.2);
+}
+.aista-chat-question {
+  margin-bottom: 25px !important;
+  margin-left: 60px !important;
+  border-radius: 10px 10px 0 10px;
+  background-color: #ff66c4;
+  color: #fcfcfc;
+  padding: 15px !important;
+  box-shadow: 3px 3px 5px rgba(0,0,0,.2);
+}
+.aista-chat-error {
+  background-color: rgb(255,230,230) !important;
+  padding: 15px !important;
+  margin-left: -15px !important;
+  margin-right: -15px !important;
+  margin-bottom: 20px !important;
+}
+.aista-chat-answer {
+  color: rgb(128,128,128) !important;
+  border-radius: 10px 10px 10px 0;
+  margin-right: 60px !important;
+  margin-bottom: 25px !important;
+  background-color: #ffde59;
+  padding: 15px !important;
+  box-shadow: 3px 3px 5px rgba(0,0,0,.2);
+}
+.aista-chat-answer.stop,
+.aista-chat-answer.cached {
+  color: unset !important;
+}
+.aista-chat-answer p:first-child,
+.aista-chat-answer p:last-child {
+  margin-top:0 !important;
+  margin-bottom:0 !important;
+}
+.aista-chat-answer p img {
+  display: block !important;
+  width: calc(100% - 20px) !important;
+  margin-left: 10px !important;
+  margin-right: 10px !important;
+  margin-top: 10px !important;
+  margin-bottom: 10px !important;
+  cursor: pointer !important;
+  border-radius: 5px !important;
+  box-shadow: 3px 3px 5px rgba(0,0,0,.2) !important;
+}
+.aista-chat-answer pre {
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.aista-chat-answer ul {
+  padding-left: 0 !important;
+}
+.aista-chat-answer ul li {
+  list-style-type: none !important;
+  margin: 0 !important;
+}
+@keyframes aista-zoom-image {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.aista-zoom-image {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 11000 !important;
+  background-color: rgba(0,0,0,.7) !important;
+  opacity: 0;
+  animation-name: aista-zoom-image;
+  animation-duration: .25s;
+  animation-fill-mode: forwards;
+}
+@keyframes aista-drop-down {
+  0% {
+    margin-top: -1000px;
+    opacity: 0;
+  }
+  100% {
+    margin-top: 25px;
+    opacity: 1;
+  }
+}
+.aista-zoom-image img {
+  display: block !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  width: auto !important;
+  max-width: calc(100% - 50px) !important;
+  max-height: calc(100% - 50px) !important;
+  margin-top: -1000px;
+  animation-name: aista-drop-down;
+  animation-duration: .25s;
+  animation-delay: .25s;
+  animation-fill-mode: forwards;
+  border-radius: 5px !important;
+  box-shadow: 0 0 15px rgba(255,255,0,.5) !important;
+}
+.aista-references-list {
+  margin-top: 20px !important;
+  padding-left: 0 !important;
+}
+.aista-references-list li {
+  display: none;
+}
+.aista-references-list li:nth-child(1),
+.aista-references-list li:nth-child(2),
+.aista-references-list li:nth-child(3),
+.aista-references-list li:nth-child(4),
+.aista-references-list li:nth-child(5) {
+  display: list-item;
+}
+@keyframes aista_fade_in {
+  0% {
+    margin-left: -100px;
+    opacity: 0;
+  }
+  100% {
+    margin-left: 0;
+    opacity: 1;
+  }
+}
+.aista-references-list li {
+  margin-left: -100px !important;
+  opacity: 0;
+  list-style: none !important;
+  margin-top: 5px !important;
+  animation-name: aista_fade_in;
+  animation-duration: .75s;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-in-out;
+}
+.aista-references-list li:nth-child(1) {
+  animation-delay: 0s;
+}
+.aista-references-list li:nth-child(2) {
+  animation-delay: .25s;
+}
+.aista-references-list li:nth-child(3) {
+  animation-delay: .5s;
+}
+.aista-references-list li:nth-child(4) {
+  animation-delay: .75s;
+}
+.aista-references-list li:nth-child(5) {
+  animation-delay: 1s;
+}
+.aista-references-list li:nth-child(6) {
+  animation-delay: 1.25s;
+}
+.aista-references-list li:nth-child(7) {
+  animation-delay: 1.5s;
+}
+.aista-references-list li:nth-child(8) {
+  animation-delay: 1.75s;
+}
+.aista-references-list li:nth-child(9) {
+  animation-delay: 2s;
+}
+.aista-references-list li:nth-child(10) {
+  animation-delay: 2.25s;
+}
+.aista-references-list li a {
+  text-decoration: none !important;
+  color: rgb(128,128,255) !important;
+  transition: color, background-color .25s ease-in-out !important;
+  padding: 5px 5px 5px 10px !important;
+  display: block !important;
+  border-radius: 5px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+.aista-references-list li a:hover,
+.aista-references-list li a:active,
+.aista-references-list li a:focus {
+  color: rgb(90,90,235) !important;
+  transition: color, background-color .25s ease-in-out !important;
+  background-color: rgba(0,0,0,.1);
+}
+.aista-chat-form {
+  padding: 10px !important;
+  margin: 0 !important;
+}
+.aista-chat-prompt {
+  padding: 10px !important;
+  border: solid 1px rgba(0,0,0,.2) !important;
+  outline: none !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  background:linear-gradient(#fcfeff, #ffffff) !important;
+  border-radius: 4px !important;
+}
+.aista-speech-button {
+  position: absolute;
+  right: 25px;
+  bottom: 14px;
+  height: 30px;
+  width: 20px;
+  font-size: 20px;
+  display: block;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  color: #ff66c4;
+  transition: color .25s ease-in-out;
+}
+.aista-speech-button:hover,
+.aista-speech-button:focus,
+.aista-speech-button:active {
+  color: #ff66c4;
+  transition: color .25s ease-in-out;
+}
+.aista-chat-prompt::placeholder {
+  color: #030a0a; !important;
+  opacity:40% !important;
+}
