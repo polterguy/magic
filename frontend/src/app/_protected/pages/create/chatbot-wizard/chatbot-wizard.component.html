@@ -112,6 +112,7 @@
 
           <mat-checkbox
             [(ngModel)]="autocrawl"
+            [disabled]="crawling"
             name="autocrawl"
             class="mx-4"
             labelPosition="before"
