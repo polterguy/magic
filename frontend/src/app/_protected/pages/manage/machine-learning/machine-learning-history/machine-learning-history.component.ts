@@ -193,7 +193,9 @@ export class MachineLearningRequestsComponent implements OnInit {
 
   private getTypes(getTrainingData: boolean = true) {
 
-    this.machineLearningTrainingService.ml_types().subscribe({
+    this.machineLearningTrainingService.ml_types({
+      limit: -1,
+    }).subscribe({
       next: (types: any[]) => {
 
         types = types || [];
