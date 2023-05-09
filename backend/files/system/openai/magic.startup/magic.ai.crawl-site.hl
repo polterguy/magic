@@ -68,6 +68,17 @@ slots.create:magic.ai.crawl-site
                      set-value:x:@.sitemap-url
                         get-value:x:@strings.trim
 
+               // Verifying sitemap URL is a full URL, and if not, prepending [url] argument.
+               if
+                  not
+                     strings.starts-with:x:@.sitemap-url
+                        .:"http"
+                  .lambda
+                     set-value:x:@.sitemap-url
+                        strings.concat
+                           get-value:x:@.arguments/*/url
+                           get-value:x:@.sitemap-url
+
                // Site has a "robots.txt" file.
                strings.concat
                   .:"Loading sitemap from "
