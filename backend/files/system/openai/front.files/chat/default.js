@@ -103,6 +103,7 @@ function aista_create_chat_ui() {
       btnTxt = '<i class="icofont-chat"></i>';
     }
     aistaChatBtn.innerHTML = btnTxt;
+    aistaChatBtn.ariaLabel = 'Chat with website';
     aistaChatBtn.className = 'aista-chat-btn';
     aistaChatBtn.addEventListener('click', () => aista_show_chat_window());
     window.document.body.appendChild(aistaChatBtn);

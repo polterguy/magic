@@ -63,6 +63,7 @@ function aista_create_search_ui() {
     btnTxt = '<i class="icofont-search-1"></i>';
   }
   aistaChatBtn.innerHTML = btnTxt;
+  aistaChatBtn.ariaLabel = 'Search website';
   aistaChatBtn.className = 'aista-search-btn';
   aistaChatBtn.addEventListener('click', () => aista_show_search_overlay());
   window.document.body.appendChild(aistaChatBtn);
