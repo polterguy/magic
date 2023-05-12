@@ -45,422 +45,294 @@ data.connect:[generic|magic]
          // URL has been fetched previously.
          return:bool:true
 
-// Retrieving URL's content.
-http.get:x:@.arguments/*/url
-   headers
-      User-Agent:AINIRO-MachineLearning-Spider-v2.0.0
-      Accept:text/html
-      Accept-Encoding:identity
+// Making sure we catch exceptions.
+try
 
-// Sanity checking above invocation.
-if
-   not
-      and
-         mte:x:@http.get
-            .:int:200
-         lt:x:@http.get
-            .:int:300
-   .lambda
+   // Retrieving URL's content.
+   http.get:x:@.arguments/*/url
+      headers
+         User-Agent:AINIRO-MachineLearning-Spider-v2.0.0
+         Accept:text/html
+         Accept-Encoding:identity
 
-      // Oops, logging error.
-      lambda2hyper:x:@http.get
-      log.error:Something went wrong while trying to crawl URL for Machine Learning snippets
-         url:x:@.arguments/*/url
-         error:x:@lambda2hyper
-      return:bool:true
-
-// Making sure URL returned HTML.
-if
-   or
-      not-exists:x:@http.get/*/headers/*/Content-Type
+   // Sanity checking above invocation.
+   if
       not
-         strings.starts-with:x:@http.get/*/headers/*/Content-Type
-            .:text/html
-   .lambda
+         and
+            mte:x:@http.get
+               .:int:200
+            lt:x:@http.get
+               .:int:300
+      .lambda
 
-      // Oops, doing some basic logging.
-      lambda2hyper:x:@http.get
-      log.error:URL did not return HTML content when crawling for Machine Learning snippets
-         content:x:@lambda2hyper
-         url:x:@.arguments/*/url
-      return:bool:true
+         // Oops, logging error.
+         lambda2hyper:x:@http.get
+         log.error:Something went wrong while trying to crawl URL for Machine Learning snippets
+            url:x:@.arguments/*/url
+            error:x:@lambda2hyper
+         return:bool:true
 
-// Converting HTML to lambda.
-html2lambda:x:@http.get/*/content
+   // Making sure URL returned HTML.
+   if
+      or
+         not-exists:x:@http.get/*/headers/*/Content-Type
+         not
+            strings.starts-with:x:@http.get/*/headers/*/Content-Type
+               .:text/html
+      .lambda
 
-// Buffer for training snippets.
-.snippets
+         // Oops, doing some basic logging.
+         lambda2hyper:x:@http.get
+         log.error:URL did not return HTML content when crawling for Machine Learning snippets
+            content:x:@lambda2hyper
+            url:x:@.arguments/*/url
+         return:bool:true
 
-// Buffer for URLs found in document.
-.urls
+   // Converting HTML to lambda.
+   html2lambda:x:@http.get/*/content
 
-// Temp buffer for completion.
-.tmp-completion:
+   // Buffer for training snippets.
+   .snippets
 
-// Looping through each HTML tag in document.
-for-each:x:@html2lambda/*/html/*/body/**
+   // Buffer for URLs found in document.
+   .urls
 
-   // Checking if this is a tag we need to handle.
-   get-name:x:@.dp/#
-   switch:x:@get-name
+   // Temp buffer for completion.
+   .tmp-completion:
 
-      // Checking if this is code.
-      case:pre
+   // Looping through each HTML tag in document.
+   for-each:x:@html2lambda/*/html/*/body/**
 
-         // Verifying text node exists.
-         if
-            exists:x:@.dp/#/**/\#text
-            .lambda
+      // Checking if this is a tag we need to handle.
+      get-name:x:@.dp/#
+      switch:x:@get-name
 
-               // Checking if we need to append code to existing completion or create new completion.
-               if
-                  exists:x:@.snippets/0/-/*/completion
-                  .lambda
+         // Checking if this is code.
+         case:pre
 
-                     // Appending to existing completion.
-                     set-value:x:@.snippets/0/-/*/completion
-                        strings.concat
-                           get-value:x:@.snippets/0/-/*/completion
-                           .:"\r\n\r\n```\r\n"
-                           strings.trim:x:@.dp/#/**/\#text/[0,1]
-                              .:"  \r\n\t"
-                           .:"\r\n```"
+            // Verifying text node exists.
+            if
+               exists:x:@.dp/#/**/\#text
+               .lambda
 
-               else
+                  // Checking if we need to append code to existing completion or create new completion.
+                  if
+                     exists:x:@.snippets/0/-/*/completion
+                     .lambda
 
-                  // Adding new prompt to [.snippets] collection.
-                  strings.concat
-                     .:"```\r\n"
-                     strings.trim:x:@.dp/#/**/\#text/[0,1]
-                        .:"  \r\n\t"
-                     .:"\r\n```"
-                  unwrap:x:+/*/*
-                  add:x:@.snippets/0/-
-                     .
-                        completion:x:@strings.concat
+                        // Appending to existing completion.
+                        set-value:x:@.snippets/0/-/*/completion
+                           strings.concat
+                              get-value:x:@.snippets/0/-/*/completion
+                              .:"\r\n\r\n```\r\n"
+                              strings.trim:x:@.dp/#/**/\#text/[0,1]
+                                 .:"  \r\n\t"
+                              .:"\r\n```"
 
-      // Checking if this is an image.
-      case:img
+                  else
 
-         // Verifying we actually have a [@src] attribute.
-         if
-            exists:x:@.dp/#/*/\@src
-            .lambda
-      
-               // Normalising URL.
-               .url
-               if
-                  and
-                     not
-                        strings.starts-with:x:@.dp/#/*/\@src
-                           .:"http://"
-                     not
-                        strings.starts-with:x:@.dp/#/*/\@src
-                           .:"https://"
-                  .lambda
+                     // Adding new prompt to [.snippets] collection.
+                     strings.concat
+                        .:"```\r\n"
+                        strings.trim:x:@.dp/#/**/\#text/[0,1]
+                           .:"  \r\n\t"
+                        .:"\r\n```"
+                     unwrap:x:+/*/*
+                     add:x:@.snippets/0/-
+                        .
+                           completion:x:@strings.concat
 
-                     // Local URL, prepending base URL.
-                     if
-                        strings.starts-with:x:@.dp/#/*/\@src
-                           .:/
-                        .lambda
+         // Checking if this is an image.
+         case:img
+
+            // Verifying we actually have a [@src] attribute.
+            if
+               exists:x:@.dp/#/*/\@src
+               .lambda
+
+                  // Normalising URL.
+                  .url
+                  if
+                     and
+                        not
+                           strings.starts-with:x:@.dp/#/*/\@src
+                              .:"http://"
+                        not
+                           strings.starts-with:x:@.dp/#/*/\@src
+                              .:"https://"
+                     .lambda
+
+                        // Local URL, prepending base URL.
+                        if
+                           strings.starts-with:x:@.dp/#/*/\@src
+                              .:/
+                           .lambda
+                              set-value:x:@.url
+                                 strings.concat
+                                    get-value:x:@.base
+                                    get-value:x:@.dp/#/*/\@src
+                        else
                            set-value:x:@.url
                               strings.concat
                                  get-value:x:@.base
+                                 .:/
                                  get-value:x:@.dp/#/*/\@src
-                     else
-                        set-value:x:@.url
+                  else
+
+                     // URL is absolute.
+                     set-value:x:@.url
+                        get-value:x:@.dp/#/*/\@src
+
+                  // Checking if we need to append code to existing completion or create new completion.
+                  if
+                     exists:x:@.snippets/0/-/*/completion
+                     .lambda
+
+                        // Appending to existing completion.
+                        set-value:x:@.snippets/0/-/*/completion
+                           strings.concat
+                              get-value:x:@.snippets/0/-/*/completion
+                              .:"\r\n\r\n!["
+                              get-first-value
+                                 strings.concat
+                                    .:"Image "
+                                    get-value:x:@.dp/#/*/\@alt
+                                 .:Image
+                              .:"]("
+                              get-value:x:@.url
+                              .:")"
+
+                  else
+
+                     // Adding new completion to [.snippets] collection.
+                     strings.concat
+                        .:"!["
+                        get-first-value
+                           strings.concat
+                              .:"Image "
+                              get-value:x:@.dp/#/*/\@alt
+                           .:Image
+                        .:"]("
+                        get-value:x:@.url
+                        .:")\r\n"
+                     unwrap:x:+/*/*
+                     add:x:@.snippets/0/-
+                        .
+                           completion:x:@strings.concat
+
+         // Checking if this is a hyperlink.
+         case:a
+
+            // Checking if it's a 'local' URL, implying within the same domain as we're currently scraping.
+            if
+               and
+                  exists:x:@.dp/#/*/\@href
+                  not-null:x:@.dp/#/*/\@href
+                  neq:x:@.dp/#/*/\@href
+                     .:#
+                  neq:x:@.dp/#/*/\@href
+                     .:
+                  not
+                     strings.starts-with:x:@.dp/#/*/\@href
+                        .:"http://"
+                  not
+                     strings.starts-with:x:@.dp/#/*/\@href
+                        .:"https://"
+               .lambda
+
+                  // Local URL.
+                  strings.split:x:@.dp/#/*/\@href
+                     .:#
+                  strings.trim-end:x:@strings.split/0
+                     .:/
+                  .tmp
+                  if
+                     strings.starts-with:x:@strings.trim-end
+                        .:/
+                     .lambda
+                        set-value:x:@.tmp
                            strings.concat
                               get-value:x:@.base
-                              .:/
-                              get-value:x:@.dp/#/*/\@src
-               else
-
-                  // URL is absolute.
-                  set-value:x:@.url
-                     get-value:x:@.dp/#/*/\@src
-
-               // Checking if we need to append code to existing completion or create new completion.
-               if
-                  exists:x:@.snippets/0/-/*/completion
-                  .lambda
-
-                     // Appending to existing completion.
-                     set-value:x:@.snippets/0/-/*/completion
-                        strings.concat
-                           get-value:x:@.snippets/0/-/*/completion
-                           .:"\r\n\r\n!["
-                           get-first-value
-                              strings.concat
-                                 .:"Image "
-                                 get-value:x:@.dp/#/*/\@alt
-                              .:Image
-                           .:"]("
-                           get-value:x:@.url
-                           .:")"
-
-               else
-
-                  // Adding new completion to [.snippets] collection.
-                  strings.concat
-                     .:"!["
-                     get-first-value
-                        strings.concat
-                           .:"Image "
-                           get-value:x:@.dp/#/*/\@alt
-                        .:Image
-                     .:"]("
-                     get-value:x:@.url
-                     .:")\r\n"
-                  unwrap:x:+/*/*
-                  add:x:@.snippets/0/-
-                     .
-                        completion:x:@strings.concat
-
-      // Checking if this is a hyperlink.
-      case:a
-
-         // Checking if it's a 'local' URL, implying within the same domain as we're currently scraping.
-         if
-            and
-               exists:x:@.dp/#/*/\@href
-               not-null:x:@.dp/#/*/\@href
-               neq:x:@.dp/#/*/\@href
-                  .:#
-               neq:x:@.dp/#/*/\@href
-                  .:
-               not
-                  strings.starts-with:x:@.dp/#/*/\@href
-                     .:"http://"
-               not
-                  strings.starts-with:x:@.dp/#/*/\@href
-                     .:"https://"
-            .lambda
-
-               // Local URL.
-               strings.split:x:@.dp/#/*/\@href
-                  .:#
-               strings.trim-end:x:@strings.split/0
-                  .:/
-               .tmp
-               if
-                  strings.starts-with:x:@strings.trim-end
-                     .:/
-                  .lambda
+                              get-value:x:@strings.trim-end
+                  else
                      set-value:x:@.tmp
                         strings.concat
                            get-value:x:@.base
+                           .:/
                            get-value:x:@strings.trim-end
-               else
-                  set-value:x:@.tmp
-                     strings.concat
-                        get-value:x:@.base
-                        .:/
-                        get-value:x:@strings.trim-end
-               if
-                  not-exists:x:@.url/*/{@strings.concat}
-                  .lambda
-                     unwrap:x:+/*/*
-                     add:x:@.urls
-                        .
-                           .:x:@.tmp
-
-         else-if
-            and
-               exists:x:@.dp/#/*/\@href
-               not-null:x:@.dp/#/*/\@href
-               neq:x:@.dp/#/*/\@href
-                  .:#
-               neq:x:@.dp/#/*/\@href
-                  .:
-               strings.starts-with:x:@.dp/#/*/\@href
-                  get-value:x:@.arguments/*/url
-            .lambda
-
-               // Absolute URL but still within base URL we're currently crawling.
-               strings.split:x:@.dp/#/*/\@href
-                  .:#
-               strings.trim-end:x:@strings.split/0
-                  .:/
-               if
-                  not-exists:x:@.urls/*/{@strings.split/0}
-                  .lambda
-                     unwrap:x:+/*/*
-                     add:x:@.urls
-                        .
-                           .:x:@strings.trim-end
-
-      // Headers becomes prompts.
-      case:h1
-      case:h2
-      case:h3
-      case:h4
-      case:h5
-      case:h6
-
-         // Creating a new prompt.
-         .prompt:
-
-         // Trimming and adding one SP characters between each part.
-         for-each:x:@.dp/#/**/\#text
-            set-value:x:@.prompt
-               strings.concat
-                  get-value:x:@.prompt
-                  strings.trim:x:@.dp/#
-                     .:"  \r\n\t"
-                  .:" "
-         set-value:x:@.prompt
-            strings.trim:x:@.prompt
-               .:" "
-
-         // Adding new prompt to [.snippets] collection.
-         unwrap:x:+/*/*/*
-         add:x:@.snippets
-            .
-               .
-                  prompt:x:@.prompt
-
-      // Paragraphs becomes completions.
-      case:p
-
-         // Making sure we've added at least one prompt.
-         if
-            exists:x:@.snippets/*
-            .lambda
-
-               // Creating a new completion.
-               .completion:
-
-               // Trimming and adding one SP characters between each part.
-               for-each:x:@.dp/#/**/\#text
                   if
-                     and
-                        neq:x:@.dp/#
-                           .
-                        neq:x:@.dp/#
-                           .:
+                     not-exists:x:@.url/*/{@strings.concat}
                      .lambda
-                        strings.replace:x:@.dp/#
-                           .:"\r"
-                           .:" "
-                        strings.replace:x:@strings.replace
-                           .:"\n"
-                           .:" "
-                        strings.replace:x:@strings.replace
-                           .:"\t"
-                           .:" "
-                        strings.replace:x:@strings.replace
-                           .:"  "
-                           .:" "
-                        if
-                           and
-                              eq
-                                 get-name:x:@.dp/#/.
-                                 .:a
-                              exists:x:@.dp/#/*/\@href
-                              not-null:x:@.dp/#/*/\@href
-                           .lambda
-      
-                              // Normalising URL.
-                              .url
-                              if
-                                 strings.starts-with:x:@.dp/#/./*/\@href
-                                    .:/
-                                 .lambda
-
-                                    // Prepending base URL.
-                                    set-value:x:@.url
-                                       strings.concat
-                                          get-value:x:@.base
-                                          get-value:x:@.dp/#/./*/\@href
-                              else-if
-                                 and
-                                    not
-                                       strings.starts-with:x:@.dp/#/./*/\@href
-                                          .:"http://"
-                                    not
-                                       strings.starts-with:x:@.dp/#/./*/\@href
-                                          .:"https://"
-                                 .lambda
-
-                                    // Prepending base URL.
-                                    set-value:x:@.url
-                                       strings.concat
-                                          get-value:x:@.base
-                                          .:/
-                                          get-value:x:@.dp/#/./*/\@href
-                              else
-
-                                 // URL is absolute.
-                                 set-value:x:@.url
-                                    get-value:x:@.dp/#/./*/\@href
-
-                              // Adding URL as Markdown to completion
-                              set-value:x:@.completion
-                                 strings.concat
-                                    get-value:x:@.completion
-                                    .:[
-                                    strings.trim:x:@strings.replace
-                                       .:"  \r\n\t"
-                                    .:](
-                                    get-value:x:@.url
-                                    .:)
-                        else
-
-                           // Anything BUT a hyperlink.
-                           set-value:x:@.completion
-                              strings.concat
-                                 get-value:x:@.completion
-                                 strings.trim:x:@strings.replace
-                                    .:"  \r\n\t"
-                                 .:" "
-
-               // Trimming completion. Notice, there's a non-breaking space in the following string (U+00A0).
-               set-value:x:@.completion
-                  strings.trim:x:@.completion
-                     .:"  \r\n\t"
-
-               // Verifying that paragraph actually contained some content.
-               if
-                  neq:x:@.completion
-                     .:
-                  .lambda
-
-                     // Checking if we need to append paragraph to existing completion or create new completion.
-                     if
-                        exists:x:@.snippets/0/-/*/completion
-                        .lambda
-
-                           // Appending to existing completion.
-                           set-value:x:@.snippets/0/-/*/completion
-                              strings.concat
-                                 get-value:x:@.snippets/0/-/*/completion
-                                 .:"\r\n\r\n"
-                                 get-value:x:@.completion
-
-                     else
-
-                        // Adding new prompt to [.snippets] collection.
                         unwrap:x:+/*/*
-                        add:x:@.snippets/0/-
+                        add:x:@.urls
                            .
-                              completion:x:@.completion
+                              .:x:@.tmp
 
-      // Lists becomes completions.
-      case:ul
-      case:ol
+            else-if
+               and
+                  exists:x:@.dp/#/*/\@href
+                  not-null:x:@.dp/#/*/\@href
+                  neq:x:@.dp/#/*/\@href
+                     .:#
+                  neq:x:@.dp/#/*/\@href
+                     .:
+                  strings.starts-with:x:@.dp/#/*/\@href
+                     get-value:x:@.arguments/*/url
+               .lambda
 
-         // Making sure we've added at least one prompt.
-         if
-            exists:x:@.snippets/*
-            .lambda
+                  // Absolute URL but still within base URL we're currently crawling.
+                  strings.split:x:@.dp/#/*/\@href
+                     .:#
+                  strings.trim-end:x:@strings.split/0
+                     .:/
+                  if
+                     not-exists:x:@.urls/*/{@strings.split/0}
+                     .lambda
+                        unwrap:x:+/*/*
+                        add:x:@.urls
+                           .
+                              .:x:@strings.trim-end
 
-               // Looping through each list item below list element tag.
-               .completion:"\r\n"
-               for-each:x:@.dp/#/*/li
+         // Headers becomes prompts.
+         case:h1
+         case:h2
+         case:h3
+         case:h4
+         case:h5
+         case:h6
 
-                  // Buffer for list item
-                  .item:
+            // Creating a new prompt.
+            .prompt:
+
+            // Trimming and adding one SP characters between each part.
+            for-each:x:@.dp/#/**/\#text
+               set-value:x:@.prompt
+                  strings.concat
+                     get-value:x:@.prompt
+                     strings.trim:x:@.dp/#
+                        .:"  \r\n\t"
+                     .:" "
+            set-value:x:@.prompt
+               strings.trim:x:@.prompt
+                  .:" "
+
+            // Adding new prompt to [.snippets] collection.
+            unwrap:x:+/*/*/*
+            add:x:@.snippets
+               .
+                  .
+                     prompt:x:@.prompt
+
+         // Paragraphs becomes completions.
+         case:p
+
+            // Making sure we've added at least one prompt.
+            if
+               exists:x:@.snippets/*
+               .lambda
+
+                  // Creating a new completion.
+                  .completion:
 
                   // Trimming and adding one SP characters between each part.
                   for-each:x:@.dp/#/**/\#text
@@ -483,104 +355,393 @@ for-each:x:@html2lambda/*/html/*/body/**
                            strings.replace:x:@strings.replace
                               .:"  "
                               .:" "
-                           set-value:x:@.item
-                              strings.concat
-                                 get-value:x:@.item
-                                 strings.trim:x:@strings.replace
-                                    .:"  \r\n\t"
-                                 .:" "
-                  set-value:x:@.completion
-                     strings.concat
-                        get-value:x:@.completion
-                        .:"\r\n- "
-                        strings.trim:x:@.item
-                           .:" "
+                           if
+                              and
+                                 eq
+                                    get-name:x:@.dp/#/.
+                                    .:a
+                                 exists:x:@.dp/#/*/\@href
+                                 not-null:x:@.dp/#/*/\@href
+                              .lambda
 
-               // Verifying that list actually contained some content.
+                                 // Normalising URL.
+                                 .url
+                                 if
+                                    strings.starts-with:x:@.dp/#/./*/\@href
+                                       .:/
+                                    .lambda
+
+                                       // Prepending base URL.
+                                       set-value:x:@.url
+                                          strings.concat
+                                             get-value:x:@.base
+                                             get-value:x:@.dp/#/./*/\@href
+                                 else-if
+                                    and
+                                       not
+                                          strings.starts-with:x:@.dp/#/./*/\@href
+                                             .:"http://"
+                                       not
+                                          strings.starts-with:x:@.dp/#/./*/\@href
+                                             .:"https://"
+                                    .lambda
+
+                                       // Prepending base URL.
+                                       set-value:x:@.url
+                                          strings.concat
+                                             get-value:x:@.base
+                                             .:/
+                                             get-value:x:@.dp/#/./*/\@href
+                                 else
+
+                                    // URL is absolute.
+                                    set-value:x:@.url
+                                       get-value:x:@.dp/#/./*/\@href
+
+                                 // Adding URL as Markdown to completion
+                                 set-value:x:@.completion
+                                    strings.concat
+                                       get-value:x:@.completion
+                                       .:[
+                                       strings.trim:x:@strings.replace
+                                          .:"  \r\n\t"
+                                       .:](
+                                       get-value:x:@.url
+                                       .:)
+                           else
+
+                              // Anything BUT a hyperlink.
+                              set-value:x:@.completion
+                                 strings.concat
+                                    get-value:x:@.completion
+                                    strings.trim:x:@strings.replace
+                                       .:"  \r\n\t"
+                                    .:" "
+
+                  // Trimming completion. Notice, there's a non-breaking space in the following string (U+00A0).
+                  set-value:x:@.completion
+                     strings.trim:x:@.completion
+                        .:"  \r\n\t"
+
+                  // Verifying that paragraph actually contained some content.
+                  if
+                     neq:x:@.completion
+                        .:
+                     .lambda
+
+                        // Checking if we need to append paragraph to existing completion or create new completion.
+                        if
+                           exists:x:@.snippets/0/-/*/completion
+                           .lambda
+
+                              // Appending to existing completion.
+                              set-value:x:@.snippets/0/-/*/completion
+                                 strings.concat
+                                    get-value:x:@.snippets/0/-/*/completion
+                                    .:"\r\n\r\n"
+                                    get-value:x:@.completion
+
+                        else
+
+                           // Adding new prompt to [.snippets] collection.
+                           unwrap:x:+/*/*
+                           add:x:@.snippets/0/-
+                              .
+                                 completion:x:@.completion
+
+         // Lists becomes completions.
+         case:ul
+         case:ol
+
+            // Making sure we've added at least one prompt.
+            if
+               exists:x:@.snippets/*
+               .lambda
+
+                  // Looping through each list item below list element tag.
+                  .completion:"\r\n"
+                  for-each:x:@.dp/#/*/li
+
+                     // Buffer for list item
+                     .item:
+
+                     // Trimming and adding one SP characters between each part.
+                     for-each:x:@.dp/#/**/\#text
+                        if
+                           and
+                              neq:x:@.dp/#
+                                 .
+                              neq:x:@.dp/#
+                                 .:
+                           .lambda
+                              strings.replace:x:@.dp/#
+                                 .:"\r"
+                                 .:" "
+                              strings.replace:x:@strings.replace
+                                 .:"\n"
+                                 .:" "
+                              strings.replace:x:@strings.replace
+                                 .:"\t"
+                                 .:" "
+                              strings.replace:x:@strings.replace
+                                 .:"  "
+                                 .:" "
+                              set-value:x:@.item
+                                 strings.concat
+                                    get-value:x:@.item
+                                    strings.trim:x:@strings.replace
+                                       .:"  \r\n\t"
+                                    .:" "
+                     set-value:x:@.completion
+                        strings.concat
+                           get-value:x:@.completion
+                           .:"\r\n- "
+                           strings.trim:x:@.item
+                              .:" "
+
+                  // Verifying that list actually contained some content.
+                  if
+                     neq:x:@.completion
+                        .:"\r\n"
+                     .lambda
+
+                        // Checking if we need to append paragraph to existing completion or create new completion.
+                        if
+                           exists:x:@.snippets/0/-/*/completion
+                           .lambda
+
+                              // Appending to existing completion.
+                              set-value:x:@.snippets/0/-/*/completion
+                                 strings.concat
+                                    get-value:x:@.snippets/0/-/*/completion
+                                    get-value:x:@.completion
+
+                        else
+
+                           // Adding new prompt to [.snippets] collection.
+                           unwrap:x:+/*/*
+                           add:x:@.snippets/0/-
+                              .
+                                 completion:x:@.completion
+
+   // Buffer for summary.
+   .summary
+
+   // Connecting to database.
+   data.connect:[generic|magic]
+
+      /*
+       * Retrieving max context tokens, such that we can ensure no snippet is longer
+       * than maximum 50% of [max_context_tokens], allowing the chatbot to create "associations"
+       * by always ensuring that it is using more than one training snippet each time it
+       * creates a context.
+       */
+      .max-size
+      data.read
+         table:ml_types
+         columns
+            max_context_tokens
+         where
+            and
+               type.eq:x:@.arguments/*/type
+      set-value:x:@.max-size
+         math.divide
+            convert:x:@data.read/*/*/max_context_tokens
+               type:int
+            .:int:2
+
+      // Creating training data from all [.snippets].
+      for-each:x:@.snippets/*
+
+         // Verifying that currently iterated snippet has both prompt and completion.
+         if
+            and
+               exists:x:@.dp/#/*/prompt
+               exists:x:@.dp/#/*/completion
+               not-null:x:@.dp/#/*/prompt
+               not-null:x:@.dp/#/*/completion
+               neq:x:@.dp/#/*/prompt
+                  .:
+               neq:x:@.dp/#/*/completion
+                  .:
+               mt
+                  strings.length:x:@.dp/#/*/completion
+                  get-value:x:@.arguments/*/threshold
+            .lambda
+
+               // Prompt.
+               .prompt
+               set-value:x:@.prompt
+                  strings.trim:x:@.dp/#/*/prompt
+                     .:"  \r\n\t"
+
+               // Completion.
+               .completion
+               set-value:x:@.completion
+                  strings.trim:x:@.dp/#/*/completion
+                     .:"  \r\n\t"
+
+               /*
+                * Checking if we already have a similar training
+                * snippet in our database, at which point we ignore it.
+                */
+               data.read
+                  table:ml_training_snippets
+                  columns
+                     id
+                  where
+                     and
+                        prompt.eq:x:@.prompt
+                        completion.eq:x:@.completion
+                        type.eq:x:@.arguments/*/type
+                  limit:1
                if
-                  neq:x:@.completion
-                     .:"\r\n"
+                  not-exists:x:@data.read/*
                   .lambda
 
-                     // Checking if we need to append paragraph to existing completion or create new completion.
+                     // Checking size of snippet.
+                     strings.concat
+                        get-value:x:@.prompt
+                        .:"\r\n"
+                        .:"\r\n"
+                        get-value:x:@.completion
                      if
-                        exists:x:@.snippets/0/-/*/completion
+                        and
+                           exists:x:@.arguments/*/summarize
+                           not-null:x:@.arguments/*/summarize
+                           get-value:x:@.arguments/*/summarize
+                           mt
+                              openai.tokenize:x:@strings.concat
+                              get-value:x:@.max-size
                         .lambda
 
-                           // Appending to existing completion.
-                           set-value:x:@.snippets/0/-/*/completion
+                           /*
+                            * Snippet is too long, so we break it down by invoking ChatGPT asking it to
+                            * create a summary for us.
+                            */
+                           .content
+                           set-value:x:@.content
                               strings.concat
-                                 get-value:x:@.snippets/0/-/*/completion
-                                 get-value:x:@.completion
+                                 .:"Create a summary of the following information: "
+                                 get-value:x:@strings.concat/@strings.concat
+                           .token
+                           set-value:x:@.token
+                              strings.concat
+                                 .:"Bearer "
+                                 config.get:"magic:openai:key"
+                           http.post:"https://api.openai.com/v1/chat/completions"
+                              headers
+                                 Authorization:x:@.token
+                                 Content-Type:application/json
+                              payload
+                                 model:gpt-3.5-turbo
+                                 max_tokens:x:@.max-size
+                                 temperature:decimal:0.1
+                                 messages
+                                    .
+                                       role:user
+                                       content:x:@.content
+                              convert:true
+
+                           // Checking that above invocation returned success.
+                           if
+                              and
+                                 mte:x:@http.post
+                                    .:int:200
+                                 lt:x:@http.post
+                                    .:int:300
+                              .lambda
+
+                                 // Success creating summary.
+                                 sockets.signal:magic.backend.chatbot
+                                    roles:root
+                                    args
+                                       message:Successfully created summary of snippet to shorten it
+                                       type:info
+                                 set-value:x:@.prompt
+                                    strings.concat
+                                       .:"Summary of; "
+                                       strings.substring:x:@.prompt
+                                          .:int:0
+                                          .:int:150
+                                 set-value:x:@.completion
+                                    strings.trim:x:@http.post/*/content/*/choices/0/*/message/*/content
+                                       .:"\r\n\t "
+                           else
+
+                              // Oops, still continuing ...
+                              lambda2hyper:x:@http.post
+                              log.error:Something went wrong while invoking OpenAI
+                                 message:x:@http.post/*/content/*/error/*/message
+                                 status:x:@http.post
+                                 error:x:@lambda2hyper
+                              sockets.signal:magic.backend.chatbot
+                                 roles:root
+                                 args
+                                    message:Could not create a summary of snippet, check your log for details
+                                    type:warning
+
+                     // Ensuring prompt is never null.
+                     set-value:x:@.prompt
+                        get-first-value:x:@.prompt
+                           .:
+
+                     // Inserting prompt, completion, type and URI into database as is.
+                     add:x:+
+                        get-nodes:x:@.arguments/*/type
+                     try-signal:magic.ai.can-create-snippet
+                     data.create
+                        table:ml_training_snippets
+                        values
+                           prompt:x:@.prompt
+                           completion:x:@.completion
+                           type:x:@.arguments/*/type
+                           uri:x:@.arguments/*/url
+
+                     // Checking if this is first iteration.
+                     if
+                        not-exists:x:@.summary/*
+                        .lambda
+
+                           // Creating our initial summary.
+                           unwrap:x:+/*/*
+                           add:x:@.summary
+                              .
+                                 prompt:x:@.prompt
+                                 completion:x:@.completion
 
                      else
 
-                        // Adding new prompt to [.snippets] collection.
-                        unwrap:x:+/*/*
-                        add:x:@.snippets/0/-
-                           .
-                              completion:x:@.completion
+                        // Concatenating into [.summary].
+                        set-value:x:@.summary/*/completion
+                           strings.concat
+                              get-value:x:@.summary/*/completion
+                              .:"\r\n\r\n"
+                              get-value:x:@.prompt
+                              .:"\r\n\r\n"
+                              get-value:x:@.completion
 
-// Buffer for summary.
-.summary
-
-// Connecting to database.
-data.connect:[generic|magic]
-
-   /*
-    * Retrieving max context tokens, such that we can ensure no snippet is longer
-    * than maximum 50% of [max_context_tokens], allowing the chatbot to create "associations"
-    * by always ensuring that it is using more than one training snippet each time it
-    * creates a context.
-    */
-   .max-size
-   data.read
-      table:ml_types
-      columns
-         max_context_tokens
-      where
-         and
-            type.eq:x:@.arguments/*/type
-   set-value:x:@.max-size
-      math.divide
-         convert:x:@data.read/*/*/max_context_tokens
-            type:int
-         .:int:2
-
-   // Creating training data from all [.snippets].
-   for-each:x:@.snippets/*
-
-      // Verifying that currently iterated snippet has both prompt and completion.
+      /*
+       * Verifying we have a summary, and if so, inserting it.
+       *
+       * Notice, if page only has one Hx tag, it will produce only OHE snippet,
+       * which of course will be the exact same as the summary, so we verify
+       * that summary doesn't exist in [.snippets] as an exact match before
+       * inserting summary.
+       */
       if
          and
-            exists:x:@.dp/#/*/prompt
-            exists:x:@.dp/#/*/completion
-            not-null:x:@.dp/#/*/prompt
-            not-null:x:@.dp/#/*/completion
-            neq:x:@.dp/#/*/prompt
-               .:
-            neq:x:@.dp/#/*/completion
-               .:
-            mt
-               strings.length:x:@.dp/#/*/completion
-               get-value:x:@.arguments/*/threshold
+            exists:x:@.summary/*
+            not-exists:x:@.snippets/*/*/prompt/={@.summary/*/prompt}
+            not-exists:x:@.snippets/*/*/completion/={@.summary/*/completion}
          .lambda
-
-            // Prompt.
-            .prompt
-            set-value:x:@.prompt
-               strings.trim:x:@.dp/#/*/prompt
-                  .:"  \r\n\t"
-
-            // Completion.
-            .completion
-            set-value:x:@.completion
-               strings.trim:x:@.dp/#/*/completion
-                  .:"  \r\n\t"
 
             /*
              * Checking if we already have a similar training
              * snippet in our database, at which point we ignore it.
+             *
+             * Notice, in theory summary might exist from before if site
+             * contains duplicated content.
              */
             data.read
                table:ml_training_snippets
@@ -588,233 +749,84 @@ data.connect:[generic|magic]
                   id
                where
                   and
-                     prompt.eq:x:@.prompt
-                     completion.eq:x:@.completion
+                     prompt.eq:x:@.summary/*/prompt
+                     completion.eq:x:@.summary/*/completion
                      type.eq:x:@.arguments/*/type
                limit:1
             if
                not-exists:x:@data.read/*
                .lambda
 
-                  // Checking size of snippet.
-                  strings.concat
-                     get-value:x:@.prompt
-                     .:"\r\n"
-                     .:"\r\n"
-                     get-value:x:@.completion
-                  if
-                     and
-                        exists:x:@.arguments/*/summarize
-                        not-null:x:@.arguments/*/summarize
-                        get-value:x:@.arguments/*/summarize
-                        mt
-                           openai.tokenize:x:@strings.concat
-                           get-value:x:@.max-size
-                     .lambda
-
-                        /*
-                         * Snippet is too long, so we break it down by invoking ChatGPT asking it to
-                         * create a summary for us.
-                         */
-                        .content
-                        set-value:x:@.content
-                           strings.concat
-                              .:"Create a summary of the following information: "
-                              get-value:x:@strings.concat/@strings.concat
-                        .token
-                        set-value:x:@.token
-                           strings.concat
-                              .:"Bearer "
-                              config.get:"magic:openai:key"
-                        http.post:"https://api.openai.com/v1/chat/completions"
-                           headers
-                              Authorization:x:@.token
-                              Content-Type:application/json
-                           payload
-                              model:gpt-3.5-turbo
-                              max_tokens:x:@.max-size
-                              temperature:decimal:0.1
-                              messages
-                                 .
-                                    role:user
-                                    content:x:@.content
-                           convert:true
-
-                        // Checking that above invocation returned success.
-                        if
-                           and
-                              mte:x:@http.post
-                                 .:int:200
-                              lt:x:@http.post
-                                 .:int:300
-                           .lambda
-
-                              // Success creating summary.
-                              sockets.signal:magic.backend.chatbot
-                                 roles:root
-                                 args
-                                    message:Successfully created summary of snippet to shorten it
-                                    type:info
-                              set-value:x:@.prompt
-                                 strings.concat
-                                    .:"Summary of; "
-                                    strings.substring:x:@.prompt
-                                       .:int:0
-                                       .:int:150
-                              set-value:x:@.completion
-                                 strings.trim:x:@http.post/*/content/*/choices/0/*/message/*/content
-                                    .:"\r\n\t "
-                        else
-
-                           // Oops, still continuing ...
-                           lambda2hyper:x:@http.post
-                           log.error:Something went wrong while invoking OpenAI
-                              message:x:@http.post/*/content/*/error/*/message
-                              status:x:@http.post
-                              error:x:@lambda2hyper
-                           sockets.signal:magic.backend.chatbot
-                              roles:root
-                              args
-                                 message:Could not create a summary of snippet, check your log for details
-                                 type:warning
-
-                  // Ensuring prompt is never null.
-                  set-value:x:@.prompt
-                     get-first-value:x:@.prompt
-                        .:
-
-                  // Inserting prompt, completion, type and URI into database as is.
+                  // Checking if we can create training snippet.
                   add:x:+
                      get-nodes:x:@.arguments/*/type
                   try-signal:magic.ai.can-create-snippet
+
+                  // Inserting summary prompt and completion.
                   data.create
                      table:ml_training_snippets
                      values
-                        prompt:x:@.prompt
-                        completion:x:@.completion
+                        prompt:x:@.summary/*/prompt
+                        completion:x:@.summary/*/completion
                         type:x:@.arguments/*/type
                         uri:x:@.arguments/*/url
-   
-                  // Checking if this is first iteration.
-                  if
-                     not-exists:x:@.summary/*
-                     .lambda
 
-                        // Creating our initial summary.
-                        unwrap:x:+/*/*
-                        add:x:@.summary
-                           .
-                              prompt:x:@.prompt
-                              completion:x:@.completion
+   // Preserving some memory.
+   remove-nodes:x:@http.get/*
+   remove-nodes:x:@html2lambda/*
+   remove-nodes:x:@.snippets/*
+   remove-nodes:x:@.summary/*
 
-                  else
-                  
-                     // Concatenating into [.summary].
-                     set-value:x:@.summary/*/completion
-                        strings.concat
-                           get-value:x:@.summary/*/completion
-                           .:"\r\n\r\n"
-                           get-value:x:@.prompt
-                           .:"\r\n\r\n"
-                           get-value:x:@.completion
-
-   /*
-    * Verifying we have a summary, and if so, inserting it.
-    *
-    * Notice, if page only has one Hx tag, it will produce only OHE snippet,
-    * which of course will be the exact same as the summary, so we verify
-    * that summary doesn't exist in [.snippets] as an exact match before
-    * inserting summary.
-    */
+   // Decrementing max argument, and checking if we've reached limit.
+   math.decrement:x:@.arguments/*/max
    if
-      and
-         exists:x:@.summary/*
-         not-exists:x:@.snippets/*/*/prompt/={@.summary/*/prompt}
-         not-exists:x:@.snippets/*/*/completion/={@.summary/*/completion}
+      lte:x:@.arguments/*/max
+         .:int:0
       .lambda
 
-         /*
-          * Checking if we already have a similar training
-          * snippet in our database, at which point we ignore it.
-          *
-          * Notice, in theory summary might exist from before if site
-          * contains duplicated content.
-          */
-         data.read
-            table:ml_training_snippets
-            columns
-               id
-            where
-               and
-                  prompt.eq:x:@.summary/*/prompt
-                  completion.eq:x:@.summary/*/completion
-                  type.eq:x:@.arguments/*/type
-            limit:1
+         // Reached max level hence stop crawling.
+         return:bool:false
+
+   /*
+    * To avoid having web server believe it's under DOS attack, we wait [delay] milliseconds
+    * before we process the next URL.
+    */
+   sleep:x:@.arguments/*/delay
+
+   /*
+    * Checking if caller wants us to crawl URLs found in document.
+    *
+    * Notice, we only crawl if site doesn't have a sitemap, at which point we
+    * crawl URLs found in HTML instead to scrape website content.
+    */
+   if:x:@.arguments/*/crawl
+
+      // Looping through all URLs found in document.
+      for-each:x:@.urls/*
+
+         // Crawling next URL.
+         unwrap:x:+/*
+         io.file.execute:/system/openai/crawl.implementation/import-url.hl
+            url:x:@.dp/#
+            type:x:@.arguments/*/type
+            delay:x:@.arguments/*/delay
+            max:x:@.arguments/*/max
          if
-            not-exists:x:@data.read/*
+            eq:x:@io.file.execute
+               .:bool:false
             .lambda
 
-               // Checking if we can create training snippet.
-               add:x:+
-                  get-nodes:x:@.arguments/*/type
-               try-signal:magic.ai.can-create-snippet
+               // Reached max value and we should stop crawling URLs.
+               return:bool:false
 
-               // Inserting summary prompt and completion.
-               data.create
-                  table:ml_training_snippets
-                  values
-                     prompt:x:@.summary/*/prompt
-                     completion:x:@.summary/*/completion
-                     type:x:@.arguments/*/type
-                     uri:x:@.arguments/*/url
+   // Returning continue flag to caller.
+   return:bool:true
 
-// Preserving some memory.
-remove-nodes:x:@http.get/*
-remove-nodes:x:@html2lambda/*
-remove-nodes:x:@.snippets/*
-remove-nodes:x:@.summary/*
+.catch
 
-// Decrementing max argument, and checking if we've reached limit.
-math.decrement:x:@.arguments/*/max
-if
-   lte:x:@.arguments/*/max
-      .:int:0
-   .lambda
-
-      // Reached max level hence stop crawling.
-      return:bool:false
-
-/*
- * To avoid having web server believe it's under DOS attack, we wait [delay] milliseconds
- * before we process the next URL.
- */
-sleep:x:@.arguments/*/delay
-
-/*
- * Checking if caller wants us to crawl URLs found in document.
- *
- * Notice, we only crawl if site doesn't have a sitemap, at which point we
- * crawl URLs found in HTML instead to scrape website content.
- */
-if:x:@.arguments/*/crawl
-
-   // Looping through all URLs found in document.
-   for-each:x:@.urls/*
-
-      // Crawling next URL.
-      unwrap:x:+/*
-      io.file.execute:/system/openai/crawl.implementation/import-url.hl
-         url:x:@.dp/#
-         type:x:@.arguments/*/type
-         delay:x:@.arguments/*/delay
-         max:x:@.arguments/*/max
-      if
-         eq:x:@io.file.execute
-            .:bool:false
-         .lambda
-
-            // Reached max value and we should stop crawling URLs.
-            return:bool:false
-
-// Returning continue flag to caller.
-return:bool:true
+   // Logging and returning true to allow crawler to continue.
+   log.error:Could not crawl page
+      url:x:@.arguments/@.arguments/*/url
+      type:x:@.arguments/@.arguments/*/type
+      error:x:@.arguments/*/message
+   return:bool:true
