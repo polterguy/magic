@@ -12,6 +12,7 @@ slots.create:magic.ai.chat
       threshold:x:@.arguments/*/threshold
       max_tokens:x:@.arguments/*/max_context_tokens
       vector_model:x:@.arguments/*/vector_model
+      api_key:x:@.arguments/*/api_key
 
    // Checking if we've got a cached result.
    if
@@ -147,7 +148,9 @@ slots.create:magic.ai.chat
    set-value:x:@.token
       strings.concat
          .:"Bearer "
-         config.get:"magic:openai:key"
+         get-first-value
+            get-value:x:@.arguments/*/api_key
+            config.get:"magic:openai:key"
 
    // Invoking OpenAI now with context being either training data or previous messages.
    add:x:./*/http.post/*/payload/*/messages

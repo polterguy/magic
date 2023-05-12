@@ -105,6 +105,23 @@
             autocomplete="off">
         </mat-form-field>
 
+        <mat-form-field class="w-100 standalone-field me-2">
+          <span
+            matPrefix
+            matTooltip="API key"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>key</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            placeholder="API key ..."
+            [disabled]="isLoading"
+            [(ngModel)]="api_key"
+            name="api_key"
+            autocomplete="off">
+        </mat-form-field>
+
         <mat-form-field class="w-100 standalone-field" [class.me-2]="use_embeddings">
           <span
             matPrefix
@@ -174,7 +191,7 @@
 
       <div class="col-12 d-flex justify-content-md-between align-items-md-center align-items-end flex-md-row">
 
-        <mat-form-field class="w-100 standalone-field" [class.me-2]="use_embeddings">
+        <mat-form-field class="w-100 standalone-field me-2">
           <span
             matPrefix
             matTooltip="Website"

@@ -76,9 +76,13 @@ export class OpenAIService {
   /**
    * Returns all models from OpenAI, including fine tuned models and base models.
    */
-  models() {
+  models(api_key: string = null) {
 
-    return this.httpService.get<OpenAIModel[]>('/magic/system/openai/models');
+    let query = '';
+    if (api_key) {
+      query += '?api_key=' + encodeURIComponent(api_key);
+    }
+    return this.httpService.get<OpenAIModel[]>('/magic/system/openai/models' + query);
   }
 
   /**
