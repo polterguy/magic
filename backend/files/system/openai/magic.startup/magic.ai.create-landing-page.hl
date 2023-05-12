@@ -23,6 +23,8 @@ slots.create:magic.ai.create-landing-page
 
    // Retrieving HTML document from URL specified.
    http.get:x:@.arguments/*/url
+      headers
+         User-Agent:AINIRO-MachineLearning-Spider
 
    // Converting to lambda to verify we've got a "base" element.
    html2lambda:x:@http.get/*/content
