@@ -31,7 +31,6 @@ function ensureReCaptchaHasBeenFetched() {
     // Including reCAPTCHA version 3
     const cap = window.document.createElement('script');
     cap.src = 'https://www.google.com/recaptcha/api.js?render=' + aistaReCaptchaSiteKeySearch;
-    cap.defer = true;
     window.document.getElementsByTagName('head')[0].appendChild(cap);
   }
 }
