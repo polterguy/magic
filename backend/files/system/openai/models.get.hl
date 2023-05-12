@@ -2,9 +2,10 @@
 /*
  * Returns all models from OpenAI, including fine tuned models.
  */
-.arguments
 .type:internal
 .description:Returns all models from OpenAI, including fine tuned models
+.arguments
+   api_key:string
 
 // Making sure user has access to invoked endpoint.
 auth.ticket.verify:root
@@ -17,7 +18,11 @@ auth.ticket.verify:root
 set-value:x:@.token
    strings.concat
       .:"Bearer "
-      config.get:"magic:openai:key"
+      get-first-value
+         get-value:x:@.arguments/*/api_key
+         config.get:"magic:openai:key"
+lambda2hyper:x:../*
+log.info:x:-
 
 // Creating an HTTP POST request towards OpenAI, now decorated.
 http.get:"https://api.openai.com/v1/models"

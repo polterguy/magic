@@ -17,6 +17,8 @@
    ml_types.contact_us.eq:string
    ml_types.lead_email.like:string
    ml_types.lead_email.eq:string
+   ml_types.api_key.like:string
+   ml_types.api_key.eq:string
 .description:Endpoint counting items in your ml_types table in your magic database
 .type:crud-count
 

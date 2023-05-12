@@ -84,6 +84,7 @@ slots.create:magic.ai.completion
             threshold:x:@.arguments/*/threshold
             max_tokens:x:@.arguments/*/max_context_tokens
             vector_model:x:@.arguments/*/vector_model
+            api_key:x:@.arguments/*/api_key
 
          // Checking if we've got a cached result.
          if
@@ -179,7 +180,9 @@ slots.create:magic.ai.completion
    set-value:x:@.token
       strings.concat
          .:"Bearer "
-         config.get:"magic:openai:key"
+         get-first-value
+            get-value:x:@.arguments/*/api_key
+            config.get:"magic:openai:key"
 
    // Invoking OpenAI, now with a decorated prompt.
    http.post:"https://api.openai.com/v1/completions"

@@ -40,6 +40,7 @@ slots.create:magic.ai.endpoint-common
             vector_model
             contact_us
             lead_email
+            api_key
          where
             and
                type.eq:x:@.arguments/*/type

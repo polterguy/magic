@@ -38,6 +38,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
   greeting: string;
   contact_us: string;
   lead_email: string;
+  api_key: string;
   cached: boolean = false;
   model: OpenAIModel = null;
   vector_model: OpenAIModel = null;
@@ -95,6 +96,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
     this.greeting = this.data?.greeting ?? 'Hi there, how can I help you?';
     this.contact_us = this.data?.contact_us ?? '';
     this.lead_email = this.data?.lead_email ?? '';
+    this.api_key = this.data?.api_key ?? '';
     this.advanced = !!this.data;
 
     this.generalService.showLoading();
@@ -104,7 +106,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
 
         this.roles = roles;
 
-        this.openAIService.models().subscribe({
+        this.openAIService.models(this.api_key).subscribe({
           next: (models: OpenAIModel[]) => {
     
             this.models = models;
@@ -232,6 +234,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
       greeting: this.greeting,
       contact_us: this.contact_us,
       lead_email: this.lead_email,
+      api_key: this.api_key?.length > 0 ? this.api_key : null,
       use_embeddings: this.use_embeddings,
       threshold: this.threshold,
     };
