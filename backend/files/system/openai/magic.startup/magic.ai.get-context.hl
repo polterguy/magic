@@ -215,10 +215,20 @@ slots.create:magic.ai.get-context
          .:"\r\n \t"
 
    // Returning context and relevant snippets to caller.
-   add:x:./*/return/*/snippets
-      get-nodes:x:@.result/*
+   if
+      and
+         exists:x:@.context
+         not-null:x:@.context
+         neq:x:@.context
+            .:
+      .lambda
+         add:x:+/+/*/*/snippets
+            get-nodes:x:@.result/*
+         unwrap:x:+/*/*
+         add:x:../*/return
+            .
+               context:x:@.context
+               snippets
    unwrap:x:./*/return/*
    return
-      context:x:@.context
       db_time:x:@.time
-      snippets
