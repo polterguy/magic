@@ -6,6 +6,26 @@
 .grecaptcha-badge {
   opacity:0 !important;
 }
+.aista-chat-btn,
+.aista-chat-btn i,
+.aista-chat-wnd,
+.aista-chat-header,
+.aista-chat-msg-container,
+.aista-chat-answer,
+.aista-chat-answer p,
+.aista-chat-answer img,
+.aista-chat-answer a,
+.aista-chat-answer ul,
+.aista-chat-answer ol,
+.aista-chat-answer li,
+.aista-chat-close-btn,
+.aista-chat-close-btn i {
+  all:revert;
+}
+.aista-chat-btn i,
+.aista-chat-close-btn i {
+  font-style: normal;
+}
 .aista-chat-btn {
   position: fixed;
   bottom: 10px;
@@ -14,7 +34,7 @@
   border: none !important;
   padding: 15px 35px;
   font-size: 14px;
-  z-index: 9999;
+  z-index: 100000;
   color: #fcfcfc !important;
   cursor: pointer !important;
   font-weight: bold !important;
@@ -43,7 +63,7 @@
 .aista-chat-wnd {
   font-family: Red hat Display, sans-serif;
   position: fixed !important;
-  z-index: 10000 !important;
+  z-index: 100001 !important;
   bottom: 10px !important;
   right: 10px !important;
   width: 350px !important;
@@ -190,7 +210,7 @@
   left: 0 !important;
   width: 100% !important;
   height: 100% !important;
-  z-index: 11000 !important;
+  z-index: 100002 !important;
   background-color: rgba(0,0,0,.7) !important;
   opacity: 0;
   animation-name: aista-zoom-image;
