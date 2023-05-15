@@ -149,7 +149,7 @@ export class BazarService {
 
     const url = environment.bazarUrl + '/magic/system/openai/prompt?prompt=' +
       encodeURIComponent(prompt) +
-      '&type=aista_com' +
+      '&type=polterguy_github_io' +
       '&recaptcha_response=' +
       encodeURIComponent(recaptch_response);
     return this.httpClient.get<MagicResponse>(url);
