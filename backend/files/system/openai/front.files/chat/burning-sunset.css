@@ -358,6 +358,6 @@
   transition: color .25s ease-in-out;
 }
 .aista-chat-prompt::placeholder {
-  color: #030a0a; !important;
+  color: #030a0a !important;
   opacity:40% !important;
 }
