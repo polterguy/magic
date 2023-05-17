@@ -70,7 +70,7 @@
   max-width: calc(100% - 20px) !important;
   background:linear-gradient(#bc61f5, #bc61f5) !important;
   border-radius: 23px !important;
-  border: solid 1px #fcfeff !important;
+  border: solid 0px #fcfeff !important;
   box-shadow: 3px 3px 5px rgba(0,0,0,.2) !important;
   display: none;
 }
