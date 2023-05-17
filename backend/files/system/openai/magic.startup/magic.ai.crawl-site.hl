@@ -147,6 +147,17 @@ slots.create:magic.ai.crawl-site
                // Iterating through each URL referenced in main sitemap.
                for-each:x:@xml2lambda/*/sitemapindex/*/sitemap/*/loc/*/\#text
 
+                  // Informing user.
+                  strings.concat
+                     .:"Parsing sitemap reference "
+                     get-value:x:@.dp/#
+                  unwrap:x:+/*/*/message
+                  sockets.signal:magic.backend.chatbot
+                     roles:root
+                     args
+                        message:x:@strings.concat
+                        type:info
+
                   // Getting XML from currently iterated sitemap subset.
                   unwrap:x:+/*/*
                   http.get:x:@.dp/#
@@ -162,20 +173,39 @@ slots.create:magic.ai.crawl-site
                            .:int:300
                      .lambda
 
-                        // Above invocation returned success.
-                        xml2lambda:x:@http.get/*/content
+                        // In case sitemap is malformed, we catch exceptions while trying to convert it to XML.
+                        try
 
-                        // Iterating through each URL in currently iterated sitemap file.
-                        for-each:x:@xml2lambda/*/urlset/*/url/*/loc/*/\#text
+                           // Above invocation returned success.
+                           xml2lambda:x:@http.get/*/content
 
-                           // Avoiding duplicates.
-                           if
-                              not-exists:x:@.urls/*/={@.dp/#}
-                              .lambda
-                                 unwrap:x:+/*/*
-                                 add:x:@.urls
-                                    .
-                                       .:x:@.dp/#
+                           // Iterating through each URL in currently iterated sitemap file.
+                           for-each:x:@xml2lambda/*/urlset/*/url/*/loc/*/\#text
+
+                              // Avoiding duplicates.
+                              if
+                                 not-exists:x:@.urls/*/={@.dp/#}
+                                 .lambda
+                                    unwrap:x:+/*/*
+                                    add:x:@.urls
+                                       .
+                                          .:x:@.dp/#
+
+                        .catch
+
+                           // Oops ...!!
+                           log.error:Not able to parse sitemap reference as XML
+                              url:x:@.dp/#
+                           strings.concat
+                              .:"Unable to parse "
+                              get-value:x:@.dp/#
+                              .:" as a valid XML document."
+                           unwrap:x:+/*/*/message
+                           sockets.signal:magic.backend.chatbot
+                              roles:root
+                              args
+                                 message:x:@strings.concat
+                                 type:warning
 
                   else
 
@@ -244,9 +274,9 @@ slots.create:magic.ai.crawl-site
 
                // Signaling frontend.
                strings.concat
-                  .:"There are "
+                  .:"There are a total of "
                   get-value:x:@get-count
-                  .:" URLs in total in site"
+                  .:" pages in website"
                unwrap:x:+/*/args/*
                sockets.signal:magic.backend.chatbot
                   roles:root
