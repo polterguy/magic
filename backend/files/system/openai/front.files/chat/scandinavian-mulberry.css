@@ -2,7 +2,7 @@
 /*
  * Default CSS style for OpenAI chat inclusion.
  */
- @import url('https://fonts.googleapis.com/css?family=Red+Hat+Display:400,500,900&display=swap');
+ @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,700;1,400&display=swap');
 .grecaptcha-badge {
   opacity:0 !important;
 }
@@ -35,16 +35,16 @@
   padding: 15px 35px;
   font-size: 14px;
   z-index: 100000;
-  color: #8c52ff !important;
+  color: #fcfeff !important;
   cursor: pointer !important;
   font-weight: bold !important;
-  border: solid 1px #c7c7c7;
-  font-family: Red hat Display, sans-serif !important;
+  border: solid 1px #d2449d;
+  font-family: Roboto !important;
   text-align: center;
   text-decoration: none !important;
-  font-family: Red hat Display, sans-serif !important;
+  font-family: Arial, Helvetica, sans-serif;
   box-shadow: 3px 3px 5px rgba(0,0,0,.2);
-  background: linear-gradient(#ff5757, #8c52ff);
+  background: linear-gradient(#d2449d, #d2449d);
   background-size: 1px 100px;
   transition: background-position .25s ease-in-out, box-shadow .25s ease-in-out;
 }
@@ -55,22 +55,22 @@
   background-position: 50px;
   transition: background-position .25s ease-in-out, box-shadow .25s ease-in-out;
   text-decoration: none !important;
-  color: #8c52ff !important;
+  color: #fcfeff !important;
 }
 .aista-chat-btn i {
   font-size: 20px;
 }
 .aista-chat-wnd {
-  font-family: Red hat Display, sans-serif;
+  font-family: Roboto !important;
   position: fixed !important;
   z-index: 100001 !important;
   bottom: 10px !important;
   right: 10px !important;
   width: 350px !important;
   max-width: calc(100% - 20px) !important;
-  background:linear-gradient(#ff5757, #8c52ff) !important;
-  border-radius: 5px !important;
-  border: solid 0px #5ce1e6 !important;
+  background:linear-gradient(#d2449d, #d2449d) !important;
+  border-radius: 23px !important;
+  border: solid 1px #fcfeff !important;
   box-shadow: 3px 3px 5px rgba(0,0,0,.2) !important;
   display: none;
 }
@@ -80,12 +80,12 @@
   color: #fcfeff !important;
 }
 .aista-chat-close-btn {
-  border-radius: 5px !important;
+  border-radius: 15px !important;
   background:linear-gradient(#fcfeff, #fcfeff) !important;
-  border: solid 0px #030a0a !important;
-  padding: 3px 12px !important;
+  border: solid 0px #c7c7c7 !important;
+  padding: 5px 7px !important;
   font-size: 12px !important;
-  color: #8c52ff !important;
+  color: #d2449d !important;
   position: absolute !important;
   top: 13px !important;
   right: 12px !important;
@@ -98,28 +98,31 @@
 .aista-chat-close-btn:focus {
   background-position: 25px !important;
   transition: background-position .25s ease-in-out !important;
-  color: #8c52ff !important;
+  color: #d2449d !important;
   outline: none !important;
   text-decoration: none !important;
 }
 .aista-chat-msg-container {
   height: 300px !important;
-  margin: 0 10px !important;
-  background-color: #ffffff;
-  border-radius: 4px !important;
+  margin: 0 0px !important;
+  background-color: #fcfeff;
+  border-radius: 0px !important;
   padding: 15px !important;
-  border: solid 1px rgba(0,0,0,.2) !important;
+  border-left: solid 1px rgba(0,0,0,.2);
+  border-right: solid 1px rgba(0,0,0,.2);
+  border-top: solid 1px #fcfeff;
+  border-bottom: solid 1px #fcfeff;
   overflow-y: auto !important;
   font-size: 14px !important;
   line-height: 20px !important;
-  color: #fffafa !important;
+  color: #030a0a !important;
 }
 .aista-chat-msg-container a {
   text-decoration: none !important;
-  color: #531cc3 !important;
+  color: #5555ff !important;
 }
 .aista-chat-msg-container a:visited {
-  color: #531cc3 !important;
+  color: #5555ff !important;
 }
 @keyframes aista-chat-question-waiting {
   0% { opacity: .2; }
@@ -135,8 +138,8 @@
   margin-left: 60px !important;
   border-radius: 10px 10px 0 10px;
   margin-bottom: 25px !important;
-  background-color: #8c52ff;
-  color: #fcfcfc;
+  background-color: #d2449d;
+  color: #fcfeff;
   padding: 15px !important;
   box-shadow: 3px 3px 5px rgba(0,0,0,.2);
 }
@@ -144,13 +147,13 @@
   margin-bottom: 25px !important;
   margin-left: 60px !important;
   border-radius: 10px 10px 0 10px;
-  background-color: #8c52ff;
-  color: #fcfcfc;
+  background-color: #d2449d;
+  color: #fcfeff;
   padding: 15px !important;
   box-shadow: 3px 3px 5px rgba(0,0,0,.2);
 }
 .aista-chat-error {
-  background-color: #850f1a !important;
+  background-color: rgb(255,230,230) !important;
   padding: 15px !important;
   margin-left: -15px !important;
   margin-right: -15px !important;
@@ -161,7 +164,7 @@
   border-radius: 10px 10px 10px 0;
   margin-right: 60px !important;
   margin-bottom: 25px !important;
-  background-color: #ff5757;
+  background-color: #d9d9d9;
   padding: 15px !important;
   box-shadow: 3px 3px 5px rgba(0,0,0,.2);
 }
@@ -308,7 +311,7 @@
 }
 .aista-references-list li a {
   text-decoration: none !important;
-  color: #531cc3 !important;
+  color: rgb(128,128,255) !important;
   transition: color, background-color .25s ease-in-out !important;
   padding: 5px 5px 5px 10px !important;
   display: block !important;
@@ -320,44 +323,43 @@
 .aista-references-list li a:hover,
 .aista-references-list li a:active,
 .aista-references-list li a:focus {
-  color: #531cc3 !important;
+  color: rgb(90,90,235) !important;
   transition: color, background-color .25s ease-in-out !important;
   background-color: rgba(0,0,0,.1);
 }
 .aista-chat-form {
-  padding: 10px !important;
+  padding: 7px !important;
   margin: 0 !important;
 }
 .aista-chat-prompt {
   padding: 10px !important;
-  border: solid 1px rgba(0,0,0,.2) !important;
+  border: solid 0px rgba(0,0,0,.2) !important;
   outline: none !important;
   width: 100% !important;
   box-sizing: border-box !important;
-  background:linear-gradient(#fcfeff, #ffffff) !important;
-  border-radius: 4px !important;
+  background:linear-gradient(#fcfeff, #fcfeff) !important;
+  border-radius: 20px !important;
 }
 .aista-speech-button {
   position: absolute;
   right: 25px;
   bottom: 14px;
-  height: 30px;
+  height: 25px;
   width: 20px;
   font-size: 20px;
   display: block;
   background-color: transparent;
   border: none;
   cursor: pointer;
-  color: #8c52ff;
+  color: #b0b0b0;
   transition: color .25s ease-in-out;
 }
 .aista-speech-button:hover,
 .aista-speech-button:focus,
 .aista-speech-button:active {
-  color: #8c52ff;
+  color: #808080;
   transition: color .25s ease-in-out;
 }
 .aista-chat-prompt::placeholder {
-  color: #030a0a; !important;
-  opacity:40% !important;
+  color: rgb(180,181,188) !important;
 }
