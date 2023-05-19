@@ -153,6 +153,4 @@ slots.create:magic.ai.massage
                   completion:x:@.completion
 
    // Returning result of invocation to caller.
-   lambda2hyper:x:../*/return
-   log.info:x:-
    return

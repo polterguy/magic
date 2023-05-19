@@ -14,6 +14,9 @@ slots.create:magic.ai.create-landing-page
       get-value:x:@.arguments/*/type
       .:" by copying "
       get-value:x:@.arguments/*/url
+   log.info:Creating default landing page for type
+      type:x:@.arguments/*/type
+      url:x:@.arguments/*/url
    unwrap:x:+/*/args/**
    sockets.signal:magic.backend.chatbot
       roles:root

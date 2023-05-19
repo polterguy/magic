@@ -4,6 +4,10 @@
  */
 slots.create:magic.ai.vectorise
 
+   // Adding callbacks to [try] invocations.
+   add:x:./*/try
+      get-value:x:@.arguments/*/.onafter
+
    // Making sure we log exceptions.
    try
 
@@ -116,8 +120,11 @@ slots.create:magic.ai.vectorise
                                  type:error
                            if
                               and
-                                 eq:x:@http.post
-                                    .:int:429
+                                 or
+                                    eq:x:@http.post
+                                       .:int:429
+                                    eq:x:@http.post
+                                       .:int:500
                                  mt:x:@.retries
                                     .:int:0
                               .lambda
@@ -206,6 +213,12 @@ slots.create:magic.ai.vectorise
             type:x:@.arguments/*/type
             count:x:@.count
             failed:x:@.failed
+
+         // Checking if we've got a callback, and if so, executing it.
+         if
+            exists:x:@.arguments/*/.onafter
+            .lambda
+               eval:x:@.arguments/*/.onafter
 
    .catch
 
