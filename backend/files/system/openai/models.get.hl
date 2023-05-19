@@ -21,8 +21,6 @@ set-value:x:@.token
       get-first-value
          get-value:x:@.arguments/*/api_key
          config.get:"magic:openai:key"
-lambda2hyper:x:../*
-log.info:x:-
 
 // Creating an HTTP POST request towards OpenAI, now decorated.
 http.get:"https://api.openai.com/v1/models"

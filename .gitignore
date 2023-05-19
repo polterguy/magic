@@ -373,3 +373,4 @@ backend/files/etc/articles/*
 backend/files/etc/4k-crm/*
 backend/files/etc/system/openai/pdf/*
 !backend/files/etc/system/openai/pdf/README.md
+backend/files/etc/wl/*
