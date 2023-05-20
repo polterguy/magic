@@ -44,6 +44,10 @@ slots.create:magic.ai.crawl-site
                   .:int:200
                lt:x:@http.get
                   .:int:300
+               not-null:x:@http.get/*/content
+               mt
+                  strings.length:x:@http.get/*/content
+                  .:int:0
             .lambda
 
                // Site has a "robots.txt" file.
@@ -103,6 +107,10 @@ slots.create:magic.ai.crawl-site
                   .:int:200
                lt:x:@http.get
                   .:int:300
+               not-null:x:@http.get/*/content
+               mt
+                  strings.length:x:@http.get/*/content
+                  .:int:0
             .lambda
 
                // Site has a sitemap, ignoring HTML and processing sitemap.xml instead.
