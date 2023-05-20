@@ -85,7 +85,7 @@ slots.create:magic.ai.crawl-site
 
                // Site has a "robots.txt" file.
                strings.concat
-                  .:"Loading sitemap from "
+                  .:"Trying to load sitemap from "
                   get-value:x:@.sitemap-url
                unwrap:x:+/*/args/*/message
                sockets.signal:magic.backend.chatbot
@@ -100,13 +100,24 @@ slots.create:magic.ai.crawl-site
             headers
                User-Agent:AINIRO-MachineLearning-Spider
 
-         // Checking if sitemap exists.
+         // Checking if sitemap exists and is valid sitemap.
          if
             and
                mte:x:@http.get
                   .:int:200
                lt:x:@http.get
                   .:int:300
+               or
+                  and
+                     exists:x:@http.get/*/headers/*/Content-Type
+                     not-null:x:@http.get/*/headers/*/Content-Type
+                     strings.starts-with:x:@http.get/*/headers/*/Content-Type
+                        .:text/xml
+                  and
+                     exists:x:@http.get/*/headers/*/Content-Type
+                     not-null:x:@http.get/*/headers/*/Content-Type
+                     strings.starts-with:x:@http.get/*/headers/*/Content-Type
+                        .:application/xml
                not-null:x:@http.get/*/content
                mt
                   strings.length:x:@http.get/*/content
@@ -397,8 +408,13 @@ slots.create:magic.ai.crawl-site
              * Site does not have a sitemap.xml, processing HTML instead,
              * crawling links found from HTML instead.
              */
-            log.info:Site does not have a sitemap
+            log.info:Could not successfully find or load a sitemap, trying to manually crawl site
                url:x:@.arguments/*/url
+            sockets.signal:magic.backend.chatbot
+               roles:root
+               args
+                  message:Could not successfully find or load a sitemap
+                  type:info
             add:x:./*/io.file.execute
                get-nodes:x:@.arguments/*
             io.file.execute:/system/openai/crawl.implementation/import-url.hl
@@ -441,3 +457,13 @@ slots.create:magic.ai.crawl-site
             args
                message:x:@strings.concat
                type:error
+
+         // Checking if caller supplied [.onerror] handler.
+         if
+            exists:x:@.arguments/@.arguments/*/.onerror
+            .lambda
+               add:x:+/+
+                  get-nodes:x:@.arguments/*
+               add:x:+
+                  get-nodes:x:@.arguments/@.arguments/*
+               invoke:x:@.arguments/@.arguments/*/.onerror
