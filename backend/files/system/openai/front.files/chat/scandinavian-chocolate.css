@@ -19,6 +19,7 @@
 .aista-chat-answer ol,
 .aista-chat-answer li,
 .aista-chat-close-btn,
+.aista-chat-prompt,
 .aista-chat-close-btn i {
   all:revert;
 }
