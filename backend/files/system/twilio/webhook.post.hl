@@ -1,0 +1,7 @@
+
+/*
+ * Twilio webhook callback allowing you to configure Twilio to send your backend SMS messages when your Twilio account receives messages
+ */
+.description:Twilio webhook callback allowing you to configure Twilio to send your backend SMS messages when your Twilio account receives messages
+lambda2hyper:x:../*
+log.info:x:-
