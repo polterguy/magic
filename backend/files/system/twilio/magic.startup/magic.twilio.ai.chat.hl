@@ -1,0 +1,69 @@
+
+/*
+ * Slot for using Twilio in combination with NLP and OpenAI's ChatGPT APIs
+ */
+slots.create:magic.twilio.ai.chat
+
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/from
+   validators.mandatory:x:@.arguments/*/message
+
+   // Creating a thread to avoid timeout during callback invocation from Twilio's side.
+   insert-before:x:./*/fork/0
+      get-nodes:x:@.arguments
+   fork
+
+      // Invoking ChatGPT.
+      signal:magic.ai.endpoint-common
+         skip-recaptcha:bool:true
+         .callback
+
+            // Checking if prompt contains an email address.
+            if
+               and
+                  strings.contains:x:@.arguments/*/prompt
+                     .:@
+                  not-null:x:@.arguments/*/contact_us
+                  neq:x:@.arguments/*/contact_us
+                     .:
+               .lambda
+
+                  // Prompt contains an email address, hence treating prompt as a lead if we can.
+                  unwrap:x:+/*
+                  signal:magic.ai.send-lead-email
+                     type:x:@.arguments/*/type
+                     prompt:x:@.arguments/*/prompt
+                     session:x:@.arguments/*/session
+                     lead_email:x:@.arguments/*/lead_email
+                     contact_us:x:@.arguments/*/contact_us
+                  if:x:@signal
+
+                     // Sending reply message to caller.
+                     signal:magic.twilio.send-message
+                        message:x:@.arguments/*/contact_us
+                        to:x:@.arguments/*/from
+
+            // Checking what type of model this is, and invoking correct slot accordingly.
+            if
+               strings.starts-with:x:@.arguments/*/model
+                  .:gpt
+               .lambda
+
+                  // Invoking chat style of slot.
+                  add:x:./*/signal
+                     get-nodes:x:@.arguments/*
+                  signal:magic.ai.chat
+                  signal:magic.twilio.send-message
+                     message:x:@signal/@signal/*/result
+                     to:x:@.arguments/*/from
+
+            else
+
+               // Invoking chat style of slot.
+               add:x:./*/signal
+                  get-nodes:x:@.arguments/*
+               signal:magic.ai.completion
+               signal:magic.twilio.send-message
+                  message:x:@signal/@signal/*/result
+                  to:x:@.arguments/*/from
+
