@@ -7,6 +7,8 @@ slots.create:magic.twilio.ai.chat
    // Sanity checking invocation.
    validators.mandatory:x:@.arguments/*/from
    validators.mandatory:x:@.arguments/*/message
+   set-name:x:@.arguments/*/message
+      .:prompt
 
    // Creating a thread to avoid timeout during callback invocation from Twilio's side.
    insert-before:x:./*/fork/0
@@ -14,8 +16,13 @@ slots.create:magic.twilio.ai.chat
    fork
 
       // Invoking ChatGPT.
+      insert-before:x:./*/signal/*/.callback
+         get-nodes:x:@.arguments/*
+      config.get:"magic:twilio:meta"
+      unwrap:x:+/*/type
       signal:magic.ai.endpoint-common
-         skip-recaptcha:bool:true
+         skip-auth:bool:true
+         type:x:@config.get
          .callback
 
             // Checking if prompt contains an email address.
@@ -40,7 +47,7 @@ slots.create:magic.twilio.ai.chat
 
                      // Sending reply message to caller.
                      signal:magic.twilio.send-message
-                        message:x:@.arguments/*/contact_us
+                        body:x:@.arguments/*/contact_us
                         to:x:@.arguments/*/from
 
             // Checking what type of model this is, and invoking correct slot accordingly.
@@ -50,20 +57,22 @@ slots.create:magic.twilio.ai.chat
                .lambda
 
                   // Invoking chat style of slot.
-                  add:x:./*/signal
+                  add:x:./*/signal/[0,1]
                      get-nodes:x:@.arguments/*
                   signal:magic.ai.chat
+                  unwrap:x:+/*
                   signal:magic.twilio.send-message
-                     message:x:@signal/@signal/*/result
+                     body:x:@signal/@signal/*/result
                      to:x:@.arguments/*/from
 
             else
 
                // Invoking chat style of slot.
-               add:x:./*/signal
+               add:x:./*/signal/[0,1]
                   get-nodes:x:@.arguments/*
                signal:magic.ai.completion
+               unwrap:x:+/*
                signal:magic.twilio.send-message
-                  message:x:@signal/@signal/*/result
+                  body:x:@signal/@signal/*/result
                   to:x:@.arguments/*/from
 

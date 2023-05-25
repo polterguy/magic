@@ -91,61 +91,68 @@ slots.create:magic.ai.endpoint-common
          add:x:@.model
             get-nodes:x:@data.read/*/*
 
-      // Checking if model requires authentication and authorisation.
+      /*
+       * Checking if model requires authentication and authorisation,
+       * unless caller wants to skip authentication.
+       */
       if
-         and
-            not-null:x:@.model/*/auth
-            neq:x:@.model/*/auth
-               .:
+         or
+            not-exists:x:@.arguments/*/skip-auth
+            eq:x:@.arguments/*/skip-auth
+               .:bool:false
          .lambda
 
-            // Making sure user is authorised to using type.
-            auth.ticket.verify:x:@.model/*/auth
-
-      // Checking if model requires reCAPTCHA.
-      if
-         and
-            or
-               not-exists:x:@.arguments/*/skip-recaptcha
-               eq:x:@.arguments/*/skip-recaptcha
-                  .:bool:false
-            not
-               auth.ticket.in-role:root
-            mt
-               convert:x:@.model/*/recaptcha
-                  type:decimal
-               .:decimal:0
-         .lambda
-
-            // Verifying reCAPTCHA was supplied.
+            // Caller wants default authentication logic.
             if
-               or
-                  not-exists:x:@.arguments/*/recaptcha_response
-                  null:x:@.arguments/*/recaptcha_response
+               and
+                  not-null:x:@.model/*/auth
+                  neq:x:@.model/*/auth
+                     .:
                .lambda
 
-                  // Endpoint invoked without reCAPTCHA, making sure we abort invocation.
-                  response.status.set:499
-                  return
-                     error:No reCAPTCHA supplied
+                  // Making sure user is authorised to using type.
+                  auth.ticket.verify:x:@.model/*/auth
 
-            // Retrieving reCAPTCHA site key.
-            .key
-            set-value:x:@.key
-               config.get:"magic:auth:recaptcha:key"
+            // Checking if model requires reCAPTCHA.
+            if
+               and
+                  not
+                     auth.ticket.in-role:root
+                  mt
+                     convert:x:@.model/*/recaptcha
+                        type:decimal
+                     .:decimal:0
+               .lambda
 
-            // Retrieving reCAPTCHA secret.
-            .secret
-            set-value:x:@.secret
-               config.get:"magic:auth:recaptcha:secret"
+                  // Verifying reCAPTCHA was supplied.
+                  if
+                     or
+                        not-exists:x:@.arguments/*/recaptcha_response
+                        null:x:@.arguments/*/recaptcha_response
+                     .lambda
 
-            // Validating reCAPTCHA invocation confirms request originated from a human.
-            convert:x:@.model/*/recaptcha
-               type:decimal
-            validators.recaptcha:x:@.arguments/*/recaptcha_response
-               min:x:@convert
-               site-key:x:@.key
-               secret:x:@.secret
+                        // Endpoint invoked without reCAPTCHA, making sure we abort invocation.
+                        response.status.set:499
+                        return
+                           error:No reCAPTCHA supplied
+
+                  // Retrieving reCAPTCHA site key.
+                  .key
+                  set-value:x:@.key
+                     config.get:"magic:auth:recaptcha:key"
+
+                  // Retrieving reCAPTCHA secret.
+                  .secret
+                  set-value:x:@.secret
+                     config.get:"magic:auth:recaptcha:secret"
+
+                  // Validating reCAPTCHA invocation confirms request originated from a human.
+                  convert:x:@.model/*/recaptcha
+                     type:decimal
+                  validators.recaptcha:x:@.arguments/*/recaptcha_response
+                     min:x:@convert
+                     site-key:x:@.key
+                     secret:x:@.secret
 
       // Doing some common conversions.
       set-value:x:@.model/*/threshold

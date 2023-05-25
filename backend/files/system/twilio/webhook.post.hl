@@ -1,19 +1,23 @@
 
 /*
- * Twilio webhook callback allowing you to configure Twilio to send your backend SMS messages when your Twilio account receives messages
+ * Twilio webhook callback allowing you to configure Twilio to send your backend
+ * SMS messages when your Twilio account receives messages.
  */
 .description:Twilio webhook callback allowing you to configure Twilio to send your backend SMS messages when your Twilio account receives messages
 
-// Sanity checking invocation making sure invocation is using configured account ID from Twilio configuration.
+/*
+ * Sanity checking invocation making sure invocation is using configured account
+ * ID from Twilio configuration.
+ */
 if
    neq
       config.get:"magic:twilio:account_id"
       get-value:x:@.arguments/*/AccountSid
-  .lambda
+   .lambda
 
-     // Oops ...!
-     throw:Not authorised
-        status:int:401
+      // Oops ...!
+      throw:Not authorised
+         status:int:401
 
 // Retrieving actual message.
 .msg
