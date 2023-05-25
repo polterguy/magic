@@ -47,6 +47,22 @@ slots.create:magic.twilio.send-message
          // Oops ...!!
          throw:No default from configuration found in settings, please provide a [from] argument
 
+   // Checking if channel was specified in to, at which point we apply same channle to from
+   strings.split:x:@.arguments/*/to
+      .:":"
+   if
+      mt
+         get-count:x:@strings.split/*
+         .:int:1
+      .lambda
+      
+         // Applying same channel to from argument.
+         set-value:x:@.from
+            strings.concat
+               get-value:x:@strings.split/0
+               .:":"
+               get-value:x:@.from
+
    // Creating Basic auth header.
    .auth
    set-value:x:@.auth
@@ -72,7 +88,7 @@ slots.create:magic.twilio.send-message
          .:"/Messages.json"
 
    // Invoking Twilio.
-   unwrap:x:+/**
+   unwrap:x:./*/http.post/**
    http.post:x:@.url
       convert:true
       headers
