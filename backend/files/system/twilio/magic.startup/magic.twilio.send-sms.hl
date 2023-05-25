@@ -1,0 +1,103 @@
+
+/*
+ * Slot for sending an SMS using Twilio.
+ */
+slots.create:magic.twilio.send-sms
+
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/to
+   validators.mandatory:x:@.arguments/*/body
+
+   // Getting Twilio account ID from configuration settings.
+   .account_id
+   set-value:x:@.account_id
+      config.get:"magic:twilio:account_id"
+   .sid
+   set-value:x:@.sid
+      config.get:"magic:twilio:sid"
+   if
+      or
+         null:x:@.sid
+         eq
+            get-value:x:@.sid
+            .:
+         null:x:@.account_id
+         eq
+            get-value:x:@.account_id
+            .:
+      .lambda
+
+         // Oops ...!!
+         throw:You have not configured a Twilio account ID or SID
+
+   // Getting from number, defaulting to account from number from configuration settings.
+   .from
+   set-value:x:@.from
+      get-first-value
+         get-value:x:@.arguments/*/from
+         config.get:"magic:twilio:from"
+   if
+      or
+         null:x:@.from
+         eq
+            get-value:x:@.from
+            .:
+      .lambda
+
+         // Oops ...!!
+         throw:No default from configuration found in settings, please provide a [from] argument
+
+   // Creating Basic auth header.
+   .auth
+   set-value:x:@.auth
+      strings.concat
+         get-value:x:@.account_id
+         .:":"
+         get-value:x:@.sid
+   set-value:x:@.auth
+      convert:x:@.auth
+         type:bytes
+   set-value:x:@.auth
+      strings.concat
+         .:"Basic "
+         convert:x:@.auth
+            type:base64
+
+   // Creating our URL to invoke Twilio API.
+   .url
+   set-value:x:@.url
+      strings.concat
+         .:"https://api.twilio.com/2010-04-01/Accounts/"
+         get-value:x:@.account_id
+         .:"/Messages.json"
+
+   // Invoking Twilio.
+   unwrap:x:+/**
+   http.post:x:@.url
+      convert:true
+      headers
+         Content-Type:application/x-www-form-urlencoded
+         Authorization:x:@.auth
+      payload
+         Body:x:@.arguments/*/body
+         From:x:@.from
+         To:x:@.arguments/*/to
+
+   // Making sure above invocation succeeded.
+   if
+      not
+         and
+            mte:x:@http.post
+               .:int:200
+            lt:x:@http.post
+               .:int:300
+      .lambda
+
+         // Something went wrong while invoking Twilio
+         lambda2hyper:x:@http.post/*/content
+         log.error:Something went wrong as we invoked Twilio
+            response:x:@lambda2hyper
+         throw:Something went wrong as we invoked Twilio, check your log for details
+
+   // Logging success.
+   log.info:Successfully sent SMS using Twilio
