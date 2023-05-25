@@ -105,6 +105,10 @@ slots.create:magic.ai.endpoint-common
       // Checking if model requires reCAPTCHA.
       if
          and
+            or
+               not-exists:x:@.arguments/*/skip-recaptcha
+               eq:x:@.arguments/*/skip-recaptcha
+                  .:bool:false
             not
                auth.ticket.in-role:root
             mt

@@ -1,8 +1,8 @@
 
 /*
- * Slot for sending an SMS using Twilio.
+ * Slot for sending a message using Twilio.
  */
-slots.create:magic.twilio.send-sms
+slots.create:magic.twilio.send-message
 
    // Sanity checking invocation.
    validators.mandatory:x:@.arguments/*/to
@@ -100,4 +100,7 @@ slots.create:magic.twilio.send-sms
          throw:Something went wrong as we invoked Twilio, check your log for details
 
    // Logging success.
-   log.info:Successfully sent SMS using Twilio
+   log.info:Successfully sent message using Twilio
+      from:x:@.from
+      to:x:@.arguments/*/to
+      message:x:@.arguments/*/body
