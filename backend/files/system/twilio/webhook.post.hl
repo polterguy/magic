@@ -35,7 +35,12 @@ log.info:Webhook invoked from Twilio
 
 // Lambda object to execute with callback.
 .exe
+
+   // Signaling configured slot.
    signal:foo
+   
+   // Returning whatever callback returned as result of webhook invocation
+   return:x:-
 
 /*
  * Dynamically creating our lambda [.exe] callback by parametrising with [.arguments]
@@ -63,4 +68,7 @@ add:x:@.exe/0
       twilio_account_id:x:@.arguments/*/AccountSid
 
 // Executing callback.
-eval:x:@.exe
+invoke:x:@.exe
+
+// Returning result of invocation to caller.
+return:x:@invoke
