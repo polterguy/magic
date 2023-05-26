@@ -15,6 +15,9 @@ slots.create:magic.twilio.ai.chat
    set-name:x:@.arguments/*/body
       .:prompt
    validators.mandatory:x:@.arguments/*/twilio_account_id
+   add:x:@.arguments
+      .
+         session:x:@.arguments/*/from
 
    // Looking up model from the given [AccountSid] argument.
    .type
