@@ -8,32 +8,16 @@ slots.create:magic.twilio.send-message
    validators.mandatory:x:@.arguments/*/to
    validators.mandatory:x:@.arguments/*/from
    validators.mandatory:x:@.arguments/*/body
-   validators.mandatory:x:@.arguments/*/type
-
-   // Getting Twilio account ID and SID from ml_type database.
-   .account_id
-   .sid
-   data.connect:[generic|magic]
-      data.read
-         table:ml_types
-         columns
-            twilio_account_id
-            twilio_account_sid
-         where
-            and
-               type.eq:x:@.arguments/*/type
-      set-value:x:@.account_id
-         get-value:x:@data.read/*/*/twilio_account_id
-      set-value:x:@.sid
-         get-value:x:@data.read/*/*/twilio_account_sid
+   validators.mandatory:x:@.arguments/*/twilio_account_id
+   validators.mandatory:x:@.arguments/*/twilio_account_sid
 
    // Creating Basic auth header.
    .auth
    set-value:x:@.auth
       strings.concat
-         get-value:x:@.account_id
+         get-value:x:@.arguments/*/twilio_account_id
          .:":"
-         get-value:x:@.sid
+         get-value:x:@.arguments/*/twilio_account_sid
    set-value:x:@.auth
       convert:x:@.auth
          type:bytes
@@ -52,7 +36,6 @@ slots.create:magic.twilio.send-message
          .:"/Messages.json"
 
    // Invoking Twilio.
-   log.info:x:-
    http.post:x:@.url
       convert:true
       headers
@@ -81,6 +64,6 @@ slots.create:magic.twilio.send-message
 
    // Logging success.
    log.info:Successfully sent message using Twilio
+      body:x:@.arguments/*/body
       to:x:@.arguments/*/to
       from:x:@.arguments/*/from
-      body:x:@.arguments/*/body
