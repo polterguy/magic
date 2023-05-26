@@ -70,5 +70,10 @@ add:x:@.exe/0
 // Executing callback.
 invoke:x:@.exe
 
-// Returning result of invocation to caller.
-return:x:@invoke
+// Returning result of invocation to caller, if caller provided a return value.
+if
+   not-null:x:@invoke
+   .lambda
+
+      // Returning result of invocation to Twilio.
+      return:x:@invoke
