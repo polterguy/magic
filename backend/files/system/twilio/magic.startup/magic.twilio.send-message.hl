@@ -15,7 +15,7 @@ slots.create:magic.twilio.send-message
    .sid
    data.connect:[generic|magic]
       data.read
-         table:ml_type
+         table:ml_types
          columns
             twilio_account_id
             twilio_account_sid
