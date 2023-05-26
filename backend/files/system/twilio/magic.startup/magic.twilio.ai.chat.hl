@@ -11,7 +11,9 @@ slots.create:magic.twilio.ai.chat
    // Sanity checking invocation.
    validators.mandatory:x:@.arguments/*/to
    validators.mandatory:x:@.arguments/*/from
-   validators.mandatory:x:@.arguments/*/prompt
+   validators.mandatory:x:@.arguments/*/body
+   set-name:x:@.arguments/*/body
+      .:prompt
    validators.mandatory:x:@.arguments/*/twilio_account_id
 
    // Looking up model from the given [AccountSid] argument.
