@@ -39,55 +39,74 @@ slots.create:magic.ai.send-lead-email
                   get-value:x:@strings.split/0
             validators.email:x:@.email
 
-            // Reading all prompt/completion from current session.
-            data.read
-               table:ml_requests
-               columns
-                  prompt
-                  completion
-               where
-                  and
-                     session.eq:x:@.arguments/*/session
-
-            // Creating email.
+            /*
+             * Connecting to database and reading all requests from current session
+             * such that we can add them to lead generation email, allowing users to
+             * continue conversation where chatbot left it.
+             */
             .body:
-            for-each:x:@data.read/*
+            data.connect:[generic|magic]
+
+               // Retrieving all requests belonging to session
+               data.read
+                  table:ml_requests
+                  columns
+                     prompt
+                     completion
+                  where
+                     and
+                        session.eq:x:@.arguments/*/session
+
+               // Creating email.
+               for-each:x:@data.read/*
+                  set-value:x:@.body
+                     strings.concat
+                        get-value:x:@.body
+                        .:"<strong>"
+                        get-value:x:@.dp/#/*/prompt
+                        .:"</strong>"
+                        .:"<br>"
+                        .:"<div>"
+                        get-value:x:@.dp/#/*/completion
+                        .:"</div>"
+                        .:"<br>"
+
+               // Adding last prompt.
                set-value:x:@.body
                   strings.concat
                      get-value:x:@.body
                      .:"<strong>"
-                     get-value:x:@.dp/#/*/prompt
+                     get-value:x:@.arguments/*/prompt
                      .:"</strong>"
                      .:"<br>"
                      .:"<div>"
-                     get-value:x:@.dp/#/*/completion
+                     get-value:x:@.arguments/*/contact_us
                      .:"</div>"
-                     .:"<br>"
 
-            // Adding last prompt.
-            set-value:x:@.body
-               strings.concat
-                  get-value:x:@.body
-                  .:"<strong>"
-                  get-value:x:@.arguments/*/prompt
-                  .:"</strong>"
-                  .:"<br>"
-                  .:"<div>"
-                  get-value:x:@.arguments/*/contact_us
-                  .:"</div>"
+               // Sending email.
+               strings.split:x:@.arguments/*/lead_email
+                  .:,
+               for-each:x:@strings.split/*
+                  strings.trim:x:@.dp/#
+                     .:" "
+                  unwrap:x:+/*/*/*
+                  add:x:../**/mail.smtp.send/*/message/*/to
+                     .
+                        .
+                           name:AINIRO Lead Inbox
+                           email:x:@strings.trim
+
+               // Storing response to ml_requests to keep history.
+               data.create
+                  table:ml_requests
+                  values
+                     type:x:@.arguments/*/type
+                     prompt:x:@.arguments/*/prompt
+                     completion:x:@.arguments/*/contact_us
+                     finish_reason:lead
+                     session:x:@.arguments/*/session
 
             // Sending email.
-            strings.split:x:@.arguments/*/lead_email
-               .:,
-            for-each:x:@strings.split/*
-               strings.trim:x:@.dp/#
-                  .:" "
-               unwrap:x:+/*/*/*
-               add:x:../**/mail.smtp.send/*/message/*/to
-                  .
-                     .
-                        name:AINIRO Lead Inbox
-                        email:x:@strings.trim
             unwrap:x:+/**/content
             mail.smtp.send
                message
@@ -98,28 +117,23 @@ slots.create:magic.ai.send-lead-email
                   entity:text/html
                      content:x:@.body
 
+            // Logging the fact that a lead was generated.
+            log.info:Lead was generated
 
-      // Storing response to ml_requests to keep history.
-      data.create
-         table:ml_requests
-         values
-            type:x:@.arguments/*/type
-            prompt:x:@.arguments/*/prompt
-            completion:x:@.arguments/*/contact_us
-            finish_reason:lead
-            session:x:@.arguments/*/session
+            // Returning success to caller.
+            return:bool:true
 
-      // Logging the fact that a lead was generated.
-      log.info:Lead was generated
-
-      // Returning success to caller.
-      return:bool:true
+      else
+      
+         // No SMTP configuration found, returning false to caller.
+         return:bool:false
 
    .catch
 
       // Oops ...
-      log.error:SMTP settings was not valid. To use lead generation with AINIRO, please apply a valid SMTP configuration.
+      log.error:SMTP settings not valid
          message:x:@.arguments/*/message
+         extra:To use lead generation with AINIRO, please apply a valid SMTP configuration.
 
       // Returning failure to caller.
       return:bool:false

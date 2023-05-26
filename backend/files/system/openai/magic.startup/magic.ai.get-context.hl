@@ -61,28 +61,34 @@ slots.create:magic.ai.get-context
    set-value:x:@.begin
       date.now
 
-   // Contains all snippets that are above [threshold].
-   unwrap:x:./*/data.scan/*/threshold
-   add:x:./*/data.scan/*/vector
-      get-nodes:x:@http.post/*/content/*/data/0/*/embedding/*
-   data.scan
-      max:int:50
-      vector
-      threshold:x:@.arguments/*/threshold
-      table:ml_training_snippets
-      columns
-         embedding
-         prompt
-         completion
-         uri
-         cached
-      where
-         and
-            embedding.neq
-            type.eq:x:@.arguments/*/type
-      limit:200
-      offset:x:@.offset
-      order:created
+   // Connecting to database to retrieve embeddings that are related to prompt.
+   .scan
+   data.connect:[generic|magic]
+
+      // Contains all snippets that are above [threshold].
+      unwrap:x:./*/data.scan/*/threshold
+      add:x:./*/data.scan/*/vector
+         get-nodes:x:@http.post/*/content/*/data/0/*/embedding/*
+      data.scan
+         max:int:50
+         vector
+         threshold:x:@.arguments/*/threshold
+         table:ml_training_snippets
+         columns
+            embedding
+            prompt
+            completion
+            uri
+            cached
+         where
+            and
+               embedding.neq
+               type.eq:x:@.arguments/*/type
+         limit:200
+         offset:x:@.offset
+         order:created
+      add:x:@.scan
+         get-nodes:x:@data.scan/*
 
    /*
     * Checking if first snippet is cached, at which point we return ONLY that snippet.
@@ -92,10 +98,10 @@ slots.create:magic.ai.get-context
     */
    if
       and
-         exists:x:@data.scan/0
-         not-null:x:@data.scan/0/*/cached
+         exists:x:@.scan/0
+         not-null:x:@.scan/0/*/cached
          mt
-            convert:x:@data.scan/0/*/cached
+            convert:x:@.scan/0/*/cached
                type:int
             .:int:0
       .lambda
@@ -103,7 +109,7 @@ slots.create:magic.ai.get-context
          // First matching snippet has been cached.
          unwrap:x:+/*
          return
-            cached:x:@data.scan/0/*/completion
+            cached:x:@.scan/0/*/completion
 
    /*
     * Used to hold the referenced snippets used to create our context.
@@ -123,7 +129,7 @@ slots.create:magic.ai.get-context
     * and storing referenced snippets in the process.
     */
    while
-      exists:x:@data.scan/0
+      exists:x:@.scan/0
       .lambda
 
          /*
@@ -135,10 +141,10 @@ slots.create:magic.ai.get-context
             strings.concat
                get-value:x:@.tmp
                .:"\r\n"
-               get-value:x:@data.scan/0/*/prompt
+               get-value:x:@.scan/0/*/prompt
                .:"\r\n"
                .:"\r\n"
-               get-value:x:@data.scan/0/*/completion
+               get-value:x:@.scan/0/*/completion
                .:"\r\n"
 
          /*
@@ -169,8 +175,8 @@ slots.create:magic.ai.get-context
                 */
                if
                   and
-                     not-null:x:@data.scan/0/*/uri
-                     not-exists:x:@.result/*/*/uri/={@data.scan/0/*/uri}
+                     not-null:x:@.scan/0/*/uri
+                     not-exists:x:@.result/*/*/uri/={@.scan/0/*/uri}
                   .lambda
 
                      // Adding current reference to [.result]
@@ -178,9 +184,9 @@ slots.create:magic.ai.get-context
                      add:x:@.result
                         .
                            .
-                              prompt:x:@data.scan/0/*/prompt
-                              uri:x:@data.scan/0/*/uri
-                              dot:x:@data.scan/0/*/dot
+                              prompt:x:@.scan/0/*/prompt
+                              uri:x:@.scan/0/*/uri
+                              dot:x:@.scan/0/*/dot
          else
 
             /*
@@ -197,7 +203,7 @@ slots.create:magic.ai.get-context
           * than larger snippets found as "better matches" since it will loop through
           * all 50 snippets we found above, and add "whatever it can add" to the context.
           */
-         remove-nodes:x:@data.scan/0
+         remove-nodes:x:@.scan/0
 
    // Measuring how much time we spent looping through snippets.
    .time

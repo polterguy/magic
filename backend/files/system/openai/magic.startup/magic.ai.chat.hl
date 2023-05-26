@@ -31,14 +31,15 @@ slots.create:magic.ai.chat
             .lambda
 
                // Storing response to ml_requests to keep history.
-               data.create
-                  table:ml_requests
-                  values
-                     type:x:@.arguments/*/type
-                     prompt:x:@.arguments/*/prompt
-                     completion:x:@signal/*/cached
-                     finish_reason:cached
-                     session:x:@.arguments/*/session
+               data.connect:[generic|magic]
+                  data.create
+                     table:ml_requests
+                     values
+                        type:x:@.arguments/*/type
+                        prompt:x:@.arguments/*/prompt
+                        completion:x:@signal/*/cached
+                        finish_reason:cached
+                        session:x:@.arguments/*/session
 
          // Returning cached result to caller.
          unwrap:x:+/*
@@ -218,7 +219,7 @@ slots.create:magic.ai.chat
             expiration:600
             value:x:@lambda2hyper
 
-   // Re-opening database connection since it might have timed out while we're waiting for OpenAI.
+   // Opening database connection to store request into ml_requests table.
    data.connect:[generic|magic]
 
       // Checking if type is "supervised".
@@ -256,9 +257,9 @@ slots.create:magic.ai.chat
             add:x:../*/return/*/references
                get-nodes:x:@signal/*/snippets/*
 
-      // Returning results returned from invocation above to caller.
-      unwrap:x:+/*
-      return
-         result:x:@.result
-         finish_reason:x:@get-first-value
-         db_time:x:@signal/*/db_time
+   // Returning results returned from invocation above to caller.
+   unwrap:x:+/*
+   return
+      result:x:@.result
+      finish_reason:x:@get-first-value
+      db_time:x:@signal/*/db_time
