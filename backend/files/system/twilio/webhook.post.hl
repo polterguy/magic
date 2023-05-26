@@ -12,12 +12,12 @@
 .type
 data.connect:[generic|magic]
    data.read
-      table:ml_types
+      table:ml_type
       columns
          type
       where
          and
-            twilio_account_sid.eq:x:@.arguments/*/AccountSid
+            twilio_account_id.eq:x:@.arguments/*/AccountSid
 
    // Verifying model exists.
    if
