@@ -32,7 +32,7 @@ slots.create:magic.twilio.send-message
    set-value:x:@.url
       strings.concat
          .:"https://api.twilio.com/2010-04-01/Accounts/"
-         get-value:x:@.account_id
+         get-value:x:@.arguments/*/twilio_account_id
          .:"/Messages.json"
 
    // Invoking Twilio.
@@ -67,3 +67,4 @@ slots.create:magic.twilio.send-message
       body:x:@.arguments/*/body
       to:x:@.arguments/*/to
       from:x:@.arguments/*/from
+      twilio_account_id:x:@.arguments/*/twilio_account_id
