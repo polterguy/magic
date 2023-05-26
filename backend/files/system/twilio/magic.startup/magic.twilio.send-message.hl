@@ -58,7 +58,7 @@ slots.create:magic.twilio.send-message
 
          // Something went wrong while invoking Twilio
          lambda2hyper:x:@http.post/*/content
-         log.error:Something went wrong as we invoked Twilio
+         log.error:Something went wrong while invoking Twilio
             response:x:@lambda2hyper
          throw:Something went wrong as we invoked Twilio, check your log for details
 
