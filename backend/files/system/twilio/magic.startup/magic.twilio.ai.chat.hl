@@ -149,3 +149,12 @@ slots.create:magic.twilio.ai.chat
                      from:x:@.arguments/*/to
                      twilio_account_id:x:@.twilio_account_id
                      twilio_account_sid:x:@.twilio_account_sid
+
+   // Making sure we return a temporary message to caller.
+   .response
+      Response
+         Say:Let me think ...
+   lambda2xml:x:@.response/*
+   response.headers.set
+      Content-Type:text/xml
+   return:x:@lambda2xml
