@@ -12,7 +12,7 @@
 .type
 data.connect:[generic|magic]
    data.read
-      table:ml_type
+      table:ml_types
       columns
          type
       where
@@ -44,7 +44,7 @@ set-value:x:@.from
 
 // Retrieving to value.
 .to
-set-value:x:@.from
+set-value:x:@.to
    get-value:x:@.arguments/*/To
 
 // Basic logging.
@@ -52,6 +52,7 @@ log.info:Webhook invoked from Twilio
    from:x:@.from
    prompt:x:@.prompt
    type:x:@.type
+   to:x:@.to
 
 // Lambda object to execute with callback.
 .exe

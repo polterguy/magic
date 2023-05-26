@@ -73,7 +73,7 @@ slots.create:magic.twilio.ai.chat
                .lambda
 
                   // Invoking chat style of slot.
-                  add:x:./*/signal
+                  add:x:./*/signal/[0,1]
                      get-nodes:x:@.arguments/*
                   signal:magic.ai.chat
                   unwrap:x:+/*
@@ -95,4 +95,3 @@ slots.create:magic.twilio.ai.chat
                   to:x:@.arguments/*/from
                   from:x:@.arguments/*/to
                   type:x:@.arguments/*/type
-

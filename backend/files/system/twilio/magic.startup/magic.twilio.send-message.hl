@@ -22,10 +22,10 @@ slots.create:magic.twilio.send-message
          where
             and
                type.eq:x:@.arguments/*/type
-   set-value:x:@.account_id
-      get-value:x:@data.read/*/*/twilio_account_id
-   set-value:x:@.sid
-      get-value:x:@data.read/*/*/twilio_account_sid
+      set-value:x:@.account_id
+         get-value:x:@data.read/*/*/twilio_account_id
+      set-value:x:@.sid
+         get-value:x:@data.read/*/*/twilio_account_sid
 
    // Creating Basic auth header.
    .auth
@@ -52,7 +52,7 @@ slots.create:magic.twilio.send-message
          .:"/Messages.json"
 
    // Invoking Twilio.
-   unwrap:x:./*/http.post/**
+   log.info:x:-
    http.post:x:@.url
       convert:true
       headers
