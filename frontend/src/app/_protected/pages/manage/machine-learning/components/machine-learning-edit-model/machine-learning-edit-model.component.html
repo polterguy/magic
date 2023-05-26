@@ -27,7 +27,7 @@
         <mat-error>{{CommonErrorMessages.appNameWithUppercaseHyphen}}</mat-error>
     </mat-form-field>
 
-    <mat-form-field class="w-100 custom-alignment" [class.d-none]="!advanced || !use_embeddings">
+    <mat-form-field class="w-100 custom-alignment standalone-field" [class.d-none]="!advanced || !use_embeddings">
       <span
         matPrefix
         matTooltip="Prefix inserted before all prompts"
@@ -40,13 +40,13 @@
         placeholder="Prefix ..."
         [disabled]="isLoading"
         spellcheck="true"
-        rows="4"
+        rows="3"
         [(ngModel)]="prefix"
         name="prefix">
       </textarea>
     </mat-form-field>
 
-    <mat-form-field class="w-100 custom-alignment" [class.d-none]="!advanced || !use_embeddings">
+    <mat-form-field class="w-100 custom-alignment standalone-field" [class.d-none]="!advanced || !use_embeddings">
       <span
         matPrefix
         matTooltip="Greeting to welcome user with"
@@ -59,13 +59,13 @@
         placeholder="Greeting ..."
         [disabled]="isLoading"
         spellcheck="true"
-        rows="4"
+        rows="3"
         [(ngModel)]="greeting"
         name="greeting">
       </textarea>
     </mat-form-field>
 
-    <mat-form-field class="w-100 custom-alignment" [class.d-none]="!advanced || !use_embeddings">
+    <mat-form-field class="w-100 custom-alignment standalone-field" [class.d-none]="!advanced || !use_embeddings">
       <span
         matPrefix
         matTooltip="Reply returned when user provides email address"
@@ -78,7 +78,7 @@
         placeholder="Email reply ..."
         [disabled]="isLoading"
         spellcheck="true"
-        rows="4"
+        rows="3"
         [(ngModel)]="contact_us"
         name="contact_us">
       </textarea>
@@ -91,7 +91,7 @@
         <mat-form-field class="w-100 standalone-field" [class.me-2]="use_embeddings">
           <span
             matPrefix
-            matTooltip="Lead email address"
+            matTooltip="Lead email address being where to send lead emails when user provides email address"
             class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>email</mat-icon>
             <span class="text-muted">|</span>
@@ -108,7 +108,7 @@
         <mat-form-field class="w-100 standalone-field me-2">
           <span
             matPrefix
-            matTooltip="API key"
+            matTooltip="OpenAI API key to use for model when invoking OpenAI"
             class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>key</mat-icon>
             <span class="text-muted">|</span>
@@ -125,7 +125,7 @@
         <mat-form-field class="w-100 standalone-field" [class.me-2]="use_embeddings">
           <span
             matPrefix
-            matTooltip="Completion model"
+            matTooltip="Completion model to use to generate response ..."
             class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>help_outline</mat-icon>
             <span class="text-muted">|</span>
@@ -156,7 +156,7 @@
         <mat-form-field class="w-100 standalone-field" *ngIf="use_embeddings">
           <span
             matPrefix
-            matTooltip="Vector model"
+            matTooltip="Vector model to vectorise training snippets"
             class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>help_outline</mat-icon>
             <span class="text-muted">|</span>
@@ -194,7 +194,7 @@
         <mat-form-field class="w-100 standalone-field me-2">
           <span
             matPrefix
-            matTooltip="Website"
+            matTooltip="Website to periodically scrape for new pages..."
             class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>http</mat-icon>
             <span class="text-muted">|</span>
@@ -211,7 +211,7 @@
         <mat-form-field class="w-100 standalone-field me-2" *ngIf="use_embeddings && model?.id?.startsWith('gpt')">
           <span
             matPrefix
-            matTooltip="Flavor"
+            matTooltip="Flavor, or pre-defined prefix to use for all questions ..."
             class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>person</mat-icon>
             <span class="text-muted">|</span>
@@ -219,8 +219,8 @@
           <mat-select
             [(ngModel)]="flavor"
             [disabled]="isLoading"
-            (selectionChange)="flavorChanged()"
             placeholder="Flavor ..."
+            (selectionChange)="flavorChanged()"
             name="flavor">
             <mat-option
               *ngFor="let idx of flavors"
@@ -233,15 +233,15 @@
         <mat-form-field class="w-100 standalone-field" [class.me-2]="use_embeddings">
           <span
             matPrefix
-            matTooltip="Temperature"
+            matTooltip="Temperature, implying risk model will take when generating response (0 to 1.0) ..."
             class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>opacity</mat-icon>
             <span class="text-muted">|</span>
           </span>
           <input
             matInput
-            placeholder="Temperature ..."
             [disabled]="isLoading"
+            placeholder="Temperature ..."
             type="number"
             min="0"
             max="1"
@@ -254,7 +254,7 @@
         <mat-form-field class="w-100 standalone-field" *ngIf="use_embeddings">
           <span
             matPrefix
-            matTooltip="Threshold for vectors"
+            matTooltip="Threshold for vectors when doing lookup into training data"
             class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>get_app</mat-icon>
             <span class="text-muted">|</span>
@@ -283,7 +283,7 @@
         <mat-form-field class="w-100 standalone-field me-2" *ngIf="use_embeddings">
           <span
             matPrefix
-            matTooltip="Max context tokens"
+            matTooltip="Max context tokens, implying maximum size of context to send to OpenAI"
             class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>timeline</mat-icon>
             <span class="text-muted">|</span>
@@ -303,7 +303,7 @@
         <mat-form-field class="w-100 standalone-field me-2">
           <span
             matPrefix
-            matTooltip="Max request tokens"
+            matTooltip="Max request tokens, implying maximum prompt size provided by users ..."
             class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>timeline</mat-icon>
             <span class="text-muted">|</span>
@@ -323,7 +323,7 @@
         <mat-form-field class="w-100 standalone-field" [class.me-2]="(model?.id?.startsWith('gpt') ?? false)">
           <span
             matPrefix
-            matTooltip="Max response tokens"
+            matTooltip="Max response tokens, implying maximum size OpenAI is allowed to return for prompts"
             class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>timeline</mat-icon>
             <span class="text-muted">|</span>
@@ -343,7 +343,7 @@
         <mat-form-field class="w-100 standalone-field" *ngIf="model?.id?.startsWith('gpt')">
           <span
             matPrefix
-            matTooltip="Max message tokens"
+            matTooltip="Max message tokens, implying maximum context size to use for conversations"
             class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>timeline</mat-icon>
             <span class="text-muted">|</span>
@@ -371,13 +371,13 @@
         <mat-form-field class="w-100 standalone-field me-2" [class.d-none]="!advanced">
           <span
             matPrefix
-            matTooltip="Authorisation requirements"
+            matTooltip="Authorisation requirements for users to invoke model"
             class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>shield</mat-icon>
             <span class="text-muted">|</span>
           </span>
           <mat-select
-            placeholder="Add roles ..."
+            placeholder="Authentication requirements ..."
             multiple
             name="auth"
             [disabled]="isLoading"
@@ -395,14 +395,14 @@
         <mat-form-field class="w-100 standalone-field">
           <span
             matPrefix
-            matTooltip="reCAPTCHA value"
+            matTooltip="reCAPTCHA value, implying minimum reCAPTCHA value before accepting input (0 - 1.0)"
             class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>verified_user</mat-icon>
             <span class="text-muted">|</span>
           </span>
           <input
             matInput
-            placeholder="reCAPTCHA ..."
+            placeholder="Minimu reCAPTCHA value ..."
             type="number"
             min="0"
             [disabled]="isLoading"
@@ -410,6 +410,50 @@
             step="0.1"
             [(ngModel)]="recaptcha"
             name="recaptcha"
+            autocomplete="off">
+        </mat-form-field>
+
+      </div>
+
+    </div>
+
+    <div class="row" [class.d-none]="!advanced">
+
+      <div class="col-12 d-flex justify-content-md-between align-items-md-center align-items-end flex-md-row">
+
+        <mat-form-field class="w-100 standalone-field me-2">
+          <span
+            matPrefix
+            matTooltip="Twilio account ID if you intend to integrate model with Twilio"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>key</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            placeholder="Twilio Account ID ..."
+            [disabled]="isLoading"
+            type="text"
+            [(ngModel)]="twilio_account_id"
+            name="twilio_account_id"
+            autocomplete="off">
+        </mat-form-field>
+
+        <mat-form-field class="w-100 standalone-field">
+          <span
+            matPrefix
+            matTooltip="Twilio account SID (secret) if you intend to integrate model with Twilio"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>key</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            placeholder="Twilio Account SID ..."
+            [disabled]="isLoading"
+            type="text"
+            [(ngModel)]="twilio_account_sid"
+            name="twilio_account_sid"
             autocomplete="off">
         </mat-form-field>
 

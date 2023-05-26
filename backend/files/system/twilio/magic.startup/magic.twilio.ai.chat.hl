@@ -1,28 +1,42 @@
 
 /*
- * Slot for using Twilio in combination with NLP and OpenAI's ChatGPT APIs
+ * Slot for using Twilio in combination with NLP and OpenAI's ChatGPT APIs.
+ *
+ * Intended to be used as a callback slot when Twilio's webhook is being invoked,
+ * allowing you to invoke OpenAI's GPT API to automatically answer messages originating
+ * from WhatsApp, SMS, and Messenger, creating virtual AI chatbots for these chat channels.
  */
 slots.create:magic.twilio.ai.chat
 
    // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/to
    validators.mandatory:x:@.arguments/*/from
-   validators.mandatory:x:@.arguments/*/message
-   set-name:x:@.arguments/*/message
-      .:prompt
+   validators.mandatory:x:@.arguments/*/type
+   validators.mandatory:x:@.arguments/*/prompt
 
-   // Creating a thread to avoid timeout during callback invocation from Twilio's side.
+   /*
+    * Creating a thread to avoid timeout during webhook invocation from Twilio's side.
+    *
+    * The way this works, is that we create a thread where we invoke OpenAI,
+    * while returning to Twilio immediately. When OpenAI returns the answer to our question,
+    * we invoke Twilio's API with the response from OpenAI using the dynamic 
+    * [magic.twilio.send-message] slot.
+    */
    insert-before:x:./*/fork/0
       get-nodes:x:@.arguments
    fork
 
-      // Invoking ChatGPT.
+      /*
+       * Parametrising invocation to common slot retrieving the model,
+       * and sanity checking invocation. Notice, we use the "meta" configuration
+       * section to determine which model to use.
+       */
       insert-before:x:./*/signal/*/.callback
          get-nodes:x:@.arguments/*
-      config.get:"magic:twilio:meta"
-      unwrap:x:+/*/type
+      
+      // Invoking common slot retrieving model configuration settings, etc.
       signal:magic.ai.endpoint-common
          skip-auth:bool:true
-         type:x:@config.get
          .callback
 
             // Checking if prompt contains an email address.
@@ -49,6 +63,8 @@ slots.create:magic.twilio.ai.chat
                      signal:magic.twilio.send-message
                         body:x:@.arguments/*/contact_us
                         to:x:@.arguments/*/from
+                        from:x:@.arguments/*/to
+                        type:x:@.arguments/*/type
 
             // Checking what type of model this is, and invoking correct slot accordingly.
             if
@@ -57,13 +73,15 @@ slots.create:magic.twilio.ai.chat
                .lambda
 
                   // Invoking chat style of slot.
-                  add:x:./*/signal/[0,1]
+                  add:x:./*/signal
                      get-nodes:x:@.arguments/*
                   signal:magic.ai.chat
                   unwrap:x:+/*
                   signal:magic.twilio.send-message
                      body:x:@signal/@signal/*/result
                      to:x:@.arguments/*/from
+                     from:x:@.arguments/*/to
+                     type:x:@.arguments/*/type
 
             else
 
@@ -75,4 +93,6 @@ slots.create:magic.twilio.ai.chat
                signal:magic.twilio.send-message
                   body:x:@signal/@signal/*/result
                   to:x:@.arguments/*/from
+                  from:x:@.arguments/*/to
+                  type:x:@.arguments/*/type
 

@@ -21,6 +21,8 @@
    ml_types.lead_email.eq:string
    ml_types.api_key.like:string
    ml_types.api_key.eq:string
+   ml_types.twilio_account_sid.like:string
+   ml_types.twilio_account_sid.eq:string
 .description:CRUD read endpoint with paging, sorting, filtering selecting records from your ml_types table in your magic database returning type, model, max_tokens, temperature filtering on type, model, max_tokens, temperature with authentication and authorisation for root roles
 .type:crud-read
 
@@ -71,6 +73,8 @@ data.connect:[generic|magic]
          ml_types.contact_us
          ml_types.lead_email
          ml_types.api_key
+         ml_types.twilio_account_id
+         ml_types.twilio_account_sid
       where
          and
 

@@ -6,62 +6,26 @@ slots.create:magic.twilio.send-message
 
    // Sanity checking invocation.
    validators.mandatory:x:@.arguments/*/to
+   validators.mandatory:x:@.arguments/*/from
    validators.mandatory:x:@.arguments/*/body
+   validators.mandatory:x:@.arguments/*/type
 
-   // Getting Twilio account ID from configuration settings.
+   // Getting Twilio account ID and SID from ml_type database.
    .account_id
-   set-value:x:@.account_id
-      config.get:"magic:twilio:account_id"
    .sid
+   data.connect:[generic|magic]
+      data.read
+         table:ml_type
+         columns
+            twilio_account_id
+            twilio_account_sid
+         where
+            and
+               type.eq:x:@.arguments/*/type
+   set-value:x:@.account_id
+      get-value:x:@data.read/*/*/twilio_account_id
    set-value:x:@.sid
-      config.get:"magic:twilio:sid"
-   if
-      or
-         null:x:@.sid
-         eq
-            get-value:x:@.sid
-            .:
-         null:x:@.account_id
-         eq
-            get-value:x:@.account_id
-            .:
-      .lambda
-
-         // Oops ...!!
-         throw:You have not configured a Twilio account ID or SID
-
-   // Getting from number, defaulting to account from number from configuration settings.
-   .from
-   set-value:x:@.from
-      get-first-value
-         get-value:x:@.arguments/*/from
-         config.get:"magic:twilio:from"
-   if
-      or
-         null:x:@.from
-         eq
-            get-value:x:@.from
-            .:
-      .lambda
-
-         // Oops ...!!
-         throw:No default from configuration found in settings, please provide a [from] argument
-
-   // Checking if channel was specified in to, at which point we apply same channle to from
-   strings.split:x:@.arguments/*/to
-      .:":"
-   if
-      mt
-         get-count:x:@strings.split/*
-         .:int:1
-      .lambda
-      
-         // Applying same channel to from argument.
-         set-value:x:@.from
-            strings.concat
-               get-value:x:@strings.split/0
-               .:":"
-               get-value:x:@.from
+      get-value:x:@data.read/*/*/twilio_account_sid
 
    // Creating Basic auth header.
    .auth
@@ -96,7 +60,7 @@ slots.create:magic.twilio.send-message
          Authorization:x:@.auth
       payload
          Body:x:@.arguments/*/body
-         From:x:@.from
+         From:x:@.arguments/*/from
          To:x:@.arguments/*/to
 
    // Making sure above invocation succeeded.
@@ -117,6 +81,6 @@ slots.create:magic.twilio.send-message
 
    // Logging success.
    log.info:Successfully sent message using Twilio
-      from:x:@.from
       to:x:@.arguments/*/to
-      message:x:@.arguments/*/body
+      from:x:@.arguments/*/from
+      body:x:@.arguments/*/body

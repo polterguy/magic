@@ -39,6 +39,8 @@ export class MachineLearningEditTypeComponent implements OnInit {
   contact_us: string;
   lead_email: string;
   api_key: string;
+  twilio_account_id:string
+  twilio_account_sid: string;
   cached: boolean = false;
   model: OpenAIModel = null;
   vector_model: OpenAIModel = null;
@@ -97,6 +99,8 @@ export class MachineLearningEditTypeComponent implements OnInit {
     this.contact_us = this.data?.contact_us ?? '';
     this.lead_email = this.data?.lead_email ?? '';
     this.api_key = this.data?.api_key ?? '';
+    this.twilio_account_id = this.data?.twilio_account_id ?? '';
+    this.twilio_account_sid = this.data?.twilio_account_sid ?? '';
     this.advanced = !!this.data;
 
     this.generalService.showLoading();
@@ -235,6 +239,8 @@ export class MachineLearningEditTypeComponent implements OnInit {
       contact_us: this.contact_us,
       lead_email: this.lead_email,
       api_key: this.api_key?.length > 0 ? this.api_key : null,
+      twilio_account_id: this.twilio_account_id,
+      twilio_account_sid: this.twilio_account_sid,
       use_embeddings: this.use_embeddings,
       threshold: this.threshold,
     };
