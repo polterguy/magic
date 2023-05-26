@@ -238,40 +238,43 @@ slots.create:magic.ai.completion
       .
          finish_reason:x:@get-first-value
 
-   // Checking if type is 'supervised', at which point we store prompt and completion.
-   if
-      and
-         not
-            get-value:x:@.result/*/error
-         not
-            exists:x:@data.read/*/*
-         mt
-            convert:x:@.arguments/*/supervised
-               type:int
-            .:int:0
-      .lambda
+   // Re-opening database connection since it might have timed out while we're waiting for OpenAI.
+   data.connect:[generic|magic]
 
-         // Storing prompt and completion in ml_requests table.
-         data.create
-            table:ml_requests
-            values
-               type:x:@.arguments/*/type
-               prompt:x:@.arguments/*/prompt
-               completion:x:@.result/*/result
-               finish_reason:x:@.result/*/finish_reason
-               session:x:@.arguments/*/session
+      // Checking if type is 'supervised', at which point we store prompt and completion.
+      if
+         and
+            not
+               get-value:x:@.result/*/error
+            not
+               exists:x:@data.read/*/*
+            mt
+               convert:x:@.arguments/*/supervised
+                  type:int
+               .:int:0
+         .lambda
 
-   /*
-    * Applying some HTTP caching to avoid invoking OpenAI again with
-    * the same question before some minimum amount of time has passed.
-    */
-   response.headers.set
-      Cache-Control:max-age=30
+            // Storing prompt and completion in ml_requests table.
+            data.create
+               table:ml_requests
+               values
+                  type:x:@.arguments/*/type
+                  prompt:x:@.arguments/*/prompt
+                  completion:x:@.result/*/result
+                  finish_reason:x:@.result/*/finish_reason
+                  session:x:@.arguments/*/session
 
-   // Returning results returned from invocation above to caller.
-   add:x:+
-      get-nodes:x:@.result/*/result
-      get-nodes:x:@.result/*/finish_reason
-      get-nodes:x:@.result/*/references
-      get-nodes:x:@.result/*/db_time
-   return
+      /*
+       * Applying some HTTP caching to avoid invoking OpenAI again with
+       * the same question before some minimum amount of time has passed.
+       */
+      response.headers.set
+         Cache-Control:max-age=30
+
+      // Returning results returned from invocation above to caller.
+      add:x:+
+         get-nodes:x:@.result/*/result
+         get-nodes:x:@.result/*/finish_reason
+         get-nodes:x:@.result/*/references
+         get-nodes:x:@.result/*/db_time
+      return

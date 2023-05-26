@@ -218,44 +218,47 @@ slots.create:magic.ai.chat
             expiration:600
             value:x:@lambda2hyper
 
-   // Checking if type is "supervised".
-   if
-      and
-         exists:x:@.arguments/*/supervised
-         not-null:x:@.arguments/*/supervised
-         eq
-            convert:x:@.arguments/*/supervised
-               type:int
-            .:int:1
-      .lambda
+   // Re-opening database connection since it might have timed out while we're waiting for OpenAI.
+   data.connect:[generic|magic]
 
-         // Storing response to ml_requests to keep history.
-         data.create
-            table:ml_requests
-            values
-               type:x:@.arguments/*/type
-               prompt:x:@.only-prompt
-               completion:x:@.result
-               finish_reason:x:@get-first-value
-               session:x:@.arguments/*/session
+      // Checking if type is "supervised".
+      if
+         and
+            exists:x:@.arguments/*/supervised
+            not-null:x:@.arguments/*/supervised
+            eq
+               convert:x:@.arguments/*/supervised
+                  type:int
+               .:int:1
+         .lambda
 
-   // Checking if we've got references.
-   if
-      and
-         exists:x:@.arguments/*/references
-         not-null:x:@.arguments/*/references
-         get-value:x:@.arguments/*/references
-         exists:x:@signal/*/snippets
-      .lambda
-         add:x:../*/return
-            .
-               references
-         add:x:../*/return/*/references
-            get-nodes:x:@signal/*/snippets/*
+            // Storing response to ml_requests to keep history.
+            data.create
+               table:ml_requests
+               values
+                  type:x:@.arguments/*/type
+                  prompt:x:@.only-prompt
+                  completion:x:@.result
+                  finish_reason:x:@get-first-value
+                  session:x:@.arguments/*/session
 
-   // Returning results returned from invocation above to caller.
-   unwrap:x:+/*
-   return
-      result:x:@.result
-      finish_reason:x:@get-first-value
-      db_time:x:@signal/*/db_time
+      // Checking if we've got references.
+      if
+         and
+            exists:x:@.arguments/*/references
+            not-null:x:@.arguments/*/references
+            get-value:x:@.arguments/*/references
+            exists:x:@signal/*/snippets
+         .lambda
+            add:x:../*/return
+               .
+                  references
+            add:x:../*/return/*/references
+               get-nodes:x:@signal/*/snippets/*
+
+      // Returning results returned from invocation above to caller.
+      unwrap:x:+/*
+      return
+         result:x:@.result
+         finish_reason:x:@get-first-value
+         db_time:x:@signal/*/db_time

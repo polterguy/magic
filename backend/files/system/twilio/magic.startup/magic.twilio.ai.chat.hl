@@ -72,59 +72,74 @@ slots.create:magic.twilio.ai.chat
          .callback
 
             // Getting twilio_account_id and twilio_account_sid from type.
-            .twilio_account_id
-            .twilio_account_sid
-            data.read
-               table:ml_types
-               columns
-                  twilio_account_id
-                  twilio_account_sid
-               where
+            data.connect:[generic|magic]
+               .twilio_account_id
+               .twilio_account_sid
+               data.read
+                  table:ml_types
+                  columns
+                     twilio_account_id
+                     twilio_account_sid
+                  where
+                     and
+                        type.eq:x:@.arguments/*/type
+               set-value:x:@.twilio_account_id
+                  get-value:x:@data.read/*/*/twilio_account_id
+               set-value:x:@.twilio_account_sid
+                  get-value:x:@data.read/*/*/twilio_account_sid
+
+               // Checking if prompt contains an email address.
+               if
                   and
-                     type.eq:x:@.arguments/*/type
-            set-value:x:@.twilio_account_id
-               get-value:x:@data.read/*/*/twilio_account_id
-            set-value:x:@.twilio_account_sid
-               get-value:x:@data.read/*/*/twilio_account_sid
+                     strings.contains:x:@.arguments/*/prompt
+                        .:@
+                     not-null:x:@.arguments/*/contact_us
+                     neq:x:@.arguments/*/contact_us
+                        .:
+                  .lambda
 
-            // Checking if prompt contains an email address.
-            if
-               and
-                  strings.contains:x:@.arguments/*/prompt
-                     .:@
-                  not-null:x:@.arguments/*/contact_us
-                  neq:x:@.arguments/*/contact_us
-                     .:
-               .lambda
+                     // Prompt contains an email address, hence treating prompt as a lead if we can.
+                     unwrap:x:+/*
+                     signal:magic.ai.send-lead-email
+                        type:x:@.arguments/*/type
+                        prompt:x:@.arguments/*/prompt
+                        session:x:@.arguments/*/session
+                        lead_email:x:@.arguments/*/lead_email
+                        contact_us:x:@.arguments/*/contact_us
+                     if:x:@signal
 
-                  // Prompt contains an email address, hence treating prompt as a lead if we can.
-                  unwrap:x:+/*
-                  signal:magic.ai.send-lead-email
-                     type:x:@.arguments/*/type
-                     prompt:x:@.arguments/*/prompt
-                     session:x:@.arguments/*/session
-                     lead_email:x:@.arguments/*/lead_email
-                     contact_us:x:@.arguments/*/contact_us
-                  if:x:@signal
+                        // Sending reply message to caller.
+                        signal:magic.twilio.send-message
+                           body:x:@.arguments/*/contact_us
+                           to:x:@.arguments/*/from
+                           from:x:@.arguments/*/to
+                           twilio_account_id:x:@.twilio_account_id
+                           twilio_account_sid:x:@.twilio_account_sid
 
-                     // Sending reply message to caller.
+               // Checking what type of model this is, and invoking correct slot accordingly.
+               if
+                  strings.starts-with:x:@.arguments/*/model
+                     .:gpt
+                  .lambda
+
+                     // Invoking chat style of slot.
+                     add:x:./*/signal/[0,1]
+                        get-nodes:x:@.arguments/*
+                     signal:magic.ai.chat
+                     unwrap:x:+/*
                      signal:magic.twilio.send-message
-                        body:x:@.arguments/*/contact_us
+                        body:x:@signal/@signal/*/result
                         to:x:@.arguments/*/from
                         from:x:@.arguments/*/to
                         twilio_account_id:x:@.twilio_account_id
                         twilio_account_sid:x:@.twilio_account_sid
 
-            // Checking what type of model this is, and invoking correct slot accordingly.
-            if
-               strings.starts-with:x:@.arguments/*/model
-                  .:gpt
-               .lambda
+               else
 
                   // Invoking chat style of slot.
                   add:x:./*/signal/[0,1]
                      get-nodes:x:@.arguments/*
-                  signal:magic.ai.chat
+                  signal:magic.ai.completion
                   unwrap:x:+/*
                   signal:magic.twilio.send-message
                      body:x:@signal/@signal/*/result
@@ -132,17 +147,3 @@ slots.create:magic.twilio.ai.chat
                      from:x:@.arguments/*/to
                      twilio_account_id:x:@.twilio_account_id
                      twilio_account_sid:x:@.twilio_account_sid
-
-            else
-
-               // Invoking chat style of slot.
-               add:x:./*/signal/[0,1]
-                  get-nodes:x:@.arguments/*
-               signal:magic.ai.completion
-               unwrap:x:+/*
-               signal:magic.twilio.send-message
-                  body:x:@signal/@signal/*/result
-                  to:x:@.arguments/*/from
-                  from:x:@.arguments/*/to
-                  twilio_account_id:x:@.twilio_account_id
-                  twilio_account_sid:x:@.twilio_account_sid
