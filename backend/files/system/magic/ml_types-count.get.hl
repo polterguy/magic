@@ -19,6 +19,8 @@
    ml_types.lead_email.eq:string
    ml_types.api_key.like:string
    ml_types.api_key.eq:string
+   ml_type.twilio_account_sid.like:string
+   ml_type.twilio_account_sid.eq:string
 .description:Endpoint counting items in your ml_types table in your magic database
 .type:crud-count
 

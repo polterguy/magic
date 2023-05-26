@@ -1,54 +1,86 @@
 
 /*
- * Twilio webhook callback allowing you to configure Twilio to send your backend
- * SMS messages when your Twilio account receives messages.
+ * Twilio webhook callback allowing you to configure Twilio to send your backend notifications when your
+ * Twilio account receives messages over WhatsApp, Messenger, or SMS etc. Supports all channels that Twilio
+ * supports.
+ *
+ * Looks up which machine learning model to use for transformation according to the given [AccountSid] argument.
  */
-.description:Twilio webhook callback allowing you to configure Twilio to send your backend SMS messages when your Twilio account receives messages
+.description:Twilio webhook callback allowing you to configure Twilio to send your backend notifications when your Twilio account receives messages over WhatsApp, Messenger, or SMS etc
 
-/*
- * Sanity checking invocation making sure invocation is using configured account
- * ID from Twilio configuration.
- */
-if
-   neq
-      config.get:"magic:twilio:account_id"
-      get-value:x:@.arguments/*/AccountSid
-   .lambda
+// Looking up model from the given [AccountSid] argument.
+.type
+data.connect:[generic|magic]
+   data.read
+      table:ml_type
+      columns
+         type
+      where
+         and
+            twilio_account_sid.eq:x:@.arguments/*/AccountSid
 
-      // Oops ...!
-      throw:Not authorised
-         status:int:401
+   // Verifying model exists.
+   if
+      not-exists:x:@data.read/*
+      .lambda
+
+         // No such type.
+         throw:Not authorised
+            status:int:401
+
+   // Storing type for invocation towards callback slot.
+   set-value:x:@.type
+      get-value:x:@data.read/*/*/type
 
 // Retrieving actual message.
-.msg
-set-value:x:@.msg
+.prompt
+set-value:x:@.prompt
    get-value:x:@.arguments/*/Body
 
-// Retrieving from value
+// Retrieving from value.
 .from
 set-value:x:@.from
    get-value:x:@.arguments/*/From
 
+// Retrieving to value.
+.to
+set-value:x:@.from
+   get-value:x:@.arguments/*/To
+
 // Basic logging.
 log.info:Webhook invoked from Twilio
    from:x:@.from
-   message:x:@.msg
+   prompt:x:@.prompt
+   type:x:@.type
 
 // Lambda object to execute with callback.
 .exe
    signal:foo
 
-// Dynamically creating our lambda [.exe] callback by parametrising with [.arguments] given by Twilio.
+/*
+ * Dynamically creating our lambda [.exe] callback by parametrising with [.arguments]
+ * given to endpoint by Twilio. This makes sure we're using the dynamically configured
+ * slot the backend has been configured to use as your webhook is being invoked.
+ */
 set-value:x:@.exe/*/signal
    config.get:"magic:twilio:callback"
 
-// Sanity checking configuration.
+/*
+ * Sanity checking configuration.
+ *
+ * This will throw an exception if you have not specified a callback
+ * slot in your configuration.
+ */
 validators.mandatory:x:@.exe/*/signal
+
+// Further parametrising slot invocation with arguments given by Twilio.
 unwrap:x:+/*/*
 add:x:@.exe/0
    .
       from:x:@.from
-      message:x:@.msg
+      to:x:@.to
+      prompt:x:@.prompt
+      type:x:@.type
 
 // Executing callback.
 eval:x:@.exe
