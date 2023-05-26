@@ -15,11 +15,11 @@ slots.create:magic.ai.endpoint-common
    set-value:x:@.arguments/*/prompt
       strings.trim:x:@.arguments/*/prompt
 
+   // Buffer for model settings.
+   .model
+
    // Connecting to database to retrieve model settings.
    data.connect:[generic|magic]
-
-      // Buffer for model settings.
-      .model
 
       // Reading settings for type.
       data.read
@@ -91,214 +91,213 @@ slots.create:magic.ai.endpoint-common
          add:x:@.model
             get-nodes:x:@data.read/*/*
 
-      /*
-       * Checking if model requires authentication and authorisation,
-       * unless caller wants to skip authentication.
-       */
-      if
-         or
-            not-exists:x:@.arguments/*/skip-auth
-            eq:x:@.arguments/*/skip-auth
-               .:bool:false
-         .lambda
+   /*
+    * Checking if model requires authentication and authorisation,
+    * unless caller explicitly informs us he wants to skip authentication.
+    */
+   if
+      or
+         not-exists:x:@.arguments/*/skip-auth
+         eq:x:@.arguments/*/skip-auth
+            .:bool:false
+      .lambda
 
-            // Caller wants default authentication logic.
-            if
-               and
-                  not-null:x:@.model/*/auth
-                  neq:x:@.model/*/auth
-                     .:
-               .lambda
+         // Caller wants default authentication logic, first checking if model requires authentication.
+         if
+            and
+               not-null:x:@.model/*/auth
+               neq:x:@.model/*/auth
+                  .:
+            .lambda
 
-                  // Making sure user is authorised to using type.
-                  auth.ticket.verify:x:@.model/*/auth
+               // Making sure user is authorised to using type.
+               auth.ticket.verify:x:@.model/*/auth
 
-            // Checking if model requires reCAPTCHA.
-            if
-               and
-                  not
-                     auth.ticket.in-role:root
-                  mt
-                     convert:x:@.model/*/recaptcha
-                        type:decimal
-                     .:decimal:0
-               .lambda
-
-                  // Verifying reCAPTCHA was supplied.
-                  if
-                     or
-                        not-exists:x:@.arguments/*/recaptcha_response
-                        null:x:@.arguments/*/recaptcha_response
-                     .lambda
-
-                        // Endpoint invoked without reCAPTCHA, making sure we abort invocation.
-                        response.status.set:499
-                        return
-                           error:No reCAPTCHA supplied
-
-                  // Retrieving reCAPTCHA site key.
-                  .key
-                  set-value:x:@.key
-                     config.get:"magic:auth:recaptcha:key"
-
-                  // Retrieving reCAPTCHA secret.
-                  .secret
-                  set-value:x:@.secret
-                     config.get:"magic:auth:recaptcha:secret"
-
-                  // Validating reCAPTCHA invocation confirms request originated from a human.
+         // Checking if model requires reCAPTCHA.
+         if
+            and
+               not
+                  auth.ticket.in-role:root
+               mt
                   convert:x:@.model/*/recaptcha
                      type:decimal
-                  validators.recaptcha:x:@.arguments/*/recaptcha_response
-                     min:x:@convert
-                     site-key:x:@.key
-                     secret:x:@.secret
+                  .:decimal:0
+            .lambda
 
-      // Doing some common conversions.
-      set-value:x:@.model/*/threshold
-         convert:x:@.model/*/threshold
-            type:decimal
-      set-value:x:@.model/*/max_tokens
-         convert:x:@.model/*/max_tokens
-            type:int
+               // Verifying reCAPTCHA was supplied.
+               if
+                  or
+                     not-exists:x:@.arguments/*/recaptcha_response
+                     null:x:@.arguments/*/recaptcha_response
+                  .lambda
 
-      // Making sure se set max size of model
-      switch:x:@.model/*/model
+                     // Endpoint invoked without reCAPTCHA, making sure we abort invocation.
+                     response.status.set:499
+                     return
+                        error:No reCAPTCHA supplied
 
-         case:text-davinci-003
-         case:gpt-3.5-turbo
-         case:gpt-3.5-turbo-0301
-         case:text-davinci-002
+               // Retrieving reCAPTCHA site key.
+               .key
+               set-value:x:@.key
+                  config.get:"magic:auth:recaptcha:key"
 
-            add:x:@.model
-               .
-                  model_size:int:4096
+               // Retrieving reCAPTCHA secret.
+               .secret
+               set-value:x:@.secret
+                  config.get:"magic:auth:recaptcha:secret"
 
-         case:code-davinci-002
+               // Validating reCAPTCHA invocation confirms request originated from a human.
+               convert:x:@.model/*/recaptcha
+                  type:decimal
+               validators.recaptcha:x:@.arguments/*/recaptcha_response
+                  min:x:@convert
+                  site-key:x:@.key
+                  secret:x:@.secret
 
-            add:x:@.model
-               .
-                  model_size:int:8000
+   // Doing some common conversions.
+   set-value:x:@.model/*/threshold
+      convert:x:@.model/*/threshold
+         type:double
+   set-value:x:@.model/*/max_tokens
+      convert:x:@.model/*/max_tokens
+         type:int
+   set-value:x:@.model/*/max_context_tokens
+      convert:x:@.model/*/max_context_tokens
+         type:int
+   set-value:x:@.model/*/max_request_tokens
+      convert:x:@.model/*/max_request_tokens
+         type:int
 
-         case:gpt-4
-         case:gpt-4-0314
+   // Making sure se set max size of model
+   switch:x:@.model/*/model
 
-            add:x:@.model
-               .
-                  model_size:int:8192
+      case:text-davinci-003
+      case:gpt-3.5-turbo
+      case:gpt-3.5-turbo-0301
+      case:text-davinci-002
 
-         case:gpt-4-32k
-         case:gpt-4-32k-0314
+         add:x:@.model
+            .
+               model_size:int:4096
 
-            add:x:@.model
-               .
-                  model_size:int:32768
+      case:code-davinci-002
 
-         default
+         add:x:@.model
+            .
+               model_size:int:8000
 
-            add:x:@.model
-               .
-                  model_size:int:2049
+      case:gpt-4
+      case:gpt-4-0314
 
-      // Adding defaults in case model has notbeen configured with max_request_tokens
-      if
-         or
-            null:x:@.model/*/max_context_tokens
-            null:x:@.model/*/max_request_tokens
-         .lambda
+         add:x:@.model
+            .
+               model_size:int:8192
 
-            /*
-             * Defaulting [max_request_tokens] and [max_context_tokens] according
-             * to what model we're using.
-             */
-            switch:x:@.model/*/model
-            
-               case:text-davinci-003
-               case:gpt-3.5-turbo
-               case:gpt-3.5-turbo-0301
-               case:text-davinci-002
+      case:gpt-4-32k
+      case:gpt-4-32k-0314
 
-                  math.divide
-                     math.subtract:int:4096
-                        get-value:x:@.model/*/max_tokens
-                     .:int:2
-                  set-value:x:@.model/*/max_context_tokens
-                     get-value:x:@math.divide
-                  set-value:x:@.model/*/max_request_tokens
-                     get-value:x:@math.divide
+         add:x:@.model
+            .
+               model_size:int:32768
 
-               case:code-davinci-002
+      default
 
-                  math.divide
-                     math.subtract:int:8000
-                        get-value:x:@.model/*/max_tokens
-                     .:int:2
-                  set-value:x:@.model/*/max_context_tokens
-                     get-value:x:@math.divide
-                  set-value:x:@.model/*/max_request_tokens
-                     get-value:x:@math.divide
+         add:x:@.model
+            .
+               model_size:int:2049
 
-               case:gpt-4
-               case:gpt-4-0314
+   // Adding defaults in case model has not been configured with max_request_tokens
+   if
+      or
+         null:x:@.model/*/max_context_tokens
+         null:x:@.model/*/max_request_tokens
+      .lambda
 
-                  math.divide
-                     math.subtract:int:8192
-                        get-value:x:@.model/*/max_tokens
-                     .:int:2
-                  set-value:x:@.model/*/max_context_tokens
-                     get-value:x:@math.divide
-                  set-value:x:@.model/*/max_request_tokens
-                     get-value:x:@math.divide
+         /*
+          * Defaulting [max_request_tokens] and [max_context_tokens] according
+          * to what model we're using.
+          */
+         switch:x:@.model/*/model
 
-               case:gpt-4-32k
-               case:gpt-4-32k-0314
+            case:text-davinci-003
+            case:gpt-3.5-turbo
+            case:gpt-3.5-turbo-0301
+            case:text-davinci-002
 
-                  math.divide
-                     math.subtract:int:32768
-                        get-value:x:@.model/*/max_tokens
-                     .:int:2
-                  set-value:x:@.model/*/max_context_tokens
-                     get-value:x:@math.divide
-                  set-value:x:@.model/*/max_request_tokens
-                     get-value:x:@math.divide
+               math.divide
+                  math.subtract:int:4096
+                     get-value:x:@.model/*/max_tokens
+                  .:int:2
+               set-value:x:@.model/*/max_context_tokens
+                  get-value:x:@math.divide
+               set-value:x:@.model/*/max_request_tokens
+                  get-value:x:@math.divide
 
-               default
+            case:code-davinci-002
 
-                  math.divide
-                     math.subtract:int:2049
-                        get-value:x:@.model/*/max_tokens
-                     .:int:2
-                  set-value:x:@.model/*/max_context_tokens
-                     get-value:x:@math.divide
-                  set-value:x:@.model/*/max_request_tokens
-                     get-value:x:@math.divide
+               math.divide
+                  math.subtract:int:8000
+                     get-value:x:@.model/*/max_tokens
+                  .:int:2
+               set-value:x:@.model/*/max_context_tokens
+                  get-value:x:@math.divide
+               set-value:x:@.model/*/max_request_tokens
+                  get-value:x:@math.divide
 
-      // Doing some common conversions.
-      set-value:x:@.model/*/max_context_tokens
-         convert:x:@.model/*/max_context_tokens
-            type:int
-      set-value:x:@.model/*/max_request_tokens
+            case:gpt-4
+            case:gpt-4-0314
+
+               math.divide
+                  math.subtract:int:8192
+                     get-value:x:@.model/*/max_tokens
+                  .:int:2
+               set-value:x:@.model/*/max_context_tokens
+                  get-value:x:@math.divide
+               set-value:x:@.model/*/max_request_tokens
+                  get-value:x:@math.divide
+
+            case:gpt-4-32k
+            case:gpt-4-32k-0314
+
+               math.divide
+                  math.subtract:int:32768
+                     get-value:x:@.model/*/max_tokens
+                  .:int:2
+               set-value:x:@.model/*/max_context_tokens
+                  get-value:x:@math.divide
+               set-value:x:@.model/*/max_request_tokens
+                  get-value:x:@math.divide
+
+            default
+
+               math.divide
+                  math.subtract:int:2049
+                     get-value:x:@.model/*/max_tokens
+                  .:int:2
+               set-value:x:@.model/*/max_context_tokens
+                  get-value:x:@math.divide
+               set-value:x:@.model/*/max_request_tokens
+                  get-value:x:@math.divide
+
+   // Making sure prompt is not larger than [max_request_tokens].
+   if
+      mt
+         openai.tokenize:x:@.arguments/*/prompt
          convert:x:@.model/*/max_request_tokens
             type:int
+      .lambda
 
-      // Making sure prompt is not larger than [max_request_tokens].
-      if
-         mt
-            openai.tokenize:x:@.arguments/*/prompt
-            get-value:x:@.model/*/max_request_tokens
-         .lambda
+         // Oops, more prompt than model allows for.
+         throw:Your request is longer than what this type is configured to allow for
+            public:bool:true
+            status:int:400
 
-            // Oops, more prompt than model allows for.
-            throw:Your request is longer than what this type is configured to allow for
-               public:bool:true
-               status:int:400
+   // Invoking callback provided by caller.
+   add:x:./*/invoke
+      get-nodes:x:@.arguments/*
+      get-nodes:x:@.model/*
+   remove-nodes:x:./*/invoke/*/.callback
+   invoke:x:@.arguments/*/.callback
 
-      // Invoking callback provided by caller.
-      add:x:./*/invoke
-         get-nodes:x:@.arguments/*
-         get-nodes:x:@.model/*
-      remove-nodes:x:./*/invoke/*/.callback
-      invoke:x:@.arguments/*/.callback
-
-      // Returning result of invocation to caller.
-      return-nodes:x:@invoke/*
+   // Returning result of invocation to caller.
+   return-nodes:x:@invoke/*

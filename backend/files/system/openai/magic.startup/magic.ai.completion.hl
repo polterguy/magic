@@ -26,34 +26,35 @@ slots.create:magic.ai.completion
       .lambda
 
          // Checking if we can find a cached request matching prompt and type.
-         data.read
-            table:ml_requests
-            columns
-               completion
-               cached
-            where
+         data.connect:[generic|ainiro]
+            data.read
+               table:ml_requests
+               columns
+                  completion
+                  cached
+               where
+                  and
+                     prompt.eq:x:@.arguments/*/prompt
+                     type.eq:x:@.arguments/*/type
+               limit:1
+               order:created
+               direction:desc
+
+            // Checking if we could find a matching request in cache.
+            if
                and
-                  prompt.eq:x:@.arguments/*/prompt
-                  type.eq:x:@.arguments/*/type
-            limit:1
-            order:created
-            direction:desc
+                  exists:x:@data.read/*/*
+                  eq
+                     convert:x:@data.read/*/*/cached
+                        type:int
+                     .:int:1
+               .lambda
 
-         // Checking if we could find a matching request in cache.
-         if
-            and
-               exists:x:@data.read/*/*
-               eq
-                  convert:x:@data.read/*/*/cached
-                     type:int
-                  .:int:1
-            .lambda
-
-               // Returning cached completion.
-               unwrap:x:+/*
-               return
-                  result:x:@data.read/*/*/completion
-                  finish_reason:cached
+                  // Returning cached completion.
+                  unwrap:x:+/*
+                  return
+                     result:x:@data.read/*/*/completion
+                     finish_reason:cached
 
    // Result we're returning to caller.
    .result
@@ -185,6 +186,7 @@ slots.create:magic.ai.completion
             config.get:"magic:openai:key"
 
    // Invoking OpenAI, now with a decorated prompt.
+   log.info:x:@.prompt
    http.post:"https://api.openai.com/v1/completions"
       headers
          Authorization:x:@.token
@@ -264,17 +266,17 @@ slots.create:magic.ai.completion
                   finish_reason:x:@.result/*/finish_reason
                   session:x:@.arguments/*/session
 
-      /*
-       * Applying some HTTP caching to avoid invoking OpenAI again with
-       * the same question before some minimum amount of time has passed.
-       */
-      response.headers.set
-         Cache-Control:max-age=30
+   /*
+    * Applying some HTTP caching to avoid invoking OpenAI again with
+    * the same question before some minimum amount of time has passed.
+    */
+   response.headers.set
+      Cache-Control:max-age=30
 
-      // Returning results returned from invocation above to caller.
-      add:x:+
-         get-nodes:x:@.result/*/result
-         get-nodes:x:@.result/*/finish_reason
-         get-nodes:x:@.result/*/references
-         get-nodes:x:@.result/*/db_time
-      return
+   // Returning results returned from invocation above to caller.
+   add:x:+
+      get-nodes:x:@.result/*/result
+      get-nodes:x:@.result/*/finish_reason
+      get-nodes:x:@.result/*/references
+      get-nodes:x:@.result/*/db_time
+   return
