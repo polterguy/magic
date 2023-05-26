@@ -1,6 +1,6 @@
 
 /*
- * Slot for using Twilio in combination with NLP and OpenAI's ChatGPT APIs.
+ * Slot for using Twilio in combination with OpenAI's ChatGPT APIs.
  *
  * Intended to be used as a callback slot when Twilio's webhook is being invoked,
  * allowing you to invoke OpenAI's GPT API to automatically answer messages originating
@@ -13,6 +13,31 @@ slots.create:magic.twilio.ai.chat
    validators.mandatory:x:@.arguments/*/from
    validators.mandatory:x:@.arguments/*/type
    validators.mandatory:x:@.arguments/*/prompt
+   validators.mandatory:x:@.arguments/*/twilio_account_id
+
+   // Looking up model from the given [AccountSid] argument.
+   .type
+   data.connect:[generic|magic]
+      data.read
+         table:ml_types
+         columns
+            type
+         where
+            and
+               twilio_account_id.eq:x:@.arguments/*/twilio_account_id
+
+      // Verifying model exists.
+      if
+         not-exists:x:@data.read/*
+         .lambda
+
+            // No such type.
+            throw:Not authorised
+               status:int:401
+
+      // Storing type for invocation towards callback slot.
+      set-value:x:@.type
+         get-value:x:@data.read/*/*/type
 
    /*
     * Creating a thread to avoid timeout during webhook invocation from Twilio's side.
@@ -24,6 +49,7 @@ slots.create:magic.twilio.ai.chat
     */
    insert-before:x:./*/fork/0
       get-nodes:x:@.arguments
+      get-nodes:x:@.type
    fork
 
       /*
@@ -35,9 +61,27 @@ slots.create:magic.twilio.ai.chat
          get-nodes:x:@.arguments/*
       
       // Invoking common slot retrieving model configuration settings, etc.
+      unwrap:x:./*/signal/*/type
       signal:magic.ai.endpoint-common
          skip-auth:bool:true
+         type:x:@.type
          .callback
+
+            // Getting twilio_account_id and twilio_account_sid from type.
+            .twilio_account_id
+            .twilio_account_sid
+            data.read
+               table:ml_types
+               columns
+                  twilio_account_id
+                  twilio_account_sid
+               where
+                  and
+                     type.eq:x:@.arguments/*/type
+            set-value:x:@.twilio_account_id
+               get-value:x:@data.read/*/*/twilio_account_id
+            set-value:x:@.twilio_account_sid
+               get-value:x:@data.read/*/*/twilio_account_sid
 
             // Checking if prompt contains an email address.
             if
@@ -64,7 +108,8 @@ slots.create:magic.twilio.ai.chat
                         body:x:@.arguments/*/contact_us
                         to:x:@.arguments/*/from
                         from:x:@.arguments/*/to
-                        type:x:@.arguments/*/type
+                        twilio_account_id:x:@.twilio_account_id
+                        twilio_account_sid:x:@.twilio_account_sid
 
             // Checking what type of model this is, and invoking correct slot accordingly.
             if
@@ -81,7 +126,8 @@ slots.create:magic.twilio.ai.chat
                      body:x:@signal/@signal/*/result
                      to:x:@.arguments/*/from
                      from:x:@.arguments/*/to
-                     type:x:@.arguments/*/type
+                     twilio_account_id:x:@.twilio_account_id
+                     twilio_account_sid:x:@.twilio_account_sid
 
             else
 
@@ -94,4 +140,5 @@ slots.create:magic.twilio.ai.chat
                   body:x:@signal/@signal/*/result
                   to:x:@.arguments/*/from
                   from:x:@.arguments/*/to
-                  type:x:@.arguments/*/type
+                  twilio_account_id:x:@.twilio_account_id
+                  twilio_account_sid:x:@.twilio_account_sid

@@ -4,37 +4,17 @@
  * Twilio account receives messages over WhatsApp, Messenger, or SMS etc. Supports all channels that Twilio
  * supports.
  *
- * Looks up which machine learning model to use for transformation according to the given [AccountSid] argument.
+ * You can configure which dynamic Hyperlambda slot you want to invoke by changing your "magic:twilio:callback"
+ * slot in your configuration settings.
+ *
+ * This webhook will pass in [body], [from], [to] and [twilio_account_id] being the AccountSid as given from
+ * Twilio during callbacks invocations.
  */
 .description:Twilio webhook callback allowing you to configure Twilio to send your backend notifications when your Twilio account receives messages over WhatsApp, Messenger, or SMS etc
 
-// Looking up model from the given [AccountSid] argument.
-.type
-data.connect:[generic|magic]
-   data.read
-      table:ml_types
-      columns
-         type
-      where
-         and
-            twilio_account_id.eq:x:@.arguments/*/AccountSid
-
-   // Verifying model exists.
-   if
-      not-exists:x:@data.read/*
-      .lambda
-
-         // No such type.
-         throw:Not authorised
-            status:int:401
-
-   // Storing type for invocation towards callback slot.
-   set-value:x:@.type
-      get-value:x:@data.read/*/*/type
-
 // Retrieving actual message.
-.prompt
-set-value:x:@.prompt
+.body
+set-value:x:@.body
    get-value:x:@.arguments/*/Body
 
 // Retrieving from value.
@@ -49,9 +29,8 @@ set-value:x:@.to
 
 // Basic logging.
 log.info:Webhook invoked from Twilio
+   body:x:@.body
    from:x:@.from
-   prompt:x:@.prompt
-   type:x:@.type
    to:x:@.to
 
 // Lambda object to execute with callback.
@@ -78,10 +57,10 @@ validators.mandatory:x:@.exe/*/signal
 unwrap:x:+/*/*
 add:x:@.exe/0
    .
+      body:x:@.body
       from:x:@.from
       to:x:@.to
-      prompt:x:@.prompt
-      type:x:@.type
+      twilio_account_id:x:@.arguments/*/AccountSid
 
 // Executing callback.
 eval:x:@.exe
