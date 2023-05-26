@@ -110,6 +110,7 @@ slots.create:magic.twilio.ai.chat
                      if:x:@signal
 
                         // Sending reply message to caller.
+                        unwrap:x:+/*
                         signal:magic.twilio.send-message
                            body:x:@.arguments/*/contact_us
                            to:x:@.arguments/*/from
