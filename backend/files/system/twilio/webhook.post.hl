@@ -12,7 +12,7 @@
 .type
 data.connect:[generic|magic]
    data.read
-      table:ml_type
+      table:ml_types
       columns
          type
       where
