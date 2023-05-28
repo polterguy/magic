@@ -424,14 +424,14 @@
         <mat-form-field class="w-100 standalone-field me-2">
           <span
             matPrefix
-            matTooltip="Twilio account ID if you intend to integrate model with Twilio"
+            matTooltip="Twilio account SID if you intend to integrate model with Twilio"
             class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>key</mat-icon>
             <span class="text-muted">|</span>
           </span>
           <input
             matInput
-            placeholder="Twilio Account ID ..."
+            placeholder="Twilio SID ..."
             [disabled]="isLoading"
             type="text"
             [(ngModel)]="twilio_account_id"
@@ -442,14 +442,14 @@
         <mat-form-field class="w-100 standalone-field">
           <span
             matPrefix
-            matTooltip="Twilio account SID (secret) if you intend to integrate model with Twilio"
+            matTooltip="Twilio account Auth Token (secret) if you intend to integrate model with Twilio"
             class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>key</mat-icon>
             <span class="text-muted">|</span>
           </span>
           <input
             matInput
-            placeholder="Twilio Account SID ..."
+            placeholder="Twilio Auth Token ..."
             [disabled]="isLoading"
             type="text"
             [(ngModel)]="twilio_account_sid"
