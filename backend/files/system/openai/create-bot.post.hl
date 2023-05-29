@@ -11,6 +11,26 @@
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
+// Prepending scheme unless given.
+if
+   not
+      strings.starts-with:x:@.arguments/*/url
+         .:"http"
+   .lambda
+      set-value:x:@.arguments/*/url
+         strings.concat
+            .:"https://"
+            get-value:x:@.arguments/*/url
+
+// Trimming extra slash.
+set-value:x:@.arguments/*/url
+   strings.trim-end:x:@.arguments/*/url
+      .:/
+
+// Making sure URL does not contain CAPS characters.
+set-value:x:@.arguments/*/url
+   strings.to-lower:x:@.arguments/*/url
+
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/url
 validators.url:x:@.arguments/*/url
