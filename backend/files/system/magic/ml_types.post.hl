@@ -46,7 +46,7 @@ data.connect:[generic|magic]
          eq:x:@.arguments/*/twilio_account_id
             .:
       .lambda
-         remove-nodes:x:@.arguments/*/twilio_account_id
+         remove-nodes:x:@data.connect/*/data.create/*/values/*/twilio_account_id
          unwrap:x:+/*/*
          add:x:@data.connect/*/data.create/[0,1]/*/values
             .
