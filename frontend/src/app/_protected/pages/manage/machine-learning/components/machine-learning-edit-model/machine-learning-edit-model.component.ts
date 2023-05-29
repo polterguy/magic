@@ -102,6 +102,9 @@ export class MachineLearningEditTypeComponent implements OnInit {
     this.twilio_account_id = this.data?.twilio_account_id ?? '';
     this.twilio_account_sid = this.data?.twilio_account_sid ?? '';
     this.advanced = !!this.data;
+    if (this.twilio_account_id == this.type) {
+      this.twilio_account_id = '';
+    }
 
     this.generalService.showLoading();
 
