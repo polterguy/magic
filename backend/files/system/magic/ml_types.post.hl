@@ -43,9 +43,11 @@ data.connect:[generic|magic]
       or
          not-exists:x:@.arguments/*/twilio_account_id
          null:x:@.arguments/*/twilio_account_id
+         eq:x:@.arguments/*/twilio_account_id
+            .:
       .lambda
          unwrap:x:+/*/*
-         add:x:@data.connect/*/data.create/*/values
+         add:x:@data.connect/*/data.create/[0,1]/*/values
             .
                twilio_account_id:x:@.arguments/*/type
 

@@ -45,6 +45,8 @@ data.connect:[generic|magic]
       or
          not-exists:x:@.arguments/*/twilio_account_id
          null:x:@.arguments/*/twilio_account_id
+         eq:x:@.arguments/*/twilio_account_id
+            .:
       .lambda
          unwrap:x:+/*/*
          add:x:@data.connect/*/data.update/*/values
