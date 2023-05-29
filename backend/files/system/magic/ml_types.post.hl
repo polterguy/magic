@@ -38,6 +38,17 @@ data.connect:[generic|magic]
    add:x:./*/data.create/[0,1]/*/values
       get-nodes:x:@.arguments/*
 
+   // Making sure we default twilio_account_id token to model name unless explicitly specified.
+   if
+      or
+         not-exists:x:@.arguments/*/twilio_account_id
+         null:x:@.arguments/*/twilio_account_id
+      .lambda
+         unwrap:x:+/*/*
+         add:x:@data.connect/*/data.create/*/values
+            .
+               twilio_account_id:x:@.arguments/*/type
+
    // Creating our record.
    data.create
       table:ml_types
