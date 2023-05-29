@@ -23,10 +23,8 @@
           matInput
           placeholder="Website URL"
           [(ngModel)]="url"
-          [pattern]="CommonRegEx.domain"
           name="url"
           autocomplete="off">
-          <mat-error>{{CommonErrorMessages.domain}}</mat-error>
       </mat-form-field>
   
     </div>

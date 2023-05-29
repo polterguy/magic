@@ -123,12 +123,8 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
 
   goodWebsite() {
 
-    const good = this.url.length > 0 && (this.url.startsWith('http://') || this.url.startsWith('https://'));
+    const good = this.url.length > 0;
     if (!good) {
-      return false;
-    }
-    const splits = this.url.split('://');
-    if (splits.length === 0 || splits[1].length < 5 || splits[1].indexOf('.') === -1 || splits[1].indexOf('/') !== -1) {
       return false;
     }
     return true;
