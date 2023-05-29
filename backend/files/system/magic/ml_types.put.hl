@@ -40,6 +40,17 @@ data.connect:[generic|magic]
    add:x:./*/data.update/*/where/*/and
       get-nodes:x:@.arguments/*/[0,1]
 
+   // Making sure we default twilio_account_id token to model name unless explicitly specified.
+   if
+      or
+         not-exists:x:@.arguments/*/twilio_account_id
+         null:x:@.arguments/*/twilio_account_id
+      .lambda
+         unwrap:x:+/*/*
+         add:x:@data.connect/*/data.update/*/values
+            .
+               twilio_account_id:x:@.arguments/*/type
+
    // Invoking our update slot.
    data.update
       table:ml_types
