@@ -290,7 +290,7 @@ slots.create:magic.ai.chat
                session:x:@.arguments/*/session
 
          // Further parametrizing invocation.
-         add:x:@.exe
+         add:x:@.exe/*/signal
             get-nodes:x:@.arguments/*/from
             get-nodes:x:@.arguments/*/to
 
