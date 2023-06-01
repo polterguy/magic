@@ -39,10 +39,10 @@ slots.create:magic.ai.endpoint-common
 
          // Parametrizing invocation to integration slot.
          add:x:@.exe/*/signal
-            get-nodes:x:@.arguments/*/to
-            get-nodes:x:@.arguments/*/from
-            get-nodes:x:@.arguments/*/prompt
-            get-nodes:x:@.arguments/*/session
+            get-nodes:x:@.arguments/*/to/[0,1]
+            get-nodes:x:@.arguments/*/from/[0,1]
+            get-nodes:x:@.arguments/*/prompt/[0,1]
+            get-nodes:x:@.arguments/*/session/[0,1]
 
          // Invoking callback.
          eval:x:@.exe
