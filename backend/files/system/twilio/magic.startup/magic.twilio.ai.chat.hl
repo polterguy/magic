@@ -66,6 +66,9 @@ slots.create:magic.twilio.ai.chat
          get-nodes:x:@.arguments/*
       
       // Invoking common slot retrieving model configuration settings, etc.
+      add:x:./*/signal
+         get-nodes:x:@.arguments/*/to
+         get-nodes:x:@.arguments/*/from
       unwrap:x:./*/signal/*/type
       signal:magic.ai.endpoint-common
          skip-auth:bool:true

@@ -7,9 +7,42 @@
 slots.create:magic.ai.endpoint-common
 
    // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/type
    validators.mandatory:x:@.arguments/*/prompt
    validators.string:x:@.arguments/*/prompt
       min:1
+
+   // Checking if we've configured integrations for incoming messages.
+   .incoming
+   set-value:x:@.incoming
+      config.get:"magic:openai:integrations:incoming:slot"
+   if
+      and
+         not-null:x:@.incoming
+         neq:x:@.incoming
+            .:
+      .lambda
+
+         // Invoking integration slot.
+         .exe
+
+            // Retrieving URL to invoke.
+            config.get:"magic:openai:integrations:incoming:url"
+
+            // Forward evaluating expressions.
+            unwrap:x:./*/signal
+            unwrap:x:./*/signal/*/url
+
+            // Invoking slot.
+            signal:x:@.incoming
+               url:x:@config.get
+
+         // Parametrizing invocation to integration slot.
+         add:x:@.exe/*/signal
+            get-nodes:x:@.arguments/*
+
+         // Invoking callback.
+         eval:x:@.exe
 
    // Trimming prompt.
    set-value:x:@.arguments/*/prompt
