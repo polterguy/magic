@@ -189,7 +189,7 @@ slots.create:magic.ai.chat
 
    else
 
-      // Success! Logging as such!
+      // Success!
       log.info:Invoking OpenAI was a success
 
    // Making sure we trim response.
@@ -256,6 +256,46 @@ slots.create:magic.ai.chat
                   references
             add:x:../*/return/*/references
                get-nodes:x:@signal/*/snippets/*
+
+   // Checking if we've configured integrations for outgoing messages.
+   .outgoing
+   set-value:x:@.outgoing
+      config.get:"magic:openai:integrations:outgoing:slot"
+   if
+      and
+         not-null:x:@.outgoing
+         neq:x:@.outgoing
+            .:
+      .lambda
+
+         // Invoking integration slot.
+         .exe
+
+            // Retrieving URL to invoke.
+            config.get:"magic:openai:integrations:outgoing:url"
+
+            // Forward evaluating expressions.
+            unwrap:x:./*/signal
+            unwrap:x:./*/signal/*/url
+
+            // Invoking slot.
+            signal:x:@.outgoing
+               url:x:@config.get
+
+         // Parametrizing invocation to integration slot.
+         unwrap:x:+/*/*
+         add:x:@.exe/*/signal
+            .
+               result:x:@.result
+               session:x:@.arguments/*/session
+
+         // Further parametrizing invocation.
+         add:x:@.exe
+            get-nodes:x:@.arguments/*/from
+            get-nodes:x:@.arguments/*/to
+
+         // Invoking callback.
+         eval:x:@.exe
 
    // Returning results returned from invocation above to caller.
    unwrap:x:+/*

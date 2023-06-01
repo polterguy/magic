@@ -1,0 +1,49 @@
+
+/*
+ * HTTP POST invoke slot that invokes an HTTP endpoint passing in everything
+ * specified as arguments as payload, except [url] which is the invocation URL.
+ */
+slots.create:magic.http.post
+
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/url
+   validators.url:x:@.arguments/*/url
+
+   // Retrieving URL.
+   .url:x:@.arguments/*/url
+   unwrap:x:@.url
+   remove-nodes:x:@.arguments/*/url
+
+   // Decorating invocation.
+   unwrap:x:./*/http.post
+   add:x:./*/http.post/*/payload
+      get-nodes:x:@.arguments/*
+
+   // Invoking endpoint.
+   http.post:x:@.url
+      payload
+
+   // Verifying invocation was a success.
+   if
+      and
+         mte:x:@http.post
+            .:int:200
+         lt:x:@http.post
+            .:int:300
+      .lambda
+
+         // Success!
+         add:x:./*/log.info
+            get-nodes:x:@.arguments/*
+         log.info:Webhook successfull invoked
+            url:x:@.url
+
+   else
+
+      // Failure!
+      add:x:./*/log.info
+         get-nodes:x:@.arguments/*
+      lambda2hyper:x:@http.post/*/content
+      log.error:Webhook failed
+         url:x:@.url
+         content:x:@lambda2hyper
