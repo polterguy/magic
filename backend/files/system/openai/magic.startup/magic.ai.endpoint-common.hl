@@ -195,11 +195,49 @@ slots.create:magic.ai.endpoint-common
                url:x:@.hook-url
 
          // Parametrizing invocation to integration slot.
-         add:x:@.exe/*/signal
-            get-nodes:x:@.arguments/*/to
-            get-nodes:x:@.arguments/*/from
-            get-nodes:x:@.arguments/*/prompt
-            get-nodes:x:@.arguments/*/session
+         if
+            and
+               exists:x:@.arguments/*/to
+               exists:x:@.arguments/*/from
+               not-null:x:@.arguments/*/to
+               not-null:x:@.arguments/*/from
+               strings.contains:x:@.arguments/*/to
+                  .:":"
+               strings.contains:x:@.arguments/*/from
+                  .:":"
+            .lambda
+
+               // We have a channel to accommodate for.
+               .channel
+               .to
+               .from
+               strings.split:x:@.arguments/*/to
+                  .:":"
+               set-value:x:@.channel
+                  get-value:x:@strings.split/0
+               set-value:x:@.to
+                  get-value:x:@strings.split/1
+               strings.split:x:@.arguments/*/from
+               set-value:x:@.from
+                  get-value:x:@strings.split/1
+               add:x:@.exe/*/signal
+                  get-nodes:x:@.arguments/*/prompt
+                  get-nodes:x:@.arguments/*/session
+               unwrap:x:+/*/*
+               add:x:@.exe/*/signal
+                  .
+                     to:x:@.to
+                     from:x:@.from
+                     channel:x:@.channel
+
+         else
+
+            // No channel
+            add:x:@.exe/*/signal
+               get-nodes:x:@.arguments/*/to
+               get-nodes:x:@.arguments/*/from
+               get-nodes:x:@.arguments/*/prompt
+               get-nodes:x:@.arguments/*/session
 
          // Invoking callback.
          eval:x:@.exe
