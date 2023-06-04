@@ -280,13 +280,10 @@ slots.create:magic.ai.chat
                   get-value:x:@.arguments/*/webhook_outgoing_url
                   config.get:"magic:openai:integrations:outgoing:url"
 
-            // Forward evaluating expressions.
-            unwrap:x:./*/signal
-            unwrap:x:./*/signal/*/url
-
             // Invoking slot.
+            unwrap:x:./*/signal/*/url
             signal:x:@.outgoing
-               url:x:@config.get
+               url:x:@.hook-url
 
          // Parametrizing invocation to integration slot.
          unwrap:x:+/*/*
