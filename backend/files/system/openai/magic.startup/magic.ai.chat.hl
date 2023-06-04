@@ -322,8 +322,8 @@ slots.create:magic.ai.chat
                unwrap:x:+/*/*
                add:x:@.exe/*/signal
                   .
-                     to:x:@.to
-                     from:x:@.from
+                     to:x:@.from
+                     from:x:@.to
                      channel:x:@.channel
 
          else
