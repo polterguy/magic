@@ -426,7 +426,7 @@
             matPrefix
             matTooltip="Twilio account SID if you intend to integrate model with Twilio"
             class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-            <mat-icon>key</mat-icon>
+            <mat-icon>person</mat-icon>
             <span class="text-muted">|</span>
           </span>
           <input
@@ -454,6 +454,86 @@
             type="text"
             [(ngModel)]="twilio_account_sid"
             name="twilio_account_sid"
+            autocomplete="off">
+        </mat-form-field>
+
+      </div>
+
+    </div>
+
+    <div class="row" [class.d-none]="!advanced">
+
+      <div class="col-12 d-flex justify-content-md-between align-items-md-center align-items-end flex-md-row">
+
+        <mat-form-field class="w-100 standalone-field me-2">
+          <span
+            matPrefix
+            matTooltip="Slot invoked when messages are sent to model"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>get_app</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            placeholder="Incoming slot ..."
+            [disabled]="isLoading"
+            type="text"
+            [(ngModel)]="webhook_incoming"
+            name="webhook_incoming"
+            autocomplete="off">
+        </mat-form-field>
+
+        <mat-form-field class="w-100 standalone-field me-2">
+          <span
+            matPrefix
+            matTooltip="Webhook URL to invoke when messages are sent to model"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>email</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            placeholder="Incoming Webhook URL ..."
+            [disabled]="isLoading"
+            type="text"
+            [(ngModel)]="webhook_incoming_url"
+            name="webhook_incoming_url"
+            autocomplete="off">
+        </mat-form-field>
+
+        <mat-form-field class="w-100 standalone-field me-2">
+          <span
+            matPrefix
+            matTooltip="Slot invoked when messages are sent to model"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>get_app</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            placeholder="Outgoing slot ..."
+            [disabled]="isLoading"
+            type="text"
+            [(ngModel)]="webhook_outgoing"
+            name="webhook_outgoing"
+            autocomplete="off">
+        </mat-form-field>
+
+        <mat-form-field class="w-100 standalone-field">
+          <span
+            matPrefix
+            matTooltip="Webhook URL to invoke when messages are sent to model"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>email</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            placeholder="Outgoing Webhook URL ..."
+            [disabled]="isLoading"
+            type="text"
+            [(ngModel)]="webhook_outgoing_url"
+            name="webhook_outgoing_url"
             autocomplete="off">
         </mat-form-field>
 

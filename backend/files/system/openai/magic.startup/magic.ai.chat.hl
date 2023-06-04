@@ -260,7 +260,9 @@ slots.create:magic.ai.chat
    // Checking if we've configured integrations for outgoing messages.
    .outgoing
    set-value:x:@.outgoing
-      config.get:"magic:openai:integrations:outgoing:slot"
+      get-first-value
+         get-value:x:@.arguments/*/webhook_outgoing
+         config.get:"magic:openai:integrations:outgoing:slot"
    if
       and
          not-null:x:@.outgoing
@@ -272,7 +274,11 @@ slots.create:magic.ai.chat
          .exe
 
             // Retrieving URL to invoke.
-            config.get:"magic:openai:integrations:outgoing:url"
+            .hook-url
+            set-value:x:@.hook-url
+               get-first-value
+                  get-value:x:@.arguments/*/webhook_outgoing_url
+                  config.get:"magic:openai:integrations:outgoing:url"
 
             // Forward evaluating expressions.
             unwrap:x:./*/signal
