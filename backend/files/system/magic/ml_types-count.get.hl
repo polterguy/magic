@@ -21,6 +21,14 @@
    ml_types.api_key.eq:string
    ml_type.twilio_account_sid.like:string
    ml_type.twilio_account_sid.eq:string
+   ml_types.webhook_incoming.like:string
+   ml_types.webhook_incoming.eq:string
+   ml_types.webhook_outgoing.like:string
+   ml_types.webhook_outgoing.eq:string
+   ml_types.webhook_incoming_url.like:string
+   ml_types.webhook_incoming_url.eq:string
+   ml_types.webhook_outgoing_url.like:string
+   ml_types.webhook_outgoing_url.eq:string
 .description:Endpoint counting items in your ml_types table in your magic database
 .type:crud-count
 

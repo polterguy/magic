@@ -22,6 +22,10 @@
    api_key:string
    twilio_account_id:string
    twilio_account_sid:string
+   webhook_incoming:string
+   webhook_outgoing:string
+   webhook_incoming_url:string
+   webhook_outgoing_url:string
 .description:CRUD create endpoint inserting one record into your ml_types table in your magic database taking type, model, max_tokens, temperature with authentication and authorisation for root roles
 .type:crud-create
 

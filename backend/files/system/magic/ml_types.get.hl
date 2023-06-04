@@ -75,6 +75,10 @@ data.connect:[generic|magic]
          ml_types.api_key
          ml_types.twilio_account_id
          ml_types.twilio_account_sid
+         ml_types.webhook_incoming
+         ml_types.webhook_outgoing
+         ml_types.webhook_incoming_url
+         ml_types.webhook_outgoing_url
       where
          and
 

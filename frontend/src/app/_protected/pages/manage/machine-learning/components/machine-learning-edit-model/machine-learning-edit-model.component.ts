@@ -41,6 +41,10 @@ export class MachineLearningEditTypeComponent implements OnInit {
   api_key: string;
   twilio_account_id:string
   twilio_account_sid: string;
+  webhook_incoming: string;
+  webhook_outgoing: string;
+  webhook_incoming_url: string;
+  webhook_outgoing_url: string;
   cached: boolean = false;
   model: OpenAIModel = null;
   vector_model: OpenAIModel = null;
@@ -101,6 +105,10 @@ export class MachineLearningEditTypeComponent implements OnInit {
     this.api_key = this.data?.api_key ?? '';
     this.twilio_account_id = this.data?.twilio_account_id ?? '';
     this.twilio_account_sid = this.data?.twilio_account_sid ?? '';
+    this.webhook_incoming = this.data?.webhook_incoming ?? '';
+    this.webhook_outgoing = this.data?.webhook_outgoing ?? '';
+    this.webhook_incoming_url = this.data?.webhook_incoming_url ?? '';
+    this.webhook_outgoing_url = this.data?.webhook_outgoing_url ?? '';
     this.advanced = !!this.data;
     if (this.twilio_account_id == this.type) {
       this.twilio_account_id = '';
@@ -244,6 +252,10 @@ export class MachineLearningEditTypeComponent implements OnInit {
       api_key: this.api_key?.length > 0 ? this.api_key : null,
       twilio_account_id: this.twilio_account_id,
       twilio_account_sid: this.twilio_account_sid,
+      webhook_incoming: this.webhook_incoming,
+      webhook_outgoing: this.webhook_outgoing,
+      webhook_incoming_url: this.webhook_incoming_url,
+      webhook_outgoing_url: this.webhook_outgoing_url,
       use_embeddings: this.use_embeddings,
       threshold: this.threshold,
     };
