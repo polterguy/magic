@@ -218,6 +218,7 @@ slots.create:magic.ai.endpoint-common
                set-value:x:@.to
                   get-value:x:@strings.split/1
                strings.split:x:@.arguments/*/from
+                  .:":"
                set-value:x:@.from
                   get-value:x:@strings.split/1
                add:x:@.exe/*/signal
