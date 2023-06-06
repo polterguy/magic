@@ -1,0 +1,61 @@
+
+/*
+ * Converts all vectors from comma separated strings to raw double byte[] and moves from embedding to embedding_vss
+ */
+try
+
+   // Connecting to database to move embeddings into new vss plugin based table, column, and logic.
+   data.connect:[generic|magic]
+      .offset:int:0
+      .cont:bool:true
+      .found:bool:false
+      while:x:@.cont
+         data.read
+            table:ml_training_snippets
+            columns
+               id
+               embedding
+            limit:100
+            offset:x:@.offset
+            where
+               and
+                  embedding.neq
+                  embedding_vss.eq
+         if
+            lt
+               get-count:x:@data.read/*/*
+               .:int:100
+            .lambda
+               set-value:x:@.cont
+                  .:bool:false
+         math.increment:x:@.offset
+            .:int:100
+         for-each:x:@data.read/*
+            set-value:x:@.found
+               .:bool:true
+            .vec
+            strings.split:x:@.dp/#/*/embedding
+               .:,
+            for-each:x:@strings.split/*
+               convert:x:@.dp/#
+                  type:float
+               unwrap:x:+/*/*
+               add:x:@.vec
+                  .
+                     .:x:@convert
+            floatArray2bytes:x:@.vec/*
+            data.execute:"update ml_training_snippets set embedding_vss = @vector where id = @id"
+               @vector:x:@floatArray2bytes
+               @id:x:@.dp/#/*/id
+      if:x:@.found
+         data.execute:@"insert into vss_ml_training_snippets(rowid, embedding_vss)
+     select 
+       id as rowid,
+       embedding_vss
+     from ml_training_snippets where embedding is not null"
+         data.execute:@"alter table ml_training_snippets drop column embedding"
+
+.catch
+
+   // Oops ...!!
+   log.error:Could not update vector database schema

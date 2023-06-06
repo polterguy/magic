@@ -43,7 +43,7 @@ export class MachineLearningTrainingDataComponent implements OnInit {
     'created',
     'cached',
     'pushed',
-    'embedding',
+    'embedding_vss',
     'action',
   ];
 
@@ -131,7 +131,7 @@ export class MachineLearningTrainingDataComponent implements OnInit {
 
   editSnippet(event: any, el: any) {
 
-    const hasEmbedding: boolean = el.embedding;
+    const hasEmbedding: boolean = el.embedding_vss;
 
     this.dialog
       .open(MachineLearningEditTrainingSnippetComponent, {

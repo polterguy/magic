@@ -48,7 +48,7 @@ slots.create:magic.ai.vectorise
                   completion
                where
                   and
-                     embedding.eq
+                     embedding_vss.eq
                      type.eq:x:@.arguments/*/type
                limit:50
                order:created
@@ -152,15 +152,23 @@ slots.create:magic.ai.vectorise
                      else
 
                         // Success creating embeddings, updating training snippet now.
-                        strings.join:x:@http.post/*/content/*/data/0/*/embedding/*
-                           .:,
+                        floatArray2bytes:x:@http.post/*/content/*/data/0/*/embedding/*
                         data.update
                            table:ml_training_snippets
                            values
-                              embedding:x:@strings.join
+                              embedding_vss:x:@floatArray2bytes
                            where
                               and
                                  id.eq:x:@.dp/#/*/id
+
+                        // Updating index.
+                        data.execute:@"
+insert into vss_ml_training_snippets(rowid, embedding_vss)
+  select 
+    id as rowid,
+    embedding_vss
+  from ml_training_snippets where id = @id"
+                           id:x:@.dp/#/*/id
 
                         // Incrementing count.
                         math.increment:x:@.count

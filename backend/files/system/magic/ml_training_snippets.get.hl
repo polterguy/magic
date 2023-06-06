@@ -68,7 +68,7 @@ data.connect:[generic|magic]
          ml_training_snippets.uri
          ml_training_snippets.prompt
          ml_training_snippets.completion
-         ml_training_snippets.embedding
+         ml_training_snippets.embedding_vss
          ml_training_snippets.cached
       where
          and
@@ -77,12 +77,12 @@ data.connect:[generic|magic]
    // Changing embedding to a boolean value to preserve bandwidth.
    for-each:x:@data.read/*
       if
-         not-null:x:@.dp/#/*/embedding
+         not-null:x:@.dp/#/*/embedding_vss
          .lambda
-            set-value:x:@.dp/#/*/embedding
+            set-value:x:@.dp/#/*/embedding_vss
                .:bool:true
       else
-         set-value:x:@.dp/#/*/embedding
+         set-value:x:@.dp/#/*/embedding_vss
             .:bool:false
 
    // Returning result of above read invocation to caller.

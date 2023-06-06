@@ -26,7 +26,7 @@ data.connect:[generic|magic]
       .lambda
          add:x:@data.connect/*/data.read/*/where/*/and
             .
-               embedding.eq
+               embedding_vss.eq
          remove-nodes:x:@.arguments/*/not_embedded
 
    // Parametrising our read invocation with filtering arguments.
