@@ -65,30 +65,24 @@ slots.create:magic.ai.get-context
    .scan
    data.connect:[generic|magic]
 
-      // Contains all snippets that are above [threshold].
-      unwrap:x:./*/data.scan/*/threshold
-      add:x:./*/data.scan/*/vector
-         get-nodes:x:@http.post/*/content/*/data/0/*/embedding/*
-      data.scan
-         max:int:50
-         vector
-         threshold:x:@.arguments/*/threshold
-         table:ml_training_snippets
-         columns
-            embedding
-            prompt
-            completion
-            uri
-            cached
-         where
-            and
-               embedding.neq
-               type.eq:x:@.arguments/*/type
-         limit:200
-         offset:x:@.offset
-         order:created
+      // Converting embeddings to a byte array of floats, since this is how we store embeddings in SQLite.
+      floatArray2bytes:x:@http.post/*/content/*/data/0/*/embedding/*
+      math.subtract
+         .:float:1
+         get-value:x:@.arguments/*/threshold
+      data.select:@"
+select vss.distance, vss.rowid as id, ts.prompt, ts.completion, ts.uri, ts.cached
+	from vss_ml_training_snippets as vss
+    	inner join ml_training_snippets ts on ts.id = vss.rowid
+   where vss_search(
+     vss.embedding_vss,
+     vss_search_params(@embedding, 20)
+   ) and vss.distance < @threshold"
+         embedding:x:@floatArray2bytes
+         type:x:@.arguments/*/type
+         threshold:x:@math.subtract
       add:x:@.scan
-         get-nodes:x:@data.scan/*
+         get-nodes:x:@data.select/*
 
    /*
     * Checking if first snippet is cached, at which point we return ONLY that snippet.

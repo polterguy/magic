@@ -72,15 +72,24 @@ data.connect:[generic|magic]
          throw:Could not create embeddings for model
 
    // Inserting embeddings for training snippet.
-   strings.join:x:@http.post/*/content/*/data/0/*/embedding/*
-      .:,
+   floatArray2bytes:x:@http.post/*/content/*/data/0/*/embedding/*
    data.update
       table:ml_training_snippets
       values
-         embedding:x:@strings.join
+         embedding_vss:x:@floatArray2bytes
       where
          and
             id.eq:x:@.arguments/*/id
+
+   // Updating index.
+   data.execute:@"
+delete from vss_ml_training_snippets where rowid = @id;
+insert into vss_ml_training_snippets(rowid, embedding_vss)
+  select 
+    id as rowid,
+    embedding_vss
+  from ml_training_snippets where id = @id"
+      id:x:@.arguments/*/id
 
 // Returning success to caller.
 return

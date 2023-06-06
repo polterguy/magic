@@ -62,26 +62,26 @@ slots.create:magic.ai.search
       .begin
       set-value:x:@.begin
          date.now
-      unwrap:x:./*/data.scan/*/threshold
-      add:x:./*/data.scan/*/vector
-         get-nodes:x:@http.post/*/content/*/data/0/*/embedding/*
-      data.scan
-         max:x:@.arguments/*/max
-         vector
-         threshold:x:@.arguments/*/threshold
-         table:ml_training_snippets
-         columns
-            embedding
-            prompt
-            completion
-            uri
-         where
-            and
-               embedding.neq
-               type.eq:x:@.arguments/*/type
-         limit:200
-         offset:x:@.offset
-         order:created
+
+      // Converting embeddings to a byte array of floats, since this is how we store embeddings in SQLite.
+      floatArray2bytes:x:@http.post/*/content/*/data/0/*/embedding/*
+      math.subtract
+         .:float:1
+         get-value:x:@.arguments/*/threshold
+      strings.concat
+         .:@"
+select vss.distance, vss.rowid as id, ts.prompt, ts.completion, ts.uri
+	from vss_ml_training_snippets as vss
+    	inner join ml_training_snippets ts on ts.id = vss.rowid
+   where vss_search(
+     vss.embedding_vss,
+     vss_search_params(@embedding, "
+         get-value:x:@.arguments/*/max
+         .:@")) and vss.distance < @threshold and ts.type = @type"
+      data.select:x:@strings.concat
+         embedding:x:@floatArray2bytes
+         type:x:@.arguments/*/type
+         threshold:x:@math.subtract
 
       // Measuring how much time we spent looping through snippets.
       .end
@@ -98,15 +98,15 @@ slots.create:magic.ai.search
 
       // Making sure we don't return [snippets] unless we actually have snippets.
       if
-         not-exists:x:@data.scan/*
+         not-exists:x:@data.select/*
          .lambda
             remove-nodes:x:../*/return/*/snippets
       else
-         add:x:../*/return/*/snippets
-            get-nodes:x:@data.scan/*
+         add:x:@data.connect/*/return/*/snippets
+            get-nodes:x:@data.select/*
 
-   // Returning result to caller.
-   unwrap:x:./*/return/*
-   return
-      db_time:x:@.time
-      snippets
+      // Returning result to caller.
+      unwrap:x:./*/return/*
+      return
+         db_time:x:@.time
+         snippets
