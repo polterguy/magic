@@ -21,7 +21,7 @@ slots.create:magic.ai.vectorise
             .:"Bearer "
             config.get:"magic:openai:key"
 
-      // Getting vector model.
+      // Getting vector model, and deleting index.
       .vector-model
       data.connect:[generic|magic]
 
@@ -35,6 +35,14 @@ slots.create:magic.ai.vectorise
                   type.eq:x:@.arguments/*/type
          set-value:x:@.vector-model
             get-value:x:@data.read/*/*/vector_model
+
+         // Deleting index
+         data.execute:@"
+delete from vss_ml_training_snippets where rowid in (
+select 
+ id as rowid
+from ml_training_snippets where type = @type)"
+            type:x:@.arguments/*/type
 
       // To avoid exhausting server's memory, we iterate 50 snippets at the time.
       .continue:bool:true
@@ -172,15 +180,6 @@ slots.create:magic.ai.vectorise
                               and
                                  id.eq:x:@.dp/#/*/id
 
-                        // Updating index.
-                        data.execute:@"
-insert into vss_ml_training_snippets(rowid, embedding_vss)
-select 
- id as rowid,
- embedding_vss
-from ml_training_snippets where id = @id;"
-                           id:x:@.dp/#/*/id
-
                         // Incrementing count.
                         math.increment:x:@.success
 
@@ -202,6 +201,16 @@ from ml_training_snippets where id = @id;"
                .lambda
                   set-value:x:@.continue
                      .:bool:false
+
+      // Re-indexing model
+      data.connect:[generic|magic]
+         data.execute:@"
+insert into vss_ml_training_snippets(rowid, embedding_vss)
+select 
+ id as rowid,
+ embedding_vss
+from ml_training_snippets where type = @type;"
+            type:x:@.arguments/*/type
 
       // Signaling frontend.
       sockets.signal:magic.backend.message
