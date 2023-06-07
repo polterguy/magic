@@ -12,7 +12,8 @@ COPY . .
 WORKDIR /app
 RUN dotnet publish backend.csproj -c release -o /magic
 
-ADD folder /magic/sqlite-plugins
+# Making sure we add all SQLite plugins to docker image.
+ADD sqlite-plugins /magic/sqlite-plugins
 
 # Final stage / image
 FROM mcr.microsoft.com/dotnet/aspnet:6.0
