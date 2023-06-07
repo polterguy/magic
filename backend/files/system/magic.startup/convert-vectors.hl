@@ -47,13 +47,14 @@ try
             data.execute:"update ml_training_snippets set embedding_vss = @vector where id = @id"
                @vector:x:@floatArray2bytes
                @id:x:@.dp/#/*/id
-      if:x:@.found
-         data.execute:@"insert into vss_ml_training_snippets(rowid, embedding_vss)
+      data.execute:@"
+delete from vss_ml_training_snippets;
+insert into vss_ml_training_snippets(rowid, embedding_vss)
      select 
        id as rowid,
        embedding_vss
      from ml_training_snippets where embedding is not null"
-         data.execute:@"alter table ml_training_snippets drop column embedding"
+      data.execute:@"alter table ml_training_snippets drop column embedding"
 
 .catch
 
