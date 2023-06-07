@@ -22,3 +22,8 @@ COPY --from=build /magic ./
 EXPOSE 4444
 ENV ASPNETCORE_URLS="http://+:4444"
 ENTRYPOINT ["dotnet", "backend.dll"]
+
+# Making sure we run apt-get to get necessary requirements for SQLite plugins
+RUN apt-get update
+RUN apt-get install libgomp1
+RUN apt-get -y install libatlas-base-dev
