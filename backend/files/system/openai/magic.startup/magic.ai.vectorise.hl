@@ -39,7 +39,8 @@ slots.create:magic.ai.vectorise
       // To avoid exhausting server's memory, we iterate 50 snippets at the time.
       .continue:bool:true
       .failed:int:0
-      .count:int:0
+      .success:int:0
+      .idx:int:0
       while:x:@.continue
 
          // Keeping connection open for only 50 iterations
@@ -58,9 +59,13 @@ slots.create:magic.ai.vectorise
                      type.eq:x:@.arguments/*/type
                limit:20
                order:created
+               offset:x:@.idx
 
             // Looping through all records returned above.
             for-each:x:@data.read/*
+
+               // Incrementing count.
+               math.increment:x:@.idx
 
                // Signaling frontend.
                strings.concat
@@ -177,11 +182,13 @@ from ml_training_snippets where id = @id;"
                            id:x:@.dp/#/*/id
 
                         // Incrementing count.
-                        math.increment:x:@.count
+                        math.increment:x:@.success
 
                else
 
                   // Making sure we count number of snippets that failed.
+                  log.info:Cannot vectorize snippet, too long
+                     id:x:@.dp/#/*/id
                   math.increment:x:@.failed
 
 
@@ -208,7 +215,7 @@ from ml_training_snippets where id = @id;"
          .:"Done vectorising model "
          get-value:x:@.arguments/*/type
          .:" containing "
-         get-value:x:@.count
+         get-value:x:@.success
          .:" training snippets"
       unwrap:x:+/*/args/*/message
       sockets.signal:magic.backend.chatbot
@@ -225,7 +232,7 @@ from ml_training_snippets where id = @id;"
       // Basic logging.
       log.info:Done with creating vectors for model
          type:x:@.arguments/*/type
-         count:x:@.count
+         count:x:@.success
          failed:x:@.failed
 
       // Checking if we've got a callback, and if so, executing it.
