@@ -613,6 +613,11 @@ try
                            mt
                               openai.tokenize:x:@strings.concat
                               get-value:x:@.max-size
+                           lt
+                              openai.tokenize:x:@strings.concat
+                              math.subtract
+                                 .:int:4050
+                                 get-value:x:@.max-size
                         .lambda
 
                            /*
