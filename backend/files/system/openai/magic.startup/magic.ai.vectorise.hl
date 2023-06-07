@@ -21,7 +21,8 @@ slots.create:magic.ai.vectorise
             .:"Bearer "
             config.get:"magic:openai:key"
 
-      // Connecting to database.
+      // Getting vector model.
+      .vector-model
       data.connect:[generic|magic]
 
          // Selecting vector model from database.
@@ -32,14 +33,19 @@ slots.create:magic.ai.vectorise
             where
                and
                   type.eq:x:@.arguments/*/type
+         set-value:x:@.vector-model
+            get-value:x:@data.read/*/*/vector_model
 
-         // To avoid exhausting server's memory, we iterate 50 snippets at the time.
-         .continue:bool:true
-         .failed:int:0
-         .count:int:0
-         while:x:@.continue
+      // To avoid exhausting server's memory, we iterate 50 snippets at the time.
+      .continue:bool:true
+      .failed:int:0
+      .count:int:0
+      while:x:@.continue
 
-            // Selecting 50 snippets from type.
+         // Keeping connection open for only 50 iterations
+         data.connect:[generic|magic]
+
+            // Selecting 20 snippets from type.
             data.read
                table:ml_training_snippets
                columns
@@ -50,7 +56,7 @@ slots.create:magic.ai.vectorise
                   and
                      embedding_vss.eq
                      type.eq:x:@.arguments/*/type
-               limit:50
+               limit:20
                order:created
 
             // Looping through all records returned above.
@@ -89,7 +95,7 @@ slots.create:magic.ai.vectorise
                            Authorization:x:@.token
                            Content-Type:application/json
                         payload
-                           model:x:@data.read/@data.read/*/*/vector_model
+                           model:x:@.vector-model
                            input:x:@.embedding
                         convert:true
 
@@ -161,15 +167,6 @@ slots.create:magic.ai.vectorise
                               and
                                  id.eq:x:@.dp/#/*/id
 
-                        // Updating index.
-                        data.execute:@"
-insert into vss_ml_training_snippets(rowid, embedding_vss)
-  select 
-    id as rowid,
-    embedding_vss
-  from ml_training_snippets where id = @id"
-                           id:x:@.dp/#/*/id
-
                         // Incrementing count.
                         math.increment:x:@.count
 
@@ -185,48 +182,59 @@ insert into vss_ml_training_snippets(rowid, embedding_vss)
             // Checking if we're done.
             if
                lt:x:@get-count
-                  .:int:50
+                  .:int:20
                .lambda
                   set-value:x:@.continue
                      .:bool:false
 
-         // Signaling frontend.
-         sockets.signal:magic.backend.message
-            roles:root
-            args
-               message:Done creating embeddings of your model
-               type:success
+      // Re-indexing database.
+      data.connect:[generic|magic]
 
-         // Signaling frontend.
-         strings.concat
-            .:"Done vectorising model "
-            get-value:x:@.arguments/*/type
-            .:" containing "
-            get-value:x:@.count
-            .:" training snippets"
-         unwrap:x:+/*/args/*/message
-         sockets.signal:magic.backend.chatbot
-            roles:root
-            args
-               message:x:@strings.concat
-               type:info
-         sockets.signal:magic.backend.chatbot
-            roles:root
-            args
-               message:Your machine learning model was successfully vectorised
-               type:success
+         data.execute:@"
+delete from vss_ml_training_snippets;
+insert into vss_ml_training_snippets(rowid, embedding_vss)
+select 
+ id as rowid,
+ embedding_vss
+from ml_training_snippets;"
 
-         // Basic logging.
-         log.info:Done with creating vectors for model
-            type:x:@.arguments/*/type
-            count:x:@.count
-            failed:x:@.failed
+      // Signaling frontend.
+      sockets.signal:magic.backend.message
+         roles:root
+         args
+            message:Done creating embeddings of your model
+            type:success
 
-         // Checking if we've got a callback, and if so, executing it.
-         if
-            exists:x:@.arguments/*/.onafter
-            .lambda
-               eval:x:@.arguments/*/.onafter
+      // Signaling frontend.
+      strings.concat
+         .:"Done vectorising model "
+         get-value:x:@.arguments/*/type
+         .:" containing "
+         get-value:x:@.count
+         .:" training snippets"
+      unwrap:x:+/*/args/*/message
+      sockets.signal:magic.backend.chatbot
+         roles:root
+         args
+            message:x:@strings.concat
+            type:info
+      sockets.signal:magic.backend.chatbot
+         roles:root
+         args
+            message:Your machine learning model was successfully vectorised
+            type:success
+
+      // Basic logging.
+      log.info:Done with creating vectors for model
+         type:x:@.arguments/*/type
+         count:x:@.count
+         failed:x:@.failed
+
+      // Checking if we've got a callback, and if so, executing it.
+      if
+         exists:x:@.arguments/*/.onafter
+         .lambda
+            eval:x:@.arguments/*/.onafter
 
    .catch
 
