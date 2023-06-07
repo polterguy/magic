@@ -167,6 +167,15 @@ slots.create:magic.ai.vectorise
                               and
                                  id.eq:x:@.dp/#/*/id
 
+                        // Updating index.
+                        data.execute:@"
+insert into vss_ml_training_snippets(rowid, embedding_vss)
+select 
+ id as rowid,
+ embedding_vss
+from ml_training_snippets where id = @id;"
+                           id:x:@.dp/#/*/id
+
                         // Incrementing count.
                         math.increment:x:@.count
 
@@ -186,17 +195,6 @@ slots.create:magic.ai.vectorise
                .lambda
                   set-value:x:@.continue
                      .:bool:false
-
-      // Re-indexing database.
-      data.connect:[generic|magic]
-
-         data.execute:@"
-delete from vss_ml_training_snippets;
-insert into vss_ml_training_snippets(rowid, embedding_vss)
-select 
- id as rowid,
- embedding_vss
-from ml_training_snippets;"
 
       // Signaling frontend.
       sockets.signal:magic.backend.message
