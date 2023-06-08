@@ -25,5 +25,4 @@ ENTRYPOINT ["dotnet", "backend.dll"]
 
 # Making sure we run apt-get to get necessary requirements for SQLite plugins
 RUN apt-get update
-RUN apt-get install libgomp1
-RUN apt-get -y install libatlas-base-dev
+RUN apt-get install -y libgomp1 libatlas-base-dev liblapack-dev
