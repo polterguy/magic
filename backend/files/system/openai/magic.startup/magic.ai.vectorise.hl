@@ -48,6 +48,7 @@ from ml_training_snippets where type = @type)"
       .continue:bool:true
       .failed:int:0
       .success:int:0
+      .id:long:0
       while:x:@.continue
 
          // Keeping connection open for only 20 iterations
@@ -64,8 +65,13 @@ from ml_training_snippets where type = @type)"
                   and
                      embedding_vss.eq
                      type.eq:x:@.arguments/*/type
+                     id.mt:x:@.id
                limit:20
-               order:created
+               order:id
+
+            // Making sure we start from the next unchecked snippet next iteration through [while].
+            set-value:x:@.id
+               get-value:x:@data.read/*/*/id
 
             // Looping through all records returned above.
             for-each:x:@data.read/*
