@@ -71,7 +71,7 @@ from ml_training_snippets where type = @type)"
 
             // Making sure we start from the next unchecked snippet next iteration through [while].
             set-value:x:@.id
-               get-value:x:@data.read/*/*/id
+               get-value:x:@data.read/*/*/id/0/-
 
             // Looping through all records returned above.
             for-each:x:@data.read/*
