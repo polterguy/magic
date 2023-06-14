@@ -114,7 +114,7 @@ try
             supervised:int:1
             cached:int:0
             use_embeddings:int:1
-            threshold:decimal:0.75
+            threshold:decimal:0.70
             vector_model:text-embedding-ada-002
             prefix:x:@.arguments/*/flavor
             greeting:Hi there, how can I help you?
