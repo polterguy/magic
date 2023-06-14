@@ -90,7 +90,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
     this.max_tokens = this.data?.max_tokens ?? 500;
     this.temperature = this.data?.temperature ?? 0.3;
     this.base_url = this.data?.base_url ?? '';
-    this.threshold = this.data?.threshold ?? 0.8;
+    this.threshold = this.data?.threshold ?? 0.7;
     this.recaptcha = this.data?.recaptcha ?? 0.3;
     if (this.data) {
       this.auth = this.data.auth?.split(',');
