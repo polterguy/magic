@@ -12,7 +12,7 @@ slots.create:magic.ai.vectorise
    try
 
       // Maximum number of times we retry OpenAI's API before giving up.
-      .retries:int:10
+      .retries:int:3
 
       // Getting OpenAI API token from configuration.
       .token
@@ -48,10 +48,9 @@ from ml_training_snippets where type = @type)"
       .continue:bool:true
       .failed:int:0
       .success:int:0
-      .idx:int:0
       while:x:@.continue
 
-         // Keeping connection open for only 50 iterations
+         // Keeping connection open for only 20 iterations
          data.connect:[generic|magic]
 
             // Selecting 20 snippets from type.
@@ -67,13 +66,9 @@ from ml_training_snippets where type = @type)"
                      type.eq:x:@.arguments/*/type
                limit:20
                order:created
-               offset:x:@.idx
 
             // Looping through all records returned above.
             for-each:x:@data.read/*
-
-               // Incrementing count.
-               math.increment:x:@.idx
 
                // Signaling frontend.
                strings.concat
@@ -128,7 +123,7 @@ from ml_training_snippets where type = @type)"
                               message:x:@http.post/*/content/*/error/*/message
                               error:x:@lambda2hyper
                            strings.concat
-                              .:"Could not create embeddings for '"
+                              .:"Could not create embeddings for, OpenAI failed '"
                               get-value:x:@.dp/#/*/prompt
                               .:"'"
                            unwrap:x:+/*/args/*/message
@@ -164,9 +159,13 @@ from ml_training_snippets where type = @type)"
                               sockets.signal:magic.backend.message
                                  roles:root
                                  args
-                                    message:x:@strings.concat
+                                    message:Aborting vectorisation
                                     type:error
-                              throw:Could not create embeddings for model
+                              log.error:Aborting vectorisation process
+                              
+                              // Aborting while loop.
+                              set-value:x:@.continue
+                                 .:bool:false
 
                      else
 
@@ -182,6 +181,10 @@ from ml_training_snippets where type = @type)"
 
                         // Incrementing count.
                         math.increment:x:@.success
+
+                        // Resetting retries
+                        set-value:x:@.retries
+                           .:int:10
 
                else
 
@@ -199,6 +202,8 @@ from ml_training_snippets where type = @type)"
                lt:x:@get-count
                   .:int:20
                .lambda
+
+                  // We're done vectorising model
                   set-value:x:@.continue
                      .:bool:false
 
@@ -206,10 +211,7 @@ from ml_training_snippets where type = @type)"
       data.connect:[generic|magic]
          data.execute:@"
 insert into vss_ml_training_snippets(rowid, embedding_vss)
-select 
- id as rowid,
- embedding_vss
-from ml_training_snippets where type = @type;"
+   select  id as rowid, embedding_vss from ml_training_snippets where type = @type"
             type:x:@.arguments/*/type
 
       // Signaling frontend.
