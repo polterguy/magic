@@ -98,8 +98,7 @@
             </span>
             <mat-select
               [(ngModel)]="flavor"
-              [disabled]="isLoading"
-              [disabled]="crawling"
+              [disabled]="isLoading || crawling"
               placeholder="Flavor"
               name="flavor">
               <mat-option
