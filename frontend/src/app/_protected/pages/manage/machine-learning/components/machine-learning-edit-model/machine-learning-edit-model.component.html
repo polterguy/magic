@@ -47,32 +47,7 @@
 
           <div class="row">
 
-            <div class="col-6">
-
-              <p class="mb-1 fw-bold">Prefix</p>
-
-              <mat-form-field class="w-100 custom-alignment standalone-field">
-                <span
-                  matPrefix
-                  matTooltip="Prefix inserted before all prompts"
-                  class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-                  <mat-icon>face</mat-icon>
-                  <span class="text-muted">|</span>
-                </span>
-                <textarea
-                  matInput
-                  placeholder="Prefix ..."
-                  [disabled]="isLoading"
-                  spellcheck="true"
-                  rows="3"
-                  [(ngModel)]="prefix"
-                  name="prefix">
-                </textarea>
-              </mat-form-field>
-
-            </div>
-
-            <div class="col-6">
+            <div class="col-4">
 
               <p class="mb-1 fw-bold">Greeting</p>
 
@@ -92,6 +67,56 @@
                   rows="3"
                   [(ngModel)]="greeting"
                   name="greeting">
+                </textarea>
+              </mat-form-field>
+
+            </div>
+
+            <div class="col-4">
+
+              <p class="mb-1 fw-bold">System message</p>
+
+              <mat-form-field class="w-100 custom-alignment standalone-field">
+                <span
+                  matPrefix
+                  matTooltip="System message to prime model with"
+                  class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+                  <mat-icon>face</mat-icon>
+                  <span class="text-muted">|</span>
+                </span>
+                <textarea
+                  matInput
+                  placeholder="System message ..."
+                  [disabled]="isLoading"
+                  spellcheck="true"
+                  rows="3"
+                  [(ngModel)]="system_message"
+                  name="system_message">
+                </textarea>
+              </mat-form-field>
+
+            </div>
+
+            <div class="col-4">
+
+              <p class="mb-1 fw-bold">Prefix</p>
+
+              <mat-form-field class="w-100 custom-alignment standalone-field">
+                <span
+                  matPrefix
+                  matTooltip="Prefix inserted before all prompts"
+                  class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+                  <mat-icon>face</mat-icon>
+                  <span class="text-muted">|</span>
+                </span>
+                <textarea
+                  matInput
+                  placeholder="Prefix ..."
+                  [disabled]="isLoading"
+                  spellcheck="true"
+                  rows="3"
+                  [(ngModel)]="prefix"
+                  name="prefix">
                 </textarea>
               </mat-form-field>
 

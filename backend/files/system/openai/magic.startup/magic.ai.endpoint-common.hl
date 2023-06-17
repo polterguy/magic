@@ -46,6 +46,7 @@ slots.create:magic.ai.endpoint-common
             webhook_outgoing
             webhook_incoming_url
             webhook_outgoing_url
+            system_message
          where
             and
                type.eq:x:@.arguments/*/type
@@ -79,6 +80,7 @@ slots.create:magic.ai.endpoint-common
                   webhook_outgoing
                   webhook_incoming_url
                   webhook_outgoing_url
+                  system_message
                where
                   and
                      type.eq:default

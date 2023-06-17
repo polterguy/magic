@@ -55,12 +55,32 @@ slots.create:magic.ai.chat
       exists:x:@signal/*/context
       .lambda
 
-         // Question triggered training data.
+         /*
+          * Question triggered training data.
+          *
+          * Checking if we've got a [system_message] value.
+          */
+         if
+            and
+               not-null:x:@.arguments/*/system_message
+               neq:x:@.arguments/*/system_message
+                  .:
+            .lambda
+
+               // Adding system message to [.session]
+               unwrap:x:+/*/*/*/content
+               add:x:@.session
+                  .
+                     .
+                        role:system
+                        content:x:@.arguments/*/system_message
+
+         // Then adding context to [.session]
          unwrap:x:+/*/*/*/content
          add:x:@.session
             .
                .
-                  role:user
+                  role:system
                   content:x:@signal/*/context
 
    else-if
@@ -81,6 +101,21 @@ slots.create:magic.ai.chat
                 */
                add:x:@.session
                   hyper2lambda:x:@cache.get
+
+         else-if
+            and
+               not-null:x:@.arguments/*/system_message
+               neq:x:@.arguments/*/system_message
+                  .:
+            .lambda
+
+               // No training data and no session, but we do have a system message.
+               unwrap:x:+/*/*/*/content
+               add:x:@.session
+                  .
+                     .
+                        role:system
+                        content:x:@.arguments/*/system_message
 
    // Checking if model is prefixed, at which point we prepend prefix to question.
    .only-prompt
@@ -139,10 +174,12 @@ slots.create:magic.ai.chat
 
          /*
           * Need to remove one of our previous messages to be able to have OpenAI return max_tokens.
-          * Notice, we make sure we always keep the first message, since it's the most important
+          * Notice, we make sure we always keep the first two messages, since it's the most important
           * part that was created when we initially found our context.
+          *
+          * The first message is possibly the system message, while the second message is the context.
           */
-         remove-nodes:x:@.session/1
+         remove-nodes:x:@.session/2
 
    // Retrieving token used to invoke OpenAI.
    .token
