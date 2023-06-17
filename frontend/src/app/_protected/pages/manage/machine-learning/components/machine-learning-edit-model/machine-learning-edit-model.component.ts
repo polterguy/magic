@@ -11,6 +11,7 @@ import { Role } from '../../../user-and-roles/_models/role.model';
 import { RoleService } from '../../../user-and-roles/_services/role.service';
 import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
 import { CommonRegEx } from 'src/app/_general/classes/common-regex';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 
 /**
  * Helper component to create or edit existing Machine Learning model.
@@ -50,6 +51,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
   vector_model: OpenAIModel = null;
   models: OpenAIModel[] = [];
   roles: Role[] = [];
+  modelsFetched: boolean = false;
   flavors: any[] = [
     {name: 'Sales Executive', prefix: 'Answer the following as if you are a Sales Executive in the subject: '},
     {name: 'The CEO', prefix: 'Answer the following as if you are the CEO of the company: '},
@@ -83,7 +85,6 @@ export class MachineLearningEditTypeComponent implements OnInit {
 
   ngOnInit() {
 
-    this.isLoading = true;
     this.type = this.data?.type;
     this.max_context_tokens = this.data?.max_context_tokens ?? 1000;
     this.max_request_tokens = this.data?.max_request_tokens ?? 100;
@@ -113,47 +114,16 @@ export class MachineLearningEditTypeComponent implements OnInit {
       this.twilio_account_id = '';
     }
 
+    this.isLoading = true;
     this.generalService.showLoading();
 
     this.roleService.list('?limit=-1').subscribe({
       next: (roles: Role[]) => {
 
         this.roles = roles;
+        this.generalService.hideLoading();
+        this.isLoading = false;
 
-        this.openAIService.models(this.api_key).subscribe({
-          next: (models: OpenAIModel[]) => {
-    
-            this.models = models;
-            this.models.sort((lhs: OpenAIModel, rhs: OpenAIModel) => {
-              if (lhs.id < rhs.id) {
-                return -1;
-              }
-              if (lhs.id > rhs.id) {
-                return 1;
-              }
-              return 0;
-            });
-
-            if (this.data?.model) {
-              this.model = this.models.filter(x => x.id === this.data.model)[0];
-            } else {
-              this.model = this.models.filter(x => x.id === 'gpt-3.5-turbo')[0];
-            }
-
-            if (this.data?.vector_model) {
-              this.vector_model = this.models.filter(x => x.id === this.data.vector_model)[0];
-            } else {
-              this.vector_model = this.models.filter(x => x.id === 'text-embedding-ada-002')[0];
-            }
-            this.generalService.hideLoading();
-            this.isLoading = false;
-          },
-          error: () => {
-    
-            this.generalService.showFeedback('Something went wrong as we tried to retrieve your models', 'errorMessage');
-            this.generalService.hideLoading();
-          }
-        });
       },
       error: () => {
 
@@ -163,11 +133,81 @@ export class MachineLearningEditTypeComponent implements OnInit {
     });
   }
 
+  onTabChanged (e: MatTabChangeEvent) {
+
+    if (e.index === 1 && !this.modelsFetched) {
+
+      this.isLoading = true;
+      this.generalService.showLoading();
+      this.getModels(); 
+    }
+  }
+
+  apiKeyChanged() {
+
+    this.getModels();
+  }
+
   flavorChanged() {
 
     this.prefix = this.flavor.prefix;
     setTimeout(() => this.flavor = null, 1);
     this.generalService.showFeedback('Flavor was changed', 'successMessage');
+  }
+
+  getModels() {
+
+    this.openAIService.models(this.api_key).subscribe({
+      next: (models: OpenAIModel[]) => {
+
+        this.models = models;
+        this.models.sort((lhs: OpenAIModel, rhs: OpenAIModel) => {
+          if (lhs.id < rhs.id) {
+            return -1;
+          }
+          if (lhs.id > rhs.id) {
+            return 1;
+          }
+          return 0;
+        });
+
+        if (this.data?.model) {
+          this.model = this.models.filter(x => x.id === this.data.model)[0];
+        } else {
+          this.model = this.models.filter(x => x.id === 'gpt-3.5-turbo')[0];
+        }
+
+        if (this.data?.vector_model) {
+          this.vector_model = this.models.filter(x => x.id === this.data.vector_model)[0];
+        } else {
+          this.vector_model = this.models.filter(x => x.id === 'text-embedding-ada-002')[0];
+        }
+
+        if (this.modelsFetched) {
+          this.generalService.showFeedback('Successfully updated your models based upon your new API key', 'successMessage');
+        }
+
+        this.generalService.hideLoading();
+        this.isLoading = false;
+        this.modelsFetched = true;
+
+      },
+      error: () => {
+
+        this.generalService.hideLoading();
+        this.isLoading = false;
+        this.modelsFetched = true;
+        this.models = [];
+
+        this.generalService.showFeedback(
+          'Something went wrong as we tried to retrieve your models, you probably supplied an invalid API key',
+          'errorMessage',
+          'Ok',
+          5000);
+
+        this.generalService.hideLoading();
+      }
+    });
   }
 
   modelChanged() {

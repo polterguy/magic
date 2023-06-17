@@ -11,6 +11,7 @@
       mat-stretch-tabs
       dynamicHeight
       animationDuration="0ms"
+      (selectedTabChange)="onTabChanged($event)"
       #tabs>
 
       <mat-tab>
@@ -280,6 +281,7 @@
                 <input
                   matInput
                   placeholder="API key ..."
+                  (input)="apiKeyChanged()"
                   [disabled]="isLoading"
                   [(ngModel)]="api_key"
                   name="api_key"
