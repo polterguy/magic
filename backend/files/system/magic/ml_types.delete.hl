@@ -14,6 +14,11 @@ validators.mandatory:x:@.arguments/*/type
 // Opening up our database connection.
 data.connect:[generic|magic]
 
+   // Deleting referenced rows in vss_ml_training_snippets
+   data.execute:@"delete from vss_ml_training_snippets where rowid in
+   (select id as rowid from ml_training_snippets where type = @type)"
+      type:x:@.arguments/*/type
+
    // Parametrising our delete invocation.
    add:x:./*/data.delete/*/where/*/and
       get-nodes:x:@.arguments/*

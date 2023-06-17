@@ -94,6 +94,9 @@ try
    // Buffer for training snippets.
    .snippets
 
+   // Primary h1 tag's content for URL.
+   .page-header
+
    // Buffer for URLs found in document.
    .urls
 
@@ -322,6 +325,16 @@ try
                .
                   .
                      prompt:x:@.prompt
+
+            // Checking if this is our H1 element.
+            if
+               eq:x:@get-name
+                  .:h1
+               .lambda
+
+                  // Storing H1 tag such that we can prefix all other prompts with its content.
+                  set-value:x:@.page-header
+                     get-value:x:@.prompt
 
          // Paragraphs becomes completions.
          case:p
@@ -575,11 +588,39 @@ try
                   strings.trim:x:@.dp/#/*/prompt
                      .:"  \r\n\t"
 
+               // Checking if we've got a [.page-header] value, at which point we prepend the prompt with its value.
+               if
+                  and
+                     not-null:x:@.page-header
+                     neq:x:@.page-header
+                        .:
+                  .lambda
+
+                     // We've got a [.page-header] value.
+                     set-value:x:@.prompt
+                        strings.concat
+                           get-value:x:@.page-header
+                           .:" - "
+                           get-value:x:@.prompt
+
                // Completion.
                .completion
                set-value:x:@.completion
                   strings.trim:x:@.dp/#/*/completion
                      .:"  \r\n\t"
+
+               // Adding URL to the bottom of the completion as a Markdown reference.
+               set-value:x:@.completion
+                  strings.concat
+                     get-value:x:@.completion
+                     .:"\r\n"
+                     .:"\r\n"
+                     .:"[Link to article about - "
+                     get-value:x:@.page-header
+                     .:]
+                     .:(
+                     get-value:x:@.arguments/*/url
+                     .:)
 
                /*
                 * Checking if we already have a similar training
