@@ -36,6 +36,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
   supervised: boolean = false;
   use_embeddings: boolean = false;
   prefix: string;
+  system_message: string;
   greeting: string;
   contact_us: string;
   lead_email: string;
@@ -100,6 +101,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
     this.use_embeddings = this.data?.use_embeddings === 1 ? true : (!this.data ? true : false);
     this.cached = this.data?.cached === 1 ? true : false;
     this.prefix = this.data?.prefix ?? '';
+    this.system_message = this.data?.system_message ?? '';
     this.greeting = this.data?.greeting ?? 'Hi there, how can I help you?';
     this.contact_us = this.data?.contact_us ?? '';
     this.lead_email = this.data?.lead_email ?? '';
@@ -279,12 +281,13 @@ export class MachineLearningEditTypeComponent implements OnInit {
       max_tokens: this.max_tokens,
       temperature: this.temperature,
       base_url: this.base_url,
-      model: this.model.id,
+      model: this.model?.id ?? this.data.model,
       supervised: this.supervised ? 1 : 0,
       recaptcha: this.recaptcha,
       auth: this.auth?.length > 0 ? this.auth.join(',') : null,
       cached: this.cached ? 1 : 0,
       prefix: this.prefix,
+      system_message: this.system_message,
       greeting: this.greeting,
       contact_us: this.contact_us,
       lead_email: this.lead_email,
