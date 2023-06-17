@@ -76,13 +76,23 @@ select vss.distance, vss.rowid as id, ts.prompt, ts.completion, ts.uri, ts.cache
     	inner join ml_training_snippets ts on ts.id = vss.rowid
    where vss_search(
      vss.embedding_vss,
-     vss_search_params(@embedding, 20)
+     vss_search_params(@embedding, 50)
    ) and vss.distance < @threshold"
          embedding:x:@floatArray2bytes
          type:x:@.arguments/*/type
          threshold:x:@math.subtract
       add:x:@.scan
          get-nodes:x:@data.select/*
+
+   // Measuring how much time we spent looping through snippets.
+   .time
+   set-value:x:@.time
+      math.subtract
+         date.now
+         get-value:x:@.begin
+   set-value:x:@.time
+      time.format:x:@.time
+         format:"ss\\.fff"
 
    /*
     * Checking if first snippet is cached, at which point we return ONLY that snippet.
@@ -104,6 +114,7 @@ select vss.distance, vss.rowid as id, ts.prompt, ts.completion, ts.uri, ts.cache
          unwrap:x:+/*
          return
             cached:x:@.scan/0/*/completion
+            db_time:x:@.time
 
    /*
     * Used to hold the referenced snippets used to create our context.
@@ -147,7 +158,8 @@ select vss.distance, vss.rowid as id, ts.prompt, ts.completion, ts.uri, ts.cache
           *
           * Notice, even if currently iterated snippet might overflow threshold,
           * it might be possible to add the NEXT snippet, with lower dot product score,
-          * if it is smaller.
+          * if it is smaller in size. Hence we continue through entire set instead of
+          * stopping once we've reached threshold.
           */
          if
             lt
@@ -180,7 +192,7 @@ select vss.distance, vss.rowid as id, ts.prompt, ts.completion, ts.uri, ts.cache
                            .
                               prompt:x:@.scan/0/*/prompt
                               uri:x:@.scan/0/*/uri
-                              dot:x:@.scan/0/*/dot
+                              distance:x:@.scan/0/*/distance
          else
 
             /*
@@ -198,16 +210,6 @@ select vss.distance, vss.rowid as id, ts.prompt, ts.completion, ts.uri, ts.cache
           * all 50 snippets we found above, and add "whatever it can add" to the context.
           */
          remove-nodes:x:@.scan/0
-
-   // Measuring how much time we spent looping through snippets.
-   .time
-   set-value:x:@.time
-      math.subtract
-         date.now
-         get-value:x:@.begin
-   set-value:x:@.time
-      time.format:x:@.time
-         format:"ss\\.fff"
 
    // Trimming [.context] before we return it to caller.
    set-value:x:@.context
