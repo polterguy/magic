@@ -17,12 +17,12 @@ import { CommonRegEx } from 'src/app/_general/classes/common-regex';
  */
 @Component({
   selector: 'app-machine-learning-edit-model',
-  templateUrl: './machine-learning-edit-model.component.html'
+  templateUrl: './machine-learning-edit-model.component.html',
+  styleUrls: ['./machine-learning-edit-model.component.scss']
 })
 export class MachineLearningEditTypeComponent implements OnInit {
 
   isLoading: boolean = false;
-  advanced: boolean = false;
   type: string = null;
   temperature: string = null;
   base_url: string = null;
@@ -109,7 +109,6 @@ export class MachineLearningEditTypeComponent implements OnInit {
     this.webhook_outgoing = this.data?.webhook_outgoing ?? '';
     this.webhook_incoming_url = this.data?.webhook_incoming_url ?? '';
     this.webhook_outgoing_url = this.data?.webhook_outgoing_url ?? '';
-    this.advanced = !!this.data;
     if (this.twilio_account_id == this.type) {
       this.twilio_account_id = '';
     }
