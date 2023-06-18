@@ -67,7 +67,7 @@
   z-index: 100001 !important;
   bottom: 10px !important;
   right: 10px !important;
-  width: 350px !important;
+  width: 450px !important;
   max-width: calc(100% - 20px) !important;
   background:linear-gradient(#38b6ff, #38b6ff) !important;
   border-radius: 23px !important;
@@ -104,7 +104,7 @@
   text-decoration: none !important;
 }
 .aista-chat-msg-container {
-  height: 300px !important;
+  height: 400px !important;
   margin: 0 0px !important;
   background-color: #fcfeff;
   border-radius: 0px !important;
@@ -192,6 +192,9 @@
 .aista-chat-answer pre {
   text-overflow: ellipsis;
   overflow: hidden;
+}
+.aista-chat-answer ol {
+  padding-left: 20px !important;
 }
 .aista-chat-answer ul {
   padding-left: 0 !important;
