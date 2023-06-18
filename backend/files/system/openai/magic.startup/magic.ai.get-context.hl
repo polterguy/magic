@@ -77,7 +77,7 @@ select vss.distance, vss.rowid as id, ts.prompt, ts.completion, ts.uri, ts.cache
    where vss_search(
      vss.embedding_vss,
      vss_search_params(@embedding, 50)
-   ) and vss.distance < @threshold"
+   ) and vss.distance < @threshold and ts.type = @type"
          embedding:x:@floatArray2bytes
          type:x:@.arguments/*/type
          threshold:x:@math.subtract
