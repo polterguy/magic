@@ -436,6 +436,33 @@ try
                      strings.trim:x:@.completion
                         .:"  \r\n\t"
 
+                  // Replacing all occurrencies of double space with single space.
+                  .has-double-space:bool:true
+                  while:x:@.has-double-space
+
+                     // Checking if we've got more double spaces in completion, and if not, stopping while loop.
+                     if
+                        strings.contains:x:@.completion
+                           .:"  "
+                        .lambda
+                           set-value:x:@.completion
+                              strings.replace:x:@.completion
+                                 .:"  "
+                                 .:" "
+                     else
+                        set-value:x:@.has-double-space
+                           .:bool:false
+
+                  // Cleaning up punctuation.
+                  set-value:x:@.completion
+                     strings.replace:x:@.completion
+                        .:" ."
+                        .:"."
+                  set-value:x:@.completion
+                     strings.replace:x:@.completion
+                        .:" ,"
+                        .:","
+
                   // Verifying that paragraph actually contained some content.
                   if
                      neq:x:@.completion
@@ -537,9 +564,6 @@ try
                               .
                                  completion:x:@.completion
 
-   // Buffer for summary.
-   .summary
-
    // Connecting to database.
    data.connect:[generic|magic]
 
@@ -600,7 +624,7 @@ try
                      set-value:x:@.prompt
                         strings.concat
                            get-value:x:@.page-header
-                           .:" - "
+                           .:". "
                            get-value:x:@.prompt
 
                // Completion.
@@ -608,19 +632,6 @@ try
                set-value:x:@.completion
                   strings.trim:x:@.dp/#/*/completion
                      .:"  \r\n\t"
-
-               // Adding URL to the bottom of the completion as a Markdown reference.
-               set-value:x:@.completion
-                  strings.concat
-                     get-value:x:@.completion
-                     .:"\r\n"
-                     .:"\r\n"
-                     .:"[Link to article about - "
-                     get-value:x:@.page-header
-                     .:]
-                     .:(
-                     get-value:x:@.arguments/*/url
-                     .:)
 
                /*
                 * Checking if we already have a similar training
@@ -632,7 +643,6 @@ try
                      id
                   where
                      and
-                        prompt.eq:x:@.prompt
                         completion.eq:x:@.completion
                         type.eq:x:@.arguments/*/type
                   limit:1
@@ -744,84 +754,10 @@ try
                            type:x:@.arguments/*/type
                            uri:x:@.arguments/*/url
 
-                     // Checking if this is first iteration.
-                     if
-                        not-exists:x:@.summary/*
-                        .lambda
-
-                           // Creating our initial summary.
-                           unwrap:x:+/*/*
-                           add:x:@.summary
-                              .
-                                 prompt:x:@.prompt
-                                 completion:x:@.completion
-
-                     else
-
-                        // Concatenating into [.summary].
-                        set-value:x:@.summary/*/completion
-                           strings.concat
-                              get-value:x:@.summary/*/completion
-                              .:"\r\n\r\n"
-                              get-value:x:@.prompt
-                              .:"\r\n\r\n"
-                              get-value:x:@.completion
-
-      /*
-       * Verifying we have a summary, and if so, inserting it.
-       *
-       * Notice, if page only has one Hx tag, it will produce only OHE snippet,
-       * which of course will be the exact same as the summary, so we verify
-       * that summary doesn't exist in [.snippets] as an exact match before
-       * inserting summary.
-       */
-      if
-         and
-            exists:x:@.summary/*
-            not-exists:x:@.snippets/*/*/prompt/={@.summary/*/prompt}
-            not-exists:x:@.snippets/*/*/completion/={@.summary/*/completion}
-         .lambda
-
-            /*
-             * Checking if we already have a similar training
-             * snippet in our database, at which point we ignore it.
-             *
-             * Notice, in theory summary might exist from before if site
-             * contains duplicated content.
-             */
-            data.read
-               table:ml_training_snippets
-               columns
-                  id
-               where
-                  and
-                     prompt.eq:x:@.summary/*/prompt
-                     completion.eq:x:@.summary/*/completion
-                     type.eq:x:@.arguments/*/type
-               limit:1
-            if
-               not-exists:x:@data.read/*
-               .lambda
-
-                  // Checking if we can create training snippet.
-                  add:x:+
-                     get-nodes:x:@.arguments/*/type
-                  try-signal:magic.ai.can-create-snippet
-
-                  // Inserting summary prompt and completion.
-                  data.create
-                     table:ml_training_snippets
-                     values
-                        prompt:x:@.summary/*/prompt
-                        completion:x:@.summary/*/completion
-                        type:x:@.arguments/*/type
-                        uri:x:@.arguments/*/url
-
    // Preserving some memory.
    remove-nodes:x:@http.get/*
    remove-nodes:x:@html2lambda/*
    remove-nodes:x:@.snippets/*
-   remove-nodes:x:@.summary/*
 
    // Decrementing max argument, and checking if we've reached limit.
    math.decrement:x:@.arguments/*/max

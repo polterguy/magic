@@ -4,6 +4,7 @@
  */
 .arguments
    url:string
+   model:string
    flavor:string
    max:int
    autocrawl:bool
@@ -32,6 +33,7 @@ set-value:x:@.arguments/*/url
    strings.to-lower:x:@.arguments/*/url
 
 // Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/model
 validators.mandatory:x:@.arguments/*/url
 validators.url:x:@.arguments/*/url
 
@@ -47,6 +49,18 @@ log.info:Crawling URL to generate OpenAI training data for a chatbot
 
 // Making sure we trap exceptions.
 try
+
+   // Informing client what model we're using to generate chatbot.
+   strings.concat
+      .:"Creating AINIRO machine learning model using "
+      get-value:x:@.arguments/*/model
+      .:" as our OpenAI base model"
+   unwrap:x:+/*/args/**
+   sockets.signal:magic.backend.chatbot
+      roles:root
+      args
+         message:x:@strings.concat
+         type:info
 
    // Informing client that we've successfully started crawling.
    strings.concat
@@ -105,7 +119,7 @@ try
          table:ml_types
          values
             type:x:@.type
-            model:gpt-3.5-turbo
+            model:x:@.arguments/*/model
             max_tokens:int:500
             max_context_tokens:int:2000
             max_request_tokens:int:100

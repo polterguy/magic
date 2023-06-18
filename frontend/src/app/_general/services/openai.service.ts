@@ -167,10 +167,11 @@ export class OpenAIService {
   /**
    * Creates a new bot 100% automatically from the specified URL.
    */
-  createBot(url: string, flavor: string = null, max: number = null, autocrawl: boolean = null) {
+  createBot(url: string, model: String, flavor: string = null, max: number = null, autocrawl: boolean = null) {
 
     const args: any = {
       url: url,
+      model: model,
     };
     if (flavor) {
       args.flavor = flavor;
