@@ -65,7 +65,7 @@
   z-index: 100001 !important;
   bottom: 10px !important;
   right: 10px !important;
-  width: 350px !important;
+  width: 450px !important;
   max-width: calc(100% - 20px) !important;
   background:linear-gradient(#fafafa, #e0e0e0) !important;
   border-radius: 4px !important;
@@ -103,7 +103,7 @@
   text-decoration: none !important;
 }
 .aista-chat-msg-container {
-  height: 300px !important;
+  height: 400px !important;
   margin: 0 10px !important;
   background:linear-gradient(#eaeaea, #fafafa) !important;
   border-radius: 4px !important;

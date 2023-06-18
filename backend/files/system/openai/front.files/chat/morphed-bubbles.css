@@ -107,7 +107,7 @@
   text-decoration: none !important;
 }
 .aista-chat-msg-container {
-  height: 300px !important;
+  height: 400px !important;
   margin: 0 10px !important;
   background-color: rgb(230, 231, 238) !important;
   border-radius: 10px !important;
@@ -194,6 +194,9 @@
 .aista-chat-answer pre {
   text-overflow: ellipsis;
   overflow: hidden;
+}
+.aista-chat-answer ol {
+  padding-left: 20px !important;
 }
 .aista-chat-answer ul {
   padding-left: 20px !important;
