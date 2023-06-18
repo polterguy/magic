@@ -173,12 +173,13 @@
 .aista-chat-answer.cached {
   color: unset !important;
 }
-.aista-chat-answer p:first-child,
-.aista-chat-answer p:last-child {
+.aista-chat-answer p:first-child  {
   margin-top:0 !important;
+}
+.aista-chat-answer p:last-child {
   margin-bottom:0 !important;
 }
-.aista-chat-answer p img {
+.aista-chat-answer p img:not(.emoji) {
   display: block !important;
   width: calc(100% - 20px) !important;
   margin-left: 10px !important;
