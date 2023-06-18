@@ -64,9 +64,21 @@ fetch('[[url]]/magic/system/misc/gibberish?min=20&max=30', {
 
 // Downloading ShowdownJS to be able to parse Markdown.
 if (aistaChatMarkdown) {
+
+  // Including ShowdownJS.
   const showdownJS = window.document.createElement('script');
   showdownJS.src = 'https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js';
   window.document.getElementsByTagName('head')[0].appendChild(showdownJS);
+
+  // Including HighlightJS.
+  const highlightJS = window.document.createElement('script');
+  highlightJS.src = 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.7.0/build/highlight.min.js';
+  window.document.getElementsByTagName('head')[0].appendChild(highlightJS);
+
+  const highlightJSCSS = window.document.createElement('link');
+  highlightJSCSS.href = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css';
+  highlightJSCSS.rel = 'stylesheet';
+  window.document.getElementsByTagName('head')[0].appendChild(highlightJSCSS);
 }
 
 
@@ -312,6 +324,9 @@ function aista_invoke_prompt(msg, token, speech) {
           for (const idxImg of images) {
             idxImg.addEventListener('click', () => aista_zoom_image(idxImg));
           }
+          row.querySelectorAll('pre code').forEach((el) => {
+            hljs.highlightElement(el);
+          });
         } else {
           row.innerText = data.result;
         }
