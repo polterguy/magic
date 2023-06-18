@@ -6,7 +6,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { BackendService } from 'src/app/_general/services/backend.service';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { OpenAIService } from 'src/app/_general/services/openai.service';
+import { OpenAIModel, OpenAIService } from 'src/app/_general/services/openai.service';
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
 import { MagicResponse } from 'src/app/_general/models/magic-response.model';
 import { MachineLearningEmbedUiComponent } from '../../manage/machine-learning/components/machine-learning-embed-ui/machine-learning-embed-ui.component';
@@ -29,6 +29,7 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
   isLoading: boolean = true;
   configured: boolean = false;
   hasApiKey: boolean = false;
+  apiKey: string = null;
   hasReCaptcha: boolean = false;
   reCaptcha: any = null;
   isSaving: boolean = false;
@@ -39,6 +40,8 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
   messages: any[] = [];
   doneCreatingBot: boolean = false;
   model: string = '';
+  chat_model: OpenAIModel = null;
+  chat_models: OpenAIModel[] = [];
   flavors: any[] = [
     {
       name: 'Sales Executive',
@@ -129,14 +132,14 @@ in the context, answer "Take me to your leader!"`
 
         this.hasApiKey = apiKey.result?.length > 0;
 
+        this.apiKey = apiKey.result;
+
         this.backendService.getReCaptchaKeySecret().subscribe({
           next: (reCaptcha: any) => {
-
-            this.generalService.hideLoading();
-            this.isLoading = false;
             this.hasReCaptcha = reCaptcha.key?.length > 0 && reCaptcha.secret?.length > 0;
             this.configured = this.hasApiKey && this.hasReCaptcha;
             this.reCaptcha = reCaptcha;
+            this.flavor = this.flavors[0];
 
             if (!this.hasApiKey) {
 
@@ -146,23 +149,58 @@ in the context, answer "Take me to your leader!"`
 
               this.manageCAPTCHA();
 
+            } else {
+
+              this.getModels();
             }
           },
           error: () => {
 
             this.generalService.hideLoading();
-            this.generalService.showFeedback('Something went wrong as we tried to check if OpenAI API key is configured', 'errorMessage');
             this.isLoading = false;
+            this.generalService.showFeedback('Something went wrong as we tried to check if OpenAI API key is configured', 'errorMessage');
           }
         });
-        this.generalService.hideLoading();
-        this.isLoading = false;
       },
       error: () => {
 
         this.generalService.hideLoading();
         this.generalService.showFeedback('Something went wrong as we tried to check if OpenAI API key is configured', 'errorMessage');
         this.isLoading = false;
+      }
+    });
+  }
+
+  getModels() {
+
+    this.openAIService.models(this.apiKey).subscribe({
+      next: (models: OpenAIModel[]) => {
+
+        this.chat_models = models;
+        this.chat_models = this.chat_models.filter((idx: OpenAIModel) => idx.id.startsWith('gpt'));
+        let defModel = this.chat_models.filter(x => x.id === 'gpt-4');
+
+        if (defModel.length > 0) {
+
+          this.chat_model = defModel[0];
+        } else {
+
+          this.chat_model = this.chat_models.filter(x => x.id === 'gpt-3.5-turbo')[0];
+        }
+
+        this.generalService.hideLoading();
+        this.isLoading = false;
+      },
+      error: () => {
+
+        this.generalService.hideLoading();
+        this.isLoading = false;
+
+        this.generalService.showFeedback(
+          'Something went wrong as we tried to retrieve your models',
+          'errorMessage',
+          'Ok',
+          5000);
       }
     });
   }
@@ -240,7 +278,12 @@ in the context, answer "Take me to your leader!"`
 
     this.hubConnection.start().then(() => {
 
-      this.openAIService.createBot(this.url, this.flavor?.prefix ?? '', this.max, this.autocrawl).subscribe({
+      this.openAIService.createBot(
+        this.url,
+        this.chat_model.id,
+        this.flavor?.prefix ?? '',
+        this.max,
+        this.autocrawl).subscribe({
         next: (result: MagicResponse) => {
   
           this.model = result.result;
@@ -299,7 +342,12 @@ in the context, answer "Take me to your leader!"`
           this.configured = this.hasReCaptcha;
 
           if (!this.hasReCaptcha) {
+
             this.manageCAPTCHA();
+
+          } else {
+
+            this.getModels();
           }
         }
       });
@@ -319,21 +367,30 @@ in the context, answer "Take me to your leader!"`
 
         if (result) {
 
+          this.generalService.showLoading();
+          this.isLoading = true;
           this.backendService.setReCaptchaKeySecret(result.key, result.secret).subscribe({
             next: () => {
 
               this.generalService.hideLoading();
+              this.isLoading = false;
               this.generalService.showFeedback('reCAPTCHA settings successfully save', 'successMessage');
               this.hasReCaptcha = true;
               this.configured = this.hasApiKey;
 
               if (!this.hasApiKey) {
+
                 this.manageOpenAI();
+
+              } else {
+
+                this.getModels();
               }
             },
             error: () => {
 
               this.generalService.hideLoading();
+              this.isLoading = false;
               this.generalService.showFeedback('Something went wrong as we tried to check if OpenAI API key is configured', 'errorMessage');
               this.isLoading = false;
             }

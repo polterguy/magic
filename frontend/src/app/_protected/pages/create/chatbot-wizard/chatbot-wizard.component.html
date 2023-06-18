@@ -46,7 +46,7 @@
 
       </div>
 
-      <div class="col-md-9 col-12">
+      <div class="col-12">
 
         <div class="d-flex justify-content-md-between align-items-md-center align-items-end flex-md-row w-100">
 
@@ -66,6 +66,36 @@
               [disabled]="crawling"
               [(ngModel)]="url"
               autocomplete="off">
+          </mat-form-field>
+
+          <mat-form-field class="w-100 standalone-field ms-2">
+            <span
+              matPrefix
+              matTooltip="Completion model to use to generate response"
+              class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+              <mat-icon>help_outline</mat-icon>
+              <span class="text-muted">|</span>
+            </span>
+            <mat-select
+              [(ngModel)]="chat_model"
+              [disabled]="crawling"
+              placeholder="Completion model ..."
+              name="chat_model">
+              <mat-select-trigger>
+                {{chat_model?.id}}
+              </mat-select-trigger>
+              <mat-option
+                class="multiline-mat-option"
+                *ngFor="let idx of chat_models"
+                [value]="idx">
+                <span class="d-block name-line" #typeName>
+                  {{idx.id}}
+                </span>
+                <span class="d-block description-line">
+                  Owned by {{idx.owned_by}}
+                </span>
+              </mat-option>
+            </mat-select>
           </mat-form-field>
 
           <mat-form-field class="w-100 standalone-field ms-2">
