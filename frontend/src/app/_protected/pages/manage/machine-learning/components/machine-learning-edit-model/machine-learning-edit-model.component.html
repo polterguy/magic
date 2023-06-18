@@ -55,7 +55,7 @@
 
               <p class="mb-1 fw-bold">Website</p>
 
-              <mat-form-field class="w-100 standalone-field">
+              <mat-form-field class="w-100 standalone-field mb-3">
                 <span
                   matPrefix
                   matTooltip="Website to periodically scrape for new pages"
@@ -78,7 +78,7 @@
 
               <p class="mb-1 fw-bold">Flavor</p>
 
-              <mat-form-field class="w-100 standalone-field">
+              <mat-form-field class="w-100 standalone-field mb-3">
                 <span
                   matPrefix
                   matTooltip="Flavor, or pre-defined prefix to use for all questions"
@@ -108,38 +108,9 @@
 
             <div class="col-12">
 
-              <p class="mb-1 fw-bold">Greeting</p>
-
-              <mat-form-field class="w-100 custom-alignment standalone-field">
-                <span
-                  matPrefix
-                  matTooltip="Greeting to welcome user with"
-                  class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-                  <mat-icon>edit</mat-icon>
-                  <span class="text-muted">|</span>
-                </span>
-                <textarea
-                  matInput
-                  placeholder="Greeting ..."
-                  [disabled]="isLoading"
-                  spellcheck="true"
-                  rows="3"
-                  [(ngModel)]="greeting"
-                  name="greeting">
-                </textarea>
-              </mat-form-field>
-
-            </div>
-
-          </div>
-
-          <div class="row">
-
-            <div class="col-6">
-
               <p class="mb-1 fw-bold">System message</p>
 
-              <mat-form-field class="w-100 custom-alignment standalone-field">
+              <mat-form-field class="w-100 custom-alignment standalone-field mb-3">
                 <span
                   matPrefix
                   matTooltip="System message to prime model with"
@@ -152,9 +123,38 @@
                   placeholder="System message ..."
                   [disabled]="isLoading"
                   spellcheck="true"
-                  rows="3"
+                  rows="5"
                   [(ngModel)]="system_message"
                   name="system_message">
+                </textarea>
+              </mat-form-field>
+
+            </div>
+
+          </div>
+
+          <div class="row">
+
+            <div class="col-6">
+
+              <p class="mb-1 fw-bold">Greeting</p>
+
+              <mat-form-field class="w-100 custom-alignment standalone-field mb-3">
+                <span
+                  matPrefix
+                  matTooltip="Greeting to welcome user with"
+                  class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+                  <mat-icon>edit</mat-icon>
+                  <span class="text-muted">|</span>
+                </span>
+                <textarea
+                  matInput
+                  placeholder="Greeting ..."
+                  [disabled]="isLoading"
+                  spellcheck="true"
+                  rows="2"
+                  [(ngModel)]="greeting"
+                  name="greeting">
                 </textarea>
               </mat-form-field>
 
@@ -164,7 +164,7 @@
 
               <p class="mb-1 fw-bold">Prefix</p>
 
-              <mat-form-field class="w-100 custom-alignment standalone-field">
+              <mat-form-field class="w-100 custom-alignment standalone-field mb-3">
                 <span
                   matPrefix
                   matTooltip="Prefix inserted before all prompts"
@@ -177,7 +177,7 @@
                   placeholder="Prefix ..."
                   [disabled]="isLoading"
                   spellcheck="true"
-                  rows="3"
+                  rows="2"
                   [(ngModel)]="prefix"
                   name="prefix">
                 </textarea>
@@ -189,7 +189,7 @@
 
           <div class="row">
 
-            <div class="col-6 mt-3">
+            <div class="col-6">
 
               <p class="mb-1 fw-bold">Authorisation</p>
 
