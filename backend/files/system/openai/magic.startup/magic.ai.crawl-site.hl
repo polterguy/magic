@@ -100,7 +100,7 @@ slots.create:magic.ai.crawl-site
             headers
                User-Agent:AINIRO-MachineLearning-Spider
 
-         // Checking if sitemap exists and is valid sitemap.
+         // Checking if sitemap exists and is a valid sitemap.
          if
             and
                mte:x:@http.get
@@ -316,7 +316,7 @@ slots.create:magic.ai.crawl-site
                      strings.concat
                         .:"Warning, the site contains more than "
                         get-value:x:@.arguments/*/max
-                        .:" pages, and will only be PARTIALLY scraped!"
+                        .:" pages, and will only be partially scraped!"
                      unwrap:x:+/*/args/*/message
                      sockets.signal:magic.backend.chatbot
                         roles:root
@@ -359,17 +359,6 @@ slots.create:magic.ai.crawl-site
                         lt:x:@.no
                            get-value:x:@.arguments/*/max
                      .lambda
-
-                        // Informing frontend of what we're doing
-                        strings.concat
-                           .:"Crawling "
-                           get-value:x:@.dp/#
-                        unwrap:x:+/*/args/*
-                        sockets.signal:magic.backend.chatbot
-                           roles:root
-                           args
-                              message:x:@strings.concat
-                              type:info
 
                         /*
                          * Invoking crawl implementation file, now with explicit list of links,
@@ -414,7 +403,7 @@ slots.create:magic.ai.crawl-site
                roles:root
                args
                   message:Could not successfully find or load a sitemap
-                  type:info
+                  type:warning
             add:x:./*/io.file.execute
                get-nodes:x:@.arguments/*
             io.file.execute:/system/openai/crawl.implementation/import-url.hl
