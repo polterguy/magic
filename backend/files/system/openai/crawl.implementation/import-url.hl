@@ -16,6 +16,17 @@ set-value:x:@.base
       .:"://"
       get-value:x:@strings.split/0
 
+// Informing frontend of what we're doing
+strings.concat
+   .:"Crawling "
+   get-value:x:@.arguments/*/url
+unwrap:x:+/*/args/*
+sockets.signal:magic.backend.chatbot
+   roles:root
+   args
+      message:x:@strings.concat
+      type:info
+
 // Ensuring [summarize] defaults to true.
 validators.default:x:@.arguments
    summarize:bool:true
@@ -783,23 +794,68 @@ try
     */
    if:x:@.arguments/*/crawl
 
+      // Sorting URLs by length, which typically makes sure more important URLs are prioritised.
+      sort:x:@.urls/*
+         if
+            lt
+               strings.length:x:@.lhs/#
+               strings.length:x:@.rhs/#
+            .lambda
+               set-value:x:@.result
+                  .:int:-1
+         else-if
+            mt
+               strings.length:x:@.lhs/#
+               strings.length:x:@.rhs/#
+            .lambda
+               set-value:x:@.result
+                  .:int:1
+         else
+            set-value:x:@.result
+               .:int:0
+      remove-nodes:x:@.urls/*
+      add:x:@.urls
+         get-nodes:x:@sort/*
+
       // Looping through all URLs found in document.
       for-each:x:@.urls/*
 
-         // Crawling next URL.
-         unwrap:x:+/*
-         io.file.execute:/system/openai/crawl.implementation/import-url.hl
-            url:x:@.dp/#
-            type:x:@.arguments/*/type
-            delay:x:@.arguments/*/delay
-            max:x:@.arguments/*/max
+         // Verifying URL doesn't already exist in model.
+         .exists:bool:false
+         data.connect:[generic|magic]
+            data.read
+               table:ml_training_snippets
+               columns
+                  id
+               where
+                  and
+                     type.eq:x:@.arguments/*/type
+                     uri.eq:x:@.dp/#
+            set-value:x:@.exists
+               exists:x:@data.read/*
+
+         // Crawling next URL unless it already exists in model.
          if
-            eq:x:@io.file.execute
+            eq:x:@.exists
                .:bool:false
             .lambda
+               add:x:./*/io.file.execute
+                  get-nodes:x:@.arguments/*/type
+                  get-nodes:x:@.arguments/*/delay
+                  get-nodes:x:@.arguments/*/max
+                  get-nodes:x:@.arguments/*/crawl
+                  get-nodes:x:@.arguments/*/threshold
+                  get-nodes:x:@.arguments/*/summarize
+               unwrap:x:+/*/url
+               io.file.execute:/system/openai/crawl.implementation/import-url.hl
+                  url:x:@.dp/#
+               if
+                  eq:x:@io.file.execute
+                     .:bool:false
+                  .lambda
 
-               // Reached max value and we should stop crawling URLs.
-               return:bool:false
+                     // Reached max value and we should stop crawling URLs.
+                     return:bool:false
 
    // Returning continue flag to caller.
    return:bool:true
