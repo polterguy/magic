@@ -43,6 +43,9 @@ data.connect:[generic|magic]
       where
          and
 
+   data.execute:delete from vss_ml_training_snippets where rowid = @id
+      id:x:@.arguments/*/id
+
    // Returning result of above invocation to caller.
    unwrap:x:+/*
    return
