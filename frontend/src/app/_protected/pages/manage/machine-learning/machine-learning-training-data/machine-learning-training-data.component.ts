@@ -114,7 +114,7 @@ export class MachineLearningTrainingDataComponent implements OnInit {
 
         if (result) {
 
-          this.openAiService.importPage(result, this.type, 150).subscribe({
+          this.openAiService.importPage(result, this.type, 50).subscribe({
             next: () => {
 
               this.generalService.hideLoading();

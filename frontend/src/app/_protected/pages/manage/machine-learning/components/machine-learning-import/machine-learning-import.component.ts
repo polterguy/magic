@@ -28,7 +28,7 @@ export class MachineLearningImportComponent {
   prompt: string = 'prompt';
   completion: string = 'completion';
   advanced: boolean = false;
-  threshold: number = 150;
+  threshold: number = 50;
   uploadIndex: number = 0;
   uploadCount: number = 0;
   files: FileList = null;
