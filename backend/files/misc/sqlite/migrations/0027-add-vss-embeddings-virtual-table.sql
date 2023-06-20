@@ -1,5 +1,4 @@
 
 create virtual table vss_ml_training_snippets using vss0(
-  embedding_vss(768) factory="PCA2,Flat,IDMap2",
-  constraint vss_ml_training_snippets_ml_training_snippets_fky foreign key (rowid) references ml_training_snippets (id) on delete cascade
+  embedding_vss(1536)
 );
