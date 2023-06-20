@@ -34,7 +34,7 @@ data.connect:[generic|magic]
          remove-nodes:x:@data.connect/*/data.read/*/where/*/and/*/or
          remove-nodes:x:@data.connect/*/data.delete/*/where/*/and/*/or
 
-   // Reading items from database such that we can delete file associated with items.
+   // Reading items from database such that we can delete files associated with items.
    data.read
       table:ml_training_snippets
       columns
@@ -43,6 +43,7 @@ data.connect:[generic|magic]
          and
             filename.neq
             or
+      limit:-1
    for-each:x:@data.read/*
       if
          and
@@ -51,7 +52,33 @@ data.connect:[generic|magic]
          .lambda
             io.file.delete:x:@.dp/#/*/filename
 
-   // Deleting item from database.
+   /*
+    * Generating select statement for records we're deleting since we need
+    * to use it as input to deletion from vss shadow table.
+    */
+   data.read
+      generate:true
+      table:ml_training_snippets
+      columns
+         id
+            as:rowid
+      where
+         and
+            or
+      limit:-1
+   .sql
+
+   // Deleting records from vss shadow table.
+   set-value:x:@.sql
+      strings.concat
+         .:delete from vss_ml_training_snippets where rowid in(
+         get-value:x:@data.read
+         .:)
+   add:x:./*/data.execute
+      get-nodes:x:@data.read/*
+   data.execute:x:@.sql
+
+   // Finally, deleting ml_training_snippets item from database.
    data.delete
       table:ml_training_snippets
       where
