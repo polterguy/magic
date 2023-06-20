@@ -341,6 +341,7 @@
   margin: 0 !important;
 }
 .aista-chat-prompt {
+  font-size: 16px !important;
   padding: 10px !important;
   border: solid 0px rgba(0,0,0,.2) !important;
   outline: none !important;
