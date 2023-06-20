@@ -107,6 +107,12 @@ try
 
    // Primary h1 tag's content for URL.
    .page-header
+      h1
+      h2
+      h3
+      h4
+      h5
+      h6
 
    // Buffer for URLs found in document.
    .urls
@@ -330,22 +336,68 @@ try
                strings.trim:x:@.prompt
                   .:" "
 
+            // Semantically storing Hx elements.
+            switch:x:@get-name
+               case:h1
+                  set-value:x:@.page-header/*/h1
+                     get-value:x:@.prompt
+                  set-value:x:@.page-header/*/h2
+                  set-value:x:@.page-header/*/h3
+                  set-value:x:@.page-header/*/h4
+                  set-value:x:@.page-header/*/h5
+                  set-value:x:@.page-header/*/h6
+               case:h2
+                  set-value:x:@.page-header/*/h2
+                     get-value:x:@.prompt
+                  set-value:x:@.page-header/*/h3
+                  set-value:x:@.page-header/*/h4
+                  set-value:x:@.page-header/*/h5
+                  set-value:x:@.page-header/*/h6
+               case:h3
+                  set-value:x:@.page-header/*/h3
+                     get-value:x:@.prompt
+                  set-value:x:@.page-header/*/h4
+                  set-value:x:@.page-header/*/h5
+                  set-value:x:@.page-header/*/h6
+               case:h4
+                  set-value:x:@.page-header/*/h4
+                     get-value:x:@.prompt
+                  set-value:x:@.page-header/*/h5
+                  set-value:x:@.page-header/*/h6
+               case:h5
+                  set-value:x:@.page-header/*/h5
+                     get-value:x:@.prompt
+                  set-value:x:@.page-header/*/h6
+               case:h6
+                  set-value:x:@.page-header/*/h6
+                     get-value:x:@.prompt
+
+            // Now creating prompt semantically by concatenating relevant Hx tags.
+            set-value:x:@.prompt
+               strings.concat
+                  get-value:x:@.page-header/*/h1
+                  .:" "
+                  get-value:x:@.page-header/*/h2
+                  .:" "
+                  get-value:x:@.page-header/*/h3
+                  .:" "
+                  get-value:x:@.page-header/*/h4
+                  .:" "
+                  get-value:x:@.page-header/*/h5
+                  .:" "
+                  get-value:x:@.page-header/*/h6
+                  .:" "
+            set-value:x:@.prompt
+               strings.replace:x:@.prompt
+                  .:"  "
+                  .:" "
+
             // Adding new prompt to [.snippets] collection.
             unwrap:x:+/*/*/*
             add:x:@.snippets
                .
                   .
                      prompt:x:@.prompt
-
-            // Checking if this is our H1 element.
-            if
-               eq:x:@get-name
-                  .:h1
-               .lambda
-
-                  // Storing H1 tag such that we can prefix all other prompts with its content.
-                  set-value:x:@.page-header
-                     get-value:x:@.prompt
 
          // Paragraphs becomes completions.
          case:p
@@ -622,21 +674,6 @@ try
                set-value:x:@.prompt
                   strings.trim:x:@.dp/#/*/prompt
                      .:"  \r\n\t"
-
-               // Checking if we've got a [.page-header] value, at which point we prepend the prompt with its value.
-               if
-                  and
-                     not-null:x:@.page-header
-                     neq:x:@.page-header
-                        .:
-                  .lambda
-
-                     // We've got a [.page-header] value.
-                     set-value:x:@.prompt
-                        strings.concat
-                           get-value:x:@.page-header
-                           .:". "
-                           get-value:x:@.prompt
 
                // Completion.
                .completion
