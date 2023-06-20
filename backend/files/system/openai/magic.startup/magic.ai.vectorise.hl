@@ -213,12 +213,7 @@ from ml_training_snippets where type = @type)"
                   set-value:x:@.continue
                      .:bool:false
 
-      // Re-indexing model
-      data.connect:[generic|magic]
-         data.execute:@"
-insert into vss_ml_training_snippets(operation, embedding_vss)
-   select ""training"", embedding_vss from ml_training_snippets where type = @type and embedding_vss is not null"
-            type:x:@.arguments/*/type
+      // Inserting vectors into virtual VSS table.
       data.connect:[generic|magic]
          data.execute:@"
 insert into vss_ml_training_snippets(rowid, embedding_vss)
