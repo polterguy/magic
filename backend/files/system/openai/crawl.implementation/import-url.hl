@@ -383,9 +383,9 @@ try
                   .lambda
                      set-value:x:@.prompt
                         strings.concat
-                           get-value:x:@.prompt
                            get-value:x:@.dp/#
                            .:" - "
+                           get-value:x:@.prompt
             set-value:x:@.prompt
                strings.replace:x:@.prompt
                   .:"  "
