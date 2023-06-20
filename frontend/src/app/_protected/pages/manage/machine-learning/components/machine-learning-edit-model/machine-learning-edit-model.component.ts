@@ -171,6 +171,10 @@ in the context, answer "Take me to your leader!"`
       this.twilio_account_id = '';
     }
 
+    this.model = {
+      id: 'gpt-3.5-turbo',
+    };
+
     this.isLoading = true;
     this.generalService.showLoading();
 
