@@ -16,9 +16,9 @@ import { PromptResponse } from '../models/prompt-response.model';
  */
 export class OpenAIModel {
   id: string;
-  created: number;
-  owned_by: string;
-  parent: string;
+  created?: number;
+  owned_by?: string;
+  parent?: string;
 }
 
 /**

@@ -374,23 +374,25 @@ try
 
             // Now creating prompt semantically by concatenating relevant Hx tags.
             set-value:x:@.prompt
-               strings.concat
-                  get-value:x:@.page-header/*/h1
-                  .:" "
-                  get-value:x:@.page-header/*/h2
-                  .:" "
-                  get-value:x:@.page-header/*/h3
-                  .:" "
-                  get-value:x:@.page-header/*/h4
-                  .:" "
-                  get-value:x:@.page-header/*/h5
-                  .:" "
-                  get-value:x:@.page-header/*/h6
-                  .:" "
+            for-each:x:@.page-header/*
+               if
+                  and
+                     not-null:x:@.dp/#
+                     neq:x:@.dp/#
+                        .:
+                  .lambda
+                     set-value:x:@.prompt
+                        strings.concat
+                           get-value:x:@.prompt
+                           get-value:x:@.dp/#
+                           .:" - "
             set-value:x:@.prompt
                strings.replace:x:@.prompt
                   .:"  "
                   .:" "
+            set-value:x:@.prompt
+               strings.trim-end:x:@.prompt
+                  .:" -"
 
             // Adding new prompt to [.snippets] collection.
             unwrap:x:+/*/*/*
