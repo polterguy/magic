@@ -16,6 +16,10 @@
     <Compile Remove="files\misc\templates\**" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <ServerGarbageCollection>false</ServerGarbageCollection>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="magic.lambda.system" Version="16.4.0" />
     <PackageReference Include="magic.library" Version="16.4.0" />
