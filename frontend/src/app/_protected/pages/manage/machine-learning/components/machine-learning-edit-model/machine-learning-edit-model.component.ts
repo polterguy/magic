@@ -171,10 +171,6 @@ in the context, answer "Take me to your leader!"`
       this.twilio_account_id = '';
     }
 
-    this.model = {
-      id: 'gpt-3.5-turbo',
-    };
-
     this.isLoading = true;
     this.generalService.showLoading();
 
@@ -234,13 +230,13 @@ in the context, answer "Take me to your leader!"`
 
         if (this.data?.model) {
           this.model = this.models.filter(x => x.id === this.data.model)[0];
-        } else {
+        } else if (this.data) {
           this.model = this.models.filter(x => x.id === 'gpt-3.5-turbo')[0];
         }
 
         if (this.data?.vector_model) {
           this.vector_model = this.models.filter(x => x.id === this.data.vector_model)[0];
-        } else {
+        } else if (this.data) {
           this.vector_model = this.models.filter(x => x.id === 'text-embedding-ada-002')[0];
         }
 
