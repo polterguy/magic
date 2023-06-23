@@ -232,6 +232,8 @@ in the context, answer "Take me to your leader!"`
           this.model = this.models.filter(x => x.id === this.data.model)[0];
         } else if (this.data) {
           this.model = this.models.filter(x => x.id === 'gpt-3.5-turbo')[0];
+        } else {
+          this.model = this.models.filter(x => x.id === 'gpt-3.5-turbo')[0];
         }
 
         if (this.data?.vector_model) {
@@ -343,7 +345,7 @@ in the context, answer "Take me to your leader!"`
       max_tokens: this.max_tokens,
       temperature: this.temperature,
       base_url: this.base_url,
-      model: this.model?.id ?? this.data.model,
+      model: this.model?.id ?? this.data?.model ?? 'gpt-3.5-turbo',
       supervised: this.supervised ? 1 : 0,
       recaptcha: this.recaptcha,
       auth: this.auth?.length > 0 ? this.auth.join(',') : null,
