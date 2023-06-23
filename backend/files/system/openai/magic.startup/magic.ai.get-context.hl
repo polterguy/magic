@@ -151,13 +151,6 @@ select vss.distance, vss.rowid as id, ts.prompt, ts.completion, ts.uri, ts.cache
                .:"\r\n"
                get-value:x:@.scan/0/*/completion
                .:"\r\n"
-               .:"\r\n"
-               .:"["
-               get-value:x:@.scan/0/*/prompt
-               .:"]("
-               get-value:x:@.scan/0/*/uri
-               .:")"
-               .:"\r\n"
 
          /*
           * Verifying that adding currently iterated snippet doesn't
