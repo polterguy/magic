@@ -55,7 +55,7 @@ slots.create:magic.ai.vectorise
 select id, prompt, completion
    from ml_training_snippets
    where type = @type and id > @id
-      and id not in(select rowid from vss_ml_training_snippets)
+      and not exists(select rowid from vss_ml_training_snippets where rowid = id)
    limit 20"
                   type:x:@.arguments/*/type
                   id:x:@.id
@@ -204,6 +204,12 @@ select id, prompt, completion
                // We're done vectorising model
                set-value:x:@.continue
                   .:bool:false
+
+         else
+
+            // Cooling down for 10 seconds to allow for garbage collector to kick in.
+            gc.collect
+            sleep:10000
 
       // Signaling frontend.
       sockets.signal:magic.backend.message
