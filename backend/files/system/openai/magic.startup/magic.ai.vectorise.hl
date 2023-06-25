@@ -36,14 +36,6 @@ slots.create:magic.ai.vectorise
          set-value:x:@.vector-model
             get-value:x:@data.read/*/*/vector_model
 
-         // Deleting index
-         data.execute:@"
-delete from vss_ml_training_snippets where rowid in (
-select 
- id as rowid
-from ml_training_snippets where type = @type)"
-            type:x:@.arguments/*/type
-
       // To avoid exhausting server's memory, we iterate 50 snippets at the time.
       .continue:bool:true
       .failed:int:0
@@ -55,26 +47,16 @@ from ml_training_snippets where type = @type)"
          data.connect:[generic|magic]
 
             // Selecting 20 snippets from type.
-            data.read
-               table:ml_training_snippets
-               columns
-                  id
-                  prompt
-                  completion
-               where
-                  and
-                     embedding_vss.eq
-                     type.eq:x:@.arguments/*/type
-                     id.mt:x:@.id
-               limit:20
-               order:id
+            data.select:select id, prompt, completion from ml_training_snippets where type = @type and id > @id and id not in(select rowid from vss_ml_training_snippets)
+               type:x:@.arguments/*/type
+               id:x:@.id
 
             // Making sure we start from the next unchecked snippet next iteration through [while].
             set-value:x:@.id
-               get-value:x:@data.read/0/-/*/id
+               get-value:x:@data.select/0/-/*/id
 
             // Looping through all records returned above.
-            for-each:x:@data.read/*
+            for-each:x:@data.select/*
 
                // Signaling frontend.
                strings.concat
@@ -177,13 +159,11 @@ from ml_training_snippets where type = @type)"
 
                         // Success creating embeddings, updating training snippet now.
                         floatArray2bytes:x:@http.post/*/content/*/data/0/*/embedding/*
-                        data.update
-                           table:ml_training_snippets
+                        data.create
+                           table:vss_ml_training_snippets
                            values
                               embedding_vss:x:@floatArray2bytes
-                           where
-                              and
-                                 id.eq:x:@.dp/#/*/id
+                              rowid:x:@.dp/#/*/id
 
                         // Incrementing count.
                         math.increment:x:@.success
@@ -201,7 +181,7 @@ from ml_training_snippets where type = @type)"
 
 
             // Counting how many records we currently processed.
-            get-count:x:@data.read/*
+            get-count:x:@data.select/*
 
             // Checking if we're done.
             if
@@ -212,13 +192,6 @@ from ml_training_snippets where type = @type)"
                   // We're done vectorising model
                   set-value:x:@.continue
                      .:bool:false
-
-      // Inserting vectors into virtual VSS table.
-      data.connect:[generic|magic]
-         data.execute:@"
-insert into vss_ml_training_snippets(rowid, embedding_vss)
-   select id as rowid, embedding_vss from ml_training_snippets where type = @type and embedding_vss is not null"
-            type:x:@.arguments/*/type
 
       // Signaling frontend.
       sockets.signal:magic.backend.message
