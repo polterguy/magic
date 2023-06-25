@@ -4,63 +4,34 @@
  */
 try
 
-   // Connecting to database to move embeddings into new vss plugin based table, column, and logic.
+   // Connecting to database to update embeddings making valid JSON out of it.
    data.connect:[generic|magic]
-      .offset:int:0
-      .cont:bool:true
-      .found:bool:false
-      while:x:@.cont
-         data.read
-            table:ml_training_snippets
-            columns
-               id
-               embedding
-            limit:100
-            offset:x:@.offset
-            where
-               and
-                  embedding.neq
-                  embedding_vss.eq
-         if
-            lt
-               get-count:x:@data.read/*/*
-               .:int:100
-            .lambda
-               set-value:x:@.cont
-                  .:bool:false
-         math.increment:x:@.offset
-            .:int:100
-         for-each:x:@data.read/*
-            set-value:x:@.found
-               .:bool:true
-            .vec
-            strings.split:x:@.dp/#/*/embedding
-               .:,
-            for-each:x:@strings.split/*
-               convert:x:@.dp/#
-                  type:float
-               unwrap:x:+/*/*
-               add:x:@.vec
-                  .
-                     .:x:@convert
-            floatArray2bytes:x:@.vec/*
-            data.execute:"update ml_training_snippets set embedding_vss = @vector where id = @id"
-               @vector:x:@floatArray2bytes
-               @id:x:@.dp/#/*/id
-      data.execute:@"delete from vss_ml_training_snippets"
-      data.execute:@"insert into vss_ml_training_snippets(operation, embedding_vss)
-     select 
-       ""training"",
-       embedding_vss
-     from ml_training_snippets where embedding is not null"
+
+      // Making sure we create valid JSON out of existing vectors.
+      data.execute:"update ml_training_snippets set embedding = '[' || embedding || ']' where embedding is not null"
+
+   // Connecting to database to move embeddings into new vss plugin table.
+   data.connect:[generic|magic]
+
+      // Copying vectors from ml_training_snippets into vss_ml_training_snippets
       data.execute:@"insert into vss_ml_training_snippets(rowid, embedding_vss)
      select 
        id as rowid,
-       embedding_vss
+       embedding
      from ml_training_snippets where embedding is not null"
-      data.execute:@"alter table ml_training_snippets drop column embedding"
+
+   // Dropping embedding column on ml_training_snippets now that we've moved vectors to VSS table.
+   data.connect:[generic|magic]
+
+      /*
+       * Making sure we drop column embedding on ml_training_snippets.
+       *
+       * This will make sure the next execution of current file fails, which is intentional.
+       */
+      data.execute:alter table ml_training_snippets drop column embedding
 
 .catch
 
    // Oops ...!!
+   console.log:x:@.arguments/*/message
    log.error:Could not update vector database schema

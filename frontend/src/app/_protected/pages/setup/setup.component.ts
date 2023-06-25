@@ -49,7 +49,7 @@ export class SetupComponent implements OnInit {
   }
 
   configForm = this.formBuilder.group({
-    connectionString: ['Data Source=files/data/{database}.db', [Validators.required, Validators.pattern('.*{database}.*')]],
+    connectionString: ['Data Source=files/data/{database}.db; Pooling=False;', [Validators.required, Validators.pattern('.*{database}.*')]],
     defaultTimeZone: ['none', [Validators.required]],
     selectedDatabaseType: ['sqlite', [Validators.required]],
     password: ['', [Validators.required, Validators.pattern('.{12,}')]],
@@ -95,7 +95,7 @@ export class SetupComponent implements OnInit {
     switch (this.configForm.controls.selectedDatabaseType.value) {
 
       case 'sqlite':
-        this.configForm.controls.connectionString.setValue('Data Source=files/data/{database}.db');
+        this.configForm.controls.connectionString.setValue('Data Source=files/data/{database}.db; Pooling=False;');
         break;
 
       case 'mysql':
