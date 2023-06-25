@@ -17,7 +17,7 @@ try
       data.execute:@"insert into vss_ml_training_snippets(rowid, embedding_vss)
      select 
        id as rowid,
-       vector_from_json('[' || embedding || ']')
+       vector_from_json(embedding)
      from ml_training_snippets where embedding is not null"
 
    // Dropping embedding column on ml_training_snippets now that we've moved vectors to VSS table.
