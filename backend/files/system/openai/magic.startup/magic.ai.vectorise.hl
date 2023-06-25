@@ -42,156 +42,168 @@ slots.create:magic.ai.vectorise
       .success:int:0
       .id:long:0
       while:x:@.continue
+      
+         // Buffer for snippets such that we can close database connection before invoking OpenAI.
+         .data
 
          // Keeping connection open for only 20 iterations
          data.connect:[generic|magic]
 
             // Selecting 20 snippets from type.
-            data.select:select id, prompt, completion from ml_training_snippets where type = @type and id > @id and id not in(select rowid from vss_ml_training_snippets)
-               type:x:@.arguments/*/type
-               id:x:@.id
+            add:x:@.data
+               data.select:@"
+select id, prompt, completion
+   from ml_training_snippets
+   where type = @type and id > @id
+      and id not in(select rowid from vss_ml_training_snippets)
+   limit 20"
+                  type:x:@.arguments/*/type
+                  id:x:@.id
 
-            // Making sure we start from the next unchecked snippet next iteration through [while].
-            set-value:x:@.id
-               get-value:x:@data.select/0/-/*/id
+         // Making sure we start from the next unchecked snippet next iteration through [while].
+         set-value:x:@.id
+            get-value:x:@.data/0/-/*/id
 
-            // Looping through all records returned above.
-            for-each:x:@data.select/*
+         // Looping through all records returned above.
+         for-each:x:@.data/*
 
-               // Signaling frontend.
+            // Signaling frontend.
+            strings.concat
+               .:"Vectorising "
+               get-value:x:@.dp/#/*/prompt
+            unwrap:x:+/*/args/*/message
+            sockets.signal:magic.backend.chatbot
+               roles:root
+               args
+                  message:x:@strings.concat
+                  type:info
+
+            // Buffer for what we're creating embeddings from.
+            .embedding
+            set-value:x:@.embedding
                strings.concat
-                  .:"Vectorising "
                   get-value:x:@.dp/#/*/prompt
-               unwrap:x:+/*/args/*/message
-               sockets.signal:magic.backend.chatbot
-                  roles:root
-                  args
-                     message:x:@strings.concat
-                     type:info
+                  .:"\r\n"
+                  .:"\r\n"
+                  get-value:x:@.dp/#/*/completion
 
-               // Buffer for what we're creating embeddings from.
-               .embedding
-               set-value:x:@.embedding
-                  strings.concat
-                     get-value:x:@.dp/#/*/prompt
-                     .:"\r\n"
-                     .:"\r\n"
-                     get-value:x:@.dp/#/*/completion
+            // Making sure we don't try to create embedding if it would exhaust the number of tokens for model.
+            if
+               lt
+                  openai.tokenize:x:@.embedding
+                  .:int:8191
+               .lambda
 
-               // Making sure we don't try to create embedding if it would exhaust the number of tokens for model.
-               if
-                  lt
-                     openai.tokenize:x:@.embedding
-                     .:int:8191
-                  .lambda
+                  // Creating an HTTP POST request towards OpenAI, now decorated.
+                  http.post:"https://api.openai.com/v1/embeddings"
+                     headers
+                        Authorization:x:@.token
+                        Content-Type:application/json
+                     payload
+                        model:x:@.vector-model
+                        input:x:@.embedding
+                     convert:true
 
-                     // Creating an HTTP POST request towards OpenAI, now decorated.
-                     http.post:"https://api.openai.com/v1/embeddings"
-                        headers
-                           Authorization:x:@.token
-                           Content-Type:application/json
-                        payload
-                           model:x:@.vector-model
-                           input:x:@.embedding
-                        convert:true
+                  // Sanity checking above invocation.
+                  if
+                     not
+                        and
+                           mte:x:@http.post
+                              .:int:200
+                           lt:x:@http.post
+                              .:int:300
+                     .lambda
 
-                     // Sanity checking above invocation.
-                     if
-                        not
+                        // Oops, error - Logging error and returning status 500 to caller.
+                        lambda2hyper:x:@http.post
+                        log.error:Something went wrong while invoking OpenAI
+                           message:x:@http.post/*/content/*/error/*/message
+                           error:x:@lambda2hyper
+                        strings.concat
+                           .:"Could not create embeddings for, OpenAI failed '"
+                           get-value:x:@.dp/#/*/prompt
+                           .:"'"
+                        unwrap:x:+/*/args/*/message
+                        sockets.signal:magic.backend.chatbot
+                           roles:root
+                           args
+                              message:x:@strings.concat
+                              type:error
+                        if
                            and
-                              mte:x:@http.post
-                                 .:int:200
-                              lt:x:@http.post
-                                 .:int:300
-                        .lambda
+                              or
+                                 eq:x:@http.post
+                                    .:int:429
+                                 eq:x:@http.post
+                                    .:int:500
+                              mt:x:@.retries
+                                 .:int:0
+                           .lambda
 
-                           // Oops, error - Logging error and returning status 500 to caller.
-                           lambda2hyper:x:@http.post
-                           log.error:Something went wrong while invoking OpenAI
-                              message:x:@http.post/*/content/*/error/*/message
-                              error:x:@lambda2hyper
-                           strings.concat
-                              .:"Could not create embeddings for, OpenAI failed '"
-                              get-value:x:@.dp/#/*/prompt
-                              .:"'"
-                           unwrap:x:+/*/args/*/message
-                           sockets.signal:magic.backend.chatbot
-                              roles:root
-                              args
-                                 message:x:@strings.concat
-                                 type:error
-                           if
-                              and
-                                 or
-                                    eq:x:@http.post
-                                       .:int:429
-                                    eq:x:@http.post
-                                       .:int:500
-                                 mt:x:@.retries
-                                    .:int:0
-                              .lambda
-
-                                 // OpenAI server is busy, waiting 5 seconds to retry.
-                                 math.decrement:x:@.retries
-                                 sockets.signal:magic.backend.chatbot
-                                    roles:root
-                                    args
-                                       message:Retrying in 5 seconds
-                                       type:info
-                                 sleep:5000
-
-                           else
-
-                              // Non-transitional error or too many retries.
-                              unwrap:x:+/*/args/*/message
-                              sockets.signal:magic.backend.message
+                              // OpenAI server is busy, waiting 5 seconds to retry.
+                              math.decrement:x:@.retries
+                              sockets.signal:magic.backend.chatbot
                                  roles:root
                                  args
-                                    message:Aborting vectorisation
-                                    type:error
-                              log.error:Aborting vectorisation process
-                              
-                              // Aborting while loop.
-                              set-value:x:@.continue
-                                 .:bool:false
+                                    message:Retrying in 5 seconds
+                                    type:info
+                              sleep:5000
 
-                     else
+                        else
 
-                        // Success creating embeddings, updating training snippet now.
-                        floatArray2bytes:x:@http.post/*/content/*/data/0/*/embedding/*
+                           // Non-transitional error or too many retries.
+                           unwrap:x:+/*/args/*/message
+                           sockets.signal:magic.backend.message
+                              roles:root
+                              args
+                                 message:Aborting vectorisation
+                                 type:error
+                           log.error:Aborting vectorisation process
+
+                           // Aborting while loop.
+                           set-value:x:@.continue
+                              .:bool:false
+
+                  else
+
+                     // Success creating embeddings, updating training snippet now.
+                     floatArray2bytes:x:@http.post/*/content/*/data/0/*/embedding/*
+
+                     // Connecting to database again to unsert embeddings into vss_ml_training_snippets table.
+                     data.connect:[generic|magic]
                         data.create
                            table:vss_ml_training_snippets
                            values
                               embedding_vss:x:@floatArray2bytes
                               rowid:x:@.dp/#/*/id
 
-                        // Incrementing count.
-                        math.increment:x:@.success
+                     // Incrementing count.
+                     math.increment:x:@.success
 
-                        // Resetting retries
-                        set-value:x:@.retries
-                           .:int:3
+                     // Resetting retries
+                     set-value:x:@.retries
+                        .:int:3
 
-               else
+            else
 
-                  // Making sure we count number of snippets that failed.
-                  log.info:Cannot vectorize snippet, too long
-                     id:x:@.dp/#/*/id
-                  math.increment:x:@.failed
+               // Making sure we count number of snippets that failed.
+               log.info:Cannot vectorize snippet, too long
+                  id:x:@.dp/#/*/id
+               math.increment:x:@.failed
 
 
-            // Counting how many records we currently processed.
-            get-count:x:@data.select/*
+         // Counting how many records we currently processed.
+         get-count:x:@data.select/*
 
-            // Checking if we're done.
-            if
-               lt:x:@get-count
-                  .:int:20
-               .lambda
+         // Checking if we're done.
+         if
+            lt:x:@get-count
+               .:int:20
+            .lambda
 
-                  // We're done vectorising model
-                  set-value:x:@.continue
-                     .:bool:false
+               // We're done vectorising model
+               set-value:x:@.continue
+                  .:bool:false
 
       // Signaling frontend.
       sockets.signal:magic.backend.message
