@@ -71,6 +71,13 @@ data.connect:[generic|magic]
             error:x:@lambda2hyper
          throw:Could not create embeddings for model
 
+   // Deleting old vector with same ID.
+   data.delete
+      table:vss_ml_training_snippets
+      where
+         and
+            rowid.eq:x:@.arguments/*/id
+
    // Inserting embeddings for training snippet.
    floatArray2bytes:x:@http.post/*/content/*/data/0/*/embedding/*
    data.create
