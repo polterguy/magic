@@ -193,7 +193,7 @@ select id, prompt, completion
 
 
          // Counting how many records we currently processed.
-         get-count:x:@data.select/*
+         get-count:x:@.data/*
 
          // Checking if we're done.
          if
