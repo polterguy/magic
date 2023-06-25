@@ -30,6 +30,12 @@ try
        */
       data.execute:alter table ml_training_snippets drop column embedding
 
+   // Updating models to reduce threshold to 0.5 as default.
+   data.connect:[generic|magic]
+
+      // Updating all types to have threshold of 0.5 by default
+      data.execute:update ml_types set threshold = 0.5
+
 .catch
 
    // Oops ...!!
