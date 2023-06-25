@@ -24,10 +24,11 @@ data.connect:[generic|magic]
          exists:x:@.arguments/*/not_embedded
          get-value:x:@.arguments/*/not_embedded
       .lambda
-         add:x:@data.connect/*/data.read/*/where/*/and
-            .
-               embedding_vss.eq
-         remove-nodes:x:@.arguments/*/not_embedded
+         data.select:select count(*) as count from ml_training_snippets where type = @type and id not in(select rowid from vss_ml_training_snippets)
+            type:x:@.arguments/*/ml_training_snippets.type.eq
+         unwrap:x:+/*
+         return
+            count:x:@data.select/*/*/count
 
    // Parametrising our read invocation with filtering arguments.
    add:x:./*/data.read/*/where/*/*/or
