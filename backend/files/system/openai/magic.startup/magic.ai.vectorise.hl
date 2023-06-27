@@ -205,12 +205,6 @@ select id, prompt, completion
                set-value:x:@.continue
                   .:bool:false
 
-         else
-
-            // Cooling down for 10 seconds to allow for garbage collector to kick in.
-            gc.collect
-            sleep:10000
-
       // Signaling frontend.
       sockets.signal:magic.backend.message
          roles:root
