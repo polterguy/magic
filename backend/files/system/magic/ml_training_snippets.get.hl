@@ -68,6 +68,8 @@ data.connect:[generic|magic]
          ml_training_snippets.uri
          ml_training_snippets.prompt
          ml_training_snippets.completion
+         ml_training_snippets.embedding
+            as:embedding_vss
          ml_training_snippets.cached
       where
          and
@@ -75,23 +77,14 @@ data.connect:[generic|magic]
 
    // Changing embedding to a boolean value to preserve bandwidth.
    for-each:x:@data.read/*
-      data.read
-         table:vss_ml_training_snippets
-         column
-            rowid
-         where
-            and
-               rowid.eq:x:@.dp/#/*/id
       if
-         exists:x:@data.read/*
+         not-null:x:@.dp/#/*/embedding_vss
          .lambda
-            add:x:@.dp/#
-               .
-                  embedding_vss:bool:true
+            set-value:x:@.dp/#/*/embedding_vss
+               .:bool:true
       else
-         add:x:@.dp/#
-            .
-               embedding_vss:bool:false
+         set-value:x:@.dp/#/*/embedding_vss
+            .:bool:false
 
    // Returning result of above read invocation to caller.
    return-nodes:x:@data.read/*
