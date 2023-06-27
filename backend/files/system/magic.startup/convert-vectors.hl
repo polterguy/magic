@@ -8,7 +8,7 @@ try
    data.connect:[generic|magic]
 
       // Making sure we create valid JSON out of existing vectors.
-      data.execute:"update ml_training_snippets set embedding = '[' || embedding || ']' where embedding is not null"
+      data.execute:"update ml_training_snippets set embedding = '[' || embedding || ']' where embedding is not null and embedding not like '[%'"
 
    // Connecting to database to move embeddings into new vss plugin table.
    data.connect:[generic|magic]
@@ -20,17 +20,7 @@ try
        vector_from_json(embedding)
      from ml_training_snippets where embedding is not null"
 
-   // Dropping embedding column on ml_training_snippets now that we've moved vectors to VSS table.
-   data.connect:[generic|magic]
-
-      /*
-       * Making sure we drop column embedding on ml_training_snippets.
-       *
-       * This will make sure the next execution of current file fails, which is intentional.
-       */
-      data.execute:alter table ml_training_snippets drop column embedding
-
-   // Updating models to reduce threshold to 0.5 as default.
+   // Updating models to reduce threshold to 0.5 as default value.
    data.connect:[generic|magic]
 
       // Updating all types to have threshold of 0.5 by default

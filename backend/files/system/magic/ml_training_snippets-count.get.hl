@@ -19,16 +19,16 @@ auth.ticket.verify:root
 // Opening up our database connection.
 data.connect:[generic|magic]
 
+   // Checking if caller only wants to count records without embeddings.
    if
       and
          exists:x:@.arguments/*/not_embedded
          get-value:x:@.arguments/*/not_embedded
       .lambda
-         data.select:select count(*) as count from ml_training_snippets where type = @type and id not in(select rowid from vss_ml_training_snippets)
-            type:x:@.arguments/*/ml_training_snippets.type.eq
-         unwrap:x:+/*
-         return
-            count:x:@data.select/*/*/count
+         add:x:@data.connect/*/data.read/*/where/*/and
+            .
+               embedding.eq
+         remove-nodes:x:@.arguments/*/not_embedded
 
    // Parametrising our read invocation with filtering arguments.
    add:x:./*/data.read/*/where/*/*/or

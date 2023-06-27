@@ -54,9 +54,7 @@ slots.create:magic.ai.vectorise
                data.select:@"
 select id, prompt, completion
    from ml_training_snippets
-   where type = @type and id > @id
-      and not exists(select rowid from vss_ml_training_snippets where rowid = id)
-   limit 20"
+   where type = @type and id > @id and embedding is null"
                   type:x:@.arguments/*/type
                   id:x:@.id
 
@@ -167,15 +165,23 @@ select id, prompt, completion
                   else
 
                      // Success creating embeddings, updating training snippet now.
-                     floatArray2bytes:x:@http.post/*/content/*/data/0/*/embedding/*
+                     .embedding
+                     set-value:x:@.embedding
+                        strings.concat
+                           .:[
+                           strings.join:x:@http.post/*/content/*/data/0/*/embedding/*
+                              .:,
+                           .:]
 
-                     // Connecting to database again to unsert embeddings into vss_ml_training_snippets table.
+                     // Connecting to database again to add embeddings to existing ml_training_snippets record.
                      data.connect:[generic|magic]
-                        data.create
-                           table:vss_ml_training_snippets
+                        data.update
+                           table:ml_training_snippets
                            values
-                              embedding_vss:x:@floatArray2bytes
-                              rowid:x:@.dp/#/*/id
+                              embedding:x:@.embedding
+                           where
+                              and
+                                 id.eq:x:@.dp/#/*/id
 
                      // Incrementing count.
                      math.increment:x:@.success
@@ -225,6 +231,22 @@ select id, prompt, completion
          args
             message:x:@strings.concat
             type:info
+
+      // Messaging frontend to let it know we're about to index embeddings.
+      sockets.signal:magic.backend.chatbot
+         roles:root
+         args
+            message:Indexing embeddings
+            type:info
+
+      // Inserting into vss_ml_training_snippets from ml_training_snippets
+      data.connect:[generic|magic]
+         data.execute:@"
+insert into vss_ml_training_snippets (rowid, embedding_vss)
+   select id as rowid, embedding as embedding_vss from ml_training_snippets where embedding is not null and type = @type"
+            type:x:@.arguments/*/type
+
+      // Done with everything, notifying frontend.
       sockets.signal:magic.backend.chatbot
          roles:root
          args

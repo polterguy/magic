@@ -4,19 +4,28 @@
  */
 try
 
-   // Updating connection string to turn OFF connection pooling.
+   // Loading configuration as string.
    config.load
-   strings.replace:x:-
-      .:@"""Data Source=files/data/{database}.db"""
-      .:@"""Data Source=files/data/{database}.db; Pooling=False;"""
-   strings.replace:x:-
-      .:@"""Data Source=files/data/{database}.db;"""
-      .:@"""Data Source=files/data/{database}.db; Pooling=False;"""
-   config.save:x:-
-   sleep:5000
+
+   // Checking if connection string have already been updated.
+   if
+      not
+         strings.contains:x:@config.load
+            .:"Pooling=false;"
+      .lambda
+
+         // Updating connection string to turn OFF connection pooling.
+         strings.replace:x:-
+            .:@"""Data Source=files/data/{database}.db"""
+            .:@"""Data Source=files/data/{database}.db; Pooling=False;"""
+         strings.replace:x:-
+            .:@"""Data Source=files/data/{database}.db;"""
+            .:@"""Data Source=files/data/{database}.db; Pooling=False;"""
+         config.save:x:-
+         sleep:5000
 
 .catch
 
    // Oops ...!!
    console.log:x:@.arguments/*/message
-   log.error:Could not update vector database schema
+   log.error:Could not update connection strings in appsettings.json file
