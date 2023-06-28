@@ -243,7 +243,11 @@ select id, prompt, completion
       data.connect:[generic|magic]
          data.execute:@"
 insert into vss_ml_training_snippets (rowid, embedding_vss)
-   select id as rowid, embedding as embedding_vss from ml_training_snippets where embedding is not null and type = @type"
+   select id as rowid, embedding as embedding_vss
+      from ml_training_snippets ts
+      where embedding is not null and
+         type = @type and
+         not exists (select rowid from vss_ml_training_snippets vss2 where vss2.rowid = ts.id)"
             type:x:@.arguments/*/type
 
       // Done with everything, notifying frontend.
