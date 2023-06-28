@@ -11,7 +11,7 @@ try
    if
       not
          strings.contains:x:@config.load
-            .:"Pooling=False;"
+            .:"Pooling=False"
       .lambda
 
          // Updating connection string to turn OFF connection pooling.
