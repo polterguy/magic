@@ -234,7 +234,7 @@ try
                            .:Image
                         .:"]("
                         get-value:x:@.url
-                        .:")\r\n"
+                        .:")"
                      unwrap:x:+/*/*
                      add:x:@.snippets/0/-
                         .
@@ -401,8 +401,38 @@ try
                   .
                      prompt:x:@.prompt
 
+         // Adding extra CR/LF sequence for UL and OL.
+         case:ul
+         case:ol
+
+            // Verifying that paragraph actually contained some content.
+            if
+               neq:x:@.completion
+                  .:
+               .lambda
+
+                  // Checking if we need to append paragraph to existing completion or create new completion.
+                  if
+                     exists:x:@.snippets/0/-/*/completion
+                     .lambda
+
+                        // Appending to existing completion.
+                        set-value:x:@.snippets/0/-/*/completion
+                           strings.concat
+                              get-value:x:@.snippets/0/-/*/completion
+                              .:"\r\n"
+
+                  else
+
+                     // Adding new prompt to [.snippets] collection.
+                     unwrap:x:+/*/*
+                     add:x:@.snippets/0/-
+                        .
+                           completion:"\r\n"
+
          // Paragraphs becomes completions.
          case:p
+         case:li
 
             // Making sure we've added at least one prompt.
             if
@@ -530,86 +560,24 @@ try
                         .:" ,"
                         .:","
 
+                  // Checking if this is a list of some sort, at which point we turn it into an unordered list.
+                  switch:x:@get-name
+                     case:li
+                        set-value:x:@.completion
+                           strings.concat
+                              .:"\r\n"
+                              .:"- "
+                              get-value:x:@.completion
+                     case:p
+                        set-value:x:@.completion
+                           strings.concat
+                              .:"\r\n\r\n"
+                              get-value:x:@.completion
+
                   // Verifying that paragraph actually contained some content.
                   if
                      neq:x:@.completion
                         .:
-                     .lambda
-
-                        // Checking if we need to append paragraph to existing completion or create new completion.
-                        if
-                           exists:x:@.snippets/0/-/*/completion
-                           .lambda
-
-                              // Appending to existing completion.
-                              set-value:x:@.snippets/0/-/*/completion
-                                 strings.concat
-                                    get-value:x:@.snippets/0/-/*/completion
-                                    .:"\r\n\r\n"
-                                    get-value:x:@.completion
-
-                        else
-
-                           // Adding new prompt to [.snippets] collection.
-                           unwrap:x:+/*/*
-                           add:x:@.snippets/0/-
-                              .
-                                 completion:x:@.completion
-
-         // Lists becomes completions.
-         case:ul
-         case:ol
-
-            // Making sure we've added at least one prompt.
-            if
-               exists:x:@.snippets/*
-               .lambda
-
-                  // Looping through each list item below list element tag.
-                  .completion:"\r\n"
-                  for-each:x:@.dp/#/*/li
-
-                     // Buffer for list item
-                     .item:
-
-                     // Trimming and adding one SP characters between each part.
-                     for-each:x:@.dp/#/**/\#text
-                        if
-                           and
-                              neq:x:@.dp/#
-                                 .
-                              neq:x:@.dp/#
-                                 .:
-                           .lambda
-                              strings.replace:x:@.dp/#
-                                 .:"\r"
-                                 .:" "
-                              strings.replace:x:@strings.replace
-                                 .:"\n"
-                                 .:" "
-                              strings.replace:x:@strings.replace
-                                 .:"\t"
-                                 .:" "
-                              strings.replace:x:@strings.replace
-                                 .:"  "
-                                 .:" "
-                              set-value:x:@.item
-                                 strings.concat
-                                    get-value:x:@.item
-                                    strings.trim:x:@strings.replace
-                                       .:"  \r\n\t"
-                                    .:" "
-                     set-value:x:@.completion
-                        strings.concat
-                           get-value:x:@.completion
-                           .:"\r\n- "
-                           strings.trim:x:@.item
-                              .:" "
-
-                  // Verifying that list actually contained some content.
-                  if
-                     neq:x:@.completion
-                        .:"\r\n"
                      .lambda
 
                         // Checking if we need to append paragraph to existing completion or create new completion.
