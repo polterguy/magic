@@ -77,7 +77,12 @@ select vss.distance, vss.rowid as id, ts.prompt, ts.completion, ts.uri
      vss.embedding_vss,
      vss_search_params(@embedding, "
          get-value:x:@.arguments/*/max
-         .:@")) and vss.distance < @threshold and ts.type = @type"
+         .:@")) and
+vss.distance < @threshold and
+ts.type = @type and
+ts.uri is not null
+group by ts.uri
+order by length(ts.prompt) asc"
       data.select:x:@strings.concat
          embedding:x:@floatArray2bytes
          type:x:@.arguments/*/type
