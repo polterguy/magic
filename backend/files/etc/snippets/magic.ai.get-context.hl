@@ -1,0 +1,6 @@
+signal:magic.ai.get-context
+   type:ainiro_io_search
+   vector_model:text-embedding-ada-002
+   prompt:venture capitalism
+   threshold:float:0.5
+   max_tokens:int:4000
