@@ -48,7 +48,10 @@
 
       <div class="col-12">
         <p>
-          <mat-slide-toggle color="primary" [(ngModel)]="userIsLocked" [ngModelOptions]="{standalone: true}"
+          <mat-slide-toggle
+            color="primary"
+            [(ngModel)]="userIsLocked"
+            [ngModelOptions]="{standalone: true}"
             (toggleChange)="toggleLockUser()">
             {{userIsLocked ? 'Unlock user' : 'Lock user'}}
           </mat-slide-toggle>

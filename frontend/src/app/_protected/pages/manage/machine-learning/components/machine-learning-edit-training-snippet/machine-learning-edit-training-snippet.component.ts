@@ -38,6 +38,12 @@ export class MachineLearningEditTrainingSnippetComponent implements OnInit {
 
   ngOnInit() {
 
+    // Checking if we're supposed to preview items or not.
+    const prev = localStorage.getItem('preview-snippets');
+    if (prev === 'true') {
+      this.preview = true;
+    }
+
     this.prompt = this.data?.prompt;
     this.completion = this.data?.completion;
     this.type = this.data?.type;
@@ -65,6 +71,12 @@ export class MachineLearningEditTrainingSnippetComponent implements OnInit {
         this.generalService.showFeedback('Something went wrong as we tried to delete your snippet', 'errorMessage');
       }
     });
+  }
+
+  previewChanged() {
+
+    // Storing value to localStorage
+    localStorage.setItem('preview-snippets', this.preview ? 'true' : 'false');
   }
 
   typeChanged() {
