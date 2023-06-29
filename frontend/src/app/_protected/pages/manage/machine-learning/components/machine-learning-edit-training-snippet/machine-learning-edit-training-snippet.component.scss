@@ -1,0 +1,11 @@
+
+.markdown-preview {
+  height: 285px;
+  overflow: auto;
+  ::ng-deep img {
+    max-width: 80%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}

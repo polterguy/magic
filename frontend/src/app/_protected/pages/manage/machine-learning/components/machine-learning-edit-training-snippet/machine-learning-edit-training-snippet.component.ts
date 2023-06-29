@@ -14,7 +14,8 @@ import { CodemirrorActionsService } from 'src/app/_general/services/codemirror-a
  */
 @Component({
   selector: 'app-machine-learning-edit-training-snippet',
-  templateUrl: './machine-learning-edit-training-snippet.component.html'
+  templateUrl: './machine-learning-edit-training-snippet.component.html',
+  styleUrls: ['./machine-learning-edit-training-snippet.component.scss']
 })
 export class MachineLearningEditTrainingSnippetComponent implements OnInit {
 
@@ -26,6 +27,7 @@ export class MachineLearningEditTrainingSnippetComponent implements OnInit {
   cached: boolean;
   ready: boolean = false;
   model: HlModel;
+  preview: boolean = false;
 
   constructor(
     private dialogRef: MatDialogRef<MachineLearningEditTrainingSnippetComponent>,

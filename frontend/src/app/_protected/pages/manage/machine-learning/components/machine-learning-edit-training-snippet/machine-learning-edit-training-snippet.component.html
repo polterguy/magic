@@ -70,7 +70,7 @@
     </div>
 
     <!-- Any other types of content besides Hyperlambda -->
-    <div class="col-12 mb-0" *ngIf="!ready">
+    <div class="col-12 mb-0" *ngIf="!ready && !preview">
 
       <mat-form-field class="w-100 custom-alignment">
         <span
@@ -91,9 +91,22 @@
 
     </div>
 
+    <!-- Preview of text content transformed as Markdown instead of textarea -->
+    <div class="col-12 mb-4 mt-2" *ngIf="!ready && preview">
+      <mat-card class="markdown-preview" [innerHTML]="completion | marked"></mat-card>
+    </div>
+
   </div>
 
   <div mat-dialog-actions [align]="'end'">
+
+    <mat-slide-toggle
+      labelPosition="before"
+      class="me-2"
+      name="preview"
+      [(ngModel)]="preview">
+      Preview
+    </mat-slide-toggle>
 
     <mat-checkbox
       [(ngModel)]="cached"
