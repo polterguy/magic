@@ -438,8 +438,8 @@ try
                                  eq
                                     get-name:x:@.dp/#/.
                                     .:a
-                                 exists:x:@.dp/#/*/\@href
-                                 not-null:x:@.dp/#/*/\@href
+                                 exists:x:@.dp/#/./*/\@href
+                                 not-null:x:@.dp/#/./*/\@href
                               .lambda
 
                                  // Normalising URL.
@@ -480,12 +480,14 @@ try
                                  set-value:x:@.completion
                                     strings.concat
                                        get-value:x:@.completion
+                                       .:" "
                                        .:[
                                        strings.trim:x:@strings.replace
                                           .:"  \r\n\t"
                                        .:](
                                        get-value:x:@.url
                                        .:)
+                                       .:" "
                            else
 
                               // Anything BUT a hyperlink.
