@@ -29,6 +29,7 @@ export class MachineLearningTestComponent implements OnInit {
   ready: boolean = false;
   model: HlModel;
   session: string;
+  preview: boolean = false;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -39,6 +40,12 @@ export class MachineLearningTestComponent implements OnInit {
     private openAIService: OpenAIService,) { }
 
   ngOnInit() {
+
+    // Checking if we're supposed to preview items or not.
+    const prev = localStorage.getItem('preview-snippets');
+    if (prev === 'true') {
+      this.preview = true;
+    }
 
     this.generalService.showLoading();
     this.configService.getGibberish(20,30).subscribe({
@@ -66,6 +73,12 @@ export class MachineLearningTestComponent implements OnInit {
         this.ready = true;
       }, 500);
     }
+  }
+
+  previewChanged() {
+
+    // Storing value to localStorage
+    localStorage.setItem('preview-snippets', this.preview ? 'true' : 'false');
   }
 
   submit() {
