@@ -16,7 +16,7 @@
 
   </div>
 
-  <div class="col-12" *ngIf="!ready">
+  <div class="col-12" *ngIf="!ready && !preview">
 
     <p class="text-muted text-small mb-3">
       Test your model here by asking it questions and sanity check its result
@@ -42,9 +42,20 @@
 
   </div>
 
+  <!-- Preview of text content transformed as Markdown instead of textarea -->
+  <div class="col-12 mb-2 mt-2" *ngIf="!ready && preview">
+
+    <p class="text-muted text-small mb-3 mt-0">
+      Test your model here by asking it questions and sanity check its result
+    </p>
+
+    <mat-card class="markdown-preview" [innerHTML]="completion | marked"></mat-card>
+
+  </div>
+
   <form (ngSubmit)="submit()" class="d-flex justify-content-md-between align-items-md-center align-items-end flex-md-row w-100">
 
-    <mat-form-field class="w-100 standalone-field me-2">
+    <mat-form-field class="w-100 standalone-field me-3">
       <span
         matPrefix
         matTooltip="Prompt"
@@ -61,6 +72,15 @@
         [(ngModel)]="prompt"
         autocomplete="off">
     </mat-form-field>
+
+    <mat-slide-toggle
+      labelPosition="before"
+      class="me-2"
+      name="preview"
+      (change)="previewChanged()"
+      [(ngModel)]="preview">
+      Preview
+    </mat-slide-toggle>
 
     <button
       mat-button

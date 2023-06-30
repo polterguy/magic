@@ -8,3 +8,16 @@
     padding-bottom: 0 !important;
   }
 }
+
+.markdown-preview {
+  height: 320px;
+  overflow: auto;
+  ::ng-deep img {
+    max-width: 80%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 25px;
+    margin-bottom: 25px;
+  }
+}
