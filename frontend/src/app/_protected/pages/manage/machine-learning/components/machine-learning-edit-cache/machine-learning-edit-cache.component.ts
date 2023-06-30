@@ -14,7 +14,8 @@ import { CodemirrorActionsService } from 'src/app/_general/services/codemirror-a
  */
 @Component({
   selector: 'app-machine-learning-edit-cache',
-  templateUrl: './machine-learning-edit-cache.component.html'
+  templateUrl: './machine-learning-edit-cache.component.html',
+  styleUrls: ['./machine-learning-edit-cache.component.scss']
 })
 export class MachineLearningEditCacheComponent implements OnInit {
 
@@ -22,6 +23,7 @@ export class MachineLearningEditCacheComponent implements OnInit {
   cached: boolean = false;
   ready: boolean = false;
   model: HlModel;
+  preview: boolean = false;
 
   constructor(
     private generalService: GeneralService,
@@ -31,6 +33,12 @@ export class MachineLearningEditCacheComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any) { }
 
   ngOnInit() {
+
+    // Checking if we're supposed to preview items or not.
+    const prev = localStorage.getItem('preview-snippets');
+    if (prev === 'true') {
+      this.preview = true;
+    }
 
     // Checking if we have a registered CodeMirror editor for type.
     const res = this.codemirrorActionsService.getActions(null, this.data.type);
@@ -44,6 +52,12 @@ export class MachineLearningEditCacheComponent implements OnInit {
         this.ready = true;
       }, 500);
     }
+  }
+
+  previewChanged() {
+
+    // Storing value to localStorage
+    localStorage.setItem('preview-snippets', this.preview ? 'true' : 'false');
   }
 
   save() {
