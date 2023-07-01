@@ -13,6 +13,7 @@ import { MachineLearningEmbedUiComponent } from '../../manage/machine-learning/c
 import { MatDialog } from '@angular/material/dialog';
 import { OpenAIConfigurationDialogComponent } from 'src/app/_general/components/openai/openai-configuration-dialog/openai-configuration-dialog.component';
 import { RecaptchaDialogComponent } from '../../misc/configuration/components/recaptcha-dialog/recaptcha-dialog.component';
+import { ConfigService } from 'src/app/_general/services/config.service';
 
 /**
  * Helper wizard component to create a chatbot rapidly, guiding the user through all
@@ -25,6 +26,7 @@ import { RecaptchaDialogComponent } from '../../misc/configuration/components/re
 })
 export class ChatbotWizardComponent implements OnInit, OnDestroy {
 
+  sqlIte: boolean = false;
   hubConnection: HubConnection = null;
   isLoading: boolean = true;
   configured: boolean = false;
@@ -84,6 +86,7 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
 
   constructor(
     private dialog: MatDialog,
+    private configService: ConfigService,
     private openAIService: OpenAIService,
     private backendService: BackendService,
     private generalService: GeneralService) { }
@@ -91,46 +94,60 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
   ngOnInit() {
 
     this.generalService.showLoading();
-    this.openAIService.key().subscribe({
-      next: (apiKey: any) => {
+    this.configService.getDatabases().subscribe({
 
-        this.hasApiKey = apiKey.result?.length > 0;
+      next: (result: any) => {
 
-        this.apiKey = apiKey.result;
+        this.sqlIte = result.default === 'sqlite';
 
-        this.backendService.getReCaptchaKeySecret().subscribe({
-          next: (reCaptcha: any) => {
-            this.hasReCaptcha = reCaptcha.key?.length > 0 && reCaptcha.secret?.length > 0;
-            this.configured = this.hasApiKey && this.hasReCaptcha;
-            this.reCaptcha = reCaptcha;
-            this.flavor = this.flavors[0];
-
-            if (!this.hasApiKey) {
-
-              this.manageOpenAI();
-
-            } else if (!this.hasReCaptcha) {
-
-              this.manageCAPTCHA();
-
-            } else {
-
-              this.getModels();
-            }
+        this.openAIService.key().subscribe({
+          next: (apiKey: any) => {
+    
+            this.hasApiKey = apiKey.result?.length > 0;
+    
+            this.apiKey = apiKey.result;
+    
+            this.backendService.getReCaptchaKeySecret().subscribe({
+              next: (reCaptcha: any) => {
+                this.hasReCaptcha = reCaptcha.key?.length > 0 && reCaptcha.secret?.length > 0;
+                this.configured = this.hasApiKey && this.hasReCaptcha;
+                this.reCaptcha = reCaptcha;
+                this.flavor = this.flavors[0];
+    
+                if (!this.hasApiKey) {
+    
+                  this.manageOpenAI();
+    
+                } else if (!this.hasReCaptcha) {
+    
+                  this.manageCAPTCHA();
+    
+                } else {
+    
+                  this.getModels();
+                }
+              },
+              error: () => {
+    
+                this.generalService.hideLoading();
+                this.isLoading = false;
+                this.generalService.showFeedback('Something went wrong as we tried to check if OpenAI API key is configured', 'errorMessage');
+              }
+            });
           },
           error: () => {
-
+    
             this.generalService.hideLoading();
-            this.isLoading = false;
             this.generalService.showFeedback('Something went wrong as we tried to check if OpenAI API key is configured', 'errorMessage');
+            this.isLoading = false;
           }
         });
       },
-      error: () => {
+
+      error: (error: any) => {
 
         this.generalService.hideLoading();
-        this.generalService.showFeedback('Something went wrong as we tried to check if OpenAI API key is configured', 'errorMessage');
-        this.isLoading = false;
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
       }
     });
   }
