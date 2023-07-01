@@ -2,7 +2,17 @@
 <mat-card class="mb-0">
   <mat-card-content>
 
-    <div *ngIf="!configured" class="row">
+    <div class="col-12" *ngIf="!sqlIte">
+
+      <h3 class="fw-bold">Not Available</h3>
+
+      <p>
+        In order to use Machine Learning and AI with Magic, you'll need to use SQLite as your primary database.
+      </p>
+
+    </div>
+
+    <div *ngIf="sqlIte && !configured" class="row">
 
       <div class="col-12 mb-3">
 
@@ -34,7 +44,7 @@
 
     </div>
 
-    <form class="row" (ngSubmit)="createBot()" *ngIf="configured">
+    <form class="row" (ngSubmit)="createBot()" *ngIf="sqlIte && configured">
 
       <div class="col-12 mb-3">
 
@@ -161,7 +171,7 @@
 
     </form>
 
-    <div class="row" *ngIf="crawling" class="mt-4 messages">
+    <div class="row" *ngIf="sqlIte && crawling" class="mt-4 messages">
 
       <div
         *ngFor="let idx of messages; index as i"
