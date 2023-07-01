@@ -75,6 +75,12 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
 
   uploadBackup(file: any) {
 
+    if (file.length === 0 || file.item(0).name !== 'appsettings.json') {
+
+      this.generalService.showFeedback('You have to choose an appsettings.json file', 'errorMessage', 'Ok', 5000);
+      return;
+    }
+
     this.generalService.showLoading();
     this.fileService.uploadFile('/config/', file).subscribe({
 
