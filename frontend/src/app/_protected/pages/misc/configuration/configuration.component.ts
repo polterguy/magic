@@ -15,6 +15,7 @@ import { SmtpDialogComponent } from './components/smtp-dialog/smtp-dialog.compon
 import json from '../../../../codemirror/options/json.json'
 import { OpenAIConfigurationDialogComponent } from 'src/app/_general/components/openai/openai-configuration-dialog/openai-configuration-dialog.component';
 import { RecaptchaDialogComponent } from './components/recaptcha-dialog/recaptcha-dialog.component';
+import { FileService } from 'src/app/_general/services/file.service';
 
 /**
  * Helper component allowing user to edit his configuration settings.
@@ -30,12 +31,14 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
 
   config: string = '';
   configExists: boolean = false;
+  jsonFileInput: any;
   cmOptions = {
     json: json,
   };
 
   constructor(
     private dialog: MatDialog,
+    private fileService: FileService,
     private configService: ConfigService,
     public backendService: BackendService,
     private generalService: GeneralService,
@@ -60,6 +63,32 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
       error: (error: any) => {
         
         this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+        this.generalService.hideLoading();
+      }
+    });
+  }
+
+  downloadBackup() {
+
+    this.fileService.downloadFile('/config/appsettings.json');
+  }
+
+  uploadBackup(file: any) {
+
+    this.generalService.showLoading();
+    this.fileService.uploadFile('/config/', file).subscribe({
+
+      next: () => {
+
+        this.jsonFileInput = null;
+        this.generalService.showFeedback('Backup of configuration file successfully uploaded', 'successMessage');
+        this.loadConfig();
+      },
+
+      error: (error: any) => {
+ 
+        this.jsonFileInput = null;
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000);
         this.generalService.hideLoading();
       }
     });

@@ -605,8 +605,11 @@ export class IdeTreeComponent implements OnInit {
   uploadFiles(files: FileList) {
 
     this.generalService.showLoading();
+
     for (let idx = 0; idx < files.length; idx++) {
+
       this.fileService.uploadFile(this.activeFolder, files.item(idx)).subscribe({
+
         next: () => {
 
           this.generalService.hideLoading();
@@ -616,6 +619,7 @@ export class IdeTreeComponent implements OnInit {
             this.updateFileObject(this.activeFolder);
           }
         },
+
         error: (error: any) => {
 
           this.generalService.hideLoading();
