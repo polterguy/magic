@@ -1,7 +1,12 @@
 <mat-card>
   <mat-card-content>
 
+    <div class="col-12" *ngIf="!sqlIte">
+      In order to use Machine Learning with Magic, you'll need to use SQLite as your primary database.
+    </div>
+
     <mat-tab-group
+      *ngIf="sqlIte"
       mat-stretch-tabs
       dynamicHeight
       animationDuration="0ms"
