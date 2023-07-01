@@ -47,8 +47,32 @@
             </ngx-codemirror>
           </div>
 
+          <input
+            type="file"
+            [(ngModel)]="jsonFileInput"
+            #jsonFile
+            class="d-none"
+            accept=".json"
+            (change)="uploadBackup($event.target.files)">
+    
           <!-- Save button -->
           <div class="col-12 d-flex justify-content-end mt-4">
+
+            <button
+              mat-flat-button
+              color="primary"
+              class="px-5 me-3"
+              (click)="downloadBackup()">
+              Backup
+            </button>
+
+            <button
+              mat-flat-button
+              color="primary"
+              class="px-5 me-3"
+              (click)="jsonFile.click()">
+              Upload backup
+            </button>
 
             <button
               mat-flat-button

@@ -179,21 +179,30 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
   }
 
   downloadDatabaseBackup(database: any) {
+
     this.fileService.downloadFile('/data/' + database.name + '.db');
   }
 
   uploadDatabaseBackup(file: any) {
+
     this.fileService.uploadDatabaseBackup(file.item(0)).subscribe({
+
       next: () => {
         this.generalService.showFeedback('Backup was successfully uploaded', 'successMessage');
         this.zipFileInput = null;
         this.getDatabases();
       },
-      error: (error: any) => this.generalService.showFeedback(error)
+
+      error: (error: any) => {
+
+        this.zipFileInput = null;
+        this.generalService.showFeedback(error);
+      }
     });
   }
 
   deleteDatabase(item: any) {
+
     this.dialog.open(ConfirmationDialogComponent, {
       width: '500px',
       data: {
@@ -211,7 +220,9 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
         }
       }
     }).afterClosed().subscribe((result: string) => {
+
       if (result === 'confirm') {
+
         this.sqlService.dropDatabase(
           'sqlite',
           'generic',
@@ -229,6 +240,7 @@ export class ManageDatabasesComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+
     this.hubConnection?.stop();
     this.generalService.hideLoading();
   }

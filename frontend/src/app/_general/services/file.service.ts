@@ -126,7 +126,10 @@ export class FileService {
    */
   public downloadFile(path: string) {
 
-    this.httpService.download('/magic/system/file-system/file?file=' + encodeURIComponent(path)).subscribe({
+    this.httpService.download(
+      '/magic/system/file-system/file?file=' +
+      encodeURIComponent(path)).subscribe({
+
       next: (res) => {
 
         const disp = res.headers.get('Content-Disposition');
@@ -134,6 +137,7 @@ export class FileService {
         const file = new Blob([res.body]);
         saveAs(file, filename);
       },
+
       error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)
     });
   }
@@ -144,7 +148,7 @@ export class FileService {
   public uploadFile(path: string, file: any) {
 
     const formData: FormData = new FormData();
-    formData.append('file', file);
+    formData.append('file', file.item(0));
     return this.httpService.put<any>('/magic/system/file-system/file?folder=' + encodeURIComponent(path), formData);
   }
 
