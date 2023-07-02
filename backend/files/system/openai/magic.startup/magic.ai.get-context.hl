@@ -224,12 +224,13 @@ select vss.distance, vss.rowid as id, ts.prompt, ts.completion, ts.uri, ts.cache
          neq:x:@.context
             .:
       .lambda
+         strings.mixin:x:@.context
          add:x:+/+/*/*/snippets
             get-nodes:x:@.result/*
          unwrap:x:+/*/*
          add:x:../*/return
             .
-               context:x:@.context
+               context:x:@strings.mixin
                snippets
    unwrap:x:./*/return/*
    return
