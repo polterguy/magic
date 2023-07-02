@@ -42,7 +42,8 @@ data.connect:[generic|magic]
       strings.concat
          get-value:x:@data.read/*/*/prompt
          .:"\r\n\r\n"
-         get-value:x:@data.read/*/*/completion
+         strings.mixin:x:@data.read/*/*/completion
+            strip:true
 
    // Creating an HTTP POST request towards OpenAI, now decorated.
    http.post:"https://api.openai.com/v1/embeddings"

@@ -83,7 +83,8 @@ select id, prompt, completion
                   get-value:x:@.dp/#/*/prompt
                   .:"\r\n"
                   .:"\r\n"
-                  get-value:x:@.dp/#/*/completion
+                  strings.mixin:x:@.dp/#/*/completion
+                     strip:true
 
             // Making sure we don't try to create embedding if it would exhaust the number of tokens for model.
             if
