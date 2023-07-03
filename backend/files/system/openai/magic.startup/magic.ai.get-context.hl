@@ -130,7 +130,7 @@ select vss.distance, vss.rowid as id, ts.prompt, ts.completion, ts.uri, ts.cache
    .tmp:
 
    /*
-    * Running through all  creating our context
+    * Running through all training snippets creating our context
     * and storing referenced snippets in the process.
     */
    while
@@ -149,7 +149,7 @@ select vss.distance, vss.rowid as id, ts.prompt, ts.completion, ts.uri, ts.cache
                get-value:x:@.scan/0/*/prompt
                .:"\r\n"
                .:"\r\n"
-               get-value:x:@.scan/0/*/completion
+               strings.mixin:x:@.scan/0/*/completion
                .:"\r\n"
 
          /*
@@ -224,13 +224,12 @@ select vss.distance, vss.rowid as id, ts.prompt, ts.completion, ts.uri, ts.cache
          neq:x:@.context
             .:
       .lambda
-         strings.mixin:x:@.context
          add:x:+/+/*/*/snippets
             get-nodes:x:@.result/*
-         unwrap:x:+/*/*
+         unwrap:x:+/*/*/context
          add:x:../*/return
             .
-               context:x:@strings.mixin
+               context:x:@.context
                snippets
    unwrap:x:./*/return/*
    return
