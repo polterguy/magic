@@ -1,0 +1,25 @@
+
+/*
+ * Slots that returns the specified [url] to caller
+ * with a 5 minute server-side cache to avoid re-fetching URL
+ * too frequently.
+ */
+slots.create:magic.http.get-with-cache
+
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/url
+   validators.url:x:@.arguments/*/url
+
+   // Checking cache.
+   unwrap:x:+/*/.lambda/*/.url
+   cache.try-get:x:@.arguments/*/url
+      expiration:300
+      .lambda
+
+         // Forward evaluated above.
+         .url:x:@.arguments/*/url
+         http.get:x:@.url
+         return:x:-/*/content
+
+   // Returning result of above invocation to caller.
+   return:x:@cache.try-get
