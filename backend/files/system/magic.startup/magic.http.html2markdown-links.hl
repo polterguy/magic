@@ -6,6 +6,9 @@ slots.create:magic.http.html2markdown-links
    // Sanity checking invocation.
    validators.mandatory:x:@.arguments/*/url
    validators.url:x:@.arguments/*/url
+   validators.integer:x:@.arguments/*/max
+      min:1
+      max:200
 
    // Figuring out base URL of document, defaulting to primary URL we're getting.
    .base
@@ -30,86 +33,97 @@ slots.create:magic.http.html2markdown-links
    html2lambda:x:@signal
    for-each:x:@html2lambda/*/html/*/body/**/a
 
-      // Figuring out URL.
-      .url
-      set-value:x:@.url
-         get-value:x:@.dp/#/*/\@href
-
-      // Making sure we turn URL into an absolute URL.
+      // Making sure we're not passed [max] argument.
       if
-         strings.starts-with:x:@.url
-            .:/
+         or
+            not-exists:x:@.arguments/*/max
+            mte:x:@.arguments/*/max
+               .:int:0
          .lambda
+
+            // Decrementing [max] to prevent overflow.
+            math.decrement:x:@.arguments/*/max
+
+            // Figuring out URL.
+            .url
             set-value:x:@.url
-               strings.concat
-                  get-value:x:@.base
-                  get-value:x:@.url
-      else-if
-         and
-            not
+               get-value:x:@.dp/#/*/\@href
+
+            // Making sure we turn URL into an absolute URL.
+            if
                strings.starts-with:x:@.url
-                  .:"https://"
-            not
-               strings.starts-with:x:@.url
-                  .:"http://"
-         .lambda
-            set-value:x:@.url
-               strings.concat
-                  get-value:x:@.base
                   .:/
-                  get-value:x:@.dp/#/*/\@href
+               .lambda
+                  set-value:x:@.url
+                     strings.concat
+                        get-value:x:@.base
+                        get-value:x:@.url
+            else-if
+               and
+                  not
+                     strings.starts-with:x:@.url
+                        .:"https://"
+                  not
+                     strings.starts-with:x:@.url
+                        .:"http://"
+               .lambda
+                  set-value:x:@.url
+                     strings.concat
+                        get-value:x:@.base
+                        .:/
+                        get-value:x:@.dp/#/*/\@href
 
-      // Figuring out anchor text.
-      .anchor:
-      for-each:x:@.dp/#/**/\#text
-         set-value:x:@.anchor
-            strings.concat
-               get-value:x:@.anchor
-               .:" "
-               get-value:x:@.dp/#
-               
-      // Trimming anchor and removing redundant spacing characters.
-      set-value:x:@.anchor
-         strings.trim:x:@.anchor
-            .:" \t\r\n"
-      set-value:x:@.anchor
-         strings.replace:x:@.anchor
-            .:"  "
-            .:" "
-      set-value:x:@.anchor
-         strings.replace:x:@.anchor
-            .:"\r"
-            .:" "
-      set-value:x:@.anchor
-         strings.replace:x:@.anchor
-            .:"\n"
-            .:" "
+            // Figuring out anchor text.
+            .anchor:
+            for-each:x:@.dp/#/**/\#text
+               set-value:x:@.anchor
+                  strings.concat
+                     get-value:x:@.anchor
+                     .:" "
+                     get-value:x:@.dp/#
 
-      /*
-       * Now we know both anchor text and URL,
-       * however before we can proceed we verify that
-       * anchor text actually exists.
-       */
-      if
-         and
-            not-null:x:@.anchor
-            neq:x:@.anchor
-               .:
-            not
-               strings.contains:x:@.url
-                  .:#
-         .lambda
+            // Trimming anchor and removing redundant spacing characters.
+            set-value:x:@.anchor
+               strings.trim:x:@.anchor
+                  .:" \t\r\n"
+            set-value:x:@.anchor
+               strings.replace:x:@.anchor
+                  .:"  "
+                  .:" "
+            set-value:x:@.anchor
+               strings.replace:x:@.anchor
+                  .:"\r"
+                  .:" "
+            set-value:x:@.anchor
+               strings.replace:x:@.anchor
+                  .:"\n"
+                  .:" "
 
-            // Adding currently iterated URL to [.markdown].
-            set-value:x:@.markdown
-               strings.concat
-                  get-value:x:@.markdown
-                  .:"* ["
-                  get-value:x:@.anchor
-                  .:](
-                  get-value:x:@.url
-                  .:)
-                  .:"\r\n"
+            /*
+             * Now we know both anchor text and URL,
+             * however before we can proceed we verify that
+             * anchor text actually exists.
+             */
+            if
+               and
+                  not-null:x:@.anchor
+                  neq:x:@.anchor
+                     .:
+                  not
+                     strings.contains:x:@.url
+                        .:#
+               .lambda
+
+                  // Adding currently iterated URL to [.markdown].
+                  set-value:x:@.markdown
+                     strings.concat
+                        get-value:x:@.markdown
+                        .:"* ["
+                        get-value:x:@.anchor
+                        .:](
+                        get-value:x:@.url
+                        .:)
+                        .:"\r\n"
 
    // Done, returning Markdown to caller.
    strings.trim:x:@.markdown
