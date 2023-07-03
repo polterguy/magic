@@ -1,5 +1,7 @@
 /*
- * Scrapes the specified [url] and returns all hyperlinks as Markdown to caller.
+ * Scrapes the specified [url] and returns all hyperlinks as Markdown to caller,
+ * optionally with [max], [starts_with] or [class] arguments, allowing you to filter
+ * what links you want to return.
  */
 slots.create:magic.http.html2markdown-links
 
@@ -38,7 +40,7 @@ slots.create:magic.http.html2markdown-links
       if
          or
             not-exists:x:@.arguments/*/max
-            mte:x:@.arguments/*/max
+            mt:x:@.arguments/*/max
                .:int:0
          .lambda
 
@@ -73,10 +75,15 @@ slots.create:magic.http.html2markdown-links
 
             // Checking if caller provided a filter, and if so, verify we've got a match.
             if
-               or
-                  not-exists:x:@.arguments/*/starts_with
-                  strings.starts-with:x:@.url
-                     get-value:x:@.arguments/*/starts_with
+               and
+                  or
+                     not-exists:x:@.arguments/*/starts_with
+                     strings.starts-with:x:@.url
+                        get-value:x:@.arguments/*/starts_with
+                  or
+                     not-exists:x:@.arguments/*/class
+                     strings.contains:x:@.dp/#/*/\@class
+                        get-value:x:@.arguments/*/class
                .lambda
 
                   // Decrementing [max] to prevent overflow.
