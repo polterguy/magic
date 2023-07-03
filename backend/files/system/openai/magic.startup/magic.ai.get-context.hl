@@ -142,6 +142,9 @@ select vss.distance, vss.rowid as id, ts.prompt, ts.completion, ts.uri, ts.cache
           * such that we can calculate total number of tokens
           * resulting from adding currently iterated snippet.
           */
+         unwrap:x:+/*
+         strings.mixin:x:@.scan/0/*/completion
+            prompt:x:@.arguments/*/prompt
          set-value:x:@.tmp
             strings.concat
                get-value:x:@.tmp
@@ -149,7 +152,7 @@ select vss.distance, vss.rowid as id, ts.prompt, ts.completion, ts.uri, ts.cache
                get-value:x:@.scan/0/*/prompt
                .:"\r\n"
                .:"\r\n"
-               strings.mixin:x:@.scan/0/*/completion
+               get-value:x:@strings.mixin
                .:"\r\n"
 
          /*
