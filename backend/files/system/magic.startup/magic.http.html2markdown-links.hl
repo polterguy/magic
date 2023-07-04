@@ -52,8 +52,23 @@ slots.create:magic.http.html2markdown-links
             // Making sure we turn URL into an absolute URL.
             if
                strings.starts-with:x:@.url
+                  .://
+               .lambda
+
+                  // URL starts with "//", and we only need to add scheme to it.
+                  strings.split:x:@.base
+                     .:"://"
+                  set-value:x:@.url
+                     strings.concat
+                        get-value:x:@strings.split/0
+                        .:":"
+                        get-value:x:@.url
+            else-if
+               strings.starts-with:x:@.url
                   .:/
                .lambda
+
+                  // URL starts with only one "/" and we need to prefix it with base URL.
                   set-value:x:@.url
                      strings.concat
                         get-value:x:@.base
@@ -67,11 +82,15 @@ slots.create:magic.http.html2markdown-links
                      strings.starts-with:x:@.url
                         .:"http://"
                .lambda
+
+                  // URL does not start with scheme or "/", hence adding scheme and slash to it.
                   set-value:x:@.url
                      strings.concat
                         get-value:x:@.base
                         .:/
                         get-value:x:@.dp/#/*/\@href
+
+            // [else] ==> URL is absolute URL.
 
             // Checking if caller provided a filter, and if so, verify we've got a match.
             if
