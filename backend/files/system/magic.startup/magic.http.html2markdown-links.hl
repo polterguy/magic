@@ -36,7 +36,7 @@ slots.create:magic.http.html2markdown-links
    html2lambda:x:@signal
    for-each:x:@html2lambda/*/html/*/body/**/a
 
-      // Making sure we're not passed [max] argument.
+      // Making sure we're not past any specified [max] argument.
       if
          or
             not-exists:x:@.arguments/*/max
@@ -92,7 +92,10 @@ slots.create:magic.http.html2markdown-links
 
             // [else] ==> URL is absolute URL.
 
-            // Checking if caller provided a filter, and if so, verify we've got a match.
+            /*
+             * Checking if caller provided a [starts_with] or [class] filter,
+             * and if so, verify we've got a match for currently iterated URL.
+             */
             if
                and
                   or
@@ -104,9 +107,6 @@ slots.create:magic.http.html2markdown-links
                      strings.contains:x:@.dp/#/*/\@class
                         get-value:x:@.arguments/*/class
                .lambda
-
-                  // Decrementing [max] to prevent overflow.
-                  math.decrement:x:@.arguments/*/max
 
                   // Figuring out anchor text.
                   .anchor:
@@ -149,16 +149,88 @@ slots.create:magic.http.html2markdown-links
                               .:#
                      .lambda
 
-                        // Adding currently iterated URL to [.markdown].
-                        set-value:x:@.markdown
-                           strings.concat
-                              get-value:x:@.markdown
-                              .:"* ["
-                              get-value:x:@.anchor
-                              .:](
-                              get-value:x:@.url
-                              .:)
-                              .:"\r\n"
+                        /*
+                         * Now checking if caller provided a [query] parameter, at which point
+                         * we assume the URL we're looking for is masked inside that query parameter,
+                         * and not being the URL itself.
+                         *
+                         * This might be true for DuckDuckGo for instance, that directs you to a redirect
+                         * service, instead of giving you the direct link.
+                         */
+                        if
+                           exists:x:@.arguments/*/query
+                           .lambda
+                           
+                              // Caller provided [query] argument.
+                              strings.split:x:@.url
+                                 .:?
+                              if
+                                 mt
+                                    get-count:x:@strings.split/*
+                                    .:int:1
+                                 .lambda
+
+                                    // URL has query parameters, splitting all query parameters.
+                                    strings.split:x:@strings.split/1
+                                       .:&
+
+                                    // Used to track if we find query parameter.
+                                    .found:bool:false
+
+                                    // Finding the correct query parameter.
+                                    for-each:x:@strings.split/*
+
+                                       // Checking if currently iterated query parameter is the correct query parameter.
+                                       if
+                                          strings.starts-with:x:@.dp/#
+                                             strings.concat
+                                                get-value:x:@.arguments/*/query
+                                                .:=
+                                          .lambda
+
+                                             // This is our query parameter.
+                                             set-value:x:@.found
+                                                .:bool:true
+                                             strings.split:x:@.dp/#
+                                                .:=
+                                             set-value:x:@.url
+                                                strings.url-decode:x:@strings.split/1
+
+                                    /*
+                                     * Verifying we found query parameter in URL, and if not,
+                                     * ignoring currently iterated link.
+                                     */
+                                    if
+                                       not
+                                          get-value:x:@.found
+                                       .lambda
+
+                                          // Query parameter wasn't found.
+                                          set-value:x:@.url
+
+                              else
+
+                                 // No query parameters in URL at all.
+                                 set-value:x:@.url
+
+                        // Adding currently iterated URL to [.markdown] if we have a valid URL.
+                        if
+                           not-null:x:@.url
+                           .lambda
+
+                              // Decrementing [max] to prevent overflow.
+                              math.decrement:x:@.arguments/*/max
+                              
+                              // Concatenating currently iterated URL to Markdown result.
+                              set-value:x:@.markdown
+                                 strings.concat
+                                    get-value:x:@.markdown
+                                    .:"* ["
+                                    get-value:x:@.anchor
+                                    .:](
+                                    get-value:x:@.url
+                                    .:)
+                                    .:"\r\n"
 
    // Done, returning Markdown to caller.
    strings.trim:x:@.markdown
