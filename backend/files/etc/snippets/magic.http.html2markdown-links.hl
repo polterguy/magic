@@ -1,0 +1,6 @@
+unwrap:x:+/*
+signal:magic.http.html2markdown-links
+   url:"https://html.duckduckgo.com/html/?q=Pixar"
+   class:result__a
+   max:int:10
+   query:uddg
