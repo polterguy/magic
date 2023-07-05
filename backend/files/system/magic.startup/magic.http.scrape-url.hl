@@ -45,10 +45,7 @@ slots.create:magic.http.scrape-url
          log.error:Something went wrong while trying to crawl URL for Machine Learning data
             url:x:@.arguments/*/url
             error:x:@lambda2hyper
-         throw:Something went wrong while trying to crawl URL
-            public:bool:true
-            status:x:@http.get
-            message:x:@.arguments/*/message
+         return:x:@http.get
 
    // Making sure URL returned HTML.
    if
@@ -64,7 +61,7 @@ slots.create:magic.http.scrape-url
          log.error:URL did not return HTML content when crawling for Machine Learning snippets
             content:x:@lambda2hyper
             url:x:@.arguments/*/url
-         return:bool:true
+         return:int:415
 
    // Converting HTML to lambda.
    html2lambda:x:@http.get/*/content

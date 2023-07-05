@@ -1,0 +1,8 @@
+/*
+ * Example snippet searching for some query using DuckDuckGo,
+ * finding [max] URLs, for then to scrape all URLs in parallel,
+ * and return aggregated result as Markdown.
+ */
+signal:magic.http.duckduckgo-and-scrape
+   query:Who won the US Open in 2023?
+   max:int:5

@@ -1,0 +1,101 @@
+/*
+ * Searches the internet using DuckDuckGofor the [query] query,
+ * scrapes the resulting websites, and returns a context that can
+ * be used for querying OpenAI.
+ *
+ * Will not get more than [max_tokens] text.
+ */
+slots.create:magic.ai.create-search-context
+
+   // Sanity checking invocation
+   validators.mandatory:x:@.arguments/*/query
+   validators.mandatory:x:@.arguments/*/max_tokens
+   validators.integer:x:@.arguments/*/max_tokens
+      min:250
+      max:8000
+
+   // Invoking slot responsible for searching DuckDuckGo and scraping results.
+   unwrap:x:+/*/query
+   signal:magic.http.duckduckgo-and-scrape
+      query:x:@.arguments/*/query
+      max:int:5
+
+   // Buffer used to hold resulting Markdown.
+   .markdown:
+
+   // Buffer used to hold how many tokens we've seen so far.
+   .tokens:int:0
+
+   // Looping as long as we have not used up tokens.
+   .cont:bool:true
+   while:x:@.cont
+
+      // Iterating through each [snippet] in first result returned from above invocation.
+      for-each:x:@signal/0/*/snippets/*
+      
+         // Concatenating existing Markdown with currently iterated snippet
+         strings.concat
+            get-value:x:@.markdown
+            get-value:x:@.dp/#/*/prompt
+            .:"\r\n"
+            get-value:x:@.dp/#/*/completion
+            .:"\r\n"
+            .:"\r\n"
+
+         // Verifying we don't ovwerflow [max_tokens] by adding currently iterated snippet.
+         if
+            lt
+               openai.tokenize:x:@strings.concat
+               get-value:x:@.arguments/*/max_tokens
+            .lambda
+
+               // We still have more room for context.
+               set-value:x:@.markdown
+                  get-value:x:@strings.concat
+
+      // Used to hold reference Markdown URL for where information was fetched.
+      .reference
+      set-value:x:@.reference
+         strings.concat
+            .:"Source: "
+            .:[
+            get-value:x:@signal/0/*/title
+            .:](
+            get-value:x:@signal/0/*/url
+            .:)
+
+      // Verifying we don't overflow [max_tokens] by adding source of information.
+      strings.concat
+         get-value:x:@.markdown
+         get-value:x:@.reference
+         .:"\r\n"
+         .:"\r\n"
+      if
+         lt
+            openai.tokenize:x:@strings.concat
+            get-value:x:@.arguments/*/max_tokens
+         .lambda
+
+            // Room for source of data.
+            set-value:x:@.markdown
+               get-value:x:@strings.concat
+
+      // Removing top item from [signal] invocation.
+      remove-nodes:x:@signal/0
+
+      // Verifying we have more items.
+      if
+         not-exists:x:@signal/0
+         .lambda
+
+            // We used everything from above invocation to DuckDuckGo scraping slot.
+            set-value:x:@.cont
+               .:bool:false
+
+   // Cleaning up Markdown.
+   set-value:x:@.markdown
+      strings.trim:x:@.markdown
+         .:"\r\n \t"
+
+   // Returning Markdown to caller.
+   return:x:@.markdown
