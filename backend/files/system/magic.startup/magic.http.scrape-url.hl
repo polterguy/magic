@@ -31,6 +31,7 @@ slots.create:magic.http.scrape-url
          Accept-Encoding:identity
 
    // Sanity checking above invocation.
+   log.info:Foo 1
    if
       not
          and
@@ -50,6 +51,10 @@ slots.create:magic.http.scrape-url
    // Making sure URL returned HTML.
    if
       or
+         not-exists:x:@http.get/*/content
+         null:x:@http.get/*/content
+         eq:x:@http.get/*/content
+            .:
          not-exists:x:@http.get/*/headers/*/Content-Type
          not
             strings.starts-with:x:@http.get/*/headers/*/Content-Type
@@ -64,7 +69,9 @@ slots.create:magic.http.scrape-url
          return:int:415
 
    // Converting HTML to lambda.
+   log.info:Foo 2
    html2lambda:x:@http.get/*/content
+   log.info:Foo 3
 
    // Buffer for snippets we found at specified URL.
    .snippets
@@ -101,6 +108,7 @@ slots.create:magic.http.scrape-url
     * Trying to find best semantic HTML tag to use as we traverse document,
     * to ignore irrelevant HTML tags.
     */
+   log.info:Foo 4
    if
       and
          or
@@ -134,6 +142,7 @@ slots.create:magic.http.scrape-url
          get-nodes:x:@html2lambda/*/html/*/body/*
 
    // Looping through each HTML tag in document.
+   log.info:Foo 5
    for-each:x:@.content/**
 
       // Checking if this is a tag we need to handle.
@@ -180,7 +189,11 @@ slots.create:magic.http.scrape-url
 
             // Verifying we actually have a [@src] attribute.
             if
-               exists:x:@.dp/#/*/\@src
+               and
+                  exists:x:@.dp/#/*/\@src
+                  not-null:x:@.dp/#/*/\@src
+                  neq:x:@.dp/#/*/\@src
+                     .:
                .lambda
 
                   // Normalising URL.
@@ -227,10 +240,8 @@ slots.create:magic.http.scrape-url
                               get-value:x:@.snippets/0/-/*/completion
                               .:"\r\n\r\n!["
                               get-first-value
-                                 strings.concat
-                                    .:"Image "
-                                    get-value:x:@.dp/#/*/\@alt
-                                 .:Image
+                                 get-value:x:@.dp/#/*/\@alt
+                                 .:"Image "
                               .:"]("
                               get-value:x:@.url
                               .:")"
@@ -241,10 +252,8 @@ slots.create:magic.http.scrape-url
                      strings.concat
                         .:"!["
                         get-first-value
-                           strings.concat
-                              .:"Image "
-                              get-value:x:@.dp/#/*/\@alt
-                           .:Image
+                           get-value:x:@.dp/#/*/\@alt
+                           .:"Image "
                         .:"]("
                         get-value:x:@.url
                         .:")"
@@ -387,6 +396,7 @@ slots.create:magic.http.scrape-url
 
             // Now creating prompt semantically by concatenating relevant Hx tags.
             set-value:x:@.prompt
+               .:
             for-each:x:@.page-header/*
                if
                   and
@@ -459,8 +469,7 @@ slots.create:magic.http.scrape-url
                   for-each:x:@.dp/#/**/\#text
                      if
                         and
-                           neq:x:@.dp/#
-                              .
+                           not-null:x:@.dp/#
                            neq:x:@.dp/#
                               .:
                         .lambda
@@ -601,7 +610,9 @@ slots.create:magic.http.scrape-url
                               // Appending to existing completion.
                               set-value:x:@.snippets/0/-/*/completion
                                  strings.concat
-                                    get-value:x:@.snippets/0/-/*/completion
+                                    get-first-value
+                                       get-value:x:@.snippets/0/-/*/completion
+                                       .:
                                     get-value:x:@.completion
 
                         else
@@ -612,5 +623,28 @@ slots.create:magic.http.scrape-url
                               .
                                  completion:x:@.completion
 
-   // Returning results to caller
-   return-nodes:x:@.snippets/*
+   // Returning results to caller.
+   log.info:Foo 6
+   for-each:x:@.snippets/*
+
+      // Verifying both [prompt] and [completion] exists for snippet.
+      if
+         and
+            exists:x:@.dp/#/*/prompt
+            not-null:x:@.dp/#/*/prompt
+            mt
+               strings.length:x:@.dp/#/*/prompt
+               .:int:50
+            exists:x:@.dp/#/*/completion
+            not-null:x:@.dp/#/*/completion
+            mt
+               strings.length:x:@.dp/#/*/completion
+               .:int:50
+         .lambda
+
+            // Valid snippet, making sure we return it to caller.
+            add:x:../*/return
+               get-nodes:x:@.dp/#
+
+   // Returning result to caller.
+   return
