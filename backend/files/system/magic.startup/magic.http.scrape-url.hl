@@ -8,7 +8,6 @@ slots.create:magic.http.scrape-url
    validators.mandatory:x:@.arguments/*/url
    validators.url:x:@.arguments/*/url
 
-
    // Retrieving URL's content.
    http.get:x:@.arguments/*/url
       headers
