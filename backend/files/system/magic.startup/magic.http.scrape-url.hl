@@ -1,6 +1,9 @@
 
 /*
  * Scrapes the spcified [url] and returns the result as Markdown to caller.
+ *
+ * If you specify [semantics] as true, the scraper will try to return only
+ * results from semantic tags such as "article" and "main".
  */
 slots.create:magic.http.scrape-url
 
@@ -102,7 +105,12 @@ slots.create:magic.http.scrape-url
     * to ignore irrelevant HTML tags.
     */
    if
-      exists:x:@html2lambda/*/html/*/body/**/article
+      and
+         or
+            not
+               exists:x:@.arguments/*/semantics
+            get-value:x:@.arguments/*/semantics
+         exists:x:@html2lambda/*/html/*/body/**/article
       .lambda
 
          // Using [article] tags as our foundation.
@@ -110,7 +118,12 @@ slots.create:magic.http.scrape-url
             get-nodes:x:@html2lambda/*/html/*/body/**/article/*
 
    else-if
-      exists:x:@html2lambda/*/html/*/body/**/main
+      and
+         or
+            not
+               exists:x:@.arguments/*/semantics
+            get-value:x:@.arguments/*/semantics
+         exists:x:@html2lambda/*/html/*/body/**/main
       .lambda
 
          // Using [main] tags as our foundation.
