@@ -8,6 +8,18 @@ slots.create:magic.http.scrape-url
    validators.mandatory:x:@.arguments/*/url
    validators.url:x:@.arguments/*/url
 
+   // Figuring out base URL, such that we can correctly crawl hyperlinks in document.
+   .base
+   strings.split:x:@.arguments/*/url
+      .:"://"
+   strings.split:x:@strings.split/1
+      .:/
+   set-value:x:@.base
+      strings.concat
+         get-value:x:@strings.split/@strings.split/0
+         .:"://"
+         get-value:x:@strings.split/0
+
    // Retrieving URL's content.
    http.get:x:@.arguments/*/url
       headers
@@ -71,9 +83,48 @@ slots.create:magic.http.scrape-url
 
    // Temp buffer for completion.
    .tmp-completion:
+   
+   // Checking if URL has a base HTML element.
+   if
+      exists:x:@html2lambda/*/head/*/base
+      .lambda
+
+         // Document contains base HTML tag, using it as our base for hyperlinks and images.
+         set-value:x:@.base
+            strings.trim-end:x:@html2lambda/*/head/*/base/*/\@href
+               .:/
+   
+   // Buffer for what nodes we're to traverse and scrape.
+   .content
+
+   /*
+    * Trying to find best semantic HTML tag to use as we traverse document,
+    * to ignore irrelevant HTML tags.
+    */
+   if
+      exists:x:@html2lambda/*/html/*/body/**/article
+      .lambda
+
+         // Using [article] tags as our foundation.
+         add:x:@.content
+            get-nodes:x:@html2lambda/*/html/*/body/**/article/*
+
+   else-if
+      exists:x:@html2lambda/*/html/*/body/**/main
+      .lambda
+
+         // Using [main] tags as our foundation.
+         add:x:@.content
+            get-nodes:x:@html2lambda/*/html/*/body/**/main/*
+
+   else
+
+      // Defaulting to [body] tag.
+      add:x:@.content
+         get-nodes:x:@html2lambda/*/html/*/body/*
 
    // Looping through each HTML tag in document.
-   for-each:x:@html2lambda/*/html/*/body/**
+   for-each:x:@.content/**
 
       // Checking if this is a tag we need to handle.
       get-name:x:@.dp/#
