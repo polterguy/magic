@@ -1,0 +1,73 @@
+/*
+ * Slot that searches DuckDuckGo for [max] URLs matching the [query],
+ * for then to scrape each URL, and aggregating the result
+ * returning it back to caller as a single Markdown.
+ */
+slots.create:magic.http.duckduckgo-and-scrape
+
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/query
+   validators.string:x:@.arguments/*/query
+      min:3
+      max:250
+   validators.integer:x:@.arguments/*/max
+      min:1
+      max:10
+
+   // Searching DuckDuckGo for matches.
+   add:x:+
+      get-nodes:x:@.arguments/*
+   signal:magic.http.duckduckgo-search
+
+   // Building our execution object that fetches all URLs simultaneously in parallel.
+   .exe
+
+      // Waiting for all scraping operations to return.
+      join
+
+   for-each:x:@signal/*/result/*
+
+      // Dynamically contructing our lambda object.
+      .cur
+         fork
+            .reference
+            signal:magic.http.scrape-url
+               url:x:@.dp/#/*/url
+               semantics:bool:true
+
+      // Unwrapping URL inside of currently iterated [fork].
+      unwrap:x:@.cur/*/fork/*/signal/*/url
+
+      // Adding URL and title as reference to currently iterated [fork].
+      unwrap:x:+/*/*
+      add:x:@.cur/*/fork/*/.reference
+         .
+            url:x:@.dp/#/*/url
+            title:x:@.dp/#/*/title
+
+      // Adding current thread to above [join].
+      add:x:@.exe/*/join
+         get-nodes:x:@.cur/*
+
+   // Executing [.exe] retrieving all URLs in parallel.
+   eval:x:@.exe
+
+   // Iterating through each above result, returning to caller.
+   for-each:x:@.exe/*/join/*
+
+      // Adding primary return lambda to [return] below.
+      unwrap:x:+/*/*/*
+      add:x:../*/return
+         .
+            .
+               url:x:@.dp/#/*/.reference/*/url
+               title:x:@.dp/#/*/.reference/*/title
+               snippets
+
+      // Adding [snippets] to return below.
+      add:x:../*/return/0/-/*/snippets
+         get-nodes:x:@.dp/#/*/signal/*
+   
+   // Returning result of invocation to caller.
+   return
+         
