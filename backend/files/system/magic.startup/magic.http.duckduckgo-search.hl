@@ -1,0 +1,112 @@
+/*
+ * Scrapes the specified [url] and returns all hyperlinks as Markdown to caller,
+ * optionally with [max], [starts_with] or [class] arguments, allowing you to filter
+ * what links you want to return.
+ */
+slots.create:magic.http.duckduckgo-search
+
+   // Result we return to caller.
+   .result
+
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/query
+   validators.integer:x:@.arguments/*/max
+      min:1
+      max:10
+
+   // Creating our search URL.
+   .url
+   set-value:x:@.url
+      strings.concat
+         .:"https://html.duckduckgo.com/html/?q="
+         strings.url-encode:x:@.arguments/*/query
+
+   // Invoking slot responsible for retrieving search results.
+   unwrap:x:+/*
+   signal:magic.http.get-with-cache
+      url:x:@.url
+
+   // Semantically traversing HTML for result.
+   html2lambda:x:@signal
+   for-each:x:@html2lambda/*/html/*/body/**/a/*/\@class/=result__a/.
+
+      // Making sure we're not past any specified [max] argument.
+      if
+         or
+            not-exists:x:@.arguments/*/max
+            mt:x:@.arguments/*/max
+               .:int:0
+         .lambda
+
+            // Not beyond [max] argument.
+            .cur
+            set-value:x:@.cur
+               strings.concat
+                  .:"http:"
+                  get-value:x:@.dp/#/*/\@href
+
+            // Retrieving raw URL from QUERY parameters returned from DuckDuckGo.
+            strings.split:x:@.cur
+               .:?
+            if
+               mt
+                  get-count:x:@strings.split/*
+                  .:int:1
+               .lambda
+
+                  // URL has query parameters, splitting all query parameters.
+                  strings.split:x:@strings.split/1
+                     .:&
+
+                  // Used to track if we find query parameter.
+                  .found:bool:false
+
+                  // Finding the correct query parameter.
+                  for-each:x:@strings.split/*
+
+                     // Checking if currently iterated query parameter is the correct query parameter.
+                     if
+                        strings.starts-with:x:@.dp/#
+                           strings.concat
+                              .:uddg
+                              .:=
+                        .lambda
+
+                           // This is our query parameter.
+                           set-value:x:@.found
+                              .:bool:true
+                           strings.split:x:@.dp/#
+                              .:=
+                           set-value:x:@.cur
+                              strings.url-decode:x:@strings.split/1
+
+                  /*
+                   * Verifying we found query parameter in URL, and if not,
+                   * ignoring currently iterated link.
+                   */
+                  if
+                     not
+                        get-value:x:@.found
+                     .lambda
+
+                        // Query parameter wasn't found.
+                        set-value:x:@.url
+
+            else
+
+               // No query parameters in URL at all.
+               set-value:x:@.url
+
+            // Decrementing [max] argument.
+            math.decrement:x:@.arguments/*/max
+
+            // Adding currently iterated URL to [.result].
+            unwrap:x:+/*/*/*
+            add:x:@.result
+               .
+                  .
+                     url:x:@.cur
+                     title:x:@.dp/#/*/\#text
+
+   // Returing result to caller.
+   return-nodes:x:@.result/*
