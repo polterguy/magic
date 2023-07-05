@@ -1,0 +1,6 @@
+/*
+ * Example snippet using DuckDuckGo to search for some query.
+ */
+signal:magic.http.duckduckgo-search
+   query:Who won the US Open in 2023?
+   max:int:5
