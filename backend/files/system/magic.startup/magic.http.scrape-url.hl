@@ -31,7 +31,6 @@ slots.create:magic.http.scrape-url
          Accept-Encoding:identity
 
    // Sanity checking above invocation.
-   log.info:Foo 1
    if
       not
          and
@@ -69,9 +68,7 @@ slots.create:magic.http.scrape-url
          return:int:415
 
    // Converting HTML to lambda.
-   log.info:Foo 2
    html2lambda:x:@http.get/*/content
-   log.info:Foo 3
 
    // Buffer for snippets we found at specified URL.
    .snippets
@@ -108,7 +105,6 @@ slots.create:magic.http.scrape-url
     * Trying to find best semantic HTML tag to use as we traverse document,
     * to ignore irrelevant HTML tags.
     */
-   log.info:Foo 4
    if
       and
          or
@@ -142,7 +138,6 @@ slots.create:magic.http.scrape-url
          get-nodes:x:@html2lambda/*/html/*/body/*
 
    // Looping through each HTML tag in document.
-   log.info:Foo 5
    for-each:x:@.content/**
 
       // Checking if this is a tag we need to handle.
@@ -624,7 +619,6 @@ slots.create:magic.http.scrape-url
                                  completion:x:@.completion
 
    // Returning results to caller.
-   log.info:Foo 6
    for-each:x:@.snippets/*
 
       // Verifying both [prompt] and [completion] exists for snippet.
