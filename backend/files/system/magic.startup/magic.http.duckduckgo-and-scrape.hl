@@ -64,9 +64,9 @@ slots.create:magic.http.duckduckgo-and-scrape
     */
    for-each:x:@.exe/*/join/*/fork
 
-      // Verifying currently iterated node has result.
+      // Verifying currently iterated node has result, containing both prompt and completion.
       if
-         exists:x:@.dp/#/*/try/*/signal/*
+         exists:x:@.dp/#/*/try/*/signal/*/*/prompt/./*/completion
          .lambda
 
             // Adding primary return lambda to [return] below.
