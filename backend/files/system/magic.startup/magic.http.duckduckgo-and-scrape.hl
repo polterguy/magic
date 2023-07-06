@@ -31,12 +31,15 @@ slots.create:magic.http.duckduckgo-and-scrape
       .cur
          fork
             .reference
-            signal:magic.http.scrape-url
-               url:x:@.dp/#/*/url
-               semantics:bool:true
-
-      // Unwrapping URL inside of currently iterated [fork].
-      unwrap:x:@.cur/*/fork/*/signal/*/url
+            try
+               unwrap:x:+/*
+               signal:magic.http.scrape-url
+                  url:x:@.reference/*/url
+                  semantics:bool:true
+            .catch
+               log.error:Could not scrape URL
+                  url:x:@.reference/*/url
+                  message:x:@.arguments/*/message
 
       // Adding URL and title as reference to currently iterated [fork].
       unwrap:x:+/*/*
@@ -52,21 +55,32 @@ slots.create:magic.http.duckduckgo-and-scrape
    // Executing [.exe] retrieving all URLs in parallel.
    eval:x:@.exe
 
-   // Iterating through each above result, returning to caller.
-   for-each:x:@.exe/*/join/*
+   /*
+    * Iterating through each above result,
+    * returning result to caller.
+    *
+    * Notice, we only iterate through invocations that have result, and
+    * did not timeout by verifying [signal] slot has children.
+    */
+   for-each:x:@.exe/*/join/*/fork
 
-      // Adding primary return lambda to [return] below.
-      unwrap:x:+/*/*/*
-      add:x:../*/return
-         .
-            .
-               url:x:@.dp/#/*/.reference/*/url
-               title:x:@.dp/#/*/.reference/*/title
-               snippets
+      // Verifying currently iterated node has result.
+      if
+         exists:x:@.dp/#/*/try/*/signal/*
+         .lambda
 
-      // Adding [snippets] to return below.
-      add:x:../*/return/0/-/*/snippets
-         get-nodes:x:@.dp/#/*/signal/*
+            // Adding primary return lambda to [return] below.
+            unwrap:x:+/*/*/*
+            add:x:../*/return
+               .
+                  .
+                     url:x:@.dp/#/*/.reference/*/url
+                     title:x:@.dp/#/*/.reference/*/title
+                     snippets
+
+            // Adding [snippets] to return below.
+            add:x:../*/return/0/-/*/snippets
+               get-nodes:x:@.dp/#/*/try/*/signal/*
    
    // Returning result of invocation to caller.
    return
