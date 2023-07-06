@@ -130,6 +130,46 @@ select vss.distance, vss.rowid as id, ts.prompt, ts.completion, ts.uri, ts.cache
    .tmp:
 
    /*
+    * To avoid mixin snippets from being executed unless they're matched at the top,
+    * we pre-process results, executing mixins for the first snippet, for then to
+    * remove all mixin snippets matched further down.
+    */
+   if
+      exists:x:@.scan/0/*/completion
+      .lambda
+
+         // Executing mixin on the first snippet.
+         unwrap:x:+/*/*
+         set-value:x:@.scan/0/*/completion
+            strings.mixin:x:@.scan/0/*/completion
+               prompt:x:@.arguments/*/prompt
+
+         /*
+          * Moving all snippets to [.tmp], such that we can add only snippets
+          * that are not mixin snippets to [.scan].
+          */
+         .tmp
+         add:x:@.tmp
+            get-nodes:x:@.scan/*
+         remove-nodes:x:@.scan/*
+         for-each:x:@.tmp/*
+
+            // Only adding non-mixin snippets back to [.scan]
+            if
+               and
+                  not
+                     strings.contains:x:@.dp/#/*/completion
+                        .:"{{"
+                  not
+                     strings.contains:x:@.dp/#/*/completion
+                        .:"}}"
+               .lambda
+
+                  // Not a mixin snippet.
+                  add:x:@.scan
+                     get-nodes:x:@.dp/#
+
+   /*
     * Running through all training snippets creating our context
     * and storing referenced snippets in the process.
     */
@@ -142,9 +182,6 @@ select vss.distance, vss.rowid as id, ts.prompt, ts.completion, ts.uri, ts.cache
           * such that we can calculate total number of tokens
           * resulting from adding currently iterated snippet.
           */
-         unwrap:x:+/*
-         strings.mixin:x:@.scan/0/*/completion
-            prompt:x:@.arguments/*/prompt
          set-value:x:@.tmp
             strings.concat
                get-value:x:@.tmp
@@ -152,7 +189,7 @@ select vss.distance, vss.rowid as id, ts.prompt, ts.completion, ts.uri, ts.cache
                get-value:x:@.scan/0/*/prompt
                .:"\r\n"
                .:"\r\n"
-               get-value:x:@strings.mixin
+               get-value:x:@.scan/0/*/completion
                .:"\r\n"
 
          /*
