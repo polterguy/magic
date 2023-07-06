@@ -25,6 +25,7 @@ slots.create:magic.http.scrape-url
 
    // Retrieving URL's content.
    http.get:x:@.arguments/*/url
+      timeout:int:10
       headers
          User-Agent:AINIRO-MachineLearning-Spider
          Accept:text/html
