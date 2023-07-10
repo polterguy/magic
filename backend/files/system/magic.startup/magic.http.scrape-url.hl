@@ -207,18 +207,35 @@ slots.create:magic.http.scrape-url
                         // Local URL, prepending base URL.
                         if
                            strings.starts-with:x:@.dp/#/*/\@src
+                              .://
+                           .lambda
+
+                              strings.split:x:@.base
+                                 .:"://"
+                              set-value:x:@.url
+                                 strings.concat
+                                    get-value:x:@strings.split/0
+                                    .:":"
+                                    get-value:x:@.dp/#/*/\@src
+
+                        else-if
+                           strings.starts-with:x:@.dp/#/*/\@src
                               .:/
                            .lambda
+
                               set-value:x:@.url
                                  strings.concat
                                     get-value:x:@.base
                                     get-value:x:@.dp/#/*/\@src
+
                         else
+
                            set-value:x:@.url
                               strings.concat
                                  get-value:x:@.base
                                  .:/
                                  get-value:x:@.dp/#/*/\@src
+
                   else
 
                      // URL is absolute.
@@ -314,11 +331,9 @@ slots.create:magic.http.scrape-url
                      .:#
                   neq:x:@.dp/#/*/\@href
                      .:
-                  strings.starts-with:x:@.dp/#/*/\@href
-                     get-value:x:@.arguments/*/url
                .lambda
 
-                  // Absolute URL but still within base URL we're currently crawling.
+                  // Absolute URL.
                   strings.split:x:@.dp/#/*/\@href
                      .:#
                   strings.trim-end:x:@strings.split/0
