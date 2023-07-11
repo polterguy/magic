@@ -147,7 +147,7 @@ slots.create:magic.ai.chat
     * Pruning previous messages until size of context + max_tokens is less than whatever
     * amount of tokens the model can handle.
     *
-    * Notice, we never submit more than 7 previous messages to OpenAI as context.
+    * Notice, we never submit more than 20 previous messages to OpenAI as context.
     * We also make sure we always submit the FIRST message and the SECOND message,
     * if existing, since this is the system message, and
     * the training data supplied as our context.
@@ -160,7 +160,7 @@ slots.create:magic.ai.chat
          and
             lt
                get-count:x:@.session/*
-               .:int:8
+               .:int:20
             lt
                math.add
                   get-value:x:@.arguments/*/max_tokens
