@@ -146,9 +146,10 @@ export class FileService {
    * Uploads a file to your backend.
    */
   public uploadFile(path: string, file: any) {
+    console.log(file);
 
     const formData: FormData = new FormData();
-    formData.append('file', file.item(0));
+    formData.append('file', file);
     return this.httpService.put<any>('/magic/system/file-system/file?folder=' + encodeURIComponent(path), formData);
   }
 

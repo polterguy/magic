@@ -82,7 +82,7 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     }
 
     this.generalService.showLoading();
-    this.fileService.uploadFile('/config/', file).subscribe({
+    this.fileService.uploadFile('/config/', file[0]).subscribe({
 
       next: () => {
 
