@@ -33,6 +33,8 @@ slots.create:magic.ai.massage
             .
                .
                   content:x:@strings.substring
+
+         // Removing the parts of the string we just used, except 50 characters of overlap.
          if
             mt
                strings.length:x:@.arguments/*/content
@@ -75,19 +77,12 @@ slots.create:magic.ai.massage
        */
       for-each:x:@.snippets/*
 
-         // Creating our prompt.
-         .decorated-prompt
-         set-value:x:@.decorated-prompt
-            strings.concat
-               get-value:x:@.dp/#/*/massage
-               get-value:x:@.dp/#/*/content
-
          // Creating an HTTP POST request towards OpenAI to create structured data of the specified content.
          .max-tokens
          set-value:x:@.max-tokens
             math.subtract
                .:int:4000
-               openai.tokenize:x:@.decorated-prompt
+               openai.tokenize:x:@.dp/#/*/content
          http.post:"https://api.openai.com/v1/chat/completions"
             headers
                Authorization:x:@.token
@@ -99,10 +94,10 @@ slots.create:magic.ai.massage
                messages
                   .
                      role:user
-                     content:You are a helpful assistant
+                     content:x:@.arguments/*/massage
                   .
                      role:user
-                     content:x:@.decorated-prompt
+                     content:x:@.dp/#/*/content
             convert:true
 
          // Sanity checking above invocation.
