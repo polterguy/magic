@@ -14,7 +14,29 @@ slots.create:magic.ai.import-zip-file
       not
          io.folder.exists:/etc/system/openai/temp/
       .lambda
+
+         // Creating folder.
          io.folder.create:/etc/system/openai/temp/
+
+   else
+
+      // Emptying folder, first deleting all files.
+      io.file.list:/etc/system/openai/temp/
+      for-each:x:@io.file.list/*
+
+         // Making sure we keep README.md file around
+         if
+            neq:x:@.dp/#
+               .:/etc/system/openai/temp/README.md
+            .lambda
+
+               // Deleting file.
+               io.file.delete:x:@.dp/#
+
+      // Then deleting all folders.
+      io.folder.list:/etc/system/openai/temp/
+      for-each:x:@io.file.list/*
+         io.folder.delete:x:@.dp/#
 
    // Saving file and unzipping it.
    .filename
