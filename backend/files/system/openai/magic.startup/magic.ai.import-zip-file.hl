@@ -1,0 +1,34 @@
+
+/*
+ * Slot responsible for unzipping and importing a ZIP file as training data.
+ */
+slots.create:magic.ai.import-zip-file
+
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/file
+   validators.mandatory:x:@.arguments/*/file/*/name
+   validators.mandatory:x:@.arguments/*/file/*/stream
+
+   // Verifying our OpenAI temp folder exists.
+   if
+      not
+         io.folder.exists:/etc/system/openai/temp/
+      .lambda
+         io.folder.create:/etc/system/openai/temp/
+
+   // Saving file and unzipping it.
+   .filename
+   set-value:x:@.filename
+      strings.concat
+         .:/etc/system/openai/temp/
+         get-value:x:@.arguments/*/file/*/name
+   io.stream.save-file:x:@.filename
+      get-value:x:@.arguments/*/file/*/stream
+
+   // Unzipping file.
+   io.file.unzip:x:@.filename
+
+   // Returning success to caller.
+   return
+      result:success
+      count:int:1

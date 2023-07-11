@@ -45,6 +45,15 @@ strings.to-lower:x:@strings.split/0/-
 // Converting file to lambda object according to its extention.
 switch:x:@strings.to-lower
 
+   // ZIP file.
+   case:zip
+
+      // Invoking slot responsible for unzipping and importing ZIP file, and returning result of invocation.
+      add:x:./*/signal
+         get-nodes:x:@.arguments/*
+      signal:magic.ai.import-zip-file
+      return:x:-/*
+
    // CSV file type.
    case:csv
 
