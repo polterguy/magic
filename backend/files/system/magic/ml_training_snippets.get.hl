@@ -24,6 +24,17 @@ auth.ticket.verify:root
 // Opening up our database connection.
 data.connect:[generic|magic]
 
+   // Checking if order exists and if it is 'tokens', at which point we order by length of prompt + completion.
+   if
+      and
+         exists:x:@.arguments/*/order
+         eq:x:@.arguments/*/order
+            .:tokens
+      .lambda
+
+         set-value:x:@.arguments/*/order
+            .:length(prompt || completion)
+
    // Parametrising our read invocation with ordering arguments if specified.
    add:x:./*/data.read
       get-nodes:x:@.arguments/*/order
@@ -75,8 +86,10 @@ data.connect:[generic|magic]
          and
             or
 
-   // Changing embedding to a boolean value to preserve bandwidth.
+   // Changing embedding to a boolean value to preserve bandwidth, and returning token count.
    for-each:x:@data.read/*
+
+      // Changing embedding to boolean to preserve bandwidth.
       if
          not-null:x:@.dp/#/*/embedding_vss
          .lambda
@@ -85,6 +98,17 @@ data.connect:[generic|magic]
       else
          set-value:x:@.dp/#/*/embedding_vss
             .:bool:false
+
+      // Adding token count for each snippet.
+      strings.concat
+         get-value:x:@.dp/#/*/prompt
+         .:"\r\n\r\n"
+         get-value:x:@.dp/#/*/completion
+      openai.tokenize:x:@strings.concat
+      unwrap:x:+/*/*
+      add:x:@.dp/#
+         .
+            tokens:x:@openai.tokenize
 
    // Returning result of above read invocation to caller.
    return-nodes:x:@data.read/*

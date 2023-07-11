@@ -19,7 +19,7 @@ slots.create:magic.ai.search
       convert:x:@.arguments/*/threshold
          type:double
 
-   // Retrieving embeddings.
+   // Retrieving OpenAI token required to invoke ChatGPT.
    .token
    set-value:x:@.token
       strings.concat
