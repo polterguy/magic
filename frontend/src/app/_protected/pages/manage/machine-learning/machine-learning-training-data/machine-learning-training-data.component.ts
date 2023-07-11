@@ -40,6 +40,7 @@ export class MachineLearningTrainingDataComponent implements OnInit {
     'prompt',
     'uri',
     'type',
+    'tokens',
     'created',
     'cached',
     'pushed',

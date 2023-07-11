@@ -39,6 +39,13 @@ slots.create:magic.ai.import-zip-file
       for-each:x:@io.folder.list/*
          io.folder.delete:x:@.dp/#
 
+   // Retrieving OpenAI token required to invoke ChatGPT.
+   .token
+   set-value:x:@.token
+      strings.concat
+         .:"Bearer "
+         config.get:"magic:openai:key"
+
    // Saving file and unzipping it.
    .filename
    set-value:x:@.filename
@@ -55,6 +62,183 @@ slots.create:magic.ai.import-zip-file
    io.file.delete:x:@.filename
    
    // Recursively listing all files in folder.
+   io.file.list-recursively:/etc/system/openai/temp/
+
+   // Looping through each file to generate training data from it.
+   for-each:x:@io.file.list-recursively/*
+
+      // If true, implies we'll handle file, otherwise we'll ignore it.
+      .handle:bool:false
+
+      // Meta buffer used to hold general information about file.
+      .file-meta:
+
+      // Checking file extension and treating accordingly.
+      strings.split:x:@.dp/#
+         .:.
+      switch:x:@strings.split/0/-
+
+         // C# file.
+         case:cs
+            set-value:x:@.handle
+               .:bool:true
+            set-value:x:@.file-meta
+               strings.concat
+                  get-value:x:@.file-meta
+                  .:"File type: VB.NET"
+
+         // VB.NET file.
+         case:vb
+            set-value:x:@.handle
+               .:bool:true
+            set-value:x:@.file-meta
+               strings.concat
+                  get-value:x:@.file-meta
+                  .:"Programming language: VB.NET"
+
+         // Python file.
+         case:py
+            set-value:x:@.handle
+               .:bool:true
+            set-value:x:@.file-meta
+               strings.concat
+                  get-value:x:@.file-meta
+                  .:"Programming language: Python"
+
+         // Ruby file.
+         case:rb
+            set-value:x:@.handle
+               .:bool:true
+            set-value:x:@.file-meta
+               strings.concat
+                  get-value:x:@.file-meta
+                  .:"Programming language: Ruby"
+
+         // JavaScript file.
+         case:js
+            set-value:x:@.handle
+               .:bool:true
+            set-value:x:@.file-meta
+               strings.concat
+                  get-value:x:@.file-meta
+                  .:"Programming language: JavaScript"
+
+         // JavaScript file.
+         case:ts
+            set-value:x:@.handle
+               .:bool:true
+            set-value:x:@.file-meta
+               strings.concat
+                  get-value:x:@.file-meta
+                  .:"Programming language: TypeScript"
+
+      // Checking if we should handle the file.
+      if:x:@.handle
+
+         // Making sure we store file path.
+         set-value:x:@.file-meta
+            strings.concat
+               get-value:x:@.file-meta
+               .:" - Filename: "
+               get-value:x:@.dp/#
+
+         // Loading file.
+         .content
+         set-value:x:@.content
+            io.file.load:x:@.dp/#
+
+         // Buffer used to hold all training snippets resulting from file.
+         .snippets
+
+         // Making sure file's content is less than 8K in token count.
+         if
+            and
+               exists:x:@.arguments/*/massage
+               neq:x:@.arguments/*/massage
+                  .
+               neq:x:@.arguments/*/massage
+                  .:
+               lt
+                  openai.tokenize:x:@.content
+                  .:int:15000
+            .lambda
+
+               /*
+                * File should be massaged by ChatGPT.
+                * Invoking OpenAI using 16K model to allow for handling huge files.
+                */
+               http.post:"https://api.openai.com/v1/chat/completions"
+                  headers
+                     Authorization:x:@.token
+                     Content-Type:application/json
+                  payload
+                     model:gpt-3.5-turbo-16k
+                     max_tokens:int:2000
+                     temperature:decimal:0.5
+                     messages
+                        .
+                           role:system
+                           content:x:@.arguments/*/massage
+                        .
+                           role:system
+                           content:x:@.content
+                  convert:true
+
+               // Verifying above invocation was a success, and if not, inserting file as is.
+               if
+                  and
+                     mte:x:@http.post
+                        .:int:200
+                     lt:x:@http.post
+                        .:int:300
+                  .lambda
+
+                     // Creating training snippet from result.
+                     unwrap:x:+/*/*/*
+                     add:x:@.snippets
+                        .
+                           .
+                              prompt:x:@http.post/*/content/*/choices/0/*/message/*/content
+                              completion:x:@.content
+
+               else
+
+                  // Invocation was a failure.
+                  unwrap:x:+/*/*/*
+                  add:x:@.snippets
+                     .
+                        .
+                           prompt:x:@.file-meta
+                           completion:x:@.content
+
+         else
+
+            /*
+             * File is too large to use ChatGPT to create a structure out of it,
+             * or caller doesn't wants us to massage its content.
+             */
+            unwrap:x:+/*/*/*
+            add:x:@.snippets
+               .
+                  .
+                     prompt:x:@.file-meta
+                     completion:x:@.content
+
+         // Inserting training snippets generated above into our database.
+         data.connect:[generic|magic]
+
+            // Looping through each training snippet generated by above invocation.
+            for-each:x:@.snippets/*
+
+               // Inserting training snippet into our database.
+               data.create
+                  table:ml_training_snippets
+                  values
+                     type:x:@.arguments/*/type
+                     prompt:x:@.dp/#/*/prompt
+                     completion:x:@.dp/#/*/completion
+                     filename:x:@.dp/@.dp/#
+                     cached:int:0
 
    // Returning success to caller.
    return
