@@ -132,6 +132,70 @@ slots.create:magic.ai.import-zip-file
                   get-value:x:@.file-meta
                   .:"Programming language: TypeScript"
 
+         // Text file.
+         case:txt
+            set-value:x:@.handle
+               .:bool:true
+            set-value:x:@.file-meta
+               strings.concat
+                  get-value:x:@.file-meta
+                  .:"Text file"
+
+         // CSS file.
+         case:css
+            set-value:x:@.handle
+               .:bool:true
+            set-value:x:@.file-meta
+               strings.concat
+                  get-value:x:@.file-meta
+                  .:"CSS file"
+
+         // HTML file.
+         case:html
+         case:htm
+            set-value:x:@.handle
+               .:bool:true
+            set-value:x:@.file-meta
+               strings.concat
+                  get-value:x:@.file-meta
+                  .:"HTML file"
+
+         // SASS file.
+         case:sass
+            set-value:x:@.handle
+               .:bool:true
+            set-value:x:@.file-meta
+               strings.concat
+                  get-value:x:@.file-meta
+                  .:"SASS file"
+
+         // SASS file.
+         case:scss
+            set-value:x:@.handle
+               .:bool:true
+            set-value:x:@.file-meta
+               strings.concat
+                  get-value:x:@.file-meta
+                  .:"SCSS file"
+
+         // SQL file.
+         case:sql
+            set-value:x:@.handle
+               .:bool:true
+            set-value:x:@.file-meta
+               strings.concat
+                  get-value:x:@.file-meta
+                  .:"SQL file"
+
+         // Markdown file.
+         case:md
+            set-value:x:@.handle
+               .:bool:true
+            set-value:x:@.file-meta
+               strings.concat
+                  get-value:x:@.file-meta
+                  .:"Markdown file"
+
       // Checking if we should handle the file.
       if:x:@.handle
 
