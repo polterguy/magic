@@ -146,7 +146,6 @@ export class FileService {
    * Uploads a file to your backend.
    */
   public uploadFile(path: string, file: any) {
-    console.log(file);
 
     const formData: FormData = new FormData();
     formData.append('file', file);
