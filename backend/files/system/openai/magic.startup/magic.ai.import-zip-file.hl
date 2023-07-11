@@ -1,6 +1,7 @@
 
 /*
- * Slot responsible for unzipping and importing a ZIP file as training data.
+ * Slot responsible for unzipping and importing a ZIP file
+ * as machine learning training data.
  */
 slots.create:magic.ai.import-zip-file
 
@@ -35,7 +36,7 @@ slots.create:magic.ai.import-zip-file
 
       // Then deleting all folders.
       io.folder.list:/etc/system/openai/temp/
-      for-each:x:@io.file.list/*
+      for-each:x:@io.folder.list/*
          io.folder.delete:x:@.dp/#
 
    // Saving file and unzipping it.
@@ -49,6 +50,11 @@ slots.create:magic.ai.import-zip-file
 
    // Unzipping file.
    io.file.unzip:x:@.filename
+   
+   // Deleting ZIP file to preserve space.
+   io.file.delete:x:@.filename
+   
+   // Recursively listing all files in folder.
 
    // Returning success to caller.
    return
