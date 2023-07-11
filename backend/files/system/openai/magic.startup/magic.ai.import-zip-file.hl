@@ -39,13 +39,6 @@ slots.create:magic.ai.import-zip-file
       for-each:x:@io.folder.list/*
          io.folder.delete:x:@.dp/#
 
-   // Retrieving OpenAI token required to invoke ChatGPT.
-   .token
-   set-value:x:@.token
-      strings.concat
-         .:"Bearer "
-         config.get:"magic:openai:key"
-
    // Saving file and unzipping it.
    .filename
    set-value:x:@.filename
@@ -55,219 +48,296 @@ slots.create:magic.ai.import-zip-file
    io.stream.save-file:x:@.filename
       get-value:x:@.arguments/*/file/*/stream
 
-   // Unzipping file.
-   io.file.unzip:x:@.filename
+   /*
+    * This might take a LOT of time, so we create a thread to do the heavy lifting,
+    * such that we can return immediately.
+    *
+    * Notice, this just forwards our arguments to our [fork] invocation.
+    */
+   insert-before:x:./*/fork/0
+      get-nodes:x:@.arguments
+      get-nodes:x:@.filename
+   fork
    
-   // Deleting ZIP file to preserve space.
-   io.file.delete:x:@.filename
+      // Making sure exceptions never leaves thread.
+      try
    
-   // Recursively listing all files in folder.
-   io.file.list-recursively:/etc/system/openai/temp/
-
-   // Looping through each file to generate training data from it.
-   for-each:x:@io.file.list-recursively/*
-
-      // If true, implies we'll handle file, otherwise we'll ignore it.
-      .handle:bool:false
-
-      // Meta buffer used to hold general information about file.
-      .file-meta:
-
-      // Checking file extension and treating accordingly.
-      strings.split:x:@.dp/#
-         .:.
-      switch:x:@strings.split/0/-
-
-         // C# file.
-         case:cs
-            set-value:x:@.handle
-               .:bool:true
-            set-value:x:@.file-meta
-               strings.concat
-                  get-value:x:@.file-meta
-                  .:"File type: VB.NET"
-
-         // VB.NET file.
-         case:vb
-            set-value:x:@.handle
-               .:bool:true
-            set-value:x:@.file-meta
-               strings.concat
-                  get-value:x:@.file-meta
-                  .:"Programming language: VB.NET"
-
-         // Python file.
-         case:py
-            set-value:x:@.handle
-               .:bool:true
-            set-value:x:@.file-meta
-               strings.concat
-                  get-value:x:@.file-meta
-                  .:"Programming language: Python"
-
-         // Ruby file.
-         case:rb
-            set-value:x:@.handle
-               .:bool:true
-            set-value:x:@.file-meta
-               strings.concat
-                  get-value:x:@.file-meta
-                  .:"Programming language: Ruby"
-
-         // JavaScript file.
-         case:js
-            set-value:x:@.handle
-               .:bool:true
-            set-value:x:@.file-meta
-               strings.concat
-                  get-value:x:@.file-meta
-                  .:"Programming language: JavaScript"
-
-         // JavaScript file.
-         case:ts
-            set-value:x:@.handle
-               .:bool:true
-            set-value:x:@.file-meta
-               strings.concat
-                  get-value:x:@.file-meta
-                  .:"Programming language: TypeScript"
-
-         // Text file.
-         case:txt
-            set-value:x:@.handle
-               .:bool:true
-            set-value:x:@.file-meta
-               strings.concat
-                  get-value:x:@.file-meta
-                  .:"Text file"
-
-         // CSS file.
-         case:css
-            set-value:x:@.handle
-               .:bool:true
-            set-value:x:@.file-meta
-               strings.concat
-                  get-value:x:@.file-meta
-                  .:"CSS file"
-
-         // HTML file.
-         case:html
-         case:htm
-            set-value:x:@.handle
-               .:bool:true
-            set-value:x:@.file-meta
-               strings.concat
-                  get-value:x:@.file-meta
-                  .:"HTML file"
-
-         // SASS file.
-         case:sass
-            set-value:x:@.handle
-               .:bool:true
-            set-value:x:@.file-meta
-               strings.concat
-                  get-value:x:@.file-meta
-                  .:"SASS file"
-
-         // SASS file.
-         case:scss
-            set-value:x:@.handle
-               .:bool:true
-            set-value:x:@.file-meta
-               strings.concat
-                  get-value:x:@.file-meta
-                  .:"SCSS file"
-
-         // SQL file.
-         case:sql
-            set-value:x:@.handle
-               .:bool:true
-            set-value:x:@.file-meta
-               strings.concat
-                  get-value:x:@.file-meta
-                  .:"SQL file"
-
-         // Markdown file.
-         case:md
-            set-value:x:@.handle
-               .:bool:true
-            set-value:x:@.file-meta
-               strings.concat
-                  get-value:x:@.file-meta
-                  .:"Markdown file"
-
-      // Checking if we should handle the file.
-      if:x:@.handle
-
-         // Making sure we store file path.
-         set-value:x:@.file-meta
+         // Retrieving OpenAI token required to invoke ChatGPT.
+         .token
+         set-value:x:@.token
             strings.concat
-               get-value:x:@.file-meta
-               .:" - Filename: "
-               get-value:x:@.dp/#
+               .:"Bearer "
+               config.get:"magic:openai:key"
 
-         // Loading file.
-         .content
-         set-value:x:@.content
-            io.file.load:x:@.dp/#
+         // Unzipping file.
+         io.file.unzip:x:@.filename
 
-         // Buffer used to hold all training snippets resulting from file.
-         .snippets
+         // Deleting ZIP file to preserve space.
+         io.file.delete:x:@.filename
 
-         // Making sure file's content is less than 8K in token count.
-         if
-            and
-               exists:x:@.arguments/*/massage
-               neq:x:@.arguments/*/massage
-                  .
-               neq:x:@.arguments/*/massage
-                  .:
-               lt
-                  openai.tokenize:x:@.content
-                  .:int:15000
-            .lambda
+         // Recursively listing all files in folder.
+         io.file.list-recursively:/etc/system/openai/temp/
 
-               /*
-                * File should be massaged by ChatGPT.
-                * Invoking OpenAI using 16K model to allow for handling huge files.
-                */
-               http.post:"https://api.openai.com/v1/chat/completions"
-                  headers
-                     Authorization:x:@.token
-                     Content-Type:application/json
-                  payload
-                     model:gpt-3.5-turbo-16k
-                     max_tokens:int:2000
-                     temperature:decimal:0.5
-                     messages
-                        .
-                           role:system
-                           content:x:@.arguments/*/massage
-                        .
-                           role:system
-                           content:x:@.content
-                  convert:true
+         // Looping through each file to generate training data from it.
+         for-each:x:@io.file.list-recursively/*
 
-               // Verifying above invocation was a success, and if not, inserting file as is.
+            // If true we'll handle file, otherwise we'll ignore it.
+            .handle:bool:false
+
+            // Meta buffer used to hold general information about file.
+            .file-meta:
+
+            // Checking file extension and treating accordingly.
+            strings.split:x:@.dp/#
+               .:.
+            switch:x:@strings.split/0/-
+
+               // C# file.
+               case:cs
+                  set-value:x:@.handle
+                     .:bool:true
+                  set-value:x:@.file-meta
+                     strings.concat
+                        get-value:x:@.file-meta
+                        .:"File type: VB.NET"
+
+               // VB.NET file.
+               case:vb
+                  set-value:x:@.handle
+                     .:bool:true
+                  set-value:x:@.file-meta
+                     strings.concat
+                        get-value:x:@.file-meta
+                        .:"Programming language: VB.NET"
+
+               // Python file.
+               case:py
+                  set-value:x:@.handle
+                     .:bool:true
+                  set-value:x:@.file-meta
+                     strings.concat
+                        get-value:x:@.file-meta
+                        .:"Programming language: Python"
+
+               // Ruby file.
+               case:rb
+                  set-value:x:@.handle
+                     .:bool:true
+                  set-value:x:@.file-meta
+                     strings.concat
+                        get-value:x:@.file-meta
+                        .:"Programming language: Ruby"
+
+               // JavaScript file.
+               case:js
+                  set-value:x:@.handle
+                     .:bool:true
+                  set-value:x:@.file-meta
+                     strings.concat
+                        get-value:x:@.file-meta
+                        .:"Programming language: JavaScript"
+
+               // JavaScript file.
+               case:ts
+                  set-value:x:@.handle
+                     .:bool:true
+                  set-value:x:@.file-meta
+                     strings.concat
+                        get-value:x:@.file-meta
+                        .:"Programming language: TypeScript"
+
+               // Text file.
+               case:txt
+                  set-value:x:@.handle
+                     .:bool:true
+                  set-value:x:@.file-meta
+                     strings.concat
+                        get-value:x:@.file-meta
+                        .:"Text file"
+
+               // CSS file.
+               case:css
+                  set-value:x:@.handle
+                     .:bool:true
+                  set-value:x:@.file-meta
+                     strings.concat
+                        get-value:x:@.file-meta
+                        .:"CSS file"
+
+               // HTML file.
+               case:html
+               case:htm
+                  set-value:x:@.handle
+                     .:bool:true
+                  set-value:x:@.file-meta
+                     strings.concat
+                        get-value:x:@.file-meta
+                        .:"HTML file"
+
+               // SASS file.
+               case:sass
+                  set-value:x:@.handle
+                     .:bool:true
+                  set-value:x:@.file-meta
+                     strings.concat
+                        get-value:x:@.file-meta
+                        .:"SASS file"
+
+               // SASS file.
+               case:scss
+                  set-value:x:@.handle
+                     .:bool:true
+                  set-value:x:@.file-meta
+                     strings.concat
+                        get-value:x:@.file-meta
+                        .:"SCSS file"
+
+               // SQL file.
+               case:sql
+                  set-value:x:@.handle
+                     .:bool:true
+                  set-value:x:@.file-meta
+                     strings.concat
+                        get-value:x:@.file-meta
+                        .:"SQL file"
+
+               // Markdown file.
+               case:md
+
+                  // Notice, ignoring primary README file that simply describes the folder
+                  if
+                     neq:x:@.dp/#
+                        .:/etc/system/openai/temp/README.md
+                     .lambda
+
+                        // Markdown file caller is interested in.
+                        set-value:x:@.handle
+                           .:bool:true
+                        set-value:x:@.file-meta
+                           strings.concat
+                              get-value:x:@.file-meta
+                              .:"Markdown file"
+
+               // File is not handled, ignoring it.
+               default
+
+                  // Signaling frontend.
+                  strings.concat
+                     .:"File: "
+                     get-value:x:@.dp/#
+                     .:" is ignored"
+                  unwrap:x:+/*/*/message
+                  sockets.signal:magic.backend.chatbot
+                     roles:root
+                     args
+                        message:x:@strings.concat
+                        type:info
+
+            // Checking if we should handle the file.
+            if:x:@.handle
+
+               // Making sure we store file path.
+               set-value:x:@.file-meta
+                  strings.concat
+                     get-value:x:@.file-meta
+                     .:" - Filename: "
+                     get-value:x:@.dp/#
+
+               // Loading file.
+               .content
+               set-value:x:@.content
+                  io.file.load:x:@.dp/#
+
+               // Buffer used to hold all training snippets resulting from file.
+               .snippets
+
+               // Making sure file's content is less than 8K in token count.
                if
                   and
-                     mte:x:@http.post
-                        .:int:200
-                     lt:x:@http.post
-                        .:int:300
+                     exists:x:@.arguments/*/massage
+                     neq:x:@.arguments/*/massage
+                        .
+                     neq:x:@.arguments/*/massage
+                        .:
+                     lt
+                        openai.tokenize:x:@.content
+                        .:int:15000
                   .lambda
 
-                     // Creating training snippet from result.
-                     unwrap:x:+/*/*/*
-                     add:x:@.snippets
-                        .
+                     // Signaling frontend.
+                     strings.concat
+                        .:"Creating summary for file: "
+                        get-value:x:@.dp/#
+                     unwrap:x:+/*/*/message
+                     sockets.signal:magic.backend.chatbot
+                        roles:root
+                        args
+                           message:x:@strings.concat
+                           type:info
+
+                     /*
+                      * File should be massaged by ChatGPT.
+                      * Invoking OpenAI using 16K model to allow for handling huge files.
+                      */
+                     http.post:"https://api.openai.com/v1/chat/completions"
+                        headers
+                           Authorization:x:@.token
+                           Content-Type:application/json
+                        payload
+                           model:gpt-3.5-turbo-16k
+                           max_tokens:int:2000
+                           temperature:decimal:0.5
+                           messages
+                              .
+                                 role:system
+                                 content:x:@.arguments/*/massage
+                              .
+                                 role:system
+                                 content:x:@.content
+                        convert:true
+
+                     // Verifying above invocation was a success, and if not, inserting file as is.
+                     if
+                        and
+                           mte:x:@http.post
+                              .:int:200
+                           lt:x:@http.post
+                              .:int:300
+                        .lambda
+
+                           // Creating training snippet from result.
+                           unwrap:x:+/*/*/*
+                           add:x:@.snippets
+                              .
+                                 .
+                                    prompt:x:@http.post/*/content/*/choices/0/*/message/*/content
+                                    completion:x:@.content
+
+                     else
+
+                        // Invocation was a failure.
+                        strings.concat
+                           .:"Could not create summary for file: "
+                           get-value:x:@.dp/#
+                        unwrap:x:+/*/*/message
+                        sockets.signal:magic.backend.chatbot
+                           roles:root
+                           args
+                              message:x:@strings.concat
+                              type:warning
+                        unwrap:x:+/*/*/*
+                        add:x:@.snippets
                            .
-                              prompt:x:@http.post/*/content/*/choices/0/*/message/*/content
-                              completion:x:@.content
+                              .
+                                 prompt:x:@.file-meta
+                                 completion:x:@.content
 
                else
 
-                  // Invocation was a failure.
+                  /*
+                   * File is too large to use ChatGPT to create a structure out of it,
+                   * or caller doesn't wants us to massage its content.
+                   */
                   unwrap:x:+/*/*/*
                   add:x:@.snippets
                      .
@@ -275,36 +345,44 @@ slots.create:magic.ai.import-zip-file
                            prompt:x:@.file-meta
                            completion:x:@.content
 
-         else
+               // Inserting training snippets generated above into our database.
+               data.connect:[generic|magic]
 
-            /*
-             * File is too large to use ChatGPT to create a structure out of it,
-             * or caller doesn't wants us to massage its content.
-             */
-            unwrap:x:+/*/*/*
-            add:x:@.snippets
-               .
-                  .
-                     prompt:x:@.file-meta
-                     completion:x:@.content
+                  // Looping through each training snippet generated by above invocation.
+                  for-each:x:@.snippets/*
 
-         // Inserting training snippets generated above into our database.
-         data.connect:[generic|magic]
+                     // Inserting training snippet into our database.
+                     data.create
+                        table:ml_training_snippets
+                        values
+                           type:x:@.arguments/*/type
+                           prompt:x:@.dp/#/*/prompt
+                           completion:x:@.dp/#/*/completion
+                           filename:x:@.dp/@.dp/#
+                           cached:int:0
 
-            // Looping through each training snippet generated by above invocation.
-            for-each:x:@.snippets/*
+         // Signaling frontend.
+         strings.concat
+            .:"Done importing "
+            get-count:x:@.snippets/*
+            .:" training snippets, now vectorising model"
+         unwrap:x:+/*/*/message
+         sockets.signal:magic.backend.chatbot
+            roles:root
+            args
+               message:x:@strings.concat
+               type:done_crawling
 
-               // Inserting training snippet into our database.
-               data.create
-                  table:ml_training_snippets
-                  values
-                     type:x:@.arguments/*/type
-                     prompt:x:@.dp/#/*/prompt
-                     completion:x:@.dp/#/*/completion
-                     filename:x:@.dp/@.dp/#
-                     cached:int:0
+      .catch
+
+         // Oops!!
+         log.error:x:@.arguments/*/message
+         sockets.signal:magic.backend.chatbot
+            roles:root
+            args
+               message:Something went wrong as we tried to import your file.
+               type:error
 
    // Returning success to caller.
    return
-      result:success
-      count:int:1
+      result:pending
