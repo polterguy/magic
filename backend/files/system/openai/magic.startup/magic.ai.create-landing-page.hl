@@ -51,6 +51,13 @@ slots.create:magic.ai.create-landing-page
    remove-nodes:x:@html2lambda/*/html/*/head/*/base/[1,2]
 
    // Adding chatbot embed script to page.
+   .header:
+   set-value:x:@.header
+      get-first-value
+         config.get:"magic:white-label:default-header"
+         .:"Ask about our products or services"
+   set-value:x:@.header
+      strings.url-encode:x:@.header
    .scheme:"https://"
    if
       strings.contains:x:@.arguments/*/host
@@ -65,7 +72,9 @@ slots.create:magic.ai.create-landing-page
          get-value:x:@.arguments/*/host
          .:"/magic/system/openai/include-javascript?markdown=true&speech=false&search=false&chat=true&css=scandinavian-navy&file=default&type="
          get-value:x:@.arguments/*/type
-         .:"&header=Ask%20about%20our%20services%20and%20products&button="
+         .:"&header="
+         get-value:x:@.header
+         .:"&button="
    .search
    set-value:x:@.search
       strings.concat
