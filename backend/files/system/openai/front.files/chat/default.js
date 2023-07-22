@@ -98,6 +98,8 @@ fetch('[[url]]/magic/system/openai/include-style?file=' + encodeURIComponent('[[
     aista_create_chat_ui();
 });
 
+const ainiro_has_submit_button = [[submit_button]];
+
 /*
  * Function creating our chat UI.
  */
@@ -132,12 +134,16 @@ function aista_create_chat_ui() {
   <button class="aista-chat-close-btn"><i class="icofont-close"></i></button>
   <form class="aista-chat-form">
   <input type="text" placeholder="Ask me anything ..." class="aista-chat-prompt">`;
+
+  // Notice, we can't have both speech recognition and submit button.
   if (aistaSpeech) {
     html += `<button type="button" class="aista-speech-button fas fa-microphone"></button>`;
     const fontAwesome = window.document.createElement('script');
     fontAwesome.src = 'https://kit.fontawesome.com/a076d05399.js';
     fontAwesome.crossorigin = 'anonymous';
     window.document.getElementsByTagName('head')[0].appendChild(fontAwesome);
+  } else if (ainiro_has_submit_button) {
+    html += `<button type="submit" class="aista-speech-button"><i class="icofont-location-arrow"></i></button>`;
   }
   html += '</form>';
   aistaChatWnd.innerHTML = html;
@@ -201,6 +207,9 @@ function aista_create_chat_ui() {
 function aista_submit_form(speech) {
   const inp = window.document.getElementsByClassName('aista-chat-prompt')[0];
   const msg = inp.value;
+  if (!msg || msg === '') {
+    return;
+  }
   const msgEl = window.document.createElement('div');
   msgEl.innerText = msg;
   msgEl.className = 'aista-chat-question-waiting';

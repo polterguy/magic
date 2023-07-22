@@ -70,7 +70,7 @@ slots.create:magic.ai.create-landing-page
       strings.concat
          get-value:x:@.scheme
          get-value:x:@.arguments/*/host
-         .:"/magic/system/openai/include-javascript?markdown=true&speech=false&search=false&chat=true&css=scandinavian-navy&file=default&type="
+         .:"/magic/system/openai/include-javascript?submit_button=true&markdown=true&speech=false&search=false&chat=true&css=scandinavian-navy&file=default&type="
          get-value:x:@.arguments/*/type
          .:"&header="
          get-value:x:@.header
