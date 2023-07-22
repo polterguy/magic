@@ -352,17 +352,17 @@
   border-radius: 4px !important;
 }
 .aista-speech-button {
+  right: 10px;
+  bottom: 10px;
+  height: 40px;
+  width: 50px;
   position: absolute;
-  right: 25px;
-  bottom: 14px;
-  height: 30px;
-  width: 20px;
   font-size: 20px;
   display: block;
   background-color: transparent;
   border: none;
   cursor: pointer;
-  color: #030a0a;
+  color: #b0b0b0;
   transition: color .25s ease-in-out;
 }
 .aista-speech-button:hover,
