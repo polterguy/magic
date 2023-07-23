@@ -27,6 +27,39 @@ slots.create:magic.twilio.send-message
          convert:x:@.auth
             type:base64
 
+   // Removing Markdown images since Twilio doesn't support Markdown.
+   .content
+   set-value:x:@.content
+      strings.regex-replace:x:@.arguments/*/body
+         .:"!\\[.*\\]\\(.*\\)"
+         .:""
+   set-value:x:@.content
+      strings.trim:x:@.content
+   .cont:bool:true
+   while:x:@.cont
+      if
+         not
+            strings.contains:x:@.content
+               .:"\r\n\r\n\r\n"
+         .lambda
+            set-value:x:@.cont
+               .:bool:false
+      else
+         set-value:x:@.content
+            strings.replace:x:@.content
+               .:"\r\n\r\n\r\n"
+               .:"\r\n\r\n"
+
+   // Fixing Markdown hyperlinks by removing brackets.
+   set-value:x:@.content
+      strings.replace:x:@.content
+         .:"["
+         .:
+   set-value:x:@.content
+      strings.replace:x:@.content
+         .:"]("
+         .:" ("
+
    // Creating our URL to invoke Twilio API.
    .url
    set-value:x:@.url
@@ -42,7 +75,7 @@ slots.create:magic.twilio.send-message
          Content-Type:application/x-www-form-urlencoded
          Authorization:x:@.auth
       payload
-         Body:x:@.arguments/*/body
+         Body:x:@.content
          From:x:@.arguments/*/from
          To:x:@.arguments/*/to
 
