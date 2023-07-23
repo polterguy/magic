@@ -368,6 +368,11 @@
   color: #ff3131;
   transition: color .25s ease-in-out;
 }
+.aista-speech-button:disabled {
+  transition: none;
+  color: #c0c0c0;
+  cursor: default;
+}
 .aista-chat-prompt::placeholder {
   color: #030a0a !important;
   opacity:40% !important;
