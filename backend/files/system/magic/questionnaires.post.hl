@@ -1,0 +1,32 @@
+
+// CRUD create endpoint inserting one record into your questionnaires table in your magic database taking name with authentication and authorisation for root,admin roles
+.arguments
+   name:string
+.description:CRUD create endpoint inserting one record into your questionnaires table in your magic database taking name with authentication and authorisation for root,admin roles
+.type:crud-create
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root,admin
+
+// Opening up database connection.
+data.connect:[generic|magic]
+   database-type:sqlite
+
+   // Parametrising our create invocation.
+   add:x:./*/data.create/*/values
+      get-nodes:x:@.arguments/*
+
+   // Creating our record.
+   data.create
+      database-type:sqlite
+      table:questionnaires
+      return-id:bool:false
+      values
+
+   // Returning the correct status code.
+   response.status.set:201
+
+   // Returning result of above invocation to caller.
+   unwrap:x:+/*
+   return
+      result:success
