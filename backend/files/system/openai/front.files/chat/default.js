@@ -101,6 +101,22 @@ fetch('[[url]]/magic/system/openai/include-style?file=' + encodeURIComponent('[[
 const ainiro_has_submit_button = [[submit_button]];
 
 /*
+ * "API method" for FAQ questions.
+ */
+window.ainiro_faq_question = function(e) {
+
+  const question = e.srcElement.innerHTML;
+  aista_show_chat_window();
+  setTimeout(() => {
+    const prompt = document.getElementsByClassName('aista-chat-prompt')[0];
+    prompt.value = question;
+    prompt.focus();
+    prompt.select();
+  }, 100);
+  e.stopPropagation();
+}
+
+/*
  * Function creating our chat UI.
  */
 function aista_create_chat_ui() {
