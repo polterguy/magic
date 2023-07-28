@@ -24,9 +24,17 @@ signal:magic.ai.endpoint-common
             not-null:x:@.arguments/*/contact_us
             neq:x:@.arguments/*/contact_us
                .:
+            not-null:x:@.arguments/*/lead_email
+            neq:x:@.arguments/*/lead_email
+               .:
          .lambda
 
-            // Prompt contains an email address, hence treating prompt as a lead if we can.
+            /*
+             * Prompt contains an email address, and model is configured with a
+             * lead email address or [contact_us]/[lead_email] property - Hence
+             * treating prompt as a lead if we can, sending an email to lead email
+             * address with the conversation.
+             */
             unwrap:x:+/*
             signal:magic.ai.send-lead-email
                type:x:@.arguments/*/type
