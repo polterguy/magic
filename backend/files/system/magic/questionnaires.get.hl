@@ -1,0 +1,48 @@
+
+// CRUD read endpoint with paging, sorting, filtering selecting records from your questionnaires table in your magic database returning name filtering on name with authentication and authorisation for root,admin roles
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   questionnaires.name.like:string
+   questionnaires.name.eq:string
+.description:CRUD read endpoint with paging, sorting, filtering selecting records from your questionnaires table in your magic database returning name filtering on name with authentication and authorisation for root,admin roles
+.type:crud-read
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root,admin
+
+// Opening up our database connection.
+data.connect:[generic|magic]
+   database-type:sqlite
+
+   // Parametrising our read invocation with ordering arguments if specified.
+   add:x:./*/data.read
+      get-nodes:x:@.arguments/*/order
+      get-nodes:x:@.arguments/*/direction
+   remove-nodes:x:@.arguments/*/order
+   remove-nodes:x:@.arguments/*/direction
+
+   // Parametrising our read invocation with paging arguments if specified.
+   add:x:./*/data.read
+      get-nodes:x:@.arguments/*/limit
+      get-nodes:x:@.arguments/*/offset
+   remove-nodes:x:@.arguments/*/limit
+   remove-nodes:x:@.arguments/*/offset
+
+   // Parametrising our read invocation with filtering arguments.
+   add:x:./*/data.read/*/where/*
+      get-nodes:x:@.arguments/*
+
+   // Reading data from database.
+   data.read
+      database-type:sqlite
+      table:questionnaires
+      columns
+         questionnaires.name
+      where
+         and
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@data.read/*
