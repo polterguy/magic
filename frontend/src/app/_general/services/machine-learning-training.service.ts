@@ -201,4 +201,42 @@ export class MachineLearningTrainingService {
 
     return this.httpService.put<any[]>('/magic/system/magic/ml_requests', type);
   }
+
+  /**
+   * Returns all types from your backend.
+   */
+  questionnaires(filter?: any) {
+
+    return this.httpService.get<any[]>(
+      '/magic/system/magic/questionnaires' +
+      this.queryArgService.getQueryArgs(filter));
+  }
+
+  /**
+   * Counts all types from your backend.
+   */
+  questionnaires_count(filter?: any) {
+
+    return this.httpService.get<Count>(
+      '/magic/system/magic/questionnaires-count' +
+      this.queryArgService.getQueryArgs(filter));
+  }
+
+  /**
+   * Creates a new machine learning model declaration.
+   */
+  questionnaires_create(value: any) {
+
+    return this.httpService.post<any[]>('/magic/system/magic/questionnaires', value);
+  }
+
+  /**
+   * Deletes an existing questionnaires declaration.
+   */
+  questionnaires_delete(name: string) {
+
+    return this.httpService.delete<any>(
+      '/magic/system/magic/questionnaires?name=' +
+      encodeURIComponent(name));
+  }
 }

@@ -230,40 +230,40 @@
       (page)="page($event)">
     </mat-paginator>
   
-  <div
-    class="mt-3 text-end"
-    *ngIf="dataSource && dataSource.length > 0">
+    <div
+      class="mt-3 text-end"
+      *ngIf="dataSource && dataSource.length > 0">
 
-    <button
-      matTooltip="Mark all filtered snippets as unpushed"
-      (click)="untrainAll()"
-      mat-button>
-      Mark as unpushed
-    </button>
+      <button
+        matTooltip="Mark all filtered snippets as unpushed"
+        (click)="untrainAll()"
+        mat-button>
+        Mark as unpushed
+      </button>
 
-    <button
-      matTooltip="Mark all filtered snippets as pushed"
-      (click)="trainAll()"
-      mat-button>
-      Mark as pushed
-    </button>
+      <button
+        matTooltip="Mark all filtered snippets as pushed"
+        (click)="trainAll()"
+        mat-button>
+        Mark as pushed
+      </button>
 
-    <button
-      matTooltip="Exports all filtered training snippets as a CSV file"
-      (click)="export()"
-      mat-button>
-      Export
-    </button>
+      <button
+        matTooltip="Exports all filtered training snippets as a CSV file"
+        (click)="export()"
+        mat-button>
+        Export
+      </button>
 
-    <button
-      color="warn"
-      matTooltip="Delete all filtered snippets"
-      (click)="deleteAll()"
-      mat-button>
-      Delete all
-    </button>
+      <button
+        color="warn"
+        matTooltip="Delete all filtered snippets"
+        (click)="deleteAll()"
+        mat-button>
+        Delete all
+      </button>
 
-  </div>
+    </div>
 
   </div>
 

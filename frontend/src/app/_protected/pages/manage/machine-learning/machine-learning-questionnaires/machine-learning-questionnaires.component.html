@@ -1,0 +1,109 @@
+
+<div class="row fullPage">
+
+  <!-- Training snippets datagrid -->
+  <div class="mt-4 col-12">
+
+    <!-- Top parts containing title of component and search textbox -->
+    <div class="row align-items-center me-1">
+
+      <div class="col-lg-5 col-12 mb-lg-0 mb-2">
+        <h3 class="mb-2 fw-bold">Machine Learning Questionnaires</h3>
+        <p class="text-muted">
+          Machine Learning questionnaires you can use to inverse the responsibility of the machine
+          learning model temporarily
+        </p>
+      </div>
+
+      <div class="col-lg-7 col-12">
+
+        <!-- Search textbox -->
+        <app-searchbox
+          (filterList)="filterList($event)"
+          buttonText="Add"
+          (buttonClick)="addType()">
+        </app-searchbox>
+
+      </div>
+
+    </div>
+
+    <div class="table-responsive mt-4">
+
+      <table
+        mat-table
+        multiTemplateDataRows
+        [dataSource]="dataSource"
+        class="w-100 borderless hoverable">
+
+        <!-- Name column -->
+        <ng-container matColumnDef="name">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            class="text-nowrap px-sm-3">
+            Name
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let element"
+            class="text-truncate px-sm-3">
+            {{element.name}}
+          </td>
+        </ng-container>
+
+        <!-- Actions column -->
+        <ng-container matColumnDef="actions">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            class="ps-sm-3 small-table-column">
+            Actions
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let element"
+            class="ps-sm-3 text-nowrap small-table-column">
+
+            <button
+              mat-button
+              color="primary"
+              (click)="edit(element)">
+              Edit
+            </button>
+
+            <button
+              mat-button
+              color="warn"
+              (click)="delete(element)">
+              Delete
+            </button>
+
+          </td>
+        </ng-container>
+
+        <tr
+          mat-header-row
+          *matHeaderRowDef="displayedColumns;sticky: true">
+        </tr>
+
+        <tr
+          mat-row
+          *matRowDef="let row; columns: displayedColumns;">
+        </tr>
+
+      </table>
+
+    </div>
+
+    <!-- Pager -->
+    <mat-paginator
+      [length]="count"
+      [pageIndex]="filter.offset / filter.limit"
+      [pageSize]="filter.limit"
+      (page)="page($event)">
+    </mat-paginator>
+
+  </div>
+
+</div>
