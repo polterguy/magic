@@ -24,6 +24,8 @@ import { MachineLearningImportComponent } from '../components/machine-learning-i
 import { MachineLearningEmbedUiComponent } from '../components/machine-learning-embed-ui/machine-learning-embed-ui.component';
 import { MachineLearningSpiceComponent } from '../components/machine-learning-spice/machine-learning-spice.component';
 import { MachineLearningQuestionnairesComponent } from '../machine-learning-questionnaires/machine-learning-questionnaires.component';
+import { MachineLearningEditQuestionnaireComponent } from '../components/machine-learning-edit-questionnaire/machine-learning-edit-questionnaire.component';
+import { MachineLearningEditQuestionsComponent } from '../components/machine-learning-edit-questions/machine-learning-edit-questions.component';
 
 @NgModule({
   declarations: [
@@ -40,6 +42,8 @@ import { MachineLearningQuestionnairesComponent } from '../machine-learning-ques
     MachineLearningEmbedUiComponent,
     MachineLearningSpiceComponent,
     MachineLearningQuestionnairesComponent,
+    MachineLearningEditQuestionnaireComponent,
+    MachineLearningEditQuestionsComponent,
   ],
   imports: [
     CommonModule,

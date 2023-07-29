@@ -8,6 +8,10 @@
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:root,admin
 
+// Sanity checking name.
+validators.regex:x:@.arguments/*/name
+   regex:^[a-z0-9_-]{2,20}$
+
 // Opening up database connection.
 data.connect:[generic|magic]
    database-type:sqlite
