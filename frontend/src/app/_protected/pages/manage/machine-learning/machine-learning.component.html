@@ -68,6 +68,22 @@
 
       </mat-tab>
 
+      <!-- Questionnaires -->
+      <mat-tab [disabled]="!isConfigured">
+
+        <ng-template mat-tab-label>
+          Questionnaires
+        </ng-template>
+
+        <ng-template matTabContent>
+
+          <app-machine-learning-questionnaires>
+          </app-machine-learning-questionnaires>
+
+        </ng-template>
+
+      </mat-tab>
+
     </mat-tab-group>
 
   </mat-card-content>
