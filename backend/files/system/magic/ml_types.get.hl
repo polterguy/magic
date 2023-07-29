@@ -80,6 +80,7 @@ data.connect:[generic|magic]
          ml_types.webhook_incoming
          ml_types.webhook_outgoing
          ml_types.webhook_incoming_url
+         ml_types.initial_questionnaire
          ml_types.webhook_outgoing_url
          ml_types.system_message
       where

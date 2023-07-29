@@ -27,6 +27,8 @@
    ml_types.webhook_outgoing.eq:string
    ml_types.webhook_incoming_url.like:string
    ml_types.webhook_incoming_url.eq:string
+   ml_types.initial_questionnaire.like:string
+   ml_types.initial_questionnaire.eq:string
    ml_types.webhook_outgoing_url.like:string
    ml_types.webhook_outgoing_url.eq:string
    ml_types.system_message.like:string
