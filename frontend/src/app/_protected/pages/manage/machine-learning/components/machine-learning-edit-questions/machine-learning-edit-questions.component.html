@@ -1,6 +1,6 @@
 
 <h3 mat-dialog-title class="mb-0">
-  Edit questions
+  Edit questions for {{data.name}}
 </h3>
 
 <div mat-dialog-content>
@@ -23,9 +23,15 @@
 <div mat-dialog-actions [align]="'end'">
 
   <button
-    mat-flat-button
+    mat-button
     mat-dialog-close>
     Close
+  </button>
+
+  <button
+    mat-flat-button
+    (click)="save()">
+    Save
   </button>
 
 </div>

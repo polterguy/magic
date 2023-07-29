@@ -203,7 +203,7 @@ export class MachineLearningTrainingService {
   }
 
   /**
-   * Returns all types from your backend.
+   * Returns all questionnaires from your backend.
    */
   questionnaires(filter?: any) {
 
@@ -213,7 +213,7 @@ export class MachineLearningTrainingService {
   }
 
   /**
-   * Counts all types from your backend.
+   * Counts all questionnaires from your backend.
    */
   questionnaires_count(filter?: any) {
 
@@ -223,7 +223,7 @@ export class MachineLearningTrainingService {
   }
 
   /**
-   * Creates a new machine learning model declaration.
+   * Creates a new questionnaires declaration.
    */
   questionnaires_create(value: any) {
 
@@ -238,5 +238,28 @@ export class MachineLearningTrainingService {
     return this.httpService.delete<any>(
       '/magic/system/magic/questionnaires?name=' +
       encodeURIComponent(name));
+  }
+
+  /**
+   * Returns all questions from your backend for specified type.
+   */
+  questions(filter?: any) {
+
+    return this.httpService.get<any[]>(
+      '/magic/system/magic/questions' +
+      this.queryArgService.getQueryArgs(filter));
+  }
+
+  /**
+   * Saves a new question declaration, expects the specified questions argument to be Markdown,
+   * with list items.
+   */
+  questions_upsert(name: string, questions: string) {
+
+    return this.httpService.put<any>(
+      '/magic/system/magic/questions-upsert', {
+        name,
+        questions,
+      });
   }
 }
