@@ -101,7 +101,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
     private generalService: GeneralService,
     private openAIService: OpenAIService,
     private roleService: RoleService,
-    private dialogRef: MatDialogRef<MachineLearningEditTypeComponent>,) { }
+    private dialogRef: MatDialogRef<MachineLearningEditTypeComponent>) { }
 
   ngOnInit() {
 

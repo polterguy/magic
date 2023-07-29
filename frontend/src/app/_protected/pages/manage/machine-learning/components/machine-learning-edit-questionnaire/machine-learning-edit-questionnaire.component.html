@@ -1,0 +1,53 @@
+
+<h3 mat-dialog-title class="mb-0">
+  New Questionnaire
+</h3>
+
+<form (ngSubmit)="save()">
+  <div mat-dialog-content>
+
+    <div class="row">
+
+      <!-- Name -->
+      <div class="col-12 pe-lg-0">
+
+        <mat-form-field class="w-100 standalone-field me-2">
+          <span
+            matPrefix
+            matTooltip="Name"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>edit</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            cdkFocusInitial
+            placeholder="Name"
+            [(ngModel)]="name"
+            name="name"
+            autocomplete="off">
+        </mat-form-field>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <div mat-dialog-actions [align]="'end'">
+
+    <button
+      mat-button
+      mat-dialog-close>
+      Cancel
+    </button>
+
+    <button
+      mat-flat-button
+      type="submit">
+      Save
+    </button>
+
+  </div>
+
+</form>
