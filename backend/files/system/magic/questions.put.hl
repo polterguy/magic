@@ -11,7 +11,7 @@
 validators.mandatory:x:@.arguments/*/question_id
 
 // Verifying user is authorized to access endpoint.
-auth.ticket.verify:root,admin
+auth.ticket.verify:root
 .foreign-keys
    .
       column:questionnaire

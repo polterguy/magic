@@ -6,7 +6,7 @@
 .type:crud-create
 
 // Verifying user is authorized to access endpoint.
-auth.ticket.verify:root,admin
+auth.ticket.verify:root
 
 // Sanity checking name.
 validators.regex:x:@.arguments/*/name

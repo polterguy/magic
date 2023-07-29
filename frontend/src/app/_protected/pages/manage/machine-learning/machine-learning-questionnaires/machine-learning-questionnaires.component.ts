@@ -94,6 +94,7 @@ export class MachineLearningQuestionnairesComponent implements OnInit {
 
     this.dialog.open(MachineLearningEditQuestionsComponent, {
       width: '80vw',
+      data: el,
     });
   }
 
@@ -121,11 +122,13 @@ export class MachineLearningQuestionnairesComponent implements OnInit {
 
         this.generalService.showLoading();
         this.machineLearningTrainingService.questionnaires_delete(el.name).subscribe({
+          
           next: () => {
     
             this.generalService.showFeedback('Questionnaire successfully deleted', 'successMessage');
             this.getData();
           },
+
           error: (error: any) => {
     
             this.generalService.showFeedback(error, 'errorMessage', 'Ok');

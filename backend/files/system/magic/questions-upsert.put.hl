@@ -1,0 +1,45 @@
+
+// Upsert endpoint upserting questions for questionnaire, assumes [questions] is Markdown with list items.
+.arguments
+   name:string
+   questions:string
+.description:Upsert endpoint upserting questions for questionnaire, assumes [questions] is Markdown with list items
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/name
+validators.mandatory:x:@.arguments/*/questions
+
+// Connecting to database.
+data.connect:[generic|magic]
+
+   // Deleting all old questions.
+   data.delete
+      table:questions
+      where
+         and
+            questionnaire.eq:x:@.arguments/*/name
+
+   /*
+    * Turning questions string into individual questions by transforming
+    * to HTML and then semantically traversing.
+    */
+   markdown2html:x:@.arguments/*/questions
+   html2lambda:x:-
+
+   // Iterating all li elements in HTML.
+   for-each:x:@html2lambda/**/li
+
+      // Inserting a question associating it with specified questionnaire.
+      data.create
+         table:questions
+         values
+            questionnaire:x:@.arguments/*/name
+            question:x:@.dp/#/*/\#text
+
+   // Returning success to caller.
+   return
+      result:success
+   

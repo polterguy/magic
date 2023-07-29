@@ -7,7 +7,7 @@
 .type:crud-count
 
 // Verifying user is authorized to access endpoint.
-auth.ticket.verify:root,admin
+auth.ticket.verify:root
 
 // Opening up our database connection.
 data.connect:[generic|magic]
