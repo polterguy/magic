@@ -12,6 +12,7 @@ import { RoleService } from '../../../user-and-roles/_services/role.service';
 import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
 import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 import { MatTabChangeEvent } from '@angular/material/tabs';
+import { MachineLearningTrainingService } from 'src/app/_general/services/machine-learning-training.service';
 
 /**
  * Helper component to create or edit existing Machine Learning model.
@@ -47,12 +48,14 @@ export class MachineLearningEditTypeComponent implements OnInit {
   webhook_outgoing: string;
   webhook_incoming_url: string;
   webhook_outgoing_url: string;
+  initial_questionnaire: any;
   cached: boolean = false;
   model: OpenAIModel = null;
   vector_model: OpenAIModel = null;
   models: OpenAIModel[] = [];
   roles: Role[] = [];
   modelsFetched: boolean = false;
+  questionnaires: any[] = [];
   flavors: any[] = [
     {
       name: 'Sales Executive',
@@ -101,6 +104,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
     private generalService: GeneralService,
     private openAIService: OpenAIService,
     private roleService: RoleService,
+    private machineLearningTrainingService: MachineLearningTrainingService,
     private dialogRef: MatDialogRef<MachineLearningEditTypeComponent>) { }
 
   ngOnInit() {
@@ -139,13 +143,31 @@ export class MachineLearningEditTypeComponent implements OnInit {
     this.generalService.showLoading();
 
     this.roleService.list('?limit=-1').subscribe({
+
       next: (roles: Role[]) => {
 
         this.roles = roles;
-        this.generalService.hideLoading();
-        this.isLoading = false;
+        this.machineLearningTrainingService.questionnaires().subscribe({
 
+          next: (result: any[]) => {
+
+            this.questionnaires = result || [];
+            this.generalService.hideLoading();
+            this.isLoading = false;
+            if (result && result.length > 0 && this.data.initial_questionnaire) {
+              this.initial_questionnaire = this.questionnaires.filter(x => x.name === this.data?.initial_questionnaire)[0];
+            }
+          },
+    
+          error: () => {
+    
+            this.isLoading = false;
+            this.generalService.showFeedback('Something went wrong as we tried to retrieve roles', 'errorMessage');
+            this.generalService.hideLoading();
+          }
+        });
       },
+
       error: () => {
 
         this.generalService.showFeedback('Something went wrong as we tried to retrieve roles', 'errorMessage');
@@ -326,6 +348,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
       webhook_outgoing: this.webhook_outgoing,
       webhook_incoming_url: this.webhook_incoming_url,
       webhook_outgoing_url: this.webhook_outgoing_url,
+      initial_questionnaire: this.initial_questionnaire?.name || null,
       use_embeddings: this.use_embeddings,
       threshold: this.threshold,
     };

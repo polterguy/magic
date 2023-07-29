@@ -24,7 +24,7 @@
 
           <div class="row">
 
-            <div class="col-6">
+            <div class="col-3">
 
               <p class="mb-1 fw-bold">Type name</p>
 
@@ -47,6 +47,34 @@
                   name="type"
                   autocomplete="off">
                   <mat-error>{{CommonErrorMessages.appNameWithUppercaseHyphen}}</mat-error>
+              </mat-form-field>
+    
+            </div>
+
+            <div class="col-3">
+
+              <p class="mb-1 fw-bold">Initial questionnaire</p>
+
+              <mat-form-field class="w-100 standalone-field me-2">
+                <span
+                  matPrefix
+                  matTooltip="Initial questionnaire to show to user before he is allowed to chat freely"
+                  class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+                  <mat-icon>help_outline</mat-icon>
+                  <span class="text-muted">|</span>
+                </span>
+                <mat-select
+                  [(ngModel)]="initial_questionnaire"
+                  [disabled]="isLoading"
+                  placeholder="Initial questionnaire ..."
+                  name="initial_questionnaire">
+                  <mat-option [value]="null">Remove questionnaire</mat-option>
+                  <mat-option
+                    *ngFor="let idx of questionnaires"
+                    [value]="idx">
+                    {{idx.name}}
+                  </mat-option>
+                </mat-select>
               </mat-form-field>
     
             </div>
