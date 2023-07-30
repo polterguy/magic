@@ -199,10 +199,10 @@
   padding-left: 20px !important;
 }
 .aista-chat-answer ul {
-  padding-left: 0 !important;
+  padding-left: 20px !important;
 }
 .aista-chat-answer ul li {
-  list-style-type: none !important;
+  list-style-type: disc !important;
   margin: 0 !important;
 }
 @keyframes aista-zoom-image {

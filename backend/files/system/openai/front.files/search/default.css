@@ -37,7 +37,7 @@
   left: 0 !important;
   width: 100% !important;
   height: 100% !important;
-  z-index: 10000 !important;
+  z-index: 100001 !important;
   background-color: #383A9D !important;
   opacity: 0;
   animation-name: aista_fade_in_search !important;
