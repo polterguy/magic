@@ -22,17 +22,21 @@ let ainiroRtl = [[rtl]];
 // True if speech is turned on.
 let aistaSpeech = [[speech]];
 
-fetch('https://ainiro.io/assets/css/icofont.min.css')
-  .then(res => {
-    return res.text()
-  })
-  .then(res => {
+// Downloading icofont, making sure we only download it once.
+if (!window.ainiroHasDownloadIcofont) {
+  window.ainiroHasDownloadIcofont = true;
+  fetch('https://ainiro.io/assets/css/icofont.min.css')
+    .then(res => {
+      return res.text()
+    })
+    .then(res => {
 
-    // Injecting CSS into DOM.
-    var css = document.createElement('style');
-    css.innerHTML = res;
-    window.document.getElementsByTagName('head')[0].appendChild(css);
-});
+      // Injecting CSS into DOM.
+      var css = document.createElement('style');
+      css.innerHTML = res;
+      window.document.getElementsByTagName('head')[0].appendChild(css);
+  });
+}
 
 let recaptchaFetched = false;
 
@@ -52,34 +56,11 @@ function ensureReCaptchaHasBeenFetched() {
   }
 }
 
-// Retrieving session identifier site key.
+// Retrieving session identifier by invoking gibberish endpoint.
 let aistaSession = null;
-fetch('[[url]]/magic/system/misc/gibberish?min=20&max=30', {
-  method: 'GET',
-}).then(res => {
-  return res.json();
-}).then(res => {
-  aistaSession = res.result;
-});
 
 // Downloading ShowdownJS to be able to parse Markdown.
-if (aistaChatMarkdown) {
-
-  // Including ShowdownJS.
-  const showdownJS = window.document.createElement('script');
-  showdownJS.src = 'https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js';
-  window.document.getElementsByTagName('head')[0].appendChild(showdownJS);
-
-  // Including HighlightJS.
-  const highlightJS = window.document.createElement('script');
-  highlightJS.src = 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.7.0/build/highlight.min.js';
-  window.document.getElementsByTagName('head')[0].appendChild(highlightJS);
-
-  const highlightJSCSS = window.document.createElement('link');
-  highlightJSCSS.href = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css';
-  highlightJSCSS.rel = 'stylesheet';
-  window.document.getElementsByTagName('head')[0].appendChild(highlightJSCSS);
-}
+let hasDownloadedShowdownHighlight = false;
 
 
 // Creating CSS inclusion.
@@ -229,7 +210,7 @@ function aista_submit_form(speech) {
   msgs.appendChild(msgEl);
   setTimeout(() => {
     msgEl.scrollIntoView({behavior: 'smooth', block: 'start'});
-  }, 1)
+  }, 1);
   inp.disabled = true;
 
   const speechBtns = window.document.getElementsByClassName('aista-speech-button');
@@ -249,6 +230,68 @@ function aista_submit_form(speech) {
   }
 }
 
+let ainiroHasFetchedQuestionnaire = false;
+let ainiroQuestionnaire = [];
+
+/*
+ * Fetches initial questionnaire.
+ */
+function ensureInitialQuestionnaireIsFetched() {
+
+  if (ainiroHasFetchedQuestionnaire === true) {
+    return;
+  }
+
+  // Disabling prompt input until we've fetched questionnaire.
+  const inp = window.document.getElementsByClassName('aista-chat-prompt')[0];
+  inp.disabled = true;
+  ainiroHasFetchedQuestionnaire = true;
+  fetch('[[url]]/magic/system/openai/questionnaire?type=' + encodeURIComponent('[[type]]'))
+  .then(res => {
+    return res.text()
+  })
+  .then(res => {
+
+    // Storing initial questions.
+    ainiroQuestionnaire = JSON.parse(res || '[]');
+
+    // Starting questionnaire loop.
+    askNextQuestion();
+
+    // Enabling prompt input.
+    const inp = window.document.getElementsByClassName('aista-chat-prompt')[0];
+    inp.disabled = false;
+    inp.focus();
+    inp.select();
+  });
+}
+
+/*
+ * Function that loops through questionnaire asking questions until no more
+ * questions remains in ainiroQuestionnaire array.
+ */
+function askNextQuestion() {
+
+  // Verifying we've got more questions remaining.
+  if (ainiroQuestionnaire.length === 0) {
+    return;
+  }
+  const row = window.document.createElement('div');
+  row.innerText = ainiroQuestionnaire[0].question;
+  row.className = 'aista-chat-answer stop';
+  const msgs = window.document.getElementsByClassName('aista-chat-msg-container')[0];
+  msgs.appendChild(row);
+
+  // Scrolling message row into view.
+  row.scrollIntoView({behavior: 'smooth', block: 'start'});
+
+  // Checking type of question.
+  if (ainiroQuestionnaire[0].type === 'message') {
+    ainiroQuestionnaire = ainiroQuestionnaire.slice(1);
+    askNextQuestion();
+  }
+}
+
 /*
  * Shows chat window.
  */
@@ -256,6 +299,39 @@ function aista_show_chat_window() {
 
   // Ensuring we fetch reCAPTCHA stuff.
   ensureReCaptchaHasBeenFetched();
+
+  // Ensuring we fetch initial questionnaire.
+  ensureInitialQuestionnaireIsFetched();
+
+  // Ensuring we've got a session identifier.
+  if (!aistaSession) {
+    fetch('[[url]]/magic/system/misc/gibberish?min=20&max=30', {
+      method: 'GET',
+    }).then(res => {
+      return res.json();
+    }).then(res => {
+      aistaSession = res.result;
+    });
+  }
+  if (aistaChatMarkdown) {
+    if (hasDownloadedShowdownHighlight === false) {
+      // Including ShowdownJS.
+      const showdownJS = window.document.createElement('script');
+      showdownJS.src = 'https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js';
+      window.document.getElementsByTagName('head')[0].appendChild(showdownJS);
+  
+      // Including HighlightJS.
+      const highlightJS = window.document.createElement('script');
+      highlightJS.src = 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.7.0/build/highlight.min.js';
+      window.document.getElementsByTagName('head')[0].appendChild(highlightJS);
+  
+      const highlightJSCSS = window.document.createElement('link');
+      highlightJSCSS.href = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css';
+      highlightJSCSS.rel = 'stylesheet';
+      window.document.getElementsByTagName('head')[0].appendChild(highlightJSCSS);
+      hasDownloadedShowdownHighlight = true;
+    }
+  }
 
   const wnd = window.document.getElementsByClassName('aista-chat-wnd')[0];
   wnd.style.display = 'block';
@@ -289,127 +365,187 @@ function aista_zoom_image(img) {
  */
 function aista_invoke_prompt(msg, token, speech) {
 
-  // Creating our URL.
-  let url = `[[url]]/magic/system/openai/chat?prompt=` + encodeURIComponent(msg) + '&type=[[type]]';
-  if (token) {
-    url += '&recaptcha_response=' + encodeURIComponent(token);
-  }
-  if (aistaChatSearch) {
-    url += '&references=true';
-  }
-  if (aistaChatChat) {
-    url += '&chat=true';
-  } else {
-    url += '&chat=false';
-  }
-  if (aistaSession) {
-    url += '&session=' + encodeURIComponent(aistaSession);
-  }
+  // Checking if we're in a questionnaire loop.
+  if (ainiroQuestionnaire.length > 0) {
 
-  // Invoking backend, with reCAPTCHA response if we've got a site-key
-  fetch(url, {
-    method: 'GET',
-  })
-    .then(res => {
-      if (res.status >= 200 && res.status <= 299) {
-        return res.json();
-      } else if (res.status === 499) {
-        throw Error('Access denied, missing reCAPTCHA. Either configure your model to not use reCAPTCHA, or setup reCAPTCHA for your bot');
-      } else if (res.status === 401) {
-        throw Error('Your model requires authentication, and you are not authorised to invoking it. Either turn off all roles, or add JWT token to requests somehow.');
-      } else if (res.status === 429) {
-        throw Error('Seriously, it is not us! OpenAI is overloaded. If it continues, try using \'text-curie-001\' as your \'transformer\' model instead of \'text-davinci-001\'. It is not as \'smart\', but much faster, and way more stable.');
-      } else {
-        throw Error(res.statusText);
-      }
+    // Creating our URL.
+    let url = `[[url]]/magic/system/openai/answer`;
+
+    // Creating our payload
+    let payload = {
+      type: '[[type]]'
+    };
+    if (token) {
+      payload.recaptcha_response = token;
+    }
+    if (aistaSession) {
+      payload.session = aistaSession;
+    }
+    payload.question = ainiroQuestionnaire[0].question;
+    ainiroQuestionnaire = ainiroQuestionnaire.slice(1);
+    payload.answer = msg;
+
+    // Invoking backend, with reCAPTCHA response if we've got a site-key
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        "Content-Type": 'application/json'
+      },
+      body: JSON.stringify(payload)
     })
-    .then(data => {
-
-      // Enabling input textbox such that user can ask next question
-      const inp = window.document.getElementsByClassName('aista-chat-prompt')[0];
-      inp.disabled = false;
-      inp.focus();
-      inp.select();
-      const speechBtns = window.document.getElementsByClassName('aista-speech-button');
-      if (speechBtns?.length > 0) {
-        speechBtns[0].disabled = false;
-      }
-    
-      // Appending answer to message container
-      const row = window.document.createElement('div');
-      if (aistaChatChat) {
-        if (aistaChatMarkdown) {
-          const converter = new showdown.Converter();
-          row.innerHTML = converter.makeHtml(data.result);
-          const images = row.querySelectorAll('img');
-          for (const idxImg of images) {
-            idxImg.addEventListener('click', () => aista_zoom_image(idxImg));
-          }
-          row.querySelectorAll('pre code').forEach((el) => {
-            hljs.highlightElement(el);
-          });
+      .then(res => {
+        if (res.status >= 200 && res.status <= 299) {
+          return res.json();
         } else {
-          row.innerText = data.result;
+          throw Error(res.statusText);
         }
-      }
-      row.className = 'aista-chat-answer ' + data.finish_reason;
-      const msgs = window.document.getElementsByClassName('aista-chat-msg-container')[0];
-      msgs.appendChild(row);
+      })
+      .then(() => {
 
-      // Removing flashing on question
-      const msgRow = window.document.getElementsByClassName('aista-chat-question-waiting')[0];
-      msgRow.className = 'aista-chat-question';
-    
-      // Checking if server returned references.
-      if (data.references && data.references.length > 0) {
-        const list = window.document.createElement('ul');
-        list.className = 'aista-references-list';
-        for (const idx of data.references) {
-          const li = window.document.createElement('li');
-          const hyp = window.document.createElement('a');
-          hyp.setAttribute('href', idx.uri);
-          hyp.setAttribute('target', '_blank');
-          hyp.innerHTML = idx.prompt;
-          li.appendChild(hyp);
-          list.appendChild(li);
+        // Enabling input textbox such that user can ask next question
+        const inp = window.document.getElementsByClassName('aista-chat-prompt')[0];
+        inp.disabled = false;
+        inp.focus();
+        inp.select();
+
+        // Removing flashing on question
+        const msgRow = window.document.getElementsByClassName('aista-chat-question-waiting')[0];
+        msgRow.className = 'aista-chat-question';
+
+        // Making sure form submit button and speech button are enabled.
+        const speechBtns = window.document.getElementsByClassName('aista-speech-button');
+        if (speechBtns?.length > 0) {
+          speechBtns[0].disabled = false;
         }
-        row.appendChild(list);
-      }
-    
-      // Scrolling message row into view.
-      msgRow.scrollIntoView({behavior: 'smooth', block: 'start'});
 
-      // Checking if we're supposed to speak the result.
-      if (aistaSpeech && speech) {
-        let toSpeak = data.result.replace(/!\[.+\]\(.+\)/gi, '');
-        let utterance = new SpeechSynthesisUtterance(toSpeak);
-        speechSynthesis.speak(utterance);
-      }
+        // Asking next question, if we've got more questions in our questionnaire.
+        askNextQuestion();
+      });
+
+  } else {
+
+    // Creating our URL.
+    let url = `[[url]]/magic/system/openai/chat?prompt=` + encodeURIComponent(msg) + '&type=[[type]]';
+    if (token) {
+      url += '&recaptcha_response=' + encodeURIComponent(token);
+    }
+    if (aistaChatSearch) {
+      url += '&references=true';
+    }
+    if (aistaChatChat) {
+      url += '&chat=true';
+    } else {
+      url += '&chat=false';
+    }
+    if (aistaSession) {
+      url += '&session=' + encodeURIComponent(aistaSession);
+    }
+
+    // Invoking backend, with reCAPTCHA response if we've got a site-key
+    fetch(url, {
+      method: 'GET',
     })
-    .catch(error => {
+      .then(res => {
+        if (res.status >= 200 && res.status <= 299) {
+          return res.json();
+        } else if (res.status === 499) {
+          throw Error('Access denied, missing reCAPTCHA. Either configure your model to not use reCAPTCHA, or setup reCAPTCHA for your bot');
+        } else if (res.status === 401) {
+          throw Error('Your model requires authentication, and you are not authorised to invoking it. Either turn off all roles, or add JWT token to requests somehow.');
+        } else if (res.status === 429) {
+          throw Error('Seriously, it is not us! OpenAI is overloaded. If it continues, try using \'text-curie-001\' as your \'transformer\' model instead of \'text-davinci-001\'. It is not as \'smart\', but much faster, and way more stable.');
+        } else {
+          throw Error(res.statusText);
+        }
+      })
+      .then(data => {
 
-      // Enabling input textbox such that user can ask next question
-      const inp = window.document.getElementsByClassName('aista-chat-prompt')[0];
-      inp.disabled = false;
-      inp.focus();
-      inp.select();
-      const speechBtns = window.document.getElementsByClassName('aista-speech-button');
-      if (speechBtns?.length > 0) {
-        speechBtns[0].disabled = false;
-      }
-    
+        // Enabling input textbox such that user can ask next question
+        const inp = window.document.getElementsByClassName('aista-chat-prompt')[0];
+        inp.disabled = false;
+        inp.focus();
+        inp.select();
+        const speechBtns = window.document.getElementsByClassName('aista-speech-button');
+        if (speechBtns?.length > 0) {
+          speechBtns[0].disabled = false;
+        }
 
-      // Appending answer to message container
-      const row = window.document.createElement('div');
-      row.className = 'aista-chat-error';
-      const msg = error.message === 'Too Many Requests' ? 'OpenAI is overloaded, try again later' : error.message;
-      row.innerText = msg;
-      const msgs = window.document.getElementsByClassName('aista-chat-msg-container')[0];
-      msgs.appendChild(row);
+        // Appending answer to message container
+        const row = window.document.createElement('div');
+        if (aistaChatChat) {
+          if (aistaChatMarkdown) {
+            const converter = new showdown.Converter();
+            row.innerHTML = converter.makeHtml(data.result);
+            const images = row.querySelectorAll('img');
+            for (const idxImg of images) {
+              idxImg.addEventListener('click', () => aista_zoom_image(idxImg));
+            }
+            row.querySelectorAll('pre code').forEach((el) => {
+              hljs.highlightElement(el);
+            });
+          } else {
+            row.innerText = data.result;
+          }
+        }
+        row.className = 'aista-chat-answer ' + data.finish_reason;
+        const msgs = window.document.getElementsByClassName('aista-chat-msg-container')[0];
+        msgs.appendChild(row);
 
-      // Removing flashing on question
-      const msgRow = window.document.getElementsByClassName('aista-chat-question-waiting')[0];
-      msgRow.className = 'aista-chat-question';
-      msgRow.scrollIntoView({behavior: 'smooth', block: 'start'});
-    });
+        // Removing flashing on question
+        const msgRow = window.document.getElementsByClassName('aista-chat-question-waiting')[0];
+        msgRow.className = 'aista-chat-question';
+      
+        // Checking if server returned references.
+        if (data.references && data.references.length > 0) {
+          const list = window.document.createElement('ul');
+          list.className = 'aista-references-list';
+          for (const idx of data.references) {
+            const li = window.document.createElement('li');
+            const hyp = window.document.createElement('a');
+            hyp.setAttribute('href', idx.uri);
+            hyp.setAttribute('target', '_blank');
+            hyp.innerHTML = idx.prompt;
+            li.appendChild(hyp);
+            list.appendChild(li);
+          }
+          row.appendChild(list);
+        }
+
+        // Scrolling message row into view.
+        msgRow.scrollIntoView({behavior: 'smooth', block: 'start'});
+
+        // Checking if we're supposed to speak the result.
+        if (aistaSpeech && speech) {
+          let toSpeak = data.result.replace(/!\[.+\]\(.+\)/gi, '');
+          let utterance = new SpeechSynthesisUtterance(toSpeak);
+          speechSynthesis.speak(utterance);
+        }
+      })
+      .catch(error => {
+
+        // Enabling input textbox such that user can ask next question
+        const inp = window.document.getElementsByClassName('aista-chat-prompt')[0];
+        inp.disabled = false;
+        inp.focus();
+        inp.select();
+        const speechBtns = window.document.getElementsByClassName('aista-speech-button');
+        if (speechBtns?.length > 0) {
+          speechBtns[0].disabled = false;
+        }
+      
+
+        // Appending answer to message container
+        const row = window.document.createElement('div');
+        row.className = 'aista-chat-error';
+        const msg = error.message === 'Too Many Requests' ? 'OpenAI is overloaded, try again later' : error.message;
+        row.innerText = msg;
+        const msgs = window.document.getElementsByClassName('aista-chat-msg-container')[0];
+        msgs.appendChild(row);
+
+        // Removing flashing on question
+        const msgRow = window.document.getElementsByClassName('aista-chat-question-waiting')[0];
+        msgRow.className = 'aista-chat-question';
+        msgRow.scrollIntoView({behavior: 'smooth', block: 'start'});
+      });
+  }
 }})();

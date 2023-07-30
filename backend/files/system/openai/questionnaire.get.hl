@@ -14,7 +14,7 @@ data.connect:[generic|magic]
 
    // Retrieving all questions from database.
    data.select:@"
-select q.question
+select q.question, q.type
 	from questions q
 		inner join questionnaires qu on qu.name = q.questionnaire
         inner join ml_types t on t.initial_questionnaire = qu.name

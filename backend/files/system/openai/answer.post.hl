@@ -1,0 +1,86 @@
+
+/*
+ * Answers a single question from a questionnaire.
+ */
+.arguments
+   type:string
+   session:string
+   question:string
+   answer:string
+   recaptcha_response:string
+.description:Answers a single question from a questionnaire
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/type
+validators.mandatory:x:@.arguments/*/session
+validators.mandatory:x:@.arguments/*/question
+validators.mandatory:x:@.arguments/*/answer
+
+// Opening up database connection.
+data.connect:[generic|magic]
+
+   // Reading reCAPTCHA value from type.
+   data.read
+      table:ml_types
+      columns
+         recaptcha
+      where
+         and
+            type.eq:x:@.arguments/*/type
+
+   // Checking if type is configured to demand reCAPTCHA validation.
+   if
+      and
+         not-null:x:@data.read/*/*/recaptcha
+         neq:x:@data.read/*/*/recaptcha
+            .:
+      .lambda
+
+         // Type is configured with reCAPTCHA value.
+         convert:x:@data.read/*/*/recaptcha
+            type:decimal
+
+         // Checking if reCAPTCHA value on type is not 0.
+         if
+            mt:x:@convert
+               .:decimal:0
+            .lambda
+
+               // Retrieving reCAPTCHA values from configuration.
+               .key
+               set-value:x:@.key
+                  config.get:"magic:auth:recaptcha:key"
+               .secret
+               set-value:x:@.secret
+                  config.get:"magic:auth:recaptcha:secret"
+
+               // Making sure reCAPTCHA is configured on the server level.
+               if
+                  and
+                     not-null:x:@.key
+                     neq:x:@.key
+                        .:
+                     not-null:x:@.secret
+                     neq:x:@.secret
+                        .:
+                  .lambda
+
+                     // Verifying reCAPTCHA argument is above threshold, valid, and exists.
+                     validators.mandatory:x:@.arguments/*/recaptcha_response
+                     validators.recaptcha:x:@.arguments/*/recaptcha_response
+                        min:x:@convert
+                        site-key:x:@.key
+                        secret:x:@.secret
+
+   // Input is OK, now storing question/answer and associating it with session.
+   data.create
+      table:ml_requests
+      values
+         type:x:@.arguments/*/type
+         prompt:x:@.arguments/*/question
+         completion:x:@.arguments/*/answer
+         finish_reason:stop
+
+// Returning success to caller.
+return
+   result:success

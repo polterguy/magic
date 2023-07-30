@@ -44,7 +44,11 @@ export class MachineLearningEditQuestionsComponent implements OnInit {
         this.generalService.hideLoading();
         result = result || [];
         for (const idx of result) {
-          this.questions += '* ' + idx.question + '\r\n';
+          this.questions += '* ' + idx.question;
+          if (idx.type !== 'question') {
+            this.questions += ' => type=' + idx.type;
+          }
+          this.questions += '\r\n'
         }
       },
 
