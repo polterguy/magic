@@ -1,0 +1,26 @@
+
+/*
+ * Returns the initial questionnaire for the specified type.
+ */
+.arguments
+   type:string
+.description:Returns the initial questionnaire for the specified type
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/type
+
+// Opening up database connection.
+data.connect:[generic|magic]
+
+   // Retrieving all questions from database.
+   data.select:@"
+select q.question
+	from questions q
+		inner join questionnaires qu on qu.name = q.questionnaire
+        inner join ml_types t on t.initial_questionnaire = qu.name
+	where t.type = @type
+   order by q.question_id"
+      type:x:@.arguments/*/type
+
+   // Returning result to caller.
+   return-nodes:x:@data.select/*
