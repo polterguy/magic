@@ -184,8 +184,6 @@
   margin-top: 10px !important;
   margin-bottom: 10px !important;
   cursor: pointer !important;
-  border-radius: 5px !important;
-  box-shadow: 3px 3px 5px rgba(0,0,0,.2) !important;
 }
 .aista-chat-answer img {
   max-width: 100%;
