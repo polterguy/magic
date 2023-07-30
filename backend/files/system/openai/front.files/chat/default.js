@@ -153,11 +153,7 @@ function aista_create_chat_ui() {
 
   // Notice, we can't have both speech recognition and submit button.
   if (aistaSpeech) {
-    html += `<button type="button" class="aista-speech-button fas fa-microphone"></button>`;
-    const fontAwesome = window.document.createElement('script');
-    fontAwesome.src = 'https://kit.fontawesome.com/a076d05399.js';
-    fontAwesome.crossorigin = 'anonymous';
-    window.document.getElementsByTagName('head')[0].appendChild(fontAwesome);
+    html += `<button type="button" class="aista-speech-button"><i class="icofont-microphone"></i></button>`;
   } else if (ainiro_has_submit_button) {
     html += `<button type="submit" class="aista-speech-button"><i class="icofont-location-arrow"></i></button>`;
   }
@@ -385,7 +381,8 @@ function aista_invoke_prompt(msg, token, speech) {
 
       // Checking if we're supposed to speak the result.
       if (aistaSpeech && speech) {
-        let utterance = new SpeechSynthesisUtterance(data.result);
+        let toSpeak = data.result.replace(/!\[.+\]\(.+\)/gi, '');
+        let utterance = new SpeechSynthesisUtterance(toSpeak);
         speechSynthesis.speak(utterance);
       }
     })
