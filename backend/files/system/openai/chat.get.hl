@@ -6,6 +6,7 @@
    references:bool
    chat:bool
    recaptcha_response:string
+   user_id:string
    session:string
 .description:@"OpenAI chat endpoint, for having conversations using 'gpt-xxx' models"
 .type:public
@@ -40,6 +41,7 @@ signal:magic.ai.endpoint-common
                type:x:@.arguments/*/type
                prompt:x:@.arguments/*/prompt
                session:x:@.arguments/*/session
+               user_id:x:@.arguments/*/user_id
                lead_email:x:@.arguments/*/lead_email
                contact_us:x:@.arguments/*/contact_us
             if:x:@signal

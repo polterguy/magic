@@ -264,6 +264,7 @@ slots.create:magic.ai.completion
                   completion:x:@.result/*/result
                   finish_reason:x:@.result/*/finish_reason
                   session:x:@.arguments/*/session
+                  user_id:x:@.arguments/*/user_id
 
    /*
     * Applying some HTTP caching to avoid invoking OpenAI again with

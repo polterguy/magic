@@ -53,6 +53,7 @@ data.connect:[generic|magic]
          ml_requests.completion
          ml_requests.finish_reason
          ml_requests.cached
+         ml_requests.questionnaire
       where
          and
 

@@ -5,6 +5,7 @@
 .arguments
    type:string
    session:string
+   user_id:string
    question:string
    answer:string
    context:int
@@ -80,8 +81,10 @@ data.connect:[generic|magic]
          type:x:@.arguments/*/type
          prompt:x:@.arguments/*/question
          completion:x:@.arguments/*/answer
-         finish_reason:stop
+         finish_reason:questionnaire
          questionnaire:int:1
+         user_id:x:@.arguments/*/user_id
+         context:x:@.arguments/*/context
 
 // Returning success to caller.
 return

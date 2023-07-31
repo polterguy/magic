@@ -40,6 +40,7 @@ slots.create:magic.ai.chat
                         completion:x:@signal/*/cached
                         finish_reason:cached
                         session:x:@.arguments/*/session
+                        user_id:x:@.arguments/*/user_id
 
          // Returning cached result to caller.
          unwrap:x:+/*
@@ -281,6 +282,7 @@ slots.create:magic.ai.chat
                   completion:x:@.result
                   finish_reason:x:@get-first-value
                   session:x:@.arguments/*/session
+                  user_id:x:@.arguments/*/user_id
 
       // Checking if we've got references.
       if

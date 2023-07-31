@@ -31,5 +31,17 @@
     &.lead {
       background-color: $aista_success;
     }
+
+    &.questionnaire {
+      background-color: $aista_dark_alt;
+    }
   }
+}
+
+tr td {
+  color: rgb(128,128,128);
+}
+
+tr.questionnaire td {
+  color: rgb(0,0,0);
 }
