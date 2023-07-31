@@ -24,7 +24,7 @@ select q.question, q.type
 
    // Retrieving main questionnaire from database.
    data.select:@"
-select q.type
+select q.name, q.type
    from questionnaires q
       inner join ml_types t on t.initial_questionnaire = q.name
    where t.type = @type"
@@ -35,5 +35,9 @@ select q.type
       get-nodes:x:@data.connect/*/data.select/[1,2]/*/*
    add:x:./*/return/*/questions
       get-nodes:x:@data.connect/*/data.select/[0,1]/*
+   if
+      not-exists:x:@data.connect/*/return/*/questions/*
+      .lambda
+         remove-nodes:x:@data.connect/*/return/*/questions
    return
       questions
