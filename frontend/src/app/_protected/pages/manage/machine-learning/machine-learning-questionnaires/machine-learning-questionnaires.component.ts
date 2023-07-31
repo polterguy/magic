@@ -62,11 +62,12 @@ export class MachineLearningQuestionnairesComponent implements OnInit {
     this.getData();
   }
 
-  addQuestionnaire() {
+  editQuestionnaire(el: any = null) {
 
     this.dialog
       .open(MachineLearningEditQuestionnaireComponent, {
         width: '450px',
+        data: el,
       })
       .afterClosed()
       .subscribe((result: any) => {
@@ -74,25 +75,40 @@ export class MachineLearningQuestionnairesComponent implements OnInit {
         if (result) {
 
           this.generalService.showLoading();
-          this.machineLearningTrainingService.questionnaires_create(result).subscribe({
-            next: () => {
+          if (el) {
+            this.machineLearningTrainingService.questionnaires_update(result).subscribe({
+              next: () => {
 
-              this.getData();
-              this.generalService.showFeedback('Model successfully saved', 'successMessage');
-            },
-            error: (error: any) => {
+                this.getData();
+                this.generalService.showFeedback('Questionnaire successfully updated', 'successMessage');
+              },
+              error: (error: any) => {
 
-              this.generalService.hideLoading();
-              this.generalService.showFeedback(error?.error?.message ?? 'Something went wrong', 'errorMessage', 'Ok', 10000);
-            }
-          });
+                this.generalService.hideLoading();
+                this.generalService.showFeedback(error?.error?.message ?? 'Something went wrong', 'errorMessage', 'Ok', 10000);
+              }
+            });
+          } else {
+            this.machineLearningTrainingService.questionnaires_create(result).subscribe({
+              next: () => {
+
+                this.getData();
+                this.generalService.showFeedback('Questionnaire successfully saved', 'successMessage');
+              },
+              error: (error: any) => {
+
+                this.generalService.hideLoading();
+                this.generalService.showFeedback(error?.error?.message ?? 'Something went wrong', 'errorMessage', 'Ok', 10000);
+              }
+            });
+          }
         }
     });
   }
 
   edit(el: any) {
 
-    console.log(el);
+    this.editQuestionnaire(el);
   }
 
   questions(el: any) {

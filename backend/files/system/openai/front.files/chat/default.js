@@ -231,7 +231,7 @@ function aista_submit_form(speech) {
 }
 
 let ainiroHasFetchedQuestionnaire = false;
-let ainiroQuestionnaire = [];
+let ainiroQuestionnaire = {};
 
 /*
  * Fetches initial questionnaire.
@@ -253,7 +253,7 @@ function ensureInitialQuestionnaireIsFetched() {
   .then(res => {
 
     // Storing initial questions.
-    ainiroQuestionnaire = JSON.parse(res || '[]');
+    ainiroQuestionnaire = JSON.parse(res || '{}');
 
     // Starting questionnaire loop.
     askNextQuestion();
@@ -273,11 +273,11 @@ function ensureInitialQuestionnaireIsFetched() {
 function askNextQuestion() {
 
   // Verifying we've got more questions remaining.
-  if (ainiroQuestionnaire.length === 0) {
+  if (ainiroQuestionnaire.questions.length === 0) {
     return;
   }
   const row = window.document.createElement('div');
-  row.innerText = ainiroQuestionnaire[0].question;
+  row.innerText = ainiroQuestionnaire.questions[0].question;
   row.className = 'aista-chat-answer stop';
   const msgs = window.document.getElementsByClassName('aista-chat-msg-container')[0];
   msgs.appendChild(row);
@@ -286,8 +286,8 @@ function askNextQuestion() {
   row.scrollIntoView({behavior: 'smooth', block: 'start'});
 
   // Checking type of question.
-  if (ainiroQuestionnaire[0].type === 'message') {
-    ainiroQuestionnaire = ainiroQuestionnaire.slice(1);
+  if (ainiroQuestionnaire.questions[0].type === 'message') {
+    ainiroQuestionnaire.questions = ainiroQuestionnaire.questions.slice(1);
     askNextQuestion();
   }
 }
@@ -366,7 +366,7 @@ function aista_zoom_image(img) {
 function aista_invoke_prompt(msg, token, speech) {
 
   // Checking if we're in a questionnaire loop.
-  if (ainiroQuestionnaire.length > 0) {
+  if (ainiroQuestionnaire.questions.length > 0) {
 
     // Creating our URL.
     let url = `[[url]]/magic/system/openai/answer`;
@@ -381,8 +381,8 @@ function aista_invoke_prompt(msg, token, speech) {
     if (aistaSession) {
       payload.session = aistaSession;
     }
-    payload.question = ainiroQuestionnaire[0].question;
-    ainiroQuestionnaire = ainiroQuestionnaire.slice(1);
+    payload.question = ainiroQuestionnaire.questions[0].question;
+    ainiroQuestionnaire.questions = ainiroQuestionnaire.questions.slice(1);
     payload.answer = msg;
 
     // Invoking backend, with reCAPTCHA response if we've got a site-key
