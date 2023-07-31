@@ -231,6 +231,14 @@ export class MachineLearningTrainingService {
   }
 
   /**
+   * Creates a new questionnaires declaration.
+   */
+  questionnaires_update(value: any) {
+
+    return this.httpService.put<any[]>('/magic/system/magic/questionnaires', value);
+  }
+
+  /**
    * Deletes an existing questionnaires declaration.
    */
   questionnaires_delete(name: string) {

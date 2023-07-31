@@ -154,7 +154,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
             this.questionnaires = result || [];
             this.generalService.hideLoading();
             this.isLoading = false;
-            if (result && result.length > 0 && this.data.initial_questionnaire) {
+            if (result && result.length > 0 && this.data?.initial_questionnaire) {
               this.initial_questionnaire = this.questionnaires.filter(x => x.name === this.data?.initial_questionnaire)[0];
             }
           },

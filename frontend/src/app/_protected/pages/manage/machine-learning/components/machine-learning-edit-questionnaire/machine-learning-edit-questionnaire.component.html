@@ -1,6 +1,6 @@
 
 <h3 mat-dialog-title class="mb-0">
-  New Questionnaire
+  {{data ? 'Edit' : 'New'}} questionnaire
 </h3>
 
 <form (ngSubmit)="save()">
@@ -21,7 +21,7 @@
           </span>
           <input
             matInput
-            cdkFocusInitial
+            [disabled]="this.data"
             placeholder="Name"
             [(ngModel)]="name"
             name="name"
@@ -43,7 +43,6 @@
           </span>
           <input
             matInput
-            cdkFocusInitial
             placeholder="Type"
             [(ngModel)]="type"
             name="type"

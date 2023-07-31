@@ -23,4 +23,7 @@ select q.question, q.type
       type:x:@.arguments/*/type
 
    // Returning result to caller.
-   return-nodes:x:@data.select/*
+   add:x:./*/return/*/questions
+      get-nodes:x:@data.select/*
+   return
+      questions

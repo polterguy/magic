@@ -23,7 +23,12 @@ export class MachineLearningEditQuestionnaireComponent {
   constructor(
     private generalService: GeneralService,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private dialogRef: MatDialogRef<MachineLearningEditQuestionnaireComponent>) { }
+    private dialogRef: MatDialogRef<MachineLearningEditQuestionnaireComponent>) {
+    if (this.data) {
+      this.name = this.data.name;
+      this.type = this.data.type;
+    }
+  }
 
   nameValid() {
 
