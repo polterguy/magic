@@ -22,8 +22,18 @@ select q.question, q.type
    order by q.question_id"
       type:x:@.arguments/*/type
 
+   // Retrieving main questionnaire from database.
+   data.select:@"
+select q.type
+   from questionnaires q
+      inner join ml_types t on t.initial_questionnaire = q.name
+   where t.type = @type"
+      type:x:@.arguments/*/type
+
    // Returning result to caller.
+   insert-before:x:./*/return/0
+      get-nodes:x:@data.connect/*/data.select/[1,2]/*/*
    add:x:./*/return/*/questions
-      get-nodes:x:@data.select/*
+      get-nodes:x:@data.connect/*/data.select/[0,1]/*
    return
       questions
