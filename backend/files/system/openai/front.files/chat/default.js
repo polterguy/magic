@@ -255,14 +255,29 @@ function ensureInitialQuestionnaireIsFetched() {
     // Storing initial questions.
     ainiroQuestionnaire = JSON.parse(res || '{}');
 
-    // Starting questionnaire loop.
-    askNextQuestion();
+    /*
+     * Checking if this is a 'single-shot' type of questionnaire,
+     * at which point we drop it if user has answered it before.
+     */
+    if (ainiroQuestionnaire.type === 'single-shot') {
+
+      // Checking local storage to see if user has answered before.
+      const previousQuestionnaire = localStorage.getItem('ainiro-questionnaire.' + ainiroQuestionnaire.name);
+      if (previousQuestionnaire !== null) {
+
+        // User has previously answered questionnaire, and it's a 'single-shot' questionnaire.
+        ainiroQuestionnaire = {};
+      }
+    }
 
     // Enabling prompt input.
     const inp = window.document.getElementsByClassName('aista-chat-prompt')[0];
     inp.disabled = false;
     inp.value = '';
     inp.focus();
+
+    // Starting questionnaire loop.
+    askNextQuestion();
   });
 }
 
@@ -274,6 +289,11 @@ function askNextQuestion() {
 
   // Verifying we've got more questions remaining.
   if (!ainiroQuestionnaire.questions || ainiroQuestionnaire.questions?.length === 0) {
+    if (ainiroQuestionnaire.name && ainiroQuestionnaire.type === 'single-shot') {
+
+      // Storing the fact that user has taken this questionnaire in local storage.
+      localStorage.setItem('ainiro-questionnaire.' + ainiroQuestionnaire.name, 'true');
+    }
     return;
   }
   const row = window.document.createElement('div');
