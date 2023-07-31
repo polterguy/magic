@@ -10,6 +10,7 @@ slots.create:magic.ai.send-lead-email
    validators.mandatory:x:@.arguments/*/type
    validators.mandatory:x:@.arguments/*/prompt
    validators.mandatory:x:@.arguments/*/session
+   validators.mandatory:x:@.arguments/*/user_id
    validators.mandatory:x:@.arguments/*/lead_email
    validators.mandatory:x:@.arguments/*/contact_us
 
@@ -105,6 +106,7 @@ slots.create:magic.ai.send-lead-email
                      completion:x:@.arguments/*/contact_us
                      finish_reason:lead
                      session:x:@.arguments/*/session
+                     user_id:x:@.arguments/*/user_id
 
             // Sending email.
             unwrap:x:+/**/content

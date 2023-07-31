@@ -59,6 +59,9 @@ function ensureReCaptchaHasBeenFetched() {
 // Retrieving session identifier by invoking gibberish endpoint.
 let aistaSession = null;
 
+// Retrieving session identifier by invoking gibberish endpoint.
+let ainiroUserId = null;
+
 // Downloading ShowdownJS to be able to parse Markdown.
 let hasDownloadedShowdownHighlight = false;
 
@@ -318,6 +321,24 @@ function askNextQuestion() {
  */
 function aista_show_chat_window() {
 
+  // Ensuring we've got a unique user ID to associate chat session with.
+  if (!ainiroUserId) {
+    const oldUserId = localStorage.getItem('ainiroUserId');
+    if (oldUserId) {
+      ainiroUserId = oldUserId;
+    } else {
+      // Creating a new unique user ID to associate session with.
+      fetch('[[url]]/magic/system/misc/gibberish?min=20&max=30', {
+        method: 'GET',
+      }).then(res => {
+        return res.json();
+      }).then(res => {
+        ainiroUserId = res.result;
+        localStorage.setItem('ainiroUserId', ainiroUserId);
+      });
+      }
+  }
+
   // Ensuring we fetch reCAPTCHA stuff.
   ensureReCaptchaHasBeenFetched();
 
@@ -334,8 +355,11 @@ function aista_show_chat_window() {
       aistaSession = res.result;
     });
   }
+
+  // Checking if we're using Markdown, and if so, downloading showdown and highlight.
   if (aistaChatMarkdown) {
     if (hasDownloadedShowdownHighlight === false) {
+
       // Including ShowdownJS.
       const showdownJS = window.document.createElement('script');
       showdownJS.src = 'https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js';
@@ -402,6 +426,9 @@ function aista_invoke_prompt(msg, token, speech) {
     if (aistaSession) {
       payload.session = aistaSession;
     }
+    if (ainiroUserId) {
+      payload.user_id = ainiroUserId;
+    }
     payload.question = ainiroQuestionnaire.questions[0].question;
     payload.context = ainiroQuestionnaire.questions[0].context;
     ainiroQuestionnaireAnswers.push({
@@ -466,6 +493,9 @@ function aista_invoke_prompt(msg, token, speech) {
     }
     if (aistaSession) {
       url += '&session=' + encodeURIComponent(aistaSession);
+    }
+    if (ainiroUserId) {
+      url += '&user_id=' + encodeURIComponent(ainiroUserId);
     }
 
     // Invoking backend, with reCAPTCHA response if we've got a site-key

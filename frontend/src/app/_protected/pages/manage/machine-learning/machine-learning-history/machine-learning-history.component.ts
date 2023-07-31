@@ -85,7 +85,7 @@ export class MachineLearningRequestsComponent implements OnInit {
         return 'cached';
 
       default:
-        return '';
+        return st;
 
     }
   }
