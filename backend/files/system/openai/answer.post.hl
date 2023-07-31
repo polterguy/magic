@@ -7,6 +7,7 @@
    session:string
    question:string
    answer:string
+   context:int
    recaptcha_response:string
 .description:Answers a single question from a questionnaire
 
@@ -80,6 +81,7 @@ data.connect:[generic|magic]
          prompt:x:@.arguments/*/question
          completion:x:@.arguments/*/answer
          finish_reason:stop
+         questionnaire:int:1
 
 // Returning success to caller.
 return

@@ -47,6 +47,7 @@ data.connect:[generic|magic]
          questions.question
          questions.questionnaire
          questions.type
+         questions.context
       where
          and
 
