@@ -273,7 +273,7 @@ function ensureInitialQuestionnaireIsFetched() {
 function askNextQuestion() {
 
   // Verifying we've got more questions remaining.
-  if (ainiroQuestionnaire.questions.length === 0) {
+  if (!ainiroQuestionnaire.questions || ainiroQuestionnaire.questions?.length === 0) {
     return;
   }
   const row = window.document.createElement('div');
@@ -366,7 +366,7 @@ function aista_zoom_image(img) {
 function aista_invoke_prompt(msg, token, speech) {
 
   // Checking if we're in a questionnaire loop.
-  if (ainiroQuestionnaire.questions.length > 0) {
+  if (ainiroQuestionnaire.questions?.length > 0) {
 
     // Creating our URL.
     let url = `[[url]]/magic/system/openai/answer`;
