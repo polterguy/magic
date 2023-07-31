@@ -232,6 +232,7 @@ function aista_submit_form(speech) {
 
 let ainiroHasFetchedQuestionnaire = false;
 let ainiroQuestionnaire = {};
+let ainiroQuestionnaireAnswers = [];
 
 /*
  * Fetches initial questionnaire.
@@ -292,7 +293,7 @@ function askNextQuestion() {
     if (ainiroQuestionnaire.name && ainiroQuestionnaire.type === 'single-shot') {
 
       // Storing the fact that user has taken this questionnaire in local storage.
-      localStorage.setItem('ainiro-questionnaire.' + ainiroQuestionnaire.name, 'true');
+      localStorage.setItem('ainiro-questionnaire.' + ainiroQuestionnaire.name, JSON.stringify(ainiroQuestionnaireAnswers));
     }
     return;
   }
@@ -402,6 +403,10 @@ function aista_invoke_prompt(msg, token, speech) {
       payload.session = aistaSession;
     }
     payload.question = ainiroQuestionnaire.questions[0].question;
+    ainiroQuestionnaireAnswers.push({
+      question: ainiroQuestionnaire.questions[0].question,
+      answer: msg,
+    });
     ainiroQuestionnaire.questions = ainiroQuestionnaire.questions.slice(1);
     payload.answer = msg;
 
