@@ -84,6 +84,38 @@ slots.create:magic.ai.chat
                   role:system
                   content:x:@signal/*/context
 
+         // Then adding context ml_requests belonging to user to [.session]
+         data.connect:[generic|magic]
+
+            // Selecting context requests from database.
+            data.select:@"
+select prompt, max(completion) as completion
+   from ml_requests
+   where user_id = @user_id and questionnaire = 1 and context = 1
+   group by prompt"
+               user_id:x:@.arguments/*/user_id
+
+            // Adding context requests to [.session].
+            for-each:x:@data.select/*
+
+               // Adding question as system message.
+               unwrap:x:+/*/*/*/content
+               add:x:@.session
+                  .
+                     .
+                        role:system
+                        content:x:@.dp/#/*/prompt
+
+               // Adding answer as user message.
+               unwrap:x:+/*/*/*/content
+               add:x:@.session
+                  .
+                     .
+                        role:user
+                        content:x:@.dp/#/*/completion
+            lambda2hyper:x:@.session
+            log.info:x:-
+
    else-if
       and
          exists:x:@.arguments/*/session
@@ -148,9 +180,8 @@ slots.create:magic.ai.chat
     * Pruning previous messages until size of context + max_tokens is less than whatever
     * amount of tokens the model can handle.
     *
-    * Notice, we never submit more than 20 previous messages to OpenAI as context.
-    * We also make sure we always submit the FIRST message and the SECOND message,
-    * if existing, since this is the system message, and
+    * Notice, we make sure we always submit the FIRST message and the SECOND message,
+    * if existing, since these are the system message, and
     * the training data supplied as our context.
     */
    .cont:bool:true
@@ -158,15 +189,11 @@ slots.create:magic.ai.chat
 
       lambda2hyper:x:@.session/*
       if
-         and
-            lt
-               get-count:x:@.session/*
-               .:int:20
-            lt
-               math.add
-                  get-value:x:@.arguments/*/max_tokens
-                  openai.tokenize:x:@lambda2hyper
-               get-value:x:@.arguments/*/model_size
+         lt
+            math.add
+               get-value:x:@.arguments/*/max_tokens
+               openai.tokenize:x:@lambda2hyper
+            get-value:x:@.arguments/*/model_size
          .lambda
 
             // Context is small enough to answer according to max_tokens.
@@ -176,11 +203,11 @@ slots.create:magic.ai.chat
       else
 
          /*
-          * Need to remove one of our previous messages to be able to have OpenAI return max_tokens.
+          * We need to remove one of our previous messages to be able to have OpenAI return max_tokens.
           * Notice, we make sure we always keep the first two messages, since it's the most important
-          * part that was created when we initially found our context.
+          * part that was created when we initially found our context as found in our ml_training_snippets.
           *
-          * The first message is possibly the system message, while the second message is the context.
+          * The first message is the system message, while the second message is the context.
           */
          remove-nodes:x:@.session/2
 
