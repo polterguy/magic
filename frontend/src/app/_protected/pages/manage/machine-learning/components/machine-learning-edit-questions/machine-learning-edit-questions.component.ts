@@ -45,8 +45,19 @@ export class MachineLearningEditQuestionsComponent implements OnInit {
         result = result || [];
         for (const idx of result) {
           this.questions += '* ' + idx.question;
+          let addedMeta = false;
           if (idx.type !== 'question') {
             this.questions += ' => type=' + idx.type;
+            addedMeta = true;
+          }
+          if (idx.context !== 0) {
+            if (!addedMeta) {
+              this.questions += ' => ';
+            } else {
+              this.questions += ', ';
+            }
+            this.questions += 'context=' + idx.context;
+            addedMeta = true;
           }
           this.questions += '\r\n'
         }

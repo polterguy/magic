@@ -403,9 +403,11 @@ function aista_invoke_prompt(msg, token, speech) {
       payload.session = aistaSession;
     }
     payload.question = ainiroQuestionnaire.questions[0].question;
+    payload.context = ainiroQuestionnaire.questions[0].context;
     ainiroQuestionnaireAnswers.push({
       question: ainiroQuestionnaire.questions[0].question,
       answer: msg,
+      context: ainiroQuestionnaire.questions[0].context,
     });
     ainiroQuestionnaire.questions = ainiroQuestionnaire.questions.slice(1);
     payload.answer = msg;

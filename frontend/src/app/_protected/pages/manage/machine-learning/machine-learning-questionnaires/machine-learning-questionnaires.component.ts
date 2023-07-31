@@ -77,11 +77,13 @@ export class MachineLearningQuestionnairesComponent implements OnInit {
           this.generalService.showLoading();
           if (el) {
             this.machineLearningTrainingService.questionnaires_update(result).subscribe({
+
               next: () => {
 
                 this.getData();
                 this.generalService.showFeedback('Questionnaire successfully updated', 'successMessage');
               },
+
               error: (error: any) => {
 
                 this.generalService.hideLoading();
@@ -89,12 +91,15 @@ export class MachineLearningQuestionnairesComponent implements OnInit {
               }
             });
           } else {
+
             this.machineLearningTrainingService.questionnaires_create(result).subscribe({
+
               next: () => {
 
                 this.getData();
                 this.generalService.showFeedback('Questionnaire successfully saved', 'successMessage');
               },
+
               error: (error: any) => {
 
                 this.generalService.hideLoading();
