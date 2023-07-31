@@ -261,8 +261,8 @@ function ensureInitialQuestionnaireIsFetched() {
     // Enabling prompt input.
     const inp = window.document.getElementsByClassName('aista-chat-prompt')[0];
     inp.disabled = false;
+    inp.value = '';
     inp.focus();
-    inp.select();
   });
 }
 
@@ -405,8 +405,8 @@ function aista_invoke_prompt(msg, token, speech) {
         // Enabling input textbox such that user can ask next question
         const inp = window.document.getElementsByClassName('aista-chat-prompt')[0];
         inp.disabled = false;
+        inp.value = '';
         inp.focus();
-        inp.select();
 
         // Removing flashing on question
         const msgRow = window.document.getElementsByClassName('aista-chat-question-waiting')[0];
@@ -463,8 +463,8 @@ function aista_invoke_prompt(msg, token, speech) {
         // Enabling input textbox such that user can ask next question
         const inp = window.document.getElementsByClassName('aista-chat-prompt')[0];
         inp.disabled = false;
+        inp.value = '';
         inp.focus();
-        inp.select();
         const speechBtns = window.document.getElementsByClassName('aista-speech-button');
         if (speechBtns?.length > 0) {
           speechBtns[0].disabled = false;
