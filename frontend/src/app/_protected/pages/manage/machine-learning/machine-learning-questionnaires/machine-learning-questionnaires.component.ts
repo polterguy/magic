@@ -62,7 +62,7 @@ export class MachineLearningQuestionnairesComponent implements OnInit {
     this.getData();
   }
 
-  addType() {
+  addQuestionnaire() {
 
     this.dialog
       .open(MachineLearningEditQuestionnaireComponent, {
@@ -91,6 +91,11 @@ export class MachineLearningQuestionnairesComponent implements OnInit {
   }
 
   edit(el: any) {
+
+    console.log(el);
+  }
+
+  questions(el: any) {
 
     this.dialog.open(MachineLearningEditQuestionsComponent, {
       width: '80vw',

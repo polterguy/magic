@@ -7,6 +7,8 @@
    direction:string
    questionnaires.name.like:string
    questionnaires.name.eq:string
+   questionnaires.type.like:string
+   questionnaires.type.eq:string
 .description:CRUD read endpoint with paging, sorting, filtering selecting records from your questionnaires table in your magic database returning name filtering on name with authentication and authorisation for root,admin roles
 .type:crud-read
 
@@ -41,6 +43,7 @@ data.connect:[generic|magic]
       table:questionnaires
       columns
          questionnaires.name
+         questionnaires.type
       where
          and
 

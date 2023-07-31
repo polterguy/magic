@@ -21,7 +21,7 @@
         <app-searchbox
           (filterList)="filterList($event)"
           buttonText="Add"
-          (buttonClick)="addType()">
+          (buttonClick)="addQuestionnaire()">
         </app-searchbox>
 
       </div>
@@ -70,6 +70,13 @@
               color="primary"
               (click)="edit(element)">
               Edit
+            </button>
+
+            <button
+              mat-button
+              color="primary"
+              (click)="questions(element)">
+              Questions
             </button>
 
             <button

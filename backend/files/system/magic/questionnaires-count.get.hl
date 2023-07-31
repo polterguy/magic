@@ -3,6 +3,8 @@
 .arguments
    questionnaires.name.like:string
    questionnaires.name.eq:string
+   questionnaires.type.like:string
+   questionnaires.type.eq:string
 .description:Endpoint counting items in your questionnaires table in your magic database
 .type:crud-count
 
