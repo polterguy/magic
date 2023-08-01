@@ -93,10 +93,12 @@ window.ainiro_faq_question = function(e) {
   aista_show_chat_window();
   setTimeout(() => {
     const prompt = document.getElementsByClassName('aista-chat-prompt')[0];
-    prompt.value = question;
-    prompt.focus();
-    prompt.select();
-  }, 100);
+    if (!ainiroQuestionnaire.questions || ainiroQuestionnaire.questions.length === 0) {
+      prompt.value = question;
+      prompt.focus();
+      prompt.select();
+    }
+  }, 1);
   e.stopPropagation();
 }
 
@@ -259,6 +261,18 @@ function ensureInitialQuestionnaireIsFetched() {
     // Storing initial questions.
     ainiroQuestionnaire = JSON.parse(res || '{}');
 
+    // Need access to prompt input element.
+    const inp = window.document.getElementsByClassName('aista-chat-prompt')[0];
+
+    // Enabling prompt input.
+    inp.disabled = false;
+    inp.focus();
+
+    // Checking if we have a questionnaire, and if not, returning early.
+    if (!ainiroQuestionnaire.name) {
+      return;
+    }
+
     /*
      * Checking if this is a 'single-shot' type of questionnaire,
      * at which point we drop it if user has answered it before.
@@ -271,14 +285,17 @@ function ensureInitialQuestionnaireIsFetched() {
 
         // User has previously answered questionnaire, and it's a 'single-shot' questionnaire.
         ainiroQuestionnaire = {};
-      }
-    }
 
-    // Enabling prompt input.
-    const inp = window.document.getElementsByClassName('aista-chat-prompt')[0];
-    inp.disabled = false;
-    inp.value = '';
-    inp.focus();
+      } else {
+
+        // We've got a questionnaire
+        inp.value = '';
+      }
+    } else {
+
+      // We've got a questionnaire
+      inp.value = '';
+    }
 
     // Starting questionnaire loop.
     askNextQuestion();
@@ -336,7 +353,7 @@ function aista_show_chat_window() {
         ainiroUserId = res.result;
         localStorage.setItem('ainiroUserId', ainiroUserId);
       });
-      }
+    }
   }
 
   // Ensuring we fetch reCAPTCHA stuff.
@@ -388,7 +405,7 @@ function aista_show_chat_window() {
   setTimeout(() => {
     inp.focus();
     inp.select();
-  }, 250)
+  }, 250);
 }
 
 function aista_zoom_image(img) {
