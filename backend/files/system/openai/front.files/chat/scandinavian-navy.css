@@ -360,13 +360,13 @@
   background-color: transparent;
   border: none;
   cursor: pointer;
-  color: #b0b0b0;
+  color: #1035ac;
   transition: color .25s ease-in-out;
 }
 .aista-speech-button:hover,
 .aista-speech-button:focus,
 .aista-speech-button:active {
-  color: #808080;
+  color: #1035ac;
   transition: color .25s ease-in-out;
 }
 .aista-speech-button:disabled {
