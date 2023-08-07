@@ -99,6 +99,7 @@ window.ainiro_faq_question = function(e) {
       prompt.select();
     }
   }, 1);
+  e.preventDefault();
   e.stopPropagation();
 }
 

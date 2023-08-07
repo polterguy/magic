@@ -28,6 +28,8 @@
    webhook_outgoing_url:string
    system_message:string
    initial_questionnaire:string
+   no_requests:int
+   max_requests:int
 .description:CRUD update endpoint updating one record in your ml_types table in your magic database filtering which item to update with type updating model, max_tokens, temperature fields with authentication and authorisation for root roles
 .type:crud-update
 

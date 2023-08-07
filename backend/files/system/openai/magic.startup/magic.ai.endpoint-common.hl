@@ -48,6 +48,8 @@ slots.create:magic.ai.endpoint-common
             webhook_outgoing_url
             system_message
             initial_questionnaire
+            no_requests
+            max_requests
          where
             and
                type.eq:x:@.arguments/*/type
@@ -83,6 +85,8 @@ slots.create:magic.ai.endpoint-common
                   webhook_outgoing_url
                   system_message
                   initial_questionnaire
+                  no_requests
+                  max_requests
                where
                   and
                      type.eq:default
@@ -169,6 +173,21 @@ slots.create:magic.ai.endpoint-common
                   min:x:@convert
                   site-key:x:@.key
                   secret:x:@.secret
+
+   // Checking if we've reached [max_requests] on model.
+   if
+      and
+         neq:x:@.model/*/max_requests
+            .:long:-1
+         mte
+            get-value:x:@.model/*/no_requests
+            get-value:x:@.model/*/max_requests
+      .lambda
+
+         // Oops, we've reached maximum number of requests for model this month.
+         throw:Maximum number of requests reached for your model this month
+            public:bool:true
+            status:int:500
 
    // Checking if we've configured integrations for incoming messages.
    .incoming
@@ -400,6 +419,11 @@ slots.create:magic.ai.endpoint-common
       get-nodes:x:@.model/*
    remove-nodes:x:./*/invoke/*/.callback
    invoke:x:@.arguments/*/.callback
+
+   // Updating [no_requests] on model.
+   data.connect:[generic|magic]
+      data.execute:@"update ml_types set no_requests = no_requests + 1 where type = @type"
+         type:x:@.arguments/*/type
 
    // Returning result of invocation to caller.
    return-nodes:x:@invoke/*
