@@ -1,0 +1,38 @@
+
+/*
+ * Creates scheduled task that deletes all cached questions / answers
+ * from machine learning models that are older than 2 weeks, to preserve
+ * storage space.
+ *
+ * Notice, task ONLY executes if default database is SQLite, since database
+ * management is up to db-admin for serious databases.
+ */
+if
+   eq
+      config.get:"magic:databases:default"
+      .:sqlite
+   .lambda
+
+      // Wrapping in try/catch in case task already exists.
+      try
+
+         // Deleting old task if existing.
+         tasks.list:reset-no_requests
+         if
+            exists:x:@tasks.list/*
+            .lambda
+               tasks.delete:x:@tasks.list/0/*/id
+         
+
+         // Creating task that periodically deletes old historical requests.
+         tasks.create:reset-no_requests
+            description:Resets no_requests at the first day of the month
+            repeats:**.01.01.01.01
+            .lambda
+               sqlite.connect:magic
+                  sqlite.execute:"update ml_types set no_requests = 0"
+               log.info:All machine learning models had their no_requests values reset
+      .catch
+
+         // Task already exists.
+         console.log:Task to reset no_requests already exists
