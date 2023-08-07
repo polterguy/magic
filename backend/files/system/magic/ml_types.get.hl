@@ -83,6 +83,8 @@ data.connect:[generic|magic]
          ml_types.initial_questionnaire
          ml_types.webhook_outgoing_url
          ml_types.system_message
+         ml_types.no_requests
+         ml_types.max_requests
       where
          and
 

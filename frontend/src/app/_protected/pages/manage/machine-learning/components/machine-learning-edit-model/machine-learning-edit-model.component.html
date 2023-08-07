@@ -326,7 +326,7 @@
 
           <div class="row">
 
-            <div class="col-12">
+            <div class="col-6">
 
               <p class="mb-1 fw-bold">OpenAI API key</p>
 
@@ -345,6 +345,54 @@
                   [disabled]="isLoading"
                   [(ngModel)]="api_key"
                   name="api_key"
+                  autocomplete="off">
+              </mat-form-field>
+
+            </div>
+
+            <div class="col-3">
+
+              <p class="mb-1 fw-bold">No requests</p>
+
+              <mat-form-field class="w-100 standalone-field">
+                <span
+                  matPrefix
+                  matTooltip="Number of requests for current month"
+                  class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+                  <mat-icon>timeline</mat-icon>
+                  <span class="text-muted">|</span>
+                </span>
+                <input
+                  matInput
+                  type="number"
+                  placeholder="No requests ..."
+                  [disabled]="isLoading"
+                  [(ngModel)]="no_requests"
+                  name="no_requests"
+                  autocomplete="off">
+              </mat-form-field>
+
+            </div>
+
+            <div class="col-3">
+
+              <p class="mb-1 fw-bold">Max requests</p>
+
+              <mat-form-field class="w-100 standalone-field">
+                <span
+                  matPrefix
+                  matTooltip="Maximum number of requests per month"
+                  class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+                  <mat-icon>timeline</mat-icon>
+                  <span class="text-muted">|</span>
+                </span>
+                <input
+                  matInput
+                  type="number"
+                  placeholder="Max requests ..."
+                  [disabled]="isLoading"
+                  [(ngModel)]="max_requests"
+                  name="max_requests"
                   autocomplete="off">
               </mat-form-field>
 
