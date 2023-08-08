@@ -113,8 +113,6 @@ select prompt, max(completion) as completion
                      .
                         role:user
                         content:x:@.dp/#/*/completion
-            lambda2hyper:x:@.session
-            log.info:x:-
 
    else-if
       and
