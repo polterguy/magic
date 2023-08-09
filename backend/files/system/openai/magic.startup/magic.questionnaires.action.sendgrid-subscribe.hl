@@ -1,0 +1,55 @@
+
+/*
+ * Subscribes the specified [name] and [email] to a newsletter using SendGrid account.
+ */
+slots.create:magic.questionnaires.action.sendgrid-subscribe
+
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/name
+   validators.mandatory:x:@.arguments/*/email
+   validators.email:x:@.arguments/*/email
+
+   // Invoking SendGrid to create recipient.
+   .auth
+   set-value:x:@.auth
+      strings.concat
+         .:"Bearer "
+         config.get:"magic:sendgrid:api-key"
+   config.get:"magic:sendgrid:chatbot-list"
+   set-name:x:./*/http.put/**/full_name
+      config.get:"magic:sendgrid:full_name_id"
+         .:e1_T
+   unwrap:x:+/**
+   http.put:"https://api.sendgrid.com/v3/marketing/contacts"
+      convert:true
+      headers
+         Authorization:x:@.auth
+         Content-Type:application/json
+      payload
+         list_ids
+            .:x:@config.get
+         contacts
+            .
+               email:x:@.arguments/*/email
+               custom_fields
+                  full_name:x:@.arguments/*/name
+
+   // Sanity checking invocation.
+   if
+      neq:x:@http.put
+         .:int:202
+      .lambda
+
+         // Oops ...!!
+         lambda2hyper:x:@http.put/*/content
+         log.error:Could not add new contact to list
+            email:x:@.arguments/*/email
+            name:x:@.arguments/*/name
+            stack:x:@lambda2hyper
+
+   else
+
+      // Doing some basic logging
+      log.info:Successfully added contact to SendGrid automation
+         name:x:@.arguments/*/name
+         email:x:@.arguments/*/email

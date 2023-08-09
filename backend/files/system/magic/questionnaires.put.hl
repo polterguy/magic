@@ -3,6 +3,7 @@
 .arguments
    name:string
    type:string
+   action:string
 .description:CRUD update endpoint updating one record in your questionnaires table in your magic database filtering which item to update with name updating type fields with authentication and authorisation for root roles
 .type:crud-update
 

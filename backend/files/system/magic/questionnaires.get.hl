@@ -44,6 +44,7 @@ data.connect:[generic|magic]
       columns
          questionnaires.name
          questionnaires.type
+         questionnaires.action
       where
          and
 

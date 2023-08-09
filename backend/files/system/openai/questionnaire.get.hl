@@ -14,7 +14,7 @@ data.connect:[generic|magic]
 
    // Retrieving all questions from database.
    data.select:@"
-select q.question, q.type, q.context
+select q.question, q.type, q.context, q.name
 	from questions q
 		inner join questionnaires qu on qu.name = q.questionnaire
         inner join ml_types t on t.initial_questionnaire = qu.name
@@ -24,7 +24,7 @@ select q.question, q.type, q.context
 
    // Retrieving main questionnaire from database.
    data.select:@"
-select q.name, q.type
+select q.name, q.type, q.action
    from questionnaires q
       inner join ml_types t on t.initial_questionnaire = q.name
    where t.type = @type"
