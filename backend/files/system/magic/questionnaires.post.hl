@@ -3,6 +3,7 @@
 .arguments
    name:string
    type:string
+   action:string
 .description:CRUD create endpoint inserting one record into your questionnaires table in your magic database taking name with authentication and authorisation for root,admin roles
 .type:crud-create
 

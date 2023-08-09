@@ -19,6 +19,7 @@ export class MachineLearningEditQuestionnaireComponent {
 
   name: string = '';
   type: string = 'single-shot';
+  action: string = 'sendgrid-subscribe';
 
   constructor(
     private generalService: GeneralService,
@@ -28,6 +29,7 @@ export class MachineLearningEditQuestionnaireComponent {
     if (this.data) {
       this.name = this.data.name;
       this.type = this.data.type;
+      this.action = this.data.action;
     }
   }
 
@@ -51,6 +53,7 @@ export class MachineLearningEditQuestionnaireComponent {
     const data: any = {
       name: this.name,
       type: this.type,
+      action: this.action,
     };
     if (this.data) {
       data.id = this.data.id;

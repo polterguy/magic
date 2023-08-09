@@ -30,6 +30,27 @@
 
       </div>
 
+      <!-- Action -->
+      <div class="col-12 pe-lg-0">
+
+        <mat-form-field class="w-100 standalone-field me-2">
+          <span
+            matPrefix
+            matTooltip="Action"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>edit</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            placeholder="Action"
+            [(ngModel)]="action"
+            name="action"
+            autocomplete="off">
+        </mat-form-field>
+
+      </div>
+
       <!-- Type -->
       <div class="col-12 pe-lg-0">
 

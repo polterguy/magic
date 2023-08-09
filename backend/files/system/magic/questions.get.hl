@@ -48,6 +48,7 @@ data.connect:[generic|magic]
          questions.questionnaire
          questions.type
          questions.context
+         questions.name
       where
          and
 

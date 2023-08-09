@@ -59,6 +59,15 @@ export class MachineLearningEditQuestionsComponent implements OnInit {
             this.questions += 'context=' + idx.context;
             addedMeta = true;
           }
+          if (idx.name) {
+            if (!addedMeta) {
+              this.questions += ' => ';
+            } else {
+              this.questions += ', ';
+            }
+            this.questions += 'name=' + idx.name;
+            addedMeta = true;
+          }
           this.questions += '\r\n'
         }
       },

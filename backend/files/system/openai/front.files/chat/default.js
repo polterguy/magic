@@ -303,11 +303,14 @@ function ensureInitialQuestionnaireIsFetched() {
   });
 }
 
+// Contains all action values for questionnaire.
+const questionnaireActionValues = {};
+
 /*
  * Function that loops through questionnaire asking questions until no more
  * questions remains in ainiroQuestionnaire array.
  */
-function askNextQuestion() {
+function askNextQuestion(justAsked = false) {
 
   // Verifying we've got more questions remaining.
   if (!ainiroQuestionnaire.questions || ainiroQuestionnaire.questions?.length === 0) {
@@ -316,6 +319,32 @@ function askNextQuestion() {
       // Storing the fact that user has taken this questionnaire in local storage.
       localStorage.setItem('ainiro-questionnaire.' + ainiroQuestionnaire.name, JSON.stringify(ainiroQuestionnaireAnswers));
     }
+    if(justAsked === true && ainiroQuestionnaire.action) {
+
+      // Done with questionnaire, invoking action on the server
+      const payload = {
+        action: ainiroQuestionnaire.action,
+        values: questionnaireActionValues,
+      };
+      let url = `[[url]]/magic/system/openai/questionnaire-action`;
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          "Content-Type": 'application/json'
+        },
+        body: JSON.stringify(payload)
+      })
+        .then(res => {
+          if (res.status >= 200 && res.status <= 299) {
+            return res.json();
+          } else {
+            throw Error(res.statusText);
+          }
+        })
+        .then(() => {
+          console.log('Successfully invoked action for questionnaire');
+        });
+      }
     return;
   }
   const row = window.document.createElement('div');
@@ -330,7 +359,7 @@ function askNextQuestion() {
   // Checking type of question.
   if (ainiroQuestionnaire.questions[0].type === 'message') {
     ainiroQuestionnaire.questions = ainiroQuestionnaire.questions.slice(1);
-    askNextQuestion();
+    askNextQuestion(true);
   }
 }
 
@@ -431,6 +460,11 @@ function aista_invoke_prompt(msg, token, speech) {
   // Checking if we're in a questionnaire loop.
   if (ainiroQuestionnaire.questions?.length > 0) {
 
+    // Checking if this is a "named" question.
+    if (ainiroQuestionnaire.questions[0].name) {
+      questionnaireActionValues[ainiroQuestionnaire.questions[0].name] = msg;
+    }
+
     // Creating our URL.
     let url = `[[url]]/magic/system/openai/answer`;
 
@@ -453,6 +487,7 @@ function aista_invoke_prompt(msg, token, speech) {
       question: ainiroQuestionnaire.questions[0].question,
       answer: msg,
       context: ainiroQuestionnaire.questions[0].context,
+      name: ainiroQuestionnaire.questions[0].name,
     });
     ainiroQuestionnaire.questions = ainiroQuestionnaire.questions.slice(1);
     payload.answer = msg;
@@ -491,7 +526,7 @@ function aista_invoke_prompt(msg, token, speech) {
         }
 
         // Asking next question, if we've got more questions in our questionnaire.
-        askNextQuestion();
+        askNextQuestion(true);
       });
 
   } else {
