@@ -181,15 +181,12 @@
 }
 .aista-chat-answer p img:not(.emoji) {
   display: block !important;
-  width: calc(100% - 20px) !important;
-  margin-left: 10px !important;
-  margin-right: 10px !important;
+  max-width: 100% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
   margin-top: 10px !important;
   margin-bottom: 10px !important;
   cursor: pointer !important;
-}
-.aista-chat-answer img {
-  max-width: 100%;
 }
 .aista-chat-answer pre {
   margin-top: 20px !important;
