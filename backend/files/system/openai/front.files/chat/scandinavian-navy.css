@@ -363,6 +363,7 @@
 .aista-speech-button:hover,
 .aista-speech-button:focus,
 .aista-speech-button:active {
+  background-color: transparent;
   color: #1035ac;
   transition: color .25s ease-in-out;
 }
