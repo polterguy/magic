@@ -93,6 +93,13 @@ slots.create:magic.ai.create-landing-page
             @src:x:@.search
             @defer
 
+   // Adding noindex to avoid duplicated content.
+   add:x:@html2lambda/*/html/*/head
+      .
+         meta
+            @name:robots
+            @content:noindex
+
    // Converting to HTML and saving to "/etc/www/" folder.
    lambda2html:x:@html2lambda/*
    strings.concat
