@@ -100,6 +100,19 @@ slots.create:magic.ai.create-landing-page
             @name:robots
             @content:noindex
 
+   // Inserting canonical if it doesn't exist from before.
+   if
+      not
+         exists:x:@html2lambda/*/html/*/head/*/link/*/\@rel/=canonical
+      .lambda
+         unwrap:x:+/*/*/*/\@href
+         add:x:@html2lambda/*/html/*/head
+            .
+               link
+                  @rel:canonical
+                  @href:x:@.arguments/*/url
+         
+
    // Converting to HTML and saving to "/etc/www/" folder.
    lambda2html:x:@html2lambda/*
    strings.concat
