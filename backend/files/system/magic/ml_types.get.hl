@@ -88,5 +88,58 @@ data.connect:[generic|magic]
       where
          and
 
+   // Filtering out models not accessible to currently authenticated user.
+   .models
+   auth.ticket.get
+   if
+      not-null:x:@auth.ticket.get
+      .lambda
+
+         // User is authenticated, only adding models user have access to.
+         for-each:x:@data.read/*
+
+            // Checking if model does not require auth at all.
+            if
+               or
+                  null:x:@.dp/#/*/auth
+                  eq:x:@.dp/#/*/auth
+                     .:
+               .lambda
+
+                  // Model does not require auth at all, all users have access.
+                  add:x:@.models
+                     get-nodes:x:@.dp/#
+
+            else
+
+               // Model has auth requirements, making sure user belongs to at least one of the roles.
+               strings.split:x:@.dp/#/*/auth
+                  .:,
+               for-each:x:@strings.split/*
+                  strings.trim:x:@.dp/#
+                     .:" \t"
+                  if
+                     and
+                        exists:x:@auth.ticket.get/*/roles/*/={@strings.trim}
+                        not-exists:x:@.models/*/*/type/={@for-each/@.dp/#/*/type}
+                     .lambda
+
+                        // User belongs to at least one role that's allowed access to model.
+                        add:x:@.models
+                           get-nodes:x:@for-each/@.dp/#
+
+   else
+
+      // User is not authenticated, filtering out all models with auth requirements.
+      for-each:x:@data.read/*
+         if
+            or
+               null:x:@.dp/#/*/auth
+               eq:x:@.dp/#/*/auth
+                  .:
+            .lambda
+               add:x:@.models
+                  get-nodes:x:@.dp/#
+
    // Returning result of above read invocation to caller.
-   return-nodes:x:@data.read/*
+   return-nodes:x:@.models/*
