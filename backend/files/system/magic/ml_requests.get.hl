@@ -54,6 +54,8 @@ data.connect:[generic|magic]
          ml_requests.finish_reason
          ml_requests.cached
          ml_requests.questionnaire
+         ml_requests.session
+         ml_requests.user_id
       where
          and
 
