@@ -138,8 +138,10 @@ data.connect:[generic|magic]
                eq:x:@.dp/#/*/auth
                   .:
             .lambda
+            
+               // Model have no auth requirements.
                add:x:@.models
                   get-nodes:x:@.dp/#
 
-   // Returning result of above read invocation to caller.
+   // Returning result of above filter invocation to caller.
    return-nodes:x:@.models/*
