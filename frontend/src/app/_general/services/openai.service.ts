@@ -10,6 +10,7 @@ import { Injectable } from '@angular/core';
 import { HttpService } from 'src/app/_general/services/http.service';
 import { MagicResponse } from '../models/magic-response.model';
 import { PromptResponse } from '../models/prompt-response.model';
+import { BackendService } from './backend.service';
 
 /**
  * OpenAI model.
@@ -29,7 +30,9 @@ export class OpenAIModel {
 })
 export class OpenAIService {
 
-  constructor(private httpService: HttpService) { }
+  constructor(
+    private httpService: HttpService,
+    private backendService: BackendService) { }
 
   /**
    * Queries OpenAI with the specified prompt and returns result to caller.
@@ -44,6 +47,7 @@ export class OpenAIService {
     if (session) {
       query += '&session=' + encodeURIComponent(session)
     }
+    query += '&user_id=' + encodeURIComponent(this.backendService.active.username);
     return this.httpService.get<PromptResponse>(query);
   }
 
