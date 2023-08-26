@@ -73,14 +73,30 @@
         autocomplete="off">
     </mat-form-field>
 
+    <button
+      mat-button
+      type="submit"
+      [disabled]="isLoading">
+      Submit
+    </button>
+
     <mat-slide-toggle
       labelPosition="before"
       class="me-2"
       name="preview"
       (change)="previewChanged()"
+      [disabled]="!completion || completion.length === 0"
       [(ngModel)]="preview">
       Preview
     </mat-slide-toggle>
+
+    <button
+      mat-button
+      (click)="train()"
+      type="button"
+      [disabled]="isLoading || (!prompt || prompt.length === 0 || !completion || completion.length === 0)">
+      Train
+    </button>
 
     <button
       mat-button
@@ -88,21 +104,6 @@
       type="button"
       mat-dialog-close>
       Close
-    </button>
-
-    <button
-      mat-button
-      (click)="train()"
-      type="button"
-      [disabled]="isLoading">
-      Train
-    </button>
-
-    <button
-      mat-button
-      type="submit"
-      [disabled]="isLoading">
-      Submit
     </button>
 
   </form>
