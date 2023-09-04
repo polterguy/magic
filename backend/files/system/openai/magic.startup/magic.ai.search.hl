@@ -58,6 +58,23 @@ slots.create:magic.ai.search
    // Connects to database to retrieve matching snippets
    data.connect:[generic|magic]
 
+      // Checking if we've got a prefix-url argument, defaulting to NOT NULL.
+      .prefix-url:"ts.uri is not null and "
+      if
+         and
+            exists:x:@.arguments/*/prefix-url
+            not-null:x:@.arguments/*/prefix-url
+            neq:x:@.arguments/*/prefix-url
+               .:
+         .lambda
+
+            // Restricting search according to [prefix-url] argument.
+            set-value:x:@.prefix-url
+               .:"ts.uri like @prefix and "
+            add:x:@data.connect/*/data.select
+               .
+                  @prefix:x:@.arguments/*/prefix-url
+
       // Fetching relevant snippets, making sure we profile the time it takes.
       .begin
       set-value:x:@.begin
@@ -70,23 +87,22 @@ slots.create:magic.ai.search
          get-value:x:@.arguments/*/threshold
       strings.concat
          .:@"
-select vss.distance, vss.rowid as id, ts.prompt, ts.completion, ts.uri
+select vss.distance, ts.prompt, ts.uri
 	from vss_ml_training_snippets as vss
     	inner join ml_training_snippets ts on ts.id = vss.rowid
-   where vss_search(
-     vss.embedding_vss,
-     vss_search_params(@embedding, "
-         get-value:x:@.arguments/*/max
-         .:@")) and
-vss.distance < @threshold and
-ts.type = @type and
-ts.uri is not null
+   where
+      ts.type = @type and "
+         get-value:x:@.prefix-url
+         .:@"vss_search(vss.embedding_vss, @embedding) and
+       vss.distance < @threshold
 group by ts.uri
-order by vss.distance"
+order by vss.distance
+limit @limit"
       data.select:x:@strings.concat
-         embedding:x:@floatArray2bytes
-         type:x:@.arguments/*/type
-         threshold:x:@math.subtract
+         @embedding:x:@floatArray2bytes
+         @type:x:@.arguments/*/type
+         @threshold:x:@math.subtract
+         @limit:x:@.arguments/*/max
 
       // Measuring how much time we spent looping through snippets.
       .end

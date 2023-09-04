@@ -74,10 +74,10 @@ slots.create:magic.ai.get-context
 select vss.distance, vss.rowid as id, ts.prompt, ts.completion, ts.uri, ts.cached
 	from vss_ml_training_snippets as vss
     	inner join ml_training_snippets ts on ts.id = vss.rowid
-   where vss_search(
-     vss.embedding_vss,
-     vss_search_params(@embedding, 50)
-   ) and vss.distance < @threshold and ts.type = @type"
+   where
+      ts.type = @type and
+      vss_search(vss.embedding_vss, @embedding) and
+      vss.distance < @threshold"
          embedding:x:@floatArray2bytes
          type:x:@.arguments/*/type
          threshold:x:@math.subtract
