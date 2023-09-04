@@ -7,6 +7,7 @@
    chat:bool
    recaptcha_response:string
    session:string
+   user_id:string
 .description:Asks OpenAI a question with the specified type, and returns the answer to caller
 .type:public
 
