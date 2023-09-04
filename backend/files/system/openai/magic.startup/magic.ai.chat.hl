@@ -48,131 +48,98 @@ slots.create:magic.ai.chat
             result:x:@signal/*/cached
             finish_reason:cached
 
-   // Taken from either training data or previous questions.
+   /*
+    * Session for user containing previous questions and answers,
+    * in addition to context and system message.
+    */
    .session
 
-   // Checking if question triggered training data.
+   // Checking if we've got a system message.
    if
-      exists:x:@signal/*/context
+      and
+         not-null:x:@.arguments/*/system_message
+         neq:x:@.arguments/*/system_message
+            .:
       .lambda
 
-         /*
-          * Question triggered training data.
-          *
-          * Checking if we've got a [system_message] value.
-          */
+         // Adding system message to [.session]
+         unwrap:x:+/*/*/*/content
+         add:x:@.session
+            .
+               .
+                  role:system
+                  content:x:@.arguments/*/system_message
+
+   // Then adding context ml_requests belonging to user to [.session]
+   data.connect:[generic|magic]
+
+      // Selecting context requests from database.
+      data.select:@"
+select prompt, max(completion) as completion
+   from ml_requests
+   where user_id = @user_id and questionnaire = 1 and context = 1
+   group by prompt"
+         user_id:x:@.arguments/*/user_id
+
+      // Adding context requests to [.session].
+      for-each:x:@data.select/*
+
+         // Adding question as system message.
+         unwrap:x:+/*/*/*/content
+         add:x:@.session
+            .
+               .
+                  role:system
+                  content:x:@.dp/#/*/prompt
+
+         // Adding answer as user message.
+         unwrap:x:+/*/*/*/content
+         add:x:@.session
+            .
+               .
+                  role:user
+                  content:x:@.dp/#/*/completion
+
+   /*
+    * Storing how many fixed messages we have to avoid removing
+    * system message or questionnaire messages as we're pruning messages
+    * to avoid overflowing model.
+    */
+   .fixed
+   set-value:x:@.fixed
+      get-count:x:@.session/*
+
+   // Checking if we've got a cached session.
+   if
+      and
+         exists:x:@.arguments/*/session
+         not-null:x:@.arguments/*/session
+         neq:x:@.arguments/*/session
+            .:
+      .lambda
+
+         // Caller provided a cache key.
+         cache.get:x:@.arguments/*/session
          if
-            and
-               not-null:x:@.arguments/*/system_message
-               neq:x:@.arguments/*/system_message
-                  .:
+            not-null:x:@cache.get
             .lambda
 
-               // Adding system message to [.session]
-               unwrap:x:+/*/*/*/content
+               // Adding session questions to context.
                add:x:@.session
-                  .
-                     .
-                        role:system
-                        content:x:@.arguments/*/system_message
+                  hyper2lambda:x:@cache.get
 
-         // Then adding context to [.session]
+   // Checking if we've got context.
+   if
+      not-null:x:@signal/*/context
+      .lambda
+
+         // Adding context to above [.session].
          unwrap:x:+/*/*/*/content
          add:x:@.session
             .
                .
                   role:system
                   content:x:@signal/*/context
-
-         // Then adding context ml_requests belonging to user to [.session]
-         data.connect:[generic|magic]
-
-            // Selecting context requests from database.
-            data.select:@"
-select prompt, max(completion) as completion
-   from ml_requests
-   where user_id = @user_id and questionnaire = 1 and context = 1
-   group by prompt"
-               user_id:x:@.arguments/*/user_id
-
-            // Adding context requests to [.session].
-            for-each:x:@data.select/*
-
-               // Adding question as system message.
-               unwrap:x:+/*/*/*/content
-               add:x:@.session
-                  .
-                     .
-                        role:system
-                        content:x:@.dp/#/*/prompt
-
-               // Adding answer as user message.
-               unwrap:x:+/*/*/*/content
-               add:x:@.session
-                  .
-                     .
-                        role:user
-                        content:x:@.dp/#/*/completion
-
-   else-if
-      and
-         exists:x:@.arguments/*/session
-         not-null:x:@.arguments/*/session
-      .lambda
-
-         // Question didn't kick in training data, hence checking if we've got a session.
-         cache.get:x:@.arguments/*/session
-         if
-            not-null:x:@cache.get
-            .lambda
-
-               /*
-                * We have an existing session, hence continuing discussing subject
-                * unless embeddings returns a better match.
-                */
-               add:x:@.session
-                  hyper2lambda:x:@cache.get
-
-         else-if
-            and
-               not-null:x:@.arguments/*/system_message
-               neq:x:@.arguments/*/system_message
-                  .:
-            .lambda
-
-               // No training data and no session, but we do have a system message.
-               unwrap:x:+/*/*/*/content
-               add:x:@.session
-                  .
-                     .
-                        role:system
-                        content:x:@.arguments/*/system_message
-
-   // Checking if model is prefixed, at which point we prepend prefix to question.
-   .only-prompt
-   set-value:x:@.only-prompt
-      get-value:x:@.arguments/*/prompt
-   if
-      and
-         exists:x:@.arguments/*/prefix
-         not-null:x:@.arguments/*/prefix
-         neq:x:@.arguments/*/prefix
-            .:
-      .lambda
-
-         // Prefixing prompt.
-         set-value:x:@.arguments/*/prompt
-            strings.concat
-               get-value:x:@.arguments/*/prefix
-               get-value:x:@.arguments/*/prompt
-
-   // Adding user's current question to session.
-   unwrap:x:+/*/*/*/content
-   add:x:@.session
-      .
-         .
-            role:user
-            content:x:@.arguments/*/prompt
 
    /*
     * Pruning previous messages until size of context + max_tokens is less than whatever
@@ -202,12 +169,42 @@ select prompt, max(completion) as completion
 
          /*
           * We need to remove one of our previous messages to be able to have OpenAI return max_tokens.
-          * Notice, we make sure we always keep the first two messages, since it's the most important
-          * part that was created when we initially found our context as found in our ml_training_snippets.
-          *
-          * The first message is the system message, while the second message is the context.
+          * Notice, we only remove messages after our "fixed" messages, which are system message and
+          * questionnaire messages.
           */
-         remove-nodes:x:@.session/2
+         strings.concat
+            .:@.session/
+            get-value:x:@.fixed
+         set-x:x:./*/remove-nodes
+            convert:x:@strings.concat
+               type:x
+         remove-nodes
+
+   // Checking if model is prefixed, at which point we prepend prefix to question.
+   .only-prompt
+   set-value:x:@.only-prompt
+      get-value:x:@.arguments/*/prompt
+   if
+      and
+         exists:x:@.arguments/*/prefix
+         not-null:x:@.arguments/*/prefix
+         neq:x:@.arguments/*/prefix
+            .:
+      .lambda
+
+         // Prefixing prompt.
+         set-value:x:@.arguments/*/prompt
+            strings.concat
+               get-value:x:@.arguments/*/prefix
+               get-value:x:@.arguments/*/prompt
+
+   // Adding user's current question to session.
+   unwrap:x:+/*/*/*/content
+   add:x:@.session
+      .
+         .
+            role:user
+            content:x:@.arguments/*/prompt
 
    // Retrieving token used to invoke OpenAI.
    .token
@@ -279,12 +276,20 @@ select prompt, max(completion) as completion
                .
                   role:system
                   content:x:@.result
+         while
+            mt:x:@.fixed
+               .:int:0
+            .lambda
+               remove-nodes:x:@.session/0
+               math.decrement:x:@.fixed
          lambda2hyper:x:@.session/*
          cache.set:x:@.arguments/*/session
             expiration:600
             value:x:@lambda2hyper
 
    // Opening database connection to store request into ml_requests table.
+   lambda2hyper:x:@.session/*
+   log.info:x:-
    data.connect:[generic|magic]
 
       // Checking if type is "supervised".
