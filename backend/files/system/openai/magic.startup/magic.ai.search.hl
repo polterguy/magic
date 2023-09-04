@@ -82,7 +82,7 @@ vss.distance < @threshold and
 ts.type = @type and
 ts.uri is not null
 group by ts.uri
-order by length(ts.prompt) asc"
+order by vss.distance"
       data.select:x:@strings.concat
          embedding:x:@floatArray2bytes
          type:x:@.arguments/*/type
