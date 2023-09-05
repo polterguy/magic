@@ -16,17 +16,11 @@ import { TermsModalComponent } from 'src/app/_general/components/terms-modal/ter
   templateUrl: './auth-base.component.html',
   styleUrls: ['./auth-base.component.scss']
 })
-export class AuthBaseComponent implements OnInit {
+export class AuthBaseComponent {
 
   constructor(private dialog: MatDialog) { }
 
-  public currentYear: number = 0;
-
   public passwordToken: string = '';
-
-  ngOnInit() {
-    this.currentYear = new Date().getFullYear();
-  }
 
   public termsModal() {
     this.dialog.open(TermsModalComponent);
