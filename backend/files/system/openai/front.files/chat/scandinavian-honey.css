@@ -125,6 +125,44 @@
 .aista-chat-msg-container a:visited {
   color: #5555ff !important;
 }
+@keyframes jump {
+  0%   {bottom: 0px;}
+  20%  {bottom: 5px;}
+  40%  {bottom: 0px;}
+}
+.ainiro-waiting-animation span {
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  animation: jump 1s infinite;
+  display: inline-block;
+  margin-top: 3px;
+  margin-bottom: -3px;
+}
+.ainiro-waiting-animation .ainiro-dot-1 {
+  background-color: #8b938e;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 3px;
+  animation-delay: 200ms;
+}
+.ainiro-waiting-animation .ainiro-dot-2 {
+  background-color: #8b938e;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 3px;
+  animation-delay: 400ms;
+}
+.ainiro-waiting-animation .ainiro-dot-3 {
+  background-color: #8b938e;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 3px;
+  animation-delay: 600ms;
+}
 @keyframes aista-chat-question-waiting {
   0% { opacity: .2; }
   100% { opacity: 1; }

@@ -106,22 +106,42 @@
 .aista-chat-msg-container a:visited {
   color: #5555ff !important;
 }
-@keyframes aista-chat-question-waiting {
-  0% { margin-left:-10px; opacity: 0; color: rgb(128,128,0); }
-  10% { margin-left:-10px; opacity: 0; color: rgb(128,128,0); }
-  23% { margin-left:0px; opacity: 1; color: rgb(128,128,128); }
-  50% { margin-left:0px; opacity: 1; color: rgb(128,128,128); }
-  65% { margin-left:0px; opacity: 1; color: rgb(128,128,128); }
-  100% { margin-left:-10px; opacity: 0; color: rgb(128,128,0); }
+@keyframes jump {
+  0%   {bottom: 0px;}
+  20%  {bottom: 5px;}
+  40%  {bottom: 0px;}
 }
-.aista-chat-question-waiting {
-  animation-name: aista-chat-question-waiting;
-  animation-duration: 1s;
-  animation-iteration-count: infinite;
-  animation-direction: alternate;
-  font-size: 14px !important;
-  margin-bottom: 10px !important;
-  font-weight: bold !important;
+.ainiro-waiting-animation span {
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  animation: jump 1s infinite;
+  display: inline-block;
+  margin-top: 20px;
+}
+.ainiro-waiting-animation .ainiro-dot-1 {
+  background-color: #c1b8c2;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 3px;
+  animation-delay: 200ms;
+}
+.ainiro-waiting-animation .ainiro-dot-2 {
+  background-color: #c1b8c2;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 3px;
+  animation-delay: 400ms;
+}
+.ainiro-waiting-animation .ainiro-dot-3 {
+  background-color: #c1b8c2;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 3px;
+  animation-delay: 600ms;
 }
 .aista-chat-question {
   font-size: 14px !important;

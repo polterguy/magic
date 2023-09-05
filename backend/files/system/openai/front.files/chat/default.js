@@ -200,6 +200,22 @@ function aista_create_chat_ui() {
   }
 }
 
+function ainiro_create_wait_animation() {
+
+  const row = window.document.createElement('div');
+  row.className = 'aista-chat-answer ainiro-waiting-animation';
+  row.innerHTML = '<span class="ainiro-dot-1"></span><span class="ainiro-dot-2"></span><span class="ainiro-dot-3"></span>';
+  const msgs = window.document.getElementsByClassName('aista-chat-msg-container')[0];
+  msgs.appendChild(row);
+}
+
+function ainiro_delete_wait_animation() {
+  const els = window.document.querySelector('.ainiro-waiting-animation');
+  if (els) {
+    els.parentNode.removeChild(els);
+  }
+}
+
 /*
  * Submits form to backend.
  */
@@ -218,6 +234,8 @@ function aista_submit_form(speech) {
     msgEl.scrollIntoView({behavior: 'smooth', block: 'start'});
   }, 1);
   inp.disabled = true;
+
+  ainiro_create_wait_animation();
 
   const speechBtns = window.document.getElementsByClassName('aista-speech-button');
   if (speechBtns?.length > 0) {
@@ -519,6 +537,8 @@ function aista_invoke_prompt(msg, token, speech) {
         const msgRow = window.document.getElementsByClassName('aista-chat-question-waiting')[0];
         msgRow.className = 'aista-chat-question';
 
+        ainiro_delete_wait_animation();
+
         // Making sure form submit button and speech button are enabled.
         const speechBtns = window.document.getElementsByClassName('aista-speech-button');
         if (speechBtns?.length > 0) {
@@ -604,6 +624,8 @@ function aista_invoke_prompt(msg, token, speech) {
         // Removing flashing on question
         const msgRow = window.document.getElementsByClassName('aista-chat-question-waiting')[0];
         msgRow.className = 'aista-chat-question';
+
+        ainiro_delete_wait_animation();
       
         // Checking if server returned references.
         if (data.references && data.references.length > 0) {
@@ -656,6 +678,8 @@ function aista_invoke_prompt(msg, token, speech) {
         const msgRow = window.document.getElementsByClassName('aista-chat-question-waiting')[0];
         msgRow.className = 'aista-chat-question';
         msgRow.scrollIntoView({behavior: 'smooth', block: 'start'});
+
+        ainiro_delete_wait_animation();
       });
   }
 }})();
