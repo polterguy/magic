@@ -126,6 +126,7 @@ export class FileService {
    */
   public downloadFile(path: string) {
 
+    this.generalService.showLoading();
     this.httpService.download(
       '/magic/system/file-system/file?file=' +
       encodeURIComponent(path)).subscribe({
@@ -136,6 +137,7 @@ export class FileService {
         let filename = disp.split(';')[1].trim().split('=')[1].replace(/"/g, '');
         const file = new Blob([res.body]);
         saveAs(file, filename);
+        this.generalService.hideLoading();
       },
 
       error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)
