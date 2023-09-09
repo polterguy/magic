@@ -191,7 +191,7 @@
 .aista-chat-answer.cached {
   color: unset !important;
 }
-.aista-chat-answer p img:not(.emoji) {
+.aista-chat-answer img:not(.emoji) {
   display: block !important;
   width: calc(100% - 20px) !important;
   margin-left: 10px !important;

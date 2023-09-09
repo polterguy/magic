@@ -216,7 +216,7 @@
   margin-top:0 !important;
   margin-bottom:0 !important;
 }
-.aista-chat-answer p img:not(.emoji) {
+.aista-chat-answer img:not(.emoji) {
   display: block !important;
   max-width: 100% !important;
   margin-left: auto !important;
