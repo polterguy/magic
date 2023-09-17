@@ -97,9 +97,9 @@ export class MachineLearningTrainingService {
         const file = new Blob([res.body]);
         saveAs(file, filename);
       },
-      error: (error: any) => {
+      error: () => {
 
-        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+        this.generalService.showFeedback('No leads were found', 'errorMessage');
       }
     });
   }

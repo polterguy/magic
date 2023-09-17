@@ -3,13 +3,14 @@
  * Copyright (c) Aista Ltd, and Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
  */
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { MachineLearningTrainingService } from 'src/app/_general/services/machine-learning-training.service';
 import { MachineLearningEditCacheComponent } from '../components/machine-learning-edit-cache/machine-learning-edit-cache.component';
+import { SearchboxComponent } from 'src/app/_general/components/searchbox/searchbox.component';
 
 /**
  * Helper component to view and manage Machine Learning requests
@@ -28,6 +29,7 @@ export class MachineLearningRequestsComponent implements OnInit {
   types: string[] = null;
   displayedColumns: string[] = [
     'prompt',
+    'user_id',
     'type',
     'created',
     'finish_reason',
@@ -39,6 +41,7 @@ export class MachineLearningRequestsComponent implements OnInit {
     order: 'created',
     direction: 'desc',
   };
+  @ViewChild('searchBox') searchBox: SearchboxComponent;
 
   constructor(
     private dialog: MatDialog,
@@ -48,6 +51,12 @@ export class MachineLearningRequestsComponent implements OnInit {
   ngOnInit() {
 
     this.getTypes(true);
+  }
+
+  filterOnUserId(event:any, user: string) {
+
+    this.searchBox.setSearchTerm(user);
+    event.preventDefault();
   }
 
   filterList(event: { searchKey: string, type?: string }) {
@@ -64,7 +73,7 @@ export class MachineLearningRequestsComponent implements OnInit {
     }
     this.filter = newFilter;
     if (event.searchKey) {
-      this.filter['ml_requests.prompt.like'] = '%' + event.searchKey + '%';
+      this.filter['filter'] = event.searchKey;
     }
     if (event.type) {
       this.filter['ml_requests.type.eq'] = event.type;

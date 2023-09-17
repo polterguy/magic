@@ -5,6 +5,7 @@
    offset:long
    order:string
    direction:string
+   filter:string
    ml_requests.id.eq:long
    ml_requests.created.eq:date
    ml_requests.type.like:string
@@ -37,6 +38,24 @@ data.connect:[generic|magic]
       get-nodes:x:@.arguments/*/offset
    remove-nodes:x:@.arguments/*/limit
    remove-nodes:x:@.arguments/*/offset
+
+   // Checking if user provided a [filter]
+   if
+      exists:x:@.arguments/*/filter
+      .lambda
+
+         // Adding filter and removing it from arguments collection.
+         strings.concat
+            .:%
+            get-value:x:@.arguments/*/filter
+            .:%
+         unwrap:x:+/*/*/*
+         add:x:@data.connect/*/data.read/*/where/*/and
+            .
+               or
+                  ml_requests.prompt.like:x:@strings.concat
+                  ml_requests.user_id.eq:x:@.arguments/*/filter
+         remove-nodes:x:@.arguments/*/filter
 
    // Parametrising our read invocation with filtering arguments.
    add:x:./*/data.read/*/where/*
