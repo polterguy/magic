@@ -19,6 +19,7 @@
 
         <!-- Search textbox -->
         <app-searchbox
+          #searchBox
           (filterList)="filterList($event)"
           buttonText="Export leads"
           (buttonClick)="exportLeads()"
@@ -54,6 +55,31 @@
             *matCellDef="let element"
             class="text-nowrap text-truncate px-sm-3">
             {{element.prompt}}
+          </td>
+        </ng-container>
+
+        <!-- User ID column -->
+        <ng-container matColumnDef="user_id">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            class="pe-sm-3 small-table-column text-nowrap"
+            mat-sort-header>
+            User ID
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let element"
+            class="pe-sm-3 text-nowrap small-table-column">
+
+            <button
+              mat-button
+              color="primary"
+              style="width:100%;text-align:left;"
+              (click)="filterOnUserId($event, element.user_id)">
+              {{element.user_id}}
+            </button>
+
           </td>
         </ng-container>
 

@@ -42,6 +42,11 @@ export class SearchboxComponent implements OnInit {
       });
   }
 
+  setSearchTerm(query: string) {
+
+    this.filterControl.setValue(query);
+  }
+
   removeSearchTerm() {
 
     this.filterControl.setValue('');

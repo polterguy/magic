@@ -1,6 +1,7 @@
 
 // Endpoint counting items in your ml_requests table in your magic database
 .arguments
+   filter:string
    ml_requests.id.eq:long
    ml_requests.created.eq:date
    ml_requests.type.like:string
@@ -19,6 +20,26 @@ auth.ticket.verify:root
 
 // Opening up our database connection.
 data.connect:[generic|magic]
+
+   // Checking if user provided a [filter]
+   if
+      exists:x:@.arguments/*/filter
+      .lambda
+
+         // Adding filter and removing it from arguments collection.
+         strings.concat
+            .:%
+            get-value:x:@.arguments/*/filter
+            .:%
+         unwrap:x:+/*/*/*
+         add:x:@data.connect/*/data.read/*/where/*/and
+            .
+               or
+                  ml_requests.prompt.like:x:@strings.concat
+                  ml_requests.user_id.eq:x:@.arguments/*/filter
+         remove-nodes:x:@.arguments/*/filter
+
+   // Adding all other arguments.
    add:x:+/*/where/*
       get-nodes:x:@.arguments/*
 
