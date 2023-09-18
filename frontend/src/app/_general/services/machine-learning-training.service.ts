@@ -110,7 +110,7 @@ export class MachineLearningTrainingService {
   ml_export_questionnaires(filter: any = null) {
 
     this.httpService.download(
-      '/magic/system/magic/ml_requests_export_questionnaires' +
+      '/magic/system/magic/ml_requests_export_conversations' +
       (filter?.type ? this.queryArgService.getQueryArgs(filter) : '')).subscribe({
       next: (res) => {
 
@@ -121,7 +121,7 @@ export class MachineLearningTrainingService {
       },
       error: () => {
 
-        this.generalService.showFeedback('No questionnaire data was found', 'errorMessage');
+        this.generalService.showFeedback('No conversation data was found', 'errorMessage');
       }
     });
   }
