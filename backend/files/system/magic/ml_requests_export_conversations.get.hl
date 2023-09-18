@@ -74,7 +74,7 @@ data.connect:[generic|magic]
    response.headers.set
       Content-Type:text/csv
       Access-Control-Expose-Headers:Content-Disposition
-      Content-Disposition:"attachment; filename=\"leads.csv\""
+      Content-Disposition:"attachment; filename=\"conversations.csv\""
 
    // Returning content to caller.
    return:x:@lambda2csv

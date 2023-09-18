@@ -23,8 +23,10 @@
           (filterList)="filterList($event)"
           buttonText="Export leads"
           (buttonClick)="exportLeads()"
+          [buttonDisabled]="!type"
           button2Text="Export conversations"
           (button2Click)="exportQuestionnaires()"
+          [button2Disabled]="!type"
           [(type)]="type"
           [types]="types">
         </app-searchbox>
