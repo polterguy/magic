@@ -106,6 +106,13 @@ export class MachineLearningRequestsComponent implements OnInit {
     });
   }
 
+  exportQuestionnaires() {
+
+    this.machineLearningTrainingService.ml_export_questionnaires({
+      type: this.type,
+    });
+  }
+
   sortData(e: any) {
 
     if (e.direction === '') {
