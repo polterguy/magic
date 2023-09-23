@@ -19,6 +19,9 @@ let aistaChatGreeting = '[[greeting]]';
 // RTL support.
 let ainiroRtl = [[rtl]];
 
+// Stream support.
+let ainiroStream = [[stream]];
+
 // True if speech is turned on.
 let aistaSpeech = [[speech]];
 
@@ -213,13 +216,103 @@ function ainiro_delete_wait_animation() {
   const els = window.document.querySelector('.ainiro-waiting-animation');
   if (els) {
     els.parentNode.removeChild(els);
+    return true;
   }
+  return false;
 }
 
 /*
  * Submits form to backend.
  */
+var ainiro_con = null;
+var ainiroTempContent = '';
 function aista_submit_form(speech) {
+  if (ainiro_con) {
+    aista_submit_form_impl(speech);
+  } else {
+    ainiro_con = new signalR.HubConnectionBuilder().withUrl('[[url]]/sockets').build();
+    ainiro_con.on(aistaSession, function (args) {
+
+      // Turning test response into JavaScript object.
+      var obj = JSON.parse(args);
+
+      // Checking if we're done
+      if (obj.finished === true) {
+
+        // Last response, enabling speech/submit button, and input textbox, such that user can ask next question.
+        const speechBtns = window.document.getElementsByClassName('aista-speech-button');
+        if (speechBtns?.length > 0) {
+          speechBtns[0].disabled = false;
+        }
+        const inp = window.document.getElementsByClassName('aista-chat-prompt')[0];
+        inp.disabled = false;
+        inp.value = '';
+        inp.focus();
+        const answer = window.document.getElementsByClassName('ainiro-has-more')[0];
+        answer.className = answer.className.replace(' ainiro-has-more', '');
+        ainiroTempContent = '';
+        return; // Returning early ...
+      }
+
+      // Appending response to temporary result.
+      ainiroTempContent += obj.message;
+
+      if (ainiro_delete_wait_animation()) {
+
+        // First response from server, removing animation on message element.
+        const msgRow = window.document.getElementsByClassName('aista-chat-question-waiting')[0];
+        msgRow.className = 'aista-chat-question';
+
+        // Appending answer to message container
+        const row = window.document.createElement('div');
+        if (aistaChatMarkdown) {
+          const converter = new showdown.Converter();
+          row.innerHTML = converter.makeHtml(ainiroTempContent);
+          const images = row.querySelectorAll('img');
+          for (const idxImg of images) {
+            idxImg.addEventListener('click', () => aista_zoom_image(idxImg));
+          }
+          row.querySelectorAll('pre code').forEach((el) => {
+            hljs.highlightElement(el);
+          });
+        } else {
+          row.innerText = ainiroTempContent;
+        }
+        row.className = 'aista-chat-answer ainiro-has-more';
+        const msgs = window.document.getElementsByClassName('aista-chat-msg-container')[0];
+        msgs.appendChild(row);
+
+        // Scrolling message row into view.
+        msgRow.scrollIntoView({behavior: 'smooth', block: 'start'});
+
+      } else {
+
+        // NOT first response from server.
+        const row = window.document.getElementsByClassName('ainiro-has-more')[0];
+        if (aistaChatMarkdown) {
+          const converter = new showdown.Converter();
+          row.innerHTML = converter.makeHtml(ainiroTempContent);
+          const images = row.querySelectorAll('img');
+          for (const idxImg of images) {
+            idxImg.addEventListener('click', () => aista_zoom_image(idxImg));
+          }
+          row.querySelectorAll('pre code').forEach((el) => {
+            hljs.highlightElement(el);
+          });
+        } else {
+          row.innerText = ainiroTempContent;
+        }
+      }
+    });
+    ainiro_con.start().then(function () {
+      aista_submit_form_impl(speech);
+    }).catch(function (err) {
+      return console.error(err.toString());
+    });
+  }
+}
+
+function aista_submit_form_impl(speech) {
   const inp = window.document.getElementsByClassName('aista-chat-prompt')[0];
   const msg = inp.value;
   if (!msg || msg === '') {
@@ -410,6 +503,13 @@ function aista_show_chat_window() {
   // Ensuring we fetch initial questionnaire.
   ensureInitialQuestionnaireIsFetched();
 
+  // Checking if we're using SignalR.
+  if (ainiroStream) {
+    const sock = window.document.createElement('script');
+    sock.src = 'https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js';
+    window.document.getElementsByTagName('head')[0].appendChild(sock);
+  }
+
   // Ensuring we've got a session identifier.
   if (!aistaSession) {
     fetch('[[url]]/magic/system/misc/gibberish?min=20&max=30', {
@@ -564,6 +664,11 @@ function aista_invoke_prompt(msg, token, speech) {
     } else {
       url += '&chat=false';
     }
+    if (ainiroStream) {
+      url += '&stream=true';
+    } else {
+      url += '&stream=false';
+    }
     if (aistaSession) {
       url += '&session=' + encodeURIComponent(aistaSession);
     }
@@ -590,67 +695,71 @@ function aista_invoke_prompt(msg, token, speech) {
       })
       .then(data => {
 
-        // Enabling input textbox such that user can ask next question
-        const inp = window.document.getElementsByClassName('aista-chat-prompt')[0];
-        inp.disabled = false;
-        inp.value = '';
-        inp.focus();
-        const speechBtns = window.document.getElementsByClassName('aista-speech-button');
-        if (speechBtns?.length > 0) {
-          speechBtns[0].disabled = false;
-        }
+        // Verifying we're not streaming result.
+        if (!ainiroStream) {
 
-        // Appending answer to message container
-        const row = window.document.createElement('div');
-        if (aistaChatChat) {
-          if (aistaChatMarkdown) {
-            const converter = new showdown.Converter();
-            row.innerHTML = converter.makeHtml(data.result);
-            const images = row.querySelectorAll('img');
-            for (const idxImg of images) {
-              idxImg.addEventListener('click', () => aista_zoom_image(idxImg));
+          // Enabling input textbox such that user can ask next question
+          const inp = window.document.getElementsByClassName('aista-chat-prompt')[0];
+          inp.disabled = false;
+          inp.value = '';
+          inp.focus();
+          const speechBtns = window.document.getElementsByClassName('aista-speech-button');
+          if (speechBtns?.length > 0) {
+            speechBtns[0].disabled = false;
+          }
+
+          // Appending answer to message container
+          const row = window.document.createElement('div');
+          if (aistaChatChat) {
+            if (aistaChatMarkdown) {
+              const converter = new showdown.Converter();
+              row.innerHTML = converter.makeHtml(data.result);
+              const images = row.querySelectorAll('img');
+              for (const idxImg of images) {
+                idxImg.addEventListener('click', () => aista_zoom_image(idxImg));
+              }
+              row.querySelectorAll('pre code').forEach((el) => {
+                hljs.highlightElement(el);
+              });
+            } else {
+              row.innerText = data.result;
             }
-            row.querySelectorAll('pre code').forEach((el) => {
-              hljs.highlightElement(el);
-            });
-          } else {
-            row.innerText = data.result;
           }
-        }
-        row.className = 'aista-chat-answer ' + data.finish_reason;
-        const msgs = window.document.getElementsByClassName('aista-chat-msg-container')[0];
-        msgs.appendChild(row);
+          row.className = 'aista-chat-answer ' + data.finish_reason;
+          const msgs = window.document.getElementsByClassName('aista-chat-msg-container')[0];
+          msgs.appendChild(row);
 
-        // Removing flashing on question
-        const msgRow = window.document.getElementsByClassName('aista-chat-question-waiting')[0];
-        msgRow.className = 'aista-chat-question';
+          // Removing flashing on question
+          const msgRow = window.document.getElementsByClassName('aista-chat-question-waiting')[0];
+          msgRow.className = 'aista-chat-question';
 
-        ainiro_delete_wait_animation();
-      
-        // Checking if server returned references.
-        if (data.references && data.references.length > 0) {
-          const list = window.document.createElement('ul');
-          list.className = 'aista-references-list';
-          for (const idx of data.references) {
-            const li = window.document.createElement('li');
-            const hyp = window.document.createElement('a');
-            hyp.setAttribute('href', idx.uri);
-            hyp.setAttribute('target', '_blank');
-            hyp.innerHTML = idx.prompt;
-            li.appendChild(hyp);
-            list.appendChild(li);
+          ainiro_delete_wait_animation();
+        
+          // Checking if server returned references.
+          if (data.references && data.references.length > 0) {
+            const list = window.document.createElement('ul');
+            list.className = 'aista-references-list';
+            for (const idx of data.references) {
+              const li = window.document.createElement('li');
+              const hyp = window.document.createElement('a');
+              hyp.setAttribute('href', idx.uri);
+              hyp.setAttribute('target', '_blank');
+              hyp.innerHTML = idx.prompt;
+              li.appendChild(hyp);
+              list.appendChild(li);
+            }
+            row.appendChild(list);
           }
-          row.appendChild(list);
-        }
 
-        // Scrolling message row into view.
-        msgRow.scrollIntoView({behavior: 'smooth', block: 'start'});
+          // Scrolling message row into view.
+          msgRow.scrollIntoView({behavior: 'smooth', block: 'start'});
 
-        // Checking if we're supposed to speak the result.
-        if (aistaSpeech && speech) {
-          let toSpeak = data.result.replace(/!\[.+\]\(.+\)/gi, '');
-          let utterance = new SpeechSynthesisUtterance(toSpeak);
-          speechSynthesis.speak(utterance);
+          // Checking if we're supposed to speak the result.
+          if (aistaSpeech && speech) {
+            let toSpeak = data.result.replace(/!\[.+\]\(.+\)/gi, '');
+            let utterance = new SpeechSynthesisUtterance(toSpeak);
+            speechSynthesis.speak(utterance);
+          }
         }
       })
       .catch(error => {
