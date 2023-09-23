@@ -8,6 +8,7 @@
    recaptcha_response:string
    user_id:string
    session:string
+   stream:bool
 .description:@"OpenAI chat endpoint, for having conversations using 'gpt-xxx' models"
 .type:public
 
@@ -58,10 +59,22 @@ signal:magic.ai.endpoint-common
          .lambda
 
             // Invoking chat style of slot.
-            add:x:./*/signal
-               get-nodes:x:@.arguments/*
-            signal:magic.ai.chat
-            return-nodes:x:@signal/*
+            if
+               eq:x:@.arguments/*/stream
+                  .:bool:true
+               .lambda
+                  add:x:./*/fork/*/signal
+                     get-nodes:x:@.arguments/*
+                  fork
+                     signal:magic.ai.chat
+                  return
+                     result:success
+                     stream:bool:true
+            else
+               add:x:./*/signal
+                  get-nodes:x:@.arguments/*
+               signal:magic.ai.chat
+               return-nodes:x:@signal/*
 
       else
 

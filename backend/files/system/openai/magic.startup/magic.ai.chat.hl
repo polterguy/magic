@@ -144,10 +144,6 @@ select prompt, max(completion) as completion
    /*
     * Pruning previous messages until size of context + max_tokens is less than whatever
     * amount of tokens the model can handle.
-    *
-    * Notice, we make sure we always submit the FIRST message and the SECOND message,
-    * if existing, since these are the system message, and
-    * the training data supplied as our context.
     */
    .cont:bool:true
    while:x:@.cont
@@ -215,6 +211,64 @@ select prompt, max(completion) as completion
             get-value:x:@.arguments/*/api_key
             config.get:"magic:openai:key"
 
+   // Checking if user wants to stream tokens.
+   if
+      eq:x:@.arguments/*/stream
+         .:bool:true
+      .lambda
+         unwrap:x:+/*/*/.sse/*/.session
+         add:x:../*/http.post
+            .
+               .sse
+
+                  // Forward evaluated further up, contains the session ID, and is also our socket channel.
+                  .session:x:@.arguments/*/session
+
+                  // Verifying OpenAI sent us actual content.
+                  if
+                     and
+                        exists:x:@.arguments/*/message
+                        not-null:x:@.arguments/*/message
+                        strings.starts-with:x:@.arguments/*/message
+                           .:"data:"
+                     .lambda
+
+                        // Parsing message sent to us from OpenAI.
+                        strings.substring:x:@.arguments/*/message
+                           .:int:5
+                        strings.trim:x:-
+                        json2lambda:x:-
+
+                        // Checking if we're done.
+                        if
+                           and
+                              exists:x:@json2lambda/*/choices/0/*/finish_reason
+                              not-null:x:@json2lambda/*/choices/0/*/finish_reason
+                           .lambda
+
+                              // Signaling client using sockets that we're done.
+                              unwrap:x:+/*/*
+                              sockets.signal:x:@.session
+                                 args
+                                    finished:bool:true
+
+                        else-if
+                           and
+                              exists:x:@json2lambda/*/choices/0/*/delta/*/content
+                              neq:x:@json2lambda/*/choices/0/*/delta/*/content
+                                 .:
+                           .lambda
+
+                              // Signaling client we've got more data using sockets.
+                              unwrap:x:+/*/*
+                              sockets.signal:x:@.session
+                                 args
+                                    message:x:@json2lambda/*/choices/0/*/delta/*/content
+
+         add:x:../*/http.post/*/payload
+            .
+               stream:bool:true
+
    // Invoking OpenAI now with context being either training data or previous messages.
    add:x:./*/http.post/*/payload/*/messages
       get-nodes:x:@.session/*
@@ -253,6 +307,15 @@ select prompt, max(completion) as completion
 
       // Success!
       log.info:Invoking OpenAI was a success
+
+   // Checking if we're streaming result, at which point we return at this point.
+   if
+      eq:x:@.arguments/*/stream
+         .:bool:true
+      .lambda
+
+         // Our HTTP post invocation won't return the actual response, since it's being streamed using SSE.
+         return:bool:success
 
    // Making sure we trim response.
    .result
