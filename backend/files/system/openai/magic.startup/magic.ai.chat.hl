@@ -427,8 +427,10 @@ select prompt, max(completion) as completion
                   remove-nodes:x:@.session/0
                   math.decrement:x:@.fixed
             lambda2hyper:x:@.session/*
+
+            // Notice, storing session for 20 minutes max!
             cache.set:x:@.arguments/*/session
-               expiration:600
+               expiration:1200
                value:x:@lambda2hyper
 
       // Checking if type is "supervised" at which point we store request.
