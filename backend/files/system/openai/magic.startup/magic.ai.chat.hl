@@ -283,6 +283,12 @@ select prompt, max(completion) as completion
                                        set-value:x:@.finish_reason
                                           get-value:x:@json2lambda/*/choices/0/*/finish_reason
 
+                                       // Signaling client
+                                       unwrap:x:+/*/*
+                                       sockets.signal:x:@.session
+                                          args
+                                             finish_reason:x:@.finish_reason
+
                                  // Making sure we have a message.
                                  if
                                     and
