@@ -273,6 +273,14 @@ function aista_submit_form(speech) {
         return; // Returning early ...
       }
 
+      if (obj.finish_reason) {
+
+        // We've got a finish reason from OpenAI.
+        const answer = window.document.getElementsByClassName('ainiro-has-more')[0];
+        answer.className = answer.className + ' ' + obj.finish_reason;
+        return;
+      }
+
       // Appending response to temporary result.
       ainiroTempContent += obj.message;
 
