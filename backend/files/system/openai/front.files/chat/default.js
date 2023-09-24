@@ -62,10 +62,10 @@ function ensureReCaptchaHasBeenFetched() {
   }
 }
 
-// Retrieving session identifier by invoking gibberish endpoint.
+// This is our session identifier, implying one user session.
 let aistaSession = null;
 
-// Retrieving session identifier by invoking gibberish endpoint.
+// This is our user id, implying one unique user.
 let ainiroUserId = null;
 
 // Downloading ShowdownJS to be able to parse Markdown.
@@ -196,8 +196,16 @@ function aista_create_chat_ui() {
     aista_submit_form(false);
   });
 
-  // Checking if we've got a greeting, and if so, adding it as initial chat message.
-  if (aistaChatGreeting && aistaChatGreeting.length > 0) {
+  const ainiroSessionItems = sessionStorage.getItem('ainiro_session_items');
+  if (ainiroSessionItems) {
+
+    // We've got an existing session, initialising our chat window with HTML from session.
+    const msgs = window.document.getElementsByClassName('aista-chat-msg-container')[0];
+    msgs.innerHTML = ainiroSessionItems;
+
+  } else if (aistaChatGreeting && aistaChatGreeting.length > 0) {
+
+    // We've got a greeting, adding it as initial chat message.
     const row = window.document.createElement('div');
     row.innerText = aistaChatGreeting;
     row.className = 'aista-chat-answer cached';
@@ -270,6 +278,10 @@ function aista_submit_form(speech) {
           }
           answer.appendChild(list);
         }
+
+        // Storing HTML to session.
+        const msgs = window.document.getElementsByClassName('aista-chat-msg-container')[0];
+        sessionStorage.setItem('ainiro_session_items', msgs.innerHTML);
         return; // Returning early ...
       }
 
@@ -539,13 +551,19 @@ function aista_show_chat_window() {
 
   // Ensuring we've got a session identifier.
   if (!aistaSession) {
-    fetch('[[url]]/magic/system/misc/gibberish?min=20&max=30', {
-      method: 'GET',
-    }).then(res => {
-      return res.json();
-    }).then(res => {
-      aistaSession = res.result;
-    });
+    const oldSession = sessionStorage.getItem('ainiro_session');
+    if (oldSession) {
+      aistaSession = oldSession;
+    } else {
+      fetch('[[url]]/magic/system/misc/gibberish?min=20&max=30', {
+        method: 'GET',
+      }).then(res => {
+        return res.json();
+      }).then(res => {
+        aistaSession = res.result;
+        sessionStorage.setItem('ainiro_session', res.result);
+      });
+    }
   }
 
   // Checking if we're using Markdown, and if so, downloading showdown and highlight.
@@ -782,6 +800,9 @@ function aista_invoke_prompt(msg, token, speech) {
             }
             row.appendChild(list);
           }
+
+          // Storing HTML to session.
+          sessionStorage.setItem('ainiro_session_items', msgs.innerHTML);
 
           // Scrolling message row into view.
           msgRow.scrollIntoView({behavior: 'smooth', block: 'start'});
