@@ -58,27 +58,15 @@ signal:magic.ai.endpoint-common
             .:gpt
          .lambda
 
-            // Invoking chat style of slot.
-            if
-               eq:x:@.arguments/*/stream
-                  .:bool:true
-               .lambda
-                  add:x:./*/fork/*/signal
-                     get-nodes:x:@.arguments/*
-                  fork
-                     signal:magic.ai.chat
-                  return
-                     result:success
-                     stream:bool:true
-            else
-               add:x:./*/signal
-                  get-nodes:x:@.arguments/*
-               signal:magic.ai.chat
-               return-nodes:x:@signal/*
+            // Invoking chat slot.
+            add:x:./*/signal
+               get-nodes:x:@.arguments/*
+            signal:magic.ai.chat
+            return-nodes:x:@signal/*
 
       else
 
-         // Invoking chat style of slot.
+         // Invoking completion slot.
          add:x:./*/signal
             get-nodes:x:@.arguments/*
          signal:magic.ai.completion

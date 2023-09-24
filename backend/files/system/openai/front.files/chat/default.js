@@ -25,6 +25,9 @@ let ainiroStream = [[stream]];
 // True if speech is turned on.
 let aistaSpeech = [[speech]];
 
+// Used for refernces.
+let ainiro_references = [];
+
 // Downloading icofont, making sure we only download it once.
 if (!window.ainiroHasDownloadIcofont) {
   window.ainiroHasDownloadIcofont = true;
@@ -227,7 +230,7 @@ function ainiro_delete_wait_animation() {
 var ainiro_con = null;
 var ainiroTempContent = '';
 function aista_submit_form(speech) {
-  if (ainiro_con) {
+  if (!ainiroStream || ainiro_con) {
     aista_submit_form_impl(speech);
   } else {
     ainiro_con = new signalR.HubConnectionBuilder().withUrl('[[url]]/sockets').build();
@@ -251,6 +254,22 @@ function aista_submit_form(speech) {
         const answer = window.document.getElementsByClassName('ainiro-has-more')[0];
         answer.className = answer.className.replace(' ainiro-has-more', '');
         ainiroTempContent = '';
+
+        // Checking if server returned references.
+        if (ainiro_references.length > 0) {
+          const list = window.document.createElement('ul');
+          list.className = 'aista-references-list';
+          for (const idx of ainiro_references) {
+            const li = window.document.createElement('li');
+            const hyp = window.document.createElement('a');
+            hyp.setAttribute('href', idx.uri);
+            hyp.setAttribute('target', '_blank');
+            hyp.innerHTML = idx.prompt;
+            li.appendChild(hyp);
+            list.appendChild(li);
+          }
+          answer.appendChild(list);
+        }
         return; // Returning early ...
       }
 
@@ -696,7 +715,12 @@ function aista_invoke_prompt(msg, token, speech) {
       .then(data => {
 
         // Verifying we're not streaming result.
-        if (!ainiroStream) {
+        if (data.stream) {
+
+          // Storing reference such that we can create these once the last socket message has been received.
+          ainiro_references = data.references ?? [];
+
+        } else {
 
           // Enabling input textbox such that user can ask next question
           const inp = window.document.getElementsByClassName('aista-chat-prompt')[0];
