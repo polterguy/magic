@@ -47,6 +47,7 @@ slots.create:magic.ai.chat
          return
             result:x:@signal/*/cached
             finish_reason:cached
+            stream:bool:false
 
    /*
     * Session for user containing previous questions and answers,
@@ -211,17 +212,29 @@ select prompt, max(completion) as completion
             get-value:x:@.arguments/*/api_key
             config.get:"magic:openai:key"
 
-   // Checking if user wants to stream tokens.
+   /*
+    * Checking if caller wants to stream tokens.
+    *
+    * Streaming implies using OpenAI's SSE features, where the
+    * invocation returns immediately, for then to invoke our callback
+    * as more tokens are available to our client.
+    */
    if
       eq:x:@.arguments/*/stream
          .:bool:true
       .lambda
+
+         // We're using streaming or SSE as we're invoking OpenAI.
          unwrap:x:+/*/*/.sse/*/.session
-         add:x:../*/http.post
+         add:x:../*/.invoke/*/http.post
             .
                .sse
 
-                  // Forward evaluated further up, contains the session ID, and is also our socket channel.
+                  /*
+                   * Forward evaluated further up, contains the session ID,
+                   * and is also our socket channel for notifying client
+                   * of new tokens.
+                   */
                   .session:x:@.arguments/*/session
 
                   // Verifying OpenAI sent us actual content.
@@ -236,124 +249,183 @@ select prompt, max(completion) as completion
                         // Parsing message sent to us from OpenAI.
                         strings.substring:x:@.arguments/*/message
                            .:int:5
-                        strings.trim:x:-
-                        json2lambda:x:-
+                        strings.trim:x:@strings.substring
 
-                        // Checking if we're done.
+                        // Making sure OpenAI sent us something at all.
                         if
-                           and
-                              exists:x:@json2lambda/*/choices/0/*/finish_reason
-                              not-null:x:@json2lambda/*/choices/0/*/finish_reason
+                           neq:x:@strings.trim
+                              .:
                            .lambda
+                        
+                              // Checking if we're done.
+                              if
+                                 eq:x:@strings.trim
+                                    .:[DONE]
+                                 .lambda
 
-                              // Signaling client using sockets that we're done.
-                              unwrap:x:+/*/*
-                              sockets.signal:x:@.session
-                                 args
-                                    finished:bool:true
+                                    // OpenAI is done.
+                                    sockets.signal:x:@.session
+                                       args
+                                          finished:bool:true
+                              else
 
-                        else-if
-                           and
-                              exists:x:@json2lambda/*/choices/0/*/delta/*/content
-                              neq:x:@json2lambda/*/choices/0/*/delta/*/content
-                                 .:
-                           .lambda
+                                 // More data to come.
+                                 json2lambda:x:@strings.trim
 
-                              // Signaling client we've got more data using sockets.
-                              unwrap:x:+/*/*
-                              sockets.signal:x:@.session
-                                 args
-                                    message:x:@json2lambda/*/choices/0/*/delta/*/content
+                                 // Updating finish reason if we were given a reason.
+                                 if
+                                    and
+                                       exists:x:@json2lambda/*/choices/0/*/finish_reason
+                                       not-null:x:@json2lambda/*/choices/0/*/finish_reason
+                                    .lambda
 
-         add:x:../*/http.post/*/payload
+                                       // OpenAI returned a [finish_reason].
+                                       set-value:x:@.finish_reason
+                                          get-value:x:@json2lambda/*/choices/0/*/finish_reason
+
+                                 // Making sure we have a message.
+                                 if
+                                    and
+                                       not-null:x:@json2lambda/*/choices/0/*/delta/*/content
+                                       neq:x:@json2lambda/*/choices/0/*/delta/*/content
+                                          .:
+                                    .lambda
+
+                                       // Appending content to above [.result].
+                                       set-value:x:@.result
+                                          strings.concat
+                                             get-value:x:@.result
+                                             get-value:x:@json2lambda/*/choices/0/*/delta/*/content
+
+                                       // Signaling client with the newly acquired data from OpenAI.
+                                       unwrap:x:+/*/*
+                                       sockets.signal:x:@.session
+                                          args
+                                             message:x:@json2lambda/*/choices/0/*/delta/*/content
+
+         /*
+          * Making sure we parametrise invocation to OpenAI
+          * such that it streams result.
+          */
+         add:x:../*/.invoke/*/http.post/*/payload
             .
                stream:bool:true
 
-   // Invoking OpenAI now with context being either training data or previous messages.
-   add:x:./*/http.post/*/payload/*/messages
-      get-nodes:x:@.session/*
-   http.post:"https://api.openai.com/v1/chat/completions"
-      headers
-         Authorization:x:@.token
-         Content-Type:application/json
-      payload
-         model:x:@.arguments/*/model
-         max_tokens:x:@.arguments/*/max_tokens
-         temperature:x:@.arguments/*/temperature
-         messages
-      convert:true
+   /*
+    * Lambda object actually invoking OpenAI.
+    *
+    * Notice, if we're streaming the result, this will be invoked one a different thread,
+    * otherwise it will be invoked synchronously.
+    */
+   insert-before:x:./*/.invoke/0
+      get-nodes:x:@.arguments
+      get-nodes:x:@.session
+      get-nodes:x:@.token
+      get-nodes:x:@.fixed
+      get-nodes:x:@.only-prompt
+   .invoke
 
-   // Sanity checking above invocation
-   if
-      not
+      // Contains result from OpenAI.
+      .result:
+      .finish_reason
+
+      // Invoking OpenAI now with context being either training data or previous messages.
+      add:x:./*/http.post/*/payload/*/messages
+         get-nodes:x:@.session/*
+      http.post:"https://api.openai.com/v1/chat/completions"
+         convert:bool:true
+         headers
+            Authorization:x:@.token
+            Content-Type:application/json
+         payload
+            model:x:@.arguments/*/model
+            max_tokens:x:@.arguments/*/max_tokens
+            temperature:x:@.arguments/*/temperature
+            messages
+
+      // Sanity checking above invocation.
+      if
+         not
+            and
+               mte:x:@http.post
+                  .:int:200
+               lt:x:@http.post
+                  .:int:300
+         .lambda
+
+            // Oops, error - Logging error and returning status 500 to caller.
+            lambda2hyper:x:@http.post
+            log.error:Something went wrong while invoking OpenAI
+               message:x:@http.post/*/content/*/error/*/message
+               status:x:@http.post
+               error:x:@lambda2hyper
+
+            // We only throw exception if we're NOT streaming.
+            if
+               neq:x:@.arguments/*/stream
+                  .:bool:true
+               .lambda
+
+                  // Not streaming, hence we're on the main thread.
+                  throw:x:@http.post/*/content/*/error/*/message
+                     public:bool:true
+                     status:x:@http.post
+
+      else
+
+         // Success!
+         log.info:Invoking OpenAI was a success
+
+      /*
+       * Checking if we're NOT streaming result, at which point we must
+       * set above [.result] to response from HTTP invocation.
+       */
+      if
+         neq:x:@.arguments/*/stream
+            .:bool:true
+         .lambda
+
+            /*
+             * Our HTTP POST invocation will return the actual response,
+             * since it's not being streamed using SSE.
+             */
+            set-value:x:@.result
+               get-value:x:@http.post/*/content/*/choices/0/*/message/*/content
+            set-value:x:@.finish_reason
+               get-first-value
+                  get-value:x:@http.post/*/content/*/choices/0/*/finish_reason
+                  .:unknown
+
+      // Making sure we trim response.
+      set-value:x:@.result
+         strings.trim:x:@.result
+
+      // Adding current prompt to session, but only if caller provided a session.
+      if
          and
-            mte:x:@http.post
-               .:int:200
-            lt:x:@http.post
-               .:int:300
-      .lambda
+            exists:x:@.arguments/*/session
+            not-null:x:@.arguments/*/session
+         .lambda
 
-         // Oops, error - Logging error and returning status 500 to caller.
-         lambda2hyper:x:@http.post
-         log.error:Something went wrong while invoking OpenAI
-            message:x:@http.post/*/content/*/error/*/message
-            status:x:@http.post
-            error:x:@lambda2hyper
-         throw:x:@http.post/*/content/*/error/*/message
-            public:bool:true
-            status:x:@http.post
-
-   else
-
-      // Success!
-      log.info:Invoking OpenAI was a success
-
-   // Checking if we're streaming result, at which point we return at this point.
-   if
-      eq:x:@.arguments/*/stream
-         .:bool:true
-      .lambda
-
-         // Our HTTP post invocation won't return the actual response, since it's being streamed using SSE.
-         return:bool:success
-
-   // Making sure we trim response.
-   .result
-   set-value:x:@.result
-      strings.trim:x:@http.post/*/content/*/choices/0/*/message/*/content
-   get-first-value
-      get-value:x:@http.post/*/content/*/choices/0/*/finish_reason
-      .:unknown
-
-   // Adding current prompt to session, but only if caller provided a session.
-   if
-      and
-         exists:x:@.arguments/*/session
-         not-null:x:@.arguments/*/session
-      .lambda
-
-         // Caller provided a session.
-         unwrap:x:+/*/*/*/content
-         add:x:@.session
-            .
+            // Caller provided a session.
+            unwrap:x:+/*/*/*/content
+            add:x:@.session
                .
-                  role:system
-                  content:x:@.result
-         while
-            mt:x:@.fixed
-               .:int:0
-            .lambda
-               remove-nodes:x:@.session/0
-               math.decrement:x:@.fixed
-         lambda2hyper:x:@.session/*
-         cache.set:x:@.arguments/*/session
-            expiration:600
-            value:x:@lambda2hyper
+                  .
+                     role:system
+                     content:x:@.result
+            while
+               mt:x:@.fixed
+                  .:int:0
+               .lambda
+                  remove-nodes:x:@.session/0
+                  math.decrement:x:@.fixed
+            lambda2hyper:x:@.session/*
+            cache.set:x:@.arguments/*/session
+               expiration:600
+               value:x:@lambda2hyper
 
-   // Opening database connection to store request into ml_requests table.
-   data.connect:[generic|magic]
-
-      // Checking if type is "supervised".
+      // Checking if type is "supervised" at which point we store request.
       if
          and
             exists:x:@.arguments/*/supervised
@@ -364,113 +436,152 @@ select prompt, max(completion) as completion
                .:int:1
          .lambda
 
-            // Storing response to ml_requests to keep history.
-            data.create
-               table:ml_requests
-               values
-                  type:x:@.arguments/*/type
-                  prompt:x:@.only-prompt
-                  completion:x:@.result
-                  finish_reason:x:@get-first-value
-                  session:x:@.arguments/*/session
-                  user_id:x:@.arguments/*/user_id
+            // Opening database connection to store request into ml_requests table.
+            data.connect:[generic|magic]
 
-      // Checking if we've got references.
+               // Storing response to ml_requests to keep history.
+               data.create
+                  table:ml_requests
+                  values
+                     type:x:@.arguments/*/type
+                     prompt:x:@.only-prompt
+                     completion:x:@.result
+                     finish_reason:x:@.finish_reason
+                     session:x:@.arguments/*/session
+                     user_id:x:@.arguments/*/user_id
+
+      // Checking if we've configured integrations for outgoing messages.
+      .outgoing
+      set-value:x:@.outgoing
+         get-first-value
+            get-value:x:@.arguments/*/webhook_outgoing
+            config.get:"magic:openai:integrations:outgoing:slot"
       if
          and
-            exists:x:@.arguments/*/references
-            not-null:x:@.arguments/*/references
-            get-value:x:@.arguments/*/references
-            exists:x:@signal/*/snippets
+            not-null:x:@.outgoing
+            neq:x:@.outgoing
+               .:
          .lambda
-            add:x:../*/return
-               .
-                  references
-            add:x:../*/return/*/references
-               get-nodes:x:@signal/*/snippets/*
 
-   // Checking if we've configured integrations for outgoing messages.
-   .outgoing
-   set-value:x:@.outgoing
-      get-first-value
-         get-value:x:@.arguments/*/webhook_outgoing
-         config.get:"magic:openai:integrations:outgoing:slot"
+            // Invoking integration slot.
+            .exe
+
+               // Retrieving URL to invoke.
+               .hook-url
+               set-value:x:@.hook-url
+                  get-first-value
+                     get-value:x:@.arguments/*/webhook_outgoing_url
+                     config.get:"magic:openai:integrations:outgoing:url"
+
+               // Invoking slot.
+               unwrap:x:./*/signal/*/url
+               signal:x:@.outgoing
+                  url:x:@.hook-url
+
+            // Parametrizing invocation to integration slot.
+            unwrap:x:+/*/*
+            add:x:@.exe/*/signal
+               .
+                  result:x:@.result
+                  session:x:@.arguments/*/session
+
+            // Parametrizing invocation to integration slot.
+            if
+               and
+                  exists:x:@.arguments/*/to
+                  exists:x:@.arguments/*/from
+                  not-null:x:@.arguments/*/to
+                  not-null:x:@.arguments/*/from
+                  strings.contains:x:@.arguments/*/to
+                     .:":"
+                  strings.contains:x:@.arguments/*/from
+                     .:":"
+               .lambda
+
+                  // We have a channel to accommodate for.
+                  .channel
+                  .to
+                  .from
+                  strings.split:x:@.arguments/*/to
+                     .:":"
+                  set-value:x:@.channel
+                     get-value:x:@strings.split/0
+                  set-value:x:@.to
+                     get-value:x:@strings.split/1
+                  strings.split:x:@.arguments/*/from
+                     .:":"
+                  set-value:x:@.from
+                     get-value:x:@strings.split/1
+                  unwrap:x:+/*/*
+                  add:x:@.exe/*/signal
+                     .
+                        to:x:@.from
+                        from:x:@.to
+                        channel:x:@.channel
+
+            else
+
+               // No channel
+               add:x:@.exe/*/signal
+                  get-nodes:x:@.arguments/*/to
+                  get-nodes:x:@.arguments/*/from
+
+            // Invoking callback.
+            eval:x:@.exe
+
+   /*
+    * Checking if we're streaming, at which point we invoke above [.invoke]
+    * on a different thread.
+    */
    if
-      and
-         not-null:x:@.outgoing
-         neq:x:@.outgoing
-            .:
+      get-value:x:@.arguments/*/stream
       .lambda
 
-         // Invoking integration slot.
-         .exe
+         // Invoking [.invoke] on a new thread.
+         insert-before:x:./*/fork/0
+            get-nodes:x:@.invoke
+         fork
+            eval:x:@.invoke
 
-            // Retrieving URL to invoke.
-            .hook-url
-            set-value:x:@.hook-url
-               get-first-value
-                  get-value:x:@.arguments/*/webhook_outgoing_url
-                  config.get:"magic:openai:integrations:outgoing:url"
+   else
 
-            // Invoking slot.
-            unwrap:x:./*/signal/*/url
-            signal:x:@.outgoing
-               url:x:@.hook-url
+      // Invoking above [.invoke] on main thread.
+      eval:x:@.invoke
 
-         // Parametrizing invocation to integration slot.
-         unwrap:x:+/*/*
-         add:x:@.exe/*/signal
+   // Checking if we've got references.
+   if
+      and
+         exists:x:@.arguments/*/references
+         not-null:x:@.arguments/*/references
+         get-value:x:@.arguments/*/references
+         exists:x:@signal/*/snippets
+      .lambda
+
+         // We've got references, returning these to caller.
+         add:x:../*/return
             .
-               result:x:@.result
-               session:x:@.arguments/*/session
+               references
+         add:x:../*/return/*/references
+            get-nodes:x:@signal/*/snippets/*
 
-         // Parametrizing invocation to integration slot.
-         if
-            and
-               exists:x:@.arguments/*/to
-               exists:x:@.arguments/*/from
-               not-null:x:@.arguments/*/to
-               not-null:x:@.arguments/*/from
-               strings.contains:x:@.arguments/*/to
-                  .:":"
-               strings.contains:x:@.arguments/*/from
-                  .:":"
-            .lambda
+   /*
+    * Checking if we're NOT streaming, at which point we return the result
+    * of the HTTP invocation to caller.
+    */
+   if
+      neq:x:@.arguments/*/stream
+         .:bool:true
+      .lambda
 
-               // We have a channel to accommodate for.
-               .channel
-               .to
-               .from
-               strings.split:x:@.arguments/*/to
-                  .:":"
-               set-value:x:@.channel
-                  get-value:x:@strings.split/0
-               set-value:x:@.to
-                  get-value:x:@strings.split/1
-               strings.split:x:@.arguments/*/from
-                  .:":"
-               set-value:x:@.from
-                  get-value:x:@strings.split/1
-               unwrap:x:+/*/*
-               add:x:@.exe/*/signal
-                  .
-                     to:x:@.from
-                     from:x:@.to
-                     channel:x:@.channel
+         // Not streaming so result was returned by HTTP invocation.
+         unwrap:x:+/*/*
+         add:x:../*/return
+            .
+               result:x:@.invoke/*/.result
+               finish_reason:x:@.invoke/*/.finish_reason
 
-         else
-
-            // No channel
-            add:x:@.exe/*/signal
-               get-nodes:x:@.arguments/*/to
-               get-nodes:x:@.arguments/*/from
-
-         // Invoking callback.
-         eval:x:@.exe
-
-   // Returning results returned from invocation above to caller.
+   // Returning results to caller.
    unwrap:x:+/*
    return
-      result:x:@.result
-      finish_reason:x:@get-first-value
       db_time:x:@signal/*/db_time
+      stream:x:@.arguments/*/stream
