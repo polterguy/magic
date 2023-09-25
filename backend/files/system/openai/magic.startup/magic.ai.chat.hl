@@ -343,6 +343,7 @@ select prompt, max(completion) as completion
          headers
             Authorization:x:@.token
             Content-Type:application/json
+            Accept:text/event-stream
          payload
             model:x:@.arguments/*/model
             max_tokens:x:@.arguments/*/max_tokens
