@@ -241,7 +241,10 @@ function aista_submit_form(speech) {
   if (!ainiroStream || ainiro_con) {
     aista_submit_form_impl(speech);
   } else {
-    ainiro_con = new signalR.HubConnectionBuilder().withUrl('[[url]]/sockets').build();
+    ainiro_con = new signalR.HubConnectionBuilder().withUrl('[[url]]/sockets', {
+      skipNegotiation: true,
+      transport: signalR.HttpTransportType.WebSockets,
+    }).build();
     ainiro_con.on(aistaSession, function (args) {
 
       // Turning test response into JavaScript object.
