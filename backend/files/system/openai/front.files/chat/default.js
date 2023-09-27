@@ -71,7 +71,6 @@ let ainiroUserId = null;
 // Downloading ShowdownJS to be able to parse Markdown.
 let hasDownloadedShowdownHighlight = false;
 
-
 // Creating CSS inclusion.
 fetch('[[url]]/magic/system/openai/include-style?file=' + encodeURIComponent('[[css]]'))
   .then(res => {
@@ -108,6 +107,9 @@ window.ainiro_faq_question = function(e) {
   e.preventDefault();
   e.stopPropagation();
 }
+
+// This is the parent DOM element of the chat window, if null, it is embedded into body.
+let ainiroParentElement = '[[parent_node]]';
 
 /*
  * Function creating our chat UI.
@@ -152,7 +154,12 @@ function aista_create_chat_ui() {
   }
   html += '</form>';
   aistaChatWnd.innerHTML = html;
-  window.document.body.appendChild(aistaChatWnd);
+  if (ainiroParentElement && ainiroParentElement !== '') {
+    document.getElementById(ainiroParentElement).appendChild(aistaChatWnd);
+    aista_show_chat_window();
+  } else {
+    window.document.body.appendChild(aistaChatWnd);
+  }
 
   // Adding event listener to input field to allow for closing it with escape key.
   const aistaChatInpField = document.getElementsByClassName('aista-chat-prompt')[0];
