@@ -170,6 +170,10 @@ function aista_create_chat_ui() {
       if (btns.length > 0) {
         btns[0].style.display = 'block';
       }
+      if (ainiro_con) {
+        ainiro_con.stop();
+        ainiro_con = null;
+      }
     }
   });
 
@@ -179,6 +183,10 @@ function aista_create_chat_ui() {
     const btns = window.document.getElementsByClassName('aista-chat-btn');
     if (btns.length > 0) {
       btns[0].style.display = 'block';
+    }
+    if (ainiro_con) {
+      ainiro_con.stop();
+      ainiro_con = null;
     }
   });
 
