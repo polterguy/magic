@@ -9,6 +9,7 @@
    header:string
    button:string
    render_button:bool
+   parent_node:string
    search:bool
    chat:bool
    markdown:bool
@@ -36,6 +37,7 @@ validators.default:x:@.arguments
    rtl:bool:false
    submit_button:bool:false
    stream:bool:false
+   parent_node:
 
 // Checking if custom JavaScript file exists.
 .result
@@ -111,6 +113,10 @@ set-value:x:@.result
    strings.replace:x:@.result
       .:[[type]]
       get-value:x:@.arguments/*/type
+set-value:x:@.result
+   strings.replace:x:@.result
+      .:[[parent_node]]
+      get-value:x:@.arguments/*/parent_node
 set-value:x:@.result
    strings.replace:x:@.result
       .:[[header]]
