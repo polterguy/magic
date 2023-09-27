@@ -161,21 +161,24 @@ function aista_create_chat_ui() {
     window.document.body.appendChild(aistaChatWnd);
   }
 
-  // Adding event listener to input field to allow for closing it with escape key.
-  const aistaChatInpField = document.getElementsByClassName('aista-chat-prompt')[0];
-  aistaChatInpField.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      aistaChatWnd.style.display = 'none';
-      const btns = window.document.getElementsByClassName('aista-chat-btn');
-      if (btns.length > 0) {
-        btns[0].style.display = 'block';
+  if (!ainiroParentElement || ainiroParentElement === '') {
+
+    // Adding event listener to input field to allow for closing it with escape key.
+    const aistaChatInpField = document.getElementsByClassName('aista-chat-prompt')[0];
+    aistaChatInpField.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        aistaChatWnd.style.display = 'none';
+        const btns = window.document.getElementsByClassName('aista-chat-btn');
+        if (btns.length > 0) {
+          btns[0].style.display = 'block';
+        }
+        if (ainiro_con) {
+          ainiro_con.stop();
+          ainiro_con = null;
+        }
       }
-      if (ainiro_con) {
-        ainiro_con.stop();
-        ainiro_con = null;
-      }
-    }
-  });
+    });
+  }
 
   // Add an event listener to the close button.
   window.document.getElementsByClassName('aista-chat-close-btn')[0].addEventListener('click', () => {
