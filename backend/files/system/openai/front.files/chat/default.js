@@ -259,10 +259,12 @@ function aista_submit_form(speech) {
   if (!ainiroStream || ainiro_con) {
     aista_submit_form_impl(speech);
   } else {
-    ainiro_con = new signalR.HubConnectionBuilder().withUrl('[[url]]/sockets', {
-      skipNegotiation: true,
-      transport: signalR.HttpTransportType.WebSockets,
-    }).build();
+    ainiro_con = new signalR.HubConnectionBuilder()
+      .withAutomaticReconnect()
+      .withUrl('[[url]]/sockets', {
+        skipNegotiation: true,
+        transport: signalR.HttpTransportType.WebSockets,
+      }).build();
     ainiro_con.on(aistaSession, function (args) {
 
       // Turning test response into JavaScript object.
@@ -615,6 +617,15 @@ function aista_show_chat_window() {
   if (btns.length > 0) {
     btns[0].style.display = 'none';
   }
+
+  // Scrolling to bottom in case we've got session messages.
+  console.log('foo');
+  const allMsgs = window.document.getElementsByClassName('aista-chat-question');
+  if (allMsgs && allMsgs.length > 0) {
+    allMsgs[allMsgs.length - 1].scrollIntoView({behavior: 'instant', block: 'start'});
+  }
+
+  // Setting focus to input textbox.
   const inp = window.document.getElementsByClassName('aista-chat-prompt')[0];
   setTimeout(() => {
     inp.focus();
