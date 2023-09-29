@@ -162,6 +162,9 @@
 .aista-chat-answer.cached {
   color: unset !important;
 }
+.aista-chat-answer.length {
+  background-color: rgb(255,230,230) !important;
+}
 .aista-chat-answer img:not(.emoji) {
   display: block !important;
   width: calc(100% - 20px) !important;
