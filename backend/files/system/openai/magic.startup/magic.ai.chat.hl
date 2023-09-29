@@ -369,14 +369,24 @@ select prompt, max(completion) as completion
 
             // We only throw exception if we're NOT streaming.
             if
-               neq:x:@.arguments/*/stream
-                  .:bool:true
+               eq:x:@.arguments/*/stream
+                  .:bool:false
                .lambda
 
-                  // Not streaming, hence we're on the main thread.
+                  // Not streaming, hence we're on the main thread and can safely throw exceptions.
                   throw:x:@http.post/*/content/*/error/*/message
                      public:bool:true
                      status:x:@http.post
+
+            else
+
+               // Signaling client with the error returned from OpenAI.
+               unwrap:x:+/*/*
+               sockets.signal:x:@.arguments/*/session
+                  args
+                     error:bool:true
+                     status:x:@http.post
+                     message:x:@http.post/*/content/*/error/*/message
 
       else
 

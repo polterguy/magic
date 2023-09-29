@@ -282,7 +282,7 @@ function aista_submit_form(speech) {
       var obj = JSON.parse(args);
 
       // Checking if we're done
-      if (obj.finished === true) {
+      if (obj.finished === true || obj.error === true) {
 
         // Last response, enabling speech/submit button, and input textbox, such that user can ask next question.
         const speechBtns = window.document.getElementsByClassName('aista-speech-button');
@@ -295,6 +295,11 @@ function aista_submit_form(speech) {
         inp.focus();
         const answer = window.document.getElementsByClassName('ainiro-has-more')[0];
         answer.className = answer.className.replace(' ainiro-has-more', '');
+        if (obj.error === true) {
+          answer.className += ' aista-chat-error';
+          answer.innerHTML = 'Something went wrong while invoking OpenAI, status was; ' + obj.status +
+            ' and message from OpenAI was; \'' + obj.message + '\'';
+        }
         ainiroTempContent = '';
 
         // Checking if server returned references.
