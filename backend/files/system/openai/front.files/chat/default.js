@@ -25,8 +25,11 @@ let ainiroStream = [[stream]];
 // True if speech is turned on.
 let aistaSpeech = [[speech]];
 
-// Used for refernces.
+// Used for references.
 let ainiro_references = [];
+
+// Type or model to use.
+let ainiroChatbotType = '[[type]]';
 
 // Downloading icofont, making sure we only download it once.
 if (!window.ainiroHasDownloadIcofont) {
@@ -434,54 +437,57 @@ function ensureInitialQuestionnaireIsFetched() {
   const inp = window.document.getElementsByClassName('aista-chat-prompt')[0];
   inp.disabled = true;
   ainiroHasFetchedQuestionnaire = true;
-  fetch('[[url]]/magic/system/openai/questionnaire?type=' + encodeURIComponent('[[type]]'))
-  .then(res => {
-    return res.text()
-  })
-  .then(res => {
+  if (window.getAiniroChatbotType) {
+    ainiroChatbotType = window.getAiniroChatbotType() ?? ainiroChatbotType;
+  }
+  fetch('[[url]]/magic/system/openai/questionnaire?type=' + encodeURIComponent(ainiroChatbotType))
+    .then(res => {
+      return res.text()
+    })
+    .then(res => {
 
-    // Storing initial questions.
-    ainiroQuestionnaire = JSON.parse(res || '{}');
+      // Storing initial questions.
+      ainiroQuestionnaire = JSON.parse(res || '{}');
 
-    // Need access to prompt input element.
-    const inp = window.document.getElementsByClassName('aista-chat-prompt')[0];
+      // Need access to prompt input element.
+      const inp = window.document.getElementsByClassName('aista-chat-prompt')[0];
 
-    // Enabling prompt input.
-    inp.disabled = false;
-    inp.focus();
+      // Enabling prompt input.
+      inp.disabled = false;
+      inp.focus();
 
-    // Checking if we have a questionnaire, and if not, returning early.
-    if (!ainiroQuestionnaire.name) {
-      return;
-    }
+      // Checking if we have a questionnaire, and if not, returning early.
+      if (!ainiroQuestionnaire.name) {
+        return;
+      }
 
-    /*
-     * Checking if this is a 'single-shot' type of questionnaire,
-     * at which point we drop it if user has answered it before.
-     */
-    if (ainiroQuestionnaire.type === 'single-shot') {
+      /*
+      * Checking if this is a 'single-shot' type of questionnaire,
+      * at which point we drop it if user has answered it before.
+      */
+      if (ainiroQuestionnaire.type === 'single-shot') {
 
-      // Checking local storage to see if user has answered before.
-      const previousQuestionnaire = localStorage.getItem('ainiro-questionnaire.' + ainiroQuestionnaire.name);
-      if (previousQuestionnaire !== null) {
+        // Checking local storage to see if user has answered before.
+        const previousQuestionnaire = localStorage.getItem('ainiro-questionnaire.' + ainiroQuestionnaire.name);
+        if (previousQuestionnaire !== null) {
 
-        // User has previously answered questionnaire, and it's a 'single-shot' questionnaire.
-        ainiroQuestionnaire = {};
+          // User has previously answered questionnaire, and it's a 'single-shot' questionnaire.
+          ainiroQuestionnaire = {};
 
+        } else {
+
+          // We've got a questionnaire
+          inp.value = '';
+        }
       } else {
 
         // We've got a questionnaire
         inp.value = '';
       }
-    } else {
 
-      // We've got a questionnaire
-      inp.value = '';
-    }
-
-    // Starting questionnaire loop.
-    askNextQuestion();
-  });
+      // Starting questionnaire loop.
+      askNextQuestion();
+    });
 }
 
 // Contains all action values for questionnaire.
@@ -671,9 +677,12 @@ function aista_invoke_prompt(msg, token, speech) {
     // Creating our URL.
     let url = `[[url]]/magic/system/openai/answer`;
 
-    // Creating our payload
+    // Creating our payload.
+    if (window.getAiniroChatbotType) {
+      ainiroChatbotType = window.getAiniroChatbotType() ?? ainiroChatbotType;
+    }
     let payload = {
-      type: '[[type]]'
+      type: ainiroChatbotType
     };
     if (token) {
       payload.recaptcha_response = token;
@@ -737,7 +746,10 @@ function aista_invoke_prompt(msg, token, speech) {
   } else {
 
     // Creating our URL.
-    let url = `[[url]]/magic/system/openai/chat?prompt=` + encodeURIComponent(msg) + '&type=[[type]]';
+    if (window.getAiniroChatbotType) {
+      ainiroChatbotType = window.getAiniroChatbotType() ?? ainiroChatbotType;
+    }
+    let url = `[[url]]/magic/system/openai/chat?prompt=` + encodeURIComponent(msg) + '&type=' + ainiroChatbotType;
     if (token) {
       url += '&recaptcha_response=' + encodeURIComponent(token);
     }
