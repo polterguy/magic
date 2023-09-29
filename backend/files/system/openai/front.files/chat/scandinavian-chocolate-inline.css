@@ -415,11 +415,12 @@
 
 /* This is the ONLY thing you need to add to an existing theme to have it become "inline" */
 .aista-chat-wnd {
-  width: calc(100% - 20px) !important;
-  max-width: calc(100% - 20px) !important;
+  width: 100% !important;
+  max-width: 100% !important;
   overflow: auto !important;
   position: relative !important;
   display: block !important;
+  z-index: unset !important;
 }
 .aista-chat-close-btn {
   display: none !important;
