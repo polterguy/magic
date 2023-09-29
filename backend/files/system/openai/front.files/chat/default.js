@@ -356,7 +356,9 @@ function aista_submit_form(speech) {
         msgs.appendChild(row);
 
         // Scrolling message row into view.
-        msgRow.scrollIntoView({behavior: 'smooth', block: 'start'});
+        if (!ainiroParentElement || ainiroParentElement === '') {
+          msgRow.scrollIntoView({behavior: 'smooth', block: 'start'});
+        }
 
       } else {
 
@@ -396,9 +398,11 @@ function aista_submit_form_impl(speech) {
   msgEl.className = 'aista-chat-question-waiting';
   const msgs = window.document.getElementsByClassName('aista-chat-msg-container')[0];
   msgs.appendChild(msgEl);
-  setTimeout(() => {
-    msgEl.scrollIntoView({behavior: 'smooth', block: 'start'});
-  }, 1);
+  if (!ainiroParentElement || ainiroParentElement === '') {
+    setTimeout(() => {
+      msgEl.scrollIntoView({behavior: 'smooth', block: 'start'});
+    }, 1);
+  }
   inp.disabled = true;
 
   ainiro_create_wait_animation();
@@ -454,7 +458,9 @@ function ensureInitialQuestionnaireIsFetched() {
 
       // Enabling prompt input.
       inp.disabled = false;
-      inp.focus();
+      if (!ainiroParentElement || ainiroParentElement === '') {
+        inp.focus();
+      }
 
       // Checking if we have a questionnaire, and if not, returning early.
       if (!ainiroQuestionnaire.name) {
@@ -541,7 +547,9 @@ function askNextQuestion(justAsked = false) {
   msgs.appendChild(row);
 
   // Scrolling message row into view.
-  row.scrollIntoView({behavior: 'smooth', block: 'start'});
+  if (!ainiroParentElement || ainiroParentElement === '') {
+    row.scrollIntoView({behavior: 'smooth', block: 'start'});
+  }
 
   // Checking type of question.
   if (ainiroQuestionnaire.questions[0].type === 'message') {
@@ -633,18 +641,21 @@ function aista_show_chat_window() {
   }
 
   // Scrolling to bottom in case we've got session messages.
-  console.log('foo');
-  const allMsgs = window.document.getElementsByClassName('aista-chat-question');
-  if (allMsgs && allMsgs.length > 0) {
-    allMsgs[allMsgs.length - 1].scrollIntoView({behavior: 'instant', block: 'start'});
+  if (!ainiroParentElement || ainiroParentElement === '') {
+    const allMsgs = window.document.getElementsByClassName('aista-chat-question');
+    if (allMsgs && allMsgs.length > 0) {
+      allMsgs[allMsgs.length - 1].scrollIntoView({behavior: 'instant', block: 'start'});
+    }
   }
 
   // Setting focus to input textbox.
-  const inp = window.document.getElementsByClassName('aista-chat-prompt')[0];
-  setTimeout(() => {
-    inp.focus();
-    inp.select();
-  }, 250);
+  if (!ainiroParentElement || ainiroParentElement === '') {
+    const inp = window.document.getElementsByClassName('aista-chat-prompt')[0];
+    setTimeout(() => {
+      inp.focus();
+      inp.select();
+    }, 250);
+  }
 }
 
 function aista_zoom_image(img) {
@@ -857,7 +868,9 @@ function aista_invoke_prompt(msg, token, speech) {
           sessionStorage.setItem('ainiro_session_items', msgs.innerHTML);
 
           // Scrolling message row into view.
-          msgRow.scrollIntoView({behavior: 'smooth', block: 'start'});
+          if (!ainiroParentElement || ainiroParentElement === '') {
+            msgRow.scrollIntoView({behavior: 'smooth', block: 'start'});
+          }
 
           // Checking if we're supposed to speak the result.
           if (aistaSpeech && speech) {
@@ -891,7 +904,9 @@ function aista_invoke_prompt(msg, token, speech) {
         // Removing flashing on question
         const msgRow = window.document.getElementsByClassName('aista-chat-question-waiting')[0];
         msgRow.className = 'aista-chat-question';
-        msgRow.scrollIntoView({behavior: 'smooth', block: 'start'});
+        if (!ainiroParentElement || ainiroParentElement === '') {
+          msgRow.scrollIntoView({behavior: 'smooth', block: 'start'});
+        }
 
         ainiro_delete_wait_animation();
       });
