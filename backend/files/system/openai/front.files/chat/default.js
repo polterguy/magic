@@ -71,8 +71,16 @@ let ainiroUserId = null;
 // Downloading ShowdownJS to be able to parse Markdown.
 let hasDownloadedShowdownHighlight = false;
 
-// Creating CSS inclusion.
-fetch('[[url]]/magic/system/openai/include-style?file=' + encodeURIComponent('[[css]]'))
+// CSS file to use as theme.
+let ainiroChatbotCssFile = '[[css]]';
+
+// Checking if there's a global callback for dynamically including CSS file.
+if (window.getAiniroChatbotCssFile) {
+  ainiroChatbotCssFile = window.getAiniroChatbotCssFile() ?? ainiroChatbotCssFile;
+}
+
+// Fetching theme's CSS file and including on page
+fetch('[[url]]/magic/system/openai/include-style?file=' + encodeURIComponent(ainiroChatbotCssFile))
   .then(res => {
     return res.text()
   })
