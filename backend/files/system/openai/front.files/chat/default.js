@@ -595,7 +595,7 @@ function aista_show_chat_window() {
   // Checking if we're using SignalR.
   if (ainiroStream) {
     const sock = window.document.createElement('script');
-    sock.src = 'https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js';
+    sock.src = 'https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.min.js';
     window.document.getElementsByTagName('head')[0].appendChild(sock);
   }
 
@@ -794,17 +794,10 @@ function aista_invoke_prompt(msg, token, speech) {
       method: 'GET',
     })
       .then(res => {
-        if (res.status >= 200 && res.status <= 299) {
-          return res.json();
-        } else if (res.status === 499) {
-          throw Error('Access denied, missing reCAPTCHA. Either configure your model to not use reCAPTCHA, or setup reCAPTCHA for your bot');
-        } else if (res.status === 401) {
-          throw Error('Your model requires authentication, and you are not authorised to invoking it. Either turn off all roles, or add JWT token to requests somehow.');
-        } else if (res.status === 429) {
-          throw Error('Seriously, it is not us! OpenAI is overloaded. If it continues, try using \'text-curie-001\' as your \'transformer\' model instead of \'text-davinci-001\'. It is not as \'smart\', but much faster, and way more stable.');
-        } else {
-          throw Error(res.statusText);
+        if (!res.ok) {
+          throw res;
         }
+        return res.json();
       })
       .then(data => {
 
@@ -887,33 +880,36 @@ function aista_invoke_prompt(msg, token, speech) {
       })
       .catch(error => {
 
-        // Enabling input textbox such that user can ask next question
-        const inp = window.document.getElementsByClassName('aista-chat-prompt')[0];
-        inp.disabled = false;
-        inp.focus();
-        inp.select();
-        const speechBtns = window.document.getElementsByClassName('aista-speech-button');
-        if (speechBtns?.length > 0) {
-          speechBtns[0].disabled = false;
-        }
-      
+        // Enabling input textbox such that user can ask next question.
+        error.json().then(msg => {
 
-        // Appending answer to message container
-        const row = window.document.createElement('div');
-        row.className = 'aista-chat-error';
-        const msg = error.message === 'Too Many Requests' ? 'OpenAI is overloaded, try again later' : error.message;
-        row.innerText = msg;
-        const msgs = window.document.getElementsByClassName('aista-chat-msg-container')[0];
-        msgs.appendChild(row);
+          const inp = window.document.getElementsByClassName('aista-chat-prompt')[0];
+          inp.disabled = false;
+          inp.focus();
+          inp.select();
+          const speechBtns = window.document.getElementsByClassName('aista-speech-button');
+          if (speechBtns?.length > 0) {
+            speechBtns[0].disabled = false;
+          }
+        
 
-        // Removing flashing on question
-        const msgRow = window.document.getElementsByClassName('aista-chat-question-waiting')[0];
-        msgRow.className = 'aista-chat-question';
-        if (!ainiroParentElement || ainiroParentElement === '') {
-          msgRow.scrollIntoView({behavior: 'smooth', block: 'start'});
-        }
+          // Appending answer to message container
+          const row = window.document.createElement('div');
+          row.className = 'aista-chat-error';
+          msg = msg.message || 'Connection was unexpectedly closed';
+          row.innerText = msg;
+          const msgs = window.document.getElementsByClassName('aista-chat-msg-container')[0];
+          msgs.appendChild(row);
 
-        ainiro_delete_wait_animation();
+          // Removing flashing on question
+          const msgRow = window.document.getElementsByClassName('aista-chat-question-waiting')[0];
+          msgRow.className = 'aista-chat-question';
+          if (!ainiroParentElement || ainiroParentElement === '') {
+            msgRow.scrollIntoView({behavior: 'smooth', block: 'start'});
+          }
+
+          ainiro_delete_wait_animation();
+        });
       });
   }
 }})();
