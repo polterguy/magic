@@ -1,0 +1,224 @@
+
+/*
+ * Returns Markdown training snippet from specified [html].
+ *
+ * Takes the following arguments:
+ *
+ * - [html]   - Mandatory. Being the actual HTML we're traversing for training data.
+ * - [url]    - Optional.  Being the URL from where the document was fetched
+ * - [images] - Optional.  If true will return images as Markdown training snippets.
+ * - [code]   - Optional.  If true will return code tags as Markdown code training snippets.
+ * - [lists]  - Optional.  If true will return li tags as list Markdown training snippets.
+ * - [main]   - Optional.  If true will return primary HTML content of p, div, article, etc type of tags.
+ */
+slots.create:magic.ai.html.extract-snippets
+
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/html
+   validators.url:x:@.arguments/*/url
+
+   // Converting HTML to lambda object such that we can semantically traverse HTML document.
+   html2lambda:x:@.arguments/*/html
+
+   // Figuring out base URL and scheme of document.
+   .base
+   .scheme
+
+   // Used to return meta information to caller.
+   .meta
+      images:int:0
+      code:int:0
+      lists:int:0
+      main:int:0
+
+   /*
+    * Checking if caller provided a [url], and if so,
+    * using it as our default [.base] and [.scheme].
+    */
+   if
+      exists:x:@.arguments/*/url
+      .lambda
+
+         // Using [url] argument as our default [.base] and [.scheme].
+         strings.split:x:@.arguments/*/url
+            .:/
+         set-value:x:@.base
+            strings.concat
+               get-value:x:@strings.split/0
+               .://
+               get-value:x:@strings.split/1
+               .:/
+         set-value:x:@.scheme
+            get-value:x:@strings.split/0
+
+   /*
+    * Checking if document contains a base HTML element, at which point
+    * we use it as our [.base] value for document.
+    */
+   if
+      exists:x:@html2lambda/*/html/*/head/*/base
+      .lambda
+
+         // Document contains a base HTML tag, making sure we use it.
+         set-value:x:@.base
+            get-value:x:@html2lambda/*/html/*/head/*/base/*/\@href
+
+         /*
+          * Before we default scheme to base tag's value, we make sure it's not already set.
+          *
+          * This is done since the URL the document was requested with have precedence over
+          * the base tag value when applying scheme to links and images.
+          */
+         if
+            null:x:@.scheme
+            .lambda
+
+               // Scheme has not already been set, hence setting it.
+               strings.split:x:@html2lambda/*/html/*/head/*/base/*/\@href
+                  .://
+               set-value:x:@.scheme
+                  get-value:x:@strings.split/0
+
+   /*
+    * Now we can create base prompt, consisting of title tag.
+    *
+    * The base prompt is used for some of our training snippetsto increase data quality.
+    */
+   .base-prompt:
+   if
+      and
+         exists:x:@html2lambda/*/html/*/head/*/title/*/\#text
+         not-null:x:@html2lambda/*/html/*/head/*/title/*/\#text
+         neq:x:@html2lambda/*/html/*/head/*/title/*/\#text
+            .:
+      .lambda
+
+         // Document contains a title tag, and it's not null or empty.
+         set-value:x:@.base-prompt
+            get-value:x:@html2lambda/*/html/*/head/*/title/*/\#text
+
+   // Trimming our base prompt to remove redundant characters.
+   set-value:x:@.base-prompt
+      strings.trim:x:@.base-prompt
+         .:"- \t\r\n"
+
+   // Buffer used for snippet to return.
+   .snippets
+
+   // Used to store a reference to above HTML transformed to lambda.
+   .document
+   set-value:x:@.document
+      reference:x:@html2lambda/*/html
+
+   /*
+    * Checking if caller wants images.
+    *
+    * Notice, images are returned as isolated snippets, but only if caller wants
+    * to fetch images.
+    */
+   if
+      eq:x:@.arguments/*/images
+         .:bool:true
+      .lambda
+
+         // Extracting all images.
+         unwrap:x:+/*
+         signal:magic.ai.html.extract-images
+            html:x:@.document
+            base:x:@.base
+            scheme:x:@.scheme
+
+         // Making sure we return snippets and meta information.
+         add:x:@.snippets
+            get-nodes:x:@signal/*
+         set-value:x:@.meta/*/images
+            get-count:x:@signal/*
+
+   /*
+    * Checking if caller wants code.
+    *
+    * Notice, code snippets being code tags are returned as isolated snippets,
+    * but only if caller wants to fetch code.
+    */
+   if
+      eq:x:@.arguments/*/code
+         .:bool:true
+      .lambda
+
+         // Extracting all code.
+         unwrap:x:+/*
+         signal:magic.ai.html.extract-code
+            html:x:@.document
+
+         // Making sure we return snippets and meta information.
+         add:x:@.snippets
+            get-nodes:x:@signal/*
+         set-value:x:@.meta/*/code
+            get-count:x:@signal/*
+
+   /*
+    * Checking if caller wants lists.
+    *
+    * Notice, list snippets being li tags are returned as isolated snippets,
+    * but only if caller wants to fetch lists.
+    */
+   if
+      eq:x:@.arguments/*/lists
+         .:bool:true
+      .lambda
+
+         // Extracting all lists.
+         unwrap:x:+/*
+         signal:magic.ai.html.extract-lists
+            html:x:@.document
+            base:x:@.base
+            scheme:x:@.scheme
+
+         // Making sure we return snippets and meta information.
+         add:x:@.snippets
+            get-nodes:x:@signal/*
+         set-value:x:@.meta/*/lists
+            get-count:x:@signal/*
+
+
+   /*
+    * Now we can traverse the HTML for Hx elements to use to create training snippets
+    * by traversing all descendent nodes of the above [.root] reference pointing to
+    * the most relevant HTML element where traversing should start.
+    *
+    * This works by breaking the document up into multiple training snippets, one for each
+    * Hx element in the document, with all paragraphs and all content below the currently
+    * iterated Hx tag as its completion.
+    */
+   if
+      eq:x:@.arguments/*/main
+         .:bool:true
+      .lambda
+
+         // Extracting all images.
+         unwrap:x:+/*
+         signal:magic.ai.html.extract-main
+            html:x:@.document
+            base:x:@.base
+            scheme:x:@.scheme
+            base-prompt:x:@.base-prompt
+
+         // Making sure we return snippets and meta information.
+         add:x:@.snippets
+            get-nodes:x:@signal/*
+         set-value:x:@.meta/*/main
+            get-count:x:@signal/*
+
+   // Returning snippets to caller.
+   if
+      exists:x:@.snippets/*
+      .lambda
+
+         // Returning snippets and meta information to caller.
+         add:x:./*/return/*/snippets
+            get-nodes:x:@.snippets/*
+         add:x:./*/return/*/meta
+            get-nodes:x:@.meta/*
+         return
+            snippets
+            meta

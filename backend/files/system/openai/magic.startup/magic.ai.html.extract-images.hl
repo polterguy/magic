@@ -1,0 +1,70 @@
+
+/*
+ * Extracts all images and returns as Markdown training snippets to caller from
+ * specified [html] argument expected to contain the HTML to traverse.
+ *
+ * Optionally provide a [base] and [scheme] argument which will be used
+ * for relative images. Notice, if image URL is relative, and you do not
+ * provide [base] and [scheme], this slot will throw an exception since
+ * it will not be able to correctly determine the URL of the image.
+ */
+slots.create:magic.ai.html.extract-images
+
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/html
+
+   // Buffer for training snipepts returned to caller.
+   .snippets
+
+   // Iterating through each [img] element found in above HTML.
+   for-each:x:@.arguments/*/html/#/**/img
+
+      /*
+       * Making sure image is not a data URL.
+       *
+       * Data URLs, implying image sources that are base64 encoded images
+       * are simply too large to store as images resulting in degraded performance
+       * on the model due to not being able to transmit enough training snippet
+       * data to OpenAI during completion invocations.
+       */
+      if
+         not
+            strings.starts-with:x:@.dp/#/*/\@src
+               .:"data:"
+         .lambda
+
+            // Normalizing URL.
+            .url
+            unwrap:x:+/*/*
+            set-value:x:@.url
+               signal:magic.url.normalize
+                  url:x:@.dp/#/*/\@src
+                  base:x:@.arguments/*/base
+                  scheme:x:@.arguments/*/scheme
+
+            // Adding currently iterated image to returned snippets.
+            strings.concat
+               .:![
+               get-first-value
+                  get-value:x:@.dp/#/*/\@alt
+                  get-value:x:@.dp/#/*/\@title
+                  .:Image
+               .:](
+               get-value:x:@.url
+               .:)
+
+            // Prompt to be returned to caller for currently iterated snippet.
+            .prompt
+            set-value:x:@.prompt
+               .:Image
+
+            // Adding Markdown training snippet to collection returned to caller.
+            unwrap:x:+/*/*/*
+            add:x:@.snippets
+               .
+                  .
+                     prompt:x:@.prompt
+                     completion:x:@strings.concat
+
+   // Returning training snippets to caller.
+   return-nodes:x:@.snippets/*
