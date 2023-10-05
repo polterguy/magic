@@ -48,20 +48,13 @@ slots.create:magic.ai.url.scrape
 
    // Fetching HTML from URL.
    .html
-   add:x:+/+/*
+   add:x:+/+
       get-nodes:x:@.arguments/*/headers
    unwrap:x:+/*
    signal:magic.url.get
       url:x:@.arguments/*/url
    set-value:x:@.html
       get-value:x:@signal
-
-   // Signaling frontend.
-   sockets.signal:magic.backend.chatbot
-      roles:root
-      args
-         message:Creating training snippets from page
-         type:info
 
    // Creating training snippets from page.
    add:x:+/+
@@ -155,24 +148,153 @@ slots.create:magic.ai.url.scrape
    else
 
       /*
+       * Checking if caller wants to summarize snippets that are too long, and if
+       * yes, we invoke OpenAI to have it summarize all training snippets that
+       * are too long to be useful as training snippets.
+       */
+      if
+         and
+            exists:x:@.arguments/*/summarize
+            eq:x:@.arguments/*/summarize
+               .:bool:true
+         .lambda
+
+            /*
+             * Caller wants to summarize long snippets, figuring out max size of snippets,
+             * which are max_context_tokens / 2.
+             */
+            .max-size
+            .api-key
+            .model
+            data.connect:[generic|magic]
+
+               // Retrieving maximum context tokens for type from database.
+               data.read
+                  table:ml_types
+                  columns
+                     max_context_tokens
+                     api_key
+                     model
+                  where
+                     and
+                        type.eq:x:@.arguments/*/type
+
+               // Making sure we use 50% of max context tokens as maximum size for snippets.
+               set-value:x:@.max-size
+                  math.divide
+                     convert:x:@data.read/*/*/max_context_tokens
+                        type:int
+                     .:int:2
+               set-value:x:@.api-key
+                  get-value:x:@data.read/*/*/api_key
+               set-value:x:@.model
+                  get-value:x:@data.read/*/*/model
+
+            // Looping through all snippets to check their size.
+            for-each:x:@.snippets/*
+
+               // Concatenating prompt and completion.
+               .tmp
+               set-value:x:@.tmp
+                  strings.concat
+                     get-value:x:@.dp/#/*/prompt
+                     .:"\r\n"
+                     .:"\r\n"
+                     get-value:x:@.dp/#/*/completion
+                     
+               // Counting total token count.
+               openai.tokenize:x:@.tmp
+
+               // Checking if there are too many tokens in snippet.
+               if
+                  mt
+                     get-value:x:@openai.tokenize
+                     get-value:x:@.max-size
+                  .lambda
+
+                     // Informing frontend of that we're about to summarize snippet.
+                     sockets.signal:magic.backend.chatbot
+                        roles:root
+                        args
+                           message:Summarizing snippet since it is larger than 50% of maximum context size for type
+                           type:info
+
+                     // Creating our bearer token.
+                     .token
+                     set-value:x:@.token
+                        strings.concat
+                           .:"Bearer "
+                           get-first-value
+                              get-value:x:@.api-key
+                              config.get:"magic:openai:key"
+
+                     // Invoking OpenAI to summarize snippet.
+                     unwrap:x:+/**
+                     http.post:"https://api.openai.com/v1/chat/completions"
+                        headers
+                           Authorization:x:@.token
+                           Content-Type:application/json
+                        payload
+                           model:x:@.model
+                           max_tokens:x:@.max-size
+                           temperature:decimal:0.3
+                           messages
+                              .
+                                 role:system
+                                 content:Create a summary of the following information
+                              .
+                                 role:user
+                                 content:x:@.dp/#/*/completion
+                        convert:true
+
+                     // Checking that above invocation returned success.
+                     if
+                        and
+                           mte:x:@http.post
+                              .:int:200
+                           lt:x:@http.post
+                              .:int:300
+                        .lambda
+
+                           // Success creating summary.
+                           sockets.signal:magic.backend.chatbot
+                              roles:root
+                              args
+                                 message:Successfully created summary of snippet
+                                 type:info
+
+                           // Updating completion.
+                           set-value:x:@.dp/#/*/completion
+                              strings.trim:x:@http.post/*/content/*/choices/0/*/message/*/content
+                                 .:"\r\n\t "
+
+                           // Updating prompt.
+                           set-value:x:@.dp/#/*/prompt
+                              strings.concat
+                                 .:"Summary of; "
+                                 strings.substring:x:@.dp/#/*/prompt
+                                    .:int:0
+                                    .:int:150
+
+                     else
+
+                        // Oops, could not summarize snippet.
+                        sockets.signal:magic.backend.chatbot
+                           roles:root
+                           args
+                              message:Could not summarize snippet, check your log for details
+                              type:info
+                        lambda2hyper:x:@http.post
+                        log.error:Something went wrong while invoking OpenAI
+                           message:x:@http.post/*/content/*/error/*/message
+                           status:x:@http.post
+                           error:x:@lambda2hyper
+
+      /*
        * Creating training snippets from result of above invocation
        * but first we need to open database connection.
        */
       data.connect:[generic|magic]
-
-         /*
-          * Verifying user can create more snippets.
-          *
-          * Notice, this is a slot that doesn't exist in Magic core, allowing
-          * us to create "plugin slots" that somehow validates whether or not the use
-          * can create additional training snippets or not.
-          *
-          * The idea is that the slot should throw an exception if user is not allowed
-          * to create additional training snippets.
-          */
-         add:x:+
-            get-nodes:x:@.arguments/*/type
-         try-signal:magic.ai.can-create-snippet
 
          // Verifying that type exists.
          data.read
@@ -223,6 +345,20 @@ slots.create:magic.ai.url.scrape
                   not-null:x:@.dp/#/*/completion
                .lambda
 
+                  /*
+                   * Verifying user can create more snippets.
+                   *
+                   * Notice, this is a slot that doesn't exist in Magic core, allowing
+                   * us to create "plugin slots" that somehow validates whether or not the use
+                   * can create additional training snippets or not.
+                   *
+                   * The idea is that the slot should throw an exception if user is not allowed
+                   * to create additional training snippets.
+                   */
+                  add:x:+
+                     get-nodes:x:@.arguments/*/type
+                  try-signal:magic.ai.can-create-snippet
+
                   // Inserting training snippet into database.
                   data.create
                      table:ml_training_snippets
@@ -231,7 +367,7 @@ slots.create:magic.ai.url.scrape
                         uri:x:@.arguments/*/url
                         prompt:x:@.dp/#/*/prompt
                         completion:x:@.dp/#/*/completion
-                        meta:AINIRO-Crawler 2.0
+                        meta:AINIRO-Website-Crawler
 
       // Informing user that we're done creating training snippets from specified URL.
       strings.concat
