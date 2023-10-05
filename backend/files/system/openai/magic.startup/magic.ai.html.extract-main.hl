@@ -1,0 +1,357 @@
+
+/*
+ * Extracts all main HTML and returns as Markdown training snippets to caller from
+ * specified [html] argument expected to contain the HTML to traverse.
+ */
+slots.create:magic.ai.html.extract-main
+
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/html
+   validators.mandatory:x:@.arguments/*/base-prompt
+
+   // Base prompt prepended in front of all prompts.
+   .base:
+   if
+      and
+         exists:x:@.arguments/*/base-prompt
+         not-null:x:@.arguments/*/base-prompt
+         neq:x:@.arguments/*/base-prompt
+            .:
+      .lambda
+
+         // Caller provided a base prompt.
+         set-value:x:@.base
+            get-value:x:@.arguments/*/base-prompt
+
+   // Buffer for training snippets returned to caller.
+   .snippets
+
+   /*
+    * Notice, we apply some logic here to figure out which part of our HTML document we're
+    * supposed to traverse for training snippets to avoid adding too much navbar stuff, footers,
+    * etc.
+    *
+    * Implying, we'll look for an article or main HTML element. If we find this, we will only
+    * traverse elements below this, and not the entire body. If we cannot find an article or
+    * a main HTML element we resort to traversing the entire body HTML element.
+    *
+    * This node contains a reference to our "root" HTML element, which we're modifying according
+    * to how the HTML document is structured.
+    */
+   .root
+   set-value:x:@.root
+      reference:x:@.arguments/*/html/#/*/body
+
+   // Checking if HTML document contains an [article] or [main] tag.
+   if
+      exists:x:@.arguments/*/html/#/*/body/**/main/[0,1]
+      .lambda
+
+         /*
+          * Using [main] tag to avoid adding navbars, footers,
+          * and other irrelevant parts of our HTML.
+          */
+         set-value:x:@.root
+            get-nodes:x:@.arguments/*/html/#/*/body/**/main/[0,1]
+
+   else-if
+      exists:x:@.arguments/*/html/#/*/body/**/article/[0,1]
+      .lambda
+
+         /*
+          * Using [article] tag to avoid adding navbars, footers,
+          * and other irrelevant parts of our HTML.
+          */
+         set-value:x:@.root
+            get-nodes:x:@.arguments/*/html/#/*/body/**/article/[0,1]
+
+   // Our HX values.
+   .hx
+      h1
+      h2
+      h3
+      h4
+      h5
+      h6
+
+   /*
+    * Now that we've found our root element to traverse for content, we
+    * can start traversing that element to create training snippets we return to caller.
+    */
+   for-each:x:@.root/#/**
+
+      // Getting name of currently traversed node.
+      get-name:x:@.dp/#
+
+      // Resetting HX elements according to which element we're handling.
+      switch:x:@get-name
+
+         case:h1
+            set-value:x:@.hx/*/h1
+            set-value:x:@.hx/*/h2
+            set-value:x:@.hx/*/h3
+            set-value:x:@.hx/*/h4
+            set-value:x:@.hx/*/h5
+            set-value:x:@.hx/*/h6
+         case:h2
+            set-value:x:@.hx/*/h2
+            set-value:x:@.hx/*/h3
+            set-value:x:@.hx/*/h4
+            set-value:x:@.hx/*/h5
+            set-value:x:@.hx/*/h6
+         case:h3
+            set-value:x:@.hx/*/h3
+            set-value:x:@.hx/*/h4
+            set-value:x:@.hx/*/h5
+            set-value:x:@.hx/*/h6
+         case:h4
+            set-value:x:@.hx/*/h4
+            set-value:x:@.hx/*/h5
+            set-value:x:@.hx/*/h6
+         case:h5
+            set-value:x:@.hx/*/h5
+            set-value:x:@.hx/*/h6
+         case:h6
+            set-value:x:@.hx/*/h6
+
+      // Special handling for node according to its name.
+      switch:x:@get-name
+
+         // Hx tags.
+         case:h1
+         case:h2
+         case:h3
+         case:h4
+         case:h5
+         case:h6
+
+            // Creating a new snippet that we return to caller.
+            .prompt:
+            for-each:x:@.dp/#/**/\#text
+
+               // Adding currently iterated text snippet to [.completion].
+               set-value:x:@.prompt
+                  strings.concat
+                     get-value:x:@.prompt
+                     .:" "
+                     strings.trim:x:@.dp/#
+                        .:"\r\n\t "
+
+            // Trimming prompt.
+            set-value:x:@.prompt
+               strings.trim:x:@.prompt
+                  .:"  \r\n\t"
+
+            // Making sure tag contains anything before creating new snippet.
+            if
+               neq:x:@.prompt
+                  .:
+               .lambda
+
+                  // Making sure we correctly store HX value.
+                  set-value:x:@.hx/*/{@get-name}
+                     get-value:x:@.prompt
+
+                  // Creating our prompt from base prompt + Hx elements.
+                  .tmp:
+                  for-each:x:@.hx/*
+
+                     // Verifying currently iterated HX element has text.
+                     if
+                        not-null:x:@.dp/#
+                        .lambda
+
+                           // Concatenating currently iterated HX element's value to above [.tmp].
+                           set-value:x:@.tmp
+                              strings.concat
+                                 get-value:x:@.tmp
+                                 .:" - "
+                                 get-value:x:@.dp/#
+
+                  // Concatenating base prompt to [.tmp].
+                  set-value:x:@.tmp
+                     strings.concat
+                        get-value:x:@.base
+                        get-value:x:@.tmp
+
+                  // Creating a new snippet with prompt and adding to [.snippets].
+                  unwrap:x:+/*/*/*
+                  add:x:@.snippets
+                     .
+                        .
+                           prompt:x:@.tmp
+
+         // Content tags.
+         case:p
+
+            /*
+             * Making sure we've already added at least one snippet,
+             * implying we're below H1 tag somewhere.
+             */
+            if
+               exists:x:@.snippets/*
+               .lambda
+
+                  // Creating a new completion.
+                  .completion:
+
+                  // Trimming and adding one SP characters between each part.
+                  for-each:x:@.dp/#/**/\#text
+
+                     // Verifying text node is not null or empty.
+                     if
+                        and
+                           neq:x:@.dp/#
+                              .
+                           neq:x:@.dp/#
+                              .:
+                        .lambda
+
+                           // Cleaning up text node, removing redundant CR/LF, TAB, and SP characters.
+                           strings.replace:x:@.dp/#
+                              .:"\r"
+                              .:" "
+                           strings.replace:x:@strings.replace
+                              .:"\n"
+                              .:" "
+                           strings.replace:x:@strings.replace
+                              .:"\t"
+                              .:" "
+                           strings.replace:x:@strings.replace
+                              .:"  "
+                              .:" "
+
+                           // Checking if currently iterated #text snippet is the child of a hyperlink [a] node.
+                           if
+                              and
+                                 eq
+                                    get-name:x:@.dp/#/.
+                                    .:a
+                                 exists:x:@.dp/#/./*/\@href
+                                 not-null:x:@.dp/#/./*/\@href
+                                 not
+                                    strings.ends-with:x:@.dp/#/./*/\@href
+                                       .:#
+                                 not
+                                    strings.starts-with:x:@.dp/#/./*/\@href
+                                       .:javascript
+                                 not
+                                    strings.starts-with:x:@.dp/#/./*/\@href
+                                       .:void
+                              .lambda
+
+                                 /*
+                                  * Currently iterated text snippet is a hyperlink.
+                                  *
+                                  * Normalizing hyperlink by invoking helper slot.
+                                  */
+                                 .url
+                                 unwrap:x:+/*/*
+                                 set-value:x:@.url
+                                    signal:magic.url.normalize
+                                       url:x:@.dp/#/./*/\@href
+                                       base:x:@.arguments/*/base
+                                       scheme:x:@.arguments/*/scheme
+
+                                 // Checking if above invocation returned a valid URL.
+                                 if
+                                    not-null:x:@.url
+                                    .lambda
+
+                                       // Adding URL as Markdown to completion.
+                                       set-value:x:@.completion
+                                          strings.concat
+                                             get-value:x:@.completion
+                                             .:" "
+                                             .:[
+                                             strings.trim:x:@strings.replace
+                                                .:"  \r\n\t"
+                                             .:](
+                                             get-value:x:@.url
+                                             .:)
+                                             .:" "
+
+                                 else
+
+                                    // Not a valid URL.
+                                    set-value:x:@.completion
+                                       strings.concat
+                                          get-value:x:@.completion
+                                          strings.trim:x:@strings.replace
+                                             .:"  \r\n\t"
+                                          .:" "
+
+                           else
+
+                              // Anything BUT a hyperlink.
+                              set-value:x:@.completion
+                                 strings.concat
+                                    get-value:x:@.completion
+                                    strings.trim:x:@strings.replace
+                                       .:"  \r\n\t"
+                                    .:" "
+
+                  /*
+                   * Trimming completion.
+                   * Notice, there's a non-breaking space in the following string (U+00A0).
+                   */
+                  set-value:x:@.completion
+                     strings.trim:x:@.completion
+                        .:"  \r\n\t"
+
+                  // Replacing all occurrencies of double space with single space.
+                  .has-double-space:bool:true
+                  while:x:@.has-double-space
+
+                     // Checking if we've got more double spaces in completion, and if not, stopping while loop.
+                     if
+                        strings.contains:x:@.completion
+                           .:"  "
+                        .lambda
+                           set-value:x:@.completion
+                              strings.replace:x:@.completion
+                                 .:"  "
+                                 .:" "
+                     else
+                        set-value:x:@.has-double-space
+                           .:bool:false
+
+                  // Cleaning up punctuation.
+                  set-value:x:@.completion
+                     strings.replace:x:@.completion
+                        .:" ."
+                        .:"."
+                  set-value:x:@.completion
+                     strings.replace:x:@.completion
+                        .:" ,"
+                        .:","
+
+                  // Verifying that element actually contained some content.
+                  if
+                     neq:x:@.completion
+                        .:
+                     .lambda
+
+                        // Checking if we need to append paragraph to existing completion or create new completion.
+                        if
+                           exists:x:@.snippets/0/-/*/completion
+                           .lambda
+
+                              // Appending to existing completion.
+                              set-value:x:@.snippets/0/-/*/completion
+                                 strings.concat
+                                    get-value:x:@.snippets/0/-/*/completion
+                                    .:"\r\n"
+                                    .:"\r\n"
+                                    get-value:x:@.completion
+
+                        else
+
+                           // Adding new prompt to [.snippets] collection.
+                           unwrap:x:+/*/*
+                           add:x:@.snippets/0/-
+                              .
+                                 completion:x:@.completion
+
+   // Returning training snippets to caller.
+   return-nodes:x:@.snippets/*

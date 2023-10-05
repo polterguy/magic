@@ -1,0 +1,80 @@
+
+/*
+ * Retrieves HTML from specified [url] and returns as HTML.
+ *
+ * Optionally provide [headers] argument to override the default HTTP headers.
+ */
+slots.create:magic.url.get
+
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/url
+   validators.url:x:@.arguments/*/url
+
+   // Adding [headers] argument unless already specified.
+   if
+      not-exists:x:@.arguments/*/headers
+      .lambda
+
+         // Adding [headers] to [.arguments] such that we can create default HTTP headers further down.
+         add:x:@.arguments
+            .
+               headers
+
+   // Adding default headers unless they're already specified.
+   validators.default:x:@.arguments/*/headers
+      User-Agent:AINIRO-Crawler 2.0
+      Accept:text/html
+      Accept-Encoding:identity
+
+   // Adding HTTP headers to invocation.
+   add:x:./*/http.get
+      get-nodes:x:@.arguments/*/headers
+
+   // Retrieving HTML document from specified URL.
+   http.get:x:@.arguments/*/url
+
+   // Sanity checking above invocation.
+   if
+      not
+         and
+            mte:x:@http.get
+               .:int:200
+            lt:x:@http.get
+               .:int:300
+      .lambda
+
+         // Oops, logging error.
+         log.error:Something went wrong while trying to get URL
+            url:x:@.arguments/*/url
+            status:x:@http.get
+         strings.concat
+            .:"Something went wrong while trying to get URL, HTTP invocation returned status code "
+            get-value:x:@http.get
+         throw:x:-
+
+
+   /*
+    * Above HTTP GET invocation returned success.
+    *
+    * Making sure URL returned HTML.
+    */
+   if
+      or
+         not-exists:x:@http.get/*/headers/*/Content-Type
+         not
+            strings.starts-with:x:@http.get/*/headers/*/Content-Type
+               .:text/html
+      .lambda
+
+         // Oops, doing some basic logging.
+         log.error:URL did not return HTML content
+            url:x:@.arguments/*/url
+            content-type:x:@http.get/*/headers/*/Content-Type
+         strings.concat
+            .:"URL did not return HTML content but '"
+            get-value:x:@http.get/*/headers/*/Content-Type
+            .:"' content"
+         throw:x:-
+
+   // Returning result of above HTTP GET invocation.
+   return:x:@http.get/*/content

@@ -1,0 +1,44 @@
+
+/*
+ * Extracts all code tags as code and returns as Markdown training snippets to caller from
+ * specified [html] argument expected to contain the HTML to traverse.
+ */
+slots.create:magic.ai.html.extract-code
+
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/html
+
+   // Buffer for training snipepts returned to caller.
+   .snippets
+
+   // Iterating through each [code] element found in above HTML.
+   for-each:x:@.arguments/*/html/#/**/code
+
+      /*
+       * Now we need to create a Markdown training snippet based upon the currently
+       * iterated [code] tag. Starting out by creating prompt.
+       */
+      .prompt
+      set-value:x:@.prompt
+         strings.concat
+            .:"Code - "
+            get-value:x:@.arguments/*/base-prompt
+            
+
+      // Now creating actual code becoming completion for training snippet.
+      .code
+      set-value:x:@.code
+         strings.concat
+            .:"```\r\n"
+            strings.join:x:@.dp/#/**/\#text
+               .:
+            .:"\r\n```"
+      unwrap:x:+/*/*/*
+      add:x:@.snippets
+         .
+            .
+               prompt:x:@.prompt
+               completion:x:@.code
+
+   // Returning training snippets to caller.
+   return-nodes:x:@.snippets/*

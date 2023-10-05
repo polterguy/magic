@@ -1,0 +1,246 @@
+
+/*
+ * Scrapes specified [url] and creates machine learning training snippets from page,
+ * by semantically chopping up page into training snippets.
+ *
+ * Arguments:
+ * - [url] - What URL to scrape.
+ * - [type] - What type to import training snippets into.
+ * - [summarize] - If true will summarize all training snippets that are larger than 1,000 tokens.
+ * - [headers] - Optional collection of HTTML headers we should associate with HTTP request.
+ * - [images] - Optional boolean indicating whether or not we should retrieve images from URL.
+ * - [lists] - Optional boolean indicating whether or not we should retrieve lists from URL.
+ * - [code] - Optional boolean indicating whether or not we should retrieve code segments from URL.
+ * - [main] - Optional boolean indicating whether or not we should retrieve main section from URL.
+ * - [empty-completion] - Optional boolean indicating whether or not we should create training snippets that has empty completion.
+ */
+slots.create:magic.ai.url.scrape
+
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/url
+   validators.mandatory:x:@.arguments/*/type
+   validators.url:x:@.arguments/*/url
+
+   // Ensuring [summarize] defaults to true.
+   validators.default:x:@.arguments
+      summarize:bool:true
+
+   // Ensuring we retrieve images, lists, code and main section by default.
+   validators.default:x:@.arguments
+      images:bool:true
+      lists:bool:true
+      code:bool:true
+      main:bool:true
+      empty-completion:bool:true
+
+   // Signaling frontend.
+   .msg
+   set-value:x:@.msg
+      strings.concat
+         .:"Scraping "
+         get-value:x:@.arguments/*/url
+   unwrap:x:+/**
+   sockets.signal:magic.backend.chatbot
+      roles:root
+      args
+         message:x:@.msg
+         type:info
+
+   // Fetching HTML from URL.
+   .html
+   add:x:+/+/*
+      get-nodes:x:@.arguments/*/headers
+   unwrap:x:+/*
+   signal:magic.url.get
+      url:x:@.arguments/*/url
+   set-value:x:@.html
+      get-value:x:@signal
+
+   // Signaling frontend.
+   sockets.signal:magic.backend.chatbot
+      roles:root
+      args
+         message:Creating training snippets from page
+         type:info
+
+   // Creating training snippets from page.
+   add:x:+/+
+      get-nodes:x:@.arguments/*/images
+      get-nodes:x:@.arguments/*/lists
+      get-nodes:x:@.arguments/*/code
+      get-nodes:x:@.arguments/*/main
+   unwrap:x:+/*
+   signal:magic.ai.html.extract-snippets
+      html:x:@.html
+      url:x:@.arguments/*/url
+
+   /*
+    * Signaling frontend with meta data extracted from page.
+    *
+    * This provides valuable feedback to user about what training
+    * snippets we found on page.
+    *
+    * First images.
+    */
+   if:x:@.arguments/*/images
+      strings.concat
+         .:"Found "
+         get-value:x:@signal/*/meta/*/images
+         .:" images on page"
+      unwrap:x:+/**
+      sockets.signal:magic.backend.chatbot
+         roles:root
+         args
+            message:x:@strings.concat
+            type:info
+
+   // Then code snippets.
+   if:x:@.arguments/*/code
+      strings.concat
+         .:"Found "
+         get-value:x:@signal/*/meta/*/code
+         .:" code snippets on page"
+      unwrap:x:+/**
+      sockets.signal:magic.backend.chatbot
+         roles:root
+         args
+            message:x:@strings.concat
+            type:info
+
+   // Then lists.
+   if:x:@.arguments/*/lists
+      strings.concat
+         .:"Found "
+         get-value:x:@signal/*/meta/*/lists
+         .:" lists on page"
+      unwrap:x:+/**
+      sockets.signal:magic.backend.chatbot
+         roles:root
+         args
+            message:x:@strings.concat
+            type:info
+
+   // Then main sections.
+   if:x:@.arguments/*/main
+      strings.concat
+         .:"Found "
+         get-value:x:@signal/*/meta/*/main
+         .:" main sections on page"
+      unwrap:x:+/**
+      sockets.signal:magic.backend.chatbot
+         roles:root
+         args
+            message:x:@strings.concat
+            type:info
+
+   // Buffer for training snippets found as we chopped up page.
+   .snippets
+   add:x:@.snippets
+      get-nodes:x:@signal/*/snippets/*
+
+   // Making sure we found anything on page, and if not, warning user.
+   if
+      eq
+         get-count:x:@.snippets/*
+         .:int:0
+      .lambda
+
+         // Warning user.
+         sockets.signal:magic.backend.chatbot
+            roles:root
+            args
+               message:WARNING! We could not find any training snippets at the specified URL!
+               type:warning
+
+   else
+
+      /*
+       * Creating training snippets from result of above invocation
+       * but first we need to open database connection.
+       */
+      data.connect:[generic|magic]
+
+         /*
+          * Verifying user can create more snippets.
+          *
+          * Notice, this is a slot that doesn't exist in Magic core, allowing
+          * us to create "plugin slots" that somehow validates whether or not the use
+          * can create additional training snippets or not.
+          *
+          * The idea is that the slot should throw an exception if user is not allowed
+          * to create additional training snippets.
+          */
+         add:x:+
+            get-nodes:x:@.arguments/*/type
+         try-signal:magic.ai.can-create-snippet
+
+         // Verifying that type exists.
+         data.read
+            table:ml_types
+            columns
+               id
+            where
+               and
+                  type.eq:x:@.arguments/*/type
+         if
+            not-exists:x:@data.read/*
+            .lambda
+
+               // Oops, type does not exist.
+               throw:Machine learning type does not exist.
+                  type:x:@.arguments/*/type
+
+         /*
+          * Deleting all training snippets matching type, URL, and meta.
+          *
+          * Notice, we need to delete records from VSS table too to avoid "dangling references".
+          */
+         data.execute:delete from vss_ml_training_snippets where rowid in (select id as rowid from ml_training_snippets where type = @type and uri = @url)
+            @type:x:@.arguments/*/type
+            @url:x:@.arguments/*/url
+         data.delete
+            table:ml_training_snippets
+            where
+               and
+                  type.eq:x:@.arguments/*/type
+                  uri.eq:x:@.arguments/*/url
+
+         /*
+          * Now looping through each snippet from above [.snippet] and inserting into database
+          * as training snippets.
+          */
+         for-each:x:@.snippets/*
+
+            // Defaulting completion to empty string if [empty-completion] argument is true.
+            if:x:@.arguments/*/empty-completion
+               validators.default:x:@.dp/#
+                  completion:
+
+            // Checking if completion exists and is not null for training snippet.
+            if
+               and
+                  exists:x:@.dp/#/*/completion
+                  not-null:x:@.dp/#/*/completion
+               .lambda
+
+                  // Inserting training snippet into database.
+                  data.create
+                     table:ml_training_snippets
+                     values
+                        type:x:@.arguments/*/type
+                        uri:x:@.arguments/*/url
+                        prompt:x:@.dp/#/*/prompt
+                        completion:x:@.dp/#/*/completion
+                        meta:AINIRO-Crawler 2.0
+
+      // Informing user that we're done creating training snippets from specified URL.
+      strings.concat
+         .:"Done importing "
+         get-count:x:@.snippets/*
+         .:" training snippets from page"
+      unwrap:x:+/**
+      sockets.signal:magic.backend.chatbot
+         roles:root
+         args
+            message:x:@strings.concat
+            type:info
