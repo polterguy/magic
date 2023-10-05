@@ -52,7 +52,7 @@ slots.create:magic.ai.html.extract-main
           * and other irrelevant parts of our HTML.
           */
          set-value:x:@.root
-            get-nodes:x:@.arguments/*/html/#/*/body/**/main/[0,1]
+            reference:x:@.arguments/*/html/#/*/body/**/main/[0,1]
 
    else-if
       exists:x:@.arguments/*/html/#/*/body/**/article/[0,1]
@@ -63,7 +63,7 @@ slots.create:magic.ai.html.extract-main
           * and other irrelevant parts of our HTML.
           */
          set-value:x:@.root
-            get-nodes:x:@.arguments/*/html/#/*/body/**/article/[0,1]
+            reference:x:@.arguments/*/html/#/*/body/**/article/[0,1]
 
    // Our HX values.
    .hx
