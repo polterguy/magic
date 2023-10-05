@@ -1,0 +1,324 @@
+
+/*
+ * Loads sitemap according to given [sitemap] collection,
+ * [allow] collection, and [disallow] collection, and
+ * returns [max] number of links to caller.
+ *
+ * Optionally supply [headers] collection being HTTP headers to
+ * use when retrieving sitemap(s).
+ */
+slots.create:magic.ai.load-sitemap
+
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/sitemap/*
+   validators.integer:x:@.arguments/*/max
+      min:1
+      max:10000
+
+   // Defaulting [max] to 25 if not specified.
+   validators.default:x:@.arguments
+      max:int:25
+
+   // Adding [headers] argument unless already specified.
+   if
+      not-exists:x:@.arguments/*/headers
+      .lambda
+
+         // Adding [headers] to [.arguments] such that we can create default HTTP headers further down.
+         add:x:@.arguments
+            .
+               headers
+
+   // Adding default headers unless they're already specified.
+   validators.default:x:@.arguments/*/headers
+      User-Agent:AINIRO-Crawler 2.0
+      Accept-Encoding:identity
+      Accept:text/xml
+
+   // Buffer used for URLs to return.
+   .urls
+
+   // Iterating through each sitemap specified by caller.
+   for-each:x:@.arguments/*/sitemap/*
+
+      // To avoid having server run out of memory we apply a hard stop at 10,000 URLs.
+      if
+         lt
+            get-count:x:@.urls/*
+            .:int:10000
+         .lambda
+
+            // Keeping a reference around for the domain.
+            .domain
+            strings.split:x:@.dp/#
+               .:/
+            set-value:x:@.domain
+               strings.concat
+                  get-value:x:@strings.split/0
+                  .://
+                  get-value:x:@strings.split/1
+
+            /*
+             * Retrieving sitemap, making sure we parametrize invocation
+             * with [headers] collection.
+             */
+            add:x:./*/http.get
+               get-nodes:x:@.arguments/*/headers
+            http.get:x:@.dp/#
+
+            // Checking if above invocation succeeded.
+            if
+               and
+                  not
+                     mte:x:@http.get
+                        .:int:200
+                  not
+                     lt:x:@http.get
+                        .:int:300
+               .lambda
+
+                  // Sitemap invocation did not return success status code.
+                  log.error:Sitemap invocation did not return success status
+                     url:x:@.dp/#
+                     status:x:@http.get
+                  throw:Could not retrieve sitemap, check log for details
+
+            // Verifying request returned text/xml MIME type or application/xml MIME type.
+            if
+               not
+                  or
+                     strings.starts-with:x:@http.get/*/headers/*/Content-Type
+                        .:application/xml
+                     strings.starts-with:x:@http.get/*/headers/*/content-type
+                        .:application/xml
+                     strings.starts-with:x:@http.get/*/headers/*/Content-Type
+                        .:text/xml
+                     strings.starts-with:x:@http.get/*/headers/*/content-type
+                        .:text/xml
+               .lambda
+
+                  // Bogus sitemap file, not XML.
+                  log.error:Sitemap was not valid XML
+                     url:x:@.dp/#
+                     Content-Type:x:@http.get/*/headers/*/Content-Type
+                     content-type:x:@http.get/*/headers/*/content-type
+                  throw:Sitemap was not XML, check log for details
+
+            // Transforming sitemap from XML to lambda.
+            xml2lambda:x:@http.get/*/content
+
+            // Iterating through each URL in currently iterated sitemap file.
+            for-each:x:@xml2lambda/*/urlset/*/url/*/loc/*/\#text
+
+               // To avoid having server run out of memory we apply a hard stop at 10,000 URLs.
+               if
+                  lt
+                     get-count:x:@.urls/*
+                     .:int:10000
+                  .lambda
+
+                     // URL we're currently adding.
+                     .url
+                     set-value:x:@.url
+                        get-value:x:@.dp/#
+                     if
+                        and
+                           not
+                              strings.starts-with:x:@.dp/#
+                                 .:"http://"
+                           not
+                              strings.starts-with:x:@.dp/#
+                                 .:"https://"
+                        .lambda
+
+                           // Need to prepend URL with domain.
+                           set-value:x:@.url
+                              strings.concat
+                                 get-value:x:@.domain
+                                 get-value:x:@.dp/#
+
+                     // Avoiding duplicates.
+                     if
+                        not-exists:x:@.urls/*/={@.url}
+                        .lambda
+
+                           // URL does not exist from before in above [.urls] collection.
+                           unwrap:x:+/*/*
+                           add:x:@.urls
+                              .
+                                 .:x:@.url
+
+            // Iterating through each CDATA URL in currently primary sitemap file.
+            for-each:x:@xml2lambda/*/urlset/*/url/*/loc/*/\#cdata-section
+
+               // To avoid having server run out of memory we apply a hard stop at 10,000 URLs.
+               if
+                  lt
+                     get-count:x:@.urls/*
+                     .:int:10000
+                  .lambda
+
+                     // URL we're currently adding.
+                     .url
+                     set-value:x:@.url
+                        get-value:x:@.dp/#
+                     if
+                        and
+                           not
+                              strings.starts-with:x:@.dp/#
+                                 .:"http://"
+                           not
+                              strings.starts-with:x:@.dp/#
+                                 .:"https://"
+                        .lambda
+
+                           // Need to prepend URL with domain.
+                           set-value:x:@.url
+                              strings.concat
+                                 get-value:x:@.domain
+                                 get-value:x:@.dp/#
+
+                     // Avoiding duplicates.
+                     if
+                        not-exists:x:@.urls/*/={@.url}
+                        .lambda
+
+                           // URL does not exist from before in above [.urls] collection.
+                           unwrap:x:+/*/*
+                           add:x:@.urls
+                              .
+                                 .:x:@.url
+
+            // Iterating through each CDATA URL referenced in main sitemap.
+            for-each:x:@xml2lambda/*/sitemapindex/*/sitemap/*/loc/*/\#cdata-section
+
+               // Recursively invoking self.
+               unwrap:x:+/**
+               signal:magic.ai.load-sitemap
+                  max:x:@.arguments/*/max
+                  sitemap
+                     .:x:@.dp/#
+
+               // Adding URLs to above [.urls] collection.
+               add:x:@.urls
+                  get-nodes:x:@signal/*
+
+   /*
+    * Sorting URLs by length, which typically makes sure more
+    * important URLs are prioritised.
+    */
+   sort:x:@.urls/*
+      if
+         lt
+            strings.length:x:@.lhs/#
+            strings.length:x:@.rhs/#
+         .lambda
+            set-value:x:@.result
+               .:int:-1
+      else-if
+         mt
+            strings.length:x:@.lhs/#
+            strings.length:x:@.rhs/#
+         .lambda
+            set-value:x:@.result
+               .:int:1
+      else
+         set-value:x:@.result
+            .:int:0
+
+   /*
+    * Helper lambda to determine if [url] is matching [pattern].
+    *
+    * Not complete implementation of specification, but supports
+    * $ and * character at the end of the line, used as wildcard
+    * and end of string.
+    */
+   .match
+
+      // Wildcard character.
+      if
+         strings.ends-with:x:@.arguments/*/pattern
+            .:*
+         .lambda
+            strings.trim-end:x:@.arguments/*/pattern
+               .:*
+            strings.starts-with:x:@.arguments/*/url
+               get-value:x:@strings.trim-end
+            return-value:x:@strings.starts-with
+
+      // $ sign, end of line.
+      if
+         strings.ends-with:x:@.arguments/*/pattern
+            .:$
+         .lambda
+            strings.trim-end:x:@.arguments/*/pattern
+               .:$
+            eq:x:@.arguments/*/url
+               get-value:x:@strings.trim-end
+            return-value:x:@eq
+
+      // Default logic.
+      strings.starts-with:x:@.arguments/*/url
+         get-value:x:@.arguments/*/pattern
+      return-value:x:@strings.starts-with
+
+   // Making sure we don't return more than [max] URLs.
+   .return
+   while
+      and
+         mt:x:@.arguments/*/max
+            .:int:0
+         exists:x:@sort/0
+      .lambda
+
+         // Making sure URL is not disallowed.
+         .allowed:bool:true
+         for-each:x:@.arguments/*/disallow/*
+
+            // Checking if currently iterated URL starts with disallow part.
+            unwrap:x:+/*
+            invoke:x:@.match
+               url:x:@sort/0
+               pattern:x:@.dp/#
+            if
+               get-value:x:@invoke
+               .lambda
+
+                  // Disallowed URL.
+                  set-value:x:@.allowed
+                     .:bool:false
+
+                  // Checking if URL is explicitly allowed again.
+                  for-each:x:@.arguments/*/allow/*
+
+                     // Checking if currently iterated URL is explicitly allowed.
+                     unwrap:x:+/*
+                     invoke:x:@.match
+                        url:x:@sort/0
+                        pattern:x:@.dp/#
+                     if
+                        get-value:x:@invoke
+                        .lambda
+
+                           // Explicitly allowed URL.
+                           set-value:x:@.allowed
+                              .:bool:true
+
+         // Verifying URL is allowed.
+         if
+            eq:x:@.allowed
+               .:bool:true
+            .lambda
+
+               // URL is allowed.
+               add:x:@.return
+                  get-nodes:x:@sort/0
+
+               // Decrementing URL count.
+               math.decrement:x:@.arguments/*/max
+
+         // Removing currently iterated URL.
+         remove-nodes:x:@sort/0
+
+   // Returning URLs to caller.
+   return-nodes:x:@.return/*
