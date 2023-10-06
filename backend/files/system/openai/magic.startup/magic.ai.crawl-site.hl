@@ -31,6 +31,7 @@ slots.create:magic.ai.crawl-site
                   args
                      message:Site has robots.txt
                      type:info
+               sleep:100
                strings.concat
                   .:"Found "
                   get-count:x:@signal/*/sitemap/*
@@ -43,6 +44,7 @@ slots.create:magic.ai.crawl-site
                   args
                      message:x:@strings.concat
                      type:info
+               sleep:100
 
          else
 
@@ -52,6 +54,7 @@ slots.create:magic.ai.crawl-site
                args
                   message:Could not find a robots.txt file for website
                   type:info
+            sleep:100
             strings.concat
                .:"We will try to retrieve sitemap from "
                get-value:x:@signal/*/sitemap/0
@@ -61,6 +64,7 @@ slots.create:magic.ai.crawl-site
                args
                   message:x:@strings.concat
                   type:info
+            sleep:100
 
          /*
           * Trying to load URLs from sitemap returned from above invocation.
@@ -84,6 +88,7 @@ slots.create:magic.ai.crawl-site
             args
                message:x:@strings.concat
                type:info
+         sleep:100
 
          // Checking if site contains more URLs than we're scraping.
          get-count:x:@signal/*/urls/*
@@ -104,6 +109,7 @@ slots.create:magic.ai.crawl-site
                   args
                      message:x:@strings.concat
                      type:warning
+               sleep:100
 
          // Iterating through each URL returned from above invocation.
          for-each:x:@signal/*/urls/*
@@ -131,6 +137,7 @@ slots.create:magic.ai.crawl-site
                args
                   message:x:@strings.concat
                   type:info
+            sleep:100
 
             // Sleeping for [delay] milliseconds to avoid exhausting web server.
             sleep:x:@.arguments/*/delay
@@ -144,6 +151,7 @@ slots.create:magic.ai.crawl-site
             args
                message:Done creating OpenAI training data from URL
                type:success
+         sleep:100
 
          // Basic logging.
          log.info:OpenAI training data successfully created
@@ -172,6 +180,7 @@ slots.create:magic.ai.crawl-site
             args
                message:x:@strings.concat
                type:error
+         sleep:100
 
          // Checking if caller supplied [.onerror] handler.
          if
