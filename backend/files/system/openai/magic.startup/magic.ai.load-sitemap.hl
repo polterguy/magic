@@ -201,7 +201,21 @@ slots.create:magic.ai.load-sitemap
 
                // Adding URLs to above [.urls] collection.
                add:x:@.urls
-                  get-nodes:x:@signal/*
+                  get-nodes:x:@signal/*/urls/*
+
+            // Iterating through each CDATA URL referenced in main sitemap.
+            for-each:x:@xml2lambda/*/sitemapindex/*/sitemap/*/loc/*/\#text
+
+               // Recursively invoking self.
+               unwrap:x:+/**
+               signal:magic.ai.load-sitemap
+                  max:x:@.arguments/*/max
+                  sitemap
+                     .:x:@.dp/#
+
+               // Adding URLs to above [.urls] collection.
+               add:x:@.urls
+                  get-nodes:x:@signal/*/urls/*
 
    /*
     * Sorting URLs by length, which typically makes sure more
