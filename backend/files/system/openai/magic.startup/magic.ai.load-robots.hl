@@ -55,6 +55,7 @@ slots.create:magic.ai.load-robots
    // Collection of URL explicitly disallowed from robots.txt file.
    .disallow
    .allow
+   .crawl-delay
 
    // True if we found a valid robots.txt file.
    .has-robots:bool:false
@@ -135,6 +136,29 @@ slots.create:magic.ai.load-robots
 
                               // Checking what type of value this is.
                               switch:x:@strings.split/0
+
+                                 case:Crawl-Delay
+                                 case:Crawl-delay
+                                 case:crawl-delay
+
+                                    // Checking if we're inside a relevant section from the robots.txt file.
+                                    set-value:x:@.value
+                                       strings.replace-not-of:x:@.value
+                                          .:0123456789
+                                    if
+                                       and
+                                          eq:x:@.relevant
+                                             .:bool:true
+                                          neq:x:@.value
+                                             .:
+                                       .lambda
+
+                                          // Storing Crawl-Delay value and returning to caller.
+                                          set-value:x:@.crawl-delay
+                                             math.multiply
+                                                .:int:1000
+                                                convert:x:@.value
+                                                   type:int
 
                                  case:User-Agent
                                  case:User-agent
@@ -335,24 +359,32 @@ slots.create:magic.ai.load-robots
             .
                sitemap
 
-   else-if
-      eq:x:@.has-robots
-         .:bool:false
+   else
+
+      /*
+       * If we could not find any sitemaps,
+       * we return x.com/sitemap.xml as the default sitemap such that
+       * caller can try to retrieve it in case it exists.
+       */
+      strings.concat
+         get-value:x:@.domain
+         .:/sitemap.xml
+      unwrap:x:+/*/*/*
+      add:x:../*/return
+         .
+            sitemap
+               .:x:@strings.concat
+
+   // Checking if we've got a crawl-delay value
+   if
+      not-null:x:@.crawl-delay
       .lambda
-   
-         /*
-          * If we could not find any sitemaps,
-          * we return x.com/sitemap.xml as the default sitemap such that
-          * caller can try to retrieve it in case it exists.
-          */
-         strings.concat
-            get-value:x:@.domain
-            .:/sitemap.xml
-         unwrap:x:+/*/*/*
+
+         // Making sure we return crawl-delay.
+         unwrap:x:+/*/*
          add:x:../*/return
             .
-               sitemap
-                  .:x:@strings.concat
+               crawl-delay:x:@.crawl-delay
 
    // Returning result to caller.
    unwrap:x:+/*

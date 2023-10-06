@@ -19,6 +19,32 @@ slots.create:magic.ai.crawl-site
          signal:magic.ai.load-robots
             url:x:@.arguments/*/url
 
+         // Checking if robots.txt contains a crawl-delay.
+         if
+            exists:x:@signal/*/crawl-delay
+            .lambda
+
+               // Updating delay to value from robots.txt.
+               remove-nodes:x:@.arguments/*/delay
+               unwrap:x:+/*
+               validators.default:x:@.arguments
+                  delay:x:@signal/*/crawl-delay
+
+
+               // Signaling frontend to inform of that we found a crawl-delay value.
+               strings.concat
+                  .:"Robots.txt file contains a Crawl-Delay value of "
+                  get-value:x:@signal/*/crawl-delay
+                  .:" milliseconds, hence making sure we don't crawl more often than every "
+                  get-value:x:@signal/*/crawl-delay
+                  .:" milliseconds to avoid exhausting web server"
+               unwrap:x:+/**
+               sockets.signal:magic.backend.chatbot
+                  roles:root
+                  args
+                     message:x:@strings.concat
+                     type:info
+
          // Checking if site contains a robots.txt file.
          if
             eq:x:@signal/*/found
@@ -114,33 +140,43 @@ slots.create:magic.ai.crawl-site
          // Iterating through each URL returned from above invocation.
          for-each:x:@signal/*/urls/*
 
-            // Scraping currently iterated URL.
-            unwrap:x:+/*
-            signal:magic.ai.url.scrape
-               url:x:@.dp/#
-               type:x:@.arguments/*/type
-               images:bool:true
-               code:bool:true
-               lists:bool:true
-               main:bool:true
-               empty-completion:bool:true
-               threshold:x:@.arguments/*/threshold
+            // Making sure we trap exceptions.
+            try
 
-            // Signaling frontend that we're waiting for n milliseconds.
-            strings.concat
-               .:"Waiting for "
-               get-value:x:@.arguments/*/delay
-               .:" milliseconds to avoid exhausting web server"
-            unwrap:x:+/**
-            sockets.signal:magic.backend.chatbot
-               roles:root
-               args
-                  message:x:@strings.concat
-                  type:info
-            sleep:100
+               // Scraping currently iterated URL.
+               unwrap:x:+/*
+               signal:magic.ai.url.scrape
+                  url:x:@.dp/#
+                  type:x:@.arguments/*/type
+                  images:bool:true
+                  code:bool:true
+                  lists:bool:true
+                  main:bool:true
+                  empty-completion:bool:true
+                  threshold:x:@.arguments/*/threshold
 
-            // Sleeping for [delay] milliseconds to avoid exhausting web server.
-            sleep:x:@.arguments/*/delay
+               // Signaling frontend that we're waiting for n milliseconds.
+               strings.concat
+                  .:"Waiting for "
+                  get-value:x:@.arguments/*/delay
+                  .:" milliseconds to avoid exhausting web server"
+               unwrap:x:+/**
+               sockets.signal:magic.backend.chatbot
+                  roles:root
+                  args
+                     message:x:@strings.concat
+                     type:info
+               sleep:100
+
+               // Sleeping for [delay] milliseconds to avoid exhausting web server.
+               sleep:x:@.arguments/*/delay
+
+            .catch
+
+               // Logging as error.
+               log.error:Could not scrape URL
+                  url:x:@.dp/#
+                  message:x:@.arguments/*/message
 
          /*
           * Crawling is done.
