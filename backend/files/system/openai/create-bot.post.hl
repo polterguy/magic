@@ -120,15 +120,15 @@ try
          values
             type:x:@.type
             model:x:@.arguments/*/model
-            max_tokens:int:500
-            max_context_tokens:int:2000
-            max_request_tokens:int:100
+            max_tokens:int:1500
+            max_context_tokens:int:1500
+            max_request_tokens:int:250
             temperature:decimal:0.3
             recaptcha:decimal:0.3
             supervised:int:1
             cached:int:0
             use_embeddings:int:1
-            threshold:decimal:0.5
+            threshold:decimal:0.4
             vector_model:text-embedding-ada-002
             system_message:x:@.arguments/*/flavor
             greeting:Hi there, how can I help you?
