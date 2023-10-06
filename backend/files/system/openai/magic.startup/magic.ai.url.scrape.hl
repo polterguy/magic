@@ -45,6 +45,7 @@ slots.create:magic.ai.url.scrape
       args
          message:x:@.msg
          type:info
+   sleep:100
 
    // Fetching HTML from URL.
    .html
@@ -86,6 +87,7 @@ slots.create:magic.ai.url.scrape
          args
             message:x:@strings.concat
             type:info
+      sleep:100
 
    // Then code snippets.
    if:x:@.arguments/*/code
@@ -99,6 +101,7 @@ slots.create:magic.ai.url.scrape
          args
             message:x:@strings.concat
             type:info
+      sleep:100
 
    // Then lists.
    if:x:@.arguments/*/lists
@@ -112,6 +115,7 @@ slots.create:magic.ai.url.scrape
          args
             message:x:@strings.concat
             type:info
+      sleep:100
 
    // Then main sections.
    if:x:@.arguments/*/main
@@ -125,6 +129,7 @@ slots.create:magic.ai.url.scrape
          args
             message:x:@strings.concat
             type:info
+      sleep:100
 
    // Buffer for training snippets found as we chopped up page.
    .snippets
@@ -144,6 +149,7 @@ slots.create:magic.ai.url.scrape
             args
                message:WARNING! We could not find any training snippets at the specified URL!
                type:warning
+         sleep:100
 
    else
 
@@ -218,6 +224,7 @@ slots.create:magic.ai.url.scrape
                         args
                            message:Summarizing snippet since it is larger than 50% of maximum context size for type
                            type:info
+                     sleep:100
 
                      // Creating our bearer token.
                      .token
@@ -272,6 +279,7 @@ slots.create:magic.ai.url.scrape
                                        args
                                           message:Successfully created summary of snippet
                                           type:info
+                                    sleep:100
 
                                     // Updating completion.
                                     set-value:x:@.dp/#/*/completion
@@ -281,7 +289,7 @@ slots.create:magic.ai.url.scrape
                                     // Updating prompt.
                                     set-value:x:@.dp/#/*/prompt
                                        strings.concat
-                                          .:"Summary of; "
+                                          .:"Summary; "
                                           strings.substring:x:@.dp/#/*/prompt
                                              .:int:0
                                              .:int:150
@@ -298,6 +306,7 @@ slots.create:magic.ai.url.scrape
                                     args
                                        message:Could not summarize snippet, check your log for details
                                        type:warning
+                                 sleep:100
                                  lambda2hyper:x:@http.post
                                  log.error:Something went wrong while invoking OpenAI
                                     message:x:@http.post/*/content/*/error/*/message
@@ -369,7 +378,7 @@ delete from vss_ml_training_snippets
                   not-null:x:@.dp/#/*/completion
                .lambda
 
-                  // Verifying snippet is longer than threshold.
+                  // Verifying snippet is longer than minimum threshold required to import snippet.
                   if
                      mt
                         strings.length:x:@.dp/#/*/completion
@@ -400,6 +409,8 @@ delete from vss_ml_training_snippets
                            table:ml_training_snippets
                            columns
                               id
+                              prompt
+                              completion
                            where
                               and
                                  type.eq:x:@.arguments/*/type
@@ -418,19 +429,133 @@ delete from vss_ml_training_snippets
                                     completion:x:@.dp/#/*/completion
                                     meta:AINIRO-Website-Crawler
 
+                        else-if
+                           and
+                              neq:x:@data.read/0/*/completion
+                                 .:
+                              strings.starts-with:x:@data.read/0/*/prompt
+                                 .:"Common;"
+                           .lambda
+
+                              /*
+                               * Snippet already exists in database and has already been summarized,
+                               * hence we do nothing.
+                               */
+                              strings.concat
+                                 .:"Snippet already exists and has been summarized; '"
+                                 get-value:x:@.dp/#/*/prompt
+                                 .:"'"
+                              unwrap:x:+/**
+                              sockets.signal:magic.backend.chatbot
+                                 roles:root
+                                 args
+                                    message:x:@strings.concat
+                                    type:info
+                              sleep:100
+
                         else
 
-                           // Signaling frontend that snippet already exists in database.
-                           strings.concat
-                              .:"Snippet already exists; '"
-                              get-value:x:@.dp/#/*/prompt
-                              .:"'"
-                           unwrap:x:+/**
+                           // Success creating summary.
                            sockets.signal:magic.backend.chatbot
                               roles:root
                               args
-                                 message:x:@strings.concat
+                                 message:Snippet with similar completion exists, summarizing prompt to create general snippet
                                  type:info
+                           sleep:100
+
+                           /*
+                            * Since snippet exists in multiple places, we cannot use
+                            * the default prompt for it, which is based upon Hx tags,
+                            * but must rather create a summary of snippet that we use
+                            * as its prompt, to avoid having the snippet only found on
+                            * searches specific to the first page we found the snippet
+                            * on.
+                            */
+                           .model
+                           .token
+
+                           // Retrieving API key and model from database if existing.
+                           data.read
+                              table:ml_types
+                              columns
+                                 api_key
+                                 model
+                              where
+                                 and
+                                    type.eq:x:@.arguments/*/type
+
+                           // Setting API key.
+                           set-value:x:@.token
+                              strings.concat
+                                 .:"Bearer "
+                                 get-first-value
+                                    get-value:x:@data.read/*/*/api_key
+                                    config.get:"magic:openai:key"
+                           set-value:x:@.model
+                              get-value:x:@data.read/*/*/model
+                           unwrap:x:+/**
+                           http.post:"https://api.openai.com/v1/chat/completions"
+                              headers
+                                 Authorization:x:@.token
+                                 Content-Type:application/json
+                              payload
+                                 model:x:@.model
+                                 max_tokens:int:1000
+                                 temperature:decimal:0.3
+                                 messages
+                                    .
+                                       role:system
+                                       content:Create a one line summary of the following information with relevant keywords you can find in the information provided
+                                    .
+                                       role:user
+                                       content:x:@data.read/@data.read/0/*/completion
+                              convert:true
+
+                           // Checking that above invocation returned success.
+                           if
+                              and
+                                 mte:x:@http.post
+                                    .:int:200
+                                 lt:x:@http.post
+                                    .:int:300
+                                 exists:x:@http.post/*/content/*/choices/0/*/message/*/content
+                                 not-null:x:@http.post/*/content/*/choices/0/*/message/*/content
+                                 neq:x:@http.post/*/content/*/choices/0/*/message/*/content
+                                    .:
+                              .lambda
+
+                                 // Success creating summary.
+                                 sockets.signal:magic.backend.chatbot
+                                    roles:root
+                                    args
+                                       message:Successfully summarized snippet, now updating its prompt
+                                       type:info
+                                 sleep:100
+
+                                 // Updating completion.
+                                 strings.concat
+                                    .:"Common; "
+                                    strings.trim:x:@http.post/*/content/*/choices/0/*/message/*/content
+                                       .:"\r\n\t \"'"
+
+                                 // Updating record in database.
+                                 data.update
+                                    table:ml_training_snippets
+                                    values
+                                       prompt:x:@strings.concat
+                                    where
+                                       and
+                                          id.eq:x:@data.read/@data.read/0/*/id
+
+                           else
+
+                              // OpenAI didn't return value response.
+                              sockets.signal:magic.backend.chatbot
+                                 roles:root
+                                 args
+                                    message:OpenAI could not successfully create a summary of completion
+                                    type:warning
+                              sleep:100
 
                   else
 
@@ -445,6 +570,7 @@ delete from vss_ml_training_snippets
                         args
                            message:x:@strings.concat
                            type:info
+                     sleep:100
 
       // Informing user that we're done creating training snippets from specified URL.
       strings.concat
@@ -457,3 +583,4 @@ delete from vss_ml_training_snippets
          args
             message:x:@strings.concat
             type:info
+      sleep:100
