@@ -56,7 +56,9 @@ slots.create:magic.ai.html.extract-images
             // Prompt to be returned to caller for currently iterated snippet.
             .prompt
             set-value:x:@.prompt
-               .:Image
+               strings.concat
+                  .:"Image  - "
+                  get-value:x:@.arguments/*/base-prompt
 
             // Adding Markdown training snippet to collection returned to caller.
             unwrap:x:+/*/*/*

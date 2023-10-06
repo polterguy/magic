@@ -228,67 +228,89 @@ slots.create:magic.ai.url.scrape
                               get-value:x:@.api-key
                               config.get:"magic:openai:key"
 
-                     // Invoking OpenAI to summarize snippet.
-                     unwrap:x:+/**
-                     http.post:"https://api.openai.com/v1/chat/completions"
-                        headers
-                           Authorization:x:@.token
-                           Content-Type:application/json
-                        payload
-                           model:x:@.model
-                           max_tokens:x:@.max-size
-                           temperature:decimal:0.3
-                           messages
-                              .
-                                 role:system
-                                 content:Create a summary of the following information
-                              .
-                                 role:user
-                                 content:x:@.dp/#/*/completion
-                        convert:true
-
-                     // Checking that above invocation returned success.
-                     if
-                        and
-                           mte:x:@http.post
-                              .:int:200
-                           lt:x:@http.post
-                              .:int:300
+                     // Making sure we try to summarize snippet 3 times before giving up.
+                     .no:int:3
+                     while
+                        mt:x:@.no
+                           .:int:0
                         .lambda
 
-                           // Success creating summary.
-                           sockets.signal:magic.backend.chatbot
-                              roles:root
-                              args
-                                 message:Successfully created summary of snippet
-                                 type:info
+                           // Making sure we catch exceptions.
+                           try
 
-                           // Updating completion.
-                           set-value:x:@.dp/#/*/completion
-                              strings.trim:x:@http.post/*/content/*/choices/0/*/message/*/content
-                                 .:"\r\n\t "
+                              // Invoking OpenAI to summarize snippet.
+                              unwrap:x:+/**
+                              http.post:"https://api.openai.com/v1/chat/completions"
+                                 headers
+                                    Authorization:x:@.token
+                                    Content-Type:application/json
+                                 payload
+                                    model:x:@.model
+                                    max_tokens:x:@.max-size
+                                    temperature:decimal:0.3
+                                    messages
+                                       .
+                                          role:system
+                                          content:Create a summary of the following information
+                                       .
+                                          role:user
+                                          content:x:@.dp/#/*/completion
+                                 convert:true
 
-                           // Updating prompt.
-                           set-value:x:@.dp/#/*/prompt
-                              strings.concat
-                                 .:"Summary of; "
-                                 strings.substring:x:@.dp/#/*/prompt
-                                    .:int:0
-                                    .:int:150
+                              // Checking that above invocation returned success.
+                              if
+                                 and
+                                    mte:x:@http.post
+                                       .:int:200
+                                    lt:x:@http.post
+                                       .:int:300
+                                 .lambda
 
-                     else
+                                    // Success creating summary.
+                                    sockets.signal:magic.backend.chatbot
+                                       roles:root
+                                       args
+                                          message:Successfully created summary of snippet
+                                          type:info
 
-                        // Oops, could not summarize snippet.
-                        sockets.signal:magic.backend.chatbot
-                           roles:root
-                           args
-                              message:Could not summarize snippet, check your log for details
-                              type:info
-                        lambda2hyper:x:@http.post
-                        log.error:Something went wrong while invoking OpenAI
-                           message:x:@http.post/*/content/*/error/*/message
-                           status:x:@http.post
-                           error:x:@lambda2hyper
+                                    // Updating completion.
+                                    set-value:x:@.dp/#/*/completion
+                                       strings.trim:x:@http.post/*/content/*/choices/0/*/message/*/content
+                                          .:"\r\n\t "
+
+                                    // Updating prompt.
+                                    set-value:x:@.dp/#/*/prompt
+                                       strings.concat
+                                          .:"Summary of; "
+                                          strings.substring:x:@.dp/#/*/prompt
+                                             .:int:0
+                                             .:int:150
+
+                                    // Making sure we don't try again.
+                                    set-value:x:@.no
+                                       .:int:0
+
+                              else
+
+                                 // Oops, could not summarize snippet.
+                                 sockets.signal:magic.backend.chatbot
+                                    roles:root
+                                    args
+                                       message:Could not summarize snippet, check your log for details
+                                       type:warning
+                                 lambda2hyper:x:@http.post
+                                 log.error:Something went wrong while invoking OpenAI
+                                    message:x:@http.post/*/content/*/error/*/message
+                                    status:x:@http.post
+                                    error:x:@lambda2hyper
+
+                                 // Decrementing [.no] such that we don't end up in an infinite loop.
+                                 math.decrement:x:@.no
+
+                           .catch
+
+                              // Decrementing [.no] such that we don't end up in an infinite loop.
+                              math.decrement:x:@.no
 
       /*
        * Creating training snippets from result of above invocation
@@ -317,7 +339,9 @@ slots.create:magic.ai.url.scrape
           *
           * Notice, we need to delete records from VSS table too to avoid "dangling references".
           */
-         data.execute:delete from vss_ml_training_snippets where rowid in (select id as rowid from ml_training_snippets where type = @type and uri = @url)
+         data.execute:@"
+delete from vss_ml_training_snippets
+   where rowid in (select id as rowid from ml_training_snippets where type = @type and uri = @url)"
             @type:x:@.arguments/*/type
             @url:x:@.arguments/*/url
          data.delete
@@ -345,29 +369,82 @@ slots.create:magic.ai.url.scrape
                   not-null:x:@.dp/#/*/completion
                .lambda
 
-                  /*
-                   * Verifying user can create more snippets.
-                   *
-                   * Notice, this is a slot that doesn't exist in Magic core, allowing
-                   * us to create "plugin slots" that somehow validates whether or not the use
-                   * can create additional training snippets or not.
-                   *
-                   * The idea is that the slot should throw an exception if user is not allowed
-                   * to create additional training snippets.
-                   */
-                  add:x:+
-                     get-nodes:x:@.arguments/*/type
-                  try-signal:magic.ai.can-create-snippet
+                  // Verifying snippet is longer than threshold.
+                  if
+                     mt
+                        strings.length:x:@.dp/#/*/completion
+                        get-value:x:@.arguments/*/threshold
+                     .lambda
 
-                  // Inserting training snippet into database.
-                  data.create
-                     table:ml_training_snippets
-                     values
-                        type:x:@.arguments/*/type
-                        uri:x:@.arguments/*/url
-                        prompt:x:@.dp/#/*/prompt
-                        completion:x:@.dp/#/*/completion
-                        meta:AINIRO-Website-Crawler
+                        /*
+                         * Snippet is longer than minimum threshold for import.
+                         *
+                         * Verifying user can create more snippets.
+                         *
+                         * Notice, this is a slot that doesn't exist in Magic core, allowing
+                         * us to create "plugin slots" that somehow validates whether or not the use
+                         * can create additional training snippets or not.
+                         *
+                         * The idea is that the slot should throw an exception if user is not allowed
+                         * to create additional training snippets.
+                         */
+                        add:x:+
+                           get-nodes:x:@.arguments/*/type
+                        try-signal:magic.ai.can-create-snippet
+
+                        /*
+                         * Before we insert snippet we make sure snippet doesn't
+                         * already exist in database.
+                         */
+                        data.read
+                           table:ml_training_snippets
+                           columns
+                              id
+                           where
+                              and
+                                 type.eq:x:@.arguments/*/type
+                                 completion.eq:x:@.dp/#/*/completion
+                        if
+                           not-exists:x:@data.read/*
+                           .lambda
+
+                              // Inserting training snippet into database.
+                              data.create
+                                 table:ml_training_snippets
+                                 values
+                                    type:x:@.arguments/*/type
+                                    uri:x:@.arguments/*/url
+                                    prompt:x:@.dp/#/*/prompt
+                                    completion:x:@.dp/#/*/completion
+                                    meta:AINIRO-Website-Crawler
+
+                        else
+
+                           // Signaling frontend that snippet already exists in database.
+                           strings.concat
+                              .:"Snippet already exists; '"
+                              get-value:x:@.dp/#/*/prompt
+                              .:"'"
+                           unwrap:x:+/**
+                           sockets.signal:magic.backend.chatbot
+                              roles:root
+                              args
+                                 message:x:@strings.concat
+                                 type:info
+
+                  else
+
+                     // Signaling frontend that snippet was too short to be considered.
+                     strings.concat
+                        .:"Snippet was below threshold and will not be imported; '"
+                        get-value:x:@.dp/#/*/prompt
+                        .:"'"
+                     unwrap:x:+/**
+                     sockets.signal:magic.backend.chatbot
+                        roles:root
+                        args
+                           message:x:@strings.concat
+                           type:info
 
       // Informing user that we're done creating training snippets from specified URL.
       strings.concat

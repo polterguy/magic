@@ -127,6 +127,7 @@ slots.create:magic.ai.html.extract-snippets
             html:x:@.document
             base:x:@.base
             scheme:x:@.scheme
+            base-prompt:x:@.base-prompt
 
          // Making sure we return snippets and meta information.
          add:x:@.snippets
@@ -149,6 +150,7 @@ slots.create:magic.ai.html.extract-snippets
          unwrap:x:+/*
          signal:magic.ai.html.extract-code
             html:x:@.document
+            base-prompt:x:@.base-prompt
 
          // Making sure we return snippets and meta information.
          add:x:@.snippets
@@ -173,6 +175,7 @@ slots.create:magic.ai.html.extract-snippets
             html:x:@.document
             base:x:@.base
             scheme:x:@.scheme
+            base-prompt:x:@.base-prompt
 
          // Making sure we return snippets and meta information.
          add:x:@.snippets

@@ -321,4 +321,10 @@ slots.create:magic.ai.load-sitemap
          remove-nodes:x:@sort/0
 
    // Returning URLs to caller.
-   return-nodes:x:@.return/*
+   add:x:./*/return-nodes/*/urls
+      get-nodes:x:@.return/*
+   get-count:x:@.urls/*
+   unwrap:x:+/*
+   return-nodes
+      total:x:@get-count
+      urls
