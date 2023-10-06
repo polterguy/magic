@@ -158,31 +158,6 @@ slots.create:magic.ai.html.extract-snippets
          set-value:x:@.meta/*/code
             get-count:x:@signal/*
 
-   /*
-    * Checking if caller wants lists.
-    *
-    * Notice, list snippets being li tags are returned as isolated snippets,
-    * but only if caller wants to fetch lists.
-    */
-   if
-      eq:x:@.arguments/*/lists
-         .:bool:true
-      .lambda
-
-         // Extracting all lists.
-         unwrap:x:+/*
-         signal:magic.ai.html.extract-lists
-            html:x:@.document
-            base:x:@.base
-            scheme:x:@.scheme
-            base-prompt:x:@.base-prompt
-
-         // Making sure we return snippets and meta information.
-         add:x:@.snippets
-            get-nodes:x:@signal/*
-         set-value:x:@.meta/*/lists
-            get-count:x:@signal/*
-
 
    /*
     * Now we can traverse the HTML for Hx elements to use to create training snippets
@@ -205,6 +180,7 @@ slots.create:magic.ai.html.extract-snippets
             base:x:@.base
             scheme:x:@.scheme
             base-prompt:x:@.base-prompt
+            lists:x:@.arguments/*/lists
 
          // Making sure we return snippets and meta information.
          add:x:@.snippets
