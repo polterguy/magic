@@ -4,18 +4,21 @@
  *
  * Takes the following arguments:
  *
- * - [html]   - Mandatory. Being the actual HTML we're traversing for training data.
- * - [url]    - Optional.  Being the URL from where the document was fetched
- * - [images] - Optional.  If true will return images as Markdown training snippets.
- * - [code]   - Optional.  If true will return code tags as Markdown code training snippets.
- * - [lists]  - Optional.  If true will return li tags as list Markdown training snippets.
- * - [main]   - Optional.  If true will return primary HTML content of p, div, article, etc type of tags.
+ * - [html]     - Mandatory. Being the actual HTML we're traversing for training data.
+ * - [url]      - Optional.  Being the URL from where the document was fetched
+ * - [images]   - Optional.  If true will return images as Markdown training snippets.
+ * - [code]     - Optional.  If true will return code tags as Markdown code training snippets.
+ * - [lists]    - Optional.  If true will return li tags as list Markdown training snippets.
+ * - [main]     - Optional.  If true will return primary HTML content of p, div, article, etc type of tags.
+ * - [semantic] - Optional.  If true, will try to start scraping from semantic tags, such as article and main.
  */
 slots.create:magic.ai.html.extract-snippets
 
    // Sanity checking invocation.
    validators.mandatory:x:@.arguments/*/html
    validators.url:x:@.arguments/*/url
+   validators.default:x:@.arguments
+      semantic:bool:false
 
    // Converting HTML to lambda object such that we can semantically traverse HTML document.
    html2lambda:x:@.arguments/*/html
@@ -181,6 +184,7 @@ slots.create:magic.ai.html.extract-snippets
             scheme:x:@.scheme
             base-prompt:x:@.base-prompt
             lists:x:@.arguments/*/lists
+            semantic:x:@.arguments/*/semantic
 
          // Making sure we return snippets and meta information.
          add:x:@.snippets
