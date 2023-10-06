@@ -44,7 +44,10 @@ slots.create:magic.ai.html.extract-main
 
    // Checking if HTML document contains an [article] or [main] tag.
    if
-      exists:x:@.arguments/*/html/#/*/body/**/main/[0,1]
+      and
+         eq:x:@.arguments/*/semantic
+            .:bool:true
+         exists:x:@.arguments/*/html/#/*/body/**/main/[0,1]
       .lambda
 
          /*
@@ -55,7 +58,10 @@ slots.create:magic.ai.html.extract-main
             reference:x:@.arguments/*/html/#/*/body/**/main/[0,1]
 
    else-if
-      exists:x:@.arguments/*/html/#/*/body/**/article/[0,1]
+      and
+         eq:x:@.arguments/*/semantic
+            .:bool:true
+         exists:x:@.arguments/*/html/#/*/body/**/article/[0,1]
       .lambda
 
          /*
