@@ -152,7 +152,7 @@ try
    unwrap:x:./*/signal/=magic.ai.crawl-site/*/.onafter/*/.host
    signal:magic.ai.crawl-site
       delay:int:1000
-      threshold:int:150
+      threshold:int:50
       summarize:bool:true
       type:x:@.type
       .onafter

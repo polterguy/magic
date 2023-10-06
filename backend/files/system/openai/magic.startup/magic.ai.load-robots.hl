@@ -299,41 +299,6 @@ slots.create:magic.ai.load-robots
                                                 .
                                                    .:x:@strings.concat
 
-   // Running through sitemaps and removing all we're not allowed to crawl.
-   .allowed-sitemaps
-   for-each:x:@.sitemap/*
-
-      // Buffer for currently iterated sitemap.
-      .cur
-      set-value:x:@.cur
-         get-value:x:@.dp/#
-
-      // Verifying currently iterated sitemap does not exist in disallow section.
-      .add:bool:true
-      for-each:x:@.disallow/*
-
-         // If [.cur] starts with currently iterated [.disallow] we do NOT add it.
-         if
-            strings.starts-with:x:@.cur
-               get-value:x:@.dp/#
-            .lambda
-
-               // We're not allowed to crawl this sitemap.
-               set-value:x:@.add
-                  .:bool:false
-
-      // Verifying we're allowed to crawl sitemap.
-      if
-         eq:x:@.add
-            .:bool:true
-         .lambda
-
-            // Currently iterated sitemap was NOT found in disallow section.
-            unwrap:x:+/*/*
-            add:x:@.allowed-sitemaps
-               .
-                  .:x:@.cur
-
    // Returning disallowed URLs to caller.
    if
       exists:x:@.disallow/*
@@ -360,12 +325,12 @@ slots.create:magic.ai.load-robots
 
    // Returning allowed sitemap URLs to caller.
    if
-      exists:x:@.allowed-sitemaps/*
+      exists:x:@.sitemap/*
       .lambda
 
          // We've got sitemap URLs in robots.txt file.
          add:x:+/*/*
-            get-nodes:x:@.allowed-sitemaps/*
+            get-nodes:x:@.sitemap/*
          add:x:../*/return
             .
                sitemap
@@ -377,7 +342,8 @@ slots.create:magic.ai.load-robots
    
          /*
           * If we could not find any sitemaps,
-          * we return x.com/sitemap.xml as the default value.
+          * we return x.com/sitemap.xml as the default sitemap such that
+          * caller can try to retrieve it in case it exists.
           */
          strings.concat
             get-value:x:@.domain

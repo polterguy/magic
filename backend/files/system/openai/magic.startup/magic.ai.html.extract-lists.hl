@@ -352,13 +352,17 @@ slots.create:magic.ai.html.extract-lists
 
             // We've seen hyperlinks.
             set-value:x:@.prompt
-               .:"List with links and hyperlinks"
+               strings.concat
+                  .:"List with links and hyperlinks - "
+                  get-value:x:@.arguments/*/base-prompt
 
       else
 
          // No hyperlinks were found.
          set-value:x:@.prompt
-            .:"List"
+            strings.concat
+               .:"List - "
+               get-value:x:@.arguments/*/base-prompt
 
       /*
        * Adding prompt and completion to returned snippets, but only
