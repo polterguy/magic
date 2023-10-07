@@ -76,60 +76,88 @@ slots.create:magic.ai.url.scrape
     *
     * First images.
     */
-   if:x:@.arguments/*/images
-      strings.concat
-         .:"Found "
-         get-value:x:@signal/*/meta/*/images
-         .:" images on page"
-      unwrap:x:+/**
-      sockets.signal:magic.backend.chatbot
-         roles:root
-         args
-            message:x:@strings.concat
-            type:info
-      sleep:100
+   if
+      and
+         exists:x:@.arguments/*/images
+         mt:x:@signal/*/meta/*/images
+            .:int:0
+      .lambda
+
+         // We found at least one image on page.
+         strings.concat
+            .:"Found "
+            get-value:x:@signal/*/meta/*/images
+            .:" images on page"
+         unwrap:x:+/**
+         sockets.signal:magic.backend.chatbot
+            roles:root
+            args
+               message:x:@strings.concat
+               type:info
+         sleep:100
 
    // Then code snippets.
-   if:x:@.arguments/*/code
-      strings.concat
-         .:"Found "
-         get-value:x:@signal/*/meta/*/code
-         .:" code snippets on page"
-      unwrap:x:+/**
-      sockets.signal:magic.backend.chatbot
-         roles:root
-         args
-            message:x:@strings.concat
-            type:info
-      sleep:100
+   if
+      and
+         exists:x:@.arguments/*/code
+         mt:x:@signal/*/meta/*/code
+            .:int:0
+      .lambda
+
+         // We found at least one code snippet on page.
+         strings.concat
+            .:"Found "
+            get-value:x:@signal/*/meta/*/code
+            .:" code snippets on page"
+         unwrap:x:+/**
+         sockets.signal:magic.backend.chatbot
+            roles:root
+            args
+               message:x:@strings.concat
+               type:info
+         sleep:100
 
    // Then lists.
-   if:x:@.arguments/*/lists
-      strings.concat
-         .:"Found "
-         get-value:x:@signal/*/meta/*/lists
-         .:" lists on page"
-      unwrap:x:+/**
-      sockets.signal:magic.backend.chatbot
-         roles:root
-         args
-            message:x:@strings.concat
-            type:info
-      sleep:100
+   if
+      and
+         exists:x:@.arguments/*/lists
+         mt:x:@signal/*/meta/*/lists
+            .:int:0
+      .lambda
+
+         // We found at least one list on page.
+         strings.concat
+            .:"Found "
+            get-value:x:@signal/*/meta/*/lists
+            .:" lists on page"
+         unwrap:x:+/**
+         sockets.signal:magic.backend.chatbot
+            roles:root
+            args
+               message:x:@strings.concat
+               type:info
+         sleep:100
 
    // Then main sections.
-   if:x:@.arguments/*/main
-      strings.concat
-         .:"Found "
-         get-value:x:@signal/*/meta/*/main
-         .:" main sections on page"
-      unwrap:x:+/**
-      sockets.signal:magic.backend.chatbot
-         roles:root
-         args
-            message:x:@strings.concat
-            type:info
-      sleep:100
+   if
+      and
+         exists:x:@.arguments/*/main
+         mt:x:@signal/*/meta/*/main
+            .:int:0
+      .lambda
+
+         // We found at least one main section on page.
+         strings.concat
+            .:"Found "
+            get-value:x:@signal/*/meta/*/main
+            .:" main sections on page"
+         unwrap:x:+/**
+         sockets.signal:magic.backend.chatbot
+            roles:root
+            args
+               message:x:@strings.concat
+               type:info
+         sleep:100
 
    // Buffer for training snippets found as we chopped up page.
    .snippets
@@ -167,7 +195,9 @@ slots.create:magic.ai.url.scrape
 
             /*
              * Caller wants to summarize long snippets, figuring out max size of snippets,
-             * which are max_context_tokens / 2.
+             * which are max_context_tokens * 0.80.
+             *
+             * This ensures that a text context will almost always have extra room for images.
              */
             .max-size
             .api-key
@@ -185,12 +215,15 @@ slots.create:magic.ai.url.scrape
                      and
                         type.eq:x:@.arguments/*/type
 
-               // Making sure we use 50% of max context tokens as maximum size for snippets.
+               // Making sure we use 80% of max context tokens as maximum size for snippets.
                set-value:x:@.max-size
-                  math.divide
+                  math.multiply
                      convert:x:@data.read/*/*/max_context_tokens
-                        type:int
-                     .:int:2
+                        type:decimal
+                     .:decimal:0.8
+               set-value:x:@.max-size
+                  convert:x:@.max-size
+                     type:int
                set-value:x:@.api-key
                   get-value:x:@data.read/*/*/api_key
                set-value:x:@.model
@@ -222,7 +255,7 @@ slots.create:magic.ai.url.scrape
                      sockets.signal:magic.backend.chatbot
                         roles:root
                         args
-                           message:Summarizing snippet since it is larger than 50% of maximum context size for type
+                           message:Summarizing snippet since it is larger than 80% of maximum context size for type
                            type:info
                      sleep:100
 
@@ -321,6 +354,20 @@ slots.create:magic.ai.url.scrape
                               // Decrementing [.no] such that we don't end up in an infinite loop.
                               math.decrement:x:@.no
 
+      // Number of snippets that are below threshold and hence won't be imported.
+      .below-threshold:int:0
+
+      // Total snippets found on page.
+      .total-snippets
+      set-value:x:@.total-snippets
+         get-count:x:@.snippets/*
+
+      // Snippets that already exists.
+      .already-exists:int:0
+
+      // Number of snippets that failed as we tried to summarize them.
+      .failed:int:0
+
       /*
        * Creating training snippets from result of above invocation
        * but first we need to open database connection.
@@ -378,15 +425,27 @@ delete from vss_ml_training_snippets
                   not-null:x:@.dp/#/*/completion
                .lambda
 
-                  // Verifying snippet is longer than minimum threshold required to import snippet.
+                  /*
+                   * Verifying snippet is longer than minimum threshold required to import snippet.
+                   *
+                   * Notice, we skip this part of snippet is an image snippet, at which point we
+                   * insert it anyway.
+                   */
                   if
-                     mt
-                        strings.length:x:@.dp/#/*/completion
-                        get-value:x:@.arguments/*/threshold
+                     or
+                        mt
+                           strings.length:x:@.dp/#/*/completion
+                           get-value:x:@.arguments/*/threshold
+                        and
+                           strings.starts-with:x:@.dp/#/*/prompt
+                              .:Image
+                           strings.starts-with:x:@.dp/#/*/completion
+                              .:![
                      .lambda
 
                         /*
-                         * Snippet is longer than minimum threshold for import.
+                         * Snippet is longer than minimum threshold for import, or snippet is
+                         * an image.
                          *
                          * Verifying user can create more snippets.
                          *
@@ -411,6 +470,7 @@ delete from vss_ml_training_snippets
                               id
                               prompt
                               completion
+                              uri
                            where
                               and
                                  type.eq:x:@.arguments/*/type
@@ -433,25 +493,15 @@ delete from vss_ml_training_snippets
                            and
                               neq:x:@data.read/0/*/completion
                                  .:
-                              strings.starts-with:x:@data.read/0/*/prompt
-                                 .:"Common;"
+                              eq:x:@data.read/0/*/prompt
+                                 .:"Common"
                            .lambda
 
                               /*
                                * Snippet already exists in database and has already been summarized,
                                * hence we do nothing.
                                */
-                              strings.concat
-                                 .:"Snippet already exists and has been summarized; '"
-                                 get-value:x:@.dp/#/*/prompt
-                                 .:"'"
-                              unwrap:x:+/**
-                              sockets.signal:magic.backend.chatbot
-                                 roles:root
-                                 args
-                                    message:x:@strings.concat
-                                    type:info
-                              sleep:100
+                              math.increment:x:@.already-exists
 
                         else
 
@@ -459,128 +509,115 @@ delete from vss_ml_training_snippets
                            sockets.signal:magic.backend.chatbot
                               roles:root
                               args
-                                 message:Snippet with similar completion exists, summarizing prompt to create general snippet
+                                 message:Snippet with similar completion exists, updating prompt to common
                                  type:info
-                           sleep:100
+                           sleep:10
 
-                           /*
-                            * Since snippet exists in multiple places, we cannot use
-                            * the default prompt for it, which is based upon Hx tags,
-                            * but must rather create a summary of snippet that we use
-                            * as its prompt, to avoid having the snippet only found on
-                            * searches specific to the first page we found the snippet
-                            * on.
-                            */
-                           .model
-                           .token
-
-                           // Retrieving API key and model from database if existing.
-                           data.read
-                              table:ml_types
-                              columns
-                                 api_key
-                                 model
+                           
+                           // Updating record in database.
+                           data.update
+                              table:ml_training_snippets
+                              values
+                                 prompt:Common
                               where
                                  and
-                                    type.eq:x:@.arguments/*/type
+                                    id.eq:x:@data.read/0/*/id
 
-                           // Setting API key.
-                           set-value:x:@.token
-                              strings.concat
-                                 .:"Bearer "
-                                 get-first-value
-                                    get-value:x:@data.read/*/*/api_key
-                                    config.get:"magic:openai:key"
-                           set-value:x:@.model
-                              get-value:x:@data.read/*/*/model
-                           unwrap:x:+/**
-                           http.post:"https://api.openai.com/v1/chat/completions"
-                              headers
-                                 Authorization:x:@.token
-                                 Content-Type:application/json
-                              payload
-                                 model:x:@.model
-                                 max_tokens:int:1000
-                                 temperature:decimal:0.3
-                                 messages
-                                    .
-                                       role:system
-                                       content:Create a one line summary of the following information with relevant keywords you can find in the information provided
-                                    .
-                                       role:user
-                                       content:x:@data.read/@data.read/0/*/completion
-                              convert:true
-
-                           // Checking that above invocation returned success.
-                           if
-                              and
-                                 mte:x:@http.post
-                                    .:int:200
-                                 lt:x:@http.post
-                                    .:int:300
-                                 exists:x:@http.post/*/content/*/choices/0/*/message/*/content
-                                 not-null:x:@http.post/*/content/*/choices/0/*/message/*/content
-                                 neq:x:@http.post/*/content/*/choices/0/*/message/*/content
-                                    .:
-                              .lambda
-
-                                 // Success creating summary.
-                                 sockets.signal:magic.backend.chatbot
-                                    roles:root
-                                    args
-                                       message:Successfully summarized snippet, now updating its prompt
-                                       type:info
-                                 sleep:100
-
-                                 // Updating completion.
-                                 strings.concat
-                                    .:"Common; "
-                                    strings.trim:x:@http.post/*/content/*/choices/0/*/message/*/content
-                                       .:"\r\n\t \"'"
-
-                                 // Updating record in database.
-                                 data.update
-                                    table:ml_training_snippets
-                                    values
-                                       prompt:x:@strings.concat
-                                    where
-                                       and
-                                          id.eq:x:@data.read/@data.read/0/*/id
-
-                           else
-
-                              // OpenAI didn't return value response.
-                              sockets.signal:magic.backend.chatbot
-                                 roles:root
-                                 args
-                                    message:OpenAI could not successfully create a summary of completion
-                                    type:warning
-                              sleep:100
+                           // Updating count of snippets that already exists.
+                           math.increment:x:@.already-exists
 
                   else
 
-                     // Signaling frontend that snippet was too short to be considered.
-                     strings.concat
-                        .:"Snippet was below threshold and will not be imported; '"
-                        get-value:x:@.dp/#/*/prompt
-                        .:"'"
-                     unwrap:x:+/**
-                     sockets.signal:magic.backend.chatbot
-                        roles:root
-                        args
-                           message:x:@strings.concat
-                           type:info
-                     sleep:100
+                     // Updating count of snippets that's below threshold.
+                     math.increment:x:@.below-threshold
 
       // Informing user that we're done creating training snippets from specified URL.
-      strings.concat
-         .:"Done importing "
-         get-count:x:@.snippets/*
-         .:" training snippets from page"
-      unwrap:x:+/**
-      sockets.signal:magic.backend.chatbot
-         roles:root
-         args
-            message:x:@strings.concat
-            type:info
-      sleep:100
+      .imported
+      set-value:x:@.imported
+         math.subtract:x:@.total-snippets
+            math.add
+               get-value:x:@.below-threshold
+               get-value:x:@.already-exists
+
+      // Making sure we were able to actually import anything.
+      if
+         mt:x:@.imported
+            .:int:0
+         .lambda
+
+            // Successfully imported at least one snippet.
+            strings.concat
+               .:"Done importing "
+               get-value:x:@.imported
+               .:" training snippets from page"
+            unwrap:x:+/**
+            sockets.signal:magic.backend.chatbot
+               roles:root
+               args
+                  message:x:@strings.concat
+                  type:info
+            sleep:100
+
+      else
+
+         // Could not import anything!
+         sockets.signal:magic.backend.chatbot
+            roles:root
+            args
+               message:We were not able to successfully import any snippets from page!
+               type:warning
+         sleep:100
+
+      // Checking how many snippets was below threshold, and informing user.
+      if
+         mt:x:@.below-threshold
+            .:int:0
+         .lambda
+
+            // Informing user how many snippets was below threshold and hence was not imported.
+            strings.concat
+               get-value:x:@.below-threshold
+               .:" snippets was below threshold and hence was not imported"
+            unwrap:x:+/**
+            sockets.signal:magic.backend.chatbot
+               roles:root
+               args
+                  message:x:@strings.concat
+                  type:info
+            sleep:100
+
+      // Checking how many snippets that already existed and informing user.
+      if
+         mt:x:@.already-exists
+            .:int:0
+         .lambda
+
+            // Informing user how many snippets was below threshold and hence was not imported.
+            strings.concat
+               get-value:x:@.already-exists
+               .:" snippets already exists in database and hence was not imported"
+            unwrap:x:+/**
+            sockets.signal:magic.backend.chatbot
+               roles:root
+               args
+                  message:x:@strings.concat
+                  type:info
+            sleep:100
+
+      // Checking how many snippets that failed during inserts.
+      if
+         mt:x:@.failed
+            .:int:0
+         .lambda
+
+            // Informing user how many snippets was below threshold and hence was not imported.
+            strings.concat
+               get-value:x:@.failed
+               .:" snippets failed during import, probably because of OpenAI not being able to summarize them"
+            unwrap:x:+/**
+            sockets.signal:magic.backend.chatbot
+               roles:root
+               args
+                  message:x:@strings.concat
+                  type:warning
+            sleep:100

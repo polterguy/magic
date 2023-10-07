@@ -8,6 +8,22 @@ slots.create:magic.ai.create-landing-page
    validators.mandatory:x:@.arguments/*/url
    validators.mandatory:x:@.arguments/*/type
 
+   // Adding [headers] argument unless already specified.
+   if
+      not-exists:x:@.arguments/*/headers
+      .lambda
+
+         // Adding [headers] to [.arguments] such that we can create default HTTP headers further down.
+         add:x:@.arguments
+            .
+               headers
+
+   // Adding default headers unless they're already specified.
+   validators.default:x:@.arguments/*/headers
+      User-Agent:AINIRO-Crawler 2.0
+      Accept-Encoding:identity
+      Accept:text/xml
+
    // Signaling frontend.
    strings.concat
       .:"Creating default landing page for "
@@ -25,9 +41,9 @@ slots.create:magic.ai.create-landing-page
          type:info
 
    // Retrieving HTML document from URL specified.
+   add:x:./*/http.get
+      get-nodes:x:@.arguments/*/headers
    http.get:x:@.arguments/*/url
-      headers
-         User-Agent:AINIRO-MachineLearning-Spider
 
    // Converting to lambda to verify we've got a "base" element.
    html2lambda:x:@http.get/*/content

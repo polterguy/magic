@@ -19,32 +19,6 @@ slots.create:magic.ai.crawl-site
          signal:magic.ai.load-robots
             url:x:@.arguments/*/url
 
-         // Checking if robots.txt contains a crawl-delay.
-         if
-            exists:x:@signal/*/crawl-delay
-            .lambda
-
-               // Updating delay to value from robots.txt.
-               remove-nodes:x:@.arguments/*/delay
-               unwrap:x:+/*
-               validators.default:x:@.arguments
-                  delay:x:@signal/*/crawl-delay
-
-
-               // Signaling frontend to inform of that we found a crawl-delay value.
-               strings.concat
-                  .:"Robots.txt file contains a Crawl-Delay value of "
-                  get-value:x:@signal/*/crawl-delay
-                  .:" milliseconds, hence making sure we don't crawl more often than every "
-                  get-value:x:@signal/*/crawl-delay
-                  .:" milliseconds to avoid exhausting web server"
-               unwrap:x:+/**
-               sockets.signal:magic.backend.chatbot
-                  roles:root
-                  args
-                     message:x:@strings.concat
-                     type:info
-
          // Checking if site contains a robots.txt file.
          if
             eq:x:@signal/*/found
@@ -71,6 +45,31 @@ slots.create:magic.ai.crawl-site
                      message:x:@strings.concat
                      type:info
                sleep:100
+
+               // Checking if robots.txt contains a crawl-delay.
+               if
+                  exists:x:@signal/*/crawl-delay
+                  .lambda
+
+                     // Updating delay to value from robots.txt.
+                     remove-nodes:x:@.arguments/*/delay
+                     unwrap:x:+/*
+                     validators.default:x:@.arguments
+                        delay:x:@signal/*/crawl-delay
+
+
+                     // Signaling frontend to inform of that we found a crawl-delay value.
+                     strings.concat
+                        .:"Robots.txt file contains a Crawl-Delay value of "
+                        math.divide:x:@signal/*/crawl-delay
+                           .:int:1000
+                        .:" seconds"
+                     unwrap:x:+/**
+                     sockets.signal:magic.backend.chatbot
+                        roles:root
+                        args
+                           message:x:@strings.concat
+                           type:info
 
          else
 
@@ -107,7 +106,7 @@ slots.create:magic.ai.crawl-site
          strings.concat
             .:"We found "
             get-value:x:@signal/*/total
-            .:" URLs in sitemap"
+            .:" URLs in sitemap(s)"
          unwrap:x:+/**
          sockets.signal:magic.backend.chatbot
             roles:root
@@ -158,8 +157,9 @@ slots.create:magic.ai.crawl-site
                // Signaling frontend that we're waiting for n milliseconds.
                strings.concat
                   .:"Waiting for "
-                  get-value:x:@.arguments/*/delay
-                  .:" milliseconds to avoid exhausting web server"
+                  math.divide:x:@.arguments/*/delay
+                     .:int:1000
+                  .:" seconds to avoid exhausting web server"
                unwrap:x:+/**
                sockets.signal:magic.backend.chatbot
                   roles:root
