@@ -145,6 +145,7 @@ slots.create:magic.ai.load-robots
                                     set-value:x:@.value
                                        strings.replace-not-of:x:@.value
                                           .:0123456789
+                                          .:
                                     if
                                        and
                                           eq:x:@.relevant

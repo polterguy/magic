@@ -9,6 +9,9 @@ slots.create:magic.ai.html.extract-main
    validators.mandatory:x:@.arguments/*/html
    validators.mandatory:x:@.arguments/*/base-prompt
 
+   // Buffer for training snippets returned to caller.
+   .snippets
+
    // Base prompt prepended in front of all prompts.
    .base:
    if
@@ -23,8 +26,18 @@ slots.create:magic.ai.html.extract-main
          set-value:x:@.base
             get-value:x:@.arguments/*/base-prompt
 
-   // Buffer for training snippets returned to caller.
-   .snippets
+         /*
+          * Adding default snippet being nothing but base prompt.
+          *
+          * This is done to make sure we can extract text that exists on
+          * page before any Hx tags, in addition to being able to extract
+          * text from page if page doesn't contain any Hx elements at all.
+          */
+         unwrap:x:+/*/*/*
+         add:x:@.snippets
+            .
+               .
+                  prompt:x:@.base
 
    /*
     * Notice, we apply some logic here to figure out which part of our HTML document we're
@@ -189,13 +202,25 @@ slots.create:magic.ai.html.extract-main
 
          // Content tags.
          case:p
+         case:i
+         case:em
+         case:b
+         case:strong
+         case:span
 
             /*
-             * Making sure we've already added at least one snippet,
-             * implying we're below H1 tag somewhere.
+             * Making sure we've already added at least one snippet.
              */
             if
-               exists:x:@.snippets/*
+               and
+                  exists:x:@.snippets/*
+                  or
+                     eq:x:@get-name
+                        .:p
+                     and
+                        not-exists:x:@.dp/#/^p
+                        not-exists:x:@.dp/#/^ul
+                        not-exists:x:@.dp/#/^li
                .lambda
 
                   // Creating a new completion.
@@ -359,6 +384,202 @@ slots.create:magic.ai.html.extract-main
                               .
                                  completion:x:@.completion
 
+         // Non semantic content tags.
+         case:div
+
+            /*
+             * Making sure we've already added at least one snippet.
+             */
+            if
+               exists:x:@.snippets/*
+               .lambda
+
+                  // Creating a new completion.
+                  .completion:
+
+                  /*
+                   * Looping through all children tags, except DIV tags, since
+                   * these will be treated specially in later iterations.
+                   */
+                  for-each:x:@.dp/#/*/!div/\#text
+
+                     /*
+                      * Verifying tag is not child of p, ul, ol, h1, etc.
+                      *
+                      * This is done because these tags are treated explicitly, and
+                      * this section is only for "non-semantic" HTML where the content
+                      * has been directly embedded within a DIV without any semantic p/ul/ol
+                      * tags wrapping the content.
+                      */
+                     if
+                        and
+                           not-exists:x:@.dp/#/^p
+                           not-exists:x:@.dp/#/^ul
+                           not-exists:x:@.dp/#/^ol
+                           not-exists:x:@.dp/#/^h1
+                           not-exists:x:@.dp/#/^h2
+                           not-exists:x:@.dp/#/^h3
+                           not-exists:x:@.dp/#/^h4
+                           not-exists:x:@.dp/#/^h5
+                           not-exists:x:@.dp/#/^h6
+                           not-exists:x:@.dp/#/^button
+                        .lambda
+
+                           // Verifying text node is not null or empty.
+                           if
+                              and
+                                 neq:x:@.dp/#
+                                    .
+                                 neq:x:@.dp/#
+                                    .:
+                              .lambda
+
+                                 // Cleaning up text node, removing redundant CR/LF, TAB, and SP characters.
+                                 strings.replace:x:@.dp/#
+                                    .:"\r"
+                                    .:" "
+                                 strings.replace:x:@strings.replace
+                                    .:"\n"
+                                    .:" "
+                                 strings.replace:x:@strings.replace
+                                    .:"\t"
+                                    .:" "
+                                 strings.replace:x:@strings.replace
+                                    .:"  "
+                                    .:" "
+
+                                 /*
+                                  * Checking if currently iterated #text snippet is the child of
+                                  * a hyperlink [a] node.
+                                  */
+                                 if
+                                    and
+                                       eq
+                                          get-name:x:@.dp/#/.
+                                          .:a
+                                       exists:x:@.dp/#/./*/\@href
+                                       not-null:x:@.dp/#/./*/\@href
+                                       not
+                                          strings.ends-with:x:@.dp/#/./*/\@href
+                                             .:#
+                                       not
+                                          strings.starts-with:x:@.dp/#/./*/\@href
+                                             .:javascript
+                                       not
+                                          strings.starts-with:x:@.dp/#/./*/\@href
+                                             .:void
+                                    .lambda
+
+                                       /*
+                                        * Currently iterated text snippet is a hyperlink.
+                                        *
+                                        * Normalizing hyperlink by invoking helper slot.
+                                        */
+                                       .url
+                                       unwrap:x:+/*/*
+                                       set-value:x:@.url
+                                          signal:magic.url.normalize
+                                             url:x:@.dp/#/./*/\@href
+                                             base:x:@.arguments/*/base
+                                             scheme:x:@.arguments/*/scheme
+
+                                       // Checking if above invocation returned a valid URL.
+                                       if
+                                          not-null:x:@.url
+                                          .lambda
+
+                                             // Adding URL as Markdown to completion.
+                                             set-value:x:@.completion
+                                                strings.concat
+                                                   get-value:x:@.completion
+                                                   .:" "
+                                                   .:[
+                                                   strings.trim:x:@strings.replace
+                                                      .:"  \r\n\t"
+                                                   .:](
+                                                   get-value:x:@.url
+                                                   .:)
+                                                   .:" "
+
+                                       else
+
+                                          // Not a valid URL.
+                                          set-value:x:@.completion
+                                             strings.concat
+                                                get-value:x:@.completion
+                                                strings.trim:x:@strings.replace
+                                                   .:"  \r\n\t"
+                                                .:" "
+
+                                 else
+
+                                    // Anything BUT a hyperlink.
+                                    set-value:x:@.completion
+                                       strings.concat
+                                          get-value:x:@.completion
+                                          strings.trim:x:@strings.replace
+                                             .:"  \r\n\t"
+                                          .:" "
+
+                  /*
+                   * Trimming completion.
+                   *
+                   * Notice, there's a non-breaking space in the following string (U+00A0).
+                   */
+                  set-value:x:@.completion
+                     strings.trim:x:@.completion
+                        .:"  \r\n\t"
+
+                  // Replacing all occurrencies of double space with single space.
+                  .has-double-space:bool:true
+                  while:x:@.has-double-space
+
+                     // Checking if we've got more double spaces in completion, and if not, stopping while loop.
+                     if
+                        strings.contains:x:@.completion
+                           .:"  "
+                        .lambda
+                           set-value:x:@.completion
+                              strings.replace:x:@.completion
+                                 .:"  "
+                                 .:" "
+                     else
+                        set-value:x:@.has-double-space
+                           .:bool:false
+
+                  // Cleaning up punctuation.
+                  set-value:x:@.completion
+                     strings.replace:x:@.completion
+                        .:" ."
+                        .:"."
+                  set-value:x:@.completion
+                     strings.replace:x:@.completion
+                        .:" ,"
+                        .:","
+
+                  // Verifying that element actually contained some content.
+                  if
+                     neq:x:@.completion
+                        .:
+                     .lambda
+
+                        // Adding new completion to [.snippets] collection
+                        unwrap:x:+/*/*
+                        add:x:@.snippets
+                           .
+                              prompt:x:@.base
+                              completion:x:@.completion
+
+                        /*
+                         * Notice, since this is not a semantic tag, we create a new
+                         * snippet that's a clone of the the old prompt.
+                         */
+                        unwrap:x:+/*/*/*
+                        add:x:@.snippets
+                           .
+                              .
+                                 prompt:x:@.base
+
          // Lists.
          case:ul
          case:ol
@@ -449,85 +670,11 @@ slots.create:magic.ai.html.extract-main
                                     set-value:x:@.has-content
                                        .:bool:true
 
-                           // Bold content.
+                           // Handled elements
                            case:b
-                           case:strong
-
-                              // Verifying element has text value.
-                              if
-                                 and
-                                    exists:x:@.dp/#/*/\#text
-                                    not-null:x:@.dp/#/*/\#text
-                                    neq
-                                       strings.trim:x:@.dp/#/*/\#text
-                                          .:"  \r\n\t"
-                                       .:
-                                 .lambda
-
-                                    // If this is not first content, we need to append white space.
-                                    if
-                                       eq:x:@.has-content
-                                          .:bool:true
-                                       .lambda
-
-                                          // We've already found content, making sure we add white space to separate.
-                                          set-value:x:@.tmp
-                                             strings.concat
-                                                get-value:x:@.tmp
-                                                .:" "
-
-                                    // Concatenating text to [.tmp].
-                                    set-value:x:@.tmp
-                                       strings.concat
-                                          get-value:x:@.tmp
-                                          .:**
-                                          get-value:x:@.dp/#/*/\#text
-                                          .:**
-
-                                    // Making sure we track the fact that currently iterated list item has valuable content.
-                                    set-value:x:@.has-content
-                                       .:bool:true
-
-                           // Italics content.
                            case:i
                            case:em
-
-                              // Verifying element has text value.
-                              if
-                                 and
-                                    exists:x:@.dp/#/*/\#text
-                                    not-null:x:@.dp/#/*/\#text
-                                    neq
-                                       strings.trim:x:@.dp/#/*/\#text
-                                          .:"  \r\n\t"
-                                       .:
-                                 .lambda
-
-                                    // If this is not first content, we need to append white space.
-                                    if
-                                       eq:x:@.has-content
-                                          .:bool:true
-                                       .lambda
-
-                                          // We've already found content, making sure we add white space to separate.
-                                          set-value:x:@.tmp
-                                             strings.concat
-                                                get-value:x:@.tmp
-                                                .:" "
-
-                                    // Concatenating text to [.tmp].
-                                    set-value:x:@.tmp
-                                       strings.concat
-                                          get-value:x:@.tmp
-                                          .:_
-                                          get-value:x:@.dp/#/*/\#text
-                                          .:_
-
-                                    // Making sure we track the fact that currently iterated list item has valuable content.
-                                    set-value:x:@.has-content
-                                       .:bool:true
-
-                           // Span element.
+                           case:strong
                            case:span
 
                               // Verifying element has text value.
@@ -577,6 +724,8 @@ slots.create:magic.ai.html.extract-main
                                        .:
                                     exists:x:@.dp/#/*/\@href
                                     not-null:x:@.dp/#/*/\@href
+                                    neq:x:@.dp/#/*/\@href
+                                       .:
                                     neq
                                        strings.trim:x:@.dp/#/*/\@href
                                           .:"  \r\n\t"

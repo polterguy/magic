@@ -41,7 +41,19 @@ slots.create:magic.ai.load-sitemap
    // Iterating through each sitemap specified by caller.
    for-each:x:@.arguments/*/sitemap/*
 
-      // To avoid having server run out of memory we apply a hard stop at 10,000 URLs.
+      // Providing feedback to client.
+      strings.concat
+         .:"Retrieving sitemap "
+         get-value:x:@.dp/#
+      unwrap:x:+/**
+      sockets.signal:magic.backend.chatbot
+         roles:root
+         args
+            message:x:@strings.concat
+            type:info
+      sleep:100
+
+      // To avoid having cloudlet run out of memory we apply a hard stop at 10,000 URLs.
       if
          lt
             get-count:x:@.urls/*
@@ -110,7 +122,7 @@ slots.create:magic.ai.load-sitemap
             // Iterating through each URL in currently iterated sitemap file.
             for-each:x:@xml2lambda/*/urlset/*/url/*/loc/*/\#text
 
-               // To avoid having server run out of memory we apply a hard stop at 10,000 URLs.
+               // To avoid having cloudlet run out of memory we apply a hard stop at 10,000 URLs.
                if
                   lt
                      get-count:x:@.urls/*
@@ -151,7 +163,7 @@ slots.create:magic.ai.load-sitemap
             // Iterating through each CDATA URL in currently primary sitemap file.
             for-each:x:@xml2lambda/*/urlset/*/url/*/loc/*/\#cdata-section
 
-               // To avoid having server run out of memory we apply a hard stop at 10,000 URLs.
+               // To avoid having cloudlet run out of memory we apply a hard stop at 10,000 URLs.
                if
                   lt
                      get-count:x:@.urls/*
@@ -192,30 +204,51 @@ slots.create:magic.ai.load-sitemap
             // Iterating through each CDATA URL referenced in main sitemap.
             for-each:x:@xml2lambda/*/sitemapindex/*/sitemap/*/loc/*/\#cdata-section
 
-               // Recursively invoking self.
-               unwrap:x:+/**
-               signal:magic.ai.load-sitemap
-                  max:x:@.arguments/*/max
-                  sitemap
-                     .:x:@.dp/#
+               // To avoid having cloudlet run out of memory we apply a hard stop at 10,000 URLs.
+               if
+                  lt
+                     get-count:x:@.urls/*
+                     .:int:10000
+                  .lambda
 
-               // Adding URLs to above [.urls] collection.
-               add:x:@.urls
-                  get-nodes:x:@signal/*/urls/*
+                     // Recursively invoking self.
+                     add:x:./*/signal
+                        get-nodes:x:@.arguments/*/headers
+                     unwrap:x:+/**
+                     signal:magic.ai.load-sitemap
+                        max:int:10000
+                        sitemap
+                           .:x:@.dp/#
+
+                     // Adding URLs to above [.urls] collection.
+                     add:x:@.urls
+                        get-nodes:x:@signal/*/urls/*
 
             // Iterating through each CDATA URL referenced in main sitemap.
             for-each:x:@xml2lambda/*/sitemapindex/*/sitemap/*/loc/*/\#text
 
-               // Recursively invoking self.
-               unwrap:x:+/**
-               signal:magic.ai.load-sitemap
-                  max:x:@.arguments/*/max
-                  sitemap
-                     .:x:@.dp/#
+               // To avoid having cloudlet run out of memory we apply a hard stop at 10,000 URLs.
+               if
+                  lt
+                     get-count:x:@.urls/*
+                     .:int:10000
+                  .lambda
 
-               // Adding URLs to above [.urls] collection.
-               add:x:@.urls
-                  get-nodes:x:@signal/*/urls/*
+                     // Recursively invoking self.
+                     unwrap:x:+/**
+                     signal:magic.ai.load-sitemap
+                        max:int:10000
+                        sitemap
+                           .:x:@.dp/#
+
+                     // Adding URLs to above [.urls] collection.
+                     add:x:@.urls
+                        get-nodes:x:@signal/*/urls/*
+
+   // Total URLs in sitemap(s)
+   .total
+   set-value:x:@.total
+      get-count:x:@.urls/*
 
    /*
     * Sorting URLs by length, which typically makes sure more
@@ -337,8 +370,7 @@ slots.create:magic.ai.load-sitemap
    // Returning URLs to caller.
    add:x:./*/return-nodes/*/urls
       get-nodes:x:@.return/*
-   get-count:x:@.urls/*
    unwrap:x:+/*
    return-nodes
-      total:x:@get-count
+      total:x:@.total
       urls

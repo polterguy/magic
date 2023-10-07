@@ -28,9 +28,14 @@ slots.create:magic.ai.html.extract-images
        * data to OpenAI during completion invocations.
        */
       if
-         not
-            strings.starts-with:x:@.dp/#/*/\@src
-               .:"data:"
+         and
+            exists:x:@.dp/#/*/\@src
+            not-null:x:@.dp/#/*/\@src
+            neq:x:@.dp/#/*/\@src
+               .:
+            not
+               strings.starts-with:x:@.dp/#/*/\@src
+                  .:"data:"
          .lambda
 
             // Normalizing URL.
