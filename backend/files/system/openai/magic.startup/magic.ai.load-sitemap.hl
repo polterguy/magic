@@ -10,7 +10,7 @@
 slots.create:magic.ai.load-sitemap
 
    // Sanity checking invocation.
-   validators.mandatory:x:@.arguments/*/sitemap/*
+   validators.mandatory:x:@.arguments/*/sitemap/*/[0,1]
    validators.integer:x:@.arguments/*/max
       min:1
       max:10000
@@ -245,7 +245,7 @@ slots.create:magic.ai.load-sitemap
                      add:x:@.urls
                         get-nodes:x:@signal/*/urls/*
 
-   // Total URLs in sitemap(s)
+   // Total URLs in sitemap(s).
    .total
    set-value:x:@.total
       get-count:x:@.urls/*

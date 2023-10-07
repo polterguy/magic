@@ -32,12 +32,12 @@ slots.create:magic.ai.crawl-site
                      message:Site has robots.txt
                      type:info
                sleep:100
+
+               // Signaling frontend how many sitemaps we found in robots.txt file.
                strings.concat
                   .:"Found "
                   get-count:x:@signal/*/sitemap/*
                   .:" sitemaps in robots.txt file"
-
-               // Signaling frontend how many sitemaps we found in robots.txt file.
                unwrap:x:+/**
                sockets.signal:magic.backend.chatbot
                   roles:root

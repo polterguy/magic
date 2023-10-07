@@ -141,11 +141,25 @@ try
    unwrap:x:./*/signal/=magic.ai.crawl-site/*/.onafter/*/.type
    unwrap:x:./*/signal/=magic.ai.crawl-site/*/.onafter/*/.url
    unwrap:x:./*/signal/=magic.ai.crawl-site/*/.onafter/*/.host
+   unwrap:x:./*/signal/=magic.ai.crawl-site/*/.onerror/*/.type
    signal:magic.ai.crawl-site
       delay:int:1000
       threshold:int:50
       summarize:bool:true
       type:x:@.type
+      .onerror
+
+         // Forward evaluated further up.
+         .type:x:@.type
+
+         // Cleaning up by deleting model.
+         data.connect:[generic|magic]
+            data.delete
+               table:ml_types
+               where
+                  and
+                     type.eq:x:@.type
+
       .onafter
 
          // Forward evaluated further up.
