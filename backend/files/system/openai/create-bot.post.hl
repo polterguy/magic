@@ -195,12 +195,15 @@ try
                      message:We could not find any training data on your website
                      type:error
 
-               // Deleting model.
-               data.delete
-                  table:ml_types
-                  where
-                     and
-                        type.eq:x:@.type
+               // Connecting to database to sanity check model.
+               data.connect:[generic|magic]
+
+                  // Deleting model.
+                  data.delete
+                     table:ml_types
+                     where
+                        and
+                           type.eq:x:@.type
 
          else
 
