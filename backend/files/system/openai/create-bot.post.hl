@@ -190,6 +190,18 @@ try
 
          else
 
+            // Informing client of how many training snippets we created in total.
+            strings.concat
+               .:"We found "
+               get-value:x:@data.connect/*/data.read/*/*/count
+               .:" training snippets we could use on website in total"
+            unwrap:x:+/**
+            sockets.signal:magic.backend.chatbot
+               roles:root
+               args
+                  message:x:@strings.concat
+                  type:info
+
             // Connecting to database to create default snippets.
             data.connect:[generic|magic]
 
