@@ -153,7 +153,7 @@ try
          .url:x:@.arguments/*/url
          .host:x:@request.host
 
-         // Connecting to database to sanity check model and apply some default training snippets.
+         // Connecting to database to sanity check model.
          data.connect:[generic|magic]
 
             // Making sure we actually have training snippets in model.
@@ -166,29 +166,32 @@ try
                   and
                      type.eq:x:@.type
 
-            // Verifying we've got training snippets for model in database.
-            if
-               eq
-                  convert:x:@data.read/*/*/count
-                     type:int
-                  .:int:0
-               .lambda
+         // Verifying we've got training snippets for model in database.
+         if
+            eq
+               convert:x:@data.connect/*/data.read/*/*/count
+                  type:int
+               .:int:0
+            .lambda
 
-                  // Informing client.
-                  sockets.signal:magic.backend.chatbot
-                     roles:root
-                     args
-                        message:We could not find any training data on your website
-                        type:error
+               // Informing client.
+               sockets.signal:magic.backend.chatbot
+                  roles:root
+                  args
+                     message:We could not find any training data on your website
+                     type:error
 
-                  // Deleting model.
-                  data.delete
-                     table:ml_types
-                     where
-                        and
-                           type.eq:x:@.type
+               // Deleting model.
+               data.delete
+                  table:ml_types
+                  where
+                     and
+                        type.eq:x:@.type
 
-            else
+         else
+
+            // Connecting to database to create default snippets.
+            data.connect:[generic|magic]
 
                // Adding "Who created this chatbot" snippet.
                data.create
@@ -199,18 +202,18 @@ try
                      completion:@"This chatbot is a custom ChatGPT chatbot allowing you to use natural language to ask questions related to the website you're currently visiting. It was created by [AINIRO.IO](https://ainiro.io). AINIRO have ChatGPT solutions allowing you to scrape your website, upload document, and create publicly available ChatGPT-based chatbots and AI Based search similar to Bing, in addition to AI Expert Systems providing cognitive assistance."
                      uri:"https://ainiro.io"
 
-               // Vectorizing model.
-               unwrap:x:+/*
-               signal:magic.ai.vectorise
-                  type:x:@.type
-                  host:x:@.host
+            // Creating landing page for model.
+            unwrap:x:+/*
+            signal:magic.ai.create-landing-page
+               url:x:@.url
+               type:x:@.type
+               host:x:@.host
 
-               // Creating landing page for model.
-               unwrap:x:+/*
-               signal:magic.ai.create-landing-page
-                  url:x:@.url
-                  type:x:@.type
-                  host:x:@.host
+            // Vectorizing model.
+            unwrap:x:+/*
+            signal:magic.ai.vectorise
+               type:x:@.type
+               host:x:@.host
 
    // Returning success to caller.
    unwrap:x:+/*

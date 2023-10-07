@@ -260,6 +260,8 @@ slots.create:magic.ai.html.extract-main
                                     .:a
                                  exists:x:@.dp/#/./*/\@href
                                  not-null:x:@.dp/#/./*/\@href
+                                 neq:x:@.dp/#/./*/\@href
+                                    .:
                                  not
                                     strings.ends-with:x:@.dp/#/./*/\@href
                                        .:#
@@ -459,6 +461,8 @@ slots.create:magic.ai.html.extract-main
                                           .:a
                                        exists:x:@.dp/#/./*/\@href
                                        not-null:x:@.dp/#/./*/\@href
+                                       neq:x:@.dp/#/./*/\@href
+                                          .:
                                        not
                                           strings.ends-with:x:@.dp/#/./*/\@href
                                              .:#

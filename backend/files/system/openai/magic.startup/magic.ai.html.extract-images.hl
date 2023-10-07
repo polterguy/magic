@@ -51,8 +51,8 @@ slots.create:magic.ai.html.extract-images
             strings.concat
                .:![
                get-first-value
-                  get-value:x:@.dp/#/*/\@alt
-                  get-value:x:@.dp/#/*/\@title
+                  get-value:x:@.dp/#/*/\@alt/[0,1]
+                  get-value:x:@.dp/#/*/\@title/[0,1]
                   .:Image
                .:](
                get-value:x:@.url

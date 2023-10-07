@@ -154,7 +154,7 @@ slots.create:magic.ai.crawl-site
                   empty-completion:bool:true
                   threshold:x:@.arguments/*/threshold
 
-               // Signaling frontend that we're waiting for n milliseconds.
+               // Signaling frontend that we're waiting for n seconds.
                strings.concat
                   .:"Waiting for "
                   math.divide:x:@.arguments/*/delay

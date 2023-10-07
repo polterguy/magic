@@ -5,7 +5,7 @@
  */
 slots.create:magic.url.normalize
 
-   // Sanity checking invocation
+   // Sanity checking invocation.
    validators.mandatory:x:@.arguments/*/url
    validators.url:x:@.arguments/*/base
    validators.enum:x:@.arguments/*/scheme
