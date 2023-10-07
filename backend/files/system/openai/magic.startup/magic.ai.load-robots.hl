@@ -353,9 +353,32 @@ slots.create:magic.ai.load-robots
       exists:x:@.sitemap/*
       .lambda
 
-         // We've got sitemap URLs in robots.txt file.
+         /*
+          * Sorting sitemap URLs by length, which typically makes sure more
+          * important sitemaps are prioritised.
+          */
+         sort:x:@.sitemap/*
+            if
+               lt
+                  strings.length:x:@.lhs/#
+                  strings.length:x:@.rhs/#
+               .lambda
+                  set-value:x:@.result
+                     .:int:-1
+            else-if
+               mt
+                  strings.length:x:@.lhs/#
+                  strings.length:x:@.rhs/#
+               .lambda
+                  set-value:x:@.result
+                     .:int:1
+            else
+               set-value:x:@.result
+                  .:int:0
+
+         // Adding sorted sitemaps to [return].
          add:x:+/*/*
-            get-nodes:x:@.sitemap/*
+            get-nodes:x:@sort/*
          add:x:../*/return
             .
                sitemap
