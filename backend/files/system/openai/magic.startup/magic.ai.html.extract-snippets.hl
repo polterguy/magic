@@ -59,7 +59,15 @@ slots.create:magic.ai.html.extract-snippets
     * we use it as our [.base] value for document.
     */
    if
-      exists:x:@html2lambda/*/html/*/head/*/base
+      and
+         exists:x:@html2lambda/*/html/*/head/*/base
+         neq:x:@html2lambda/*/html/*/head/*/base/*/\@href
+            .:
+         or
+            strings.starts-with:x:@html2lambda/*/html/*/head/*/base/*/\@href
+               .:"http://"
+            strings.starts-with:x:@html2lambda/*/html/*/head/*/base/*/\@href
+               .:"https://"
       .lambda
 
          // Document contains a base HTML tag, making sure we use it.
