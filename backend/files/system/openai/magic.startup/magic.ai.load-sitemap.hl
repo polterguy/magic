@@ -105,7 +105,7 @@ slots.create:magic.ai.load-sitemap
                      log.error:Sitemap invocation did not return success status
                         url:x:@.dp/#
                         status:x:@http.get
-                     throw:Could not retrieve sitemap, check log for details
+                     throw:Could not retrieve sitemap
 
                // Verifying request returned text/xml MIME type or application/xml MIME type.
                if
@@ -122,15 +122,7 @@ slots.create:magic.ai.load-sitemap
                   .lambda
 
                      // Bogus sitemap file, not XML.
-                     log.error:Sitemap was not valid XML
-                        url:x:@.dp/#
-                        Content-Type:x:@http.get/*/headers/*/Content-Type
-                        content-type:x:@http.get/*/headers/*/content-type
-                     sockets.signal:magic.backend.chatbot
-                        roles:root
-                        args
-                           message:Sitemap was not XML
-                           type:warning
+                     throw:Sitemap was not XML
 
                else
 
@@ -254,6 +246,18 @@ slots.create:magic.ai.load-sitemap
                            add:x:@.urls
                               get-nodes:x:@signal/*/urls/*
 
+                           // If above invocation returned no sitemap, and we've got zero URLs, we set [.has-sitemap] to false.
+                           if
+                              and
+                                 eq:x:@signal/*/has-sitemap
+                                    .:bool:false
+                                 eq
+                                    get-count:x:@.urls/*
+                                    .:int:0
+                              .lambda
+                                 set-value:x:@.has-sitemap
+                                    .:bool:false
+
                   /*
                    * Iterating through each text URL referenced in main sitemap.
                    *
@@ -279,6 +283,18 @@ slots.create:magic.ai.load-sitemap
                            // Adding URLs to above [.urls] collection.
                            add:x:@.urls
                               get-nodes:x:@signal/*/urls/*
+
+                           // If above invocation returned no sitemap, and we've got zero URLs, we set [.has-sitemap] to false.
+                           if
+                              and
+                                 eq:x:@signal/*/has-sitemap
+                                    .:bool:false
+                                 eq
+                                    get-count:x:@.urls/*
+                                    .:int:0
+                              .lambda
+                                 set-value:x:@.has-sitemap
+                                    .:bool:false
 
       // Total URLs in sitemap(s).
       .total
@@ -423,11 +439,9 @@ slots.create:magic.ai.load-sitemap
          roles:root
          args
             message:x:@strings.concat
-            type:info
+            type:warning
       sleep:100
 
       // Returning "no URLs" to caller
       return-nodes
          has-sitemap:bool:false
-         total:int:0
-         urls
