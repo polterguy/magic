@@ -259,17 +259,17 @@ slots.create:magic.ai.html.extract-main
                                     get-name:x:@.dp/#/.
                                     .:a
                                  exists:x:@.dp/#/./*/\@href
-                                 not-null:x:@.dp/#/./*/\@href
-                                 neq:x:@.dp/#/./*/\@href
+                                 not-null:x:@.dp/#/./*/\@href/[0,1]
+                                 neq:x:@.dp/#/./*/\@href/[0,1]
                                     .:
                                  not
-                                    strings.ends-with:x:@.dp/#/./*/\@href
+                                    strings.ends-with:x:@.dp/#/./*/\@href/[0,1]
                                        .:#
                                  not
-                                    strings.starts-with:x:@.dp/#/./*/\@href
+                                    strings.starts-with:x:@.dp/#/./*/\@href/[0,1]
                                        .:javascript
                                  not
-                                    strings.starts-with:x:@.dp/#/./*/\@href
+                                    strings.starts-with:x:@.dp/#/./*/\@href/[0,1]
                                        .:void
                               .lambda
 
@@ -282,7 +282,7 @@ slots.create:magic.ai.html.extract-main
                                  unwrap:x:+/*/*
                                  set-value:x:@.url
                                     signal:magic.url.normalize
-                                       url:x:@.dp/#/./*/\@href
+                                       url:x:@.dp/#/./*/\@href/[0,1]
                                        base:x:@.arguments/*/base
                                        scheme:x:@.arguments/*/scheme
 
@@ -464,17 +464,17 @@ slots.create:magic.ai.html.extract-main
                                           get-name:x:@.dp/#/.
                                           .:a
                                        exists:x:@.dp/#/./*/\@href
-                                       not-null:x:@.dp/#/./*/\@href
-                                       neq:x:@.dp/#/./*/\@href
+                                       not-null:x:@.dp/#/./*/\@href/[0,1]
+                                       neq:x:@.dp/#/./*/\@href/[0,1]
                                           .:
                                        not
-                                          strings.ends-with:x:@.dp/#/./*/\@href
+                                          strings.ends-with:x:@.dp/#/./*/\@href/[0,1]
                                              .:#
                                        not
-                                          strings.starts-with:x:@.dp/#/./*/\@href
+                                          strings.starts-with:x:@.dp/#/./*/\@href/[0,1]
                                              .:javascript
                                        not
-                                          strings.starts-with:x:@.dp/#/./*/\@href
+                                          strings.starts-with:x:@.dp/#/./*/\@href/[0,1]
                                              .:void
                                     .lambda
 
@@ -487,7 +487,7 @@ slots.create:magic.ai.html.extract-main
                                        unwrap:x:+/*/*
                                        set-value:x:@.url
                                           signal:magic.url.normalize
-                                             url:x:@.dp/#/./*/\@href
+                                             url:x:@.dp/#/./*/\@href/[0,1]
                                              base:x:@.arguments/*/base
                                              scheme:x:@.arguments/*/scheme
 
@@ -689,9 +689,9 @@ slots.create:magic.ai.html.extract-main
                               if
                                  and
                                     exists:x:@.dp/#/*/\#text
-                                    not-null:x:@.dp/#/*/\#text
+                                    not-null:x:@.dp/#/*/\#text/[0,1]
                                     neq
-                                       strings.trim:x:@.dp/#/*/\#text
+                                       strings.trim:x:@.dp/#/*/\#text/[0,1]
                                           .:"  \r\n\t"
                                        .:
                                  .lambda
@@ -712,7 +712,7 @@ slots.create:magic.ai.html.extract-main
                                     set-value:x:@.tmp
                                        strings.concat
                                           get-value:x:@.tmp
-                                          get-value:x:@.dp/#/*/\#text
+                                          get-value:x:@.dp/#/*/\#text/[0,1]
 
                                     // Making sure we track the fact that currently iterated list item has valuable content.
                                     set-value:x:@.has-content
@@ -725,31 +725,31 @@ slots.create:magic.ai.html.extract-main
                               if
                                  and
                                     exists:x:@.dp/#/*/\#text
-                                    not-null:x:@.dp/#/*/\#text
+                                    not-null:x:@.dp/#/*/\#text/[0,1]
                                     neq
-                                       strings.trim:x:@.dp/#/*/\#text
+                                       strings.trim:x:@.dp/#/*/\#text/[0,1]
                                           .:"  \r\n\t"
                                        .:
                                     exists:x:@.dp/#/*/\@href
-                                    not-null:x:@.dp/#/*/\@href
-                                    neq:x:@.dp/#/*/\@href
+                                    not-null:x:@.dp/#/*/\@href/[0,1]
+                                    neq:x:@.dp/#/*/\@href/[0,1]
                                        .:
                                     neq
-                                       strings.trim:x:@.dp/#/*/\@href
+                                       strings.trim:x:@.dp/#/*/\@href/[0,1]
                                           .:"  \r\n\t"
                                        .:
                                     not
-                                       strings.starts-with:x:@.dp/#/*/\@href
+                                       strings.starts-with:x:@.dp/#/*/\@href/[0,1]
                                           .:"javascript:"
                                     not
-                                       strings.ends-with:x:@.dp/#/*/\@href
+                                       strings.ends-with:x:@.dp/#/*/\@href/[0,1]
                                           .:#
                                  .lambda
 
                                     // Trimming text and removing CR/LF characters from it. Notice, there's a (U+00A0) character here.
                                     .anchor
                                     set-value:x:@.anchor
-                                       strings.trim:x:@.dp/#/*/\#text
+                                       strings.trim:x:@.dp/#/*/\#text/[0,1]
                                           .:"  \r\n\t"
                                     set-value:x:@.anchor
                                        strings.replace:x:@.anchor
@@ -775,7 +775,7 @@ slots.create:magic.ai.html.extract-main
                                     // Concatenating hyperlink to [.tmp], making sure we first normalize URL.
                                     unwrap:x:+/*
                                     signal:magic.url.normalize
-                                       url:x:@.dp/#/*/\@href
+                                       url:x:@.dp/#/*/\@href/[0,1]
                                        base:x:@.arguments/*/base
                                        scheme:x:@.arguments/*/scheme
                                     set-value:x:@.tmp
