@@ -136,6 +136,8 @@ slots.create:magic.ai.html.extract-snippets
             not-null:x:@.dp/#
             neq:x:@.dp/#
                .:
+            neq:x:@.dp/#
+               .:#
             not
                strings.starts-with:x:@.dp/#
                   .:javascript

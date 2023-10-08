@@ -62,369 +62,396 @@ slots.create:magic.ai.load-robots
          message:x:@strings.concat
          type:info
 
-   // Retrieving robots.txt file.
-   http.get:x:@.robots
-      timeout:30
+   // Making sure we trap exceptions.
+   try
 
-   // Collection of URL explicitly disallowed from robots.txt file.
-   .disallow
-   .allow
-   .crawl-delay
+      // Retrieving robots.txt file.
+      http.get:x:@.robots
+         timeout:30
 
-   // True if we found a valid robots.txt file.
-   .has-robots:bool:false
+      // Collection of URL explicitly disallowed from robots.txt file.
+      .disallow
+      .allow
+      .crawl-delay
 
-   // Checking if above invocation succeeded.
-   if
-      and
-         mte:x:@http.get
-            .:int:200
-         lt:x:@http.get
-            .:int:300
-      .lambda
+      // True if we found a valid robots.txt file.
+      .has-robots:bool:false
 
-         // Verifying request returned text/plain MIME type.
-         if
-            or
-               strings.starts-with:x:@http.get/*/headers/*/Content-Type
-                  .:text/plain
-               strings.starts-with:x:@http.get/*/headers/*/content-type
-                  .:text/plain
-            .lambda
+      // Checking if above invocation succeeded.
+      if
+         and
+            mte:x:@http.get
+               .:int:200
+            lt:x:@http.get
+               .:int:300
+         .lambda
 
-               // We've got a robots.txt file, and it's a text file.
-               set-value:x:@.has-robots
-                  .:bool:true
+            // Verifying request returned text/plain MIME type.
+            if
+               or
+                  strings.starts-with:x:@http.get/*/headers/*/Content-Type
+                     .:text/plain
+                  strings.starts-with:x:@http.get/*/headers/*/content-type
+                     .:text/plain
+               .lambda
 
-               // Splitting file into separate lines.
-               strings.split:x:@http.get/*/content
-                  .:"\n"
+                  // We've got a robots.txt file, and it's a text file.
+                  set-value:x:@.has-robots
+                     .:bool:true
 
-               /*
-                * If true it implies we're in a section of the robots.txt file
-                * relevant for AINIRO crawler.
-                */
-               .relevant:bool:false
+                  // Splitting file into separate lines.
+                  strings.split:x:@http.get/*/content
+                     .:"\n"
 
-               // True if we've seen an explicit AINIRO crawler section.
-               .has-seen-ainiro:bool:false
+                  /*
+                   * If true it implies we're in a section of the robots.txt file
+                   * relevant for AINIRO crawler.
+                   */
+                  .relevant:bool:false
 
-               // Looping through each line from above invocation.
-               for-each:x:@strings.split/*
+                  // True if we've seen an explicit AINIRO crawler section.
+                  .has-seen-ainiro:bool:false
 
-                  // Trimming each line.
-                  strings.trim:x:@.dp/#
-                     .:"\r\n\t "
+                  // Looping through each line from above invocation.
+                  for-each:x:@strings.split/*
 
-                  // Making sure this is not a comment.
-                  if
-                     not
-                        strings.starts-with:x:@strings.trim
-                           .:#
-                     .lambda
+                     // Trimming each line.
+                     strings.trim:x:@.dp/#
+                        .:"\r\n\t "
 
-                        // splitting up line into name/value pair.
-                        strings.split:x:@strings.trim
-                           .:":"
+                     // Making sure this is not a comment.
+                     if
+                        not
+                           strings.starts-with:x:@strings.trim
+                              .:#
+                        .lambda
 
-                        // Verifying this is a name/value pair.
-                        if
-                           mte
-                              get-count:x:@strings.split/*
-                              .:int:2
-                           .lambda
+                           // splitting up line into name/value pair.
+                           strings.split:x:@strings.trim
+                              .:":"
 
-                              // Recombining splits, except first part.
-                              .value
-                              set-value:x:@.value
-                                 strings.join:x:@strings.split/*/[1,100]
-                                    .:":"
+                           // Verifying this is a name/value pair.
+                           if
+                              mte
+                                 get-count:x:@strings.split/*
+                                 .:int:2
+                              .lambda
 
-                              // Trimming name and value.
-                              set-value:x:@strings.split/0
-                                 strings.trim:x:@strings.split/0
-                                    .:"\r\n\t "
-                              set-value:x:@.value
-                                 strings.trim:x:@.value
-                                    .:"\r\n\t "
+                                 // Recombining splits, except first part.
+                                 .value
+                                 set-value:x:@.value
+                                    strings.join:x:@strings.split/*/[1,100]
+                                       .:":"
 
-                              // Checking what type of value this is.
-                              switch:x:@strings.split/0
+                                 // Trimming name and value.
+                                 set-value:x:@strings.split/0
+                                    strings.trim:x:@strings.split/0
+                                       .:"\r\n\t "
+                                 set-value:x:@.value
+                                    strings.trim:x:@.value
+                                       .:"\r\n\t "
 
-                                 case:Crawl-Delay
-                                 case:Crawl-delay
-                                 case:crawl-delay
+                                 // Checking what type of value this is.
+                                 switch:x:@strings.split/0
 
-                                    // Checking if we're inside a relevant section from the robots.txt file.
-                                    set-value:x:@.value
-                                       strings.replace-not-of:x:@.value
-                                          .:0123456789
-                                          .:
-                                    if
-                                       and
-                                          eq:x:@.relevant
-                                             .:bool:true
-                                          neq:x:@.value
+                                    case:Crawl-Delay
+                                    case:Crawl-delay
+                                    case:crawl-delay
+
+                                       // Checking if we're inside a relevant section from the robots.txt file.
+                                       set-value:x:@.value
+                                          strings.replace-not-of:x:@.value
+                                             .:0123456789
                                              .:
-                                       .lambda
+                                       if
+                                          and
+                                             eq:x:@.relevant
+                                                .:bool:true
+                                             neq:x:@.value
+                                                .:
+                                          .lambda
 
-                                          // Storing Crawl-Delay value and returning to caller.
-                                          set-value:x:@.crawl-delay
-                                             math.multiply
-                                                .:int:1000
-                                                convert:x:@.value
-                                                   type:int
+                                             // Storing Crawl-Delay value and returning to caller.
+                                             set-value:x:@.crawl-delay
+                                                math.multiply
+                                                   .:int:1000
+                                                   convert:x:@.value
+                                                      type:int
 
-                                 case:User-Agent
-                                 case:User-agent
-                                 case:user-agent
+                                    case:User-Agent
+                                    case:User-agent
+                                    case:user-agent
 
-                                    // Checking if section is relevant for us.
-                                    switch:x:@.value
+                                       // Checking if section is relevant for us.
+                                       switch:x:@.value
 
-                                       // These are our interesting sections.
-                                       case:*
-                                       case:AINIRO
-                                       case:GPTBot
-
-                                          /*
-                                           * Checking if this is explicit AINIRO section, and if so,
-                                           * clearing allows/disallows.
-                                           */
-                                          if
-                                             or
-                                                eq:x:@.value
-                                                   .:AINIRO
-                                                eq:x:@.value
-                                                   .:GPTBot
-                                             .lambda
-
-                                                // Removing previously iterated allow/disallows.
-                                                remove-nodes:x:@.allow/*
-                                                remove-nodes:x:@.disallow/*
-                                                set-value:x:@.has-seen-ainiro
-                                                   .:bool:true
-
-                                                // Section is relevant for us.
-                                                set-value:x:@.relevant
-                                                   .:bool:true
-
-                                          else
+                                          // These are our interesting sections.
+                                          case:*
+                                          case:AINIRO
+                                          case:GPTBot
 
                                              /*
-                                              * Making sure we've not seen an explicit AINIRO section
-                                              * before setting [.relevant].
+                                              * Checking if this is explicit AINIRO section, and if so,
+                                              * clearing allows/disallows.
                                               */
                                              if
-                                                eq:x:@.has-seen-ainiro
-                                                   .:bool:false
+                                                or
+                                                   eq:x:@.value
+                                                      .:AINIRO
+                                                   eq:x:@.value
+                                                      .:GPTBot
                                                 .lambda
+
+                                                   // Removing previously iterated allow/disallows.
+                                                   remove-nodes:x:@.allow/*
+                                                   remove-nodes:x:@.disallow/*
+                                                   set-value:x:@.has-seen-ainiro
+                                                      .:bool:true
 
                                                    // Section is relevant for us.
                                                    set-value:x:@.relevant
                                                       .:bool:true
+
                                              else
 
                                                 /*
-                                                 * Section is relevant for us because we've already seen
-                                                 * AINIRO specific section.
+                                                 * Making sure we've not seen an explicit AINIRO section
+                                                 * before setting [.relevant].
                                                  */
-                                                set-value:x:@.relevant
-                                                   .:bool:false
+                                                if
+                                                   eq:x:@.has-seen-ainiro
+                                                      .:bool:false
+                                                   .lambda
 
-                                       default
+                                                      // Section is relevant for us.
+                                                      set-value:x:@.relevant
+                                                         .:bool:true
+                                                else
 
-                                          // Section is not relevant for us.
-                                          set-value:x:@.relevant
-                                             .:bool:false
+                                                   /*
+                                                    * Section is relevant for us because we've already seen
+                                                    * AINIRO specific section.
+                                                    */
+                                                   set-value:x:@.relevant
+                                                      .:bool:false
 
-                                 case:Sitemap
-                                 case:sitemap
+                                          default
 
-                                    // Updating above [.sitemap], but we need to check if sitemap URL is relative.
-                                    if
-                                       or
-                                          strings.starts-with:x:@.value
-                                             .:"http://"
-                                          strings.starts-with:x:@.value
-                                             .:"https://"
-                                       .lambda
+                                             // Section is not relevant for us.
+                                             set-value:x:@.relevant
+                                                .:bool:false
 
-                                          // Absolute URL.
+                                    case:Sitemap
+                                    case:sitemap
+
+                                       // Updating above [.sitemap], but we need to check if sitemap URL is relative.
+                                       if
+                                          or
+                                             strings.starts-with:x:@.value
+                                                .:"http://"
+                                             strings.starts-with:x:@.value
+                                                .:"https://"
+                                          .lambda
+
+                                             // Absolute URL.
+                                             unwrap:x:+/*/*
+                                             add:x:@.sitemap
+                                                .
+                                                   .:x:@.value
+
+                                       else
+
+                                          // URL is relative.
+                                          strings.concat
+                                             get-value:x:@.domain
+                                             .:/
+                                             get-value:x:@.value
                                           unwrap:x:+/*/*
                                           add:x:@.sitemap
                                              .
-                                                .:x:@.value
+                                                .:x:@strings.concat
 
-                                    else
+                                    case:Disallow
+                                    case:disallow
 
-                                       // URL is relative.
-                                       strings.concat
-                                          get-value:x:@.domain
-                                          .:/
-                                          get-value:x:@.value
-                                       unwrap:x:+/*/*
-                                       add:x:@.sitemap
-                                          .
-                                             .:x:@strings.concat
+                                       // Checking if we're inside a relevant section from the robots.txt file.
+                                       if
+                                          eq:x:@.relevant
+                                             .:bool:true
+                                          .lambda
 
-                                 case:Disallow
-                                 case:disallow
+                                             // Updating above [.disallow], but we need to check if URL is relative first.
+                                             if
+                                                or
+                                                   strings.starts-with:x:@.value
+                                                      .:"http://"
+                                                   strings.starts-with:x:@.value
+                                                      .:"https://"
+                                                .lambda
 
-                                    // Checking if we're inside a relevant section from the robots.txt file.
-                                    if
-                                       eq:x:@.relevant
-                                          .:bool:true
-                                       .lambda
+                                                   // Absolute URL.
+                                                   unwrap:x:+/*/*
+                                                   add:x:@.disallow
+                                                      .
+                                                         .:x:@.value
 
-                                          // Updating above [.disallow], but we need to check if URL is relative first.
-                                          if
-                                             or
-                                                strings.starts-with:x:@.value
-                                                   .:"http://"
-                                                strings.starts-with:x:@.value
-                                                   .:"https://"
-                                             .lambda
+                                             else
 
-                                                // Absolute URL.
+                                                // URL is relative.
+                                                strings.concat
+                                                   get-value:x:@.domain
+                                                   get-value:x:@.value
                                                 unwrap:x:+/*/*
                                                 add:x:@.disallow
                                                    .
-                                                      .:x:@.value
+                                                      .:x:@strings.concat
 
-                                          else
+                                    case:Allow
+                                    case:allow
 
-                                             // URL is relative.
-                                             strings.concat
-                                                get-value:x:@.domain
-                                                get-value:x:@.value
-                                             unwrap:x:+/*/*
-                                             add:x:@.disallow
-                                                .
-                                                   .:x:@strings.concat
+                                       // Checking if we're inside a relevant section from the robots.txt file.
+                                       if
+                                          eq:x:@.relevant
+                                             .:bool:true
+                                          .lambda
 
-                                 case:Allow
-                                 case:allow
+                                             // Updating above [.disallow], but we need to check if URL is relative first.
+                                             if
+                                                or
+                                                   strings.starts-with:x:@.value
+                                                      .:"http://"
+                                                   strings.starts-with:x:@.value
+                                                      .:"https://"
+                                                .lambda
 
-                                    // Checking if we're inside a relevant section from the robots.txt file.
-                                    if
-                                       eq:x:@.relevant
-                                          .:bool:true
-                                       .lambda
+                                                   // Absolute URL.
+                                                   unwrap:x:+/*/*
+                                                   add:x:@.allow
+                                                      .
+                                                         .:x:@.value
 
-                                          // Updating above [.disallow], but we need to check if URL is relative first.
-                                          if
-                                             or
-                                                strings.starts-with:x:@.value
-                                                   .:"http://"
-                                                strings.starts-with:x:@.value
-                                                   .:"https://"
-                                             .lambda
+                                             else
 
-                                                // Absolute URL.
+                                                // URL is relative.
+                                                strings.concat
+                                                   get-value:x:@.domain
+                                                   get-value:x:@.value
                                                 unwrap:x:+/*/*
                                                 add:x:@.allow
                                                    .
-                                                      .:x:@.value
+                                                      .:x:@strings.concat
 
-                                          else
+      // Returning disallowed URLs to caller.
+      if
+         exists:x:@.disallow/*
+         .lambda
 
-                                             // URL is relative.
-                                             strings.concat
-                                                get-value:x:@.domain
-                                                get-value:x:@.value
-                                             unwrap:x:+/*/*
-                                             add:x:@.allow
-                                                .
-                                                   .:x:@strings.concat
+            // We've got disallowed URLs in robots.txt file.
+            add:x:+/*/*
+               get-nodes:x:@.disallow/*
+            add:x:@try/*/return
+               .
+                  disallow
 
-   // Returning disallowed URLs to caller.
-   if
-      exists:x:@.disallow/*
-      .lambda
+      // Returning allowed URLs to caller.
+      if
+         exists:x:@.allow/*
+         .lambda
 
-         // We've got disallowed URLs in robots.txt file.
-         add:x:+/*/*
-            get-nodes:x:@.disallow/*
-         add:x:../*/return
-            .
-               disallow
+            // We've got allowed URLs in robots.txt file.
+            add:x:+/*/*
+               get-nodes:x:@.allow/*
+            add:x:@try/*/return
+               .
+                  allow
 
-   // Returning allowed URLs to caller.
-   if
-      exists:x:@.allow/*
-      .lambda
+      // Returning allowed sitemap URLs to caller.
+      if
+         exists:x:@.sitemap/*
+         .lambda
 
-         // We've got allowed URLs in robots.txt file.
-         add:x:+/*/*
-            get-nodes:x:@.allow/*
-         add:x:../*/return
-            .
-               allow
+            /*
+             * Sorting sitemap URLs by length, which typically makes sure more
+             * important sitemaps are prioritised.
+             */
+            sort:x:@.sitemap/*
+               if
+                  lt
+                     strings.length:x:@.lhs/#
+                     strings.length:x:@.rhs/#
+                  .lambda
+                     set-value:x:@.result
+                        .:int:-1
+               else-if
+                  mt
+                     strings.length:x:@.lhs/#
+                     strings.length:x:@.rhs/#
+                  .lambda
+                     set-value:x:@.result
+                        .:int:1
+               else
+                  set-value:x:@.result
+                     .:int:0
 
-   // Returning allowed sitemap URLs to caller.
-   if
-      exists:x:@.sitemap/*
-      .lambda
+            // Adding sorted sitemaps to [return].
+            add:x:+/*/*
+               get-nodes:x:@sort/*
+            add:x:@try/*/return
+               .
+                  sitemap
+
+      else
 
          /*
-          * Sorting sitemap URLs by length, which typically makes sure more
-          * important sitemaps are prioritised.
+          * If we could not find any sitemaps,
+          * we return x.com/sitemap.xml as the default sitemap such that
+          * caller can try to retrieve it in case it exists.
           */
-         sort:x:@.sitemap/*
-            if
-               lt
-                  strings.length:x:@.lhs/#
-                  strings.length:x:@.rhs/#
-               .lambda
-                  set-value:x:@.result
-                     .:int:-1
-            else-if
-               mt
-                  strings.length:x:@.lhs/#
-                  strings.length:x:@.rhs/#
-               .lambda
-                  set-value:x:@.result
-                     .:int:1
-            else
-               set-value:x:@.result
-                  .:int:0
-
-         // Adding sorted sitemaps to [return].
-         add:x:+/*/*
-            get-nodes:x:@sort/*
-         add:x:../*/return
+         strings.concat
+            get-value:x:@.domain
+            .:/sitemap.xml
+         unwrap:x:+/*/*/*
+         add:x:@try/*/return
             .
                sitemap
+                  .:x:@strings.concat
 
-   else
+      // Checking if we've got a crawl-delay value
+      if
+         not-null:x:@.crawl-delay
+         .lambda
 
-      /*
-       * If we could not find any sitemaps,
-       * we return x.com/sitemap.xml as the default sitemap such that
-       * caller can try to retrieve it in case it exists.
-       */
+            // Making sure we return crawl-delay.
+            unwrap:x:+/*/*
+            add:x:../*/return
+               .
+                  crawl-delay:x:@.crawl-delay
+
+      // Returning result to caller.
+      unwrap:x:+/*
+      return
+         found:x:@.has-robots
+
+   .catch
+
+      // Informing user that something went wrong.
+      strings.concat
+         .:"Error while trying to retrieve robots.txt, message was; '"
+         get-value:x:@.arguments/*/message
+         .:"'"
+      unwrap:x:+/**
+      sockets.signal:magic.backend.chatbot
+         roles:root
+         args
+            message:x:@strings.concat
+            type:warning
+
+      // Returning "no robots" to caller.
       strings.concat
          get-value:x:@.domain
          .:/sitemap.xml
-      unwrap:x:+/*/*/*
-      add:x:../*/return
-         .
-            sitemap
-               .:x:@strings.concat
-
-   // Checking if we've got a crawl-delay value
-   if
-      not-null:x:@.crawl-delay
-      .lambda
-
-         // Making sure we return crawl-delay.
-         unwrap:x:+/*/*
-         add:x:../*/return
-            .
-               crawl-delay:x:@.crawl-delay
-
-   // Returning result to caller.
-   unwrap:x:+/*
-   return
-      found:x:@.has-robots
+      unwrap:x:+/*/*
+      return
+         found:bool:false
+         sitemap
+            .:x:@strings.concat
