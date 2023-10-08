@@ -116,10 +116,58 @@ slots.create:magic.ai.html.extract-snippets
    // Buffer used for snippet to return.
    .snippets
 
+   // Buffer used to hold all URLs found during scraping.
+   .urls
+
    // Used to store a reference to above HTML transformed to lambda.
    .document
    set-value:x:@.document
       reference:x:@html2lambda/*/html
+
+   /*
+    * Looping through entire document to find URLs in it such that we
+    * can return this to caller.
+    */
+   for-each:x:@.document/#/**/a/*/\@href
+
+      // Sanity checking currently iterated URL.
+      if
+         and
+            not-null:x:@.dp/#
+            neq:x:@.dp/#
+               .:
+            not
+               strings.starts-with:x:@.dp/#
+                  .:javascript
+            not
+               strings.starts-with:x:@.dp/#
+                  .:void
+            not
+               exists:x:./*/rel/=nofollow
+         .lambda
+
+            // Removing hash tag parts, if existing.
+            strings.split:x:@.dp/#
+               .:#
+            unwrap:x:+/*
+            signal:magic.url.normalize
+               url:x:@strings.split/0
+               base:x:@.base
+               scheme:x:@.scheme
+
+            // Verifying this is a local URL.
+            if
+               strings.starts-with:x:@signal
+                  get-value:x:@.base
+               .lambda
+
+                  // This is a local URL, trimming trailing slash.
+                  strings.trim-end:x:@signal
+                     .:/
+                  unwrap:x:+/*/*
+                  add:x:@.urls
+                     .
+                        .:x:@strings.trim-end
 
    /*
     * Checking if caller wants images.
@@ -210,6 +258,9 @@ slots.create:magic.ai.html.extract-snippets
             get-nodes:x:@.snippets/*
          add:x:./*/return/*/meta
             get-nodes:x:@.meta/*
+         add:x:./*/return/*/urls
+            get-nodes:x:@.urls/*
          return
+            urls
             snippets
             meta
