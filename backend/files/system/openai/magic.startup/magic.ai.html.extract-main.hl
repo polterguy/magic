@@ -425,6 +425,10 @@ slots.create:magic.ai.html.extract-main
                            not-exists:x:@.dp/#/^h5
                            not-exists:x:@.dp/#/^h6
                            not-exists:x:@.dp/#/^button
+                           not-exists:x:@.dp/#/^style
+                           not-exists:x:@.dp/#/^script
+                           not-exists:x:@.dp/#/^iframe
+                           not-exists:x:@.dp/#/^object
                         .lambda
 
                            // Verifying text node is not null or empty.

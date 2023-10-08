@@ -42,7 +42,7 @@ slots.create:magic.ai.load-robots
     */
    .sitemap
 
-   // Trying to load robots.txt file.
+   // Creating our robots.txt URL.
    .robots
    set-value:x:@.robots
       strings.concat
@@ -50,7 +50,21 @@ slots.create:magic.ai.load-robots
          .:/robots.txt
    add:x:./*/http.get
       get-nodes:x:@.arguments/*/headers
+
+   // Informing user that we're trying to retrieve robots.txt.
+   strings.concat
+      .:"Trying to retrieve robots.txt file from "
+      get-value:x:@.robots
+   unwrap:x:+/**
+   sockets.signal:magic.backend.chatbot
+      roles:root
+      args
+         message:x:@strings.concat
+         type:info
+
+   // Retrieving robots.txt file.
    http.get:x:@.robots
+      timeout:30
 
    // Collection of URL explicitly disallowed from robots.txt file.
    .disallow

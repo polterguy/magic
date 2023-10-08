@@ -78,7 +78,7 @@ slots.create:magic.ai.crawl-site
                roles:root
                args
                   message:Could not find a robots.txt file for website
-                  type:info
+                  type:warning
             sleep:100
             strings.concat
                .:"We will try to retrieve sitemap from "
@@ -101,6 +101,8 @@ slots.create:magic.ai.crawl-site
          unwrap:x:+/*
          signal:magic.ai.load-sitemap
             max:x:@.arguments/*/max
+         lambda2hyper:x:-
+         log.info:x:-
 
          // Signaling frontend how many URLs we found, and how many there are in total.
          strings.concat
@@ -220,10 +222,10 @@ slots.create:magic.ai.crawl-site
 
          // Checking if caller supplied [.onerror] handler.
          if
-            exists:x:@.arguments/@.arguments/*/.onerror
+            exists:x:@.onerror
             .lambda
                add:x:+/+
                   get-nodes:x:@.arguments/*
                add:x:+
                   get-nodes:x:@.arguments/@.arguments/*
-               invoke:x:@.arguments/@.arguments/*/.onerror
+               invoke:x:@.onerror
