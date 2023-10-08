@@ -38,6 +38,9 @@ slots.create:magic.ai.load-sitemap
    // Buffer used for URLs to return.
    .urls
 
+   // True if site contains a sitemap.
+   .has-sitemap:bool:false
+
    /*
     * Iterating through each sitemap specified by caller.
     *
@@ -82,7 +85,7 @@ slots.create:magic.ai.load-sitemap
             add:x:./*/http.get
                get-nodes:x:@.arguments/*/headers
             http.get:x:@.dp/#
-               timeout:30
+               timeout:60
 
             // Checking if above invocation succeeded.
             if
@@ -127,6 +130,10 @@ slots.create:magic.ai.load-sitemap
                         type:warning
 
             else
+
+               // Making sure we return the fact that site has at least one sitemap.
+               set-value:x:@.has-sitemap
+                  .:bool:true
 
                // Some sitemaps contains bogus space characters, removing these to be sure.
                strings.trim:x:@http.get/*/content
@@ -397,5 +404,6 @@ slots.create:magic.ai.load-sitemap
       get-nodes:x:@.return/*
    unwrap:x:+/*
    return-nodes
+      has-sitemap:x:@.has-sitemap
       total:x:@.total
       urls

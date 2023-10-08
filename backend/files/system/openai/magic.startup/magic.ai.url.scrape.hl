@@ -68,6 +68,11 @@ slots.create:magic.ai.url.scrape
       html:x:@.html
       url:x:@.arguments/*/url
 
+   // URLs we return to caller.
+   .urls
+   add:x:@.urls
+      get-nodes:x:@signal/*/urls/*
+
    /*
     * Signaling frontend with meta data extracted from page.
     *
@@ -618,3 +623,6 @@ delete from vss_ml_training_snippets
                   message:x:@strings.concat
                   type:warning
             sleep:100
+
+   // Returning all URLs found during scraping to caller.
+   return:x:@.urls/*

@@ -101,67 +101,22 @@ slots.create:magic.ai.crawl-site
          unwrap:x:+/*
          signal:magic.ai.load-sitemap
             max:x:@.arguments/*/max
-         lambda2hyper:x:-
-         log.info:x:-
 
-         // Signaling frontend how many URLs we found, and how many there are in total.
-         strings.concat
-            .:"We found "
-            get-value:x:@signal/*/total
-            .:" URLs in sitemap(s)"
-         unwrap:x:+/**
-         sockets.signal:magic.backend.chatbot
-            roles:root
-            args
-               message:x:@strings.concat
-               type:info
-         sleep:100
-
-         // Checking if site contains more URLs than we're scraping.
-         get-count:x:@signal/*/urls/*
+         // Verifying we found at least one sitemap.
          if
-            mt
-               get-value:x:@signal/*/total
-               get-value:x:@get-count
+            eq:x:@signal/*/has-sitemap
+               .:bool:true
             .lambda
 
-               // Warning user!
+               /*
+                * We found at least one sitemap.
+                *
+                * Signaling frontend how many URLs we found, and how many there are in total.
+                */
                strings.concat
-                  .:"Warning, site contains more than "
-                  get-value:x:@get-count
-                  .:" URLs and will only be partially scraped"
-               unwrap:x:+/**
-               sockets.signal:magic.backend.chatbot
-                  roles:root
-                  args
-                     message:x:@strings.concat
-                     type:warning
-               sleep:100
-
-         // Iterating through each URL returned from above invocation.
-         for-each:x:@signal/*/urls/*
-
-            // Making sure we trap exceptions.
-            try
-
-               // Scraping currently iterated URL.
-               unwrap:x:+/*
-               signal:magic.ai.url.scrape
-                  url:x:@.dp/#
-                  type:x:@.arguments/*/type
-                  images:bool:true
-                  code:bool:true
-                  lists:bool:true
-                  main:bool:true
-                  empty-completion:bool:true
-                  threshold:x:@.arguments/*/threshold
-
-               // Signaling frontend that we're waiting for n seconds.
-               strings.concat
-                  .:"Waiting for "
-                  math.divide:x:@.arguments/*/delay
-                     .:int:1000
-                  .:" seconds to avoid exhausting web server"
+                  .:"We found "
+                  get-value:x:@signal/*/total
+                  .:" URLs in sitemap(s)"
                unwrap:x:+/**
                sockets.signal:magic.backend.chatbot
                   roles:root
@@ -170,37 +125,223 @@ slots.create:magic.ai.crawl-site
                      type:info
                sleep:100
 
-               // Sleeping for [delay] milliseconds to avoid exhausting web server.
-               sleep:x:@.arguments/*/delay
+               // Checking if site contains more URLs than we're scraping.
+               get-count:x:@signal/*/urls/*
+               if
+                  mt
+                     get-value:x:@signal/*/total
+                     get-value:x:@get-count
+                  .lambda
 
-            .catch
+                     // Warning user!
+                     strings.concat
+                        .:"Warning, site contains more than "
+                        get-value:x:@get-count
+                        .:" URLs and will only be partially scraped"
+                     unwrap:x:+/**
+                     sockets.signal:magic.backend.chatbot
+                        roles:root
+                        args
+                           message:x:@strings.concat
+                           type:warning
+                     sleep:100
 
-               // Logging as error.
-               log.error:Could not scrape URL
-                  url:x:@.dp/#
-                  message:x:@.arguments/*/message
+               // Iterating through each URL returned from above invocation.
+               for-each:x:@signal/*/urls/*
 
-         /*
-          * Crawling is done.
-          * Making sure we notify client that we're done and do some logging.
-          */
-         sockets.signal:magic.backend.message
-            roles:root
-            args
-               message:Done creating OpenAI training data from URL
-               type:success
-         sleep:100
+                  // Making sure we trap exceptions.
+                  try
 
-         // Basic logging.
-         log.info:OpenAI training data successfully created
-            url:x:@.arguments/*/url
-            type:x:@.arguments/*/type
+                     // Scraping currently iterated URL.
+                     unwrap:x:+/*
+                     signal:magic.ai.url.scrape
+                        url:x:@.dp/#
+                        type:x:@.arguments/*/type
+                        images:bool:true
+                        code:bool:true
+                        lists:bool:true
+                        main:bool:true
+                        empty-completion:bool:true
+                        threshold:x:@.arguments/*/threshold
 
-         // Checking if caller wants us to execute some lambda object once we're done.
-         if
-            exists:x:@.arguments/*/.onafter
-            .lambda
-               eval:x:@.arguments/*/.onafter
+                     // Signaling frontend that we're waiting for n seconds.
+                     strings.concat
+                        .:"Waiting for "
+                        math.divide:x:@.arguments/*/delay
+                           .:int:1000
+                        .:" seconds to avoid exhausting web server"
+                     unwrap:x:+/**
+                     sockets.signal:magic.backend.chatbot
+                        roles:root
+                        args
+                           message:x:@strings.concat
+                           type:info
+                     sleep:100
+
+                     // Sleeping for [delay] milliseconds to avoid exhausting web server.
+                     sleep:x:@.arguments/*/delay
+
+                  .catch
+
+                     // Logging as error.
+                     log.error:Could not scrape URL
+                        url:x:@.dp/#
+                        message:x:@.arguments/*/message
+
+               /*
+                * Crawling is done.
+                * Making sure we notify client that we're done and do some logging.
+                */
+               sockets.signal:magic.backend.message
+                  roles:root
+                  args
+                     message:Done creating OpenAI training data from URL
+                     type:success
+               sleep:100
+
+               // Basic logging.
+               log.info:OpenAI training data successfully created
+                  url:x:@.arguments/*/url
+                  type:x:@.arguments/*/type
+
+               // Checking if caller wants us to execute some lambda object once we're done.
+               if
+                  exists:x:@.arguments/*/.onafter
+                  .lambda
+                     eval:x:@.arguments/*/.onafter
+
+         else
+
+            /*
+             * Site did not have a valid sitemap, hence we
+             * try to crawl it manually instead.
+             *
+             * This is the list of URLs we should scrape.
+             */
+            .urls
+
+            // This is the list of URLs we already have scraped.
+            .done
+
+            // Adding root URL to above list of URLs to be crawled.
+            unwrap:x:+/*/*
+            add:x:@.urls
+               .
+                  .:x:@.arguments/*/url
+
+            // Informing frontend of that we'll try to crawl site.
+            sockets.signal:magic.backend.chatbot
+               roles:root
+               args
+                  message:Trying to crawl site even though we did not find a valid sitemap
+                  type:info
+            sleep:100
+
+            /*
+             * Looping through all above [.urls] as long as we don't exceed [max] argument,
+             * and for as long as we have URLs to scrape.
+             */
+            while
+               and
+                  exists:x:@.urls/*
+                  lt
+                     get-count:x:@.done/*
+                     get-value:x:@.arguments/*/max
+               .lambda
+
+                  /*
+                   * Scraping first URL in above [.urls] informing slot that
+                   * we want it to return URLs found during scraping.
+                   */
+                  unwrap:x:+/*
+                  signal:magic.ai.url.scrape
+                     url:x:@.urls/0
+                     type:x:@.arguments/*/type
+                     images:bool:true
+                     code:bool:true
+                     lists:bool:true
+                     main:bool:true
+                     empty-completion:bool:true
+                     threshold:x:@.arguments/*/threshold
+
+                  /*
+                   * Adding currently iterated URL to [.done] and removing it
+                   * from above [.urls] collection.
+                   */
+                  add:x:@.done
+                     get-nodes:x:@.urls/0
+                  remove-nodes:x:@.urls/0
+
+                  /*
+                   * Adding all URLs returned in above invocation to above [.urls] collection,
+                   * unless we've already crawled the URL.
+                   */
+                  for-each:x:@signal/*
+
+                     // Verifying we have not already scraped URL.
+                     .exists:bool:false
+                     for-each:x:@.done/*
+
+                        // Checking if URL exists in [.done] collection.
+                        if
+                           eq:x:@.dp/#
+                              get-value:x:@.dp/@.dp/#
+                           .lambda
+
+                              // URL has already been imported.
+                              set-value:x:@.exists
+                                 .:bool:true
+
+                     // Checking if URL has been imported before.
+                     if
+                        eq:x:@.exists
+                           .:bool:false
+                        .lambda
+
+                           // Adding URL to [.urls] collection.
+                           add:x:@.urls
+                              get-nodes:x:@.dp/#
+
+                  // Signaling frontend that we're waiting for n seconds.
+                  strings.concat
+                     .:"Waiting for "
+                     math.divide:x:@.arguments/*/delay
+                        .:int:1000
+                     .:" seconds to avoid exhausting web server"
+                  unwrap:x:+/**
+                  sockets.signal:magic.backend.chatbot
+                     roles:root
+                     args
+                        message:x:@strings.concat
+                        type:info
+                  sleep:100
+
+                  // Sleeping for [delay] milliseconds to avoid exhausting web server.
+                  sleep:x:@.arguments/*/delay
+
+            // Informing frontend of that we're done crawling.
+            strings.concat
+               .:"Done scraping "
+               get-count:x:@.done/*
+               .:" URLs"
+            unwrap:x:+/**
+            sockets.signal:magic.backend.chatbot
+               roles:root
+               args
+                  message:x:@strings.concat
+                  type:info
+            sleep:100
+
+            // Basic logging.
+            log.info:OpenAI training data successfully created
+               url:x:@.arguments/*/url
+               type:x:@.arguments/*/type
+
+            // Checking if caller wants us to execute some lambda object once we're done.
+            if
+               exists:x:@.arguments/*/.onafter
+               .lambda
+                  eval:x:@.arguments/*/.onafter
 
       .catch
 
