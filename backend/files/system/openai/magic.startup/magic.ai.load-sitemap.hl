@@ -38,8 +38,13 @@ slots.create:magic.ai.load-sitemap
    // Buffer used for URLs to return.
    .urls
 
-   // Iterating through each sitemap specified by caller.
-   for-each:x:@.arguments/*/sitemap/*
+   /*
+    * Iterating through each sitemap specified by caller.
+    *
+    * Notice, we only iterate through a maximum of 25 sitemaps to
+    * avoid exhausting the cloudlet.
+    */
+   for-each:x:@.arguments/*/sitemap/*/[0,25]
 
       // Providing feedback to client.
       strings.concat
@@ -77,6 +82,7 @@ slots.create:magic.ai.load-sitemap
             add:x:./*/http.get
                get-nodes:x:@.arguments/*/headers
             http.get:x:@.dp/#
+               timeout:30
 
             // Checking if above invocation succeeded.
             if
@@ -114,136 +120,155 @@ slots.create:magic.ai.load-sitemap
                      url:x:@.dp/#
                      Content-Type:x:@http.get/*/headers/*/Content-Type
                      content-type:x:@http.get/*/headers/*/content-type
-                  throw:Sitemap was not XML, check log for details
+                  sockets.signal:magic.backend.chatbot
+                     roles:root
+                     args
+                        message:Sitemap was not XML
+                        type:warning
 
-            // Transforming sitemap from XML to lambda.
-            xml2lambda:x:@http.get/*/content
+            else
 
-            // Iterating through each URL in currently iterated sitemap file.
-            for-each:x:@xml2lambda/*/urlset/*/url/*/loc/*/\#text
+               // Some sitemaps contains bogus space characters, removing these to be sure.
+               strings.trim:x:@http.get/*/content
 
-               // To avoid having cloudlet run out of memory we apply a hard stop at 10,000 URLs.
-               if
-                  lt
-                     get-count:x:@.urls/*
-                     .:int:10000
-                  .lambda
+               // Transforming sitemap from XML to lambda.
+               xml2lambda:x:@strings.trim
 
-                     // URL we're currently adding.
-                     .url
-                     set-value:x:@.url
-                        get-value:x:@.dp/#
-                     if
-                        and
-                           not
-                              strings.starts-with:x:@.dp/#
-                                 .:"http://"
-                           not
-                              strings.starts-with:x:@.dp/#
-                                 .:"https://"
-                        .lambda
+               // Iterating through each URL in currently iterated sitemap file.
+               for-each:x:@xml2lambda/*/urlset/*/url/*/loc/*/\#text
 
-                           // Need to prepend URL with domain.
-                           set-value:x:@.url
-                              strings.concat
-                                 get-value:x:@.domain
-                                 get-value:x:@.dp/#
+                  // To avoid having cloudlet run out of memory we apply a hard stop at 10,000 URLs.
+                  if
+                     lt
+                        get-count:x:@.urls/*
+                        .:int:10000
+                     .lambda
 
-                     // Avoiding duplicates.
-                     if
-                        not-exists:x:@.urls/*/={@.url}
-                        .lambda
+                        // URL we're currently adding.
+                        .url
+                        set-value:x:@.url
+                           get-value:x:@.dp/#
+                        if
+                           and
+                              not
+                                 strings.starts-with:x:@.dp/#
+                                    .:"http://"
+                              not
+                                 strings.starts-with:x:@.dp/#
+                                    .:"https://"
+                           .lambda
 
-                           // URL does not exist from before in above [.urls] collection.
-                           unwrap:x:+/*/*
-                           add:x:@.urls
-                              .
-                                 .:x:@.url
+                              // Need to prepend URL with domain.
+                              set-value:x:@.url
+                                 strings.concat
+                                    get-value:x:@.domain
+                                    get-value:x:@.dp/#
 
-            // Iterating through each CDATA URL in currently primary sitemap file.
-            for-each:x:@xml2lambda/*/urlset/*/url/*/loc/*/\#cdata-section
+                        // Avoiding duplicates.
+                        if
+                           not-exists:x:@.urls/*/={@.url}
+                           .lambda
 
-               // To avoid having cloudlet run out of memory we apply a hard stop at 10,000 URLs.
-               if
-                  lt
-                     get-count:x:@.urls/*
-                     .:int:10000
-                  .lambda
+                              // URL does not exist from before in above [.urls] collection.
+                              unwrap:x:+/*/*
+                              add:x:@.urls
+                                 .
+                                    .:x:@.url
 
-                     // URL we're currently adding.
-                     .url
-                     set-value:x:@.url
-                        get-value:x:@.dp/#
-                     if
-                        and
-                           not
-                              strings.starts-with:x:@.dp/#
-                                 .:"http://"
-                           not
-                              strings.starts-with:x:@.dp/#
-                                 .:"https://"
-                        .lambda
+               // Iterating through each CDATA URL in currently primary sitemap file.
+               for-each:x:@xml2lambda/*/urlset/*/url/*/loc/*/\#cdata-section
 
-                           // Need to prepend URL with domain.
-                           set-value:x:@.url
-                              strings.concat
-                                 get-value:x:@.domain
-                                 get-value:x:@.dp/#
+                  // To avoid having cloudlet run out of memory we apply a hard stop at 10,000 URLs.
+                  if
+                     lt
+                        get-count:x:@.urls/*
+                        .:int:10000
+                     .lambda
 
-                     // Avoiding duplicates.
-                     if
-                        not-exists:x:@.urls/*/={@.url}
-                        .lambda
+                        // URL we're currently adding.
+                        .url
+                        set-value:x:@.url
+                           get-value:x:@.dp/#
+                        if
+                           and
+                              not
+                                 strings.starts-with:x:@.dp/#
+                                    .:"http://"
+                              not
+                                 strings.starts-with:x:@.dp/#
+                                    .:"https://"
+                           .lambda
 
-                           // URL does not exist from before in above [.urls] collection.
-                           unwrap:x:+/*/*
-                           add:x:@.urls
-                              .
-                                 .:x:@.url
+                              // Need to prepend URL with domain.
+                              set-value:x:@.url
+                                 strings.concat
+                                    get-value:x:@.domain
+                                    get-value:x:@.dp/#
 
-            // Iterating through each CDATA URL referenced in main sitemap.
-            for-each:x:@xml2lambda/*/sitemapindex/*/sitemap/*/loc/*/\#cdata-section
+                        // Avoiding duplicates.
+                        if
+                           not-exists:x:@.urls/*/={@.url}
+                           .lambda
 
-               // To avoid having cloudlet run out of memory we apply a hard stop at 10,000 URLs.
-               if
-                  lt
-                     get-count:x:@.urls/*
-                     .:int:10000
-                  .lambda
+                              // URL does not exist from before in above [.urls] collection.
+                              unwrap:x:+/*/*
+                              add:x:@.urls
+                                 .
+                                    .:x:@.url
 
-                     // Recursively invoking self.
-                     add:x:./*/signal
-                        get-nodes:x:@.arguments/*/headers
-                     unwrap:x:+/**
-                     signal:magic.ai.load-sitemap
-                        max:int:10000
-                        sitemap
-                           .:x:@.dp/#
+               /*
+                * Iterating through each CDATA URL referenced in main sitemap.
+                *
+                * Notice, we only iterate through the first 25 sitemap references to
+                * avoid exhausting cloudlet.
+                */
+               for-each:x:@xml2lambda/*/sitemapindex/*/sitemap/*/[0,25]/loc/*/\#cdata-section
 
-                     // Adding URLs to above [.urls] collection.
-                     add:x:@.urls
-                        get-nodes:x:@signal/*/urls/*
+                  // To avoid having cloudlet run out of memory we apply a hard stop at 10,000 URLs.
+                  if
+                     lt
+                        get-count:x:@.urls/*
+                        .:int:10000
+                     .lambda
 
-            // Iterating through each CDATA URL referenced in main sitemap.
-            for-each:x:@xml2lambda/*/sitemapindex/*/sitemap/*/loc/*/\#text
+                        // Recursively invoking self.
+                        add:x:./*/signal
+                           get-nodes:x:@.arguments/*/headers
+                        unwrap:x:+/**
+                        signal:magic.ai.load-sitemap
+                           max:int:10000
+                           sitemap
+                              .:x:@.dp/#
 
-               // To avoid having cloudlet run out of memory we apply a hard stop at 10,000 URLs.
-               if
-                  lt
-                     get-count:x:@.urls/*
-                     .:int:10000
-                  .lambda
+                        // Adding URLs to above [.urls] collection.
+                        add:x:@.urls
+                           get-nodes:x:@signal/*/urls/*
 
-                     // Recursively invoking self.
-                     unwrap:x:+/**
-                     signal:magic.ai.load-sitemap
-                        max:int:10000
-                        sitemap
-                           .:x:@.dp/#
+               /*
+                * Iterating through each text URL referenced in main sitemap.
+                *
+                * Notice, we only iterate through the first 25 sitemap references to
+                * avoid exhausting cloudlet.
+                */
+               for-each:x:@xml2lambda/*/sitemapindex/*/sitemap/*/[0,25]/loc/*/\#text
 
-                     // Adding URLs to above [.urls] collection.
-                     add:x:@.urls
-                        get-nodes:x:@signal/*/urls/*
+                  // To avoid having cloudlet run out of memory we apply a hard stop at 10,000 URLs.
+                  if
+                     lt
+                        get-count:x:@.urls/*
+                        .:int:10000
+                     .lambda
+
+                        // Recursively invoking self.
+                        unwrap:x:+/**
+                        signal:magic.ai.load-sitemap
+                           max:int:10000
+                           sitemap
+                              .:x:@.dp/#
+
+                        // Adding URLs to above [.urls] collection.
+                        add:x:@.urls
+                           get-nodes:x:@signal/*/urls/*
 
    // Total URLs in sitemap(s).
    .total

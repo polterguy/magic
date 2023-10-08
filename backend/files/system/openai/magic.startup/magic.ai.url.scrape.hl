@@ -436,11 +436,8 @@ delete from vss_ml_training_snippets
                         mt
                            strings.length:x:@.dp/#/*/completion
                            get-value:x:@.arguments/*/threshold
-                        and
-                           strings.starts-with:x:@.dp/#/*/prompt
-                              .:Image
-                           strings.starts-with:x:@.dp/#/*/completion
-                              .:![
+                        strings.starts-with:x:@.dp/#/*/completion
+                           .:![
                      .lambda
 
                         /*
