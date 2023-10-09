@@ -39,13 +39,17 @@ fork
        * Invoking crawl implementation file, now with explicit list of links,
        * informing invocation that we do NOT want to process links.
        */
-      add:x:./*/io.file.execute
-         get-nodes:x:@.arguments/*/url
-         get-nodes:x:@.arguments/*/type
-         get-nodes:x:@.arguments/*/threshold
-         get-nodes:x:@.arguments/*/summarize
-      io.file.execute:/system/openai/crawl.implementation/import-url.hl
-         crawl:bool:false
+      unwrap:x:+/*
+      signal:magic.ai.url.scrape
+         url:x:@.arguments/*/url
+         type:x:@.arguments/*/type
+         images:bool:true
+         code:bool:true
+         lists:bool:true
+         main:bool:true
+         empty-completion:bool:true
+         threshold:x:@.arguments/*/threshold
+         summarize:x:@.arguments/*/summarize
 
       /*
        * Crawling is done.
