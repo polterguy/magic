@@ -17,6 +17,7 @@ import { MachineLearningEmbedUiComponent } from '../components/machine-learning-
 import { MachineLearningImportComponent } from '../components/machine-learning-import/machine-learning-import.component';
 import { MachineLearningTestComponent } from '../components/machine-learning-test/machine-learning-test.component';
 import { MachineLearningTrainComponent } from '../components/machine-learning-train/machine-learning-train.component';
+import { MachineLearningImportFeedbackComponent } from '../components/machine-learning-import-feedback/machine-learning-import-feedback.component';
 
 /**
  * Helper component to manage machine learning types, different models, and configurations
@@ -146,23 +147,29 @@ export class MachineLearningModelsComponent implements OnInit {
         maxWidth: '850px',
         data: el,
       }).afterClosed()
-      .subscribe((result: { train?: boolean, crawl?: string, delay?: number, max?: number, threshold?: number, summarize?: boolean }) =>{
+      .subscribe((result: {
+        train?: boolean,
+        crawl?: string,
+        delay?: number,
+        max?: number,
+        threshold?: number,
+        summarize?: boolean }) => {
 
         if (result?.crawl) {
 
-          this.generalService.showLoading();
-          this.openAIService.importUrl(result.crawl, el.type, result.delay, result.max, result.threshold, result.summarize).subscribe({
-            next: () => {
-
-              this.generalService.hideLoading();
-              this.generalService.showFeedback('Crawling started, you will be notified when it is finished', 'successMessage');
-            },
-            error: () => {
-
-              this.generalService.hideLoading();
-              this.generalService.showFeedback('Something went wrong as we tried to start training', 'errorMessage');
-            }
-          });
+          this.dialog
+            .open(MachineLearningImportFeedbackComponent, {
+              width: '80vw',
+              maxWidth: '1280px',
+              data: {
+                url: result.crawl,
+                type: el.type,
+                delay: result.delay,
+                max: result.max,
+                threshold: result.threshold,
+                summarize: result.summarize,
+              }
+            });
         }
       });
   }

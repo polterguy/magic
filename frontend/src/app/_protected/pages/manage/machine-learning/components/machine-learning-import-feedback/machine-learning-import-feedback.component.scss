@@ -1,0 +1,46 @@
+
+/*
+ * Copyright (c) Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
+ */
+.messages {
+  background-color: rgb(0,0,0);
+  padding: 25px 15px;
+  border-radius: 5px;
+  color: #e0e0e0;
+  line-height: 1.1rem;
+  position: relative;
+  height: 340px;
+  max-height: 340px;
+  overflow: auto;
+
+  @keyframes fade-in {
+    0% {
+      margin-left: -300px;
+      opacity: 0;
+    }
+    100% {
+      margin-left: 0;
+      opacity: 1;
+    }
+  }
+
+  .msg {
+    opacity: 0;
+    animation-name: fade-in;
+    animation-duration: .25s;
+    animation-fill-mode: forwards;
+    animation-timing-function: ease-in-out;
+  }
+
+  .success {
+    color: rgb(0,255,0);
+  }
+
+  .warning {
+    color: rgb(255,200,0);
+  }
+
+  .error {
+    color: rgb(255,0,0);
+  }
+}
