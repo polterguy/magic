@@ -17,22 +17,23 @@ if
       try
 
          // Deleting old task if existing.
-         tasks.list:reset-no_requests
+         tasks.list:delete-old-machine-learning-requests
          if
             exists:x:@tasks.list/*
             .lambda
                tasks.delete:x:@tasks.list/0/*/id
-         
 
          // Creating task that periodically deletes old historical requests.
-         tasks.create:reset-no_requests
-            description:Resets no_requests at the first day of the month
-            repeats:**.01.01.01.01
+         tasks.create:delete-old-machine-learning-requests
+            description:Periodically deletes all machine learning requests older than 14 days
+            repeats:72.hours
             .lambda
                sqlite.connect:magic
-                  sqlite.execute:"update ml_types set no_requests = 0"
-               log.info:All machine learning models had their no_requests values reset
+                  sqlite.execute:"delete from ml_requests where created < date('now', '-14 day') and cached != 1 and questionnaire != 1"
+               log.info:Task to cleanup old machine learning requests executed successfully
+                  deleted:x:@sqlite.connect/*/sqlite.execute
+
       .catch
 
          // Task already exists.
-         console.log:Task to reset no_requests already exists
+         console.log:Task to periodically delete historical requests already exists
