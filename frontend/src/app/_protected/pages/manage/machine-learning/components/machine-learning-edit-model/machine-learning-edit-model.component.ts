@@ -130,11 +130,11 @@ export class MachineLearningEditTypeComponent implements OnInit {
 
     this.type = this.data?.type;
     this.max_context_tokens = this.data?.max_context_tokens ?? 1000;
-    this.max_request_tokens = this.data?.max_request_tokens ?? 100;
-    this.max_tokens = this.data?.max_tokens ?? 500;
+    this.max_request_tokens = this.data?.max_request_tokens ?? 250;
+    this.max_tokens = this.data?.max_tokens ?? 1000;
     this.temperature = this.data?.temperature ?? 0.3;
     this.base_url = this.data?.base_url ?? '';
-    this.threshold = this.data?.threshold ?? 0.5;
+    this.threshold = this.data?.threshold ?? 0.4;
     this.recaptcha = this.data?.recaptcha ?? 0.3;
     if (this.data) {
       this.auth = this.data.auth?.split(',');
