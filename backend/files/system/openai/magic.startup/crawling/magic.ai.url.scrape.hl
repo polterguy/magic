@@ -55,7 +55,7 @@ slots.create:magic.ai.url.scrape
       add:x:+/+
          get-nodes:x:@.arguments/*/headers
       unwrap:x:+/*
-      signal:magic.url.get
+      signal:magic.ai.url.get
          url:x:@.arguments/*/url
       set-value:x:@.html
          get-value:x:@signal
@@ -67,7 +67,7 @@ slots.create:magic.ai.url.scrape
          get-nodes:x:@.arguments/*/code
          get-nodes:x:@.arguments/*/main
       unwrap:x:+/*
-      signal:magic.ai.html.extract-snippets
+      signal:magic.ai.html.extract
          html:x:@.html
          url:x:@.arguments/*/url
 

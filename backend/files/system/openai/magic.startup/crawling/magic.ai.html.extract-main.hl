@@ -281,7 +281,7 @@ slots.create:magic.ai.html.extract-main
                                  .url
                                  unwrap:x:+/*/*
                                  set-value:x:@.url
-                                    signal:magic.url.normalize
+                                    signal:magic.ai.url.normalize
                                        url:x:@.dp/#/./*/\@href/[0,1]
                                        base:x:@.arguments/*/base
                                        scheme:x:@.arguments/*/scheme
@@ -486,7 +486,7 @@ slots.create:magic.ai.html.extract-main
                                        .url
                                        unwrap:x:+/*/*
                                        set-value:x:@.url
-                                          signal:magic.url.normalize
+                                          signal:magic.ai.url.normalize
                                              url:x:@.dp/#/./*/\@href/[0,1]
                                              base:x:@.arguments/*/base
                                              scheme:x:@.arguments/*/scheme
@@ -667,6 +667,34 @@ slots.create:magic.ai.html.extract-main
                                                 get-value:x:@.tmp
                                                 .:" "
 
+                                    /*
+                                     * Making sure list items doesn't have carriage return or
+                                     * multiple consecutive white space characters.
+                                     */
+                                    set-value:x:@.dp/#
+                                       strings.replace:x:@.dp/#
+                                          .:"\n"
+                                    set-value:x:@.dp/#
+                                       strings.replace:x:@.dp/#
+                                          .:"\r"
+                                    set-value:x:@.dp/#
+                                       strings.replace:x:@.dp/#
+                                          .:"\t"
+                                    .cont:bool:true
+                                    while
+                                       get-value:x:@.cont
+                                       .lambda
+                                          if
+                                             strings.contains:x:@.dp/#
+                                                .:"  "
+                                             .lambda
+                                                set-value:x:@.dp/#
+                                                   strings.replace:x:@.dp/#
+                                                      .:"  "
+                                          else
+                                             set-value:x:@.cont
+                                                .:bool:false
+
                                     // Concatenating text to [.tmp].
                                     set-value:x:@.tmp
                                        strings.concat
@@ -674,7 +702,10 @@ slots.create:magic.ai.html.extract-main
                                           strings.trim:x:@.dp/#
                                              .:"  \r\n\t"
 
-                                    // Making sure we track the fact that currently iterated list item has valuable content.
+                                    /*
+                                     * Making sure we track the fact that currently iterated list item
+                                     * has valuable content.
+                                     */
                                     set-value:x:@.has-content
                                        .:bool:true
 
@@ -774,7 +805,7 @@ slots.create:magic.ai.html.extract-main
 
                                     // Concatenating hyperlink to [.tmp], making sure we first normalize URL.
                                     unwrap:x:+/*
-                                    signal:magic.url.normalize
+                                    signal:magic.ai.url.normalize
                                        url:x:@.dp/#/*/\@href/[0,1]
                                        base:x:@.arguments/*/base
                                        scheme:x:@.arguments/*/scheme

@@ -12,7 +12,7 @@
  * - [main]     - Optional.  If true will return primary HTML content of p, div, article, etc type of tags.
  * - [semantic] - Optional.  If true, will try to start scraping from semantic tags, such as article and main.
  */
-slots.create:magic.ai.html.extract-snippets
+slots.create:magic.ai.html.extract
 
    // Sanity checking invocation.
    validators.mandatory:x:@.arguments/*/html
@@ -152,7 +152,7 @@ slots.create:magic.ai.html.extract-snippets
             strings.split:x:@.dp/#
                .:#
             unwrap:x:+/*
-            signal:magic.url.normalize
+            signal:magic.ai.url.normalize
                url:x:@strings.split/0
                base:x:@.base
                scheme:x:@.scheme
