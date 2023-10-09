@@ -446,11 +446,17 @@ slots.create:magic.ai.url.scrape
                               get-value:x:@.arguments/*/threshold
                            strings.starts-with:x:@.dp/#/*/completion
                               .:![
+                           strings.contains:x:@.dp/#/*/completion
+                              .:"* "
+                           strings.contains:x:@.dp/#/*/completion
+                              .:"1. "
+                           strings.contains:x:@.dp/#/*/completion
+                              .:"["
                         .lambda
 
                            /*
                             * Snippet is longer than minimum threshold for import, or snippet is
-                            * an image.
+                            * an image, contains list elements, or hyperlinks.
                             *
                             * Verifying user can create more snippets.
                             *
