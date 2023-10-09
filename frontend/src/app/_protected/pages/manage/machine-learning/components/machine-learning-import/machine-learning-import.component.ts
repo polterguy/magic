@@ -23,7 +23,7 @@ export class MachineLearningImportComponent {
   uploading: boolean = false;
   trainingFileModel: string = '';
   url: string = null;
-  delay: number = 2;
+  delay: number = 1;
   max: number = 200;
   prompt: string = 'prompt';
   completion: string = 'completion';
