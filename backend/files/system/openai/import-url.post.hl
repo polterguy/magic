@@ -65,6 +65,15 @@ log.info:Crawling URL generating OpenAI training snippets
 add:x:./*/signal
    get-nodes:x:@.arguments/*
 signal:magic.ai.crawl-site
+   .onafter
+
+      // Informing client that we're done.
+      sockets.signal:magic.backend.chatbot
+         roles:root
+         args
+            message:Successfull crawled and scraped site, remember to vectorize your model before using it
+            type:success
+
 
 // Returning success to caller.
 return

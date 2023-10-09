@@ -1,0 +1,29 @@
+
+<h3 mat-dialog-title class="mb-0">Progress</h3>
+
+<div mat-dialog-content>
+
+  <p class="text-muted text-small mb-3">
+    You can close this window if you want to, you will be notified when the scraping is done
+  </p>
+
+  <div class="messages">
+
+    <div
+      *ngFor="let idx of messages; index as i"
+      [class]="'msg ' + idx.type"
+      [id]="'m_' + i">{{idx.message}}</div>
+
+  </div>
+
+</div>
+
+<div mat-dialog-actions [align]="'end'">
+
+  <button
+    mat-button
+    mat-dialog-close>
+    Close
+  </button>
+
+</div>
