@@ -114,14 +114,29 @@ try
             .
                base_url:x:@.arguments/*/url
 
+      // Figuring out max tokens to use, which varies according to base model.
+      .max-tokens:int:1500
+      .max-context-tokens:int:1500
+      if
+         not
+            strings.starts-with:x:@.arguments/*/model
+               .:gpt-4
+         .lambda
+
+            // Not GPT4, hence reducing tokens to 1000.
+            set-value:x:@.max-context-tokens
+               .:int:1000
+            set-value:x:@.max-tokens
+               .:int:1000
+
       // Creating our type.
       data.create
          table:ml_types
          values
             type:x:@.type
             model:x:@.arguments/*/model
-            max_tokens:int:1500
-            max_context_tokens:int:1500
+            max_tokens:x:@.max-tokens
+            max_context_tokens:x:@.max-context-tokens
             max_request_tokens:int:250
             temperature:decimal:0.3
             recaptcha:decimal:0.3
