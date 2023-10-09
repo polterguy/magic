@@ -42,7 +42,7 @@ slots.create:magic.ai.html.extract-images
             .url
             unwrap:x:+/*/*
             set-value:x:@.url
-               signal:magic.url.normalize
+               signal:magic.ai.url.normalize
                   url:x:@.dp/#/*/\@src
                   base:x:@.arguments/*/base
                   scheme:x:@.arguments/*/scheme

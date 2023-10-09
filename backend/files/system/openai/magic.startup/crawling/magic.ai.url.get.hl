@@ -4,7 +4,7 @@
  *
  * Optionally provide [headers] argument to override the default HTTP headers.
  */
-slots.create:magic.url.get
+slots.create:magic.ai.url.get
 
    // Sanity checking invocation.
    validators.mandatory:x:@.arguments/*/url

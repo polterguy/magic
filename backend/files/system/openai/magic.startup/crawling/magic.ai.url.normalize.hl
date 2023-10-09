@@ -3,7 +3,7 @@
  * Normalizing specified [url] according to [base] given, resorting to [url]
  * if no base was specified.
  */
-slots.create:magic.url.normalize
+slots.create:magic.ai.url.normalize
 
    // Sanity checking invocation.
    validators.mandatory:x:@.arguments/*/url
@@ -48,7 +48,7 @@ slots.create:magic.url.normalize
             .lambda
 
                // Oops, relative URL and we were not given a scheme
-               throw:Cannot apply scheme to URL since no [scheme] argument was supplied to [magic.url.normalize].
+               throw:Cannot apply scheme to URL since no [scheme] argument was supplied to [magic.ai.url.normalize].
 
          // Applying the scheme used to retrieve the document.
          set-value:x:@.url
@@ -70,7 +70,7 @@ slots.create:magic.url.normalize
             .lambda
 
                // Oops, relative URL and we were not given a scheme
-               throw:Cannot apply base URL to specified URL since no [base] argument was supplied to [magic.url.normalize].
+               throw:Cannot apply base URL to specified URL since no [base] argument was supplied to [magic.ai.url.normalize].
 
          // URL is relative to base but starts with a single slash (/).
          set-value:x:@.url
@@ -101,7 +101,7 @@ slots.create:magic.url.normalize
             .lambda
 
                // Oops, relative URL and we were not given a scheme
-               throw:Cannot apply base URL to specified URL since no [base] argument was supplied to [magic.url.normalize].
+               throw:Cannot apply base URL to specified URL since no [base] argument was supplied to [magic.ai.url.normalize].
 
          // Image URL is still relative, but doesn't start with a slash (/).
          set-value:x:@.url
