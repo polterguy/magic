@@ -401,8 +401,41 @@ slots.create:magic.ai.url.scrape
             /*
              * Deleting all training snippets matching type, URL, and meta.
              *
-             * Notice, we need to delete records from VSS table too to avoid "dangling references".
+             * Notice, we need to delete records from VSS table too to avoid "dangling references",
+             * and we also count items we delete before we delete, to inform user of how many existing
+             * snippets are to be "overwritten".
              */
+            data.read
+               table:ml_training_snippets
+               columns
+                  count(*)
+                     as:count
+               where
+                  and
+                     type.eq:x:@.arguments/*/type
+                     uri.eq:x:@.arguments/*/url
+                     meta.eq:AINIRO-Website-Crawler
+            if
+               neq
+                  convert:x:@data.read/*/*/count
+                     type:int
+                  .:int:0
+               .lambda
+
+                  // We have old snippets with the same URL, informing user of how many snippets we're deleting.
+                  strings.concat
+                     .:"Deleting "
+                     get-value:x:@data.read/*/*/count
+                     .:" old training snippets with the same URL"
+                  unwrap:x:+/**
+                  sockets.signal:magic.backend.chatbot
+                     roles:root
+                     args
+                        message:x:@strings.concat
+                        type:info
+                  sleep:10
+
+            // Deleting from VSS table.
             data.execute:@"
    delete from vss_ml_training_snippets
       where rowid in (select id as rowid from ml_training_snippets where type = @type and uri = @url)"
@@ -414,6 +447,7 @@ slots.create:magic.ai.url.scrape
                   and
                      type.eq:x:@.arguments/*/type
                      uri.eq:x:@.arguments/*/url
+                     meta.eq:AINIRO-Website-Crawler
 
             /*
              * Now looping through each snippet from above [.snippet] and inserting into database
