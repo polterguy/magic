@@ -299,7 +299,7 @@ try
                url:x:@.url
                type:x:@.type
                host:x:@.host
-               feedback-channel:x:@.arguments/*/feedback-channel
+               feedback-channel:x:@.feedback-channel
 
             // Vectorizing model.
             if
@@ -312,7 +312,7 @@ try
                   signal:magic.ai.vectorise
                      type:x:@.type
                      host:x:@.host
-                     feedback-channel:x:@.arguments/*/feedback-channel
+                     feedback-channel:x:@.feedback-channel
 
             else
 
