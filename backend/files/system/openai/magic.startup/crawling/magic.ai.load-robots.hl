@@ -56,7 +56,7 @@ slots.create:magic.ai.load-robots
       .:"Trying to retrieve robots.txt file from "
       get-value:x:@.robots
    unwrap:x:+/**
-   sockets.signal:magic.backend.chatbot
+   sockets.signal:x:@.arguments/*/feedback-channel
       roles:root
       args
          message:x:@strings.concat
@@ -440,7 +440,7 @@ slots.create:magic.ai.load-robots
          get-value:x:@.arguments/*/message
          .:"'"
       unwrap:x:+/**
-      sockets.signal:magic.backend.chatbot
+      sockets.signal:x:@.arguments/@.arguments/*/feedback-channel
          roles:root
          args
             message:x:@strings.concat

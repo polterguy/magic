@@ -227,7 +227,7 @@ slots.create:magic.ai.import-zip-file
                      get-value:x:@.dp/#
                      .:" is ignored"
                   unwrap:x:+/*/*/message
-                  sockets.signal:magic.backend.chatbot
+                  sockets.signal:x:@.arguments/*/feedback-channel
                      roles:root
                      args
                         message:x:@strings.concat
@@ -269,7 +269,7 @@ slots.create:magic.ai.import-zip-file
                         .:"Creating summary for file: "
                         get-value:x:@.dp/#
                      unwrap:x:+/*/*/message
-                     sockets.signal:magic.backend.chatbot
+                     sockets.signal:x:@.arguments/*/feedback-channel
                         roles:root
                         args
                            message:x:@strings.concat
@@ -320,7 +320,7 @@ slots.create:magic.ai.import-zip-file
                            .:"Could not create summary for file: "
                            get-value:x:@.dp/#
                         unwrap:x:+/*/*/message
-                        sockets.signal:magic.backend.chatbot
+                        sockets.signal:x:@.arguments/*/feedback-channel
                            roles:root
                            args
                               message:x:@strings.concat
@@ -367,7 +367,7 @@ slots.create:magic.ai.import-zip-file
             get-count:x:@.snippets/*
             .:" training snippets, now vectorising model"
          unwrap:x:+/*/*/message
-         sockets.signal:magic.backend.chatbot
+         sockets.signal:x:@.arguments/*/feedback-channel
             roles:root
             args
                message:x:@strings.concat
@@ -377,7 +377,7 @@ slots.create:magic.ai.import-zip-file
 
          // Oops!!
          log.error:x:@.arguments/*/message
-         sockets.signal:magic.backend.chatbot
+         sockets.signal:x:@.arguments/@.arguments/*/feedback-channel
             roles:root
             args
                message:Something went wrong as we tried to import your file.

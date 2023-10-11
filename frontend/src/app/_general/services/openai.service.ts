@@ -124,7 +124,14 @@ export class OpenAIService {
   /**
    * Imports the specified URL as training data.
    */
-  importUrl(url: string, type: string, delay: number, max: number, threshold: number, summarize: boolean) {
+  importUrl(
+    url: string,
+    type: string,
+    delay: number,
+    max: number,
+    threshold: number,
+    summarize: boolean,
+    feedbackChannel: string) {
 
     return this.httpService.post<any>('/magic/system/openai/import-url', {
       url,
@@ -133,18 +140,24 @@ export class OpenAIService {
       max,
       threshold,
       summarize,
+      ['feedback-channel']: feedbackChannel,
     });
   }
 
   /**
    * Imports the specified page as training data.
    */
-  importPage(url: string, type: string, threshold: number) {
+  importPage(
+    url: string,
+    type: string,
+    threshold: number,
+    feedbackChannel: string) {
 
     return this.httpService.post<any>('/magic/system/openai/import-page', {
       url,
       type,
       threshold,
+      ['feedback-channel']: feedbackChannel,
     });
   }
 
@@ -171,11 +184,20 @@ export class OpenAIService {
   /**
    * Creates a new bot 100% automatically from the specified URL.
    */
-  createBot(url: string, model: String, flavor: string = null, max: number = null, autocrawl: boolean = null) {
+  createBot(
+    url: string,
+    model: string,
+    flavor: string,
+    max: number,
+    autocrawl: boolean,
+    feedbackChannel: string,
+    vectorize: boolean) {
 
     const args: any = {
       url: url,
       model: model,
+      ['feedback-channel']: feedbackChannel,
+      vectorize: vectorize,
     };
     if (flavor) {
       args.flavor = flavor;

@@ -57,7 +57,7 @@ slots.create:magic.ai.load-sitemap
             .:"Retrieving sitemap "
             get-value:x:@.dp/#
          unwrap:x:+/**
-         sockets.signal:magic.backend.chatbot
+         sockets.signal:x:@.arguments/*/feedback-channel
             roles:root
             args
                message:x:@strings.concat
@@ -239,6 +239,7 @@ slots.create:magic.ai.load-sitemap
                            unwrap:x:+/**
                            signal:magic.ai.load-sitemap
                               max:int:10000
+                              feedback-channel:x:@.arguments/*/feedback-channel
                               sitemap
                                  .:x:@.dp/#
 
@@ -277,6 +278,7 @@ slots.create:magic.ai.load-sitemap
                            unwrap:x:+/**
                            signal:magic.ai.load-sitemap
                               max:int:10000
+                              feedback-channel:x:@.arguments/*/feedback-channel
                               sitemap
                                  .:x:@.dp/#
 
@@ -435,7 +437,7 @@ slots.create:magic.ai.load-sitemap
          get-value:x:@.arguments/*/message
          .:"'"
       unwrap:x:+/**
-      sockets.signal:magic.backend.chatbot
+      sockets.signal:x:@.arguments/@.arguments/*/feedback-channel
          roles:root
          args
             message:x:@strings.concat
