@@ -70,24 +70,38 @@ export class MachineLearningImportFeedbackComponent implements OnInit, OnDestroy
     this.hubConnection.start().then(() => {
 
       this.generalService.showLoading();
-      this.openAIService.importUrl(
-        this.data.url,
-        this.data.type,
-        this.data.delay,
-        this.data.max,
-        this.data.threshold,
-        this.data.summarize).subscribe({
-        next: () => {
+      if (this.data.site === true) {
+        this.openAIService.importUrl(
+          this.data.url,
+          this.data.type,
+          this.data.delay,
+          this.data.max,
+          this.data.threshold,
+          this.data.summarize).subscribe({
+          next: () => {
 
-          this.generalService.hideLoading();
-          this.generalService.showFeedback('Crawling started, you will be notified when it is finished', 'successMessage');
-        },
-        error: () => {
+            this.generalService.hideLoading();
+            this.generalService.showFeedback('Crawling started, you will be notified when it is finished', 'successMessage');
+          },
+          error: () => {
 
-          this.generalService.hideLoading();
-          this.generalService.showFeedback('Something went wrong as we tried to start import', 'errorMessage');
-        }
-      });
+            this.generalService.hideLoading();
+            this.generalService.showFeedback('Something went wrong as we tried to start import', 'errorMessage');
+          }
+        });
+      } else {
+        this.openAIService.importPage(this.data.url, this.data.type, 50).subscribe({
+          next: () => {
+
+            this.generalService.hideLoading();
+          },
+          error: () => {
+
+            this.generalService.hideLoading();
+            this.generalService.showFeedback('Something went wrong as we tried to spice your model', 'errorMessage');
+          }
+        });
+    }
     });
   }
 }

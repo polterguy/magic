@@ -168,6 +168,7 @@ export class MachineLearningModelsComponent implements OnInit {
                 max: result.max,
                 threshold: result.threshold,
                 summarize: result.summarize,
+                site: true,
               }
             });
         }

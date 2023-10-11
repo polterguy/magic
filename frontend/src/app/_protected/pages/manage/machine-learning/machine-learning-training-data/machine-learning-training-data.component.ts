@@ -13,6 +13,7 @@ import { MachineLearningTrainingService } from 'src/app/_general/services/machin
 import { OpenAIService } from 'src/app/_general/services/openai.service';
 import { MachineLearningEditTrainingSnippetComponent } from '../components/machine-learning-edit-training-snippet/machine-learning-edit-training-snippet.component';
 import { MachineLearningSpiceComponent } from '../components/machine-learning-spice/machine-learning-spice.component';
+import { MachineLearningImportFeedbackComponent } from '../components/machine-learning-import-feedback/machine-learning-import-feedback.component';
 
 /**
  * Helper component to administrate training data for OpenAI integration
@@ -115,17 +116,20 @@ export class MachineLearningTrainingDataComponent implements OnInit {
 
         if (result) {
 
-          this.openAiService.importPage(result, this.type, 50).subscribe({
-            next: () => {
-
-              this.generalService.hideLoading();
-            },
-            error: () => {
-
-              this.generalService.hideLoading();
-              this.generalService.showFeedback('Something went wrong as we tried to spice your model', 'errorMessage');
-            }
-          });
+          this.dialog
+            .open(MachineLearningImportFeedbackComponent, {
+              width: '80vw',
+              maxWidth: '1280px',
+              data: {
+                url: result,
+                type: this.type,
+                delay: result.delay,
+                max: result.max,
+                threshold: result.threshold,
+                summarize: result.summarize,
+                site: false,
+              }
+            });
         }
     });
   }

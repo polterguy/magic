@@ -60,6 +60,11 @@ fork
          args
             message:Done creating OpenAI training data from page
             type:success
+      sockets.signal:magic.backend.chatbot
+         roles:root
+         args
+            message:Done creating OpenAI training data from page
+            type:success
 
       // Basic logging.
       log.info:OpenAI training data successfully created from page
