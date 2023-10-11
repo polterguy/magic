@@ -32,6 +32,7 @@ slots.create:magic.ai.url.get
 
    // Retrieving HTML document from specified URL.
    http.get:x:@.arguments/*/url
+      timeout:60
 
    // Sanity checking above invocation.
    if
