@@ -309,6 +309,28 @@ slots.create:magic.ai.url.scrape
 
                                  // Checking that above invocation returned success.
                                  if
+                                    eq:x:@http.post
+                                       .:int:400
+                                    .lambda
+
+                                       // Probably too many tokens to summarize.
+                                       sockets.signal:x:@.arguments/*/feedback-channel
+                                          roles:root
+                                          args
+                                             message:Could not summarize snippet, check your log for details
+                                             type:warning
+                                       sleep:100
+                                       lambda2hyper:x:@http.post
+                                       log.error:Something went wrong while invoking OpenAI
+                                          message:x:@http.post/*/content/*/error/*/message
+                                          status:x:@http.post
+                                          error:x:@lambda2hyper
+
+                                       // Making sure we don't try again.
+                                       set-value:x:@.no
+                                          .:int:0
+
+                                 else-if
                                     and
                                        mte:x:@http.post
                                           .:int:200
@@ -680,7 +702,7 @@ slots.create:magic.ai.url.scrape
          get-value:x:@.arguments/*/message
          .:"'"
       unwrap:x:+/**
-      sockets.signal:x:@.arguments/*/feedback-channel
+      sockets.signal:x:@.arguments/@.arguments/*/feedback-channel
          roles:root
          args
             message:x:@strings.concat
