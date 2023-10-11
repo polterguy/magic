@@ -154,6 +154,14 @@ slots.create:magic.ai.crawl-site
                   // Making sure we trap exceptions.
                   try
 
+                     // Adding spacer.
+                     sockets.signal:x:@.arguments/*/feedback-channel
+                        roles:root
+                        args
+                           message:------------------------------------------------------------------------------------------------------------------------
+                           type:info
+                     sleep:100
+
                      // Scraping currently iterated URL.
                      unwrap:x:+/*
                      signal:magic.ai.url.scrape
@@ -203,6 +211,14 @@ slots.create:magic.ai.crawl-site
                            message:x:@strings.concat
                            type:warning
                      sleep:100
+
+               // Adding spacer.
+               sockets.signal:x:@.arguments/*/feedback-channel
+                  roles:root
+                  args
+                     message:------------------------------------------------------------------------------------------------------------------------
+                     type:info
+               sleep:100
 
                /*
                 * Crawling is done.
@@ -265,6 +281,14 @@ slots.create:magic.ai.crawl-site
                      get-value:x:@.arguments/*/max
                .lambda
 
+                  // Adding spacer.
+                  sockets.signal:x:@.arguments/*/feedback-channel
+                     roles:root
+                     args
+                        message:------------------------------------------------------------------------------------------------------------------------
+                        type:info
+                  sleep:100
+
                   /*
                    * Scraping first URL in above [.urls] informing slot that
                    * we want it to return URLs found during scraping.
@@ -322,6 +346,14 @@ slots.create:magic.ai.crawl-site
 
                   // Sleeping for [delay] milliseconds to avoid exhausting web server.
                   sleep:x:@.arguments/*/delay
+
+            // Adding spacer.
+            sockets.signal:x:@.arguments/*/feedback-channel
+               roles:root
+               args
+                  message:------------------------------------------------------------------------------------------------------------------------
+                  type:info
+            sleep:100
 
             // Informing frontend of that we're done crawling.
             strings.concat
