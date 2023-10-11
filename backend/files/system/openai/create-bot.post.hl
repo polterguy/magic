@@ -8,6 +8,8 @@
    flavor:string
    max:int
    autocrawl:bool
+   feedback-channel:string
+   vectorize:bool
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
@@ -41,6 +43,23 @@ validators.url:x:@.arguments/*/url
 validators.default:x:@.arguments
    max:int:1250
    autocrawl:bool:false
+   vectorize:bool:true
+
+/*
+ * To avoid null reference exceptions in case feedback channel
+ * is not provided, we default it to something random.
+ */
+if
+   not-exists:x:@.arguments/*/feedback-channel
+   .lambda
+
+      // Creating default dummy value.
+      crypto.random
+         min:10
+         max:20
+      unwrap:x:+/*
+      validators.default:x:@.arguments
+         feedback-channel:x:@crypto.random
 
 // Doing some basic logging.
 log.info:Crawling URL to generate OpenAI training data for a chatbot
@@ -56,7 +75,7 @@ try
       get-value:x:@.arguments/*/model
       .:" as our OpenAI base model"
    unwrap:x:+/*/args/**
-   sockets.signal:magic.backend.chatbot
+   sockets.signal:x:@.arguments/*/feedback-channel
       roles:root
       args
          message:x:@strings.concat
@@ -67,7 +86,7 @@ try
       .:"Crawling website "
       get-value:x:@.arguments/*/url
    unwrap:x:+/*/args/**
-   sockets.signal:magic.backend.chatbot
+   sockets.signal:x:@.arguments/*/feedback-channel
       roles:root
       args
          message:x:@strings.concat
@@ -156,7 +175,10 @@ try
    unwrap:x:./*/signal/=magic.ai.crawl-site/*/.onafter/*/.type
    unwrap:x:./*/signal/=magic.ai.crawl-site/*/.onafter/*/.url
    unwrap:x:./*/signal/=magic.ai.crawl-site/*/.onafter/*/.host
+   unwrap:x:./*/signal/=magic.ai.crawl-site/*/.onafter/*/.feedback-channel
+   unwrap:x:./*/signal/=magic.ai.crawl-site/*/.onafter/*/.vectorize
    unwrap:x:./*/signal/=magic.ai.crawl-site/*/.onerror/*/.type
+   unwrap:x:./*/signal/=magic.ai.crawl-site/*/.onerror/*/.feedback-channel
    signal:magic.ai.crawl-site
       delay:int:1000
       threshold:int:50
@@ -166,6 +188,7 @@ try
 
          // Forward evaluated further up.
          .type:x:@.type
+         .feedback-channel:x:@.arguments/*/feedback-channel
 
          // Cleaning up by deleting model.
          data.connect:[generic|magic]
@@ -181,6 +204,8 @@ try
          .type:x:@.type
          .url:x:@.arguments/*/url
          .host:x:@request.host
+         .feedback-channel:x:@.arguments/*/feedback-channel
+         .vectorize:x:@.arguments/*/vectorize
 
          // Connecting to database to sanity check model.
          data.connect:[generic|magic]
@@ -204,7 +229,7 @@ try
             .lambda
 
                // Informing client.
-               sockets.signal:magic.backend.chatbot
+               sockets.signal:x:@.feedback-channel
                   roles:root
                   args
                      message:We could not find any training data on your website
@@ -228,11 +253,33 @@ try
                get-value:x:@data.connect/*/data.read/*/*/count
                .:" training snippets we could use on website in total"
             unwrap:x:+/**
-            sockets.signal:magic.backend.chatbot
+            sockets.signal:x:@.feedback-channel
                roles:root
                args
                   message:x:@strings.concat
                   type:info
+            sleep:100
+
+            // Verifying we've got at least 10 training snippets, and if not, warning user.
+            if
+               lt
+                  convert:x:@data.connect/*/data.read/*/*/count
+                     type:int
+                  .:int:10
+               .lambda
+
+                  // Warning user about quality of chatbot.
+                  strings.concat
+                     .:"Warning! Only "
+                     get-value:x:@data.connect/*/data.read/*/*/count
+                     .:" training snippets will provide a poor chatbot experience!"
+                  unwrap:x:+/**
+                  sockets.signal:x:@.feedback-channel
+                     roles:root
+                     args
+                        message:x:@strings.concat
+                        type:warning
+                  sleep:100
 
             // Connecting to database to create default snippets.
             data.connect:[generic|magic]
@@ -252,12 +299,29 @@ try
                url:x:@.url
                type:x:@.type
                host:x:@.host
+               feedback-channel:x:@.arguments/*/feedback-channel
 
             // Vectorizing model.
-            unwrap:x:+/*
-            signal:magic.ai.vectorise
-               type:x:@.type
-               host:x:@.host
+            if
+               eq:x:@.vectorize
+                  .:bool:true
+               .lambda
+
+                  // Caller wants to vectorize model.
+                  unwrap:x:+/*
+                  signal:magic.ai.vectorise
+                     type:x:@.type
+                     host:x:@.host
+                     feedback-channel:x:@.arguments/*/feedback-channel
+
+            else
+
+               // Providing feedback to caller.
+               sockets.signal:x:@.feedback-channel
+                  roles:root
+                  args
+                     message:Done creating your machine learning model, remember to vectorize it before attempting to use it
+                     type:success
 
    // Returning success to caller.
    unwrap:x:+/*
@@ -268,7 +332,7 @@ try
 
    // Signaling frontend.
    unwrap:x:+/*/args/**
-   sockets.signal:magic.backend.chatbot
+   sockets.signal:x:@.arguments/@.arguments/*/feedback-channel
       roles:root
       args
          message:x:@.arguments/*/message

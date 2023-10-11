@@ -4,10 +4,6 @@
  */
 slots.create:magic.ai.vectorise
 
-   // Adding callbacks to [try] invocations.
-   add:x:./*/try
-      get-value:x:@.arguments/*/.onafter
-
    // Making sure we log exceptions.
    try
 
@@ -70,7 +66,7 @@ select id, prompt, completion
                .:"Vectorising "
                get-value:x:@.dp/#/*/prompt
             unwrap:x:+/*/args/*/message
-            sockets.signal:magic.backend.chatbot
+            sockets.signal:x:@.arguments/*/feedback-channel
                roles:root
                args
                   message:x:@strings.concat
@@ -123,7 +119,7 @@ select id, prompt, completion
                            get-value:x:@.dp/#/*/prompt
                            .:"'"
                         unwrap:x:+/*/args/*/message
-                        sockets.signal:magic.backend.chatbot
+                        sockets.signal:x:@.arguments/*/feedback-channel
                            roles:root
                            args
                               message:x:@strings.concat
@@ -141,7 +137,7 @@ select id, prompt, completion
 
                               // OpenAI server is busy, waiting 5 seconds to retry.
                               math.decrement:x:@.retries
-                              sockets.signal:magic.backend.chatbot
+                              sockets.signal:x:@.arguments/*/feedback-channel
                                  roles:root
                                  args
                                     message:Retrying in 5 seconds
@@ -227,14 +223,14 @@ select id, prompt, completion
          get-value:x:@.success
          .:" training snippets"
       unwrap:x:+/*/args/*/message
-      sockets.signal:magic.backend.chatbot
+      sockets.signal:x:@.arguments/*/feedback-channel
          roles:root
          args
             message:x:@strings.concat
             type:info
 
       // Messaging frontend to let it know we're about to index embeddings.
-      sockets.signal:magic.backend.chatbot
+      sockets.signal:x:@.arguments/*/feedback-channel
          roles:root
          args
             message:Indexing embeddings
@@ -252,7 +248,7 @@ insert into vss_ml_training_snippets (rowid, embedding_vss)
             type:x:@.arguments/*/type
 
       // Done with everything, notifying frontend.
-      sockets.signal:magic.backend.chatbot
+      sockets.signal:x:@.arguments/*/feedback-channel
          roles:root
          args
             message:Your machine learning model was successfully vectorised

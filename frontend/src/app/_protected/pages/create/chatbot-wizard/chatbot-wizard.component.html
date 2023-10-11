@@ -157,6 +157,14 @@
             labelPosition="before"
             color="primary">Auto crawl</mat-checkbox>
 
+          <mat-checkbox
+            [(ngModel)]="vectorize"
+            [disabled]="crawling"
+            name="vectorize"
+            class="mx-4"
+            labelPosition="before"
+            color="primary">Vectorize</mat-checkbox>
+
           <button
             mat-flat-button
             color="primary"

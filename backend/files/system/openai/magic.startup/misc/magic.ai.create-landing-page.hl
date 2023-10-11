@@ -34,7 +34,7 @@ slots.create:magic.ai.create-landing-page
       type:x:@.arguments/*/type
       url:x:@.arguments/*/url
    unwrap:x:+/*/args/**
-   sockets.signal:magic.backend.chatbot
+   sockets.signal:x:@.arguments/*/feedback-channel
       roles:root
       args
          message:x:@strings.concat

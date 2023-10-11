@@ -38,6 +38,7 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
   url: string = '';
   max: number = 25;
   autocrawl: boolean = false;
+  vectorize: boolean = true;
   crawling: boolean = false;
   messages: any[] = [];
   doneCreatingBot: boolean = false;
@@ -219,6 +220,20 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
 
   createBot() {
 
+    this.configService.getGibberish(10, 20).subscribe({
+      next: (result: any) => {
+
+        this.createBotImplementation(result.result);
+      },
+      error: (error: any) => {
+
+        this.generalService.showFeedback(error?.error?.message ?? 'Something went wrong as we tried to create your bot', 'errorMessage', 'Ok', 10000);
+      }
+    });
+  }
+
+  createBotImplementation(feedbackChannel: string) {
+
     this.crawling = true;
     this.generalService.showLoading();
     this.doneCreatingBot = false;
@@ -231,7 +246,7 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
       transport: HttpTransportType.WebSockets,
     }).build();
 
-    this.hubConnection.on('magic.backend.chatbot', (args) => {
+    this.hubConnection.on(feedbackChannel, (args) => {
 
       args = JSON.parse(args);
       this.messages.push(args);
@@ -249,7 +264,7 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
       } else if (args.type === 'error') {
 
         this.generalService.showFeedback(args.message, 'errorMessage');
-        if (args.message.includes('license')) {
+        if (args.message.includes('license') && this.vectorize === true) {
 
           /*
            * Too many snippets according to license, still we'll vectorise the model explicitly to make sure
@@ -264,7 +279,7 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
 
               this.generalService.showFeedback(error?.error?.message ?? 'Something went wrong as we tried to create your bot', 'errorMessage', 'Ok', 10000);
             }
-          })
+          });
         }
       }
       setTimeout(() => {
@@ -281,7 +296,9 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
         this.chat_model.id,
         this.flavor?.prefix ?? '',
         this.max,
-        this.autocrawl).subscribe({
+        this.autocrawl,
+        feedbackChannel,
+        this.vectorize).subscribe({
         next: (result: MagicResponse) => {
   
           this.model = result.result;

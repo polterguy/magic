@@ -18,6 +18,7 @@ slots.create:magic.ai.crawl-site
          unwrap:x:+/*
          signal:magic.ai.load-robots
             url:x:@.arguments/*/url
+            feedback-channel:x:@.arguments/*/feedback-channel
 
          // Checking if site contains a robots.txt file.
          if
@@ -26,7 +27,7 @@ slots.create:magic.ai.crawl-site
             .lambda
 
                // Site contains a robots.txt file, signaling frontend of that fact.
-               sockets.signal:magic.backend.chatbot
+               sockets.signal:x:@.arguments/*/feedback-channel
                   roles:root
                   args
                      message:Site has robots.txt
@@ -39,7 +40,7 @@ slots.create:magic.ai.crawl-site
                   get-count:x:@signal/*/sitemap/*
                   .:" sitemaps in robots.txt file"
                unwrap:x:+/**
-               sockets.signal:magic.backend.chatbot
+               sockets.signal:x:@.arguments/*/feedback-channel
                   roles:root
                   args
                      message:x:@strings.concat
@@ -65,7 +66,7 @@ slots.create:magic.ai.crawl-site
                            .:int:1000
                         .:" seconds"
                      unwrap:x:+/**
-                     sockets.signal:magic.backend.chatbot
+                     sockets.signal:x:@.arguments/*/feedback-channel
                         roles:root
                         args
                            message:x:@strings.concat
@@ -74,7 +75,7 @@ slots.create:magic.ai.crawl-site
          else
 
             // Site does not contain a robots.txt file, signaling that fact to frontend.
-            sockets.signal:magic.backend.chatbot
+            sockets.signal:x:@.arguments/*/feedback-channel
                roles:root
                args
                   message:Could not find a robots.txt file for website
@@ -84,7 +85,7 @@ slots.create:magic.ai.crawl-site
                .:"We will try to retrieve sitemap from "
                get-value:x:@signal/*/sitemap/0
             unwrap:x:+/**
-            sockets.signal:magic.backend.chatbot
+            sockets.signal:x:@.arguments/*/feedback-channel
                roles:root
                args
                   message:x:@strings.concat
@@ -101,6 +102,7 @@ slots.create:magic.ai.crawl-site
          unwrap:x:+/*
          signal:magic.ai.load-sitemap
             max:x:@.arguments/*/max
+            feedback-channel:x:@.arguments/*/feedback-channel
 
          // Verifying we found at least one sitemap.
          if
@@ -118,7 +120,7 @@ slots.create:magic.ai.crawl-site
                   get-value:x:@signal/*/total
                   .:" URLs in sitemap(s)"
                unwrap:x:+/**
-               sockets.signal:magic.backend.chatbot
+               sockets.signal:x:@.arguments/*/feedback-channel
                   roles:root
                   args
                      message:x:@strings.concat
@@ -139,7 +141,7 @@ slots.create:magic.ai.crawl-site
                         get-value:x:@get-count
                         .:" URLs and will only be partially scraped"
                      unwrap:x:+/**
-                     sockets.signal:magic.backend.chatbot
+                     sockets.signal:x:@.arguments/*/feedback-channel
                         roles:root
                         args
                            message:x:@strings.concat
@@ -161,8 +163,9 @@ slots.create:magic.ai.crawl-site
                         code:bool:true
                         lists:bool:true
                         main:bool:true
-                        empty-completion:bool:true
+                        empty-completion:bool:false
                         threshold:x:@.arguments/*/threshold
+                        feedback-channel:x:@.arguments/*/feedback-channel
 
                      // Signaling frontend that we're waiting for n seconds.
                      strings.concat
@@ -171,7 +174,7 @@ slots.create:magic.ai.crawl-site
                            .:int:1000
                         .:" seconds to avoid exhausting web server"
                      unwrap:x:+/**
-                     sockets.signal:magic.backend.chatbot
+                     sockets.signal:x:@.arguments/*/feedback-channel
                         roles:root
                         args
                            message:x:@strings.concat
@@ -187,6 +190,19 @@ slots.create:magic.ai.crawl-site
                      log.error:Could not scrape URL
                         url:x:@.dp/#
                         message:x:@.arguments/*/message
+
+                     // Signaling frontend to inform about error.
+                     strings.concat
+                        .:"Could not scrape URL, error was: '"
+                        get-value:x:@.arguments/*/message
+                        .:"'"
+                     unwrap:x:+/**
+                     sockets.signal:x:@.arguments/@.arguments/*/feedback-channel
+                        roles:root
+                        args
+                           message:x:@strings.concat
+                           type:warning
+                     sleep:100
 
                /*
                 * Crawling is done.
@@ -230,7 +246,7 @@ slots.create:magic.ai.crawl-site
                   .:x:@.arguments/*/url
 
             // Informing frontend of that we'll try to crawl site.
-            sockets.signal:magic.backend.chatbot
+            sockets.signal:x:@.arguments/*/feedback-channel
                roles:root
                args
                   message:Trying to crawl site even though we did not find a valid sitemap
@@ -261,8 +277,9 @@ slots.create:magic.ai.crawl-site
                      code:bool:true
                      lists:bool:true
                      main:bool:true
-                     empty-completion:bool:true
+                     empty-completion:bool:false
                      threshold:x:@.arguments/*/threshold
+                     feedback-channel:x:@.arguments/*/feedback-channel
 
                   /*
                    * Adding currently iterated URL to [.done] and removing it
@@ -285,7 +302,18 @@ slots.create:magic.ai.crawl-site
                         // Checking if URL exists in [.done] collection.
                         if
                            eq:x:@.dp/#
-                              get-value:x:@.dp/@.dp/#
+                              get-value:x:@for-each/@.dp/#
+                           .lambda
+
+                              // URL has already been imported.
+                              set-value:x:@.exists
+                                 .:bool:true
+                     for-each:x:@.urls/*
+
+                        // Checking if URL exists in [.done] collection.
+                        if
+                           eq:x:@.dp/#
+                              get-value:x:@for-each/@.dp/#
                            .lambda
 
                               // URL has already been imported.
@@ -309,7 +337,7 @@ slots.create:magic.ai.crawl-site
                         .:int:1000
                      .:" seconds to avoid exhausting web server"
                   unwrap:x:+/**
-                  sockets.signal:magic.backend.chatbot
+                  sockets.signal:x:@.arguments/*/feedback-channel
                      roles:root
                      args
                         message:x:@strings.concat
@@ -325,7 +353,7 @@ slots.create:magic.ai.crawl-site
                get-count:x:@.done/*
                .:" URLs"
             unwrap:x:+/**
-            sockets.signal:magic.backend.chatbot
+            sockets.signal:x:@.arguments/*/feedback-channel
                roles:root
                args
                   message:x:@strings.concat
@@ -354,7 +382,7 @@ slots.create:magic.ai.crawl-site
             .:"Error - "
             get-value:x:@.arguments/*/message
          unwrap:x:+/*/args/*
-         sockets.signal:magic.backend.chatbot
+         sockets.signal:x:@.arguments/@.arguments/*/feedback-channel
             roles:root
             args
                message:x:@strings.concat

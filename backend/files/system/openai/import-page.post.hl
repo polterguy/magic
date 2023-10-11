@@ -7,6 +7,7 @@
    type:string
    threshold:int
    summarize:bool
+   feedback-channel:string
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
@@ -20,6 +21,22 @@ validators.integer:x:@.arguments/*/threshold
    min:25
 validators.default:x:@.arguments
    summarize:bool:false
+
+/*
+ * To avoid null reference exceptions in case feedback channel
+ * is not provided, we default it to something random.
+ */
+if
+   not-exists:x:@.arguments/*/feedback-channel
+   .lambda
+
+      // Creating default dummy value.
+      crypto.random
+         min:10
+         max:20
+      unwrap:x:+/*
+      validators.default:x:@.arguments
+         feedback-channel:x:@crypto.random
 
 // Doing some basic logging.
 log.info:Crawling page generating OpenAI training snippets
@@ -43,11 +60,12 @@ fork
       signal:magic.ai.url.scrape
          url:x:@.arguments/*/url
          type:x:@.arguments/*/type
+         feedback-channel:x:@.arguments/*/feedback-channel
          images:bool:true
          code:bool:true
          lists:bool:true
          main:bool:true
-         empty-completion:bool:true
+         empty-completion:bool:false
          threshold:x:@.arguments/*/threshold
          summarize:x:@.arguments/*/summarize
 
@@ -60,7 +78,7 @@ fork
          args
             message:Done creating OpenAI training data from page
             type:success
-      sockets.signal:magic.backend.chatbot
+      sockets.signal:x:@.arguments/*/feedback-channel
          roles:root
          args
             message:Done creating OpenAI training data from page

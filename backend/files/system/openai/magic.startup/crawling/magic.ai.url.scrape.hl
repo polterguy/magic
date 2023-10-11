@@ -4,6 +4,7 @@
  * by semantically chopping up page into training snippets.
  *
  * Arguments:
+ *
  * - [url] - What URL to scrape.
  * - [type] - What type to import training snippets into.
  * - [summarize] - If true will summarize all training snippets that are larger than 1,000 tokens.
@@ -31,7 +32,7 @@ slots.create:magic.ai.url.scrape
       lists:bool:true
       code:bool:true
       main:bool:true
-      empty-completion:bool:true
+      empty-completion:bool:false
 
    // Signaling frontend.
    .msg
@@ -40,7 +41,7 @@ slots.create:magic.ai.url.scrape
          .:"Scraping "
          get-value:x:@.arguments/*/url
    unwrap:x:+/**
-   sockets.signal:magic.backend.chatbot
+   sockets.signal:x:@.arguments/*/feedback-channel
       roles:root
       args
          message:x:@.msg
@@ -70,6 +71,7 @@ slots.create:magic.ai.url.scrape
       signal:magic.ai.html.extract
          html:x:@.html
          url:x:@.arguments/*/url
+         feedback-channel:x:@.arguments/*/feedback-channel
 
       // URLs we return to caller.
       .urls
@@ -97,7 +99,7 @@ slots.create:magic.ai.url.scrape
                get-value:x:@signal/*/meta/*/images
                .:" images on page"
             unwrap:x:+/**
-            sockets.signal:magic.backend.chatbot
+            sockets.signal:x:@.arguments/*/feedback-channel
                roles:root
                args
                   message:x:@strings.concat
@@ -118,7 +120,7 @@ slots.create:magic.ai.url.scrape
                get-value:x:@signal/*/meta/*/code
                .:" code snippets on page"
             unwrap:x:+/**
-            sockets.signal:magic.backend.chatbot
+            sockets.signal:x:@.arguments/*/feedback-channel
                roles:root
                args
                   message:x:@strings.concat
@@ -139,7 +141,7 @@ slots.create:magic.ai.url.scrape
                get-value:x:@signal/*/meta/*/lists
                .:" lists on page"
             unwrap:x:+/**
-            sockets.signal:magic.backend.chatbot
+            sockets.signal:x:@.arguments/*/feedback-channel
                roles:root
                args
                   message:x:@strings.concat
@@ -160,7 +162,7 @@ slots.create:magic.ai.url.scrape
                get-value:x:@signal/*/meta/*/main
                .:" main sections on page"
             unwrap:x:+/**
-            sockets.signal:magic.backend.chatbot
+            sockets.signal:x:@.arguments/*/feedback-channel
                roles:root
                args
                   message:x:@strings.concat
@@ -180,7 +182,7 @@ slots.create:magic.ai.url.scrape
          .lambda
 
             // Warning user.
-            sockets.signal:magic.backend.chatbot
+            sockets.signal:x:@.arguments/*/feedback-channel
                roles:root
                args
                   message:WARNING! We could not find any training snippets at the specified URL!
@@ -260,7 +262,7 @@ slots.create:magic.ai.url.scrape
                      .lambda
 
                         // Informing frontend of that we're about to summarize snippet.
-                        sockets.signal:magic.backend.chatbot
+                        sockets.signal:x:@.arguments/*/feedback-channel
                            roles:root
                            args
                               message:Summarizing snippet since it is larger than 80% of maximum context size for type
@@ -315,7 +317,7 @@ slots.create:magic.ai.url.scrape
                                     .lambda
 
                                        // Success creating summary.
-                                       sockets.signal:magic.backend.chatbot
+                                       sockets.signal:x:@.arguments/*/feedback-channel
                                           roles:root
                                           args
                                              message:Successfully created summary of snippet
@@ -342,7 +344,7 @@ slots.create:magic.ai.url.scrape
                                  else
 
                                     // Oops, could not summarize snippet.
-                                    sockets.signal:magic.backend.chatbot
+                                    sockets.signal:x:@.arguments/*/feedback-channel
                                        roles:root
                                        args
                                           message:Could not summarize snippet, check your log for details
@@ -428,7 +430,7 @@ slots.create:magic.ai.url.scrape
                      get-value:x:@data.read/*/*/count
                      .:" old training snippets with the same URL"
                   unwrap:x:+/**
-                  sockets.signal:magic.backend.chatbot
+                  sockets.signal:x:@.arguments/*/feedback-channel
                      roles:root
                      args
                         message:x:@strings.concat
@@ -551,7 +553,7 @@ slots.create:magic.ai.url.scrape
                            else
 
                               // Success creating summary.
-                              sockets.signal:magic.backend.chatbot
+                              sockets.signal:x:@.arguments/*/feedback-channel
                                  roles:root
                                  args
                                     message:Snippet with similar completion exists, updating prompt to common
@@ -584,35 +586,6 @@ slots.create:magic.ai.url.scrape
                   get-value:x:@.below-threshold
                   get-value:x:@.already-exists
 
-         // Making sure we were able to actually import anything.
-         if
-            mt:x:@.imported
-               .:int:0
-            .lambda
-
-               // Successfully imported at least one snippet.
-               strings.concat
-                  .:"Done importing "
-                  get-value:x:@.imported
-                  .:" training snippets from page"
-               unwrap:x:+/**
-               sockets.signal:magic.backend.chatbot
-                  roles:root
-                  args
-                     message:x:@strings.concat
-                     type:info
-               sleep:100
-
-         else
-
-            // Could not import anything!
-            sockets.signal:magic.backend.chatbot
-               roles:root
-               args
-                  message:We were not able to successfully import any snippets from page!
-                  type:warning
-            sleep:100
-
          // Checking how many snippets was below threshold, and informing user.
          if
             mt:x:@.below-threshold
@@ -624,7 +597,7 @@ slots.create:magic.ai.url.scrape
                   get-value:x:@.below-threshold
                   .:" snippets was below threshold and hence was not imported"
                unwrap:x:+/**
-               sockets.signal:magic.backend.chatbot
+               sockets.signal:x:@.arguments/*/feedback-channel
                   roles:root
                   args
                      message:x:@strings.concat
@@ -642,7 +615,7 @@ slots.create:magic.ai.url.scrape
                   get-value:x:@.already-exists
                   .:" snippets already exists in database and hence was not imported"
                unwrap:x:+/**
-               sockets.signal:magic.backend.chatbot
+               sockets.signal:x:@.arguments/*/feedback-channel
                   roles:root
                   args
                      message:x:@strings.concat
@@ -660,12 +633,41 @@ slots.create:magic.ai.url.scrape
                   get-value:x:@.failed
                   .:" snippets failed during import, probably because of OpenAI not being able to summarize them"
                unwrap:x:+/**
-               sockets.signal:magic.backend.chatbot
+               sockets.signal:x:@.arguments/*/feedback-channel
                   roles:root
                   args
                      message:x:@strings.concat
                      type:warning
                sleep:100
+
+         // Making sure we were able to actually import anything.
+         if
+            mt:x:@.imported
+               .:int:0
+            .lambda
+
+               // Successfully imported at least one snippet.
+               strings.concat
+                  .:"Done importing "
+                  get-value:x:@.imported
+                  .:" training snippets from page"
+               unwrap:x:+/**
+               sockets.signal:x:@.arguments/*/feedback-channel
+                  roles:root
+                  args
+                     message:x:@strings.concat
+                     type:info
+               sleep:100
+
+         else
+
+            // Could not import anything!
+            sockets.signal:x:@.arguments/*/feedback-channel
+               roles:root
+               args
+                  message:We were not able to successfully import any snippets from page!
+                  type:warning
+            sleep:100
 
       // Returning all URLs found during scraping to caller.
       return:x:@.urls/*
@@ -678,7 +680,7 @@ slots.create:magic.ai.url.scrape
          get-value:x:@.arguments/*/message
          .:"'"
       unwrap:x:+/**
-      sockets.signal:magic.backend.chatbot
+      sockets.signal:x:@.arguments/*/feedback-channel
          roles:root
          args
             message:x:@strings.concat
