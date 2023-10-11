@@ -48,7 +48,7 @@ slots.create:magic.ai.url.get
             url:x:@.arguments/*/url
             status:x:@http.get
          strings.concat
-            .:"Something went wrong while trying to get URL, HTTP invocation returned status code "
+            .:"HTTP invocation returned status code "
             get-value:x:@http.get
          throw:x:-
 
