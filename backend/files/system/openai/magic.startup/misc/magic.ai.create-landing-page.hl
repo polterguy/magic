@@ -35,7 +35,6 @@ slots.create:magic.ai.create-landing-page
       url:x:@.arguments/*/url
    unwrap:x:+/*/args/**
    sockets.signal:x:@.arguments/*/feedback-channel
-      roles:root
       args
          message:x:@strings.concat
          type:info

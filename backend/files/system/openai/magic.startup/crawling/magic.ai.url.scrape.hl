@@ -42,7 +42,6 @@ slots.create:magic.ai.url.scrape
          get-value:x:@.arguments/*/url
    unwrap:x:+/**
    sockets.signal:x:@.arguments/*/feedback-channel
-      roles:root
       args
          message:x:@.msg
          type:info
@@ -100,7 +99,6 @@ slots.create:magic.ai.url.scrape
                .:" images on page"
             unwrap:x:+/**
             sockets.signal:x:@.arguments/*/feedback-channel
-               roles:root
                args
                   message:x:@strings.concat
                   type:info
@@ -121,7 +119,6 @@ slots.create:magic.ai.url.scrape
                .:" code snippets on page"
             unwrap:x:+/**
             sockets.signal:x:@.arguments/*/feedback-channel
-               roles:root
                args
                   message:x:@strings.concat
                   type:info
@@ -142,7 +139,6 @@ slots.create:magic.ai.url.scrape
                .:" lists on page"
             unwrap:x:+/**
             sockets.signal:x:@.arguments/*/feedback-channel
-               roles:root
                args
                   message:x:@strings.concat
                   type:info
@@ -163,7 +159,6 @@ slots.create:magic.ai.url.scrape
                .:" main sections on page"
             unwrap:x:+/**
             sockets.signal:x:@.arguments/*/feedback-channel
-               roles:root
                args
                   message:x:@strings.concat
                   type:info
@@ -183,7 +178,6 @@ slots.create:magic.ai.url.scrape
 
             // Warning user.
             sockets.signal:x:@.arguments/*/feedback-channel
-               roles:root
                args
                   message:WARNING! We could not find any training snippets at the specified URL!
                   type:warning
@@ -262,7 +256,6 @@ slots.create:magic.ai.url.scrape
 
                         // Informing frontend of that we're about to summarize snippet.
                         sockets.signal:x:@.arguments/*/feedback-channel
-                           roles:root
                            args
                               message:Summarizing snippet since it is larger than 80% of maximum context size for type
                               type:info
@@ -314,7 +307,6 @@ slots.create:magic.ai.url.scrape
 
                                        // Probably too many tokens to summarize.
                                        sockets.signal:x:@.arguments/*/feedback-channel
-                                          roles:root
                                           args
                                              message:Could not summarize snippet, check your log for details
                                              type:warning
@@ -339,7 +331,6 @@ slots.create:magic.ai.url.scrape
 
                                        // Success creating summary.
                                        sockets.signal:x:@.arguments/*/feedback-channel
-                                          roles:root
                                           args
                                              message:Successfully created summary of snippet
                                              type:info
@@ -366,7 +357,6 @@ slots.create:magic.ai.url.scrape
 
                                     // Oops, could not summarize snippet.
                                     sockets.signal:x:@.arguments/*/feedback-channel
-                                       roles:root
                                        args
                                           message:Could not summarize snippet, check your log for details
                                           type:warning
@@ -452,7 +442,6 @@ slots.create:magic.ai.url.scrape
                      .:" old training snippets with the same URL"
                   unwrap:x:+/**
                   sockets.signal:x:@.arguments/*/feedback-channel
-                     roles:root
                      args
                         message:x:@strings.concat
                         type:info
@@ -575,7 +564,6 @@ slots.create:magic.ai.url.scrape
 
                               // Success creating summary.
                               sockets.signal:x:@.arguments/*/feedback-channel
-                                 roles:root
                                  args
                                     message:Snippet with similar completion exists, updating prompt to common
                                     type:info
@@ -619,7 +607,6 @@ slots.create:magic.ai.url.scrape
                   .:" snippets was below threshold and hence was not imported"
                unwrap:x:+/**
                sockets.signal:x:@.arguments/*/feedback-channel
-                  roles:root
                   args
                      message:x:@strings.concat
                      type:info
@@ -637,7 +624,6 @@ slots.create:magic.ai.url.scrape
                   .:" snippets already exists in database and hence was not imported"
                unwrap:x:+/**
                sockets.signal:x:@.arguments/*/feedback-channel
-                  roles:root
                   args
                      message:x:@strings.concat
                      type:info
@@ -655,7 +641,6 @@ slots.create:magic.ai.url.scrape
                   .:" snippets failed during import, probably because of OpenAI not being able to summarize them"
                unwrap:x:+/**
                sockets.signal:x:@.arguments/*/feedback-channel
-                  roles:root
                   args
                      message:x:@strings.concat
                      type:warning
@@ -674,7 +659,6 @@ slots.create:magic.ai.url.scrape
                   .:" training snippets from page"
                unwrap:x:+/**
                sockets.signal:x:@.arguments/*/feedback-channel
-                  roles:root
                   args
                      message:x:@strings.concat
                      type:info
@@ -684,7 +668,6 @@ slots.create:magic.ai.url.scrape
 
             // Could not import anything!
             sockets.signal:x:@.arguments/*/feedback-channel
-               roles:root
                args
                   message:We were not able to successfully import any snippets from page!
                   type:warning
