@@ -57,7 +57,6 @@ slots.create:magic.ai.load-robots
       get-value:x:@.robots
    unwrap:x:+/**
    sockets.signal:x:@.arguments/*/feedback-channel
-      roles:root
       args
          message:x:@strings.concat
          type:info

@@ -67,7 +67,6 @@ select id, prompt, completion
                get-value:x:@.dp/#/*/prompt
             unwrap:x:+/*/args/*/message
             sockets.signal:x:@.arguments/*/feedback-channel
-               roles:root
                args
                   message:x:@strings.concat
                   type:info
@@ -120,7 +119,6 @@ select id, prompt, completion
                            .:"'"
                         unwrap:x:+/*/args/*/message
                         sockets.signal:x:@.arguments/*/feedback-channel
-                           roles:root
                            args
                               message:x:@strings.concat
                               type:error
@@ -138,7 +136,6 @@ select id, prompt, completion
                               // OpenAI server is busy, waiting 5 seconds to retry.
                               math.decrement:x:@.retries
                               sockets.signal:x:@.arguments/*/feedback-channel
-                                 roles:root
                                  args
                                     message:Retrying in 5 seconds
                                     type:info
@@ -224,14 +221,12 @@ select id, prompt, completion
          .:" training snippets"
       unwrap:x:+/*/args/*/message
       sockets.signal:x:@.arguments/*/feedback-channel
-         roles:root
          args
             message:x:@strings.concat
             type:info
 
       // Messaging frontend to let it know we're about to index embeddings.
       sockets.signal:x:@.arguments/*/feedback-channel
-         roles:root
          args
             message:Indexing embeddings
             type:info
@@ -249,7 +244,6 @@ insert into vss_ml_training_snippets (rowid, embedding_vss)
 
       // Done with everything, notifying frontend.
       sockets.signal:x:@.arguments/*/feedback-channel
-         roles:root
          args
             message:Your machine learning model was successfully vectorised
             type:success

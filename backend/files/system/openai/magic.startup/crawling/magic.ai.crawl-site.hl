@@ -28,7 +28,6 @@ slots.create:magic.ai.crawl-site
 
                // Site contains a robots.txt file, signaling frontend of that fact.
                sockets.signal:x:@.arguments/*/feedback-channel
-                  roles:root
                   args
                      message:Site has robots.txt
                      type:info
@@ -41,7 +40,6 @@ slots.create:magic.ai.crawl-site
                   .:" sitemaps in robots.txt file"
                unwrap:x:+/**
                sockets.signal:x:@.arguments/*/feedback-channel
-                  roles:root
                   args
                      message:x:@strings.concat
                      type:info
@@ -67,7 +65,6 @@ slots.create:magic.ai.crawl-site
                         .:" seconds"
                      unwrap:x:+/**
                      sockets.signal:x:@.arguments/*/feedback-channel
-                        roles:root
                         args
                            message:x:@strings.concat
                            type:info
@@ -76,7 +73,6 @@ slots.create:magic.ai.crawl-site
 
             // Site does not contain a robots.txt file, signaling that fact to frontend.
             sockets.signal:x:@.arguments/*/feedback-channel
-               roles:root
                args
                   message:Could not find a robots.txt file for website
                   type:warning
@@ -86,7 +82,6 @@ slots.create:magic.ai.crawl-site
                get-value:x:@signal/*/sitemap/0
             unwrap:x:+/**
             sockets.signal:x:@.arguments/*/feedback-channel
-               roles:root
                args
                   message:x:@strings.concat
                   type:info
@@ -121,7 +116,6 @@ slots.create:magic.ai.crawl-site
                   .:" URLs in sitemap(s)"
                unwrap:x:+/**
                sockets.signal:x:@.arguments/*/feedback-channel
-                  roles:root
                   args
                      message:x:@strings.concat
                      type:info
@@ -142,7 +136,6 @@ slots.create:magic.ai.crawl-site
                         .:" URLs and will only be partially scraped"
                      unwrap:x:+/**
                      sockets.signal:x:@.arguments/*/feedback-channel
-                        roles:root
                         args
                            message:x:@strings.concat
                            type:warning
@@ -156,7 +149,6 @@ slots.create:magic.ai.crawl-site
 
                      // Adding spacer.
                      sockets.signal:x:@.arguments/*/feedback-channel
-                        roles:root
                         args
                            message:------------------------------------------------------------------------------------------------------------------------
                            type:info
@@ -183,7 +175,6 @@ slots.create:magic.ai.crawl-site
                         .:" seconds to avoid exhausting web server"
                      unwrap:x:+/**
                      sockets.signal:x:@.arguments/*/feedback-channel
-                        roles:root
                         args
                            message:x:@strings.concat
                            type:info
@@ -214,7 +205,6 @@ slots.create:magic.ai.crawl-site
 
                // Adding spacer.
                sockets.signal:x:@.arguments/*/feedback-channel
-                  roles:root
                   args
                      message:------------------------------------------------------------------------------------------------------------------------
                      type:info
@@ -263,7 +253,6 @@ slots.create:magic.ai.crawl-site
 
             // Informing frontend of that we'll try to crawl site.
             sockets.signal:x:@.arguments/*/feedback-channel
-               roles:root
                args
                   message:Trying to crawl site even though we did not find a valid sitemap
                   type:info
@@ -283,7 +272,6 @@ slots.create:magic.ai.crawl-site
 
                   // Adding spacer.
                   sockets.signal:x:@.arguments/*/feedback-channel
-                     roles:root
                      args
                         message:------------------------------------------------------------------------------------------------------------------------
                         type:info
@@ -338,7 +326,6 @@ slots.create:magic.ai.crawl-site
                      .:" seconds to avoid exhausting web server"
                   unwrap:x:+/**
                   sockets.signal:x:@.arguments/*/feedback-channel
-                     roles:root
                      args
                         message:x:@strings.concat
                         type:info
@@ -349,7 +336,6 @@ slots.create:magic.ai.crawl-site
 
             // Adding spacer.
             sockets.signal:x:@.arguments/*/feedback-channel
-               roles:root
                args
                   message:------------------------------------------------------------------------------------------------------------------------
                   type:info
@@ -362,7 +348,6 @@ slots.create:magic.ai.crawl-site
                .:" URLs"
             unwrap:x:+/**
             sockets.signal:x:@.arguments/*/feedback-channel
-               roles:root
                args
                   message:x:@strings.concat
                   type:info

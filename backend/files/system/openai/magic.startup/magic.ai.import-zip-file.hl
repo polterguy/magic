@@ -228,7 +228,6 @@ slots.create:magic.ai.import-zip-file
                      .:" is ignored"
                   unwrap:x:+/*/*/message
                   sockets.signal:x:@.arguments/*/feedback-channel
-                     roles:root
                      args
                         message:x:@strings.concat
                         type:info
@@ -270,7 +269,6 @@ slots.create:magic.ai.import-zip-file
                         get-value:x:@.dp/#
                      unwrap:x:+/*/*/message
                      sockets.signal:x:@.arguments/*/feedback-channel
-                        roles:root
                         args
                            message:x:@strings.concat
                            type:info
@@ -321,7 +319,6 @@ slots.create:magic.ai.import-zip-file
                            get-value:x:@.dp/#
                         unwrap:x:+/*/*/message
                         sockets.signal:x:@.arguments/*/feedback-channel
-                           roles:root
                            args
                               message:x:@strings.concat
                               type:warning
@@ -368,7 +365,6 @@ slots.create:magic.ai.import-zip-file
             .:" training snippets, now vectorising model"
          unwrap:x:+/*/*/message
          sockets.signal:x:@.arguments/*/feedback-channel
-            roles:root
             args
                message:x:@strings.concat
                type:done_crawling

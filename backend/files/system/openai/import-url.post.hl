@@ -89,7 +89,6 @@ signal:magic.ai.crawl-site
       // Informing client that we're done.
       .feedback-channel:x:@.arguments/*/feedback-channel
       sockets.signal:x:@.arguments/*/feedback-channel
-         roles:root
          args
             message:Successfull scraped URL(s), remember to vectorize your model before using it
             type:success

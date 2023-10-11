@@ -79,7 +79,6 @@ fork
             message:Done creating OpenAI training data from page
             type:success
       sockets.signal:x:@.arguments/*/feedback-channel
-         roles:root
          args
             message:Done creating OpenAI training data from page
             type:success
