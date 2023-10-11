@@ -220,7 +220,6 @@ slots.create:magic.ai.url.scrape
                      columns
                         max_context_tokens
                         api_key
-                        model
                      where
                         and
                            type.eq:x:@.arguments/*/type
@@ -237,7 +236,7 @@ slots.create:magic.ai.url.scrape
                   set-value:x:@.api-key
                      get-value:x:@data.read/*/*/api_key
                   set-value:x:@.model
-                     get-value:x:@data.read/*/*/model
+                     .:gpt-3.5-turbo-16k
 
                // Looping through all snippets to check their size.
                for-each:x:@.snippets/*
