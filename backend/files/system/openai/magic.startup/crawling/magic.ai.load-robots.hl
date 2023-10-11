@@ -67,7 +67,7 @@ slots.create:magic.ai.load-robots
 
       // Retrieving robots.txt file.
       http.get:x:@.robots
-         timeout:30
+         timeout:60
 
       // Collection of URL explicitly disallowed from robots.txt file.
       .disallow
