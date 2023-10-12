@@ -201,7 +201,7 @@ slots.create:magic.ai.load-robots
                                                 // Crawl-Delay was not a number, warning user.
                                                 sockets.signal:x:@.arguments/*/feedback-channel
                                                    args
-                                                      message:Crawl-Delay was not a valid integer value, using 10 seconds as default value
+                                                      message:Crawl-Delay was not a valid integer value, using 10 seconds as our value
                                                       type:warning
                                                 set-value:x:@.crawl-delay
                                                    .:int:10000
