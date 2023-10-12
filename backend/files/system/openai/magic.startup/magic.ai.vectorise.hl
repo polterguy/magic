@@ -114,14 +114,14 @@ select id, prompt, completion
                            message:x:@http.post/*/content/*/error/*/message
                            error:x:@lambda2hyper
                         strings.concat
-                           .:"Could not create embeddings for, OpenAI failed '"
+                           .:"OpenAI failed, could not create vectors for '"
                            get-value:x:@.dp/#/*/prompt
                            .:"'"
                         unwrap:x:+/*/args/*/message
                         sockets.signal:x:@.arguments/*/feedback-channel
                            args
                               message:x:@strings.concat
-                              type:error
+                              type:warning
                         if
                            and
                               or
@@ -148,9 +148,8 @@ select id, prompt, completion
                            sockets.signal:magic.backend.message
                               roles:root
                               args
-                                 message:Aborting vectorisation
+                                 message:Could not vectorize snippet
                                  type:error
-                           log.error:Aborting vectorisation process
 
                            // Aborting while loop.
                            set-value:x:@.continue

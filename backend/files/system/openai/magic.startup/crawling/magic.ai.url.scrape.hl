@@ -547,11 +547,8 @@ slots.create:magic.ai.url.scrape
                                        meta:AINIRO-Website-Crawler
 
                            else-if
-                              and
-                                 neq:x:@data.read/0/*/completion
-                                    .:
-                                 eq:x:@data.read/0/*/prompt
-                                    .:"Common"
+                              eq:x:@data.read/0/*/prompt
+                                 .:"Common"
                               .lambda
 
                                  /*
@@ -568,7 +565,6 @@ slots.create:magic.ai.url.scrape
                                     message:Snippet with similar completion exists, updating prompt to common
                                     type:info
                               sleep:10
-
 
                               // Updating record in database.
                               data.update
@@ -654,7 +650,7 @@ slots.create:magic.ai.url.scrape
 
                // Successfully imported at least one snippet.
                strings.concat
-                  .:"Done importing "
+                  .:"Done importing or updating "
                   get-value:x:@.imported
                   .:" training snippets from page"
                unwrap:x:+/**
