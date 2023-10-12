@@ -110,10 +110,13 @@ slots.create:magic.ai.crawl-site
                 *
                 * Signaling frontend how many URLs we found, and how many there are in total.
                 */
+               get-count:x:@signal/*/urls/*
                strings.concat
                   .:"We found "
                   get-value:x:@signal/*/total
-                  .:" URLs in sitemap(s)"
+                  .:" URLs in sitemap(s), we will be scraping "
+                  get-value:x:@get-count
+                  .:" URLs"
                unwrap:x:+/**
                sockets.signal:x:@.arguments/*/feedback-channel
                   args
@@ -122,7 +125,6 @@ slots.create:magic.ai.crawl-site
                sleep:100
 
                // Checking if site contains more URLs than we're scraping.
-               get-count:x:@signal/*/urls/*
                if
                   mt
                      get-value:x:@signal/*/total
@@ -140,6 +142,30 @@ slots.create:magic.ai.crawl-site
                            message:x:@strings.concat
                            type:warning
                      sleep:100
+
+               // Adding spacer.
+               sockets.signal:x:@.arguments/*/feedback-channel
+                  args
+                     message:------------------------------------------------------------------------------------------------------------------------
+                     type:info
+               sleep:100
+
+               // Feedback
+               sockets.signal:x:@.arguments/*/feedback-channel
+                  args
+                     message:"URLs we will scrape are as follows:"
+                     type:info
+               sleep:100
+
+               // Iterating through each URL returned from above invocation.
+               for-each:x:@signal/*/urls/*
+
+                  unwrap:x:+/**
+                  sockets.signal:x:@.arguments/*/feedback-channel
+                     args
+                        message:x:@.dp/#
+                        type:info
+                  sleep:100
 
                // Iterating through each URL returned from above invocation.
                for-each:x:@signal/*/urls/*
