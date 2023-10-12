@@ -38,6 +38,14 @@ slots.create:magic.ai.create-landing-page
       args
          message:x:@strings.concat
          type:info
+   sleep:100
+
+   // Adding spacer.
+   sockets.signal:x:@.arguments/*/feedback-channel
+      args
+         message:------------------------------------------------------------------------------------------------------------------------
+         type:info
+   sleep:100
 
    // Retrieving HTML document from URL specified.
    add:x:./*/http.get
