@@ -172,12 +172,39 @@ slots.create:magic.ai.load-robots
                                                 .:
                                           .lambda
 
-                                             // Storing Crawl-Delay value and returning to caller.
-                                             set-value:x:@.crawl-delay
-                                                math.multiply
-                                                   .:int:1000
-                                                   convert:x:@.value
-                                                      type:int
+                                             // In case Crawl-Delay is not a number we need to catch exceptions.
+                                             try
+
+                                                // Storing Crawl-Delay value and returning to caller.
+                                                set-value:x:@.crawl-delay
+                                                   math.multiply
+                                                      .:int:1000
+                                                      convert:x:@.value
+                                                         type:int
+
+                                                // Verifying Crawl-Delay is not more than 60000.
+                                                if
+                                                   mt:x:@.crawl-delay
+                                                      .:int:60000
+                                                   .lambda
+
+                                                      // Crawl-Delay more than 60 seconds, warning user.
+                                                      sockets.signal:x:@.arguments/*/feedback-channel
+                                                         args
+                                                            message:Crawl-Delay was more than 60 seconds, using 60 seconds as our value
+                                                            type:warning
+                                                      set-value:x:@.crawl-delay
+                                                         .:int:60000
+
+                                             .catch
+
+                                                // Crawl-Delay was not a number, warning user.
+                                                sockets.signal:x:@.arguments/*/feedback-channel
+                                                   args
+                                                      message:Crawl-Delay was not a valid integer value, using 10 seconds as default value
+                                                      type:warning
+                                                set-value:x:@.crawl-delay
+                                                   .:int:10000
 
                                     case:User-Agent
                                     case:User-agent
@@ -442,7 +469,6 @@ slots.create:magic.ai.load-robots
          .:"'"
       unwrap:x:+/**
       sockets.signal:x:@.arguments/@.arguments/*/feedback-channel
-         roles:root
          args
             message:x:@strings.concat
             type:warning
