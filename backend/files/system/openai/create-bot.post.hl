@@ -234,7 +234,7 @@ try
                      message:We could not find any training data on your website
                      type:error
 
-               // Connecting to database to sanity check model.
+               // Connecting to database to delete model.
                data.connect:[generic|magic]
 
                   // Deleting model.
