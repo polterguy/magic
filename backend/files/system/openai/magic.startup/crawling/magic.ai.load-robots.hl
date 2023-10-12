@@ -157,11 +157,13 @@ slots.create:magic.ai.load-robots
                                     case:Crawl-delay
                                     case:crawl-delay
 
-                                       // Checking if we're inside a relevant section from the robots.txt file.
+                                       // Replacing everything that's not a digit in value.
                                        set-value:x:@.value
                                           strings.replace-not-of:x:@.value
                                              .:0123456789
                                              .:
+
+                                       // Checking if we're inside a relevant section from the robots.txt file.
                                        if
                                           and
                                              eq:x:@.relevant
@@ -422,7 +424,7 @@ slots.create:magic.ai.load-robots
 
             // Making sure we return crawl-delay.
             unwrap:x:+/*/*
-            add:x:../*/return
+            add:x:@try/*/return
                .
                   crawl-delay:x:@.crawl-delay
 
