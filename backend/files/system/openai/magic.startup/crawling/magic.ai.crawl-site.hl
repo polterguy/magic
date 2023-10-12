@@ -251,6 +251,13 @@ slots.create:magic.ai.crawl-site
                .
                   .:x:@.arguments/*/url
 
+            // No sitemap(s) found, informing user
+            sockets.signal:x:@.arguments/*/feedback-channel
+               args
+                  message:Could not find any valid sitemaps
+                  type:warning
+            sleep:100
+
             // Informing frontend of that we'll try to crawl site.
             sockets.signal:x:@.arguments/*/feedback-channel
                args
