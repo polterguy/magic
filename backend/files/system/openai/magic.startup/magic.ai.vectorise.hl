@@ -245,7 +245,7 @@ insert into vss_ml_training_snippets (rowid, embedding_vss)
       sockets.signal:x:@.arguments/*/feedback-channel
          args
             message:Your machine learning model was successfully vectorised
-            type:success
+            type:info
 
       // Basic logging.
       log.info:Done with creating vectors for model
