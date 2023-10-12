@@ -79,6 +79,7 @@ try
       args
          message:x:@strings.concat
          type:info
+   sleep:1000
 
    // Informing client that we've successfully started crawling.
    strings.concat
@@ -89,6 +90,7 @@ try
       args
          message:x:@strings.concat
          type:info
+   sleep:100
 
    // Figuring out what to name our type.
    .type
