@@ -27,7 +27,7 @@ slots.create:magic.http.scrape-url
    http.get:x:@.arguments/*/url
       timeout:int:10
       headers
-         User-Agent:AINIRO-MachineLearning-Spider
+         User-Agent:AINIRO-Crawler 2.0
          Accept:text/html
          Accept-Encoding:identity
 

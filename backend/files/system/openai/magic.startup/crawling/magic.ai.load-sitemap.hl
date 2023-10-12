@@ -366,7 +366,7 @@ slots.create:magic.ai.load-sitemap
       while
          and
             mt:x:@.arguments/*/max
-               .:int:1
+               .:int:0
             exists:x:@sort/0
          .lambda
 
