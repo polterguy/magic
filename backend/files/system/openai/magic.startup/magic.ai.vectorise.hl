@@ -63,8 +63,9 @@ select id, prompt, completion
 
             // Signaling frontend.
             strings.concat
-               .:"Vectorising "
+               .:"Vectorizing: \""
                get-value:x:@.dp/#/*/prompt
+               .:"\""
             unwrap:x:+/*/args/*/message
             sockets.signal:x:@.arguments/*/feedback-channel
                args
@@ -240,12 +241,6 @@ insert into vss_ml_training_snippets (rowid, embedding_vss)
          type = @type and
          not exists (select rowid from vss_ml_training_snippets vss2 where vss2.rowid = ts.id)"
             type:x:@.arguments/*/type
-
-      // Done with everything, notifying frontend.
-      sockets.signal:x:@.arguments/*/feedback-channel
-         args
-            message:Your machine learning model was successfully vectorised
-            type:info
 
       // Basic logging.
       log.info:Done with creating vectors for model

@@ -164,10 +164,11 @@ export class OpenAIService {
   /**
    * Vectorises all snippets in the specified type.
    */
-  vectorise(type: string) {
+  vectorise(type: string, channel: string) {
 
     return this.httpService.post<any>('/magic/system/openai/vectorise', {
       type,
+      ['feedback-channel']: channel,
     });
   }
 

@@ -39,6 +39,11 @@ fork
    add:x:./*/signal
       get-nodes:x:@.arguments/*
    signal:magic.ai.vectorise
+      .onafter
+         sockets.signal:x:@.arguments/*/feedback-channel
+            args
+               message:Done!
+               type:success
 
 // Returning success to caller.
 return

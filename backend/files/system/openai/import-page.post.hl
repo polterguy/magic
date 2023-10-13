@@ -80,7 +80,7 @@ fork
             type:success
       sockets.signal:x:@.arguments/*/feedback-channel
          args
-            message:Done creating OpenAI training data from page
+            message:Done!
             type:success
 
       // Basic logging.

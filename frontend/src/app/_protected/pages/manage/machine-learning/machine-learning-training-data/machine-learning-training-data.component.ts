@@ -127,7 +127,7 @@ export class MachineLearningTrainingDataComponent implements OnInit {
                 max: result.max,
                 threshold: result.threshold,
                 summarize: result.summarize,
-                site: false,
+                mode: 'single-page'
               }
             });
         }

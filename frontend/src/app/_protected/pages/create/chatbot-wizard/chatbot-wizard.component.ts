@@ -270,7 +270,7 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
            * Too many snippets according to license, still we'll vectorise the model explicitly to make sure
            * user gets at least a somewhat working chatbot to embed on page.
            */
-          this.openAIService.vectorise(this.model).subscribe({
+          this.openAIService.vectorise(this.model, feedbackChannel).subscribe({
             next: () => {
 
               console.log('Vectorising started');

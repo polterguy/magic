@@ -75,8 +75,7 @@ export class MachineLearningImportFeedbackComponent implements OnInit, OnDestroy
     
         this.hubConnection.start().then(() => {
     
-          this.generalService.showLoading();
-          if (this.data.site === true) {
+          if (this.data.mode === 'site') {
             this.openAIService.importUrl(
               this.data.url,
               this.data.type,
@@ -96,7 +95,7 @@ export class MachineLearningImportFeedbackComponent implements OnInit, OnDestroy
                 this.generalService.showFeedback('Something went wrong as we tried to start import', 'errorMessage');
               }
             });
-          } else {
+          } else if (this.data.mode === 'single-page') {
             this.openAIService.importPage(
               this.data.url,
               this.data.type,
@@ -112,7 +111,20 @@ export class MachineLearningImportFeedbackComponent implements OnInit, OnDestroy
                 this.generalService.showFeedback('Something went wrong as we tried to spice your model', 'errorMessage');
               }
             });
-        }
+          } else if (this.data.mode === 'vectorize') {
+
+            this.openAIService.vectorise(this.data.type, result.result).subscribe({
+              next: () => {
+
+                this.generalService.hideLoading();
+              },
+              error: () => {
+
+                this.generalService.hideLoading();
+                this.generalService.showFeedback('Something went wrong as we tried to create embeddings for model', 'errorMessage');
+              }
+            });
+          }
         });
       },
       error: () => {
