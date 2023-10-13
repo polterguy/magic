@@ -316,8 +316,14 @@ try
                // Providing feedback to caller.
                sockets.signal:x:@.feedback-channel
                   args
-                     message:Done creating your machine learning model, remember to vectorize it before attempting to use it
-                     type:success
+                     message:Remember to vectorize before attempting to use your model
+                     type:info
+
+            // Informing user that we're done.
+            sockets.signal:x:@.arguments/*/feedback-channel
+               args
+                  message:Done!
+                  type:success
 
    // Returning success to caller.
    unwrap:x:+/*

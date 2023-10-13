@@ -168,7 +168,7 @@ export class MachineLearningModelsComponent implements OnInit {
                 max: result.max,
                 threshold: result.threshold,
                 summarize: result.summarize,
-                site: true,
+                mode: 'site'
               }
             });
         }
@@ -233,17 +233,14 @@ export class MachineLearningModelsComponent implements OnInit {
         }).afterClosed().subscribe((result: string) => {
 
           if (result === 'confirm') {
-
-            this.openAIService.vectorise(el.type).subscribe({
-              next: () => {
-
-                this.generalService.showFeedback('Started creating embeddings of model', 'successMessage');
-                this.generalService.hideLoading();
-              },
-              error: () => {
-
-                this.generalService.hideLoading();
-                this.generalService.showFeedback('Something went wrong as we tried to create embeddings for model', 'errorMessage');
+            this.dialog
+            .open(MachineLearningImportFeedbackComponent, {
+              width: '80vw',
+              maxWidth: '1280px',
+              data: {
+                url: result,
+                type: el.type,
+                mode: 'vectorize'
               }
             });
           }

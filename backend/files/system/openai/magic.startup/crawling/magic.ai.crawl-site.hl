@@ -193,21 +193,27 @@ slots.create:magic.ai.crawl-site
                         threshold:x:@.arguments/*/threshold
                         feedback-channel:x:@.arguments/*/feedback-channel
 
-                     // Signaling frontend that we're waiting for n seconds.
-                     strings.concat
-                        .:"Waiting for "
-                        math.divide:x:@.arguments/*/delay
-                           .:int:1000
-                        .:" seconds to avoid exhausting web server"
-                     unwrap:x:+/**
-                     sockets.signal:x:@.arguments/*/feedback-channel
-                        args
-                           message:x:@strings.concat
-                           type:info
-                     sleep:100
+                     // Verifying we've got more snippets before applying Crawl-Delay
+                     if
+                        neq:x:@.dp/#
+                           get-value:x:@signal/@signal/*/urls/0/-
+                        .lambda
 
-                     // Sleeping for [delay] milliseconds to avoid exhausting web server.
-                     sleep:x:@.arguments/*/delay
+                           // Signaling frontend that we're waiting for n seconds.
+                           strings.concat
+                              .:"Waiting for "
+                              math.divide:x:@.arguments/*/delay
+                                 .:int:1000
+                              .:" seconds to avoid exhausting web server"
+                           unwrap:x:+/**
+                           sockets.signal:x:@.arguments/*/feedback-channel
+                              args
+                                 message:x:@strings.concat
+                                 type:info
+                           sleep:100
+
+                           // Sleeping for [delay] milliseconds to avoid exhausting web server.
+                           sleep:x:@.arguments/*/delay
 
                   .catch
 
