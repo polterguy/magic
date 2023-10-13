@@ -125,6 +125,15 @@
 .aista-chat-msg-container a:visited {
   color: #5555ff !important;
 }
+.aista-chat-question-waiting {
+  margin-bottom: 25px !important;
+  margin-left: 60px !important;
+  border-radius: 7px 7px 0 7px;
+  background:linear-gradient(to right, #0c6e6e, #059595) !important;
+  color: #aaaaaa;
+  padding: 15px !important;
+  box-shadow: 3px 3px 5px rgba(0,0,0,.2);
+}
 @keyframes jump {
   0%   {bottom: 0px;}
   20%  {bottom: 5px;}
