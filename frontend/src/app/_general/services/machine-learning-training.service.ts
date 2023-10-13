@@ -63,7 +63,7 @@ export class MachineLearningTrainingService {
   /**
    * Exports all training snippet matching filter.
    */
-  ml_training_snippets_export(filter: any) {
+  ml_training_snippets_export(filter: any, filename: string) {
 
     this.httpService.download(
       '/magic/system/magic/ml_training_snippets_export' +
@@ -71,7 +71,7 @@ export class MachineLearningTrainingService {
       next: (res) => {
 
         const disp = res.headers.get('Content-Disposition');
-        let filename = disp.split(';')[1].trim().split('=')[1].replace(/"/g, '');
+        filename = filename ?? disp.split(';')[1].trim().split('=')[1].replace(/"/g, '');
         const file = new Blob([res.body]);
         saveAs(file, filename);
       },

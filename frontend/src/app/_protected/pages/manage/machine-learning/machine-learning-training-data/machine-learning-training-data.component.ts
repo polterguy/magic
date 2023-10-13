@@ -376,10 +376,12 @@ export class MachineLearningTrainingDataComponent implements OnInit {
     if (this.filter['ml_training_snippets.uri.like']) {
       filter['ml_training_snippets.uri.like'] = this.filter['ml_training_snippets.uri.like'];
     }
+    let filename = 'training-snippets.csv';
     if (this.filter['ml_training_snippets.type.eq']) {
       filter['ml_training_snippets.type.eq'] = this.filter['ml_training_snippets.type.eq'];
+      filename = this.filter['ml_training_snippets.type.eq'] + '.csv';
     }
-    this.machineLearningTrainingService.ml_training_snippets_export(filter);
+    this.machineLearningTrainingService.ml_training_snippets_export(filter, filename);
   }
 
   page(event: PageEvent) {
