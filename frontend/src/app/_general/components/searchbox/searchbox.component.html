@@ -79,4 +79,14 @@
     {{button2Text}}
   </button>
 
+  <button
+    mat-flat-button
+    *ngIf="button3Text"
+    color="primary"
+    [disabled]="button3Disabled"
+    class="ms-3"
+    (click)="button3Clicked()">
+    {{button3Text}}
+  </button>
+
 </div>

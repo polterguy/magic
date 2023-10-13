@@ -15,7 +15,7 @@ validators.mandatory:x:@.arguments/*/type
 data.connect:[generic|magic]
 
    // Selecting data.
-   data.select:select distinct(user_id) from ml_requests where type = @type and questionnaire = 1
+   data.select:select distinct(user_id) from ml_requests where type = @type and questionnaire != 1
       @type:x:@.arguments/*/type
 
    // Buffer for data
@@ -24,34 +24,21 @@ data.connect:[generic|magic]
    // Iterating through above result to create our CSV file.
    for-each:x:@data.select/*
 
-      // Adding record for user to above [.data] buffer.
-      add:x:@.data
-         .
-            .
-
-      // Selecting questionnaire data for each above user_id.
-      data.select:"select prompt, completion from ml_requests where user_id = @user_id and questionnaire = 1 and finish_reason = 'questionnaire'"
+      // Finding all prompts and answers for currently iterated user.
+      data.select:select prompt, completion from ml_requests where type = @type and user_id = @user_id and questionnaire != 1
+         @type:x:@.arguments/*/type
          @user_id:x:@.dp/#/*/user_id
 
-      // Iterating through above result and adding to [.data].
-      for-each:x:@data.select/*
-         set-name:x:./*/add/[0,1]/*/*
-            get-value:x:@.dp/#/*/prompt
-         unwrap:x:+/*/*
-         add:x:@.data/0/-
-            .
-               foo:x:@.dp/#/*/completion
+      // Temporary buffer for all questions and answers for currently iterated user.
+      .tmp:
 
-      // Selecting conversation for user and adding to above [.data].
-      .conv:
-      data.select:"select prompt, completion from ml_requests where user_id = @user_id and questionnaire = 0"
-         @user_id:x:@.dp/#/*/user_id
+      // Looping through all questions/answers.
       for-each:x:@data.select/*
 
-         // Concatenating prompt/completion to above [.conv].
-         set-value:x:@.conv
+         // Appending currently iterated question answer to above [.tmp] variable.
+         set-value:x:@.tmp
             strings.concat
-               get-value:x:@.conv
+               get-value:x:@.tmp
                get-value:x:@.dp/#/*/prompt
                .:"\n"
                .:"\n"
@@ -59,13 +46,12 @@ data.connect:[generic|magic]
                .:"\n"
                .:"\n"
 
-      // Adding conversation to above [.data].
-      set-value:x:@.conv
-         strings.trim:x:@.conv
-      unwrap:x:+/*/*
-      add:x:@.data/0/-
+      // Adding currently iterated conversation to above [.data]
+      unwrap:x:+/*/*/*
+      add:x:@.data
          .
-            conversation:x:@.conv
+            .
+               conversation:x:@.tmp
 
    // Converting result to CSV.
    lambda2csv:x:@.data/*

@@ -1,0 +1,80 @@
+
+// Exports all questionnaire data from training requests for the specified type and returns as a CSV file.
+.arguments
+   type:string
+.description:Exports all questionnaire data from training requests for the specified type and returns as a CSV file
+.type:internal
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/type
+
+// Opening up our database connection.
+data.connect:[generic|magic]
+
+   // Selecting data.
+   data.select:select distinct(user_id) from ml_requests where type = @type and questionnaire = 1
+      @type:x:@.arguments/*/type
+
+   // Buffer for data
+   .data
+
+   // Iterating through above result to create our CSV file.
+   for-each:x:@data.select/*
+
+      // Adding record for user to above [.data] buffer.
+      add:x:@.data
+         .
+            .
+
+      // Selecting questionnaire data for each above user_id.
+      data.select:"select prompt, completion from ml_requests where user_id = @user_id and questionnaire = 1 and finish_reason = 'questionnaire'"
+         @user_id:x:@.dp/#/*/user_id
+
+      // Iterating through above result and adding to [.data].
+      for-each:x:@data.select/*
+         set-name:x:./*/add/[0,1]/*/*
+            get-value:x:@.dp/#/*/prompt
+         unwrap:x:+/*/*
+         add:x:@.data/0/-
+            .
+               foo:x:@.dp/#/*/completion
+
+      // Selecting conversation for user and adding to above [.data].
+      .conv:
+      data.select:"select prompt, completion from ml_requests where user_id = @user_id and questionnaire = 0"
+         @user_id:x:@.dp/#/*/user_id
+      for-each:x:@data.select/*
+
+         // Concatenating prompt/completion to above [.conv].
+         set-value:x:@.conv
+            strings.concat
+               get-value:x:@.conv
+               get-value:x:@.dp/#/*/prompt
+               .:"\n"
+               .:"\n"
+               get-value:x:@.dp/#/*/completion
+               .:"\n"
+               .:"\n"
+
+      // Adding conversation to above [.data].
+      set-value:x:@.conv
+         strings.trim:x:@.conv
+      unwrap:x:+/*/*
+      add:x:@.data/0/-
+         .
+            conversation:x:@.conv
+
+   // Converting result to CSV.
+   lambda2csv:x:@.data/*
+
+   // Applying correct HTTP header.
+   response.headers.set
+      Content-Type:text/csv
+      Access-Control-Expose-Headers:Content-Disposition
+      Content-Disposition:"attachment; filename=\"questionnaires.csv\""
+
+   // Returning content to caller.
+   return:x:@lambda2csv

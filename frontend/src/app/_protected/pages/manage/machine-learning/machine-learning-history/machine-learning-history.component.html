@@ -21,12 +21,15 @@
         <app-searchbox
           #searchBox
           (filterList)="filterList($event)"
-          buttonText="Export leads"
+          buttonText="Leads"
           (buttonClick)="exportLeads()"
           [buttonDisabled]="!type"
-          button2Text="Export conversations"
+          button2Text="Questionnaires"
           (button2Click)="exportQuestionnaires()"
+          button3Text="Conversations"
+          (button3Click)="exportConversations()"
           [button2Disabled]="!type"
+          [button3Disabled]="!type"
           [(type)]="type"
           [types]="types">
         </app-searchbox>

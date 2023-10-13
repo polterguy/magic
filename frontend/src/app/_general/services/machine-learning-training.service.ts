@@ -105,9 +105,31 @@ export class MachineLearningTrainingService {
   }
 
   /**
-   * Exports all leads.
+   * Exports all questionnaires.
    */
   ml_export_questionnaires(filter: any = null) {
+
+    this.httpService.download(
+      '/magic/system/magic/ml_requests_export_questionnaires' +
+      (filter?.type ? this.queryArgService.getQueryArgs(filter) : '')).subscribe({
+      next: (res) => {
+
+        const disp = res.headers.get('Content-Disposition');
+        let filename = disp.split(';')[1].trim().split('=')[1].replace(/"/g, '');
+        const file = new Blob([res.body]);
+        saveAs(file, filename);
+      },
+      error: () => {
+
+        this.generalService.showFeedback('No conversation data was found', 'errorMessage');
+      }
+    });
+  }
+
+  /**
+   * Exports all questionnaires.
+   */
+  ml_export_conversations(filter: any = null) {
 
     this.httpService.download(
       '/magic/system/magic/ml_requests_export_conversations' +

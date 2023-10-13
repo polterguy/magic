@@ -113,6 +113,13 @@ export class MachineLearningRequestsComponent implements OnInit {
     });
   }
 
+  exportConversations() {
+
+    this.machineLearningTrainingService.ml_export_conversations({
+      type: this.type,
+    });
+  }
+
   sortData(e: any) {
 
     if (e.direction === '') {

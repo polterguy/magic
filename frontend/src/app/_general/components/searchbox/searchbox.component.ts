@@ -19,15 +19,18 @@ export class SearchboxComponent implements OnInit {
   @Output() filterList = new EventEmitter<any>();
   @Output() buttonClick = new EventEmitter();
   @Output() button2Click = new EventEmitter();
+  @Output() button3Click = new EventEmitter();
   @Input() types: string[];
   @Input() type: string;
   @Output() typeChange: EventEmitter<string> = new EventEmitter<string>();
   @Input() checkBoxText: string = null;
   @Input() buttonText: string = null;
   @Input() button2Text: string = null;
+  @Input() button3Text: string = null;
   @Input() buttonIcon: string = null;
   @Input() buttonDisabled: boolean = false;
   @Input() button2Disabled: boolean = false;
+  @Input() button3Disabled: boolean = false;
 
   filterControl: FormControl;
   checked: boolean = false;
@@ -80,5 +83,10 @@ export class SearchboxComponent implements OnInit {
   button2Clicked() {
 
     this.button2Click.emit();
+  }
+
+  button3Clicked() {
+
+    this.button3Click.emit();
   }
 }
