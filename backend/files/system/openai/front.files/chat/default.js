@@ -34,7 +34,7 @@ let ainiroChatbotType = '[[type]]';
 // Downloading icofont, making sure we only download it once.
 if (!window.ainiroHasDownloadIcofont) {
   window.ainiroHasDownloadIcofont = true;
-  fetch('https://ainiro.io/assets/css/icofont.min.css')
+  fetch('https://ainiro.io/assets/css/icofont.min.css?v=16.9.4')
     .then(res => {
       return res.text()
     })
