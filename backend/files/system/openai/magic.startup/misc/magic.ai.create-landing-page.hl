@@ -112,9 +112,11 @@ slots.create:magic.ai.create-landing-page
          script
             @src:x:@.chatbot
             @defer
+            @async
          script
             @src:x:@.search
             @defer
+            @async
 
    // Adding noindex to avoid duplicated content.
    add:x:@html2lambda/*/html/*/head
