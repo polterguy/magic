@@ -34,21 +34,10 @@ let ainiroChatbotType = '[[type]]';
 // Downloading icofont, making sure we only download it once.
 if (!window.ainiroHasDownloadIcofont) {
   window.ainiroHasDownloadIcofont = true;
-  fetch('https://ainiro.io/assets/css/icofont.min.css?v=16.9.5', {
-    headers: {
-      'mode': 'no-cors'
-    }
-  })
-    .then(res => {
-      return res.text()
-    })
-    .then(res => {
-
-      // Injecting CSS into DOM.
-      var css = document.createElement('style');
-      css.innerHTML = res;
-      window.document.getElementsByTagName('head')[0].appendChild(css);
-  });
+  const icofontCss = window.document.createElement('link');
+  icofontCss.href = 'https://ainiro.io/assets/css/icofont.min.css?v=16.9.5';
+  icofontCss.rel = 'stylesheet';
+  window.document.getElementsByTagName('head')[0].appendChild(icofontCss);
 }
 
 let recaptchaFetched = false;
