@@ -123,13 +123,14 @@
   color: #9f0c0c !important;
 }
 .aista-chat-wnd .ainiro-powered-by {
-  width: calc(100% - 30px);
+  width: calc(100% - 50px);
   position: absolute;
   bottom: 60px;
   left: 15px;
   text-align: right;
   font-size: 10px;
   opacity: .5;
+  display: block !important;
 }
 .aista-chat-wnd .ainiro-powered-by a {
   text-decoration: none;
@@ -397,8 +398,8 @@
   border-radius: 4px !important;
 }
 .aista-speech-button {
-  right: 10px;
-  bottom: 10px;
+  right: 9px;
+  bottom: 9px;
   height: 40px;
   width: 50px;
   position: absolute;

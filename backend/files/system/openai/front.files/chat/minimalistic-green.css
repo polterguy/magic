@@ -126,7 +126,7 @@
   color: #5555ff !important;
 }
 .aista-chat-wnd .ainiro-powered-by {
-  width: calc(100% - 20px);
+  width: calc(100% - 40px);
   position: absolute;
   bottom: 53px;
   left: 15px;

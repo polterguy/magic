@@ -123,7 +123,7 @@
   color: #e56f29 !important;
 }
 .aista-chat-wnd .ainiro-powered-by {
-  width: calc(100% - 30px);
+  width: calc(100% - 50px);
   position: absolute;
   bottom: 65px;
   left: 15px;
