@@ -107,6 +107,12 @@ set-value:x:@.result
       get-value:x:@.url
 set-value:x:@.result
    strings.replace:x:@.result
+      .:[[ainiro_watermark]]
+      get-first-value
+         config.get:"magic:watermark"
+         .:"Powered by <a href=\"https://ainiro.io\" target=\"_blank\">AINIRO.IO</a>"
+set-value:x:@.result
+   strings.replace:x:@.result
       .:[[recaptcha]]
       get-value:x:@.captcha
 set-value:x:@.result
