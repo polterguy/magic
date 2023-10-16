@@ -128,6 +128,19 @@
   20%  {bottom: 5px;}
   40%  {bottom: 0px;}
 }
+.aista-chat-wnd .ainiro-powered-by {
+  width: calc(100% - 40px);
+  position: absolute;
+  bottom: 63px;
+  left: 15px;
+  text-align: right;
+  font-size: 10px;
+  opacity: .5;
+  display: block !important;
+}
+.aista-chat-wnd .ainiro-powered-by a {
+  text-decoration: none;
+}
 .ainiro-waiting-animation span {
   position: relative;
   margin-left: auto;
@@ -393,8 +406,8 @@
   box-sizing: border-box !important;
 }
 .aista-speech-button {
-  right: 10px;
-  bottom: 10px;
+  right: 9px;
+  bottom: 9px;
   height: 40px;
   width: 50px;
   position: absolute;
