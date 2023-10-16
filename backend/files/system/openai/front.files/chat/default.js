@@ -144,6 +144,9 @@ function aista_create_chat_ui() {
   }
   aistaChatWnd.className = 'aista-chat-wnd';
   let html = `
+  <div class="ainiro-powered-by">
+    Powered by <a href="https://ainiro.io">AINIRO.IO</a>
+  </div>
   <div class="aista-chat-header">[[header]]</div>
   <div class="aista-chat-msg-container"></div>
   <button class="aista-chat-close-btn"><i class="icofont-close"></i></button>
