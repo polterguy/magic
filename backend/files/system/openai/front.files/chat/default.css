@@ -106,6 +106,18 @@
 .aista-chat-msg-container a:visited {
   color: #5555ff !important;
 }
+.aista-chat-wnd .ainiro-powered-by {
+  width: calc(100% - 30px);
+  position: absolute;
+  bottom: 62px;
+  left: 15px;
+  text-align: right;
+  font-size: 10px;
+  opacity: .5;
+}
+.aista-chat-wnd .ainiro-powered-by a {
+  text-decoration: none;
+}
 @keyframes jump {
   0%   {bottom: 0px;}
   20%  {bottom: 5px;}
