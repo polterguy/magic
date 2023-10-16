@@ -133,6 +133,7 @@
   text-align: right;
   font-size: 10px;
   opacity: .5;
+  display: block !important;
 }
 .aista-chat-wnd .ainiro-powered-by a {
   text-decoration: none;
