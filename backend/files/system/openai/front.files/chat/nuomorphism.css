@@ -54,6 +54,14 @@
 }
 .aista-chat-btn i {
   font-size: 20px;
+  transition: color .25s ease-in-out;
+  color: rgba(0, 0, 0, .67);
+}
+.aista-chat-btn:hover:hover i.icofont-chat,
+.aista-chat-btn:hover:active i.icofont-chat,
+.aista-chat-btn:hover:focus i.icofont-chat {
+  transition: color .25s ease-in-out;
+  color: rgba(0, 0, 0, 1);
 }
 .aista-chat-btn:hover {
   text-decoration: none !important;
