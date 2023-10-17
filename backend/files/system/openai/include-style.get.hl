@@ -2,6 +2,7 @@
 // Returns the specified CSS file to caller.
 .arguments
    file:string
+   v:string
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/file
