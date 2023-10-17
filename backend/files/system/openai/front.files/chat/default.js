@@ -131,6 +131,8 @@ function aista_create_chat_ui() {
     aistaChatBtn.className = 'aista-chat-btn';
     aistaChatBtn.addEventListener('click', () => aista_show_chat_window());
     window.document.body.appendChild(aistaChatBtn);
+
+    // In case we're using a custom theme.
     setTimeout(() => {
       aistaChatBtn.style.display = 'block';
     }, 500);
