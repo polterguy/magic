@@ -5,25 +5,31 @@
 (function() {
 
 // True if caller wants "references" as in site search.
-let aistaChatSearch = [[search]];
+const aistaChatSearch = [[search]];
 
 // True if caller wants "chatting" support.
-let aistaChatChat = [[chat]];
+const aistaChatChat = [[chat]];
 
 // True if caller wants Markdown support.
-let aistaChatMarkdown = [[markdown]];
+const aistaChatMarkdown = [[markdown]];
 
 // Greeting to welcome user with.
-let aistaChatGreeting = '[[greeting]]';
+const aistaChatGreeting = '[[greeting]]';
 
 // RTL support.
-let ainiroRtl = [[rtl]];
+const ainiroRtl = [[rtl]];
 
-// Stream support.
-let ainiroStream = [[stream]];
+// True if we're using streams.
+const ainiroStream = [[stream]];
 
 // True if speech is turned on.
-let aistaSpeech = [[speech]];
+const aistaSpeech = [[speech]];
+
+// True if we have a submit button.
+const ainiro_has_submit_button = [[submit_button]];
+
+// This is the parent DOM element of the chat window, if null, it is embedded into body.
+const ainiroParentElement = '[[parent_node]]';
 
 // Used for references.
 let ainiro_references = [];
@@ -76,22 +82,14 @@ if (window.getAiniroChatbotCssFile) {
 }
 
 // Fetching theme's CSS file and including on page
-fetch('[[url]]/magic/system/openai/include-style?file=' + encodeURIComponent(ainiroChatbotCssFile))
-  .then(res => {
-    return res.text()
-  })
-  .then(res => {
+window.ainiroHasDownloadIcofont = true;
+const icofontCss = window.document.createElement('link');
+icofontCss.href = '[[url]]/magic/system/openai/include-style?file=' + encodeURIComponent(ainiroChatbotCssFile) + '&v=16.9.8';
+icofontCss.rel = 'stylesheet';
+window.document.getElementsByTagName('head')[0].appendChild(icofontCss);
 
-    // Injecting CSS into DOM.
-    var css = document.createElement('style');
-    css.innerHTML = res;
-    window.document.getElementsByTagName('head')[0].appendChild(css);
-
-    // Creating our chat UI.
-    aista_create_chat_ui();
-});
-
-const ainiro_has_submit_button = [[submit_button]];
+// Creating our chat UI.
+aista_create_chat_ui();
 
 /*
  * "API method" for FAQ questions.
@@ -112,9 +110,6 @@ window.ainiro_faq_question = function(e) {
   e.stopPropagation();
 }
 
-// This is the parent DOM element of the chat window, if null, it is embedded into body.
-let ainiroParentElement = '[[parent_node]]';
-
 /*
  * Function creating our chat UI.
  */
@@ -123,6 +118,7 @@ function aista_create_chat_ui() {
   // Creating chat button if we should.
   if ('[[render_button]]' === 'True') {
     const aistaChatBtn = window.document.createElement('button');
+    aistaChatBtn.style.display = 'none';
     if (ainiroRtl && ainiroRtl === true) {
       aistaChatBtn.dir = 'rtl';
     }
@@ -135,6 +131,9 @@ function aista_create_chat_ui() {
     aistaChatBtn.className = 'aista-chat-btn';
     aistaChatBtn.addEventListener('click', () => aista_show_chat_window());
     window.document.body.appendChild(aistaChatBtn);
+    setTimeout(() => {
+      aistaChatBtn.style.display = 'block';
+    }, 500);
   }
 
   // Chat window.
@@ -144,6 +143,7 @@ function aista_create_chat_ui() {
   }
   const ainiroWatermarkContent = '[[ainiro_watermark]]';
   aistaChatWnd.className = 'aista-chat-wnd';
+  aistaChatWnd.style.display = 'none';
   let html = `
   <div class="ainiro-powered-by" style="display: none">
     ${ainiroWatermarkContent}

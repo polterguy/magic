@@ -28,6 +28,7 @@
   font-style: normal;
 }
 .aista-chat-btn {
+  display: block !important;
   position: fixed;
   bottom: 10px;
   right: 10px;
@@ -61,7 +62,21 @@
 .aista-chat-btn i {
   font-size: 20px;
 }
+@keyframes ainiro_fade_in_chat_window {
+  0% {
+    opacity: 0;
+    margin-bottom: -100px;
+  }
+  100% {
+    opacity: 1;
+    margin-bottom: 0;
+  }
+}
 .aista-chat-wnd {
+  animation-name: ainiro_fade_in_chat_window;
+  animation-duration: .5s;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
   font-family: Red hat Display, sans-serif;
   position: fixed !important;
   z-index: 100001 !important;
