@@ -39,7 +39,7 @@ else
    else
 
       // Oops, no such file exists.
-      throw:No such AI chat template file exists
+      throw:No such AI chat CSS file exists
          public:bool:true
          status:400
 
