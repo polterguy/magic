@@ -41,7 +41,7 @@ let ainiroChatbotType = '[[type]]';
 if (!window.ainiroHasDownloadIcofont) {
   window.ainiroHasDownloadIcofont = true;
   const icofontCss = window.document.createElement('link');
-  icofontCss.href = 'https://ainiro.io/assets/css/icofont.min.css?v=16.9.5';
+  icofontCss.href = 'https://ainiro.io/assets/css/icofont.min.css?v=[[ainiro_version]]';
   icofontCss.rel = 'stylesheet';
   window.document.getElementsByTagName('head')[0].appendChild(icofontCss);
 }
@@ -84,7 +84,7 @@ if (window.getAiniroChatbotCssFile) {
 // Fetching theme's CSS file and including on page
 window.ainiroHasDownloadIcofont = true;
 const icofontCss = window.document.createElement('link');
-icofontCss.href = '[[url]]/magic/system/openai/include-style?file=' + encodeURIComponent(ainiroChatbotCssFile) + '&v=16.9.8';
+icofontCss.href = '[[url]]/magic/system/openai/include-style?file=' + encodeURIComponent(ainiroChatbotCssFile) + '&v=[[ainiro_version]]';
 icofontCss.rel = 'stylesheet';
 window.document.getElementsByTagName('head')[0].appendChild(icofontCss);
 
