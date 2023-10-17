@@ -28,6 +28,14 @@
   font-style: normal;
 }
 .aista-chat-btn {
+  animation-name: ainiro_fade_in_chat_window;
+  animation-duration: .5s;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  animation-name: ainiro_fade_in_chat_window;
+  animation-duration: .5s;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
   display: block !important;
   position: fixed;
   bottom: 10px;
