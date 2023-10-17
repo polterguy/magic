@@ -65,6 +65,14 @@
 }
 .aista-chat-btn i {
   font-size: 20px;
+  transition: color .25s ease-in-out;
+  color: #fafafa;
+}
+.aista-chat-btn:hover:hover i.icofont-chat,
+.aista-chat-btn:hover:active i.icofont-chat,
+.aista-chat-btn:hover:focus i.icofont-chat {
+  transition: color .25s ease-in-out;
+  color: rgb(200,200,200);
 }
 @keyframes ainiro_fade_in_chat_window {
   0% {
