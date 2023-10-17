@@ -37,6 +37,25 @@ let ainiro_references = [];
 // Type or model to use.
 let ainiroChatbotType = '[[type]]';
 
+/*
+ * "API method" for FAQ questions.
+ */
+window.ainiro_faq_question = function(e) {
+
+  const question = e.srcElement.innerHTML;
+  aista_show_chat_window();
+  setTimeout(() => {
+    const prompt = document.getElementsByClassName('aista-chat-prompt')[0];
+    if (!ainiroQuestionnaire.questions || ainiroQuestionnaire.questions.length === 0) {
+      prompt.value = question;
+      prompt.focus();
+      prompt.select();
+    }
+  }, 1);
+  e.preventDefault();
+  e.stopPropagation();
+}
+
 // Downloading icofont, making sure we only download it once.
 if (!window.ainiroHasDownloadIcofont) {
   window.ainiroHasDownloadIcofont = true;
@@ -90,25 +109,6 @@ window.document.getElementsByTagName('head')[0].appendChild(icofontCss);
 
 // Creating our chat UI.
 aista_create_chat_ui();
-
-/*
- * "API method" for FAQ questions.
- */
-window.ainiro_faq_question = function(e) {
-
-  const question = e.srcElement.innerHTML;
-  aista_show_chat_window();
-  setTimeout(() => {
-    const prompt = document.getElementsByClassName('aista-chat-prompt')[0];
-    if (!ainiroQuestionnaire.questions || ainiroQuestionnaire.questions.length === 0) {
-      prompt.value = question;
-      prompt.focus();
-      prompt.select();
-    }
-  }, 1);
-  e.preventDefault();
-  e.stopPropagation();
-}
 
 /*
  * Function creating our chat UI.
@@ -239,6 +239,11 @@ function aista_create_chat_ui() {
     row.className = 'aista-chat-answer cached';
     const msgs = window.document.getElementsByClassName('aista-chat-msg-container')[0];
     msgs.appendChild(row);
+  }
+
+  // Checking if we've got a global callback that should be invoked as we've created our window.
+  if (window.ainiroInitializeChatWindow) {
+    window.ainiroInitializeChatWindow();
   }
 }
 
