@@ -42,6 +42,26 @@ validators.default:x:@.arguments
    stream:bool:false
    parent_node:
 
+// Checking if we've got a cached JavaScript file.
+strings.join:x:@.arguments/*
+   .:,
+.cached-file
+set-value:x:-
+   strings.concat
+      .:/etc/cache/
+      crypto.hash.sha256:x:@strings.join
+      .:.js
+if
+   io.file.exists:x:@.cached-file
+   .lambda
+
+      // Cached transformed file exists, returning it immediately, applying correct HTTP headers.
+      response.headers.set
+         Content-Type:application/javascript; charset=utf-8
+         Cache-Control:public, max-age=3600
+      io.stream.open-file:x:@.cached-file
+      return:x:-
+
 // Checking if custom JavaScript file exists.
 .result
 strings.concat
@@ -52,13 +72,13 @@ if
    io.file.exists:x:@strings.concat
    .lambda
 
-      // Generic template file.
+      // We need to load a custom JavaScript file.
       set-value:x:@.result
          io.file.load:x:@strings.concat
 
 else
 
-   // Checking if system JavaScript file exists.
+   // We need to load a system JavaScript file, making sure it exists.
    strings.concat
       .:/system/openai/front.files/chat/
       get-value:x:@.arguments/*/file
@@ -67,7 +87,7 @@ else
       io.file.exists:x:@strings.concat
       .lambda
 
-         // Generic template file.
+         // System JavaScript file exists, making sure we use it.
          set-value:x:@.result
             io.file.load:x:@strings.concat
 
@@ -254,6 +274,19 @@ data.connect:[generic|magic]
       strings.replace:x:@.result
          .:[[greeting]]
          get-value:x:@.greeting
+
+// Checking if cache folder exists.
+if
+   not
+      io.folder.exists:/etc/cache/
+   .lambda
+   
+      // Creating cache folder.
+      io.folder.create:/etc/cache/
+
+// Making sure we cache file.
+io.file.save:x:@.cached-file
+   get-value:x:@.result
 
 // Making sure we return correct Content-Type to caller, and applying some cache.
 response.headers.set
