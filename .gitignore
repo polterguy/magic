@@ -377,3 +377,4 @@ backend/files/etc/wl/*
 backend/files/etc/hub/image-cache/*
 backend/files/etc/system/openai/temp/*
 !backend/files/etc/system/openai/temp/README.md
+backend/files/etc/cache/*
