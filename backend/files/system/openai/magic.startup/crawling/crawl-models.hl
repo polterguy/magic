@@ -12,6 +12,9 @@ tasks.create:ainiro-crawl-machine-learning-models
    repeats:24.hours
    .lambda
 
+      // Basic logging.
+      log.info:Task to periodically crawl models about to be executed
+
       // Connecting to database.
       data.connect:[generic|magic]
 
@@ -29,35 +32,49 @@ tasks.create:ainiro-crawl-machine-learning-models
          // Looping through all types returned above.
          for-each:x:@data.read/*
 
-            // Making sure exceptions never leave thread.
-            try
+            // Verifying URL is not null and not empty.
+            if
+               and
+                  not-null:x:@.dp/#/*/base_url
+                  neq:x:@.dp/#/*/base_url
+                     .:
+               .lambda
 
-               // Verifying user can create more snippets.
-               add:x:+
-                  get-nodes:x:@.dp/#/*/type
-               try-signal:magic.ai.can-create-snippet
+                  // Making sure exceptions never leave thread.
+                  try
 
-               // Doing some logging.
-               log.info:Crawling website
-                  url:x:@.dp/#/*/base_url
-                  type:x:@.dp/#/*/type
+                     // Verifying user can create more snippets.
+                     add:x:+
+                        get-nodes:x:@.dp/#/*/type
+                     try-signal:magic.ai.can-create-snippet
 
-               // Invoking slot doing the heavy lifting.
-               unwrap:x:./*/signal/*
-               unwrap:x:./*/signal/*/.onafter/**
-               signal:magic.ai.crawl-site
-                  delay:int:2000
-                  threshold:int:150
-                  summarize:bool:true
-                  url:x:@.dp/#/*/base_url
-                  type:x:@.dp/#/*/type
-                  .onafter
-                     signal:magic.ai.vectorise
+                     // Doing some logging.
+                     log.info:Crawling website
+                        url:x:@.dp/#/*/base_url
                         type:x:@.dp/#/*/type
 
-            .catch
+                     // Invoking slot doing the heavy lifting.
+                     unwrap:x:./*/signal/*
+                     unwrap:x:./*/signal/*/.onafter/**
+                     signal:magic.ai.crawl-site
+                        delay:int:2000
+                        threshold:int:150
+                        max:int:1250
+                        summarize:bool:true
+                        url:x:@.dp/#/*/base_url
+                        type:x:@.dp/#/*/type
+                        feedback-channel:non-existing
+                        .onafter
+                           signal:magic.ai.vectorise
+                              feedback-channel:non-existing
+                              type:x:@.dp/#/*/type
 
-               // Logging.
-               log.error:Could not crawl site
-                  error:x:@.arguments/*/message
-                  site:x:@.dp/#/*/base_url
+                  .catch
+
+                     // Logging.
+                     log.error:Could not crawl site
+                        error:x:@.arguments/*/message
+                        site:x:@.dp/#/*/base_url
+
+      // Basic logging.
+      log.info:All models scheduled for periodically crawling were crawled
