@@ -55,7 +55,8 @@ tasks.create:ainiro-crawl-machine-learning-models
 
                      // Invoking slot doing the heavy lifting.
                      unwrap:x:./*/signal/*
-                     unwrap:x:./*/signal/*/.onafter/**
+                     unwrap:x:./*/signal/*/.onafter/**/type
+                     unwrap:x:./*/signal/*/.onafter/**/.type
                      signal:magic.ai.crawl-site
                         delay:int:2000
                         threshold:int:150
@@ -75,6 +76,7 @@ tasks.create:ainiro-crawl-machine-learning-models
                                  strings.concat
                                     get-value:x:@.type
                                     .:" successfully crawled"
+                                 log.info:x:-
 
                   .catch
 
