@@ -68,6 +68,13 @@ tasks.create:ainiro-crawl-machine-learning-models
                            signal:magic.ai.vectorise
                               feedback-channel:non-existing
                               type:x:@.dp/#/*/type
+                              .onafter
+
+                                 // Basic logging.
+                                 .type:x:@.dp/#/*/type
+                                 strings.concat
+                                    get-value:x:@.type
+                                    .:" successfully crawled"
 
                   .catch
 
@@ -75,6 +82,3 @@ tasks.create:ainiro-crawl-machine-learning-models
                      log.error:Could not crawl site
                         error:x:@.arguments/*/message
                         site:x:@.dp/#/*/base_url
-
-      // Basic logging.
-      log.info:All models scheduled for periodically crawling were crawled
