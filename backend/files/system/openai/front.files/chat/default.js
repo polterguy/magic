@@ -235,7 +235,7 @@ function aista_create_chat_ui() {
 
     // We've got a greeting, adding it as initial chat message.
     const row = window.document.createElement('div');
-    row.innerText = aistaChatGreeting;
+    row.innerHTML = aistaChatGreeting;
     row.className = 'aista-chat-answer cached';
     const msgs = window.document.getElementsByClassName('aista-chat-msg-container')[0];
     msgs.appendChild(row);
