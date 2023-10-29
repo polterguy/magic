@@ -1,0 +1,301 @@
+
+/*
+ * Query endpoint taking an instruction, and a query.
+ *
+ * The query can be either a URL or a search query. If a search query is submitted,
+ * it will use the query as a search query, invoking DuckDuckGo, find the top matches,
+ * and scrape these URLs, and use the result as context data and send to OpenAI with
+ * the instruction being an instruction to ChatGPT for how to handle the context.
+ *
+ * If a URL is submitted, it will scrape that URL and use as context coupled with
+ * the instruction and send to ChatGPT.
+ */
+.arguments
+   session:string
+   query:string
+   instruction:string
+   recaptcha_response:string
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/session
+validators.mandatory:x:@.arguments/*/query
+validators.mandatory:x:@.arguments/*/instruction
+
+/*
+ * Checking if backend is configured to use reCAPTCHA, and if so,
+ * making sure we ensure the frontend supplied a [recaptcha_response],
+ * and invoking slot responsible for verifying reCAPTCHA value.
+ */
+config.get:"magic:auth:recaptcha:key"
+.if
+   and
+      neq:x:@config.get
+         .
+      neq:x:@config.get
+         .:
+   .lambda
+
+      // [recaptcha_response] is a mandatory field.
+      validators.mandatory:x:@.arguments/*/recaptcha_response
+
+      // Retrieving secret and invoking slot responsible for verifying reCAPTCHA value.
+      config.get:"magic:auth:recaptcha:secret"
+      validators.recaptcha:x:@.arguments/*/recaptcha_response
+         min:decimal:0.3
+         site-key:x:@config.get/@config.get
+         secret:x:@config.get
+
+// Buffer for context data.
+.context
+
+// Checking if caller supplied a URL or a search query.
+if
+   or
+      strings.starts-with:x:@.arguments/*/query
+         .:"http://"
+      strings.starts-with:x:@.arguments/*/query
+         .:"https://"
+   .lambda
+
+      // Caller supplied a URL.
+      strings.concat
+         .:"Scraping URL: '"
+         get-value:x:@.arguments/*/query
+         .:"'"
+      unwrap:x:+/**
+      sockets.signal:x:@.arguments/*/session
+         args
+            message:x:@strings.concat
+            type:system
+      
+      // Scraping specified URL.
+      unwrap:x:+/*
+      signal:magic.ai.url.get
+         url:x:@.arguments/*/query
+      unwrap:x:+/*
+      signal:magic.ai.html.extract
+         url:x:@.arguments/*/query
+         images:bool:true
+         code:bool:true
+         lists:bool:true
+         main:bool:true
+         semantic:bool:true
+         html:x:@signal/@signal
+
+      // Building our context making sure we don't overflow 4,000 tokens.
+      .tmp:
+      while
+         and
+            exists:x:@signal/*/snippets/0
+            lt
+               openai.tokenize:x:@.tmp
+               .:int:4000
+         .lambda
+
+            // Updating [.context] to current value of [.tmp].
+            set-value:x:@.context
+               get-value:x:@.tmp
+
+            // Checking if prompt is not-null and existing.
+            if
+               and
+                  exists:x:@signal/*/snippets/0/*/prompt
+                  not-null:x:@signal/*/snippets/0/*/prompt
+                  neq:x:@signal/*/snippets/0/*/prompt
+                     .:
+               .lambda
+
+                  // We have a prompt.
+                  set-value:x:@.tmp
+                     strings.concat
+                        get-value:x:@.tmp
+                        .:"\r\n"
+                        .:"\r\n"
+                        get-value:x:@signal/*/snippets/0/*/prompt
+
+            // Checking if completion is not-null and existing.
+            if
+               and
+                  exists:x:@signal/*/snippets/0/*/completion
+                  not-null:x:@signal/*/snippets/0/*/completion
+                  neq:x:@signal/*/snippets/0/*/completion
+                     .:
+               .lambda
+
+                  // We have a completion.
+                  set-value:x:@.tmp
+                     strings.concat
+                        get-value:x:@.tmp
+                        .:"\r\n"
+                        .:"\r\n"
+                        get-value:x:@signal/*/snippets/0/*/completion
+
+            // Removing top snippet.
+            remove-nodes:x:@signal/*/snippets/0
+
+else
+
+   // Caller supplied a search query, informing caller that we're searching.
+   strings.concat
+      .:"Searching DuckDuckGo for: "
+      get-value:x:@.arguments/*/query
+   unwrap:x:+/**
+   sockets.signal:x:@.arguments/*/session
+      args
+         message:x:@strings.concat
+         type:system
+
+   // Caller supplied a search query.
+   unwrap:x:+/*
+   signal:magic.ai.create-search-context
+      query:x:@.arguments/*/query
+      max_tokens:int:4000
+   set-value:x:@.context
+      strings.trim:x:@signal
+
+// Trimming context.
+set-value:x:@.context
+   strings.trim:x:@.context
+
+// Adding all arguments to [fork] invocation.
+insert-before:x:./*/fork/0
+   get-nodes:x:@.arguments
+   get-nodes:x:@.context
+
+// Creating a fork to take advantage of SSE features of OpenAI.
+fork
+
+   // Making sure we catch exceptions.
+   try
+
+      // Retrieving OpenAI API token to use.
+      .token
+      set-value:x:@.token
+         strings.concat
+            .:"Bearer "
+            get-first-value
+               get-value:x:@.arguments/*/api_key
+               config.get:"magic:openai:key"
+
+      // Unwrapping [.session] inside our [.sse].
+      unwrap:x:+/*/.sse/*/.session
+
+      // Invoking OpenAI, now with a decorated prompt and an SSE callback.
+      http.post:"https://api.openai.com/v1/chat/completions"
+         convert:true
+         .sse
+
+            // Our socket channel for notifying client of new tokens.
+            .session:x:@.arguments/*/session
+
+            // Verifying OpenAI sent us actual content.
+            if
+               and
+                  exists:x:@.arguments/*/message
+                  not-null:x:@.arguments/*/message
+                  strings.starts-with:x:@.arguments/*/message
+                     .:"data:"
+               .lambda
+
+                  // Parsing message sent to us from OpenAI.
+                  strings.substring:x:@.arguments/*/message
+                     .:int:5
+                  strings.trim:x:@strings.substring
+
+                  // Making sure OpenAI sent us something at all.
+                  if
+                     neq:x:@strings.trim
+                        .:
+                     .lambda
+
+                        // Checking if we're done.
+                        if
+                           eq:x:@strings.trim
+                              .:[DONE]
+                           .lambda
+
+                              // OpenAI is done.
+                              sockets.signal:x:@.session
+                                 args
+                                    finished:bool:true
+                        else
+
+                           // More data to come.
+                           json2lambda:x:@strings.trim
+
+                           // Updating finish reason if we were given a reason.
+                           if
+                              and
+                                 exists:x:@json2lambda/*/choices/0/*/finish_reason
+                                 not-null:x:@json2lambda/*/choices/0/*/finish_reason
+                              .lambda
+
+                                 // Signaling client what finish reason we have.
+                                 unwrap:x:+/*/*
+                                 sockets.signal:x:@.session
+                                    args
+                                       finish_reason:x:@json2lambda/*/choices/0/*/finish_reason
+
+                           // Making sure we have a message.
+                           if
+                              and
+                                 not-null:x:@json2lambda/*/choices/0/*/delta/*/content
+                                 neq:x:@json2lambda/*/choices/0/*/delta/*/content
+                                    .:
+                              .lambda
+
+                                 // Appending content to above [.result].
+                                 set-value:x:@.result
+                                    strings.concat
+                                       get-value:x:@.result
+                                       get-value:x:@json2lambda/*/choices/0/*/delta/*/content
+
+                                 // Signaling client with the newly acquired data from OpenAI.
+                                 unwrap:x:+/*/*
+                                 sockets.signal:x:@.session
+                                    args
+                                       message:x:@json2lambda/*/choices/0/*/delta/*/content
+         headers
+            Authorization:x:@.token
+            Content-Type:application/json
+            Accept:text/event-stream
+         payload
+            model:gpt-4
+            max_tokens:int:4100
+            temperature:decimal:0.3
+            stream:bool:true
+            messages
+               .
+                  role:system
+                  content:x:@.arguments/*/instruction
+               .
+                  role:system
+                  content:x:@.context
+
+      // Sanity checking above invocation.
+      if
+         not
+            and
+               mte:x:@http.post
+                  .:int:200
+               lt:x:@http.post
+                  .:int:300
+         .lambda
+
+            // Oops, error - Logging error and returning status 500 to caller.
+            throw:x:@http.post/*/content/*/error/*/message
+
+      else
+
+         // Success! Logging as such!
+         log.info:Invoking OpenAI was a success
+
+   .catch
+
+      // Oops!
+      log.error:x:@.arguments/*/message
+
+
+// Returning success to caller.
+return
+   result:success
