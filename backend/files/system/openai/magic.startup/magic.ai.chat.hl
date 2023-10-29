@@ -256,7 +256,7 @@ select prompt, max(completion) as completion
                            neq:x:@strings.trim
                               .:
                            .lambda
-                        
+
                               // Checking if we're done.
                               if
                                  eq:x:@strings.trim
