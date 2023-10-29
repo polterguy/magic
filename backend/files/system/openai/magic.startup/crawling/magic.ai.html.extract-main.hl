@@ -572,11 +572,12 @@ slots.create:magic.ai.html.extract-main
                      .lambda
 
                         // Adding new completion to [.snippets] collection
-                        unwrap:x:+/*/*
+                        unwrap:x:+/*/*/*
                         add:x:@.snippets
                            .
-                              prompt:x:@.base
-                              completion:x:@.completion
+                              .
+                                 prompt:x:@.base
+                                 completion:x:@.completion
 
                         /*
                          * Notice, since this is not a semantic tag, we create a new
