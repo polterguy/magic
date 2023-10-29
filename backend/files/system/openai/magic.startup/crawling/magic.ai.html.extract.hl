@@ -172,31 +172,6 @@ slots.create:magic.ai.html.extract
                         .:x:@strings.trim-end
 
    /*
-    * Checking if caller wants images.
-    *
-    * Notice, images are returned as isolated snippets, but only if caller wants
-    * to fetch images.
-    */
-   if
-      eq:x:@.arguments/*/images
-         .:bool:true
-      .lambda
-
-         // Extracting all images.
-         unwrap:x:+/*
-         signal:magic.ai.html.extract-images
-            html:x:@.document
-            base:x:@.base
-            scheme:x:@.scheme
-            base-prompt:x:@.base-prompt
-
-         // Making sure we return snippets and meta information.
-         add:x:@.snippets
-            get-nodes:x:@signal/*
-         set-value:x:@.meta/*/images
-            get-count:x:@signal/*
-
-   /*
     * Checking if caller wants code.
     *
     * Notice, code snippets being code tags are returned as isolated snippets,
@@ -218,7 +193,6 @@ slots.create:magic.ai.html.extract
             get-nodes:x:@signal/*
          set-value:x:@.meta/*/code
             get-count:x:@signal/*
-
 
    /*
     * Now we can traverse the HTML for Hx elements to use to create training snippets
@@ -248,6 +222,31 @@ slots.create:magic.ai.html.extract
          add:x:@.snippets
             get-nodes:x:@signal/*
          set-value:x:@.meta/*/main
+            get-count:x:@signal/*
+
+   /*
+    * Checking if caller wants images.
+    *
+    * Notice, images are returned as isolated snippets, but only if caller wants
+    * to fetch images.
+    */
+   if
+      eq:x:@.arguments/*/images
+         .:bool:true
+      .lambda
+
+         // Extracting all images.
+         unwrap:x:+/*
+         signal:magic.ai.html.extract-images
+            html:x:@.document
+            base:x:@.base
+            scheme:x:@.scheme
+            base-prompt:x:@.base-prompt
+
+         // Making sure we return snippets and meta information.
+         add:x:@.snippets
+            get-nodes:x:@signal/*
+         set-value:x:@.meta/*/images
             get-count:x:@signal/*
 
    // Returning snippets to caller.
