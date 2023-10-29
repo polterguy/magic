@@ -628,12 +628,12 @@ function aista_show_chat_window() {
       const showdownJS = window.document.createElement('script');
       showdownJS.src = 'https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js';
       window.document.getElementsByTagName('head')[0].appendChild(showdownJS);
-  
+
       // Including HighlightJS.
       const highlightJS = window.document.createElement('script');
       highlightJS.src = 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.7.0/build/highlight.min.js';
       window.document.getElementsByTagName('head')[0].appendChild(highlightJS);
-  
+
       const highlightJSCSS = window.document.createElement('link');
       highlightJSCSS.href = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css';
       highlightJSCSS.rel = 'stylesheet';
