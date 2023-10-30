@@ -21,6 +21,19 @@ slots.create:magic.http.duckduckgo-search
          .:"https://html.duckduckgo.com/html/?q="
          strings.url-encode:x:@.arguments/*/query
 
+   // Checking if caller provided a session argument, and if so, signaling client using web sockets.
+   if
+      exists:x:@.arguments/*/session
+      .lambda
+         strings.concat
+            .:"Invoking DuckDuckGo at: "
+            get-value:x:@.url
+         unwrap:x:+/**
+         sockets.signal:x:@.arguments/*/session
+            args
+               message:x:@strings.concat
+               type:system
+
    // Invoking slot responsible for retrieving search results.
    unwrap:x:+/*
    signal:magic.http.get-with-cache
