@@ -12,9 +12,11 @@ slots.create:magic.ai.create-search-context
    validators.mandatory:x:@.arguments/*/max_tokens
    validators.integer:x:@.arguments/*/max_tokens
       min:250
-      max:8000
+      max:15000
 
    // Invoking slot responsible for searching DuckDuckGo and scraping results.
+   add:x:./*/signal
+      get-nodes:x:@.arguments/*/session
    unwrap:x:+/*/query
    signal:magic.http.duckduckgo-and-scrape
       query:x:@.arguments/*/query

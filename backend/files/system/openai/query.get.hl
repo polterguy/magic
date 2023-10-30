@@ -18,8 +18,17 @@
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/session
+validators.string:x:@.arguments/*/session
+   min:5
+   max:50
 validators.mandatory:x:@.arguments/*/query
+validators.string:x:@.arguments/*/query
+   min:2
+   max:200
 validators.mandatory:x:@.arguments/*/instruction
+validators.string:x:@.arguments/*/instruction
+   min:5
+   max:750
 
 /*
  * Checking if backend is configured to use reCAPTCHA, and if so,
@@ -27,7 +36,7 @@ validators.mandatory:x:@.arguments/*/instruction
  * and invoking slot responsible for verifying reCAPTCHA value.
  */
 config.get:"magic:auth:recaptcha:key"
-.if
+if
    and
       neq:x:@config.get
          .
@@ -59,15 +68,15 @@ if
 
       // Caller supplied a URL.
       strings.concat
-         .:"Scraping URL: '"
+         .:"Scraping URL: "
          get-value:x:@.arguments/*/query
-         .:"'"
       unwrap:x:+/**
       sockets.signal:x:@.arguments/*/session
          args
             message:x:@strings.concat
             type:system
-      
+      sleep:100
+
       // Scraping specified URL.
       unwrap:x:+/*
       signal:magic.ai.url.get
@@ -82,14 +91,14 @@ if
          semantic:bool:true
          html:x:@signal/@signal
 
-      // Building our context making sure we don't overflow 4,000 tokens.
+      // Building our context making sure we don't overflow 10,000 tokens.
       .tmp:
       while
          and
             exists:x:@signal/*/snippets/0
             lt
                openai.tokenize:x:@.tmp
-               .:int:4000
+               .:int:5000
          .lambda
 
             // Updating [.context] to current value of [.tmp].
@@ -144,12 +153,14 @@ else
       args
          message:x:@strings.concat
          type:system
+   sleep:100
 
    // Caller supplied a search query.
    unwrap:x:+/*
    signal:magic.ai.create-search-context
       query:x:@.arguments/*/query
-      max_tokens:int:4000
+      max_tokens:int:5000
+      session:x:@.arguments/*/session
    set-value:x:@.context
       strings.trim:x:@signal
 
@@ -161,6 +172,22 @@ set-value:x:@.context
 insert-before:x:./*/fork/0
    get-nodes:x:@.arguments
    get-nodes:x:@.context
+   
+// Signaling caller on sockets.
+openai.tokenize:x:@.arguments/*/instruction
+openai.tokenize:x:@.context
+strings.concat
+   .:"Invoking OpenAI with "
+   get-value:x:@openai.tokenize
+   .:" context tokens and "
+   get-value:x:@openai.tokenize/@openai.tokenize
+   .:" instruction tokens"
+unwrap:x:+/**
+sockets.signal:x:@.arguments/*/session
+   args
+      message:x:@strings.concat
+      type:system
+sleep:100
 
 // Creating a fork to take advantage of SSE features of OpenAI.
 fork
@@ -260,8 +287,8 @@ fork
             Content-Type:application/json
             Accept:text/event-stream
          payload
-            model:gpt-4
-            max_tokens:int:4100
+            model:gpt-3.5-turbo-16k
+            max_tokens:int:4000
             temperature:decimal:0.3
             stream:bool:true
             messages

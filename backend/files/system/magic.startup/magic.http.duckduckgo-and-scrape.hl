@@ -19,6 +19,21 @@ slots.create:magic.http.duckduckgo-and-scrape
       get-nodes:x:@.arguments/*
    signal:magic.http.duckduckgo-search
 
+   // Checking if we've got a session, and if so, notifying user using web sockets.
+   if
+      exists:x:@.arguments/*/session
+      .lambda
+         for-each:x:@signal/*/result/*
+            strings.concat
+               .:"Scraping: "
+               get-value:x:@.dp/#/*/url
+            unwrap:x:+/**
+            sockets.signal:x:@.arguments/*/session
+               args
+                  message:x:@strings.concat
+                  type:system
+            sleep:100
+
    // Building our execution object that fetches all URLs simultaneously in parallel.
    .exe
 
@@ -36,12 +51,25 @@ slots.create:magic.http.duckduckgo-and-scrape
                signal:magic.http.scrape-url
                   url:x:@.reference/*/url
                   semantics:bool:true
+               if
+                  exists:x:@.reference/*/session
+                  .lambda
+                     strings.concat
+                        .:"Done scraping "
+                        get-value:x:@.reference/*/url
+                     unwrap:x:+/**
+                     sockets.signal:x:@.reference/*/session
+                        args
+                           message:x:@strings.concat
+                           type:system
             .catch
                log.error:Could not scrape URL
                   url:x:@.reference/*/url
                   message:x:@.arguments/*/message
 
       // Adding URL and title as reference to currently iterated [fork].
+      add:x:+/+/*
+         get-nodes:x:@.arguments/*/session
       unwrap:x:+/*/*
       add:x:@.cur/*/fork/*/.reference
          .
@@ -54,6 +82,17 @@ slots.create:magic.http.duckduckgo-and-scrape
 
    // Executing [.exe] retrieving all URLs in parallel.
    eval:x:@.exe
+   remove-nodes:x:@.exe/**/session
+   
+   // Signaling caller on sockets.
+   if
+      exists:x:@.arguments/*/session
+      .lambda
+         sockets.signal:x:@.arguments/*/session
+            args
+               message:Building context
+               type:system
+         sleep:100
 
    /*
     * Iterating through each above result,
