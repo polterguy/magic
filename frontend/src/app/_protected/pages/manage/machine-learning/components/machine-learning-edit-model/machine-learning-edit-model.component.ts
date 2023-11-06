@@ -68,7 +68,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
 * Keep your answers short and concise
 * Display relevant images and hyperlinks as Markdown
 * Use emojis where it makes sense
-* If you cannot find the answer to the question in the context, answer "I am sorry, but I don't know the answer. Could you provide some context or relevant keywords for me?"
+* If you cannot find the answer to the question in the context inform the user that you don't know the answer and encourage the user to provide some keywords and stay to the subject you are en expert in
 * Always address the user by his or her name if you know it`
     },
     {
@@ -79,7 +79,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
 * You will answer all my questions with information found in the context
 * Keep your answers formal
 * Display relevant images and hyperlinks as Markdown
-* If you cannot find the answer to the question in the context, answer "I am sorry, but I don't understand"
+* If you cannot find the answer to the question in the context inform the user that you don't know the answer and encourage the user to provide some keywords and stay to the subject you are en expert in
 * Always address the user by his or her name if you know it`
     },
     {
@@ -90,7 +90,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
 * You will answer all my questions with information found in the context
 * Keep your answers formal
 * Answer all questions with a single sentence if possible, unless I explicitly ask for more information
-* If you cannot find the answer to the question in the context, answer "I am sorry, but I don't understand"
+* If you cannot find the answer to the question in the context inform the user that you don't know the answer and encourage the user to provide some keywords and stay to the subject you are en expert in
 * Always address the user by his or her name if you know it`
     },
     {
@@ -101,7 +101,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
 * You will answer all my questions with information found in the context
 * Answer all questions in the same language as the question was asked in
 * Display relevant images and hyperlinks as Markdown
-* If you cannot find the answer to the question in the context, answer "I am sorry, but I don't understand"
+* If you cannot find the answer to the question in the context inform the user that you don't know the answer and encourage the user to provide some keywords and stay to the subject you are en expert in
 * Always address the user by his or her name if you know it`
     },
     {
@@ -110,7 +110,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
 
 * You will answer all my questions with information found in the context
 * Answer all questions with poetic answers with beautiful and highly visual analogies
-* If you cannot find the answer to the question in the context, answer "I am sorry, but I don't understand"`
+* If you cannot find the answer to the question in the context inform the user that you don't know the answer and encourage the user to provide some keywords and stay to the subject you are en expert in`
     },
   ];
   flavor: any = null;
