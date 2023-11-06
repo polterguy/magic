@@ -28,10 +28,10 @@
   font-style: normal;
 }
 .aista-chat-btn {
-  animation-name: ainiro_fade_in_chat_window;
-  animation-duration: .5s;
-  animation-iteration-count: 1;
-  animation-fill-mode: forwards;
+  animation-name: ainiro_fade_in_chat_window !important;
+  animation-duration: .5s !important;
+  animation-iteration-count: 1 !important;
+  animation-fill-mode: forwards !important;
   display: block !important;
   position: fixed !important;
   bottom: 10px !important;
@@ -375,18 +375,19 @@
   box-sizing: border-box !important;
 }
 .aista-speech-button {
-  right: 10px;
-  bottom: 10px;
-  height: 40px;
-  width: 50px;
-  position: absolute;
-  font-size: 20px;
-  display: block;
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  color: #b0b0b0;
-  transition: color .25s ease-in-out;
+  right: 10px !important;
+  bottom: 10px !important;
+  height: 40px !important;
+  width: 50px !important;
+  position: absolute !important;
+  font-size: 20px !important;
+  display: block !important;
+  background-color: transparent !important;
+  border: none !important;
+  cursor: pointer !important;
+  color: #b0b0b0 !important;
+  transition: color .25s ease-in-out !important;
+  padding: 0 !important;
 }
 .aista-speech-button:hover,
 .aista-speech-button:focus,

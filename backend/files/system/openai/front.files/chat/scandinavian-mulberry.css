@@ -28,31 +28,30 @@
   font-style: normal;
 }
 .aista-chat-btn {
-  animation-name: ainiro_fade_in_chat_window;
-  animation-duration: .5s;
-  animation-iteration-count: 1;
-  animation-fill-mode: forwards;
+  animation-name: ainiro_fade_in_chat_window !important;
+  animation-duration: .5s !important;
+  animation-iteration-count: 1 !important;
+  animation-fill-mode: forwards !important;
   display: block !important;
-  position: fixed;
-  bottom: 10px;
-  right: 10px;
+  position: fixed !important;
+  bottom: 10px !important;
+  right: 10px !important;
   border-radius: 23px !important;
   border: none !important;
-  padding: 15px 35px;
-  font-size: 14px;
-  z-index: 100000;
+  padding: 15px 35px !important;
+  font-size: 14px !important;
+  z-index: 100000 !important;
   color: #fcfeff !important;
   cursor: pointer !important;
   font-weight: bold !important;
-  border: solid 1px #d2449d;
-  font-family: Roboto !important;
-  text-align: center;
+  border: solid 1px #d2449d !important;
+  text-align: center !important;
   text-decoration: none !important;
-  font-family: Arial, Helvetica, sans-serif;
-  box-shadow: 3px 3px 5px rgba(0,0,0,.2);
-  background: linear-gradient(#d2449d, #d2449d);
-  background-size: 1px 100px;
-  transition: background-position .25s ease-in-out, box-shadow .25s ease-in-out;
+  font-family: Arial, Helvetica, sans-serif !important;
+  box-shadow: 3px 3px 5px rgba(0,0,0,.2) !important;
+  background: linear-gradient(#d2449d, #d2449d) !important;
+  background-size: 1px 100px !important;
+  transition: background-position .25s ease-in-out, box-shadow .25s ease-in-out !important;
 }
 .aista-chat-btn:hover,
 .aista-chat-btn:active
@@ -427,18 +426,19 @@
   border-radius: 20px !important;
 }
 .aista-speech-button {
-  right: 10px;
-  bottom: 6px;
-  height: 40px;
-  width: 50px;
-  position: absolute;
-  font-size: 20px;
-  display: block;
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  color: #d2449d;
-  transition: color .25s ease-in-out;
+  right: 10px !important;
+  bottom: 6px !important;
+  height: 40px !important;
+  width: 50px !important;
+  position: absolute !important;
+  font-size: 20px !important;
+  display: block !important;
+  background-color: transparent !important;
+  border: none !important;
+  cursor: pointer !important;
+  color: #d2449d !important;
+  transition: color .25s ease-in-out !important;
+  padding: 0 !important;
 }
 .aista-speech-button:hover,
 .aista-speech-button:focus,
