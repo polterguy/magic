@@ -40,7 +40,6 @@ export class MachineLearningTrainingDataComponent implements OnInit {
   displayedColumns: string[] = [
     'prompt',
     'uri',
-    'type',
     'tokens',
     'created',
     'cached',
