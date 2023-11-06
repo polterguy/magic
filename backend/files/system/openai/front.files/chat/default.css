@@ -27,7 +27,7 @@
 .aista-chat-close-btn i {
   font-style: normal;
 }
-.aista-chat-btn {
+button.aista-chat-btn {
   animation-name: ainiro_fade_in_chat_window !important;
   animation-duration: .5s !important;
   animation-iteration-count: 1 !important;
@@ -54,14 +54,14 @@
 .aista-chat-btn:hover {
   text-decoration: none !important;
 }
-.aista-chat-btn i {
+button.aista-chat-btn i {
   font-size: 20px;
   transition: color .25s ease-in-out;
   color: #fafafa;
 }
-.aista-chat-btn:hover:hover i.icofont-chat,
-.aista-chat-btn:hover:active i.icofont-chat,
-.aista-chat-btn:hover:focus i.icofont-chat {
+button.aista-chat-btn:hover i.icofont-chat,
+button.aista-chat-btn:active i.icofont-chat,
+button.aista-chat-btn:focus i.icofont-chat {
   transition: color .25s ease-in-out;
   color: rgb(200,200,200);
 }
@@ -213,9 +213,7 @@
   margin-top: 10px !important;
   margin-bottom: 10px !important;
   cursor: pointer !important;
-}
-.aista-chat-answer img {
-  max-width: 100%;
+  max-width: 100% !important;
 }
 .aista-chat-answer pre {
   margin-top: 20px !important;
