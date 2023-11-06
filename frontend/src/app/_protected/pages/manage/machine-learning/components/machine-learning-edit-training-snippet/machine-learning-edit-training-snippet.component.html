@@ -13,7 +13,7 @@
     <div class="row">
 
       <!-- Prompt -->
-      <div class="col-lg-9 col-12 pe-lg-0">
+      <div class="col-lg-6 col-12 pe-lg-0">
 
         <mat-form-field class="w-100 standalone-field me-2">
           <span
@@ -33,7 +33,32 @@
         </mat-form-field>
 
       </div>
+      <!-- /Prompt -->
 
+      <!-- URI -->
+      <div class="col-lg-3 col-12 ps-lg-1 pe-lg-0">
+
+        <mat-form-field class="w-100 standalone-field me-2">
+          <span
+            matPrefix
+            matTooltip="URI"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>http</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            cdkFocusInitial
+            placeholder="URI"
+            [(ngModel)]="uri"
+            name="uri"
+            autocomplete="off">
+        </mat-form-field>
+
+      </div>
+      <!-- /URI -->
+
+      <!-- Type -->
       <div class="col-lg-3 col-12 ps-lg-1">
 
         <mat-form-field class="w-100 standalone-field">
@@ -57,6 +82,7 @@
         </mat-form-field>
 
       </div>
+      <!-- /Type -->
 
     </div>
 

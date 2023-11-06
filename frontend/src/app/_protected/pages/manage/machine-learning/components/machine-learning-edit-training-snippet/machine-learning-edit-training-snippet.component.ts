@@ -22,6 +22,7 @@ export class MachineLearningEditTrainingSnippetComponent implements OnInit {
   type: string = null;
   types: string[] = [];
   prompt: string;
+  uri: string;
   completion: string;
   pushed: boolean;
   cached: boolean;
@@ -45,6 +46,7 @@ export class MachineLearningEditTrainingSnippetComponent implements OnInit {
     }
 
     this.prompt = this.data?.prompt;
+    this.uri = this.data?.uri;
     this.completion = this.data?.completion;
     this.type = this.data?.type;
     this.pushed = this.data?.pushed > 0 ? true : false;
@@ -99,6 +101,7 @@ export class MachineLearningEditTrainingSnippetComponent implements OnInit {
 
     const data: any = {
       prompt: this.prompt,
+      uri: this.uri,
       completion: this.ready ? this.model.hyperlambda : this.completion,
       type: this.type,
       pushed: this.pushed ? 1 : 0,
