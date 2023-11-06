@@ -183,7 +183,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
           error: () => {
     
             this.isLoading = false;
-            this.generalService.showFeedback('Something went wrong as we tried to retrieve roles', 'errorMessage');
+            this.generalService.showFeedback('Something went wrong as we tried to retrieve questionnaires', 'errorMessage');
             this.generalService.hideLoading();
           }
         });
