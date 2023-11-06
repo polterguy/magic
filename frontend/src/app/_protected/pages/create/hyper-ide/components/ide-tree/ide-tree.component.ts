@@ -4,7 +4,7 @@
  */
 
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTreeFlattener, MatTreeFlatDataSource } from '@angular/material/tree';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
@@ -29,7 +29,8 @@ import { FileService } from '../../../../../../_general/services/file.service';
 @Component({
   selector: 'app-ide-tree',
   templateUrl: './ide-tree.component.html',
-  styleUrls: ['./ide-tree.component.scss']
+  styleUrls: ['./ide-tree.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class IdeTreeComponent implements OnInit {
 
