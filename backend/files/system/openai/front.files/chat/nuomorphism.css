@@ -27,28 +27,28 @@
   font-style: normal;
 }
 .aista-chat-btn {
-  animation-name: ainiro_fade_in_chat_window;
-  animation-duration: .5s;
-  animation-iteration-count: 1;
-  animation-fill-mode: forwards;
+  animation-name: ainiro_fade_in_chat_window !important;
+  animation-duration: .5s !important;
+  animation-iteration-count: 1 !important;
+  animation-fill-mode: forwards !important;
   display: block !important;
-  position: fixed;
-  bottom: 10px;
-  right: 10px;
-  padding: 8px 15px;
+  position: fixed !important;
+  bottom: 10px !important;
+  right: 10px !important;
+  padding: 8px 15px !important;
   font-size: 14px !important;
   z-index: 100000 !important;
-  cursor: pointer;
+  cursor: pointer !important;
   font-family: Helvetica !important;
-  font-weight: normal;
-  text-align: center;
+  font-weight: normal !important;
+  text-align: center !important;
   text-decoration: none !important;
   background-color: rgb(230, 231, 238) !important;
   box-shadow: 3px 3px 6px #b8b9be, -3px -3px 6px #fff !important;
   color: rgba(0, 0, 0, .87) !important;
-  transition-property: box-shadow;
-  transition-duration: .2s;
-  transition-timing-function: ease-in-out;
+  transition-property: box-shadow !important;
+  transition-duration: .2s !important;
+  transition-timing-function: ease-in-out !important;
   border: .0625rem solid #d1d9e6 !important;
   border-radius: 5px !important;
 }
@@ -420,18 +420,19 @@
   color: rgb(198,198,198) !important;
 }
 .aista-speech-button {
-  right: 10px;
-  bottom: 8px;
-  height: 40px;
-  width: 50px;
-  position: absolute;
-  font-size: 20px;
-  display: block;
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  color: #b0b0b0;
-  transition: color .25s ease-in-out;
+  right: 10px !important;
+  bottom: 8px !important;
+  height: 40px !important;
+  width: 50px !important;
+  position: absolute !important;
+  font-size: 20px !important;
+  display: block !important;
+  background-color: transparent !important;
+  border: none !important;
+  cursor: pointer !important;
+  color: #b0b0b0 !important;
+  transition: color .25s ease-in-out !important;
+  padding: 0 !important;
 }
 .aista-speech-button:hover,
 .aista-speech-button:focus,
