@@ -320,6 +320,10 @@ export class MachineLearningEditTypeComponent implements OnInit {
         model_size = 8192;
         break;
 
+        case 'gpt-4-1106-preview':
+          model_size = 131072;
+          break;
+  
       case 'gpt-4-32k':
       case 'gpt-4-32k-0314':
         model_size = 32768;
