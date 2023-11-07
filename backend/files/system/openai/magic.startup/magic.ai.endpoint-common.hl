@@ -321,6 +321,12 @@ slots.create:magic.ai.endpoint-common
             .
                model_size:int:32768
 
+      case:gpt-4-1106-preview
+
+         add:x:@.model
+            .
+               model_size:int:131072
+
       default
 
          add:x:@.model
@@ -382,6 +388,17 @@ slots.create:magic.ai.endpoint-common
 
                math.divide
                   math.subtract:int:32768
+                     get-value:x:@.model/*/max_tokens
+                  .:int:2
+               set-value:x:@.model/*/max_context_tokens
+                  get-value:x:@math.divide
+               set-value:x:@.model/*/max_request_tokens
+                  get-value:x:@math.divide
+
+            case:gpt-4-1106-preview
+
+               math.divide
+                  math.subtract:int:131072
                      get-value:x:@.model/*/max_tokens
                   .:int:2
                set-value:x:@.model/*/max_context_tokens
