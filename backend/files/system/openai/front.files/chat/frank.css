@@ -419,7 +419,9 @@ button.aista-chat-btn:focus {
   background:linear-gradient(#fcfeff, #ffffff) !important;
   border-radius: 4px !important;
 }
-.aista-speech-button {
+button.aista-speech-button {
+  min-height: 1rem !important;
+  margin: 0 !important;
   right: 10px !important;
   bottom: 10px !important;
   height: 40px !important;

@@ -372,7 +372,9 @@ button.aista-chat-btn:focus i.icofont-chat {
   width: 100% !important;
   box-sizing: border-box !important;
 }
-.aista-speech-button {
+button.aista-speech-button {
+  min-height: 1rem !important;
+  margin: 0 !important;
   right: 10px !important;
   bottom: 10px !important;
   height: 40px !important;

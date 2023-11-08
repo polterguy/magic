@@ -417,7 +417,9 @@ button.aista-chat-btn:focus i.icofont-chat {
 .aista-chat-prompt:disabled {
   color: rgb(198,198,198) !important;
 }
-.aista-speech-button {
+button.aista-speech-button {
+  min-height: 1rem !important;
+  margin: 0 !important;
   right: 10px !important;
   bottom: 8px !important;
   height: 40px !important;
