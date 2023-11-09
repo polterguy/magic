@@ -1,0 +1,21 @@
+
+//Compiling a snippet of C# code.
+system.compile
+   references
+      .:System.Console
+      .:System.Runtime
+      .:System.Private.CoreLib
+   code:@"
+public class Foo
+{
+   public void Bar()
+   {
+      System.Console.WriteLine(""Hello from console"");
+   }
+}
+"
+   assembly-name:foo
+
+// Saving our compiled CLR assembly to /etc/foo.dll
+io.file.save.binary:/etc/foo.dll
+   get-value:x:@system.compile
