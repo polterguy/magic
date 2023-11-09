@@ -1,21 +1,39 @@
 
-//Compiling a snippet of C# code.
+/*
+ * Compiles a snippet of C# code and saves it to /etc/foo.dll
+ * as a library.
+ *
+ * This particular code creates a slot, but you can create any
+ * code you wish.
+ */
 system.compile
    references
-      .:System.Console
+      .:netstandard
       .:System.Runtime
       .:System.Private.CoreLib
+      .:magic.node
+      .:magic.signals.contracts
    code:@"
-public class Foo
+
+// Example C# code creating a Hyperlambda slot.
+using System;
+using magic.node;
+using magic.signals.contracts;
+
+// Our slot class.
+[Slot(Name = ""foo"")]
+public class Foo : ISlot
 {
-   public void Bar()
+   public void Signal(ISignaler signaler, Node input)
    {
-      System.Console.WriteLine(""Hello from console"");
+      input.Value = ""Foo was here!"";
    }
-}
-"
+}"
    assembly-name:foo
 
-// Saving our compiled CLR assembly to /etc/foo.dll
+// Saving our compiled CLR assembly to '/etc/foo.dll'.
 io.file.save.binary:/etc/foo.dll
    get-value:x:@system.compile
+
+// Loading assembly now that we've created it and saved it.
+system.load-plugin:/etc/foo.dll
