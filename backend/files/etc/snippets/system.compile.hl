@@ -1,10 +1,18 @@
 
+
 /*
  * Compiles a snippet of C# code and saves it to /etc/foo.dll
- * as a library.
+ * as a library, for then to dynamically load it as a plugin.
  *
  * This particular code creates a slot, but you can create any
- * code you wish.
+ * code you wish, and it doesn't have to be Hyperlambda related.
+ *
+ * Notice, to recompile the code, and/or unload the assembly we're
+ * creating here, you'll need to invoke:
+ *
+ * system.unload-plugin:/etc/foo
+ *
+ * ... to unload the assembly before you reload it.
  */
 system.compile
    references
@@ -36,4 +44,4 @@ io.file.save.binary:/etc/foo.dll
    get-value:x:@system.compile
 
 // Loading assembly now that we've created it and saved it.
-system.load-plugin:/etc/foo.dll
+system.load-plugin:/etc/foo
