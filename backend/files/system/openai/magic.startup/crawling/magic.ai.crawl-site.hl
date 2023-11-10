@@ -365,11 +365,13 @@ slots.create:magic.ai.crawl-site
                    */
                   for-each:x:@signal/*
 
-                     // Checking if URL has been imported or added before.
+                     // Checking if URL has been imported or added before, and that it matches base URL provided by caller.
                      if
                         and
                            not-exists:x:@.done/*/={@.dp/#}
                            not-exists:x:@.urls/*/={@.dp/#}
+                           strings.starts-with:x:@.dp/#
+                              get-value:x:@.arguments/*/url
                         .lambda
 
                            // Adding URL to [.urls] collection.
