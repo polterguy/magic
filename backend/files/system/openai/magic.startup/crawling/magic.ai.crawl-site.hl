@@ -98,6 +98,7 @@ slots.create:magic.ai.crawl-site
          signal:magic.ai.load-sitemap
             max:x:@.arguments/*/max
             feedback-channel:x:@.arguments/*/feedback-channel
+            url:x:@.arguments/*/url
 
          // Verifying we found at least one sitemap.
          if
@@ -126,6 +127,20 @@ slots.create:magic.ai.crawl-site
 
                // Checking if site contains more URLs than we're scraping.
                if
+                  eq:x:@get-count
+                     .:int:0
+                  .lambda
+
+                     // Warning user!
+                     strings.concat
+                        .:"Warning, we could not find a single valid URL in site, probably because sitemap or robots.txt file prohibits scraping, or because your filter is entirely excluded from robots.txt for AINIRO selector"
+                     unwrap:x:+/**
+                     sockets.signal:x:@.arguments/*/feedback-channel
+                        args
+                           message:x:@strings.concat
+                           type:warning
+                     sleep:100
+               else-if
                   mt
                      get-value:x:@signal/*/total
                      get-value:x:@get-count
@@ -143,19 +158,23 @@ slots.create:magic.ai.crawl-site
                            type:warning
                      sleep:100
 
-               // Adding spacer.
-               sockets.signal:x:@.arguments/*/feedback-channel
-                  args
-                     message:------------------------------------------------------------------------------------------------------------------------
-                     type:info
-               sleep:100
+               // Feedback about URLs we're about to scrape, but only if there are any URLs.
+               if
+                  mt:x:@get-count
+                     .:int:0
+                  .lambda
 
-               // Feedback
-               sockets.signal:x:@.arguments/*/feedback-channel
-                  args
-                     message:"URLs we will scrape are as follows:"
-                     type:info
-               sleep:100
+                     // Adding spacer.
+                     sockets.signal:x:@.arguments/*/feedback-channel
+                        args
+                           message:------------------------------------------------------------------------------------------------------------------------
+                           type:info
+                     sleep:100
+                        sockets.signal:x:@.arguments/*/feedback-channel
+                           args
+                              message:"URLs we will scrape are as follows:"
+                              type:info
+                        sleep:100
 
                // Iterating through each URL returned from above invocation.
                for-each:x:@signal/*/urls/*
