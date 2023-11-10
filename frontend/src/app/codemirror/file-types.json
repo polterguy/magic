@@ -190,6 +190,27 @@
   },
   {
     "extensions": [
+      "cs"
+    ],
+    "options": {
+      "mode": "text/x-csharp",
+      "lineNumbers": true,
+      "readOnly": false,
+      "tabSize": 4,
+      "indentUnit": 4,
+      "indentAuto": true,
+      "matchBrackets": true,
+      "theme": "aista",
+      "autofocus": true,
+      "styleActiveLine": true,
+      "extraKeys": {
+        "Shift-Tab": "indentLess",
+        "Tab": "indentMore"
+      }
+    }
+  },
+  {
+    "extensions": [
       "sh"
     ],
     "options": {

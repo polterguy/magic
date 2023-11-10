@@ -14,6 +14,7 @@ import 'codemirror/mode/css/css';
 import 'codemirror/mode/sass/sass';
 import 'codemirror/mode/yaml/yaml';
 import 'codemirror/mode/ruby/ruby';
+import 'codemirror/mode/clike/clike';
 import 'codemirror/mode/shell/shell';
 import 'codemirror/mode/python/python';
 import 'codemirror/mode/markdown/markdown';
