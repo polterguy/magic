@@ -70,7 +70,7 @@ export class MachineLearningTrainingService {
       const nFilter = {
       };
       if (filter['ml_training_snippets.type.eq']) {
-        nFilter['type'] = filter['ml_training_snippets.type.eq'];
+        nFilter['ml_training_snippets.type.eq'] = filter['ml_training_snippets.type.eq'];
       }
 
       return this.httpService.get<Count>(
