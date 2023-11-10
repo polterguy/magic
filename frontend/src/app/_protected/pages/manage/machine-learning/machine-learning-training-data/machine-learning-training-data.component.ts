@@ -47,6 +47,7 @@ export class MachineLearningTrainingDataComponent implements OnInit {
     'embedding_vss',
     'action',
   ];
+  filterOnVss: boolean;
 
   constructor(
     private dialog: MatDialog,
@@ -389,12 +390,15 @@ export class MachineLearningTrainingDataComponent implements OnInit {
     this.getTrainingData(false);
   }
 
-  filterList(event: { searchKey: string, type?: string }) {
+  filterList(event: { searchKey: string, type?: string, checked: boolean }) {
+
+    this.filterOnVss = event.checked;
 
     const newFilter: any = {
       limit: this.filter.limit,
       offset: 0,
     };
+
     if (this.filter.order) {
       newFilter.order = this.filter.order;
     }
@@ -459,7 +463,7 @@ export class MachineLearningTrainingDataComponent implements OnInit {
 
   private getTrainingData(count: boolean = true) {
 
-    this.machineLearningTrainingService.ml_training_snippets(this.filter).subscribe({
+    this.machineLearningTrainingService.ml_training_snippets(this.filter, this.filterOnVss).subscribe({
       next: (result: any[]) => {
 
         this.dataSource = result || [];
@@ -476,7 +480,7 @@ export class MachineLearningTrainingDataComponent implements OnInit {
           }
         }
     
-        this.machineLearningTrainingService.ml_training_snippets_count(countFilter).subscribe({
+        this.machineLearningTrainingService.ml_training_snippets_count(countFilter, this.filterOnVss).subscribe({
           next: (result: any) => {
 
             this.count = result.count;

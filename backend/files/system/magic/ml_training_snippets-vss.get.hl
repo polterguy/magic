@@ -1,0 +1,132 @@
+
+// CRUD read endpoint with paging, and VSS filtering selecting records from your ml_training_snippets table in your magic database returning id, created, type, pushed, uri, prompt, completion filtering on id, created, type, pushed, uri, prompt, completion with authentication and authorisation for root roles
+.arguments
+   limit:long
+   offset:long
+   filter:string
+   type:string
+.description:CRUD read endpoint with paging, and VSS filtering selecting records from your ml_training_snippets table in your magic database returning id, created, type, pushed, uri, prompt, completion filtering on id, created, type, pushed, uri, prompt, completion with authentication and authorisation for root roles
+.type:crud-read
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/filter
+validators.string:x:@.arguments/*/filter
+   min:1
+   max:1000
+
+// Applying defaults.
+validators.default:x:@.arguments
+   limit:int:10
+
+// Retrieving embeddings.
+.token
+set-value:x:@.token
+   strings.concat
+      .:"Bearer "
+      config.get:"magic:openai:key"
+
+// Retrieving embedding for prompt.
+http.post:"https://api.openai.com/v1/embeddings"
+   headers
+      Authorization:x:@.token
+      Content-Type:application/json
+   payload
+      input:x:@.arguments/*/filter
+      model:text-embedding-ada-002
+   convert:true
+
+// Sanity checking above invocation.
+if
+   not
+      and
+         mte:x:@http.post
+            .:int:200
+         lt:x:@http.post
+            .:int:300
+   .lambda
+
+      // Oops, error - Logging error and returning OpenAI's HTTP status code to caller.
+      lambda2hyper:x:@http.post
+      log.error:Something went wrong while invoking OpenAI
+         message:x:@http.post/*/content/*/error/*/message
+         error:x:@lambda2hyper
+      throw:x:@http.post/*/content/*/error/*/message
+         public:bool:true
+         status:x:@http.post
+
+// Converting from JSON string to byte array.
+floatArray2bytes:x:@http.post/*/content/*/data/0/*/embedding/*
+
+// Opening up our database connection.
+data.connect:[generic|magic]
+
+   .sql:@"
+select id, created, type, pushed, uri, prompt, completion, filename, cached, meta, embedding as embedding_vss
+   from vss_ml_training_snippets as vss
+    	inner join ml_training_snippets ts on ts.id = vss.rowid
+   where
+      vss_search(vss.embedding_vss, @embedding)"
+
+   // Further parametrising invocation if we should.
+   if
+      exists:x:@.arguments/*/type
+      .lambda
+         set-value:x:@.sql
+            strings.concat
+               get-value:x:@.sql
+               .:" and type = @type"
+         unwrap:x:+/*/*
+         add:x:@if/./*/data.select
+            .
+               @type:x:@.arguments/*/type
+   if
+      exists:x:@.arguments/*/limit
+      .lambda
+         set-value:x:@.sql
+            strings.concat
+               get-value:x:@.sql
+               .:" limit "
+               get-value:x:@.arguments/*/limit
+   if
+      exists:x:@.arguments/*/offset
+      .lambda
+         set-value:x:@.sql
+            strings.concat
+               get-value:x:@.sql
+               .:" offset "
+               get-value:x:@.arguments/*/offset
+
+   // Executing SQL towards database.
+   log.info:x:@.sql
+   data.select:x:@.sql
+      @embedding:x:@floatArray2bytes
+
+   // Changing embedding to a boolean value to preserve bandwidth, and returning token count.
+   for-each:x:@data.select/*
+
+      // Changing embedding to boolean to preserve bandwidth.
+      if
+         not-null:x:@.dp/#/*/embedding_vss
+         .lambda
+            set-value:x:@.dp/#/*/embedding_vss
+               .:bool:true
+      else
+         set-value:x:@.dp/#/*/embedding_vss
+            .:bool:false
+
+      // Adding token count for each snippet.
+      strings.concat
+         get-value:x:@.dp/#/*/prompt
+         .:"\r\n\r\n"
+         get-value:x:@.dp/#/*/completion
+      openai.tokenize:x:@strings.concat
+      unwrap:x:+/*/*
+      add:x:@.dp/#
+         .
+            tokens:x:@openai.tokenize
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@data.select/*

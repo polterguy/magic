@@ -31,17 +31,58 @@ export class MachineLearningTrainingService {
   /**
    * Returns all training snippets from backend matching filter condition.
    */
-  ml_training_snippets(filter?: any) {
+  ml_training_snippets(filter?: any, filterOnVss: boolean = false) {
 
-    return this.httpService.get<any>('/magic/system/magic/ml_training_snippets' + this.queryArgService.getQueryArgs(filter));
+    if (filterOnVss) {
+
+      const nFilter = {
+        filter: filter['ml_training_snippets.uri.like'].substring(0, filter['ml_training_snippets.uri.like'].length - 1),
+      };
+      if (filter['ml_training_snippets.type.eq']) {
+        nFilter['type'] = filter['ml_training_snippets.type.eq'];
+      }
+      if (filter['limit']) {
+        nFilter['limit'] = filter['limit'];
+      }
+      if (filter['offset']) {
+        nFilter['offset'] = filter['offset'];
+      }
+
+      return this.httpService.get<any>(
+        '/magic/system/magic/ml_training_snippets-vss' +
+        this.queryArgService.getQueryArgs(nFilter));
+
+    } else {
+
+      return this.httpService.get<any>(
+        '/magic/system/magic/ml_training_snippets' +
+        this.queryArgService.getQueryArgs(filter));
+    }
   }
 
   /**
    * Counts training snippets matching condition.
    */
-  ml_training_snippets_count(filter?: any) {
+  ml_training_snippets_count(filter?: any, filterOnVss: boolean = false) {
 
-    return this.httpService.get<Count>('/magic/system/magic/ml_training_snippets-count' + this.queryArgService.getQueryArgs(filter));
+    if (filterOnVss) {
+
+      const nFilter = {
+      };
+      if (filter['ml_training_snippets.type.eq']) {
+        nFilter['type'] = filter['ml_training_snippets.type.eq'];
+      }
+
+      return this.httpService.get<Count>(
+        '/magic/system/magic/ml_training_snippets-count' +
+        this.queryArgService.getQueryArgs(nFilter));
+
+    } else {
+
+      return this.httpService.get<Count>(
+        '/magic/system/magic/ml_training_snippets-count' +
+        this.queryArgService.getQueryArgs(filter));
+    }
   }
 
   /**
