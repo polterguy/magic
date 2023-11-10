@@ -83,7 +83,7 @@ try
 
    // Informing client that we've successfully started crawling.
    strings.concat
-      .:"Crawling website "
+      .:"Crawling URL "
       get-value:x:@.arguments/*/url
    unwrap:x:+/*/args/**
    sockets.signal:x:@.arguments/*/feedback-channel
@@ -105,6 +105,14 @@ try
    set-value:x:@.type
       strings.replace:x:@.type
          .:"."
+         .:_
+   set-value:x:@.type
+      strings.replace:x:@.type
+         .:"/"
+         .:_
+   set-value:x:@.type
+      strings.replace-not-of:x:@.type
+         .:abcdefghijklmnopqrstuvwxyz_0987654321
          .:_
 
    // Creating our type
