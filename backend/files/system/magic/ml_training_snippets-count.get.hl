@@ -33,10 +33,13 @@ data.connect:[generic|magic]
    // Parametrising our read invocation with filtering arguments.
    add:x:./*/data.read/*/where/*/*/or
       get-nodes:x:@.arguments/*/ml_training_snippets.prompt.like
+      get-nodes:x:@.arguments/*/ml_training_snippets.completion.like
       get-nodes:x:@.arguments/*/ml_training_snippets.uri.like
       get-nodes:x:@.arguments/*/ml_training_snippets.prompt.eq
+      get-nodes:x:@.arguments/*/ml_training_snippets.completion.eq
       get-nodes:x:@.arguments/*/ml_training_snippets.uri.eq
    remove-nodes:x:@.arguments/*/ml_training_snippets.prompt.like
+   remove-nodes:x:@.arguments/*/ml_training_snippets.completion.like
    remove-nodes:x:@.arguments/*/ml_training_snippets.uri.like
    remove-nodes:x:@.arguments/*/ml_training_snippets.prompt.eq
    remove-nodes:x:@.arguments/*/ml_training_snippets.uri.eq
@@ -50,6 +53,8 @@ data.connect:[generic|magic]
          remove-nodes:x:@data.connect/*/data.read/*/where/*/and/*/or
 
    // Reading data from database.
+   lambda2hyper:x:./*/data.read
+   log.info:x:-
    data.read
       table:ml_training_snippets
       columns
