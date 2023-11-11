@@ -24,6 +24,10 @@ jobs:
         cd ..
 
         cd ./backend
+        docker build -t servergardens/magic-backend:${{ steps.get_version.outputs.VERSION }} -f ./Dockerfile .
+        docker push servergardens/magic-backend:${{ steps.get_version.outputs.VERSION }}
+
+        dotnet remove reference magic.lambda.system
         docker build -t servergardens/magic-backend:min-${{ steps.get_version.outputs.VERSION }} -f ./Dockerfile .
         docker push servergardens/magic-backend:min-${{ steps.get_version.outputs.VERSION }}
 
