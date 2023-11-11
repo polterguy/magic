@@ -1,18 +1,9 @@
-
-
 /*
  * Compiles a snippet of C# code and saves it to /etc/foo.dll
  * as a library, for then to dynamically load it as a plugin.
  *
  * This particular code creates a slot, but you can create any
  * code you wish, and it doesn't have to be Hyperlambda related.
- *
- * Notice, to recompile the code, and/or unload the assembly we're
- * creating here, you'll need to invoke:
- *
- * system.unload-plugin:/etc/foo
- *
- * ... to unload the assembly before you reload it.
  */
 system.compile
    references
@@ -34,7 +25,7 @@ public class Foo : ISlot
 {
    public void Signal(ISignaler signaler, Node input)
    {
-      input.Value = ""Foo was here!"";
+      input.Value = ""Foo was here!!"";
    }
 }"
    assembly-name:foo
@@ -44,4 +35,13 @@ io.file.save.binary:/etc/foo.dll
    get-value:x:@system.compile
 
 // Loading assembly now that we've created it and saved it.
-system.load-plugin:/etc/foo
+system.load-plugin:/etc/foo.dll
+
+// Executing [foo] slot now dynamically injected into AppDomain.
+foo
+
+// Unloading plugin.
+system.unload-plugin:/etc/foo.dll
+
+// Deleting foo.dll to make sure we clean up after ourselves.
+io.file.delete:/etc/foo.dll
