@@ -55,6 +55,8 @@ codemirror
 =-=-=-=-=-=*/
 .CodeMirror {
   border-radius: 5px;
+  background-color: #faf8f3 !important;
+  border: solid 1px rgba(0,0,0,.1);
 }
 
 .CodeMirror-scroll {
@@ -62,6 +64,158 @@ codemirror
   padding-bottom: 30px;
   margin-bottom: 0;
   max-height: 100%;
+}
+
+div.CodeMirror-selected {
+  background: transparentize($color: $aista_info, $amount: 0.85);
+}
+
+.CodeMirror-line::selection,
+.CodeMirror-line>span::selection,
+.CodeMirror-line>span>span::selection {
+  background: transparentize($color: $aista_info, $amount: 0.85);
+}
+
+.CodeMirror-line::-moz-selection,
+.CodeMirror-line>span::-moz-selection,
+.CodeMirror-line>span>span::-moz-selection {
+  background: transparentize($color: $aista_info, $amount: 0.85);
+}
+
+.CodeMirror-gutters {
+  background: #fefefe;
+  border-right: 0px;
+  border-top-left-radius: $aista_radius;
+  border-bottom-left-radius: $aista_radius;
+}
+
+.CodeMirror-guttermarker {
+  color: white;
+}
+
+.CodeMirror-guttermarker-subtle {
+  color: grey;
+}
+
+.CodeMirror-linenumber {
+  color: #91828f;
+}
+
+.CodeMirror-cursor {
+  border-left: 1px solid #21121f;
+}
+
+span.cm-comment {
+  color: #95958a;
+}
+
+span.cm-atom {
+  color: #00a8c6;
+}
+
+span.cm-number {
+  color: #00a8c6;
+}
+
+span.cm-property,
+span.cm-attribute {
+  color: #3893a1;
+}
+
+span.cm-keyword {
+  color: #a77106;
+}
+
+span.cm-string {
+  color: #3893a1;
+}
+
+span.cm-string.cm-property {
+  color: #41412f;
+}
+
+span.cm-variable {
+  color: #913ca1;
+}
+
+span.cm-variable-2 {
+  color: #a77106;
+}
+
+span.cm-def {
+  color: #02803a;
+}
+
+span.cm-bracket {
+  color: #a77106;
+  font-weight: bold;
+}
+
+span.cm-tag {
+  color: #037688;
+}
+
+span.cm-link {
+  color: #f54b07;
+}
+
+span.cm-error {
+  border-bottom: #636363;
+  color: #d64f10;
+}
+
+span.cm-qualifier {
+  color: #646452;
+}
+
+.CodeMirror-activeline-background {
+  border-top: 1px solid transparentize($color: $aista_default_grey4, $amount: 0.75);
+  border-bottom: 1px solid transparentize($color: $aista_default_grey4, $amount: 0.75);
+  background: transparentize($color: $aista_default_grey4, $amount: 0.95);
+}
+
+.CodeMirror-matchingbracket {
+  color: #ffb928 !important;
+}
+
+.CodeMirror-matchingtag {
+  background: rgba(255, 255, 255, .37);
+}
+
+.CodeMirror-hints {
+  position: absolute;
+  z-index: 10000;
+  overflow: hidden;
+  list-style: none;
+  margin: 0;
+  padding: 2px;
+  -webkit-box-shadow: 2px 3px 5px transparentize($color: $aista_dark, $amount: 0.8);
+  -moz-box-shadow: 2px 3px 5px transparentize($color: $aista_dark, $amount: 0.8);
+  box-shadow: 2px 3px 5px transparentize($color: $aista_dark, $amount: 0.8);
+  border-radius: 3px;
+  color: $aista_dark;
+  background-color: #b29762;
+  font-size: 90%;
+  font-family: monospace;
+  max-height: 20em;
+  overflow-y: auto;
+}
+
+.CodeMirror-hint {
+  margin: 0;
+  padding: 0 4px;
+  border-radius: 2px;
+  white-space: pre;
+  cursor: pointer;
+}
+
+li.CodeMirror-hint-active {
+  background: $aista_primary;
+  color: white;
+}
+
+.CodeMirror-dialog-top {
+  background-color: $aista_default_grey4;
 }
 
 app-dashboard>div {

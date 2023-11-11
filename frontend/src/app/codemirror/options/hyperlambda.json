@@ -2,7 +2,6 @@
   "autofocus": true,
   "readonly": false,
   "lineNumbers": true,
-  "theme": "aista",
   "mode": "hyperlambda",
   "tabSize": 3,
   "indentUnit": 3,
