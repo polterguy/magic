@@ -1,6 +1,6 @@
 /*
- * Compiles a snippet of C# code and saves it to /etc/foo.dll
- * as a library, for then to dynamically load it as a plugin.
+ * Compiles a snippet of C# code down to a library,
+ * for then to dynamically load it as a plugin.
  *
  * This particular code creates a slot, but you can create any
  * code you wish, and it doesn't have to be Hyperlambda related.
@@ -11,12 +11,14 @@ system.compile
       .:System.Runtime
       .:System.Private.CoreLib
       .:magic.node
+      .:magic.node.extensions
       .:magic.signals.contracts
    code:@"
 
 // Example C# code creating a Hyperlambda slot.
 using System;
 using magic.node;
+using magic.node.extensions;
 using magic.signals.contracts;
 
 // Our slot class.
@@ -25,23 +27,17 @@ public class Foo : ISlot
 {
    public void Signal(ISignaler signaler, Node input)
    {
-      input.Value = ""Foo was here!!"";
+      input.Value = $""Hi {input.GetEx<string>()}, how may I assist you?"";
    }
 }"
-   assembly-name:foo
-
-// Saving our compiled CLR assembly to '/etc/foo.dll'.
-io.file.save.binary:/etc/foo.dll
-   get-value:x:@system.compile
+   assembly-name:foo.dll
 
 // Loading assembly now that we've created it and saved it.
-system.load-plugin:/etc/foo.dll
+system.plugin.load:x:@system.compile
 
-// Executing [foo] slot now dynamically injected into AppDomain.
-foo
+// Invoking dynamically created C# slot.
+.name:John Doe
+foo:x:@.name
 
 // Unloading plugin.
-system.unload-plugin:/etc/foo.dll
-
-// Deleting foo.dll to make sure we clean up after ourselves.
-io.file.delete:/etc/foo.dll
+system.plugin.unload:foo.dll
