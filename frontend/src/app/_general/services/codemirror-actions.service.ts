@@ -7,6 +7,7 @@ import { Injectable, NgZone } from '@angular/core';
 import CodeMirror from 'codemirror';
 import { Subject } from 'rxjs';
 import fileTypes from 'src/app/codemirror/file-types.json';
+import { ThemeService } from './theme.service';
 
 /**
  * CodeMirror keyboard shortcut action service for listening to keyboard shortcuts.
@@ -19,7 +20,9 @@ export class CodemirrorActionsService {
   private extensions = fileTypes;
   action: Subject<string> = new Subject();
 
-  constructor(private ngZone: NgZone) { }
+  constructor(
+    private ngZone: NgZone,
+    private themeService: ThemeService) { }
 
   public getActions(path?: string, type?: string) {
 
@@ -36,7 +39,7 @@ export class CodemirrorActionsService {
       return null;
     } else {
       const res = this.clone(options[0]);
-      res.options.theme = 'duotone-light';
+      res.options.theme = this.themeService.codeTheme;
       if (res.options.extraKeys) {
         res.options.extraKeys['Alt-M'] = (cm: any) => {
           cm.setOption('fullScreen', !cm.getOption('fullScreen'));

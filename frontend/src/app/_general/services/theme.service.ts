@@ -38,6 +38,43 @@ export class ThemeService {
     ];
   }
 
+  get codeThemes() {
+
+    return [
+      'duotone-light',
+      'duotone-dark',
+      'paraiso-light',
+      'paraiso-dark',
+      '3024-day',
+      '3024-night',
+      'abbott',
+      'abcdef',
+      'ambiance',
+      'ayu-dark',
+      'ayu-mirage',
+      'base16-dark',
+      'base16-light',
+      'bespin',
+      'blackboard',
+      'cobalt',
+      'colorforth',
+      'darcula',
+      'dracula',
+      'eclipse',
+      'elegant',
+      'erlang-dark',
+      'gruvbox-dark',
+      'hopscotch',
+      'icecoder',
+      'lesser-dark',
+      'lucario',
+      'material',
+      'material-darker',
+      'mbo',
+      'monokai',
+    ];
+  }
+
   get theme() {
 
     return localStorage.getItem('theme') || 'default';
@@ -58,6 +95,16 @@ export class ThemeService {
       this.injectTheme(value);
     }
     this._themeChanged.next(value);
+  }
+
+  get codeTheme() {
+
+    return localStorage.getItem('codeTheme') || 'mbo';
+  }
+
+  set codeTheme(value: string) {
+
+    localStorage.setItem('codeTheme', value);
   }
 
   get theme_options() {

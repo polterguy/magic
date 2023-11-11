@@ -219,7 +219,26 @@
             </mat-form-field>
 
           </div>
-          <div class="col-lg col-sm-6 col-12 mt-lg-0 mt-3"></div>
+          <div class="col-lg col-sm-6 col-12 mb-sm-0 mb-3">
+
+            <mat-form-field class="w-100 standalone-field">
+              <span
+                matPrefix
+                matTooltip="Code theme"
+                class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+                <mat-icon>remove_red_eye</mat-icon>
+                <span class="text-muted">|</span>
+              </span>
+              <mat-select
+                placeholder="Code theme"
+                [(ngModel)]="themeService.codeTheme">
+                <mat-option
+                  *ngFor="let item of themeService.codeThemes"
+                  [value]="item">{{item}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+          </div>
           <div class="col-lg col-sm-6 col-12 mt-lg-0 mt-3"></div>
           <div class="col-xl-2 col-lg-3 col-sm-6 col-12 mt-lg-0 mt-3"></div>
         </div>
