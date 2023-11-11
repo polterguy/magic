@@ -36,6 +36,7 @@ export class CodemirrorActionsService {
       return null;
     } else {
       const res = this.clone(options[0]);
+      res.options.theme = 'duotone-light';
       if (res.options.extraKeys) {
         res.options.extraKeys['Alt-M'] = (cm: any) => {
           cm.setOption('fullScreen', !cm.getOption('fullScreen'));

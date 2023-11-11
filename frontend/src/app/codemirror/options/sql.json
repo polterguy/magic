@@ -2,7 +2,6 @@
   "mode": "text/x-mysql",
   "lineNumbers": true,
   "matchBrackets": true,
-  "theme": "aista",
   "autofocus": false,
   "styleActiveLine": true,
   "extraKeys": {

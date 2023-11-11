@@ -3,13 +3,13 @@
  */
 
 .playground ::ng-deep {
-  .cm-s-aista.CodeMirror {
+  .CodeMirror {
     height: 100%;
     max-height: calc(100vh - (368px));
   }
 
   @media (max-width: 991px) {
-    .cm-s-aista.CodeMirror {
+    .CodeMirror {
       max-height: calc(100vh - (368px));
     }
   }

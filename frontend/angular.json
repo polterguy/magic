@@ -36,7 +36,9 @@
             ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
-              "src/styles.scss"
+              "src/styles.scss",
+              "./node_modules/codemirror/lib/codemirror.css",
+              "./node_modules/codemirror/theme/duotone-light.css"
             ],
             "scripts": [],
             "allowedCommonJsDependencies": [
