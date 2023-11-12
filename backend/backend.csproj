@@ -20,6 +20,10 @@
     <ServerGarbageCollection>false</ServerGarbageCollection>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <DefaultItemExcludes>$(DefaultItemExcludes);files/**/*.cs</DefaultItemExcludes>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="magic.lambda.system" Version="16.11.5" />
     <PackageReference Include="magic.library" Version="16.11.5" />
