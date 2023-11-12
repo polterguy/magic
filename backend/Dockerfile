@@ -29,5 +29,5 @@ RUN apt-get install -y libgomp1 libatlas-base-dev liblapack-dev
 
 # Making sure we run in the context of a custom user with restricted access to core operating system
 RUN groupadd -r magic && useradd -g magic magic
-RUN chown -R magic:magic /magic/files
+RUN chown -R magic:magic /magic
 USER magic
