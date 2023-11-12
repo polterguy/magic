@@ -41,6 +41,7 @@ export class ThemeService {
   get codeThemes() {
 
     return [
+      'ainiro',
       'duotone-light',
       'duotone-dark',
       'paraiso-light',
@@ -99,7 +100,7 @@ export class ThemeService {
 
   get codeTheme() {
 
-    return localStorage.getItem('codeTheme') || 'mbo';
+    return localStorage.getItem('codeTheme') || 'ainiro';
   }
 
   set codeTheme(value: string) {
