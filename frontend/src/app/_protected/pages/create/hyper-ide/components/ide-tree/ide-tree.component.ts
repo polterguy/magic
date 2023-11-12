@@ -568,7 +568,7 @@ export class IdeTreeComponent implements OnInit {
             error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
           });
         } else {
-          this.fileService.saveFile(path, '').subscribe({
+          this.fileService.saveFile(path, result.template).subscribe({
             next: () => {
               this.generalService.showFeedback('File successfully created', 'successMessage');
               this.sort({ dialogResult: result, objectPath: path })

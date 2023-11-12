@@ -125,9 +125,9 @@ export class NewFileFolderDialogComponent implements OnInit {
         /*
          * Default return value.
          *
-         * Notice, we allow user to create any Markdown type of files in any folder.
+         * Notice, we allow user to create Markdown files and C# files in any folder.
          */
-        let result: Template[] = this.templates.filter(x => x.name.endsWith('.md'));
+        let result: Template[] = this.templates.filter(x => x.name.endsWith('.md') || x.name.endsWith('.cs'));
 
         // Checking if we can create HTTP endpoints.
         const canCreateHttpEndpoint =
