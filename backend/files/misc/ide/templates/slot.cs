@@ -3,9 +3,9 @@
 using System;
 
 using magic.node;
+using magic.node.contracts;
 using magic.node.extensions;
 using magic.signals.contracts;
-using magic.node.contracts;
 
 // Our slot class.
 [Slot(Name = "foo")]
