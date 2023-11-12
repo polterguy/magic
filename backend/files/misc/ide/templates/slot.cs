@@ -31,6 +31,6 @@ public class Foo : ISlot
     public void Signal(ISignaler signaler, Node input)
     {
         var configuration = (IMagicConfiguration)_services.GetService(typeof(IMagicConfiguration));
-        input.Value = $"Hello {input.GetEx<string>()} your SMTP server is {configuration["magic:smtp:host"]}";
+        input.Value = $"Hello {input.GetEx<string>() ?? "Unknown"} your default database type is {configuration["magic:databases:default"]}";
     }
 }
