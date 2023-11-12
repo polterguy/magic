@@ -19,7 +19,6 @@ import { Model } from 'src/app/codemirror/codemirror-hyperlambda/codemirror-hype
 
 // CodeMirror options.
 import hyperlambda from 'src/app/codemirror/options/hyperlambda.json';
-import hyperlambda_readonly from 'src/app/codemirror/options/hyperlambda_readonly.json';
 import { AiService } from 'src/app/_general/services/ai.service';
 
 /**
@@ -42,7 +41,7 @@ export class HyperlambdaPlaygroundComponent implements OnInit, OnDestroy {
 
   output: Model = {
     hyperlambda: '',
-    options: hyperlambda_readonly,
+    options: hyperlambda,
   };
 
   filename: string = null;
@@ -185,8 +184,12 @@ export class HyperlambdaPlaygroundComponent implements OnInit, OnDestroy {
 
   private getCodeMirrorOptions() {
 
-    const options = this.codemirrorActionsService.getActions(null, 'hl');
-    this.input.options = options;
+    const optionsInput = this.codemirrorActionsService.getActions(null, 'hl');
+    this.input.options = optionsInput;
+
+    const optionsOutput = this.codemirrorActionsService.getActions(null, 'hl');
+    optionsOutput.readOnly = true;
+    this.output.options = optionsOutput;
   }
 
   private watchForActions() {
