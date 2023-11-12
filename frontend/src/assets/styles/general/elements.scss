@@ -58,6 +58,13 @@ codemirror
   border: solid 1px rgba(0,0,0,.1);
 }
 
+.CodeMirror.CodeMirror-fullscreen {
+  position: fixed;
+  max-height: unset !important;
+  height: auto;
+  border-radius: 0 !important;
+}
+
 .CodeMirror-scroll {
   overflow: auto !important;
   padding-bottom: 30px;
