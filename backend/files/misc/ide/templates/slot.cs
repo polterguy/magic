@@ -2,6 +2,7 @@
 using System;
 
 using magic.node;
+using magic.node.extensions;
 using magic.signals.contracts;
 using magic.node.contracts;
 
@@ -19,6 +20,6 @@ public class Foo : ISlot
     public void Signal(ISignaler signaler, Node input)
     {
         var configuration = (IMagicConfiguration)_services.GetService(typeof(IMagicConfiguration));
-        input.Value = configuration["magic:smtp:host"];
+        input.Value = $"Hello {input.GetEx<string>()} your SMTP server is {configuration["magic:smtp:host"]}";
     }
 }
