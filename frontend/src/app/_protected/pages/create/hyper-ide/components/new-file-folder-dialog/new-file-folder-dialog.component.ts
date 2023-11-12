@@ -125,9 +125,9 @@ export class NewFileFolderDialogComponent implements OnInit {
         /*
          * Default return value.
          *
-         * Notice, we allow user to create Markdown files and C# files in any folder.
+         * Notice, we allow user to create Markdown files in any folder.
          */
-        let result: Template[] = this.templates.filter(x => x.name.endsWith('.md') || x.name.endsWith('.cs'));
+        let result: Template[] = this.templates.filter(x => x.name.endsWith('.md'));
 
         // Checking if we can create HTTP endpoints.
         const canCreateHttpEndpoint =
@@ -178,6 +178,11 @@ export class NewFileFolderDialogComponent implements OnInit {
         // Checking if we can create MS SQL migration scripts.
         if (canCreateSlotsAndSqlFiles && splits.filter(x => x === 'db-migrations' || x === 'mssql').length === 2) {
           result = result.concat(this.templates.filter(x => x.name.endsWith('0001-migrate-foo_bar-mssql-database.sql')))
+        }
+
+        // Checking if we can create C# files.
+        if (splits.filter(x => x === 'etc' || x === 'csharp').length === 2) {
+          result = result.concat(this.templates.filter(x => x.name.endsWith('.cs')))
         }
 
         // Returning result to caller.
