@@ -1,0 +1,38 @@
+/****************************************************************/
+/*   Based on ainironaci's Brackets ainiro theme                      */
+/*   https://github.com/ainironaci/global/blob/master/ainiro.tmTheme  */
+/*   Create your own: http://tmtheme-editor.herokuapp.com       */
+/****************************************************************/
+
+.cm-s-ainiro.CodeMirror { background: #2c2c2c; color: #ffffec; }
+.cm-s-ainiro div.CodeMirror-selected { background: #716C62; }
+.cm-s-ainiro .CodeMirror-line::selection, .cm-s-ainiro .CodeMirror-line > span::selection, .cm-s-ainiro .CodeMirror-line > span > span::selection { background: rgba(113, 108, 98, .99); }
+.cm-s-ainiro .CodeMirror-line::-moz-selection, .cm-s-ainiro .CodeMirror-line > span::-moz-selection, .cm-s-ainiro .CodeMirror-line > span > span::-moz-selection { background: rgba(113, 108, 98, .99); }
+.cm-s-ainiro .CodeMirror-gutters { background: #4e4e4e; border-right: 0px; }
+.cm-s-ainiro .CodeMirror-guttermarker { color: white; }
+.cm-s-ainiro .CodeMirror-guttermarker-subtle { color: grey; }
+.cm-s-ainiro .CodeMirror-linenumber { color: #dadada; }
+.cm-s-ainiro .CodeMirror-cursor { border-left: 1px solid #ffffec; }
+
+.cm-s-ainiro span.cm-comment { color: #95958a; }
+.cm-s-ainiro span.cm-atom { color: #00a8c6; }
+.cm-s-ainiro span.cm-number { color: #00a8c6; }
+
+.cm-s-ainiro span.cm-property, .cm-s-ainiro span.cm-attribute { color: #9ddfe9; }
+.cm-s-ainiro span.cm-keyword { color: #ffb928; }
+.cm-s-ainiro span.cm-string { color: #ffcf6c; }
+.cm-s-ainiro span.cm-string.cm-property { color: #ffffec; }
+
+.cm-s-ainiro span.cm-type { color: #fffffc; }
+.cm-s-ainiro span.cm-variable { color: #00a8c6; }
+.cm-s-ainiro span.cm-variable-2 { color: #32a5b9; }
+.cm-s-ainiro span.cm-def { color: #00c6a8; }
+.cm-s-ainiro span.cm-bracket { color: #fffffc; font-weight: bold; }
+.cm-s-ainiro span.cm-tag { color: #9ddfe9; }
+.cm-s-ainiro span.cm-link { color: #f54b07; }
+.cm-s-ainiro span.cm-error { border-bottom: #636363; color: #ffffec; }
+.cm-s-ainiro span.cm-qualifier { color: #ffffec; }
+
+.cm-s-ainiro .CodeMirror-activeline-background { background: #494b41; }
+.cm-s-ainiro .CodeMirror-matchingbracket { color: #ffb928 !important; }
+.cm-s-ainiro .CodeMirror-matchingtag { background: rgba(255, 255, 255, .37); }

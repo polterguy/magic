@@ -37,6 +37,7 @@
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.scss",
+              "./src/assets/styles/codemirror/themes/ainiro.css",
               "./node_modules/codemirror/lib/codemirror.css",
               "./node_modules/codemirror/theme/duotone-light.css",
               "./node_modules/codemirror/theme/duotone-dark.css",
