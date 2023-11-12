@@ -1,35 +1,23 @@
 /*
- * Compiles a snippet of C# code down to a library,
- * for then to dynamically load it as a plugin.
+ * Compiles a C# file and creates a library from the compiled result,
+ * for then to dynamically load it as a plugin and invoke a slot
+ * called [foo] expected to exist within the C# code.
  *
- * This particular code creates a slot, but you can create any
- * code you wish, and it doesn't have to be Hyperlambda related.
+ * Notice, the code assumes there's a C# file called "slot.cs"
+ * in your '/etc/csharp/' folder. Create this file with Hyper IDE
+ * using the "slot" template to test the code.
  */
+io.file.load:/etc/csharp/slot.cs
 system.compile
    references
       .:netstandard
       .:System.Runtime
+      .:System.ComponentModel
       .:System.Private.CoreLib
       .:magic.node
       .:magic.node.extensions
       .:magic.signals.contracts
-   code:@"
-
-// Example C# code creating a Hyperlambda slot.
-using System;
-using magic.node;
-using magic.node.extensions;
-using magic.signals.contracts;
-
-// Our slot class.
-[Slot(Name = ""foo"")]
-public class Foo : ISlot
-{
-   public void Signal(ISignaler signaler, Node input)
-   {
-      input.Value = $""Hi {input.GetEx<string>()}, how may I assist you?"";
-   }
-}"
+   code:x:@io.file.load
    assembly-name:foo.dll
 
 // Loading assembly now that we've created it and saved it.
