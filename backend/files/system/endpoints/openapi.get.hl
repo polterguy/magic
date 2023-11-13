@@ -88,43 +88,98 @@ for-each:x:@endpoints.list/*
                .:/
                get-value:x:@.dp/#/*/path
 
-         // Iterating through each argument endpoint can handle.
-         for-each:x:@.dp/#/*/input/*
+         /*
+          * Checking if this is a GET or DELETE endpoint,
+          * at which point parameters are always QUERY parameters.
+          *
+          * If POST, PUT or PATCH however, we use schema level example instead.
+          */
+         if
+            or
+               eq:x:@.dp/#/*/verb
+                  .:get
+               eq:x:@.dp/#/*/verb
+                  .:delete
+            .lambda
 
-            // Verifying this is not an asterisk argument.
+               // Iterating through each argument endpoint can handle.
+               for-each:x:@.dp/#/*/input/*
+
+                  // Verifying this is not an asterisk argument.
+                  if
+                     neq:x:@.dp/#/*/type
+                        .:*
+                     .lambda
+
+                        // Buffer for parameter.
+                        .arg
+                           name
+                           in:query
+                           schema
+                              type
+
+                        // Setting most common values.
+                        set-value:x:@.arg/*/name
+                           get-value:x:@.dp/#/*/name
+                        set-value:x:@.arg/*/schema/*/type
+                           get-value:x:@.dp/#/*/type
+
+                        // Adding currently iterated argument to parameters collection.
+                        add:x:+/*/*
+                           get-nodes:x:@.arg/*
+                        add:x:@.buffer/*/*/*/parameters
+                           .
+                              .
+
+         else
+
+            // POST, PUT or PATCH endpoint.
+            .body
+               name:body
+               in:body
+               required:bool:true
+               schema
+                  example
+
+            // Iterating through each argument endpoint can handle.
+            for-each:x:@.dp/#/*/input/*
+
+               // Adding currently iterated argument to parameters collection, making sure it's not already existing.
+               if
+                  not-exists:x:@.body/*/schema/*/example/*/{@.dp/#/*/name}
+                  .lambda
+
+                     // Field does not exist from before.
+                     .buf
+                        name:value
+                     switch:x:@.dp/#/*/type
+                        case:date
+                           set-value:x:@.buf/*
+                              date.now
+                        case:int
+                        case:long
+                           set-value:x:@.buf/*
+                              .:int:5
+                        default
+                           set-value:x:@.buf/*
+                              .:string value
+                     set-name:x:@.buf/*
+                        get-value:x:@.dp/#/*/name
+                     add:x:@.body/*/schema/*/example
+                        get-nodes:x:@.buf/*
+
+            // Adding currently iterated argument to parameters collection if we've got an example.
             if
-               neq:x:@.dp/#/*/type
-                  .:*
+               exists:x:@.body/*/schema/*/example/*
                .lambda
 
-                  // Buffer for parameter.
-                  .arg
-                     name
-                     in
-                     schema
-                        type
-
-                  // Setting most common values.
-                  set-value:x:@.arg/*/name
-                     get-value:x:@.dp/#/*/name
-                  set-value:x:@.arg/*/schema/*/type
-                     get-value:x:@.dp/#/*/type
-
-                  // Checking what verb endpoint has and treating [in] accordingly.
-                  switch:x:@for-each/@.dp/#/*/verb
-                     case:get
-                        set-value:x:@.arg/*/in
-                           .:query
-                     default
-                        set-value:x:@.arg/*/in
-                           .:body
-
-                  // Adding currently iterated argument to parameters collection.
+                  // We've got an example payload.
                   add:x:+/*/*
-                     get-nodes:x:@.arg/*
+                     get-nodes:x:@.body/*
                   add:x:@.buffer/*/*/*/parameters
                      .
                         .
+
 
          // Removing [parameters] unless we actually have parameters.
          if
@@ -160,4 +215,6 @@ if
       remove-nodes:x:@.result/*/paths
 
 // Returning result to caller.
+lambda2hyper:x:@.result
+log.info:x:-
 return-nodes:x:@.result/*
