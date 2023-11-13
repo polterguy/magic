@@ -12,14 +12,13 @@ COPY . .
 WORKDIR /app
 RUN dotnet publish backend.csproj -c release -o /magic
 
-# Making sure we run in the context of a custom user with restricted access to core operating system
-# TODO: This doesn't work since it can't resolve our VSS0 SQLite plugin ... :/
-# RUN groupadd -r magic && useradd -g magic magic
-# RUN chown -R magic:magic /magic
-# USER magic
-
 # Making sure we add all SQLite plugins to docker image.
 ADD sqlite-plugins /magic/sqlite-plugins
+
+# Making sure we run in the context of a custom user with restricted access to core operating system
+RUN groupadd -r magic && useradd -g magic magic
+RUN chown -R magic:magic /magic
+USER magic
 
 # Final stage / image
 FROM mcr.microsoft.com/dotnet/aspnet:6.0
