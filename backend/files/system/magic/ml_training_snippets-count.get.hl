@@ -53,8 +53,6 @@ data.connect:[generic|magic]
          remove-nodes:x:@data.connect/*/data.read/*/where/*/and/*/or
 
    // Reading data from database.
-   lambda2hyper:x:./*/data.read
-   log.info:x:-
    data.read
       table:ml_training_snippets
       columns

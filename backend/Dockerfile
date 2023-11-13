@@ -12,9 +12,6 @@ COPY . .
 WORKDIR /app
 RUN dotnet publish backend.csproj -c release -o /magic
 
-# Making sure we add all SQLite plugins to docker image.
-ADD sqlite-plugins /magic/sqlite-plugins
-
 # Making sure we run apt-get to get necessary requirements for SQLite plugins
 RUN apt-get update
 RUN apt-get install -y libgomp1 libatlas-base-dev liblapack-dev
@@ -23,6 +20,9 @@ RUN apt-get install -y libgomp1 libatlas-base-dev liblapack-dev
 RUN groupadd -r magic && useradd -g magic magic
 RUN chown -R magic:magic /magic
 USER magic
+
+# Making sure we add all SQLite plugins to docker image.
+ADD sqlite-plugins /magic/sqlite-plugins
 
 # Final stage / image
 FROM mcr.microsoft.com/dotnet/aspnet:6.0
