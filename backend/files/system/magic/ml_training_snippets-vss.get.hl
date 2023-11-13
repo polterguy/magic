@@ -100,7 +100,6 @@ select id, created, type, pushed, uri, prompt, completion, filename, cached, met
                get-value:x:@.arguments/*/offset
 
    // Executing SQL towards database.
-   log.info:x:@.sql
    data.select:x:@.sql
       @embedding:x:@floatArray2bytes
 
