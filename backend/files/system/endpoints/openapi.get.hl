@@ -1,0 +1,163 @@
+
+// Returns all public endpoints as an OpenAPI specification.
+.arguments
+   system:bool
+.description:Returns all public endpoints as an OpenAPI specification
+.type:public
+
+// Defaulting system endpoints to false.
+validators.default:x:@.arguments
+   system:bool:false
+
+// Retrieving Magic backend version.
+version
+
+// Retrieving host and scheme for request.
+.base-url
+set-value:x:@.base-url
+   strings.concat
+      request.scheme
+      .:"://"
+      request.host
+
+// Unwrapping expressions in [.result].
+unwrap:x:./*/.result/**
+
+// Buffer for return value.
+.result
+   openapi:3.1.0
+   info
+      title:AINIRO Magic Cloudlet
+      description:Allows you to interact with your Magic cloudlet
+      version:x:@version
+   servers
+      .
+         url:x:@.base-url
+   paths
+
+// Retrieves all endpoints in the system.
+endpoints.list
+
+// Iterating through each public endpoint and adding to above [paths].
+for-each:x:@endpoints.list/*
+
+   // Verifying endpoint is public.
+   if
+      and
+         neq:x:@.dp/#/*/type
+            .:internal
+         or
+            eq:x:@.arguments/*/system
+               .:bool:true
+            strings.starts-with:x:@.dp/#/*/path
+               .:magic/modules/
+      .lambda
+
+         // Checking if we've already added URL to [.result].
+         .exists:bool:false
+         for-each:x:@.result/*/paths/*
+            if
+               eq
+                  get-name:x:@.dp/#
+                  strings.concat
+                     .:/
+                     get-value:x:@for-each/@.dp/#/*/path
+               .lambda
+
+                  // Endpoint URL has already been added.
+                  set-value:x:@.exists
+                     .:bool:true
+
+         /*
+          * Endpoint URL has not been added before, making sure
+          * we add it with its correct URL and additional information.
+          */
+         .buffer
+            url
+               verb
+                  description
+                  parameters
+
+         // Setting most common values.
+         set-value:x:@.buffer/*/url/*/verb/*/description
+            get-value:x:@.dp/#/*/description
+         set-name:x:@.buffer/*/url/*/verb
+            get-value:x:@.dp/#/*/verb
+         set-name:x:@.buffer/*/url
+            strings.concat
+               .:/
+               get-value:x:@.dp/#/*/path
+
+         // Iterating through each argument endpoint can handle.
+         for-each:x:@.dp/#/*/input/*
+
+            // Verifying this is not an asterisk argument.
+            if
+               neq:x:@.dp/#/*/type
+                  .:*
+               .lambda
+
+                  // Buffer for parameter.
+                  .arg
+                     name
+                     in
+                     schema
+                        type
+
+                  // Setting most common values.
+                  set-value:x:@.arg/*/name
+                     get-value:x:@.dp/#/*/name
+                  set-value:x:@.arg/*/schema/*/type
+                     get-value:x:@.dp/#/*/type
+
+                  // Checking what verb endpoint has and treating [in] accordingly.
+                  switch:x:@for-each/@.dp/#/*/verb
+                     case:get
+                        set-value:x:@.arg/*/in
+                           .:query
+                     default
+                        set-value:x:@.arg/*/in
+                           .:body
+
+                  // Adding currently iterated argument to parameters collection.
+                  add:x:+/*/*
+                     get-nodes:x:@.arg/*
+                  add:x:@.buffer/*/*/*/parameters
+                     .
+                        .
+
+         // Removing [parameters] unless we actually have parameters.
+         if
+            not-exists:x:@.buffer/*/*/*/parameters/*
+            .lambda
+               remove-nodes:x:@.buffer/*/*/*/parameters
+
+         /*
+          * Checking if endpoint URL has already been added, and if so,
+          * we add another verb instead of a new URL reference.
+          */
+         if:x:@.exists
+
+            // Endpoint URL already exists, adding new verb instead.
+            strings.concat
+               .:/
+               get-value:x:@.dp/#/*/path
+            add:x:@.result/*/paths/*/{@strings.concat}
+               get-nodes:x:@.buffer/*/*
+
+         else
+
+            // Adding [.buffer] to [.result].
+            add:x:+/*
+               get-nodes:x:@.buffer/*
+            add:x:@.result/*/paths
+               .
+
+// Verifying we have any endpoints at all, and if not, simply removing paths.
+if
+   not-exists:x:@.result/*/paths/*
+   .lambda
+      remove-nodes:x:@.result/*/paths
+
+// Returning result to caller.
+return-nodes:x:@.result/*
