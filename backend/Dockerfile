@@ -12,10 +12,6 @@ COPY . .
 WORKDIR /app
 RUN dotnet publish backend.csproj -c release -o /magic
 
-# Making sure we run apt-get to get necessary requirements for SQLite plugins
-RUN apt-get update
-RUN apt-get install -y libgomp1 libatlas-base-dev liblapack-dev
-
 # Making sure we run in the context of a custom user with restricted access to core operating system
 # TODO: This doesn't work since it can't resolve our VSS0 SQLite plugin ... :/
 # RUN groupadd -r magic && useradd -g magic magic
@@ -32,3 +28,7 @@ COPY --from=build /magic ./
 EXPOSE 4444
 ENV ASPNETCORE_URLS="http://+:4444"
 ENTRYPOINT ["dotnet", "backend.dll"]
+
+# Making sure we run apt-get to get necessary requirements for SQLite plugins
+RUN apt-get update
+RUN apt-get install -y libgomp1 libatlas-base-dev liblapack-dev
