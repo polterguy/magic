@@ -29,5 +29,6 @@ ENV ASPNETCORE_URLS="http://+:4444"
 ENTRYPOINT ["dotnet", "backend.dll"]
 
 # Making sure we run apt-get to get necessary requirements for SQLite plugins
+# TODO: Not sure if this even have any effect?
 RUN apt-get update
 RUN apt-get install -y libgomp1 libatlas-base-dev liblapack-dev
