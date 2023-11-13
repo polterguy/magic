@@ -90,15 +90,32 @@ for-each:x:@endpoints.list/*
                   description
                   parameters
 
-         // Setting most common values.
+         // Setting description, making sure we don't exceed 300 characters.
+         if
+            and
+               exists:x:@.dp/#/*/description
+               mt
+                  strings.length:x:@.dp/#/*/description
+                  .:int:300
+            .lambda
+               set-value:x:@.dp/#/*/description
+                  strings.substring:x:@.dp/#/*/description
+                     .:int:0
+                     .:int:300
          set-value:x:@.buffer/*/url/*/verb/*/description
             get-value:x:@.dp/#/*/description
+
+         // Setting verb.
          set-name:x:@.buffer/*/url/*/verb
             get-value:x:@.dp/#/*/verb
+
+         // Setting URL.
          set-name:x:@.buffer/*/url
             strings.concat
                .:/
                get-value:x:@.dp/#/*/path
+
+         // Setting operationId.
          strings.split:x:@.dp/#/*/path
             .:/
          set-value:x:@.buffer/*/*/*/operationId
