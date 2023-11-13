@@ -17,9 +17,10 @@ RUN apt-get update
 RUN apt-get install -y libgomp1 libatlas-base-dev liblapack-dev
 
 # Making sure we run in the context of a custom user with restricted access to core operating system
-RUN groupadd -r magic && useradd -g magic magic
-RUN chown -R magic:magic /magic
-USER magic
+# TODO: This doesn't work since it can't resolve our VSS0 SQLite plugin ... :/
+# RUN groupadd -r magic && useradd -g magic magic
+# RUN chown -R magic:magic /magic
+# USER magic
 
 # Making sure we add all SQLite plugins to docker image.
 ADD sqlite-plugins /magic/sqlite-plugins
