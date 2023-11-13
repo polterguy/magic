@@ -13,10 +13,21 @@ validators.default:x:@.arguments
 version
 
 // Retrieving host and scheme for request.
+.scheme
+request.host
+if
+   strings.starts-with:x:@request.host
+      .:"localhost:5000"
+   .lambda
+      set-value:x:@.scheme
+         .:http
+else
+   set-value:x:@.scheme
+      .:https
 .base-url
 set-value:x:@.base-url
    strings.concat
-      request.scheme
+      get-value:x:@.scheme
       .:"://"
       request.host
 
@@ -75,6 +86,7 @@ for-each:x:@endpoints.list/*
          .buffer
             url
                verb
+                  operationId
                   description
                   parameters
 
@@ -87,6 +99,15 @@ for-each:x:@endpoints.list/*
             strings.concat
                .:/
                get-value:x:@.dp/#/*/path
+         strings.split:x:@.dp/#/*/path
+            .:/
+         set-value:x:@.buffer/*/*/*/operationId
+            strings.concat
+               get-value:x:@.dp/#/*/verb
+               .:-
+               get-value:x:@strings.split/0/-/-
+               .:-
+               get-value:x:@strings.split/0/-
 
          /*
           * Checking if this is a GET or DELETE endpoint,
