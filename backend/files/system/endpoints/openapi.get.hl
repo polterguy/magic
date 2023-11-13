@@ -105,7 +105,7 @@ for-each:x:@endpoints.list/*
                // Iterating through each argument endpoint can handle.
                for-each:x:@.dp/#/*/input/*
 
-                  // Verifying this is not an asterisk argument.
+                  // Verifying this is not a wildcard argument.
                   if
                      neq:x:@.dp/#/*/type
                         .:*
@@ -118,11 +118,22 @@ for-each:x:@endpoints.list/*
                            schema
                               type
 
-                        // Setting most common values.
+                        // Setting name.
                         set-value:x:@.arg/*/name
                            get-value:x:@.dp/#/*/name
+
+                        // Setting type.
                         set-value:x:@.arg/*/schema/*/type
                            get-value:x:@.dp/#/*/type
+
+                        // Checking if we've got a description, and if so, adding it.
+                        if
+                           exists:x:@.dp/#/*/description
+                           .lambda
+                              unwrap:x:+/*/*
+                              add:x:@.arg
+                                 .
+                                    description:x:@.dp/#/*/description
 
                         // Adding currently iterated argument to parameters collection.
                         add:x:+/*/*
@@ -139,7 +150,8 @@ for-each:x:@endpoints.list/*
                in:body
                required:bool:true
                schema
-                  example
+                  type:object
+                  properties
 
             // Iterating through each argument endpoint can handle.
             for-each:x:@.dp/#/*/input/*
@@ -149,28 +161,49 @@ for-each:x:@endpoints.list/*
                   not-exists:x:@.body/*/schema/*/example/*/{@.dp/#/*/name}
                   .lambda
 
-                     // Field does not exist from before.
-                     .buf
-                        name:value
+                     // Field does not exist from before, adding field into [properties] lambda.
+                     .prop
+                        name
+                           type
+                           example
+
+                     // Type
+                     set-value:x:@.prop/*/*/type
+                        get-value:x:@.dp/#/*/type
+
+                     // Name
+                     set-name:x:@.prop/*
+                        get-value:x:@.dp/#/*/name
+
+                     // Example.
                      switch:x:@.dp/#/*/type
                         case:date
-                           set-value:x:@.buf/*
+                           set-value:x:@.prop/*/*/example
                               date.now
                         case:int
                         case:long
-                           set-value:x:@.buf/*
+                           set-value:x:@.prop/*/*/example
                               .:int:5
                         default
-                           set-value:x:@.buf/*
-                              .:string value
-                     set-name:x:@.buf/*
-                        get-value:x:@.dp/#/*/name
-                     add:x:@.body/*/schema/*/example
-                        get-nodes:x:@.buf/*
+                           set-value:x:@.prop/*/*/example
+                              .:This is an example string
+
+                     // Checking if we've got a description, and if so, adding it.
+                     if
+                        exists:x:@.dp/#/*/description
+                        .lambda
+                           unwrap:x:+/*/*
+                           add:x:@.prop/*
+                              .
+                                 description:x:@.dp/#/*/description
+
+                     // Adding field to [properties].
+                     add:x:@.body/*/schema/*/properties
+                        get-nodes:x:@.prop/*
 
             // Adding currently iterated argument to parameters collection if we've got an example.
             if
-               exists:x:@.body/*/schema/*/example/*
+               exists:x:@.body/*/schema/*/properties/*
                .lambda
 
                   // We've got an example payload.
