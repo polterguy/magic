@@ -319,6 +319,9 @@ semaphore:crudifier
          .first:bool:true
          add:x:@apply/*/.arguments
             get-nodes:x:@.arguments/*/args/*/primary/*/*
+         insert-before:x:@apply/*/.arguments/*
+            .
+               ..:Primary key of record to delete
          for-each:x:@.arguments/*/args/*/primary/*/*
 
             // Checking if this is our first loop iteration.
@@ -551,14 +554,21 @@ semaphore:crudifier
 
                            // String type of argument, appending ".like" to legal arguments.
                            .buffer
+                              ..
                               .name:x:@.dp/#/*/type
                            unwrap:x:@.buffer/*
-                           set-name:x:@.buffer/*
+                           set-name:x:@.buffer/*/.name
                               strings.concat
                                  get-value:x:@.arguments/*/table
                                  .:.
                                  get-value:x:@.dp/#/*/name
                                  .:.like
+                           set-value:x:@.buffer/0
+                              strings.concat
+                                 get-value:x:@.arguments/*/table
+                                 .:" table "
+                                 get-value:x:@.dp/#/*/name
+                                 .:" column wildcard filtering with SQL like '%' comparison"
                            add:x:@apply/*/.arguments
                               get-nodes:x:@.buffer/*
 
@@ -574,14 +584,21 @@ semaphore:crudifier
 
                            // Boolean type of argument, removing everything but ".eq" type of arguments.
                            .buffer
+                              ..
                               .name:x:@.dp/#/*/type
                            unwrap:x:@.buffer/*
-                           set-name:x:@.buffer/*
+                           set-name:x:@.buffer/*/.name
                               strings.concat
                                  get-value:x:@.arguments/*/table
                                  .:.
                                  get-value:x:@.dp/#/*/name
                                  .:.eq
+                           set-value:x:@.buffer/0
+                              strings.concat
+                                 get-value:x:@.arguments/*/table
+                                 .:" table "
+                                 get-value:x:@.dp/#/*/name
+                                 .:" column equality exact match filtering"
                            add:x:@apply/*/.arguments
                               get-nodes:x:@.buffer/*
                      else
@@ -592,15 +609,48 @@ semaphore:crudifier
                          */
                         for-each:x:@.operators/*
                            .buffer
+                              ..
                               .name:x:@.dp/@.dp/#/*/type
-                           unwrap:x:@.buffer/*
-                           set-name:x:@.buffer/*
+                           unwrap:x:@.buffer/*/.name
+                           set-name:x:@.buffer/*/.name
                               strings.concat
                                  get-value:x:@.arguments/*/table
                                  .:.
                                  get-value:x:@.dp/@.dp/#/*/name
                                  .:.
                                  get-name:x:@.dp/#
+                           set-value:x:@.buffer/0
+                              strings.concat
+                                 get-value:x:@.arguments/*/table
+                                 .:" table "
+                                 get-value:x:@.dp/@.dp/#/*/name
+                                 .:" column "
+                           .comp
+                           get-name:x:@.dp/#
+                           switch:x:@get-name
+                              case:eq
+                                 set-value:x:@.comp
+                                    .:equality exact match
+                              case:neq
+                                 set-value:x:@.comp
+                                    .:not equals
+                              case:lt
+                                 set-value:x:@.comp
+                                    .:less than
+                              case:mt
+                                 set-value:x:@.comp
+                                    .:more than
+                              case:lteq
+                                 set-value:x:@.comp
+                                    .:less than or equals
+                              case:mteq
+                                 set-value:x:@.comp
+                                    .:more than or equals
+                           set-value:x:@.buffer/0
+                              strings.concat
+                                 get-value:x:@.buffer/0
+                                 get-value:x:@.comp
+                                 .:" filtering"
                            add:x:@apply/*/.arguments
                               get-nodes:x:@.buffer/*
 
@@ -759,6 +809,18 @@ semaphore:crudifier
                                  as:x:@.display-name
 
                         // Then we need to add the eq and like query parameters for the referenced columns.
+                        set-value:x:+/+/+/+/*/0
+                           strings.concat
+                              get-value:x:@.dp/#/*/foreign_key/*/table
+                              .:" table "
+                              get-value:x:@.dp/#/*/foreign_key/*/name
+                              .:" column equality exact match filtering"
+                        set-value:x:+/+/+/*/2
+                           strings.concat
+                              get-value:x:@.dp/#/*/foreign_key/*/table
+                              .:" table "
+                              get-value:x:@.dp/#/*/foreign_key/*/name
+                              .:" column wildcard filtering with SQL like '%' comparison"
                         set-name:x:+/+/*/*/like
                            strings.concat
                               get-value:x:@.display-col
@@ -769,7 +831,9 @@ semaphore:crudifier
                               .:.eq
                         add:x:@apply/*/.arguments
                            .
+                              ..
                               eq:string
+                              ..
                               like:string
 
          // Checking if paging is turned off.
@@ -920,12 +984,17 @@ semaphore:crudifier
             if
                not-exists:x:@.dp/#/*/locked
                .lambda
-                  set-name:x:+/+/*/*
+                  set-value:x:+/+/+/*/0
+                     strings.concat
+                        get-value:x:@.dp/#/*/name
+                        .:" column value"
+                  set-name:x:+/+/*/1
                      get-value:x:@.dp/#/*/name
-                  set-value:x:+/*/*
+                  set-value:x:+/*/1
                      get-value:x:@.dp/#/*/type
                   add:x:@apply/*/.arguments
                      .
+                        ..
                         .
 
          /*
@@ -1045,12 +1114,17 @@ semaphore:crudifier
                      .:", "
                      get-value:x:@.dp/#/*/name
 
-            set-name:x:+/+/*/*
+            set-value:x:+/+/+/*/0
+               strings.concat
+                  get-value:x:@.dp/#/*/name
+                  .:" column value being primary key of record to update"
+            set-name:x:+/+/*/1
                get-value:x:@.dp/#/*/name
-            set-value:x:+/*/*
+            set-value:x:+/*/1
                get-value:x:@.dp/#/*/type
             add:x:@apply/*/.arguments
                .
+                  ..
                   .
          .first:bool:true
          for-each:x:@.arguments/*/args/*/primary/*
@@ -1116,12 +1190,17 @@ semaphore:crudifier
             if
                not-exists:x:@.dp/#/*/locked
                .lambda
-                  set-name:x:+/+/*/*
+                  set-value:x:+/+/+/*/0
+                     strings.concat
+                        get-value:x:@.dp/#/*/name
+                        .:" column's new value"
+                  set-name:x:+/+/*/1
                      get-value:x:@.dp/#/*/name
-                  set-value:x:+/*/*
+                  set-value:x:+/*/1
                      get-value:x:@.dp/#/*/type
                   add:x:@apply/*/.arguments
                      .
+                        ..
                         .
 
          set-value:x:@.comment-tail
@@ -1502,9 +1581,13 @@ semaphore:crudifier
          remove-nodes:x:@apply/**/return-nodes
          remove-nodes:x:@apply/**/table/././*/add/-
          remove-nodes:x:@apply/**/table/././*/add
+         remove-nodes:x:@apply/*/.arguments/*/limit/-
          remove-nodes:x:@apply/*/.arguments/*/limit
+         remove-nodes:x:@apply/*/.arguments/*/offset/-
          remove-nodes:x:@apply/*/.arguments/*/offset
+         remove-nodes:x:@apply/*/.arguments/*/order/-
          remove-nodes:x:@apply/*/.arguments/*/order
+         remove-nodes:x:@apply/*/.arguments/*/direction/-
          remove-nodes:x:@apply/*/.arguments/*/direction
          set-value:x:@apply/*/.type
             .:crud-count
