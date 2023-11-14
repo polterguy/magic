@@ -115,6 +115,18 @@ for-each:x:@endpoints.list/*
          set-name:x:@.buffer/*/url/*/verb
             get-value:x:@.dp/#/*/verb
 
+         // Setting consumes
+         switch:x:@.dp/#/*/verb
+            case:post
+            case:put
+            case:patch
+               insert-after:x:@.buffer/*/*/*/operationId
+                  .
+                     consumes
+                        .:application/json
+                     produces
+                        .:application/json
+
          // Setting URL.
          set-name:x:@.buffer/*/url
             strings.concat
@@ -127,9 +139,9 @@ for-each:x:@endpoints.list/*
          set-value:x:@.buffer/*/*/*/operationId
             strings.concat
                get-value:x:@.dp/#/*/verb
-               .:-
+               .:_
                get-value:x:@strings.split/0/-/-
-               .:-
+               .:_
                get-value:x:@strings.split/0/-
 
          /*
