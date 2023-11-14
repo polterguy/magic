@@ -183,8 +183,26 @@ for-each:x:@endpoints.list/*
                            get-value:x:@.dp/#/*/name
 
                         // Setting type.
-                        set-value:x:@.arg/*/schema/*/type
-                           get-value:x:@.dp/#/*/type
+                        switch:x:@.dp/#/*/type
+                           case:short
+                           case:ushort
+                           case:int
+                           case:uint
+                           case:long
+                           case:ulong
+                              set-value:x:@.arg/*/schema/*/type
+                                 .:integer
+                           case:float
+                           case:double
+                           case:decimal
+                              set-value:x:@.arg/*/schema/*/type
+                                 .:number
+                           case:bool
+                              set-value:x:@.arg/*/schema/*/type
+                                 .:boolean
+                           default
+                              set-value:x:@.arg/*/schema/*/type
+                                 .:string
 
                         // Checking if we've got a description, and if so, adding it.
                         if
