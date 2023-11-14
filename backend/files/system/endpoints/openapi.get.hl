@@ -2,7 +2,8 @@
 // Returns all public endpoints as an OpenAPI specification.
 .arguments
    system:bool
-.description:Returns all public endpoints as an OpenAPI specification
+   filter:string
+.description:Returns all public endpoints as an OpenAPI specification, matching the optional [filter] condition in URL
 .type:public
 
 // Defaulting system endpoints to false.
@@ -62,6 +63,11 @@ for-each:x:@endpoints.list/*
                .:bool:true
             strings.starts-with:x:@.dp/#/*/path
                .:magic/modules/
+         or
+            not-exists:x:@.arguments/*/filter
+            null:x:@.arguments/*/filter
+            strings.contains:x:@.dp/#/*/path
+               get-value:x:@.arguments/*/filter
       .lambda
 
          // Checking if we've already added URL to [.result].
@@ -169,7 +175,7 @@ for-each:x:@endpoints.list/*
                            exists:x:@.dp/#/*/description
                            .lambda
                               unwrap:x:+/*/*
-                              add:x:@.arg
+                              insert-after:x:@.arg/*/name
                                  .
                                     description:x:@.dp/#/*/description
 

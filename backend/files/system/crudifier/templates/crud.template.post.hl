@@ -1,6 +1,10 @@
 // dynamically populated
 .arguments
-.description:CRUD create endpoint inserting one record into your {table} table in your {database} database
+
+// Meta data description for endpoint
+.description:Create endpoint inserting one record into your {table} table in your {database} database
+
+// Type of endpoint
 .type:crud-create
 .foreign-keys
 
