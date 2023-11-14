@@ -1592,7 +1592,7 @@ semaphore:crudifier
          set-value:x:@apply/*/.type
             .:crud-count
          set-value:x:@apply/*/.description
-            strings.replace:Endpoint counting items in your {table} table in your {database} database
+            strings.replace:Counts items from your {table} table in your {database} database
                .:{database}
                get-value:x:@.database-name
          set-value:x:@apply/*/.description
