@@ -94,7 +94,6 @@ for-each:x:@endpoints.list/*
                verb
                   operationId
                   description
-                  parameters
 
          // Setting description, making sure we don't exceed 300 characters.
          if
@@ -158,6 +157,11 @@ for-each:x:@endpoints.list/*
                   .:delete
             .lambda
 
+               // Adding [parameters].
+               add:x:@.buffer/*/*
+                  .
+                     parameters
+
                // Iterating through each argument endpoint can handle.
                for-each:x:@.dp/#/*/input/*
 
@@ -200,28 +204,26 @@ for-each:x:@endpoints.list/*
 
          else
 
-            // POST, PUT or PATCH endpoint.
             .body
-               name:body
-               in:body
-               required:bool:true
-               schema
-                  type:object
-                  properties
+               requestBody
+                  content
+                     application/json
+                        schema
+                           type:object
+                           properties
 
             // Iterating through each argument endpoint can handle.
             for-each:x:@.dp/#/*/input/*
 
                // Adding currently iterated argument to parameters collection, making sure it's not already existing.
                if
-                  not-exists:x:@.body/*/schema/*/example/*/{@.dp/#/*/name}
+                  not-exists:x:@.body/*/requestBody/*/content/*/*/schema/*/properties/*/{@.dp/#/*/name}
                   .lambda
 
                      // Field does not exist from before, adding field into [properties] lambda.
                      .prop
                         name
                            type
-                           example
 
                      // Type
                      set-value:x:@.prop/*/*/type
@@ -230,19 +232,6 @@ for-each:x:@endpoints.list/*
                      // Name
                      set-name:x:@.prop/*
                         get-value:x:@.dp/#/*/name
-
-                     // Example.
-                     switch:x:@.dp/#/*/type
-                        case:date
-                           set-value:x:@.prop/*/*/example
-                              date.now
-                        case:int
-                        case:long
-                           set-value:x:@.prop/*/*/example
-                              .:int:5
-                        default
-                           set-value:x:@.prop/*/*/example
-                              .:This is an example string
 
                      // Checking if we've got a description, and if so, adding it.
                      if
@@ -254,20 +243,19 @@ for-each:x:@endpoints.list/*
                                  description:x:@.dp/#/*/description
 
                      // Adding field to [properties].
-                     add:x:@.body/*/schema/*/properties
+                     add:x:@.body/*/requestBody/*/content/*/*/schema/*/properties
                         get-nodes:x:@.prop/*
 
             // Adding currently iterated argument to parameters collection if we've got an example.
             if
-               exists:x:@.body/*/schema/*/properties/*
+               exists:x:@.body/*/requestBody/*/content/*/*/schema/*/properties
                .lambda
 
                   // We've got an example payload.
-                  add:x:+/*/*
+                  add:x:+/*
                      get-nodes:x:@.body/*
-                  add:x:@.buffer/*/*/*/parameters
+                  add:x:@.buffer/*/*
                      .
-                        .
 
 
          // Removing [parameters] unless we actually have parameters.
