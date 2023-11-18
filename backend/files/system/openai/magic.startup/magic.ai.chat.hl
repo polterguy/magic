@@ -369,8 +369,10 @@ select prompt, max(completion) as completion
 
             // We only throw exception if we're NOT streaming.
             if
-               eq:x:@.arguments/*/stream
-                  .:bool:false
+               or
+                  not-exists:x:@.arguments/*/stream
+                  eq:x:@.arguments/*/stream
+                     .:bool:false
                .lambda
 
                   // Not streaming, hence we're on the main thread and can safely throw exceptions.
