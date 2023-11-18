@@ -42,6 +42,7 @@
       *ngIf="currentFileData"
       (callback)="insertFromOpenAI($event)"
       callbackText="Use"
+      dialogue="false"
       [fileType]="fileType()"
       class="w-100">
     </app-openai-prompt>

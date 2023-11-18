@@ -441,9 +441,9 @@ select prompt, max(completion) as completion
                   math.decrement:x:@.fixed
             lambda2hyper:x:@.session/*
 
-            // Notice, storing session for 20 minutes max!
+            // Caching for "session_timeout" seconds (defaults to 20 minutes).
             cache.set:x:@.arguments/*/session
-               expiration:1200
+               expiration:x:@.arguments/*/session_timeout
                value:x:@lambda2hyper
 
       // Checking if type is "supervised" at which point we store request.
