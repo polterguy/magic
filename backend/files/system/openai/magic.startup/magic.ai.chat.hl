@@ -200,6 +200,8 @@ select prompt, max(completion) as completion
       and
          exists:x:@.arguments/*/data
          not-null:x:@.arguments/*/data
+         neq:x:@.arguments/*/data
+            .:
       .lambda
          unwrap:x:+/*/*/*/content
          add:x:@.session
