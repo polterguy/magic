@@ -37,13 +37,22 @@ export class OpenAIService {
   /**
    * Queries OpenAI with the specified prompt and returns result to caller.
    */
-  query(prompt: string, type: string, search: boolean = false, session: string = null, model: string = null) {
+  query(
+    prompt: string,
+    type: string,
+    search: boolean = false,
+    session: string = null,
+    model: string = null,
+    data: string = null) {
 
     let query =
-      `/magic/system/openai/${model?.startsWith('gpt-') ? 'chat' : 'prompt'}?prompt=` +
+      `/magic/system/openai/${model?.startsWith('gpt-') || !model ? 'chat' : 'prompt'}?prompt=` +
       encodeURIComponent(prompt) +
       '&references=' + (search ? 'true' : 'false') +
       '&type=' + encodeURIComponent(type);
+    if (data) {
+      query += '&data=' + encodeURIComponent(data);
+    }
     if (session) {
       query += '&session=' + encodeURIComponent(session)
     }
@@ -169,6 +178,17 @@ export class OpenAIService {
     return this.httpService.post<any>('/magic/system/openai/vectorise', {
       type,
       ['feedback-channel']: channel,
+    });
+  }
+
+  /**
+   * Adds the specified content to the specified session.
+   */
+  addToSession(session:string, content: string) {
+
+    return this.httpService.post<any>('/magic/system/openai/add-to-session', {
+      session,
+      content,
     });
   }
 

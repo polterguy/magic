@@ -9,6 +9,7 @@
    user_id:string
    session:string
    stream:bool
+   data:string
 .description:@"OpenAI chat endpoint, for having conversations using 'gpt-xxx' models"
 .type:public
 

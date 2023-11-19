@@ -195,6 +195,19 @@ select prompt, max(completion) as completion
                get-value:x:@.arguments/*/prefix
                get-value:x:@.arguments/*/prompt
 
+   // Checking if we've got a [data] argument, and if so, adding it.
+   if
+      and
+         exists:x:@.arguments/*/data
+         not-null:x:@.arguments/*/data
+      .lambda
+         unwrap:x:+/*/*/*/content
+         add:x:@.session
+            .
+               .
+                  role:user
+                  content:x:@.arguments/*/data
+
    // Adding user's current question to session.
    unwrap:x:+/*/*/*/content
    add:x:@.session
