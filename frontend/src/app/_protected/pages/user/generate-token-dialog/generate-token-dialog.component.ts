@@ -17,7 +17,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
   templateUrl: './generate-token-dialog.component.html',
   styleUrls: ['./generate-token-dialog.component.scss']
 })
-export class GithubTokenDialogComponent implements OnInit {
+export class GenerateTokenDialogComponent implements OnInit {
 
   public token: string = '';
 
@@ -35,7 +35,7 @@ export class GithubTokenDialogComponent implements OnInit {
   }
 
   public generateToken() {
-    this.cryptoService.getGithubKey(this.data.username, this.data.role, new Date(this.data.expires).toISOString()).subscribe({
+    this.cryptoService.generateToken(this.data.username, this.data.role, new Date(this.data.expires).toISOString()).subscribe({
       next: (res: any) => {
         this.token = res.ticket;
       },
