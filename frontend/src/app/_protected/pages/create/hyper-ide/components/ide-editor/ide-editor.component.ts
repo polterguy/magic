@@ -80,7 +80,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
           setTimeout(() => {
             const activeWrapper = document.querySelector('.active-codemirror-editor-' + fileExisting);
             const editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
-            editor.doc.isClean()
+            editor.doc.isClean();
             editor.doc.markClean();
             editor.doc.clearHistory(); // To avoid having initial loading of file becoming an "undo operation".
           }, 100);

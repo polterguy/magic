@@ -9,7 +9,6 @@ import { GeneralService } from 'src/app/_general/services/general.service';
 import { OpenAIService } from 'src/app/_general/services/openai.service';
 import { OpenAIAnswerDialogComponent } from '../openai-answer-dialog/openai-answer-dialog.component';
 import { OpenAIConfigurationDialogComponent } from '../openai-configuration-dialog/openai-configuration-dialog.component';
-import { BackendService } from 'src/app/_general/services/backend.service';
 
 /**
  * OpenAI prompt component allowing you to ask questions to OpenAI through their API.
@@ -30,11 +29,9 @@ export class OpenAIPromptComponent implements OnInit {
   openAiEnabled: boolean = false;
   waitingForAnswer: boolean = false;
   openAiPrompt: string = '';
-  session: string = null;
 
   constructor(
     private dialog: MatDialog,
-    private backendService: BackendService,
     private generalService: GeneralService,
     private openAiService: OpenAIService) { }
 
@@ -44,7 +41,6 @@ export class OpenAIPromptComponent implements OnInit {
     this.openAiService.isConfigured().subscribe({
       next: (isConfigured: any) => {
 
-        this.session = this.backendService.active.username + '_openai_session';
         this.openAiEnabled = isConfigured.result;
         this.generalService.hideLoading();
       },
@@ -117,14 +113,13 @@ export class OpenAIPromptComponent implements OnInit {
       this.openAiPrompt,
       this.fileType,
       false,
-      this.session,
+      this.currentFileData.path,
       null,
-      this.currentFileData.sentToOpenAI === true ? null : this.currentFileData.content).subscribe({
+      this.currentFileData.content).subscribe({
       next: (result: any) => {
 
         this.generalService.hideLoading();
         this.waitingForAnswer = false;
-        this.currentFileData.sentToOpenAI = true;
 
         if (this.dialogue === true) {
           this.dialog.open(OpenAIAnswerDialogComponent, {
