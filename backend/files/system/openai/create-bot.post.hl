@@ -316,7 +316,6 @@ try
                   unwrap:x:+/*
                   signal:magic.ai.vectorise
                      type:x:@.type
-                     host:x:@.host
                      feedback-channel:x:@.feedback-channel
 
             else
