@@ -142,6 +142,18 @@ select prompt, max(completion) as completion
                   role:system
                   content:x:@signal/*/context
 
+   // Checking if we've got a [data] argument, and if so, making sure we accommodate for token size.
+   .extra-tokens:int:0
+   if
+      and
+         exists:x:@.arguments/*/data
+         not-null:x:@.arguments/*/data
+         neq:x:@.arguments/*/data
+            .:
+      .lambda
+         set-value:x:@.extra-tokens
+            openai.tokenize:x:@.arguments/*/data
+
    /*
     * Pruning previous messages until size of context + max_tokens is less than whatever
     * amount of tokens the model can handle.
@@ -155,6 +167,7 @@ select prompt, max(completion) as completion
             math.add
                get-value:x:@.arguments/*/max_tokens
                openai.tokenize:x:@lambda2hyper
+               get-value:x:@.extra-tokens
             get-value:x:@.arguments/*/model_size
          .lambda
 
