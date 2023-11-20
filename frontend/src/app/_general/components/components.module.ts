@@ -21,7 +21,7 @@ import { CreateAssumptionTestDialogComponent } from './create-assumption-test-di
 import { SnippetNameDialogComponent } from './snippet-name-dialog/snippet-name-dialog.component';
 import { ExecuteEndpointDialogComponent } from './execute-endpoint-dialog/execute-endpoint-dialog.component';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
-import { GithubTokenDialogComponent } from '../../_protected/pages/user/generate-token-dialog/generate-token-dialog.component';
+import { GenerateTokenDialogComponent } from '../../_protected/pages/user/generate-token-dialog/generate-token-dialog.component';
 import { PwaUpdateDialogComponent } from './pwa-update-dialog/pwa-update-dialog.component';
 import { LogItemDetailsComponent } from './log-item-details/log-item-details.component';
 import { SearchboxComponent } from 'src/app/_general/components/searchbox/searchbox.component';
@@ -45,7 +45,7 @@ import { OpenAIPromptComponent } from './openai/openai-prompt/openai-prompt.comp
     CreateAssumptionTestDialogComponent,
     SnippetNameDialogComponent,
     ExecuteEndpointDialogComponent,
-    GithubTokenDialogComponent,
+    GenerateTokenDialogComponent,
     PwaUpdateDialogComponent,
     LogItemDetailsComponent,
     SearchboxComponent,
@@ -75,7 +75,7 @@ import { OpenAIPromptComponent } from './openai/openai-prompt/openai-prompt.comp
     CreateAssumptionTestDialogComponent,
     SnippetNameDialogComponent,
     ExecuteEndpointDialogComponent,
-    GithubTokenDialogComponent,
+    GenerateTokenDialogComponent,
     LogItemDetailsComponent,
     SearchboxComponent,
     OpenAIAnswerDialogComponent,

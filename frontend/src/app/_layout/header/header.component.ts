@@ -9,7 +9,7 @@ import { NavLinks } from './_model/nav-links';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogComponent } from 'src/app/_general/components/dialog/dialog.component';
 import { BackendsListComponent } from 'src/app/_general/components/backends-list/backends-list.component';
-import { GithubTokenDialogComponent } from 'src/app/_protected/pages/user/generate-token-dialog/generate-token-dialog.component';
+import { GenerateTokenDialogComponent } from 'src/app/_protected/pages/user/generate-token-dialog/generate-token-dialog.component';
 import { Status } from 'src/app/_protected/models/common/status.model';
 import { Router } from '@angular/router';
 import { MessageService } from 'src/app/_general/services/message.service';
@@ -93,12 +93,12 @@ export class HeaderComponent implements OnInit {
       return;
     }
 
-    this.dialog.open(GithubTokenDialogComponent, {
+    this.dialog.open(GenerateTokenDialogComponent, {
       width: '500px',
       autoFocus: false,
       data: {
         username: this.backendService.active.username,
-        role: 'root',
+        role: 'admin',
         expires: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString()
       }
     });
