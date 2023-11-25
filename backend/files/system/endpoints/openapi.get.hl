@@ -119,10 +119,11 @@ for-each:x:@endpoints.list/*
             case:post
             case:put
             case:patch
+               unwrap:x:+/*/*/*
                insert-after:x:@.buffer/*/*/*/operationId
                   .
                      consumes
-                        .:application/json
+                        .:x:@.dp/#/*/consumes
                      produces
                         .:application/json
 
