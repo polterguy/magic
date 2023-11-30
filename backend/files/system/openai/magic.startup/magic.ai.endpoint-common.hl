@@ -88,6 +88,7 @@ slots.create:magic.ai.endpoint-common
                   initial_questionnaire
                   no_requests
                   max_requests
+                  session_timeout
                where
                   and
                      type.eq:default
