@@ -71,7 +71,7 @@ export class AssumptionsComponent implements OnInit {
       error: (error: any) => {
 
         this.generalService.hideLoading();
-        this.generalService.showFeedback(error, 'errorMessage', 'Ok');
+        this.generalService.showFeedback(error?.error?.message, 'errorMessage', 'Ok');
         assumption.success = false;
       }
     });
@@ -96,7 +96,7 @@ export class AssumptionsComponent implements OnInit {
           this.assumptions = arr;
         }
       },
-      error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message, 'errorMessage')
     });
   }
 }

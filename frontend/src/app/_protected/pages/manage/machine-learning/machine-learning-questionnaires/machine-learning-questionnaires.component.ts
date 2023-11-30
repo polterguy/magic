@@ -157,7 +157,7 @@ export class MachineLearningQuestionnairesComponent implements OnInit {
 
           error: (error: any) => {
     
-            this.generalService.showFeedback(error, 'errorMessage', 'Ok');
+            this.generalService.showFeedback(error?.error?.message, 'errorMessage', 'Ok');
             this.generalService.hideLoading();
           }
         });
