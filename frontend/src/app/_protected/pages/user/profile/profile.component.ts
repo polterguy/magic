@@ -117,7 +117,7 @@ export class ProfileComponent implements OnInit {
           this.user = user;
         }
       },
-      error: (error: any) => this.generalService.showFeedback(error, 'errorMessage')
+      error: (error: any) => this.generalService.showFeedback(error?.error?.message, 'errorMessage')
     });
   }
 }

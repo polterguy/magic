@@ -75,7 +75,7 @@ export class MachineLearningEditQuestionsComponent implements OnInit {
       error: (error: any) => {
     
         this.generalService.hideLoading();
-        this.generalService.showFeedback(error, 'errorMessage', 'Ok');
+        this.generalService.showFeedback(error?.error?.message, 'errorMessage', 'Ok');
       }
     });
 
@@ -103,7 +103,7 @@ export class MachineLearningEditQuestionsComponent implements OnInit {
       error: (error: any) => {
     
         this.generalService.hideLoading();
-        this.generalService.showFeedback(error, 'errorMessage', 'Ok');
+        this.generalService.showFeedback(error?.error?.message, 'errorMessage', 'Ok');
       }
     });
   }

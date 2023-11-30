@@ -325,7 +325,7 @@ export class MachineLearningModelsComponent implements OnInit {
           },
           error: (error: any) => {
     
-            this.generalService.showFeedback(error, 'errorMessage', 'Ok');
+            this.generalService.showFeedback(error?.error?.message, 'errorMessage', 'Ok');
             this.generalService.hideLoading();
           }
         });
@@ -377,14 +377,14 @@ export class MachineLearningModelsComponent implements OnInit {
           },
           error: (error: any) => {
 
-            this.generalService.showFeedback(error, 'errorMessage', 'Ok');
+            this.generalService.showFeedback(error?.error?.message, 'errorMessage', 'Ok');
             this.generalService.hideLoading();
           }
         });
       },
       error: (error: any) => {
 
-        this.generalService.showFeedback(error, 'errorMessage', 'Ok');
+        this.generalService.showFeedback(error?.error?.message, 'errorMessage', 'Ok');
         this.generalService.hideLoading();
       }
     });
@@ -406,7 +406,7 @@ export class MachineLearningModelsComponent implements OnInit {
       },
       error: (error: any) => {
 
-        this.generalService.showFeedback(error, 'errorMessage', 'Ok');
+        this.generalService.showFeedback(error?.error?.message, 'errorMessage', 'Ok');
         this.generalService.hideLoading();
       }
     });
