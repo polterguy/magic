@@ -327,7 +327,7 @@
 
           <div class="row">
 
-            <div class="col-6">
+            <div class="col-3">
 
               <p class="mb-1 fw-bold">OpenAI API key</p>
 
@@ -346,6 +346,29 @@
                   [disabled]="isLoading"
                   [(ngModel)]="api_key"
                   name="api_key"
+                  autocomplete="off">
+              </mat-form-field>
+
+            </div>
+
+            <div class="col-3">
+
+              <p class="mb-1 fw-bold">Search Postfix</p>
+
+              <mat-form-field class="w-100 standalone-field">
+                <span
+                  matPrefix
+                  matTooltip="Static string appended to all search queries when querying training material to ensure specific snippets 'bubbles' to the top"
+                  class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+                  <mat-icon>help_outline</mat-icon>
+                  <span class="text-muted">|</span>
+                </span>
+                <input
+                  matInput
+                  placeholder="Search Postfix"
+                  [disabled]="isLoading"
+                  [(ngModel)]="search_postfix"
+                  name="search_postfix"
                   autocomplete="off">
               </mat-form-field>
 

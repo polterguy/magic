@@ -85,6 +85,7 @@ data.connect:[generic|magic]
          ml_types.system_message
          ml_types.no_requests
          ml_types.max_requests
+         ml_types.search_postfix
       where
          and
 

@@ -5,12 +5,6 @@
 
 // Angular and system imports.
 import { Injectable } from '@angular/core';
-import { Affected } from 'src/app/models/affected.model';
-import { Count } from 'src/app/models/count.model';
-
-// Application specific imports.
-import { HttpService } from 'src/app/_general/services/http.service';
-import { MagicResponse } from '../models/magic-response.model';
 
 /**
  * OpenAI service, allowing user to interact with OpenAI.
@@ -26,7 +20,7 @@ export class QueryArgService {
    * Used by CRUD service methods to create the correct QUERY parameters
    * during invocations towards your backend.
    */
-  public getQueryArgs(args: any) {
+  public getQueryArgs(args: any, forced: string[] = []) {
 
     let result = '';
     for(const idx in args || {}) {
@@ -34,7 +28,7 @@ export class QueryArgService {
       if (Object.prototype.hasOwnProperty.call(args, idx)) {
 
         const idxFilter = args[idx];
-        if (idxFilter !== null && idxFilter !== undefined && idxFilter !== '') {
+        if (idxFilter !== null && idxFilter !== undefined && (idxFilter !== '' || forced[idx])) {
 
           if (result === '') {
             result += '?';

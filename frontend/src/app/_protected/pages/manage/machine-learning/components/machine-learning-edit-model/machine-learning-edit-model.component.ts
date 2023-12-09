@@ -56,6 +56,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
   roles: Role[] = [];
   modelsFetched: boolean = false;
   questionnaires: any[] = [];
+  search_postfix: string;
   no_requests: number;
   max_requests: number;
   flavors: any[] = [
@@ -155,6 +156,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
     this.webhook_incoming_url = this.data?.webhook_incoming_url ?? '';
     this.webhook_outgoing_url = this.data?.webhook_outgoing_url ?? '';
     this.no_requests = this.data?.no_requests ?? 0;
+    this.search_postfix = this.data?.search_postfix ?? '';
     this.max_requests = this.data?.max_requests ?? -1;
     if (this.twilio_account_id == this.type) {
       this.twilio_account_id = '';
@@ -377,6 +379,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
       use_embeddings: this.use_embeddings,
       threshold: this.threshold,
       no_requests: this.no_requests,
+      search_postfix: this.search_postfix,
       max_requests: this.max_requests,
     };
     this.dialogRef.close(data);
