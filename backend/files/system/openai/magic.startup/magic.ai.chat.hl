@@ -13,6 +13,7 @@ slots.create:magic.ai.chat
       max_tokens:x:@.arguments/*/max_context_tokens
       vector_model:x:@.arguments/*/vector_model
       api_key:x:@.arguments/*/api_key
+      search_postfix:x:@.arguments/*/search_postfix
 
    // Checking if we've got a cached result.
    if

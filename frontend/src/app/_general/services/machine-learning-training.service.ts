@@ -33,11 +33,14 @@ export class MachineLearningTrainingService {
    */
   ml_training_snippets(filter?: any, filterOnVss: boolean = false) {
 
-    if (filterOnVss) {
+    if (filterOnVss && filter['ml_training_snippets.uri.like'] && filter['ml_training_snippets.uri.like'].length > 0) {
 
-      const nFilter = {
-        filter: filter['ml_training_snippets.uri.like'].substring(0, filter['ml_training_snippets.uri.like'].length - 1),
-      };
+      const nFilter = {};
+      if (filter['ml_training_snippets.uri.like']) {
+        nFilter['filter'] = filter['ml_training_snippets.uri.like'].substring(0, filter['ml_training_snippets.uri.like'].length - 1);
+      } else {
+        nFilter['filter'] = '';
+      }
       if (filter['ml_training_snippets.type.eq']) {
         nFilter['type'] = filter['ml_training_snippets.type.eq'];
       }
@@ -50,7 +53,7 @@ export class MachineLearningTrainingService {
 
       return this.httpService.get<any>(
         '/magic/system/magic/ml_training_snippets-vss' +
-        this.queryArgService.getQueryArgs(nFilter));
+        this.queryArgService.getQueryArgs(nFilter, ['filter']));
 
     } else {
 

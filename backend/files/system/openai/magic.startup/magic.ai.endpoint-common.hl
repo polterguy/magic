@@ -51,6 +51,7 @@ slots.create:magic.ai.endpoint-common
             no_requests
             max_requests
             session_timeout
+            search_postfix
          where
             and
                type.eq:x:@.arguments/*/type
@@ -89,6 +90,7 @@ slots.create:magic.ai.endpoint-common
                   no_requests
                   max_requests
                   session_timeout
+                  search_postfix
                where
                   and
                      type.eq:default

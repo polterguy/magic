@@ -27,13 +27,34 @@ slots.create:magic.ai.get-context
          .:"Bearer "
          config.get:"magic:openai:key"
 
+   // Text value we're passing on to OpenAI to create embeddings for prompt.
+   .prompt
+   if
+      and
+         not-null:x:@.arguments/*/search_postfix
+         neq:x:@.arguments/*/search_postfix
+            .:
+      .lambda
+
+         // We have a search postfix.
+         set-value:x:@.prompt
+            strings.concat
+               get-value:x:@.arguments/*/prompt
+               .:" "
+               get-value:x:@.arguments/*/search_postfix
+   else
+
+      // Not search postfix.
+      set-value:x:@.prompt
+         get-value:x:@.arguments/*/prompt
+
    // Retrieving embedding for prompt.
    http.post:"https://api.openai.com/v1/embeddings"
       headers
          Authorization:x:@.token
          Content-Type:application/json
       payload
-         input:x:@.arguments/*/prompt
+         input:x:@.prompt
          model:x:@.arguments/*/vector_model
       convert:true
 
