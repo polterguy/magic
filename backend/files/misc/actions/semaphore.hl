@@ -1,0 +1,15 @@
+
+// Semaphore action.
+.arguments
+   actions:*
+.output:x:@.arguments/*/actions/*/*/.output/*
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/actions/*
+
+// Adding lambda object to [semaphore] invocation.
+add:x:./*/semaphore
+   get-nodes:x:@.arguments/*/actions/*
+
+// Creating a new semaphore.
+semaphore

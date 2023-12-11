@@ -4,11 +4,11 @@
    actions:*
 
 // Sanity checking invocation.
-validators.mandatory:x:@.arguments/*/lambda/*
+validators.mandatory:x:@.arguments/*/actions/*
 
 // Adding lambda object to [fork] invocation.
 add:x:./*/fork
-   get-nodes:x:@.arguments/*/lambda/*
+   get-nodes:x:@.arguments/*/actions/*
 
 // Creating a new thread.
 fork
