@@ -23,3 +23,10 @@ mat-card.workflow-card {
 .max-height {
   max-height: 100%;
 }
+
+.custom-size {
+  .mat-form-field-infix {
+    width: 100%;
+  }
+  font-size: 11px;
+}
