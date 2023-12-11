@@ -5,3 +5,21 @@
 @import "../../../../../assets/styles/_variables/colors.scss";
 @import "../../../../../assets/styles/_variables/mixin.scss";
 @import "../../../../../assets/styles/_variables/sizing.scss";
+
+mat-card.workflow-card {
+  padding: 15px;
+
+  app-ide-searchbox {
+    font-size: 11px;
+  }
+}
+
+.max-height-full {
+  max-height: 53vh;
+  min-height: 100%;
+  overflow: hidden;
+}
+
+.max-height {
+  max-height: 100%;
+}

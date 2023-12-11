@@ -10,6 +10,8 @@ import { MaterialModule } from 'src/app/material.module';
 import { CmModule } from 'src/app/codemirror/_module/cm.module';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import { WorkflowEditorComponent } from '../workflow-editor.component';
+import { ComponentsModule } from 'src/app/_general/components/components.module';
+import { SharedModule } from 'src/app/shared.module';
 
 @NgModule({
   declarations: [
@@ -17,10 +19,12 @@ import { WorkflowEditorComponent } from '../workflow-editor.component';
   ],
   imports: [
     CommonModule,
+    ComponentsModule,
     WorkflowEditorRoutingModule,
     MaterialModule,
     CmModule,
     CodemirrorModule,
+    SharedModule,
   ]
 })
 export class WorkflowEditorModule { }
