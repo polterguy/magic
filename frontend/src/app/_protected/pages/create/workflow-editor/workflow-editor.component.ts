@@ -3,8 +3,11 @@
  * Copyright (c) Aista Ltd, and Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
  */
 
-import { Component } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ReplaySubject } from 'rxjs';
+import { FileService } from 'src/app/_general/services/file.service';
+import { GeneralService } from 'src/app/_general/services/general.service';
+import { BrowserJsPlumbInstance, newInstance } from "@jsplumb/browser-ui";
 
 /**
  * Primary Workflow component, allowing users to create and manage workflows.
@@ -14,19 +17,51 @@ import { ReplaySubject } from 'rxjs';
   templateUrl: './workflow-editor.component.html',
   styleUrls: ['./workflow-editor.component.scss']
 })
-export class WorkflowEditorComponent {
-
+export class WorkflowEditorComponent implements OnInit {
   private _dbLoading: ReplaySubject<boolean> = new ReplaySubject();
 
   dbLoading = this._dbLoading.asObservable();
-  workflows: any[] = [];
+  workflows: string[] = [];
   selectedWorkflow: any = null;
+  @ViewChild('surface', { static: false }) surface: ElementRef;
+  jsPlumbInstance: BrowserJsPlumbInstance;
 
-  workflowChanged(el: any) {
-    console.log(el);
+  constructor(
+    private fileService: FileService,
+    private generalService: GeneralService) { }
+
+  ngOnInit() {
+
+    this._dbLoading.next(true);
+    this.generalService.showLoading();
+    this.fileService.listFilesRecursively('/etc/workflows/', false).subscribe({
+
+      next: (files: string[]) => {
+
+        this._dbLoading.next(false);
+        this.generalService.hideLoading();
+        this.workflows = files
+          .filter(x => x.endsWith('.hl'))
+          .map(x => x.substring('/etc/workflows/'.length))
+          .map(x => x.substring(0, x.length - 3));
+      },
+
+      error: (error: any) => {
+
+        this._dbLoading.next(false);
+        this.generalService.hideLoading();
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+      }
+    });
+  }
+
+  workflowChanged() {
+
+    this.jsPlumbInstance = newInstance({
+      container: this.surface.nativeElement
+    });
   }
 
   addNewWorkflow() {
-    
   }
 }
