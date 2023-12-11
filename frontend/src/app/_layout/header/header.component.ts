@@ -391,11 +391,6 @@ optin verification and potential referential integrity issues.`;
             exact: false,
           },
           {
-            name: 'Workflow Editor',
-            url: '/workflow-editor',
-            exact: false,
-          },
-          {
             name: 'Chatbot Wizard',
             url: '/chatbot-wizard',
             exact: false,

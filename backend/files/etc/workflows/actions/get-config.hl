@@ -1,9 +1,15 @@
 
 // Get configuration setting action.
-.input
+.arguments
    key:string
 .output
    result:string
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/key
+validators.string:x:@.arguments/*/key
+   min:1
+   max:1000
 
 // Retrieves config setting.
 config.get:x:@.arguments/*/key
