@@ -1,4 +1,4 @@
 
-# Hyperlambda Workflows
+# Hyperlambda workflow folder
 
-This folder contains Hyperlambda Workflows.
+This folder contains Hyperlambda workflows and actions.
