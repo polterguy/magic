@@ -8,8 +8,8 @@
 // Retrieves config setting.
 config.get:x:@.arguments/*/key
 
-// Forward evaluating [return] result.
-unwrap:x:./*/return/*
+// Forward evaluating returned result.
+ßunwrap:x:./*/return/*
 
 // Returning result to caller.
 return
