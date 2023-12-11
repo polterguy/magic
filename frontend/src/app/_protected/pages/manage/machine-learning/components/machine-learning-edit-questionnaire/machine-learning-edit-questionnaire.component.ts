@@ -20,6 +20,9 @@ export class MachineLearningEditQuestionnaireComponent {
   name: string = '';
   type: string = 'single-shot';
   action: string = 'sendgrid-subscribe';
+  types: string[] = [
+    'single-shot'
+  ];
 
   constructor(
     private generalService: GeneralService,
