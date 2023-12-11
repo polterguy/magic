@@ -22,7 +22,7 @@
           <input
             matInput
             [disabled]="this.data"
-            placeholder="Name"
+            placeholder="Name ..."
             [(ngModel)]="name"
             name="name"
             autocomplete="off">
@@ -36,14 +36,14 @@
         <mat-form-field class="w-100 standalone-field me-2">
           <span
             matPrefix
-            matTooltip="Action"
+            matTooltip="Action to execute once questionnaire has been done"
             class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-            <mat-icon>edit</mat-icon>
+            <mat-icon>bolt</mat-icon>
             <span class="text-muted">|</span>
           </span>
           <input
             matInput
-            placeholder="Action"
+            placeholder="Action ..."
             [(ngModel)]="action"
             name="action"
             autocomplete="off">
@@ -57,14 +57,14 @@
         <mat-form-field class="w-100 standalone-field me-2">
           <span
             matPrefix
-            matTooltip="Type"
+            matTooltip="Type of questionnaire"
             class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-            <mat-icon>edit</mat-icon>
+            <mat-icon>bookmark</mat-icon>
             <span class="text-muted">|</span>
           </span>
           <input
             matInput
-            placeholder="Type"
+            placeholder="Type ..."
             [(ngModel)]="type"
             name="type"
             autocomplete="off">
