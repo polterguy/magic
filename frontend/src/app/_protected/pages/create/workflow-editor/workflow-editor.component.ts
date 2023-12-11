@@ -18,9 +18,7 @@ import { BrowserJsPlumbInstance, newInstance } from "@jsplumb/browser-ui";
   styleUrls: ['./workflow-editor.component.scss']
 })
 export class WorkflowEditorComponent implements OnInit {
-  private _dbLoading: ReplaySubject<boolean> = new ReplaySubject();
 
-  dbLoading = this._dbLoading.asObservable();
   workflows: string[] = [];
   selectedWorkflow: any = null;
   @ViewChild('surface', { static: false }) surface: ElementRef;
@@ -32,13 +30,11 @@ export class WorkflowEditorComponent implements OnInit {
 
   ngOnInit() {
 
-    this._dbLoading.next(true);
     this.generalService.showLoading();
     this.fileService.listFilesRecursively('/etc/workflows/', false).subscribe({
 
       next: (files: string[]) => {
 
-        this._dbLoading.next(false);
         this.generalService.hideLoading();
         this.workflows = files
           .filter(x => x.endsWith('.hl'))
@@ -48,7 +44,6 @@ export class WorkflowEditorComponent implements OnInit {
 
       error: (error: any) => {
 
-        this._dbLoading.next(false);
         this.generalService.hideLoading();
         this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
       }

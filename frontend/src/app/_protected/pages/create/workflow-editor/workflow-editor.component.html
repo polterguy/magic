@@ -9,7 +9,7 @@
         <div class="row">
           <div class="col-12">
 
-            <mat-form-field *ngIf="!(dbLoading | async)" class="w-100 standalone-field mb-lg-0 mb-2">
+            <mat-form-field class="w-100 standalone-field mb-lg-0 mb-2 custom-size">
               <span
                 matPrefix
                 class="d-flex flex-nowrap align-items-center justify-content-between me-2">
@@ -36,6 +36,11 @@
   <div class="col-xl-9 col-lg-8 col-md-7 col-12">
     <mat-card class="h-100 px-3 py-2">
       <mat-card-content class="h-100 max-height-full">
+
+        <h3 *ngIf="!selectedWorkflow" class="my-0 fw-bold">Workflow Editor</h3>
+        <div class="d-flex align-items-center">
+          <h3 *ngIf="selectedWorkflow" class="my-0 fw-bold">Edit</h3>&nbsp;&nbsp;{{selectedWorkflow}}
+        </div>
 
         <div #surface></div>
 
