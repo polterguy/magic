@@ -31,14 +31,14 @@ export class WorkflowEditorComponent implements OnInit {
   ngOnInit() {
 
     this.generalService.showLoading();
-    this.fileService.listFilesRecursively('/etc/workflows/', false).subscribe({
+    this.fileService.listFilesRecursively('/etc/workflows/workflows/', false).subscribe({
 
       next: (files: string[]) => {
 
         this.generalService.hideLoading();
         this.workflows = files
           .filter(x => x.endsWith('.hl'))
-          .map(x => x.substring('/etc/workflows/'.length))
+          .map(x => x.substring('/etc/workflows/workflows/'.length))
           .map(x => x.substring(0, x.length - 3));
       },
 

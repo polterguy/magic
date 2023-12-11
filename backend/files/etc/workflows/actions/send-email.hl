@@ -1,0 +1,21 @@
+
+// Send email action.
+.input
+   name:string
+   email:string
+   subject:string
+   body:string
+
+// Forward evaluating arguments to [mail.smtp.send].
+unwrap:x:+/**
+
+// Sending email.
+mail.smtp.send
+   message
+      to
+         .
+            name:x:@.arguments/*/name
+            email:x:@.arguments/*/email
+      subject:x:@.arguments/*/subject
+      entity:text/plain
+         content:x:@.arguments/*/body
