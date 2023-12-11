@@ -25,6 +25,7 @@
     "@angular/service-worker": "^14.2.3",
     "@aspnet/signalr": "^1.0.27",
     "@ctrl/ngx-codemirror": "^5.1.1",
+    "@jsplumb/browser-ui": "^6.2.10",
     "angular-marked": "^0.0.14",
     "codemirror": "^5.65.7",
     "echarts": "^5.4.0",
