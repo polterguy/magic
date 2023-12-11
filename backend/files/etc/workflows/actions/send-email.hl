@@ -1,10 +1,17 @@
 
 // Send email action.
-.input
+.arguments
    name:string
    email:string
    subject:string
    body:string
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/name
+validators.mandatory:x:@.arguments/*/email
+validators.email:x:@.arguments/*/email
+validators.mandatory:x:@.arguments/*/subject
+validators.mandatory:x:@.arguments/*/body
 
 // Forward evaluating arguments to [mail.smtp.send].
 unwrap:x:./*/mail.smtp.send/**
