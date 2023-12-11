@@ -5,24 +5,22 @@
 
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HyperlambdaPlaygroundComponent } from '../hyperlambda-playground.component';
-import { HyperlambdaPlaygroundRoutingModule } from './hyperlambda-playground.routing.module';
-import { ComponentsModule } from 'src/app/_general/components/components.module';
+import { WorkflowEditorRoutingModule } from './workflow-editor.routing.module';
 import { MaterialModule } from 'src/app/material.module';
 import { CmModule } from 'src/app/codemirror/_module/cm.module';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
+import { WorkflowEditorComponent } from '../workflow-editor.component';
 
 @NgModule({
   declarations: [
-    HyperlambdaPlaygroundComponent
+    WorkflowEditorComponent,
   ],
   imports: [
     CommonModule,
-    HyperlambdaPlaygroundRoutingModule,
-    ComponentsModule,
+    WorkflowEditorRoutingModule,
     MaterialModule,
     CmModule,
     CodemirrorModule,
   ]
 })
-export class HyperlambdaPlaygroundModule { }
+export class WorkflowEditorModule { }

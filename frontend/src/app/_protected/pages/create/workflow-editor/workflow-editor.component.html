@@ -1,0 +1,76 @@
+
+<mat-card class="py-3 mb-2">
+  <mat-card-content>
+
+    <div class="row align-items-stretch">
+
+      <div class="col-lg-auto col-12 align-self-center">
+        <p class="fw-bold mb-lg-0">Select a Workflow</p>
+      </div>
+
+      <!-- Existing Workflows -->
+      <div class="col-md col-sm-6 col-12" [class.col-md-3]="dbLoading | async">
+
+        <!-- Loading skeleton -->
+        <ng-container *ngIf="dbLoading | async">
+
+          <app-loading-skeleton
+            amount="1"
+            colClass="col-12"
+            blockHeight="45px"
+            hasShadow="false">
+          </app-loading-skeleton>
+
+        </ng-container>
+
+        <mat-form-field *ngIf="!(dbLoading | async)" class="w-100 standalone-field mb-lg-0 mb-2">
+          <span
+            matPrefix
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>database</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <mat-select
+            placeholder="Workflows ..."
+            [(ngModel)]="selectedWorkflow"
+            (selectionChange)="workflowChanged(selectedWorkflow)">
+            <mat-option
+              *ngFor="let item of workflows"
+              [value]="item.type">{{item.name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+      </div>
+
+      <!-- Toolbar action buttons -->
+      <div class="col align-self-center">
+        <div class="d-flex justify-content-end flex-sm-nowrap flex-wrap mt-xl-0 mt-3">
+
+          <button
+            mat-button
+            color="primary"
+            class="mat-caption"
+            [disabled]="dbLoading | async"
+            (click)="addNewWorkflow()">
+            New workflow
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </mat-card-content>
+</mat-card>
+
+<mat-card class="mb-0 mt-4">
+  <mat-card-content>
+
+    <div class="row">
+      <div class="col-12 mb-3">
+
+        Foo
+
+      </div>
+    </div>
+
+  </mat-card-content>
+</mat-card>
