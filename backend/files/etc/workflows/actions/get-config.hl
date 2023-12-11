@@ -1,0 +1,16 @@
+
+// Get configuration setting action.
+.input
+   key:string
+.output
+   result:string
+
+// Retrieves config setting.
+config.get:x:@.arguments/*/key
+
+// Forward evaluating [return] result.
+unwrap:x:./*/return/*
+
+// Returning result to caller.
+return
+   result:x:@config.get
