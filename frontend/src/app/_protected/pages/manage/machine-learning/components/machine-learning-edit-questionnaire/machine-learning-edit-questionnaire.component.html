@@ -54,20 +54,25 @@
       <!-- Type -->
       <div class="col-12 pe-lg-0">
 
-        <mat-form-field class="w-100 standalone-field me-2">
+        <mat-form-field
+          class="w-100 standalone-field me-2">
           <span
             matPrefix
             matTooltip="Type of questionnaire"
             class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>bookmark</mat-icon>
-            <span class="text-muted">|</span>
+            <span class="text-muted ms-1">|</span>
           </span>
-          <input
-            matInput
-            placeholder="Type ..."
+          <mat-select
             [(ngModel)]="type"
             name="type"
-            autocomplete="off">
+            placeholder="Type ...">
+            <mat-option
+              *ngFor="let item of types"
+              [value]="item">
+              <span class="d-block name-line">{{item}}</span>
+            </mat-option>
+          </mat-select>
         </mat-form-field>
 
       </div>
