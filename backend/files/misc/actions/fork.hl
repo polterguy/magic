@@ -1,7 +1,7 @@
 
 // Fork action.
 .arguments
-   lambda:*
+   actions:*
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/lambda/*
