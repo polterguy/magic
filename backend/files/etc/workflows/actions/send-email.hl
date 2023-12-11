@@ -7,7 +7,7 @@
    body:string
 
 // Forward evaluating arguments to [mail.smtp.send].
-unwrap:x:+/**
+unwrap:x:./*/mail.smtp.send/**
 
 // Sending email.
 mail.smtp.send
