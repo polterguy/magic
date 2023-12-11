@@ -9,7 +9,7 @@
 config.get:x:@.arguments/*/key
 
 // Forward evaluating returned result.
-ßunwrap:x:./*/return/*
+unwrap:x:./*/return/*
 
 // Returning result to caller.
 return
