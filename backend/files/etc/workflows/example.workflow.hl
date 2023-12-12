@@ -3,16 +3,11 @@
  * Example workflow taking some input, and returning
  * some result.
  */
-.arguments
 
 // Executes sql-select action.
-add:x:@.arguments
-   signal:magic.workflows.action.execute
-      name:sql-select
-      action:/misc/actions/sql-select.hl
-      arguments
-         database:magic
-         sql:select name from roles order by name limit 2
-
-// Returning success to caller.
-return-nodes:x:@.arguments/*
+signal:magic.workflows.action.execute
+   name:sql-select
+   action:/misc/actions/sql-select.hl
+   arguments
+      sql:select name from roles order by name limit 2
+return-nodes:x:--/signal/=sql-select/*
