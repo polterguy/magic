@@ -1,0 +1,41 @@
+
+/*
+ * Returns all workflow functions to caller.
+ */
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Listing all functions in workflow functions folder.
+io.file.list:/misc/workflows/functions/
+
+// Filtering out everything not ending with '.hl'.
+for-each:x:@io.file.list/*
+   if
+      strings.ends-with:x:@.dp/#
+         .:.hl
+      .lambda
+
+         // Loading file to add meta data.
+         load-file:x:@.dp/#
+         hyper2lambda:x:-
+            comments:true
+         if
+            eq
+               get-name:x:@hyper2lambda/0
+               .:..
+            .lambda
+               unwrap:x:+/*/*
+               add:x:@.lambda/@.lambda/0/-/*/*
+                  .
+                     description:x:@hyper2lambda/0
+
+         // Returning result to caller.
+         unwrap:x:+/*/*/*
+         add:x:../*/return
+            .
+               .
+                  filename:x:@.dp/#
+
+// Returning result to caller.
+return

@@ -1,5 +1,8 @@
 
-// Get configuration setting action.
+/*
+ * Returns the specified [key] configuration value.
+ * Notice, [key] syntax is similar to dotnet syntax, e.g. 'magic:smtp:host'.
+ */
 .arguments
    key:string
 

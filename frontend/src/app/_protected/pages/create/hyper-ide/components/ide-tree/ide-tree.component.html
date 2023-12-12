@@ -18,7 +18,7 @@
           <mat-panel-title>
             <div class="d-flex justify-content-between align-items-center w-100">
 
-              <p class="my-0 fw-bold text-nowrap w-100">Files</p>
+              <p class="my-0 fw-bold text-nowrap w-100">All files</p>
 
               <div
                 class="ps-3 d-flex justify-content-end align-items-center action-menu-general"
@@ -221,6 +221,36 @@
 
       </mat-expansion-panel>
 
+    </mat-accordion>
+
+  </div>
+
+  <!-- Toolbox section -->
+  <div class="max-height panel-2">
+
+    <mat-accordion
+      displayMode="flat"
+      multi>
+
+      <mat-expansion-panel
+        [expanded]="isWorkflowFile()"
+        class="mat-elevation-z0">
+
+        <mat-expansion-panel-header class="ps-0 pe-1">
+          <mat-panel-title>
+            <div class="d-flex w-100">
+              <p class="my-0 fw-bold text-nowrap">Toolbox</p>
+            </div>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <div
+          class="justify-content-between d-flex w-100 open-files"
+          *ngFor="let item of toolboxItems">
+
+        </div>
+
+      </mat-expansion-panel>
     </mat-accordion>
 
   </div>

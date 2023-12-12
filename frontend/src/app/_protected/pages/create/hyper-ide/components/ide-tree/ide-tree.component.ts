@@ -21,6 +21,7 @@ import { MacroDefinition } from '../../models/macro-definition.model';
 import { TreeNode } from './models/tree-node.model';
 import { CodemirrorActionsService } from '../../../../../../_general/services/codemirror-actions.service';
 import { FileService } from '../../../../../../_general/services/file.service';
+import { WorkflowService } from 'src/app/_general/services/workflow.service';
 
 /**
  * Tree component for Hyper IDE displaying files and folders, allowing user
@@ -62,10 +63,12 @@ export class IdeTreeComponent implements OnInit {
   zipFileInput: string;
   showRenameBox: TreeNode = null;
   currentSelection: string = '';
+  toolboxItems: any[] = [];
 
   constructor(
     private dialog: MatDialog,
     private fileService: FileService,
+    private workflowService: WorkflowService,
     private generalService: GeneralService,
     private endpointService: EndpointService,
     private codemirrorActionsService: CodemirrorActionsService) { }
@@ -86,6 +89,12 @@ export class IdeTreeComponent implements OnInit {
         this.getEndpoints();
       }
     });
+    this.getWorkflowFunctionsFromServer();
+  }
+
+  isWorkflowFile() {
+
+    return this.currentFileData?.path?.endsWith('.workflow.hl') || false;
   }
 
   /**
@@ -137,6 +146,21 @@ export class IdeTreeComponent implements OnInit {
           this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
         }
       });
+    });
+  }
+
+  getWorkflowFunctionsFromServer() {
+
+    this.workflowService.list().subscribe({
+
+      next: (functions: any[]) => {
+        console.log(functions);
+      },
+
+      error: (error: any) => {
+
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+      }
     });
   }
 
