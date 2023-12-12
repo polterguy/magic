@@ -5,11 +5,11 @@
  */
 
 // Executes sql-select action.
-signal:magic.workflows.action.execute
+execute:magic.workflows.action.execute
    name:sql-select
    action:/misc/workflows/functions/sql-select.hl
    arguments
-      sql:select name from roles order by name limit 2
+      sql:select name from roles order by name limit 3
 
 // Returning result of sql-select action.
-return-nodes:x:--/signal/=sql-select/*
+return-nodes:x:--/execute/=sql-select/*
