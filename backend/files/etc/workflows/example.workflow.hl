@@ -1,0 +1,25 @@
+
+/*
+ * Example workflow taking some input, and returning
+ * some result.
+ */
+.arguments
+   name:string
+   email:string
+   subject:string
+   body:string
+.output
+   result:string
+
+// Executes send-email action.
+add:x:+/*/signal/*/arguments
+   get-nodes:x:@.arguments/*
+add:x:@.arguments
+   signal:magic.workflows.action.execute
+      name:send-email
+      action:/misc/actions/send-email.hl
+      arguments
+
+// Returning success to caller.
+return
+   result:success

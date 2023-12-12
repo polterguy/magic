@@ -1,0 +1,31 @@
+
+/*
+ * Slot that executes a single workflow action.
+ */
+slots.create:magic.workflows.action.execute
+
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/name
+   validators.mandatory:x:@.arguments/*/action
+
+   // Parametrising [io.file.execute].
+   add:x:./*/io.file.execute
+      get-nodes:x:@.arguments/*/arguments/*
+
+   // Executing action.
+   io.file.execute:x:@.arguments/*/action
+
+   // Transforming nodes resulting of invocation to correct "namespace".
+   for-each:x:@io.file.execute/*
+      set-name:x:@.dp/#
+         strings.concat
+            get-value:x:@.arguments/*/name
+            .:.
+            get-name:x:@.dp/#
+   lambda2hyper:x:../*
+   log.info:x:-
+
+   // Returning result of invocation to caller.
+   add:x:./*/return
+      get-nodes:x:@io.file.execute/*
+   return
