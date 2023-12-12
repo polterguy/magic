@@ -5,8 +5,6 @@
    database-type:string
    database:string
    sql:string
-.output
-   result:*
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/sql
