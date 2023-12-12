@@ -1,0 +1,67 @@
+
+/*
+ * Returns all workflow functions to caller.
+ */
+.arguments
+   filename:string
+   hyperlambda:string
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Loading function Hyperlambda file and transforming to lambda object.
+.function
+load-file:x:@.arguments/*/filename
+add:x:@.function
+   hyper2lambda:x:@load-file
+      comments:true
+
+// Transforming input Hyperlambda to lambda.
+.lambda
+add:x:@.lambda
+   hyper2lambda:x:@.arguments/*/hyperlambda
+      comments:true
+
+// Creating a name for function.
+.name
+strings.split:x:@.arguments/*/filename
+   .:/
+strings.split:x:-/0/-
+   .:.
+remove-nodes:x:@strings.split/0/-
+set-value:x:@.name
+   strings.join:x:@strings.split/0
+      .:.
+
+// Creating our function invocation.
+.invocation
+   execute:magic.workflows.action.execute
+      name
+      action
+      arguments
+set-value:x:@.invocation/*/execute/*/name
+   get-value:x:@.name
+set-value:x:@.invocation/*/execute/*/action
+   get-value:x:@.arguments/*/filename
+
+// Creating our function comment.
+if
+   eq
+      get-name:x:@.function/0
+      .:..
+   .lambda
+      unwrap:x:+/*/*
+      insert-before:x:@.invocation/0
+         .
+            ..:x:@.function/0
+
+// Appending function to existing lambda.
+add:x:@.lambda
+   get-nodes:x:@.invocation/*
+
+// Returning result to caller as Hyperlambda.
+lambda2hyper:x:@.lambda/*
+   comments:true
+unwrap:x:+/*
+return
+   result:x:@lambda2hyper
