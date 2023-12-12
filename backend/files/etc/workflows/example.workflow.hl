@@ -4,22 +4,15 @@
  * some result.
  */
 .arguments
-   name:string
-   email:string
-   subject:string
-   body:string
-.output
-   result:string
 
-// Executes send-email action.
-add:x:+/*/signal/*/arguments
-   get-nodes:x:@.arguments/*
+// Executes sql-select action.
 add:x:@.arguments
    signal:magic.workflows.action.execute
-      name:send-email
-      action:/misc/actions/send-email.hl
+      name:sql-select
+      action:/misc/actions/sql-select.hl
       arguments
+         database:magic
+         sql:select name from roles order by name limit 2
 
 // Returning success to caller.
-return
-   result:success
+return-nodes:x:@.arguments/*
