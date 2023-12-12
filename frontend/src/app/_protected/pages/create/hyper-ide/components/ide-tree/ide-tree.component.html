@@ -246,7 +246,16 @@
 
         <div
           class="justify-content-between d-flex w-100 open-files"
-          *ngFor="let item of toolboxItems">
+          *ngFor="let item of workflowFunctions">
+
+          <!-- Button for selecting workflow function -->
+          <button
+            mat-button
+            [disabled]="!isWorkflowFile()"
+            (click)="addFunction(item)"
+            class="justify-content-start d-flex w-100">
+            {{item.name}}
+          </button>
 
         </div>
 

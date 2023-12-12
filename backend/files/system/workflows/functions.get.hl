@@ -30,11 +30,21 @@ for-each:x:@io.file.list/*
                   .
                      description:x:@hyper2lambda/0
 
+         // Creating a name for function.
+         strings.split:x:@.dp/#
+            .:/
+         strings.split:x:-/0/-
+            .:.
+         remove-nodes:x:@strings.split/0/-
+         strings.join:x:@strings.split/0
+            .:.
+
          // Returning result to caller.
          unwrap:x:+/*/*/*
          add:x:../*/return
             .
                .
+                  name:x:@strings.join
                   filename:x:@.dp/#
 
 // Returning result to caller.

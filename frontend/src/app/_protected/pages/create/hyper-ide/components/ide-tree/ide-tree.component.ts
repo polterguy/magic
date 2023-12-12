@@ -22,6 +22,7 @@ import { TreeNode } from './models/tree-node.model';
 import { CodemirrorActionsService } from '../../../../../../_general/services/codemirror-actions.service';
 import { FileService } from '../../../../../../_general/services/file.service';
 import { WorkflowService } from 'src/app/_general/services/workflow.service';
+import { MagicResponse } from 'src/app/_general/models/magic-response.model';
 
 /**
  * Tree component for Hyper IDE displaying files and folders, allowing user
@@ -63,7 +64,7 @@ export class IdeTreeComponent implements OnInit {
   zipFileInput: string;
   showRenameBox: TreeNode = null;
   currentSelection: string = '';
-  toolboxItems: any[] = [];
+  workflowFunctions: any[] = [];
 
   constructor(
     private dialog: MatDialog,
@@ -92,9 +93,34 @@ export class IdeTreeComponent implements OnInit {
     this.getWorkflowFunctionsFromServer();
   }
 
+  /**
+   * Returns true if currently open file is a Hyperlambda workflow.
+   */
   isWorkflowFile() {
 
     return this.currentFileData?.path?.endsWith('.workflow.hl') || false;
+  }
+
+  /**
+   * Adds the specified function to the currently edited workflow.
+   */
+  addFunction(el: any) {
+
+    this.generalService.showLoading();
+    this.workflowService.appendFunction(el.filename, this.currentFileData.content).subscribe({
+
+      next: (result: MagicResponse) => {
+
+        this.currentFileData.content = result.result;
+        this.generalService.hideLoading();
+      },
+
+      error: (error: any) => {
+
+        this.generalService.hideLoading();
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+      }
+    });
   }
 
   /**
@@ -127,6 +153,7 @@ export class IdeTreeComponent implements OnInit {
 
       // Getting folders recursively.
       this.fileService.listFoldersRecursively(folder, this.systemFiles).subscribe({
+
         next: (folders: string[]) => {
 
           addToRoot(folders || [], true);
@@ -142,6 +169,7 @@ export class IdeTreeComponent implements OnInit {
           });
         },
         error: (error: any) => {
+
           resolve(false);
           this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
         }
@@ -151,14 +179,18 @@ export class IdeTreeComponent implements OnInit {
 
   getWorkflowFunctionsFromServer() {
 
-    this.workflowService.list().subscribe({
+    this.generalService.showLoading();
+    this.workflowService.listFunctions().subscribe({
 
       next: (functions: any[]) => {
-        console.log(functions);
+
+        this.generalService.hideLoading();
+        this.workflowFunctions = functions;
       },
 
       error: (error: any) => {
 
+        this.generalService.hideLoading();
         this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
       }
     });
