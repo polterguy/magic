@@ -55,6 +55,10 @@ if
          .
             ..:x:@.function/0
 
+// Adding default argument placeholders for invocation.
+add:x:@.invocation/*/execute/*/arguments
+   get-nodes:x:@.function/*/.example/*
+
 // Appending function to existing lambda.
 add:x:@.lambda
    get-nodes:x:@.invocation/*
