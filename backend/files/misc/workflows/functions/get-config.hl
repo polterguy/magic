@@ -5,6 +5,8 @@
  */
 .arguments
    key:string
+.example
+   key:"magic:smtp:host"
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/key

@@ -8,6 +8,11 @@
    database-type:string
    database:string
    sql:string
+.example
+   connection-string:generic
+   database-type:sqlite
+   database:magic
+   sql:select name from roles limit 2
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/sql

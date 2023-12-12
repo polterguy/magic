@@ -5,6 +5,13 @@
    email:string
    subject:string
    body:string
+.example
+   name:John Doe
+   email:john@doe.com
+   subject:Just checking in
+   body:@"Hi John,
+
+How's it going?"
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/name
