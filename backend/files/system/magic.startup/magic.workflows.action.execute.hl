@@ -2,18 +2,18 @@
 /*
  * Slot that executes a single workflow action.
  */
-slots.create:magic.workflows.action.execute
+slots.create:magic.workflows.function.execute
 
    // Sanity checking invocation.
    validators.mandatory:x:@.arguments/*/name
-   validators.mandatory:x:@.arguments/*/action
+   validators.mandatory:x:@.arguments/*/filename
 
    // Parametrizing [io.file.execute].
    add:x:./*/io.file.execute
       get-nodes:x:@.arguments/*/arguments/*
 
    // Executing action.
-   io.file.execute:x:@.arguments/*/action
+   io.file.execute:x:@.arguments/*/filename
 
    // Decorating [result] node.
    set-value:x:./*/return

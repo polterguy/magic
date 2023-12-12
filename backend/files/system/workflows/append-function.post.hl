@@ -35,13 +35,13 @@ set-value:x:@.name
 
 // Creating our function invocation.
 .invocation
-   execute:magic.workflows.action.execute
+   execute:magic.workflows.function.execute
       name
-      action
+      filename
       arguments
 set-value:x:@.invocation/*/execute/*/name
    get-value:x:@.name
-set-value:x:@.invocation/*/execute/*/action
+set-value:x:@.invocation/*/execute/*/filename
    get-value:x:@.arguments/*/filename
 
 // Creating our function comment.

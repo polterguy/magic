@@ -4,9 +4,10 @@
  * to return result of invocation.
  */
 
-// Executes sql-select action.
-execute:magic.workflows.action.execute
+// Executes sql-select function.
+execute:magic.workflows.function.execute
    name:sql-select
-   action:/misc/workflows/functions/sql-select.hl
+   filename:/misc/workflows/functions/sql-select.hl
    arguments
       sql:select name from roles order by name limit 2
+return:x:-/*
