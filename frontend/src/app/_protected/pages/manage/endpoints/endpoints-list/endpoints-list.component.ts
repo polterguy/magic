@@ -47,6 +47,11 @@ export class EndpointsListComponent {
     el.expanded = true;
   }
 
+  isExpanded(el: any) {
+
+    return el.expanded;
+  }
+
   deleteEndpoint(el: any) {
 
     const confirm = el.path.substring(el.path.lastIndexOf('/') + 1);
