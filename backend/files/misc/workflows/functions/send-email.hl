@@ -1,5 +1,5 @@
 
-// Send email action.
+// Send an email to the specified [name]/[email] recipient with the specified [subject] and [body].
 .arguments
    name:string
    email:string
