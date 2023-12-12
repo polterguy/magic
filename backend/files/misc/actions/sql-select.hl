@@ -9,13 +9,13 @@
    result:*
 
 // Sanity checking invocation.
-validators.mandatory:x:@.arguments/*/database
 validators.mandatory:x:@.arguments/*/sql
 
 // Applying defaults.
 validators.default:x:@.arguments
    connection-string:generic
    database-type:sqlite
+   database:magic
 
 // Connection string to actually use as we connect.
 .connection-string

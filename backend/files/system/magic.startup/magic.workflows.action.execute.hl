@@ -8,7 +8,7 @@ slots.create:magic.workflows.action.execute
    validators.mandatory:x:@.arguments/*/name
    validators.mandatory:x:@.arguments/*/action
 
-   // Parametrising [io.file.execute].
+   // Parametrizing [io.file.execute].
    add:x:./*/io.file.execute
       get-nodes:x:@.arguments/*/arguments/*
 
@@ -16,11 +16,10 @@ slots.create:magic.workflows.action.execute
    io.file.execute:x:@.arguments/*/action
 
    // Decorating [result] node.
-   set-name:x:./*/return/*/result
+   set-value:x:./*/return
       get-value:x:@.arguments/*/name
-   add:x:./*/return/*
+   add:x:./*/return
       get-nodes:x:@io.file.execute/*
 
    // Returning result of invocation to caller.
    return
-      result
