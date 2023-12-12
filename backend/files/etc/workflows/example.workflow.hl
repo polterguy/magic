@@ -1,13 +1,15 @@
 
 /*
- * Example workflow taking some input, and returning
- * some result.
+ * Example workflow executing sql-select action, for then
+ * to return result of invocation.
  */
 
 // Executes sql-select action.
 signal:magic.workflows.action.execute
    name:sql-select
-   action:/misc/actions/sql-select.hl
+   action:/misc/workflows/functions/sql-select.hl
    arguments
       sql:select name from roles order by name limit 2
+
+// Returning result of sql-select action.
 return-nodes:x:--/signal/=sql-select/*

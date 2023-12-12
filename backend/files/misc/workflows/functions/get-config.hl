@@ -2,8 +2,6 @@
 // Get configuration setting action.
 .arguments
    key:string
-.output
-   result:string
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/key
