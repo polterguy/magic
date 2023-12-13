@@ -7,6 +7,7 @@
  */
 .arguments
    code:string
+   file:string
    references:*
    assembly-name:string
    recompile:bool
@@ -62,9 +63,28 @@ if
 
       // Parametrizing [system.compile] invocation.
       add:x:./*/system.compile
-         get-nodes:x:@.arguments/*/code
          get-nodes:x:@.arguments/*/references
          get-nodes:x:@.arguments/*/assembly-name
+
+      // Checking if caller provided a [file] argument instead of a [code] argument.
+      if
+         and
+            not-exists:x:@.arguments/*/code
+            exists:x:@.arguments/*/file
+            not-null:x:@.arguments/*/file
+         .lambda
+
+            // We've got a [file] argument instead of a [code] argument.
+            load-file:x:@.arguments/*/file
+            add:x:@.lambda/@.lambda/*/system.compile
+               .
+                  code:x:@load-file
+
+      else
+
+         // Caller provided a [code] argument.
+         add:x:@.lambda/*/system.compile
+            get-nodes:x:@.arguments/*/code
 
       // Compiling C# code.
       system.compile
