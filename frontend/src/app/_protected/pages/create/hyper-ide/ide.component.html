@@ -51,6 +51,7 @@
           [activeFolder]="tree.activeFolder"
           [openFiles]="tree.openFiles"
           (updateFileObject)="tree.updateFileObject($event)"
+          (focusToFind)="focusToFind($event)"
           (getFilesFromServer)="tree.getFilesFromServer()"
           (getEndpoints)="tree.getEndpoints()"
           [endpoints]="tree.endpoints"
