@@ -20,6 +20,7 @@ import { RenameFolderDialogComponent } from '../components/rename-folder-dialog/
 import { SelectMacroDialogComponent } from '../components/select-macro-dialog/select-macro-dialog.component';
 import { UnsavedChangesDialogComponent } from '../components/unsaved-changes-dialog/unsaved-changes-dialog.component';
 import { CmModule } from 'src/app/codemirror/_module/cm.module';
+import { ExecuteResult } from '../components/execute-result/execute-result-dialog.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { CmModule } from 'src/app/codemirror/_module/cm.module';
     IdeEditorComponent,
     IdeSearchboxComponent,
     ExecuteMacroDialogComponent,
+    ExecuteResult,
     IncompatibleFileDialogComponent,
     NewFileFolderDialogComponent,
     RenameFileDialogComponent,

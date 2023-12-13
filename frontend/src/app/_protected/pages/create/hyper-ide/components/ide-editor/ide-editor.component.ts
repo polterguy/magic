@@ -25,6 +25,8 @@ import { FileService } from '../../../../../../_general/services/file.service';
 import { VocabularyService } from '../../../../../../_general/services/vocabulary.service';
 import { Endpoint } from 'src/app/_protected/models/common/endpoint.model';
 import { AiService } from 'src/app/_general/services/ai.service';
+import { MagicResponse } from 'src/app/_general/models/magic-response.model';
+import { ExecuteResult } from '../execute-result/execute-result-dialog.component';
 
 /**
  * Hyper IDE editor component, wrapping currently open files, allowing user to edit the code.
@@ -129,7 +131,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
       data: {
         type: ['full', 'prompt']
       }
-    })
+    });
   }
 
   ngAfterViewInit() {
@@ -230,11 +232,18 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
 
       this.generalService.showLoading();
       this.evaluatorService.execute(this.currentFileData.content).subscribe({
-        next: () => {
+
+        next: (response: MagicResponse) => {
 
           this.generalService.hideLoading();
-          this.generalService.showFeedback('File successfully executed', 'successMessage');
+          this.dialog.open(ExecuteResult, {
+            width: '900px',
+            data: {
+              hyperlambda: response.result,
+            }
+          });
         },
+
         error: (error: any) => {
 
           this.generalService.hideLoading();
