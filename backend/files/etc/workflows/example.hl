@@ -4,7 +4,6 @@
  * to return result of invocation.
  */
 
-
 /*
  * Execute some select SQL statement specified as [sql].
  * Optionally provide [connection-string], [database-type] and [database].
