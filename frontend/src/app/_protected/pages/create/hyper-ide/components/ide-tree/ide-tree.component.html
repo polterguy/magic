@@ -246,6 +246,7 @@
 
         <div
           class="justify-content-between d-flex w-100 toolbox"
+          [class.d-none]="filterToolbox(item, searchKey)"
           *ngFor="let item of workflowFunctions">
 
           <!-- Button for selecting workflow function -->
@@ -254,7 +255,7 @@
             [disabled]="!isHyperlambdaFile()"
             [matTooltip]="item.description"
             matTooltipPosition="right"
-            (click)="addFunction(item)"
+            (click)="addSnippet(item)"
             class="justify-content-start d-flex w-100">
             <mat-icon>{{item.icon ?? 'star'}}</mat-icon>
             {{item.name}}

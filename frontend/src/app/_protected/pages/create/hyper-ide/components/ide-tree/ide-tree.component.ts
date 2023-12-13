@@ -90,7 +90,7 @@ export class IdeTreeComponent implements OnInit {
         this.getEndpoints();
       }
     });
-    this.getWorkflowFunctionsFromServer();
+    this.getToolboxItemsFromServer();
   }
 
   /**
@@ -155,10 +155,13 @@ export class IdeTreeComponent implements OnInit {
     });
   }
 
-  getWorkflowFunctionsFromServer() {
+  /**
+   * Returns all toolbox items from the server.
+   */
+  getToolboxItemsFromServer() {
 
     this.generalService.showLoading();
-    this.workflowService.listFunctions().subscribe({
+    this.workflowService.listToolboxItems().subscribe({
 
       next: (functions: any[]) => {
 
@@ -177,7 +180,7 @@ export class IdeTreeComponent implements OnInit {
   /**
    * Adds the specified function to the currently edited workflow.
    */
-  addFunction(el: any) {
+  addSnippet(el: any) {
 
     // Retrieving editor instance.
     const fileExisting: number = this.openFiles.findIndex((item: any) => item.path === this.currentFileData.path);
@@ -808,6 +811,11 @@ export class IdeTreeComponent implements OnInit {
       return false
     }
     return true
+  }
+
+  filterToolbox(item: any, searchKeyword: string) {
+
+    return searchKeyword && searchKeyword !== '' && !item.name.includes(searchKeyword);
   }
 
   installModule(file: FileList) {
