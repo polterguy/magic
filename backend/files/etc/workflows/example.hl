@@ -9,16 +9,6 @@ execute:magic.workflows.functions.execute
    name:sql-select
    filename:/misc/workflows/functions/sql-select.hl
    arguments
-      sql:select name from roles order by name limit 2
-
-/*
- * Execute some select SQL statement specified as [sql].
- * Optionally provide [connection-string], [database-type] and [database].
- */
-execute:magic.workflows.functions.execute
-   name:sql-select
-   filename:/misc/workflows/functions/sql-select.hl
-   arguments
       connection-string:generic
       database-type:sqlite
       database:magic
