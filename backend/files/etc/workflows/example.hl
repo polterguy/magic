@@ -10,4 +10,3 @@ execute:magic.workflows.function.execute
    filename:/misc/workflows/functions/sql-select.hl
    arguments
       sql:select name from roles order by name limit 2
-return:x:-/*

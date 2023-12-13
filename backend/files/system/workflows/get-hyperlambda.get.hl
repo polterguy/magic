@@ -4,7 +4,6 @@
  */
 .arguments
    filename:string
-   hyperlambda:string
 
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:root
@@ -14,12 +13,6 @@ auth.ticket.verify:root
 load-file:x:@.arguments/*/filename
 add:x:@.function
    hyper2lambda:x:@load-file
-      comments:true
-
-// Transforming input Hyperlambda to lambda.
-.lambda
-add:x:@.lambda
-   hyper2lambda:x:@.arguments/*/hyperlambda
       comments:true
 
 // Creating a name for function.
@@ -59,12 +52,8 @@ if
 add:x:@.invocation/*/execute/*/arguments
    get-nodes:x:@.function/*/.example/*
 
-// Appending function to existing lambda.
-add:x:@.lambda
-   get-nodes:x:@.invocation/*
-
 // Returning result to caller as Hyperlambda.
-lambda2hyper:x:@.lambda/*
+lambda2hyper:x:@.invocation/*
    comments:true
 unwrap:x:+/*
 return
