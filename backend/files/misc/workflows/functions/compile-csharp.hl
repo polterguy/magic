@@ -1,0 +1,73 @@
+
+/*
+ * Compiles the specified C# code and loads into the AppDomain.
+ *
+ * Notice, will not compile the specified code if assembly already exists in
+ * AppDomain, unless [recompile] is true.
+ */
+.arguments
+   code:string
+   references:*
+   assembly-name:string
+   recompile:bool
+.example
+   code:@"
+using System;
+using magic.node;
+using magic.node.extensions;
+using magic.signals.contracts;
+
+[Slot(Name = ""get-employee-details"")]
+public class Foo : ISlot
+{
+    public void Signal(ISignaler signaler, Node input)
+    {
+        switch (input.GetEx<string>().ToLower())
+        {
+            case ""john"":
+                input.Add(new Node(""title"", ""cmo""));
+                input.Add(new Node(""phone"", ""92929292""));
+                input.Add(new Node(""email"", ""john@doe.come""));
+                break;
+        }
+    }
+}"
+   references
+      .:netstandard
+      .:System.Runtime
+      .:System.ComponentModel
+      .:System.Private.CoreLib
+      .:magic.node
+      .:magic.node.extensions
+      .:magic.signals.contracts
+   assembly-name:employees.dll
+   recompile:bool:false
+.icon:rocket_launch
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/code
+validators.mandatory:x:@.arguments/*/references
+validators.mandatory:x:@.arguments/*/assembly-name
+
+/*
+ * We only compile C# code if it does not already exist in AppDomain,
+ * unless caller explicitly specifies [recompile] as true.
+ */
+system.plugin.list
+if
+   or
+      get-value:x:@.arguments/*/recompile
+      not-exists:x:@system.plugin.list/*/={@.arguments/*/assembly-name}
+   .lambda
+
+      // Parametrizing [system.compile] invocation.
+      add:x:./*/system.compile
+         get-nodes:x:@.arguments/*/code
+         get-nodes:x:@.arguments/*/references
+         get-nodes:x:@.arguments/*/assembly-name
+
+      // Compiling C# code.
+      system.compile
+
+      // Loading assembly into AppDomain.
+      system.plugin.load:x:@system.compile
