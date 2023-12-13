@@ -1,0 +1,5 @@
+
+// Creates an info type of log entry.
+log.info:This is written to the log
+   val1:This is some additional value
+   val2:This is also some additional value
