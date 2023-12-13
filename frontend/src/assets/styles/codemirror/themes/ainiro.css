@@ -20,7 +20,7 @@
 
 .cm-s-ainiro span.cm-property, .cm-s-ainiro span.cm-attribute { color: #9ddfe9; }
 .cm-s-ainiro span.cm-keyword { color: #ffb928; }
-.cm-s-ainiro span.cm-string { color: #ffcf6c; }
+.cm-s-ainiro span.cm-string { color: #9ddfe9; }
 .cm-s-ainiro span.cm-string.cm-property { color: #ffffec; }
 
 .cm-s-ainiro span.cm-type { color: #fffffc; }
