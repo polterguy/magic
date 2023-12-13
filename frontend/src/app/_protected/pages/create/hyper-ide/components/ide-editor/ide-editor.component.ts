@@ -295,7 +295,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
         }
       }
       resolve(true);
-    })
+    });
   }
 
   private markEditorClean(clearHistory: boolean = true) {
@@ -344,7 +344,6 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     });
     dialog.afterClosed().subscribe((data: string) => {
       if (data) {
-        const path: string = this.activeFolder.substring(0, this.activeFolder.lastIndexOf('/'));
         this.renameFolderFromParent.emit({
           folder: this.activeFolder,
           newName: data,
