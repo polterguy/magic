@@ -56,6 +56,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   @Output() renameFileFromParent: EventEmitter<{ file: { path: string }, newName: string }> = new EventEmitter<{ file: { path: string }, newName: string }>();
   @Output() renameFolderFromParent: EventEmitter<any> = new EventEmitter<any>();
   @Output() createNewFileObjectFromParent: EventEmitter<any> = new EventEmitter<any>();
+  @Output() focusToFind: EventEmitter<any> = new EventEmitter<any>();
 
   constructor(
     private dialog: MatDialog,
@@ -537,6 +538,10 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
 
         case 'save':
           this.saveActiveFile();
+          break;
+
+        case 'find':
+          this.focusToFind.emit();
           break;
 
         case 'deleteFile':

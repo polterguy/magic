@@ -54,6 +54,11 @@ export class CodemirrorActionsService {
             this.action.next('deleteFile');
           })
         };
+        res.options.extraKeys['Alt-F'] = () => {
+          this.ngZone.run(() => {
+            this.action.next('find');
+          })
+        };
         res.options.extraKeys['Alt-C'] = () => {
           this.ngZone.run(() => {
             this.action.next('close');
