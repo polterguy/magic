@@ -815,7 +815,10 @@ export class IdeTreeComponent implements OnInit {
 
   filterToolbox(item: any, searchKeyword: string) {
 
-    return searchKeyword && searchKeyword !== '' && !item.name.includes(searchKeyword);
+    return searchKeyword &&
+      searchKeyword !== '' &&
+      !item.name.toLowerCase().includes(searchKeyword.toLowerCase()) &&
+      !item.description.toLowerCase().includes(searchKeyword.toLowerCase());
   }
 
   installModule(file: FileList) {
