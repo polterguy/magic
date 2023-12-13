@@ -1,0 +1,25 @@
+
+/*
+ * If/else-if/else condition conditionally executing some Hyperlambda [.lambda] object,
+ * defaulting to executing its else if neither condition is true.
+ */
+if
+   eq:x:@.arguments/*/var1
+      .:bool:true
+   .lambda
+
+      // First condition is true.
+      log.info:First condition is true
+
+else-if
+   eq:x:@.arguments/*/var2
+      .:bool:true
+   .lambda
+
+      // Second condition is true.
+      log.info:Second condition is true
+
+else
+
+   // Both above conditions are false.
+   log.info:Both conditions are false

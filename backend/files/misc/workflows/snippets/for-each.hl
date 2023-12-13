@@ -1,0 +1,6 @@
+
+// For each loop iterating through a list of items.
+for-each:x:@.data/*
+
+   // Currently iterated node can be found by reference in [.dp] node
+   log.info:x:@.dp/#

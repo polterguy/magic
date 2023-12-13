@@ -1,0 +1,10 @@
+
+// If condition conditionally executing some Hyperlambda [.lambda] object.
+if
+   eq:x:@.arguments/*/foo
+      .:bool:true
+   .lambda
+
+      // Condition is true.
+      log.info:Condition is true
+

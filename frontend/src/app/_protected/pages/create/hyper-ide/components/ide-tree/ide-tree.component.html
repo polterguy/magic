@@ -256,7 +256,7 @@
             matTooltipPosition="right"
             (click)="addFunction(item)"
             class="justify-content-start d-flex w-100">
-            <mat-icon>{{item.icon}}</mat-icon>
+            <mat-icon>{{item.icon ?? 'star'}}</mat-icon>
             {{item.name}}
           </button>
 

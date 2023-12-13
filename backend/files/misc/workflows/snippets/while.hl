@@ -1,0 +1,10 @@
+
+// While loop executing its [.lambda] object as long as its condition is true.
+while
+   eq:x:@.continue
+      .:bool:true
+   .lambda
+
+      // Condition is true.
+      log.info:Condition is still true, iterating once more
+
