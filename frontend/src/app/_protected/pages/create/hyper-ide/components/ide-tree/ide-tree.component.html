@@ -253,8 +253,9 @@
           <button
             mat-button
             [disabled]="!isHyperlambdaFile()"
-            [matTooltip]="item.description"
+            [matTooltip]="getToolboxTooltip(item)"
             matTooltipPosition="right"
+            [matTooltipClass]="getTooltipClass(item)"
             (click)="addSnippet(item)"
             class="justify-content-start d-flex w-100">
             <mat-icon>{{item.icon ?? 'star'}}</mat-icon>
