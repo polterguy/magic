@@ -6,11 +6,11 @@
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:root
 
-// Listing all functions in workflow functions folder.
-io.file.list:/misc/workflows/functions/
+// Listing all functions and snippets in workflow folder.
+io.file.list-recursively:/misc/workflows/
 
 // Filtering out everything not ending with '.hl'.
-for-each:x:@io.file.list/*
+for-each:x:@io.file.list-recursively/*
    if
       strings.ends-with:x:@.dp/#
          .:.hl

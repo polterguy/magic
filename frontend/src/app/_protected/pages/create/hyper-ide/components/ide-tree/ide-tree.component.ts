@@ -163,7 +163,7 @@ export class IdeTreeComponent implements OnInit {
       next: (functions: any[]) => {
 
         this.generalService.hideLoading();
-        this.workflowFunctions = functions;
+        this.workflowFunctions = functions.reverse();
       },
 
       error: (error: any) => {
