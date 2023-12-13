@@ -1,0 +1,4 @@
+
+// Example snippet scraping some web page.
+execute:magic.http.scrape-url
+   url:"https://ainiro.io"

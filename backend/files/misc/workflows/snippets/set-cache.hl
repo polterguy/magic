@@ -1,0 +1,4 @@
+
+// Saves a value to the memory cache with the specified key.
+cache.set:cache-key
+   value:x:@.some-value
