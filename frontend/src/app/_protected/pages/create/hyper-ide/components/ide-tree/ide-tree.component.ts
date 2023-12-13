@@ -818,7 +818,18 @@ export class IdeTreeComponent implements OnInit {
     return searchKeyword &&
       searchKeyword !== '' &&
       !item.name.toLowerCase().includes(searchKeyword.toLowerCase()) &&
-      !item.description.toLowerCase().includes(searchKeyword.toLowerCase());
+      !item.description.toLowerCase().includes(searchKeyword.toLowerCase()) &&
+      (!item.content?.toLowerCase().includes(searchKeyword.toLowerCase()) || false);
+  }
+
+  getTooltipClass(el: any) {
+
+    return el.content ? 'pre-tooltip' : '';
+  }
+
+  getToolboxTooltip(item: any) {
+
+    return item.content ?? item.description;
   }
 
   installModule(file: FileList) {

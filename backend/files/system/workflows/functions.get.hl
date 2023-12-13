@@ -29,6 +29,14 @@ for-each:x:@io.file.list-recursively/*
                add:x:@.lambda/@.lambda/0/-/*/*
                   .
                      description:x:@hyper2lambda/0
+         if
+            strings.starts-with:x:@.dp/#
+               .:/misc/workflows/snippets/
+            .lambda
+               unwrap:x:+/*/*
+               add:x:@.lambda/@.lambda/0/-/*/*
+                  .
+                     content:x:@load-file
 
          // Creating a name for function.
          strings.split:x:@.dp/#
