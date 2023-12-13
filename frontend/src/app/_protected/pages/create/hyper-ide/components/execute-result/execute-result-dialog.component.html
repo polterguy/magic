@@ -1,0 +1,21 @@
+<h3 mat-dialog-title>Result</h3>
+
+<div mat-dialog-content>
+
+  <div *ngIf="hlReady">
+    <app-codemirror-hyperlambda
+      [(model)]="hlModel">
+    </app-codemirror-hyperlambda>
+  </div>
+
+</div>
+
+<div mat-dialog-actions [align]="'end'">
+
+  <button
+    mat-button
+    mat-dialog-close>
+    Close
+  </button>
+
+</div>
