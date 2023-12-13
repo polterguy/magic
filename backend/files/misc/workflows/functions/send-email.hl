@@ -1,5 +1,9 @@
 
-// Send an email to the specified [name]/[email] recipient with the specified [subject] and [body].
+/*
+ * Sends an email to the specified [name]/[email] recipient,
+ * with the specified [subject] and [body] using the default from email address and name
+ * from your configuration settings.
+ */
 .arguments
    name:string
    email:string
