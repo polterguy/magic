@@ -1,0 +1,6 @@
+
+// Creates a new thread an executes the lambda object on the new thread.
+fork
+
+   // This executes on a different thread.
+   log.info:Hello from another thread
