@@ -8,11 +8,14 @@
    database-type:string
    database:string
    sql:string
+   parameters:*
 .example
    connection-string:generic
    database-type:sqlite
    database:magic
-   sql:select name from roles limit 2
+   sql:select name from roles where name like @arg1 limit 2
+   parameters
+      @arg1:%a%
 .icon:storage
 
 // Sanity checking invocation.
@@ -39,6 +42,10 @@ set-value:x:@.connection-string
 // Connecting to database.
 data.connect:x:@.connection-string
    database-type:x:@.arguments/*/database-type
+
+   // Parametrizing SQL.
+   add:x:./*/data.select
+      get-nodes:x:@.arguments/*/parameters/*
 
    // Executing SQL.
    data.select:x:@.arguments/*/sql
