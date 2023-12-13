@@ -1,0 +1,3 @@
+
+// Returns the specified item from your memory cache.
+cache.get:cache-key
