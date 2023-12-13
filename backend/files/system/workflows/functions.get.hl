@@ -46,6 +46,7 @@ for-each:x:@io.file.list/*
                .
                   name:x:@strings.join
                   filename:x:@.dp/#
+                  icon:x:@hyper2lambda/*/.icon
 
 // Returning result to caller.
 return

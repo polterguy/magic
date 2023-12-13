@@ -233,7 +233,7 @@
       multi>
 
       <mat-expansion-panel
-        [expanded]="isWorkflowFile()"
+        [expanded]="isHyperlambdaFile()"
         class="mat-elevation-z0">
 
         <mat-expansion-panel-header class="ps-0 pe-1">
@@ -251,11 +251,12 @@
           <!-- Button for selecting workflow function -->
           <button
             mat-button
-            [disabled]="!isWorkflowFile()"
+            [disabled]="!isHyperlambdaFile()"
             [matTooltip]="item.description"
             matTooltipPosition="right"
             (click)="addFunction(item)"
             class="justify-content-start d-flex w-100">
+            <mat-icon>{{item.icon}}</mat-icon>
             {{item.name}}
           </button>
 
@@ -267,7 +268,7 @@
   </div>
 
   <!-- Currently open files section -->
-  <div class="max-height panel-2">
+  <div class="max-height panel-3">
 
     <mat-accordion
       displayMode="flat"

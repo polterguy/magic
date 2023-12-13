@@ -18,6 +18,14 @@
   flex: 0 0 auto;
 
   .mat-expansion-panel {
+    max-height: 25vh;
+  }
+}
+
+.panel-3 {
+  flex: 0 0 auto;
+
+  .mat-expansion-panel {
     max-height: 15vh;
   }
 }
@@ -189,6 +197,9 @@
       font-size: 12px;
       line-height: 21px;
       padding-left: 5px;
+      mat-icon {
+        font-size: 18px;
+      }
     }
   }
 }
