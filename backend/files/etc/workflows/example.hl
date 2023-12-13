@@ -13,8 +13,5 @@ execute:magic.workflows.functions.execute
    name:sql-select
    filename:/misc/workflows/functions/sql-select.hl
    arguments
-      connection-string:generic
-      database-type:sqlite
-      database:magic
       sql:select name from roles where name like @arg1 limit 2
          @arg1:a%
