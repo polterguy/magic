@@ -7,14 +7,12 @@
    connection-string:string
    database-type:string
    database:string
-   sql:string
-   parameters:*
+   sql:*
 .example
    connection-string:generic
    database-type:sqlite
    database:magic
    sql:insert into roles (name, description) value (@name, @description)
-   parameters
       @name:role-name
       @description:The description for your role
 .icon:storage
@@ -46,7 +44,7 @@ data.connect:x:@.connection-string
 
    // Parametrizing SQL.
    add:x:./*/data.select
-      get-nodes:x:@.arguments/*/parameters/*
+      get-nodes:x:@.arguments/*/sql/*
 
    // Executing SQL.
    data.select:x:@.arguments/*/sql
