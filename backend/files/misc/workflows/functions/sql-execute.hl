@@ -15,7 +15,7 @@
    sql:insert into roles (name, description) value (@name, @description)
       @name:role-name
       @description:The description for your role
-.icon:storage
+.icon:backup
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/sql
