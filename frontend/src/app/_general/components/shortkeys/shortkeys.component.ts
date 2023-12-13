@@ -44,6 +44,15 @@ export class ShortkeysComponent implements OnInit {
         }
       ];
     }
+    if (this.data.type.indexOf('find') > -1) {
+      this.shortkeys = [
+        ...this.shortkeys,
+        {
+          name: 'Find',
+          key: 'Alt + F'
+        }
+      ];
+    }
     if (this.data.type.indexOf('execute') > -1) {
       this.shortkeys = [
         ...this.shortkeys,

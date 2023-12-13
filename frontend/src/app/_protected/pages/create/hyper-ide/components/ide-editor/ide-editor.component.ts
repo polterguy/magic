@@ -130,7 +130,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     this.dialog.open(ShortkeysComponent, {
       width: '900px',
       data: {
-        type: ['full', 'prompt']
+        type: ['full', 'prompt', 'find']
       }
     });
   }
