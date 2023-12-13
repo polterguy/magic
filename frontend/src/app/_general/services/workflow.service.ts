@@ -23,7 +23,7 @@ export class WorkflowService {
   /**
    * Returns a list of all workflow funtions.
    */
-  listFunctions() {
+  listToolboxItems() {
 
     return this.httpService.get<any[]>('/magic/system/workflows/functions');
   }
