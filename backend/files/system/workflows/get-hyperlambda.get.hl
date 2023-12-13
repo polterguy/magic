@@ -37,7 +37,7 @@ if
 
       // Creating our function invocation.
       .invocation
-         execute:magic.workflows.function.execute
+         execute:magic.workflows.functions.execute
             name
             filename
             arguments

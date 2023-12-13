@@ -2,7 +2,7 @@
 /*
  * Slot that executes a single workflow action.
  */
-slots.create:magic.workflows.function.execute
+slots.create:magic.workflows.functions.execute
 
    // Sanity checking invocation.
    validators.mandatory:x:@.arguments/*/name

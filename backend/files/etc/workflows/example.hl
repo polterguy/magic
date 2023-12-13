@@ -5,7 +5,7 @@
  */
 
 // Executes sql-select function.
-execute:magic.workflows.function.execute
+execute:magic.workflows.functions.execute
    name:sql-select
    filename:/misc/workflows/functions/sql-select.hl
    arguments
