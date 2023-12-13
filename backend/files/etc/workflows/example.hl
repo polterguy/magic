@@ -4,7 +4,11 @@
  * to return result of invocation.
  */
 
-// Executes sql-select function.
+
+/*
+ * Execute some select SQL statement specified as [sql].
+ * Optionally provide [connection-string], [database-type] and [database].
+ */
 execute:magic.workflows.functions.execute
    name:sql-select
    filename:/misc/workflows/functions/sql-select.hl
@@ -13,5 +17,4 @@ execute:magic.workflows.functions.execute
       database-type:sqlite
       database:magic
       sql:select name from roles where name like @arg1 limit 2
-      parameters
          @arg1:a%
