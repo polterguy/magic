@@ -12,8 +12,8 @@
    threshold:decimal
    max_tokens:int
 .example
-   type:ainiro
-   query:Tell me about your chatbot
+   type:x:@.arguments/*/type
+   query:x:@.arguments/*/query
    threshold:decimal:0.3
    max_tokens:int:2000
 .icon:extension
