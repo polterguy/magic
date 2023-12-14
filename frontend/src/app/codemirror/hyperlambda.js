@@ -853,14 +853,16 @@
         list.push(window._vocabulary[idx]);
       }
     }
-    for (var idx = 0; idx < window._slots.length; idx++) {
-      if (window._slots[idx].indexOf(curWord) != -1) {
+    if (window._slots) {
+      for (var idx = 0; idx < window._slots.length; idx++) {
+        if (window._slots[idx].indexOf(curWord) != -1) {
 
-        /*
-         * This dynamic slot contains the text from current line in editor, hence
-         * adding slot invocation and returning it back to caller
-         */
-        list.push('execute:' + window._slots[idx]);
+          /*
+          * This dynamic slot contains the text from current line in editor, hence
+          * adding slot invocation and returning it back to caller
+          */
+          list.push('execute:' + window._slots[idx]);
+        }
       }
     }
     return { list: list, from: CodeMirror.Pos(cur.line, start), to: CodeMirror.Pos(cur.line, end) };
