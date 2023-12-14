@@ -25,7 +25,7 @@ export class EndpointsComponent implements OnInit  {
   defaultListToShow: string = '';
   searchKey: string = '';
   itemToBeTried = new BehaviorSubject<any>({});
-  isLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+  isLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   constructor(
     private generalService: GeneralService,
@@ -64,6 +64,8 @@ export class EndpointsComponent implements OnInit  {
 
   private getEndpoints() {
 
+    this.isLoading.next(true);
+    this.generalService.showLoading();
     this.endpointsService.endpoints().subscribe({
 
       next: (endpoints: Endpoint[]) => {
@@ -105,11 +107,13 @@ export class EndpointsComponent implements OnInit  {
 
           this.isLoading.next(false);
         }
+        this.generalService.hideLoading();
       },
 
       error: (error: any) => {
 
         this.isLoading.next(false);
+        this.generalService.hideLoading();
         this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
       }
     });
