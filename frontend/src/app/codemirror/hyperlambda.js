@@ -857,8 +857,8 @@
       if (window._slots[idx].indexOf(curWord) != -1) {
 
         /*
-         * This keyword contains the text from current line in editor, hence
-         * adding keyword back to caller
+         * This dynamic slot contains the text from current line in editor, hence
+         * adding slot invocation and returning it back to caller
          */
         list.push('execute:' + window._slots[idx]);
       }
