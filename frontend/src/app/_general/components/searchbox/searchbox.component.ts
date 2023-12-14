@@ -31,13 +31,27 @@ export class SearchboxComponent implements OnInit {
   @Input() buttonDisabled: boolean = false;
   @Input() button2Disabled: boolean = false;
   @Input() button3Disabled: boolean = false;
+  @Input() set disableSearchTextBox( condition : boolean ) {
+    this.disabledInitially = condition;
+    if (this.filterControl) {
+      if (condition) {
+        this.filterControl.disable();
+      } else {
+        this.filterControl.enable();
+      }
+    }
+  }
 
   filterControl: FormControl;
   checked: boolean = false;
+  disabledInitially: boolean = false;
 
   ngOnInit() {
 
     this.filterControl = new FormControl('');
+    if (this.disabledInitially) {
+      this.filterControl.disable();
+    }
     this.filterControl.valueChanges
       .pipe(debounceTime(400), distinctUntilChanged())
       .subscribe(() => {
