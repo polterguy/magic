@@ -1,9 +1,0 @@
-<mat-form-field appearance="outline">
-  <mat-label>{{placeholder}}</mat-label>
-  <mat-select
-    [(ngModel)]="model[field]"
-    [name]="field"
-    (selectionChange)="valueChanged()">
-    <mat-option *ngFor="let idx of items" [value]="idx[key]">{{idx[value]}}</mat-option>
-  </mat-select>
-</mat-form-field>

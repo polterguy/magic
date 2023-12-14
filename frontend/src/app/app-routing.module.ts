@@ -48,10 +48,6 @@ const routes: Routes = [
         loadChildren: () => import('./_protected/pages/create/endpoint-generator/_module/endpoint.module').then(m => m.EndpointModule)
       },
       {
-        path: 'frontend-generator',
-        loadChildren: () => import('./_protected/pages/create/frontend-generator/_module/frontend-generator.module').then(m => m.FrontendGeneratorModule)
-      },
-      {
         path: 'plugins',
         loadChildren: () => import('./_protected/pages/manage/plugins/_module/plugins.module').then(m => m.PluginsModule)
       },
@@ -84,16 +80,8 @@ const routes: Routes = [
         loadChildren: () => import('./_protected/pages/misc/log/_module/log.module').then(m => m.LogModule)
       },
       {
-        path: 'cryptography',
-        loadChildren: () => import('./_protected/pages/misc/cryptography/_module/cryptography.module').then(m => m.CryptographyModule)
-      },
-      {
         path: 'user-profile',
         loadChildren: () => import('./_protected/pages/user/profile/_module/profile.module').then(m => m.ProfileModule)
-      },
-      {
-        path: 'help-center',
-        loadChildren: () => import('./_protected/pages/misc/help-center/_module/help-center.module').then(m => m.HelpCenterModule)
       },
       {
         path: 'machine-learning',
