@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) Aista Ltd, and Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
+ * Copyright (c) 2023 Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
  */
 
 import { NgModule } from '@angular/core';
@@ -22,7 +22,7 @@ import { CodemirrorModule } from '@ctrl/ngx-codemirror';
     ComponentsModule,
     MaterialModule,
     CmModule,
-    CodemirrorModule
+    CodemirrorModule,
   ]
 })
 export class HyperlambdaPlaygroundModule { }

@@ -25,7 +25,7 @@
 
       <mat-accordion multi>
         <mat-expansion-panel
-          (opened)="panelExpanded(el);"
+          (opened)="panelExpanded(el)"
           class="mat-elevation-z1 mb-3"
           id="inner-panel"
           *ngFor="let el of item.value">
@@ -142,7 +142,7 @@
 
             </div>
 
-            <ng-container>
+            <ng-container *ngIf="isExpanded(el)">
 
               <div class="row mt-4">
                 <div class="col-12">
@@ -186,13 +186,13 @@
 
   <app-loading-skeleton
     amount="1"
-    colClass="col-12"
+    colClass="col-12 mb-3"
     blockHeight="64px">
   </app-loading-skeleton>
 
   <app-loading-skeleton
     amount="5"
-    colClass="col-12"
+    colClass="col-12 mb-3"
     blockHeight="56px">
   </app-loading-skeleton>
 

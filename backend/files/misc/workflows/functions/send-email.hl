@@ -1,0 +1,40 @@
+
+/*
+ * Sends an email to the specified [name]/[email] recipient,
+ * with the specified [subject] and [body] using the default from email address and name
+ * from your configuration settings.
+ */
+.arguments
+   name:string
+   email:string
+   subject:string
+   body:string
+.example
+   name:John Doe
+   email:john@doe.com
+   subject:Just checking in
+   body:@"Hi John,
+
+How's it going?"
+.icon:email
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/name
+validators.mandatory:x:@.arguments/*/email
+validators.email:x:@.arguments/*/email
+validators.mandatory:x:@.arguments/*/subject
+validators.mandatory:x:@.arguments/*/body
+
+// Forward evaluating arguments to [mail.smtp.send].
+unwrap:x:./*/mail.smtp.send/**
+
+// Sending email.
+mail.smtp.send
+   message
+      to
+         .
+            name:x:@.arguments/*/name
+            email:x:@.arguments/*/email
+      subject:x:@.arguments/*/subject
+      entity:text/plain
+         content:x:@.arguments/*/body

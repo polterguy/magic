@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) Aista Ltd, and Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
+ * Copyright (c) 2023 Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
  */
 
 import { Injectable, NgZone } from '@angular/core';
@@ -52,6 +52,11 @@ export class CodemirrorActionsService {
         res.options.extraKeys['Alt-D'] = () => {
           this.ngZone.run(() => {
             this.action.next('deleteFile');
+          })
+        };
+        res.options.extraKeys['Alt-F'] = () => {
+          this.ngZone.run(() => {
+            this.action.next('find');
           })
         };
         res.options.extraKeys['Alt-C'] = () => {

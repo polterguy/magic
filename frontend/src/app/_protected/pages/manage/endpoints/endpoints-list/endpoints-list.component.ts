@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) Aista Ltd, and Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
+ * Copyright (c) 2023 Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
  */
 
 import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
@@ -45,6 +45,11 @@ export class EndpointsListComponent {
   panelExpanded(el: any) {
 
     el.expanded = true;
+  }
+
+  isExpanded(el: any) {
+
+    return el.expanded;
   }
 
   deleteEndpoint(el: any) {

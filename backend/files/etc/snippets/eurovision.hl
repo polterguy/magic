@@ -1,0 +1,24 @@
+signal:magic.http.duckduckgo-and-scrape
+   query:Who won Eurovision 2023
+   max:int:5
+
+
+signal:magic.http.duckduckgo-search
+   query:Who won Eurovision 2023
+   max:int:5
+
+signal:magic.http.scrape-url
+   url:"https://www.cnn.com/2023/05/13/europe/eurovision-song-contest-2023-winner-intl/index.html"
+
+signal:magic.http.scrape-url
+   url:"https://eurovisionworld.com/eurovision/2023"
+
+signal:magic.http.scrape-url
+   url:"https://www.nytimes.com/2023/05/13/arts/music/eurovision-2023-final-sweden.html"
+
+signal:magic.http.scrape-url
+   url:"https://www.npr.org/2023/05/13/1176049673/loreen-of-sweden-wins-eurovision-song-contest"
+
+signal:magic.http.scrape-url
+   url:"https://www.nytimes.com/live/2023/05/13/arts/eurovision-final"
+

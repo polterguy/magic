@@ -13,6 +13,7 @@
     <mat-chip
       *ngFor="let item of assumptions"
       [matTooltip]="item.description"
+      matTooltipPosition="right"
       (click)="runAssumption(item)"
       class="assumption mat-caption"
       selectable="false">

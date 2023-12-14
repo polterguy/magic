@@ -1,0 +1,18 @@
+
+// Switch/case lambda conditionally executing a piece of Hyperlambda.
+switch:x:@.arguments/*/input-value
+
+   case:foo
+
+      // [input-value] was equal to "foo".
+      log.info:Value was foo
+
+   case:bar
+
+      // [input-value] was equal to "bar".
+      log.info:Value was bar
+
+   default
+
+      // [input-value] was neither foo nor bar.
+      log.info:Value was neither foo nor bar
