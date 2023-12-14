@@ -81,9 +81,13 @@ export class IdeTreeComponent implements OnInit {
 
         // Data binding tree.
         this.dataSource.data = this.root.children;
+
+        this.getToolboxItemsFromServer().then(() => {
+
+          this.generalService.hideLoading();
+        })
       }
     });
-    this.getToolboxItemsFromServer();
   }
 
   /**
@@ -153,20 +157,22 @@ export class IdeTreeComponent implements OnInit {
    */
   getToolboxItemsFromServer() {
 
-    this.generalService.showLoading();
-    this.workflowService.listToolboxItems().subscribe({
+    return new Promise<boolean>(resolve => {
 
-      next: (functions: any[]) => {
+      this.workflowService.listToolboxItems().subscribe({
 
-        this.generalService.hideLoading();
-        this.workflowFunctions = functions.reverse();
-      },
+        next: (functions: any[]) => {
 
-      error: (error: any) => {
+          this.workflowFunctions = functions.reverse();
+          resolve(true);
+        },
 
-        this.generalService.hideLoading();
-        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
-      }
+        error: (error: any) => {
+
+          this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+          resolve(false);
+        }
+      });
     });
   }
 
@@ -771,9 +777,12 @@ export class IdeTreeComponent implements OnInit {
         } else {
 
           this.dataBindTree();
+          this.generalService.hideLoading();
         }
+      } else {
+        this.generalService.hideLoading();
       }
-    })
+    });
   }
 
   isExpandable(_: number, node: FlatNode) {
