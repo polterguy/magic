@@ -1,6 +1,0 @@
-
-// Automatically generated assumption test.
-verb:get
-url:/magic/system/crypto/public-key
-status:int:200
-description:"Assumes that trying to retrieve the server's public cryptography key succeeds"
