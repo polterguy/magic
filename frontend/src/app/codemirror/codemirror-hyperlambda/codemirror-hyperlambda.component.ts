@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) Aista Ltd, and Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
+ * Copyright (c) 2023 Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
  */
 
 // Angular and system imports.
@@ -48,9 +48,10 @@ export class HyperlambdaComponent implements OnInit {
     } else {
 
       this.vocabularyService.vocabulary().subscribe({
-        next: (vocabulary: string[]) => {
+        next: (result: {vocabulary: string[], slots: string[]}) => {
 
-          window['_vocabulary'] = vocabulary;
+          window['_vocabulary'] = result.vocabulary;
+          window['_slot'] = result.slots;
           this.init();
         },
         error: (error: any) => this.generalService.showFeedback(error.error.message ?? error, 'errorMessage')

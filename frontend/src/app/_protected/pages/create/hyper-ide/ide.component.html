@@ -1,5 +1,6 @@
 
 <div class="row fullPage">
+
   <div class="col-xl-3 col-lg-4 col-md-5 col-12 mb-md-0 mb-4">
 
     <mat-card class="h-100 tree-card">
@@ -50,6 +51,7 @@
           [activeFolder]="tree.activeFolder"
           [openFiles]="tree.openFiles"
           (updateFileObject)="tree.updateFileObject($event)"
+          (focusToFind)="focusToFind($event)"
           (getFilesFromServer)="tree.getFilesFromServer()"
           (getEndpoints)="tree.getEndpoints()"
           [endpoints]="tree.endpoints"

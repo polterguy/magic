@@ -1,0 +1,52 @@
+
+/*
+ * Execute some select SQL statement specified as [sql].
+ * Optionally provide [connection-string], [database-type] and [database].
+ */
+.arguments
+   connection-string:string
+   database-type:string
+   database:string
+   sql:*
+.example
+   connection-string:generic
+   database-type:sqlite
+   database:magic
+   sql:insert into roles (name, description) value (@name, @description)
+      @name:role-name
+      @description:The description for your role
+.icon:backup
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/sql
+
+// Applying defaults.
+validators.default:x:@.arguments
+   connection-string:generic
+   database-type:sqlite
+   database:magic
+
+// Connection string to actually use as we connect.
+.connection-string
+
+// Caller supplied an explicit [connection-string] argument.
+set-value:x:@.connection-string
+   strings.concat
+      .:[
+      get-value:x:@.arguments/*/connection-string
+      .:|
+      get-value:x:@.arguments/*/database
+      .:]
+
+// Connecting to database.
+data.connect:x:@.connection-string
+   database-type:x:@.arguments/*/database-type
+
+   // Parametrizing SQL.
+   add:x:./*/data.select
+      get-nodes:x:@.arguments/*/sql/*
+
+   // Executing SQL.
+   data.select:x:@.arguments/*/sql
+      database-type:x:@.arguments/*/database-type
+   return-nodes:x:@data.select/*

@@ -18,7 +18,7 @@
             <ng-container *ngIf="isLoading;else loaded">
               <app-loading-skeleton
                 [amount]="1"
-                [colClass]="'col-12'"
+                colClass="col-12 mb-3"
                 [blockHeight]="'41px'"
                 [hasShadow]="false">
               </app-loading-skeleton>
@@ -37,7 +37,7 @@
         <ng-container *ngIf="isLoading;else dataReady">
           <app-loading-skeleton
             [amount]="6"
-            [colClass]="'col-12'"
+            colClass="col-12 mb-3"
             [blockHeight]="'40px'"
             [hasShadow]="false">
           </app-loading-skeleton>

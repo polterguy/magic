@@ -1,0 +1,69 @@
+
+/*
+ * Returns [max_tokens] context for the specified [query] by searching DuckDuckGo.
+ *
+ * [max_tokens] is optional and defaults to 4000.
+ */
+.arguments
+   query:string
+   max_tokens:int
+.example
+   query:x:@.arguments/*/query
+   max_tokens:int:4000
+.icon:extension
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/query
+
+// Applying default values for optional arguments.
+validators.default:x:@.arguments
+   max_tokens:int:4000
+
+// Retrieving context.
+execute:magic.http.duckduckgo-and-scrape
+   query:x:@.arguments/*/query
+   max:int:10
+
+// Building our context return value.
+.context:
+while
+   and
+      exists:x:@execute/0/*/snippets/0
+      lt
+         openai.tokenize:x:@.context
+         get-value:x:@.arguments/*/max_tokens
+   .lambda
+
+      // Temporary value.
+      .tmp
+      set-value:x:@.tmp
+         strings.concat
+            get-value:x:@.context
+            .:"\r\n"
+            .:"\r\n"
+            get-value:x:@execute/0/*/snippets/0/*/prompt
+            .:"\r\n"
+            get-value:x:@execute/0/*/snippets/0/*/completion
+      if
+         lt
+            openai.tokenize:x:@.tmp
+            get-value:x:@.arguments/*/max_tokens
+         .lambda
+
+            // Still below [max_tokes].
+            set-value:x:@.context
+               get-value:x:@.tmp
+
+      // Removing top snippet.
+      remove-nodes:x:@execute/0/*/snippets/0
+      if
+         not-exists:x:@execute/0/*/snippets/0
+         .lambda
+
+            // Removing currently iterated URL.
+            remove-nodes:x:@execute/0
+
+// Returning result to caller.
+unwrap:x:./*/return/*
+return
+   result:x:@.context

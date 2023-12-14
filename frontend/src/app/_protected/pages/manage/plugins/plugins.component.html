@@ -19,8 +19,12 @@
 
         <!-- Loading skeleton displayed when system is waiting for data from the backend -->
         <ng-container *ngIf="isLoading">
-          <app-loading-skeleton [amount]="9" [colClass]="'col-4'" [blockHeight]="'180px'"
-            [hasShadow]="false"></app-loading-skeleton>
+          <app-loading-skeleton
+            [amount]="9"
+            [colClass]="'col-4 mb-3'"
+            [blockHeight]="'180px'"
+            [hasShadow]="false">
+          </app-loading-skeleton>
         </ng-container>
 
         <!-- List of plugins available, and/or already installed in the system -->

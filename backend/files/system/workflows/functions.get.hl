@@ -1,0 +1,60 @@
+
+/*
+ * Returns all workflow functions to caller.
+ */
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Listing all functions and snippets in workflow folder.
+io.file.list-recursively:/misc/workflows/
+
+// Filtering out everything not ending with '.hl'.
+for-each:x:@io.file.list-recursively/*
+   if
+      strings.ends-with:x:@.dp/#
+         .:.hl
+      .lambda
+
+         // Loading file to add meta data.
+         load-file:x:@.dp/#
+         hyper2lambda:x:-
+            comments:true
+         if
+            eq
+               get-name:x:@hyper2lambda/0
+               .:..
+            .lambda
+               unwrap:x:+/*/*
+               add:x:@.lambda/@.lambda/0/-/*/*
+                  .
+                     description:x:@hyper2lambda/0
+         if
+            strings.starts-with:x:@.dp/#
+               .:/misc/workflows/snippets/
+            .lambda
+               unwrap:x:+/*/*
+               add:x:@.lambda/@.lambda/0/-/*/*
+                  .
+                     content:x:@load-file
+
+         // Creating a name for function.
+         strings.split:x:@.dp/#
+            .:/
+         strings.split:x:-/0/-
+            .:.
+         remove-nodes:x:@strings.split/0/-
+         strings.join:x:@strings.split/0
+            .:.
+
+         // Returning result to caller.
+         unwrap:x:+/*/*/*
+         add:x:../*/return
+            .
+               .
+                  name:x:@strings.join
+                  filename:x:@.dp/#
+                  icon:x:@hyper2lambda/*/.icon
+
+// Returning result to caller.
+return

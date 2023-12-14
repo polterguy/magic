@@ -14,6 +14,7 @@
 
       <button
         mat-button
+        *ngIf="currentFileData"
         color="primary"
         (click)="openShortkeys()">
         Shortkeys

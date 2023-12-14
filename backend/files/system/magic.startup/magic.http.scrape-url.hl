@@ -596,11 +596,15 @@ slots.create:magic.http.scrape-url
                   // Checking if this is a list of some sort, at which point we turn it into an unordered list.
                   switch:x:@get-name
                      case:li
-                        set-value:x:@.completion
-                           strings.concat
-                              .:"\r\n"
-                              .:"- "
-                              get-value:x:@.completion
+                        if
+                           neq:x:@.completion
+                              .:
+                           .lambda
+                              set-value:x:@.completion
+                                 strings.concat
+                                    .:"\r\n"
+                                    .:"- "
+                                    get-value:x:@.completion
                      case:p
                         set-value:x:@.completion
                            strings.concat
@@ -644,13 +648,16 @@ slots.create:magic.http.scrape-url
             not-null:x:@.dp/#/*/prompt
             mt
                strings.length:x:@.dp/#/*/prompt
-               .:int:50
+               .:int:0
             exists:x:@.dp/#/*/completion
             not-null:x:@.dp/#/*/completion
-            mt
-               strings.length:x:@.dp/#/*/completion
-               .:int:50
          .lambda
+
+            // Trimming both prompt and completion.
+            set-value:x:@.dp/#/*/prompt
+               strings.trim:x:@.dp/#/*/prompt
+            set-value:x:@.dp/#/*/completion
+               strings.trim:x:@.dp/#/*/completion
 
             // Valid snippet, making sure we return it to caller.
             add:x:../*/return

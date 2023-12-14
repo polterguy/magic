@@ -1,10 +1,11 @@
 
 /*
- * Copyright (c) Aista Ltd, and Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
+ * Copyright (c) 2023 Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
  */
 
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { FileNode } from './models/file-node.model';
+import { IdeSearchboxComponent } from './components/ide-searchbox/ide-searchbox.component';
 
 /**
  * Primary Hyper IDE component, allowing users to browse and edit files.
@@ -18,6 +19,7 @@ export class IdeComponent {
 
   currentFileData: FileNode;
   searchKey: string;
+  @ViewChild('search', {static: true}) search: IdeSearchboxComponent;
 
   showEditor(event: { currentFileData: any }) {
 
@@ -27,5 +29,10 @@ export class IdeComponent {
   filterList(event: any) {
 
     this.searchKey = event.value;
+  }
+
+  focusToFind(e: any) {
+
+    this.search.focusToFind();
   }
 }

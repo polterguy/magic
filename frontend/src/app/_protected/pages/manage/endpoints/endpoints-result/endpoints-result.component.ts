@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) Aista Ltd, and Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
+ * Copyright (c) 2023 Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
  */
 
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
@@ -96,6 +96,7 @@ export class EndpointsResultComponent implements OnInit {
   }
 
   getArguments(args: Argument[], controlArguments: boolean) {
+
     if (this.itemDetails.type === 'crud-read' || this.itemDetails.type === 'crud-count') {
       return args.filter(x => {
         switch (x.name) {
@@ -341,11 +342,9 @@ export class EndpointsResultComponent implements OnInit {
 
       case 'bool':
         return 'text';
-        break;
 
       case 'string':
         return 'text';
-        break;
 
       case 'long':
       case 'int':
@@ -353,11 +352,9 @@ export class EndpointsResultComponent implements OnInit {
       case 'short':
       case 'ushort':
         return 'number';
-        break;
 
       case 'date':
         return 'date';
-        break;
     }
   }
 

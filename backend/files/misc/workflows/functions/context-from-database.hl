@@ -1,0 +1,41 @@
+
+/*
+ * Returns context for the specified [query] from the specified [type],
+ * and returns to caller.
+ *
+ * Optionally add [threshold] and [max_tokens] to specify similarity and maximum
+ * tokens to return.
+ */
+.arguments
+   type:string
+   query:string
+   threshold:decimal
+   max_tokens:int
+.example
+   type:x:@.arguments/*/type
+   query:x:@.arguments/*/query
+   threshold:decimal:0.3
+   max_tokens:int:2000
+.icon:extension
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/type
+validators.mandatory:x:@.arguments/*/query
+
+// Applying default values for optional arguments.
+validators.default:x:@.arguments
+   threshold:decimal:0.3
+   max_tokens:int:4000
+
+// Retrieving context.
+execute:magic.ai.get-context
+   type:x:@.arguments/*/type
+   vector_model:text-embedding-ada-002
+   prompt:x:@.arguments/*/query
+   threshold:x:@.arguments/*/threshold
+   max_tokens:x:@.arguments/*/max_tokens
+
+// Returning result of invocation to caller.
+unwrap:x:./*/return/*
+return
+   result:x:@execute/*/context

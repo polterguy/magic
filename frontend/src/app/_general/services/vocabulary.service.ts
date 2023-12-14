@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) Aista Ltd, and Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
+ * Copyright (c) 2023 Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
  */
 
 // Angular and system imports.
@@ -44,14 +44,25 @@ export class VocabularyService {
       of(this._vocabulary);
     }
 
-    return new Observable<string[]>((observer) => {
+    return new Observable<{vocabulary: string[], slots: string[]}>((observer) => {
 
       this.httpService.get<string[]>('/magic/system/evaluator/vocabulary').subscribe({
         next: (vocabulary: string[]) => {
 
           this._vocabulary = vocabulary;
-          observer.next(vocabulary);
-          observer.complete();
+
+          this.httpService.get<string[]>('/magic/system/evaluator/slots').subscribe({
+            next: (slots: string[]) => {
+    
+              observer.next({vocabulary, slots});
+              observer.complete();
+            },
+            error: (error: any) => {
+    
+              observer.error(error);
+              observer.complete();
+            }
+          });
         },
         error: (error: any) => {
 

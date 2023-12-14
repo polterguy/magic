@@ -1,0 +1,79 @@
+
+/*
+ * Returns all workflow functions to caller.
+ */
+.arguments
+   filename:string
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Loading function Hyperlambda file and transforming to lambda object.
+load-file:x:@.arguments/*/filename
+
+// Checking if this is a function template.
+if
+   strings.starts-with:x:@.arguments/*/filename
+      .:/misc/workflows/functions/
+   .lambda
+
+      /*
+       * This is a function template type of snippet.
+       * Parametrizing accordingly.
+       */
+      .function
+      add:x:@.function
+         hyper2lambda:x:@load-file
+            comments:true
+      .name
+      strings.split:x:@.arguments/*/filename
+         .:/
+      strings.split:x:-/0/-
+         .:.
+      remove-nodes:x:@strings.split/0/-
+      set-value:x:@.name
+         strings.join:x:@strings.split/0
+            .:.
+
+      // Creating our function invocation.
+      .invocation
+         execute:magic.workflows.functions.execute
+            name
+            filename
+            arguments
+      set-value:x:@.invocation/*/execute/*/name
+         get-value:x:@.name
+      set-value:x:@.invocation/*/execute/*/filename
+         get-value:x:@.arguments/*/filename
+
+      // Creating our function comment.
+      if
+         eq
+            get-name:x:@.function/0
+            .:..
+         .lambda
+            unwrap:x:+/*/*
+            insert-before:x:@.invocation/0
+               .
+                  ..:x:@.function/0
+
+      // Adding default argument placeholders for invocation.
+      add:x:@.invocation/*/execute/*/arguments
+         get-nodes:x:@.function/*/.example/*
+
+      // Returning result to caller as Hyperlambda.
+      lambda2hyper:x:@.invocation/*
+         comments:true
+      unwrap:x:+/*
+      return
+         result:x:@lambda2hyper
+
+else
+
+   /*
+    * This is just some other template snippet,
+    * returning as is.
+    */
+   unwrap:x:+/*
+   return
+      result:x:@load-file

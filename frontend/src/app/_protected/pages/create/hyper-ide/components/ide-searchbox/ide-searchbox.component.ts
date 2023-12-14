@@ -1,9 +1,9 @@
 
 /*
- * Copyright (c) Aista Ltd, and Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
+ * Copyright (c) 2023 Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
  */
 
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
 /**
@@ -21,6 +21,7 @@ export class IdeSearchboxComponent {
 
   @Output() filterList = new EventEmitter<any>();
   @Output() toggleFileSystems = new EventEmitter<any>();
+  @ViewChild('input', {static: true}) input: any;
 
   inputValue = this._inputValue.asObservable();
 
@@ -41,5 +42,10 @@ export class IdeSearchboxComponent {
   toggleFileSystem() {
 
     this.toggleFileSystems.emit(this.fileSystem);
+  }
+
+  focusToFind() {
+
+    this.input.nativeElement.focus();
   }
 }

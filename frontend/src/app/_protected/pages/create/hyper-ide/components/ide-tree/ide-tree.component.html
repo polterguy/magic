@@ -12,13 +12,13 @@
 
       <mat-expansion-panel
         expanded
-        class="mat-elevation-z0">
+        class="mat-elevation-z0 mt-2">
 
         <mat-expansion-panel-header class="ps-0 pe-1">
           <mat-panel-title>
             <div class="d-flex justify-content-between align-items-center w-100">
 
-              <p class="my-0 fw-bold text-nowrap w-100">Files & folders</p>
+              <p class="my-0 fw-bold text-nowrap w-100">All files</p>
 
               <div
                 class="ps-3 d-flex justify-content-end align-items-center action-menu-general"
@@ -225,8 +225,52 @@
 
   </div>
 
-  <!-- Currently open files section -->
+  <!-- Toolbox section -->
   <div class="max-height panel-2">
+
+    <mat-accordion
+      displayMode="flat"
+      multi>
+
+      <mat-expansion-panel
+        [expanded]="isHyperlambdaFile()"
+        class="mat-elevation-z0">
+
+        <mat-expansion-panel-header class="ps-0 pe-1">
+          <mat-panel-title>
+            <div class="d-flex w-100">
+              <p class="my-0 fw-bold text-nowrap">Toolbox</p>
+            </div>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <div
+          class="justify-content-between d-flex w-100 toolbox"
+          [class.d-none]="filterToolbox(item, searchKey)"
+          *ngFor="let item of workflowFunctions">
+
+          <!-- Button for selecting workflow function -->
+          <button
+            mat-button
+            [disabled]="!isHyperlambdaFile()"
+            [matTooltip]="getToolboxTooltip(item)"
+            matTooltipPosition="right"
+            [matTooltipClass]="getTooltipClass(item)"
+            (click)="addSnippet(item)"
+            class="justify-content-start d-flex w-100">
+            <mat-icon>{{item.icon ?? 'grade'}}</mat-icon>
+            {{item.name}}
+          </button>
+
+        </div>
+
+      </mat-expansion-panel>
+    </mat-accordion>
+
+  </div>
+
+  <!-- Currently open files section -->
+  <div class="max-height panel-3">
 
     <mat-accordion
       displayMode="flat"

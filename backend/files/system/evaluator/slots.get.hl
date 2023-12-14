@@ -1,0 +1,13 @@
+
+// Returns all dynamic slots in the system.
+.description:Returns all dynamic slots in the system
+.type:internal
+
+// Ensures user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Retrieving all system slots.
+slots.vocabulary
+
+// Returning results of the above to caller.
+return-nodes:x:@slots.vocabulary/*

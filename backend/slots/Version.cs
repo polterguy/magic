@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) Aista Ltd, 2021 - 2023 team@ainiro.io.
+ * Copyright (c) Thomas Hansen, 2021 - 2023 thomas@ainiro.io.
  */
 
 using magic.node;
@@ -20,7 +20,7 @@ namespace magic.backend.slots
         /// <param name="input">Parameters passed from signaler</param>
         public void Signal(ISignaler signaler, Node input)
         {
-            input.Value = "v16.11.26";
+            input.Value = "v17.0.0";
         }
     }
 }

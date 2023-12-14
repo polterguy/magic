@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) Aista Ltd, and Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
+ * Copyright (c) 2023 Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
  */
 
 import { FlatTreeControl } from '@angular/cdk/tree';
@@ -21,6 +21,8 @@ import { MacroDefinition } from '../../models/macro-definition.model';
 import { TreeNode } from './models/tree-node.model';
 import { CodemirrorActionsService } from '../../../../../../_general/services/codemirror-actions.service';
 import { FileService } from '../../../../../../_general/services/file.service';
+import { WorkflowService } from 'src/app/_general/services/workflow.service';
+import { MagicResponse } from 'src/app/_general/models/magic-response.model';
 
 /**
  * Tree component for Hyper IDE displaying files and folders, allowing user
@@ -62,10 +64,12 @@ export class IdeTreeComponent implements OnInit {
   zipFileInput: string;
   showRenameBox: TreeNode = null;
   currentSelection: string = '';
+  workflowFunctions: any[] = [];
 
   constructor(
     private dialog: MatDialog,
     private fileService: FileService,
+    private workflowService: WorkflowService,
     private generalService: GeneralService,
     private endpointService: EndpointService,
     private codemirrorActionsService: CodemirrorActionsService) { }
@@ -86,6 +90,15 @@ export class IdeTreeComponent implements OnInit {
         this.getEndpoints();
       }
     });
+    this.getToolboxItemsFromServer();
+  }
+
+  /**
+   * Returns true if currently open file is a Hyperlambda file.
+   */
+  isHyperlambdaFile() {
+
+    return this.currentFileData?.path?.endsWith('.hl') || false;
   }
 
   /**
@@ -118,6 +131,7 @@ export class IdeTreeComponent implements OnInit {
 
       // Getting folders recursively.
       this.fileService.listFoldersRecursively(folder, this.systemFiles).subscribe({
+
         next: (folders: string[]) => {
 
           addToRoot(folders || [], true);
@@ -133,10 +147,75 @@ export class IdeTreeComponent implements OnInit {
           });
         },
         error: (error: any) => {
+
           resolve(false);
           this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
         }
       });
+    });
+  }
+
+  /**
+   * Returns all toolbox items from the server.
+   */
+  getToolboxItemsFromServer() {
+
+    this.generalService.showLoading();
+    this.workflowService.listToolboxItems().subscribe({
+
+      next: (functions: any[]) => {
+
+        this.generalService.hideLoading();
+        this.workflowFunctions = functions.reverse();
+      },
+
+      error: (error: any) => {
+
+        this.generalService.hideLoading();
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+      }
+    });
+  }
+
+  /**
+   * Adds the specified function to the currently edited workflow.
+   */
+  addSnippet(el: any) {
+
+    // Retrieving editor instance.
+    const fileExisting: number = this.openFiles.findIndex((item: any) => item.path === this.currentFileData.path);
+    const activeWrapper = document.querySelector('.active-codemirror-editor-' + fileExisting);
+    const editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
+
+    // Making sure we're in a position where we can insert Hyperlambda.
+    const sel = editor.doc.sel.ranges[0];
+    if (sel.anchor.ch % 3 !== 0) {
+      this.generalService.showFeedback('You cannot insert Hyperlambda at the caret\'s current position since it would produce invalid Hyperlambda', 'errorMessage');
+      editor.focus();
+      return;
+    }
+
+    this.generalService.showLoading();
+    this.workflowService.getHyperlambda(el.filename).subscribe({
+
+      next: (result: MagicResponse) => {
+
+        this.generalService.hideLoading();
+        let hl = result.result.split('\r\n');
+        let sp = '';
+        for (let idxNo = 0; idxNo < sel.anchor.ch; idxNo++) {
+          sp += ' ';
+        }
+        editor.replaceSelection(hl.map(x => sp + x).join('\r\n'));
+        editor.changeGeneration(true);
+        editor.focus();
+      },
+
+      error: (error: any) => {
+
+        this.generalService.hideLoading();
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+      }
     });
   }
 
@@ -732,6 +811,25 @@ export class IdeTreeComponent implements OnInit {
       return false
     }
     return true
+  }
+
+  filterToolbox(item: any, searchKeyword: string) {
+
+    return searchKeyword &&
+      searchKeyword !== '' &&
+      !item.name.toLowerCase().includes(searchKeyword.toLowerCase()) &&
+      !item.description.toLowerCase().includes(searchKeyword.toLowerCase()) &&
+      (!item.content?.toLowerCase().includes(searchKeyword.toLowerCase()) || false);
+  }
+
+  getTooltipClass(el: any) {
+
+    return el.content ? 'pre-tooltip' : '';
+  }
+
+  getToolboxTooltip(item: any) {
+
+    return item.content ?? item.description;
   }
 
   installModule(file: FileList) {

@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) Aista Ltd, and Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
+ * Copyright (c) 2023 Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
  */
 
 import { Component, Inject, OnInit } from '@angular/core';
@@ -41,6 +41,15 @@ export class ShortkeysComponent implements OnInit {
         {
           name: 'Save',
           key: 'Alt + S'
+        }
+      ];
+    }
+    if (this.data.type.indexOf('find') > -1) {
+      this.shortkeys = [
+        ...this.shortkeys,
+        {
+          name: 'Find',
+          key: 'Alt + F'
         }
       ];
     }

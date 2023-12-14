@@ -1,0 +1,4 @@
+
+// Saves the specified content to the specified file assuming the content is text-based.
+save-file:/etc/foo.md
+   get-content:x:@.file-content

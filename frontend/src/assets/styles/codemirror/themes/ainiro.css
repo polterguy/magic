@@ -20,17 +20,17 @@
 
 .cm-s-ainiro span.cm-property, .cm-s-ainiro span.cm-attribute { color: #9ddfe9; }
 .cm-s-ainiro span.cm-keyword { color: #ffb928; }
-.cm-s-ainiro span.cm-string { color: #ffcf6c; }
+.cm-s-ainiro span.cm-string { color: #9ddfe9; }
 .cm-s-ainiro span.cm-string.cm-property { color: #ffffec; }
 
 .cm-s-ainiro span.cm-type { color: #fffffc; }
 .cm-s-ainiro span.cm-variable { color: #00a8c6; }
-.cm-s-ainiro span.cm-variable-2 { color: #32a5b9; }
+.cm-s-ainiro span.cm-variable-2 { color: #ffb928; }
 .cm-s-ainiro span.cm-def { color: #00c6a8; }
 .cm-s-ainiro span.cm-bracket { color: #fffffc; font-weight: bold; }
 .cm-s-ainiro span.cm-tag { color: #9ddfe9; }
 .cm-s-ainiro span.cm-link { color: #f54b07; }
-.cm-s-ainiro span.cm-error { border-bottom: #636363; color: #ffffec; }
+.cm-s-ainiro span.cm-error { color: #ff0000; }
 .cm-s-ainiro span.cm-qualifier { color: #ffffec; }
 
 .cm-s-ainiro .CodeMirror-activeline-background { background: #494b41; }

@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) Aista Ltd, and Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
+ * Copyright (c) 2023 Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
  */
 
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
@@ -25,6 +25,8 @@ import { FileService } from '../../../../../../_general/services/file.service';
 import { VocabularyService } from '../../../../../../_general/services/vocabulary.service';
 import { Endpoint } from 'src/app/_protected/models/common/endpoint.model';
 import { AiService } from 'src/app/_general/services/ai.service';
+import { MagicResponse } from 'src/app/_general/models/magic-response.model';
+import { ExecuteResult } from '../execute-result/execute-result-dialog.component';
 
 /**
  * Hyper IDE editor component, wrapping currently open files, allowing user to edit the code.
@@ -54,6 +56,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   @Output() renameFileFromParent: EventEmitter<{ file: { path: string }, newName: string }> = new EventEmitter<{ file: { path: string }, newName: string }>();
   @Output() renameFolderFromParent: EventEmitter<any> = new EventEmitter<any>();
   @Output() createNewFileObjectFromParent: EventEmitter<any> = new EventEmitter<any>();
+  @Output() focusToFind: EventEmitter<any> = new EventEmitter<any>();
 
   constructor(
     private dialog: MatDialog,
@@ -127,16 +130,22 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     this.dialog.open(ShortkeysComponent, {
       width: '900px',
       data: {
-        type: ['full', 'prompt']
+        type: ['full', 'prompt', 'find']
       }
-    })
+    });
   }
 
   ngAfterViewInit() {
 
     if (!window['_vocabulary']) {
       this.vocabularyService.vocabulary().subscribe({
-        next: (vocabulary: string[]) => window['_vocabulary'] = vocabulary,
+
+        next: (result: {vocabulary: string[], slots: string[]}) => {
+
+          window['_vocabulary'] = result.vocabulary;
+          window['_slots'] = result.slots;
+        },
+
         error: error => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
       });
     }
@@ -228,13 +237,31 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
 
     } else {
 
+      // Verifying document contains any actual code.
+      const fileExisting: number = this.openFiles.findIndex((item: any) => item.path === this.currentFileData.path);
+      const activeWrapper = document.querySelector('.active-codemirror-editor-' + fileExisting);
+      const editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
+      if (editor.getDoc().getValue() === '') {
+
+        this.generalService.showFeedback('Active document contains no code', 'errorMessage');
+        return;
+      }
+      const selectedText = editor.getSelection();
+
       this.generalService.showLoading();
-      this.evaluatorService.execute(this.currentFileData.content).subscribe({
-        next: () => {
+      this.evaluatorService.execute(selectedText === '' ? this.currentFileData.content : selectedText).subscribe({
+
+        next: (response: MagicResponse) => {
 
           this.generalService.hideLoading();
-          this.generalService.showFeedback('File successfully executed', 'successMessage');
+          this.dialog.open(ExecuteResult, {
+            width: '900px',
+            data: {
+              hyperlambda: response.result,
+            }
+          });
         },
+
         error: (error: any) => {
 
           this.generalService.hideLoading();
@@ -286,7 +313,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
         }
       }
       resolve(true);
-    })
+    });
   }
 
   private markEditorClean(clearHistory: boolean = true) {
@@ -335,7 +362,6 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     });
     dialog.afterClosed().subscribe((data: string) => {
       if (data) {
-        const path: string = this.activeFolder.substring(0, this.activeFolder.lastIndexOf('/'));
         this.renameFolderFromParent.emit({
           folder: this.activeFolder,
           newName: data,
@@ -529,6 +555,10 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
 
         case 'save':
           this.saveActiveFile();
+          break;
+
+        case 'find':
+          this.focusToFind.emit();
           break;
 
         case 'deleteFile':

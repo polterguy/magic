@@ -15,7 +15,10 @@ log.error:x:@.arguments/*/message
 if
    and
       exists:x:@.arguments/*/public
-      get-value:x:@.arguments/*/public
+      or
+         get-value:x:@.arguments/*/public
+         convert:x:@.arguments/*/public
+            type:bool
    .lambda
    
       // Exception message is supposed to propagate to client.

@@ -1,0 +1,69 @@
+
+/*
+ * Invokes ChatGPT with the specified [messages].
+ *
+ * Will use the default API key found from configurations.
+ */
+.arguments
+   model:string
+   max_tokens:int
+   messages:*
+.example
+   messages
+      .
+         role:system
+         content:Answer my question in the style of Snoop Dogg
+      .
+         role:user
+         content:"Explain Einstein's theory of relativity as if I am 5 in one sentence"
+.icon:chat_bubble
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/messages
+validators.default:x:@.arguments
+   model:gpt-4-1106-preview
+   max_tokens:int:4000
+
+// Retrieving OpenAI API token from configuration settings.
+.token
+set-value:x:@.token
+   strings.concat
+      .:"Bearer "
+      config.get:"magic:openai:key"
+
+// Parametrizing invocation to ChatGPT.
+add:x:./*/http.post/*/payload
+   get-nodes:x:@.arguments/*/messages
+
+// Invokes OpenAI.
+http.post:"https://api.openai.com/v1/chat/completions"
+   convert:bool:true
+   headers
+      Authorization:x:@.token
+      Content-Type:application/json
+   payload
+      model:x:@.arguments/*/model
+      max_tokens:x:@.arguments/*/max_tokens
+      temperature:decimal:0.3
+
+// Sanity checking above invocation.
+if
+   not
+      and
+         mte:x:@http.post
+            .:int:200
+         lt:x:@http.post
+            .:int:300
+   .lambda
+
+      // Oops, error - Logging error and returning status 500 to caller.
+      lambda2hyper:x:@http.post
+      log.error:Something went wrong while invoking OpenAI
+         message:x:@http.post/*/content/*/error/*/message
+         status:x:@http.post
+         error:x:@lambda2hyper
+
+// Returning result to caller.
+unwrap:x:+/*
+return
+   result:x:@http.post/*/content/*/choices/0/*/message/*/content
