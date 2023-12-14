@@ -8,9 +8,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output
 import { MatDialog } from '@angular/material/dialog';
 import { MatTreeFlattener, MatTreeFlatDataSource } from '@angular/material/tree';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
-import { EndpointService } from 'src/app/_general/services/endpoint.service';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { Endpoint } from 'src/app/_protected/models/common/endpoint.model';
 import { ExecuteMacroDialogComponent } from '../execute-macro-dialog/execute-macro-dialog.component';
 import { IncompatibleFileDialogComponent } from '../incompatible-file-dialog/incompatible-file-dialog.component';
 import { NewFileFolderDialogComponent } from '../new-file-folder-dialog/new-file-folder-dialog.component';
@@ -52,7 +50,6 @@ export class IdeTreeComponent implements OnInit {
   @Output() clearEditorHistory: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output() setFocusToActiveEditor: EventEmitter<any> = new EventEmitter<any>();
 
-  endpoints: Endpoint[];
   systemFiles: boolean = false;
 
   treeControl = new FlatTreeControl<FlatNode>(node => node.level, node => node.expandable);
@@ -71,7 +68,6 @@ export class IdeTreeComponent implements OnInit {
     private fileService: FileService,
     private workflowService: WorkflowService,
     private generalService: GeneralService,
-    private endpointService: EndpointService,
     private codemirrorActionsService: CodemirrorActionsService) { }
 
   ngOnInit() {
@@ -85,9 +81,6 @@ export class IdeTreeComponent implements OnInit {
 
         // Data binding tree.
         this.dataSource.data = this.root.children;
-
-        // We need endpoints to be able to determine how to execute Hyperlambda files (execute or invoke).
-        this.getEndpoints();
       }
     });
     this.getToolboxItemsFromServer();
@@ -563,9 +556,6 @@ export class IdeTreeComponent implements OnInit {
         // Data binding tree again, the node name changed.
         this.dataBindTree();
 
-        // In case file changed file extension, we need to retrieve endpoints again.
-        this.getEndpoints();
-
         // Hiding rename textbox.
         this.showRenameBox = null;
 
@@ -781,7 +771,6 @@ export class IdeTreeComponent implements OnInit {
         } else {
 
           this.dataBindTree();
-          this.getEndpoints();
         }
       }
     })
@@ -930,7 +919,6 @@ export class IdeTreeComponent implements OnInit {
 
       sorter();
       this.dataBindTree();
-      this.getEndpoints();
       this.updateFileObject(event.objectPath);
     }
   }
@@ -1025,23 +1013,6 @@ export class IdeTreeComponent implements OnInit {
             this.selectMacro();
           }
         });
-      },
-      error: (error: any) => {
-
-        this.generalService.hideLoading();
-        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
-      }
-    });
-  }
-
-  private getEndpoints() {
-
-    this.generalService.showLoading();
-    this.endpointService.endpoints().subscribe({
-      next: (result: Endpoint[]) => {
-
-        this.generalService.hideLoading();
-        this.endpoints = result;
       },
       error: (error: any) => {
 

@@ -17,13 +17,11 @@ import { RenameFolderDialogComponent } from '../rename-folder-dialog/rename-fold
 import { SelectMacroDialogComponent, Macro } from '../select-macro-dialog/select-macro-dialog.component';
 import { UnsavedChangesDialogComponent } from '../unsaved-changes-dialog/unsaved-changes-dialog.component';
 import { EvaluatorService } from '../../../../../../_general/services/evaluator.service';
-import { ExecuteEndpointDialogComponent } from '../../../../../../_general/components/execute-endpoint-dialog/execute-endpoint-dialog.component';
 import { FileNode } from '../../models/file-node.model';
 import { MacroDefinition } from '../../models/macro-definition.model';
 import { CodemirrorActionsService } from '../../../../../../_general/services/codemirror-actions.service';
 import { FileService } from '../../../../../../_general/services/file.service';
 import { VocabularyService } from '../../../../../../_general/services/vocabulary.service';
-import { Endpoint } from 'src/app/_protected/models/common/endpoint.model';
 import { AiService } from 'src/app/_general/services/ai.service';
 import { MagicResponse } from 'src/app/_general/models/magic-response.model';
 import { ExecuteResult } from '../execute-result/execute-result-dialog.component';
@@ -44,11 +42,9 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   @Input() currentFileData: FileNode;
   @Input() activeFolder: string = '';
   @Input() openFiles: FileNode[];
-  @Input() endpoints: Endpoint[];
 
   @Output() updateFileObject: EventEmitter<any> = new EventEmitter<any>();
   @Output() getFilesFromServer: EventEmitter<any> = new EventEmitter<any>();
-  @Output() getEndpoints: EventEmitter<any> = new EventEmitter<any>();
   @Output() dataBindTree: EventEmitter<any> = new EventEmitter<any>();
   @Output() closeFile: EventEmitter<string> = new EventEmitter<string>();
   @Output() deleteActiveFolderFromParent: EventEmitter<any> = new EventEmitter<any>();
@@ -168,7 +164,6 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
 
         this.markEditorClean(false);
         this.generalService.showFeedback('File successfully saved', 'successMessage');
-        this.getEndpoints.emit();
         if (thenClose) {
           this.closeActiveFile(true);
         }
@@ -226,79 +221,37 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
       return;
     }
 
-    if (await this.getEndpointToExecute() !== null) {
+    // Verifying document contains any actual code.
+    const fileExisting: number = this.openFiles.findIndex((item: any) => item.path === this.currentFileData.path);
+    const activeWrapper = document.querySelector('.active-codemirror-editor-' + fileExisting);
+    const editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
+    if (editor.getDoc().getValue() === '') {
 
-      this.dialog.open(ExecuteEndpointDialogComponent, {
-        data: { itemToBeTried: await this.getEndpointToExecute() },
-        minWidth: '80vw',
-        minHeight: '50vh',
-        panelClass: ['light']
-      });
-
-    } else {
-
-      // Verifying document contains any actual code.
-      const fileExisting: number = this.openFiles.findIndex((item: any) => item.path === this.currentFileData.path);
-      const activeWrapper = document.querySelector('.active-codemirror-editor-' + fileExisting);
-      const editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
-      if (editor.getDoc().getValue() === '') {
-
-        this.generalService.showFeedback('Active document contains no code', 'errorMessage');
-        return;
-      }
-      const selectedText = editor.getSelection();
-
-      this.generalService.showLoading();
-      this.evaluatorService.execute(selectedText === '' ? this.currentFileData.content : selectedText).subscribe({
-
-        next: (response: MagicResponse) => {
-
-          this.generalService.hideLoading();
-          this.dialog.open(ExecuteResult, {
-            width: '900px',
-            data: {
-              hyperlambda: response.result,
-            }
-          });
-        },
-
-        error: (error: any) => {
-
-          this.generalService.hideLoading();
-          this.generalService.showFeedback(error?.error?.message ?? error, 'erroorMessage');
-        }
-      });
+      this.generalService.showFeedback('Active document contains no code', 'errorMessage');
+      return;
     }
-  }
+    const selectedText = editor.getSelection();
 
-  private getEndpointToExecute(): Promise<any> {
+    this.generalService.showLoading();
+    this.evaluatorService.execute(selectedText === '' ? this.currentFileData.content : selectedText).subscribe({
 
-    if (this.currentFileData?.path?.startsWith('/modules/') || this.currentFileData?.path?.startsWith('/system/')) {
-      const lastSplits = this.currentFileData.name.split('.');
-      if (lastSplits.length >= 3 && lastSplits[lastSplits.length - 1] === 'hl') {
-        switch (lastSplits[lastSplits.length - 2]) {
-          case 'get':
-          case 'put':
-          case 'post':
-          case 'patch':
-          case 'delete':
+      next: (response: MagicResponse) => {
 
-            /*
-             * File is probably a Hyperlambda endpoint, however to be sure we
-             * verify we can find file in our list of endpoints.
-             */
-            const url = 'magic' + this.currentFileData.folder + lastSplits[0];
-            // deep copying the original endpoints array to prevent manipulations.
-            const copyEndpoints = JSON.parse(JSON.stringify(this.endpoints));
-            let endpoints = copyEndpoints.filter((x: any) => x.path === url && x.verb === lastSplits[lastSplits.length - 2]);
+        this.generalService.hideLoading();
+        this.dialog.open(ExecuteResult, {
+          width: '900px',
+          data: {
+            hyperlambda: response.result,
+          }
+        });
+      },
 
-            if (endpoints.length > 0) {
-              return endpoints[0];
-            }
-        }
+      error: (error: any) => {
+
+        this.generalService.hideLoading();
+        this.generalService.showFeedback(error?.error?.message ?? error, 'erroorMessage');
       }
-    }
-    return null;
+    });
   }
 
   private activeFileIsClean() {
