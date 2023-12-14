@@ -175,12 +175,6 @@ your database of choice, in addition to creating SQL based endpoints. It give yo
 settings, such as turning on or off logging, publishing socket messages upon invocation to write endpoints,
 authentication and authorisation configuration options, etc.`;
 
-      case 'frontend-generator':
-        return `The frontend generator is where you generate your frontends. A frontend is incrementally built
-on top of a backend, so you'll first need to generate a backend before you can generate your frontend.
-Magic comes with a very good angular template our of the box, allowing you to generate a fully fledged
-Angular frontend, providing you with a UI for your database tables with all 4 CRUD operations.`;
-
       case 'hyper-ide':
         return `Hyper IDE is Magic's integrated IDE, and is particularly good for editing Hyperlambda files.
 It also gives you macros, machine learning and AI capabilities, in addition to a whole range of other
@@ -245,22 +239,11 @@ server inaccessible.`;
 a diagnostic tool to ensure it is functioning correctly. Automated tests can be created with the "Endpoints"
 menu item or manually written in Hyperlambda. You can then run all tests automatically and view any errors that arise.`;
 
-      case 'cryptography':
-        return `The cryptography component allows you to manage and administrate your server's
-public and private keys, as well as public keys belonging to others. This allows you to securely
-communicate with other Magic servers and/or clients using cryptographic signatures and encryption.
-Additionally, it allows you to verify cryptographic signatures and payloads received from others.`;
-
       case 'log':
         return `The Log component in Magic allows you to browse your server's log and filter for specific items.
 There are 4 types of log entries you can create: debug, info, error, and fatal. You can configure the log
 level to adjust how much is logged. Refer to magic.lambda.logging to understand how you can create
 log items from your own Hyperlambda code.`;
-
-      case 'help-center':
-        return `The help center component is where you would go to learn, and get access to resources required
-to learning more about Aista Magic Cloud, such as teaching yourself Hyperlambda, and/or learning other things
-related to Aista Magic Cloud.`;
 
       case 'user-profile':
         return `The Profile component of Magic allows you to customize you profile by changing your password,
@@ -324,9 +307,6 @@ optin verification and potential referential integrity issues.`;
       case 'health-check':
         return 'https://polterguy.github.io/documentation/magic/components/assumptions/';
 
-      case 'cryptography':
-        return 'https://polterguy.github.io/documentation/magic/components/crypto/';
-
       case 'log':
         return 'https://polterguy.github.io/documentation/magic/components/log/';
 
@@ -378,11 +358,6 @@ optin verification and potential referential integrity issues.`;
           {
             name: 'Endpoint Generator',
             url: '/endpoint-generator',
-            exact: false,
-          },
-          {
-            name: 'Frontend Generator',
-            url: '/frontend-generator',
             exact: false,
           },
           {
@@ -457,18 +432,8 @@ optin verification and potential referential integrity issues.`;
             exact: false,
           },
           {
-            name: 'Cryptography',
-            url: '/cryptography',
-            exact: false,
-          },
-          {
             name: 'Log',
             url: '/log',
-            exact: false,
-          },
-          {
-            name: 'Help Center',
-            url: '/help-center',
             exact: false,
           },
         ],
