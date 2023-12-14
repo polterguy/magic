@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Aista Ltd, 2021 - 2023 team@ainiro.io.
+ * Copyright (c) Thomas Hansen, 2021 - 2023 thomas@ainiro.io.
  */
 
 import { Pipe, PipeTransform } from '@angular/core';
