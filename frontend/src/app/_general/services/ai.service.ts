@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) Aista Ltd, and Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
+ * Copyright (c) 2023 Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
  */
 
 import { Injectable } from '@angular/core';

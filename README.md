@@ -54,4 +54,4 @@ See the enclosed LICENSE files within each folder, and/or plugin if in doubt.
 
 ## Copyright and maintenance
 
-The projects is copyright of Aista, Ltd 2021 - 2023, and professionally maintained by [AINIRO your friendly ChatGPT website chatbot vendor](https://ainiro.io).
+The projects is copyright of Thomas Hansen, Ltd 2021 - 2023, and professionally maintained by [AINIRO your friendly ChatGPT website chatbot vendor](https://ainiro.io).
