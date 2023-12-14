@@ -139,7 +139,13 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
 
     if (!window['_vocabulary']) {
       this.vocabularyService.vocabulary().subscribe({
-        next: (vocabulary: string[]) => window['_vocabulary'] = vocabulary,
+
+        next: (result: {vocabulary: string[], slots: string[]}) => {
+
+          window['_vocabulary'] = result.vocabulary;
+          window['_slots'] = result.slots;
+        },
+
         error: error => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
       });
     }

@@ -853,6 +853,16 @@
         list.push(window._vocabulary[idx]);
       }
     }
+    for (var idx = 0; idx < window._slots.length; idx++) {
+      if (window._slots[idx].indexOf(curWord) != -1) {
+
+        /*
+         * This keyword contains the text from current line in editor, hence
+         * adding keyword back to caller
+         */
+        list.push('execute:' + window._slots[idx]);
+      }
+    }
     return { list: list, from: CodeMirror.Pos(cur.line, start), to: CodeMirror.Pos(cur.line, end) };
   });
 
