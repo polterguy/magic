@@ -231,8 +231,19 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
 
     } else {
 
+      // Verifying document contains any actual code.
+      const fileExisting: number = this.openFiles.findIndex((item: any) => item.path === this.currentFileData.path);
+      const activeWrapper = document.querySelector('.active-codemirror-editor-' + fileExisting);
+      const editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
+      if (editor.getDoc().getValue() === '') {
+
+        this.generalService.showFeedback('Active document contains no code', 'errorMessage');
+        return;
+      }
+      const selectedText = editor.getSelection();
+
       this.generalService.showLoading();
-      this.evaluatorService.execute(this.currentFileData.content).subscribe({
+      this.evaluatorService.execute(selectedText === '' ? this.currentFileData.content : selectedText).subscribe({
 
         next: (response: MagicResponse) => {
 
