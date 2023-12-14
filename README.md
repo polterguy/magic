@@ -37,9 +37,7 @@ In addition to its OpenAI and ChatGPT features, Magic is also a complete Low-Cod
 
 ## License
 
-This project, and all of its satellite project, is licensed under the terms of the GPL license version 3, as published by the Free Software Foundation. See LICENSE file for details.
-
-For licensing inquiries you can contact thomas@ainiro.io
+This project, and all of its satellite project, is licensed under the terms of the GPL license version 3, as published by the Free Software Foundation unless an explicit and signed exception has been provided by Thomas Hansen its copyright owner. See LICENSE file for details. For licensing inquiries you can contact Thomas Hansen thomas@ainiro.io
 
 ## Copyright and maintenance
 
