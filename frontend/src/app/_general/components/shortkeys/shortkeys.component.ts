@@ -159,10 +159,6 @@ const fullkeys: Keys[] = [
     key: 'Alt + X'
   },
   {
-    name: 'Execute macro',
-    key: 'Alt + O'
-  },
-  {
     name: 'New file',
     key: 'Alt + A'
   },

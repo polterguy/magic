@@ -10,7 +10,6 @@ import { ConfirmationDialogComponent } from 'src/app/_general/components/confirm
 import { LoadSnippetDialogComponent } from 'src/app/_general/components/load-snippet-dialog/load-snippet-dialog.component';
 import { ShortkeysComponent } from 'src/app/_general/components/shortkeys/shortkeys.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { ExecuteMacroDialogComponent } from '../execute-macro-dialog/execute-macro-dialog.component';
 import { PreviewFileDialogComponent } from '../preview-file-dialog/preview-file-dialog.component';
 import { RenameFileDialogComponent, FileObjectName } from '../rename-file-dialog/rename-file-dialog.component';
 import { RenameFolderDialogComponent } from '../rename-folder-dialog/rename-folder-dialog.component';
@@ -400,106 +399,6 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  private selectMacro() {
-
-    const dialogRef = this.dialog.open(SelectMacroDialogComponent, {
-      width: '550px',
-      data: {
-        name: '',
-      },
-    });
-    dialogRef.afterClosed().subscribe((result: Macro) => {
-      if (result) {
-        this.executeMacro(result.name);
-      }
-    });
-  }
-
-  private executeMacro(file: string) {
-
-    this.generalService.showLoading();
-    this.fileService.getMacroDefinition(file).subscribe({
-      next: (result: MacroDefinition) => {
-
-        this.generalService.hideLoading();
-
-        /*
-         * Filling out default values for anything we can intelligently figure
-         * out according to selected folder.
-         */
-        const splits = this.activeFolder.split('/');
-        if (splits.length === 4 && splits[1] === 'modules') {
-          const moduleArgs = result.arguments.filter(x => x.name === 'module' || x.name === 'database');
-          if (moduleArgs.length > 0) {
-            for (const idx of moduleArgs) {
-              idx.value = splits[2];
-            }
-          }
-        }
-        const authArgs = result.arguments.filter(x => x.name === 'auth');
-        if (authArgs.length > 0) {
-          for (const idx of authArgs) {
-            idx.value = 'root';
-          }
-        }
-        const dialogRef = this.dialog.open(ExecuteMacroDialogComponent, {
-          width: '500px',
-          data: result,
-        });
-        dialogRef.afterClosed().subscribe((result: MacroDefinition) => {
-          if (result && result.name) {
-            const payload = {};
-            for (const idx of result.arguments.filter(x => x.value)) {
-              payload[idx.name] = idx.value;
-            }
-
-            this.generalService.showLoading();
-            this.fileService.executeMacro(file, payload).subscribe({
-              next: (exeResult: any) => {
-
-                this.generalService.hideLoading();
-                this.generalService.showFeedback('Macro successfully executed', 'successMessage');
-                if (exeResult.result === 'folders-changed') {
-
-                  this.dialog.open(ConfirmationDialogComponent, {
-                    width: '500px',
-                    data: {
-                      title: `Refresh folders`,
-                      description_extra: 'Macro execution changed your file system, do you want to refresh your files and folders?',
-                      action_btn: 'Refresh',
-                      action_btn_color: 'primary',
-                      bold_description: true
-                    }
-                  }).afterClosed().subscribe((result: string) => {
-                    if (result === 'confirm') {
-                      this.getFilesFromServer.emit();
-                    }
-                  })
-                } else if (exeResult.result.startsWith('folders-changed|')) {
-                  var fileObject = exeResult.result.split('|')[1];
-                  this.updateFileObject.emit(fileObject);
-
-                }
-              },
-              error: (error: any) => {
-
-                this.generalService.hideLoading();
-                this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
-              }
-            });
-          } else if (result) {
-            this.selectMacro();
-          }
-        });
-      },
-      error: (error: any) => {
-
-        this.generalService.hideLoading();
-        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
-      }
-    });
-  }
-
   private watchForActions() {
 
     this.codemirrorActionSubscription = this.codemirrorActionsService.action.subscribe((action: string) => {
@@ -532,10 +431,6 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
 
         case 'insertSnippet':
           this.insertSnippet();
-          break;
-
-        case 'macro':
-          this.selectMacro();
           break;
 
         case 'newFile':

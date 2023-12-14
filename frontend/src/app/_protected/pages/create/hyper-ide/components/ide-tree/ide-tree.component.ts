@@ -9,7 +9,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatTreeFlattener, MatTreeFlatDataSource } from '@angular/material/tree';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
-import { ExecuteMacroDialogComponent } from '../execute-macro-dialog/execute-macro-dialog.component';
 import { IncompatibleFileDialogComponent } from '../incompatible-file-dialog/incompatible-file-dialog.component';
 import { NewFileFolderDialogComponent } from '../new-file-folder-dialog/new-file-folder-dialog.component';
 import { Macro, SelectMacroDialogComponent } from '../select-macro-dialog/select-macro-dialog.component';
@@ -214,23 +213,6 @@ export class IdeTreeComponent implements OnInit {
 
         this.generalService.hideLoading();
         this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
-      }
-    });
-  }
-
-  /**
-   * Invoked when user wants to execute a macro.
-   */
-  selectMacro() {
-    const dialogRef = this.dialog.open(SelectMacroDialogComponent, {
-      width: '550px',
-      data: {
-        name: '',
-      },
-    });
-    dialogRef.afterClosed().subscribe((result: Macro) => {
-      if (result) {
-        this.executeMacro(result.name);
       }
     });
   }
@@ -944,91 +926,6 @@ export class IdeTreeComponent implements OnInit {
       }
     }
     return null;
-  }
-
-  private executeMacro(file: string) {
-
-    this.generalService.showLoading();
-    this.fileService.getMacroDefinition(file).subscribe({
-      next: (result: MacroDefinition) => {
-
-        this.generalService.hideLoading();
-
-        /*
-         * Filling out default values for anything we can intelligently figure
-         * out according to selected folder.
-         */
-        const splits = this.activeFolder.split('/');
-        if (splits.length === 4 && splits[1] === 'modules') {
-          const moduleArgs = result.arguments.filter(x => x.name === 'module' || x.name === 'database');
-          if (moduleArgs.length > 0) {
-            for (const idx of moduleArgs) {
-              idx.value = splits[2];
-            }
-          }
-        }
-        const authArgs = result.arguments.filter(x => x.name === 'auth');
-        if (authArgs.length > 0) {
-          for (const idx of authArgs) {
-            idx.value = 'root';
-          }
-        }
-        const dialogRef = this.dialog.open(ExecuteMacroDialogComponent, {
-          width: '500px',
-          data: result,
-        });
-        dialogRef.afterClosed().subscribe((result: MacroDefinition) => {
-
-          if (result && result.name) {
-            const payload = {};
-            for (const idx of result.arguments.filter(x => x.value)) {
-              payload[idx.name] = idx.value;
-            }
-
-            this.generalService.showLoading();
-            this.fileService.executeMacro(file, payload).subscribe({
-              next: (exeResult: any) => {
-
-                this.generalService.hideLoading();
-                this.generalService.showFeedback('Macro successfully executed', 'successMessage');
-                if (exeResult.result === 'folders-changed') {
-
-                  this.dialog.open(ConfirmationDialogComponent, {
-                    width: '500px',
-                    data: {
-                      title: `Refresh folders`,
-                      description_extra: 'Macro execution changed your file system, do you want to refresh your files and folders?',
-                      action_btn: 'Refresh',
-                      action_btn_color: 'primary',
-                      bold_description: true
-                    }
-                  }).afterClosed().subscribe((result: string) => {
-                    if (result === 'confirm') {
-                      this.getFilesFromServer().then();
-                    }
-                  })
-                } else if (exeResult.result.startsWith('folders-changed|')) {
-                  var fileObject = exeResult.result.split('|')[1];
-                  this.updateFileObject(fileObject);
-                }
-              },
-              error: (error: any) => {
-
-                this.generalService.hideLoading();
-                this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
-              }
-            });
-          } else if (result) {
-            this.selectMacro();
-          }
-        });
-      },
-      error: (error: any) => {
-
-        this.generalService.hideLoading();
-        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
-      }
-    });
   }
 
   private nameValidation(name: string) {
