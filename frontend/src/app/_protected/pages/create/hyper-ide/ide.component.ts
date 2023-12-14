@@ -31,7 +31,7 @@ export class IdeComponent {
     this.searchKey = event.value;
   }
 
-  focusToFind(e: any) {
+  focusToFind() {
 
     this.search.focusToFind();
   }
