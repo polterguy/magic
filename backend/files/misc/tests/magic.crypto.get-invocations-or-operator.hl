@@ -1,7 +1,0 @@
-
-// Automatically generated assumption test.
-verb:get
-url:/magic/system/magic/crypto_invocations?limit=1&offset=1&order=created&direction=desc&operator=or&id.mteq=3
-status:int:200
-description:Assumes retrieving crypto invocations with lots of query parameters using the or operators succeeds
-produces:application/json

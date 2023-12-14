@@ -1,7 +1,0 @@
-
-// Automatically generated assumption test.
-verb:get
-url:/magic/system/magic/crypto_keys
-status:int:200
-description:Assumes it is possible to retrieve cryptography keys
-produces:application/json

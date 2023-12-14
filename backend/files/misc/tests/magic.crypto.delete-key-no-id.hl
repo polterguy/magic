@@ -1,9 +1,0 @@
-verb:delete
-url:/magic/system/magic/crypto_keys
-status:int:400
-description:Assumes that invoking endpoint without an id results in the correct error response and status code from the backend
-response:@"{
-  ""message"": ""Mandatory argument 'id' not given"",
-  ""field"": ""id""
-}"
-produces:application/json
