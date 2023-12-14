@@ -37,20 +37,7 @@ In addition to its OpenAI and ChatGPT features, Magic is also a complete Low-Cod
 
 ## License
 
-**TL;TR** - You can create closed source applications with Magic, but you can _not_ close Magic itself.
-
-The frontend dashboard is licensed under the terms of the GPL version 3, as published by the Free Software Foundation -
-While the backend is licensed under the terms of the MIT license. What this implies, is that you can freely use Magic
-as you see fit, also in your own proprietary and closed source applications - However, if you modify any of its plugins,
-and or the dashboard frontend, you'll have to publish your changes to anyone requesting your changes.
-
-To sum up each license.
-
-* All NuGet packages are LGPL3
-* The `backend` folder is MIT
-* The `frontend` folder is GPL3
-
-See the enclosed LICENSE files within each folder, and/or plugin if in doubt.
+This project, and all of its satellite project, is licensed under the terms of the GPL license version 3, as published by the Free Software Foundation. See LICENSE file for details.
 
 ## Copyright and maintenance
 
