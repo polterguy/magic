@@ -6,18 +6,15 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
-import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
 import { LoadSnippetDialogComponent } from 'src/app/_general/components/load-snippet-dialog/load-snippet-dialog.component';
 import { ShortkeysComponent } from 'src/app/_general/components/shortkeys/shortkeys.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { PreviewFileDialogComponent } from '../preview-file-dialog/preview-file-dialog.component';
 import { RenameFileDialogComponent, FileObjectName } from '../rename-file-dialog/rename-file-dialog.component';
 import { RenameFolderDialogComponent } from '../rename-folder-dialog/rename-folder-dialog.component';
-import { SelectMacroDialogComponent, Macro } from '../select-macro-dialog/select-macro-dialog.component';
 import { UnsavedChangesDialogComponent } from '../unsaved-changes-dialog/unsaved-changes-dialog.component';
 import { EvaluatorService } from '../../../../../../_general/services/evaluator.service';
 import { FileNode } from '../../models/file-node.model';
-import { MacroDefinition } from '../../models/macro-definition.model';
 import { CodemirrorActionsService } from '../../../../../../_general/services/codemirror-actions.service';
 import { FileService } from '../../../../../../_general/services/file.service';
 import { VocabularyService } from '../../../../../../_general/services/vocabulary.service';
@@ -162,6 +159,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
       next: () => {
 
         this.markEditorClean(false);
+        this.generalService.hideLoading();
         this.generalService.showFeedback('File successfully saved', 'successMessage');
         if (thenClose) {
           this.closeActiveFile(true);
@@ -211,7 +209,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
           }
         });
       }
-    })
+    });
   }
 
   private async executeActiveFile() {

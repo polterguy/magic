@@ -4,7 +4,6 @@
  */
 
 // Angular and system imports.
-import { throwError } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
@@ -15,7 +14,6 @@ import { FileService } from 'src/app/_general/services/file.service';
 import { BazarApp } from 'src/app/models/bazar-app.model';
 import { environment } from 'src/environments/environment';
 import { AppManifest } from 'src/app/models/app-manifest';
-import { PurchaseStatus } from 'src/app/models/purchase-status.model';
 import { MagicResponse } from '../models/magic-response.model';
 
 /**
@@ -32,12 +30,12 @@ export class BazarService {
     private httpService: HttpService,
     private fileService: FileService) { }
 
-  localManifests() {
+  installedPlugins() {
 
     return this.httpService.get<AppManifest[]>('/magic/system/bazar/app-manifests');
   }
 
-  listBazarItems(filter: string, offset: number, limit: number) {
+  availablePlugins(filter: string, offset: number, limit: number) {
 
     let query = '?limit=' + limit;
     if (offset && offset !== 0) {
@@ -71,52 +69,11 @@ export class BazarService {
     return this.httpClient.get<Count>(environment.bazarUrl + '/magic/modules/bazar/apps-count' + query);
   }
 
-  subscribeToNewsletter(data: any) {
-
-    return this.httpClient.post<MagicResponse>(environment.bazarUrl + '/magic/modules/bazar/subscribe', data);
-  }
-
-  purchaseBazarItem(
-    app: BazarApp,
-    name: string,
-    email: string,
-    subscribe: boolean,
-    promo_code?: string) {
-
-    const payload: any = {
-      product_id: app.id,
-      name,
-      customer_email: email,
-      subscribe,
-      redirect_url: window.location.href.split('?')[0],
-    };
-    if (promo_code && promo_code !== '') {
-      payload.promo_code = promo_code;
-    }
-    return this.httpClient.post<PurchaseStatus>(environment.bazarUrl + '/magic/modules/bazar/purchase', payload);
-  }
-
-  canDownloadBazarItem(token: string) {
-
-    return this.httpClient.get<MagicResponse>(environment.bazarUrl + '/magic/modules/bazar/can-download?token=' + encodeURIComponent(token));
-  }
-
-  downloadBazarItem(app: BazarApp, token: string) {
+  downloadBazarItem(app: BazarApp) {
 
     return this.httpService.post<MagicResponse>('/magic/system/bazar/download-from-bazar', {
-      url: environment.bazarUrl + '/magic/modules/bazar/download?token=' + token,
+      url: environment.bazarUrl + '/magic/modules/bazar/download?product_id=' + app.id,
       name: app.folder_name
-    });
-  }
-
-  updateBazarItem(app: AppManifest) {
-
-    if (!app.token || app.token === '') {
-      return throwError(() => new Error('No token found in app\'s manifest'));
-    }
-    return this.httpService.post<MagicResponse>('/magic/system/bazar/download-from-bazar', {
-      url: environment.bazarUrl + '/magic/modules/bazar/download?token=' + app.token,
-      name: app.module_name
     });
   }
 

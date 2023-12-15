@@ -20,83 +20,114 @@ auth.ticket.verify:root
 validators.mandatory:x:@.arguments/*/url
 validators.mandatory:x:@.arguments/*/name
 
-/*
- * Verifying that folder doesn't already exist, as in that module
- * is already installed.
- */
-strings.concat
-   .:/modules/
-   get-value:x:@.arguments/*/name
-   .:/
-if
-   io.folder.exists:x:@strings.concat
-   .lambda
+// Running actual installation on a different thread.
+insert-before:x:./*/fork/0
+   get-nodes:x:@.arguments
+fork
+
+   // Making sure we catch exceptions such that we can log errors.
+   try
 
       /*
-       * Oops, folder already exists, hence we first delete existing folder,
-       * which will run through uninstallation scripts to uninstall module completely,
-       * if we execute the 'folder.delete.hl' endpoint.
+       * Verifying that folder doesn't already exist, as in that plugin
+       * is already installed - And if plugin is already installed we
+       * delete the folder first which will uninstall the plugin.
        */
       strings.concat
          .:/modules/
          get-value:x:@.arguments/*/name
          .:/
-      unwrap:x:+/*
-      io.file.execute:/system/file-system/folder.delete.hl
-         folder:x:@strings.concat
+      if
+         io.folder.exists:x:@strings.concat
+         .lambda
+
+            /*
+             * Oops, folder already exists, hence we first delete existing folder,
+             * which will run through uninstallation scripts to uninstall module completely,
+             * if we execute the 'folder.delete.hl' endpoint.
+             */
+            strings.concat
+               .:/modules/
+               get-value:x:@.arguments/*/name
+               .:/
+            unwrap:x:+/*
+            io.file.execute:/system/file-system/folder.delete.hl
+               folder:x:@strings.concat
+            if
+               not
+                  eq
+                     get-value:x:@io.file.execute/*/result
+                     .:success
+               .lambda
+
+                  // Oops ...!!
+                  throw:Could not uninstall previously installed version
+                     public:bool:true
+                     status:int:500
+
+      // Downloading zip file as binary content from specified URL.
+      http.get:x:@.arguments/*/url
+
+      /*
+       * Saving file to modules folder using the 'filename' argument specified
+       * by its HTTP Content-Disposition header.
+       */
+      strings.split:x:@http.get/*/headers/*/Content-Disposition
+         .:=
+      strings.trim:x:@strings.split/1
+         .:"\""
+      strings.concat
+         .:/modules/
+         get-value:x:@strings.trim
+      io.file.save.binary:x:@strings.concat
+         get-value:x:@http.get/*/content
+
+      // Unzipping downloaded ZIP file.
+      io.file.unzip:x:@strings.concat
+
+      // Deleting ZIP file.
+      io.file.delete:x:@strings.concat
+
+      /*
+       * Checking if the ZIP file resulted in creating the module folder,
+       * otherwise renaming folder accordingly.
+       */
+      .module-folder
+      set-value:x:@.module-folder
+         strings.concat
+            .:/modules/
+            get-value:x:@.arguments/*/name
+            .:/
       if
          not
-            eq
-               get-value:x:@io.file.execute/*/result
-               .:success
+            io.folder.exists:x:@.module-folder
          .lambda
-            throw:Could not uninstall previously installed version
-               public:bool:true
-               status:int:500
 
-// Downloading zip file as binary content from specified URL.
-http.get:x:@.arguments/*/url
+            // Renaming the folder to the name specified by caller.
+            strings.split:x:@strings.concat
+               .:.zip
+            io.folder.move:x:@strings.split/0
+               get-value:x:@.module-folder
 
-/*
- * Saving file to modules folder using the 'filename' argument specified
- * by its HTTP Content-Disposition header.
- */
-strings.split:x:@http.get/*/headers/*/Content-Disposition
-   .:=
-strings.trim:x:@strings.split/1
-   .:"\""
-strings.concat
-   .:/modules/
-   get-value:x:@strings.trim
-io.file.save.binary:x:@strings.concat
-   get-value:x:@http.get/*/content
+      // Notifying client that installation is done.
+      sockets.signal:magic.backend.message
+         roles:root
+         args
+            message:Plugin was successfully installed
+            type:success
 
-// Unzipping downloaded ZIP file.
-io.file.unzip:x:@strings.concat
+   .catch
 
-// Deleting ZIP file.
-io.file.delete:x:@strings.concat
+      // Oops ...!!
+      log.error:Could not install plugin
+         message:x:@.arguments/*/message
 
-/*
- * Checking if the ZIP file resulted in creating the module folder,
- * otherwise renaming folder accordingly.
- */
-.module-folder
-set-value:x:@.module-folder
-   strings.concat
-      .:/modules/
-      get-value:x:@.arguments/*/name
-      .:/
-if
-   not
-      io.folder.exists:x:@.module-folder
-   .lambda
-
-      // Renaming the folder to the name specified by caller.
-      strings.split:x:@strings.concat
-         .:.zip
-      io.folder.move:x:@strings.split/0
-         get-value:x:@.module-folder
+      // Notifying client that some error occurred.
+      sockets.signal:magic.backend.message
+         roles:root
+         args
+            message:Plugin could not be installed, check your log for details
+            type:error
 
 // Returning success to caller.
 return
