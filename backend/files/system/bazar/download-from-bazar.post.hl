@@ -109,6 +109,14 @@ fork
             io.folder.move:x:@strings.split/0
                get-value:x:@.module-folder
 
+      /*
+       * Running through installation process of plugin.
+       */
+      strings.split:x:@.module-folder
+         .:/
+      execute:magic.modules.install-module
+         module:x:@strings.split/0/-
+
       // Notifying client that installation is done.
       sockets.signal:magic.backend.message
          roles:root
