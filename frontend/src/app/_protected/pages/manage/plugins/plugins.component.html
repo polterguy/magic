@@ -33,7 +33,7 @@
             class="col-lg-4 col-md-6 col-12 mb-4"
             *ngFor="let item of getPluginsToDisplay()">
 
-            <div class="w-100 h-100 bg-light p-3">
+            <mat-card class="w-100 h-100 p-3">
 
               <p>{{item.name}}</p>
               <p class="line-truncate text-muted mt-3 mb-4">
@@ -60,7 +60,7 @@
 
               </div>
 
-            </div>
+            </mat-card>
 
           </div>
 
