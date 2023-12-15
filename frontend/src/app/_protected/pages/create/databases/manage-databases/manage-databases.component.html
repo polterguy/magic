@@ -39,71 +39,13 @@
             class="w-35"
             color="primary"
             type="submit"
+            [disabled]="!databaseName || databaseName === ''"
             (click)="createNewDatabase()">
             Create
           </button>
 
         </form>
       </div>
-
-      <!-- Install plugin database section -->
-      <div class="col-12">
-        <h3 class="fw-bold">Install database</h3>
-        <p class="text-muted">Install an SQLite plugin database</p>
-      </div>
-
-      <!-- Loading skeleton -->
-      <ng-container *ngIf="isLoadingPlugins">
-
-        <app-loading-skeleton
-          amount="3"
-          colClass="col-12 mb-3"
-          blockHeight="80px"
-          hasShadow="false">
-        </app-loading-skeleton>
-
-      </ng-container>
-
-      <ng-container *ngIf="!isLoadingPlugins">
-        <div class="col-12 bg-light mt-4 py-3 mb-2" *ngFor="let item of databases">
-          <div class="row">
-
-            <div class="col-xl-7 col-lg-6 col-12 ps-4">
-              <p class="mat-body-2 mb-1">{{item?.name}}</p>
-              <p class="text-muted text-truncate my-0">{{item?.description}}</p>
-            </div>
-
-            <div class="col-xl-5 col-lg-6 col-12 d-flex flex-nowrap align-self-center justifycontent-between mt-lg-0 mt-3">
-
-              <button
-                mat-button
-                color="primary"
-                (click)="viewPluginDatabaseDetails(item)">
-                Details
-              </button>
-
-              <button
-                mat-flat-button
-                color="primary"
-                class="w-100 px-4 ms-2"
-                *ngIf="!item?.details"
-                (click)="installPluginDatabase(item)">
-                Install
-              </button>
-
-              <button
-                mat-flat-button
-                color="warn"
-                class="w-100 px-4 ms-2"
-                *ngIf="item?.details"
-                (click)="uninstallPluginDatabase(item.details)">
-                Uninstall
-              </button>
-
-            </div>
-          </div>
-        </div>
-      </ng-container>
     </div>
   </div>
 
@@ -210,22 +152,5 @@
       accept=".db"
       (change)="uploadDatabaseBackup($event.target.files)">
 
-  </div>
-</div>
-
-<!-- Installation obscurer making sure user doesn't leave the page -->
-<div class="waiting-overlay" *ngIf="waitingInstallation">
-  <div class="row h-100 align-items-center justify-content-center">
-    <div class="col-xxl-2 col-xl-3 col-md-4 col-sm-5 col-6">
-
-      <div class="d-flex w-100 justify-content-center">
-        <div class="wating-dot-animation"></div>
-      </div>
-
-      <h3 class="text-center mt-5">{{currentStage}}</h3>
-
-      <p class="mat-h3 text-center mt-4">Please do NOT leave this page until the installation is completed.</p>
-
-    </div>
   </div>
 </div>
