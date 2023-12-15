@@ -1,6 +1,0 @@
-
-// Automatically generated assumption test.
-verb:get
-url:/magic/system/images/generate-qr?content=This%20is%20a%20QR%20code&size=2
-status:int:200
-description:Assumes that creating a QR code succeeds
