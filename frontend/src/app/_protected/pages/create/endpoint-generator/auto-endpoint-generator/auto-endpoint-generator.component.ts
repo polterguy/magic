@@ -7,7 +7,6 @@ import { formatNumber } from '@angular/common';
 import { Component, Inject, LOCALE_ID, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { forkJoin, Observable, Subscription } from 'rxjs';
-import { Model } from 'src/app/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { CrudifyService } from '../../../../../_general/services/crudify.service';
 import { TransformModelService } from '../../../../../_general/services/transform-model.service';
@@ -16,11 +15,9 @@ import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messa
 import { CommonRegEx } from 'src/app/_general/classes/common-regex';
 
 // CodeMirror options.
-import hyperlambda from '../../../../../codemirror/options/hyperlambda.json';
 import { CodemirrorActionsService } from '../../../../../_general/services/codemirror-actions.service';
 import { MatDialog } from '@angular/material/dialog';
 import { EvaluatorService } from '../../../../../_general/services/evaluator.service';
-import { LoadSnippetDialogComponent } from 'src/app/_general/components/load-snippet-dialog/load-snippet-dialog.component';
 import { MessageService } from 'src/app/_general/services/message.service';
 import { ActivatedRoute } from '@angular/router';
 import { SqlService } from 'src/app/_general/services/sql.service';
@@ -35,9 +32,7 @@ import { LocResult } from 'src/app/_general/models/loc-result.model';
   selector: 'app-auto-endpoint-generator',
   templateUrl: './auto-endpoint-generator.component.html'
 })
-export class AutoGeneratorComponent extends GeneratorBase implements OnInit, OnDestroy {
-
-  private codemirrorActionsSubscription: Subscription;
+export class AutoGeneratorComponent extends GeneratorBase implements OnInit {
 
   CommonRegEx = CommonRegEx;
   CommonErrorMessages = CommonErrorMessages;
@@ -66,20 +61,14 @@ export class AutoGeneratorComponent extends GeneratorBase implements OnInit, OnD
   socketAuthorisationTypeValue: string;
   socketAuthorisationRoles: FormControl = new FormControl<any>('');
   availableTables: any[] = [];
-  hlInput: Model = {
-    hyperlambda: '',
-    options: hyperlambda,
-  };
 
   constructor(
-    private dialog: MatDialog,
     private logService: LogService,
     protected sqlService: SqlService,
     private messageService: MessageService,
     protected generalService: GeneralService,
     protected activatedRoute: ActivatedRoute,
     private crudifyService: CrudifyService,
-    private evaluatorService: EvaluatorService,
     protected roleService: RoleService,
     protected transformService: TransformModelService,
     private codemirrorActionsService: CodemirrorActionsService,
@@ -90,8 +79,6 @@ export class AutoGeneratorComponent extends GeneratorBase implements OnInit, OnD
 
   ngOnInit() {
 
-    this.getOptions();
-    this.watchForActions();
     this.init();
   }
 
@@ -269,35 +256,6 @@ export class AutoGeneratorComponent extends GeneratorBase implements OnInit, OnD
     });
   }
 
-  loadSnippet() {
-
-    this.dialog.open(LoadSnippetDialogComponent, {
-      width: '550px',
-    }).afterClosed().subscribe((filename: string) => {
-      if (filename) {
-
-        this.generalService.showLoading();
-        this.evaluatorService.loadSnippet(filename).subscribe({
-          next: (content: string) => {
-
-            this.generalService.hideLoading();
-            this.hlInput.hyperlambda = content;
-          },
-          error: (error: any) => {
-
-            this.generalService.hideLoading();
-            this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
-          }
-        });
-      }
-    });
-  }
-
-  ngOnDestroy() {
-
-    this.codemirrorActionsSubscription?.unsubscribe();
-  }
-
   /*
    * Protected implementations of base class methods.
    */
@@ -314,25 +272,6 @@ export class AutoGeneratorComponent extends GeneratorBase implements OnInit, OnD
   /*
    * Private helper methods.
    */
-
-  private watchForActions() {
-
-    this.codemirrorActionsSubscription = this.codemirrorActionsService.action.subscribe((action: string) => {
-      switch (action) {
-
-        case 'insertSnippet':
-          this.loadSnippet();
-          break;
-      }
-    });
-  }
-
-  private getOptions() {
-
-    const options = this.codemirrorActionsService.getActions('', 'hl');
-    options.autofocus = false;
-    this.hlInput.options = options;
-  }
 
   private createDefaultOptions(db: any, tables: any[]) {
 
@@ -378,9 +317,6 @@ export class AutoGeneratorComponent extends GeneratorBase implements OnInit, OnD
       // Applying cache settings.
       idxTable.cache = this.cacheDuration;
       idxTable.publicCache = this.cachePublic;
-
-      // applying additional Hyperlambda validators.
-      idxTable.validators = this.hlInput.hyperlambda;
 
       // Applying primary URL.
       idxTable.moduleName = this.primaryURL;
