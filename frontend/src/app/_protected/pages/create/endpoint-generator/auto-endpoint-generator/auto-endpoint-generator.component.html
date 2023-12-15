@@ -679,37 +679,6 @@
     </div>
   </div>
 
-  <ng-container *ngIf="selectedTables.value.length === 1">
-
-    <!-- 8 - Hyperlambda for POST and PUT endpoints, typically validators -->
-    <div class="col-12 mt-5">
-      <div class="d-flex justify-content-between align-items-center">
-        <p class="fw-bold mb-0">Step 8 - Additional POST/PUT Hyperlambda</p>
-        <div>
-
-          <button
-            mat-button
-            color="primary"
-            (click)="loadSnippet()">
-            Snippets
-          </button>
-
-        </div>
-      </div>
-    </div>
-
-    <!-- CodeMirror editor for additional Hyperlambda -->
-    <div class="col-12">
-
-      <app-codemirror-hyperlambda
-        [(model)]="hlInput"
-        class="codemirror-container">
-      </app-codemirror-hyperlambda>
-
-    </div>
-
-  </ng-container>
-
   <div class="col-12 d-flex justify-content-end button-row mt-4">
 
     <button
