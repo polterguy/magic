@@ -36,10 +36,6 @@ const routes: Routes = [
         loadChildren: () => import('./_protected/pages/manage/endpoints/_module/endpoints.module').then(m => m.EndpointsModule)
       },
       {
-        path: 'sockets',
-        loadChildren: () => import('./_protected/pages/manage/sockets/_module/socket.module').then(m => m.SocketModule)
-      },
-      {
         path: 'databases',
         loadChildren: () => import('./_protected/pages/create/databases/_module/databases.module').then(m => m.DatabasesModule)
       },

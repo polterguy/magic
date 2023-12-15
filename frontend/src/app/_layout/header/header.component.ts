@@ -399,11 +399,6 @@ optin verification and potential referential integrity issues.`;
             exact: false,
           },
           {
-            name: 'Sockets',
-            url: '/sockets',
-            exact: false,
-          },
-          {
             name: 'Plugins',
             url: '/plugins',
             exact: false,

@@ -133,34 +133,6 @@ if
             // Counting cache items.
             cache.count
 
-            // Verifying sockets are turned on.
-            .has-sockets:bool:true
-            .has-terminal:bool:true
-            if
-               eq
-                  config.get:"magic:sockets:url"
-                  .
-               .lambda
-                  set-value:x:@.has-sockets
-                     .:bool:false
-                  set-value:x:@.has-terminal
-                     .:bool:false
-            else-if
-               eq
-                  config.get:"magic:terminal"
-                  .:False
-               .lambda
-                  set-value:x:@.has-terminal
-                     .:bool:false
-            else
-               vocabulary:system.terminal.create
-               if
-                  not
-                     exists:x:@vocabulary/*
-                  .lambda
-                     set-value:x:@.has-terminal
-                        .:bool:false
-
             // Verifying scheduler is turned on.
             .has-scheduler:bool:true
             if
@@ -214,7 +186,6 @@ if
                version:x:@version
                persisted_tasks:x:@tasks.count
                has_sockets:x:@.has-sockets
-               has_terminal:x:@.has-terminal
                has_scheduler:x:@.has-scheduler
                log_items:x:@log.count
                cache_items:x:@cache.count

@@ -3,11 +3,11 @@
  * for then to dynamically load it as a plugin and invoke a slot
  * called [foo] expected to exist within the C# code.
  *
- * Notice, the code assumes there's a C# file called "slot.cs"
- * in your '/etc/csharp/' folder. Create this file with Hyper IDE
+ * Notice, the code assumes there's a C# file called "foo.cs"
+ * in your '/etc/' folder. Create this file with Hyper IDE
  * using the "slot" template to test the code.
  */
-io.file.load:/etc/csharp/slot.cs
+io.file.load:/etc/foo.cs
 system.compile
    references
       .:netstandard

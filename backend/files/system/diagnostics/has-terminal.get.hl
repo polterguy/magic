@@ -1,7 +1,0 @@
-
-/*
- * Dummy endpoint to get access rights correctly applied in frontend.
- */
-auth.ticket.verify:root
-return
-   result:bool:true
