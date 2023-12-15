@@ -71,7 +71,7 @@ export class BazarService {
 
   downloadBazarItem(app: BazarApp) {
 
-    return this.httpService.post<MagicResponse>('/magic/system/bazar/download-from-bazar', {
+    return this.httpService.post<MagicResponse>('/magic/system/bazar/install-plugin', {
       url: environment.bazarUrl + '/magic/modules/bazar/download?product_id=' + app.id,
       name: app.folder_name
     });
