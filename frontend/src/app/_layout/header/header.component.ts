@@ -147,7 +147,7 @@ export class HeaderComponent implements OnInit {
     switch (val) {
 
       case '/':
-        return `The Magic Dashboard is the primary tool for managing an Aista Magic Cloud installation.
+        return `The Magic Dashboard is the primary tool for managing an AINIRO.IO Magic Cloud installation.
 It provides a graphical user interface for managing tasks, machine learning models, Hyperlambda code,
 and other aspects of your cloudlet. It also contains key performance indicators, charts, and a YouTube
 tutorial for getting started with Magic and Hyperlambda.`;
@@ -216,7 +216,7 @@ and see the result in this component.`;
 
       case 'plugins':
         return `Magic's plugin component is an integrated "AppStore" that allows you to install backend
-microservices on the fly without interrupting normal usage. It provides access to Aista's repository of
+microservices on the fly without interrupting normal usage. It provides access to AINIRO.IO's repository of
 pre-fabricated microservices, such as translations, ticket management, CRM, Stripe payments, and SQLite
 databases. Most plugins automatically create their databases and any other necessary components for
 initialization. You can view and edit the plugin code after installing a plugin using Hyper IDE and SQL Studio.`;
