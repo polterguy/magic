@@ -35,6 +35,7 @@ export abstract class GeneratorBase {
 
     this.isLoading = true;
     this.generalService.showLoading();
+
     this.sqlService.connectionStrings(this.selectedDbType).subscribe({
       next: (connectionStrings: any) => {
 
