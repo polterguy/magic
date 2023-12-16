@@ -19,7 +19,6 @@ import { Model } from 'src/app/codemirror/codemirror-hyperlambda/codemirror-hype
 
 // CodeMirror options.
 import hyperlambda from 'src/app/codemirror/options/hyperlambda.json';
-import { AiService } from 'src/app/_general/services/ai.service';
 
 /**
  * Hyperlambda Playground component, allowing user to execute arbitrary Hyperlambda, and/or
@@ -50,7 +49,6 @@ export class HyperlambdaPlaygroundComponent implements OnInit, OnDestroy {
     private evaluatorService: EvaluatorService,
     private generalService: GeneralService,
     private dialog: MatDialog,
-    private aiService: AiService,
     private codemirrorActionsService: CodemirrorActionsService) { }
 
   ngOnInit() {
