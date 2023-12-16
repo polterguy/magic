@@ -439,7 +439,6 @@ export class IdeTreeComponent implements OnInit {
     for (const idx of this.treeControl.dataNodes) {
       if (this.treeControl.isExpanded(idx)) {
         expanded.push(idx);
-        expanded.push(this.openFolder);
       }
     }
 
