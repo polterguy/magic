@@ -492,12 +492,18 @@ export class IdeTreeComponent implements OnInit {
   /**
    * Renames the specified file to its new name.
    */
-  renameFile(event: { file: { path: string }, newName: string }) {
+  renameFile(event: { file: { path: string, name: string }, newName: string }) {
 
     // Sanity checking new name.
     if (!this.nameValidation(event.newName)) {
       this.generalService.showFeedback(`${event.newName} is not an aceptable filename`);
       return;
+    }
+
+    // Checking if name is the same at which point we return early.
+    if (event.file.name === event.newName) {
+      this.showRenameBox = null;
+      return; // Name didn't change.
     }
 
     // Renaming file on server.
@@ -565,6 +571,12 @@ export class IdeTreeComponent implements OnInit {
 
     // Figuring out new folder path after renaming.
     const newFolderPath = TreeNode.parentFolderFromPath(event.folder) + event.newName + '/';
+
+    // Checking if name is the same at which point we return early.
+    if (newFolderPath === event.folder) {
+      this.showRenameBox = null;
+      return; // Name didn't change.
+    }
 
     // Renaming folder on server.
     this.fileService.rename(event.folder, newFolderPath).subscribe({
