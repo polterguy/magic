@@ -39,18 +39,24 @@
     <mat-datepicker #picker></mat-datepicker>
   </mat-form-field>
 
-  <mat-form-field class="w-100 standalone-field">
+  <mat-form-field class="w-100" *ngIf="roles.length > 0">
     <span
       matPrefix
-      matTooltip="Role(s) to associate token with"
+      matTooltip="Role(s) required to invoke endpoint"
       class="d-flex flex-nowrap align-items-center justify-content-between me-2">
       <mat-icon>shield</mat-icon>
       <span class="text-muted">|</span>
     </span>
-    <input
-      type="text"
-      matInput
-      [(ngModel)]="data.role">
+    <mat-select
+      placeholder="Role(s) to associate token with"
+      multiple
+      [(ngModel)]="data.roles"
+      disableOptionCentering
+      panelClass="custom-select-option">
+      <mat-option *ngFor="let item of roles" [value]="item.name">
+        {{item.name}}
+      </mat-option>
+    </mat-select>
   </mat-form-field>
 
   <ng-container *ngIf="token && token!==''">

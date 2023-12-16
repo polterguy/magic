@@ -98,7 +98,7 @@ export class HeaderComponent implements OnInit {
       autoFocus: false,
       data: {
         username: this.backendService.active.username,
-        role: 'admin',
+        roles: ['admin'],
         expires: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString()
       }
     });
