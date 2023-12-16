@@ -7,7 +7,7 @@
       <!-- Create new database section -->
       <div class="col-12">
         <h3 class="fw-bold">Create database</h3>
-        <p class="text-muted">Create a new SQLite database below</p>
+        <p class="text-muted">Create a new SQLite database</p>
       </div>
 
       <div class="col-12 mt-3 mb-5">
@@ -26,7 +26,7 @@
               type="text"
               name="-"
               autocomplete="off"
-              placeholder="Name of database"
+              placeholder="Name of new database"
               [(ngModel)]="databaseName"
               [pattern]="CommonRegEx.appNameWithUppercaseHyphen" />
             <mat-error>{{CommonErrorMessages.appNameWithUppercaseHyphen}}</mat-error>
@@ -133,10 +133,11 @@
       </table>
     </div>
 
-    <div class="text-end button-row mt-3 w-100 upload-backup-row">
+    <div class="text-end button-row w-100 upload-backup-row">
 
       <button
         mat-flat-button
+        class="me-4"
         color="primary"
         (click)="zipfile.click()">
         Upload backup
