@@ -11,10 +11,8 @@ import { ConfirmationDialogComponent } from 'src/app/_general/components/confirm
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { IncompatibleFileDialogComponent } from '../incompatible-file-dialog/incompatible-file-dialog.component';
 import { NewFileFolderDialogComponent } from '../new-file-folder-dialog/new-file-folder-dialog.component';
-import { Macro, SelectMacroDialogComponent } from '../select-macro-dialog/select-macro-dialog.component';
 import { FileNode } from '../../models/file-node.model';
 import { FlatNode } from './models/flat-node.model';
-import { MacroDefinition } from '../../models/macro-definition.model';
 import { TreeNode } from './models/tree-node.model';
 import { CodemirrorActionsService } from '../../../../../../_general/services/codemirror-actions.service';
 import { FileService } from '../../../../../../_general/services/file.service';
