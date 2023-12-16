@@ -16,6 +16,7 @@ import { Subscription } from 'rxjs';
 import { ShortkeysComponent } from 'src/app/_general/components/shortkeys/shortkeys.component';
 import { CodemirrorActionsService } from '../../../../_general/services/codemirror-actions.service';
 import { Model } from 'src/app/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
+import { AiService } from 'src/app/_general/services/ai.service';
 
 // CodeMirror options.
 import hyperlambda from 'src/app/codemirror/options/hyperlambda.json';
@@ -49,6 +50,7 @@ export class HyperlambdaPlaygroundComponent implements OnInit, OnDestroy {
     private evaluatorService: EvaluatorService,
     private generalService: GeneralService,
     private dialog: MatDialog,
+    private aiService: AiService,
     private codemirrorActionsService: CodemirrorActionsService) { }
 
   ngOnInit() {
@@ -150,7 +152,7 @@ export class HyperlambdaPlaygroundComponent implements OnInit, OnDestroy {
     this.dialog.open(ShortkeysComponent, {
       width: '900px',
       data: {
-        type: ['save', 'execute', 'prompt']
+        type: ['save', 'execute', 'prompt', 'insertSnippet'],
       }
     })
   }
@@ -169,11 +171,10 @@ export class HyperlambdaPlaygroundComponent implements OnInit, OnDestroy {
   private getCodeMirrorOptions() {
 
     const optionsInput = this.codemirrorActionsService.getActions(null, 'hl');
-    optionsInput.autoFocus = true;
     this.input.options = optionsInput;
 
     const optionsOutput = this.codemirrorActionsService.getActions(null, 'hl');
-    optionsOutput.autoFocus = true;
+    optionsOutput.autofocus = false;
     optionsOutput.readOnly = true;
     this.output.options = optionsOutput;
   }
@@ -195,10 +196,22 @@ export class HyperlambdaPlaygroundComponent implements OnInit, OnDestroy {
         case 'execute':
           this.execute();
           break;
+
+        case 'prompt':
+          this.prompt();
+          break;
   
         default:
           break;
       }
     });
+  }
+
+  private prompt() {
+    const editor = (<any>document.querySelector('.CodeMirror')).CodeMirror;
+    const selection = editor.getSelection();
+    if (selection?.length > 0) {
+      this.aiService.prompt(selection);
+    }
   }
 }
