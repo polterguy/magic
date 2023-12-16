@@ -59,11 +59,6 @@ export class HyperlambdaPlaygroundComponent implements OnInit, OnDestroy {
     this.watchForActions();
   }
 
-  insertFromOpenAI(snippet: string) {
-
-    this.input.hyperlambda = snippet;
-  }
-
   load() {
 
     this.dialog.open(LoadSnippetDialogComponent, {
@@ -173,21 +168,14 @@ export class HyperlambdaPlaygroundComponent implements OnInit, OnDestroy {
    * Private helper methods.
    */
 
-  private prompt() {
-
-    const editor = (<any>document.querySelector('.CodeMirror')).CodeMirror;
-    const selection = editor.getSelection();
-    if (selection?.length > 0) {
-      this.aiService.prompt(selection);
-    }
-  }
-
   private getCodeMirrorOptions() {
 
     const optionsInput = this.codemirrorActionsService.getActions(null, 'hl');
+    optionsInput.autoFocus = true;
     this.input.options = optionsInput;
 
     const optionsOutput = this.codemirrorActionsService.getActions(null, 'hl');
+    optionsOutput.autoFocus = true;
     optionsOutput.readOnly = true;
     this.output.options = optionsOutput;
   }
@@ -209,10 +197,6 @@ export class HyperlambdaPlaygroundComponent implements OnInit, OnDestroy {
         case 'execute':
           this.execute();
           break;
-
-          case 'prompt':
-            this.prompt();
-            break;
   
         default:
           break;
