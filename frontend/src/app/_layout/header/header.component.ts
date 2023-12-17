@@ -97,9 +97,9 @@ export class HeaderComponent implements OnInit {
       width: '500px',
       autoFocus: false,
       data: {
-        username: this.backendService.active.username,
+        username: 'service',
         roles: ['admin'],
-        expires: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString()
+        expires: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString(),
       }
     });
   }
