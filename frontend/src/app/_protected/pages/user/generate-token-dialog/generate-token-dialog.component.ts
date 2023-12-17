@@ -50,7 +50,7 @@ export class GenerateTokenDialogComponent implements OnInit {
     });
   }
 
-  public generateToken() {
+  generateToken() {
 
     this.generalService.showLoading();
     this.cryptoService.generateToken(
@@ -71,9 +71,9 @@ export class GenerateTokenDialogComponent implements OnInit {
     });
   }
 
-  public copy() {
+  copy() {
 
     this.clipboard.copy(this.token);
-    this.generalService.showFeedback('Token can be found on your clipboard');
+    this.generalService.showFeedback('Token can be found on your clipboard', 'successMessage');
   }
 }
