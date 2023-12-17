@@ -3,13 +3,9 @@
  * Copyright (c) 2023 Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
  */
 
-import { PlatformLocation } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { User } from 'src/app/_protected/pages/manage/user-and-roles/_models/user.model';
-import { BackendService } from 'src/app/_general/services/backend.service';
-import { AuthenticateResponse } from '../_models/authenticate-response.model';
 import { UserService } from '../_services/user.service';
-import { Clipboard } from '@angular/cdk/clipboard';
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from 'src/app/_general/components/confirmation-dialog/confirmation-dialog.component';
@@ -43,65 +39,8 @@ export class UsersListComponent {
 
   constructor(
     private dialog: MatDialog,
-    private clipboard: Clipboard,
     private userService: UserService,
-    private generalService: GeneralService,
-    private backendService: BackendService,
-    private platformLocation: PlatformLocation) { }
-
-  generateResetPasswordLink(user: User) {
-
-    this.generalService.showLoading();
-    this.userService.generateResetPasswordLink(user.username).subscribe({
-      next: (result: AuthenticateResponse) => {
-
-        this.generalService.hideLoading();
-        const location: any = this.platformLocation;
-        const url = location.location.origin.toString() +
-          '/authentication/auto-auth?token=' +
-          encodeURIComponent(result.ticket) +
-          '&username=' +
-          encodeURIComponent(user.username) +
-          '&url=' +
-          encodeURIComponent(this.backendService.active.url);
-
-        this.clipboard.copy(url);
-        this.generalService.showFeedback('Reset password link is copied to your clipboard', 'successMessage');
-      },
-      error: (error: any) => {
-
-        this.generalService.hideLoading();
-        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
-      }
-    });
-  }
-
-  generateLoginLink(user: User) {
-
-    this.generalService.showLoading();
-    this.userService.generateLoginLink(user.username).subscribe({
-      next: (result: AuthenticateResponse) => {
-
-        this.generalService.hideLoading();
-        const location: any = this.platformLocation;
-        const url = location.location.origin.toString() + '/authentication/auto-auth' +
-          '/?token=' +
-          encodeURIComponent(result.ticket) +
-          '&username=' +
-          encodeURIComponent(user.username) +
-          '&url=' +
-          encodeURIComponent(this.backendService.active.url);
-
-        this.clipboard.copy(url);
-        this.generalService.showFeedback('Login link is copied to your clipboard', 'successMessage');
-      },
-      error: (error: any) => {
-
-        this.generalService.hideLoading();
-        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
-      }
-    });
-  }
+    private generalService: GeneralService) { }
 
   lockedChanged(user: User) {
 

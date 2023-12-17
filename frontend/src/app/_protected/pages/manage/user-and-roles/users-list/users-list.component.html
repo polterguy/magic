@@ -56,23 +56,6 @@
 
       <td mat-cell *matCellDef="let element">
         <div class="d-flex justify-content-between align-items-center">
-          <div>
-
-            <button
-              mat-button
-              color="primary" 
-              (click)="editUser(element)">
-              Edit
-            </button>
-
-            <button
-              mat-button
-              color="primary" 
-              (click)="changePassword(element)">
-              Change password
-            </button>
-
-          </div>
 
           <button
             mat-icon-button
@@ -86,20 +69,20 @@
 
           <button
             mat-menu-item
+            (click)="editUser(element)">
+            Edit
+          </button>
+
+          <button
+            mat-menu-item
+            (click)="changePassword(element)">
+            Change password
+          </button>
+
+          <button
+            mat-menu-item
             (click)="lockedChanged(element)">
             {{element?.locked ? 'Unlock' : 'Lock'}}
-          </button>
-
-          <button
-            mat-menu-item
-            (click)="generateResetPasswordLink(element)">
-            Create reset password link
-          </button>
-
-          <button
-            mat-menu-item
-            (click)="generateLoginLink(element)">
-            Login as {{element?.username}}
           </button>
 
           <button
