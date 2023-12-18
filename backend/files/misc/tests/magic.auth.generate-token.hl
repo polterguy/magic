@@ -1,5 +1,0 @@
-verb:get
-url:/magic/system/auth/impersonate?username=root
-status:int:200
-description:Assumes that invoking endpoint with root username results in the correct status code from backend
-produces:application/json

@@ -1,9 +1,0 @@
-verb:get
-url:/magic/system/auth/impersonate
-status:int:400
-description:Assumes that invoking endpoint without passing in a username results in the correct error response and status from backend
-response:@"{
-  ""message"": ""Mandatory argument 'username' not given"",
-  ""field"": ""username""
-}"
-produces:application/json
