@@ -3,8 +3,9 @@
  * Copyright (c) 2023 Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
  */
 
+import { Argument } from "../components/protected/manage/endpoints/_models/argument.model";
+
 // Application specific imports.
-import { Argument } from "../components/protected/pages/manage/endpoints/_models/argument.model";
 
 /**
  * Endpoint model describing a single endpoint in your backend,

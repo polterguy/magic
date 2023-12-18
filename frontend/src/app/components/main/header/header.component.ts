@@ -9,7 +9,7 @@ import { NavLinks } from '../../../models/nav-links';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogComponent } from 'src/app/components/common/dialog/dialog.component';
 import { BackendsListComponent } from 'src/app/components/common/backends-list/backends-list.component';
-import { GenerateTokenDialogComponent } from 'src/app/components/protected/pages/user/generate-token-dialog/generate-token-dialog.component';
+import { GenerateTokenDialogComponent } from 'src/app/components/protected/user/generate-token-dialog/generate-token-dialog.component';
 import { Router } from '@angular/router';
 import { MessageService } from 'src/app/services/message.service';
 import { Message } from 'src/app/models/message.model';
