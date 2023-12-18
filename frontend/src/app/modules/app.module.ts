@@ -21,7 +21,7 @@ import { RecaptchaV3Module, RecaptchaFormsModule, RecaptchaModule, RECAPTCHA_V3_
 import { NgxMatDatetimePickerModule, NgxMatTimepickerModule } from '@angular-material-components/datetime-picker';
 
 // Hyperlambda mode for CodeMirror import.
-import './codemirror/hyperlambda.js';
+import '../codemirror/hyperlambda.js';
 
 // SQL hints plugin for CodeMirror.
 import 'codemirror/addon/hint/sql-hint.js';
@@ -31,17 +31,17 @@ import { environment } from 'src/environments/environment';
 import { ServiceWorkerModule } from '@angular/service-worker';
 
 // Interceptors
-import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { AuthInterceptor } from '../interceptors/auth.interceptor';
 
 // Components
-import { AppComponent } from './app.component';
-import { CoreComponent } from './_layout/core/core.component';
-import { HeaderComponent } from './_layout/header/header.component';
-import { FooterComponent } from './_layout/footer/footer.component';
+import { AppComponent } from '../app.component';
+import { CoreComponent } from '../_layout/core/core.component';
+import { HeaderComponent } from '../_layout/header/header.component';
+import { FooterComponent } from '../_layout/footer/footer.component';
 
 // Misc
-import { AccessGuard } from './access.guard';
-import { AuthBaseComponent } from './public/authentication/auth-base/auth-base.component';
+import { AccessGuard } from '../access.guard';
+import { AuthBaseComponent } from '../public/authentication/auth-base/auth-base.component';
 import { SharedModule } from './shared.module';
 
 @NgModule({

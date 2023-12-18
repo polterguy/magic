@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
 import { HyperlambdaPlaygroundComponent } from '../hyperlambda-playground.component';
 import { HyperlambdaPlaygroundRoutingModule } from './hyperlambda-playground.routing.module';
 import { ComponentsModule } from 'src/app/_general/components/components.module';
-import { MaterialModule } from 'src/app/material.module';
+import { MaterialModule } from 'src/app/modules/material.module';
 import { CmModule } from 'src/app/codemirror/_module/cm.module';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 

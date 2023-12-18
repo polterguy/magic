@@ -7,7 +7,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProfileComponent } from '../profile.component';
 import { ProfileRoutingModule } from './profile.routing.module';
-import { MaterialModule } from 'src/app/material.module';
+import { MaterialModule } from 'src/app/modules/material.module';
 import { FormsModule } from '@angular/forms';
 
 @NgModule({

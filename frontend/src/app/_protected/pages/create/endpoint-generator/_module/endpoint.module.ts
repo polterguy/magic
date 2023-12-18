@@ -6,8 +6,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MaterialModule } from 'src/app/material.module';
-import { SharedModule } from 'src/app/shared.module';
+import { MaterialModule } from 'src/app/modules/material.module';
+import { SharedModule } from 'src/app/modules/shared.module';
 import { ComponentsModule } from 'src/app/_general/components/components.module';
 import { EndpointRoutingModule } from './endpoint.routing.module';
 import { EndpointGeneratorComponent } from '../endpoint-generator.component';
