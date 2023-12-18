@@ -1,0 +1,25 @@
+/*
+ * Copyright (c) 2023 Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
+ */
+
+@import "src/assets/styles/_variables/colors.scss";
+@import "src/assets/styles/_variables/mixin.scss";
+
+::ng-deep .sql-editor {
+  .sql-input {
+    min-height: 500px;
+
+    .CodeMirror:not(.CodeMirror-fullscreen) {
+      height: 100%;
+    }
+  }
+}
+
+.table-responsive {
+  max-height: 50vh;
+  @include scrollbar($aista_default_alt, $aista_default_grey4, 5px);
+
+  .text-truncate {
+    max-width: 25vw;
+  }
+}

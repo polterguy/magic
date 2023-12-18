@@ -1,0 +1,43 @@
+/*
+ * Copyright (c) 2023 Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
+ */
+
+@import "src/assets/styles/_variables/colors.scss";
+@import "src/assets/styles/_variables/mixin.scss";
+@import "src/assets/styles/_variables/sizing.scss";
+
+.table-responsive {
+
+  .text-truncate {
+    max-width: 30vw;
+  }
+
+  .text-truncate-2 {
+    max-width: 15vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .status {
+    min-width: 7px;
+    min-height: 7px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    display: inline-block;
+    background-color: $aista_warning;
+
+    &.pushed {
+      background-color: $aista_success;
+    }
+
+    &.cached {
+      background-color: $aista_success;
+    }
+  }
+}
+
+a {
+  text-decoration: none;
+}

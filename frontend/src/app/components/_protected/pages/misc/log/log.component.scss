@@ -1,0 +1,14 @@
+/*
+ * Copyright (c) 2023 Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
+ */
+
+@import 'src/assets/styles/_variables/colors.scss';
+@import 'src/assets/styles/_variables/mixin.scss';
+
+.table-responsive {
+  @include scrollbar($aista_default_alt, $aista_default_grey4, 8px);
+
+  .text-truncate {
+    max-width: 30vw;
+  }
+}

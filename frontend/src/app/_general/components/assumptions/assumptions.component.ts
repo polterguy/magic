@@ -4,9 +4,9 @@
  */
 
 import { Component, Input, OnInit } from '@angular/core';
-import { AssumptionService } from 'src/app/_general/services/assumption.service';
-import { GeneralService } from 'src/app/_general/services/general.service';
-import { InvocationResult } from '../../../_protected/pages/manage/endpoints/endpoints-result/endpoints-result.component';
+import { AssumptionService } from 'src/app/services/assumption.service';
+import { GeneralService } from 'src/app/services/general.service';
+import { InvocationResult } from '../../../components/_protected/pages/manage/endpoints/endpoints-result/endpoints-result.component';
 
 /*
  * Assumption model for showing tests associated with endpoints.

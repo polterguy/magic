@@ -1,0 +1,14 @@
+
+/*
+ * Copyright (c) 2023 Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
+ */
+
+ @import 'src/assets/styles/_variables/colors.scss';
+@import 'src/assets/styles/_variables/mixin.scss';
+@import 'src/assets/styles/_variables/sizing.scss';
+
+.max-height-full {
+  max-height: 53vh;
+  min-height: 100%;
+  overflow: hidden;
+}

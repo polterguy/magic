@@ -8,10 +8,10 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 
 // Application specific imports.
-import { AssumptionService } from 'src/app/_general/services/assumption.service';
+import { AssumptionService } from 'src/app/services/assumption.service';
 import { CommonErrorMessages } from '../../classes/common-error-messages';
 import { CommonRegEx } from '../../classes/common-regex';
-import { GeneralService } from '../../services/general.service';
+import { GeneralService } from '../../../services/general.service';
 
 /**
  * Result of dialog if user chooses to create a test.

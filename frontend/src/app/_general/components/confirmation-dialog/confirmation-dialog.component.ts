@@ -6,7 +6,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { GeneralService } from '../../services/general.service';
+import { GeneralService } from '../../../services/general.service';
 
 /**
  * Data model to bind towards UI in form.

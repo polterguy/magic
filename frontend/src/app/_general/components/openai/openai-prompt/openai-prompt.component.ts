@@ -5,8 +5,8 @@
 
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { GeneralService } from 'src/app/_general/services/general.service';
-import { OpenAIService } from 'src/app/_general/services/openai.service';
+import { GeneralService } from 'src/app/services/general.service';
+import { OpenAIService } from 'src/app/services/openai.service';
 import { OpenAIAnswerDialogComponent } from '../openai-answer-dialog/openai-answer-dialog.component';
 import { OpenAIConfigurationDialogComponent } from '../openai-configuration-dialog/openai-configuration-dialog.component';
 
