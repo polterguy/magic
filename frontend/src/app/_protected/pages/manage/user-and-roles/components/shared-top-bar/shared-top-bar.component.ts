@@ -5,8 +5,6 @@
 
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { GeneralService } from 'src/app/_general/services/general.service';
-import { FileService } from 'src/app/_general/services/file.service';
 import { Role } from '../../_models/role.model';
 import { ManageRoleDialogComponent } from '../manage-role-dialog/manage-role-dialog.component';
 import { NewUserDialogComponent } from '../new-user-dialog/new-user-dialog.component';
@@ -28,23 +26,7 @@ export class SharedTopBarComponent {
   @Output() getUsersList = new EventEmitter<any>();
   @Output() getRolesList = new EventEmitter<any>();
 
-  csvFileInput: any = null;
-
-  constructor(
-    private dialog: MatDialog,
-    private fileService: FileService,
-    private generalService: GeneralService) { }
-
-  uploadUsers(files: any) {
-
-    this.fileService.importUsers(files.item(0)).subscribe({
-      next: (res: any) => {
-        this.csvFileInput = null;
-        this.getUsersList.emit({ search: this.searchTerm });
-        this.generalService.showFeedback(`${res.count} users were successfully imported`);
-      }, error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
-    });
-  }
+  constructor(private dialog: MatDialog) { }
 
   filterList(event: { searchKey: string }) {
 
@@ -97,10 +79,12 @@ export class SharedTopBarComponent {
    */
 
   private getUsers() {
+
     this.getUsersList.emit({ search: this.searchTerm });
   }
 
   private getRoles() {
+
     this.getRolesList.emit({ search: this.searchTerm });
   }
 }

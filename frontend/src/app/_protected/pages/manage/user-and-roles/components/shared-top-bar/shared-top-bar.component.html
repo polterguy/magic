@@ -11,28 +11,12 @@
   <div class="d-flex justify-content-end button-row align-items-center w-100">
 
     <button
-      mat-button
-      color="primary"
-      *ngIf="tab === 'user'"
-      (click)="csvFile.click()">
-      Import users
-    </button>
-
-    <button
       mat-flat-button
       color="primary"
       class="py-1"
       (click)="tab === 'user' ? createNewUser() : createNewRole()">
       Add {{tab}}
     </button>
-
-    <input
-      type="file"
-      [(ngModel)]="csvFileInput"
-      #csvFile
-      class="d-none"
-      accept=".csv"
-      (change)="uploadUsers($event.target.files)">
 
   </div>
 </div>

@@ -188,24 +188,6 @@ export class FileService {
   }
 
   /**
-   * Imports users
-   */
-  public importUsers(file: any) {
-
-    const formData: FormData = new FormData();
-    formData.append('file', file);
-    return this.httpService.put<any>('/magic/system/auth/import-users', formData);
-  }
-
-  /**
-   * Uploads a file to your backend.
-   */
-  public uploadStaticWebsite(data: FormData) {
-
-    return this.httpService.put<any>('/magic/system/file-system/overwrite-folder', data);
-  }
-
-  /**
    * Downloads a file from backend.
    */
   public downloadFolder(path: string) {
