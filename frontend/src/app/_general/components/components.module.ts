@@ -5,7 +5,7 @@
 
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MaterialModule } from 'src/app/material.module';
+import { MaterialModule } from 'src/app/modules/material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TermsModalComponent } from './terms-modal/terms-modal.component';
 import { PrivacyModalComponent } from './privacy-modal/privacy-modal.component';

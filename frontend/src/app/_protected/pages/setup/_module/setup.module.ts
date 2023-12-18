@@ -6,7 +6,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MaterialModule } from 'src/app/material.module';
+import { MaterialModule } from 'src/app/modules/material.module';
 import { ComponentsModule } from 'src/app/_general/components/components.module';
 import { SetupComponent } from '../setup.component';
 import { SetupRoutingModule } from './setup.routing.module';

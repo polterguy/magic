@@ -8,8 +8,8 @@ import { CommonModule } from '@angular/common';
 import { LogComponent } from '../log.component';
 import { LogRoutingModule } from './log.routing.module';
 import { ComponentsModule } from 'src/app/_general/components/components.module';
-import { MaterialModule } from 'src/app/material.module';
-import { SharedModule } from 'src/app/shared.module';
+import { MaterialModule } from 'src/app/modules/material.module';
+import { SharedModule } from 'src/app/modules/shared.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({

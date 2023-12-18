@@ -5,7 +5,7 @@
 
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MaterialModule } from 'src/app/material.module';
+import { MaterialModule } from 'src/app/modules/material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UsersRolesRoutingModule } from './users-roles.routing.module';
 import { UsersListComponent } from '../users-list/users-list.component';

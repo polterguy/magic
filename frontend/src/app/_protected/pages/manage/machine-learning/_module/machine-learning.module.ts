@@ -5,7 +5,7 @@
 
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MaterialModule } from 'src/app/material.module';
+import { MaterialModule } from 'src/app/modules/material.module';
 import { FormsModule } from '@angular/forms';
 import { ComponentsModule } from 'src/app/_general/components/components.module';
 import { MachineLearningTrainingDataComponent } from '../machine-learning-training-data/machine-learning-training-data.component';
@@ -18,7 +18,7 @@ import { MachineLearningModelsComponent } from '../machine-learning-models/machi
 import { MachineLearningRequestsComponent } from '../machine-learning-history/machine-learning-history.component';
 import { MachineLearningEditCacheComponent } from '../components/machine-learning-edit-cache/machine-learning-edit-cache.component';
 import { MachineLearningTestComponent } from '../components/machine-learning-test/machine-learning-test.component';
-import { SharedModule } from 'src/app/shared.module';
+import { SharedModule } from 'src/app/modules/shared.module';
 import { MachineLearningTrainComponent } from '../components/machine-learning-train/machine-learning-train.component';
 import { MachineLearningImportComponent } from '../components/machine-learning-import/machine-learning-import.component';
 import { MachineLearningEmbedUiComponent } from '../components/machine-learning-embed-ui/machine-learning-embed-ui.component';

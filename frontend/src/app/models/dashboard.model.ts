@@ -26,7 +26,7 @@ export interface SystemReport {
 }
 
 /**
- * type of logs created on the backend
+ * Type of logs created on the backend
  */
 export interface LogTypes {
   debug?: number,

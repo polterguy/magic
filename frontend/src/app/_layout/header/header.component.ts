@@ -10,11 +10,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { DialogComponent } from 'src/app/_general/components/dialog/dialog.component';
 import { BackendsListComponent } from 'src/app/_general/components/backends-list/backends-list.component';
 import { GenerateTokenDialogComponent } from 'src/app/_protected/pages/user/generate-token-dialog/generate-token-dialog.component';
-import { Status } from 'src/app/_protected/models/common/status.model';
 import { Router } from '@angular/router';
 import { MessageService } from 'src/app/_general/services/message.service';
 import { Message } from 'src/app/models/message.model';
 import { MatMenuTrigger } from '@angular/material/menu';
+import { MagicResponse } from 'src/app/_general/models/magic-response.model';
 
 /**
  * Header component showing navbar links and backend switcher.
@@ -321,7 +321,7 @@ optin verification and potential referential integrity issues.`;
   private getSetupStatus() {
 
     // Subscribing to status changes and redirect accordingly if we need user to setup system.
-    this.backendService.statusRetrieved.subscribe((status: Status) => {
+    this.backendService.statusRetrieved.subscribe((status: MagicResponse) => {
       if (status) {
         if (!status.result) {
           this.router.navigate(['/setup']);

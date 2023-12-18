@@ -4,8 +4,8 @@
  */
 
 // Application specific imports.
+import { MagicResponse } from 'src/app/_general/models/magic-response.model';
 import { Token } from './token.model';
-import { Status } from './status.model';
 
 /**
  * Encapsulates a backend instance, in addition to its username, password, and if existing also
@@ -17,7 +17,7 @@ export class Backend {
   private _url: string;
   private _username: string;
   private _password: string;
-  private _status: Status = null;
+  private _status: MagicResponse = null;
   private _version: string = null;
 
   /**
@@ -110,7 +110,7 @@ export class Backend {
   /**
    * Changes the status of the backend.
    */
-  set status(value: Status) {
+  set status(value: MagicResponse) {
 
     this._status = value;
   }

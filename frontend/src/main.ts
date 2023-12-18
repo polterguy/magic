@@ -29,7 +29,7 @@ import 'codemirror/addon/display/fullscreen';
 import 'codemirror/addon/selection/active-line';
 
 // Application specific imports.
-import { AppModule } from './app/app.module';
+import { AppModule } from './app/modules/app.module';
 import { environment } from './environments/environment';
 import { RecaptchaComponent } from 'ng-recaptcha';
 

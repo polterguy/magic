@@ -10,7 +10,6 @@ import { BehaviorSubject, Observable, throwError } from 'rxjs';
 
 // Application specific imports.
 import { Token } from '../../_protected/models/common/token.model';
-import { Status } from '../../_protected/models/common/status.model';
 import { Backend } from '../../_protected/models/common/backend.model';
 import { MagicResponse } from '../models/magic-response.model';
 import { CoreVersion } from '../../_protected/models/common/core-version.model';
@@ -31,7 +30,7 @@ export class BackendService {
 
   private _authenticated: BehaviorSubject<boolean>;
   private _activeChanged: BehaviorSubject<Backend>;
-  private _statusRetrieved: BehaviorSubject<Status>;
+  private _statusRetrieved: BehaviorSubject<MagicResponse>;
   private _versionRetrieved: BehaviorSubject<string>;
   private _latestBazarVersion: string = null;
   private _activeCaptcha = new BehaviorSubject<string>('');
@@ -40,7 +39,7 @@ export class BackendService {
 
   authenticatedChanged: Observable<boolean>;
   activeBackendChanged: Observable<Backend>;
-  statusRetrieved: Observable<Status>;
+  statusRetrieved: Observable<MagicResponse>;
   versionRetrieved: Observable<string>;
 
   constructor(
@@ -60,7 +59,7 @@ export class BackendService {
     this._activeChanged = new BehaviorSubject<Backend>(null);
     this.activeBackendChanged = this._activeChanged.asObservable();
 
-    this._statusRetrieved = new BehaviorSubject<Status>(null);
+    this._statusRetrieved = new BehaviorSubject<MagicResponse>(null);
     this.statusRetrieved = this._statusRetrieved.asObservable();
 
     this._versionRetrieved = new BehaviorSubject<string>(null);
@@ -347,11 +346,11 @@ export class BackendService {
   private retrieveStatusAndVersion() {
 
     // Retrieving status of specified backend.
-    return new Observable<Status>(observer => {
-      this.httpClient.get<Status>(
+    return new Observable<MagicResponse>(observer => {
+      this.httpClient.get<MagicResponse>(
         this.active.url +
         '/magic/system/config/status').subscribe({
-          next: (status: Status) => {
+          next: (status: MagicResponse) => {
 
             // Assigning model.
             this.active.status = status;
