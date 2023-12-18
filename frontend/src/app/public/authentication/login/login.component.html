@@ -2,7 +2,7 @@
 <div class="row">
   <div class="col-12 mb-2">
     <p class="mat-title mb-2 fw-bold">Magic Dashboard</p>
-    <p class="text-muted mat-body-2">Hi again, happy to see you</p>
+    <p class="text-muted mat-body-2">Hi again, happy to see you 🥳</p>
   </div>
 </div>
 
@@ -66,7 +66,9 @@
           name="username"
           type="username"
           autocomplete="username">
-        <mat-error *ngIf="loginForm.controls.username.errors?.['required']">Username is required</mat-error>
+        <mat-error *ngIf="loginForm.controls.username.errors?.['required']">
+          Username is required
+        </mat-error>
       </mat-form-field>
 
     </div>
