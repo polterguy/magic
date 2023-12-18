@@ -62,7 +62,7 @@ slots.create:magic.auth.authenticate
             password
          where
             and
-               username:x:@.arguments/*/username
+               username.eq:x:@.arguments/*/username
 
       // Checking if user with specified [username] exists.
       if

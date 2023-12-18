@@ -23,11 +23,9 @@ slots.create:magic.auth.create-user
 
    // Opening up a database connection to magic.
    data.connect:magic
-      database-type:x:@.arguments/*/database-type
 
       // Inserting user.
       data.create
-         database-type:x:@.arguments/*/database-type
          table:users
          values
             username:x:@.arguments/*/username
@@ -38,7 +36,6 @@ slots.create:magic.auth.create-user
 
          // Then inserting into users_roles an association between user and role.
          data.create
-            database-type:x:@.arguments/*/database-type
             table:users_roles
             values
                role:x:@.dp/#
@@ -62,7 +59,6 @@ slots.create:magic.auth.create-user
 
                // Then inserting into users_extra an association between user and extra value.
                data.create
-                  database-type:x:@.arguments/*/database-type
                   table:users_extra
                   values
                      user:x:@.arguments/*/username
