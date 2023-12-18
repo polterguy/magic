@@ -34,7 +34,8 @@
               "src/assets/images/icons/favicon-16x16.png",
               "src/assets/site.webmanifest",
               "src/assets/safari-pinned-tab.svg",
-              "src/assets/images/ainiro-logo-new.svg"
+              "src/assets/images/ainiro-logo-new.svg",
+              "src/assets/images/frank.png"
             ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
@@ -150,7 +151,8 @@
               "src/assets/images/icons/favicon-16x16.png",
               "src/assets/site.webmanifest",
               "src/assets/safari-pinned-tab.svg",
-              "src/assets/images/ainiro-logo-new.svg"
+              "src/assets/images/ainiro-logo-new.svg",
+              "src/assets/images/frank.png"
             ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
