@@ -34,10 +34,10 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { AuthInterceptor } from '../interceptors/auth.interceptor';
 
 // Components
-import { AppComponent } from '../components/main/app.component';
-import { CoreComponent } from '../components/core/core.component';
-import { HeaderComponent } from '../components/core/header/header.component';
-import { FooterComponent } from '../components/core/footer/footer.component';
+import { MainComponent } from '../components/main/main.component';
+import { CoreComponent } from '../components/main/core/core.component';
+import { HeaderComponent } from '../components/main/header/header.component';
+import { FooterComponent } from '../components/main/footer/footer.component';
 
 // Misc
 import { AccessGuard } from '../access.guard';
@@ -46,7 +46,7 @@ import { SharedModule } from './shared.module';
 
 @NgModule({
   declarations: [
-    AppComponent,
+    MainComponent,
     CoreComponent,
     HeaderComponent,
     FooterComponent,
@@ -87,6 +87,6 @@ import { SharedModule } from './shared.module';
       useValue: "6LfVd20fAAAAAC2tcJ55RvOEkraQL390cDw2yiT2"
     },
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [MainComponent]
 })
 export class AppModule { }

@@ -11,12 +11,12 @@ import { GeneralService } from '../../services/general.service';
  * Primary component for dashboard, encapsulating progress bar, and router outlet.
  */
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
+  selector: 'app-main',
+  templateUrl: './main.component.html',
+  styleUrls: ['./main.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AppComponent implements AfterContentChecked {
+export class MainComponent implements AfterContentChecked {
   title = 'AINIRO.IO Magic Cloud';
 
   loading$: Subject<any> = new BehaviorSubject(true);
