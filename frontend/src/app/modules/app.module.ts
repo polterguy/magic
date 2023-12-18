@@ -40,7 +40,7 @@ import { HeaderComponent } from 'src/app/components/main/header/header.component
 import { FooterComponent } from 'src/app/components/main/footer/footer.component';
 
 // Misc
-import { AccessGuard } from 'src/app/access.guard';
+import { AccessGuard } from 'src/app/access-guards/access.guard';
 import { AuthBaseComponent } from 'src/app/components/public/authentication/auth-base/auth-base.component';
 import { SharedModule } from './shared.module';
 
