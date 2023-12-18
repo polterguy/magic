@@ -103,7 +103,6 @@ try
             // Root user already exists, hence simply changing its password.
             execute:magic.auth.change-password
                password:x:@.arguments/*/password
-               database-type:x:@.arguments/*/databaseType
                is_hashed:x:@.arguments/*/is_hashed
 
       else
@@ -113,7 +112,6 @@ try
             username:x:@.arguments/*/username
             password:x:@.arguments/*/password
             is_hashed:x:@.arguments/*/is_hashed
-            database-type:x:@.arguments/*/databaseType
             roles
                .:root
             extra
@@ -122,13 +120,12 @@ try
                name:x:@.arguments/*/name
 
       // Authenticating user and returning new JWT token to client.
-      unwrap:x:+/*
-      signal:magic.auth.authenticate
+      execute:magic.auth.authenticate
          username:x:@.arguments/*/username
-         check-password:bool:false
+         password:x:@.arguments/*/password
 
       // Returns the authentication JWT ticket created above to caller.
-      return-nodes:x:@signal/*
+      return-nodes:x:@execute/*
 
 .catch
 
