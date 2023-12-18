@@ -6,7 +6,7 @@ version: "3.3"
 services:
 
   backend:
-    image: aistamagic/magic-backend:latest
+    image: servergardens/magic-backend:latest
     container_name: magic_backend
     restart: always
     ports:
@@ -18,7 +18,7 @@ services:
       - magic_files_modules:/magic/files/modules
 
   frontend:
-    image: aistamagic/magic-frontend:latest
+    image: servergardens/magic-frontend:latest
     container_name: magic_frontend
     depends_on:
       - backend
