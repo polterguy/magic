@@ -1,6 +1,6 @@
 
 // Automatically generated assumption test.
 verb:get
-url:/magic/system/file-system/download-folder?folder=%2Fmisc%2Fmysql%2F
+url:/magic/system/file-system/download-folder?folder=%2Fmisc%2Fsqlite%2F
 status:int:200
 description:Assumes that downloading a folder succeeds

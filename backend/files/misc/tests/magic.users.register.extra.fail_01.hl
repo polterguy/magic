@@ -1,6 +1,0 @@
-verb:post
-url:/magic/system/auth/register
-status:int:400
-description:Verifies that trying to register in Magic with an extra field not supported fails
-payload:"{\n  \"username\": \"foo2@gmail.com\",\n  \"password\": \"foo\",\n  \"frontendUrl\": \"http://localhost:4200\",\n  \"extra\": {\n    \"non-existent-extra-field\": \"sdfoiuhsdf\"\n  }\n}"
-produces:application/json

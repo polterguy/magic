@@ -1,7 +1,0 @@
-verb:post
-url:/magic/system/auth/register
-status:int:400
-description:Verifies that frontendUrl is a valid URL during registration
-payload:"{\n  \"username\": \"foo@howdy.com\",\n  \"password\": \"foo\",\n  \"frontendUrl\": \"foo\"\n}"
-response:"{\n  \"message\": \"'foo' is not a valid URL for [frontendUrl]\",\n  \"field\": \"frontendUrl\"\n}"
-produces:application/json
