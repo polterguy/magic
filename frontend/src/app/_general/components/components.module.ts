@@ -15,7 +15,6 @@ import { DialogComponent } from './dialog/dialog.component';
 import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
 import { ShortkeysComponent } from './shortkeys/shortkeys.component';
 import { LoadSnippetDialogComponent } from './load-snippet-dialog/load-snippet-dialog.component';
-import { QueryParamsComponent } from './query-params/query-params.component';
 import { AssumptionsComponent } from './assumptions/assumptions.component';
 import { CreateAssumptionTestDialogComponent } from './create-assumption-test-dialog/create-assumption-test-dialog.component';
 import { SnippetNameDialogComponent } from './snippet-name-dialog/snippet-name-dialog.component';
@@ -39,7 +38,6 @@ import { OpenAIPromptComponent } from './openai/openai-prompt/openai-prompt.comp
     ConfirmationDialogComponent,
     ShortkeysComponent,
     LoadSnippetDialogComponent,
-    QueryParamsComponent,
     AssumptionsComponent,
     CreateAssumptionTestDialogComponent,
     SnippetNameDialogComponent,
@@ -68,7 +66,6 @@ import { OpenAIPromptComponent } from './openai/openai-prompt/openai-prompt.comp
     ConfirmationDialogComponent,
     ShortkeysComponent,
     LoadSnippetDialogComponent,
-    QueryParamsComponent,
     AssumptionsComponent,
     CreateAssumptionTestDialogComponent,
     SnippetNameDialogComponent,
