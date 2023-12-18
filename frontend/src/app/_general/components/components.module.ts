@@ -19,7 +19,6 @@ import { QueryParamsComponent } from './query-params/query-params.component';
 import { AssumptionsComponent } from './assumptions/assumptions.component';
 import { CreateAssumptionTestDialogComponent } from './create-assumption-test-dialog/create-assumption-test-dialog.component';
 import { SnippetNameDialogComponent } from './snippet-name-dialog/snippet-name-dialog.component';
-import { ExecuteEndpointDialogComponent } from './execute-endpoint-dialog/execute-endpoint-dialog.component';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import { GenerateTokenDialogComponent } from '../../_protected/pages/user/generate-token-dialog/generate-token-dialog.component';
 import { PwaUpdateDialogComponent } from './pwa-update-dialog/pwa-update-dialog.component';
@@ -44,7 +43,6 @@ import { OpenAIPromptComponent } from './openai/openai-prompt/openai-prompt.comp
     AssumptionsComponent,
     CreateAssumptionTestDialogComponent,
     SnippetNameDialogComponent,
-    ExecuteEndpointDialogComponent,
     GenerateTokenDialogComponent,
     PwaUpdateDialogComponent,
     LogItemDetailsComponent,
@@ -74,7 +72,6 @@ import { OpenAIPromptComponent } from './openai/openai-prompt/openai-prompt.comp
     AssumptionsComponent,
     CreateAssumptionTestDialogComponent,
     SnippetNameDialogComponent,
-    ExecuteEndpointDialogComponent,
     GenerateTokenDialogComponent,
     LogItemDetailsComponent,
     SearchboxComponent,

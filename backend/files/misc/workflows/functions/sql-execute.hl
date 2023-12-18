@@ -12,7 +12,7 @@
    connection-string:generic
    database-type:sqlite
    database:magic
-   sql:insert into roles (name, description) value (@name, @description)
+   sql:insert into roles (name, description) values (@name, @description)
       @name:role-name
       @description:The description for your role
 .icon:backup
