@@ -73,7 +73,7 @@ try
     * connection string to connect to database further down in this file and the configuration
     * object is stale unless we sleep the thread for a couple of seconds.
     */
-   sleep:20000
+   sleep:2000
 
    // Creating our magic database since default database might have changed.
    io.file.execute:/system/ensure-magic-database.hl

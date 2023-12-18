@@ -67,7 +67,6 @@ slots.create:magic.auth.authenticate
          columns
             username
             password
-            locked
          where
             and
                username:x:@.arguments/*/username
@@ -98,17 +97,13 @@ slots.create:magic.auth.authenticate
                      columns
                         username
                         password
-                        locked
                      where
                         and
                            username:x:@data.read/@data.read/*/*/user
 
                   // Checking if user with specified [username] exists.
                   if
-                     or
-                        not
-                           exists:x:@data.read/*/*
-                        get-value:x:@data.read/*/*/locked
+                     not-exists:x:@data.read/*/*
                      .lambda
 
                         // No such user.
@@ -133,15 +128,6 @@ slots.create:magic.auth.authenticate
 
       else
 
-         // Checking if user is locked.
-         if:x:@data.read/*/*/locked
-            .lambda
-
-               // User is locked out of system.
-               throw:Access denied
-                  status:int:401
-                  public:bool:true
-
          // Storing password and username for later.
          set-value:x:@.username
             get-value:x:@data.read/*/*/username
@@ -156,18 +142,12 @@ slots.create:magic.auth.authenticate
       config.get:"magic:auth:authentication"
       if
          and
-            not
-               eq
-                  get-value:x:@config.get
-                  .
-            not
-               eq
-                  get-value:x:@config.get
-                  .:
-            not
-               eq
-                  get-value:x:@config.get
-                  .:crypto.password.verify
+            neq:x:@config.get
+               .
+            neq:x:@config.get
+               .:
+            neq:x:@config.get
+               .:crypto.password.verify
          .lambda
 
             /*
@@ -175,8 +155,7 @@ slots.create:magic.auth.authenticate
              * Hence we replace the existing invocation to [crypto.password.verify]
              * with the slot found from the "appsettings.json" file.
              * 
-             * This is the part that basically allows for external username/password verifications,
-             * including using AD/Windows authentication, etc.
+             * This is the part that basically allows for external username/password verifications.
              */
             strings.split:x:@config.get
                .:":"
@@ -192,110 +171,60 @@ slots.create:magic.auth.authenticate
                      password:x:@.arguments/*/password
             remove-nodes:x:@if/./**/crypto.password.verify
 
-      /*
-       * Verify we have a password match, unless [check-password] was false,
-       * which might occur if a JWT token is generated on behalf of another user.
-       */
+      // Verify we have a password match.
       if
-         or
-            eq
-               get-value:x:@.arguments/*/check-password
-               .:bool:false
-            crypto.password.verify:x:@.arguments/*/password
-               hash:x:@.password
+         crypto.password.verify:x:@.arguments/*/password
+            hash:x:@.password
          .lambda
 
-            /*
-             * Password is matching hashed value from database, or caller
-             * does not want to verify password.
-             * 
-             * Now checking if this is a request for a "change password link".
-             */
+            // Now we need to select all roles user belongs to.
+            data.read
+               table:users_roles
+               columns
+                  role
+               where
+                  and
+                     user:x:@.username
+
+            // Then we can create our JWT token/ticket.
+            add:x:+/*/roles
+               get-nodes:x:@data.read/*/*
+            auth.ticket.create
+               username:x:@.username
+               expires:x:@.arguments/*/expires
+               roles
+
+            // Logging the fact that user successfully logged in.
+            log.info:User successfully authenticated
+               username:x:@.username
+
+            // Selecting all extra information associated with user.
+            data.read
+               table:users_extra
+               columns
+                  type
+                  value
+               where
+                  and
+                     user.eq:x:@.username
+            for-each:x:@data.read/*
+               set-name:x:./*/add/[0,1]/*/*/name
+                  get-value:x:@.dp/#/*/type
+               unwrap:x:+/*/*
+               add:x:././*/return/*/extra
+                  .
+                     name:x:@.dp/#/*/value
+
+            // Returning results back to caller.
+            unwrap:x:+/+/*
             if
-               eq
-                  get-value:x:@.arguments/*/reset-password
-                  .:bool:true
+               not
+                  exists:x:./././*/return/*/extra/0
                .lambda
-
-                  /*
-                   * Caller requested a "reset password link", hence
-                   * we add the user to the "reset-password" role, and
-                   * the [old-password] role, which we check when user
-                   * actually attempts to change his password, to make sure one
-                   * reset password link can only be used once.
-                   * 
-                   * Hashing the password might be a bit overkill here, since
-                   * it's already hashed in the database - However, we can't be
-                   * too cautious.
-                   */
-                  crypto.hash:x:@.password
-                  unwrap:x:+/*/*
-                  add:x:+/*/roles
-                     .
-                        .:x:@crypto.hash
-                  auth.ticket.create
-                     username:x:@.username
-                     roles
-                        .:reset-password
-
-                  // Logging the fact that we generated a reset-password token.
-                  log.info:Reset password token successfully generated
-                     username:x:@.username
-
-                  // Returning results back to caller.
-                  unwrap:x:+/*
-                  return
-                     ticket:x:@auth.ticket.create
-            else
-
-               // Now we need to select all roles user belongs to.
-               data.read
-                  table:users_roles
-                  columns
-                     role
-                  where
-                     and
-                        user:x:@.username
-
-               // Then we can create our JWT token/ticket.
-               add:x:+/*/roles
-                  get-nodes:x:@data.read/*/*
-               auth.ticket.create
-                  username:x:@.username
-                  expires:x:@.arguments/*/expires
-                  roles
-
-               // Logging the fact that user successfully logged in.
-               log.info:User successfully authenticated
-                  username:x:@.username
-
-               // Selecting all extra information associated with user.
-               data.read
-                  table:users_extra
-                  columns
-                     type
-                     value
-                  where
-                     and
-                        user.eq:x:@.username
-               for-each:x:@data.read/*
-                  set-name:x:./*/add/[0,1]/*/*/name
-                     get-value:x:@.dp/#/*/type
-                  unwrap:x:+/*/*
-                  add:x:././*/return/*/extra
-                     .
-                        name:x:@.dp/#/*/value
-
-               // Returning results back to caller.
-               unwrap:x:+/+/*
-               if
-                  not
-                     exists:x:./././*/return/*/extra/0
-                  .lambda
-                     remove-nodes:x:./././*/return/*/extra
-               return
-                  ticket:x:@auth.ticket.create
-                  extra
+                  remove-nodes:x:./././*/return/*/extra
+            return
+               ticket:x:@auth.ticket.create
+               extra
       else
 
          // Hash version of password didn't match.
