@@ -5,10 +5,10 @@
 
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { DateSincePipe } from "../pipes/date-since.pipe";
-import { MarkedPipe } from "../pipes/marked.pipe";
-import { DatePipe } from "../pipes/date.pipe";
-import { SortByPipe } from "../pipes/sort-by.pipe";
+import { DateSincePipe } from "src/app/pipes/date-since.pipe";
+import { MarkedPipe } from "src/app/pipes/marked.pipe";
+import { DatePipe } from "src/app/pipes/date.pipe";
+import { SortByPipe } from "src/app/pipes/sort-by.pipe";
 import { MaterialModule } from "./material.module";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { CodemirrorModule } from "@ctrl/ngx-codemirror";
