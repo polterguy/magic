@@ -13,9 +13,6 @@
    username:string
    password:string
    is_hashed:bool
-   connectionString:string
-   defaultTimeZone:string
-   databaseType:string
    name:string
    email:string
 .description:Setup authentication and other parts of the system according to the arguments provided
@@ -24,30 +21,10 @@
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
-// Sanity checking invocation.
-validators.enum:x:@.arguments/*/databaseType
-   .:mssql
-   .:mysql
-   .:pgsql
-   .:sqlite
-
 // Defaulting [is_hashed] to false.
-if
-   not
-      exists:x:@.arguments/*/is_hashed
-   .lambda
-      add:x:@.arguments
-         .
-            is_hashed:bool:false
-
-// Defaulting to 'root' as root username unless user specified an explicit username.
-if
-   not
-      exists:x:@.arguments/*/username
-   .lambda
-      add:x:@.arguments
-         .
-            username:root
+validators.default:x:@.arguments
+   is_hashed:bool:false
+   username:root
 
 /*
  * Checking if JWT secret has been changed, and
@@ -72,77 +49,17 @@ if
 // Making sure we're able to return exceptions to caller.
 try
 
-   /*
-    * Testing connection string before we save it, to make sure
-    * it is functioning. This part will throw if connection string is
-    * not valid.
-    */
-   try
-
-      switch:x:@.arguments/*/databaseType
-
-         case:mssql
-            strings.replace:x:@.arguments/*/connectionString
-               .:{database}
-               .:master
-            mssql.connect:x:@strings.replace
-               mssql.select:select name from master.dbo.sysdatabases
-
-         case:mysql
-            strings.replace:x:@.arguments/*/connectionString
-               .:{database}
-               .:information_schema
-            mysql.connect:x:@strings.replace
-               mysql.select:show databases
-
-         case:pgsql
-            strings.replace:x:@.arguments/*/connectionString
-               .:{database}
-               .:postgres
-            pgsql.connect:x:@strings.replace
-               pgsql.select:select datname from pg_database
-
-         case:sqlite
-            // No need to verify if connection string is good.
-            .
-
-   .catch
-
-      throw:Could not connect to database, please double check your connection string
-         public:true
-         status:400
-
-   /*
-    * Connection string is valid and we are able to connect to a database,
-    * hence we can safely change our appsettings.json file now.
-    */
+   // Loading our appsettings.json file now.
    config.load
    json2lambda:x:@config.load
 
-   // Storing old default database, since if it's being changed, we must ensure database is created.
-   .old-db
-   set-value:x:@.old-db
-      get-value:x:@json2lambda/*/magic/*/databases/*/default
-
-   // Creating our default database configuration object.
-   remove-nodes:x:@json2lambda/*/magic/*/databases/*
-   unwrap:x:+/*/*
-   add:x:@json2lambda/*/magic/*/databases
-      .
-         default:x:@.arguments/*/databaseType
-   set-name:x:+/+/*/*
-      get-value:x:@.arguments/*/databaseType
-   unwrap:x:+/*/*/*
-   add:x:@json2lambda/*/magic/*/databases
-      .
-         .
-            generic:x:@.arguments/*/connectionString
+   // Updating auth secret to some CSRNG safe value.
    set-value:x:@json2lambda/*/magic/*/auth/*/secret
       crypto.random
          min:100
          max:200
    set-value:x:@json2lambda/*/magic/*/culture/*/defaultTimeZone
-      get-value:x:@.arguments/*/defaultTimeZone
+      .:none
 
    // Saving changed configuration now.
    lambda2json:x:@json2lambda/*
@@ -156,16 +73,10 @@ try
     * connection string to connect to database further down in this file and the configuration
     * object is stale unless we sleep the thread for a couple of seconds.
     */
-   sleep:2000
+   sleep:20000
 
    // Creating our magic database since default database might have changed.
-   if
-      neq:x:@.old-db
-         get-value:x:@.arguments/*/databaseType
-      .lambda
-
-         // Database type was changed, hence we must ensure we create database if not already existing.
-         io.file.execute:/system/ensure-magic-database.hl
+   io.file.execute:/system/ensure-magic-database.hl
 
    /*
     * We can start the setup process, inserting a root user, etc ...
@@ -190,8 +101,7 @@ try
          .lambda
 
             // Root user already exists, hence simply changing its password.
-            unwrap:x:+/*
-            signal:magic.auth.change-password
+            execute:magic.auth.change-password
                password:x:@.arguments/*/password
                database-type:x:@.arguments/*/databaseType
                is_hashed:x:@.arguments/*/is_hashed
@@ -199,8 +109,7 @@ try
       else
 
          // Inserting root user.
-         unwrap:x:+/*
-         signal:magic.auth.create-user
+         execute:magic.auth.create-user
             username:x:@.arguments/*/username
             password:x:@.arguments/*/password
             is_hashed:x:@.arguments/*/is_hashed
@@ -209,28 +118,8 @@ try
                .:root
             extra
                source:setup
-
-      /*
-       * Explicitly seeding CSRNG with password to create more entropy.
-       */
-      crypto.seed:x:@.arguments/*/password
-
-      // Creating cryptography key pair.
-      crypto.random
-         min:100
-         max:200
-      strings.concat
-         request.scheme
-         .:"://"
-         request.host
-      unwrap:x:+/*
-      io.file.execute:/system/crypto/generate-keypair.post.hl
-         strength:int:2048
-         seed:x:@crypto.random
-         subject:x:@.arguments/*/name
-         email:x:@.arguments/*/email
-         username:x:@.arguments/*/username
-         domain:x:@strings.concat
+               email:x:@.arguments/*/email
+               name:x:@.arguments/*/name
 
       // Authenticating user and returning new JWT token to client.
       unwrap:x:+/*
@@ -238,15 +127,12 @@ try
          username:x:@.arguments/*/username
          check-password:bool:false
 
-      // Re-initialising time zone in case it was changed from its default setting.
-      timezone.init
-
       // Returns the authentication JWT ticket created above to caller.
       return-nodes:x:@signal/*
 
-   .catch
+.catch
 
-      // Making sure we make exception publicly visible for frontend.
-      throw:x:@.arguments/*/message
-         public:true
-         status:400
+   // Making sure we make exception publicly visible for frontend.
+   throw:x:@.arguments/*/message
+      public:true
+      status:400

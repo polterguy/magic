@@ -6,10 +6,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroupDirective, NgForm, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
-import { Router } from '@angular/router';
 import { CommonErrorMessages } from 'src/app/_general/classes/common-error-messages';
 import { CommonRegEx } from 'src/app/_general/classes/common-regex';
-
 import { GeneralService } from 'src/app/_general/services/general.service';
 import { ConfigService } from '../../../_general/services/config.service';
 import { SetupModel } from '../../models/common/setup.model';
@@ -33,47 +31,35 @@ class MyErrorStateMatcher implements ErrorStateMatcher {
 })
 export class SetupComponent implements OnInit {
 
+  showPassword: boolean = false;
+  waiting: boolean = false;
+  CommonRegEx = CommonRegEx;
+  CommonErrorMessages = CommonErrorMessages;
   matcher = new MyErrorStateMatcher();
-
-  databaseTypes: any[] = [
-    { name: 'SQLite', value: 'sqlite' },
-    { name: 'MySQL', value: 'mysql' },
-    { name: 'PostgreSQL', value: 'pgsql' },
-    { name: 'SQL Server', value: 'mssql' },
-  ];
-
   checkPasswords: ValidatorFn = (g: AbstractControl): ValidationErrors | null => {
+
     const pass = g.get('password')?.value;
     const confirmPass = g.get('passwordRepeat')?.value;
     return pass === confirmPass ? null : { notSame: true }
   }
-
   configForm = this.formBuilder.group({
-    connectionString: ['Data Source=files/data/{database}.db; Pooling=False;', [Validators.required, Validators.pattern('.*{database}.*')]],
-    defaultTimeZone: ['none', [Validators.required]],
-    selectedDatabaseType: ['sqlite', [Validators.required]],
+
     password: ['', [Validators.required, Validators.pattern('.{12,}')]],
     passwordRepeat: [''],
     name: ['', [Validators.required]],
     email: ['', [Validators.required]],
   });
 
-  showPassword: boolean = false;
-
-  public waiting: boolean = false;
-
-  public CommonRegEx = CommonRegEx;
-  public CommonErrorMessages = CommonErrorMessages;
-
   constructor(
     private formBuilder: FormBuilder,
     private configService: ConfigService,
-    private generalService: GeneralService,
-    private router: Router) {
+    private generalService: GeneralService) {
+
     this.configForm.addValidators(this.checkPasswords);
   }
 
   ngOnInit() {
+
     this.configForm.controls.password.valueChanges.subscribe(() => {
       if (this.showPassword) {
         this.configForm.controls.passwordRepeat.setValue(this.configForm.controls.password.value);
@@ -82,6 +68,7 @@ export class SetupComponent implements OnInit {
   }
 
   toggleShowPassword() {
+
     this.showPassword = !this.showPassword;
     if (this.showPassword) {
       this.configForm.controls.passwordRepeat.setValue(this.configForm.controls.password.value);
@@ -91,49 +78,33 @@ export class SetupComponent implements OnInit {
     }
   }
 
-  selectedDatabaseTypeChanged() {
-    switch (this.configForm.controls.selectedDatabaseType.value) {
-
-      case 'sqlite':
-        this.configForm.controls.connectionString.setValue('Data Source=files/data/{database}.db; Pooling=False;');
-        break;
-
-      case 'mysql':
-        this.configForm.controls.connectionString.setValue('Server=localhost;Database={database};Uid=root;Pwd=ThisIsNotAGoodPassword;SslMode=Preferred;Old Guids=true;');
-        break;
-
-      case 'pgsql':
-        this.configForm.controls.connectionString.setValue('User ID=postgres;Password=ThisIsNotAGoodPassword;Host=localhost;Port=5432;Database={database}');
-        break;
-
-      case 'mssql':
-        this.configForm.controls.connectionString.setValue('Server=localhost\\SQLEXPRESS;Database={database};Trusted_Connection=True;');
-        break;
-    }
-  }
-
   submit() {
+
     if (this.configForm.invalid) {
       this.generalService.showFeedback('Please provide all fields', 'errorMessage');
       return;
     }
+
     this.generalService.showLoading();
     this.waiting = true;
+
     const payload: SetupModel = {
       password: this.configForm.controls.password.value,
-      connectionString: this.configForm.controls.connectionString.value,
-      defaultTimeZone: this.configForm.controls.defaultTimeZone.value,
-      databaseType: this.configForm.controls.selectedDatabaseType.value,
       name: this.configForm.controls.name.value,
       email: this.configForm.controls.email.value,
     };
+
     this.configService.setup(payload).subscribe({
+
       next: () => {
+
         this.waiting = false;
         window.location.href = '/';
         this.generalService.hideLoading();
       },
+
       error: (error: any) => {
+
         this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
         this.generalService.hideLoading();
         this.waiting = false;

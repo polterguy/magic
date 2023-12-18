@@ -7,79 +7,9 @@
 
         <div class="col-12">
           <h3 class="my-0 fw-bold">Setup</h3>
-          <p class="text-muted">Initial settings for your account and the connected backend</p>
+          <p class="text-muted">Please provide initial settings for your account</p>
         </div>
-
         <div class="col-12 mt-4">
-          <p class="fw-bold">Default database configuration</p>
-          <div class="row">
-            <div class="col-xl-3 col-sm-6 col-12 order-1">
-
-              <mat-form-field class="w-100 standalone-field">
-                <span
-                  matPrefix
-                  matTooltip="Default database type"
-                  class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-                  <mat-icon>database</mat-icon>
-                  <span class="text-muted">|</span>
-                </span>
-                <mat-select
-                  formControlName="selectedDatabaseType"
-                  (selectionChange)="selectedDatabaseTypeChanged()">
-                  <mat-option *ngFor="let idx of databaseTypes" [value]="idx.value">
-                    {{idx.name}}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
-
-            </div>
-            <div class="col-xl-3 col-sm-6 col-12 order-xl-3 order-2">
-
-              <mat-form-field class="w-100 standalone-field">
-                <span
-                  matPrefix
-                  matTooltip="Default time zone"
-                  class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-                  <mat-icon>query_builder</mat-icon>
-                  <span class="text-muted">|</span>
-                </span>
-    
-                <mat-select formControlName="defaultTimeZone">
-                  <mat-option value="none">None</mat-option>
-                  <mat-option value="utc">UTC</mat-option>
-                  <mat-option value="local">Local</mat-option>
-                </mat-select>
-              </mat-form-field>
-
-            </div>
-            <div class="col-xl-6 col-sm-12 col-12 order-xl-2 order-3">
-
-              <mat-form-field class="w-100 standalone-field">
-                <span
-                  matPrefix
-                  matTooltip="Default connection string"
-                  class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-                  <mat-icon>conversion_path</mat-icon>
-                  <span class="text-muted">|</span>
-                </span>
-    
-                <input
-                  matInput
-                  autocomplete="connectionString"
-                  placeholder="Connection string"
-                  formControlName="connectionString"
-                  name="connectionString">
-                <mat-error>
-                  Connection string in not valid
-                </mat-error>
-              </mat-form-field>
-
-            </div>
-          </div>
-        </div>
-
-        <div class="col-12 mt-4">
-          <p class="fw-bold">Default account configuration</p>
           <div class="row">
 
             <div class="col-xl-3 col-md-6 col-12">
@@ -121,10 +51,9 @@
                   matInput
                   autocomplete="email"
                   formControlName="email"
+                  type="email"
                   placeholder="Your email address"
-                  name="email"
-                  [pattern]="CommonRegEx.email">
-                <mat-error>{{CommonErrorMessages.email}}</mat-error>
+                  name="email">
               </mat-form-field>
 
             </div>
