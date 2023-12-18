@@ -45,6 +45,7 @@ export class ConfigService {
       return this.httpService.post<AuthenticateResponse>(
         '/magic/system/config/setup',
         payload).subscribe({
+
           next: (auth: AuthenticateResponse) => {
 
             const backend = new Backend(this.backendService.active.url, 'root', null, auth.ticket);
@@ -53,6 +54,7 @@ export class ConfigService {
             observer.next(auth);
             observer.complete();
           },
+
           error: (error: any) => {
 
             observer.error(error);
