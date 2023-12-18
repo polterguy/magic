@@ -10,7 +10,7 @@
 
 (function (mod) {
   if (typeof exports == "object" && typeof module == "object") {
-    mod(require("../../../node_modules/codemirror/lib/codemirror"));
+    mod(require("codemirror"));
   }
 })(function (CodeMirror) {
   "use strict";

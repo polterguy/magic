@@ -11,7 +11,7 @@ import { Observable } from 'rxjs';
 import { AssumptionsComponent } from 'src/app/components/common/assumptions/assumptions.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from 'src/app/components/common/confirmation-dialog/confirmation-dialog.component';
-import { FileService } from '../../../../../services/file.service';
+import { FileService } from 'src/app/services/file.service';
 
 /**
  * Helper component to display all endpoints in the system,

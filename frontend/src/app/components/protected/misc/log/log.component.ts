@@ -5,7 +5,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { GeneralService } from 'src/app/services/general.service';
-import { LogService } from '../../../../services/log.service';
+import { LogService } from 'src/app/services/log.service';
 import { LogItem } from './_models/log-item.model';
 import { PageEvent } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';

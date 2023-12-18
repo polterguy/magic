@@ -7,8 +7,8 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { GeneralService } from 'src/app/services/general.service';
 import { OpenAIService } from 'src/app/services/openai.service';
-import { OpenAIAnswerDialogComponent } from '../openai-answer-dialog/openai-answer-dialog.component';
-import { OpenAIConfigurationDialogComponent } from '../openai-configuration-dialog/openai-configuration-dialog.component';
+import { OpenAIAnswerDialogComponent } from 'src/app/components/common/openai/openai-answer-dialog/openai-answer-dialog.component';
+import { OpenAIConfigurationDialogComponent } from 'src/app/components/common/openai/openai-configuration-dialog/openai-configuration-dialog.component';
 
 /**
  * OpenAI prompt component allowing you to ask questions to OpenAI through their API.

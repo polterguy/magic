@@ -9,9 +9,9 @@ import { MatDialogRef } from '@angular/material/dialog';
 
 // Application specific imports.
 import { AssumptionService } from 'src/app/services/assumption.service';
-import { CommonErrorMessages } from '../../../helpers/common-error-messages';
-import { CommonRegEx } from '../../../helpers/common-regex';
-import { GeneralService } from '../../../services/general.service';
+import { CommonErrorMessages } from 'src/app/helpers/common-error-messages';
+import { CommonRegEx } from 'src/app/helpers/common-regex';
+import { GeneralService } from 'src/app/services/general.service';
 
 /**
  * Result of dialog if user chooses to create a test.

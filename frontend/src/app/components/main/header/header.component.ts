@@ -5,7 +5,7 @@
 
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { BackendService } from 'src/app/services/backend.service';
-import { NavLinks } from '../../../models/nav-links';
+import { NavLinks } from 'src/app/models/nav-links';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogComponent } from 'src/app/components/common/dialog/dialog.component';
 import { BackendsListComponent } from 'src/app/components/common/backends-list/backends-list.component';

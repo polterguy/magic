@@ -7,7 +7,6 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
-import { CmModule } from 'src/app/codemirror/_module/cm.module';
 import { MaterialModule } from 'src/app/modules/material.module';
 import { SharedModule } from 'src/app/modules/shared.module';
 import { ComponentsModule } from 'src/app/components/common/components.module';
@@ -40,7 +39,6 @@ import { AddMigrateScriptComponent } from '../components/tables-view/components/
     CodemirrorModule,
     FormsModule,
     SharedModule,
-    CmModule,
   ]
 })
 export class SqlStudioModule { }

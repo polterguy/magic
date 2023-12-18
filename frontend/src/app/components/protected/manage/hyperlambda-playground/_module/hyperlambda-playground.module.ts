@@ -9,7 +9,6 @@ import { HyperlambdaPlaygroundComponent } from '../hyperlambda-playground.compon
 import { HyperlambdaPlaygroundRoutingModule } from './hyperlambda-playground.routing.module';
 import { ComponentsModule } from 'src/app/components/common/components.module';
 import { MaterialModule } from 'src/app/modules/material.module';
-import { CmModule } from 'src/app/codemirror/_module/cm.module';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 
 @NgModule({
@@ -21,7 +20,6 @@ import { CodemirrorModule } from '@ctrl/ngx-codemirror';
     HyperlambdaPlaygroundRoutingModule,
     ComponentsModule,
     MaterialModule,
-    CmModule,
     CodemirrorModule,
   ]
 })

@@ -7,7 +7,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HealthCheckRoutingModule } from './health-check.routing.module';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
-import { CmModule } from 'src/app/codemirror/_module/cm.module';
 import { MaterialModule } from 'src/app/modules/material.module';
 import { ComponentsModule } from 'src/app/components/common/components.module';
 import { TestHealthContentDialogComponent } from '../components/test-health-content-dialog/test-health-content-dialog.component';
@@ -23,7 +22,6 @@ import { HealthCheckComponent } from '../health-check.component';
     HealthCheckRoutingModule,
     ComponentsModule,
     MaterialModule,
-    CmModule,
     CodemirrorModule
   ]
 })

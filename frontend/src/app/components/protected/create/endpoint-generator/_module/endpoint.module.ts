@@ -17,7 +17,6 @@ import { AddArgumentDialogComponent } from '../sql-endpoint-generator/components
 import { SqlSnippetDialogComponent } from '../../sql-studio/components/sql-view/components/load-sql-snippet-dialog/load-sql-snippet-dialog.component';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import { SingleTableConfigComponent } from '../auto-endpoint-generator/components/single-table-config/single-table-config.component';
-import { CmModule } from 'src/app/codemirror/_module/cm.module';
 import { ForeignKeyListComponent } from '../auto-endpoint-generator/components/foreign-key-list/foreign-key-list.component';
 
 @NgModule({
@@ -39,7 +38,6 @@ import { ForeignKeyListComponent } from '../auto-endpoint-generator/components/f
     FormsModule,
     ReactiveFormsModule,
     SharedModule,
-    CmModule
   ]
 })
 export class EndpointModule { }

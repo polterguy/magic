@@ -6,18 +6,15 @@
 import { formatNumber } from '@angular/common';
 import { Component, Inject, LOCALE_ID, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { forkJoin, Observable, Subscription } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 import { GeneralService } from 'src/app/services/general.service';
-import { CrudifyService } from '../../../../../services/crudify.service';
-import { TransformModelService } from '../../../../../services/transform-model.service';
-import { LogService } from '../../../../../services/log.service';
+import { CrudifyService } from 'src/app/services/crudify.service';
+import { TransformModelService } from 'src/app/services/transform-model.service';
+import { LogService } from 'src/app/services/log.service';
 import { CommonErrorMessages } from 'src/app/helpers/common-error-messages';
 import { CommonRegEx } from 'src/app/helpers/common-regex';
 
 // CodeMirror options.
-import { CodemirrorActionsService } from '../../../../../services/codemirror-actions.service';
-import { MatDialog } from '@angular/material/dialog';
-import { EvaluatorService } from '../../../../../services/evaluator.service';
 import { MessageService } from 'src/app/services/message.service';
 import { ActivatedRoute } from '@angular/router';
 import { SqlService } from 'src/app/services/sql.service';
@@ -71,7 +68,6 @@ export class AutoGeneratorComponent extends GeneratorBase implements OnInit {
     private crudifyService: CrudifyService,
     protected roleService: RoleService,
     protected transformService: TransformModelService,
-    private codemirrorActionsService: CodemirrorActionsService,
     @Inject(LOCALE_ID) public locale: string) {
 
       super(generalService, roleService, activatedRoute, sqlService);

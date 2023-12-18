@@ -18,7 +18,6 @@ import { RenameFileDialogComponent } from '../components/rename-file-dialog/rena
 import { RenameFolderDialogComponent } from '../components/rename-folder-dialog/rename-folder-dialog.component';
 import { SelectMacroDialogComponent } from '../components/select-macro-dialog/select-macro-dialog.component';
 import { UnsavedChangesDialogComponent } from '../components/unsaved-changes-dialog/unsaved-changes-dialog.component';
-import { CmModule } from 'src/app/codemirror/_module/cm.module';
 import { ExecuteResult } from '../components/execute-result/execute-result-dialog.component';
 
 @NgModule({
@@ -40,7 +39,6 @@ import { ExecuteResult } from '../components/execute-result/execute-result-dialo
     IdeRoutingModule,
     ComponentsModule,
     SharedModule,
-    CmModule,
   ]
 })
 export class IdeModule { }

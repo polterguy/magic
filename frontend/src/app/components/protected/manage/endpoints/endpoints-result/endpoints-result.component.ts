@@ -10,19 +10,19 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Clipboard } from '@angular/cdk/clipboard';
 
 import { Argument } from '../_models/argument.model';
-import { EndpointService } from '../../../../../services/endpoint.service';
+import { EndpointService } from 'src/app/services/endpoint.service';
 import { GeneralService } from 'src/app/services/general.service';
 import { BackendService } from 'src/app/services/backend.service';
 
 // CodeMirror options.
-import json from '../../../../../codemirror/options/json.json';
-import markdown from '../../../../../codemirror/options/markdown.json';
-import hyperlambda from '../../../../../codemirror/options/hyperlambda.json';
-import json_readonly from '../../../../../codemirror/options/json_readonly.json';
-import markdown_readonly from '../../../../../codemirror/options/markdown_readonly.json';
-import hyperlambda_readonly from '../../../../../codemirror/options/hyperlambda_readonly.json';
+import json from 'src/app/helpers/options/json.json';
+import markdown from 'src/app/helpers/options/markdown.json';
+import hyperlambda from 'src/app/helpers/options/hyperlambda.json';
+import json_readonly from 'src/app/helpers/options/json_readonly.json';
+import markdown_readonly from 'src/app/helpers/options/markdown_readonly.json';
+import hyperlambda_readonly from 'src/app/helpers/options/hyperlambda_readonly.json';
 import { FormBuilder, FormControl } from '@angular/forms';
-import { AssumptionService } from '../../../../../services/assumption.service';
+import { AssumptionService } from 'src/app/services/assumption.service';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateAssumptionTestDialogComponent, TestModel } from 'src/app/components/common/create-assumption-test-dialog/create-assumption-test-dialog.component';
 

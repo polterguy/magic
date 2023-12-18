@@ -8,11 +8,11 @@ import { bufferCount, concatMap, forkJoin, from } from 'rxjs';
 import { MagicResponse } from 'src/app/models/magic-response.model';
 import { GeneralService } from 'src/app/services/general.service';
 import { BackendService } from 'src/app/services/backend.service';
-import { FileService } from '../../../../services/file.service';
-import { AssumptionService } from '../../../../services/assumption.service';
+import { FileService } from 'src/app/services/file.service';
+import { AssumptionService } from 'src/app/services/assumption.service';
 
 // CodeMirror options.
-import hyperlambda from 'src/app/codemirror/options/hyperlambda.json';
+import hyperlambda from 'src/app/helpers/options/hyperlambda.json';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from 'src/app/components/common/confirmation-dialog/confirmation-dialog.component';
 import { TestHealthContentDialogComponent } from './components/test-health-content-dialog/test-health-content-dialog.component';

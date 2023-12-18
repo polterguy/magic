@@ -5,7 +5,7 @@
 
 import { AfterContentChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { Subject, BehaviorSubject } from 'rxjs';
-import { GeneralService } from '../../services/general.service';
+import { GeneralService } from 'src/app/services/general.service';
 
 /**
  * Primary component for dashboard, encapsulating progress bar, and router outlet.

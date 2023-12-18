@@ -10,8 +10,8 @@ import { LoadSnippetDialogComponent } from 'src/app/components/common/load-snipp
 import { GeneralService } from 'src/app/services/general.service';
 import { CodemirrorActionsService } from 'src/app/services/codemirror-actions.service';
 import { FileService } from 'src/app/services/file.service';
-import { EvaluatorService } from '../../../../../../services/evaluator.service';
-import { AssumptionService } from '../../../../../../services/assumption.service';
+import { EvaluatorService } from 'src/app/services/evaluator.service';
+import { AssumptionService } from 'src/app/services/assumption.service';
 
 /**
  * Helper modal dialog to allow user to view and manage an individual test case.

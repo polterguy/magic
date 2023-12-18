@@ -10,7 +10,7 @@ import { ReplaySubject } from 'rxjs';
 import { Databases } from 'src/app/models/databases.model';
 import { CacheService } from 'src/app/services/cache.service';
 import { GeneralService } from 'src/app/services/general.service';
-import { SqlService } from '../../../../services/sql.service';
+import { SqlService } from 'src/app/services/sql.service';
 import { AddMigrateScriptComponent } from './components/tables-view/components/apply-migrate-script/apply-migrate-script.component';
 import { ExportDdlComponent } from './components/tables-view/components/export-ddl/export-ddl.component';
 import { LinkTableComponent } from './components/tables-view/components/add-link-table/add-link-table.component';

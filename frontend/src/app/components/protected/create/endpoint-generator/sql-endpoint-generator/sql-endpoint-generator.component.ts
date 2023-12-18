@@ -7,18 +7,18 @@ import { ChangeDetectorRef, Component, Inject, LOCALE_ID, OnDestroy, OnInit } fr
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
-import { Model } from 'src/app/codemirror/codemirror-sql/codemirror-sql.component';
+import { Model } from 'src/app/components/common/codemirror-sql/codemirror-sql.component';
 import { ShortkeysComponent } from 'src/app/components/common/shortkeys/shortkeys.component';
 import { GeneralService } from 'src/app/services/general.service';
-import { CrudifyService } from '../../../../../services/crudify.service';
-import { TransformModelService } from '../../../../../services/transform-model.service';
+import { CrudifyService } from 'src/app/services/crudify.service';
+import { TransformModelService } from 'src/app/services/transform-model.service';
 import { Argument } from '../../../manage/endpoints/_models/argument.model';
-import { SqlService } from '../../../../../services/sql.service';
+import { SqlService } from 'src/app/services/sql.service';
 import { AddArgumentDialogComponent } from './components/add-argument-dialog/add-argument-dialog.component';
 import { SqlSnippetDialogComponent } from '../../sql-studio/components/sql-view/components/load-sql-snippet-dialog/load-sql-snippet-dialog.component';
 
 // CodeMirror options.
-import { CodemirrorActionsService } from '../../../../../services/codemirror-actions.service';
+import { CodemirrorActionsService } from 'src/app/services/codemirror-actions.service';
 import { SnippetNameDialogComponent } from 'src/app/components/common/snippet-name-dialog/snippet-name-dialog.component';
 import { MessageService } from 'src/app/services/message.service';
 import { GeneratorBase } from '../generator-base';

@@ -7,7 +7,7 @@ import { Component, Inject } from '@angular/core';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from 'src/app/components/common/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/services/general.service';
-import { SqlService } from '../../../../../../../services/sql.service';
+import { SqlService } from 'src/app/services/sql.service';
 
 /**
  * Helper component allowing you to view and administrate catalogs in
