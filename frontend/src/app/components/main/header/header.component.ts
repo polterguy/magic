@@ -177,16 +177,14 @@ authentication and authorisation configuration options, etc.`;
 
       case 'hyper-ide':
         return `Hyper IDE is Magic's integrated IDE, and is particularly good for editing Hyperlambda files.
-It also gives you macros, machine learning and AI capabilities, in addition to a whole range of other
+It also gives you a lot of machine learning and AI capabilities, in addition to a whole range of other
 features that simplifies your life as a software developer. You would typically want to use Hyper IDE
-on your generated Hyperlambda code after having used the endpoint generator to apply your own
+on your generated Hyperlambda code after having used the endpoint generator first to apply your own
 custom business logic according to your requirements.`;
 
       case 'user-roles-management':
         return `The users and roles component it where you can manage your users and roles.
-From this component you can create new users and roles, in addition to associate users with roles.
-You can also import users from CSV files. You can also edit users, and lock out specific users
-from your cloudlet using this component.`;
+From this component you can create new users and roles, in addition to associate users with roles.`;
 
       case 'endpoints':
         return `The Endpoints component in Magic allows you to view and test your HTTP endpoints.
@@ -207,7 +205,7 @@ be correctly re-scheduled.`;
 execute your code in “immediate mode”, and see the result of your execution immediately.
 It also contains a range of “Hyperlambda snippets” which demonstrate Hyperlambda's capabilities
 and provide examples for you to learn Hyperlambda. The “Save” button allows you to store your Hyperlambda
-snippets as “admin snippets” which can be quickly executed later.`;
+snippets as “admin snippets” that can be quickly executed later.`;
 
       case 'sockets':
         return `The sockets component allows you to play with and debug your socket messages.
@@ -215,24 +213,25 @@ Subscribe to sockets you wish to debug, and/or publish socket messages as you se
 and see the result in this component.`;
 
       case 'plugins':
-        return `Magic's plugin component is an integrated "AppStore" that allows you to install backend
-microservices on the fly without interrupting normal usage. It provides access to AINIRO.IO's repository of
-pre-fabricated microservices, such as translations, ticket management, CRM, Stripe payments, and SQLite
+        return `Magic's plugin component is an integrated "App Store" that allows you to install backend
+plugins on the fly without interrupting normal usage. It provides access to AINIRO.IO's repository of
+pre-fabricated plugins, such as Stripe payment plugins and SQLite example
 databases. Most plugins automatically create their databases and any other necessary components for
-initialization. You can view and edit the plugin code after installing a plugin using Hyper IDE and SQL Studio.`;
+initialization. You can view and edit the plugin code after installing a plugin using Hyper IDE.`;
 
       case 'machine-learning':
         return `The machine learning component allows you to create and test AI models.
 It also allows you to import training data for your AI models, either from files containing your
 training data, or by crawling and scraping a website. When you have gathered training data, and
 quality assured your training data, you can upload it to OpenAI's API automatically using this component,
-resulting in a new machine learning model you can test from here, and consume in your own projects.`;
+resulting in a new machine learning model you can test from here, and consume in your own projects - Or
+you can use Magic's RAG features in combination with OpenAI.`;
 
       case 'configuration':
         return `The configuration component is where can modify your server's configuration settings, and
-is typically used to for instance configure your server's SMTP settings, etc. Be careful as you're editing
-your server's configuration, since applying a wrong configuration setting might in theory make your
-server inaccessible.`;
+is typically used to for instance configure your server's SMTP settings, reCAPTCHA settings, etc. Be careful
+as you're editing your server's configuration, since applying a wrong configuration setting might in theory
+make your server inaccessible.`;
 
       case 'health-check':
         return `The health check component allows you to easily sanity check your system, providing you with
@@ -246,7 +245,7 @@ level to adjust how much is logged. Refer to magic.lambda.logging to understand 
 log items from your own Hyperlambda code.`;
 
       case 'user-profile':
-        return `The Profile component of Magic allows you to customize you profile by changing your password,
+        return `The Profile component of Magic allows you to customize your profile by changing your password,
 theme, and name. However, you cannot change your username or email address due to the need for double
 optin verification and potential referential integrity issues.`;
     }
