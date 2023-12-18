@@ -23,28 +23,6 @@ export class CacheService {
 
   constructor(private httpService: HttpService) { }
 
-  list(filter: any = null) {
-
-    let query = '';
-    if (filter !== null) {
-      query += '?limit=' + filter.limit;
-      query += "&offset=" + filter.offset;
-      if (filter.filter && filter.filter !== '') {
-        query += '&filter=' + encodeURIComponent(filter.filter);
-      }
-    }
-    return this.httpService.get<CacheItem[]>('/magic/system/cache/list' + query);
-  }
-
-  count(filter: string = null) {
-
-    let query = '';
-    if (filter !== null && filter !== '') {
-      query += '?filter=' + encodeURIComponent(filter);
-    }
-    return this.httpService.get<Count>('/magic/system/cache/count' + query);
-  }
-
   delete(id: string) {
 
     return this.httpService.delete<MagicResponse>('/magic/system/cache/delete?id=' + encodeURIComponent(id));
