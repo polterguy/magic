@@ -7,7 +7,6 @@
    operator:string
    username.eq:string
    username.like:string
-   locked.eq:bool
    created.mt:date
    created.lt:date
    created.mteq:date

@@ -6,69 +6,11 @@
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify
 
-// Ensuring this is not a 'reset-password' type of token.
-if
-   exists:x:@auth.ticket.verify/*/roles/*/reset-password
-   .lambda
-
-      /*
-       * Reset password type of JWT token, which we don't allow user to
-       * refresh - Hence, throwing an exception.
-       */
-      throw:Access denied
-         status:int:401
-         public:bool:true
-
 /*
  * Retrieving actual token, which is necessary to retrieve
- * user's username, and whether ot not the current token
- * is a 'reset-password' token, which we do not allow the
- * user to refresh.
+ * user's username.
  */
 auth.ticket.get
-
-// Ensuring this is not a 'reset-password' type of token.
-if
-   exists:x:@auth.ticket.get/*/roles/*/reset-password
-   .lambda
-
-      /*
-       * Reset password type of JWT token, which we don't allow user to
-       * refresh - Hence, throwing an exception.
-       */
-      throw:Access denied
-         status:int:401
-         public:bool:true
-
-/*
- * Verifying user has not been locked out since he logged in
- * or refreshed his ticket earlier.
- * 
- * Without this step, user could just login, and refresh his
- * token for an eternity, without Magic having any capacity to
- * lock user out from backend.
- */
-data.connect:magic
-   data.read
-      table:users
-      columns
-         username
-         locked
-      where
-         and
-            username:x:@auth.ticket.get
-   if
-      or
-         eq
-            get-count:x:@data.read/*
-            .:int:0
-         eq
-            get-count:x:@data.read/*/*/locked
-            .:bool:true
-      .lambda
-         throw:Access denied
-            status:int:401
-            public:bool:true
 
 /*
  * Invokes [auth.ticket.refresh] that does the heavy lifting, and creates our JWT token,

@@ -32,7 +32,6 @@ export class UsersListComponent {
     'email',
     'role',
     'creationDate',
-    'status',
     'actions'
   ];
   userCanDelete: boolean = undefined;
@@ -41,48 +40,6 @@ export class UsersListComponent {
     private dialog: MatDialog,
     private userService: UserService,
     private generalService: GeneralService) { }
-
-  lockedChanged(user: User) {
-
-    this.dialog.open(ConfirmationDialogComponent, {
-      width: '500px',
-      data: {
-        title: `${user?.locked ? 'Unlock' : 'Lock'} user ${user?.username}`,
-        description_extra: 'To proceed please type in the <span class="fw-bold">user\'s username</span> below.',
-        action_btn: user?.locked ? 'Unlock user' : 'Lock user',
-        action_btn_color: 'warn',
-        bold_description: true,
-        extra: {
-          details: user,
-          action: 'confirmInput',
-          fieldToBeTypedTitle: 'username',
-          fieldToBeTypedValue: user.username,
-          icon: 'do_not_disturb_on'
-        }
-      }
-    }).afterClosed().subscribe((result: string) => {
-      if (result === 'confirm') {
-
-        this.generalService.showLoading();
-        this.userService.update({
-          username: user.username,
-          locked: !user.locked
-        }).subscribe({
-          next: () => {
-
-            this.generalService.hideLoading();
-            user.locked = !user.locked;
-            this.generalService.showFeedback(`User is successfully ${user.locked ? 'locked out of system' : 'released to access the system'}`, 'successMessage');
-          },
-          error: (error: any) => {
-
-            this.generalService.hideLoading();
-            this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
-          }
-        });
-      }
-    });
-  }
 
   deleteUser(user: User) {
 
@@ -134,6 +91,7 @@ export class UsersListComponent {
   }
 
   changePassword(user: User) {
+
     this.dialog.open(ChangePasswordDialogComponent, {
       width: '500px',
       data: user
