@@ -5,27 +5,17 @@ version: "3.3"
 
 services:
 
-  db:
-    image: mariadb:10.5.8
-    container_name: magic_mysql
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: ThisIsNotAGoodPassword
-    volumes:
-      - database_mysql:/var/lib/mysql
-
   backend:
     image: aistamagic/magic-backend:latest
     container_name: magic_backend
-    depends_on:
-      - db
     restart: always
     ports:
       - "4444:4444"
     volumes:
-      - magic_files_data_mysql:/magic/files/data
-      - magic_files_config_mysql:/magic/files/config
-      - magic_files_modules_mysql:/magic/files/modules
+      - magic_files_etc:/magic/files/etc
+      - magic_files_data:/magic/files/data
+      - magic_files_config:/magic/files/config
+      - magic_files_modules:/magic/files/modules
 
   frontend:
     image: aistamagic/magic-frontend:latest
@@ -37,7 +27,7 @@ services:
       - "5555:80"
 
 volumes:
-  database_mysql:
-  magic_files_data_mysql:
-  magic_files_config_mysql:
-  magic_files_modules_mysql:
+  magic_files_etc:
+  magic_files_data:
+  magic_files_config:
+  magic_files_modules:
