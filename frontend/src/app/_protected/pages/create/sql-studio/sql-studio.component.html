@@ -123,7 +123,6 @@
             mat-button
             color="primary"
             [disabled]="sqlView"
-            class="mat-caption"
             [disabled]="(dbLoading | async) || sqlView"
             (click)="addNewTable()">
             New table
@@ -133,26 +132,23 @@
             mat-button
             color="primary"
             [disabled]="sqlView"
-            class="mat-caption"
             [disabled]="(dbLoading | async) || sqlView"
             (click)="createNewLinkTable()">
             Link table
           </button>
 
           <button
-            mat-button
+            mat-icon-button
             color="primary"
             [disabled]="(dbLoading | async)"
-            class="mat-caption"
             [matMenuTriggerFor]="menu">
-            More
+            <mat-icon>more_vert</mat-icon>
           </button>
 
           <button
             mat-button
             color="primary"
-            (click)="sqlView = !sqlView"
-            class="mat-caption">
+            (click)="sqlView = !sqlView">
             {{sqlView ? 'Table view' : 'SQL view'}}
           </button>
 
