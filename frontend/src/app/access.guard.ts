@@ -34,13 +34,18 @@ export class AccessGuard implements CanActivate {
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+
     return (async () => {
+
       if (this.backendService.active?.token?.in_role('root')) {
         return true;
       }
+
       this.router.navigate(['/authentication/login/'], {
         queryParams: route.queryParams
       });
+
     })();
+
   }
 }

@@ -39,6 +39,7 @@ import { CoreComponent } from './_layout/core/core.component';
 import { HeaderComponent } from './_layout/header/header.component';
 import { FooterComponent } from './_layout/footer/footer.component';
 
+// Misc
 import { AccessGuard } from './access.guard';
 import { AuthBaseComponent } from './public/authentication/auth-base/auth-base.component';
 import { SharedModule } from './shared.module';
