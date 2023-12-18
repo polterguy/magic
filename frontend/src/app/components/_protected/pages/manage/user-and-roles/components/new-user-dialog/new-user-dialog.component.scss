@@ -1,0 +1,23 @@
+/*
+ * Copyright (c) 2023 Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
+ */
+
+@import 'src/assets/styles/_variables/colors.scss';
+
+.multiline-mat-option.mat-option {
+  white-space: normal;
+  line-height: normal;
+  height: unset;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.name-line {
+  color: $aista_dark;
+}
+
+.description-line {
+  color: $aista_default_grey3;
+  font-size: 13px;
+  margin-top: 5px;
+}

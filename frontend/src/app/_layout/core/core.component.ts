@@ -4,9 +4,9 @@
  */
 
 import { ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit } from '@angular/core';
-import { UpdatePwaService } from 'src/app/_general/services/update-pwa.service';
-import { GeneralService } from 'src/app/_general/services/general.service';
-import { BackendService } from 'src/app/_general/services/backend.service';
+import { UpdatePwaService } from 'src/app/services/update-pwa.service';
+import { GeneralService } from 'src/app/services/general.service';
+import { BackendService } from 'src/app/services/backend.service';
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
 
 @Component({

@@ -5,9 +5,9 @@
 
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { MagicResponse } from 'src/app/_general/models/magic-response.model';
-import { GeneralService } from 'src/app/_general/services/general.service';
-import { OpenAIService } from 'src/app/_general/services/openai.service';
+import { MagicResponse } from 'src/app/models/magic-response.model';
+import { GeneralService } from 'src/app/services/general.service';
+import { OpenAIService } from 'src/app/services/openai.service';
 
 /**
  * OpenAI configuration modal dialog allowing user to store his

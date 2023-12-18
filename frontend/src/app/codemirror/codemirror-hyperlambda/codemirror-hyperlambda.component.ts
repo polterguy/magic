@@ -12,8 +12,8 @@ import {
 } from '@angular/core';
 
 // Application specific imports.
-import { GeneralService } from 'src/app/_general/services/general.service';
-import { VocabularyService } from 'src/app/_general/services/vocabulary.service';
+import { GeneralService } from 'src/app/services/general.service';
+import { VocabularyService } from 'src/app/services/vocabulary.service';
 
 export class Model {
   hyperlambda: string;

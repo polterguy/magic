@@ -1,0 +1,177 @@
+/*
+ * Copyright (c) 2023 Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
+ */
+
+@import "src/assets/styles/_variables/colors.scss";
+@import "src/assets/styles/_variables/mixin.scss";
+@import "src/assets/styles/_variables/sizing.scss";
+
+.align-items-stretch ::ng-deep {
+  .mat-form-field-wrapper {
+    margin: 0;
+  }
+}
+
+.w-65 {
+  width: 65%;
+}
+
+.w-35 {
+  width: 35%;
+}
+
+.position-relative {
+  position: relative;
+
+  .v-line {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background-color: $aista_default_grey5;
+  }
+}
+
+.bg-light {
+  border-radius: $aista_radius;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.waiting-overlay {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1080;
+  color: $aista_default;
+  background-color: transparentize($color: $aista_dark, $amount: 0.1);
+  animation-name: fadeIn;
+  animation-duration: 1s;
+  animation-fill-mode: forwards;
+}
+
+.wating-dot-animation {
+  position: relative;
+  left: -9999px;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: $aista_primary;
+  color: $aista_primary;
+  box-shadow: 9999px 0 0 0 $aista_primary;
+  animation: waitingDot 1s infinite linear;
+  animation-delay: 0.1s;
+
+  &::before,
+  &::after {
+    content: "";
+    display: inline-block;
+    position: absolute;
+    top: 0;
+  }
+
+  &::before {
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    background-color: $aista_primary;
+    color: $aista_primary;
+    animation: waitingDotBefore 1s infinite linear;
+    animation-delay: 0s;
+  }
+
+  &::after {
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    background-color: $aista_primary;
+    color: $aista_primary;
+    animation: waitingDotAfter 1s infinite linear;
+    animation-delay: 0.2s;
+  }
+}
+
+@keyframes waitingDot {
+  0% {
+    box-shadow: 9999px -15px 0 0 rgba(152, 128, 255, 0);
+  }
+
+  25%,
+  50%,
+  75% {
+    box-shadow: 9999px 0 0 0 $aista_primary;
+  }
+
+  100% {
+    box-shadow: 9999px 15px 0 0 rgba(152, 128, 255, 0);
+  }
+}
+
+@keyframes waitingDotBefore {
+  0% {
+    box-shadow: 9984px -15px 0 0 rgba(152, 128, 255, 0);
+  }
+
+  25%,
+  50%,
+  75% {
+    box-shadow: 9984px 0 0 0 $aista_primary;
+  }
+
+  100% {
+    box-shadow: 9984px 15px 0 0 rgba(152, 128, 255, 0);
+  }
+}
+
+@keyframes waitingDotAfter {
+  0% {
+    box-shadow: 10014px -15px 0 0 rgba(152, 128, 255, 0);
+  }
+
+  25%,
+  50%,
+  75% {
+    box-shadow: 10014px 0 0 0 $aista_primary;
+  }
+
+  100% {
+    box-shadow: 10014px 15px 0 0 rgba(152, 128, 255, 0);
+  }
+}
+
+.table-responsive {
+  .text-truncate {
+    max-width: 10vw;
+  }
+}
+
+@media (min-width: 768px) {
+  .create-btn {
+    height: 43px;
+    margin-top: 3px;
+  }
+}
+
+@media (max-width: 767px) {
+  .create-btn {
+    width: 100%;
+    height: 44px;
+  }
+}
+
+.upload-backup-row {
+  position: absolute;
+  top: 0;
+  right: 0;
+}

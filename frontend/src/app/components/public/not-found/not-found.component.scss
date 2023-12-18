@@ -1,0 +1,22 @@
+/*
+ * Copyright (c) 2023 Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
+ */
+
+.not-found {
+  height: 100vh;
+
+  .watermark {
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    p {
+      font-size: clamp(10rem, 54vw, 35rem);
+      opacity: 0.1;
+      font-weight: 900;
+    }
+  }
+}

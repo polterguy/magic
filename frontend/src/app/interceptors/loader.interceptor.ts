@@ -14,7 +14,7 @@ import {
 } from '@angular/common/http';
 
 // Application specific imports.
-import { GeneralService } from "../_general/services/general.service";
+import { GeneralService } from "../services/general.service";
 
 /**
  * Our HTTP interceptor that changes the LoaderService's state according to whether or not

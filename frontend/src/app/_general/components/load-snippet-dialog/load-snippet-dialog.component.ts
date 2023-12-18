@@ -6,10 +6,10 @@
 // Angular and system imports.
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { EvaluatorService } from '../../services/evaluator.service';
+import { EvaluatorService } from '../../../services/evaluator.service';
 
 // Application specific imports.
-import { GeneralService } from '../../services/general.service';
+import { GeneralService } from '../../../services/general.service';
 
 /**
  * Load snippet dialog for loading saved Hyperlambda snippets from the backend.

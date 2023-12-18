@@ -4,9 +4,9 @@
  */
 
 import { Component, OnInit } from '@angular/core';
-import { Backend } from 'src/app/_protected/models/common/backend.model';
-import { BackendService } from 'src/app/_general/services/backend.service';
-import { GeneralService } from '../../services/general.service';
+import { Backend } from 'src/app/models/backend.model';
+import { BackendService } from 'src/app/services/backend.service';
+import { GeneralService } from '../../../services/general.service';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { Router } from '@angular/router';
 import { DialogRef } from '@angular/cdk/dialog';

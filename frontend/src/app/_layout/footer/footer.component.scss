@@ -2,9 +2,9 @@
  * Copyright (c) 2023 Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
  */
 
-@import '../../../assets/styles/_variables/colors.scss';
-@import '../../../assets/styles/_variables/sizing.scss';
-@import '../../../assets/styles/_variables/mixin.scss';
+@import 'src/assets/styles/_variables/colors.scss';
+@import 'src/assets/styles/_variables/sizing.scss';
+@import 'src/assets/styles/_variables/mixin.scss';
 
 #footer {
   margin: $aista_spacing;
