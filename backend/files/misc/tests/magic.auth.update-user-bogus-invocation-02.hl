@@ -5,8 +5,7 @@ url:/magic/system/magic/users
 status:int:404
 description:Assumes that password field is not mandatory when updating users, and that hash logic simply ignores it during updates. We do this by updating a non-existent user, avoid passing in password field
 payload:@"{
-  ""username"": ""non-existent-user"",
-  ""locked"": true
+  ""username"": ""non-existent-user""
 }"
 response:@"{
   ""result"": ""Record not found""

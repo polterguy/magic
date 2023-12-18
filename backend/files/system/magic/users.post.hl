@@ -6,7 +6,6 @@
 .arguments
    username:string
    password:string
-   locked:bool
 .description:Creates an item in your users table in your [generic|magic] database according to the specified arguments
 .type:crud-create
 

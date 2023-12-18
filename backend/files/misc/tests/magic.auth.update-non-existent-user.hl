@@ -6,8 +6,7 @@ status:int:404
 description:Assumes that trying to update a non-existent user results in the correct status code and response from backend
 payload:@"{
   ""username"": ""non-existent-user"",
-  ""password"": ""foo"",
-  ""locked"": true
+  ""password"": ""foo""
 }"
 response:@"{
   ""result"": ""Record not found""
