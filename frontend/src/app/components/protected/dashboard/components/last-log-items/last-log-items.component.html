@@ -2,43 +2,102 @@
   <mat-card-content class="h-100">
 
     <div class="d-flex justify-content-between align-items-center">
+
       <p class="mb-0 mat-body-2 fw-bold">System logs</p>
-      <a mat-button color="primary" routerLink="/log" class="p-0">See all</a>
+
+      <a
+        mat-button
+        color="primary"
+        routerLink="/log">
+        See all
+      </a>
+
     </div>
 
     <div class="table-responsive w-100 log-table leave-as-normal">
-      <table mat-table [dataSource]="dataSource" class="w-100">
+
+      <table
+        mat-table
+        [dataSource]="dataSource"
+        class="w-100">
 
         <!-- Created column -->
         <ng-container matColumnDef="created">
-          <th mat-header-cell *matHeaderCellDef> Date/time </th>
-          <td mat-cell *matCellDef="let element" class="pr-3 text-nowrap"> {{element.created | since}} </td>
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef>
+            Date/time
+          </th>
+
+          <td
+            mat-cell
+            *matCellDef="let element"
+            class="pr-3 text-nowrap">
+            {{element.created | since}}
+          </td>
+
         </ng-container>
 
         <!-- Type column -->
         <ng-container matColumnDef="type">
-          <th mat-header-cell *matHeaderCellDef> Type </th>
-          <td mat-cell *matCellDef="let element" class="pr-3"
-            [class.error]="element.type === 'error' || element.type === 'fatal'"> {{element.type}} </td>
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef>
+            Type
+          </th>
+
+          <td
+            mat-cell
+            *matCellDef="let element"
+            class="pr-3"
+            [class.error]="element.type === 'error' || element.type === 'fatal'">
+            {{element.type}}
+          </td>
+
         </ng-container>
 
         <!-- Content column -->
         <ng-container matColumnDef="content">
-          <th mat-header-cell *matHeaderCellDef> Content </th>
-          <td mat-cell *matCellDef="let element" class="pr-3">
-            <p class="my-0 text-truncate mx-width-100">{{element.content}} </p>
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef>
+            Content
+          </th>
+
+          <td
+            mat-cell
+            *matCellDef="let element"
+            class="pr-3">
+            <p class="my-0 text-truncate mx-width-100">{{element.content}}</p>
           </td>
+
         </ng-container>
 
         <!-- More column, implying action buttons -->
         <ng-container matColumnDef="more">
-          <th mat-header-cell *matHeaderCellDef>
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef>
             <span class="d-flex justify-content-end me-2">Details</span>
           </th>
-          <td mat-cell *matCellDef="let element">
-            <button mat-button color="primary" (click)="viewLog(element)" class="d-block pe-2 ms-auto">
+
+          <td
+            mat-cell
+            *matCellDef="let element"
+            class="mx-0">
+
+            <button
+              mat-button
+              color="primary"
+              (click)="viewLog(element)"
+              class="d-block px-2 ms-auto">
               Details
             </button>
+
           </td>
         </ng-container>
 
