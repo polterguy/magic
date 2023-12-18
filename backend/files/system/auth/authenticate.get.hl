@@ -3,11 +3,8 @@
 .arguments
    username:string
    password:string
-   recaptcha_response:string
 .description:Authenticates a user returning a JWT token if successful
 .type:public
-
-// TODO: Verify reCAPTCHA token is valid but ONLY if server has reCAPTCHA configurations.
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/username
