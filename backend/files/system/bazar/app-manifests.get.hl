@@ -14,28 +14,22 @@ auth.ticket.verify:root
 io.folder.list:/modules/
 for-each:x:@io.folder.list/*
 
-   // Checking if this is the magic folder, which we simply ignore.
-   switch:x:@.dp/#
-      case:/modules/magic/
+   // Retrieving manifest.hl file's information, if existing.
+   strings.concat
+      get-value:x:@.dp/#
+      .:manifest.hl
+   if
+      io.file.exists:x:@strings.concat
+      .lambda
 
-         // Ignoring ...
-         .foo
-      default
-         strings.concat
-            get-value:x:@.dp/#
-            .:manifest.hl
-         if
-            io.file.exists:x:@strings.concat
-            .lambda
-
-               // Loading file, transforming to lambda, and returning to caller.
-               io.file.load:x:@strings.concat
-               hyper2lambda:x:@io.file.load
-               add:x:+/*/*
-                  get-nodes:x:@hyper2lambda/*
-               add:x:../*/return
-                  .
-                     .
+         // Loading file, transforming to lambda, and returning to caller.
+         io.file.load:x:@strings.concat
+         hyper2lambda:x:@io.file.load
+         add:x:+/*/*
+            get-nodes:x:@hyper2lambda/*
+         add:x:../*/return
+            .
+               .
 
 // Returning result to caller.
 return

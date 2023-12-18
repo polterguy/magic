@@ -69,7 +69,7 @@ export class PluginsComponent implements OnInit {
 
   install(plugin: any) {
 
-    this.bazarService.downloadBazarItem(plugin).subscribe({
+    this.bazarService.installPlugin(plugin).subscribe({
 
       next: () => {
 
