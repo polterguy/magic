@@ -23,17 +23,11 @@ export class CacheService {
 
   constructor(private httpService: HttpService) { }
 
+  /**
+   * Deletes the specified server-side cache item.
+   */
   delete(id: string) {
 
     return this.httpService.delete<MagicResponse>('/magic/system/cache/delete?id=' + encodeURIComponent(id));
-  }
-
-  clear(filter: string = null) {
-
-    let query = '';
-    if (filter !== null && filter !== '') {
-      query += '?filter=' + encodeURIComponent(filter);
-    }
-    return this.httpService.delete<MagicResponse>('/magic/system/cache/empty' + query);
   }
 }

@@ -208,6 +208,50 @@ export class BackendService {
     return false;
   }
 
+  /**
+   * Updates the reCAPTCHA key and secret combination to the specified values.
+   */
+  setReCaptchaKeySecret(key: string, secret: string) {
+
+    return this.httpClient.post<MagicResponse>(
+      this.active.url +
+      '/magic/system/auth/recaptcha-secret-key', {
+        key,
+        secret,
+      });
+  }
+
+  /**
+   * Returns both the reCAPTCHA secret and site key.
+   */
+  getReCaptchaKeySecret() {
+
+    return this.httpClient.get<any>(
+      this.active.url +
+      '/magic/system/auth/recaptcha-secret-key');
+  }
+
+  /**
+   * Retrieving recaptcha key only, if existing.
+   */
+  getRecaptchaKey() {
+
+    this.httpClient.get<MagicResponse>(
+      environment.bazarUrl +
+      '/magic/system/auth/recaptcha-key').subscribe({
+        next: (recaptcha: MagicResponse) => {
+          this._bazaarCaptchaKey = recaptcha.result;
+        }
+      });
+    this.httpClient.get<MagicResponse>(
+      this.active.url +
+      '/magic/system/auth/recaptcha-key').subscribe({
+        next: (recaptcha: MagicResponse) => {
+          this._activeCaptcha.next(recaptcha.result);
+        }
+      });
+  }
+
   /*
    * Private helper methods.
    */
@@ -359,46 +403,5 @@ export class BackendService {
           }
         });
     });
-  }
-
-  public setReCaptchaKeySecret(key: string, secret: string) {
-
-    return this.httpClient.post<MagicResponse>(
-      this.active.url +
-      '/magic/system/auth/recaptcha-secret-key', {
-        key,
-        secret,
-      });
-  }
-
-  /**
-   * Returns both the reCAPTCHA secret and site key.
-   */
-  public getReCaptchaKeySecret() {
-
-    return this.httpClient.get<any>(
-      this.active.url +
-      '/magic/system/auth/recaptcha-secret-key');
-  }
-
-  /**
-   * Retrieving recaptcha, if existing.
-   */
-  public getRecaptchaKey() {
-
-    this.httpClient.get<MagicResponse>(
-      environment.bazarUrl +
-      '/magic/system/auth/recaptcha-key').subscribe({
-        next: (recaptcha: MagicResponse) => {
-          this._bazaarCaptchaKey = recaptcha.result;
-        }
-      });
-    this.httpClient.get<MagicResponse>(
-      this.active.url +
-      '/magic/system/auth/recaptcha-key').subscribe({
-        next: (recaptcha: MagicResponse) => {
-          this._activeCaptcha.next(recaptcha.result);
-        }
-      });
   }
 }
