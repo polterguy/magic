@@ -1,12 +1,5 @@
 
-/*
- * Authenticates the user with the specified [username] and [password] combination.
- * 
- * Notice, if [check-password] is false, we don't check the user's password, and
- * if [reset-password] is true, we generate a JWT token that can only be used to
- * change the user's password. The latter allows us to generated "change password links"
- * in the frontend, and similar type of logic.
- */
+// Authenticates the user with the specified [username] and [password] combination.
 slots.create:magic.auth.authenticate
 
    /*
