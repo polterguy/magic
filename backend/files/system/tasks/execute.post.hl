@@ -8,8 +8,13 @@
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
-// Executing task.
-tasks.execute:x:@.arguments/*/id
+// Executing task on a different thread in case it takes a lot of time to execute.
+insert-before:x:./*/fork/0
+   get-nodes:x:@.arguments
+fork
+
+   // Executing task.
+   tasks.execute:x:@.arguments/*/id
 
 // Returning success to caller.
 return
