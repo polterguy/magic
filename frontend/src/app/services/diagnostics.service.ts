@@ -6,7 +6,7 @@
 // Angular and system imports.
 import { Injectable } from '@angular/core';
 import { HttpService } from 'src/app/services/http.service';
-import { SystemReport } from '../components/_protected/pages/dashboard/_models/dashboard.model';
+import { SystemReport } from '../models/dashboard.model';
 
 /**
  * Diagnostics service providing you with diagnostics information about your system.

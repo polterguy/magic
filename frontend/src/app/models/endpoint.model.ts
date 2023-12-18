@@ -4,7 +4,7 @@
  */
 
 // Application specific imports.
-import { Argument } from "../components/_protected/pages/manage/endpoints/_models/argument.model";
+import { Argument } from "../components/protected/pages/manage/endpoints/_models/argument.model";
 
 /**
  * Endpoint model describing a single endpoint in your backend,
