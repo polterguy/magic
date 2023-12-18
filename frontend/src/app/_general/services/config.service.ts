@@ -29,11 +29,6 @@ export class ConfigService {
     private httpService: HttpService,
     private backendService: BackendService) { }
 
-  rootUserEmailAddress() {
-
-    return this.httpService.get<NameEmailModel>('/magic/system/emails/email');
-  }
-
   loadConfig() {
 
     return this.httpService.get<any>('/magic/system/config/load');
@@ -67,29 +62,9 @@ export class ConfigService {
     });
   }
 
-  installModules() {
-
-    return this.httpService.post<any>('/magic/system/config/install-modules', {});
-  }
-
   getGibberish(min: number, max: number) {
 
     return this.httpService.get<MagicResponse>('/magic/system/misc/gibberish?min=' + min + '&max=' + max);
-  }
-
-  versionCompare(version_1: string, version_2: string) {
-
-    const lhs = version_1.substring(1).split('.');
-    const rhs = version_2.substring(1).split('.');
-    for (let idx = 0; idx < 3; idx++) {
-      if (lhs[idx] < rhs[idx]) {
-        return -1;
-      }
-      if (lhs[idx] > rhs[idx]) {
-        return 1;
-      }
-    }
-    return 0;
   }
 
   getDatabases() {
