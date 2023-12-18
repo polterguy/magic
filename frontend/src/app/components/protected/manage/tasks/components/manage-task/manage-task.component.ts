@@ -6,7 +6,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { GeneralService } from 'src/app/services/general.service';
-import { CodemirrorActionsService } from '../../../../../../services/codemirror-actions.service';
+import { CodemirrorActionsService } from 'src/app/services/codemirror-actions.service';
 import { TaskService } from '../../_services/task.service';
 import { CommonErrorMessages } from 'src/app/helpers/common-error-messages';
 import { CommonRegEx } from 'src/app/helpers/common-regex';

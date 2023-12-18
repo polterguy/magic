@@ -10,7 +10,6 @@ import { ComponentsModule } from 'src/app/components/common/components.module';
 import { MaterialModule } from 'src/app/modules/material.module';
 import { TaskRoutingModule } from './task.routing.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { CmModule } from 'src/app/codemirror/_module/cm.module';
 import { ScheduleTaskComponent } from '../components/schedule-task/schedule-task.component';
 import { NgxMatDatetimePickerModule, NgxMatNativeDateModule } from '@angular-material-components/datetime-picker';
 import { ManageTaskComponent } from '../components/manage-task/manage-task.component';
@@ -28,7 +27,6 @@ import { ManageTaskComponent } from '../components/manage-task/manage-task.compo
     MaterialModule,
     FormsModule,
     ReactiveFormsModule,
-    CmModule,
     NgxMatDatetimePickerModule,
     NgxMatNativeDateModule
   ]

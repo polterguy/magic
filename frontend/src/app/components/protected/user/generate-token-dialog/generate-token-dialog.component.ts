@@ -6,7 +6,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { CryptoService } from 'src/app/components/protected/misc/cryptography/_services/crypto.service';
 import { Clipboard } from '@angular/cdk/clipboard';
-import { GeneralService } from '../../../../services/general.service';
+import { GeneralService } from 'src/app/services/general.service';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Role } from '../../manage/user-and-roles/_models/role.model';
 import { RoleService } from '../../manage/user-and-roles/_services/role.service';

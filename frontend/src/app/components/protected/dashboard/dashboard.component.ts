@@ -5,8 +5,8 @@
 
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { GeneralService } from 'src/app/services/general.service';
-import { BackendService } from '../../../services/backend.service';
-import { DiagnosticsService } from '../../../services/diagnostics.service';
+import { BackendService } from 'src/app/services/backend.service';
+import { DiagnosticsService } from 'src/app/services/diagnostics.service';
 import moment from 'moment';
 import { LogTypes, SystemReport } from './_models/dashboard.model';
 import { ConfigureThemeDialog } from 'src/app/components/protected/dashboard/components/configure-theme/configure-theme-dialog.component';

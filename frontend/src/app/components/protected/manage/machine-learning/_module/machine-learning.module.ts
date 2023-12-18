@@ -11,7 +11,6 @@ import { ComponentsModule } from 'src/app/components/common/components.module';
 import { MachineLearningTrainingDataComponent } from '../machine-learning-training-data/machine-learning-training-data.component';
 import { MachineLearningTrainingRoutingModule } from './machine-learning.routing.module';
 import { MachineLearningEditTrainingSnippetComponent } from '../components/machine-learning-edit-training-snippet/machine-learning-edit-training-snippet.component';
-import { CmModule } from 'src/app/codemirror/_module/cm.module';
 import { MachineLearningEditTypeComponent } from '../components/machine-learning-edit-model/machine-learning-edit-model.component';
 import { MachineLearningComponent } from '../machine-learning.component';
 import { MachineLearningModelsComponent } from '../machine-learning-models/machine-learning-models.component';
@@ -51,7 +50,6 @@ import { MachineLearningImportFeedbackComponent } from '../components/machine-le
     CommonModule,
     MachineLearningTrainingRoutingModule,
     MaterialModule,
-    CmModule,
     FormsModule,
     ComponentsModule,
     SharedModule,

@@ -6,7 +6,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Backend } from 'src/app/models/backend.model';
 import { BackendService } from 'src/app/services/backend.service';
-import { GeneralService } from '../../../services/general.service';
+import { GeneralService } from 'src/app/services/general.service';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { Router } from '@angular/router';
 import { DialogRef } from '@angular/cdk/dialog';

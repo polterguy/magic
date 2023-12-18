@@ -29,7 +29,7 @@ export class Model {
   selector: 'app-codemirror-hyperlambda',
   templateUrl: './codemirror-hyperlambda.component.html'
 })
-export class HyperlambdaComponent implements OnInit {
+export class CodemirrorHyperlambdaComponent implements OnInit {
 
   @ViewChild('codeeditor') private _editor: { codeMirror: any; };
   @Input() public model: Model;
@@ -55,7 +55,7 @@ export class HyperlambdaComponent implements OnInit {
           this.init();
         },
         error: (error: any) => this.generalService.showFeedback(error.error.message ?? error, 'errorMessage')
-      })
+      });
     }
   }
 

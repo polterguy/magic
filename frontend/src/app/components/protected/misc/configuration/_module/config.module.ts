@@ -8,7 +8,6 @@ import { CommonModule } from '@angular/common';
 import { ConfigurationComponent } from '../configuration.component';
 import { ConfigRoutingModule } from './config.routing.module';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
-import { CmModule } from 'src/app/codemirror/_module/cm.module';
 import { MaterialModule } from 'src/app/modules/material.module';
 import { ComponentsModule } from 'src/app/components/common/components.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -26,7 +25,6 @@ import { RecaptchaDialogComponent } from '../components/recaptcha-dialog/recaptc
     ConfigRoutingModule,
     ComponentsModule,
     MaterialModule,
-    CmModule,
     CodemirrorModule,
     FormsModule,
     ReactiveFormsModule,

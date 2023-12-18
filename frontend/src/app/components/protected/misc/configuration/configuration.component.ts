@@ -7,12 +7,12 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { GeneralService } from 'src/app/services/general.service';
 import { BackendService } from 'src/app/services/backend.service';
-import { ConfigService } from '../../../../services/config.service';
+import { ConfigService } from 'src/app/services/config.service';
 
-import { CodemirrorActionsService } from '../../../../services/codemirror-actions.service';
+import { CodemirrorActionsService } from 'src/app/services/codemirror-actions.service';
 import { Subscription } from 'rxjs';
 import { SmtpDialogComponent } from './components/smtp-dialog/smtp-dialog.component';
-import json from '../../../../codemirror/options/json.json'
+import json from 'src/app/helpers/options/json.json'
 import { OpenAIConfigurationDialogComponent } from 'src/app/components/common/openai/openai-configuration-dialog/openai-configuration-dialog.component';
 import { RecaptchaDialogComponent } from './components/recaptcha-dialog/recaptcha-dialog.component';
 import { FileService } from 'src/app/services/file.service';

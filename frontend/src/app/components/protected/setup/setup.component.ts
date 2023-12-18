@@ -9,7 +9,7 @@ import { ErrorStateMatcher } from '@angular/material/core';
 import { CommonErrorMessages } from 'src/app/helpers/common-error-messages';
 import { CommonRegEx } from 'src/app/helpers/common-regex';
 import { GeneralService } from 'src/app/services/general.service';
-import { ConfigService } from '../../../services/config.service';
+import { ConfigService } from 'src/app/services/config.service';
 import { SetupModel } from '../../../models/setup.model';
 
 class MyErrorStateMatcher implements ErrorStateMatcher {

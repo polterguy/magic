@@ -9,17 +9,17 @@ import { MatDialog } from '@angular/material/dialog';
 import { LoadSnippetDialogComponent } from 'src/app/components/common/load-snippet-dialog/load-snippet-dialog.component';
 import { SnippetNameDialogComponent } from 'src/app/components/common/snippet-name-dialog/snippet-name-dialog.component';
 import { GeneralService } from 'src/app/services/general.service';
-import { EvaluatorService } from '../../../../services/evaluator.service';
+import { EvaluatorService } from 'src/app/services/evaluator.service';
 import { MagicResponse } from 'src/app/models/magic-response.model';
 
 import { Subscription } from 'rxjs';
 import { ShortkeysComponent } from 'src/app/components/common/shortkeys/shortkeys.component';
-import { CodemirrorActionsService } from '../../../../services/codemirror-actions.service';
-import { Model } from 'src/app/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
+import { CodemirrorActionsService } from 'src/app/services/codemirror-actions.service';
+import { Model } from 'src/app/components/common/codemirror-hyperlambda/codemirror-hyperlambda.component';
 import { AiService } from 'src/app/services/ai.service';
 
 // CodeMirror options.
-import hyperlambda from 'src/app/codemirror/options/hyperlambda.json';
+import hyperlambda from 'src/app/helpers/options/hyperlambda.json';
 
 /**
  * Hyperlambda Playground component, allowing user to execute arbitrary Hyperlambda, and/or

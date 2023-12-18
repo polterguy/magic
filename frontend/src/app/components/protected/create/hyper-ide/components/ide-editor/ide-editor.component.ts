@@ -13,11 +13,11 @@ import { PreviewFileDialogComponent } from '../preview-file-dialog/preview-file-
 import { RenameFileDialogComponent, FileObjectName } from '../rename-file-dialog/rename-file-dialog.component';
 import { RenameFolderDialogComponent } from '../rename-folder-dialog/rename-folder-dialog.component';
 import { UnsavedChangesDialogComponent } from '../unsaved-changes-dialog/unsaved-changes-dialog.component';
-import { EvaluatorService } from '../../../../../../services/evaluator.service';
+import { EvaluatorService } from 'src/app/services/evaluator.service';
 import { FileNode } from '../../models/file-node.model';
-import { CodemirrorActionsService } from '../../../../../../services/codemirror-actions.service';
-import { FileService } from '../../../../../../services/file.service';
-import { VocabularyService } from '../../../../../../services/vocabulary.service';
+import { CodemirrorActionsService } from 'src/app/services/codemirror-actions.service';
+import { FileService } from 'src/app/services/file.service';
+import { VocabularyService } from 'src/app/services/vocabulary.service';
 import { AiService } from 'src/app/services/ai.service';
 import { MagicResponse } from 'src/app/models/magic-response.model';
 import { ExecuteResult } from '../execute-result/execute-result-dialog.component';

@@ -14,8 +14,8 @@ import { NewFileFolderDialogComponent } from '../new-file-folder-dialog/new-file
 import { FileNode } from '../../models/file-node.model';
 import { FlatNode } from './models/flat-node.model';
 import { TreeNode } from './models/tree-node.model';
-import { CodemirrorActionsService } from '../../../../../../services/codemirror-actions.service';
-import { FileService } from '../../../../../../services/file.service';
+import { CodemirrorActionsService } from 'src/app/services/codemirror-actions.service';
+import { FileService } from 'src/app/services/file.service';
 import { WorkflowService } from 'src/app/services/workflow.service';
 import { MagicResponse } from 'src/app/models/magic-response.model';
 
