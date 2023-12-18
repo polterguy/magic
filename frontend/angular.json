@@ -29,10 +29,12 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
             "assets": [
-              "src/favicon.ico",
-              "src/assets",
-              "src/web.config",
-              "src/manifest.webmanifest"
+              "src/assets/images/icons/apple-touch-icon.png",
+              "src/assets/images/icons/favicon-32x32.png",
+              "src/assets/images/icons/favicon-16x16.png",
+              "src/assets/site.webmanifest",
+              "src/assets/safari-pinned-tab.svg",
+              "src/assets/images/ainiro-logo-new.svg"
             ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
@@ -143,9 +145,12 @@
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
             "assets": [
-              "src/favicon.ico",
-              "src/assets",
-              "src/manifest.webmanifest"
+              "src/assets/images/icons/apple-touch-icon.png",
+              "src/assets/images/icons/favicon-32x32.png",
+              "src/assets/images/icons/favicon-16x16.png",
+              "src/assets/site.webmanifest",
+              "src/assets/safari-pinned-tab.svg",
+              "src/assets/images/ainiro-logo-new.svg"
             ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
