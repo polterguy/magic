@@ -1,6 +1,0 @@
-
-// Automatically generated assumption test.
-verb:get
-url:/magic/system/cache/list
-status:int:200
-description:Assumes that listing cache items succeeds

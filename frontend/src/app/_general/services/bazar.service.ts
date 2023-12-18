@@ -13,8 +13,8 @@ import { HttpService } from 'src/app/_general/services/http.service';
 import { FileService } from 'src/app/_general/services/file.service';
 import { BazarApp } from 'src/app/models/bazar-app.model';
 import { environment } from 'src/environments/environment';
-import { AppManifest } from 'src/app/models/app-manifest';
 import { MagicResponse } from '../models/magic-response.model';
+import { AppManifest } from '../models/app-manifest';
 
 /**
  * Bazar service allowing you to query Aista's Bazar, and/or install Bazar items locally on your
