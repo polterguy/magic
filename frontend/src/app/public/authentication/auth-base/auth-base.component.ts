@@ -3,7 +3,7 @@
  * Copyright (c) 2023 Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
  */
 
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PrivacyModalComponent } from 'src/app/_general/components/privacy-modal/privacy-modal.component';
 import { TermsModalComponent } from 'src/app/_general/components/terms-modal/terms-modal.component';
@@ -20,13 +20,13 @@ export class AuthBaseComponent {
 
   constructor(private dialog: MatDialog) { }
 
-  public passwordToken: string = '';
+  termsModal() {
 
-  public termsModal() {
     this.dialog.open(TermsModalComponent);
   }
 
-  public privacyModal() {
+  privacyModal() {
+
     this.dialog.open(PrivacyModalComponent);
   }
 }
