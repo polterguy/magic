@@ -8,8 +8,8 @@ import { Injectable } from '@angular/core';
 
 // Application specific imports.
 import { Count } from '../models/count.model';
-import { LogItem } from 'src/app/components/_protected/pages/misc/log/_models/log-item.model';
 import { HttpService } from 'src/app/services/http.service';
+import { LogItem } from '../components/protected/pages/misc/log/_models/log-item.model';
 
 /**
  * Log service, allows you to query your backend log, in addition to some other helper methods.

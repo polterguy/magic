@@ -1,0 +1,244 @@
+/*
+ * Copyright (c) 2023 Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
+ */
+
+@import 'src/assets/styles/_variables/colors.scss';
+@import 'src/assets/styles/_variables/sizing.scss';
+@import 'src/assets/styles/_variables/mixin.scss';
+
+#navbar {
+  margin: $aista_spacing;
+  background-color: $aista_default;
+  border-radius: $aista_radius;
+  height: 70px;
+  padding: 20px;
+
+  .menu_trigger {
+    width: 0px;
+    height: 0px;
+    display: inline;
+    padding: 0;
+  }
+
+  @media (max-width: 575px) {
+    border-radius: 0;
+    margin: 0 0 $aista_spacing 0;
+  }
+
+  .url-btn {
+    min-height: 36px;
+  }
+
+  .url-text {
+    max-width: clamp(21vw, 1vw, 40vw);
+  }
+
+  .nav-link {
+    font-weight: 500;
+    font-family: 'inter-medium';
+    @include general_transition(0.3s);
+
+    &.active-link,
+    &:hover {
+      color: $aista_primary;
+    }
+  }
+
+  .nav-button {
+    line-height: 35px;
+    min-width: unset;
+    min-height: 35px;
+
+    @media (min-width: 576px) {
+      padding: 0 15px 0 10px;
+    }
+  }
+
+}
+
+.bell-button {
+  position: relative;
+
+  &.isOpen::before {
+    content: " ";
+    display: block;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid #FFFFFF;
+    position: absolute;
+    top: 100%;
+    left: 10px;
+    z-index: 9999999;
+  }
+
+  &.hasUnread mat-icon {
+    position: relative;
+
+    &::after {
+      position: absolute;
+      z-index: 2;
+      content: ' ';
+      width: 5px;
+      height: 5px;
+      right: 5px;
+      top: 6px;
+      border-radius: 50%;
+      background-color: $aista_error;
+    }
+
+    &::before {
+      position: absolute;
+      z-index: 1;
+      content: ' ';
+      width: 10px;
+      height: 10px;
+      right: 2.5px;
+      top: 3.5px;
+      border-radius: 50%;
+      background-color: $aista_default;
+    }
+  }
+
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+  .nav-link {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}
+
+@media (max-width: 991px) {
+  #navbar {
+    .nav-links {
+      position: fixed;
+      height: 100%;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 250px;
+      z-index: 999;
+      padding: 40px 20px;
+      background-color: $aista_default;
+      box-shadow: 0 18px 7px 4px rgba(0, 0, 0, 0.15);
+      transform: translateX(-270px);
+      @include general_transition(0.3s);
+
+      &.open {
+        transform: translateX(0px);
+      }
+
+      .nav-link {
+        height: 50px;
+        display: flex;
+        align-items: center;
+        @include general_transition(0.3s);
+
+        &.active-link,
+        &:hover {
+          color: $aista_primary;
+
+          &::before {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background-color: $aista_primary;
+            content: ' ';
+          }
+        }
+      }
+    }
+  }
+
+  .overlay {
+    background-color: rgba(0, 0, 0, 0.2);
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 998;
+  }
+}
+
+.logout-btn {
+  background-color: transparentize($color: $aista_error, $amount: 0.8);
+  border-radius: $aista_radius_sm;
+}
+
+a {
+  background-color: transparent !important;
+  @include general_transition(0.3s);
+
+  &.active-link,
+  &:not([disabled]):not(.warn):hover {
+    color: $aista_primary;
+
+    &::before {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background-color: $aista_primary;
+      border-radius: $aista_radius;
+      content: ' ';
+    }
+  }
+
+  &.warn {
+    color: $aista_error;
+  }
+}
+
+::ng-deep .mat-menu-panel.account-menu {
+  margin-top: 10px;
+  border-radius: $aista_radius;
+}
+
+::ng-deep .mat-menu-panel.account-menu button {
+  padding-right: 50px;
+}
+
+.coloured-box {
+  background-color: $aista_default_alt;
+  border-radius: $aista_radius;
+  cursor: pointer;
+
+  p {
+    line-height: 1.5;
+
+    &.truncatable {
+      @include line_truncate(2);
+    }
+  }
+}
+
+::ng-deep.nav-link {
+  @include general_transition(0.3s);
+
+  &.bg-light {
+    color: $aista_primary;
+    border-radius: 0;
+  }
+}
+
+::ng-deep {
+  .help_menu {
+    width: 500px;
+    min-width: 500px;
+    max-width: 80vw !important;
+    text-align: justify;
+
+    .read_more_help {
+      display:block;
+    }
+  }
+}
+

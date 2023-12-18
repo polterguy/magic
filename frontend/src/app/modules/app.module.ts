@@ -34,10 +34,10 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { AuthInterceptor } from '../interceptors/auth.interceptor';
 
 // Components
-import { AppComponent } from '../app.component';
-import { CoreComponent } from '../_layout/core/core.component';
-import { HeaderComponent } from '../_layout/header/header.component';
-import { FooterComponent } from '../_layout/footer/footer.component';
+import { AppComponent } from '../components/main/app.component';
+import { CoreComponent } from '../components/core/core.component';
+import { HeaderComponent } from '../components/core/header/header.component';
+import { FooterComponent } from '../components/core/footer/footer.component';
 
 // Misc
 import { AccessGuard } from '../access.guard';

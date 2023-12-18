@@ -5,8 +5,8 @@
 
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { PrivacyModalComponent } from 'src/app/_general/components/privacy-modal/privacy-modal.component';
-import { TermsModalComponent } from 'src/app/_general/components/terms-modal/terms-modal.component';
+import { PrivacyModalComponent } from 'src/app/components/common/privacy-modal/privacy-modal.component';
+import { TermsModalComponent } from 'src/app/components/common/terms-modal/terms-modal.component';
 
 /**
  * Base component for everything related to authentication.
