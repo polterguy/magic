@@ -39,6 +39,7 @@ export class TaskService {
     filter: string,
     offset: number,
     limit: number) {
+
     let query = '';
     if (filter) {
       query += '&filter=' + encodeURIComponent(filter);
@@ -57,6 +58,7 @@ export class TaskService {
    * @param name Name of task to retrieve
    */
   get(name: string) {
+
     return this.httpService.get<Task>('/magic/system/tasks/get?name=' + encodeURIComponent(name));
   }
 
@@ -66,6 +68,7 @@ export class TaskService {
    * @param filter Query filter for items to include in count
    */
   count(filter?: string) {
+
     let query = '';
     if (filter) {
       query += '?filter=' + encodeURIComponent(filter);
@@ -81,6 +84,7 @@ export class TaskService {
    * @param description Description for task as humanly readable text
    */
   create(id: string, hyperlambda: string, description: string = null) {
+
     return this.httpService.post<MagicResponse>(
       '/magic/system/tasks/create', {
       id,
@@ -97,6 +101,7 @@ export class TaskService {
    * @param description Description for task as humanly readable text
    */
   update(id: string, hyperlambda: string, description: string = null) {
+
     return this.httpService.post<MagicResponse>(
       '/magic/system/tasks/update', {
       id,
@@ -111,6 +116,7 @@ export class TaskService {
    * @param id Unique name or ID of task to execute
    */
   execute(id: string) {
+
     return this.httpService.post<MagicResponse>(
       '/magic/system/tasks/execute', {
       id
@@ -123,6 +129,7 @@ export class TaskService {
    * @param id Unique name or ID of task to delete
    */
   delete(id: string) {
+
     return this.httpService.delete<MagicResponse>('/magic/system/tasks/delete?id=' + encodeURIComponent(id));
   }
 
@@ -134,6 +141,7 @@ export class TaskService {
    * @param repeats Optional repetition pattern for task
    */
   schedule(id: string, due?: Date, repeats?: string) {
+
     const payload: any = {
       id
     };
@@ -152,6 +160,7 @@ export class TaskService {
    * @param id ID of task schedule to delete
    */
   deleteSchedule(id: number) {
+
     return this.httpService.delete<MagicResponse>('/magic/system/tasks/due/delete?id=' + id);
   }
 }
