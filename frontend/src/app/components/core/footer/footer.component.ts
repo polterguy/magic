@@ -6,7 +6,7 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PrivacyDialogComponent } from 'src/app/components/common/privacy-dialog/privacy-dialog.component';
-import { TermsModalComponent } from 'src/app/components/common/terms-modal/terms-modal.component';
+import { TermsDialogComponent } from 'src/app/components/common/terms-dialog/terms-dialog.component';
 
 declare function aista_show_chat_window(): any;
 
@@ -24,7 +24,7 @@ export class FooterComponent {
 
   termsModal() {
 
-    this.dialog.open(TermsModalComponent);
+    this.dialog.open(TermsDialogComponent);
   }
 
   privacyModal() {

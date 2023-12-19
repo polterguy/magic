@@ -19,7 +19,7 @@ import { SqlSnippetDialogComponent } from '../../sql-studio/components/sql-view/
 
 // CodeMirror options.
 import { CodemirrorActionsService } from 'src/app/services/codemirror-actions.service';
-import { SnippetNameDialogComponent } from 'src/app/components/common/snippet-name-dialog/snippet-name-dialog.component';
+import { SaveSnippetDialogComponent } from 'src/app/components/common/save-snippet-dialog/save-snippet-dialog.component';
 import { MessageService } from 'src/app/services/message.service';
 import { GeneratorBase } from '../generator-base';
 import { ActivatedRoute } from '@angular/router';
@@ -240,7 +240,7 @@ export class ManualGeneratorComponent extends GeneratorBase implements OnInit, O
       return;
     }
 
-    this.dialog.open(SnippetNameDialogComponent, {
+    this.dialog.open(SaveSnippetDialogComponent, {
       width: '550px',
       data: ''
     }).afterClosed().subscribe((filename: string) => {

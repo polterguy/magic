@@ -7,7 +7,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 import { LoadSnippetDialogComponent } from 'src/app/components/common/load-snippet-dialog/load-snippet-dialog.component';
-import { SnippetNameDialogComponent } from 'src/app/components/common/snippet-name-dialog/snippet-name-dialog.component';
+import { SaveSnippetDialogComponent } from 'src/app/components/common/save-snippet-dialog/save-snippet-dialog.component';
 import { GeneralService } from 'src/app/services/general.service';
 import { EvaluatorService } from 'src/app/services/evaluator.service';
 import { MagicResponse } from 'src/app/models/magic-response.model';
@@ -91,7 +91,7 @@ export class HyperlambdaPlaygroundComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.dialog.open(SnippetNameDialogComponent, {
+    this.dialog.open(SaveSnippetDialogComponent, {
       width: '550px',
       data: this.filename || '',
     }).afterClosed().subscribe((filename: string) => {

@@ -15,7 +15,7 @@ import { saveAs } from 'file-saver';
 import { CodemirrorActionsService } from 'src/app/services/codemirror-actions.service';
 import { SqlService } from 'src/app/services/sql.service';
 import { SqlSnippetDialogComponent } from './components/load-sql-snippet-dialog/load-sql-snippet-dialog.component';
-import { SnippetNameDialogComponent } from '../../../../../common/snippet-name-dialog/snippet-name-dialog.component';
+import { SaveSnippetDialogComponent } from '../../../../../common/save-snippet-dialog/save-snippet-dialog.component';
 
 /**
  * Helper component to allo user to view his database in SQL view, as in allowing to
@@ -113,7 +113,7 @@ export class SqlViewComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.dialog.open(SnippetNameDialogComponent, {
+    this.dialog.open(SaveSnippetDialogComponent, {
       width: '550px',
       data: this.selectedSnippet
     }).afterClosed().subscribe((filename: string) => {

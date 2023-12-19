@@ -11,11 +11,11 @@
 
         <div class="row mt-3">
           <div class="col-12">
-            <app-searchbox
+            <app-filter
               (filterList)="filterList($event)"
               [disableSearchTextBox]="isLoading | async"
               checkBoxText="System endpoints">
-            </app-searchbox>
+            </app-filter>
           </div>
         </div>
 

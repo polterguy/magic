@@ -10,7 +10,7 @@ import { ConfirmationDialogComponent } from 'src/app/components/common/confirmat
 import { GeneralService } from 'src/app/services/general.service';
 import { MachineLearningTrainingService } from 'src/app/services/machine-learning-training.service';
 import { MachineLearningEditCacheComponent } from '../components/machine-learning-edit-cache/machine-learning-edit-cache.component';
-import { SearchboxComponent } from 'src/app/components/common/searchbox/searchbox.component';
+import { FilterComponent } from 'src/app/components/common/filter/filter.component';
 
 /**
  * Helper component to view and manage Machine Learning requests
@@ -41,7 +41,7 @@ export class MachineLearningRequestsComponent implements OnInit {
     order: 'created',
     direction: 'desc',
   };
-  @ViewChild('searchBox') searchBox: SearchboxComponent;
+  @ViewChild('searchBox') searchBox: FilterComponent;
 
   constructor(
     private dialog: MatDialog,
