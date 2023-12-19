@@ -64,6 +64,5 @@ while
             remove-nodes:x:@execute/0
 
 // Returning result to caller.
-unwrap:x:./*/return/*
-return
+yield
    result:x:@.context
