@@ -16,9 +16,9 @@ import { IncompatibleFileDialogComponent } from '../components/incompatible-file
 import { NewFileFolderDialogComponent } from '../components/new-file-folder-dialog/new-file-folder-dialog.component';
 import { RenameFileDialogComponent } from '../components/rename-file-dialog/rename-file-dialog.component';
 import { RenameFolderDialogComponent } from '../components/rename-folder-dialog/rename-folder-dialog.component';
-import { SelectMacroDialogComponent } from '../components/select-macro-dialog/select-macro-dialog.component';
 import { UnsavedChangesDialogComponent } from '../components/unsaved-changes-dialog/unsaved-changes-dialog.component';
-import { ExecuteResult } from '../components/execute-result/execute-result-dialog.component';
+import { ExecuteResult } from '../components/execute-result-dialog/execute-result-dialog.component';
+import { ParametriseActionDialog } from '../components/parametrise-action-dialog/parametrise-action-dialog.component';
 
 @NgModule({
   declarations: [
@@ -31,8 +31,8 @@ import { ExecuteResult } from '../components/execute-result/execute-result-dialo
     NewFileFolderDialogComponent,
     RenameFileDialogComponent,
     RenameFolderDialogComponent,
-    SelectMacroDialogComponent,
     UnsavedChangesDialogComponent,
+    ParametriseActionDialog,
   ],
   imports: [
     CommonModule,

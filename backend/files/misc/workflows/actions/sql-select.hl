@@ -4,18 +4,35 @@
  * Optionally provide [connection-string], [database-type] and [database].
  */
 .arguments
-   connection-string:string
-   database-type:string
-   database:string
-   sql:*
+   connection-string
+      type:string
+      default:generic
+      mandatory:bool:false
+   database-type
+      type:string
+      default:sqlite
+      mandatory:bool:false
+   database
+      type:string
+      default:magic
+      mandatory:bool:false
+   sql
+      type:string
+      default:select name from roles where name like @arg1 limit 2
+      mandatory:bool:true
+   params
+      type:key-value
+      default
+         @arg1:a%
+      mandatory:bool:false
 .example
    connection-string:generic
    database-type:sqlite
    database:magic
-   sql:insert into roles (name, description) values (@name, @description)
-      @name:role-name
-      @description:The description for your role
-.icon:backup
+   sql:select name from roles where name like @arg1 limit 2
+   params
+      @arg1:a%
+.icon:cloud_download
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/sql
@@ -44,7 +61,7 @@ data.connect:x:@.connection-string
 
    // Parametrizing SQL.
    add:x:./*/data.select
-      get-nodes:x:@.arguments/*/sql/*
+      get-nodes:x:@.arguments/*/params/*
 
    // Executing SQL.
    data.select:x:@.arguments/*/sql

@@ -3,21 +3,25 @@
  * Copyright (c) 2023 Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
  */
 
+// Angular and system imports
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTreeFlattener, MatTreeFlatDataSource } from '@angular/material/tree';
-import { ConfirmationDialogComponent } from 'src/app/components/protected/common/confirmation-dialog/confirmation-dialog.component';
-import { GeneralService } from 'src/app/services/general.service';
-import { IncompatibleFileDialogComponent } from '../incompatible-file-dialog/incompatible-file-dialog.component';
-import { NewFileFolderDialogComponent } from '../new-file-folder-dialog/new-file-folder-dialog.component';
-import { FileNode } from '../../models/file-node.model';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+
+// Application specific imports
 import { FlatNode } from './models/flat-node.model';
 import { TreeNode } from './models/tree-node.model';
-import { CodemirrorActionsService } from 'src/app/services/codemirror-actions.service';
+import { FileNode } from '../../models/file-node.model';
 import { FileService } from 'src/app/services/file.service';
+import { GeneralService } from 'src/app/services/general.service';
 import { WorkflowService } from 'src/app/services/workflow.service';
 import { MagicResponse } from 'src/app/models/magic-response.model';
+import { CodemirrorActionsService } from 'src/app/services/codemirror-actions.service';
+import { ConfirmationDialogComponent } from 'src/app/components/protected/common/confirmation-dialog/confirmation-dialog.component';
+import { NewFileFolderDialogComponent } from 'src/app/components/protected/create/hyper-ide/components/new-file-folder-dialog/new-file-folder-dialog.component';
+import { IncompatibleFileDialogComponent } from 'src/app/components/protected/create/hyper-ide/components/incompatible-file-dialog/incompatible-file-dialog.component';
+import { ParametriseActionDialog } from '../parametrise-action-dialog/parametrise-action-dialog.component';
 
 /**
  * Tree component for Hyper IDE displaying files and folders, allowing user
@@ -31,7 +35,6 @@ import { MagicResponse } from 'src/app/models/magic-response.model';
 })
 export class IdeTreeComponent implements OnInit {
 
-  private openFolder: FlatNode;
   private root: TreeNode = {
     name: '',
     path: '/',
@@ -42,13 +45,11 @@ export class IdeTreeComponent implements OnInit {
   };
 
   @Input() searchKey: string;
-
   @Output() showEditor: EventEmitter<any> = new EventEmitter<any>();
   @Output() clearEditorHistory: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output() setFocusToActiveEditor: EventEmitter<any> = new EventEmitter<any>();
 
   systemFiles: boolean = false;
-
   treeControl = new FlatTreeControl<FlatNode>(node => node.level, node => node.expandable);
   dataSource = new MatTreeFlatDataSource(this.treeControl, treeFlattener);
   openFiles: FileNode[] = [];
@@ -176,7 +177,7 @@ export class IdeTreeComponent implements OnInit {
   /**
    * Adds the specified function to the currently edited workflow.
    */
-  addSnippet(el: any) {
+  insertToolboxItem(el: any) {
 
     // Retrieving editor instance.
     const fileExisting: number = this.openFiles.findIndex((item: any) => item.path === this.currentFileData.path);
@@ -186,33 +187,45 @@ export class IdeTreeComponent implements OnInit {
     // Making sure we're in a position where we can insert Hyperlambda.
     const sel = editor.doc.sel.ranges[0];
     if (sel.anchor.ch % 3 !== 0) {
+
       this.generalService.showFeedback('You cannot insert Hyperlambda at the caret\'s current position since it would produce invalid Hyperlambda', 'errorMessage');
       editor.focus();
       return;
     }
 
-    this.generalService.showLoading();
-    this.workflowService.getHyperlambda(el.filename).subscribe({
+    // Checking if this is a simple snippet insert.
+    if (el.action === false) {
 
-      next: (result: MagicResponse) => {
+      // Simple snippet insert.
+      this.insertToolboxItemImplementation(editor, sel, el);
 
-        this.generalService.hideLoading();
-        let hl = result.result.split('\r\n');
-        let sp = '';
-        for (let idxNo = 0; idxNo < sel.anchor.ch; idxNo++) {
-          sp += ' ';
+    } else {
+
+      // Action insert.
+      this.workflowService.getArguments(el.filename).subscribe({
+
+        next: (result: any) => {
+
+          const dialog = this.dialog.open(ParametriseActionDialog, {
+            width: '550px',
+            data: {
+              input: result.input,
+            },
+          });
+          dialog.afterClosed().subscribe((data: any) => {
+            if (data) {
+              this.insertToolboxItemImplementation(editor, sel, el);
+            }
+          });
+        },
+
+        error: (error: any) => {
+
+          this.generalService.hideLoading();
+          this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
         }
-        editor.replaceSelection(hl.map(x => sp + x).join('\r\n'));
-        editor.changeGeneration(true);
-        editor.focus();
-      },
-
-      error: (error: any) => {
-
-        this.generalService.hideLoading();
-        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
-      }
-    });
+      });
+    }
   }
 
   /**
@@ -666,7 +679,6 @@ export class IdeTreeComponent implements OnInit {
   selectFolder(folder: FlatNode) {
 
     this.activeFolder = folder.node.path;
-    this.openFolder = folder;
   }
 
   uploadFiles(files: FileList) {
@@ -978,6 +990,32 @@ export class IdeTreeComponent implements OnInit {
       path === '/data/' ||
       path === '/config/' ||
       path === '/etc/';
+  }
+
+  private insertToolboxItemImplementation(editor: any, sel: any, el: any) {
+
+    this.generalService.showLoading();
+    this.workflowService.getHyperlambda(el.filename).subscribe({
+
+      next: (result: MagicResponse) => {
+
+        this.generalService.hideLoading();
+        let hl = result.result.split('\r\n');
+        let sp = '';
+        for (let idxNo = 0; idxNo < sel.anchor.ch; idxNo++) {
+          sp += ' ';
+        }
+        editor.replaceSelection(hl.map(x => sp + x).join('\r\n'));
+        editor.changeGeneration(true);
+        editor.focus();
+      },
+
+      error: (error: any) => {
+
+        this.generalService.hideLoading();
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+      }
+    });
   }
 }
 

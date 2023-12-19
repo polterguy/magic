@@ -25,7 +25,7 @@ export class WorkflowService {
    */
   listToolboxItems() {
 
-    return this.httpService.get<any[]>('/magic/system/workflows/functions');
+    return this.httpService.get<any[]>('/magic/system/workflows/actions');
   }
 
   /**
@@ -35,6 +35,16 @@ export class WorkflowService {
 
     return this.httpService.get<MagicResponse>(
       '/magic/system/workflows/get-hyperlambda?filename=' + 
+      encodeURIComponent(filename));
+  }
+
+  /**
+   * Returns the arguments the specified workflow action can handle.
+   */
+  getArguments(filename: string) {
+
+    return this.httpService.get<any>(
+      '/magic/system/workflows/get-arguments?action=' + 
       encodeURIComponent(filename));
   }
 }

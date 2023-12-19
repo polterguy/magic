@@ -1,0 +1,37 @@
+
+/*
+ * Returns arguments the specified action can handle.
+ */
+.arguments
+   action:string
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Verifying this is an action template.
+if
+   strings.starts-with:x:@.arguments/*/action
+      .:/misc/workflows/actions/
+   .lambda
+
+      /*
+       * This is an action template type of snippet.
+       * Loading file and returning [.arguments] collection to caller.
+       */
+      load-file:x:@.arguments/*/action
+
+      // Transforming Hyperlambda to lambda and making sure we return [.arguments] collection.
+      hyper2lambda:x:@load-file
+      add:x:./*/return/*/input
+         get-nodes:x:@hyper2lambda/*/.arguments/*
+
+      // Returning arguments to caller.
+      return
+         input
+
+else
+
+   // Oops ...!!
+   throw:You can only retrieve arguments for actions
+      public:bool:true
+      status:int:400
