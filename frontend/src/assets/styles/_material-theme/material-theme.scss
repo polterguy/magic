@@ -8,7 +8,7 @@
 // Foreground Elements
 
 // Light Theme Text
-$dark-text: $aista_dark;
+$dark-text: $ainiro_dark;
 $dark-primary-text: rgba($dark-text, 0.87);
 $dark-accent-text: rgba($dark-primary-text, 0.54);
 $dark-disabled-text: rgba($dark-primary-text, 0.38);
@@ -36,15 +36,15 @@ $mat-light-theme-foreground: (
 
 // Background config
 // Light bg
-$light-background: $aista_default_alt;
+$light-background: $ainiro_default_alt;
 $light-bg-darker-5: darken($light-background, 5%);
 $light-bg-darker-10: darken($light-background, 10%);
 $light-bg-darker-20: darken($light-background, 20%);
 $light-bg-darker-30: darken($light-background, 30%);
 $light-bg-lighter-5: lighten($light-background, 5%);
-$dark-bg-tooltip: lighten($aista_dark, 20%);
-$dark-bg-alpha-4: rgba($aista_dark, 0.04);
-$dark-bg-alpha-12: rgba($aista_dark, 0.12);
+$dark-bg-tooltip: lighten($ainiro_dark, 20%);
+$dark-bg-alpha-4: rgba($ainiro_dark, 0.04);
+$dark-bg-alpha-12: rgba($ainiro_dark, 0.12);
 
 $mat-light-theme-background: (
   background: $light-background,
@@ -52,7 +52,7 @@ $mat-light-theme-background: (
   app-bar: $light-bg-darker-5,
   hover: $dark-bg-alpha-4,
   card: $light-bg-lighter-5,
-  dialog: $aista_default,
+  dialog: $ainiro_default,
   tooltip: $dark-bg-tooltip,
   disabled-button: $dark-bg-alpha-12,
   raised-button: $light-bg-lighter-5,
@@ -67,14 +67,14 @@ $mat-light-theme-background: (
 // primary
 
 $mat-primary: (
-  main: $aista_primary,
-  lighter: $aista_primary,
-  darker: $aista_primary,
-  200: $aista_primary,
+  main: $ainiro_primary,
+  lighter: $ainiro_primary,
+  darker: $ainiro_primary,
+  200: $ainiro_primary,
   // For slide toggle,
-  contrast : (main: $aista_default,
-    lighter: $aista_primary,
-    darker: $aista_default,
+  contrast : (main: $ainiro_default,
+    lighter: $ainiro_primary,
+    darker: $ainiro_default,
   )
 );
 $theme-primary: mat-palette($mat-primary, main, lighter, darker);
@@ -82,14 +82,14 @@ $theme-primary: mat-palette($mat-primary, main, lighter, darker);
 // accent
 
 $mat-accent: (
-  main: $aista_accent,
-  lighter: $aista_accent,
-  darker: $aista_accent,
-  200: $aista_accent,
+  main: $ainiro_accent,
+  lighter: $ainiro_accent,
+  darker: $ainiro_accent,
+  200: $ainiro_accent,
   // For slide toggle,
-  contrast : (main: $aista_default,
-    lighter: $aista_accent,
-    darker: $aista_default,
+  contrast : (main: $ainiro_default,
+    lighter: $ainiro_accent,
+    darker: $ainiro_default,
   )
 );
 $theme-accent: mat-palette($mat-accent, main, lighter, darker);

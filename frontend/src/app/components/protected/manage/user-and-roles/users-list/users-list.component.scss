@@ -17,10 +17,10 @@ button.p-0 {
   display: inline-block;
 
   &.locked {
-    background-color: $aista_error;
+    background-color: $ainiro_error;
   }
 
   &.unlocked {
-    background-color: $aista_success;
+    background-color: $ainiro_success;
   }
 }

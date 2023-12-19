@@ -26,14 +26,14 @@
     height: 7px;
     border-radius: 50%;
     display: inline-block;
-    background-color: $aista_warning;
+    background-color: $ainiro_warning;
 
     &.pushed {
-      background-color: $aista_success;
+      background-color: $ainiro_success;
     }
 
     &.cached {
-      background-color: $aista_success;
+      background-color: $ainiro_success;
     }
   }
 }

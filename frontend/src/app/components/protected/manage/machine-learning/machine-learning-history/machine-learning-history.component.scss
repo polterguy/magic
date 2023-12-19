@@ -18,22 +18,22 @@
     height: 7px;
     border-radius: 50%;
     display: inline-block;
-    background-color: $aista_error;
+    background-color: $ainiro_error;
 
     &.stop {
-      background-color: $aista_default_grey3;
+      background-color: $ainiro_default_grey3;
     }
 
     &.cached {
-      background-color: $aista_info;
+      background-color: $ainiro_info;
     }
 
     &.lead {
-      background-color: $aista_success;
+      background-color: $ainiro_success;
     }
 
     &.questionnaire {
-      background-color: $aista_dark_alt;
+      background-color: $ainiro_dark_alt;
     }
   }
 }

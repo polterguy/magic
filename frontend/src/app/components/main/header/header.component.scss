@@ -7,9 +7,9 @@
 @import 'src/assets/styles/_variables/mixin.scss';
 
 #navbar {
-  margin: $aista_spacing;
-  background-color: $aista_default;
-  border-radius: $aista_radius;
+  margin: $ainiro_spacing;
+  background-color: $ainiro_default;
+  border-radius: $ainiro_radius;
   height: 70px;
   padding: 20px;
 
@@ -22,7 +22,7 @@
 
   @media (max-width: 575px) {
     border-radius: 0;
-    margin: 0 0 $aista_spacing 0;
+    margin: 0 0 $ainiro_spacing 0;
   }
 
   .url-btn {
@@ -40,7 +40,7 @@
 
     &.active-link,
     &:hover {
-      color: $aista_primary;
+      color: $ainiro_primary;
     }
   }
 
@@ -85,7 +85,7 @@
       right: 5px;
       top: 6px;
       border-radius: 50%;
-      background-color: $aista_error;
+      background-color: $ainiro_error;
     }
 
     &::before {
@@ -97,7 +97,7 @@
       right: 2.5px;
       top: 3.5px;
       border-radius: 50%;
-      background-color: $aista_default;
+      background-color: $ainiro_default;
     }
   }
 
@@ -121,7 +121,7 @@
       width: 250px;
       z-index: 999;
       padding: 40px 20px;
-      background-color: $aista_default;
+      background-color: $ainiro_default;
       box-shadow: 0 18px 7px 4px rgba(0, 0, 0, 0.15);
       transform: translateX(-270px);
       @include general_transition(0.3s);
@@ -138,7 +138,7 @@
 
         &.active-link,
         &:hover {
-          color: $aista_primary;
+          color: $ainiro_primary;
 
           &::before {
             position: absolute;
@@ -146,7 +146,7 @@
             top: 0;
             bottom: 0;
             width: 3px;
-            background-color: $aista_primary;
+            background-color: $ainiro_primary;
             content: ' ';
           }
         }
@@ -168,8 +168,8 @@
 }
 
 .logout-btn {
-  background-color: transparentize($color: $aista_error, $amount: 0.8);
-  border-radius: $aista_radius_sm;
+  background-color: transparentize($color: $ainiro_error, $amount: 0.8);
+  border-radius: $ainiro_radius_sm;
 }
 
 a {
@@ -178,7 +178,7 @@ a {
 
   &.active-link,
   &:not([disabled]):not(.warn):hover {
-    color: $aista_primary;
+    color: $ainiro_primary;
 
     &::before {
       position: absolute;
@@ -186,20 +186,20 @@ a {
       top: 0;
       bottom: 0;
       width: 3px;
-      background-color: $aista_primary;
-      border-radius: $aista_radius;
+      background-color: $ainiro_primary;
+      border-radius: $ainiro_radius;
       content: ' ';
     }
   }
 
   &.warn {
-    color: $aista_error;
+    color: $ainiro_error;
   }
 }
 
 ::ng-deep .mat-menu-panel.account-menu {
   margin-top: 10px;
-  border-radius: $aista_radius;
+  border-radius: $ainiro_radius;
 }
 
 ::ng-deep .mat-menu-panel.account-menu button {
@@ -207,8 +207,8 @@ a {
 }
 
 .coloured-box {
-  background-color: $aista_default_alt;
-  border-radius: $aista_radius;
+  background-color: $ainiro_default_alt;
+  border-radius: $ainiro_radius;
   cursor: pointer;
 
   p {
@@ -224,7 +224,7 @@ a {
   @include general_transition(0.3s);
 
   &.bg-light {
-    color: $aista_primary;
+    color: $ainiro_primary;
     border-radius: 0;
   }
 }

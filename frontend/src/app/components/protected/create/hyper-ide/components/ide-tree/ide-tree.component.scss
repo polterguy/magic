@@ -89,8 +89,8 @@
       max-height: calc(100% - 25px);
       height: 100%;
       overflow: auto;
-      @include scrollbar($aista_default_alt, $aista_default_grey4, 8px);
-      @include scrollbar_horizontal($aista_default_alt, $aista_default_grey4, 7px);
+      @include scrollbar($ainiro_default_alt, $ainiro_default_grey4, 8px);
+      @include scrollbar_horizontal($ainiro_default_alt, $ainiro_default_grey4, 7px);
     }
   }
 
@@ -132,7 +132,7 @@
         height: 25px;
         width: 25px;
         line-height: 25px;
-        background-color: transparentize($color: $aista_default, $amount: 0.05);
+        background-color: transparentize($color: $ainiro_default, $amount: 0.05);
       }
 
       mat-icon {
@@ -146,16 +146,16 @@
 
     &.active-folder,
     &.active-folder:hover {
-      background-color: transparentize($color: $aista_default_grey4, $amount: 0.75);
+      background-color: transparentize($color: $ainiro_default_grey4, $amount: 0.75);
     }
 
     &.active-file,
     &.active-file:hover {
-      background-color: transparentize($color: $aista_default_grey4, $amount: 0.75);
+      background-color: transparentize($color: $ainiro_default_grey4, $amount: 0.75);
     }
 
     &:hover {
-      background-color: transparentize($color: $aista_default_grey5, $amount: 0.75);
+      background-color: transparentize($color: $ainiro_default_grey5, $amount: 0.75);
 
       .show-on-hover {
         visibility: visible;
@@ -177,11 +177,11 @@
     @include general_transition(0.3s);
 
     &.active-file {
-      background-color: transparentize($color: $aista_default_grey4, $amount: 0.9);
+      background-color: transparentize($color: $ainiro_default_grey4, $amount: 0.9);
     }
 
     &:hover {
-      background-color: transparentize($color: $aista_default_grey5, $amount: 0.75);
+      background-color: transparentize($color: $ainiro_default_grey5, $amount: 0.75);
     }
 
     mat-icon {

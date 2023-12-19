@@ -24,8 +24,8 @@ html {
 .container-md,
 .container-sm {
   width: 100%;
-  padding-right: $aista_gutter_y;
-  padding-left: $aista_gutter_y;
+  padding-right: $ainiro_gutter_y;
+  padding-left: $ainiro_gutter_y;
   margin-right: auto;
   margin-left: auto;
 }
@@ -83,8 +83,8 @@ html {
 .row {
   display: flex;
   flex-wrap: wrap;
-  margin-right: calc(-0.5 * #{$aista_gutter_x});
-  margin-left: calc(-0.5 * #{$aista_gutter_x});
+  margin-right: calc(-0.5 * #{$ainiro_gutter_x});
+  margin-left: calc(-0.5 * #{$ainiro_gutter_x});
 }
 
 .row>* {
@@ -92,8 +92,8 @@ html {
   flex-shrink: 0;
   width: 100%;
   max-width: 100%;
-  padding-right: calc(#{$aista_gutter_x} * 0.5);
-  padding-left: calc(#{$aista_gutter_x} * 0.5);
+  padding-right: calc(#{$ainiro_gutter_x} * 0.5);
+  padding-left: calc(#{$ainiro_gutter_x} * 0.5);
 }
 
 .col {
@@ -5056,7 +5056,7 @@ html {
 
 .fw-bold {
   font-weight: 900 !important;
-  font-family: $aista_font_medium !important;
+  font-family: $ainiro_font_medium !important;
 }
 
 .text-center {

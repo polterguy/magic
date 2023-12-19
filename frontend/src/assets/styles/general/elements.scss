@@ -2,7 +2,7 @@
 card
 =-=-=-=-=-=*/
 :root .mat-card {
-  border-radius: $aista_radius;
+  border-radius: $ainiro_radius;
   padding: 30px;
 }
 
@@ -45,7 +45,7 @@ table
     @include general_transition(0.3s);
 
     &:hover {
-      background-color: transparentize($color: $aista_default_alt, $amount: 0.5);
+      background-color: transparentize($color: $ainiro_default_alt, $amount: 0.5);
     }
   }
 }
@@ -79,11 +79,11 @@ codemirror
   list-style: none;
   margin: 0;
   padding: 2px;
-  -webkit-box-shadow: 2px 3px 5px transparentize($color: $aista_dark, $amount: 0.8);
-  -moz-box-shadow: 2px 3px 5px transparentize($color: $aista_dark, $amount: 0.8);
-  box-shadow: 2px 3px 5px transparentize($color: $aista_dark, $amount: 0.8);
+  -webkit-box-shadow: 2px 3px 5px transparentize($color: $ainiro_dark, $amount: 0.8);
+  -moz-box-shadow: 2px 3px 5px transparentize($color: $ainiro_dark, $amount: 0.8);
+  box-shadow: 2px 3px 5px transparentize($color: $ainiro_dark, $amount: 0.8);
   border-radius: 3px;
-  color: $aista_dark;
+  color: $ainiro_dark;
   background-color: #b29762;
   font-size: 90%;
   font-family: monospace;
@@ -100,12 +100,12 @@ codemirror
 }
 
 li.CodeMirror-hint-active {
-  background: $aista_primary;
+  background: $ainiro_primary;
   color: white;
 }
 
 .CodeMirror-dialog-top {
-  background-color: $aista_default_grey4;
+  background-color: $ainiro_default_grey4;
 }
 
 app-dashboard>div {
@@ -137,7 +137,7 @@ accordion
 dialog
 =-=-=-=-=-=*/
 .mat-dialog-content {
-  @include scrollbar($aista_default_alt, $aista_default_grey4, 3px);
+  @include scrollbar($ainiro_default_alt, $ainiro_default_grey4, 3px);
 }
 
 @media(max-width: 576px) {
@@ -186,7 +186,7 @@ radio button
 tab
 =-=-=-=-=-=*/
 .mat-tab-label-active {
-  color: $aista_primary;
+  color: $ainiro_primary;
 }
 
 .mat-tab-label {

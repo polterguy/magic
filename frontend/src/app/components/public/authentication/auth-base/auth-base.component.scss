@@ -15,40 +15,40 @@ main styling for all components in AUTH
   padding-top: 30px;
   padding-bottom: 10px;
   background: linear-gradient(to right,
-      $aista_accent 0%,
-      $aista_accent 33.33333%,
-      $aista_default 33.33333%,
-      $aista_default 100%);
+      $ainiro_accent 0%,
+      $ainiro_accent 33.33333%,
+      $ainiro_default 33.33333%,
+      $ainiro_default 100%);
 
   @media (max-width: 767px) {
-    background: $aista_accent;
-    color: $aista_default;
+    background: $ainiro_accent;
+    color: $ainiro_default;
     padding-bottom: 30px;
 
     .mat-input-element,
     .mat-form-field-suffix {
-      color: $aista_default_grey1;
+      color: $ainiro_default_grey1;
     }
   }
 
   .title-text {
-    color: $aista_default;
+    color: $ainiro_default;
   }
 
   .footer {
     .btn-link-accent {
-      color: $aista_primary;
+      color: $ainiro_primary;
       cursor: pointer;
       text-decoration: none;
       @include general_transition(0.3s);
 
       &:hover {
-        color: transparentize($color: $aista_primary, $amount: 0.38);
+        color: transparentize($color: $ainiro_primary, $amount: 0.38);
       }
     }
 
     .link-divider {
-      color: transparentize($color: $aista_default_grey2, $amount: 0.38);
+      color: transparentize($color: $ainiro_default_grey2, $amount: 0.38);
     }
   }
 
@@ -63,7 +63,7 @@ main styling for all components in AUTH
 
     @media (max-width: 767px) {
       .mat-flat-button:disabled {
-        color: $aista_default_grey3;
+        color: $ainiro_default_grey3;
       }
     }
   }

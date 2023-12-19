@@ -29,12 +29,12 @@
     top: 0;
     bottom: 0;
     width: 1px;
-    background-color: $aista_default_grey5;
+    background-color: $ainiro_default_grey5;
   }
 }
 
 .bg-light {
-  border-radius: $aista_radius;
+  border-radius: $ainiro_radius;
 }
 
 @keyframes fadeIn {
@@ -54,8 +54,8 @@
   left: 0;
   right: 0;
   z-index: 1080;
-  color: $aista_default;
-  background-color: transparentize($color: $aista_dark, $amount: 0.1);
+  color: $ainiro_default;
+  background-color: transparentize($color: $ainiro_dark, $amount: 0.1);
   animation-name: fadeIn;
   animation-duration: 1s;
   animation-fill-mode: forwards;
@@ -67,9 +67,9 @@
   width: 10px;
   height: 10px;
   border-radius: 5px;
-  background-color: $aista_primary;
-  color: $aista_primary;
-  box-shadow: 9999px 0 0 0 $aista_primary;
+  background-color: $ainiro_primary;
+  color: $ainiro_primary;
+  box-shadow: 9999px 0 0 0 $ainiro_primary;
   animation: waitingDot 1s infinite linear;
   animation-delay: 0.1s;
 
@@ -85,8 +85,8 @@
     width: 10px;
     height: 10px;
     border-radius: 5px;
-    background-color: $aista_primary;
-    color: $aista_primary;
+    background-color: $ainiro_primary;
+    color: $ainiro_primary;
     animation: waitingDotBefore 1s infinite linear;
     animation-delay: 0s;
   }
@@ -95,8 +95,8 @@
     width: 10px;
     height: 10px;
     border-radius: 5px;
-    background-color: $aista_primary;
-    color: $aista_primary;
+    background-color: $ainiro_primary;
+    color: $ainiro_primary;
     animation: waitingDotAfter 1s infinite linear;
     animation-delay: 0.2s;
   }
@@ -110,7 +110,7 @@
   25%,
   50%,
   75% {
-    box-shadow: 9999px 0 0 0 $aista_primary;
+    box-shadow: 9999px 0 0 0 $ainiro_primary;
   }
 
   100% {
@@ -126,7 +126,7 @@
   25%,
   50%,
   75% {
-    box-shadow: 9984px 0 0 0 $aista_primary;
+    box-shadow: 9984px 0 0 0 $ainiro_primary;
   }
 
   100% {
@@ -142,7 +142,7 @@
   25%,
   50%,
   75% {
-    box-shadow: 10014px 0 0 0 $aista_primary;
+    box-shadow: 10014px 0 0 0 $ainiro_primary;
   }
 
   100% {
