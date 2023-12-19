@@ -8,7 +8,7 @@ import { ApplicationRef, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { SwUpdate } from '@angular/service-worker';
 import { interval, concat, first } from 'rxjs';
-import { PwaUpdateDialogComponent } from '../components/common/pwa-update-dialog/pwa-update-dialog.component';
+import { PwaUpdateDialogComponent } from '../components/protected/common/pwa-update-dialog/pwa-update-dialog.component';
 
 /**
  * Update PWA service for letting users know about new update is available

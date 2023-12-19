@@ -7,7 +7,7 @@ import { FlatTreeControl } from '@angular/cdk/tree';
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTreeFlattener, MatTreeFlatDataSource } from '@angular/material/tree';
-import { ConfirmationDialogComponent } from 'src/app/components/common/confirmation-dialog/confirmation-dialog.component';
+import { ConfirmationDialogComponent } from 'src/app/components/protected/common/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/services/general.service';
 import { IncompatibleFileDialogComponent } from '../incompatible-file-dialog/incompatible-file-dialog.component';
 import { NewFileFolderDialogComponent } from '../new-file-folder-dialog/new-file-folder-dialog.component';

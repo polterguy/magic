@@ -5,7 +5,7 @@
 
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ConfirmationDialogComponent } from 'src/app/components/common/confirmation-dialog/confirmation-dialog.component';
+import { ConfirmationDialogComponent } from 'src/app/components/protected/common/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/services/general.service';
 import { FileService } from 'src/app/services/file.service';
 import { SqlService } from 'src/app/services/sql.service';

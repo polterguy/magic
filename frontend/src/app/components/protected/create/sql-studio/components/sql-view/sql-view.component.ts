@@ -6,8 +6,8 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, Subscription } from 'rxjs';
-import { Model } from 'src/app/components/common/codemirror-sql/codemirror-sql.component';
-import { ShortkeysDialogComponent } from 'src/app/components/common/shortkeys-dialog/shortkeys-dialog.component';
+import { Model } from 'src/app/components/protected/common/codemirror-sql/codemirror-sql.component';
+import { ShortkeysDialogComponent } from 'src/app/components/protected/common/shortkeys-dialog/shortkeys-dialog.component';
 import { GeneralService } from 'src/app/services/general.service';
 import { saveAs } from 'file-saver';
 
@@ -15,7 +15,7 @@ import { saveAs } from 'file-saver';
 import { CodemirrorActionsService } from 'src/app/services/codemirror-actions.service';
 import { SqlService } from 'src/app/services/sql.service';
 import { SqlSnippetDialogComponent } from './components/load-sql-snippet-dialog/load-sql-snippet-dialog.component';
-import { SaveSnippetDialogComponent } from '../../../../../common/save-snippet-dialog/save-snippet-dialog.component';
+import { SaveSnippetDialogComponent } from '../../../../common/save-snippet-dialog/save-snippet-dialog.component';
 
 /**
  * Helper component to allo user to view his database in SQL view, as in allowing to

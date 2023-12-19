@@ -5,7 +5,7 @@
 
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ConfirmationDialogComponent } from 'src/app/components/common/confirmation-dialog/confirmation-dialog.component';
+import { ConfirmationDialogComponent } from 'src/app/components/protected/common/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/services/general.service';
 import { ManageRoleDialogComponent } from '../components/manage-role-dialog/manage-role-dialog.component';
 import { Role } from '../_models/role.model';

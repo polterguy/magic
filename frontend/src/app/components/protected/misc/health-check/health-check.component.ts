@@ -14,7 +14,7 @@ import { AssumptionService } from 'src/app/services/assumption.service';
 // CodeMirror options.
 import hyperlambda from 'src/app/helpers/options/hyperlambda.json';
 import { MatDialog } from '@angular/material/dialog';
-import { ConfirmationDialogComponent } from 'src/app/components/common/confirmation-dialog/confirmation-dialog.component';
+import { ConfirmationDialogComponent } from 'src/app/components/protected/common/confirmation-dialog/confirmation-dialog.component';
 import { TestHealthContentDialogComponent } from './components/test-health-content-dialog/test-health-content-dialog.component';
 import { Sort } from '@angular/material/sort';
 

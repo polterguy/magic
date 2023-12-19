@@ -6,8 +6,8 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
-import { LoadSnippetDialogComponent } from 'src/app/components/common/load-snippet-dialog/load-snippet-dialog.component';
-import { ShortkeysDialogComponent } from 'src/app/components/common/shortkeys-dialog/shortkeys-dialog.component';
+import { LoadSnippetDialogComponent } from 'src/app/components/protected/common/load-snippet-dialog/load-snippet-dialog.component';
+import { ShortkeysDialogComponent } from 'src/app/components/protected/common/shortkeys-dialog/shortkeys-dialog.component';
 import { GeneralService } from 'src/app/services/general.service';
 import { PreviewFileDialogComponent } from '../preview-file-dialog/preview-file-dialog.component';
 import { RenameFileDialogComponent, FileObjectName } from '../rename-file-dialog/rename-file-dialog.component';

@@ -6,16 +6,16 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
-import { LoadSnippetDialogComponent } from 'src/app/components/common/load-snippet-dialog/load-snippet-dialog.component';
-import { SaveSnippetDialogComponent } from 'src/app/components/common/save-snippet-dialog/save-snippet-dialog.component';
+import { LoadSnippetDialogComponent } from 'src/app/components/protected/common/load-snippet-dialog/load-snippet-dialog.component';
+import { SaveSnippetDialogComponent } from 'src/app/components/protected/common/save-snippet-dialog/save-snippet-dialog.component';
 import { GeneralService } from 'src/app/services/general.service';
 import { EvaluatorService } from 'src/app/services/evaluator.service';
 import { MagicResponse } from 'src/app/models/magic-response.model';
 
 import { Subscription } from 'rxjs';
-import { ShortkeysDialogComponent } from 'src/app/components/common/shortkeys-dialog/shortkeys-dialog.component';
+import { ShortkeysDialogComponent } from 'src/app/components/protected/common/shortkeys-dialog/shortkeys-dialog.component';
 import { CodemirrorActionsService } from 'src/app/services/codemirror-actions.service';
-import { Model } from 'src/app/components/common/codemirror-hyperlambda/codemirror-hyperlambda.component';
+import { Model } from 'src/app/components/protected/common/codemirror-hyperlambda/codemirror-hyperlambda.component';
 import { AiService } from 'src/app/services/ai.service';
 
 // CodeMirror options.

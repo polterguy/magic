@@ -6,10 +6,10 @@
 import { Component, OnInit } from '@angular/core';
 import { TaskService } from './_services/task.service';
 import { Task } from './_models/task.model';
-import { Model } from 'src/app/components/common/codemirror-hyperlambda/codemirror-hyperlambda.component';
+import { Model } from 'src/app/components/protected/common/codemirror-hyperlambda/codemirror-hyperlambda.component';
 import { GeneralService } from 'src/app/services/general.service';
 import { MatDialog } from '@angular/material/dialog';
-import { ConfirmationDialogComponent } from 'src/app/components/common/confirmation-dialog/confirmation-dialog.component';
+import { ConfirmationDialogComponent } from 'src/app/components/protected/common/confirmation-dialog/confirmation-dialog.component';
 import { ScheduleTaskComponent } from './components/schedule-task/schedule-task.component';
 import { ManageTaskComponent } from './components/manage-task/manage-task.component';
 import { Schedule } from './_models/schedule.model';
