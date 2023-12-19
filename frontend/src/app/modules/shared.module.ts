@@ -8,15 +8,12 @@ import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 
-// Helper components imports
-import { CodemirrorModule } from "@ctrl/ngx-codemirror";
-
 // Application specific imports
+import { MaterialModule } from "./material.module";
 import { DateSincePipe } from "src/app/pipes/date-since.pipe";
 import { MarkedPipe } from "src/app/pipes/marked.pipe";
 import { DatePipe } from "src/app/pipes/date.pipe";
 import { SortByPipe } from "src/app/pipes/sort-by.pipe";
-import { MaterialModule } from "./material.module";
 
 @NgModule({
   declarations: [
@@ -30,7 +27,6 @@ import { MaterialModule } from "./material.module";
     MaterialModule,
     FormsModule,
     ReactiveFormsModule,
-    CodemirrorModule,
   ],
   exports: [
     FormsModule,
@@ -40,7 +36,6 @@ import { MaterialModule } from "./material.module";
     MarkedPipe,
     SortByPipe,
     MaterialModule,
-    CodemirrorModule,
   ]
 })
 export class SharedModule { }
