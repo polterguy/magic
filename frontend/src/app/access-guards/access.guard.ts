@@ -25,8 +25,6 @@ import { BackendService } from '../services/backend.service';
 })
 export class AccessGuard implements CanActivate {
 
-  hasAccess: boolean = undefined;
-
   constructor(
     private router: Router,
     private backendService: BackendService) { }
