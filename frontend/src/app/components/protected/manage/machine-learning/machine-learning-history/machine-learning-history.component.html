@@ -18,7 +18,7 @@
       <div class="col-lg-7 col-12">
 
         <!-- Search textbox -->
-        <app-searchbox
+        <app-filter
           #searchBox
           (filterList)="filterList($event)"
           buttonText="Leads"
@@ -32,7 +32,7 @@
           [button3Disabled]="!type"
           [(type)]="type"
           [types]="types">
-        </app-searchbox>
+        </app-filter>
 
       </div>
     </div>

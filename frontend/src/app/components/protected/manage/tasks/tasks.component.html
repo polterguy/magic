@@ -17,11 +17,11 @@
 
         <ng-template #loaded>
           <div class="col-lg-4 offset-lg-8 col-12">
-            <app-searchbox
+            <app-filter
               (filterList)="filterList($event)"
               buttonText="Add"
               (buttonClick)="addTask()">
-            </app-searchbox>
+            </app-filter>
           </div>
 
           <div class="table-responsive mt-1">

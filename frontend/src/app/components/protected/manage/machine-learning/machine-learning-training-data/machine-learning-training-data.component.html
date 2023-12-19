@@ -18,7 +18,7 @@
       <div class="col-lg-7 col-12">
 
         <!-- Search textbox -->
-        <app-searchbox
+        <app-filter
           (filterList)="filterList($event)"
           buttonText="Add"
           button2Text="Spice"
@@ -29,7 +29,7 @@
           [(type)]="type"
           checkBoxText="VSS"
           [types]="types">
-        </app-searchbox>
+        </app-filter>
 
       </div>
     </div>

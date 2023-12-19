@@ -11,10 +11,10 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
  * Search textbox for filtering stuff in general.
  */
 @Component({
-  selector: 'app-searchbox',
-  templateUrl: './searchbox.component.html'
+  selector: 'app-filter',
+  templateUrl: './filter.component.html'
 })
-export class SearchboxComponent implements OnInit {
+export class FilterComponent implements OnInit {
 
   @Output() filterList = new EventEmitter<any>();
   @Output() buttonClick = new EventEmitter();

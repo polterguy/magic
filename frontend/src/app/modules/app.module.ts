@@ -34,21 +34,21 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { AuthInterceptor } from 'src/app/interceptors/auth.interceptor';
 
 // Components
-import { MainComponent } from 'src/app/components/main/main.component';
-import { CoreComponent } from 'src/app/components/main/core/core.component';
-import { HeaderComponent } from 'src/app/components/main/header/header.component';
-import { FooterComponent } from 'src/app/components/main/footer/footer.component';
+import { AppComponent } from 'src/app/components/app.component';
+import { MainComponent } from 'src/app/components/core/main/main.component';
+import { HeaderComponent } from 'src/app/components/core/header/header.component';
+import { FooterComponent } from 'src/app/components/core/footer/footer.component';
 
 // Misc
 import { AccessGuard } from 'src/app/access-guards/access.guard';
 import { AuthBaseComponent } from 'src/app/components/public/authentication/auth-base/auth-base.component';
 import { SharedModule } from './shared.module';
-import { BackendsListComponent } from '../components/main/backends-list/backends-list.component';
+import { BackendsListComponent } from '../components/core/backends-list/backends-list.component';
 
 @NgModule({
   declarations: [
+    AppComponent,
     MainComponent,
-    CoreComponent,
     HeaderComponent,
     FooterComponent,
     AuthBaseComponent,
@@ -89,6 +89,6 @@ import { BackendsListComponent } from '../components/main/backends-list/backends
       useValue: "6LfVd20fAAAAAC2tcJ55RvOEkraQL390cDw2yiT2"
     },
   ],
-  bootstrap: [MainComponent]
+  bootstrap: [AppComponent]
 })
 export class AppModule { }

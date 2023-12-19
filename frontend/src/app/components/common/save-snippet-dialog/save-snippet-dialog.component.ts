@@ -14,17 +14,17 @@ import { GeneralService } from 'src/app/services/general.service';
  * user to provide a name for snippet.
  */
 @Component({
-  selector: 'app-snippet-name-dialog',
-  templateUrl: './snippet-name-dialog.component.html'
+  selector: 'app-save-snippet-dialog',
+  templateUrl: './save-snippet-dialog.component.html'
 })
-export class SnippetNameDialogComponent {
+export class SaveSnippetDialogComponent {
 
   CommonRegEx = CommonRegEx;
   CommonErrorMessages = CommonErrorMessages;
 
   constructor(
     private generalService: GeneralService,
-    private dialogRef: MatDialogRef<SnippetNameDialogComponent>,
+    private dialogRef: MatDialogRef<SaveSnippetDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: string) { }
 
   save() {

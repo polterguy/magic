@@ -10,10 +10,10 @@ import { BackendService } from 'src/app/services/backend.service';
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
 
 @Component({
-  selector: 'app-core',
-  templateUrl: './core.component.html'
+  selector: 'app-main',
+  templateUrl: './main.component.html'
 })
-export class CoreComponent implements OnInit, OnDestroy {
+export class MainComponent implements OnInit, OnDestroy {
 
   private largeScreenStatus!: boolean;
 

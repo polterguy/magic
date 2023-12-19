@@ -8,23 +8,21 @@ import { Subject, BehaviorSubject } from 'rxjs';
 import { GeneralService } from 'src/app/services/general.service';
 
 /**
- * Primary component for dashboard, encapsulating progress bar, and router outlet.
+ * Primary component for application, encapsulating progress bar, and router outlet.
  */
 @Component({
-  selector: 'app-main',
-  templateUrl: './main.component.html',
-  styleUrls: ['./main.component.scss'],
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MainComponent implements AfterContentChecked {
-  title = 'AINIRO.IO Magic Cloud';
+export class AppComponent implements AfterContentChecked {
 
   loading$: Subject<any> = new BehaviorSubject(true);
 
   constructor(
     private generalService: GeneralService,
-    private cdr: ChangeDetectorRef) {
-  }
+    private cdr: ChangeDetectorRef) { }
 
   ngAfterContentChecked() {
 
