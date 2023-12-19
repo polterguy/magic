@@ -7,18 +7,11 @@
 auth.ticket.verify
 
 /*
- * Retrieving actual token, which is necessary to retrieve
- * user's username.
- */
-auth.ticket.get
-
-/*
  * Invokes [auth.ticket.refresh] that does the heavy lifting, and creates our JWT token,
  * making sure we return that token to caller.
  */
 auth.ticket.refresh
 
 // Returns the authentication JWT ticket created above to caller.
-unwrap:x:+/*
-return-nodes
+yield
    ticket:x:@auth.ticket.refresh
