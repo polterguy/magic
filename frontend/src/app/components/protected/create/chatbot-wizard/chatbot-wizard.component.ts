@@ -321,7 +321,7 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
     this.dialog
       .open(MachineLearningEmbedUiComponent, {
         width: '80vw',
-        maxWidth: '850px',
+        maxWidth: '750px',
         data: {
           type: this.model,
           landing_page: true,
