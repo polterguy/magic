@@ -6,7 +6,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DatabasesRoutingModule } from './databases.routing.module';
-import { ComponentsModule } from 'src/app/components/protected/common/components.module';
+import { CommonComponentsModule } from 'src/app/components/protected/common/common-components.module';
 import { MaterialModule } from 'src/app/modules/material.module';
 import { DatabasesComponent } from '../databases.component';
 import { FormsModule } from '@angular/forms';
@@ -27,7 +27,7 @@ import { CatalogNameComponent } from '../connect-databases/components/catalog-na
   imports: [
     CommonModule,
     DatabasesRoutingModule,
-    ComponentsModule,
+    CommonComponentsModule,
     MaterialModule,
     FormsModule,
     SharedModule

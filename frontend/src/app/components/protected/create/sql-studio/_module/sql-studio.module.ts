@@ -9,7 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import { MaterialModule } from 'src/app/modules/material.module';
 import { SharedModule } from 'src/app/modules/shared.module';
-import { ComponentsModule } from 'src/app/components/protected/common/components.module';
+import { CommonComponentsModule } from 'src/app/components/protected/common/common-components.module';
 import { AddFieldComponent } from '../components/tables-view/components/add-field-or-key/add-field-or-key.component';
 import { ExportDdlComponent } from '../components/tables-view/components/export-ddl/export-ddl.component';
 import { LinkTableComponent } from '../components/tables-view/components/add-link-table/add-link-table.component';
@@ -34,7 +34,7 @@ import { AddMigrateScriptComponent } from '../components/tables-view/components/
   imports: [
     CommonModule,
     SqlStudioRoutingModule,
-    ComponentsModule,
+    CommonComponentsModule,
     MaterialModule,
     CodemirrorModule,
     FormsModule,

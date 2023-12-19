@@ -9,7 +9,7 @@ import { ConfigurationComponent } from '../configuration.component';
 import { ConfigRoutingModule } from './config.routing.module';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import { MaterialModule } from 'src/app/modules/material.module';
-import { ComponentsModule } from 'src/app/components/protected/common/components.module';
+import { CommonComponentsModule } from 'src/app/components/protected/common/common-components.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SmtpDialogComponent } from '../components/smtp-dialog/smtp-dialog.component';
 import { RecaptchaDialogComponent } from '../components/recaptcha-dialog/recaptcha-dialog.component';
@@ -23,7 +23,7 @@ import { RecaptchaDialogComponent } from '../components/recaptcha-dialog/recaptc
   imports: [
     CommonModule,
     ConfigRoutingModule,
-    ComponentsModule,
+    CommonComponentsModule,
     MaterialModule,
     CodemirrorModule,
     FormsModule,
