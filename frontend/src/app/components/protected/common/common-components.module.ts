@@ -24,6 +24,7 @@ import { OpenAIConfigurationDialogComponent } from './openai/openai-configuratio
 import { OpenAIPromptComponent } from './openai/openai-prompt/openai-prompt.component';
 import { CodemirrorSqlComponent } from './codemirror-sql/codemirror-sql.component';
 import { CodemirrorHyperlambdaComponent } from './codemirror-hyperlambda/codemirror-hyperlambda.component';
+import { LegalModule } from 'src/app/components/legal/legal.module';
 
 @NgModule({
   declarations: [
@@ -50,6 +51,7 @@ import { CodemirrorHyperlambdaComponent } from './codemirror-hyperlambda/codemir
     FormsModule,
     ReactiveFormsModule,
     CodemirrorModule,
+    LegalModule,
   ],
   exports: [
     LoadingSkeletonComponent,
@@ -66,6 +68,7 @@ import { CodemirrorHyperlambdaComponent } from './codemirror-hyperlambda/codemir
     OpenAIPromptComponent,
     CodemirrorSqlComponent,
     CodemirrorHyperlambdaComponent,
+    LegalModule,
   ]
 })
 export class CommonComponentsModule { }
