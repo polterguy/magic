@@ -7,8 +7,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/modules/material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { TermsDialogComponent } from '../../common/terms-dialog/terms-dialog.component';
-import { PrivacyDialogComponent } from '../../common/privacy-dialog/privacy-dialog.component';
 import { LoadingSkeletonComponent } from './loading-skeleton/loading-skeleton.component';
 import { DialogComponent } from './dialog/dialog.component';
 import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
@@ -29,8 +27,6 @@ import { CodemirrorHyperlambdaComponent } from './codemirror-hyperlambda/codemir
 
 @NgModule({
   declarations: [
-    TermsDialogComponent,
-    PrivacyDialogComponent,
     LoadingSkeletonComponent,
     DialogComponent,
     ConfirmationDialogComponent,
@@ -56,8 +52,6 @@ import { CodemirrorHyperlambdaComponent } from './codemirror-hyperlambda/codemir
     CodemirrorModule,
   ],
   exports: [
-    TermsDialogComponent,
-    PrivacyDialogComponent,
     LoadingSkeletonComponent,
     DialogComponent,
     ConfirmationDialogComponent,
@@ -74,4 +68,4 @@ import { CodemirrorHyperlambdaComponent } from './codemirror-hyperlambda/codemir
     CodemirrorHyperlambdaComponent,
   ]
 })
-export class ComponentsModule { }
+export class CommonComponentsModule { }

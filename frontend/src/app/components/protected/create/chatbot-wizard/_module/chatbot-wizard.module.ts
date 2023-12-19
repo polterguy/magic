@@ -6,7 +6,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ChatbotWizardRoutingModule } from './chatbot-wizard.routing.module';
-import { ComponentsModule } from 'src/app/components/protected/common/components.module';
+import { CommonComponentsModule } from 'src/app/components/protected/common/common-components.module';
 import { MaterialModule } from 'src/app/modules/material.module';
 import { ChatbotWizardComponent } from '../chatbot-wizard.component';
 import { FormsModule } from '@angular/forms';
@@ -19,7 +19,7 @@ import { SharedModule } from 'src/app/modules/shared.module';
   imports: [
     CommonModule,
     ChatbotWizardRoutingModule,
-    ComponentsModule,
+    CommonComponentsModule,
     MaterialModule,
     FormsModule,
     SharedModule

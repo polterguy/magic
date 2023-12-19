@@ -7,7 +7,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/modules/material.module';
 import { FormsModule } from '@angular/forms';
-import { ComponentsModule } from 'src/app/components/protected/common/components.module';
+import { CommonComponentsModule } from 'src/app/components/protected/common/common-components.module';
 import { MachineLearningTrainingDataComponent } from '../machine-learning-training-data/machine-learning-training-data.component';
 import { MachineLearningTrainingRoutingModule } from './machine-learning.routing.module';
 import { MachineLearningEditTrainingSnippetComponent } from '../components/machine-learning-edit-training-snippet/machine-learning-edit-training-snippet.component';
@@ -51,7 +51,7 @@ import { MachineLearningImportFeedbackComponent } from '../components/machine-le
     MachineLearningTrainingRoutingModule,
     MaterialModule,
     FormsModule,
-    ComponentsModule,
+    CommonComponentsModule,
     SharedModule,
   ]
 })

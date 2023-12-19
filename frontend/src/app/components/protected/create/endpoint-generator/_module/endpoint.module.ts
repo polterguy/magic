@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/modules/material.module';
 import { SharedModule } from 'src/app/modules/shared.module';
-import { ComponentsModule } from 'src/app/components/protected/common/components.module';
+import { CommonComponentsModule } from 'src/app/components/protected/common/common-components.module';
 import { EndpointRoutingModule } from './endpoint.routing.module';
 import { EndpointGeneratorComponent } from '../endpoint-generator.component';
 import { AutoGeneratorComponent } from '../auto-endpoint-generator/auto-endpoint-generator.component';
@@ -32,7 +32,7 @@ import { ForeignKeyListComponent } from '../auto-endpoint-generator/components/f
   imports: [
     CommonModule,
     EndpointRoutingModule,
-    ComponentsModule,
+    CommonComponentsModule,
     CodemirrorModule,
     MaterialModule,
     FormsModule,

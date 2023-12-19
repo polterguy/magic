@@ -7,7 +7,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IdeComponent } from '../ide.component';
 import { SharedModule } from 'src/app/modules/shared.module';
-import { ComponentsModule } from 'src/app/components/protected/common/components.module';
+import { CommonComponentsModule } from 'src/app/components/protected/common/common-components.module';
 import { IdeEditorComponent } from '../components/ide-editor/ide-editor.component';
 import { IdeSearchboxComponent } from '../components/ide-searchbox/ide-searchbox.component';
 import { IdeTreeComponent } from '../components/ide-tree/ide-tree.component';
@@ -37,7 +37,7 @@ import { ExecuteResult } from '../components/execute-result/execute-result-dialo
   imports: [
     CommonModule,
     IdeRoutingModule,
-    ComponentsModule,
+    CommonComponentsModule,
     SharedModule,
   ]
 })

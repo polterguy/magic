@@ -5,25 +5,25 @@
 
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LogComponent } from '../log.component';
-import { LogRoutingModule } from './log.routing.module';
-import { CommonComponentsModule } from 'src/app/components/protected/common/common-components.module';
 import { MaterialModule } from 'src/app/modules/material.module';
-import { SharedModule } from 'src/app/modules/shared.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { TermsDialogComponent } from './terms-dialog/terms-dialog.component';
+import { PrivacyDialogComponent } from './privacy-dialog/privacy-dialog.component';
 
 @NgModule({
   declarations: [
-    LogComponent,
+    TermsDialogComponent,
+    PrivacyDialogComponent,
   ],
   imports: [
     CommonModule,
-    LogRoutingModule,
-    CommonComponentsModule,
     MaterialModule,
-    SharedModule,
     FormsModule,
     ReactiveFormsModule,
+  ],
+  exports: [
+    TermsDialogComponent,
+    PrivacyDialogComponent,
   ]
 })
-export class LogModule { }
+export class LegalModule { }
