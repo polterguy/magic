@@ -19,7 +19,7 @@ import { Model } from 'src/app/components/protected/common/codemirror-hyperlambd
 import { AiService } from 'src/app/services/ai.service';
 
 // CodeMirror options.
-import hyperlambda from 'src/app/helpers/options/hyperlambda.json';
+import hyperlambda from 'src/app/resources/options/hyperlambda.json';
 
 /**
  * Hyperlambda Playground component, allowing user to execute arbitrary Hyperlambda, and/or

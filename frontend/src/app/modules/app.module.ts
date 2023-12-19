@@ -21,7 +21,7 @@ import { RecaptchaV3Module, RecaptchaFormsModule, RecaptchaModule, RECAPTCHA_V3_
 import { NgxMatDatetimePickerModule, NgxMatTimepickerModule } from '@angular-material-components/datetime-picker';
 
 // Hyperlambda mode for CodeMirror import.
-import 'src/app/helpers/hyperlambda.js';
+import 'src/app/resources/hyperlambda.js';
 
 // SQL hints plugin for CodeMirror.
 import 'codemirror/addon/hint/sql-hint.js';

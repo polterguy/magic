@@ -6,7 +6,7 @@
 import { Injectable, NgZone } from '@angular/core';
 import CodeMirror from 'codemirror';
 import { Subject } from 'rxjs';
-import fileTypes from 'src/app/helpers/file-types.json';
+import fileTypes from 'src/app/resources/file-types.json';
 import { ThemeService } from './theme.service';
 
 /**
