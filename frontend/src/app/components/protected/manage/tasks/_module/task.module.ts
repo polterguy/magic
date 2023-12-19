@@ -6,7 +6,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TasksComponent } from '../tasks.component';
-import { ComponentsModule } from 'src/app/components/common/components.module';
+import { ComponentsModule } from 'src/app/components/protected/common/components.module';
 import { MaterialModule } from 'src/app/modules/material.module';
 import { TaskRoutingModule } from './task.routing.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';

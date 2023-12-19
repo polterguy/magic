@@ -9,7 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { MaterialModule } from 'src/app/modules/material.module';
 import { SharedModule } from 'src/app/modules/shared.module';
-import { ComponentsModule } from 'src/app/components/common/components.module';
+import { ComponentsModule } from 'src/app/components/protected/common/components.module';
 import { ChartComponent } from '../components/chart/chart.component';
 import { SplashComponnt } from '../components/splash/splash.component';
 import { LastLogItemsComponent } from '../components/last-log-items/last-log-items.component';

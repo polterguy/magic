@@ -6,7 +6,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DatabasesRoutingModule } from './databases.routing.module';
-import { ComponentsModule } from 'src/app/components/common/components.module';
+import { ComponentsModule } from 'src/app/components/protected/common/components.module';
 import { MaterialModule } from 'src/app/modules/material.module';
 import { DatabasesComponent } from '../databases.component';
 import { FormsModule } from '@angular/forms';

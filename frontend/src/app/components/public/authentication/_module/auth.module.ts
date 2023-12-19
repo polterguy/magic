@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
 import { AuthRoutingModule } from './auth.routing.module';
 import { LoginComponent } from '../login/login.component';
 import { MaterialModule } from 'src/app/modules/material.module';
-import { ComponentsModule } from 'src/app/components/common/components.module';
+import { ComponentsModule } from 'src/app/components/protected/common/components.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RecaptchaV3Module, RecaptchaModule, RecaptchaFormsModule } from "ng-recaptcha";
 import { HttpClientModule } from '@angular/common/http';
