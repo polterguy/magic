@@ -11,18 +11,18 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background-color: $aista_default_grey3;
+  background-color: $ainiro_default_grey3;
   display: inline-block;
 
   &.Untested {
-    background-color: $aista_default_grey3;
+    background-color: $ainiro_default_grey3;
   }
 
   &.Passed {
-    background-color: $aista_success;
+    background-color: $ainiro_success;
   }
 
   &.Failed {
-    background-color: $aista_error;
+    background-color: $ainiro_error;
   }
 }

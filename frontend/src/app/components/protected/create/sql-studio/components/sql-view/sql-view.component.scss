@@ -17,7 +17,7 @@
 
 .table-responsive {
   max-height: 50vh;
-  @include scrollbar($aista_default_alt, $aista_default_grey4, 5px);
+  @include scrollbar($ainiro_default_alt, $ainiro_default_grey4, 5px);
 
   .text-truncate {
     max-width: 25vw;

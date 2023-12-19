@@ -11,22 +11,22 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background-color: $aista_default_grey3;
+  background-color: $ainiro_default_grey3;
   display: inline-block;
 
   &.unsupervised {
-    background-color: $aista_warning;
+    background-color: $ainiro_warning;
   }
 
   &.supervised {
-    background-color: $aista_success;
+    background-color: $ainiro_success;
   }
 
   &.uncached {
-    background-color: $aista_warning;
+    background-color: $ainiro_warning;
   }
 
   &.cached {
-    background-color: $aista_success;
+    background-color: $ainiro_success;
   }
 }

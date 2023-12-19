@@ -46,14 +46,14 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background-color: $aista_default_grey3;
+  background-color: $ainiro_default_grey3;
   display: inline-block;
 
   &.disconnected {
-    background-color: $aista_default_grey3;
+    background-color: $ainiro_default_grey3;
   }
 
   &.connected {
-    background-color: $aista_success;
+    background-color: $ainiro_success;
   }
 }

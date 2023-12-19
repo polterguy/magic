@@ -7,26 +7,26 @@
 @import 'src/assets/styles/_variables/mixin.scss';
 
 #footer {
-  margin: $aista_spacing;
-  background-color: $aista_default;
-  border-radius: $aista_radius;
+  margin: $ainiro_spacing;
+  background-color: $ainiro_default;
+  border-radius: $ainiro_radius;
   min-height: 70px;
   padding: 20px;
   font-size: 12px;
 
   @media (max-width: 575px) {
     border-radius: 0;
-    margin: $aista_spacing 0 0 0;
+    margin: $ainiro_spacing 0 0 0;
   }
 
   a.link {
     cursor: pointer;
     text-decoration: none;
-    color: $aista_primary;
+    color: $ainiro_primary;
     @include general_transition(0.3s);
 
     &:hover {
-      color: $aista_accent;
+      color: $ainiro_accent;
     }
   }
 }

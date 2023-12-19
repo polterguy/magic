@@ -36,11 +36,11 @@
 
 .masonry {
   width: 100%;
-  -webkit-column-gap: $aista_gutter_x;
+  -webkit-column-gap: $ainiro_gutter_x;
   -moz-column-count: 3;
-  -moz-column-gap: $aista_gutter_x;
+  -moz-column-gap: $ainiro_gutter_x;
   column-count: 3;
-  column-gap: $aista_gutter_x;
+  column-gap: $ainiro_gutter_x;
 
   .grid {
     -webkit-column-break-inside: avoid-column;

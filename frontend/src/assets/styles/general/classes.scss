@@ -16,38 +16,38 @@ spaces - sizes
 }
 
 .mt-spacing {
-  margin-top: $aista_spacing;
+  margin-top: $ainiro_spacing;
 }
 
 /*=-=-=-=-=-=
 background
 =-=-=-=-=-=*/
 .bg-light {
-  background-color: $aista_default_grey5;
-  border-radius: $aista_radius_sm;
+  background-color: $ainiro_default_grey5;
+  border-radius: $ainiro_radius_sm;
 }
 
 /*=-=-=-=-=-=
 text
 =-=-=-=-=-=*/
 .text-primary {
-  color: $aista_primary;
+  color: $ainiro_primary;
 }
 
 .text-muted {
-  color: $aista_default_grey3;
+  color: $ainiro_default_grey3;
 }
 
 .text-danger {
-  color: $aista_error;
+  color: $ainiro_error;
 }
 
 .text-success {
-  color: $aista_success;
+  color: $ainiro_success;
 }
 
 .error {
-  color: $aista_error;
+  color: $ainiro_error;
 }
 
 .word-break {
@@ -64,18 +64,18 @@ text
 snackbar classes
 =-=-=-=-=-=*/
 .successMessage {
-  color: $aista_success;
+  color: $ainiro_success;
 
   button {
-    color: $aista_success;
+    color: $ainiro_success;
   }
 }
 
 .errorMessage {
-  color: $aista_error;
+  color: $ainiro_error;
 
   button {
-    color: $aista_error;
+    color: $ainiro_error;
   }
 }
 
@@ -86,7 +86,7 @@ hover
   @include general_transition(0.3s);
 
   &:hover {
-    background-color: transparentize($color: $aista_default_alt, $amount: 0.5);
+    background-color: transparentize($color: $ainiro_default_alt, $amount: 0.5);
   }
 }
 
@@ -96,7 +96,7 @@ table
 .table-responsive {
   width: 100%;
   overflow-x: auto;
-  @include scrollbar_horizontal($aista_default_alt, $aista_default_grey4, 5px);
+  @include scrollbar_horizontal($ainiro_default_alt, $ainiro_default_grey4, 5px);
 
   th.mat-header-cell:not(:first-child),
   td.mat-cell:not(:first-child) {
@@ -115,7 +115,7 @@ table
 
   @media(min-width: 577px) {
     th.mat-header-cell {
-      border-bottom: 1px solid $aista_default_grey5;
+      border-bottom: 1px solid $ainiro_default_grey5;
       padding: 15px 0;
     }
   }

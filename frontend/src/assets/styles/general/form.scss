@@ -3,7 +3,7 @@ buttons
 =-=-=-=-=-=*/
 :root .mat-flat-button,
 :root .mat-stroked-button {
-  border-radius: $aista_radius_sm;
+  border-radius: $ainiro_radius_sm;
   min-width: unset;
 }
 :root .mat-button {
@@ -33,15 +33,15 @@ icons
   .mat-select-arrow {
     width: 8px;
     height: 8px;
-    border-top: 1px solid $aista_default_grey2;
-    border-left: 1px solid $aista_default_grey2;
+    border-top: 1px solid $ainiro_default_grey2;
+    border-left: 1px solid $ainiro_default_grey2;
     border-right: unset;
     transform: rotate(-135deg) !important;
   }
 
   .mat-form-field-prefix {
     top: 0.35em;
-    color: $aista_default_grey3;
+    color: $ainiro_default_grey3;
   }
 
   &.text-prefix .mat-form-field-prefix {
@@ -56,11 +56,11 @@ icons
   }
 
   .mat-form-field-outline-start {
-    border-radius: $aista_radius_sm 0 0 $aista_radius_sm;
+    border-radius: $ainiro_radius_sm 0 0 $ainiro_radius_sm;
   }
 
   .mat-form-field-outline-end {
-    border-radius: 0 $aista_radius_sm $aista_radius_sm 0;
+    border-radius: 0 $ainiro_radius_sm $ainiro_radius_sm 0;
   }
 }
 
@@ -77,9 +77,9 @@ form fields
     .mat-form-field-outline-start,
     .mat-form-field-outline-gap,
     .mat-form-field-outline-end {
-      background-color: $aista_default_grey5;
+      background-color: $ainiro_default_grey5;
       border: none;
-      color: $aista_default_grey3;
+      color: $ainiro_default_grey3;
     }
 
     .mat-form-field-infix {
@@ -129,9 +129,9 @@ form fields
     padding: 0 13px;
     position: sticky;
     top: 0;
-    background-color: $aista_default;
+    background-color: $ainiro_default;
     z-index: 1;
-    border-bottom: 1px solid transparentize($color: $aista_default_grey4, $amount: 0.8);
+    border-bottom: 1px solid transparentize($color: $ainiro_default_grey4, $amount: 0.8);
 
     mat-icon {
       font-size: 20px;
@@ -154,11 +154,11 @@ multi select form fields
     padding-bottom: 10px;
 
     .name-line {
-      color: $aista_dark;
+      color: $ainiro_dark;
     }
 
     .description-line {
-      color: $aista_default_grey3;
+      color: $ainiro_default_grey3;
       font-size: 12px;
       margin-top: 5px;
     }

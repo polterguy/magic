@@ -19,7 +19,7 @@
   }
 
   #inner-panel {
-    border-radius: $aista_radius;
+    border-radius: $ainiro_radius;
 
     .mat-content {
       font-size: 14px;
@@ -43,24 +43,24 @@
   align-items: center;
   justify-content: center;
   text-transform: uppercase;
-  color: $aista_default;
+  color: $ainiro_default;
 
   &.get {
-    background-color: $aista_info;
+    background-color: $ainiro_info;
   }
 
   &.post,
   &.socket {
-    background-color: $aista_success;
+    background-color: $ainiro_success;
   }
 
   &.put,
   &.patch {
-    background-color: $aista_warning;
+    background-color: $ainiro_warning;
   }
 
   &.delete {
-    background-color: $aista_error;
+    background-color: $ainiro_error;
   }
 }
 
@@ -111,6 +111,6 @@
   @include scrollbar(transparent, transparent, 7px);
 
   &:hover {
-    @include scrollbar($aista_default_alt, $aista_default_grey4, 7px);
+    @include scrollbar($ainiro_default_alt, $ainiro_default_grey4, 7px);
   }
 }

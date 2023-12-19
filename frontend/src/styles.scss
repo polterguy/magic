@@ -8,12 +8,12 @@
 
 html,
 body {
-  background-color: $aista_default_alt;
+  background-color: $ainiro_default_alt;
 }
 
 body {
   margin: 0;
-  @include scrollbar($aista_default_alt, $aista_default_grey4, 5px);
+  @include scrollbar($ainiro_default_alt, $ainiro_default_grey4, 5px);
 }
 
 .grecaptcha-badge {
