@@ -9,7 +9,7 @@ import { GeneralService } from 'src/app/services/general.service';
 import { MachineLearningTrainingService } from 'src/app/services/machine-learning-training.service';
 import { MachineLearningEditQuestionnaireComponent } from '../components/machine-learning-edit-questionnaire/machine-learning-edit-questionnaire.component';
 import { MatDialog } from '@angular/material/dialog';
-import { ConfirmationDialogComponent } from 'src/app/components/common/confirmation-dialog/confirmation-dialog.component';
+import { ConfirmationDialogComponent } from 'src/app/components/protected/common/confirmation-dialog/confirmation-dialog.component';
 import { MachineLearningEditQuestionsComponent } from '../components/machine-learning-edit-questions/machine-learning-edit-questions.component';
 
 /**

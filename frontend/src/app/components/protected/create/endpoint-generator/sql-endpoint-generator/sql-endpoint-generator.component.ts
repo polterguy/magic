@@ -7,8 +7,8 @@ import { ChangeDetectorRef, Component, Inject, LOCALE_ID, OnDestroy, OnInit } fr
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
-import { Model } from 'src/app/components/common/codemirror-sql/codemirror-sql.component';
-import { ShortkeysDialogComponent } from 'src/app/components/common/shortkeys-dialog/shortkeys-dialog.component';
+import { Model } from 'src/app/components/protected/common/codemirror-sql/codemirror-sql.component';
+import { ShortkeysDialogComponent } from 'src/app/components/protected/common/shortkeys-dialog/shortkeys-dialog.component';
 import { GeneralService } from 'src/app/services/general.service';
 import { CrudifyService } from 'src/app/services/crudify.service';
 import { TransformModelService } from 'src/app/services/transform-model.service';
@@ -19,7 +19,7 @@ import { SqlSnippetDialogComponent } from '../../sql-studio/components/sql-view/
 
 // CodeMirror options.
 import { CodemirrorActionsService } from 'src/app/services/codemirror-actions.service';
-import { SaveSnippetDialogComponent } from 'src/app/components/common/save-snippet-dialog/save-snippet-dialog.component';
+import { SaveSnippetDialogComponent } from 'src/app/components/protected/common/save-snippet-dialog/save-snippet-dialog.component';
 import { MessageService } from 'src/app/services/message.service';
 import { GeneratorBase } from '../generator-base';
 import { ActivatedRoute } from '@angular/router';

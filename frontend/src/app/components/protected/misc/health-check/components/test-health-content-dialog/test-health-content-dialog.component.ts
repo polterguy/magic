@@ -6,7 +6,7 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
-import { LoadSnippetDialogComponent } from 'src/app/components/common/load-snippet-dialog/load-snippet-dialog.component';
+import { LoadSnippetDialogComponent } from 'src/app/components/protected/common/load-snippet-dialog/load-snippet-dialog.component';
 import { GeneralService } from 'src/app/services/general.service';
 import { CodemirrorActionsService } from 'src/app/services/codemirror-actions.service';
 import { FileService } from 'src/app/services/file.service';

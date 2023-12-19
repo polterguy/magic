@@ -5,7 +5,7 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { LastLogItems } from 'src/app/models/dashboard.model';
-import { LogItemDialogComponent } from 'src/app/components/common/log-item-dialog/log-item-dialog.component';
+import { LogItemDialogComponent } from 'src/app/components/protected/common/log-item-dialog/log-item-dialog.component';
 
 /**
  * Helper component for displaying latest log items from the dashboard.

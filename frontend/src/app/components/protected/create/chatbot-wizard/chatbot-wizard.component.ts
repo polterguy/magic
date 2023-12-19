@@ -11,7 +11,7 @@ import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@aspnet/
 import { MagicResponse } from 'src/app/models/magic-response.model';
 import { MachineLearningEmbedUiComponent } from 'src/app/components/protected/manage/machine-learning/components/machine-learning-embed-ui/machine-learning-embed-ui.component';
 import { MatDialog } from '@angular/material/dialog';
-import { OpenAIConfigurationDialogComponent } from 'src/app/components/common/openai/openai-configuration-dialog/openai-configuration-dialog.component';
+import { OpenAIConfigurationDialogComponent } from 'src/app/components/protected/common/openai/openai-configuration-dialog/openai-configuration-dialog.component';
 import { RecaptchaDialogComponent } from 'src/app/components/protected/misc/configuration/components/recaptcha-dialog/recaptcha-dialog.component';
 import { ConfigService } from 'src/app/services/config.service';
 

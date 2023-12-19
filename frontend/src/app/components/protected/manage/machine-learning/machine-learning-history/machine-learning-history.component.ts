@@ -6,11 +6,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
-import { ConfirmationDialogComponent } from 'src/app/components/common/confirmation-dialog/confirmation-dialog.component';
+import { ConfirmationDialogComponent } from 'src/app/components/protected/common/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/services/general.service';
 import { MachineLearningTrainingService } from 'src/app/services/machine-learning-training.service';
 import { MachineLearningEditCacheComponent } from '../components/machine-learning-edit-cache/machine-learning-edit-cache.component';
-import { FilterComponent } from 'src/app/components/common/filter/filter.component';
+import { FilterComponent } from 'src/app/components/protected/common/filter/filter.component';
 
 /**
  * Helper component to view and manage Machine Learning requests

@@ -45,37 +45,12 @@ export class LoginComponent implements OnInit {
     private activatedRoute: ActivatedRoute) { }
 
   ngOnInit() {
+
     this.waitForBackend();
   }
 
-  private waitForBackend() {
-    this.backendList = this.backendService.backends;
-
-    this.activatedRoute.queryParams.subscribe((params: any) => {
-      if (params.switchTo) {
-        this.loginForm.controls.backend.setValue(params.switchTo);
-        const defaultBackend: Backend = this.backendList.find((item: any) => item.url === params.switchTo);
-        if (defaultBackend) {
-          this.loginForm.controls.username.setValue(defaultBackend.username);
-          this.loginForm.controls.password.setValue(defaultBackend.password);
-        }
-      } else if (params.backend) {
-        this.loginForm.controls.backend.setValue(params.backend);
-        const defaultBackend: Backend = this.backendList.find((item: any) => item.url === params.backend.url);
-        if (defaultBackend) {
-          this.loginForm.controls.username.setValue(defaultBackend.username);
-          this.loginForm.controls.password.setValue(defaultBackend.password);
-        }
-      } else if (this.backendList.length > 0) {
-        const defaultBackend: Backend = this.backendList[0];
-        this.loginForm.controls.backend.setValue(defaultBackend.url);
-        this.loginForm.controls.username.setValue(defaultBackend.username);
-        this.loginForm.controls.password.setValue(defaultBackend.password);
-      }
-    })
-  }
-
   backendActivated(e: MatAutocompleteActivatedEvent) {
+
     const defaultBackend: Backend = this.backendList.find((item: any) => item.url === e.option.value);
     this.loginForm.controls.username.setValue(defaultBackend.username);
     if (defaultBackend.password) {
@@ -84,6 +59,7 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
+
     if (!CommonRegEx.backend.test(this.loginForm.controls.backend.value.replace(/\/$/, ''))) {
       this.generalService.showFeedback('Backend URL is not valid', 'errorMessage', 'Ok');
       return;
@@ -115,5 +91,37 @@ export class LoginComponent implements OnInit {
           this.waiting = false;
         }
       });
+  }
+
+  /*
+   * Private helper methods.
+   */
+
+  private waitForBackend() {
+
+    this.backendList = this.backendService.backends;
+
+    this.activatedRoute.queryParams.subscribe((params: any) => {
+      if (params.switchTo) {
+        this.loginForm.controls.backend.setValue(params.switchTo);
+        const defaultBackend: Backend = this.backendList.find((item: any) => item.url === params.switchTo);
+        if (defaultBackend) {
+          this.loginForm.controls.username.setValue(defaultBackend.username);
+          this.loginForm.controls.password.setValue(defaultBackend.password);
+        }
+      } else if (params.backend) {
+        this.loginForm.controls.backend.setValue(params.backend);
+        const defaultBackend: Backend = this.backendList.find((item: any) => item.url === params.backend.url);
+        if (defaultBackend) {
+          this.loginForm.controls.username.setValue(defaultBackend.username);
+          this.loginForm.controls.password.setValue(defaultBackend.password);
+        }
+      } else if (this.backendList.length > 0) {
+        const defaultBackend: Backend = this.backendList[0];
+        this.loginForm.controls.backend.setValue(defaultBackend.url);
+        this.loginForm.controls.username.setValue(defaultBackend.username);
+        this.loginForm.controls.password.setValue(defaultBackend.password);
+      }
+    })
   }
 }

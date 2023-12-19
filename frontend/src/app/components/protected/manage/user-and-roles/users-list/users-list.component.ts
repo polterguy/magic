@@ -8,7 +8,7 @@ import { User } from 'src/app/components/protected/manage/user-and-roles/_models
 import { UserService } from '../_services/user.service';
 import { GeneralService } from 'src/app/services/general.service';
 import { MatDialog } from '@angular/material/dialog';
-import { ConfirmationDialogComponent } from 'src/app/components/common/confirmation-dialog/confirmation-dialog.component';
+import { ConfirmationDialogComponent } from 'src/app/components/protected/common/confirmation-dialog/confirmation-dialog.component';
 import { ChangePasswordDialogComponent } from '../components/change-password-dialog/change-password-dialog.component';
 import { EditUserDialogComponent } from '../components/edit-user-dialog/edit-user-dialog.component';
 

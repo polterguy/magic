@@ -13,7 +13,7 @@ import { CodemirrorActionsService } from 'src/app/services/codemirror-actions.se
 import { Subscription } from 'rxjs';
 import { SmtpDialogComponent } from './components/smtp-dialog/smtp-dialog.component';
 import json from 'src/app/helpers/options/json.json'
-import { OpenAIConfigurationDialogComponent } from 'src/app/components/common/openai/openai-configuration-dialog/openai-configuration-dialog.component';
+import { OpenAIConfigurationDialogComponent } from 'src/app/components/protected/common/openai/openai-configuration-dialog/openai-configuration-dialog.component';
 import { RecaptchaDialogComponent } from './components/recaptcha-dialog/recaptcha-dialog.component';
 import { FileService } from 'src/app/services/file.service';
 

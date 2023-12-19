@@ -9,7 +9,7 @@ import { LogService } from 'src/app/services/log.service';
 import { LogItem } from './_models/log-item.model';
 import { PageEvent } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
-import { LogItemDialogComponent } from '../../../common/log-item-dialog/log-item-dialog.component';
+import { LogItemDialogComponent } from '../../common/log-item-dialog/log-item-dialog.component';
 
 /**
  * Log component, allowing user to search through and view log items.
