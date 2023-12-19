@@ -245,7 +245,7 @@
             [matTooltip]="getToolboxTooltip(item)"
             matTooltipPosition="right"
             [matTooltipClass]="getTooltipClass(item)"
-            (click)="addSnippet(item)"
+            (click)="insertToolboxItem(item)"
             class="justify-content-start d-flex w-100">
             <mat-icon>{{item.icon ?? 'grade'}}</mat-icon>
             {{item.name}}

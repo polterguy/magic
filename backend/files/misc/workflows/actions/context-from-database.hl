@@ -29,11 +29,11 @@ validators.default:x:@.arguments
 
 // Retrieving context.
 execute:magic.ai.get-context
-   type:x:@.arguments/*/type
+   type:ainiro_io
    vector_model:text-embedding-ada-002
-   prompt:x:@.arguments/*/query
-   threshold:x:@.arguments/*/threshold
-   max_tokens:x:@.arguments/*/max_tokens
+   prompt:What is AINIRO?
+   threshold:decimal:0.3
+   max_tokens:int:2000
 
 // Returning result of invocation to caller.
 yield

@@ -20,7 +20,7 @@ import { FileService } from 'src/app/services/file.service';
 import { VocabularyService } from 'src/app/services/vocabulary.service';
 import { AiService } from 'src/app/services/ai.service';
 import { MagicResponse } from 'src/app/models/magic-response.model';
-import { ExecuteResult } from '../execute-result/execute-result-dialog.component';
+import { ExecuteResult } from '../execute-result-dialog/execute-result-dialog.component';
 
 /**
  * Hyper IDE editor component, wrapping currently open files, allowing user to edit the code.

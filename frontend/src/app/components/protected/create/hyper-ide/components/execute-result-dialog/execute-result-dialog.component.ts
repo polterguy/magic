@@ -12,7 +12,7 @@ import { CodemirrorActionsService } from 'src/app/services/codemirror-actions.se
  * Modal dialog allowing you to parametrise and execute a macro.
  */
 @Component({
-  selector: 'app-execute-result',
+  selector: 'app-execute-result-dialog',
   templateUrl: './execute-result-dialog.component.html',
   styleUrls: ['./execute-result-dialog.component.scss']
 })

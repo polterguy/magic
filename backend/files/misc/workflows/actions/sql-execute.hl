@@ -7,14 +7,17 @@
    connection-string:string
    database-type:string
    database:string
-   sql:*
+   sql:string
+   params:key-value
 .example
    connection-string:generic
    database-type:sqlite
    database:magic
-   sql:select name from roles where name like @arg1 limit 2
-      @arg1:a%
-.icon:cloud_download
+   sql:insert into roles (name, description) values (@name, @description)
+   params
+      @name:role-name
+      @description:The description for your role
+.icon:backup
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/sql
@@ -43,7 +46,7 @@ data.connect:x:@.connection-string
 
    // Parametrizing SQL.
    add:x:./*/data.select
-      get-nodes:x:@.arguments/*/sql/*
+      get-nodes:x:@.arguments/*/params/*
 
    // Executing SQL.
    data.select:x:@.arguments/*/sql

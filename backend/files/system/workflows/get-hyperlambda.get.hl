@@ -1,6 +1,6 @@
 
 /*
- * Returns all workflow functions to caller.
+ * Returns Hyperlambda required to execute action or snippet.
  */
 .arguments
    filename:string
@@ -8,21 +8,21 @@
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:root
 
-// Loading function Hyperlambda file and transforming to lambda object.
+// Loading actin/snippet Hyperlambda file and transforming to lambda object.
 load-file:x:@.arguments/*/filename
 
-// Checking if this is a function template.
+// Checking if this is a action template.
 if
    strings.starts-with:x:@.arguments/*/filename
-      .:/misc/workflows/functions/
+      .:/misc/workflows/actions/
    .lambda
 
       /*
-       * This is a function template type of snippet.
+       * This is an action template type of snippet.
        * Parametrizing accordingly.
        */
-      .function
-      add:x:@.function
+      .action
+      add:x:@.action
          hyper2lambda:x:@load-file
             comments:true
       .name
@@ -35,9 +35,9 @@ if
          strings.join:x:@strings.split/0
             .:.
 
-      // Creating our function invocation.
+      // Creating our action invocation.
       .invocation
-         execute:magic.workflows.functions.execute
+         execute:magic.workflows.actions.execute
             name
             filename
             arguments
@@ -46,20 +46,20 @@ if
       set-value:x:@.invocation/*/execute/*/filename
          get-value:x:@.arguments/*/filename
 
-      // Creating our function comment.
+      // Creating our action comment.
       if
          eq
-            get-name:x:@.function/0
+            get-name:x:@.action/0
             .:..
          .lambda
             unwrap:x:+/*/*
             insert-before:x:@.invocation/0
                .
-                  ..:x:@.function/0
+                  ..:x:@.action/0
 
       // Adding default argument placeholders for invocation.
       add:x:@.invocation/*/execute/*/arguments
-         get-nodes:x:@.function/*/.example/*
+         get-nodes:x:@.action/*/.example/*
 
       // Returning result to caller as Hyperlambda.
       lambda2hyper:x:@.invocation/*

@@ -8,7 +8,7 @@
    query:string
    max_tokens:int
 .example
-   query:x:@.arguments/*/query
+   query:Who won US Open in 2023?
    max_tokens:int:4000
 .icon:extension
 
