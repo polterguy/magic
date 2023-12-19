@@ -345,11 +345,6 @@ optin verification and potential referential integrity issues.`;
         exact: false,
         submenu: [
           {
-            name: 'Databases',
-            url: '/databases',
-            exact: false,
-          },
-          {
             name: 'SQL Studio',
             url: '/sql-studio',
             exact: false,
@@ -380,6 +375,11 @@ optin verification and potential referential integrity issues.`;
           {
             name: 'Users & roles',
             url: '/user-roles-management',
+            exact: false,
+          },
+          {
+            name: 'Databases',
+            url: '/databases',
             exact: false,
           },
           {

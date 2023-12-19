@@ -37,7 +37,7 @@ const routes: Routes = [
       },
       {
         path: 'databases',
-        loadChildren: () => import('src/app/components/protected/create/databases/_module/databases.module').then(m => m.DatabasesModule)
+        loadChildren: () => import('src/app/components/protected/manage/databases/_module/databases.module').then(m => m.DatabasesModule)
       },
       {
         path: 'endpoint-generator',
