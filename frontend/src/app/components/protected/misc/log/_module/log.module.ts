@@ -7,7 +7,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LogComponent } from '../log.component';
 import { LogRoutingModule } from './log.routing.module';
-import { ComponentsModule } from 'src/app/components/common/components.module';
+import { ComponentsModule } from 'src/app/components/protected/common/components.module';
 import { MaterialModule } from 'src/app/modules/material.module';
 import { SharedModule } from 'src/app/modules/shared.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
