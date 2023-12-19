@@ -59,6 +59,13 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
 
         this.config = JSON.stringify(res, null, 2);
         this.generalService.hideLoading();
+
+        setTimeout(() => {
+          const editor = (<any>document.querySelector('.CodeMirror')).CodeMirror;
+          editor.doc.isClean();
+          editor.doc.markClean();
+          editor.doc.clearHistory(); // To avoid having initial loading of file becoming an "undo operation".
+        }, 1);
       },
       error: (error: any) => {
         
