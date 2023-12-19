@@ -15,10 +15,10 @@ interface Keys {
  * Dialog for showing user keyboard shortcuts for CodeMirror editors.
  */
 @Component({
-  selector: 'app-shortkeys',
-  templateUrl: './shortkeys.component.html'
+  selector: 'app-shortkeys-dialog',
+  templateUrl: './shortkeys-dialog.component.html'
 })
-export class ShortkeysComponent implements OnInit {
+export class ShortkeysDialogComponent implements OnInit {
 
   public shortkeys: Keys[] = fixKeys;
 

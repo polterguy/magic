@@ -13,7 +13,7 @@ import { EvaluatorService } from 'src/app/services/evaluator.service';
 import { MagicResponse } from 'src/app/models/magic-response.model';
 
 import { Subscription } from 'rxjs';
-import { ShortkeysComponent } from 'src/app/components/common/shortkeys/shortkeys.component';
+import { ShortkeysDialogComponent } from 'src/app/components/common/shortkeys-dialog/shortkeys-dialog.component';
 import { CodemirrorActionsService } from 'src/app/services/codemirror-actions.service';
 import { Model } from 'src/app/components/common/codemirror-hyperlambda/codemirror-hyperlambda.component';
 import { AiService } from 'src/app/services/ai.service';
@@ -149,7 +149,7 @@ export class HyperlambdaPlaygroundComponent implements OnInit, OnDestroy {
 
   viewShortkeys() {
 
-    this.dialog.open(ShortkeysComponent, {
+    this.dialog.open(ShortkeysDialogComponent, {
       width: '900px',
       data: {
         type: ['save', 'execute', 'prompt', 'insertSnippet'],

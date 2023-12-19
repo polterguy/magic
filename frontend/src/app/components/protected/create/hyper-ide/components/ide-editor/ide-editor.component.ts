@@ -7,7 +7,7 @@ import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, S
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { LoadSnippetDialogComponent } from 'src/app/components/common/load-snippet-dialog/load-snippet-dialog.component';
-import { ShortkeysComponent } from 'src/app/components/common/shortkeys/shortkeys.component';
+import { ShortkeysDialogComponent } from 'src/app/components/common/shortkeys-dialog/shortkeys-dialog.component';
 import { GeneralService } from 'src/app/services/general.service';
 import { PreviewFileDialogComponent } from '../preview-file-dialog/preview-file-dialog.component';
 import { RenameFileDialogComponent, FileObjectName } from '../rename-file-dialog/rename-file-dialog.component';
@@ -119,7 +119,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
 
   openShortkeys() {
 
-    this.dialog.open(ShortkeysComponent, {
+    this.dialog.open(ShortkeysDialogComponent, {
       width: '900px',
       data: {
         type: ['full', 'prompt', 'find']

@@ -1,7 +1,18 @@
 
 <div class="d-flex justify-content-between align-items-center">
-  <h3 mat-dialog-title class="my-0">Log ID {{data.id}}</h3>
-  <p class="mat-h3" [class.text-danger]="data?.type === 'error'"> {{data?.type}} </p>
+
+  <h3
+    mat-dialog-title
+    class="my-0">
+    Log ID {{data.id}}
+  </h3>
+
+  <p
+    class="mat-h3"
+    [class.text-danger]="data?.type === 'error'">
+    {{data?.type}}
+  </p>
+
 </div>
 
 <div mat-dialog-content>
