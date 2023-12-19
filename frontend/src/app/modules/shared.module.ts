@@ -10,10 +10,10 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 
 // Application specific imports
 import { MaterialModule } from "./material.module";
-import { DateSincePipe } from "src/app/pipes/date-since.pipe";
-import { MarkedPipe } from "src/app/pipes/marked.pipe";
 import { DatePipe } from "src/app/pipes/date.pipe";
+import { MarkedPipe } from "src/app/pipes/marked.pipe";
 import { SortByPipe } from "src/app/pipes/sort-by.pipe";
+import { DateSincePipe } from "src/app/pipes/date-since.pipe";
 
 @NgModule({
   declarations: [
