@@ -52,6 +52,7 @@ import { LegalModule } from 'src/app/components/legal/legal.module';
     ReactiveFormsModule,
     CodemirrorModule,
     LegalModule,
+    CodemirrorModule,
   ],
   exports: [
     LoadingSkeletonComponent,
@@ -69,6 +70,7 @@ import { LegalModule } from 'src/app/components/legal/legal.module';
     CodemirrorSqlComponent,
     CodemirrorHyperlambdaComponent,
     LegalModule,
+    CodemirrorModule,
   ]
 })
 export class CommonComponentsModule { }
