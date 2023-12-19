@@ -36,6 +36,5 @@ execute:magic.ai.get-context
    max_tokens:x:@.arguments/*/max_tokens
 
 // Returning result of invocation to caller.
-unwrap:x:./*/return/*
-return
+yield
    result:x:@execute/*/context

@@ -64,6 +64,5 @@ if
          error:x:@lambda2hyper
 
 // Returning result to caller.
-unwrap:x:+/*
-return
+yield
    result:x:@http.post/*/content/*/choices/0/*/message/*/content
