@@ -15,6 +15,9 @@ import { EndpointsListComponent } from '../endpoints-list/endpoints-list.compone
 import { EndpointsResultComponent } from '../endpoints-result/endpoints-result.component';
 import { EndpointsComponent } from '../endpoints.component';
 import { EndpointsRoutingModule } from './endpoints.routing.module';
+import { AssumptionsComponent } from '../components/assumptions/assumptions.component';
+import { CreateAssumptionTestDialogComponent } from '../components/create-assumption-test-dialog/create-assumption-test-dialog.component';
+import { QueryParamsComponent } from '../components/query-params/query-params.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +25,9 @@ import { EndpointsRoutingModule } from './endpoints.routing.module';
     EndpointsListComponent,
     EndpointsResultComponent,
     PreviewFileDialogComponent,
+    AssumptionsComponent,
+    CreateAssumptionTestDialogComponent,
+    QueryParamsComponent,
   ],
   imports: [
     CommonModule,
@@ -31,7 +37,7 @@ import { EndpointsRoutingModule } from './endpoints.routing.module';
     CodemirrorModule,
     ComponentsModule,
     EndpointsRoutingModule,
-    SharedModule
+    SharedModule,
   ]
 })
 export class EndpointsModule { }

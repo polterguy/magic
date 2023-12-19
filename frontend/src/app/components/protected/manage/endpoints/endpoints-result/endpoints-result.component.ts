@@ -24,7 +24,7 @@ import hyperlambda_readonly from 'src/app/helpers/options/hyperlambda_readonly.j
 import { FormBuilder, FormControl } from '@angular/forms';
 import { AssumptionService } from 'src/app/services/assumption.service';
 import { MatDialog } from '@angular/material/dialog';
-import { CreateAssumptionTestDialogComponent, TestModel } from 'src/app/components/common/create-assumption-test-dialog/create-assumption-test-dialog.component';
+import { CreateAssumptionTestDialogComponent, TestModel } from 'src/app/components/protected/manage/endpoints/components/create-assumption-test-dialog/create-assumption-test-dialog.component';
 
 /*
  * Result of invocation.
