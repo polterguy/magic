@@ -15,12 +15,12 @@ import { GeneralService } from 'src/app/services/general.service';
 import { BackendService } from 'src/app/services/backend.service';
 
 // CodeMirror options.
-import json from 'src/app/helpers/options/json.json';
-import markdown from 'src/app/helpers/options/markdown.json';
-import hyperlambda from 'src/app/helpers/options/hyperlambda.json';
-import json_readonly from 'src/app/helpers/options/json_readonly.json';
-import markdown_readonly from 'src/app/helpers/options/markdown_readonly.json';
-import hyperlambda_readonly from 'src/app/helpers/options/hyperlambda_readonly.json';
+import json from 'src/app/resources/options/json.json';
+import markdown from 'src/app/resources/options/markdown.json';
+import hyperlambda from 'src/app/resources/options/hyperlambda.json';
+import json_readonly from 'src/app/resources/options/json_readonly.json';
+import markdown_readonly from 'src/app/resources/options/markdown_readonly.json';
+import hyperlambda_readonly from 'src/app/resources/options/hyperlambda_readonly.json';
 import { FormBuilder, FormControl } from '@angular/forms';
 import { AssumptionService } from 'src/app/services/assumption.service';
 import { MatDialog } from '@angular/material/dialog';
