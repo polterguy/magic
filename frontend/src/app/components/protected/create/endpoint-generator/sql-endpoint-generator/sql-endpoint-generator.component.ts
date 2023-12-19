@@ -8,7 +8,7 @@ import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { Model } from 'src/app/components/common/codemirror-sql/codemirror-sql.component';
-import { ShortkeysComponent } from 'src/app/components/common/shortkeys/shortkeys.component';
+import { ShortkeysDialogComponent } from 'src/app/components/common/shortkeys-dialog/shortkeys-dialog.component';
 import { GeneralService } from 'src/app/services/general.service';
 import { CrudifyService } from 'src/app/services/crudify.service';
 import { TransformModelService } from 'src/app/services/transform-model.service';
@@ -190,7 +190,7 @@ export class ManualGeneratorComponent extends GeneratorBase implements OnInit, O
 
   viewShortkeys() {
 
-    this.dialog.open(ShortkeysComponent, {
+    this.dialog.open(ShortkeysDialogComponent, {
       width: '900px',
       data: {
         type: ['save']

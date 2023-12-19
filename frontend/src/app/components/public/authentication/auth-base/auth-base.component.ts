@@ -5,7 +5,7 @@
 
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { PrivacyModalComponent } from 'src/app/components/common/privacy-modal/privacy-modal.component';
+import { PrivacyDialogComponent } from 'src/app/components/common/privacy-dialog/privacy-dialog.component';
 import { TermsModalComponent } from 'src/app/components/common/terms-modal/terms-modal.component';
 
 /**
@@ -27,6 +27,6 @@ export class AuthBaseComponent {
 
   privacyModal() {
 
-    this.dialog.open(PrivacyModalComponent);
+    this.dialog.open(PrivacyDialogComponent);
   }
 }

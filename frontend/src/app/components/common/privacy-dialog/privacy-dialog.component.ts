@@ -9,8 +9,8 @@ import { Component } from '@angular/core';
  * Privacy dialog showing user Aista's privacy declaration.
  */
 @Component({
-  selector: 'app-privacy-modal',
-  templateUrl: './privacy-modal.component.html',
+  selector: 'app-privacy-dialog',
+  templateUrl: './privacy-dialog.component.html',
 })
-export class PrivacyModalComponent {
+export class PrivacyDialogComponent {
 }

@@ -7,7 +7,7 @@ import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angu
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, Subscription } from 'rxjs';
 import { Model } from 'src/app/components/common/codemirror-sql/codemirror-sql.component';
-import { ShortkeysComponent } from 'src/app/components/common/shortkeys/shortkeys.component';
+import { ShortkeysDialogComponent } from 'src/app/components/common/shortkeys-dialog/shortkeys-dialog.component';
 import { GeneralService } from 'src/app/services/general.service';
 import { saveAs } from 'file-saver';
 
@@ -253,7 +253,7 @@ export class SqlViewComponent implements OnInit, OnDestroy {
 
   viewShortkeys() {
 
-    this.dialog.open(ShortkeysComponent, {
+    this.dialog.open(ShortkeysDialogComponent, {
       width: '900px',
       data: {
         type: ['save', 'execute', 'insertSnippet'],
