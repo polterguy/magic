@@ -43,6 +43,7 @@ import { FooterComponent } from 'src/app/components/main/footer/footer.component
 import { AccessGuard } from 'src/app/access-guards/access.guard';
 import { AuthBaseComponent } from 'src/app/components/public/authentication/auth-base/auth-base.component';
 import { SharedModule } from './shared.module';
+import { BackendsListComponent } from '../components/main/backends-list/backends-list.component';
 
 @NgModule({
   declarations: [
@@ -50,7 +51,8 @@ import { SharedModule } from './shared.module';
     CoreComponent,
     HeaderComponent,
     FooterComponent,
-    AuthBaseComponent
+    AuthBaseComponent,
+    BackendsListComponent,
   ],
   imports: [
     BrowserModule,

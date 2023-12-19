@@ -9,14 +9,11 @@ import { MaterialModule } from 'src/app/modules/material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TermsModalComponent } from './terms-modal/terms-modal.component';
 import { PrivacyModalComponent } from './privacy-modal/privacy-modal.component';
-import { BackendsListComponent } from './backends-list/backends-list.component';
 import { LoadingSkeletonComponent } from './loading-skeleton/loading-skeleton.component';
 import { DialogComponent } from './dialog/dialog.component';
 import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
 import { ShortkeysComponent } from './shortkeys/shortkeys.component';
 import { LoadSnippetDialogComponent } from './load-snippet-dialog/load-snippet-dialog.component';
-import { AssumptionsComponent } from './assumptions/assumptions.component';
-import { CreateAssumptionTestDialogComponent } from './create-assumption-test-dialog/create-assumption-test-dialog.component';
 import { SnippetNameDialogComponent } from './snippet-name-dialog/snippet-name-dialog.component';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import { GenerateTokenDialogComponent } from 'src/app/components/protected/user/generate-token-dialog/generate-token-dialog.component';
@@ -34,14 +31,11 @@ import { CodemirrorHyperlambdaComponent } from './codemirror-hyperlambda/codemir
   declarations: [
     TermsModalComponent,
     PrivacyModalComponent,
-    BackendsListComponent,
     LoadingSkeletonComponent,
     DialogComponent,
     ConfirmationDialogComponent,
     ShortkeysComponent,
     LoadSnippetDialogComponent,
-    AssumptionsComponent,
-    CreateAssumptionTestDialogComponent,
     SnippetNameDialogComponent,
     GenerateTokenDialogComponent,
     PwaUpdateDialogComponent,
@@ -64,14 +58,11 @@ import { CodemirrorHyperlambdaComponent } from './codemirror-hyperlambda/codemir
   exports: [
     TermsModalComponent,
     PrivacyModalComponent,
-    BackendsListComponent,
     LoadingSkeletonComponent,
     DialogComponent,
     ConfirmationDialogComponent,
     ShortkeysComponent,
     LoadSnippetDialogComponent,
-    AssumptionsComponent,
-    CreateAssumptionTestDialogComponent,
     SnippetNameDialogComponent,
     GenerateTokenDialogComponent,
     LogItemDetailsComponent,

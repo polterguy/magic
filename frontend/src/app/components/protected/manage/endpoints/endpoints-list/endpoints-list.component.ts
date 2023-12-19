@@ -8,7 +8,7 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { GeneralService } from 'src/app/services/general.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { Observable } from 'rxjs';
-import { AssumptionsComponent } from 'src/app/components/common/assumptions/assumptions.component';
+import { AssumptionsComponent } from 'src/app/components/protected/manage/endpoints/components/assumptions/assumptions.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from 'src/app/components/common/confirmation-dialog/confirmation-dialog.component';
 import { FileService } from 'src/app/services/file.service';
