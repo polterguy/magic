@@ -35,15 +35,15 @@ import { AuthInterceptor } from 'src/app/interceptors/auth.interceptor';
 
 // Components
 import { AppComponent } from 'src/app/components/app.component';
-import { MainComponent } from 'src/app/components/protected/main/main.component';
-import { HeaderComponent } from 'src/app/components/protected/header/header.component';
-import { FooterComponent } from 'src/app/components/protected/footer/footer.component';
+import { MainComponent } from 'src/app/components/protected/core/main/main.component';
+import { HeaderComponent } from 'src/app/components/protected/core/header/header.component';
+import { FooterComponent } from 'src/app/components/protected/core/footer/footer.component';
 
 // Misc
 import { AccessGuard } from 'src/app/access-guards/access.guard';
 import { AuthBaseComponent } from 'src/app/components/public/authentication/auth-base/auth-base.component';
 import { SharedModule } from './shared.module';
-import { BackendsListComponent } from '../components/protected/header/components/backends-list/backends-list.component';
+import { BackendsListComponent } from '../components/protected/core/header/components/backends-list/backends-list.component';
 
 @NgModule({
   declarations: [
