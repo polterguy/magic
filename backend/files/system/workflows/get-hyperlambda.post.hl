@@ -4,6 +4,7 @@
  */
 .arguments
    filename:string
+   args:*
 
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:root
@@ -57,6 +58,12 @@ if
                .
                   ..:x:@.action/0
 
+      // Decorating Hyperlambda according to input [args].
+      for-each:x:@.arguments/*/args/*
+         get-name:x:@.dp/#
+         set-value:x:@.action/*/.example/*/{@get-name}
+            get-value:x:@.dp/#
+
       // Adding default argument placeholders for invocation.
       add:x:@.invocation/*/execute/*/arguments
          get-nodes:x:@.action/*/.example/*
@@ -64,8 +71,7 @@ if
       // Returning result to caller as Hyperlambda.
       lambda2hyper:x:@.invocation/*
          comments:true
-      unwrap:x:+/*
-      return
+      yield
          result:x:@lambda2hyper
 
 else

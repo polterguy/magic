@@ -5,10 +5,18 @@
  * from your configuration settings.
  */
 .arguments
-   name:string
-   email:string
-   subject:string
-   body:string
+   name
+      type:name
+      mandatory:bool:true
+   email
+      type:email
+      mandatory:bool:true
+   subject
+      type:string
+      mandatory:bool:true
+   body
+      type:textarea
+      mandatory:bool:true
 .example
    name:John Doe
    email:john@doe.com

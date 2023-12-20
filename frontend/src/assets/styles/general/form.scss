@@ -69,6 +69,12 @@ form fields
 =-=-=-=-=-=*/
 
 :root {
+  .mat-form-field-label-wrapper {
+    top: -.92em;
+  }
+  .mat-form-field-appearance-outline .mat-form-field-label {
+    margin-top: -.35em;
+  }
   mat-form-field.mat-form-field {
     overflow: hidden;
   }

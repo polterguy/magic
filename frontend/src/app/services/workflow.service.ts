@@ -31,11 +31,13 @@ export class WorkflowService {
   /**
    * Adds the specified function to the specified Hyperlambda and returns the transformed result.
    */
-  getHyperlambda(filename: string) {
+  getHyperlambda(filename: string, args: any = null) {
 
-    return this.httpService.get<MagicResponse>(
-      '/magic/system/workflows/get-hyperlambda?filename=' + 
-      encodeURIComponent(filename));
+    return this.httpService.post<MagicResponse>(
+      '/magic/system/workflows/get-hyperlambda', {
+        filename,
+        args,
+      });
   }
 
   /**
