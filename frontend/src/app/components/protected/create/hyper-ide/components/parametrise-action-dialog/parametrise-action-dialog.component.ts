@@ -10,6 +10,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 // Utility imports
 import { FormlyFieldConfig } from '@ngx-formly/core';
+import { GeneralService } from 'src/app/services/general.service';
 
 /**
  * Modal dialog allowing you to parametrise and execute a macro.
@@ -26,6 +27,7 @@ export class ParametriseActionDialog implements OnInit {
   model: any = {};
 
   constructor(
+    private generalService: GeneralService,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private refDialog: MatDialogRef<ParametriseActionDialog>) {}
 
@@ -107,6 +109,11 @@ export class ParametriseActionDialog implements OnInit {
 
   onSubmit(model: any) {
 
+    if (!this.form.valid) {
+
+      this.generalService.showFeedback('Input is not valid', 'errorMessage');
+      return;
+    }
     this.refDialog.close(model);
   }
 }

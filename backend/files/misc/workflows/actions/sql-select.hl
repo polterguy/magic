@@ -20,7 +20,7 @@
    database
       type:string
       default:magic
-      mandatory:bool:false
+      mandatory:bool:true
    sql
       type:sql
       default:select name from roles where name like @arg1 limit 2
