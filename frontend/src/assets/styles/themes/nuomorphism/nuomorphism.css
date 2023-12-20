@@ -244,3 +244,8 @@ a {
 a.active-link:not([disabled]) {
   color: rgb(50,50,50) !important;
 }
+
+:root .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label, .mat-form-field-appearance-outline.mat-form-field-can-float .mat-input-server:focus + .mat-form-field-label-wrapper .mat-form-field-label {
+  transform: translateY(-0.9em) scale(0.65);
+  opacity: .75;
+}
