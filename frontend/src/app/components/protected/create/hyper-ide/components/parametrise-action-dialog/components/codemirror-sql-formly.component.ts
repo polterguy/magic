@@ -4,14 +4,16 @@
  */
 
 // Angular and system imports.
-import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { CodemirrorComponent } from '@ctrl/ngx-codemirror';
 import { FieldType, FieldTypeConfig } from '@ngx-formly/core';
 import { debounceTime, distinctUntilChanged, tap } from 'rxjs';
-import { Databases } from 'src/app/models/databases.model';
-import { CodemirrorActionsService } from 'src/app/services/codemirror-actions.service';
-import { GeneralService } from 'src/app/services/general.service';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+
+// Application specific imports
 import { SqlService } from 'src/app/services/sql.service';
+import { Databases } from 'src/app/models/databases.model';
+import { GeneralService } from 'src/app/services/general.service';
+import { CodemirrorActionsService } from 'src/app/services/codemirror-actions.service';
 
 /**
  * CodeMirror Formly extension field.
