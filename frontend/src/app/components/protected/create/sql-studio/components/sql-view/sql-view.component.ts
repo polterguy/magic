@@ -78,7 +78,7 @@ export class SqlViewComponent implements OnInit, OnDestroy {
       tables: this.tablesList,
     };
     this.input.options.autofocus = true;
-  };
+  }
 
   loadSnippet() {
 

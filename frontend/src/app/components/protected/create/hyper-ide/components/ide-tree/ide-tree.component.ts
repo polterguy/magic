@@ -208,6 +208,7 @@ export class IdeTreeComponent implements OnInit {
 
           this.dialog.open(ParametriseActionDialog, {
             width: '550px',
+            disableClose: true,
             data: {
               input: result.input,
             },

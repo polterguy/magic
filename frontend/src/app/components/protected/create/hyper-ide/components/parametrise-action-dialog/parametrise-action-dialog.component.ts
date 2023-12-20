@@ -59,20 +59,17 @@ export class ParametriseActionDialog implements OnInit {
           };
           break;
 
-        case 'name':
-          add = true;
-          field.type = 'input';
-          field.props.attributes = {
-            autocomplete: 'name',
-          };
-          break;
-
         case 'textarea':
           add = true;
           field.type = 'textarea';
           field.props.attributes = {
             rows: 5,
           };
+          break;
+
+        case 'sql':
+          add = true;
+          field.type = 'sql';
           break;
 
         case 'email':
