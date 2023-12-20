@@ -7,6 +7,7 @@
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { CodemirrorComponent } from '@ctrl/ngx-codemirror';
 import { FieldType, FieldTypeConfig } from '@ngx-formly/core';
+import { debounceTime, distinctUntilChanged, tap } from 'rxjs';
 import { Databases } from 'src/app/models/databases.model';
 import { CodemirrorActionsService } from 'src/app/services/codemirror-actions.service';
 import { GeneralService } from 'src/app/services/general.service';
@@ -17,7 +18,7 @@ import { SqlService } from 'src/app/services/sql.service';
  */
 @Component({
   selector: 'app-codemirror-formly',
-  template: `<ngx-codemirror #editor class="sql-formly-editor" *ngIf="cmOptions" [options]="cmOptions" [(ngModel)]="model[field.key]"></ngx-codemirror>`,
+  template: `<mat-icon [matTooltip]="connected ? 'You have a valid database connection' : 'You do not have a valid database connection'" [class]="connected ? 'connected' : 'disconnected'">{{connected ? 'check_circle' : 'report_problem'}}</mat-icon><ngx-codemirror #editor class="sql-formly-editor" *ngIf="cmOptions" [options]="cmOptions" [(ngModel)]="model[field.key]"></ngx-codemirror>`,
   styleUrls: ['./codemirror-sql-formly.scss']
 })
 export class CodemirrorSqlFormlyComponent extends FieldType<FieldTypeConfig> implements OnInit {
@@ -26,6 +27,7 @@ export class CodemirrorSqlFormlyComponent extends FieldType<FieldTypeConfig> imp
   @ViewChild('editor') private editor: CodemirrorComponent;
   cmOptions: any = null;
   ready: boolean = false;
+  connected: boolean = false;
 
   constructor(
     private sqlService: SqlService,
@@ -72,16 +74,18 @@ export class CodemirrorSqlFormlyComponent extends FieldType<FieldTypeConfig> imp
               this.getDatabaseTables();
             }
           });
-          this.form.controls['connection-string'].valueChanges.subscribe({
-            next : () => {
-              this.getDatabaseTables();
-            }
-          });
-          this.form.controls['database'].valueChanges.subscribe({
-            next : () => {
-              this.databaseChanged();
-            }
-          });
+          this.form.controls['connection-string'].valueChanges.pipe(
+            debounceTime(400),
+            distinctUntilChanged(),
+            tap(() => {
+                this.getDatabaseTables();
+            })).subscribe();
+          this.form.controls['database'].valueChanges.pipe(
+            debounceTime(400),
+            distinctUntilChanged(),
+            tap(() => {
+                this.databaseChanged();
+            })).subscribe();
         }
       }, 1);
     }, 250);
@@ -109,13 +113,16 @@ export class CodemirrorSqlFormlyComponent extends FieldType<FieldTypeConfig> imp
 
         this.generalService.hideLoading();
         this.databases = result;
+        this.connected = true;
+        this.cdn.detectChanges();
         this.databaseChanged();
       },
 
       error: () => {
 
         this.generalService.hideLoading();
-        this.generalService.showFeedback('Not a valid database-type/connection-string combination', 'errorMessage');
+        this.connected = false;
+        this.cdn.detectChanges();
       }
     });
   }
@@ -123,9 +130,16 @@ export class CodemirrorSqlFormlyComponent extends FieldType<FieldTypeConfig> imp
   private databaseChanged() {
 
     let hintTables = (this.databases.databases || []).find((db: any) => db.name === this.model['database'])?.tables || [];
-    const hints = Object.fromEntries(hintTables.map((x: any) => [x.name, x.columns.map((y: any) => y.name)]));
-    this.cmOptions.hintOptions = {
-      tables: hints,
-    };
-}
+    if (hintTables.length === 0) {
+      this.connected = false;
+      this.cdn.detectChanges();
+    } else {
+      const hints = Object.fromEntries(hintTables.map((x: any) => [x.name, x.columns.map((y: any) => y.name)]));
+      this.cmOptions.hintOptions = {
+        tables: hints,
+      };
+      this.connected = true;
+      this.cdn.detectChanges();
+    }
+  }
 }
