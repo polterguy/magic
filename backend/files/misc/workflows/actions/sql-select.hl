@@ -7,7 +7,7 @@
    database-type
       type:enum
       default:sqlite
-      mandatory:bool:false
+      mandatory:bool:true
       values
          .:sqlite
          .:mssql
@@ -16,7 +16,7 @@
    connection-string
       type:string
       default:generic
-      mandatory:bool:false
+      mandatory:bool:true
    database
       type:string
       default:magic

@@ -116,6 +116,7 @@ export class CodemirrorSqlFormlyComponent extends FieldType<FieldTypeConfig> imp
         this.generalService.hideLoading();
         this.databases = result;
         this.connected = true;
+        this.formControl.setErrors(null);
         this.cdn.detectChanges();
         this.databaseChanged();
       },
@@ -124,6 +125,7 @@ export class CodemirrorSqlFormlyComponent extends FieldType<FieldTypeConfig> imp
 
         this.generalService.hideLoading();
         this.connected = false;
+        this.formControl.setErrors({connected: false});
         this.cdn.detectChanges();
       }
     });
@@ -132,16 +134,23 @@ export class CodemirrorSqlFormlyComponent extends FieldType<FieldTypeConfig> imp
   private databaseChanged() {
 
     let hintTables = (this.databases.databases || []).find((db: any) => db.name === this.model['database'])?.tables || [];
+
     if (hintTables.length === 0) {
+
       this.connected = false;
+      this.formControl.setErrors({connected: false});
       this.cdn.detectChanges();
+
     } else {
+
       const hints = Object.fromEntries(hintTables.map((x: any) => [x.name, x.columns.map((y: any) => y.name)]));
       this.cmOptions.hintOptions = {
         tables: hints,
       };
       this.connected = true;
+      this.formControl.setErrors(null);
       this.cdn.detectChanges();
+
     }
   }
 }

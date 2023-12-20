@@ -6,11 +6,11 @@
 // Angular and system imports.
 import { FormGroup } from '@angular/forms';
 import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 // Utility imports
 import { FormlyFieldConfig } from '@ngx-formly/core';
-import { GeneralService } from 'src/app/services/general.service';
+import { ConfirmationDialogComponent } from 'src/app/components/protected/common/confirmation-dialog/confirmation-dialog.component';
 
 /**
  * Modal dialog allowing you to parametrise and execute a macro.
@@ -27,7 +27,7 @@ export class ParametriseActionDialog implements OnInit {
   model: any = {};
 
   constructor(
-    private generalService: GeneralService,
+    private dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private refDialog: MatDialogRef<ParametriseActionDialog>) {}
 
@@ -111,9 +111,26 @@ export class ParametriseActionDialog implements OnInit {
 
     if (!this.form.valid) {
 
-      this.generalService.showFeedback('Input is not valid', 'errorMessage');
-      return;
+    // Asking user to confirm action.
+    this.dialog.open(ConfirmationDialogComponent, {
+      width: '500px',
+      data: {
+        title: `Action is not valid`,
+        description: `Action has invalid arguments, are you sure you want to save it?`,
+        action_btn: 'Yes',
+        close_btn: 'No',
+        action_btn_color: 'warn',
+      }
+    }).afterClosed().subscribe((result: string) => {
+
+      if (result === 'confirm') {
+        this.refDialog.close(model);
+      }
+    });
+
+    } else {
+
+      this.refDialog.close(model);
     }
-    this.refDialog.close(model);
   }
 }
