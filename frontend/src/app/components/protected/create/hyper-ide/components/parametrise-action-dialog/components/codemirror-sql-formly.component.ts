@@ -17,7 +17,8 @@ import { SqlService } from 'src/app/services/sql.service';
  */
 @Component({
   selector: 'app-codemirror-formly',
-  template: `<ngx-codemirror #editor *ngIf="cmOptions" [options]="cmOptions" [(ngModel)]="model[field.key]"></ngx-codemirror>`,
+  template: `<ngx-codemirror #editor class="sql-formly-editor" *ngIf="cmOptions" [options]="cmOptions" [(ngModel)]="model[field.key]"></ngx-codemirror>`,
+  styleUrls: ['./codemirror-sql-formly.scss']
 })
 export class CodemirrorSqlFormlyComponent extends FieldType<FieldTypeConfig> implements OnInit {
 
@@ -106,12 +107,12 @@ export class CodemirrorSqlFormlyComponent extends FieldType<FieldTypeConfig> imp
 
       next: (result: Databases) => {
 
-        this.databases = result;
         this.generalService.hideLoading();
+        this.databases = result;
         this.databaseChanged();
       },
 
-      error: (error: any) => {
+      error: () => {
 
         this.generalService.hideLoading();
         this.generalService.showFeedback('Not a valid database-type/connection-string combination', 'errorMessage');
