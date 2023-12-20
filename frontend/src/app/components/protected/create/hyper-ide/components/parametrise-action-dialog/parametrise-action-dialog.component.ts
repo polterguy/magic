@@ -109,9 +109,13 @@ export class ParametriseActionDialog implements OnInit {
 
   onSubmit(model: any) {
 
+    /*
+     * Notice, we still allow for saving the action if it's got errors,
+     * since it might be valid in the context it's supposed to run in.
+     */
     if (!this.form.valid) {
 
-    // Asking user to confirm action.
+    // Asking user to confirm saving action with error.
     this.dialog.open(ConfirmationDialogComponent, {
       width: '500px',
       data: {
