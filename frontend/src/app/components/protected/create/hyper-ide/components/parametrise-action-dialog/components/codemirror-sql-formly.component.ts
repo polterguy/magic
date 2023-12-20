@@ -47,6 +47,7 @@ export class CodemirrorSqlFormlyComponent extends FieldType<FieldTypeConfig> imp
 
       // This will display CodeMirror due to its *ngIf part.
       this.cmOptions = this.codemirrorActionsService.getActions(null, 'sql');
+      this.cmOptions.autofocus = false;
       this.cdn.detectChanges();
 
       // Waiting until CodeMirror is displayed, and cleaning history.
@@ -113,7 +114,7 @@ export class CodemirrorSqlFormlyComponent extends FieldType<FieldTypeConfig> imp
       error: (error: any) => {
 
         this.generalService.hideLoading();
-        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+        this.generalService.showFeedback('Not a valid database-type/connection-string combination', 'errorMessage');
       }
     });
   }
