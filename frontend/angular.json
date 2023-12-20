@@ -29,18 +29,12 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
             "assets": [
-              "src/assets/images/icons/apple-touch-icon.png",
-              "src/assets/images/icons/favicon-32x32.png",
-              "src/assets/images/icons/favicon-16x16.png",
-              "src/assets/site.webmanifest",
-              "src/assets/safari-pinned-tab.svg",
-              "src/assets/images/ainiro-logo.svg",
-              "src/assets/images/frank.png"
+              "src/assets"
             ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.scss",
-              "./src/assets/styles/codemirror/themes/ainiro.css",
+              "src/assets/styles/codemirror/themes/ainiro.css",
               "./node_modules/codemirror/lib/codemirror.css",
               "./node_modules/codemirror/theme/duotone-light.css",
               "./node_modules/codemirror/theme/duotone-dark.css",

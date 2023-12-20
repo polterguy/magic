@@ -38,6 +38,7 @@ export class ProfileComponent implements OnInit {
     private generalService: GeneralService) { }
 
   ngOnInit() {
+
     this.getUsername();
   }
 
@@ -54,10 +55,16 @@ export class ProfileComponent implements OnInit {
     }
 
     this.userService.editExtra(data).subscribe({
+
       next: () => {
+
         this.generalService.showFeedback('Details saved successfully', 'successMessage');
       },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')});
+      error: (error: any) => {
+        
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+      }
+    });
   }
 
   savePassword() {
@@ -83,7 +90,9 @@ export class ProfileComponent implements OnInit {
     }
 
     this.backendService.changePassword(this.password).subscribe({
+
       next: () => {
+
         this.generalService.showFeedback('Please sign in with your new password', 'successMessage', 'Ok', 5000);
         this.backendService.logout(false);
         this.router.navigate(['/authentication']);
@@ -97,13 +106,17 @@ export class ProfileComponent implements OnInit {
    */
 
   private getUsername() {
+
     this.user.username = this.backendService.active.token['_username'];
     this.getUser();
   }
 
   private getUser() {
+
     this.userService.list(`?username.like=${encodeURIComponent(this.user.username)}%`).subscribe({
+
       next: (res: any) => {
+
         if (res) {
           let user: any = {}
           res.map((item: any) => {
