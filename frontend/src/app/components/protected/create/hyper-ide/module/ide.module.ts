@@ -3,9 +3,16 @@
  * Copyright (c) 2023 Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
  */
 
+// Angular and system specific imports
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IdeComponent } from '../ide.component';
+
+// Utility imports
+import { FormlyModule } from '@ngx-formly/core';
+import { FormlyMaterialModule } from '@ngx-formly/material';
+
+// Application specific imports
+import { IdeComponent } from 'src/app/components/protected/create/hyper-ide/ide.component';
 import { SharedModule } from 'src/app/modules/shared.module';
 import { CommonComponentsModule } from 'src/app/components/protected/common/common-components.module';
 import { IdeEditorComponent } from '../components/ide-editor/ide-editor.component';
@@ -39,6 +46,8 @@ import { ParametriseActionDialog } from '../components/parametrise-action-dialog
     IdeRoutingModule,
     CommonComponentsModule,
     SharedModule,
+    FormlyModule.forRoot(),
+    FormlyMaterialModule,
   ]
 })
 export class IdeModule { }

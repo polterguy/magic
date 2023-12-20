@@ -4,19 +4,32 @@
  * Optionally provide [connection-string], [database-type] and [database].
  */
 .arguments
-   connection-string:string
-   database-type:string
-   database:string
-   sql:string
-   params:key-value
-.example
-   connection-string:generic
-   database-type:sqlite
-   database:magic
-   sql:insert into roles (name, description) values (@name, @description)
+   database-type
+      type:enum
+      default:sqlite
+      mandatory:bool:false
+      values
+         .:sqlite
+         .:mssql
+         .:mysql
+         .:pgsql
+   connection-string
+      type:string
+      default:generic
+      mandatory:bool:false
+   database
+      type:string
+      default:magic
+      mandatory:bool:false
+   sql
+      type:string
+      default:select name from roles where name like @arg1 limit 2
+      mandatory:bool:true
    params
-      @name:role-name
-      @description:The description for your role
+      type:key-value
+      default
+         @arg1:a%
+      mandatory:bool:false
 .icon:backup
 
 // Sanity checking invocation.

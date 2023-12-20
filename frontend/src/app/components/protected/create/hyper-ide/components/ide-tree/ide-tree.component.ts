@@ -206,15 +206,14 @@ export class IdeTreeComponent implements OnInit {
 
         next: (result: any) => {
 
-          const dialog = this.dialog.open(ParametriseActionDialog, {
+          this.dialog.open(ParametriseActionDialog, {
             width: '550px',
             data: {
               input: result.input,
             },
-          });
-          dialog.afterClosed().subscribe((data: any) => {
+          }).afterClosed().subscribe((data: any) => {
             if (data) {
-              this.insertToolboxItemImplementation(editor, sel, el);
+              this.insertToolboxItemImplementation(editor, sel, el, data);
             }
           });
         },
@@ -992,10 +991,10 @@ export class IdeTreeComponent implements OnInit {
       path === '/etc/';
   }
 
-  private insertToolboxItemImplementation(editor: any, sel: any, el: any) {
+  private insertToolboxItemImplementation(editor: any, sel: any, el: any, args: any = null) {
 
     this.generalService.showLoading();
-    this.workflowService.getHyperlambda(el.filename).subscribe({
+    this.workflowService.getHyperlambda(el.filename, args).subscribe({
 
       next: (result: MagicResponse) => {
 

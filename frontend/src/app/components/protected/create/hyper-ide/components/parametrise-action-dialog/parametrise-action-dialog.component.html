@@ -1,26 +1,34 @@
 <h3 mat-dialog-title>Parametrise action</h3>
 
-<div mat-dialog-content>
+<form
+  [formGroup]="form"
+  (ngSubmit)="onSubmit(model)">
 
-  <p>
-    sdfoihsdf
-  </p>
+  <div mat-dialog-content>
 
-</div>
+    <formly-form
+      [form]="form"
+      [fields]="fields"
+      [model]="model">
+    </formly-form>
 
-<div mat-dialog-actions [align]="'end'">
+  </div>
 
-  <button
-    mat-button
-    mat-dialog-close>
-    Close
-  </button>
+  <div mat-dialog-actions [align]="'end'">
 
-  <button
-    mat-flat-button
-    color="primary"
-    [mat-dialog-close]="data">
-    OK
-  </button>
+    <button
+      mat-button
+      mat-dialog-close>
+      Close
+    </button>
 
-</div>
+    <button
+      mat-flat-button
+      color="primary"
+      type="submit">
+      OK
+    </button>
+
+  </div>
+
+</form>
