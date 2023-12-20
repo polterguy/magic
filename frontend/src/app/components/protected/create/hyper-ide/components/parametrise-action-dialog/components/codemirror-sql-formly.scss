@@ -2,3 +2,17 @@
 ::ng-deep .sql-formly-editor .CodeMirror {
   max-height: 150px;
 }
+mat-icon {
+  position: absolute;
+  z-index: 100000;
+  position: absolute;
+  right: -5px;
+  top: 18px;
+  font-size: 1rem;
+}
+mat-icon.connected {
+  color: #a0ffa0;
+}
+mat-icon.disconnected {
+  color: #ffa0a0;
+}
