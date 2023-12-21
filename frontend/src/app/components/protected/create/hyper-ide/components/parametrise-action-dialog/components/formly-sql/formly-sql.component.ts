@@ -140,6 +140,9 @@ export class FormlySqlComponent extends FieldType<FieldTypeConfig> implements On
         this.generalService.hideLoading();
         this.connected = false;
         this.formControl.setErrors({connected: false});
+        this.cmOptions.hintOptions = {
+          tables: [],
+        };
         this.cdr.detectChanges();
       }
     });
@@ -155,6 +158,9 @@ export class FormlySqlComponent extends FieldType<FieldTypeConfig> implements On
 
       this.connected = false;
       this.formControl.setErrors({connected: false});
+      this.cmOptions.hintOptions = {
+        tables: [],
+      };
       this.cdr.detectChanges();
 
     } else {

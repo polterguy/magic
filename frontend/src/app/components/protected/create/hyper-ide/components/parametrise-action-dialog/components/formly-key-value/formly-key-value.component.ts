@@ -22,6 +22,10 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChil
       {{item.name}}:{{item.value}}
       <mat-icon matChipRemove>cancel</mat-icon>
     </mat-chip>
+    <mat-chip>
+      Add
+      <mat-icon>add</mat-icon>
+    </mat-chip>
   </mat-chip-list>
 </div>`,
   styleUrls: ['./formly-key-value.scss'],
