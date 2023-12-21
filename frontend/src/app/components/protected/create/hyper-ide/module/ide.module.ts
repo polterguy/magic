@@ -26,7 +26,7 @@ import { RenameFolderDialogComponent } from '../components/rename-folder-dialog/
 import { UnsavedChangesDialogComponent } from '../components/unsaved-changes-dialog/unsaved-changes-dialog.component';
 import { ExecuteResult } from '../components/execute-result-dialog/execute-result-dialog.component';
 import { ParametriseActionDialog } from '../components/parametrise-action-dialog/parametrise-action-dialog.component';
-import { CodemirrorSqlFormlyComponent } from '../components/parametrise-action-dialog/components/codemirror-sql-formly.component';
+import { FormlySqlComponent } from '../components/parametrise-action-dialog/components/formly-sql/formly-sql.component';
 
 @NgModule({
   declarations: [
@@ -41,7 +41,7 @@ import { CodemirrorSqlFormlyComponent } from '../components/parametrise-action-d
     RenameFolderDialogComponent,
     UnsavedChangesDialogComponent,
     ParametriseActionDialog,
-    CodemirrorSqlFormlyComponent,
+    FormlySqlComponent,
   ],
   imports: [
     CommonModule,
@@ -52,7 +52,7 @@ import { CodemirrorSqlFormlyComponent } from '../components/parametrise-action-d
     FormlyMaterialModule,
     FormlyModule.forRoot({
       types: [
-        { name: 'sql', component: CodemirrorSqlFormlyComponent },
+        { name: 'sql', component: FormlySqlComponent },
       ],
     }),
   ]

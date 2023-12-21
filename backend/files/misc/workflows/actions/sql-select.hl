@@ -29,7 +29,6 @@
       type:key-value
       default
          @arg1:a%
-      mandatory:bool:false
 .icon:cloud_download
 
 // Sanity checking invocation.

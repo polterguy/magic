@@ -51,6 +51,7 @@ export class ParametriseActionDialog implements OnInit {
       switch (this.data.input[idx].type) {
 
         case 'key-value':
+          console.log(this.data.input[idx]);
           break;
 
         case 'string':
