@@ -15,20 +15,20 @@ import { CodemirrorActionsService } from 'src/app/services/codemirror-actions.se
  * Formly C# extension field.
  */
 @Component({
-  selector: 'app-formly-csharp',
+  selector: 'app-formly-hyperlambda',
   template: `
 <div class="mb-4">
   <ngx-codemirror
     #editor
-    class="csharp-formly-editor"
+    class="hyperlambda-formly-editor"
     *ngIf="cmOptions"
     [options]="cmOptions"
     [(ngModel)]="model[field.key]">
   </ngx-codemirror>
 </div>`,
-  styleUrls: ['./formly-csharp.scss']
+  styleUrls: ['./formly-hyperlambda.scss']
 })
-export class FormlyCSharpComponent extends FieldType<FieldTypeConfig> implements OnInit {
+export class FormlyHyperlambdaComponent extends FieldType<FieldTypeConfig> implements OnInit {
 
   @ViewChild('editor') private editor: CodemirrorComponent;
   cmOptions: any = null;
@@ -51,7 +51,7 @@ export class FormlyCSharpComponent extends FieldType<FieldTypeConfig> implements
     setTimeout(() => {
 
       // This will display CodeMirror due to its *ngIf part.
-      this.cmOptions = this.codemirrorActionsService.getActions(null, 'cs');
+      this.cmOptions = this.codemirrorActionsService.getActions(null, 'hl');
       this.cmOptions.autofocus = false;
       this.cdr.detectChanges();
 

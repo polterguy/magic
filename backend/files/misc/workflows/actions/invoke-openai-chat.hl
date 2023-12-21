@@ -5,17 +5,28 @@
  * Will use the default API key found from configurations.
  */
 .arguments
-   model:string
-   max_tokens:int
-   messages:*
-.example
+   model
+      type:enum
+      default:gpt-3.5-turbo
+      mandatory:bool:true
+      values
+         .:gpt-3.5-turbo
+         .:gpt-3.5-turbo-16k
+         .:gpt-4
+         .:gpt-4-1106-preview
+   max_tokens
+      type:int
+      default:int:4000
+      mandatory:bool:true
    messages
-      .
-         role:system
-         content:Answer my question in the style of Snoop Dogg
-      .
-         role:user
-         content:"Explain Einstein's theory of relativity as if I am 5 in one sentence"
+      type:hyperlambda
+      mandatory:bool:true
+      default:@".
+   role:system
+   content:Answer my question in the style of Snoop Dogg
+.
+   role:user
+   content:""Explain Einstein's theory of relativity as if I am 5 in one sentence"""
 .icon:chat_bubble
 
 // Sanity checking invocation.
