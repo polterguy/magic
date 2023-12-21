@@ -27,6 +27,7 @@ import { UnsavedChangesDialogComponent } from '../components/unsaved-changes-dia
 import { ExecuteResult } from '../components/execute-result-dialog/execute-result-dialog.component';
 import { ParametriseActionDialog } from '../components/parametrise-action-dialog/parametrise-action-dialog.component';
 import { FormlySqlComponent } from '../components/parametrise-action-dialog/components/formly-sql/formly-sql.component';
+import { FormlyKeyValueComponent } from '../components/parametrise-action-dialog/components/formly-key-value/formly-key-value.component';
 
 @NgModule({
   declarations: [
@@ -42,6 +43,7 @@ import { FormlySqlComponent } from '../components/parametrise-action-dialog/comp
     UnsavedChangesDialogComponent,
     ParametriseActionDialog,
     FormlySqlComponent,
+    FormlyKeyValueComponent,
   ],
   imports: [
     CommonModule,
@@ -53,6 +55,7 @@ import { FormlySqlComponent } from '../components/parametrise-action-dialog/comp
     FormlyModule.forRoot({
       types: [
         { name: 'sql', component: FormlySqlComponent },
+        { name: 'key-value', component: FormlyKeyValueComponent },
       ],
     }),
   ]
