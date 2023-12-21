@@ -79,6 +79,15 @@ use GUI constructs for the most parts to decorate your action invocations. Since
 expressions, you can easily reference results of your previous actions in your consecutive actions, allowing you to
 use the result of one action as the input to your next action.
 
+Notice, there is nothing preventing you from combining actions and workflows with normal Hyperlambda code, since
+workflows fundamentally are just plain Hyperlambda. However, if you add too much _"standard Hyperlambda code"_ to
+your workflows, it becomes difficult to continue maintaining your code using GUI constructs. The workflow GUI is
+created explicitly to handle workflows based upon actions, and doesn't do a very good job at describing standard
+Hyperlambda code.
+
+It is therefor smart to separate your workflows from your standard Hyperlambda code, to ensure your workflows
+becomes easily maintainable also by those without much prior Hyperlambda experience.
+
 ## Action arguments
 
 An action can accept arguments as an **[.arguments]** collection. Below is an example of arguments for an SQL
