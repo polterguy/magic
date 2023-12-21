@@ -24,7 +24,7 @@
       default:@".
    // Use 'system' for system messages and instructions.
    role:system
-   content:Answer my question in the style of Snoop Dogg
+   content:Answer me in the style of Snoop Dogg
 .
    // Use 'user' for content provided by user.
    role:user
