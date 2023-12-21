@@ -58,15 +58,9 @@ if
                .
                   ..:x:@.action/0
 
-      // Decorating Hyperlambda according to input [args].
-      for-each:x:@.arguments/*/args/*
-         get-name:x:@.dp/#
-         set-value:x:@.action/*/.example/*/{@get-name}
-            get-value:x:@.dp/#
-
-      // Adding default argument placeholders for invocation.
+      // Decorating action arguments according to [.arguments]/[args].
       add:x:@.invocation/*/execute/*/arguments
-         get-nodes:x:@.action/*/.example/*
+         get-nodes:x:@.arguments/*/args/*
 
       // Returning result to caller as Hyperlambda.
       lambda2hyper:x:@.invocation/*

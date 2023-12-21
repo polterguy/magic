@@ -30,13 +30,6 @@
       default
          @arg1:a%
       mandatory:bool:false
-.example
-   database-type:sqlite
-   connection-string:generic
-   database:magic
-   sql:select name from roles where name like @arg1 limit 2
-   params
-      @arg1:a%
 .icon:cloud_download
 
 // Sanity checking invocation.

@@ -7,7 +7,7 @@
    database-type
       type:enum
       default:sqlite
-      mandatory:bool:false
+      mandatory:bool:true
       values
          .:sqlite
          .:mssql
@@ -16,19 +16,20 @@
    connection-string
       type:string
       default:generic
-      mandatory:bool:false
+      mandatory:bool:true
    database
       type:string
       default:magic
-      mandatory:bool:false
+      mandatory:bool:true
    sql
-      type:string
-      default:select name from roles where name like @arg1 limit 2
+      type:sql
+      default:insert into roles (name, description) values (@name, @description)
       mandatory:bool:true
    params
       type:key-value
       default
-         @arg1:a%
+         @name:some-role-name
+         @description:Some role description
       mandatory:bool:false
 .icon:backup
 
@@ -58,10 +59,11 @@ data.connect:x:@.connection-string
    database-type:x:@.arguments/*/database-type
 
    // Parametrizing SQL.
-   add:x:./*/data.select
+   add:x:./*/data.execute
       get-nodes:x:@.arguments/*/params/*
 
    // Executing SQL.
-   data.select:x:@.arguments/*/sql
+   data.execute:x:@.arguments/*/sql
       database-type:x:@.arguments/*/database-type
-   return-nodes:x:@data.select/*
+   yield
+      result:x:@data.execute
