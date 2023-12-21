@@ -69,6 +69,15 @@ export class ParametriseActionDialog implements OnInit {
           };
           break;
 
+        case 'int':
+          add = true;
+          field.type = 'input';
+          field.props.attributes = {
+            autocomplete: 'off',
+            type: 'number'
+          };
+          break;
+
         case 'textarea':
           add = true;
           field.type = 'textarea';
@@ -85,6 +94,11 @@ export class ParametriseActionDialog implements OnInit {
         case 'csharp':
           add = true;
           field.type = 'csharp';
+          break;
+
+        case 'hyperlambda':
+          add = true;
+          field.type = 'hyperlambda';
           break;
 
         case 'email':

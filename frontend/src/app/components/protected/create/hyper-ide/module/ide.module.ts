@@ -32,6 +32,7 @@ import { CreateKeyValueDialogComponent } from '../components/parametrise-action-
 import { FormlyCSharpComponent } from '../components/parametrise-action-dialog/components/formly-csharp/formly-csharp.component';
 import { FormlyArrayComponent } from '../components/parametrise-action-dialog/components/formly-array/formly-array.component';
 import { CreateArrayDialogComponent } from '../components/parametrise-action-dialog/components/formly-array/components/create-array-dialog/create-array-dialog.component';
+import { FormlyHyperlambdaComponent } from '../components/parametrise-action-dialog/components/formly-hyperlambda/formly-hyperlambda.component';
 
 @NgModule({
   declarations: [
@@ -48,6 +49,7 @@ import { CreateArrayDialogComponent } from '../components/parametrise-action-dia
     ParametriseActionDialog,
     FormlySqlComponent,
     FormlyCSharpComponent,
+    FormlyHyperlambdaComponent,
     FormlyKeyValueComponent,
     FormlyArrayComponent,
     CreateKeyValueDialogComponent,
@@ -66,6 +68,7 @@ import { CreateArrayDialogComponent } from '../components/parametrise-action-dia
         { name: 'key-value', component: FormlyKeyValueComponent },
         { name: 'array', component: FormlyArrayComponent },
         { name: 'csharp', component: FormlyCSharpComponent },
+        { name: 'hyperlambda', component: FormlyHyperlambdaComponent },
       ],
     }),
   ]
