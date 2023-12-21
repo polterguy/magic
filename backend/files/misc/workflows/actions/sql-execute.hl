@@ -28,8 +28,8 @@
    params
       type:key-value
       default
-         @name:some-role-name
-         @description:Some role description
+         name:some-role-name
+         description:Some role description
       mandatory:bool:false
 .icon:backup
 

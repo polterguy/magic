@@ -21,8 +21,9 @@ import { GeneralService } from 'src/app/services/general.service';
     <mat-chip
       *ngFor="let item of items"
       (removed)="removeArgument(item)"
+      (click)="editArgument(item)"
       [removable]="true">
-      {{item.name}}:{{item.value}}
+      {{item.key}}:{{item.value}}
       <mat-icon matChipRemove>cancel</mat-icon>
     </mat-chip>
     <mat-chip (click)="addItem()">
@@ -51,7 +52,7 @@ export class FormlyKeyValueComponent extends FieldType<FieldTypeConfig> implemen
 
   removeArgument(el: any) {
 
-    delete this.model[<string>this.field.key][el.name];
+    delete this.model[<string>this.field.key][el.key];
     this.createItems();
   }
 
@@ -74,7 +75,23 @@ export class FormlyKeyValueComponent extends FieldType<FieldTypeConfig> implemen
         this.createItems();
       }
     });
-}
+  }
+
+  editArgument(item: any) {
+
+    this.dialog.open(CreateKeyValueDialogComponent, {
+      width: '80vw',
+      maxWidth: '512px',
+      data: item,
+    }).afterClosed().subscribe((result: any) => {
+
+      if (result) {
+
+        this.model[<string>this.field.key][result.key] = result.value;
+        this.createItems();
+      }
+    });
+  }
 
   /*
    * Private helpers.
@@ -85,7 +102,7 @@ export class FormlyKeyValueComponent extends FieldType<FieldTypeConfig> implemen
     this.items = [];
     for (var idx in this.model[<string>this.field.key]) {
       this.items.push({
-        name: idx,
+        key: idx,
         value: this.model[<string>this.field.key][idx],
       });
     }

@@ -4,8 +4,8 @@
  */
 
 // Angular and system imports.
-import { Component } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { Component, Inject, OnInit } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 // Application specific imports.
 import { GeneralService } from 'src/app/services/general.service';
@@ -18,14 +18,23 @@ import { GeneralService } from 'src/app/services/general.service';
   templateUrl: './create-key-value-dialog.component.html',
   styleUrls: ['./create-key-value-dialog.component.scss']
 })
-export class CreateKeyValueDialogComponent {
+export class CreateKeyValueDialogComponent implements OnInit {
 
   key: string;
   value: string;
 
   constructor(
     private generalService: GeneralService,
-    private dialogRef: MatDialogRef<CreateKeyValueDialogComponent>) {}
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private dialogRef: MatDialogRef<CreateKeyValueDialogComponent>) { }
+
+  ngOnInit() {
+
+    if (this.data) {
+      this.key = this.data.key;
+      this.value = this.data.value;
+    }
+  }
 
   onSubmit() {
 
@@ -38,6 +47,7 @@ export class CreateKeyValueDialogComponent {
     this.dialogRef.close({
       key: this.key,
       value: this.value,
+      edit: !!this.data
     });
   }
 }
