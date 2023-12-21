@@ -19,8 +19,22 @@ import { CodemirrorActionsService } from 'src/app/services/codemirror-actions.se
  * Formly SQL extension field.
  */
 @Component({
-  selector: 'app-codemirror-formly',
-  template: `<mat-icon [matTooltip]="connected ? 'You have a valid database connection' : 'You do not have a valid database connection'" [class]="connected ? 'connected' : 'disconnected'">{{connected ? 'check_circle' : 'report_problem'}}</mat-icon><ngx-codemirror #editor class="sql-formly-editor" *ngIf="cmOptions" [options]="cmOptions" [(ngModel)]="model[field.key]"></ngx-codemirror>`,
+  selector: 'app-formly-sql',
+  template: `
+<div class="mb-4">
+  <mat-icon
+    [matTooltip]="connected ? 'You have a valid database connection' : 'You do not have a valid database connection'"
+    [class]="connected ? 'connected' : 'disconnected'">
+    {{connected ? 'check_circle' : 'report_problem'}}
+  </mat-icon>
+  <ngx-codemirror
+    #editor
+    class="sql-formly-editor"
+    *ngIf="cmOptions"
+    [options]="cmOptions"
+    [(ngModel)]="model[field.key]">
+  </ngx-codemirror>
+</div>`,
   styleUrls: ['./formly-sql.scss']
 })
 export class FormlySqlComponent extends FieldType<FieldTypeConfig> implements OnInit {
@@ -33,7 +47,7 @@ export class FormlySqlComponent extends FieldType<FieldTypeConfig> implements On
 
   constructor(
     private sqlService: SqlService,
-    private cdn: ChangeDetectorRef,
+    private cdr: ChangeDetectorRef,
     private generalService: GeneralService,
     private codemirrorActionsService: CodemirrorActionsService) {
 
@@ -53,7 +67,7 @@ export class FormlySqlComponent extends FieldType<FieldTypeConfig> implements On
       // This will display CodeMirror due to its *ngIf part.
       this.cmOptions = this.codemirrorActionsService.getActions(null, 'sql');
       this.cmOptions.autofocus = false;
-      this.cdn.detectChanges();
+      this.cdr.detectChanges();
 
       // Waiting until CodeMirror is displayed, and cleaning history.
       setTimeout(() => {
@@ -117,7 +131,7 @@ export class FormlySqlComponent extends FieldType<FieldTypeConfig> implements On
         this.databases = result;
         this.connected = true;
         this.formControl.setErrors(null);
-        this.cdn.detectChanges();
+        this.cdr.detectChanges();
         this.databaseChanged();
       },
 
@@ -126,7 +140,7 @@ export class FormlySqlComponent extends FieldType<FieldTypeConfig> implements On
         this.generalService.hideLoading();
         this.connected = false;
         this.formControl.setErrors({connected: false});
-        this.cdn.detectChanges();
+        this.cdr.detectChanges();
       }
     });
   }
@@ -141,7 +155,7 @@ export class FormlySqlComponent extends FieldType<FieldTypeConfig> implements On
 
       this.connected = false;
       this.formControl.setErrors({connected: false});
-      this.cdn.detectChanges();
+      this.cdr.detectChanges();
 
     } else {
 
@@ -151,7 +165,7 @@ export class FormlySqlComponent extends FieldType<FieldTypeConfig> implements On
       };
       this.connected = true;
       this.formControl.setErrors(null);
-      this.cdn.detectChanges();
+      this.cdr.detectChanges();
     }
   }
 }
