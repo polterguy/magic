@@ -7,6 +7,9 @@
 import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 
+// Application specific imports.
+import { GeneralService } from 'src/app/services/general.service';
+
 /**
  * Modal dialog allowing you to create a new key/value pair.
  */
@@ -20,9 +23,17 @@ export class CreateKeyValueDialogComponent {
   key: string;
   value: string;
 
-  constructor(private dialogRef: MatDialogRef<CreateKeyValueDialogComponent>) {}
+  constructor(
+    private dialogRef: MatDialogRef<CreateKeyValueDialogComponent>,
+    private generalService: GeneralService) {}
 
   onSubmit() {
+
+    if (!this.key || !this.value || this.key === '' || this.value === '') {
+
+      this.generalService.showFeedback('Please provide both key and value', 'errorMessage');
+      return;
+    }
 
     this.dialogRef.close({
       key: this.key,

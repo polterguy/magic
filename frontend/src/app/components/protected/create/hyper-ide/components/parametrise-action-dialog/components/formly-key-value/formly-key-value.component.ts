@@ -5,7 +5,7 @@
 
 // Angular and system imports.
 import { FieldType, FieldTypeConfig } from '@ngx-formly/core';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateKeyValueDialogComponent } from '../create-key-value-dialog/create-key-value-dialog.component';
 
@@ -31,7 +31,6 @@ import { CreateKeyValueDialogComponent } from '../create-key-value-dialog/create
   </mat-chip-list>
 </div>`,
   styleUrls: ['./formly-key-value.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FormlyKeyValueComponent extends FieldType<FieldTypeConfig> implements OnInit {
 
