@@ -15,6 +15,12 @@ and/or input arguments to the workflow itself. The purpose of a workflow is to l
 logic flow, to such a significant extent, that also non-software developers can to some extent manage to create
 computer logic and backend code.
 
+A workflow can in theory be any Hyperlambda file, and workflows are not special in any ways, except they're
+typically not built by writing code, but rather built using GUI building blocks to chain actions together.
+This allows you to create workflows that are HTTP API endpoints, workflows intended to be executed as scheduled
+tasks, etc. This makes Hyperlambda workflows _very_ powerful, allowing you to create almost anything you wish 
+(in theory) using GUI building blocks, without having to manually write Hyperlambda.
+
 ## Actions
 
 Actions are building blocks for workflows, and once chained together, at least in theory allows for declaratively
@@ -132,6 +138,8 @@ his or her own value.
 
 Mandatory will require the user to provide a value if it's true.
 
+## An example action declaration
+
 Below you can see a complete action declaration, including its arguments. This action executes an SQL statement
 towards your database type and connection string, and returns the result as an array.
 
@@ -203,6 +211,8 @@ data.connect:x:@.connection-string
    return-nodes:x:@data.select/*
 ```
 
+## Example action invocation
+
 If you use your toolbox to inject the above action into a workflow, it will end up looking as follows.
 
 ```
@@ -222,7 +232,9 @@ execute:magic.workflows.actions.execute
          @arg1:a%
 ```
 
-Think about action declarations and action invocations as functions versus invocations. Your action declarations
-declares what your actions does, what input it can legally handle, etc - While your action invocations invokes
-your actions. If you wish you can also use the analogy of a class for an action declaration, and an object for
-an action invocation.
+## Action abstracts
+
+Think of action declarations and action invocations as function declarations versus function invocations. Your
+action declarations declares what your actions does, what input it can legally handle, contains its logic, etc -
+While your action invocations invokes and consumes your actions. If you wish you can also use the analogy of a
+class for an action declaration, and an object for an action invocation.
