@@ -23,12 +23,12 @@
       mandatory:bool:true
    sql
       type:sql
-      default:select name from roles where name like @arg1 limit 2
+      default:select name from roles where name like @filter limit 2
       mandatory:bool:true
    params
       type:key-value
       default
-         @arg1:a%
+         filter:a%
 .icon:cloud_download
 
 // Sanity checking invocation.
