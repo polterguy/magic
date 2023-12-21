@@ -6,25 +6,23 @@
  */
 .arguments
    name
-      type:name
+      type:string
       mandatory:bool:true
+      default:John Doe
    email
       type:email
       mandatory:bool:true
+      default:john@doe.com
    subject
       type:string
       mandatory:bool:true
+      default:Some subject line
    body
       type:textarea
       mandatory:bool:true
-.example
-   name:John Doe
-   email:john@doe.com
-   subject:Just checking in
-   body:@"Hi John,
+      default:@"Hello John,
 
 How's it going?"
-.icon:email
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/name

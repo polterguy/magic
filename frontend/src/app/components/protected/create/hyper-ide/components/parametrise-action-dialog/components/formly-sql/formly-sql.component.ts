@@ -21,9 +21,9 @@ import { CodemirrorActionsService } from 'src/app/services/codemirror-actions.se
 @Component({
   selector: 'app-codemirror-formly',
   template: `<mat-icon [matTooltip]="connected ? 'You have a valid database connection' : 'You do not have a valid database connection'" [class]="connected ? 'connected' : 'disconnected'">{{connected ? 'check_circle' : 'report_problem'}}</mat-icon><ngx-codemirror #editor class="sql-formly-editor" *ngIf="cmOptions" [options]="cmOptions" [(ngModel)]="model[field.key]"></ngx-codemirror>`,
-  styleUrls: ['./codemirror-sql-formly.scss']
+  styleUrls: ['./formly-sql.scss']
 })
-export class CodemirrorSqlFormlyComponent extends FieldType<FieldTypeConfig> implements OnInit {
+export class FormlySqlComponent extends FieldType<FieldTypeConfig> implements OnInit {
 
   private databases: Databases = null;
   @ViewChild('editor') private editor: CodemirrorComponent;
@@ -150,7 +150,6 @@ export class CodemirrorSqlFormlyComponent extends FieldType<FieldTypeConfig> imp
       this.connected = true;
       this.formControl.setErrors(null);
       this.cdn.detectChanges();
-
     }
   }
 }
