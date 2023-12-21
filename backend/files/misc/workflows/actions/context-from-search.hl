@@ -1,15 +1,15 @@
 
 /*
  * Returns [max_tokens] context for the specified [query] by searching DuckDuckGo.
- *
- * [max_tokens] is optional and defaults to 4000.
  */
 .arguments
-   query:string
-   max_tokens:int
-.example
-   query:Who won US Open in 2023?
-   max_tokens:int:4000
+   query
+      type:string
+      mandatory:bool:true
+   max_tokens
+      type:int
+      mandatory:bool:true
+      default:int:4000
 .icon:extension
 
 // Sanity checking invocation.
@@ -31,7 +31,8 @@ while
       exists:x:@execute/0/*/snippets/0
       lt
          openai.tokenize:x:@.context
-         get-value:x:@.arguments/*/max_tokens
+         convert:x:@.arguments/*/max_tokens
+            type:int
    .lambda
 
       // Temporary value.
@@ -47,7 +48,8 @@ while
       if
          lt
             openai.tokenize:x:@.tmp
-            get-value:x:@.arguments/*/max_tokens
+            convert:x:@.arguments/*/max_tokens
+               type:int
          .lambda
 
             // Still below [max_tokes].
