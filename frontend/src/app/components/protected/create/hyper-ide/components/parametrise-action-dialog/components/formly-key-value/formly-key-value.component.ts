@@ -5,7 +5,9 @@
 
 // Angular and system imports.
 import { FieldType, FieldTypeConfig } from '@ngx-formly/core';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { CreateKeyValueDialogComponent } from '../create-key-value-dialog/create-key-value-dialog.component';
 
 /**
  * Formly key/value extension field.
@@ -22,7 +24,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChil
       {{item.name}}:{{item.value}}
       <mat-icon matChipRemove>cancel</mat-icon>
     </mat-chip>
-    <mat-chip>
+    <mat-chip (click)="addItem()">
       Add
       <mat-icon>add</mat-icon>
     </mat-chip>
@@ -35,7 +37,7 @@ export class FormlyKeyValueComponent extends FieldType<FieldTypeConfig> implemen
 
   items: any[] = [];
 
-  constructor() {
+  constructor(private dialog: MatDialog) {
 
     super();
   }
@@ -51,11 +53,26 @@ export class FormlyKeyValueComponent extends FieldType<FieldTypeConfig> implemen
     this.createItems();
   }
 
+  addItem() {
+
+    this.dialog.open(CreateKeyValueDialogComponent, {
+      width: '80vw',
+      maxWidth: '512px',
+    }).afterClosed().subscribe((result: any) => {
+
+      if (result) {
+
+        this.model[<string>this.field.key][result.key] = result.value;
+        this.createItems();
+      }
+    });
+}
+
   /*
    * Private helpers.
    */
 
-  createItems() {
+  private createItems() {
 
     this.items = [];
     for (var idx in this.model[<string>this.field.key]) {
