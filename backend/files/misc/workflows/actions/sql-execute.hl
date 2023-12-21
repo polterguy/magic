@@ -1,6 +1,6 @@
 
 /*
- * Execute some select SQL statement specified as [sql].
+ * Execute some execute SQL statement specified as [sql].
  * Optionally provide [connection-string], [database-type] and [database].
  */
 .arguments
