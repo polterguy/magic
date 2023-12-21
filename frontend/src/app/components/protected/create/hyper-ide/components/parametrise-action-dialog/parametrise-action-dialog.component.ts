@@ -55,6 +55,11 @@ export class ParametriseActionDialog implements OnInit {
           field.type = 'key-value';
           break;
 
+        case 'array':
+          add = true;
+          field.type = 'array';
+          break;
+
         case 'string':
           add = true;
           field.type = 'input';
@@ -76,12 +81,22 @@ export class ParametriseActionDialog implements OnInit {
           field.type = 'sql';
           break;
 
+        case 'csharp':
+          add = true;
+          field.type = 'csharp';
+          break;
+
         case 'email':
           add = true;
           field.type = 'input';
           field.props.attributes = {
             autocomplete: 'email',
           };
+          break;
+
+        case 'bool':
+          add = true;
+          field.type = 'checkbox';
           break;
 
         case 'enum':

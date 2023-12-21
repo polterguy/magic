@@ -24,8 +24,8 @@ export class CreateKeyValueDialogComponent {
   value: string;
 
   constructor(
-    private dialogRef: MatDialogRef<CreateKeyValueDialogComponent>,
-    private generalService: GeneralService) {}
+    private generalService: GeneralService,
+    private dialogRef: MatDialogRef<CreateKeyValueDialogComponent>) {}
 
   onSubmit() {
 

@@ -7,14 +7,14 @@
 import { FieldType, FieldTypeConfig } from '@ngx-formly/core';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { CreateKeyValueDialogComponent } from './components/create-key-value-dialog/create-key-value-dialog.component';
 import { GeneralService } from 'src/app/services/general.service';
+import { CreateArrayDialogComponent } from './components/create-array-dialog/create-array-dialog.component';
 
 /**
  * Formly key/value extension field.
  */
 @Component({
-  selector: 'app-formly-key-value',
+  selector: 'app-formly-array',
   template: `
 <div class="w-100 standalone-field mb-4">
   <mat-chip-list>
@@ -22,7 +22,7 @@ import { GeneralService } from 'src/app/services/general.service';
       *ngFor="let item of items"
       (removed)="removeArgument(item)"
       [removable]="true">
-      {{item.name}}:{{item.value}}
+      {{item}}
       <mat-icon matChipRemove>cancel</mat-icon>
     </mat-chip>
     <mat-chip (click)="addItem()">
@@ -31,11 +31,11 @@ import { GeneralService } from 'src/app/services/general.service';
     </mat-chip>
   </mat-chip-list>
 </div>`,
-  styleUrls: ['./formly-key-value.scss'],
+  styleUrls: ['./formly-array.scss'],
 })
-export class FormlyKeyValueComponent extends FieldType<FieldTypeConfig> implements OnInit {
+export class FormlyArrayComponent extends FieldType<FieldTypeConfig> implements OnInit {
 
-  items: any[] = [];
+  items: string[] = [];
 
   constructor(
     private dialog: MatDialog,
@@ -51,26 +51,20 @@ export class FormlyKeyValueComponent extends FieldType<FieldTypeConfig> implemen
 
   removeArgument(el: any) {
 
-    delete this.model[<string>this.field.key][el.name];
+    this.model[<string>this.field.key].splice(this.model[<string>this.field.key].indexOf(el), 1);
     this.createItems();
   }
 
   addItem() {
 
-    this.dialog.open(CreateKeyValueDialogComponent, {
+    this.dialog.open(CreateArrayDialogComponent, {
       width: '80vw',
       maxWidth: '512px',
     }).afterClosed().subscribe((result: any) => {
 
       if (result) {
 
-        if (this.model[<string>this.field.key][result.key]) {
-
-          this.generalService.showFeedback('That key already exists', 'errorMessage');
-          return;
-        }
-
-        this.model[<string>this.field.key][result.key] = result.value;
+        this.model[<string>this.field.key].push(result);
         this.createItems();
       }
     });
@@ -83,11 +77,8 @@ export class FormlyKeyValueComponent extends FieldType<FieldTypeConfig> implemen
   private createItems() {
 
     this.items = [];
-    for (var idx in this.model[<string>this.field.key]) {
-      this.items.push({
-        name: idx,
-        value: this.model[<string>this.field.key][idx],
-      });
+    for (var idx of this.model[<string>this.field.key]) {
+      this.items.push(idx);
     }
   }
 }

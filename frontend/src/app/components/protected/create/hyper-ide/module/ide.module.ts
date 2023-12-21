@@ -28,7 +28,10 @@ import { ExecuteResult } from '../components/execute-result-dialog/execute-resul
 import { ParametriseActionDialog } from '../components/parametrise-action-dialog/parametrise-action-dialog.component';
 import { FormlySqlComponent } from '../components/parametrise-action-dialog/components/formly-sql/formly-sql.component';
 import { FormlyKeyValueComponent } from '../components/parametrise-action-dialog/components/formly-key-value/formly-key-value.component';
-import { CreateKeyValueDialogComponent } from '../components/parametrise-action-dialog/components/create-key-value-dialog/create-key-value-dialog.component';
+import { CreateKeyValueDialogComponent } from '../components/parametrise-action-dialog/components/formly-key-value/components/create-key-value-dialog/create-key-value-dialog.component';
+import { FormlyCSharpComponent } from '../components/parametrise-action-dialog/components/formly-csharp/formly-csharp.component';
+import { FormlyArrayComponent } from '../components/parametrise-action-dialog/components/formly-array/formly-array.component';
+import { CreateArrayDialogComponent } from '../components/parametrise-action-dialog/components/formly-array/components/create-array-dialog/create-array-dialog.component';
 
 @NgModule({
   declarations: [
@@ -44,8 +47,11 @@ import { CreateKeyValueDialogComponent } from '../components/parametrise-action-
     UnsavedChangesDialogComponent,
     ParametriseActionDialog,
     FormlySqlComponent,
+    FormlyCSharpComponent,
     FormlyKeyValueComponent,
+    FormlyArrayComponent,
     CreateKeyValueDialogComponent,
+    CreateArrayDialogComponent,
   ],
   imports: [
     CommonModule,
@@ -58,6 +64,8 @@ import { CreateKeyValueDialogComponent } from '../components/parametrise-action-
       types: [
         { name: 'sql', component: FormlySqlComponent },
         { name: 'key-value', component: FormlyKeyValueComponent },
+        { name: 'array', component: FormlyArrayComponent },
+        { name: 'csharp', component: FormlyCSharpComponent },
       ],
     }),
   ]
