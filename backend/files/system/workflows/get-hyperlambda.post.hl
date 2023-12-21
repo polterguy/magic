@@ -58,6 +58,23 @@ if
                .
                   ..:x:@.action/0
 
+      // Making sure we correctly convert arguments according to type declaration.
+      for-each:x:@.arguments/*/args/*
+         get-name:x:@.dp/#
+         switch:x:@.action/*/.arguments/*/{@get-name}/*/type
+            case:long
+            case:decimal
+            case:int
+            case:float
+            case:double
+               set-value:x:@.dp/#
+                  convert:x:@.dp/#
+                     type:x:@.action/*/.arguments/*/{@get-name}/*/type
+            case:hyperlambda
+               add:x:@.dp/#
+                  hyper2lambda:x:@.dp/#
+               set-value:x:@.dp/#
+
       // Decorating action arguments according to [.arguments]/[args].
       add:x:@.invocation/*/execute/*/arguments
          get-nodes:x:@.arguments/*/args/*

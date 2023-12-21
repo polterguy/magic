@@ -7,15 +7,21 @@
  * tokens to return.
  */
 .arguments
-   type:string
-   query:string
-   threshold:decimal
-   max_tokens:int
-.example
-   type:x:@.arguments/*/type
-   query:x:@.arguments/*/query
-   threshold:decimal:0.3
-   max_tokens:int:2000
+   type
+      type:string
+      mandatory:bool:true
+      default:default
+   query
+      type:string
+      mandatory:bool:true
+   threshold
+      type:decimal
+      mandatory:bool:false
+      default:decimal:0.3
+   max_tokens
+      type:int
+      mandatory:bool:false
+      default:int:4000
 .icon:extension
 
 // Sanity checking invocation.
@@ -29,11 +35,11 @@ validators.default:x:@.arguments
 
 // Retrieving context.
 execute:magic.ai.get-context
-   type:ainiro_io
+   type:x:@.arguments/*/type
    vector_model:text-embedding-ada-002
-   prompt:What is AINIRO?
-   threshold:decimal:0.3
-   max_tokens:int:2000
+   prompt:x:@.arguments/*/query
+   threshold:x:@.arguments/*/threshold
+   max_tokens:x:@.arguments/*/max_tokens
 
 // Returning result of invocation to caller.
 yield
