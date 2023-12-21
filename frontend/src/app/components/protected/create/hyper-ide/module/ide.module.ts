@@ -28,6 +28,7 @@ import { ExecuteResult } from '../components/execute-result-dialog/execute-resul
 import { ParametriseActionDialog } from '../components/parametrise-action-dialog/parametrise-action-dialog.component';
 import { FormlySqlComponent } from '../components/parametrise-action-dialog/components/formly-sql/formly-sql.component';
 import { FormlyKeyValueComponent } from '../components/parametrise-action-dialog/components/formly-key-value/formly-key-value.component';
+import { CreateKeyValueDialogComponent } from '../components/parametrise-action-dialog/components/create-key-value-dialog/create-key-value-dialog.component';
 
 @NgModule({
   declarations: [
@@ -44,6 +45,7 @@ import { FormlyKeyValueComponent } from '../components/parametrise-action-dialog
     ParametriseActionDialog,
     FormlySqlComponent,
     FormlyKeyValueComponent,
+    CreateKeyValueDialogComponent,
   ],
   imports: [
     CommonModule,

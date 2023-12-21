@@ -1,0 +1,58 @@
+<h3 mat-dialog-title>New key/value pair</h3>
+
+<form (ngSubmit)="onSubmit()">
+
+  <div mat-dialog-content>
+
+    <mat-form-field class="w-100 standalone-field prompt">
+      <span
+        matPrefix
+        matTooltip="Key of key pair"
+        class="d-flex flex-nowrap align-items-center justify-content-between pe-2">
+        <mat-icon>key</mat-icon>
+        <span class="text-muted">|</span>
+      </span>
+      <input
+        matInput
+        placeholder="Key of your pair ..."
+        name="key"
+        [(ngModel)]="key"
+        autocomplete="off">
+    </mat-form-field>
+
+    <mat-form-field class="w-100 standalone-field prompt">
+      <span
+        matPrefix
+        matTooltip="Value of key pair"
+        class="d-flex flex-nowrap align-items-center justify-content-between pe-2">
+        <mat-icon>edit</mat-icon>
+        <span class="text-muted">|</span>
+      </span>
+      <input
+        matInput
+        placeholder="Value of your pair ..."
+        name="value"
+        [(ngModel)]="value"
+        autocomplete="off">
+    </mat-form-field>
+
+  </div>
+
+  <div mat-dialog-actions [align]="'end'">
+
+    <button
+      mat-button
+      mat-dialog-close>
+      Close
+    </button>
+
+    <button
+      mat-flat-button
+      color="primary"
+      type="submit">
+      OK
+    </button>
+
+  </div>
+
+</form>
