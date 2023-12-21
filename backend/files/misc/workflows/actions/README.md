@@ -6,7 +6,27 @@ building blocks for workflows, allowing you to chain together collections of act
 declaratively instructs your backend how to execute a workflow. Think of them as _"chained high level functions"_,
 where the implementation details are hidden, and your job is to supply the correct input, chaining the result
 of the invocation of one action to your next action, resulting in an _"execution flow"_ of high level building
-blocks. An action is declared as follows. 
+blocks, resulting in a _"workflow"_.
+
+## Workflows
+
+A workflow is a chained list of actions, where each action can reference results from executing previous actions,
+and/or input arguments to the workflow itself. The purpose of a workflow is to lower the bar for creating backend
+logic flow, to such a significant extent, that also non-software developers can to some extent manage to create
+computer logic and backend code.
+
+## Actions
+
+Actions are building blocks for workflows, and once chained together, at least in theory allows for declaratively
+creating code without much software development experience. What actions your particular installation has might 
+differ from installation to installation, but each Magic Cloud installation should be able to find at least some
+actions in the _"Toolbox"_ component in Hyper IDE. Creating an action requires extensive knowledge about Hyperlambda,
+but consuming an action should be significantly easier, since consuming actions typically are used using high
+level GUI building blocks without having to understand its underlying code. However, consuming an action
+still _produces_ code for you, which can be manually edited afterwards - But it is not necessary in general to
+write Hyperlambda to consume actions and create workflows.
+
+An action is declared as follows.
 
 ```
 /*
