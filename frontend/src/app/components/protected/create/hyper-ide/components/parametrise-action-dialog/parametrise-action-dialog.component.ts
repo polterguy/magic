@@ -33,6 +33,7 @@ export class ParametriseActionDialog implements OnInit {
 
   ngOnInit() {
 
+    // Adding fields as returned from server.
     for (const idx in this.data.input) {
       const field: FormlyFieldConfig = {
         key: idx,

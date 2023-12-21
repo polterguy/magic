@@ -1,10 +1,14 @@
-<h3 mat-dialog-title>Arguments to action</h3>
+<h3 mat-dialog-title>Arguments to {{data.name}}</h3>
 
 <form
   [formGroup]="form"
   (ngSubmit)="onSubmit(model)">
 
   <div mat-dialog-content>
+
+    <p class="text-muted mb-4">
+      {{data.description}}
+    </p>
 
     <formly-form
       [form]="form"

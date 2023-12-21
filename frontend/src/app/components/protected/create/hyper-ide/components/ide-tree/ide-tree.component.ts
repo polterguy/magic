@@ -212,6 +212,8 @@ export class IdeTreeComponent implements OnInit {
             disableClose: true,
             data: {
               input: result.input,
+              description: el.description,
+              name: el.name,
             },
           }).afterClosed().subscribe((data: any) => {
             if (data) {
