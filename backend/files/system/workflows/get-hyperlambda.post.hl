@@ -73,6 +73,7 @@ if
             case:hyperlambda
                add:x:@.dp/#
                   hyper2lambda:x:@.dp/#
+                     comments:true
                set-value:x:@.dp/#
 
       // Decorating action arguments according to [.arguments]/[args].
