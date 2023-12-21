@@ -10,6 +10,10 @@
       type:string
       mandatory:bool:true
       default:your-assembly-name.dll
+   recompile
+      type:bool
+      mandatory:bool:true
+      default:bool:true
    references
       type:array
       mandatory:bool:true
@@ -21,10 +25,6 @@
          .:magic.node
          .:magic.node.extensions
          .:magic.signals.contracts
-   recompile
-      type:bool
-      mandatory:bool:true
-      default:bool:true
    code
       type:csharp
       mandatory:bool:false
