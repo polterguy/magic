@@ -16,7 +16,7 @@ import { GeneralService } from 'src/app/services/general.service';
 import { CodemirrorActionsService } from 'src/app/services/codemirror-actions.service';
 
 /**
- * CodeMirror Formly extension field.
+ * Formly SQL extension field.
  */
 @Component({
   selector: 'app-codemirror-formly',
@@ -133,7 +133,9 @@ export class FormlySqlComponent extends FieldType<FieldTypeConfig> implements On
 
   private databaseChanged() {
 
-    let hintTables = (this.databases.databases || []).find((db: any) => db.name === this.model['database'])?.tables || [];
+    let hintTables = (this.databases.databases || [])
+      .find((db: any) => db.name === this.model['database'])
+      ?.tables || [];
 
     if (hintTables.length === 0) {
 
