@@ -42,7 +42,6 @@ export class FormlySqlComponent extends FieldType<FieldTypeConfig> implements On
   private databases: Databases = null;
   @ViewChild('editor') private editor: CodemirrorComponent;
   cmOptions: any = null;
-  ready: boolean = false;
   connected: boolean = false;
 
   constructor(

@@ -6,14 +6,29 @@
  * AppDomain, unless [recompile] is true.
  */
 .arguments
-   code:string
-   file:string
-   references:*
-   assembly-name:string
-   recompile:bool
-.example
-   code:@"
-using System;
+   assembly-name
+      type:string
+      mandatory:bool:true
+      default:your-assembly-name.dll
+   references
+      type:array
+      mandatory:bool:true
+      default
+         .:netstandard
+         .:System.Runtime
+         .:System.ComponentModel
+         .:System.Private.CoreLib
+         .:magic.node
+         .:magic.node.extensions
+         .:magic.signals.contracts
+   recompile
+      type:bool
+      mandatory:bool:true
+      default:bool:true
+   code
+      type:csharp
+      mandatory:bool:false
+      default:@"using System;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
@@ -34,16 +49,6 @@ public class Foo : ISlot
         input.Value = null;
     }
 }"
-   references
-      .:netstandard
-      .:System.Runtime
-      .:System.ComponentModel
-      .:System.Private.CoreLib
-      .:magic.node
-      .:magic.node.extensions
-      .:magic.signals.contracts
-   assembly-name:employees.dll
-   recompile:bool:false
 .icon:rocket_launch
 
 // Sanity checking invocation.
@@ -66,26 +71,7 @@ if
       add:x:./*/system.compile
          get-nodes:x:@.arguments/*/references
          get-nodes:x:@.arguments/*/assembly-name
-
-      // Checking if caller provided a [file] argument instead of a [code] argument.
-      if
-         and
-            not-exists:x:@.arguments/*/code
-            exists:x:@.arguments/*/file
-            not-null:x:@.arguments/*/file
-         .lambda
-
-            // We've got a [file] argument instead of a [code] argument.
-            load-file:x:@.arguments/*/file
-            add:x:@.lambda/@.lambda/*/system.compile
-               .
-                  code:x:@load-file
-
-      else
-
-         // Caller provided a [code] argument.
-         add:x:@.lambda/*/system.compile
-            get-nodes:x:@.arguments/*/code
+         get-nodes:x:@.arguments/*/code
 
       // Compiling C# code.
       system.compile
