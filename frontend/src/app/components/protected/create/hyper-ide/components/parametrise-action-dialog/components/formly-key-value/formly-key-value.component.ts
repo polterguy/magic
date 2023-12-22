@@ -66,6 +66,9 @@ export class FormlyKeyValueComponent extends FieldType<FieldTypeConfig> implemen
 
       if (result) {
 
+        if (!this.model[<string>this.field.key]) {
+          this.model[<string>this.field.key] = {};
+        }
         if (item === null && this.model[<string>this.field.key][result.key]) {
 
           this.generalService.showFeedback('That key already exists', 'errorMessage');
