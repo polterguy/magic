@@ -39,15 +39,18 @@ for-each:x:@hyper2lambda/*/.arguments/*
       .lambda
 
          // Complete argument we can reference "absolutely".
+         get-name:x:@.dp/#
+         strings.concat
+            .:"Argument / "
+            get-value:x:@get-name
          strings.concat
             .:@.arguments/*/
             get-name:x:@.dp/#
-         get-name:x:@.dp/#
          unwrap:x:+/*/*/*
          add:x:../*/return/*/candidates
             .
                .
-                  name:x:@get-name
+                  name:x:@strings.concat/@strings.concat
                   expression:x:@strings.concat
                   type:argument
                   complete:bool:true
@@ -55,15 +58,18 @@ for-each:x:@hyper2lambda/*/.arguments/*
    else
 
       // Incomplete argument we can NOT reference "absolutely".
+      get-name:x:@.dp/#
+      strings.concat
+         .:"Argument / "
+         get-value:x:@get-name
       strings.concat
          .:@.arguments/*/
          get-name:x:@.dp/#
-      get-name:x:@.dp/#
       unwrap:x:+/*/*/*
       add:x:../*/return/*/candidates
          .
             .
-               name:x:@get-name
+               name:x:@strings.concat/@strings.concat
                expression:x:@strings.concat
                type:argument
                complete:bool:false
@@ -78,6 +84,10 @@ for-each:x:@hyper2lambda/*/execute/*/name/./*/filename/.
    // Finding complete arguments first, implying arguments we can reference absolutely.
    for-each:x:@hyper2lambda/**/[yield|return]/*
       strings.concat
+         get-value:x:@.dp/@.dp/#/*/name
+         .:" / "
+         get-name:x:@.dp/#
+      strings.concat
          .:--/execute/=
          get-value:x:@.dp/@.dp/#/*/name
          .:/*/
@@ -86,7 +96,7 @@ for-each:x:@hyper2lambda/*/execute/*/name/./*/filename/.
       add:x:../*/return/*/candidates
          .
             .
-               name:x:@.dp/@.dp/#/*/name
+               name:x:@strings.concat/@strings.concat
                expression:x:@strings.concat
                type:action-result
                complete:bool:true

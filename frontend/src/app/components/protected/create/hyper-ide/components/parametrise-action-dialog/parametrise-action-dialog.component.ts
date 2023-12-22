@@ -61,21 +61,35 @@ export class ParametriseActionDialog implements OnInit {
           field.type = 'array';
           break;
 
-        case 'string':
-          add = true;
-          field.type = 'input';
-          field.props.attributes = {
-            autocomplete: 'off',
-          };
-          break;
-
         case 'int':
+        case 'email':
+        case 'string':
+        case 'enum':
           add = true;
-          field.type = 'input';
-          field.props.attributes = {
-            autocomplete: 'off',
-            type: 'number'
-          };
+          field.type = 'autocomplete';
+          field.props.options = [];
+          if (this.data.input[idx].default) {
+            field.props.options.push({
+              value: this.data.input[idx].default,
+              label: this.data.input[idx].default
+            });
+          }
+          if (this.data.input[idx].type === 'enum') {
+            for (let idxNo = 0; idxNo < this.data.input[idx].values.length; idxNo++) {
+              if (field.props.options.filter(x => x.value === this.data.input[idx].values[idxNo]).length === 0) {
+                field.props.options.push({
+                  value: this.data.input[idx].values[idxNo],
+                  label: this.data.input[idx].values[idxNo],
+                });
+              }
+            }
+          }
+          for (const idxCandidate of this.data.candidates) {
+            field.props.options.push({
+              value: ':x:' + idxCandidate.expression,
+              label: idxCandidate.name,
+            });
+          }
           break;
 
         case 'textarea':
@@ -101,29 +115,9 @@ export class ParametriseActionDialog implements OnInit {
           field.type = 'hyperlambda';
           break;
 
-        case 'email':
-          add = true;
-          field.type = 'input';
-          field.props.attributes = {
-            autocomplete: 'email',
-          };
-          break;
-
         case 'bool':
           add = true;
           field.type = 'checkbox';
-          break;
-
-        case 'enum':
-          add = true;
-          field.type = 'select';
-          field.props.options = [];
-          for (let idxNo = 0; idxNo < this.data.input[idx].values.length; idxNo++) {
-            field.props.options.push({
-              value: this.data.input[idx].values[idxNo],
-              label: this.data.input[idx].values[idxNo],
-            });
-          }
           break;
 
         default:
