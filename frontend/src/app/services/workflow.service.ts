@@ -23,9 +23,17 @@ export class WorkflowService {
   /**
    * Returns a list of all workflow funtions.
    */
-  listToolboxItems() {
+  getWorkflowActions() {
 
     return this.httpService.get<any[]>('/magic/system/workflows/actions');
+  }
+
+  /**
+   * Returns a list of all workflow funtions.
+   */
+  getWorkflowSnippets() {
+
+    return this.httpService.get<any[]>('/magic/system/workflows/snippets');
   }
 
   /**

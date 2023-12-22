@@ -59,7 +59,8 @@ export class IdeTreeComponent implements OnInit {
   zipFileInput: string;
   showRenameBox: TreeNode = null;
   currentSelection: string = '';
-  workflowFunctions: any[] = [];
+  workflowActions: any[] = [];
+  workflowSnippets: any[] = [];
 
   constructor(
     private dialog: MatDialog,
@@ -80,7 +81,7 @@ export class IdeTreeComponent implements OnInit {
         // Data binding tree.
         this.dataSource.data = this.root.children;
 
-        this.getToolboxItemsFromServer().then(() => {
+        this.getWorkflowActions().then(() => {
 
           this.generalService.hideLoading();
         })
@@ -145,30 +146,6 @@ export class IdeTreeComponent implements OnInit {
 
           resolve(false);
           this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
-        }
-      });
-    });
-  }
-
-  /**
-   * Returns all toolbox items from the server.
-   */
-  getToolboxItemsFromServer() {
-
-    return new Promise<boolean>(resolve => {
-
-      this.workflowService.listToolboxItems().subscribe({
-
-        next: (functions: any[]) => {
-
-          this.workflowFunctions = functions.reverse();
-          resolve(true);
-        },
-
-        error: (error: any) => {
-
-          this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
-          resolve(false);
         }
       });
     });
@@ -1018,6 +995,41 @@ export class IdeTreeComponent implements OnInit {
         this.generalService.hideLoading();
         this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
       }
+    });
+  }
+
+  private getWorkflowActions() {
+
+    return new Promise<boolean>(resolve => {
+
+      this.workflowService.getWorkflowActions().subscribe({
+
+        next: (functions: any[]) => {
+
+          this.workflowService.getWorkflowSnippets().subscribe({
+
+            next: (snippets: any[]) => {
+
+              this.workflowSnippets = snippets.reverse();
+              resolve(true);
+            },
+
+            error: (error: any) => {
+
+              this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+              resolve(false);
+            }
+          });
+
+          this.workflowActions = functions.reverse();
+        },
+
+        error: (error: any) => {
+
+          this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+          resolve(false);
+        }
+      });
     });
   }
 }
