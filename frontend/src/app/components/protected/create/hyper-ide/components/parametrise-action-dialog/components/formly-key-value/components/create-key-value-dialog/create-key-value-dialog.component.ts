@@ -47,7 +47,7 @@ export class CreateKeyValueDialogComponent implements OnInit {
     this.dialogRef.close({
       key: this.key,
       value: this.value,
-      edit: !!this.data
+      edit: !!this.data,
     });
   }
 }
