@@ -23,6 +23,7 @@
       default:@"Hello John,
 
 How's it going?"
+.icon:email
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/name

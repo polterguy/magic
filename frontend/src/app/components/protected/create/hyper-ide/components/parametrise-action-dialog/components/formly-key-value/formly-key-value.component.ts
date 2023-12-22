@@ -61,7 +61,10 @@ export class FormlyKeyValueComponent extends FieldType<FieldTypeConfig> implemen
     this.dialog.open(CreateKeyValueDialogComponent, {
       width: '80vw',
       maxWidth: '512px',
-      data: item || null,
+      data: {
+        item: item || null,
+        options: this.props.options,
+      }
     }).afterClosed().subscribe((result: any) => {
 
       if (result) {
