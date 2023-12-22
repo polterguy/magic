@@ -152,7 +152,7 @@ export class IdeTreeComponent implements OnInit {
   }
 
   /**
-   * Adds the specified function to the currently edited workflow.
+   * Adds the specified action to the currently edited Hyperlambda file.
    */
   insertAction(el: any) {
 
@@ -163,10 +163,12 @@ export class IdeTreeComponent implements OnInit {
     }
 
     // Getting arguments for action.
-    this.workflowService.getArgumentsToAction(el.filename).subscribe({
+    this.generalService.showLoading();
+    this.workflowService.getArgumentsToAction(el.filename, cm.codeToCaret).subscribe({
 
       next: (result: any) => {
 
+        this.generalService.hideLoading();
         this.dialog.open(ParametriseActionDialog, {
           width: '750px',
           maxWidth: '80vw',
@@ -207,7 +209,7 @@ export class IdeTreeComponent implements OnInit {
   }
 
   /**
-   * Adds the specified function to the currently edited workflow.
+   * Adds the specified snippet to the currently edited Hyperlambda.
    */
   insertSnippet(el: any) {
 
@@ -1037,10 +1039,13 @@ export class IdeTreeComponent implements OnInit {
       editor.focus();
       return null;
     }
+    const lines = editor.getValue().split('\n').splice(0, sel.anchor.line).map((x:string) => x.trimEnd());
+    const codeToCaret = lines.join('\r\n');
 
     return {
-      editor: editor,
-      sel: sel,
+      editor,
+      sel,
+      codeToCaret,
     };
   }
 }
