@@ -815,16 +815,6 @@ export class IdeTreeComponent implements OnInit {
       (!item.content?.toLowerCase().includes(searchKeyword.toLowerCase()) || false);
   }
 
-  getTooltipClass(el: any) {
-
-    return el.content ? 'pre-tooltip' : '';
-  }
-
-  getToolboxTooltip(item: any) {
-
-    return item.content ?? item.description;
-  }
-
   installModule(file: FileList) {
 
     if (file[0].name.split('.')[1] === 'zip') {
