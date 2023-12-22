@@ -21,12 +21,12 @@ import { GeneralService } from 'src/app/services/general.service';
     <mat-chip
       *ngFor="let item of items"
       (removed)="removeArgument(item)"
-      (click)="editArgument(item)"
+      (click)="addEditItem(item)"
       [removable]="true">
       {{item.key}}:{{item.value}}
       <mat-icon matChipRemove>cancel</mat-icon>
     </mat-chip>
-    <mat-chip (click)="addItem()">
+    <mat-chip (click)="addEditItem(null)">
       Add
       <mat-icon>add</mat-icon>
     </mat-chip>
@@ -56,36 +56,21 @@ export class FormlyKeyValueComponent extends FieldType<FieldTypeConfig> implemen
     this.createItems();
   }
 
-  addItem() {
+  addEditItem(item: any) {
 
     this.dialog.open(CreateKeyValueDialogComponent, {
       width: '80vw',
       maxWidth: '512px',
+      data: item || null,
     }).afterClosed().subscribe((result: any) => {
 
       if (result) {
 
-        if (this.model[<string>this.field.key][result.key]) {
+        if (item === null && this.model[<string>this.field.key][result.key]) {
 
           this.generalService.showFeedback('That key already exists', 'errorMessage');
           return;
         }
-
-        this.model[<string>this.field.key][result.key] = result.value;
-        this.createItems();
-      }
-    });
-  }
-
-  editArgument(item: any) {
-
-    this.dialog.open(CreateKeyValueDialogComponent, {
-      width: '80vw',
-      maxWidth: '512px',
-      data: item,
-    }).afterClosed().subscribe((result: any) => {
-
-      if (result) {
 
         this.model[<string>this.field.key][result.key] = result.value;
         this.createItems();
