@@ -5,7 +5,9 @@
 
 // Angular and system imports.
 import { Component, Inject, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Observable, map, startWith } from 'rxjs';
 
 // Application specific imports.
 import { GeneralService } from 'src/app/services/general.service';
@@ -20,8 +22,9 @@ import { GeneralService } from 'src/app/services/general.service';
 })
 export class CreateKeyValueDialogComponent implements OnInit {
 
+  autocompleter = new FormControl('');
+  filteredOptions: Observable<string[]>;
   key: string;
-  value: string;
 
   constructor(
     private generalService: GeneralService,
@@ -30,15 +33,20 @@ export class CreateKeyValueDialogComponent implements OnInit {
 
   ngOnInit() {
 
-    if (this.data) {
-      this.key = this.data.key;
-      this.value = this.data.value;
+    if (this.data?.item) {
+      this.key = this.data.item.key;
+      this.autocompleter.setValue(this.data.item.value);
     }
+    this.filteredOptions = this.autocompleter.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filter(value || '')),
+    );
   }
 
   onSubmit() {
 
-    if (!this.key || !this.value || this.key === '' || this.value === '') {
+
+    if (!this.key || this.key === '' || this.autocompleter.value === '') {
 
       this.generalService.showFeedback('Please provide both key and value', 'errorMessage');
       return;
@@ -46,8 +54,18 @@ export class CreateKeyValueDialogComponent implements OnInit {
 
     this.dialogRef.close({
       key: this.key,
-      value: this.value,
+      value: this.autocompleter.value,
       edit: !!this.data,
     });
+  }
+
+  /*
+   * Private helper methods
+   */
+
+  private _filter(value: string): string[] {
+    const filterValue = value.toLowerCase();
+
+    return this.data.options.filter(option => option.label.toLowerCase().includes(filterValue));
   }
 }

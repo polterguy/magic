@@ -54,6 +54,13 @@ export class ParametriseActionDialog implements OnInit {
         case 'key-value':
           add = true;
           field.type = 'key-value';
+          field.props.options = [];
+          for (const idxCandidate of this.data.candidates) {
+            field.props.options.push({
+              value: ':x:' + idxCandidate.expression,
+              label: ':x:' + idxCandidate.expression,
+            });
+          }
           break;
 
         case 'array':

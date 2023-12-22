@@ -15,7 +15,7 @@
       <input
         matInput
         placeholder="Key ..."
-        [disabled]="data"
+        [disabled]="data?.item"
         name="key"
         [(ngModel)]="key"
         autocomplete="off">
@@ -30,11 +30,16 @@
         <span class="text-muted">|</span>
       </span>
       <input
+        type="text"
         matInput
         placeholder="Value ..."
-        name="value"
-        [(ngModel)]="value"
-        autocomplete="off">
+        [formControl]="autocompleter"
+        [matAutocomplete]="auto">
+      <mat-autocomplete #auto="matAutocomplete">
+        <mat-option
+          *ngFor="let option of filteredOptions | async"
+          [value]="option.value">{{option.label}}</mat-option>
+      </mat-autocomplete>
     </mat-form-field>
 
   </div>

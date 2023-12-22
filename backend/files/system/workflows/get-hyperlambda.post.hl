@@ -59,7 +59,7 @@ if
                   ..:x:@.action/0
 
       // Making sure we correctly convert arguments according to type declaration.
-      for-each:x:@.arguments/*/args/*
+      for-each:x:@.arguments/*/args/**
          if
             strings.starts-with:x:@.dp/#
                .:":x:"
