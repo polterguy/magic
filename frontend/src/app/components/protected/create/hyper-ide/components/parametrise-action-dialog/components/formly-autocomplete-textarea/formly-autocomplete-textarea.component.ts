@@ -49,7 +49,7 @@ export class FormlyAutocompleteTextareaComponent extends FieldType<FieldTypeConf
   ngOnInit() {
 
     this.filteredOptions = this.control.valueChanges.pipe(
-      startWith(''),
+      startWith(this.model[<string>this.field.key]),
       map(value => this._filter(value || '')),
     );
     this.control.setValue(this.field.model[<string>this.field.key]);

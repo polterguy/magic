@@ -23,7 +23,7 @@ import { Observable, map, startWith } from 'rxjs';
     [id]="field.key"
     [placeholder]="field.props.label"
     matInput
-    [formControl]="control"
+    [formControl]="formControl"
     [matAutocomplete]="auto">
   <mat-autocomplete #auto="matAutocomplete">
     <mat-option
@@ -36,7 +36,6 @@ import { Observable, map, startWith } from 'rxjs';
 })
 export class FormlyAutocompleteComponent extends FieldType<FieldTypeConfig> implements OnInit {
 
-  control = new FormControl('');
   filteredOptions: Observable<string[]>;
 
   constructor() {
@@ -46,12 +45,12 @@ export class FormlyAutocompleteComponent extends FieldType<FieldTypeConfig> impl
 
   ngOnInit() {
 
-    this.filteredOptions = this.control.valueChanges.pipe(
-      startWith(''),
+    this.filteredOptions = this.formControl.valueChanges.pipe(
+      startWith(this.model[<string>this.field.key]),
       map(value => this._filter(value || '')),
     );
-    this.control.setValue(this.field.model[<string>this.field.key]);
-    this.control.valueChanges.subscribe((val: string) => {
+    this.formControl.setValue(this.field.model[<string>this.field.key]);
+    this.formControl.valueChanges.subscribe((val: string) => {
       this.model[<string>this.field.key] = val;
     });
   }
@@ -64,4 +63,5 @@ export class FormlyAutocompleteComponent extends FieldType<FieldTypeConfig> impl
 
     const filterValue = value.toLowerCase();
     return (<any[]>this.field.props.options).filter(option => option.label.toLowerCase().includes(filterValue));
-  }}
+  }
+}

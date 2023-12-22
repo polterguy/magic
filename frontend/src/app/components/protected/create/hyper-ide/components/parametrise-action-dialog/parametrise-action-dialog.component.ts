@@ -69,12 +69,6 @@ export class ParametriseActionDialog implements OnInit {
           add = true;
           field.type = this.data.input[idx].type === 'textarea' ? 'autocomplete-textarea' : 'autocomplete';
           field.props.options = [];
-          if (this.data.input[idx].default) {
-            field.props.options.push({
-              value: this.data.input[idx].default,
-              label: this.data.input[idx].default,
-            });
-          }
           if (this.data.input[idx].type === 'enum') {
             for (let idxNo = 0; idxNo < this.data.input[idx].values.length; idxNo++) {
               if (field.props.options.filter(x => x.value === this.data.input[idx].values[idxNo]).length === 0) {
@@ -139,7 +133,7 @@ export class ParametriseActionDialog implements OnInit {
       width: '500px',
       data: {
         title: `Action is not valid`,
-        description: `Action has invalid arguments, are you sure you want to save it?`,
+        description: `Action\'s arguments cannot be verified, are you sure you want to save it?`,
         action_btn: 'Yes',
         close_btn: 'No',
         action_btn_color: 'warn',

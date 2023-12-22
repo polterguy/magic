@@ -122,7 +122,9 @@ export class FormlySqlComponent extends FieldType<FieldTypeConfig> implements On
     }
 
     this.generalService.showLoading();
-    this.sqlService.getDatabaseMetaInfo(this.model['database-type'], this.model['connection-string']).subscribe({
+    this.sqlService.getDatabaseMetaInfo(
+      this.model['database-type'],
+      this.model['connection-string']).subscribe({
 
       next: (result: Databases) => {
 

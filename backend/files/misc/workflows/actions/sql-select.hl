@@ -1,12 +1,10 @@
 
 /*
- * Execute some select SQL statement specified as [sql].
- * Optionally provide [connection-string], [database-type] and [database].
+ * Execute some select SQL statement specified as [sql] towards the specified database.
  */
 .arguments
    database-type
       type:enum
-      default:sqlite
       mandatory:bool:true
       values
          .:sqlite
@@ -15,20 +13,15 @@
          .:pgsql
    connection-string
       type:string
-      default:generic
       mandatory:bool:true
    database
       type:string
-      default:magic
       mandatory:bool:true
    sql
       type:sql
-      default:select name from roles where name like @filter limit 2
       mandatory:bool:true
    params
       type:key-value
-      default
-         filter:a%
 .icon:cloud_download
 
 // Sanity checking invocation.
