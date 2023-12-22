@@ -65,13 +65,14 @@ export class ParametriseActionDialog implements OnInit {
         case 'email':
         case 'string':
         case 'enum':
+        case 'textarea':
           add = true;
-          field.type = 'autocomplete';
+          field.type = this.data.input[idx].type === 'textarea' ? 'autocomplete-textarea' : 'autocomplete';
           field.props.options = [];
           if (this.data.input[idx].default) {
             field.props.options.push({
               value: this.data.input[idx].default,
-              label: this.data.input[idx].default
+              label: this.data.input[idx].default,
             });
           }
           if (this.data.input[idx].type === 'enum') {
@@ -87,17 +88,9 @@ export class ParametriseActionDialog implements OnInit {
           for (const idxCandidate of this.data.candidates) {
             field.props.options.push({
               value: ':x:' + idxCandidate.expression,
-              label: idxCandidate.name,
+              label: ':x:' + idxCandidate.expression,
             });
           }
-          break;
-
-        case 'textarea':
-          add = true;
-          field.type = 'textarea';
-          field.props.attributes = {
-            rows: 5,
-          };
           break;
 
         case 'sql':
