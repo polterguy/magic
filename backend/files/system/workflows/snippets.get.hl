@@ -29,12 +29,7 @@ for-each:x:@io.file.list-recursively/*
                add:x:@.lambda/@.lambda/0/-/*/*
                   .
                      description:x:@hyper2lambda/0
-
-         // Decorating return value.
-         unwrap:x:+/*/*
-         add:x:@.lambda/@.lambda/0/-/*/*
-            .
-               content:x:@load-file
+                     content:x:@load-file
 
          // Creating a name for snippet by using filename.
          strings.split:x:@.dp/#

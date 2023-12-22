@@ -245,7 +245,7 @@
             [matTooltip]="getToolboxTooltip(item)"
             matTooltipPosition="right"
             [matTooltipClass]="getTooltipClass(item)"
-            (click)="insertToolboxItem(item)"
+            (click)="insertAction(item)"
             class="justify-content-start d-flex w-100">
             <mat-icon>{{item.icon ?? 'grade'}}</mat-icon>
             {{item.name}}
@@ -267,7 +267,7 @@
             [matTooltip]="getToolboxTooltip(item)"
             matTooltipPosition="right"
             [matTooltipClass]="getTooltipClass(item)"
-            (click)="insertToolboxItem(item)"
+            (click)="insertSnippet(item)"
             class="justify-content-start d-flex w-100">
             <mat-icon>{{item.icon ?? 'grade'}}</mat-icon>
             {{item.name}}

@@ -154,31 +154,13 @@ export class IdeTreeComponent implements OnInit {
   /**
    * Adds the specified function to the currently edited workflow.
    */
-  insertToolboxItem(el: any) {
+  insertAction(el: any) {
 
-    // Retrieving editor instance.
-    const fileExisting: number = this.openFiles.findIndex((item: any) => item.path === this.currentFileData.path);
-    const activeWrapper = document.querySelector('.active-codemirror-editor-' + fileExisting);
-    const editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
+    const cm = this.getEditorSelection();
 
-    // Making sure we're in a position where we can insert Hyperlambda.
-    const sel = editor.doc.sel.ranges[0];
-    if (sel.anchor.ch % 3 !== 0) {
+    if (cm) {
 
-      this.generalService.showFeedback('You cannot insert Hyperlambda at the caret\'s current position since it would produce invalid Hyperlambda', 'errorMessage');
-      editor.focus();
-      return;
-    }
-
-    // Checking if this is a simple snippet insert.
-    if (el.action === false) {
-
-      // Simple snippet insert.
-      this.insertToolboxItemImplementation(editor, sel, el);
-
-    } else {
-
-      // Action insert.
+      // Getting arguments for action.
       this.workflowService.getArguments(el.filename).subscribe({
 
         next: (result: any) => {
@@ -194,7 +176,22 @@ export class IdeTreeComponent implements OnInit {
             },
           }).afterClosed().subscribe((data: any) => {
             if (data) {
-              this.insertToolboxItemImplementation(editor, sel, el, data);
+
+              this.generalService.showLoading();
+              this.workflowService.getHyperlambda(el.filename, data).subscribe({
+          
+                next: (result: MagicResponse) => {
+          
+                  this.generalService.hideLoading();
+                  this.insertHyperlambdaSnippet(result.result, cm.editor, cm.sel);
+                },
+          
+                error: (error: any) => {
+          
+                  this.generalService.hideLoading();
+                  this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+                }
+              });
             }
           });
         },
@@ -205,6 +202,18 @@ export class IdeTreeComponent implements OnInit {
           this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
         }
       });
+    }
+  }
+
+  /**
+   * Adds the specified function to the currently edited workflow.
+   */
+  insertSnippet(el: any) {
+
+    const cm = this.getEditorSelection();
+
+    if (cm) {
+      this.insertHyperlambdaSnippet(el.content, cm.editor, cm.sel);
     }
   }
 
@@ -972,32 +981,6 @@ export class IdeTreeComponent implements OnInit {
       path === '/etc/';
   }
 
-  private insertToolboxItemImplementation(editor: any, sel: any, el: any, args: any = null) {
-
-    this.generalService.showLoading();
-    this.workflowService.getHyperlambda(el.filename, args).subscribe({
-
-      next: (result: MagicResponse) => {
-
-        this.generalService.hideLoading();
-        let hl = result.result.split('\r\n');
-        let sp = '';
-        for (let idxNo = 0; idxNo < sel.anchor.ch; idxNo++) {
-          sp += ' ';
-        }
-        editor.replaceSelection(hl.map(x => sp + x).join('\r\n'));
-        editor.changeGeneration(true);
-        editor.focus();
-      },
-
-      error: (error: any) => {
-
-        this.generalService.hideLoading();
-        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
-      }
-    });
-  }
-
   private getWorkflowActions() {
 
     return new Promise<boolean>(resolve => {
@@ -1031,6 +1014,41 @@ export class IdeTreeComponent implements OnInit {
         }
       });
     });
+  }
+
+  private insertHyperlambdaSnippet(snippet: string, editor: any, sel: any) {
+
+    // Splitting Hyperlambda into lines such that we can correctly indent it.
+    let hl = snippet.split('\n');
+    let sp = '';
+    for (let idxNo = 0; idxNo < sel.anchor.ch; idxNo++) {
+      sp += ' ';
+    }
+    editor.replaceSelection(hl.map((x: string) => sp + x.trimEnd()).join('\r\n').trimEnd());
+    editor.changeGeneration(true);
+    editor.focus();
+  }
+
+  private getEditorSelection() {
+
+    // Retrieving editor instance.
+    const fileExisting: number = this.openFiles.findIndex((item: any) => item.path === this.currentFileData.path);
+    const activeWrapper = document.querySelector('.active-codemirror-editor-' + fileExisting);
+    const editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
+
+    // Making sure we're in a position where we can insert Hyperlambda.
+    const sel = editor.doc.sel.ranges[0];
+    if (sel.anchor.ch % 3 !== 0) {
+
+      this.generalService.showFeedback('You cannot insert Hyperlambda at the caret\'s current position since it would produce invalid Hyperlambda', 'errorMessage');
+      editor.focus();
+      return null;
+    }
+
+    return {
+      editor: editor,
+      sel: sel,
+    };
   }
 }
 
