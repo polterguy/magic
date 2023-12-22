@@ -60,21 +60,31 @@ if
 
       // Making sure we correctly convert arguments according to type declaration.
       for-each:x:@.arguments/*/args/*
-         get-name:x:@.dp/#
-         switch:x:@.action/*/.arguments/*/{@get-name}/*/type
-            case:long
-            case:decimal
-            case:int
-            case:float
-            case:double
-               set-value:x:@.dp/#
-                  convert:x:@.dp/#
-                     type:x:@.action/*/.arguments/*/{@get-name}/*/type
-            case:hyperlambda
-               add:x:@.dp/#
-                  hyper2lambda:x:@.dp/#
-                     comments:true
-               set-value:x:@.dp/#
+         if
+            strings.starts-with:x:@.dp/#
+               .:":x:"
+            .lambda
+               strings.substring:x:@.dp/#
+                  .:int:3
+               set-x:x:@.dp/#
+                  convert:x:@strings.substring
+                     type:x
+         else
+            get-name:x:@.dp/#
+            switch:x:@.action/*/.arguments/*/{@get-name}/*/type
+               case:long
+               case:decimal
+               case:int
+               case:float
+               case:double
+                  set-value:x:@.dp/#
+                     convert:x:@.dp/#
+                        type:x:@.action/*/.arguments/*/{@get-name}/*/type
+               case:hyperlambda
+                  add:x:@.dp/#
+                     hyper2lambda:x:@.dp/#
+                        comments:true
+                  set-value:x:@.dp/#
 
       // Decorating action arguments according to [.arguments]/[args].
       add:x:@.invocation/*/execute/*/arguments

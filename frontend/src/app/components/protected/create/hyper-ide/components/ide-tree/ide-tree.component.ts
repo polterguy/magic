@@ -173,10 +173,12 @@ export class IdeTreeComponent implements OnInit {
           width: '750px',
           maxWidth: '80vw',
           disableClose: true,
+          autoFocus: false,
           data: {
             input: result.input,
             description: el.description,
             name: el.name,
+            candidates: result.candidates,
           },
         }).afterClosed().subscribe((args: any) => {
           if (args) {

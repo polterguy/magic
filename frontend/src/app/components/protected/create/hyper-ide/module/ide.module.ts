@@ -33,6 +33,7 @@ import { FormlyCSharpComponent } from '../components/parametrise-action-dialog/c
 import { FormlyArrayComponent } from '../components/parametrise-action-dialog/components/formly-array/formly-array.component';
 import { CreateArrayDialogComponent } from '../components/parametrise-action-dialog/components/formly-array/components/create-array-dialog/create-array-dialog.component';
 import { FormlyHyperlambdaComponent } from '../components/parametrise-action-dialog/components/formly-hyperlambda/formly-hyperlambda.component';
+import { FormlyAutocompleteComponent } from '../components/parametrise-action-dialog/components/formly-autocomplete/formly-autocomplete.component';
 
 @NgModule({
   declarations: [
@@ -52,6 +53,7 @@ import { FormlyHyperlambdaComponent } from '../components/parametrise-action-dia
     FormlyHyperlambdaComponent,
     FormlyKeyValueComponent,
     FormlyArrayComponent,
+    FormlyAutocompleteComponent,
     CreateKeyValueDialogComponent,
     CreateArrayDialogComponent,
   ],
@@ -69,6 +71,7 @@ import { FormlyHyperlambdaComponent } from '../components/parametrise-action-dia
         { name: 'array', component: FormlyArrayComponent },
         { name: 'csharp', component: FormlyCSharpComponent },
         { name: 'hyperlambda', component: FormlyHyperlambdaComponent },
+        { name: 'autocomplete', component: FormlyAutocompleteComponent },
       ],
     }),
   ]
