@@ -1,13 +1,13 @@
 
 /*
- * Returns all workflow actions to caller.
+ * Returns all workflow snippets to caller.
  */
 
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:root
 
-// Listing all actions in workflow folder.
-io.file.list-recursively:/misc/workflows/actions/
+// Listing all snippets in workflow folder.
+io.file.list-recursively:/misc/workflows/snippets/
 
 // Filtering out everything not ending with '.hl'.
 for-each:x:@io.file.list-recursively/*
@@ -32,11 +32,11 @@ for-each:x:@io.file.list-recursively/*
 
          // Decorating return value.
          unwrap:x:+/*/*
-         add:x:@.lambda/0/-/*/*
+         add:x:@.lambda/@.lambda/0/-/*/*
             .
-               icon:x:@hyper2lambda/*/.icon
+               content:x:@load-file
 
-         // Creating a name for action by using filename.
+         // Creating a name for snippet by using filename.
          strings.split:x:@.dp/#
             .:/
          strings.split:x:-/0/-

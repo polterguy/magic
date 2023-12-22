@@ -236,9 +236,31 @@
         <div
           class="justify-content-between d-flex w-100 toolbox"
           [class.d-none]="filterToolbox(item, searchKey)"
-          *ngFor="let item of workflowFunctions">
+          *ngFor="let item of workflowActions">
 
-          <!-- Button for selecting workflow function -->
+          <!-- Button for selecting workflow action -->
+          <button
+            mat-button
+            [disabled]="!isHyperlambdaFile()"
+            [matTooltip]="getToolboxTooltip(item)"
+            matTooltipPosition="right"
+            [matTooltipClass]="getTooltipClass(item)"
+            (click)="insertToolboxItem(item)"
+            class="justify-content-start d-flex w-100">
+            <mat-icon>{{item.icon ?? 'grade'}}</mat-icon>
+            {{item.name}}
+          </button>
+
+        </div>
+
+        <hr>
+
+        <div
+          class="justify-content-between d-flex w-100 toolbox"
+          [class.d-none]="filterToolbox(item, searchKey)"
+          *ngFor="let item of workflowSnippets">
+
+          <!-- Button for selecting workflow snippet -->
           <button
             mat-button
             [disabled]="!isHyperlambdaFile()"
