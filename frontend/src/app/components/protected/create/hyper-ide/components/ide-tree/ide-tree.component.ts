@@ -161,7 +161,7 @@ export class IdeTreeComponent implements OnInit {
     if (cm) {
 
       // Getting arguments for action.
-      this.workflowService.getArguments(el.filename).subscribe({
+      this.workflowService.getArgumentsToAction(el.filename).subscribe({
 
         next: (result: any) => {
 
@@ -178,7 +178,7 @@ export class IdeTreeComponent implements OnInit {
             if (data) {
 
               this.generalService.showLoading();
-              this.workflowService.getHyperlambda(el.filename, data).subscribe({
+              this.workflowService.getActionHyperlambda(el.filename, data).subscribe({
           
                 next: (result: MagicResponse) => {
           

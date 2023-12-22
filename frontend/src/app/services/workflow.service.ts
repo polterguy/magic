@@ -39,7 +39,7 @@ export class WorkflowService {
   /**
    * Adds the specified function to the specified Hyperlambda and returns the transformed result.
    */
-  getHyperlambda(filename: string, args: any = null) {
+  getActionHyperlambda(filename: string, args: any = null) {
 
     return this.httpService.post<MagicResponse>(
       '/magic/system/workflows/get-hyperlambda', {
@@ -51,7 +51,7 @@ export class WorkflowService {
   /**
    * Returns the arguments the specified workflow action can handle.
    */
-  getArguments(filename: string) {
+  getArgumentsToAction(filename: string) {
 
     return this.httpService.get<any>(
       '/magic/system/workflows/get-arguments?action=' + 
