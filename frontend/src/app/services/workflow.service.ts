@@ -51,10 +51,11 @@ export class WorkflowService {
   /**
    * Returns the arguments the specified workflow action can handle.
    */
-  getArgumentsToAction(filename: string) {
+  getArgumentsToAction(action: string, codeToCaret: string = null) {
 
-    return this.httpService.get<any>(
-      '/magic/system/workflows/get-arguments?action=' + 
-      encodeURIComponent(filename));
+    return this.httpService.post<any>('/magic/system/workflows/get-arguments', {
+      action,
+      codeToCaret
+    });
   }
 }

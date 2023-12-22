@@ -1,0 +1,112 @@
+
+/*
+ * Returns arguments the specified action can handle,
+ * in addition to candidates for expressions.
+ */
+.arguments
+   action:string
+   codeToCaret:string
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Loading file.
+load-file:x:@.arguments/*/action
+
+// Transforming Hyperlambda to lambda and making sure we return [.arguments] collection.
+hyper2lambda:x:@load-file
+add:x:./*/return/*/input
+   get-nodes:x:@hyper2lambda/*/.arguments/*
+
+/*
+ * Transforming code specified as input to lambda such that we can
+ * semantically traverse it for candidate expressions.
+ */
+hyper2lambda:x:@.arguments/*/codeToCaret
+
+/*
+ * Figuring out candidate expressions from [.arguments] collection.
+ * Notice, this logic only does "level 1" type of arguments.
+ *
+ * TODO: Implement support for nested arguments.
+ */
+for-each:x:@hyper2lambda/*/.arguments/*
+   if
+      and
+         not-null:x:@.dp/#
+         neq:x:@.dp/#
+            .:*
+      .lambda
+
+         // Complete argument we can reference "absolutely".
+         strings.concat
+            .:@.arguments/*/
+            get-name:x:@.dp/#
+         get-name:x:@.dp/#
+         unwrap:x:+/*/*/*
+         add:x:../*/return/*/candidates
+            .
+               .
+                  name:x:@get-name
+                  expression:x:@strings.concat
+                  type:argument
+                  complete:bool:true
+
+   else
+
+      // Incomplete argument we can NOT reference "absolutely".
+      strings.concat
+         .:@.arguments/*/
+         get-name:x:@.dp/#
+      get-name:x:@.dp/#
+      unwrap:x:+/*/*/*
+      add:x:../*/return/*/candidates
+         .
+            .
+               name:x:@get-name
+               expression:x:@strings.concat
+               type:argument
+               complete:bool:false
+
+// Figuring out candidate expressions from action invocations.
+for-each:x:@hyper2lambda/*/execute/*/name/./*/filename/.
+
+   // Loading file such that we can inspect return values.
+   load-file:x:@.dp/#/*/filename
+   hyper2lambda:x:@load-file
+
+   // Finding complete arguments first, implying arguments we can reference absolutely.
+   for-each:x:@hyper2lambda/**/[yield|return]/*
+      strings.concat
+         .:--/execute/=
+         get-value:x:@.dp/@.dp/#/*/name
+         .:/*/
+         get-name:x:@.dp/#
+      unwrap:x:+/*/*/*
+      add:x:../*/return/*/candidates
+         .
+            .
+               name:x:@.dp/@.dp/#/*/name
+               expression:x:@strings.concat
+               type:action-result
+               complete:bool:true
+
+   // Finding incomplete arguments, implying arguments we can NOT reference absolutely.
+   for-each:x:@hyper2lambda/**/return-nodes
+      strings.concat
+         .:--/execute/=
+         get-value:x:@.dp/@.dp/#/*/name
+         .:/*/
+      unwrap:x:+/*/*/*
+      add:x:../*/return/*/candidates
+         .
+            .
+               name:x:@.dp/@.dp/#/*/name
+               expression:x:@strings.concat
+               type:action-result
+               complete:bool:false
+
+// Returning arguments to caller.
+return
+   input
+   candidates
