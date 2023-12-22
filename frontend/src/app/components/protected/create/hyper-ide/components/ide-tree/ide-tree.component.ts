@@ -156,53 +156,54 @@ export class IdeTreeComponent implements OnInit {
    */
   insertAction(el: any) {
 
+    // Getting editor and its selection.
     const cm = this.getEditorSelection();
-
-    if (cm) {
-
-      // Getting arguments for action.
-      this.workflowService.getArgumentsToAction(el.filename).subscribe({
-
-        next: (result: any) => {
-
-          this.dialog.open(ParametriseActionDialog, {
-            width: '750px',
-            maxWidth: '80vw',
-            disableClose: true,
-            data: {
-              input: result.input,
-              description: el.description,
-              name: el.name,
-            },
-          }).afterClosed().subscribe((data: any) => {
-            if (data) {
-
-              this.generalService.showLoading();
-              this.workflowService.getActionHyperlambda(el.filename, data).subscribe({
-          
-                next: (result: MagicResponse) => {
-          
-                  this.generalService.hideLoading();
-                  this.insertHyperlambdaSnippet(result.result, cm.editor, cm.sel);
-                },
-          
-                error: (error: any) => {
-          
-                  this.generalService.hideLoading();
-                  this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
-                }
-              });
-            }
-          });
-        },
-
-        error: (error: any) => {
-
-          this.generalService.hideLoading();
-          this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
-        }
-      });
+    if (!cm) {
+      return; // Not a valid selection
     }
+
+    // Getting arguments for action.
+    this.workflowService.getArgumentsToAction(el.filename).subscribe({
+
+      next: (result: any) => {
+
+        this.dialog.open(ParametriseActionDialog, {
+          width: '750px',
+          maxWidth: '80vw',
+          disableClose: true,
+          data: {
+            input: result.input,
+            description: el.description,
+            name: el.name,
+          },
+        }).afterClosed().subscribe((args: any) => {
+          if (args) {
+
+            this.generalService.showLoading();
+            this.workflowService.getActionHyperlambda(el.filename, args).subscribe({
+        
+              next: (result: MagicResponse) => {
+        
+                this.generalService.hideLoading();
+                this.insertHyperlambdaSnippet(result.result, cm.editor, cm.sel);
+              },
+        
+              error: (error: any) => {
+        
+                this.generalService.hideLoading();
+                this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+              }
+            });
+          }
+        });
+      },
+
+      error: (error: any) => {
+
+        this.generalService.hideLoading();
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+      }
+    });
   }
 
   /**
@@ -210,11 +211,13 @@ export class IdeTreeComponent implements OnInit {
    */
   insertSnippet(el: any) {
 
+    // Getting editor and its selection.
     const cm = this.getEditorSelection();
-
-    if (cm) {
-      this.insertHyperlambdaSnippet(el.content, cm.editor, cm.sel);
+    if (!cm) {
+      return; // Not a valid selection
     }
+
+    this.insertHyperlambdaSnippet(el.content, cm.editor, cm.sel);
   }
 
   /**
@@ -1024,7 +1027,7 @@ export class IdeTreeComponent implements OnInit {
     for (let idxNo = 0; idxNo < sel.anchor.ch; idxNo++) {
       sp += ' ';
     }
-    editor.replaceSelection(hl.map((x: string) => sp + x.trimEnd()).join('\r\n').trimEnd());
+    editor.replaceSelection(hl.map((x: string) => sp + x.trimEnd()).join('\r\n').trimEnd() + '\r\n' + sp);
     editor.changeGeneration(true);
     editor.focus();
   }
