@@ -242,9 +242,8 @@
           <button
             mat-button
             [disabled]="!isHyperlambdaFile()"
-            [matTooltip]="getToolboxTooltip(item)"
+            [matTooltip]="item.description"
             matTooltipPosition="right"
-            [matTooltipClass]="getTooltipClass(item)"
             (click)="insertAction(item)"
             class="justify-content-start d-flex w-100">
             <mat-icon>{{item.icon ?? 'grade'}}</mat-icon>
@@ -264,9 +263,8 @@
           <button
             mat-button
             [disabled]="!isHyperlambdaFile()"
-            [matTooltip]="getToolboxTooltip(item)"
+            [matTooltip]="item.description"
             matTooltipPosition="right"
-            [matTooltipClass]="getTooltipClass(item)"
             (click)="insertSnippet(item)"
             class="justify-content-start d-flex w-100">
             <mat-icon>{{item.icon ?? 'grade'}}</mat-icon>
