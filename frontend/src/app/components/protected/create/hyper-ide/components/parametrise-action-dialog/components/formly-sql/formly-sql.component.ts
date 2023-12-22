@@ -99,7 +99,11 @@ export class FormlySqlComponent extends FieldType<FieldTypeConfig> implements On
             debounceTime(400),
             distinctUntilChanged(),
             tap(() => {
+              if (!this.databases) {
+                this.getDatabaseTables();
+              } else {
                 this.databaseChanged();
+              }
             })).subscribe();
         }
       }, 1);
@@ -113,8 +117,11 @@ export class FormlySqlComponent extends FieldType<FieldTypeConfig> implements On
   private getDatabaseTables() {
 
     // Verifying we've got a "well known type" that allows us to retrieve database meta information.
-    if (this.model['database-type'] === '' ||
+    if (!this.model['database-type'] ||
+        this.model['database-type'] === '' ||
+        !this.model['connection-string'] ||
         this.model['connection-string'] === '' ||
+        !this.model['database'] ||
         this.model['database'] === '') {
 
       // No valid database is selected.
@@ -151,7 +158,7 @@ export class FormlySqlComponent extends FieldType<FieldTypeConfig> implements On
 
   private databaseChanged() {
 
-    let hintTables = (this.databases.databases || [])
+    let hintTables = (this.databases?.databases || [])
       .find((db: any) => db.name === this.model['database'])
       ?.tables || [];
 

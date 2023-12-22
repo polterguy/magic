@@ -7,7 +7,9 @@
 import { FieldType, FieldTypeConfig } from '@ngx-formly/core';
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Observable, map, startWith } from 'rxjs';
+import { Observable, debounceTime, distinctUntilChanged, map, startWith, tap } from 'rxjs';
+import { SqlService } from 'src/app/services/sql.service';
+import { GeneralService } from 'src/app/services/general.service';
 
 // Application specific imports
 
@@ -17,7 +19,7 @@ import { Observable, map, startWith } from 'rxjs';
 @Component({
   selector: 'app-formly-autocomplete',
   template: `
-<mat-form-field class="w-100 standalone-field mb-4">
+<mat-form-field class="w-100 standalone-field mb-2">
   <mat-label>{{field.props.label}}</mat-label>
   <input type="text"
     [id]="field.key"
@@ -38,7 +40,9 @@ export class FormlyAutocompleteComponent extends FieldType<FieldTypeConfig> impl
 
   filteredOptions: Observable<string[]>;
 
-  constructor() {
+  constructor(
+    private sqlService: SqlService,
+    private generalService: GeneralService,) {
 
     super();
   }
@@ -53,11 +57,100 @@ export class FormlyAutocompleteComponent extends FieldType<FieldTypeConfig> impl
     this.formControl.valueChanges.subscribe((val: string) => {
       this.model[<string>this.field.key] = val;
     });
+
+    if (this.field.key === 'connection-string') {
+      if (this.form.controls['database-type']) {
+        this.form.controls['database-type'].valueChanges.pipe(
+          debounceTime(400),
+          distinctUntilChanged(),
+          tap(() => {
+              this.getConnectionStrings();
+          })).subscribe();
+      }
+    } else if (this.field.key === 'database') {
+      if (this.form.controls['database-type'] && this.form.controls['connection-string']) {
+        this.form.controls['connection-string'].valueChanges.pipe(
+          debounceTime(400),
+          distinctUntilChanged(),
+          tap(() => {
+              this.getDatabases();
+          })).subscribe();
+      }
+    }
   }
 
   /*
    * Private helper methods.
    */
+
+  private getConnectionStrings() {
+
+    if (!this.model['database-type'] || this.model['database-type'] === '') {
+      return;
+    }
+
+    this.generalService.showLoading();
+    this.sqlService.connectionStrings(<string>this.model['database-type']).subscribe({
+
+      next: (result: any) => {
+
+        this.generalService.hideLoading();
+        const expOptions = (<any[]>this.field.props.options).filter(x => x.value.startsWith(':x:'));
+        this.field.props.options = [];
+        for (const idx in result) {
+          this.field.props.options.push({
+            value: idx,
+            label: idx,
+          });
+        }
+        for (const idx of expOptions) {
+          this.field.props.options.push(idx);
+        }
+        this.formControl.setValue('');
+      },
+
+      error: () => {
+
+        this.generalService.hideLoading();
+      }
+    });
+  }
+
+  private getDatabases() {
+
+    if (!this.model['database-type'] || this.model['database-type'] === '' ||
+        !this.model['connection-string'] || this.model['connection-string'] === '') {
+      return;
+    }
+
+    this.generalService.showLoading();
+    this.sqlService.getDatabaseMetaInfo(
+      <string>this.model['database-type'],
+      <string>this.model['connection-string']).subscribe({
+
+      next: (result: any) => {
+
+        this.generalService.hideLoading();
+        const expOptions = (<any[]>this.field.props.options).filter(x => x.value.startsWith(':x:'));
+        this.field.props.options = [];
+        for (const idx of result.databases) {
+          this.field.props.options.push({
+            value: idx.name,
+            label: idx.name,
+          });
+        }
+        for (const idx of expOptions) {
+          this.field.props.options.push(idx);
+        }
+        this.formControl.setValue('');
+      },
+
+      error: () => {
+
+        this.generalService.hideLoading();
+      }
+    });
+  }
 
   private _filter(value: string): any[] {
 
