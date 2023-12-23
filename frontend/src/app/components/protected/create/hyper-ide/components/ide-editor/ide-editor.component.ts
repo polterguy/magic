@@ -21,7 +21,7 @@ import { VocabularyService } from 'src/app/services/vocabulary.service';
 import { AiService } from 'src/app/services/ai.service';
 import { MagicResponse } from 'src/app/models/magic-response.model';
 import { ExecuteResultDialog } from '../execute-result-dialog/execute-result-dialog.component';
-import { GetArgumentsDialog } from '../get-arguments-dialog/get-arguments-dialog.component';
+import { ParametriseActionDialog } from '../parametrise-action-dialog/parametrise-action-dialog.component';
 
 /**
  * Hyper IDE editor component, wrapping currently open files, allowing user to edit the code.
@@ -240,11 +240,11 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
 
           // Code requires arguments, making sure user populates them.
           this.generalService.hideLoading();
-          this.dialog.open(GetArgumentsDialog, {
+          this.dialog.open(ParametriseActionDialog, {
             width: '900px',
             maxWidth: '80vw',
             data: {
-              args: args,
+              input: args,
             }
           }).afterClosed().subscribe((populated: any) => {
 
