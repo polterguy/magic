@@ -86,7 +86,7 @@ export class ParametriseActionDialog implements OnInit {
               }
             }
           }
-          for (const idxCandidate of this.data.candidates) {
+          for (const idxCandidate of this.data.candidates || []) {
             field.props.options.push({
               value: ':x:' + idxCandidate.expression,
               label: ':x:' + idxCandidate.expression,
