@@ -1,0 +1,11 @@
+
+// Returns the result of all actions at root
+for-each:x:../*/execute
+   set-name:x:./0/-/*/*
+      get-value:x:@.dp/#
+   add:x:./0/-/*/*
+      get-nodes:x:@.dp/#/*
+   add:x:../*/return
+      .
+         name
+return

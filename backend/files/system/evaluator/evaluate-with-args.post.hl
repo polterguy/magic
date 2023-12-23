@@ -17,14 +17,22 @@ hyper2lambda:x:@.arguments/*/hyperlambda
 
 // Converts all input arguments to their expected type.
 for-each:x:@.arguments/*/args/*
+
+   // Getting name of currently iterated argument.
    get-name:x:@.dp/#
+
+   // Checking if this is a workflow type of argument declaration or an endpoint type of declaration.
    if
       exists:x:@hyper2lambda/*/.arguments/*/{@get-name}/*/type
       .lambda
+
+         // Workflow type of argument declaration, converting argument value accordingly.
          set-value:x:@.dp/#
             convert:x:@.dp/#
                type:x:@hyper2lambda/*/.arguments/*/{@get-name}/*/type
    else
+
+      // Endpoint type of argument declaration, converting argument value accordingly.
       set-value:x:@.dp/#
          convert:x:@.dp/#
             type:x:@hyper2lambda/*/.arguments/*/{@get-name}
