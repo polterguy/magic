@@ -175,9 +175,9 @@ export class IdeTreeComponent implements OnInit {
           disableClose: true,
           autoFocus: false,
           data: {
-            input: result.input,
-            description: el.description,
             name: el.name,
+            description: el.description,
+            input: result.input,
             candidates: result.candidates || [],
           },
         }).afterClosed().subscribe((args: any) => {

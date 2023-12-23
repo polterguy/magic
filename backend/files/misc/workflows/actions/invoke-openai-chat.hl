@@ -7,7 +7,6 @@
 .arguments
    model
       type:enum
-      default:gpt-3.5-turbo
       mandatory:bool:true
       values
          .:gpt-3.5-turbo
@@ -16,26 +15,16 @@
          .:gpt-4-1106-preview
    max_tokens
       type:int
-      default:int:4000
       mandatory:bool:true
-   messages
-      type:hyperlambda
+   prompt
+      type:textarea
       mandatory:bool:true
-      default:@".
-   // Use 'system' for system messages and instructions.
-   role:system
-   content:Answer me in the style of Snoop Dogg
-.
-   // Use 'user' for content provided by user.
-   role:user
-   content:""Explain Einstein's theory of relativity as if I am 5 in one sentence"""
 .icon:chat_bubble
 
 // Sanity checking invocation.
-validators.mandatory:x:@.arguments/*/messages
-validators.default:x:@.arguments
-   model:gpt-4-1106-preview
-   max_tokens:int:4000
+validators.mandatory:x:@.arguments/*/model
+validators.mandatory:x:@.arguments/*/prompt
+validators.mandatory:x:@.arguments/*/max_tokens
 
 // Retrieving OpenAI API token from configuration settings.
 .token
@@ -43,10 +32,6 @@ set-value:x:@.token
    strings.concat
       .:"Bearer "
       config.get:"magic:openai:key"
-
-// Parametrizing invocation to ChatGPT.
-add:x:./*/http.post/*/payload
-   get-nodes:x:@.arguments/*/messages
 
 // Invokes OpenAI.
 http.post:"https://api.openai.com/v1/chat/completions"
@@ -58,6 +43,10 @@ http.post:"https://api.openai.com/v1/chat/completions"
       model:x:@.arguments/*/model
       max_tokens:x:@.arguments/*/max_tokens
       temperature:decimal:0.3
+      messages
+         .
+            role:user
+            content:x:@.arguments/*/prompt
 
 // Sanity checking above invocation.
 if

@@ -10,18 +10,15 @@
    type
       type:string
       mandatory:bool:true
-      default:default
    query
       type:string
       mandatory:bool:true
    threshold
       type:decimal
       mandatory:bool:false
-      default:decimal:0.3
    max_tokens
       type:int
       mandatory:bool:false
-      default:int:4000
 .icon:extension
 
 // Sanity checking invocation.

@@ -154,6 +154,10 @@ export class FormlyAutocompleteComponent extends FieldType<FieldTypeConfig> impl
 
   private _filter(value: string): any[] {
 
+    if (!value) {
+      return <any[]>this.field.props.options;
+    }
+
     const filterValue = value.toLowerCase();
     return (<any[]>this.field.props.options).filter(option => option.label.toLowerCase().includes(filterValue));
   }

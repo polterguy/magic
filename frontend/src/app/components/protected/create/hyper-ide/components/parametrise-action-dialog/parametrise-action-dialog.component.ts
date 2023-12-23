@@ -145,7 +145,7 @@ export class ParametriseActionDialog implements OnInit {
       this.dialog.open(ConfirmationDialogComponent, {
         width: '500px',
         data: {
-          title: `Action is not valid`,
+          title: `Action might be invalid`,
           description: `Action\'s arguments cannot be verified, are you sure you want to save it?`,
           action_btn: 'Yes',
           close_btn: 'No',
