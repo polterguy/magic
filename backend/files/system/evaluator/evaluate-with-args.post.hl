@@ -17,10 +17,18 @@ hyper2lambda:x:@.arguments/*/hyperlambda
 
 // Converts all input arguments to their expected type.
 for-each:x:@.arguments/*/args/*
-   get-name:x:@.dp/#
-   set-value:x:@.dp/#
-      convert:x:@.dp/#
-         type:x:@hyper2lambda/*/.arguments/*/{@get-name}/*/type
+   if
+      exists:x:@hyper2lambda/*/.arguments/*/{@get-name}/*/type
+      .lambda
+         get-name:x:@.dp/#
+         set-value:x:@.dp/#
+            convert:x:@.dp/#
+               type:x:@hyper2lambda/*/.arguments/*/{@get-name}/*/type
+   else
+      get-name:x:@.dp/#
+      set-value:x:@.dp/#
+         convert:x:@.dp/#
+            type:x:@hyper2lambda/*/.arguments/*/{@get-name}
 
 /*
  * Removing [.arguments] declaration from Hyperlambda we're about to execute,

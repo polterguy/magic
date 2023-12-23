@@ -29,15 +29,20 @@ export class ParametriseActionDialog implements OnInit {
   constructor(
     private dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private refDialog: MatDialogRef<ParametriseActionDialog>) {}
+    private refDialog: MatDialogRef<ParametriseActionDialog>) { }
 
   ngOnInit() {
 
     // Adding fields as returned from server.
     for (const idx in this.data.input) {
       const field: FormlyFieldConfig = {
-        key: idx,
+
+        // Because Formly turns 'foo.bar' into a nested object in model, we need this little hack around
+        key: this.replaceAll(idx, '.', '$__$'),
         className: 'w-100 standalone-field',
+        options: {
+
+        },
         props: {
           placeholder: idx,
           label: idx,
@@ -69,6 +74,7 @@ export class ParametriseActionDialog implements OnInit {
           break;
 
         case 'int':
+        case 'long':
         case 'email':
         case 'string':
         case 'enum':
@@ -135,26 +141,52 @@ export class ParametriseActionDialog implements OnInit {
      */
     if (!this.form.valid) {
 
-    // Asking user to confirm saving action with error.
-    this.dialog.open(ConfirmationDialogComponent, {
-      width: '500px',
-      data: {
-        title: `Action is not valid`,
-        description: `Action\'s arguments cannot be verified, are you sure you want to save it?`,
-        action_btn: 'Yes',
-        close_btn: 'No',
-        action_btn_color: 'warn',
-      }
-    }).afterClosed().subscribe((result: string) => {
+      // Asking user to confirm saving action with error.
+      this.dialog.open(ConfirmationDialogComponent, {
+        width: '500px',
+        data: {
+          title: `Action is not valid`,
+          description: `Action\'s arguments cannot be verified, are you sure you want to save it?`,
+          action_btn: 'Yes',
+          close_btn: 'No',
+          action_btn_color: 'warn',
+        }
+      }).afterClosed().subscribe((result: string) => {
 
-      if (result === 'confirm') {
-        this.refDialog.close(model);
-      }
-    });
+        if (result === 'confirm') {
+          this.refDialog.close(this.getModel(model));
+        }
+      });
 
     } else {
 
-      this.refDialog.close(model);
+      this.refDialog.close(this.getModel(model));
     }
+  }
+
+  /*
+   * Private helper methods
+   */
+
+  // Reverts '$__$' in field names back to '.', and verifies we only submit non-empty values
+  private getModel(model: any) {
+
+    const result: any = {};
+    for (var idx in model) {
+      if (typeof model[idx] === 'string') {
+        if (model[idx] !== '') {
+          result[this.replaceAll(idx, '$__$', '.')] = model[idx];
+        }
+      } else {
+        result[idx] = this.getModel(result[idx]);
+      }
+    }
+    return result;
+  }
+
+  // "Replace all" helper
+  private replaceAll(str: string, find: string, replace: string) {
+
+    return str.replace(new RegExp(find.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), replace);
   }
 }
