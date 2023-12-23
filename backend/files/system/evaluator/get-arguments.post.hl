@@ -13,5 +13,18 @@ auth.ticket.verify:root
 // Transforming Hyperlambda to lambda object.
 hyper2lambda:x:@.arguments/*/hyperlambda
 
+// Making sure we "normalize" arguments.
+for-each:x:@hyper2lambda/*/.arguments/*
+   if
+      and
+         not-exists:x:@.dp/#/*/type
+         not-null:x:@.dp/#
+      .lambda
+         unwrap:x:+/*/*
+         add:x:@.dp/#
+            .
+               type:x:@.dp/#
+         set-value:x:@.dp/#
+
 // Returning arguments Hyperlambda requires to caller.
 return-nodes:x:@hyper2lambda/*/.arguments/*

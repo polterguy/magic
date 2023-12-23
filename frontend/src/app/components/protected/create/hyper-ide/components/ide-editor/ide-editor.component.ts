@@ -279,6 +279,11 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
 
       next: (response: any) => {
 
+        if (!response || response === '') {
+          this.generalService.showFeedback('Hyperlambda successfully executed but produced no result', 'successMessage');
+          return;
+        }
+
         this.generalService.hideLoading();
         this.dialog.open(ExecuteResultDialog, {
           width: '900px',
