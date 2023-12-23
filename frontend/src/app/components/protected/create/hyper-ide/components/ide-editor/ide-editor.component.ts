@@ -213,7 +213,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     });
   }
 
-  private async executeActiveFile() {
+  private async executeHyperlambda() {
 
     if (this.openFiles.length === 0 || !this.currentFileData.path.endsWith('.hl')) {
       return;
@@ -277,15 +277,13 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     this.generalService.showLoading();
     this.evaluatorService.executeWithArgs(hyperlambda, args).subscribe({
 
-      next: (response: MagicResponse) => {
+      next: (response: any) => {
 
         this.generalService.hideLoading();
         this.dialog.open(ExecuteResultDialog, {
           width: '900px',
           maxWidth: '80vw',
-          data: {
-            hyperlambda: response.result,
-          }
+          data: JSON.stringify(response, null, 2),
         });
       },
 
@@ -494,7 +492,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
           break;
 
         case 'execute':
-          this.executeActiveFile();
+          this.executeHyperlambda();
           break;
 
         case 'prompt':

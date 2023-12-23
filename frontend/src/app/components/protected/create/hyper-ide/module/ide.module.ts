@@ -10,6 +10,7 @@ import { CommonModule } from '@angular/common';
 // Utility imports
 import { FormlyModule } from '@ngx-formly/core';
 import { FormlyMaterialModule } from '@ngx-formly/material';
+import { HighlightModule } from 'ngx-highlightjs';
 
 // Application specific imports
 import { IdeComponent } from 'src/app/components/protected/create/hyper-ide/ide.component';
@@ -66,6 +67,7 @@ import { FormlyAutocompleteTextareaComponent } from '../components/parametrise-a
     SharedModule,
     FormlyModule.forRoot(),
     FormlyMaterialModule,
+    HighlightModule,
     FormlyModule.forRoot({
       types: [
         { name: 'sql', component: FormlySqlComponent },
@@ -77,6 +79,6 @@ import { FormlyAutocompleteTextareaComponent } from '../components/parametrise-a
         { name: 'autocomplete-textarea', component: FormlyAutocompleteTextareaComponent },
       ],
     }),
-  ]
+  ],
 })
 export class IdeModule { }

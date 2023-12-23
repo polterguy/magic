@@ -36,6 +36,4 @@ add:x:./*/invoke
 invoke:x:@hyper2lambda
 
 // Returning the results of the evaluation to caller.
-lambda2hyper:x:@invoke/*
-yield
-   result:x:@lambda2hyper
+return-nodes:x:@invoke/*
