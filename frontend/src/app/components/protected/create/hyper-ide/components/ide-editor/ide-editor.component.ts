@@ -20,7 +20,8 @@ import { FileService } from 'src/app/services/file.service';
 import { VocabularyService } from 'src/app/services/vocabulary.service';
 import { AiService } from 'src/app/services/ai.service';
 import { MagicResponse } from 'src/app/models/magic-response.model';
-import { ExecuteResult } from '../execute-result-dialog/execute-result-dialog.component';
+import { ExecuteResultDialog } from '../execute-result-dialog/execute-result-dialog.component';
+import { GetArgumentsDialog } from '../get-arguments-dialog/get-arguments-dialog.component';
 
 /**
  * Hyper IDE editor component, wrapping currently open files, allowing user to edit the code.
@@ -227,16 +228,61 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
       this.generalService.showFeedback('Active document contains no code', 'errorMessage');
       return;
     }
-    const selectedText = editor.getSelection();
+    const hyperlambda = editor.getSelection() || this.currentFileData.content;
 
+    // Checking if we've got an arguments collection in Hyperlambda we're about to execute.
     this.generalService.showLoading();
-    this.evaluatorService.execute(selectedText === '' ? this.currentFileData.content : selectedText).subscribe({
+    this.evaluatorService.getHyperlambdaArguments(hyperlambda).subscribe({
+
+      next: (args: any) => {
+
+        if (args) {
+
+          // Code requires arguments, making sure user populates them.
+          this.generalService.hideLoading();
+          this.dialog.open(GetArgumentsDialog, {
+            width: '900px',
+            maxWidth: '80vw',
+            data: {
+              args: args,
+            }
+          }).afterClosed().subscribe((populated: any) => {
+
+            // Verifying user clicked OK.
+            if (populated) {
+
+              // Executing endpoint now with decorated arguments.
+              this.executeWithArguments(hyperlambda, populated);
+            }
+
+          });
+        } else {
+
+          // Code doesn't require arguments,executing as is.
+          this.executeWithArguments(hyperlambda, args);
+        }
+      },
+
+      error: (error: any) => {
+
+        this.generalService.hideLoading();
+        this.generalService.showFeedback(error?.error?.message ?? error, 'erroorMessage');
+      }
+    });
+  }
+
+  private executeWithArguments(hyperlambda: string, args: any) {
+
+    // Executing selected Hyperlambda or all Hyperlambda.
+    this.generalService.showLoading();
+    this.evaluatorService.execute(hyperlambda, args).subscribe({
 
       next: (response: MagicResponse) => {
 
         this.generalService.hideLoading();
-        this.dialog.open(ExecuteResult, {
+        this.dialog.open(ExecuteResultDialog, {
           width: '900px',
+          maxWidth: '80vw',
           data: {
             hyperlambda: response.result,
           }

@@ -5,6 +5,7 @@
  */
 .arguments
    hyperlambda:string
+   args:*
 .description:Evaluates the given Hyperlambda and returns the results of the evaluation as Hyperlambda
 .type:internal
 
@@ -31,6 +32,9 @@ try
     */
    .x:node:""
    hyper2lambda:x:@.arguments/*/hyperlambda
+   remove-nodes:x:@hyper2lambda/*/.arguments/*
+   add:x:@hyper2lambda/*/.arguments
+      get-nodes:x:@.arguments/*/args/*
    add:x:@.x/#
       get-nodes:x:@hyper2lambda/*
 

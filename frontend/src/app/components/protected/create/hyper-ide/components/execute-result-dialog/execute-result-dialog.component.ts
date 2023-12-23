@@ -9,14 +9,14 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CodemirrorActionsService } from 'src/app/services/codemirror-actions.service';
 
 /**
- * Modal dialog allowing you to parametrise and execute a macro.
+ * Modal dialog allowing you to view the result of executing some piece of Hyperlambda.
  */
 @Component({
   selector: 'app-execute-result-dialog',
   templateUrl: './execute-result-dialog.component.html',
   styleUrls: ['./execute-result-dialog.component.scss']
 })
-export class ExecuteResult implements OnInit {
+export class ExecuteResultDialog implements OnInit {
 
   hlReady: boolean = false;
   hlModel: HlModel;
