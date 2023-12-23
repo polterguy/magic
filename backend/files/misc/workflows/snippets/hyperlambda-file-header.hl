@@ -1,0 +1,10 @@
+
+/*
+ * Hyperlambda file taking some arguments and doing some stuff.
+ *
+ * Notice, edit this comment and its description and provide a real description of your file.
+ */
+.arguments
+   foo:string
+   bar:int
+.description:This Hyperlambda file does xyz and qwe

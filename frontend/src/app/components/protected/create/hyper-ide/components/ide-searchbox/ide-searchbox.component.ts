@@ -47,5 +47,6 @@ export class IdeSearchboxComponent {
   focusToFind() {
 
     this.input.nativeElement.focus();
+    this.input.nativeElement.select();
   }
 }
