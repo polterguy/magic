@@ -178,7 +178,7 @@ export class IdeTreeComponent implements OnInit {
             input: result.input,
             description: el.description,
             name: el.name,
-            candidates: result.candidates,
+            candidates: result.candidates || [],
           },
         }).afterClosed().subscribe((args: any) => {
           if (args) {

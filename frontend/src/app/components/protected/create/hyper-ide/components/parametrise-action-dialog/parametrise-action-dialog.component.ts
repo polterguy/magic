@@ -92,7 +92,7 @@ export class ParametriseActionDialog implements OnInit {
               }
             }
           }
-          for (const idxCandidate of this.data.candidates || []) {
+          for (const idxCandidate of this.data.candidates) {
             field.props.options.push({
               value: ':x:' + idxCandidate.expression,
               label: ':x:' + idxCandidate.expression,
@@ -178,7 +178,7 @@ export class ParametriseActionDialog implements OnInit {
           result[this.replaceAll(idx, '$__$', '.')] = model[idx];
         }
       } else {
-        result[idx] = this.getModel(result[idx]);
+        result[idx] = this.getModel(model[idx]);
       }
     }
     return result;

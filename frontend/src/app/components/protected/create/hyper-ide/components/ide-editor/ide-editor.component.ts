@@ -19,7 +19,6 @@ import { CodemirrorActionsService } from 'src/app/services/codemirror-actions.se
 import { FileService } from 'src/app/services/file.service';
 import { VocabularyService } from 'src/app/services/vocabulary.service';
 import { AiService } from 'src/app/services/ai.service';
-import { MagicResponse } from 'src/app/models/magic-response.model';
 import { ExecuteResultDialog } from '../execute-result-dialog/execute-result-dialog.component';
 import { ParametriseActionDialog } from '../parametrise-action-dialog/parametrise-action-dialog.component';
 
@@ -244,7 +243,10 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
             width: '900px',
             maxWidth: '80vw',
             data: {
+              name: 'Hyperlambda execution',
+              description: 'Provide arguments for execution of Hyperlambda',
               input: args,
+              candidates: []
             }
           }).afterClosed().subscribe((populated: any) => {
 
@@ -279,12 +281,13 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
 
       next: (response: any) => {
 
+        this.generalService.hideLoading();
         if (!response || response === '') {
+
           this.generalService.showFeedback('Hyperlambda successfully executed but produced no result', 'successMessage');
           return;
         }
 
-        this.generalService.hideLoading();
         this.dialog.open(ExecuteResultDialog, {
           width: '900px',
           maxWidth: '80vw',
