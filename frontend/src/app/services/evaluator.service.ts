@@ -25,9 +25,17 @@ export class EvaluatorService {
     private httpService: HttpService,
     private fileService: FileService) { }
 
-  execute(hyperlambda: string) {
+  execute(hyperlambda: string, args: any) {
 
     return this.httpService.post<MagicResponse>('/magic/system/evaluator/evaluate', {
+      hyperlambda,
+      args,
+    });
+  }
+
+  getHyperlambdaArguments(hyperlambda: string) {
+
+    return this.httpService.post<MagicResponse>('/magic/system/evaluator/get-arguments', {
       hyperlambda,
     });
   }

@@ -130,9 +130,9 @@ export class HyperlambdaPlaygroundComponent implements OnInit, OnDestroy {
     }
 
     this.generalService.showLoading();
-    const selectedText = this.input.editor.getSelection();
+    const hyperlambda = this.input.editor.getSelection() || this.input.hyperlambda;
 
-    this.evaluatorService.execute(selectedText == '' ? this.input.hyperlambda : selectedText).subscribe({
+    this.evaluatorService.execute(hyperlambda, null).subscribe({
       next: (res: MagicResponse) => {
 
         this.output.hyperlambda = res.result;

@@ -24,7 +24,7 @@ import { NewFileFolderDialogComponent } from '../components/new-file-folder-dial
 import { RenameFileDialogComponent } from '../components/rename-file-dialog/rename-file-dialog.component';
 import { RenameFolderDialogComponent } from '../components/rename-folder-dialog/rename-folder-dialog.component';
 import { UnsavedChangesDialogComponent } from '../components/unsaved-changes-dialog/unsaved-changes-dialog.component';
-import { ExecuteResult } from '../components/execute-result-dialog/execute-result-dialog.component';
+import { ExecuteResultDialog } from '../components/execute-result-dialog/execute-result-dialog.component';
 import { ParametriseActionDialog } from '../components/parametrise-action-dialog/parametrise-action-dialog.component';
 import { FormlySqlComponent } from '../components/parametrise-action-dialog/components/formly-sql/formly-sql.component';
 import { FormlyKeyValueComponent } from '../components/parametrise-action-dialog/components/formly-key-value/formly-key-value.component';
@@ -35,6 +35,7 @@ import { CreateArrayDialogComponent } from '../components/parametrise-action-dia
 import { FormlyHyperlambdaComponent } from '../components/parametrise-action-dialog/components/formly-hyperlambda/formly-hyperlambda.component';
 import { FormlyAutocompleteComponent } from '../components/parametrise-action-dialog/components/formly-autocomplete/formly-autocomplete.component';
 import { FormlyAutocompleteTextareaComponent } from '../components/parametrise-action-dialog/components/formly-autocomplete-textarea/formly-autocomplete-textarea.component';
+import { GetArgumentsDialog } from '../components/get-arguments-dialog/get-arguments-dialog.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,7 @@ import { FormlyAutocompleteTextareaComponent } from '../components/parametrise-a
     IdeTreeComponent,
     IdeEditorComponent,
     IdeSearchboxComponent,
-    ExecuteResult,
+    ExecuteResultDialog,
     IncompatibleFileDialogComponent,
     NewFileFolderDialogComponent,
     RenameFileDialogComponent,
@@ -58,6 +59,7 @@ import { FormlyAutocompleteTextareaComponent } from '../components/parametrise-a
     FormlyAutocompleteTextareaComponent,
     CreateKeyValueDialogComponent,
     CreateArrayDialogComponent,
+    GetArgumentsDialog,
   ],
   imports: [
     CommonModule,

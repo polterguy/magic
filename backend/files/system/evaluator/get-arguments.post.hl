@@ -1,0 +1,17 @@
+
+/*
+ * Returns arguments the specified Hyperlambda require if any.
+ */
+.arguments
+   hyperlambda:string
+.description:Returns arguments the specified Hyperlambda require if any
+.type:internal
+
+// Ensures user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Transforming Hyperlambda to lambda object.
+hyper2lambda:x:@.arguments/*/hyperlambda
+
+// Returning arguments Hyperlambda requires to caller.
+return-nodes:x:@hyper2lambda/*/.arguments/*
