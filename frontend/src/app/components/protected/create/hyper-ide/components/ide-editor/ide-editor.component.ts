@@ -275,7 +275,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
 
     // Executing selected Hyperlambda or all Hyperlambda.
     this.generalService.showLoading();
-    this.evaluatorService.execute(hyperlambda, args).subscribe({
+    this.evaluatorService.executeWithArgs(hyperlambda, args).subscribe({
 
       next: (response: MagicResponse) => {
 
