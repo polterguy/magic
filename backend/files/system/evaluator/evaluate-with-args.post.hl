@@ -1,0 +1,41 @@
+
+/*
+ * Evaluates the given [hyperlambda], and returns
+ * the results of the evaluation.
+ */
+.arguments
+   hyperlambda:string
+   args:*
+.description:Evaluates the given Hyperlambda and returns the results of the evaluation as Hyperlambda
+.type:internal
+
+// Ensures user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Transforms Hyperlambda 2 lambda object.
+hyper2lambda:x:@.arguments/*/hyperlambda
+
+// Converts all input arguments to their expected type.
+for-each:x:@.arguments/*/args/*
+   get-name:x:@.dp/#
+   set-value:x:@.dp/#
+      convert:x:@.dp/#
+         type:x:@hyper2lambda/*/.arguments/*/{@get-name}/*/type
+
+/*
+ * Removing [.arguments] declaration from Hyperlambda we're about to execute,
+ * such that we can add the input arguments to the Hyperlambda file correctly.
+ */
+remove-nodes:x:@hyper2lambda/*/.arguments/*
+
+// Adding input arguments specified by caller.
+add:x:./*/invoke
+   get-nodes:x:@.arguments/*/args/*
+
+// Evaluating Hyperlambda, now with the correct root node.
+invoke:x:@hyper2lambda
+
+// Returning the results of the evaluation to caller.
+lambda2hyper:x:@invoke/*
+yield
+   result:x:@lambda2hyper
