@@ -4,9 +4,10 @@
  */
 
 // Angular and system imports.
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
+import { Clipboard } from '@angular/cdk/clipboard';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { CodemirrorActionsService } from 'src/app/services/codemirror-actions.service';
+import { GeneralService } from 'src/app/services/general.service';
 
 /**
  * Modal dialog allowing you to view the result of executing some piece of Hyperlambda.
@@ -16,33 +17,19 @@ import { CodemirrorActionsService } from 'src/app/services/codemirror-actions.se
   templateUrl: './execute-result-dialog.component.html',
   styleUrls: ['./execute-result-dialog.component.scss']
 })
-export class ExecuteResultDialog implements OnInit {
-
-  hlReady: boolean = false;
-  hlModel: HlModel;
+export class ExecuteResultDialog {
 
   /**
    * Creates an instance of your component.
    */
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: any,
-    private codemirrorActionsService: CodemirrorActionsService) { }
+    @Inject(MAT_DIALOG_DATA) public data: string,
+    private clipBoard: Clipboard,
+    private generalService: GeneralService) { }
 
-  ngOnInit() {
+  copy() {
 
-    const res = this.codemirrorActionsService.getActions(null, 'hl');
-    res.readOnly = true;
-    this.hlModel = {
-      hyperlambda: this.data.hyperlambda,
-      options: res,
-    }
-    setTimeout(() => {
-      this.hlReady = true;
-    }, 500);
+    this.clipBoard.copy(this.data);
+    this.generalService.showFeedback('You can find the content on your clipboard', 'successMessage');
   }
-}
-
-interface HlModel {
-  hyperlambda: string,
-  options: any
 }

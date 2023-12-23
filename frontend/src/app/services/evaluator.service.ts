@@ -34,7 +34,7 @@ export class EvaluatorService {
 
   executeWithArgs(hyperlambda: string, args: any) {
 
-    return this.httpService.post<MagicResponse>('/magic/system/evaluator/evaluate-with-args', {
+    return this.httpService.post<any>('/magic/system/evaluator/evaluate-with-args', {
       hyperlambda,
       args,
     });

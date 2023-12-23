@@ -1,19 +1,20 @@
 <h3 mat-dialog-title>Result of execution</h3>
 
 <div mat-dialog-content>
-
-  <div *ngIf="hlReady">
-    <app-codemirror-hyperlambda
-      [(model)]="hlModel">
-    </app-codemirror-hyperlambda>
-  </div>
-
+  <pre><code [highlight]="data"></code></pre>
 </div>
 
 <div mat-dialog-actions [align]="'end'">
 
   <button
     mat-button
+    (click)="copy()">
+    Copy
+  </button>
+
+  <button
+    mat-flat-button
+    color="primary"
     mat-dialog-close>
     Close
   </button>

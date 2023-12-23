@@ -44,6 +44,7 @@ import { AccessGuard } from 'src/app/access-guards/access.guard';
 import { AuthBaseComponent } from 'src/app/components/public/authentication/auth-base/auth-base.component';
 import { SharedModule } from './shared.module';
 import { BackendsListComponent } from '../components/protected/core/header/components/backends-list/backends-list.component';
+import { HIGHLIGHT_OPTIONS } from 'ngx-highlightjs';
 
 @NgModule({
   declarations: [
@@ -87,6 +88,15 @@ import { BackendsListComponent } from '../components/protected/core/header/compo
     {
       provide: RECAPTCHA_V3_SITE_KEY,
       useValue: "6LfVd20fAAAAAC2tcJ55RvOEkraQL390cDw2yiT2"
+    },
+    {
+      provide: HIGHLIGHT_OPTIONS,
+      useValue: {
+        coreLibraryLoader: () => import('highlight.js/lib/core'),
+        languages: {
+          javascript: () => import('highlight.js/lib/languages/javascript'),
+        }
+      }
     },
   ],
   bootstrap: [AppComponent]
