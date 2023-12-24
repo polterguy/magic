@@ -179,7 +179,12 @@ export class IdeTreeComponent implements OnInit {
             name: el.name,
             description: el.description,
             input: result.input,
-            candidates: result.candidates || [],
+            candidates: result.candidates?.map((x: any) => {
+              return {
+                value: ':x:' + x.expression,
+                label: x.name,
+              }
+            }) || [],
           },
         }).afterClosed().subscribe((args: any) => {
           if (args) {
@@ -622,6 +627,7 @@ export class IdeTreeComponent implements OnInit {
   }
 
   createNewFileObject(type: string) {
+
     const folders = this.getFolders();
     const files = this.getFiles();
     const dialogRef = this.dialog.open(NewFileFolderDialogComponent, {
@@ -636,26 +642,99 @@ export class IdeTreeComponent implements OnInit {
       },
     });
     dialogRef.afterClosed().subscribe((result: any) => {
+
       if (result) {
         let path = result.path + result.name;
 
         if (type === 'folder') {
+
           path += '/';
+          this.generalService.showLoading();
           this.fileService.createFolder(path).subscribe({
+
             next: () => {
+
+              this.generalService.hideLoading();
               this.generalService.showFeedback('Folder successfully created', 'successMessage');
               this.sort({ dialogResult: result, objectPath: path })
             },
-            error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+
+            error: (error: any) => {
+             
+              this.generalService.hideLoading();
+              this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+            }
           });
+
         } else {
-          this.fileService.saveFile(path, result.template ?? '').subscribe({
+
+          const fileContent = result.template ?? '';
+          this.generalService.showLoading();
+          this.fileService.saveFile(path, fileContent).subscribe({
+
             next: () => {
+
+              this.generalService.hideLoading();
               this.generalService.showFeedback('File successfully created', 'successMessage');
-              this.sort({ dialogResult: result, objectPath: path })
+              this.sort({ dialogResult: result, objectPath: path });
+
+              if (fileContent === '') {
+
+                // Checking if we should show "Create arguments collection" dialog for file.
+                if (path.endsWith('.hl')) {
+
+                  this.dialog.open(ParametriseActionDialog, {
+                    width: '750px',
+                    maxWidth: '80vw',
+                    autoFocus: true,
+                    data: {
+                      name: path,
+                      description: 'What arguments can your Hyperlambda file handle?',
+                      input: {
+                        arguments: {
+                          type: 'key-value',
+                        },
+                      },
+                      candidates: [
+                        { value: 'string', label: 'string' },
+                        { value: 'int', label: 'int' },
+                        { value: 'long', label: 'long' },
+                        { value: 'bool', label: 'bool' },
+                        { value: 'date', label: 'date' },
+                        { value: '*', label: '*' },
+                      ],
+                    },
+                  }).afterClosed().subscribe((args: any) => {
+                    if (args) {
+
+                      this.generalService.showLoading();
+                      this.workflowService.applyArguments(fileContent, args.arguments).subscribe({
+
+                        next: (response: MagicResponse) => {
+
+                          this.generalService.hideLoading();
+                          this.currentFileData.content = response.result;
+                          this.setFocusToActiveEditor.emit();
+                        },
+                        error: (error: any) => {
+             
+                          this.generalService.hideLoading();
+                          this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+                        }
+                      });
+                    }
+                  });
+                }
+              }
+
             },
-            error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+            error: (error: any) => {
+             
+              this.generalService.hideLoading();
+              this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+            }
           });
+
         }
       }
     });

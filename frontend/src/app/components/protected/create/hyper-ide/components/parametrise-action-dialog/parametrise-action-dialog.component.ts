@@ -59,8 +59,8 @@ export class ParametriseActionDialog implements OnInit {
           field.props.options = [];
           for (const idxCandidate of this.data.candidates) {
             field.props.options.push({
-              value: ':x:' + idxCandidate.expression,
-              label: ':x:' + idxCandidate.expression,
+              value: idxCandidate.value,
+              label: idxCandidate.label,
             });
           }
           break;
@@ -91,8 +91,8 @@ export class ParametriseActionDialog implements OnInit {
           }
           for (const idxCandidate of this.data.candidates) {
             field.props.options.push({
-              value: ':x:' + idxCandidate.expression,
-              label: ':x:' + idxCandidate.expression,
+              value: ':x:' + idxCandidate.value,
+              label: ':x:' + idxCandidate.label,
             });
           }
           break;

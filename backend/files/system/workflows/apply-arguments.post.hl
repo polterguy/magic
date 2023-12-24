@@ -1,0 +1,35 @@
+
+/*
+ * Applies the specified arguments to the specified Hyperlambda
+ */
+.arguments
+   hyperlambda:string
+   args:*
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Converting input Hyperlambda to lambda object.
+hyper2lambda:x:@.arguments/*/hyperlambda
+if
+   exists:x:@hyper2lambda/*/.arguments
+   .lambda
+
+      // Removing old arguments.
+      remove-nodes:x:@hyper2lambda/*/.arguments/*
+      add:x:@hyper2lambda/*/.arguments
+         get-nodes:x:@.arguments/*/args/*
+
+else
+
+   // Adding new arguments collection into lambda object.
+   add:x:+/*/*
+      get-nodes:x:@.arguments/*/args/*
+   add:x:@hyper2lambda
+      .
+         .arguments
+
+// Returning updated Hyperlambda to caller.
+lambda2hyper:x:@hyper2lambda/*
+yield
+   result:x:@lambda2hyper
