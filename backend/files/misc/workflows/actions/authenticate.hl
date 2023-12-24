@@ -1,0 +1,26 @@
+
+/*
+ * Ensures user is authenticated and optionally authorised.
+ */
+.arguments
+   roles
+      type:array
+      mandatory:bool:false
+.icon:shield
+
+/*
+ * Checking if we've got a [roles] argument,
+ * and if so, joining all roles into a comma separated string of roles.
+ */
+.roles
+if
+   exists:x:@.arguments/*/roles/*
+   .lambda
+
+      // Creating comma separated list of roles.
+      set-value:x:@.roles
+         strings.join:x:@.arguments/*/roles/*
+            .:,
+
+// Making sure user is authenticated, and optionally authorised.
+auth.ticket.verify:x:@.roles

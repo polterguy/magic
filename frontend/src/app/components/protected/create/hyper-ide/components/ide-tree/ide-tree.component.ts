@@ -715,6 +715,7 @@ export class IdeTreeComponent implements OnInit {
                           this.generalService.hideLoading();
                           this.currentFileData.content = response.result;
                           this.setFocusToActiveEditor.emit();
+                          this.toolboxExpanded = true;
                         },
                         error: (error: any) => {
              

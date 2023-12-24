@@ -7,7 +7,6 @@
 import { FieldType, FieldTypeConfig } from '@ngx-formly/core';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { GeneralService } from 'src/app/services/general.service';
 import { CreateArrayDialogComponent } from './components/create-array-dialog/create-array-dialog.component';
 
 /**
@@ -37,15 +36,16 @@ export class FormlyArrayComponent extends FieldType<FieldTypeConfig> implements 
 
   items: string[] = [];
 
-  constructor(
-    private dialog: MatDialog,
-    private generalService: GeneralService) {
+  constructor(private dialog: MatDialog) {
 
     super();
   }
 
   ngOnInit() {
 
+    if (!this.model[<string>this.field.key]) {
+      this.model[<string>this.field.key] = [];
+    }
     this.createItems();
   }
 

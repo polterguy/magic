@@ -8,6 +8,7 @@
    model
       type:enum
       mandatory:bool:true
+      default:gpt-4-1106-preview
       values
          .:gpt-3.5-turbo
          .:gpt-3.5-turbo-16k
@@ -16,6 +17,7 @@
    max_tokens
       type:int
       mandatory:bool:true
+      default:int:1500
    prompt
       type:textarea
       mandatory:bool:true
