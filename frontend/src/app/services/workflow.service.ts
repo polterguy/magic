@@ -58,4 +58,12 @@ export class WorkflowService {
       codeToCaret
     });
   }
+
+  applyArguments(hyperlambda: string, args: any) {
+
+    return this.httpService.post<MagicResponse>('/magic/system/workflows/apply-arguments', {
+      hyperlambda,
+      args
+    });
+  }
 }

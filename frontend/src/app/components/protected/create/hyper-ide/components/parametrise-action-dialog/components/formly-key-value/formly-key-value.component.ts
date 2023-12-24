@@ -23,7 +23,7 @@ import { GeneralService } from 'src/app/services/general.service';
       (removed)="removeArgument(item)"
       (click)="addEditItem(item)"
       [removable]="true">
-      {{item.key}}:{{item.value}}
+      {{item.key}}[{{item.value}}]
       <mat-icon matChipRemove>cancel</mat-icon>
     </mat-chip>
     <mat-chip (click)="addEditItem(null)">
