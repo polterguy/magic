@@ -61,6 +61,7 @@ export class IdeTreeComponent implements OnInit {
   currentSelection: string = '';
   workflowActions: any[] = [];
   workflowSnippets: any[] = [];
+  toolboxExpanded: boolean = null;
 
   constructor(
     private dialog: MatDialog,
@@ -240,6 +241,11 @@ export class IdeTreeComponent implements OnInit {
       });
 
     } else {
+
+      // Checking if we should expand toolbox.
+      if (file.path.endsWith('.hl') && this.toolboxExpanded === null) {
+        this.toolboxExpanded = true;
+      }
 
       // File is not open from before.
       const cmOptions = this.getCodeMirrorOptions(file.path);
