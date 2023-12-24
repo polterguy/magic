@@ -1,6 +1,6 @@
 
 /*
- * Invokes ChatGPT with the specified [messages].
+ * Invokes ChatGPT with the specified [prompt], [model] and [max_tokens].
  *
  * Will use the default API key found from configurations.
  */
@@ -18,6 +18,9 @@
       type:int
       mandatory:bool:true
       default:int:1500
+   instruction
+      type:textarea
+      mandatory:bool:true
    prompt
       type:textarea
       mandatory:bool:true
@@ -46,6 +49,9 @@ http.post:"https://api.openai.com/v1/chat/completions"
       max_tokens:x:@.arguments/*/max_tokens
       temperature:decimal:0.3
       messages
+         .
+            role:system
+            content:x:@.arguments/*/instruction
          .
             role:user
             content:x:@.arguments/*/prompt
