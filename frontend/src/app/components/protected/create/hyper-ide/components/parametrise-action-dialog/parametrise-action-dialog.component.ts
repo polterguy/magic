@@ -40,9 +40,6 @@ export class ParametriseActionDialog implements OnInit {
         // Because Formly turns 'foo.bar' into a nested object in model, we need this little hack around
         key: this.replaceAll(idx, '.', '$__$'),
         className: 'w-100 standalone-field',
-        options: {
-
-        },
         props: {
           placeholder: idx,
           label: idx,

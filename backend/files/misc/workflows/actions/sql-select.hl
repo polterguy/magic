@@ -22,6 +22,7 @@
       mandatory:bool:true
    params
       type:key-value
+      mandatory:bool:false
 .icon:cloud_download
 
 // Sanity checking invocation.

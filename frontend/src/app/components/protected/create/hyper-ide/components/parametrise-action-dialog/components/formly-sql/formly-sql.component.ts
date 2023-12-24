@@ -35,12 +35,12 @@ import { CodemirrorActionsService } from 'src/app/services/codemirror-actions.se
     [(ngModel)]="model[field.key]">
   </ngx-codemirror>
 </div>`,
-  styleUrls: ['./formly-sql.scss']
+  styleUrls: ['./formly-sql.scss'],
 })
 export class FormlySqlComponent extends FieldType<FieldTypeConfig> implements OnInit {
 
-  private databases: Databases = null;
   @ViewChild('editor') private editor: CodemirrorComponent;
+  private databases: Databases = null;
   cmOptions: any = null;
   connected: boolean = false;
 
@@ -75,6 +75,14 @@ export class FormlySqlComponent extends FieldType<FieldTypeConfig> implements On
         this.editor.codeMirror.getDoc().markClean();
         this.editor.codeMirror.getDoc().clearHistory();
 
+        this.editor.codeMirror.on('change', () => {
+          if (this.valid()) {
+            this.formControl.setErrors(null);
+          } else {
+            this.formControl.setErrors({hasError: true});
+          }
+        });
+  
         // Verifying we've got database type, connection string, and database values.
         if (this.form.controls['database-type'] &&
           this.form.controls['connection-string'] &&
@@ -138,7 +146,11 @@ export class FormlySqlComponent extends FieldType<FieldTypeConfig> implements On
         this.generalService.hideLoading();
         this.databases = result;
         this.connected = true;
-        this.formControl.setErrors(null);
+        if (this.valid()) {
+          this.formControl.setErrors(null);
+        } else {
+          this.formControl.setErrors({hasError: true});
+        }
         this.cdr.detectChanges();
         this.databaseChanged();
       },
@@ -147,7 +159,7 @@ export class FormlySqlComponent extends FieldType<FieldTypeConfig> implements On
 
         this.generalService.hideLoading();
         this.connected = false;
-        this.formControl.setErrors({connected: false});
+        this.formControl.setErrors({hasError: true});
         this.cmOptions.hintOptions = {
           tables: [],
         };
@@ -178,8 +190,22 @@ export class FormlySqlComponent extends FieldType<FieldTypeConfig> implements On
         tables: hints,
       };
       this.connected = true;
-      this.formControl.setErrors(null);
+      if (this.valid()) {
+        this.formControl.setErrors(null);
+      } else {
+        this.formControl.setErrors({hasError: true});
+      }
       this.cdr.detectChanges();
     }
+  }
+
+  private valid() {
+    if (!this.connected) {
+      return false;
+    }
+    if (this.field.props.required === true && this.editor.codeMirror.getValue() === '') {
+      return false;
+    }
+    return true;
   }
 }
