@@ -33,6 +33,20 @@ export class ParametriseActionDialog implements OnInit {
 
   ngOnInit() {
 
+    if (this.data.is_action) {
+      this.fields.push({
+        key: 'action_name',
+        type: 'input',
+        className: 'w-100 standalone-field',
+        props: {
+          placeholder: 'Action name ...',
+          label: 'Name of Action',
+          required: true,
+        }
+      });
+      this.model.action_name = this.data.name;
+    }
+
     // Adding fields as returned from server.
     for (const idx in this.data.input) {
       const field: FormlyFieldConfig = {
