@@ -6,7 +6,6 @@
 // Angular and system imports.
 import { FieldType, FieldTypeConfig } from '@ngx-formly/core';
 import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
 import { Observable, debounceTime, distinctUntilChanged, map, startWith, tap } from 'rxjs';
 import { SqlService } from 'src/app/services/sql.service';
 import { GeneralService } from 'src/app/services/general.service';
@@ -21,8 +20,9 @@ import { GeneralService } from 'src/app/services/general.service';
   template: `
 <mat-form-field class="w-100 standalone-field mb-2">
   <mat-label>{{field.props.label}}</mat-label>
-  <input type="text"
+  <input
     [id]="field.key"
+    type="text"
     [placeholder]="field.props.label"
     matInput
     [formControl]="formControl"
