@@ -8,21 +8,15 @@
    name
       type:string
       mandatory:bool:true
-      default:John Doe
    email
       type:email
       mandatory:bool:true
-      default:john@doe.com
    subject
       type:string
       mandatory:bool:true
-      default:Some subject line
    body
       type:textarea
       mandatory:bool:true
-      default:@"Hello John,
-
-How's it going?"
 .icon:email
 
 // Sanity checking invocation.

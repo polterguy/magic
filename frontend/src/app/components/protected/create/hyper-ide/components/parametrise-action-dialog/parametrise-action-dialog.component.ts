@@ -91,8 +91,8 @@ export class ParametriseActionDialog implements OnInit {
           }
           for (const idxCandidate of this.data.candidates) {
             field.props.options.push({
-              value: ':x:' + idxCandidate.value,
-              label: ':x:' + idxCandidate.label,
+              value: idxCandidate.value,
+              label: idxCandidate.label,
             });
           }
           break;
@@ -124,7 +124,7 @@ export class ParametriseActionDialog implements OnInit {
       if (add) {
         this.fields.push(field);
         if (this.data.input[idx].default) {
-          this.model[idx] = this.data.input[idx].default;
+          this.model[idx] = this.data.input[idx].default?.toString() ?? '';
         }
       }
     }
@@ -174,6 +174,8 @@ export class ParametriseActionDialog implements OnInit {
         if (model[idx] !== '') {
           result[this.replaceAll(idx, '$__$', '.')] = model[idx];
         }
+      } else if (Object.prototype.toString.call(model[idx]) === '[object Array]') {
+        result[idx] = model[idx];
       } else {
         result[idx] = this.getModel(model[idx]);
       }
