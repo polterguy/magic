@@ -26,15 +26,6 @@ if
       add:x:@.action
          hyper2lambda:x:@load-file
             comments:true
-      .name
-      strings.split:x:@.arguments/*/filename
-         .:/
-      strings.split:x:-/0/-
-         .:.
-      remove-nodes:x:@strings.split/0/-
-      set-value:x:@.name
-         strings.join:x:@strings.split/0
-            .:.
 
       // Creating our action invocation.
       .invocation
@@ -43,7 +34,8 @@ if
             filename
             arguments
       set-value:x:@.invocation/*/execute/*/name
-         get-value:x:@.name
+         get-value:x:@.arguments/*/args/*/action_name
+      remove-nodes:x:@.arguments/*/args/*/action_name
       set-value:x:@.invocation/*/execute/*/filename
          get-value:x:@.arguments/*/filename
 

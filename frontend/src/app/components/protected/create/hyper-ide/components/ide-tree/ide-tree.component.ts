@@ -177,6 +177,7 @@ export class IdeTreeComponent implements OnInit {
           autoFocus: false,
           data: {
             name: el.name,
+            is_action: true,
             description: el.description,
             input: result.input,
             candidates: result.candidates?.map((x: any) => {
@@ -689,6 +690,7 @@ export class IdeTreeComponent implements OnInit {
                     autoFocus: true,
                     data: {
                       name: path,
+                      is_action: false,
                       description: 'What arguments can your Hyperlambda file handle?',
                       input: {
                         arguments: {
