@@ -174,7 +174,7 @@ export class IdeTreeComponent implements OnInit {
           width: '750px',
           maxWidth: '80vw',
           disableClose: true,
-          autoFocus: false,
+          autoFocus: true,
           data: {
             name: el.name,
             is_action: true,
