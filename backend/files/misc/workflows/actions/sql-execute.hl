@@ -6,7 +6,6 @@
 .arguments
    database-type
       type:enum
-      default:sqlite
       mandatory:bool:true
       values
          .:sqlite
@@ -15,21 +14,15 @@
          .:pgsql
    connection-string
       type:string
-      default:generic
       mandatory:bool:true
    database
       type:string
-      default:magic
       mandatory:bool:true
    sql
       type:sql
-      default:insert into roles (name, description) values (@name, @description)
       mandatory:bool:true
    params
       type:key-value
-      default
-         name:some-role-name
-         description:Some role description
       mandatory:bool:false
 .icon:backup
 
