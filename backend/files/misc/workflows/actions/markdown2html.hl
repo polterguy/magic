@@ -6,7 +6,7 @@
    markdown
       type:string
       mandatory:bool:true
-.icon:shield
+.icon:pageview
 
 // Transforming Markdown to HTML.
 markdown2html:x:@.arguments/*/markdown
