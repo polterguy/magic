@@ -1,0 +1,16 @@
+
+/*
+ * Transforms the specified [markdown] to HTML and returns to caller.
+ */
+.arguments
+   markdown
+      type:string
+      mandatory:bool:true
+.icon:shield
+
+// Transforming Markdown to HTML.
+markdown2html:x:@.arguments/*/markdown
+
+// Returning resulting HTML to caller.
+yield
+   html:x:@markdown2html
