@@ -11,6 +11,12 @@
    email
       type:email
       mandatory:bool:true
+   from
+      type:string
+      mandatory:bool:false
+   from-email
+      type:email
+      mandatory:bool:false
    subject
       type:string
       mandatory:bool:true
@@ -28,6 +34,7 @@ validators.mandatory:x:@.arguments/*/email
 validators.email:x:@.arguments/*/email
 validators.mandatory:x:@.arguments/*/subject
 validators.mandatory:x:@.arguments/*/body
+validators.email:x:@.arguments/*/from-email
 
 // Applying defaults.
 validators.default:x:@.arguments
@@ -41,6 +48,21 @@ if
       // Making sure MIME message becomes HTML Content-Type.
       set-value:x:../*/mail.smtp.send/**/entity
          .:text/html
+
+// Checking if we've got an explicit [from] and [from-email] argument.
+if
+   and
+      exists:x:@.arguments/*/from
+      exists:x:@.arguments/*/from-email
+   .lambda
+
+      // Adding explicit from name/address.
+      add:x:../*/mail.smtp.send/*/message
+         .
+            from
+               .
+                  name:x:@.arguments/*/from
+                  email:x:@.arguments/*/from-email
 
 // Forward evaluating arguments to [mail.smtp.send].
 unwrap:x:./*/mail.smtp.send/**
