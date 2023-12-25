@@ -190,6 +190,10 @@ export class ParametriseActionDialog implements OnInit {
         }
       } else if (Object.prototype.toString.call(model[idx]) === '[object Array]') {
         result[idx] = model[idx];
+      } else if (typeof model[idx] === 'boolean') {
+        result[idx] = model[idx];
+      } else if (typeof model[idx] === 'number') {
+        result[idx] = model[idx];
       } else {
         result[idx] = this.getModel(model[idx]);
       }

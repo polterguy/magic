@@ -17,6 +17,9 @@
    body
       type:textarea
       mandatory:bool:true
+   html
+      type:bool
+      mandatory:bool:false
 .icon:email
 
 // Sanity checking invocation.
@@ -25,6 +28,19 @@ validators.mandatory:x:@.arguments/*/email
 validators.email:x:@.arguments/*/email
 validators.mandatory:x:@.arguments/*/subject
 validators.mandatory:x:@.arguments/*/body
+
+// Applying defaults.
+validators.default:x:@.arguments
+   html:bool:false
+
+// Making sure we send email as HTML if we should.
+if
+   get-value:x:@.arguments/*/html
+   .lambda
+
+      // Making sure MIME message becomes HTML Content-Type.
+      set-value:x:../*/mail.smtp.send/**/entity
+         .:text/html
 
 // Forward evaluating arguments to [mail.smtp.send].
 unwrap:x:./*/mail.smtp.send/**
