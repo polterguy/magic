@@ -85,6 +85,9 @@ export class ParametriseActionDialog implements OnInit {
           break;
 
         case 'int':
+        case 'decimal':
+        case 'float':
+        case 'double':
         case 'long':
         case 'email':
         case 'string':

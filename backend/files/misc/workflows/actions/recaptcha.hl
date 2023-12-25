@@ -9,6 +9,9 @@
    recaptcha_token
       type:string
       mandatory:bool:true
+   threshold
+      type:decimal
+      mandatory:bool:false
 .icon:shield
 
 /*
@@ -28,10 +31,14 @@ if
 
       // [recaptcha_token] is a mandatory field.
       validators.mandatory:x:@.arguments/*/recaptcha_token
-      
+
+      // Defaulting [threshold] if not given to 0.3.
+      validators.default:x:@.arguments
+         threshold:decimal:0.3
+
       // Retrieving secret and invoking slot responsible for verifying reCAPTCHA value.
       config.get:"magic:auth:recaptcha:secret"
       validators.recaptcha:x:@.arguments/*/recaptcha_token
-         min:decimal:0.3
+         min:x:@.arguments/*/threshold
          site-key:x:@config.get/@config.get
          secret:x:@config.get
