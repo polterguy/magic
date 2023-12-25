@@ -1,0 +1,11 @@
+
+/*
+ * Transforms the result of multiple actions/arguments into a new object.
+ */
+.arguments
+   params
+      type:key-value
+      mandatory:bool:false
+.icon:input
+
+return-nodes:x:@.arguments/*
