@@ -1,7 +1,9 @@
 
 /*
  * Execute some execute SQL statement specified as [sql].
- * Optionally provide [connection-string], [database-type] and [database].
+ *
+ * Provide [connection-string], [database-type] and [database] to inform the action of
+ * what database you want to execute your SQL towards.
  */
 .arguments
    database-type

@@ -1,8 +1,12 @@
 
 /*
- * Invokes ChatGPT with the specified [prompt], [model] and [max_tokens].
+ * Invokes ChatGPT with the specified [prompt], [model], [max_tokens] and [instruction].
  *
- * Will use the default API key found from configurations.
+ * Will use the default API key found from configurations and send the [prompt] to ChatGPT
+ * to have the [model] you supply answer your question without any context, but using the specified
+ * [instruction] to modify the model's behavior. Try using for instance
+ * "Answer my question as if I am 5 years old in one sentence" for instance as your [instruction]
+ * to understand how it works.
  */
 .arguments
    model

@@ -1,9 +1,9 @@
 
 /*
- * Returns [max_tokens] context for the specified [query] by searching DuckDuckGo.
+ * Returns [max_tokens] context from the specified [url].
  */
 .arguments
-   query
+   url
       type:string
       mandatory:bool:true
    max_tokens
@@ -12,22 +12,21 @@
 .icon:extension
 
 // Sanity checking invocation.
-validators.mandatory:x:@.arguments/*/query
+validators.mandatory:x:@.arguments/*/url
 
 // Applying default values for optional arguments.
 validators.default:x:@.arguments
    max_tokens:int:4000
 
 // Retrieving context.
-execute:magic.http.duckduckgo-and-scrape
-   query:x:@.arguments/*/query
-   max:int:10
+execute:magic.http.scrape-url
+   url:x:@.arguments/*/url
 
 // Building our context return value.
 .context:
 while
    and
-      exists:x:@execute/0/*/snippets/0
+      exists:x:@execute/0
       lt
          openai.tokenize:x:@.context
          convert:x:@.arguments/*/max_tokens
@@ -40,9 +39,9 @@ while
          strings.concat
             get-value:x:@.context
             .:"\n\n"
-            get-value:x:@execute/0/*/snippets/0/*/prompt
+            get-value:x:@execute/0/*/prompt
             .:"\n\n"
-            get-value:x:@execute/0/*/snippets/0/*/completion
+            get-value:x:@execute/0/*/completion
       if
          lt
             openai.tokenize:x:@.tmp
@@ -59,8 +58,6 @@ while
       if
          not-exists:x:@execute/0/*/snippets/0
          .lambda
-
-            // TODO: Add reference URL here.
 
             // Removing currently iterated URL.
             remove-nodes:x:@execute/0

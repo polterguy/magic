@@ -1,8 +1,13 @@
 
 /*
- * Invokes ChatGPT with the specified [prompt], [model] and [max_tokens].
+ * Invokes ChatGPT with the specified [prompt], [model], [max_tokens], [instruction] and [context].
  *
- * Will use the default API key found from configurations.
+ * This action will use the default API key found from configurations, and the specified [context]
+ * and [instruction] to answer the question specified as [prompt]. This allows you to answer a question
+ * by using a context found by e.g. using the [context-from-database] action or the [context-from-search]
+ * action, and an instruction saying for instance "Answer my question exclusively using the specified context",
+ * which then will invoke ChatGPT with your own custom data, having ChatGPT exclusively using your data
+ * to answer your questions.
  */
 .arguments
    model
@@ -21,6 +26,7 @@
    instruction
       type:textarea
       mandatory:bool:true
+      default:Answer my question using the information found in the context
    context
       type:textarea
       mandatory:bool:true

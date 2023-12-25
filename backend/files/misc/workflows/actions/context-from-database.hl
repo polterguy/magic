@@ -4,7 +4,8 @@
  * and returns to caller.
  *
  * Optionally add [threshold] and [max_tokens] to specify similarity and maximum
- * tokens to return.
+ * tokens to return. [type] is a machine learning type from your ml_types database table in
+ * your magic database.
  */
 .arguments
    type

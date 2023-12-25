@@ -1,6 +1,10 @@
 
 /*
- * Execute some select SQL statement specified as [sql] towards the specified database.
+ * Execute some select SQL statement specified as [sql] towards the specified database and
+ * returns the result of your SQL as a record set.
+ *
+ * Provide [connection-string], [database-type] and [database] to inform the action of
+ * what database you want to execute your SQL towards.
  */
 .arguments
    database-type
