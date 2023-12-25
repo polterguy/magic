@@ -8,9 +8,10 @@ auth.ticket.verify:root
 
 // Listing all snippets in workflow folder.
 io.file.list-recursively:/misc/workflows/snippets/
+io.file.list-recursively:/etc/workflows/snippets/
 
 // Filtering out everything not ending with '.hl'.
-for-each:x:@io.file.list-recursively/*
+for-each:x:./*/io.file.list-recursively/*
    if
       strings.ends-with:x:@.dp/#
          .:.hl
