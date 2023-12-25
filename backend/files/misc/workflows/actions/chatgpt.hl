@@ -19,6 +19,12 @@
       type:int
       mandatory:bool:true
       default:int:1500
+   instruction
+      type:textarea
+      mandatory:bool:false
+   context
+      type:textarea
+      mandatory:bool:false
    prompt
       type:textarea
       mandatory:bool:true
@@ -35,6 +41,30 @@ set-value:x:@.token
    strings.concat
       .:"Bearer "
       config.get:"magic:openai:key"
+
+// Checking if caller provided a [context].
+if
+   exists:x:@.arguments/*/context
+   .lambda
+
+      // Adding [context].
+      insert-before:x:../*/http.post/*/payload/*/messages/0
+         .
+            .
+               role:user
+               content:x:@.arguments/*/context
+
+// Checking if caller provided an [instruction].
+if
+   exists:x:@.arguments/*/instruction
+   .lambda
+
+      // Adding [instruction].
+      insert-before:x:../*/http.post/*/payload/*/messages/0
+         .
+            .
+               role:system
+               content:x:@.arguments/*/instruction
 
 // Invokes OpenAI.
 http.post:"https://api.openai.com/v1/chat/completions"
