@@ -1,6 +1,7 @@
 
 /*
- * Invokes ChatGPT with the specified [prompt], [model] and [max_tokens].
+ * Invokes ChatGPT with the specified [prompt], [model] and [max_tokens] and
+ * have ChatGPT answer your question.
  *
  * Will use the default API key found from configurations.
  */

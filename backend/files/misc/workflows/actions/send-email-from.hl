@@ -1,14 +1,20 @@
 
 /*
  * Sends an email to the specified [name]/[email] recipient,
- * with the specified [subject] and [body], using the default from email address and name
- * from your configuration settings.
+ * with the specified [subject] and [body], using the specified [from] and [from-email]
+ * as the sender.
  */
 .arguments
    name
       type:string
       mandatory:bool:true
    email
+      type:email
+      mandatory:bool:true
+   from
+      type:string
+      mandatory:bool:true
+   from-email
       type:email
       mandatory:bool:true
    subject
@@ -23,6 +29,9 @@
 validators.mandatory:x:@.arguments/*/name
 validators.mandatory:x:@.arguments/*/email
 validators.email:x:@.arguments/*/email
+validators.mandatory:x:@.arguments/*/from
+validators.mandatory:x:@.arguments/*/from-email
+validators.email:x:@.arguments/*/from-email
 validators.mandatory:x:@.arguments/*/subject
 validators.mandatory:x:@.arguments/*/body
 
@@ -36,6 +45,10 @@ mail.smtp.send
          .
             name:x:@.arguments/*/name
             email:x:@.arguments/*/email
+      from
+         .
+            name:x:@.arguments/*/from
+            email:x:@.arguments/*/from-email
       subject:x:@.arguments/*/subject
       entity:text/plain
          content:x:@.arguments/*/body

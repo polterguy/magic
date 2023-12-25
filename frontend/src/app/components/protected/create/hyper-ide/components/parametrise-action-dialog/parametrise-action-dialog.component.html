@@ -6,9 +6,7 @@
 
   <div mat-dialog-content>
 
-    <p class="text-muted mb-4">
-      {{data.description}}
-    </p>
+    <div class="text-muted mb-4" [innerHTML]="data.description | marked"></div>
 
     <formly-form
       [form]="form"
