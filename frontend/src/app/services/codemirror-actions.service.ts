@@ -96,12 +96,6 @@ export class CodemirrorActionsService {
           })
         };
 
-        res.options.extraKeys['Alt-O'] = () => {
-          this.ngZone.run(() => {
-            this.action.next('macro');
-          })
-        };
-
         res.options.extraKeys['Alt-A'] = () => {
           this.ngZone.run(() => {
             this.action.next('newFile');
@@ -123,6 +117,12 @@ export class CodemirrorActionsService {
         res.options.extraKeys['Alt-P'] = () => {
           this.ngZone.run(() => {
             this.action.next('preview');
+          })
+        };
+
+        res.options.extraKeys['Alt-Q'] = () => {
+          this.ngZone.run(() => {
+            this.action.next('arguments');
           })
         };
 

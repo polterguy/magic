@@ -1,0 +1,24 @@
+
+/*
+ * Returns the arguments the specified Hyperlambda can handle.
+ */
+.arguments
+   hyperlambda:string
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Converting Hyperlambda to lambda.
+hyper2lambda:x:@.arguments/*/hyperlambda
+
+// Iterating through each argument Hyperlambda can handle.
+for-each:x:@hyper2lambda/*/.arguments/*
+   set-name:x:+/+/*/*
+      get-name:x:@.dp/#
+   unwrap:x:+/*/*
+   add:x:../*/return-nodes
+      .
+         name:x:@.dp/#
+
+// Returning arguments to caller, together with their type information.
+return-nodes

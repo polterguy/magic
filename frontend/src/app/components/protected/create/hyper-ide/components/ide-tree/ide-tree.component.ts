@@ -728,6 +728,18 @@ export class IdeTreeComponent implements OnInit {
                         { value: 'bool', label: 'bool' },
                         { value: 'date', label: 'date' },
                         { value: '*', label: '*' },
+                        { value: 'short', label: 'short' },
+                        { value: 'ushort', label: 'ushort' },
+                        { value: 'uint', label: 'uint' },
+                        { value: 'ulong', label: 'ulong' },
+                        { value: 'single', label: 'single' },
+                        { value: 'char', label: 'char' },
+                        { value: 'byte', label: 'byte' },
+                        { value: 'sbyte', label: 'sbyte' },
+                        { value: 'time', label: 'time' },
+                        { value: 'guid', label: 'guid' },
+                        { value: 'x', label: 'x' },
+                        { value: 'node', label: 'node' },
                       ],
                     },
                   }).afterClosed().subscribe((args: any) => {
@@ -742,6 +754,16 @@ export class IdeTreeComponent implements OnInit {
                           this.currentFileData.content = response.result;
                           this.setFocusToActiveEditor.emit();
                           this.toolboxExpanded = true;
+                          const fileExisting: number = this.openFiles.findIndex((item: any) => item.path === this.currentFileData.path);
+                          const activeWrapper = document.querySelector('.active-codemirror-editor-' + fileExisting);
+                          const editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
+                          this.currentFileData.content = response.result;
+                          setTimeout(() => {
+                            editor.setCursor({
+                              line: editor.doc.lineCount(),
+                              ch: 0,
+                            });
+                          },1);
                         },
                         error: (error: any) => {
              

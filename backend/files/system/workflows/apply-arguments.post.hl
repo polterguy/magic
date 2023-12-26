@@ -11,6 +11,7 @@ auth.ticket.verify:root
 
 // Converting input Hyperlambda to lambda object.
 hyper2lambda:x:@.arguments/*/hyperlambda
+   comments:true
 if
    exists:x:@hyper2lambda/*/.arguments
    .lambda
@@ -31,5 +32,6 @@ else
 
 // Returning updated Hyperlambda to caller.
 lambda2hyper:x:@hyper2lambda/*
+   comments:true
 yield
    result:x:@lambda2hyper

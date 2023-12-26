@@ -21,6 +21,8 @@ import { VocabularyService } from 'src/app/services/vocabulary.service';
 import { AiService } from 'src/app/services/ai.service';
 import { ExecuteResultDialog } from '../execute-result-dialog/execute-result-dialog.component';
 import { ParametriseActionDialog } from '../parametrise-action-dialog/parametrise-action-dialog.component';
+import { MagicResponse } from 'src/app/models/magic-response.model';
+import { WorkflowService } from 'src/app/services/workflow.service';
 
 /**
  * Hyper IDE editor component, wrapping currently open files, allowing user to edit the code.
@@ -55,6 +57,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     private fileService: FileService,
     private aiService: AiService,
     private generalService: GeneralService,
+    private workflowService: WorkflowService,
     private evaluatorService: EvaluatorService,
     private vocabularyService: VocabularyService,
     private codemirrorActionsService: CodemirrorActionsService) { }
@@ -69,9 +72,13 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     const fileExisting: number = this.openFiles.findIndex((item: any) => item.path === this.currentFileData.path);
 
     if (changes['currentFileData'] && !changes['currentFileData'].firstChange) {
+
       if (this.currentFileData) {
+
         if (this.currentFileData.options !== this.codemirrorOptions[this.currentFileData.path]) {
+
           this.getCodeMirrorOptions();
+
           setTimeout(() => {
             const activeWrapper = document.querySelector('.active-codemirror-editor-' + fileExisting);
             const editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
@@ -122,7 +129,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     this.dialog.open(ShortkeysDialogComponent, {
       width: '900px',
       data: {
-        type: ['full', 'prompt', 'find']
+        type: ['full', 'prompt', 'find', 'arguments']
       }
     });
   }
@@ -507,6 +514,10 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
           this.prompt();
           break;
 
+        case 'arguments':
+          this.editArguments();
+          break;
+
         default:
           break;
       }
@@ -522,6 +533,90 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     if (selection?.length > 0) {
       this.aiService.prompt(selection);
     }
+  }
+
+  private editArguments() {
+
+    this.generalService.showLoading();
+    this.workflowService.getArguments(this.currentFileData.content).subscribe({
+
+      next: (result: any[]) => {
+
+        this.generalService.hideLoading();
+        this.dialog.open(ParametriseActionDialog, {
+          width: '750px',
+          maxWidth: '80vw',
+          autoFocus: true,
+          data: {
+            name: this.currentFileData.path,
+            is_action: false,
+            description: 'Edit arguments your Hyperlambda file can handle?',
+            input: {
+              arguments: {
+                type: 'key-value',
+              },
+            },
+            model: {
+              arguments: result,
+            },
+            candidates: [
+              { value: 'string', label: 'string' },
+              { value: 'int', label: 'int' },
+              { value: 'long', label: 'long' },
+              { value: 'bool', label: 'bool' },
+              { value: 'date', label: 'date' },
+              { value: '*', label: '*' },
+              { value: 'short', label: 'short' },
+              { value: 'ushort', label: 'ushort' },
+              { value: 'uint', label: 'uint' },
+              { value: 'ulong', label: 'ulong' },
+              { value: 'single', label: 'single' },
+              { value: 'char', label: 'char' },
+              { value: 'byte', label: 'byte' },
+              { value: 'sbyte', label: 'sbyte' },
+              { value: 'time', label: 'time' },
+              { value: 'guid', label: 'guid' },
+              { value: 'x', label: 'x' },
+              { value: 'node', label: 'node' },
+            ],
+          },
+        }).afterClosed().subscribe((args: any) => {
+          if (args) {
+    
+            this.generalService.showLoading();
+            this.workflowService.applyArguments(this.currentFileData.content, args.arguments).subscribe({
+    
+              next: (response: MagicResponse) => {
+    
+                this.generalService.hideLoading();
+                const fileExisting: number = this.openFiles.findIndex((item: any) => item.path === this.currentFileData.path);
+                const activeWrapper = document.querySelector('.active-codemirror-editor-' + fileExisting);
+                const editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
+                this.currentFileData.content = response.result;
+                setTimeout(() => {
+                  editor.setCursor({
+                    line: editor.doc.lineCount(),
+                    ch: 0,
+                  });
+                },1);
+              },
+    
+              error: (error: any) => {
+    
+                this.generalService.hideLoading();
+                this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+              }
+            });
+          }
+        });
+          },
+
+      error: (error: any) => {
+
+        this.generalService.hideLoading();
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+      }
+    });
   }
 
   private getCodeMirrorOptions() {
