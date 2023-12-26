@@ -1,0 +1,46 @@
+
+/*
+ * Transforms the specified [markdown] to HTML and returns to caller.
+ */
+.arguments
+   price_reference
+      type:string
+      mandatory:bool:true
+   quantity
+      type:int
+      mandatory:bool:false
+   success_url
+      type:string
+      mandatory:bool:true
+.icon:payment
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/price_reference
+validators.mandatory:x:@.arguments/*/success_url
+
+// Applying default values.
+validators.default:x:@.arguments
+   quantity:int:1
+
+// Retrieving Stripe token from configuration.
+.token
+set-value:x:@.token
+   strings.concat
+      .:"Bearer "
+      config.get:"magic:stripe:token"
+
+// Invoking Stripe to create payment link here.
+http.post:"https://api.stripe.com/v1/payment_links"
+   convert:true
+   headers
+      Authorization:x:@.token
+      Content-Type:application/x-www-form-urlencoded
+   payload
+      line_items[0][price]:x:@.arguments/*/price_reference
+      line_items[0][quantity]:int:1
+      after_completion[type]:redirect
+      after_completion[redirect][url]:x:@.arguments/*/success_url
+
+// Returning payment link to caller.
+yield
+   purchase_link:x:@http.post/*/content/*/url
