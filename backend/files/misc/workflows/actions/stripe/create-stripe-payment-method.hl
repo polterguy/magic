@@ -1,0 +1,66 @@
+
+/*
+ * Transforms the specified [markdown] to HTML and returns to caller.
+ */
+.arguments
+   card_number
+      type:string
+      mandatory:bool:true
+   card_exp_month
+      type:int
+      mandatory:bool:true
+   card_exp_year
+      type:int
+      mandatory:bool:true
+   card_cvs
+      type:int
+      mandatory:bool:true
+.icon:payment
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/card_number
+validators.mandatory:x:@.arguments/*/card_exp_month
+validators.mandatory:x:@.arguments/*/card_exp_year
+validators.mandatory:x:@.arguments/*/card_cvs
+
+// Retrieving token to use for invocations towards Stripe.
+.token
+set-value:x:-
+   strings.concat
+      .:"Bearer "
+      config.get:"magic:stripe:token"
+
+// Invoking Stripe REST API.
+http.post:"https://api.stripe.com/v1/payment_methods"
+   headers
+      Content-Type:application/x-www-form-urlencoded
+      Authorization:x:@.token
+   payload
+      card[number]:x:@.arguments/*/card_number
+      card[exp_month]:x:@.arguments/*/card_exp_month
+      card[exp_year]:x:@.arguments/*/card_exp_year
+      card[cvc]:x:@.arguments/*/card_cvs
+      type:card
+   convert:true
+
+// Sanity checking above invocation.
+if
+   mte
+      get-value:x:@http.post
+      .:int:400
+   .lambda
+
+      // Oops, something went wrong ...!!
+      lambda2hyper:x:@http.post
+      log.error:Something went wrong while invoking Stripe
+         result:x:@lambda2hyper
+         provider:Stripe
+      throw:Something went wrong while invoking Stripe
+         public:true
+         status:500
+
+// Returning customer ID to caller.
+yield
+   payment_method_id:x:@http.post/*/content/*/id
+   payment_method_brand:x:@http.post/*/content/*/card/*/brand
+   last4:x:@http.post/*/content/*/card/*/last4
