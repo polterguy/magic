@@ -15,6 +15,9 @@
    card_cvs
       type:int
       mandatory:bool:true
+   customer_id
+      type:string
+      mandatory:bool:true
 .icon:payment
 
 // Sanity checking invocation.
@@ -22,6 +25,7 @@ validators.mandatory:x:@.arguments/*/card_number
 validators.mandatory:x:@.arguments/*/card_exp_month
 validators.mandatory:x:@.arguments/*/card_exp_year
 validators.mandatory:x:@.arguments/*/card_cvs
+validators.mandatory:x:@.arguments/*/customer_id
 
 // Retrieving token to use for invocations towards Stripe.
 .token
@@ -59,8 +63,38 @@ if
          public:true
          status:500
 
-// Returning customer ID to caller.
+
+// Attaching payment method to customer.
+strings.concat
+   .:"https://api.stripe.com/v1/payment_methods/"
+   get-value:x:@http.post/*/content/*/id
+   .:"/attach"
+http.post:x:@strings.concat
+   headers
+      Content-Type:application/x-www-form-urlencoded
+      Authorization:x:@.token
+   payload
+      customer:x:@.arguments/*/customer_id
+   convert:true
+
+// Sanity checking above invocation.
+if
+   mte
+      get-value:x:@http.post
+      .:int:400
+   .lambda
+
+      // Oops, something went wrong ...!!
+      lambda2hyper:x:@http.post
+      log.error:Something went wrong while invoking Stripe API
+         result:x:@lambda2hyper
+         provider:Stripe
+      throw:"We could not attach your payment method to Stripe's systems"
+         public:true
+         status:500
+
+// Returning payment method information to caller.
 yield
-   payment_method_id:x:@http.post/*/content/*/id
-   payment_method_brand:x:@http.post/*/content/*/card/*/brand
-   last4:x:@http.post/*/content/*/card/*/last4
+   payment_method_id:x:@http.post/@http.post/*/content/*/id
+   payment_method_brand:x:@http.post/@http.post/*/content/*/card/*/brand
+   last4:x:@http.post/@http.post/*/content/*/card/*/last4
