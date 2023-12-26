@@ -1,0 +1,68 @@
+
+/*
+ * Transforms the specified [markdown] to HTML and returns to caller.
+ */
+.arguments
+   name
+      type:string
+      mandatory:bool:true
+   email
+      type:email
+      mandatory:bool:true
+   ip_address
+      type:string
+      mandatory:bool:false
+.icon:payment
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/name
+validators.mandatory:x:@.arguments/*/email
+validators.email:x:@.arguments/*/email
+
+// Checking if IP address was supplied, and if so, adding it to invocation.
+if
+   exists:x:@.arguments/*/ip_address
+   .lambda
+
+      // Adding [ip_address] to payload as tax location.
+      add:x:../*/http.post/*/payload
+         .
+            tax[ip_address]:x:@.arguments/*/ip_address
+
+// Retrieving token to use for invocations towards Stripe.
+.token
+set-value:x:-
+   strings.concat
+      .:"Bearer "
+      config.get:"magic:stripe:token"
+
+// Invoking Stripe REST API.
+http.post:"https://api.stripe.com/v1/customers"
+   headers
+      Content-Type:application/x-www-form-urlencoded
+      Authorization:x:@.token
+   payload
+      email:x:@.arguments/*/email
+      name:x:@.arguments/*/name
+   convert:true
+
+// Sanity checking above invocation.
+if
+   mte
+      get-value:x:@http.post
+      .:int:400
+   .lambda
+
+      // Oops, something went wrong ...!!
+      lambda2hyper:x:@http.post
+      log.error:Something went wrong while invoking Stripe
+         result:x:@lambda2hyper
+         provider:Stripe
+      throw:Something went wrong while invoking Stripe
+         public:true
+         status:500
+
+// Returning customer ID to caller.
+yield
+   customer_id:x:@http.post/*/content/*/id
+
