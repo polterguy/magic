@@ -53,6 +53,15 @@ export class ShortkeysDialogComponent implements OnInit {
         }
       ];
     }
+    if (this.data.type.indexOf('arguments') > -1) {
+      this.shortkeys = [
+        ...this.shortkeys,
+        {
+          name: 'Edit arguments',
+          key: 'Alt + Q'
+        }
+      ];
+    }
     if (this.data.type.indexOf('execute') > -1) {
       this.shortkeys = [
         ...this.shortkeys,
