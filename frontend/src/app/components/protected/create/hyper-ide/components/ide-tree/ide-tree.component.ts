@@ -684,6 +684,11 @@ export class IdeTreeComponent implements OnInit {
                 // Checking if we should show "Create arguments collection" dialog for file.
                 if (path.endsWith('.hl')) {
 
+                  // Checking if we should expand toolbox.
+                  if (path.endsWith('.hl') && this.toolboxExpanded === null) {
+                    this.toolboxExpanded = true;
+                  }
+
                   this.dialog.open(ParametriseActionDialog, {
                     width: '750px',
                     maxWidth: '80vw',
@@ -817,39 +822,46 @@ export class IdeTreeComponent implements OnInit {
 
               this.generalService.hideLoading();
 
-              if (this.getCodeMirrorOptions(fileObject) !== null) {
+              const cmOptions = this.getCodeMirrorOptions(fileObject);
+
+              if (cmOptions !== null) {
+
                 this.openFiles.push({
                   name: fileObject.substring(fileObject.lastIndexOf('/') + 1),
                   path: fileObject,
                   folder: fileObject.substring(0, fileObject.lastIndexOf('/') + 1),
                   content: content,
-                  options: this.getCodeMirrorOptions(fileObject),
+                  options: cmOptions,
                 });
                 this.currentFileData = this.openFiles.filter(x => x.path === fileObject)[0];
                 this.showEditor.emit({ currentFileData: this.currentFileData });
                 this.setFocusToActiveEditor.emit();
-              }
 
-              // If the code mirror can't open the file.
-              // Lets the user decide what to do with it.
-              if (this.getCodeMirrorOptions(fileObject) === null) {
+              } else {
+
                 this.dialog.open(IncompatibleFileDialogComponent, {
                   width: '550px',
                   data: {
                     name: fileObject.substring(fileObject.lastIndexOf('/') + 1),
                   },
                 }).afterClosed().subscribe(async (data: { deleteFile: false, download: false }) => {
+
                   const objectToDelete: any = {
                     name: fileObject.substring(fileObject.lastIndexOf('/') + 1),
                     path: fileObject,
                     folder: fileObject.substring(0, fileObject.lastIndexOf('/') + 1),
                     content: content,
-                    options: this.getCodeMirrorOptions(fileObject)
+                    options: null,
                   }
+
                   if (data && data.download) {
+
                     this.downloadActiveFile(fileObject);
+
                   } else if (data && data.deleteFile) {
+
                     this.deleteFile(objectToDelete, false);
+
                   }
                 });
                 return;
@@ -867,6 +879,7 @@ export class IdeTreeComponent implements OnInit {
           this.generalService.hideLoading();
         }
       } else {
+
         this.generalService.hideLoading();
       }
     });
