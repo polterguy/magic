@@ -1,6 +1,13 @@
 
 /*
- * Transforms the specified [markdown] to HTML and returns to caller.
+ * Creates a customer object in Stripe with the given [name], [email] and
+ * optionally [ip_address].
+ *
+ * If you supply an [ip_address] the country of origin for the IP address
+ * will be used as the default tax location for your customer in Stripe.
+ *
+ * Will use your Stripe API token found from your settings as it's interacting
+ * with the Stripe API.
  */
 .arguments
    name

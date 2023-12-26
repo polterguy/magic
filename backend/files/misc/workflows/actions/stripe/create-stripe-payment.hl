@@ -1,0 +1,84 @@
+
+/*
+ * Creates a new Stripe payment for the given [customer_id] using the
+ * specified [payment_method], for the given [amount] in the given [currency].
+ *
+ * Will use your Stripe API token found from your settings as it's interacting
+ * with the Stripe API.
+ */
+.arguments
+   customer_id
+      type:string
+      mandatory:bool:true
+   payment_method
+      type:int
+      mandatory:bool:true
+   amount
+      type:decimal
+      mandatory:bool:true
+   currency
+      type:string
+      mandatory:bool:true
+.icon:payment
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/customer_id
+validators.mandatory:x:@.arguments/*/payment_method
+validators.mandatory:x:@.arguments/*/amount
+validators.mandatory:x:@.arguments/*/currency
+
+// Retrieving token to use for invocations towards Stripe.
+.token
+set-value:x:-
+   strings.concat
+      .:"Bearer "
+      config.get:"magic:stripe:token"
+
+// Multiplying [amount] with 100 to correctly add decimals.
+math.multiply:x:@.arguments/*/amount
+   .:decimal:100
+
+// Invoking Stripe REST API.
+http.post:"https://api.stripe.com/v1/payment_intents"
+   headers
+      Content-Type:application/x-www-form-urlencoded
+      Authorization:x:@.token
+   payload
+      amount:x:@math.multiply
+      currency:x:@.arguments/*/currency
+      payment_method:x:@.arguments/*/payment_method
+      customer:x:@.arguments/*/customer_id
+      confirm:true
+   convert:true
+
+// Sanity checking above invocation.
+if
+   mte
+      get-value:x:@http.post
+      .:int:400
+   .lambda
+
+      // Oops, something went wrong ...!!
+      lambda2hyper:x:@http.post
+      log.error:Something went wrong while invoking Stripe API, could not create payment intent
+         result:x:@lambda2hyper
+         provider:Stripe
+      throw:Something went wrong while invoking Stripe API, could not create payment intent
+         public:true
+         status:500
+
+// Checking if charge was successful.
+if
+   exists:x:@http.post/*/content/*/next_action/*/use_stripe_sdk/*/stripe_js
+   .lambda
+
+      // Charge was NOT successful, and probably needs 3D secure.
+      yield
+         finished:bool:false
+         id:x:@http.post/*/content/*/id
+         payment_url:x:@http.post/*/content/*/next_action/*/use_stripe_sdk/*/stripe_js
+
+// Returning customer ID to caller.
+yield
+   finished:bool:true
+   id:x:@http.post/*/content/*/id
