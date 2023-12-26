@@ -1,6 +1,11 @@
 
 /*
- * Transforms the specified [markdown] to HTML and returns to caller.
+ * Creates a new Stripe payment method with the given [card_number], [card_exp_month],
+ * [card_exp_year] and [card_cvs] and attaches the payment metho to the specified
+ * [customer_id] object.
+ *
+ * Will use your Stripe API token found from your settings as it's interacting
+ * with the Stripe API.
  */
 .arguments
    card_number
