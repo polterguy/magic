@@ -41,6 +41,27 @@ http.post:"https://api.stripe.com/v1/payment_links"
       after_completion[type]:redirect
       after_completion[redirect][url]:x:@.arguments/*/success_url
 
+// Sanity checking above invocation.
+if
+   not
+      and
+         mte:x:@http.post
+            .:int:200
+         lt:x:@http.post
+            .:int:300
+   .lambda
+
+      // Oops, error - Logging error and returning status 500 to caller.
+      lambda2hyper:x:@http.post
+      log.error:Something went wrong while invoking Stripe
+         message:x:@http.post/*/content/*/error/*/message
+         status:x:@http.post
+         error:x:@lambda2hyper
+      throw:Something went wrong while invoking Stripe
+         message:x:@http.post/*/content/*/error/*/message
+         status:x:@http.post
+         error:x:@lambda2hyper
+
 // Returning payment link to caller.
 yield
    purchase_link:x:@http.post/*/content/*/url
