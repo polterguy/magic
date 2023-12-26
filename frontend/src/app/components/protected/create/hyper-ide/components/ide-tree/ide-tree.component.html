@@ -304,7 +304,7 @@
           *ngFor="let item of openFiles;let index=index"
           [id]="currentFileData.name === item.name ? 'active' : ''"
           [title]="item.path"
-          (click)="openFile(item)"
+          (click)="openFile(item, false)"
           [class.active-file]="currentFileData.path === item.path">
 
           <!-- Button for selecting file, opening it for editing -->
