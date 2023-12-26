@@ -55,11 +55,11 @@ if
 
       // Oops, error - Logging error and returning status 500 to caller.
       lambda2hyper:x:@http.post
-      log.error:Something went wrong while invoking Stripe
+      log.error:Something went wrong while invoking Stripe, could not create payment link
          message:x:@http.post/*/content/*/error/*/message
          status:x:@http.post
          error:x:@lambda2hyper
-      throw:Something went wrong while invoking Stripe
+      throw:Something went wrong while invoking Stripe, could not create payment link
          message:x:@http.post/*/content/*/error/*/message
          status:x:@http.post
          error:x:@lambda2hyper

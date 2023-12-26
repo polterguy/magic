@@ -56,10 +56,10 @@ if
 
       // Oops, something went wrong ...!!
       lambda2hyper:x:@http.post
-      log.error:Something went wrong while invoking Stripe
+      log.error:Something went wrong while invoking Stripe, could not create payment method
          result:x:@lambda2hyper
          provider:Stripe
-      throw:Something went wrong while invoking Stripe
+      throw:Something went wrong while invoking Stripe, could not create payment method
          public:true
          status:500
 
@@ -86,10 +86,10 @@ if
 
       // Oops, something went wrong ...!!
       lambda2hyper:x:@http.post
-      log.error:Something went wrong while invoking Stripe API
+      log.error:Something went wrong while invoking Stripe API, could not attach payment method to customer
          result:x:@lambda2hyper
          provider:Stripe
-      throw:"We could not attach your payment method to Stripe's systems"
+      throw:Something went wrong while invoking Stripe API, could not attach payment method to customer
          public:true
          status:500
 
