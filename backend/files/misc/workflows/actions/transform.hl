@@ -11,4 +11,4 @@
       mandatory:bool:false
 .icon:input
 
-return-nodes:x:@.arguments/*
+return-nodes:x:@.arguments/*/*

@@ -102,6 +102,6 @@ if
          status:x:@http.post
          error:x:@lambda2hyper
 
-// Returning result to caller.
+// Returning answer to caller.
 yield
-   result:x:@http.post/*/content/*/choices/0/*/message/*/content
+   answer:x:@http.post/*/content/*/choices/0/*/message/*/content

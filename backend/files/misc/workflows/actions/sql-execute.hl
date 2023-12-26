@@ -61,4 +61,4 @@ data.connect:x:@.connection-string
    data.execute:x:@.arguments/*/sql
       database-type:x:@.arguments/*/database-type
    yield
-      result:x:@data.execute
+      affected:x:@data.execute
