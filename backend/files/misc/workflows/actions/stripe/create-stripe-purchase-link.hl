@@ -1,6 +1,8 @@
 
 /*
- * Transforms the specified [markdown] to HTML and returns to caller.
+ * Creates a Stripe payment link from the specified [price_reference], being
+ * a Stripe payment ID, for [quantity] amount of items, returning the user to
+ * [success_url] after payment has been successfully finished.
  */
 .arguments
    price_reference
