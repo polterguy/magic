@@ -10,15 +10,29 @@ auth.ticket.verify:root
 
 // Converting Hyperlambda to lambda.
 hyper2lambda:x:@.arguments/*/hyperlambda
+   comments:true
 
 // Iterating through each argument Hyperlambda can handle.
 for-each:x:@hyper2lambda/*/.arguments/*
    set-name:x:+/+/*/*
       get-name:x:@.dp/#
    unwrap:x:+/*/*
-   add:x:../*/return-nodes
+   add:x:../*/return-nodes/*/args
       .
          name:x:@.dp/#
 
+// Fetching description if existing.
+.desc
+if
+   eq
+      get-name:x:@hyper2lambda/0
+      .:..
+   .lambda
+      set-value:x:@.desc
+         get-value:x:@hyper2lambda/0
+
 // Returning arguments to caller, together with their type information.
+unwrap:x:+/*
 return-nodes
+   args
+   description:x:@.desc

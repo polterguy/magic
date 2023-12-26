@@ -720,6 +720,10 @@ export class IdeTreeComponent implements OnInit {
                       is_action: false,
                       description: 'What arguments can your Hyperlambda file handle?',
                       input: {
+                        description: {
+                          type: 'textarea',
+                          noCandidates: true,
+                        },
                         arguments: {
                           type: 'key-value',
                         },
@@ -749,7 +753,10 @@ export class IdeTreeComponent implements OnInit {
                     if (args) {
 
                       this.generalService.showLoading();
-                      this.workflowService.applyArguments(fileContent, args.arguments).subscribe({
+                      this.workflowService.applyArguments(
+                        fileContent,
+                        args.description,
+                        args.arguments).subscribe({
 
                         next: (response: MagicResponse) => {
 

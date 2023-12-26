@@ -62,10 +62,11 @@ export class WorkflowService {
   /**
    * Applies the specified arguments to the specified Hyperlambda and returns to caller.
    */
-  applyArguments(hyperlambda: string, args: any) {
+  applyArguments(hyperlambda: string, description: string, args: any) {
 
     return this.httpService.post<MagicResponse>('/magic/system/workflows/apply-arguments', {
       hyperlambda,
+      description,
       args,
     });
   }
@@ -75,7 +76,7 @@ export class WorkflowService {
    */
   getArguments(hyperlambda: string) {
 
-    return this.httpService.post<any[]>('/magic/system/workflows/get-file-arguments', {
+    return this.httpService.post<any>('/magic/system/workflows/get-file-arguments', {
       hyperlambda,
     });
   }

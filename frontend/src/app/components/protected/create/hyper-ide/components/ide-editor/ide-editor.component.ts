@@ -540,7 +540,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     this.generalService.showLoading();
     this.workflowService.getArguments(this.currentFileData.content).subscribe({
 
-      next: (result: any[]) => {
+      next: (result: any) => {
 
         this.generalService.hideLoading();
         this.dialog.open(ParametriseActionDialog, {
@@ -550,14 +550,19 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
           data: {
             name: this.currentFileData.path,
             is_action: false,
-            description: 'Edit arguments your Hyperlambda file can handle?',
+            description: 'Edit description and arguments your Hyperlambda file can handle?',
             input: {
+              description: {
+                type: 'textarea',
+                noCandidates: true,
+              },
               arguments: {
                 type: 'key-value',
               },
             },
             model: {
-              arguments: result,
+              arguments: result.args,
+              description: result.description,
             },
             candidates: [
               { value: 'string', label: 'string' },
@@ -584,7 +589,10 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
           if (args) {
     
             this.generalService.showLoading();
-            this.workflowService.applyArguments(this.currentFileData.content, args.arguments).subscribe({
+            this.workflowService.applyArguments(
+              this.currentFileData.content,
+              args.description,
+              args.arguments).subscribe({
     
               next: (response: MagicResponse) => {
     

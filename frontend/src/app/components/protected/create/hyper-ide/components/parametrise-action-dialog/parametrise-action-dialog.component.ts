@@ -71,11 +71,13 @@ export class ParametriseActionDialog implements OnInit {
           add = true;
           field.type = 'key-value';
           field.props.options = [];
-          for (const idxCandidate of this.data.candidates) {
-            field.props.options.push({
-              value: idxCandidate.value,
-              label: idxCandidate.label,
-            });
+          if (!this.data.input[idx].noCandidates || this.data.input[idx].noCandidates === false) {
+            for (const idxCandidate of this.data.candidates) {
+              field.props.options.push({
+                value: idxCandidate.value,
+                label: idxCandidate.label,
+              });
+            }
           }
           break;
 
@@ -106,11 +108,13 @@ export class ParametriseActionDialog implements OnInit {
               }
             }
           }
-          for (const idxCandidate of this.data.candidates) {
-            field.props.options.push({
-              value: idxCandidate.value,
-              label: idxCandidate.label,
-            });
+          if (!this.data.input[idx].noCandidates || this.data.input[idx].noCandidates === false) {
+            for (const idxCandidate of this.data.candidates) {
+              field.props.options.push({
+                value: idxCandidate.value,
+                label: idxCandidate.label,
+              });
+            }
           }
           break;
 

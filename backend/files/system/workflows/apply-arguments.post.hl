@@ -4,6 +4,7 @@
  */
 .arguments
    hyperlambda:string
+   description:string
    args:*
 
 // Verifying user is authorized to access endpoint.
@@ -29,6 +30,26 @@ else
    add:x:@hyper2lambda
       .
          .arguments
+
+// Checking if caller provided a description.
+remove-nodes:x:@hyper2lambda/0/[0,1]/\..
+if
+   and
+      exists:x:@.arguments/*/description
+      not-null:x:@.arguments/*/description
+      neq:x:@.arguments/*/description
+         .:
+   .lambda
+      strings.replace:x:@.arguments/*/description
+         .:"\r\n"
+         .:"\n"
+      strings.replace:x:@strings.replace
+         .:"\n"
+         .:"\r\n"
+      unwrap:x:+/*/*
+      insert-before:x:@hyper2lambda/0
+         .
+            ..:x:@strings.replace
 
 // Returning updated Hyperlambda to caller.
 lambda2hyper:x:@hyper2lambda/*
