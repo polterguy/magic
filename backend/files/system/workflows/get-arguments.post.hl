@@ -46,14 +46,19 @@ for-each:x:@hyper2lambda/*/.arguments/*
          strings.concat
             .:@.arguments/*/
             get-name:x:@.dp/#
-         unwrap:x:+/*/*/*
-         add:x:../*/return/*/candidates
-            .
-               .
-                  name:x:@strings.concat/@strings.concat
-                  expression:x:@strings.concat
-                  type:argument
-                  complete:bool:true
+         if
+            not-exists:x:../*/return/*/candidates/*/*/expression/={@strings.concat}
+            .lambda
+
+               // Argument has not already been added to return lambda.
+               unwrap:x:+/*/*/*
+               add:x:../*/return/*/candidates
+                  .
+                     .
+                        name:x:@strings.concat/@strings.concat
+                        expression:x:@strings.concat
+                        type:argument
+                        complete:bool:true
 
    else
 
@@ -65,14 +70,19 @@ for-each:x:@hyper2lambda/*/.arguments/*
       strings.concat
          .:@.arguments/*/
          get-name:x:@.dp/#
-      unwrap:x:+/*/*/*
-      add:x:../*/return/*/candidates
-         .
-            .
-               name:x:@strings.concat/@strings.concat
-               expression:x:@strings.concat
-               type:argument
-               complete:bool:false
+      if
+         not-exists:x:../*/return/*/candidates/*/*/expression/={@strings.concat}
+         .lambda
+
+            // Argument has not already been added to return lambda.
+            unwrap:x:+/*/*/*
+            add:x:../*/return/*/candidates
+               .
+                  .
+                     name:x:@strings.concat/@strings.concat
+                     expression:x:@strings.concat
+                     type:argument
+                     complete:bool:false
 
 // Figuring out candidate expressions from action invocations.
 for-each:x:@hyper2lambda/*/execute/*/name/./*/filename/.
@@ -92,14 +102,19 @@ for-each:x:@hyper2lambda/*/execute/*/name/./*/filename/.
          get-value:x:@.dp/@.dp/#/*/name
          .:/*/
          get-name:x:@.dp/#
-      unwrap:x:+/*/*/*
-      add:x:../*/return/*/candidates
-         .
-            .
-               name:x:@strings.concat/@strings.concat
-               expression:x:@strings.concat
-               type:action-result
-               complete:bool:true
+      if
+         not-exists:x:../*/return/*/candidates/*/*/expression/={@strings.concat}
+         .lambda
+
+            // Argument has not already been added to return lambda.
+            unwrap:x:+/*/*/*
+            add:x:../*/return/*/candidates
+               .
+                  .
+                     name:x:@strings.concat/@strings.concat
+                     expression:x:@strings.concat
+                     type:action-result
+                     complete:bool:true
 
    // Finding incomplete arguments, implying arguments we can NOT reference absolutely.
    for-each:x:@hyper2lambda/**/return-nodes
@@ -107,14 +122,19 @@ for-each:x:@hyper2lambda/*/execute/*/name/./*/filename/.
          .:--/execute/=
          get-value:x:@.dp/@.dp/#/*/name
          .:/*/
-      unwrap:x:+/*/*/*
-      add:x:../*/return/*/candidates
-         .
-            .
-               name:x:@.dp/@.dp/#/*/name
-               expression:x:@strings.concat
-               type:action-result
-               complete:bool:false
+      if
+         not-exists:x:../*/return/*/candidates/*/*/expression/={@strings.concat}
+         .lambda
+
+            // Argument has not already been added to return lambda.
+            unwrap:x:+/*/*/*
+            add:x:../*/return/*/candidates
+               .
+                  .
+                     name:x:@.dp/@.dp/#/*/name
+                     expression:x:@strings.concat
+                     type:action-result
+                     complete:bool:false
 
 // Returning arguments to caller.
 return
