@@ -508,6 +508,9 @@ export class IdeTreeComponent implements OnInit {
 
     // Trying our best to open another file.
     this.currentFileData = this.openFiles.length > 0 ? this.openFiles[this.openFiles.length - 1] : null;
+    if (this.currentFileData === null) {
+      this.toolboxExpanded = null;
+    }
     this.scrollToActiveOpenFile();
 
     // Signaling other components to let them know active file was changed.

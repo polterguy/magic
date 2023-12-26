@@ -41,4 +41,4 @@ execute:magic.ai.get-context
 
 // Returning result of invocation to caller.
 yield
-   result:x:@execute/*/context
+   context:x:@execute/*/context
