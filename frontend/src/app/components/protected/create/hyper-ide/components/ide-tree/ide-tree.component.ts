@@ -173,7 +173,6 @@ export class IdeTreeComponent implements OnInit {
         this.dialog.open(ParametriseActionDialog, {
           width: '750px',
           maxWidth: '80vw',
-          disableClose: true,
           autoFocus: true,
           data: {
             name: el.name,
@@ -323,6 +322,17 @@ export class IdeTreeComponent implements OnInit {
           setTimeout(() => {
             this.scrollToActiveOpenFile();
             this.clearEditorHistory.emit(true);
+
+            // Scrolling to bottom of file.
+            const fileExisting: number = this.openFiles.findIndex((item: any) => item.path === this.currentFileData.path);
+            const activeWrapper = document.querySelector('.active-codemirror-editor-' + fileExisting);
+            const editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
+            setTimeout(() => {
+              editor.setCursor({
+                line: editor.doc.lineCount(),
+                ch: 0,
+              });
+            }, 1);
           }, 1);
 
         },

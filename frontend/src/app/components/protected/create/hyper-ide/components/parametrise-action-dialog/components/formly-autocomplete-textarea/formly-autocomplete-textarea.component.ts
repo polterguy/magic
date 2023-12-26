@@ -6,7 +6,6 @@
 // Angular and system imports.
 import { FieldType, FieldTypeConfig } from '@ngx-formly/core';
 import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
 import { Observable, map, startWith } from 'rxjs';
 
 // Application specific imports
@@ -23,7 +22,7 @@ import { Observable, map, startWith } from 'rxjs';
     [id]="field.key"
     [placeholder]="field.props.label"
     matInput
-    rows="3"
+    rows="5"
     [formControl]="formControl"
     [matAutocomplete]="auto">
   </textarea>
