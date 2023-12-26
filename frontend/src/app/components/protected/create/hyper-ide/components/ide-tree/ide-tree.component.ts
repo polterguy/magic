@@ -234,7 +234,7 @@ export class IdeTreeComponent implements OnInit {
   /**
    * Invoked when user wants to open a file for editing.
    */
-  openFile(file: TreeNode) {
+  openFile(file: TreeNode, scrollOpenFiles: boolean = true) {
 
     // Checking if file is already open.
     const alreadyOpen = this.openFiles.filter(x => x.path === file.path).pop();
@@ -245,6 +245,9 @@ export class IdeTreeComponent implements OnInit {
       this.showEditor.emit({
         currentFileData: this.currentFileData
       });
+      if (scrollOpenFiles) {
+        this.scrollToActiveOpenFile();
+      }
 
     } else {
 
@@ -279,13 +282,19 @@ export class IdeTreeComponent implements OnInit {
           } else if (data && data.unzip) {
 
             // Unzipping file.
+            this.generalService.showLoading();
             this.fileService.unzip(file.path).subscribe({
+
               next: () => {
 
                 // Updating parent folder since unzip operation highly likely produced additional files and/or folder for us.
                 this.updateFileObject(TreeNode.parentFolder(file));
               },
-              error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+              error: (error: any) => {
+
+                this.generalService.hideLoading();
+                this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+              }
             });
           }
         });
@@ -293,8 +302,12 @@ export class IdeTreeComponent implements OnInit {
       }
 
       // File type has a registered CodeMirror editor.
+      this.generalService.showLoading();
       this.fileService.loadFile(file.path).subscribe({
+
         next: (content: string) => {
+
+          this.generalService.hideLoading();
           this.openFiles.push({
             name: file.name,
             path: file.path,
@@ -308,12 +321,18 @@ export class IdeTreeComponent implements OnInit {
 
           // Hack to make sure initial loading of file does not become an "undo" operation.
           setTimeout(() => {
-            this.scrollToLastOpenFile();
+            this.scrollToActiveOpenFile();
             this.clearEditorHistory.emit(true);
           }, 1);
 
         },
-        error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+
+        error: (error: any) => {
+          
+          this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+          this.generalService.hideLoading();
+
+        }
       });
     }
 
@@ -489,7 +508,7 @@ export class IdeTreeComponent implements OnInit {
 
     // Trying our best to open another file.
     this.currentFileData = this.openFiles.length > 0 ? this.openFiles[this.openFiles.length - 1] : null;
-    this.scrollToLastOpenFile();
+    this.scrollToActiveOpenFile();
 
     // Signaling other components to let them know active file was changed.
     this.showEditor.emit({ currentFileData: this.currentFileData })
@@ -815,9 +834,13 @@ export class IdeTreeComponent implements OnInit {
 
     this.generalService.showLoading();
     this.getFilesFromServer(folder).then((success: any) => {
+
       if (success) {
+
         if (isFile) {
+
           this.fileService.loadFile(fileObject).subscribe({
+
             next: async (content: string) => {
 
               this.generalService.hideLoading();
@@ -875,8 +898,8 @@ export class IdeTreeComponent implements OnInit {
           })
         } else {
 
-          this.dataBindTree();
           this.generalService.hideLoading();
+          this.dataBindTree();
         }
       } else {
 
@@ -1054,11 +1077,12 @@ export class IdeTreeComponent implements OnInit {
     return this.codemirrorActionsService.getActions(path);
   }
 
-  private scrollToLastOpenFile() {
+  private scrollToActiveOpenFile() {
 
     const el = document.getElementById('active');
-    if (el)
+    if (el) {
       el.scrollIntoView();
+    }
   }
 
   private isSystemPath(path: string) {
