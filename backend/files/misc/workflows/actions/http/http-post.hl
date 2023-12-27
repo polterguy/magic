@@ -1,0 +1,69 @@
+
+/*
+ * Creates an HTTP POST invocation and returns the result to caller.
+ */
+.arguments
+   url
+      type:string
+      mandatory:bool:true
+   query-params
+      type:key-value
+      mandatory:bool:false
+   payload
+      type:key-value
+      mandatory:bool:true
+.icon:http
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/url
+validators.url:x:@.arguments/*/url
+validators.mandatory:x:@.arguments/*/payload/0
+
+// Decorating HTTP POST invocation.
+add:x:./*/http.post
+   get-nodes:x:@.arguments/*/payload
+
+// Checking if we've got QUERY parameters.
+if
+   exists:x:@.arguments/*/query-params
+   .lambda
+
+      // Making sure we URL encode everything.
+      for-each:x:@.arguments/*/query-params/*
+         set-value:x:@.dp/#
+            strings.concat
+               get-name:x:@.dp/#
+               .:=
+               strings.url-encode:x:@.dp/#
+
+      // Appending QUERY parameters to URL.
+      set-value:x:@.arguments/*/url
+         strings.concat
+            get-value:x:@.arguments/*/url
+            .:?
+            strings.join:x:@.arguments/*/query-params/*
+               .:&
+
+// Creating HTTP invocation.
+http.post:x:@.arguments/*/url
+   convert:bool:true
+
+// Verifying above invocation succeeded.
+if
+   and
+      mte:x:@http.post
+         .:int:200
+      lt:x:@http.post
+         .:int:300
+   .lambda
+
+      // Returning result to caller.
+      return-nodes:x:@http.post/content/*
+
+else
+
+   // Oops ...!!
+   lambda2hyper:x:@http.post
+   log.error:HTTP post invocation failed
+      response:x:@lambda2hyper
+   throw:HTTP post invocation failed
