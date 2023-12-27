@@ -20,7 +20,7 @@ validators.url:x:@.arguments/*/url
 validators.mandatory:x:@.arguments/*/payload/0
 
 // Decorating HTTP POST invocation.
-add:x:./*/http.post
+add:x:./*/http.patch
    get-nodes:x:@.arguments/*/payload
 
 // Checking if we've got QUERY parameters.
@@ -45,25 +45,25 @@ if
                .:&
 
 // Creating HTTP invocation.
-http.post:x:@.arguments/*/url
+http.patch:x:@.arguments/*/url
    convert:bool:true
 
 // Verifying above invocation succeeded.
 if
    and
-      mte:x:@http.post
+      mte:x:@http.patch
          .:int:200
-      lt:x:@http.post
+      lt:x:@http.patch
          .:int:300
    .lambda
 
       // Returning result to caller.
-      return-nodes:x:@http.post/content/*
+      return-nodes:x:@http.patch/content/*
 
 else
 
    // Oops ...!!
-   lambda2hyper:x:@http.post
+   lambda2hyper:x:@http.patch
    log.error:HTTP POST invocation failed
       response:x:@lambda2hyper
    throw:HTTP POST invocation failed

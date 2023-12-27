@@ -1,6 +1,6 @@
 
 /*
- * Creates an HTTP POST invocation and returns the result to caller.
+ * Creates an HTTP GET invocation and returns the result to caller.
  */
 .arguments
    url
@@ -9,19 +9,11 @@
    query-params
       type:key-value
       mandatory:bool:false
-   payload
-      type:key-value
-      mandatory:bool:true
 .icon:http
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/url
 validators.url:x:@.arguments/*/url
-validators.mandatory:x:@.arguments/*/payload/0
-
-// Decorating HTTP POST invocation.
-add:x:./*/http.post
-   get-nodes:x:@.arguments/*/payload
 
 // Checking if we've got QUERY parameters.
 if
@@ -45,25 +37,25 @@ if
                .:&
 
 // Creating HTTP invocation.
-http.post:x:@.arguments/*/url
+http.get:x:@.arguments/*/url
    convert:bool:true
 
 // Verifying above invocation succeeded.
 if
    and
-      mte:x:@http.post
+      mte:x:@http.get
          .:int:200
-      lt:x:@http.post
+      lt:x:@http.get
          .:int:300
    .lambda
 
       // Returning result to caller.
-      return-nodes:x:@http.post/content/*
+      return-nodes:x:@http.get/content/*
 
 else
 
    // Oops ...!!
-   lambda2hyper:x:@http.post
-   log.error:HTTP POST invocation failed
+   lambda2hyper:x:@http.get
+   log.error:HTTP GET invocation failed
       response:x:@lambda2hyper
-   throw:HTTP POST invocation failed
+   throw:HTTP GET invocation failed
