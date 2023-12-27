@@ -37,25 +37,25 @@ if
                .:&
 
 // Creating HTTP invocation.
-http.get:x:@.arguments/*/url
+http.delete:x:@.arguments/*/url
    convert:bool:true
 
 // Verifying above invocation succeeded.
 if
    and
-      mte:x:@http.get
+      mte:x:@http.delete
          .:int:200
-      lt:x:@http.get
+      lt:x:@http.delete
          .:int:300
    .lambda
 
       // Returning result to caller.
-      return-nodes:x:@http.get/content/*
+      return-nodes:x:@http.delete/content/*
 
 else
 
    // Oops ...!!
-   lambda2hyper:x:@http.get
+   lambda2hyper:x:@http.delete
    log.error:HTTP GET invocation failed
       response:x:@lambda2hyper
    throw:HTTP GET invocation failed
