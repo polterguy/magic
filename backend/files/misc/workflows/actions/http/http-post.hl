@@ -6,6 +6,14 @@
    url
       type:string
       mandatory:bool:true
+   token-type
+      type:enum
+      mandatory:bool:false
+      values
+         .:Bearer
+   token
+      type:string
+      mandatory:bool:false
    query-params
       type:key-value
       mandatory:bool:false
@@ -17,7 +25,31 @@
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/url
 validators.url:x:@.arguments/*/url
-validators.mandatory:x:@.arguments/*/payload/0
+validators.mandatory:x:@.arguments/*/payload/*
+
+// Checking if we've got a token.
+if
+   exists:x:@.arguments/*/token
+   .lambda
+
+      // Defaulting [token-type] to Bearer token.
+      validators.default:x:@.arguments
+         token-type:Bearer
+
+      // Handling token according to type of token.
+      switch:x:@.arguments/*/token-type
+
+         case:Bearer
+            strings.concat
+               .:"Bearer "
+               get-value:x:@.arguments/*/token
+            unwrap:x:+/*/*/*
+            add:x:../*/http.post/*/headers
+               .
+                  Authorization:x:@strings.concat
+
+         default
+            throw:Unsupported token type
 
 // Decorating HTTP POST invocation.
 add:x:./*/http.post
@@ -46,6 +78,7 @@ if
 
 // Creating HTTP invocation.
 http.post:x:@.arguments/*/url
+   headers
    convert:bool:true
 
 // Verifying above invocation succeeded.
