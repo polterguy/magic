@@ -1,5 +1,5 @@
 
-// Returns the result of all actions at root
+// Returns the result of all actions.
 for-each:x:../*/execute
    set-name:x:./0/-/*/*
       get-value:x:@.dp/#
