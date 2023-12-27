@@ -6,10 +6,10 @@
   <div class="terminal">
     <div *ngFor="let el of messages" [class]="el.type">
       <h3 *ngIf="!el.time">
-        {{el.message}}: {{el['action-name']}}
+        {{el['action-name']}}
       </h3>
+      <pre *ngIf="el.arguments" class="args"><code [highlight]="el.json"></code></pre>
       <div *ngIf="el.time">{{el.time}} seconds</div>
-      <pre class="args"><code [highlight]="el.json"></code></pre>
       <hr *ngIf="el.time && el !== messages[messages.length - 1]">
     </div>
   </div>

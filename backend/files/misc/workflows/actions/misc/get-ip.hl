@@ -1,0 +1,13 @@
+
+/*
+ * Returns all specified HTTP headers to caller.
+ */
+.arguments
+.icon:http
+
+// Retrieving IP address from equest.
+request.ip
+
+// Returning IP address to caller.
+yield
+   ip:x:@request.ip
