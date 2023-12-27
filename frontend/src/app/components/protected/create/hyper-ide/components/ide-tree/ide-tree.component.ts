@@ -740,6 +740,7 @@ export class IdeTreeComponent implements OnInit {
                       },
                       candidates: [
                         { value: 'string', label: 'string' },
+                        { value: 'decimal', label: 'decimal' },
                         { value: 'int', label: 'int' },
                         { value: 'long', label: 'long' },
                         { value: 'bool', label: 'bool' },

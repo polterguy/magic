@@ -16,6 +16,7 @@ import { CreateArrayDialogComponent } from './components/create-array-dialog/cre
   selector: 'app-formly-array',
   template: `
 <div class="w-100 standalone-field mb-4">
+  <div class="mb-2 fw-bold">{{field.key}}</div>
   <mat-chip-list>
     <mat-chip
       *ngFor="let item of items"

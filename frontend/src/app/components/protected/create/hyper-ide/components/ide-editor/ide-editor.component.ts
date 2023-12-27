@@ -549,6 +549,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
             candidates: [
               { value: 'string', label: 'string' },
               { value: 'int', label: 'int' },
+              { value: 'decimal', label: 'decimal' },
               { value: 'long', label: 'long' },
               { value: 'bool', label: 'bool' },
               { value: 'date', label: 'date' },

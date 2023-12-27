@@ -17,6 +17,7 @@ import { GeneralService } from 'src/app/services/general.service';
   selector: 'app-formly-key-value',
   template: `
 <div class="w-100 standalone-field mb-4">
+  <div class="mb-2 fw-bold">{{field.key}}</div>
   <mat-chip-list>
     <mat-chip
       *ngFor="let item of items"
