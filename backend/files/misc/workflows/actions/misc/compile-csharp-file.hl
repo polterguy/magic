@@ -1,8 +1,8 @@
 
 /*
- * Compiles the specified C# code and loads into the AppDomain.
+ * Compiles the specified C# file and loads the resulting assembly into the AppDomain.
  *
- * Notice, will not compile the specified code if [assembly-name] already exists in
+ * Notice, will not compile the specified file if [assembly-name] already exists in
  * AppDomain, unless [recompile] is true.
  */
 .arguments
@@ -25,39 +25,18 @@
          .:magic.node
          .:magic.node.extensions
          .:magic.signals.contracts
-   code
-      type:csharp
+   file
+      type:string
       mandatory:bool:true
-      default:@"using System;
-using magic.node;
-using magic.node.extensions;
-using magic.signals.contracts;
-
-[Slot(Name = ""get-employee-details"")]
-public class Foo : ISlot
-{
-    public void Signal(ISignaler signaler, Node input)
-    {
-        switch (input.GetEx<string>().ToLower())
-        {
-            case ""john"":
-                input.Add(new Node(""title"", ""cmo""));
-                input.Add(new Node(""phone"", ""92929292""));
-                input.Add(new Node(""email"", ""john@doe.come""));
-                break;
-        }
-        input.Value = null;
-    }
-}"
 .icon:rocket_launch
 
 // Sanity checking invocation.
-validators.mandatory:x:@.arguments/*/code
+validators.mandatory:x:@.arguments/*/file
 validators.mandatory:x:@.arguments/*/references
 validators.mandatory:x:@.arguments/*/assembly-name
 
 /*
- * We only compile C# code if it does not already exist in AppDomain,
+ * We only compile C# file if the assembly does not already exist in AppDomain,
  * unless caller explicitly specifies [recompile] as true.
  */
 system.plugin.list
@@ -71,10 +50,13 @@ if
       add:x:./*/system.compile
          get-nodes:x:@.arguments/*/references
          get-nodes:x:@.arguments/*/assembly-name
-         get-nodes:x:@.arguments/*/code
+
+      // Loading file.
+      load-file:x:@.arguments/*/file
 
       // Compiling C# code.
       system.compile
+         code:x:@load-file
 
       // Loading assembly into AppDomain.
       system.plugin.load:x:@system.compile
