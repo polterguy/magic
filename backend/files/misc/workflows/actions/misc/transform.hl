@@ -11,4 +11,5 @@
       mandatory:bool:false
 .icon:input
 
+// Simply returning all nodes specified as input arguments.
 return-nodes:x:@.arguments/*/*
