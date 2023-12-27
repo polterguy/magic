@@ -1,0 +1,33 @@
+
+/*
+ * Executes the specified shell/bash command with the specified arguments,
+ * and returns the result to caller as a string.
+ */
+.arguments
+   command
+      type:string
+      mandatory:bool:true
+   args
+      type:string
+      mandatory:bool:false
+.icon:rocket_launch
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/command
+
+// Checking if we've got arguments.
+if
+   exists:x:@.arguments/*/args/0
+   .lambda
+
+      // Adding argument to invocation below.
+      add:x:../*/system.execute
+         .
+            get-value:x:@.arguments/*/args/0
+
+// Executes shell command
+system.execute:x:@.arguments/*/command
+
+// Returning result of above invocation to caller.
+yield
+   result:x:@system.execute
