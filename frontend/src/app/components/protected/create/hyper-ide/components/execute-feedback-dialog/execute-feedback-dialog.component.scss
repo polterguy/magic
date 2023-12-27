@@ -1,0 +1,36 @@
+
+.terminal {
+
+  background-color: #202020;
+  color: #fafafa;
+  padding: 1rem;
+  border-radius: 5px;
+  box-shadow: 3px 3px 5px rgba(0,0,0,.2);
+  height: auto;
+  min-height: 350px;
+  max-height: 350px;
+  margin-bottom: 1rem;
+  overflow: auto;
+
+  h3 {
+    margin-bottom: 0;
+  }
+
+  .args {
+    margin-top: 0;
+    text-wrap:wrap;
+  }
+
+  .info {
+    color: #fafafa;
+  }
+
+  .error {
+    color: #ff2020;
+  }
+
+  hr {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+}

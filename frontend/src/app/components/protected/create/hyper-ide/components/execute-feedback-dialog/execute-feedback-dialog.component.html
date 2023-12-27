@@ -1,0 +1,28 @@
+
+<h3 mat-dialog-title>Debug information</h3>
+
+<div mat-dialog-content>
+
+  <div class="terminal">
+    <div *ngFor="let el of messages" [class]="el.type">
+      <h3 *ngIf="!el.time">
+        {{el.message}}: {{el['action-name']}}
+      </h3>
+      <div *ngIf="el.time">{{el.time}} seconds</div>
+      <pre class="args"><code [highlight]="el.json"></code></pre>
+      <hr *ngIf="el.time && el !== messages[messages.length - 1]">
+    </div>
+  </div>
+
+</div>
+
+<div mat-dialog-actions [align]="'end'">
+
+  <button
+    mat-flat-button
+    color="primary"
+    mat-dialog-close>
+    Close
+  </button>
+
+</div>

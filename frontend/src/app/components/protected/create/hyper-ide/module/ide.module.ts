@@ -36,6 +36,7 @@ import { CreateArrayDialogComponent } from '../components/parametrise-action-dia
 import { FormlyHyperlambdaComponent } from '../components/parametrise-action-dialog/components/formly-hyperlambda/formly-hyperlambda.component';
 import { FormlyAutocompleteComponent } from '../components/parametrise-action-dialog/components/formly-autocomplete/formly-autocomplete.component';
 import { FormlyAutocompleteTextareaComponent } from '../components/parametrise-action-dialog/components/formly-autocomplete-textarea/formly-autocomplete-textarea.component';
+import { ExecuteFeedbackDialog } from '../components/execute-feedback-dialog/execute-feedback-dialog.component';
 
 @NgModule({
   declarations: [
@@ -59,6 +60,7 @@ import { FormlyAutocompleteTextareaComponent } from '../components/parametrise-a
     FormlyAutocompleteTextareaComponent,
     CreateKeyValueDialogComponent,
     CreateArrayDialogComponent,
+    ExecuteFeedbackDialog,
   ],
   imports: [
     CommonModule,

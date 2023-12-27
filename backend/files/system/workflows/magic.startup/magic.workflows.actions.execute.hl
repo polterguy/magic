@@ -1,0 +1,101 @@
+
+/*
+ * Slot that executes a single workflow action.
+ */
+slots.create:magic.workflows.actions.execute
+
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/name
+   validators.mandatory:x:@.arguments/*/filename
+
+   /*
+    * Checking if we're authenticated as root user, and if so,
+    * publishing a socket message as "debug info" back to caller.
+    */
+   .time
+   if
+      auth.ticket.in-role:root
+      .lambda
+
+         // Publishing socket debug message to client.
+         add:x:./*/sockets.signal/*/args/*/arguments
+            get-nodes:x:@.arguments/*/arguments/*
+         unwrap:x:+/**
+         sockets.signal:magic.workflows.action
+            roles:root
+            args
+               type:info
+               message:Action input
+               action-name:x:@.arguments/*/name
+               arguments
+         set-value:x:@.time
+            date.now
+
+   // Making sure we're able to catch exceptions.
+   try
+
+      // Parametrising [execute-file].
+      add:x:./*/execute-file
+         get-nodes:x:@.arguments/*/arguments/*
+
+      // Executing action.
+      execute-file:x:@.arguments/*/filename
+
+      /*
+       * Checking if we're authenticated as root user, and if so,
+       * publishing a socket message as "debug info" back to caller.
+       */
+      if
+         auth.ticket.in-role:root
+         .lambda
+
+            // Publishing socket debug message to client.
+            add:x:./*/sockets.signal/*/args/*/arguments
+               get-nodes:x:@execute-file/*
+            math.subtract
+               date.now
+               get-value:x:@.time
+            unwrap:x:+/**
+            sockets.signal:magic.workflows.action
+               roles:root
+               args
+                  type:info
+                  message:Action returned
+                  action-name:x:@.arguments/*/name
+                  time:x:@math.subtract
+                  arguments
+
+      // Decorating [result] node.
+      set-value:x:./*/return
+         get-value:x:@.arguments/*/name
+      add:x:./*/return
+         get-nodes:x:@execute-file/*
+
+      // Returning result of invocation to caller.
+      return
+
+   .catch
+
+      /*
+       * Checking if we're authenticated as root user, and if so,
+       * publishing a socket message as "debug info" back to caller.
+       */
+      if
+         auth.ticket.in-role:root
+         .lambda
+
+            // Publishing socket debug message to client.
+            add:x:./*/sockets.signal/*/args/*/arguments
+               get-nodes:x:@.arguments/@.arguments/*/arguments/*
+            unwrap:x:+/**
+            sockets.signal:magic.workflows.action
+               roles:root
+               args
+                  type:error
+                  message:Exception during execution of action
+                  esception-message:x:@.arguments/*/message
+                  action-name:x:@.arguments/@.arguments/*/name
+                  arguments
+
+      // Rethrowing exception
+      throw:x:@.arguments/*/message
