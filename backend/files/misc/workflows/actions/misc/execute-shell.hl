@@ -10,6 +10,9 @@
    args
       type:string
       mandatory:bool:false
+   structured
+      type:bool
+      mandatory:bool:false
 .icon:rocket_launch
 
 // Sanity checking invocation.
@@ -17,16 +20,24 @@ validators.mandatory:x:@.arguments/*/command
 
 // Checking if we've got arguments.
 if
-   exists:x:@.arguments/*/args/0
+   exists:x:@.arguments/*/args
    .lambda
 
       // Adding argument to invocation below.
       add:x:../*/system.execute
          .
-            get-value:x:@.arguments/*/args/0
+            get-value:x:@.arguments/*/args
 
 // Executes shell command
 system.execute:x:@.arguments/*/command
+   structured:x:@.arguments/*/structured
+
+/*
+ * Checking if caller wanted structured results, at which point we return an array
+ * containing lines returned from above invocation.
+ */
+if:x:@.arguments/*/structured
+   return-nodes:x:@system.execute/*
 
 // Returning result of above invocation to caller.
 yield
