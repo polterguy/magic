@@ -1,0 +1,16 @@
+
+/*
+ * Loads the specified [file] and returns to caller as [content].
+ */
+.arguments
+   file
+      type:string
+      mandatory:bool:true
+.icon:insert_drive_file
+
+// Retrieving IP address from equest.
+load-file:x:@.arguments/*/file
+
+// Returning IP address to caller.
+yield
+   content:x:@load-file
