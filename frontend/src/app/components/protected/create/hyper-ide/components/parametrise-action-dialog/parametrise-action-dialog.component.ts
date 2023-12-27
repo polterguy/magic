@@ -148,7 +148,7 @@ export class ParametriseActionDialog implements OnInit {
         if (this.data.model && this.data.model[idx]) {
           this.model[idx] = this.data.model[idx];
         } else if (this.data.input[idx].default) {
-          this.model[idx] = this.data.input[idx].default?.toString() ?? '';
+          this.model[idx] = this.data.input[idx].default;
         }
       }
     }
