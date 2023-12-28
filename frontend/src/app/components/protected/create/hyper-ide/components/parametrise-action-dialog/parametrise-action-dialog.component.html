@@ -6,7 +6,8 @@
 
   <div mat-dialog-content>
 
-    <div class="text-muted mb-4" [innerHTML]="data.description | marked"></div>
+    <div class="text-muted mb-3" [innerHTML]="data.description | marked"></div>
+    <div *ngIf="data.warning" class="warning mb-3">{{data.warning}}</div>
 
     <formly-form
       [form]="form"

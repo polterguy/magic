@@ -51,11 +51,11 @@ export class WorkflowService {
   /**
    * Returns the arguments the specified workflow action can handle.
    */
-  getArgumentsToAction(action: string, codeToCaret: string = null) {
+  getArgumentsToAction(action: string, hyperlambda: string = null) {
 
-    return this.httpService.post<any>('/magic/system/workflows/get-arguments', {
+    return this.httpService.post<any>('/magic/system/workflows/get-action-arguments', {
       'action-file': action,
-      codeToCaret,
+      hyperlambda,
     });
   }
 
@@ -76,7 +76,7 @@ export class WorkflowService {
    */
   getArguments(hyperlambda: string) {
 
-    return this.httpService.post<any>('/magic/system/workflows/get-file-arguments', {
+    return this.httpService.post<any>('/magic/system/workflows/get-hyperlambda-arguments', {
       hyperlambda,
     });
   }

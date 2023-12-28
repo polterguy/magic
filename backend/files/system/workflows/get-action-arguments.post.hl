@@ -5,7 +5,7 @@
  */
 .arguments
    action-file:string
-   codeToCaret:string
+   hyperlambda:string
 
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:root
@@ -22,10 +22,13 @@ add:x:./*/return/*/input
    get-nodes:x:@hyper2lambda/*/.arguments/*
 
 /*
- * Transforming code specified as input to lambda such that we can
+ * Transforming Hyperlambda specified as input to lambda such that we can
  * semantically traverse it for candidate expressions.
  */
-hyper2lambda:x:@.arguments/*/codeToCaret
+hyper2lambda:x:@.arguments/*/hyperlambda
+
+// Warnings found while traversing candidates.
+.warning
 
 /*
  * Figuring out candidate expressions
@@ -36,10 +39,16 @@ for-each:x:@hyper2lambda/*
    .node-name
    set-value:x:@.node-name
       get-name:x:@.dp/#
+
+   // Verifying this is either an [execute] node or an [.xxxx] node of some sort.
    if
       or
+
+         // Checking if this is a "variable" or a "variable collection".
          strings.starts-with:x:@.node-name
             .:.
+
+         // Checking if this is an action execute invocation.
          and
             eq:x:@.node-name
                .:execute
@@ -48,7 +57,9 @@ for-each:x:@hyper2lambda/*
       .lambda
 
          /*
-          * Checking if we're dealing with an action invocation, at which point
+          * Currently iterated node is either [execute] or [.xxx].
+          *
+          * Checking if we're dealing with an action invocation [execute], at which point
           * we'll have to load the action file and figure out return values from action
           * that becomes our candidate expressions.
           */
@@ -61,8 +72,20 @@ for-each:x:@hyper2lambda/*
                load-file:x:@.dp/#/*/filename
                hyper2lambda:x:@load-file
 
-               // Finding arguments.
+               // Iterating through all [return] invocations.
                for-each:x:@hyper2lambda/**/[yield|return|return-nodes]/*
+
+                  /*
+                   * Checking if currently iterated node has children nodes,
+                   * at which point we have to return a warning to caller.
+                   */
+                  if
+                     exists:x:@.dp/#/*
+                     .lambda
+
+                        // Returning warning to caller.
+                        set-value:x:@.warning
+                           .:Warning, some of your actions, and/or arguments, are returning complex objects, and we cannot automatically create candidate expressions for these. You will have to manually edit some of your expressions if you want to reference these nodes in your actions.
 
                   // Creating our candidate expression.
                   .x
@@ -73,7 +96,12 @@ for-each:x:@hyper2lambda/*
                         .:/*/
                         get-name:x:@.dp/#
 
-                  // Making sure candidate expression has not already been added before we add it.
+                  /*
+                   * Making sure candidate expression has not already been added before we add it.
+                   *
+                   * Notice, the same [return] invocation can be repeated multiple times in the same action file,
+                   * if there are conditional statements ([if]/[else-if]) that invokes [return] or [yield], etc.
+                   */
                   if
                      not-exists:x:../*/return/*/candidates/*/*/expression/={@.x}
                      .lambda
@@ -94,6 +122,18 @@ for-each:x:@hyper2lambda/*
              * Looping through children of node and creating our candidate expression.
              */
             for-each:x:@.dp/#/*
+
+               /*
+                * Checking if currently iterated node has children nodes,
+                * at which point we have to return a warning to caller.
+                */
+               if
+                  exists:x:@.dp/#/*
+                  .lambda
+
+                     // Returning warning to caller.
+                     set-value:x:@.warning
+                        .:Warning, some of your actions, and/or arguments, are returning complex objects, and we cannot automatically create candidate expressions for these. You will have to manually edit some of your expressions if you want to reference these nodes in your actions.
 
                // Creating our candidate expression.
                .x
@@ -117,7 +157,12 @@ for-each:x:@hyper2lambda/*
                               name:x:@.x
                               expression:x:@.x
 
-            // In case this is a "simple variable" we add it directly if it has a value.
+            /*
+             * In case this is a "simple variable" we add it directly if it has a value.
+             *
+             * Notice, "simple variable declarations" can be for instance ".foo:int:5", which
+             * are variable nodes without children of themselves.
+             */
             if
                not-null:x:@.dp/#
                .lambda
@@ -141,6 +186,15 @@ for-each:x:@hyper2lambda/*
                               .
                                  name:x:@.x
                                  expression:x:@.x
+
+// Checking if we've got warning, at which point we return these to caller.
+if
+   not-null:x:@.warning
+   .lambda
+      unwrap:x:+/*/*
+      add:x:../*/return
+         .
+            warning:x:@.warning
 
 // Returning arguments to caller.
 return
