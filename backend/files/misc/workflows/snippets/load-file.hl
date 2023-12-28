@@ -1,3 +1,0 @@
-
-// Loads the specified file assuming it is text content.
-load-file:/etc/README.md

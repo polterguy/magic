@@ -1,6 +1,0 @@
-
-// Post the specified content as a JSON document to the specified URL.
-http.post:"https://foo.bar"
-   payload
-      id:int:1
-      userId:x:@.some-variable

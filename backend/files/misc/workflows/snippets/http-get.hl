@@ -1,3 +1,0 @@
-
-// Retrieves the specified JSON document.
-http.get:"https://foo.bar"
