@@ -1,6 +1,0 @@
-
-// Searches DuckDuckGo for the specified query and returns 5 results.
-.query:Who invented Hyperlambda?
-execute:magic.http.duckduckgo-search
-   query:x:@.query
-   max:int:5
