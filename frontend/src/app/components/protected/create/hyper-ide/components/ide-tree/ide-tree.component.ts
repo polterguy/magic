@@ -177,6 +177,7 @@ export class IdeTreeComponent implements OnInit {
           data: {
             name: el.name,
             is_action: true,
+            warning: result.warning,
             description: el.description,
             input: result.input,
             candidates: result.candidates?.map((x: any) => {

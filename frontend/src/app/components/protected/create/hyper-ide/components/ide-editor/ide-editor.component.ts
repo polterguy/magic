@@ -532,6 +532,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
           data: {
             name: this.currentFileData.path,
             is_action: false,
+            warning: result.warning,
             description: 'Edit description and arguments your Hyperlambda file can handle?',
             input: {
               description: {
