@@ -44,4 +44,3 @@ if
 // Publishing socket message.
 sockets.signal:x:@.arguments/*/channel
    args
-
