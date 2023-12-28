@@ -4,16 +4,19 @@
  * in addition to candidates for expressions.
  */
 .arguments
-   action:string
+   action-file:string
    codeToCaret:string
 
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:root
 
-// Loading file.
-load-file:x:@.arguments/*/action
-
-// Transforming Hyperlambda to lambda and making sure we return [.arguments] collection.
+/*
+ * Loading action file and transforming Hyperlambda to lambda and making sure
+ * we return [.arguments] collection as [input].
+ *
+ * This becomes our input arguments to our action.
+ */
+load-file:x:@.arguments/*/action-file
 hyper2lambda:x:@load-file
 add:x:./*/return/*/input
    get-nodes:x:@hyper2lambda/*/.arguments/*
@@ -25,116 +28,119 @@ add:x:./*/return/*/input
 hyper2lambda:x:@.arguments/*/codeToCaret
 
 /*
- * Figuring out candidate expressions from [.arguments] collection.
- * Notice, this logic only does "level 1" type of arguments.
- *
- * TODO: Implement support for nested arguments.
+ * Figuring out candidate expressions
  */
-for-each:x:@hyper2lambda/*/.arguments/*
+for-each:x:@hyper2lambda/*
+
+   // Figuring out if we should return this as a candidate expression or not.
+   .node-name
+   set-value:x:@.node-name
+      get-name:x:@.dp/#
    if
-      and
-         not-null:x:@.dp/#
-         neq:x:@.dp/#
-            .:*
+      or
+         strings.starts-with:x:@.node-name
+            .:.
+         and
+            eq:x:@.node-name
+               .:execute
+            exists:x:@.dp/#/*/name
+            exists:x:@.dp/#/*/filename
       .lambda
 
-         // Complete argument we can reference "absolutely".
-         get-name:x:@.dp/#
-         strings.concat
-            .:"Argument / "
-            get-value:x:@get-name
-         strings.concat
-            .:@.arguments/*/
-            get-name:x:@.dp/#
+         /*
+          * Checking if we're dealing with an action invocation, at which point
+          * we'll have to load the action file and figure out return values from action
+          * that becomes our candidate expressions.
+          */
          if
-            not-exists:x:../*/return/*/candidates/*/*/expression/={@strings.concat}
+            eq:x:@.node-name
+               .:execute
             .lambda
 
-               // Argument has not already been added to return lambda.
-               unwrap:x:+/*/*/*
-               add:x:../*/return/*/candidates
-                  .
-                     .
-                        name:x:@strings.concat/@strings.concat
-                        expression:x:@strings.concat
-                        type:argument
-                        complete:bool:true
+               // Action invocation, loading file such that we can inspect return values.
+               load-file:x:@.dp/#/*/filename
+               hyper2lambda:x:@load-file
 
-   else
+               // Finding arguments.
+               for-each:x:@hyper2lambda/**/[yield|return|return-nodes]/*
 
-      // Incomplete argument we can NOT reference "absolutely".
-      get-name:x:@.dp/#
-      strings.concat
-         .:"Argument / "
-         get-value:x:@get-name
-      strings.concat
-         .:@.arguments/*/
-         get-name:x:@.dp/#
-      if
-         not-exists:x:../*/return/*/candidates/*/*/expression/={@strings.concat}
-         .lambda
+                  // Creating our candidate expression.
+                  .x
+                  set-value:x:@.x
+                     strings.concat
+                        .:--/execute/=
+                        get-value:x:@.dp/@.dp/#/*/name
+                        .:/*/
+                        get-name:x:@.dp/#
 
-            // Argument has not already been added to return lambda.
-            unwrap:x:+/*/*/*
-            add:x:../*/return/*/candidates
-               .
-                  .
-                     name:x:@strings.concat/@strings.concat
-                     expression:x:@strings.concat
-                     type:argument
-                     complete:bool:false
+                  // Making sure candidate expression has not already been added before we add it.
+                  if
+                     not-exists:x:../*/return/*/candidates/*/*/expression/={@.x}
+                     .lambda
 
-// Figuring out candidate expressions from action invocations.
-for-each:x:@hyper2lambda/*/execute/*/name/./*/filename/.
+                        // Argument has not been previously added to return lambda.
+                        unwrap:x:+/*/*/*
+                        add:x:../*/return/*/candidates
+                           .
+                              .
+                                 name:x:@.x
+                                 expression:x:@.x
 
-   // Loading file such that we can inspect return values.
-   load-file:x:@.dp/#/*/filename
-   hyper2lambda:x:@load-file
+         else
 
-   // Finding complete arguments first, implying arguments we can reference absolutely.
-   for-each:x:@hyper2lambda/**/[yield|return]/*
-      strings.concat
-         get-value:x:@.dp/@.dp/#/*/name
-         .:" / "
-         get-name:x:@.dp/#
-      strings.concat
-         .:--/execute/=
-         get-value:x:@.dp/@.dp/#/*/name
-         .:/*/
-         get-name:x:@.dp/#
-      if
-         not-exists:x:../*/return/*/candidates/*/*/expression/={@strings.concat}
-         .lambda
+            /*
+             * Variable node, either [.arguments] collection, or some variable node declaration.
+             *
+             * Looping through children of node and creating our candidate expression.
+             */
+            for-each:x:@.dp/#/*
 
-            // Argument has not already been added to return lambda.
-            unwrap:x:+/*/*/*
-            add:x:../*/return/*/candidates
-               .
-                  .
-                     name:x:@strings.concat/@strings.concat
-                     expression:x:@strings.concat
-                     type:action-result
-                     complete:bool:true
+               // Creating our candidate expression.
+               .x
+               set-value:x:@.x
+                  strings.concat
+                     .:@
+                     get-value:x:@.node-name
+                     .:/*/
+                     get-name:x:@.dp/#
 
-   // Finding incomplete arguments, implying arguments we can NOT reference absolutely.
-   for-each:x:@hyper2lambda/**/return-nodes
-      strings.concat
-         .:--/execute/=
-         get-value:x:@.dp/@.dp/#/*/name
-         .:/*/
-      if
-         not-exists:x:../*/return/*/candidates/*/*/expression/={@strings.concat}
-         .lambda
+               // Making sure candidate expression has not already been added before we add it.
+               if
+                  not-exists:x:../*/return/*/candidates/*/*/expression/={@.x}
+                  .lambda
 
-            // Argument has not already been added to return lambda.
-            unwrap:x:+/*/*/*
-            add:x:../*/return/*/candidates
-               .
-                  .
-                     name:x:@.dp/@.dp/#/*/name
-                     expression:x:@strings.concat
-                     type:action-result
-                     complete:bool:false
+                     // Argument has not been previously added to return lambda.
+                     unwrap:x:+/*/*/*
+                     add:x:../*/return/*/candidates
+                        .
+                           .
+                              name:x:@.x
+                              expression:x:@.x
+
+            // In case this is a "simple variable" we add it directly if it has a value.
+            if
+               not-null:x:@.dp/#
+               .lambda
+
+                  // Creating our candidate expression.
+                  .x
+                  set-value:x:@.x
+                     strings.concat
+                        .:@
+                        get-value:x:@.node-name
+
+                  // Making sure candidate expression has not already been added before we add it.
+                  if
+                     not-exists:x:../*/return/*/candidates/*/*/expression/={@.x}
+                     .lambda
+
+                        // Argument has not been previously added to return lambda.
+                        unwrap:x:+/*/*/*
+                        add:x:../*/return/*/candidates
+                           .
+                              .
+                                 name:x:@.x
+                                 expression:x:@.x
 
 // Returning arguments to caller.
 return

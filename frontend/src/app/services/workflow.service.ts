@@ -54,7 +54,7 @@ export class WorkflowService {
   getArgumentsToAction(action: string, codeToCaret: string = null) {
 
     return this.httpService.post<any>('/magic/system/workflows/get-arguments', {
-      action,
+      'action-file': action,
       codeToCaret,
     });
   }
