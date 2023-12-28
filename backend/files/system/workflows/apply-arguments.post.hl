@@ -1,6 +1,7 @@
 
 /*
- * Applies the specified arguments to the specified Hyperlambda
+ * Applies the specified arguments and file comment description
+ * to the specified Hyperlambda.
  */
 .arguments
    hyperlambda:string
@@ -13,46 +14,58 @@ auth.ticket.verify:root
 // Converting input Hyperlambda to lambda object.
 hyper2lambda:x:@.arguments/*/hyperlambda
    comments:true
+
+// Removing old file comment description.
+remove-nodes:x:@hyper2lambda/0/\..
+
+// Removing old [.arguments] collection.
+remove-nodes:x:@hyper2lambda/0/.arguments
+
+// Creating supporting node at the end of lambda object.
+add:x:@hyper2lambda
+   .
+      .support
+
+// Checking if caller provided an [.arguments] collection for Hyperlambda.
 if
-   exists:x:@hyper2lambda/*/.arguments
+   exists:x:@.arguments/*/args
    .lambda
 
-      // Removing old arguments.
-      remove-nodes:x:@hyper2lambda/*/.arguments/*
-      add:x:@hyper2lambda/*/.arguments
+      // Inserting arguments at top of lambda object.
+      add:x:+/*/*
          get-nodes:x:@.arguments/*/args/*
+      insert-before:x:@hyper2lambda/0
+         .
+            .arguments
 
-else
-
-   // Adding new arguments collection into lambda object.
-   add:x:+/*/*
-      get-nodes:x:@.arguments/*/args/*
-   add:x:@hyper2lambda
-      .
-         .arguments
-
-// Checking if caller provided a description.
-remove-nodes:x:@hyper2lambda/0/[0,1]/\..
+// Checking if caller provided a [description] for Hyperlambda.
 if
    and
       exists:x:@.arguments/*/description
       not-null:x:@.arguments/*/description
-      neq:x:@.arguments/*/description
-         .:
    .lambda
+
+      // Normalising [description] CR/LF characters.
       strings.replace:x:@.arguments/*/description
          .:"\r\n"
          .:"\n"
       strings.replace:x:@strings.replace
          .:"\n"
          .:"\r\n"
+
+      // Inserting file comment / description at top of lambda object.
       unwrap:x:+/*/*
       insert-before:x:@hyper2lambda/0
          .
             ..:x:@strings.replace
 
-// Returning updated Hyperlambda to caller.
+// Removing supporting node.
+remove-nodes:x:@hyper2lambda/0/-/.support
+
+// Converting lambda to Hyperlambda again.
 lambda2hyper:x:@hyper2lambda/*
    comments:true
+
+// Returning updated Hyperlambda to caller.
 yield
    result:x:@lambda2hyper

@@ -184,7 +184,7 @@ const fullkeys: Keys[] = [
     key: 'TAB'
   },
   {
-    name: 'Deindent',
+    name: 'Dedent',
     key: 'SHIFT + TAB'
   }
 ];
